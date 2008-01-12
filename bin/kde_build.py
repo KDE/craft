@@ -36,33 +36,33 @@ class kde_interface:
         self.buildType = BUILDTYPE
 
 
-        self.buildTests     = False
-        self.noCopy         = False
-        self.noFetch        = False
-        self.noUpdate       = False
-        self.traditional    = True
+        self.buildTests      = False
+        self.noCopy          = False
+        self.noFetch         = False
+        self.noClean         = False
+        self.traditional     = True
 
-        self.rootdir        = rootdir
-        self.workdir        = workdir
-        self.imagedir       = imagedir
-        self.instsrcdir     = instsrcdir
-        self.instdestdir    = instdestdir
+        self.rootdir         = rootdir
+        self.workdir         = workdir
+        self.imagedir        = imagedir
+        self.instsrcdir      = instsrcdir
+        self.instdestdir     = instdestdir
 
         if os.getenv( "EMERGE_OFFLINE" )    == "True":
-            self.noFetch    = True
+            self.noFetch     = True
         if os.getenv( "EMERGE_NOCOPY" )     == "True":
-            self.noCopy     = True
-        if os.getenv( "EMERGE_NOUPDATE" )   == "True":
-            self.noUpdate   = True
+            self.noCopy      = True
+        if os.getenv( "EMERGE_NOCLEAN" )    == "True":
+            self.noClean     = True
         if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
-            self.buildTests = True
-        if os.getenv( "directory_layout" ) == "installer":
+            self.buildTests  = True
+        if os.getenv( "directory_layout" )  == "installer":
             self.traditional = False
 
-        self.kdesvndir      = KDESVNDIR
-        self.kdesvnserver   = KDESVNSERVER
-        self.kdesvnuser     = KDESVNUSERNAME
-        self.kdesvnpass     = KDESVNPASSWORD
+        self.kdesvndir       = KDESVNDIR
+        self.kdesvnserver    = KDESVNSERVER
+        self.kdesvnuser      = KDESVNUSERNAME
+        self.kdesvnpass      = KDESVNPASSWORD
 
     def kdesinglecheckout( self, repourl, ownpath, codir, doRecursive = False ):
         """in ownpath try to checkout codir from repourl """
@@ -217,7 +217,7 @@ class kde_interface:
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
 
-        if not self.noUpdate:
+        if not self.noClean:
             os.chdir( self.workdir )
             utils.cleanDirectory( builddir )
         os.chdir( builddir )

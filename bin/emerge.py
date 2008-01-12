@@ -160,8 +160,10 @@ for i in sys.argv:
         os.environ["EMERGE_VERBOSE"] = str( verbose )
     elif ( i == "--nocopy" ):
         os.environ["EMERGE_NOCOPY"] = str( True )
-    elif ( i == "--noupdate" ):
-        os.environ["EMERGE_NOUPDATE"] = str( True )
+    elif ( i == "--noclean" ):
+        os.environ["EMERGE_NOCLEAN"] = str( True )
+    elif ( i == "--clean" ):
+        os.environ["EMERGE_NOCLEAN"] = str( False )
     elif ( i in ["--version-dir", "--version-package", "--print-installable", "--print-installed", "--print-targets"] ):
         buildAction = i[2:]
         stayQuiet = True
