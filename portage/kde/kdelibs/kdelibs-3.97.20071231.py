@@ -29,6 +29,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = "-DKDE4_BUILD_TESTS=OFF"
         return self.kdeCompile()
 
     def install( self ):
