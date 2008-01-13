@@ -24,6 +24,7 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdewin-installer"
         self.buildType = "Release"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()
