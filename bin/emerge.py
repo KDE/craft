@@ -236,7 +236,7 @@ if ( buildAction != "all" ):
     if packageName:
         package = deplist[-1]
     else:
-    ok = handlePackage( None, None, None, buildAction, opts )
+        ok = handlePackage( None, None, None, buildAction, opts )
 else:
     for package in deplist:
         if ( utils.isInstalled( package[0], package[1], package[2] ) ):
