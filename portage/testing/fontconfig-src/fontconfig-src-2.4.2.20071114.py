@@ -3,6 +3,7 @@ import os
 import utils
 import shutil
 from utils import die
+import info
 
 PACKAGE_NAME         = "fontconfig"
 PACKAGE_VER          = "2.4.2"
@@ -14,16 +15,21 @@ SRC_URI= """
 http://fontconfig.org/release/""" + PACKAGE_FULL_NAME + """.tar.gz
 """
 
-DEPEND = """
-dev-util/win32libs
-testing/freetype-src
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['2.4.2'] = SRC_URI
+        self.defaultTarget = '2.4.2'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['testing/freetype-src'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, SRC_URI )
         self.instsrcdir = PACKAGE_FULL_NAME
         self.createCombinedPackage = True
+        self.subinfo = subinfo()
 
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):

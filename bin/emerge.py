@@ -82,7 +82,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in ["fetch", "unpack", "compile", "configure", "make", "qmerge", "package", "manifest", "unmerge"] ):
+    elif ( buildAction in [ "fetch", "unpack", "compile", "configure", "make", "qmerge", "package", "manifest", "unmerge" ] ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         success = doExec( category, package, version, "cleanimage", opts )
@@ -155,6 +155,8 @@ for i in sys.argv:
         os.environ["EMERGE_VERSION"]   = i.replace( "--version=", "" )
     elif ( i.startswith( "--buildtype=" ) ):
         os.environ["EMERGE_BUILDTYPE"] = i.replace( "--buildtype=", "" )
+    elif ( i.startswith( "--target=" ) ):
+        os.environ["EMERGE_TARGET"] = i.replace( "--target=", "" )
     elif ( i == "-v" ):
         verbose = verbose + 1
         os.environ["EMERGE_VERBOSE"] = str( verbose )
@@ -164,12 +166,13 @@ for i in sys.argv:
         os.environ["EMERGE_NOCLEAN"] = str( True )
     elif ( i == "--clean" ):
         os.environ["EMERGE_NOCLEAN"] = str( False )
-    elif ( i in ["--version-dir", "--version-package", "--print-installable", "--print-installed", "--print-targets"] ):
+    elif ( i in [ "--version-dir", "--version-package", "--print-installable",
+                  "--print-installed", "--print-targets" ] ):
         buildAction = i[2:]
         stayQuiet = True
-    elif ( i in ["--fetch", "--unpack", "--compile", "--configure", "--make",
-                 "--install", "--qmerge", "--manifest", "--package", "--unmerge",
-                 "--full-package"] ):
+    elif ( i in [ "--fetch", "--unpack", "--compile", "--configure", "--make",
+                  "--install", "--qmerge", "--manifest", "--package", "--unmerge",
+                  "--full-package" ] ):
         buildAction = i[2:]
     elif ( i.startswith( "-" ) ):
         usage()
@@ -234,9 +237,10 @@ if ( buildAction != "all" ):
     """if a buildAction is given, then do not try to build dependencies"""
     """and do the action although the package might already be installed"""
     if packageName:
-        package = deplist[-1]
+        package = deplist[ -1 ]
     else:
-        ok = handlePackage( None, None, None, buildAction, opts )
+        package = [ None, None, None ]
+    ok = handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts )
 else:
     for package in deplist:
         if ( utils.isInstalled( package[0], package[1], package[2] ) ):

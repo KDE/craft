@@ -1,6 +1,8 @@
+import base
+import utils
+from utils import die
 import os
 import sys
-import base
 import info
 
 #DEPEND = """
@@ -14,14 +16,14 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin32'
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin-installer'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "kdewin32"
-        self.subinfo = subinfo()
+        self.instsrcdir = "kdewin-installer"
+        self.buildType = "Release"
 
     def unpack( self ):
         return self.kdeSvnUnpack()
@@ -35,8 +37,7 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-            return self.doPackaging( "kdewin32", "0.3.4-1", True )
-        else:
-            return self.doPackaging( "kdewin32", os.path.basename(sys.argv[0]).replace("kdewin32-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdewin-installer", os.path.basename(sys.argv[0]).replace("kdewin-installer-", "").replace(".py", ""), True )
+
 if __name__ == '__main__':
     subclass().execute()

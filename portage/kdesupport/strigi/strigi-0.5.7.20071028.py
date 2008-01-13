@@ -1,26 +1,31 @@
+import base
 import os
 import sys
-import base
 import info
 
 #DEPEND = """
 #virtual/base
 #libs/qt
+#kdesupport/kdewin32
+#kdesupport/clucene-core
 #"""
 
+#currently build without clucene...
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/clucene-core'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin32'
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "kdewin32"
+        self.instsrcdir = "strigi"
         self.subinfo = subinfo()
 
     def unpack( self ):
@@ -35,8 +40,9 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-            return self.doPackaging( "kdewin32", "0.3.4-1", True )
+            return self.doPackaging( "strigi", "0.5.7-1", True )
         else:
-            return self.doPackaging( "kdewin32", os.path.basename(sys.argv[0]).replace("kdewin32-", "").replace(".py", ""), True )
+            return self.doPackaging( "strigi", os.path.basename(sys.argv[0]).replace("strigi-", "").replace(".py", ""), True )
+
 if __name__ == '__main__':
     subclass().execute()

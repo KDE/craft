@@ -1,26 +1,28 @@
+import base
+import utils
+from utils import die
 import os
 import sys
-import base
 import info
 
 #DEPEND = """
 #virtual/base
-#libs/qt
 #"""
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['virtual/Base'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin32'
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/gmm'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "kdewin32"
+        # header-only package
+        self.createCombinedPackage = True
+        self.instsrcdir = "gmm"
         self.subinfo = subinfo()
 
     def unpack( self ):
@@ -33,10 +35,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
+        # FIXME?
         if self.traditional:
             self.instdestdir = "kde"
-            return self.doPackaging( "kdewin32", "0.3.4-1", True )
-        else:
-            return self.doPackaging( "kdewin32", os.path.basename(sys.argv[0]).replace("kdewin32-", "").replace(".py", ""), True )
+        return self.doPackaging( "gmm", os.path.basename(sys.argv[0]).replace("gmm-", "").replace(".py", ""), True )        
+
 if __name__ == '__main__':
     subclass().execute()

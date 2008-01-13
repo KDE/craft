@@ -3,19 +3,28 @@ import utils
 import shutil
 import os
 import sys
+import info
 
 SRC_URI= """
 http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2
 """
 
-DEPEND = """
-virtual/base
-"""
+class subinfo (info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
+    def setTargets( self ):
+        #self.targets['0.9.16a'] = "http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
+        self.svnTargets['svnHEAD'] = False
+        #self.defaultTarget = '0.9.16a'
+        self.defaultTarget = 'svnHEAD'
+
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, SRC_URI )
         self.instsrcdir = os.path.join( "clucene-core-0.9.16a", "src" )
+        self.subinfo = subinfo()
 
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):
@@ -31,9 +40,6 @@ class subclass(base.baseclass):
         shutil.copy( cmake_script, cmake_dest )
 
         return True
-
-    def kdeSvnPath( self ):
-        return False
 
     def compile( self ):
         return self.kdeCompile()

@@ -1,24 +1,22 @@
 import base
+import utils
 import os
 import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdesdk'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdesdk'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/taglib'] = 'default'
-        self.hardDependencies['testing/ruby'] = 'default'
-        self.hardDependencies['testing/phonon'] = 'default'
-        self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase'] = 'default'
-    
+        
 class subclass(base.baseclass):
-    def __init__( self ):
+    def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "amarok"
+        self.instsrcdir = "kdesdk"
         self.subinfo = subinfo()
 
     def unpack( self ):
@@ -31,7 +29,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "amarok", os.path.basename(sys.argv[0]).replace("amarok-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdesdk", os.path.basename(sys.argv[0]).replace("kdesdk-", "").replace(".py", ""), True )
 
-if __name__ == '__main__':		
+if __name__ == '__main__':
     subclass().execute()

@@ -3,6 +3,7 @@ import os
 import utils
 
 import base
+import info
 
 COMPILER            = os.getenv( "KDECOMPILER" )
 KDESVNUSERNAME      = os.getenv( "KDESVNUSERNAME" )
@@ -18,10 +19,13 @@ if ( BUILDTYPE not in ["Debug", "Release", "RelWithDebInfo", "MinSizeRel"] ):
     BUILDTYPE=None
 
 class kde_interface:
-    def __init__( self, baseobject ):
-        self.base = baseobject
+#    def __init__( self ):
+        
 
-    def setDirectories(self, rootdir, imagedir, workdir, instsrcdir, instdestdir):
+    def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
+        """ """
+        self.subinfo = infoobject
+
         if COMPILER   == "msvc2005":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm      = "nmake"
@@ -144,7 +148,7 @@ class kde_interface:
     def kdeSvnPath( self ):
         """overload this function in kde packages to use the nocopy option"""
         """this function should return the full path seen from /home/KDE/"""
-        return self.base.kdeGet()
+        return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
 
     def kdeSvnUnpack( self, svnpath=None, packagedir=None ):
         """fetching and copying the sources from svn"""

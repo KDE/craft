@@ -1,7 +1,7 @@
 import base
 import os
 import utils
-from utils import die
+import info
 
 PACKAGE_NAME         = "poppler"
 PACKAGE_VER          = "0.6.3"
@@ -14,20 +14,24 @@ http://poppler.freedesktop.org/poppler-0.6.3.tar.gz
 http://poppler.freedesktop.org/poppler-data-0.2.0.tar.gz
 """
 
-DEPEND = """
-gnuwin32/patch
-testing/freetype-src
-testing/fontconfig-src
-"""
-
 ##http://poppler.freedesktop.org/""" + PACKAGE_FULL_NAME + """.tar.gz
 ##"""
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['0.6.3'] = SRC_URI
+        self.defaultTarget = '0.6.3'
+    
+    def setDependencies( self ):
+        self.hardDependencies['testing/fontconfig-src'] = 'default'
+        self.hardDependencies['testing/freetype-src'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, SRC_URI )
         self.instsrcdir = PACKAGE_FULL_NAME
         self.createCombinedPackage = True
+        self.subinfo = subinfo()
 
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):

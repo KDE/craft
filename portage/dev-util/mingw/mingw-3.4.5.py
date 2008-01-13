@@ -2,6 +2,7 @@ import base
 import utils
 from utils import die
 import os
+import info
 
 """
 from trolltech mingw package:
@@ -24,10 +25,20 @@ http://heanet.dl.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
 http://heanet.dl.sourceforge.net/sourceforge/mingw/gdb-6.7.50.20071127-mingw.tar.bz2
 """
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['3.4.5'] = SRC_URI
+        self.defaultTarget = '3.4.5'
+    
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['gnuwin32/patch'] = 'default'
+        
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, SRC_URI )
         self.instdestdir = "mingw"
+        self.subinfo = subinfo()
 	
     def unpack( self ):
         base.baseclass.unpack( self )

@@ -11,6 +11,8 @@ import shutil
 
 # for get functions etc...
 import utils
+# for info header class
+import info
 # for the msys interface
 import msys_build
 # for the kde interface
@@ -81,8 +83,12 @@ class baseclass:
         self.kdeCustomDefines       = ""
         self.createCombinedPackage  = False
 
+        self.subinfo                = info.infoclass()
+        self.buildTarget            = self.subinfo.defaultTarget
+        self.Targets                = self.subinfo.svnTargets
+
         self.msys = msys_build.msys_interface()
-        self.kde  = kde_build.kde_interface( self )
+        self.kde  = kde_build.kde_interface()
         
         if os.getenv( "EMERGE_OFFLINE" ) == "True":
             self.noFetch = True
@@ -271,8 +277,15 @@ class baseclass:
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
 
+        self.Targets = self.subinfo.svnTargets
+        self.Targets.update( self.subinfo.targets )
+
+        if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
+            self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
+
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
-        self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
+        self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
+
 
     def svnFetch( self, repo ):
         """getting sources from a custom svn repo"""

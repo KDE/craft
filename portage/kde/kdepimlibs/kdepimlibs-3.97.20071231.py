@@ -1,37 +1,40 @@
 import base
+import utils
 import os
 import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepimlibs'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepimlibs'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/taglib'] = 'default'
-        self.hardDependencies['testing/ruby'] = 'default'
-        self.hardDependencies['testing/phonon'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdebase'] = 'default'
-    
+        
 class subclass(base.baseclass):
-    def __init__( self ):
+    def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "amarok"
+        self.instsrcdir = "kdepimlibs"
         self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        # add env var so that boost headers are found
+        path = os.path.join( self.rootdir, "win32libs" )
+        os.putenv( "BOOST_ROOT", path )
+
         return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "amarok", os.path.basename(sys.argv[0]).replace("amarok-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdepimlibs", os.path.basename(sys.argv[0]).replace("kdepimlibs-", "").replace(".py", ""), True )
 
-if __name__ == '__main__':		
+
+if __name__ == '__main__':
     subclass().execute()
