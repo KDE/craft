@@ -169,6 +169,7 @@ class baseclass:
             if utils.verbose() > 0:
                 print "skipping fetch (--offline)"
             return True
+        print self.subinfo.targets, self.subinfo.buildTarget, self.subinfo.defaultTarget
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
             return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
         else:
@@ -281,6 +282,8 @@ class baseclass:
 
         self.Targets = self.subinfo.svnTargets
         self.Targets.update( self.subinfo.targets )
+        
+        self.subinfo.buildTarget = self.subinfo.defaultTarget
 
         if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
             self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
