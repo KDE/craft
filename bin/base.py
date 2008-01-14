@@ -169,8 +169,10 @@ class baseclass:
             if utils.verbose() > 0:
                 print "skipping fetch (--offline)"
             return True
-        
-        return utils.getFiles( self.SRC_URI, self.downloaddir )
+        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
+            return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
+        else:
+            return utils.getFiles( "", self.downloaddir ) 
 
     def unpack( self ):
         """unpacking all zipped(gz,zip,bz2) tarballs"""
