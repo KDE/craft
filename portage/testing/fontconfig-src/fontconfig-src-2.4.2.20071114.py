@@ -17,7 +17,7 @@ http://fontconfig.org/release/""" + PACKAGE_FULL_NAME + """.tar.gz
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['2.4.2'] = SRC_URI
+        self.targets['2.4.2'] = SRC_URI
         self.defaultTarget = '2.4.2'
     
     def setDependencies( self ):
