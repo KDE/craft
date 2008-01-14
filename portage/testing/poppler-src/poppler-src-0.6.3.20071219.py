@@ -25,6 +25,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['testing/fontconfig-src'] = 'default'
         self.hardDependencies['testing/freetype-src'] = 'default'
+        self.hardDependencies['testing/poppler-data'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
