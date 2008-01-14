@@ -7,6 +7,7 @@ class infoclass:
         self.svnTargets = dict()
         self.hardDependencies = dict()
         self.softDependencies = dict()
+        self.svnTargets['svnHEAD'] = False
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
         
