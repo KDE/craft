@@ -14,10 +14,10 @@ class subinfo (info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        #self.targets['0.9.16a'] = "http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
-        self.svnTargets['svnHEAD'] = False
-        #self.defaultTarget = '0.9.16a'
-        self.defaultTarget = 'svnHEAD'
+        self.targets['0.9.16a'] = "http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
+        #self.svnTargets['svnHEAD'] = False
+        self.defaultTarget = '0.9.16a'
+        #self.defaultTarget = 'svnHEAD'
 
 
 class subclass(base.baseclass):
