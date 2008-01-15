@@ -13,31 +13,41 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, "" )
-    # cmake scripts are not in src root...
-    self.instsrcdir = "gpgme-qt"
+    def __init__(self):
+        base.baseclass.__init__( self, "" )
+        # cmake scripts are not in src root...
+        self.instsrcdir = "gpgme-qt"
 
-  def unpack( self ):
-    print "gpgme-qt unpack called"
-    # do the svn fetch/update
-    repo = "svn://cvs.gnupg.org/gpgme/trunk/gpgme"
-    self.svnFetch( repo )
+    def unpack( self ):
+        print "gpgme-qt unpack called"
+        # do the svn fetch/update
+        repo = "svn://cvs.gnupg.org/gpgme/trunk/gpgme"
+        self.svnFetch( repo )
 
-    return True
+        utils.cleanDirectory( self.workdir )
 
-  def compile( self ):
-    return self.kdeCompile()
+        # now copy the tree below destdir/trunk to workdir
+        print self.svndir, self.workdir
+        srcdir = os.path.join( self.svndir )
+        destdir = os.path.join( self.workdir, "gpgme-qt" )
+        utils.copySrcDirToDestDir( srcdir, destdir )
 
-  def install( self ):
-    return self.kdeInstall()
+        os.chdir( self.workdir )
+        self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "gpgme-qt.patch" ) ) )
+        return True
 
-  def make_package( self ):
+    def compile( self ):
+        return self.kdeCompile()
 
-    # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+    def install( self ):
+        return self.kdeInstall()
 
-    return True
+    def make_package( self ):
+
+        # now do packaging with kdewin-packager
+        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+
+        return True
     
 if __name__ == '__main__':
     subclass().execute()
