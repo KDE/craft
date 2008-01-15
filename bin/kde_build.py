@@ -234,7 +234,7 @@ class kde_interface:
 
         if utils.verbose() > 0:
             print "configuration command: %s" % command
-        utils.system( command ) or die( "while CMake'ing. cmd: %s" % command )
+        utils.system( command ) or utils.die( "while CMake'ing. cmd: %s" % command )
         return True
 
     def kdeMakeInternal( self, buildType ):
