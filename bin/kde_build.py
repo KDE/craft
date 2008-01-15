@@ -250,7 +250,7 @@ class kde_interface:
         # adding Targets later
         if utils.verbose() > 1:
             command += " VERBOSE=1"
-        utils.system( command ) or die( "while Make'ing. cmd: %s" % command )
+        utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
     def kdeInstallInternal( self, buildType ):
@@ -265,7 +265,7 @@ class kde_interface:
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
-        utils.system( "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) ) or die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        utils.system( "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
         return True
 
     def kdeCompile( self, kdeCustomDefines ):
