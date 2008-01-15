@@ -40,6 +40,17 @@ def __import__( module ):
         modulename=os.path.basename( module ).replace('.py', '')
         return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
+def test4application( appname, args=None ):
+    try:
+        f = file('NUL:')
+        p = subprocess.Popen( appname, stdout=f, stderr=f )
+        p.wait()
+        return True
+    except:
+        if verbose() > 1:
+            print "could not find application %s" % appname
+        return False
+
 def verbose():
     verb=os.getenv( "EMERGE_VERBOSE" )
     if ( not verb == None and verb.isdigit() and int(verb) > 0 ):

@@ -348,6 +348,9 @@ class baseclass:
 
         if( os.path.exists( tmp ) ):
             binpath = tmp
+        
+        if not utils.test4application( "kdewin-packager" ):
+            utils.die( "kdewin-packager not found - please make sure it is in your path" )
 
         if ( packSources and not ( self.noCopy and self.kde.kdeSvnPath() ) ):
             srcpath = os.path.join( self.workdir, self.instsrcdir )
