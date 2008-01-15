@@ -19,7 +19,7 @@ http://www.littlecms.com/lcms-1.17.tar.gz
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['1.17'] = SRC_URI
+        self.targets['1.17'] = SRC_URI
         self.defaultTarget = '1.17'
     
     def setDependencies( self ):
