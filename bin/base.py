@@ -280,7 +280,7 @@ class baseclass:
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
 
-        self.Targets = self.subinfo.svnTargets
+        self.Targets.update( self.subinfo.svnTargets )
         self.Targets.update( self.subinfo.targets )
         
         self.subinfo.buildTarget = self.subinfo.defaultTarget
