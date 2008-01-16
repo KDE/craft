@@ -12,6 +12,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase'] = 'default'
+
+        self.softDependencies['kdesupport/eigen'] = 'default'
+        self.softDependencies['kdesupport/qca'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
