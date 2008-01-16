@@ -1,0 +1,182 @@
+diff -N -r -u kdepimlibs-orig/gpgme-qt/CMakeLists.txt kdepimlibs/gpgme-qt/CMakeLists.txt
+--- kdepimlibs-orig/gpgme-qt/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ kdepimlibs/gpgme-qt/CMakeLists.txt	2008-01-16 02:00:25.187500000 +0100
+@@ -0,0 +1,49 @@
++project( gpgme_qt )
++
++INCLUDE_DIRECTORIES("${CMAKE_INSTALL_PREFIX}/include" ${CMAKE_BINARY_DIR} ${QT_INCLUDES}) 
++configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
++add_definitions(-DHAVE_CONFIG_H)
++
++if (WIN32)
++# overriding LIB_INSTALL_DIR specific for win32 to archieve 
++# propper installation of shared library targets will also be 
++# used in install(FILES ...) which fails with error
++# 'INSTALL FILES given unknown argument "RUNTIME".'
++# There must be a way to only patch install(TARGETS) 
++#    set (LIB_INSTALL_DIR lib)
++  add_definitions(-DHAVE_W32_SYSTEM)
++endif (WIN32)
++
++## gpgme comes in three flavours on each of the platforms:
++##  Windows: gpgme, gpgme-glib, gpgme-qt
++##     Unix: gpgme, gpgme-pthread, gpgme-pth
++## We're building corresponding gpgme++ flavours
++
++set(gpgme_qt_LIB_SRCS 
++  gpgme/get-env.c
++  gpgme/w32-sema.c
++  gpgme/vasprintf.c
++  gpgme/debug.c
++#(js) todo - readd later, as I do not have gpgme supporting getauditlog
++#gpgme/gpgme/getauditlog.c
++  gpgme/w32-qt-io.cpp 
++  gpgme/kdpipeiodevice.cpp
++  gpgme/kdpipeiodevice.h
++)
++
++qt4_automoc(${gpgme_qt_LIB_SRCS})
++
++set( _gpgme_qt_version 1.0.0 )
++
++#set( GPGMEPP_INCLUDE ${INCLUDE_INSTALL_DIR} ${GPGME_INCLUDES} )
++
++if ( GPGME_VANILLA_FOUND )
++  ADD_LIBRARY( gpgme-qt SHARED ${gpgme_qt_LIB_SRCS} gpgme/gpgme.def )
++  TARGET_LINK_LIBRARIES( gpgme-qt ${GPGME_VANILLA_LIBRARIES} ${QT_QTCORE_LIBRARY} )
++  set_target_properties( gpgme-qt PROPERTIES
++    VERSION     ${_gpgme_qt_version}
++    SOVERSION   ${_gpgme_qt_version}
++    OUTPUT_NAME gpgme-qt
++   )
++   install(TARGETS gpgme-qt DESTINATION ${LIB_INSTALL_DIR} )
++endif ( GPGME_VANILLA_FOUND )
+diff -N -r -u kdepimlibs-orig/gpgme-qt/config.h.cmake kdepimlibs/gpgme-qt/config.h.cmake
+--- kdepimlibs-orig/gpgme-qt/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ kdepimlibs/gpgme-qt/config.h.cmake	2008-01-16 02:00:25.187500000 +0100
+@@ -0,0 +1,42 @@
++/* This file is part of the KDE libraries
++   Copyright (c) 2007 The KDE Project
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public
++   License version 2 as published by the Free Software Foundation.
++
++   This library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public License
++   along with this library; see the file COPYING.LIB.  If not, write to
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++#ifndef GPGME_QT_CONFIG_H
++#define GPGME_QT_CONFIG_H
++
++/* Definition of GCC specific attributes.  */
++#if defined __GNUC__ && __GNUC__ > 2
++# define GPGME_GCC_A_PURE  __attribute__ ((__pure__))
++#else
++# define GPGME_GCC_A_PURE
++#endif
++
++#ifdef _MSC_VER
++# define snprintf _snprintf 
++
++#endif
++
++/* Separators as used in $PATH.  */
++#if defined _WIN32 || defined _WIN64
++# define HAVE_DOSISH_SYSTEM
++# define PATHSEP_C ';'
++#else
++# define PATHSEP_C ':'
++#endif
++
++#endif
+diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/debug.h kdepimlibs/gpgme-qt/gpgme/debug.h
+--- kdepimlibs-orig/gpgme-qt/gpgme/debug.h	2008-01-16 01:56:12.453125000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/debug.h	2008-01-16 02:00:25.203125000 +0100
+@@ -22,6 +22,7 @@
+ #define DEBUG_H
+ 
+ #include <string.h>
++#include "config.h"
+ 
+ /* Indirect stringification, requires __STDC__ to work.  */
+ #define STRINGIFY(v) #v
+@@ -40,10 +41,10 @@
+ 
+ /* Remove path components from filenames (i.e. __FILE__) for cleaner
+    logs. */
+-static inline const char *_gpgme_debug_srcname (const char *file)
++static const char *_gpgme_debug_srcname (const char *file)
+                                                 GPGME_GCC_A_PURE;
+ 
+-static inline const char *
++static const char *
+ _gpgme_debug_srcname (const char *file)
+ {
+   const char *s = strrchr (file, '/');
+diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/gpgme.def kdepimlibs/gpgme-qt/gpgme/gpgme.def
+--- kdepimlibs-orig/gpgme-qt/gpgme/gpgme.def	2008-01-16 01:56:12.468750000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/gpgme.def	2008-01-16 02:00:25.203125000 +0100
+@@ -156,8 +156,8 @@
+     gpgme_get_giochannel		  @121
+     gpgme_get_fdptr			  @122
+ 
+-    gpgme_op_getauditlog_start            @123
+-    gpgme_op_getauditlog                  @124
++;    gpgme_op_getauditlog_start            @123
++;    gpgme_op_getauditlog                  @124
+ 
+     gpgme_conf_release			  @125
+     gpgme_conf_arg_new			  @126
+diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/gpgme.h kdepimlibs/gpgme-qt/gpgme/gpgme.h
+--- kdepimlibs-orig/gpgme-qt/gpgme/gpgme.h	2008-01-16 01:56:12.468750000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/gpgme.h	2008-01-16 02:00:25.234375000 +0100
+@@ -34,7 +34,10 @@
+ 
+ #ifdef _MSC_VER
+   typedef long off_t;
+-  typedef long ssize_t;
++  #ifndef _SSIZE_T_DEFINED
++  #define _SSIZE_T_DEFINED
++    typedef long ssize_t;
++  #endif
+ #else
+ # include <sys/types.h>
+ #endif
+diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/w32-qt-io.cpp kdepimlibs/gpgme-qt/gpgme/w32-qt-io.cpp
+--- kdepimlibs-orig/gpgme-qt/gpgme/w32-qt-io.cpp	2008-01-16 01:56:12.484375000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/w32-qt-io.cpp	2008-01-16 02:00:25.234375000 +0100
+@@ -29,8 +29,6 @@
+ #include <errno.h>
+ #include <signal.h>
+ #include <fcntl.h>
+-#include <unistd.h>
+-#include <sys/time.h>
+ #include <sys/types.h>
+ #include <windows.h>
+ #include <io.h>
+@@ -409,7 +407,7 @@
+       0,         /* returns pid */
+       0         /* returns tid */
+     };
+-  STARTUPINFO si;
++  STARTUPINFOA si;
+   char *envblock = NULL;
+   int cr_flags = CREATE_DEFAULT_ERROR_MODE
+     | GetPriorityClass (GetCurrentProcess ());
+@@ -476,7 +474,7 @@
+       memset (&sa, 0, sizeof sa);
+       sa.nLength = sizeof sa;
+       sa.bInheritHandle = TRUE;
+-      hnul = CreateFile ("nul",
++      hnul = CreateFile (TEXT("nul"),
+ 			 GENERIC_READ|GENERIC_WRITE,
+ 			 FILE_SHARE_READ|FILE_SHARE_WRITE,
+ 			 &sa,
