@@ -17,6 +17,7 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdepim"
         self.subinfo = subinfo()
+        self.customDefines = "-DKLEO_BUILD_OLD_MAINWINDOW=1"
 
     def unpack( self ):
         return self.kdeSvnUnpack()
