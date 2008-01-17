@@ -11,7 +11,7 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['lib/qt'] = 'default'
+        self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'

@@ -11,7 +11,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/Base'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/gmm'
