@@ -1,6 +1,6 @@
 diff -N -r -u kdepimlibs-orig/gpgme-qt/CMakeLists.txt kdepimlibs/gpgme-qt/CMakeLists.txt
 --- kdepimlibs-orig/gpgme-qt/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ kdepimlibs/gpgme-qt/CMakeLists.txt	2008-01-16 02:00:25.187500000 +0100
++++ kdepimlibs/gpgme-qt/CMakeLists.txt	2008-01-17 18:28:08.859375000 +0100
 @@ -0,0 +1,49 @@
 +project( gpgme_qt )
 +
@@ -53,7 +53,7 @@ diff -N -r -u kdepimlibs-orig/gpgme-qt/CMakeLists.txt kdepimlibs/gpgme-qt/CMakeL
 +endif ( GPGME_VANILLA_FOUND )
 diff -N -r -u kdepimlibs-orig/gpgme-qt/config.h.cmake kdepimlibs/gpgme-qt/config.h.cmake
 --- kdepimlibs-orig/gpgme-qt/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ kdepimlibs/gpgme-qt/config.h.cmake	2008-01-16 02:00:25.187500000 +0100
++++ kdepimlibs/gpgme-qt/config.h.cmake	2008-01-17 18:28:08.859375000 +0100
 @@ -0,0 +1,42 @@
 +/* This file is part of the KDE libraries
 +   Copyright (c) 2007 The KDE Project
@@ -98,8 +98,8 @@ diff -N -r -u kdepimlibs-orig/gpgme-qt/config.h.cmake kdepimlibs/gpgme-qt/config
 +
 +#endif
 diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/debug.h kdepimlibs/gpgme-qt/gpgme/debug.h
---- kdepimlibs-orig/gpgme-qt/gpgme/debug.h	2008-01-16 01:56:12.453125000 +0100
-+++ kdepimlibs/gpgme-qt/gpgme/debug.h	2008-01-16 02:00:25.203125000 +0100
+--- kdepimlibs-orig/gpgme-qt/gpgme/debug.h	2008-01-16 02:01:04.750000000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/debug.h	2008-01-17 18:28:08.890625000 +0100
 @@ -22,6 +22,7 @@
  #define DEBUG_H
  
@@ -122,9 +122,9 @@ diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/debug.h kdepimlibs/gpgme-qt/gpgme/d
  {
    const char *s = strrchr (file, '/');
 diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/gpgme.def kdepimlibs/gpgme-qt/gpgme/gpgme.def
---- kdepimlibs-orig/gpgme-qt/gpgme/gpgme.def	2008-01-16 01:56:12.468750000 +0100
-+++ kdepimlibs/gpgme-qt/gpgme/gpgme.def	2008-01-16 02:00:25.203125000 +0100
-@@ -156,8 +156,8 @@
+--- kdepimlibs-orig/gpgme-qt/gpgme/gpgme.def	2008-01-16 02:01:04.750000000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/gpgme.def	2008-01-17 18:28:38.656250000 +0100
+@@ -156,15 +156,15 @@
      gpgme_get_giochannel		  @121
      gpgme_get_fdptr			  @122
  
@@ -133,11 +133,24 @@ diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/gpgme.def kdepimlibs/gpgme-qt/gpgme
 +;    gpgme_op_getauditlog_start            @123
 +;    gpgme_op_getauditlog                  @124
  
-     gpgme_conf_release			  @125
-     gpgme_conf_arg_new			  @126
+-    gpgme_conf_release			  @125
+-    gpgme_conf_arg_new			  @126
+-    gpgme_conf_arg_release		  @127
+-    gpgme_conf_opt_change		  @128
+-    gpgme_op_conf_load			  @129
+-    gpgme_op_conf_save			  @130
++;    gpgme_conf_release			  @125
++;    gpgme_conf_arg_new			  @126
++;    gpgme_conf_arg_release		  @127
++;    gpgme_conf_opt_change		  @128
++;    gpgme_op_conf_load			  @129
++;    gpgme_op_conf_save			  @130
+ 
+ ; END
+ 
 diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/gpgme.h kdepimlibs/gpgme-qt/gpgme/gpgme.h
---- kdepimlibs-orig/gpgme-qt/gpgme/gpgme.h	2008-01-16 01:56:12.468750000 +0100
-+++ kdepimlibs/gpgme-qt/gpgme/gpgme.h	2008-01-16 02:00:25.234375000 +0100
+--- kdepimlibs-orig/gpgme-qt/gpgme/gpgme.h	2008-01-16 02:01:04.750000000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/gpgme.h	2008-01-17 18:28:08.906250000 +0100
 @@ -34,7 +34,10 @@
  
  #ifdef _MSC_VER
@@ -151,8 +164,8 @@ diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/gpgme.h kdepimlibs/gpgme-qt/gpgme/g
  # include <sys/types.h>
  #endif
 diff -N -r -u kdepimlibs-orig/gpgme-qt/gpgme/w32-qt-io.cpp kdepimlibs/gpgme-qt/gpgme/w32-qt-io.cpp
---- kdepimlibs-orig/gpgme-qt/gpgme/w32-qt-io.cpp	2008-01-16 01:56:12.484375000 +0100
-+++ kdepimlibs/gpgme-qt/gpgme/w32-qt-io.cpp	2008-01-16 02:00:25.234375000 +0100
+--- kdepimlibs-orig/gpgme-qt/gpgme/w32-qt-io.cpp	2008-01-16 02:01:04.765625000 +0100
++++ kdepimlibs/gpgme-qt/gpgme/w32-qt-io.cpp	2008-01-17 18:28:08.921875000 +0100
 @@ -29,8 +29,6 @@
  #include <errno.h>
  #include <signal.h>
