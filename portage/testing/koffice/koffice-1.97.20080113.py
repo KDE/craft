@@ -30,7 +30,7 @@ class subclass(base.baseclass):
 
     def kdeDefaultDefines( self ):
         options = base.baseclass.kdeDefaultDefines( self )
-#        options = options + "-DBUILD_karbon=OFF "
+        options = options + "-DBUILD_karbon=OFF "
 #        options = options + "-DBUILD_kdgantt=OFF "
 #        options = options + "-DBUILD_kexi=OFF "
 #        options = options + "-DBUILD_kivio=OFF "
