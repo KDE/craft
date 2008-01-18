@@ -15,12 +15,27 @@ class subinfo(info.infoclass):
 
         self.softDependencies['kdesupport/eigen'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
+        self.softDependencies['testing/gsl'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "koffice"
         self.subinfo = subinfo()
+        self.kdeCustomDefines = ""
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_karbon=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kformula=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kpresenter=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kchart=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kdgantt=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kexi=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kivio=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kounavail=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kplato=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_krita=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kword=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kspread=OFF "
+        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
         unp = self.kdeSvnUnpack()
@@ -28,18 +43,6 @@ class subclass(base.baseclass):
         return unp
 
 
-    def kdeDefaultDefines( self ):
-        options = base.baseclass.kdeDefaultDefines( self )
-        options = options + "-DBUILD_karbon=OFF "
-#        options = options + "-DBUILD_kdgantt=OFF "
-#        options = options + "-DBUILD_kexi=OFF "
-#        options = options + "-DBUILD_kivio=OFF "
-#        options = options + "-DBUILD_kounavail=OFF "
-#        options = options + "-DBUILD_kplato=OFF "
-#        options = options + "-DBUILD_krita=OFF "
-#        options = options + "-DBUILD_kword=OFF "
-        options = options + "-DBUILD_doc=OFF "
-        return options
 
     def compile( self ):
         return self.kdeCompile()
