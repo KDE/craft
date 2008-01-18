@@ -55,7 +55,7 @@ def usage():
 
 def doExec( category, package, version, action, opts ):
     if utils.verbose() > 2:
-        print "emerge doExec called opts:", opts
+        print "emerge doExec called. action: %s opts: %s" % (action, opts)
     fileName = os.path.join( utils.getPortageDir(), category, package, "%s-%s.py" % \
                          ( package, version ) )
     opts_string = ( "%s " * len( opts ) ) % tuple( opts )
@@ -63,12 +63,16 @@ def doExec( category, package, version, action, opts ):
     if utils.verbose() > 1:
         print "file:", fileName
         print "commandstring", commandstring
-    utils.system( commandstring ) or utils.die( "running %s" % commandstring )
+    try:
+        utils.system( commandstring ) or utils.die( "running %s" % commandstring )
+    except:
+        return False
     return True
 
 def handlePackage( category, package, version, buildAction, opts ):
     if utils.verbose() > 1:
-        print "emerge handlePackage called:", category, package, version, buildAction
+        print "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction)
+
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
@@ -112,29 +116,37 @@ packageName = None
 doPretend = False
 stayQuiet = False
 opts = ""
-
+environ = dict()
 if len( sys.argv ) < 2:
     usage()
-    exit( 1 )
+    utils.die("")
 
-ncopy=os.getenv( "EMERGE_NOCOPY" )
-if ( ncopy == "True" ):
+environ["EMERGE_NOCOPY"]        = os.getenv( "EMERGE_NOCOPY" )
+environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
+environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
+environ["EMERGE_VERBOSE"]       = os.getenv( "EMERGE_VERBOSE" )
+environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
+environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
+environ["EMERGE_FORCED"]        = os.getenv( "EMERGE_FORCED" )
+environ["EMERGE_VERSION"]       = os.getenv( "EMERGE_VERSION" )
+environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
+environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
+
+if ( environ['EMERGE_NOCOPY'] == "True" ):
     nocopy = True
 else:
     nocopy = False
 
-nupdate=os.getenv( "EMERGE_NOUPDATE" )
-if ( nupdate == "True" ):
+if ( environ['EMERGE_NOUPDATE'] == "True" ):
     noupdate = True
 else:
     noupdate = False
 
-verb = os.getenv( "EMERGE_VERBOSE" )
-if verb == None or not verb.isdigit():
+if environ['EMERGE_VERBOSE'] == None or not environ['EMERGE_VERBOSE'].isdigit():
     verbose = 1
     os.environ["EMERGE_VERBOSE"] = str( verbose )
 else:
-    verbose = int( verb )
+    verbose = int( environ[ "EMERGE_VERBOSE" ] )
     
 opts = list()
 
@@ -170,6 +182,8 @@ for i in sys.argv:
                   "--print-installed", "--print-targets" ] ):
         buildAction = i[2:]
         stayQuiet = True
+        if i in [ "--print-installable", "--print-installed" ]:
+            break
     elif ( i in [ "--fetch", "--unpack", "--compile", "--configure", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge",
                   "--full-package" ] ):
@@ -179,6 +193,10 @@ for i in sys.argv:
         exit ( 1 )
     else:
         packageName = i
+        break
+
+nextArguments = sys.argv[ (sys.argv.index( i ) + 1): ]
+
 if stayQuiet == True:
     verbose = 0
     os.environ["EMERGE_VERBOSE"] = str( verbose )
@@ -220,6 +238,7 @@ os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH" ) + ";" +\
 sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) )
 
 deplist = []
+
 if packageName:
     utils.solveDependencies( "", packageName, "", deplist )
     
@@ -227,6 +246,7 @@ if utils.verbose() > 2:
     print "deplist:", deplist
 
 deplist.reverse()
+
 success = True
 
 # package[0] -> category
@@ -256,4 +276,18 @@ else:
                 if not handlePackage( package[0], package[1], package[2], buildAction, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         (package[0], package[1], package[2], buildAction) )
-    
+
+print                        
+if len( nextArguments ) > 0:
+    command = "emerge.py " + " ".join( nextArguments )
+    if utils.verbose() > 1:
+        print command
+
+    for element in environ.keys():
+        if environ[ element ]:
+            os.environ[ element ] = environ[ element ]
+        elif element == "EMERGE_VERBOSE":
+            os.environ[ element ] = "1"
+        else:
+            os.environ[ element ] = ""
+    utils.system( command ) or utils.die( "cannot execute next commands cmd: %s" % command )
