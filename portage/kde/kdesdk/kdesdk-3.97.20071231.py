@@ -18,6 +18,23 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdesdk"
         self.subinfo = subinfo()
+        self.kdeCustomDefines = ""
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kate=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kapptemplate=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kbugbuster=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kcachegrind=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kdeaccounts-plugin=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kdepalettes=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_strigi-analyzer=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kioslave=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kmtrace=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kprofilemethod=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kuiviewer=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_poxml=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_scripts=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_umbrello=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
+        
 
     def unpack( self ):
         return self.kdeSvnUnpack()
