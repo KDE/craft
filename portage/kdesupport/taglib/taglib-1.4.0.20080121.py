@@ -31,11 +31,8 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
-            return self.doPackaging( "taglib", "1.4.0-3", True )
-        else:
-            return self.doPackaging( "taglib", os.path.basename(sys.argv[0]).replace("taglib-", "").replace(".py", ""), True )
+        self.instdestdir = "kde"
+        return self.doPackaging( "taglib", "1.4.0-4", True )
 
 if __name__ == '__main__':
     subclass().execute()
