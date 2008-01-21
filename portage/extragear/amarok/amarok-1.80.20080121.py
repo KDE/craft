@@ -5,6 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['1.80'] = 'tags/amarok/1.80/amarok'
         self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
         self.defaultTarget = 'svnHEAD'
     
