@@ -534,21 +534,29 @@ def printTargets( category, package, version ):
         else:
             print ' ',
         print i
+
+def printCategoriesPackagesAndVersions(lines, condition):
+    """prints a number of 'lines', each consisting of category, package and version field"""
+    def printLine(cat, pack, ver):
+        catlen = 25
+        packlen = 25
+        print cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver
+
+    printLine('Category', 'Package', 'Version')
+    printLine('--------', '-------', '-------')
+    for category, package, version in lines:
+        if condition( category, package, version ):
+            printLine(category, package, version)
     
 def printInstallables():
-    catlen = 25
-    packlen = 25
-    for category, package, version in getInstallables():
-        print category + " " * ( catlen - len( category ) ) + package + " " * ( packlen - len( package ) ) + version
+    """get all the packages that can be installed"""
+    def alwaysTrue( category, package, version ):
+        return True
+    printCategoriesPackagesAndVersions( getInstallables(), alwaysTrue )
 
 def printInstalled():
     """get all the packages that are already installed"""
-    catlen = 25
-    packlen = 25
-    installed = getInstallables()
-    for category, package, version in installed:
-        if isInstalled( category, package, version ):
-            print category + " " * ( catlen - len( category ) ) + package + " " * ( packlen - len( package ) ) + version
+    printCategoriesPackagesAndVersions( getInstallables(), isInstalled )
 
 def warning( message ):
     if verbose() > 0:
