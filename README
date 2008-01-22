@@ -1,0 +1,18 @@
+This is the readme for the emerge scripts to build kde on windows.
+
+1. step-by-step guide
+    - Get Python ( e.g. from http://www.python.org ).
+    - If you can read this file you probably already got the svn-sources.
+      If not, get an svn client, preferrably TortoiseSVN ( from 
+      http://tortoisesvn.net/downloads ).
+    - If you have not done already: make up a directory kderoot somewhere;
+      We will refer to it as %KDEROOT% or just kderoot - the name is not important
+      at all though.
+    - Put another directory emerge into %KDEROOT% enter that directory
+      and checkout from svn://anonsvn.kde.org/home/trunk/kdesupport/emerge .
+    - Add another directory etc to %KDEROOT%. Copy the file kdesettings-example.bat
+      from the emerge directory into the etc directory. Rename kdesettings-example.bat
+      to kdesettings.bat and edit it according to your needs.
+    - open up kdeenv.bat from the emerge directory, try 'emerge -p kdebase' and
+      if everything is shown you can start building.
+
