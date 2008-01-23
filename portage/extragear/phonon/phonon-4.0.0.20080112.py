@@ -15,6 +15,7 @@ class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "phonon"
+        self.kdeCustomDefines = "-DBUILD_binary-clock=OFF -DBUILD_fuzzy-clock=OFF -DBUILD_ksystemlog=OFF"
         self.subinfo = subinfo()
 
     def unpack( self ):
