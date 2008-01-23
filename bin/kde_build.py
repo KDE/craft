@@ -224,8 +224,8 @@ class kde_interface:
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
 
+        os.chdir( self.workdir )
         if not self.noClean:
-            os.chdir( self.workdir )
             utils.cleanDirectory( builddir )
         os.chdir( builddir )
 
