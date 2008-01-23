@@ -5,13 +5,10 @@ echo package: %0
 echo *******************************************************************************
 
 set quitnow=False
-for %%i in ( dbus-daemon.exe kioslave.exe kded4.exe ) DO (
-    tasklist /NH /FI "IMAGENAME eq %%i" | find "%%i" > "Nul"
-    if "%errorlevel%" equ "0" (
+for %%i in ( kioslave.exe kded4.exe ) DO (
+    tasklist /NH /FI "IMAGENAME eq %%i" | find "%%i" > "Nul" && (
         echo error: found %%i running. please kill this process!
         set quitnow=True
-    ) else (
-        echo %%i not found. Good!
     )
 )
 
@@ -21,14 +18,14 @@ if %quitnow% equ True (
     goto :eof
 )
 
-if not `update-mime-database` equ "" (
+if not `"update-mime-database --help"` equ "" (
     update-mime-database %CD%\share\mime
 ) else (
     echo error: update-mime-database wasn't found.
     echo        please check for correct installation
 )
 
-if not `kbuildsycoca4` equ "" (
+if not `"kbuildsycoca4 --help"` equ "" (
     kbuildsycoca4 --noincremental
 ) else (
     echo error: kbuildsycoca4 wasn't found.
