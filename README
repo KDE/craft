@@ -105,3 +105,25 @@ PLEASE DO NOT USE!
 --version-package
 --noclean
 --clean
+
+3. the environment and the directory layout
+For running emerge in a preset environment, please use the kdeenv.bat. this
+will set all Environment variables for you that are needed to build KDE4.
+Please be aware that cygwin shouldn't be in your path.
+KDE on windows uses a special layout that might change in future releases.
+Below %KDEROOT% you will find common unix folders such as bin, lib and etc.
+There are some special folders that have another meaning though:
+\emerge     This folder contains the portage directory, the emerge scripts
+            within the folder bin, this README and the kdesettings-example.bat
+\tmp        This folder contains the build directories of all packages.
+            After finishing with emerge, you can empty this folder.
+\etc        this folder contains lots of settings.
+\bin        Contains all executables and all shared libraries.
+\lib        Contains all non-shared libraries.
+\include    Contains header files.
+\share      Contains lots of additional stuff: Wallpapers,mimetype definitions
+            and some more.
+\mingw      This folder only exists if you install mingw or gdb with emerge.
+            The kdeenv.bat will include this folder into the path for you.
+            You can of course use this compiler outside of KDE as well.
+
