@@ -1,7 +1,7 @@
 This is the readme for the emerge scripts to build kde on windows.
 
 1. step-by-step guide
-    - Get Python ( e.g. from http://www.python.org ).
+    - Get Python >= 2.5 ( e.g. from http://www.python.org ).
     - If you can read this file you probably already got the svn-sources.
       If not, get an svn client, preferrably TortoiseSVN ( from 
       http://tortoisesvn.net/downloads ).
@@ -15,7 +15,7 @@ This is the readme for the emerge scripts to build kde on windows.
       directory. Rename kdesettings-example.bat to kdesettings.bat and edit it
       according to your needs.
     - open up kdeenv.bat from the emerge directory, try 'emerge -p kdebase'
-      and if everything is shown you can start building.
+      and if there are no errors, you can use emerge.
 
 2. emerge options
 Since there is no real help available for emerge, I will try to lay out all 
@@ -127,3 +127,63 @@ There are some special folders that have another meaning though:
             The kdeenv.bat will include this folder into the path for you.
             You can of course use this compiler outside of KDE as well.
 
+4. remarks to the step-by-step guide
+    - Get Python >= 2.5 ( e.g. from http://www.python.org ).
+
+Python should be within your path ( which is normally set automatically ).
+You don't have to register python with the file ending .py though the author
+of these lines finds it useful.
+
+
+    - If you can read this file you probably already got the svn-sources.
+      If not, get an svn client, preferrably TortoiseSVN ( from 
+      http://tortoisesvn.net/downloads ).
+
+TortoiseSVN is an extension to the Windows Explorer and a full featured svn
+client. It makes development easy. The point in not using a commandline client
+is that emerge will not check for an installed commandline client yet.
+
+
+    - If you have not done already: make up a directory kderoot somewhere;
+      We will refer to it as %KDEROOT% or just kderoot - the name is not
+      important at all though.
+
+As already stated the name isn't really important. Currently all KDE files
+will be installed under KDEROOT, but this might change in the future. 
+
+
+    - Put another directory emerge into %KDEROOT% enter that directory
+      and checkout from svn://anonsvn.kde.org/home/trunk/kdesupport/emerge .
+      
+If you want to directly work on emerge itself, please checkout from the normal
+svn server instead.
+
+      
+    - Add another directory etc to %KDEROOT%. Copy the file 
+      kdesettings-example.bat from the emerge directory into the etc 
+      directory. Rename kdesettings-example.bat to kdesettings.bat and edit it
+      according to your needs.
+      
+The file kdesettings-example.bat should contain all necessary informations.
+You should read at that point.
+
+
+    - open up kdeenv.bat from the emerge directory, try 'emerge -p kdebase'
+      and if there are no errors, you can use emerge.
+
+You will get a list of packages that emerge would try to build.
+You can most of the time ignore warning messages - they are mostly for your
+information.
+
+5. Authors, Contact and License
+There were multiple authors working on these scripts:
+Holger Schröder
+Patrick Spendrin
+Christian Ehrlicher
+Jaroslaw Staniek
+Shane King
+
+You can contact us via our mailing list kde-windows@kde.org
+
+License: the file portage_versions.py can be used
+under GPLv2 all other files are licensed (if needed) under BSD
