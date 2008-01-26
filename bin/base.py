@@ -363,7 +363,7 @@ class baseclass:
         else:
             cmd = "-name %s -root %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath )
-        cmd = "kdewin-packager.exe -debuglibs " + cmd + " -complete -compression 2 "
+        cmd = "kdewin-packager.exe -debuglibs " + cmd + " -compression 2 "
 
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
