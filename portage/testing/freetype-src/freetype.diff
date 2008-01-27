@@ -1,6 +1,6 @@
 diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 --- freetype-2.3.5-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/CMakeLists.txt	2008-01-27 00:05:11.078125000 +0100
++++ freetype-2.3.5/CMakeLists.txt	2008-01-27 01:12:55.265625000 +0100
 @@ -0,0 +1,112 @@
 +project( freetype )
 +
@@ -94,20 +94,20 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +
 +add_definitions( -DFT_CONFIG_CONFIG_H="<ftconfig.h>" -DFT2_BUILD_LIBRARY -DFT_CONFIG_MODULES_H="<ftmodule.h>" )
 +
-+if( ZLIB_FOUND )
++if( ZLIB_FOUND AND MINGW)
 +    add_definitions( -DFT_CONFIG_OPTION_SYSTEM_ZLIB )
 +    include_directories( ${ZLIB_INCLUDE_DIR} )
-+endif( ZLIB_FOUND )
++endif( ZLIB_FOUND AND MINGW )
 +
 +add_library( freetype ${freetype_SRC} )
 +add_library( freetype-6 SHARED ${freetype_SRC} )
 +set_target_properties( freetype-6 PROPERTIES 
 +                       DEFINE_SYMBOL DLL_EXPORTS
 +                     )
-+if( ZLIB_FOUND )
++if( ZLIB_FOUND AND MINGW )
 +    target_link_libraries(freetype ${ZLIB_LIBRARY} )
 +    target_link_libraries(freetype-6 ${ZLIB_LIBRARY} )
-+endif( ZLIB_FOUND )
++endif( ZLIB_FOUND AND MINGW )
 +
 +
 +install( TARGETS freetype DESTINATION lib )
