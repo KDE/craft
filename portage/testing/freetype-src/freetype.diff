@@ -4,7 +4,7 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 @@ -0,0 +1,112 @@
 +project( freetype )
 +
-+find_package( zlib )
++#find_package( zlib )
 +
 +if( WIN32 )
 +    if( MINGW )
@@ -105,7 +105,7 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +                       DEFINE_SYMBOL DLL_EXPORTS
 +                     )
 +if( ZLIB_FOUND AND MINGW )
-+    target_link_libraries(freetype ${ZLIB_LIBRARY} )
++#    target_link_libraries(freetype ${ZLIB_LIBRARY} )
 +    target_link_libraries(freetype-6 ${ZLIB_LIBRARY} )
 +endif( ZLIB_FOUND AND MINGW )
 +
