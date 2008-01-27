@@ -5,12 +5,12 @@ echo package: %0
 echo *******************************************************************************
 
 set quitnow=False
-for %%i in ( kioslave.exe kded4.exe ) DO (
-    tasklist /NH /FI "IMAGENAME eq %%i" | find "%%i" > "Nul" && (
-        echo error: found %%i running. please kill this process!
-        set quitnow=True
-    )
-)
+::for %%i in ( kioslave.exe kded4.exe ) DO (
+::    tasklist /NH /FI "IMAGENAME eq %%i" | find "%%i" > "Nul" && (
+::        echo error: found %%i running. please kill this process!
+::        set quitnow=True
+::    )
+::)
 
 if %quitnow% equ True (
     echo error: one or more programs are running that shouldn't run.
