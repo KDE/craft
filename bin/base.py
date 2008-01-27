@@ -169,7 +169,6 @@ class baseclass:
             if utils.verbose() > 0:
                 print "skipping fetch (--offline)"
             return True
-        print self.subinfo.targets, self.subinfo.buildTarget, self.subinfo.defaultTarget
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
             return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
         else:
@@ -342,7 +341,9 @@ class baseclass:
         """this requires the kdewin-packager"""
         
         # FIXME: add a test for the installer later
-        dstpath = os.path.join( self.rootdir, "tmp", self.PV )
+        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
+        if not dstpath:
+            dstpath = os.path.join( self.rootdir, "tmp" )
         binpath = os.path.join( self.imagedir, self.instdestdir )
         tmp = os.path.join( binpath, "kde" )
 

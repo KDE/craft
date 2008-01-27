@@ -72,6 +72,10 @@ rem If you want to build all packages with buildTests, enable the next option
 rem this applies only to the cmake based packages
 rem set EMERGE_BUILDTESTS=True
 
+rem The next option only applies if you want to make packages
+rem it sets the output directory where your generated packages should be stored
+rem set EMERGE_PKGDSTDIR=%KDEROOT%\tmp
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
