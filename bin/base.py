@@ -199,7 +199,21 @@ class baseclass:
         """mergeing the imagedirectory into the filesystem"""
         if utils.verbose() > 1:
             print "base qmerge called"
+        for pkgtype in ['bin', 'lib', 'doc', 'src']:
+            script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
+            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            destscript = os.path.join( self.imagedir, "manifest", scriptName )
+            if os.path.exists( script ):
+                shutil.copyfile( script, destscript )
+                             
         utils.mergeImageDirToRootDir( self.imagedir, self.rootdir )
+        # run post-install scripts
+        for pkgtype in ['bin', 'lib', 'doc', 'src']:
+            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            script = os.path.join( self.rootdir, "manifest", scriptName )
+            if os.path.exists( script ):
+                cmd = "cd %s && %s" % ( self.rootdir, script )
+                utils.system( cmd ) or utils.warning("%s failed!" % cmd )
         utils.addInstalled( self.category, self.package, self.version )
         return True
 
@@ -352,6 +366,13 @@ class baseclass:
         
         if not utils.test4application( "kdewin-packager" ):
             utils.die( "kdewin-packager not found - please make sure it is in your path" )
+
+        for pkgtype in ['bin', 'lib', 'doc', 'src']:
+            script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
+            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            destscript = os.path.join( self.imagedir, "manifest", scriptName )
+            if os.path.exists( script ):
+                shutil.copyfile( script, destscript )
 
         if ( packSources and not ( self.noCopy and self.kde.kdeSvnPath() ) ):
             srcpath = os.path.join( self.workdir, self.instsrcdir )
