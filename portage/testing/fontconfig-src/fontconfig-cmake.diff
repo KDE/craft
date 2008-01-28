@@ -1,0 +1,1127 @@
+diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake fontconfig-2.4.2/cmake/modules/FindFreetype.cmake
+--- fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindFreetype.cmake	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,72 @@
++# - Try to find the freetype library
++# Once done this will define
++#
++#  FREETYPE_FOUND - system has Freetype
++#  FREETYPE_INCLUDE_DIR - the FREETYPE include directory
++#  FREETYPE_LIBRARIES - Link these to use FREETYPE
++#
++# Copyright (c) 2006, Laurent Montel, <montel@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++if (FREETYPE_LIBRARIES AND FREETYPE_INCLUDE_DIR)
++
++  # in cache already
++  set(FREETYPE_FOUND TRUE)
++
++else (FREETYPE_LIBRARIES AND FREETYPE_INCLUDE_DIR)
++
++  FIND_PROGRAM(FREETYPECONFIG_EXECUTABLE NAMES freetype-config PATHS
++     /opt/local/bin
++  )
++
++  #reset vars
++  set(FREETYPE_LIBRARIES)
++  set(FREETYPE_INCLUDE_DIR)
++
++  # if freetype-config has been found
++  if(FREETYPECONFIG_EXECUTABLE)
++
++    EXEC_PROGRAM(${FREETYPECONFIG_EXECUTABLE} ARGS --libs RETURN_VALUE _return_VALUE OUTPUT_VARIABLE FREETYPE_LIBRARIES)
++
++    EXEC_PROGRAM(${FREETYPECONFIG_EXECUTABLE} ARGS --cflags RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _freetype_pkgconfig_output)
++    if(FREETYPE_LIBRARIES AND _freetype_pkgconfig_output)
++      set(FREETYPE_FOUND TRUE)
++
++      # freetype-config can print out more than one -I, so we need to chop it up
++      # into a list and process each entry separately
++      SEPARATE_ARGUMENTS(_freetype_pkgconfig_output)
++      FOREACH(value ${_freetype_pkgconfig_output})
++        STRING(REGEX REPLACE "-I(.+)" "\\1" value "${value}")
++        set(FREETYPE_INCLUDE_DIR ${FREETYPE_INCLUDE_DIR} ${value})
++      ENDFOREACH(value)
++    endif(FREETYPE_LIBRARIES AND _freetype_pkgconfig_output)
++
++    MARK_AS_ADVANCED(FREETYPE_LIBRARIES FREETYPE_INCLUDE_DIR)
++
++    set( FREETYPE_LIBRARIES ${FREETYPE_LIBRARIES} CACHE INTERNAL "The libraries for freetype" )
++
++  else(FREETYPECONFIG_EXECUTABLE)
++	find_path (FREETYPE_INCLUDE_DIR freetype/freetype.h
++        ${CMAKE_INCLUDE_PATH}/freetype2
++	)
++    find_library(FREETYPE_LIBRARIES freetype)
++    if(FREETYPE_INCLUDE_DIR AND FREETYPE_LIBRARIES)
++        set(FREETYPE_FOUND TRUE)
++    endif(FREETYPE_INCLUDE_DIR AND FREETYPE_LIBRARIES)
++  endif(FREETYPECONFIG_EXECUTABLE)
++
++
++  IF (FREETYPE_FOUND)
++    IF (NOT Freetype_FIND_QUIETLY)
++       MESSAGE(STATUS "Found Freetype: ${FREETYPE_LIBRARIES}")
++    ENDIF (NOT Freetype_FIND_QUIETLY)
++  ELSE (FREETYPE_FOUND)
++    IF (Freetype_FIND_REQUIRED)
++       MESSAGE(FATAL_ERROR "Could not find FreeType library")
++    ENDIF (Freetype_FIND_REQUIRED)
++  ENDIF (FREETYPE_FOUND)
++
++endif (FREETYPE_LIBRARIES AND FREETYPE_INCLUDE_DIR)
+diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake
+--- fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake	2007-12-23 06:46:02.000000000 +0100
+@@ -0,0 +1,64 @@
++# - Try to find the directory in which the kdewin32 library and other win32 related libraries lives
++# 
++# used environment vars 
++#  KDEWIN_DIR  - kdewin root dir 
++#
++# this will define
++#  KDEWIN_FOUND - system has KDEWIN
++#  KDEWIN_DIR - the KDEWIN root installation dir
++#
++# Copyright (c) 2007, Ralf Habacker, <ralf.habacker@freenet.de>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if (WIN32)
++  IF (NOT KDEWIN_DIR)
++    # check for enviroment variable
++    file(TO_CMAKE_PATH "$ENV{KDEWIN_DIR}" KDEWIN_DIR)
++    if(NOT KDEWIN_DIR)
++      file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
++      if (MINGW)
++        set (DIR "kdewin-mingw")
++      else (MINGW)
++        set (DIR "kdewin-msvc")
++      endif (MINGW)
++      
++      # search in the default program install folder
++      find_file(KDEWIN_DIR_tmp ${DIR} kdewin kdewin32 win32libs gnuwin32
++      PATHS
++        "${_progFiles}"
++      )
++      set (KDEWIN_DIR ${KDEWIN_DIR_tmp})
++    endif (NOT KDEWIN_DIR)
++    if (KDEWIN_DIR)
++      message(STATUS "Found windows supplementary package location: ${KDEWIN_DIR}")
++    endif (KDEWIN_DIR)
++  endif (NOT KDEWIN_DIR)
++
++  # this must be set every time 
++  if (KDEWIN_DIR)
++    # add include path and library to all targets, this is required because 
++    # cmake's 2.4.6 FindZLib.cmake does not use CMAKE_REQUIRED... vars
++    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${KDEWIN_DIR}/include)
++    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${KDEWIN_DIR}/lib)
++     
++    set (KDEWIN_FOUND 1)
++    if (NOT KDEWIN_FIND_QUIETLY)
++      message(STATUS "Found kdewin32 library: ${KDEWIN32_LIBRARY}")
++    endif (NOT KDEWIN_FIND_QUIETLY)
++
++  else(KDEWIN_DIR)
++    if( KDEWIN_FIND_REQUIRED )
++      message(FATAL_ERROR "Could not find the location of the windows supplementary packages which is \n"
++                      "\t\tenvironment variable KDEWIN_DIR\n"
++                      "\t\t<ProgramFiles>/${DIR}\n"
++                      "\t\t<ProgramFiles>/kdewin\n" 
++                      "\t\t<ProgramFiles>/kdewin32\n" 
++                      "\t\t<ProgramFiles>/win32libs\n"
++                      "\t\t<ProgramFiles>/gnuwin32\n"
++      )
++    endif( KDEWIN_FIND_REQUIRED )
++   endif(KDEWIN_DIR)
++  
++endif (WIN32)
+diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake
+--- fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake	2007-12-23 06:46:02.000000000 +0100
+@@ -0,0 +1,74 @@
++# - Try to find the KDEWIN32 library
++# 
++# Once done this will define
++#
++#  KDEWIN32_FOUND - system has KDEWIN32
++#  KDEWIN32_INCLUDES - the KDEWIN32 include directories
++#  KDEWIN32_LIBRARIES - The libraries needed to use KDEWIN32
++#
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++# Copyright (c) 2007, Ralf Habacker, <ralf.habacker@freenet.de>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++if (WIN32)
++  include(FindLibraryWithDebug)
++
++  if (NOT KDEWIN32_DIR)
++    if(NOT KDEWIN_FOUND)
++      find_package(KDEWIN)
++    endif(NOT KDEWIN_FOUND)
++
++    find_path(KDEWIN32_INCLUDE_DIR winposix_export.h
++      ${CMAKE_INCLUDE_PATH}
++      ${CMAKE_INSTALL_PREFIX}/include
++    )
++ 
++    # search for kdewin32 in the default install directory for applications (default of (n)make install)
++    FILE(TO_CMAKE_PATH "${CMAKE_LIBRARY_PATH}" _cmakeLibraryPathCmakeStyle)
++    find_library_with_debug(KDEWIN32_LIBRARY
++      WIN32_DEBUG_POSTFIX d
++      NAMES kdewin32
++      PATHS 
++        ${_cmakeLibraryPathCmakeStyle}
++        ${CMAKE_INSTALL_PREFIX}/lib
++      NO_SYSTEM_ENVIRONMENT_PATH
++    )
++
++    # kdelibs/win/ has to be built before the rest of kdelibs/
++    # eventually it will be moved out from kdelibs/
++    if (KDEWIN32_LIBRARY AND KDEWIN32_INCLUDE_DIR)
++      set(KDEWIN32_FOUND TRUE)
++      # add needed system libs
++      set(KDEWIN32_LIBRARIES ${KDEWIN32_LIBRARY} user32 shell32 ws2_32 netapi32 userenv)
++  
++      if (MINGW)
++        #mingw compiler
++        set(KDEWIN32_INCLUDES ${KDEWIN32_INCLUDE_DIR} ${KDEWIN32_INCLUDE_DIR}/mingw ${QT_INCLUDES})
++      else (MINGW)
++        # msvc compiler
++        # add the MS SDK include directory if available
++        file(TO_CMAKE_PATH "$ENV{MSSDK}" MSSDK_DIR)
++        set(KDEWIN32_INCLUDES ${KDEWIN32_INCLUDE_DIR} ${KDEWIN32_INCLUDE_DIR}/msvc  ${QT_INCLUDES} ${MSSDK_DIR})
++      endif (MINGW)
++  
++    endif (KDEWIN32_LIBRARY AND KDEWIN32_INCLUDE_DIR)
++    # required for configure
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${KDEWIN32_INCLUDES})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${KDEWIN32_LIBRARIES})      
++
++  endif (NOT KDEWIN32_DIR)
++
++  if (KDEWIN32_FOUND)
++    if (NOT KDEWIN32_FIND_QUIETLY)
++      message(STATUS "Found kdewin32 library: ${KDEWIN32_LIBRARY}")
++    endif (NOT KDEWIN32_FIND_QUIETLY)
++
++  else (KDEWIN32_FOUND)
++    if (KDEWIN32_FIND_REQUIRED)
++      message(FATAL_ERROR "Could NOT find KDEWIN32 library\nPlease install it first")
++    endif (KDEWIN32_FIND_REQUIRED)
++  endif (KDEWIN32_FOUND)
++endif (WIN32)
+diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake
+--- fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake	2007-12-23 06:46:02.000000000 +0100
+@@ -0,0 +1,113 @@
++#
++#  FIND_LIBRARY_WITH_DEBUG
++#  -> enhanced FIND_LIBRARY to allow the search for an
++#     optional debug library with a WIN32_DEBUG_POSTFIX similar
++#     to CMAKE_DEBUG_POSTFIX when creating a shared lib
++#     it has to be the second and third argument
++
++# Copyright (c) 2007, Christian Ehrlicher, <ch.ehrlicher@gmx.de>
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++MACRO(FIND_LIBRARY_WITH_DEBUG var_name win32_dbg_postfix_name dgb_postfix libname)
++
++  IF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++     # no WIN32_DEBUG_POSTFIX -> simply pass all arguments to FIND_LIBRARY
++     FIND_LIBRARY(${var_name}
++                  ${win32_dbg_postfix_name}
++                  ${dgb_postfix}
++                  ${libname}
++                  ${ARGN}
++     )
++
++  ELSE(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++    IF(NOT WIN32)
++      # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
++
++      FIND_LIBRARY(${var_name} ${libname} ${ARGN})
++
++    ELSE(NOT WIN32)
++
++      # 1. get all possible libnames
++      SET(args ${ARGN})
++      SET(newargs "")
++      SET(libnames_release "")
++      SET(libnames_debug "")
++
++      LIST(LENGTH args listCount)
++
++      IF("${libname}" STREQUAL "NAMES")
++        SET(append_rest 0)
++        LIST(APPEND args " ")
++
++        FOREACH(i RANGE ${listCount})
++          LIST(GET args ${i} val)
++
++          IF(append_rest)
++            LIST(APPEND newargs ${val})
++          ELSE(append_rest)
++            IF("${val}" STREQUAL "PATHS")
++              LIST(APPEND newargs ${val})
++              SET(append_rest 1)
++            ELSE("${val}" STREQUAL "PATHS")
++              LIST(APPEND libnames_release "${val}")
++              LIST(APPEND libnames_debug   "${val}${dgb_postfix}")
++            ENDIF("${val}" STREQUAL "PATHS")
++          ENDIF(append_rest)
++
++        ENDFOREACH(i)
++
++      ELSE("${libname}" STREQUAL "NAMES")
++
++        # just one name
++        LIST(APPEND libnames_release "${libname}")
++        LIST(APPEND libnames_debug   "${libname}${dgb_postfix}")
++
++        SET(newargs ${args})
++
++      ENDIF("${libname}" STREQUAL "NAMES")
++
++      # search the release lib
++      FIND_LIBRARY(${var_name}_RELEASE
++                   NAMES ${libnames_release}
++                   ${newargs}
++      )
++
++      # search the debug lib
++      FIND_LIBRARY(${var_name}_DEBUG
++                   NAMES ${libnames_debug}
++                   ${newargs}
++      )
++
++      IF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++        # both libs found
++        SET(${var_name} optimized ${${var_name}_RELEASE}
++                        debug     ${${var_name}_DEBUG})
++
++      ELSE(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++        IF(${var_name}_RELEASE)
++
++          # only release found
++          SET(${var_name} ${${var_name}_RELEASE})
++
++        ELSE(${var_name}_RELEASE)
++
++          # only debug (or nothing) found
++          SET(${var_name} ${${var_name}_DEBUG})
++
++        ENDIF(${var_name}_RELEASE)
++       
++      ENDIF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++      MARK_AS_ADVANCED(${var_name}_RELEASE)
++      MARK_AS_ADVANCED(${var_name}_DEBUG)
++
++    ENDIF(NOT WIN32)
++
++  ENDIF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
+diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake
+--- fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,62 @@
++# - Try to find LibXml2
++# Once done this will define
++#
++#  LIBXML2_FOUND - system has LibXml2
++#  LIBXML2_INCLUDE_DIR - the LibXml2 include directory
++#  LIBXML2_LIBRARIES - the libraries needed to use LibXml2
++#  LIBXML2_DEFINITIONS - Compiler switches required for using LibXml2
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++IF (LIBXML2_INCLUDE_DIR AND LIBXML2_LIBRARIES)
++   # in cache already
++   SET(LibXml2_FIND_QUIETLY TRUE)
++ENDIF (LIBXML2_INCLUDE_DIR AND LIBXML2_LIBRARIES)
++
++IF (NOT WIN32)
++   # use pkg-config to get the directories and then use these values
++   # in the FIND_PATH() and FIND_LIBRARY() calls
++   INCLUDE(UsePkgConfig)
++   PKGCONFIG(libxml-2.0 _LibXml2IncDir _LibXml2LinkDir _LibXml2LinkFlags _LibXml2Cflags)
++   SET(LIBXML2_DEFINITIONS ${_LibXml2Cflags})
++ENDIF (NOT WIN32)
++
++FIND_PATH(LIBXML2_INCLUDE_DIR libxml/xpath.h
++   PATHS
++   ${_LibXml2IncDir}
++   PATH_SUFFIXES libxml2
++   )
++
++FIND_LIBRARY(LIBXML2_LIBRARIES NAMES xml2 libxml2
++   PATHS
++   ${_LibXml2LinkDir}
++   )
++
++IF (LIBXML2_INCLUDE_DIR AND LIBXML2_LIBRARIES)
++   SET(LIBXML2_FOUND TRUE)
++ELSE (LIBXML2_INCLUDE_DIR AND LIBXML2_LIBRARIES)
++   SET(LIBXML2_FOUND FALSE)
++ENDIF (LIBXML2_INCLUDE_DIR AND LIBXML2_LIBRARIES)
++
++FIND_PROGRAM(XMLLINT_EXECUTABLE xmllint)
++
++if( NOT XMLLINT_EXECUTABLE )
++   MESSAGE(STATUS "xmllint program not found. Install it if you want validate generated doc file.")
++endif(NOT XMLLINT_EXECUTABLE )
++
++IF (LIBXML2_FOUND)
++   IF (NOT LibXml2_FIND_QUIETLY)
++      MESSAGE(STATUS "Found LibXml2: ${LIBXML2_LIBRARIES}")
++   ENDIF (NOT LibXml2_FIND_QUIETLY)
++ELSE (LIBXML2_FOUND)
++   IF (LibXml2_FIND_REQUIRED)
++      MESSAGE(SEND_ERROR "Could NOT find LibXml2")
++   ENDIF (LibXml2_FIND_REQUIRED)
++ENDIF (LIBXML2_FOUND)
++
++MARK_AS_ADVANCED(LIBXML2_INCLUDE_DIR LIBXML2_LIBRARIES)
++
+diff -N -r -u fontconfig-2.4.2-orig/CMakeLists.txt fontconfig-2.4.2/CMakeLists.txt
+--- fontconfig-2.4.2-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/CMakeLists.txt	2008-01-28 00:02:47.406250000 +0100
+@@ -0,0 +1,43 @@
++project( fontconfig )
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
++
++find_package(EXPAT)
++if(MSVC)
++    find_package(kdewin32 REQUIRED)
++endif(MSVC)
++find_package(Freetype)
++find_package(LibXML2)
++
++include_directories(
++    ${CMAKE_INCLUDE_PATH}/freetype2
++    ${CMAKE_INCLUDE_PATH}
++    ${CMAKE_CURRENT_BINARY_DIR}
++    ${CMAKE_CURRENT_SOURCE_DIR}
++    ${CMAKE_CURRENT_SOURCE_DIR}/src
++)
++if(MSVC)
++    include_directories( ${CMAKE_INCLUDE_PATH}/msvc )
++    add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -wd4018)
++endif(MSVC)
++
++link_directories( ${CMAKE_LIBRARY_PATH} )
++
++include( ConfigureChecks.cmake )
++
++add_subdirectory( fontconfig )
++add_subdirectory( fc-case )
++add_subdirectory( fc-lang )
++add_subdirectory( fc-glyphname )
++add_subdirectory( fc-arch )
++add_subdirectory( src )
++add_subdirectory( fc-cache )
++add_subdirectory( fc-cat )
++add_subdirectory( fc-list )
++add_subdirectory( fc-match )
++add_subdirectory( conf.d )
++add_subdirectory( doc )
++add_subdirectory( test )
++
++#install(FILES)
++#install(FILES)
++#install(FILES)
+diff -N -r -u fontconfig-2.4.2-orig/conf.d/CMakeLists.txt fontconfig-2.4.2/conf.d/CMakeLists.txt
+--- fontconfig-2.4.2-orig/conf.d/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/conf.d/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,3 @@
++file( GLOB conf_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.conf" )
++install( FILES README ${conf_files} DESTINATION etc/fonts/conf.d )
++install( FILES README ${conf_files} DESTINATION etc/fonts/conf.avail )
+\ No newline at end of file
+diff -N -r -u fontconfig-2.4.2-orig/config.h.cmake fontconfig-2.4.2/config.h.cmake
+--- fontconfig-2.4.2-orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/config.h.cmake	2008-01-28 01:04:36.015625000 +0100
+@@ -0,0 +1,179 @@
++/* config.h.in.  Generated from configure.in by autoheader.  */
++
++/* Font configuration directory */
++#cmakedefine CONFDIR
++
++/* Use libxml2 instead of Expat */
++#define ENABLE_LIBXML2 1
++
++/* Additional font directories */
++#define FC_ADD_FONTS
++
++/* System font directory */
++#define FC_DEFAULT_FONTS "WINDOWSFONTDIR"
++
++/* temporary cachedir */
++#define FC_CACHEDIR ${FC_CACHEDIR}
++
++/* Define to 1 if you have the `chsize' function. */
++#cmakedefine HAVE_CHSIZE 1
++
++/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
++   */
++#cmakedefine HAVE_DIRENT_H 1
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H 1
++
++/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
++#cmakedefine HAVE_DOPRNT 1
++
++/* Found a useable expat library */
++#cmakedefine HAVE_EXPAT 1
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H 1
++
++/* Define to 1 if you have the `ftruncate' function. */
++#cmakedefine HAVE_FTRUNCATE 1
++
++/* FT_Bitmap_Size structure includes y_ppem field */
++#cmakedefine HAVE_FT_BITMAP_SIZE_Y_PPEM 1
++
++/* Define to 1 if you have the `FT_Get_BDF_Property' function. */
++#cmakedefine HAVE_FT_GET_BDF_PROPERTY 1
++
++/* Define to 1 if you have the `FT_Get_Next_Char' function. */
++#cmakedefine HAVE_FT_GET_NEXT_CHAR 1
++
++/* Define to 1 if you have the `FT_Get_PS_Font_Info' function. */
++#cmakedefine HAVE_FT_GET_PS_FONT_INFO 1
++
++/* Define to 1 if you have the `FT_Get_X11_Font_Format' function. */
++#cmakedefine HAVE_FT_GET_X11_FONT_FORMAT 1
++
++/* Define to 1 if you have the `FT_Has_PS_Glyph_Names' function. */
++#cmakedefine HAVE_FT_HAS_PS_GLYPH_NAMES 1
++
++/* Define to 1 if you have the `geteuid' function. */
++#cmakedefine HAVE_GETEUID 1
++
++/* Define to 1 if you have the `getopt' function. */
++#cmakedefine HAVE_GETOPT 1
++
++/* Define to 1 if you have the `getopt_long' function. */
++#cmakedefine HAVE_GETOPT_LONG 1
++
++/* Define to 1 if you have the `getpagesize' function. */
++#cmakedefine HAVE_GETPAGESIZE 1
++
++/* Define to 1 if you have the `getuid' function. */
++#cmakedefine HAVE_GETUID 1
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the `link' function. */
++#cmakedefine HAVE_LINK 1
++
++/* Define to 1 if you have the `lrand48' function. */
++#cmakedefine HAVE_LRAND48 1
++
++/* Define to 1 if you have the `memmove' function. */
++#cmakedefine HAVE_MEMMOVE 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the `memset' function. */
++#cmakedefine HAVE_MEMSET 1
++
++/* Define to 1 if you have the `mkstemp' function. */
++#cmakedefine HAVE_MKSTEMP 1
++
++/* Define to 1 if you have a working `mmap' system call. */
++#cmakedefine HAVE_MMAP 1
++
++/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
++#cmakedefine HAVE_NDIR_H 1
++
++/* Define to 1 if you have the `rand' function. */
++#cmakedefine HAVE_RAND 1
++
++/* Define to 1 if you have the `random' function. */
++#cmakedefine HAVE_RANDOM 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the `strchr' function. */
++#cmakedefine HAVE_STRCHR 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H 1
++
++/* Define to 1 if you have the `strrchr' function. */
++#cmakedefine HAVE_STRRCHR 1
++
++/* Define to 1 if you have the `strtol' function. */
++#cmakedefine HAVE_STRTOL 1
++
++/* Define to 1 if you have the `sysconf' function. */
++#cmakedefine HAVE_SYSCONF 1
++
++/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.    */
++#cmakedefine HAVE_SYS_DIR_H 1
++
++/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.    */
++#cmakedefine HAVE_SYS_NDIR_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H 1
++
++/* Define to 1 if you have the `vprintf' function. */
++#cmakedefine HAVE_VPRINTF 1
++
++/* Can use #warning in C files */
++#cmakedefine HAVE_WARNING_CPP_DIRECTIVE 1
++
++/* Use xmlparse.h instead of expat.h */
++#cmakedefine HAVE_XMLPARSE_H 1
++
++/* Define to 1 if you have the `XML_SetDoctypeDeclHandler' function. */
++#cmakedefine HAVE_XML_SETDOCTYPEDECLHANDLER 1
++
++/* Name of package */
++#define PACKAGE "fontconfig"
++
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT 
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "fontconfig"
++
++/* Define to the full name and version of this package. */
++#define PACKAGE_STRING "fontconfig"
++
++/* Define to the one symbol short name of this package. */
++#define PACKAGE_TARNAME ""
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION 1
++
++/* Define to 1 if you have the ANSI C header files. */
++#define STDC_HEADERS 1
++
++/* Version number of package */
++#define VERSION "2.4.2"
+diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/ConfigureChecks.cmake
+--- fontconfig-2.4.2-orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/ConfigureChecks.cmake	2008-01-28 01:04:29.453125000 +0100
+@@ -0,0 +1,66 @@
++# Checking Headers and Functions for fontconfig
++
++include( CheckIncludeFile )
++include( CheckFunctionExists )
++
++if(WIN32)
++    if(MSVC)
++        set( CMAKE_REQUIRED_INCLUDES ${CMAKE_INCLUDE_PATH} ${CMAKE_INCLUDE_PATH}/msvc )
++    else(MSVC)
++        set( CMAKE_REQUIRED_INCLUDES ${CMAKE_INCLUDE_PATH} ${CMAKE_INCLUDE_PATH}/mingw )
++    endif(MSVC)
++endif(WIN32)
++
++set( CMAKE_REQUIRED_LIBRARIES freetype libxml2 )
++check_include_file( "dirent.h" HAVE_DIRENT_H )
++check_include_file( "dlfcn.h" HAVE_DLFCN_H )
++check_include_file( "fcntl.h" HAVE_FCNTL_H )
++check_include_file( "inttypes.h" HAVE_INTTYPES_H )
++check_include_file( "memory.h" HAVE_MEMORY_H )
++check_include_file( "ndir.h" HAVE_NDIR_H )
++check_include_file( "stdint.h" HAVE_STDINT_H )
++check_include_file( "stdlib.h" HAVE_STDLIB_H )
++check_include_file( "strings.h" HAVE_STRINGS_H )
++check_include_file( "string.h" HAVE_STRING_H )
++check_include_file( "sys/dir.h" HAVE_SYS_DIR_H )
++check_include_file( "sys/ndir.h" HAVE_SYS_NDIR_H )
++check_include_file( "sys/stat.h" HAVE_SYS_STAT_H )
++check_include_file( "sys/types.h" HAVE_SYS_TYPES_H )
++check_include_file( "unistd.h" HAVE_UNISTD_H )
++check_include_file( "xmlparse.h" HAVE_XMLPARSE_H )
++
++check_function_exists( chsize HAVE_CHSIZE )
++check_function_exists( _doprnt HAVE_DOPRNT )
++check_function_exists( ftruncate HAVE_FTRUNCATE )
++set(CMAKE_REQUIRED_INCLUDES  ${CMAKE_INCLUDE_PATH}/freetype2} )
++check_function_exists( FT_Get_BDF_Property HAVE_FT_GET_BDF_PROPERTY )
++check_function_exists( FT_Get_Next_Char HAVE_FT_GET_NEXT_CHAR )
++check_function_exists( FT_Get_PS_Font_Info HAVE_FT_GET_PS_FONT_INFO )
++check_function_exists( FT_Get_X11_Font_Format HAVE_FT_GET_X11_FONT_FORMAT )
++check_function_exists( FT_Has_PS_Glyph_Names HAVE_FT_HAS_PS_GLYPH_NAMES )
++check_function_exists( geteuid HAVE_GETEUID )
++check_function_exists( getopt HAVE_GETOPT )
++check_function_exists( getopt_long HAVE_GETOPT_LONG )
++check_function_exists( getpagesize HAVE_GETPAGESIZE )
++check_function_exists( getuid HAVE_GETUID )
++check_function_exists( link HAVE_LINK )
++check_function_exists( lrand48 HAVE_LRAND48 )
++check_function_exists( memmove HAVE_MEMMOVE )
++check_function_exists( memset HAVE_MEMSET )
++check_function_exists( mkstemp HAVE_MKSTEMP )
++check_function_exists( mmap HAVE_MMAP )
++check_function_exists( rand HAVE_RAND )
++check_function_exists( random HAVE_RANDOM )
++check_function_exists( strchr HAVE_STRCHR )
++check_function_exists( strrchr HAVE_STRRCHR )
++check_function_exists( strtol HAVE_STRTOL )
++check_function_exists( sysconf HAVE_SYSCONF )
++check_function_exists( vprintf HAVE_VPRINTF )
++check_function_exists( XML_SetDoctypeDeclHandler HAVE_XML_SETDOCTYPEDECLHANDLER )
++
++add_definitions( -DHAVE_CONFIG_H )
++add_definitions( -DFONTCONFIG_PATH='"/etc/fonts"' )
++set( FC_CACHEDIR "\"${CMAKE_INSTALL_PREFIX}/var/cache/fontconfig\"" )
++configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
++#configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
++#configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
+diff -N -r -u fontconfig-2.4.2-orig/doc/CMakeLists.txt fontconfig-2.4.2/doc/CMakeLists.txt
+--- fontconfig-2.4.2-orig/doc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/doc/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,16 @@
++set( sub_dir_name edit-sgml )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++target_link_libraries( ${sub_dir_name} fontconfig )
++
++file( GLOB man3_srcs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.3" )
++file( GLOB man5_srcs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.5" )
++file( GLOB html_srcs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "fontconfig-devel/*.html" )
++
++install( FILES ${man3_srcs} DESTINATION share/man/man3 )
++install( FILES ${man5_srcs} DESTINATION share/man/man5 )
++install( FILES ${html_srcs} DESTINATION share/doc/fontconfig )
++install( FILES fontconfig-devel.pdf fontconfig-user.pdf fontconfig-devel.txt fontconfig-user.txt  fontconfig-user.html DESTINATION share/doc/fontconfig )
+diff -N -r -u fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt fontconfig-2.4.2/fc-arch/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-arch/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,13 @@
++set( sub_dir_name fc-arch )
++
++set( DATA_FILE auto )
++set( TEMPLATE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/fcarch.tmpl.h )
++set( OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/fcarch.h )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++add_custom_command( TARGET ${sub_dir_name} POST_BUILD
++                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} ARGS ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE} 
++                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
+diff -N -r -u fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt fontconfig-2.4.2/fc-cache/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-cache/CMakeLists.txt	2008-01-28 00:27:19.562500000 +0100
+@@ -0,0 +1,10 @@
++set( sub_dir_name fc-cache )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/.. ${CMAKE_CURRENT_BINARY_DIR}/../src/ )
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../src/ )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++target_link_libraries( ${sub_dir_name} fontconfig )
++
++install( TARGETS ${sub_dir_name} DESTINATION bin )
+\ No newline at end of file
+diff -N -r -u fontconfig-2.4.2-orig/fc-case/CMakeLists.txt fontconfig-2.4.2/fc-case/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-case/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-case/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,13 @@
++set( sub_dir_name fc-case )
++
++set( DATA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/CaseFolding.txt )
++set( TEMPLATE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/fccase.tmpl.h )
++set( OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/fccase.h )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++add_custom_command( TARGET ${sub_dir_name} POST_BUILD
++                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} ARGS ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE} 
++                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
+diff -N -r -u fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt fontconfig-2.4.2/fc-cat/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-cat/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,9 @@
++set( sub_dir_name fc-cat )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++target_link_libraries( ${sub_dir_name} fontconfig )
++
++install( TARGETS ${sub_dir_name} DESTINATION bin )
+\ No newline at end of file
+diff -N -r -u fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt fontconfig-2.4.2/fc-glyphname/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-glyphname/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,13 @@
++set( sub_dir_name fc-glyphname )
++
++set( DATA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/zapfdingbats.txt )
++set( TEMPLATE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/fcglyphname.tmpl.h )
++set( OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/fcglyphname.h )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++add_custom_command( TARGET ${sub_dir_name} POST_BUILD
++                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} ARGS ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE} 
++                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
+diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-lang/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-lang/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,15 @@
++set( sub_dir_name fc-lang )
++
++file( GLOB DATA_FILE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.orth" )
++set( TEMPLATE_FILE fclang.tmpl.h )
++set( OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/fclang.h )
++
++file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++add_custom_command( TARGET ${sub_dir_name} POST_BUILD
++                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} -d . ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE}
++                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} VERBATIM )
+diff -N -r -u fontconfig-2.4.2-orig/fc-list/CMakeLists.txt fontconfig-2.4.2/fc-list/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-list/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-list/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,9 @@
++set( sub_dir_name fc-list )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++target_link_libraries( ${sub_dir_name} fontconfig )
++
++install( TARGETS ${sub_dir_name} DESTINATION bin )
+\ No newline at end of file
+diff -N -r -u fontconfig-2.4.2-orig/fc-match/CMakeLists.txt fontconfig-2.4.2/fc-match/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fc-match/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fc-match/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,9 @@
++set( sub_dir_name fc-match )
++
++include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
++
++add_executable( ${sub_dir_name} ${sub_dir_name}.c )
++
++target_link_libraries( ${sub_dir_name} fontconfig )
++
++install( TARGETS ${sub_dir_name} DESTINATION bin )
+\ No newline at end of file
+diff -N -r -u fontconfig-2.4.2-orig/fontconfig/CMakeLists.txt fontconfig-2.4.2/fontconfig/CMakeLists.txt
+--- fontconfig-2.4.2-orig/fontconfig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/fontconfig/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
+@@ -0,0 +1,3 @@
++# fontconfig
++
++install( FILES fcfreetype.h fcprivate.h fontconfig.h DESTINATION include/fontconfig )
+\ No newline at end of file
+diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMakeLists.txt
+--- fontconfig-2.4.2-orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/src/CMakeLists.txt	2008-01-28 01:22:28.125000000 +0100
+@@ -0,0 +1,47 @@
++set(sub_dir_name src)
++
++set( fontconfig_SRCS
++fcatomic.c
++fcblanks.c
++fccache.c
++fccfg.c
++fccharset.c
++fcdbg.c
++fcdefault.c
++fcdir.c
++fcfreetype.c
++fcfs.c
++fcinit.c
++fclang.c
++fclist.c
++fcmatch.c
++fcmatrix.c
++fcname.c
++fcpat.c
++fcserialize.c
++fcstr.c
++fcxml.c
++ftglue.c
++)
++
++include_directories(
++${CMAKE_CURRENT_BINARY_DIR}
++${CMAKE_CURRENT_BINARY_DIR}/../fc-lang
++)
++
++if(MSVC)
++add_definitions( -DWINPOSIX_EXPORT= )
++set( fontconfig_SRCS ${fontconfig_SRCS} dirent.c )
++add_library( fontconfig STATIC ${fontconfig_SRCS} )
++endif(MSVC)
++add_library( fontconfig SHARED ${fontconfig_SRCS} )
++set_target_properties(fontconfig PROPERTIES OUTPUT_NAME fontconfig )
++
++target_link_libraries( fontconfig freetype )
++target_link_libraries( fontconfig libxml2 )
++if( EXPAT_FOUND )
++    target_link_libraries( fontconfig expat )
++endif( EXPAT_FOUND )
++
++install( TARGETS fontconfig RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
+diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
+--- fontconfig-2.4.2-orig/src/dirent.c	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.4.2/src/dirent.c	2007-12-19 02:10:12.000000000 +0100
+@@ -0,0 +1,158 @@
++/* ====================================================================
++ * The Apache Software License, Version 1.1
++ *
++ * Copyright (c) 2000-2002 The Apache Software Foundation.  All rights
++ * reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. The end-user documentation included with the redistribution,
++ *    if any, must include the following acknowledgment:
++ *       "This product includes software developed by the
++ *        Apache Software Foundation (http://www.apache.org/)."
++ *    Alternately, this acknowledgment may appear in the software itself,
++ *    if and wherever such third-party acknowledgments normally appear.
++ *
++ * 4. The names "Apache" and "Apache Software Foundation" must
++ *    not be used to endorse or promote products derived from this
++ *    software without prior written permission. For written
++ *    permission, please contact apache@apache.org.
++ *
++ * 5. Products derived from this software may not be called "Apache",
++ *    nor may "Apache" appear in their name, without prior written
++ *    permission of the Apache Software Foundation.
++ *
++ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
++ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
++ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
++ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ * ====================================================================
++ *
++ * This software consists of voluntary contributions made by many
++ * individuals on behalf of the Apache Software Foundation.  For more
++ * information on the Apache Software Foundation, please see
++ * <http://www.apache.org/>.
++ *
++ * Portions of this software are based upon public domain software
++ * originally written at the National Center for Supercomputing Applications,
++ * University of Illinois, Urbana-Champaign.
++ */
++
++#include <winposix_export.h>
++#include <windows.h>
++
++#include <malloc.h>
++#include <string.h>
++#include <errno.h>
++
++#include "dirent.h"
++
++/**********************************************************************
++ * Implement dirent-style opendir/readdir/closedir on Window 95/NT
++ *
++ * Functions defined are opendir(), readdir() and closedir() with the
++ * same prototypes as the normal dirent.h implementation.
++ *
++ * Does not implement telldir(), seekdir(), rewinddir() or scandir(). 
++ * The dirent struct is compatible with Unix, except that d_ino is 
++ * always 1 and d_off is made up as we go along.
++ *
++ * The DIR typedef is not compatible with Unix.
++ **********************************************************************/
++
++#ifndef __MINGW32__
++
++KDEWIN32_EXPORT DIR * opendir(const char *dir)
++{
++    DIR *dp;
++    char *filespec;
++    long handle;
++    int index;
++
++    filespec = malloc(strlen(dir) + 2 + 1);
++    strcpy(filespec, dir);
++    index = strlen(filespec) - 1;
++    if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
++        filespec[index] = '\0';
++    strcat(filespec, "\\*");
++
++    dp = (DIR *)malloc(sizeof(DIR));
++    dp->offset = 0;
++    dp->finished = 0;
++    dp->dir = strdup(dir);
++
++    if ((handle = _findfirst(filespec, &(dp->fileinfo))) < 0) {
++        if (errno == ENOENT)
++            dp->finished = 1;
++        else
++        return NULL;
++    }
++
++    dp->handle = handle;
++    free(filespec);
++
++    return dp;
++}
++
++KDEWIN32_EXPORT struct dirent * readdir(DIR *dp)
++{
++    if (!dp || dp->finished) return NULL;
++
++    if (dp->offset != 0) {
++        if (_findnext(dp->handle, &(dp->fileinfo)) < 0) {
++            dp->finished = 1;
++            /* posix does not set errno in this case */
++            errno = 0;
++            return NULL;
++        }
++    }
++    dp->offset++;
++
++    strncpy(dp->dent.d_name, dp->fileinfo.name, _MAX_FNAME);
++#ifdef KDEWIN32_HAVE_DIRENT_D_TYPE
++    dp->dent.d_type = DT_UNKNOWN;
++#endif    
++    dp->dent.d_ino = 1;
++    dp->dent.d_reclen = strlen(dp->dent.d_name);
++    dp->dent.d_off = dp->offset;
++
++    return &(dp->dent);
++}
++
++KDEWIN32_EXPORT int closedir(DIR *dp)
++{
++    if (!dp) return 0;
++    if ((HANDLE)dp->handle != INVALID_HANDLE_VALUE) _findclose(dp->handle);
++    if (dp->dir) free(dp->dir);
++    if (dp) free(dp);
++
++    return 0;
++}
++
++#endif // #ifndef __MINGW32__
++
++
++KDEWIN32_EXPORT struct dirent* readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
++{
++	//todo: remove this when readdir_r.c will be ported
++	result = 0;
++	return 0;
++}
+diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
+--- fontconfig-2.4.2-orig/src/fccache.c	2006-12-02 22:33:41.000000000 +0100
++++ fontconfig-2.4.2/src/fccache.c	2008-01-28 00:13:28.656250000 +0100
+@@ -1,6 +1,6 @@
+ /*
+  * Copyright © 2000 Keith Packard
+- * Copyright © 2005 Patrick Lam
++ * Copyright © 2005 Patrick Lamj
+  *
+  * Permission to use, copy, modify, distribute, and sell this software and its
+  * documentation for any purpose is hereby granted without fee, provided that
+@@ -224,6 +224,10 @@
+ #  endif
+ # endif
+ #endif
++
++#ifdef _WIN32
++#  define FcRandom() rand()
++#endif
+ /*
+  * Generate a random level number, distributed
+  * so that each level is 1/4 as likely as the one before
+diff -N -r -u fontconfig-2.4.2-orig/src/fccfg.c fontconfig-2.4.2/src/fccfg.c
+--- fontconfig-2.4.2-orig/src/fccfg.c	2006-09-15 09:20:13.000000000 +0200
++++ fontconfig-2.4.2/src/fccfg.c	2008-01-27 04:13:46.000000000 +0100
+@@ -1643,7 +1643,7 @@
+ 	}
+     }
+     
+-    dir = (FcChar8 *) FONTCONFIG_PATH;
++    dir = (FcChar8 *) getenv ("FONTCONFIG_PATH");
+     path[i] = malloc (strlen ((char *) dir) + 1);
+     if (!path[i])
+ 	goto bail1;
+diff -N -r -u fontconfig-2.4.2-orig/src/fcfreetype.c fontconfig-2.4.2/src/fcfreetype.c
+--- fontconfig-2.4.2-orig/src/fcfreetype.c	2006-12-02 21:32:15.000000000 +0100
++++ fontconfig-2.4.2/src/fcfreetype.c	2008-01-27 04:16:48.000000000 +0100
+@@ -1818,7 +1818,7 @@
+ #define FT_Get_Next_Char(face, ucs4, gi) ((ucs4) >= 0xffffff ? \
+ 					  (*(gi) = 0), 0 : \
+ 					  (*(gi) = 1), (ucs4) + 1)
+-#warning "No FT_Get_Next_Char: Please install freetype version 2.1.0 or newer"
++//#warning "No FT_Get_Next_Char: Please install freetype version 2.1.0 or newer"
+ #endif
+ 
+ typedef struct _FcCharEnt {
