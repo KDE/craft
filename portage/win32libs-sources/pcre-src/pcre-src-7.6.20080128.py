@@ -7,8 +7,8 @@ import sys
 import info
 
 PACKAGE_NAME         = "pcre"
-PACKAGE_VER          = "7.5"
-PACKAGE_FULL_VER     = "7.5-1"
+PACKAGE_VER          = "7.6"
+PACKAGE_FULL_VER     = "7.6-1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "pcre"
 
@@ -21,25 +21,23 @@ DEPEND = """
 dev-util/win32libs
 """
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets[PACKAGE_VER] = SRC_URI
+        self.defaultTarget = PACKAGE_VER
+
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
     self.createCombinedPackage = False
+    self.subinfo = subinfo()
     self.instsrcdir = PACKAGE_FULL_NAME
-    self.kdeCustomDefines = "-DBUILD_SHARED_LIBS=ON"
+    self.kdeCustomDefines += "-DBUILD_SHARED_LIBS=ON "
+    self.kdeCustomDefines += "-DPCRE_SUPPORT_UNICODE_PROPERTIES=ON "
+    self.kdeCustomDefines += "-DPCRE_SUPPORT_UTF8=ON "
+    self.kdeCustomDefines += "-DPCRE_EBCDIC=ON "
 
   def compile( self ):
-
-    files = """
-CMakeLists.txt
-config-cmake.h.in
-"""
-    # we have an own cmake script - copy it to the right place
-    src = self.packagedir
-    dst = os.path.join( self.workdir, self.instsrcdir )
-    for f in files.split():
-        shutil.copy( os.path.join( src, f ), os.path.join( dst, f ) )
-
     return self.kdeCompile()
 
   def install( self ):
