@@ -19,7 +19,7 @@ http://poppler.freedesktop.org/poppler-data-0.2.0.tar.gz
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['0.6.3'] = SRC_URI
+        self.targets['0.6.3'] = SRC_URI
         self.defaultTarget = '0.6.3'
     
     def setDependencies( self ):
