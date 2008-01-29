@@ -12,8 +12,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase'] = 'default'
-        
-        self.softDependencies['testing/poppler-src'] = 'default'
+        self.hardDependencies['testing/poppler-src'] = 'default'
         
 class subclass(base.baseclass):
     def __init__(self):
