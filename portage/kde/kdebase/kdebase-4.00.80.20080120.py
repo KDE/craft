@@ -3,11 +3,6 @@ import os
 import sys
 import info
 
-DEPEND = """
-kde/kdelibs
-kde/kdepimlibs
-"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdebase'
