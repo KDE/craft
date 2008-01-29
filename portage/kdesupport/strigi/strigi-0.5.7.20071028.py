@@ -19,8 +19,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/clucene-core'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '0.5.7'
 
 class subclass(base.baseclass):
     def __init__(self):
