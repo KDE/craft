@@ -20,7 +20,7 @@ http://www.sqlite.org/sqlite-amalgamation-3_5_4.zip
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['3.5.4'] = SRC_URI
+        self.targets['3.5.4'] = SRC_URI
         self.defaultTarget = '3.5.4'
     
 class subclass(base.baseclass):
@@ -31,6 +31,7 @@ class subclass(base.baseclass):
     def unpack( self ):
         base.baseclass.unpack( self )
         return True
+        
     def install( self ):
         dst = os.path.join( self.imagedir, "bin" )
         utils.cleanDirectory( dst )
