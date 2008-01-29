@@ -8,7 +8,7 @@ import info
 
 PACKAGE_NAME         = "pcre"
 PACKAGE_VER          = "7.6"
-PACKAGE_FULL_VER     = "7.6-1"
+PACKAGE_FULL_VER     = "7.6-2"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "pcre"
 
@@ -41,7 +41,20 @@ class subclass(base.baseclass):
     return self.kdeCompile()
 
   def install( self ):
-    return self.kdeInstall()
+    if (not self.kdeInstall()):
+      return False
+    # a hack for mingw to fix my error I made in pcre 7.0
+    # removeme once nobody needs pcre.dll anymore
+    src = os.path.join( self.imagedir, self.instdestdir, "bin", "libpcre.dll" )
+    dst = os.path.join( self.imagedir, self.instdestdir, "bin", "pcre.dll" )
+    shutil.copy( src, dst )
+    src = os.path.join( self.imagedir, self.instdestdir, "bin", "libpcrecpp.dll" )
+    dst = os.path.join( self.imagedir, self.instdestdir, "bin", "mingw-pcrecpp.dll" )
+    shutil.copy( src, dst )
+    src = os.path.join( self.imagedir, self.instdestdir, "bin", "libpcreposix.dll" )
+    dst = os.path.join( self.imagedir, self.instdestdir, "bin", "pcreposix.dll" )
+    shutil.copy( src, dst )
+    return True
 
   def make_package( self ):
     # now do packaging with kdewin-packager
