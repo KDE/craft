@@ -56,10 +56,10 @@ http://82.149.170.66/kde-windows/win32libs/single/openslp-1.2.1-2-lib.zip
 http://82.149.170.66/kde-windows/win32libs/single/openssl-0.9.8g-1-bin.zip
 http://82.149.170.66/kde-windows/win32libs/single/openssl-0.9.8g-1-lib.zip
 
-http://82.149.170.66/kde-windows/win32libs/single/pcre-msvc-7.6-1-bin.zip
-http://82.149.170.66/kde-windows/win32libs/single/pcre-msvc-7.6-1-lib.zip
-http://82.149.170.66/kde-windows/win32libs/single/pcre-mingw-7.6-1-bin.zip
-http://82.149.170.66/kde-windows/win32libs/single/pcre-mingw-7.6-1-lib.zip
+http://82.149.170.66/kde-windows/win32libs/single/pcre-msvc-7.6-1-bin.tar.bz2
+http://82.149.170.66/kde-windows/win32libs/single/pcre-msvc-7.6-1-lib.tar.bz2
+http://82.149.170.66/kde-windows/win32libs/single/pcre-mingw-7.6-1-bin.tar.bz2
+http://82.149.170.66/kde-windows/win32libs/single/pcre-mingw-7.6-1-lib.tar.bz2
 
 http://82.149.170.66/kde-windows/win32libs/single/redland-1.0.3-5-bin.zip
 http://82.149.170.66/kde-windows/win32libs/single/redland-1.0.3-5-lib.zip
