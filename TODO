@@ -1,0 +1,50 @@
+this is a list of things that could be done to improve emerge:
+
+- implement "emerge --digest package":
+this would create a digest file for the files needed for this package.
+the advantage would be that it would not be necessary to have internet
+connection to build a package any more. right now every time a package 
+is built emerge tries to fetch the package, because it does not know,
+if the downloaded files are complete. with a digest file it would be possible
+to check if the files are already complete without an internet connection.
+for ideas and code how to do so, look at the gentoo portage system.
+(pretty much unclear to me)
+
+- implement an option -r (recursive) so that options behind this option are given to all dependencies
+  this is needed so that e.g. 'emerge.py --target=4.0 kdebase' will build only the 4.0 target and will
+  not depend on the svnHEAD.
+
+- implement an option --update which updates installed svn packages (e.g. with target svnHEAD)
+  this will replace 'emerge.py --unmerge package --noclean package'
+
+- make the internal system target aware
+  the 4.0 branch definitely needs this since it should neither depend on trunk of kdesupport nor should
+  we introduce new static packages for that purpose.
+  
+- introduce the special target svnREV[XXXXXX] where XXXXXX is a revision number.
+  this needs some work on the internal implementation for subversion.
+
+- implement a better option transmission between calling emerge script and executed package script
+## note: started; the import of the file makes complete transmission possible
+
+- implement a function for making the settings readable by the app without the use environment vars
+
+- make up a package for the installer
+- as well with the installer:
+    can there be a custom app to translate .desktop files to .lnk files?
+## kdewin-menubuilder takes over this task for now, might be released soon in a better version
+
+## - implement "emerge --version=version":
+## instead of using a different package name for each alpha, beta etc. use an option for this
+##
+## implemented as option --target=target
+## please see as well option --print-target
+
+## - implement a non-copy option:
+## except for packaging, the copying of the sources is pretty useless - and even that can be changed.
+## so implement an option to make emerge faster and less space consuming: don't copy the sources but 
+## rely on the svn tree
+##
+## implemented as option --copy and --nocopy; --nocopy is standard now for all svn packages
+## even packaging works from svn now
+
