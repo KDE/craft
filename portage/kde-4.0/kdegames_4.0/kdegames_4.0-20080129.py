@@ -7,11 +7,11 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdegames'
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegames'
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.0/kdegames'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase'] = 'default'
+        self.hardDependencies['kde-4.0/kdebase_4.0'] = 'default'
         
 class subclass(base.baseclass):
     def __init__(self):
