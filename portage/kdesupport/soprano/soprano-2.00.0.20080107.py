@@ -3,12 +3,6 @@ import os
 import sys
 import info
 
-#DEPEND = """
-#virtual/base
-#libs/qt
-#kdesupport/clucene-core
-#"""
-
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -18,7 +12,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
         self.svnTargets['2.0.0'] = 'tags/soprano/2.0.0'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '2.0.0'
 
 class subclass(base.baseclass):
     def __init__(self):
