@@ -19,6 +19,7 @@ class subclass(base.baseclass):
         self.buildType="Debug"
         base.baseclass.__init__( self, "" )
         self.subinfo = subinfo()
+        self.kdeCustomDefines = "-DBUILD_doc=OFF"
 
     def unpack( self ):
         return self.kdeSvnUnpack()
