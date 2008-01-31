@@ -47,7 +47,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdesdk", os.path.basename(sys.argv[0]).replace("kdesdk-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdesdk", os.path.basename(sys.argv[0]).replace("kdesdk_4.0-", "").replace(".py", ""), True )
 
 if __name__ == '__main__':
     subclass().execute()

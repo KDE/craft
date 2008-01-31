@@ -31,7 +31,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdegames", os.path.basename(sys.argv[0]).replace("kdegames-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdegames", os.path.basename(sys.argv[0]).replace("kdegames_4.0-", "").replace(".py", ""), True )
 
 if __name__ == '__main__':
     subclass().execute()
