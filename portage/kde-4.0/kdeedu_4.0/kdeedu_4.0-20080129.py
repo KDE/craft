@@ -7,6 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdeedu'
+        self.svnTargets['4.0.1'] = 'tags/KDE/4.0.1/kdeedu'
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.0/kdeedu'
         self.defaultTarget = 'svnHEAD'
     
