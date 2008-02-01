@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase'] = 'default'
+        self.softDependencies['kdesupport/qca'] = 'default'
         
 class subclass(base.baseclass):
     def __init__(self):
