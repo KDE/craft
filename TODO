@@ -10,6 +10,16 @@ to check if the files are already complete without an internet connection.
 for ideas and code how to do so, look at the gentoo portage system.
 (pretty much unclear to me)
 
+- think of a fail proof versioning system - a script from today should stay executable at least for the next
+  two minor KDE versions.
+  
+- replace current implementation of option handling with a better one:
+  use a parser function that returns the options as a list.
+  Maybe there are already implementations for that?
+
+- include the *_build.py as modules directly into the build scripts - this gives back the possibility to
+  overload functions and thus reimplement them.
+  
 - implement an option -r (recursive) so that options behind this option are given to all dependencies
   this is needed so that e.g. 'emerge.py --target=4.0 kdebase' will build only the 4.0 target and will
   not depend on the svnHEAD.
@@ -21,8 +31,8 @@ for ideas and code how to do so, look at the gentoo portage system.
   the 4.0 branch definitely needs this since it should neither depend on trunk of kdesupport nor should
   we introduce new static packages for that purpose.
   
-- introduce the special target svnREV[XXXXXX] where XXXXXX is a revision number.
-  this needs some work on the internal implementation for subversion.
+- introduce the special target svnREV[XXXXXX] where XXXXXX is a revision number (why not use svn[XXXXXXX] ?).
+  this needs some work on the internal implementation for interacting with subversion client.
 
 - implement a better option transmission between calling emerge script and executed package script
 ## note: started; the import of the file makes complete transmission possible
