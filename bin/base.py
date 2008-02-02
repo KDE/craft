@@ -247,10 +247,6 @@ class baseclass:
         #print "basename:", sys.argv[ 0 ]
         #print "src_uri", self.SRC_URI
 
-        filenames = []
-        for uri in self.SRC_URI.split():
-            filenames.append( os.path.basename( uri ) )
-        self.filenames = filenames
         #print "filenames:", self.filenames
 
         #( self.progname, ext ) = os.path.splitext( os.path.basename( sys.argv[ 0 ] ) )
@@ -303,6 +299,13 @@ class baseclass:
 
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
+        
+        if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
+            filenames = []
+            for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
+                filenames.append( os.path.basename( uri ) )
+            self.filenames = filenames
+            
 
 
     def svnFetch( self, repo ):
@@ -330,7 +333,10 @@ class baseclass:
         return self.kde.kdeSvnPath()
         
     def kdeSvnUnpack( self, svnpath=None, packagedir=None ):
-        return self.kde.kdeSvnUnpack( svnpath, packagedir )
+        if self.kde.kdeSvnPath():
+            return self.kde.kdeSvnUnpack( svnpath, packagedir )
+        else:
+            return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
         
     def kdeDefaultDefines( self ):
         return self.kde.kdeDefaultDefines()
