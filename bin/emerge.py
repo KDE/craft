@@ -39,18 +39,19 @@ def usage():
     print '                 This will automatically overrun all buildtype definitions'
     print '                 made in the package\'s .py-file'
     print 'Options:'
-    print '--compile PACKAGES       configure and build the PACKAGES'
-    print '--fetch PACKAGES         just fetch the PACKAGES'
-    print '--full-package PACKAGES  make all of the above steps'
-    print '--install PACKAGES       install the PACKAGES to an image directory'
-    print '--manifest PACKAGES      add the installdb files to the image directory'
-    print '--package PACKAGES       package the image directory with the kdewin-packager[*]'
-    print '--print-installable      displays packages that can be installed'
-    print '--print-installed        displays installed packages'
-    print '--print-targets PACKAGES displays targets for PACKAGES'
-    print '--qmerge PACKAGES        install the image directories contents to the kderoot'
-    print '--unmerge PACKAGES       try to unmerge PACKAGES'
-    print '--unpack PACKAGES        unpack the PACKAGES and apply the patches if needed'
+    print '--compile PACKAGE       configure and build the PACKAGE'
+    print '--fetch PACKAGE         just fetch the PACKAGE'
+    print '--full-package PACKAGE  make all of the above steps'
+    print '--install PACKAGE       install the PACKAGE to an image directory'
+    print '--manifest PACKAGE      add the installdb files to the image directory'
+    print '--package PACKAGE       package the image directory with the kdewin-packager[*]'
+    print '--print-installable     displays packages that can be installed'
+    print '--print-installed       displays installed packages'
+    print '--print-targets PACKAGE displays targets for PACKAGE'
+    print '--qmerge PACKAGE        install the image directories contents to the kderoot'
+    print '--unmerge PACKAGE       try to unmerge PACKAGE'
+    print '--unpack PACKAGE        unpack the PACKAGE and apply the patches if needed'
+    print '--update PACKAGE        update the PACKAGE if it is installed already; ignored if not present'
     print
     print '[*] - this requires the packager to be installed already.'
     print 'Please see http://windows.kde.org for more information.'
@@ -119,6 +120,7 @@ buildAction = "all"
 packageName = None
 doPretend = False
 stayQuiet = False
+ignoreInstalled = False
 opts = ""
 environ = dict()
 if len( sys.argv ) < 2:
@@ -188,6 +190,11 @@ for i in sys.argv:
         stayQuiet = True
         if i in [ "--print-installable", "--print-installed" ]:
             break
+    elif ( i == "-i" ):
+        ignoreInstalled = True
+    elif ( i == "--update" ):
+        ignoreInstalled = True
+        os.environ["EMERGE_NOCLEAN"] = str( True )
     elif ( i in [ "--fetch", "--unpack", "--compile", "--configure", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge",
                   "--full-package" ] ):
@@ -267,7 +274,10 @@ if ( buildAction != "all" ):
     ok = handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts )
 else:
     for package in deplist:
-        if ( utils.isInstalled( package[0], package[1], package[2] ) ):
+        ignore = False
+        if package == deplist[ -1 ] and ignoreInstalled:
+            ignore = True
+        if ( utils.isInstalled( package[0], package[1], package[2] ) and not ignore ):
             if utils.verbose() > 1 and package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
             elif utils.verbose() > 2 and not package[1] == packageName:
