@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         """ """
         self.targets['2.4.7'] = 'http://www.cmake.org/files/v2.4/cmake-2.4.7-win32-x86.zip'
+        self.targetInstSrc['2.4.7'] = 'cmake-2.4.7-win32-x86'
         self.defaultTarget = '2.4.7'
 
 class subclass(base.baseclass):
