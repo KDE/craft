@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase'] = 'default'
+        self.hardDependencies['contributed/gpgme-qt'] = 'default'
         
 class subclass(base.baseclass):
     def __init__(self):
@@ -31,7 +32,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdepim", os.path.basename(sys.argv[0]).replace("kdepim-", "").replace(".py", ""), True )
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "kdepim", self.buildTarget, True )
+        else:
+            return self.doPackaging( "kdepim", os.path.basename(sys.argv[0]).replace("kdepim-", "").replace(".py", ""), True )
 		
 if __name__ == '__main__':
     subclass().execute()
