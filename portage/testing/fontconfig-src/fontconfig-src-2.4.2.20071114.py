@@ -10,13 +10,10 @@ PACKAGE_FULL_VER     = "2.4.2-1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libfontconfig"
 
-SRC_URI= """
-http://fontconfig.org/release/""" + PACKAGE_FULL_NAME + """.tar.gz
-"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.4.2'] = SRC_URI
+        self.targets['2.4.2'] = "http://fontconfig.org/release/" + PACKAGE_FULL_NAME + ".tar.gz"
+        self.targetInstSrc['2.4.2'] = PACKAGE_FULL_NAME
         self.defaultTarget = '2.4.2'
     
     def setDependencies( self ):
@@ -25,8 +22,7 @@ class subinfo(info.infoclass):
     
 class subclass(base.baseclass):
     def __init__(self):
-        base.baseclass.__init__( self, SRC_URI )
-        self.instsrcdir = PACKAGE_FULL_NAME
+        base.baseclass.__init__( self, "" )
         self.createCombinedPackage = True
         self.subinfo = subinfo()
 

@@ -10,13 +10,11 @@ PACKAGE_FULL_VER     = "2.3.5-1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libfreetype-6"
 
-SRC_URI= """
-http://download.savannah.gnu.org/releases/""" + PACKAGE_NAME + """/""" + PACKAGE_FULL_NAME + """.tar.gz
-"""
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.3.5-1'] = SRC_URI
+        self.targets['2.3.5-1'] = "http://download.savannah.gnu.org/releases/" + PACKAGE_NAME + "/" + PACKAGE_FULL_NAME + ".tar.gz"
+        self.targetInstSrc['2.3.5-1'] = PACKAGE_FULL_NAME
         self.defaultTarget = '2.3.5-1'
     
     def setDependencies( self ):
@@ -24,8 +22,7 @@ class subinfo(info.infoclass):
     
 class subclass(base.baseclass):
     def __init__(self):
-        base.baseclass.__init__( self, SRC_URI )
-        self.instsrcdir = PACKAGE_FULL_NAME
+        base.baseclass.__init__( self, "" )
         self.createCombinedPackage = True
         self.subinfo = subinfo()
 
