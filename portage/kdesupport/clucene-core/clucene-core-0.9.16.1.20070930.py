@@ -5,25 +5,19 @@ import os
 import sys
 import info
 
-SRC_URI= """
-http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2
-"""
-
 class subinfo (info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.targets['0.9.16a'] = "http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
-        #self.svnTargets['svnHEAD'] = False
+        self.targetInstSrc['0.9.16a'] = os.path.join( "clucene-core-0.9.16a", "src" )
         self.defaultTarget = '0.9.16a'
-        #self.defaultTarget = 'svnHEAD'
 
 
 class subclass(base.baseclass):
     def __init__(self):
-        base.baseclass.__init__( self, SRC_URI )
-        self.instsrcdir = os.path.join( "clucene-core-0.9.16a", "src" )
+        base.baseclass.__init__( self, "" )
         self.subinfo = subinfo()
 
     def unpack( self ):

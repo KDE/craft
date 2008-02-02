@@ -7,21 +7,22 @@ import info
 
 # http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz
 # see http://eigen.tuxfamily.org/ for more informations
+
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-#        self.targets['1.0.5'] = 'http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz'
+        self.targets['1.0.5'] = 'http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz'
+        self.targetInstSrc['1.0.5'] = "eigen"
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '1.0.5'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         # header-only package
         self.createCombinedPackage = True
-        self.instsrcdir = "eigen"
         self.subinfo = subinfo()
 
     def unpack( self ):
