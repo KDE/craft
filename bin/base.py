@@ -296,7 +296,12 @@ class baseclass:
 
         if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
             self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
-
+            
+        if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
+            self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
+        else:
+            self.instsrcdir = os.path.basename( self.Targets[ self.subinfo.buildTarget ] )
+            
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
         

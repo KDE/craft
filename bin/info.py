@@ -4,6 +4,7 @@ class infoclass:
     def __init__( self, RAW="" ):
         """ """
         self.targets = dict()
+        self.targetInstSrc = dict()
         self.svnTargets = dict()
         self.hardDependencies = dict()
         self.softDependencies = dict()
