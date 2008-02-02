@@ -6,7 +6,7 @@ SRC_URI= "ftp://ftp.ruby-lang.org/pub/ruby/binaries/mswin32/ruby-1.8.6-i386-mswi
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['1.8.6'] = SRC_URI
+        self.targets['1.8.6'] = SRC_URI
         self.defaultTarget = '1.8.6'
     
 class subclass(base.baseclass):

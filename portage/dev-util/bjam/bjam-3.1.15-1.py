@@ -13,6 +13,7 @@ http://downloads.sourceforge.net/boost/""" + PACKAGE_FULL_NAME + """-ntx86.zip
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['3.1.15-1'] = SRC_URI
+        self.targetInstSrc['3.1.15-1'] = PACKAGE_FULL_NAME + "-ntx86"
         self.defaultTarget = '3.1.15-1'
     
     def setDependencies( self ):
@@ -25,7 +26,6 @@ class subclass(base.baseclass):
             self.instdestdir = "bjam\bin"
         else:
             self.instdestdir = "bin"
-        self.instsrcdir = PACKAGE_FULL_NAME + "-ntx86"
 
     def make_package( self ):
         if self.traditional:
