@@ -299,12 +299,12 @@ class baseclass:
             
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
             self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
-        else:
-            if self.subinfo.buildTarget in self.Targets.keys() and self.Targets[ self.subinfo.buildTarget ]:
-                self.instsrcdir = os.path.basename( self.Targets[ self.subinfo.buildTarget ] )
-            else:
-                if not self.instsrcdir:
-                    utils.warning( "Skript warning: self.instsrcdir not set - this might be ok, but if it leads to errors that might be the problem" )
+#        else:
+#            if self.subinfo.buildTarget in self.Targets.keys() and self.Targets[ self.subinfo.buildTarget ]:
+#                self.instsrcdir = os.path.basename( self.Targets[ self.subinfo.buildTarget ] )
+#            else:
+#                if not self.instsrcdir:
+#                    utils.warning( "Skript warning: self.instsrcdir not set - this might be ok, but if it leads to errors that might be the problem" )
             
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
