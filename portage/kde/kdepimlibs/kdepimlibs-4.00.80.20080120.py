@@ -8,6 +8,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepimlibs'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepimlibs'
+        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdepimlibs-4.0.60.tar.bz2'
+        self.targetInstSrc['4.0.60'] = 'kdepimlibs-4.0.60'        
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -17,7 +19,6 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "kdepimlibs"
         self.subinfo = subinfo()
 
     def unpack( self ):

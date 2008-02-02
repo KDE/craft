@@ -7,6 +7,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdegraphics'
+        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdegraphics-4.0.60.tar.bz2'
+        self.targetInstSrc['4.0.60'] = 'kdegraphics-4.0.60'        
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics'
         self.defaultTarget = 'svnHEAD'
     
@@ -17,7 +19,6 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "kdegraphics"
         if self.traditional:
             self.instdestdir = "kde"
         self.subinfo = subinfo()

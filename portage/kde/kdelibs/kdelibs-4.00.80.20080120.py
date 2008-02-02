@@ -6,8 +6,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdelibs'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdelibs'
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdelibs'
+        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdelibs-4.0.60.tar.bz2'
+        self.targetInstSrc['4.0.60'] = 'kdelibs-4.0.60'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -22,7 +24,6 @@ class subclass(base.baseclass):
     def __init__(self):
         self.buildType = "Debug"
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "kdelibs"
         self.subinfo = subinfo()
 
     def unpack( self ):

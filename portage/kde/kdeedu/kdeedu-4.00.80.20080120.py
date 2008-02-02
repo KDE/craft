@@ -8,6 +8,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdeedu'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu'
+        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdeedu-4.0.60.tar.bz2'
+        self.targetInstSrc['4.0.60'] = 'kdeedu-4.0.60'        
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
