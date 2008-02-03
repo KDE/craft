@@ -293,9 +293,11 @@ class baseclass:
         self.Targets.update( self.subinfo.targets )
         
         self.subinfo.buildTarget = self.subinfo.defaultTarget
+        self.buildTarget = self.subinfo.defaultTarget
 
         if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
             self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
+            self.buildTarget = os.getenv( "EMERGE_TARGET" )
             
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
             self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
