@@ -387,6 +387,8 @@ class baseclass:
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
             destscript = os.path.join( self.imagedir, "manifest", scriptName )
             if os.path.exists( script ):
+                if not os.path.exists( os.path.join( self.imagedir, "manifest" ) ):
+                    os.mkdir( os.path.join( self.imagedir, "manifest" ) )
                 shutil.copyfile( script, destscript )
 
         if ( packSources and not ( self.noCopy and self.kde.kdeSvnPath() ) ):
