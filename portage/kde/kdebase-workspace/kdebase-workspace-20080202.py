@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdebase/workspace'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/workspace'
+        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdebase-workspace-4.0.60.tar.bz2'
+        self.targetInstSrc['4.0.60'] = 'kdebase-4.0.60-workspace'        
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -30,7 +32,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdebase-workspace", os.path.basename(sys.argv[0]).replace("kdebase-workspace-", "").replace(".py", ""), True )
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "kdebase-workspace", self.buildTarget, True )
+        else:
+            return self.doPackaging( "kdebase-workspace", os.path.basename(sys.argv[0]).replace("kdebase-workspace-", "").replace(".py", ""), True )
 
 		
 if __name__ == '__main__':

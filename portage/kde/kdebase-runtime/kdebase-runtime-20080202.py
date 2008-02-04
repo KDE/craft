@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdebase/runtime'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
+        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdebase-runtime-4.0.60.tar.bz2'
+        self.targetInstSrc['4.0.60'] = 'kdebase-4.0.60-runtime'        
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -29,7 +31,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdebase-runtime", os.path.basename(sys.argv[0]).replace("kdebase-runtime-", "").replace(".py", ""), True )
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "kdebase-runtime", self.buildTarget, True )
+        else:
+            return self.doPackaging( "kdebase-runtime", os.path.basename(sys.argv[0]).replace("kdebase-runtime-", "").replace(".py", ""), True )
 
 		
 if __name__ == '__main__':
