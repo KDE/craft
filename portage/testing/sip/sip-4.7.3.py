@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.7.3'
 
         def setDependencies( self ):
-        self.hardDependencies['libs/qt'] = 'default'
+            self.hardDependencies['libs/qt'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self ):
