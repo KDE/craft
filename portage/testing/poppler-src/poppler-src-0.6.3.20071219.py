@@ -9,17 +9,14 @@ PACKAGE_FULL_VER     = "0.6.3"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "poppler"
 
-SRC_URI = """
-http://poppler.freedesktop.org/poppler-0.6.3.tar.gz
-http://poppler.freedesktop.org/poppler-data-0.2.0.tar.gz
-"""
 
 ##http://poppler.freedesktop.org/""" + PACKAGE_FULL_NAME + """.tar.gz
 ##"""
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.6.3'] = SRC_URI
+        self.targets['0.6.3'] = 'http://poppler.freedesktop.org/poppler-0.6.3.tar.gz'
+        self.targetInstSrc['0.6.3'] = 'poppler-0.6.3'
         self.defaultTarget = '0.6.3'
     
     def setDependencies( self ):
@@ -29,8 +26,7 @@ class subinfo(info.infoclass):
     
 class subclass(base.baseclass):
     def __init__( self ):
-        base.baseclass.__init__( self, SRC_URI )
-        self.instsrcdir = PACKAGE_FULL_NAME
+        base.baseclass.__init__( self, "" )
         self.createCombinedPackage = True
         self.subinfo = subinfo()
 
