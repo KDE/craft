@@ -1,16 +1,14 @@
 diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 --- freetype-2.3.5-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/CMakeLists.txt	2008-01-27 01:12:55.265625000 +0100
-@@ -0,0 +1,112 @@
++++ freetype-2.3.5/CMakeLists.txt	2008-02-06 02:08:37.937500000 +0100
+@@ -0,0 +1,99 @@
 +project( freetype )
-+
-+#find_package( zlib )
 +
 +if( WIN32 )
 +    if( MINGW )
-+    add_definitions( -pedantic -ansi -Wall -g -O2 -DPIC )
++      add_definitions( -pedantic -ansi -Wall -g -O2 -DPIC )
 +    else( MINGW )
-+#    add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -D_REENTRANT )
++      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -D_REENTRANT )
 +    endif( MINGW )
 +endif( WIN32 )
 +include( checkIncludeFile checkTypeSize )
@@ -94,29 +92,18 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +
 +add_definitions( -DFT_CONFIG_CONFIG_H="<ftconfig.h>" -DFT2_BUILD_LIBRARY -DFT_CONFIG_MODULES_H="<ftmodule.h>" )
 +
-+if( ZLIB_FOUND AND MINGW)
-+    add_definitions( -DFT_CONFIG_OPTION_SYSTEM_ZLIB )
-+    include_directories( ${ZLIB_INCLUDE_DIR} )
-+endif( ZLIB_FOUND AND MINGW )
 +
-+add_library( freetype ${freetype_SRC} )
-+add_library( freetype-6 SHARED ${freetype_SRC} )
-+set_target_properties( freetype-6 PROPERTIES 
++add_library( freetype SHARED ${freetype_SRC} )
++set_target_properties( freetype PROPERTIES 
 +                       DEFINE_SYMBOL DLL_EXPORTS
 +                     )
-+if( ZLIB_FOUND AND MINGW )
-+#    target_link_libraries(freetype ${ZLIB_LIBRARY} )
-+    target_link_libraries(freetype-6 ${ZLIB_LIBRARY} )
-+endif( ZLIB_FOUND AND MINGW )
 +
-+
-+install( TARGETS freetype DESTINATION lib )
-+install( TARGETS freetype-6 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++install( TARGETS freetype RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
 +install( DIRECTORY include DESTINATION . PATTERN ftmodule.h EXCLUDE )
 diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cmake
 --- freetype-2.3.5-orig/ftconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/ftconfig.h.cmake	2008-01-26 23:08:22.437500000 +0100
++++ freetype-2.3.5/ftconfig.h.cmake	2008-02-06 02:04:28.734375000 +0100
 @@ -0,0 +1,349 @@
 +/***************************************************************************/
 +/*                                                                         */
@@ -469,7 +456,7 @@ diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cma
 +/* END */
 diff -N -r -u freetype-2.3.5-orig/include/ftmodule.h freetype-2.3.5/include/ftmodule.h
 --- freetype-2.3.5-orig/include/ftmodule.h	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/include/ftmodule.h	2008-01-25 23:03:53.828125000 +0100
++++ freetype-2.3.5/include/ftmodule.h	2008-02-06 02:04:28.750000000 +0100
 @@ -0,0 +1,20 @@
 +/* This is a generated file. */
 +FT_USE_MODULE(tt_driver_class)
