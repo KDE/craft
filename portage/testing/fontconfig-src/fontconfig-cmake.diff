@@ -1,7 +1,7 @@
 diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake fontconfig-2.4.2/cmake/modules/FindFreetype.cmake
 --- fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindFreetype.cmake	2008-01-27 03:18:24.000000000 +0100
-@@ -0,0 +1,72 @@
++++ fontconfig-2.4.2/cmake/modules/FindFreetype.cmake	2008-02-06 02:27:55.296875000 +0100
+@@ -0,0 +1,73 @@
 +# - Try to find the freetype library
 +# Once done this will define
 +#
@@ -54,7 +54,8 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake fontconfig-
 +
 +  else(FREETYPECONFIG_EXECUTABLE)
 +	find_path (FREETYPE_INCLUDE_DIR freetype/freetype.h
-+        ${CMAKE_INCLUDE_PATH}/freetype2
++        PATH ${CMAKE_INCLUDE_PATH}
++        PATH_SUFFIXES freetype2
 +	)
 +    find_library(FREETYPE_LIBRARIES freetype)
 +    if(FREETYPE_INCLUDE_DIR AND FREETYPE_LIBRARIES)
@@ -76,7 +77,7 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake fontconfig-
 +endif (FREETYPE_LIBRARIES AND FREETYPE_INCLUDE_DIR)
 diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake
 --- fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake	2007-12-23 06:46:02.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake	2008-02-05 18:23:06.765625000 +0100
 @@ -0,0 +1,64 @@
 +# - Try to find the directory in which the kdewin32 library and other win32 related libraries lives
 +# 
@@ -144,7 +145,7 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake fontconfig-2.
 +endif (WIN32)
 diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake
 --- fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake	2007-12-23 06:46:02.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake	2008-02-05 18:23:06.765625000 +0100
 @@ -0,0 +1,74 @@
 +# - Try to find the KDEWIN32 library
 +# 
@@ -222,7 +223,7 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake fontconfig-
 +endif (WIN32)
 diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake
 --- fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake	2007-12-23 06:46:02.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake	2008-02-05 18:23:06.781250000 +0100
 @@ -0,0 +1,113 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -339,7 +340,7 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake fon
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
 diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake
 --- fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake	2008-02-05 18:23:06.781250000 +0100
 @@ -0,0 +1,62 @@
 +# - Try to find LibXml2
 +# Once done this will define
@@ -405,26 +406,33 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake fontconfig-2
 +
 diff -N -r -u fontconfig-2.4.2-orig/CMakeLists.txt fontconfig-2.4.2/CMakeLists.txt
 --- fontconfig-2.4.2-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/CMakeLists.txt	2008-01-28 00:02:47.406250000 +0100
-@@ -0,0 +1,43 @@
++++ fontconfig-2.4.2/CMakeLists.txt	2008-02-06 02:42:30.187500000 +0100
+@@ -0,0 +1,50 @@
 +project( fontconfig )
-+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
++set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 +
-+find_package(EXPAT)
-+if(MSVC)
-+    find_package(kdewin32 REQUIRED)
-+endif(MSVC)
-+find_package(Freetype)
-+find_package(LibXML2)
++find_package( EXPAT )
++find_package( Freetype REQUIRED )
++find_package( LibXML2  REQUIRED )
++
++if( MSVC )
++    find_package( kdewin32 REQUIRED )
++endif( MSVC )
 +
 +include_directories(
-+    ${CMAKE_INCLUDE_PATH}/freetype2
++    ${FREETYPE_INCLUDE_DIR}/freetype2
++    ${LIBXML2_INCLUDE_DIR}/libxml2
 +    ${CMAKE_INCLUDE_PATH}
 +    ${CMAKE_CURRENT_BINARY_DIR}
 +    ${CMAKE_CURRENT_SOURCE_DIR}
 +    ${CMAKE_CURRENT_SOURCE_DIR}/src
 +)
-+if(MSVC)
++
++if( EXPAT_FOUND )
++include_directories( ${EXPAT_INCLUDE_DIR} )
++endif( EXPAT_FOUND )
++
++if( MSVC )
 +    include_directories( ${CMAKE_INCLUDE_PATH}/msvc )
 +    add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -wd4018)
 +endif(MSVC)
@@ -452,15 +460,15 @@ diff -N -r -u fontconfig-2.4.2-orig/CMakeLists.txt fontconfig-2.4.2/CMakeLists.t
 +#install(FILES)
 diff -N -r -u fontconfig-2.4.2-orig/conf.d/CMakeLists.txt fontconfig-2.4.2/conf.d/CMakeLists.txt
 --- fontconfig-2.4.2-orig/conf.d/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/conf.d/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/conf.d/CMakeLists.txt	2008-02-05 18:23:06.812500000 +0100
 @@ -0,0 +1,3 @@
 +file( GLOB conf_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.conf" )
 +install( FILES README ${conf_files} DESTINATION etc/fonts/conf.d )
 +install( FILES README ${conf_files} DESTINATION etc/fonts/conf.avail )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u fontconfig-2.4.2-orig/config.h.cmake fontconfig-2.4.2/config.h.cmake
 --- fontconfig-2.4.2-orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/config.h.cmake	2008-01-28 01:04:36.015625000 +0100
++++ fontconfig-2.4.2/config.h.cmake	2008-02-05 18:23:06.828125000 +0100
 @@ -0,0 +1,179 @@
 +/* config.h.in.  Generated from configure.in by autoheader.  */
 +
@@ -643,8 +651,8 @@ diff -N -r -u fontconfig-2.4.2-orig/config.h.cmake fontconfig-2.4.2/config.h.cma
 +#define VERSION "2.4.2"
 diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/ConfigureChecks.cmake
 --- fontconfig-2.4.2-orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/ConfigureChecks.cmake	2008-01-28 01:04:29.453125000 +0100
-@@ -0,0 +1,66 @@
++++ fontconfig-2.4.2/ConfigureChecks.cmake	2008-02-06 02:39:07.265625000 +0100
+@@ -0,0 +1,70 @@
 +# Checking Headers and Functions for fontconfig
 +
 +include( CheckIncludeFile )
@@ -658,7 +666,12 @@ diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/Confi
 +    endif(MSVC)
 +endif(WIN32)
 +
-+set( CMAKE_REQUIRED_LIBRARIES freetype libxml2 )
++set( CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${FREETYPE_LIBRARIES} ${LIBXML2_LIBRARIES} )
++set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${FREETYPE_INCLUDE_DIR}/freetype2 ${LIBXML2_INCLUDE_DIR} )
++if( EXPAT_FOUND )
++    set( CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${EXPAT_LIBRARY} )
++    set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${EXPAT_INCLUDE_DIR} )
++endif( EXPAT_FOUND )
 +check_include_file( "dirent.h" HAVE_DIRENT_H )
 +check_include_file( "dlfcn.h" HAVE_DLFCN_H )
 +check_include_file( "fcntl.h" HAVE_FCNTL_H )
@@ -679,7 +692,6 @@ diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/Confi
 +check_function_exists( chsize HAVE_CHSIZE )
 +check_function_exists( _doprnt HAVE_DOPRNT )
 +check_function_exists( ftruncate HAVE_FTRUNCATE )
-+set(CMAKE_REQUIRED_INCLUDES  ${CMAKE_INCLUDE_PATH}/freetype2} )
 +check_function_exists( FT_Get_BDF_Property HAVE_FT_GET_BDF_PROPERTY )
 +check_function_exists( FT_Get_Next_Char HAVE_FT_GET_NEXT_CHAR )
 +check_function_exists( FT_Get_PS_Font_Info HAVE_FT_GET_PS_FONT_INFO )
@@ -713,7 +725,7 @@ diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/Confi
 +#configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 diff -N -r -u fontconfig-2.4.2-orig/doc/CMakeLists.txt fontconfig-2.4.2/doc/CMakeLists.txt
 --- fontconfig-2.4.2-orig/doc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/doc/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/doc/CMakeLists.txt	2008-02-05 18:23:06.859375000 +0100
 @@ -0,0 +1,16 @@
 +set( sub_dir_name edit-sgml )
 +
@@ -733,7 +745,7 @@ diff -N -r -u fontconfig-2.4.2-orig/doc/CMakeLists.txt fontconfig-2.4.2/doc/CMak
 +install( FILES fontconfig-devel.pdf fontconfig-user.pdf fontconfig-devel.txt fontconfig-user.txt  fontconfig-user.html DESTINATION share/doc/fontconfig )
 diff -N -r -u fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt fontconfig-2.4.2/fc-arch/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-arch/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-arch/CMakeLists.txt	2008-02-05 18:23:06.859375000 +0100
 @@ -0,0 +1,13 @@
 +set( sub_dir_name fc-arch )
 +
@@ -750,7 +762,7 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt fontconfig-2.4.2/fc-a
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
 diff -N -r -u fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt fontconfig-2.4.2/fc-cache/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-cache/CMakeLists.txt	2008-01-28 00:27:19.562500000 +0100
++++ fontconfig-2.4.2/fc-cache/CMakeLists.txt	2008-02-05 18:23:06.921875000 +0100
 @@ -0,0 +1,10 @@
 +set( sub_dir_name fc-cache )
 +
@@ -762,10 +774,10 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt fontconfig-2.4.2/fc-
 +target_link_libraries( ${sub_dir_name} fontconfig )
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u fontconfig-2.4.2-orig/fc-case/CMakeLists.txt fontconfig-2.4.2/fc-case/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-case/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-case/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-case/CMakeLists.txt	2008-02-05 18:23:07.125000000 +0100
 @@ -0,0 +1,13 @@
 +set( sub_dir_name fc-case )
 +
@@ -782,7 +794,7 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-case/CMakeLists.txt fontconfig-2.4.2/fc-c
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
 diff -N -r -u fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt fontconfig-2.4.2/fc-cat/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-cat/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-cat/CMakeLists.txt	2008-02-05 18:23:07.125000000 +0100
 @@ -0,0 +1,9 @@
 +set( sub_dir_name fc-cat )
 +
@@ -793,10 +805,10 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt fontconfig-2.4.2/fc-ca
 +target_link_libraries( ${sub_dir_name} fontconfig )
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt fontconfig-2.4.2/fc-glyphname/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-glyphname/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-glyphname/CMakeLists.txt	2008-02-05 18:23:07.156250000 +0100
 @@ -0,0 +1,13 @@
 +set( sub_dir_name fc-glyphname )
 +
@@ -813,7 +825,7 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt fontconfig-2.4.2
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
 diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-lang/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-lang/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-lang/CMakeLists.txt	2008-02-05 18:23:07.156250000 +0100
 @@ -0,0 +1,15 @@
 +set( sub_dir_name fc-lang )
 +
@@ -832,7 +844,7 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-l
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} VERBATIM )
 diff -N -r -u fontconfig-2.4.2-orig/fc-list/CMakeLists.txt fontconfig-2.4.2/fc-list/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-list/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-list/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-list/CMakeLists.txt	2008-02-05 18:23:07.171875000 +0100
 @@ -0,0 +1,9 @@
 +set( sub_dir_name fc-list )
 +
@@ -843,10 +855,10 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-list/CMakeLists.txt fontconfig-2.4.2/fc-l
 +target_link_libraries( ${sub_dir_name} fontconfig )
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u fontconfig-2.4.2-orig/fc-match/CMakeLists.txt fontconfig-2.4.2/fc-match/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-match/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-match/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fc-match/CMakeLists.txt	2008-02-05 18:23:07.203125000 +0100
 @@ -0,0 +1,9 @@
 +set( sub_dir_name fc-match )
 +
@@ -857,19 +869,19 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-match/CMakeLists.txt fontconfig-2.4.2/fc-
 +target_link_libraries( ${sub_dir_name} fontconfig )
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u fontconfig-2.4.2-orig/fontconfig/CMakeLists.txt fontconfig-2.4.2/fontconfig/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fontconfig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fontconfig/CMakeLists.txt	2008-01-27 03:18:24.000000000 +0100
++++ fontconfig-2.4.2/fontconfig/CMakeLists.txt	2008-02-05 18:23:07.265625000 +0100
 @@ -0,0 +1,3 @@
 +# fontconfig
 +
 +install( FILES fcfreetype.h fcprivate.h fontconfig.h DESTINATION include/fontconfig )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMakeLists.txt
 --- fontconfig-2.4.2-orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/CMakeLists.txt	2008-01-29 00:38:06.468750000 +0100
-@@ -0,0 +1,47 @@
++++ fontconfig-2.4.2/src/CMakeLists.txt	2008-02-06 02:47:13.312500000 +0100
+@@ -0,0 +1,48 @@
 +set(sub_dir_name src)
 +
 +set( fontconfig_SRCS
@@ -906,20 +918,21 @@ diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMak
 +set( fontconfig_SRCS ${fontconfig_SRCS} dirent.c unistd.c )
 +add_library( fontconfig STATIC ${fontconfig_SRCS} )
 +endif(MSVC)
++
 +add_library( fontconfig SHARED ${fontconfig_SRCS} )
 +set_target_properties(fontconfig PROPERTIES OUTPUT_NAME fontconfig )
 +
-+target_link_libraries( fontconfig freetype )
-+target_link_libraries( fontconfig libxml2 )
++target_link_libraries( fontconfig ${FREETYPE_LIBRARIES} )
++target_link_libraries( fontconfig ${LIBXML2_LIBRARIES} )
 +if( EXPAT_FOUND )
-+    target_link_libraries( fontconfig expat )
++    target_link_libraries( fontconfig ${EXPAT_LIBRARY} )
 +endif( EXPAT_FOUND )
 +
 +install( TARGETS fontconfig RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
 diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 --- fontconfig-2.4.2-orig/src/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/dirent.c	2007-12-19 02:10:12.000000000 +0100
++++ fontconfig-2.4.2/src/dirent.c	2008-02-05 18:23:07.265625000 +0100
 @@ -0,0 +1,158 @@
 +/* ====================================================================
 + * The Apache Software License, Version 1.1
@@ -1081,7 +1094,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 +}
 diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
 --- fontconfig-2.4.2-orig/src/fccache.c	2006-12-02 22:33:41.000000000 +0100
-+++ fontconfig-2.4.2/src/fccache.c	2008-01-29 00:55:34.531250000 +0100
++++ fontconfig-2.4.2/src/fccache.c	2008-02-05 18:23:07.281250000 +0100
 @@ -224,6 +224,10 @@
  #  endif
  # endif
@@ -1113,7 +1126,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
  	    break;
 diff -N -r -u fontconfig-2.4.2-orig/src/fcfreetype.c fontconfig-2.4.2/src/fcfreetype.c
 --- fontconfig-2.4.2-orig/src/fcfreetype.c	2006-12-02 21:32:15.000000000 +0100
-+++ fontconfig-2.4.2/src/fcfreetype.c	2008-01-27 04:16:48.000000000 +0100
++++ fontconfig-2.4.2/src/fcfreetype.c	2008-02-05 18:23:07.328125000 +0100
 @@ -1818,7 +1818,7 @@
  #define FT_Get_Next_Char(face, ucs4, gi) ((ucs4) >= 0xffffff ? \
  					  (*(gi) = 0), 0 : \
@@ -1125,7 +1138,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fcfreetype.c fontconfig-2.4.2/src/fcfree
  typedef struct _FcCharEnt {
 diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 --- fontconfig-2.4.2-orig/src/unistd.c	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/unistd.c	2008-01-29 00:33:17.656250000 +0100
++++ fontconfig-2.4.2/src/unistd.c	2008-02-05 18:23:07.343750000 +0100
 @@ -0,0 +1,507 @@
 +/* This file is part of the KDE project
 +   Copyright (C) 2003-2004 Jaroslaw Staniek <js@iidea.pl>
