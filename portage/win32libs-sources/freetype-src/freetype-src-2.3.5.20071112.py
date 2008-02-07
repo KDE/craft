@@ -41,11 +41,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        #self.stripLibs( PACKAGE_DLL_NAME )
-        #self.createImportLibs( "lib" + PACKAGE_NAME )
-        # now do packaging with kdewin-packager
-        # it's a in-source build, do not pack sources
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
 
         return True
 
