@@ -1,7 +1,7 @@
 diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 --- freetype-2.3.5-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/CMakeLists.txt	2008-02-07 15:19:38.171875000 +0100
-@@ -0,0 +1,98 @@
++++ freetype-2.3.5/CMakeLists.txt	2008-02-07 15:30:09.593750000 +0100
+@@ -0,0 +1,102 @@
 +project( freetype )
 +
 +if( WIN32 )
@@ -11,8 +11,8 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -D_REENTRANT )
 +    endif( MINGW )
 +endif( WIN32 )
-+include( CheckIncludeFile )
-+include( CheckTypeSize )
++include( checkIncludeFile checkTypeSize )
++
 +
 +CHECK_INCLUDE_FILE( "unistd.h" HAVE_UNISTD_H )
 +CHECK_INCLUDE_FILE( "fcntl.h" HAVE_FCNTL_H )
@@ -92,19 +92,23 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +
 +add_definitions( -DFT_CONFIG_CONFIG_H="<ftconfig.h>" -DFT2_BUILD_LIBRARY -DFT_CONFIG_MODULES_H="<ftmodule.h>" )
 +
++
 +add_library( freetype SHARED ${freetype_SRC} )
++set_target_properties( freetype PROPERTIES 
++                       DEFINE_SYMBOL DLL_EXPORTS
++                     )
 +
 +install( TARGETS freetype RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
 +file( GLOB_RECURSE include_files "include/freetype/*.h")
-+ 
++
 +install( FILES ${include_files} DESTINATION include/freetype2/freetype )
 +install( FILES include/ft2build.h DESTINATION include/freetype2 )
 \ Kein Zeilenumbruch am Dateiende.
 diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cmake
 --- freetype-2.3.5-orig/ftconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/ftconfig.h.cmake	2008-02-06 02:04:28.734375000 +0100
-@@ -0,0 +1,349 @@
++++ freetype-2.3.5/ftconfig.h.cmake	2008-02-07 18:46:19.828125000 +0100
+@@ -0,0 +1,364 @@
 +/***************************************************************************/
 +/*                                                                         */
 +/*  ftconfig.in                                                            */
@@ -374,14 +378,29 @@ diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cma
 +
 +
 +#ifndef FT_EXPORT
-+
-+#ifdef __cplusplus
-+#define FT_EXPORT( x )  extern "C"  x
-+#else
-+#define FT_EXPORT( x )  extern  x
-+#endif
-+
++# ifdef WIN32
++#  ifdef freetype_EXPORTS
++#   ifdef __cplusplus
++#    define FT_EXPORT( x ) __declspec(dllexport) "C" x
++#   else
++#    define FT_EXPORT( x ) __declspec(dllexport) x
++#   endif
++#  else
++#   ifdef __cplusplus
++#    define FT_EXPORT( x ) __declspec(dllimport) "C" x
++#   else
++#    define FT_EXPORT( x ) __declspec(dllimport) x
++#   endif
++#  endif
++# else
++#  ifdef __cplusplus
++#   define FT_EXPORT( x ) extern "C" x
++#  else
++#   define FT_EXPORT( x ) extern x
++#  endif
++# endif
 +#endif /* !FT_EXPORT */
++
 +
 +
 +#ifndef FT_EXPORT_DEF
