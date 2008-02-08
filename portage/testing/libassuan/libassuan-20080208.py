@@ -7,15 +7,15 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = False
-        self.defaultTarget = '0.6.3'
+        self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
     
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
+        self.instsrcdir = "libassuan"
         self.subinfo = subinfo()
 
     def unpack( self ):
