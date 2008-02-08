@@ -18,7 +18,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if utils.verbose() >= 1
+        if utils.verbose() >= 1:
             print "libassuan unpack called"
         # do the svn fetch/update
         repo = "svn://cvs.gnupg.org/libassuan/trunk"
