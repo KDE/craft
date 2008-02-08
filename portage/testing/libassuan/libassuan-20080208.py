@@ -1,13 +1,15 @@
 import base
 import utils
 import os
+import shutil
 import info
 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = False
-        self.defaultTarget = 'svnHEAD'
+        self.targets['1.0.4'] = 'ftp://ftp.gnupg.org/gcrypt/libassuan/libassuan-1.0.4.tar.bz2'
+        self.defaultTarget = '1.0.4'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -19,25 +21,34 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if utils.verbose() >= 1:
-            print "libassuan unpack called"
-        # do the svn fetch/update
-        repo = "svn://cvs.gnupg.org/libassuan/trunk"
-        self.svnFetch( repo )
+        if self.buildTarget == "svnHEAD":
+            if utils.verbose() >= 1:
+                print "libassuan unpack called"
+            # do the svn fetch/update
+            repo = "svn://cvs.gnupg.org/libassuan/trunk"
+            self.svnFetch( repo )
 
-        utils.cleanDirectory( self.workdir )
+            utils.cleanDirectory( self.workdir )
 
-        # now copy the tree below destdir/trunk to workdir
-        srcdir = os.path.join( self.svndir, "trunk" )
-        destdir = os.path.join( self.workdir, "libassuan" )
-        utils.copySrcDirToDestDir( srcdir, destdir )
+            # now copy the tree below destdir/trunk to workdir
+            srcdir = os.path.join( self.svndir, "trunk" )
+            destdir = os.path.join( self.workdir, "libassuan" )
+            utils.copySrcDirToDestDir( srcdir, destdir )
 
-        os.chdir( self.workdir )
-        self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
-        self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
+            os.chdir( self.workdir )
+            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
+            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
 #    os.system( "patch -p0 < libassuan_cmake.diff" )
 
-        return True
+            return True
+        else:
+            base.baseclass.unpack( self ) or utils.die( "unpack failed" )
+            os.chdir( self.workdir )
+            shutil.move("libassuan-1.0.4", "libassuan")
+            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
+            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
+            return True
+
 
 
     def compile( self ):
