@@ -21,7 +21,7 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +CHECK_TYPE_SIZE( long SIZEOF_LONG )
 +
 +configure_file( ftconfig.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ftconfig.h )
-+# ftconfig.h has to be made before it can be used.
++configure_file( ftmodule.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ftmodule.h )
 +
 +set( freetype_SRC
 +    src/base/ftsystem.c
@@ -469,9 +469,9 @@ diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cma
 +
 +
 +/* END */
-diff -N -r -u freetype-2.3.5-orig/include/ftmodule.h freetype-2.3.5/include/ftmodule.h
---- freetype-2.3.5-orig/include/ftmodule.h	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/include/ftmodule.h	2008-02-07 18:59:09.312500000 +0100
+diff -N -r -u freetype-2.3.5-orig/ftmodule.h.cmake freetype-2.3.5/ftmodule.h.cmake
+--- freetype-2.3.5-orig/ftmodule.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ freetype-2.3.5/ftmodule.h.cmake	2008-02-07 18:59:09.312500000 +0100
 @@ -0,0 +1,20 @@
 +/* This is a generated file. */
 +FT_USE_MODULE(tt_driver_class)
