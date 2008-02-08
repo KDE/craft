@@ -1,0 +1,56 @@
+import base
+import utils
+import os
+
+
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = False
+        self.defaultTarget = '0.6.3'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
+    
+class subclass(base.baseclass):
+    def __init__(self):
+        base.baseclass.__init__( self, "" )
+        self.subinfo = subinfo()
+
+    def unpack( self ):
+        if utils.verbose() >= 1
+            print "libassuan unpack called"
+        # do the svn fetch/update
+        repo = "svn://cvs.gnupg.org/libassuan/trunk"
+        self.svnFetch( repo )
+
+        utils.cleanDirectory( self.workdir )
+
+        # now copy the tree below destdir/trunk to workdir
+        srcdir = os.path.join( self.svndir, "trunk" )
+        destdir = os.path.join( self.workdir, "libassuan" )
+        utils.copySrcDirToDestDir( srcdir, destdir )
+
+        os.chdir( self.workdir )
+        self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
+        self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
+#    os.system( "patch -p0 < libassuan_cmake.diff" )
+
+        return True
+
+
+    def compile( self ):
+        return self.kdeCompile()
+
+    def install( self ):
+        return self.kdeInstall()
+
+    def make_package( self ):
+
+    # now do packaging with kdewin-packager
+        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+
+        return True
+
+if __name__ == '__main__':
+    subclass().execute()
