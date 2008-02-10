@@ -12,11 +12,6 @@ http://82.149.170.66/kde-windows/repository/win32libs/single/boost-headers-1.34-
 http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.4-6-bin.tar.bz2
 http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.4-6-lib.tar.bz2
 
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-bin.tar.bz2
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-lib.tar.bz2
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-lib.tar.bz2
-
 http://82.149.170.66/kde-windows/repository/win32libs/single/expat-2.0.1-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/expat-2.0.1-lib.zip
 
@@ -56,11 +51,6 @@ http://82.149.170.66/kde-windows/repository/win32libs/single/openslp-1.2.1-2-lib
 http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-msvc-7.6-1-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-msvc-7.6-1-lib.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-lib.tar.bz2
-
 http://82.149.170.66/kde-windows/repository/win32libs/single/redland-1.0.3-5-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/redland-1.0.3-5-lib.zip
 
@@ -76,6 +66,23 @@ http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-bin.zip
 http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 """
 
+if os.getenv("KDECOMPILER") == "mingw":
+    SRC_URI = SRC_URI + """
+http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-bin.tar.bz2
+http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-lib.tar.bz2
+
+http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-bin.tar.bz2
+http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-lib.tar.bz2
+"""
+else:
+    SRC_URI = SRC_URI + """
+http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2
+http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-lib.tar.bz2
+
+http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-msvc-7.6-1-bin.tar.bz2
+http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-msvc-7.6-1-lib.tar.bz2
+"""
+
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['HEAD'] = SRC_URI
@@ -86,7 +93,7 @@ class subinfo(info.infoclass):
     
 class subclass(base.baseclass):
   def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+    base.baseclass.__init__( self, "" )
     if self.traditional:
         self.instdestdir = "win32libs"
     else:
