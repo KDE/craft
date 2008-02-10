@@ -20,8 +20,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.6.3'
     
     def setDependencies( self ):
-        self.hardDependencies['testing/fontconfig-src'] = 'default'
-        self.hardDependencies['testing/freetype-src'] = 'default'
+        self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
+        self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
         self.hardDependencies['testing/poppler-data'] = 'default'
     
 class subclass(base.baseclass):
