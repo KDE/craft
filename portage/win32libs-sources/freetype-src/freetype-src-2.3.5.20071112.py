@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.createCombinedPackage = True
+        self.createCombinedPackage = False
         self.subinfo = subinfo()
 
     def unpack( self ):
