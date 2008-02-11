@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/ruby'] = 'default'
         self.hardDependencies['extragear/phonon'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdebase'] = 'default'
+        self.hardDependencies['kde/kdebase-runtime'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
@@ -32,7 +32,11 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "amarok", os.path.basename(sys.argv[0]).replace("amarok-", "").replace(".py", ""), True )
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "amarok", self.buildTarget, True )
+        else:
+            return self.doPackaging( "amarok", os.path.basename(sys.argv[0]).replace("amarok-", "").replace(".py", ""), True )
+
 
 if __name__ == '__main__':		
     subclass().execute()
