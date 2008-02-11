@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
         self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdebase-runtime-4.0.60.tar.bz2'
         self.targetInstSrc['4.0.60'] = 'kdebase-runtime-4.0.60'
+        self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdebase-runtime-4.0.61.tar.bz2'
+        self.targetInstSrc['4.0.61'] = 'kdebase-runtime-4.0.61'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

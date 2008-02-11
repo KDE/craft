@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdebase/workspace'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/workspace'
-        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdebase-workspace-4.0.60.tar.bz2'
-        self.targetInstSrc['4.0.60'] = 'kdebase-workspace-4.0.60'
+        self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdebase-workspace-4.0.61.tar.bz2'
+        self.targetInstSrc['4.0.61'] = 'kdebase-workspace-4.0.61'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
