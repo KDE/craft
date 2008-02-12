@@ -1,6 +1,7 @@
 import base
 import os
 import utils
+import shutil
 import info
 
 SRC_URI= """
@@ -106,6 +107,14 @@ class subclass(base.baseclass):
     srcdir  = os.path.join( self.workdir, "include", "boost-1_34" )
     destdir = os.path.join( self.workdir, "include", "boost-1_34_0" )
     utils.copySrcDirToDestDir( srcdir, destdir )
+    if self.compiler == "mingw":
+        srcfile = os.path.join( self.workdir, "lib", "libdbus-1.dll.a" )
+        destfile = os.path.join( self.workdir, "lib", "libdbus-1d.dll.a" )
+        shutil.copy( srcfile, destfile )
+        srcfile = os.path.join( self.workdir, "bin", "libdbus-1.dll" )
+        destfile = os.path.join( self.workdir, "bin", "libdbus-1d.dll" )
+        shutil.copy( srcfile, destfile )
+
     return True
 
 if __name__ == '__main__':
