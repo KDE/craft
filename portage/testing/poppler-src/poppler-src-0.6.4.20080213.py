@@ -4,8 +4,8 @@ import utils
 import info
 
 PACKAGE_NAME         = "poppler"
-PACKAGE_VER          = "0.6.3"
-PACKAGE_FULL_VER     = "0.6.3"
+PACKAGE_VER          = "0.6.4"
+PACKAGE_FULL_VER     = "0.6.4"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "poppler"
 
@@ -15,9 +15,9 @@ PACKAGE_DLL_NAME     = "poppler"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.6.3'] = 'http://poppler.freedesktop.org/poppler-0.6.3.tar.gz'
-        self.targetInstSrc['0.6.3'] = 'poppler-0.6.3'
-        self.defaultTarget = '0.6.3'
+        self.targets['0.6.4'] = 'http://poppler.freedesktop.org/poppler-0.6.4.tar.gz'
+        self.targetInstSrc['0.6.4'] = 'poppler-0.6.4'
+        self.defaultTarget = '0.6.4'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
@@ -27,7 +27,6 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
-        self.createCombinedPackage = True
         self.subinfo = subinfo()
 
     def unpack( self ):
