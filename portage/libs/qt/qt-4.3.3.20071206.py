@@ -10,18 +10,16 @@ PACKAGE_VER          = "4.3.3"
 PACKAGE_FULL_VER     = "4.3.3-2"
 PACKAGE_FULL_NAME    = "%s-win-opensource-src-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 
-#DEPEND = """
-#dev-util/win32libs
-#virtual/base
-#"""
-
-SRC_URI= """
-ftp://ftp.tu-chemnitz.de/pub/Qt/qt/source/""" + PACKAGE_FULL_NAME + """.zip
-"""
+# ok we need something more here
+# dbus-lib
+# openssl-lib
+# we can't use kde-root/include because we get conflicting includes then
+# we have to make sure that the compiler picks up the correct ones!
+# --> fetch the two libs above, unpack them into a separate folder
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.3.3-2'] = SRC_URI
+        self.targets['4.3.3-2'] = 'ftp://ftp.tu-chemnitz.de/pub/Qt/qt/source/' + PACKAGE_FULL_NAME + '.zip'
         self.targetInstSrc['4.3.3-2'] = "qt-win-opensource-src-4.3.3" + "-" + os.getenv( "KDECOMPILER" )
         self.svnTargets['qt-copy'] = 'trunk/qt-copy'
         self.defaultTarget = '4.3.3-2'
@@ -35,7 +33,34 @@ class subclass(base.baseclass):
         self.instsrcdir = "qt-win-opensource-src-" + self.compiler
         self.subinfo = subinfo()
 
+    def fetch( self ):
+        if not base.baseclass.fetch( self ):
+            return False
+        openssl = "http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-lib.zip"
+        if self.compiler == "msvc2005":
+            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2"
+        elif self.compiler == "mingw":
+            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-lib.tar.bz2"
+
+        if not utils.getFiles( openssl, self.downloaddir ):
+            return False
+        if not utils.getFiles( dbuslib, self.downloaddir ):
+            return False
+        return True
+
     def unpack( self ):
+        utils.cleanDirectory( self.workdir )
+        # unpack our two external dependencies
+        thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
+        files = "openssl-0.9.8g-1-lib.zip "
+        if self.compiler == "msvc2005":
+            files += "dbus-msvc-1.1.2.20071228-lib.tar.bz2"
+        elif self.compiler == "mingw":
+            files += "dbus-mingw-1.1.2.20071228-lib.tar.bz2"
+        if not utils.unpackFiles( self.downloaddir, files.split(), thirdparty_dir ):
+            return False
+
+        # and now qt
         if self.buildTarget == '4.3.3-2':
             qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
             qtsrcdir_tmp = os.path.join( self.workdir, PACKAGE_FULL_NAME )
@@ -83,25 +108,26 @@ class subclass(base.baseclass):
             
             utils.cleanDirectory( qtsrcdir )
             self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
-            
+
+            # noCopy isn't possible for qt
             if self.noCopy:
-                srcdir = os.path.join(self.kdesvndir, self.kdeSvnPath() ).replace("/", "\\")
+                srcdir = os.path.join(self.kdesvndir, self.kdeSvnPath() )
                 utils.copySrcDirToDestDir( srcdir, qtsrcdir )
 
             # disable demos and examples
             sedcommand = r""" -e "s:SUBDIRS += examples::" -e "s:SUBDIRS += demos::" """
             utils.sedFile( qtsrcdir, "projects.pro", sedcommand )
 
-            # patch to disable building of pbuilder_pbx.cpp, as it takes ages
-            path = os.path.join( qtsrcdir, "qmake" )
-            file = "Makefile.win32-g++"
-            sedcommand = """ -e "s/pbuilder_pbx.o//" """
-#            utils.sedFile( path, file, sedcommand )
-            
+            # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
+            cmd = "cd %s && patch -p0 < %s" % \
+              ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
+            self.system( cmd ) and utils.die( "qt unpack failed" )
+
         return True
 
     def compile( self ):
         qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
+        thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
         os.chdir( qtsrcdir )
 
         # so that the mkspecs can be found, when -prefix is set
@@ -114,18 +140,6 @@ class subclass(base.baseclass):
                            "though. If you're not sure what to do, kill the current process with Ctrl+C and ask\n" \
                            "on irc or on the mailing list."\
                            "************************************************************************************\n" )
-        if self.traditional:
-            win32incdir = os.path.join( self.rootdir, "win32libs", "include" ).replace( "\\", "/" )
-            win32libdir = os.path.join( self.rootdir, "win32libs", "lib" ).replace( "\\", "/" )
-        else:
-            win32incdir = os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
-            win32libdir = os.path.join( self.rootdir, "lib" ).replace( "\\", "/" )
-
-        # recommended from README.qt-copy
-        #  "configure.exe -prefix ..\..\image\qt -platform win32-g++ " \
-        #  "-qt-gif -no-exceptions -debug -system-zlib -system-libpng -system-libmng " \
-        #  "-system-libtiff -system-libjpeg -openssl " \
-        #  "-I %s -L %s" % ( win32incdir, win32libdir )
 
         # configure qt
         # prefix = os.path.join( self.rootdir, "qt" ).replace( "\\", "/" )
@@ -145,11 +159,13 @@ class subclass(base.baseclass):
         os.environ[ "USERIN" ] = "y"
         os.chdir( qtsrcdir )
         command = r"echo y | configure.exe -platform %s -prefix %s " \
-          "-qdbus -qt-gif -qt-libpng " \
-          "-system-libjpeg -system-libtiff -openssl " \
+          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
+          "-qdbus -openssl " \
           "-fast -no-vcproj -no-dsp " \
           "-I %s -L %s " % \
-          ( platform, prefix, win32incdir, win32libdir )
+          ( platform, prefix,
+            os.path.join( thirdparty_dir, "include" ),
+            os.path.join( thirdparty_dir, "lib" ) )
         print "command: ", command
         self.system( command ) or utils.die( "qt configure failed" )
 
