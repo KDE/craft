@@ -170,12 +170,11 @@ def unpackFile( downloaddir, filename, workdir ):
         else:
             error( "unpacking %s" % myext )
             return False
-    else:
-        if ( ext == ".exe" ):
-            warning( "unpack ignoring exe file" )
-            return True
-        error( "dont know how to unpack this file:", filename )
-        return False
+    elif ( ext == ".exe" ):
+        warning( "unpack ignoring exe file" )
+        return True
+    error( "dont know how to unpack this file: %s" % filename )
+    return False
 
 def unTar( file, destdir ):
     if verbose() > 1:
