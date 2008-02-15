@@ -145,9 +145,9 @@ class subclass(base.baseclass):
         os.environ[ "USERIN" ] = "y"
         os.chdir( qtsrcdir )
         command = r"echo y | configure.exe -platform %s -prefix %s " \
-          "-qdbus -qt-gif -no-exceptions -qt-libpng " \
+          "-qdbus -qt-gif -qt-libpng " \
           "-system-libjpeg -system-libtiff -openssl " \
-          "-fast -no-vcproj -no-dsp -no-style-windowsvista " \
+          "-fast -no-vcproj -no-dsp " \
           "-I %s -L %s " % \
           ( platform, prefix, win32incdir, win32libdir )
         print "command: ", command
