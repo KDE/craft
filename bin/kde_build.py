@@ -180,7 +180,10 @@ class kde_interface:
             print "noCopy       : %s" % self.noCopy
             print "kdeSvnPath() : %s" % self.kdeSvnPath().replace("/", "\\")
         if not ( self.noCopy and self.kdeSvnPath() ) :
-            source_path = "..\\%s" % self.instsrcdir
+            if self.kdeSvnPath():
+                source_path = "..\\%s" % self.kdeSvnPath().split('/')[-1]
+            else:
+                source_path = "..\\%s" % self.instsrcdir
         else:
             source_path = "%s" % os.path.join(self.kdesvndir, self.kdeSvnPath() ).replace("/", "\\")
 #        if( not self.instsrcdir == "" ):
