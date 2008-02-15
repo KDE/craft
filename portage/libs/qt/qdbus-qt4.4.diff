@@ -1,7 +1,7 @@
---- tools\qdbus\qdbuscpp2xml\qdbuscpp2xml.pro.orig	2007-12-28 10:22:08.133250000 +0100
-+++ tools\qdbus\qdbuscpp2xml\qdbuscpp2xml.pro	2007-12-24 13:02:33.218750000 +0100
+--- tools\qdbus\qdbuscpp2xml\qdbuscpp2xml.pro.orig	2008-02-15 21:28:36.197500000 +0100
++++ tools\qdbus\qdbuscpp2xml\qdbuscpp2xml.pro	2008-02-15 21:29:09.478750000 +0100
 @@ -2,8 +2,8 @@
- DESTDIR = ../../../../bin
+ DESTDIR = ../../../bin
  TARGET = qdbuscpp2xml
  QT = core xml
 -CONFIG += qdbus
@@ -11,10 +11,10 @@
  win32:CONFIG += console
  
  target.path=$$[QT_INSTALL_BINS]
---- tools\qdbus\qdbusxml2cpp\qdbusxml2cpp.pro.orig	2007-12-28 10:22:31.836375000 +0100
-+++ tools\qdbus\qdbusxml2cpp\qdbusxml2cpp.pro	2007-12-24 13:02:40.437500000 +0100
+--- tools\qdbus\qdbusxml2cpp\qdbusxml2cpp.pro.orig	2008-02-15 21:28:36.416250000 +0100
++++ tools\qdbus\qdbusxml2cpp\qdbusxml2cpp.pro	2008-02-15 21:29:09.510000000 +0100
 @@ -2,8 +2,8 @@
- DESTDIR = ../../../../bin
+ DESTDIR = ../../../bin
  TARGET = qdbusxml2cpp
  QT = core xml
 -CONFIG += qdbus
@@ -24,11 +24,11 @@
  win32:CONFIG += console
  
  target.path=$$[QT_INSTALL_BINS]
---- tools\qdbus\qdbusviewer\qdbusviewer.pro.orig	2007-12-24 12:03:07.593750000 +0100
-+++ tools\qdbus\qdbusviewer\qdbusviewer.pro	2007-12-28 10:23:24.961375000 +0100
+--- tools\qdbus\qdbusviewer\qdbusviewer.pro.orig	2008-02-15 21:40:44.013500000 +0100
++++ tools\qdbus\qdbusviewer\qdbusviewer.pro	2008-02-15 21:40:44.794750000 +0100
 @@ -14,7 +14,8 @@
  
- DESTDIR = ../../../../bin
+ DESTDIR = ../../../bin
  
 -CONFIG += qdbus
 +CONFIG += qdbus release

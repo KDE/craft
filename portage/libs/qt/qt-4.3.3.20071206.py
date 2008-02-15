@@ -92,17 +92,17 @@ class subclass(base.baseclass):
             # help qt a little bit :)
             cmd = "cd %s && patch -p0 < %s" % \
               ( qtsrcdir, os.path.join( self.packagedir, "qt-4.3.3.diff" ) )
-            self.system( cmd ) and utils.die( "qt unpack failed" )
+            self.system( cmd )
 
             # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
             cmd = "cd %s && patch -p0 < %s" % \
               ( qtsrcdir, os.path.join( self.packagedir, "qdbus.diff" ) )
-            self.system( cmd ) and utils.die( "qt unpack failed" )
+            self.system( cmd )
 
             # install qtestlib into /bin
             cmd = "cd %s && patch -p0 < %s" % \
               ( qtsrcdir, os.path.join( self.packagedir, "qtestlib.diff" ) )
-            self.system( cmd ) and utils.die( "qt unpack failed" )
+            self.system( cmd )
         else:
             qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
             
@@ -121,7 +121,7 @@ class subclass(base.baseclass):
             # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
             cmd = "cd %s && patch -p0 < %s" % \
               ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
-            self.system( cmd ) and utils.die( "qt unpack failed" )
+            self.system( cmd )
 
         return True
 
@@ -167,10 +167,10 @@ class subclass(base.baseclass):
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
         print "command: ", command
-        self.system( command ) or utils.die( "qt configure failed" )
+        self.system( command )
 
         # build qt
-        self.system( self.cmakeMakeProgramm ) or utils.die( "qt make failed" )
+        self.system( self.cmakeMakeProgramm )
 
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
@@ -182,7 +182,7 @@ class subclass(base.baseclass):
         qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
         os.chdir( qtsrcdir )
 
-        self.system( "%s install" % self.cmakeMakeProgramm ) or utils.die( "qt make install failed" )
+        self.system( "%s install" % self.cmakeMakeProgramm )
 
         src = os.path.join( self.packagedir, "qt.conf" )
         dst = os.path.join( self.imagedir, self.instdestdir, "bin", "qt.conf" )
