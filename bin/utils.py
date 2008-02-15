@@ -522,7 +522,10 @@ def printTargets( category, package, version ):
         print "importing file %s" % getFilename( category, package, version )
     mod = __import__( getFilename( category, package, version ) )
     packageInfo = mod.subinfo()
-    for i in packageInfo.svnTargets.keys():
+    svnTargetsList = packageInfo.svnTargets.keys()
+    if not packageInfo.svnTargets['svnHEAD']:
+        svnTargetsList.remove('svnHEAD')
+    for i in svnTargetsList:
         if packageInfo.defaultTarget == i:
             print '*',
         else:
