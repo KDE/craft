@@ -96,7 +96,7 @@ class subclass(base.baseclass):
             path = os.path.join( qtsrcdir, "qmake" )
             file = "Makefile.win32-g++"
             sedcommand = """ -e "s/pbuilder_pbx.o//" """
-            utils.sedFile( path, file, sedcommand )
+#            utils.sedFile( path, file, sedcommand )
             
         return True
 
