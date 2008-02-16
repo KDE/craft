@@ -69,8 +69,8 @@ http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 
 if os.getenv("KDECOMPILER") == "mingw":
     SRC_URI = SRC_URI + """
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-bin.tar.bz2
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-lib.tar.bz2
+http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-bin.tar.bz2
+http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-lib.tar.bz2
 
 http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-bin.tar.bz2
 http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-lib.tar.bz2

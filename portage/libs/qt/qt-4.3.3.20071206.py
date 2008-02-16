@@ -40,7 +40,7 @@ class subclass(base.baseclass):
         if self.compiler == "msvc2005":
             dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2"
         elif self.compiler == "mingw":
-            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20071228-lib.tar.bz2"
+            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-lib.tar.bz2"
 
         if not utils.getFiles( openssl, self.downloaddir ):
             return False
@@ -166,6 +166,8 @@ class subclass(base.baseclass):
           ( platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
+        if not self.buildTarget == '4.3.3-2':
+            command = command + " -no-webkit "
         print "command: ", command
         self.system( command )
 

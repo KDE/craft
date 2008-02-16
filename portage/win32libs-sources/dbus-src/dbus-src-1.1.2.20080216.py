@@ -6,7 +6,7 @@ import info
 
 
 PACKAGE_NAME = "dbus"
-PACKAGE_FULL_VER = "1.1.2.20071228"
+PACKAGE_FULL_VER = "1.1.2.20080216"
 
 
 class subinfo(info.infoclass):
