@@ -38,7 +38,7 @@ class subclass(base.baseclass):
             return False
         openssl = "http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-lib.zip"
         if self.compiler == "msvc2005":
-            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2"
+            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-lib.tar.bz2"
         elif self.compiler == "mingw":
             dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-lib.tar.bz2"
 
@@ -56,7 +56,7 @@ class subclass(base.baseclass):
         if self.compiler == "msvc2005":
             files += "dbus-msvc-1.1.2.20071228-lib.tar.bz2"
         elif self.compiler == "mingw":
-            files += "dbus-mingw-1.1.2.20071228-lib.tar.bz2"
+            files += "dbus-mingw-1.1.2.20080216-lib.tar.bz2"
         if not utils.unpackFiles( self.downloaddir, files.split(), thirdparty_dir ):
             return False
 
