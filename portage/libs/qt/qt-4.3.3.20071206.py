@@ -166,8 +166,6 @@ class subclass(base.baseclass):
           ( platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
-        if not self.buildTarget == '4.3.3-2':
-            command = command + " -no-webkit "
         print "command: ", command
         self.system( command )
 
