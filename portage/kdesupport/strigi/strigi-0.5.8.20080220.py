@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
+        self.svnTargets['0.5.8'] = 'tags/strigi/strigi/0.5.8'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
         self.defaultTarget = '0.5.7'
 
@@ -41,9 +42,10 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-            return self.doPackaging( "strigi", "0.5.7-1", True )
+        if self.buildTarget == "svnHEAD":
+            return self.doPackaging( "strigi", os.path.basename(sys.argv[0]).replace("strigi-", ""), True )
         else:
-            return self.doPackaging( "strigi", os.path.basename(sys.argv[0]).replace("strigi-", "").replace(".py", ""), True )
+            return self.doPackaging( "strigi", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
