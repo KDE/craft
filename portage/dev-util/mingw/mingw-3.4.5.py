@@ -23,6 +23,7 @@ http://heanet.dl.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-2.tar.gz
 http://heanet.dl.sourceforge.net/sourceforge/mingw/mingw-runtime-3.13.tar.gz
 http://heanet.dl.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
 http://heanet.dl.sourceforge.net/sourceforge/mingw/gdb-6.7.50.20071127-mingw.tar.bz2
+http://heanet.dl.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 """
 
 class subinfo(info.infoclass):
