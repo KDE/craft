@@ -10,6 +10,10 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegames'
         self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdegames-4.0.61.tar.bz2'
         self.targetInstSrc['4.0.61'] = 'kdegames-4.0.61'
+        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdegames-4.0.62.tar.bz2'
+        self.targetInstSrc['4.0.62'] = 'kdegames-4.0.62'
+        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdegames-4.0.63.tar.bz2'
+        self.targetInstSrc['4.0.63'] = 'kdegames-4.0.63'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

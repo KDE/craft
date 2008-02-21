@@ -9,6 +9,10 @@ class subinfo(info.infoclass):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdegraphics'
         self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdegraphics-4.0.61.tar.bz2'
         self.targetInstSrc['4.0.61'] = 'kdegraphics-4.0.61'
+        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdegraphics-4.0.62.tar.bz2'
+        self.targetInstSrc['4.0.62'] = 'kdegraphics-4.0.62'
+        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdegraphics-4.0.63.tar.bz2'
+        self.targetInstSrc['4.0.63'] = 'kdegraphics-4.0.63'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics'
         self.defaultTarget = 'svnHEAD'
     

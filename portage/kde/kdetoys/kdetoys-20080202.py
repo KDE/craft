@@ -12,6 +12,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['4.0.60'] = 'kdetoys-4.0.60'
         self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdetoys-4.0.61.tar.bz2'
         self.targetInstSrc['4.0.61'] = 'kdetoys-4.0.61'
+        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdetoys-4.0.62.tar.bz2'
+        self.targetInstSrc['4.0.62'] = 'kdetoys-4.0.62'
+        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdetoys-4.0.63.tar.bz2'
+        self.targetInstSrc['4.0.63'] = 'kdetoys-4.0.63'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
