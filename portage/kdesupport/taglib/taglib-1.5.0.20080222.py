@@ -32,7 +32,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         self.instdestdir = "kde"
-        return self.doPackaging( "taglib", "1.4.0-4", True )
+        return self.doPackaging( "taglib", "1.5.0-1", True )
 
 if __name__ == '__main__':
     subclass().execute()
