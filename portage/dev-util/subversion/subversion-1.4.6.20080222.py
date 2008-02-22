@@ -1,13 +1,13 @@
 import base
 import info
 
-SRC_URI = "http://subversion.tigris.org/downloads/1.4.5-win32/apache-2.0/svn-win32-1.4.5.zip"
+SRC_URI = "http://subversion.tigris.org/files/documents/15/41094/svn-win32-1.4.6.zip"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.4.5'] = SRC_URI
-        self.targetInstSrc['1.4.5'] = "svn-win32-1.4.5"
-        self.defaultTarget = '1.4.5'
+        self.targets['1.4.6'] = SRC_URI
+        self.targetInstSrc['1.4.6'] = "svn-win32-1.4.6"
+        self.defaultTarget = '1.4.6'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
