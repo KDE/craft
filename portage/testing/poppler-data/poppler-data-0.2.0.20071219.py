@@ -28,6 +28,7 @@ class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = PACKAGE_FULL_NAME
+        self.createCombinedPackage = True
         self.subinfo = subinfo()
 
     def unpack( self ):
