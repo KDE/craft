@@ -5,11 +5,6 @@ from utils import die
 import os
 import info
 
-PACKAGE_NAME         = "qt"
-PACKAGE_VER          = "4.3.3"
-PACKAGE_FULL_VER     = "4.3.3-2"
-PACKAGE_FULL_NAME    = "%s-win-opensource-src-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-
 # ok we need something more here
 # dbus-lib
 # openssl-lib
@@ -19,10 +14,10 @@ PACKAGE_FULL_NAME    = "%s-win-opensource-src-%s" % ( PACKAGE_NAME, PACKAGE_VER 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.3.3-2'] = 'ftp://ftp.tu-chemnitz.de/pub/Qt/qt/source/' + PACKAGE_FULL_NAME + '.zip'
-        self.targetInstSrc['4.3.3-2'] = "qt-win-opensource-src-4.3.3" + "-" + os.getenv( "KDECOMPILER" )
+        self.targets['4.3.3'] = 'ftp://ftp.tu-chemnitz.de/pub/Qt/qt/source/qt-win-opensource-src-4.3.3.zip'
+        self.targetInstSrc['4.3.3'] = "qt-win-opensource-src-4.3.3-" + os.getenv( "KDECOMPILER" )
         self.svnTargets['qt-copy'] = 'trunk/qt-copy'
-        self.defaultTarget = '4.3.3-2'
+        self.defaultTarget = 'qt-copy'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -61,7 +56,7 @@ class subclass(base.baseclass):
             return False
 
         # and now qt
-        if self.buildTarget == '4.3.3-2':
+        if self.buildTarget == '4.3.3':
             qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
             qtsrcdir_tmp = os.path.join( self.workdir, PACKAGE_FULL_NAME )
 
@@ -133,7 +128,7 @@ class subclass(base.baseclass):
         # so that the mkspecs can be found, when -prefix is set
         os.putenv( "QMAKEPATH", qtsrcdir )
 
-        if self.buildTarget == '4.3.3-2':
+        if self.buildTarget == '4.3.3':
             utils.warning( "************************************************************************************\n" \
                            "This Target might be deprecated and is going to be replaced with the target qt-copy.\n" \
                            "Since qt-copy might not have best stability, you might choose to install this target\n" \
@@ -191,7 +186,9 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+        if self.buildTarget == '4.3.3':
+           return self.doPackaging( "qt", "4.3.3-2", False )
+        return self.doPackaging( "qt", "4.4.0-1", False )
 
 if __name__ == '__main__':
     subclass().execute()
