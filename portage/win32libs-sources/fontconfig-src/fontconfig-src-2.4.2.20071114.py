@@ -6,15 +6,15 @@ import info
 
 PACKAGE_NAME         = "fontconfig"
 PACKAGE_VER          = "2.4.2"
-PACKAGE_FULL_VER     = "2.4.2-1"
+PACKAGE_FULL_VER     = "2.4.2-2"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libfontconfig"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.4.2'] = "http://fontconfig.org/release/" + PACKAGE_FULL_NAME + ".tar.gz"
-        self.targetInstSrc['2.4.2'] = PACKAGE_FULL_NAME
-        self.defaultTarget = '2.4.2'
+        self.targets['2.4.2-2'] = "http://fontconfig.org/release/" + PACKAGE_FULL_NAME + ".tar.gz"
+        self.targetInstSrc['2.4.2-2'] = PACKAGE_FULL_NAME
+        self.defaultTarget = '2.4.2-2'
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/kdewin32'] = 'default'
@@ -45,13 +45,6 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        # auto-create both import libs with the help of pexports
-        #self.stripLibs( PACKAGE_DLL_NAME )
-
-        # auto-create both import libs with the help of pexports
-        #self.createImportLibs( PACKAGE_DLL_NAME )
-
-        # now do packaging with kdewin-packager
         self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
 
         return True
