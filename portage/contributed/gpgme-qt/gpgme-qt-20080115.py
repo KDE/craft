@@ -45,7 +45,7 @@ class subclass(base.baseclass):
     def make_package( self ):
 
         # now do packaging with kdewin-packager
-        self.doPackaging( "gpgme-qt", "r1304", True )
+        self.doPackaging( "gpgme-qt", "20080115", True )
 
         return True
     
