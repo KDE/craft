@@ -824,11 +824,12 @@ diff -N -r -u gpgme-qt-orig/gpgme/gpgme.def gpgme-qt/gpgme/gpgme.def
 diff -N -r -u gpgme-qt-orig/gpgme/gpgme.h gpgme-qt/gpgme/gpgme.h
 --- gpgme-qt-orig/gpgme/gpgme.h	2008-01-21 22:48:20.376076500 +0100
 +++ gpgme-qt/gpgme/gpgme.h	2008-01-21 22:49:20.157326500 +0100
-@@ -34,7 +34,10 @@
+@@ -34,7 +34,11 @@
  
  #ifdef _MSC_VER
    typedef long off_t;
 -  typedef long ssize_t;
++  typedef int pid_t;
 +  #ifndef _SSIZE_T_DEFINED
 +  #define _SSIZE_T_DEFINED
 +    typedef long ssize_t;
@@ -866,3 +867,25 @@ diff -N -r -u gpgme-qt-orig/gpgme/w32-qt-io.cpp gpgme-qt/gpgme/w32-qt-io.cpp
  			 GENERIC_READ|GENERIC_WRITE,
  			 FILE_SHARE_READ|FILE_SHARE_WRITE,
  			 &sa,
+diff -N -r -u gpgme-qt-orig/gpgme/w32-sema.c gpgme-qt/gpgme/w32-sema.c
+--- gpgme-qt-orig/gpgme/w32-sema.c	2008-01-21 22:48:20.376076500 +0100
++++ gpgme-qt/gpgme/w32-sema.c	2008-01-21 22:49:20.172951500 +0100
+@@ -29,7 +29,6 @@
+ #include <errno.h>
+ #include <signal.h>
+ #include <fcntl.h>
+-#include <sys/time.h>
+ #include <sys/types.h>
+ #include <windows.h>
+ #include <io.h>
+diff -N -r -u gpgme-qt-orig/gpgme/debug.c gpgme-qt/gpgme/debug.c
+--- gpgme-qt-orig/gpgme/debug.c	2008-01-21 22:48:20.376076500 +0100
++++ gpgme-qt/gpgme/debug.c	2008-01-21 22:49:20.172951500 +0100
+@@ -26,7 +26,6 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
+-#include <unistd.h>
+ #include <ctype.h>
+ #include <errno.h>
+ #ifndef HAVE_DOSISH_SYSTEM
