@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
+        self.targets['2.0.0-5'] = 'http://delta.affinix.com/download/qca/2.0/qca-2.0.0.tar.bz2'
+        self.targetInstSrc['2.0.0-5'] = 'qca-2.0.0'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
         self.defaultTarget = 'svnHEAD'
 
@@ -33,11 +35,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
+        if self.buildTarget == "svnHEAD":
             self.instdestdir = "kde"
-            return self.doPackaging( "qca", "2.0.0-4", True )
+            return self.doPackaging( "qca", os.path.basename(sys.argv[0]).replace("qca-", ""), True )
         else:
-            return self.doPackaging( "qca", os.path.basename(sys.argv[0]).replace("qca-", "").replace(".py", ""), True )
-
+            return self.doPackaging( "qca", self.buildTarget, True )
 if __name__ == '__main__':
     subclass().execute()
