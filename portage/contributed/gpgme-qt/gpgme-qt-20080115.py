@@ -45,7 +45,7 @@ class subclass(base.baseclass):
     def make_package( self ):
 
         # now do packaging with kdewin-packager
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        self.doPackaging( "gpgme-qt", "svn", True )
 
         return True
     
