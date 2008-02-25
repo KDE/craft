@@ -15,6 +15,7 @@ call ..\etc\kdesettings.bat
 
 set PATH=%KDEROOT%\emerge\bin;%PATH%
 SET KDEWIN_DIR=%KDEROOT%
+set XDG_DATA_DIRS=%KDEROOT%\share
 if %KDECOMPILER% == mingw ( call :path-mingw )
 
 if %directory_layout% == installer ( 
