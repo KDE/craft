@@ -16,7 +16,11 @@ call ..\etc\kdesettings.bat
 set PATH=%KDEROOT%\emerge\bin;%PATH%
 SET KDEWIN_DIR=%KDEROOT%
 set XDG_DATA_DIRS=%KDEROOT%\share
-if %KDECOMPILER% == mingw ( call :path-mingw )
+if %KDECOMPILER% == mingw ( 
+    call :path-mingw
+) else ( 
+    call :path-msvc 
+)
 
 if %directory_layout% == installer ( 
     call :path-installer
@@ -56,4 +60,12 @@ goto :eof
     
 :path-mingw
     set PATH=%KDEROOT%\mingw\bin;%PATH%
+    goto :eof
+
+:path-msvc
+    if defined PSDKDIR ( 
+        set PATH=%PSDKDIR%\bin;%PATH%
+        set INCLUDE=%PSDKDIR%\Include;%INCLUDE%
+        set LIB=%PSDKDIR%\Lib;%LIB%
+    )
     goto :eof
