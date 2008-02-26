@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
         self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
-        self.hardDependencies['testing/poppler-data'] = 'default'
+        self.hardDependencies['data/poppler-data'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
