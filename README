@@ -1,5 +1,12 @@
 This is the readme for the emerge scripts to build kde on windows.
 
+contents:
+1. step-by-step guide
+2. emerge options
+3. the environment and the directory layout
+4. remarks to the step-by-step guide
+5. Authors, Contact and License
+
 1. step-by-step guide
     - Get Python >= 2.5 ( e.g. from http://www.python.org ).
     - If you can read this file you probably already got the svn-sources.
@@ -41,7 +48,7 @@ options:
                                 be installed. Currently you don't need to
                                 enter the category and package: only the
                                 package will be enough.
---print-targets packagename     This will print all the different targets
+--print-targets                 This will print all the different targets
                                 one package can contain: different releases
                                 might have different tags that are build as
                                 targets of a package. As an example:
@@ -76,6 +83,13 @@ build steps:
                     working manifest directory.
 
 flags:
+-i          ignore install: using this option will install a package over an
+            existing install. This can be useful if you want to check some
+            new code and your last build isn't that old. This option might
+            cause some problems though: if you want to update Qt e.g. the
+            building of qmake depends on the existance on the system - thus
+            using -i will result in a wrong qt package (as has happened when
+            updating from qt4.3 to qt4.4).
 -p          probing: emerge will only look which files it has to build
             according to the list of installed files and according to the
             dependencies of the package.
@@ -87,10 +101,9 @@ flags:
             cmake, make and other programs that are used. verbose level 2
             adds an option VERBOSE=1 to make and emerge is more verbose
             highest level is verbose level 3.
---offline   do not try to connect to the internet: KDE packages will try to
-            use an existing source tree and other packages would try to use
-            existing packages in the download directory. If that doesn't
-            work, the build will fail.
+--noclean   this option will try to use an existing build directory. Please
+            handle this option with care - it will possibly break if the
+            directory isn't existing.
 --nocopy    this option is deprecated. In older releases emerge would have
             copied everything from the SVN source tree to a source directory
             under %KDEROOT%\tmp - currently nocopy is applied by default if
@@ -98,13 +111,18 @@ flags:
             EMERGE_NOCOPY to "True" might slow down the build process,
             irritate you and increase the disk space roughly by the size of
             SVN source tree.
+--offline   do not try to connect to the internet: KDE packages will try to
+            use an existing source tree and other packages would try to use
+            existing packages in the download directory. If that doesn't
+            work, the build will fail.
+--update    this option is the same as '-i --noclean'. It will update a single
+            package (that is already installed. SE: I will change this sooner
+            or later)
             
 Internal options or options that aren't implemented yet:
 PLEASE DO NOT USE!
 --version-dir
 --version-package
---noclean
---clean
 
 3. the environment and the directory layout
 For running emerge in a preset environment, please use the kdeenv.bat. this
