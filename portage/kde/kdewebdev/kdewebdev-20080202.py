@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.softDependencies['kde/kdevplatform'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self ):
@@ -30,6 +31,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        # if you want to build quanta, you need to build kdevplatform as well - this is not build by default!!!
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_quanta=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kfilereplace=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kxsldbg=OFF "
