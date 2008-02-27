@@ -24,9 +24,6 @@ for ideas and code how to do so, look at the gentoo portage system.
   this is needed so that e.g. 'emerge.py --target=4.0 kdebase' will build only the 4.0 target and will
   not depend on the svnHEAD.
 
-- implement an option --update which updates installed svn packages (e.g. with target svnHEAD)
-  this will replace 'emerge.py --unmerge package --noclean package'
-
 - make the internal system target aware
   the 4.0 branch definitely needs this since it should neither depend on trunk of kdesupport nor should
   we introduce new static packages for that purpose.
@@ -39,10 +36,23 @@ for ideas and code how to do so, look at the gentoo portage system.
 
 - implement a function for making the settings readable by the app without the use environment vars
 
-- make up a package for the installer
+- make up a package for the installer so that emerge itself can be distributed with the installer.
+  This requires a real release handling for the 'product' emerge.
+  
+- implement a test/status page. gentoo emerge uses --info option to give that out.
+  maybe some self tests could be included into a small test package. (could this test package be released independently?)
+
+- support additional portage directories - those have to be compatible to the original one...
+
 - as well with the installer:
     can there be a custom app to translate .desktop files to .lnk files?
 ## kdewin-menubuilder takes over this task for now, might be released soon in a better version
+
+## - implement an option --update which updates installed svn packages (e.g. with target svnHEAD)
+##   this will replace 'emerge.py --unmerge package --noclean package'
+##
+## implemented as said above; the only thing is that passing the environment to the next process has to 
+## be restricted - this can hopefully be fixed together with the option parser.
 
 ## - implement "emerge --version=version":
 ## instead of using a different package name for each alpha, beta etc. use an option for this
