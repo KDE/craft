@@ -4,8 +4,8 @@ import utils
 import info
 
 PACKAGE_NAME         = "poppler"
-PACKAGE_VER          = "0.6.4"
-PACKAGE_FULL_VER     = "0.6.4"
+PACKAGE_VER          = "0.7.1"
+PACKAGE_FULL_VER     = "0.7.1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "poppler"
 
@@ -17,7 +17,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.6.4'] = 'http://poppler.freedesktop.org/poppler-0.6.4.tar.gz'
         self.targetInstSrc['0.6.4'] = 'poppler-0.6.4'
-        self.defaultTarget = '0.6.4'
+        self.targets['0.7.1'] = 'http://poppler.freedesktop.org/poppler-0.7.1.tar.gz'
+        self.targetInstSrc['0.7.1'] = 'poppler-0.7.1'
+        self.defaultTarget = '0.7.1'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
@@ -32,14 +34,14 @@ class subclass(base.baseclass):
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):
             return False
-            
-        src = os.path.join( self.workdir, self.instsrcdir )
+        if self.buildTarget == '0.6.4':
+            src = os.path.join( self.workdir, self.instsrcdir )
 
-        cmd = "cd %s && patch -p0 < %s" % \
-              ( self.workdir, os.path.join( self.packagedir , "poppler-cmake.patch" ) )
-        if utils.verbose() >= 1:
-            print cmd
-        self.system( cmd ) or die( "patch" )
+            cmd = "cd %s && patch -p0 < %s" % \
+                  ( self.workdir, os.path.join( self.packagedir , "poppler-cmake.patch" ) )
+            if utils.verbose() >= 1:
+                print cmd
+            self.system( cmd ) or die( "patch" )
         return True
         
         
@@ -61,7 +63,7 @@ class subclass(base.baseclass):
         #self.createImportLibs( PACKAGE_DLL_NAME )
 
         # now do packaging with kdewin-packager
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        self.doPackaging( "poppler", self.buildTarget, True )
 
         return True
 
