@@ -26,7 +26,9 @@ set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 
 rem the location of the vcvarsall.bat file that includes Visual C++ environment variables
 rem into the build environment...if you are not building on x86 change that to something appropriate
+if %KDECOMPILER% == msvc2005 ( 
 call "C:\Program Files\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
+)
 
 rem here you can set the download directory to another dir
 rem if you want, so you can share the same download dir between
