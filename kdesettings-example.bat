@@ -24,6 +24,10 @@ rem here you set set the path to your platform sdk installation
 rem this path will automatically be included then
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 
+rem the location of the vcvarsall.bat file that includes Visual C++ environment variables
+rem into the build environment...if you are not building on x86 change that to something appropriate
+call "C:\Program Files\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
+
 rem here you can set the download directory to another dir
 rem if you want, so you can share the same download dir between
 rem mingw and msvc
