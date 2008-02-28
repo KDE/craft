@@ -22,7 +22,7 @@ set MSYSDIR=e:\kderoot\msys
 
 rem here you set set the path to your platform sdk installation
 rem this path will automatically be included then
-set PSDKDIR="%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2"
+set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 
 rem here you can set the download directory to another dir
 rem if you want, so you can share the same download dir between
