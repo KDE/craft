@@ -8,14 +8,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdetoys'
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdetoys'
-        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdetoys-4.0.60.tar.bz2'
-        self.targetInstSrc['4.0.60'] = 'kdetoys-4.0.60'
-        self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdetoys-4.0.61.tar.bz2'
-        self.targetInstSrc['4.0.61'] = 'kdetoys-4.0.61'
-        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdetoys-4.0.62.tar.bz2'
-        self.targetInstSrc['4.0.62'] = 'kdetoys-4.0.62'
-        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdetoys-4.0.63.tar.bz2'
-        self.targetInstSrc['4.0.63'] = 'kdetoys-4.0.63'
+        for ver in ['61', '62', '63', '64']:
+          self.targets['4.0.' + ver] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.' + ver + '/src/kdetoys-4.0.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.0.' + ver] = 'kdetoys-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

@@ -8,14 +8,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepimlibs'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepimlibs'
-        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdepimlibs-4.0.60.tar.bz2'
-        self.targetInstSrc['4.0.60'] = 'kdepimlibs-4.0.60'
-        self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdepimlibs-4.0.61.tar.bz2'
-        self.targetInstSrc['4.0.61'] = 'kdepimlibs-4.0.61'
-        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdepimlibs-4.0.62.tar.bz2'
-        self.targetInstSrc['4.0.62'] = 'kdepimlibs-4.0.62'
-        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdepimlibs-4.0.63.tar.bz2'
-        self.targetInstSrc['4.0.63'] = 'kdepimlibs-4.0.63'
+        for ver in ['61', '62', '63', '64']:
+          self.targets['4.0.' + ver] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.' + ver + '/src/kdepimlibs-4.0.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.0.' + ver] = 'kdepimlibs-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

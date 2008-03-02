@@ -8,14 +8,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdesdk'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdesdk'
-        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdesdk-4.0.60.tar.bz2'
-        self.targetInstSrc['4.0.60'] = 'kdesdk-4.0.60'
-        self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdesdk-4.0.61.tar.bz2'
-        self.targetInstSrc['4.0.61'] = 'kdesdk-4.0.61'
-        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdesdk-4.0.62.tar.bz2'
-        self.targetInstSrc['4.0.62'] = 'kdesdk-4.0.62'
-        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdesdk-4.0.63.tar.bz2'
-        self.targetInstSrc['4.0.63'] = 'kdesdk-4.0.63'
+        for ver in ['61', '62', '63', '64']:
+          self.targets['4.0.' + ver] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.' + ver + '/src/kdesdk-4.0.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.0.' + ver] = 'kdesdk-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

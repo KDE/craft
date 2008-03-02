@@ -8,19 +8,14 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdenetwork'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdenetwork'
-        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdenetwork-4.0.60.tar.bz2'
-        self.targetInstSrc['4.0.60'] = 'kdenetwork-4.0.60'
-        self.targets['4.0.61'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.61/src/kdenetwork-4.0.61.tar.bz2'
-        self.targetInstSrc['4.0.61'] = 'kdenetwork-4.0.61'
-        self.targets['4.0.62'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.62/src/kdenetwork-4.0.62.tar.bz2'
-        self.targetInstSrc['4.0.62'] = 'kdenetwork-4.0.62'
-        self.targets['4.0.63'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.63/src/kdenetwork-4.0.63.tar.bz2'
-        self.targetInstSrc['4.0.63'] = 'kdenetwork-4.0.63'
+        for ver in ['61', '62', '63', '64']:
+          self.targets['4.0.' + ver] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.' + ver + '/src/kdenetwork-4.0.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.0.' + ver] = 'kdenetwork-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.softDependencies['kdesupport/qca'] = 'default'
+        self.hardDependencies['kdesupport/qca'] = 'default'
         
 class subclass(base.baseclass):
     def __init__(self):
