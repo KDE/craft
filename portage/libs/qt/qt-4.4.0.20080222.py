@@ -161,6 +161,10 @@ class subclass(base.baseclass):
           ( platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
+        if self.buildType == "Debug":
+          command = command + " -debug "
+        else:
+          command = command + " -release "
         print "command: ", command
         self.system( command )
 
