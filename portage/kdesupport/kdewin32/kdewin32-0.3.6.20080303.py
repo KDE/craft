@@ -3,11 +3,6 @@ import sys
 import base
 import info
 
-#DEPEND = """
-#virtual/base
-#libs/qt
-#"""
-
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -35,7 +30,7 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-            return self.doPackaging( "kdewin32", "0.3.5-1", True )
+            return self.doPackaging( "kdewin32", "0.3.6-1", True )
         else:
             return self.doPackaging( "kdewin32", os.path.basename(sys.argv[0]).replace("kdewin32-", "").replace(".py", ""), True )
 if __name__ == '__main__':
