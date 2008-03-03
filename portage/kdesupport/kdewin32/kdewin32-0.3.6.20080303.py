@@ -28,10 +28,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
-            return self.doPackaging( "kdewin32", "0.3.6-1", True )
-        else:
-            return self.doPackaging( "kdewin32", os.path.basename(sys.argv[0]).replace("kdewin32-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdewin32", "0.3.6-1", True )
+
 if __name__ == '__main__':
     subclass().execute()
