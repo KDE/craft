@@ -53,7 +53,9 @@ class subclass(base.baseclass):
         base.baseclass.install( self )
         srcdir = os.path.join( self.imagedir, self.instdestdir, "bin", "mingwm10.dll" )
         destdir = os.path.join( self.imagedir, "bin" )
-        shutil.copy( srcdir, destdir )
+        if not os.path.exists( destdir ):
+            os.mkdir( destdir )
+        shutil.copy( srcdir, os.path.join( destdir, "mingwm10.dll" ) )
         return True
 
 if __name__ == '__main__':
