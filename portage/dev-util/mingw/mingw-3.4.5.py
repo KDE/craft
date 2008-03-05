@@ -1,6 +1,6 @@
 import base
 import utils
-from utils import die
+import shutil
 import os
 import info
 
@@ -46,9 +46,15 @@ class subclass(base.baseclass):
         srcdir = self.workdir
         cmd = "cd %s && patch -p1 < %s" % \
           ( srcdir, os.path.join( self.packagedir, "vmr9.diff" ) )
-        os.system( cmd ) and die( "mingw unpack failed" )
-        return True		
-    
+        self.system( cmd )
+        return True
+        
+    def install( self ):
+        base.baseclass.install( self )
+        srcdir = os.path.join( self.imagedir, self.instdestdir, "bin", "mingwm10.dll" )
+        destdir = os.path.join( self.imagedir, "bin" )
+        shutil.copy( srcdir, destdir )
+        return True
 
 if __name__ == '__main__':
     subclass().execute()
