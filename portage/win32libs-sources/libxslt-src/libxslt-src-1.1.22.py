@@ -18,7 +18,7 @@ SRC_URI= """ftp://ftp.zlatkovic.com/pub/libxml/""" + PACKAGE_FULL_NAME + """.win
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['1.1.22'] = SRC_URI
+        self.targets['1.1.22'] = SRC_URI
         self.defaultTarget = '1.1.22-2'
     
 class subclass(base.baseclass):
