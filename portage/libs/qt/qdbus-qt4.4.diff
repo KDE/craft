@@ -6,8 +6,8 @@
  QT = core xml
 -CONFIG += qdbus
 -CONFIG -= app_bundle
-+CONFIG += qdbus release
-+CONFIG -= app_bundle debug debug_and_release
++CONFIG += qdbus
++CONFIG -= app_bundle debug_and_release
  win32:CONFIG += console
  
  target.path=$$[QT_INSTALL_BINS]
@@ -19,8 +19,8 @@
  QT = core xml
 -CONFIG += qdbus
 -CONFIG -= app_bundle
-+CONFIG += qdbus release
-+CONFIG -= app_bundle debug debug_and_release
++CONFIG += qdbus
++CONFIG -= app_bundle debug_and_release
  win32:CONFIG += console
  
  target.path=$$[QT_INSTALL_BINS]
@@ -31,8 +31,8 @@
  DESTDIR = ../../../bin
  
 -CONFIG += qdbus
-+CONFIG += qdbus release
-+CONFIG -= debug debug_and_release
++CONFIG += qdbus
++CONFIG -= debug_and_release
  QT += xml
  
  target.path=$$[QT_INSTALL_BINS]
