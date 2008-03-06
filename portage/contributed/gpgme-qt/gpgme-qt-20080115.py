@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
+        self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
 
 class subclass(base.baseclass):
