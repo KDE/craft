@@ -192,7 +192,7 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.buildTarget == '4.3.3':
            return self.doPackaging( "qt", "4.3.3-2", False )
-        return self.doPackaging( "qt", "4.4.0-1", False )
+        return self.doPackaging( "qt", "4.4.0-2", False )
 
 if __name__ == '__main__':
     subclass().execute()
