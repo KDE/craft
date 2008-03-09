@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
+#        self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
 

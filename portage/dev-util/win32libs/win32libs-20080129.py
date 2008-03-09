@@ -31,6 +31,9 @@ http://82.149.170.66/kde-windows/repository/win32libs/single/jasper-1.900.1-2-li
 http://82.149.170.66/kde-windows/repository/win32libs/single/jpeg-6.b-5-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/jpeg-6.b-5-lib.zip
 
+http://82.149.170.66/kde-windows/repository/win32libs/single/lcms-1.17-bin.zip
+http://82.149.170.66/kde-windows/repository/win32libs/single/lcms-1.17-lib.zip
+
 http://82.149.170.66/kde-windows/repository/win32libs/single/libintl-0.14.4-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/libintl-0.14.4-lib.zip
 
