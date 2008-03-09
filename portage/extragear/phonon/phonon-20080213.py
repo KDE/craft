@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kde/kdegames'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
