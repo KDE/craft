@@ -37,8 +37,8 @@ set DOWNLOADDIR=%KDEROOT%\download
 rem Here you can tell the emerge tool in which dir you want to save the
 rem SVN checkout of KDE source code. If you have SVN account registered 
 rem within the KDE project, you can also set KDESVNUSERNAME and change 
-rem KDESVNSERVER from anonsvn.kde.org to svn.kde.org, so that you 
-rem can directly commit your changes from the emerge's SVN checkout.
+rem KDESVNSERVER from svn://anonsvn.kde.org to https://svn.kde.org, so that
+rem you can directly commit your changes from the emerge's SVN checkout.
 set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
