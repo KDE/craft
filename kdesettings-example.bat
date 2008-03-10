@@ -1,89 +1,99 @@
 @echo off
-rem here you set the base directory under which the whole kde
-rem system will live
-set KDEROOT=e:\kderoot
+rem Here you set the base directory under which the whole KDE
+rem subsystem will live.
+set KDEROOT=c:\kderoot
 
-rem here you set the compiler to be used:
-rem mingw : use the mingw gcc compiler (recommended)
-rem msvc2005: use the microsoft visual studio 2005 c-compiler
-rem
+rem Here you set the compiler to be used.
+rem * mingw - use the mingw gcc compiler (recommended)
+rem * msvc2005 - use the Microsoft Visual C++ 2005 compiler or newer
 set KDECOMPILER=mingw
 
-rem here you should set the path to your python installation
-rem this is needed, so that python will be found, when
-rem python scripts will be executed. by setting this here,
-rem you don´t have to change the environment settings of
-rem windows at all
-set PYTHONPATH=e:\python25
+rem Here you set the path to your Python installation,
+rem so that Python will be found, when Python scripts are be executed.
+rem By setting this here, you don't have to change the global environment
+rem settings of Windows.
+set PYTHONPATH=%PROGRAMFILES%\python25
 
-rem here you set set the path to msys if you want to compile
-rem automake-based projects (only needed for some internal packages)
-set MSYSDIR=e:\kderoot\msys
+rem Here you set the path to msys if you want to compile
+rem automake-based projects (only needed for some internal packages).
+set MSYSDIR=%KDEROOT%\msys
 
-rem here you set set the path to your platform sdk installation
-rem this path will automatically be included then
+rem Here you set the path to your platform SDK installation.
+rem This path will be automatically included then.
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 
-rem the location of the vcvarsall.bat file that includes Visual C++ environment variables
-rem into the build environment...if you are not building on x86 change that to something appropriate
+rem Here you set the location of the vcvarsall.bat file that adds
+rem Visual C++ environment variables into the build environment.
+rem if you are not building on x86 change that to something appropriate.
 if %KDECOMPILER% == msvc2005 ( 
-call "C:\Program Files\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
+call "%PROGRAMFILES%\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
 )
 
-rem here you can set the download directory to another dir
-rem if you want, so you can share the same download dir between
-rem mingw and msvc
-set DOWNLOADDIR=e:\kdedownload
+rem Here you change the download directory.
+rem If you want, so you can share the same download directory between
+rem mingw and msvc.
+set DOWNLOADDIR=%KDEROOT%\download
 
-rem here you can tell emerge in which dir you want to save the
-rem svn checkout of kde sources, and you can optionally
-rem set the svn.kde.org server instead of the anonsvn.kde.org
-rem one, so that you can directly commit your changes from the
-rem svn checkout from emerge, if you want.
-set KDESVNDIR=e:\kdesvn
+rem Here you can tell the emerge tool in which dir you want to save the
+rem SVN checkout of KDE source code. If you have SVN account registered 
+rem within the KDE project, you can also set KDESVNUSERNAME and change 
+rem KDESVNSERVER from anonsvn.kde.org to svn.kde.org, so that you 
+rem can directly commit your changes from the emerge's SVN checkout.
+set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
-rem for security reasons you better log in to the kde server by hand
-rem and set the username and password at first login. then svn will
-rem remember the password and it does not have to be written down here
+
+rem Here you can tell the emerge tool password for the SVN access
+rem if you have SVN account registered within the KDE project.
+rem For security reasons you should better log in to the KDE server by hand
+rem using the command line Subversion 'svn' command: enter the username
+rem and password at the first login, e.g. when you checkout the emerge
+rem directory. The Subversion client will then remember the password so it
+rem does not have to be written down here.
 rem set KDESVNPASSWORD=password
 
-rem if you use svn+ssh, you'll need a ssh-agent equaivalent for managing the authorization 
-rem Pageant is provided by putty, get it at 
+rem If you use svn+ssh, you will need a ssh-agent equaivalent for managing
+rem the authorization. Pageant is provided by the Putty project, get it at 
 rem http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
-rem and make sure plink is in your path and Pageant is configured (you need to import your key)
+rem and make sure that plink is in your PATH and Pageant is configured
+rem (you need to import your key)
 set SVN_SSH=plink 
 
-rem it is not recommended anymore to use the traditional layout.
-rem if you want to use emerge.py together with the kdewin-installer, you should set
-rem the value of directory_layout to 'installer', if you leave it unset or set it to
-rem 'traditional' you get the category sublayout
+rem If you want to use emerge.py together with the kdewin-installer,
+rem you should set the value of directory_layout to 'installer'. 
+rem If you leave it unset or set it to 'traditional' you get the category
+rem sublayout. 
+rem Note: it is not recommended anymore to use the traditional layout.
 set directory_layout=installer
 
-rem You can set type of emerge build.
-rem There are standard two build types: Debug and Release
-rem - both are used if no EMERGE_BUILDTYPE is set.
-rem There is a third buildtype called RelWithDebInfo
-rem - which is release (optimized) build but containing debugging information.
-rem You can override the build type at the commandline using the '--buildtype=[BuildType]' option.
-rem The build type which is set here will not override the buildtype in .py package files.
+rem Here you can set type of the emerge build. 
+rem There are two standard build types: Debug and Release.
+rem Both are used if no EMERGE_BUILDTYPE is set.
+rem There is a third extra buildtype called RelWithDebInfo, which is
+rem release (optimized) build but containing debugging information.
+rem You can override the build type at the commandline using
+rem the '--buildtype=[BuildType]' option. The build type which is set here
+rem will not override the buildtype in .py package files.
 set EMERGE_BUILDTYPE=RelWithDebInfo
 
-rem If you want to have verbose output uncomment the following option and set it to any positive integer
-rem for verbose output and to 0 or disable it for normal output
+rem If you want to have verbose output, uncomment the following option
+rem and set it to positive integer for verbose output and to 0
+rem or disable it for normal output. Currently the highest verbosity level
+rem is 3 (equal to 'emerge -v -v -v'). level 0 equals 'emerge -q'
 set EMERGE_VERBOSE=1
 
-rem If you want to have shorter build times, and less disk usage, enable the next option
-rem for all kde svn based stuff it will not copy the svn sources again
-rem problem is that you cannot make packages when this option is set
+rem Enable this option if you want to have shorter build times, and less
+rem disk usage. It will then avoid copying source code files of the KDE
+rem svn repository. The disadvantage is that you cannot make packages when
+rem this option is set. To disable, set EMERGE_NOCOPY=False.
 set EMERGE_NOCOPY=True
 
-rem If you want to build all packages with buildTests, enable the next option
-rem this applies only to the cmake based packages
+rem If you want to build all packages with buildTests option, enable
+rem this option. Applies only to the cmake based packages.
 rem set EMERGE_BUILDTESTS=True
 
-rem The next option only applies if you want to make packages
-rem it sets the output directory where your generated packages should be stored
+rem This option only applies if you want to make packages. It sets
+rem the output directory where your generated packages should be stored.
 rem set EMERGE_PKGDSTDIR=%KDEROOT%\tmp
 
 rem No editing should be necessary below this line (in an ideal world)
