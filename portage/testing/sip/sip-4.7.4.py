@@ -5,9 +5,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.7.3'] = 'http://www.riverbankcomputing.com/Downloads/sip4/sip-4.7.3.zip'
-        self.targetInstSrc['4.7.3'] = 'sip-4.7.3'
-        self.defaultTarget = '4.7.3'
+        self.targets['4.7.4'] = 'http://www.riverbankcomputing.com/Downloads/sip4/sip-4.7.4.zip'
+        self.targetInstSrc['4.7.4'] = 'sip-4.7.4'
+        self.defaultTarget = '4.7.4'
 
         def setDependencies( self ):
             self.hardDependencies['libs/qt'] = 'default'
