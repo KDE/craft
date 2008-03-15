@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdetoys'
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdetoys'
-        for ver in ['61', '62', '63', '64', '65']:
+        for ver in ['61', '62', '63', '64', '65', '66']:
           self.targets['4.0.' + ver] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.' + ver + '/src/kdetoys-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdetoys-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
