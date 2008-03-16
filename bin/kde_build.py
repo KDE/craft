@@ -67,6 +67,18 @@ class kde_interface:
         self.kdesvnserver    = KDESVNSERVER
         self.kdesvnuser      = KDESVNUSERNAME
         self.kdesvnpass      = KDESVNPASSWORD
+        
+        if utils.verbose() > 1 and self.kdeSvnPath():
+            print "noCopy       : %s" % self.noCopy
+            print "kdeSvnPath() : %s" % self.kdeSvnPath().replace("/", "\\")
+            
+        if not ( self.noCopy and self.kdeSvnPath() ) :
+            if self.kdeSvnPath():
+                self.sourcePath = "..\\%s" % self.kdeSvnPath().split('/')[-1]
+            else:
+                self.sourcePath = "..\\%s" % self.instsrcdir
+        else:
+            self.sourcePath = "%s" % os.path.join(self.kdesvndir, self.kdeSvnPath() ).replace("/", "\\")
 
     def kdesinglecheckout( self, repourl, ownpath, codir, doRecursive = False ):
         """in ownpath try to checkout codir from repourl """
@@ -175,22 +187,11 @@ class kde_interface:
 
     def kdeDefaultDefines( self ):
         """defining the default cmake cmd line"""
-        #FIXME: can we define the paths externally???
-        if utils.verbose() > 1 and self.kdeSvnPath():
-            print "noCopy       : %s" % self.noCopy
-            print "kdeSvnPath() : %s" % self.kdeSvnPath().replace("/", "\\")
-        if not ( self.noCopy and self.kdeSvnPath() ) :
-            if self.kdeSvnPath():
-                source_path = "..\\%s" % self.kdeSvnPath().split('/')[-1]
-            else:
-                source_path = "..\\%s" % self.instsrcdir
-        else:
-            source_path = "%s" % os.path.join(self.kdesvndir, self.kdeSvnPath() ).replace("/", "\\")
 #        if( not self.instsrcdir == "" ):
-#            source_path = self.instsrcdir
+#            self.sourcePath = self.instsrcdir
         if self.traditional:
             options = "%s -DCMAKE_INSTALL_PREFIX=%s/kde " % \
-                  ( source_path, self.rootdir.replace( "\\", "/" ) )
+                  ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
 
             options = options + "-DCMAKE_INCLUDE_PATH=%s;%s " % \
                     ( os.path.join( self.rootdir, "win32libs", "include" ).replace( "\\", "/" ), \
@@ -203,7 +204,7 @@ class kde_interface:
                     )
         else:
             options = "%s -DCMAKE_INSTALL_PREFIX=%s " % \
-                  ( source_path, self.rootdir.replace( "\\", "/" ) )
+                  ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
 
             options = options + "-DCMAKE_INCLUDE_PATH=%s " % \
                     os.path.join( self.rootdir, "include" ).replace( "\\", "/" )

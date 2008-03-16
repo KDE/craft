@@ -111,6 +111,8 @@ class baseclass:
         else:
             self.buildType = None
 
+        self.setDirectories()
+        
         if COMPILER == "msvc2005":
             self.compiler = "msvc2005"
         elif COMPILER == "mingw":
@@ -133,8 +135,6 @@ class baseclass:
         if utils.verbose() > 1:
             print "command:", command
             print "opts:", options
-
-        self.setDirectories()
 
         ok = True
         if command   == "fetch":       ok = self.fetch()
@@ -285,6 +285,7 @@ class baseclass:
         self.kdesvnserver = KDESVNSERVER
         self.kdesvnuser = KDESVNUSERNAME
         self.kdesvnpass = KDESVNPASSWORD
+        self.svndir = os.path.join( self.downloaddir, "svn-src", self.package )
        
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
@@ -323,7 +324,6 @@ class baseclass:
         """getting sources from a custom svn repo"""
         if utils.verbose() > 1:
             print "base svnFetch called"
-        self.svndir = os.path.join( self.downloaddir, "svn-src", self.package )
         if ( self.noFetch ):
             if utils.verbose() > 0:
                 print "skipping svn fetch/update (--offline)"
