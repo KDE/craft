@@ -76,6 +76,7 @@ class baseclass:
         self.instdestdir            = ""
         self.traditional            = True
         self.noCopy                 = False
+        self.noClean                = False
         self.buildTests             = False
         self.forced                 = False
         self.versioned              = False
@@ -94,6 +95,8 @@ class baseclass:
             self.noFetch = True
         if os.getenv( "EMERGE_NOCOPY" ) == "True":
             self.noCopy = True
+        if os.getenv( "EMERGE_NOCLEAN" )    == "True":
+            self.noClean     = True
         if os.getenv( "EMERGE_FORCED" ) == "True":
             self.forced = True
         if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
