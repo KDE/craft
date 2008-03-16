@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['testing/poppler-src'] = 'default'
+        self.hardDependencies['win32libs-sources/poppler-src'] = 'default'
         
 class subclass(base.baseclass):
     def __init__(self):
