@@ -139,9 +139,21 @@ class baseclass:
             print "command:", command
             print "opts:", options
 
+        self.subinfo.buildTarget = self.subinfo.defaultTarget
+        self.buildTarget = self.subinfo.defaultTarget
+
+        if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
+            self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
+            self.buildTarget = os.getenv( "EMERGE_TARGET" )
+            
+        if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
+            self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
+
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
         
+        print '>', self.subinfo.buildTarget
+        print '>', self.subinfo.targets.keys()
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
             filenames = []
             for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
@@ -305,15 +317,6 @@ class baseclass:
         self.Targets.update( self.subinfo.svnTargets )
         self.Targets.update( self.subinfo.targets )
         
-        self.subinfo.buildTarget = self.subinfo.defaultTarget
-        self.buildTarget = self.subinfo.defaultTarget
-
-        if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
-            self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
-            self.buildTarget = os.getenv( "EMERGE_TARGET" )
-            
-        if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
-            self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
 #        else:
 #            if self.subinfo.buildTarget in self.Targets.keys() and self.Targets[ self.subinfo.buildTarget ]:
 #                self.instsrcdir = os.path.basename( self.Targets[ self.subinfo.buildTarget ] )
