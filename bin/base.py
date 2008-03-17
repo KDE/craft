@@ -152,8 +152,6 @@ class baseclass:
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
         
-        print '>', self.subinfo.buildTarget
-        print '>', self.subinfo.targets.keys()
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
             filenames = []
             for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
