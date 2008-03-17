@@ -139,6 +139,15 @@ class baseclass:
             print "command:", command
             print "opts:", options
 
+        self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
+        self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
+        
+        if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
+            filenames = []
+            for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
+                filenames.append( os.path.basename( uri ) )
+            self.filenames = filenames
+
         ok = True
         if command   == "fetch":       ok = self.fetch()
         elif command == "cleanimage":       self.cleanup()
@@ -312,14 +321,6 @@ class baseclass:
 #                if not self.instsrcdir:
 #                    utils.warning( "Skript warning: self.instsrcdir not set - this might be ok, but if it leads to errors that might be the problem" )
             
-        self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
-        self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
-        
-        if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
-            filenames = []
-            for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
-                filenames.append( os.path.basename( uri ) )
-            self.filenames = filenames
             
 
 
