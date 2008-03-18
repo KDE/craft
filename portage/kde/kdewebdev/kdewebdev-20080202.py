@@ -30,6 +30,7 @@ class subclass(base.baseclass):
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_quanta=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kfilereplace=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kxsldbg=OFF "
+	self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kommander=OFF "
 
         return self.kdeCompile()
 
