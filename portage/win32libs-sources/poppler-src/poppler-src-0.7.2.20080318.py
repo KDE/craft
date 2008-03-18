@@ -9,22 +9,21 @@ PACKAGE_FULL_VER     = "0.7.1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "poppler"
 
-
-##http://poppler.freedesktop.org/""" + PACKAGE_FULL_NAME + """.tar.gz
-##"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.6.4'] = 'http://poppler.freedesktop.org/poppler-0.6.4.tar.gz'
         self.targetInstSrc['0.6.4'] = 'poppler-0.6.4'
         self.targets['0.7.1'] = 'http://poppler.freedesktop.org/poppler-0.7.1.tar.gz'
         self.targetInstSrc['0.7.1'] = 'poppler-0.7.1'
-        self.defaultTarget = '0.7.1'
+        self.targets['0.7.2'] = 'http://poppler.freedesktop.org/poppler-0.7.2.tar.gz'
+        self.targetInstSrc['0.7.2'] = 'poppler-0.7.2'
+        self.defaultTarget = '0.7.2'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
         self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
+        self.hardDependencies['libs/qt'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self ):
