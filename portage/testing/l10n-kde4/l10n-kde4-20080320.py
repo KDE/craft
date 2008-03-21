@@ -116,8 +116,7 @@ class subclass(base.baseclass):
         f = open( os.path.join(self.svnpath,"subdirs"), "r" )
         for line in f.read().splitlines():
             workdir = os.path.join(self.workdir,line)
-            self.packager = os.path.join(self.filesdir,"kdewin-packager") 
-            cmd = self.packager + " -name kde-i18n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % (line,self.version,self.imagedir,line,dstpath)
+            cmd = "kdewin-packager -name kde-i18n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % (line,self.version,self.imagedir,line,dstpath)
             print cmd
             utils.system(cmd)
         f.close()
