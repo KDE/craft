@@ -91,7 +91,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "compile", "configure", "make", "qmerge", "package", "manifest", "unmerge" ] ):
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge" ] ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         success = doExec( category, package, version, "cleanimage", opts )
@@ -195,7 +195,7 @@ for i in sys.argv:
     elif ( i == "--update" ):
         ignoreInstalled = True
         os.environ["EMERGE_NOCLEAN"] = str( True )
-    elif ( i in [ "--fetch", "--unpack", "--compile", "--configure", "--make",
+    elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge",
                   "--full-package" ] ):
         buildAction = i[2:]

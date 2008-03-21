@@ -54,6 +54,8 @@ class baseclass:
 # __init__                   the baseclass constructor
 # execute                    called to run the derived class
 # fetch                      getting the package
+# preconfigure               pre configure step (optional)
+# configure                  configure step 
 # unpack                     unpacking the source tarball
 # compile                    compiling the tarball
 # install                    installing the files into the normal
@@ -159,17 +161,18 @@ class baseclass:
             self.filenames = filenames
 
         ok = True
-        if command   == "fetch":       ok = self.fetch()
+        if command   == "fetch":        ok = self.fetch()
         elif command == "cleanimage":       self.cleanup()
-        elif command == "unpack":      ok = self.unpack()
-        elif command == "compile":     ok = self.compile()
-        elif command == "configure":   ok = self.compile()
-        elif command == "make":        ok = self.compile()
-        elif command == "install":     ok = self.install()
-        elif command == "qmerge":      ok = self.qmerge()
-        elif command == "unmerge":     ok = self.unmerge()
-        elif command == "manifest":    ok = self.manifest()
-        elif command == "package":     ok = self.make_package()
+        elif command == "configure":    ok = self.configure()
+        elif command == "compile":      ok = self.compile()
+        elif command == "install":      ok = self.install()
+        elif command == "make":         ok = self.compile()
+        elif command == "qmerge":       ok = self.qmerge()
+        elif command == "manifest":     ok = self.manifest()
+        elif command == "package":      ok = self.make_package()
+        elif command == "preconfigure": ok = self.preconfigure()
+        elif command == "unpack":       ok = self.unpack()
+        elif command == "unmerge":      ok = self.unmerge()
         else:
             ok = utils.error( "command %s not understood" % command )
 
@@ -201,6 +204,18 @@ class baseclass:
         if utils.verbose() > 1:
             print "base unpack called, files:", self.filenames
         return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
+
+    def preconfigure( self ):
+        """overload this function according to the packages needs"""
+        if utils.verbose() > 1:
+            print "base preconfigure called, doing nothing..."
+        return True
+
+    def configure( self ):
+        """overload this function according to the packages needs"""
+        if utils.verbose() > 1:
+            print "base configure called, doing nothing..."
+        return True
 
     def compile( self ):
         """overload this function according to the packages needs"""
