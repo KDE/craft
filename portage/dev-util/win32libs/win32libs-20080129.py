@@ -66,8 +66,8 @@ http://82.149.170.66/kde-windows/repository/win32libs/single/tiff-3.8.2-2-lib.zi
 http://82.149.170.66/kde-windows/repository/win32libs/single/zlib-1.2.3-2-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/zlib-1.2.3-2-lib.zip
 
-http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-bin.zip
-http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-bin.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 """
 
 if os.getenv("KDECOMPILER") == "mingw":
