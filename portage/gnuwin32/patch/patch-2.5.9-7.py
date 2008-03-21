@@ -2,7 +2,7 @@ import gnuwin32
 import info
 
 SRC_URI = """
-http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip
 """
 
 class subinfo(info.infoclass):
