@@ -229,6 +229,9 @@ class kde_interface:
             builddir = "%s-%s" % ( builddir, buildType )
 
         os.chdir( self.workdir )
+        if ( not os.path.exists( builddir) ):
+            os.mkdir( builddir )
+
         if not self.noClean:
             utils.cleanDirectory( builddir )
         os.chdir( builddir )
