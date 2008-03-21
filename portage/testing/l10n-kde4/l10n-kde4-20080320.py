@@ -12,8 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['testing/gettext-tools'] = 'default'
-        # self provided kdewin-packager 
-        #self.hardDependencies['kdewin-installer'] = 'default'
+        self.hardDependencies['kdesupport/kdewin-installer'] = 'default'
         return 0
         
 class subclass(base.baseclass):
