@@ -16,14 +16,14 @@ w32api-3.2.tar.gz -> 3.6
 """
 
 SRC_URI = """
-http://heanet.dl.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109.tar.gz
-http://heanet.dl.sourceforge.net/sourceforge/mingw/gcc-core-3.4.5-20060117-1.tar.gz
-http://heanet.dl.sourceforge.net/sourceforge/mingw/gcc-g++-3.4.5-20060117-1.tar.gz
-http://heanet.dl.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-2.tar.gz
-http://heanet.dl.sourceforge.net/sourceforge/mingw/mingw-runtime-3.13.tar.gz
-http://heanet.dl.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
-http://heanet.dl.sourceforge.net/sourceforge/mingw/gdb-6.7.50.20071127-mingw.tar.bz2
-http://heanet.dl.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-3.4.5-20060117-1.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-g++-3.4.5-20060117-1.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-2.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.13.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.7.50.20071127-mingw.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 """
 
 class subinfo(info.infoclass):
@@ -44,6 +44,9 @@ class subclass(base.baseclass):
     def unpack( self ):
         base.baseclass.unpack( self )
         srcdir = self.workdir
+        cmd = "cd %s && patch -p1 < %s" % \
+          ( srcdir, os.path.join( self.packagedir, "windef.diff" ) )
+        self.system( cmd )
         cmd = "cd %s && patch -p1 < %s" % \
           ( srcdir, os.path.join( self.packagedir, "vmr9.diff" ) )
         self.system( cmd )
