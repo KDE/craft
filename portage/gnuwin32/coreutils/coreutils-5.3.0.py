@@ -2,8 +2,8 @@ import gnuwin32
 import info
 
 SRC_URI = """
-http://switch.dl.sourceforge.net/sourceforge/gnuwin32/coreutils-5.3.0-bin.zip
-http://switch.dl.sourceforge.net/sourceforge/gnuwin32/coreutils-5.3.0-dep.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/coreutils-5.3.0-bin.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/coreutils-5.3.0-dep.zip
 """
 
 class subinfo(info.infoclass):

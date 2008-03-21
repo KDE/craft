@@ -3,8 +3,8 @@ import os
 import info
 
 SRC_URI = """
-http://switch.dl.sf.net/sourceforge/gnuwin32/openssl-0.9.7c-bin.zip
-http://switch.dl.sf.net/sourceforge/gnuwin32/openssl-0.9.7c-lib.zip
+http://downloads.sf.net/sourceforge/gnuwin32/openssl-0.9.7c-bin.zip
+http://downloads.sf.net/sourceforge/gnuwin32/openssl-0.9.7c-lib.zip
 """
 
 class subinfo(info.infoclass):
