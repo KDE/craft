@@ -10,9 +10,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        # FIXME: if enabled, let targets fails
-        #self.hardDependencies['cmake'] = 'default'
-        #self.hardDependencies['gettext-tools'] = 'default'
+        self.hardDependencies['dev-util/cmake'] = 'default'
+        self.hardDependencies['testing/gettext-tools'] = 'default'
         # self provided kdewin-packager 
         #self.hardDependencies['kdewin-installer'] = 'default'
         return 0
@@ -26,20 +25,21 @@ class subclass(base.baseclass):
         return path.replace("\\","/")
 
     def toCygwinPath( self,path):
-        return path.replace("\\","/").replace("c:","/c")
+        _path = '/' + path[0] + path[2:]
+        return _path.replace("\\","/")
 
     def setupCygwin( self ):
         self.filesdir = os.path.join(self.packagedir,"files")
         self.shell = os.path.join(self.filesdir,"sh.exe")+" -c "
         self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        self.cmdprefix="PATH=.:"+self.toCygwinPath(self.filesdir)+":"+self.toCygwinPath(os.getenv( "KDEROOT" )+"/bin")
+        self.cmdprefix="PATH=.:"+self.toCygwinPath(self.filesdir)+":"+self.toCygwinPath(os.path.join(self.rootdir,"bin"))
         self.envsettings=self.cmdprefix
 
     def unpack( self ):
-        ret = self.kdeSvnUnpack()
-        if not ret:
-            return false
+        print "!!!!! Note !!!!!: edit %s to limit affected languages" % (os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD']))
+        return self.kdeSvnUnpack()
 
+    def preconfigure( self ):
         self.setupCygwin()
 
         shellscript=self.toCygwinSeparator(os.path.join( self.svnpath,"scripts","autogen.sh"))
@@ -49,19 +49,24 @@ class subclass(base.baseclass):
         utils.system(self.shell + cmd)
         return True
                
-    def compile( self ):
+    def configure( self ):
         self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        self.kderoot = os.getenv( "KDEROOT" )
         f = open( os.path.join(self.svnpath,"subdirs"), "r" )
         for line in f.read().splitlines():
-            defines = "-DCMAKE_INCLUDE_PATH=%s/include -DCMAKE_LIBRARY_PATH=%s/lib -DCMAKE_INSTALL_PREFIX=%s/%s" % (self.kderoot,self.kderoot,self.imagedir,line)
+            defines = "-DCMAKE_INCLUDE_PATH=%s/include -DCMAKE_LIBRARY_PATH=%s/lib -DCMAKE_INSTALL_PREFIX=%s" % (self.rootdir,self.rootdir,self.rootdir)
+            # does not work because source dir does not fit
+            #defines = self.kdeDefaultDefines()
             workdir = os.path.join(self.workdir,line)
             if not os.path.exists( workdir ):
                 os.mkdir(workdir)
-            cmd = "cd " + workdir + "&& " + os.path.join(self.kderoot,"bin","cmake") +" -G \"%s\" %s/%s %s" % (self.cmakeMakefileGenerator, self.svnpath, line, defines ) 
+            cmd = "cd %s && cmake -G \"%s\" %s/%s %s" % (workdir, self.cmakeMakefileGenerator, self.svnpath, line, defines ) 
             print cmd
             utils.system(cmd)
         f.close()
+        return True
+
+    def make( self ):
+        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
         f = open( os.path.join(self.svnpath,"subdirs"), "r" )
         for line in f.read().splitlines():
             workdir = os.path.join(self.workdir,line)
@@ -71,21 +76,39 @@ class subclass(base.baseclass):
         f.close()
         return True
 
+    def compile( self ):
+        ret = self.preconfigure() 
+        if not ret: 
+            return ret
+        ret = self.configure()
+        if not ret: 
+            return ret
+        return self.make()
+
     def install( self ):
         self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        self.kderoot = os.getenv( "KDEROOT" )
         f = open( os.path.join(self.svnpath,"subdirs"), "r" )
         for line in f.read().splitlines():
             workdir = os.path.join(self.workdir,line)
-            cmd = "cd " + workdir + "&& " + self.cmakeMakeProgramm + " install"
+            cmd = "cd %s && cmake.exe -DCMAKE_INSTALL_PREFIX=%s/%s -P cmake_install.cmake" % (workdir,self.imagedir,line)
             print cmd
-            utils.system(cmd)
+            utils.system(cmd) or utils.die( "while installing. cmd: %s" % cmd )
+        f.close()
+        return True
+
+    def uninstall( self ):
+        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
+        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
+        for line in f.read().splitlines():
+            workdir = os.path.join(self.workdir,line)
+            cmd = "cd %s && cmake.exe -P cmake_uninstall.cmake" % (workdir)
+            print cmd
+            utils.system(cmd) or utils.die( "while installing. cmd: %s" % cmd )
         f.close()
         return True
 
     def make_package( self ):
         self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        self.kderoot = os.getenv( "KDEROOT" )
         self.filesdir = os.path.join(self.packagedir,"files")
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
@@ -100,6 +123,26 @@ class subclass(base.baseclass):
             utils.system(cmd)
         f.close()
         return True
+
+    def qmerge( self ):
+        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
+        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
+        for line in f.read().splitlines():
+            utils.mergeImageDirToRootDir( os.path.join(self.imagedir,line), self.rootdir )
+        f.close()
+        return True
+        
+    def unmerge( self ):
+        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
+        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
+        for line in f.read().splitlines():
+            print "implement unmerge for " + line 
+            #utils.unmerge( self.rootdir, self.package, self.forced )
+            #utils.remInstalled( self.category, self.package, self.version )
+        f.close()
+        return True
+        
+        
 
 if __name__ == '__main__':
     subclass().execute()
