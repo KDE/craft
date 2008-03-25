@@ -2,8 +2,8 @@ import gnuwin32
 import info
 
 SRC_URI = """
-http://downloads.sf.net/sourceforge/gnuwin32/grep-2.5.1a-bin.zip
-http://downloads.sf.net/sourceforge/gnuwin32/grep-2.5.1a-dep.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-2.5.1a-bin.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-2.5.1a-dep.zip
 """
 
 class subinfo(info.infoclass):
