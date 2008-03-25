@@ -8,8 +8,8 @@ http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-4.1.5-dep.zip
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.1.4'] = SRC_URI
-        self.defaultTarget = '4.1.4'
+        self.targets['4.1.5'] = SRC_URI
+        self.defaultTarget = '4.1.5'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
