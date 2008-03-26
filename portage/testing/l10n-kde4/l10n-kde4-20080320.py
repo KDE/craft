@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4'
         self.defaultTarget = 'svnHEAD'
+        self.languages = 'de'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
@@ -20,90 +21,71 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, "" )
         self.subinfo = subinfo()
 
-    def toCygwinSeparator( self,path):
-        return path.replace("\\","/")
-
-    def toCygwinPath( self,path):
-        _path = '/' + path[0] + path[2:]
-        return _path.replace("\\","/")
-
-    def setupCygwin( self ):
-        self.filesdir = os.path.join(self.packagedir,"files")
-        self.shell = os.path.join(self.filesdir,"sh.exe")+" -c "
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        self.cmdprefix="PATH=.:"+self.toCygwinPath(self.filesdir)+":"+self.toCygwinPath(os.path.join(self.rootdir,"bin"))
-        self.envsettings=self.cmdprefix
-
     def unpack( self ):
-        print "!!!!! Note !!!!!: edit %s to limit affected languages" % (os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD']))
-        return self.kdeSvnUnpack()
+        svnpath = self.kdeSvnPath()
+        utils.cleanDirectory( self.workdir )
+        if not self.kdeSvnUnpack( svnpath, "scripts" ):
+            return False
+        srcdir  = os.path.join( self.kdesvndir, svnpath, "scripts" )
+        destdir = os.path.join( self.workdir, "scripts" )
+        utils.copySrcDirToDestDir( srcdir, destdir )
+        for pkg in self.subinfo.languages.split():
+            if not self.kdeSvnUnpack( svnpath, pkg ):
+                return False
+            srcdir  = os.path.join( self.kdesvndir, svnpath, pkg )
+            destdir = os.path.join( self.workdir, pkg )
+            utils.copySrcDirToDestDir( srcdir, destdir )
+        # revpath is not available in msys
+        return True
 
     def preconfigure( self ):
-        self.setupCygwin()
-
-        shellscript=self.toCygwinSeparator(os.path.join( self.svnpath,"scripts","autogen.sh"))
-        cmd = "'"+self.cmdprefix+";cd "+self.toCygwinSeparator(self.svnpath)+";"+shellscript+"'"
-
-        print self.shell + cmd
-        utils.system(self.shell + cmd)
+        path = self.workdir
+        cmd = os.path.join( path, "scripts", "autogen.sh" )
+        args = self.subinfo.languages
+        self.msys.msysExecute( path, cmd, args )
         return True
                
     def configure( self ):
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            defines = "-DCMAKE_INCLUDE_PATH=%s/include -DCMAKE_LIBRARY_PATH=%s/lib -DCMAKE_INSTALL_PREFIX=%s" % (self.rootdir,self.rootdir,self.rootdir)
+        for pkg in self.subinfo.languages.split():
+            defines = "-DCMAKE_INCLUDE_PATH=%s/include -DCMAKE_LIBRARY_PATH=%s/lib -DCMAKE_INSTALL_PREFIX=%s" % \
+                      ( self.rootdir, self.rootdir, self.rootdir )
             # does not work because source dir does not fit
             #defines = self.kdeDefaultDefines()
-            workdir = os.path.join(self.workdir,line)
+            workdir = os.path.join( self.workdir, pkg )
             if not os.path.exists( workdir ):
-                os.mkdir(workdir)
-            cmd = "cd %s && cmake -G \"%s\" %s/%s %s" % (workdir, self.cmakeMakefileGenerator, self.svnpath, line, defines ) 
+                os.mkdir( workdir )
+            cmd = "cmake -G \"%s\" %s %s" % ( self.cmakeMakefileGenerator, workdir, defines )
             print cmd
             utils.system(cmd)
-        f.close()
         return True
 
     def make( self ):
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            workdir = os.path.join(self.workdir,line)
-            cmd = "cd " + workdir + "&& " + self.cmakeMakeProgramm
-            print cmd
-            utils.system(cmd)
-        f.close()
+        cmd = "cd " + self.workdir + "&& " + self.cmakeMakeProgramm
+        utils.system( cmd )
         return True
 
     def compile( self ):
-        ret = self.preconfigure() 
-        if not ret: 
+        ret = self.preconfigure()
+        if not ret:
             return ret
         ret = self.configure()
-        if not ret: 
+        if not ret:
             return ret
         return self.make()
 
     def install( self ):
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            workdir = os.path.join(self.workdir,line)
-            cmd = "cd %s && cmake.exe -DCMAKE_INSTALL_PREFIX=%s/%s -P cmake_install.cmake" % (workdir,self.imagedir,line)
-            print cmd
-            utils.system(cmd) or utils.die( "while installing. cmd: %s" % cmd )
-        f.close()
+        for pkg in self.subinfo.languages.split():
+            workdir = os.path.join( self.workdir, pkg )
+            cmd = "cd %s && cmake -DCMAKE_INSTALL_PREFIX=%s/%s" % \
+                  ( workdir, self.imagedir, pkg )
+            utils.system( cmd )
         return True
 
     def uninstall( self ):
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            workdir = os.path.join(self.workdir,line)
-            cmd = "cd %s && cmake.exe -P cmake_uninstall.cmake" % (workdir)
-            print cmd
-            utils.system(cmd) or utils.die( "while installing. cmd: %s" % cmd )
-        f.close()
+        for pkg in self.subinfo.languages.split():
+            workdir = os.path.join( self.workdir, pkg )
+            cmd = "cd %s && cmake -P cmake_uninstall.cmake" % ( workdir )
+            utils.system( cmd )
         return True
 
     def make_package( self ):
@@ -113,34 +95,28 @@ class subclass(base.baseclass):
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
 
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            workdir = os.path.join(self.workdir,line)
-            cmd = "kdewin-packager -name kde-i18n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % (line,self.version,self.imagedir,line,dstpath)
-            print cmd
-            utils.system(cmd)
-        f.close()
+        if not utils.test4application( "kdewin-packager" ):
+            utils.die( "kdewin-packager not found - please make sure it is in your path" )
+
+        for pkg in self.subinfo.languages.split():
+            workdir = os.path.join( self.workdir, pkg )
+            cmd = "kdewin-packager -name kde-i18n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % \
+                  ( pkg, self.version, self.imagedir, pkg, dstpath )
+            utils.system( cmd )
         return True
 
     def qmerge( self ):
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            utils.mergeImageDirToRootDir( os.path.join(self.imagedir,line), self.rootdir )
-        f.close()
+        for pkg in self.subinfo.languages.split():
+            utils.mergeImageDirToRootDir( os.path.join( self.imagedir, pkg ), self.rootdir )
         return True
         
     def unmerge( self ):
-        self.svnpath=os.path.join( self.kdesvndir,self.subinfo.svnTargets['svnHEAD'])
-        f = open( os.path.join(self.svnpath,"subdirs"), "r" )
-        for line in f.read().splitlines():
-            print "implement unmerge for " + line 
+        for pkg in self.subinfo.languages.split():
+            print "implement unmerge for " + pkg
             #utils.unmerge( self.rootdir, self.package, self.forced )
             #utils.remInstalled( self.category, self.package, self.version )
-        f.close()
         return True
-        
-        
+
 
 if __name__ == '__main__':
     subclass().execute()
