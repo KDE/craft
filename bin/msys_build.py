@@ -23,8 +23,6 @@ class msys_interface:
         cmd = "%s --login -c \"cd %s && %s %s" % \
               ( sh, self.__toMSysPath( path ), self.__toMSysPath( cmd ), args )
 
-        if utils.verbose() > 1:
-            cmd += " VERBOSE=1"
         cmd +="\""
         if utils.verbose() > 0:
             print "msys compile: %s" % cmd
