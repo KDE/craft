@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
         self.svnTargets['2.0.0'] = 'tags/soprano/2.0.0'
-        self.defaultTarget = '2.0.0'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
