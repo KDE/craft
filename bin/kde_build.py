@@ -254,6 +254,8 @@ class kde_interface:
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
+        if( not self.buildNameExt ):
+            builddir = "%s-%s" % ( builddir, self.buildNameExt )
 
         os.chdir( os.path.join( self.workdir, builddir ) )
         command = self.cmakeMakeProgramm
@@ -269,6 +271,9 @@ class kde_interface:
 
         if( not buildType == None ):
             builddir = "%s-%s" % ( builddir, buildType )
+
+        if( not self.buildNameExt ):
+            builddir = "%s-%s" % ( builddir, self.buildNameExt )
 
         os.chdir( self.workdir )
         os.chdir( builddir )
