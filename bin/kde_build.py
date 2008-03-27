@@ -45,6 +45,7 @@ class kde_interface:
         self.noFetch         = False
         self.noClean         = False
         self.traditional     = True
+        self.buildNameExt    = None
 
         self.rootdir         = rootdir
         self.workdir         = workdir
@@ -254,7 +255,7 @@ class kde_interface:
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
-        if( not self.buildNameExt ):
+        if( not self.buildNameExt == None ):
             builddir = "%s-%s" % ( builddir, self.buildNameExt )
 
         os.chdir( os.path.join( self.workdir, builddir ) )
@@ -272,7 +273,7 @@ class kde_interface:
         if( not buildType == None ):
             builddir = "%s-%s" % ( builddir, buildType )
 
-        if( not self.buildNameExt ):
+        if( not self.buildNameExt == None ):
             builddir = "%s-%s" % ( builddir, self.buildNameExt )
 
         os.chdir( self.workdir )
