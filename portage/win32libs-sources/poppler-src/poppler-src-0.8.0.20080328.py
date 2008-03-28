@@ -3,12 +3,6 @@ import os
 import utils
 import info
 
-PACKAGE_NAME         = "poppler"
-PACKAGE_VER          = "0.7.1"
-PACKAGE_FULL_VER     = "0.7.1"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = "poppler"
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.6.4'] = 'http://poppler.freedesktop.org/poppler-0.6.4.tar.gz'
@@ -17,7 +11,9 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.7.1'] = 'poppler-0.7.1'
         self.targets['0.7.2'] = 'http://poppler.freedesktop.org/poppler-0.7.2.tar.gz'
         self.targetInstSrc['0.7.2'] = 'poppler-0.7.2'
-        self.defaultTarget = '0.7.2'
+        self.targets['0.8.0'] = 'http://poppler.freedesktop.org/poppler-0.8.0.tar.gz'
+        self.targetInstSrc['0.8.0'] = 'poppler-0.8.0'
+        self.defaultTarget = '0.8.0'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
@@ -41,6 +37,15 @@ class subclass(base.baseclass):
             if utils.verbose() >= 1:
                 print cmd
             self.system( cmd ) or die( "patch" )
+            
+        src = os.path.join( self.workdir, self.instsrcdir )
+
+        cmd = "cd %s && patch -p0 < %s" % \
+              ( self.workdir, os.path.join( self.packagedir , "poppler-pagetransition.diff" ) )
+        if utils.verbose() >= 1:
+            print cmd
+        self.system( cmd ) or die( "patch" )
+            
         return True
         
         
@@ -55,12 +60,6 @@ class subclass(base.baseclass):
         return False
         
     def make_package( self ):
-        # auto-create both import libs with the help of pexports
-        #self.stripLibs( PACKAGE_DLL_NAME )
-
-        # auto-create both import libs with the help of pexports
-        #self.createImportLibs( PACKAGE_DLL_NAME )
-
         # now do packaging with kdewin-packager
         self.doPackaging( "poppler", self.buildTarget, True )
 

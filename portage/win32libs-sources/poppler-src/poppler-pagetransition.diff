@@ -1,0 +1,21 @@
+diff -N -r -u poppler-0.8.0-orig/qt/poppler-page-transition.h poppler-0.8.0/qt/poppler-page-transition.h
+--- poppler-0.8.0-orig/qt/poppler-page-transition.h	2007-12-20 19:40:06.000000000 +0100
++++ poppler-0.8.0/qt/poppler-page-transition.h	2008-03-28 15:31:05.109375000 +0100
+@@ -20,6 +20,8 @@
+ #ifndef __PAGETRANSITION_X_H__
+ #define __PAGETRANSITION_X_H__
+ 
++#include "../qt4/src/poppler-export.h"
++
+ namespace Poppler {
+ 
+ class PageTransitionParams;
+@@ -39,7 +41,7 @@
+ */
+ 
+ 
+-class PageTransition {
++class POPPLER_QT4_EXPORT PageTransition {
+  public:
+ 
+   /** \brief transition effect that shall be used
