@@ -229,6 +229,9 @@ class kde_interface:
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
 
+        if( not self.buildNameExt == None ):
+            builddir = "%s-%s" % ( builddir, self.buildNameExt )
+
         os.chdir( self.workdir )
         if ( not os.path.exists( builddir) ):
             os.mkdir( builddir )
