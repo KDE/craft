@@ -5,7 +5,7 @@ diff -N -r -u poppler-0.8.0-orig/qt/poppler-page-transition.h poppler-0.8.0/qt/p
  #ifndef __PAGETRANSITION_X_H__
  #define __PAGETRANSITION_X_H__
  
-+#include "../qt4/src/poppler-export.h"
++#include <poppler-export.h>
 +
  namespace Poppler {
  
