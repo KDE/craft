@@ -21,11 +21,12 @@ class subinfo(info.infoclass):
     
 class subclass(base.baseclass):
     def __init__(self):
-        base.baseclass.__init__( self, SRC_URI )
+        base.baseclass.__init__( self, "" )
         if self.traditional:
             self.instdestdir = "bjam\bin"
         else:
             self.instdestdir = "bin"
+        self.subinfo = subinfo()
 
     def make_package( self ):
         if self.traditional:
