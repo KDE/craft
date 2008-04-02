@@ -5,15 +5,6 @@ import re
 import utils
 import info
 
-PACKAGE_NAME         = "boost"
-PACKAGE_VER          = "1_34"
-PACKAGE_FULL_VER     = "1_34_1"
-PACKAGE_FULL_NAME    = "%s_%s" % ( PACKAGE_NAME, PACKAGE_FULL_VER)
-
-SRC_URI= """
-http://downloads.sourceforge.net/boost/""" + PACKAGE_FULL_NAME + """.tar.bz2
-"""
-
 # #########################################################################################
 # ATTENTION: currently the only libraries that are built are boost.python libs
 # that implies that the bin package requires the lib package as well to be used for compilation
@@ -22,7 +13,10 @@ http://downloads.sourceforge.net/boost/""" + PACKAGE_FULL_NAME + """.tar.bz2
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.34.1'] = 'http://downloads.sourceforge.net/boost/boost_1_34_1.tar.bz2'
-        self.defaultTarget = '1.34.1'
+        self.targetInstSrc['1.34.1'] = 'boost_1_34_1'
+        self.targets['1.35.0'] = 'http://downloads.sourceforge.net/boost/boost_1_35_0.tar.bz2'
+        self.targetInstSrc['1.35.0'] = 'boost_1_35_0'
+        self.defaultTarget = '1.35.0'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/win32libs'] = 'default'
@@ -30,9 +24,8 @@ class subinfo(info.infoclass):
 
 class subclass(base.baseclass):
     def __init__(self):
-        base.baseclass.__init__( self, SRC_URI )
-        self.instsrcdir = PACKAGE_FULL_NAME
-        self.createCombinedPackage = True
+        base.baseclass.__init__( self, "" )
+        #self.createCombinedPackage = True  # no longer true :(
         if self.compiler == "mingw":
             self.toolset = "gcc"
         else:
@@ -59,16 +52,6 @@ class subclass(base.baseclass):
             print cmd
         os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
 
-        # add another boost include dir boost-1_34
-        srcdir  = os.path.join( self.workdir, self.imagedir, "include", "boost" )
-        destdir = os.path.join( self.workdir, self.imagedir, "include", PACKAGE_NAME + "-" + PACKAGE_FULL_VER, "boost" )
-        utils.copySrcDirToDestDir( srcdir, destdir )
-
-        # add another boost include dir boost-1_34_1
-        srcdir  = os.path.join( self.workdir, self.imagedir, "include", "boost" )
-        destdir = os.path.join( self.workdir, self.imagedir, "include", PACKAGE_NAME + "-" + PACKAGE_VER, "boost" )
-        utils.copySrcDirToDestDir( srcdir, destdir )
-        
         # copy runtime libraries to the bin folder
         cmd = "cd %s && mkdir bin && copy lib\\*.dll bin" % ( os.path.join( self.workdir, self.imagedir ) )
         if utils.verbose() >= 1:
@@ -77,7 +60,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        return self.doPackaging( "boost", "boost_" + self.buildTarget.replace('.','_') , True )
 
 if __name__ == '__main__':
     subclass().execute()
