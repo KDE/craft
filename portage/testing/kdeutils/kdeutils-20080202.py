@@ -6,16 +6,16 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdeutils'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeutils'
-        self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdeutils-4.0.60.tar.bz2'
-        self.targetInstSrc['4.0.60'] = 'kdeutils-4.0.60'        
+        for ver in ['65', '66', '67']:
+          self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdeutils-4.0.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.0.' + ver] = 'kdeedu-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['kde/kdebase'] = 'default'
-    
+        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+
 class subclass(base.baseclass):
     def __init__(self):
         self.buildType="Debug"
@@ -23,7 +23,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
         self.kdeCustomDefines = ""
 #        self.kdeCustomDefines += "-DBUILD_kwallet=OFF "
-        self.kdeCustomDefines += "-DBUILD_doc=OFF"
+#        self.kdeCustomDefines += "-DBUILD_doc=OFF"
 
     def unpack( self ):
         return self.kdeSvnUnpack()
