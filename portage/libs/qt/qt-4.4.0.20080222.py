@@ -170,6 +170,10 @@ class subclass(base.baseclass):
 
         # build qt
         self.system( self.cmakeMakeProgramm )
+        # build Qt documentation - currently does not work with mingw
+        if self.compiler == "msvc2005":
+            if self.buildTarget != '4.3.3':
+                self.system( self.cmakeMakeProgramm + " docs" )
 
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
