@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdereview/step'
+        self.svnTargets['svnHEAD'] = 'trunk/kdereview/step'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -16,7 +16,8 @@ class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
         self.subinfo = subinfo()
-
+        self.instsrcdir = "step"
+        
     def unpack( self ):
         return self.kdeSvnUnpack()
 
