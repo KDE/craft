@@ -10,8 +10,8 @@ http://82.149.170.66/kde-windows/repository/win32libs/single/aspell-0.60.5-lib.z
 
 http://82.149.170.66/kde-windows/repository/win32libs/single/boost-headers-1.34-lib.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.4-6-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.4-6-lib.tar.bz2
+http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.5-1-bin.tar.bz2
+http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.5-1-lib.tar.bz2
 
 http://82.149.170.66/kde-windows/repository/win32libs/single/expat-2.0.1-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/expat-2.0.1-lib.zip
