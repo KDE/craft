@@ -5,26 +5,20 @@ import utils
 import info
 
 PACKAGE_NAME         = "libbzip2"
-PACKAGE_VER          = "1.0.4"
-PACKAGE_FULL_VER     = "1.0.4-6"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "bzip2"
 
-SRC_URI= """
-http://www.bzip.org/1.0.4/bzip2-1.0.4.tar.gz
-"""
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.0.4-6'] = 'http://www.bzip.org/1.0.4/bzip2-1.0.4.tar.gz'
-        self.defaultTarget = '1.0.4-6'
+        self.targetInstSrc['1.0.4-6'] = "bzip2-1.0.4"
+        self.targets['1.0.5-1'] = 'http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz'
+        self.targetInstSrc['1.0.5-1'] = "bzip2-1.0.5"
+        self.defaultTarget = '1.0.5-1'
 
 class subclass(base.baseclass):
   def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
-    self.instsrcdir = "bzip2-1.0.4"
-    if self.traditional:
-        self.instdestdir = "kde"
+    base.baseclass.__init__( self, "" )
     self.createCombinedPackage = True
     self.buildType = "Release"
     self.subinfo = subinfo()
@@ -41,7 +35,7 @@ class subclass(base.baseclass):
 
     cmd = "cd %s && patch -p0 < %s" % \
           ( bzip2_dir, os.path.join( self.packagedir, "bzip.diff" ) )
-    os.system( cmd ) or utils.die("patch")
+    os.system( cmd )
 
     return True
 
@@ -59,7 +53,7 @@ class subclass(base.baseclass):
     self.createImportLibs( PACKAGE_DLL_NAME )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+    self.doPackaging( PACKAGE_NAME, self.buildTarget, True )
 
     return True
 
