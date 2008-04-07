@@ -40,8 +40,8 @@ http://82.149.170.66/kde-windows/repository/win32libs/single/libintl-0.14.4-lib.
 http://82.149.170.66/kde-windows/repository/win32libs/single/libidn-1.2-1-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/libidn-1.2-1-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libpng-1.2.23-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/libpng-1.2.23-lib.tar.bz2
+http://82.149.170.66/kde-windows/repository/win32libs/single/libpng-1.2.26-bin.tar.bz2
+http://82.149.170.66/kde-windows/repository/win32libs/single/libpng-1.2.26-lib.tar.bz2
 
 http://82.149.170.66/kde-windows/repository/win32libs/single/libxml2-2.6.30-3-bin.zip
 http://82.149.170.66/kde-windows/repository/win32libs/single/libxml2-2.6.30-3-lib.zip
