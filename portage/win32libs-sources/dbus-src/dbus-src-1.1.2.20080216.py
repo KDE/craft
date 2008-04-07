@@ -29,7 +29,7 @@ class subclass(base.baseclass):
   def unpack( self ):
     print "dbus unpack called"
     # do the svn fetch/update
-    repo = "https://windbus.svn.sourceforge.net/svnroot/windbus/trunk"
+    repo = "https://windbus.svn.sourceforge.net/svnroot/windbus/tags/1.1.2"
     self.svnFetch( repo )
 
     utils.cleanDirectory( self.workdir )
