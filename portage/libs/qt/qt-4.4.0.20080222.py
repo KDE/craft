@@ -31,11 +31,11 @@ class subclass(base.baseclass):
     def fetch( self ):
         if not base.baseclass.fetch( self ):
             return False
-        openssl = "http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-lib.zip"
+        openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip"
         if self.compiler == "msvc2005":
-            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-lib.tar.bz2"
+            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-lib.tar.bz2"
         elif self.compiler == "mingw":
-            dbuslib = "http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-lib.tar.bz2"
+            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-lib.tar.bz2"
 
         if not utils.getFiles( openssl, self.downloaddir ):
             return False
