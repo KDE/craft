@@ -2,6 +2,7 @@ import base
 import os
 import shutil
 import utils
+import info
 import re
 
 PACKAGE_NAME         = "shared-mime-info"
