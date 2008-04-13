@@ -5,66 +5,66 @@ import shutil
 import info
 
 SRC_URI= """
-http://82.149.170.66/kde-windows/repository/win32libs/single/aspell-0.60.5-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/aspell-0.60.5-lib.zip
+http://downloads.sourceforge.net/kde-windows/aspell-0.60.5-bin.zip
+http://downloads.sourceforge.net/kde-windows/aspell-0.60.5-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/boost-headers-1.34-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/boost-headers-1.34-lib.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.5-1-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/libbzip2-1.0.5-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libbzip2-1.0.5-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libbzip2-1.0.5-1-lib.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/expat-2.0.1-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/expat-2.0.1-lib.zip
+http://downloads.sourceforge.net/kde-windows/expat-2.0.1-bin.zip
+http://downloads.sourceforge.net/kde-windows/expat-2.0.1-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/giflib-4.1.4-1-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/giflib-4.1.4-1-lib.zip
+http://downloads.sourceforge.net/kde-windows/giflib-4.1.4-1-bin.zip
+http://downloads.sourceforge.net/kde-windows/giflib-4.1.4-1-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/gpgme-1.1.4-3-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/gpgme-1.1.4-3-lib.zip
+http://downloads.sourceforge.net/kde-windows/gpgme-1.1.4-3-bin.zip
+http://downloads.sourceforge.net/kde-windows/gpgme-1.1.4-3-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/iconv-1.9.2-2-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/iconv-1.9.2-2-lib.zip
+http://downloads.sourceforge.net/kde-windows/iconv-1.9.2-2-bin.zip
+http://downloads.sourceforge.net/kde-windows/iconv-1.9.2-2-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/jasper-1.900.1-2-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/jasper-1.900.1-2-lib.zip
+http://downloads.sourceforge.net/kde-windows/jasper-1.900.1-2-bin.zip
+http://downloads.sourceforge.net/kde-windows/jasper-1.900.1-2-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/jpeg-6.b-5-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/jpeg-6.b-5-lib.zip
+http://downloads.sourceforge.net/kde-windows/jpeg-6.b-5-bin.zip
+http://downloads.sourceforge.net/kde-windows/jpeg-6.b-5-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/lcms-1.17-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/lcms-1.17-lib.zip
+http://downloads.sourceforge.net/kde-windows/lcms-1.17-bin.zip
+http://downloads.sourceforge.net/kde-windows/lcms-1.17-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libintl-0.14.4-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/libintl-0.14.4-lib.zip
+http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-bin.zip
+http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libidn-1.2-1-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/libidn-1.2-1-lib.zip
+http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-bin.zip
+http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libpng-1.2.26-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/libpng-1.2.26-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libpng-1.2.26-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libpng-1.2.26-lib.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libxml2-2.6.30-3-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/libxml2-2.6.30-3-lib.zip
+http://downloads.sourceforge.net/kde-windows/libxml2-2.6.30-3-bin.zip
+http://downloads.sourceforge.net/kde-windows/libxml2-2.6.30-3-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/libxslt-1.1.22-2-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/libxslt-1.1.22-2-lib.zip
+http://downloads.sourceforge.net/kde-windows/libxslt-1.1.22-2-bin.zip
+http://downloads.sourceforge.net/kde-windows/libxslt-1.1.22-2-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/openslp-1.2.1-2-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/openslp-1.2.1-2-lib.zip
+http://downloads.sourceforge.net/kde-windows/openslp-1.2.1-2-bin.zip
+http://downloads.sourceforge.net/kde-windows/openslp-1.2.1-2-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/openssl-0.9.8g-1-lib.zip
+http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-bin.zip
+http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/redland-1.0.3-5-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/redland-1.0.3-5-lib.zip
+http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-bin.zip
+http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-lib.zip
 
 http://download.cegit.de/kde-windows/repository/win32libs/single/shared-mime-info-0.23-bin.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/tiff-3.8.2-2-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/tiff-3.8.2-2-lib.zip
+http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-bin.zip
+http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-lib.zip
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/zlib-1.2.3-2-bin.zip
-http://82.149.170.66/kde-windows/repository/win32libs/single/zlib-1.2.3-2-lib.zip
+http://downloads.sourceforge.net/kde-windows/zlib-1.2.3-2-bin.zip
+http://downloads.sourceforge.net/kde-windows/zlib-1.2.3-2-lib.zip
 
 http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
@@ -75,16 +75,16 @@ if os.getenv("KDECOMPILER") == "mingw":
 http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-bin.tar.bz2
 http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-lib.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-mingw-7.6-2-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.6-2-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.6-2-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
 http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2
 http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-lib.tar.bz2
 
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-msvc-7.6-1-bin.tar.bz2
-http://82.149.170.66/kde-windows/repository/win32libs/single/pcre-msvc-7.6-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.6-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.6-1-lib.tar.bz2
 """
 
 class subinfo(info.infoclass):
