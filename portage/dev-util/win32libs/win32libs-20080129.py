@@ -58,7 +58,7 @@ http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip
 http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-bin.zip
 http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-lib.zip
 
-http://download.cegit.de/kde-windows/repository/win32libs/single/shared-mime-info-0.23-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/shared-mime-info-0.23-bin.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-bin.zip
 http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-lib.zip
@@ -72,16 +72,16 @@ http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 
 if os.getenv("KDECOMPILER") == "mingw":
     SRC_URI = SRC_URI + """
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-bin.tar.bz2
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-mingw-1.1.2.20080216-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.6-2-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.6-2-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-bin.tar.bz2
-http://download.cegit.de/kde-windows/repository/win32libs/single/dbus-msvc-1.1.2.20071228-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.6-1-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.6-1-lib.tar.bz2
