@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
+        self.hardDependencies['dev-util/msys'] = 'default'
         self.hardDependencies['testing/gettext-tools'] = 'default'
         
 class subclass(base.baseclass):
