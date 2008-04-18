@@ -36,3 +36,17 @@
  QT += xml
  
  target.path=$$[QT_INSTALL_BINS]
+--- src\dbus\qdbus_symbols.cpp.orig	2008-04-18 16:34:22.000000000 +0200
++++ src\dbus\qdbus_symbols.cpp	2008-04-17 21:10:23.796875000 +0200
+@@ -75,7 +75,11 @@
+ 
+     static int majorversions[] = { 3, 2, -1 };
+     lib->unload();
++#ifdef Q_CC_MINGW
++    lib->setFileName(QLatin1String("libdbus-1"));
++#else
+     lib->setFileName(QLatin1String("dbus-1"));
++#endif
+     for (uint i = 0; i < sizeof(majorversions) / sizeof(majorversions[0]); ++i) {
+         lib->setFileNameAndVersion(lib->fileName(), majorversions[i]);
+         if (lib->load() && lib->resolve("dbus_connection_open_private"))
