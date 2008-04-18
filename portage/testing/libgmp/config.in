@@ -92,7 +92,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_NATIVE_mpn_add
 #cmakedefine HAVE_NATIVE_mpn_add_1
 #cmakedefine HAVE_NATIVE_mpn_add_n
-#cmakedefine HAVE_NATIVE_mpn_add_nc
+#cmakedefine HAVE_NATIVE_mpn_add_nc 1
 #cmakedefine HAVE_NATIVE_mpn_addmul_1
 #cmakedefine HAVE_NATIVE_mpn_addmul_1c
 #cmakedefine HAVE_NATIVE_mpn_addmul_2
@@ -156,7 +156,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_NATIVE_mpn_sub
 #cmakedefine HAVE_NATIVE_mpn_sub_1
 #cmakedefine HAVE_NATIVE_mpn_sub_n
-#cmakedefine HAVE_NATIVE_mpn_sub_nc
+#cmakedefine HAVE_NATIVE_mpn_sub_nc 1
 #cmakedefine HAVE_NATIVE_mpn_submul_1
 #cmakedefine HAVE_NATIVE_mpn_submul_1c
 #cmakedefine HAVE_NATIVE_mpn_udiv_w_sdiv
