@@ -108,10 +108,21 @@ def wgetFile( url, destdir ):
     if verbose() > 1:
         print "wgetfile called"
         print "executing this command:", command
-    # FIXME: there needs to be another function instead of os.system
-    ret = system( command )
-    if verbose() > 0:
-        print "wget ret:", ret
+    attempts=1
+    if url.lower().startswith("http://downloads.sourceforge.net"):
+        if verbose() > 0:
+            print "Detected downloads.sourceforge.net... Trying three times."
+        attempts=3
+
+    while(attempts > 0):
+        attempts -= 1
+        ret = system( command )
+        if verbose() > 0:
+            print "wget ret:", ret
+        if ret == True:
+            # success stop early.
+            break;
+
     return ret
     
 def getFtpFile( host, path, destdir, filename ):
