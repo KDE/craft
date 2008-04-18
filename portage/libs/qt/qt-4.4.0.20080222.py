@@ -18,10 +18,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['4.3.3'] = "qt-win-opensource-src-4.3.3-" + os.getenv( "KDECOMPILER" )
         self.svnTargets['qt-copy'] = 'trunk/qt-copy'
         self.defaultTarget = 'qt-copy'
-    
+
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-    
+
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
@@ -100,7 +100,7 @@ class subclass(base.baseclass):
             self.system( cmd )
         else:
             qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
-            
+
             utils.cleanDirectory( qtsrcdir )
             self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
 
@@ -172,9 +172,9 @@ class subclass(base.baseclass):
         self.system( self.cmakeMakeProgramm )
 
         # build Qt documentation - currently does not work with mingw
-	# it does not work with msvc either; unless you have a Qt4-Installation
-	# already at hand. (otherwise qdoc3 fails to locate qtxml4.dll)
-	#
+        # it does not work with msvc either; unless you have a Qt4-Installation
+        # already at hand. (otherwise qdoc3 fails to locate qtxml4.dll)
+        #
         #if self.compiler == "msvc2005":
         #    if self.buildTarget != '4.3.3':
         #        self.system( self.cmakeMakeProgramm + " docs" )
