@@ -124,12 +124,12 @@ def wgetFile( url, destdir ):
             break;
 
     return ret
-    
+
 def getFtpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
     if verbose() > 1:
         print "FIXME getFtpFile called.", host, path
-    
+
     outfile = open( os.path.join( destdir, filename ), "wb" )
     ftp = ftplib.FTP( host )
     ftp.login( "anonymous", "johndoe" )
@@ -142,7 +142,7 @@ def getHttpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
     if verbose() > 1:
         print "getHttpFile called.", host, path
-    
+
     conn = httplib.HTTPConnection( host )
     conn.request( "GET", path )
     r1 = conn.getresponse()
@@ -197,7 +197,7 @@ def unTar( file, destdir ):
         mode = "r:gz"
     elif ( ext == ".bz2" ):
         mode = "r:bz2"
-    
+
     tar = tarfile.open( file, mode )
 
     # FIXME how to handle errors here ?
@@ -221,12 +221,12 @@ def unZip( file, destdir ):
 
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
-            
+
             outfile = open(os.path.join(destdir, name), 'wb')
             outfile.write(zip.read(name))
             outfile.flush()
             outfile.close()
-    
+
     return True
 
 
@@ -270,7 +270,7 @@ def svnFetch( repo, destdir, username = None, password = None ):
         return False
 
 ### package dependencies functions
-    
+
 def isInstalled( category, package, version ):
     fileName = os.path.join( getEtcPortageDir(), "installed" )
     if ( not os.path.isfile( fileName ) ):
@@ -292,7 +292,7 @@ def isInstalled( category, package, version ):
         if( os.path.isfile( releasepack ) or os.path.isfile( develpack ) ):
             found = True
     return found
-    
+
 def addInstalled( category, package, version ):
     if verbose() > 1:
         print "addInstalled called"
@@ -327,7 +327,7 @@ def remInstalled( category, package, version ):
         tfile.close()
         os.remove( dbfile )
         os.rename( tmpdbfile, dbfile )
-        
+
 def getCategoryPackageVersion( path ):
     if verbose() > 1:
         print "getCategoryPackageVersion:", path
@@ -346,7 +346,7 @@ def getPortageDir():
 
 def getEtcPortageDir():
     return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
-    
+
 def getFilename( category, package, version ):
     file = os.path.join( getPortageDir(), category, package, "%s-%s.py" % ( package, version ) )
     return file
@@ -379,7 +379,7 @@ def getAllTags( category, package, version ):
         return info.svnTargets
     else:
         return dict()
-    
+
 def getNewestVersion( category, package ):
     """
     returns the newest version of this category/package
@@ -392,7 +392,7 @@ def getNewestVersion( category, package ):
         die( "could not find category '%s'" % category )
     if package not in os.listdir( os.path.join( getPortageDir(), category ) ):
         die( "could not find package '%s' in category '%s'" % ( package, category ) )
-        
+
     packagepath = os.path.join( getPortageDir(), category, package )
 
     versions = []
@@ -494,7 +494,7 @@ def solveDependencies( category, package, version, deplist ):
 
     if [ category, package, version, tag ] in deplist:
         deplist.remove( [ category, package, version, tag ] )
-        
+
     deplist.append( [ category, package, version, tag ] )
 
     mydeps = getDependencies( category, package, version )
@@ -560,7 +560,7 @@ def printCategoriesPackagesAndVersions(lines, condition):
     for category, package, version in lines:
         if condition( category, package, version ):
             printLine(category, package, version)
-    
+
 def printInstallables():
     """get all the packages that can be installed"""
     def alwaysTrue( category, package, version ):
@@ -580,7 +580,7 @@ def error( message ):
     if verbose() > 0:
         print "emerge error: %s" % message
     return False
-    
+
 def die( message ):
     print "emerge fatal error: %s" % message
     exit( 1 )
@@ -592,7 +592,7 @@ def system( cmdstring ):
     p = subprocess.Popen( cmdstring, shell=True, stdout=sys.stdout, stderr=sys.stderr )
     ret = p.wait()
     return ( ret == 0 )
-    
+
 def copySrcDirToDestDir( srcdir, destdir ):
     if verbose() > 1:
         print "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir )
@@ -604,7 +604,7 @@ def copySrcDirToDestDir( srcdir, destdir ):
     mydestdir = destdir
     if ( not destdir.endswith( "\\" ) ):
         mydestdir = mydestdir + "\\"
-    
+
     for root, dirs, files in os.walk( mysrcdir ):
 
         # do not copy files under .svn directories, because they are write-protected
@@ -614,7 +614,7 @@ def copySrcDirToDestDir( srcdir, destdir ):
             if ( not os.path.exists( tmpdir ) ): os.makedirs( tmpdir )
             for file in files:
                 shutil.copy( os.path.join( root, file ), tmpdir )
-                
+
 def moveSrcDirToDestDir( srcdir, destdir ):
     if verbose() > 1:
         print "moveSrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir )
@@ -624,7 +624,7 @@ def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
     if verbose() > 1:
         print "unmerge called: %s" % ( package )
-        
+
     if os.path.exists( os.path.join( rootdir, "manifest"  ) ):
         for file in os.listdir( os.path.join( rootdir, "manifest"  ) ):
             if file.startswith( "%s-" % package ) and file.endswith( ".mft" ):
@@ -652,12 +652,12 @@ def unmerge( rootdir, package, forced = False ):
                 fptr.close()
                 os.remove( os.path.join( rootdir, "manifest", file ) )
     return
-    
+
 def manifestDir( srcdir, imagedir, package, version ):
     """ make the manifest files for an imagedir like the kdewin-packager does """
     if verbose() > 1:
         print "manifestDir called: %s %s" % ( srcdir, imagedir )
-        
+
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
         for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
             if file.startswith( package ):
@@ -666,13 +666,13 @@ def manifestDir( srcdir, imagedir, package, version ):
 
     myimagedir = imagedir
     if ( not imagedir.endswith( "\\" ) ):
-	myimagedir = myimagedir + "\\"
+        myimagedir = myimagedir + "\\"
 
     binList = list()
     libList = list()
     docList = list()
     dirType=0
-    
+
     for root, dirs, files in os.walk( imagedir ):
         relativeRoot = root.replace( imagedir, "" )
         if relativeRoot.startswith( "\\bin" ):
@@ -693,7 +693,7 @@ def manifestDir( srcdir, imagedir, package, version ):
             dirType=8
         else:
             dirType=1
-            
+
         for file in files:
             if dirType == 1 or dirType == 2:
                 if file.endswith( ".exe" ) or file.endswith( ".bat" ) or file.endswith( ".dll" ):
@@ -707,10 +707,10 @@ def manifestDir( srcdir, imagedir, package, version ):
                 libList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
             if dirType == 7 or dirType == 8:
                 docList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
-                
+
     if not os.path.exists( os.path.join( imagedir, "manifest" ) ):
         os.mkdir( os.path.join( imagedir, "manifest" ) )
-        
+
     if len(binList) > 0:
         binmanifest = open( os.path.join( imagedir, "manifest", "%s-%s-bin.mft" % ( package, version )), 'wb' )
     if len(libList) > 0:
@@ -737,7 +737,7 @@ def manifestDir( srcdir, imagedir, package, version ):
     if len(docList) > 0:
         docmanifest.write( os.path.join( "manifest", "%s-%s-doc.mft\n" % ( package, version ) ) )
         docmanifest.write( os.path.join( "manifest", "%s-%s-doc.ver\n" % ( package, version ) ) )
-        
+
     if len(binList) > 0:
         binversion = open( os.path.join( imagedir, "manifest", "%s-%s-bin.ver" % ( package, version )), 'wb' )
     if len(libList) > 0:
@@ -750,7 +750,7 @@ def manifestDir( srcdir, imagedir, package, version ):
         libversion.write( "%s %s developer files\n%s:" % ( package, version, package ) )
     if len(docList) > 0:
         docversion.write( "%s %s Documentation\n%s:" % ( package, version, package ) )
-    
+
 def mergeImageDirToRootDir( imagedir, rootdir ):
     copySrcDirToDestDir( imagedir, rootdir )
 
@@ -768,7 +768,7 @@ def moveEntries( srcdir, destdir ):
         if( os.path.isdir( dest ) ):
           continue
         os.rename( src, dest )
-    
+
 def moveImageDirContents( imagedir, relSrcDir, relDestDir ):
     srcdir = os.path.join( imagedir, relSrcDir )
     destdir = os.path.join( imagedir, relDestDir )    
@@ -845,7 +845,7 @@ def digestFile( filepath ):
         hash.update( line )
     file.close()
     return hash.hexdigest()
-    
+
 def toMSysPath( path ):
     path = path.replace( '\\', '/' )
     if ( path[1] == ':' ):
