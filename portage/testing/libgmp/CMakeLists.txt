@@ -10,7 +10,7 @@ INCLUDE (CheckFunctionExists)
 # ########## gmp-4.1 executable ##########
 # Sources:
 SET(gmp-4.1_executable_SRCS
-    ansi2knr.c
+#     ansi2knr.c
 #    tal-debug.c
 #    tal-notreent.c
 #    tal-reent.c
@@ -38,8 +38,74 @@ SET(gmp-4.1_executable_SRCS
     dummy.cc
 )
 
-SET(gmp-4.1_executable_SRCS
-    ${gmp-4.1_executable_SRCS}
+SET(mpf_SRCS
+   mpf/iset_ui.c
+   mpf/abs.c
+   mpf/add.c
+   mpf/add_ui.c
+   mpf/ceilfloor.c
+   mpf/clear.c
+   mpf/cmp.c
+   mpf/cmp_d.c
+   mpf/cmp_si.c
+   mpf/cmp_ui.c
+   mpf/div.c
+   mpf/div_2exp.c
+   mpf/div_ui.c
+   mpf/dump.c
+   mpf/eq.c
+   mpf/fits_sint.c
+   mpf/fits_slong.c
+   mpf/fits_sshort.c
+   mpf/fits_uint.c
+   mpf/fits_ulong.c
+   mpf/fits_ushort.c
+   mpf/get_d.c
+   mpf/get_dfl_prec.c
+   mpf/get_d_2exp.c
+   mpf/get_prc.c
+   mpf/get_si.c
+   mpf/get_str.c
+   mpf/get_ui.c
+   mpf/init.c
+   mpf/init2.c
+   mpf/inp_str.c
+   mpf/int_p.c
+   mpf/iset.c
+   mpf/iset_d.c
+   mpf/iset_si.c
+   mpf/iset_str.c
+   mpf/mul.c
+   mpf/mul_2exp.c
+   mpf/mul_ui.c
+   mpf/neg.c
+   mpf/out_str.c
+   mpf/pow_ui.c
+   mpf/random2.c
+   mpf/reldiff.c
+   mpf/set.c
+   mpf/set_d.c
+   mpf/set_dfl_prec.c
+   mpf/set_prc.c
+   mpf/set_prc_raw.c
+   mpf/set_q.c
+   mpf/set_si.c
+   mpf/set_str.c
+   mpf/set_ui.c
+   mpf/set_z.c
+   mpf/size.c
+   mpf/sqrt.c
+   mpf/sqrt_ui.c
+   mpf/sub.c
+   mpf/sub_ui.c
+   mpf/swap.c
+   mpf/trunc.c
+   mpf/ui_div.c
+   mpf/ui_sub.c
+   mpf/urandomb.c
+)
+
+SET(mpz_SRCS
     mpz/add.c
     mpz/add_ui.c
     mpz/abs.c
@@ -185,8 +251,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/xor.c
 )
 
-SET(gmp-4.1_executable_SRCS
-    ${gmp-4.1_executable_SRCS}
+SET(mpn_SRCS
     mpn/mp_bases.c
     mpn/generic/add.c
     mpn/generic/add_1.c
@@ -243,17 +308,105 @@ SET(gmp-4.1_executable_SRCS
     mpn/generic/udiv_w_sdiv.c
 )
 
-# Headers:
-SET(gmp-4.1_executable_HDRS
-    acconfig.h
-    install-sh
-    ltmain.sh
-    mdate-sh
-    gmp-impl.h
-    longlong.h
-    gmpxx.h
-    mpfrxx.h
+SET(mpq_SRCS
+   mpq/abs.c
+   mpq/aors.c
+   mpq/canonicalize.c
+   mpq/clear.c
+   mpq/cmp.c
+   mpq/cmp_si.c
+   mpq/cmp_ui.c
+   mpq/div.c
+   mpq/equal.c
+   mpq/get_d.c
+   mpq/get_den.c
+   mpq/get_num.c
+   mpq/get_str.c
+   mpq/init.c
+   mpq/inp_str.c
+   mpq/inv.c
+   mpq/md_2exp.c
+   mpq/mul.c
+   mpq/neg.c
+   mpq/out_str.c
+   mpq/set.c
+   mpq/set_d.c
+   mpq/set_den.c
+   mpq/set_f.c
+   mpq/set_num.c
+   mpq/set_si.c
+   mpq/set_str.c
+   mpq/set_ui.c
+   mpq/set_z.c
+   mpq/swap.c
 )
+
+SET(printf_SRCS
+   printf/asprintf.c
+   printf/asprntffuns.c
+   printf/doprnt.c
+   printf/doprntf.c
+   printf/doprnti.c
+   printf/fprintf.c
+   printf/obprintf.c
+   printf/obprntffuns.c
+   printf/obvprintf.c
+   printf/printf.c
+   printf/printffuns.c
+   printf/repl-vsnprintf.c
+   printf/snprintf.c
+   printf/snprntffuns.c
+   printf/sprintf.c
+   printf/sprintffuns.c
+   printf/vasprintf.c
+   printf/vfprintf.c
+   printf/vprintf.c
+   printf/vsnprintf.c
+   printf/vsprintf.c
+)
+
+SET(scanf_SRCS
+   scanf/doscan.c
+   scanf/fscanf.c
+   scanf/fscanffuns.c
+   scanf/scanf.c
+   scanf/sscanf.c
+   scanf/sscanffuns.c
+   scanf/vfscanf.c
+   scanf/vscanf.c
+   scanf/vsscanf.c
+)
+
+# Headers:
+# SET(gmp-4.1_executable_HDRS
+#     acconfig.h
+#     install-sh
+#     ltmain.sh
+#     mdate-sh
+#     gmp-impl.h
+#     longlong.h
+#     gmpxx.h
+#     mpfrxx.h
+# )
+# 
+# SET(gmp-4.1_executable_HDRS
+# 	${gmp-4.1_executable_HDRS}
+#     mpf/fits_s.h
+#     mpf/fits_u.h
+# )
+# 
+# SET(gmp-4.1_executable_HDRS
+# 	${gmp-4.1_executable_HDRS}
+#     mpz/aors.h
+#     mpz/aors_ui.h
+#     mpz/fits_s.h
+#     mpz/mul_i.h
+# )
+# 
+# SET(gmp-4.1_executable_HDRS
+# 	${gmp-4.1_executable_HDRS}
+# 	mpn/generic/gmp-mparam.h
+# )
 
 SET(HAVE_HOST_CPU_FAMILY_powerpc 0)
 SET(HAVE_HOST_CPU_FAMILY_power 0)
@@ -294,7 +447,7 @@ CHECK_INCLUDE_FILES(sys/mman.h HAVE_SYS_MMAN_H)
 CHECK_INCLUDE_FILES(stdarg.h HAVE_STDARG)
 
 #we should choose the right gmp-mparam by the type of processor but I don't know how to do that
-CONFIGURE_FILE(mpn/x86/i486/gmp-mparam.h ${CMAKE_BINARY_DIR}/gmp-mparam.h COPYONLY)
+CONFIGURE_FILE(mpn/x86/p6/gmp-mparam.h ${CMAKE_BINARY_DIR}/gmp-mparam.h COPYONLY)
 CONFIGURE_FILE(stamp-h1.in ${CMAKE_BINARY_DIR}/stamp.h1)
 #CONFIGURE_FILE(Makefile.in ${CMAKE_BINARY_DIR}/Makefile)
 CONFIGURE_FILE(config.in ${CMAKE_BINARY_DIR}/config.h)
@@ -303,10 +456,29 @@ CONFIGURE_FILE(gmp-h.in ${CMAKE_BINARY_DIR}/gmp.h)
 CONFIGURE_FILE(mp-h.in ${CMAKE_BINARY_DIR}/mp.h)
 
 
-add_definitions(-DHAVE_CONFIG_H)
+add_definitions(-DHAVE_CONFIG_H -D__GMP_WITHIN_GMP)
 
 # actual target:
+ADD_LIBRARY(mpf STATIC ${mpf_SRCS})
+# set_target_properties(mpf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+
+ADD_LIBRARY(mpz STATIC ${mpz_SRCS})
+# set_target_properties(mpz PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+
+ADD_LIBRARY(mpn STATIC ${mpn_SRCS})
+# set_target_properties(mpf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+
+ADD_LIBRARY(mpq STATIC ${mpq_SRCS})
+# set_target_properties(mpq PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+
+ADD_LIBRARY(printf STATIC ${printf_SRCS})
+# set_target_properties(printf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+
+ADD_LIBRARY(scanf STATIC ${scanf_SRCS})
+# set_target_properties(scanf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+
 ADD_LIBRARY(gmp-4.1 SHARED ${gmp-4.1_executable_SRCS})
-set_target_properties(gmp-4.1 PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+# set_target_properties(gmp-4.1 PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+target_link_libraries(gmp-4.1 mpf mpz mpn mpq printf scanf)
 # add install target:
-INSTALL(TARGETS gmp-4.1 DESTINATION bin)
+# INSTALL(TARGETS gmp-4.1 DESTINATION bin)
