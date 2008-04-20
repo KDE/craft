@@ -118,6 +118,10 @@ class subclass(base.baseclass):
               ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
             self.system( cmd )
 
+            cmd = " cd %s && %s /nopause" % \
+              ( qtsrcdir, os.path.join( "patches", "apply_patches.bat" ) )
+            self.system( cmd )
+
         return True
 
     def compile( self ):
