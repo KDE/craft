@@ -597,21 +597,18 @@ def copySrcDirToDestDir( srcdir, destdir ):
     if verbose() > 1:
         print "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir )
 
-    mysrcdir = srcdir
     if ( not srcdir.endswith( "\\" ) ):
-        mysrcdir = mysrcdir + "\\"
-
-    mydestdir = destdir
+        srcdir += "\\"
     if ( not destdir.endswith( "\\" ) ):
-        mydestdir = mydestdir + "\\"
+        destdir += "\\"
 
-    for root, dirs, files in os.walk( mysrcdir ):
-
+    for root, dirs, files in os.walk( srcdir ):
         # do not copy files under .svn directories, because they are write-protected
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):
-            tmpdir = root.replace( mysrcdir, mydestdir )
-            if ( not os.path.exists( tmpdir ) ): os.makedirs( tmpdir )
+            tmpdir = root.replace( srcdir, destdir )
+            if ( not os.path.exists( tmpdir ) ):
+                os.makedirs( tmpdir )
             for file in files:
                 shutil.copy( os.path.join( root, file ), tmpdir )
 

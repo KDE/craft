@@ -12,8 +12,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
-        self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['testing/gettext-tools'] = 'default'
+        self.hardDependencies['dev-util/gettext-tools'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self ):
@@ -31,26 +30,25 @@ class subclass(base.baseclass):
             if not self.kdeSvnUnpack( svnpath, pkg ):
                 return False
 
-                
-        srcdir  = os.path.join( self.kdesvndir, svnpath, "scripts" )
-        destdir = os.path.join( self.workdir, "scripts" )
-        utils.copySrcDirToDestDir( srcdir, destdir )
-        
-        for pkg in self.subinfo.languages.split():
-            srcdir  = os.path.join( self.kdesvndir, svnpath, pkg )
-            destdir = os.path.join( self.workdir, pkg )
-            utils.copySrcDirToDestDir( srcdir, destdir )
-            
-        # execute autogen.sh and generate the CMakeLists.txt files
-        self.msys.msysExecute( self.workdir, os.path.join( self.workdir, "scripts", "autogen.sh" ), self.subinfo.languages )
+        # ok, that's not really fine, but copying all the stuff around isn't either
+        autogen = os.path.join( self.packagedir , "autogen.py" )
+        svnpath = os.path.join( self.kdesvndir, svnpath )
+
+
+        # execute autogen.py and generate the CMakeLists.txt files
+        cmd = "cd %s && %s %s" % \
+              (svnpath , autogen, self.subinfo.languages )
+        print cmd
+        utils.system( cmd )
         # revpath is not available in msys
         return True
 
     def compile( self ):
         self.kde.nocopy = False
+        sourcePath = self.kde.sourcePath
         for pkg in self.subinfo.languages.split():
             self.kde.buildNameExt = pkg
-            self.kde.sourcePath = "..\\" + pkg
+            self.kde.sourcePath = os.path.join( sourcePath, pkg )
             if not self.kdeCompile():
                 return False
         return True
