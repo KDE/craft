@@ -20,7 +20,7 @@ class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.subinfo = subinfo()
-        self.kdeCustomDefines = "-DKLEO_BUILD_OLD_MAINWINDOW=1"
+         self.kdeCustomDefines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON"
 #        self.kdeCustomDefines += " -DBUILD_doc=OFF"
 
     def unpack( self ):
