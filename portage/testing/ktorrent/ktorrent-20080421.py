@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['testing/libgmp-src'] = 'default'
     
 class subclass(base.baseclass):
