@@ -85,7 +85,7 @@ MA 02111-1307, USA. */
  */
 #cmakedefine HAVE_HOST_CPU_FAMILY_power
 #cmakedefine HAVE_HOST_CPU_FAMILY_powerpc
-#cmakedefine HAVE_HOST_CPU_FAMILY_x86
+#cmakedefine HAVE_HOST_CPU_FAMILY_x86 1
 
 
 /* Define if we have native implementation of function. */
@@ -187,16 +187,16 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_ALLOCA_H 1
 
 /* Define if the compiler accepts gcc style __attribute__ ((const)) */
-#cmakedefine HAVE_ATTRIBUTE_CONST
+#cmakedefine HAVE_ATTRIBUTE_CONST 1
 
 /* Define if the compiler accepts gcc style __attribute__ ((malloc)) */
-#cmakedefine HAVE_ATTRIBUTE_MALLOC
+#cmakedefine HAVE_ATTRIBUTE_MALLOC 1
 
 /* Define if the compiler accepts gcc style __attribute__ ((mode (XX))) */
-#cmakedefine HAVE_ATTRIBUTE_MODE
+#cmakedefine HAVE_ATTRIBUTE_MODE 1
 
 /* Define if the compiler accepts gcc style __attribute__ ((noreturn)) */
-#cmakedefine HAVE_ATTRIBUTE_NORETURN
+#cmakedefine HAVE_ATTRIBUTE_NORETURN 1
 
 /* Define if tests/libtests has calling conventions checking for the CPU */
 #cmakedefine HAVE_CALLING_CONVENTIONS
@@ -212,23 +212,23 @@ MA 02111-1307, USA. */
 
 /* Define to 1 if you have the declaration of `fgetc', and to 0 if you don't.
    */
-#cmakedefine HAVE_DECL_FGETC
+#cmakedefine HAVE_DECL_FGETC 1
 
 /* Define to 1 if you have the declaration of `fscanf', and to 0 if you don't.
    */
-#cmakedefine HAVE_DECL_FSCANF
+#cmakedefine HAVE_DECL_FSCANF 1
 
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
-#cmakedefine HAVE_DECL_OPTARG
+#cmakedefine HAVE_DECL_OPTARG 1
 
 /* Define to 1 if you have the declaration of `ungetc', and to 0 if you don't.
    */
-#cmakedefine HAVE_DECL_UNGETC
+#cmakedefine HAVE_DECL_UNGETC 1
 
 /* Define to 1 if you have the declaration of `vfprintf', and to 0 if you
    don't. */
-#cmakedefine HAVE_DECL_VFPRINTF
+#cmakedefine HAVE_DECL_VFPRINTF 1
 
 /* Define if denormalized floats work. */
 #cmakedefine HAVE_DENORMS
@@ -315,7 +315,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_PROCESSOR_INFO 1
 
 /* Define if the system has the type `ptrdiff_t'. */
-#cmakedefine HAVE_PTRDIFF_T
+#cmakedefine HAVE_PTRDIFF_T 1
 
 /* Define if the system has the type `quad_t'. */
 #cmakedefine HAVE_QUAD_T 1
