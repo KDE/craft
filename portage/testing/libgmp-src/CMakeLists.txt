@@ -534,9 +534,14 @@ ADD_LIBRARY(printf STATIC ${printf_SRCS})
 ADD_LIBRARY(scanf STATIC ${scanf_SRCS})
 # set_target_properties(scanf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
-ADD_LIBRARY(gmp-4.1 SHARED ${gmp-4.1_executable_SRCS})
+ADD_LIBRARY(gmp SHARED ${gmp-4.1_executable_SRCS})
 # set_target_properties(gmp-4.1 PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
-target_link_libraries(gmp-4.1 mpf mpz mpn mpq printf scanf)
+target_link_libraries(gmp mpf mpz mpn mpq printf scanf)
 # add install target:
-install_targets(/lib gmp-4.1)
+install(TARGETS gmp
+                RUNTIME DESTINATION bin
+                LIBRARY DESTINATION lib
+                ARCHIVE DESTINATION lib
+)
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/gmp.h          DESTINATION include)
