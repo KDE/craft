@@ -2,12 +2,45 @@
 
 import os
 import sys
+import imp
 import subprocess
 
-class emerge_environment:
+globalVerboseLevel = int( os.getenv( "EMERGE_VERBOSE" ) )
+
+class Verbose:
+    """ This class will work on the overall output verbosity """
+    """ It defines the interface for the option parser but before the default value is taken """
+    """ from the environment variable """
+
+    def increase( self, option, opt, value, parser ):
+        """ callback function as requested by the optparse parser """
+        global globalVerboseLevel
+        print "increase"
+        globalVerboseLevel += 1
+        self.VERBOSE = str( globalVerboseLevel )
+
+    def decrease( self, option, opt, value, parser ):
+        """ callback function as requested by the optparse parser """
+        global globalVerboseLevel
+        print "decrease"
+        if globalVerboseLevel > 0:
+            globalVerboseLevel -= 1
+            self.VERBOSE = str( globalVerboseLevel )
+            
+    def setVerboseLevel( self, newLevel ):
+        """ set the level by hand for quick and dirty changes """
+        global globalVerboseLevel
+        globalVerboseLevel = newLevel
+        
+    def verbose( self ):
+        """ returns the verbosity level for the application """
+        global globalVerboseLevel
+        return globalVerboseLevel
+
+class Environment ( Verbose ):
     def __init__( self ):
         """ """
-        self.VERBOSE = os.getenv( "EMERGE_VERBOSE" )
+#        Verbose.__init__( self )
         self.KDEROOT = os.getenv( "KDEROOT" )
         self.LOGFILE = os.getenv( "EMERGE_LOGFILE" )
         self.BUILDTYPE = os.getenv( "EMERGE_BUILDTYPE" )
@@ -21,7 +54,6 @@ class emerge_environment:
         
     def __lshift__( self, other ):
         """ self << other """
-        self.VERBOSE = other.VERBOSE
         self.KDEROOT = other.KDEROOT
         self.LOGFILE = other.LOGFILE
         self.BUILDTYPE = other.BUILDTYPE
@@ -29,18 +61,11 @@ class emerge_environment:
         self.PKG_DEST_DIR = other.PKG_DEST_DIR
         self.COMPILER = other.COMPILER
         
-class emerge_container ( emerge_environment ):
+class Object ( Environment ):
     def __init__( self ):
         """ """
-        emerge_environment.__init__( self )
+        Environment.__init__( self )
     
-    def verbose( self ):
-        """ returns the verbose level for the application """
-        if ( not self.VERBOSE == None and self.VERBOSE.isdigit() and int( self.VERBOSE ) > 0 ):
-            return int( self.VERBOSE )
-        else:
-            return 0
-        
     def warning( self, message ):
         if self.verbose() > 0:
             print "emerge warning: %s" % message
@@ -74,40 +99,13 @@ class emerge_container ( emerge_environment ):
         if die:
             self.die( "system failed to execute: <" + cmdstring + ">" )
         return ret
-
-class portage( emerge_environment ):
-    def __init__( self ):
-        """ ctor """
-        emerge_environment.__init__( self )
-        self.PORTAGE_DIRS = []
-        if os.getenv( "EMERGE_PORTAGE_DIRS" ):
-            for i in os.getenv( "EMERGE_PORTAGE_DIRS" ).split( os.pathsep ):
-                self.PORTAGE_DIRS.append( i )
-        self.PORTAGE_DIRS.append( os.path.join( self.KDEROOT, "emerge", "portage" ) )
         
-    def sync( self ):
-        """ sync the portage directory(ies) """
-        for portage_dir in self.PORTAGE_DIRS:
-            print portage_dir
-        
-    def list_packages( self ):
-        """ return a list of all packages including the category, name, version and path of the script """
-        instList = []
-        for portage_dir in self.PORTAGE_DIRS:
-            catdirs = os.listdir( portage_dir )
+    def __import__( self, module ):
+        if not os.path.isfile( module ):
+            return __builtin__.__import__( module )
+        else:
+            sys.path.append( os.path.dirname( module ) )
+            fileHdl = open( module )
+            modulename = os.path.basename( module ).replace('.py', '')
+            return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
-            for category in catdirs:
-                if os.path.isdir( os.path.join( portage_dir, category ) ):
-                    pakdirs = os.listdir( os.path.join( portage_dir, category ) )
-                    if self.IGNORE_SUBVERSION in pakdirs:
-                        pakdirs.remove( self.IGNORE_SUBVERSION )
-                    for package in pakdirs:
-                        if os.path.isdir( os.path.join( portage_dir, category, package ) ):
-                            scriptdirs = os.listdir( os.path.join( portage_dir, category, package ) )
-                            for script in scriptdirs:
-                                if script.endswith( '.py' ):
-                                    version = script.replace('.py', '').replace(package + '-', '')
-                                    instList.append( [ category, package, os.path.join( portage_dir, category, package, script), version ] )
-
-        return instList
-        

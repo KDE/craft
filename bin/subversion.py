@@ -5,7 +5,7 @@ import tools
 import re
 import sys
 
-class repo_info:
+class Repo_info:
     def __init__( self ):
         """"""
         self.server = None
@@ -24,6 +24,14 @@ class repo_info:
         self.password = password
         return self
         
+    def readFromURL( self, URL ):
+        """ read from any url into the """
+        print "readFromURL:", URL
+        pattern = "((?:svn\+ssh|svn|:https):\/\/[^/]*)/"
+        print "substring: ", re.split( pattern, URL )
+        regex = re.compile( pattern )
+        print "substring:", regex.sub("", URL )
+        
     def __lshift__( self, other ):
         """ self << other """
         self.server = other.server
@@ -33,33 +41,33 @@ class repo_info:
         self.user = other.user
         self.password = other.password
         
-kde_repo_info = repo_info().set_repo( user=os.getenv( "KDESVNUSERNAME" ), 
+kde_repo_info = Repo_info().set_repo( user=os.getenv( "KDESVNUSERNAME" ), 
                                       password=os.getenv( "KDESVNPASSWORD" ),
                                       server=os.getenv( "KDESVNSERVER" ),
                                       svnbase="/home/kde/",
                                       repodir=os.getenv( "KDESVNDIR" ) )
 
 
-class repository ( tools.emerge_container ):
-    def __init__( self, info=kde_repo_info, svnpath=None ):
+class Repository ( tools.Object ):
+    def __init__( self, repo_info=kde_repo_info, svnpath=None ):
         """ ctor """
-        self.info = info
-        self.info.svnpath = svnpath
-        self.verb = "1"
-
+        tools.Object.__init__( self )
+        self.rinfo = repo_info
+        self.rinfo.svnpath = svnpath
+        
     def __atomicCheckout( self, recursive=False ):
         """ checkout for one directory """
-        repoURL = self.info.server + self.info.svnbase + self.currentsvnpath
+        repoURL = self.rinfo.server + self.rinfo.svnbase + self.currentsvnpath
         if recursive:
             recursiveOption = ""
         else:
             recursiveOption = "-N "
 
         command = "svn checkout %s%s" % (recursiveOption, repoURL)
-        if ( self.info.user != None ):
-            command = command + " --username " + self.info.user
-        if ( self.info.password != None ):
-            command = command + " --password " + self.info.password
+        if ( self.rinfo.user != None ):
+            command = command + " --username " + self.rinfo.user
+        if ( self.rinfo.password != None ):
+            command = command + " --password " + self.rinfo.password
         log = os.tmpfile()
         ret = self.system( command, capture_output=log )
         log.seek( 0 )
@@ -73,17 +81,17 @@ class repository ( tools.emerge_container ):
             
     def __atomicUpdate( self, target, recursive=False ):
         """ update for one directory """
-        repoURL = self.info.server + self.info.svnbase + self.currentsvnpath
+        repoURL = self.rinfo.server + self.rinfo.svnbase + self.currentsvnpath
         if recursive:
             recursiveOption = ""
         else:
             recursiveOption = "-N "        
         
         command = "svn %s update %s" % ( recursiveOption, target )
-        if ( self.info.user != None ):
-            command = command + " --username " + self.info.user
-        if ( self.info.password != None ):
-            command = command + " --password " + self.info.password
+        if ( self.rinfo.user != None ):
+            command = command + " --username " + self.rinfo.user
+        if ( self.rinfo.password != None ):
+            command = command + " --password " + self.rinfo.password
         log = os.tmpfile()
         ret = self.system( command, capture_output=log )
         log.seek( 0 )
@@ -97,23 +105,23 @@ class repository ( tools.emerge_container ):
 
     def checkout( self ):
         """ checkout from repository """
-        if ( not os.path.exists( self.info.repodir ) ):
-            os.makedirs( self.info.repodir )
+        if ( not os.path.exists( self.rinfo.repodir ) ):
+            os.makedirs( self.rinfo.repodir )
         else:
             self.warning( "svn checkout destination already exists" )
         
-        currentdir = self.info.repodir
+        currentdir = self.rinfo.repodir
         self.currentsvnpath = ""
-        os.chdir( self.info.repodir )
+        os.chdir( self.rinfo.repodir )
         
-        for tmpdir in self.info.svnpath.split( '/' )[:-1]:
+        for tmpdir in self.rinfo.svnpath.split( '/' )[:-1]:
             currentdir = os.path.join( currentdir, tmpdir )
             self.currentsvnpath += tmpdir
             if not self.__atomicCheckout():
                 return False
             self.currentsvnpath += '/'
             os.chdir( currentdir )
-        self.currentsvnpath = self.info.svnpath
+        self.currentsvnpath = self.rinfo.svnpath
         if not self.__atomicCheckout( True ):
             return False
         return True
@@ -123,13 +131,13 @@ class repository ( tools.emerge_container ):
         if ( not self.localCopyExists() ):
             self.error( "svn update destination directory not existing." )
             return False
-        os.chdir( self.info.repodir )
+        os.chdir( self.rinfo.repodir )
         
-        currentdir = self.info.repodir
+        currentdir = self.rinfo.repodir
         self.currentsvnpath = ""
-        os.chdir( self.info.repodir )
+        os.chdir( self.rinfo.repodir )
         
-        for target in self.info.svnpath.split( '/' )[ :-1 ]:
+        for target in self.rinfo.svnpath.split( '/' )[ :-1 ]:
             if self.verbose() > 2:
                 print "target: ", target
             currentdir = os.path.join( currentdir, target )
@@ -139,10 +147,10 @@ class repository ( tools.emerge_container ):
                 return False
             self.currentsvnpath += '/'
             os.chdir( currentdir )
-        self.currentsvnpath = os.path.join( self.info.repodir, self.info.svnpath.replace( '/', os.path.sep ) )
+        self.currentsvnpath = os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace( '/', os.path.sep ) )
         if self.verbose() > 2:
-            print "target: ", self.info.svnpath.split( '/' )[ -1 ]
-        if not self.__atomicUpdate( self.info.svnpath.split( '/' )[ -1 ], recursive=True ):
+            print "target: ", self.rinfo.svnpath.split( '/' )[ -1 ]
+        if not self.__atomicUpdate( self.rinfo.svnpath.split( '/' )[ -1 ], recursive=True ):
             return False
         return True
         
@@ -150,12 +158,12 @@ class repository ( tools.emerge_container ):
         """ check for status """
         """ it will return False if the repository is somehow locked """
         
-        target = self.info.svnpath.split( '/' )[ -1 ]
+        target = self.rinfo.svnpath.split( '/' )[ -1 ]
         if ( self.localCopyExists() ):
             # this rather strange line removes the target (the last part of the svnpath) from the svnpath, translates it to a normal path and appends it to the repodir
-            os.chdir( os.path.join( self.info.repodir, self.info.svnpath[:-(len(target) + 1)].replace('/', os.path.sep ) ) )
+            os.chdir( os.path.join( self.rinfo.repodir, self.rinfo.svnpath[:-(len(target) + 1)].replace('/', os.path.sep ) ) )
             if not self.isSvnRepo():
-                self.warning( "svn destination directory %s is no valid svn directory" % ( self.info.repodir ) )
+                self.warning( "svn destination directory %s is no valid svn directory" % ( self.rinfo.repodir ) )
                 return False
                 
             command = "svn status %s" % target
@@ -175,22 +183,22 @@ class repository ( tools.emerge_container ):
             return False
     
     def isSvnRepo( self ):
-        if ".svn" not in os.listdir( os.path.join( self.info.repodir, self.info.svnpath.replace('/', os.path.sep ) ) ):
+        if ".svn" not in os.listdir( os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace('/', os.path.sep ) ) ):
             return False
         else:
             return True
             
     def localCopyExists( self ):
-        if ( not os.path.exists( os.path.join( self.info.repodir, self.info.svnpath.replace('/', os.path.sep ) ) ) ):
+        if ( not os.path.exists( os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace('/', os.path.sep ) ) ) ):
             return False
         else:
             return True
     
     def cleanup( self ):
         """ eventually cleanup the local copy """
-        target = self.info.svnpath.split( '/' )[ -1 ]
+        target = self.rinfo.svnpath.split( '/' )[ -1 ]
         if ( self.localCopyExists() ):
-            os.chdir( os.path.join( self.info.repodir, self.info.svnpath.replace('/' + target, '').replace('/', os.path.sep ) ) )
+            os.chdir( os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace('/' + target, '').replace('/', os.path.sep ) ) )
             
             if not self.isSvnRepo():
                 self.warning( "svn destination directory is no valid svn directory" )
@@ -210,28 +218,55 @@ class repository ( tools.emerge_container ):
         else:
             self.warning( "svn destination directory not existing." )
             return False
-        
+
+    def info( self ):
+        """ return dictionary of the svn info command """
+        """ be aware that this function is running within repodir """
+        os.chdir( self.rinfo.repodir )
+        print self.rinfo.repodir
+        log = os.tmpfile()
+        self.system( "svn info", capture_output=log )
+        log.seek( 0 )
+        infos = dict()
+        for line in log:
+            if self.verbose() > 2:
+                print line,
+            if re.match( "^.*: .*\r\n", line ):
+                [key, value] = re.split(": ", line, 1 )
+                value = value.strip()
+                if self.verbose() > 2:
+                    print [key, value]
+                infos[ key ] = value
+        if self.verbose() > 1:
+            print infos
+        return infos
     
     def runSelfTests( self ):
         """ define some tests to make sure this class works """
         
-        self.info.repodir = "D:\\sources\\subversiontest"
-        self.info.svnpath = "trunk/kdesupport/emerge"
-        self.verb="2"
+        self.rinfo.repodir = "D:\\sources\\subversiontest\\trunk\\kdesupport\\emerge"
+#        self.rinfo.repodir = "D:\\sources\\subversiontest"
+#        self.rinfo.svnpath = "trunk/kdesupport/emerge"
+        self.increase( 0, 0, 0, 0 )
+#        self.increase( 0, 0, 0, 0 )
         
         print "checkout: ..."
-        self.checkout()
+        #self.checkout()
         print "checkout done"
         print "status: ..."
-        self.status()
+        #self.status()
         print "status done"
         print "cleanup: ..."
-        self.cleanup()
+        #self.cleanup()
         print "cleanup done"
         print "update: ..."
-        self.update()
+        #self.update()
         print "update done"
+        print "info: ..."
+        infodict = self.info()
+        print Repo_info().readFromURL( infodict['URL'] )
+        print "info done"
         
         
 if __name__ == '__main__':
-    repository().runSelfTests()
+    Repository().runSelfTests()
