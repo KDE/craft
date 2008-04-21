@@ -36,9 +36,6 @@ class subclass(base.baseclass):
 
         return True
         
-    def install( self ):
-        return self.kdeInstall()
-    
     def compile( self ):
         return self.kdeCompile()
 
