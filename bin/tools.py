@@ -65,6 +65,10 @@ class Object ( Environment ):
     def __init__( self ):
         """ """
         Environment.__init__( self )
+        
+    def info( self, message ):
+        if self.verbose() > 0:
+            print "emerge info: %s" % message
     
     def warning( self, message ):
         if self.verbose() > 0:
