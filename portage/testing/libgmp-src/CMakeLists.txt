@@ -310,7 +310,7 @@ SET(gmp-4.1_executable_SRCS
     mpn/generic/sub_n.c
     mpn/generic/submul_1.c
     mpn/generic/tdiv_qr.c
-    mpn/generic/udiv_w_sdiv.c
+    #mpn/generic/udiv_w_sdiv.c
 )
 
 SET(gmp-4.1_executable_SRCS
@@ -436,9 +436,10 @@ SET(LIBGMP_DLL 1)
 SET(WANT_TMP_ALLOCA 1)
 SET(WANT_FFT 1)
 SET(STDC_HEADERS 1)
-# SET(HAVE_NATIVE_mpn_add_nc 0)
-# SET(HAVE_NATIVE_mpn_add_n 0)
-# SET(HAVE_NATIVE_mpn_sub_nc 0)
+SET(HAVE_NATIVE_mpn_add_nc 0)
+SET(HAVE_NATIVE_mpn_add_n 1)
+SET(HAVE_NATIVE_mpn_sub_nc 0)
+SET(HAVE_NATIVE_mpn_sub_n 1)
 SET(GMP_MPARAM_H_SUGGEST 1)
 SET(HAVE_ALLOCA 1)
 SET(HAVE_CALLING_CONVENTIONS 1)

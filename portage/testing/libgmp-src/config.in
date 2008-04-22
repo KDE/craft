@@ -91,7 +91,7 @@ MA 02111-1307, USA. */
 /* Define if we have native implementation of function. */
 #cmakedefine HAVE_NATIVE_mpn_add
 #cmakedefine HAVE_NATIVE_mpn_add_1
-#cmakedefine HAVE_NATIVE_mpn_add_n
+#cmakedefine HAVE_NATIVE_mpn_add_n 1
 #cmakedefine HAVE_NATIVE_mpn_add_nc 1
 #cmakedefine HAVE_NATIVE_mpn_addmul_1
 #cmakedefine HAVE_NATIVE_mpn_addmul_1c
@@ -155,7 +155,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_NATIVE_mpn_sqr_diagonal
 #cmakedefine HAVE_NATIVE_mpn_sub
 #cmakedefine HAVE_NATIVE_mpn_sub_1
-#cmakedefine HAVE_NATIVE_mpn_sub_n
+#cmakedefine HAVE_NATIVE_mpn_sub_n 1
 #cmakedefine HAVE_NATIVE_mpn_sub_nc 1
 #cmakedefine HAVE_NATIVE_mpn_submul_1
 #cmakedefine HAVE_NATIVE_mpn_submul_1c
