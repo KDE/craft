@@ -427,6 +427,14 @@ class baseclass:
         dst = os.path.join( basepath, "lib" )
         if( not os.path.exists( dst ) ):
             os.mkdir( dst )
+            
+        # check whether the required binary tools exist
+        HAVE_PEXPORTS = utils.check4application( "pexports" )
+        HAVE_LIB = utils.check4application( "lib" )
+        HAVE_DLLTOOL = utils.check4application( "dlltool" )
+        
+        if not HAVE_PEXPORTS and ( HAVE_LIB or HAVE_DLLTOOL ):
+            return False
 
         dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
         defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
@@ -437,12 +445,12 @@ class baseclass:
         cmd = "pexports %s > %s " % ( dllpath, defpath )
         self.system( cmd )
 
-        if( not os.path.isfile( imppath ) ):
+        if( HAVE_LIB and not os.path.isfile( imppath ) ):
             # create .lib
             cmd = "lib /machine:x86 /def:%s /out:%s" % ( defpath, imppath )
             self.system( cmd )
         
-        if( not os.path.isfile( gccpath ) ):
+        if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
             # create .dll.a
             cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
             self.system( cmd )
