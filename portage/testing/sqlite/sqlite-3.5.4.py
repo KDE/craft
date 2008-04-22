@@ -55,7 +55,8 @@ class subclass(base.baseclass):
         src = os.path.join( self.workdir, PACKAGE_DLL_NAME + ".def" )
         dst = os.path.join( self.imagedir, "lib", PACKAGE_DLL_NAME + ".def" )
         shutil.copy( src, dst )
-        
+        if not os.getenv("KDECOMPILER") == "mingw":
+            self.createImportLibs( PACKAGE_DLL_NAME )
         return True
     
 if __name__ == '__main__':
