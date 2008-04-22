@@ -61,7 +61,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_HOST_CPU_hppa2_0w
 
 #cmakedefine HAVE_HOST_CPU_i386
-#cmakedefine HAVE_HOST_CPU_i486
+#cmakedefine HAVE_HOST_CPU_i486 1
 #cmakedefine HAVE_HOST_CPU_i586
 #cmakedefine HAVE_HOST_CPU_i686
 #cmakedefine HAVE_HOST_CPU_pentium
@@ -169,13 +169,13 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_NATIVE_
 
 /* bits per unsigned long, if not in gmp-mparam.h */
-#cmakedefine BITS_PER_ULONG
+#cmakedefine BITS_PER_ULONG BITS_PER_MP_LIMB
 
 /* bytes per mp_limb_t, if not in gmp-mparam.h */
 #cmakedefine BYTES_PER_MP_LIMB
 
 /* The gmp-mparam.h to update when tuning. */
-#cmakedefine GMP_MPARAM_H_SUGGEST
+#cmakedefine GMP_MPARAM_H_SUGGEST "./mpn/x86/p6/gmp-mparam.h"
 
 /* Define if you have the `alarm' function. */
 #cmakedefine HAVE_ALARM 1
@@ -199,7 +199,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_ATTRIBUTE_NORETURN 1
 
 /* Define if tests/libtests has calling conventions checking for the CPU */
-#cmakedefine HAVE_CALLING_CONVENTIONS
+#cmakedefine HAVE_CALLING_CONVENTIONS 1
 
 /* Define if you have the `clock' function. */
 #cmakedefine HAVE_CLOCK 1
@@ -242,7 +242,7 @@ MA 02111-1307, USA. */
    "IEEE_LITTLE_SWAPPED" means little endian, but with the two 4-byte halves
    swapped, as used by ARM CPUs in little endian mode.  */
 #cmakedefine HAVE_DOUBLE_IEEE_BIG_ENDIAN
-#cmakedefine HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
+#cmakedefine HAVE_DOUBLE_IEEE_LITTLE_ENDIAN 1
 #cmakedefine HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
 #cmakedefine HAVE_DOUBLE_VAX_D
 #cmakedefine HAVE_DOUBLE_VAX_G
@@ -275,8 +275,8 @@ MA 02111-1307, USA. */
 /* Define one (just one) of the following for the endiannes of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
    it is, then leave both of these undefined. */
-#cmakedefine HAVE_LIMB_BIG_ENDIAN
-#cmakedefine HAVE_LIMB_LITTLE_ENDIAN
+#cmakedefine HAVE_LIMB_BIG_ENDIAN 1
+#cmakedefine HAVE_LIMB_LITTLE_ENDIAN 1
 
 /* Define if you have the `localeconv' function. */
 #cmakedefine HAVE_LOCALECONV 1
@@ -333,7 +333,7 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_SIGSTACK 1
 
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
-#cmakedefine HAVE_SPEED_CYCLECOUNTER
+#cmakedefine HAVE_SPEED_CYCLECOUNTER 2
 
 /* Define if the system has the type `stack_t'. */
 #cmakedefine HAVE_STACK_T 1
@@ -423,20 +423,20 @@ MA 02111-1307, USA. */
 #cmakedefine HAVE_VSNPRINTF 1
 
 /* Assembler local label prefix */
-#cmakedefine LSYM_PREFIX
+#cmakedefine LSYM_PREFIX "L"
 
 /* Define if you have the `fesetround' function via the <fenv.h> header file.
    */
 #cmakedefine MPFR_HAVE_FESETROUND
 
 /* Name of package */
-#define PACKAGE gmp
+#define PACKAGE "gmp"
 
 /* Define if compiler has function prototypes */
-#cmakedefine PROTOTYPES
+#cmakedefine PROTOTYPES 1
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#cmakedefine RETSIGTYPE
+#cmakedefine RETSIGTYPE void
 
 /* The size of a `mp_limb_t', as computed by sizeof. */
 #cmakedefine SIZEOF_MP_LIMB_T
@@ -451,10 +451,10 @@ MA 02111-1307, USA. */
 #cmakedefine STDC_HEADERS 1
 
 /* Define if you can safely include both <sys/time.h> and <time.h>. */
-#cmakedefine TIME_WITH_SYS_TIME
+#cmakedefine TIME_WITH_SYS_TIME 1
 
 /* Maximum size the tune program can test for SQR_KARATSUBA_THRESHOLD */
-#cmakedefine TUNE_SQR_KARATSUBA_MAX
+#cmakedefine TUNE_SQR_KARATSUBA_MAX 67
 
 /* Version number of package */
 #define VERSION "4.1"
@@ -491,4 +491,4 @@ MA 02111-1307, USA. */
 
 /* Define as `__restrict' if that's what the C compiler calls it, or to
    nothing if it is not supported. */
-#cmakedefine restrict
+#cmakedefine restrict __restrict

@@ -37,10 +37,11 @@ SET(gmp-4.1_executable_SRCS
     randsd.c
     randsdui.c
     version.c
-    dummy.cc
+#     dummy.cc
 )
 
-SET(mpf_SRCS
+SET(gmp-4.1_executable_SRCS
+    ${gmp-4.1_executable_SRCS}
    mpf/iset_ui.c
    mpf/abs.c
    mpf/add.c
@@ -107,7 +108,8 @@ SET(mpf_SRCS
    mpf/urandomb.c
 )
 
-SET(mpz_SRCS
+SET(gmp-4.1_executable_SRCS
+    ${gmp-4.1_executable_SRCS}
     mpz/add.c
     mpz/add_ui.c
     mpz/abs.c
@@ -253,7 +255,8 @@ SET(mpz_SRCS
     mpz/xor.c
 )
 
-SET(mpn_SRCS
+SET(gmp-4.1_executable_SRCS
+    ${gmp-4.1_executable_SRCS}
     mpn/mp_bases.c
     mpn/generic/add.c
     mpn/generic/add_1.c
@@ -310,7 +313,8 @@ SET(mpn_SRCS
     mpn/generic/udiv_w_sdiv.c
 )
 
-SET(mpq_SRCS
+SET(gmp-4.1_executable_SRCS
+    ${gmp-4.1_executable_SRCS}
    mpq/abs.c
    mpq/aors.c
    mpq/canonicalize.c
@@ -343,7 +347,8 @@ SET(mpq_SRCS
    mpq/swap.c
 )
 
-SET(printf_SRCS
+SET(gmp-4.1_executable_SRCS
+    ${gmp-4.1_executable_SRCS}
    printf/asprintf.c
    printf/asprntffuns.c
    printf/doprnt.c
@@ -367,7 +372,8 @@ SET(printf_SRCS
    printf/vsprintf.c
 )
 
-SET(scanf_SRCS
+SET(gmp-4.1_executable_SRCS
+    ${gmp-4.1_executable_SRCS}
    scanf/doscan.c
    scanf/fscanf.c
    scanf/fscanffuns.c
@@ -412,9 +418,10 @@ SET(scanf_SRCS
 
 SET(HAVE_HOST_CPU_FAMILY_powerpc 0)
 SET(HAVE_HOST_CPU_FAMILY_power 0)
-#SET(HAVE_HOST_CPU_FAMILY_x86 1)
+# SET(HAVE_HOST_CPU_FAMILY_x86 1)
+SET(HAVE_HOST_CPU_i486 1)
 SET(GMP_NAIL_BITS 0 CACHE STRING "")
-
+SET(BITS_PER_ULONG 1)
 IF (CMAKE_SIZEOF_VOID_P MATCHES "8")
     SET(BITS_PER_MP_LIMB 64)
 ELSE(CMAKE_SIZEOF_VOID_P MATCHES "8")
@@ -429,11 +436,28 @@ SET(LIBGMP_DLL 1)
 SET(WANT_TMP_ALLOCA 1)
 SET(WANT_FFT 1)
 SET(STDC_HEADERS 1)
-SET(HAVE_NATIVE_mpn_add_nc 1)
-SET(HAVE_NATIVE_mpn_sub_nc 1)
+# SET(HAVE_NATIVE_mpn_add_nc 0)
+# SET(HAVE_NATIVE_mpn_add_n 0)
+# SET(HAVE_NATIVE_mpn_sub_nc 0)
+SET(GMP_MPARAM_H_SUGGEST 1)
+SET(HAVE_ALLOCA 1)
+SET(HAVE_CALLING_CONVENTIONS 1)
+SET(HAVE_DECL_FGETC 1)
+SET(HAVE_DECL_FSCANF 1)
+SET(HAVE_DECL_OPTARG 1)
+SET(HAVE_DECL_UNGETC 1)
+SET(HAVE_DECL_VFPRINTF 1)
+SET(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN 1)
+SET(HAVE_LIMB_LITTLE_ENDIAN 1)
+SET(HAVE_SPEED_CYCLECOUNTER 1)
+SET(LSYM_PREFIX 1)
+SET(PROTOTYPES 1)
+SET(RETSIGTYPE 1)
+SET(TUNE_SQR_KARATSUBA_MAX 1)
 
 if(MSVC)
     SET(inline 1)
+    SET(restrict 1)
 endif(MSVC)
 
 CHECK_FUNCTION_EXISTS(alarm HAVE_ALARM)
@@ -451,6 +475,7 @@ CHECK_FUNCTION_EXISTS(localeconv HAVE_LOCALECONV)
 CHECK_FUNCTION_EXISTS(lrand48 HAVE_LRAND48)
 CHECK_FUNCTION_EXISTS(memset HAVE_MEMSET)
 CHECK_FUNCTION_EXISTS(mmap HAVE_MMAP)
+CHECK_FUNCTION_EXISTS(mprotect HAVE_MPROTECT)
 CHECK_FUNCTION_EXISTS(obstack_vprintf HAVE_OBSTACK_VPRINTF)
 CHECK_FUNCTION_EXISTS(popen HAVE_POPEN)
 CHECK_FUNCTION_EXISTS(processor_info HAVE_PROCESSOR_INFO)
@@ -461,6 +486,8 @@ CHECK_FUNCTION_EXISTS(sigstack HAVE_SIGSTACK)
 CHECK_FUNCTION_EXISTS(strnlen HAVE_STRNLEN)
 CHECK_FUNCTION_EXISTS(strcasecmp HAVE_STRCASECMP)
 CHECK_FUNCTION_EXISTS(strchr HAVE_STRCHR)
+CHECK_FUNCTION_EXISTS(strnlen HAVE_STRNLEN)
+CHECK_FUNCTION_EXISTS(strtoul HAVE_STRTOUL)
 
 CHECK_INCLUDE_FILES(alloca.h HAVE_ALLOCA_H)
 CHECK_INCLUDE_FILES(unistd.h HAVE_UNISTD_H)
@@ -483,9 +510,10 @@ CHECK_INCLUDE_FILES(inttypes.h HAVE_INTTYPES_H)
 CHECK_INCLUDE_FILES(locale.h HAVE_LOCALE_H)
 CHECK_INCLUDE_FILES(memory.h HAVE_MEMORY_H)
 CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
-#CHECK_INCLUDE_FILES(stdlib.h HAVE_STDLIB_H)
-#CHECK_INCLUDE_FILES(strings.h HAVE_STRINGS_H)
-#CHECK_INCLUDE_FILES(string.h HAVE_STRING_H)
+CHECK_INCLUDE_FILES(stdlib.h HAVE_STDLIB_H)
+CHECK_INCLUDE_FILES(strings.h HAVE_STRINGS_H)
+CHECK_INCLUDE_FILES(string.h HAVE_STRING_H)
+CHECK_INCLUDE_FILES(time.h TIME_WITH_SYS_TIME)
 
 CHECK_C_SOURCE_COMPILES("int foo (int x) __attribute__ ((const));int main () {}", HAVE_ATTRIBUTE_CONST)
 CHECK_C_SOURCE_COMPILES("void foo (int x) __attribute__ ((malloc));int main () {}", HAVE_ATTRIBUTE_MALLOC)
@@ -504,8 +532,8 @@ CHECK_TYPE_SIZE("ptrdiff_t" PTRDIFF_T)
 SET(CMAKE_EXTRA_INCLUDE_FILES)
 
 #we should choose the right gmp-mparam by the type of processor but I don't know how to do that
-CONFIGURE_FILE(mpn/x86/p6/gmp-mparam.h ${CMAKE_BINARY_DIR}/gmp-mparam.h COPYONLY)
-CONFIGURE_FILE(stamp-h1.in ${CMAKE_BINARY_DIR}/stamp.h1)
+CONFIGURE_FILE(mpn/x86/i486/gmp-mparam.h ${CMAKE_BINARY_DIR}/gmp-mparam.h COPYONLY)
+# CONFIGURE_FILE(stamp-h1.in ${CMAKE_BINARY_DIR}/stamp.h1)
 #CONFIGURE_FILE(Makefile.in ${CMAKE_BINARY_DIR}/Makefile)
 CONFIGURE_FILE(config.in ${CMAKE_BINARY_DIR}/config.h)
 #CONFIGURE_FILE(configure.in ${CMAKE_BINARY_DIR}/configure)
@@ -516,27 +544,27 @@ CONFIGURE_FILE(mp-h.in ${CMAKE_BINARY_DIR}/mp.h)
 add_definitions(-DHAVE_CONFIG_H -D__GMP_WITHIN_GMP)
 
 # actual target:
-ADD_LIBRARY(mpf STATIC ${mpf_SRCS})
+# ADD_LIBRARY(mpf STATIC ${mpf_SRCS})
 # set_target_properties(mpf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
-ADD_LIBRARY(mpz STATIC ${mpz_SRCS})
+# ADD_LIBRARY(mpz STATIC ${mpz_SRCS})
 # set_target_properties(mpz PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
-ADD_LIBRARY(mpn STATIC ${mpn_SRCS})
+# ADD_LIBRARY(mpn STATIC ${mpn_SRCS})
 # set_target_properties(mpf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
-ADD_LIBRARY(mpq STATIC ${mpq_SRCS})
+# ADD_LIBRARY(mpq STATIC ${mpq_SRCS})
 # set_target_properties(mpq PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
-ADD_LIBRARY(printf STATIC ${printf_SRCS})
+# ADD_LIBRARY(printf STATIC ${printf_SRCS})
 # set_target_properties(printf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
-ADD_LIBRARY(scanf STATIC ${scanf_SRCS})
+# ADD_LIBRARY(scanf STATIC ${scanf_SRCS})
 # set_target_properties(scanf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
 ADD_LIBRARY(gmp SHARED ${gmp-4.1_executable_SRCS})
 # set_target_properties(gmp-4.1 PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
-target_link_libraries(gmp mpf mpz mpn mpq printf scanf)
+# target_link_libraries(gmp mpf mpz mpn mpq printf scanf)
 # add install target:
 install(TARGETS gmp
                 RUNTIME DESTINATION bin
