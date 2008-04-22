@@ -433,13 +433,16 @@ class baseclass:
         HAVE_LIB = utils.test4application( "lib" )
         HAVE_DLLTOOL = utils.test4application( "dlltool" )
         
-        if not HAVE_PEXPORTS and ( HAVE_LIB or HAVE_DLLTOOL ):
-            return False
-
         dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
         defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
         imppath = os.path.join( basepath, "lib", "%s.lib" % pkg_name )
         gccpath = os.path.join( basepath, "lib", "%s.dll.a" % pkg_name )
+
+        if not HAVE_PEXPORTS and os.path.exists( defpath ):
+            HAVE_EXPORTS = True
+        if not HAVE_PEXPORTS and ( HAVE_LIB or HAVE_DLLTOOL ):
+            utils.warning( "system does not have pexports and either lib.exe or dlltool.exe" )
+            return False
 
         # create .def
         cmd = "pexports %s > %s " % ( dllpath, defpath )
@@ -449,7 +452,7 @@ class baseclass:
             # create .lib
             cmd = "lib /machine:x86 /def:%s /out:%s" % ( defpath, imppath )
             self.system( cmd )
-        
+
         if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
             # create .dll.a
             cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
