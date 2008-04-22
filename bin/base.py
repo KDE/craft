@@ -439,7 +439,7 @@ class baseclass:
         gccpath = os.path.join( basepath, "lib", "%s.dll.a" % pkg_name )
 
         if not HAVE_PEXPORTS and os.path.exists( defpath ):
-            HAVE_EXPORTS = True
+            HAVE_PEXPORTS = True
         if not HAVE_PEXPORTS and ( HAVE_LIB or HAVE_DLLTOOL ):
             utils.warning( "system does not have pexports and either lib.exe or dlltool.exe" )
             return False
