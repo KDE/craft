@@ -429,9 +429,9 @@ class baseclass:
             os.mkdir( dst )
             
         # check whether the required binary tools exist
-        HAVE_PEXPORTS = utils.check4application( "pexports" )
-        HAVE_LIB = utils.check4application( "lib" )
-        HAVE_DLLTOOL = utils.check4application( "dlltool" )
+        HAVE_PEXPORTS = utils.test4application( "pexports" )
+        HAVE_LIB = utils.test4application( "lib" )
+        HAVE_DLLTOOL = utils.test4application( "dlltool" )
         
         if not HAVE_PEXPORTS and ( HAVE_LIB or HAVE_DLLTOOL ):
             return False
