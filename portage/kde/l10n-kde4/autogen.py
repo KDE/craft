@@ -5,13 +5,14 @@
 # 
 
 import os
+import re
 import sys
 import getopt
 
 cmake_filename = "CMakeLists.txt"
 
-def createTopLevelCMakeListFile(langdir):
-    topLevelCmakeList = os.path.join(langdir, cmake_filename)
+def createTopLevelCMakeListFile(subdir, language):
+    topLevelCmakeList = os.path.join(subdir, cmake_filename)
     if not os.path.exists(topLevelCmakeList):
         content = "                                            \n\
 project(kde-i18n-%s)                                           \n\
@@ -29,13 +30,13 @@ endif (NOT GETTEXT_MSGMERGE_EXECUTABLE)                        \n\
 IF(NOT GETTEXT_MSGFMT_EXECUTABLE)                              \n\
    MESSAGE(FATAL_ERROR \"Please install the msgfmt binary\")   \n\
 endif (NOT GETTEXT_MSGFMT_EXECUTABLE)                          \n\
-" % (langdir)
+" % (language)
         f = open(topLevelCmakeList,"w")
         f.write(content)
         f.close
 
     f = open(topLevelCmakeList,"a")
-    f.write('\nset(CURRENT_LANG %s)\n\n' % (langdir))
+    f.write('\nset(CURRENT_LANG %s)\n\n' % (language))
     return f
 
 #
@@ -45,7 +46,7 @@ def add_cmake_files_messages_po(path):
     filename = os.path.join(path, cmake_filename)
     fc = open(filename, "w")
     fc.write("file(GLOB _po_files *.po)\n\
-GETTEXT_PROCESS_PO_FILES(${CURRENT_LANG} ALL INSTALL_DESTINATION ${LOCALE_INSTALL_DIR} ${_po_files} )")
+GETTEXT_PROCESS_PO_FILES(${CURRENT_LANG} ALL INSTALL_DESTINATION ${LOCALE_INSTALL_DIR} ${_po_files} )\n")
     fc.close()
 
 def walk_subdir_messages(path):
@@ -144,7 +145,7 @@ def walk_subdir_scripts(path):
             p = os.path.join(path, subdir)         
             if (os.path.isdir(p)):
                 fc.write("add_subdirectory( %s )\n" % subdir)
-                add_cmake_files_scripts_subdir(path, subdir)
+                add_cmake_files_scripts_subdir(os.path.join(path, subdir))
     fc.close()
 
 def add_cmake_files_scripts(path, f):
@@ -154,13 +155,36 @@ def add_cmake_files_scripts(path, f):
     f.write("macro_optional_add_subdirectory( scripts )\n")
     walk_subdir_scripts(scriptsdir)
 
+def handle_subdir(subdir, language):
+    print "processing %s" % (subdir)
+
+    # toplevel cmake script
+    f = createTopLevelCMakeListFile(subdir, language)
+
+    # UI message catalogs
+    add_cmake_files_messages(subdir, f)
+
+    # Documentation
+    add_cmake_files_docs(subdir, f)
+
+    # Custom localized application data.
+    add_cmake_files_data(subdir, f)
+
+    # Transcript files.
+    add_cmake_files_scripts(subdir, f)
+
+    # Add subdirs of sub-languages (with @ modifier).
+    # -> not found in repository, therefore not added
+
+    f.close()
+
 
 subdirs = sys.argv[1:]
 if not subdirs:
     fileName = 'inst-apps'
     if not os.path.exists(fileName):
         fileName = 'subdirs'
-    f = open(fileName, "r" )
+    f = open(fileName, "r")
     for line in f.read().splitlines():
         subdirs.append(line)
     f.close()
@@ -171,24 +195,8 @@ if not subdirs:
 
 # Go through all subdirs
 for langdir in subdirs:
-    print "processing %s" % (langdir)
-
-    # toplevel cmake script
-    f = createTopLevelCMakeListFile(langdir)
-
-    # UI message catalogs
-    add_cmake_files_messages(langdir, f)
-    
-    # Documentation
-    add_cmake_files_docs(langdir, f)
-
-    # Custom localized application data.
-    add_cmake_files_data(langdir, f)
-
-    # Transcript files.
-    add_cmake_files_scripts(langdir, f)
-
-    # Add subdirs of sub-languages (with @ modifier).
-    # -> not found in repository, therefore not added
-
-    f.close()
+    handle_subdir(langdir, langdir)
+    search = re.compile(langdir + '@*')
+    for subdir in os.listdir(langdir):
+        if search.match(subdir):
+            handle_subdir(os.path.join(langdir, subdir), subdir)
