@@ -4,6 +4,7 @@ import os
 import tools
 import re
 import sys
+import ConfigParser
 
 class Repo_info:
     def __init__( self ):
@@ -47,6 +48,51 @@ kde_repo_info = Repo_info().set_repo( user=os.getenv( "KDESVNUSERNAME" ),
                                       svnbase="/home/kde/",
                                       repodir=os.getenv( "KDESVNDIR" ) )
 
+class ServerConfig ( tools.Object ):
+    def __init__( self ):
+        """ ctor """
+        """ check if the config file is already in the location """
+        # set the path for the config file
+        self.configFilePath = os.path.join( os.getenv( "KDEROOT" ), "etc", "svnservers.conf" )
+        
+        self.config = ConfigParser.ConfigParser()
+        
+        if not os.path.exists( self.configFilePath ):
+            self.inform( "couldn't find subversion server config file:" )
+            self.inform( self.configFilePath )
+            self.inform( "- adding new one." )
+            self.config.set( "DEFAULT", "protocol", "svn" )
+            self.config.set( "DEFAULT", "address", "anonsvn.kde.org" )
+            self.config.set( "DEFAULT", "base", "/home/kde/" )
+            self.config.set( "DEFAULT", "username", "" )
+            self.config.set( "DEFAULT", "password", "" )
+            try:
+                self.config.write( open( self.configFilePath, 'wb' ) )
+            except:
+                self.error( "couldn't write subversion server config file: %s" % self.configFilePath )
+        try:
+            self.config.read( os.path.join( self.configFilePath ) )
+            sections = self.config.sections()
+        except:
+            self.die( "couldn't read subversion server config file: %s" % self.configFilePath )
+        finally:
+            self.inform( "reading subversion server configuration" )
+        self.servers = dict()
+        for entry in sections:
+            self.servers[ entry ] = Repo_info()
+            try:
+                if self.config.has_option( entry, "username" ):
+                    username = self.config.get( entry, "username" )
+                if self.config.has_option( entry, "password" ):
+                    password = self.config.get( entry, "password" )
+                address = self.config.get( entry, "address" )
+                protocol = self.config.get( entry, "protocol" )
+                base = self.config.get( entry, "base" )
+                self.debug("%s %s %s" % ( username, password, '<' + protocol + '://' + address + base + '>' ), 0 )
+            except:
+                self.error( "reading configuration for server %s epically failed" % entry )
+
+globalServerConfig = ServerConfig()
 
 class Repository ( tools.Object ):
     def __init__( self, repo_info=kde_repo_info, svnpath=None ):
@@ -210,7 +256,7 @@ class Repository ( tools.Object ):
             log.seek( 0 )
             if self.verbose() > 1:
                 for line in log:
-                    print line,
+                    self.debug( line )
             if ( ret == 0 ):
                 return True
             else:
@@ -223,22 +269,21 @@ class Repository ( tools.Object ):
         """ return dictionary of the svn info command """
         """ be aware that this function is running within repodir """
         os.chdir( self.rinfo.repodir )
-        print self.rinfo.repodir
+        self.debug( self.rinfo.repodir )
         log = os.tmpfile()
         self.system( "svn info", capture_output=log )
         log.seek( 0 )
         infos = dict()
         for line in log:
             if self.verbose() > 2:
-                print line,
+                self.debug( line )
             if re.match( "^.*: .*\r\n", line ):
                 [key, value] = re.split(": ", line, 1 )
                 value = value.strip()
                 if self.verbose() > 2:
-                    print [key, value]
+                    self.debug( [key, value] )
                 infos[ key ] = value
-        if self.verbose() > 1:
-            print infos
+        self.debug( infos )
         return infos
     
     def runSelfTests( self ):
@@ -250,22 +295,22 @@ class Repository ( tools.Object ):
         self.increase( 0, 0, 0, 0 )
 #        self.increase( 0, 0, 0, 0 )
         
-        print "checkout: ..."
+        self.debug("checkout: ...")
         #self.checkout()
-        print "checkout done"
-        print "status: ..."
+        self.inform("checkout done")
+        self.debug("status: ...")
         #self.status()
-        print "status done"
-        print "cleanup: ..."
+        self.inform("status done")
+        self.debug("cleanup: ...")
         #self.cleanup()
-        print "cleanup done"
-        print "update: ..."
+        self.inform("cleanup done")
+        self.debug("update: ...")
         #self.update()
-        print "update done"
-        print "info: ..."
-        infodict = self.info()
-        print Repo_info().readFromURL( infodict['URL'] )
-        print "info done"
+        self.inform("update done")
+        self.debug("info: ...")
+#        infodict = self.info()
+#        print Repo_info().readFromURL( infodict['URL'] )
+        self.inform("info done")
         
         
 if __name__ == '__main__':
