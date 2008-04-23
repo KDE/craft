@@ -9,6 +9,7 @@ class infoclass:
         self.hardDependencies = dict()
         self.softDependencies = dict()
         self.svnTargets['svnHEAD'] = False
+        self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
         
