@@ -148,7 +148,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/divis_ui.c
     mpz/divis_2exp.c
     mpz/dump.c
-    mpz/export.c
+    #mpz/export.c
     mpz/fac_ui.c
     mpz/fdiv_q.c
     mpz/fdiv_q_ui.c
@@ -175,7 +175,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/get_ui.c
     mpz/getlimbn.c
     mpz/hamdist.c
-    mpz/import.c
+   # mpz/import.c
     mpz/init.c
     mpz/init2.c
     mpz/inp_raw.c
@@ -249,7 +249,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/tdiv_r_ui.c
     mpz/tstbit.c
     mpz/ui_pow_ui.c
-    mpz/ui_sub.c
+    #mpz/ui_sub.c
     mpz/urandomb.c
     mpz/urandomm.c
     mpz/xor.c
@@ -262,7 +262,7 @@ SET(gmp-4.1_executable_SRCS
     mpn/generic/add_1.c
     mpn/generic/add_n.c
     mpn/generic/addmul_1.c
-    mpn/generic/addsub_n.c
+    #mpn/generic/addsub_n.c
     mpn/generic/bdivmod.c
     mpn/generic/cmp.c
     mpn/generic/dc_divrem_n.c
@@ -302,7 +302,7 @@ SET(gmp-4.1_executable_SRCS
     mpn/generic/scan0.c
     mpn/generic/scan1.c
     mpn/generic/set_str.c
-    mpn/generic/sizeinbase.c
+    #mpn/generic/sizeinbase.c
     mpn/generic/sqr_basecase.c
     mpn/generic/sqrtrem.c
     mpn/generic/sub.c
@@ -458,7 +458,6 @@ SET(TUNE_SQR_KARATSUBA_MAX 1)
 
 if(MSVC)
     SET(inline 1)
-    SET(restrict 1)
 endif(MSVC)
 
 CHECK_FUNCTION_EXISTS(alarm HAVE_ALARM)
@@ -544,6 +543,10 @@ CONFIGURE_FILE(mp-h.in ${CMAKE_BINARY_DIR}/mp.h)
 
 add_definitions(-DHAVE_CONFIG_H -D__GMP_WITHIN_GMP)
 
+if(MSVC)
+    add_definitions(-D__STDC__=0 -Dquad_t=__int64 -Dintmax_t=__int64 -DGMP_EXPORTS -Dsnprintf=_snprintf)
+endif(MSVC)
+
 # actual target:
 # ADD_LIBRARY(mpf STATIC ${mpf_SRCS})
 # set_target_properties(mpf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
@@ -564,7 +567,7 @@ add_definitions(-DHAVE_CONFIG_H -D__GMP_WITHIN_GMP)
 # set_target_properties(scanf PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
 
 ADD_LIBRARY(gmp SHARED ${gmp-4.1_executable_SRCS})
-# set_target_properties(gmp-4.1 PROPERTIES DEFINE_SYMBOL __GMP_WITHIN_GMP)
+#set_target_properties(gmp-4.1 PROPERTIES DEFINE_SYMBOL GMP_EXPORTS)
 # target_link_libraries(gmp mpf mpz mpn mpq printf scanf)
 # add install target:
 install(TARGETS gmp
