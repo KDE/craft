@@ -70,6 +70,11 @@ class Object ( Environment ):
         if self.verbose() > 0:
             print "emerge info: %s" % message
         return True
+        
+    def debug( self, message, level=1 ):
+        if self.verbose() > level:
+            print "emerge debug: %s" % message
+        return True
     
     def warning( self, message ):
         if self.verbose() > 0:
