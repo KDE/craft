@@ -44,9 +44,13 @@ class subclass(base.baseclass):
     def compile( self ):
         self.kdeCustomDefines = " -DGNUWIN32_DIR=" + self.rootdir
         self.kdeCustomDefines += " -Daspell=1"
-        self.kdeCustomDefines += " -Dmerge=0"
+        if os.getenv("KDECOMPILER") == "mingw":
+            self.kdeCustomDefines += " -Dmerge=0"
+            self.kdeCustomDefines += " -DCONFIGURECHECKS=1"
+        else:
+            self.kdeCustomDefines += " -Dmerge=1"
+            self.kdeCustomDefines += " -DCONFIGURECHECKS=0"
         self.kdeCustomDefines += " -Dnls=1"
-        self.kdeCustomDefines += " -DCONFIGURECHECKS=1"
         return self.kdeCompile()
 
     def install( self ):
