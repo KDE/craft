@@ -12,7 +12,7 @@
 # emerge <options> <action> <packageName>
 #
 # action can be:
-# --fetch, --unpack, --compile, --install, --qmerge
+# --fetch, --unpack, --compile, --install, --manifest, --qmerge
 #
 # options can be:
 # -p for pretend
