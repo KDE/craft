@@ -148,7 +148,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/divis_ui.c
     mpz/divis_2exp.c
     mpz/dump.c
-    #mpz/export.c
+    mpz/export.c
     mpz/fac_ui.c
     mpz/fdiv_q.c
     mpz/fdiv_q_ui.c
@@ -175,7 +175,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/get_ui.c
     mpz/getlimbn.c
     mpz/hamdist.c
-   # mpz/import.c
+    mpz/import.c
     mpz/init.c
     mpz/init2.c
     mpz/inp_raw.c
@@ -249,7 +249,7 @@ SET(gmp-4.1_executable_SRCS
     mpz/tdiv_r_ui.c
     mpz/tstbit.c
     mpz/ui_pow_ui.c
-    #mpz/ui_sub.c
+    mpz/ui_sub.c
     mpz/urandomb.c
     mpz/urandomm.c
     mpz/xor.c
@@ -262,7 +262,7 @@ SET(gmp-4.1_executable_SRCS
     mpn/generic/add_1.c
     mpn/generic/add_n.c
     mpn/generic/addmul_1.c
-    #mpn/generic/addsub_n.c
+    mpn/generic/addsub_n.c
     mpn/generic/bdivmod.c
     mpn/generic/cmp.c
     mpn/generic/dc_divrem_n.c
@@ -302,7 +302,7 @@ SET(gmp-4.1_executable_SRCS
     mpn/generic/scan0.c
     mpn/generic/scan1.c
     mpn/generic/set_str.c
-    #mpn/generic/sizeinbase.c
+    mpn/generic/sizeinbase.c
     mpn/generic/sqr_basecase.c
     mpn/generic/sqrtrem.c
     mpn/generic/sub.c
