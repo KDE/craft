@@ -27,6 +27,29 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = ""
+        self.kdeCustomDefines += " -DBUILD_libs=OFF"
+        self.kdeCustomDefines += " -DBUILD_systemsettings=OFF"
+        self.kdeCustomDefines += " -DBUILD_kcheckpass=OFF"
+        self.kdeCustomDefines += " -DBUILD_kscreensaver=OFF"
+        self.kdeCustomDefines += " -DBUILD_solid=OFF"
+        self.kdeCustomDefines += " -DBUILD_ksmserver=OFF"
+        self.kdeCustomDefines += " -DBUILD_kcminit=OFF"
+        self.kdeCustomDefines += " -DBUILD_ksplash=OFF"
+        self.kdeCustomDefines += " -DBUILD_ksysguard=OFF"
+        self.kdeCustomDefines += " -DBUILD_klipper=OFF"
+        self.kdeCustomDefines += " -DBUILD_kmenuedit=OFF"
+        self.kdeCustomDefines += " -DBUILD_krunner=OFF"
+        self.kdeCustomDefines += " -DBUILD_kwin=OFF"
+        self.kdeCustomDefines += " -DBUILD_plasma=OFF"
+        self.kdeCustomDefines += " -DBUILD_printer-applet=OFF"
+        self.kdeCustomDefines += " -DBUILD_kstartupconfig=OFF"
+        self.kdeCustomDefines += " -DBUILD_khotkeys=OFF"
+        self.kdeCustomDefines += " -DBUILD_kcontrol=OFF"
+        self.kdeCustomDefines += " -DBUILD_ksystraycmd=OFF"
+        self.kdeCustomDefines += " -DBUILD_doc=OFF"
+#        self.kdeCustomDefines += " -DBUILD_wallpapers=OFF"
+   
         return self.kdeCompile()
 
     def install( self ):
