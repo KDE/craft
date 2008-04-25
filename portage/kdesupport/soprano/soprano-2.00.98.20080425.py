@@ -12,6 +12,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
         self.svnTargets['2.0.0'] = 'tags/soprano/2.0.0'
+        self.svnTargets['2.0.1'] = 'tags/soprano/2.0.1'
+        self.svnTargets['2.0.2'] = 'tags/soprano/2.0.2'
+        self.svnTargets['2.0.3'] = 'tags/soprano/2.0.3'
+        self.targets['2.0.98'] = 'http://kent.dl.sourceforge.net/sourceforge/soprano/soprano-2.0.98.tar.bz2'
+        self.targetInstSrc['2.0.98'] = 'soprano-2.0.98'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
@@ -30,9 +35,8 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
-            return self.doPackaging( "soprano", "2.00.0-1", True )
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "soprano", self.buildTarget, True )
         else:
             return self.doPackaging( "soprano", os.path.basename(sys.argv[0]).replace("soprano-", "").replace(".py", ""), True )
 
