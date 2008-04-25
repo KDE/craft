@@ -32,7 +32,6 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            self.instdestdir = "kde"
             return self.doPackaging( "akonadi", os.path.basename(sys.argv[0]).replace("akonadi-", ""), True )
         else:
             return self.doPackaging( "taglib", self.buildTarget, True )
