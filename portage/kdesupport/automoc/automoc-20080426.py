@@ -10,16 +10,15 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['kdesupport/automoc'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/automoc'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-        self.instsrcdir = "akonadi"
+        self.instsrcdir = "automoc"
         self.subinfo = subinfo()
 
     def unpack( self ):
@@ -33,9 +32,9 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "akonadi", os.path.basename(sys.argv[0]).replace("akonadi-", ""), True )
+            return self.doPackaging( "automoc", os.path.basename(sys.argv[0]).replace("automoc-", ""), True )
         else:
-            return self.doPackaging( "akonadi", self.buildTarget, True )
+            return self.doPackaging( "automoc", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
