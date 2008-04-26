@@ -18,6 +18,7 @@ import msys_build
 # for the kde interface
 import kde_build
 #from utils import die
+import datetime
 
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
@@ -77,6 +78,7 @@ class baseclass:
         self.traditional            = True
         self.noCopy                 = False
         self.noClean                = False
+        self.noFast                 = True
         self.buildTests             = False
         self.forced                 = False
         self.versioned              = False
@@ -88,6 +90,8 @@ class baseclass:
         self.buildTarget            = self.subinfo.defaultTarget
         self.Targets                = self.subinfo.svnTargets
 
+        self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
+
         self.msys = msys_build.msys_interface()
         self.kde  = kde_build.kde_interface()
         
@@ -95,6 +99,8 @@ class baseclass:
             self.noFetch = True
         if os.getenv( "EMERGE_NOCOPY" ) == "True":
             self.noCopy = True
+        if os.getenv( "EMERGE_NOFAST" ) == "False":
+            self.noFast = False
         if os.getenv( "EMERGE_NOCLEAN" )    == "True":
             self.noClean     = True
         if os.getenv( "EMERGE_FORCED" ) == "True":
