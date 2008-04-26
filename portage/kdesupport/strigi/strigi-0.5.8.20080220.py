@@ -3,13 +3,6 @@ import os
 import sys
 import info
 
-#DEPEND = """
-#virtual/base
-#libs/qt
-#kdesupport/kdewin32
-#kdesupport/clucene-core
-#"""
-
 #currently build without clucene...
 class subinfo(info.infoclass):
     def setDependencies( self ):
