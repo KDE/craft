@@ -6,6 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
+        self.svnTargets['alpha2'] = "tags/koffice/1.9.95.4"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
