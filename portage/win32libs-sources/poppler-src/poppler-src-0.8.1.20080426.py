@@ -13,7 +13,9 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.7.2'] = 'poppler-0.7.2'
         self.targets['0.8.0'] = 'http://poppler.freedesktop.org/poppler-0.8.0.tar.gz'
         self.targetInstSrc['0.8.0'] = 'poppler-0.8.0'
-        self.defaultTarget = '0.8.0'
+        self.targets['0.8.1'] = 'http://poppler.freedesktop.org/poppler-0.8.1.tar.gz'
+        self.targetInstSrc['0.8.1'] = 'poppler-0.8.1'
+        self.defaultTarget = '0.8.1'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
@@ -40,11 +42,12 @@ class subclass(base.baseclass):
             
         src = os.path.join( self.workdir, self.instsrcdir )
 
-        cmd = "cd %s && patch -p0 < %s" % \
-              ( self.workdir, os.path.join( self.packagedir , "poppler-pagetransition.diff" ) )
-        if utils.verbose() >= 1:
-            print cmd
-        self.system( cmd ) or die( "patch" )
+        if self.buildTarget == '0.8.0':
+            cmd = "cd %s && patch -p0 < %s" % \
+                  ( self.workdir, os.path.join( self.packagedir , "poppler-pagetransition.diff" ) )
+            if utils.verbose() >= 1:
+                print cmd
+            self.system( cmd ) or die( "patch" )
             
         return True
         
