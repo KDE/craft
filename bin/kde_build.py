@@ -44,6 +44,7 @@ class kde_interface:
         self.noCopy          = False
         self.noFetch         = False
         self.noClean         = False
+        self.noFast          = True
         self.traditional     = True
         self.buildNameExt    = None
 
@@ -59,6 +60,8 @@ class kde_interface:
             self.noCopy      = True
         if os.getenv( "EMERGE_NOCLEAN" )    == "True":
             self.noClean     = True
+        if os.getenv( "EMERGE_NOFAST" )    == "False":
+            self.noFast      = False
         if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
             self.buildTests  = True
         if os.getenv( "directory_layout" )  == "installer":
@@ -284,7 +287,10 @@ class kde_interface:
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
-        utils.system( "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        fastString = ""
+        if not self.noFast:
+            fastString = "/fast"
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm , self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
         return True
 
     def kdeCompile( self, kdeCustomDefines ):
