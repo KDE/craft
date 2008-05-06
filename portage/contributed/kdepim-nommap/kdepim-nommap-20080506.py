@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['nommap'] = 'kde/branches/work/kdepim-nommap'
+        self.svnTargets['nommap'] = 'branches/work/kdepim-nommap'
 #        for ver in ['66', '67', '70']:
 #          self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdepim-4.0.' + ver + '.tar.bz2'
 #          self.targetInstSrc['4.0.' + ver] = 'kdepim-4.0.' + ver
