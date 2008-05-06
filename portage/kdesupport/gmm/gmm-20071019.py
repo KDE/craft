@@ -1,32 +1,31 @@
 import base
-import utils
-from utils import die
 import os
-import sys
+import shutil
 import info
-
-#DEPEND = """
-#virtual/base
-#"""
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/gmm'
-        self.defaultTarget = 'svnHEAD'
+        self.targets['3.0'] = 'http://download.gna.org/getfem/stable/gmm-3.0.tar.gz'
+        self.targetInstSrc['3.0'] = 'gmm-3.0'
+        self.defaultTarget = '3.0'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         # header-only package
         self.createCombinedPackage = True
-        self.instsrcdir = "gmm"
         self.subinfo = subinfo()
 
     def unpack( self ):
-        return self.kdeSvnUnpack()
+        if not self.kdeSvnUnpack():
+            return False
+        src = os.path.join( self.packagedir , "CMakeLists.txt" )
+        dst = os.path.join( self.workdir, self.instsrcdir, "CMakeLists.txt" )
+        shutil.copy( src, dst )
+        return True
 
     def compile( self ):
         return self.kdeCompile()
@@ -35,10 +34,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        # FIXME?
-        if self.traditional:
-            self.instdestdir = "kde"
-        return self.doPackaging( "gmm", os.path.basename(sys.argv[0]).replace("gmm-", "").replace(".py", ""), True )        
+        return self.doPackaging( 'gmm', self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
