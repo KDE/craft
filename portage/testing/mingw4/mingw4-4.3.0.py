@@ -6,11 +6,11 @@ import info
 
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109-2.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/gcc-4.3.0-mingw-alpha-20080403.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-4.3.0-20080502-mingw32-alpha-bin.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.14.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-2.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 """
 
