@@ -15,8 +15,9 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        
+
         self.softDependencies['kdesupport/eigen'] = 'default'
+        self.softDependencies['kdesupport/gmm'] = 'default'
         self.softDependencies['win32libs-sources/cfitsio-src'] = 'default'
         self.softDependencies['win32libs-sources/libnova-src'] = 'default'
         self.softDependencies['win32libs-sources/openbabel-src'] = 'default'
