@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['contributed/gpgme-qt'] = 'default'
+        self.hardDependencies['kdesupport/akonadi'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self ):
