@@ -375,8 +375,8 @@ class baseclass:
     def kdeCompile( self ):
         return self.kde.kdeCompile( self.kdeCustomDefines )
 
-    def kdeInstall( self ):
-        return self.kde.kdeInstall()
+    def kdeInstall( self, customPath = None  ):
+        return self.kde.kdeInstall( customPath )
 
     def doPackaging( self, pkg_name, pkg_version, packSources = True ):
         """packaging according to the gnuwin32 packaging rules"""
@@ -408,7 +408,7 @@ class baseclass:
             srcpath = os.path.join( self.workdir, self.instsrcdir )
             cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, srcpath, pkg_version, dstpath )
-        elif self.noCopy and self.kde.kdeSvnPath():
+        elif packSources and self.noCopy and self.kde.kdeSvnPath():
             srcpath = os.path.join(self.kde.kdesvndir, self.kde.kdeSvnPath() ).replace( "/", "\\" )
             cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, srcpath, pkg_version, dstpath )

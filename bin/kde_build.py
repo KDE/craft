@@ -272,7 +272,7 @@ class kde_interface:
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
-    def kdeInstallInternal( self, buildType ):
+    def kdeInstallInternal( self, buildType, customPath ):
         """Using *make install"""
         builddir = "%s" % ( COMPILER )
 
@@ -284,6 +284,10 @@ class kde_interface:
 
         os.chdir( self.workdir )
         os.chdir( builddir )
+        imagedir = self.imagedir
+        if customPath != None:
+            imagedir = os.path.join( imagedir, customPath )
+            os.chdir( customPath )
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
@@ -305,16 +309,19 @@ class kde_interface:
                 return False
         return True
 
-    def kdeInstall( self ):
+    def kdeInstall( self, customPath ):
         """making all required stuff for installing cmake based modules"""
         if( not self.buildType == None ):
-            if( not self.kdeInstallInternal( self.buildType ) ):
+            if( not self.kdeInstallInternal( self.buildType, customPath ) ):
                 return False
         else:
-            if( not self.kdeInstallInternal( "debug" ) ):
+            if( not self.kdeInstallInternal( "debug", customPath ) ):
                 return False
-            if( not self.kdeInstallInternal( "release" ) ):
+            if( not self.kdeInstallInternal( "release", customPath ) ):
                 return False
-        utils.fixCmakeImageDir( self.imagedir, self.rootdir )
+        if customPath != None:
+            utils.fixCmakeImageDir( os.path.join( self.imagedir, customPath ), self.rootdir )
+        else:
+            utils.fixCmakeImageDir( self.imagedir, self.rootdir )
         return True
 
