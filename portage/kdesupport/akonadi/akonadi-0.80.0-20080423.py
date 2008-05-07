@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['0.80'] = 'tags/akonadi/0.80/'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
 
