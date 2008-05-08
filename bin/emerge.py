@@ -8,15 +8,6 @@
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 
-# syntax:
-# emerge <options> <action> <packageName>
-#
-# action can be:
-# --fetch, --unpack, --compile, --install, --manifest, --qmerge
-#
-# options can be:
-# -p for pretend
-
 import sys
 import os
 import utils
@@ -116,17 +107,21 @@ def handlePackage( category, package, version, buildAction, opts ):
 
     return success
 
+#
+# "main" action starts here
+#
+
 buildAction = "all"
 packageName = None
 doPretend = False
 stayQuiet = False
 ignoreInstalled = False
 opts = ""
-environ = dict()
 if len( sys.argv ) < 2:
     usage()
     utils.die("")
 
+environ = dict()
 environ["EMERGE_NOCOPY"]        = os.getenv( "EMERGE_NOCOPY" )
 environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
 environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
