@@ -118,6 +118,11 @@ class subclass(base.baseclass):
               ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
             self.system( cmd )
 
+            # make qmake.exe create correct makefiles (moc und uic paths, reported to qt-bugs)
+            cmd = "cd %s && patch -p0 < %s" % \
+              ( qtsrcdir, os.path.join( self.packagedir, "qt_qmake.diff" ) )
+            self.system( cmd )
+
             cmd = " cd %s && %s /nopause" % \
               ( qtsrcdir, os.path.join( "patches", "apply_patches.bat" ) )
             self.system( cmd )
