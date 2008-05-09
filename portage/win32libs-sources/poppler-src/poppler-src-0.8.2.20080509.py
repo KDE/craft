@@ -15,7 +15,9 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.8.0'] = 'poppler-0.8.0'
         self.targets['0.8.1'] = 'http://poppler.freedesktop.org/poppler-0.8.1.tar.gz'
         self.targetInstSrc['0.8.1'] = 'poppler-0.8.1'
-        self.defaultTarget = '0.8.1'
+        self.targets['0.8.2'] = 'http://poppler.freedesktop.org/poppler-0.8.2.tar.gz'
+        self.targetInstSrc['0.8.2'] = 'poppler-0.8.2'
+        self.defaultTarget = '0.8.2'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
