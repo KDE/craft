@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
+        self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80/'
