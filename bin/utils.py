@@ -571,6 +571,16 @@ def printInstalled():
     """get all the packages that are already installed"""
     printCategoriesPackagesAndVersions( getInstallables(), isInstalled )
 
+def info( message ):
+    if verbose() > 0:
+        print "emerge info: %s" % message
+    return True
+
+def debug( message, level = 0 ):
+    if verbose() > level:
+        print "emerge debug: %s" % message
+    return True
+
 def warning( message ):
     if verbose() > 0:
         print "emerge warning: %s" % message
