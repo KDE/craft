@@ -3,13 +3,16 @@ import os
 import utils
 
 class msys_interface:
+    def __init__( self, env = dict( os.environ ) ):
+        self.MSYSDIR = env[ "MSYSDIR" ]
+        
     def setDirectories(self, rootdir, imagedir, workdir, instsrcdir, instdestdir):
         self.rootdir = rootdir
         self.imagedir = imagedir
         self.workdir = workdir
         self.instsrcdir = instsrcdir
         self.instdestdir = instdestdir
-        self.msysdir = os.getenv( "MSYSDIR" )
+        self.msysdir = self.MSYSDIR
 
     def __toMSysPath( self, path ):
         path = path.replace( '\\', '/' )

@@ -5,39 +5,43 @@ import utils
 import base
 import info
 
-COMPILER            = os.getenv( "KDECOMPILER" )
-KDESVNUSERNAME      = os.getenv( "KDESVNUSERNAME" )
-KDESVNPASSWORD      = os.getenv( "KDESVNPASSWORD" )
-KDESVNDIR           = os.getenv( "KDESVNDIR" )
-KDESVNSERVER        = os.getenv( "KDESVNSERVER" )
-if ( KDESVNDIR    == None ):
-    KDESVNDIR       = os.path.join( DOWNLOADDIR, "svn-src", "kde" )
-if ( KDESVNSERVER == None ):
-    KDESVNSERVER    = "svn://anonsvn.kde.org"
-BUILDTYPE           = os.getenv( "EMERGE_BUILDTYPE" )
-if ( BUILDTYPE not in ["Debug", "Release", "RelWithDebInfo", "MinSizeRel"] ):
-    BUILDTYPE=None
-
 class kde_interface:
-#    def __init__( self ):
+    def __init__( self, env = dict( os.environ ) ):
+        self.COMPILER            = env[ "KDECOMPILER" ]
+        self.KDESVNUSERNAME      = env[ "KDESVNUSERNAME" ]
+        self.KDESVNPASSWORD      = env[ "KDESVNPASSWORD" ]
+        self.KDESVNDIR           = env[ "KDESVNDIR" ]
+        self.KDESVNSERVER        = env[ "KDESVNSERVER" ]
+        if ( self.KDESVNDIR    == None ):
+            self.KDESVNDIR       = os.path.join( DOWNLOADDIR, "svn-src", "kde" )
+        if ( self.KDESVNSERVER == None ):
+            self.KDESVNSERVER    = "svn://anonsvn.kde.org"
+        self.BUILDTYPE           = env[ "EMERGE_BUILDTYPE" ]
+        if ( self.BUILDTYPE not in ["Debug", "Release", "RelWithDebInfo", "MinSizeRel"] ):
+            self.BUILDTYPE=None
+        self.OFFLINE = env[ "EMERGE_OFFLINE" ]
+        self.NOCOPY = env[ "EMERGE_NOCOPY" ]
+        self.NOCLEAN = env[ "EMERGE_NOCLEAN" ]
+        self.NOFAST = env[ "EMERGE_NOFAST" ]
+        self.BUILDTESTS = env[ "EMERGE_BUILDTESTS" ]
+        self.DIRECTORY_LAYOUT = env[ "directory_layout" ]
         
-
     def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
         """ """
         self.subinfo = infoobject
 
-        if COMPILER   == "msvc2005":
+        if self.COMPILER   == "msvc2005":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm      = "nmake"
-        elif COMPILER == "mingw":
+        elif self.COMPILER == "mingw":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
             self.cmakeMakeProgramm      = "mingw32-make"
         else:
-            utils.die( "KDECOMPILER: %s not understood" % COMPILER )
+            utils.die( "KDECOMPILER: %s not understood" % self.COMPILER )
 
         if utils.verbose() > 1:
-            print "BuildType: %s" % BUILDTYPE
-        self.buildType = BUILDTYPE
+            print "BuildType: %s" % self.BUILDTYPE
+        self.buildType = self.BUILDTYPE
 
 
         self.buildTests      = False
@@ -54,23 +58,23 @@ class kde_interface:
         self.instsrcdir      = instsrcdir
         self.instdestdir     = instdestdir
 
-        if os.getenv( "EMERGE_OFFLINE" )    == "True":
+        if self.OFFLINE    == "True":
             self.noFetch     = True
-        if os.getenv( "EMERGE_NOCOPY" )     == "True":
+        if self.NOCOPY     == "True":
             self.noCopy      = True
-        if os.getenv( "EMERGE_NOCLEAN" )    == "True":
+        if self.NOCLEAN    == "True":
             self.noClean     = True
-        if os.getenv( "EMERGE_NOFAST" )    == "False":
+        if self.NOFAST    == "False":
             self.noFast      = False
-        if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
+        if self.BUILDTESTS == "True":
             self.buildTests  = True
-        if os.getenv( "directory_layout" )  == "installer":
+        if self.DIRECTORY_LAYOUT  == "installer":
             self.traditional = False
 
-        self.kdesvndir       = KDESVNDIR
-        self.kdesvnserver    = KDESVNSERVER
-        self.kdesvnuser      = KDESVNUSERNAME
-        self.kdesvnpass      = KDESVNPASSWORD
+        self.kdesvndir       = self.KDESVNDIR
+        self.kdesvnserver    = self.KDESVNSERVER
+        self.kdesvnuser      = self.KDESVNUSERNAME 
+        self.kdesvnpass      = self.KDESVNPASSWORD
         
         if utils.verbose() > 1 and self.kdeSvnPath():
             print "noCopy       : %s" % self.noCopy
@@ -226,7 +230,7 @@ class kde_interface:
 
     def kdeConfigureInternal( self, buildType, kdeCustomDefines ):
         """Using cmake"""
-        builddir = "%s" % ( COMPILER )
+        builddir = "%s" % ( self.COMPILER )
 
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
@@ -256,7 +260,7 @@ class kde_interface:
 
     def kdeMakeInternal( self, buildType ):
         """Using the *make program"""
-        builddir = "%s" % ( COMPILER )
+        builddir = "%s" % ( self.COMPILER )
 
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
@@ -274,7 +278,7 @@ class kde_interface:
 
     def kdeInstallInternal( self, buildType, customPath ):
         """Using *make install"""
-        builddir = "%s" % ( COMPILER )
+        builddir = "%s" % ( self.COMPILER )
 
         if( not buildType == None ):
             builddir = "%s-%s" % ( builddir, buildType )
