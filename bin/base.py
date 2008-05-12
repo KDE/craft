@@ -35,7 +35,7 @@ if ( KDESVNSERVER == None ):
 KDESVNUSERNAME=os.getenv( "KDESVNUSERNAME" )
 KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
 
-DIRECTORYLAYOUT=os.getenv( "directory_layout" )
+DIRECTORYLAYOUT=os.getenv( "DIRECTORY_LAYOUT" )
 if ( not DIRECTORYLAYOUT == "installer" ):
     """ traditional layout is using the categories as subfolders of kderoot """
     """ installer layout has no category subfolder """

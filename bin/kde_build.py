@@ -28,7 +28,7 @@ class kde_interface:
         self.NOCLEAN = env[ "EMERGE_NOCLEAN" ]
         self.NOFAST = env[ "EMERGE_NOFAST" ]
         self.BUILDTESTS = env[ "EMERGE_BUILDTESTS" ]
-        self.DIRECTORY_LAYOUT = env[ "directory_layout" ]
+        self.DIRECTORY_LAYOUT = env[ "DIRECTORY_LAYOUT" ]
         
     def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
         """ """
