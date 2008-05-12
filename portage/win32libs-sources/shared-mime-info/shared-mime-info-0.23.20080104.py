@@ -31,7 +31,8 @@ class subclass(base.baseclass):
     base.baseclass.__init__( self, "" )
     self.instsrcdir = PACKAGE_FULL_NAME
     self.createCombinedPackage = True
-    self.buildType = "Release"    
+    self.subinfo = subinfo()
+    self.buildType = "Release"
 
   def unpack( self ):
     if(not base.baseclass.unpack( self ) ):
