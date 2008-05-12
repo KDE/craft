@@ -13,8 +13,8 @@ cmake_filename = "CMakeLists.txt"
 
 def createTopLevelCMakeListFile(subdir, language):
     topLevelCmakeList = os.path.join(subdir, cmake_filename)
-    if not os.path.exists(topLevelCmakeList):
-        content = "                                            \n\
+
+    content = "                                            \n\
 project(kde-i18n-%s)                                           \n\
                                                                \n\
 # Search KDE installation                                      \n\
@@ -31,11 +31,8 @@ IF(NOT GETTEXT_MSGFMT_EXECUTABLE)                              \n\
    MESSAGE(FATAL_ERROR \"Please install the msgfmt binary\")   \n\
 endif (NOT GETTEXT_MSGFMT_EXECUTABLE)                          \n\
 " % (language)
-        f = open(topLevelCmakeList,"w")
-        f.write(content)
-        f.close
-
-    f = open(topLevelCmakeList,"a")
+    f = open(topLevelCmakeList,"w")
+    f.write(content)
     f.write('\nset(CURRENT_LANG %s)\n\n' % (language))
     return f
 
@@ -155,27 +152,30 @@ def add_cmake_files_scripts(path, f):
     f.write("macro_optional_add_subdirectory( scripts )\n")
     walk_subdir_scripts(scriptsdir)
 
-def handle_subdir(subdir, language):
-    print "processing %s" % (subdir)
+def handle_subdir(langdir, language):
+    print "processing %s" % (langdir)
 
     # toplevel cmake script
-    f = createTopLevelCMakeListFile(subdir, language)
+    f = createTopLevelCMakeListFile(langdir, language)
 
     # UI message catalogs
-    add_cmake_files_messages(subdir, f)
+    add_cmake_files_messages(langdir, f)
 
     # Documentation
-    add_cmake_files_docs(subdir, f)
+    add_cmake_files_docs(langdir, f)
 
     # Custom localized application data.
-    add_cmake_files_data(subdir, f)
+    add_cmake_files_data(langdir, f)
 
     # Transcript files.
-    add_cmake_files_scripts(subdir, f)
+    add_cmake_files_scripts(langdir, f)
 
-    # Add subdirs of sub-languages (with @ modifier).
-    # -> not found in repository, therefore not added
-
+    search = re.compile(langdir + '@.*')
+    for subdir in os.listdir(langdir):
+        if search.match(subdir):
+            handle_subdir(os.path.join(langdir, subdir), subdir)
+            f.write("macro_optional_add_subdirectory( %s )\n" % subdir)
+            
     f.close()
 
 
@@ -196,7 +196,3 @@ if not subdirs:
 # Go through all subdirs
 for langdir in subdirs:
     handle_subdir(langdir, langdir)
-    search = re.compile(langdir + '@*')
-    for subdir in os.listdir(langdir):
-        if search.match(subdir):
-            handle_subdir(os.path.join(langdir, subdir), subdir)
