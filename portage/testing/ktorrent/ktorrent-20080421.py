@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/ktorrent/windows_port'
+        self.svnTargets['svnHEAD'] = 'trunk/extragear/network/ktorrent'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
