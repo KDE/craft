@@ -5,8 +5,8 @@ import utils
 import info
 
 PACKAGE_NAME         = "libxslt"
-PACKAGE_VER          = "1.1.22"
-PACKAGE_FULL_VER     = "1.1.22-2"
+PACKAGE_VER          = "1.1.23+"
+PACKAGE_FULL_VER     = "1.1.23-1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER)
 PACKAGE_DLL_NAMES    = """
 libxslt
@@ -14,17 +14,17 @@ libexslt
 """
 PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
 
-SRC_URI= """ftp://ftp.zlatkovic.com/pub/libxml/""" + PACKAGE_FULL_NAME + """.win32.zip"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.1.22'] = SRC_URI
-        self.defaultTarget = '1.1.22-2'
-    
+        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/" + PACKAGE_FULL_NAME + ".win32.zip"
+        self.targetInstSrc[PACKAGE_VER] = PACKAGE_FULL_NAME
+        self.defaultTarget = PACKAGE_VER
+
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def compile( self ):
     # binary-only package - nothing to compile

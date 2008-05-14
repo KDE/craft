@@ -5,17 +5,17 @@ import utils
 import info
 
 PACKAGE_NAME         = "libxml2"
-PACKAGE_VER          = "2.6.31"
-PACKAGE_FULL_VER     = "2.6.31-1"
+PACKAGE_VER          = "2.6.32+"
+PACKAGE_FULL_VER     = "2.6.32-1"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libxml2"
 PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.6.31-1'] = "ftp://ftp.zlatkovic.com/pub/libxml/" + PACKAGE_FULL_NAME + ".win32.zip"
-        self.targetInstSrc['2.6.31-1'] = PACKAGE_FULL_NAME
-        self.defaultTarget = '2.6.31-1'
+        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/" + PACKAGE_FULL_NAME + ".win32.zip"
+        self.targetInstSrc[PACKAGE_VER] = PACKAGE_FULL_NAME
+        self.defaultTarget = PACKAGE_VER
     def setDependencies( self ):
         return
 
