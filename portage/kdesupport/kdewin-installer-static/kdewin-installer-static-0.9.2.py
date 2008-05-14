@@ -1,14 +1,7 @@
 import base
-import utils
-from utils import die
 import os
 import sys
 import info
-
-#DEPEND = """
-#virtual/base
-#libs/qt
-#"""
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -21,8 +14,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
-    def __init__(self):
-        base.baseclass.__init__( self, "" )
+    def __init__(self, **args):
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "kdewin-installer"
         self.buildType = "Release"
         self.subinfo = subinfo()
@@ -31,14 +24,14 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
+            % os.path.join(self.rootdir, "qt-static", "bin", "qmake.exe").replace('\\', '/')
         return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
         return self.doPackaging( "kdewin-installer", os.path.basename(sys.argv[0]).replace("kdewin-installer-", "").replace(".py", ""), True )
 
 if __name__ == '__main__':

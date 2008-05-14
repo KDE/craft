@@ -14,10 +14,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.3.2'
     
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
-    if self.traditional:
-        self.instdestdir = "qt"
+  def __init__(self, **args):
+    base.baseclass.__init__( self, args=args )
+    self.instdestdir = "qt-static"
     self.subinfo = subinfo()
 
   def unpack(self):
