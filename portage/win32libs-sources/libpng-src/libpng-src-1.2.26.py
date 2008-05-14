@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'dev-util/win32libs'
 
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, "" )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
     self.buildType = "Release"
     self.subinfo = subinfo()

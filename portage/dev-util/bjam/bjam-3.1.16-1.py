@@ -20,8 +20,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__(self):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         if self.traditional:
             self.instdestdir = "bjam\bin"
         else:

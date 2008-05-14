@@ -10,8 +10,8 @@ DEPEND = """
 dev-util/win32libs
 """
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, SRC_URI, args=args )
     if self.traditional:
         self.instdestdir = "win32libs"
     else:

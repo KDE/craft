@@ -20,8 +20,8 @@ class subinfo(info.infoclass):
         self.softDependencies['kde/kdevplatform'] = 'default'
         
 class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
 
     def unpack( self ):

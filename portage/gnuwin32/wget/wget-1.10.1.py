@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.10.1'
         
 class subclass(gnuwin32.gnuwin32class):
-  def __init__(self):
+  def __init__( self, **args ):
     gnuwin32.gnuwin32class.__init__( self, SRC_URI )
     self.subinfo = subinfo()
 

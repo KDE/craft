@@ -14,8 +14,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
     
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, SRC_URI, args=args )
     self.instdestdir = "mc"
     self.subinfo = subinfo()
 

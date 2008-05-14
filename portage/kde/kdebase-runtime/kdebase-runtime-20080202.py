@@ -17,8 +17,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdepimlibs'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "runtime"
         self.subinfo = subinfo()
 

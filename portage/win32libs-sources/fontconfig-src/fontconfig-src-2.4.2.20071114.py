@@ -21,8 +21,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__(self):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.createCombinedPackage = False
         self.subinfo = subinfo()
 

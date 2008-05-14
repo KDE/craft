@@ -15,8 +15,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde-4.0/kdebase_4.0'] = 'default'
         
 class subclass(base.baseclass):
-    def __init__(self):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "kdegames"
         self.subinfo = subinfo()
 

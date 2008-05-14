@@ -19,8 +19,8 @@ class subinfo(info.infoclass):
         self.softDependencies['testing/gsl'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "koffice"
         self.subinfo = subinfo()
         self.kdeCustomDefines = ""

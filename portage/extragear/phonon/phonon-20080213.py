@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdegames'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "phonon"
         self.kdeCustomDefines = "-DBUILD_binary-clock=OFF -DBUILD_fuzzy-clock=OFF -DBUILD_ksystemlog=OFF -DBUILD_kollision=OFF -DBUILD_decibel=OFF -DBUILD_emoticonskcm=off"
         self.subinfo = subinfo()

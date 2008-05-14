@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.8.6'
     
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, SRC_URI, args=args )
     if self.traditional:
         self.instdestdir = "ruby"
     self.subinfo = subinfo()

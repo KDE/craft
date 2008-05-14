@@ -14,8 +14,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/kdevplatform'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__(self):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "kdevelop"
         self.subinfo = subinfo()
 

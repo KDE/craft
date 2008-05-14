@@ -27,8 +27,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.06'
 
 class subclass(base.baseclass):
-    def __init__(self):
-        base.baseclass.__init__( self, SRC_URI )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, SRC_URI, args=args )
         self.instsrcdir = PACKAGE_NAME
         self.createCombinedPackage = True
         self.subinfo = subinfo()

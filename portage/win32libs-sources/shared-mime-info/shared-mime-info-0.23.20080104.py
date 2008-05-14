@@ -27,8 +27,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = PACKAGE_VER
 
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, "" )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, args=args )
     self.instsrcdir = PACKAGE_FULL_NAME
     self.createCombinedPackage = True
     self.subinfo = subinfo()

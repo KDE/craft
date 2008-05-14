@@ -25,8 +25,8 @@ kde/kdepimlibs
 """
 
 class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, "" )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
         self.kdeCustomDefines = ""
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_karbon=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kpresenter=OFF "

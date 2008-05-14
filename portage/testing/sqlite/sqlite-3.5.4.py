@@ -24,8 +24,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.5.4'
     
 class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, SRC_URI )
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, SRC_URI, args=args )
         self.subinfo = subinfo()
     
     def unpack( self ):

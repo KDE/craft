@@ -15,14 +15,14 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.17-1'
     
 class subclass(gnuwin32.gnuwin32class):
-    def __init__(self):
+    def __init__( self, **args ):
         gnuwin32.gnuwin32class.__init__( self, SRC_URI )
         self.subinfo = subinfo()
 
 
 #class subclass(base.baseclass):
-#  def __init__(self):
-#    base.baseclass.__init__( self, SRC_URI )
+#  def __init__( self, **args ):
+#    base.baseclass.__init__( self, SRC_URI, args=args )
 #    if self.traditional:
 #        self.instdestdir = "win32libs"
 #    else:

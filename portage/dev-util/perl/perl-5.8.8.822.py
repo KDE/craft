@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '5.8.8'
         
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, SRC_URI, args=args )
     self.subinfo = subinfo()
     if self.traditional:
         self.instdestdir = "perl"

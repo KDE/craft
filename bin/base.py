@@ -70,8 +70,12 @@ class baseclass:
 # system                     instead of using the os.system command, please use this one - it makes later changes easier
 
 
-    def __init__( self, SRC_URI ):
+    def __init__( self, SRC_URI="", **args ):
         """ the baseclass constructor """
+        if "args" in args.keys() and "env" in args["args"].keys():
+            env = args["args"]["env"]
+        else:
+            env = dict( os.environ )
         self.SRC_URI                = SRC_URI
         self.instsrcdir             = ""
         self.instdestdir            = ""

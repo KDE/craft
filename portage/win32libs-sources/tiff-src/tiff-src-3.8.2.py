@@ -24,8 +24,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '3.8.2'
         
 class subclass( base.baseclass ):
-  def __init__( self ):
-    base.baseclass.__init__( self, "" )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
     self.subinfo = subinfo()
 

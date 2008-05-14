@@ -13,9 +13,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
     
 class subclass(base.baseclass):
-    def __init__(self):
+    def __init__( self, **args ):
         self.buildType="Debug"
-        base.baseclass.__init__( self, "" )
+        base.baseclass.__init__( self, args=args )
         self.instsrcdir = "kdevplatform"
         self.subinfo = subinfo()
 
