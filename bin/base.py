@@ -76,6 +76,12 @@ class baseclass:
             env = args["args"]["env"]
         else:
             env = dict( os.environ )
+            
+        if "args" in args.keys() and "argv0" in args["args"].keys():
+            self.argv0 = args["args"]["argv0"]
+        else:
+            self.argv0 = sys.argv[ 0 ]
+            
         self.SRC_URI                = SRC_URI
         self.instsrcdir             = ""
         self.instdestdir            = ""
@@ -134,17 +140,21 @@ class baseclass:
             print "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
 
-    def execute( self ):
+    def execute( self, cmd=None ):
         """called to run the derived class"""
         """this will be executed from the package if the package is started on its own"""
         """it shouldn't be called if the package is imported as a python module"""
         if utils.verbose() > 1:
             print "base exec called. args:", sys.argv
 
-        command = sys.argv[ 1 ]
-        options = ""
-        if ( len( sys.argv )  > 2 ):
-            options = sys.argv[ 2: ]
+        if not cmd:
+            command = sys.argv[ 1 ]
+            options = ""
+            if ( len( sys.argv )  > 2 ):
+                options = sys.argv[ 2: ]
+        else:
+            command = cmd
+            options = ""
         if utils.verbose() > 1:
             print "command:", command
             print "opts:", options
@@ -238,6 +248,8 @@ class baseclass:
             script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
             destscript = os.path.join( self.imagedir, "manifest", scriptName )
+            if not os.path.exists( os.path.join( self.imagedir, "manifest" ) ):
+                os.mkdir( os.path.join( self.imagedir, "manifest" ) )
             if os.path.exists( script ):
                 shutil.copyfile( script, destscript )
                              
@@ -285,11 +297,11 @@ class baseclass:
         #print "filenames:", self.filenames
 
         #( self.progname, ext ) = os.path.splitext( os.path.basename( sys.argv[ 0 ] ) )
-        ( self.PV, ext ) = os.path.splitext( os.path.basename( sys.argv[ 0 ] ) )
+        ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
         #print "progname:", self.progname        
 
         ( self.category, self.package, self.version ) = \
-                       utils.getCategoryPackageVersion( sys.argv[ 0 ] )
+                       utils.getCategoryPackageVersion( self.argv0 )
 
         #self.progname = self.package        
         if utils.verbose() > 0:
