@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
 
 class subclass(base.baseclass):
