@@ -633,8 +633,10 @@ def unmerge( rootdir, package, forced = False ):
         print "unmerge called: %s" % ( package )
 
     if os.path.exists( os.path.join( rootdir, "manifest"  ) ):
-        for file in os.listdir( os.path.join( rootdir, "manifest"  ) ):
-            if file.startswith( "%s-" % package ) and file.endswith( ".mft" ):
+        for file in os.listdir( os.path.join( rootdir, "manifest" ) ):
+            if file.endswith(".mft"):
+                [ pkg, version ] = packageSplit( file.replace( ".mft", "" ) )
+            if file.endswith( ".mft" ) and package==pkg:
                 fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
                 for line in fptr:
                     line = line.replace( "\n", "" ).replace( "\r", "" )
