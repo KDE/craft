@@ -43,7 +43,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
     
     def make_package( self ):
-        self.instsrcdir = ""
+        return self.doPackaging( "libgmp", self.buildTarget, True )
         
 if __name__ == '__main__':
     subclass().execute()
