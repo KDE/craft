@@ -78,8 +78,27 @@ def add_cmake_files_docs_subdir(path, subdir):
         f.close()
         return
     if os.path.isfile(os.path.join(path, subdir, "index.docbook")):
-        f = open(os.path.join(path, subdir, cmake_filename), "w")
-        f.write("kde4_create_handbook(index.docbook INSTALL_DESTINATION ${HTML_INSTALL_DIR}/${CURRENT_LANG}/ )\n")
+        add_subdir = ""
+        openmode = "w"
+        (head, tail) = os.path.split(path)
+        # check for khelpcenter module
+        if subdir == "faq" or subdir == "glossary" or subdir == "quickstart" or \
+           subdir == "userguide" or subdir == "visualdict":
+            add_subdir = "SUBDIR khelpcenter/%s" % subdir
+        # kcontrol or kinfocenter main dir
+        elif subdir == "kcontrol" or subdir == "kinfocenter":
+            walk_subdir_docs(os.path.join(path, subdir))
+            openmode = "a"
+        # kcontrol subdir
+        elif tail == "kcontrol":
+            add_subdir = "SUBDIR kcontrol/%s" % subdir
+        # kinfocenter subdir
+        elif tail == "kinfocenter":
+            add_subdir = "SUBDIR kinfocenter/%s" % subdir
+
+        f = open(os.path.join(path, subdir, cmake_filename), openmode)
+        f.write("kde4_create_handbook(index.docbook INSTALL_DESTINATION ${HTML_INSTALL_DIR}/${CURRENT_LANG}/ %s )\n" \
+                 % add_subdir)
         f.close()
         return
     walk_subdir_docs(os.path.join(path, subdir))
