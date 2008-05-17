@@ -96,8 +96,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
     
 class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
+  def __init__(self):
+    base.baseclass.__init__( self, "" )
     if self.traditional:
         self.instdestdir = "win32libs"
     else:
