@@ -41,11 +41,7 @@ class subclass(base.baseclass):
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        unp = self.kdeSvnUnpack()
-        # now copy the tree to workdir
-        return unp
-
-
+        return self.kdeSvnUnpack()
 
     def compile( self ):
         return self.kdeCompile()
@@ -54,7 +50,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "koffice", os.path.basename(sys.argv[0]).replace("koffice-", "").replace(".py", ""), True )
+        if self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "koffice", os.path.basename(sys.argv[0]).replace("koffice-", "").replace(".py", ""), True )
+        else:
+            return self.doPackaging( "koffice", self.buildTarget, True )
 		
 if __name__ == '__main__':
     subclass().execute()
