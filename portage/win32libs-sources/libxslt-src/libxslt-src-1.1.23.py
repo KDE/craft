@@ -6,7 +6,7 @@ import info
 
 PACKAGE_NAME         = "libxslt"
 PACKAGE_VER          = "1.1.23+"
-PACKAGE_FULL_VER     = "1.1.23-1"
+PACKAGE_FULL_VER     = "1.1.23-2"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER)
 PACKAGE_DLL_NAMES    = """
 libxslt
@@ -47,6 +47,11 @@ class subclass(base.baseclass):
     src = os.path.join( self.workdir, self.instsrcdir, "include" )
     dst = os.path.join( self.imagedir, self.instdestdir, "include" )
     utils.copySrcDirToDestDir( src, dst )
+    # a small patch is needed
+    cmd = "cd %s && patch -p0 < %s" % \
+          ( os.path.join( self.workdir, self.instsrcdir ), \
+            os.path.join( self.packagedir, "libxslt_mingw.patch" ) )
+    self.system( cmd ) or utils.die( "patch" )
 
     # /contrib contains readme.txt
     dst = os.path.join( self.imagedir, self.instdestdir, "contrib" )

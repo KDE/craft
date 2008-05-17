@@ -1,0 +1,13 @@
+--- include\libxslt\xsltexports.h.orig	2008-05-16 16:39:25.453125000 +0200
++++ include\libxslt\xsltexports.h	2008-05-17 13:55:26.546875000 +0200
+@@ -93,10 +93,7 @@
+   #undef XSLTPUBFUN
+   #undef XSLTPUBVAR
+   #undef XSLTCALL
+-/*
+   #if defined(IN_LIBXSLT) && !defined(LIBXSLT_STATIC)
+-*/
+-  #if !defined(LIBXSLT_STATIC)
+     #define XSLTPUBFUN __declspec(dllexport)
+     #define XSLTPUBVAR __declspec(dllexport) extern
+   #else
