@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['testing/libgmp-src'] = 'default'
+        self.hardDependencies['win32libs-sources/libgmp-src'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -30,7 +30,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "ktorrent", self.buildTarget, True )
+        if self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "ktorrent", os.path.basename(sys.argv[0]).replace("ktorrent-", "").replace(".py", ""), True )
+        else:
+            return self.doPackaging( "ktorrent", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
