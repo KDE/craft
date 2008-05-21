@@ -29,7 +29,7 @@ class subclass(base.baseclass):
         # we have an own cmake script - copy it to the right place
         mydir = os.path.join( self.workdir, self.instsrcdir )
         cmake_script = ""
-        if self.buildTarget == 0.9.16a:
+        if self.buildTarget == '0.9.16a':
             cmake_script = os.path.join( self.packagedir , "CMakeLists-0.9.16.txt" )
         else:
             cmake_script = os.path.join( self.packagedir , "CMakeLists-0.9.20.txt" )
