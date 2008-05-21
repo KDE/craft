@@ -10,9 +10,11 @@ class subinfo (info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['0.9.16a'] = "http://garr.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
+        self.targets['0.9.16a'] = "http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
         self.targetInstSrc['0.9.16a'] = os.path.join( "clucene-core-0.9.16a", "src" )
-        self.defaultTarget = '0.9.16a'
+        self.targets['0.9.20'] = "http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.20.tar.bz2"
+        self.targetInstSrc['0.9.20'] = os.path.join( "clucene-core-0.9.20", "src" )
+        self.defaultTarget = '0.9.20'
 
 
 class subclass(base.baseclass):
@@ -26,7 +28,11 @@ class subclass(base.baseclass):
 
         # we have an own cmake script - copy it to the right place
         mydir = os.path.join( self.workdir, self.instsrcdir )
-        cmake_script = os.path.join( self.packagedir , "CMakeLists.txt" )
+        cmake_script = ""
+        if self.buildTarget == 0.9.16a:
+            cmake_script = os.path.join( self.packagedir , "CMakeLists-0.9.16.txt" )
+        else:
+            cmake_script = os.path.join( self.packagedir , "CMakeLists-0.9.20.txt" )
         cmake_dest = os.path.join( mydir, "CMakeLists.txt" )
         shutil.copy( cmake_script, cmake_dest )
         cmake_script = os.path.join( self.packagedir , "clucene-config.h.cmake" )
@@ -42,14 +48,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        # FIXME?
-        if self.traditional:
-            self.instdestdir = "kde"
-            self.instsrcdir = "clucene"
-            return self.doPackaging( "clucene", "0.9.16a-1", True )
-        else:
-            self.instsrcdir = "clucene-core-0.9.16a"
-            return self.doPackaging( "clucene-core", os.path.basename(sys.argv[0]).replace("clucene-core-", "").replace(".py", ""), True )
+        return self.doPackaging( "clucene-core", self.buildTarget, True )
 
     
 if __name__ == '__main__':

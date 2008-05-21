@@ -3,7 +3,6 @@ import os
 import sys
 import info
 
-#currently build without clucene...
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -16,7 +15,7 @@ class subinfo(info.infoclass):
         self.svnTargets['0.5.8'] = 'tags/strigi/strigi/0.5.8'
         self.svnTargets['0.5.9'] = 'tags/strigi/strigi/0.5.9'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
-        self.defaultTarget = '0.5.9'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -34,8 +33,6 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
         if self.buildTarget == "svnHEAD":
             return self.doPackaging( "strigi", os.path.basename(sys.argv[0]).replace("strigi-", ""), True )
         else:
