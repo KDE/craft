@@ -44,7 +44,7 @@ options:
                                 manifest directory - it prints out only those
                                 packages that are contained within
                                 --print-installables
---print-installables            This will give you a list of packages that can
+--print-installable             This will give you a list of packages that can
                                 be installed. Currently you don't need to
                                 enter the category and package: only the
                                 package will be enough.
