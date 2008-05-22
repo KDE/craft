@@ -1,9 +1,5 @@
 # this will emerge some programs...
 
-# call this with "emerge.py <packageName> <action>"
-# where packageName is the program you want to install
-# and action is the action you want to do, see base.py
-#
 # copyright:
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
@@ -13,41 +9,113 @@ import os
 import utils
 
 def usage():
-    print
-    print 'Usage: emerge [-f|-p|-q|-v|--offline][--compile|--fetch|--full-package|'
-    print '               --install|--manifest|--package|--print-targets|--qmerge|'
-    print '               --unmerge|--unpack] PACKAGES'
-    print '       emerge [--print-installable|--print-installed]'
-    print 'emerge.py is a script for easier building.'
-    print
-    print 'Flags:'
-    print '-p               pretend to do everything - a dry run'
-    print '-q               suppress all output'
-    print '-f               force removal of files with unmerge'
-    print '-v               print additional output (increase the verbosity level)'
-    print '--offline        don\'t try to download anything'
-    print '--buildtype=[KdeBuildType] where KdeBuildType is one of the used BuildTypes'
-    print '                 This will automatically overrun all buildtype definitions'
-    print '                 made in the package\'s .py-file'
-    print 'Options:'
-    print '--compile PACKAGE       configure and build the PACKAGE'
-    print '--fetch PACKAGE         just fetch the PACKAGE'
-    print '--full-package PACKAGE  make all of the above steps'
-    print '--install PACKAGE       install the PACKAGE to an image directory'
-    print '--manifest PACKAGE      add the installdb files to the image directory'
-    print '--package PACKAGE       package the image directory with the kdewin-packager[*]'
-    print '--print-installable     displays packages that can be installed'
-    print '--print-installed       displays installed packages'
-    print '--print-targets PACKAGE displays targets for PACKAGE'
-    print '--qmerge PACKAGE        install the image directories contents to the kderoot'
-    print '--unmerge PACKAGE       try to unmerge PACKAGE'
-    print '--unpack PACKAGE        unpack the PACKAGE and apply the patches if needed'
-    print '--update PACKAGE        update the PACKAGE if it is installed already; ignored if not present'
-    print
-    print '[*] - this requires the packager to be installed already.'
-    print 'Please see http://windows.kde.org for more information.'
-    print 'Send bugs and feature requests to <kde-windows@kde.org>.'
-    print
+    print """
+Usage:
+    emerge [[ command and flags ] [ packagename ]
+            [ command and flags ] [ packagename ]
+            ... ]
+
+Emerge is a tool for building KDE-related software under Windows. emerge
+automates it, looks for the dependencies and fetches them automatically.
+Some options should be used with extreme caution since they will
+make your kde installation unusable in 999 out of 1000 cases.
+
+Commands (no packagename needed - will be ignored when given):
+
+--print-installed               This will show a list of all packages that
+                                are installed currently. It queries both
+                                databases (etc\portage\installed) and the
+                                manifest directory - it prints out only those
+                                packages that are contained within
+                                --print-installable
+--print-installable            This will give you a list of packages that can
+                                be installed. Currently you don't need to
+                                enter the category and package: only the
+                                package will be enough.
+--print-targets                 This will print all the different targets
+                                one package can contain: different releases
+                                might have different tags that are build as
+                                targets of a package. As an example:
+                                You could build the latest amarok sources
+                                with the target 'svnHEAD' the previous '1.80'
+                                release would be contained as target '1.80'.
+
+Commands (must have a packagename):
+
+--fetch             for most non-KDE packages: retrieve package sources.
+--unpack            for most non-KDE packages: unpack package sources and make
+                    up the build directory.
+                    for KDE packages: get package source from SVN and make up
+                    the build directory.
+--compile           compile the sources: this includes configure'ing/cmake'ing
+                    and running [mingw32-|n|]make.
+--install           This will run [mingw32-|n|]make install into the image 
+                    directory of each package.
+--manifest          This step creates the files contained in the manifest dir.
+--qmerge            This will merge the image directory into the KDEROOT
+--package           This step will create a package out of the image directory
+                    instead of merge'ing the image directory into the KDEROOT
+                    (Requires the packager to be installed already.)
+--full-package      This will create packages instead of installing stuff to
+                    KDEROOT
+--unmerge           this uninstalls a package from KDEROOT - it requires a
+                    working manifest directory.
+
+Flags:
+
+--buildtype=[BUILDTYPE]         This will override the build type set by the
+                                environment option EMERGE_BUILDTYPE .
+                                Please set it to one out of Release, Debug,
+                                RelWithDebInfo, MinSizeRel
+--target=[TARGET]               This will override the build of the default
+                                target. The default Target is marked with a
+                                star in the printout of --print-targets
+
+-i          ignore install: using this option will install a package over an
+            existing install. This can be useful if you want to check some
+            new code and your last build isn't that old. This option might
+            cause some problems though: if you want to update Qt e.g. the
+            building of qmake depends on the existance on the system - thus
+            using -i will result in a wrong qt package (as has happened when
+            updating from qt4.3 to qt4.4).
+-p          probing: emerge will only look which files it has to build
+            according to the list of installed files and according to the
+            dependencies of the package.
+-q          quiet: there should be no output - The verbose level should be 0
+-t          test: if used on an KDE target it will override the environment
+            variable and build the target with -DKDE_BUILD_TESTS=ON
+-v          verbose: increases the verbose level of emerge.
+            verbose level 1 contains some notes from emerge, all output of
+            cmake, make and other programs that are used. verbose level 2
+            adds an option VERBOSE=1 to make and emerge is more verbose
+            highest level is verbose level 3.
+--noclean   this option will try to use an existing build directory. Please
+            handle this option with care - it will possibly break if the
+            directory isn't existing.
+--nocopy    this option is deprecated. In older releases emerge would have
+            copied everything from the SVN source tree to a source directory
+            under %KDEROOT%\\tmp - currently nocopy is applied by default if
+            EMERGE_NOCOPY is not set to "False". Be aware that setting
+            EMERGE_NOCOPY to "True" might slow down the build process,
+            irritate you and increase the disk space roughly by the size of
+            SVN source tree.
+--offline   do not try to connect to the internet: KDE packages will try to
+            use an existing source tree and other packages would try to use
+            existing packages in the download directory. If that doesn't
+            work, the build will fail.
+--update    this option is the same as '-i --noclean'. It will update a single
+            package (that is already installed. SE: I will change this sooner
+            or later)
+
+Internal options or options that aren't fully implemented yet:
+PLEASE DO NOT USE!
+--version-dir
+--version-package
+
+More information see the README or http://windows.kde.org/.
+Send feedback to <kde-windows@kde.org>.
+
+"""
 
 def doExec( category, package, version, action, opts ):
     if utils.verbose() > 2:
