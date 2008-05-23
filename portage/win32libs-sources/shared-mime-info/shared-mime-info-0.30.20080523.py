@@ -6,33 +6,31 @@ import info
 import re
 
 PACKAGE_NAME         = "shared-mime-info"
-PACKAGE_VER          = "0.23"
-PACKAGE_FULL_VER     = "0.23"
+PACKAGE_VER          = "0.30"
+PACKAGE_FULL_VER     = "0.30"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
+GLIB_VER             = "2.14.5"
 
 SRC_URI= """
 http://people.freedesktop.org/~hadess/""" + PACKAGE_FULL_NAME + """.tar.bz2
-ftp://ftp.gtk.org/pub/glib/2.14/glib-2.14.1.tar.bz2
+ftp://ftp.gtk.org/pub/glib/2.14/glib-""" + GLIB_VER + """.tar.bz2
 """
 
-# deps: libxml2, libintl, iconv
-# source-deps: glib (yeah!) and kdewin32
-DEPEND = """
-dev-util/win32libs
-"""
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets[PACKAGE_VER] = SRC_URI
-        self.defaultTarget = PACKAGE_VER
+        self.targets['0.30'] = SRC_URI
+        self.targetInstSrc['0.30'] = PACKAGE_FULL_NAME
+        self.defaultTarget = '0.30'
+
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/win32libs'] = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, args=args )
-    self.instsrcdir = PACKAGE_FULL_NAME
     self.createCombinedPackage = True
     self.subinfo = subinfo()
-    self.buildType = "Release"
 
   def unpack( self ):
     if(not base.baseclass.unpack( self ) ):
@@ -41,7 +39,7 @@ class subclass(base.baseclass):
     # rename config.h and glibconfig.h.win32 in glib to 
     # avoid config.h confusion
     p = re.compile('.*\.[ch]$')
-    glibdir = os.path.join( self.workdir, "glib-2.14.1" )
+    glibdir = os.path.join( self.workdir, "glib-" + GLIB_VER )
     sedcmd = r"""-e "s/config.h/config.h.win32/" """
     dir = os.path.join( glibdir, "glib" )
     if ( os.path.exists( dir ) ):
@@ -68,14 +66,11 @@ class subclass(base.baseclass):
     # adjust some vars for proper compile
     cmake_src  = os.path.join( self.workdir, self.instsrcdir )
 
-    options = "%s -DCMAKE_INSTALL_PREFIX=%s " % \
-              ( cmake_src, self.rootdir.replace( '\\', '/' ) )
-
-    options = options + "-DKDEWIN32_DIR=%s " % \
+    options = "-DKDEWIN32_DIR=%s " % \
               os.path.join( self.workdir, "kdewin32" ).replace( "\\", "/" )
 
     options = options + "-DGLIB_DIR=%s " % \
-              os.path.join( self.workdir, "glib-2.14.1" ).replace( "\\", "/" )
+              os.path.join( self.workdir, "glib-" + GLIB_VER ).replace( "\\", "/" )
 
     options = options + "-DCMAKE_INCLUDE_PATH=%s " % \
               os.path.join( self.rootdir, "win32libs", "include" ).replace( "\\", "/" )
@@ -84,12 +79,13 @@ class subclass(base.baseclass):
               os.path.join( self.rootdir, "win32libs", "lib" ).replace( "\\", "/" )
 
     self.kdeCustomDefines = "-DCMAKE_BUILD_TYPE=Release -DGLIB_DIR=%s" % \
-              os.path.join( self.workdir, "glib-2.14.1" ).replace( "\\", "/" )
+              os.path.join( self.workdir, "glib-" + GLIB_VER ).replace( "\\", "/" )
     
 
     return options
 
   def compile( self ):
+    self.kdeCustomDefines = self.kdeDefaultDefines()
     return self.kdeCompile()
 
   def install( self ):
@@ -106,7 +102,7 @@ class subclass(base.baseclass):
     self.system( cmd )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+    self.doPackaging( PACKAGE_NAME, self.buildTarget, True )
 
     return True
   
