@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        self.languages  = 'sr'
+        self.languages  = 'de'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
