@@ -6,8 +6,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4'
+        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/'
+        self.targets['4.0.80'] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.80/src/kde-l10n/'
         self.defaultTarget = 'svnHEAD'
+
+        # all targets in svn
         self.languages  = 'af ar be bg bn bn_IN br ca cs csb cy da de '
         self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl gu '
         self.languages += 'ha he hi hr hsb hu hy is it ja ka kk km kn ko ku '
@@ -15,7 +18,16 @@ class subinfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        self.languages  = 'de'
+        # released target in 4.0.80
+        self.languages  = 'ar be bg ca cs csb de '
+        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl  '
+        self.languages += 'hi hu is it ja kk ko '
+        self.languages += 'lv mk nb nds ne nl nn '
+        self.languages += 'pa pl pt pt_BR ro ru se sl sv '
+        self.languages += 'ta th tr uk wa zh_CN zh_TW '
+
+        #for testing
+        #self.languages  = 'de'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
@@ -27,36 +39,64 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
 
+    def fetch( self ):
+        svnpath = self.kdeSvnPath()
+        if svnpath:
+            return base.baseclass.fetch( self )
+
+        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
+            for pkg in self.subinfo.languages.split():
+                tgt = self.subinfo.buildTarget
+                filename = self.subinfo.targets[ tgt ] + 'kde-l10n-' + pkg + '-' + tgt + '.tar.bz2' 
+                return utils.getFiles( filename, self.downloaddir )
+        else:
+            return False
+
+        return True
+
     def unpack( self ):
         svnpath = self.kdeSvnPath()
         utils.cleanDirectory( self.workdir )
 
-        if not self.kdeSvnUnpack( svnpath, "scripts" ):
-            return False
-            
-        for pkg in self.subinfo.languages.split():
-            if not self.kdeSvnUnpack( svnpath, pkg ):
+        if svnpath:
+            if not self.kdeSvnUnpack( svnpath, "scripts" ):
                 return False
+                
+            for pkg in self.subinfo.languages.split():
+                if not self.kdeSvnUnpack( svnpath, pkg ):
+                    return False
+            autogen = os.path.join( self.packagedir , "autogen.py" )
+            svnpath = os.path.join( self.kdesvndir, svnpath )
+    
+    
+            # execute autogen.py and generate the CMakeLists.txt files
+            cmd = "cd %s && %s %s" % \
+                  (svnpath , autogen, self.subinfo.languages )
+            utils.system( cmd )
 
-        # ok, that's not really fine, but copying all the stuff around isn't either
-        autogen = os.path.join( self.packagedir , "autogen.py" )
-        svnpath = os.path.join( self.kdesvndir, svnpath )
-
-
-        # execute autogen.py and generate the CMakeLists.txt files
-        cmd = "cd %s && %s %s" % \
-              (svnpath , autogen, self.subinfo.languages )
-        print cmd
-        utils.system( cmd )
-        # revpath is not available in msys
+        else:
+            filenames = []
+            for pkg in self.subinfo.languages.split():
+                if not self.subinfo.buildTarget in self.subinfo.targets.keys():
+                    return False
+                tgt = self.subinfo.buildTarget
+                filenames.append( 'kde-l10n-' + pkg + '-' + tgt + '.tar.bz2' )
+            if not utils.unpackFiles( self.downloaddir, filenames, self.workdir ):
+                return False
+            # no need for autogen.py - CMake scripts are already created
         return True
 
     def compile( self ):
         self.kde.nocopy = False
         sourcePath = self.kde.sourcePath
+        svnpath = self.kdeSvnPath()
         for pkg in self.subinfo.languages.split():
             self.kde.buildNameExt = pkg
-            self.kde.sourcePath = os.path.join( sourcePath, pkg )
+            if svnpath:
+                self.kde.sourcePath = os.path.join( sourcePath, pkg )
+            else:
+                pkg_dir = 'kde-l10n-' + pkg + '-' + self.subinfo.buildTarget
+                self.kde.sourcePath = os.path.join( sourcePath, pkg_dir )
             if not self.kdeCompile():
                 return False
         return True
