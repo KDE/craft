@@ -43,8 +43,8 @@ http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-lib.zip
 http://downloads.sourceforge.net/kde-windows/libpng-1.2.26-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/libpng-1.2.26-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/libxml2-2.6.32-1-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/libxml2-2.6.32-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libxml2-2.6.30-3-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libxml2-2.6.30-3-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/libxslt-1.1.23-2-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/libxslt-1.1.23-2-lib.tar.bz2
