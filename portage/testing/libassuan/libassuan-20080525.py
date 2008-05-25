@@ -8,12 +8,12 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = False
-        self.targets['1.0.4'] = 'ftp://ftp.gnupg.org/gcrypt/libassuan/libassuan-1.0.4.tar.bz2'
-        self.defaultTarget = '1.0.4'
-    
+        self.targets['1.0.5'] = 'ftp://ftp.gnupg.org/gcrypt/libassuan/libassuan-1.0.5.tar.bz2'
+        self.defaultTarget = '1.0.5'
+
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-    
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -44,7 +44,7 @@ class subclass(base.baseclass):
         else:
             base.baseclass.unpack( self ) or utils.die( "unpack failed" )
             os.chdir( self.workdir )
-            shutil.move("libassuan-1.0.4", "libassuan")
+            shutil.move("libassuan-1.0.5", "libassuan")
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
             return True
