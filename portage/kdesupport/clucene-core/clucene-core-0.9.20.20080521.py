@@ -10,9 +10,9 @@ class subinfo (info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['0.9.16a'] = "http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
+        self.targets['0.9.16a'] = "http://downloads.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
         self.targetInstSrc['0.9.16a'] = os.path.join( "clucene-core-0.9.16a", "src" )
-        self.targets['0.9.20'] = "http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.20.tar.bz2"
+        self.targets['0.9.20'] = "http://downloads.sourceforge.net/sourceforge/clucene/clucene-core-0.9.20.tar.bz2"
         self.targetInstSrc['0.9.20'] = os.path.join( "clucene-core-0.9.20", "src" )
         self.defaultTarget = '0.9.20'
 

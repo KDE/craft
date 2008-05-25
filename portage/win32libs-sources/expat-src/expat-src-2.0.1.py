@@ -10,7 +10,7 @@ PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libexpat"
 
 SRC_URI= """
-http://kent.dl.sourceforge.net/sourceforge/expat/expat-win32bin-2.0.1.exe
+http://downloads.sourceforge.net/sourceforge/expat/expat-win32bin-2.0.1.exe
 """
 
 DEPEND = """

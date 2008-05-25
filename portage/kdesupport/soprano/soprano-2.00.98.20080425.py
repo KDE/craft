@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.svnTargets['2.0.1'] = 'tags/soprano/2.0.1'
         self.svnTargets['2.0.2'] = 'tags/soprano/2.0.2'
         self.svnTargets['2.0.3'] = 'tags/soprano/2.0.3'
-        self.targets['2.0.98'] = 'http://kent.dl.sourceforge.net/sourceforge/soprano/soprano-2.0.98.tar.bz2'
+        self.targets['2.0.98'] = 'http://downloads.sourceforge.net/sourceforge/soprano/soprano-2.0.98.tar.bz2'
         self.targetInstSrc['2.0.98'] = 'soprano-2.0.98'
         self.defaultTarget = 'svnHEAD'
 

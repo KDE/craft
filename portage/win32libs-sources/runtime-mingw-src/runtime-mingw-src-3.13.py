@@ -10,7 +10,7 @@ PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libintl3"
 
 SRC_URI= """
-http://kent.dl.sourceforge.net/sourceforge/mingw/""" + PACKAGE_FULL_NAME + """.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/""" + PACKAGE_FULL_NAME + """.tar.gz
 """
 
 DEPEND = """
