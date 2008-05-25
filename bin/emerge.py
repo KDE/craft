@@ -32,15 +32,15 @@ Commands (no packagename needed - will be ignored when given):
                                 be installed. Currently you don't need to
                                 enter the category and package: only the
                                 package will be enough.
---print-targets                 This will print all the different targets
-                                one package can contain: different releases
-                                might have different tags that are build as
-                                targets of a package. As an example:
-                                You could build the latest amarok sources
-                                with the target 'svnHEAD' the previous '1.80'
-                                release would be contained as target '1.80'.
 
 Commands (must have a packagename):
+
+--print-targets     This will print all the different targets 
+                    one package can contain: different releases might have
+                    different tags that are build as targets of a package. As
+                    an example: You could build the latest amarok sources with
+                    the target 'svnHEAD' the previous '1.80' release would be
+                    contained as target '1.80'.
 
 --fetch             for most non-KDE packages: retrieve package sources.
 --unpack            for most non-KDE packages: unpack package sources and make
