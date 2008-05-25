@@ -218,7 +218,7 @@ set(clucene_HDRS
    ${CLucene_src_dir}/debug/condition.h
    ${CLucene_src_dir}/debug/error.h
    ${CLucene_src_dir}/debug/mem.h
-   ${CLucene_src_dir}/debug/pool.h
+   #${CLucene_src_dir}/debug/pool.h
 
    ${CLucene_src_dir}/document/DateField.h
    ${CLucene_src_dir}/document/Document.h
@@ -251,7 +251,7 @@ set(clucene_HDRS
    ${CLucene_src_dir}/queryParser/MultiFieldQueryParser.h
    ${CLucene_src_dir}/queryParser/QueryParser.h
    ${CLucene_src_dir}/queryParser/QueryParserBase.h
-   ${CLucene_src_dir}/queryParser/QueryParserConstants.h
+   #${CLucene_src_dir}/queryParser/QueryParserConstants.h
    ${CLucene_src_dir}/queryParser/QueryToken.h
    ${CLucene_src_dir}/queryParser/TokenList.h
 
@@ -285,7 +285,7 @@ set(clucene_HDRS
    ${CLucene_src_dir}/search/QueryFilter.h
    ${CLucene_src_dir}/search/RangeFilter.h
    ${CLucene_src_dir}/search/RangeQuery.h
-   ${CLucene_src_dir}/search/ScoreDoc.h
+   #${CLucene_src_dir}/search/ScoreDoc.h
    ${CLucene_src_dir}/search/Scorer.h
    ${CLucene_src_dir}/search/SearchHeader.h
    ${CLucene_src_dir}/search/Similarity.h
