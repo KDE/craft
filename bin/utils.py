@@ -148,7 +148,23 @@ def getHttpFile( host, path, destdir, filename ):
     r1 = conn.getresponse()
     if verbose() > 0:
         print r1.status, r1.reason
-
+        
+    count = 0
+    while r1.status == 302:
+        if count > 10:
+            print "Redirect loop"
+            return False
+        count += 1
+        scheme, host, path, params, qu, fr = urlparse.urlparse( r1.getheader( "Location" ) )
+        if verbose() > 1:
+            print "Redirection.", host, path
+        conn = httplib.HTTPConnection( host )
+        conn.request( "GET", path )
+        r1 = conn.getresponse()
+        if verbose() > 0:
+            print r1.status, r1.reason
+    
+        
     data = r1.read()
 
     f = open( os.path.join( destdir, filename ), "wb" )
