@@ -391,8 +391,8 @@ class baseclass:
     def kdeCompile( self ):
         return self.kde.kdeCompile( self.kdeCustomDefines )
 
-    def kdeInstall( self, customPath = None  ):
-        return self.kde.kdeInstall( customPath )
+    def kdeInstall( self ):
+        return self.kde.kdeInstall()
 
     def doPackaging( self, pkg_name, pkg_version, packSources = True ):
         """packaging according to the gnuwin32 packaging rules"""

@@ -103,8 +103,10 @@ class subclass(base.baseclass):
 
     def install( self ):
         self.kde.nocopy = False
+        imgdir = self.kde.imagedir
         for pkg in self.subinfo.languages.split():
             self.kde.buildNameExt = pkg
+            self.kde.imagedir = os.path.join( imgdir, pkg )
             if not self.kdeInstall():
                 return False
         return True
@@ -121,7 +123,7 @@ class subclass(base.baseclass):
 
         for pkg in self.subinfo.languages.split():
             workdir = os.path.join( self.workdir, pkg )
-            cmd = "kdewin-packager -name kde-i18n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % \
+            cmd = "kdewin-packager -name kde-l10n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % \
                   ( pkg, self.version, self.imagedir, pkg, dstpath )
             utils.system( cmd )
         return True

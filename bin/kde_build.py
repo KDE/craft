@@ -280,7 +280,7 @@ class kde_interface:
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
-    def kdeInstallInternal( self, buildType, customPath ):
+    def kdeInstallInternal( self, buildType ):
         """Using *make install"""
         builddir = "%s" % ( self.COMPILER )
 
@@ -292,17 +292,14 @@ class kde_interface:
 
         os.chdir( self.workdir )
         os.chdir( builddir )
-        imagedir = self.imagedir
-        if customPath != None:
-            imagedir = os.path.join( imagedir, customPath )
-            os.chdir( customPath )
+
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm , self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
         return True
 
     def kdeCompile( self, kdeCustomDefines ):
@@ -317,19 +314,16 @@ class kde_interface:
                 return False
         return True
 
-    def kdeInstall( self, customPath ):
+    def kdeInstall( self ):
         """making all required stuff for installing cmake based modules"""
         if( not self.buildType == None ):
-            if( not self.kdeInstallInternal( self.buildType, customPath ) ):
+            if( not self.kdeInstallInternal( self.buildType ) ):
                 return False
         else:
-            if( not self.kdeInstallInternal( "debug", customPath ) ):
+            if( not self.kdeInstallInternal( "debug" ) ):
                 return False
-            if( not self.kdeInstallInternal( "release", customPath ) ):
+            if( not self.kdeInstallInternal( "release" ) ):
                 return False
-        if customPath != None:
-            utils.fixCmakeImageDir( os.path.join( self.imagedir, customPath ), self.rootdir )
-        else:
-            utils.fixCmakeImageDir( self.imagedir, self.rootdir )
+        utils.fixCmakeImageDir( self.imagedir, self.rootdir )
         return True
 
