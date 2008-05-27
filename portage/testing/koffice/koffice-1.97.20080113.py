@@ -6,9 +6,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
-        self.svnTargets['alpha2'] = "tags/koffice/1.9.95.4"
-        self.targets['1.9.95.4'] = "ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.95.4/src/koffice-1.9.95.4.tar.bz2"
-        self.targetInstSrc['1.9.95.4'] = "koffice-1.9.95.4"
+        self.targetInstSrc['1.9.95.4'] = "tags/koffice/koffice-1.9.95.4"
+        self.targetInstSrc['1.9.95.8'] = "tags/koffice/koffice-1.9.95.8"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
