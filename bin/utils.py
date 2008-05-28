@@ -672,7 +672,7 @@ def unmerge( rootdir, package, forced = False ):
                             warning( "file %s has different hash: %s %s, run with option --forced to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
                             if forced:
                                 os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
-                    else:
+                    elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
                         warning( "file %s is not existing" % ( os.path.normcase( a ) ) )
                 fptr.close()
                 os.remove( os.path.join( rootdir, "manifest", file ) )
