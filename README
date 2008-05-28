@@ -21,7 +21,7 @@ contents:
       kdesettings-example.bat from the emerge directory into the etc 
       directory. Rename kdesettings-example.bat to kdesettings.bat and edit it
       according to your needs.
-    - open up kdeenv.bat from the emerge directory, try 'emerge -p kdebase'
+    - open up kdeenv.bat from the emerge directory, try 'emerge -p kdebase-runtime'
       and if there are no errors, you can use emerge.
 
 2. running emerge
