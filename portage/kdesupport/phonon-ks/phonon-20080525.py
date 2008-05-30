@@ -1,6 +1,6 @@
+
 import base
 import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['4.1.0'] = 'tags/phonon/4.1'    # tagged version, also in qt4.4.0
+        self.svnTargets['4.1'] = 'branches/phonon/4.1'  # branch for bugfixes
+        self.svnTargets['4.2'] = 'branches/phonon/4.2'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
         self.defaultTarget = 'svnHEAD'
 
@@ -30,9 +33,9 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "phonon-ks", os.path.basename(sys.argv[0]).replace("phonon-", ""), True )
+            return self.doPackaging( "phonon", os.path.basename(sys.argv[0]).replace("phonon-", ""), True )
         else:
-            return self.doPackaging( "phonon-ks", self.buildTarget, True )
+            return self.doPackaging( "phonon", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
