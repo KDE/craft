@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/taglib'] = 'default'
+        self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['dev-util/ruby'] = 'default'
-        self.hardDependencies['extragear/phonon'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
     
