@@ -61,15 +61,14 @@ class subclass(base.baseclass):
             utils.cleanDirectory( os.path.join( self.workdir, "gpgme-build" ) )
             BUILD_REVISION=0
             configure_sed = "s/BUILD_REVISION=svn_revision/BUILD_REVISION=" + repr(BUILD_REVISION) + "/g"
-            configure_sed = "s/min_automake_version=\\\"1.10\\\"/min_automake_version=\\\"1.8\\\"/g"
-            Makefile_sed = "s/SUBDIRS = ${assuan} gpgme ${tests} doc ${complus} lang/SUBDIRS = ${assuan} gpgme ${tests} ${complus} lang/g"
-            Makefile2_sed = "s/SUFFIXES: \.rc \.lo/SUFFIXES: rc \.rc \.lo/g"
             os.chdir( destdir )
             cmd = "sed -i -e \"" + configure_sed + "\" configure.ac"
             self.system( cmd )
-            cmd = "sed -i -e \"" + Makefile_sed + "\" Makefile.am"
-            self.system( cmd )
-            cmd = "sed -i -e \"" + Makefile_sed + "\" gpgme/Makefile.am"
+            src = os.path.join( self.workdir )
+            gpgme_dir  = os.path.join( src, "gpgme" )
+
+            cmd = "cd %s && patch -p0 < %s" % \
+                  ( gpgme_dir, os.path.join( self.packagedir, "gpgme-1.1.7.diff" ) )
             self.system( cmd )
             self.msys.msysExecute( utils.toMSysPath( destdir ), "./autogen.sh", "--enable-maintainer-mode" )
             return True

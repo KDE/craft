@@ -1,0 +1,33 @@
+--- configure.ac.orig	2008-06-02 16:04:44.593750000 +0200
++++ configure.ac	2008-06-02 16:10:27.859375000 +0200
+@@ -20,7 +20,7 @@
+  
+ # (Process this file with autoconf to produce a configure script.)
+ AC_PREREQ(2.59)
+-min_automake_version="1.10"
++min_automake_version="1.8"
+ 
+ # Version number: Remember to change it immediately *after* a release.
+ #                 Make sure to run  "svn up" and "./autogen.sh --force"
+--- gpgme/Makefile.am.orig	2008-06-02 16:04:45.125000000 +0200
++++ gpgme/Makefile.am	2008-06-02 16:07:19.609375000 +0200
+@@ -146,7 +146,7 @@
+      `echo $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) | \
+      sed -e 's/-I/--include-dir /g;s/-D/--define /g'`
+ 
+-SUFFIXES: .rc .lo
++SUFFIXES: rc .rc .lo
+ 
+ .rc.lo:
+ 	$(LTRCCOMPILE) -i $< -o $@
+--- Makefile.am.orig	2008-06-02 16:04:44.609375000 +0200
++++ Makefile.am	2008-06-02 16:07:19.546875000 +0200
+@@ -43,7 +43,7 @@
+ tests = 
+ endif
+ 
+-SUBDIRS = ${assuan} gpgme ${tests} doc ${complus} lang
++SUBDIRS = ${assuan} gpgme ${tests} ${complus} lang
+ 
+ # Fix the version of the spec file and create a file named VERSION 
+ # to be used for patch's Prereq: feature.
