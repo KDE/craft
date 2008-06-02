@@ -1,0 +1,11 @@
+--- src/Makefile.in.orig	2008-06-02 10:27:58.203125000 +0200
++++ src/Makefile.in	2008-06-02 10:21:30.515625000 +0200
+@@ -299,7 +299,7 @@
+ @HAVE_W32_SYSTEM_FALSE@gpg_error_res = 
+ @HAVE_W32_SYSTEM_TRUE@gpg_error_res = versioninfo.o
+ @HAVE_W32_SYSTEM_FALSE@gpg_error_res_ldflag = 
+-@HAVE_W32_SYSTEM_TRUE@gpg_error_res_ldflag = -Wl,$(gpg_error_res)
++@HAVE_W32_SYSTEM_TRUE@gpg_error_res_ldflag = -Wl,.libs/$(gpg_error_res)
+ @HAVE_W32_SYSTEM_FALSE@no_undefined = 
+ @HAVE_W32_SYSTEM_TRUE@no_undefined = -no-undefined
+ @HAVE_W32_SYSTEM_FALSE@export_symbols = 
