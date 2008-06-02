@@ -1,0 +1,12 @@
+--- libassuan\src\assuan-socket.c	2007-12-14 16:51:55.808441900 +0100
++++ libassuan2\src\assuan-socket.c	2007-12-14 16:52:11.429941900 +0100
+@@ -21,7 +21,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #ifdef HAVE_W32_SYSTEM
++#ifndef WIN32_LEAN_AND_MEAN
+ #define WIN32_LEAN_AND_MEAN
++#endif
+ #include <windows.h>
+ #include <wincrypt.h>
+ #include <io.h>
