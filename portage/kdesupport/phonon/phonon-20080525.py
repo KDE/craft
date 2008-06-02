@@ -26,9 +26,9 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        if os.getenv("KDECOMPILER") == "mingw":
-            os.environ["DXSDK_DIR"] = os.path.join( self.rootdir, "include", "mingw" )
-            self.kdeCustomDefines = "-DCMAKE_REQUIRED_INCLUDES=" + os.path.join( self.rootdir, "include" ).replace("\\", "\\\\")
+#        if os.getenv("KDECOMPILER") == "mingw":
+#            os.environ["DXSDK_DIR"] = os.path.join( self.rootdir, "include", "mingw" )
+#            self.kdeCustomDefines = "-DCMAKE_REQUIRED_INCLUDES=" + os.path.join( self.rootdir, "include" ).replace("\\", "\\\\")
         return self.kdeCompile()
 
     def install( self ):
