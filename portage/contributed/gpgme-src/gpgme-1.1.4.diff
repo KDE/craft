@@ -1,0 +1,14 @@
+--- gpgme/gpgme.h.orig	2007-09-23 18:43:38.000000000 +0200
++++ gpgme/gpgme.h	2007-09-23 18:37:24.000000000 +0200
+@@ -35,7 +35,10 @@
+ 
+ #ifdef _MSC_VER
+   typedef long off_t;
+-  typedef long ssize_t;
++  #ifndef _SSIZE_T_DEFINED
++  #define _SSIZE_T_DEFINED
++    typedef long ssize_t;
++  #endif
+ #else
+ # include <sys/types.h>
+ #endif
