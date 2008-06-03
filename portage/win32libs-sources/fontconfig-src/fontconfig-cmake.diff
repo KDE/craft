@@ -869,7 +869,7 @@ diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/Confi
 +check_function_exists( XML_SetDoctypeDeclHandler HAVE_XML_SETDOCTYPEDECLHANDLER )
 +set( FC_DEFAULT_FONTS "%WINDIR%\\fonts" )
 +add_definitions( -DHAVE_CONFIG_H )
-+add_definitions( -DFONTCONFIG_PATH='"/etc/fonts"' )
++add_definitions( -DFONTCONFIG_PATH="\\"${CMAKE_INSTALL_PREFIX}/etc/fonts\\"" )
 +set( FC_CACHEDIR "\"%TEMP%\\fc_cache\"" )
 +configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 +configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/fonts.conf.cmake ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf )
