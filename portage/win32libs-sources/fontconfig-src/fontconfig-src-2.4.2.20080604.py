@@ -6,7 +6,7 @@ import info
 
 PACKAGE_NAME         = "fontconfig"
 PACKAGE_VER          = "2.4.2"
-PACKAGE_FULL_VER     = "2.4.2-2"
+PACKAGE_FULL_VER     = "2.4.2-3"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libfontconfig"
 
