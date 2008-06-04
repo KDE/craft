@@ -1,7 +1,7 @@
-diff -N -r -u exiv2-0.16/CMakeLists.txt _exiv2-0.16/CMakeLists.txt
---- exiv2-0.16/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/CMakeLists.txt	2008-06-04 04:03:55.968750000 +0200
-@@ -0,0 +1,50 @@
+diff -N -r -u exiv2-0.16.orig/CMakeLists.txt exiv2-0.16/CMakeLists.txt
+--- exiv2-0.16.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ exiv2-0.16/CMakeLists.txt	2008-06-04 13:49:51.874407100 +0200
+@@ -0,0 +1,66 @@
 +# CMake build system for exiv2 library and executables
 +# Copyright 2008 by Patrick Spendrin <ps_ml@gmx.de>
 +#
@@ -47,14 +47,30 @@ diff -N -r -u exiv2-0.16/CMakeLists.txt _exiv2-0.16/CMakeLists.txt
 +
 +set( INSTALL_TARGET_STANDARD_ARGS RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
-+add_subdirectory( xmpsdk )
++# add sources from XMPSDK directory
++set( XMPSRC ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPMeta.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPMeta-GetSet.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPMeta-Parse.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPMeta-Serialize.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPIterator.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPUtils.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPUtils-FileInfo.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/XMPCore_Impl.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/ExpatAdapter.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/ParseRDF.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/UnicodeConversions.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/MD5.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/WXMPMeta.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/WXMPIterator.cpp
++            ${CMAKE_SOURCE_DIR}/xmpsdk/src/WXMPUtils.cpp )
++
 +add_subdirectory( src )
 +if( BUILD_samples )
 +    add_subdirectory( samples )
 +endif( BUILD_samples )
-diff -N -r -u exiv2-0.16/config/ConfigureChecks.cmake _exiv2-0.16/config/ConfigureChecks.cmake
---- exiv2-0.16/config/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/config/ConfigureChecks.cmake	2008-06-04 05:00:28.109375000 +0200
+diff -N -r -u exiv2-0.16.orig/config/ConfigureChecks.cmake exiv2-0.16/config/ConfigureChecks.cmake
+--- exiv2-0.16.orig/config/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ exiv2-0.16/config/ConfigureChecks.cmake	2008-06-04 13:00:24.031250000 +0200
 @@ -0,0 +1,153 @@
 +# CMake build system for exiv2 library and executables
 +# Copyright 2008 by Patrick Spendrin <ps_ml@gmx.de>
@@ -210,9 +226,9 @@ diff -N -r -u exiv2-0.16/config/ConfigureChecks.cmake _exiv2-0.16/config/Configu
 +install( FILES ${CMAKE_BINARY_DIR}/exiv2.pc DESTINATION lib/pkgconfig )
 +endif( NOT WIN32 )
 \ Kein Zeilenumbruch am Dateiende.
-diff -N -r -u exiv2-0.16/config/exiv2.pc.cmake _exiv2-0.16/config/exiv2.pc.cmake
---- exiv2-0.16/config/exiv2.pc.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/config/exiv2.pc.cmake	2008-06-03 20:49:24.609375000 +0200
+diff -N -r -u exiv2-0.16.orig/config/exiv2.pc.cmake exiv2-0.16/config/exiv2.pc.cmake
+--- exiv2-0.16.orig/config/exiv2.pc.cmake	1970-01-01 01:00:00.000000000 +0100
++++ exiv2-0.16/config/exiv2.pc.cmake	2008-06-04 13:00:24.046875000 +0200
 @@ -0,0 +1,10 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +exec_prefix=${prefix}
@@ -224,9 +240,9 @@ diff -N -r -u exiv2-0.16/config/exiv2.pc.cmake _exiv2-0.16/config/exiv2.pc.cmake
 +Version: @PACKAGE_VERSION@
 +Libs: -L${libdir} -lexiv2 @EXV_LIB_STATIC@
 +Cflags: -I${includedir}
-diff -N -r -u exiv2-0.16/config/exv_conf.h.cmake _exiv2-0.16/config/exv_conf.h.cmake
---- exiv2-0.16/config/exv_conf.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/config/exv_conf.h.cmake	2008-06-03 19:47:33.062500000 +0200
+diff -N -r -u exiv2-0.16.orig/config/exv_conf.h.cmake exiv2-0.16/config/exv_conf.h.cmake
+--- exiv2-0.16.orig/config/exv_conf.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ exiv2-0.16/config/exv_conf.h.cmake	2008-06-04 13:00:24.109375000 +0200
 @@ -0,0 +1,195 @@
 +/**/
 +/* config.h.cmake.  Generated cmake.  */
@@ -423,9 +439,9 @@ diff -N -r -u exiv2-0.16/config/exv_conf.h.cmake _exiv2-0.16/config/exv_conf.h.c
 +#define EXV_SEPERATOR_STR "/"
 +#define EXV_SEPERATOR_CHR '/'
 +#endif
-diff -N -r -u exiv2-0.16/samples/CMakeLists.txt _exiv2-0.16/samples/CMakeLists.txt
---- exiv2-0.16/samples/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/samples/CMakeLists.txt	2008-06-04 02:46:52.546875000 +0200
+diff -N -r -u exiv2-0.16.orig/samples/CMakeLists.txt exiv2-0.16/samples/CMakeLists.txt
+--- exiv2-0.16.orig/samples/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ exiv2-0.16/samples/CMakeLists.txt	2008-06-04 13:00:24.171875000 +0200
 @@ -0,0 +1,57 @@
 +# CMake build system for exiv2 library and executables
 +# Copyright 2008 by Patrick Spendrin <ps_ml@gmx.de>
@@ -484,10 +500,10 @@ diff -N -r -u exiv2-0.16/samples/CMakeLists.txt _exiv2-0.16/samples/CMakeLists.t
 +add_executable( ${target} ${target}.cpp )
 +target_link_libraries(${target} exiv2 )
 +endforeach(entry ${SAMPLES})
-diff -N -r -u exiv2-0.16/src/CMakeLists.txt _exiv2-0.16/src/CMakeLists.txt
---- exiv2-0.16/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/src/CMakeLists.txt	2008-06-04 04:58:34.000000000 +0200
-@@ -0,0 +1,170 @@
+diff -N -r -u exiv2-0.16.orig/src/CMakeLists.txt exiv2-0.16/src/CMakeLists.txt
+--- exiv2-0.16.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ exiv2-0.16/src/CMakeLists.txt	2008-06-04 13:51:34.790825500 +0200
+@@ -0,0 +1,169 @@
 +# CMake build system for exiv2 library and executables
 +# Copyright 2008 by Patrick Spendrin <ps_ml@gmx.de>
 +#
@@ -518,50 +534,48 @@ diff -N -r -u exiv2-0.16/src/CMakeLists.txt _exiv2-0.16/src/CMakeLists.txt
 +# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 +#
 +# Add standalone C++ header files to this list
-+set( LIBEXIV2_HDR   
-+basicio.hpp
-+canonmn.hpp
-+cr2image.hpp
-+crwimage.hpp
-+datasets.hpp
-+error.hpp
-+exif.hpp
-+exv_msvc.h
-+fujimn.hpp
-+futils.hpp
-+ifd.hpp
-+image.hpp
-+iptc.hpp
-+jpgimage.hpp
-+makernote.hpp
-+makernote2.hpp
-+metadatum.hpp
-+minoltamn.hpp
-+mn.hpp
-+mrwimage.hpp
-+nikonmn.hpp
-+olympusmn.hpp
-+orfimage.hpp
-+panasonicmn.hpp
-+pentaxmn.hpp
-+pngchunk.hpp
-+pngimage.hpp
-+properties.hpp
-+rafimage.hpp
-+rcsid.hpp
-+sigmamn.hpp
-+sonymn.hpp
-+tags.hpp
-+tiffcomposite.hpp
-+tifffwd.hpp
-+tiffimage.hpp
-+tiffparser.hpp
-+tiffvisitor.hpp
-+types.hpp
-+value.hpp
-+version.hpp
-+xmp.hpp
-+)
++set( LIBEXIV2_HDR   basicio.hpp
++                    canonmn.hpp
++                    cr2image.hpp
++                    crwimage.hpp
++                    datasets.hpp
++                    error.hpp
++                    exif.hpp
++                    exv_msvc.h
++                    fujimn.hpp
++                    futils.hpp
++                    ifd.hpp
++                    image.hpp
++                    iptc.hpp
++                    jpgimage.hpp
++                    makernote.hpp
++                    makernote2.hpp
++                    metadatum.hpp
++                    minoltamn.hpp
++                    mn.hpp
++                    mrwimage.hpp
++                    nikonmn.hpp
++                    olympusmn.hpp
++                    orfimage.hpp
++                    panasonicmn.hpp
++                    pentaxmn.hpp
++                    pngchunk.hpp
++                    pngimage.hpp
++                    properties.hpp
++                    rafimage.hpp
++                    rcsid.hpp
++                    sigmamn.hpp
++                    sonymn.hpp
++                    tags.hpp
++                    tiffcomposite.hpp
++                    tifffwd.hpp
++                    tiffimage.hpp
++                    tiffparser.hpp
++                    tiffvisitor.hpp
++                    types.hpp
++                    value.hpp
++                    version.hpp
++                    xmp.hpp )
 +
 +# Add library C++ source files to this list
 +set( LIBEXIV2_SRC   basicio.cpp
@@ -602,16 +616,16 @@ diff -N -r -u exiv2-0.16/src/CMakeLists.txt _exiv2-0.16/src/CMakeLists.txt
 +                    xmp.cpp )
 +
 +# Add source files of simple applications to this list
-+set( TAGLIST_SRC taglist.cpp )
++set( TAGLIST_SRC    taglist.cpp )
 +
 +# Source files for the Exiv2 application
-+set( EXIV2_SRC  exiv2.cpp
-+                actions.cpp
-+                utils.cpp )
++set( EXIV2_SRC      exiv2.cpp
++                    actions.cpp
++                    utils.cpp )
 +
 +# Source files for the metacopy sample application
-+set( MC_SRC metacopy.cpp
-+            utils.cpp )
++set( MC_SRC         metacopy.cpp
++                    utils.cpp )
 +
 +if( HAVE_ZLIB )
 +set( LIBEXIV2_SRC ${LIBEXIV2_SRC}   pngimage.cpp
@@ -619,20 +633,21 @@ diff -N -r -u exiv2-0.16/src/CMakeLists.txt _exiv2-0.16/src/CMakeLists.txt
 +endif( HAVE_ZLIB )
 +
 +if(NOT HAVE_TIMEGM )
-+set( LIBEXIV2_SRC ${LIBEXIV2_SRC} localtime.c )
-+set( EXIV2_SRC ${EXIV2_SRC} localtime.c )
++set( LIBEXIV2_SRC   ${LIBEXIV2_SRC} localtime.c )
++set( EXIV2_SRC      ${EXIV2_SRC}    localtime.c )
 +endif( NOT HAVE_TIMEGM )
 +
 +if(MSVC)
-+set( MC_SRC ${MC_SRC} getopt_win32.c )
-+set( LIBEXIV2_SRC ${LIBEXIV2_SRC} getopt_win32.c )
++set( MC_SRC         ${MC_SRC}       getopt_win32.c )
++set( LIBEXIV2_SRC   ${LIBEXIV2_SRC} getopt_win32.c )
 +endif(MSVC)
 +
 +# ******************************************************************************
 +# Library
-+add_library( exiv2 STATIC ${LIBEXIV2_SRC} )
-+link_directories( ${CMAKE_LIBRARY_PATH} ${CMAKE_BINARY_DIR}/xmpsdk/src )
-+target_link_libraries( exiv2 xmp )
++include_directories( ${CMAKE_SOURCE_DIR}/xmpsdk/src )
++add_library( exiv2 STATIC ${XMPSRC} ${LIBEXIV2_SRC} )
++
++target_link_libraries( exiv2 ${EXPAT_LIBRARIES} )
 +install( TARGETS exiv2 ${INSTALL_TARGET_STANDARD_ARGS} )
 +
 +# ******************************************************************************
@@ -658,35 +673,4 @@ diff -N -r -u exiv2-0.16/src/CMakeLists.txt _exiv2-0.16/src/CMakeLists.txt
 +install( FILES ${LIBEXIV2_HDR} DESTINATION include/exiv2 )
 +
 +install( FILES exiv2.1 DESTINATION share/man/man1 )
-\ Kein Zeilenumbruch am Dateiende.
-diff -N -r -u exiv2-0.16/xmpsdk/CMakeLists.txt _exiv2-0.16/xmpsdk/CMakeLists.txt
---- exiv2-0.16/xmpsdk/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/xmpsdk/CMakeLists.txt	2008-06-03 16:40:52.656250000 +0200
-@@ -0,0 +1 @@
-+add_subdirectory(src)
-\ Kein Zeilenumbruch am Dateiende.
-diff -N -r -u exiv2-0.16/xmpsdk/src/CMakeLists.txt _exiv2-0.16/xmpsdk/src/CMakeLists.txt
---- exiv2-0.16/xmpsdk/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ _exiv2-0.16/xmpsdk/src/CMakeLists.txt	2008-06-04 04:56:18.546875000 +0200
-@@ -0,0 +1,20 @@
-+set( XMPSRC XMPMeta.cpp
-+            XMPMeta-GetSet.cpp
-+            XMPMeta-Parse.cpp
-+            XMPMeta-Serialize.cpp
-+            XMPIterator.cpp
-+            XMPUtils.cpp
-+            XMPUtils-FileInfo.cpp
-+            XMPCore_Impl.cpp
-+            ExpatAdapter.cpp
-+            ParseRDF.cpp
-+            UnicodeConversions.cpp
-+            MD5.cpp
-+            WXMPMeta.cpp
-+            WXMPIterator.cpp
-+            WXMPUtils.cpp )
-+
-+# ******************************************************************************
-+# Library
-+add_library( xmp STATIC ${XMPSRC} )
-+target_link_libraries( xmp ${EXPAT_LIBRARY} )
 \ Kein Zeilenumbruch am Dateiende.
