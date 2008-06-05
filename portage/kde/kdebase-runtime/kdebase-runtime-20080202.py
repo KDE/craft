@@ -26,6 +26,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kde.buildTests=False
         return self.kdeCompile()
 
     def install( self ):
