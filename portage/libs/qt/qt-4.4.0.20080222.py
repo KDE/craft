@@ -14,8 +14,6 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.3.3'] = 'ftp://ftp.tu-chemnitz.de/pub/Qt/qt/source/qt-win-opensource-src-4.3.3.zip'
-        self.targetInstSrc['4.3.3'] = "qt-win-opensource-src-4.3.3-" + os.getenv( "KDECOMPILER" )
         self.svnTargets['qt-copy'] = 'trunk/qt-copy'
         self.defaultTarget = 'qt-copy'
 
@@ -56,76 +54,39 @@ class subclass(base.baseclass):
             return False
 
         # and now qt
-        if self.buildTarget == '4.3.3':
-            qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
-            qtsrcdir_tmp = os.path.join( self.workdir, PACKAGE_FULL_NAME )
+        qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
 
-            utils.cleanDirectory( qtsrcdir )
-            utils.cleanDirectory( qtsrcdir_tmp )
+        utils.cleanDirectory( qtsrcdir )
+        self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
 
-            if ( not utils.unpackFile( self.downloaddir, self.filenames[0], self.workdir ) ):
-                return False
-            os.rmdir( qtsrcdir )
-            os.rename( qtsrcdir_tmp, qtsrcdir )
+        # noCopy isn't possible for qt
+        if self.noCopy:
+            srcdir = os.path.join(self.kdesvndir, self.kdeSvnPath() )
+            utils.copySrcDirToDestDir( srcdir, qtsrcdir )
 
-            # disable demos and examples
-            sedcommand = r""" -e "s:SUBDIRS += examples::" -e "s:SUBDIRS += demos::" """
-            utils.sedFile( qtsrcdir, "projects.pro", sedcommand )
+        # disable demos and examples
+        sedcommand = r""" -e "s:SUBDIRS += examples::" -e "s:SUBDIRS += demos::" """
+        utils.sedFile( qtsrcdir, "projects.pro", sedcommand )
 
-            # patch to disable building of pbuilder_pbx.cpp, as it takes ages
-            path = os.path.join( qtsrcdir, "qmake" )
-            file = "Makefile.win32-g++"
-            sedcommand = """ -e "s/pbuilder_pbx.o//" """
-            utils.sedFile( path, file, sedcommand )
+        # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
+        cmd = "cd %s && patch -p0 < %s" % \
+          ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
+        self.system( cmd )
 
-            # disable usage of it
-            path = os.path.join( qtsrcdir, "qmake", "generators" )
-            file = "metamakefile.cpp"
-            sedcommand = r""" -e "s:^.*ProjectBuilder://\0:" """
-            utils.sedFile( path, file, sedcommand )
+        # make qmake.exe create correct makefiles (moc und uic paths, reported to qt-bugs)
+        cmd = "cd %s && patch -p0 < %s" % \
+          ( qtsrcdir, os.path.join( self.packagedir, "qt_qmake.diff" ) )
+        self.system( cmd )
+        
+        # patch to fix okular, sent to qt-bugs 08.06.08
+        cmd = "cd %s && patch -p0 < %s" % \
+          ( qtsrcdir, os.path.join( self.packagedir, "qpixmap-qimage-detach.diff" ) )
+        self.system( cmd )
 
-            # help qt a little bit :)
-            cmd = "cd %s && patch -p0 < %s" % \
-              ( qtsrcdir, os.path.join( self.packagedir, "qt-4.3.3.diff" ) )
-            self.system( cmd )
-
-            # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
-            cmd = "cd %s && patch -p0 < %s" % \
-              ( qtsrcdir, os.path.join( self.packagedir, "qdbus.diff" ) )
-            self.system( cmd )
-
-            # install qtestlib into /bin
-            cmd = "cd %s && patch -p0 < %s" % \
-              ( qtsrcdir, os.path.join( self.packagedir, "qtestlib.diff" ) )
-            self.system( cmd )
-        else:
-            qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
-
-            utils.cleanDirectory( qtsrcdir )
-            self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
-
-            # noCopy isn't possible for qt
-            if self.noCopy:
-                srcdir = os.path.join(self.kdesvndir, self.kdeSvnPath() )
-                utils.copySrcDirToDestDir( srcdir, qtsrcdir )
-
-            # disable demos and examples
-            sedcommand = r""" -e "s:SUBDIRS += examples::" -e "s:SUBDIRS += demos::" """
-            utils.sedFile( qtsrcdir, "projects.pro", sedcommand )
-
-            # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
-            cmd = "cd %s && patch -p0 < %s" % \
-              ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
-            self.system( cmd )
-
-            # make qmake.exe create correct makefiles (moc und uic paths, reported to qt-bugs)
-            cmd = "cd %s && patch -p0 < %s" % \
-              ( qtsrcdir, os.path.join( self.packagedir, "qt_qmake.diff" ) )
-            self.system( cmd )
-
-            cmd = " cd %s && %s /nopause" % \
-              ( qtsrcdir, os.path.join( "patches", "apply_patches.bat" ) )
-            self.system( cmd )
+        # looks like this doesn't work... hmm
+        cmd = " cd %s && %s /nopause" % \
+          ( os.path.join( qtsrcdir, "patches" ), "apply_patches.bat" )
+        self.system( cmd )
 
         return True
 
@@ -136,14 +97,6 @@ class subclass(base.baseclass):
 
         # so that the mkspecs can be found, when -prefix is set
         os.putenv( "QMAKEPATH", qtsrcdir )
-
-        if self.buildTarget == '4.3.3':
-            utils.warning( "************************************************************************************\n" \
-                           "This Target might be deprecated and is going to be replaced with the target qt-copy.\n" \
-                           "Since qt-copy might not have best stability, you might choose to install this target\n" \
-                           "though. If you're not sure what to do, kill the current process with Ctrl+C and ask\n" \
-                           "on irc or on the mailing list."\
-                           "************************************************************************************\n" )
 
         # configure qt
         # prefix = os.path.join( self.rootdir, "qt" ).replace( "\\", "/" )
@@ -185,8 +138,7 @@ class subclass(base.baseclass):
         # already at hand. (otherwise qdoc3 fails to locate qtxml4.dll)
         #
         #if self.compiler == "msvc2005":
-        #    if self.buildTarget != '4.3.3':
-        #        self.system( self.cmakeMakeProgramm + " docs" )
+        #    self.system( self.cmakeMakeProgramm + " docs" )
 
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
@@ -207,9 +159,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        if self.buildTarget == '4.3.3':
-           return self.doPackaging( "qt", "4.3.3-2", False )
-        return self.doPackaging( "qt", "4.4.0-4", False )
+        return self.doPackaging( "qt", "4.4.0-5", False )
 
 if __name__ == '__main__':
     subclass().execute()
