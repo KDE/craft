@@ -17,7 +17,7 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
-        self.kdeCustomDefines = "-DQTONLY=ON"
+        self.kdeCustomDefines = "-DQTONLY=ON -DBUILD_MARBLE_TESTS=ON"
         
     def unpack( self ):
         return self.kdeSvnUnpack()
