@@ -5,15 +5,6 @@ import re
 import utils
 import info
 
-PACKAGE_NAME         = "cfitsio"
-PACKAGE_VER          = "3.06"
-PACKAGE_FULL_VER     = "3060"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_FULL_VER )
-
-SRC_URI= """
-ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/""" + PACKAGE_NAME + PACKAGE_FULL_VER + """.tar.gz
-"""
-
 #
 # this library is used by kdeedu/kstars
 # the library is c-only but it may not work due to __stdcall - we'll see
@@ -23,13 +14,13 @@ ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/""" + PACKAGE_NAME + PACKAGE_FULL_
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.06'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio-3060.tar.gz'
-        self.defaultTarget = '3.06'
+        self.targets['3.08'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3080.tar.gz'
+        self.targetInstSrc['3.08'] = "cfitsio"
+        self.defaultTarget = '3.08'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, SRC_URI, args=args )
-        self.instsrcdir = PACKAGE_NAME
+        base.baseclass.__init__( self, "", args=args )
         self.createCombinedPackage = True
         self.subinfo = subinfo()
 
@@ -49,13 +40,13 @@ class subclass(base.baseclass):
               ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir , "configure.diff" ) )
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) or utils.die( "patchin'. cmd: %s" % cmd )
+        self.system( cmd )
 
         cmd = "cd %s && patch -p0 < %s" % \
               ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir , "Makefile.in.diff" ) )
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) or utils.die( "patchin'. cmd: %s" % cmd )
+        self.system( cmd )
         
         return True
 

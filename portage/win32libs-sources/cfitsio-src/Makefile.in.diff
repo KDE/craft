@@ -1,0 +1,42 @@
+--- Makefile.in.old	2008-06-12 00:21:59.640625000 +0200
++++ Makefile.in	2008-06-12 00:24:34.734375000 +0200
+@@ -23,8 +23,9 @@
+ DESTDIR		= 
+ CFITSIO_PREFIX	= $(prefix)
+ CFITSIO_LIB	= $(DESTDIR)$(exec_prefix)/lib
++CFITSIO_RUNTIME = ${DESTDIR}${exec_prefix}/bin
+ CFITSIO_INCLUDE	= $(DESTDIR)$(prefix)/include
+-INSTALL_DIRS	= $(DESTDIR)@INSTALL_ROOT@ ${CFITSIO_LIB} ${CFITSIO_LIB}/pkgconfig ${CFITSIO_INCLUDE}
++INSTALL_DIRS	= $(DESTDIR)@INSTALL_ROOT@ ${CFITSIO_RUNTIME} ${CFITSIO_LIB} ${CFITSIO_INCLUDE}
+ 
+ 
+ SHELL =		/bin/sh
+@@ -79,7 +80,7 @@
+ all-nofitsio:
+ 		${MAKE} stand_alone "FITSIO_SRC="
+ 
+-stand_alone:	libcfitsio.a
++stand_alone:	libcfitsio.a shared
+ 
+ libcfitsio.a:	${OBJECTS}
+ 		ar rv libcfitsio.a ${OBJECTS}; \
+@@ -90,15 +91,14 @@
+ libcfitsio${SHLIB_SUFFIX}: ${OBJECTS}
+ 		${SHLIB_LD} -o $@ ${OBJECTS}
+ 
+-install:	libcfitsio.a $(INSTALL_DIRS)
++install:	libcfitsio.a shared $(INSTALL_DIRS)
+ 		@if [ -f libcfitsio.a ]; then \
+-			/bin/mv libcfitsio.a ${CFITSIO_LIB}; \
++			/bin/cp libcfitsio.a ${CFITSIO_LIB}; \
+ 		fi; \
+ 		if [ -f libcfitsio${SHLIB_SUFFIX} ]; then \
+-			/bin/mv libcfitsio${SHLIB_SUFFIX} ${CFITSIO_LIB}; \
++			/bin/cp libcfitsio${SHLIB_SUFFIX} ${CFITSIO_RUNTIME}; \
+ 		fi; \
+-		/bin/cp fitsio.h fitsio2.h longnam.h drvrsmem.h ${CFITSIO_INCLUDE}/; \
+-		/bin/cp cfitsio.pc ${CFITSIO_LIB}/pkgconfig
++		/bin/cp fitsio.h fitsio2.H longnam.h drvrsmem.h ${CFITSIO_INCLUDE}/;
+ 
+ smem:		smem.o libcfitsio.a ${OBJECTS}
+ 		${CC} $(CFLAGS) $(DEFS) -o smem smem.o -L. -lcfitsio -lm
