@@ -68,7 +68,7 @@ class subclass(base.baseclass):
         self.createImportLibs( "libcfitsio" )
         # now do packaging with kdewin-packager
         # it's a in-source build, do not pack sources
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+        self.doPackaging( "cfitsio", self.buildTarget, False )
 
         return True
 
