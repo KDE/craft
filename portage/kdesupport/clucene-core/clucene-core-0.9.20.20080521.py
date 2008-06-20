@@ -42,6 +42,7 @@ class subclass(base.baseclass):
         return True
 
     def compile( self ):
+        self.kdeCustomDefines="-DCLUCENE_VERSION:STRING="+self.buildTarget
         return self.kdeCompile()
 
     def install( self ):
