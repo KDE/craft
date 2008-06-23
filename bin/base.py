@@ -137,7 +137,7 @@ class baseclass:
         elif COMPILER == "mingw":
             self.compiler = "mingw"
         else:
-            print "emerge error: KDECOMPILER: %s not understood" % COMPILER
+            print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
 
     def execute( self, cmd=None ):

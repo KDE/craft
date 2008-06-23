@@ -353,6 +353,7 @@ else:
                 if not handlePackage( package[0], package[1], package[2], buildAction, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         (package[0], package[1], package[2], buildAction) )
+                    exit( 1 )
 
 print                        
 if len( nextArguments ) > 0:

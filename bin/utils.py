@@ -604,11 +604,11 @@ def warning( message ):
 
 def error( message ):
     if verbose() > 0:
-        print "emerge error: %s" % message
+        print >> sys.stderr, "emerge error: %s" % message
     return False
 
 def die( message ):
-    print "emerge fatal error: %s" % message
+    print >> sys.stderr, "emerge fatal error: %s" % message
     exit( 1 )
 
 def system( cmdstring ):

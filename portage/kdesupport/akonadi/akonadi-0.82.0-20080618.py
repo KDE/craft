@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80/'
-        self.svnTargets['0.81'] = 'tags/akonadi/0.82/'
+        self.svnTargets['0.81'] = 'tags/akonadi/0.81/'
         self.svnTargets['0.82'] = 'tags/akonadi/0.82/'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'

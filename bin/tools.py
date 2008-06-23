@@ -85,7 +85,7 @@ class Object ( Environment ):
         if not message:
             message = self.errormessage
         if self.verbose() > 0:
-            print "emerge error: %s" % message
+            print >> sys.stderr, "emerge error: %s" % message
         return False
         
     def die( self, message ):
