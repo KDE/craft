@@ -734,7 +734,7 @@ def manifestDir( srcdir, imagedir, package, version ):
                 docList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
 
     if not os.path.exists( os.path.join( imagedir, "manifest" ) ):
-        os.mkdir( os.path.join( imagedir, "manifest" ) )
+        os.makedirs( os.path.join( imagedir, "manifest" ) )
 
     if len(binList) > 0:
         binmanifest = open( os.path.join( imagedir, "manifest", "%s-%s-bin.mft" % ( package, version )), 'wb' )
