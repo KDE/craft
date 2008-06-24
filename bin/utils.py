@@ -32,12 +32,13 @@ else:
     WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "gnuwin32", "bin", "wget.exe" )
 
 def __import__( module ):
+    debug( "module to import: %s" % module, 2 )
     if not os.path.isfile( module ):
         return __builtin__.__import__( module )
     else:
         sys.path.append( os.path.dirname( module ) )
-        fileHdl=open( module )
-        modulename=os.path.basename( module ).replace('.py', '')
+        fileHdl = open( module )
+        modulename = os.path.basename( module ).replace('.py', '')
         return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
 def test4application( appname, args=None ):
@@ -47,20 +48,18 @@ def test4application( appname, args=None ):
         p.wait()
         return True
     except:
-        if verbose() > 1:
-            print "could not find application %s" % appname
+        debug( "could not find application %s" % appname, 1 )
         return False
 
 def verbose():
-    verb=os.getenv( "EMERGE_VERBOSE" )
+    verb = os.getenv( "EMERGE_VERBOSE" )
     if ( not verb == None and verb.isdigit() and int(verb) > 0 ):
         return int( verb )
     else:
         return 0
 
 def getFiles( urls, destdir ):
-    if verbose() > 1:
-        print "getfiles called. urls:", urls
+    debug( "getfiles called. urls: %s" % urls, 1 )
     # make sure distfiles dir exists
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
@@ -73,8 +72,7 @@ def getFiles( urls, destdir ):
     return True
 
 def getFile( url, destdir ):
-    if verbose() > 1:
-        print "getFile called. url:", url
+    debug( "getFile called. url: %s" % url, 1 )
     if url == "":
         error( "fetch: no url given" )
         return False
@@ -88,11 +86,7 @@ def getFile( url, destdir ):
 
 
     filename = os.path.basename( path )
-    if verbose() > 0:
-        print scheme
-        print host
-        print path
-        print filename
+    debug( "%s\n%s\n%s\n%s" % ( scheme, host, path, filename ) )
 
     if ( scheme == "http" ):
         return getHttpFile( host, path, destdir, filename )
@@ -105,20 +99,16 @@ def getFile( url, destdir ):
 def wgetFile( url, destdir ):
     compath = WGetExecutable
     command = "%s -c -t 1 -P %s %s" % ( compath, destdir, url )
-    if verbose() > 1:
-        print "wgetfile called"
-        print "executing this command:", command
-    attempts=1
-    if url.lower().startswith("http://downloads.sourceforge.net"):
-        if verbose() > 0:
-            print "Detected downloads.sourceforge.net... Trying three times."
+    debug( "wgetfile called", 1 )
+    attempts = 1
+    if url.lower().startswith( "http://downloads.sourceforge.net" ):
+        debug( "Detected downloads.sourceforge.net... Trying three times." )
         attempts=3
 
-    while(attempts > 0):
+    while( attempts > 0 ):
         attempts -= 1
         ret = system( command )
-        if verbose() > 0:
-            print "wget ret:", ret
+        debug( "wget ret: %s" % ret )
         if ret == True:
             # success stop early.
             break;
@@ -127,8 +117,7 @@ def wgetFile( url, destdir ):
 
 def getFtpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
-    if verbose() > 1:
-        print "FIXME getFtpFile called.", host, path
+    debug( "FIXME getFtpFile called. %s %s" % ( host, path ), 1 )
 
     outfile = open( os.path.join( destdir, filename ), "wb" )
     ftp = ftplib.FTP( host )
@@ -140,14 +129,12 @@ def getFtpFile( host, path, destdir, filename ):
 
 def getHttpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
-    if verbose() > 1:
-        print "getHttpFile called.", host, path
+    debug( "getHttpFile called. %s %s" % ( host, path ) , 1 )
 
     conn = httplib.HTTPConnection( host )
     conn.request( "GET", path )
     r1 = conn.getresponse()
-    if verbose() > 0:
-        print r1.status, r1.reason
+    debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
         
     count = 0
     while r1.status == 302:
@@ -156,13 +143,11 @@ def getHttpFile( host, path, destdir, filename ):
             return False
         count += 1
         scheme, host, path, params, qu, fr = urlparse.urlparse( r1.getheader( "Location" ) )
-        if verbose() > 1:
-            print "Redirection.", host, path
+        debug( "Redirection: %s %s" % ( host, path ), 1 )
         conn = httplib.HTTPConnection( host )
         conn.request( "GET", path )
         r1 = conn.getresponse()
-        if verbose() > 0:
-            print r1.status, r1.reason
+        debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
     
         
     data = r1.read()
@@ -179,8 +164,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
     cleanDirectory( workdir )
 
     for filename in filenames:
-        if verbose() > 1:
-            print "unpacking this file:", filename
+        debug( "unpacking this file: %s" % filename, 1 )
         if ( not unpackFile( downloaddir, filename, workdir ) ):
             return False
 
@@ -204,8 +188,7 @@ def unpackFile( downloaddir, filename, workdir ):
     return False
 
 def unTar( file, destdir ):
-    if verbose() > 1:
-        print "unTar called. file: %s, destdir: %s" % ( file, destdir )
+    debug( "unTar called. file: %s, destdir: %s" % ( file, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( file )
 
     mode = "r"
@@ -223,23 +206,22 @@ def unTar( file, destdir ):
     return True
 
 def unZip( file, destdir ):
-    if verbose() > 1:
-        print "unZip called:", file, destdir
+    debug( "unZip called: file %s to destination %s" % ( file, destdir ), 1 )
 
-    if not os.path.exists(destdir):
-        os.makedirs(destdir)
+    if not os.path.exists( destdir ):
+        os.makedirs( destdir )
 
-    zip = zipfile.ZipFile(file)
+    zip = zipfile.ZipFile( file )
 
-    for i, name in enumerate(zip.namelist()):
-        if not name.endswith('/'):
+    for i, name in enumerate( zip.namelist() ):
+        if not name.endswith( '/' ):
             dirname = os.path.join( destdir, os.path.dirname( name ) )
 
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
+            if not os.path.exists( dirname ):
+                os.makedirs( dirname )
 
-            outfile = open(os.path.join(destdir, name), 'wb')
-            outfile.write(zip.read(name))
+            outfile = open( os.path.join( destdir, name ), 'wb' )
+            outfile.write( zip.read( name ) )
             outfile.flush()
             outfile.close()
 
@@ -249,8 +231,7 @@ def unZip( file, destdir ):
 ### svn fetch/unpack functions
 
 def svnFetch( repo, destdir, username = None, password = None ):
-    if verbose() > 1:
-        print "utils svnfetch", repo, destdir
+    debug( "utils svnfetch: repo %s to destination %s" % ( repo, destdir ), 1 )
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
     os.chdir( destdir )
@@ -260,8 +241,7 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
     dir = os.path.basename( repo.replace( "/", "\\" ) )
     path = os.path.join( destdir, dir )
-    if verbose() > 1:
-        print "path: ", path 
+    debug( "path: %s" % path, 1 ) 
     if ( not os.path.exists( path ) ):
         # not checked out yet
         command = "svn checkout %s" % repo
@@ -269,15 +249,12 @@ def svnFetch( repo, destdir, username = None, password = None ):
             command = command + " --username " + username
         if ( password != None ):
             command = command + " --password " + password
-        if verbose() > 1:
-            print "executing this:", command
         ret = system( command )
     else:
         # already checked out, so only update
         mode = "update"
         os.chdir( path )
-        if verbose() > 1:
-            print "svn up cwd:", os.getcwd()
+        debug( "svn up cwd: %s" % os.getcwd(), 1 )
         ret = system( "svn update" )
 
     if ( ret == 0 ):
@@ -310,8 +287,7 @@ def isInstalled( category, package, version ):
     return found
 
 def addInstalled( category, package, version ):
-    if verbose() > 1:
-        print "addInstalled called"
+    debug( "addInstalled called", 1 )
     # write a line to etc/portage/installed,
     # that contains category/package-version
     path = os.path.join( getEtcPortageDir() )
@@ -329,8 +305,7 @@ def addInstalled( category, package, version ):
     f.close()
 
 def remInstalled( category, package, version ):
-    if verbose() > 1:
-        print "remInstalled called"
+    debug( "remInstalled called", 1 )
     dbfile = os.path.join( getEtcPortageDir(), "installed" )
     tmpdbfile = os.path.join( getEtcPortageDir(), "TMPinstalled" )
     if os.path.exists( dbfile ):
@@ -345,16 +320,14 @@ def remInstalled( category, package, version ):
         os.rename( tmpdbfile, dbfile )
 
 def getCategoryPackageVersion( path ):
-    if verbose() > 1:
-        print "getCategoryPackageVersion:", path
+    debug( "getCategoryPackageVersion: %s" % path )
     ( head, file ) = os.path.split( path )
     ( head, package ) = os.path.split( head )
     ( head, category ) = os.path.split( head )
 
     (filename, ext) = os.path.splitext( file )
     ( package, version ) = packageSplit( filename )
-    if verbose() > 1:
-        print "category: %s, package: %s, version: %s" %( category, package, version )
+    debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
     return [ category, package, version ]
 
 def getPortageDir():
@@ -371,8 +344,7 @@ def getCategory( package ):
     """
     returns the category of this package
     """
-    if verbose() > 1:
-        print "getCategory:", package
+    debug( "getCategory: %s" % package, 1 )
     basedir = getPortageDir()
 
     for cat in os.listdir( basedir ):
@@ -382,8 +354,7 @@ def getCategory( package ):
             for pack in os.listdir( catpath ):
                 #print "    package:", pack
                 if ( pack == package ):
-                    if verbose() > 1:
-                        print "found:", cat, pack
+                    debug( "found: category %s for package %s" % ( cat, pack ), 1 )
                     return cat
 
 def getAllTags( category, package, version ):
@@ -469,8 +440,7 @@ def getDependencies( category, package, version ):
     deplines = []
     inDepend = False
 
-    if verbose() > 2:
-        print "solving package: %s-%s" % ( package, version )
+    debug( "solving package: %s-%s" % ( package, version ), 2 )
     # FIXME make this more clever
     for line in lines.splitlines():
         if ( inDepend == True ):
@@ -480,6 +450,7 @@ def getDependencies( category, package, version ):
         if ( line.startswith( "DEPEND" ) ):
             inDepend = True
     if not len(deplines) > 0:
+        debug( "%s %s %s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
@@ -544,8 +515,7 @@ def getInstallables():
 
 def printTargets( category, package, version ):
     """ """
-    if verbose() > 1:
-        print "importing file %s" % getFilename( category, package, version )
+    debug( "importing file %s" % getFilename( category, package, version ), 1 )
     mod = __import__( getFilename( category, package, version ) )
     packageInfo = mod.subinfo()
     svnTargetsList = packageInfo.svnTargets.keys()
@@ -592,9 +562,9 @@ def info( message ):
         print "emerge info: %s" % message
     return True
 
-def debug( message, level = 0 ):
+def debug( message, level=0 ):
     if verbose() > level:
-        print "emerge debug: %s" % message
+        print "emerge debug:", message
     return True
 
 def warning( message ):
@@ -612,6 +582,7 @@ def die( message ):
     exit( 1 )
 
 def system( cmdstring ):
+    debug( "executing command: %s" % cmdstring, 1 )
     if verbose() == 0:
         sys.stderr = file('test.outlog', 'wb')
         sys.stdout = sys.stderr
@@ -620,8 +591,7 @@ def system( cmdstring ):
     return ( ret == 0 )
 
 def copySrcDirToDestDir( srcdir, destdir ):
-    if verbose() > 1:
-        print "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir )
+    debug( "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ) )
 
     if ( not srcdir.endswith( "\\" ) ):
         srcdir += "\\"
@@ -639,14 +609,12 @@ def copySrcDirToDestDir( srcdir, destdir ):
                 shutil.copy( os.path.join( root, file ), tmpdir )
 
 def moveSrcDirToDestDir( srcdir, destdir ):
-    if verbose() > 1:
-        print "moveSrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir )
+    debug( "moveSrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
     shutil.move( srcdir, destdir )
 
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
-    if verbose() > 1:
-        print "unmerge called: %s" % ( package )
+    debug( "unmerge called: %s" % ( package ), 1 )
 
     if os.path.exists( os.path.join( rootdir, "manifest"  ) ):
         for file in os.listdir( os.path.join( rootdir, "manifest" ) ):
@@ -665,8 +633,7 @@ def unmerge( rootdir, package, forced = False ):
                     if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
                         hash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
                         if b == "" or hash == b:
-                            if verbose() > 0:
-                                print "deleting file %s" % a
+                            debug( "deleting file %s" % a )
                             os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                         else:
                             warning( "file %s has different hash: %s %s, run with option --forced to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
@@ -680,8 +647,7 @@ def unmerge( rootdir, package, forced = False ):
 
 def manifestDir( srcdir, imagedir, package, version ):
     """ make the manifest files for an imagedir like the kdewin-packager does """
-    if verbose() > 1:
-        print "manifestDir called: %s %s" % ( srcdir, imagedir )
+    debug( "manifestDir called: %s %s" % ( srcdir, imagedir ), 1 )
 
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
         for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
@@ -782,12 +748,10 @@ def mergeImageDirToRootDir( imagedir, rootdir ):
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
         #print "rootdir:", root
-        if verbose() > 1:
-            print "entry:", entry
+        debug( "entry: %s" % entry, 1 )
         src = os.path.join( srcdir, entry )
         dest = os.path.join( destdir, entry )
-        if verbose() > 1:
-            print "src: %s dest: %s" %( src, dest )
+        debug( "src: %s dest: %s" %( src, dest ), 1 )
         if( os.path.isfile( dest ) ):
           os.remove( dest )
         if( os.path.isdir( dest ) ):
@@ -812,8 +776,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     so when we want to be able to install imagedir into KDEROOT,
     we have to move things around...
     """
-    if verbose() > 1:
-        print "fixImageDir:", imagedir, rootdir
+    debug( "fixImageDir: %s %s" % ( imagedir, rootdir ), 1 )
     # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
     # rootdir  = e:\foo\thirdroot
     # files are installed to
@@ -823,8 +786,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     if ( rootpath.startswith( "\\" ) ):
         rootpath = rootpath[1:]
     tmp = os.path.join( imagedir, rootpath )
-    if verbose() > 1:
-        print "tmp:", tmp
+    debug( "tmp: %s" % tmp, 1 )
     tmpdir = os.path.join( imagedir, "tMpDiR" )
 
     if ( not os.path.isdir( tmpdir ) ):
@@ -863,10 +825,8 @@ def sedFile( directory, file, sedcommand ):
     os.rename( file, backup )
 
     command = "type %s | sed %s > %s" % ( backup, sedcommand, file )
-    if verbose() > 1:
-        print "sedFile command:", command
 
-    system( command ) or die( "utils sedFile failed" )
+    system( command )
 
 def digestFile( filepath ):
     """ md5-digests a file """
