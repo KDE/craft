@@ -124,8 +124,7 @@ class baseclass:
         # "" -> debug and release
         Type=os.getenv( "EMERGE_BUILDTYPE" )
         if ( not Type == None ):
-            if utils.verbose() > 1:
-                print "BuildType: %s" % Type
+            utils.debug( "BuildType: %s" % Type, 1 )
             self.buildType = Type
         else:
             self.buildType = None
@@ -144,8 +143,7 @@ class baseclass:
         """called to run the derived class"""
         """this will be executed from the package if the package is started on its own"""
         """it shouldn't be called if the package is imported as a python module"""
-        if utils.verbose() > 1:
-            print "base exec called. args:", sys.argv
+        utils.debug( "base exec called. args: %s" % sys.argv )
 
         if not cmd:
             command = sys.argv[ 1 ]
@@ -155,9 +153,8 @@ class baseclass:
         else:
             command = cmd
             options = ""
-        if utils.verbose() > 1:
-            print "command:", command
-            print "opts:", options
+
+        utils.debug( "command: %s" % command )
 
         self.Targets.update( self.subinfo.svnTargets )
         self.Targets.update( self.subinfo.targets )
@@ -202,17 +199,14 @@ class baseclass:
     def cleanup( self ):
         """cleanup before install to imagedir"""
         if ( os.path.exists( self.imagedir ) ):
-            if not utils.verbose() > 1:
-                print "cleaning image dir:", self.imagedir
+            utils.debug( "cleaning image dir: %s" % self.imagedir, 1 )
             utils.cleanDirectory( self.imagedir )
     
     def fetch( self ):
         """getting normal tarballs from SRC_URI"""
-        if utils.verbose() > 1:
-            print "base fetch called"
+        utils.debug( "base fetch called", 1 )
         if ( self.noFetch ):
-            if utils.verbose() > 0:
-                print "skipping fetch (--offline)"
+            utils.debug( "skipping fetch (--offline)" )
             return True
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
             return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
@@ -221,14 +215,12 @@ class baseclass:
 
     def unpack( self ):
         """unpacking all zipped(gz,zip,bz2) tarballs"""
-        if utils.verbose() > 1:
-            print "base unpack called, files:", self.filenames
+        utils.debug( "base unpack called, files: %s" % self.filenames, 1 )
         return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
 
     def compile( self ):
         """overload this function according to the packages needs"""
-        if utils.verbose() > 1:
-            print "base compile called, doing nothing..."
+        utils.debug( "base compile called, doing nothing...", 1 )
         return True
 
     def install( self ):
@@ -289,28 +281,17 @@ class baseclass:
     def setDirectories( self ):
         """setting all important stuff that isn't coped with in the c'tor"""
         """parts will probably go to infoclass"""
-        if utils.verbose() > 1:
-            print "setdirectories called"
-        #print "basename:", sys.argv[ 0 ]
-        #print "src_uri", self.SRC_URI
+        utils.debug( "setdirectories called", 1 )
 
-        #print "filenames:", self.filenames
-
-        #( self.progname, ext ) = os.path.splitext( os.path.basename( sys.argv[ 0 ] ) )
         ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
-        #print "progname:", self.progname        
 
         ( self.category, self.package, self.version ) = \
                        utils.getCategoryPackageVersion( self.argv0 )
 
-        #self.progname = self.package        
-        if utils.verbose() > 0:
-            print "setdir category: %s, package: %s, version: %s" %\
-              ( self.category, self.package, self.version )
+        utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ) )
 
         self.cmakeInstallPrefix = ROOTDIR.replace( "\\", "/" )
-        if utils.verbose() > 0:
-            print "cmakeInstallPrefix:", self.cmakeInstallPrefix
+        utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix )
 
         if COMPILER == "msvc2005":
             self.cmakeMakefileGenerator = "NMake Makefiles"
@@ -336,15 +317,6 @@ class baseclass:
        
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
-
-#        else:
-#            if self.subinfo.buildTarget in self.Targets.keys() and self.Targets[ self.subinfo.buildTarget ]:
-#                self.instsrcdir = os.path.basename( self.Targets[ self.subinfo.buildTarget ] )
-#            else:
-#                if not self.instsrcdir:
-#                    utils.warning( "Skript warning: self.instsrcdir not set - this might be ok, but if it leads to errors that might be the problem" )
-            
-            
 
 
     def svnFetch( self, repo ):
@@ -439,7 +411,7 @@ class baseclass:
             else:
               cmd = cmd + " -type msvc "
 
-        utils.system( cmd ) or utils.die("while packaging. cmd: %s" % cmd)
+        utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
         return True
 
     def createImportLibs( self, pkg_name ):
