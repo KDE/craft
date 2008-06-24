@@ -13,6 +13,7 @@ class msys_interface:
         self.instsrcdir = instsrcdir
         self.instdestdir = instdestdir
         self.msysdir = self.MSYSDIR
+        self.msysCustomDefines = ""
 
     def __toMSysPath( self, path ):
         path = path.replace( '\\', '/' )
@@ -37,6 +38,7 @@ class msys_interface:
         flags  = "--disable-nls "
         flags += "--disable-static "
         flags += "--prefix=/ "
+        flags += self.msysCustomDefines
         return flags
 
     def msysCompile( self, bOutOfSource = True ):
