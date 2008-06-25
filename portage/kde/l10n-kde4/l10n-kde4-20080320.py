@@ -19,10 +19,10 @@ class subinfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        # released target in 4.0.80
-        self.languages  = 'ar be bg ca cs csb de '
-        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl  '
-        self.languages += 'hi hu is it ja kk ko '
+        # released target in 4.0.83
+        self.languages  = 'ar be bg ca cs csb da de '
+        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl '
+        self.languages += 'hi hu is it ja kk km ko '
         self.languages += 'lv mk nb nds ne nl nn '
         self.languages += 'pa pl pt pt_BR ro ru se sl sv '
         self.languages += 'ta th tr uk wa zh_CN zh_TW '
@@ -41,6 +41,8 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def fetch( self ):
+        if self.noFetch:
+            return True
         svnpath = self.kdeSvnPath()
         if svnpath:
             return base.baseclass.fetch( self )
@@ -125,7 +127,7 @@ class subclass(base.baseclass):
         for pkg in self.subinfo.languages.split():
             workdir = os.path.join( self.workdir, pkg )
             cmd = "kdewin-packager -name kde-l10n-%s -version %s -hashfirst -compression 2 -root %s/%s -destdir %s" % \
-                  ( pkg, self.version, self.imagedir, pkg, dstpath )
+                  ( pkg, self.buildTarget, self.imagedir, pkg, dstpath )
             utils.system( cmd )
         return True
 
