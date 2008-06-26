@@ -1,16 +1,140 @@
-# a python package which contains some helper classes and which should replace utils in the long run
+#!/usr/bin/env python
+
+"""
+    several useful tool classes
+    
+    This module contains some important classes to be used in the future.
+    The Tee class should be used for duplicating output on the commandline and
+    into a stream.
+    The Popen class fixes two important problems with executing commands.
+    It requires the installation of the pywin32 packages from
+    http://sourceforge.net/projects/pywin32/ to work though ( thanks to the 
+    author! )
+"""
+
+__author__ = "Patrick Spendrin ( ps_ml at gmx dot de )"
+__license__ = "GNU General Public License (GPL)"
 
 import os
 import sys
 import imp
 import subprocess
+import __builtin__
+import msvcrt
+import time
+
+
+try:
+    import win32pipe
+    import win32file
+    _pywin32 = True
+except:
+    _pywin32 = False
+    
+class Tee( __builtin__.file ):
+    """
+        This class behaves like the unix command tee:
+        everything that gets written into it, will be given out into the given
+        file (the object itself) and into the stream outstream.
+        Be aware that for writing to this class you should use the write
+        function explicitly: print >> Tee(), "string" will not work!
+    """
+    def __init__( self, name, mode='r', bufsize=-1, outstream=sys.stdout ):
+        self.outstream = outstream
+        __builtin__.file.__init__( self, name, mode, bufsize )
+
+    def write( self, inputstring ):
+        print >> self.outstream, inputstring,
+        return __builtin__.file.write( self, inputstring )
+
+if _pywin32:
+    class Popen( subprocess.Popen ):
+        """
+            This class is used to achieve two goals:
+                1) the subprocess.Popen class does not use the write
+                method of the file object that is given over - but rather
+                the fileno() function. Thus a Tee File Object cannot be used.
+                2) with the help of win32pipe.PeekNamedPipe we can check whether
+                something has been written to one stream without blocking the
+                running program and this way we are not dependent on any output
+                in the streams.
+        """
+
+        sleeptime = .05
+
+        def __init__( self, *args, **kwargs ):
+            """
+                Both output streams stdout and stderr can be set to any object
+                that has a write function. Leaving stdout or stderr out will
+                redirect both streams to their system equivalent (sys.stdout and
+                sys.stderr).
+            """
+            self._bypass_stdout = False
+            self._bypass_stderr = False
+
+            if 'stdout' in kwargs and not kwargs['stdout'] is subprocess.PIPE:
+                self._stdout_file = kwargs['stdout']
+                kwargs['stdout'] = subprocess.PIPE
+                self._bypass_stdout = True
+            elif not 'stdout' in kwargs:
+                self._stdout_file = sys.stdout
+                kwargs['stdout'] = subprocess.PIPE
+                self._bypass_stdout = True
+
+            if 'stderr' in kwargs and not kwargs['stderr'] is subprocess.PIPE:
+                self._stderr_file = kwargs['stderr']
+                kwargs['stderr'] = subprocess.PIPE
+                self._bypass_stderr = True
+            elif not 'stderr' in kwargs:
+                self._stderr_file = sys.stderr
+                kwargs['stderr'] = subprocess.PIPE
+                self._bypass_stderr = True
+
+            subprocess.Popen.__init__( self, *args, **kwargs )
+
+            if self._bypass_stdout:
+                self._stdout_hdl = msvcrt.get_osfhandle( self.stdout.fileno() )
+            if self._bypass_stderr:
+                self._stderr_hdl = msvcrt.get_osfhandle( self.stderr.fileno() )
+
+        def wait( self ):
+            """
+                This function overwrites the wait() function from subprocess
+                completely. It will set up an independent loop, and connect
+                the streams of the process via the write function of the object
+                that has been given over.
+                Before returning, the buffers of the streams are emptied and
+                written into the given objects.
+            """
+
+            while self.poll() is None:
+                if self._bypass_stdout:
+                    cont, avail, pos = win32pipe.PeekNamedPipe( self._stdout_hdl, 1024 )
+                    if avail > 0: 
+                        self._stdout_file.write( win32file.ReadFile( self._stdout_hdl, avail, None )[1] )
+                if self._bypass_stderr:
+                    cont, avail, pos = win32pipe.PeekNamedPipe( self._stderr_hdl, 1024 )
+                    if avail > 0: 
+                        self._stderr_file.write( win32file.ReadFile( self._stderr_hdl, avail, None )[1] )
+                time.sleep( self.sleeptime )
+
+            # there might be some stuff left in the streams
+            if self._bypass_stdout:
+                for line in self.stdout: self._stdout_file.write( line )
+            if self._bypass_stderr:
+                for line in self.stderr: self._stderr_file.write( line )
+
+            return self.returncode
+
 
 globalVerboseLevel = int( os.getenv( "EMERGE_VERBOSE" ) )
 
 class Verbose:
-    """ This class will work on the overall output verbosity """
-    """ It defines the interface for the option parser but before the default value is taken """
-    """ from the environment variable """
+    """ 
+        This class will work on the overall output verbosity 
+        It defines the interface for the option parser but before the default 
+        value is taken from the environment variable 
+    """
 
     def increase( self, option, opt, value, parser ):
         """ callback function as requested by the optparse parser """
@@ -26,12 +150,12 @@ class Verbose:
         if globalVerboseLevel > 0:
             globalVerboseLevel -= 1
             self.VERBOSE = str( globalVerboseLevel )
-            
+
     def setVerboseLevel( self, newLevel ):
         """ set the level by hand for quick and dirty changes """
         global globalVerboseLevel
         globalVerboseLevel = newLevel
-        
+
     def verbose( self ):
         """ returns the verbosity level for the application """
         global globalVerboseLevel
@@ -51,7 +175,8 @@ class Environment ( Verbose ):
         if not self.LOGFILE:
             self.LOGFILE = '%KDEROOT%\\emerge-system.log'
 
-        
+
+
     def __lshift__( self, other ):
         """ self << other """
         self.KDEROOT = other.KDEROOT
@@ -60,22 +185,23 @@ class Environment ( Verbose ):
         self.BUILDTESTS = other.BUILDTESTS
         self.PKG_DEST_DIR = other.PKG_DEST_DIR
         self.COMPILER = other.COMPILER
-        
+
+
 class Object ( Environment ):
     def __init__( self ):
         """ """
         Environment.__init__( self )
-        
+
     def inform( self, message ):
         if self.verbose() > 0:
             print "emerge info: %s" % message
         return True
-        
+
     def debug( self, message, level=1 ):
         if self.verbose() > level:
             print "emerge debug: %s" % message
         return True
-    
+
     def warning( self, message ):
         if self.verbose() > 0:
             print "emerge warning: %s" % message
@@ -87,7 +213,7 @@ class Object ( Environment ):
         if self.verbose() > 0:
             print >> sys.stderr, "emerge error: %s" % message
         return False
-        
+
     def die( self, message ):
         print "emerge fatal error: %s" % message
         exit( 1 )
@@ -109,7 +235,7 @@ class Object ( Environment ):
         if die:
             self.die( "system failed to execute: <" + cmdstring + ">" )
         return ret
-        
+
     def __import__( self, module ):
         if not os.path.isfile( module ):
             return __builtin__.__import__( module )
