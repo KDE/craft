@@ -118,15 +118,13 @@ Send feedback to <kde-windows@kde.org>.
 """
 
 def doExec( category, package, version, action, opts ):
-    if utils.verbose() > 2:
-        print "emerge doExec called. action: %s opts: %s" % (action, opts)
+    utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
     fileName = os.path.join( utils.getPortageDir(), category, package, "%s-%s.py" % \
                          ( package, version ) )
     opts_string = ( "%s " * len( opts ) ) % tuple( opts )
     commandstring = "python %s %s %s" % ( fileName, action, opts_string )
-    if utils.verbose() > 1:
-        print "file:", fileName
-        print "commandstring", commandstring
+
+    utils.debug( "file: " + fileName, 1 )
     try:
         utils.system( commandstring ) or utils.die( "running %s" % commandstring )
     except:
@@ -134,8 +132,7 @@ def doExec( category, package, version, action, opts ):
     return True
 
 def handlePackage( category, package, version, buildAction, opts ):
-    if utils.verbose() > 1:
-        print "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction)
+    utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
 
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
@@ -278,14 +275,13 @@ if stayQuiet == True:
 # get KDEROOT from env
 KDEROOT = os.getenv( "KDEROOT" )
 
-if utils.verbose() >= 1:
-    print "buildAction:", buildAction
-    print "doPretend:", doPretend
-    print "packageName:", packageName
-    print "buildType:", os.getenv( "EMERGE_BUILDTYPE" )
-    print "buildTests:", os.getenv( "EMERGE_BUILDTESTS" )
-    print "verbose:", os.getenv( "EMERGE_VERBOSE" )
-    print "KDEROOT:", KDEROOT
+utils.debug( "buildAction: %s" % buildAction )
+utils.debug( "doPretend: %s" % doPretend )
+utils.debug( "packageName: %s" % packageName )
+utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
+utils.debug( "buildTests: %s" % os.getenv( "EMERGE_BUILDTESTS" ) )
+utils.debug( "verbose: %s" % os.getenv( "EMERGE_VERBOSE" ) )
+utils.debug( "KDEROOT: %s" % KDEROOT )
     
 if not os.getenv( "CMAKE_INCLUDE_PATH" ) == None:
     print
@@ -316,8 +312,7 @@ deplist = []
 if packageName:
     utils.solveDependencies( "", packageName, "", deplist )
     
-if utils.verbose() > 2:
-    print "deplist:", deplist
+utils.debug( "deplist: %s" % deplist, 2 )
 
 deplist.reverse()
 
@@ -328,8 +323,8 @@ success = True
 # package[2] -> version
 
 if ( buildAction != "all" ):
-    """if a buildAction is given, then do not try to build dependencies"""
-    """and do the action although the package might already be installed"""
+    """ if a buildAction is given, then do not try to build dependencies
+        and do the action although the package might already be installed"""
     if packageName:
         package = deplist[ -1 ]
     else:
@@ -357,9 +352,7 @@ else:
 
 print                        
 if len( nextArguments ) > 0:
-    command = "emerge.py " + " ".join( nextArguments )
-    if utils.verbose() > 1:
-        print command
+    command = sys.executable + " -u emerge.py " + " ".join( nextArguments )
 
     for element in environ.keys():
         if environ[ element ]:
