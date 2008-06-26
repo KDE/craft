@@ -39,13 +39,19 @@ class Tee( __builtin__.file ):
         Be aware that for writing to this class you should use the write
         function explicitly: print >> Tee(), "string" will not work!
     """
-    def __init__( self, name, mode='r', bufsize=-1, outstream=sys.stdout ):
+    def __init__( self, name=None, mode='r', bufsize=-1, outstream=sys.stdout, outfile=None ):
         self.outstream = outstream
-        __builtin__.file.__init__( self, name, mode, bufsize )
+        self.outfile = outfile
+        if self.outfile is None:
+            __builtin__.file.__init__( self, name, mode, bufsize )
 
     def write( self, inputstring ):
         print >> self.outstream, inputstring,
-        return __builtin__.file.write( self, inputstring )
+        if self.outfile is None:
+            __builtin__.file.write( self, inputstring )
+        else:
+            self.outfile.write( inputstring )
+            self.outfile.flush()
 
 if _pywin32:
     class Popen( subprocess.Popen ):
@@ -245,3 +251,46 @@ class Object ( Environment ):
             modulename = os.path.basename( module ).replace('.py', '')
             return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
+if __name__ == "__main__":
+    """
+        Give a short introduction on how to use Tee and Popen;
+        A script will be written that can be executed afterwards and which
+        will give out some stuff on stdout and stderr. This script gets
+        deleted in the end.
+        For some further insight:
+            We first create a normal file object log and a Tee object which uses
+            the log object as its output file. The outstream of the Tee object
+            stays sys.stdout even though we redirect sys.stdout to the log 
+            object next. That will result in stderr going to stdout and log via
+            the Tee object and stdout going directly into log (as we changed
+            the sys.stdout for that!!!!).
+            If we would want to make stderr to go to stderr and log, we only
+            need to add outstream=sys.stderr in the creation of the Tee object.
+    """
+
+    import os
+    import sys
+    
+    if not os.path.exists( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ) ) or not '--no-write' in sys.argv:
+        testfile = file( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ), 'w+' )
+        content = """from time import sleep
+import sys
+for i in range( 100 ):
+        sleep(.1)
+        print "stdout: " + str(i)
+        if i%5 == 0:
+            print >> sys.stderr, "stderr: " + str(i)
+        """
+        
+        testfile.write( content )
+        testfile.close()
+    
+    command = sys.executable + " -u " + os.path.join( os.path.dirname( sys.argv[0] ), "test.py" )
+    log=open( os.path.join( os.getenv( "KDEROOT" ), "tools.log" ), mode='w+b' )
+    T_err = Tee( outfile=log )
+    sys.stdout=log
+    process = Popen( command, stderr=T_err, shell=True )
+    process.wait()
+    
+    if not '--no-remove' in sys.argv:
+        os.remove( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ) )
