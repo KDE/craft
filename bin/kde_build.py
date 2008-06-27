@@ -327,3 +327,24 @@ class kde_interface:
         utils.fixCmakeImageDir( self.imagedir, self.rootdir )
         return True
 
+    def kdeTest( self ):
+        """running cmake based unittests"""
+        builddir = "%s" % ( self.COMPILER )
+
+        if( not self.buildType == None ):
+            builddir = "%s-%s" % ( builddir, self.buildType )
+
+        if( not self.buildNameExt == None ):
+            builddir = "%s-%s" % ( builddir, self.buildNameExt )
+
+        os.chdir( self.workdir )
+        os.chdir( builddir )
+
+        if utils.verbose() > 0:
+            print "builddir: " + builddir
+
+        fastString = ""
+        if not self.noFast:
+            fastString = "/fast"
+        utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
+        return True

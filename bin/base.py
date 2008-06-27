@@ -186,6 +186,7 @@ class baseclass:
         elif command == "configure":   ok = self.compile()
         elif command == "make":        ok = self.compile()
         elif command == "install":     ok = self.install()
+        elif command == "test":      ok = self.unittest()
         elif command == "qmerge":      ok = self.qmerge()
         elif command == "unmerge":     ok = self.unmerge()
         elif command == "manifest":    ok = self.manifest()
@@ -232,6 +233,12 @@ class baseclass:
         utils.copySrcDirToDestDir( srcdir, destdir )
         return True
 
+    def unittest( self ):
+        """ run the unittests of the package """
+        if utils.verbose() > 1:
+            print "currently only supported for some internal packages"
+        return True
+
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
         if utils.verbose() > 1:
@@ -275,7 +282,7 @@ class baseclass:
     def make_package( self ):
         """overload this function with the package specific packaging instructions"""
         if utils.verbose() > 1:
-            print "currently only supported for some interal packages"
+            print "currently only supported for some internal packages"
         return True
 
     def setDirectories( self ):
@@ -365,6 +372,9 @@ class baseclass:
 
     def kdeInstall( self ):
         return self.kde.kdeInstall()
+
+    def kdeTest( self ):
+        return self.kde.kdeTest()
 
     def doPackaging( self, pkg_name, pkg_version, packSources = True ):
         """packaging according to the gnuwin32 packaging rules"""

@@ -53,6 +53,7 @@ Commands (must have a packagename):
                     directory of each package.
 --manifest          This step creates the files contained in the manifest dir.
 --qmerge            This will merge the image directory into the KDEROOT
+--test              This will run the unittests if they are present
 --package           This step will create a package out of the image directory
                     instead of merge'ing the image directory into the KDEROOT
                     (Requires the packager to be installed already.)
@@ -147,7 +148,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge" ] ):
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge", "test" ] ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         success = doExec( category, package, version, "cleanimage", opts )
@@ -256,7 +257,7 @@ for i in sys.argv:
         ignoreInstalled = True
         os.environ["EMERGE_NOCLEAN"] = str( True )
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
-                  "--install", "--qmerge", "--manifest", "--package", "--unmerge",
+                  "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
                   "--full-package" ] ):
         buildAction = i[2:]
     elif ( i.startswith( "-" ) ):
