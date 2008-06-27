@@ -43,6 +43,9 @@ class subclass(base.baseclass):
     def install( self ):
         return self.kdeInstall()
 
+    def unittest( self ):
+        return self.kdeTest()
+
     def make_package( self ):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdelibs", self.buildTarget, True )
