@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
         self.languages += 'ta th tr uk wa zh_CN zh_TW '
 
         #for testing
-        #self.languages  = 'de'
+        self.languages  = 'de'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
@@ -112,6 +112,14 @@ class subclass(base.baseclass):
             self.kde.imagedir = os.path.join( imgdir, pkg )
             if not self.kdeInstall():
                 return False
+        return True
+
+    def qmerge( self ):
+        imgdir = self.kde.imagedir
+        for pkg in self.subinfo.languages.split():
+            self.kde.buildNameExt = pkg
+            self.kde.imagedir = os.path.join( imgdir, pkg )
+            utils.mergeImageDirToRootDir( self.kde.imagedir, self.rootdir )
         return True
 
     def make_package( self ):
