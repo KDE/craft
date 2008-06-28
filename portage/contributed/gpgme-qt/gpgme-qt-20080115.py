@@ -7,8 +7,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = False
-        self.defaultTarget = 'svnHEAD'
-    
+        self.targets['r1322'] = "http://saroengels.net/kde-windows/gnuwin32/gpgme-qt.tar.bz2"
+        self.targetInstSrc['r1322'] = "gpgme-qt"
+        self.defaultTarget = 'r1322'
+     
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
@@ -21,20 +23,25 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, args=args )
         # cmake scripts are not in src root...
         self.instsrcdir = "gpgme-qt"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         print "gpgme-qt unpack called"
         # do the svn fetch/update
-        repo = "svn://cvs.gnupg.org/gpgme/trunk/gpgme"
-        self.svnFetch( repo )
+        if self.buildTarget == 'svnHEAD':
+            repo = "svn://cvs.gnupg.org/gpgme/trunk/gpgme"
+            self.svnFetch( repo )
 
-        utils.cleanDirectory( self.workdir )
+            utils.cleanDirectory( self.workdir )
 
-        # now copy the tree below destdir/trunk to workdir
-        print self.svndir, self.workdir
-        srcdir = os.path.join( self.svndir )
-        destdir = os.path.join( self.workdir, "gpgme-qt" )
-        utils.copySrcDirToDestDir( srcdir, destdir )
+            # now copy the tree below destdir/trunk to workdir
+            utils.debug( "%s %s" % ( self.svndir, self.workdir ) )
+            srcdir = os.path.join( self.svndir )
+            destdir = os.path.join( self.workdir, "gpgme-qt" )
+            utils.copySrcDirToDestDir( srcdir, destdir )
+        else:
+            if( not base.baseclass.unpack( self ) ):
+                return True
 
         os.chdir( self.workdir )
         self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "gpgme-qt.patch" ) ) )

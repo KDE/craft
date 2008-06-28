@@ -925,3 +925,12 @@ diff -N -r -u gpgme-qt-orig/gpgme/w32-util.c gpgme-qt/gpgme/w32-util.c
  {
    int len;
    char *XXXXXX;
+@@ -540,7 +540,7 @@
+   if (!tmpname)
+     return -1;
+   strcpy (stpcpy (tmpname, tmp), "\\gpgme-XXXXXX");
+-  *fd = mkstemp (tmpname);
++  *fd = gpgme_mkstemp (tmpname);
+   if (fd < 0)
+     return -1;
+ 
