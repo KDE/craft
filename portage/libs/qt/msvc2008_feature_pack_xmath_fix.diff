@@ -1,0 +1,14 @@
+--- src\3rdparty\webkit\JavaScriptCore\wtf\MathExtras.h.orig	2008-06-28 17:07:01.703125000 +0200
++++ src\3rdparty\webkit\JavaScriptCore\wtf\MathExtras.h	2008-06-28 18:39:54.468750000 +0200
+@@ -46,7 +46,11 @@
+ 
+ #include "kjs/operations.h"
+ #include "kjs/value.h"
++#if defined(_MSC_VER) && (_MSC_VER >= 1500)
++// #include <xmath.h> // It actually only needs to be commented out if MSVC2008 Feature Pack is installed but there is no way to check that unless you #include MFC and check for _MFC_VER == 9.0.30411 and that does not seem a good idea
++#else
+ #include <xmath.h>
++#endif
+ #include <limits>
+ 
+ #if HAVE(FLOAT_H)

@@ -30,7 +30,7 @@ class subclass(base.baseclass):
         if not base.baseclass.fetch( self ):
             return False
         openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip"
-        if self.compiler == "msvc2005":
+        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
             dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-lib.tar.bz2"
         elif self.compiler == "mingw":
             dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-lib.tar.bz2"
@@ -46,7 +46,7 @@ class subclass(base.baseclass):
         # unpack our two external dependencies
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
         files = "openssl-0.9.8g-1-lib.zip "
-        if self.compiler == "msvc2005":
+        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
             files += "dbus-msvc-1.1.2.20071228-lib.tar.bz2"
         elif self.compiler == "mingw":
             files += "dbus-mingw-1.1.2.20080216-lib.tar.bz2"
@@ -82,12 +82,19 @@ class subclass(base.baseclass):
         cmd = "cd %s && patch -p0 < %s" % \
           ( qtsrcdir, os.path.join( self.packagedir, "qpixmap-qimage-detach.diff" ) )
         self.system( cmd )
+        
+        # QtWebkit does not build if VC++ 2008 Feature Pack is installed
+        if self.compiler == "msvc2008":
+            cmd = "cd %s && patch -p0 < %s" % \
+                ( qtsrcdir, os.path.join( self.packagedir, "msvc2008_feature_pack_xmath_fix.diff" ) )
+            self.system( cmd )
+
 
         # looks like this doesn't work... hmm
         cmd = " cd %s && %s /nopause" % \
           ( os.path.join( qtsrcdir, "patches" ), "apply_patches.bat" )
         self.system( cmd )
-
+        
         return True
 
     def compile( self ):
@@ -106,6 +113,8 @@ class subclass(base.baseclass):
         inctmp = os.getenv( "INCLUDE" )
         if self.compiler == "msvc2005":
             platform = "win32-msvc2005"
+        elif self.compiler == "msvc2008":
+            platform = "win32-msvc2008"
         elif self.compiler == "mingw":
             os.environ[ "LIB" ] = ""
             os.environ[ "INCLUDE" ] = ""
