@@ -29,6 +29,10 @@ if %KDECOMPILER% == msvc2005 (
 call "%PROGRAMFILES%\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
 )
 
+if %KDECOMPILER% == msvc2008 ( 
+call "%PROGRAMFILES%\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86
+)
+
 rem Here you change the download directory.
 rem If you want, so you can share the same download directory between
 rem mingw and msvc.
