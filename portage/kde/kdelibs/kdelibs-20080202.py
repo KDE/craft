@@ -32,7 +32,6 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        self.kdeCustomDefines = " -DKDE4_BUILD_TESTS=OFF "
         if self.compiler == "mingw":
           self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
         if self.compiler == "msvc2005":
