@@ -72,8 +72,7 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
-    # now do packaging with kdewin-packager
-    self.doPackaging( "dbus", self.buildTarget, True )
+    self.doPackaging( "dbus", "1.2.1-2", False )
 
     return True
 
