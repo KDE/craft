@@ -353,7 +353,7 @@ else:
 
 print                        
 if len( nextArguments ) > 0:
-    command = sys.executable + " -u " + executableName + " " + " ".join( nextArguments )
+    command = "\"" + sys.executable + "\" -u " + executableName + " " + " ".join( nextArguments )
 
     for element in environ.keys():
         if environ[ element ]:
