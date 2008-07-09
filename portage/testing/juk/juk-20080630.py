@@ -23,13 +23,13 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        self.kde.kdeCustomDefines = "-DBUILD_dragonplayer=OFF"
-        self.kde.kdeCustomDefines += " -DBUILD_kscd=OFF"
-        self.kde.kdeCustomDefines += " -DBUILD_libkcompactdisc=OFF"
-#        self.kde.kdeCustomDefines += " -DBUILD_juk=OFF"
-        self.kde.kdeCustomDefines += " -DBUILD_strigi-analyzer=OFF"
-        self.kde.kdeCustomDefines += " -DBUILD_kioslave=OFF"        # audiocd kioslave
-        self.kde.kdeCustomDefines += " -DBUILD_kmix=OFF"
+        self.kdeCustomDefines = "-DBUILD_dragonplayer=OFF"
+        self.kdeCustomDefines += " -DBUILD_kscd=OFF"
+        self.kdeCustomDefines += " -DBUILD_kcompactdisc=OFF"
+#        self.kdeCustomDefines += " -DBUILD_juk=OFF"
+        self.kdeCustomDefines += " -DBUILD_strigi-analyzer=OFF"
+        self.kdeCustomDefines += " -DBUILD_kioslave=OFF"        # audiocd kioslave
+        self.kdeCustomDefines += " -DBUILD_kmix=OFF"
         return self.kdeCompile()
 
     def install( self ):
