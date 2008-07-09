@@ -36,7 +36,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "phonon", os.path.basename(sys.argv[0]).replace("phonon-", ""), True )
+            return self.doPackaging( "phonon", os.path.basename(sys.argv[0]).replace("phonon-", "").replace(".py", ""), True )
         else:
             return self.doPackaging( "phonon", self.buildTarget, True )
 
