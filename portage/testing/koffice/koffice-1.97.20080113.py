@@ -6,8 +6,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
-        self.svnTargets['1.9.95.4'] = "tags/koffice/1.9.95.4/koffice"
         self.svnTargets['1.9.95.8'] = "tags/koffice/1.9.95.8/koffice"
+        self.svnTargets['1.9.95.9'] = "tags/koffice/1.9.95.9/koffice"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -37,7 +37,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_krita=OFF "
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kword=OFF "
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kspread=OFF "
-        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
+#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
         return self.kdeSvnUnpack()
