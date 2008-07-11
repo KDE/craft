@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
-        self.hardDependencies['kde-4.1/kdelibs_4.1'] = 'default'
+        self.hardDependencies['kde-4.1/kdelibs'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
