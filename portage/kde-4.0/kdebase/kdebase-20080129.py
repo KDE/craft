@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde-4.0/kdelibs_4.0'] = 'default'
-        self.hardDependencies['kde-4.0/kdepimlibs_4.0'] = 'default'
+        self.hardDependencies['kde-4.0/kdelibs'] = 'default'
+        self.hardDependencies['kde-4.0/kdepimlibs'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
