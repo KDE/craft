@@ -11,9 +11,14 @@ import utils
 def usage():
     print """
 Usage:
-    emerge [[ command and flags ] [ packagename ]
-            [ command and flags ] [ packagename ]
+    emerge [[ command and flags ] [ singletarget ]
+            [ command and flags ] [ singletarget ]
             ... ]
+
+    where singletarget can be of the form:
+        category
+        package
+        category/package
 
 Emerge is a tool for building KDE-related software under Windows. emerge
 automates it, looks for the dependencies and fetches them automatically.
@@ -105,8 +110,7 @@ Flags:
             existing packages in the download directory. If that doesn't
             work, the build will fail.
 --update    this option is the same as '-i --noclean'. It will update a single
-            package (that is already installed. SE: I will change this sooner
-            or later)
+            package that is already installed.
 
 Internal options or options that aren't fully implemented yet:
 PLEASE DO NOT USE!
@@ -282,26 +286,20 @@ utils.debug( "packageName: %s" % packageName )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
 utils.debug( "buildTests: %s" % os.getenv( "EMERGE_BUILDTESTS" ) )
 utils.debug( "verbose: %s" % os.getenv( "EMERGE_VERBOSE" ) )
-utils.debug( "KDEROOT: %s" % KDEROOT )
-    
-if not os.getenv( "CMAKE_INCLUDE_PATH" ) == None:
-    print
-    utils.warning( "CMAKE_INCLUDE_PATH found as environment variable. you cannot override emerge"\
-                   " with this - unsetting CMAKE_INCLUDE_PATH locally" )
-    os.environ["CMAKE_INCLUDE_PATH"]=""
+utils.debug( "KDEROOT: %s\n" % KDEROOT )
+utils.debug_line()
 
-if not os.getenv( "CMAKE_LIBRARY_PATH" ) == None:
-    print
-    utils.warning( "CMAKE_LIBRARY_PATH found as environment variable. you cannot override emerge"\
-                   " with this - unsetting CMAKE_LIBRARY_PATH locally" )
-    os.environ["CMAKE_LIBRARY_PATH"]=""
+def unset_var( varname ):
+    if not os.getenv( varname ) == None:
+        print
+        utils.warning( "%s found as environment variable. you cannot override emerge"\
+                       " with this - unsetting %s locally" % ( varname, varname ) )
+        os.environ[ varname ]=""
 
-if not os.getenv( "CMAKE_FIND_PREFIX" ) == None:
-    print
-    utils.warning( "CMAKE_FIND_PREFIX found as environment variable. you cannot override emerge"\
-                   " with this - unsetting CMAKE_FIND_PREFIX locally" )
-    os.environ["CMAKE_FIND_PREFIX"]=""
-    
+unset_var( "CMAKE_INCLUDE_PATH" )
+unset_var( "CMAKE_LIBRARY_PATH" )
+unset_var( "CMAKE_FIND_PREFIX" )
+unset_var( "CMAKE_INSTALL_PREFIX" )
 
 # adding emerge/bin to find base.py and gnuwin32.py etc.
 os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH" ) + ";" +\
@@ -309,14 +307,48 @@ os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH" ) + ";" +\
 sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) )
 
 deplist = []
+packageList = []
 
+category = ""
 if packageName:
-    utils.solveDependencies( "", packageName, "", deplist )
-    
-utils.debug( "deplist: %s" % deplist, 2 )
+    if len( packageName.split( "/" ) ) == 1:
+        if utils.isCategory( packageName ):
+            utils.debug( "isCategory=True", 2 )
+            packageList = utils.getAllPackages( packageName )
+            category = packageName
+        else:
+            if utils.getCategory( packageName ):
+                category = utils.getCategory( packageName )
+                packageList = [ packageName ]
+            else:
+                utils.warning( "unknown category or package: %s" % packageName )
+    elif len( packageName.split( "/" ) ) == 2:
+        [ cat, pac ] = packageName.split( "/" )
+        validPackage = False
+        if utils.isCategory( cat ):
+            category = cat
+        else:
+            utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
+        if category and utils.isPackage( category, pac ):
+            packageList = [ pac ]
+        if len( packageList ):
+            utils.debug( "added package %s/%s" % ( category, pac ), 2 )
+        else:
+            utils.debug( "ignoring package %s" % packageName )
+    else:
+        utils.error( "unknown packageName" )
+
+for entry in packageList:
+    utils.debug( "%s" % entry, 1 )
+utils.debug_line( 1 )
+
+for entry in packageList:
+    utils.solveDependencies( category, entry, "", deplist )
+
+for dependency in deplist:
+    utils.debug( "dependency: %s" % dependency, 1 )
 
 deplist.reverse()
-
 success = True
 
 # package[0] -> category
@@ -325,7 +357,10 @@ success = True
 
 if ( buildAction != "all" ):
     """ if a buildAction is given, then do not try to build dependencies
-        and do the action although the package might already be installed"""
+        and do the action although the package might already be installed.
+        This is still a bit problematic since packageName might not be a valid
+        package"""
+        
     if packageName:
         package = deplist[ -1 ]
     else:

@@ -356,6 +356,37 @@ def getCategory( package ):
                 if ( pack == package ):
                     debug( "found: category %s for package %s" % ( cat, pack ), 1 )
                     return cat
+    return False
+
+def isCategory( category ):
+    if category in os.listdir( getPortageDir() ):
+        catpath = os.path.join( getPortageDir(), category )
+        debug( "isCategory: catpath=%s" % catpath, 2 )
+        if os.path.isdir( catpath ):
+            return True
+    return False
+
+def isPackage( category, package ):
+    return os.path.exists( os.path.join( getPortageDir(), category, package ) )
+
+def getAllPackages( category ):
+    if isCategory( category ):
+        plist = os.listdir( os.path.join( getPortageDir(), category ) )
+        if ".svn" in plist: plist.remove( ".svn" )
+        for entry in plist:
+            if not os.path.isdir( os.path.join( getPortageDir(), category, entry ) ):
+                plist.remove( entry )
+        debug( plist, 2 )
+        if os.path.exists( os.path.join( getPortageDir(), category, "dont_build.txt" ) ):
+            f = open( os.path.join( getPortageDir(), category, "dont_build.txt" ), "r" )
+            for line in f:
+                try:
+                    plist.remove( line.strip() )
+                except:
+                    warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
+        return plist
+    else:
+        return
 
 def getAllTags( category, package, version ):
     """ """
@@ -571,6 +602,10 @@ def warning( message ):
     if verbose() > 0:
         print "emerge warning: %s" % message
     return True
+
+def debug_line( level=0 ):
+    if verbose() > level:
+        print "_" * 80
 
 def error( message ):
     if verbose() > 0:
