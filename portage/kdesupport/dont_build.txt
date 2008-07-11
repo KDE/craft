@@ -1,0 +1,4 @@
+decibel
+kdewin-installer-static
+tapioca-qt
+telepathy-qt
