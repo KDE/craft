@@ -6,8 +6,10 @@ SRC_URI = "http://subversion.tigris.org/files/documents/15/41094/svn-win32-1.4.6
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.4.6'] = SRC_URI
+        self.targets['1.5.0'] = "http://subversion.tigris.org/files/documents/15/43074/svn-win32-1.5.0.zip"
         self.targetInstSrc['1.4.6'] = "svn-win32-1.4.6"
-        self.defaultTarget = '1.4.6'
+        self.targets['1.5.0'] = "svn-win32-1.5.0"
+        self.defaultTarget = '1.5.0'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
