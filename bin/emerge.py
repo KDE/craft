@@ -345,12 +345,15 @@ utils.debug_line( 1 )
 for entry in packageList:
     utils.solveDependencies( category, entry, "", deplist )
 
-for dependency in deplist:
-    utils.debug( "dependency: %s" % dependency, 1 )
+for item in range( len( deplist ) ):
+    if deplist[ item ][ 0 ] == category and deplist[ item ][ 1 ] in packageList:
+        deplist[ item ].append( ignoreInstalled )
+    else:
+        deplist[ item ].append( False )
+    utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
 deplist.reverse()
 success = True
-
 # package[0] -> category
 # package[1] -> package
 # package[2] -> version
@@ -368,10 +371,7 @@ if ( buildAction != "all" ):
     ok = handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts )
 else:
     for package in deplist:
-        ignore = False
-        if package == deplist[ -1 ] and ignoreInstalled:
-            ignore = True
-        if ( utils.isInstalled( package[0], package[1], package[2] ) and not ignore ):
+        if ( utils.isInstalled( package[0], package[1], package[2] ) and not package[ -1 ] ):
             if utils.verbose() > 1 and package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
             elif utils.verbose() > 2 and not package[1] == packageName:
