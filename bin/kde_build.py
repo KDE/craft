@@ -110,7 +110,7 @@ class kde_interface:
         else:
                 recFlag = "-N"
 
-        if ( os.path.exists( os.path.join( ownpath, ".svn" ) ) ):
+        if ( os.path.exists( os.path.join( ownpath, codir, ".svn" ) ) ):
             # svn up
             svncmd = "svn update %s %s" % ( recFlag, codir )
         else:
