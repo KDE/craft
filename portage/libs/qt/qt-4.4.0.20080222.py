@@ -14,8 +14,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['qt-copy'] = 'trunk/qt-copy'
-        self.defaultTarget = 'qt-copy'
+        self.svnTargets['svnHEAD'] = 'trunk/qt-copy'
+        self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
