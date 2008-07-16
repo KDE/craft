@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeutils'
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdeutils-4.0.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.0.' + ver] = 'kdeedu-4.0.' + ver
+          self.targetInstSrc['4.0.' + ver] = 'kdeutils-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
