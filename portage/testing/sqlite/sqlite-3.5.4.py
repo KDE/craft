@@ -57,6 +57,11 @@ class subclass(base.baseclass):
         shutil.copy( src, dst )
         self.createImportLibs( PACKAGE_DLL_NAME )
         return True
-    
+
+    def make_package( self ):
+        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+
+        return True
+
 if __name__ == '__main__':
     subclass().execute()
