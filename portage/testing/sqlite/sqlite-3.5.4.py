@@ -27,7 +27,8 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, SRC_URI, args=args )
         self.subinfo = subinfo()
-    
+        self.createCombinedPackage = True
+
     def unpack( self ):
         base.baseclass.unpack( self )
         return True
