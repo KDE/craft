@@ -59,7 +59,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
 
         return True
 
