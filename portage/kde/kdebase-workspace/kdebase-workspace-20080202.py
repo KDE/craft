@@ -41,7 +41,6 @@ class subclass(base.baseclass):
         self.kdeCustomDefines += " -DBUILD_kmenuedit=OFF"
         self.kdeCustomDefines += " -DBUILD_krunner=OFF"
         self.kdeCustomDefines += " -DBUILD_kwin=OFF"
-        self.kdeCustomDefines += " -DBUILD_plasma=OFF"
         self.kdeCustomDefines += " -DBUILD_printer-applet=OFF"
         self.kdeCustomDefines += " -DBUILD_kstartupconfig=OFF"
         self.kdeCustomDefines += " -DBUILD_khotkeys=OFF"
