@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['kdesupport/tapioca-qt'] = 'default'
         self.hardDependencies['kdesupport/telepathy-qt'] = 'default'
 
     def setTargets( self ):
