@@ -1,6 +1,7 @@
 import sys
 import base
 import utils
+import os
 import info
 
 class subinfo(info.infoclass):
@@ -26,7 +27,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        if os.getenv("KDECOMPILER") == "mingw":
+        if self.compiler == "mingw":
             """
             For microsoft compilers the DirectX SDK is needed if you want to
             compile the DirectShow 9 backend.
