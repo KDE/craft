@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -31,8 +31,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            self.instdestdir = "kde"
-            return self.doPackaging( "qca", os.path.basename(sys.argv[0]).replace("qca-", ""), True )
+            return self.doPackaging( "qca", utils.cleanPackageName( sys.argv[0], "qca" ), True )
         else:
             return self.doPackaging( "qca", self.buildTarget, True )
 if __name__ == '__main__':

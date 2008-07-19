@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -28,11 +28,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
-            return self.doPackaging( "qimageblitz", "4.0.0-3", True )
-        else:
-            return self.doPackaging( "qimageblitz", os.path.basename(sys.argv[0]).replace("qimageblitz-", "").replace(".py", ""), True )
+        return self.doPackaging( "qimageblitz", "4.0.0-3", True )
 
 if __name__ == '__main__':
     subclass().execute()

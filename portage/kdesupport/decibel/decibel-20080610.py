@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -34,7 +34,7 @@ class subclass(base.baseclass):
             self.instdestdir = "kde"
             return self.doPackaging( "decibel", "20080610", True )
         else:
-            return self.doPackaging( "decibel", os.path.basename(sys.argv[0]).replace("decibel-", "").replace(".py", ""), True )
+            return self.doPackaging( "decibel", utils.cleanPackageName( sys.argv[0], "decibel" ), True )
 
 if __name__ == '__main__':
     subclass().execute()

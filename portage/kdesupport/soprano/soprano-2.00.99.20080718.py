@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -39,7 +39,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "soprano", self.buildTarget, True )
         else:
-            return self.doPackaging( "soprano", os.path.basename(sys.argv[0]).replace("soprano-", "").replace(".py", ""), True )
+            return self.doPackaging( "soprano", utils.cleanPackageName( sys.argv[0], "soprano" ), True )
 
 if __name__ == '__main__':
     subclass().execute()

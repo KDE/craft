@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -33,7 +33,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "akonadi", os.path.basename(sys.argv[0]).replace("akonadi-", ""), True )
+            return self.doPackaging( "akonadi", utils.cleanPackageName( sys.argv[0], "akonadi" ), True )
         else:
             return self.doPackaging( "akonadi", self.buildTarget, True )
 

@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -32,8 +32,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            self.instdestdir = "kde"
-            return self.doPackaging( "taglib", os.path.basename(sys.argv[0]).replace("taglib-", ""), True )
+            return self.doPackaging( "taglib", utils.cleanPackageName( sys.argv[0], "taglib" ), True )
         else:
             return self.doPackaging( "taglib", self.buildTarget, True )
 

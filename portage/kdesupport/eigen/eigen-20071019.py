@@ -1,7 +1,6 @@
 import base
 import utils
 from utils import die
-import os
 import sys
 import info
 
@@ -37,7 +36,7 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-        return self.doPackaging( "eigen", os.path.basename(sys.argv[0]).replace("eigen-", "").replace(".py", ""), True )        
+        return self.doPackaging( "eigen", utils.cleanPackageName( sys.argv[0], "eigen" ), True )        
 
 if __name__ == '__main__':
     subclass().execute()

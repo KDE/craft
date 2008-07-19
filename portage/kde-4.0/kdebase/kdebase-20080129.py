@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -30,7 +30,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdebase", os.path.basename(sys.argv[0]).replace("kdebase_4.0-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdebase", utils.cleanPackageName( sys.argv[0], "kdebase" ), True )
 
 		
 if __name__ == '__main__':

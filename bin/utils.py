@@ -877,3 +877,7 @@ def toMSysPath( path ):
     if ( path[1] == ':' ):
       path = '/' + path[0].lower() + '/' + path[3:]
     return path
+
+def cleanPackageName( basename, packagename ):
+    return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
+    

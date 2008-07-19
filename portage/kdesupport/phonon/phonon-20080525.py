@@ -1,6 +1,6 @@
 import sys
 import base
-import os
+import utils
 import info
 
 class subinfo(info.infoclass):
@@ -40,7 +40,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "phonon", os.path.basename(sys.argv[0]).replace("phonon-", "").replace(".py", ""), True )
+            return self.doPackaging( "phonon", utils.cleanPackageName( sys.argv[0], "phonon" ), True )
         else:
             return self.doPackaging( "phonon", self.buildTarget, True )
 

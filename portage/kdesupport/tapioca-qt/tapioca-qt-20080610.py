@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -29,11 +29,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
-            return self.doPackaging( "tapioca-qt", "20080610", True )
-        else:
-            return self.doPackaging( "tapioca-qt", os.path.basename(sys.argv[0]).replace("tapioca-qt-", "").replace(".py", ""), True )
+        return self.doPackaging( "tapioca-qt", utils.cleanPackageName( sys.argv[0], "tapioca-qt" ), True )
 
 if __name__ == '__main__':
     subclass().execute()

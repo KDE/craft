@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -28,11 +28,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
-            return self.doPackaging( "telepathy-qt", "20080610", True )
-        else:
-            return self.doPackaging( "telepathy-qt", os.path.basename(sys.argv[0]).replace("telepathy-qt-", "").replace(".py", ""), True )
+        return self.doPackaging( "telepathy-qt", utils.cleanPackageName( sys.argv[0], "telepathy-qt" ), True )
 
 if __name__ == '__main__':
     subclass().execute()

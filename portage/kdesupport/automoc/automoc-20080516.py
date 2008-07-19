@@ -1,5 +1,5 @@
 import base
-import os
+import utils
 import sys
 import info
 
@@ -29,7 +29,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "automoc", os.path.basename(sys.argv[0]).replace("automoc-", ""), True )
+            return self.doPackaging( "automoc", utils.cleanPackageName( sys.argv[0], "automoc" ), True )
         else:
             return self.doPackaging( "automoc", self.buildTarget, True )
 
