@@ -152,7 +152,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge", "test" ] ):
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge", "test" ] and category and package and version ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         success = doExec( category, package, version, "cleanimage", opts )
@@ -364,7 +364,7 @@ if ( buildAction != "all" ):
         This is still a bit problematic since packageName might not be a valid
         package"""
         
-    if packageName:
+    if packageName and len(deplist) >= 1:
         package = deplist[ -1 ]
     else:
         package = [ None, None, None ]
