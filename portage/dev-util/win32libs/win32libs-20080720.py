@@ -75,8 +75,8 @@ if os.getenv("KDECOMPILER") == "mingw":
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.6-2-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.6-2-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-1-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
