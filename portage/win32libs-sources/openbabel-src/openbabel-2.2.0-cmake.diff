@@ -1,0 +1,45 @@
+--- CMakeLists.txt.orig	2008-07-20 17:24:36.875000000 +0200
++++ CMakeLists.txt	2008-07-20 17:21:27.156250000 +0200
+@@ -68,6 +68,7 @@
+ check_include_file(time.h       HAVE_TIME_H)
+ check_include_file_cxx(sstream  HAVE_SSTREAM)
+ 
++check_symbol_exists(isfinite      "math.h"     HAVE_ISFINITE)
+ check_symbol_exists(rint          "math.h"     HAVE_RINT)
+ check_symbol_exists(snprintf      "stdio.h"    HAVE_SNPRINTF)
+ check_symbol_exists(sranddev      "stdlib.h"   HAVE_SRANDDEV)
+--- src\config.h.cmake.orig	2008-07-20 17:24:31.546875000 +0200
++++ src\config.h.cmake	2008-07-20 17:21:37.218750000 +0200
+@@ -129,6 +129,11 @@
+ #cmakedefine HAVE_CLOCK_T 1
+ 
+ #if defined(WIN32)
++ #ifndef HAVE_ISFINITE
++  #define isfinite _finite
++  #define HAVE_ISFINITE 1
++ #endif
++
+  #ifndef HAVE_SNPRINTF
+   #define snprintf _snprintf
+   #define HAVE_SNPRINTF 1
+--- src\formats\APIInterface.cpp.orig	2008-07-20 17:29:43.093750000 +0200
++++ src\formats\APIInterface.cpp	2008-07-20 17:29:03.859375000 +0200
+@@ -22,7 +22,7 @@
+ namespace OpenBabel
+ {
+ 
+-class OBCOMMON OBAPIInterface : public OBFormat
++class OBAPIInterface : public OBFormat
+ {
+ public:
+   OBAPIInterface()
+--- tools\obgen.cpp.orig	2008-07-20 17:34:22.156250000 +0200
++++ tools\obgen.cpp	2008-07-20 17:34:27.906250000 +0200
+@@ -29,7 +29,6 @@
+ #include <openbabel/obconversion.h>
+ #include <openbabel/forcefield.h>
+ #include <openbabel/builder.h>
+-#include <unistd.h>
+ 
+ using namespace std;
+ using namespace OpenBabel;

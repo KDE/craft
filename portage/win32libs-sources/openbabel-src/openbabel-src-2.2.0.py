@@ -24,13 +24,12 @@ class subclass(base.baseclass):
         if( not base.baseclass.unpack( self ) ):
             return False
 
-        if self.buildTarget == "2.1.1":
-            src = os.path.join( self.workdir, self.instsrcdir )
-            cmd = "cd %s && patch -p0 < %s" % \
-                  ( self.workdir, os.path.join( self.packagedir , "openbabel-2.1.1-cmake.diff" ) )
-            if utils.verbose() > 0:
-                print cmd
-            utils.system( cmd ) or die( "patchin'" )
+        patch = "openbabel-%s-cmake.diff" % self.buildTarget
+        cmd = "cd %s && patch -p0 < %s" % \
+              ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir , patch ) )
+        if utils.verbose() > 0:
+            print cmd
+        utils.system( cmd ) or utils.die( "patchin'" )
         
         return True
 
