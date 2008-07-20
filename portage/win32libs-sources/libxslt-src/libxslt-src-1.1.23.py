@@ -6,7 +6,7 @@ import info
 
 PACKAGE_NAME         = "libxslt"
 PACKAGE_VER          = "1.1.23+"
-PACKAGE_FULL_VER     = "1.1.23-2"
+PACKAGE_FULL_VER     = "1.1.23-3"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER)
 PACKAGE_DLL_NAMES    = """
 libxslt

@@ -11,3 +11,16 @@
      #define XSLTPUBFUN __declspec(dllexport)
      #define XSLTPUBVAR __declspec(dllexport) extern
    #else
+--- include\libexslt\exsltexports.h.orig	2008-07-20 14:54:57.937500000 +0200
++++ include\libexslt\exsltexports.h	2008-07-20 14:57:09.171875000 +0200
+@@ -91,10 +91,7 @@
+   #undef EXSLTPUBFUN
+   #undef EXSLTPUBVAR
+   #undef EXSLTCALL
+-/*
+   #if defined(IN_LIBEXSLT) && !defined(LIBEXSLT_STATIC)
+-*/
+-  #if !defined(LIBEXSLT_STATIC)
+     #define EXSLTPUBFUN __declspec(dllexport)
+     #define EXSLTPUBVAR __declspec(dllexport) extern
+   #else
