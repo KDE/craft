@@ -40,8 +40,8 @@ http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-lib.zip
 http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-bin.zip
 http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-lib.zip
 
-http://downloads.sourceforge.net/kde-windows/libpng-1.2.26-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/libpng-1.2.26-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libpng-1.2.29-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libpng-1.2.29-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/libxml2-2.6.30-3-bin.zip
 http://downloads.sourceforge.net/kde-windows/libxml2-2.6.30-3-lib.zip
@@ -75,16 +75,16 @@ if os.getenv("KDECOMPILER") == "mingw":
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-1-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-1-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-lib.tar.bz2
 """
 
 class subinfo(info.infoclass):
