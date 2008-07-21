@@ -83,8 +83,8 @@ else:
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.6-1-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.6-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-1-lib.tar.bz2
 """
 
 class subinfo(info.infoclass):
