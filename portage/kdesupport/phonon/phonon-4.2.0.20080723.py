@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['4.1.0'] = 'tags/phonon/4.1'    # tagged version, also in qt4.4.0
-        self.svnTargets['4.1'] = 'branches/phonon/4.1'  # branch for bugfixes
+        self.svnTargets['4.1.0'] = 'tags/phonon/4.1.0'    # tagged version, also in qt4.4.0
+        self.svnTargets['4.2.0'] = 'tags/phonon/4.2.0'    # tagged version
         self.svnTargets['4.2'] = 'branches/phonon/4.2'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
         self.defaultTarget = 'svnHEAD'
