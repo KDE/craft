@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['0.80'] = 'tags/akonadi/0.80/'
-        self.svnTargets['0.81'] = 'tags/akonadi/0.81/'
-        self.svnTargets['0.82'] = 'tags/akonadi/0.82/'
-        self.svnTargets['1.0.0'] = 'tags/akonadi/1.0.0/'
+        self.svnTargets['0.80'] = 'tags/akonadi/0.80'
+        self.svnTargets['0.81'] = 'tags/akonadi/0.81'
+        self.svnTargets['0.82'] = 'tags/akonadi/0.82'
+        self.svnTargets['1.0.0'] = 'tags/akonadi/1.0.0'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
 

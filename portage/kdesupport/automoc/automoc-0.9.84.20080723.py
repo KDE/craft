@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/automoc'
-        self.svnTargets['0.9.83'] = 'tags/automoc/0.9.83'
-        self.svnTargets['0.9.84'] = 'tags/automoc/0.9.84'
+        self.svnTargets['0.9.83'] = 'tags/automoc4/0.9.83'
+        self.svnTargets['0.9.84'] = 'tags/automoc4/0.9.84'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
