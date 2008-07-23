@@ -58,7 +58,7 @@ http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip
 http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-bin.zip
 http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-lib.zip
 
-http://downloads.sourceforge.net/kde-windows/shared-mime-info-0.30-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/shared-mime-info-0.51-bin.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-bin.zip
 http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-lib.zip

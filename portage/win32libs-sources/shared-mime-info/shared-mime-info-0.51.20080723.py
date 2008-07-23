@@ -5,23 +5,18 @@ import utils
 import info
 import re
 
-PACKAGE_NAME         = "shared-mime-info"
-PACKAGE_VER          = "0.30"
-PACKAGE_FULL_VER     = "0.30"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-GLIB_VER             = "2.14.5"
-
+# do not forget to update CMakeLists.txt!
 SRC_URI= """
-http://people.freedesktop.org/~hadess/""" + PACKAGE_FULL_NAME + """.tar.bz2
-ftp://ftp.gtk.org/pub/glib/2.14/glib-""" + GLIB_VER + """.tar.bz2
+http://people.freedesktop.org/~hadess/shared-mime-info-0.51.tar.bz2
+ftp://ftp.gtk.org/pub/glib/2.14/glib-2.14.5.tar.bz2
 """
 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.30'] = SRC_URI
-        self.targetInstSrc['0.30'] = PACKAGE_FULL_NAME
-        self.defaultTarget = '0.30'
+        self.targets['0.51'] = SRC_URI
+        self.targetInstSrc['0.51'] = "shared-mime-info-0.51"
+        self.defaultTarget = '0.51'
 
     def setDependencies( self ):
         self.hardDependencies['dev-util/win32libs'] = 'default'
@@ -102,7 +97,7 @@ class subclass(base.baseclass):
     self.system( cmd )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, self.buildTarget, True )
+    self.doPackaging( "shared-mime-info", self.buildTarget, True )
 
     return True
   
