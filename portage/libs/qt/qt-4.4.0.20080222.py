@@ -126,7 +126,7 @@ class subclass(base.baseclass):
         os.chdir( qtsrcdir )
         command = r"echo y | configure.exe -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
-          "-qdbus -openssl -dbus-linked " \
+          "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp " \
           "-I %s -L %s " % \
           ( platform, prefix,
