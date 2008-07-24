@@ -227,7 +227,8 @@ class kde_interface:
         if self.buildTests:
             options = options + " -DKDE4_BUILD_TESTS=1 "
 
-        options = options + "-DKDEWIN_DIR:PATH=%s" % \
+        options = options + " -DKDE4_ENABLE_EXPERIMENTAL_LIB_EXPORT:BOOL=ON "
+        options = options + " -DKDEWIN_DIR:PATH=%s " % \
                os.path.join( self.rootdir ).replace( "\\", "/" )
 
         return options
