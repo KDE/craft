@@ -449,8 +449,14 @@ class baseclass:
         if not HAVE_PEXPORTS and os.path.exists( defpath ):
             HAVE_PEXPORTS = True
             USE_PEXPORTS = False
-        if not HAVE_PEXPORTS and ( HAVE_LIB or HAVE_DLLTOOL ):
-            utils.warning( "system does not have pexports and either lib.exe or dlltool.exe" )
+        if not HAVE_PEXPORTS:
+            utils.warning( "system does not have pexports.exe" )
+            return False
+        if not HAVE_LIB :
+            utils.warning( "system does not have lib.exe (from msvc)" )
+            return False
+        if not HAVE_DLLTOOL:
+            utils.warning( "system does not have dlltool.exe" )
             return False
 
         # create .def
