@@ -18,17 +18,14 @@ class subinfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        # released target in 4.0.83
-        self.languages  = 'ar be bg ca cs csb da de '
-        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl '
-        self.languages += 'hi hu is it ja kk km ko '
-        self.languages += 'lv mk nb nds ne nl nn '
-        self.languages += 'pa pl pt pt_BR ro ru se sl sv '
+        # released target in 4.1.0
+        self.languages  = 'bg ca cs csb da de '
+        self.languages += 'el en_GB eo es et fi fr fy ga gl '
+        self.languages += 'hi hu it ja kk km ko ku '
+        self.languages += 'lt lv mk ml nb nds nl nn '
+        self.languages += 'pa pl pt pt_BR ru sl sr sv '
         self.languages += 'ta th tr uk wa zh_CN zh_TW '
 
-        #for testing
-        self.languages  = 'de'
-    
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
