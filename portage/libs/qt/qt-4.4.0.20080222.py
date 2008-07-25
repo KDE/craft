@@ -31,9 +31,9 @@ class subclass(base.baseclass):
             return False
         openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip"
         if self.compiler == "msvc2005" or self.compiler == "msvc2008":
-            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.1.2.20071228-lib.tar.bz2"
+            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1.20080725-lib.tar.bz2"
         elif self.compiler == "mingw":
-            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.1.2.20080216-lib.tar.bz2"
+            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1.20080725-lib.tar.bz2"
 
         if not utils.getFiles( openssl, self.downloaddir ):
             return False

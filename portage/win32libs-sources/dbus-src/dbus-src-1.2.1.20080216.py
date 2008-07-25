@@ -7,10 +7,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['1.1.2'] = 'tags/1.1.2'
-        self.targetInstSrc['1.1.2'] = os.path.join( "dbus", "cmake" )
+        self.svnTargets['1.2.1'] = 'tags/1.2.1'
         self.svnTargets['svnHEAD'] = 'trunk'
-        self.targetInstSrc['svnHEAD'] = os.path.join( "dbus", "cmake" )
-        self.defaultTarget = 'svnHEAD'  # currently 1.2.1
+        self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -18,6 +17,7 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, args=args )
+    self.instsrcdir = os.path.join( "dbus", "cmake" )
     self.subinfo = subinfo()
     
   def unpack( self ):
