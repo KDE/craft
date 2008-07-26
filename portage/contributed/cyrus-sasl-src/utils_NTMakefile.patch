@@ -1,5 +1,5 @@
---- utils/NTMakefile.orig 2007-03-26 10:51:30.627125000 -0600
-+++ utils/NTMakefile 2007-03-26 10:54:23.986500000 -0600
+--- utils\NTMakefile.orig 2007-03-26 10:51:30.627125000 -0600
++++ utils\NTMakefile 2007-03-26 10:54:23.986500000 -0600
 @@ -1,29 +1,39 @@
  !INCLUDE ..\win32\common.mak
  

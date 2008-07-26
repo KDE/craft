@@ -31,11 +31,8 @@ class subclass(base.baseclass):
         base.baseclass.unpack( self ) or utils.die( "unpack failed" )
         os.chdir( self.workdir )
         shutil.move("cyrus-sasl-2.1.22", self.instsrcdir)
-        # gnuwin32 patch fails for unknown reason
-        patch="c:\\cygwin\\bin\\patch"
-        #patch="patch"
-        self.system( "cd %s && %s -p0 < %s" % ( os.path.join(self.workdir,self.instsrcdir), patch,os.path.join( self.packagedir, "plugins_NTMakefile.patch" ) ) )
-        self.system( "cd %s && %s -p0 < %s" % ( os.path.join(self.workdir,self.instsrcdir), patch,os.path.join( self.packagedir, "utils_NTMakefile.patch" ) ) )
+        self.system( "cd %s && patch -p0 < %s" % ( os.path.join(self.workdir,self.instsrcdir), os.path.join( self.packagedir, "plugins_NTMakefile.patch" ) ) )
+        self.system( "cd %s && patch -p0 < %s" % ( os.path.join(self.workdir,self.instsrcdir), os.path.join( self.packagedir, "utils_NTMakefile.patch" ) ) )
         # required by rc
         fc = open( os.path.join(os.environ["TEMP"],"afxres.h"), "w")
         fc.write("\n")

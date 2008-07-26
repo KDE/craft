@@ -1,5 +1,5 @@
---- plugins/NTMakefile.orig 2007-03-26 10:42:04.314625000 -0600
-+++ plugins/NTMakefile 2007-03-26 10:48:57.174000000 -0600
+--- plugins\NTMakefile.orig 2007-03-26 10:42:04.314625000 -0600
++++ plugins\NTMakefile 2007-03-26 10:48:57.174000000 -0600
 @@ -30,23 +30,27 @@
  !ENDIF 
  
