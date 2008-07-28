@@ -24,20 +24,19 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "qt-win-opensource-src-" + self.compiler
+        self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip"
+        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
+            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-lib.tar.bz2"
+        elif self.compiler == "mingw":
+            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-lib.tar.bz2"
         self.subinfo = subinfo()
 
     def fetch( self ):
         if not base.baseclass.fetch( self ):
             return False
-        openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip"
-        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
-            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-lib.tar.bz2"
-        elif self.compiler == "mingw":
-            dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-lib.tar.bz2"
-
-        if not utils.getFiles( openssl, self.downloaddir ):
+        if not utils.getFiles( self.openssl, self.downloaddir ):
             return False
-        if not utils.getFiles( dbuslib, self.downloaddir ):
+        if not utils.getFiles( self.dbuslib, self.downloaddir ):
             return False
         return True
 
@@ -45,8 +44,8 @@ class subclass(base.baseclass):
         utils.cleanDirectory( self.workdir )
         # unpack our two external dependencies
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
-        files = [ os.path.basename( openssl ) ]
-        files.append( os.path.basename( dbuslib ) )
+        files = [ os.path.basename( self.openssl ) ]
+        files.append( os.path.basename( self.dbuslib ) )
         if not utils.unpackFiles( self.downloaddir, files, thirdparty_dir ):
             return False
 
