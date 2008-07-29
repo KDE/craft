@@ -4,6 +4,7 @@ import info
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/libarchive-2.4.12-1-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/libarchive-2.4.12-1-dep.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/libarchive-2.4.12-1-lib.zip
 """
 
 class subinfo(info.infoclass):
