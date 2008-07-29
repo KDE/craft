@@ -284,6 +284,15 @@ def isInstalled( category, package, version ):
         develpack = os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.mft" )
         if( os.path.isfile( releasepack ) or os.path.isfile( develpack ) ):
             found = True
+
+    if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" ):
+        """ check for any installation """
+        if package.endswith( "-src" ):
+            package = package[:-4]
+        for filename in os.listdir( os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
+            if filename.startswith( package ):
+                found = True
+                break
     return found
 
 def addInstalled( category, package, version ):
