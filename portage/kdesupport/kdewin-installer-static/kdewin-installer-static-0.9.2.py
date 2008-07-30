@@ -2,6 +2,7 @@ import base
 import utils
 import sys
 import info
+import os.path
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
