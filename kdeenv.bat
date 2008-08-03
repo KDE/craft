@@ -37,6 +37,7 @@ goto :eof
     set PATH=%KDEROOT%\lib;%PATH%
     set PATH=%KDEROOT%\bin;%PATH%
     set KDEDIRS=%KDEROOT%
+    set QT_PLUGIN_PATH=%KDEROOT%\plugins
     goto :eof
 
 :: traditional layout: depending on the categories, there exist subfolders in %KDEROOT%: gnuwin32 for the gnuwin32 packages, qt
@@ -45,6 +46,7 @@ goto :eof
     set PATH=%KDEROOT%\gnuwin32\bin;%PATH%
     set PATH=%KDEROOT%\subversion\bin;%PATH%
     set PATH=%KDEROOT%\qt\bin;%PATH%
+    set QT_PLUGIN_PATH=%KDEROOT%\qt\plugins
     set PATH=%KDEROOT%\cmake\bin;%PATH%
     set PATH=%KDEROOT%\kdewin32\bin;%PATH%
     set PATH=%KDEROOT%\win32libs\bin;%PATH%
