@@ -1,0 +1,40 @@
+import base
+import info
+import os
+
+class subinfo( info.infoclass ):
+    def setTargets( self ):
+        self.targets['2.4.8'] = 'http://www.cmake.org/files/v2.4/cmake-2.4.8.zip'
+        self.targets['2.6.0'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.0.zip'
+        self.targets['2.6.1'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.1.zip'
+        self.targetInstSrc['2.4.8'] = 'cmake-2.4.8'
+        self.targetInstSrc['2.6.0'] = 'cmake-2.6.0'
+        self.targetInstSrc['2.6.1'] = 'cmake-2.6.1'
+        self.defaultTarget = '2.6.1'
+
+class subclass(base.baseclass):
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
+        self.subinfo = subinfo()
+
+    def execute( self ):
+        base.baseclass.execute( self )
+        return True
+
+    def unpack( self ):
+        base.baseclass.unpack( self ) or utils.die( "unpack failed" )
+        return True
+
+    def compile( self ):
+        return self.kdeCompile()
+
+    def install( self ):
+        return self.kdeInstall()
+
+    def make_package( self ):
+    # now do packaging with kdewin-packager
+        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        return True
+
+if __name__ == '__main__':
+    subclass().execute()
