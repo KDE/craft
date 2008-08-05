@@ -21,14 +21,14 @@ class subclass( base.baseclass ):
     def unpack( self ):
         print "kmess unpack called"
         # do the svn fetch/update
-        repo = "http://kmess.svn.sourceforge.net/svnroot/kmess/trunk/kmess/"
+        repo = "http://kmess.svn.sourceforge.net/svnroot/kmess/trunk/kmess"
         self.svnFetch( repo )
 
         utils.cleanDirectory( self.workdir )
 
         # now copy the tree below destdir/trunk to workdir
-        srcdir = os.path.join( self.svndir )
-        destdir = os.path.join( self.workdir )
+        srcdir = os.path.join( self.svndir, "kmess" )
+        destdir = os.path.join( self.workdir, "kmess" )
         utils.copySrcDirToDestDir( srcdir, destdir )
 
         os.chdir( destdir )
