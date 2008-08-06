@@ -1,5 +1,5 @@
---- cmake-2.6.1/Source/CMakeLists.txt.old	2008-08-01 11:34:00.000000000 +0200
-+++ cmake-2.6.1/Source/CMakeLists.txt	2008-08-06 02:19:33.265625000 +0200
+--- cmake-2.6.1\Source\CMakeLists.txt.old 2008-08-01 11:34:00.000000000 +0200
++++ cmake-2.6.1\Source\CMakeLists.txt 2008-08-06 02:19:33.265625000 +0200
 @@ -417,6 +417,13 @@
  ADD_EXECUTABLE(cpack CPack/cpack.cxx)
  TARGET_LINK_LIBRARIES(cpack CPackLib)
