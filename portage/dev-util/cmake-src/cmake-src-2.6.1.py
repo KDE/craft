@@ -23,6 +23,9 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         base.baseclass.unpack( self ) or utils.die( "unpack failed" )
+        if self.buildTarget == '2.6.1' and not self.compiler == "mingw":
+            cmd = "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir , "comsuppw-2.6.1.diff" ) )
+            self.system( cmd )
         return True
 
     def compile( self ):
