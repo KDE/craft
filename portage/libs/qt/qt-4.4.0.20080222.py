@@ -14,6 +14,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.targets['4.4.0'] = 'ftp://ftp.trolltech.com/pub/qt/source/qt-win-opensource-src-4.4.0.zip'
+        self.targets['4.4.1'] = 'ftp://ftp.trolltech.com/pub/qt/source/qt-win-opensource-src-4.4.1.zip'
         self.svnTargets['svnHEAD'] = 'trunk/qt-copy'
         self.defaultTarget = 'svnHEAD'
 
@@ -164,7 +166,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( "qt", "4.4.0-6", False )
+        return self.doPackaging( "qt", "4.4.1-1", False )
 
 if __name__ == '__main__':
     subclass().execute()
