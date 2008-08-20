@@ -2,6 +2,7 @@ import base
 import os
 import sys
 import info
+import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
