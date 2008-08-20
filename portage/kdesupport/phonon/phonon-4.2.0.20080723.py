@@ -33,7 +33,7 @@ class subclass(base.baseclass):
             compile the DirectShow 9 backend.
             """
             os.environ["DXSDK_DIR"] = os.path.join( self.rootdir, "include", "mingw" )
-        
+        self.kdeCustomDefines="-DPHONON_BUILD_EXAMPLES=ON -DPHONON_BUILD_TESTS=ON"
         return self.kdeCompile()
 
     def install( self ):
