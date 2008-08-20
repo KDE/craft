@@ -43,6 +43,9 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         if self.buildTarget == '1.9.95.10':
+            if( not base.baseclass.unpack( self ) ):
+                return False
+                
             src = os.path.join( self.workdir, self.instsrcdir )
 
             cmd = "cd %s && patch -p0 < %s" % \
@@ -50,7 +53,9 @@ class subclass(base.baseclass):
             if utils.verbose() >= 1:
                 print cmd
             self.system( cmd ) or die( "patch" )
-        return self.kdeSvnUnpack()
+            return True
+        else:
+            return self.kdeSvnUnpack()
 
     def compile( self ):
         return self.kdeCompile()
