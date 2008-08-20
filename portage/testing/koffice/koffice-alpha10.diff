@@ -1,0 +1,226 @@
+Index: filters/kword/CMakeLists.txt
+===================================================================
+--- filters/kword/CMakeLists.txt	(revision 849386)
++++ filters/kword/CMakeLists.txt	(revision 849387)
+@@ -14,12 +14,12 @@
+ #html FIXME: export dialog is Qt 3 version ui file
+ if(NOT WIN32)
+ add_subdirectory( html )
++add_subdirectory( mswrite )
+ endif(NOT WIN32)
+ add_subdirectory( kword1.3 )
+ add_subdirectory( hancomword )
+ message(STATUS "When latex is reactivated (if?) also port it to GraphicsMagick, to make life easy for Isaac.")
+ #add_subdirectory( latex )
+-add_subdirectory( mswrite )
+ add_subdirectory( oowriter )
+ add_subdirectory( palmdoc )
+ # add_subdirectory( pdf )
+Index: filters/CMakeLists.txt
+===================================================================
+--- filters/CMakeLists.txt	(revision 849401)
++++ filters/CMakeLists.txt	(revision 849402)
+@@ -55,9 +55,9 @@
+ endif(SHOULD_BUILD_KRITA)
+ 
+ #macro_optional_add_subdirectory(kivio)
+-if(LIBXML2_FOUND AND LIBXSLT_FOUND)
++if(LIBXML2_FOUND AND LIBXSLT_FOUND AND NOT WIN32)
+ 	add_subdirectory(xsltfilter)
+-endif(LIBXML2_FOUND AND LIBXSLT_FOUND)	
++endif(LIBXML2_FOUND AND LIBXSLT_FOUND AND NOT WIN32)	
+ 
+ message (STATUS "Re-add kivio filters, karbon filter, kpresenter filters")
+ MESSAGE( STATUS "Readd or not Kformula filter: Status ?")
+Index: krita/plugins/paintops/libpaintop/kis_paintop_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_paintop_option.h	(revision 849419)
++++ krita/plugins/paintops/libpaintop/kis_paintop_option.h	(revision 849420)
+@@ -23,6 +23,7 @@
+ #include <QString>
+ #include <QWidget>
+ #include <kis_types.h>
++#include "kis_paintop_preset.h"
+ 
+ /**
+  * Base interface for paintop options. A paintop option
+Index: krita/plugins/paintops/sumie/kis_sumipaintop.cpp
+===================================================================
+--- krita/plugins/paintops/sumie/kis_sumipaintop.cpp	(revision 849430)
++++ krita/plugins/paintops/sumie/kis_sumipaintop.cpp	(revision 849431)
+@@ -30,6 +30,7 @@
+ 
+ #include <KoColor.h>
+ #include <KoColorSpace.h>
++#include <KoInputDevice.h>
+ 
+ #include <kis_image.h>
+ #include <kis_debug.h>
+Index: krita/plugins/viewplugins/CMakeLists.txt
+===================================================================
+--- krita/plugins/viewplugins/CMakeLists.txt	(revision 849529)
++++ krita/plugins/viewplugins/CMakeLists.txt	(revision 849530)
+@@ -27,9 +27,9 @@
+ macro_log_feature(HAVE_OPENGL "OpenGL" "The Krita shader filter plugin will not be built" "" FALSE "")
+ macro_log_feature(HAVE_GLEW "GLEW" "The Krita shader filter plugin will not be built" "http://glew.sourceforge.net" FALSE "")
+ 
+-if (EIGEN2_FOUND AND GMM_FOUND)
++if (EIGEN2_FOUND AND GMM_FOUND AND NOT MSVC)
+     add_subdirectory( panorama )
+-endif (EIGEN2_FOUND AND GMM_FOUND)
++endif (EIGEN2_FOUND AND GMM_FOUND AND NOT MSVC)
+ 
+ if(HAVE_OPENGL AND HAVE_GLEW)
+    add_subdirectory( glsl )
+Index: karbon/plugins/tools/CalligraphyTool/KarbonCalligraphyTool.cpp
+===================================================================
+--- karbon/plugins/tools/CalligraphyTool/KarbonCalligraphyTool.cpp	(revision 849548)
++++ karbon/plugins/tools/CalligraphyTool/KarbonCalligraphyTool.cpp	(revision 849549)
+@@ -222,7 +222,7 @@
+         }
+ 
+         // y is inverted in qt painting
+-        m_angle = std::atan( -event->yTilt() / event->xTilt() ) + M_PI/2;
++        m_angle = std::atan( static_cast<double>(-event->yTilt() / event->xTilt()) ) + M_PI/2;
+     }
+     else
+     {
+Index: krita/image/tests/kis_threaded_applicator_test.cpp
+===================================================================
+--- krita/image/tests/kis_threaded_applicator_test.cpp	(revision 849691)
++++ krita/image/tests/kis_threaded_applicator_test.cpp	(revision 849692)
+@@ -69,7 +69,7 @@
+ 
+ class TestJobFactory : public KisJobFactory {
+ public:
+-    ThreadWeaver::Job * createJob(QObject * parent, KisPaintDeviceSP dev,  const QRect & rc, int margin, KoUpdater updater = 0)
++    ThreadWeaver::Job * createJob(QObject * parent, KisPaintDeviceSP dev,  const QRect & rc, int margin, KoUpdater updater)
+         {
+             Q_UNUSED(updater);
+             return new TestJob( parent, dev, rc, margin );
+Index: kis_painter.h
+===================================================================
+--- kis_painter.h	(revision 849398)
++++ kis_painter.h	(working copy)
+@@ -455,7 +455,7 @@
+     void KDE_DEPRECATED setBrush(KisBrush* brush);
+ 
+     /// Returns the currently set brush
+-    KisBrush* KDE_DEPRECATED brush() const;
++    KDE_DEPRECATED KisBrush* brush() const;
+ 
+     /// Set the paintop preset to use
+     void setPaintOpPreset( KisPaintOpPresetSP preset );
+Index: filters/kword/CMakeLists.txt
+===================================================================
+--- filters/kword/CMakeLists.txt	(revision 849386)
++++ filters/kword/CMakeLists.txt	(revision 849387)
+@@ -14,12 +14,12 @@
+ #html FIXME: export dialog is Qt 3 version ui file
+ if(NOT WIN32)
+ add_subdirectory( html )
++add_subdirectory( mswrite )
+ endif(NOT WIN32)
+ add_subdirectory( kword1.3 )
+ add_subdirectory( hancomword )
+ message(STATUS "When latex is reactivated (if?) also port it to GraphicsMagick, to make life easy for Isaac.")
+ #add_subdirectory( latex )
+-add_subdirectory( mswrite )
+ add_subdirectory( oowriter )
+ add_subdirectory( palmdoc )
+ # add_subdirectory( pdf )
+Index: filters/CMakeLists.txt
+===================================================================
+--- filters/CMakeLists.txt	(revision 849401)
++++ filters/CMakeLists.txt	(revision 849402)
+@@ -55,9 +55,9 @@
+ endif(SHOULD_BUILD_KRITA)
+ 
+ #macro_optional_add_subdirectory(kivio)
+-if(LIBXML2_FOUND AND LIBXSLT_FOUND)
++if(LIBXML2_FOUND AND LIBXSLT_FOUND AND NOT WIN32)
+ 	add_subdirectory(xsltfilter)
+-endif(LIBXML2_FOUND AND LIBXSLT_FOUND)	
++endif(LIBXML2_FOUND AND LIBXSLT_FOUND AND NOT WIN32)	
+ 
+ message (STATUS "Re-add kivio filters, karbon filter, kpresenter filters")
+ MESSAGE( STATUS "Readd or not Kformula filter: Status ?")
+Index: krita/plugins/paintops/libpaintop/kis_paintop_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_paintop_option.h	(revision 849419)
++++ krita/plugins/paintops/libpaintop/kis_paintop_option.h	(revision 849420)
+@@ -23,6 +23,7 @@
+ #include <QString>
+ #include <QWidget>
+ #include <kis_types.h>
++#include "kis_paintop_preset.h"
+ 
+ /**
+  * Base interface for paintop options. A paintop option
+Index: krita/plugins/paintops/sumie/kis_sumipaintop.cpp
+===================================================================
+--- krita/plugins/paintops/sumie/kis_sumipaintop.cpp	(revision 849430)
++++ krita/plugins/paintops/sumie/kis_sumipaintop.cpp	(revision 849431)
+@@ -30,6 +30,7 @@
+ 
+ #include <KoColor.h>
+ #include <KoColorSpace.h>
++#include <KoInputDevice.h>
+ 
+ #include <kis_image.h>
+ #include <kis_debug.h>
+Index: krita/plugins/viewplugins/CMakeLists.txt
+===================================================================
+--- krita/plugins/viewplugins/CMakeLists.txt	(revision 849529)
++++ krita/plugins/viewplugins/CMakeLists.txt	(revision 849530)
+@@ -27,9 +27,9 @@
+ macro_log_feature(HAVE_OPENGL "OpenGL" "The Krita shader filter plugin will not be built" "" FALSE "")
+ macro_log_feature(HAVE_GLEW "GLEW" "The Krita shader filter plugin will not be built" "http://glew.sourceforge.net" FALSE "")
+ 
+-if (EIGEN2_FOUND AND GMM_FOUND)
++if (EIGEN2_FOUND AND GMM_FOUND AND NOT MSVC)
+     add_subdirectory( panorama )
+-endif (EIGEN2_FOUND AND GMM_FOUND)
++endif (EIGEN2_FOUND AND GMM_FOUND AND NOT MSVC)
+ 
+ if(HAVE_OPENGL AND HAVE_GLEW)
+    add_subdirectory( glsl )
+Index: karbon/plugins/tools/CalligraphyTool/KarbonCalligraphyTool.cpp
+===================================================================
+--- karbon/plugins/tools/CalligraphyTool/KarbonCalligraphyTool.cpp	(revision 849548)
++++ karbon/plugins/tools/CalligraphyTool/KarbonCalligraphyTool.cpp	(revision 849549)
+@@ -222,7 +222,7 @@
+         }
+ 
+         // y is inverted in qt painting
+-        m_angle = std::atan( -event->yTilt() / event->xTilt() ) + M_PI/2;
++        m_angle = std::atan( static_cast<double>(-event->yTilt() / event->xTilt()) ) + M_PI/2;
+     }
+     else
+     {
+Index: krita/image/tests/kis_threaded_applicator_test.cpp
+===================================================================
+--- krita/image/tests/kis_threaded_applicator_test.cpp	(revision 849691)
++++ krita/image/tests/kis_threaded_applicator_test.cpp	(revision 849692)
+@@ -69,7 +69,7 @@
+ 
+ class TestJobFactory : public KisJobFactory {
+ public:
+-    ThreadWeaver::Job * createJob(QObject * parent, KisPaintDeviceSP dev,  const QRect & rc, int margin, KoUpdater updater = 0)
++    ThreadWeaver::Job * createJob(QObject * parent, KisPaintDeviceSP dev,  const QRect & rc, int margin, KoUpdater updater)
+         {
+             Q_UNUSED(updater);
+             return new TestJob( parent, dev, rc, margin );
+Index: krita/image/kis_painter.h
+===================================================================
+--- krita/image/kis_painter.h	(revision 849398)
++++ krita/image/kis_painter.h	(working copy)
+@@ -455,7 +455,7 @@
+     void KDE_DEPRECATED setBrush(KisBrush* brush);
+ 
+     /// Returns the currently set brush
+-    KisBrush* KDE_DEPRECATED brush() const;
++    KDE_DEPRECATED KisBrush* brush() const;
+ 
+     /// Set the paintop preset to use
+     void setPaintOpPreset( KisPaintOpPresetSP preset );
