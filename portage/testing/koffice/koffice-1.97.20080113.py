@@ -49,7 +49,7 @@ class subclass(base.baseclass):
             src = os.path.join( self.workdir, self.instsrcdir )
 
             cmd = "cd %s && patch -p0 < %s" % \
-                  ( self.workdir, os.path.join( self.packagedir , "koffice-alpha10.diff" ) )
+                  ( src, os.path.join( self.packagedir , "koffice-alpha10.diff" ) )
             if utils.verbose() >= 1:
                 print cmd
             self.system( cmd ) or die( "patch" )
