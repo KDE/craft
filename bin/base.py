@@ -439,6 +439,11 @@ class baseclass:
         USE_PEXPORTS = HAVE_PEXPORTS
         HAVE_LIB = utils.test4application( "lib" )
         HAVE_DLLTOOL = utils.test4application( "dlltool" )
+        if utils.verbose() > 1:
+            print "pexports found:", HAVE_PEXPORTS
+            print "pexports used:", USE_PEXPORTS
+            print "lib found:", HAVE_LIB
+            print "dlltool found:", HAVE_DLLTOOL
         
         dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
         defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
@@ -452,12 +457,11 @@ class baseclass:
         if not HAVE_PEXPORTS:
             utils.warning( "system does not have pexports.exe" )
             return False
-        if not HAVE_LIB :
+        if not HAVE_LIB:
             utils.warning( "system does not have lib.exe (from msvc)" )
-            return False
-        if not HAVE_DLLTOOL:
-            utils.warning( "system does not have dlltool.exe" )
-            return False
+            if not HAVE_DLLTOOL:
+                utils.warning( "system does not have dlltool.exe" )
+                return False
 
         # create .def
         if USE_PEXPORTS:
