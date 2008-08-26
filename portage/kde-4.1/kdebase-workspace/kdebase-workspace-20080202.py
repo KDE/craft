@@ -40,13 +40,13 @@ class subclass(base.baseclass):
         self.kdeCustomDefines += " -DBUILD_kmenuedit=OFF"
         self.kdeCustomDefines += " -DBUILD_krunner=OFF"
         self.kdeCustomDefines += " -DBUILD_kwin=OFF"
-        self.kdeCustomDefines += " -DBUILD_plasma=OFF"
         self.kdeCustomDefines += " -DBUILD_printer-applet=OFF"
         self.kdeCustomDefines += " -DBUILD_kstartupconfig=OFF"
         self.kdeCustomDefines += " -DBUILD_khotkeys=OFF"
         self.kdeCustomDefines += " -DBUILD_kcontrol=OFF"
         self.kdeCustomDefines += " -DBUILD_ksystraycmd=OFF"
-        self.kdeCustomDefines += " -DBUILD_doc=OFF"
+#        self.kdeCustomDefines += " -DBUILD_plasma=OFF"
+#        self.kdeCustomDefines += " -DBUILD_doc=OFF"
 #        self.kdeCustomDefines += " -DBUILD_wallpapers=OFF"
    
         return self.kdeCompile()
