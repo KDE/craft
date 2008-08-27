@@ -13,6 +13,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.1'
 
     def setDependencies( self ):
+        self.hardDependencies['testing/libgs'] = 'default'
+
+    def setDependencies( self ):
         """ """
         self.hardDependencies['gnuwin32/wget'] = 'default'
         
