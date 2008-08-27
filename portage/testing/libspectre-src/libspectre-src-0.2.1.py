@@ -11,7 +11,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.2.1'] = "libspectre-0.2.1"
         self.defaultTarget = '0.2.1'
     def setDependencies( self ):
-        self.hardDependencies['testing/libgs'] = 'default'
+        #self.hardDependencies['testing/libgs'] = 'default'
+        pass
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
