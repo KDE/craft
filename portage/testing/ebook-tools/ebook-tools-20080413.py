@@ -19,12 +19,25 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
+        self.createCombinedPackage = True
 
     def compile( self ):
         return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
+
+    def make_package( self ):
+        self.instsrcdir = ""
+
+        # auto-create both import libs with the help of pexports
+        self.createImportLibs( "libepub" )
+
+        # now do packaging with kdewin-packager
+        self.doPackaging( "ebook-tools", "0.1.0", True )
+
+        return True
+  
 
 if __name__ == '__main__':
     subclass().execute()
