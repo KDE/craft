@@ -60,6 +60,11 @@ diff -Nru libspectre-0.2.1.orig/CMakeLists.txt libspectre-0.2.1/CMakeLists.txt
 +                     ${CMAKE_CURRENT_SOURCE_DIR}/libspectre)
 +
 +add_definitions(-DHAVE_CONFIG_H)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
 +add_library(spectre SHARED ${spectre_SRCS})
 +target_link_libraries(spectre ${GS_LIBRARY})
 +
