@@ -1,7 +1,7 @@
 diff -Nru libspectre-0.2.1.orig/CMakeLists.txt libspectre-0.2.1/CMakeLists.txt
 --- libspectre-0.2.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libspectre-0.2.1/CMakeLists.txt	2008-08-27 01:50:18.781250000 +0200
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,72 @@
 +project(spectre)
 +
 +set(PACKAGE "libspectre")
