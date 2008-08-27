@@ -2,7 +2,7 @@ import base
 import os
 import utils
 import info
-import shutil
+import sys
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -34,7 +34,7 @@ class subclass(base.baseclass):
     def make_package( self ):
         self.instsrcdir = ""
 
-        self.doPackaging( "spectre", os.path.basename(sys.argv[0]).replace("spectre-src-", "").replace(".py", ""), True )
+        self.doPackaging( "libspectre", os.path.basename(sys.argv[0]).replace("libspectre-src-", "").replace(".py", ""), True )
         return True
   
 if __name__ == '__main__':
