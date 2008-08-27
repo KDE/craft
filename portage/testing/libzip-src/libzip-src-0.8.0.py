@@ -37,10 +37,10 @@ class subclass(base.baseclass):
         self.instsrcdir = ""
 
         # auto-create both import libs with the help of pexports
-#        self.createImportLibs( "libzip" )
+        self.createImportLibs( "libzip" )
 
         # now do packaging with kdewin-packager
-#        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+        self.doPackaging( "libzip", "0.8.0", True )
 
         return True
   
