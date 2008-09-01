@@ -8,20 +8,24 @@ import info
 
 PACKAGE_NAME         = "sqlite"
 PACKAGE_DLL_NAME     = "sqlite3"
-PACKAGE_VER          = "3.5.4"
-PACKAGE_FULL_VER     = "3.5.4"
+PACKAGE_VER_MAJOR    = "3"
+PACKAGE_VER_MINOR    = "6"
+PACKAGE_VER_RELEASE  = "2"
+PACKAGE_VER          = "%s.%s.%s" % ( PACKAGE_VER_MAJOR, PACKAGE_VER_MINOR, PACKAGE_VER_RELEASE )
+PACKAGE_FULL_VER     = PACKAGE_VER
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
+PACKAGE_FULL_NAME    = "%s_%s_%s" % ( PACKAGE_VER_MAJOR, PACKAGE_VER_MINOR, PACKAGE_VER_RELEASE )
 
 SRC_URI= """
-http://www.sqlite.org/sqlite-3_5_4.zip
-http://www.sqlite.org/sqlitedll-3_5_4.zip
-http://www.sqlite.org/sqlite-amalgamation-3_5_4.zip
-"""
+http://www.sqlite.org/sqlite-%s_%s_%s.zip
+http://www.sqlite.org/sqlitedll-%s_%s_%s.zip
+http://www.sqlite.org/sqlite-amalgamation-%s_%s_%s.zip
+""" % ( PACKAGE_VER_MAJOR, PACKAGE_VER_MINOR, PACKAGE_VER_RELEASE, PACKAGE_VER_MAJOR, PACKAGE_VER_MINOR, PACKAGE_VER_RELEASE, PACKAGE_VER_MAJOR, PACKAGE_VER_MINOR, PACKAGE_VER_RELEASE )
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.5.4'] = SRC_URI
-        self.defaultTarget = '3.5.4'
+        self.targets[PACKAGE_VER] = SRC_URI
+        self.defaultTarget = PACKAGE_VER
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
