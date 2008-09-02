@@ -66,10 +66,11 @@ class subclass(base.baseclass):
         sedcommand = r""" -e "s:SUBDIRS += examples::" -e "s:SUBDIRS += demos::" """
         utils.sedFile( qtsrcdir, "projects.pro", sedcommand )
 
-        # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
-        cmd = "cd %s && patch -p0 < %s" % \
-          ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
-        self.system( cmd )
+        if not self.subinfo.buildTarget == "svnHEAD":
+            # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
+            cmd = "cd %s && patch -p0 < %s" % \
+              ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
+            self.system( cmd )
 
         # make qmake.exe create correct makefiles (moc und uic paths, reported to qt-bugs)
         cmd = "cd %s && patch -p0 < %s" % \
