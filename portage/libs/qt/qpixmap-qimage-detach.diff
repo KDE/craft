@@ -21,10 +21,10 @@ saves a pointer to the paintEngine *before* the detach is done. So QPainter
 paints on the wrong paintEngine and we get a warning + crash.
 
 
-Index: src/gui/image/qpixmap.cpp
+Index: src\gui\image\qpixmap.cpp
 ===================================================================
---- src/gui/image/qpixmap.cpp	(revision 813015)
-+++ src/gui/image/qpixmap.cpp	(working copy)
+--- src\gui\image\qpixmap.cpp	(revision 813015)
++++ src\gui\image\qpixmap.cpp	(working copy)
 @@ -1813,6 +1813,7 @@
      if (rasterData->texture)
          rasterData->texture->Release();
