@@ -1,0 +1,88 @@
+--- include\archive.h	2008-09-03 03:25:12.468750000 +0200
++++ include\archive.h	2008-09-03 03:54:55.296875000 +0200
+@@ -35,11 +35,12 @@
+  */
+ 
+ #include <sys/types.h>  /* Linux requires this for off_t */
+-#include <inttypes.h> /* For int64_t */
+ #include <stdio.h> /* For FILE * */
+ #ifndef _WIN32
++#include <inttypes.h> /* For int64_t */
+ #include <unistd.h>  /* For ssize_t and size_t */
+ #else
++#include <stdint.h>
+ #include "libarchive-nonposix.h"
+ #endif
+ 
+--- include\archive_entry.h	2008-09-03 03:25:12.468750000 +0200
++++ include\archive_entry.h	2008-09-03 03:53:00.265625000 +0200
+@@ -28,7 +28,7 @@
+ #ifndef ARCHIVE_ENTRY_H_INCLUDED
+ #define	ARCHIVE_ENTRY_H_INCLUDED
+ 
+-#ifndef __GNUC__
++#if (defined __WIN32__) || (defined _WIN32)
+ # define __DLL_IMPORT__  __declspec(dllimport)
+ # define __DLL_EXPORT__  __declspec(dllexport)
+ #else
+@@ -322,7 +322,7 @@
+  * have been found.  If the nlinks value is zero, it will keep every
+  * name in the cache indefinitely, which can use a lot of memory.
+  */
+-LIBARCHIVE_DLL_IMPEXP struct archive_entry_linkresolver;
++struct archive_entry_linkresolver;
+ 
+ LIBARCHIVE_DLL_IMPEXP struct archive_entry_linkresolver *archive_entry_linkresolver_new(void);
+ LIBARCHIVE_DLL_IMPEXP void archive_entry_linkresolver_free(struct archive_entry_linkresolver *);
+--- include\libarchive-nonposix.h	2008-09-03 03:25:12.484375000 +0200
++++ include\libarchive-nonposix.h	2008-09-03 04:01:43.828125000 +0200
+@@ -50,8 +50,8 @@
+ #undef gid_t
+ #undef id_t
+ #undef ssize_t
+-typedef int uid_t;
+-typedef int gid_t;
++//typedef int uid_t;
++//typedef int gid_t;
+ typedef int id_t;
+ #ifndef _SSIZE_T_
+ typedef long ssize_t;
+@@ -69,6 +69,7 @@
+ #endif /* STDERR_FILENO  */
+ 
+ /* Alias the Windows _function to the POSIX equivalent. */
++#ifndef _WIN32
+ #define	chdir		_chdir
+ #define	chmod		_chmod
+ #define	close		_close
+@@ -89,6 +90,7 @@
+ #define	tzset		_tzset
+ #define	umask		_umask
+ #define	write		_write
++#endif
+ 
+ #ifdef _S_IFBLK
+ # undef _S_IFBLK
+@@ -276,7 +278,7 @@
+ #endif
+ 
+ extern char *fullname (const char *name);
+-extern int readlink (const char *path, char *buf, size_t len);
++//extern int readlink (const char *path, char *buf, size_t len);
+ extern int link (const char *from, const char *to);
+ extern int symlink (const char *from, const char *to);
+ extern int utimes (const char *path, const struct timeval times[2]);
+@@ -284,10 +286,10 @@
+ extern int fcntl (int fd, int cmd, ...);
+ extern int fork ();
+ extern pid_t vfork (void);
+-extern int setenv (const char *name, const char *value, int replace);
+-extern int unsetenv (const char *name);
++//extern int setenv (const char *name, const char *value, int replace);
++//extern int unsetenv (const char *name);
+ extern int pipe (int pipedes[2]);
+-extern unsigned int sleep (unsigned int seconds);
++//extern unsigned int sleep (unsigned int seconds);
+ extern pid_t waitpid (pid_t pid, int *stat_loc, int options);
+ 
+ #ifdef __cplusplus
