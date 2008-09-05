@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/kdepim/enterprise4/kdebase-4.0.83/runtime'
+        self.svnTargets['svnHEAD'] = 'branches/kdepim/enterprise4/kdebase-4.1-branch/runtime'
         for ver in ['74', '80', '83']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdebase-runtime-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdebase-runtime-enterprise4-4.0.' + ver
