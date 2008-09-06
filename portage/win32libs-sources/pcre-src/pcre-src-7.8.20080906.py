@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['7.6', '7.7']:
+        for ver in ['7.6', '7.7', '7.8']:
           self.targets[ver] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'pcre-' + ver
         self.defaultTarget = '7.7'
