@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.0.0-5'] = 'http://delta.affinix.com/download/qca/2.0/qca-2.0.0.tar.bz2'
-        self.targetInstSrc['2.0.0-5'] = 'qca-2.0.0'
+        self.svnTargets['2.0.0-5'] = 'tags/qca/2.0.0'
+        self.svnTargets['2.0.1-1'] = 'tags/qca/2.0.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
         self.defaultTarget = 'svnHEAD'
 
