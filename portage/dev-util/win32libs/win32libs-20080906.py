@@ -75,16 +75,16 @@ if os.getenv("KDECOMPILER") == "mingw":
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.7-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.8-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.8-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-lib.tar.bz2
 
-http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.7-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.8-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.8-lib.tar.bz2
 """
 
 class subinfo(info.infoclass):
