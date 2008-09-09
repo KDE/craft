@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['gnuwin32/coreutils'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
