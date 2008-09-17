@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
         self.svnTargets['1.9.95.8'] = "tags/koffice/1.9.95.8/koffice"
         self.svnTargets['1.9.95.9'] = "tags/koffice/1.9.95.9/koffice"
+        self.svnTargets['1.9.98.0'] = "tags/koffice/1.9.98.0/koffice"
         self.targets['1.9.95.10'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.95.10/src/koffice-1.9.95.10.tar.bz2'
         self.targetInstSrc['1.9.95.10'] = 'koffice-1.9.95.10'
         self.defaultTarget = 'svnHEAD'
