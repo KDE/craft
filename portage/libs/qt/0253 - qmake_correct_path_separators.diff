@@ -1,3 +1,12 @@
+qt-bugs@ issue : none
+Trolltech task ID : 214661
+applied: no
+author: Christian Ehrlicher <ch.ehrlicher@gmx.de>
+
+When using qmake outside qt src tree, it sometimes generates wrong
+paths (wrong path separator)
+
+
 --- qmake\property.cpp.orig	2008-05-08 21:16:15.902625000 +0200
 +++ qmake\property.cpp	2008-05-08 21:16:10.481500000 +0200
 @@ -83,29 +83,32 @@

@@ -1,3 +1,11 @@
+qt-bugs@ issue : none
+Trolltech task ID : none
+applied: no
+author: 
+
+compile with installed msvc2008 feature pack
+
+
 --- src\3rdparty\webkit\JavaScriptCore\wtf\MathExtras.h.orig	2008-06-28 17:07:01.703125000 +0200
 +++ src\3rdparty\webkit\JavaScriptCore\wtf\MathExtras.h	2008-06-28 18:39:54.468750000 +0200
 @@ -46,7 +46,11 @@

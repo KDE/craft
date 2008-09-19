@@ -14,8 +14,6 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.4.0'] = 'ftp://ftp.trolltech.com/pub/qt/source/qt-win-opensource-src-4.4.0.zip'
-        self.targets['4.4.1'] = 'ftp://ftp.trolltech.com/pub/qt/source/qt-win-opensource-src-4.4.1.zip'
         self.svnTargets['svnHEAD'] = 'trunk/qt-copy'
         self.defaultTarget = 'svnHEAD'
 
@@ -52,48 +50,19 @@ class subclass(base.baseclass):
             return False
 
         # and now qt
-        qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
-
-        utils.cleanDirectory( qtsrcdir )
         self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
 
-        # noCopy isn't possible for qt
-        if self.noCopy:
-            srcdir = os.path.join(self.kdesvndir, self.kdeSvnPath() )
-            utils.copySrcDirToDestDir( srcdir, qtsrcdir )
+        svnpath = os.path.join( self.kdesvndir, self.kdeSvnPath() )
 
-        # disable demos and examples
-        sedcommand = r""" -e "s:SUBDIRS += examples::" -e "s:SUBDIRS += demos::" """
-        utils.sedFile( qtsrcdir, "projects.pro", sedcommand )
-
-        if not self.subinfo.buildTarget == "svnHEAD":
-            # disable debug build of qdbus tools to avoid linking problems (reported on kde-windows)
-            cmd = "cd %s && patch -p0 < %s" % \
-              ( qtsrcdir, os.path.join( self.packagedir, "qdbus-qt4.4.diff" ) )
-            self.system( cmd )
-
-        # make qmake.exe create correct makefiles (moc und uic paths, reported to qt-bugs)
-        cmd = "cd %s && patch -p0 < %s" % \
-          ( qtsrcdir, os.path.join( self.packagedir, "qt_qmake.diff" ) )
-        self.system( cmd )
+        # use our configure.exe until tt has the patches upstream
+        src = os.path.join( self.packagedir, "configure.exe" )
+        dst = os.path.join( svnpath, "configure.exe" )
+        shutil.copyfile( src, dst )
         
-        # patch to fix okular, sent to qt-bugs 08.06.08
-        cmd = "cd %s && patch -p0 < %s" % \
-          ( qtsrcdir, os.path.join( self.packagedir, "qpixmap-qimage-detach.diff" ) )
+        # apply patches
+        cmd = "cd %s && apply_patches.py" % svnpath
         self.system( cmd )
-        
-        # QtWebkit does not build if VC++ 2008 Feature Pack is installed
-        if self.compiler == "msvc2008":
-            cmd = "cd %s && patch -p0 < %s" % \
-                ( qtsrcdir, os.path.join( self.packagedir, "msvc2008_feature_pack_xmath_fix.diff" ) )
-            self.system( cmd )
 
-
-        # looks like this doesn't work... hmm
-        cmd = " cd %s && %s /nopause" % \
-          ( os.path.join( qtsrcdir, "patches" ), "apply_patches.bat" )
-        self.system( cmd )
-        
         return True
 
     def compile( self ):

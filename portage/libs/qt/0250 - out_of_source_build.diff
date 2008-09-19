@@ -1,0 +1,77 @@
+qt-bugs@ issue : N227213
+Trolltech task ID : none yet
+applied: no
+author: Christian Ehrlicher <ch.ehrlicher@gmx.de>
+        Ralf Habacker <ralf.habacker@freenet.de>
+
+Fix configure.exe to do an out-of-source build on windows
+
+
+Index: qmake/Makefile.win32
+===================================================================
+--- qmake/Makefile.win32	(revision 859598)
++++ qmake/Makefile.win32	(working copy)
+@@ -32,7 +32,7 @@
+               -I$(BUILD_PATH)\include -I$(BUILD_PATH)\include\QtCore \
+               -I$(SOURCE_PATH)\include -I$(SOURCE_PATH)\include\QtCore \
+               -I$(BUILD_PATH)\src\corelib\global \
+-              -I$(BUILD_PATH)\include\QtScript \
++              -I$(SOURCE_PATH)\include\QtScript \
+               -I$(SOURCE_PATH)\mkspecs\$(QMAKESPEC)  \
+               -DQT_NO_TEXTCODEC -DQT_NO_UNICODETABLES -DQT_LITE_COMPONENT -DQT_NODLL -DQT_NO_STL \
+               -DQT_NO_COMPRESS -DUNICODE -DHAVE_QCONFIG_CPP -DQT_BUILD_QMAKE -DQT_NO_THREAD \
+Index: qmake/Makefile.win32-g++
+===================================================================
+--- qmake/Makefile.win32-g++	(revision 859598)
++++ qmake/Makefile.win32-g++	(working copy)
+@@ -18,7 +18,7 @@
+ 		-I$(BUILD_PATH)/include -I$(BUILD_PATH)/include/QtCore \
+ 		-I$(SOURCE_PATH)/include -I$(SOURCE_PATH)/include/QtCore \
+ 		-I$(BUILD_PATH)/src/corelib/global \
+-	        -I$(BUILD_PATH)/include/QtScript \
++		-I$(SOURCE_PATH)/include/QtScript \
+ 		-I$(SOURCE_PATH)/mkspecs/win32-g++  \
+ 		-DQT_NO_TEXTCODEC -DQT_NO_UNICODETABLES -DQT_LITE_COMPONENT -DQT_NO_PCRE \
+ 	       	-DQT_NODLL -DQT_NO_STL -DQT_NO_COMPRESS -DUNICODE -DHAVE_QCONFIG_CPP \
+Index: tools/configure/configureapp.cpp
+===================================================================
+--- tools/configure/configureapp.cpp	(revision 859598)
++++ tools/configure/configureapp.cpp	(working copy)
+@@ -2362,7 +2386,15 @@
+         cacheStream << "QMAKE_UIC3      = $$QT_BUILD_TREE" << fixSeparators("/bin/uic3.exe") << endl;
+         cacheStream << "QMAKE_RCC       = $$QT_BUILD_TREE" << fixSeparators("/bin/rcc.exe") << endl;
+         cacheStream << "QMAKE_DUMPCPP   = $$QT_BUILD_TREE" << fixSeparators("/bin/dumpcpp.exe") << endl;
+-        cacheStream << "QMAKE_INCDIR_QT = $$QT_BUILD_TREE" << fixSeparators("/include") << endl;
++        if (sourcePath != buildPath)
++            cacheStream << "QMAKE_INCDIR_QT = $$QT_BUILD_TREE" << fixSeparators("/include")
++                        << " $$QT_SOURCE_TREE" << fixSeparators("/include")
++                        << " $$QT_SOURCE_TREE" << fixSeparators("/include/Qt")
++                        << " $$QT_SOURCE_TREE" << fixSeparators("/include/QtCore")
++                        << " $$QT_SOURCE_TREE" << fixSeparators("/include/QtXml")
++                        << endl;
++        else
++            cacheStream << "QMAKE_INCDIR_QT = $$QT_BUILD_TREE" << fixSeparators("/include") << endl;
+         cacheStream << "QMAKE_LIBDIR_QT = $$QT_BUILD_TREE" << fixSeparators("/lib") << endl;
+         if (dictionary["CETEST"] == "yes") {
+             cacheStream << "QT_CE_RAPI_INC  = " << fixSeparators(dictionary[ "QT_CE_RAPI_INC" ]) << endl;
+@@ -3184,10 +3216,19 @@
+                     QString dirPath = fixSeparators( it->directory + "/" );
+                     QString projectName = it->proFile;
+                     QString makefileName = buildPath + "/" + dirPath + it->target;
++
++                    if (sourcePath != buildPath)
++                        QDir().mkpath(buildPath + "/" + dirPath);
++
+                     QStringList args;
+ 
+                     args << fixSeparators( buildPath + "/bin/qmake" );
+-                    args << projectName;
++
++                    if (sourcePath != buildPath)
++                        args << fixSeparators(sourcePath + "/" + dirPath + projectName);
++                    else
++                        args << projectName;
++
+                     args << dictionary[ "QMAKE_ALL_ARGS" ];
+ 
+                     cout << "For " << qPrintable(dirPath + projectName) << endl;
