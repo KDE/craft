@@ -66,9 +66,14 @@ class subclass(base.baseclass):
         return True
 
     def compile( self ):
-        qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
+        qtsrcdir = os.path.join( self.kdesvndir, self.kdeSvnPath() )
+        qtbindir = os.path.join( self.workdir, self.instsrcdir )
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
-        os.chdir( qtsrcdir )
+        configure = os.path.join( qtsrcdir, "configure.exe" ).replace( "/", "\\" )
+
+        if not os.path.exists( qtbindir ):
+          os.mkdir( qtbindir )
+        os.chdir( qtbindir )
 
         # so that the mkspecs can be found, when -prefix is set
         os.putenv( "QMAKEPATH", qtsrcdir )
@@ -91,13 +96,14 @@ class subclass(base.baseclass):
             exit( 1 )
 
         os.environ[ "USERIN" ] = "y"
-        os.chdir( qtsrcdir )
-        command = r"echo y | configure.exe -platform %s -prefix %s " \
+        os.chdir( qtbindir )
+        command = r"echo y | %s -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp " \
+          "-nomake demos -nomake examples " \
           "-I %s -L %s " % \
-          ( platform, prefix,
+          ( configure, platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
         if self.buildType == "Debug":
@@ -124,8 +130,8 @@ class subclass(base.baseclass):
         return True
 
     def install( self ):
-        qtsrcdir = os.path.join( self.workdir, self.instsrcdir )
-        os.chdir( qtsrcdir )
+        qtbindir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( qtbindir )
 
         self.system( "%s install" % self.cmakeMakeProgramm )
 
