@@ -1,0 +1,494 @@
+Index: filters/CMakeLists.txt
+===================================================================
+--- filters/CMakeLists.txt	(revision 862291)
++++ filters/CMakeLists.txt	(working copy)
+@@ -49,9 +49,7 @@
+ endif(SHOULD_BUILD_KARBON)
+ 
+ if (SHOULD_BUILD_KRITA)
+-  if(NOT MSVC) # TODO reenable
+     macro_optional_add_subdirectory(krita)
+-  endif(NOT MSVC)
+ endif(SHOULD_BUILD_KRITA)
+ 
+ #macro_optional_add_subdirectory(kivio)
+Index: filters/krita/CMakeLists.txt
+===================================================================
+--- filters/krita/CMakeLists.txt	(revision 862291)
++++ filters/krita/CMakeLists.txt	(working copy)
+@@ -54,9 +54,9 @@
+ 	add_subdirectory(jpeg)
+ endif(JPEG_FOUND AND EXIV2_FOUND)
+ 
+-if(TIFF_FOUND)
++if(TIFF_FOUND AND NOT WIN32)
+ 	add_subdirectory(tiff)
+-endif(TIFF_FOUND )
++endif(TIFF_FOUND AND NOT WIN32)
+ 
+ if(PNG_FOUND AND EXIV2_FOUND)
+     add_subdirectory(png)
+Index: kplato/libs/ui/plotting/kplotobject.h
+===================================================================
+--- kplato/libs/ui/plotting/kplotobject.h	(revision 862291)
++++ kplato/libs/ui/plotting/kplotobject.h	(working copy)
+@@ -21,7 +21,7 @@
+ #ifndef KPLOTOBJECT_H
+ #define KPLOTOBJECT_H
+ 
+-#include <kdeui_export.h>
++#include <kplatoui_export.h>
+ 
+ #include <QtCore/QString>
+ #include <QtGui/QColor>
+@@ -55,7 +55,7 @@
+  * @author Jason Harris
+  * @version 1.1
+  */
+-class KDEUI_EXPORT KPlotObject{
++class KPLATOUI_EXPORT KPlotObject{
+ public:
+     /**
+      * The type classification of the KPlotObject.
+Index: kpresenter/part/KPrPlaceholderShape.cpp
+===================================================================
+--- kpresenter/part/KPrPlaceholderShape.cpp	(revision 862291)
++++ kpresenter/part/KPrPlaceholderShape.cpp	(working copy)
+@@ -21,6 +21,9 @@
+ 
+ #include <QPainter>
+ #include <KoViewConverter.h>
++#include <KoXmlReader.h>
++#include <KoShapeLoadingContext.h>
++#include <KoShapeSavingContext.h>
+ 
+ KPrPlaceholderShape::KPrPlaceholderShape()
+ {
+Index: kpresenter/part/tools/animationtool/KPrAnimationTool.cpp
+===================================================================
+--- kpresenter/part/tools/animationtool/KPrAnimationTool.cpp	(revision 862291)
++++ kpresenter/part/tools/animationtool/KPrAnimationTool.cpp	(working copy)
+@@ -23,8 +23,10 @@
+ #include <klocale.h>
+ 
+ #include <QMap>
++#include <QPainter>
+ 
+ #include <KoPACanvas.h>
++#include <KoViewConverter.h>
+ #include <KPrPageEffectDocker.h>
+ 
+ KPrAnimationTool::KPrAnimationTool( KoCanvasBase *canvas )
+Index: kpresenter/part/tools/KPrPlaceholderTool.cpp
+===================================================================
+--- kpresenter/part/tools/KPrPlaceholderTool.cpp	(revision 862291)
++++ kpresenter/part/tools/KPrPlaceholderTool.cpp	(working copy)
+@@ -20,6 +20,7 @@
+ #include "KPrPlaceholderTool.h"
+ 
+ #include <QUndoCommand>
++#include <QPainter>
+ #include <klocale.h>
+ 
+ #include <KoShapeRegistry.h>
+Index: krita/image/krita_export.h
+===================================================================
+--- krita/image/krita_export.h	(revision 862291)
++++ krita/image/krita_export.h	(working copy)
+@@ -42,10 +42,19 @@
+ # endif
+ #endif
+ 
++#ifndef PAINTOP_EXPORT
++# ifdef MAKE_KRITALIBPAINTOP_LIB
++#  define PAINTOP_EXPORT KDE_EXPORT
++# else
++#  define PAINTOP_EXPORT KDE_IMPORT
++# endif
++#endif
++
+ #else // not windows
+ 
+ #define KRITAUI_EXPORT KDE_EXPORT
+ #define KRITAIMAGE_EXPORT KDE_EXPORT
++#define PAINTOP_EXPORT KDE_EXPORT
+ 
+ #endif /* not windows */
+ 
+Index: krita/plugins/paintops/libpaintop/kis_auto_brush.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_auto_brush.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_auto_brush.h	(working copy)
+@@ -24,7 +24,7 @@
+ 
+ class KisMaskGenerator;
+ 
+-class KRITAUI_EXPORT KisAutoBrush : public KisBrush
++class PAINTOP_EXPORT KisAutoBrush : public KisBrush
+ {
+ public:
+     KisAutoBrush(KisMaskGenerator* img);
+Index: krita/plugins/paintops/libpaintop/kis_auto_brush_widget.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_auto_brush_widget.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_auto_brush_widget.h	(working copy)
+@@ -25,7 +25,7 @@
+ #include "ui_wdgautobrush.h"
+ #include <kis_auto_brush.h>
+ 
+-class KRITAUI_EXPORT KisWdgAutobrush : public QWidget, public Ui::KisWdgAutobrush
++class PAINTOP_EXPORT KisWdgAutobrush : public QWidget, public Ui::KisWdgAutobrush
+ {
+     Q_OBJECT
+ 
+@@ -35,7 +35,7 @@
+     }
+ };
+ 
+-class KRITAUI_EXPORT KisAutoBrushWidget : public KisWdgAutobrush
++class PAINTOP_EXPORT KisAutoBrushWidget : public KisWdgAutobrush
+ {
+     Q_OBJECT
+ public:
+Index: krita/plugins/paintops/libpaintop/kis_brush.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_brush.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_brush.h	(working copy)
+@@ -55,7 +55,7 @@
+  * A brush factory can create a new brush instance based
+  * on a filename and a brush id or just a brush id.
+  */
+-class KRITAUI_EXPORT KisBrushFactory : public KisShared
++class PAINTOP_EXPORT KisBrushFactory : public KisShared
+ {
+ 
+ public:
+@@ -78,7 +78,7 @@
+ };
+ 
+ 
+-class KRITAIMAGE_EXPORT KisBrush : public KoResource, public KisShared
++class PAINTOP_EXPORT KisBrush : public KoResource, public KisShared
+ {
+ 
+     class ScaledBrush;
+Index: krita/plugins/paintops/libpaintop/kis_brush_based_paintop.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_brush_based_paintop.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_brush_based_paintop.h	(working copy)
+@@ -27,7 +27,7 @@
+  * brush to paint with. This is mainly important for the spacing
+  * generation.
+  */
+-class KRITAUI_EXPORT KisBrushBasedPaintOp : public KisPaintOp
++class PAINTOP_EXPORT KisBrushBasedPaintOp : public KisPaintOp
+ {
+ 
+ public:
+Index: krita/plugins/paintops/libpaintop/kis_brush_chooser.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_brush_chooser.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_brush_chooser.h	(working copy)
+@@ -30,7 +30,7 @@
+ class KoResource;
+ 
+ 
+-class KRITAUI_EXPORT KisBrushChooser : public KisItemChooser
++class PAINTOP_EXPORT KisBrushChooser : public KisItemChooser
+ {
+ 
+     Q_OBJECT
+Index: krita/plugins/paintops/libpaintop/kis_brush_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_brush_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_brush_option.h	(working copy)
+@@ -30,7 +30,7 @@
+  * The brush option allows the user to select a particular brush
+  * footprint for suitable paintops
+  */
+-class KRITAUI_EXPORT KisBrushOption : public KisPaintOpOption
++class PAINTOP_EXPORT KisBrushOption : public KisPaintOpOption
+ {
+ public:
+ 
+Index: krita/plugins/paintops/libpaintop/kis_curve_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_curve_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_curve_option.h	(working copy)
+@@ -35,7 +35,7 @@
+  *
+  * XXX; Add a reset button!
+  */
+-class KRITAUI_EXPORT KisCurveOption : public QObject, public KisPaintOpOption
++class PAINTOP_EXPORT KisCurveOption : public QObject, public KisPaintOpOption
+ {
+ 
+     Q_OBJECT
+Index: krita/plugins/paintops/libpaintop/kis_filter_option.cpp
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_filter_option.cpp	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_filter_option.cpp	(working copy)
+@@ -26,7 +26,7 @@
+ {
+ }
+ 
+-const KisFilterSP KisFilterOption::KisFilterOption::filter() const
++const KisFilterSP KisFilterOption::filter() const
+ {
+     return 0;
+ }
+Index: krita/plugins/paintops/libpaintop/kis_filter_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_filter_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_filter_option.h	(working copy)
+@@ -30,7 +30,7 @@
+  * that can be applied by the paintop to the brush footprint or the
+  * original paint device data.
+  */
+-class KRITAUI_EXPORT KisFilterOption : public KisPaintOpOption
++class PAINTOP_EXPORT KisFilterOption : public KisPaintOpOption
+ {
+ 
+ public:
+Index: krita/plugins/paintops/libpaintop/kis_imagepipe_brush.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_imagepipe_brush.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_imagepipe_brush.h	(working copy)
+@@ -45,7 +45,7 @@
+     };
+ }
+ 
+-class KRITAUI_EXPORT KisImagePipeBrush : public KisBrush
++class PAINTOP_EXPORT KisImagePipeBrush : public KisBrush
+ {
+ 
+     Q_OBJECT
+Index: krita/plugins/paintops/libpaintop/kis_paint_action_type_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_paint_action_type_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_paint_action_type_option.h	(working copy)
+@@ -35,7 +35,7 @@
+  * * indirect (like photoshop and gimp)
+  * * rate (staying in the same spot makes it darker)
+  */
+-class KRITAUI_EXPORT KisPaintActionTypeOption : public KisPaintOpOption
++class PAINTOP_EXPORT KisPaintActionTypeOption : public KisPaintOpOption
+ {
+ public:
+     KisPaintActionTypeOption();
+Index: krita/plugins/paintops/libpaintop/kis_paintop_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_paintop_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_paintop_option.h	(working copy)
+@@ -33,7 +33,7 @@
+  *
+  * Options are disabled by default.
+  */
+-class KRITAUI_EXPORT KisPaintOpOption
++class PAINTOP_EXPORT KisPaintOpOption
+ {
+ 
+ public:
+Index: krita/plugins/paintops/libpaintop/kis_paintop_options_widget.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_paintop_options_widget.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_paintop_options_widget.h	(working copy)
+@@ -37,7 +37,7 @@
+  * and has a popdown button that shows a settings widget.
+  *
+  */
+-class KRITAUI_EXPORT KisPaintOpOptionsWidget : public KisConfigWidget
++class PAINTOP_EXPORT KisPaintOpOptionsWidget : public KisConfigWidget
+ {
+ 
+     Q_OBJECT
+Index: krita/plugins/paintops/libpaintop/kis_pressure_darken_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_pressure_darken_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_pressure_darken_option.h	(working copy)
+@@ -30,7 +30,7 @@
+  * The pressure opacity option defines a curve that is used to
+  * calculate the effect of pressure on the darkness of the dab
+  */
+-class KRITAUI_EXPORT KisPressureDarkenOption : public KisCurveOption
++class PAINTOP_EXPORT KisPressureDarkenOption : public KisCurveOption
+ {
+ public:
+ 
+Index: krita/plugins/paintops/libpaintop/kis_pressure_opacity_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_pressure_opacity_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_pressure_opacity_option.h	(working copy)
+@@ -28,7 +28,7 @@
+  * The pressure opacity option defines a curve that is used to
+  * calculate the effect of pressure on opacity
+  */
+-class KRITAUI_EXPORT KisPressureOpacityOption : public KisCurveOption
++class PAINTOP_EXPORT KisPressureOpacityOption : public KisCurveOption
+ {
+ public:
+ 
+Index: krita/plugins/paintops/libpaintop/kis_pressure_size_option.h
+===================================================================
+--- krita/plugins/paintops/libpaintop/kis_pressure_size_option.h	(revision 862291)
++++ krita/plugins/paintops/libpaintop/kis_pressure_size_option.h	(working copy)
+@@ -28,7 +28,7 @@
+  * The pressure opacity option defines a curve that is used to
+  * calculate the effect of pressure on the size of the dab
+  */
+-class KRITAUI_EXPORT KisPressureSizeOption : public KisCurveOption
++class PAINTOP_EXPORT KisPressureSizeOption : public KisCurveOption
+ {
+ public:
+     KisPressureSizeOption();
+Index: krita/plugins/tools/tool_perspectivegrid/kis_tool_perspectivegrid.cc
+===================================================================
+--- krita/plugins/tools/tool_perspectivegrid/kis_tool_perspectivegrid.cc	(revision 862291)
++++ krita/plugins/tools/tool_perspectivegrid/kis_tool_perspectivegrid.cc	(working copy)
+@@ -36,6 +36,7 @@
+ #include <kis_cursor.h>
+ #include <kis_image.h>
+ #include <KoPointerEvent.h>
++#include <KoViewConverter.h>
+ #include <canvas/kis_perspective_grid_manager.h>
+ #include <kis_canvas_resource_provider.h>
+ #include <kis_selected_transaction.h>
+Index: kspread/CMakeLists.txt
+===================================================================
+--- kspread/CMakeLists.txt	(revision 862291)
++++ kspread/CMakeLists.txt	(working copy)
+@@ -242,7 +242,7 @@
+ 
+ 
+ 
+-target_link_libraries(kspreadpart  ${KDE4_KDECORE_LIBS} kspreadcommon )
++target_link_libraries(kspreadpart  ${KDE4_KDECORE_LIBS}  ${KDE4_KPARTS_LIBS} kspreadcommon )
+ 
+ install(TARGETS kspreadpart  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+Index: kword/part/CMakeLists.txt
+===================================================================
+--- kword/part/CMakeLists.txt	(revision 862291)
++++ kword/part/CMakeLists.txt	(working copy)
+@@ -99,7 +99,7 @@
+ 
+ 
+ 
+-target_link_libraries(kwordpart ${KDE4_KDECORE_LIBS} kwordprivate )
++target_link_libraries(kwordpart ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} kwordprivate )
+ 
+ install(TARGETS kwordpart  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+Index: libs/kopageapp/tools/backgroundTool/KoPABackgroundTool.cpp
+===================================================================
+--- libs/kopageapp/tools/backgroundTool/KoPABackgroundTool.cpp	(revision 862291)
++++ libs/kopageapp/tools/backgroundTool/KoPABackgroundTool.cpp	(working copy)
+@@ -21,6 +21,7 @@
+ 
+ //Qt includes
+ #include <QMap>
++#include <QPainter>
+ 
+ //KDE includes
+ #include <klocale.h>
+Index: libs/pigment/CMakeLists.txt
+===================================================================
+--- libs/pigment/CMakeLists.txt	(revision 862291)
++++ libs/pigment/CMakeLists.txt	(working copy)
+@@ -75,7 +75,7 @@
+ target_link_libraries(
+     pigmentcms
+     komain
+-    lcms
++    ${LCMS_LIBRARIES}
+     ${KDE4_KPARTS_LIBS}
+     ${QT_QTCORE_LIBRARY}
+     ${X11_X11_LIB}
+@@ -85,7 +85,7 @@
+ 
+ set_target_properties(pigmentcms PROPERTIES
+     VERSION ${GENERIC_KOFFICE_LIB_VERSION} SOVERSION ${GENERIC_KOFFICE_LIB_SOVERSION}
+-    ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "komain;lcms"
++    ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "komain;${LCMS_LIBRARIES}"
+ )
+ 
+ install(TARGETS pigmentcms  ${INSTALL_TARGETS_DEFAULT_ARGS})
+Index: plugins/colorspaces/cmyk_u16/CMakeLists.txt
+===================================================================
+--- plugins/colorspaces/cmyk_u16/CMakeLists.txt	(revision 862291)
++++ plugins/colorspaces/cmyk_u16/CMakeLists.txt	(working copy)
+@@ -9,7 +9,7 @@
+ target_link_libraries(
+     krita_cmyk_u16_plugin
+     pigmentcms
+-    lcms
++    ${LCMS_LIBRARIES}
+     ${KDE4_KDECORE_LIBS}
+     ${QT_QTGUI_LIBRARY}
+     ${QT_QTXML_LIBRARY}
+Index: plugins/colorspaces/cmyk_u8/CMakeLists.txt
+===================================================================
+--- plugins/colorspaces/cmyk_u8/CMakeLists.txt	(revision 862291)
++++ plugins/colorspaces/cmyk_u8/CMakeLists.txt	(working copy)
+@@ -17,7 +17,7 @@
+ target_link_libraries(
+     kritacmykplugin
+     pigmentcms
+-    lcms
++    ${LCMS_LIBRARIES}
+     ${KDE4_KDECORE_LIBS}
+     ${QT_QTGUI_LIBRARY}
+     ${QT_QTXML_LIBRARY}
+Index: plugins/colorspaces/gray_u16/CMakeLists.txt
+===================================================================
+--- plugins/colorspaces/gray_u16/CMakeLists.txt	(revision 862291)
++++ plugins/colorspaces/gray_u16/CMakeLists.txt	(working copy)
+@@ -13,7 +13,7 @@
+ target_link_libraries(
+     koffice_graya_u16
+     pigmentcms
+-    lcms
++    ${LCMS_LIBRARIES}
+     ${KDE4_KDECORE_LIBS}
+     ${QT_QTCORE_LIBRARY}
+     ${QT_QTGUI_LIBRARY}
+Index: plugins/colorspaces/gray_u8/CMakeLists.txt
+===================================================================
+--- plugins/colorspaces/gray_u8/CMakeLists.txt	(revision 862291)
++++ plugins/colorspaces/gray_u8/CMakeLists.txt	(working copy)
+@@ -15,7 +15,7 @@
+ target_link_libraries(
+     kofficegrayau8colorspace
+     pigmentcms
+-    lcms
++    ${LCMS_LIBRARIES}
+     ${KDE4_KDECORE_LIBS} 
+     ${QT_QTCORE_LIBRARY}
+     ${QT_QTGUI_LIBRARY}
+Index: tools/converter/CMakeLists.txt
+===================================================================
+--- tools/converter/CMakeLists.txt	(revision 862291)
++++ tools/converter/CMakeLists.txt	(working copy)
+@@ -5,6 +5,8 @@
+ kde4_add_executable(koconverter ${koconverter_SRCS})
+ 
+ target_link_libraries(koconverter komain )
+-
++if(WIN32)
++target_link_libraries(koconverter ${KDE4_KIO_LIBS})
++endif(WIN32)
+ install(TARGETS koconverter  ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+Index: tools/thumbnail/CMakeLists.txt
+===================================================================
+--- tools/thumbnail/CMakeLists.txt	(revision 862291)
++++ tools/thumbnail/CMakeLists.txt	(working copy)
+@@ -8,7 +8,7 @@
+ 
+ 
+ 
+-target_link_libraries(clipartthumbnail komain )
++target_link_libraries(clipartthumbnail komain ${KDE4_KIO_LIBS} )
+ 
+ install(TARGETS clipartthumbnail  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
