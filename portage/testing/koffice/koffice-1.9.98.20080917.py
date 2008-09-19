@@ -65,7 +65,7 @@ class subclass(base.baseclass):
             src = os.path.join( self.workdir, self.instsrcdir )
 
             cmd = "cd %s && patch -p0 < %s" % \
-                  ( src, os.path.join( self.packagedir , "koffice-alpha10.diff" ) )
+                  ( src, os.path.join( self.packagedir , "koffice-beta1.diff" ) )
             if utils.verbose() >= 1:
                 print cmd
             self.kdeCustomDefines += " -DINCLUDE_INSTALL_DIR=%s" % os.path.join( self.rootdir, "include" )
