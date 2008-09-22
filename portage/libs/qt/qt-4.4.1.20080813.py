@@ -133,11 +133,11 @@ class subclass(base.baseclass):
         qtbindir = os.path.join( self.workdir, self.instsrcdir )
         os.chdir( qtbindir )
 
-        self.system( "%s install" % self.cmakeMakeProgramm )
-
         src = os.path.join( self.packagedir, "qt.conf" )
-        dst = os.path.join( self.imagedir, self.instdestdir, "bin", "qt.conf" )
+        dst = os.path.join( qtbindir, "bin", "qt.conf" )
         shutil.copy( src, dst )
+
+        self.system( "%s install" % self.cmakeMakeProgramm )
 
         return True
 
