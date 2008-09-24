@@ -101,8 +101,8 @@ class subclass(base.baseclass):
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp " \
-          "-nomake demos -nomake examples " \
-          "-I %s -L %s " % \
+          "-nomake demos -nomake examples -nomake docs " \
+          "-I \"%s\" -L \"%s\" " % \
           ( configure, platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
