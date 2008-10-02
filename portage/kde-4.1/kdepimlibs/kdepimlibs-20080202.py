@@ -35,6 +35,11 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
+        # generate the template file for KDELibsDependenciesInternal.cmake
+        filename = os.path.join( self.imagedir, "share", "apps", "cmake", "modules", "KDEPimLibsDependencies.cmake" )
+        sedcmd = "sed -e \"s/" + self.rootdir.replace("\\", "\\/") + "/[replace_this]/g\" " + filename + " > " + filename + ".template"
+        self.system( sedcmd )
+
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdepimlibs", self.buildTarget, True )
         else:
