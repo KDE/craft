@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.16'] = 'exiv2-0.16'
         self.targets['0.17'] = 'http://www.exiv2.org/exiv2-0.17.tar.gz'
         self.targetInstSrc['0.17'] = 'exiv2-0.17'
+        self.svnTargets['svnHEAD'] = 'trunk'
         self.defaultTarget = '0.17'
     
     def setDependencies( self ):
@@ -22,22 +23,37 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if not base.baseclass.unpack( self ):
-            return False
+        if not self.buildTarget == 'svnHEAD':
+            if not base.baseclass.unpack( self ):
+                return False
+        else:
+            repo = 'svn://dev.robotbattle.com/exiv2/'
+            if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+                self.svnFetch( repo + self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
+            else:
+                return False
+            utils.cleanDirectory( self.workdir )
+        
 
         os.chdir( self.workdir )
         if self.buildTarget == '0.16':
             self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "exiv2-cmake.diff" ) ) )
-        else:
+        elif self.buildTarget == '0.17':
             self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "exiv2-0.17-cmake.diff" ) ) )
         
         return True
         
     def compile( self ):
+        if self.subinfo.buildTarget == 'svnHEAD':
+            self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
         return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
+
+    def make_package( self ):
+        self.doPackaging( "exiv2", "0.18-0", True )
+
 
 if __name__ == '__main__':
     subclass().execute()
