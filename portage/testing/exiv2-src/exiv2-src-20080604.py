@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.16'] = 'exiv2-0.16'
         self.targets['0.17'] = 'http://www.exiv2.org/exiv2-0.17.tar.gz'
         self.targetInstSrc['0.17'] = 'exiv2-0.17'
-        self.svnTargets['svnHEAD'] = 'branches/unstable'
+        self.svnTargets['svnHEAD'] = 'unstable'
         self.defaultTarget = '0.17'
     
     def setDependencies( self ):
@@ -27,7 +27,7 @@ class subclass(base.baseclass):
             if not base.baseclass.unpack( self ):
                 return False
         else:
-            repo = 'svn://dev.robotbattle.com/exiv2/'
+            repo = 'svn://dev.robotbattle.com/exiv2/branches/'
             if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
                 self.svnFetch( repo + self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
             else:
