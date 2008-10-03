@@ -52,7 +52,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        self.doPackaging( "exiv2", "0.18-0", True )
+        self.doPackaging( "exiv2", "0.18svn-0", True )
 
 
 if __name__ == '__main__':
