@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.16'] = 'exiv2-0.16'
         self.targets['0.17'] = 'http://www.exiv2.org/exiv2-0.17.tar.gz'
         self.targetInstSrc['0.17'] = 'exiv2-0.17'
-        self.svnTargets['svnHEAD'] = 'trunk'
+        self.svnTargets['svnHEAD'] = 'branches/unstable'
         self.defaultTarget = '0.17'
     
     def setDependencies( self ):
