@@ -56,7 +56,7 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.subinfo.buildTarget == 'svnHEAD':
             self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
-        self.doPackaging( "exiv2", "0.18svn-0", True )
+        return self.doPackaging( "exiv2", "0.18svn-0", True )
 
 
 if __name__ == '__main__':
