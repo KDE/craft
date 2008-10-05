@@ -108,7 +108,7 @@ class kde_interface:
         if ( doRecursive ):
                 recFlag = ""
         else:
-                recFlag = "-N"
+                recFlag = "--depth=files"
 
         if ( os.path.exists( os.path.join( ownpath, codir, ".svn" ) ) ):
             # svn up
