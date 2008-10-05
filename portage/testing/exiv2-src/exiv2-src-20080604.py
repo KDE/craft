@@ -21,6 +21,8 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
+        if self.subinfo.buildTarget == 'svnHEAD':
+            self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
 
     def unpack( self ):
         if not self.buildTarget == 'svnHEAD':
