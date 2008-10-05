@@ -1,0 +1,17 @@
+--- configure.py 2007-03-26 10:42:04.314625000 -0600
++++ configure.py 2007-03-26 10:48:57.174000000 -0600
+@@ -1532,8 +1532,12 @@
+     qmake_args = fix_qmake_args("-o " + make_file)
+ 
+     if sys.platform == "win32":
+-        exe_file = os.path.join("release", app + ".exe")
+-        make_target = " release"
++        if opts.debug:
++            exe_file = os.path.join("debug", app + ".exe")
++            make_target = " debug"
++        else:
++            exe_file = os.path.join("release", app + ".exe")
++            make_target = " release"
+     elif sys.platform == "darwin":
+         exe_file = os.path.join(app + ".app", "Contents", "MacOS", app)
+     else:

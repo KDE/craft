@@ -21,10 +21,18 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
         os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-"+self.compiler) )
 
+    def unpack(self):
+        base.baseclass.unpack( self ) or utils.die( "unpack failed" )		
+        self.system( "copy " + os.path.join( self.packagedir,"configure.py") + " " + os.path.join(self.workdir,self.instsrcdir,"configure.py") )
+
+        # patch does not work for unknown reasons
+        #cmd = "cd %s && patch -p0 -i %s" % ( self.instsrcdir, os.path.join( self.packagedir, "pyqt-4.4.3.patch" ) ) 
+        #self.system( cmd )
+        return True
+
     def configure( self ):
 		builddir = os.path.join( self.workdir, self.instsrcdir )
 		os.chdir( builddir )
-		self.system( "set" )
 		
 		if self.buildType == 'Debug':
 			command = "echo yes | python configure.py -u "
@@ -32,8 +40,9 @@ class subclass(base.baseclass):
 			command = "echo yes | python configure.py "
 		# add mingw compiler
 		#command += "-p plat"
-		#command += " LFLAGS+=/MANIFEST"
-		command += " --verbose"
+		command += "--verbose"
+		command += " CFLAGS=-I" + os.path.join(self.packagedir)
+		command += " CXXFLAGS=-I" + os.path.join(self.packagedir)
 		self.system( command )
 		return True
 
@@ -49,7 +58,6 @@ class subclass(base.baseclass):
 		builddir = os.path.join( self.workdir, self.instsrcdir )
 		os.chdir( builddir )
 		self.system( "nmake install" )
-		self.system( "copy " + os.path.join(builddir,"sipgen","sip.exe.manifest") + " c:\python25") 
 		# install manifest file too
 		return True
 
