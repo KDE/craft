@@ -22,11 +22,13 @@ class subclass(base.baseclass):
 		builddir = os.path.join( self.workdir, self.instsrcdir )
 		os.chdir( builddir )
 		if self.buildType == 'Debug':
-			command = "python configure.py -u -k"
+			command = "python configure.py -u"
 		else:
-			command = "python configure.py -k"
+			command = "python configure.py"
 		# add mingw compiler
 		#command += "-p plat"
+		command += " CFLAGS=-I" + os.path.join(self.packagedir)
+		command += " CXXFLAGS=-I" + os.path.join(self.packagedir)
 		self.system( command )
 		return True
 
