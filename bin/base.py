@@ -409,7 +409,9 @@ class baseclass:
             cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, srcpath, pkg_version, dstpath )
         elif packSources and self.noCopy and self.kde.kdeSvnPath():
-            srcpath = os.path.join(self.kde.kdesvndir, self.kde.kdeSvnPath() ).replace( "/", "\\" )
+            srcpath = os.path.join( self.kde.kdesvndir, self.kde.kdeSvnPath() ).replace( "/", "\\" )
+            if not os.path.exists( srcpath ):
+                srcpath = self.kde.sourcePath
             cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, srcpath, pkg_version, dstpath )
         else:
