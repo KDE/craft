@@ -1,6 +1,25 @@
---- configure.py 2007-03-26 10:42:04.314625000 -0600
-+++ configure.py 2007-03-26 10:48:57.174000000 -0600
-@@ -1532,8 +1532,12 @@
+--- E:/daten/kde/emerge-msvc-root/tmp/pyqt-4.4.3/work/PyQt-win-gpl-4.4.3/configure.py.orig	Mon Oct 06 08:07:48 2008
++++ E:/daten/kde/emerge-msvc-root/tmp/pyqt-4.4.3/work/PyQt-win-gpl-4.4.3/configure.py	Mon Oct 06 08:09:14 2008
+@@ -127,6 +127,9 @@
+     p = optparse.OptionParser(usage="python %prog [opts] [macro=value] "
+             "[macro+=value]", version=pyqt_version_str)
+ 
++    p.add_option("-I", "--include", action="callback", default=False,
++            dest="include", metavar="DIR", type="string", 
++			callback=store_abspath_dir, help="additional include directories")
+     # Note: we don't use %default to be compatible with Python 2.3.
+     p.add_option("-k", "--static", action="store_true", default=False,
+             dest="static", help="build modules as static libraries")
+@@ -323,6 +326,8 @@
+ 
+         sp_libs, sp_libdirs = self._static_plugins("QtCore")
+         sp_incdirs = []
++        if opts.include:
++            sp_incdirs.append(opts.include)
+ 
+         if opts.vendorcheck:
+             sp_incdirs.append(opts.vendincdir)
+@@ -1532,8 +1537,12 @@
      qmake_args = fix_qmake_args("-o " + make_file)
  
      if sys.platform == "win32":

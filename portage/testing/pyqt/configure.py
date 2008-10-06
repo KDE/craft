@@ -127,6 +127,9 @@ def create_optparser():
     p = optparse.OptionParser(usage="python %prog [opts] [macro=value] "
             "[macro+=value]", version=pyqt_version_str)
 
+    p.add_option("-I", "--include", action="callback", default=False,
+            dest="include", metavar="DIR", type="string", 
+			callback=store_abspath_dir, help="additional include directories")
     # Note: we don't use %default to be compatible with Python 2.3.
     p.add_option("-k", "--static", action="store_true", default=False,
             dest="static", help="build modules as static libraries")
@@ -1256,6 +1259,12 @@ def generate_code(mname, extra_include_dirs=None, extra_lib_dirs=None, extra_lib
     # Work out what Qt libraries need to be linked against and how SIP is
     # supposed to handle the consolidated module and its components.
     cons_args = []
+
+    if opts.include:    		
+        tmp = []
+        tmp.append(opts.include)
+        tmp.append(extra_include_dirs)
+        extra_include_dirs = tmp    	
 
     if opts.bigqt:
         if mname == "_qt":
