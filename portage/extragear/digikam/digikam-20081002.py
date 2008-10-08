@@ -23,6 +23,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = "-DENABLE_GPHOTO2=OFF"
         return self.kdeCompile()
 
     def install( self ):
