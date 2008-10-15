@@ -130,14 +130,13 @@ class subclass(base.baseclass):
         return True
 
     def install( self ):
-        qtbindir = os.path.join( self.workdir, self.instsrcdir )
-        os.chdir( qtbindir )
+
+        os.chdir( os.path.join( self.workdir, self.instsrcdir ) )
+        self.system( "%s install" % self.cmakeMakeProgramm )
 
         src = os.path.join( self.packagedir, "qt.conf" )
-        dst = os.path.join( qtbindir, "bin", "qt.conf" )
+        dst = os.path.join( self.imagedir, self.instdestdir, "bin", "qt.conf" )
         shutil.copy( src, dst )
-
-        self.system( "%s install" % self.cmakeMakeProgramm )
 
         return True
 
