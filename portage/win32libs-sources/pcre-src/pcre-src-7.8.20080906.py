@@ -20,7 +20,7 @@ class subclass(base.baseclass):
     self.kdeCustomDefines += "-DBUILD_SHARED_LIBS=ON "
     self.kdeCustomDefines += "-DPCRE_SUPPORT_UNICODE_PROPERTIES=ON "
     self.kdeCustomDefines += "-DPCRE_SUPPORT_UTF8=ON "
-    self.kdeCustomDefines += "-DPCRE_EBCDIC=ON "
+    self.kdeCustomDefines += "-DPCRE_EBCDIC=OFF "
 
   def compile( self ):
     return self.kdeCompile()
