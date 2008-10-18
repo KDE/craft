@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['testing/mysql-embedded'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
