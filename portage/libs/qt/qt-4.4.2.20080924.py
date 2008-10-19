@@ -137,7 +137,17 @@ class subclass(base.baseclass):
         src = os.path.join( self.packagedir, "qt.conf" )
         dst = os.path.join( self.imagedir, self.instdestdir, "bin", "qt.conf" )
         shutil.copy( src, dst )
+        
+        if self.buildType == "Debug" and (self.compiler == "msvc2005" or self.compiler == "msvc2008"):
+            srcdir = os.path.join( self.workdir, self.instsrcdir, "lib" )
+            destdir = os.path.join( self.imagedir, self.instdestdir, "lib" )
 
+            filelist = os.listdir( srcdir )
+            
+            for file in filelist:
+                if file.endswith( ".pdb" ):
+                    shutil.copy( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
+                
         return True
 
     def make_package( self ):
