@@ -9,8 +9,9 @@ class subinfo(info.infoclass):
         self.svnTargets['1.1.2'] = 'tags/1.1.2'
         self.svnTargets['1.2.1'] = 'tags/1.2.1'
         self.svnTargets['1.2.3'] = 'tags/1.2.3'
+        self.svnTargets['1.2.4'] = 'tags/1.2.4'
         self.svnTargets['svnHEAD'] = 'trunk'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '1.2.4'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -73,7 +74,7 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
-    self.doPackaging( "dbus", "1.2.3-1", False )
+    self.doPackaging( "dbus", "1.2.4-1", False )
 
     return True
 
