@@ -26,9 +26,9 @@ class subclass(base.baseclass):
         self.instsrcdir = "qt-win-opensource-src-" + self.compiler
         self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip"
         if self.compiler == "msvc2005" or self.compiler == "msvc2008":
-            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-lib.tar.bz2"
+            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2"
         elif self.compiler == "mingw":
-            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-lib.tar.bz2"
+            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
         self.subinfo = subinfo()
 
     def fetch( self ):

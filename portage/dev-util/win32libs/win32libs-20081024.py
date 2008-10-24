@@ -34,6 +34,9 @@ http://downloads.sourceforge.net/kde-windows/jpeg-6.b-5-lib.zip
 http://downloads.sourceforge.net/kde-windows/lcms-1.17-bin.zip
 http://downloads.sourceforge.net/kde-windows/lcms-1.17-lib.zip
 
+http://downloads.sourceforge.net/kde-windows/libical-0.40-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libical-0.40-1-lib.tar.bz2
+
 http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-bin.zip
 http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-lib.zip
 
@@ -68,23 +71,20 @@ http://downloads.sourceforge.net/kde-windows/zlib-1.2.3-2-lib.zip
 
 http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
-
-http://winkde.org/pub/kde/ports/win32/repository/win32libs/libical-0.40-1-bin.tar.bz2
-http://winkde.org/pub/kde/ports/win32/repository/win32libs/libical-0.40-1-lib.tar.bz2
 """
 
 if os.getenv("KDECOMPILER") == "mingw":
     SRC_URI = SRC_URI + """
-http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.1-2-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.8-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.8-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
-http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.1-2-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.8-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/pcre-msvc-7.8-lib.tar.bz2
