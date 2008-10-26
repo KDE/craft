@@ -22,7 +22,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget == '0.10.0-beta5'
+        if self.buildTarget == '0.10.0-beta5':
             if( not base.baseclass.unpack( self ) ):
                 return True
             else:
