@@ -234,8 +234,6 @@ for i in sys.argv:
         os.environ["EMERGE_OFFLINE"] = "True"
     elif ( i == "-f" ):
         os.environ["EMERGE_FORCED"] = "True"
-    elif ( i.startswith( "--version=" ) ):
-        os.environ["EMERGE_VERSION"]   = i.replace( "--version=", "" )
     elif ( i.startswith( "--buildtype=" ) ):
         os.environ["EMERGE_BUILDTYPE"] = i.replace( "--buildtype=", "" )
     elif ( i.startswith( "--target=" ) ):
