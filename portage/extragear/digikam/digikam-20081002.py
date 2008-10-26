@@ -7,6 +7,8 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
+        self.target['0.10.0-beta5'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0-beta5.tar.bz2'
+        self.targetInstSrc['0.10.0-beta5'] = 'digikam-0.10.0-beta5'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -20,7 +22,13 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        return self.kdeSvnUnpack()
+        if self.buildTarget == '0.10.0-beta5'
+            if( not base.baseclass.unpack( self ) ):
+                return True
+            else:
+                return False
+        else:
+            return self.kdeSvnUnpack()
 
     def compile( self ):
         self.kdeCustomDefines = "-DENABLE_GPHOTO2=OFF"
