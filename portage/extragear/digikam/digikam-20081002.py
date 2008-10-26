@@ -24,9 +24,9 @@ class subclass(base.baseclass):
     def unpack( self ):
         if self.buildTarget == '0.10.0-beta5':
             if( not base.baseclass.unpack( self ) ):
-                return True
-            else:
                 return False
+            else:
+                return True
         else:
             return self.kdeSvnUnpack()
 
