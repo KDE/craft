@@ -7,7 +7,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'libical'
-        self.defaultTarget = 'svnHEAD'
+        self.targets['0.40'] = 'http://downloads.sourceforge.net/freeassociation/libical-0.40.tar.gz'
+        self.targetInstSrc['0.40'] = 'libical-0.40'
+        self.defaultTarget = '0.40'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -26,19 +28,23 @@ class subclass(base.baseclass):
     def unpack( self ):
         print "libical unpack called for %s" % self.subinfo.buildTarget
         # do the svn fetch/update
-        repo = 'https://freeassociation.svn.sourceforge.net/svnroot/freeassociation/trunk/'
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            self.svnFetch( repo + self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
+        if self.buildTarget == 'svnHEAD':
+            repo = 'https://freeassociation.svn.sourceforge.net/svnroot/freeassociation/trunk/'
+            if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+                self.svnFetch( repo + self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
+            else:
+                return False
+            utils.cleanDirectory( self.workdir )
         else:
-            return False
-        utils.cleanDirectory( self.workdir )
+            return base.baseclass.unpack( self )
         return True
 
     def compile( self ):
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
-        else:
-            return False
+        if self.buildTarget == 'svnHEAD':
+            if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+                self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
+            else:
+                return False
         return self.kdeCompile()
 
     def install( self ):
