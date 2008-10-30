@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/'
+        self.svnTargets['svnHEAD'] = 'branches/kdepim/enterprise4/l10n-kde4/'
         self.targets['4.0.80'] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.80/src/kde-l10n/'
         self.targets['4.0.83'] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.83/src/kde-l10n/'
         self.defaultTarget = 'svnHEAD'
