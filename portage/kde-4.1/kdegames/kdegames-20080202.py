@@ -6,7 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.1/kdegames'
-        for ver in ['0', '1', '2']:
+        for ver in ['0', '1', '2', '3']:
           self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.1.' + ver + '/src/kdegames-4.1.' + ver + '.tar.bz2'
           self.targetInstSrc['4.1.' + ver] = 'kdegames-4.1.' + ver
         self.defaultTarget = 'svnHEAD'
