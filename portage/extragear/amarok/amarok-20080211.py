@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
         self.targets['1.90'] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/1.90/src/amarok-1.90.tar.bz2'
         self.targetInstSrc['1.90'] = 'amarok-1.90'
+        self.targets['1.94'] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/1.94/src/amarok-1.94.tar.bz2'
+        self.targetInstSrc['1.94'] = 'amarok-1.94'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -37,6 +39,10 @@ class subclass(base.baseclass):
             if utils.verbose() >= 1:
                 print cmd
 #            self.system( cmd ) or die( "patch" )
+            return True
+        else if self.buildTarget == '1.94':
+            if( not base.baseclass.unpack( self ) ):
+                return False
             return True
         else:
             return self.kdeSvnUnpack()
