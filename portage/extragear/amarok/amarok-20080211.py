@@ -40,7 +40,7 @@ class subclass(base.baseclass):
                 print cmd
 #            self.system( cmd ) or die( "patch" )
             return True
-        else if self.buildTarget == '1.94':
+        elif self.buildTarget == '1.94':
             if( not base.baseclass.unpack( self ) ):
                 return False
             return True
