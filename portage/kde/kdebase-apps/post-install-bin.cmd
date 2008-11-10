@@ -19,7 +19,7 @@ if %quitnow% equ True (
 )
 
 if not `"bin\update-mime-database.exe --help"` equ "" (
-    bin\update-mime-database %CD%\share\mime
+    bin\update-mime-database "%CD%\share\mime"
 ) else (
     echo error: update-mime-database wasn't found.
     echo        please check for correct installation

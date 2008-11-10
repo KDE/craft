@@ -18,15 +18,15 @@ if %quitnow% equ True (
     goto :eof
 )
 
-if not `"update-mime-database --help"` equ "" (
-    update-mime-database %CD%\share\mime
+if not `"bin\update-mime-database.exe --help"` equ "" (
+    bin\update-mime-database "%CD%\share\mime"
 ) else (
     echo error: update-mime-database wasn't found.
     echo        please check for correct installation
 )
 
-if not `"kbuildsycoca4 --help"` equ "" (
-    kbuildsycoca4 --noincremental
+if not `"bin\kbuildsycoca4.exe --help"` equ "" (
+    bin\kbuildsycoca4 --noincremental
 ) else (
     echo error: kbuildsycoca4 wasn't found.
     echo        please check for correct installation
