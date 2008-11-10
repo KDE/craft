@@ -13,7 +13,7 @@ PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/" + PACKAGE_FULL_NAME + ".win32.zip"
+        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/oldreleases/" + PACKAGE_FULL_NAME + ".win32.zip"
         self.targetInstSrc[PACKAGE_VER] = PACKAGE_FULL_NAME
         self.defaultTarget = PACKAGE_VER
     def setDependencies( self ):
