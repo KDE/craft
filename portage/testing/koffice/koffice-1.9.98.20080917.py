@@ -9,10 +9,13 @@ class subinfo(info.infoclass):
         self.svnTargets['1.9.95.8'] = "tags/koffice/1.9.95.8/koffice"
         self.svnTargets['1.9.95.9'] = "tags/koffice/1.9.95.9/koffice"
         self.svnTargets['1.9.98.0'] = "tags/koffice/1.9.98.0/koffice"
+        self.svnTargets['1.9.98.2'] = "tags/koffice/1.9.98.2/koffice"
         self.targets['alpha10'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.95.10/src/koffice-1.9.95.10.tar.bz2'
         self.targetInstSrc['alpha10'] = 'koffice-1.9.95.10'
         self.targets['beta1'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.98.0/src/koffice-1.9.98.0.tar.bz2'
         self.targetInstSrc['beta1'] = 'koffice-1.9.98.0'
+        self.targets['beta3'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.98.2/src/koffice-1.9.98.2.tar.bz2'
+        self.targetInstSrc['beta3'] = 'koffice-1.9.98.2'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
