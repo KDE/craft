@@ -1,0 +1,387 @@
+diff -Nru D:\tmp\libmsn-4.0-beta1/cmake/modules/FindLibraryWithDebug.cmake libmsn-4.0-beta1/cmake/modules/FindLibraryWithDebug.cmake
+--- D:\tmp\libmsn-4.0-beta1/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libmsn-4.0-beta1/cmake/modules/FindLibraryWithDebug.cmake	2008-11-06 20:45:29.703125000 +0100
+@@ -0,0 +1,113 @@
++#
++#  FIND_LIBRARY_WITH_DEBUG
++#  -> enhanced FIND_LIBRARY to allow the search for an
++#     optional debug library with a WIN32_DEBUG_POSTFIX similar
++#     to CMAKE_DEBUG_POSTFIX when creating a shared lib
++#     it has to be the second and third argument
++
++# Copyright (c) 2007, Christian Ehrlicher, <ch.ehrlicher@gmx.de>
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++MACRO(FIND_LIBRARY_WITH_DEBUG var_name win32_dbg_postfix_name dgb_postfix libname)
++
++  IF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++     # no WIN32_DEBUG_POSTFIX -> simply pass all arguments to FIND_LIBRARY
++     FIND_LIBRARY(${var_name}
++                  ${win32_dbg_postfix_name}
++                  ${dgb_postfix}
++                  ${libname}
++                  ${ARGN}
++     )
++
++  ELSE(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++    IF(NOT WIN32)
++      # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
++
++      FIND_LIBRARY(${var_name} ${libname} ${ARGN})
++
++    ELSE(NOT WIN32)
++
++      # 1. get all possible libnames
++      SET(args ${ARGN})
++      SET(newargs "")
++      SET(libnames_release "")
++      SET(libnames_debug "")
++
++      LIST(LENGTH args listCount)
++
++      IF("${libname}" STREQUAL "NAMES")
++        SET(append_rest 0)
++        LIST(APPEND args " ")
++
++        FOREACH(i RANGE ${listCount})
++          LIST(GET args ${i} val)
++
++          IF(append_rest)
++            LIST(APPEND newargs ${val})
++          ELSE(append_rest)
++            IF("${val}" STREQUAL "PATHS")
++              LIST(APPEND newargs ${val})
++              SET(append_rest 1)
++            ELSE("${val}" STREQUAL "PATHS")
++              LIST(APPEND libnames_release "${val}")
++              LIST(APPEND libnames_debug   "${val}${dgb_postfix}")
++            ENDIF("${val}" STREQUAL "PATHS")
++          ENDIF(append_rest)
++
++        ENDFOREACH(i)
++
++      ELSE("${libname}" STREQUAL "NAMES")
++
++        # just one name
++        LIST(APPEND libnames_release "${libname}")
++        LIST(APPEND libnames_debug   "${libname}${dgb_postfix}")
++
++        SET(newargs ${args})
++
++      ENDIF("${libname}" STREQUAL "NAMES")
++
++      # search the release lib
++      FIND_LIBRARY(${var_name}_RELEASE
++                   NAMES ${libnames_release}
++                   ${newargs}
++      )
++
++      # search the debug lib
++      FIND_LIBRARY(${var_name}_DEBUG
++                   NAMES ${libnames_debug}
++                   ${newargs}
++      )
++
++      IF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++        # both libs found
++        SET(${var_name} optimized ${${var_name}_RELEASE}
++                        debug     ${${var_name}_DEBUG})
++
++      ELSE(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++        IF(${var_name}_RELEASE)
++
++          # only release found
++          SET(${var_name} ${${var_name}_RELEASE})
++
++        ELSE(${var_name}_RELEASE)
++
++          # only debug (or nothing) found
++          SET(${var_name} ${${var_name}_DEBUG})
++
++        ENDIF(${var_name}_RELEASE)
++       
++      ENDIF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++      MARK_AS_ADVANCED(${var_name}_RELEASE)
++      MARK_AS_ADVANCED(${var_name}_DEBUG)
++
++    ENDIF(NOT WIN32)
++
++  ENDIF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
+diff -Nru D:\tmp\libmsn-4.0-beta1/cmake/modules/FindOpenSSL.cmake libmsn-4.0-beta1/cmake/modules/FindOpenSSL.cmake
+--- D:\tmp\libmsn-4.0-beta1/cmake/modules/FindOpenSSL.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libmsn-4.0-beta1/cmake/modules/FindOpenSSL.cmake	2008-11-16 01:32:55.109375000 +0100
+@@ -0,0 +1,63 @@
++# - Try to find the OpenSSL encryption library
++# Once done this will define
++#
++#  OPENSSL_FOUND - system has the OpenSSL library
++#  OPENSSL_INCLUDE_DIR - the OpenSSL include directory
++#  OPENSSL_LIBRARIES - The libraries needed to use OpenSSL
++#  OPENSSL_EAY_LIBRARIES - The additional libraries needed to use OpenSSL on windows
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++INCLUDE(FindLibraryWithDebug)
++
++# on win32 we additional need to link to libeay32.lib
++MACRO(OPENSSL_ADD_LIB_EAY_LIBS)
++   FIND_LIBRARY_WITH_DEBUG(OPENSSL_EAY_LIBRARIES
++                   WIN32_DEBUG_POSTFIX d
++                   NAMES eay libeay libeay32 libeay32MD)
++ENDMACRO(OPENSSL_ADD_LIB_EAY_LIBS)
++
++IF(OPENSSL_LIBRARIES)
++   SET(OpenSSL_FIND_QUIETLY TRUE)
++ENDIF(OPENSSL_LIBRARIES)
++
++IF(SSL_EAY_DEBUG AND SSL_EAY_RELEASE)
++   SET(LIB_FOUND 1)
++ENDIF(SSL_EAY_DEBUG AND SSL_EAY_RELEASE)
++
++FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h )
++
++FIND_LIBRARY_WITH_DEBUG(OPENSSL_LIBRARIES
++                WIN32_DEBUG_POSTFIX d
++                NAMES ssl ssleay ssleay32 ssleay32MD)
++
++IF(WIN32)
++   OPENSSL_ADD_LIB_EAY_LIBS()
++   IF(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES AND OPENSSL_EAY_LIBRARIES)
++      SET(OPENSSL_FOUND TRUE)
++   ELSE(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES AND OPENSSL_EAY_LIBRARIES)
++      SET(OPENSSL_FOUND FALSE)
++   ENDIF (OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES AND OPENSSL_EAY_LIBRARIES)
++ELSE(WIN32)
++   IF(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES)
++      SET(OPENSSL_FOUND TRUE)
++   ELSE(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES)
++      SET(OPENSSL_FOUND FALSE)
++   ENDIF (OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES)
++ENDIF(WIN32)
++
++IF (OPENSSL_FOUND)
++   IF (NOT OpenSSL_FIND_QUIETLY)
++      MESSAGE(STATUS "Found OpenSSL: ${OPENSSL_LIBRARIES}")
++   ENDIF (NOT OpenSSL_FIND_QUIETLY)
++ELSE (OPENSSL_FOUND)
++   IF (OpenSSL_FIND_REQUIRED)
++      MESSAGE(FATAL_ERROR "Could NOT find OpenSSL")
++   ENDIF (OpenSSL_FIND_REQUIRED)
++ENDIF (OPENSSL_FOUND)
++
++MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
++
+diff -Nru D:\tmp\libmsn-4.0-beta1/CMakeLists.txt libmsn-4.0-beta1/CMakeLists.txt
+--- D:\tmp\libmsn-4.0-beta1/CMakeLists.txt	2008-10-27 16:08:03.000000000 +0100
++++ libmsn-4.0-beta1/CMakeLists.txt	2008-11-16 01:39:21.890625000 +0100
+@@ -1,6 +1,10 @@
+ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+ project(libmsn)
+ 
+-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
++# find directories for openssl
++find_package(OpenSSL REQUIRED)
++
++include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${OPENSSL_INCLUDE_DIR})
+ add_subdirectory(msn)
+ 
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/CMakeLists.txt libmsn-4.0-beta1/msn/CMakeLists.txt
+--- D:\tmp\libmsn-4.0-beta1/msn/CMakeLists.txt	2008-11-12 16:45:40.000000000 +0100
++++ libmsn-4.0-beta1/msn/CMakeLists.txt	2008-11-16 01:36:19.187500000 +0100
+@@ -17,6 +17,10 @@
+     buddy.cpp
+     passport.cpp
+ )
++if(WIN32)
++set(msn_STAT_SRCS   ${msn_STAT_SRCS}
++                    ${OPENSSL_INCLUDE_DIR}/openssl/applink.c)
++endif(WIN32)
+ 
+ set(msn_HEADERS
+     authdata.h
+@@ -39,7 +43,12 @@
+ set_target_properties(msn PROPERTIES VERSION 0.1.0 
+                                      SOVERSION 0.1
+ )
++if(NOT WIN32)
+ target_link_libraries(msn crypto)
++else(NOT WIN32)
++message("${OPENSSL_EAY_LIBRARIES}")
++target_link_libraries(msn ${OPENSSL_EAY_LIBRARIES})
++endif(NOT WIN32)
+ 
+ ########### install files ###############
+ install(TARGETS msn DESTINATION  ${CMAKE_INSTALL_PREFIX}/lib)
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/connection.h libmsn-4.0-beta1/msn/connection.h
+--- D:\tmp\libmsn-4.0-beta1/msn/connection.h	2008-09-21 21:01:04.000000000 +0200
++++ libmsn-4.0-beta1/msn/connection.h	2008-11-16 00:45:23.046875000 +0100
+@@ -30,6 +30,10 @@
+ #include <map>
+ #include <stdexcept>
+ 
++#ifdef _MSC_VER
++#pragma warning( disable : 4290 )
++#endif
++
+ namespace MSN
+ {
+     class callback;
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/message.h libmsn-4.0-beta1/msn/message.h
+--- D:\tmp\libmsn-4.0-beta1/msn/message.h	2008-09-10 21:34:08.000000000 +0200
++++ libmsn-4.0-beta1/msn/message.h	2008-11-16 00:45:50.843750000 +0100
+@@ -30,6 +30,10 @@
+ #include <vector>
+ #include <stdexcept>
+ 
++#ifdef _MSC_VER
++#pragma warning( disable : 4290 )
++#endif
++
+ namespace MSN 
+ {
+     
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/msnobject.cpp libmsn-4.0-beta1/msn/msnobject.cpp
+--- D:\tmp\libmsn-4.0-beta1/msn/msnobject.cpp	2008-09-21 21:01:04.000000000 +0200
++++ libmsn-4.0-beta1/msn/msnobject.cpp	2008-11-16 00:41:14.046875000 +0100
+@@ -108,7 +108,7 @@
+     {
+         if(msnObjects.empty()) return false;
+ 
+-        __gnu_cxx::slist<MSNObjectUnit>::iterator i = msnObjects.begin();
++        std::list<MSNObjectUnit>::iterator i = msnObjects.begin();
+         for(; i!=msnObjects.end();i++)
+         {
+             if((*i).realLocation == filename && 
+@@ -126,8 +126,8 @@
+         bool deleted=false;
+         if(msnObjects.empty()) return false;
+ 
+-        __gnu_cxx::slist<MSNObjectUnit>::iterator i = msnObjects.begin();
+-        __gnu_cxx::slist<MSNObjectUnit>::iterator d;
++        std::list<MSNObjectUnit>::iterator i = msnObjects.begin();
++        std::list<MSNObjectUnit>::iterator d;
+         for(;i!=msnObjects.end();i++)
+         {
+             if((*i).Type == Type)
+@@ -144,7 +144,7 @@
+     bool MSNObject::getMSNObjectXMLByType(int Type, std::string & xml)
+     {
+         if(msnObjects.empty()) return false;
+-        __gnu_cxx::slist<MSNObjectUnit>::iterator i = msnObjects.begin();
++        std::list<MSNObjectUnit>::iterator i = msnObjects.begin();
+         
+         for( ; i!=msnObjects.end();i++)
+         {
+@@ -163,7 +163,7 @@
+         XMLNode msnObject = XMLNode::parseString(xml.c_str());
+         std::string SHA1D = msnObject.getAttribute("SHA1D",0);
+ 
+-        __gnu_cxx::slist<MSNObjectUnit>::iterator i = msnObjects.begin();
++        std::list<MSNObjectUnit>::iterator i = msnObjects.begin();
+         
+         for( ; i!=msnObjects.end();i++)
+         {
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/msnobject.h libmsn-4.0-beta1/msn/msnobject.h
+--- D:\tmp\libmsn-4.0-beta1/msn/msnobject.h	2008-09-21 21:01:04.000000000 +0200
++++ libmsn-4.0-beta1/msn/msnobject.h	2008-11-16 00:41:37.250000000 +0100
+@@ -25,7 +25,7 @@
+ 
+ #include <string>
+ #include <list>
+-#include <ext/slist>
++//#include <ext/slist>
+ 
+ namespace MSN
+ {
+@@ -47,7 +47,7 @@
+             std::string XMLString;
+         } MSNObjectUnit;
+ 
+-        __gnu_cxx::slist<MSNObjectUnit> msnObjects;
++        std::list<MSNObjectUnit> msnObjects;
+ public:
+         MSNObject() : current_id(0) {};
+         ~MSNObject() {};
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/notificationserver.h libmsn-4.0-beta1/msn/notificationserver.h
+--- D:\tmp\libmsn-4.0-beta1/msn/notificationserver.h	2008-10-18 02:41:53.000000000 +0200
++++ libmsn-4.0-beta1/msn/notificationserver.h	2008-11-16 00:43:15.968750000 +0100
+@@ -37,6 +37,10 @@
+ #include <cassert>
+ #include <sys/types.h>
+ 
++#ifdef _WIN32
++typedef unsigned uint;
++#endif
++
+ namespace MSN
+ {    
+     class SwitchboardServerConnection;
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/soap.cpp libmsn-4.0-beta1/msn/soap.cpp
+--- D:\tmp\libmsn-4.0-beta1/msn/soap.cpp	2008-09-21 21:01:04.000000000 +0200
++++ libmsn-4.0-beta1/msn/soap.cpp	2008-11-16 00:51:09.000000000 +0100
+@@ -30,6 +30,7 @@
+ 
+ #include <cctype>
+ #include <iostream>
++#include <algorithm>
+ #include <string.h>
+ #include <soap.h>
+ 
+@@ -1527,7 +1528,7 @@
+                     if(!Member.nChildNode("PassportName"))
+                             continue;
+                     std::string a = Member.getChildNode("PassportName").getText();
+-                    std::transform (a.begin(),a.end(), a.begin(), tolower); 
++                    transform (a.begin(),a.end(), a.begin(), tolower); 
+ 
+                     if(!listInfo->contactList[a])
+                         listInfo->contactList[a]=new Buddy(a);
+@@ -1686,7 +1687,7 @@
+             std::string isMobileIMEnabled(thisContact.getChildNode("isMobileIMEnabled").getText());
+             std::string isMessengerUser(thisContact.getChildNode("isMessengerUser").getText());
+             std::string contactType1(thisContact.getChildNode("contactType").getText());
+-            std::transform (passportName.begin(), passportName.end(), passportName.begin(), tolower); 
++            transform (passportName.begin(), passportName.end(), passportName.begin(), tolower); 
+ 
+             if(!listInfo->contactList[passportName])
+                 listInfo->contactList[passportName]=new Buddy(passportName,displayName);
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/util.cpp libmsn-4.0-beta1/msn/util.cpp
+--- D:\tmp\libmsn-4.0-beta1/msn/util.cpp	2008-11-12 22:07:09.000000000 +0100
++++ libmsn-4.0-beta1/msn/util.cpp	2008-11-16 00:55:54.453125000 +0100
+@@ -32,6 +32,10 @@
+ #include <sys/timeb.h>
+ #include "md5.h"
+ 
++#ifdef _WIN32
++#define random rand
++#endif
++
+ namespace MSN 
+ {    
+     std::pair<std::string, int> splitServerAddress(const std::string & address, int default_port)
+diff -Nru D:\tmp\libmsn-4.0-beta1/msn/util.h libmsn-4.0-beta1/msn/util.h
+--- D:\tmp\libmsn-4.0-beta1/msn/util.h	2008-11-12 22:07:09.000000000 +0100
++++ libmsn-4.0-beta1/msn/util.h	2008-11-16 00:46:45.093750000 +0100
+@@ -37,6 +37,10 @@
+ #include <stdexcept>
+ #include <string>
+ 
++#ifdef _MSC_VER
++#pragma warning( disable : 4290 )
++#endif
++
+ // this is for CHL command
+ #define szClientID "PROD0114ES4Z%Q5W"
+ #define szClientCode "PK}_A_0N_K%O?A9S"

@@ -1,0 +1,48 @@
+import base
+import os
+import shutil
+import info
+import utils
+
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['4.0-beta1'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta1.tar.bz2'
+        self.targetInstSrc['4.0-beta1'] = 'libmsn-4.0-beta1'
+        self.defaultTarget = '4.0-beta1'
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/win32libs'] = 'default'
+
+class subclass(base.baseclass):
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
+        self.createCombinedPackage = False
+        self.subinfo = subinfo()
+
+    def unpack( self ):
+        if( not base.baseclass.unpack( self ) ):
+            return False
+        if self.buildTarget == '4.0-beta1':
+            cmd = "cd %s && patch -p0 < %s" % \
+                  ( self.workdir, os.path.join( self.packagedir , "libmsn.diff" ) )
+            if utils.verbose() >= 1:
+                print cmd
+            self.system( cmd ) or die( "patch" )
+            
+        return True
+        
+
+    def compile( self ):
+        return self.kdeCompile()
+
+    def install( self ):
+        if not self.kdeInstall():
+            return False
+        return True
+
+    def make_package( self ):
+        # now do packaging with kdewin-packager
+        self.doPackaging( "libmsn", self.buildTarget, True )
+        return True
+  
+if __name__ == '__main__':
+    subclass().execute()
