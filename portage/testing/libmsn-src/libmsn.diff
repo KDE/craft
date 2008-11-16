@@ -356,7 +356,6 @@ diff -Nru D:\cygopt\tempdownloads\libmsn-4.0-beta1/msn/libmsn_export.h libmsn-4.
 +#endif
 +
 +#endif // _LIBMSN_EXPORT_H_
-\ No newline at end of file
 diff -Nru D:\cygopt\tempdownloads\libmsn-4.0-beta1/msn/message.h libmsn-4.0-beta1/msn/message.h
 --- D:\cygopt\tempdownloads\libmsn-4.0-beta1/msn/message.h	2008-09-10 21:34:08.000000000 +0200
 +++ libmsn-4.0-beta1/msn/message.h	2008-11-16 03:10:32.687500000 +0100
