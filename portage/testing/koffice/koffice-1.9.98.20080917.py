@@ -48,7 +48,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget == 'alpha10' || self.buildTarget == 'beta1' || self.buildTarget == 'beta3':
+        if self.buildTarget == 'alpha10' or self.buildTarget == 'beta1' or self.buildTarget == 'beta3':
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
