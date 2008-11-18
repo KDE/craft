@@ -48,27 +48,14 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget == 'alpha10':
+        if self.buildTarget == 'alpha10' || self.buildTarget == 'beta1' || self.buildTarget == 'beta3':
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
             src = os.path.join( self.workdir, self.instsrcdir )
 
             cmd = "cd %s && patch -p0 < %s" % \
-                  ( src, os.path.join( self.packagedir , "koffice-alpha10.diff" ) )
-            if utils.verbose() >= 1:
-                print cmd
-            self.kdeCustomDefines += " -DINCLUDE_INSTALL_DIR=%s" % os.path.join( self.rootdir, "include" )
-            self.system( cmd ) or die( "patch" )
-            return True
-        if self.buildTarget == 'beta1':
-            if( not base.baseclass.unpack( self ) ):
-                return False
-                
-            src = os.path.join( self.workdir, self.instsrcdir )
-
-            cmd = "cd %s && patch -p0 < %s" % \
-                  ( src, os.path.join( self.packagedir , "koffice-beta1.diff" ) )
+                  ( src, os.path.join( self.packagedir , "koffice-" + self.buildTarget + ".diff" ) )
             if utils.verbose() >= 1:
                 print cmd
             self.kdeCustomDefines += " -DINCLUDE_INSTALL_DIR=%s" % os.path.join( self.rootdir, "include" )
