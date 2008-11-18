@@ -1,25 +1,24 @@
 import base
 import os
+import sys
 import shutil
 import utils
+import info
 
-PACKAGE_NAME         = "expat"
-PACKAGE_VER          = "2.0.1"
-PACKAGE_FULL_VER     = "2.0.1"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libexpat"
 
-SRC_URI= """
-http://downloads.sourceforge.net/sourceforge/expat/expat-win32bin-2.0.1.exe
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+      self.targets['2.0.1'] = 'http://downloads.sourceforge.net/sourceforge/expat/expat-win32bin-2.0.1.exe'
+      self.targetInstSrc['2.0.1'] = ''
+      self.defaultTarget = '2.0.1'
 
-DEPEND = """
-"""
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def unpack( self ):
 
@@ -48,12 +47,12 @@ class subclass(base.baseclass):
     dst = os.path.join( self.imagedir, self.instdestdir, "bin", PACKAGE_DLL_NAME + ".dll" )
     shutil.copy( src, dst )
 
-    # /contrib/PACKAGE_NAME/PACKAGE_FULL_VER
+    # /contrib/expat/self.buildTarget
     dst = os.path.join( self.imagedir, self.instdestdir, "contrib" )
     utils.cleanDirectory( dst )
-    dst = os.path.join( dst, PACKAGE_NAME )
+    dst = os.path.join( dst, "expat" )
     utils.cleanDirectory( dst )
-    dst = os.path.join( dst, PACKAGE_FULL_VER )
+    dst = os.path.join( dst, self.buildTarget )
     utils.cleanDirectory( dst )
 
     src = os.path.join( self.workdir )
@@ -76,14 +75,17 @@ class subclass(base.baseclass):
     utils.cleanDirectory( dst )
 
     return True
-  def make_package( self ):
-    self.instsrcdir = "source"
 
+  def qmerge( self ):
+    print >> sys.stderr, "Installing this package is not intented."
+    return False
+
+  def make_package( self ):
     # auto-create both import libs with the help of pexports
     self.createImportLibs( PACKAGE_DLL_NAME )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+    self.doPackaging( "expat", self.buildTarget, True )
 
     return True
   

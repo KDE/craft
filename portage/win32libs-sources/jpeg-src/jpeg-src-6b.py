@@ -1,25 +1,24 @@
 import base
 import os
+import sys
 import shutil
 import utils
+import info
 
-PACKAGE_NAME         = "jpeg"
-PACKAGE_VER          = "6b"
-PACKAGE_FULL_VER     = "6b"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "jpeg62"
 
-SRC_URI= """
-http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/jpeg-6b-4.exe
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+      self.targets['6b-5'] = 'http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/jpeg-6b-4.exe'
+      self.targetInstSrc['6b-5'] = ''
+      self.defaultTarget = '6b-5'
 
-DEPEND = """
-"""
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def unpack( self ):
 
@@ -63,14 +62,18 @@ class subclass(base.baseclass):
     utils.cleanDirectory( dst )
 
     return True
-  def make_package( self ):
-    self.instsrcdir = ""
 
+  def qmerge( self ):
+    print >> sys.stderr, "Installing this package is not intented."
+    return False
+
+  def make_package( self ):
     # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
+    if not self.createImportLibs( PACKAGE_DLL_NAME ):
+        return False
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+    self.doPackaging( "jpeg", self.buildTarget, False )
 
     return True
   

@@ -1,25 +1,24 @@
 import base
 import os
+import sys
 import shutil
 import utils
+import info
 
-PACKAGE_NAME         = "giflib"
-PACKAGE_VER          = "4.1.4"
-PACKAGE_FULL_VER     = "4.1.4-2"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "giflib4"
 
-SRC_URI= """
-http://switch.dl.sourceforge.net/sourceforge/gnuwin32/giflib-4.1.4-1.exe
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+      self.targets['4.1.4-1'] = 'http://switch.dl.sourceforge.net/sourceforge/gnuwin32/giflib-4.1.4-1.exe'
+      self.targetInstSrc['4.1.4-1'] = ''
+      self.defaultTarget = '4.1.4-1'
 
-DEPEND = """
-"""
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def unpack( self ):
 
@@ -48,7 +47,7 @@ class subclass(base.baseclass):
     dst = os.path.join( self.imagedir, self.instdestdir, "bin", PACKAGE_DLL_NAME + "giflib4.dll" )
     shutil.copy( src, dst )
 
-    # /contrib/PACKAGE_NAME/PACKAGE_FULL_VER
+    # /contrib/giflib/self.buildTarget
     src = os.path.join( self.workdir, self.instsrcdir, "contrib" )
     dst = os.path.join( self.imagedir, self.instdestdir, "contrib" )
     utils.copySrcDirToDestDir( src, dst )
@@ -68,14 +67,18 @@ class subclass(base.baseclass):
     utils.cleanDirectory( dst )
 
     return True
-  def make_package( self ):
-    self.instsrcdir = ""
 
+  def qmerge( self ):
+    print >> sys.stderr, "Installing this package is not intented."
+    return False
+
+  def make_package( self ):
     # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
+    if not self.createImportLibs( PACKAGE_DLL_NAME ):
+        return False
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+    self.doPackaging( "giflib", self.buildTarget, False )
 
     return True
   

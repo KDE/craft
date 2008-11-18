@@ -1,25 +1,26 @@
 import base
 import os
+import sys
 import shutil
 import utils
+import info
 
 PACKAGE_NAME         = "zlib"
-PACKAGE_VER          = "1.2.3"
 PACKAGE_FULL_VER     = "1.2.3-2"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "zlib1"
 
-SRC_URI= """
-http://www.zlib.net/zlib123-dll.zip
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+      self.targets['1.2.3-2'] = 'http://www.zlib.net/zlib123-dll.zip'
+      self.targetInstSrc['1.2.3-2'] = ''
+      self.defaultTarget = '1.2.3-2'
 
-DEPEND = """
-"""
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def compile( self ):
     # binary-only package - nothing to compile
@@ -63,14 +64,18 @@ class subclass(base.baseclass):
     utils.cleanDirectory( dst )
 
     return True
-  def make_package( self ):
-    self.instsrcdir = ""
 
+  def qmerge( self ):
+    print >> sys.stderr, "Installing this package is not intented."
+    return False
+
+  def make_package( self ):
     # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
+    if not self.createImportLibs( PACKAGE_DLL_NAME ):
+        return False
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+    self.doPackaging( PACKAGE_NAME, self.buildTarget, False )
 
     return True
   
