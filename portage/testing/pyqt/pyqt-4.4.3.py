@@ -24,7 +24,7 @@ class subclass(base.baseclass):
         os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-"+self.compiler) )
 
     def unpack(self):
-        base.baseclass.unpack( self ) or utils.die( "unpack failed" )		
+        base.baseclass.unpack( self ) or utils.die( "unpack failed" )       
         self.system( "copy " + os.path.join(self.workdir,self.instsrcdir,"configure.py") + " " + os.path.join(self.workdir,self.instsrcdir,"configure.py.orig") )
         self.system( "copy " + os.path.join( self.packagedir,"configure.py") + " " + os.path.join(self.workdir,self.instsrcdir,"configure.py") )
         # patch does not work for unknown reasons
@@ -37,7 +37,7 @@ class subclass(base.baseclass):
             py_lib_dir = sipcfg.py_lib_dir
             implib = os.path.join(py_lib_dir,"python25.lib")
             implib_d = os.path.join(py_lib_dir,"python25_d.lib")
-			# new location build dir
+            # new location build dir
             #implib_d = os.path.join(self.workdir,self.instsrcdir,"python25_d.lib")
             if os.path.exists(implib):
                 self.system( "copy " + implib + " " + implib_d);
@@ -45,35 +45,35 @@ class subclass(base.baseclass):
         return True
 
     def configure( self ):
-		builddir = os.path.join( self.workdir, self.instsrcdir )
-		os.chdir( builddir )
-		
-		if self.buildType == 'Debug':
-			command = "echo yes | python configure.py -u "
-		else:
-			command = "echo yes | python configure.py "
-		# add mingw compiler
-		#command += "-p plat"
-		command += "--verbose"
-		command += " -I " + os.path.join(self.packagedir)
-		# for debug library
-		self.system( command )
-		return True
+        builddir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( builddir )
+
+        if self.buildType == 'Debug':
+            command = "echo yes | python configure.py -u "
+        else:
+            command = "echo yes | python configure.py "
+        # add mingw compiler
+        #command += "-p plat"
+        command += "--verbose"
+        command += " -I " + os.path.join(self.packagedir)
+        # for debug library
+        self.system( command )
+        return True
 
     def compile( self ):
-		self.configure()
-		builddir = os.path.join( self.workdir, self.instsrcdir )
-		os.chdir( builddir )
-		command = "nmake"
-		self.system( command )
-		return True
+        self.configure()
+        builddir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( builddir )
+        command = "nmake"
+        self.system( command )
+        return True
 
     def install( self ):
-		builddir = os.path.join( self.workdir, self.instsrcdir )
-		os.chdir( builddir )
-		self.system( "nmake install" )
-		# install manifest file too
-		return True
+        builddir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( builddir )
+        self.system( "nmake install" )
+        # install manifest file too
+        return True
 
     def make_package( self ):
         return False
