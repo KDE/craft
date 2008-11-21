@@ -19,35 +19,35 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def configure( self ):
-		builddir = os.path.join( self.workdir, self.instsrcdir )
-		os.chdir( builddir )
-		if self.buildType == 'Debug':
-			command = "python configure.py -u"
-		else:
-			command = "python configure.py"
-		# add mingw compiler
-		#command += "-p plat"
-		command += " CFLAGS=-I" + os.path.join(self.packagedir)
-		command += " CXXFLAGS=-I" + os.path.join(self.packagedir)
-		self.system( command )
-		return True
+        builddir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( builddir )
+        if self.buildType == 'Debug':
+            command = "python configure.py -u"
+        else:
+            command = "python configure.py"
+        # add mingw compiler
+        #command += "-p plat"
+        command += " CFLAGS=-I" + os.path.join(self.packagedir)
+        command += " CXXFLAGS=-I" + os.path.join(self.packagedir)
+        self.system( command )
+        return True
 
     def compile( self ):
-		self.configure()
-		builddir = os.path.join( self.workdir, self.instsrcdir )
-		os.chdir( builddir )
-		command = "nmake"
-		self.system( command )
-		return True
+        self.configure()
+        builddir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( builddir )
+        command = "nmake"
+        self.system( command )
+        return True
 
     def install( self ):
-		builddir = os.path.join( self.workdir, self.instsrcdir )
-		os.chdir( builddir )
-		self.system( "nmake install" )
-		# fix problem with not copying manifest file 
-		self.system( "copy " + os.path.join(builddir,"sipgen","sip.exe.manifest") + " c:\python25") 
-		# install manifest file too
-		return True
+        builddir = os.path.join( self.workdir, self.instsrcdir )
+        os.chdir( builddir )
+        self.system( "nmake install" )
+        # fix problem with not copying manifest file 
+        self.system( "copy " + os.path.join(builddir,"sipgen","sip.exe.manifest") + " c:\python25") 
+        # install manifest file too
+        return True
 
     def make_package( self ):
         return False
