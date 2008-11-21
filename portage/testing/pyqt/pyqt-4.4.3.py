@@ -21,7 +21,11 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
-        os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-"+self.compiler) )
+        if self.compiler == "mingw":
+            os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-g++") )
+        else:
+            os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-"+self.compiler) )
+
 
     def unpack(self):
         base.baseclass.unpack( self ) or utils.die( "unpack failed" )       
@@ -52,8 +56,8 @@ class subclass(base.baseclass):
             command = "echo yes | python configure.py -u "
         else:
             command = "echo yes | python configure.py "
-        # add mingw compiler
-        #command += "-p plat"
+        if self.compiler == "mingw":
+            command += " -p win32-g++"
         command += "--verbose"
         command += " -I " + os.path.join(self.packagedir)
         # for debug library
@@ -64,14 +68,20 @@ class subclass(base.baseclass):
         self.configure()
         builddir = os.path.join( self.workdir, self.instsrcdir )
         os.chdir( builddir )
-        command = "nmake"
+        if self.compiler == "mingw":
+            command = "mingw32-make"
+        else:
+            command = "nmake"
         self.system( command )
         return True
 
     def install( self ):
         builddir = os.path.join( self.workdir, self.instsrcdir )
         os.chdir( builddir )
-        self.system( "nmake install" )
+        if self.compiler == "mingw":
+            self.system( "mingw32-make install" )
+        else:
+            self.system( "nmake install" )
         # install manifest file too
         return True
 
