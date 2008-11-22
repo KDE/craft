@@ -151,7 +151,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( "qt", "4.4.2-1" )
+        return self.doPackaging( "qt", "4.4.3-1" )
 
 if __name__ == '__main__':
     subclass().execute()

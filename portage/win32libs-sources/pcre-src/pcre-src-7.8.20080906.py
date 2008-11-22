@@ -44,7 +44,7 @@ class subclass(base.baseclass):
 
   def make_package( self ):
     # now do packaging with kdewin-packager
-    self.doPackaging( "pcre", self.buildTarget, True )
+    self.doPackaging( "pcre", self.buildTarget + '-2', True )
     return True
   
 if __name__ == '__main__':
