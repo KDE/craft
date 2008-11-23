@@ -60,7 +60,7 @@ class subclass(base.baseclass):
 
         if utils.verbose() >= 1:
             print cmd
-        #os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
 
         # copy runtime libraries to the bin folder
         cmd = "cd %s && mkdir bin && move lib\\*.dll bin" % ( os.path.join( self.workdir, self.imagedir ) )
