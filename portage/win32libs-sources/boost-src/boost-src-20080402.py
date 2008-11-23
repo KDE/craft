@@ -13,9 +13,11 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.34.1'] = 'http://downloads.sourceforge.net/boost/boost_1_34_1.tar.bz2'
-        self.targetInstSrc['1.34.1'] = 'boost_1_34_1'
         self.targets['1.35.0'] = 'http://downloads.sourceforge.net/boost/boost_1_35_0.tar.bz2'
+        self.targets['1.37.0'] = 'http://downloads.sourceforge.net/boost/boost_1_37_0.tar.bz2'
+        self.targetInstSrc['1.34.1'] = 'boost_1_34_1'
         self.targetInstSrc['1.35.0'] = 'boost_1_35_0'
+        self.targetInstSrc['1.37.0'] = 'boost_1_37_0'
         self.defaultTarget = '1.35.0'
     
     def setDependencies( self ):
@@ -25,7 +27,6 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        #self.createCombinedPackage = True  # no longer true :(
         if self.compiler == "mingw":
             self.toolset = "gcc"
         else:
@@ -35,10 +36,16 @@ class subclass(base.baseclass):
     def execute( self ):
         base.baseclass.execute( self )
 
+    def libsToBuild( self ):
+        libs = "--with-python "
+        return libs
+
     def compile( self ):
         """"""
-        cmd = "cd %s && bjam --toolset=%s --prefix=%s --with-python --layout=system" % ( os.path.join( self.workdir, self.instsrcdir ),
-        self.toolset, os.path.join( self.workdir, self.imagedir ))
+        cmd  = "cd %s && bjam --toolset=%s --prefix=%s install " % \
+               ( os.path.join( self.workdir, self.instsrcdir ),
+                 self.toolset, os.path.join( self.workdir, self.imagedir ))
+        cmd += self.libsToBuild()
         if utils.verbose() >= 1:
             print cmd
         os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
@@ -46,14 +53,17 @@ class subclass(base.baseclass):
 
     def install( self ):
         """"""
-        cmd = "cd %s && bjam --toolset=%s --prefix=%s --with-python --layout=system install" % ( os.path.join( self.workdir, self.instsrcdir ),
-        self.toolset, os.path.join( self.workdir, self.imagedir ))
+        cmd  = "cd %s && bjam --toolset=%s --prefix=%s " % \
+               ( os.path.join( self.workdir, self.instsrcdir ),
+                 self.toolset, os.path.join( self.workdir, self.imagedir ))
+        cmd += self.libsToBuild()
+
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        #os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
 
         # copy runtime libraries to the bin folder
-        cmd = "cd %s && mkdir bin && copy lib\\*.dll bin" % ( os.path.join( self.workdir, self.imagedir ) )
+        cmd = "cd %s && mkdir bin && move lib\\*.dll bin" % ( os.path.join( self.workdir, self.imagedir ) )
         if utils.verbose() >= 1:
             print cmd
         os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
