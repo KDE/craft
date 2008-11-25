@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.1.0'] = 'tags/phonon/4.1.0'    # tagged version, also in qt4.4.0
         self.svnTargets['4.2.0'] = 'tags/phonon/4.2.0'    # tagged version
+        self.svnTargets['4.2.80'] = 'tags/phonon/4.2.80'
         self.svnTargets['4.2'] = 'branches/phonon/4.2'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
         self.defaultTarget = 'svnHEAD'
@@ -33,7 +34,7 @@ class subclass(base.baseclass):
             compile the DirectShow 9 backend.
             """
             os.environ["DXSDK_DIR"] = os.path.join( self.rootdir, "include", "mingw" )
-        self.kdeCustomDefines="-DPHONON_BUILD_EXAMPLES=ON -DPHONON_BUILD_TESTS=ON"
+        self.kdeCustomDefines="-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
         return self.kdeCompile()
 
     def install( self ):
