@@ -16,6 +16,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
+        self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -29,7 +32,7 @@ class subclass(base.baseclass):
     def compile( self ):
         self.kdeCustomDefines = ""
         self.kdeCustomDefines += " -DBUILD_libs=OFF"
-        self.kdeCustomDefines += " -DBUILD_systemsettings=OFF"
+        self.kdeCustomDefines += " -DBUILD_systemsettings=ON"
         self.kdeCustomDefines += " -DBUILD_kcheckpass=OFF"
         self.kdeCustomDefines += " -DBUILD_kscreensaver=OFF"
         self.kdeCustomDefines += " -DBUILD_solid=OFF"
@@ -43,8 +46,8 @@ class subclass(base.baseclass):
         self.kdeCustomDefines += " -DBUILD_kwin=OFF"
         self.kdeCustomDefines += " -DBUILD_printer-applet=OFF"
         self.kdeCustomDefines += " -DBUILD_kstartupconfig=OFF"
-        self.kdeCustomDefines += " -DBUILD_khotkeys=OFF"
-        self.kdeCustomDefines += " -DBUILD_kcontrol=OFF"
+        self.kdeCustomDefines += " -DBUILD_khotkeys=ON"
+        self.kdeCustomDefines += " -DBUILD_kcontrol=ON"
         self.kdeCustomDefines += " -DBUILD_ksystraycmd=OFF"
         self.kdeCustomDefines += " -DBUILD_doc=OFF"
 #        self.kdeCustomDefines += " -DBUILD_wallpapers=OFF"
