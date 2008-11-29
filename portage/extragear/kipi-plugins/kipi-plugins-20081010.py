@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/kipi-plugins'
         self.targets['0.2.0-beta3'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta3.tar.bz2'
         self.targetInstSrc['0.2.0-beta3'] = 'kipi-plugins-0.2.0-beta3'
+        self.targets['0.2.0-beta4'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta4.tar.bz2'
+        self.targetInstSrc['0.2.0-beta4'] = 'kipi-plugins-0.2.0-beta4'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -23,6 +25,11 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         if self.buildTarget == '0.2.0-beta3':
+            if( not base.baseclass.unpack( self ) ):
+                return True
+            else:
+                return False
+        elif self.buildTarget == '0.2.0-beta3':
             if( not base.baseclass.unpack( self ) ):
                 return True
             else:

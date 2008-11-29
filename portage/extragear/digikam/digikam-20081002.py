@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
         self.targets['0.10.0-beta5'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0-beta5.tar.bz2'
         self.targetInstSrc['0.10.0-beta5'] = 'digikam-0.10.0-beta5'
+        self.targets['0.10.0-beta6'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0-beta6.tar.bz2'
+        self.targetInstSrc['0.10.0-beta6'] = 'digikam-0.10.0-beta6'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -23,6 +25,11 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         if self.buildTarget == '0.10.0-beta5':
+            if( not base.baseclass.unpack( self ) ):
+                return False
+            else:
+                return True
+        elif self.buildTarget == '0.10.0-beta6':
             if( not base.baseclass.unpack( self ) ):
                 return False
             else:
