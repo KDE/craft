@@ -10,9 +10,11 @@ class subinfo (info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['0.1.0'] = "http://saroengels.net/kde-windows/gnuwin32/digikam-support.tar.bz2"
+        self.targets['0.1.0'] = "http://saroengels.net/kde-windows/gnuwin32/digikam-support-0.1.0.tar.bz2"
         self.targetInstSrc['0.1.0'] = "digikam-support"
-        self.defaultTarget = '0.1.0'
+        self.targets['0.2.0'] = "http://saroengels.net/kde-windows/gnuwin32/digikam-support-0.2.0.tar.bz2"
+        self.targetInstSrc['0.2.0'] = "digikam-support-0.2.0"
+        self.defaultTarget = '0.2.0'
 
 
 class subclass(base.baseclass):
