@@ -6,12 +6,10 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['1.80'] = 'tags/amarok/1.80/amarok'
         self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
-        self.targets['1.90'] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/1.90/src/amarok-1.90.tar.bz2'
-        self.targetInstSrc['1.90'] = 'amarok-1.90'
-        self.targets['1.94'] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/1.94/src/amarok-1.94.tar.bz2'
-        self.targetInstSrc['1.94'] = 'amarok-1.94'
+        for rel in ['1.90', '1.94', '1.98']:
+            self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
+            self.targetInstSrc[ rel ] = 'amarok-' + rel
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -41,6 +39,10 @@ class subclass(base.baseclass):
 #            self.system( cmd ) or die( "patch" )
             return True
         elif self.buildTarget == '1.94':
+            if( not base.baseclass.unpack( self ) ):
+                return False
+            return True
+        elif self.buildTarget == '1.98':
             if( not base.baseclass.unpack( self ) ):
                 return False
             return True
