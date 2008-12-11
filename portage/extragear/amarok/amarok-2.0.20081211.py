@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
         for rel in ['1.90', '1.94', '1.98']:
             self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
             self.targetInstSrc[ rel ] = 'amarok-' + rel
+        for rel in ['2.0']:
+            self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/stable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
+            self.targetInstSrc[ rel ] = 'amarok-' + rel
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -26,25 +29,18 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget == '1.90':
+        if self.buildTarget in ['1.90', '1.94', '1.98', '2.0']:
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
-            src = os.path.join( self.workdir, self.instsrcdir )
+            if self.buildTarget == '1.90':
+                src = os.path.join( self.workdir, self.instsrcdir )
 
-            cmd = "cd %s && patch -p0 < %s" % \
-                  ( src, os.path.join( self.packagedir , "amarok-beta1.diff" ) )
-            if utils.verbose() >= 1:
-                print cmd
-#            self.system( cmd ) or die( "patch" )
-            return True
-        elif self.buildTarget == '1.94':
-            if( not base.baseclass.unpack( self ) ):
-                return False
-            return True
-        elif self.buildTarget == '1.98':
-            if( not base.baseclass.unpack( self ) ):
-                return False
+                cmd = "cd %s && patch -p0 < %s" % \
+                      ( src, os.path.join( self.packagedir , "amarok-beta1.diff" ) )
+                if utils.verbose() >= 1:
+                    print cmd
+#                self.system( cmd ) or die( "patch" )
             return True
         else:
             return self.kdeSvnUnpack()
