@@ -9,7 +9,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.1.0'] = 'http://downloads.sourceforge.net/ebook-tools/ebook-tools-0.1.0.tar.gz'
         self.targetInstSrc['0.1.0'] = 'ebook-tools-0.1.0'
-        self.defaultTarget = '0.1.0'
+        self.targets['0.1.1'] = 'http://downloads.sourceforge.net/ebook-tools/ebook-tools-0.1.1.tar.gz'
+        self.targetInstSrc['0.1.1'] = 'ebook-tools-0.1.1'
+        self.defaultTarget = '0.1.1'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -34,7 +36,7 @@ class subclass(base.baseclass):
         self.createImportLibs( "libepub" )
 
         # now do packaging with kdewin-packager
-        self.doPackaging( "ebook-tools", "0.1.0", True )
+        self.doPackaging( "ebook-tools", self.buildTarget, True )
 
         return True
   
