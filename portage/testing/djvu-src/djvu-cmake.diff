@@ -1,7 +1,7 @@
 diff -Nru CMakeLists.txt CMakeLists.txt
 --- CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ CMakeLists.txt	2008-12-16 11:39:31.968750000 +0100
-@@ -0,0 +1,29 @@
++++ CMakeLists.txt	2008-12-16 23:55:55.748517700 +0100
+@@ -0,0 +1,33 @@
 +project(djvulibre)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -25,16 +25,19 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +endif(MSVC)
 +
++if(MINGW)
++add_definitions(-Wno-deprecated)
++endif(MINGW)
++
 +# ******************************************************************************
 +# cmake handles the dependencies itself
 +add_subdirectory(gui)
 +add_subdirectory(libdjvu)
 +add_subdirectory(tools)
 +add_subdirectory(xmltools)
-\ No newline at end of file
 diff -Nru gui/CMakeLists.txt gui/CMakeLists.txt
 --- gui/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gui/CMakeLists.txt	2008-12-16 11:40:40.421875000 +0100
++++ gui/CMakeLists.txt	2008-12-16 14:22:38.640625000 +0100
 @@ -0,0 +1,22 @@
 +include_directories( ../libdjvu 
 +                     ..)
@@ -60,7 +63,7 @@ diff -Nru gui/CMakeLists.txt gui/CMakeLists.txt
 +endif(X11_FOUND)
 diff -Nru libdjvu/Arrays.h libdjvu/Arrays.h
 --- libdjvu/Arrays.h	2007-05-19 05:07:33.000000000 +0200
-+++ libdjvu/Arrays.h	2008-12-16 12:10:52.718750000 +0100
++++ libdjvu/Arrays.h	2008-12-16 14:22:38.843750000 +0100
 @@ -129,7 +129,7 @@
  //@{
  
@@ -79,9 +82,88 @@ diff -Nru libdjvu/Arrays.h libdjvu/Arrays.h
  {
  public:
     _ArrayBase(void) : rep(0) {}
+diff -Nru libdjvu/atomic.cpp libdjvu/atomic.cpp
+--- libdjvu/atomic.cpp	2008-08-03 05:54:01.000000000 +0200
++++ libdjvu/atomic.cpp	2008-12-17 00:04:14.748517700 +0100
+@@ -168,8 +168,13 @@
+ 
+ 
+ #if USE_WIN32_INTERLOCKED && !HAVE_SYNC
++# ifdef __MINGW__
++#  define LONG_VOLATILE long
++# else
++#  define LONG_VOLATILE LONG volatile
++# endif
+ # define SYNC_ACQ(l)                                    \
+-  (!InterlockedExchange((LONG volatile *)(l),1))
++  (!InterlockedExchange((LONG_VOLATILE *)(l),1))
+ # if defined(_M_ALPHA) || defined(_M_PPC) || defined(_M_IA64)
+ #  define SYNC_REL(l)                           \
+   (InterlockedExchange((LONG volatile *)(l),0))
+@@ -178,11 +183,11 @@
+   (*(int volatile *)(l)=0)
+ # endif
+ # define SYNC_INC(l)                            \
+-  (InterlockedIncrement((LONG volatile *)(l)))
++  (InterlockedIncrement((LONG_VOLATILE *)(l)))
+ # define SYNC_DEC(l)                            \
+-  (InterlockedDecrement((LONG volatile *)(l)))
++  (InterlockedDecrement((LONG_VOLATILE *)(l)))
+ # define SYNC_CAS(l,o,n)                                        \
+-  (InterlockedCompareExchange((LONG volatile *)(l),n,o)==(o))
++  (InterlockedCompareExchange((LONG_VOLATILE *)(l),n,o)==(o))
+ # define HAVE_SYNC 1
+ #endif
+ 
+diff -Nru libdjvu/atomic.h libdjvu/atomic.h
+--- libdjvu/atomic.h	2008-08-03 05:54:01.000000000 +0200
++++ libdjvu/atomic.h	2008-12-16 15:27:06.078125000 +0100
+@@ -78,24 +78,35 @@
+ # ifdef __cplusplus
+ extern "C" {
+ #endif
+-  
++#ifdef WIN32
++#pragma warning( disable : 4251 )
++# ifdef DLL_EXPORT
++#  define DJVUAPI __declspec(dllexport)
++# else
++#  define DJVUAPI __declspec(dllimport)
++# endif
++#endif
++#ifndef DJVUAPI
++# define DJVUAPI
++#endif
++
+ /* { int tmp = *lock; *lock = 1; return !tmp; }. */
+-int atomicAcquire(int volatile *lock);
++int DJVUAPI atomicAcquire(int volatile *lock);
+   
+ /* { while (!atomicAcquire(lock)) { spin/yield/wait } } */
+-void atomicAcquireOrSpin(int volatile *lock);
++void DJVUAPI atomicAcquireOrSpin(int volatile *lock);
+ 
+ /* { *lock = 0; } */
+-void atomicRelease(int volatile *lock);
++void DJVUAPI atomicRelease(int volatile *lock);
+ 
+ /* { *var += 1; return *var; } */
+-int atomicIncrement(int volatile *var);
++int DJVUAPI atomicIncrement(int volatile *var);
+ 
+ /* { *var -= 1; return *var; } */
+-int atomicDecrement(int volatile *var);
++int DJVUAPI atomicDecrement(int volatile *var);
+ 
+ /* { if (*var == oldval) { *var = newval; return TRUE; } return FALSE; } */
+-int atomicCompareAndSwap(int volatile *var, int oldval, int newval);
++int DJVUAPI atomicCompareAndSwap(int volatile *var, int oldval, int newval);
+ 
+ 
+ # ifdef __cplusplus
 diff -Nru libdjvu/CMakeLists.txt libdjvu/CMakeLists.txt
 --- libdjvu/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libdjvu/CMakeLists.txt	2008-12-16 01:16:46.421875000 +0100
++++ libdjvu/CMakeLists.txt	2008-12-16 14:22:38.953125000 +0100
 @@ -0,0 +1,81 @@
 +# ******************************************************************************
 +# building djvu library
@@ -166,7 +248,7 @@ diff -Nru libdjvu/CMakeLists.txt libdjvu/CMakeLists.txt
 +endforeach(filename ${datafiles})
 diff -Nru libdjvu/DjVuGlobal.h libdjvu/DjVuGlobal.h
 --- libdjvu/DjVuGlobal.h	2007-05-19 05:07:33.000000000 +0200
-+++ libdjvu/DjVuGlobal.h	2008-12-15 20:09:32.703125000 +0100
++++ libdjvu/DjVuGlobal.h	2008-12-16 14:22:39.109375000 +0100
 @@ -76,6 +76,7 @@
  #endif
  
@@ -175,9 +257,55 @@ diff -Nru libdjvu/DjVuGlobal.h libdjvu/DjVuGlobal.h
  # ifdef DLL_EXPORT
  #  define DJVUAPI __declspec(dllexport)
  # else
+diff -Nru libdjvu/GString.cpp libdjvu/GString.cpp
+--- libdjvu/GString.cpp	2008-03-10 21:42:33.000000000 +0100
++++ libdjvu/GString.cpp	2008-12-16 23:41:53.936017700 +0100
+@@ -2607,6 +2607,8 @@
+   else 
+     init(fmt); 
+ }
++GUTF8String::GUTF8String(const GUTF8String &str)
++{ init(str); }
+ 
+ GUTF8String::GUTF8String(const char *str)
+ { init(GStringRep::UTF8::create(str)); }
+diff -Nru libdjvu/GString.h libdjvu/GString.h
+--- libdjvu/GString.h	2008-01-27 12:36:27.000000000 +0100
++++ libdjvu/GString.h	2008-12-16 23:41:43.686017700 +0100
+@@ -1412,9 +1412,6 @@
+ 
+ inline GUTF8String::GUTF8String(void) { }
+ 
+-inline GUTF8String::GUTF8String(const GUTF8String &str)
+-{ init(str); }
+-
+ inline GUTF8String& GUTF8String::operator= (const GP<GStringRep> &str)
+ { return init(str); }
+ 
+diff -Nru libdjvu/GThreads.h libdjvu/GThreads.h
+--- libdjvu/GThreads.h	2007-03-25 22:48:32.000000000 +0200
++++ libdjvu/GThreads.h	2008-12-16 23:21:07.373517700 +0100
+@@ -361,7 +361,7 @@
+     as private members. It is therefore not possible to make multiple copies
+     of instances of this class, as implied by the class semantic. */
+ 
+-class GMonitor
++class DJVUAPI GMonitor
+ {
+ public:
+   GMonitor();
+@@ -504,7 +504,7 @@
+     (second). The flags remain locked between the moment of testing and
+     modification, which guarantees, that their state cannot be changed in
+     between of these operations. */
+-class GSafeFlags : public GMonitor
++class DJVUAPI GSafeFlags : public GMonitor
+ {
+ private:
+    volatile long flags;
 diff -Nru tools/CMakeLists.txt tools/CMakeLists.txt
 --- tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tools/CMakeLists.txt	2008-12-16 11:56:21.453125000 +0100
++++ tools/CMakeLists.txt	2008-12-16 23:12:31.842267700 +0100
 @@ -0,0 +1,53 @@
 +# libdjvu tools
 +
@@ -218,9 +346,9 @@ diff -Nru tools/CMakeLists.txt tools/CMakeLists.txt
 +add_djvutool(djvutxt djvutxt.cpp)
 +add_djvutool(djvuserve djvuserve.cpp)
 +
-+target_link_libraries(cjb2 jb2)
-+target_link_libraries(cpaldjvu jb2)
-+target_link_libraries(csepdjvu jb2)
++target_link_libraries(cjb2 jb2 djvulibre)
++target_link_libraries(cpaldjvu jb2 djvulibre)
++target_link_libraries(csepdjvu jb2 djvulibre)
 +
 +# ******************************************************************************
 +# install man pages
@@ -234,7 +362,7 @@ diff -Nru tools/CMakeLists.txt tools/CMakeLists.txt
 +endif(NOT WIN32)
 diff -Nru xmltools/CMakeLists.txt xmltools/CMakeLists.txt
 --- xmltools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xmltools/CMakeLists.txt	2008-12-15 23:12:32.750000000 +0100
++++ xmltools/CMakeLists.txt	2008-12-16 14:22:39.218750000 +0100
 @@ -0,0 +1,27 @@
 +include_directories( ../libdjvu 
 +                     ..)
@@ -265,7 +393,7 @@ diff -Nru xmltools/CMakeLists.txt xmltools/CMakeLists.txt
 +install(FILES ${docdefs} DESTINATION ${DATA_INSTALL_DIR}/djvu/pubtest)
 diff -Nru xmltools/djvuxml.1.cmake xmltools/djvuxml.1.cmake
 --- xmltools/djvuxml.1.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ xmltools/djvuxml.1.cmake	2008-12-15 22:56:32.843750000 +0100
++++ xmltools/djvuxml.1.cmake	2008-12-16 14:22:39.406250000 +0100
 @@ -0,0 +1,288 @@
 +.\" Copyright (c) 2002 Bill C. Riemers
 +.\"
