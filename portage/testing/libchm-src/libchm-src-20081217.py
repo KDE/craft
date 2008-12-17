@@ -31,6 +31,8 @@ class subclass(base.baseclass):
         return True
         
     def compile( self ):
+        # building examples and debugging tools
+        self.kdeCustomDefines = "-DBUILD_examples=OFF"
         return self.kdeCompile()
 
     def install( self ):

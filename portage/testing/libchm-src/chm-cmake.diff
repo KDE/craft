@@ -1,6 +1,6 @@
-diff -Nru chmlib-0.39.org/CMakeLists.txt chmlib-0.39/CMakeLists.txt
---- chmlib-0.39.org/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ chmlib-0.39/CMakeLists.txt	2008-12-17 01:45:42.248517700 +0100
+diff -Nru CMakeLists.txt CMakeLists.txt
+--- CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ CMakeLists.txt	2008-12-17 01:45:42.248517700 +0100
 @@ -0,0 +1,36 @@
 +project(chmlib)
 +cmake_minimum_required(VERSION 2.6)
@@ -38,9 +38,9 @@ diff -Nru chmlib-0.39.org/CMakeLists.txt chmlib-0.39/CMakeLists.txt
 +                                LIBRARY DESTINATION lib
 +                                ARCHIVE DESTINATION lib)
 +endif(BUILD_examples)
-diff -Nru chmlib-0.39.org/src/chm_lib.c chmlib-0.39/src/chm_lib.c
---- chmlib-0.39.org/src/chm_lib.c	2007-01-25 03:12:58.000000000 +0100
-+++ chmlib-0.39/src/chm_lib.c	2008-12-17 01:28:06.076642700 +0100
+diff -Nru src/chm_lib.c src/chm_lib.c
+--- src/chm_lib.c	2007-01-25 03:12:58.000000000 +0100
++++ src/chm_lib.c	2008-12-17 01:28:06.076642700 +0100
 @@ -180,7 +180,7 @@
  #endif
  
