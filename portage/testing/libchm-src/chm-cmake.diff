@@ -18,7 +18,7 @@ diff -Nru chm.def chm.def
 diff -Nru CMakeLists.txt CMakeLists.txt
 --- CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ CMakeLists.txt	2008-12-17 02:16:45.764142700 +0100
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,47 @@
 +project(chmlib)
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -29,6 +29,8 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +endif(MSVC)
 +add_library(chm SHARED ${chm_SRCS})
++
++install(FILES chm_lib.h lzx.h DESTINATION include)
 +
 +install(TARGETS chm RUNTIME DESTINATION bin
 +                    LIBRARY DESTINATION lib
