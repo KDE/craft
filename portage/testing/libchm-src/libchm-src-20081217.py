@@ -25,7 +25,7 @@ class subclass(base.baseclass):
 
         os.chdir( self.workdir )
         print os.path.join( self.workdir, self.instsrcdir )
-        if self.buildTarget == '3.5.21':
+        if self.buildTarget == '0.39':
             self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "chm-cmake.diff" ) ) )
         
         return True
