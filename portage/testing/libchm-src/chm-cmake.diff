@@ -1,0 +1,52 @@
+diff -Nru chmlib-0.39.org/CMakeLists.txt chmlib-0.39/CMakeLists.txt
+--- chmlib-0.39.org/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ chmlib-0.39/CMakeLists.txt	2008-12-17 01:45:42.248517700 +0100
+@@ -0,0 +1,36 @@
++project(chmlib)
++cmake_minimum_required(VERSION 2.6)
++
++include_directories( src )
++add_library(chm SHARED src/chm_lib.c src/lzx.c)
++
++install(TARGETS chm RUNTIME DESTINATION bin
++                    LIBRARY DESTINATION lib
++                    ARCHIVE DESTINATION lib)
++
++if(BUILD_examples)
++    set(examples enum_chmLib enumdir_chmLib extract_chmLib test_chmLib)
++
++    if(NOT WIN32)
++        # some non-standard includes
++        add_executable(chm_http src/chm_http.c)
++        target_link_libraries(chm_http chm)
++        set(examples chm_http ${examples})
++    endif(NOT WIN32)
++
++    add_executable(enum_chmLib src/enum_chmLib.c)
++    target_link_libraries(enum_chmLib chm)
++
++    add_executable(enumdir_chmLib src/enumdir_chmLib.c)
++    target_link_libraries(enumdir_chmLib chm)
++
++    add_executable(extract_chmLib src/extract_chmLib.c)
++    target_link_libraries(extract_chmLib chm)
++
++    add_executable(test_chmLib src/test_chmLib.c)
++    target_link_libraries(test_chmLib chm)
++
++    install(TARGETS ${examples} RUNTIME DESTINATION bin
++                                LIBRARY DESTINATION lib
++                                ARCHIVE DESTINATION lib)
++endif(BUILD_examples)
+diff -Nru chmlib-0.39.org/src/chm_lib.c chmlib-0.39/src/chm_lib.c
+--- chmlib-0.39.org/src/chm_lib.c	2007-01-25 03:12:58.000000000 +0100
++++ chmlib-0.39/src/chm_lib.c	2008-12-17 01:28:06.076642700 +0100
+@@ -180,7 +180,7 @@
+ #endif
+ 
+ /* GCC */
+-#ifdef __GNUC__
++#if defined(__GNUC__) && !defined(WIN32)
+ #define memcmp __builtin_memcmp
+ #define memcpy __builtin_memcpy
+ #define strlen __builtin_strlen
