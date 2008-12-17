@@ -30,7 +30,7 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +endif(MSVC)
 +add_library(chm SHARED ${chm_SRCS})
 +
-+install(FILES chm_lib.h lzx.h DESTINATION include)
++install(FILES src/chm_lib.h src/lzx.h DESTINATION include)
 +
 +install(TARGETS chm RUNTIME DESTINATION bin
 +                    LIBRARY DESTINATION lib
