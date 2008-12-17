@@ -89,7 +89,7 @@ diff -Nru libdjvu/atomic.cpp libdjvu/atomic.cpp
  
  
  #if USE_WIN32_INTERLOCKED && !HAVE_SYNC
-+# ifdef __MINGW__
++# ifdef __MINGW32__
 +#  define LONG_VOLATILE long
 +# else
 +#  define LONG_VOLATILE LONG volatile
