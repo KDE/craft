@@ -28,7 +28,7 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +    set(chm_SRCS ${chm_SRCS} chm.def)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +endif(MSVC)
-+add_library(chm SHARED ${chm_SRCS})
++add_library(chm STATIC ${chm_SRCS})
 +
 +install(FILES src/chm_lib.h src/lzx.h DESTINATION include)
 +
