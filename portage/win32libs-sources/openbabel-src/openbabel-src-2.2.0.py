@@ -9,8 +9,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.1.1'] = 'http://heanet.dl.sourceforge.net/sourceforge/openbabel/openbabel-2.1.1.tar.gz'
-        self.targets['2.2.0'] = 'http://heanet.dl.sourceforge.net/sourceforge/openbabel/openbabel-2.2.0.tar.gz'
+        self.targets['2.1.1'] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-2.1.1.tar.gz'
+        self.targets['2.2.0'] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-2.2.0.tar.gz'
         self.targetInstSrc['2.1.1'] = 'openbabel-2.1.1'
         self.targetInstSrc['2.2.0'] = 'openbabel-2.2.0'
         self.defaultTarget = '2.2.0'

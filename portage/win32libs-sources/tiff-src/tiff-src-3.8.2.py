@@ -11,8 +11,8 @@ PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libtiff3"
 
 SRC_URI= """
-http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-bin.zip
-http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-lib.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-bin.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-lib.zip
 """
 
 DEPEND = """

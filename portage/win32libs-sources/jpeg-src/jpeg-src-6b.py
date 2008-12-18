@@ -9,7 +9,7 @@ PACKAGE_DLL_NAME     = "jpeg62"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      self.targets['6b-5'] = 'http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/jpeg-6b-4.exe'
+      self.targets['6b-5'] = 'http://downloads.sourceforge.net/sourceforge/gnuwin32/jpeg-6b-4.exe'
       self.targetInstSrc['6b-5'] = ''
       self.defaultTarget = '6b-5'
 

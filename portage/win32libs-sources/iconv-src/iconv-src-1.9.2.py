@@ -13,7 +13,7 @@ libcharset1
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      self.targets['1.9.2-2'] = 'http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/libiconv-1.9.2-1.exe'
+      self.targets['1.9.2-2'] = 'http://downloads.sourceforge.net/sourceforge/gnuwin32/libiconv-1.9.2-1.exe'
       self.targetInstSrc['1.9.2-2'] = ''
       self.defaultTarget = '1.9.2-2'
 
