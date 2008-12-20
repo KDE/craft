@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['4.7.7'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/external/sip-4.7.7.zip'
-        self.targetInstSrc['4.7.7'] = 'sip-4.7.7'
-        self.defaultTarget = '4.7.7'
+        self.targets['4.7.9'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/external/sip-4.7.9.zip'
+        self.targetInstSrc['4.7.9'] = 'sip-4.7.9'
+        self.defaultTarget = '4.7.9'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -22,7 +22,7 @@ class subclass(base.baseclass):
         builddir = os.path.join( self.workdir, self.instsrcdir )
         os.chdir( builddir )
         if self.buildType == 'Debug':
-            command = "python configure.py -u"
+            command = "python configure.py"
         else:
             command = "python configure.py"
         if self.compiler == "mingw":
