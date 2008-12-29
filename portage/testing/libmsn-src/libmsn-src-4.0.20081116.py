@@ -7,8 +7,10 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.0-beta1'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta1.tar.bz2'
+        self.targets['4.0-beta2'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta2.tar.bz2'
         self.targetInstSrc['4.0-beta1'] = 'libmsn-4.0-beta1'
-        self.defaultTarget = '4.0-beta1'
+        self.targetInstSrc['4.0-beta2'] = 'libmsn-4.0-beta2'
+        self.defaultTarget = '4.0-beta2'
     def setDependencies( self ):
         self.hardDependencies['dev-util/win32libs'] = 'default'
 
@@ -27,7 +29,13 @@ class subclass(base.baseclass):
             if utils.verbose() >= 1:
                 print cmd
             self.system( cmd ) or die( "patch" )
-            
+        if self.buildTarget == '4.0-beta2':
+            cmd = "cd %s && patch -p0 < %s" % \
+                  ( self.workdir, os.path.join( self.packagedir , "libmsn_b2.diff" ) )
+            if utils.verbose() >= 1:
+                print cmd
+            self.system( cmd ) or die( "patch" )
+
         return True
         
 

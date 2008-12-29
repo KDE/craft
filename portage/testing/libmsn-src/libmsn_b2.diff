@@ -1,0 +1,36 @@
+diff -u -r libmsn-4.0-beta2-orig/CMakeLists.txt libmsn-4.0-beta2/CMakeLists.txt
+--- libmsn-4.0-beta2-orig/CMakeLists.txt	2008-11-18 16:17:55.000000000 +0100
++++ libmsn-4.0-beta2/CMakeLists.txt	2008-12-29 16:20:43.578125000 +0100
+@@ -9,9 +9,9 @@
+ 
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${OPENSSL_INCLUDE_DIR})
+ add_subdirectory(msn)
+-add_subdirectory(msntest)
+ 
+ if(NOT WIN32)
++add_subdirectory(msntest)
+ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libmsn.pc.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/libmsn.pc
+                @ONLY )
+diff -u -r libmsn-4.0-beta2-orig/msn/libmsn_export.h libmsn-4.0-beta2/msn/libmsn_export.h
+--- libmsn-4.0-beta2-orig/msn/libmsn_export.h	2008-11-16 14:27:05.000000000 +0100
++++ libmsn-4.0-beta2/msn/libmsn_export.h	2008-12-29 16:17:31.656250000 +0100
+@@ -5,7 +5,10 @@
+  * visibility can be added later under all other systems
+ */
+ #ifdef _MSC_VER
+-#pragma warning( disable : 4251, 4996 )
++// we need to include windows.h here to not get compiler errors inside excpt.h (system header)
++#include <windows.h>
++#pragma warning( disable : 4251 )
++#pragma warning( disable : 4996 )
+ #endif
+ 
+ #ifdef _WIN32
+@@ -18,4 +21,4 @@
+ # define LIBMSN_EXPORT
+ #endif
+ 
+-#endif // _LIBMSN_EXPORT_H_
+\ No newline at end of file
++#endif // _LIBMSN_EXPORT_H_
