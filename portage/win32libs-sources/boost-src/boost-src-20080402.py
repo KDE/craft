@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.34.1'] = 'boost_1_34_1'
         self.targetInstSrc['1.35.0'] = 'boost_1_35_0'
         self.targetInstSrc['1.37.0'] = 'boost_1_37_0'
-        self.defaultTarget = '1.35.0'
+        self.defaultTarget = '1.37.0'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/win32libs'] = 'default'
@@ -37,7 +37,7 @@ class subclass(base.baseclass):
         base.baseclass.execute( self )
 
     def libsToBuild( self ):
-        libs = " --with-python "
+        libs = " --with-python --with-program_options "
         return libs
 
     def compile( self ):
