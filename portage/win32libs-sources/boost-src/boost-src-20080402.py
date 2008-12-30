@@ -41,7 +41,7 @@ class subclass(base.baseclass):
         return libs
 
     def compile( self ):
-        cmd  = "cd %s && bjam --toolset=%s --prefix=%s install " % \
+        cmd  = "cd %s && bjam --toolset=%s --prefix=%s --build-type=complete install " % \
                ( os.path.join( self.workdir, self.instsrcdir ),
                  self.toolset, os.path.join( self.workdir, self.imagedir ))
         cmd += self.libsToBuild()
@@ -51,7 +51,7 @@ class subclass(base.baseclass):
         return True
 
     def install( self ):
-        cmd  = "cd %s && bjam --toolset=%s --prefix=%s install" % \
+        cmd  = "cd %s && bjam --toolset=%s --prefix=%s --build-type=complete install" % \
                ( os.path.join( self.workdir, self.instsrcdir ),
                  self.toolset, os.path.join( self.workdir, self.imagedir ))
         cmd += self.libsToBuild()
