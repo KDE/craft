@@ -2,25 +2,20 @@ import base
 import os
 import shutil
 import utils
+import info
 
-PACKAGE_NAME         = "libintl"
-PACKAGE_VER          = "0.14.4"
-PACKAGE_FULL_VER     = "0.14.4-2"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = "libintl3"
 
-SRC_URI= """
-http://surfnet.dl.sourceforge.net/sourceforge/gnuwin32/""" + PACKAGE_FULL_NAME + """-bin.zip
-http://surfnet.dl.sourceforge.net/sourceforge/gnuwin32/""" + PACKAGE_FULL_NAME + """-lib.zip
-"""
-
-DEPEND = """
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+      self.targets['0.17'] = 'http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-tools-0.17.zip'
+      self.targetInstSrc['0.17'] = ''
+      self.defaultTarget = '0.17'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def compile( self ):
     # binary-only package - nothing to compile
@@ -36,20 +31,13 @@ class subclass(base.baseclass):
     src = os.path.join( self.workdir, self.instsrcdir )
     utils.copySrcDirToDestDir( src, dst )
 
-    # we better recreate the import libs... :)
-    dst = os.path.join( dst, "lib" )
-    utils.cleanDirectory( dst )
-
     return True
 
   def make_package( self ):
     self.instsrcdir = ""
 
-    # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
-
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
+    self.doPackaging( "gettext-tools", self.buildTarget, False )
 
     return True
   
