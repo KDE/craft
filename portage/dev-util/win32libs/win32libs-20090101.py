@@ -16,6 +16,9 @@ http://downloads.sourceforge.net/kde-windows/libbzip2-1.0.5-1-lib.tar.bz2
 http://downloads.sourceforge.net/kde-windows/expat-2.0.1-bin.zip
 http://downloads.sourceforge.net/kde-windows/expat-2.0.1-lib.zip
 
+http://downloads.sourceforge.net/kde-windows/gettext-0.17-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/gettext-0.17-1-lib.tar.bz2
+
 http://downloads.sourceforge.net/kde-windows/giflib-4.1.4-1-bin.zip
 http://downloads.sourceforge.net/kde-windows/giflib-4.1.4-1-lib.zip
 
@@ -36,9 +39,6 @@ http://downloads.sourceforge.net/kde-windows/lcms-1.17-lib.zip
 
 http://downloads.sourceforge.net/kde-windows/libical-0.40-1-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/libical-0.40-1-lib.tar.bz2
-
-http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-bin.zip
-http://downloads.sourceforge.net/kde-windows/libintl-0.14.4-lib.zip
 
 http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-bin.zip
 http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-lib.zip
