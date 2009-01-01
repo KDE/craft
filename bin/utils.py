@@ -866,9 +866,7 @@ def sedFile( directory, file, sedcommand ):
     if( os.path.isfile( backup ) ):
         os.remove( backup )
 
-    os.rename( file, backup )
-
-    command = "type %s | sed %s > %s" % ( backup, sedcommand, file )
+    command = "sed -i.orig %s %s" % ( sedcommand, file )
 
     system( command )
 
