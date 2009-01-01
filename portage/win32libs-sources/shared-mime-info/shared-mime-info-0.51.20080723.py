@@ -8,9 +8,9 @@ import re
 # do not forget to update CMakeLists.txt!
 SRC_URI= """
 http://people.freedesktop.org/~hadess/shared-mime-info-0.51.tar.bz2
-ftp://ftp.gtk.org/pub/glib/2.14/glib-2.14.5.tar.bz2
+ftp://ftp.gtk.org/pub/glib/2.18/glib-2.18.3.tar.bz2
 """
-
+GLIB_VER = "2.18.3"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -30,7 +30,9 @@ class subclass(base.baseclass):
   def unpack( self ):
     if(not base.baseclass.unpack( self ) ):
       return False;
-    
+    if not self.kde.kdeSvnUnpack( "trunk/kdesupport", "kdewin32"):
+      return False;
+
     # rename config.h and glibconfig.h.win32 in glib to 
     # avoid config.h confusion
     p = re.compile('.*\.[ch]$')
@@ -48,14 +50,19 @@ class subclass(base.baseclass):
     src = os.path.join( self.packagedir , "CMakeLists.txt" )
     dst = os.path.join( self.workdir, self.instsrcdir, "CMakeLists.txt" )
     shutil.copy( src, dst )
+    # and two cmake modules too
+    src = os.path.join( self.packagedir , "FindLibiconv.cmake" )
+    dst = os.path.join( self.workdir, self.instsrcdir, "FindLibiconv.cmake" )
+    shutil.copy( src, dst )
+    src = os.path.join( self.packagedir , "FindLibintl.cmake" )
+    dst = os.path.join( self.workdir, self.instsrcdir, "FindLibintl.cmake" )
+    shutil.copy( src, dst )
 
     src = os.path.join( self.packagedir , "config.h.cmake" )
     dst = os.path.join( self.workdir, self.instsrcdir, "config.h.cmake" )
     shutil.copy( src, dst )
 
-    if( self.compiler == "mingw"):
-        return True
-    return self.kdeSvnUnpack( "trunk/kdesupport", "kdewin32")
+    return True
 
   def kdeDefaultDefines( self ):
     # adjust some vars for proper compile

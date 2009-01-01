@@ -11,7 +11,8 @@
 # extract all into on directory and adjust the following paths:
 
 project(update-mime-database)
-cmake_minimum_required(VERSION 2.4.5)
+cmake_minimum_required(VERSION 2.6.2)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
 
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -26,15 +27,9 @@ set(GLIB_DIR     "" CACHE FILEPATH "Path to glib sources")
 # libxml2
 find_package(LIBXML2 REQUIRED)
 # libintl
-find_library(LIBINTL_LIB NAMES libintl libintl3)
-if(LIBINTL_LIB-NOTFOUND)
-  message(FATAL_ERROR "libintl lib not found!")
-endif(LIBINTL_LIB-NOTFOUND)
+find_package(Libintl REQUIRED)
 # libiconv
-find_library(ICONV_LIB NAMES iconv libiconv)
-if(ICONV_LIB-NOTFOUND)
-  message(FATAL_ERROR "iconv lib not found!")
-endif(ICONV_LIB-NOTFOUND)
+find_package(Libiconv REQUIRED)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
@@ -82,7 +77,9 @@ set(GLIB_SOURCES
     ${GLIB_DIR}/glib/gslist.c
     ${GLIB_DIR}/glib/gstrfuncs.c
     ${GLIB_DIR}/glib/gstring.c
+    ${GLIB_DIR}/glib/gtestutils.c
     ${GLIB_DIR}/glib/gthread.c
+    ${GLIB_DIR}/glib/gtimer.c
     ${GLIB_DIR}/glib/guniprop.c
     ${GLIB_DIR}/glib/gunidecomp.c
     ${GLIB_DIR}/glib/gwin32.c
@@ -96,9 +93,9 @@ set(GLIB_SOURCES
 include_directories(
    ${GLIB_DIR}
    ${GLIB_DIR}/glib
-   ${LIBINTL_DIR}/include
+   ${LIBINTL_INCLUDE_DIR}
+   ${LIBICONV_INCLUDE_DIR}
    ${KDEWIN32_DIR}/include
-   ${ICONV_DIR}/include
    ${LIBXML2_INCLUDE_DIR}
    ${CMAKE_BINARY_DIR}
 )
@@ -116,16 +113,16 @@ endif(MINGW)
 
 if(MSVC)
   add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -wd4018)
-  set(additional_SOURCES ${KDEWIN32_DIR}/src/dirent.c ${KDEWIN32_DIR}/src/unistd.c ${KDEWIN32_DIR}/src/win32_utils.c)
+  set(additional_SOURCES ${KDEWIN32_DIR}/src/dirent.c ${KDEWIN32_DIR}/src/unistd.c)
 endif(MSVC)
 
-add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT= -DWIN32_LEAN_AND_MEAN)
+add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT= -DWIN32_LEAN_AND_MEAN -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
 
 add_executable(update-mime-database update-mime-database.c ${GLIB_SOURCES} ${additional_SOURCES})
 
 target_link_libraries(update-mime-database
-        ${LIBINTL_LIB}
-        ${ICONV_LIB}
+        ${LIBINTL_LIBRARIES}
+        ${LIBICONV_LIBRARIES}
         ${LIBXML2_LIBRARIES}
         ole32
 )
