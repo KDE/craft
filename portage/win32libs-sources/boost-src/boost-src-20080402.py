@@ -68,7 +68,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( "boost", "boost_" + self.buildTarget.replace('.','_') , True )
+        return self.doPackaging( "boost", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
