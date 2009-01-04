@@ -6,7 +6,6 @@ import os.path
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt-static'] = 'default'
         self.hardDependencies['dev-util/upx'] = 'default'
 
