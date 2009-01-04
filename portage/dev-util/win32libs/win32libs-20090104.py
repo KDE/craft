@@ -8,8 +8,6 @@ SRC_URI= """
 http://downloads.sourceforge.net/kde-windows/aspell-0.60.5-bin.zip
 http://downloads.sourceforge.net/kde-windows/aspell-0.60.5-lib.zip
 
-http://downloads.sourceforge.net/kde-windows/boost-headers-1.34-lib.tar.bz2
-
 http://downloads.sourceforge.net/kde-windows/libbzip2-1.0.5-1-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/libbzip2-1.0.5-1-lib.tar.bz2
 
@@ -61,7 +59,7 @@ http://downloads.sourceforge.net/kde-windows/openssl-0.9.8g-1-lib.zip
 http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-bin.zip
 http://downloads.sourceforge.net/kde-windows/redland-1.0.3-5-lib.zip
 
-http://downloads.sourceforge.net/kde-windows/shared-mime-info-0.51-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/shared-mime-info-0.51-1-bin.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-bin.zip
 http://downloads.sourceforge.net/kde-windows/tiff-3.8.2-2-lib.zip
@@ -75,6 +73,9 @@ http://downloads.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 
 if os.getenv("KDECOMPILER") == "mingw":
     SRC_URI = SRC_URI + """
+http://downloads.sourceforge.net/kde-windows/boost-mingw-1.37.0-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/boost-mingw-1.37.0-1-lib.tar.bz2
+
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2
 
@@ -83,6 +84,9 @@ http://downloads.sourceforge.net/kde-windows/pcre-mingw-7.8-lib.tar.bz2
 """
 else:
     SRC_URI = SRC_URI + """
+http://downloads.sourceforge.net/kde-windows/boost-msvc-1.37.0-1-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/boost-msvc-1.37.0-1-lib.tar.bz2
+
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2
 
@@ -108,11 +112,6 @@ class subclass(base.baseclass):
     self.subinfo = subinfo()
 
   def compile(self):
-    # here we need an own compile step, because we have to copy
-    # the boost headers around, so that they are found for kdepimlibs
-    srcdir  = os.path.join( self.workdir, "include", "boost-1_34" )
-    destdir = os.path.join( self.workdir, "include", "boost-1_34_0" )
-    utils.copySrcDirToDestDir( srcdir, destdir )
     if self.compiler == "mingw":
         srcfile = os.path.join( self.workdir, "lib", "libdbus-1.dll.a" )
         destfile = os.path.join( self.workdir, "lib", "libdbus-1d.dll.a" )
