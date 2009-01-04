@@ -8,8 +8,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'libical'
         self.targets['0.41'] = 'http://downloads.sourceforge.net/freeassociation/libical-0.41.tar.gz'
+        self.targets['0.42'] = 'http://downloads.sourceforge.net/freeassociation/libical-0.42.tar.gz'
         self.targetInstSrc['0.41'] = 'libical-0.41'
-        self.defaultTarget = '0.41'
+        self.targetInstSrc['0.42'] = 'libical-0.42'
+        self.defaultTarget = '0.42'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -51,7 +53,7 @@ class subclass(base.baseclass):
         self.createImportLibs( "libicalss" )
         self.createImportLibs( "libicalvcal" )
 
-        self.doPackaging( "libical", "0.41-0", True )
+        self.doPackaging( "libical", self.buildtarget, True )
 
         return True
 
