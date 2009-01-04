@@ -53,7 +53,7 @@ class subclass(base.baseclass):
         self.createImportLibs( "libicalss" )
         self.createImportLibs( "libicalvcal" )
 
-        self.doPackaging( "libical", self.buildtarget, True )
+        self.doPackaging( "libical", self.buildTarget, True )
 
         return True
 
