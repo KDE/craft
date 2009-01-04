@@ -35,8 +35,8 @@ http://downloads.sourceforge.net/kde-windows/jpeg-6.b-5-lib.zip
 http://downloads.sourceforge.net/kde-windows/lcms-1.17-bin.zip
 http://downloads.sourceforge.net/kde-windows/lcms-1.17-lib.zip
 
-http://downloads.sourceforge.net/kde-windows/libical-0.40-1-bin.tar.bz2
-http://downloads.sourceforge.net/kde-windows/libical-0.40-1-lib.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libical-0.42-bin.tar.bz2
+http://downloads.sourceforge.net/kde-windows/libical-0.42-lib.tar.bz2
 
 http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-bin.zip
 http://downloads.sourceforge.net/kde-windows/libidn-1.2-1-lib.zip
