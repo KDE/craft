@@ -16,7 +16,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['3.08'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3080.tar.gz'
         self.targetInstSrc['3.08'] = "cfitsio"
-        self.defaultTarget = '3.08'
+        self.targets['3.10'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3100.tar.gz'
+        self.targetInstSrc['3.10'] = "cfitsio"
+        self.defaultTarget = '3.10'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
