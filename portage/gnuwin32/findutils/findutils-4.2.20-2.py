@@ -2,8 +2,7 @@ import gnuwin32
 import info
 
 SRC_URI = """
-http://downloads.sourceforge.net/sourceforge/gnuwin32/findutils-4.2.20-2-dep.zip
-http://downloads.sourceforge.net/sourceforge/gnuwin32/findutils-4.2.20-2-bin.zip
+http://www.winkde.org/pub/kde/ports/win32/repository/gnuwin32/findutils-4.2.20-2-bin.zip
 """
 
 class subinfo(info.infoclass):
