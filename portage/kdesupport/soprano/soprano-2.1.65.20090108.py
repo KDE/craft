@@ -11,14 +11,15 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
-        self.svnTargets['2.0.0'] = 'tags/soprano/2.0.0'
-        self.svnTargets['2.0.1'] = 'tags/soprano/2.0.1'
-        self.svnTargets['2.0.2'] = 'tags/soprano/2.0.2'
-        self.svnTargets['2.0.3'] = 'tags/soprano/2.0.3'
+        self.svnTargets['2.0.0']  = 'tags/soprano/2.0.0'
+        self.svnTargets['2.0.1']  = 'tags/soprano/2.0.1'
+        self.svnTargets['2.0.2']  = 'tags/soprano/2.0.2'
+        self.svnTargets['2.0.3']  = 'tags/soprano/2.0.3'
         self.svnTargets['2.0.99'] = 'tags/soprano/2.0.99'
-        self.svnTargets['2.1'] = 'tags/soprano/2.1'
-        self.svnTargets['2.1.1'] = 'tags/soprano/2.1.1'
+        self.svnTargets['2.1']    = 'tags/soprano/2.1'
+        self.svnTargets['2.1.1']  = 'tags/soprano/2.1.1'
         self.svnTargets['2.1.64'] = 'tags/soprano/2.1.64'
+        self.svnTargets['2.1.65'] = 'tags/soprano/2.1.65'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
