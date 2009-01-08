@@ -1,21 +1,15 @@
 import base
 import os
 import utils
-import shutil
 import info
-
-PACKAGE_NAME         = "freetype"
-PACKAGE_VER          = "2.3.5"
-PACKAGE_FULL_VER     = "2.3.5-2"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = "libfreetype-6"
-
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.3.5-2'] = "http://download.savannah.gnu.org/releases/" + PACKAGE_NAME + "/" + PACKAGE_FULL_NAME + ".tar.gz"
-        self.targetInstSrc['2.3.5-2'] = PACKAGE_FULL_NAME
-        self.defaultTarget = '2.3.5-2'
+        self.targets['2.3.5-2'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.5.tar.bz2"
+        self.targets['2.3.7-1'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.7.tar.bz2"
+        self.targetInstSrc['2.3.5-2'] = "freetype-2.3.5"
+        self.targetInstSrc['2.3.7-1'] = "freetype-2.3.7"
+        self.defaultTarget = '2.3.7-1'
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/kdewin32'] = 'default'
@@ -29,8 +23,10 @@ class subclass(base.baseclass):
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):
             return False
-        cmd = "cd %s && patch -p0 < %s" % \
-              ( self.workdir, os.path.join( self.packagedir, "freetype.diff" ) )
+        cmd = "cd %s && patch -p1 < %s" % \
+              ( os.path.join ( self.workdir, self.instsrcdir ), \
+                os.path.join( self.packagedir, "freetype.diff" ) )
+        print "cmd: " + cmd
         utils.system( cmd ) or utils.die( "patch" )
         return True
 
@@ -41,7 +37,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        self.doPackaging( "freetype", self.buildTarget, True )
 
         return True
 
