@@ -7,7 +7,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/'
-        self.targets['4.1.80'] = 'ftp://ftp.kde.org/pub/kde/stable/4.1.80/src/kde-l10n/'
+        for ver in ['80', '96']:
+          self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.1.' + ver + '/src/kde-l10n/'
+          self.targetInstSrc['4.1.' + ver] = 'kdewebdev-4.1.' + ver
         self.defaultTarget = 'svnHEAD'
 
         # all targets in svn
