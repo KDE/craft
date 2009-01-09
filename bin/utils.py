@@ -503,6 +503,9 @@ def getDependencies( category, package, version ):
 
     deps = []
     for line in deplines:
+        if len(line) <= 1 or len(line[ 0 ]) <= 1:
+            """if empty or if first argument is empty """
+            continue
         (category, package) = line[ 0 ].split( "/" )
         version = getNewestVersion( category, package )
         deps.append( [ category, package, version, line[ 1 ] ] )
