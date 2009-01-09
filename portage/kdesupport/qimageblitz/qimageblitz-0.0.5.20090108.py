@@ -29,7 +29,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "qimageblitz", "4.0.0-3", True )
+        return self.doPackaging( "qimageblitz", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
