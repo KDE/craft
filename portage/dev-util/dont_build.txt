@@ -1,1 +1,2 @@
 mc
+gettext-tools
