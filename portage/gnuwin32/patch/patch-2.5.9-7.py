@@ -29,7 +29,7 @@ class subclass(gnuwin32.gnuwin32class):
     else:
         manifest_dest = os.path.join( self.imagedir, "bin" )
 
-    shutil.copy( manifest, manifest_dest )
+    #shutil.copy( manifest, manifest_dest )
     return True
 
 if __name__ == '__main__':
