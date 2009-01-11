@@ -1583,13 +1583,23 @@ int main(int, char **)
 
     QTextStream out(&outf);
 
+// QLibraryInfo returns the compile time path, which is wrong
+#if 0
     out << QLibraryInfo::location(QLibraryInfo::PrefixPath) << '\\n';
     out << QLibraryInfo::location(QLibraryInfo::HeadersPath) << '\\n';
     out << QLibraryInfo::location(QLibraryInfo::LibrariesPath) << '\\n';
     out << QLibraryInfo::location(QLibraryInfo::BinariesPath) << '\\n';
     out << QLibraryInfo::location(QLibraryInfo::DataPath) << '\\n';
     out << QLibraryInfo::location(QLibraryInfo::PluginsPath) << '\\n';
-
+#else
+    QString qtRoot = qgetenv("KDEROOT"); 
+    out << qtRoot << '\\n';
+    out << qtRoot << "\\include" << '\\n';
+    out << qtRoot << "\\lib" << '\\n';
+    out << qtRoot << "\\bin" << '\\n';
+    out << qtRoot << '\\n';
+    out << qtRoot << "\\plugins" << '\\n';
+#endif
     out << QT_VERSION << '\\n';
     out << QT_EDITION << '\\n';
 
