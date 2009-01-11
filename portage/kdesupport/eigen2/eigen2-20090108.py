@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['2.0-b5'] = 'tags/eigen/2.0-beta5'
+        self.svnTargets['2.0-beta5'] = 'tags/eigen/2.0-beta5'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen2'
         self.defaultTarget = 'svnHEAD'
 
@@ -35,7 +35,10 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-        return self.doPackaging( "eigen2", utils.cleanPackageName( sys.argv[0], "eigen2" ), True )        
+        if self.buildTarget == "svnHEAD":
+            return self.doPackaging( "eigen2", utils.cleanPackageName( sys.argv[0], "eigen2" ), True )
+        else:
+            return self.doPackaging( "eigen2", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()

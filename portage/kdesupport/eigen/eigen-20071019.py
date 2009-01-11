@@ -36,7 +36,10 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.traditional:
             self.instdestdir = "kde"
-        return self.doPackaging( "eigen", utils.cleanPackageName( sys.argv[0], "eigen" ), True )        
+        if self.buildTarget == "svnHEAD":
+            return self.doPackaging( "eigen", utils.cleanPackageName( sys.argv[0], "eigen" ), True )
+        else:
+            return self.doPackaging( "eigen", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
