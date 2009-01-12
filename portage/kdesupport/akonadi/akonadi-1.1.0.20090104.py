@@ -1,6 +1,7 @@
 import base
 import utils
 import sys
+import os
 import info
 
 class subinfo(info.infoclass):
@@ -8,6 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
+        self.boostversion = "1.37"
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80'
@@ -29,6 +31,9 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
+        self.kdeCustomDefines += " -DBOOST_INCLUDEDIR=" + os.path.join( self.rootdir, "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
+        print self.kdeCustomDefines
         return self.kdeCompile()
 
     def install( self ):
