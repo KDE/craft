@@ -13,6 +13,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.2.0-beta4'] = 'kipi-plugins-0.2.0-beta4'
         self.targets['0.2.0-beta5'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta5.tar.bz2'
         self.targetInstSrc['0.2.0-beta5'] = 'kipi-plugins-0.2.0-beta5'
+        self.targets['0.2.0-beta6'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta6.tar.bz2'
+        self.targetInstSrc['0.2.0-beta6'] = 'kipi-plugins-0.2.0-beta6'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
