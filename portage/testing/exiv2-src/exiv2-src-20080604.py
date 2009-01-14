@@ -11,8 +11,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.16'] = 'exiv2-0.16'
         self.targets['0.17'] = 'http://www.exiv2.org/exiv2-0.17.tar.gz'
         self.targetInstSrc['0.17'] = 'exiv2-0.17'
+        self.targets['0.18'] = 'http://www.exiv2.org/exiv2-0.18.tar.gz'
+        self.targetInstSrc['0.18'] = 'exiv2-0.18'
         self.svnTargets['svnHEAD'] = 'unstable'
-        self.defaultTarget = '0.17'
+        self.defaultTarget = '0.18'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -38,11 +40,8 @@ class subclass(base.baseclass):
         
 
         os.chdir( self.workdir )
-        if self.buildTarget == '0.16':
-            self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "exiv2-cmake.diff" ) ) )
-        elif self.buildTarget == '0.17':
-            self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "exiv2-0.17-cmake.diff" ) ) )
-        
+        if self.buildTarget in ['0.16', '0.17', '0.18']:
+            self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "exiv2-" + self.buildTarget + "-cmake.diff" ) ) )
         return True
         
     def compile( self ):
@@ -56,7 +55,9 @@ class subclass(base.baseclass):
     def make_package( self ):
         if self.subinfo.buildTarget == 'svnHEAD':
             self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
-        return self.doPackaging( "exiv2", "0.18svn-0", True )
+            return self.doPackaging( "exiv2", "0.18svn-0", True )
+        else:
+            return self.doPackaging( "exiv2", self.subinfo.buildTarget, True)
 
 
 if __name__ == '__main__':
