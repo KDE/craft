@@ -28,13 +28,6 @@ class subclass( base.baseclass ):
             self.svnFetch( repo )
 
             utils.cleanDirectory( self.workdir )
-
-            # now copy the tree below destdir/trunk to workdir
-            srcdir = os.path.join( self.svndir, "krusader_kde4" )
-            destdir = os.path.join( self.workdir, "krusader_kde4" )
-            utils.copySrcDirToDestDir( srcdir, destdir )
-
-            os.chdir( destdir )
         else:
             if not base.baseclass.unpack( self ):
                 return False
@@ -42,6 +35,8 @@ class subclass( base.baseclass ):
         return True
 
     def compile( self ):
+        if self.subinfo.buildTarget == 'svnHEAD':
+            self.kde.sourcePath = os.path.join( self.svndir, "krusader_kde4" )
         return self.kdeCompile()
 
     def install( self ):
