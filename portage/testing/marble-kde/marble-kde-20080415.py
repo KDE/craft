@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu'
         self.svnTargets['4.1'] = 'branches/KDE/4.1/kdeedu'
+        self.svnTargets['4.2'] = 'branches/KDE/4.2/kdeedu'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
