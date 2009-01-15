@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
 
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['0.18svn-0']:
+        for version in ['0.18']:
             self.targets[ version ] = repoUrl + """/exiv2-""" + compiler + """-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/exiv2-""" + compiler + """-""" + version + """-lib.tar.bz2"""
             self.targetInstSrc[ version ] = 'exiv2-' + version
             
-        self.defaultTarget = '0.18svn-0'
+        self.defaultTarget = '0.18'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
