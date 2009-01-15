@@ -12,9 +12,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde-4.1/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-sources/poppler-src'] = 'default'
-        self.hardDependencies['testing/exiv2-src'] = 'default'
+        self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
