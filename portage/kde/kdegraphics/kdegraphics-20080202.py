@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-sources/poppler-src'] = 'default'
-        self.hardDependencies['testing/exiv2-src'] = 'default'
+        self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -28,7 +28,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-       return self.kdeCompile()
+        return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
