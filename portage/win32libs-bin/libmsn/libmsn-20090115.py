@@ -13,8 +13,7 @@ class subinfo(info.infoclass):
         for version in ['4.0-beta2']:
             self.targets[ version ] = repoUrl + """/libmsn-""" + compiler + """-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libmsn-""" + compiler + """-""" + version + """-lib.tar.bz2"""
-            self.targetInstSrc[ version ] = 'libmsn-' + version
-            
+
         self.defaultTarget = '4.0-beta2'
 
     def setDependencies( self ):

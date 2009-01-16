@@ -13,8 +13,7 @@ class subinfo(info.infoclass):
         for version in ['2.2.0']:
             self.targets[ version ] = repoUrl + """/openbabel-""" + compiler + """-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/openbabel-""" + compiler + """-""" + version + """-lib.tar.bz2"""
-            self.targetInstSrc[ version ] = 'openbabel-' + version
-            
+
         self.defaultTarget = '2.2.0'
 
     def setDependencies( self ):

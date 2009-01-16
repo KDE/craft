@@ -13,8 +13,7 @@ class subinfo(info.infoclass):
         for version in ['0.18']:
             self.targets[ version ] = repoUrl + """/exiv2-""" + compiler + """-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/exiv2-""" + compiler + """-""" + version + """-lib.tar.bz2"""
-            self.targetInstSrc[ version ] = 'exiv2-' + version
-            
+
         self.defaultTarget = '0.18'
 
     def setDependencies( self ):

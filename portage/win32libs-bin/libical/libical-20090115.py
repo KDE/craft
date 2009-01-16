@@ -9,8 +9,7 @@ class subinfo(info.infoclass):
         for version in ['0.42']:
             self.targets[ version ] = repoUrl + """/libical-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libical-""" + version + """-lib.tar.bz2"""
-            self.targetInstSrc[ version ] = 'libical-' + version
-            
+
         self.defaultTarget = '0.42'
 
     def setDependencies( self ):

@@ -11,7 +11,6 @@ class subinfo(info.infoclass):
         for version in ['3.10']:
             self.targets[ version ] = repoUrl + """/cfitsio-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/cfitsio-""" + version + """-lib.tar.bz2"""
-            self.targetInstSrc[ version ] = 'cfitsio-' + version
 
         self.defaultTarget = '3.10'
 
