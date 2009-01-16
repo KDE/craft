@@ -6,12 +6,12 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['1.1.30-3']:
+        for version in ['1.1.23-3']:
             self.targets[ version ] = repoUrl + """/libxslt-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libxslt-""" + version + """-lib.tar.bz2"""
 
             
-        self.defaultTarget = '1.1.30-3'
+        self.defaultTarget = '1.1.23-3'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
