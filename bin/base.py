@@ -449,10 +449,10 @@ class baseclass:
         
         dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
         defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
+        exppath = os.path.join( basepath, "lib", "%s.exp" % pkg_name )
         imppath = os.path.join( basepath, "lib", "%s.lib" % pkg_name )
         gccpath = os.path.join( basepath, "lib", "%s.dll.a" % pkg_name )
 
-        
         if not HAVE_PEXPORTS and os.path.exists( defpath ):
             HAVE_PEXPORTS = True
             USE_PEXPORTS = False
@@ -479,6 +479,11 @@ class baseclass:
             # create .dll.a
             cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
             self.system( cmd )
+            
+        if os.path.exists( defpath ):
+            os.remove( defpath )
+        if os.path.exists( exppath ):
+            os.remove( exppath )
         return True
 
     def stripLibs( self, pkg_name ):
