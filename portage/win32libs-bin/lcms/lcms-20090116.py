@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['1.17']:
-            self.targets[ version ] = repoUrl + """/lcms-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/lcms-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = repoUrl + """/lcms-""" + version + """-bin.zip
+                                """ + repoUrl + """/lcms-""" + version + """-lib.zip"""
 
             
         self.defaultTarget = '1.17'

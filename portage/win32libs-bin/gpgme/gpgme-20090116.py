@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['1.1.4-3']:
-            self.targets[ version ] = repoUrl + """/gpgme-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/gpgme-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = repoUrl + """/gpgme-""" + version + """-bin.zip
+                                """ + repoUrl + """/gpgme-""" + version + """-lib.zip"""
 
             
         self.defaultTarget = '1.1.4-3'

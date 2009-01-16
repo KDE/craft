@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['4.1.4-1']:
-            self.targets[ version ] = repoUrl + """/giflib-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/giflib-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = repoUrl + """/giflib-""" + version + """-bin.zip
+                                """ + repoUrl + """/giflib-""" + version + """-lib.zip"""
 
             
         self.defaultTarget = '4.1.4-1'

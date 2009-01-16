@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['1.900.1-2']:
-            self.targets[ version ] = repoUrl + """/jasper-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/jasper-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = repoUrl + """/jasper-""" + version + """-bin.zip
+                                """ + repoUrl + """/jasper-""" + version + """-lib.zip"""
 
             
         self.defaultTarget = '1.900.1-2'
