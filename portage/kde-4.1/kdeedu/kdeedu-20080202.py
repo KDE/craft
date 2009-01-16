@@ -16,10 +16,10 @@ class subinfo(info.infoclass):
 
         self.softDependencies['kdesupport/eigen'] = 'default'
         self.softDependencies['kdesupport/gmm'] = 'default'
-        self.softDependencies['win32libs-sources/cfitsio-src'] = 'default'
-        self.softDependencies['win32libs-sources/libnova-src'] = 'default'
-        self.softDependencies['win32libs-sources/openbabel-src'] = 'default'
-    
+        self.hardDependencies['win32libs-bin/cfitsio'] = 'default'
+        self.hardDependencies['win32libs-bin/libnova'] = 'default'
+        self.hardDependencies['win32libs-bin/openbabel'] = 'default'
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
