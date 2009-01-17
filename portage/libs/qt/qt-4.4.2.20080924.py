@@ -19,6 +19,9 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-bin/dbus'] = 'default'
+        self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
