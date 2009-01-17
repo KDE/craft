@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdegraphics'] = 'default'
+        self.hardDependencies['win32libs-bin/lcms'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
