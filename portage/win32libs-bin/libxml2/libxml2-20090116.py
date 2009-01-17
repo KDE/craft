@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['2.6.30-3']:
-            self.targets[ version ] = repoUrl + """/libxml2-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/libxml2-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = repoUrl + """/libxml2-""" + version + """-bin.zip
+                                """ + repoUrl + """/libxml2-""" + version + """-lib.zip"""
 
             
         self.defaultTarget = '2.6.30-3'
