@@ -30,9 +30,9 @@ rem Here you set the location of the vcvarsall.bat file that adds
 rem Visual C++ environment variables into the build environment.
 rem if you are not building on x86 change that to something appropriate.
 
-if %KDECOMPILER% == msvc2005 call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" && call "%PROGRAMFILES%\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
+if %KDECOMPILER% == msvc2005 call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86 && call "%PROGRAMFILES%\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
 
-if %KDECOMPILER% == msvc2008 call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" && call "%PROGRAMFILES%\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86
+if %KDECOMPILER% == msvc2008 call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86 && call "%PROGRAMFILES%\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86
 
 rem Here you change the download directory.
 rem If you want, so you can share the same download directory between
