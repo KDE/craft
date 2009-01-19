@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/'
         for ver in ['80', '96']:
           self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.1.' + ver + '/src/kde-l10n/'
-          self.targetInstSrc['4.1.' + ver] = 'kdewebdev-4.1.' + ver
         self.defaultTarget = 'svnHEAD'
 
         # all targets in svn
@@ -20,13 +19,16 @@ class subinfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        # released target in 4.1.80
-        self.languages  = 'bg ca cs csb da de '
-        self.languages += 'el en_GB eo es et fi fr fy ga gl '
-        self.languages += 'hi hu it ja kk km ko ku '
+        # released target in 4.1.96
+        self.languages  = 'ar bg ca cs csb da de '
+        self.languages += 'el en_GB eo es et '
+        self.languages += 'fi fr fy ga gl gu he hi hu '
+        self.languages += 'it ja kk km ko ku '
         self.languages += 'lt lv mk ml nb nds nl nn '
-        self.languages += 'pa pl pt pt_BR ru sl sr sv '
+        self.languages += 'pa pl pt pt_BR ro ru sl sr sv '
         self.languages += 'ta th tr uk wa zh_CN zh_TW '
+
+        self.languages  = 'pa pl pt pt_BR ro ru sl sr sv ta th tr uk wa zh_CN zh_TW'
 
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
@@ -66,6 +68,8 @@ class subclass(base.baseclass):
             for pkg in self.subinfo.languages.split():
                 if not self.kdeSvnUnpack( svnpath, pkg ):
                     return False
+                else:
+                    print "Unpacked %s" % pkg
             autogen = os.path.join( self.packagedir , "autogen.py" )
             svnpath = os.path.join( self.kdesvndir, svnpath )
     
@@ -98,8 +102,7 @@ class subclass(base.baseclass):
             else:
                 pkg_dir = 'kde-l10n-' + pkg + '-' + self.subinfo.buildTarget
                 self.kde.sourcePath = os.path.join( sourcePath, pkg_dir )
-            if not self.kdeCompile():
-                return False
+            self.kdeCompile()
         return True
 
     def install( self ):
@@ -108,8 +111,7 @@ class subclass(base.baseclass):
         for pkg in self.subinfo.languages.split():
             self.kde.buildNameExt = pkg
             self.kde.imagedir = os.path.join( imgdir, pkg )
-            if not self.kdeInstall():
-                return False
+            self.kdeInstall()
         return True
 
     def qmerge( self ):
