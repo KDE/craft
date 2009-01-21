@@ -7,14 +7,9 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/kipi-plugins'
-        self.targets['0.2.0-beta3'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta3.tar.bz2'
-        self.targetInstSrc['0.2.0-beta3'] = 'kipi-plugins-0.2.0-beta3'
-        self.targets['0.2.0-beta4'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta4.tar.bz2'
-        self.targetInstSrc['0.2.0-beta4'] = 'kipi-plugins-0.2.0-beta4'
-        self.targets['0.2.0-beta5'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta5.tar.bz2'
-        self.targetInstSrc['0.2.0-beta5'] = 'kipi-plugins-0.2.0-beta5'
-        self.targets['0.2.0-beta6'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-beta6.tar.bz2'
-        self.targetInstSrc['0.2.0-beta6'] = 'kipi-plugins-0.2.0-beta6'
+        for version in ['beta3', 'beta4', 'beta5', 'beta6', 'rc1']:
+            self.targets['0.2.0-' + version] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-' + version + '.tar.bz2'
+            self.targetInstSrc['0.2.0-' + version] = 'kipi-plugins-0.2.0-' + version
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -28,7 +23,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.2.0-beta3', '0.2.0-beta4', '0.2.0-beta5']:
+        if self.buildTarget in ['0.2.0-beta3', '0.2.0-beta4', '0.2.0-beta5', '0.2.0-beta6', 'rc1']:
             if( not base.baseclass.unpack( self ) ):
                 return True
             else:
