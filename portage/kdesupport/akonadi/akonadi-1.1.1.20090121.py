@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
         self.svnTargets['1.0.0'] = 'tags/akonadi/1.0.0'
         self.svnTargets['1.0.80'] = 'tags/akonadi/1.0.80'
         self.svnTargets['1.1.0']  = 'tags/akonadi/1.1.0'
+        self.svnTargets['1.1.1']  = 'tags/akonadi/1.1.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
 
