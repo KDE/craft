@@ -32,7 +32,7 @@ class subclass(base.baseclass):
 
     def compile( self ):
         self.kdeCustomDefines = " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
-        self.kdeCustomDefines += " -DBOOST_INCLUDEDIR=" + os.path.join( self.rootdir, "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
+        self.kdeCustomDefines += " -DBoost_INCLUDE_DIR=" + os.path.join( self.rootdir, "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
         print self.kdeCustomDefines
         return self.kdeCompile()
 
