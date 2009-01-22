@@ -1,5 +1,6 @@
 import base
 import info
+import os
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -14,7 +15,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl']       = 'default'
         self.hardDependencies['dev-util/subversion'] = 'default'
         self.hardDependencies['dev-util/win32libs']  = 'default'
-    
+        if os.getenv( "KDECOMPILER" ) == "mingw":
+          self.hardDependencies['dev-util/mingw']    = 'default'
+
 class subclass(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, args=args )
