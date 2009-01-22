@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.2.0'] = 'tags/phonon/4.2.0'    # tagged version
         self.svnTargets['4.2.80'] = 'tags/phonon/4.2.80'
         self.svnTargets['4.2.96'] = 'tags/phonon/4.2.96'
+        self.svnTargets['4.3.0'] = 'tags/phonon/4.3.0'
         self.svnTargets['4.2'] = 'branches/phonon/4.2'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
         self.defaultTarget = 'svnHEAD'
