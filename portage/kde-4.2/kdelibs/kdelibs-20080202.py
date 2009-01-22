@@ -6,9 +6,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.2/kdelibs'
-        for ver in ['80', '96']:
-          self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.1.' + ver + '/src/kdelibs-4.1.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.1.' + ver] = 'kdelibs-4.1.' + ver
+        for ver in ['0']:
+          self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdelibs-4.2.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.2.' + ver] = 'kdelibs-4.2.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -49,10 +49,7 @@ class subclass(base.baseclass):
         # filename = os.path.join( self.imagedir, "share", "apps", "cmake", "modules", "KDELibsDependenciesInternal.cmake" )
         # sedcmd = "sed -e \"s/" + self.rootdir.replace("\\", "\\/") + "/[replace_this]/g\" " + filename + " > " + filename + ".template"
         # self.system( sedcmd )
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdelibs", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdelibs", os.path.basename(sys.argv[0]).replace("kdelibs-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdelibs", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()

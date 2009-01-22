@@ -6,9 +6,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.2/kdenetwork'
-        for ver in ['80', '96']:
-          self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.1.' + ver + '/src/kdenetwork-4.1.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.1.' + ver] = 'kdenetwork-4.1.' + ver
+        for ver in ['0']:
+          self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdenetwork-4.2.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.2.' + ver] = 'kdenetwork-4.2.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -31,10 +31,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdenetwork", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdenetwork", os.path.basename(sys.argv[0]).replace("kdenetwork-", "").replace(".py", ""), True )
+        return self.doPackaging( "kdenetwork", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()

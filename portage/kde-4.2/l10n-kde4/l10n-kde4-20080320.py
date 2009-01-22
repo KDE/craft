@@ -7,19 +7,11 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/'
-        for ver in ['80', '96']:
-          self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.1.' + ver + '/src/kde-l10n/'
+        for ver in ['0']:
+          self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kde-l10n/'
         self.defaultTarget = 'svnHEAD'
 
-        # all targets in svn
-        self.languages  = 'af ar be bg bn bn_IN br ca cs csb cy da de '
-        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl gu '
-        self.languages += 'ha he hi hr hsb hu hy is it ja ka kk km kn ko ku '
-        self.languages += 'lb lt lv mk ml ms mt nb nds ne nl nn nso oc '
-        self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
-        self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
-
-        # released target in 4.1.96
+        # released target in 4.2.0
         self.languages  = 'ar bg ca cs csb da de '
         self.languages += 'el en_GB eo es et '
         self.languages += 'fi fr fy ga gl gu he hi hu '
