@@ -1,0 +1,26 @@
+Index: kdeui/windowmanagement/kwindowinfo_win.cpp
+===================================================================
+--- kdeui/windowmanagement/kwindowinfo_win.cpp	(revision 915711)
++++ kdeui/windowmanagement/kwindowinfo_win.cpp	(revision 915712)
+@@ -147,7 +147,7 @@
+         return NET::PopupMenu;
+     else if(windowStyleEx & WS_EX_TOOLWINDOW && supported_types & NET::TooltipMask)
+         return NET::Tooltip;
+-    else if(!windowStyle & WS_CHILD  && supported_types & NET::NormalMask)
++    else if(!(windowStyle & WS_CHILD) && supported_types & NET::NormalMask)
+         return NET::Normal;
+         
+     return wt;
+Index: interfaces/ktexteditor/codecompletionmodelcontrollerinterface.cpp
+===================================================================
+--- interfaces/ktexteditor/codecompletionmodelcontrollerinterface.cpp	(revision 907328)
++++ interfaces/ktexteditor/codecompletionmodelcontrollerinterface.cpp	(revision 907329)
+@@ -19,6 +19,8 @@
+ 
+ #include "codecompletionmodelcontrollerinterface.h"
+ 
++#include <QtCore/QModelIndex>
++
+ #include <ktexteditor/view.h>
+ #include <ktexteditor/document.h>
+ 
