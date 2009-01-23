@@ -4,13 +4,13 @@ import os
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.targets['2.4.8'] = 'http://www.cmake.org/files/v2.4/cmake-2.4.8.zip'
         self.targets['2.6.0'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.0.zip'
         self.targets['2.6.1'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.1.zip'
-        self.targetInstSrc['2.4.8'] = 'cmake-2.4.8'
+        self.targets['2.6.2'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.2.zip'
         self.targetInstSrc['2.6.0'] = 'cmake-2.6.0'
         self.targetInstSrc['2.6.1'] = 'cmake-2.6.1'
-        self.defaultTarget = '2.6.1'
+        self.targetInstSrc['2.6.2'] = 'cmake-2.6.2'
+        self.defaultTarget = '2.6.2'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
