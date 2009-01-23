@@ -26,6 +26,9 @@ class subclass(base.baseclass):
         if self.buildTarget == '2.6.1' and not self.compiler == "mingw":
             cmd = "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir , "comsuppw-2.6.1.diff" ) )
             self.system( cmd )
+        if self.buildTarget == '2.6.2' and not self.compiler == "mingw":
+            cmd = "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir , "comsuppw-2.6.2.diff" ) )
+            self.system( cmd )
         return True
 
     def compile( self ):
