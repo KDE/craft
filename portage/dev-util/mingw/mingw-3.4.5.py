@@ -20,8 +20,7 @@ http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.19-mingw32-bin.tar
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-3.4.5-20060117-3.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-g++-3.4.5-20060117-3.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326-3.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/mingwrt-3.15.2-mingw32-dll.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/mingwrt-3.15.2-mingw32-dev.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.14.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
