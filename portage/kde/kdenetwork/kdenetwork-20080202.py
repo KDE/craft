@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['win32libs-bin/libidn'] = 'default'
+        self.hardDependencies['win32libs-bin/libmsn'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
