@@ -62,8 +62,8 @@ diff -u -r -N redland-1.0.8-orig/cmake/FindPCRE.cmake redland-1.0.8/cmake/FindPC
 +
 +endif (NOT WIN32)
 +
-+find_path(PCRE_INCLUDE_DIR pcre.h 
-+          HINTS ${PC_PCRE_INCLUDEDIR} ${PC_PCRE_INCLUDE_DIRS} 
++find_path(PCRE_INCLUDE_DIR pcre.h
++          HINTS ${PC_PCRE_INCLUDEDIR} ${PC_PCRE_INCLUDE_DIRS}
 +          PATH_SUFFIXES pcre)
 +
 +find_library(PCRE_PCRE_LIBRARY NAMES pcre HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
@@ -117,7 +117,7 @@ diff -u -r -N redland-1.0.8-orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 diff -u -r -N redland-1.0.8-orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLists.txt
 --- redland-1.0.8-orig/librdf/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ redland-1.0.8/librdf/CMakeLists.txt	2009-01-24 20:05:06.531250000 +0100
-@@ -0,0 +1,118 @@
+@@ -0,0 +1,121 @@
 +project(librdf)
 +
 +find_package(SQLite3 REQUIRED)
@@ -225,16 +225,19 @@ diff -u -r -N redland-1.0.8-orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMak
 +include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 +include_directories(${CMAKE_SOURCE_DIR}/raptor/src)
 +include_directories(${CMAKE_SOURCE_DIR}/rasqal/src)
-+add_library(librdf SHARED ${librdf_SRCS} ${librdf_HDRS} ${librdf_HDRS_INST})
-+set_target_properties(librdf PROPERTIES DEFINE_SYMBOL LIBRDF_INTERNAL)
-+target_link_libraries(librdf raptor rasqal ${SQLITE3_LIBRARIES})
++add_library(rdf SHARED ${librdf_SRCS} ${librdf_HDRS} ${librdf_HDRS_INST})
++set_target_properties(rdf PROPERTIES DEFINE_SYMBOL LIBRDF_INTERNAL)
++target_link_libraries(rdf raptor rasqal ${SQLITE3_LIBRARIES})
++if(MSVC)
++  set_target_properties(rdf PROPERTIES OUTPUT_NAME librdf)
++endif(MSVC)
 +
 +set(PROGRAMM librdf)
 +configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/redland-config.cpp)
 +add_executable(redland-config ${CMAKE_CURRENT_BINARY_DIR}/redland-config.cpp)
-+target_link_libraries(redland-config librdf)
++target_link_libraries(redland-config rdf)
 +
-+install(TARGETS librdf redland-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++install(TARGETS rdf redland-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 +install(FILES   ${librdf_HDRS_INST} DESTINATION include/redland)
 diff -u -r -N redland-1.0.8-orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win32_rdf_config.h
 --- redland-1.0.8-orig/librdf/win32_rdf_config.h	2008-07-01 05:10:26.000000000 +0200
@@ -473,11 +476,13 @@ diff -u -r -N redland-1.0.8-orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/
 diff -u -r -N redland-1.0.8-orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src/sparql_parser.c
 --- redland-1.0.8-orig/rasqal/src/sparql_parser.c	2008-06-26 20:52:33.000000000 +0200
 +++ redland-1.0.8/rasqal/src/sparql_parser.c	2009-01-24 15:20:44.281250000 +0100
-@@ -43,6 +43,12 @@
+@@ -43,6 +43,14 @@
     define necessary library symbols; they are noted "INFRINGES ON
     USER NAME SPACE" below.  */
  
 +#ifdef WIN32
++//undefine some constants which are used below
++#define _WINSOCK2_H
 +#include <windows.h>
 +#undef DELETE
 +#undef OPTIONAL

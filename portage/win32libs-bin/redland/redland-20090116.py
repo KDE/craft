@@ -6,12 +6,12 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['1.0.3-5']:
-            self.targets[ version ] = repoUrl + """/redland-""" + version + """-bin.zip
-                                """ + repoUrl + """/redland-""" + version + """-lib.zip"""
+        for version in ['1.0.8']:
+            self.targets[ version ] = repoUrl + """/redland-""" + version + """-bin.tar.bz2
+                                """ + repoUrl + """/redland-""" + version + """-lib.tar.bz2"""
 
             
-        self.defaultTarget = '1.0.3-5'
+        self.defaultTarget = '1.0.8'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, "" )
-    self.createCombinedPackage = False
+    self.createCombinedPackage = True
     self.buildType = "Release"
     self.subinfo = subinfo()
 
@@ -33,16 +33,17 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
+    # only mingw supported
     self.instsrcdir = ""
 
     # auto-create both import libs with the help of pexports
-    for libs in "librdf raptor rasqal".split():
+    for libs in "librdf libraptor librasqal".split():
         self.createImportLibs( libs )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( "redland", self.buildTarget, False )
+    self.doPackaging( "redland", self.buildTarget )
 
     return True
-  
+
 if __name__ == '__main__':
     subclass().execute()
