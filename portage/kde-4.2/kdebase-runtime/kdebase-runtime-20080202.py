@@ -22,7 +22,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        return self.kdeSvnUnpack():
+        return self.kdeSvnUnpack()
 
     def compile( self ):
         self.kde.buildTests=False
