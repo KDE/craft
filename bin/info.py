@@ -9,6 +9,7 @@ class infoclass:
         self.svnTargets = dict()
         self.hardDependencies = dict()
         self.softDependencies = dict()
+        self.patchToApply = dict()  # list ( 'patchname', patchdepth for patch )
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
         self.svnTargets['svnHEAD'] = False
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)

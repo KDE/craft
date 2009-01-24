@@ -219,7 +219,14 @@ class baseclass:
     def unpack( self ):
         """unpacking all zipped(gz,zip,bz2) tarballs"""
         utils.debug( "base unpack called, files: %s" % self.filenames, 1 )
-        return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
+        if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
+            return False
+        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
+            ( file, patchdepth ) = self.subinfo.patchToApply[ self.subinfo.buildTarget ]
+            patchfile = os.path.join ( self.packagedir, file )
+            srcdir = os.path.join ( self.workdir, self.instsrcdir )
+            return utils.applyPatch( patchfile, srcdir, patchdepth )
+        return True
 
     def compile( self ):
         """overload this function according to the packages needs"""

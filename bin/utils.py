@@ -227,6 +227,10 @@ def unZip( file, destdir ):
 
     return True
 
+### patch file functions
+def applyPatch( patch, workdir, patchdepth ):
+    cmd = "cd %s && patch -p%s < %s" % ( workdir, patchdepth, patch )
+    return system( cmd )
 
 ### svn fetch/unpack functions
 
