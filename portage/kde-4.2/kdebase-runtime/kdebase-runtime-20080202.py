@@ -22,14 +22,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if not self.kdeSvnUnpack():
-          return False;
-        if self.buildTarget == "4.2.0":
-          src_dir  = os.path.join( self.workdir, self.instsrcdir )
-          cmd = "cd %s && patch -p0 < %s" % \
-            ( src_dir, os.path.join( self.packagedir, "kdebase-runtime_4.2.0.patch" ) )
-          os.system( cmd )
-        return True
+        return self.kdeSvnUnpack():
 
     def compile( self ):
         self.kde.buildTests=False
