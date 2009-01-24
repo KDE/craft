@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde-4.2/kdelibs'] = 'default'
-#        self.hardDependencies['win32libs/libical'] = 'default'
+        self.hardDependencies['win32libs-bin/libical'] = 'default'
         self.hardDependencies['contributed/gpgme-qt'] = 'default'
         self.hardDependencies['kdesupport/akonadi'] = 'default'
         

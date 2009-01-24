@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['7.19.3]:
+        for version in ['7.19.3']:
             self.targets[ version ] = repoUrl + """/libcurl-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libcurl-""" + version + """-lib.tar.bz2"""
 
