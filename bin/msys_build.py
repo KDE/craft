@@ -36,6 +36,7 @@ class msys_interface:
     def msysConfigureFlags ( self ):
         """adding configure flags always used"""
         flags  = "--disable-nls "
+        flags += "--enable-shared "
         flags += "--disable-static "
         flags += "--prefix=/ "
         flags += self.msysCustomDefines
