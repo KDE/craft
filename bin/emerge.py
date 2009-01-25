@@ -391,7 +391,10 @@ else:
                 if utils.verbose() > 0:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
             else:
-                if not handlePackage( package[0], package[1], package[2], buildAction, opts ):
+                action = buildAction
+                if buildAction == "fetch-deps":
+                  action = "all"
+                if not handlePackage( package[0], package[1], package[2], action, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         (package[0], package[1], package[2], buildAction) )
                     exit( 1 )
