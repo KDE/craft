@@ -46,6 +46,9 @@ class msys_interface:
         config = os.path.join( self.workdir, self.instsrcdir, "configure" )
         build  = os.path.join( self.workdir )
         if( bOutOfSource ):
+           # otherwise $srcdir is very long and a conftest may fail (like it's the
+           # case in libgmp-4.2.4)
+           config = os.path.join( "..", self.instsrcdir, "configure" )
            build  = os.path.join( build, self.instsrcdir + "-build" )
            utils.cleanDirectory( build )
         else:
