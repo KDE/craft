@@ -12,15 +12,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
         # released target in 4.2.0
-        self.languages  = 'ar bg ca cs csb da de '
-        self.languages += 'el en_GB eo es et '
-        self.languages += 'fi fr fy ga gl gu he hi hu '
-        self.languages += 'it ja kk km ko ku '
-        self.languages += 'lt lv mk ml nb nds nl nn '
+        self.languages  = 'ar bg bn_IN ca cs csb da de '
+        self.languages += 'el en_GB es et eu '
+        self.languages += 'fi fr ga gl gu he hi hu '
+        self.languages += 'is it ja kk km kn ko ku '
+        self.languages += 'lt lv mai mk ml mr nb nds nl nn '
         self.languages += 'pa pl pt pt_BR ro ru sl sr sv '
-        self.languages += 'ta th tr uk wa zh_CN zh_TW '
-
-        self.languages  = 'pa pl pt pt_BR ro ru sl sr sv ta th tr uk wa zh_CN zh_TW'
+        self.languages += 'tg th tr uk wa zh_CN zh_TW '
 
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
