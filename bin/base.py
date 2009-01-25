@@ -476,6 +476,8 @@ class baseclass:
         if USE_PEXPORTS:
             cmd = "pexports %s > %s " % ( dllpath, defpath )
             self.system( cmd )
+            sedcmd = "-i s/^LIBRARY.*$/LIBRARY %s.dll/ %s" % (pkg_name, defpath)
+            self.system( sedcmd )
 
         if( HAVE_LIB and not os.path.isfile( imppath ) ):
             # create .lib
