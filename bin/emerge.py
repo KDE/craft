@@ -64,6 +64,8 @@ Commands (must have a packagename):
                     (Requires the packager to be installed already.)
 --full-package      This will create packages instead of installing stuff to
                     KDEROOT
+--install-deps      This will fetch and install all required dependencies for 
+                    the specified package
 --unmerge           this uninstalls a package from KDEROOT - it requires a
                     working manifest directory.
 
@@ -172,6 +174,8 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction == "print-targets" ):
         utils.printTargets( category, package, version )
         success = True
+    elif ( buildAction == "fetch-deps" ):
+        success = True
     else:
         success = utils.error( "could not understand this buildAction: %s" % buildAction )
 
@@ -258,6 +262,9 @@ for i in sys.argv:
     elif ( i == "--update" ):
         ignoreInstalled = True
         os.environ["EMERGE_NOCLEAN"] = str( True )
+    elif ( i == "--fetch-deps" ):
+        ignoreInstalled = True
+        buildAction = "fetch-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
                   "--full-package" ] ):
@@ -350,13 +357,18 @@ for item in range( len( deplist ) ):
         deplist[ item ].append( False )
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
+if buildAction == "fetch-deps":
+    # the first dependency is the package itself - ignore it
+    # TODO: why are we our own dependency?
+    del deplist[ 0 ]
+
 deplist.reverse()
 success = True
 # package[0] -> category
 # package[1] -> package
 # package[2] -> version
 
-if ( buildAction != "all" ):
+if ( buildAction != "all" and buildAction != "fetch-deps" ):
     """ if a buildAction is given, then do not try to build dependencies
         and do the action although the package might already be installed.
         This is still a bit problematic since packageName might not be a valid
