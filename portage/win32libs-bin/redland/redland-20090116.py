@@ -14,6 +14,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.8'
 
     def setDependencies( self ):
+        self.hardDependencies['win32libs-bin/curl'] = 'default'
+        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
+        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
+        self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        self.hardDependencies['win32libs-bin/pcre'] = 'default'
+        self.hardDependencies['testing/sqlite'] = 'default'
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
 class subclass(base.baseclass):
