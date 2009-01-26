@@ -7,11 +7,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'libical'
-        self.targets['0.41'] = 'http://downloads.sourceforge.net/freeassociation/libical-0.41.tar.gz'
-        self.targets['0.42'] = 'http://downloads.sourceforge.net/freeassociation/libical-0.42.tar.gz'
-        self.targetInstSrc['0.41'] = 'libical-0.41'
-        self.targetInstSrc['0.42'] = 'libical-0.42'
-        self.defaultTarget = '0.42'
+        for v in [ '0.41', '0.42', '0.43']:
+            self.targets[ v ] = 'http://downloads.sourceforge.net/freeassociation/libical-' + v + '.tar.gz'
+            self.targetInstSrc[ v ] = 'libical-' + v
+        self.defaultTarget = '0.43'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
