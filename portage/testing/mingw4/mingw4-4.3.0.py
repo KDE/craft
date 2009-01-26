@@ -16,7 +16,7 @@ http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 
 SRC_URI2 = """
 http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-2-dw2-core.tar.gz
-http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-2-dw2-g%2B%2B.tar.gz
+http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-2-dw2-g++.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109-2.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.14.tar.gz
