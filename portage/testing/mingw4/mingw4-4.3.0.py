@@ -14,9 +14,20 @@ http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 """
 
+SRC_URI2 = """
+http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-2-dw2-core.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109-2.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.14.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
+"""
+
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.3.0'] = SRC_URI
+        self.targets['4.3.2-tdm'] = 
         self.defaultTarget = '4.3.0'
     
     def setDependencies( self ):
