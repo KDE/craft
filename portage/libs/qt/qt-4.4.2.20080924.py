@@ -63,7 +63,8 @@ class subclass(base.baseclass):
         shutil.copyfile( src, dst )
         
         # apply patches
-        cmd = "cd %s && apply_patches.py" % svnpath
+        os.chdir(svnpath)
+        cmd = "apply_patches.py"
         self.system( cmd )
 
         return True
