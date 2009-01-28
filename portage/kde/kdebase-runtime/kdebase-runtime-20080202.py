@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
