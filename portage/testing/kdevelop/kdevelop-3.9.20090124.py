@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-		self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['testing/kdevplatform'] = 'default'
     
 class subclass(base.baseclass):
