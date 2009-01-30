@@ -21,7 +21,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['testing/mysql-embedded'] = 'default'
-    
+        self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        self.hardDependencies['dev-util/gettext-tools'] = 'default'
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )

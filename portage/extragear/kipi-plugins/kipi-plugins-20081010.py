@@ -15,7 +15,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdegraphics'] = 'default'
-    
+        self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        self.hardDependencies['dev-util/gettext-tools'] = 'default'
+        self.hardDependencies['win32libs-bin/expat'] = 'default'
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
