@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['win32libs-sources/libgmp-src'] = 'default'
+        self.hardDependencies['win32libs-bin/libgmp'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
