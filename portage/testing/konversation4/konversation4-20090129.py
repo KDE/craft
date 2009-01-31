@@ -1,29 +1,22 @@
 import base
 import os
 import utils
+import info
 
-DEPEND = """
-kde/kdelibs
-kde/kdebase
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'branches/work/konvi-kde4'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "konvi-kde4"
-
-    def kdeSvnPath( self ):
-        return "branches/work/konvi-kde4"
 
     def unpack( self ):
-        unp = self.kdeSvnUnpack()
-        # now copy the tree to workdir
-        return unp
-
-
-    def kdeDefaultDefines( self ):
-        options = base.baseclass.kdeDefaultDefines( self )
-        return options
+        return self.kdeSvnUnpack()
 
     def compile( self ):
         return self.kdeCompile()
