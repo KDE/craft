@@ -7,7 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/network/ktorrent'
-        for version in ['3.2beta1']:
+        for version in ['3.2beta1', '3.2rc1']:
             self.targets[version] = 'http://ktorrent.org/downloads/' + version + '/ktorrent-' + version + '.tar.bz2'
             self.targetInstSrc[version] = 'ktorrent-' + version
         self.defaultTarget = 'svnHEAD'
@@ -24,11 +24,8 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['3.2beta1']:
-            if( not base.baseclass.unpack( self ) ):
-                return False
-            else:
-                return True
+        if self.buildTarget in ['3.2beta1', '3.2rc1']:
+            return base.baseclass.unpack( self )
         else:
             return self.kdeSvnUnpack()
 
