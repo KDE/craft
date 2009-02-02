@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['2.0-beta5'] = 'tags/eigen/2.0-beta5'
         self.svnTargets['2.0-beta6'] = 'tags/eigen/2.0-beta6'
+        self.svnTargets['2.0.0'] = 'tags/eigen/2.0.0'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen2'
         self.defaultTarget = 'svnHEAD'
 
