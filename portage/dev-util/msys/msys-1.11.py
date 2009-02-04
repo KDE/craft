@@ -6,6 +6,8 @@ import info
 
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/mingw/msysCORE-1.0.11-2007.01.19-1.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/gettext-devel-0.16.1-MSYS-1.0.11-1.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/gettext-0.16.1-MSYS-1.0.11-1.tar.bz2
 """
 
 class subinfo(info.infoclass):
