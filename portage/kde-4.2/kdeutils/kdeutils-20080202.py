@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/libgmp'] = 'default'
+        self.hardDependencies['win32libs-bin/libzip'] = 'default'
+        self.hardDependencies['gnuwin32/libarchive'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
