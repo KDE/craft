@@ -17,6 +17,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-sources/poppler-src'] = 'default'
         self.hardDependencies['win32libs-bin/exiv2'] = 'default'
+        self.hardDependencies['win32libs-bin/chm'] = 'default'
+        self.hardDependencies['win32libs-bin/djvu'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
