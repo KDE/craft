@@ -79,8 +79,15 @@ class subclass(base.baseclass):
     return False
 
   def make_package( self ):
+    in_lib  = os.path.join( self.imagedir, "bin", "libiconv-2.dll" )
+    out_lib1 = os.path.join( self.imagedir, "bin", "libiconv2.dll" )
+    out_lib2 = os.path.join( self.imagedir, "bin", "iconv.dll" )
+    if os.path.exists( in_lib ):
+      shutil.copy( in_lib, out_lib2 )
+      os.rename( in_lib, out_lib1 )
+
     # auto-create both import libs with the help of pexports
-    for libs in "libiconv2 libcharset1".split():
+    for libs in "libiconv2 iconv libcharset-1".split():
         if not self.createImportLibs( libs ):
             return False;
 
