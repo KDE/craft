@@ -14,7 +14,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/qt-copy'
+        self.svnTargets['4.4'] = 'branches/qt/4.4'
+        self.svnTargets['svnHEAD'] = 'trunk/qt-copy/'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
@@ -53,7 +54,14 @@ class subclass(base.baseclass):
             return False
 
         # and now qt
-        self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
+        if self.buildTarget == "4.4":
+          self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
+        else:
+          self.kdeSvnUnpack() or utils.die( "kdeSvnUnpack failed" )
+          # unpack all subdirs except 'include'
+          svnpath = os.path.join( self.kdesvndir, self.kdeSvnPath() )
+          for subdir in "bin config.tests demos doc examples lib mkspecs patches qmake src tools translations".split():
+            self.kdeSvnUnpack( self.kdeSvnPath(), subdir ) or utils.die( "kdeSvnUnpack failed" )
 
         svnpath = os.path.join( self.kdesvndir, self.kdeSvnPath() )
 
