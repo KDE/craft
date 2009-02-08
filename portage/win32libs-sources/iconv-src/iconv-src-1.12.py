@@ -8,14 +8,14 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      self.targets['1.9.2-2'] = 'http://downloads.sourceforge.net/sourceforge/gnuwin32/libiconv-1.9.2-1.exe'
-      self.targetInstSrc['1.9.2-2'] = ''
-
       self.targets['1.12'] = 'http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.12.tar.gz'
       self.targetInstSrc['1.12'] = 'libiconv-1.12'
       self.patchToApply['1.12'] = ( 'iconv-src-1.12.patch', 0 )
       self.defaultTarget = '1.12'
 
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['dev-util/msys'] = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
@@ -79,20 +79,19 @@ class subclass(base.baseclass):
     return False
 
   def make_package( self ):
+    # libxml2.dll is linked against iconv.dll ... :(
     in_lib  = os.path.join( self.imagedir, "bin", "libiconv-2.dll" )
-    out_lib1 = os.path.join( self.imagedir, "bin", "libiconv2.dll" )
-    out_lib2 = os.path.join( self.imagedir, "bin", "iconv.dll" )
+    out_lib = os.path.join( self.imagedir, "bin", "iconv.dll" )
     if os.path.exists( in_lib ):
-      shutil.copy( in_lib, out_lib2 )
-      os.rename( in_lib, out_lib1 )
+      shutil.copy( in_lib, out_lib )
 
     # auto-create both import libs with the help of pexports
-    for libs in "libiconv2 iconv libcharset-1".split():
+    for libs in "libiconv-2 libcharset-1".split():
         if not self.createImportLibs( libs ):
             return False;
 
     # now do packaging with kdewin-packager
-    self.doPackaging( "libiconv", self.buildTarget, False )
+    self.doPackaging( "iconv", self.buildTarget + "-1" )
 
     return True
   

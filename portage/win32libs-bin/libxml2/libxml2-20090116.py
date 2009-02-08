@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['win32libs-bin/iconv'] = 'default'
 
 class subclass(base.baseclass):
   def __init__(self):
