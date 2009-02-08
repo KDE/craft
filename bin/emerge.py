@@ -174,7 +174,7 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction == "print-targets" ):
         utils.printTargets( category, package, version )
         success = True
-    elif ( buildAction == "fetch-deps" ):
+    elif ( buildAction == "install-deps" ):
         success = True
     else:
         success = utils.error( "could not understand this buildAction: %s" % buildAction )
@@ -262,9 +262,9 @@ for i in sys.argv:
     elif ( i == "--update" ):
         ignoreInstalled = True
         os.environ["EMERGE_NOCLEAN"] = str( True )
-    elif ( i == "--fetch-deps" ):
+    elif ( i == "--install-deps" ):
         ignoreInstalled = True
-        buildAction = "fetch-deps"
+        buildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
                   "--full-package" ] ):
@@ -357,7 +357,7 @@ for item in range( len( deplist ) ):
         deplist[ item ].append( False )
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
-if buildAction == "fetch-deps":
+if buildAction == "install-deps":
     # the first dependency is the package itself - ignore it
     # TODO: why are we our own dependency?
     del deplist[ 0 ]
@@ -368,7 +368,7 @@ success = True
 # package[1] -> package
 # package[2] -> version
 
-if ( buildAction != "all" and buildAction != "fetch-deps" ):
+if ( buildAction != "all" and buildAction != "install-deps" ):
     """ if a buildAction is given, then do not try to build dependencies
         and do the action although the package might already be installed.
         This is still a bit problematic since packageName might not be a valid
@@ -392,7 +392,7 @@ else:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
             else:
                 action = buildAction
-                if buildAction == "fetch-deps":
+                if buildAction == "install-deps":
                   action = "all"
                 if not handlePackage( package[0], package[1], package[2], action, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
