@@ -4,17 +4,11 @@ import utils
 import shutil
 import info
 
-PACKAGE_NAME         = "fontconfig"
-PACKAGE_VER          = "2.4.2"
-PACKAGE_FULL_VER     = "2.4.2-3"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = "libfontconfig"
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.4.2-2'] = "http://fontconfig.org/release/" + PACKAGE_FULL_NAME + ".tar.gz"
-        self.targetInstSrc['2.4.2-2'] = PACKAGE_FULL_NAME
-        self.defaultTarget = '2.4.2-2'
+        self.targets['2.4.2-3'] = "http://fontconfig.org/release/fontconfig-2.4.2.tar.gz"
+        self.targetInstSrc['2.4.2-3'] = PACKAGE_FULL_NAME
+        self.defaultTarget = '2.4.2-3'
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/kdewin32'] = 'default'
@@ -45,7 +39,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+        self.doPackaging( "fontconfig", self.buildTarget, True )
 
         return True
 

@@ -9,15 +9,14 @@ class subinfo(info.infoclass):
             tgt = '0.8.%s' % i
             self.targets[ tgt ] = 'http://poppler.freedesktop.org/poppler-' + tgt + '.tar.gz'
             self.targetInstSrc[ tgt ] = 'poppler-' + tgt
-        self.targets[ '0.10.1' ] = 'http://poppler.freedesktop.org/poppler-0.10.1.tar.gz'
-        self.targets[ '0.10.2' ] = 'http://poppler.freedesktop.org/poppler-0.10.2.tar.gz'
-        self.targetInstSrc[ '0.10.1' ] = 'poppler-0.10.1'
-        self.targetInstSrc[ '0.10.2' ] = 'poppler-0.10.2'
-        self.defaultTarget = "0.10.2"
+        for i in ( '0.10.1', '0.10.2', '0.10.3' ):
+          self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
+          self.targetInstSrc[ i ] = 'poppler-%s' % i
+        self.defaultTarget = "0.10.3"
     
     def setDependencies( self ):
-        self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
-        self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
+        self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
+        self.hardDependencies['win32libs-bin/freetype'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
@@ -50,9 +49,7 @@ class subclass(base.baseclass):
         return False
         
     def make_package( self ):
-        # now do packaging with kdewin-packager
         self.doPackaging( "poppler", self.buildTarget, True )
-
         return True
 
 if __name__ == '__main__':

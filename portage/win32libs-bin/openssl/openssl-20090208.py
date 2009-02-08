@@ -6,12 +6,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['0.9.8g-1', '0.9.8j' ]:
-            self.targets[ version ] = repoUrl + """/openssl-""" + version + """-bin.zip
-                                """ + repoUrl + """/openssl-""" + version + """-lib.zip"""
+        for version in [ '0.9.8j' ]:
+            self.targets[ version ] = repoUrl + """/openssl-""" + version + """-bin.tar.bz2
+                                """ + repoUrl + """/openssl-""" + version + """-lib.tar.bz2"""
 
-            
-        self.defaultTarget = '0.9.8-j'
+        self.defaultTarget = '0.9.8j'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
