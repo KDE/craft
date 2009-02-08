@@ -19,7 +19,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.51'
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/win32libs'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
@@ -49,10 +51,6 @@ class subclass(base.baseclass):
     # we have an own cmake script - copy it to the right place
     src = os.path.join( self.packagedir , "CMakeLists.txt" )
     dst = os.path.join( self.workdir, self.instsrcdir, "CMakeLists.txt" )
-    shutil.copy( src, dst )
-    # and two cmake modules too
-    src = os.path.join( self.packagedir , "FindLibiconv.cmake" )
-    dst = os.path.join( self.workdir, self.instsrcdir, "FindLibiconv.cmake" )
     shutil.copy( src, dst )
     src = os.path.join( self.packagedir , "FindLibintl.cmake" )
     dst = os.path.join( self.workdir, self.instsrcdir, "FindLibintl.cmake" )
@@ -104,7 +102,7 @@ class subclass(base.baseclass):
     self.system( cmd )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( "shared-mime-info", self.buildTarget, True )
+    self.doPackaging( "shared-mime-info", self.buildTarget + "-2", True )
 
     return True
   

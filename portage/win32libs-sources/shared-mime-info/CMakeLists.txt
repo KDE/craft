@@ -28,8 +28,6 @@ set(GLIB_DIR     "" CACHE FILEPATH "Path to glib sources")
 find_package(LIBXML2 REQUIRED)
 # libintl
 find_package(Libintl REQUIRED)
-# libiconv
-find_package(Libiconv REQUIRED)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
@@ -94,7 +92,6 @@ include_directories(
    ${GLIB_DIR}
    ${GLIB_DIR}/glib
    ${LIBINTL_INCLUDE_DIR}
-   ${LIBICONV_INCLUDE_DIR}
    ${KDEWIN32_DIR}/include
    ${LIBXML2_INCLUDE_DIR}
    ${CMAKE_BINARY_DIR}
@@ -122,7 +119,6 @@ add_executable(update-mime-database update-mime-database.c ${GLIB_SOURCES} ${add
 
 target_link_libraries(update-mime-database
         ${LIBINTL_LIBRARIES}
-        ${LIBICONV_LIBRARIES}
         ${LIBXML2_LIBRARIES}
         ole32
 )
