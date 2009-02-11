@@ -34,19 +34,19 @@ class subclass(base.baseclass):
     os.mkdir( os.path.join( dst, "lib" ) )
     os.mkdir( os.path.join( dst, "include" ) )
 
-    for f in "libeay32 libssl32".split():
-      shutil.copy( os.path.join( src, f + ".dll" ) , os.path.join( dst, "bin" ) )
+    shutil.copy( os.path.join( src, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
+    shutil.copy( os.path.join( src, "libssl32.dll" ) , os.path.join( dst, "bin", "ssleay32.dll" ) )
     utils.copySrcDirToDestDir( os.path.join( src, "outinc" ) , os.path.join( dst, "include" ) )
 
     # auto-create both import libs with the help of pexports
-    for f in "libeay32 libssl32".split():
+    for f in "libeay32 ssleay32".split():
       self.stripLibs( f )
       self.createImportLibs( f )
 
     return True
 
   def make_package( self ):
-    return self.doPackaging( "openssl", self.buildTarget, False )
+    return self.doPackaging( "openssl", self.buildTarget + "-1", False )
   
 if __name__ == '__main__':
     subclass().execute()
