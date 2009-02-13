@@ -14,7 +14,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.4'] = 'branches/qt/4.4'
+        self.svnTargets['4.4.3-2'] = 'branches/qt/4.4'
         self.svnTargets['svnHEAD'] = 'trunk/qt-copy/'
         self.defaultTarget = 'svnHEAD'
 
@@ -163,7 +163,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( "qt", "4.4.3-1" )
+        return self.doPackaging( "qt", self.buildTarget )
 
 if __name__ == '__main__':
     subclass().execute()
