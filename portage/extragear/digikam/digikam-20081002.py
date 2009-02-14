@@ -7,6 +7,7 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
+        self.svnTargets['branch-0.11'] = 'branches/extragear/graphics/digikam'
         for version in ['beta5', 'beta6', 'beta7', 'beta8', 'rc1', 'rc2']:
             self.targets['0.10.0-' + version] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0-' + version + '.tar.bz2'
             self.targetInstSrc['0.10.0-' + version] = 'digikam-0.10.0-' + version
