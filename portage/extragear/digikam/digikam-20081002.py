@@ -7,7 +7,7 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
-        for version in ['beta5', 'beta6', 'beta7', 'beta8', 'rc1']:
+        for version in ['beta5', 'beta6', 'beta7', 'beta8', 'rc1', 'rc2']:
             self.targets['0.10.0-' + version] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0-' + version + '.tar.bz2'
             self.targetInstSrc['0.10.0-' + version] = 'digikam-0.10.0-' + version
         self.defaultTarget = 'svnHEAD'
@@ -26,7 +26,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.10.0-beta5', '0.10.0-beta6', '0.10.0-beta7', '0.10.0-beta8', '0.10.0-rc1']:
+        if self.buildTarget in ['0.10.0-beta5', '0.10.0-beta6', '0.10.0-beta7', '0.10.0-beta8', '0.10.0-rc1', '0.10.0-rc2']:
             if( not base.baseclass.unpack( self ) ):
                 return False
             else:
