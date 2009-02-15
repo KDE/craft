@@ -28,10 +28,7 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         if self.buildTarget in ['0.2.0-beta3', '0.2.0-beta4', '0.2.0-beta5', '0.2.0-beta6', '0-2.0-rc1', '0.2.0-rc2']:
-            if( not base.baseclass.unpack( self ) ):
-                return True
-            else:
-                return False
+            return base.baseclass.unpack( self )
         else:
             return self.kdeSvnUnpack()
 
