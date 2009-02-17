@@ -38,10 +38,6 @@ class subclass(base.baseclass):
     def fetch( self ):
         if not base.baseclass.fetch( self ):
             return False
-        if not utils.getFiles( self.openssl, self.downloaddir ):
-            return False
-        if not utils.getFiles( self.dbuslib, self.downloaddir ):
-            return False
         return True
 
     def unpack( self ):
@@ -81,6 +77,9 @@ class subclass(base.baseclass):
         qtsrcdir = os.path.join( self.kdesvndir, self.kdeSvnPath() )
         qtbindir = os.path.join( self.workdir, self.instsrcdir )
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
+
+        os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
+
         configure = os.path.join( qtsrcdir, "configure.exe" ).replace( "/", "\\" )
 
         if not os.path.exists( qtbindir ):
@@ -142,6 +141,7 @@ class subclass(base.baseclass):
         return True
 
     def install( self ):
+        os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
 
         os.chdir( os.path.join( self.workdir, self.instsrcdir ) )
         self.system( "%s install" % self.cmakeMakeProgramm )
