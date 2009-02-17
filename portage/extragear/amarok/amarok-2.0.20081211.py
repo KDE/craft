@@ -57,7 +57,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "amarok", self.buildTarget, True )
         else:
-            return self.doPackaging( "amarok", os.path.basename(sys.argv[0]).replace("amarok-", "").replace(".py", ""), True )
+            return self.doPackaging( "amarok", self.subinfo.isoDateToday, True )
 
 
 if __name__ == '__main__':		
