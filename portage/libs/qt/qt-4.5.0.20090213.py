@@ -141,6 +141,7 @@ class subclass(base.baseclass):
         return True
 
     def install( self ):
+        qtbindir = os.path.join( self.workdir, self.instsrcdir )
         os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
 
         os.chdir( os.path.join( self.workdir, self.instsrcdir ) )
