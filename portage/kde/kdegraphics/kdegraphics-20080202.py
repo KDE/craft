@@ -40,7 +40,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdegraphics", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdegraphics", os.path.basename(sys.argv[0]).replace("kdegraphics-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdegraphics" )
 
 if __name__ == '__main__':
     subclass().execute()

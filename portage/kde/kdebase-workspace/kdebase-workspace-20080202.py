@@ -48,7 +48,8 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines += " -DBUILD_khotkeys=OFF"
 #        self.kdeCustomDefines += " -DBUILD_kcontrol=OFF"
         self.kdeCustomDefines += " -DBUILD_ksystraycmd=OFF"
-        self.kdeCustomDefines += " -DBUILD_doc=OFF"
+#        self.kdeCustomDefines += " -DBUILD_doc=OFF"
+#        self.kdeCustomDefines += " -DBUILD_plasma=OFF"
 #        self.kdeCustomDefines += " -DBUILD_wallpapers=OFF"
    
         return self.kdeCompile()
@@ -60,7 +61,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdebase-workspace", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdebase-workspace", os.path.basename(sys.argv[0]).replace("kdebase-workspace-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdebase-workspace" )
 
 		
 if __name__ == '__main__':

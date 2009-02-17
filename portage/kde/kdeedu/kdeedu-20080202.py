@@ -41,7 +41,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdeedu", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdeedu", os.path.basename(sys.argv[0]).replace("kdeedu-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdeedu" )
 
 if __name__ == '__main__':
     subclass().execute()

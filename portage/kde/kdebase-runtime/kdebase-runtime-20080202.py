@@ -35,7 +35,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdebase-runtime", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdebase-runtime", os.path.basename(sys.argv[0]).replace("kdebase-runtime-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdebase-runtime" )
 
 		
 if __name__ == '__main__':

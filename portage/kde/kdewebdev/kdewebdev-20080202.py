@@ -42,7 +42,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdewebdev", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdewebdev", os.path.basename(sys.argv[0]).replace("kdewebdev-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdewebdev" )
 
 
 if __name__ == '__main__':

@@ -66,7 +66,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdegames", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdegames", os.path.basename(sys.argv[0]).replace("kdegames-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdegames" )
 
 if __name__ == '__main__':
     subclass().execute()

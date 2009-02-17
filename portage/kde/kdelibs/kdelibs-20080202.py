@@ -50,7 +50,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdelibs", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdelibs", os.path.basename(sys.argv[0]).replace("kdelibs-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdelibs" )
 
 if __name__ == '__main__':
     subclass().execute()

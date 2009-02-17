@@ -36,7 +36,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdemultimedia", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdemultimedia", os.path.basename(sys.argv[0]).replace("kdemultimedia-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdemultimedia" )
 
 
 if __name__ == '__main__':

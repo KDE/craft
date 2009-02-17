@@ -41,7 +41,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdepimlibs", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdepimlibs", os.path.basename(sys.argv[0]).replace("kdepimlibs-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdepimlibs" )
 
 
 if __name__ == '__main__':

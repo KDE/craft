@@ -50,7 +50,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdesdk", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdesdk", os.path.basename(sys.argv[0]).replace("kdesdk-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdesdk" )
 
 if __name__ == '__main__':
     subclass().execute()

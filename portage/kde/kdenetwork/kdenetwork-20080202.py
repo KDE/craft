@@ -36,7 +36,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdenetwork", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdenetwork", os.path.basename(sys.argv[0]).replace("kdenetwork-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdenetwork" )
 
 if __name__ == '__main__':
     subclass().execute()

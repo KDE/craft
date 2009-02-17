@@ -33,7 +33,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdetoys", self.buildTarget, True )
         else:
-            return self.doPackaging( "kdetoys", os.path.basename(sys.argv[0]).replace("kdetoys-", "").replace(".py", ""), True )
+            return self.doPackaging( "kdetoys" )
 
 if __name__ == '__main__':
     subclass().execute()
