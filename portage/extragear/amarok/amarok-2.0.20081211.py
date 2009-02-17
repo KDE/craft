@@ -57,7 +57,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "amarok", self.buildTarget, True )
         else:
-            return self.doPackaging( "amarok", self.subinfo.isoDateToday, True )
+            return self.doPackaging( "amarok" )
 
 
 if __name__ == '__main__':		

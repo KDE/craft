@@ -37,7 +37,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "ktorrent", os.path.basename(sys.argv[0]).replace("ktorrent-", "").replace(".py", ""), True )
+            return self.doPackaging( "ktorrent" )
         else:
             return self.doPackaging( "ktorrent", self.buildTarget, True )
 

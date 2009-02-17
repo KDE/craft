@@ -46,7 +46,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "digikam", self.buildTarget, True )
         else:
-            return self.doPackaging( "digikam", os.path.basename(sys.argv[0]).replace("digikam-", "").replace(".py", ""), True )
+            return self.doPackaging( "digikam" )
 
 
 if __name__ == '__main__':		

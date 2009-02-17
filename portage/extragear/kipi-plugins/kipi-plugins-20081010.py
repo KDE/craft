@@ -42,7 +42,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kipi-plugins", self.buildTarget, True )
         else:
-            return self.doPackaging( "kipi-plugins", os.path.basename(sys.argv[0]).replace("kipi-plugins-", "").replace(".py", ""), True )
+            return self.doPackaging( "kipi-plugins" )
 
 
 if __name__ == '__main__':		
