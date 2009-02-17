@@ -385,7 +385,7 @@ class baseclass:
     def kdeTest( self ):
         return self.kde.kdeTest()
 
-    def doPackaging( self, pkg_name, pkg_version, packSources = True ):
+    def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True ):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
         
