@@ -5,9 +5,11 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['virtual/base']            = 'default'
+        self.hardDependencies['libs/qt']                 = 'default'
         self.hardDependencies['kdesupport/clucene-core'] = 'default'
+        #not good for 4.2 branch...
+        #self.hardDependencies['win32libs-bin/redland']   = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
@@ -22,6 +24,7 @@ class subinfo(info.infoclass):
         self.svnTargets['2.1.65'] = 'tags/soprano/2.1.65'
         self.svnTargets['2.1.67'] = 'tags/soprano/2.1.67'
         self.svnTargets['2.2']    = 'tags/soprano/2.2'
+        self.svnTargets['2.2.1']  = 'tags/soprano/2.2.1'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
