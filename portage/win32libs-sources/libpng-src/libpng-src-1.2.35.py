@@ -5,9 +5,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.2.34'] = 'http://downloads.sourceforge.net/libpng/libpng-1.2.34.tar.gz'
-        self.targetInstSrc['1.2.34'] = 'libpng-1.2.34'
-        self.defaultTarget = '1.2.34'
+        self.targets['1.2.35'] = 'http://downloads.sourceforge.net/libpng/libpng-1.2.35.tar.gz'
+        self.targetInstSrc['1.2.35'] = 'libpng-1.2.35'
+        self.defaultTarget = '1.2.35'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'dev-util/win32libs'
