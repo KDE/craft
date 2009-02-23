@@ -7,16 +7,16 @@ import re
 
 # do not forget to update CMakeLists.txt!
 SRC_URI= """
-http://people.freedesktop.org/~hadess/shared-mime-info-0.51.tar.bz2
+http://people.freedesktop.org/~hadess/shared-mime-info-0.60.tar.bz2
 ftp://ftp.gtk.org/pub/glib/2.18/glib-2.18.3.tar.bz2
 """
 GLIB_VER = "2.18.3"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.51'] = SRC_URI
-        self.targetInstSrc['0.51'] = "shared-mime-info-0.51"
-        self.defaultTarget = '0.51'
+        self.targets['0.60'] = SRC_URI
+        self.targetInstSrc['0.60'] = "shared-mime-info-0.60"
+        self.defaultTarget = '0.60'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -102,7 +102,7 @@ class subclass(base.baseclass):
     self.system( cmd )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( "shared-mime-info", self.buildTarget + "-2", True )
+    self.doPackaging( "shared-mime-info", self.buildTarget, True )
 
     return True
   
