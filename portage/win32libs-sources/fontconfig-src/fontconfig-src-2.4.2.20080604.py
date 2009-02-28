@@ -7,7 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.4.2-3'] = "http://fontconfig.org/release/fontconfig-2.4.2.tar.gz"
-        self.targetInstSrc['2.4.2-3'] = PACKAGE_FULL_NAME
+        self.targetInstSrc['2.4.2-3'] = "fontconfig-2.4.2"
         self.defaultTarget = '2.4.2-3'
     
     def setDependencies( self ):

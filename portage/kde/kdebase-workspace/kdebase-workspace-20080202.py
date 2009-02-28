@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['win32libs-sources/fontconfig-src'] = 'default'
-        self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
+        self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
+        self.hardDependencies['win32libs-bin/freetype'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
