@@ -2,14 +2,15 @@ import gnuwin32
 import info
 
 SRC_URI = """
-http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-1.10.1-bin.zip
-http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-1.10.1-dep.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-%s-bin.zip
+http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-%s-dep.zip
 """
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.10.1'] = SRC_URI
-        self.defaultTarget = '1.10.1'
+        for t in ( '1.10.1', '1.11.4' ):
+          self.targets[ t ] = SRC_URI % ( t, t )
+        self.defaultTarget = '1.11.4'
         
 class subclass(gnuwin32.gnuwin32class):
   def __init__( self, **args ):

@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targets[ version ] = repoUrl + """/libidn-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libidn-""" + version + """-lib.tar.bz2"""
 
-        self.defaultTarget = '1.9'
+        self.defaultTarget = '1.12'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

@@ -8,8 +8,9 @@ http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-2.5.1a-dep.zip
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.5.1a'] = SRC_URI
-        self.defaultTarget = '2.5.1a'
+        for t in ( '2.5.1a', '2.5.4' ):
+          self.targets[ t ] = SRC_URI % ( t, t )
+        self.defaultTarget = '2.5.4'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
