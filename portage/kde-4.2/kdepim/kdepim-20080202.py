@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde-4.1/kdebase-runtime-branch'] = 'default'
+        self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
         self.hardDependencies['contributed/gpgme-qt'] = 'default'
         self.hardDependencies['testing/sqlite'] = 'default'
         
