@@ -79,4 +79,4 @@ install(TARGETS idn-11 idn
                 LIBRARY DESTINATION lib
                 ARCHIVE DESTINATION lib
 )
-install(FILES ${libIDN_hdrs} DESTINATION include/libidn)
+install(FILES ${libIDN_hdrs} DESTINATION include)
