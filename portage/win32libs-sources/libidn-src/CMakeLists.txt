@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
 
 set(PACKAGE "libidn")
 set(PACKAGE_NAME "GNU Libidn")
-set(PACKAGE_VERSION "1.12")
+set(PACKAGE_VERSION "1.13")
 set(PACKAGE_BUGREPORT "bug-libidn@gnu.org")
 set(LOCALEDIR .)
 
@@ -79,4 +79,4 @@ install(TARGETS idn-11 idn
                 LIBRARY DESTINATION lib
                 ARCHIVE DESTINATION lib
 )
-install(FILES ${libIDN_hdrs} DESTINATION include)
+install(FILES ${libIDN_hdrs} DESTINATION include/libidn)
