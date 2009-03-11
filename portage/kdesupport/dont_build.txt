@@ -1,5 +1,2 @@
-decibel
 kdewin-installer-static
-tapioca-qt
-telepathy-qt
 clucene-core
