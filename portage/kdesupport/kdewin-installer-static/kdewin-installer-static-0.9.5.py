@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin-installer'
+        self.svnTargets['amarokHEAD'] = 'trunk/kdesupport/kdewin-installer'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
@@ -27,13 +28,16 @@ class subclass(base.baseclass):
     def compile( self ):
         self.kdeCustomDefines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
             % os.path.join(self.rootdir, "qt-static", "bin", "qmake.exe").replace('\\', '/')
+        if self.buildTarget == 'amarokHEAD':
+            self.kdeCustomDefines += " -DBUILD_FOR_AMAROK=ON"
+
         return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdewin-installer", utils.cleanPackageName( sys.argv[0], "kdewin-installer" ), True )
+        return self.doPackaging( "kdewin-installer" )
 
 if __name__ == '__main__':
     subclass().execute()
