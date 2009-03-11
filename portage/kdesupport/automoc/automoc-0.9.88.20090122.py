@@ -33,7 +33,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "automoc", utils.cleanPackageName( sys.argv[0], "automoc" ), True )
+            return self.doPackaging( "automoc" )
         else:
             return self.doPackaging( "automoc", self.buildTarget, True )
 

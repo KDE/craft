@@ -33,7 +33,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "qca", utils.cleanPackageName( sys.argv[0], "qca" ), True )
+            return self.doPackaging( "qca" )
         else:
             return self.doPackaging( "qca", self.buildTarget, True )
 if __name__ == '__main__':

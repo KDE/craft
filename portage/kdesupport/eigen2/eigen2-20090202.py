@@ -38,7 +38,7 @@ class subclass(base.baseclass):
         if self.traditional:
             self.instdestdir = "kde"
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "eigen2", utils.cleanPackageName( sys.argv[0], "eigen2" ), True )
+            return self.doPackaging( "eigen2" )
         else:
             return self.doPackaging( "eigen2", self.buildTarget, True )
 

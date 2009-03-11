@@ -42,7 +42,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "akonadi", utils.cleanPackageName( sys.argv[0], "akonadi" ), True )
+            return self.doPackaging( "akonadi" )
         else:
             return self.doPackaging( "akonadi", self.buildTarget, True )
 

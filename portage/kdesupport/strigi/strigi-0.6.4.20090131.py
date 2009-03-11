@@ -38,7 +38,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "strigi", utils.cleanPackageName( sys.argv[0], "strigi" ), True )
+            return self.doPackaging( "strigi" )
         else:
             return self.doPackaging( "strigi", self.buildTarget, True )
 

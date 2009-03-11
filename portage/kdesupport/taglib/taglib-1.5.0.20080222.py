@@ -32,7 +32,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "taglib", utils.cleanPackageName( sys.argv[0], "taglib" ), True )
+            return self.doPackaging( "taglib" )
         else:
             return self.doPackaging( "taglib", self.buildTarget, True )
 
