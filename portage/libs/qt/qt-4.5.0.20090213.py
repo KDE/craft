@@ -68,7 +68,7 @@ class subclass(base.baseclass):
         
         # apply patches
         os.chdir(svnpath)
-        cmd = "apply_patches.py"
+        cmd = "python apply_patches.py"
         self.system( cmd )
 
         return True
