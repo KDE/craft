@@ -55,15 +55,17 @@ class baseclass:
 # __init__                   the baseclass constructor
 # execute                    called to run the derived class
 # fetch                      getting the package
-# unpack                     unpacking the source tarball
-# compile                    compiling the tarball
+# unpack                     unpacking the source package
+# configure                  configure the package
+# make                       make the package
+# compile                    compiling (configure + make) the package
 # install                    installing the files into the normal
 # qmerge                     mergeing the local directory to the kderoot
 # unmerge                    unmergeing the local directory again
 # manifest                   getting the headers
 # make_package               overload this function to make the packages themselves
 # setDirectories
-# svnFetch                  getting sources from a custom repo url
+# svnFetch                   getting sources from a custom repo url
 # doPackaging
 # createImportLibs           creating import libs for mingw and msvc
 # stripLibs                  stripping libs
@@ -185,8 +187,8 @@ class baseclass:
         elif command == "cleanimage":       self.cleanup()
         elif command == "unpack":      ok = self.unpack()
         elif command == "compile":     ok = self.compile()
-        elif command == "configure":   ok = self.compile()
-        elif command == "make":        ok = self.compile()
+        elif command == "configure":   ok = self.configure()
+        elif command == "make":        ok = self.make()
         elif command == "install":     ok = self.install()
         elif command == "test":      ok = self.unittest()
         elif command == "qmerge":      ok = self.qmerge()
@@ -230,7 +232,22 @@ class baseclass:
 
     def compile( self ):
         """overload this function according to the packages needs"""
-        utils.debug( "base compile called, doing nothing...", 1 )
+        utils.debug( "base compile (configure + make) called, doing nothing...", 1 )
+        return True
+
+    def configure( self ):
+        """overload this function according to the packages needs"""
+        utils.debug( "base configure called, doing nothing...", 1 )
+        return True
+
+    def make( self ):
+        """overload this function according to the packages needs
+		   the base implementation performs a standard make"""
+        srcdir = os.path.join( self.workdir, self.instsrcdir, self.compiler + '-' +self.buildType )
+        if utils.verbose() > 1:
+            print "entering " + srcdir
+        os.chdir( srcdir )
+        self.system( self.cmakeMakeProgramm )
         return True
 
     def install( self ):

@@ -54,6 +54,8 @@ Commands (must have a packagename):
                     the build directory.
 --compile           compile the sources: this includes configure'ing/cmake'ing
                     and running [mingw32-|n|]make.
+--configure         configure the sources (support is package specific)
+--make              run [mingw32-|n|]make
 --install           This will run [mingw32-|n|]make install into the image 
                     directory of each package.
 --manifest          This step creates the files contained in the manifest dir.
