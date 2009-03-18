@@ -241,13 +241,8 @@ class baseclass:
         return True
 
     def make( self ):
-        """overload this function according to the packages needs
-		   the base implementation performs a standard make"""
-        srcdir = os.path.join( self.workdir, self.instsrcdir, self.compiler + '-' +self.buildType )
-        if utils.verbose() > 1:
-            print "entering " + srcdir
-        os.chdir( srcdir )
-        self.system( self.cmakeMakeProgramm )
+        """overload this function according to the packages needs"""
+        utils.debug( "base configure called, doing nothing...", 1 )
         return True
 
     def install( self ):
