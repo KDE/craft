@@ -1,30 +1,22 @@
 import base
 import os
 import shutil
-import utils
-from utils import die
+import info
 
-PACKAGE_NAME         = "jasper"
-PACKAGE_VER          = "1.900.1"
-PACKAGE_FULL_VER     = "1.900.1-2"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = "libjasper"
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets[ '1.900.1-2' ] = 'http://www.ece.uvic.ca/~mdadams/jasper/software/jasper-1.900.1.zip'
+        self.targetInstSrc[ '1.900.1-2' ] = os.path.join( 'jasper-1.900.1', 'src', 'libjasper' )
+        self.defaultTarget = '1.900.1-2'
 
-SRC_URI= """
-http://www.ece.uvic.ca/~mdadams/jasper/software/jasper-1.900.1.zip
-"""
-
-# fixme: we only need jpeg as dependency!
-DEPEND = """
-dev-util/win32libs
-"""
+    def setDependencies( self ):
+        self.hardDependencies['win32libs-bin/jpeg'] = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
-    self.instsrcdir = os.path.join( PACKAGE_FULL_NAME, "src", "libjasper" )
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
-    self.buildType = "Release"
+    self.subinfo = subinfo()
 
   def unpack( self ):
     if( not base.baseclass.unpack( self ) ):
@@ -36,20 +28,6 @@ class subclass(base.baseclass):
 
     return True
 
-  def kdeDefaultDefines( self ):
-    # adjust some vars for proper compile
-    cmake_src  = os.path.join( self.workdir, self.instsrcdir )
-
-    options = "%s -DCMAKE_INSTALL_PREFIX=%s " % \
-              ( cmake_src, self.rootdir.replace( '\\', '/' ) )
-    options = options + "-DCMAKE_INCLUDE_PATH=%s " % \
-              os.path.join( self.rootdir, "win32libs", "include" ).replace( "\\", "/" )
-
-    options = options + "-DCMAKE_LIBRARY_PATH=%s " % \
-              os.path.join( self.rootdir, "win32libs", "lib" ).replace( "\\", "/" )
-
-    return options
-
   def compile( self ):
     return self.kdeCompile()
 
@@ -58,15 +36,15 @@ class subclass(base.baseclass):
 
   def make_package( self ):
     # auto-create both import libs with the help of pexports
-    self.stripLibs( PACKAGE_DLL_NAME )
+    self.stripLibs( "libjasper" )
 
     # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
+    self.createImportLibs( "libjasper" )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+    self.doPackaging( "jasper", self.buildTarget, True )
 
     return True
-  
+
 if __name__ == '__main__':
     subclass().execute()

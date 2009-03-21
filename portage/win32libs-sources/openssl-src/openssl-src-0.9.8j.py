@@ -37,6 +37,7 @@ class subclass(base.baseclass):
     shutil.copy( os.path.join( src, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
     shutil.copy( os.path.join( src, "libssl32.dll" ) , os.path.join( dst, "bin", "ssleay32.dll" ) )
     utils.copySrcDirToDestDir( os.path.join( src, "outinc" ) , os.path.join( dst, "include" ) )
+    shutil.copy( os.path.join( src, "ms", "applink.c" ) , os.path.join( dst, "include", "openssl" ) )
 
     # auto-create both import libs with the help of pexports
     for f in "libeay32 ssleay32".split():
@@ -47,6 +48,6 @@ class subclass(base.baseclass):
 
   def make_package( self ):
     return self.doPackaging( "openssl", self.buildTarget + "-1", False )
-  
+
 if __name__ == '__main__':
     subclass().execute()

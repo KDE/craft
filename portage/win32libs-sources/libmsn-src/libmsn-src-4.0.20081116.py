@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['4.0-beta4'] = 'libmsn-4.0-beta4'
         self.defaultTarget = '4.0-beta4'
     def setDependencies( self ):
-        self.hardDependencies['dev-util/win32libs'] = 'default'
+        self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.2.35'
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'dev-util/win32libs'
+        self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
