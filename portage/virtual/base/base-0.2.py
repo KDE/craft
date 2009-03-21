@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/cmake']      = 'default'
         self.hardDependencies['dev-util/perl']       = 'default'
         self.hardDependencies['dev-util/subversion'] = 'default'
-        self.hardDependencies['dev-util/win32libs']  = 'default'
+        self.hardDependencies['virtual/win32libs']   = 'default'
         if os.getenv( "KDECOMPILER" ) == "mingw":
           self.hardDependencies['dev-util/mingw']    = 'default'
 

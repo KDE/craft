@@ -13,7 +13,6 @@ gpgme
 iconv
 jasper
 jpeg
-lcms
 libpng
 libxml2
 libxslt

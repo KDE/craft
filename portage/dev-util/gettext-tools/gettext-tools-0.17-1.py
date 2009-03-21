@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.targets['0.17'] = 'http://winkde.org/pub/kde/ports/win32/repository/win32libs/gettext-tools-0.17-bin.tar.bz2'
         self.defaultTarget = '0.17'
     def setDependencies( self ):
-        self.hardDependencies['dev-util/win32libs'] = 'default'
+        self.hardDependencies['virtual/win32libs'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

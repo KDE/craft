@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.4.12-1'
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/win32libs'] = 'default'
+        self.hardDependencies['virtual/win32libs'] = 'default'
         
 class subclass(gnuwin32.gnuwin32class):
     def __init__( self, **args ):
