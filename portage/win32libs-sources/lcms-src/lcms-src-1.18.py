@@ -5,30 +5,19 @@ import re
 import utils
 import info
 
-PACKAGE_NAME         = "lcms"
-PACKAGE_VER          = "1.17"
-PACKAGE_FULL_VER     = "1.17"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = """
-liblcms-1
-"""
-
-SRC_URI= """
-http://www.littlecms.com/lcms-1.17.tar.gz
-"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.17'] = SRC_URI
-        self.defaultTarget = '1.17'
-    
+        self.targets['1.18'] = "http://www.littlecms.com/lcms-1.18.tar.gz"
+        self.targetInstSrc['1.18'] = "lcms-1.18"
+        self.patchToApply['1.18'] = ( 'lcms-1.18.patch', 0 )
+        self.defaultTarget = '1.18'
+
     def setDependencies( self ):
-        self.hardDependencies['dev-util/win32libs'] = 'default'
+        self.hardDependencies['dev-util/msys'] = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
-    self.instsrcdir = PACKAGE_FULL_NAME
+    base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True
     self.subinfo = subinfo()
 
@@ -49,12 +38,6 @@ class subclass(base.baseclass):
     return True
 
   def compile( self ):
-    libpath = os.path.join( self.rootdir, "win32libs", "lib" )
-    incpath = os.path.join( self.rootdir, "win32libs", "include" )
-    print libpath
-    print incpath
-    os.environ[ "LDFLAGS" ] = "-L" + utils.toMSysPath( libpath )
-    os.environ[ "CFLAGS" ]  = "-I" + utils.toMSysPath( incpath )
     return self.msysCompile()
 
   def install( self ):
@@ -65,15 +48,13 @@ class subclass(base.baseclass):
     dst = os.path.join( self.imagedir, self.instdestdir, "lib" )
     utils.cleanDirectory( dst )
 
-    for lib in PACKAGE_DLL_NAME.split():
-        self.stripLibs( lib )
+    self.stripLibs( "liblcms-1" )
 
     # auto-create both import libs with the help of pexports
-    for lib in PACKAGE_DLL_NAME.split():
-        self.createImportLibs( lib )
+    self.createImportLibs( "liblcms-1" )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
+    self.doPackaging( "lcms", self.buildTarget, True )
 
     return True
 

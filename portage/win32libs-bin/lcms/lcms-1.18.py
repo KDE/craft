@@ -6,12 +6,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['1.17']:
+        for version in ['1.17', '1.18']:
             self.targets[ version ] = repoUrl + """/lcms-""" + version + """-bin.zip
                                 """ + repoUrl + """/lcms-""" + version + """-lib.zip"""
-
-            
-        self.defaultTarget = '1.17'
+        self.defaultTarget = '1.18'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
