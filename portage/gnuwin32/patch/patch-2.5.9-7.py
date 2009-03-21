@@ -2,14 +2,11 @@ import gnuwin32
 import info
 import os
 import shutil
-
-SRC_URI = """
-http://downloads.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip
-"""
+import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.5.9'] = SRC_URI
+        self.targets['2.5.9'] = "http://downloads.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip"
         self.defaultTarget = '2.5.9'
     
     def setDependencies( self ):
@@ -17,19 +14,20 @@ class subinfo(info.infoclass):
 
 class subclass(gnuwin32.gnuwin32class):
   def __init__( self, **args ):
-    gnuwin32.gnuwin32class.__init__( self, SRC_URI )
+    gnuwin32.gnuwin32class.__init__( self, "" )
     self.subinfo = subinfo()
 
   def install( self ):
     gnuwin32.gnuwin32class.install( self )
-
-    manifest = os.path.join( self.packagedir , "patch.exe.manifest" )
-    if self.traditional:
-        manifest_dest = os.path.join( self.imagedir, "gnuwin32", "bin" )
-    else:
-        manifest_dest = os.path.join( self.imagedir, "bin" )
-
-    #shutil.copy( manifest, manifest_dest )
+    print "self.compiler: " + self.compiler
+    if self.compiler == "msvc2005":
+      manifest = os.path.join( self.packagedir, "patch.exe.manifest" )
+      manifest_dest = os.path.join( self.imagedir, "bin", "patch.exe.manifest" )
+      patch = os.path.join( self.imagedir, "bin", "patch.exe" )
+      shutil.copy( manifest, manifest_dest )
+      cmd = "mt.exe -nologo -manifest %s -outputresource:%s;2" % ( manifest_dest, patch )
+      utils.system( cmd )
+    
     return True
 
 if __name__ == '__main__':
