@@ -21,7 +21,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.37.0'
     
     def setDependencies( self ):
-        self.hardDependencies['dev-util/win32libs'] = 'default'
         self.hardDependencies['dev-util/bjam'] = 'default'
 
 class subclass(base.baseclass):
