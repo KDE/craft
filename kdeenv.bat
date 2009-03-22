@@ -27,7 +27,7 @@ if %directory_layout% == installer (
 ) else (
     call :path-traditional
 )
-cmd /e:on /K "cd %KDEROOT%"
+%comspec% /e:on /K "cd %KDEROOT%"
 goto :eof
 
 :: installer layout: only one installation directory - which serves as installation root for all packages

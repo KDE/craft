@@ -22,17 +22,17 @@ set MSYSDIR=%KDEROOT%\msys
 rem Here you set the path to your platform SDK installation.
 rem This path will be automatically included then.
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
+
 rem Here you set the path to your Microsoft DirectX SDK installation
 rem This is not needed if you use MinGW
 set MSDXSDKDIR=%PROGRAMFILES%\Microsoft DirectX SDK (June 2008)
+call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86
 
 rem Here you set the location of the vcvarsall.bat file that adds
 rem Visual C++ environment variables into the build environment.
 rem if you are not building on x86 change that to something appropriate.
-
-if %KDECOMPILER% == msvc2005 call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86 && call "%PROGRAMFILES%\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
-
-if %KDECOMPILER% == msvc2008 call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86 && call "%PROGRAMFILES%\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86
+set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 8
+call "%VSDIR%\VC\vcvarsall.bat" x86
 
 rem Here you change the download directory.
 rem If you want, so you can share the same download directory between
