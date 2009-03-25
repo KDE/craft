@@ -25,6 +25,7 @@ class subinfo(info.infoclass):
         self.svnTargets['2.1.67'] = 'tags/soprano/2.1.67'
         self.svnTargets['2.2']    = 'tags/soprano/2.2'
         self.svnTargets['2.2.1']  = 'tags/soprano/2.2.1'
+        self.svnTargets['2.2.2']  = 'tags/soprano/2.2.2'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
