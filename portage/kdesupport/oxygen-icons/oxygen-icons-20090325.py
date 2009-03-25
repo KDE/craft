@@ -1,40 +1,36 @@
 import base
-import os
+import utils
 import sys
 import info
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
-        self.defaultTarget = 'svnHEAD'
-    
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
+
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/oxygen-icons'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "runtime"
+        self.instsrcdir = "oxygen-icons"
         self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        self.kde.buildTests=False
         return self.kdeCompile()
 
     def install( self ):
         return self.kdeInstall()
 
     def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdebase-runtime", self.buildTarget, True )
+        if self.buildTarget == "svnHEAD":
+            return self.doPackaging( "oxygen-icons" )
         else:
-            return self.doPackaging( "kdebase-runtime" )
+            return self.doPackaging( "oxygen-icons", self.buildTarget, True )
 
-		
 if __name__ == '__main__':
     subclass().execute()
