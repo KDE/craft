@@ -1,0 +1,1104 @@
+diff -Nru qtscriptgenerator-src-0.1.0.orig/CMakeLists.txt qtscriptgenerator-src-0.1.0/CMakeLists.txt
+--- qtscriptgenerator-src-0.1.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/CMakeLists.txt	2009-03-25 23:09:22.619867200 +0100
+@@ -0,0 +1,4 @@
++project(qtscriptgenerator)
++cmake_minimum_required(VERSION 2.6)
++find_package(Qt4 REQUIRED)
++add_subdirectory(generator)
+\ No newline at end of file
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/CMakeLists.txt qtscriptgenerator-src-0.1.0/generator/CMakeLists.txt
+--- qtscriptgenerator-src-0.1.0.orig/generator/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/CMakeLists.txt	2009-03-25 23:11:59.094867200 +0100
+@@ -0,0 +1,124 @@
++set ( QT_USE_QTXML                 TRUE )
++set ( QT_USE_QTSCRIPT              TRUE )
++set ( QT_USE_QTMAIN                TRUE )
++set ( QT_USE_QTNETWORK             TRUE )
++set ( QT_USE_QTNSPLUGIN            TRUE )
++set ( QT_USE_QTOPENGL              TRUE )
++set ( QT_USE_QTSQL                 TRUE )
++set ( QT_USE_QTXML                 TRUE )
++set ( QT_USE_QTSVG                 TRUE )
++set ( QT_USE_QTTEST                TRUE )
++set ( QT_USE_QTUITOOLS             TRUE )
++set ( QT_USE_QTDBUS                TRUE )
++set ( QT_USE_QTSCRIPT              TRUE )
++set ( QT_USE_QTWEBKIT              TRUE )
++
++include(${QT_USE_FILE})
++
++add_definitions( -DRXX_ALLOCATOR_INIT_0 -DQT_WEBKIT )
++
++include_directories(
++    ${QT_INCLUDES}
++    ${CMAKE_CURRENT_SOURCE_DIR}
++    ${CMAKE_CURRENT_SOURCE_DIR}/parser
++    ${CMAKE_CURRENT_SOURCE_DIR}/parser/rpp
++)
++
++set(Rpp_SRCS
++    parser/rpp/preprocessor.cpp
++)
++
++set(Parser_SRCS
++    parser/ast.cpp 
++    parser/lexer.cpp
++    parser/list.cpp
++    parser/parser.cpp
++    parser/smallobject.cpp
++    parser/control.cpp
++    parser/visitor.cpp
++    parser/default_visitor.cpp
++    parser/dumptree.cpp
++    parser/tokens.cpp
++    parser/binder.cpp
++    parser/codemodel.cpp
++    parser/type_compiler.cpp
++    parser/name_compiler.cpp
++    parser/declarator_compiler.cpp
++    parser/class_compiler.cpp
++    parser/codemodel_finder.cpp
++    parser/compiler_utils.cpp
++)
++
++set(Generator_SRCS
++    ${Parser_SRCS}
++    ${Rpp_SRCS}
++    generator.cpp
++    main.cpp
++    reporthandler.cpp
++    typeparser.cpp
++    typesystem.cpp
++    asttoxml.cpp
++    fileout.cpp
++    generatorset.cpp
++    metajava.cpp
++    customtypes.cpp
++    abstractmetabuilder.cpp
++    abstractmetalang.cpp
++    prigenerator.cpp
++
++    generatorsetqtscript.cpp
++    metaqtscriptbuilder.cpp
++    metaqtscript.cpp
++    classgenerator.cpp
++    shellgenerator.cpp
++    shellimplgenerator.cpp
++    shellheadergenerator.cpp
++    setupgenerator.cpp
++    docgenerator.cpp
++)
++
++set(Generator_MOCS
++    generator.h
++    fileout.h
++    generatorset.h
++    prigenerator.h
++    generatorsetqtscript.h
++    classgenerator.h
++    shellgenerator.h
++    shellimplgenerator.h
++    shellheadergenerator.h
++    setupgenerator.h
++)
++
++QT4_WRAP_CPP(Generator_MOC_SRCS ${Generator_MOCS})
++
++set(Generator_RCCS generator.qrc)
++
++qt4_add_resources(Generator_RCC_SRCS ${Generator_RCCS})
++
++include_directories( ${CMAKE_BINARY_DIR} )
++
++add_executable(generator ${Generator_SRCS} ${Generator_MOC_SRCS} ${Generator_RCC_SRCS})
++
++target_link_libraries(generator ${QT_LIBRARIES})
++
++get_target_property( GENERATOR_EXE generator LOCATION )
++add_custom_command( TARGET generator
++                    POST_BUILD
++                    COMMAND ${GENERATOR_EXE} --output-directory=${CMAKE_CURRENT_BINARY_DIR} --include-paths=${QT_INCLUDE_DIR}
++                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
++include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../qtbindings/qtscript_core/ )
++
++include( "qtscript_core.cmake" )
++include( "qtscript_gui.cmake" )
++include( "qtscript_network.cmake" )
++include( "qtscript_sql.cmake" )
++#see https://bugzilla.novell.com/show_bug.cgi?id=413829
++#many distros have trouble with webkit because its seperate
++#we should really fix this though, I want my scripts to browse the web. ;)
++#include( "qtscript_webkit.cmake" )
++include( "qtscript_xml.cmake" )
++include( "qtscript_uitools.cmake" )
++#XML Patterns requires Qt to be compiled with exception support
++#so Qt is often missing this feature
++#include( "qtscript_xmlpatterns.cmake" )
+\ No newline at end of file
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_core.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_core.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_core.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_core.cmake	2009-03-25 14:54:22.000000000 +0100
+@@ -0,0 +1,125 @@
++set( Generated_QtCore_SRCS
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/main.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QBasicTimer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QBitArray.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QBuffer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QByteArray.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QByteArrayMatcher.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QChildEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QCoreApplication.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QCryptographicHash.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QDataStream.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QDir.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QDirIterator.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QDynamicPropertyChangeEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QEventLoop.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFile.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFileInfo.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFileSystemWatcher.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFuture.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFutureIterator.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFutureSynchronizer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFutureSynchronizerVoid.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFutureVoid.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFutureWatcher.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QFutureWatcherVoid.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QIODevice.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QLibraryInfo.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QLocale.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QMutex.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QObject.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QPoint.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QPointF.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QProcess.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QRect.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QRectF.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QRunnable.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSemaphore.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSettings.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSignalMapper.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSize.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSizeF.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSocketNotifier.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QStringMatcher.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QSystemSemaphore.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTemporaryFile.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTextBoundaryFinder.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTextCodec.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTextCodecPlugin.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTextDecoder.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTextEncoder.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTextStream.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QThreadPool.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTime.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTimeLine.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTimer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTimerEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QTranslator.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QUrl.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QUuid.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QWaitCondition.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamAttribute.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamAttributes.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamEntityDeclaration.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamEntityResolver.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamNamespaceDeclaration.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamNotationDeclaration.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamReader.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QXmlStreamWriter.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_Qt.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QtConcurrent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QBuffer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QChildEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QCoreApplication.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QDataStream.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QDirIterator.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QEventLoop.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QFile.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QFileSystemWatcher.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QFutureSynchronizer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QFutureSynchronizerVoid.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QIODevice.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QObject.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QProcess.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QRunnable.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QSettings.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QSignalMapper.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QSocketNotifier.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTemporaryFile.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTextCodec.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTextCodecPlugin.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTextStream.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QThreadPool.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTimeLine.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTimer.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTimerEvent.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTranslator.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QUuid.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QXmlStreamAttributes.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QXmlStreamEntityResolver.cpp
++)
++
++#Files added in latest qtscriptgenerator, turns out it generates it for both qt 4.4 and qt 4.5
++set( Generated_QtCore_45_SRCS
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_Global.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QAbstractItemModel.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QAbstractListModel.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QAbstractTableModel.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QMimeData.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QModelIndex.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscript_QPersistentModelIndex.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QAbstractItemModel.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QAbstractListModel.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QAbstractTableModel.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QMimeData.cpp
++)
++
++
++set_source_files_properties( ${Generated_QtCore_SRCS} ${Generated_QtCore_45_SRCS} PROPERTIES GENERATED true )
++#qtscript bindings don't use moc
++add_library( qtscript_core MODULE ${Generated_QtCore_SRCS} ${Generated_QtCore_45_SRCS} )
++add_dependencies( qtscript_core generator )
++target_link_libraries( qtscript_core ${QT_LIBRARIES})
++install( TARGETS qtscript_core DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_gui.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_gui.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake	2009-03-25 14:54:22.000000000 +0100
+@@ -0,0 +1,596 @@
++set( Generated_QtGUI_cnv0_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractGraphicsShapeItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractItemDelegate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractItemView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractPageSetupDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractPrintDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractScrollArea.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractSlider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAbstractSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessible.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessible2Interface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleBridge.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleInterfaceEx.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleObject.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleObjectEx.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessiblePlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleTableInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAccessibleWidgetEx.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QAction.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QActionEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QActionGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QApplication.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QBitmap.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QBoxLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QBrush.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QButtonGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCDEStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCalendarWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCheckBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCleanlooksStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QClipboard.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QClipboardEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCloseEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QColor.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QColorDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QColumnView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QComboBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCommandLinkButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCommonStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCompleter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QConicalGradient.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QContextMenuEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QCursor.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDataWidgetMapper.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDateEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDateTimeEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDesktopServices.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDesktopWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDial.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDialogButtonBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDockWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDoubleSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDoubleValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDrag.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDragEnterEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDragLeaveEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDragMoveEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDragResponseEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QDropEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QErrorMessage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFileDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFileIconProvider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFileOpenEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFocusEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFocusFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFont.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFontComboBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFontDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFontInfo.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFontMetrics.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFontMetricsF.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFormLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGradient.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsEllipseItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsGridLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsItemAnimation.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsItemGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsLayoutItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsLineItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsLinearLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsPathItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsPixmapItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsPolygonItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsProxyWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsRectItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsScene.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneContextMenuEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneHelpEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneHoverEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneMouseEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneMoveEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneResizeEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSceneWheelEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsSimpleTextItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsTextItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGraphicsWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGridLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QGroupBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QHBoxLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QHeaderView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QHelpEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QHideEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QHoverEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QIcon.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QIconDragEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QIconEngine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QIconEnginePluginV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QImage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QImageIOHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QImageIOPlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QImageReader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QImageWriter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QInputContext.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QInputContextFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QInputContextPlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QInputDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QInputEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QIntValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QItemDelegate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QItemEditorCreatorBase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QItemEditorFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QItemSelection.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QItemSelectionModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QItemSelectionRange.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QKeyEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QKeySequence.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLCDNumber.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLabel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLayoutItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLineEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLineF.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QLinearGradient.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QListView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QListWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QListWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMainWindow.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMatrix.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMdiArea.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMdiSubWindow.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMenu.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMenuBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMessageBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMotifStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMouseEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMoveEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QMovie.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPageSetupDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPaintDevice.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPaintEngine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPaintEngineState.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPaintEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPainter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPainterPath.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPainterPathStroker.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPalette.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPen.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPicture.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPictureFormatPlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPictureIO.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPixmap.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPixmapCache.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPlainTextDocumentLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPlainTextEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPlastiqueStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPolygon.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPolygonF.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPrintDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPrintEngine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPrintPreviewDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPrintPreviewWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPrinter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QProgressBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QProgressDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QPushButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QRadialGradient.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QRadioButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QReadWriteLock.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QRegExpValidator.cpp )
++set( Generated_QtGUI_cnv1_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QRegion.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QResizeEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QRubberBand.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QScrollArea.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QScrollBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSessionManager.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QShortcut.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QShortcutEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QShowEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSizeGrip.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSizePolicy.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSlider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSound.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSpacerItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSplashScreen.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSplitter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSplitterHandle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStackedLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStackedWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStandardItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStandardItemModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStatusBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStatusTipEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStringListModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleHintReturn.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleHintReturnMask.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleHintReturnVariant.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOption.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionComboBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionComplex.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionDockWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionDockWidgetV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionFocusRect.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionFrameV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionGraphicsItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionGroupBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionMenuItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionProgressBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionProgressBarV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionRubberBand.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionSizeGrip.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionSlider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionTab.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionTabBarBase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionTabV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionTabWidgetFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionTitleBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionToolBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionToolBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionToolBoxV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionToolButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionViewItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionViewItemV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionViewItemV3.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyleOptionViewItemV4.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStylePainter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStylePlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QStyledItemDelegate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSyntaxHighlighter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QSystemTrayIcon.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTabBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTabWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTableView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTableWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTableWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTableWidgetSelectionRange.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTabletEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextBlock.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextBlockFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextBlockGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextBlockUserData.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextBrowser.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextCharFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextCursor.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextDocument.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextDocumentFragment.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextFragment.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextFrameFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextImageFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextInlineObject.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextLength.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextLine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextList.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextListFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextObject.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextObjectInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextTable.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextTableCell.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextTableCellFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTextTableFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTimeEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QToolBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QToolBarChangeEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QToolBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QToolButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QToolTip.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTransform.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTreeView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTreeWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QTreeWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QUndoCommand.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QUndoGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QUndoStack.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QUndoView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QVBoxLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWhatsThis.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWhatsThisClickedEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWheelEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWidgetAction.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWindowStateChangeEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWindowsStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWizard.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWizardPage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QWorkspace.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractGraphicsShapeItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractItemDelegate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractItemView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractPageSetupDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractPrintDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractScrollArea.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractSlider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAbstractSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessible.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessible2Interface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleBridge.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleInterfaceEx.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleObject.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleObjectEx.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessiblePlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleTableInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAccessibleWidgetEx.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QAction.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QActionGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QApplication.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QBitmap.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QBoxLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QButtonGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCDEStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCalendarWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCheckBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCleanlooksStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QColumnView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QComboBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCommandLinkButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCommonStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QCompleter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QContextMenuEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDataWidgetMapper.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDateEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDateTimeEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDesktopServices.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDesktopWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDial.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDialogButtonBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDockWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDoubleSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDoubleValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDrag.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDragMoveEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDragResponseEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QDropEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QErrorMessage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFileDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFileIconProvider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFocusFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFontComboBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFormLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFrame.cpp )
++set( Generated_QtGUI_cnv2_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsEllipseItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsGridLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsItemAnimation.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsItemGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsLayoutItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsLineItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsLinearLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsPathItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsPixmapItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsPolygonItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsProxyWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsRectItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsScene.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsSimpleTextItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsTextItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGraphicsWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGridLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QGroupBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QHBoxLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QHeaderView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QHoverEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QIconEngine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QIconEnginePluginV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QImage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QImageIOHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QImageIOPlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QInputContext.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QInputContextFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QInputContextPlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QInputEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QIntValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QItemDelegate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QItemEditorCreatorBase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QItemEditorFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QItemSelectionModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QKeyEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QLCDNumber.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QLabel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QLayoutItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QLineEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QListView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QListWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QListWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMainWindow.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMdiArea.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMdiSubWindow.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMenu.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMenuBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMessageBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMotifStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMouseEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMoveEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QMovie.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPageSetupDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPaintDevice.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPaintEngine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPaintEngineState.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPaintEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPicture.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPictureFormatPlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPixmap.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPixmapCache.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPlainTextDocumentLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPlainTextEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPlastiqueStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPrintDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPrintEngine.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPrintPreviewDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPrintPreviewWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPrinter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QProgressBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QProgressDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QPushButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QRadioButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QRegExpValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QResizeEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QRubberBand.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QScrollArea.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QScrollBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QShortcut.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QShortcutEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSizeGrip.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSlider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSound.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSpacerItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSplashScreen.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSplitter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSplitterHandle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStackedLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStackedWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStandardItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStandardItemModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStatusBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStringListModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleHintReturn.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleHintReturnMask.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleHintReturnVariant.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOption.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionComboBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionComplex.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionDockWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionDockWidgetV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionFocusRect.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionFrameV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionGraphicsItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionGroupBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionMenuItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionProgressBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionProgressBarV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionRubberBand.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionSizeGrip.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionSlider.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionSpinBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionTab.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionTabBarBase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionTabV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionTabWidgetFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionTitleBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionToolBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionToolBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionToolBoxV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionToolButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionViewItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionViewItemV2.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionViewItemV3.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyleOptionViewItemV4.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStylePlugin.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QStyledItemDelegate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSyntaxHighlighter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QSystemTrayIcon.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTabBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTabWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTableView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTableWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTableWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTabletEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextBlockFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextBlockGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextBlockUserData.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextBrowser.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextCharFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextDocument.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextFrameFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextImageFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextList.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextListFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextObject.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextObjectInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextTable.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextTableCellFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTextTableFormat.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTimeEdit.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QToolBar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QToolBox.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QToolButton.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTreeView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTreeWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QTreeWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QUndoCommand.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QUndoGroup.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QUndoStack.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QUndoView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QVBoxLayout.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QValidator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWheelEvent.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWidget.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWidgetAction.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWidgetItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWindowsStyle.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWizard.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWizardPage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QWorkspace.cpp )
++
++set( Generated_QtGUI_cnvmain_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/main.cpp
++)
++#This needs to be added to qt 4.5 builds:
++set( Generated_QtGUI_45
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QColorDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QFontDialog.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscriptshell_QInputDialog.cpp )
++
++if(QTVERSION VERSION_GREATER "4.4.99")
++    set( Generated_QtGUI_cnv2_SRCS ${Generated_QtGUI_cnv2_SRCS} ${Generated_QtGUI_45} )
++endif(QTVERSION VERSION_GREATER "4.4.99")
++
++set_source_files_properties( ${Generated_QtGUI_cnvmain_SRCS} PROPERTIES GENERATED true )
++set_source_files_properties( ${Generated_QtGUI_cnv0_SRCS} PROPERTIES GENERATED true )
++set_source_files_properties( ${Generated_QtGUI_cnv1_SRCS} PROPERTIES GENERATED true )
++set_source_files_properties( ${Generated_QtGUI_cnv2_SRCS} PROPERTIES GENERATED true )
++if( WIN32 )
++    add_library( helperLibrary0 STATIC ${Generated_QtGUI_cnv0_SRCS} )
++    add_library( helperLibrary1 STATIC ${Generated_QtGUI_cnv1_SRCS} )
++    add_library( qtscript_gui MODULE ${Generated_QtGUI_cnvmain_SRCS} ${Generated_QtGUI_cnv2_SRCS} )
++    add_dependencies( qtscript_gui generator )
++    target_link_libraries( qtscript_gui helperLibrary0 helperLibrary1 )
++else( WIN32 )
++    add_library( qtscript_gui MODULE ${Generated_QtGUI_cnvmain_SRCS} ${Generated_QtGUI_cnv0_SRCS} ${Generated_QtGUI_cnv1_SRCS} ${Generated_QtGUI_cnv2_SRCS} )
++    add_dependencies( qtscript_gui generator )
++endif( WIN32 )
++
++target_link_libraries( qtscript_gui ${QT_LIBRARIES})
++
++install( TARGETS qtscript_gui DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_network.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_network.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_network.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_network.cmake	2009-03-25 14:54:22.000000000 +0100
+@@ -0,0 +1,71 @@
++set( Generated_QtNetwork_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QAbstractSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QAuthenticator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QFtp.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QHostAddress.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QHostInfo.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QHttp.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QHttpHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QHttpRequestHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QHttpResponseHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QIPv6Address.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QLocalServer.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QLocalSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkAccessManager.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkAddressEntry.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkCookie.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkCookieJar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkProxy.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkReply.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkRequest.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSsl.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSslCertificate.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSslCipher.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSslConfiguration.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSslError.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSslKey.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QSslSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QTcpServer.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QTcpSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QUdpSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QUrlInfo.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QAbstractSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QFtp.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QHttp.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QHttpHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QHttpRequestHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QHttpResponseHeader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QIPv6Address.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QLocalServer.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QLocalSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QNetworkAccessManager.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QNetworkCookieJar.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QNetworkReply.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QSslSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QTcpServer.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QTcpSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QUdpSocket.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QUrlInfo.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/main.cpp
++)
++#This needs to be added to qt 4.5 builds:
++set( Generated_45_QtNetwork_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QAbstractNetworkCache.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkCacheMetaData.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkProxyFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscript_QNetworkProxyQuery.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QAbstractNetworkCache.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_network/qtscriptshell_QNetworkProxyFactory.cpp
++)
++
++if(QTVERSION VERSION_GREATER "4.4.99")
++    set( Generated_QtNetwork_SRCS ${Generated_QtNetwork_SRCS} ${Generated_45_QtNetwork_SRCS} )
++endif(QTVERSION VERSION_GREATER "4.4.99")
++
++set_source_files_properties( ${Generated_QtNetwork_SRCS} PROPERTIES GENERATED true )
++#qtscript bindings don't use moc
++add_library( qtscript_network MODULE ${Generated_QtNetwork_SRCS} )
++add_dependencies( qtscript_network generator )
++target_link_libraries( qtscript_network ${QT_LIBRARIES})
++install( TARGETS qtscript_network DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_sql.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_sql.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_sql.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_sql.cmake	2009-03-25 14:54:22.000000000 +0100
+@@ -0,0 +1,30 @@
++set( Generated_QtSql_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSql.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlDatabase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlDriver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlDriverCreatorBase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlError.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlField.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlIndex.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlQuery.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlQueryModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlRecord.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlRelation.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlRelationalTableModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlResult.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscript_QSqlTableModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlDatabase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlDriver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlDriverCreatorBase.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlQueryModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlRelationalTableModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlResult.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/qtscriptshell_QSqlTableModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_sql/main.cpp
++)
++set_source_files_properties( ${Generated_QtSql_SRCS} PROPERTIES GENERATED true )
++#qtscript bindings don't use moc
++add_library( qtscript_sql MODULE ${Generated_QtSql_SRCS} )
++add_dependencies( qtscript_sql generator )
++target_link_libraries( qtscript_sql ${QT_LIBRARIES})
++install( TARGETS qtscript_sql DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_uitools.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_uitools.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_uitools.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_uitools.cmake	2009-03-25 14:54:20.000000000 +0100
+@@ -0,0 +1,10 @@
++set( Generated_QtUiTools_SRCS
++           ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_uitools/qtscript_QUiLoader.cpp
++           ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_uitools/qtscriptshell_QUiLoader.cpp
++           ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_uitools/main.cpp
++)
++set_source_files_properties( ${Generated_QtUiTools_SRCS} PROPERTIES GENERATED true )
++add_library( qtscript_uitools MODULE ${Generated_QtUiTools_SRCS} )
++add_dependencies( qtscript_uitools generator )
++target_link_libraries( qtscript_uitools ${QT_LIBRARIES})
++install( TARGETS qtscript_uitools DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_webkit.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_webkit.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_webkit.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_webkit.cmake	2009-03-25 14:54:20.000000000 +0100
+@@ -0,0 +1,20 @@
++set( Generated_QtWebkit_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebFrame.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebHistoryInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebHitTestResult.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebPage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebPluginFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebSettings.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscript_QWebView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscriptshell_QWebHistoryInterface.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscriptshell_QWebPage.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscriptshell_QWebPluginFactory.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/qtscriptshell_QWebView.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_webkit/main.cpp
++)
++set_source_files_properties( ${Generated_QtWebkit_SRCS} PROPERTIES GENERATED true )
++#qtscript bindings don't use moc
++add_library( qtscript_webkit MODULE ${Generated_QtWebkit_SRCS} )
++add_dependencies( qtscript_webkit generator )
++target_link_libraries( qtscript_webkit ${QT_LIBRARIES})
++install( TARGETS qtscript_webkit DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xml.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_xml.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xml.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_xml.cmake	2009-03-25 14:54:20.000000000 +0100
+@@ -0,0 +1,51 @@
++set( Generated_QtXML_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomAttr.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomCDATASection.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomCharacterData.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomComment.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomDocument.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomDocumentFragment.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomDocumentType.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomElement.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomEntity.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomEntityReference.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomImplementation.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomNamedNodeMap.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomNode.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomNodeList.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomNotation.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomProcessingInstruction.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QDomText.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlAttributes.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlContentHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlDTDHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlDeclHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlDefaultHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlEntityResolver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlErrorHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlInputSource.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlLexicalHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlLocator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlParseException.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlReader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscript_QXmlSimpleReader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlAttributes.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlContentHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlDTDHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlDeclHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlDefaultHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlEntityResolver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlErrorHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlInputSource.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlLexicalHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlLocator.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlReader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/qtscriptshell_QXmlSimpleReader.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xml/main.cpp
++)
++set_source_files_properties( ${Generated_QtXML_SRCS} PROPERTIES GENERATED true )
++#qtscript bindings don't use moc
++add_library( qtscript_xml MODULE ${Generated_QtXML_SRCS} )
++add_dependencies( qtscript_xml generator )
++target_link_libraries( qtscript_xml ${QT_LIBRARIES})
++install( TARGETS qtscript_xml DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
+diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xmlpatterns.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_xmlpatterns.cmake
+--- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xmlpatterns.cmake	1970-01-01 01:00:00.000000000 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_xmlpatterns.cmake	2009-03-25 14:54:20.000000000 +0100
+@@ -0,0 +1,31 @@
++set( Generated_QtXMLPatterns_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QAbstractMessageHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QAbstractUriResolver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QAbstractXmlNodeModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QAbstractXmlReceiver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QSimpleXmlNodeModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QSourceLocation.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlFormatter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlItem.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlName.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlNamePool.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlNodeModelIndex.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlQuery.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlResultItems.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscript_QXmlSerializer.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QAbstractMessageHandler.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QAbstractUriResolver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QAbstractXmlNodeModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QAbstractXmlReceiver.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QSimpleXmlNodeModel.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QXmlFormatter.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QXmlResultItems.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/qtscriptshell_QXmlSerializer.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_xmlpatterns/main.cpp
++)
++set_source_files_properties( ${Generated_QtXMLPatterns_SRCS} PROPERTIES GENERATED true )
++#qtscript bindings don't use moc
++add_library( qtscript_xmlpatterns MODULE ${Generated_QtXMLPatterns_SRCS} )
++add_dependencies( qtscript_xmlpatterns generator )
++target_link_libraries( qtscript_xmlpatterns ${QT_LIBRARIES})
++install( TARGETS qtscript_xmlpatterns DESTINATION ${LIB_INSTALL_DIR}/kde4/plugins/script )
