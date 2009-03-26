@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['kdesupport/taglib'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib-extras'
@@ -22,6 +23,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+#        self.kdeCustomDefines = "-DWITH_KDE=ON"
         return self.kdeCompile()
 
     def install( self ):
