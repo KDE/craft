@@ -264,7 +264,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_core.cmake qtscrip
 +add_library( qtscript_core MODULE ${Generated_QtCore_SRCS} ${Generated_QtCore_45_SRCS} )
 +add_dependencies( qtscript_core generator )
 +target_link_libraries( qtscript_core ${QT_LIBRARIES})
-+install( TARGETS qtscript_core DESTINATION plugins/script )
++install( TARGETS qtscript_core DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_gui.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_gui.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake	2009-03-25 14:54:22.000000000 +0100
@@ -864,7 +864,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_gui.cmake qtscript
 +
 +target_link_libraries( qtscript_gui ${QT_LIBRARIES})
 +
-+install( TARGETS qtscript_gui DESTINATION plugins/script )
++install( TARGETS qtscript_gui DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_network.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_network.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_network.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_network.cmake	2009-03-25 14:54:22.000000000 +0100
@@ -939,7 +939,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_network.cmake qtsc
 +add_library( qtscript_network MODULE ${Generated_QtNetwork_SRCS} )
 +add_dependencies( qtscript_network generator )
 +target_link_libraries( qtscript_network ${QT_LIBRARIES})
-+install( TARGETS qtscript_network DESTINATION plugins/script )
++install( TARGETS qtscript_network DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_sql.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_sql.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_sql.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_sql.cmake	2009-03-25 14:54:22.000000000 +0100
@@ -973,7 +973,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_sql.cmake qtscript
 +add_library( qtscript_sql MODULE ${Generated_QtSql_SRCS} )
 +add_dependencies( qtscript_sql generator )
 +target_link_libraries( qtscript_sql ${QT_LIBRARIES})
-+install( TARGETS qtscript_sql DESTINATION plugins/script )
++install( TARGETS qtscript_sql DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_uitools.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_uitools.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_uitools.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_uitools.cmake	2009-03-25 14:54:20.000000000 +0100
@@ -987,7 +987,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_uitools.cmake qtsc
 +add_library( qtscript_uitools MODULE ${Generated_QtUiTools_SRCS} )
 +add_dependencies( qtscript_uitools generator )
 +target_link_libraries( qtscript_uitools ${QT_LIBRARIES})
-+install( TARGETS qtscript_uitools DESTINATION plugins/script )
++install( TARGETS qtscript_uitools DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_webkit.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_webkit.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_webkit.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_webkit.cmake	2009-03-25 14:54:20.000000000 +0100
@@ -1011,7 +1011,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_webkit.cmake qtscr
 +add_library( qtscript_webkit MODULE ${Generated_QtWebkit_SRCS} )
 +add_dependencies( qtscript_webkit generator )
 +target_link_libraries( qtscript_webkit ${QT_LIBRARIES})
-+install( TARGETS qtscript_webkit DESTINATION plugins/script )
++install( TARGETS qtscript_webkit DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xml.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_xml.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xml.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_xml.cmake	2009-03-25 14:54:20.000000000 +0100
@@ -1066,7 +1066,7 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xml.cmake qtscript
 +add_library( qtscript_xml MODULE ${Generated_QtXML_SRCS} )
 +add_dependencies( qtscript_xml generator )
 +target_link_libraries( qtscript_xml ${QT_LIBRARIES})
-+install( TARGETS qtscript_xml DESTINATION plugins/script )
++install( TARGETS qtscript_xml DESTINATION lib/kde4/plugins/script )
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xmlpatterns.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_xmlpatterns.cmake
 --- qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xmlpatterns.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/qtscript_xmlpatterns.cmake	2009-03-25 14:54:20.000000000 +0100
@@ -1101,4 +1101,4 @@ diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/qtscript_xmlpatterns.cmake 
 +add_library( qtscript_xmlpatterns MODULE ${Generated_QtXMLPatterns_SRCS} )
 +add_dependencies( qtscript_xmlpatterns generator )
 +target_link_libraries( qtscript_xmlpatterns ${QT_LIBRARIES})
-+install( TARGETS qtscript_xmlpatterns DESTINATION plugins/script )
++install( TARGETS qtscript_xmlpatterns DESTINATION lib/kde4/plugins/script )
