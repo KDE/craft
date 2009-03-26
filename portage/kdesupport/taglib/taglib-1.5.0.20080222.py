@@ -25,6 +25,13 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = ""
+#        self.kdeCustomDefines += " -DBUILD_TESTS=ON"
+#        self.kdeCustomDefines += " -DBUILD_EXAMPLES=ON"
+#        self.kdeCustomDefines += " -DNO_ITUNES_HACKS=ON"
+        self.kdeCustomDefines += " -DWITH_ASF=ON"
+        self.kdeCustomDefines += " -DWITH_MP4=ON"
+
         return self.kdeCompile()
 
     def install( self ):
