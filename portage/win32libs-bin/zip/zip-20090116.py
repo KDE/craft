@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/gnuwin32"""
         
-        for version in ['2.31']:
+        for version in ['2.31', '3.0']:
             self.targets[ version ] = repoUrl + """/zip-""" + version + """-bin.zip
                                 """ + repoUrl + """/zip-""" + version + """-lib.zip
                                 """ + repoUrl + """/zip-""" + version + """-dep.zip"""
