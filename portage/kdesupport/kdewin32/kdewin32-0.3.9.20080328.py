@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['0.3.9'] = 'tags/kdewin32/0.3.9'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin32'
         self.defaultTarget = 'svnHEAD'
 
@@ -27,7 +28,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdewin32", "0.3.8-1", True )
+        return self.doPackaging( "kdewin32", "0.3.9", True )
 
 if __name__ == '__main__':
     subclass().execute()
