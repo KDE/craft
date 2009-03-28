@@ -4,7 +4,7 @@ import shutil
 import utils
 import info
 
-PACKAGE_NAME         = "samplerate"
+PACKAGE_NAME         = "libsamplerate"
 PACKAGE_VER          = "0.1.7"
 PACKAGE_FULL_VER     = "0.1.7"
 PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
