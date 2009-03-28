@@ -27,10 +27,8 @@ class subclass(base.baseclass):
     print "self.compiler: " + self.compiler
     if self.compiler == "msvc2005":
       manifest = os.path.join( self.packagedir, "update-mime-database.exe.manifest" )
-      manifest_dest = os.path.join( self.imagedir, "bin", "update-mime-database.exe.manifest" )
       patch = os.path.join( self.imagedir, "bin", "update-mime-database.exe" )
-      shutil.copy( manifest, manifest_dest )
-      cmd = "mt.exe -nologo -manifest %s -outputresource:%s;2" % ( manifest_dest, patch )
+      cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
       utils.system( cmd )
     
     return True
