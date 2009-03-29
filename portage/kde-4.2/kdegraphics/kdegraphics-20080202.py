@@ -18,7 +18,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/exiv2'] = 'default'
         self.hardDependencies['win32libs-bin/chm'] = 'default'
         self.hardDependencies['win32libs-bin/djvu'] = 'default'
-        
+        self.hardDependencies['win32libs-bin/lcms'] = 'default'
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )

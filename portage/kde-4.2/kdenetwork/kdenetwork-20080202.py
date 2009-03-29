@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdenetwork-4.2.' + ver + '.tar.bz2'
           self.targetInstSrc['4.2.' + ver] = 'kdenetwork-4.2.' + ver
+        self.patchToApply['4.2.2'] = ( 'kdenetwork-4.2.2.patch', 0 )
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

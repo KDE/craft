@@ -1,0 +1,121 @@
+Index: kdecore/kernel/kkernel_win.cpp
+===================================================================
+--- kdecore/kernel/kkernel_win.cpp	(revision 945734)
++++ kdecore/kernel/kkernel_win.cpp	(working copy)
+@@ -33,10 +33,9 @@
+ 
+ #include <QtCore/QDir>
+ #include <QtCore/QString>
++#include <QtCore/QLibrary>
+ 
+-#ifdef Q_CC_MINGW
+ #define _WIN32_WINNT 0x500
+-#endif
+ #include <windows.h>
+ #include <shellapi.h>
+ #include <process.h>
+@@ -267,9 +266,16 @@
+   try to attach to the parents console
+   \return true if console has been attached, false otherwise
+ */
++typedef BOOL (WINAPI*attachConsolePtr)(DWORD dwProcessId);
++static attachConsolePtr attachConsole = 0;
++static bool attachConsoleResolved = false;
+ static bool attachToConsole()
+ {
+-    return AttachConsole(~0U) != 0;
++    if(!attachConsoleResolved) {
++      attachConsoleResolved = true;
++      attachConsole = (attachConsolePtr)QLibrary::resolve(QLatin1String("kernel32"), "AttachConsole");
++    }
++    return attachConsole ? attachConsole(~0U) != 0 : false;
+ }
+ 
+ /**
+@@ -283,20 +289,25 @@
+     int i;
+     
+     hCrt = _open_osfhandle((long) GetStdHandle(STD_INPUT_HANDLE),_O_TEXT);
+-    hf = _fdopen( hCrt, "r" );
+-    *stdin = *hf;
+-    i = setvbuf( stdin, NULL, _IONBF, 0 );
++    if(hCrt != -1) {
++        hf = _fdopen( hCrt, "r" );
++        *stdin = *hf;
++        i = setvbuf( stdin, NULL, _IONBF, 0 );
++    }
+ 
+     hCrt = _open_osfhandle((long) GetStdHandle(STD_OUTPUT_HANDLE),_O_TEXT);
+-    hf = _fdopen( hCrt, "w" );
+-    *stdout = *hf;
+-    i = setvbuf( stdout, NULL, _IONBF, 0 );
+-    
++    if(hCrt != -1) {
++        hf = _fdopen( hCrt, "w" );
++        *stdout = *hf;
++        i = setvbuf( stdout, NULL, _IONBF, 0 );
++    }
++
+     hCrt = _open_osfhandle((long) GetStdHandle(STD_ERROR_HANDLE),_O_TEXT);
+-    hf = _fdopen( hCrt, "w" );
+-    *stderr = *hf;
+-    i = setvbuf( stderr, NULL, _IONBF, 0 );
+-
++    if(hCrt != -1) {
++        hf = _fdopen( hCrt, "w" );
++        *stderr = *hf;
++        i = setvbuf( stderr, NULL, _IONBF, 0 );
++    }
+     // make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog
+     // point to console as well
+     ios::sync_with_stdio();
+Index: kioslave/file/file_win.cpp
+===================================================================
+--- kioslave/file/file_win.cpp	(revision 945734)
++++ kioslave/file/file_win.cpp	(working copy)
+@@ -104,6 +104,36 @@
+     return entry;
+ }
+ 
++static bool deleteRecursive(FileProtocol *fp, const QString& path)
++{
++    //kDebug() << path;
++    QDirIterator it(path, QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
++                    QDirIterator::Subdirectories);
++    QStringList dirsToDelete;
++    while ( it.hasNext() ) {
++        const QString itemPath = it.next();
++        const QFileInfo info = it.fileInfo();
++        if (info.isDir())
++            dirsToDelete.prepend(itemPath);
++        else {
++            //kDebug() << "QFile::remove" << itemPath;
++            if (!QFile::remove(itemPath)) {
++                fp->error(KIO::ERR_CANNOT_DELETE, itemPath);
++                return false;
++            }
++        }
++    }
++    QDir dir;
++    Q_FOREACH(const QString& itemPath, dirsToDelete) {
++        //kDebug() << "QDir::rmdir" << itemPath;
++        if (!dir.rmdir(itemPath)) {
++            fp->error(KIO::ERR_CANNOT_DELETE, itemPath);
++            return false;
++        }
++    }
++    return true;
++}
++
+ void FileProtocol::copy( const KUrl &src, const KUrl &dest,
+                          int _mode, JobFlags _flags )
+ {
+@@ -300,7 +330,7 @@
+         }
+     } else {
+         kDebug( 7101 ) << "Deleting directory " << _path;
+-        if (!deleteRecursive(_path))
++        if (!deleteRecursive(this, _path))
+             return;
+         if( RemoveDirectoryW( ( LPCWSTR ) _path.utf16() ) == 0 ) {
+             DWORD dwLastErr = GetLastError();

@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdelibs-4.2.' + ver + '.tar.bz2'
           self.targetInstSrc['4.2.' + ver] = 'kdelibs-4.2.' + ver
+        self.patchToApply['4.2.0'] = ( 'kdelibs_4.2.0.patch', 0 )
+        self.patchToApply['4.2.2'] = ( 'kdelibs_4.2.2.patch', 0 )
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -28,14 +30,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if not self.kdeSvnUnpack():
-          return False;
-        if self.buildTarget == "4.2.0":
-          src_dir  = os.path.join( self.workdir, self.instsrcdir )
-          cmd = "cd %s && patch -p0 < %s" % \
-            ( src_dir, os.path.join( self.packagedir, "kdelibs_4.2.0.patch" ) )
-          os.system( cmd )
-        return True
+        return self.kdeSvnUnpack()
 
     def compile( self ):
         if self.compiler == "mingw":
