@@ -4,15 +4,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
-        
+
         for version in ['1.2.4-1']:
-            self.targets[ version ] = repoUrl + """/dbus-""" + compiler + """-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/dbus-""" + compiler + """-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getPackage( repoUrl, "dbus", version )
 
         self.defaultTarget = '1.2.4-1'
 

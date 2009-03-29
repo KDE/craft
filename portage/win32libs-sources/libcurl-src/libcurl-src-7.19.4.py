@@ -6,14 +6,14 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['7.19.3'] = 'http://curl.haxx.se/download/curl-7.19.3.tar.bz2'
-        self.targetInstSrc['7.19.3'] = "curl-7.19.3"
-        self.defaultTarget = '7.19.3'
+        ver = '7.19.4'
+        self.targets[ver] = 'http://curl.haxx.se/download/curl-' + ver + '.tar.bz2'
+        self.targetInstSrc[ver] = 'curl-' + ver
+        self.defaultTarget = ver
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, args=args )
-    self.createCombinedPackage = True
     self.buildType = "Release"
     self.subinfo = subinfo()
 
@@ -34,15 +34,7 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
-    # throw away possible debug symbols
-    self.stripLibs( "libcurl" )
-
-    # auto-create both import libs with the help of pexports
-    self.createImportLibs( "libcurl" )
-
-    # now do packaging with kdewin-packager
     self.doPackaging( "libcurl", self.buildTarget, True )
-
     return True
 
 if __name__ == '__main__':

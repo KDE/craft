@@ -117,7 +117,7 @@ diff -u -r -N redland-1.0.8-orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 diff -u -r -N redland-1.0.8-orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLists.txt
 --- redland-1.0.8-orig/librdf/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ redland-1.0.8/librdf/CMakeLists.txt	2009-01-24 20:05:06.531250000 +0100
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,120 @@
 +project(librdf)
 +
 +find_package(SQLite3 REQUIRED)
@@ -126,7 +126,6 @@ diff -u -r -N redland-1.0.8-orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMak
 +include_directories(${OPENSSL_INCLUDE_DIR})
 +
 +set(librdf_SRCS
-+    memcmp.c
 +    rdf_avltree.c
 +    rdf_concepts.c
 +    rdf_digest.c
@@ -266,7 +265,7 @@ diff -u -r -N redland-1.0.8-orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMak
 @@ -0,0 +1,100 @@
 +project(raptor)
 +
-+find_package(Curl REQUIRED)
++find_package(CURL REQUIRED)
 +find_package(LibXml2 REQUIRED)
 +find_package(LibXslt REQUIRED)
 +

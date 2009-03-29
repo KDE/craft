@@ -1,5 +1,6 @@
 # this module contains the information class
 import datetime
+import os
 
 class infoclass:
     def __init__( self, RAW="" ):
@@ -34,3 +35,11 @@ class infoclass:
 
     def setSVNTargets( self ):
         """ """
+
+    def getPackage( self, repoUrl, name, version ):
+        compiler = "msvc"
+        if os.getenv("KDECOMPILER") == "mingw":
+            compiler = "mingw"
+
+        return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin.tar.bz2\n' + \
+               repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib.tar.bz2\n'
