@@ -7,12 +7,11 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['win32libs-bin/cyrus-sasl'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['2.0.0-5'] = 'tags/qca/2.0.0'
-        self.svnTargets['2.0.1-1'] = 'tags/qca/2.0.1'
+        self.svnTargets['2.0.1-2'] = 'tags/qca/2.0.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
         self.defaultTarget = 'svnHEAD'
 
@@ -35,6 +34,6 @@ class subclass(base.baseclass):
         if self.buildTarget == "svnHEAD":
             return self.doPackaging( "qca" )
         else:
-            return self.doPackaging( "qca", self.buildTarget, True )
+            return self.doPackaging( "qca", self.buildTarget + "-1", True )
 if __name__ == '__main__':
     subclass().execute()

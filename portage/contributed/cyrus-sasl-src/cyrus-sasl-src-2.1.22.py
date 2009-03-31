@@ -58,21 +58,17 @@ class subclass(base.baseclass):
         #SQLITE_LIBPATH
         #LDAP_LIB_BASE
         #LDAP_INCLUDE
-        self.system("nmake /f NTMakefile CFG=%s prefix=%s" % (self.buildType,dst))
+        self.system("nmake /f NTMakefile CFG=Release prefix=%s" % (dst))
         return True
 
     def install( self ):
         os.chdir(os.path.join(self.workdir,self.instsrcdir))
         dst = os.path.join( self.imagedir, self.instdestdir)
-        os.system("nmake /f NTMakefile  CFG=%s prefix=%s install" % (self.buildType,dst))
+        os.system("nmake /f NTMakefile  CFG=Release prefix=%s install" % (dst))
         return True
 
     def make_package( self ):
-
-    # now do packaging with kdewin-packager
-        self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
-
-        return True
+        return self.doPackaging( "cyrus-sasl", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
