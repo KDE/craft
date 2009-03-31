@@ -5,10 +5,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets[ '1.0.8' ] = 'http://download.librdf.org/source/redland-1.0.8.tar.gz'
-        self.targetInstSrc[ '1.0.8' ] = 'redland-1.0.8'
-        self.patchToApply[ '1.0.8' ] = ( 'redland-src_1.0.8.patch', 1 )
-        self.defaultTarget = "1.0.8"
+        self.targets[ '1.0.8-1' ] = 'http://download.librdf.org/source/redland-1.0.8.tar.gz'
+        self.targetInstSrc[ '1.0.8-1' ] = 'redland-1.0.8'
+        self.patchToApply[ '1.0.8-1' ] = ( 'redland-src_1.0.8.patch', 1 )
+        self.defaultTarget = '1.0.8-1'
 
     def setDependencies( self ):
         self.hardDependencies['testing/sqlite'] = 'default'

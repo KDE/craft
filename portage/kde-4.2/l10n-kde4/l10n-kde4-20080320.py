@@ -11,13 +11,13 @@ class subinfo(info.infoclass):
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kde-l10n/'
         self.defaultTarget = 'svnHEAD'
 
-        # released target in 4.2.0
+        # released target in 4.2.2
         self.languages  = 'ar bg bn_IN ca cs csb da de '
         self.languages += 'el en_GB es et eu '
         self.languages += 'fi fr ga gl gu he hi hu '
         self.languages += 'is it ja kk km kn ko ku '
         self.languages += 'lt lv mai mk ml mr nb nds nl nn '
-        self.languages += 'pa pl pt pt_BR ro ru sl sr sv '
+        self.languages += 'pa pl pt pt_BR ro ru sk sl sr sv '
         self.languages += 'tg th tr uk wa zh_CN zh_TW '
 
     def setDependencies( self ):

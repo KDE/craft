@@ -27,6 +27,7 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
+        self.kdeCustomDefines = "-DWITH_jabber:BOOL=OFF"
         return self.kdeCompile()
 
     def install( self ):
