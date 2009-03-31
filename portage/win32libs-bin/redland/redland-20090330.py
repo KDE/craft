@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for ver in ['1.0.8', '1.0.8-1']:
-            self.targets[ ver ] = self.getPackage( repoUrl, "redland", version )
+            self.targets[ ver ] = self.getPackage( repoUrl, "redland", ver )
 
             
         self.defaultTarget = '1.0.8-1'
