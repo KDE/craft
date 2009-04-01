@@ -34,6 +34,6 @@ class subclass(base.baseclass):
         if self.buildTarget == "svnHEAD":
             return self.doPackaging( "qca" )
         else:
-            return self.doPackaging( "qca", self.buildTarget + "-1", True )
+            return self.doPackaging( "qca", self.buildTarget, True )
 if __name__ == '__main__':
     subclass().execute()
