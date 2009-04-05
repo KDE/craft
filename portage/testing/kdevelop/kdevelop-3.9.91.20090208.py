@@ -7,6 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdevelop'
+        self.svnTargets['3.9.92'] = 'tags/kdevelop/3.9.92'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -33,7 +34,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdevelop", os.path.basename(sys.argv[0]).replace("kdevelop-", "").replace(".py", ""), True )
+        if self.buildTarget == "svnHEAD":
+            return self.doPackaging( "kdevelop", os.path.basename(sys.argv[0]).replace("kdevelop-", "").replace(".py", ""), True )
+        else:
+            return self.doPackaging( "kdevelop", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
