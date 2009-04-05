@@ -164,7 +164,7 @@ class subclass(base.baseclass):
         return True
 
     def make_package( self ):
-        return self.doPackaging( "qt", self.buildTarget )
+        return self.doPackaging( "qt", self.buildTarget, True, True )
 
 if __name__ == '__main__':
     subclass().execute()

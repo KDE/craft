@@ -397,7 +397,7 @@ class baseclass:
     def kdeTest( self ):
         return self.kde.kdeTest()
 
-    def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True ):
+    def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True, special = False ):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
         
@@ -440,9 +440,12 @@ class baseclass:
 
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
-              cmd = cmd + " -type mingw "
+              cmd += " -type mingw "
             else:
-              cmd = cmd + " -type msvc "
+              cmd += " -type msvc "
+
+        if special:
+            cmd += " -special"
 
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
         return True
