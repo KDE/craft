@@ -7,8 +7,8 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/kipi-plugins'
-            self.targets['0.2.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0.tar.bz2'
-            self.targetInstSrc['0.2.0'] = 'kipi-plugins-0.2.0'
+        self.targets['0.2.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0.tar.bz2'
+        self.targetInstSrc['0.2.0'] = 'kipi-plugins-0.2.0'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
