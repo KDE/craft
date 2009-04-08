@@ -7,10 +7,8 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/kipi-plugins'
-        self.svnTargets['branch-0.3'] = 'branches/extragear/graphics/kipi-plugins'
-        for version in ['beta3', 'beta4', 'beta5', 'beta6', 'rc1', 'rc2']:
-            self.targets['0.2.0-' + version] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0-' + version + '.tar.bz2'
-            self.targetInstSrc['0.2.0-' + version] = 'kipi-plugins-0.2.0-' + version
+            self.targets['0.2.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0.tar.bz2'
+            self.targetInstSrc['0.2.0'] = 'kipi-plugins-0.2.0'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -27,7 +25,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.2.0-beta3', '0.2.0-beta4', '0.2.0-beta5', '0.2.0-beta6', '0-2.0-rc1', '0.2.0-rc2']:
+        if self.buildTarget in ['0.2.0']:
             return base.baseclass.unpack( self )
         else:
             return self.kdeSvnUnpack()
