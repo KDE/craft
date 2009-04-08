@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.svnTargets['1.9.95.9'] = "tags/koffice/1.9.95.9/koffice"
         self.svnTargets['1.9.98.0'] = "tags/koffice/1.9.98.0/koffice"
         self.svnTargets['1.9.98.2'] = "tags/koffice/1.9.98.2/koffice"
+        self.svnTargets['1.9.99.0'] = "tags/koffice/1.9.99.0/koffice"
         self.targets['alpha10'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.95.10/src/koffice-1.9.95.10.tar.bz2'
         self.targetInstSrc['alpha10'] = 'koffice-1.9.95.10'
         self.targets['beta1'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.98.0/src/koffice-1.9.98.0.tar.bz2'
@@ -75,7 +76,7 @@ class subclass(base.baseclass):
         if self.buildTarget == 'svnHEAD':
             return self.doPackaging( "koffice", os.path.basename(sys.argv[0]).replace("koffice-", "").replace(".py", ""), True )
         else:
-            return self.doPackaging( "koffice", self.buildTarget, True )
+            return self.doPackaging( "koffice" )
 		
 if __name__ == '__main__':
     subclass().execute()
