@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
+        self.hardDependencies['dev-util/perl']       = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
     
