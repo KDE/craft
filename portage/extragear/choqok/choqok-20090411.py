@@ -7,6 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/network/choqok'
+        self.svnTargets['0.6.0'] = 'tags/choqok/0.6.0/choqok'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -14,7 +15,6 @@ class subinfo(info.infoclass):
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
-        self.buildType = "Debug"
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
 
@@ -28,7 +28,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "ktorrent", self.buildTarget, True )
+        if self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "choqok" )
+        else:
+            return self.doPackaging( "choqok", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
