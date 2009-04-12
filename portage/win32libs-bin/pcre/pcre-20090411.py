@@ -4,13 +4,16 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        compiler = "msvc"
+        if os.getenv("KDECOMPILER") == "mingw":
+            compiler = "mingw"
+
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in [ '0.9.8j-1' ]:
-            self.targets[ version ] = repoUrl + """/openssl-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/openssl-""" + version + """-lib.tar.bz2"""
+        for version in ['7.8','7.9']:
+            self.targets[ version ] = self.getPackage( repoUrl, "pcre", version )
 
-        self.defaultTarget = '0.9.8j-1'
+        self.defaultTarget = '7.9'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

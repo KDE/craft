@@ -5,10 +5,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['7.6', '7.7', '7.8']:
+        for ver in ['7.6', '7.7', '7.8', '7.9']:
           self.targets[ver] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'pcre-' + ver
-        self.defaultTarget = '7.8'
+        self.defaultTarget = '7.9'
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/libbzip2'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
@@ -31,7 +31,7 @@ class subclass(base.baseclass):
 
   def make_package( self ):
     # now do packaging with kdewin-packager
-    self.doPackaging( "pcre", self.buildTarget + '-3', True )
+    self.doPackaging( "pcre", self.buildTarget, True )
     return True
   
 if __name__ == '__main__':

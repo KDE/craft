@@ -6,9 +6,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.9.8j'] = 'http://www.openssl.org/source/openssl-0.9.8j.tar.gz'
-        self.targetInstSrc['0.9.8j'] = 'openssl-0.9.8j'
-        self.defaultTarget = '0.9.8j'
+        self.targets['0.9.8k'] = 'http://www.openssl.org/source/openssl-0.9.8k.tar.gz'
+        self.targetInstSrc['0.9.8k'] = 'openssl-0.9.8k'
+        self.defaultTarget = '0.9.8k'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
