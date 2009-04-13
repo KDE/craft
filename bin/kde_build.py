@@ -53,7 +53,6 @@ class kde_interface:
         self.noFetch         = False
         self.noClean         = False
         self.noFast          = True
-        self.traditional     = True
         self.buildNameExt    = None
 
         self.rootdir         = rootdir
@@ -72,8 +71,6 @@ class kde_interface:
             self.noFast      = False
         if self.BUILDTESTS == "True":
             self.buildTests  = True
-        if self.DIRECTORY_LAYOUT  == "installer":
-            self.traditional = False
 
         self.kdesvndir       = self.KDESVNDIR
         self.kdesvnserver    = self.KDESVNSERVER
@@ -199,30 +196,14 @@ class kde_interface:
 
     def kdeDefaultDefines( self ):
         """defining the default cmake cmd line"""
-#        if( not self.instsrcdir == "" ):
-#            self.sourcePath = self.instsrcdir
-        if self.traditional:
-            options = "%s -DCMAKE_INSTALL_PREFIX=%s/kde " % \
-                  ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
+        options = "%s -DCMAKE_INSTALL_PREFIX=%s " % \
+              ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
 
-            options = options + "-DCMAKE_INCLUDE_PATH=%s;%s " % \
-                    ( os.path.join( self.rootdir, "win32libs", "include" ).replace( "\\", "/" ), \
-                      os.path.join( self.rootdir, "kde", "include" ).replace( "\\", "/" ) \
-                    )
+        options = options + "-DCMAKE_INCLUDE_PATH=%s " % \
+                os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
 
-            options = options + "-DCMAKE_LIBRARY_PATH=%s;%s " % \
-                    ( os.path.join( self.rootdir, "win32libs", "lib" ).replace( "\\", "/" ), \
-                      os.path.join( self.rootdir, "kde", "lib" ).replace( "\\", "/" ) \
-                    )
-        else:
-            options = "%s -DCMAKE_INSTALL_PREFIX=%s " % \
-                  ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
-
-            options = options + "-DCMAKE_INCLUDE_PATH=%s " % \
-                    os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
-
-            options = options + "-DCMAKE_LIBRARY_PATH=%s " % \
-                    os.path.join( self.rootdir, "lib" ).replace( "\\", "/" )
+        options = options + "-DCMAKE_LIBRARY_PATH=%s " % \
+                os.path.join( self.rootdir, "lib" ).replace( "\\", "/" )
 
         if self.buildTests:
             options = options + " -DKDE4_BUILD_TESTS=1 "

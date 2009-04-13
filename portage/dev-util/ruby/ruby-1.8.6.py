@@ -2,18 +2,14 @@ import base
 import os
 import info
 
-SRC_URI= "ftp://ftp.ruby-lang.org/pub/ruby/binaries/mswin32/ruby-1.8.6-i386-mswin32.zip"
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.8.6'] = SRC_URI
+        self.targets['1.8.6'] = "ftp://ftp.ruby-lang.org/pub/ruby/binaries/mswin32/ruby-1.8.6-i386-mswin32.zip"
         self.defaultTarget = '1.8.6'
     
 class subclass(base.baseclass):
   def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
-    if self.traditional:
-        self.instdestdir = "ruby"
+    base.baseclass.__init__( self, args=args )
     self.subinfo = subinfo()
 
   def unpack(self):

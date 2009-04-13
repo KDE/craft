@@ -33,8 +33,6 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
         if self.buildTarget == "svnHEAD":
             return self.doPackaging( "eigen" )
         else:

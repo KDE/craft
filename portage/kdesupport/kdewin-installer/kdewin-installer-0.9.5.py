@@ -40,8 +40,6 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "kde"
         return self.doPackaging( "kdewin-installer" )
 
 if __name__ == '__main__':

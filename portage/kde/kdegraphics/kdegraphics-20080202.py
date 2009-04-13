@@ -24,8 +24,6 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        if self.traditional:
-            self.instdestdir = "kde"
         self.subinfo = subinfo()
 
     def unpack( self ):

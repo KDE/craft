@@ -1,19 +1,14 @@
 import base
-import os
 import info
-
-SRC_URI= "http://www.winkde.org/pub/kde/ports/win32/repository/other/upx-3.0.3-bin.zip"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.0.3'] = SRC_URI
+        self.targets['3.0.3'] = "http://www.winkde.org/pub/kde/ports/win32/repository/other/upx-3.0.3-bin.zip"
         self.defaultTarget = '3.0.3'
     
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
-    if self.traditional:
-        self.instdestdir = "upx"
+  def __init__(self, **args):
+    base.baseclass.__init__( self, args=args )
     self.subinfo = subinfo()
 
   def unpack(self):

@@ -35,12 +35,6 @@ if ( KDESVNSERVER == None ):
 KDESVNUSERNAME=os.getenv( "KDESVNUSERNAME" )
 KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
 
-DIRECTORYLAYOUT=os.getenv( "DIRECTORY_LAYOUT" )
-if ( not DIRECTORYLAYOUT == "installer" ):
-    """ traditional layout is using the categories as subfolders of kderoot """
-    """ installer layout has no category subfolder """
-    DIRECTORYLAYOUT = "traditional"
-
 # ok, we have the following dirs:
 # ROOTDIR: the root where all this is below
 # DOWNLOADDIR: the dir under rootdir, where the downloaded files are put into
@@ -87,7 +81,6 @@ class baseclass:
         self.SRC_URI                = SRC_URI
         self.instsrcdir             = ""
         self.instdestdir            = ""
-        self.traditional            = True
         self.noCopy                 = False
         self.noClean                = False
         self.noFast                 = True
@@ -119,8 +112,6 @@ class baseclass:
             self.forced = True
         if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
             self.buildTests = True
-        if DIRECTORYLAYOUT == "installer":
-            self.traditional = False
 
         # Build type for kdeCompile() / kdeInstall() - packages
         # "" -> debug and release

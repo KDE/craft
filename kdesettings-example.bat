@@ -67,13 +67,6 @@ rem and make sure that plink is in your PATH and Pageant is configured
 rem (you need to import your key)
 set SVN_SSH=plink 
 
-rem If you want to use emerge.py together with the kdewin-installer,
-rem you should set the value of directory_layout to 'installer'. 
-rem If you leave it unset or set it to 'traditional' you get the category
-rem sublayout. 
-rem Note: it is not recommended anymore to use the traditional layout.
-set directory_layout=installer
-
 rem Here you can set type of the emerge build. 
 rem There are two standard build types: Debug and Release.
 rem Both are used if no EMERGE_BUILDTYPE is set.

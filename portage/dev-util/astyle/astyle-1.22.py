@@ -12,8 +12,6 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
-    if self.traditional:
-        self.instdestdir = "astyle"
     self.subinfo = subinfo()
 
   def unpack(self):

@@ -22,17 +22,10 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        if self.traditional:
-            self.instdestdir = "bjam\bin"
-        else:
-            self.instdestdir = "bin"
+        self.instdestdir = "dev-utils"
         self.subinfo = subinfo()
 
     def make_package( self ):
-        if self.traditional:
-            self.instdestdir = "bjam"
-        else:
-            self.instdestdir = ""
         return self.doPackaging( PACKAGE_NAME, PACKAGE_VER, True )
 
 if __name__ == '__main__':
