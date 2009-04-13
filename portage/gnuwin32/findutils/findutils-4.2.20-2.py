@@ -1,4 +1,4 @@
-import gnuwin32
+import base
 import info
 
 SRC_URI = """
@@ -10,9 +10,9 @@ class subinfo(info.infoclass):
         self.targets['4.2.20-2'] = SRC_URI
         self.defaultTarget = '4.2.20-2'
         
-class subclass(gnuwin32.gnuwin32class):
+class subclass(base.baseclass):
   def __init__( self, **args ):
-    gnuwin32.gnuwin32class.__init__( self, SRC_URI )
+    base.baseclass.__init__( self, args=args )
     self.subinfo = subinfo()
 
 if __name__ == '__main__':

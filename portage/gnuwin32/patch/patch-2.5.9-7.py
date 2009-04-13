@@ -1,4 +1,4 @@
-import gnuwin32
+import base
 import info
 import os
 import shutil
@@ -12,13 +12,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
-class subclass(gnuwin32.gnuwin32class):
+class subclass(base.baseclass):
   def __init__( self, **args ):
-    gnuwin32.gnuwin32class.__init__( self, "" )
+    base.baseclass.__init__( self, args=args )
     self.subinfo = subinfo()
 
   def install( self ):
-    gnuwin32.gnuwin32class.install( self )
+    base.baseclass.install( self )
     print "self.compiler: " + self.compiler
     if self.compiler == "msvc2005":
       manifest = os.path.join( self.packagedir, "patch.exe.manifest" )

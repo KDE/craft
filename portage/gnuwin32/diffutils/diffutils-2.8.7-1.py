@@ -1,5 +1,4 @@
-import gnuwin32
-import info
+import base
 
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/diffutils-2.8.7-1-bin.zip
@@ -14,9 +13,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
     
-class subclass(gnuwin32.gnuwin32class):
+class subclass(base.baseclass):
   def __init__( self, **args ):
-    gnuwin32.gnuwin32class.__init__( self, SRC_URI )
+    base.baseclass.__init__( self, args=args )
     self.subinfo = subinfo()
 
 if __name__ == '__main__':
