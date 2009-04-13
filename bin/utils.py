@@ -26,10 +26,9 @@ import portage_versions
 ### fetch functions
 
 #FIXME: get this from somewhere else:
-if (os.getenv( "directory_layout" ) == "installer" ):
-    WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "bin", "wget.exe" )
-else:
-    WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "gnuwin32", "bin", "wget.exe" )
+WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "bin", "wget.exe" )
+if not os.path.exists( WGetExecutable ):
+    WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "dev-utils", "bin", "wget.exe" )
 
 def __import__( module ):
     debug( "module to import: %s" % module, 2 )
