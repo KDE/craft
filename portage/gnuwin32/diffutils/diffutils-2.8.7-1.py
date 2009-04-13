@@ -1,4 +1,5 @@
 import base
+import info
 
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/diffutils-2.8.7-1-bin.zip
