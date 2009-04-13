@@ -13,7 +13,7 @@ rem    this file sources the kdesettings.bat file automatically
 
 call ..\etc\kdesettings.bat
 
-set PATH=%KDEROOT%\emerge\bin;%PATH%
+set PATH=%KDEROOT%\emerge\bin;%KDEROOT%\dev-utils\bin;%PATH%
 SET KDEWIN_DIR=%KDEROOT%
 set XDG_DATA_DIRS=%KDEROOT%\share
 if %KDECOMPILER% == mingw ( 

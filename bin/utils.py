@@ -268,6 +268,24 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
 ### package dependencies functions
 
+def findInstalled( category, package ):
+    fileName = os.path.join( getEtcPortageDir(), "installed" )
+    if ( not os.path.isfile( fileName ) ):
+        warning( "installed db file does not exist" )
+        return None
+
+    ret = None
+    f = open( fileName, "rb" )
+    str = "^%s/%s-(.*)$" % ( category, package )
+    regex = re.compile( str )
+    for line in f.read().splitlines():
+        match = regex.match( line )
+        if match:
+            print "found: " + match.group(1)
+            ret = match.group(1)
+    f.close()
+    return ret;
+
 def isInstalled( category, package, version ):
     fileName = os.path.join( getEtcPortageDir(), "installed" )
     if ( not os.path.isfile( fileName ) ):
@@ -693,12 +711,13 @@ def unmerge( rootdir, package, forced = False ):
                             if forced:
                                 os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                     elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                        warning( "file %s is not existing" % ( os.path.normcase( a ) ) )
+                        warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
                 fptr.close()
                 os.remove( os.path.join( rootdir, "manifest", file ) )
     return
 
 def manifestDir( srcdir, imagedir, package, version ):
+    print "manifestDir: %s %s %s %s" % (srcdir, imagedir, package, version)
     """ make the manifest files for an imagedir like the kdewin-packager does """
     debug( "manifestDir called: %s %s" % ( srcdir, imagedir ), 1 )
 

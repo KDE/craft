@@ -389,6 +389,10 @@ else:
             elif utils.verbose() > 2 and not package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
         else:
+            instver = utils.findInstalled( package[0], package[1] )
+            if( instver != None ):
+                utils.debug( "found old version %s - removing" % instver )
+                handlePackage( package[0], package[1], package[2], "unmerge", opts )
             if ( doPretend ):
                 if utils.verbose() > 0:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )

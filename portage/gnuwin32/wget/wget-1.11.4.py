@@ -1,4 +1,4 @@
-import gnuwin32
+import base
 import info
 
 SRC_URI = """
@@ -12,9 +12,10 @@ class subinfo(info.infoclass):
           self.targets[ t ] = SRC_URI % ( t, t )
         self.defaultTarget = '1.11.4'
         
-class subclass(gnuwin32.gnuwin32class):
+class subclass(base.baseclass):
   def __init__( self, **args ):
-    gnuwin32.gnuwin32class.__init__( self, SRC_URI )
+    base.baseclass.__init__( self, SRC_URI, args=args )
+    self.instdestdir = "dev-utils"
     self.subinfo = subinfo()
 
 if __name__ == '__main__':
