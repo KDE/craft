@@ -12,11 +12,15 @@ rem    to build and run kde programs
 rem    this file sources the kdesettings.bat file automatically
 
 call ..\etc\kdesettings.bat
-call :path-installer
 
+set PATH=%KDEROOT%\lib;%PATH%
+set PATH=%KDEROOT%\bin;%PATH%
+set KDEDIRS=%KDEROOT%
+set QT_PLUGIN_PATH=%KDEROOT%\plugins
 set PATH=%KDEROOT%\emerge\bin;%KDEROOT%\dev-utils\bin;%PATH%
 SET KDEWIN_DIR=%KDEROOT%
 set XDG_DATA_DIRS=%KDEROOT%\share
+
 if %KDECOMPILER% == mingw ( 
     call :path-mingw
 ) else ( 
@@ -25,16 +29,6 @@ if %KDECOMPILER% == mingw (
 
 %comspec% /e:on /K "cd %KDEROOT%"
 goto :eof
-
-:: installer layout: only one installation directory - which serves as installation root for all packages
-:: its subfolder bin contains all the executables and should contain all dynamic libraries
-:: putting the lib directory into the path shouldn't be needed, it is included though for convenience
-:path-installer
-    set PATH=%KDEROOT%\lib;%PATH%
-    set PATH=%KDEROOT%\bin;%PATH%
-    set KDEDIRS=%KDEROOT%
-    set QT_PLUGIN_PATH=%KDEROOT%\plugins
-    goto :eof
 
 :path-mingw
     set PATH=%KDEROOT%\mingw\bin;%PATH%
