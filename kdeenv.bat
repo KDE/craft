@@ -12,6 +12,7 @@ rem    to build and run kde programs
 rem    this file sources the kdesettings.bat file automatically
 
 call ..\etc\kdesettings.bat
+call :path-installer
 
 set PATH=%KDEROOT%\emerge\bin;%KDEROOT%\dev-utils\bin;%PATH%
 SET KDEWIN_DIR=%KDEROOT%
@@ -21,8 +22,6 @@ if %KDECOMPILER% == mingw (
 ) else ( 
     call :path-msvc 
 )
-
-call :path-installer
 
 %comspec% /e:on /K "cd %KDEROOT%"
 goto :eof
