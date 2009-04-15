@@ -16,6 +16,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-sources/poppler-src'] = 'default'
+        self.hardDependencies['win32libs-bin/expat'] = 'default'
+        self.hardDependencies['win32libs-bin/tiff'] = 'default'
         self.hardDependencies['win32libs-bin/exiv2'] = 'default'
         self.hardDependencies['win32libs-bin/chm'] = 'default'
         self.hardDependencies['win32libs-bin/djvu'] = 'default'
