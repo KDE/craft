@@ -22,7 +22,6 @@ redland
 shared-mime-info
 tiff
 zlib
-zip
 boost
 dbus
 pcre
