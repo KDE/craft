@@ -6,10 +6,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for v in [ '2.6.991a' ]:
+        for v in [ '2.7.0' ]:
             self.targets[ v ] = 'http://libarchive.googlecode.com/files/libarchive-' + v + '.tar.gz'
             self.targetInstSrc[ v ] = 'libarchive-' + v
-        self.defaultTarget = '2.6.991a'
+        self.defaultTarget = '2.7.0'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
