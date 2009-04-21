@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 import base
 import utils
 import shutil
@@ -29,7 +30,7 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "qt-win-opensource-src-" + self.compiler
-        self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-1-lib.tar.bz2"
+        self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-2-lib.tar.bz2"
         if self.compiler == "msvc2005" or self.compiler == "msvc2008":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2"
         elif self.compiler == "mingw":
