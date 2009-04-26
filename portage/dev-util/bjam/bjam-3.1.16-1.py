@@ -1,5 +1,9 @@
+# -*- coding: iso-8859-15 -*-
 import base
 import info
+import os
+import shutil
+import utils
 
 PACKAGE_NAME         = "boost-jam"
 PACKAGE_VER          = "3.1.16"
@@ -24,6 +28,15 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, args=args )
         self.instdestdir = "dev-utils"
         self.subinfo = subinfo()
+
+    def install( self ):
+        if( not os.path.exists( os.path.join( self.imagedir, self.instdestdir, "bin" ) ) ):
+            os.makedirs( os.path.join( self.imagedir, self.instdestdir, "bin" ) )
+
+        src = os.path.join( self.workdir, self.instsrcdir, "bjam.exe" )
+        dst = os.path.join( self.imagedir, self.instdestdir, "bin", "bjam.exe" )
+        shutil.copy( src, dst )
+        return True
 
     def make_package( self ):
         return self.doPackaging( PACKAGE_NAME, PACKAGE_VER, True )
