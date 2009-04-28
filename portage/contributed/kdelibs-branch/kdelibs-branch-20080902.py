@@ -21,6 +21,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl']       = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
+        self.hardDependencies['data/aspell-data'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
