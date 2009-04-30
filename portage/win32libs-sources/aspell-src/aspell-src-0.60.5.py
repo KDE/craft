@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import shutil
@@ -30,6 +31,9 @@ class subclass(base.baseclass):
     src = os.path.join( self.workdir, self.instsrcdir )
     cmd = "cd %s && patch -p0 < %s" % \
           ( src, os.path.join( self.packagedir , "aspell-0.60.5.diff" ) )
+    utils.system( cmd )
+    cmd = "cd %s && patch -p0 < %s" % \
+          ( src, os.path.join( self.packagedir , "aspell-kde-dirs.diff" ) )
     utils.system( cmd )
     return True
 

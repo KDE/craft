@@ -1,0 +1,78 @@
+--- common/config.cpp.orig	2009-04-30 01:26:11.470400000 +0200
++++ common/config.cpp	2009-04-30 02:00:53.473400000 +0200
+@@ -10,6 +10,11 @@
+ #include <stdlib.h>
+ #include <assert.h>
+ 
++#ifdef _WIN32
++#include <windows.h>
++#include <shlobj.h>
++#endif
++
+ #include "dirs.h"
+ #include "settings.h"
+ 
+@@ -44,6 +49,51 @@
+ 
+ #define DEFAULT_LANG "en_US"
+ 
++#ifdef _WIN32
++// let us override the generated paths. Those are only usable on Unix
++// instead we use the layout which fits KDE best: we make the default search path
++// depending on the path of the executable.
++#undef PREFIX
++#define PREFIX prefixPath
++#undef DATA_DIR 
++#define DATA_DIR dataPath
++#undef DICT_DIR 
++#define DICT_DIR dictPath
++#undef CONF_DIR
++#define CONF_DIR confPath
++#undef HOME_DIR
++#define HOME_DIR homePath
++
++char prefixPath[MAX_PATH];
++char dataPath[MAX_PATH];
++char dictPath[MAX_PATH];
++char confPath[MAX_PATH];
++char homePath[MAX_PATH];
++
++static class anonymous {
++    public:
++        anonymous() {
++            char modulePath[MAX_PATH];
++            GetModuleFileName(NULL, modulePath, MAX_PATH);
++            // the path is of the form C:\\Path\\to\\aspell\\bin\\aspell.exe
++            // cut of the string after C:\\Path\\to\\aspell
++            if(NULL != strrchr(modulePath, '\\')) modulePath[strrchr(modulePath, '\\') - modulePath] = '\0';
++            if(NULL != strrchr(modulePath, '\\')) modulePath[strrchr(modulePath, '\\') - modulePath] = '\0';
++            // now replace all backslashes to forward slashes
++            while(NULL != strchr(modulePath, '\\')) modulePath[strchr(modulePath, '\\') - modulePath] = '/';
++
++            sprintf(prefixPath, modulePath);
++            sprintf(dataPath, "%s/lib/aspell-0.60", modulePath);
++            sprintf(dictPath, "%s/lib/aspell-0.60", modulePath);
++            sprintf(confPath, "%s/etc", modulePath);
++
++            SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, homePath);
++            // now replace all backslashes to forward slashes
++            while(NULL != strchr(homePath, '\\')) homePath[strchr(homePath, '\\') - homePath] = '/';
++        }
++} pathLoader;
++#endif
++
+ // NOTE: All filter options are now stored with he "f-" prefix.  However
+ //   during lookup, the non prefix version is also recognized.
+ 
+@@ -1339,11 +1389,9 @@
+ 
+ 
+ #ifdef ENABLE_WIN32_RELOCATABLE
+-#  define HOME_DIR "<prefix>"
+ #  define PERSONAL "<lang>.pws"
+ #  define REPL     "<lang>.prepl"
+ #else
+-#  define HOME_DIR "<$HOME|./>"
+ #  define PERSONAL ".aspell.<lang>.pws"
+ #  define REPL     ".aspell.<lang>.prepl"
+ #endif
