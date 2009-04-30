@@ -5,14 +5,18 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/kdepim/enterprise4/kdebase-4.1-branch/runtime'
+        self.svnTargets['4.1'] = 'branches/kdepim/enterprise4/kdebase-4.1-branch/runtime'
+        self.svnTargets['4.2'] = 'branches/kdepim/enterprise4/kdebase-4.2-branch/runtime'
         for ver in ['74', '80', '83']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdebase-runtime-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdebase-runtime-enterprise4-4.0.' + ver
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '4.1'
     
     def setDependencies( self ):
-        self.hardDependencies['contributed/kdelibs-branch'] = 'default'
+        if self.buildTarget == '4.1':
+            self.hardDependencies['contributed/kdelibs-branch'] = '4.1'
+        else:
+            self.hardDependencies['contributed/kdelibs-branch'] = '4.2'
         self.hardDependencies['contributed/kdepimlibs-branch'] = 'default'
     
 class subclass(base.baseclass):
