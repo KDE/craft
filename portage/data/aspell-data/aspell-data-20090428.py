@@ -6,12 +6,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://winkde.org/pub/kde/ports/win32/repository/aspell"""
         
-        for version in ['0.60.20030222.1-10']:
-            self.targets[ version ] = repoUrl + """/aspell-de-0.60.20030222.1-10-bin.tar.bz2"""
+        self.targets[ '0.60' ] = repoUrl + """/aspell-en-6.0-41-bin.tar.bz2
+                           """ + repoUrl + """/aspell-de-0.60.20030222.1-10-bin.tar.bz2"""
 
+        self.defaultTarget = '0.60'
             
-        self.defaultTarget = '0.60.20030222.1-10'
-
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
