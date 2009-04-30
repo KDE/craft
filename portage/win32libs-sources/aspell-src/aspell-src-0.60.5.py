@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-15 -*-
 import base
 import os
 import shutil
@@ -16,7 +16,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.60.5'] = 'aspell-0.60.5'
         self.defaultTarget = '0.60.5'
     def setDependencies( self ):
-        self.hardDependencies['dev-util/msys'] = 'default'
+        self.hardDependencies['dev-util/perl'] = 'default' # buildtime dependency
+        self.hardDependencies['dev-util/msys'] = 'default' # buildtime dependency
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
