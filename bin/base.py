@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # this package contains the base class for all packages
 
 # copyright:
@@ -288,7 +289,7 @@ class baseclass:
         """install database"""
         if utils.verbose() > 1:
             print "base manifest called"
-        utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.package, self.version )
+        utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.category, self.package, self.version )
         return True
         
     def make_package( self ):
@@ -427,7 +428,7 @@ class baseclass:
         else:
             cmd = "-name %s -root %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath )
-        cmd = "kdewin-packager.exe -debuglibs " + cmd + " -compression 2 "
+        cmd = "kdewin-packager.exe -debuglibs " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
 
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):

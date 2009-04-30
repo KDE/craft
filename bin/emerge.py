@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # this will emerge some programs...
 
 # copyright:
@@ -33,10 +34,14 @@ Commands (no packagename needed - will be ignored when given):
                                 manifest directory - it prints out only those
                                 packages that are contained within
                                 --print-installable
---print-installable            This will give you a list of packages that can
+--print-installable             This will give you a list of packages that can
                                 be installed. Currently you don't need to
                                 enter the category and package: only the
                                 package will be enough.
+--update-all                    this option tries to update all installed 
+                                packages that contain one or multiple svn 
+                                targets. This is equivalent to running all
+                                those packages with the flag --update.
 
 Commands (must have a packagename):
 
@@ -192,6 +197,7 @@ packageName = None
 doPretend = False
 stayQuiet = False
 ignoreInstalled = False
+updateAll = False
 opts = ""
 if len( sys.argv ) < 2:
     usage()
@@ -264,6 +270,10 @@ for i in sys.argv:
     elif ( i == "--update" ):
         ignoreInstalled = True
         os.environ["EMERGE_NOCLEAN"] = str( True )
+    elif ( i == "--update-all" ):
+        ignoreInstalled = True
+        os.environ["EMERGE_NOCLEAN"] = str( True )
+        updateAll = True
     elif ( i == "--install-deps" ):
         ignoreInstalled = True
         buildAction = "install-deps"
@@ -315,49 +325,68 @@ sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) 
 
 deplist = []
 packageList = []
+categoryList = []
 
-category = ""
 if packageName:
     if len( packageName.split( "/" ) ) == 1:
         if utils.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
             packageList = utils.getAllPackages( packageName )
-            category = packageName
+            categoryList = [ packageName ]
         else:
             if utils.getCategory( packageName ):
-                category = utils.getCategory( packageName )
                 packageList = [ packageName ]
+                categoryList = [ utils.getCategory( packageName ) ]
             else:
                 utils.warning( "unknown category or package: %s" % packageName )
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
         validPackage = False
         if utils.isCategory( cat ):
-            category = cat
+            categoryList = [ cat ]
         else:
             utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
-        if category and utils.isPackage( category, pac ):
+        if len( categoryList ) > 0 and utils.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
-        if len( packageList ):
-            utils.debug( "added package %s/%s" % ( category, pac ), 2 )
+        if len( categoryList ) and len( packageList ):
+            utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
         else:
             utils.debug( "ignoring package %s" % packageName )
     else:
         utils.error( "unknown packageName" )
+elif updateAll:
+    installedPackages = utils.getInstallables()
+    utils.debug( "Updating, no package spec given", 1 )
+    packageList = []
+    for category, package, version in installedPackages:
+        if utils.isInstalled( category, package, version ) and utils.isPackageUpdateable( category, package, version ):
+            categoryList.append( category )
+            packageList.append( package )
+    utils.debug( "Will update packages: " + str (packageList), 1 )
 
 for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
 
-for entry in packageList:
+for category, entry in zip (categoryList, packageList):
     utils.solveDependencies( category, entry, "", deplist )
 
 for item in range( len( deplist ) ):
-    if deplist[ item ][ 0 ] == category and deplist[ item ][ 1 ] in packageList:
+    if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:
         deplist[ item ].append( ignoreInstalled )
     else:
         deplist[ item ].append( False )
+
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
+
+for item in deplist:
+    cat = item[ 0 ]
+    pac = item[ 1 ]
+    ver = item[ 2 ]
+
+    if utils.isInstalled( cat, pac, ver ) and updateAll and not utils.isPackageUpdateable( cat, pac, ver ):
+        print "remove:", cat, pac, ver
+        deplist.remove( item )
 
 if buildAction == "install-deps":
     # the first dependency is the package itself - ignore it

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # this file contains some helper functions for emerge
 
 # copyright:
@@ -280,10 +281,26 @@ def findInstalled( category, package ):
     for line in f.read().splitlines():
         match = regex.match( line )
         if match:
-            print "found: " + match.group(1)
+            debug( "found: " + match.group(1), 1 )
             ret = match.group(1)
     f.close()
     return ret;
+
+def checkManifestFile( name, category, package, version ):
+    if os.path.isfile( name ):
+        f = open( name, "rb" )
+        header = f.readline()
+        line = f.readline()
+        f.close()
+        if not '/' in line:
+            """ update the file """
+            line = "%s/%s:%s:unknown" % ( package, category, package, version )
+            f = open( name, "wb" )
+            f.write( header )
+            f.write( line )
+        if ( line.startswith( "%s/%s:%s:" % ( category, package, version ) ) ):
+            return True
+    return False
 
 def isInstalled( category, package, version ):
     fileName = os.path.join( getEtcPortageDir(), "installed" )
@@ -301,10 +318,9 @@ def isInstalled( category, package, version ):
 
     if ( not found ):
         """ try to detect packages from the installer """
-        releasepack = os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-bin.mft" )
-        develpack = os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.mft" )
-        if( os.path.isfile( releasepack ) or os.path.isfile( develpack ) ):
-            found = True
+        bin = checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-bin.ver"), category, package, version )
+        lib = checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.ver"), category, package, version )
+        found = found or bin or lib
 
     if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" ):
         """ check for any installation """
@@ -418,13 +434,26 @@ def getAllPackages( category ):
     else:
         return
 
-def getAllTags( category, package, version ):
+def getDefaultTarget( category, package, version ):
     """ """
+    debug( "importing file %s" % getFilename( category, package, version ), 1 )
+    mod = __import__( getFilename( category, package, version ) )
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()
-        mod = __import__( getFilename( category, package, version ) )
+        return mod.subinfo().defaultTarget
+    else:
+        return None
+
+def getAllTags( category, package, version ):
+    """ """
+    debug( "importing file %s" % getFilename( category, package, version ), 1 )
+    mod = __import__( getFilename( category, package, version ) )
+    if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()
-        return info.svnTargets
+        tagDict = info.svnTargets
+        tagDict.update( info.targets )
+        debug( tagDict )
+        return tagDict
     else:
         return dict()
 
@@ -579,24 +608,29 @@ def getInstallables():
 
 def printTargets( category, package, version ):
     """ """
+    targetsList = getAllTags( category, package, version )
+    defaultTarget = getDefaultTarget( category, package, version )
+    if not targetsList['svnHEAD']:
+        targetsList.remove('svnHEAD')
+    targetsListKeys = targetsList.keys()
+    targetsListKeys.sort()
+    for i in targetsListKeys:
+        if defaultTarget == i:
+            print '*',
+        else:
+            print ' ',
+        print i
+
+def isPackageUpdateable( category, package, version ):
     debug( "importing file %s" % getFilename( category, package, version ), 1 )
     mod = __import__( getFilename( category, package, version ) )
-    packageInfo = mod.subinfo()
-    svnTargetsList = packageInfo.svnTargets.keys()
-    if not packageInfo.svnTargets['svnHEAD']:
-        svnTargetsList.remove('svnHEAD')
-    for i in svnTargetsList:
-        if packageInfo.defaultTarget == i:
-            print '*',
-        else:
-            print ' ',
-        print i
-    for i in packageInfo.targets.keys():
-        if packageInfo.defaultTarget == i:
-            print '*',
-        else:
-            print ' ',
-        print i
+    if hasattr( mod, 'subinfo' ):
+        info = mod.subinfo()
+        if len( info.svnTargets ) is 1 and not info.svnTargets[ info.svnTargets.keys()[0] ]:
+            return False
+        return len( info.svnTargets ) > 0
+    else:
+        return False
 
 def printCategoriesPackagesAndVersions(lines, condition):
     """prints a number of 'lines', each consisting of category, package and version field"""
@@ -715,7 +749,7 @@ def unmerge( rootdir, package, forced = False ):
                 os.remove( os.path.join( rootdir, "manifest", file ) )
     return
 
-def manifestDir( srcdir, imagedir, package, version ):
+def manifestDir( srcdir, imagedir, category, package, version ):
     print "manifestDir: %s %s %s %s" % (srcdir, imagedir, package, version)
     """ make the manifest files for an imagedir like the kdewin-packager does """
     debug( "manifestDir called: %s %s" % ( srcdir, imagedir ), 1 )
@@ -807,11 +841,11 @@ def manifestDir( srcdir, imagedir, package, version ):
     if len(docList) > 0:
         docversion = open( os.path.join( imagedir, "manifest", "%s-%s-doc.ver" % ( package, version )), 'wb' )
     if len(binList) > 0:
-        binversion.write( "%s %s Binaries\n%s:" % ( package, version, package ) )
+        binversion.write( "%s %s Binaries\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
     if len(libList) > 0:
-        libversion.write( "%s %s developer files\n%s:" % ( package, version, package ) )
+        libversion.write( "%s %s developer files\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
     if len(docList) > 0:
-        docversion.write( "%s %s Documentation\n%s:" % ( package, version, package ) )
+        docversion.write( "%s %s Documentation\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
 
 def mergeImageDirToRootDir( imagedir, rootdir ):
     copySrcDirToDestDir( imagedir, rootdir )
