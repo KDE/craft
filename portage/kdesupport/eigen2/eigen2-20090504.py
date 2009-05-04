@@ -11,9 +11,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['2.0-beta5'] = 'tags/eigen/2.0-beta5'
-        self.svnTargets['2.0-beta6'] = 'tags/eigen/2.0-beta6'
         self.svnTargets['2.0.0'] = 'tags/eigen/2.0.0'
+        self.svnTargets['2.0.1'] = 'tags/eigen/2.0.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen2'
         self.defaultTarget = 'svnHEAD'
 

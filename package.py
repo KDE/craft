@@ -19,8 +19,8 @@ def system( cmdstring, logfile ):
   
 def kdesupport():
     packages = "qt,4.4.3-2 kdewin32,0.3.9, kdewin-installer,svnHEAD \
-                automoc,0.9.88 akonadi,1.1.1 clucene-core,0.9.21-2 \
-                eigen2,2.0.0 qca,2.0.1-2 qimageblitz,0.0.5 \
+                automoc,0.9.88 akonadi,1.1.2 clucene-core,0.9.21-2 \
+                eigen2,2.0.1 qca,2.0.1-2 qimageblitz,0.0.5 \
                 phonon,4.3.0 soprano,2.2.2 strigi,0.6.5 taglib,1.5.0"
     for d in packages.split():
       (name, version) = d.split(',')
@@ -75,7 +75,7 @@ def kde_languages(suffix = ""):
     else:
       print log.write( "%s OK\n" % full_name )
 
-os.environ["EMERGE_TARGET"]="4.2.2"
+os.environ["EMERGE_TARGET"]="4.2.3"
 os.environ["EMERGE_OFFLINE"]=""
 suffix = "kde-4.2"
 
