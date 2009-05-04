@@ -13,11 +13,15 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.1'
     
     def setDependencies( self ):
+        if self.buildTarget == '4.1':
+            self.hardDependencies['kdesupport/phonon'] = '4.2.0'
+        else:
+            self.hardDependencies['kdesupport/phonon'] = '4.3.0'
+
         self.hardDependencies['kdesupport/kdewin32'] = 'default'
         self.hardDependencies['kdesupport/qimageblitz'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
-        self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['dev-util/perl']       = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
