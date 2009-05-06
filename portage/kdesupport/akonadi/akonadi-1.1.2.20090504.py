@@ -8,7 +8,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
-        self.hardDependencies['win32libs-bin/boost'] = 'default'
+        self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
+        self.hardDependencies['win32libs-bin/boost']   = 'default'
+        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         self.boostversion = "1.37"
 

@@ -15,7 +15,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.4.3-2'] = 'branches/qt/4.4'
+        self.svnTargets['4.4.3-3'] = 'branches/qt/4.4'
         self.svnTargets['svnHEAD'] = 'trunk/qt-copy/'
         self.defaultTarget = 'svnHEAD'
 

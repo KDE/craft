@@ -11,6 +11,9 @@ class subinfo(info.infoclass):
           self.patchToApply[v] = ( 'poppler-data-cmake.patch', 0 )
         self.defaultTarget = '0.2.1'
 
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )

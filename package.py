@@ -18,13 +18,15 @@ def system( cmdstring, logfile ):
     return ( ret == 0 )
   
 def kdesupport():
-    packages = "qt,4.4.3-2 kdewin32,0.3.9, kdewin-installer,svnHEAD \
+    packages = "qt,4.4.3-3 kdewin-installer,svnHEAD kdewin32,0.3.9 \
                 automoc,0.9.88 akonadi,1.1.2 clucene-core,0.9.21-2 \
                 eigen2,2.0.1 qca,2.0.1-2 qimageblitz,0.0.5 \
                 phonon,4.3.0 soprano,2.2.2 strigi,0.6.5 taglib,1.5.0"
     for d in packages.split():
       (name, version) = d.split(',')
       system( "--unmerge %s" % name, outfile % name )
+      if not system( "--install-deps %s" % name, outfile % name ):
+        die( "%s FAILED" % full_name )
       if not system( "--target=%s %s" % ( version, name ), outfile % name ):
         die( "%s FAILED\n" % name )
       system( "--package --target=%s %s" % ( version, name ), outfile % name )
@@ -37,6 +39,8 @@ def kde_base_system(suffix = ""):
       system( "--unmerge %s" % p, outfile % p )
       if suffix != "":
         system( "--unmerge %s" % full_name, outfile % p )
+      if not system( "--install-deps %s" % full_name, outfile % p ):
+        die( "%s FAILED" % full_name )
       if not system( "--offline %s" % full_name, outfile % p ):
         die( "%s FAILED\n" % p )
       if not system( "--package %s" % full_name, outfile % p ):
@@ -44,7 +48,8 @@ def kde_base_system(suffix = ""):
       print log.write( "%s OK\n" % full_name )
 
 def kde_packages(suffix = ""):
-    packages = "kdebase-apps kdeedu kdegames kdegraphics kdenetwork kdesdk kdetoys kdewebdev kdeutils"
+    packages = "kdebase-apps kdeedu kdegames kdegraphics kdemultimedia \
+                kdenetwork kdesdk kdetoys kdewebdev kdeutils"
     for p in packages.split():
       full_name = "%s/%s" % ( suffix, p )
 

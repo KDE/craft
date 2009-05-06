@@ -30,7 +30,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdewin32", "0.3.9", True )
+        return self.doPackaging( "kdewin32", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
