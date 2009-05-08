@@ -9,11 +9,10 @@ class subinfo(info.infoclass):
             compiler = "mingw"
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['0.10.3', '0.10.4', '0.10.5']:
-            self.targets[ version ] = repoUrl + """/poppler-"""+ compiler + """-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/poppler-"""+ compiler + """-""" + version + """-lib.tar.bz2"""
+        for ver in ['0.10.3', '0.10.4', '0.10.5', '0.10.6']:
+            self.targets[ ver ] = self.getPackage( repoUrl, "poppler", ver )
 
-        self.defaultTarget = '0.10.5'
+        self.defaultTarget = '0.10.6'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

@@ -7,17 +7,21 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.16'] = 'http://www.exiv2.org/exiv2-0.16.tar.gz'
-        self.targetInstSrc['0.16'] = 'exiv2-0.16'
-        self.targets['0.17'] = 'http://www.exiv2.org/exiv2-0.17.tar.gz'
-        self.targetInstSrc['0.17'] = 'exiv2-0.17'
-        self.targets['0.18'] = 'http://www.exiv2.org/exiv2-0.18.tar.gz'
-        self.targetInstSrc['0.18'] = 'exiv2-0.18'
+        for f in ( '16', '17', '18', '18.1' ):
+          ver = '0.' + f
+          self.targets[ver]       = 'http://www.exiv2.org/exiv2-%s.tar.gz' % ver
+          self.targetInstSrc[ver] = 'exiv2-%s' % ver
+          self.patchToApply[ver]  = ( 'exiv2-%s-cmake.diff' % ver, 0 )
+
         self.svnTargets['svnHEAD'] = 'unstable'
-        self.defaultTarget = '0.18'
+        self.defaultTarget = '0.18.1'
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-bin/iconv']   = 'default'
+        self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        self.hardDependencies['win32libs-bin/expat']   = 'default'
+        self.hardDependencies['win32libs-bin/zlib']    = 'default'
+        self.hardDependencies['virtual/base']          = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -37,11 +41,6 @@ class subclass(base.baseclass):
             else:
                 return False
             utils.cleanDirectory( self.workdir )
-        
-
-        os.chdir( self.workdir )
-        if self.buildTarget in ['0.16', '0.17', '0.18']:
-            self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "exiv2-" + self.buildTarget + "-cmake.diff" ) ) )
         return True
         
     def compile( self ):

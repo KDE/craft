@@ -4,13 +4,16 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        compiler = "msvc"
+        if os.getenv("KDECOMPILER") == "mingw":
+            compiler = "mingw"
+
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['1.12', '1.12-1']:
-            self.targets[ version ] = repoUrl + """/iconv-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/iconv-""" + version + """-lib.tar.bz2"""
+        for ver in ['0.18', '0.18.1']:
+            self.targets[ ver ] = self.getPackage( repoUrl, "exiv2", ver )
 
-        self.defaultTarget = '1.12-1'
+        self.defaultTarget = '0.18.1'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

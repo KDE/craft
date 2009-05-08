@@ -1,15 +1,14 @@
 import base
+import os
 import info
-
-# currently only needed from kdenetwork
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['1.9', '1.12', '1.13']:
-            self.targets[ version ] = repoUrl + """/libidn-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/libidn-""" + version + """-lib.tar.bz2"""
+        for version in ['1.12', '1.12-1', '1.13']:
+            self.targets[ version ] = repoUrl + """/iconv-""" + version + """-bin.tar.bz2
+                                """ + repoUrl + """/iconv-""" + version + """-lib.tar.bz2"""
 
         self.defaultTarget = '1.13'
 

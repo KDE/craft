@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
 
 set(PACKAGE "libidn")
 set(PACKAGE_NAME "GNU Libidn")
-set(PACKAGE_VERSION "1.13")
+set(PACKAGE_VERSION "1.14")
 set(PACKAGE_BUGREPORT "bug-libidn@gnu.org")
 set(LOCALEDIR .)
 

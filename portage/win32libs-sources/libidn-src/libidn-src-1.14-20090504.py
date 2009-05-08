@@ -6,15 +6,10 @@ import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.2'] = 'ftp://alpha.gnu.org/pub/gnu/libidn/libidn-1.2.tar.gz'
-        self.targets['1.9'] = 'ftp://alpha.gnu.org/pub/gnu/libidn/libidn-1.9.tar.gz'
-        self.targets['1.12'] = 'ftp://alpha.gnu.org/pub/gnu/libidn/libidn-1.12.tar.gz'
-        self.targets['1.13'] = 'ftp://alpha.gnu.org/pub/gnu/libidn/libidn-1.13.tar.gz'
-        self.targetInstSrc['1.2'] = 'libidn-1.2'
-        self.targetInstSrc['1.9'] = 'libidn-1.9'
-        self.targetInstSrc['1.12'] = 'libidn-1.12'
-        self.targetInstSrc['1.13'] = 'libidn-1.13'
-        self.defaultTarget = '1.13'
+        ver = '1.14'
+        self.targets[ver]       = 'ftp://alpha.gnu.org/pub/gnu/libidn/libidn-%s.tar.gz' % ver
+        self.targetInstSrc[ver] = 'libidn-%s' % ver
+        self.defaultTarget = ver
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'

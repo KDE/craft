@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
             tgt = '0.8.%s' % i
             self.targets[ tgt ] = 'http://poppler.freedesktop.org/poppler-' + tgt + '.tar.gz'
             self.targetInstSrc[ tgt ] = 'poppler-' + tgt
-        for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5' ):
+        for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5', '0.10.6' ):
           self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
           self.targetInstSrc[ i ] = 'poppler-%s' % i
-        self.defaultTarget = "0.10.5"
+        self.defaultTarget = "0.10.6"
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'

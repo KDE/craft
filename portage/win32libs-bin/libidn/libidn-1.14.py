@@ -1,20 +1,17 @@
 import base
-import os
 import info
+
+# currently only needed from kdenetwork
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['0.18']:
-            self.targets[ version ] = repoUrl + """/exiv2-""" + compiler + """-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/exiv2-""" + compiler + """-""" + version + """-lib.tar.bz2"""
+        for version in ['1.9', '1.12', '1.13', '1.14']:
+            self.targets[ version ] = repoUrl + """/libidn-""" + version + """-bin.tar.bz2
+                                """ + repoUrl + """/libidn-""" + version + """-lib.tar.bz2"""
 
-        self.defaultTarget = '0.18'
+        self.defaultTarget = '1.14'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
