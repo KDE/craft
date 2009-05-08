@@ -113,7 +113,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +  plugins/anonymous_init.c
 +)
 +add_library(saslANONYMOUS MODULE ${anonymous_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslANONYMOUS sasl ${additional_link_libs})
++target_link_libraries(saslANONYMOUS sasl2 ${additional_link_libs})
 +install(TARGETS saslANONYMOUS DESTINATION bin/sasl2)
 +
 +#
@@ -124,7 +124,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +  plugins/login_init.c
 +)
 +add_library(saslLOGIN MODULE ${login_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslLOGIN sasl ${additional_link_libs})
++target_link_libraries(saslLOGIN sasl2 ${additional_link_libs})
 +install(TARGETS saslLOGIN DESTINATION bin/sasl2)
 +
 +#
@@ -135,7 +135,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +  plugins/plain_init.c
 +)
 +add_library(saslPLAIN MODULE ${plain_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslPLAIN sasl ${additional_link_libs})
++target_link_libraries(saslPLAIN sasl2 ${additional_link_libs})
 +install(TARGETS saslPLAIN DESTINATION bin/sasl2)
 +
 +#
@@ -146,7 +146,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +  plugins/crammd5_init.c
 +)
 +add_library(saslCRAMMD5 MODULE ${crammd5_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslCRAMMD5 sasl ${additional_link_libs})
++target_link_libraries(saslCRAMMD5 sasl2 ${additional_link_libs})
 +install(TARGETS saslCRAMMD5 DESTINATION bin/sasl2)
 +
 +#
@@ -157,7 +157,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +  plugins/digestmd5_init.c
 +)
 +add_library(saslDIGESTMD5 MODULE ${digestmd5_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslDIGESTMD5 sasl ${additional_link_libs})
++target_link_libraries(saslDIGESTMD5 sasl2 ${additional_link_libs})
 +install(TARGETS saslDIGESTMD5 DESTINATION bin/sasl2)
 +
 +
@@ -165,7 +165,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +# Pluginviewer
 +#
 +add_executable(sasl2_pluginviewer utils/pluginviewer.c)
-+target_link_libraries(sasl2_pluginviewer sasl ${additional_link_libs})
++target_link_libraries(sasl2_pluginviewer sasl2 ${additional_link_libs})
 +install(TARGETS sasl2_pluginviewer DESTINATION bin)
 diff -u -r -N cyrus-sasl-2.1.22-orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
 --- cyrus-sasl-2.1.22-orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
