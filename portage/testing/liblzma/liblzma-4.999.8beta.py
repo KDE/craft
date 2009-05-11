@@ -18,6 +18,13 @@ class subclass(base.baseclass):
     self.buildType = "Release"
     self.subinfo = subinfo()
 
+  def execute( self ):
+    base.baseclass.execute( self )
+    if self.compiler != "mingw":
+      print "error: can only be build with MinGW (but in the end a \
+             mingw/msvc combined package is created"
+      exit( 1 )
+
   def unpack( self ):
     if( not base.baseclass.unpack( self ) ):
       return False
