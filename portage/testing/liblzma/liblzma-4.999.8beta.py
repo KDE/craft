@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         ver = '4.999.8beta'
         self.targets[ver] = 'http://tukaani.org/xz/xz-4.999.8beta.tar.gz'
-        self.targetInstSrc[ver] = 'lzma-' + ver
+        self.targetInstSrc[ver] = 'xz-' + ver
         self.defaultTarget = ver
 
 class subclass(base.baseclass):
