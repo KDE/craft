@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import utils
@@ -6,7 +7,7 @@ import sys
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/work/konvi-kde4'
+        self.svnTargets['svnHEAD'] = 'trunk/extragear/network/konversation'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
