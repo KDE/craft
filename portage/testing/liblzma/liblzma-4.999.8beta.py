@@ -46,6 +46,7 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
+    self.createImportLibs( "liblzma" )
     self.doPackaging( "liblzma", self.buildTarget, True )
     return True
 
