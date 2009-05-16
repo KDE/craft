@@ -16,8 +16,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.4.3-3'] = 'branches/qt/4.4'
-        self.svnTargets['svnHEAD'] = 'trunk/qt-copy/'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['4.5.1-1'] = 'trunk/qt-copy/'
+        self.defaultTarget = '4.5.1-1'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -63,11 +63,12 @@ class subclass(base.baseclass):
 
         svnpath = os.path.join( self.kdesvndir, self.kdeSvnPath() )
 
-        # use our configure.exe until tt has the patches upstream
-        src = os.path.join( self.packagedir, "configure.exe" )
-        dst = os.path.join( svnpath, "configure.exe" )
-        shutil.copyfile( src, dst )
-        
+        if self.buildTarget == '4.4.3-3':
+          # use our configure.exe until tt has the patches upstream
+          src = os.path.join( self.packagedir, "configure.exe" )
+          dst = os.path.join( svnpath, "configure.exe" )
+          shutil.copyfile( src, dst )
+
         # apply patches
         os.chdir(svnpath)
         cmd = "python apply_patches.py"
@@ -108,15 +109,20 @@ class subclass(base.baseclass):
         else:
             exit( 1 )
 
-        os.environ[ "USERIN" ] = "y"
+        if self.buildTarget == '4.4.3-3':
+          os.environ[ "USERIN" ] = "y"
+          userin = "y"
+        else:
+          os.environ[ "USERIN" ] = "oy"
+          userin = "oy"
         os.chdir( qtbindir )
-        command = r"echo y | %s -platform %s -prefix %s " \
+        command = r"echo %s | %s -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp " \
           "-nomake demos -nomake examples -nomake docs " \
           "-I \"%s\" -L \"%s\" " % \
-          ( configure, platform, prefix,
+          ( userin, configure, platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
         if self.buildType == "Debug":

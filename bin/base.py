@@ -208,7 +208,7 @@ class baseclass:
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
             return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
         else:
-            return utils.getFiles( "", self.downloaddir ) 
+            return utils.getFiles( "", self.downloaddir )
 
     def unpack( self ):
         """unpacking all zipped(gz,zip,bz2) tarballs"""
@@ -433,8 +433,12 @@ class baseclass:
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
               cmd += " -type mingw "
-            else:
+            elif self.compiler == "msvc2005":
               cmd += " -type msvc "
+            elif self.compiler == "msvc2008":
+              cmd += " -type vc90 "
+            else:
+              cmd += " -type unknown "
 
         if special:
             cmd += " -special"

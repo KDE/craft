@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.2.4'
     
     def setDependencies( self ):
+        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
 
 class subclass(base.baseclass):

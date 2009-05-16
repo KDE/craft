@@ -35,8 +35,10 @@ class subclass(base.baseclass):
     def compile( self ):
         if self.compiler == "mingw":
           self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
-        if self.compiler == "msvc2005":
+        elif self.compiler == "msvc2005":
           self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
+        elif self.compiler == "msvc2008":
+          self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
 
         return self.kdeCompile()
 
