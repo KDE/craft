@@ -48,9 +48,10 @@ class subclass(base.baseclass):
         #cmd = "cd %s && patch -p1 < %s" % \
         #  ( srcdir, os.path.join( self.packagedir, "windef.diff" ) )
         #self.system( cmd )
-        cmd = "cd %s && patch -p1 < %s" % \
-          ( srcdir, os.path.join( self.packagedir, "vmr9.diff" ) )
-        self.system( cmd )
+        #this patch fails
+        #cmd = "cd %s && patch -p1 < %s" % \
+        #  ( srcdir, os.path.join( self.packagedir, "vmr9.diff" ) )
+        #self.system( cmd )
         return True
         
     def install( self ):
