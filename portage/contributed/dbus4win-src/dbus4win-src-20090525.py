@@ -19,12 +19,13 @@ class subclass(base.baseclass):
     base.baseclass.__init__( self, args=args )
     self.instsrcdir = os.path.join( "dbus4win-20090525", "cmake" )
     self.subinfo = subinfo()
-    
+    self.kdeCustomDefines = "-DDBUS_USE_EXPAT=ON"
+
   def unpack( self ):
     if( not base.baseclass.unpack( self ) ):
         return False
 
-    print "dbus unpack called for %s" % self.subinfo.buildTarget
+    print "dbus4win unpack called for %s" % self.subinfo.buildTarget
 
     if( not os.path.exists( self.workdir ) ):
         os.makedirs( self.workdir )
@@ -32,14 +33,13 @@ class subclass(base.baseclass):
     return True
 
   def compile( self ):
-    self.kdeCustomDefines = "-DDBUS_USE_EXPAT=ON"
     return self.kdeCompile()
 
   def install( self ):
     return self.kdeInstall()
 
   def make_package( self ):
-    self.doPackaging( "dbus", self.buildTarget, False )
+    self.doPackaging( "dbus4win", self.buildTarget, False )
 
     return True
 
