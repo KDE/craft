@@ -7,7 +7,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['dbus4win-frank'] = 'http://www.kdab.net/~frank/dbus4win-20090525.zip'
+        self.targets['dbus4win-frank'] = 'http://www.kdab.net/~frank/dbus4win-20090526.zip'
         self.defaultTarget = 'dbus4win-frank'
     
     def setDependencies( self ):
@@ -17,9 +17,9 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, args=args )
-    self.instsrcdir = os.path.join( "dbus4win-20090525", "cmake" )
+    self.instsrcdir = os.path.join( "dbus4win-20090526", "cmake" )
     self.subinfo = subinfo()
-    self.kdeCustomDefines = "-DDBUS_USE_EXPAT=ON"
+    self.kdeCustomDefines = "-DDBUS_USE_EXPAT=ON -DDBUS_DISABLE_EXECUTABLE_DEBUG_POSTFIX=ON"
 
   def unpack( self ):
     if( not base.baseclass.unpack( self ) ):
