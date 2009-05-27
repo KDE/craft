@@ -608,13 +608,13 @@ def getInstallables():
 
 def printTargets( category, package, version ):
     """ """
-    targetsList = getAllTags( category, package, version )
+    targetsDict = getAllTags( category, package, version )
     defaultTarget = getDefaultTarget( category, package, version )
-    if not targetsList['svnHEAD']:
-        targetsList.remove('svnHEAD')
-    targetsListKeys = targetsList.keys()
-    targetsListKeys.sort()
-    for i in targetsListKeys:
+    if not targetsDict['svnHEAD']:
+        del targetsDict['svnHEAD']
+    targetsDictKeys = targetsDict.keys()
+    targetsDictKeys.sort()
+    for i in targetsDictKeys:
         if defaultTarget == i:
             print '*',
         else:
