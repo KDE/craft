@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import utils
@@ -6,22 +7,13 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
-        self.svnTargets['1.9.95.8'] = "tags/koffice/1.9.95.8/koffice"
-        self.svnTargets['1.9.95.9'] = "tags/koffice/1.9.95.9/koffice"
-        self.svnTargets['1.9.98.0'] = "tags/koffice/1.9.98.0/koffice"
-        self.svnTargets['1.9.98.2'] = "tags/koffice/1.9.98.2/koffice"
-        self.svnTargets['1.9.99.0'] = "tags/koffice/1.9.99.0/koffice"
         self.svnTargets['2.0'] = "branches/koffice/2.0/koffice"
-        self.targets['alpha10'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.95.10/src/koffice-1.9.95.10.tar.bz2'
-        self.targetInstSrc['alpha10'] = 'koffice-1.9.95.10'
-        self.targets['beta1'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.98.0/src/koffice-1.9.98.0.tar.bz2'
-        self.targetInstSrc['beta1'] = 'koffice-1.9.98.0'
-        self.targets['beta3'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-1.9.98.2/src/koffice-1.9.98.2.tar.bz2'
-        self.targetInstSrc['beta3'] = 'koffice-1.9.98.2'
+        self.targets['2.0.0'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-2.0.0/src/koffice-2.0.0.tar.bz2'
+        self.targetInstSrc['2.0.0'] = 'koffice-2.0.0'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-#        self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
+        self.hardDependencies['win32libs-bin/lcms'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
@@ -51,7 +43,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget == 'alpha10' or self.buildTarget == 'beta1' or self.buildTarget == 'beta3':
+        if self.buildTarget == '2.0.0':
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
@@ -61,7 +53,6 @@ class subclass(base.baseclass):
                   ( src, os.path.join( self.packagedir , "koffice-" + self.buildTarget + ".diff" ) )
             if utils.verbose() >= 1:
                 print cmd
-            self.kdeCustomDefines += " -DINCLUDE_INSTALL_DIR=%s" % os.path.join( self.rootdir, "include" )
             self.system( cmd ) or die( "patch" )
             return True
         else:
