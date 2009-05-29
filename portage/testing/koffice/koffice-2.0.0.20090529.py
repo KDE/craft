@@ -8,14 +8,14 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
         self.svnTargets['2.0'] = "branches/koffice/2.0/koffice"
-        self.targets['2.0.0'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-2.0.0/src/koffice-2.0.0.tar.bz2'
+        self.targets['2.0.0'] = 'ftp://ftp.kde.org/pub/kde/stable/koffice-2.0.0/src/koffice-2.0.0.tar.bz2'
         self.targetInstSrc['2.0.0'] = 'koffice-2.0.0'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde-4.2/kdepimlibs'] = 'default'
+        self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
 #        self.hardDependencies['kdesupport/eigen'] = 'default'
         self.hardDependencies['kdesupport/eigen2'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
