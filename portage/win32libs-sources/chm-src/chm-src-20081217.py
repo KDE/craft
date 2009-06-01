@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import utils
 import os
@@ -7,9 +8,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.39'] = 'http://freshmeat.net/redir/chmlib/22229/url_bz2/chmlib-0.39.tar.bz2'
-        self.targetInstSrc['0.39'] = 'chmlib-0.39'
-        self.defaultTarget = '0.39'
+        self.targets['0.40'] = 'http://www.jedrea.com/chmlib/chmlib-0.40.tar.bz2'
+        self.targetInstSrc['0.40'] = 'chmlib-0.40'
+        self.defaultTarget = '0.40'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -25,7 +26,7 @@ class subclass(base.baseclass):
 
         os.chdir( self.workdir )
         print os.path.join( self.workdir, self.instsrcdir )
-        if self.buildTarget == '0.39':
+        if self.buildTarget == '0.40':
             self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "chm-cmake.diff" ) ) )
         
         return True
