@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import info
@@ -17,6 +18,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['win32libs-bin/expat'] = 'default'
 
 class subclass(base.baseclass):
   def __init__(self):
