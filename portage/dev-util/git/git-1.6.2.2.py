@@ -9,7 +9,7 @@ http://winkde.org/pub/kde/ports/win32/repository/other/Git-1.6.3-preview20090507
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.6.3'] = SRC_URI
-        self.targetInstSrc['1.6.3'] = "Git-1.6.3-preview20090507-2"
+        self.targetInstSrc['1.6.3'] = ""
         self.defaultTarget = '1.6.3'
     
     def setDependencies( self ):
