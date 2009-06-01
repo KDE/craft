@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import utils
 from utils import die
@@ -16,7 +17,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.11'
     
     def setDependencies( self ):
-        self.hardDependencies['dev-util/mingw'] = 'default'
+        self.hardDependencies['gnuwin32/wget'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
