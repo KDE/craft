@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import sys
@@ -39,6 +40,7 @@ class subclass(base.baseclass):
           self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
         elif self.compiler == "msvc2008":
           self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+#       self.kdeCustomDefines += " -DKDE4_ENABLE_UAC_MANIFEST=ON "
 
         return self.kdeCompile()
 
