@@ -31,7 +31,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "konversation4" )
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "konversation", self.buildTarget, True )
+        else:
+            return self.doPackaging( "konversation" )
 		
 if __name__ == '__main__':
     subclass().execute()
