@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import utils
@@ -5,10 +6,6 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for i in ( 0, 1, 2, 3, 4, 7 ):
-            tgt = '0.8.%s' % i
-            self.targets[ tgt ] = 'http://poppler.freedesktop.org/poppler-' + tgt + '.tar.gz'
-            self.targetInstSrc[ tgt ] = 'poppler-' + tgt
         for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5', '0.10.6' ):
           self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
           self.targetInstSrc[ i ] = 'poppler-%s' % i
