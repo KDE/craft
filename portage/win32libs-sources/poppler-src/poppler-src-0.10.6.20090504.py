@@ -25,13 +25,6 @@ class subclass(base.baseclass):
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):
             return False
-        if self.buildTarget == '0.8.0':
-            cmd = "cd %s && patch -p0 < %s" % \
-                  ( self.workdir, os.path.join( self.packagedir , "poppler-pagetransition.diff" ) )
-            if utils.verbose() >= 1:
-                print cmd
-            self.system( cmd ) or die( "patch" )
-            
         return True
         
         
