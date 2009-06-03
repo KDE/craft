@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import sys
@@ -7,10 +8,7 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
-        for rel in ['1.90', '1.94', '1.98']:
-            self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/unstable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
-            self.targetInstSrc[ rel ] = 'amarok-' + rel
-        for rel in ['2.0', '2.0.1.1']:
+        for rel in ['2.0', '2.0.1.1', '2.1']:
             self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/stable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
             self.targetInstSrc[ rel ] = 'amarok-' + rel
         self.defaultTarget = 'svnHEAD'
@@ -34,7 +32,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['1.90', '1.94', '1.98', '2.0', '2.0.1.1']:
+        if self.buildTarget in ['2.0', '2.0.1.1', '2.1']:
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
