@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import utils
 import os
@@ -75,7 +76,8 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
-    self.doPackaging( "dbus", "1.2.4-1", False )
+    self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
+    self.doPackaging( "dbus", "1.2.4-1", True )
 
     return True
 
