@@ -1,7 +1,7 @@
-Index: kotext/KoTextEditingFactory.h
+Index: libs/kotext/KoTextEditingFactory.h
 ===================================================================
---- kotext/KoTextEditingFactory.h	(revision 974288)
-+++ kotext/KoTextEditingFactory.h	(working copy)
+--- libs/kotext/KoTextEditingFactory.h	(revision 974288)
++++ libs/kotext/KoTextEditingFactory.h	(working copy)
 @@ -55,6 +55,11 @@
       */
      QString id() const;
@@ -14,10 +14,10 @@ Index: kotext/KoTextEditingFactory.h
      /**
       * return if the plugin this factory creates has to be shown in the context menu.
       * @see KoTextEditingPlugin::checkSection()
-Index: kotext/opendocument/KoTextSharedLoadingData.cpp
+Index: libs/kotext/opendocument/KoTextSharedLoadingData.cpp
 ===================================================================
---- kotext/opendocument/KoTextSharedLoadingData.cpp	(revision 974288)
-+++ kotext/opendocument/KoTextSharedLoadingData.cpp	(working copy)
+--- libs/kotext/opendocument/KoTextSharedLoadingData.cpp	(revision 974288)
++++ libs/kotext/opendocument/KoTextSharedLoadingData.cpp	(working copy)
 @@ -33,6 +33,7 @@
  #include <KoXmlNS.h>
  #include <KoOdfStylesReader.h>
