@@ -64,7 +64,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.buildTarget == 'svnHEAD':
+        if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "koffice", self.buildTarget, True )
         else:
             return self.doPackaging( "koffice" )
