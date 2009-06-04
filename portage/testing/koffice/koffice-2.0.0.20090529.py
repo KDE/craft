@@ -65,7 +65,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         if self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "koffice", os.path.basename(sys.argv[0]).replace("koffice-", "").replace(".py", ""), True )
+            return self.doPackaging( "koffice", self.buildTarget, True )
         else:
             return self.doPackaging( "koffice" )
 		
