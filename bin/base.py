@@ -210,9 +210,26 @@ class baseclass:
         else:
             return utils.getFiles( "", self.downloaddir )
 
+    def git_unpack( self, repoUrl ):
+        svndir = os.path.join( self.downloaddir, "svn-src" )
+
+        if os.path.exists( self.svndir ):
+            """if directory already exists, simply do a pull but obey to offline"""
+            ret = self.msys.msysExecute( self.svndir, "git", "pull" )
+        else:
+            """it doesn't exist so clone the repo"""
+            ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
+        return ret
+
     def unpack( self ):
         """unpacking all zipped(gz,zip,bz2) tarballs"""
-        utils.debug( "base unpack called, files: %s" % self.filenames, 1 )
+        
+        utils.debug( "base unpack called", 1 )
+
+        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+            if self.subinfo.svnTargets[ self.subinfo.buildTarget ].endswith( '.git' ):
+                return self.git_unpack( self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
+
         if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
             return False
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
@@ -248,8 +265,7 @@ class baseclass:
 
     def unittest( self ):
         """ run the unittests of the package """
-        if utils.verbose() > 1:
-            print "currently only supported for some internal packages"
+        utils.debug( "currently only supported for some internal packages", 1 )
         return True
 
     def qmerge( self ):
