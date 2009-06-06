@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # definitions for the msys build system
 import os
 import utils
@@ -29,7 +30,7 @@ class msys_interface:
 
         cmd +="\""
         if utils.verbose() > 0:
-            print "msys compile: %s" % cmd
+            print "msys execute: %s" % cmd
         utils.system( cmd ) or utils.die( "msys execute failed. cmd: %s" % cmd )
         return True
 
