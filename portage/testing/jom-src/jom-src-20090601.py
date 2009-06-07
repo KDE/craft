@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/msys'] = 'default'
         self.hardDependencies['dev-util/git'] = 'default'
+        self.hardDependencies['testing/libantlr'] = 'default'
         pass
 
 class subclass(base.baseclass):
@@ -35,6 +36,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         self.kde.sourcePath = self.svndir
+        self.doPackaging("jom")
         return True
 
 if __name__ == '__main__':
