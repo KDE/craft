@@ -792,11 +792,12 @@ def manifestDir( srcdir, imagedir, category, package, version ):
 
         for file in files:
             if dirType == 1 or dirType == 2:
-                if file.endswith( ".exe" ) or file.endswith( ".bat" ) or file.endswith( ".dll" ):
-                    binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
             if dirType == 2:
                 if file.endswith( ".a" ) or file.endswith( ".lib" ):
                     libList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                else:
+                    binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
             if dirType == 3 or dirType == 4 or dirType == 5:
                 binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
             if dirType == 6:
