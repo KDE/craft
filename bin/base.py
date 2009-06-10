@@ -36,6 +36,8 @@ if ( KDESVNSERVER == None ):
 KDESVNUSERNAME=os.getenv( "KDESVNUSERNAME" )
 KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
 
+EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
+
 # ok, we have the following dirs:
 # ROOTDIR: the root where all this is below
 # DOWNLOADDIR: the dir under rootdir, where the downloaded files are put into
@@ -338,6 +340,10 @@ class baseclass:
         else:
             utils.die( "KDECOMPILER: %s not understood" % COMPILER )
 
+        if EMERGE_MAKE_PROGRAM and (COMPILER == "msvc2005" or COMPILER == "msvc2008"):
+            self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
+            utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
+
         self.rootdir     = ROOTDIR
         self.downloaddir = DOWNLOADDIR
         self.workdir     = os.path.join( ROOTDIR, "tmp", self.PV, "work" )
@@ -444,7 +450,7 @@ class baseclass:
         else:
             cmd = "-name %s -root %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath )
-        cmd = "kdewin-packager.exe -debuglibs " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+        cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
 
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
