@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         self.hardDependencies['contributed/cyrus-sasl'] = 'default'
 #        self.hardDependencies['contributed/gpgme-qt'] = 'default'
-        self.hardDependencies['kdesupport/akonadi'] = 'default'
+        #self.hardDependencies['kdesupport/akonadi'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):

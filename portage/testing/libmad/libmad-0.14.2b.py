@@ -33,7 +33,7 @@ class subclass( base.baseclass ):
         base.baseclass.unpack( self ) or utils.die( "unpack failed" )
         os.chdir( self.workdir )
         shutil.copyfile( os.path.join( self.packagedir, "CMakeLists.txt" ), os.path.join( self.workdir,self.instsrcdir, "CMakeLists.txt" ) )
-        shutil.copyfile( os.path.join( self.packagedir, "FindKDEWIN32.cmake" ), os.path.join( self.workdir,self.instsrcdir, "FindKDEWIN32.cmake" ) )
+        shutil.copyfile( os.path.join( self.packagedir, "FindKDEWIN.cmake" ), os.path.join( self.workdir,self.instsrcdir, "FindKDEWIN.cmake" ) )
         if( not os.path.exists( self.workdir ) ):
             os.makedirs( self.workdir )
         return True

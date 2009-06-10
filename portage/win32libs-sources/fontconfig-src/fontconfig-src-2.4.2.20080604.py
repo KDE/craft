@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.4.2-3'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
     
 class subclass(base.baseclass):

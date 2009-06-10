@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         else:
             self.hardDependencies['kdesupport/phonon'] = '4.3.0'
 
-        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/qimageblitz'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'

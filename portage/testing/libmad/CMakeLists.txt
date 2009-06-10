@@ -3,7 +3,7 @@ project(libmad)
 cmake_minimum_required(VERSION 2.6)
 
 list(APPEND CMAKE_MODULE_PATH  ${CMAKE_SOURCE_DIR})
-find_package(kdewin32 REQUIRED)
+find_package(kdewin REQUIRED)
 
 option(ENABLE_ASO "architecture-specific optimizations" on) 
 if (ENABLE_ASO)
@@ -32,7 +32,7 @@ endif (MSVC)
 
 include_directories(
 	${CMAKE_BINARY_DIR}/msvc++
-	${KDEWIN32_INCLUDES}
+	${KDEWIN_INCLUDES}
 )
 
 set (exported_headers 
@@ -88,4 +88,4 @@ else (MSVC)
 endif (MSVC)
 
 add_executable(minimad minimad.c)
-target_link_libraries(minimad mad ${KDEWIN32_LIBRARIES})
+target_link_libraries(minimad mad ${KDEWIN_LIBRARIES})

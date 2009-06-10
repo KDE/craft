@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         if not os.getenv("KDECOMPILER") == "mingw":
-            self.hardDependencies['kdesupport/kdewin32'] = 'default'
+            self.hardDependencies['kdesupport/kdewin'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

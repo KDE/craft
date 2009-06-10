@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['gnuwin32/sed'] = 'default'
         
 class subclass(base.baseclass):

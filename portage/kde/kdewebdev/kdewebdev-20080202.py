@@ -28,7 +28,6 @@ class subclass(base.baseclass):
 
     def compile( self ):
         # if you want to build quanta, you need to build kdevplatform as well - this is not build by default!!!
-        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_quanta=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kfilereplace=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kxsldbg=OFF "
 	self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kommander=OFF "

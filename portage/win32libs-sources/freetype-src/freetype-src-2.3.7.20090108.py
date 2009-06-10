@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.3.7-1'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):

@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
-        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['win32libs-bin/freetype'] = 'default'
 
 class subclass(base.baseclass):
