@@ -340,7 +340,7 @@ class baseclass:
         else:
             utils.die( "KDECOMPILER: %s not understood" % COMPILER )
 
-        if EMERGE_MAKE_PROGRAM and (COMPILER == "msvc2005" or COMPILER == "msvc2008"):
+        if EMERGE_MAKE_PROGRAM:
             self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
 
