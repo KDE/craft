@@ -97,6 +97,10 @@ rem This option only applies if you want to make packages. It sets
 rem the output directory where your generated packages should be stored.
 rem set EMERGE_PKGDSTDIR=%KDEROOT%\tmp
 
+rem This option can be used to override the default make program
+rem change the value to the path of the executable you want to use instead.
+rem set EMERGE_MAKE_PROGRAM=%KDEROOT%\bin\jom.exe
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
