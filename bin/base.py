@@ -233,6 +233,8 @@ class baseclass:
 
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
             if self.subinfo.svnTargets[ self.subinfo.buildTarget ].endswith( '.git' ):
+                if ( not os.path.exists( self.workdir ) ):
+                    os.makedirs( self.workdir )
                 return self.git_unpack( self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
 
         if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
