@@ -113,10 +113,10 @@ class subclass(base.baseclass):
           os.environ[ "USERIN" ] = "y"
           userin = "y"
         else:
-          os.environ[ "USERIN" ] = "oy"
-          userin = "oy"
+          os.environ[ "USERIN" ] = "y"
+          userin = "y"
         os.chdir( qtbindir )
-        command = r"echo %s | %s -platform %s -prefix %s " \
+        command = r"echo %s | %s -opensource -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp " \
