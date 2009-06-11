@@ -9,10 +9,6 @@ class subinfo(info.infoclass):
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
 
-        if os.getenv("KDECOMPILER") == "msvc":
-            print "Error: this library has been compiled with a newer compiler, please use the -src package instead!"
-            sys.exit(1)
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['3.1.3']:
