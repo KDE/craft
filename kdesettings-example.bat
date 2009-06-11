@@ -104,7 +104,7 @@ rem set EMERGE_MAKE_PROGRAM=%KDEROOT%\bin\jom.exe
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
-set PATH=%PYTHONPATH%;%KDEROOT%\emerge\bin;%KDEROOT%\dev-utils\bin;%PATH%
+set PATH=%PYTHONPATH%;%PATH%
 
 echo kdesettings.bat executed
 echo KDEROOT     : %KDEROOT%
