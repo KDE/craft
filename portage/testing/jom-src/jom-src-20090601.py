@@ -22,6 +22,9 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
+        if self.buildTarget == "static":
+            self.buildType = "Release"
+
         self.createCombinedPackage = True
 
     def compile( self ):
