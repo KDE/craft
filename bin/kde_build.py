@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # definitions for the kde build system (cmake and svn)
 import os
 import utils
@@ -8,7 +9,7 @@ import info
 class kde_interface:
     def __init__( self, env = dict( os.environ ) ):
         for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER", 
-                    "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN", "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "DIRECTORY_LAYOUT" ]:
+                    "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN", "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
             if not key in env.keys():
                 env[ key ] = None
         self.COMPILER            = env[ "KDECOMPILER" ]
@@ -29,6 +30,7 @@ class kde_interface:
         self.NOFAST = env[ "EMERGE_NOFAST" ]
         self.BUILDTESTS = env[ "EMERGE_BUILDTESTS" ]
         self.DIRECTORY_LAYOUT = env[ "DIRECTORY_LAYOUT" ]
+        self.MAKE_PROGRAM = env[ "EMERGE_MAKE_PROGRAM" ]
         
     def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
         """ """
@@ -42,6 +44,10 @@ class kde_interface:
             self.cmakeMakeProgramm      = "mingw32-make"
         else:
             utils.die( "KDECOMPILER: %s not understood" % self.COMPILER )
+
+        if self.MAKE_PROGRAM:
+            self.cmakeMakeProgramm = self.MAKE_PROGRAM
+            utils.debug( "set custom make program: %s" % self.MAKE_PROGRAM, 1 )
 
         if utils.verbose() > 1:
             print "BuildType: %s" % self.BUILDTYPE
