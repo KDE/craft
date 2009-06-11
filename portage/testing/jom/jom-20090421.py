@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 import base
 import info
 import shutil
@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['HEAD'] = 'http://winkde.org/pub/kde/ports/win32/repository/other/jom.zip'
+        self.targets['HEAD'] = 'http://winkde.org/pub/kde/ports/win32/repository/other/jom-20090611-bin.tar.bz2'
         self.targetInstSrc['HEAD'] = 'jom'
         self.defaultTarget = 'HEAD'
 
