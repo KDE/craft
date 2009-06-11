@@ -215,12 +215,15 @@ class baseclass:
     def git_unpack( self, repoUrl ):
         svndir = os.path.join( self.downloaddir, "svn-src" )
 
+        safePath = os.environ["PATH"]
+        os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
         if os.path.exists( self.svndir ):
             """if directory already exists, simply do a pull but obey to offline"""
             ret = self.msys.msysExecute( self.svndir, "git", "pull" )
         else:
             """it doesn't exist so clone the repo"""
             ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
+        os.environ["PATH"] = safePath
         return ret
 
     def unpack( self ):
