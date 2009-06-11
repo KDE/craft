@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import sys
@@ -15,7 +16,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['contributed/gpgme-qt'] = 'default'
         self.hardDependencies['testing/sqlite'] = 'default'
         
 class subclass(base.baseclass):
