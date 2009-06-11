@@ -28,10 +28,12 @@ class subclass(base.baseclass):
         self.createCombinedPackage = True
 
     def compile( self ):
-        self.kdeCustomDefines = "-DJOM_ENABLE_TESTS=ON"
         if self.buildTarget == "static":
             self.kdeCustomDefines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " % \
             os.path.join(self.rootdir, "qt-static", "bin", "qmake.exe").replace('\\', '/')
+        else:
+            self.kdeCustomDefines = "-DJOM_ENABLE_TESTS=ON"
+
         self.kde.sourcePath = self.svndir
         return self.kdeCompile()
 
