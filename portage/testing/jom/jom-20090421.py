@@ -6,7 +6,7 @@ import os
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['gnuwin32/wget'] = 'default'
 
     def setTargets( self ):
         self.targets['HEAD'] = 'http://winkde.org/pub/kde/ports/win32/repository/other/jom-20090611-bin.tar.bz2'
