@@ -202,20 +202,20 @@ class kde_interface:
 
     def kdeDefaultDefines( self ):
         """defining the default cmake cmd line"""
-        options = "%s -DCMAKE_INSTALL_PREFIX=%s " % \
+        options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
               ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
 
-        options = options + "-DCMAKE_INCLUDE_PATH=%s " % \
+        options = options + "-DCMAKE_INCLUDE_PATH=\"%s\" " % \
                 os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
 
-        options = options + "-DCMAKE_LIBRARY_PATH=%s " % \
+        options = options + "-DCMAKE_LIBRARY_PATH=\"%s\" " % \
                 os.path.join( self.rootdir, "lib" ).replace( "\\", "/" )
 
         if self.buildTests:
             options = options + " -DKDE4_BUILD_TESTS=1 "
 
         options = options + " -DKDE4_ENABLE_EXPERIMENTAL_LIB_EXPORT:BOOL=ON "
-        options = options + " -DKDEWIN_DIR:PATH=%s " % \
+        options = options + " -DKDEWIN_DIR:PATH=\"%s\" " % \
                os.path.join( self.rootdir ).replace( "\\", "/" )
 
         return options
