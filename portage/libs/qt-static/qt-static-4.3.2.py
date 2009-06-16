@@ -10,8 +10,8 @@ http://www.winkde.org/pub/kde/ports/win32/repository/other/qt-static-msvc-4.3.2-
 """
 
 SRC_URI2 = """
-http://www.winkde.org/pub/kde/ports/win32/repository/other/qt-static-msvc-4.5.1-bin.tar.bz2
-http://www.winkde.org/pub/kde/ports/win32/repository/other/qt-static-msvc-4.5.1-lib.tar.bz2
+http://www.winkde.org/pub/kde/ports/win32/repository/other/qt-static-msvc-4.5.1-1-bin.tar.bz2
+http://www.winkde.org/pub/kde/ports/win32/repository/other/qt-static-msvc-4.5.1-1-lib.tar.bz2
 """
 
 class subinfo(info.infoclass):
