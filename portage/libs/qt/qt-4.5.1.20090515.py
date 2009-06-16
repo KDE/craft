@@ -22,17 +22,22 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
+        self.hardDependencies['win32libs-bin/dbus'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
-        
+
+# the dbus and openssl dependencies are not important to be installed, but
+# rather that the packages have been downloaded for use in this build
+# check that 
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "qt-win-opensource-src-" + self.compiler
         self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-3-lib.tar.bz2"
-        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
+        if self.compiler == "msvc2005":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2"
+        elif self.compiler == "msvc2008":
+            self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-vc90-1.2.4-1-lib.tar.bz2"
         elif self.compiler == "mingw":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
         self.subinfo = subinfo()
@@ -98,10 +103,8 @@ class subclass(base.baseclass):
         platform = ""
         libtmp = os.getenv( "LIB" )
         inctmp = os.getenv( "INCLUDE" )
-        if self.compiler == "msvc2005":
-            platform = "win32-msvc2005"
-        elif self.compiler == "msvc2008":
-            platform = "win32-msvc2008"
+        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
+            platform = "win32-%s" % self.compiler
         elif self.compiler == "mingw":
             os.environ[ "LIB" ] = ""
             os.environ[ "INCLUDE" ] = ""
