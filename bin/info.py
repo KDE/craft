@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # this module contains the information class
 import datetime
 import os
@@ -40,6 +41,8 @@ class infoclass:
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
+        elif os.getenv("KDECOMPILER") == "msvc2008":
+            compiler = "vc90"
 
         return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin.tar.bz2\n' + \
                repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib.tar.bz2\n'
