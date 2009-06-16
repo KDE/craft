@@ -1,18 +1,14 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['1.37.0-1']:
-            self.targets[ version ] = repoUrl + """/boost-""" + compiler + """-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/boost-""" + compiler + """-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getPackage( repoUrl, "boost", version )
 
         self.defaultTarget = '1.37.0-1'
 

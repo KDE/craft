@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import info
@@ -7,6 +8,8 @@ class subinfo(info.infoclass):
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
+        elif os.getenv("KDECOMPILER") == "msvc2008":
+            compiler = "vc90"
 
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         

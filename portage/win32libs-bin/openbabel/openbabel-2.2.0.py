@@ -1,18 +1,14 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['2.2.0']:
-            self.targets[ version ] = repoUrl + """/openbabel-""" + compiler + """-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/openbabel-""" + compiler + """-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getPackage( repoUrl, "openbabel", version )
 
         self.defaultTarget = '2.2.0'
 

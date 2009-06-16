@@ -5,10 +5,6 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for ver in ['0.18', '0.18.1']:

@@ -1,13 +1,10 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['7.8','7.9']:

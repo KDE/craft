@@ -1,18 +1,14 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        compiler = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
-
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['3.5.21']:
-            self.targets[ version ] = repoUrl + """/djvulibre-""" + compiler + """-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/djvulibre-""" + compiler + """-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getPackage( repoUrl, "djvulibre", version )
 
         self.defaultTarget = '3.5.21'
 
