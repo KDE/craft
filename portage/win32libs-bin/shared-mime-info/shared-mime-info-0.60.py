@@ -25,7 +25,7 @@ class subclass(base.baseclass):
   def install( self ):
     base.baseclass.install( self )
     print "self.compiler: " + self.compiler
-    if self.compiler == "msvc2005":
+    if self.compiler == "msvc2005" or self.compiler == "msvc2008":
       manifest = os.path.join( self.packagedir, "update-mime-database.exe.manifest" )
       patch = os.path.join( self.imagedir, "bin", "update-mime-database.exe" )
       cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
