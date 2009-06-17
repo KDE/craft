@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="kdegraphics">
+    <package name="libkdegraphics">
+        <shortDescription>the kdegraphics support libraries</shortDescription>
+        <regexp>bin/.*(kdcraw|kexiv|kipi).*</regexp>
+        <regexp>lib/.*(kdcraw|kexiv|kipi).*</regexp>
+        <regexp>include/.*(kdcraw|kexiv|kipi).*</regexp>
+        <regexp>lib/strigi.*</regexp>
+        <regexp>lib/kde4/.*(gsthumbnail|gvpart|msits|mobithumbnail|svgpart).*</regexp>
+        <regexp>share/.*(kdcraw|kexiv|kipi).*</regexp>
+        <regexp>share/.*(gsthumbnail|gvpart|msits|mobithumbnail|svgpart|KSane).*</regexp>
+    </package>
+    <package name="kcolorchooser">
+        <shortDescription>a simple color choosing tool</shortDescription>
+        <regexp>bin/.*kcolorchooser.*</regexp>
+        <regexp>share/.*kcolorchooser.*</regexp>
+    </package>
+    <package name="kruler">
+        <shortDescription>a simple screen ruler</shortDescription>
+        <regexp>bin/.*kruler.*</regexp>
+        <regexp>share/.*kruler.*</regexp>
+    </package>
+    <package name="kolourpaint">
+        <shortDescription>a simple paint application</shortDescription>
+        <regexp>bin/.*kolourpaint.*</regexp>
+        <regexp>lib/.*kolourpaint.*</regexp>
+        <regexp>share/.*kolourpaint.*</regexp>
+    </package>
+    <package name="gwenview">
+        <shortDescription>KDE's image viewer for jpg, png and more</shortDescription>
+        <description>Gwenview is KDE's picture viewer</description>
+        <regexp>bin/.*gwenview.*</regexp>
+        <regexp>lib/.*gwenview.*</regexp>
+        <regexp>share/.*gwenview.*</regexp>
+        <regexp>share/.*slideshow.desktop</regexp>
+    </package>
+    <package name="Okular">
+        <shortDescription>KDE's document viewer for PDF and more</shortDescription>
+        <description>Okular is KDE's document viewer and supports besides PDF also PostScript(.ps,.eps), Oasis-Documents(.odt), DejaVu (.djvu), Compressed Windows Help (.chm), ebooks (.epub)</description>
+        <regexp>bin/.*okular.*</regexp>
+        <regexp>share/.*[Oo]kular.*</regexp>
+        <regexp>lib/kde4.*[Oo]kular.*</regexp>
+        <regexp>include/okular.*</regexp>
+        <regexp>lib/.*okular.*</regexp>
+    </package>
+    <package name="default" empty="false">
+        <shortDescription>the default package</shortDescription>
+    </package>
+</module>
