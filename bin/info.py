@@ -37,12 +37,12 @@ class infoclass:
     def setSVNTargets( self ):
         """ """
 
-    def getPackage( self, repoUrl, name, version ):
+    def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
         elif os.getenv("KDECOMPILER") == "msvc2008":
             compiler = "vc90"
 
-        return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin.tar.bz2\n' + \
-               repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib.tar.bz2\n'
+        return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin' + ext + '\n' + \
+               repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib' + ext + '\n'
