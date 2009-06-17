@@ -43,7 +43,8 @@
         <regexp>include/okular.*</regexp>
         <regexp>lib/.*okular.*</regexp>
     </package>
-    <package name="default" empty="false">
+    <package name="default" empty="true">
         <shortDescription>the default package</shortDescription>
+        <ignore>manifest/.*</ignore>
     </package>
 </module>
