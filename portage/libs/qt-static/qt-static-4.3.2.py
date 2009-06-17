@@ -6,8 +6,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = "http://www.winkde.org/pub/kde/ports/win32/repository/other"
-        for version in ['4.3.2', '4.5.1-1']:
-            self.targets[ version ] = self.getPackage( repoUrl, "qt-static", version )
+        self.targets[ '4.3.2' ] = self.getPackage( repoUrl, "qt-static", '4.3.2', '.zip' )
+        for version in ['4.5.1-1']:
+            self.targets[ version ] = self.getPackage( repoUrl, "qt-static", version)
         self.defaultTarget = '4.5.1-1'
     
 class subclass(base.baseclass):
