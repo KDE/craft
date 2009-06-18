@@ -17,7 +17,6 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libical'] = 'default'
         self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         self.hardDependencies['win32libs-bin/cyrus-sasl'] = 'default'
-#        self.hardDependencies['contributed/gpgme-qt'] = 'default'
         self.hardDependencies['kdesupport/akonadi'] = 'default'
         
 class subclass(base.baseclass):

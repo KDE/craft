@@ -13,7 +13,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
-        self.hardDependencies['contributed/gpgme-qt'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
 class subclass(base.baseclass):
