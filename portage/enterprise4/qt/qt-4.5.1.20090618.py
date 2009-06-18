@@ -22,8 +22,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['win32libs-sources/dbus'] = 'default'
-        self.hardDependencies['win32libs-sources/openssl'] = 'default'
+        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
+        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
 
 # the dbus and openssl dependencies are not important to be installed, but
 # rather that the packages have been downloaded for use in this build
