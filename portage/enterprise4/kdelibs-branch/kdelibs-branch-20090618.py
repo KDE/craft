@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl']       = 'default'
 
-        self.hardDependencies['enterprise4/qt'] = 'default'
+        self.hardDependencies['enterprise4/qt-e'] = 'default'
 
         self.hardDependencies['win32libs-sources/aspell-src']  = 'default'
 #        self.hardDependencies['win32libs-sources/enchant-src']  = 'default'
