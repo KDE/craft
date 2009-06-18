@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
         self.hardDependencies['win32libs-bin/pcre'] = 'default'
-        self.hardDependencies['testing/sqlite'] = 'default'
+        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
 class subclass(base.baseclass):

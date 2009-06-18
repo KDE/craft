@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.8-1'
 
     def setDependencies( self ):
-        self.hardDependencies['testing/sqlite'] = 'default'
+        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         self.hardDependencies['win32libs-bin/libcurl'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['testing/sqlite'] = 'default'
+        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
