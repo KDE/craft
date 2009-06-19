@@ -1,0 +1,18 @@
+Contains the emerge scripts for building the Enterprise4 version of Kontact.
+
+Purpose:
+1) build entirely from source
+2) use -mms-bitfields option throughout
+3) experiment at will without breaking for anyone else
+
+
+Todo:
+figure out how to build the following from source
+* expat
+* giflib
+* zlib
+* gettext (gnuwin32)
+* gettext-tools (gnuwin32)
+* jpeg (gnuwin32)
+* runtime-mingw (gnuwin32)
+* tiff (gnuwin32)
