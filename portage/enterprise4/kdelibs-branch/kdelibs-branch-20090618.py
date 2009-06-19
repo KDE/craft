@@ -16,8 +16,6 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl']       = 'default'
 
-        self.hardDependencies['enterprise4/qt-e'] = 'default'
-
         self.hardDependencies['win32libs-sources/aspell-src']  = 'default'
 #        self.hardDependencies['win32libs-sources/enchant-src']  = 'default'
         self.hardDependencies['win32libs-sources/gettext-src']  = 'default'
@@ -36,14 +34,12 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/shared-mime-info-src']  = 'default'
         self.hardDependencies['win32libs-sources/zlib-src']  = 'default'
 
-        if self.buildTarget == '4.1':
-            self.hardDependencies['kdesupport/phonon'] = '4.2.0'
-        else:
-            self.hardDependencies['kdesupport/phonon'] = '4.3.0'
+        self.hardDependencies['enterprise4/qt-e'] = 'default'
 
-        self.hardDependencies['kdesupport/qimageblitz'] = 'default'
-        self.hardDependencies['kdesupport/soprano'] = 'default'
-        self.hardDependencies['kdesupport/strigi'] = 'default'
+        self.hardDependencies['enterprise4/phonon-e'] = '4.3.0'
+        self.hardDependencies['enterprise4/qimageblitz-e'] = 'default'
+        self.hardDependencies['enterprise4/soprano-e'] = 'default'
+        self.hardDependencies['enterprise4/strigi-e'] = 'default'
         self.hardDependencies['data/aspell-data'] = 'default'
     
 class subclass(base.baseclass):
