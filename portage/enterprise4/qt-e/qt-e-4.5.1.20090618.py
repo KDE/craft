@@ -5,6 +5,7 @@ import shutil
 from utils import die
 import os
 import info
+import re
 
 # ok we need something more here
 # dbus-lib
