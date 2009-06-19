@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'dbus4win-frank'
     
     def setDependencies( self ):
-        self.hardDependencies['win32libs-sources/expat-src'] = 'default'
+        self.hardDependencies['win32libs-bin/expat'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
 
 class subclass(base.baseclass):
