@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
 #        self.hardDependencies['win32libs-sources/hspell-src']  = 'default'
         self.hardDependencies['win32libs-sources/jasper-src']  = 'default'
         self.hardDependencies['win32libs-sources/jpeg-src']  = 'default'
-        self.hardDependencies['win32libs-sources/libbzip2-src']  = 'default'
+        self.hardDependencies['win32libs-bin/libbzip2']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
         self.hardDependencies['win32libs-sources/libxml2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libxslt-src']  = 'default'
