@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['contributed/dbus4win-src'] = 'default'
+        self.hardDependencies['contributed/dbus4win-src'] = 'dbus4win-noncetcp'
         self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
 
 # the dbus and openssl dependencies are not important to be installed, but
@@ -52,6 +52,7 @@ class subclass(base.baseclass):
         # unpack our two external dependencies
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
         files = [ os.path.basename( self.openssl ) ]
+#ENTERPRISE4: we don't use the binary dbus packages
 #        files.append( os.path.basename( self.dbuslib ) )
         if not utils.unpackFiles( self.downloaddir, files, thirdparty_dir ):
             return False
