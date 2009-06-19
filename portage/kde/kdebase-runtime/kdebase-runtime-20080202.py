@@ -10,7 +10,6 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
 
 class subclass(base.baseclass):
