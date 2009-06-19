@@ -49,13 +49,31 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         utils.cleanDirectory( self.workdir )
+
+        if not os.path.exists( os.path.join( self.workdir, "3rdparty", "include", "dbus" ) ):
+            os.makedirs( os.path.join( self.workdir, "3rdparty", "include", "dbus" ) )
+        utils.copySrcDirToDestDir( os.path.join( self.rootdir, "include", "dbus" ), os.path.join( self.workdir, "3rdparty", "include", "dbus" ) )
+        if not os.path.exists( os.path.join( self.workdir, "3rdparty", "include", "openssl" ) ):
+            os.makedirs( os.path.join( self.workdir, "3rdparty", "include", "openssl" ) )
+        utils.copySrcDirToDestDir( os.path.join( self.rootdir, "include", "openssl" ), os.path.join( self.workdir, "3rdparty", "include", "openssl" ) )
+
+        if not os.path.exists( os.path.join( self.workdir, "3rdparty", "lib" ) ):
+            os.makedirs( os.path.join( self.workdir, "3rdparty", "lib" ) )
+        re1 = re.compile(".*dbus-1.*")
+        re2 = re.compile(".*eay.*")
+        for filename in os.listdir( os.path.join( self.rootdir, "lib" ) ):
+            if re1.match( filename ) or re2.match( filename ):
+                src = os.path.join( self.rootdir, "lib", filename )
+                dst = os.path.join( self.workdir, "3rdparty", "lib", filename )
+                shutil.copyfile( src, dst )
+
         # unpack our two external dependencies
-        thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
-        files = [ os.path.basename( self.openssl ) ]
+#        thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
+#        files = [ os.path.basename( self.openssl ) ]
 #ENTERPRISE4: we don't use the binary dbus packages
 #        files.append( os.path.basename( self.dbuslib ) )
-        if not utils.unpackFiles( self.downloaddir, files, thirdparty_dir ):
-            return False
+#        if not utils.unpackFiles( self.downloaddir, files, thirdparty_dir ):
+#            return False
 
         # and now qt
         if self.buildTarget == "4.4":
