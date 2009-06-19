@@ -52,7 +52,7 @@ class subclass(base.baseclass):
         # unpack our two external dependencies
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
         files = [ os.path.basename( self.openssl ) ]
-        files.append( os.path.basename( self.dbuslib ) )
+#        files.append( os.path.basename( self.dbuslib ) )
         if not utils.unpackFiles( self.downloaddir, files, thirdparty_dir ):
             return False
 
