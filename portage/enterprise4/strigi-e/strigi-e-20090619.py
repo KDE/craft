@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['enterprise4/qt-e'] = 'default'
         self.hardDependencies['kdesupport/clucene-core'] = 'default'
-        self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
-        self.hardDependencies['win32libs-sources/iconv-src'] = 'default'
+        self.hardDependencies['win32libs-bin/exiv2'] = 'default'
+        self.hardDependencies['win32libs-bin/iconv'] = 'default'
         self.hardDependencies['win32libs-sources/bzip2-src'] = 'default'
         self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
-        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+        self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
