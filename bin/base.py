@@ -236,7 +236,7 @@ class baseclass:
         utils.debug( "base unpack called", 1 )
 
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            if self.subinfo.svnTargets[ self.subinfo.buildTarget ].endswith( '.git' ):
+            if self.subinfo.buildTarget and self.subinfo.svnTargets[ self.subinfo.buildTarget ].endswith( '.git' ):
                 if ( not os.path.exists( self.workdir ) ):
                     os.makedirs( self.workdir )
                 return self.git_unpack( self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
