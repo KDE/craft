@@ -16,23 +16,28 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl']       = 'default'
 
-        self.hardDependencies['win32libs-sources/aspell-src']  = 'default'
+# aspell-src patch failed and build failed
+        self.hardDependencies['win32libs-bin/aspell']  = 'default'
 #        self.hardDependencies['win32libs-sources/enchant-src']  = 'default'
-        self.hardDependencies['win32libs-sources/gettext-src']  = 'default'
-        self.hardDependencies['win32libs-sources/giflib-src']  = 'default'
+# SaroEngels says that gettext doesn't build, but it looks like it does. hmm.
+        self.hardDependencies['win32libs-bin/gettext']  = 'default'
+        self.hardDependencies['win32libs-bin/giflib']  = 'default'
 #        self.hardDependencies['win32libs-sources/gssapi-src']  = 'default'
 #        self.hardDependencies['win32libs-sources/hspell-src']  = 'default'
+        self.hardDependencies['win32libs-bin/jpeg']  = 'default'
         self.hardDependencies['win32libs-sources/jasper-src']  = 'default'
-        self.hardDependencies['win32libs-sources/jpeg-src']  = 'default'
         self.hardDependencies['win32libs-sources/bzip2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
         self.hardDependencies['win32libs-sources/libxml2-src']  = 'default'
-        self.hardDependencies['win32libs-sources/libxslt-src']  = 'default'
+# libxml2-src patch failed
+        self.hardDependencies['win32libs-bin/libxslt']  = 'default'
 #        self.hardDependencies['win32libs-sources/openexr-src']  = 'default'
         self.hardDependencies['win32libs-sources/openssl-src']  = 'default'
         self.hardDependencies['win32libs-sources/pcre-src']  = 'default'
-        self.hardDependencies['win32libs-sources/shared-mime-info-src']  = 'default'
-        self.hardDependencies['win32libs-sources/zlib-src']  = 'default'
+# shared-mime-info-src build failed
+        self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
+# zlib-src qmerge failed
+        self.hardDependencies['win32libs-bin/zlib']  = 'default'
 
         self.hardDependencies['enterprise4/qt-e'] = 'default'
 
