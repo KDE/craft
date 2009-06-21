@@ -8,11 +8,16 @@ Purpose:
 
 Todo:
 figure out how to build the following from source
+* aspell
+* exiv2
 * expat
+* gettext
+* gettext-tools 
 * giflib
+* iconv
+* jpeg
+* libxslt
+* runtime-mingw
+* shared-mime-info
+* tiff
 * zlib
-* gettext (gnuwin32)
-* gettext-tools (gnuwin32)
-* jpeg (gnuwin32)
-* runtime-mingw (gnuwin32)
-* tiff (gnuwin32)
