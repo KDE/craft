@@ -9,11 +9,13 @@ Purpose:
 Todo:
 figure out how to build the following from source
 * aspell
+* cyrus-sasl
 * exiv2
 * expat
 * gettext
 * gettext-tools 
 * giflib
+* gpgme
 * iconv
 * jpeg
 * libxslt
