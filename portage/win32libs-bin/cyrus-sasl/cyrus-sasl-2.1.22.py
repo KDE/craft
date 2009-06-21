@@ -6,12 +6,12 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['2.1.22']:
+        for version in ['2.1.22-1']:
             self.targets[ version ] = repoUrl + """/cyrus-sasl-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/cyrus-sasl-""" + version + """-lib.tar.bz2"""
 
             
-        self.defaultTarget = '2.1.22'
+        self.defaultTarget = '2.1.22-1'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
