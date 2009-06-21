@@ -170,7 +170,9 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 diff -u -r -N cyrus-sasl-2.1.22-orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
 --- cyrus-sasl-2.1.22-orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ cyrus-sasl-2.1.22/config.h.cmake	2009-04-11 15:24:44.546875000 +0200
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,108 @@
++#ifndef CONFIG_H
++#define CONFIG_H
 +/* Name of package */
 +#cmakedefine PACKAGE "@PACKAGE@"
 +
@@ -276,6 +278,7 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/config.h.cmake cyrus-sasl-2.1.22/config.h.c
 +#ifndef HIER_DELIMITER
 +# define HIER_DELIMITER @HIER_DELIMITER@
 +#endif
++#endif
 diff -u -r -N cyrus-sasl-2.1.22-orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
 --- cyrus-sasl-2.1.22-orig/include/gai.h	2006-04-10 15:36:20.000000000 +0200
 +++ cyrus-sasl-2.1.22/include/gai.h	2009-04-11 15:24:44.593750000 +0200
@@ -308,6 +311,18 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/include/gai.h cyrus-sasl-2.1.22/include/gai
  #endif
  
  #ifdef __cplusplus
+diff -u -r -N cyrus-sasl-2.1.22-orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
+--- cyrus-sasl-2.1.22-orig/lib/saslutil.c	2006-03-13 19:26:36.000000000 +0100
++++ cyrus-sasl-2.1.22/lib/saslutil.c	2009-06-21 23:46:30.391000000 +0200
+@@ -469,7 +469,7 @@
+     memset(buf, 0, len);
+ }
+ 
+-#ifdef WIN32
++#ifdef _MSC_VER
+ /***************************************************************************** 
+  * 
+  *  MODULE NAME : GETOPT.C 
 diff -u -r -N cyrus-sasl-2.1.22-orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pluginviewer.c
 --- cyrus-sasl-2.1.22-orig/utils/pluginviewer.c	2006-05-17 18:46:17.000000000 +0200
 +++ cyrus-sasl-2.1.22/utils/pluginviewer.c	2009-04-11 16:22:20.046875000 +0200
