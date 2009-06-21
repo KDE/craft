@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
+        self.createCombinedPackage = True
         self.subinfo = subinfo()
 
     def compile( self ):
