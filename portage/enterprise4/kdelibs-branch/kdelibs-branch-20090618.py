@@ -41,7 +41,7 @@ class subinfo(info.infoclass):
 
         self.hardDependencies['enterprise4/qt-e'] = 'default'
 
-        self.hardDependencies['enterprise4/kdewin-e] = 'default'
+        self.hardDependencies['enterprise4/kdewin-e'] = 'default'
         self.hardDependencies['enterprise4/phonon-e'] = '4.3.0'
         self.hardDependencies['enterprise4/qimageblitz-e'] = 'default'
         self.hardDependencies['enterprise4/soprano-e'] = 'default'
