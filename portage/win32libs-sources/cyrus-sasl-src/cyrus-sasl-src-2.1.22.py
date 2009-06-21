@@ -28,6 +28,12 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
+		# auto-create both import libs with the help of pexports
+		self.stripLibs( "libsasl2" )
+
+		# auto-create both import libs with the help of pexports
+		self.createImportLibs( "libsasl2" )
+
         return self.doPackaging( "cyrus-sasl", self.buildTarget, True )
 
 if __name__ == '__main__':
