@@ -13,14 +13,12 @@ figure out how to build the following from source
 * exiv2
 * expat
 * gettext
-* gettext-tools 
 * giflib
 * gpgme
 * iconv
 * jpeg
 * libxslt
-* runtime-mingw
+* libxml2
 * shared-mime-info
 * sqlite
-* tiff
 * zlib
