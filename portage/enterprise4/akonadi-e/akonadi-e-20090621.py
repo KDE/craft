@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-        self.hardDependencies['win32libs-source/boost-src']   = 'default'
+        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
         self.hardDependencies['enterprise4/automoc-e'] = 'default'
         self.hardDependencies['enterprise4/soprano-e'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
