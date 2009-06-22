@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/boost-src']   = 'default'
         self.hardDependencies['enterprise4/automoc-e'] = 'default'
         self.hardDependencies['enterprise4/soprano-e'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['enterprise4/qt-e'] = 'default'
         self.boostversion = "1.37"
 
     def setTargets( self ):
