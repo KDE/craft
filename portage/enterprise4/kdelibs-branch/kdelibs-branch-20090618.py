@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libxslt']  = 'default'
 #        self.hardDependencies['win32libs-sources/openexr-src']  = 'default'
         self.hardDependencies['win32libs-sources/openssl-src']  = 'default'
-        self.hardDependencies['win32libs-sources/pcre-src']  = 'default'
+        self.hardDependencies['enterprise4/libs-sources/pcre-src-e']  = 'default'
 # shared-mime-info-src build failed
         self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
 # zlib-src qmerge failed
