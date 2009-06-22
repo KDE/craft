@@ -21,5 +21,6 @@ figure out how to build the following from source
 * libxslt
 * runtime-mingw
 * shared-mime-info
+* sqlite
 * tiff
 * zlib
