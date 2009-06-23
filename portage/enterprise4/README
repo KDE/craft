@@ -8,13 +8,17 @@ Purpose:
 
 Todo:
 figure out how to build the following from source
-* aspell
+
+Priority top first.
+
 * cyrus-sasl
+	Needed to log in for some connects, thus important.
+* openldap
+	Needed for KAddressbook LDAP search
 * exiv2
 * expat
 * gettext
 * giflib
-* gpgme
 * iconv
 * jpeg
 * libxslt
@@ -22,3 +26,11 @@ figure out how to build the following from source
 * shared-mime-info
 * sqlite
 * zlib
+* aspell
+
+* gpgme
+Lesser priority because http://gpg4win.org/ is already build with
+-mmsbitfields and has a working source code installer and build system
+on GNU/Linux.
+
+
