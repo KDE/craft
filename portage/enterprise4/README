@@ -15,6 +15,23 @@ Priority top first.
 	Needed to log in for some connects, thus important.
 * openldap
 	Needed for KAddressbook LDAP search
+
+	Procedure used for 
+	KoWi-Installer-src-20090313/openldap-2.4.11-mingw-build-20080919-1.zip:
+
+	General reference: http://bowmansolutions.com/mingw-openldap/
+	With emerge after setting up emerge, a fresh directory "kderoot":
+	* emerge mingw openssl win32libs msys
+	* download and install of setup.exe for cygpath.exe
+	* cygpath.exe, cygwin.dll copied in kderoot/bin
+	* groff-1.19.2-bin.zip: unpacked and soelim.exe to kderoot/bin 
+	* mingw-libgnurx-2.5.1-bin.tar.gz, mingw-libgnurx-2.5.1-dev.tar.gz:
+	  unpacked and copied to corresponding directories in kderoot/mingw
+	* openldap-stable-20080813.tgz (2.4.11) unpacked to msys.
+	* ./configure --with-ssl --with-tls --disable-slapd --disable-backends --disable-slurpd --prefix=c:/mingw --sysconfdir=/c
+	* make depend ; make ; make install
+	* copy /mingw to openldap-2.4.11-mingw; remove directory "man"; pack up
+
 * exiv2
 * expat
 * gettext
@@ -32,5 +49,3 @@ Priority top first.
 Lesser priority because http://gpg4win.org/ is already build with
 -mmsbitfields and has a working source code installer and build system
 on GNU/Linux.
-
-
