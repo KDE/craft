@@ -24,7 +24,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         # the dbus binary package do not contain debug import libraries
-        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
+        if os.getenv("KDECOMPILER") == "mingw":
+            self.hardDependencies['win32libs-bin/dbus'] = 'default'
+        else:
+            self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
 # the dbus and openssl dependencies are not important to be installed, but
