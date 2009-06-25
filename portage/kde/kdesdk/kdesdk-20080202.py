@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['win32libs-bin/boost'] = 'default'
         self.hardDependencies['win32libs-bin/zip'] = 'default'
         
 class subclass(base.baseclass):
