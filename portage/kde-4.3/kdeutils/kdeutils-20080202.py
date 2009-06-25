@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import sys
@@ -15,6 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
+        self.hardDependencies['kde-4.3/kdelibs-experimental'] = 'default'
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/libgmp'] = 'default'
         self.hardDependencies['win32libs-bin/libzip'] = 'default'
