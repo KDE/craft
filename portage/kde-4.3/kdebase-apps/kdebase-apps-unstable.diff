@@ -1,0 +1,562 @@
+Index: apps/CMakeLists.txt
+===================================================================
+--- apps/CMakeLists.txt
++++ apps/CMakeLists.txt
+@@ -27,9 +27,9 @@
+ add_subdirectory( kfind )
+ add_subdirectory( kappfinder )
+ add_subdirectory( plasma )
++add_subdirectory( konsole )
+ 
+ if ( Q_WS_MAC )
+-  add_subdirectory( konsole )
+   add_subdirectory( kdepasswd )
+ endif ( Q_WS_MAC )
+ 
+Index: apps/konsole/data/keyboard-layouts/CMakeLists.txt
+===================================================================
+--- apps/konsole/data/keyboard-layouts/CMakeLists.txt
++++ apps/konsole/data/keyboard-layouts/CMakeLists.txt
+@@ -1,10 +1,20 @@
+-install( FILES
+-         default.keytab
+-         linux.keytab 
+-         #  DON'T INSTALL VT420 KEYBOARD LAYOUT - IT DOESN'T WORK WITH
+-         #  ACTUAL VT420 SYSTEMS - EITHER RENAME IT OR IMPROVE KONSOLE
+-         #  vt420pc.keytab 
+-         solaris.keytab    
+-         README.KeyTab 
+-         DESTINATION 
+-         ${DATA_INSTALL_DIR}/konsole )
++if(NOT WIN32)
++    install( FILES
++             default.keytab
++             linux.keytab 
++             #  DON'T INSTALL VT420 KEYBOARD LAYOUT - IT DOESN'T WORK WITH
++             #  ACTUAL VT420 SYSTEMS - EITHER RENAME IT OR IMPROVE KONSOLE
++             #  vt420pc.keytab 
++             solaris.keytab    
++             README.KeyTab 
++             DESTINATION 
++             ${DATA_INSTALL_DIR}/konsole )
++else(NOT WIN32)
++    configure_file( windows.keytab ${CMAKE_CURRENT_BINARY_DIR}/default.keytab COPYONLY)
++    install( FILES
++             ${CMAKE_CURRENT_BINARY_DIR}/default.keytab
++             windows.keytab
++             README.KeyTab 
++             DESTINATION 
++             ${DATA_INSTALL_DIR}/konsole )
++endif(NOT WIN32)
+Index: apps/konsole/data/keyboard-layouts/windows.keytab
+===================================================================
+--- apps/konsole/data/keyboard-layouts/windows.keytab
++++ apps/konsole/data/keyboard-layouts/windows.keytab
+@@ -0,0 +1,183 @@
++# [windows.keytab] Konsole Keyboard Table (Windows console keys)
++#
++# --------------------------------------------------------------
++
++# NOT TESTED, MAY NEED SOME CLEANUPS
++keyboard "Windows cmd"
++
++# --------------------------------------------------------------
++#
++# This configuration table allows to customize the
++# meaning of the keys.
++#
++# The syntax is that each entry has the form : 
++#
++#   "key" Keyname { ("+"|"-") Modename } ":" (String|Operation)
++#
++# Keynames are those defined in <qnamespace.h> with the
++# "Qt::Key_" removed. (We'd better insert the list here)
++#
++# Mode names are : 
++#
++# - Shift
++# - Alt
++# - Control
++#
++#   The VT100 emulation has two modes that can affect the
++#   sequences emitted by certain keys. These modes are
++#   under control of the client program.
++#   
++# - Newline     : effects Return and Enter key.
++# - Application : effects Up and Down key.
++#
++# - Ansi        : effects Up and Down key (This is for VT52, really).
++#
++# Operations are
++#
++# - scrollUpLine
++# - scrollUpPage
++# - scrollDownLine
++# - scrollDownPage
++#
++# - emitSelection
++#
++# If the key is not found here, the text of the
++# key event as provided by Qt is emitted, possibly
++# preceeded by ESC if the Alt key is pressed.
++#
++# --------------------------------------------------------------
++
++key Tab    : "\t"
++
++key Return-NewLine : "\r\n"
++
++#----------------------------------------------------------
++
++# keypad characters as offered by Qt
++# cannot be recognized as such.
++
++#----------------------------------------------------------
++
++# Following other strings as emitted by konsole.
++# [windows.keytab] Konsole Keyboard Table (Windows console keys)
++#
++# --------------------------------------------------------------
++
++# NOT TESTED, MAY NEED SOME CLEANUPS
++keyboard "Windows cmd"
++
++# --------------------------------------------------------------
++#
++# This configuration table allows to customize the
++# meaning of the keys.
++#
++# The syntax is that each entry has the form : 
++#
++#   "key" Keyname { ("+"|"-") Modename } ":" (String|Operation)
++#
++# Keynames are those defined in <qnamespace.h> with the
++# "Qt::Key_" removed. (We'd better insert the list here)
++#
++# Mode names are : 
++#
++# - Shift
++# - Alt
++# - Control
++#
++#   The VT100 emulation has two modes that can affect the
++#   sequences emitted by certain keys. These modes are
++#   under control of the client program.
++#   
++# - Newline     : effects Return and Enter key.
++# - Application : effects Up and Down key.
++#
++# - Ansi        : effects Up and Down key (This is for VT52, really).
++#
++# Operations are
++#
++# - scrollUpLine
++# - scrollUpPage
++# - scrollDownLine
++# - scrollDownPage
++#
++# - emitSelection
++#
++# If the key is not found here, the text of the
++# key event as provided by Qt is emitted, possibly
++# preceeded by ESC if the Alt key is pressed.
++#
++# --------------------------------------------------------------
++
++key Tab    : "\t"
++
++key Return-NewLine : "\r\n"
++
++#----------------------------------------------------------
++
++# keypad characters as offered by Qt
++# cannot be recognized as such.
++
++#----------------------------------------------------------
++
++# Following other strings as emitted by konsole.
++# [windows.keytab] Konsole Keyboard Table (Windows console keys)
++#
++# --------------------------------------------------------------
++
++# NOT TESTED, MAY NEED SOME CLEANUPS
++keyboard "Windows cmd"
++
++# --------------------------------------------------------------
++#
++# This configuration table allows to customize the
++# meaning of the keys.
++#
++# The syntax is that each entry has the form : 
++#
++#   "key" Keyname { ("+"|"-") Modename } ":" (String|Operation)
++#
++# Keynames are those defined in <qnamespace.h> with the
++# "Qt::Key_" removed. (We'd better insert the list here)
++#
++# Mode names are : 
++#
++# - Shift
++# - Alt
++# - Control
++#
++#   The VT100 emulation has two modes that can affect the
++#   sequences emitted by certain keys. These modes are
++#   under control of the client program.
++#   
++# - Newline     : effects Return and Enter key.
++# - Application : effects Up and Down key.
++#
++# - Ansi        : effects Up and Down key (This is for VT52, really).
++#
++# Operations are
++#
++# - scrollUpLine
++# - scrollUpPage
++# - scrollDownLine
++# - scrollDownPage
++#
++# - emitSelection
++#
++# If the key is not found here, the text of the
++# key event as provided by Qt is emitted, possibly
++# preceeded by ESC if the Alt key is pressed.
++#
++# --------------------------------------------------------------
++
++key Tab    : "\t"
++
++key Return-NewLine : "\r\n"
++
++#----------------------------------------------------------
++
++# keypad characters as offered by Qt
++# cannot be recognized as such.
++
++#----------------------------------------------------------
++
++# Following other strings as emitted by konsole.
+Index: apps/konsole/src/Pty.cpp
+===================================================================
+--- apps/konsole/src/Pty.cpp
++++ apps/konsole/src/Pty.cpp
+@@ -26,18 +26,23 @@
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <errno.h>
++#ifndef Q_WS_WIN
+ #include <termios.h>
+ #include <signal.h>
++#endif
+ 
+ // Qt
+ #include <QtCore/QStringList>
++#include <QtCore/QTextCodec>
+ 
+ // KDE
+ #include <KStandardDirs>
+ #include <KLocale>
+ #include <KDebug>
++#ifndef Q_WS_WIN
+ #include <KPty>
+ #include <KPtyDevice>
++#endif
+ #include <kde_file.h>
+ 
+ using namespace Konsole;
+@@ -47,8 +52,10 @@
+   _windowColumns = cols;
+   _windowLines = lines;
+ 
++#ifndef Q_WS_WIN
+   if (pty()->masterFd() >= 0)
+     pty()->setWinSize(lines, cols);
++#endif
+ }
+ QSize Pty::windowSize() const
+ {
+@@ -59,6 +66,7 @@
+ {
+   _xonXoff = enable;
+ 
++#ifndef Q_WS_WIN
+   if (pty()->masterFd() >= 0)
+   {
+     struct ::termios ttmode;
+@@ -70,9 +78,11 @@
+     if (!pty()->tcSetAttr(&ttmode))
+       kWarning() << "Unable to set terminal attributes.";
+   }
++#endif
+ }
+ bool Pty::flowControlEnabled() const
+ {
++#ifndef Q_WS_WIN
+     if (pty()->masterFd() >= 0)
+     {
+         struct ::termios ttmode;
+@@ -81,6 +91,7 @@
+                ttmode.c_iflag & IXON;
+     }  
+     kWarning() << "Unable to get flow control status, terminal not connected.";
++#endif
+     return false;
+ }
+ 
+@@ -107,6 +118,7 @@
+ {
+   _eraseChar = erase;
+   
++#ifndef Q_WS_WIN
+   if (pty()->masterFd() >= 0)
+   {
+     struct ::termios ttmode;
+@@ -115,10 +127,12 @@
+     if (!pty()->tcSetAttr(&ttmode))
+       kWarning() << "Unable to set terminal attributes.";
+   }
++#endif
+ }
+ 
+ char Pty::erase() const
+ {
++#ifndef Q_WS_WIN
+     if (pty()->masterFd() >= 0)
+     {
+         struct ::termios ttyAttributes;
+@@ -126,6 +140,7 @@
+         return ttyAttributes.c_cc[VERASE];
+     }
+ 
++#endif
+     return _eraseChar;
+ }
+ 
+@@ -187,6 +202,7 @@
+   // BR:149300
+   setEnv("LANGUAGE",QString(),false /* do not overwrite existing value if any */);
+ 
++#ifndef Q_WS_WIN
+   setUseUtmp(addToUtmp);
+ 
+   struct ::termios ttmode;
+@@ -209,6 +225,7 @@
+     kWarning() << "Unable to set terminal attributes.";
+   
+   pty()->setWinSize(_windowLines, _windowColumns);
++#endif
+ 
+   KProcess::start();
+ 
+@@ -220,24 +237,44 @@
+ 
+ void Pty::setWriteable(bool writeable)
+ {
++#ifndef Q_WS_WIN
+   KDE_struct_stat sbuf;
+   KDE_stat(pty()->ttyName(), &sbuf);
+   if (writeable)
+     chmod(pty()->ttyName(), sbuf.st_mode | S_IWGRP);
+   else
+     chmod(pty()->ttyName(), sbuf.st_mode & ~(S_IWGRP|S_IWOTH));
++#else
++  Q_UNUSED(writeable);
++#endif
+ }
+ 
+ Pty::Pty(int masterFd, QObject* parent)
++#ifndef Q_WS_WIN
+     : KPtyProcess(masterFd,parent)
++#else
++    : KProcess(parent)
++#endif
+ {
+     init();
+ }
+ Pty::Pty(QObject* parent)
++#ifndef Q_WS_WIN
+     : KPtyProcess(parent)
++#else
++    : KProcess(parent)
++#endif
+ {
+     init();
+ }
++
++#ifdef Q_WS_WIN
++KProcess* Pty::pty()
++{
++    return this;
++}
++#endif
++
+ void Pty::init()
+ {
+   _windowColumns = 0;
+@@ -247,7 +284,11 @@
+   _utf8 =true;
+ 
+   connect(pty(), SIGNAL(readyRead()) , this , SLOT(dataReceived()));
++#ifndef Q_WS_WIN
+   setPtyChannels(KPtyProcess::AllChannels);
++#else
++  setOutputChannelMode(MergedChannels);
++#endif
+ }
+ 
+ Pty::~Pty()
+@@ -264,11 +305,16 @@
+     kWarning() << "Pty::doSendJobs - Could not send input data to terminal process.";
+     return;
+   }
++#ifdef Q_WS_WIN
++  emit receivedData(data,length);
++#endif
+ }
+ 
+ void Pty::dataReceived() 
+ {
+-     QByteArray data = pty()->readAll();
++    QTextCodec *codec = QTextCodec::codecForName("IBM 850");
++    QString string = codec->toUnicode(pty()->readAll());
++    QByteArray data = string.toLatin1();
+     emit receivedData(data.constData(),data.count());
+ }
+ 
+@@ -285,7 +331,11 @@
+ 
+ int Pty::foregroundProcessGroup() const
+ {
++#ifndef Q_WS_WIN
+     int pid = tcgetpgrp(pty()->masterFd());
++#else
++    int pid = KProcess::pid();
++#endif
+ 
+     if ( pid != -1 )
+     {
+@@ -297,6 +347,7 @@
+ 
+ void Pty::setupChildProcess()
+ {
++#ifndef Q_WS_WIN
+     KPtyProcess::setupChildProcess();
+     
+     // reset all signal handlers
+@@ -309,6 +360,7 @@
+     action.sa_flags = 0;
+     for (int signal=1;signal < NSIG; signal++)
+         sigaction(signal,&action,0L);
++#endif
+ }
+ 
+ 
+Index: apps/konsole/src/Pty.h
+===================================================================
+--- apps/konsole/src/Pty.h
++++ apps/konsole/src/Pty.h
+@@ -30,7 +30,7 @@
+ #include <QtCore/QSize>
+ 
+ // KDE
+-#include <KPtyProcess>
++#include <KProcess>
+ 
+ // Konsole
+ #include "konsole_export.h"
+@@ -51,7 +51,7 @@
+  * To start the terminal process, call the start() method
+  * with the program name and appropriate arguments. 
+  */
+-class KONSOLEPRIVATE_EXPORT Pty: public KPtyProcess
++class KONSOLEPRIVATE_EXPORT Pty: public KProcess
+ {
+ Q_OBJECT
+ 
+@@ -143,6 +143,9 @@
+      */
+     int foregroundProcessGroup() const;
+    
++#ifdef Q_WS_WIN
++    KProcess* pty();
++#endif
+   public slots:
+ 
+     /**
+Index: apps/konsole/src/Session.cpp
+===================================================================
+--- apps/konsole/src/Session.cpp
++++ apps/konsole/src/Session.cpp
+@@ -37,6 +37,7 @@
+ #include <QtCore/QStringList>
+ #include <QtDBus/QtDBus>
+ #include <QtCore/QDate>
++#include <QtCore/QTextCodec>
+ 
+ // KDE
+ #include <KDebug>
+@@ -47,7 +48,9 @@
+ #include <KRun>
+ #include <kshell.h>
+ #include <KStandardDirs>
++#ifndef Q_OS_WIN
+ #include <KPtyDevice>
++#endif
+ #include <KUrl>
+ 
+ // Konsole
+@@ -314,16 +317,17 @@
+   // Check to see if the given program is executable.
+   QString exec = QFile::encodeName(program);
+ 
+-  if (exec.isEmpty())
+-      return QString();
++/*  if (exec.isEmpty())
++      return QString();*/
+ 
+   // if 'exec' is not specified, fall back to default shell.  if that 
+   // is not set then fall back to /bin/sh
+   if ( exec.isEmpty() )
+       exec = qgetenv("SHELL");
+   if ( exec.isEmpty() )
+-        exec = "/bin/sh";
+-
++#ifndef Q_WS_WIN
++      exec = "/bin/sh";
++ 
+   exec = KRun::binaryName(exec, false);
+   exec = KShell::tildeExpand(exec);
+   QString pexec = KGlobal::dirs()->findExe(exec);
+@@ -332,7 +336,9 @@
+       kError() << i18n("Could not find binary: ") << exec;
+     return QString();
+   }
+-
++#else
++      exec = "C:/WINDOWS/system32/cmd.exe";
++#endif
+   return exec;
+ }
+ 
+@@ -364,7 +370,11 @@
+   }
+ 
+   const int CHOICE_COUNT = 3;
+-  QString programs[CHOICE_COUNT] = {_program,qgetenv("SHELL"),"/bin/sh"};
++#ifndef Q_WS_WIN
++   QString programs[CHOICE_COUNT] = {_program,qgetenv("SHELL"),"/bin/sh"};
++#else
++  QString programs[CHOICE_COUNT] = {_program,qgetenv("SHELL"),"C:/WINDOWS/system32/cmd.exe"};
++#endif
+   QString exec;
+   int choice = 0;
+   while (choice < CHOICE_COUNT)
+@@ -410,7 +420,7 @@
+   int result = _shellProcess->start(exec,
+                                   arguments,
+                                   _environment << backgroundColorHint,
+-                                  windowId(),
++                                  (ulong)windowId(),
+                                   _addToUtmp,
+                                   dbusService,
+                                   (QLatin1String("/Sessions/") +
