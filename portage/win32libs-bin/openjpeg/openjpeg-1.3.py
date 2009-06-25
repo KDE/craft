@@ -22,7 +22,8 @@ j2k-images, ... """
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['1.3']:
-            self.targets[ version ] = self.getPackage( repoUrl, "OpenJPEG", version )
+            self.targets[ version ] = repoUrl + "/OpenJPEG-" + version + "-bin.tar.bz2 " +\
+                                      repoUrl + "/OpenJPEG-" + version + "-lib.tar.bz2"
 
             
         self.defaultTarget = '1.3'
