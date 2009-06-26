@@ -11,13 +11,13 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'tags/kdewin32/0.3.9'
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin32'
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kdewin32"
+        self.instsrcdir = "kdewin"
         self.subinfo = subinfo()
 
     def unpack( self ):
@@ -30,7 +30,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "kdewin32", self.buildTarget, True )
+        return self.doPackaging( "kdewin", self.buildTarget, True )
 
 if __name__ == '__main__':
     subclass().execute()
