@@ -2,49 +2,86 @@
 <module name="kdegraphics">
     <package name="libkdegraphics">
         <shortDescription>the kdegraphics support libraries</shortDescription>
-        <regexp>bin/.*(kdcraw|kexiv|kipi).*</regexp>
-        <regexp>lib/.*(kdcraw|kexiv|kipi).*</regexp>
-        <regexp>include/.*(kdcraw|kexiv|kipi).*</regexp>
-        <regexp>lib/strigi.*</regexp>
-        <regexp>lib/kde4/.*(gsthumbnail|gvpart|msits|mobithumbnail|svgpart).*</regexp>
-        <regexp>share/.*(kdcraw|kexiv|kipi).*</regexp>
-        <regexp>share/.*(gsthumbnail|gvpart|msits|mobithumbnail|svgpart|KSane).*</regexp>
+		<part name="runtime">
+			<files include="bin/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="lib/strigi.*"/>
+			<files include="lib/kde4/.*(thumbnail|gvpart|msits|svgpart).*"/>
+			<files include="share/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="share/.*(thumbnail|gvpart|msits|svgpart|KSane).*"/>
+		</part>
+		<part name="development">
+			<files include="lib/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="include/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="lib/strigi.*"/>
+		</part>
+        <dependency>kdebase-runtime</dependency> 
+        <dependency>kdelibs</dependency>
+        <dependency>poppler</dependency> 
+        <dependency>ebook-tools</dependency> 
+        <dependency>libspectre</dependency>
+        <dependency>exiv2</dependency>
     </package>
     <package name="kcolorchooser">
         <shortDescription>a simple color choosing tool</shortDescription>
-        <regexp>bin/.*kcolorchooser.*</regexp>
-        <regexp>share/.*kcolorchooser.*</regexp>
+		<part name="runtime">
+			<files include="bin/.*kcolorchooser.*"/>
+			<files include="share/.*kcolorchooser.*"/>
+		</part>
+        <dependency>libkdegraphics</dependency>
     </package>
     <package name="kruler">
         <shortDescription>a simple screen ruler</shortDescription>
-        <regexp>bin/.*kruler.*</regexp>
-        <regexp>share/.*kruler.*</regexp>
+		<part name="runtime">
+			<files include="bin/.*kruler.*"/>
+			<files include="share/.*kruler.*"/>
+		</part>
+        <dependency>libkdegraphics</dependency>
     </package>
     <package name="kolourpaint">
         <shortDescription>a simple paint application</shortDescription>
-        <regexp>bin/.*kolourpaint.*</regexp>
-        <regexp>lib/.*kolourpaint.*</regexp>
-        <regexp>share/.*kolourpaint.*</regexp>
+		<part name="runtime">
+			<files include="bin/.*kolourpaint.*"/>
+			<files include="lib/.*kolourpaint.*"/>
+			<files include="share/.*kolourpaint.*"/>
+		</part>
+        <dependency>libkdegraphics</dependency>
     </package>
     <package name="gwenview">
         <shortDescription>KDE's image viewer for jpg, png and more</shortDescription>
         <description>Gwenview is KDE's picture viewer</description>
-        <regexp>bin/.*gwenview.*</regexp>
-        <regexp>lib/.*gwenview.*</regexp>
-        <regexp>share/.*gwenview.*</regexp>
-        <regexp>share/.*slideshow.desktop</regexp>
+		<part name="runtime">
+			<files include="bin/.*gwenview.*"/>
+			<files include="lib/.*gwenview.*"/>
+			<files include="share/.*gwenview.*"/>
+			<files include="share/.*slideshow.desktop"/>
+		</part>
+        <dependency>libkdegraphics</dependency>
     </package>
-    <package name="Okular">
+    <package name="okular">
         <shortDescription>KDE's document viewer for PDF and more</shortDescription>
         <description>Okular is KDE's document viewer and supports besides PDF also PostScript(.ps,.eps), Oasis-Documents(.odt), DejaVu (.djvu), Compressed Windows Help (.chm), ebooks (.epub)</description>
-        <regexp>bin/.*okular.*</regexp>
-        <regexp>share/.*[Oo]kular.*</regexp>
-        <regexp>lib/kde4.*[Oo]kular.*</regexp>
-        <regexp>include/okular.*</regexp>
-        <regexp>lib/.*okular.*</regexp>
+		<part name="runtime">
+			<files include="bin/.*okular.*"/>
+			<files include="share/.*[Oo]kular.*"/>
+			<files include="lib/kde4.*[Oo]kular.*"/>
+		</part>
+		<part name="development">
+			<files include="include/okular.*"/>
+			<files include="lib/.*okular.*"/>
+		</part>
+        <dependency>libkdegraphics</dependency>
     </package>
-    <package name="default" empty="true">
-        <shortDescription>the default package</shortDescription>
-        <ignore>manifest/.*</ignore>
+    <package name="kdegraphics" comment="kdegraphics meta package">
+        <shortDescription>Graphics applications (including Okular)</shortDescription>
+		<part name="runtime" >
+            <files include="manifest/post-install-.*"/>
+		</part>
+        <dependency>okular</dependency> 
+        <dependency>gwenview</dependency>
+        <dependency>kolourpaint</dependency> 
+        <dependency>kcolorchooser</dependency> 
+        <dependency>kruler</dependency>
     </package>
+<!-- does not work yet 
+   <files exclude=".*manifest/.*"/>   -->
 </module>
