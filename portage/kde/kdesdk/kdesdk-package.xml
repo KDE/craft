@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="kdesdk">
+    <package name="umbrello">
+        <shortDescription>An UML modeling tool for KDE</shortDescription>
+        <description>Umbrello UML Modeller is a Unified Modelling Language diagram programme for KDE. UML allows you to create diagrams of software and other systems in a standard format.</description>
+        <part name="runtime">
+            <files include="bin/.*umbrello.*"/>
+            <files include="share/.*umbrello.*"/>
+        </part>
+    </package>
+    <package name="lokalize">
+        <shortDescription>A computer-aided translation system for KDE</shortDescription>
+        <description>Lokalize is a computer-aided translation system that focuses on productivity and performance. Lokalize applies a paragraph-by-paragraph translation approach when translating documentation, and takes a message-by-message approach when translating GUI components..</description>
+        <part name="runtime">
+            <files include="bin/.*lokalize.*"/>
+            <files include="lib/.*lokalize.*dll"/>
+            <files include="share/.*lokalize.*"/>
+        </part>
+    </package>
+    <package name="kate">
+        <shortDescription>a MDI text editor application for KDE</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*kate.*"/>
+            <files include="lib/.*kate.*dll"/>
+            <files include="share/.*kate.*"/>
+        </part>
+        <part name="development">
+            <files include="include/.*kate.*"/>
+            <files include="lib/.*kate.*\.lib"/>
+        </part>
+    </package>
+    <package name="kompare">
+        <shortDescription>KDE diff tool</shortDescription>
+        <description>Kompare is a free software graphical computer application which helps the user to compare two different text files or two directories.</description>
+        <part name="runtime">
+            <files include="bin/.*kompare.*"/>
+            <files include="lib/.*kompare.*dll"/>
+            <files include="share/.*kompare.*"/>
+        </part>
+        <part name="development">
+            <files include="include/.*kompare.*"/>
+            <files include="lib/.*kompare.*lib"/>
+        </part>
+    </package>
+    <package name="kdesdk">
+        <shortDescription>KDE Software development package</shortDescription>
+        <part name="runtime" >
+            <files include="manifest/post-install-.*"/>
+            <files>
+bin/antlr.dll
+bin/colorsvn
+bin/create_makefile
+bin/cvs-clean
+bin/cvsblame
+bin/cvscheck
+bin/cvslastchange
+bin/cxxmetric
+bin/extend_dmalloc
+bin/extractattr
+bin/extractrc
+bin/fixkdeincludes
+bin/fixuifiles
+bin/includemocs
+bin/kapptemplate.exe
+bin/kde_generate_export_header
+bin/kdekillall
+bin/kdelnk2desktop.py
+bin/kdemangen.pl
+bin/kdesvn-build
+bin/kpartloader.exe
+bin/kuiviewer.exe
+bin/makeobj
+bin/noncvslist
+bin/package_crystalsvg
+bin/png2mng.pl
+bin/po2xml.exe
+bin/split2po.exe
+bin/svn-clean
+bin/svnintegrate
+bin/svnlastchange
+bin/svnversions
+bin/swappo.exe
+bin/xml2pot.exe
+bin/zonetab2pot.py
+lib/kde4/kio_perldoc.dll
+lib/kde4/kuiviewerpart.dll
+lib/kde4/quithumbnail.dll
+lib/strigi/msvc_strigila_diff.dll
+lib/strigi/msvc_strigila_po.dll
+lib/strigi/msvc_strigita_ts.dll
+share/applications/kde4/kapptemplate.desktop
+share/applications/kde4/kdesvn-build.desktop
+share/applications/kde4/kuiviewer.desktop
+share/apps/kdevappwizard/template_previews/akonadi-resources.png
+share/apps/kdevappwizard/template_previews/akonadi-serializer.png
+share/apps/kdevappwizard/template_previews/default.png
+share/apps/kdevappwizard/template_previews/kapp4.png
+share/apps/kdevappwizard/template_previews/kderubyapp.png
+share/apps/kdevappwizard/template_previews/kpartapp.png
+share/apps/kdevappwizard/template_previews/plasma-applet.png
+share/apps/kdevappwizard/template_previews/pykde4.png
+share/apps/kdevappwizard/template_previews/pyqt4app.png
+share/apps/kdevappwizard/template_previews/qmake4gui.png
+share/apps/kdevappwizard/template_previews/runner.png
+share/apps/kdevappwizard/templates/akonadiresource.zip
+share/apps/kdevappwizard/templates/akonadiserializer.zip
+share/apps/kdevappwizard/templates/kapp4.zip
+share/apps/kdevappwizard/templates/kderubyapp.zip
+share/apps/kdevappwizard/templates/kpartapp.zip
+share/apps/kdevappwizard/templates/plasmoid.zip
+share/apps/kdevappwizard/templates/pykde4app.zip
+share/apps/kdevappwizard/templates/pyqt4app.zip
+share/apps/kdevappwizard/templates/qmake_qt4guiapp.zip
+share/apps/kdevappwizard/templates/runner.zip
+share/apps/kio_perldoc/pod2html.pl
+share/apps/kpartloader/kpartloaderui.rc
+share/apps/kuiviewer/kuiviewerui.rc
+share/apps/kuiviewerpart/kuiviewer_part.rc
+share/config.kcfg/kapptemplate.kcfg
+share/doc/HTML/en/kapptemplate/first-page.png
+share/doc/HTML/en/kapptemplate/fourth-page.png
+share/doc/HTML/en/kapptemplate/index.cache.bz2
+share/doc/HTML/en/kapptemplate/index.docbook
+share/doc/HTML/en/kapptemplate/kapp4.png
+share/doc/HTML/en/kapptemplate/kderubyapp.png
+share/doc/HTML/en/kapptemplate/kpartapp.png
+share/doc/HTML/en/kapptemplate/plasma-applet.png
+share/doc/HTML/en/kapptemplate/pykde4.png
+share/doc/HTML/en/kapptemplate/pyqt4app.png
+share/doc/HTML/en/kapptemplate/second-page.png
+share/doc/HTML/en/kapptemplate/third-page.png
+share/doc/HTML/en/kbugbuster/index.cache.bz2
+share/doc/HTML/en/kbugbuster/index.docbook
+share/doc/HTML/en/kcachegrind/index.cache.bz2
+share/doc/HTML/en/kcachegrind/index.docbook
+share/doc/HTML/en/kdesvn-build/index.cache.bz2
+share/doc/HTML/en/kdesvn-build/index.docbook
+share/icons/hicolor/128x128/apps/kapptemplate.png
+share/icons/hicolor/16x16/actions/approved.png
+share/icons/hicolor/16x16/actions/insert_arg.png
+share/icons/hicolor/16x16/actions/insert_tag.png
+share/icons/hicolor/16x16/actions/msgid2msgstr.png
+share/icons/hicolor/16x16/actions/nexterror.png
+share/icons/hicolor/16x16/actions/nextfuzzy.png
+share/icons/hicolor/16x16/actions/nextfuzzyuntrans.png
+share/icons/hicolor/16x16/actions/nextuntranslated.png
+share/icons/hicolor/16x16/actions/preverror.png
+share/icons/hicolor/16x16/actions/prevfuzzy.png
+share/icons/hicolor/16x16/actions/prevfuzzyuntrans.png
+share/icons/hicolor/16x16/actions/prevuntranslated.png
+share/icons/hicolor/16x16/actions/search2msgstr.png
+share/icons/hicolor/16x16/actions/transsearch.png
+share/icons/hicolor/16x16/apps/kapptemplate.png
+share/icons/hicolor/16x16/apps/kuiviewer.png
+share/icons/hicolor/22x22/actions/approved.png
+share/icons/hicolor/22x22/actions/catalogmanager.png
+share/icons/hicolor/22x22/actions/insert_arg.png
+share/icons/hicolor/22x22/actions/insert_tag.png
+share/icons/hicolor/22x22/actions/msgid2msgstr.png
+share/icons/hicolor/22x22/actions/nexterror.png
+share/icons/hicolor/22x22/actions/nextfuzzy.png
+share/icons/hicolor/22x22/actions/nextfuzzyuntrans.png
+share/icons/hicolor/22x22/actions/nextuntranslated.png
+share/icons/hicolor/22x22/actions/preverror.png
+share/icons/hicolor/22x22/actions/prevfuzzy.png
+share/icons/hicolor/22x22/actions/prevfuzzyuntrans.png
+share/icons/hicolor/22x22/actions/prevuntranslated.png
+share/icons/hicolor/22x22/actions/search2msgstr.png
+share/icons/hicolor/22x22/actions/transsearch.png
+share/icons/hicolor/22x22/apps/kapptemplate.png
+share/icons/hicolor/32x32/actions/approved.png
+share/icons/hicolor/32x32/actions/catalogmanager.png
+share/icons/hicolor/32x32/actions/diff.png
+share/icons/hicolor/32x32/actions/insert_arg.png
+share/icons/hicolor/32x32/actions/insert_tag.png
+share/icons/hicolor/32x32/actions/msgid2msgstr.png
+share/icons/hicolor/32x32/actions/nexterror.png
+share/icons/hicolor/32x32/actions/nextfuzzy.png
+share/icons/hicolor/32x32/actions/nextfuzzyuntrans.png
+share/icons/hicolor/32x32/actions/nextuntranslated.png
+share/icons/hicolor/32x32/actions/preverror.png
+share/icons/hicolor/32x32/actions/prevfuzzy.png
+share/icons/hicolor/32x32/actions/prevfuzzyuntrans.png
+share/icons/hicolor/32x32/actions/prevuntranslated.png
+share/icons/hicolor/32x32/actions/search2msgstr.png
+share/icons/hicolor/32x32/actions/transsearch.png
+share/icons/hicolor/32x32/apps/kapptemplate.png
+share/icons/hicolor/32x32/apps/kuiviewer.png
+share/icons/hicolor/48x48/actions/approved.png
+share/icons/hicolor/48x48/apps/kapptemplate.png
+share/icons/hicolor/48x48/apps/kuiviewer.png
+share/icons/hicolor/64x64/apps/kapptemplate.png
+share/icons/hicolor/scalable/actions/approved.svgz
+share/icons/locolor/16x16/actions/catalogmanager.png
+share/icons/locolor/16x16/actions/diff.png
+share/icons/locolor/16x16/actions/insert_arg.png
+share/icons/locolor/16x16/actions/insert_tag.png
+share/icons/locolor/16x16/actions/msgid2msgstr.png
+share/icons/locolor/16x16/actions/nexterror.png
+share/icons/locolor/16x16/actions/nextfuzzy.png
+share/icons/locolor/16x16/actions/nextfuzzyuntrans.png
+share/icons/locolor/16x16/actions/nextuntranslated.png
+share/icons/locolor/16x16/actions/preverror.png
+share/icons/locolor/16x16/actions/prevfuzzy.png
+share/icons/locolor/16x16/actions/prevfuzzyuntrans.png
+share/icons/locolor/16x16/actions/prevuntranslated.png
+share/icons/locolor/16x16/actions/search2msgstr.png
+share/icons/locolor/16x16/actions/transsearch.png
+share/icons/locolor/32x32/actions/catalogmanager.png
+share/icons/locolor/32x32/actions/diff.png
+share/icons/locolor/32x32/actions/insert_arg.png
+share/icons/locolor/32x32/actions/insert_tag.png
+share/icons/locolor/32x32/actions/msgid2msgstr.png
+share/icons/locolor/32x32/actions/nexterror.png
+share/icons/locolor/32x32/actions/nextfuzzy.png
+share/icons/locolor/32x32/actions/nextfuzzyuntrans.png
+share/icons/locolor/32x32/actions/nextuntranslated.png
+share/icons/locolor/32x32/actions/preverror.png
+share/icons/locolor/32x32/actions/prevfuzzy.png
+share/icons/locolor/32x32/actions/prevfuzzyuntrans.png
+share/icons/locolor/32x32/actions/prevuntranslated.png
+share/icons/locolor/32x32/actions/search2msgstr.png
+share/icons/locolor/32x32/actions/transsearch.png
+share/kde4/services/designerthumbnail.desktop
+share/kde4/services/kuiviewer_part.desktop
+share/kde4/services/perldoc.protocol
+share/man/man1/adddebug.1
+share/man/man1/cheatmake.1
+share/man/man1/create_cvsignore.1
+share/man/man1/create_makefile.1
+share/man/man1/create_makefiles.1
+share/man/man1/cvscheck.1
+share/man/man1/cvslastchange.1
+share/man/man1/cvslastlog.1
+share/man/man1/cvsrevertlast.1
+share/man/man1/cxxmetric.1
+share/man/man1/demangle.1
+share/man/man1/extend_dmalloc.1
+share/man/man1/extractrc.1
+share/man/man1/fixincludes.1
+share/man/man1/po2xml.1
+share/man/man1/pruneemptydirs.1
+share/man/man1/qtdoc.1
+share/man/man1/reportview.1
+share/man/man1/split2po.1
+share/man/man1/swappo.1
+share/man/man1/transxx.1
+share/man/man1/xml2pot.1
+share/man/man1/zonetab2pot.py.1
+share/strigi/fieldproperties/strigi_translation.fieldproperties
+            </files>
+        </part>
+        <part name="development">
+            <files>
+include/kprofilemethod.h
+lib/antlr.lib
+            </files>
+        </part>
+        <dependency>umbrello</dependency> 
+        <dependency>lokalize</dependency> 
+        <dependency>kate</dependency> 
+        <dependency>kompare</dependency> 
+    </package>
+</module>
