@@ -459,8 +459,12 @@ class baseclass:
         else:
             cmd = "-name %s -root %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath )
-        cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
-
+        xmltemplate=os.path.join(self.packagedir,pkg_name+"-package.xml")
+        if os.path.exists(xmltemplate):
+            cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+        else:
+            cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+        
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
               cmd += " -type mingw "
