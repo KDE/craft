@@ -41,13 +41,13 @@ class BuildSystemBase(EmergeBase):
             return True
 
     #install the target into local install directory"""
-    def install(self): abstract
+    def install(self): abstract()
 
     #uninstall the target from the local install directory"""
-    def uninstall(self): abstract
+    def uninstall(self): abstract()
 
     #run the test - if available - for the target"""
-    def runTests(self): abstract
+    def runTests(self): abstract()
 
     #make the target by runnning the related make tool"""
-    def make(self): abstract
+    def make(self): abstract()

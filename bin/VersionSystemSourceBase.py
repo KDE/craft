@@ -24,7 +24,7 @@ class VersionSystemSourceBase (SourceBase):
     def __init__(self):
         SourceBase.__init__(self)
         
-    def checkout(self): abstract
-    def update(self): abstract
+    def checkout(self): abstract()
+    def update(self): abstract()
 
 

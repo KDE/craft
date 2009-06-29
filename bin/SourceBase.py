@@ -7,6 +7,6 @@ class SourceBase(EmergeBase):
     def __init__(self):
         EmergeBase.__init__(self)
 
-    def fetch(self): abstract
+    def fetch(self): abstract()
 
-    def unpack(self): abstract
+    def unpack(self): abstract()
