@@ -17,7 +17,7 @@ import info
 # for the msys interface
 import msys_build
 # for the kde interface
-import kde_build
+from KDE4BuildSystem import *
 #from utils import die
 import datetime
 
@@ -101,7 +101,7 @@ class baseclass:
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
         self.msys = msys_build.msys_interface()
-        self.kde  = kde_build.kde_interface()
+        self.kde  = KDE4BuildSystem()
         
         if os.getenv( "EMERGE_OFFLINE" ) == "True":
             self.noFetch = True
@@ -385,40 +385,40 @@ class baseclass:
         return self.kdeSvnPath()
 
     def __kdesinglecheckout( self, repourl, ownpath, codir, doRecursive = False ):
-        self.kde.kdesinglecheckout( repourl, ownpath, codir, doRecursive )
+        self.kde.checkout( repourl, ownpath, codir, doRecursive )
                 
     def kdeSvnFetch( self, svnpath, packagedir ):
-        return self.kde.kdeSvnFetch( svnpath, packagedir )
+        return self.kde.fetch( svnpath, packagedir )
 
     def kdeSvnPath( self ):
-        return self.kde.kdeSvnPath()
+        return self.kde.svnPath()
         
     def kdeSvnUnpack( self, svnpath=None, packagedir=None ):
-        if self.kde.kdeSvnPath():
-            return self.kde.kdeSvnUnpack( svnpath, packagedir )
+        if self.kde.svnPath():
+            return self.kde.unpack( svnpath, packagedir )
         else:
             return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
         
     def kdeDefaultDefines( self ):
         return self.kde.kdeDefaultDefines()
 
-    def kdeConfigureInternal( self, buildType ):
-        return self.kde.kdeConfigureInternal( buildType, self.kdeCustomDefines )
+    #def kdeConfigureInternal( self, buildType ):
+    #    return self.kde.kdeConfigureInternal( buildType, self.kdeCustomDefines )
 
-    def kdeMakeInternal( self, buildType ):
-        return self.kde.kdeMakeInternal( buildType )
+    #def kdeMakeInternal( self, buildType ):
+    #    return self.kde.kdeMakeInternal( buildType )
     
-    def kdeInstallInternal( self, buildType ):
-        return self.kde.kdeInstallInternal( buildType )
+    #def kdeInstallInternal( self, buildType ):
+    #    return self.kde.kdeInstallInternal( buildType )
 
     def kdeCompile( self ):
-        return self.kde.kdeCompile( self.kdeCustomDefines )
+        return self.kde.compile( self.kdeCustomDefines )
 
     def kdeInstall( self ):
-        return self.kde.kdeInstall()
+        return self.kde.install()
 
     def kdeTest( self ):
-        return self.kde.kdeTest()
+        return self.kde.runTest()
 
     def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True, special = False ):
         """packaging according to the gnuwin32 packaging rules"""
@@ -446,12 +446,12 @@ class baseclass:
                     os.mkdir( os.path.join( self.imagedir, "manifest" ) )
                 shutil.copyfile( script, destscript )
 
-        if ( packSources and not ( self.noCopy and self.kde.kdeSvnPath() ) ):
+        if ( packSources and not ( self.noCopy and self.kde.svnPath() ) ):
             srcpath = os.path.join( self.workdir, self.instsrcdir )
             cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, srcpath, pkg_version, dstpath )
-        elif packSources and self.noCopy and self.kde.kdeSvnPath():
-            srcpath = os.path.join( self.kde.kdesvndir, self.kde.kdeSvnPath() ).replace( "/", "\\" )
+        elif packSources and self.noCopy and self.kde.svnPath():
+            srcpath = os.path.join( self.kde.kdesvndir, self.kde.svnPath() ).replace( "/", "\\" )
             if not os.path.exists( srcpath ):
                 srcpath = self.kde.sourcePath
             cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
