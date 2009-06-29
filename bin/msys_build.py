@@ -2,6 +2,7 @@
 # definitions for the msys build system
 import os
 import utils
+import shells
 
 class msys_interface:
     def __init__( self, env = dict( os.environ ) ):
@@ -58,6 +59,7 @@ class msys_interface:
 
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
+        # todo use msysexecute
         cmd = "%s --login -c \"cd %s && %s %s && make -j2" % \
               ( sh, self.__toMSysPath( build ), self.__toMSysPath( config ), \
                 self.msysConfigureFlags() )
@@ -80,6 +82,7 @@ class msys_interface:
 
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
+        # todo use msysexecute
         cmd = "%s --login -c \"cd %s && make -j2 install DESTDIR=%s\"" % \
               ( sh, self.__toMSysPath( build ), self.__toMSysPath( install ) )
         if utils.verbose() > 0:

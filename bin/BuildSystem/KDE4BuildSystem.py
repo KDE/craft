@@ -13,6 +13,7 @@ from Source.SvnSource import *
 from BuildSystemBase import *
 
 class KDE4BuildSystem(SvnSource,BuildSystemBase):
+    # todo fix setting sourcePath correctly
     sourcePath = ""
     def __init__( self, env = dict( os.environ ) ):
         SvnSource.__init__(self)
@@ -180,10 +181,13 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         utils.system( command ) or utils.die( "while CMake'ing. cmd: %s" % command )
         return True
 
-    def make( self, buildType ):
+    def make( self, buildType=None ):
         """Using the *make program"""
         builddir = "%s" % ( self.COMPILER )
 
+        if( buildType == None ):
+            buildtype = self.buildType
+        
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
@@ -198,10 +202,13 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
-    def __install( self, buildType ):
+    def __install( self, buildType=None ):
         """Using *make install"""
         builddir = "%s" % ( self.COMPILER )
 
+        if( buildType == None ):
+            buildtype = self.buildType
+        
         if( not buildType == None ):
             builddir = "%s-%s" % ( builddir, buildType )
 
@@ -220,15 +227,15 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
         return True
 
-    def compile( self, kdeCustomDefines ):
+    def compile( self, customDefines=""):
         """making all required stuff for compiling cmake based modules"""
         if( not self.buildType == None ) :
-            if( not ( self.configure( self.buildType, kdeCustomDefines ) and self.make( self.buildType ) ) ):
+            if( not ( self.configure( self.buildType, customDefines ) and self.make( self.buildType ) ) ):
                 return False
         else:
-            if( not ( self.configure( "Debug", kdeCustomDefines ) and self.make( "Debug" ) ) ):
+            if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
                 return False
-            if( not ( self.configure( "Release", kdeCustomDefines ) and self.make( "Release" ) ) ):
+            if( not ( self.configure( "Release", customDefines ) and self.make( "Release" ) ) ):
                 return False
         return True
 
