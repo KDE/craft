@@ -16,11 +16,7 @@ class VersionSystemSourceBase (SourceBase):
         
     # complete local path for currently used source
     svndir = ""
-    
-    # from base.py
-    DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
-    downloaddir = DOWNLOADDIR
-    
+        
     def __init__(self):
         SourceBase.__init__(self)
         
