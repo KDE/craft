@@ -400,7 +400,7 @@ class baseclass:
             return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
         
     def kdeDefaultDefines( self ):
-        return self.kde.kdeDefaultDefines()
+        return self.kde.configureDefaultDefines()
 
     #def kdeConfigureInternal( self, buildType ):
     #    return self.kde.kdeConfigureInternal( buildType, self.kdeCustomDefines )

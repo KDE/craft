@@ -125,8 +125,8 @@ class KDE4BuildSystem(SubversionSource,BuildSystemBase):
             utils.copySrcDirToDestDir( srcdir, destdir )
         return True
 
-    # todo rename to defaultDefines
-    def kdeDefaultDefines( self ):
+    # is this kde or cmake specific 
+    def configureDefaultDefines( self ):
         """defining the default cmake cmd line"""
         options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
               ( self.sourcePath, self.rootdir.replace( "\\", "/" ) )
@@ -146,7 +146,7 @@ class KDE4BuildSystem(SubversionSource,BuildSystemBase):
 
         return options
 
-    def __configure( self, buildType, kdeCustomDefines ):
+    def __configure( self, buildType, customDefines ):
         """Using cmake"""
         builddir = "%s" % ( self.COMPILER )
 
@@ -167,8 +167,8 @@ class KDE4BuildSystem(SubversionSource,BuildSystemBase):
 
         command = r"""cmake -G "%s" %s %s %s""" % \
               ( self.cmakeMakefileGenerator, \
-                self.kdeDefaultDefines(), \
-                kdeCustomDefines, \
+                self.configureDefaultDefines(), \
+                customDefines, \
                 buildtype )
 
         if utils.verbose() > 0:
