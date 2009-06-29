@@ -9,12 +9,12 @@ import utils
 import base
 import info
 
-from SubversionSource import *
+from SvnSource import *
 from BuildSystemBase import *
 
-class KDE4BuildSystem(SubversionSource,BuildSystemBase):
+class KDE4BuildSystem(SvnSource,BuildSystemBase):
     def __init__( self, env = dict( os.environ ) ):
-        SubversionSource.__init__(self)
+        SvnSource.__init__(self)
         BuildSystemBase.__init__(self)
         
         for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER", 

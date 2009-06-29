@@ -5,7 +5,7 @@ from VersionSystemSourceBase import *
 import os
 import utils
 
-class SubversionSource (VersionSystemSourceBase):
+class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self):
         VersionSystemSourceBase.__init__(self)
