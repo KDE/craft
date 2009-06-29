@@ -41,11 +41,17 @@ class SvnSource (VersionSystemSourceBase):
         os.chdir( ownpath )
         utils.system( svncmd ) or utils.die( "while checking out. cmd: %s" % svncmd )
 
-    def fetch( self, svnpath, packagedir ):
+    def fetch( self, svnpath=None, packagedir=None ):
         """svnpath is the part of the repo url after /home/kde, for example"""
         """"trunk/kdesupport/", which leads to the package itself,"""
         """without the package"""
 
+        if svnpath == None:
+            svnpath = self.svnPath()
+
+        if packagedir == None:
+            packagedir = self.packagedir
+            
         if utils.verbose() > 1:
             print "fetch called. svnpath: %s dir: %s" % ( svnpath, packagedir )
 

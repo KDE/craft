@@ -106,7 +106,8 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
                 self.sourcePath = "..\\%s" % self.instsrcdir
         else:
             self.sourcePath = "%s" % os.path.join(self.kdesvndir, self.svnPath() ).replace("/", "\\")
-
+        print "sourcePath" + self.sourcePath
+            
     def unpack( self, svnpath=None, packagedir=None ):
         """fetching and copying the sources from svn"""
         if not svnpath and not packagedir:
@@ -153,7 +154,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         builddir = "%s" % ( self.COMPILER )
 
         if( buildType == None ):
-            buildtype = self.buildType
+            buildType = self.buildType
         
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
@@ -186,11 +187,13 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         builddir = "%s" % ( self.COMPILER )
 
         if( buildType == None ):
-            buildtype = self.buildType
+            buildType = self.buildType
         
+        // todo fixes buildtype and buildType spelling issues 
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
+            
         if( not self.buildNameExt == None ):
             builddir = "%s-%s" % ( builddir, self.buildNameExt )
 
@@ -207,7 +210,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         builddir = "%s" % ( self.COMPILER )
 
         if( buildType == None ):
-            buildtype = self.buildType
+            buildType = self.buildType
         
         if( not buildType == None ):
             builddir = "%s-%s" % ( builddir, buildType )

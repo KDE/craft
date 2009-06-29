@@ -139,7 +139,7 @@ class EmergeBase():
             self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
 
         #self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
-        #self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
+        self.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
         
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
             filenames = []
