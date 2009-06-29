@@ -189,7 +189,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         if( buildType == None ):
             buildType = self.buildType
         
-        // todo fixes buildtype and buildType spelling issues 
+        # todo fixes buildtype and buildType spelling issues 
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
