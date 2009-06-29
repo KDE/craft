@@ -87,6 +87,10 @@ class SubversionSource (VersionSystemSourceBase):
 
         return True
 
+    def unpack( self ):
+        return True
+    
+        
     def svnPath( self ):
         """overload this function in kde packages to use the nocopy option"""
         """this function should return the full path seen from /home/KDE/"""
