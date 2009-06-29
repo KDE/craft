@@ -9,7 +9,7 @@ import utils
 import base
 import info
 
-from SvnSource import *
+from Source.SvnSource import *
 from BuildSystemBase import *
 
 class KDE4BuildSystem(SvnSource,BuildSystemBase):

@@ -17,7 +17,7 @@ import info
 # for the msys interface
 import msys_build
 # for the kde interface
-from KDE4BuildSystem import *
+from BuildSystem.KDE4BuildSystem import *
 #from utils import die
 import datetime
 
