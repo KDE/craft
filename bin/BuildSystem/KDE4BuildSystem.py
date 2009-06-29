@@ -13,6 +13,7 @@ from Source.SvnSource import *
 from BuildSystemBase import *
 
 class KDE4BuildSystem(SvnSource,BuildSystemBase):
+    sourcePath = ""
     def __init__( self, env = dict( os.environ ) ):
         SvnSource.__init__(self)
         BuildSystemBase.__init__(self)
@@ -146,10 +147,13 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
 
         return options
 
-    def __configure( self, buildType, customDefines ):
+    def configure( self, buildType=None, customDefines="" ):
         """Using cmake"""
         builddir = "%s" % ( self.COMPILER )
 
+        if( buildType == None ):
+            buildtype = self.buildType
+        
         if( not buildType == None ):
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
@@ -176,7 +180,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         utils.system( command ) or utils.die( "while CMake'ing. cmd: %s" % command )
         return True
 
-    def __make( self, buildType ):
+    def make( self, buildType ):
         """Using the *make program"""
         builddir = "%s" % ( self.COMPILER )
 
@@ -219,12 +223,12 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
     def compile( self, kdeCustomDefines ):
         """making all required stuff for compiling cmake based modules"""
         if( not self.buildType == None ) :
-            if( not ( self.__configure( self.buildType, kdeCustomDefines ) and self.__make( self.buildType ) ) ):
+            if( not ( self.configure( self.buildType, kdeCustomDefines ) and self.make( self.buildType ) ) ):
                 return False
         else:
-            if( not ( self.__configure( "Debug", kdeCustomDefines ) and self.__make( "Debug" ) ) ):
+            if( not ( self.configure( "Debug", kdeCustomDefines ) and self.make( "Debug" ) ) ):
                 return False
-            if( not ( self.__configure( "Release", kdeCustomDefines ) and self.__make( "Release" ) ) ):
+            if( not ( self.configure( "Release", kdeCustomDefines ) and self.make( "Release" ) ) ):
                 return False
         return True
 
