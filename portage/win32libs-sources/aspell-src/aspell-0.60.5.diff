@@ -1,0 +1,10 @@
+--- common\file_util.cpp.orig	2007-09-09 18:17:26.088375000 +0200
++++ common\file_util.cpp	2007-09-09 18:15:12.932125000 +0200
+@@ -30,6 +30,7 @@
+ #  define ACCESS _access
+ #  include <windows.h>
+ #  include <winbase.h>
++#  include "asc_ctype.hpp"
+ 
+ #else
+ 
