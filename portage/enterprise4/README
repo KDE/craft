@@ -33,7 +33,6 @@ Priority top first.
 	* copy /mingw to openldap-2.4.11-mingw; remove directory "man"; pack up
 
 * bzip2
-* exiv2
 * expat
 * gettext
 * giflib

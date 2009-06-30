@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['enterprise4/qt-e'] = 'default'
         self.hardDependencies['kdesupport/clucene-core'] = 'default'
-        self.hardDependencies['win32libs-bin/exiv2'] = 'default'
+        self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
         self.hardDependencies['win32libs-bin/iconv'] = 'default'
         self.hardDependencies['win32libs-sources/bzip2-src'] = 'default'
         self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
