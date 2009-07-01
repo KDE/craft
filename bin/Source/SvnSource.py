@@ -47,7 +47,7 @@ class SvnSource (VersionSystemSourceBase):
         """without the package"""
 
         if svnpath == None:
-            svnpath = self.svnPath()
+            svnpath = self.repositoryPath()
 
         if packagedir == None:
             packagedir = self.packagedir
@@ -92,12 +92,3 @@ class SvnSource (VersionSystemSourceBase):
         self.svndir = os.path.join( svndir, packagedir )
 
         return True
-
-	# todo merge with similar method from GitSource
-    def svnPath( self ):
-        """this function should return the full path seen from /home/KDE/"""
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
-        else:
-            return False
-

@@ -43,10 +43,8 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         self.DIRECTORY_LAYOUT = env[ "DIRECTORY_LAYOUT" ]
         self.MAKE_PROGRAM = env[ "EMERGE_MAKE_PROGRAM" ]
         
-    def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
+    def setDirectories( self):
         """ """
-        self.subinfo = infoobject
-
         if self.COMPILER   == "msvc2005" or self.COMPILER == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm      = "nmake"
@@ -72,12 +70,6 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         self.noFast          = True
         self.buildNameExt    = None
 
-        self.rootdir         = rootdir
-        self.workdir         = workdir
-        self.imagedir        = imagedir
-        self.instsrcdir      = instsrcdir
-        self.instdestdir     = instdestdir
-
         if self.OFFLINE    == "True":
             self.noFetch     = True
         if self.NOCOPY     == "True":
@@ -89,31 +81,31 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         if self.BUILDTESTS == "True":
             self.buildTests  = True
 
-        # this has to go into VersionSystemSourceBase.py
+        # this has to be generalized and moved into VersionSystemSourceBase.py
         self.kdesvndir       = self.KDESVNDIR
         self.kdesvnserver    = self.KDESVNSERVER
         self.kdesvnuser      = self.KDESVNUSERNAME 
         self.kdesvnpass      = self.KDESVNPASSWORD
         
-        if utils.verbose() > 1 and self.svnPath():
+        if utils.verbose() > 1 and self.repositoryPath():
             print "noCopy       : %s" % self.noCopy
-            print "kdeSvnPath() : %s" % self.svnPath().replace("/", "\\")
+            print "repositoryPath()   : %s" % self.repositoryPath().replace("/", "\\")
             
-        if not ( self.noCopy and self.svnPath() ) :
-            if self.svnPath():
-                self.sourcePath = "..\\%s" % self.svnPath().split('/')[-1]
+        if not ( self.noCopy and self.repositoryPath() ) :
+            if self.repositoryPath():
+                self.sourcePath = "..\\%s" % self.repositoryPath().split('/')[-1]
             else:
                 self.sourcePath = "..\\%s" % self.instsrcdir
         else:
-            self.sourcePath = "%s" % os.path.join(self.kdesvndir, self.svnPath() ).replace("/", "\\")
+            self.sourcePath = "%s" % os.path.join(self.kdesvndir, self.repositoryPath() ).replace("/", "\\")
         print "sourcePath" + self.sourcePath
             
     def unpack( self, svnpath=None, packagedir=None ):
         """fetching and copying the sources from svn"""
         if not svnpath and not packagedir:
-            if self.svnPath():
-                svnpath = self.svnPath()[ :self.svnPath().rfind('/') ]
-                packagedir = self.svnPath()[ self.svnPath().rfind('/') + 1:]
+            if self.repositoryPath():
+                svnpath = self.repositoryPath()[ :self.repositoryPath().rfind('/') ]
+                packagedir = self.repositoryPath()[ self.repositoryPath().rfind('/') + 1:]
             else:
                 utils.die( "no svn repository information are available" )
         self.fetch( svnpath, packagedir )
@@ -121,7 +113,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         if( not os.path.exists( self.workdir ) ):
             os.makedirs( self.workdir )
 
-        if not ( self.noCopy and self.svnPath() ):
+        if not ( self.noCopy and self.repositoryPath() ):
             # now copy the tree to workdir
             srcdir  = os.path.join( self.kdesvndir, svnpath, packagedir )
             destdir = os.path.join( self.workdir, packagedir )

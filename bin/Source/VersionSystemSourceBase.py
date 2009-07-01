@@ -35,3 +35,10 @@ class VersionSystemSourceBase (SourceBase):
             self.enterBuildDir()
             utils.copySrcDirToDestDir(self.sourcedir, self.builddir)
         return True;
+
+    def repositoryPath( self ):
+        """this function should return the full path into the repository"""
+        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+            return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
+        else:
+            return False

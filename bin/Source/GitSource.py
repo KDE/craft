@@ -16,7 +16,7 @@ class GitSource (VersionSystemSourceBase):
 
     def fetch( self, repopath=None, packagedir=None ):
         if repopath == None:
-            repopath = self.__repopath()
+            repopath = self.repositoryPath()
 
         if packagedir == None:
             packagedir = self.packagedir
@@ -36,11 +36,3 @@ class GitSource (VersionSystemSourceBase):
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
-
-	# todo implement common available method in the settings class
-    def __repopath( self ):
-        """this function should return the full path seen from /home/KDE/"""
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
-        else:
-            return False
