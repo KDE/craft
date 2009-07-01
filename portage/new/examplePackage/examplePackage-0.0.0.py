@@ -5,6 +5,7 @@ import sys
 
 from Source.SvnSource import *
 from BuildSystem.KDE4BuildSystem import *
+from Package.PackageBase import *
 
 # deprecated class
 class subinfo(info.infoclass):
@@ -20,11 +21,12 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         
                 
-class Package(SvnSource, KDE4BuildSystem):
+class Package(SvnSource, KDE4BuildSystem, PackageBase):
     #KDEWinPackager
     def __init__( self, **args ):
         SvnSource.__init__(self)
         KDE4BuildSystem.__init__(self)
+        PackageBase.__init__(self)
         #KDEWinPackager.__init__(self)
         #self.settings.svnSource.url['default'] = 'trunk/KDE/kdegames'
         
