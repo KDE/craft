@@ -1,13 +1,12 @@
 
 from EmergeBase import *;
 import os;
-import shutils;
 import utils;
 
 class PackageBase (EmergeBase):
-	"""
-	 provides a generic interface for packages and implements the basic stuff for all
-	 packages
+    """
+     provides a generic interface for packages and implements the basic stuff for all
+     packages
     """
 
     # uses the following instance variables 
@@ -15,16 +14,16 @@ class PackageBase (EmergeBase):
     
     #rootdir    -> EmergeBase  
     #package    -> PackageBase
-    #forced      -> for what this this variable good ? 
+    #force      -> PackageBase
     #category   -> PackageBase
     #version    -> PackageBase
     #workdir    -> PackageBase
     #packagedir -> PackageBase
     #imagedir   -> PackageBase
     
-	def __init__(self):
-		EmergeBase.__init__(self)
-	
+    def __init__(self):
+        EmergeBase.__init__(self)
+
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -56,20 +55,20 @@ class PackageBase (EmergeBase):
         utils.remInstalled( self.category, self.package, self.version )
         return True
 
-    def setup(self):
-		"""
-		 
+    def cleanup( self ):
+        """cleanup before install to imagedir"""
+        if ( os.path.exists( self.imagedir ) ):
+            utils.debug( "cleaning image dir: %s" % self.imagedir, 1 )
+            utils.cleanDirectory( self.imagedir )
 
-		@return  :
-		@author
-		"""
-		pass
+    def manifest( self ):
+        """installer compatibility: make the manifest files that make up the installers"""
+        """install database"""
+        print "manifest should be created on qmerge "
+    
+        if utils.verbose() > 1:
+            print "base manifest called"
+        utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.category, self.package, self.version )
+        return True
 
-	def clean(self):
-		"""
-		 
-
-		@return  :
-		@author
-		"""
-		pass
+ 
