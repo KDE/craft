@@ -34,7 +34,7 @@ EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
 
 class EmergeBase():
     """base class for emerge system - holds attributes and methods required by base classes"""
-    
+
     def __init__( self, SRC_URI="", **args ):
         if "args" in args.keys() and "env" in args["args"].keys():
             env = args["args"]["env"]
@@ -56,7 +56,7 @@ class EmergeBase():
         self.forced                 = False
         self.versioned              = False
         self.noFetch                = False
-        self.kdeCustomDefines       = ""
+        self.CustomDefines       = ""
         self.createCombinedPackage  = False
 
         self.subinfo                = info.infoclass()
@@ -89,8 +89,6 @@ class EmergeBase():
             self.buildType = Type
         else:
             self.buildType = None
-
-        self.setDirectoriesBase()
         
         if COMPILER == "msvc2005":
             self.compiler = "msvc2005"
@@ -123,6 +121,8 @@ class EmergeBase():
             command = cmd
             options = ""
 
+        self.setDirectoriesBase()
+
         utils.debug( "command: %s" % command )
 
         self.Targets.update( self.subinfo.svnTargets )
@@ -139,7 +139,7 @@ class EmergeBase():
             self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
 
         #self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
-        self.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
+        self.setDirectories()
         
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
             filenames = []
@@ -196,16 +196,44 @@ class EmergeBase():
 
         self.rootdir     = ROOTDIR
         self.downloaddir = DOWNLOADDIR
-        self.workdir     = os.path.join( ROOTDIR, "tmp", self.PV, "work" )
-        self.imagedir    = os.path.join( ROOTDIR, "tmp", self.PV, "image-" + COMPILER )
+        self.workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
+        self.workdir     = os.path.join( self.workroot, "work" )
+        self.builddir    = self.__buildDir()        
+        self.imagedir    = os.path.join( self.workroot, "image-" + COMPILER )
 
         self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )
+        # deprecated
         self.kdesvndir = KDESVNDIR
         self.kdesvnserver = KDESVNSERVER
         self.kdesvnuser = KDESVNUSERNAME
         self.kdesvnpass = KDESVNPASSWORD
-        self.svndir = os.path.join( self.downloaddir, "svn-src", self.package )
+        
+        self.sourcedir = os.path.join( self.downloaddir, "svn-src", self.package )
        
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
+
+    def __buildDir(self):        
+        if( self.buildType == None ):
+            tmp = "%s-%s" % (COMPILER, "default")
+        else:
+            tmp = "%s-%s" % (COMPILER, self.buildType)
+        
+        #if( not self.buildNameExt == None ):
+        #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
+
+        builddir = os.path.join( self.workroot, tmp )
+        print "__buildDir() " + builddir
+        return builddir
+
+    def enterBuildDir(self):
+        if ( not os.path.exists( self.workroot) ):
+            os.mkdir( self.workroot )
+        
+        if ( not os.path.exists( self.workdir) ):
+            os.mkdir( self.workdir )
+        
+        if ( not os.path.exists( self.builddir) ):
+            os.mkdir( self.builddir )
+        os.chdir( self.builddir )

@@ -51,3 +51,7 @@ class BuildSystemBase(EmergeBase):
 
     #make the target by runnning the related make tool"""
     def make(self): abstract()
+            
+    def setDirectories(self):
+        print "setDirectories called"
+        return True
