@@ -1,0 +1,125 @@
+Index: libs/kworkspace/kworkspace.cpp
+===================================================================
+--- libs/kworkspace/kworkspace.cpp
++++ libs/kworkspace/kworkspace.cpp
+@@ -55,7 +55,7 @@
+ 
+ namespace KWorkSpace
+ {
+-
++#ifdef Q_WS_X11
+ static void save_yourself_callback( SmcConn conn_P, SmPointer, int, Bool , int, Bool )
+     {
+     SmcSaveYourselfDone( conn_P, True );
+@@ -155,10 +155,12 @@
+ {
+     delete helper;
+ }
++#endif
+ 
+ bool requestShutDown(
+     ShutdownConfirm confirm, ShutdownType sdtype, ShutdownMode sdmode )
+ {
++#ifdef Q_WS_X11
+     QApplication::syncX();
+     kapp->updateRemoteUserTimestamp( "org.kde.ksmserver" );
+     /*  use ksmserver's dcop interface if necessary  */
+@@ -176,12 +178,16 @@
+         qAddPostRoutine(cleanup_sm);
+     }
+     return helper->requestShutdown( confirm );
++#else
++    return false;
++#endif
+ }
+ 
+ bool canShutDown( ShutdownConfirm confirm,
+                   ShutdownType sdtype,
+                   ShutdownMode sdmode )
+ {
++#ifdef Q_WS_X11
+     if ( confirm == ShutdownConfirmYes ||
+          sdtype != ShutdownTypeDefault ||
+          sdmode != ShutdownModeDefault )
+@@ -195,11 +201,15 @@
+     }
+ 
+     return true;
++#else
++    return false;
++#endif
+ }
+ 
+ static QTime smModificationTime;
+ void propagateSessionManager()
+ {
++#ifdef Q_WS_X11
+     QByteArray fName = QFile::encodeName(KStandardDirs::locateLocal("socket", "KSMserver"));
+     QString display = QString::fromLocal8Bit( ::getenv(DISPLAY) );
+     // strip the screen number from the display
+@@ -229,6 +239,7 @@
+         f.close();
+         ::setenv( "SESSION_MANAGER", s.toLatin1(), true  );
+     }
++#endif
+ }
+ 
+ } // end namespace
+Index: libs/kworkspace/CMakeLists.txt
+===================================================================
+--- libs/kworkspace/CMakeLists.txt
++++ libs/kworkspace/CMakeLists.txt
+@@ -3,12 +3,9 @@
+ set(kworkspace_LIB_SRCS kdisplaymanager.cpp
+                         kwindowlistmenu.cpp
+                         screenpreviewwidget.cpp
++                        kworkspace.cpp
+    )
+ 
+-if(NOT WIN32)
+-	list(APPEND kworkspace_LIB_SRCS kworkspace.cpp)
+-endif(NOT WIN32)
+-
+ set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
+ qt4_add_dbus_interface( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
+ 
+@@ -33,10 +30,5 @@
+ 
+ install( FILES kdisplaymanager.h
+                kwindowlistmenu.h
+-         DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace COMPONENT Devel )
+-
+-if(NOT WIN32)
+-	install( FILES 
+                kworkspace.h
+          DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace COMPONENT Devel )
+-endif(NOT WIN32)
+Index: libs/kworkspace/kworkspace_p.h
+===================================================================
+--- libs/kworkspace/kworkspace_p.h
++++ libs/kworkspace/kworkspace_p.h
+@@ -20,6 +20,8 @@
+ #ifndef KWORKSPACE_P_H
+ #define KWORKSPACE_P_H
+ 
++#ifdef Q_WS_X11
++
+ #include "kworkspace.h"
+ 
+ class QSocketNotifier;
+@@ -39,13 +41,13 @@
+     private slots:
+         void processData();
+     private:
+-#ifndef Q_WS_WIN
+ 		SmcConn connection() const { return conn; }
+         SmcConn conn;
+-#endif
+         QSocketNotifier* notifier;
+     };
+  
+ }
+ 
+ #endif
++
++#endif
