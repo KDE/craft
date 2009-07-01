@@ -109,8 +109,8 @@ class EmergeBase():
         """called to run the derived class"""
         """this will be executed from the package if the package is started on its own"""
         """it shouldn't be called if the package is imported as a python module"""
-        print self.__class__.__name__
-        utils.debug( "base exec called. args: %s" % sys.argv )
+
+        utils.debug( "EmergeBase.execute called. args: %s" % sys.argv )
 
         if not cmd:
             command = sys.argv[ 1 ]
@@ -140,12 +140,6 @@ class EmergeBase():
 
         #self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.setDirectories()
-        
-        if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
-            filenames = []
-            for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
-                filenames.append( os.path.basename( uri ) )
-            self.filenames = filenames
 
         ok = True
         if command   == "fetch":       ok = self.fetch()
