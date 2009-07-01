@@ -74,7 +74,9 @@ Commands (must have a packagename):
 --install-deps      This will fetch and install all required dependencies for 
                     the specified package
 --unmerge           this uninstalls a package from KDEROOT - it requires a
-                    working manifest directory.
+                    working manifest directory. unmerge only delete unmodified 
+                    files by default. You may use the -f or --force option to 
+                    let unmerge delete all files unconditional.
 
 Flags:
 
@@ -244,7 +246,7 @@ for i in sys.argv:
     elif ( i == "--offline" ):
         opts.append( "--offline" )
         os.environ["EMERGE_OFFLINE"] = "True"
-    elif ( i == "-f" ):
+    elif ( i == "-f" or i == "--force" ):
         os.environ["EMERGE_FORCED"] = "True"
     elif ( i.startswith( "--buildtype=" ) ):
         os.environ["EMERGE_BUILDTYPE"] = i.replace( "--buildtype=", "" )

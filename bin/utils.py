@@ -740,7 +740,7 @@ def unmerge( rootdir, package, forced = False ):
                             debug( "deleting file %s" % a )
                             os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                         else:
-                            warning( "file %s has different hash: %s %s, run with option --forced to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
+                            warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
                             if forced:
                                 os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                     elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
