@@ -96,7 +96,7 @@ class SvnSource (VersionSystemSourceBase):
     def unpack( self ):
         return True
     
-        
+	# todo merge with similar method from GitSource
     def svnPath( self ):
         """overload this function in kde packages to use the nocopy option"""
         """this function should return the full path seen from /home/KDE/"""
