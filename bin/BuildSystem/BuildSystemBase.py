@@ -25,20 +25,19 @@ class BuildSystemBase(EmergeBase):
     def __init__(self):
         EmergeBase.__init__(self)
 
-    #configure the target
-    def configure(self,buildType="",customDefines=""): abstract
+    
+    def configureOptions( self ):
+        """options for the configure line"""
+        return ""
 
-    def compile(self,buildType="",customDefines=""):
-        """convencience method - runs configure() and make()"""
-        if( not self.buildType == None ) :
-            if( not ( self.configure( self.buildType, customDefines ) and self.make( self.buildType ) ) ):
-                return False
-            else:
-                if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
-                    return False
-                if( not ( self.configure( "Release", customDefines ) and self.make( "Release" ) ) ):
-                    return False
-            return True
+    # todo find a better name 
+    def configureTool(self):
+        """return string to override the complete configure command"""
+        return ""
+        
+    #configure the target
+    # todo not sure if buildType and options are used anywhere, if not remove them
+    def configure(self, buildType=None, customOptions=""): abstract
 
     #install the target into local install directory"""
     def install(self): abstract()
@@ -50,8 +49,24 @@ class BuildSystemBase(EmergeBase):
     def runTests(self): abstract()
 
     #make the target by runnning the related make tool"""
-    def make(self): abstract()
+    def make(self, buildType=None): abstract()
             
+    def makeOptions( self ):
+        """options for the make command line"""
+        return ""
+
+    # todo not sure if buildType and customDefines are used anywhere, if not remove them
+    def compile(self, buildType=None, customOptions=""):
+        """convencience method - runs configure() and make()"""
+        if( not self.buildType == None ) :
+            if( not ( self.configure( self.buildType, customOptions ) and self.make( self.buildType ) ) ):
+                return False
+            else:
+                if( not ( self.configure( "Debug", customOptions ) and self.make( "Debug" ) ) ):
+                    return False
+                if( not ( self.configure( "Release", customOptions ) and self.make( "Release" ) ) ):
+                    return False
+            return True
+
     def setDirectories(self):
-        print "setDirectories called"
-        return True
+        return
