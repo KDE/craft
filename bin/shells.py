@@ -4,6 +4,11 @@
     provides shells     
 """
 
+import os
+import utils
+
+# todo requires installed msys package -> add suport for installing packages 
+
 class Shell(object):
     def __init__(self):
         dummy = 0
@@ -18,6 +23,8 @@ class Shell(object):
 class MSysShell(Shell):
     def __init__(self):
         Shell.__init__(self)
+        env = dict( os.environ )
+        self.msysdir = env[ "MSYSDIR" ]
 
     def toNativePath( self, path ):
         path = path.replace( '\\', '/' )
