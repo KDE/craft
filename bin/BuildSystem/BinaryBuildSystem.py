@@ -14,16 +14,14 @@ class BinaryBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self)
         
     def configure( self, buildType=None, customOptions="" ):
-        return 
-
-    def make( self, buildType=None ):
-        return
-
-    def install( self, buildType=None ):
-        enterBuildDir()
-        print "unpack archive file"
-        # unpack archive file into image directory
         return True
 
+    def make( self, buildType=None ):
+        return True
+
+    # nothing to do - unpack hasd done this job already
+    def install( self, buildType=None ):
+        return True
+        
     def runTest( self ):
-        return
+        return False

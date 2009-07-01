@@ -60,7 +60,8 @@ class PackageBase (EmergeBase):
         if ( os.path.exists( self.imagedir ) ):
             utils.debug( "cleaning image dir: %s" % self.imagedir, 1 )
             utils.cleanDirectory( self.imagedir )
-
+        return True
+        
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers"""
         """install database"""
