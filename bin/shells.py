@@ -17,7 +17,7 @@ class Shell(object):
 
 class MSysShell(Shell):
     def __init__(self):
-        Shell.__init(self)
+        Shell.__init__(self)
 
     def toNativePath( self, path ):
         path = path.replace( '\\', '/' )
@@ -29,7 +29,7 @@ class MSysShell(Shell):
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
         cmd = "%s --login -c \"cd %s && %s %s" % \
-              ( sh, self.__toMSysPath( path ), self.__toMSysPath( cmd ), args )
+              ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
 
         cmd +="\""
         if utils.verbose() > 0:
