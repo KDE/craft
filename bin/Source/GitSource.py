@@ -30,7 +30,8 @@ class GitSource (VersionSystemSourceBase):
                 ret = self.shell.execute( self.sourcedir, "git", "pull" )
             else:
                 """it doesn't exist so clone the repo"""
-                ret = self.shell.execute( self.sourcedir, "git", "clone %s %s" % ( repopath, self.package ) )
+                # todo we need to enter into one level above the source directory 
+                ret = self.shell.execute( self.sourcedir.replace(self.package,""), "git", "clone %s %s" % ( repopath, self.package ) )
             os.environ["PATH"] = safePath
         else:
             utils.debug( "skipping git fetch (--offline)" )
@@ -43,6 +44,3 @@ class GitSource (VersionSystemSourceBase):
             return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
         else:
             return False
-
-    def unpack(self):
-        return True;

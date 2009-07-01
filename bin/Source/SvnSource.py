@@ -10,7 +10,7 @@ class SvnSource (VersionSystemSourceBase):
     def __init__(self):
         VersionSystemSourceBase.__init__(self)
         
-    def checkout( self, repourl, ownpath, codir, doRecursive = False ):
+    def __checkout( self, repourl, ownpath, codir, doRecursive = False ):
         """in ownpath try to checkout codir from repourl """
         """if codir exists and doRecursive is false, simply return,"""
         """if codir does not exist, but ownpath/.svn exists,"""
@@ -74,14 +74,14 @@ class SvnSource (VersionSystemSourceBase):
                 print "  dir to checkout: %s" % tmpdir
                 print "  repourl", repourl
 
-            self.checkout( repourl, svndir, tmpdir, False )
+            self.__checkout( repourl, svndir, tmpdir, False )
             svndir = os.path.join( svndir, tmpdir )
             repourl = repourl + tmpdir + "/"
 
         if utils.verbose() > 0:
             print "dir in which to really checkout: %s" % svndir
             print "dir to really checkout: %s" % packagedir
-        self.checkout( repourl, svndir, packagedir, True )
+        self.__checkout( repourl, svndir, packagedir, True )
 
         svndir = os.path.join( self.kdesvndir, svnpath ).replace( "/", "\\" )
         #repo = self.kdesvnserver + "/home/kde/" + svnpath + dir
@@ -93,12 +93,8 @@ class SvnSource (VersionSystemSourceBase):
 
         return True
 
-    def unpack( self ):
-        return True
-    
 	# todo merge with similar method from GitSource
     def svnPath( self ):
-        """overload this function in kde packages to use the nocopy option"""
         """this function should return the full path seen from /home/KDE/"""
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
             return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
