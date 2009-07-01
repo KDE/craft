@@ -223,17 +223,28 @@ class EmergeBase():
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 
-        builddir = os.path.join( self.workroot, tmp )
-        print "__buildDir() " + builddir
+        builddir = os.path.join( self.workdir, tmp )
+        if utils.verbose() > 0:
+            print "package builddir is: %s" % builddir
         return builddir
 
     def enterBuildDir(self):
         if ( not os.path.exists( self.workroot) ):
             os.mkdir( self.workroot )
+            if utils.verbose() > 0:
+                print "creating: %s" % self.workroot
         
         if ( not os.path.exists( self.workdir) ):
             os.mkdir( self.workdir )
+            if utils.verbose() > 0:
+                print "creating: %s" % self.workdir
         
         if ( not os.path.exists( self.builddir) ):
             os.mkdir( self.builddir )
+            if utils.verbose() > 0:
+                print "creating: %s" % self.builddir 
+
         os.chdir( self.builddir )
+        if utils.verbose() > 0:
+            print "entering: %s" % self.builddir
+
