@@ -143,13 +143,13 @@ class EmergeBase():
 
         ok = True
         if command   == "fetch":       ok = self.fetch()
-        elif command == "cleanimage":       self.cleanup()
+        elif command == "cleanimage":  ok = self.cleanup()
         elif command == "unpack":      ok = self.unpack()
         elif command == "compile":     ok = self.compile()
         elif command == "configure":   ok = self.configure()
         elif command == "make":        ok = self.make()
         elif command == "install":     ok = self.install()
-        elif command == "test":      ok = self.unittest()
+        elif command == "test":        ok = self.unittest()
         elif command == "qmerge":      ok = self.qmerge()
         elif command == "unmerge":     ok = self.unmerge()
         elif command == "manifest":    ok = self.manifest()
