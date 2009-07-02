@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Packager base
+
 from EmergeBase import *
 
 class PackagerBase(EmergeBase):
@@ -10,7 +13,7 @@ class PackagerBase(EmergeBase):
 
     # for compatibility 
     def make_package(self):
-        return createPackage(self)
+        return self.createPackage()
 
 
 
