@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
         self.svnTargets['2.0'] = "branches/koffice/2.0/koffice"
         self.targets['2.0.0'] = 'ftp://ftp.kde.org/pub/kde/stable/koffice-2.0.0/src/koffice-2.0.0.tar.bz2'
         self.targetInstSrc['2.0.0'] = 'koffice-2.0.0'
+        self.targets['2.0.1'] = 'ftp://ftp.kde.org/pub/kde/stable/koffice-2.0.1/src/koffice-2.0.1.tar.bz2'
+        self.targetInstSrc['2.0.1'] = 'koffice-2.0.1'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -42,7 +44,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget == '2.0.0':
+        if self.buildTarget in ['2.0.0']:
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
