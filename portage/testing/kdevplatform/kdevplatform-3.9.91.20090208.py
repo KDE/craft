@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import utils
 import os
@@ -7,7 +8,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdevplatform'
-        self.svnTargets['0.9.92'] = 'tags/kdevplatform/0.9.92'
+        self.svnTargets['0.9.94'] = 'tags/kdevplatform/0.9.94'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -29,10 +30,10 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "kdevplatform", os.path.basename(sys.argv[0]).replace("kdevplatform-", "").replace(".py", ""), True )
-        else:
+        if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "kdevplatform", self.buildTarget, True )
+        else:
+            return self.doPackaging( "kdevplatform" )
 
 if __name__ == '__main__':
     subclass().execute()
