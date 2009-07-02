@@ -59,7 +59,6 @@ class CMakeBuildSystem(BuildSystemBase):
         
         # todo fixes buildtype and buildType spelling issues 
         if( not buildType == None ):
-            buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
             
         if( not self.buildNameExt == None ):
