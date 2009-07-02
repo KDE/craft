@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import sys
@@ -9,6 +10,8 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
         self.targets['0.10.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0.tar.bz2'
         self.targetInstSrc['0.10.0'] = 'digikam-0.10.0'
+        self.targets['1.0.0-beta1'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-1.0.0-beta1.tar.bz2'
+        self.targetInstSrc['1.0.0-beta1'] = 'digikam-1.0.0-beta1'
         
         self.svnTargets['branch-0.10.0'] = 'branches/extragear/graphics/digikam/0.10.0-trunk'
         self.defaultTarget = 'svnHEAD'
@@ -27,7 +30,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.10.0']:
+        if self.buildTarget in ['0.10.0', '1.0.0-beta1']:
             if( not base.baseclass.unpack( self ) ):
                 return False
             else:
