@@ -1,3 +1,39 @@
+--- kate/plugins/konsole/kateconsole.cpp
++++ kate/plugins/konsole/kateconsole.cpp
+@@ -207,7 +207,7 @@
+ 
+ void KateConsole::cd (const KUrl &url)
+ {
+-  sendInput("cd " + KShell::quoteArg(url.path()) + '\n');
++  sendInput("cd " + KShell::quoteArg(url.toLocalFile()) + '\n');
+ }
+ 
+ void KateConsole::sendInput( const QString& text )
+--- kate/plugins/openheader/plugin_kateopenheader.cpp
++++ kate/plugins/openheader/plugin_kateopenheader.cpp
+@@ -89,7 +89,10 @@
+   QFileInfo info( url.toLocalFile() );
+   QString extension = info.suffix().toLower();
+ 
+-  QStringList headers( QStringList() << "h" << "H" << "hh" << "hpp" );
++  QStringList headers( QStringList() << "h" << "hh" << "hpp" );
++#ifndef Q_OS_WIN
++  headers << "H";
++#endif
+   QStringList sources( QStringList() << "c" << "cpp" << "cc" << "cp" << "cxx" );
+ 
+   if( sources.contains( extension ) ) {
+@@ -111,6 +114,10 @@
+     newURL.setFileName( basename + '.' + *it );
+     if( KIO::NetAccess::exists( newURL , KIO::NetAccess::SourceSide, application()->activeMainWindow()->window()) ) {
+       application()->activeMainWindow()->openUrl( newURL );
++#ifdef Q_OS_WIN
++      /* on windows the files foo.h and foo.H can't coexist - so don't look for another version of the same file. */
++      continue;
++#endif
+     }
+     newURL.setFileName( basename + '.' + (*it).toUpper() );
+     if( KIO::NetAccess::exists( newURL , KIO::NetAccess::SourceSide, application()->activeMainWindow()->window()) )
 --- umbrello/umbrello/CMakeLists.txt
 +++ umbrello/umbrello/CMakeLists.txt
 @@ -433,7 +433,7 @@
