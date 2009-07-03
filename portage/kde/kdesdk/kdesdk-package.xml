@@ -54,6 +54,7 @@
         <part name="runtime" >
             <files include="manifest/post-install-.*"/>
             <files include="lib/kde4/.*dll"/>
+            <files include="lib/strigi/.*_strigila_.*dll"/>
             <files>
 bin/.*antlr.dll
 bin/colorsvn
@@ -90,9 +91,6 @@ bin/svnversions
 bin/swappo.exe
 bin/xml2pot.exe
 bin/zonetab2pot.py
-lib/strigi/msvc_strigila_diff.dll
-lib/strigi/msvc_strigila_po.dll
-lib/strigi/msvc_strigita_ts.dll
 share/applications/kde4/kapptemplate.desktop
 share/applications/kde4/kdesvn-build.desktop
 share/applications/kde4/kuiviewer.desktop
