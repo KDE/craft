@@ -12,7 +12,6 @@
 		<part name="development">
 			<files include="lib/.*(kdcraw|kexiv|kipi).*"/>
 			<files include="include/.*(kdcraw|kexiv|kipi).*"/>
-			<files include="lib/strigi.*"/>
 		</part>
         <dependency>kdebase-runtime</dependency> 
         <dependency>kdelibs</dependency>
@@ -67,7 +66,7 @@
 		</part>
 		<part name="development">
 			<files include="include/okular.*"/>
-			<files include="lib/.*okular.*"/>
+			<files dir="lib" include="/.*okular.*\.lib"/>
 		</part>
         <dependency>libkdegraphics</dependency>
     </package>
