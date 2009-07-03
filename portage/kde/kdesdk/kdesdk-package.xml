@@ -52,11 +52,11 @@
     <package name="kdesdk">
         <shortDescription>KDE Software development package</shortDescription>
         <part name="runtime" >
+            <files include="bin/.*antlr.*dll.*"/>
             <files include="manifest/post-install-.*"/>
             <files include="lib/kde4/.*dll"/>
             <files include="lib/strigi/.*_strigi.*dll"/>
             <files>
-bin/.*antlr.dll
 bin/colorsvn
 bin/create_makefile
 bin/cvs-clean
