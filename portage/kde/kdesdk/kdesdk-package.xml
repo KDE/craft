@@ -54,7 +54,7 @@
         <part name="runtime" >
             <files include="manifest/post-install-.*"/>
             <files include="lib/kde4/.*dll"/>
-            <files include="lib/strigi/.*_strigila_.*dll"/>
+            <files include="lib/strigi/.*_strigi.*dll"/>
             <files>
 bin/.*antlr.dll
 bin/colorsvn
