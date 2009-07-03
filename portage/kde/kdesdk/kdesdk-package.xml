@@ -17,6 +17,13 @@
             <files include="share/.*lokalize.*"/>
         </part>
     </package>
+    <package name="kbugbuster">
+        <shortDescription>a bug triaging application for KDE</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*kbugbuster.*"/>
+            <files include="share/.*kbugbuster.*"/>
+        </part>
+    </package>
     <package name="kate">
         <shortDescription>a MDI text editor application for KDE</shortDescription>
         <part name="runtime">
@@ -46,8 +53,9 @@
         <shortDescription>KDE Software development package</shortDescription>
         <part name="runtime" >
             <files include="manifest/post-install-.*"/>
+            <files include="lib/kde4/.*dll"/>
             <files>
-bin/antlr.dll
+bin/.*antlr.dll
 bin/colorsvn
 bin/create_makefile
 bin/cvs-clean
@@ -82,15 +90,14 @@ bin/svnversions
 bin/swappo.exe
 bin/xml2pot.exe
 bin/zonetab2pot.py
-lib/kde4/kio_perldoc.dll
-lib/kde4/kuiviewerpart.dll
-lib/kde4/quithumbnail.dll
 lib/strigi/msvc_strigila_diff.dll
 lib/strigi/msvc_strigila_po.dll
 lib/strigi/msvc_strigita_ts.dll
 share/applications/kde4/kapptemplate.desktop
 share/applications/kde4/kdesvn-build.desktop
 share/applications/kde4/kuiviewer.desktop
+share/apps/kabc/formats/kdeaccountsplugin.desktop
+share/kde4/services/kresources/kcal/bugzilla.desktop
 share/apps/kdevappwizard/template_previews/akonadi-resources.png
 share/apps/kdevappwizard/template_previews/akonadi-serializer.png
 share/apps/kdevappwizard/template_previews/default.png
@@ -129,8 +136,6 @@ share/doc/HTML/en/kapptemplate/pykde4.png
 share/doc/HTML/en/kapptemplate/pyqt4app.png
 share/doc/HTML/en/kapptemplate/second-page.png
 share/doc/HTML/en/kapptemplate/third-page.png
-share/doc/HTML/en/kbugbuster/index.cache.bz2
-share/doc/HTML/en/kbugbuster/index.docbook
 share/doc/HTML/en/kcachegrind/index.cache.bz2
 share/doc/HTML/en/kcachegrind/index.docbook
 share/doc/HTML/en/kdesvn-build/index.cache.bz2
@@ -259,6 +264,7 @@ lib/antlr.lib
         <dependency>umbrello</dependency> 
         <dependency>lokalize</dependency> 
         <dependency>kate</dependency> 
+        <dependency>kbugbuster</dependency> 
         <dependency>kompare</dependency> 
     </package>
 </module>
