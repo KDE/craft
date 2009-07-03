@@ -31,7 +31,7 @@ class subclass(base.baseclass):
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "yakuake", self.buildTarget, True )
         else:
-            return self.doPackaging( "yakuake", os.path.basename(sys.argv[0]).replace("kile-", "").replace(".py", ""), True )
+            return self.doPackaging( "yakuake" )
 
 
 if __name__ == '__main__':		
