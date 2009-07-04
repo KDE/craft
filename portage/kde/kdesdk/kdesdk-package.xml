@@ -49,7 +49,7 @@
             <files include="lib/.*kompare.*lib"/>
         </part>
     </package>
-    <package name="kdesdk">
+    <package name="libkdesdk">
         <shortDescription>KDE Software development package</shortDescription>
         <part name="runtime" >
             <files include="bin/.*antlr.*dll.*"/>
