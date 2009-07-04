@@ -5,13 +5,14 @@
 		<part name="runtime">
 			<files include="bin/.*(kdcraw|kexiv|kipi).*"/>
 			<files include="lib/strigi.*"/>
-			<files include="lib/kde4/.*(gsthumbnail|gvpart|msits|mobithumbnail|rawthumbnail|svgpart).*"/>
+			<files include="lib/kde4/.*(gsthumbnail|msits|mobithumbnail|rawthumbnail|svgpart).*"/>
 			<files include="share/.*(kdcraw|kexiv|kipi).*"/>
-			<files include="share/.*(gsthumbnail|gvpart|msits|mobithumbnail|rawthumbnail|svgpart|KSane).*"/>
+			<files include="share/.*(gsthumbnail|msits|mobithumbnail|rawthumbnail|svgpart).*"/>
 		</part>
 		<part name="development">
 			<files include="lib/.*(kdcraw|kexiv|kipi).*"/>
 			<files include="include/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="share/.*KSane.*"/>
 		</part>
         <dependency>kdebase-runtime</dependency> 
         <dependency>kdelibs</dependency>
@@ -51,8 +52,10 @@
 		<part name="runtime">
 			<files include="bin/.*gwenview.*"/>
 			<files include="lib/.*gwenview.*"/>
+			<files include="lib/kde4.*gvpart.*"/>
 			<files include="share/.*gwenview.*"/>
 			<files include="share/.*slideshow.desktop"/>
+			<files include="share/.*gvpart.*"/>
 		</part>
         <dependency>libkdegraphics</dependency>
     </package>
