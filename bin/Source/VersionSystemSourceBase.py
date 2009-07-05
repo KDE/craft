@@ -38,7 +38,7 @@ class VersionSystemSourceBase (SourceBase):
 
     def repositoryPath( self ):
         """this function should return the full path into the repository"""
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
+        if self.subinfo.hasSvnTarget():
+            return self.subinfo.svnTarget()
         else:
             return False
