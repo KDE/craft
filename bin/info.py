@@ -70,3 +70,9 @@ class infoclass:
         if self.buildTarget in self.svnTargets.keys():
             return self.svnTargets[self.buildTarget]
         return ""
+
+    # return patch informations for the currently selected build target
+    def patchToApply():
+        if len( self.targets ) and self.buildTarget in self.patchToApply.keys():
+            return self.patchToApply[ self.buildTarget ]
+        return ("","")
