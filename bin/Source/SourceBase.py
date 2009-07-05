@@ -4,6 +4,7 @@ from EmergeBase import *
 
 class SourceBase(EmergeBase):
     """ implements basic stuff required for  all sources"""
+    url = ""
     def __init__(self):
         EmergeBase.__init__(self)
 
