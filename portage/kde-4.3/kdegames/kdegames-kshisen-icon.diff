@@ -1,0 +1,26 @@
+Index: kshisen/CMakeLists.txt
+===================================================================
+--- kshisen/CMakeLists.txt	(revision 991906)
++++ kshisen/CMakeLists.txt	(working copy)
+@@ -4,8 +4,6 @@
+ # not used as yet
+ #add_subdirectory( sounds )
+ 
+-kde4_add_app_icon( kshisen_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../hi*-app-kshisen.png" )
+-
+ install( FILES kshisen.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
+ 
+ kde4_install_icons( ${ICON_INSTALL_DIR} )
+Index: kshisen/src/CMakeLists.txt
+===================================================================
+--- kshisen/src/CMakeLists.txt	(revision 991906)
++++ kshisen/src/CMakeLists.txt	(working copy)
+@@ -14,6 +14,8 @@
+ 
+ kde4_add_kcfg_files( kshisen_SRCS prefs.kcfgc )
+ 
++kde4_add_app_icon( kshisen_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../hi*-app-kshisen.png" )
++
+ kde4_add_executable( kshisen ${kshisen_SRCS} )
+ 
+ target_link_libraries( kshisen ${KDE4_KDEUI_LIBS} kdegames kmahjongglib )

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base
 import os
 import sys
@@ -12,6 +13,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdegames-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdegames-4.3.' + ver
+        self.patchToApply['4.2.95'] = 'kdegames-kshisen-icon.diff'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
