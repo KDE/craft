@@ -397,7 +397,16 @@ class baseclass:
         if self.kde.kdeSvnPath():
             return self.kde.kdeSvnUnpack( svnpath, packagedir )
         else:
-            return utils.unpackFiles( self.downloaddir, self.filenames, self.workdir )
+            if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
+                return False
+            if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
+                ( file, patchdepth ) = self.subinfo.patchToApply[ self.subinfo.buildTarget ]
+                utils.debug( "patchesToApply: %s" % file, 0 )
+                patchfile = os.path.join ( self.packagedir, file )
+                srcdir = os.path.join ( self.workdir, self.instsrcdir )
+                return utils.applyPatch( patchfile, srcdir, patchdepth )
+            return True
+
         
     def kdeDefaultDefines( self ):
         return self.kde.kdeDefaultDefines()
