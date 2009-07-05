@@ -23,17 +23,21 @@
    QStringList sources( QStringList() << "c" << "cpp" << "cc" << "cp" << "cxx" );
  
    if( sources.contains( extension ) ) {
-@@ -111,6 +114,10 @@
+@@ -109,8 +112,13 @@
+   KUrl newURL( url );
+   for( QStringList::ConstIterator it = extensions.begin(); it != extensions.end(); ++it ) {
      newURL.setFileName( basename + '.' + *it );
-     if( KIO::NetAccess::exists( newURL , KIO::NetAccess::SourceSide, application()->activeMainWindow()->window()) ) {
+-    if( KIO::NetAccess::exists( newURL , KIO::NetAccess::SourceSide, application()->activeMainWindow()->window()) )
++    if( KIO::NetAccess::exists( newURL , KIO::NetAccess::SourceSide, application()->activeMainWindow()->window()) ) {
        application()->activeMainWindow()->openUrl( newURL );
 +#ifdef Q_OS_WIN
 +      /* on windows the files foo.h and foo.H can't coexist - so don't look for another version of the same file. */
 +      continue;
 +#endif
-     }
++    }
      newURL.setFileName( basename + '.' + (*it).toUpper() );
      if( KIO::NetAccess::exists( newURL , KIO::NetAccess::SourceSide, application()->activeMainWindow()->window()) )
+       application()->activeMainWindow()->openUrl( newURL );
 --- umbrello/umbrello/CMakeLists.txt
 +++ umbrello/umbrello/CMakeLists.txt
 @@ -433,7 +433,7 @@
