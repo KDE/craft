@@ -28,7 +28,7 @@ def SourceFactory(settings):
                 print "foung kde svn target with url=" + url
             source = KDESvnSource()
             source.url = url
-            return url
+            return source
             
         if url.find("git:"):
             if utils.verbose > 1:
