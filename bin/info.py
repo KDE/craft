@@ -51,6 +51,11 @@ class infoclass:
         return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin' + ext + '\n' + \
                repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib' + ext + '\n'
 
+    # return archive file based package url for unified packages
+    def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
+        return repoUrl + '/' + name + '-' + version + '-bin' + ext + '\n' + \
+               repoUrl + '/' + name + '-' + version + '-lib' + ext + '\n'
+
     # return true if archive targets for the currently selected build target is available
     def hasTarget( self ):
         return self.buildTarget in self.targets.keys()
