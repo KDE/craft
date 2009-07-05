@@ -28,15 +28,19 @@ class infoclass:
         self.setTargets()
         self.setSVNTargets()
 
+    # abstract method for setting dependencies, override to set individual targets
     def setDependencies( self ):
         """ """
 
+    # abstract method for setting targets, override to set individual targets
     def setTargets( self ):
         """ """
 
+    # abstract method for setting svn targets, override to set individual targets
     def setSVNTargets( self ):
         """ """
 
+    # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
@@ -46,3 +50,23 @@ class infoclass:
 
         return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin' + ext + '\n' + \
                repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib' + ext + '\n'
+
+    # return true if archive targets for the currently selected build target is available
+    def hasTarget( self ):
+        return self.buildTarget in self.targets.keys()
+        
+    # return archive target
+    def target( self ):
+        if self.buildTarget in self.targets.keys():
+            return self.targets[self.buildTarget]
+        return ""
+
+    # return true if version system based target for the currently selected build target is available
+    def hasSvnTarget( self ):
+        return self.buildTarget in self.svnTargets.keys()
+        
+    # return version system based target for the currently selected build target
+    def svnTarget( self ):
+        if self.buildTarget in self.svnTargets.keys():
+            return self.svnTargets[self.buildTarget]
+        return ""
