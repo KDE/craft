@@ -107,8 +107,8 @@ class EmergeBase():
         return workroot
 
     def workDir(self):
-        self.workDir()     = os.path.join( self.workRoot(), "work" )
-        return self.workDir()
+        _workDir = os.path.join( self.workRoot(), "work" )
+        return _workDir
 
     def imageDir(self):
         imagedir = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType())
@@ -195,7 +195,7 @@ class EmergeBase():
 		#deprecated
         self.workroot    = self.workRoot()
         #deprecated
-		self.workdir     = self.workDir()
+        self.workdir     = self.workDir()
 		#deprecated
         self.builddir    = self.__buildDir()        
 
@@ -221,7 +221,7 @@ class EmergeBase():
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 
-        builddir = os.path.join( self.self.workDir(), tmp )
+        builddir = os.path.join( self.workDir(), tmp )
         if utils.verbose() > 0:
             print self.buildType() + "  --- package builddir is: %s" % builddir
         return builddir
