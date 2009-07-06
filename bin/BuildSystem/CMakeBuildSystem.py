@@ -39,12 +39,12 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def configure( self, buildType=None, customDefines="" ):
         """Using cmake"""
+
+        if not self.noClean:
+            utils.cleanDirectory( self.builddir )
             
         self.enterBuildDir()
         
-        if not self.noClean:
-            utils.cleanDirectory( self.builddir )
-
         command = r"""cmake -G "%s" %s %s""" % \
               ( self.cmakeMakefileGenerator, \
                 self.configureDefaultDefines(), \
@@ -71,9 +71,6 @@ class CMakeBuildSystem(BuildSystemBase):
         """Using *make install"""
 
         self.enterBuildDir()
-
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
 
         fastString = ""
         if not self.noFast:
