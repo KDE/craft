@@ -12,12 +12,14 @@ class SourceBase(EmergeBase):
 
     def unpack(self): abstract()
 
+    def sourceDir(self): abstract()
+
     def applyPatches(self):
         """ apply patches is available """
         utils.debug( "SourceBase.__applyPatches called", 1 )
 
         if self.subinfo.hasTarget():
-            ( file, patchdepth ) = self.subinfo.patchToApply()
+            ( file, patchdepth ) = self.subinfo.patchesToApply()
             patchfile = os.path.join ( self.packagedir, file )
             srcdir = os.path.join ( self.workdir, self.instsrcdir )
             return utils.applyPatch( patchfile, srcdir, patchdepth )

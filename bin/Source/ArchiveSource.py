@@ -5,7 +5,7 @@ import utils
 
 class ArchiveSource(SourceBase):
     """ file download source"""
-    filenames = []
+    filenames = []    
     def __init__(self):
         SourceBase.__init__(self)
         utils.debug( "ArchiveSource.__init__ called", 1 )
@@ -14,9 +14,10 @@ class ArchiveSource(SourceBase):
         """ collect local filenames """
         utils.debug( "ArchiveSource.__localFileNames called", 1 )
 
-        if self.subinfo.buildTarget in self.subinfo.targets.keys(): # and not self.repoPath():
-            filenames = []
-            for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
+        filenames =[]
+
+        if self.subinfo.hasTarget():
+            for uri in self.subinfo.target().split():
                 filenames.append( os.path.basename( uri ) )
         return filenames
 
@@ -29,8 +30,8 @@ class ArchiveSource(SourceBase):
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
             return True
-        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
-            return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
+        if self.subinfo.hasTarget():
+            return utils.getFiles( self.subinfo.target(), self.downloaddir )
         else:
             return utils.getFiles( "", self.downloaddir )
 
@@ -39,7 +40,29 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.unpack called", 1 )
 
         filenames = self.__localFileNames()        
-        if not utils.unpackFiles( self.downloaddir, filenames, self.imagedir ):
+        destdir = self.workdir 
+        # if using BinaryBuildSystem the files should be unpacked into imagedir
+        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+            destdir = self.imagedir
+            if utils.verbose > 1:
+                print "unpacking files into image root %s" % destdir 
+        else:
+            if utils.verbose > 1:
+                print "unpacking files into work root %s" % destdir 
+        
+        if not utils.unpackFiles( self.downloaddir, filenames, destdir ):
             return False
 
         return self.applyPatches()
+
+    def sourceDir(self): 
+        sourcedir = self.workdir
+        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+            sourcedir = self.imagedir
+
+        if self.subinfo.hasTargetSourcePath():
+            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+        if utils.verbose > 1:
+            print "using sourcedir: " + sourcedir
+        return sourcedir
+
