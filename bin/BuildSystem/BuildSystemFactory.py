@@ -12,7 +12,7 @@ import utils
 
 def BuildSystemFactory(buildSystemType, source):
     """ return BuildSystemBase derived instance for recent settings"""
-    utils.debug( "buildsystemFactory called", 1 )
+    utils.debug( "buildsystemFactory called for type %s" % buildSystemType, 1 )
     buildSystem = None
 
     if buildSystemType == None or buildSystemType == 'cmake':
@@ -30,6 +30,8 @@ def BuildSystemFactory(buildSystemType, source):
         
     buildSystem.source = source
     buildSystem.subinfo = source.subinfo
+    # for cleanimage
+    buildSystem.type  = buildSystemType
     # required for archive source
     source.buildSystemType = buildSystemType
     return buildSystem
