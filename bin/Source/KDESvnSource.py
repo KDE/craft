@@ -95,3 +95,13 @@ class KDESvnSource (VersionSystemSourceBase):
         self.svndir = os.path.join( svndir, packagedir )
 
         return True
+
+    def sourceDir(self): 
+        if self.subinfo.hasTargetSourcePath():
+            sourcedir = os.path.join(self.workDir(), self.subinfo.targetSourcePath())
+        else:
+            sourcedir = os.path.join(self.kdesvndir, self.repositoryPath() ).replace( "/", "\\" )
+
+        if utils.verbose > 1:
+            print "using sourcedir: " + sourcedir
+        return sourcedir
