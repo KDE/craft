@@ -34,7 +34,8 @@ EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
 
 class EmergeBase():
     """base class for emerge system - holds attributes and methods required by base classes"""
-
+    buildType=""
+    
     def __init__( self, SRC_URI="", **args ):
         if "args" in args.keys() and "env" in args["args"].keys():
             env = args["args"]["env"]
@@ -59,12 +60,9 @@ class EmergeBase():
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
 
-        self.subinfo                = info.infoclass()
-        self.buildTarget            = self.subinfo.defaultTarget
-        self.Targets                = self.subinfo.svnTargets
-
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
+        self.setDirectoriesBase()
         #self.msys = msys_build.msys_interface()
         #self.kde  = KDE4BuildSystem()
         
@@ -125,18 +123,11 @@ class EmergeBase():
 
         utils.debug( "command: %s" % command )
 
-        self.Targets.update( self.subinfo.svnTargets )
-        self.Targets.update( self.subinfo.targets )
-
-        self.subinfo.buildTarget = self.subinfo.defaultTarget
-        self.buildTarget = self.subinfo.defaultTarget
-
-        if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
-            self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
-            self.buildTarget = os.getenv( "EMERGE_TARGET" )
+        self.subinfo.setBuildTarget()
+        self.buildTarget = self.subinfo.buildTarget
             
-        if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
-            self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
+        if self.subinfo.hasTargetSourcePath():
+            self.instsrcdir = self.subinfo.targetSourcePath()
 
         #self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.setDirectories()
@@ -202,9 +193,7 @@ class EmergeBase():
         self.kdesvnserver = KDESVNSERVER
         self.kdesvnuser = KDESVNUSERNAME
         self.kdesvnpass = KDESVNPASSWORD
-        
-        self.sourcedir = os.path.join( self.downloaddir, "svn-src", self.package )
-       
+               
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
 

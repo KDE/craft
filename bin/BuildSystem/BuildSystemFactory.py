@@ -10,7 +10,7 @@ from BinaryBuildSystem import *;
 import info
 import utils
 
-def BuildSystemFactory(buildSystemType, source, settings):
+def BuildSystemFactory(buildSystemType, source):
     """ return BuildSystemBase derived instance for recent settings"""
     utils.debug( "buildsystemFactory called", 1 )
     buildSystem = None
@@ -28,6 +28,6 @@ def BuildSystemFactory(buildSystemType, source, settings):
     else:   
         utils.die("none or unsupported buildsystem set, use self.buildSystemType='type', where type could be 'binary', 'cmake', 'qmake', 'autotools' or 'KDE4'")
         
-    buildSystem.subinfo = settings
     buildSystem.source = source
+    buildSystem.subinfo = source.subinfo
     return buildSystem
