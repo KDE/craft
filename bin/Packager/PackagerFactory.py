@@ -12,7 +12,7 @@ def PackagerFactory(packagerType, buildSystem):
     utils.debug( "PackagerFactory called", 1 )
 
     packager = None
-    if packagerType == 'KDEWin' or packagerType == None:
+    if packagerType == 'KDEWin' or packagerType == 'kdewin' or packagerType == None:
         packager = KDEWinPackager()
     elif packagerType == 'CPack':
         packager = CPackPackager()
