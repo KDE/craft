@@ -125,11 +125,11 @@ class EmergeBase():
 
         self.subinfo.setBuildTarget()
         self.buildTarget = self.subinfo.buildTarget
-            
+        
+        # required by some packages
         if self.subinfo.hasTargetSourcePath():
             self.instsrcdir = self.subinfo.targetSourcePath()
 
-        #self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.setDirectories()
 
         ok = True
@@ -203,6 +203,7 @@ class EmergeBase():
         else:
             tmp = "%s-%s" % (COMPILER, self.buildType)
         
+        # todo for what is this good ?
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 
