@@ -15,9 +15,11 @@ class PackageMultiBase (PackageBase):
     buildSystemType = None
     packagerType = None
     
-    def __init__(self):
+    def __init__(self, buildSystemType=None):
         if utils.verbose > 1:
             print "PackageMultiBase.__init__ called"
+        if not buildSystemType == None:
+            self.buildSystemType = buildSystemType
         PackageBase.__init__(self)
         
     def execute(self):
