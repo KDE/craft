@@ -44,12 +44,10 @@ class ArchiveSource(SourceBase):
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.imageDir()
-            if utils.verbose > 1:
-                print "unpacking files into image root %s" % destdir 
+            utils.debug("unpacking files into image root %s" % destdir,1)
         else:
-            if utils.verbose > 1:
-                print "unpacking files into work root %s" % destdir 
-        
+            utils.debug("unpacking files into work root %s" % destdir,1)
+
         if not utils.unpackFiles( self.downloaddir, filenames, destdir ):
             return False
 
