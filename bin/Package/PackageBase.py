@@ -59,6 +59,9 @@ class PackageBase (EmergeBase):
 
     def cleanup( self ):
         """cleanup before install to imagedir"""
+        if self.buildSystem.type == 'binary':
+            utils.debug("skipped cleaning image dir because we use binary build system",1)
+            return True
         if ( os.path.exists( self.imageDir() ) ):
             utils.debug( "cleaning image dir: %s" % self.imageDir(), 1 )
             utils.cleanDirectory( self.imageDir() )
