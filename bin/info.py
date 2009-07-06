@@ -2,6 +2,7 @@
 # this module contains the information class
 import datetime
 import os
+import utils
 
 class infoclass:
     def __init__( self, RAW="" ):
@@ -39,7 +40,18 @@ class infoclass:
     # abstract method for setting svn targets, override to set individual targets
     def setSVNTargets( self ):
         """ """
+	
+	# setup current build target 
+    def setBuildTarget( self ):
+        self.buildTarget = self.defaultTarget
 
+        self.buildTarget = os.getenv( "EMERGE_TARGET" )
+        if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
+            utils.die("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()))
+        else:
+            if utils.verbose > 1:
+                print "setting buildtarget to " + self.buildTarget
+    
     # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
         compiler = "msvc"
@@ -76,8 +88,15 @@ class infoclass:
             return self.svnTargets[self.buildTarget]
         return ""
 
+    def hasTargetSourcePath(self):
+        return self.buildTarget in self.targets.keys() and self.buildTarget in self.targetInstSrc.keys()
+                
+    def targetSourcePath(self):
+        if self.buildTarget in self.targets.keys() and self.buildTarget in self.targetInstSrc.keys():
+            return self.targetInstSrc[ self.buildTarget ]
+        
     # return patch informations for the currently selected build target
-    def patchToApply():
+    def patchesToApply(self):
         if len( self.targets ) and self.buildTarget in self.patchToApply.keys():
             return self.patchToApply[ self.buildTarget ]
         return ("","")
