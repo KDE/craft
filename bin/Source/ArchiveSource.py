@@ -40,7 +40,7 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.unpack called", 1 )
 
         filenames = self.__localFileNames()        
-        destdir = self.workdir 
+        destdir = self.workDir()
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.imageDir()
@@ -56,7 +56,7 @@ class ArchiveSource(SourceBase):
         return self.applyPatches()
 
     def sourceDir(self): 
-        sourcedir = self.workdir
+        sourcedir = self.workDir()
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             sourcedir = self.imageDir()
 

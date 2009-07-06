@@ -102,6 +102,14 @@ class EmergeBase():
         utils.debug( "BuildType: %s" % buildType, 1 )
         return buildType
 
+    def workRoot(self):
+        workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
+        return workroot
+
+    def workDir(self):
+        self.workDir()     = os.path.join( self.workRoot(), "work" )
+        return self.workDir()
+
     def imageDir(self):
         imagedir = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType())
         return imagedir
@@ -184,8 +192,11 @@ class EmergeBase():
 
         self.rootdir     = ROOTDIR
         self.downloaddir = DOWNLOADDIR
-        self.workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
-        self.workdir     = os.path.join( self.workroot, "work" )
+		#deprecated
+        self.workroot    = self.workRoot()
+        #deprecated
+		self.workdir     = self.workDir()
+		#deprecated
         self.builddir    = self.__buildDir()        
 
         self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
@@ -210,7 +221,7 @@ class EmergeBase():
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 
-        builddir = os.path.join( self.workdir, tmp )
+        builddir = os.path.join( self.self.workDir(), tmp )
         if utils.verbose() > 0:
             print self.buildType() + "  --- package builddir is: %s" % builddir
         return builddir
@@ -221,10 +232,10 @@ class EmergeBase():
             if utils.verbose() > 0:
                 print "creating: %s" % self.workroot
         
-        if ( not os.path.exists( self.workdir) ):
-            os.mkdir( self.workdir )
+        if ( not os.path.exists( self.self.workDir()) ):
+            os.mkdir( self.self.workDir() )
             if utils.verbose() > 0:
-                print "creating: %s" % self.workdir
+                print "creating: %s" % self.self.workDir()
         
         if ( not os.path.exists( self.builddir) ):
             os.mkdir( self.builddir )

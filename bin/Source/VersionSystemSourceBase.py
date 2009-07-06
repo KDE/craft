@@ -45,7 +45,7 @@ class VersionSystemSourceBase (SourceBase):
             
     def sourceDir(self): 
         if self.subinfo.hasTargetSourcePath():
-            sourcedir = os.path.join(self.workdir, self.subinfo.targetSourcePath())
+            sourcedir = os.path.join(self.workDir(), self.subinfo.targetSourcePath())
         else:
             sourcedir = os.path.join( self.downloaddir, "svn-src", self.package )
         if utils.verbose > 1:

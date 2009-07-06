@@ -110,13 +110,13 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
                 utils.die( "no svn repository information are available" )
         self.fetch( svnpath, packagedir )
 
-        if( not os.path.exists( self.workdir ) ):
-            os.makedirs( self.workdir )
+        if( not os.path.exists( self.workDir() ) ):
+            os.makedirs( self.workDir() )
 
         if not ( self.noCopy and self.repositoryPath() ):
             # now copy the tree to workdir
             srcdir  = os.path.join( self.kdesvndir, svnpath, packagedir )
-            destdir = os.path.join( self.workdir, packagedir )
+            destdir = os.path.join( self.workDir(), packagedir )
             utils.copySrcDirToDestDir( srcdir, destdir )
         return True
 
