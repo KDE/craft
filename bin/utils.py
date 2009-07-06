@@ -906,6 +906,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     os.rmdir( tmpdir )
 
 def cleanDirectory( dir ):
+    debug("clean directory %s" % dir,1)
     if ( os.path.exists( dir ) ):
         for root, dirs, files in os.walk( dir, topdown=False):
             for name in files:
