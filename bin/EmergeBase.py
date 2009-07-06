@@ -184,7 +184,7 @@ class EmergeBase():
         self.workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
         self.workdir     = os.path.join( self.workroot, "work" )
         self.builddir    = self.__buildDir()        
-        self.imagedir    = os.path.join( self.workroot, "image-" + COMPILER )
+        self.imagedir    = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType)
 
         self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )

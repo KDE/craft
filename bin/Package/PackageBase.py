@@ -22,6 +22,8 @@ class PackageBase (EmergeBase):
     #imagedir   -> PackageBase
     
     def __init__(self):
+        if utils.verbose > 1:
+            print "PackageBase.__init__ called"
         EmergeBase.__init__(self)
 
     def qmerge( self ):
