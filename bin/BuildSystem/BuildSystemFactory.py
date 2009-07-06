@@ -30,4 +30,6 @@ def BuildSystemFactory(buildSystemType, source):
         
     buildSystem.source = source
     buildSystem.subinfo = source.subinfo
+    # required for archive source
+    source.buildSystemType = buildSystemType
     return buildSystem
