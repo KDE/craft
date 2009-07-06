@@ -87,6 +87,8 @@ Flags:
 --target=[TARGET]               This will override the build of the default
                                 target. The default Target is marked with a
                                 star in the printout of --print-targets
+--patchlevel=[PATCHLEVEL]       This will add a patch level when used together 
+                                with --package                               
 
 -i          ignore install: using this option will install a package over an
             existing install. This can be useful if you want to check some
@@ -216,6 +218,7 @@ environ["EMERGE_FORCED"]        = os.getenv( "EMERGE_FORCED" )
 environ["EMERGE_VERSION"]       = os.getenv( "EMERGE_VERSION" )
 environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
+environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
 
 if ( environ['EMERGE_NOCOPY'] == "True" ):
     nocopy = True
@@ -252,6 +255,8 @@ for i in sys.argv:
         os.environ["EMERGE_BUILDTYPE"] = i.replace( "--buildtype=", "" )
     elif ( i.startswith( "--target=" ) ):
         os.environ["EMERGE_TARGET"] = i.replace( "--target=", "" )
+    elif ( i.startswith( "--patchlevel=" ) ):
+        os.environ["EMERGE_PKGPATCHLVL"] = i.replace( "--patchlevel=", "" )
     elif ( i == "-v" ):
         verbose = verbose + 1
         os.environ["EMERGE_VERBOSE"] = str( verbose )

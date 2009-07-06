@@ -440,6 +440,10 @@ class baseclass:
         binpath = os.path.join( self.imagedir, self.instdestdir )
         tmp = os.path.join( binpath, "kde" )
 
+        patchlevel = os.getenv( "EMERGE_PKGPATCHLVL" )
+        if patchlevel:
+            pkg_version += "-" + patchlevel
+
         if( os.path.exists( tmp ) ):
             binpath = tmp
         
