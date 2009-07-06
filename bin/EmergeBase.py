@@ -232,10 +232,10 @@ class EmergeBase():
             if utils.verbose() > 0:
                 print "creating: %s" % self.workroot
         
-        if ( not os.path.exists( self.self.workDir()) ):
-            os.mkdir( self.self.workDir() )
+        if ( not os.path.exists( self.workDir()) ):
+            os.mkdir( self.workDir() )
             if utils.verbose() > 0:
-                print "creating: %s" % self.self.workDir()
+                print "creating: %s" % self.workDir()
         
         if ( not os.path.exists( self.builddir) ):
             os.mkdir( self.builddir )
