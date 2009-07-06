@@ -11,14 +11,13 @@ from CvsSource import *
 def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
     utils.debug( "SourceFactory called", 1 )
+    source = None
     
     if settings.hasTarget():
         url = settings.target()
         if utils.verbose > 1:
             print "foung archive target with url=" + url
         source = ArchiveSource()
-        source.url = url
-        return source
 
     # todo move settings access into info class 
     if settings.hasSvnTarget():
@@ -27,28 +26,26 @@ def SourceFactory(settings):
             if utils.verbose > 1:
                 print "foung kde svn target with url=" + url
             source = KDESvnSource()
-            source.url = url
-            return source
             
-        if url.find("git:"):
+        elif url.find("git:"):
             if utils.verbose > 1:
                 print "foung git svn target with url=" + url
             source = GitSource()
-            source.url = url
-            return source
          
-        if url.find("svn:") or url.find("https:") or url.find("http:"):
+        elif url.find("svn:") or url.find("https:") or url.find("http:"):
             if utils.verbose > 1:
                 print "foung git svn target with url=" + url
             source = SvnSource()
-            source.url = url
-            return source
 
         # todo complete more cvs access schemes 
-        if url.find("pserver:"): 
+        elif url.find("pserver:"): 
             if utils.verbose > 1:
                 print "foung cvs target with url=" + url
             source = CvsSource()
-            source.url = url
-            return source
-    return None
+
+    if source == None:
+        utils.die("none or unsupported source system set")
+        
+    source.subinfo = settings
+    source.url = url
+    return source
