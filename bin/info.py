@@ -44,8 +44,8 @@ class infoclass:
 	# setup current build target 
     def setBuildTarget( self ):
         self.buildTarget = self.defaultTarget
-
-        self.buildTarget = os.getenv( "EMERGE_TARGET" )
+        if not os.getenv( "EMERGE_TARGET" ) == None:
+            self.buildTarget = os.getenv( "EMERGE_TARGET" )
         if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
             utils.die("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()))
         else:
