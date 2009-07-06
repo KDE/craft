@@ -100,7 +100,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
             self.sourcePath = "%s" % os.path.join(self.kdesvndir, self.repositoryPath() ).replace("/", "\\")
         print "sourcePath" + self.sourcePath
             
-    def unpack( self, svnpath=None, packagedir=None ):
+    def __unpack( self, svnpath=None, packagedir=None ):
         """fetching and copying the sources from svn"""
         if not svnpath and not packagedir:
             if self.repositoryPath():
@@ -143,25 +143,11 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
 
     def configure( self, buildType=None, customDefines="" ):
         """Using cmake"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( buildType == None ):
-            buildType = self.buildType
+        self.enterBuildDir()
         
-        if( not buildType == None ):
-            buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
-            builddir = "%s-%s" % ( builddir, buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        if ( not os.path.exists( builddir) ):
-            os.mkdir( builddir )
-
         if not self.noClean:
             utils.cleanDirectory( builddir )
-        os.chdir( builddir )
 
         command = r"""cmake -G "%s" %s %s %s""" % \
               ( self.cmakeMakefileGenerator, \
@@ -178,18 +164,8 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         """Using the *make program"""
         builddir = "%s" % ( self.COMPILER )
 
-        if( buildType == None ):
-            buildType = self.buildType
-        
-        # todo fixes buildtype and buildType spelling issues 
-        if( not buildType == None ):
-            buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
-            builddir = "%s-%s" % ( builddir, buildType )
-            
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
+        self.enterBuildDir()
 
-        os.chdir( os.path.join( self.workdir, builddir ) )
         command = self.cmakeMakeProgramm
         # adding Targets later
         if utils.verbose() > 1:
@@ -199,19 +175,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
 
     def __install( self, buildType=None ):
         """Using *make install"""
-        builddir = "%s" % ( self.COMPILER )
-
-        if( buildType == None ):
-            buildType = self.buildType
-        
-        if( not buildType == None ):
-            builddir = "%s-%s" % ( builddir, buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
+        self.enterBuildDir()
 
         if utils.verbose() > 0:
             print "builddir: " + builddir
@@ -249,19 +213,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
 
     def runTest( self ):
         """running cmake based unittests"""
-        builddir = "%s" % ( self.COMPILER )
-
-        if( not self.buildType == None ):
-            builddir = "%s-%s" % ( builddir, self.buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
-
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
+        self.enterBuildDir()
 
         fastString = ""
         if not self.noFast:
