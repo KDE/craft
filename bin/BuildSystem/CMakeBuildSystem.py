@@ -17,9 +17,14 @@ class CMakeBuildSystem(BuildSystemBase):
         return ""
                                 
     def configureDefaultDefines( self ):
+        if hasattr(self,'source'):
+            sourcedir = self.source.sourceDir()
+        else:
+            sourcedir = self.sourceDir()
+       
         """defining the default cmake cmd line"""
         options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
-              ( self.sourcedir, self.rootdir.replace( "\\", "/" ) )
+              ( sourcedir, self.rootdir.replace( "\\", "/" ) )
 
         options = options + "-DCMAKE_INCLUDE_PATH=\"%s\" " % \
                 os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
@@ -52,21 +57,11 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def make( self, buildType=None ):
         """Using the *make program"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( buildType == None ):
-            buildType = self.buildType
+        self.enterBuildDir()
         
-        # todo fixes buildtype and buildType spelling issues 
-        if( not buildType == None ):
-            builddir = "%s-%s" % ( builddir, buildType )
-            
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( os.path.join( self.workdir, builddir ) )
         command = self.cmakeMakeProgramm
-        # adding Targets later
+
         if utils.verbose() > 1:
             command += " VERBOSE=1"
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
@@ -74,19 +69,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __install( self, buildType=None ):
         """Using *make install"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( buildType == None ):
-            buildType = self.buildType
-        
-        if( not buildType == None ):
-            builddir = "%s-%s" % ( builddir, buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
+        self.enterBuildDir()
 
         if utils.verbose() > 0:
             print "builddir: " + builddir
@@ -124,16 +108,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def runTest( self ):
         """running cmake based unittests"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( not self.buildType == None ):
-            builddir = "%s-%s" % ( builddir, self.buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
+        self.enterbuildDir()
 
         if utils.verbose() > 0:
             print "builddir: " + builddir
