@@ -1,3 +1,33 @@
+Index: systemsettings/CMakeLists.txt
+===================================================================
+--- systemsettings/CMakeLists.txt
++++ systemsettings/CMakeLists.txt
+@@ -2,6 +2,9 @@
+ 
+ INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/core ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+ 
++IF(MINGW)
++ADD_DEFINITIONS(-DSYSTEMSETTINGS_EXPORT=)
++ENDIF(MINGW)
+ ADD_SUBDIRECTORY(core)
+ ADD_SUBDIRECTORY(app)
+ ADD_SUBDIRECTORY(categories)
+Index: systemsettings/core/CMakeLists.txt
+===================================================================
+--- systemsettings/core/CMakeLists.txt
++++ systemsettings/core/CMakeLists.txt
+@@ -30,7 +30,11 @@
+     ToolTipManager.h
+ )
+ 
++if(MINGW)
++kde4_add_library( systemsettingsview ${systemsettingsview_LIB_SRCS} )
++else(MINGW)
+ kde4_add_library( systemsettingsview SHARED ${systemsettingsview_LIB_SRCS} )
++endif(MINGW)
+ 
+ target_link_libraries( systemsettingsview ${KDE4_KDECORE_LIBS} ${KDE4_KUTILS_LIBS} )
+ 
 Index: systemsettings/app/CMakeLists.txt
 ===================================================================
 --- systemsettings/app/CMakeLists.txt
