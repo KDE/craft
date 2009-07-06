@@ -6,6 +6,7 @@ import sys
 from Source.ArchiveSource import *
 from BuildSystem.BinaryBuildSystem import *
 from Package.PackageBase import *
+from Packager.KDEWinPackager import *
 
 # deprecated class
 class subinfo(info.infoclass):
@@ -19,11 +20,12 @@ class subinfo(info.infoclass):
     #    self.hardDependencies['kde/kdebase-runtime'] = 'default'
         
                 
-class Package(ArchiveSource, BinaryBuildSystem, PackageBase):
+class Package(ArchiveSource, BinaryBuildSystem, PackageBase, KDEWinPackager):
     def __init__( self, **args ):
         ArchiveSource.__init__(self)
         BinaryBuildSystem.__init__(self)
         PackageBase.__init__(self)
+        KDEWinPackager.__init__(self)
         
         # we use subinfo for now too 
         self.subinfo = subinfo()
