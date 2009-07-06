@@ -17,29 +17,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
             
     def configureDefaultDefines( self ):
         """defining the default cmake cmd line"""
-        options = ""
-        #options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
-        #      ( self.sourcedir, self.rootdir.replace( "\\", "/" ) )
-
-        #options = options + "-DCMAKE_INCLUDE_PATH=\"%s\" " % \
-        #        os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
-
-        #options = options + "-DCMAKE_LIBRARY_PATH=\"%s\" " % \
-        #        os.path.join( self.rootdir, "lib" ).replace( "\\", "/" )
-
-        #if( not self.buildType == None ):
-        #    options  = options + "-DCMAKE_BUILD_TYPE=%s" % self.buildType             
-                
-        return options
+        return ""
 
     def configure( self, buildType=None, customDefines="" ):
-        """Using cmake"""
+        """configure the target"""
             
-        self.enterBuildDir()
-        
         if not self.noClean:
             utils.cleanDirectory( self.builddir )
 
+        self.enterBuildDir()
+
+        #todo make generic
         ret = self.shell.execute(self.sourcedir, "ruby configure", "" )
         return ret
 
@@ -58,23 +46,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def __install( self, buildType=None ):
         """Using *make install"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( buildType == None ):
-            buildType = self.buildType
+        self.enterBuildDir()
         
-        if( not buildType == None ):
-            builddir = "%s-%s" % ( builddir, buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
-
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
-
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
@@ -108,17 +82,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def runTest( self ):
         """running cmake based unittests"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( not self.buildType == None ):
-            builddir = "%s-%s" % ( builddir, self.buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
-
+        self.enterBuildDir()
+        
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
