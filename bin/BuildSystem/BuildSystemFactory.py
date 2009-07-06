@@ -15,7 +15,7 @@ def BuildSystemFactory(buildSystemType, source):
     utils.debug( "buildsystemFactory called", 1 )
     buildSystem = None
 
-    if buildSystemType == 'cmake':
+    if buildSystemType == None or buildSystemType == 'cmake':
         buildSystem = CMakeBuildSystem()
     elif buildSystemType == 'kde4':
         buildSystem = KDE4BuildSystem()
