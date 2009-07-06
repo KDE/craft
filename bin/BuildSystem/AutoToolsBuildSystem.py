@@ -52,13 +52,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
         return True
 
     def compile( self, customDefines=""):
         """making all required stuff for compiling cmake based modules"""
-        if( not self.buildType == None ) :
-            if( not ( self.configure( self.buildType, customDefines ) and self.make( self.buildType ) ) ):
+        if( not self.buildType() == None ) :
+            if( not ( self.configure( self.buildType(), customDefines ) and self.make( self.buildType() ) ) ):
                 return False
         else:
             if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
@@ -69,15 +69,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def install( self ):
         """making all required stuff for installing cmake based modules"""
-        if( not self.buildType == None ):
-            if( not self.__install( self.buildType ) ):
+        if( not self.buildType() == None ):
+            if( not self.__install( self.buildType() ) ):
                 return False
         else:
             if( not self.__install( "debug" ) ):
                 return False
             if( not self.__install( "release" ) ):
                 return False
-        utils.fixCmakeImageDir( self.imagedir, self.rootdir )
+        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
         return True
 
     def runTest( self ):

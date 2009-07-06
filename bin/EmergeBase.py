@@ -34,7 +34,6 @@ EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
 
 class EmergeBase():
     """base class for emerge system - holds attributes and methods required by base classes"""
-    buildType=""
     
     def __init__( self, SRC_URI="", **args ):
         if "args" in args.keys() and "env" in args["args"].keys():
@@ -79,15 +78,6 @@ class EmergeBase():
         if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
             self.buildTests = True
 
-        # Build type for kdeCompile() / kdeInstall() - packages
-        # "" -> debug and release
-        Type=os.getenv( "EMERGE_BUILDTYPE" )
-        if ( not Type == None ):
-            utils.debug( "BuildType: %s" % Type, 1 )
-            self.buildType = Type
-        else:
-            self.buildType = None
-        
         if COMPILER == "msvc2005":
             self.compiler = "msvc2005"
         elif COMPILER == "msvc2008":
@@ -102,6 +92,19 @@ class EmergeBase():
         import inspect
         caller = inspect.getouterframes(inspect.currentframe())[1][3]
         raise NotImplementedError(caller + ' must be implemented in subclass')
+
+    def buildType(self):
+        Type=os.getenv( "EMERGE_BUILDTYPE" )
+        if ( not Type == None ):
+            buildType = Type
+        else:
+            buildType = None
+        utils.debug( "BuildType: %s" % buildType, 1 )
+        return buildType
+
+    def imageDir(self):
+        imagedir = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType())
+        return imagedir
 
     def execute( self, cmd=None ):
         """called to run the derived class"""
@@ -184,10 +187,10 @@ class EmergeBase():
         self.workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
         self.workdir     = os.path.join( self.workroot, "work" )
         self.builddir    = self.__buildDir()        
-        self.imagedir    = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType)
 
         self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )
+                
         # deprecated
         self.kdesvndir = KDESVNDIR
         self.kdesvnserver = KDESVNSERVER
@@ -198,10 +201,10 @@ class EmergeBase():
         self.dbusdir = os.getenv( "DBUSDIR" )
 
     def __buildDir(self):        
-        if( self.buildType == None ):
+        if( self.buildType() == None ):
             tmp = "%s-%s" % (COMPILER, "default")
         else:
-            tmp = "%s-%s" % (COMPILER, self.buildType)
+            tmp = "%s-%s" % (COMPILER, self.buildType())
         
         # todo for what is this good ?
         #if( not self.buildNameExt == None ):
@@ -209,7 +212,7 @@ class EmergeBase():
 
         builddir = os.path.join( self.workdir, tmp )
         if utils.verbose() > 0:
-            print "package builddir is: %s" % builddir
+            print self.buildType() + "  --- package builddir is: %s" % builddir
         return builddir
 
     def enterBuildDir(self):

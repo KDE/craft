@@ -5,21 +5,7 @@ import utils;
 
 class BuildSystemBase(EmergeBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
-    
-    """ build type """
-    buildType = "Release"
-
-    """ ? """
-    buildNameExt = ""
-
-    """ ? """
-    workdir = ""
-
-    """ ? """
-    COMPILER = ""
-
     noClean = False
-    
     debug = True
 
     def __init__(self):
@@ -58,8 +44,8 @@ class BuildSystemBase(EmergeBase):
     # todo not sure if buildType and customDefines are used anywhere, if not remove them
     def compile(self, buildType=None, customOptions=""):
         """convencience method - runs configure() and make()"""
-        if( not self.buildType == None ) :
-            if( not ( self.configure( self.buildType, customOptions ) and self.make( self.buildType ) ) ):
+        if( not self.buildType() == None ) :
+            if( not ( self.configure( self.buildType(), customOptions ) and self.make( self.buildType() ) ) ):
                 return False
             else:
                 if( not ( self.configure( "Debug", customOptions ) and self.make( "Debug" ) ) ):

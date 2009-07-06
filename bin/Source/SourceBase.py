@@ -12,6 +12,7 @@ class SourceBase(EmergeBase):
 
     def unpack(self): abstract()
 
+    # return source dir 
     def sourceDir(self): abstract()
 
     def applyPatches(self):

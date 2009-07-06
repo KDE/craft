@@ -183,7 +183,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
         return True
 
     def compile( self, customDefines=""):
@@ -208,7 +208,7 @@ class KDE4BuildSystem(SvnSource,BuildSystemBase):
                 return False
             if( not self.__install( "release" ) ):
                 return False
-        utils.fixCmakeImageDir( self.imagedir, self.rootdir )
+        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
         return True
 
     def runTest( self ):

@@ -31,13 +31,13 @@ class PackageBase (EmergeBase):
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
-            destscript = os.path.join( self.imagedir, "manifest", scriptName )
-            if not os.path.exists( os.path.join( self.imagedir, "manifest" ) ):
-                os.mkdir( os.path.join( self.imagedir, "manifest" ) )
+            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
+            if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
+                os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
             if os.path.exists( script ):
                 shutil.copyfile( script, destscript )
                              
-        utils.mergeImageDirToRootDir( self.imagedir, self.rootdir )
+        utils.mergeImageDirToRootDir( self.imageDir(), self.rootdir )
 
         # run post-install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -59,9 +59,9 @@ class PackageBase (EmergeBase):
 
     def cleanup( self ):
         """cleanup before install to imagedir"""
-        if ( os.path.exists( self.imagedir ) ):
-            utils.debug( "cleaning image dir: %s" % self.imagedir, 1 )
-            utils.cleanDirectory( self.imagedir )
+        if ( os.path.exists( self.imageDir() ) ):
+            utils.debug( "cleaning image dir: %s" % self.imageDir(), 1 )
+            utils.cleanDirectory( self.imageDir() )
         return True
         
     def manifest( self ):
@@ -71,7 +71,7 @@ class PackageBase (EmergeBase):
     
         if utils.verbose() > 1:
             print "base manifest called"
-        utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.category, self.package, self.version )
+        utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imageDir(), self.category, self.package, self.version )
         return True
 
  

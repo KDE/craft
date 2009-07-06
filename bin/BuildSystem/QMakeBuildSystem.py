@@ -58,19 +58,8 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def __install( self, buildType=None ):
         """Using *make install"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( buildType == None ):
-            buildType = self.buildType
-        
-        if( not buildType == None ):
-            builddir = "%s-%s" % ( builddir, buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
+        self.enterBuildDir()
 
         if utils.verbose() > 0:
             print "builddir: " + builddir
@@ -78,13 +67,13 @@ class QMakeBuildSystem(BuildSystemBase):
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
         return True
 
     def compile( self, customDefines=""):
         """making all required stuff for compiling cmake based modules"""
-        if( not self.buildType == None ) :
-            if( not ( self.configure( self.buildType, customDefines ) and self.make( self.buildType ) ) ):
+        if( not self.buildType() == None ) :
+            if( not ( self.configure( self.buildType(), customDefines ) and self.make( self.buildType() ) ) ):
                 return False
         else:
             if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
@@ -95,33 +84,22 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def install( self ):
         """making all required stuff for installing cmake based modules"""
-        if( not self.buildType == None ):
-            if( not self.__install( self.buildType ) ):
+        if( not self.buildType() == None ):
+            if( not self.__install( self.buildType() ) ):
                 return False
         else:
             if( not self.__install( "debug" ) ):
                 return False
             if( not self.__install( "release" ) ):
                 return False
-        utils.fixCmakeImageDir( self.imagedir, self.rootdir )
+        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
         return True
 
     def runTest( self ):
         """running cmake based unittests"""
-        builddir = "%s" % ( self.COMPILER )
 
-        if( not self.buildType == None ):
-            builddir = "%s-%s" % ( builddir, self.buildType )
-
-        if( not self.buildNameExt == None ):
-            builddir = "%s-%s" % ( builddir, self.buildNameExt )
-
-        os.chdir( self.workdir )
-        os.chdir( builddir )
-
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
-
+        self.enterBuildDir()
+        
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
