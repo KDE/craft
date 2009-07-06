@@ -223,7 +223,7 @@ class EmergeBase():
 
         builddir = os.path.join( self.workDir(), tmp )
         if utils.verbose() > 0:
-            print self.buildType() + "  --- package builddir is: %s" % builddir
+            print "package builddir is: %s" % builddir
         return builddir
 
     def enterBuildDir(self):
