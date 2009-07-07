@@ -24,7 +24,7 @@ class subclass(base.baseclass):
 
     def install(self):
         res = base.baseclass.install( self )
-        srcdir = os.path.join( self.workdir, "jom.exe" )
+        srcdir = os.path.join( os.path.join(self.workdir, "bin"), "jom.exe" )
         destdir = os.path.join( self.imagedir, "bin" )
         if not os.path.exists( self.imagedir ):
             os.mkdir( self.imagedir )
