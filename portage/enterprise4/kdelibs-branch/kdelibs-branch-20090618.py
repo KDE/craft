@@ -28,8 +28,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/jasper-src']  = 'default'
         self.hardDependencies['win32libs-sources/bzip2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
-        self.hardDependencies['win32libs-sources/libxml2-src']  = 'default'
-# libxml2-src patch failed
+        self.hardDependencies['enterprise4/libxml2-src-e']  = 'default'
+# libxslt-src patch failed
         self.hardDependencies['win32libs-bin/libxslt']  = 'default'
 #        self.hardDependencies['win32libs-sources/openexr-src']  = 'default'
         self.hardDependencies['win32libs-sources/openssl-src']  = 'default'

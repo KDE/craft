@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
         self.hardDependencies['win32libs-bin/iconv'] = 'default'
         self.hardDependencies['win32libs-sources/bzip2-src'] = 'default'
-        self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
+        self.hardDependencies['enterprise4/libxml2-src-e'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
