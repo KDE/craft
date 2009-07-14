@@ -55,7 +55,7 @@ class subclass(base.baseclass):
     
     
             # execute autogen.py and generate the CMakeLists.txt files
-            cmd = "cd %s && %s %s" % \
+            cmd = "cd %s && python %s %s" % \
                   (svnpath , autogen, self.subinfo.languages )
             utils.system( cmd )
 
