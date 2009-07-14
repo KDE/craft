@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['enterprise4/kdelibs-branch'] = 'default'
-        self.hardDependencies['win32libs-bin/cyrus-sasl'] = 'default'
+        self.hardDependencies['win32libs-sources/cyrus-sasl-src'] = 'default'
         self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         self.hardDependencies['enterprise4/akonadi-e'] = 'default'
         
