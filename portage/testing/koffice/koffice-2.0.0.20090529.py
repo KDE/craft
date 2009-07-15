@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
-        self.hardDependencies['kde-4.2/kdepimlibs'] = 'default'
-        self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde-4.3/kdepimlibs'] = 'default'
+        self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
 #        self.hardDependencies['kdesupport/eigen'] = 'default'
         self.hardDependencies['kdesupport/eigen2'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
@@ -44,14 +44,14 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget in ['2.0.0']:
+        if self.buildTarget in ['2.0.0', '2.0.1']:
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
             src = os.path.join( self.workdir, self.instsrcdir )
 
             cmd = "cd %s && patch -p0 < %s" % \
-                  ( src, os.path.join( self.packagedir , "koffice-" + self.buildTarget + ".diff" ) )
+                  ( src, os.path.join( self.packagedir , "koffice-2.0.0.diff" ) )
             if utils.verbose() >= 1:
                 print cmd
             self.system( cmd ) or die( "patch" )
