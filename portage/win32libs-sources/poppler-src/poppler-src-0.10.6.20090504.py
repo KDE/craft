@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5', '0.10.6' ):
+        for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5', '0.10.6', '0.11.0' ):
           self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
           self.targetInstSrc[ i ] = 'poppler-%s' % i
         self.defaultTarget = "0.10.6"
@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
         self.hardDependencies['win32libs-bin/freetype'] = 'default'
+        self.hardDependencies['win32libs-bin/openjpeg'] = 'default'
+        self.hardDependencies['win32libs-bin/lcms'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
