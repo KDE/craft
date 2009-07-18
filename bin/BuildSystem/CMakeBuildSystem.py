@@ -10,8 +10,8 @@ import info
 from BuildSystemBase import *
 
 class CMakeBuildSystem(BuildSystemBase):
-    def __init__( self, env = dict( os.environ ) ):
-        BuildSystemBase.__init__(self)
+    def __init__( self, configureOptions="",makeOptions=""):
+        BuildSystemBase.__init__(self,"cmake",configureOptions,makeOptions)
 
     def svnPath(self): 
         return ""
@@ -45,10 +45,13 @@ class CMakeBuildSystem(BuildSystemBase):
             
         self.enterBuildDir()
         
+        print "calling configureDefaultDefines"
+        defines = self.configureDefaultDefines()
+        
         command = r"""cmake -G "%s" %s %s""" % \
               ( self.cmakeMakefileGenerator, \
-                self.configureDefaultDefines(), \
-                customDefines )
+                defines, \
+                self.configureOptions )
 
         if utils.verbose() > 0:
             print "configuration command: %s" % command
@@ -64,6 +67,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if utils.verbose() > 1:
             command += " VERBOSE=1"
+        
+        command += ' %s' % self.makeOptions
+
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 

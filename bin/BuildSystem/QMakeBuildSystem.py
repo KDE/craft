@@ -10,8 +10,8 @@ import info
 from BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
-    def __init__( self, env = dict( os.environ ) ):
-        BuildSystemBase.__init__(self)
+    def __init__( self, configureOptions="", makeOptions=""):
+        BuildSystemBase.__init__(self,"qmake",configureOptions,makeOptions)
         
     def configure( self, buildType=None, customOptions="" ):
         """Using qmake"""

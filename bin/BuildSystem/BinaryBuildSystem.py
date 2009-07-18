@@ -10,8 +10,8 @@ import info
 from BuildSystemBase import *
 
 class BinaryBuildSystem(BuildSystemBase):
-    def __init__( self, env = dict( os.environ ) ):
-        BuildSystemBase.__init__(self)
+    def __init__( self, configureOptions="", makeOptions=""):
+        BuildSystemBase.__init__(self,"binary", configureOptions,makeOptions)
         
     def configure( self, buildType=None, customOptions="" ):
         return True

@@ -11,8 +11,8 @@ from shells import *
 from BuildSystemBase import *
 
 class AutoToolsBuildSystem(BuildSystemBase):
-    def __init__( self, env = dict( os.environ ) ):
-        BuildSystemBase.__init__(self)
+    def __init__( self, configureOptions="", makeOptions=""):
+        BuildSystemBase.__init__(self,"autotools",configureOptions,makeOptions)
         self.shell = MSysShell()
             
     def configureDefaultDefines( self ):

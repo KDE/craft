@@ -8,14 +8,12 @@ class BuildSystemBase(EmergeBase):
     noClean = False
     debug = True
 
-    def __init__(self):
+    def __init__(self,type,configureOptions="", makeOptions=""):
         EmergeBase.__init__(self)
-
-    
-    def configureOptions( self ):
-        """options for the configure line"""
-        return ""
-
+        self.buildSystemType = type
+        self.configureOptions = configureOptions
+        self.makeOptions = makeOptions
+        
     # todo find a better name 
     def configureTool(self):
         """return string to override the complete configure command"""
@@ -23,7 +21,7 @@ class BuildSystemBase(EmergeBase):
         
     #configure the target
     # todo not sure if buildType and options are used anywhere, if not remove them
-    def configure(self, buildType=None, customOptions=""): abstract
+    def configure(self, buildType=None): abstract
 
     #install the target into local install directory"""
     def install(self): abstract()
