@@ -19,7 +19,7 @@ def SourceFactory(settings):
             print "foung archive target with url=" + url
         source = ArchiveSource()
 
-    # todo move settings access into info class 
+    ## \todo move settings access into info class 
     if settings.hasSvnTarget():
         url = settings.svnTarget()
         if utils.verbose > 1:
@@ -39,7 +39,7 @@ def SourceFactory(settings):
                 print "found svn target with url=" + url
             source = SvnSource()
 
-        # todo complete more cvs access schemes 
+        ## \todo complete more cvs access schemes 
         elif url.find("pserver:") >= 0: 
             if utils.verbose > 1:
                 print "found cvs target with url=" + url

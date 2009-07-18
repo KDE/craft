@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # subversion support
-# todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes 
+## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes 
 
 from VersionSystemSourceBase import *
 import os

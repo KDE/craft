@@ -6,7 +6,7 @@ import os
 import utils
 from shells import *
 
-# todo requires installed git package -> add suport for installing packages 
+## \todo requires installed git package -> add suport for installing packages 
 
 class GitSource (VersionSystemSourceBase):
     """git support"""
@@ -30,7 +30,7 @@ class GitSource (VersionSystemSourceBase):
                 ret = self.shell.execute( self.sourceDir(), "git", "pull" )
             else:
                 """it doesn't exist so clone the repo"""
-                # todo we need to enter into one level above the source directory 
+                ## \todo we need to enter into one level above the source directory 
                 ret = self.shell.execute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repopath, self.package ) )
             os.environ["PATH"] = safePath
         else:

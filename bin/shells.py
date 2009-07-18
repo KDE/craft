@@ -7,7 +7,7 @@
 import os
 import utils
 
-# todo requires installed msys package -> add suport for installing packages 
+## \todo requires installed msys package -> add suport for installing packages 
 
 class Shell(object):
     def __init__(self):

@@ -37,7 +37,7 @@ class BuildSystemBase(EmergeBase):
         """make the target by runnning the related make tool"""
         abstract()
             
-    # \todo not sure if buildType and customDefines are used anywhere, if not remove them"""
+    ## \todo not sure if buildType and customDefines are used anywhere, if not remove them"""
     def compile(self, buildType=None, customOptions=""):
         """convencience method - runs configure() and make()"""
         if( not self.buildType() == None ) :

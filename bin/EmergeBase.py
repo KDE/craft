@@ -220,7 +220,7 @@ class EmergeBase():
         else:
             tmp = "%s-%s" % (COMPILER, self.buildType())
         
-        # todo for what is this good ?
+        ## \todo for what is this good ?
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 

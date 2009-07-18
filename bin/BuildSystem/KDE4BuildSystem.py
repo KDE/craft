@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# definitions for the kde build system (cmake and svn)
+""" @package definitions for the kde build system (cmake and svn)"""
 
-# todo: split into base CMakeBuildSystem and KDE4BuildSystem
+## \todo: split into base CMakeBuildSystem and KDE4BuildSystem
 
 import os
 import utils
