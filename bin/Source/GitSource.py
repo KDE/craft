@@ -25,13 +25,13 @@ class GitSource (VersionSystemSourceBase):
         if ( not self.noFetch ):
             safePath = os.environ["PATH"]
             os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
-            if os.path.exists( self.sourcedir ):
+            if os.path.exists( self.sourceDir() ):
                 """if directory already exists, simply do a pull but obey to offline"""
-                ret = self.shell.execute( self.sourcedir, "git", "pull" )
+                ret = self.shell.execute( self.sourceDir(), "git", "pull" )
             else:
                 """it doesn't exist so clone the repo"""
                 # todo we need to enter into one level above the source directory 
-                ret = self.shell.execute( self.sourcedir.replace(self.package,""), "git", "clone %s %s" % ( repopath, self.package ) )
+                ret = self.shell.execute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repopath, self.package ) )
             os.environ["PATH"] = safePath
         else:
             utils.debug( "skipping git fetch (--offline)" )
