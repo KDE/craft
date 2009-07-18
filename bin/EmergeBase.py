@@ -99,7 +99,7 @@ class EmergeBase():
             buildType = Type
         else:
             buildType = None
-        utils.debug( "BuildType: %s" % buildType, 1 )
+        utils.debug( "BuildType: %s" % buildType, 2 )
         return buildType
 
     def compiler(self):
