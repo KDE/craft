@@ -79,11 +79,11 @@ class EmergeBase():
             self.buildTests = True
 
         if COMPILER == "msvc2005":
-            self.compiler = "msvc2005"
+            self.__compiler = "msvc2005"
         elif COMPILER == "msvc2008":
-            self.compiler = "msvc2008"
+            self.__compiler = "msvc2008"
         elif COMPILER == "mingw":
-            self.compiler = "mingw"
+            self.__compiler = "mingw"
         else:
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
@@ -102,6 +102,9 @@ class EmergeBase():
         utils.debug( "BuildType: %s" % buildType, 1 )
         return buildType
 
+    def compiler(self):
+        return self.__compiler
+        
     def workRoot(self):
         workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
         return workroot
