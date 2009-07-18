@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# definitions for the cmake build system
+"""@package provides cmake build system"""
 
 import os
 import utils
@@ -10,13 +10,16 @@ import info
 from BuildSystemBase import *
 
 class CMakeBuildSystem(BuildSystemBase):
+    """ cmake build support """
     def __init__( self, configureOptions="",makeOptions=""):
+        """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self,"cmake",configureOptions,makeOptions)
 
     def svnPath(self): 
         return ""
                                 
     def configureDefaultDefines( self ):
+        """returns default configure options"""
         if hasattr(self,'source'):
             sourcedir = self.source.sourceDir()
         else:
@@ -45,7 +48,6 @@ class CMakeBuildSystem(BuildSystemBase):
             
         self.enterBuildDir()
         
-        print "calling configureDefaultDefines"
         defines = self.configureDefaultDefines()
         
         command = r"""cmake -G "%s" %s %s""" % \
@@ -59,7 +61,7 @@ class CMakeBuildSystem(BuildSystemBase):
         return True
 
     def make( self, buildType=None ):
-        """Using the *make program"""
+        """run the *make program"""
 
         self.enterBuildDir()
         

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+""" \package BuildSystemBase"""
 
 from EmergeBase import *
 import utils;
@@ -9,37 +10,34 @@ class BuildSystemBase(EmergeBase):
     debug = True
 
     def __init__(self,type,configureOptions="", makeOptions=""):
+        """constructor"""
         EmergeBase.__init__(self)
         self.buildSystemType = type
         self.configureOptions = configureOptions
         self.makeOptions = makeOptions
-        
-    # todo find a better name 
-    def configureTool(self):
-        """return string to override the complete configure command"""
-        return ""
-        
-    #configure the target
-    # todo not sure if buildType and options are used anywhere, if not remove them
-    def configure(self, buildType=None): abstract
+                
+    ## \todo not sure if buildType and options are used anywhere, if not remove them
+    def configure(self, buildType=None): 
+        """configure the target"""
+        abstract()
 
-    #install the target into local install directory"""
-    def install(self): abstract()
+    def install(self): 
+        """install the target into local install directory"""
+        abstract()
 
-    #uninstall the target from the local install directory"""
-    def uninstall(self): abstract()
+    def uninstall(self): 
+        """uninstall the target from the local install directory"""
+        abstract()
 
-    #run the test - if available - for the target"""
-    def runTests(self): abstract()
+    def runTests(self): 
+        """run the test - if available - for the target"""
+        abstract()
 
-    #make the target by runnning the related make tool"""
-    def make(self, buildType=None): abstract()
+    def make(self, buildType=None): 
+        """make the target by runnning the related make tool"""
+        abstract()
             
-    def makeOptions( self ):
-        """options for the make command line"""
-        return ""
-
-    # todo not sure if buildType and customDefines are used anywhere, if not remove them
+    # \todo not sure if buildType and customDefines are used anywhere, if not remove them"""
     def compile(self, buildType=None, customOptions=""):
         """convencience method - runs configure() and make()"""
         if( not self.buildType() == None ) :
@@ -54,3 +52,4 @@ class BuildSystemBase(EmergeBase):
 
     def setDirectories(self):
         return
+    
