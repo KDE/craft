@@ -28,6 +28,7 @@ class infoclass:
         self.setDependencies()
         self.setTargets()
         self.setSVNTargets()
+        #self.setBuildTarget()
 
     # abstract method for setting dependencies, override to set individual targets
     def setDependencies( self ):
@@ -89,10 +90,10 @@ class infoclass:
         return ""
 
     def hasTargetSourcePath(self):
-        return self.buildTarget in self.targets.keys() and self.buildTarget in self.targetInstSrc.keys()
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstSrc.keys()
                 
     def targetSourcePath(self):
-        if self.buildTarget in self.targets.keys() and self.buildTarget in self.targetInstSrc.keys():
+        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstSrc.keys():
             return self.targetInstSrc[ self.buildTarget ]
         
     # return patch informations for the currently selected build target
