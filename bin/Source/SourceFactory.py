@@ -22,25 +22,27 @@ def SourceFactory(settings):
     # todo move settings access into info class 
     if settings.hasSvnTarget():
         url = settings.svnTarget()
+        if utils.verbose > 1:
+            print "found svn target with url=" + url
         if url.find("://") == -1: 
             if utils.verbose > 1:
-                print "foung kde svn target with url=" + url
+                print "found kde svn target with url=" + url
             source = KDESvnSource()
             
-        elif url.find("git:"):
+        elif url.find("git:") >= 0:
             if utils.verbose > 1:
-                print "foung git svn target with url=" + url
+                print "found git target with url=" + url
             source = GitSource()
          
-        elif url.find("svn:") or url.find("https:") or url.find("http:"):
+        elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
             if utils.verbose > 1:
-                print "foung git svn target with url=" + url
+                print "found svn target with url=" + url
             source = SvnSource()
 
         # todo complete more cvs access schemes 
-        elif url.find("pserver:"): 
+        elif url.find("pserver:") >= 0: 
             if utils.verbose > 1:
-                print "foung cvs target with url=" + url
+                print "found cvs target with url=" + url
             source = CvsSource()
 
     if source == None:
