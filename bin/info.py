@@ -16,6 +16,7 @@ class infoclass:
         self.targetInstSrc = dict()
         self.targetConfigurePath = dict()
         self.targetInstallPath = dict()
+        self.targetMergeSourcePath = dict()
         self.targetMergePath = dict()
         self.svnTargets = dict()
         self.hardDependencies = dict()
@@ -133,6 +134,15 @@ class infoclass:
         """return relative path appendable to local merge path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergePath.keys():
             return self.targetMergePath[ self.buildTarget ]
+
+    def hasMergeSourcePath(self):
+        """return true if relative path appendable to local merge source path is given for the recent target"""
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergeSourcePath.keys()
+                
+    def mergeSourcePath(self):
+        """return relative path appendable to local merge source path for the recent target"""
+        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergeSourcePath.keys():
+            return self.targetMergeSourcePath[ self.buildTarget ]
 
     def patchesToApply(self):
         """return patch informations for the recent build target"""
