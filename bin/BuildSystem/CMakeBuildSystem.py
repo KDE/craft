@@ -20,12 +20,8 @@ class CMakeBuildSystem(BuildSystemBase):
                                 
     def configureDefaultDefines( self ):
         """returns default configure options"""
-        if hasattr(self,'source'):
-            sourcedir = self.source.sourceDir()
-        else:
-            sourcedir = self.sourceDir()
-       
-        """defining the default cmake cmd line"""
+        sourcedir = self.configureSourceDir()
+        ## \todo should install prefix not be set to mergeDir ?`
         options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
               ( sourcedir, self.rootdir.replace( "\\", "/" ) )
 

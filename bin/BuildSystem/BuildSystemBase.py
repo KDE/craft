@@ -53,3 +53,14 @@ class BuildSystemBase(EmergeBase):
     def setDirectories(self):
         return
     
+    def configureSourceDir():
+        """returns source dir used for configure step"""
+        if hasattr(self,'source'):
+            sourcedir = self.source.sourceDir()
+        else:
+            sourcedir = self.sourceDir()
+       
+        if self.subinfo.hasConfigurePath():
+            sourcedir = os.path.join(sourcedir,self.subinfo.configurePath())
+        return sourcedir
+        
