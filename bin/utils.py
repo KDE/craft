@@ -764,12 +764,14 @@ def unmerge( rootdir, package, forced = False ):
     return
 
 def manifestDir( srcdir, imagedir, category, package, version ):
-    print "manifestDir: %s %s %s %s" % (srcdir, imagedir, package, version)
-    """ make the manifest files for an imagedir like the kdewin-packager does """
-    debug( "manifestDir called: %s %s" % ( srcdir, imagedir ), 1 )
+    createManifestFiles( imagedir, imagedir, category, package, version )
 
-    if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
-        for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
+def createManifestFiles( imagedir, destdir, category, package, version ):
+    """create the manifest files for an imagedir like the kdewin-packager does"""
+    debug( "manifestDir called: %s %s" % ( imagedir, destdir ), 1 )
+
+    if os.path.exists( os.path.join( destdir, "manifest"  ) ):
+        for file in os.listdir( os.path.join( destdir, "manifest"  ) ):
             if file.startswith( package ):
                 warning( "found package %s according to file '%s', .mft files will not be generated." % ( package, file ) )
                 return
@@ -819,15 +821,15 @@ def manifestDir( srcdir, imagedir, category, package, version ):
             if dirType == 7 or dirType == 8:
                 docList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
 
-    if not os.path.exists( os.path.join( imagedir, "manifest" ) ):
-        os.makedirs( os.path.join( imagedir, "manifest" ) )
+    if not os.path.exists( os.path.join( destdir, "manifest" ) ):
+        os.makedirs( os.path.join( destdir, "manifest" ) )
 
     if len(binList) > 0:
-        binmanifest = open( os.path.join( imagedir, "manifest", "%s-%s-bin.mft" % ( package, version )), 'wb' )
+        binmanifest = open( os.path.join( destdir, "manifest", "%s-%s-bin.mft" % ( package, version )), 'wb' )
     if len(libList) > 0:
-        libmanifest = open( os.path.join( imagedir, "manifest", "%s-%s-lib.mft" % ( package, version )), 'wb' )
+        libmanifest = open( os.path.join( destdir, "manifest", "%s-%s-lib.mft" % ( package, version )), 'wb' )
     if len(docList) > 0:
-        docmanifest = open( os.path.join( imagedir, "manifest", "%s-%s-doc.mft" % ( package, version )), 'wb' )
+        docmanifest = open( os.path.join( destdir, "manifest", "%s-%s-doc.mft" % ( package, version )), 'wb' )
 #    if utils.verbose() >= 1:
 #        print "bin: ", binList
 #        print "lib: ", libList
@@ -850,11 +852,11 @@ def manifestDir( srcdir, imagedir, category, package, version ):
         docmanifest.write( os.path.join( "manifest", "%s-%s-doc.ver\n" % ( package, version ) ) )
 
     if len(binList) > 0:
-        binversion = open( os.path.join( imagedir, "manifest", "%s-%s-bin.ver" % ( package, version )), 'wb' )
+        binversion = open( os.path.join( destdir, "manifest", "%s-%s-bin.ver" % ( package, version )), 'wb' )
     if len(libList) > 0:
-        libversion = open( os.path.join( imagedir, "manifest", "%s-%s-lib.ver" % ( package, version )), 'wb' )
+        libversion = open( os.path.join( destdir, "manifest", "%s-%s-lib.ver" % ( package, version )), 'wb' )
     if len(docList) > 0:
-        docversion = open( os.path.join( imagedir, "manifest", "%s-%s-doc.ver" % ( package, version )), 'wb' )
+        docversion = open( os.path.join( destdir, "manifest", "%s-%s-doc.ver" % ( package, version )), 'wb' )
     if len(binList) > 0:
         binversion.write( "%s %s Binaries\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
     if len(libList) > 0:
