@@ -17,7 +17,6 @@ class PackageBase (EmergeBase):
     #force      -> PackageBase
     #category   -> PackageBase
     #version    -> PackageBase
-    #workdir    -> PackageBase
     #packagedir -> PackageBase
     #imagedir   -> PackageBase
     
@@ -36,8 +35,8 @@ class PackageBase (EmergeBase):
                 os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
             if os.path.exists( script ):
                 shutil.copyfile( script, destscript )
-                             
-        utils.mergeImageDirToRootDir( self.imageDir(), self.rootdir )
+
+        utils.mergeImageDirToRootDir( self.imageDir(), self.mergeDir() )
 
         # run post-install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -53,7 +52,8 @@ class PackageBase (EmergeBase):
         """unmergeing the files from the filesystem"""
         if utils.verbose() > 1:
             print "base unmerge called"
-        utils.unmerge( self.rootdir, self.package, self.forced )
+
+        utils.unmerge( self.mergeDir(), self.package, self.forced )
         utils.remInstalled( self.category, self.package, self.version )
         return True
 
