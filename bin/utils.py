@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-# this file contains some helper functions for emerge
+"""@brief utilities 
+this file contains some helper functions for emerge
+"""
 
 # copyright:
 # Holger Schroeder <holger [AT] holgis [DOT] net>
@@ -42,6 +44,7 @@ def __import__( module ):
         return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
 def test4application( appname, args=None ):
+    """check if the application specified by 'appname' is available"""
     try:
         f = file('NUL:')
         p = subprocess.Popen( appname, stdout=f, stderr=f )
@@ -52,6 +55,7 @@ def test4application( appname, args=None ):
         return False
 
 def verbose():
+    """return the value if the verbose level""" 
     verb = os.getenv( "EMERGE_VERBOSE" )
     if ( not verb == None and verb.isdigit() and int(verb) > 0 ):
         return int( verb )
@@ -59,6 +63,7 @@ def verbose():
         return 0
 
 def getFiles( urls, destdir ):
+    """download files from 'url' into 'destdir'"""
     debug( "getfiles called. urls: %s" % urls, 1 )
     # make sure distfiles dir exists
     if ( not os.path.exists( destdir ) ):
@@ -72,6 +77,7 @@ def getFiles( urls, destdir ):
     return True
 
 def getFile( url, destdir ):
+    """download file from 'url' into 'destdir'"""
     debug( "getFile called. url: %s" % url, 1 )
     if url == "":
         error( "fetch: no url given" )
@@ -97,6 +103,7 @@ def getFile( url, destdir ):
         return False
 
 def wgetFile( url, destdir ):
+    """download file with wget from 'url' into 'destdir'"""
     compath = WGetExecutable
     command = "%s -c -t 1 -P %s %s" % ( compath, destdir, url )
     debug( "wgetfile called", 1 )
@@ -116,6 +123,7 @@ def wgetFile( url, destdir ):
     return ret
 
 def getFtpFile( host, path, destdir, filename ):
+    """download file from a ftp host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
     debug( "FIXME getFtpFile called. %s %s" % ( host, path ), 1 )
 
@@ -128,6 +136,7 @@ def getFtpFile( host, path, destdir, filename ):
     return True
 
 def getHttpFile( host, path, destdir, filename ):
+    """download file from a http host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
     debug( "getHttpFile called. %s %s" % ( host, path ) , 1 )
 
@@ -161,6 +170,7 @@ def getHttpFile( host, path, destdir, filename ):
 ### unpack functions
 
 def unpackFiles( downloaddir, filenames, workdir ):
+    """unpack (multiple) files specified by 'filenames' from 'downloaddir' into 'workdir'"""
     cleanDirectory( workdir )
 
     for filename in filenames:
@@ -171,6 +181,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
     return True
 
 def unpackFile( downloaddir, filename, workdir ):
+    """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     ( shortname, ext ) = os.path.splitext( filename )
     if ( ext == ".zip" ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
@@ -188,6 +199,7 @@ def unpackFile( downloaddir, filename, workdir ):
     return False
 
 def unTar( file, destdir ):
+    """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( file, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( file )
 
@@ -206,6 +218,7 @@ def unTar( file, destdir ):
     return True
 
 def unZip( file, destdir ):
+    """unzip file specified by 'file' into 'destdir'"""
     debug( "unZip called: file %s to destination %s" % ( file, destdir ), 1 )
 
     if not os.path.exists( destdir ):
@@ -229,6 +242,7 @@ def unZip( file, destdir ):
 
 ### patch file functions
 def applyPatch( patch, workdir, patchdepth ):
+    """apply patch file specified by 'patch' into 'workdir' using patch level 'patchdepth'"""
     cmd = "cd %s && patch -p%s < %s" % ( workdir, patchdepth, patch )
     return system( cmd )
 
