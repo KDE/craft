@@ -772,7 +772,7 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
 
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
         for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
-            if file.startswith( package ) and file.endswith("-bin.mft"):
+            if file.startswith( package ) and file.endswith( "-bin.mft" ):
                 warning( "found package %s according to file '%s', .mft files will not be generated." % ( package, file ) )
                 return False
 
