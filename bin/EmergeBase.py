@@ -133,7 +133,17 @@ class EmergeBase():
             installDir = self.imageDir()
         return installDir
 
-    def mergeDir(self):
+    def mergeSourceDir(self):
+        """return absolute path to the merge source directory of the currently active package. 
+        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used 
+        """
+        if self.subinfo.hasMergeSourcePath():
+            installDir = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath())
+        else:
+            installDir = self.imageDir()
+        return installDir
+                        
+    def mergeDestinationDir(self):
         """return absolute path to the merge directory of the currently active package. 
         This path may point to a subdir of rootdir in case @ref info.targetMergePath is used 
         """
