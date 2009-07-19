@@ -94,6 +94,7 @@ class EmergeBase():
         raise NotImplementedError(caller + ' must be implemented in subclass')
 
     def buildType(self):
+        """return currently selected build type"""
         Type=os.getenv( "EMERGE_BUILDTYPE" )
         if ( not Type == None ):
             buildType = Type
@@ -103,19 +104,44 @@ class EmergeBase():
         return buildType
 
     def compiler(self):
+        """return currently selected compiler"""
         return self.__compiler
         
     def workRoot(self):
+        """return absolute path to the root directory of the currently active package"""
         workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
         return workroot
 
     def workDir(self):
+        """return absolute path to the 'work' subdirectory of the currently active package"""
         _workDir = os.path.join( self.workRoot(), "work" )
         return _workDir
 
     def imageDir(self):
+        """return absolute path to the install root directory of the currently active package
+        """
         imagedir = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType())
         return imagedir
+
+    def installDir(self):
+        """return absolute path to the install directory of the currently active package. 
+        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used 
+        """
+        if self.subinfo.hasInstallPath():
+            installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
+        else:
+            installDir = self.imageDir()
+        return installDir
+
+    def mergeDir(self):
+        """return absolute path to the merge directory of the currently active package. 
+        This path may point to a subdir of rootdir in case @ref info.targetMergePath is used 
+        """
+        if self.subinfo.hasMergePath():
+            mergeDir = os.path.join( ROOTDIR, self.subinfo.mergePath())
+        else:
+            mergeDir = ROOTDIR
+        return mergeDir
 
     def execute( self, cmd=None ):
         """called to run the derived class"""
@@ -195,9 +221,9 @@ class EmergeBase():
 
         self.rootdir     = ROOTDIR
         self.downloaddir = DOWNLOADDIR
-		#deprecated
+		## \todo remove
         self.workroot    = self.workRoot()
-        #deprecated
+		## \todo remove
         self.workdir     = self.workDir()
 		#deprecated
         self.builddir    = self.__buildDir()        
@@ -230,10 +256,10 @@ class EmergeBase():
         return builddir
 
     def enterBuildDir(self):
-        if ( not os.path.exists( self.workroot) ):
-            os.mkdir( self.workroot )
+        if ( not os.path.exists( self.workRoot()) ):
+            os.mkdir( self.workRoot() )
             if utils.verbose() > 0:
-                print "creating: %s" % self.workroot
+                print "creating: %s" % self.workRoot()
         
         if ( not os.path.exists( self.workDir()) ):
             os.mkdir( self.workDir() )
