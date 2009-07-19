@@ -16,3 +16,6 @@ class MultiSource():
         
     def unpack(self):
         return self.source.unpack()
+
+    def sourceDir(self):
+        return self.source.sourceDir()
