@@ -27,6 +27,9 @@ class PackageBase (EmergeBase):
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
+ 
+        ## \todo is this the optimal place for creating the post install scripts ? 
+        # create post install scripts 
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
@@ -36,7 +39,8 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 shutil.copyfile( script, destscript )
 
-        utils.mergeImageDirToRootDir( self.imageDir(), self.mergeDir() )
+        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
+        utils.createManifestFiles( self.mergeSourceDir(), self.mergeDestinationDir(), self.category, self.package, self.version )
 
         # run post-install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -45,6 +49,8 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 cmd = "cd %s && %s" % ( self.rootdir, script )
                 utils.system( cmd ) or utils.warning("%s failed!" % cmd )
+
+        # add package to installed database -> is this not the task of the manifest files ? 
         utils.addInstalled( self.category, self.package, self.version )
         return True
 
@@ -53,7 +59,7 @@ class PackageBase (EmergeBase):
         if utils.verbose() > 1:
             print "base unmerge called"
 
-        utils.unmerge( self.mergeDir(), self.package, self.forced )
+        utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
         utils.remInstalled( self.category, self.package, self.version )
         return True
 
