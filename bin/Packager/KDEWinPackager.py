@@ -11,8 +11,6 @@ class KDEWinPackager (PackagerBase):
     def createPackage(self):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
-        #self.doPackaging( "dbus4win", self.buildTarget, False )
-        #def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True, special = False ):
         pkg_name = self.package
         pkg_version = str( datetime.date.today() ).replace('-', '')
         packSources = True 
@@ -42,19 +40,13 @@ class KDEWinPackager (PackagerBase):
         
         # todo: this is probably code for dealing with svn repositories 
         # need to be refactored
-        #if ( packSources and not ( self.noCopy and self.repositoryPath() ) ):
-        #    srcpath = os.path.join( self.workDir(), self.instsrcdir )
-        #    cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
-        #          ( pkg_name, binpath, srcpath, pkg_version, dstpath )
-        #elif packSources and self.noCopy and self.repositoryPath():
-        #    srcpath = os.path.join( self.kdesvndir, self.repositoryPath() ).replace( "/", "\\" )
-        #    if not os.path.exists( srcpath ):
-        #        srcpath = self.sourcedir
-        #    cmd = "-name %s -root %s -srcroot %s -version %s -destdir %s" % \
-        #          ( pkg_name, binpath, srcpath, pkg_version, dstpath )
-        #else:
-        cmd = "-name %s -root %s -version %s -destdir %s" % \
-                  ( pkg_name, binpath, pkg_version, dstpath )
+        if ( packSources ):
+            srcCmd = " -srcroot " + self.source.sourceDir()
+        else:
+            srcCmd = ""
+            
+        cmd = "-name %s -root %s -version %s -destdir %s %s" % \
+                  ( pkg_name, binpath, pkg_version, dstpath, srcCmd )
         xmltemplate=os.path.join(self.packagedir,pkg_name+"-package.xml")
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
