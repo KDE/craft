@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 # this module contains the information class
+
+# the current work here is to access members only 
+# by methods to be able to separate the access from 
+# the definition 
+
 import datetime
 import os
 import utils
@@ -9,6 +14,9 @@ class infoclass:
         """ """
         self.targets = dict()
         self.targetInstSrc = dict()
+        self.targetConfigurePath = dict()
+        self.targetInstallPath = dict()
+        self.targetMergePath = dict()
         self.svnTargets = dict()
         self.hardDependencies = dict()
         self.softDependencies = dict()
@@ -28,7 +36,7 @@ class infoclass:
         self.setDependencies()
         self.setTargets()
         self.setSVNTargets()
-        #self.setBuildTarget()
+        self.setBuildTarget()
 
     # abstract method for setting dependencies, override to set individual targets
     def setDependencies( self ):
@@ -41,8 +49,8 @@ class infoclass:
     # abstract method for setting svn targets, override to set individual targets
     def setSVNTargets( self ):
         """ """
-	
-	# setup current build target 
+    
+    # setup current build target 
     def setBuildTarget( self ):
         self.buildTarget = self.defaultTarget
         if not os.getenv( "EMERGE_TARGET" ) == None:
@@ -90,14 +98,44 @@ class infoclass:
         return ""
 
     def hasTargetSourcePath(self):
+        """return true if relative path appendable to local source path is given for the recent target"""
         return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstSrc.keys()
-                
+            
     def targetSourcePath(self):
+        """return relative path appendable to local source path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstSrc.keys():
             return self.targetInstSrc[ self.buildTarget ]
         
-    # return patch informations for the currently selected build target
+    def hasConfigurePath(self):
+        """return true if relative path appendable to local source path is given for the recent target"""
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetConfigurePath.keys()
+            
+    def configurePath(self):
+        """return relative path appendable to local source path for the recent target"""
+        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetConfigurePath.keys():
+            return self.targetConfigurePath[ self.buildTarget ]
+
+    def hasInstallPath(self):
+        """return true if relative path appendable to local install path is given for the recent target"""
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstallPath.keys()
+                
+    def installPath(self):
+        """return relative path appendable to local install path for the recent target"""
+        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstallPath.keys():
+            return self.targetInstallPath[ self.buildTarget ]
+        utils.die("no install path for this build target defined")
+            
+    def hasMergePath(self):
+        """return true if relative path appendable to local merge path is given for the recent target"""
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergePath.keys()
+                
+    def mergePath(self):
+        """return relative path appendable to local merge path for the recent target"""
+        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergePath.keys():
+            return self.targetMergePath[ self.buildTarget ]
+
     def patchesToApply(self):
+        """return patch informations for the recent build target"""
         if len( self.targets ) and self.buildTarget in self.patchToApply.keys():
             return self.patchToApply[ self.buildTarget ]
         return ("","")
