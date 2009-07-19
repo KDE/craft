@@ -770,11 +770,11 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
     """create the manifest files for an imagedir like the kdewin-packager does"""
     debug( "manifestDir called: %s %s" % ( imagedir, destdir ), 1 )
 
-    if os.path.exists( os.path.join( destdir, "manifest"  ) ):
-        for file in os.listdir( os.path.join( destdir, "manifest"  ) ):
-            if file.startswith( package ):
+    if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
+        for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
+            if file.startswith( package ) and file.endswith("-bin.mft"):
                 warning( "found package %s according to file '%s', .mft files will not be generated." % ( package, file ) )
-                return
+                return False
 
     myimagedir = imagedir
     if ( not imagedir.endswith( "\\" ) ):
@@ -863,6 +863,7 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
         libversion.write( "%s %s developer files\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
     if len(docList) > 0:
         docversion.write( "%s %s Documentation\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
+    return True
 
 def mergeImageDirToRootDir( imagedir, rootdir ):
     copySrcDirToDestDir( imagedir, rootdir )
