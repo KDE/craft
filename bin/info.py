@@ -59,8 +59,7 @@ class infoclass:
         if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
             utils.die("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()))
         else:
-            if utils.verbose > 1:
-                print "setting buildtarget to " + self.buildTarget
+            utils.debug( "setting buildtarget to " + self.buildTarget, 1 )
     
     # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
