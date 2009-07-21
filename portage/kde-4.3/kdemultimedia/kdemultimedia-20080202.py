@@ -7,7 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.3/kdemultimedia'
-        for ver in ['91', '95']:
+        for ver in ['91', '95', '98']:
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.2.' + ver + '/src/kdemultimedia-4.2.' + ver + '.tar.bz2'
           self.targetInstSrc['4.2.' + ver] = 'kdemultimedia-4.2.' + ver
         for ver in ['0', '1', '2', '3', '4']:
