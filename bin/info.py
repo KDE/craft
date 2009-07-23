@@ -57,7 +57,8 @@ class infoclass:
         if not os.getenv( "EMERGE_TARGET" ) == None:
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
         if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
-            utils.die("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()))
+            self.buildTarget = self.defaultTarget
+            utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()), 1)
         else:
             utils.debug( "setting buildtarget to " + self.buildTarget, 1 )
     
