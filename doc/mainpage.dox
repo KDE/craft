@@ -1,0 +1,212 @@
+/** 
+\mainpage Emerge Documentation
+
+\section intro_sec Introduction
+
+Emerge is a tool that can build the different parts of KDE and its dependencies under Windows. 
+This documentation describes the internal structure of the build system and gives an overview 
+about creating package scripts. 
+
+<ul>
+<li>\ref directories
+<li>\ref emerge_actions
+<li> \ref package_scripts
+</ul>
+
+(c) copyright 2009 Ralf Habacker <ralf.habacker@freenet.de>
+
+\page emerge_basics Emerge Basics
+
+\todo fill in  
+
+\page directories Directory Structure
+
+\section emerge_root Emerge Root Directory
+
+The Emerge Root Directory is the root directory for the emerge build system. The most important directories and a short explanation are listed below. Detailled informations about directories are then following.
+\code 
+ dev-utils/         -> development tools install directory
+ download/          -> Download Directory
+    svn-src/        -> svn Download Directory
+ emerge/            -> emerge scripts    
+    portage/        -> Package Root Directory    
+        kdesupport/
+            kdewin/ -> Package Directory
+ etc/
+    portage/        -> contains package install state database 
+ svn/               -> KDE svn Download Directory 
+ tmp/               
+    kdewin/
+        work/                           -> Package Work Directory  
+        image-<compiler>-<buildType>/   -> Package Image Directory
+\endcode
+
+\section package_root Package Root Directory
+The package root directory contains directories and files with informations required for building packages. 
+Each package is located into a separate directory. Multiple packages are grouped into so called category directories as shown in the following outline:
+
+\code 
+    <Package Root Directory>
+        <Category Directory> 
+            <Package Directory>
+                <package-file> 
+                <other-files> 
+\endcode
+
+\section download_dir Download Directory
+In this directory all downloaded files or sources fetched by the \ref fetch_action are stored except for KDE sources. KDE sources are fetched into the svn subdirectory.  
+
+\section package_dir Package Directory
+The Package Directory contains files with informations required for building packages. See \ref package_file for more informations. 
+
+\section work_dir Package Work Directory
+In the Package Work Directory all files created by the \ref configure_action, \ref make_action or \ref compile_action are stored. 
+
+\section image_dir Package Image Directory
+In the Image Directory all files created by the \ref install_action are stored. The files in this directory are used for merging into the \ref merge_root or for creating binary packages or installers.
+
+\section merge_root Merge Root Directory
+In the Merge Root Directory all created files of packages could be merged to have a complete installed system for testing and debugging. 
+\todo probably this directory should better not be the emerge root 
+
+\page emerge_actions Emerge Actions
+
+Building packages needs several actions like fetching sources from a remote server, unpackaging downloaded files, running configure and make tools, 
+installing created files into a temporary install directory and merging the installed file into one live root or building a binary package. 
+
+Each of this actions, which is selectable on the \ref emerge_script, is described in details below: 
+
+\section fetch_action Fetch Action
+
+- fetches a remote archive source file or sources from a remote version control system into the local download location. 
+\todo describe attributes 
+
+\section unpack_action unpack Action
+
+- unpacks a downloaded archive source file or copy fetched sources from a remote version control system into the package working directory.
+\todo describe attributes 
+
+\section configure_action configure Action
+
+- perform the configure step of the related package  
+\todo describe attributes 
+
+\section make_action make Action
+- run the make tool in the build directory of the related package  
+\todo describe attributes 
+
+\section compile_action compile Action
+This action compile the sources - that means run the configure and make action of the related package. 
+\todo describe attributes 
+ 
+\section install_action install Action
+This action will run the compiler specific make install command to install files into the \ref image_dir. 
+The files from the \ref image_dir will used for merging into the \ref merge_root or for building binary packages using the \ref package_action.
+
+\section qmerge_action qmerge Action
+The qmerge action merges the content from the \ref image_dir into the \ref merge_root.
+
+\section unmerge_action unmerge Action
+This action uninstalls a package from the \merge_root - it requires a working manifest directory. \todo describe working manifest directory
+The unmerge action only delete unmodified files by default. You may use the -f or --force option to let the unmerge action delete all files unconditional.
+
+\section package_action package Action
+This step will create a package out of the \image_dir instead of merge'ing the \ref image_dir into the \ref merge_root.  
+This actions requires the packager to be already installed.
+\todo is instead the truth ?
+
+Other actions:
+\code
+--manifest          This step creates the files contained in the manifest dir.
+--qmerge            This will merge the image directory into the KDEROOT
+--test              This will run the unittests if they are present
+--install-deps      This will fetch and install all required dependencies for
+                    the specified package
+--full-package      This will create packages instead of installing stuff to
+\endcode
+
+
+\page package_scripts Package Scripts
+
+Package scripts are the central place for definitions and actions required to build a package.
+Package scripts are divided into categories and are located unter a \ref package_root.
+
+A package file name could be named as shown below: 
+    \li package.py
+    \li <package-name>.py
+    \li <package-name>-<version>.py
+
+where package name could be: 
+    \li <text>
+    \li <text>-<text>
+ 
+and the version could be in the form: 
+    \li <major>
+    \li <major>.<minor>
+    \li <major>.<minor>.<patch>
+    \li <major>.<minor>.<patch>-<postfix>
+    
+For a real example see below: 
+    
+\code 
+    portage/
+        kdesupport/ 
+            kdewin-installer/
+                kdewin-installer.py
+            kdewin/
+                kdewin-0.4.2.py
+                
+\endcode
+
+see \ref package_file for details about package files. 
+
+\page package_file Package file
+
+The package file contains the definitions and actions to build a specific source package. 
+
+\code 
+import base
+import info
+import os
+
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['0.2'] = "http://www.winkde.org/..."
+        self.defaultTarget = '0.2'
+    
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget']       = 'default'
+        self.hardDependencies['gnuwin32/patch']      = 'default'
+        self.hardDependencies['gnuwin32/sed']        = 'default'
+        self.hardDependencies['dev-util/cmake']      = 'default'
+        self.hardDependencies['dev-util/subversion'] = 'default'
+        if os.getenv( "KDECOMPILER" ) == "mingw":
+          self.hardDependencies['dev-util/mingw']    = 'default'
+
+class subclass(base.baseclass):
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, args=args )
+    self.subinfo = subinfo()
+
+if __name__ == '__main__':
+    subclass().execute()
+
+\endcode            
+\todo complete 
+
+
+\page tools Tools and Scripts 
+
+\section emerge_script Emerge Script 
+The Emerge.py script contains the entry point for all available actions. In detail it does: 
+- parses the command line options
+- performs dependency handling for given package
+- run the specified action for the given package   
+- 
+\todo complete 
+
+The emerge script is called by a command line wrapper named emerge.bat 
+
+ 
+
+*/
