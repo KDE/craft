@@ -137,8 +137,7 @@ Send feedback to <kde-windows@kde.org>.
 
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
-    fileName = os.path.join( utils.getPortageDir(), category, package, "%s-%s.py" % \
-                         ( package, version ) )
+    fileName = utils.getFilename( category, package, version )
     opts_string = ( "%s " * len( opts ) ) % tuple( opts )
     commandstring = "python %s %s %s" % ( fileName, action, opts_string )
 
