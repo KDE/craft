@@ -48,55 +48,51 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         
         self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-3-lib.tar.bz2"
-        if self.compiler == "msvc2005":
+        if self.compiler() == "msvc2005":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2"
-        elif self.compiler == "msvc2008":
+        elif self.compiler() == "msvc2008":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-vc90-1.2.4-1-lib.tar.bz2"
-        elif self.compiler == "mingw":
+        elif self.compiler() == "mingw":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
         self.subinfo = subinfo()
 
-    # in def fetch(self): git sources are fetched 
-    
+    def fetch(self):
+        if not GitSource.fetch(self):
+            return False
+            
+        if not utils.getFile(self.openssl,self.downloaddir):
+            return False
+
+        if not utils.getFile(self.dbuslib,self.downloaddir):
+            return False
+            
+        return True
+        
     def unpack( self ):
-        utils.cleanDirectory( self.workdir )
+        utils.cleanDirectory( self.buildDir() )
 
-        # copy include header and libs into local work dir
-        if not os.path.exists( os.path.join( self.workdir, "3rdparty", "include", "dbus" ) ):
-            os.makedirs( os.path.join( self.workdir, "3rdparty", "include", "dbus" ) )
-        utils.copySrcDirToDestDir( os.path.join( self.rootdir, "include", "dbus" ), os.path.join( self.workdir, "3rdparty", "include", "dbus" ) )
-        if not os.path.exists( os.path.join( self.workdir, "3rdparty", "include", "openssl" ) ):
-            os.makedirs( os.path.join( self.workdir, "3rdparty", "include", "openssl" ) )
-        utils.copySrcDirToDestDir( os.path.join( self.rootdir, "include", "openssl" ), os.path.join( self.workdir, "3rdparty", "include", "openssl" ) )
+        self.enterBuildDir()
+        
+        thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
 
-        if not os.path.exists( os.path.join( self.workdir, "3rdparty", "lib" ) ):
-            os.makedirs( os.path.join( self.workdir, "3rdparty", "lib" ) )
-        re1 = re.compile(".*dbus-1.*")
-        re2 = re.compile(".*eay.*")
-        for filename in os.listdir( os.path.join( self.rootdir, "lib" ) ):
-            if re1.match( filename ) or re2.match( filename ):
-                src = os.path.join( self.rootdir, "lib", filename )
-                dst = os.path.join( self.workdir, "3rdparty", "lib", filename )
-                shutil.copyfile( src, dst )
+        utils.createDir(thirdparty_dir)
+        if not utils.unpackFile( self.downloaddir, os.path.basename(self.openssl), thirdparty_dir ):
+            return False
+
+        if not utils.unpackFile( self.downloaddir, os.path.basename(self.dbuslib), thirdparty_dir ):
+            return False
 
         return True
 
     def configure( self, buildType=None, defines=""):
-        print "configure called"
-        qtsrcdir = self.sourceDir()
-        qtbindir = self.workdir
-        thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
+        thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
+        os.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
+        configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
 
-        os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
-
-        configure = os.path.join( qtsrcdir, "configure.exe" ).replace( "/", "\\" )
-
-        if not os.path.exists( qtbindir ):
-          os.mkdir( qtbindir )
-        os.chdir( qtbindir )
+        self.enterBuildDir()
 
         # so that the mkspecs can be found, when -prefix is set
-        os.putenv( "QMAKEPATH", qtsrcdir )
+        os.putenv( "QMAKEPATH", self.sourceDir() )
 
         # configure qt
         # prefix = os.path.join( self.rootdir, "qt" ).replace( "\\", "/" )
@@ -115,7 +111,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         os.environ[ "USERIN" ] = "y"
         userin = "y"
-        os.chdir( qtbindir )
+
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
@@ -140,19 +136,17 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         return True        
 
     def install( self ):
-        qtbindir = os.path.join( self.workdir, self.instsrcdir )
-        os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
+        QMakeBuildSystem.install(self)
 
-        os.chdir( os.path.join( self.workdir, self.instsrcdir ) )
-        self.system( "%s install" % self.cmakeMakeProgramm )
-
-        src = os.path.join( self.packagedir, "qt.conf" )
-        dst = os.path.join( self.imagedir, self.instdestdir, "bin", "qt.conf" )
+        # create qt.conf 
+        src = os.path.join( self.packageDir(), "qt.conf" )
+        dst = os.path.join( self.installDir(), "bin", "qt.conf" )
         shutil.copy( src, dst )
         
-        if self.buildType == "Debug" and (self.compiler == "msvc2005" or self.compiler == "msvc2008"):
-            srcdir = os.path.join( self.workdir, self.instsrcdir, "lib" )
-            destdir = os.path.join( self.imagedir, self.instdestdir, "lib" )
+        # install msvc debug files if available
+        if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008"):
+            srcdir = os.path.join( self.buildDir(), "lib" )
+            destdir = os.path.join( self.installDir(), "lib" )
 
             filelist = os.listdir( srcdir )
             
