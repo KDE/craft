@@ -20,6 +20,7 @@ class KDEWinPackager (PackagerBase):
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
+        ## \todo fow what is this good ? FIXME    
         binpath = os.path.join( self.imageDir(), self.instdestdir )
         tmp = os.path.join( binpath, "kde" )
 
@@ -30,7 +31,7 @@ class KDEWinPackager (PackagerBase):
             utils.die( "kdewin-packager not found - please make sure it is in your path" )
 
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
-            script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
+            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if os.path.exists( script ):
@@ -47,7 +48,7 @@ class KDEWinPackager (PackagerBase):
             
         cmd = "-name %s -root %s -version %s -destdir %s %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath, srcCmd )
-        xmltemplate=os.path.join(self.packagedir,pkg_name+"-package.xml")
+        xmltemplate=os.path.join(self.packageDir()(),pkg_name+"-package.xml")
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
         else:

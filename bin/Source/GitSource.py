@@ -18,7 +18,7 @@ class GitSource (VersionSystemSourceBase):
         if repopath == None:
             repopath = self.repositoryPath()
         if packagedir == None:
-            packagedir = self.packagedir
+            packagedir = self.packageDir()
             
         ret = True
         if ( not self.noFetch ):

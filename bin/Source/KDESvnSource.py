@@ -53,7 +53,7 @@ class KDESvnSource (VersionSystemSourceBase):
             svnpath = self.repositoryPath()
 
         if packagedir == None:
-            packagedir = self.packagedir
+            packagedir = self.packageDir()
             
         if utils.verbose() > 1:
             print "fetch called. svnpath: %s dir: %s" % ( svnpath, packagedir )

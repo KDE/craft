@@ -1013,3 +1013,7 @@ def toMSysPath( path ):
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
     
+
+def createDir(path):
+    if not os.path.exists( path ):
+        os.makedirs( path )

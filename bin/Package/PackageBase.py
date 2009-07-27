@@ -31,8 +31,9 @@ class PackageBase (EmergeBase):
         ## \todo is this the optimal place for creating the post install scripts ? 
         # create post install scripts 
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
-            script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
+            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            # are there any cases there installDir should be honored ? 
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
                 os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
