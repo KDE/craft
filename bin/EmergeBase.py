@@ -237,14 +237,10 @@ class EmergeBase():
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
 
         self.rootdir     = ROOTDIR
-        self.downloaddir = DOWNLOADDIR
 		## \todo remove
         self.workroot    = self.workRoot()
 		## \todo remove
         self.workdir     = self.workDir()
-
-        self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
-        self.filesdir = os.path.join( self.packagedir, "files" )
                 
         # deprecated
         self.kdesvndir = KDESVNDIR
