@@ -18,13 +18,16 @@ class QMakeBuildSystem(BuildSystemBase):
             
         self.enterBuildDir()
         
+        # so that the mkspecs can be found, when -prefix is set
+        os.putenv( "QMAKEPATH", self.sourceDir() )
+
         # here follows some automatic configure tool detection
         # 1. search for configure.exe 
         # 2. search for a pro-file named as the package 
         # 3. if a pro-file is available through configureOptions, run it with qmake
         # 4. if a complete configure command line is available run it 
-        configTool = os.path.join(self.sourcedir,"configure.exe")
-        topLevelProFile = os.path.join(self.sourcedir,self.package + ".pro")
+        configTool = os.path.join(self.sourceDir(),"configure.exe")
+        topLevelProFile = os.path.join(self.sourceDir(),self.package + ".pro")
         if os.path.exists(configTool):
             command = configTool + " " + self.configureOptions()
         elif os.path.exists(topLevelProFile):
@@ -49,7 +52,12 @@ class QMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        command = self.cmakeMakeProgramm + " " + self.makeOptions()
+        # so that the mkspecs can be found, when -prefix is set
+        os.putenv( "QMAKEPATH", self.sourceDir() )
+
+        command = self.cmakeMakeProgramm 
+        #if self.makeOptions() <> "": 
+        #    command += " " + self.makeOptions()
         # adding Targets later
         if utils.verbose() > 1:
             command += " VERBOSE=1"
@@ -61,25 +69,10 @@ class QMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
-
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
-        return True
-
-    def compile( self, customDefines=""):
-        """making all required stuff for compiling cmake based modules"""
-        if( not self.buildType() == None ) :
-            if( not ( self.configure( self.buildType(), customDefines ) and self.make( self.buildType() ) ) ):
-                return False
-        else:
-            if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
-                return False
-            if( not ( self.configure( "Release", customDefines ) and self.make( "Release" ) ) ):
-                return False
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.installDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.installDir() ) )
         return True
 
     def install( self ):

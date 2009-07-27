@@ -177,6 +177,7 @@ class EmergeBase():
         self.buildTarget = self.subinfo.buildTarget
         
         # required by some packages
+		## \todo  migrate to new style 
         if self.subinfo.hasTargetSourcePath():
             self.instsrcdir = self.subinfo.targetSourcePath()
 
@@ -235,8 +236,6 @@ class EmergeBase():
         self.workroot    = self.workRoot()
 		## \todo remove
         self.workdir     = self.workDir()
-		#deprecated
-        self.builddir    = self.__buildDir()        
 
         self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )
@@ -250,7 +249,7 @@ class EmergeBase():
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
 
-    def __buildDir(self):        
+    def buildDir(self):        
         if( self.buildType() == None ):
             tmp = "%s-%s" % (COMPILER, "default")
         else:
@@ -276,12 +275,12 @@ class EmergeBase():
             if utils.verbose() > 0:
                 print "creating: %s" % self.workDir()
         
-        if ( not os.path.exists( self.builddir) ):
-            os.mkdir( self.builddir )
+        if ( not os.path.exists( self.buildDir()) ):
+            os.mkdir( self.buildDir() )
             if utils.verbose() > 0:
-                print "creating: %s" % self.builddir 
+                print "creating: %s" % self.buildDir()
 
-        os.chdir( self.builddir )
+        os.chdir( self.buildDir() )
         if utils.verbose() > 0:
-            print "entering: %s" % self.builddir
+            print "entering: %s" % self.buildDir()
 
