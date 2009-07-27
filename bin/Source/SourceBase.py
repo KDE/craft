@@ -27,8 +27,8 @@ class SourceBase(EmergeBase):
         if self.subinfo.hasTarget():
             ( file, patchdepth ) = self.subinfo.patchesToApply()
             if file:
-                patchfile = os.path.join ( self.packagedir, file )
-                srcdir = os.path.join ( self.workDir(), self.instsrcdir )
+                patchfile = os.path.join ( self.packageDir(), file )
+                srcdir = os.path.join ( self.sourceDir() )
                 return utils.applyPatch( patchfile, srcdir, patchdepth )
         return True
 
