@@ -86,6 +86,10 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         return True
 
+    # def compile(self): is no more defined in packages. It is defined in BuildSystemBase.py 
+    # and is a wrapper for configure and make, this makes it possible to continue make after a make error 
+    # without the need to reconfigùre the whole package, which needs much time for big packages
+    
     def configure( self, buildType=None, defines=""):
         thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
         os.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
