@@ -237,10 +237,6 @@ class EmergeBase():
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
 
         self.rootdir     = ROOTDIR
-		## \todo remove
-        self.workroot    = self.workRoot()
-		## \todo remove
-        self.workdir     = self.workDir()
                 
         # deprecated
         self.kdesvndir = KDESVNDIR
