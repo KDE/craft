@@ -40,7 +40,7 @@ class subinfo(info.infoclass):
 # rather that the packages have been downloaded for use in this build
 # check that 
 
-class Package(GitSource, QMakeBuildSystem, KDEWinPackager, PackageBase):
+class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
         GitSource.__init__(self)
         QMakeBuildSystem.__init__(self)
@@ -56,9 +56,12 @@ class Package(GitSource, QMakeBuildSystem, KDEWinPackager, PackageBase):
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
         self.subinfo = subinfo()
 
+    # in def fetch(self): git sources are fetched 
+    
     def unpack( self ):
         utils.cleanDirectory( self.workdir )
 
+        # copy include header and libs into local work dir
         if not os.path.exists( os.path.join( self.workdir, "3rdparty", "include", "dbus" ) ):
             os.makedirs( os.path.join( self.workdir, "3rdparty", "include", "dbus" ) )
         utils.copySrcDirToDestDir( os.path.join( self.rootdir, "include", "dbus" ), os.path.join( self.workdir, "3rdparty", "include", "dbus" ) )
@@ -76,13 +79,12 @@ class Package(GitSource, QMakeBuildSystem, KDEWinPackager, PackageBase):
                 dst = os.path.join( self.workdir, "3rdparty", "lib", filename )
                 shutil.copyfile( src, dst )
 
-        # and now clone/checkout qt
-        GitSource.fetch(self)
         return True
 
-    def compile( self ):
-        qtsrcdir = self.sourcePath()
-        qtbindir = os.path.join( self.workdir, self.instsrcdir )
+    def configure( self, buildType=None, defines=""):
+        print "configure called"
+        qtsrcdir = self.sourceDir()
+        qtbindir = self.workdir
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
 
         os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
@@ -98,13 +100,13 @@ class Package(GitSource, QMakeBuildSystem, KDEWinPackager, PackageBase):
 
         # configure qt
         # prefix = os.path.join( self.rootdir, "qt" ).replace( "\\", "/" )
-        prefix = os.path.join( self.imagedir, self.instdestdir )
+        prefix = self.installDir()
         platform = ""
         libtmp = os.getenv( "LIB" )
         inctmp = os.getenv( "INCLUDE" )
-        if self.compiler == "msvc2005" or self.compiler == "msvc2008":
-            platform = "win32-%s" % self.compiler
-        elif self.compiler == "mingw":
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+            platform = "win32-%s" % self.compiler()
+        elif self.compiler() == "mingw":
             os.environ[ "LIB" ] = ""
             os.environ[ "INCLUDE" ] = ""
             platform = "win32-g++"
@@ -128,23 +130,14 @@ class Package(GitSource, QMakeBuildSystem, KDEWinPackager, PackageBase):
         else:
           command = command + " -release "
         print "command: ", command
-        self.system( command )
-
-        # build qt
-        self.system( self.cmakeMakeProgramm )
-
-        # build Qt documentation - currently does not work with mingw
-        # it does not work with msvc either; unless you have a Qt4-Installation
-        # already at hand. (otherwise qdoc3 fails to locate qtxml4.dll)
-        #
-        #if self.compiler == "msvc2005":
-        #    self.system( self.cmakeMakeProgramm + " docs" )
-
+        utils.system( command )
+        
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
         if( not inctmp == None ):
             os.environ[ "INCLUDE" ] = inctmp
-        return True
+
+        return True        
 
     def install( self ):
         qtbindir = os.path.join( self.workdir, self.instsrcdir )
