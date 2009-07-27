@@ -212,7 +212,7 @@ class baseclass:
         else:
             return utils.getFiles( "", self.downloaddir )
 
-    def git_unpack( self, repoUrl ):
+    def git_unpack( self, repoString ):
         svndir = os.path.join( self.downloaddir, "svn-src" )
         
         ret = True
@@ -224,7 +224,16 @@ class baseclass:
                 ret = self.msys.msysExecute( self.svndir, "git", "pull" )
             else:
                 """it doesn't exist so clone the repo"""
+                # first try to replace with a repo url from etc/portage/emergehosts.conf
+                repoString = utils.replaceGitUrl( repoString )
+                
+                repoUrl = utils.splitGitUrl( repoString )[0]
                 ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
+            [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+            if ret and repoBranch:
+                ret = self.msys.msysExecute( self.svndir, "git", "checkout -b %s origin/%s" % ( repoBranch, repoBranch ) )
+            if ret and repoTag:
+                ret = self.msys.msysExecute( self.svndir, "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
             os.environ["PATH"] = safePath
         else:
             utils.debug( "skipping git fetch (--offline)" )
@@ -236,7 +245,7 @@ class baseclass:
         utils.debug( "base unpack called", 1 )
 
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
-            if self.subinfo.svnTargets[ self.subinfo.buildTarget ] and self.subinfo.svnTargets[ self.subinfo.buildTarget ].endswith( '.git' ):
+            if self.subinfo.svnTargets[ self.subinfo.buildTarget ] and utils.isGitUrl( self.subinfo.svnTargets[ self.subinfo.buildTarget ] ):
                 if ( not os.path.exists( self.workdir ) ):
                     os.makedirs( self.workdir )
                 return self.git_unpack( self.subinfo.svnTargets[ self.subinfo.buildTarget ] )

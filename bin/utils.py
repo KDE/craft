@@ -23,6 +23,8 @@ import __builtin__
 import imp
 import info
 
+import ConfigParser
+
 import portage_versions
 
 
@@ -958,6 +960,49 @@ def digestFile( filepath ):
         hash.update( line )
     file.close()
     return hash.hexdigest()
+
+def isGitUrl( Url ):
+    """ this function returns true, if the Url given as parameter is a git url:
+        it either starts with git:// or the first part before the first '|' ends with .git"""
+    if Url.startswith('git://'):
+        return True
+    # split away branch and tags
+    splitUrl = Url.split('|')
+    if splitUrl[0].endswith(".git"):
+        return True
+    return False
+
+def splitGitUrl( Url ):
+    """ this function splits up an url provided by Url into the server name, the path, a branch or tag; 
+        it will return a list with 3 strings according to the following scheme:
+        git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']"""
+    splitUrl = Url.split('|')
+    if len(splitUrl) < 3:
+        c = [x for x in splitUrl]
+        for y in range(3 - len(splitUrl)): c.append('')
+    else:
+        c = splitUrl[0:3]
+    return c
+
+def replaceGitUrl( Url ):
+    """ this function should be used to replace the url of a server
+        this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
+    configfile = os.path.join( getEtcPortageDir(), "emergehosts.conf" )
+    replacedict = dict()
+
+    if os.path.exists( configfile ):
+        config = ConfigParser.ConfigParser()
+        config.read( configfile )
+        for section in config.sections():
+            host = config.get( section, "host" )
+            replace = config.get( section, "replace" )
+            replacedict[ host ] = replace
+            
+        for host in replacedict.keys():
+            if not Url.find( host ) == -1:
+                Url = Url.replace( host, replacedict[ host ] )
+                break
+    return Url
 
 def toMSysPath( path ):
     path = path.replace( '\\', '/' )

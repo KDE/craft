@@ -25,6 +25,25 @@ class GitSource (VersionSystemSourceBase):
         if ( not self.noFetch ):
             safePath = os.environ["PATH"]
             os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
+            if os.path.exists( self.svndir ):
+                """if directory already exists, simply do a pull but obey to offline"""
+                ret = self.msys.msysExecute( self.sourcedir(), "git", "pull" )
+            else:
+                """it doesn't exist so clone the repo"""
+                # first try to replace with a repo url from etc/portage/emergehosts.conf
+                repoString = utils.replaceGitUrl( repoString )
+                
+                repoUrl = utils.splitGitUrl( repoString )[0]
+                ret = self.msys.msysExecute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repoUrl, self.package ) )
+            [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+            if ret and repoBranch:
+                ret = self.msys.msysExecute( self.sourceDir(), "git", "checkout -b %s origin/%s" % ( repoBranch, repoBranch ) )
+            if ret and repoTag:
+                ret = self.msys.msysExecute( self.sourceDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
+            os.environ["PATH"] = safePath
+
+            safePath = os.environ["PATH"]
+            os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
             if os.path.exists( self.sourceDir() ):
                 """if directory already exists, simply do a pull but obey to offline"""
                 ret = self.shell.execute( self.sourceDir(), "git", "pull" )
