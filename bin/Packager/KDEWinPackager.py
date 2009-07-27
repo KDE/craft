@@ -20,13 +20,7 @@ class KDEWinPackager (PackagerBase):
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
-        ## \todo fow what is this good ? FIXME    
-        binpath = os.path.join( self.imageDir(), self.instdestdir )
-        tmp = os.path.join( binpath, "kde" )
-
-        if( os.path.exists( tmp ) ):
-            binpath = tmp
-        
+         
         if not utils.test4application( "kdewin-packager" ):
             utils.die( "kdewin-packager not found - please make sure it is in your path" )
 
@@ -47,8 +41,8 @@ class KDEWinPackager (PackagerBase):
             srcCmd = ""
             
         cmd = "-name %s -root %s -version %s -destdir %s %s" % \
-                  ( pkg_name, binpath, pkg_version, dstpath, srcCmd )
-        xmltemplate=os.path.join(self.packageDir()(),pkg_name+"-package.xml")
+                  ( pkg_name, self.installDir(), pkg_version, dstpath, srcCmd )
+        xmltemplate=os.path.join(self.packageDir(),pkg_name+"-package.xml")
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
         else:
