@@ -31,9 +31,9 @@ class ArchiveSource(SourceBase):
             utils.debug( "skipping fetch (--offline)" )
             return True
         if self.subinfo.hasTarget():
-            return utils.getFiles( self.subinfo.target(), self.downloaddir )
+            return utils.getFiles( self.subinfo.target(), self.downloadDir() )
         else:
-            return utils.getFiles( "", self.downloaddir )
+            return utils.getFiles( "", self.downloadDir() )
 
     def unpack(self):
         """unpacking all zipped(gz,zip,bz2) tarballs"""        
@@ -48,7 +48,7 @@ class ArchiveSource(SourceBase):
             destdir = self.workDir()
             utils.debug("unpacking files into work root %s" % destdir,1)
 
-        if not utils.unpackFiles( self.downloaddir, filenames, destdir ):
+        if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
             return False
 
         return self.applyPatches()

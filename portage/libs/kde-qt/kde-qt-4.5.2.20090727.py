@@ -60,10 +60,10 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         if not GitSource.fetch(self):
             return False
             
-        if not utils.getFile(self.openssl,self.downloaddir):
+        if not utils.getFile(self.openssl,self.downloadDir()):
             return False
 
-        if not utils.getFile(self.dbuslib,self.downloaddir):
+        if not utils.getFile(self.dbuslib,self.downloadDir()):
             return False
             
         return True

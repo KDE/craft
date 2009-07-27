@@ -47,7 +47,7 @@ class VersionSystemSourceBase (SourceBase):
         if not self.noCopy:
             sourcedir = self.workDir()
         else:
-            sourcedir = os.path.join( self.downloaddir, "svn-src", self.package )
+            sourcedir = os.path.join( self.downloadDir(), "svn-src", self.package )
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
