@@ -141,7 +141,7 @@ class EmergeBase():
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        imagedir = os.path.join( self.workroot, "image-" + COMPILER + '-' + self.buildType())
+        imagedir = os.path.join( self.workRoot(), "image-" + COMPILER + '-' + self.buildType())
         return imagedir
 
     def installDir(self):
