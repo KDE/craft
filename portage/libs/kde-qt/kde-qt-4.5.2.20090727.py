@@ -76,10 +76,10 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
 
         utils.createDir(thirdparty_dir)
-        if not utils.unpackFile( self.downloaddir, os.path.basename(self.openssl), thirdparty_dir ):
+        if not utils.unpackFile( self.downloadDir(), os.path.basename(self.openssl), thirdparty_dir ):
             return False
 
-        if not utils.unpackFile( self.downloaddir, os.path.basename(self.dbuslib), thirdparty_dir ):
+        if not utils.unpackFile( self.downloadDir(), os.path.basename(self.dbuslib), thirdparty_dir ):
             return False
 
         return True
