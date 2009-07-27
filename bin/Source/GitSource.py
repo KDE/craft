@@ -17,7 +17,6 @@ class GitSource (VersionSystemSourceBase):
     def fetch( self, repopath=None, packagedir=None ):
         if repopath == None:
             repopath = self.repositoryPath()
-
         if packagedir == None:
             packagedir = self.packagedir
             
@@ -27,19 +26,19 @@ class GitSource (VersionSystemSourceBase):
             os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
             if os.path.exists( self.svndir ):
                 """if directory already exists, simply do a pull but obey to offline"""
-                ret = self.msys.msysExecute( self.sourcedir(), "git", "pull" )
+                ret = self.shell.execute( self.sourcedir(), "git", "pull" )
             else:
                 """it doesn't exist so clone the repo"""
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                repoString = utils.replaceGitUrl( repoString )
+                repoString = utils.replaceGitUrl( repopath )
                 
                 repoUrl = utils.splitGitUrl( repoString )[0]
-                ret = self.msys.msysExecute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repoUrl, self.package ) )
+                ret = self.shell.execute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repoUrl, self.package ) )
             [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
             if ret and repoBranch:
-                ret = self.msys.msysExecute( self.sourceDir(), "git", "checkout -b %s origin/%s" % ( repoBranch, repoBranch ) )
+                ret = self.shell.execute( self.sourceDir(), "git", "checkout -b %s origin/%s" % ( repoBranch, repoBranch ) )
             if ret and repoTag:
-                ret = self.msys.msysExecute( self.sourceDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
+                ret = self.shell.execute( self.sourceDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
             os.environ["PATH"] = safePath
 
             safePath = os.environ["PATH"]
