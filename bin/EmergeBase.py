@@ -47,8 +47,6 @@ class EmergeBase():
             self.argv0 = sys.argv[ 0 ]
             
         self.SRC_URI                = SRC_URI
-        self.instsrcdir             = ""
-        self.instdestdir            = ""
         self.noCopy                 = False
         self.noClean                = False
         self.noFast                 = True
