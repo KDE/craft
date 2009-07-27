@@ -105,11 +105,15 @@ class EmergeBase():
         """return currently selected compiler"""
         return self.__compiler
 
-    def packageDir(): 
+    def downloadDir(self): 
+        """ location of directory where fetched files are  stored """
+        return DOWNLOADDIR
+        
+    def packageDir(self): 
         """ add documentation """
         return os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
     
-    def filesDir():
+    def filesDir(self):
         """ add documentation """
         return os.path.join( self.packageDir(), "files" )
         
@@ -197,11 +201,6 @@ class EmergeBase():
         self.subinfo.setBuildTarget()
         self.buildTarget = self.subinfo.buildTarget
         
-        # required by some packages
-		## \todo  migrate to new style 
-        if self.subinfo.hasTargetSourcePath():
-            self.instsrcdir = self.subinfo.targetSourcePath()
-
         self.setDirectories()
 
         ok = True

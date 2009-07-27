@@ -7,12 +7,21 @@ class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
     def __init__(self):
         PackagerBase.__init__(self)
+        
+    def xmlTemplate(self):
+        return os.path.join(self.packageDir(),self.package+"-package.xml")
+
 
     def createPackage(self):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
-        pkg_name = self.package
-        pkg_version = str( datetime.date.today() ).replace('-', '')
+
+        if self.subinfo.options.package.fileName <> "":
+            pkgName = self.subinfo.options.package.fileName
+        else:
+            pkgName = self.package
+
+        pkgVersion = str( datetime.date.today() ).replace('-', '')
         packSources = True 
         special = False 
     
@@ -33,16 +42,22 @@ class KDEWinPackager (PackagerBase):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
                 shutil.copyfile( script, destscript )
         
+        # determine source in case MultiSource is used
+        if hasattr(self,'source'): 
+            sourcedir = self.source.sourceDir()
+        else:
+            sourcedir = self.sourceDir()
+        
         # todo: this is probably code for dealing with svn repositories 
         # need to be refactored
         if ( packSources ):
-            srcCmd = " -srcroot " + self.source.sourceDir()
+            srcCmd = " -srcroot " + sourcedir
         else:
             srcCmd = ""
             
         cmd = "-name %s -root %s -version %s -destdir %s %s" % \
-                  ( pkg_name, self.installDir(), pkg_version, dstpath, srcCmd )
-        xmltemplate=os.path.join(self.packageDir(),pkg_name+"-package.xml")
+                  ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd )
+        xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
         else:

@@ -9,15 +9,41 @@ import datetime
 import os
 import utils
 
+## prelimary settings/options support 
+# not clear if it would be better to use 
+# class orientated settings like PackagerSettings 
+# or action orientated settings like 
+# actions.package
+# -> I guess action orientated settings would be much better 
+
+class ActionPackageOptions:
+    def __init__(self):
+        print "Options for package action" 
+        self.packageName = ""
+
+class ActionConfigureOptions:
+    def __init__(self):
+        print "Options for configure action" 
+        self.defines = ""
+        self.configurePath = ""
+
+class Options:
+	def __init__(self):
+		self.configure = ActionConfigureOptions()
+		self.package = ActionPackageOptions()
+
+
 class infoclass:
     def __init__( self, RAW="" ):
         """ """
+        self.options = Options()
         self.targets = dict()
         self.targetInstSrc = dict()
         self.targetConfigurePath = dict()
         self.targetInstallPath = dict()
         self.targetMergeSourcePath = dict()
         self.targetMergePath = dict()
+        ## \todo prelimary 
         self.svnTargets = dict()
         self.hardDependencies = dict()
         self.softDependencies = dict()
