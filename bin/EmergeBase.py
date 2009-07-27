@@ -104,6 +104,14 @@ class EmergeBase():
     def compiler(self):
         """return currently selected compiler"""
         return self.__compiler
+
+    def packageDir(): 
+        """ add documentation """
+        return os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
+    
+    def filesDir():
+        """ add documentation """
+        return os.path.join( self.packageDir(), "files" )
         
     def workRoot(self):
         """return absolute path to the root directory of the currently active package"""
