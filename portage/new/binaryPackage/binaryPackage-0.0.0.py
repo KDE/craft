@@ -11,7 +11,7 @@ from Packager.KDEWinPackager import *
 # deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['default'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/gnuwin32/bzip2-1.0.4-bin.zip'
+        self.targets['default'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/gnuwin32/libbzip2-1.0.5-1-bin.tar.bz2'
        
         #self.targetInstSrc['default'] = 'bzip2-1.0.4'
         self.defaultTarget = 'default'
