@@ -123,6 +123,21 @@ class EmergeBase():
         _workDir = os.path.join( self.workRoot(), "work" )
         return _workDir
 
+    def buildDir(self):        
+        if( self.buildType() == None ):
+            tmp = "%s-%s" % (COMPILER, "default")
+        else:
+            tmp = "%s-%s" % (COMPILER, self.buildType())
+        
+        ## \todo for what is this good ?
+        #if( not self.buildNameExt == None ):
+        #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
+
+        builddir = os.path.join( self.workDir(), tmp )
+        if utils.verbose() > 0:
+            print "package builddir is: %s" % builddir
+        return builddir
+
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
@@ -246,21 +261,6 @@ class EmergeBase():
                
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
-
-    def buildDir(self):        
-        if( self.buildType() == None ):
-            tmp = "%s-%s" % (COMPILER, "default")
-        else:
-            tmp = "%s-%s" % (COMPILER, self.buildType())
-        
-        ## \todo for what is this good ?
-        #if( not self.buildNameExt == None ):
-        #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
-
-        builddir = os.path.join( self.workDir(), tmp )
-        if utils.verbose() > 0:
-            print "package builddir is: %s" % builddir
-        return builddir
 
     def enterBuildDir(self):
         if ( not os.path.exists( self.workRoot()) ):
