@@ -25,15 +25,15 @@ class VersionSystemSourceBase (SourceBase):
 
         if not self.noClean:
             if utils.verbose > 0:
-                print "cleaning %s" % self.builddir
+                print "cleaning %s" % self.buildDir()
             self.enterBuildDir()
-            utils.cleanDirectory( self.builddir )
+            utils.cleanDirectory( self.buildDir() )
         
         if not self.noCopy:
             if utils.verbose > 0:
-                print "copying %s to %s" % (self.sourcedir, self.builddir)
+                print "copying %s to %s" % (self.sourceDir(), self.buildDir())
             self.enterBuildDir()
-            utils.copySrcDirToDestDir(self.sourcedir, self.builddir)
+            utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
         return True;
 
     def repositoryPath( self ):
