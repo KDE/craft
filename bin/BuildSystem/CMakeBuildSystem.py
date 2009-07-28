@@ -15,8 +15,14 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self,"cmake",configureOptions,makeOptions)
 
-    def svnPath(self): 
-        return ""
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+            self.cmakeMakefileGenerator = "NMake Makefiles"
+            self.cmakeMakeProgramm = "nmake"
+        elif self.compiler() == "mingw":
+            self.cmakeMakefileGenerator = "MinGW Makefiles"
+            self.cmakeMakeProgramm = "mingw32-make"
+        else:
+            utils.die( "unknown %s compiler" % self.compiler() )
                                 
     def configureDefaultDefines( self ):
         """returns default configure options"""
@@ -39,8 +45,9 @@ class CMakeBuildSystem(BuildSystemBase):
     def configure( self, buildType=None, customDefines="" ):
         """Using cmake"""
 
+        ## \todo isn't builddir already cleaed on unpack ?
         if not self.noClean:
-            utils.cleanDirectory( self.builddir )
+            utils.cleanDirectory( self.buildDir() )
             
         self.enterBuildDir()
         
@@ -80,18 +87,6 @@ class CMakeBuildSystem(BuildSystemBase):
         if not self.noFast:
             fastString = "/fast"
         utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
-        return True
-
-    def compile( self, customDefines=""):
-        """making all required stuff for compiling cmake based modules"""
-        if( not self.buildType() == None ) :
-            if( not ( self.configure( self.buildType(), customDefines ) and self.make( self.buildType() ) ) ):
-                return False
-        else:
-            if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
-                return False
-            if( not ( self.configure( "Release", customDefines ) and self.make( "Release" ) ) ):
-                return False
         return True
 
     def install( self ):
