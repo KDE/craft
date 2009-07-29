@@ -7,11 +7,11 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
+        self.svnTargets['2.1.1'] = 'tags/amarok/2.1.1/amarok'
         for rel in ['2.0', '2.0.1.1', '2.1']:
             self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/stable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
             self.targetInstSrc[ rel ] = 'amarok-' + rel
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '2.1.1'
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/taglib'] = 'default'
