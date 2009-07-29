@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
     def setTargets( self ):
-        self.targets['HEAD'] = 'http://winkde.org/pub/kde/ports/win32/repository/other/jom-20090611-bin.tar.bz2'
+        self.targets['HEAD'] = 'http://winkde.org/pub/kde/ports/win32/repository/other/jom-20090729-bin.tar.bz2'
         self.targetInstSrc['HEAD'] = 'jom'
         self.defaultTarget = 'HEAD'
 
