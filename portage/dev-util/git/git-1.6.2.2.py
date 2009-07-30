@@ -10,16 +10,24 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.6.3'] = SRC_URI
         self.targetInstSrc['1.6.3'] = ""
+        self.targetMergePath['1.6.3'] = "git";
         self.defaultTarget = '1.6.3'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/msys'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instdestdir = "git"
+
+from Source.ArchiveSource import *
+from BuildSystem.BinaryBuildSystem import *
+from Package.PackageBase import *
+
+class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+    def __init__( self):
         self.subinfo = subinfo()
+        PackageBase.__init__(self)
+        ArchiveSource.__init__(self)
+        BinaryBuildSystem.__init__(self)
+        # no packager required 
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
