@@ -128,7 +128,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
           ( userin, configure, platform, prefix,
             os.path.join( thirdparty_dir, "include" ),
             os.path.join( thirdparty_dir, "lib" ) )
-        if self.buildType == "Debug":
+        if self.buildType() == "Debug":
           command = command + " -debug "
         else:
           command = command + " -release "
