@@ -382,7 +382,7 @@ def remInstalled( category, package, version ):
         os.rename( tmpdbfile, dbfile )
 
 def getCategoryPackageVersion( path ):
-    debug( "getCategoryPackageVersion: %s" % path )
+    debug( "getCategoryPackageVersion: %s" % path ,1 )
     ( head, file ) = os.path.split( path )
     ( head, package ) = os.path.split( head )
     ( head, category ) = os.path.split( head )
@@ -766,17 +766,19 @@ def unmerge( rootdir, package, forced = False ):
     return
 
 def manifestDir( srcdir, imagedir, category, package, version ):
-    createManifestFiles( imagedir, imagedir, category, package, version )
+    if not hasManifestFile( imagedir, category, package ):
+        createManifestFiles( imagedir, imagedir, category, package, version )
 
-def createManifestFiles( imagedir, destdir, category, package, version ):
-    """create the manifest files for an imagedir like the kdewin-packager does"""
-    debug( "manifestDir called: %s %s" % ( imagedir, destdir ), 1 )
-
+def hasManifestFile( imagedir, category, package ):
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
         for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
             if file.startswith( package ) and file.endswith( "-bin.mft" ):
-                warning( "found package %s according to file '%s', .mft files will not be generated." % ( package, file ) )
-                return False
+                return True
+    return False
+    
+def createManifestFiles( imagedir, destdir, category, package, version ):
+    """create the manifest files for an imagedir like the kdewin-packager does"""
+    debug( "manifestDir called: %s %s" % ( imagedir, destdir ), 1 )
 
     myimagedir = imagedir
     if ( not imagedir.endswith( "\\" ) ):
