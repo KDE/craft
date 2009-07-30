@@ -145,7 +145,16 @@ class EmergeBase():
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        imagedir = os.path.join( self.workRoot(), "image-" + COMPILER + '-' + self.buildType())
+        imagedir = os.path.join( self.workRoot(), "image" )
+
+        # we assume that binary packages are for all compiler and targets
+        ## \todo add image dir support for using binary packages for a specific compiler and build type
+        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+            return imagedir
+        
+        imagedir += '-' + COMPILER
+        imagedir += '-' + self.buildType()
+        
         return imagedir
 
     def installDir(self):
@@ -232,7 +241,7 @@ class EmergeBase():
         ( self.category, self.package, self.version ) = \
                        utils.getCategoryPackageVersion( self.argv0 )
 
-        utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ) )
+        utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1)
 
         self.cmakeInstallPrefix = ROOTDIR.replace( "\\", "/" )
         utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix )
