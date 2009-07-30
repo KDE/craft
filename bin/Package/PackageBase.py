@@ -25,6 +25,8 @@ class PackageBase (EmergeBase):
             print "PackageBase.__init__ called"
         EmergeBase.__init__(self)
         self.forceCreateManifestFiles = False
+        # set to debug/release for build type related install databases 
+        self.dbBuildType = ''
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
@@ -53,7 +55,8 @@ class PackageBase (EmergeBase):
                 utils.system( cmd ) or utils.warning("%s failed!" % cmd )
 
         # add package to installed database -> is this not the task of the manifest files ? 
-        utils.addInstalled( self.category, self.package, self.version )
+        
+        utils.addInstalled( self.category, self.package, self.version, self.dbBuildType )
         return True
 
     def unmerge( self ):
@@ -65,7 +68,7 @@ class PackageBase (EmergeBase):
         ## a better solution will be to save the merge sub dir into 
         ## /etc/portage/installed and to read from it on unmerge
         utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
-        utils.remInstalled( self.category, self.package, self.version )
+        utils.remInstalled( self.category, self.package, self.version, self.dbBuildType)
         return True
 
     def cleanup( self ):

@@ -348,27 +348,35 @@ def isInstalled( category, package, version ):
                 break
     return found
 
-def addInstalled( category, package, version ):
+def addInstalled( category, package, version, buildType='' ):
     debug( "addInstalled called", 1 )
     # write a line to etc/portage/installed,
     # that contains category/package-version
     path = os.path.join( getEtcPortageDir() )
     if ( not os.path.isdir( path ) ):
         os.makedirs( path )
-    if( os.path.isfile( os.path.join( path, "installed" ) ) ):
+    if buildType <> '': 
+        fileName = 'installed-' + buildType
+    else:
+        fileName = 'installed'
+    if( os.path.isfile( os.path.join( path, fileName ) ) ):
         f = open( os.path.join( path, "installed" ), "rb" )
         for line in f:
             # FIXME: this is not a good definition of a package entry
             if line.startswith( "%s/%s-" % ( category, package ) ):
                 warning( "already installed" )
                 return
-    f = open( os.path.join( path, "installed" ), "ab" )
+    f = open( os.path.join( path, fileName ), "ab" )
     f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
     f.close()
 
-def remInstalled( category, package, version ):
+def remInstalled( category, package, version, buildType='' ):
     debug( "remInstalled called", 1 )
-    dbfile = os.path.join( getEtcPortageDir(), "installed" )
+    if buildType <> '': 
+        fileName = 'installed-' + buildType
+    else:
+        fileName = 'installed'
+    dbfile = os.path.join( getEtcPortageDir(), fileName )
     tmpdbfile = os.path.join( getEtcPortageDir(), "TMPinstalled" )
     if os.path.exists( dbfile ):
         file = open( dbfile, "rb" )

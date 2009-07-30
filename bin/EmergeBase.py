@@ -181,11 +181,20 @@ class EmergeBase():
         """return absolute path to the merge directory of the currently active package. 
         This path may point to a subdir of rootdir in case @ref info.targetMergePath is used 
         """
+            
         if self.subinfo.hasMergePath():
-            mergeDir = os.path.join( ROOTDIR, self.subinfo.mergePath())
+            return os.path.join(self.rootdir, self.subinfo.mergePath())
+        # \todo complete a release and binary merge dir below rootdir 
+        # beside the merge install settings, there are different install databases 
+        # for debug and release required, or emerge shuld use the manifest files 
+        # to install detection 
+        
+        #elif self.buildType() == 'Debug':
+        #    return os.path.join(self.rootdir,'debug')
+        #elif self.buildType() == 'Release':
+        #    return os.path.join(self.rootdir,'release')
         else:
-            mergeDir = ROOTDIR
-        return mergeDir
+            return self.rootdir
 
     def execute( self, cmd=None ):
         """called to run the derived class"""
