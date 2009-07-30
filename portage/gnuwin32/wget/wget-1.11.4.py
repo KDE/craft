@@ -11,12 +11,19 @@ class subinfo(info.infoclass):
         for t in ( '1.10.1', '1.11.4' ):
           self.targets[ t ] = SRC_URI % ( t, t )
         self.defaultTarget = '1.11.4'
-        
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, SRC_URI, args=args )
-    self.instdestdir = "dev-utils"
-    self.subinfo = subinfo()
+        self.targetMergePath['1.11.4'] = "dev-utils";
+
+from Source.ArchiveSource import *
+from BuildSystem.BinaryBuildSystem import *
+from Package.PackageBase import *
+
+class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+    def __init__( self):
+        self.subinfo = subinfo()
+        PackageBase.__init__(self)
+        ArchiveSource.__init__(self)
+        BinaryBuildSystem.__init__(self)
+        # no packager required 
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

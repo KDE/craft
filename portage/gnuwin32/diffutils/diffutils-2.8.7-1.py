@@ -10,14 +10,22 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.8.7-1'] = SRC_URI
         self.defaultTarget = '2.8.7-1'
+        self.targetMergePath['2.8.7-1'] = "dev-utils";
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
     
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.subinfo = subinfo()
+from Source.ArchiveSource import *
+from BuildSystem.BinaryBuildSystem import *
+from Package.PackageBase import *
+
+class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+    def __init__( self):
+        self.subinfo = subinfo()
+        PackageBase.__init__(self)
+        ArchiveSource.__init__(self)
+        BinaryBuildSystem.__init__(self)
+        # no packager required 
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
