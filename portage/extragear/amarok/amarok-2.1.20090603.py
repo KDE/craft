@@ -50,6 +50,8 @@ class subclass(base.baseclass):
                 return True
             else:
                 return self.kdeSvnUnpack()
+        else:
+            return base.baseclass.unpack( self )
 
     def compile( self ):
         if self.buildTarget in ['master']:
