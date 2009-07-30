@@ -24,6 +24,7 @@ class PackageBase (EmergeBase):
         if utils.verbose > 1:
             print "PackageBase.__init__ called"
         EmergeBase.__init__(self)
+        self.forceCreateManifestFiles = False
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
@@ -41,7 +42,7 @@ class PackageBase (EmergeBase):
                 shutil.copyfile( script, destscript )
 
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
-        utils.createManifestFiles( self.mergeSourceDir(), self.mergeDestinationDir(), self.category, self.package, self.version )
+        self.manifest()
 
         # run post-install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -57,9 +58,12 @@ class PackageBase (EmergeBase):
 
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
-        if utils.verbose() > 1:
-            print "base unmerge called"
+        utils.debug("base unmerge called",1)
 
+        ## \todo mergeDestinationDir() reads the real used merge dir from the 
+        ## package definition, which fails if this is changed 
+        ## a better solution will be to save the merge sub dir into 
+        ## /etc/portage/installed and to read from it on unmerge
         utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
         utils.remInstalled( self.category, self.package, self.version )
         return True
@@ -77,11 +81,11 @@ class PackageBase (EmergeBase):
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers"""
         """install database"""
-        print "manifest should be created on qmerge "
     
-        if utils.verbose() > 1:
-            print "base manifest called"
-        utils.manifestDir( os.path.join( self.workDir(), self.instsrcdir, self.package ), self.imageDir(), self.category, self.package, self.version )
+        utils.debug("base manifest called",1)
+        if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
+            utils.debug("creating of manifest files triggered", 1)
+            utils.createManifestFiles( self.mergeSourceDir(), self.mergeDestinationDir(), self.category, self.package, self.version )
         return True
 
  
