@@ -4,10 +4,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['5.8.8'] = "http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.822-MSWin32-x86-280952.zip"
-        self.targets['5.10.0'] = "http://downloads.activestate.com/ActivePerl/Windows/5.10/ActivePerl-5.10.0.1004-MSWin32-x86-287188.zip"
-        self.targetInstSrc['5.8.8'] = "ActivePerl-5.8.8.822-MSWin32-x86-280952\\perl"
-        self.targetInstSrc['5.10.0'] = "ActivePerl-5.10.0.1004-MSWin32-x86-287188\\perl"
+        self.targetMergeSourcePath['5.8.8'] = "ActivePerl-5.8.8.822-MSWin32-x86-280952\\perl"
         self.targetMergePath['5.8.8'] = "dev-utils";
+        self.targets['5.10.0'] = "http://downloads.activestate.com/ActivePerl/Windows/5.10/ActivePerl-5.10.0.1004-MSWin32-x86-287188.zip"
+        self.targetMergeSourcePath['5.10.0'] = "ActivePerl-5.10.0.1004-MSWin32-x86-287188\\perl"
         self.targetMergePath['5.10.0'] = "dev-utils";
         self.defaultTarget = '5.10.0'
         
