@@ -18,12 +18,12 @@ import utils
 
 class ActionPackageOptions:
     def __init__(self):
-        utils.debug( "Options for package action", 1 )
+#        utils.debug( "Options for package action", 1 )
         self.packageName = ""
 
 class ActionConfigureOptions:
     def __init__(self):
-        utils.debug( "Options for configure action", 1 )
+#        utils.debug( "Options for configure action", 1 )
         self.defines = ""
         self.configurePath = ""
 
