@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         for rel in ['2.0', '2.0.1.1', '2.1']:
             self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/stable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
             self.targetInstSrc[ rel ] = 'amarok-' + rel
+        self.svnTargets['master'] = 'git://gitorious.org/amarok/amarok.git'
         self.defaultTarget = '2.1.1'
     
     def setDependencies( self ):
@@ -19,6 +20,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['testing/mysql-server'] = 'default'
         self.hardDependencies['testing/mysql-embedded'] = 'default'
         # this is only a runtime dependency: keep that in mind for later!!!!
         self.hardDependencies['testing/qtscriptgenerator'] = 'default'
@@ -49,6 +51,9 @@ class subclass(base.baseclass):
             return self.kdeSvnUnpack()
 
     def compile( self ):
+        if self.buildTarget in ['master']:
+            self.kde.sourcePath = self.svndir
+
         return self.kdeCompile()
 
     def install( self ):
