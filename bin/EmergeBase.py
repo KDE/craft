@@ -250,10 +250,10 @@ class EmergeBase():
         ( self.category, self.package, self.version ) = \
                        utils.getCategoryPackageVersion( self.argv0 )
 
-        utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1)
+        utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1 )
 
         self.cmakeInstallPrefix = ROOTDIR.replace( "\\", "/" )
-        utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix )
+        utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix, 1 )
 
         if COMPILER == "msvc2005" or COMPILER == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
