@@ -13,6 +13,11 @@ class GitSource (VersionSystemSourceBase):
     def __init__(self):
         VersionSystemSourceBase.__init__(self)        
         self.shell = MSysShell()
+		# detect git installation
+        gitInstallDir = os.path.join(self.rootDir(),'dev-utils','git')
+        if os.path.exists(gitInstallDir):
+            self.shell.msysdir = gitInstallDir
+            utils.debug('using shell from %s' % gitInstallDir,1)
 
     def fetch( self, repopath=None, packagedir=None ):
         if repopath == None:
