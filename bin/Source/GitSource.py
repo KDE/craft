@@ -14,7 +14,7 @@ class GitSource (VersionSystemSourceBase):
         VersionSystemSourceBase.__init__(self)        
         self.shell = MSysShell()
 		# detect git installation
-        gitInstallDir = os.path.join(self.rootDir(),'dev-utils','git')
+        gitInstallDir = os.path.join(self.rootdir,'dev-utils','git')
         if os.path.exists(gitInstallDir):
             self.shell.msysdir = gitInstallDir
             utils.debug('using shell from %s' % gitInstallDir,1)
