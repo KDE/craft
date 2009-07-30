@@ -15,15 +15,25 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.11'] = SRC_URI
         self.defaultTarget = '1.11'
+        # This attribute is in prelimary state
+        ## \todo move to dev-utils/msys
+        self.targetMergePath['1.11'] = "msys";
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
-    
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, SRC_URI, args=args )
-        self.instdestdir = "msys"
+
+from Source.ArchiveSource import *
+from BuildSystem.BinaryBuildSystem import *
+from Package.PackageBase import *
+
+class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+    def __init__( self):
         self.subinfo = subinfo()
-	
+        PackageBase.__init__(self)
+        ArchiveSource.__init__(self)
+        BinaryBuildSystem.__init__(self)
+        # no packager required 
+
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
+
