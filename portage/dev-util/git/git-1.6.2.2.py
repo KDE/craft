@@ -12,10 +12,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.6.3'] = ""
         self.targetMergePath['1.6.3'] = "git";
         self.defaultTarget = '1.6.3'
-    
-    def setDependencies( self ):
-        self.hardDependencies['dev-util/msys'] = 'default'
-    
+   
 
 from Source.ArchiveSource import *
 from BuildSystem.BinaryBuildSystem import *
