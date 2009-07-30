@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdelibs-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdelibs-4.3.' + ver
-        self.patchToApply['4.2.95'] = 'kdelibs-solid.diff'
+        self.patchToApply['4.2.95'] = ('kdelibs-solid.diff', 0)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
