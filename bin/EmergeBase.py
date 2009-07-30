@@ -183,18 +183,18 @@ class EmergeBase():
         """
             
         if self.subinfo.hasMergePath():
-            return os.path.join(self.rootdir, self.subinfo.mergePath())
+            return os.path.join(ROOTDIR, self.subinfo.mergePath())
         # \todo complete a release and binary merge dir below rootdir 
         # beside the merge install settings, there are different install databases 
         # for debug and release required, or emerge shuld use the manifest files 
         # to install detection 
         
         #elif self.buildType() == 'Debug':
-        #    return os.path.join(self.rootdir,'debug')
+        #    return os.path.join(ROOTDIR,'debug')
         #elif self.buildType() == 'Release':
-        #    return os.path.join(self.rootdir,'release')
+        #    return os.path.join(ROOTDIR,'release')
         else:
-            return self.rootdir
+            return ROOTDIR
 
     def execute( self, cmd=None ):
         """called to run the derived class"""
