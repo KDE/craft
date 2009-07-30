@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.6.3'
     
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['dev-util/msys'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
