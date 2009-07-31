@@ -214,7 +214,6 @@ class EmergeBase():
             dir = os.path.join(ROOTDIR,'release')
         else:
             dir = ROOTDIR
-        print "mergeDestinationDir" + dir
         return dir
 
     def execute( self, cmd=None ):
