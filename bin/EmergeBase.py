@@ -149,9 +149,9 @@ class EmergeBase():
 
     def buildDir(self):        
         if( self.buildType() == None ):
-            tmp = "%s-%s-%s" % (COMPILER, "default", buildTarget)
+            tmp = "%s-%s-%s" % (COMPILER, "default", self.buildTarget)
         else:
-            tmp = "%s-%s-%s" % (COMPILER, self.buildType(), buildTarget)
+            tmp = "%s-%s-%s" % (COMPILER, self.buildType(), self.buildTarget)
         
         ## \todo for what is this good ?
         #if( not self.buildNameExt == None ):
@@ -205,17 +205,17 @@ class EmergeBase():
         """            
 
         if self.subinfo.hasMergePath():
-            return os.path.join(ROOTDIR, self.subinfo.mergePath())
-            
-        if not self.useBuildTypeRelatedMergeRoot:
-            return ROOTDIR
-
-        if self.buildType() == 'Debug':
-            return os.path.join(ROOTDIR,'debug')
+            dir = os.path.join(ROOTDIR, self.subinfo.mergePath())
+        elif not self.useBuildTypeRelatedMergeRoot:
+            dir = ROOTDIR
+        elif self.buildType() == 'Debug':
+            dir = os.path.join(ROOTDIR,'debug')
         elif self.buildType() == 'Release':
-            return os.path.join(ROOTDIR,'release')
+            dir = os.path.join(ROOTDIR,'release')
         else:
-            return ROOTDIR
+            dir = ROOTDIR
+        print "mergeDestinationDir" + dir
+        return dir
 
     def execute( self, cmd=None ):
         """called to run the derived class"""
@@ -298,18 +298,9 @@ class EmergeBase():
         self.dbusdir = os.getenv( "DBUSDIR" )
 
     def enterBuildDir(self):
-        if ( not os.path.exists( self.buildRoot()) ):
-            os.mkdir( self.buildRoot() )
-            if utils.verbose() > 0:
-                print "creating: %s" % self.buildRoot()
-        
-        if ( not os.path.exists( self.workDir()) ):
-            os.mkdir( self.workDir() )
-            if utils.verbose() > 0:
-                print "creating: %s" % self.workDir()
-        
+       
         if ( not os.path.exists( self.buildDir()) ):
-            os.mkdir( self.buildDir() )
+            os.makedirs( self.buildDir() )
             if utils.verbose() > 0:
                 print "creating: %s" % self.buildDir()
 

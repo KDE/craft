@@ -29,13 +29,13 @@ class CMakeBuildSystem(BuildSystemBase):
         sourcedir = self.configureSourceDir()
         ## \todo should install prefix not be set to mergeDir ?`
         options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
-              ( sourcedir, self.rootdir.replace( "\\", "/" ) )
+              ( sourcedir, self.mergeDestinationDir().replace( "\\", "/" ) )
 
         options = options + "-DCMAKE_INCLUDE_PATH=\"%s\" " % \
-                os.path.join( self.rootdir, "include" ).replace( "\\", "/" )
+                os.path.join( self.mergeDestinationDir(), "include" ).replace( "\\", "/" )
 
         options = options + "-DCMAKE_LIBRARY_PATH=\"%s\" " % \
-                os.path.join( self.rootdir, "lib" ).replace( "\\", "/" )
+                os.path.join( self.mergeDestinationDir(), "lib" ).replace( "\\", "/" )
 
         if( not self.buildType() == None ):
             options  = options + "-DCMAKE_BUILD_TYPE=%s" % self.buildType()             
