@@ -122,34 +122,36 @@ class EmergeBase():
         """ add documentation """
         return os.path.join( self.packageDir(), "files" )
         
-    def workRoot(self):
+    def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        workroot    = os.path.join( ROOTDIR, "tmp", self.PV )
-        return workroot
+        buildroot    = os.path.join( ROOTDIR, "build", self.category, self.PV )
+        return buildroot
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
-        _workDir = os.path.join( self.workRoot(), "work" )
+        _workDir = os.path.join( self.buildRoot(), "work" )
         return _workDir
 
     def buildDir(self):        
         if( self.buildType() == None ):
-            tmp = "%s-%s" % (COMPILER, "default")
+            tmp = "%s-%s-%s" % (COMPILER, "default", buildTarget)
         else:
-            tmp = "%s-%s" % (COMPILER, self.buildType())
+            tmp = "%s-%s-%s" % (COMPILER, self.buildType(), buildTarget)
         
         ## \todo for what is this good ?
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 
         builddir = os.path.join( self.workDir(), tmp )
-        utils.debug( "package builddir is: %s" % builddir, 2 )
+                
+        if utils.verbose() > 0:
+            print "package builddir is: %s" % builddir
         return builddir
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        imagedir = os.path.join( self.workRoot(), "image" )
+        imagedir = os.path.join( self.buildRoot(), "image" )
 
         # we assume that binary packages are for all compiler and targets
         ## \todo add image dir support for using binary packages for a specific compiler and build type
@@ -158,6 +160,7 @@ class EmergeBase():
         
         imagedir += '-' + COMPILER
         imagedir += '-' + self.buildType()
+        imagedir += '-' + self.buildTarget
         
         return imagedir
 
@@ -284,10 +287,10 @@ class EmergeBase():
         self.dbusdir = os.getenv( "DBUSDIR" )
 
     def enterBuildDir(self):
-        if ( not os.path.exists( self.workRoot()) ):
-            os.mkdir( self.workRoot() )
+        if ( not os.path.exists( self.buildRoot()) ):
+            os.mkdir( self.buildRoot() )
             if utils.verbose() > 0:
-                print "creating: %s" % self.workRoot()
+                print "creating: %s" % self.buildRoot()
         
         if ( not os.path.exists( self.workDir()) ):
             os.mkdir( self.workDir() )
