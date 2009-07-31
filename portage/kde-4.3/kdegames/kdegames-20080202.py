@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
+        self.hardDependencies['kdesupport/qca'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):
