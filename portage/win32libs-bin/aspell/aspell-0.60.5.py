@@ -1,5 +1,7 @@
 # -*- coding: iso-8859-15 -*-
-import base
+from Package.BinaryPackageBase import *
+from Package.BinaryPackageBase import *        
+
 import os
 import info
 
@@ -17,10 +19,11 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
-class subclass(base.baseclass):
+
+class Package(BinaryPackageBase):
   def __init__(self):
-    base.baseclass.__init__( self, "" )
     self.subinfo = subinfo()
+    BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

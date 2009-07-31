@@ -1,4 +1,4 @@
-import base
+from Package.BinaryPackageBase import *
 import os
 import info
 import shutil
@@ -17,13 +17,13 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
 
-class subclass(base.baseclass):
+class Package(BinaryPackageBase):
   def __init__(self):
-    base.baseclass.__init__( self, "" )
     self.subinfo = subinfo()
+    BinaryPackageBase.__init__( self )
 
   def install( self ):
-    base.baseclass.install( self )
+    BinaryPackageBase.install( self )
     print "self.compiler: " + self.compiler
     if self.compiler == "msvc2005" or self.compiler == "msvc2008":
       manifest = os.path.join( self.packagedir, "update-mime-database.exe.manifest" )
@@ -34,4 +34,4 @@ class subclass(base.baseclass):
     return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

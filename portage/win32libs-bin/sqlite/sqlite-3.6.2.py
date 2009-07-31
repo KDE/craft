@@ -1,4 +1,4 @@
-import base
+from Package.BinaryPackageBase import *
 import os
 import shutil
 import re
@@ -30,14 +30,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/sed'] = 'default'
     
-class subclass(base.baseclass):
+class Package(BinaryPackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, SRC_URI, args=args )
-        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self, SRC_URI, args=args )
+        BinaryPackageBase.__init__( self )
         self.createCombinedPackage = True
 
     def unpack( self ):
-        base.baseclass.unpack( self )
+        BinaryPackageBase.unpack( self )
         return True
         
     def install( self ):
@@ -72,4 +72,4 @@ class subclass(base.baseclass):
         return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

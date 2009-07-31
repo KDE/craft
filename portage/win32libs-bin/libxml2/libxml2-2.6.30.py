@@ -1,4 +1,4 @@
-import base
+from Package.BinaryPackageBase import *
 import os
 import info
 
@@ -18,10 +18,12 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
         self.hardDependencies['win32libs-bin/iconv'] = 'default'
 
-class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, "" )
-    self.subinfo = subinfo()
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
