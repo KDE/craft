@@ -78,28 +78,20 @@ class CMakeBuildSystem(BuildSystemBase):
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
-    def __install( self, buildType=None ):
+    def install( self):
         """Using *make install"""
 
         self.enterBuildDir()
 
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
-        return True
-
-    def install( self ):
-        """making all required stuff for installing cmake based modules"""
-        if( not self.buildType() == None ):
-            if( not self.__install( self.buildType() ) ):
-                return False
-        else:
-            if( not self.__install( "debug" ) ):
-                return False
-            if( not self.__install( "release" ) ):
-                return False
-        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
+        #fastString = ""
+        #if not self.noFast:
+        #    fastString = "/fast"
+        #command = "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString )
+        
+        command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
+        
+        utils.debug(command,1)
+        utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
         return True
 
     def runTest( self ):
