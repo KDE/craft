@@ -333,6 +333,8 @@ deplist = []
 packageList = []
 categoryList = []
 
+buildType = os.environ["EMERGE_BUILDTYPE"] 
+
 if packageName:
     if len( packageName.split( "/" ) ) == 1:
         if utils.isCategory( packageName ):
@@ -365,7 +367,7 @@ elif updateAll:
     utils.debug( "Updating, no package spec given", 1 )
     packageList = []
     for category, package, version in installedPackages:
-        if utils.isInstalled( category, package, version ) and utils.isPackageUpdateable( category, package, version ):
+        if utils.isInstalled( category, package, version, buildType ) and utils.isPackageUpdateable( category, package, version ):
             categoryList.append( category )
             packageList.append( package )
     utils.debug( "Will update packages: " + str (packageList), 1 )
@@ -390,7 +392,7 @@ for item in deplist:
     pac = item[ 1 ]
     ver = item[ 2 ]
 
-    if utils.isInstalled( cat, pac, ver ) and updateAll and not utils.isPackageUpdateable( cat, pac, ver ):
+    if utils.isInstalled( cat, pac, ver, buildType) and updateAll and not utils.isPackageUpdateable( cat, pac, ver ):
         print "remove:", cat, pac, ver
         deplist.remove( item )
 
@@ -418,7 +420,7 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
     ok = handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts )
 else:
     for package in deplist:
-        if ( utils.isInstalled( package[0], package[1], package[2] ) and not package[ -1 ] ):
+        if ( utils.isInstalled( package[0], package[1], package[2], buildType ) and not package[ -1 ] ):
             if utils.verbose() > 1 and package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
             elif utils.verbose() > 2 and not package[1] == packageName:

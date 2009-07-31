@@ -6,6 +6,14 @@ import os;
 import sys;
 import datetime;
 
+## @todo complete a release and binary merge dir below rootdir 
+# 1.  enable build type related merge install settings
+# 2a. use different install databases for debug and release
+# 3. binary packages which are build type independent should be 
+# marked in both databases or should have a separate install database
+# question: How to detect reliable this case ? 
+
+
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
 DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
@@ -61,7 +69,11 @@ class EmergeBase():
         self.noFetch                = False
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
-
+     
+        ## specifies if a build type related root directory 
+        # should be used
+        self.useBuildTypeRelatedMergeRoot = False
+        
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
         self.setDirectoriesBase()
@@ -90,6 +102,9 @@ class EmergeBase():
         else:
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
+
+        self.subinfo.setBuildTarget()
+        self.buildTarget = self.subinfo.buildTarget
 
     def abstract():
         import inspect
@@ -187,19 +202,18 @@ class EmergeBase():
     def mergeDestinationDir(self):
         """return absolute path to the merge directory of the currently active package. 
         This path may point to a subdir of rootdir in case @ref info.targetMergePath is used 
-        """
-            
+        """            
+
         if self.subinfo.hasMergePath():
             return os.path.join(ROOTDIR, self.subinfo.mergePath())
-        # \todo complete a release and binary merge dir below rootdir 
-        # beside the merge install settings, there are different install databases 
-        # for debug and release required, or emerge shuld use the manifest files 
-        # to install detection 
-        
-        #elif self.buildType() == 'Debug':
-        #    return os.path.join(ROOTDIR,'debug')
-        #elif self.buildType() == 'Release':
-        #    return os.path.join(ROOTDIR,'release')
+            
+        if not self.useBuildTypeRelatedMergeRoot:
+            return ROOTDIR
+
+        if self.buildType() == 'Debug':
+            return os.path.join(ROOTDIR,'debug')
+        elif self.buildType() == 'Release':
+            return os.path.join(ROOTDIR,'release')
         else:
             return ROOTDIR
 
@@ -222,9 +236,6 @@ class EmergeBase():
         self.setDirectoriesBase()
 
         utils.debug( "command: %s" % command )
-
-        self.subinfo.setBuildTarget()
-        self.buildTarget = self.subinfo.buildTarget
         
         self.setDirectories()
 
