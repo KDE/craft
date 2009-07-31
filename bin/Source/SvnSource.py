@@ -10,16 +10,20 @@ class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self):
         VersionSystemSourceBase.__init__(self)
+        self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
+        if not os.path.exists(self.svnInstallDir):
+            die("required subversion package not installed" 
         
     def fetch( self, repopath=None, packagedir=None ):
         if repopath == None:
             repopath = self.repositoryPath()
 
         if packagedir == None:
-            packagedir = self.packagedir
+            packagedir = self.packageDir()
             
         ret = True
         if ( not self.noFetch ):
+        
             if os.path.exists( self.sourceDir() ):
                 cmd = "svn update %s %s" % ( repopath, self.sourceDir() )
             else:
