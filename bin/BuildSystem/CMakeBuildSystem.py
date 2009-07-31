@@ -15,19 +15,20 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self,"cmake",configureOptions,makeOptions)
 
+        self.envPath = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
         elif self.compiler() == "mingw":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
             self.cmakeMakeProgramm = "mingw32-make"
+            self.envPath = "mingw/bin"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
                                 
     def configureDefaultDefines( self ):
         """returns default configure options"""
         sourcedir = self.configureSourceDir()
-        ## \todo should install prefix not be set to mergeDir ?`
         options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
               ( sourcedir, self.mergeDestinationDir().replace( "\\", "/" ) )
 
@@ -42,7 +43,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 
         return options
 
-    def configure( self, buildType=None, customDefines="" ):
+    def configure( self ):
         """Using cmake"""
 
         ## \todo isn't builddir already cleaed on unpack ?
@@ -52,18 +53,20 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         
         defines = self.configureDefaultDefines()
+        if self.envPath <> '':
+            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
+            os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
         
         command = r"""cmake -G "%s" %s %s""" % \
               ( self.cmakeMakefileGenerator, \
                 defines, \
                 self.configureOptions )
 
-        if utils.verbose() > 0:
-            print "configuration command: %s" % command
-        utils.system( command ) or utils.die( "while CMake'ing. cmd: %s" % command )
+        #utils.debug("cofigure command: %s" % command,1)
+        utils.system( command ) or utils.die( "while configuring. cmd: %s" % command )
         return True
 
-    def make( self, buildType=None ):
+    def make( self ):
         """run the *make program"""
 
         self.enterBuildDir()
@@ -82,15 +85,10 @@ class CMakeBuildSystem(BuildSystemBase):
         """Using *make install"""
 
         self.enterBuildDir()
-
-        #fastString = ""
-        #if not self.noFast:
-        #    fastString = "/fast"
-        #command = "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString )
         
-        command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
+        command = "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
         
-        utils.debug(command,1)
+        #utils.debug(command,1)
         utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
         return True
 
@@ -98,9 +96,6 @@ class CMakeBuildSystem(BuildSystemBase):
         """running cmake based unittests"""
 
         self.enterbuildDir()
-
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
 
         utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
         return True
