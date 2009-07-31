@@ -145,6 +145,7 @@ class EmergeBase():
         return _workDir
 
     def buildDir(self):        
+        utils.debug("EmergeBase.buildDir() called" ,2)
         if( self.buildType() == None ):
             tmp = "%s-%s-%s" % (COMPILER, "default", self.buildTarget)
         else:
@@ -156,8 +157,7 @@ class EmergeBase():
 
         builddir = os.path.join( self.workDir(), tmp )
                 
-        if utils.verbose() > 0:
-            print "package builddir is: %s" % builddir
+        utils.debug("package builddir is: %s" % builddir,2)
         return builddir
 
     def imageDir(self):
