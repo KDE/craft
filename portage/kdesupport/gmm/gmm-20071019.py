@@ -1,6 +1,4 @@
-import base
 import os
-import shutil
 import info
 
 class subinfo(info.infoclass):
@@ -12,29 +10,22 @@ class subinfo(info.infoclass):
         self.targetInstSrc['3.0'] = 'gmm-3.0'
         self.defaultTarget = '3.0'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+from Package.CMakePackageBase import *
+        
+class Package(CMakePackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
         # header-only package
         self.createCombinedPackage = True
-        self.subinfo = subinfo()
 
     def unpack( self ):
-        if not self.kdeSvnUnpack():
+        if not CMakePackageBase.unpack(self):
             return False
-        src = os.path.join( self.packagedir , "CMakeLists.txt" )
-        dst = os.path.join( self.workdir, self.instsrcdir, "CMakeLists.txt" )
-        shutil.copy( src, dst )
+        src = os.path.join( self.packageDir(), "CMakeLists.txt" )
+        dst = os.path.join( self.sourceDir(), "CMakeLists.txt" )
+        utils.copyFile( src, dst )
         return True
 
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( 'gmm', self.buildTarget, True )
-
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
