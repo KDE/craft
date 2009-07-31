@@ -68,15 +68,13 @@ class QMakeBuildSystem(BuildSystemBase):
         """Using *make install"""
 
         self.enterBuildDir()
-
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.installDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.installDir() ) )
+        command = "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm, self.installDir() )
+        
+        utils.system( command ) or utils.die( "while installing. cmd: %s" % ( command )
         return True
 
     def install( self ):
-        """making all required stuff for installing cmake based modules"""
+        """making all required stuff for installing qmake based modules"""
         if( not self.buildType() == None ):
             if( not self.__install( self.buildType() ) ):
                 return False
@@ -85,16 +83,8 @@ class QMakeBuildSystem(BuildSystemBase):
                 return False
             if( not self.__install( "release" ) ):
                 return False
-        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
         return True
 
     def runTest( self ):
-        """running cmake based unittests"""
-
-        self.enterBuildDir()
-        
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
-        utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
+        """running qmake based unittests"""
         return True
