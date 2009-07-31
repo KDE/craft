@@ -46,9 +46,9 @@ class PackageBase (EmergeBase):
             # are there any cases there installDir should be honored ? 
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
+                utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
             if os.path.exists( script ):
-                shutil.copyfile( script, destscript )
+                utils.copyFile( script, destscript )
 
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
         self.manifest()
