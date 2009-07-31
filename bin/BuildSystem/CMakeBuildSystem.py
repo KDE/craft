@@ -15,14 +15,12 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self,"cmake",configureOptions,makeOptions)
 
-        self.envPath = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
         elif self.compiler() == "mingw":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
             self.cmakeMakeProgramm = "mingw32-make"
-            self.envPath = "mingw/bin"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
                                 
@@ -46,10 +44,6 @@ class CMakeBuildSystem(BuildSystemBase):
     def configure( self ):
         """Using cmake"""
 
-        ## \todo isn't builddir already cleaed on unpack ?
-        if not self.noClean:
-            utils.cleanDirectory( self.buildDir() )
-            
         self.enterBuildDir()
         
         defines = self.configureDefaultDefines()
@@ -70,6 +64,9 @@ class CMakeBuildSystem(BuildSystemBase):
         """run the *make program"""
 
         self.enterBuildDir()
+        if self.envPath <> '':
+            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
+            os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
         
         command = self.cmakeMakeProgramm
 

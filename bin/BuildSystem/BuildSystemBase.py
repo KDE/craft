@@ -15,6 +15,9 @@ class BuildSystemBase(EmergeBase):
         self.buildSystemType = type
         self.configureOptions = configureOptions
         self.makeOptions = makeOptions
+        self.envPath = ""
+        if self.compiler() == "mingw":
+            self.envPath = "mingw/bin"
                 
     def configure(self): 
         """configure the target"""
