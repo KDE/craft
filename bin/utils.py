@@ -1027,3 +1027,7 @@ def cleanPackageName( basename, packagename ):
 def createDir(path):
     if not os.path.exists( path ):
         os.makedirs( path )
+
+def copyFile(src,dest):
+    """ copy file from src to dest"""
+    shutil.copy( src, dst )
