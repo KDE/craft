@@ -40,15 +40,8 @@ class BuildSystemBase(EmergeBase):
     ## \todo not sure if buildType and customDefines are used anywhere, if not remove them"""
     def compile(self, buildType=None, customOptions=""):
         """convencience method - runs configure() and make()"""
-        if( not self.buildType() == None ) :
-            if( not ( self.configure( self.buildType(), customOptions ) and self.make( self.buildType() ) ) ):
-                return False
-            else:
-                if( not ( self.configure( "Debug", customOptions ) and self.make( "Debug" ) ) ):
-                    return False
-                if( not ( self.configure( "Release", customOptions ) and self.make( "Release" ) ) ):
-                    return False
-            return True
+        ## \todo remove options
+        return self.configure( self.buildType(), customOptions ) and self.make( )
 
     def setDirectories(self):
         return
