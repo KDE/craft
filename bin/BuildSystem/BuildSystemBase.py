@@ -16,8 +16,7 @@ class BuildSystemBase(EmergeBase):
         self.configureOptions = configureOptions
         self.makeOptions = makeOptions
                 
-    ## \todo not sure if buildType and options are used anywhere, if not remove them
-    def configure(self, buildType=None): 
+    def configure(self): 
         """configure the target"""
         abstract()
 
@@ -33,15 +32,13 @@ class BuildSystemBase(EmergeBase):
         """run the test - if available - for the target"""
         abstract()
 
-    def make(self, buildType=None): 
+    def make(self): 
         """make the target by runnning the related make tool"""
         abstract()
             
-    ## \todo not sure if buildType and customDefines are used anywhere, if not remove them"""
-    def compile(self, buildType=None, customOptions=""):
+    def compile(self):
         """convencience method - runs configure() and make()"""
-        ## \todo remove options
-        return self.configure( self.buildType(), customOptions ) and self.make( )
+        return self.configure() and self.make()
 
     def setDirectories(self):
         return
