@@ -141,6 +141,12 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             os.environ[ "INCLUDE" ] = inctmp
 
         return True        
+        
+    def make(self):
+        # so that the mkspecs can be found, when -prefix is set
+        os.putenv( "QMAKEPATH", self.sourceDir() )
+        QMakeBuildSystem.make(self)
+       
 
     def install( self ):
         QMakeBuildSystem.install(self)
