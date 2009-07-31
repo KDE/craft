@@ -9,7 +9,7 @@ import utils
 
 class MultiPackager():
     def __init__(self,packagerType=None):
-        utils.debug( "MultiPackager __init__", 1 )
+        utils.debug( "MultiPackager __init__", 2 )
         self.packager = None
         if packagerType == 'KDEWin' or packagerType == 'kdewin' or packagerType == None:
             self.packager = KDEWinPackager()

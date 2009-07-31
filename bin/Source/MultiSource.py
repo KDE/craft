@@ -8,7 +8,7 @@ from SourceFactory import *
 class MultiSource():
     """ provides multi source type api """
     def __init__(self):
-        utils.debug( "MultiSource __init__", 1 )
+        utils.debug( "MultiSource __init__", 2 )
         self.source = SourceFactory(self.subinfo)
 
     def fetch(self):

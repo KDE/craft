@@ -8,11 +8,11 @@ class ArchiveSource(SourceBase):
     filenames = []    
     def __init__(self):
         SourceBase.__init__(self)
-        utils.debug( "ArchiveSource.__init__ called", 1 )
+        utils.debug( "ArchiveSource.__init__ called", 2 )
 
     def __localFileNames(self):
         """ collect local filenames """
-        utils.debug( "ArchiveSource.__localFileNames called", 1 )
+        utils.debug( "ArchiveSource.__localFileNames called", 2 )
 
         filenames =[]
 
@@ -23,7 +23,7 @@ class ArchiveSource(SourceBase):
 
     def fetch(self):
         """getting normal tarballs from SRC_URI"""
-        utils.debug( "ArchiveSource.fetch called", 1 )
+        utils.debug( "ArchiveSource.fetch called", 2 )
             
         filenames = self.__localFileNames()
         
@@ -37,7 +37,7 @@ class ArchiveSource(SourceBase):
 
     def unpack(self):
         """unpacking all zipped(gz,zip,bz2) tarballs"""        
-        utils.debug( "ArchiveSource.unpack called", 1 )
+        utils.debug( "ArchiveSource.unpack called", 2 )
 
         filenames = self.__localFileNames()        
         # if using BinaryBuildSystem the files should be unpacked into imagedir

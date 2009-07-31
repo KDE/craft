@@ -10,7 +10,7 @@ from CvsSource import *
 
 def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
-    utils.debug( "SourceFactory called", 1 )
+    utils.debug( "SourceFactory called", 2 )
     source = None
     
     if settings.hasTarget():

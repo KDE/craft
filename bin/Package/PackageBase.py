@@ -21,8 +21,7 @@ class PackageBase (EmergeBase):
     #imagedir   -> PackageBase
     
     def __init__(self):
-        if utils.verbose > 1:
-            print "PackageBase.__init__ called"
+        utils.debug("PackageBase.__init__ called",2)
         EmergeBase.__init__(self)
         self.forceCreateManifestFiles = False
         # set to debug/release for build type related install databases 
@@ -61,7 +60,7 @@ class PackageBase (EmergeBase):
 
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
-        utils.debug("base unmerge called",1)
+        utils.debug("base unmerge called",2)
 
         ## \todo mergeDestinationDir() reads the real used merge dir from the 
         ## package definition, which fails if this is changed 
@@ -85,7 +84,7 @@ class PackageBase (EmergeBase):
         """installer compatibility: make the manifest files that make up the installers"""
         """install database"""
     
-        utils.debug("base manifest called",1)
+        utils.debug("base manifest called",2)
         if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
             utils.debug("creating of manifest files triggered", 1)
             utils.createManifestFiles( self.mergeSourceDir(), self.mergeDestinationDir(), self.category, self.package, self.version )

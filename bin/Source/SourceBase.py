@@ -22,7 +22,7 @@ class SourceBase(EmergeBase):
 
     def applyPatches(self):
         """apply patches is available"""
-        utils.debug( "SourceBase.applyPatches called", 1 )
+        utils.debug( "SourceBase.applyPatches called", 2 )
 
         if self.subinfo.hasTarget():
             ( file, patchdepth ) = self.subinfo.patchesToApply()

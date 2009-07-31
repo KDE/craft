@@ -201,7 +201,7 @@ class EmergeBase():
         """this will be executed from the package if the package is started on its own"""
         """it shouldn't be called if the package is imported as a python module"""
 
-        utils.debug( "EmergeBase.execute called. args: %s" % sys.argv )
+        utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
 
         if not cmd:
             command = sys.argv[ 1 ]
@@ -243,7 +243,7 @@ class EmergeBase():
     def setDirectoriesBase( self ):
         """setting all important stuff that isn't coped with in the c'tor"""
         """parts will probably go to infoclass"""
-        utils.debug( "setdirectories called", 1 )
+        utils.debug( "setdirectories called", 2 )
 
         ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
 

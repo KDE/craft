@@ -18,12 +18,10 @@ import utils
 
 class ActionPackageOptions:
     def __init__(self):
-#        utils.debug( "Options for package action", 1 )
         self.packageName = ""
 
 class ActionConfigureOptions:
     def __init__(self):
-#        utils.debug( "Options for configure action", 1 )
         self.defines = ""
         self.configurePath = ""
 
@@ -86,7 +84,7 @@ class infoclass:
             self.buildTarget = self.defaultTarget
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()), 1)
         else:
-            utils.debug( "setting buildtarget to " + self.buildTarget, 1 )
+            utils.debug( "setting buildtarget to " + self.buildTarget, 2 )
     
     # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
