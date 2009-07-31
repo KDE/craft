@@ -6,7 +6,7 @@ this file contains some helper functions for emerge
 # copyright:
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
-
+# Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
 import httplib
 import ftplib
@@ -284,24 +284,6 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
 ### package dependencies functions
 
-def findInstalled( category, package ):
-    fileName = os.path.join( getEtcPortageDir(), "installed" )
-    if ( not os.path.isfile( fileName ) ):
-        warning( "installed db file does not exist" )
-        return None
-
-    ret = None
-    f = open( fileName, "rb" )
-    str = "^%s/%s-(.*)$" % ( category, package )
-    regex = re.compile( str )
-    for line in f.read().splitlines():
-        match = regex.match( line )
-        if match:
-            debug( "found: " + match.group(1), 1 )
-            ret = match.group(1)
-    f.close()
-    return ret;
-
 def checkManifestFile( name, category, package, version ):
     if os.path.isfile( name ):
         f = open( name, "rb" )
@@ -318,10 +300,11 @@ def checkManifestFile( name, category, package, version ):
             return True
     return False
 
-def isInstalled( category, package, version ):
-    fileName = os.path.join( getEtcPortageDir(), "installed" )
-    if ( not os.path.isfile( fileName ) ):
-        warning( "installed db file does not exist" )
+def isInstalled( category, package, version, buildType='' ):
+    # find in old style database
+    path = getEtcPortageDir()
+    fileName = os.path.join(path,'installed')
+    if not os.path.isfile( fileName ):
         return False
 
     found = False
@@ -331,6 +314,17 @@ def isInstalled( category, package, version ):
             found = True
             break
     f.close()
+
+    # find in release mode database
+    if not found and buildType <> '': 
+        fileName = os.path.join(path,'installed-' + buildType )
+        if os.path.isfile( fileName ):
+            f = open( fileName, "rb" )
+            for line in f.read().splitlines():
+                if ( line == "%s/%s-%s" % ( category, package, version ) ):
+                    found = True
+                    break
+            f.close()
 
     if ( not found ):
         """ try to detect packages from the installer """
@@ -348,6 +342,23 @@ def isInstalled( category, package, version ):
                 break
     return found
 
+def findInstalled( category, package, buildType='' ):
+    fileName = os.path.join( getEtcPortageDir(), "installed" )
+    if ( not os.path.isfile( fileName ) ):
+        return None
+
+    ret = None
+    f = open( fileName, "rb" )
+    str = "^%s/%s-(.*)$" % ( category, package )
+    regex = re.compile( str )
+    for line in f.read().splitlines():
+        match = regex.match( line )
+        if match:
+            debug( "found: " + match.group(1), 2 )
+            ret = match.group(1)
+    f.close()
+    return ret;
+
 def addInstalled( category, package, version, buildType='' ):
     debug( "addInstalled called", 1 )
     # write a line to etc/portage/installed,
@@ -360,7 +371,7 @@ def addInstalled( category, package, version, buildType='' ):
     else:
         fileName = 'installed'
     if( os.path.isfile( os.path.join( path, fileName ) ) ):
-        f = open( os.path.join( path, "installed" ), "rb" )
+        f = open( os.path.join( path, fileName ), "rb" )
         for line in f:
             # FIXME: this is not a good definition of a package entry
             if line.startswith( "%s/%s-" % ( category, package ) ):
