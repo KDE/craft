@@ -222,6 +222,8 @@ class EmergeBase():
 
         self.subinfo.setBuildTarget()
         self.buildTarget = self.subinfo.buildTarget
+        if hasattr(self,'source'):
+            self.source.buildTarget = self.subinfo.buildTarget
 
         if not cmd:
             command = sys.argv[ 1 ]
