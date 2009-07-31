@@ -7,8 +7,8 @@ class ArchiveSource(SourceBase):
     """ file download source"""
     filenames = []    
     def __init__(self):
-        SourceBase.__init__(self)
         utils.debug( "ArchiveSource.__init__ called", 2 )
+        SourceBase.__init__(self)
 
     def __localFileNames(self):
         """ collect local filenames """

@@ -36,7 +36,7 @@ class KDESvnSource (VersionSystemSourceBase):
             svncmd = "svn update %s %s" % ( recFlag, codir )
         else:
             #svn co
-            svncmd = "svn checkout %s %s" % ( recFlag, repourl + codir )
+            svncmd = "svn checkout %s %s" % ( recFlag, repourl )
 
         if utils.verbose() > 1:
             print "checkout:pwd ", ownpath
