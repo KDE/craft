@@ -70,7 +70,7 @@ class QMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         command = "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm, self.installDir() )
         
-        utils.system( command ) or utils.die( "while installing. cmd: %s" % ( command )
+        utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
         return True
 
     def install( self ):
