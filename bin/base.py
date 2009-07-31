@@ -231,7 +231,7 @@ class baseclass:
                 ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
             [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
             if ret and repoBranch:
-                ret = self.msys.msysExecute( self.svndir, "git", "checkout -b %s origin/%s" % ( repoBranch, repoBranch ) )
+                ret = self.msys.msysExecute( self.svndir, "git", "checkout --track -b %s origin/%s" % ( repoBranch, repoBranch ) )
             if ret and repoTag:
                 ret = self.msys.msysExecute( self.svndir, "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
             os.environ["PATH"] = safePath

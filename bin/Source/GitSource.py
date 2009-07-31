@@ -25,6 +25,9 @@ class GitSource (VersionSystemSourceBase):
         if packagedir == None:
             packagedir = self.packageDir()
             
+        repoString = utils.replaceGitUrl( repopath )
+        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+
         ret = True
         if ( not self.noFetch ):
             safePath = os.environ["PATH"]
@@ -35,13 +38,10 @@ class GitSource (VersionSystemSourceBase):
             else:
                 """it doesn't exist so clone the repo"""
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                repoString = utils.replaceGitUrl( repopath )
-                repoUrl = utils.splitGitUrl( repoString )[0]
                 ret = self.shell.execute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repoUrl, self.package ) )
                 
-                [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
                 if ret and repoBranch:
-                    ret = self.shell.execute( self.sourceDir(), "git", "checkout -b %s origin/%s" % ( repoBranch, repoBranch ) )
+                    ret = self.shell.execute( self.sourceDir(), "git", "checkout --track -b %s origin/%s" % ( repoBranch, repoBranch ) )
                 if ret and repoTag:
                     ret = self.shell.execute( self.sourceDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
         else:
