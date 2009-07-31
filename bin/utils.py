@@ -717,7 +717,7 @@ def system( cmdstring ):
     return ( ret == 0 )
 
 def copySrcDirToDestDir( srcdir, destdir ):
-    debug( "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ) )
+    debug( "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ) , 2)
 
     if ( not srcdir.endswith( "\\" ) ):
         srcdir += "\\"
@@ -733,6 +733,7 @@ def copySrcDirToDestDir( srcdir, destdir ):
                 os.makedirs( tmpdir )
             for file in files:
                 shutil.copy( os.path.join( root, file ), tmpdir )
+                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ) , 2) 
 
 def moveSrcDirToDestDir( srcdir, destdir ):
     debug( "moveSrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
