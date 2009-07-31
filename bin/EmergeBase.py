@@ -103,9 +103,6 @@ class EmergeBase():
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
 
-        self.subinfo.setBuildTarget()
-        self.buildTarget = self.subinfo.buildTarget
-
     def abstract():
         import inspect
         caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -222,6 +219,9 @@ class EmergeBase():
         """it shouldn't be called if the package is imported as a python module"""
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
+
+        self.subinfo.setBuildTarget()
+        self.buildTarget = self.subinfo.buildTarget
 
         if not cmd:
             command = sys.argv[ 1 ]
