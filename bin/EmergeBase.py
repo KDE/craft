@@ -269,22 +269,6 @@ class EmergeBase():
 
         utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1 )
 
-        self.cmakeInstallPrefix = ROOTDIR.replace( "\\", "/" )
-        utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix, 1 )
-
-        if COMPILER == "msvc2005" or COMPILER == "msvc2008":
-            self.cmakeMakefileGenerator = "NMake Makefiles"
-            self.cmakeMakeProgramm = "nmake"
-        elif COMPILER == "mingw":
-            self.cmakeMakefileGenerator = "MinGW Makefiles"
-            self.cmakeMakeProgramm = "mingw32-make"
-        else:
-            utils.die( "KDECOMPILER: %s not understood" % COMPILER )
-
-        if EMERGE_MAKE_PROGRAM:
-            self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
-            utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
-
         self.rootdir     = ROOTDIR
                 
         # deprecated
