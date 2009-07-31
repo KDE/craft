@@ -36,6 +36,11 @@ class EmergeBase():
     """base class for emerge system - holds attributes and methods required by base classes"""
     
     def __init__( self, SRC_URI="", **args ):
+        utils.debug( "EmergeBase.__init__ called", 2 )
+        if hasattr(self,'alreadyCalled'):
+            return
+        self.alreadyCalled = True
+
         if "args" in args.keys() and "env" in args["args"].keys():
             env = args["args"]["env"]
         else:
