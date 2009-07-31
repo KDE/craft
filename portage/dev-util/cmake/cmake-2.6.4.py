@@ -1,19 +1,21 @@
-import base
 import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['2.4.8'] = 'http://www.cmake.org/files/v2.4/cmake-2.4.8-win32-x86.zip'
         self.targets['2.6.4'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.zip'
-        self.targetInstSrc['2.4.8'] = 'cmake-2.4.8-win32-x86'
-        self.targetInstSrc['2.6.4'] = 'cmake-2.6.4-win32-x86'
+        self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
+        self.targetMergePath['2.4.8'] = 'dev-utils'
         self.defaultTarget = '2.6.4'
+        self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
+        self.targetMergePath['2.6.4'] = 'dev-utils'
 
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.instdestdir = "dev-utils"
-    self.subinfo = subinfo()
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-import base
-import utils
-from utils import die
-import os
 import info
 
 SRC_URI = """
@@ -22,18 +17,12 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
-from Source.ArchiveSource import *
-from BuildSystem.BinaryBuildSystem import *
-from Package.PackageBase import *
+from Package.BinaryPackageBase import *
 
-class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        ArchiveSource.__init__(self)
-        BinaryBuildSystem.__init__(self)
-        # no packager required 
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()
-

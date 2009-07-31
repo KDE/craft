@@ -1,4 +1,3 @@
-import base
 import utils
 import shutil
 import os
@@ -29,39 +28,31 @@ http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['3.4.5'] = SRC_URI
+        self.targetMergePath['3.4.5'] = "mingw";
         self.defaultTarget = '3.4.5'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['gnuwin32/patch'] = 'default'
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, SRC_URI, args=args )
-        self.instdestdir = "mingw"
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
-	
-    def unpack( self ):
-        base.baseclass.unpack( self )
-        srcdir = self.workdir
-        #this patch breaks qt build!
-        #cmd = "cd %s && patch -p1 < %s" % \
-        #  ( srcdir, os.path.join( self.packagedir, "windef.diff" ) )
-        #self.system( cmd )
-        #this patch fails
-        #cmd = "cd %s && patch -p1 < %s" % \
-        #  ( srcdir, os.path.join( self.packagedir, "vmr9.diff" ) )
-        #self.system( cmd )
-        return True
+        BinaryPackageBase.__init__(self)
+
+if __name__ == '__main__':
+    Package().execute()
         
     def install( self ):
-        base.baseclass.install( self )
-        srcdir = os.path.join( self.imagedir, self.instdestdir, "bin", "mingwm10.dll" )
-        destdir = os.path.join( self.imagedir, "bin" )
-        if not os.path.exists( destdir ):
-            os.mkdir( destdir )
-        shutil.copy( srcdir, os.path.join( destdir, "mingwm10.dll" ) )
+        BinaryPackageBase.install( self )
+        #srcdir = os.path.join( self.imagedir, self.instdestdir, "bin", "mingwm10.dll" )
+        #destdir = os.path.join( self.imagedir, "bin" )
+        #if not os.path.exists( destdir ):
+        #    os.mkdir( destdir )
+        #shutil.copy( srcdir, os.path.join( destdir, "mingwm10.dll" ) )
         return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

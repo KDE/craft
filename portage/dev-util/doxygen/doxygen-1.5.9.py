@@ -1,9 +1,4 @@
-import base
 import info
-
-from Source.MultiSource import *
-from BuildSystem.BinaryBuildSystem import *
-from Package.PackageBase import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -15,14 +10,13 @@ class subinfo( info.infoclass ):
         # merge the package into the dev-utils tree 
         # This attribute is in prelimary state
         self.targetMergePath['1.5.9'] = "dev-utils";
-    
-class Package(PackageBase, MultiSource, BinaryBuildSystem):
+
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        BinaryBuildSystem.__init__(self)
-        # no packager required 
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()
