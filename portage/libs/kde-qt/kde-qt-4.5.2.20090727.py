@@ -56,6 +56,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-vc90-1.2.4-1-lib.tar.bz2"
         elif self.compiler() == "mingw":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
+        self.mysql = "http://downloads.sourceforge.net/kde-windows/mysql-server-5.1.36-1-lib.tar.bz2"
         self.subinfo = subinfo()
 
     def fetch(self):
@@ -68,6 +69,9 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         if not utils.getFile(self.dbuslib,self.downloadDir()):
             return False
             
+        if not utils.getFile(self.mysql,self.downloadDir()):
+            return False
+
         return True
         
     def unpack( self ):
@@ -82,6 +86,9 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             return False
 
         if not utils.unpackFile( self.downloadDir(), os.path.basename(self.dbuslib), thirdparty_dir ):
+            return False
+
+        if not utils.unpackFile( self.downloadDir(), os.path.basename(self.mysql), thirdparty_dir ):
             return False
 
         return True
@@ -122,7 +129,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
-          "-fast -no-vcproj -no-dsp " \
+          "-fast -no-vcproj -no-dsp -plugin-sql-mysql" \
           "-nomake demos -nomake examples -nomake docs " \
           "-I \"%s\" -L \"%s\" " % \
           ( userin, configure, platform, prefix,
