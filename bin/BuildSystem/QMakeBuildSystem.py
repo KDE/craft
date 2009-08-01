@@ -55,7 +55,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # so that the mkspecs can be found, when -prefix is set
         os.putenv( "QMAKEPATH", self.sourceDir() )
 
-        command = self.cmakeMakeProgramm 
+        command = self.makeProgramm 
         #if self.makeOptions() <> "": 
         #    command += " " + self.makeOptions()
         # adding Targets later
@@ -68,7 +68,7 @@ class QMakeBuildSystem(BuildSystemBase):
         """Using *make install"""
 
         self.enterBuildDir()
-        command = "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm, self.installDir() )
+        command = "%s DESTDIR=%s install" % ( self.makeProgramm, self.installDir() )
         
         utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
         return True

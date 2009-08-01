@@ -18,6 +18,14 @@ class BuildSystemBase(EmergeBase):
         self.envPath = ""
         if self.compiler() == "mingw":
             self.envPath = "mingw/bin"
+
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+            self.makeProgramm = "nmake"
+        elif self.compiler() == "mingw":
+            self.makeProgramm = "mingw32-make"
+        else:
+            utils.die( "unknown %s compiler" % self.compiler() )
+            
                 
     def configure(self): 
         """configure the target"""

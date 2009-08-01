@@ -17,10 +17,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
-            self.cmakeMakeProgramm = "nmake"
         elif self.compiler() == "mingw":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
-            self.cmakeMakeProgramm = "mingw32-make"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
                                 
@@ -68,7 +66,7 @@ class CMakeBuildSystem(BuildSystemBase):
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
         
-        command = self.cmakeMakeProgramm
+        command = self.makeProgramm
 
         if utils.verbose() > 1:
             command += " VERBOSE=1"
