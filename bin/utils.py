@@ -311,7 +311,6 @@ def isInstalled( category, package, version, buildType='' ):
     f = open( fileName, "rb" )
     for line in f.read().splitlines():
         (_category, _packageVersion) = line.split( "/" )
-        print _packageVersion
         (_package, _version) = packageSplit(_packageVersion)
         if category <> '' and version <> '' and category == _category and package == _package and version == _version:
             found = True
