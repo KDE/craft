@@ -50,6 +50,9 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
 
+        if utils.isInstalled( '', self.package, '', self.buildType() ):
+            self.unmerge()
+
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
         self.manifest()
 
@@ -68,7 +71,7 @@ class PackageBase (EmergeBase):
 
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
-        utils.debug("base unmerge called",2)
+        utils.debug("Packagebase unmerge called",2)
 
         ## \todo mergeDestinationDir() reads the real used merge dir from the 
         ## package definition, which fails if this is changed 

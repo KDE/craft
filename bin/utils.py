@@ -310,7 +310,13 @@ def isInstalled( category, package, version, buildType='' ):
     found = False
     f = open( fileName, "rb" )
     for line in f.read().splitlines():
-        if ( line == "%s/%s-%s" % ( category, package, version ) ):
+        (_category, _packageVersion) = line.split( "/" )
+        print _packageVersion
+        (_package, _version) = packageSplit(_packageVersion)
+        if category <> '' and version <> '' and category == _category and package == _package and version == _version:
+            found = True
+            break
+        elif category == '' and version == '' and package == _package:
             found = True
             break
     f.close()
@@ -321,7 +327,12 @@ def isInstalled( category, package, version, buildType='' ):
         if os.path.isfile( fileName ):
             f = open( fileName, "rb" )
             for line in f.read().splitlines():
-                if ( line == "%s/%s-%s" % ( category, package, version ) ):
+                (_category, _packageVersion) = line.split( "/" )
+                (_package, _version) = packageSplit(_packageVersion)
+                if category <> '' and version <> '' and category == _category and package == _package and version == _version:
+                    found = True
+                    break
+                elif category == '' and version == '' and package == _package:
                     found = True
                     break
             f.close()
@@ -340,6 +351,7 @@ def isInstalled( category, package, version, buildType='' ):
             if filename.startswith( package ):
                 found = True
                 break
+    debug("package %s %s" % (package, found) ,2)
     return found
 
 def findInstalled( category, package, buildType='' ):
@@ -752,7 +764,7 @@ def moveSrcDirToDestDir( srcdir, destdir ):
 
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
-    debug( "unmerge called: %s" % ( package ), 1 )
+    debug( "unmerge called: %s" % ( package ), 2 )
 
     if os.path.exists( os.path.join( rootdir, "manifest"  ) ):
         for file in os.listdir( os.path.join( rootdir, "manifest" ) ):
