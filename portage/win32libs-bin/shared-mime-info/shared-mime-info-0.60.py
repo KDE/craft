@@ -24,10 +24,10 @@ class Package(BinaryPackageBase):
 
   def install( self ):
     BinaryPackageBase.install( self )
-    print "self.compiler: " + self.compiler
-    if self.compiler == "msvc2005" or self.compiler == "msvc2008":
-      manifest = os.path.join( self.packagedir, "update-mime-database.exe.manifest" )
-      patch = os.path.join( self.imagedir, "bin", "update-mime-database.exe" )
+    print "self.compiler: " + self.compiler()
+    if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+      manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
+      patch = os.path.join( self.imageDir(), "bin", "update-mime-database.exe" )
       cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
       utils.system( cmd )
     
