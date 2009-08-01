@@ -129,7 +129,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
-          "-fast -no-vcproj -no-dsp -plugin-sql-mysql" \
+          "-fast -no-vcproj -no-dsp -plugin-sql-mysql " \
           "-nomake demos -nomake examples -nomake docs " \
           "-I \"%s\" -L \"%s\" " % \
           ( userin, configure, platform, prefix,
