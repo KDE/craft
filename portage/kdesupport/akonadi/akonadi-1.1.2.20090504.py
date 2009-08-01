@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.svnTargets['1.1.1']  = 'tags/akonadi/1.1.1'
         self.svnTargets['1.1.2']  = 'tags/akonadi/1.1.2'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/akonadi'
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/akonadi'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
 

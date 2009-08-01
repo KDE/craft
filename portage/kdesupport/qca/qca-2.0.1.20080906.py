@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.svnTargets['2.0.1-3'] = 'tags/qca/2.0.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/qca'
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qca'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
