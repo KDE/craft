@@ -113,12 +113,16 @@ class kde_interface:
         else:
                 recFlag = "--depth=files"
 
+        svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
+        if not os.path.exists(svnInstallDir):
+            die("required subversion package not installed")
+
         if ( os.path.exists( os.path.join( ownpath, codir, ".svn" ) ) ):
             # svn up
-            svncmd = "svn update %s %s" % ( recFlag, codir )
+            svncmd = "%s/svn update %s %s" % (svnInstallDir, recFlag, codir )
         else:
             #svn co
-            svncmd = "svn checkout %s %s" % ( recFlag, repourl + codir )
+            svncmd = "%s/svn checkout %s %s" % (svnInstallDir, recFlag, repourl + codir )
 
         if utils.verbose() > 1:
             print "kdesinglecheckout:pwd ", ownpath
