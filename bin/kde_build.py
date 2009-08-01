@@ -115,7 +115,7 @@ class kde_interface:
 
         svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
         if not os.path.exists(svnInstallDir):
-            die("required subversion package not installed")
+            utils.die("required subversion package not installed")
 
         if ( os.path.exists( os.path.join( ownpath, codir, ".svn" ) ) ):
             # svn up
