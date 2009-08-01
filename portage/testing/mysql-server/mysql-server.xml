@@ -25,7 +25,6 @@
 			<files include="bin/.*mysqld.dll"/>
 		</part>
 		<part name="development">
-			<files include="include/.*\.h"/>
 			<files include="lib/.*.*mysqld.*"/>
 			<files include="share/license/mysql-embedded/.*"/>
 		</part>
