@@ -13,6 +13,8 @@ class subinfo(info.infoclass):
         self.targets['1.5.0'] = 'http://developer.kde.org/~wheeler/files/src/taglib-1.5.tar.gz'
         self.targetInstSrc['1.5.0'] = 'taglib-1.5'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
+        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/taglib'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):

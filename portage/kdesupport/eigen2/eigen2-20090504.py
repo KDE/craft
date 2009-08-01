@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
         self.svnTargets['2.0.0'] = 'tags/eigen/2.0.0'
         self.svnTargets['2.0.1'] = 'tags/eigen/2.0.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen2'
+        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/eigen2'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):

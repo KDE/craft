@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
         self.svnTargets['0.9.84'] = 'tags/automoc4/0.9.84'
         self.svnTargets['0.9.87'] = 'tags/automoc4/0.9.87'
         self.svnTargets['0.9.88'] = 'tags/automoc4/0.9.88'
+        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/automoc'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):

@@ -11,6 +11,8 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib-extras'
+        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/taglib-extras'
         self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
