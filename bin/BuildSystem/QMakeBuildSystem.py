@@ -13,7 +13,7 @@ class QMakeBuildSystem(BuildSystemBase):
     def __init__( self, configureOptions="", makeOptions=""):
         BuildSystemBase.__init__(self,"qmake",configureOptions,makeOptions)
         
-    def configure( self, buildType=None, customOptions="" ):
+    def configure( self ):
         """Using qmake"""
             
         self.enterBuildDir()
@@ -47,7 +47,7 @@ class QMakeBuildSystem(BuildSystemBase):
     def makeOptions(self):
         return ""
 
-    def make( self, buildType=None ):
+    def make( self ):
         """Using the make program"""
 
         self.enterBuildDir()
@@ -64,25 +64,13 @@ class QMakeBuildSystem(BuildSystemBase):
         utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
-    def __install( self, buildType=None ):
+    def install( self ):
         """Using *make install"""
 
         self.enterBuildDir()
         command = "%s DESTDIR=%s install" % ( self.makeProgramm, self.installDir() )
         
         utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
-        return True
-
-    def install( self ):
-        """making all required stuff for installing qmake based modules"""
-        if( not self.buildType() == None ):
-            if( not self.__install( self.buildType() ) ):
-                return False
-        else:
-            if( not self.__install( "debug" ) ):
-                return False
-            if( not self.__install( "release" ) ):
-                return False
         return True
 
     def runTest( self ):
