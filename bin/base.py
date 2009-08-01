@@ -218,7 +218,7 @@ class baseclass:
         ret = True
         if ( not self.noFetch ):
             safePath = os.environ["PATH"]
-            os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
+            os.environ["PATH"] = os.path.join(self.rootdir, "dev-utils", "git", "bin") + ";" + safePath
             if os.path.exists( self.svndir ):
                 """if directory already exists, simply do a pull but obey to offline"""
                 ret = self.msys.msysExecute( self.svndir, "git", "pull" )
