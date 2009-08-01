@@ -351,7 +351,6 @@ def isInstalled( category, package, version, buildType='' ):
             if filename.startswith( package ):
                 found = True
                 break
-    debug("package %s %s" % (package, found) ,2)
     return found
 
 def findInstalled( category, package, buildType='' ):
