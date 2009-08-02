@@ -32,9 +32,9 @@ class subinfo(info.infoclass):
     
 class Package(BinaryPackageBase):
     def __init__( self, **args ):
-        BinaryPackageBase.__init__( self, SRC_URI, args=args )
         BinaryPackageBase.__init__( self )
         self.createCombinedPackage = True
+        self.subinfo = subinfo()
 
     def unpack( self ):
         BinaryPackageBase.unpack( self )
