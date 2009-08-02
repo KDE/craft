@@ -19,11 +19,9 @@ class GitSource (VersionSystemSourceBase):
             self.shell.msysdir = gitInstallDir
             utils.debug('using shell from %s' % gitInstallDir,1)
 
-    def fetch( self, repopath=None, packagedir=None ):
+    def fetch( self, repopath=None ):
         if repopath == None:
             repopath = self.repositoryPath()
-        if packagedir == None:
-            packagedir = self.packageDir()
             
         repoString = utils.replaceGitUrl( repopath )
         [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
