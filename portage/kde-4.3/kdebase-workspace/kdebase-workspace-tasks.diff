@@ -1,6 +1,6 @@
 Index: libs/CMakeLists.txt
 ===================================================================
---- libs/CMakeLists.txt	(revision 1006026)
+--- libs/CMakeLists.txt	(revision 991409)
 +++ libs/CMakeLists.txt	(working copy)
 @@ -4,9 +4,9 @@
  add_subdirectory(solid)
@@ -13,11 +13,72 @@ Index: libs/CMakeLists.txt
  add_subdirectory(kworkspace)
  
  
+Index: libs/taskmanager/groupmanager.cpp
+===================================================================
+--- libs/taskmanager/groupmanager.cpp	(revision 991409)
++++ libs/taskmanager/groupmanager.cpp	(working copy)
+@@ -130,7 +130,7 @@
+ 
+ GroupManager::~GroupManager()
+ {
+-    TaskManager::TaskManager::self()->setTrackGeometry(false, d->configToken);
++    TaskManager::self()->setTrackGeometry(false, d->configToken);
+     delete d->abstractSortingStrategy;
+     delete d->abstractGroupingStrategy;
+     delete d->rootGroup;
+@@ -477,7 +477,7 @@
+     if (d->showOnlyCurrentDesktop || d->showOnlyMinimized || d->showOnlyCurrentScreen) {
+         // listen to the relevant task manager signals
+         if (d->showOnlyCurrentDesktop) {
+-            connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
++            connect(TaskManager::self(), SIGNAL(desktopChanged(int)),
+                     this, SLOT(currentDesktopChanged(int)));
+         }
+ 
+@@ -485,7 +485,7 @@
+                 this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
+     }
+ 
+-    TaskManager::TaskManager::self()->setTrackGeometry(d->showOnlyCurrentScreen, d->configToken);
++    TaskManager::self()->setTrackGeometry(d->showOnlyCurrentScreen, d->configToken);
+ 
+     if (!d->showOnlyCurrentScreen) {
+         d->geometryTasks.clear();
+Index: libs/taskmanager/strategies/manualsortingstrategy.cpp
+===================================================================
+--- libs/taskmanager/strategies/manualsortingstrategy.cpp	(revision 991409)
++++ libs/taskmanager/strategies/manualsortingstrategy.cpp	(working copy)
+@@ -59,11 +59,11 @@
+ 
+     d->desktops = new desktopHashTable();
+     //TODO add a screenHashTable
+-    d->oldDesktop = TaskManager::TaskManager::self()->currentDesktop();
++    d->oldDesktop = TaskManager::self()->currentDesktop();
+ 
+     if (d->groupingStrategy->showOnlyCurrentDesktop()) {
+-        d->desktops->insert(TaskManager::TaskManager::self()->currentDesktop(), new itemHashTable());
+-        d->managedItems = d->desktops->value(TaskManager::TaskManager::self()->currentDesktop());
++        d->desktops->insert(TaskManager::self()->currentDesktop(), new itemHashTable());
++        d->managedItems = d->desktops->value(TaskManager::self()->currentDesktop());
+     } else {
+         d->desktops->insert(0,new itemHashTable());
+         d->managedItems = d->desktops->value(0);
 Index: libs/taskmanager/task.cpp
 ===================================================================
---- libs/taskmanager/task.cpp	(revision 1006026)
+--- libs/taskmanager/task.cpp	(revision 991409)
 +++ libs/taskmanager/task.cpp	(working copy)
-@@ -88,7 +88,17 @@
+@@ -36,6 +36,10 @@
+ #include <QX11Info>
+ #endif
+ 
++#ifdef Q_WS_WIN
++#include <windows.h>
++#endif
++
+ // KDE
+ #include <KDebug>
+ #include <KIconLoader>
+@@ -88,7 +92,17 @@
      unsigned int cachedChanges;
      int cachedChangesTimerId;
  };
@@ -35,7 +96,7 @@ Index: libs/taskmanager/task.cpp
  Task::Task(WId w, QObject *parent, const char *name)
    : QObject(parent),
      d(new Private(w))
-@@ -317,30 +327,6 @@
+@@ -317,30 +331,6 @@
      return d->info.geometry();
  }
  
@@ -66,7 +127,7 @@ Index: libs/taskmanager/task.cpp
  void Task::removeTransient(WId w)
  {
      d->transients.remove(w);
-@@ -377,30 +363,6 @@
+@@ -377,30 +367,6 @@
      return d->info.name();
  }
  
@@ -97,7 +158,7 @@ Index: libs/taskmanager/task.cpp
  QPixmap Task::icon( int width, int height, bool allowResize )
  {
    if ( (width == d->lastWidth)
-@@ -534,113 +496,11 @@
+@@ -534,113 +500,11 @@
    return false;
  }
  
@@ -211,7 +272,7 @@ Index: libs/taskmanager/task.cpp
  void Task::setIconified(bool iconify)
  {
      if (iconify)
-@@ -671,12 +531,6 @@
+@@ -671,12 +535,6 @@
      setIconified(!isIconified());
  }
  
@@ -224,7 +285,7 @@ Index: libs/taskmanager/task.cpp
  void Task::raise()
  {
  //    kDebug(1210) << "Task::raise(): " << name();
-@@ -714,119 +568,31 @@
+@@ -714,119 +572,31 @@
      }
  }
  
@@ -346,7 +407,7 @@ Index: libs/taskmanager/task.cpp
      Q_ASSERT(mimeData);
 Index: libs/taskmanager/task.h
 ===================================================================
---- libs/taskmanager/task.h	(revision 1006026)
+--- libs/taskmanager/task.h	(revision 991409)
 +++ libs/taskmanager/task.h	(working copy)
 @@ -236,7 +236,9 @@
      //* @internal
@@ -362,7 +423,7 @@ Index: libs/taskmanager/task_win.cpp
 ===================================================================
 --- libs/taskmanager/task_win.cpp	(revision 0)
 +++ libs/taskmanager/task_win.cpp	(revision 0)
-@@ -0,0 +1,166 @@
+@@ -0,0 +1,165 @@
 +/*****************************************************************
 +
 +Copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
@@ -387,7 +448,6 @@ Index: libs/taskmanager/task_win.cpp
 +******************************************************************/
 +
 +#include <windows.h>
-+
 +namespace TaskManager
 +{
 +
@@ -808,7 +868,7 @@ Index: libs/taskmanager/task_x11.cpp
 +}
 Index: libs/taskmanager/taskmanager.cpp
 ===================================================================
---- libs/taskmanager/taskmanager.cpp	(revision 1006026)
+--- libs/taskmanager/taskmanager.cpp	(revision 991409)
 +++ libs/taskmanager/taskmanager.cpp	(working copy)
 @@ -42,6 +42,10 @@
  #include <QX11Info>
@@ -868,7 +928,7 @@ Index: libs/taskmanager/taskmanager.cpp
  
 Index: libs/taskmanager/taskmanager.h
 ===================================================================
---- libs/taskmanager/taskmanager.h	(revision 1006026)
+--- libs/taskmanager/taskmanager.h	(revision 991409)
 +++ libs/taskmanager/taskmanager.h	(working copy)
 @@ -32,7 +32,7 @@
  #include <KDE/KSharedPtr>
@@ -879,21 +939,34 @@ Index: libs/taskmanager/taskmanager.h
  
  namespace TaskManager
  {
-Index: plasma/applets/CMakeLists.txt
+Index: plasma/applets/tasks/abstracttaskitem.cpp
 ===================================================================
---- plasma/applets/CMakeLists.txt	(revision 1006026)
-+++ plasma/applets/CMakeLists.txt	(working copy)
-@@ -10,6 +10,7 @@
- add_subdirectory(quicklaunch)
- add_subdirectory(trash)
- add_subdirectory(panelspacer)
-+add_subdirectory(tasks)
+--- plasma/applets/tasks/abstracttaskitem.cpp	(revision 991409)
++++ plasma/applets/tasks/abstracttaskitem.cpp	(working copy)
+@@ -33,7 +33,9 @@
+ #include <QTextLayout>
+ #include <QTimer>
+ #include <QVarLengthArray>
+-#include <QX11Info>
++#ifdef Q_WS_X11
++# include <QX11Info>
++#endif
  
- if(QT_QTWEBKIT_FOUND)
-    add_subdirectory(webbrowser)
-@@ -19,5 +20,4 @@
-    add_subdirectory(pager)
-    add_subdirectory(system-monitor)
-    add_subdirectory(systemtray)
--   add_subdirectory(tasks)
- endif(NOT WIN32)
+ // KDE
+ #include <KAuthorized>
+Index: plasma/applets/tasks/CMakeLists.txt
+===================================================================
+--- plasma/applets/tasks/CMakeLists.txt	(revision 991409)
++++ plasma/applets/tasks/CMakeLists.txt	(working copy)
+@@ -5,7 +5,9 @@
+ 
+ kde4_add_ui_files(tasks_SRCS tasksConfig.ui )
+ kde4_add_plugin(plasma_applet_tasks ${tasks_SRCS})
+-target_link_libraries(plasma_applet_tasks ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} taskmanager ${X11_LIBRARIES})
+-
++target_link_libraries(plasma_applet_tasks ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} taskmanager)
++if(Q_WS_X11)
++    target_link_libraries(plasma_applet_tasks ${X11_LIBRARIES})
++endif(Q_WS_X11)
+ install(TARGETS plasma_applet_tasks DESTINATION ${PLUGIN_INSTALL_DIR})
+ install(FILES plasma-tasks-default.desktop DESTINATION ${SERVICES_INSTALL_DIR})
