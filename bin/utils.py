@@ -506,7 +506,7 @@ def getNewestVersion( category, package ):
     """
     returns the newest version of this category/package
     """
-#    if utils.verbose() >= 1:
+#    if verbose() >= 1:
 #        print "getNewestVersion:", category, package
     if( category == None ):
         die("Empty category for package '%s'" % package )
@@ -593,7 +593,7 @@ def getDependencies( category, package, version ):
                 deplines.append( [line, info.hardDependencies[ line ] ] )
                 #warning( "%s %s" % (line, info.hardDependencies[ line ] ) )
 
-#    if utils.verbose() >= 1 and len( deplines ) > 0:
+#    if verbose() >= 1 and len( deplines ) > 0:
 #        print "deplines:", deplines
 
     deps = []
@@ -623,7 +623,7 @@ def solveDependencies( category, package, version, deplist ):
     deplist.append( [ category, package, version, tag ] )
 
     mydeps = getDependencies( category, package, version )
-#    if utils.verbose() >= 1:
+#    if verbose() >= 1:
 #        print "mydeps:", mydeps
     for dep in mydeps:
         solveDependencies( dep[0], dep[1], dep[2], deplist )
@@ -864,7 +864,7 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
         libmanifest = open( os.path.join( destdir, "manifest", "%s-%s-lib.mft" % ( package, version )), 'wb' )
     if len(docList) > 0:
         docmanifest = open( os.path.join( destdir, "manifest", "%s-%s-doc.mft" % ( package, version )), 'wb' )
-#    if utils.verbose() >= 1:
+#    if verbose() >= 1:
 #        print "bin: ", binList
 #        print "lib: ", libList
 #        print "doc: ", docList
@@ -1035,6 +1035,65 @@ def replaceGitUrl( Url ):
                 Url = Url.replace( host, replacedict[ host ] )
                 break
     return Url
+
+def createImportLibs( pkg_name, basepath ):
+    """creating the import libraries for the other compiler(if ANSI-C libs)"""
+
+    dst = os.path.join( basepath, "lib" )
+    if( not os.path.exists( dst ) ):
+        os.mkdir( dst )
+        
+    # check whether the required binary tools exist
+    HAVE_PEXPORTS = test4application( "pexports" )
+    USE_PEXPORTS = HAVE_PEXPORTS
+    HAVE_LIB = test4application( "lib" )
+    HAVE_DLLTOOL = test4application( "dlltool" )
+    if verbose() > 1:
+        print "pexports found:", HAVE_PEXPORTS
+        print "pexports used:", USE_PEXPORTS
+        print "lib found:", HAVE_LIB
+        print "dlltool found:", HAVE_DLLTOOL
+    
+    dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
+    defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
+    exppath = os.path.join( basepath, "lib", "%s.exp" % pkg_name )
+    imppath = os.path.join( basepath, "lib", "%s.lib" % pkg_name )
+    gccpath = os.path.join( basepath, "lib", "%s.dll.a" % pkg_name )
+
+    if not HAVE_PEXPORTS and os.path.exists( defpath ):
+        HAVE_PEXPORTS = True
+        USE_PEXPORTS = False
+    if not HAVE_PEXPORTS:
+        warning( "system does not have pexports.exe" )
+        return False
+    if not HAVE_LIB:
+        warning( "system does not have lib.exe (from msvc)" )
+        if not HAVE_DLLTOOL:
+            warning( "system does not have dlltool.exe" )
+            return False
+
+    # create .def
+    if USE_PEXPORTS:
+        cmd = "pexports %s > %s " % ( dllpath, defpath )
+        system( cmd )
+        sedcmd = "sed -i \"s/^LIBRARY.*$/LIBRARY %s.dll/\" %s" % (pkg_name, defpath)
+        system( sedcmd )
+
+    if( HAVE_LIB and not os.path.isfile( imppath ) ):
+        # create .lib
+        cmd = "lib /machine:x86 /def:%s /out:%s" % ( defpath, imppath )
+        system( cmd )
+
+    if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
+        # create .dll.a
+        cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
+        system( cmd )
+        
+    if os.path.exists( defpath ):
+        os.remove( defpath )
+    if os.path.exists( exppath ):
+        os.remove( exppath )
+    return True
 
 def toMSysPath( path ):
     path = path.replace( '\\', '/' )

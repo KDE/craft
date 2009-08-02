@@ -507,62 +507,7 @@ class baseclass:
     def createImportLibs( self, pkg_name ):
         """creating the import libraries for the other compiler(if ANSI-C libs)"""
         basepath = os.path.join( self.imagedir, self.instdestdir )
-
-        dst = os.path.join( basepath, "lib" )
-        if( not os.path.exists( dst ) ):
-            os.mkdir( dst )
-            
-        # check whether the required binary tools exist
-        HAVE_PEXPORTS = utils.test4application( "pexports" )
-        USE_PEXPORTS = HAVE_PEXPORTS
-        HAVE_LIB = utils.test4application( "lib" )
-        HAVE_DLLTOOL = utils.test4application( "dlltool" )
-        if utils.verbose() > 1:
-            print "pexports found:", HAVE_PEXPORTS
-            print "pexports used:", USE_PEXPORTS
-            print "lib found:", HAVE_LIB
-            print "dlltool found:", HAVE_DLLTOOL
-        
-        dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
-        defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
-        exppath = os.path.join( basepath, "lib", "%s.exp" % pkg_name )
-        imppath = os.path.join( basepath, "lib", "%s.lib" % pkg_name )
-        gccpath = os.path.join( basepath, "lib", "%s.dll.a" % pkg_name )
-
-        if not HAVE_PEXPORTS and os.path.exists( defpath ):
-            HAVE_PEXPORTS = True
-            USE_PEXPORTS = False
-        if not HAVE_PEXPORTS:
-            utils.warning( "system does not have pexports.exe" )
-            return False
-        if not HAVE_LIB:
-            utils.warning( "system does not have lib.exe (from msvc)" )
-            if not HAVE_DLLTOOL:
-                utils.warning( "system does not have dlltool.exe" )
-                return False
-
-        # create .def
-        if USE_PEXPORTS:
-            cmd = "pexports %s > %s " % ( dllpath, defpath )
-            self.system( cmd )
-            sedcmd = "sed -i \"s/^LIBRARY.*$/LIBRARY %s.dll/\" %s" % (pkg_name, defpath)
-            self.system( sedcmd )
-
-        if( HAVE_LIB and not os.path.isfile( imppath ) ):
-            # create .lib
-            cmd = "lib /machine:x86 /def:%s /out:%s" % ( defpath, imppath )
-            self.system( cmd )
-
-        if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
-            # create .dll.a
-            cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
-            self.system( cmd )
-            
-        if os.path.exists( defpath ):
-            os.remove( defpath )
-        if os.path.exists( exppath ):
-            os.remove( exppath )
-        return True
+        utils.createImportLibs( pkg_name, basepath )
 
     def stripLibs( self, pkg_name ):
         """stripping libraries"""
