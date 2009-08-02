@@ -7,11 +7,11 @@ import shutil
 class subinfo(info.infoclass):
     def setTargets( self ):
         """ """
-        self.targets['5.1.36-1'] = """
-http://downloads.sourceforge.net/kde-windows/mysql-debug-5.1.36-1-bin.tar.bz2
+        self.targets['5.1.36-2'] = """
+http://downloads.sourceforge.net/kde-windows/mysql-debug-5.1.36-2-bin.tar.bz2
 """
-        self.targetInstSrc['5.1.36-1'] = ""
-        self.defaultTarget = '5.1.36-1'
+        self.targetInstSrc['5.1.36-2'] = ""
+        self.defaultTarget = '5.1.36-2'
 
     def setDependencies( self ):
         """ """
