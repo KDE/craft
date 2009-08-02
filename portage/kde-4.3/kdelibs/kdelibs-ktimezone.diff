@@ -1,7 +1,7 @@
-Index: CMakeLists.txt
+Index: kdecore/CMakeLists.txt
 ===================================================================
---- CMakeLists.txt
-+++ CMakeLists.txt
+--- kdecore/CMakeLists.txt
++++ kdecore/CMakeLists.txt
 @@ -68,6 +68,7 @@
        util/kshell_win.cpp
        util/kmacroexpander_win.cpp
@@ -10,10 +10,10 @@ Index: CMakeLists.txt
     )
     if(NOT MSVC)
     set(kdecore_OPTIONAL_SRCS ${kdecore_OPTIONAL_SRCS}
-Index: date/ksystemtimezone.cpp
+Index: kdecore/date/ksystemtimezone.cpp
 ===================================================================
---- date/ksystemtimezone.cpp
-+++ date/ksystemtimezone.cpp
+--- kdecore/date/ksystemtimezone.cpp
++++ kdecore/date/ksystemtimezone.cpp
 @@ -54,8 +54,10 @@
  #include <kdebug.h>
  #include <kconfiggroup.h>
@@ -109,10 +109,10 @@ Index: date/ksystemtimezone.cpp
      return QList<int>();
  }
 +
-Index: date/ktimezone.cpp
+Index: kdecore/date/ktimezone.cpp
 ===================================================================
---- date/ktimezone.cpp
-+++ date/ktimezone.cpp
+--- kdecore/date/ktimezone.cpp
++++ kdecore/date/ktimezone.cpp
 @@ -118,10 +118,6 @@
  
  KTimeZone KTimeZones::zone(const QString &name) const
@@ -150,10 +150,10 @@ Index: date/ktimezone.cpp
  KTimeZoneBackend::~KTimeZoneBackend()
  {
      if (d && --d->refCount == 0)
-Index: date/ktimezone_win.h
+Index: kdecore/date/ktimezone_win.h
 ===================================================================
---- date/ktimezone_win.h
-+++ date/ktimezone_win.h
+--- kdecore/date/ktimezone_win.h
++++ kdecore/date/ktimezone_win.h
 @@ -0,0 +1,48 @@
 +/*
 +   This file is part of the KDE libraries
@@ -203,10 +203,10 @@ Index: date/ktimezone_win.h
 +
 +#endif // _KTIMEZONE_WINDOWS_H
 +
-Index: date/ktimezone_win.cpp
+Index: kdecore/date/ktimezone_win.cpp
 ===================================================================
---- date/ktimezone_win.cpp
-+++ date/ktimezone_win.cpp
+--- kdecore/date/ktimezone_win.cpp
++++ kdecore/date/ktimezone_win.cpp
 @@ -0,0 +1,464 @@
 +/*
 +   This file is part of the KDE libraries
