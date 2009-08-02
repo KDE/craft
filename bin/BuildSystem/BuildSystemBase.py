@@ -4,6 +4,8 @@
 from EmergeBase import *
 import utils;
 
+EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
+
 class BuildSystemBase(EmergeBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
     noClean = False
@@ -18,14 +20,18 @@ class BuildSystemBase(EmergeBase):
         self.envPath = ""
         if self.compiler() == "mingw":
             self.envPath = "mingw/bin"
+        if self.compiler() == "mingw4":
+            self.envPath = "mingw4/bin"
 
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             self.makeProgramm = "nmake"
-        elif self.compiler() == "mingw":
+        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             self.makeProgramm = "mingw32-make"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
-            
+        if EMERGE_MAKE_PROGRAM:
+            self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
+            utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
                 
     def configure(self): 
         """configure the target"""

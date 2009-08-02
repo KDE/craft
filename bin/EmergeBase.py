@@ -29,8 +29,6 @@ if ( KDESVNSERVER == None ):
 KDESVNUSERNAME=os.getenv( "KDESVNUSERNAME" )
 KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
 
-EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
-
 # ok, we have the following dirs:
 # ROOTDIR: the root where all this is below
 # DOWNLOADDIR: the dir under rootdir, where the downloaded files are put into
@@ -99,6 +97,8 @@ class EmergeBase():
             self.__compiler = "msvc2008"
         elif COMPILER == "mingw":
             self.__compiler = "mingw"
+        elif COMPILER == "mingw4":
+            self.__compiler = "mingw4"
         else:
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
