@@ -1,9 +1,7 @@
 from Package.BinaryPackageBase import *
 import os
 import shutil
-import re
 import utils
-from utils import die
 import info
 
 PACKAGE_NAME         = "sqlite"
@@ -41,29 +39,29 @@ class Package(BinaryPackageBase):
         return True
         
     def install( self ):
-        dst = os.path.join( self.imagedir, "bin" )
+        dst = os.path.join( self.imageDir(), "bin" )
         utils.cleanDirectory( dst )
-        dst = os.path.join( self.imagedir, "include" )
+        dst = os.path.join( self.imageDir(), "include" )
         utils.cleanDirectory( dst )
-        dst = os.path.join( self.imagedir, "lib" )
+        dst = os.path.join( self.imageDir(), "lib" )
         utils.cleanDirectory( dst )
 
-        src = os.path.join( self.workdir, PACKAGE_DLL_NAME + ".dll" )
-        dst = os.path.join( self.imagedir, "bin", PACKAGE_DLL_NAME + ".dll" )
+        src = os.path.join( self.imageDir(), PACKAGE_DLL_NAME + ".dll" )
+        dst = os.path.join( self.imageDir(), "bin", PACKAGE_DLL_NAME + ".dll" )
         shutil.copy( src, dst )
-        src = os.path.join( self.workdir, PACKAGE_DLL_NAME + ".exe" )
-        dst = os.path.join( self.imagedir, "bin", PACKAGE_DLL_NAME + ".exe" )
+        src = os.path.join( self.imageDir(), PACKAGE_DLL_NAME + ".exe" )
+        dst = os.path.join( self.imageDir(), "bin", PACKAGE_DLL_NAME + ".exe" )
         shutil.copy( src, dst )
-        src = os.path.join( self.workdir, PACKAGE_DLL_NAME + ".h" )
-        dst = os.path.join( self.imagedir, "include", PACKAGE_DLL_NAME + ".h" )
+        src = os.path.join( self.imageDir(), PACKAGE_DLL_NAME + ".h" )
+        dst = os.path.join( self.imageDir(), "include", PACKAGE_DLL_NAME + ".h" )
         shutil.copy( src, dst )
-        src = os.path.join( self.workdir, PACKAGE_DLL_NAME + "ext.h" )
-        dst = os.path.join( self.imagedir, "include", PACKAGE_DLL_NAME + "ext.h" )
+        src = os.path.join( self.imageDir(), PACKAGE_DLL_NAME + "ext.h" )
+        dst = os.path.join( self.imageDir(), "include", PACKAGE_DLL_NAME + "ext.h" )
         shutil.copy( src, dst )
-        src = os.path.join( self.workdir, PACKAGE_DLL_NAME + ".def" )
-        dst = os.path.join( self.imagedir, "lib", PACKAGE_DLL_NAME + ".def" )
+        src = os.path.join( self.imageDir(), PACKAGE_DLL_NAME + ".def" )
+        dst = os.path.join( self.imageDir(), "lib", PACKAGE_DLL_NAME + ".def" )
         shutil.copy( src, dst )
-        self.createImportLibs( PACKAGE_DLL_NAME )
+        utils.createImportLibs( PACKAGE_DLL_NAME, self.imageDir() )
         return True
 
     def make_package( self ):
