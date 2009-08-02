@@ -66,6 +66,8 @@ class KDEWinPackager (PackagerBase):
         if( not self.createCombinedPackage ):
             if( self.compiler() == "mingw"):
               cmd += " -type mingw "
+            elif self.compiler() == "mingw4":
+              cmd += " -type mingw4 "
             elif self.compiler() == "msvc2005":
               cmd += " -type msvc "
             elif self.compiler() == "msvc2008":
