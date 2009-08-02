@@ -1,0 +1,899 @@
+Index: libs/CMakeLists.txt
+===================================================================
+--- libs/CMakeLists.txt	(revision 1006026)
++++ libs/CMakeLists.txt	(working copy)
+@@ -4,9 +4,9 @@
+ add_subdirectory(solid)
+ 
+ if(NOT WIN32)
+- add_subdirectory(taskmanager)
+  add_subdirectory(ksysguard)
+ endif(NOT WIN32)
++add_subdirectory(taskmanager)
+ add_subdirectory(kworkspace)
+ 
+ 
+Index: libs/taskmanager/task.cpp
+===================================================================
+--- libs/taskmanager/task.cpp	(revision 1006026)
++++ libs/taskmanager/task.cpp	(working copy)
+@@ -88,7 +88,17 @@
+     unsigned int cachedChanges;
+     int cachedChangesTimerId;
+ };
++}
+ 
++#if defined Q_WS_WIN
++# include "task_win.cpp"
++#else
++# include "task_x11.cpp"
++#endif
++
++namespace TaskManager
++{
++
+ Task::Task(WId w, QObject *parent, const char *name)
+   : QObject(parent),
+     d(new Private(w))
+@@ -317,30 +327,6 @@
+     return d->info.geometry();
+ }
+ 
+-void Task::updateDemandsAttentionState( WId w )
+-{
+-    if (window() != w) {
+-        // 'w' is a transient for this task
+-        NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
+-        if (i.state() & NET::DemandsAttention) {
+-            if (!d->transientsDemandingAttention.contains(w)) {
+-                d->transientsDemandingAttention.insert(w);
+-            }
+-        } else {
+-            d->transientsDemandingAttention.remove(w);
+-        }
+-    }
+-}
+-
+-void Task::addTransient( WId w, const NETWinInfo& info )
+-{
+-    d->transients.insert(w);
+-    if (info.state() & NET::DemandsAttention) {
+-        d->transientsDemandingAttention.insert(w);
+-        emit changed(TransientsChanged);
+-    }
+-}
+-
+ void Task::removeTransient(WId w)
+ {
+     d->transients.remove(w);
+@@ -377,30 +363,6 @@
+     return d->info.name();
+ }
+ 
+-QString Task::className() const
+-{
+-    XClassHint hint;
+-    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
+-        QString nh( hint.res_name );
+-        XFree( hint.res_name );
+-        XFree( hint.res_class );
+-        return nh;
+-    }
+-    return QString();
+-}
+-
+-QString Task::classClass() const
+-{
+-    XClassHint hint;
+-    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
+-        QString ch( hint.res_class );
+-        XFree( hint.res_name );
+-        XFree( hint.res_class );
+-        return ch;
+-    }
+-    return QString();
+-}
+-
+ QPixmap Task::icon( int width, int height, bool allowResize )
+ {
+   if ( (width == d->lastWidth)
+@@ -534,113 +496,11 @@
+   return false;
+ }
+ 
+-void Task::move()
+-{
+-    bool on_current = d->info.isOnCurrentDesktop();
+-
+-    if (!on_current)
+-    {
+-        KWindowSystem::setCurrentDesktop(d->info.desktop());
+-        KWindowSystem::forceActiveWindow(d->win);
+-    }
+-
+-    if (d->info.isMinimized())
+-    {
+-        KWindowSystem::unminimizeWindow(d->win);
+-    }
+-
+-    QRect geom = d->info.geometry();
+-    QCursor::setPos(geom.center());
+-
+-    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
+-    ri.moveResizeRequest(d->win, geom.center().x(),
+-                         geom.center().y(), NET::Move);
+-}
+-
+-void Task::resize()
+-{
+-    bool on_current = d->info.isOnCurrentDesktop();
+-
+-    if (!on_current)
+-    {
+-        KWindowSystem::setCurrentDesktop(d->info.desktop());
+-        KWindowSystem::forceActiveWindow(d->win);
+-    }
+-
+-    if (d->info.isMinimized())
+-    {
+-        KWindowSystem::unminimizeWindow(d->win);
+-    }
+-
+-    QRect geom = d->info.geometry();
+-    QCursor::setPos(geom.bottomRight());
+-
+-    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
+-    ri.moveResizeRequest(d->win, geom.bottomRight().x(),
+-                         geom.bottomRight().y(), NET::BottomRight);
+-}
+-
+-void Task::setMaximized(bool maximize)
+-{
+-    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+-    bool on_current = info.isOnCurrentDesktop();
+-
+-    if (!on_current)
+-    {
+-        KWindowSystem::setCurrentDesktop(info.desktop());
+-    }
+-
+-    if (info.isMinimized())
+-    {
+-        KWindowSystem::unminimizeWindow(d->win);
+-    }
+-
+-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+-
+-    if (maximize)
+-    {
+-        ni.setState(NET::Max, NET::Max);
+-    }
+-    else
+-    {
+-        ni.setState(0, NET::Max);
+-    }
+-
+-    if (!on_current)
+-    {
+-        KWindowSystem::forceActiveWindow(d->win);
+-    }
+-}
+-
+ void Task::toggleMaximized()
+ {
+     setMaximized(!isMaximized());
+ }
+ 
+-void Task::restore()
+-{
+-    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+-    bool on_current = info.isOnCurrentDesktop();
+-
+-    if (!on_current)
+-    {
+-        KWindowSystem::setCurrentDesktop(info.desktop());
+-    }
+-
+-    if( info.isMinimized())
+-    {
+-        KWindowSystem::unminimizeWindow(d->win);
+-    }
+-
+-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+-    ni.setState(0, NET::Max);
+-
+-    if (!on_current)
+-    {
+-        KWindowSystem::forceActiveWindow( d->win );
+-    }
+-}
+-
+ void Task::setIconified(bool iconify)
+ {
+     if (iconify)
+@@ -671,12 +531,6 @@
+     setIconified(!isIconified());
+ }
+ 
+-void Task::close()
+-{
+-    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
+-    ri.closeWindowRequest( d->win );
+-}
+-
+ void Task::raise()
+ {
+ //    kDebug(1210) << "Task::raise(): " << name();
+@@ -714,119 +568,31 @@
+     }
+ }
+ 
+-void Task::toDesktop(int desk)
+-{
+-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMDesktop);
+-    if (desk == 0) {
+-        if (isOnAllDesktops()) {
+-            ni.setDesktop(KWindowSystem::currentDesktop());
+-            KWindowSystem::forceActiveWindow(d->win);
+-        } else {
+-            ni.setDesktop(NETWinInfo::OnAllDesktops);
+-        }
+-
+-        return;
+-    }
+-
+-    ni.setDesktop(desk);
+-
+-    if (desk == KWindowSystem::currentDesktop()) {
+-        KWindowSystem::forceActiveWindow(d->win);
+-    }
+-}
+-
+ void Task::toCurrentDesktop()
+ {
+     toDesktop(KWindowSystem::currentDesktop());
+ }
+ 
+-void Task::setAlwaysOnTop(bool stay)
+-{
+-    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+-    if(stay)
+-        ni.setState( NET::StaysOnTop, NET::StaysOnTop );
+-    else
+-        ni.setState( 0, NET::StaysOnTop );
+-}
+-
+ void Task::toggleAlwaysOnTop()
+ {
+     setAlwaysOnTop( !isAlwaysOnTop() );
+ }
+ 
+-void Task::setKeptBelowOthers(bool below)
+-{
+-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+-
+-    if (below)
+-    {
+-        ni.setState(NET::KeepBelow, NET::KeepBelow);
+-    }
+-    else
+-    {
+-        ni.setState(0, NET::KeepBelow);
+-    }
+-}
+-
+ void Task::toggleKeptBelowOthers()
+ {
+     setKeptBelowOthers(!isKeptBelowOthers());
+ }
+ 
+-void Task::setFullScreen(bool fullscreen)
+-{
+-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+-
+-    if (fullscreen)
+-    {
+-        ni.setState(NET::FullScreen, NET::FullScreen);
+-    }
+-    else
+-    {
+-        ni.setState(0, NET::FullScreen);
+-    }
+-}
+-
+ void Task::toggleFullScreen()
+ {
+     setFullScreen(!isFullScreen());
+ }
+ 
+-void Task::setShaded(bool shade)
+-{
+-    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
+-    if(shade)
+-        ni.setState( NET::Shaded, NET::Shaded );
+-    else
+-        ni.setState( 0, NET::Shaded );
+-}
+-
+ void Task::toggleShaded()
+ {
+     setShaded( !isShaded() );
+ }
+ 
+-void Task::publishIconGeometry(QRect rect)
+-{
+-    if (rect == d->iconGeometry)
+-    {
+-        return;
+-    }
+-
+-    d->iconGeometry = rect;
+-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), 0);
+-    NETRect r;
+-
+-    if (rect.isValid())
+-    {
+-        r.pos.x = rect.x();
+-        r.pos.y = rect.y();
+-        r.size.width = rect.width();
+-        r.size.height = rect.height();
+-    }
+-    ni.setIconGeometry(r);
+-}
+-
+ void Task::addMimeData(QMimeData *mimeData) const
+ {
+     Q_ASSERT(mimeData);
+Index: libs/taskmanager/task.h
+===================================================================
+--- libs/taskmanager/task.h	(revision 1006026)
++++ libs/taskmanager/task.h	(working copy)
+@@ -236,7 +236,9 @@
+     //* @internal
+     ::TaskManager::TaskChanges refresh(unsigned int dirty);
+     //* @internal
++#ifdef Q_WS_X11
+     void addTransient( WId w, const NETWinInfo& info );
++#endif
+     //* @internal
+     void removeTransient( WId w );
+     //* @internal
+Index: libs/taskmanager/task_win.cpp
+===================================================================
+--- libs/taskmanager/task_win.cpp	(revision 0)
++++ libs/taskmanager/task_win.cpp	(revision 0)
+@@ -0,0 +1,166 @@
++/*****************************************************************
++
++Copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
++AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++******************************************************************/
++
++#include <windows.h>
++
++namespace TaskManager
++{
++
++void Task::updateDemandsAttentionState( WId w )
++{
++}
++
++QString Task::className() const
++{
++    return QString();
++}
++
++QString Task::classClass() const
++{
++    return QString();
++}
++
++void Task::move()
++{
++    bool on_current = d->info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(d->info.desktop());
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++
++    if (d->info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    QRect geom = d->info.geometry();
++    QCursor::setPos(geom.center());
++
++}
++
++void Task::resize()
++{
++    bool on_current = d->info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(d->info.desktop());
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++
++    if (d->info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    QRect geom = d->info.geometry();
++    QCursor::setPos(geom.bottomRight());
++}
++
++void Task::setMaximized(bool maximize)
++{
++    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
++    bool on_current = info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(info.desktop());
++    }
++
++    if (info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    if (!on_current)
++    {
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++}
++
++void Task::restore()
++{
++    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
++    bool on_current = info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(info.desktop());
++    }
++
++    if( info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    if (!on_current)
++    {
++        KWindowSystem::forceActiveWindow( d->win );
++    }
++}
++
++void Task::close()
++{
++    PostMessage( d->win, WM_CLOSE, 0, 0 );
++}
++
++void Task::toDesktop(int desk)
++{
++    if (desk == KWindowSystem::currentDesktop()) {
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++}
++
++void Task::setAlwaysOnTop(bool stay)
++{
++    Q_UNUSED(stay);
++}
++
++void Task::setKeptBelowOthers(bool below)
++{
++    Q_UNUSED(below);
++}
++
++void Task::setFullScreen(bool fullscreen)
++{
++    Q_UNUSED(fullscreen);
++}
++
++void Task::setShaded(bool shade)
++{
++    Q_UNUSED(shade);
++}
++
++void Task::publishIconGeometry(QRect rect)
++{
++    if (rect == d->iconGeometry)
++    {
++        return;
++    }
++
++    d->iconGeometry = rect;
++}
++
++} // TaskManager namespace
+Index: libs/taskmanager/task_x11.cpp
+===================================================================
+--- libs/taskmanager/task_x11.cpp	(revision 0)
++++ libs/taskmanager/task_x11.cpp	(revision 0)
+@@ -0,0 +1,272 @@
++/*****************************************************************
++
++Copyright (c) 2000-2001 Matthias Elter <elter@kde.org>
++Copyright (c) 2001 Richard Moore <rich@kde.org>
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
++AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++******************************************************************/
++
++void Task::updateDemandsAttentionState( WId w )
++{
++    if (window() != w) {
++        // 'w' is a transient for this task
++        NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
++        if (i.state() & NET::DemandsAttention) {
++            if (!d->transientsDemandingAttention.contains(w)) {
++                d->transientsDemandingAttention.insert(w);
++            }
++        } else {
++            d->transientsDemandingAttention.remove(w);
++        }
++    }
++}
++
++void Task::addTransient( WId w, const NETWinInfo& info )
++{
++    d->transients.insert(w);
++    if (info.state() & NET::DemandsAttention) {
++        d->transientsDemandingAttention.insert(w);
++        emit changed(TransientsChanged);
++    }
++}
++
++QString Task::className() const
++{
++    XClassHint hint;
++    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
++        QString nh( hint.res_name );
++        XFree( hint.res_name );
++        XFree( hint.res_class );
++        return nh;
++    }
++    return QString();
++}
++
++QString Task::classClass() const
++{
++    XClassHint hint;
++    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
++        QString ch( hint.res_class );
++        XFree( hint.res_name );
++        XFree( hint.res_class );
++        return ch;
++    }
++    return QString();
++}
++
++void Task::move()
++{
++    bool on_current = d->info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(d->info.desktop());
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++
++    if (d->info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    QRect geom = d->info.geometry();
++    QCursor::setPos(geom.center());
++
++    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
++    ri.moveResizeRequest(d->win, geom.center().x(),
++                         geom.center().y(), NET::Move);
++}
++
++void Task::resize()
++{
++    bool on_current = d->info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(d->info.desktop());
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++
++    if (d->info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    QRect geom = d->info.geometry();
++    QCursor::setPos(geom.bottomRight());
++
++    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
++    ri.moveResizeRequest(d->win, geom.bottomRight().x(),
++                         geom.bottomRight().y(), NET::BottomRight);
++}
++
++void Task::setMaximized(bool maximize)
++{
++    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
++    bool on_current = info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(info.desktop());
++    }
++
++    if (info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
++
++    if (maximize)
++    {
++        ni.setState(NET::Max, NET::Max);
++    }
++    else
++    {
++        ni.setState(0, NET::Max);
++    }
++
++    if (!on_current)
++    {
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++}
++
++void Task::toggleMaximized()
++{
++    setMaximized(!isMaximized());
++}
++
++void Task::restore()
++{
++    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
++    bool on_current = info.isOnCurrentDesktop();
++
++    if (!on_current)
++    {
++        KWindowSystem::setCurrentDesktop(info.desktop());
++    }
++
++    if( info.isMinimized())
++    {
++        KWindowSystem::unminimizeWindow(d->win);
++    }
++
++    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
++    ni.setState(0, NET::Max);
++
++    if (!on_current)
++    {
++        KWindowSystem::forceActiveWindow( d->win );
++    }
++}
++
++void Task::close()
++{
++    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
++    ri.closeWindowRequest( d->win );
++}
++
++void Task::toDesktop(int desk)
++{
++    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMDesktop);
++    if (desk == 0) {
++        if (isOnAllDesktops()) {
++            ni.setDesktop(KWindowSystem::currentDesktop());
++            KWindowSystem::forceActiveWindow(d->win);
++        } else {
++            ni.setDesktop(NETWinInfo::OnAllDesktops);
++        }
++
++        return;
++    }
++
++    ni.setDesktop(desk);
++
++    if (desk == KWindowSystem::currentDesktop()) {
++        KWindowSystem::forceActiveWindow(d->win);
++    }
++}
++
++void Task::setAlwaysOnTop(bool stay)
++{
++    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
++    if(stay)
++        ni.setState( NET::StaysOnTop, NET::StaysOnTop );
++    else
++        ni.setState( 0, NET::StaysOnTop );
++}
++
++void Task::setKeptBelowOthers(bool below)
++{
++    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
++
++    if (below)
++    {
++        ni.setState(NET::KeepBelow, NET::KeepBelow);
++    }
++    else
++    {
++        ni.setState(0, NET::KeepBelow);
++    }
++}
++
++void Task::setFullScreen(bool fullscreen)
++{
++    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
++
++    if (fullscreen)
++    {
++        ni.setState(NET::FullScreen, NET::FullScreen);
++    }
++    else
++    {
++        ni.setState(0, NET::FullScreen);
++    }
++}
++
++void Task::setShaded(bool shade)
++{
++    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
++    if(shade)
++        ni.setState( NET::Shaded, NET::Shaded );
++    else
++        ni.setState( 0, NET::Shaded );
++}
++
++void Task::publishIconGeometry(QRect rect)
++{
++    if (rect == d->iconGeometry)
++    {
++        return;
++    }
++
++    d->iconGeometry = rect;
++    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), 0);
++    NETRect r;
++
++    if (rect.isValid())
++    {
++        r.pos.x = rect.x();
++        r.pos.y = rect.y();
++        r.size.width = rect.width();
++        r.size.height = rect.height();
++    }
++    ni.setIconGeometry(r);
++}
+Index: libs/taskmanager/taskmanager.cpp
+===================================================================
+--- libs/taskmanager/taskmanager.cpp	(revision 1006026)
++++ libs/taskmanager/taskmanager.cpp	(working copy)
+@@ -42,6 +42,10 @@
+ #include <QX11Info>
+ #endif
+ 
++#ifdef Q_WS_WIN
++#include <windows.h>
++#endif
++
+ #include <kephal/screens.h>
+ 
+ namespace TaskManager
+@@ -197,6 +201,7 @@
+ 
+ void TaskManager::windowAdded(WId w )
+ {
++#ifdef Q_WS_X11
+     NETWinInfo info(QX11Info::display(), w, QX11Info::appRootWindow(),
+                     NET::WMWindowType | NET::WMPid | NET::WMState);
+ 
+@@ -239,6 +244,7 @@
+             }
+         }
+     }
++#endif
+ 
+     TaskPtr t(new Task(w, 0));
+     d->tasksByWId[w] = t;
+@@ -293,6 +299,7 @@
+ 
+ void TaskManager::windowChanged(WId w, unsigned int dirty)
+ {
++#ifdef Q_WS_X11
+     if (dirty & NET::WMState) {
+         NETWinInfo info (QX11Info::display(), w, QX11Info::appRootWindow(),
+                          NET::WMState | NET::XAWMState);
+@@ -310,6 +317,7 @@
+             }
+         }
+     }
++#endif
+ 
+     // check if any state we are interested in is marked dirty
+     if (!(dirty & (NET::WMVisibleName | NET::WMName |
+@@ -482,10 +490,11 @@
+             if (t == task) {
+                 return true;
+             }
+-
++#ifndef Q_WS_WIN
+             if (!t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop())) {
+                 return false;
+             }
++#endif
+         }
+     } while (it-- != begin);
+ 
+Index: libs/taskmanager/taskmanager.h
+===================================================================
+--- libs/taskmanager/taskmanager.h	(revision 1006026)
++++ libs/taskmanager/taskmanager.h	(working copy)
+@@ -32,7 +32,7 @@
+ #include <KDE/KSharedPtr>
+ #include <KDE/KWindowSystem>
+ 
+-class QUuid;
++struct QUuid;
+ 
+ namespace TaskManager
+ {
+Index: plasma/applets/CMakeLists.txt
+===================================================================
+--- plasma/applets/CMakeLists.txt	(revision 1006026)
++++ plasma/applets/CMakeLists.txt	(working copy)
+@@ -10,6 +10,7 @@
+ add_subdirectory(quicklaunch)
+ add_subdirectory(trash)
+ add_subdirectory(panelspacer)
++add_subdirectory(tasks)
+ 
+ if(QT_QTWEBKIT_FOUND)
+    add_subdirectory(webbrowser)
+@@ -19,5 +20,4 @@
+    add_subdirectory(pager)
+    add_subdirectory(system-monitor)
+    add_subdirectory(systemtray)
+-   add_subdirectory(tasks)
+ endif(NOT WIN32)

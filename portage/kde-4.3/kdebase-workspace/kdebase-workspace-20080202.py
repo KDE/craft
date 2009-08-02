@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdebase-workspace-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdebase-workspace-4.3.' + ver
         self.patchToApply['4.2.95'] = ( 'kdebase-kworkspace.diff', 0 )
+        self.patchToApply['4.3.0'] = ( 'kdebase-workspace-tasks.diff', 0 )
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
