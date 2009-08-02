@@ -56,7 +56,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-vc90-1.2.4-1-lib.tar.bz2"
         elif self.compiler() == "mingw":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
-        self.mysql = "http://downloads.sourceforge.net/kde-windows/mysql-server-5.1.36-1-lib.tar.bz2"
+        self.mysql = "http://downloads.sourceforge.net/kde-windows/mysql-server-5.1.36-2-lib.tar.bz2"
         self.subinfo = subinfo()
 
     def fetch(self):
@@ -78,7 +78,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         utils.cleanDirectory( self.buildDir() )
 
         self.enterBuildDir()
-        
+        print self.buildDir()
         thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
 
         utils.createDir(thirdparty_dir)
@@ -127,7 +127,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         userin = "y"
 
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
-          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff " \
+          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp -plugin-sql-mysql " \
           "-nomake demos -nomake examples -nomake docs " \
