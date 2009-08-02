@@ -133,6 +133,8 @@ class baseclass:
             self.compiler = "msvc2008"
         elif COMPILER == "mingw":
             self.compiler = "mingw"
+        elif COMPILER == "mingw4":
+            self.compiler = "mingw4"
         else:
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
@@ -352,7 +354,7 @@ class baseclass:
         if COMPILER == "msvc2005" or COMPILER == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
-        elif COMPILER == "mingw":
+        elif COMPILER == "mingw" or COMPILER == "mingw4":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
             self.cmakeMakeProgramm = "mingw32-make"
         else:
