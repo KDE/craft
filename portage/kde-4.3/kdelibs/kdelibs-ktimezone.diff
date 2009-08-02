@@ -1,0 +1,674 @@
+Index: CMakeLists.txt
+===================================================================
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -68,6 +68,7 @@
+       util/kshell_win.cpp
+       util/kmacroexpander_win.cpp
+       util/kuser_win.cpp
++      date/ktimezone_win.cpp
+    )
+    if(NOT MSVC)
+    set(kdecore_OPTIONAL_SRCS ${kdecore_OPTIONAL_SRCS}
+Index: date/ksystemtimezone.cpp
+===================================================================
+--- date/ksystemtimezone.cpp
++++ date/ksystemtimezone.cpp
+@@ -54,8 +54,10 @@
+ #include <kdebug.h>
+ #include <kconfiggroup.h>
+ #include "ktzfiletimezone.h"
++#ifdef Q_OS_WIN
++#include "ktimezone_win.h"
++#endif
+ 
+-
+ #define KTIMEZONED_DBUS_IFACE "org.kde.KTimeZoned"
+ 
+ 
+@@ -116,7 +118,12 @@
+     static void setLocalZone();
+     static void cleanup();
+     static void readConfig(bool init);
+-#ifndef Q_OS_WIN
++#ifdef Q_OS_WIN
++    static void updateTimezoneInformation()
++    {
++      instance()->updateTimezoneInformation(true);
++    }
++#else
+     static void updateZonetab()  { instance()->readZoneTab(true); }
+ #endif
+ 
+@@ -128,7 +135,9 @@
+ 
+ private:
+     KSystemTimeZonesPrivate() {}
+-#ifndef Q_OS_WIN
++#ifdef Q_OS_WIN
++    void updateTimezoneInformation(bool update);
++#else
+     void readZoneTab(bool update);
+     static float convertCoordinate(const QString &coordinate);
+ #endif
+@@ -256,6 +265,7 @@
+ #ifdef Q_OS_WIN
+         // On Windows, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones
+         // is the place to look. The TZI binary value is the TIME_ZONE_INFORMATION structure.
++        m_instance->updateTimezoneInformation(false);
+ #else
+         // For Unix, read zone.tab.
+         if (!m_zonetab.isEmpty())
+@@ -313,7 +323,43 @@
+     delete m_tzfileSource;
+ }
+ 
+-#ifndef Q_OS_WIN
++#ifdef Q_OS_WIN
++
++void KSystemTimeZonesPrivate::updateTimezoneInformation(bool update)
++{
++    if (!m_source)
++        m_source = new KSystemTimeZoneSourceWindows;
++    QStringList newZones;
++    Q_FOREACH( const QString & tz, KSystemTimeZoneWindows::listTimeZones() ) {
++       // const std::wstring wstr = tz.toStdWString();
++       // const KTimeZone info = make_time_zone( wstr.c_str() );
++      KSystemTimeZoneWindows stz(m_source, tz);
++      if (update)
++        {
++            // Update the existing collection with the new zone definition
++            newZones += stz.name();
++            KTimeZone oldTz = zone(stz.name());
++            if (oldTz.isValid())
++                oldTz.updateBase(stz);   // the zone previously existed, so update its definition
++            else
++                add(stz);   // the zone didn't previously exist, so add it
++        }
++        else
++            add(stz);
++    }
++    if (update)
++    {
++        // Remove any zones from the collection which no longer exist
++        const ZoneMap oldZones = zones();
++        for (ZoneMap::const_iterator it = oldZones.begin();  it != oldZones.end();  ++it)
++        {
++            if (newZones.indexOf(it.key()) < 0)
++                remove(it.value());
++        }
++    }
++}
++
++#else
+ /*
+  * Find the location of the zoneinfo files and store in mZoneinfoDir.
+  * Parse zone.tab and for each time zone, create a KSystemTimeZone instance.
+@@ -769,3 +815,4 @@
+ {
+     return QList<int>();
+ }
++
+Index: date/ktimezone.cpp
+===================================================================
+--- date/ktimezone.cpp
++++ date/ktimezone.cpp
+@@ -118,10 +118,6 @@
+ 
+ KTimeZone KTimeZones::zone(const QString &name) const
+ {
+-#ifdef Q_WS_WIN
+-    // return always the utc for now
+-    return KTimeZone::utc();
+-#else
+     if (!name.isEmpty())
+     {
+         ZoneMap::ConstIterator it = d->zones.constFind(name);
+@@ -131,7 +127,6 @@
+             return KTimeZone::utc();
+     }
+     return KTimeZone();    // error
+-#endif
+ }
+ 
+ 
+@@ -249,7 +244,7 @@
+ {
+ }
+ 
+-KTimeZone::Transition::Transition(const QDateTime &t, const KTimeZone::Phase &p) 
++KTimeZone::Transition::Transition(const QDateTime &t, const KTimeZone::Phase &p)
+     : d(new KTimeZoneTransitionPrivate)
+ {
+     d->time  = t;
+@@ -419,7 +414,7 @@
+ {
+     ++d->refCount;
+ }
+-  
++
+ KTimeZoneBackend::~KTimeZoneBackend()
+ {
+     if (d && --d->refCount == 0)
+Index: date/ktimezone_win.h
+===================================================================
+--- date/ktimezone_win.h
++++ date/ktimezone_win.h
+@@ -0,0 +1,48 @@
++/*
++   This file is part of the KDE libraries
++   Copyright (c) 2008 Marc Mutz <mutz@kde.org>, Till Adam <adam@kde.org>
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public
++   License as published by the Free Software Foundation; either
++   version 2 of the License, or (at your option) any later version.
++
++   This library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public License
++   along with this library; see the file COPYING.LIB.  If not, write to
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++#ifndef _KTIMEZONE_WINDOWS_H
++#define _KTIMEZONE_WINDOWS_H
++
++#include <kdecore_export.h>
++
++#include <ktimezone.h>
++#include <ksystemtimezone.h>
++#include <windows.h>
++
++class KDECORE_EXPORT KSystemTimeZoneSourceWindows : public KSystemTimeZoneSource
++{
++public:
++  KSystemTimeZoneSourceWindows() {}
++  KTimeZoneData* parse(const KTimeZone &zone) const;
++};
++
++
++class KDECORE_EXPORT KSystemTimeZoneWindows : public KTimeZone
++{
++public:
++  KSystemTimeZoneWindows(KTimeZoneSource *source, const QString &name);
++    
++  ~KSystemTimeZoneWindows() {}
++  static QStringList listTimeZones();
++};
++
++#endif // _KTIMEZONE_WINDOWS_H
++
+Index: date/ktimezone_win.cpp
+===================================================================
+--- date/ktimezone_win.cpp
++++ date/ktimezone_win.cpp
+@@ -0,0 +1,464 @@
++/*
++   This file is part of the KDE libraries
++   Copyright (c) 2008 Marc Mutz <mutz@kde.org>, Till Adam <adam@kde.org>
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public
++   License as published by the Free Software Foundation; either
++   version 2 of the License, or (at your option) any later version.
++
++   This library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public License
++   along with this library; see the file COPYING.LIB.  If not, write to
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++
++#include "ktimezone_win.h"
++#include <config.h>
++
++#include <kdebug.h>
++
++#include <QStringList>
++#include <windows.h>
++
++#include <memory>
++#include <string>
++#include <cassert>
++
++
++namespace {
++    class HKeyCloser {
++        const HKEY hkey;
++        Q_DISABLE_COPY( HKeyCloser )
++    public:
++        explicit HKeyCloser( HKEY hk ) : hkey( hk ) {}
++        ~HKeyCloser() { RegCloseKey(  hkey ); }
++    };
++
++    struct TZI {
++        LONG Bias;
++        LONG StandardBias;
++        LONG DaylightBias;
++        SYSTEMTIME StandardDate;
++        SYSTEMTIME DaylightDate;
++    };
++}
++
++
++static const TCHAR timeZonesKey[] = TEXT("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones");
++static inline QDateTime systemtime_to_qdatetime( const SYSTEMTIME & st ) {
++    return QDateTime( QDate( st.wYear, st.wMonth, st.wDay ),
++                      QTime( st.wHour, st.wMinute, st.wSecond, st.wMilliseconds ) );
++}
++
++static SYSTEMTIME qdatetime_to_systemtime( const QDateTime & dt ) {
++    const QDate d = dt.date();
++    const QTime t = dt.time();
++    const SYSTEMTIME st = {
++        d.year(),
++        d.month(),
++        d.dayOfWeek() % 7, // 1..7 (Mon..Sun)->0..6(Sun..Sat)
++        d.day(),
++        t.hour(),
++        t.minute(),
++        t.second(),
++        t.msec(),
++    };
++    return st;
++}
++
++static bool TzSpecificLocalTimeToSystemTime_Portable( TIME_ZONE_INFORMATION* tz,
++                                                      SYSTEMTIME *i_stLocal,
++                                                      SYSTEMTIME *o_stUniversal )
++{
++
++    // the method below was introduced in XP. If it's there, use it, otherwise
++    // fall back to doing things manually
++//#if Q_OS_VERSION > 5.0
++#if 0
++    if ( QSysInfo::windowsVersion() > QSysInfo::WV_2000 )
++    {
++        return TzSpecificLocalTimeToSystemTime( &tz, i_stLocal , o_stUniversal ) != 0;
++    }
++#endif
++    // the algorithm is:
++    // - switch to the desired timezone temporarily
++    // - convert system time to (local) file time in that timezone
++    // - convert local file time to utc file time
++    // - convert utc file time to system time
++    // - reset timezone
++    FILETIME ft, ft_utc;
++    int result = 1;
++    TIME_ZONE_INFORMATION currentTimeZone;
++    result = GetTimeZoneInformation(&currentTimeZone);
++    if ( result == TIME_ZONE_ID_INVALID ) {
++        kWarning(161) << "Getting time zone information failed";
++        return false;
++    }
++    result = SetTimeZoneInformation(tz);
++    if ( result == 0 ) {
++        kWarning(161) << "Setting temporary time zone failed";
++        return false;
++    }
++    result = SystemTimeToFileTime(i_stLocal, &ft);
++    if ( result == 0 ) {
++        kWarning(161) << "SysteTimeToFileTime failed";
++        return false;
++    }
++    result = LocalFileTimeToFileTime(&ft, &ft_utc);
++    if ( result == 0 ) {
++        kWarning(161) << "LocalFileTimeToFileTime failed";
++        return false;
++    }
++    result = FileTimeToSystemTime(&ft_utc,o_stUniversal);
++    if ( result == 0 ) {
++        kWarning(161) << "FileTimeToSystemTime failed";
++        return false;
++    }
++    result = SetTimeZoneInformation(&currentTimeZone);
++    if ( result == 0 ) {
++        kWarning(161) << "Re-setting time zone information failed";
++        return false;
++    }
++    return true;
++}
++
++
++
++
++static bool get_binary_value( HKEY key, const TCHAR * value, void * data, DWORD numData, DWORD * outNumData=0 ) {
++    DWORD size = numData;
++    DWORD type = REG_BINARY;
++    if ( RegQueryValueEx( key, value, 0, &type, (LPBYTE)data, &size ) != ERROR_SUCCESS )
++        return false;
++    assert( type == REG_BINARY );
++    if (  type != REG_BINARY )
++        return false;
++    if ( outNumData )
++        *outNumData = size;
++    return true;
++}
++
++static bool get_string_value( HKEY key, const WCHAR * value, WCHAR * dest, DWORD destSizeInBytes ) {
++    DWORD size = destSizeInBytes;
++    DWORD type = REG_SZ;
++    dest[0] = '\0';
++    if ( RegQueryValueExW( key, value, 0, &type, (LPBYTE)dest, &size ) != ERROR_SUCCESS )
++        return false;
++    //dest[ qMin( size, destSizeInBytes - sizeof( WCHAR ) ) / sizeof( WCHAR ) ] = 0;
++    assert( type == REG_SZ );
++    if ( type != REG_SZ )
++        return false;
++    return true;
++}
++
++//
++//
++// Backend interface impl:
++//
++//
++
++static bool check_prereq( const KTimeZone * caller, const QDateTime & dt, Qt::TimeSpec spec ) {
++    return caller && caller->isValid() && dt.isValid() && dt.timeSpec() == spec ;
++}
++
++static inline bool check_local( const KTimeZone * caller, const QDateTime & dt ) {
++    return check_prereq( caller, dt, Qt::LocalTime );
++}
++
++static inline bool check_utc( const KTimeZone * caller, const QDateTime & dt ) {
++    return check_prereq( caller, dt, Qt::UTC );
++}
++
++static bool has_transition( const TIME_ZONE_INFORMATION & tz ) {
++    return tz.StandardDate.wMonth != 0 && tz.DaylightDate.wMonth != 0 ;
++}
++
++static int win_dayofweek_to_qt_dayofweek( int wdow ) {
++    // Sun(0)..Sat(6) -> Mon(1)...Sun(7)
++    return wdow ? wdow : 7 ;
++}
++
++static int qt_dayofweek_to_win_dayofweek( int qdow ) {
++    // Mon(1)...Sun(7) -> Sub(0)...Sat(6)
++    return qdow % 7;
++}
++
++static QDate find_nth_weekday_in_month_of_year( int nth, int dayOfWeek, int month, int year ) {
++    assert( nth >= 1 );
++    assert( nth <= 5 );
++
++    const QDate first( year, month, 1 );
++    const int actualDayOfWeek = first.dayOfWeek();
++    QDate candidate = first.addDays( ( nth - 1 ) * 7 + dayOfWeek - actualDayOfWeek );
++    assert( candidate.dayOfWeek() == dayOfWeek );
++    if ( nth == 5 )
++        if ( candidate.month() != month )
++            candidate = candidate.addDays( -7 );
++    assert( candidate.month() == month );
++    return candidate;
++}
++
++static QDateTime transition( const SYSTEMTIME & st, int year ) {
++    assert( st.wYear == 0 );
++    assert( st.wMonth != 0 );
++    return QDateTime( find_nth_weekday_in_month_of_year( st.wDay, win_dayofweek_to_qt_dayofweek( st.wDayOfWeek ), st.wMonth, year ),
++                      QTime( st.wHour, st.wMinute, st.wSecond, st.wMilliseconds ) );
++}
++
++struct Transitions {
++    QDateTime stdStart, dstStart;
++};
++
++Transitions transitions( const TIME_ZONE_INFORMATION & tz, int year ) {
++    const Transitions t = {
++        transition( tz.StandardDate, year ), transition( tz.DaylightDate, year )
++    };
++    return t;
++}
++
++class KSystemTimeZoneBackendWindows : public KTimeZoneBackend
++{
++public:
++  KSystemTimeZoneBackendWindows(KTimeZoneSource *source, const QString &name)
++  : KTimeZoneBackend(source, name) {}
++
++  ~KSystemTimeZoneBackendWindows() {}
++
++  KSystemTimeZoneBackendWindows *clone() const;
++
++  QByteArray type() const;
++
++  int offsetAtZoneTime(const KTimeZone *caller, const QDateTime &zoneDateTime, int *secondOffset) const;
++  int offsetAtUtc(const KTimeZone *caller, const QDateTime &utcDateTime) const;
++  int offset(const KTimeZone *caller, time_t t) const;
++  bool isDstAtUtc(const KTimeZone *caller, const QDateTime &utcDateTime) const;
++  bool isDst(const KTimeZone *caller, time_t t) const;
++};
++
++class KSystemTimeZoneDataWindows : public KTimeZoneData
++{
++public:
++  KSystemTimeZoneDataWindows()
++  :KTimeZoneData()
++  {
++
++  }
++  TIME_ZONE_INFORMATION _tzi;
++  QString displayName;
++
++  const TIME_ZONE_INFORMATION & tzi( int year = 0 ) const { Q_UNUSED( year ); return _tzi; }
++};
++
++
++KTimeZoneData* KSystemTimeZoneSourceWindows::parse(const KTimeZone &zone) const
++{
++    KSystemTimeZoneDataWindows* data = new KSystemTimeZoneDataWindows();
++
++    std::basic_string<TCHAR> path( timeZonesKey );
++    path += TEXT( "\\" );
++    path += reinterpret_cast<TCHAR*>( zone.name().toLocal8Bit().data() );
++
++    HKEY key;
++    if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, path.c_str(), 0, KEY_READ, &key ) != ERROR_SUCCESS ) {
++        delete data;
++        return 0; // FIXME what's the right error handling here?
++    }
++
++    const HKeyCloser closer( key );
++
++    TZI tzi = { 0 };
++
++    if ( !get_binary_value( key, TEXT( "TZI" ), &tzi, sizeof( TZI ) ) ) {
++        delete data;
++        return 0; // ?
++    }
++
++    get_string_value( key, L"Std", data->_tzi.StandardName, sizeof( data->_tzi.StandardName ) );
++    get_string_value( key, L"Dlt", data->_tzi.DaylightName, sizeof( data->_tzi.DaylightName ) );
++
++    WCHAR display[512];
++    get_string_value( key, L"Display", display, sizeof( display ) );
++    data->displayName = QString::fromUtf16( reinterpret_cast<ushort*>( display ) );
++
++#define COPY( name ) data->_tzi.name = tzi.name
++    COPY( Bias );
++    COPY( StandardBias );
++    COPY( StandardDate );
++    COPY( DaylightBias );
++    COPY( DaylightDate );
++#undef COPY
++
++    return data;
++}
++
++Transitions transitions( const KTimeZone * caller, int year ) {
++    return transitions( static_cast<const KSystemTimeZoneDataWindows*>( caller->data(true) )->tzi( year ), year );
++}
++
++static bool is_dst( const TIME_ZONE_INFORMATION & tzi, const QDateTime & utc, int year ) {
++    if ( !has_transition( tzi ) )
++        return false;
++    const Transitions trans = transitions( tzi, year );
++    if ( trans.stdStart < trans.dstStart )
++        return trans.dstStart <= utc || utc < trans.stdStart ;
++    else
++        return trans.dstStart <= utc && utc < trans.stdStart ;
++}
++
++static bool is_dst( const KTimeZone * caller, const QDateTime & utc ) {
++    assert( caller );
++    assert( caller->isValid() );
++    const int year = utc.date().year();
++    const TIME_ZONE_INFORMATION & tzi = static_cast<const KSystemTimeZoneDataWindows*>( caller->data(true) )->tzi( year );
++    return is_dst( tzi, utc, year );
++}
++
++static int effective_offset( const TIME_ZONE_INFORMATION& tz, bool isDst ) {
++    int bias = tz.Bias;
++    if ( has_transition( tz ) )
++        if ( isDst )
++            bias += tz.DaylightBias;
++        else
++            bias += tz.StandardBias;
++    return bias * -60; // min -> secs
++}
++
++static int offset_at_utc( const KTimeZone * caller, const QDateTime & utc ) {
++    assert( caller );
++    assert( caller->isValid() );
++    const int year = utc.date().year();
++    const TIME_ZONE_INFORMATION & tz = static_cast<const KSystemTimeZoneDataWindows*>( caller->data(true) )->tzi( year );
++    return effective_offset( tz, is_dst( tz, utc, year ) );
++}
++
++static const int OneHour = 3600; //sec
++
++static int difference( const SYSTEMTIME & st1, const SYSTEMTIME & st2 ) {
++    return systemtime_to_qdatetime( st1 ).secsTo( systemtime_to_qdatetime( st2 ) );
++}
++
++static int offset_at_zone_time( const KTimeZone * caller, const SYSTEMTIME & zone, int * secondOffset ) {
++    assert( caller );
++    assert( caller->isValid() );
++    assert(caller->data(true));
++    const KSystemTimeZoneDataWindows * const data = static_cast<const KSystemTimeZoneDataWindows*>( caller->data(true) );
++    const TIME_ZONE_INFORMATION & tz = data->tzi( zone.wYear );
++    SYSTEMTIME utc;
++    if ( !TzSpecificLocalTimeToSystemTime_Portable( const_cast<LPTIME_ZONE_INFORMATION>( &tz ), const_cast<LPSYSTEMTIME>( &zone ), &utc ) )
++        return 0;
++    const bool isDst = is_dst( tz, systemtime_to_qdatetime( utc ), utc.wYear );
++    int result = effective_offset( tz, isDst );
++    if ( secondOffset ) {
++        const SYSTEMTIME utcplus1 = qdatetime_to_systemtime( systemtime_to_qdatetime( utc ).addSecs( OneHour ) );
++        const SYSTEMTIME utcminus1 = qdatetime_to_systemtime( systemtime_to_qdatetime( utc ).addSecs( -OneHour ) );
++        SYSTEMTIME zoneplus1, zoneminus1;
++        if ( !SystemTimeToTzSpecificLocalTime( const_cast<LPTIME_ZONE_INFORMATION>( &tz ), const_cast<LPSYSTEMTIME>( &utcplus1 ), &zoneplus1 ) ||
++             !SystemTimeToTzSpecificLocalTime( const_cast<LPTIME_ZONE_INFORMATION>( &tz ), const_cast<LPSYSTEMTIME>( &utcminus1 ), &zoneminus1 ) )
++            return result;
++        if ( difference( zoneminus1, zone ) != OneHour ||
++             difference( zone, zoneplus1 ) != OneHour )
++        {
++            *secondOffset = effective_offset( tz, !isDst );
++            if ( result < *secondOffset )
++                qSwap( result, *secondOffset );
++        }
++    }
++    return result;
++}
++
++
++static const int MAX_KEY_LENGTH = 255;
++
++// TCHAR can be either uchar, or wchar_t:
++static inline QString tchar_to_qstring( TCHAR * ustr ) {
++    const char * str = reinterpret_cast<const char*>( ustr );
++    return QString::fromLocal8Bit( str );
++}
++static inline QString tchar_to_qstring( const wchar_t * str ) {
++    return QString::fromUtf16( reinterpret_cast<const ushort*>( str ) );
++}
++
++static QStringList list_key( HKEY key ) {
++
++    DWORD numSubKeys = 0;
++    QStringList result;
++
++    if ( RegQueryInfoKey( key, 0, 0, 0, &numSubKeys, 0, 0, 0, 0, 0, 0, 0 ) == ERROR_SUCCESS )
++        for ( DWORD i = 0 ; i < numSubKeys ; ++i ) {
++            TCHAR name[MAX_KEY_LENGTH+1];
++            DWORD nameLen = MAX_KEY_LENGTH;
++            if ( RegEnumKeyEx( key, i, name, &nameLen, 0, 0, 0, 0 ) == ERROR_SUCCESS )
++                result.push_back( tchar_to_qstring( name ) );
++        }
++
++    return result;
++}
++
++
++KSystemTimeZoneBackendWindows * KSystemTimeZoneBackendWindows::clone() const
++{
++    return new KSystemTimeZoneBackendWindows(*this);
++}
++
++QByteArray KSystemTimeZoneBackendWindows::type() const
++{
++    return "KSystemTimeZoneWindows";
++}
++
++int KSystemTimeZoneBackendWindows::offsetAtZoneTime(const KTimeZone *caller, const QDateTime &zoneDateTime, int *secondOffset) const
++{
++    if (!caller->isValid()  ||  !zoneDateTime.isValid()  ||  zoneDateTime.timeSpec() != Qt::LocalTime)
++        return 0;
++    if ( !check_local( caller, zoneDateTime ) )
++        return 0;
++
++    return offset_at_zone_time( caller, qdatetime_to_systemtime( zoneDateTime ), secondOffset );
++}
++
++int KSystemTimeZoneBackendWindows::offsetAtUtc(const KTimeZone *caller, const QDateTime &utcDateTime) const
++{
++    if (!caller->isValid()  ||  !utcDateTime.isValid())
++        return 0;
++    if ( !check_utc( caller, utcDateTime ) )
++        return 0;
++    return offset_at_utc( caller, utcDateTime );
++}
++
++int KSystemTimeZoneBackendWindows::offset(const KTimeZone *caller, time_t t) const
++{
++    if (!caller->isValid()  ||  t == KTimeZone::InvalidTime_t)
++        return 0;
++    return offsetAtUtc( caller, KTimeZone::fromTime_t( t ) );
++}
++
++bool KSystemTimeZoneBackendWindows::isDstAtUtc(const KTimeZone *caller, const QDateTime &utcDateTime) const
++{
++    return check_utc( caller, utcDateTime ) && is_dst( caller, utcDateTime );
++}
++
++
++bool KSystemTimeZoneBackendWindows::isDst(const KTimeZone *caller, time_t t) const
++{
++    return isDstAtUtc( caller, KTimeZone::fromTime_t( t ) );
++}
++
++KSystemTimeZoneWindows::KSystemTimeZoneWindows(KTimeZoneSource *source, const QString &name)
++: KTimeZone(new KSystemTimeZoneBackendWindows(source, name))
++{}
++
++QStringList KSystemTimeZoneWindows::listTimeZones() 
++{
++    HKEY timeZones;
++    if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, timeZonesKey, 0, KEY_READ, &timeZones ) != ERROR_SUCCESS )
++        return QStringList();
++    const HKeyCloser closer( timeZones );
++    return list_key( timeZones );
++}
++

@@ -1,0 +1,439 @@
+Index: ktimezoned/CMakeLists.txt
+===================================================================
+--- ktimezoned/CMakeLists.txt
++++ ktimezoned/CMakeLists.txt
+@@ -1,6 +1,9 @@
+-set(kded_ktimezoned_SRCS ktimezoned.cpp)
++if (WIN32)
++    set(kded_ktimezoned_SRCS ktimezoned_win.cpp)
++else (WIN32)
++    set(kded_ktimezoned_SRCS ktimezoned.cpp)
++endif (WIN32)
+ 
+-
+ kde4_add_plugin(kded_ktimezoned ${kded_ktimezoned_SRCS})
+ 
+ #qt4_add_dbus_adaptor(kded_ktimezoned_SRCS org.kde.KTimeZoned ktimezonedbus.h DBusHandler)
+@@ -13,3 +16,5 @@
+ 
+ install( FILES ktimezoned.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
+ install( FILES org.kde.KTimeZoned.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
++
++
+Index: ktimezoned/ktimezoned.h
+===================================================================
+--- ktimezoned/ktimezoned.h
++++ ktimezoned/ktimezoned.h
+@@ -21,6 +21,8 @@
+ #ifndef KTIMEZONED_H
+ #define KTIMEZONED_H
+ 
++#include "ktimezonedbase.h"
++
+ #include <QString>
+ #include <QByteArray>
+ class QFile;
+@@ -30,35 +32,14 @@
+ #include <ksystemtimezone.h>
+ 
+ 
+-class KTimeZoned : public KDEDModule
++class KTimeZoned : public KTimeZonedBase
+ {
+         Q_OBJECT
+-        Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
+ 
+     public:
+         KTimeZoned(QObject* parent, const QList<QVariant>&);
+         ~KTimeZoned();
+ 
+-    public Q_SLOTS:
+-        /** D-Bus call to initialize the module.
+-         *  @param reinit determines whether to reinitialize if the module has already
+-         *                initialized itself
+-         */
+-        Q_SCRIPTABLE void initialize(bool reinit);
+-
+-    Q_SIGNALS:
+-        /** D-Bus signal emitted when the time zone configuration file has changed. */
+-        void configChanged();
+-	/** D-Bus signal emitted when zone.tab contents have changed.
+-	 *  @param zonetab path to zone.tab
+-	 */
+-        void zonetabChanged(const QString &zonetab);
+-	/** D-Bus signal emitted when the definition (not the identity) of the local
+-	 *  system time zone has changed.
+-	 *  @param zone path to time zone definition file
+-	 */
+-        void zoneDefinitionChanged(const QString &zone);
+-
+     private Q_SLOTS:
+         void  zonetab_Changed(const QString& path);
+         void  localChanged(const QString& path);
+@@ -90,6 +71,7 @@
+         };
+         typedef QMap<QString, QString> MD5Map;    // zone name, checksum
+ 
++        /** reimp */
+         void  init(bool restart);
+         bool  findZoneTab(QFile& f);
+         void  readZoneTab(QFile& f);
+@@ -110,8 +92,6 @@
+         QByteArray  mSavedTZ;           // last value of TZ if it's used to set local zone
+         KSystemTimeZoneSource *mSource;
+         KTimeZones  mZones;             // time zones collection
+-        QString     mLocalZone;         // local system time zone name
+-        QString     mConfigLocalZone;   // local system time zone name as stored in config file
+         QString     mLocalIdFile;       // file containing pointer to local time zone definition
+         QString     mLocalZoneDataFile; // zoneinfo file containing local time zone definition
+         QString     mLocaltimeMd5Sum;   // MD5 checksum of /etc/localtime
+Index: ktimezoned/ktimezoned.cpp
+===================================================================
+--- ktimezoned/ktimezoned.cpp
++++ ktimezoned/ktimezoned.cpp
+@@ -20,6 +20,7 @@
+ */
+ 
+ #include "ktimezoned.moc"
++#include "ktimezonedbase.moc"
+ 
+ #include <climits>
+ #include <cstdlib>
+@@ -57,8 +58,8 @@
+ const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
+ 
+ 
+-KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>&)
+-  : KDEDModule(parent),
++KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>& l)
++  : KTimeZonedBase(parent, l),
+     mSource(0),
+     mZonetabWatch(0),
+     mDirWatch(0)
+@@ -76,14 +77,6 @@
+     mDirWatch = 0;
+ }
+ 
+-void KTimeZoned::initialize(bool reinit)
+-{
+-    // If we reach here, the module has already been constructed and therefore
+-    // initialized. So only do anything if reinit is true.
+-    if (reinit)
+-        init(true);
+-}
+-
+ void KTimeZoned::init(bool restart)
+ {
+     if (restart)
+@@ -97,11 +90,6 @@
+         mDirWatch = 0;
+     }
+ 
+-#ifdef Q_OS_WIN
+-    // On Windows, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones
+-    // holds the time zone database. The TZI binary value is the TIME_ZONE_INFORMATION structure.
+-#else
+-    // For Unix, read zone.tab.
+     KConfig config(QLatin1String("ktimezonedrc"));
+     if (restart)
+         config.reparseConfiguration();
+@@ -111,6 +99,9 @@
+     mConfigLocalZone = group.readEntry(LOCAL_ZONE);
+     QString ztc      = group.readEntry(ZONE_TAB_CACHE, QString());
+     mZoneTabCache    = (ztc == "Solaris") ? Solaris : NoCache;
++
++    // For Unix, read zone.tab.
++
+     QString oldZoneinfoDir = mZoneinfoDir;
+     QString oldZoneTab     = mZoneTab;
+     CacheType oldCacheType = mZoneTabCache;
+@@ -164,7 +155,6 @@
+     mZonetabWatch = new KDirWatch(this);
+     mZonetabWatch->addFile(mZoneTab);
+     connect(mZonetabWatch, SIGNAL(dirty(const QString&)), SLOT(zonetab_Changed(const QString&)));
+-#endif
+ 
+     // Find the local system time zone and set up file monitors to detect changes
+     findLocalZone();
+Index: ktimezoned/ktimezoned_win.h
+===================================================================
+--- ktimezoned/ktimezoned_win.h
++++ ktimezoned/ktimezoned_win.h
+@@ -0,0 +1,43 @@
++/*
++   This file is part of the KDE libraries
++   Copyright (c) 2009 Till Adam <adam@kde.org>
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public
++   License as published by the Free Software Foundation; either
++   version 2 of the License, or (at your option) any later version.
++
++   This library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public License
++   along with this library; see the file COPYING.LIB.  If not, write to
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++#ifndef KTIMEZONED_H
++#define KTIMEZONED_H
++
++#include "ktimezonedbase.h"
++
++class KTimeZoned : public KTimeZonedBase
++{
++        Q_OBJECT
++        friend class RegistryWatcherThread;
++
++    public:
++        KTimeZoned(QObject* parent, const QList<QVariant>&);
++        ~KTimeZoned();
++
++    private:
++        /** reimp */
++        void init(bool);
++        void updateLocalZone();
++
++        RegistryWatcherThread     *mRegistryWatcherThread; // thread that watches the timezone registry key
++};
++
++#endif
+Index: ktimezoned/ktimezoned_win.cpp
+===================================================================
+--- ktimezoned/ktimezoned_win.cpp
++++ ktimezoned/ktimezoned_win.cpp
+@@ -0,0 +1,151 @@
++/*
++   This file is part of the KDE libraries
++   Copyright (c) 2009 Till Adam <adam@kde.org>
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public
++   License as published by the Free Software Foundation; either
++   version 2 of the License, or (at your option) any later version.
++
++   This library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public License
++   along with this library; see the file COPYING.LIB.  If not, write to
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++#include "ktimezoned_win.moc"
++#include "ktimezonedbase.moc"
++
++#include <climits>
++#include <cstdlib>
++
++#include <QStringList>
++#include <QTextStream>
++#include <QtDBus/QtDBus>
++#include <QThread>
++#include <QDebug>
++
++#include <kglobal.h>
++#include <klocale.h>
++#include <kcodecs.h>
++#include <kdebug.h>
++#include <kconfiggroup.h>
++
++#include <kpluginfactory.h>
++#include <kpluginloader.h>
++
++#ifdef Q_OS_WIN
++#include <Windows.h>
++#endif
++
++K_PLUGIN_FACTORY(KTimeZonedFactory,
++                 registerPlugin<KTimeZoned>();
++    )
++K_EXPORT_PLUGIN(KTimeZonedFactory("ktimezoned"))
++
++
++// Config file entry names
++const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
++static const TCHAR currentTimeZoneKey[] = TEXT("System\\CurrentControlSet\\Control\\TimeZoneInformation");
++
++class RegistryWatcherThread : public QThread
++{
++    public:
++    RegistryWatcherThread(KTimeZoned* parent)
++    :QThread(parent),q(parent)
++    {
++    }
++
++    ~RegistryWatcherThread()
++    {
++        RegCloseKey(key);
++    }
++
++    void run()
++    {
++        if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, currentTimeZoneKey, 0, KEY_READ, &key ) == ERROR_SUCCESS )
++        {
++            while(true)
++            {
++                RegNotifyChangeKeyValue( key, true, REG_NOTIFY_CHANGE_LAST_SET,
++                                         NULL, false /*async, we want it to block*/ );
++                q->updateLocalZone();
++            }
++        }
++    }
++    private:
++        KTimeZoned* q;
++        HKEY key;
++};
++
++KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>& l)
++  : KTimeZonedBase(parent, l), mRegistryWatcherThread(0)
++{
++    init(false);
++}
++
++KTimeZoned::~KTimeZoned()
++{
++    if (mRegistryWatcherThread)
++    {
++        mRegistryWatcherThread->quit();
++        mRegistryWatcherThread->wait(100);
++    }
++    delete mRegistryWatcherThread;
++}
++
++void KTimeZoned::init(bool restart)
++{
++    if (restart)
++    {
++        kDebug(1221) << "KTimeZoned::init(restart)";
++        delete mRegistryWatcherThread;
++        mRegistryWatcherThread = 0;
++    }
++
++    KConfig config(QLatin1String("ktimezonedrc"));
++    if (restart)
++        config.reparseConfiguration();
++    KConfigGroup group(&config, "TimeZones");
++    mConfigLocalZone = group.readEntry(LOCAL_ZONE);
++
++    updateLocalZone();
++    if (!mRegistryWatcherThread)
++    {
++        mRegistryWatcherThread = new RegistryWatcherThread(this);
++        mRegistryWatcherThread->start();
++    }
++}
++
++// Check if the local zone has been updated, and if so, write the new
++// zone to the config file and notify interested parties.
++void KTimeZoned::updateLocalZone()
++{
++    // On Windows, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones
++    // holds the time zone database. The TZI binary value is the TIME_ZONE_INFORMATION structure.
++
++    TIME_ZONE_INFORMATION tzinfo;
++    DWORD res =  GetTimeZoneInformation(&tzinfo);
++    if (res == TIME_ZONE_ID_INVALID) return; // hm
++    mLocalZone = QString::fromUtf16( reinterpret_cast<ushort*>( tzinfo.StandardName ) );
++
++    if (mConfigLocalZone != mLocalZone)
++    {
++        kDebug(1221) << "Local timezone is now: " << mLocalZone;
++        KConfig config(QLatin1String("ktimezonedrc"));
++        KConfigGroup group(&config, "TimeZones");
++        mConfigLocalZone = mLocalZone;
++        group.writeEntry(LOCAL_ZONE, mConfigLocalZone);
++        group.sync();
++
++        QDBusMessage message = QDBusMessage::createSignal("/Daemon", "org.kde.KTimeZoned", "configChanged");
++        QDBusConnection::sessionBus().send(message);
++    }
++}
++
++
+Index: ktimezoned/ktimezonedbase.h
+===================================================================
+--- ktimezoned/ktimezonedbase.h
++++ ktimezoned/ktimezonedbase.h
+@@ -0,0 +1,73 @@
++/*
++   This file is part of the KDE libraries
++   Copyright (c) 2007-2009 David Jarvie <software@astrojar.org.uk>
++   Copyright (c) 2009 Till Adam <adam@kde.org>
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public
++   License as published by the Free Software Foundation; either
++   version 2 of the License, or (at your option) any later version.
++
++   This library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public License
++   along with this library; see the file COPYING.LIB.  If not, write to
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++#ifndef KTIMEZONEDBASE_H
++#define KTIMEZONEDBASE_H
++
++#include <kdedmodule.h>
++
++
++class KTimeZonedBase : public KDEDModule
++{
++        Q_OBJECT
++        Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
++    public:
++        KTimeZonedBase(QObject* parent, const QList<QVariant>&)
++        :KDEDModule(parent) {}
++        virtual ~KTimeZonedBase() {};
++
++    public Q_SLOTS:
++        /** D-Bus call to initialize the module.
++         *  @param reinit determines whether to reinitialize if the module has already
++         *                initialized itself
++         */
++        Q_SCRIPTABLE void initialize(bool reinit)
++        {
++            // If we reach here, the module has already been constructed and therefore
++            // initialized. So only do anything if reinit is true.
++            if (reinit)
++                init(true);
++        }
++
++    Q_SIGNALS:
++        /** D-Bus signal emitted when the time zone configuration has changed. */
++        void configChanged();
++
++	/** D-Bus signal emitted when zone.tab contents have changed.
++	 *  @param zonetab path to zone.tab
++	 */
++        void zonetabChanged(const QString &zonetab);
++
++	/** D-Bus signal emitted when the definition (not the identity) of the local
++	 *  system time zone has changed.
++	 *  @param zone path to time zone definition file
++	 */
++	void zoneDefinitionChanged(const QString &zone);
++
++    protected:
++        virtual void init(bool) = 0;
++
++        QString     mLocalZone;         // local system time zone name
++        QString     mConfigLocalZone;   // local system time zone name as stored in config file
++};
++
++
++#endif
