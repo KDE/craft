@@ -52,7 +52,6 @@ class VersionSystemSourceBase (SourceBase):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
-        if utils.verbose > 1:
-            print "using sourcedir: " + sourcedir
+        utils.debug("using sourcedir: %s" % sourcedir,2)
         return sourcedir
 
