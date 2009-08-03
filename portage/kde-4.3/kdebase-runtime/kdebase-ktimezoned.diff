@@ -159,7 +159,7 @@ Index: ktimezoned/ktimezoned_win.h
 ===================================================================
 --- ktimezoned/ktimezoned_win.h
 +++ ktimezoned/ktimezoned_win.h
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,45 @@
 +/*
 +   This file is part of the KDE libraries
 +   Copyright (c) 2009 Till Adam <adam@kde.org>
@@ -184,6 +184,8 @@ Index: ktimezoned/ktimezoned_win.h
 +#define KTIMEZONED_H
 +
 +#include "ktimezonedbase.h"
++
++class RegistryWatcherThread;
 +
 +class KTimeZoned : public KTimeZonedBase
 +{
@@ -658,6 +660,3 @@ Index: kioslave/smb/CMakeLists.txt
 +endif(NOT WIN32)
 +
  install(TARGETS kio_smb  DESTINATION ${PLUGIN_INSTALL_DIR} )
- 
- 
- 
