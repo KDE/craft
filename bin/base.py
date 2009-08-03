@@ -372,11 +372,7 @@ class baseclass:
         self.workdir     = os.path.join( ROOTDIR, "tmp", self.PV, "work" )
         self.imagedir    = os.path.join( ROOTDIR, "tmp", self.PV, "image-" + COMPILER )
 
-        portageroot = os.environ["EMERGE_PORTAGE_ROOT"]
-        if portageroot <> '':
-            self.packagedir = os.path.join( portageroot, self.category, self.package )
-        else:
-            self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
+        self.packagedir = os.path.join( portage.rootDir(), self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )
         self.kdesvndir = KDESVNDIR
         self.kdesvnserver = KDESVNSERVER
