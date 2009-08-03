@@ -21,6 +21,9 @@ import kde_build
 #from utils import die
 import datetime
 
+# portage tree related
+import portage
+
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
 DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
@@ -344,7 +347,7 @@ class baseclass:
         ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
 
         ( self.category, self.package, self.version ) = \
-                       utils.getCategoryPackageVersion( self.argv0 )
+                       portage.getCategoryPackageVersion( self.argv0 )
 
         utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ) )
 
@@ -369,7 +372,11 @@ class baseclass:
         self.workdir     = os.path.join( ROOTDIR, "tmp", self.PV, "work" )
         self.imagedir    = os.path.join( ROOTDIR, "tmp", self.PV, "image-" + COMPILER )
 
-        self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
+        portageroot = os.environ["EMERGE_PORTAGE_ROOT"]
+        if portageroot <> '':
+            self.packagedir = os.path.join( portageroot, self.category, self.package )
+        else:
+            self.packagedir = os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )
         self.kdesvndir = KDESVNDIR
         self.kdesvnserver = KDESVNSERVER

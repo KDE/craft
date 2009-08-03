@@ -8,6 +8,7 @@
 import sys
 import os
 import utils
+import portage
 
 def usage():
     print """
@@ -137,7 +138,7 @@ Send feedback to <kde-windows@kde.org>.
 
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
-    fileName = utils.getFilename( category, package, version )
+    fileName = portage.getFilename( category, package, version )
     opts_string = ( "%s " * len( opts ) ) % tuple( opts )
     commandstring = "python %s %s %s" % ( fileName, action, opts_string )
 
@@ -337,14 +338,14 @@ buildType = os.environ["EMERGE_BUILDTYPE"]
 
 if packageName:
     if len( packageName.split( "/" ) ) == 1:
-        if utils.isCategory( packageName ):
+        if portage.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
             packageList = utils.getAllPackages( packageName )
             categoryList = [ packageName ]
         else:
-            if utils.getCategory( packageName ):
+            if portage.getCategory( packageName ):
                 packageList = [ packageName ]
-                categoryList = [ utils.getCategory( packageName ) ]
+                categoryList = [ portage.getCategory( packageName ) ]
             else:
                 utils.warning( "unknown category or package: %s" % packageName )
     elif len( packageName.split( "/" ) ) == 2:
@@ -367,7 +368,7 @@ elif updateAll:
     utils.debug( "Updating, no package spec given", 1 )
     packageList = []
     for category, package, version in installedPackages:
-        if utils.isInstalled( category, package, version, buildType ) and utils.isPackageUpdateable( category, package, version ):
+        if portage.isInstalled( category, package, version, buildType ) and portage.isPackageUpdateable( category, package, version ):
             categoryList.append( category )
             packageList.append( package )
     utils.debug( "Will update packages: " + str (packageList), 1 )
@@ -377,7 +378,7 @@ for entry in packageList:
 utils.debug_line( 1 )
 
 for category, entry in zip (categoryList, packageList):
-    utils.solveDependencies( category, entry, "", deplist )
+    portage.solveDependencies( category, entry, "", deplist )
 
 for item in range( len( deplist ) ):
     if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:
@@ -392,7 +393,7 @@ for item in deplist:
     pac = item[ 1 ]
     ver = item[ 2 ]
 
-    if utils.isInstalled( cat, pac, ver, buildType) and updateAll and not utils.isPackageUpdateable( cat, pac, ver ):
+    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
         print "remove:", cat, pac, ver
         deplist.remove( item )
 
@@ -420,13 +421,13 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
     ok = handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts )
 else:
     for package in deplist:
-        if ( utils.isInstalled( package[0], package[1], package[2], buildType ) and not package[ -1 ] ):
+        if ( portage.isInstalled( package[0], package[1], package[2], buildType ) and not package[ -1 ] ):
             if utils.verbose() > 1 and package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
             elif utils.verbose() > 2 and not package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
         else:
-            instver = utils.findInstalled( package[0], package[1] )
+            instver = portage.findInstalled( package[0], package[1] )
             if ( doPretend ):
                 if utils.verbose() > 0:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
