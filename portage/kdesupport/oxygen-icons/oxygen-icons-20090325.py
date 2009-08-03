@@ -13,14 +13,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
 from Package.CMakePackageBase import *
-from Packager.KDEWinPackager import *
 
 class Package(CMakePackageBase, KDEWinPackager):
     def __init__( self ):
         self.subinfo = subinfo()
         self.createCombinedPackage = True
         CMakePackageBase.__init__( self )
-        KDEWinPackager.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()
