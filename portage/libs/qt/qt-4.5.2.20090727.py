@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import base
 import utils
-import shutil
 from utils import die
 import os
 import info
-import re
+import portage
 
 from Package.QMakePackageBase import *
 
@@ -45,11 +44,11 @@ class Package(QMakePackageBase):
         QMakePackageBase.__init__(self)
         # get instance of dbus and openssl package
         if self.compiler() == "mingw":
-            self.dbus = utils.getPackageInstance('win32libs-bin','dbus')
+            self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
         else:
-            self.dbus = utils.getPackageInstance('win32libs-sources','dbus-src')
-        self.openssl = utils.getPackageInstance('win32libs-bin','openssl')
-        self.mysql = utils.getPackageInstance('testing','mysql-embedded')
+            self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
+        self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
+        self.mysql = portage.getPackageInstance('testing','mysql-embedded')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -77,6 +76,10 @@ class Package(QMakePackageBase):
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.mysql.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.mysql.installDir(), "lib" ) + "\""
+        if self.buildType() == "Debug":
+          libdirs += " -l libmysqld "
+        else:
+          libdirs += " -l libmysql "
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
