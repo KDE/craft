@@ -76,9 +76,11 @@ class infoclass:
         """ """
     
     # setup current build target 
-    def setBuildTarget( self ):
+    def setBuildTarget( self, buildTarget = None):
         self.buildTarget = self.defaultTarget
-        if not os.getenv( "EMERGE_TARGET" ) == None:
+        if not buildTarget == None:
+            self.buildTarget = buildTarget
+        elif not os.getenv( "EMERGE_TARGET" ) == None:
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
         if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
             self.buildTarget = self.defaultTarget
