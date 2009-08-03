@@ -141,7 +141,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
           command = command + " -release "
         print "command: ", command
-#        utils.system( command )
+        utils.system( command )
         
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
