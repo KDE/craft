@@ -25,8 +25,10 @@ class KDEWinPackager (PackagerBase):
         if not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
             pkgVersion = self.subinfo.buildTarget
 
-        packSources = True 
+        packSources = True
         special = False 
+        if self.specialPackaging:
+            special = True
     
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
