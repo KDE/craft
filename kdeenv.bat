@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 rem    this file sets some environment variables that are needed
 rem    for finding programs and libraries etc.
 rem    by Holger Schroeder <schroder@kde.org>
@@ -11,15 +11,32 @@ rem    this file should contain all path settings - and provide thus an environm
 rem    to build and run kde programs
 rem    this file sources the kdesettings.bat file automatically
 
-call ..\etc\kdesettings.bat
+call etc\kdesettings.bat %1
 
-set PATH=%KDEROOT%\lib;%PATH%
+if "%1" == "debug" ( 
+set SUBDIR=\debug
+) 
+if "%1" == "relwithdebinfo" ( 
+set SUBDIR=\relwithdebinfo
+)
+if "%1" == "release" ( 
+set SUBDIR=\release
+)
+if "%1" == "" (
+    if %EMERGE_MERGE_ROOT_WITH_BUILD_TYPE% == True (
+        set SUBDIR=\relwithdebinfo
+    ) else (
+        set SUBDIR=
+    )
+)
+
+set PATH=%KDEROOT%%SUBDIR%\bin;%PATH%
+set KDEDIRS=%KDEROOT%%SUBDIR%
+set QT_PLUGIN_PATH=%KDEROOT%%SUBDIR%\plugins
+set XDG_DATA_DIRS=%KDEROOT%%SUBDIR%\share
+
+rem for old packages
 set PATH=%KDEROOT%\bin;%PATH%
-set KDEDIRS=%KDEROOT%
-set QT_PLUGIN_PATH=%KDEROOT%\plugins
-set PATH=%KDEROOT%\emerge\bin;%KDEROOT%\dev-utils\bin;%PATH%
-SET KDEWIN_DIR=%KDEROOT%
-set XDG_DATA_DIRS=%KDEROOT%\share
 
 if %KDECOMPILER% == mingw ( 
     call :path-mingw

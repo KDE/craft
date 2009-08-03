@@ -21,18 +21,17 @@ set MSYSDIR=%KDEROOT%\msys
 
 rem Here you set the path to your platform SDK installation.
 rem This path will be automatically included then.
+if %KDECOMPILER% == "msvc2005" (
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
-
-rem Here you set the path to your Microsoft DirectX SDK installation
-rem This is not needed if you use MinGW
-set MSDXSDKDIR=%PROGRAMFILES%\Microsoft DirectX SDK (June 2008)
-call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86
+)
 
 rem Here you set the location of the vcvarsall.bat file that adds
 rem Visual C++ environment variables into the build environment.
 rem if you are not building on x86 change that to something appropriate.
+if %KDECOMPILER% == "msvc2005" (
 set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 8
 call "%VSDIR%\VC\vcvarsall.bat" x86
+)
 
 rem Here you change the download directory.
 rem If you want, so you can share the same download directory between
@@ -75,7 +74,18 @@ rem release (optimized) build but containing debugging information.
 rem You can override the build type at the commandline using
 rem the '--buildtype=[BuildType]' option. The build type which is set here
 rem will not override the buildtype in .py package files.
+if "%1" == "debug" (
+set EMERGE_BUILDTYPE=Debug
+)
+if "%1" == "relwithdebinfo" (
 set EMERGE_BUILDTYPE=RelWithDebInfo
+)
+if "%1" == "release" (
+set EMERGE_BUILDTYPE=Release
+)
+if "%1" == "" (
+set EMERGE_BUILDTYPE=RelWithDebInfo
+)
 
 rem If you want to have verbose output, uncomment the following option
 rem and set it to positive integer for verbose output and to 0
@@ -88,6 +98,14 @@ rem disk usage. It will then avoid copying source code files of the KDE
 rem svn repository. The disadvantage is that you cannot make packages when
 rem this option is set. To disable, set EMERGE_NOCOPY=False.
 set EMERGE_NOCOPY=True
+
+rem By default emerge will merge all package into KDEROOT. By setting the following 
+rem option to true, the package will be installed into a subdir of KDEROOT. 
+rem The directory is named like the lower cased build type 
+rem When using this option you can run emerge/kdeenv.bat with the build mode type 
+rem parameter (release, releasedebug or debug) to have different shells for each 
+rem build type. 
+set EMERGE_MERGE_ROOT_WITH_BUILD_TYPE=True
 
 rem If you want to build all packages with buildTests option, enable
 rem this option. Applies only to the cmake based packages.
