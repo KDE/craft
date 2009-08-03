@@ -35,6 +35,12 @@ set KDEDIRS=%KDEROOT%%SUBDIR%
 set QT_PLUGIN_PATH=%KDEROOT%%SUBDIR%\plugins
 set XDG_DATA_DIRS=%KDEROOT%%SUBDIR%\share
 
+rem for emerge
+set PATH=%KDEROOT%\emerge\bin;%PATH%
+
+rem for dev-utils
+set PATH=%KDEROOT%\dev-utils\bin;%PATH%
+
 rem for old packages
 set PATH=%KDEROOT%\bin;%PATH%
 
