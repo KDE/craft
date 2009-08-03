@@ -12,6 +12,10 @@ class KDESvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self):
         VersionSystemSourceBase.__init__(self)
+        self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
+        if not os.path.exists(self.svnInstallDir):
+            die("required subversion package not installed")
+        
         
     def __checkout( self, repourl, ownpath, codir, doRecursive = False ):
         """in ownpath try to checkout codir from repourl """
@@ -33,10 +37,10 @@ class KDESvnSource (VersionSystemSourceBase):
 
         if ( os.path.exists( os.path.join( ownpath, codir, ".svn" ) ) ):
             # svn up
-            svncmd = "svn update %s %s" % ( recFlag, codir )
+            svncmd = "%s/svn update %s %s" % (self.svnInstallDir, recFlag, codir )
         else:
             #svn co
-            svncmd = "svn checkout %s %s" % ( recFlag, repourl )
+            svncmd = "%s/svn checkout %s %s" % (self.svnInstallDir, recFlag, repourl )
 
         if utils.verbose() > 1:
             print "checkout:pwd ", ownpath
