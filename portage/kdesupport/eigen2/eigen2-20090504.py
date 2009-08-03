@@ -11,12 +11,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['2.0.0'] = 'tags/eigen/2.0.0'
-        self.svnTargets['2.0.1'] = 'tags/eigen/2.0.1'
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen2'
-        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/eigen2'
-        self.defaultTarget = 'svnHEAD'
+        self.targets['2.0.4'] = "http://bitbucket.org/eigen/eigen2/get/2.0.4.tar.bz2"
+        self.targetInstSrc['2.0.4'] = "eigen2"
+        self.defaultTarget = '2.0.4'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
