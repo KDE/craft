@@ -50,7 +50,7 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
 
-        if utils.isInstalled( '', self.package, '', self.buildType() ):
+        if portage.isInstalled( '', self.package, '', self.buildType() ):
             self.unmerge()
 
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
