@@ -29,9 +29,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        # for compiling qt is only mysql-embedded is really required 
-        # mysql-server would also work but is much bigger 
-        self.hardDependencies['testing/mysql-embedded'] = 'default'
+        self.hardDependencies['testing/mysql-server'] = 'default'
         if COMPILER == "mingw":
             self.hardDependencies['win32libs-bin/dbus'] = 'default'
         else:
@@ -48,7 +46,7 @@ class Package(QMakePackageBase):
         else:
             self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
-        self.mysql = portage.getPackageInstance('testing','mysql-embedded')
+        self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -74,12 +72,9 @@ class Package(QMakePackageBase):
         libdirs =  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
-        incdirs += " -I \"" + os.path.join( self.mysql.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.mysql.installDir(), "lib" ) + "\""
-        if self.buildType() == "Debug":
-          libdirs += " -l libmysqld "
-        else:
-          libdirs += " -l libmysql "
+        incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
+        libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
+        libdirs += " -l libmysql "
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
@@ -104,10 +99,8 @@ class Package(QMakePackageBase):
         libdirs =  ";" + os.path.join( self.dbus.installDir(), "lib" )
         incdirs += ";" + os.path.join( self.openssl.installDir(), "include" )
         libdirs += ";" + os.path.join( self.openssl.installDir(), "lib" )
-        incdirs += ";" + os.path.join( self.mysql.installDir(), "include" )
-        libdirs += ";" + os.path.join( self.mysql.installDir(), "lib" )
-        print incdirs
-        print libdirs
+        incdirs += ";" + os.path.join( self.mysql_server.installDir(), "include" )
+        libdirs += ";" + os.path.join( self.mysql_server.installDir(), "lib" )
         os.environ[ "INCLUDE" ] = "%s%s" % (inctmp, incdirs)
         os.environ[ "LIB" ] = "%s%s" % (libtmp, libdirs)
         
@@ -136,7 +129,7 @@ class Package(QMakePackageBase):
             
             for file in filelist:
                 if file.endswith( ".pdb" ):
-                    shutil.copy( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
+                    utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
                 
         return True
 
