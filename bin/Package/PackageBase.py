@@ -78,7 +78,7 @@ class PackageBase (EmergeBase):
         ## a better solution will be to save the merge sub dir into 
         ## /etc/portage/installed and to read from it on unmerge
         utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
-        utils.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+        portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
 
     def cleanup( self ):

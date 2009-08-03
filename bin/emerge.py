@@ -351,11 +351,11 @@ if packageName:
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
         validPackage = False
-        if utils.isCategory( cat ):
+        if portage.isCategory( cat ):
             categoryList = [ cat ]
         else:
             utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
-        if len( categoryList ) > 0 and utils.isPackage( categoryList[0], pac ):
+        if len( categoryList ) > 0 and portage.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
         if len( categoryList ) and len( packageList ):
             utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
