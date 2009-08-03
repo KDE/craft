@@ -1,14 +1,4 @@
-import base
-import utils
-from utils import die
-import os
-import sys
 import info
-
-#DEPEND = """
-#virtual/base
-#libs/qt
-#"""
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -20,27 +10,18 @@ class subinfo(info.infoclass):
         self.svnTargets['amarokHEAD'] = 'trunk/kdesupport/kdewin-installer'
         self.defaultTarget = 'svnHEAD'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kdewin-installer"
-        self.buildType = "Release"
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        #help(self)
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
+    def configure(self):
         if self.buildTarget == 'amarokHEAD':
-            self.kdeCustomDefines += " -DBUILD_FOR_AMAROK=ON"
-
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "kdewin-installer" )
+            self.subinfo.configure.defines = " -DBUILD_FOR_AMAROK=ON"
+        return CMakePackageBase.configure(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

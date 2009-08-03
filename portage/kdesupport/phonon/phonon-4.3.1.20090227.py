@@ -20,34 +20,14 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/phonon'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
         self.defaultTarget = 'svnHEAD'
+        self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "phonon"
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        if self.compiler == "mingw":
-            """
-            For microsoft compilers the DirectX SDK is needed if you want to
-            compile the DirectShow 9 backend.
-            """
-            os.environ["DXSDK_DIR"] = os.path.join( self.rootdir, "include", "mingw" )
-        self.kdeCustomDefines="-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "phonon" )
-        else:
-            return self.doPackaging( "phonon", self.buildTarget, True )
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
