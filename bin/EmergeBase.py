@@ -2,6 +2,7 @@
 
 import info;
 import utils;
+import portage;
 import os;
 import sys;
 import datetime;
@@ -68,9 +69,11 @@ class EmergeBase():
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
      
-        ## specifies if a build type related root directory 
-        # should be used
-        self.useBuildTypeRelatedMergeRoot = False
+        ## specifies if a build type related root directory should be used
+        if os.getenv("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE") <> None:
+            self.useBuildTypeRelatedMergeRoot = os.getenv("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE")
+        else:
+            self.useBuildTypeRelatedMergeRoot = False
         
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
@@ -115,7 +118,6 @@ class EmergeBase():
             buildType = Type
         else:
             buildType = None
-        utils.debug( "BuildType: %s" % buildType, 2 )
         return buildType
 
     def compiler(self):
@@ -128,7 +130,7 @@ class EmergeBase():
         
     def packageDir(self): 
         """ add documentation """
-        return os.path.join( ROOTDIR, "emerge", "portage", self.category, self.package )
+        return os.path.join( portage.rootDir(), self.category, self.package )
     
     def filesDir(self):
         """ add documentation """
@@ -281,7 +283,7 @@ class EmergeBase():
         ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
 
         ( self.category, self.package, self.version ) = \
-                       utils.getCategoryPackageVersion( self.argv0 )
+                       portage.getCategoryPackageVersion( self.argv0 )
 
         utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1 )
 
