@@ -24,9 +24,10 @@ class subinfo(info.infoclass):
         self.svnTargets['4.5.2-static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.svnTargets['gitHEAD'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
         self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
+        self.svnTargets['4.5.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.defaultTarget = '4.5.2-patched'
         ## \todo this is prelimary  and may be changed 
-        self.options.package.fileName = 'qt'
+        self.options.package.packageName = 'qt'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -177,6 +178,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
                     shutil.copy( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
                 
         return True
-
+        
 if __name__ == '__main__':
     Package().execute()
