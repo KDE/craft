@@ -314,7 +314,7 @@ class baseclass:
             if os.path.exists( script ):
                 cmd = "cd %s && %s" % ( self.rootdir, script )
                 utils.system( cmd ) or utils.warning("%s failed!" % cmd )
-        utils.addInstalled( self.category, self.package, self.version )
+        portage.addInstalled( self.category, self.package, self.version )
         return True
 
     def unmerge( self ):
@@ -322,7 +322,7 @@ class baseclass:
         if utils.verbose() > 1:
             print "base unmerge called"
         utils.unmerge( self.rootdir, self.package, self.forced )
-        utils.remInstalled( self.category, self.package, self.version )
+        portage.remInstalled( self.category, self.package, self.version )
         return True
         
     def manifest( self ):
