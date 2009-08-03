@@ -22,6 +22,9 @@ class KDEWinPackager (PackagerBase):
             pkgName = self.package
 
         pkgVersion = str( datetime.date.today() ).replace('-', '')
+        if not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
+            pkgVersion = self.subinfo.buildTarget
+
         packSources = True 
         special = False 
     
