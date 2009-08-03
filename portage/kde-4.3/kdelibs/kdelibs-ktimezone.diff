@@ -1,3 +1,19 @@
+Index: kdeui/windowmanagement/kwindowsystem_win.cpp
+===================================================================
+--- kdeui/windowmanagement/kwindowsystem_win.cpp
++++ kdeui/windowmanagement/kwindowsystem_win.cpp
+@@ -365,6 +365,11 @@
+    }
+ 
+ }
++
++bool KWindowSystem::allowedActionsSupported()
++{
++    return false;
++}
+ 
+ int KWindowSystem::currentDesktop()
+ {
 Index: kdecore/CMakeLists.txt
 ===================================================================
 --- kdecore/CMakeLists.txt
