@@ -14,7 +14,7 @@ class KDESvnSource (VersionSystemSourceBase):
         VersionSystemSourceBase.__init__(self)
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
         if not os.path.exists(self.svnInstallDir):
-            die("required subversion package not installed")
+            utils.die("required subversion package not installed")
         
         
     def __checkout( self, repourl, ownpath, codir, doRecursive = False ):
