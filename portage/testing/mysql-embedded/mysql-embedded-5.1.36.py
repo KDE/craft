@@ -1,8 +1,6 @@
-import base
-import os
-import utils
 import info
-import shutil
+
+# version 5.1.36 contains only debug libraries 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -17,12 +15,15 @@ http://downloads.sourceforge.net/kde-windows/mysql-embedded-5.1.36-2-lib.tar.bz2
     def setDependencies( self ):
         """ """
         self.hardDependencies['gnuwin32/wget'] = 'default'
-        self.hardDependencies['testing/mysql-server'] = 'default' # the include files are used in the mysql-server package already
+        #self.hardDependencies['testing/mysql-server'] = 'default' 
+        # the include files are used in the mysql-server package already
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.subinfo = subinfo()
+from Package.BinaryPackageBase import *
 
+class Package(BinaryPackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+        
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

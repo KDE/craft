@@ -1,8 +1,4 @@
-import base
-import os
-import utils
 import info
-import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -16,11 +12,13 @@ http://downloads.sourceforge.net/kde-windows/mysql-debug-5.1.36-2-bin.tar.bz2
     def setDependencies( self ):
         """ """
         self.hardDependencies['gnuwin32/wget'] = 'default'
-        
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
