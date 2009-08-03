@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 rem    this file sets some environment variables that are needed
 rem    for finding programs and libraries etc.
 rem    by Holger Schroeder <schroder@kde.org>
@@ -23,7 +23,7 @@ if "%1" == "release" (
 set SUBDIR=\release
 )
 if "%1" == "" (
-    if %EMERGE_MERGE_ROOT_WITH_BUILD_TYPE% == True (
+    if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
         set SUBDIR=\relwithdebinfo
     ) else (
         set SUBDIR=
