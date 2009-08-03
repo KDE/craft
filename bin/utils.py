@@ -479,6 +479,15 @@ def getAllPackages( category ):
     else:
         return
 
+def getPackageInstance( category, package ):
+    """return instance of class Package from package file"""
+    version = getNewestVersion( category, package )
+    fileName = getFilename( category, package, version )
+    module = __import__( fileName )
+    p = module.Package()
+    p.setup(fileName, category, package, version)
+    return p
+    
 def getDefaultTarget( category, package, version ):
     """ """
     debug( "importing file %s" % getFilename( category, package, version ), 1 )

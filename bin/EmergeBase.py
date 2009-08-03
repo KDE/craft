@@ -213,6 +213,13 @@ class EmergeBase():
             dir = ROOTDIR
         return dir
 
+    def setBuildTarget( self, target = None):
+        self.subinfo.setBuildTarget(target)
+        self.buildTarget = self.subinfo.buildTarget
+        if hasattr(self,'source'):
+            self.source.buildTarget = self.subinfo.buildTarget
+        
+    ## \todo cleanup 
     def execute( self, cmd=None ):
         """called to run the derived class"""
         """this will be executed from the package if the package is started on its own"""
@@ -220,10 +227,7 @@ class EmergeBase():
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
 
-        self.subinfo.setBuildTarget()
-        self.buildTarget = self.subinfo.buildTarget
-        if hasattr(self,'source'):
-            self.source.buildTarget = self.subinfo.buildTarget
+        self.setBuildTarget()
 
         if not cmd:
             command = sys.argv[ 1 ]
@@ -259,6 +263,16 @@ class EmergeBase():
         if ( not ok ):
             utils.die( "command %s failed" % command )
 
+    def setup( self, fileName, category, package, version ):
+        """ called from internal instance creating """
+        self.rootdir = ROOTDIR
+        self.category = category
+        self.package = package
+        self.version = version
+        ( self.PV, ext ) = os.path.splitext( os.path.basename( fileName) )
+        self.setBuildTarget()
+
+    ## \todo cleanup 
     def setDirectoriesBase( self ):
         """setting all important stuff that isn't coped with in the c'tor"""
         """parts will probably go to infoclass"""
