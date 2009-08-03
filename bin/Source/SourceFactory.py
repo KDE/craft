@@ -4,7 +4,6 @@ import info
 
 from ArchiveSource import *
 from SvnSource import *
-from KDESvnSource import *
 from GitSource import *
 from CvsSource import *
 
