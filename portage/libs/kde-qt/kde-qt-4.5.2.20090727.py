@@ -37,6 +37,7 @@ class subinfo(info.infoclass):
         else:
             self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        self.hardDependencies['testing/mysql-server'] = 'default'
 
 # the dbus and openssl dependencies are not important to be installed, but
 # rather that the packages have been downloaded for use in this build
@@ -140,7 +141,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
           command = command + " -release "
         print "command: ", command
-        utils.system( command )
+#        utils.system( command )
         
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
