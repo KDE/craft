@@ -39,11 +39,11 @@ class VersionSystemSourceBase (SourceBase):
     def repositoryPath( self ):
         """this function should return the full path into the repository"""
         if self.subinfo.hasSvnTarget():
-                url = self.subinfo.svnTarget()
-                if url.find("://") == -1: 
-                    return os.environ["KDESVNSERVER"] + '/home/kde/' + url
-                else:
-                    return url
+            url = self.subinfo.svnTarget()
+            if url.find("://") == -1: 
+                return os.environ["KDESVNSERVER"] + '/home/kde/' + url
+            else:
+                return url
         else:
             return False
             
