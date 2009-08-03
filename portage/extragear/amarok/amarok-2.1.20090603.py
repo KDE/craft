@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
             self.targets[ rel ] = 'ftp://ftp.kde.org/pub/kde/stable/amarok/' + rel + '/src/amarok-' + rel + '.tar.bz2'
             self.targetInstSrc[ rel ] = 'amarok-' + rel
         self.svnTargets['master'] = 'git://gitorious.org/amarok/amarok.git'
-        self.defaultTarget = '2.1.1'
+        self.defaultTarget = 'master'
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/taglib'] = 'default'
