@@ -47,6 +47,7 @@ class EmergeBase():
         if hasattr(self,'alreadyCalled'):
             return
         self.alreadyCalled = True
+        self.buildTarget = None
 
         if "args" in args.keys() and "env" in args["args"].keys():
             env = args["args"]["env"]
@@ -240,13 +241,25 @@ class EmergeBase():
             command = cmd
             options = ""
 
+        # \todo cleanup
         self.setDirectoriesBase()
-
-        utils.debug( "command: %s" % command )
         
+        # \todo cleanup
         self.setDirectories()
+        
+        #if self.createCombinedPackage:
+        #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]                        
+        #    os.environ["EMERGE_BUILDTYPE"] = "Release"
+        #    self.runAction(command)
+        #    os.environ["EMERGE_BUILDTYPE"] = "Debug"
+        #    self.runAction(command)
+        #    os.environ["EMERGE_BUILDTYPE"] = oldBuildType
+        #else:
+        self.runAction(command)
 
+    def runAction( self, command ):
         ok = True
+        utils.debug( "command: %s" % command,0 )
         if command   == "fetch":       ok = self.fetch()
         elif command == "cleanimage":  ok = self.cleanup()
         elif command == "unpack":      ok = self.unpack()
@@ -288,15 +301,6 @@ class EmergeBase():
         utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1 )
 
         self.rootdir     = ROOTDIR
-                
-        # deprecated
-        self.kdesvndir = KDESVNDIR
-        self.kdesvnserver = KDESVNSERVER
-        self.kdesvnuser = KDESVNUSERNAME
-        self.kdesvnpass = KDESVNPASSWORD
-               
-        self.strigidir = os.getenv( "STRIGI_HOME" )
-        self.dbusdir = os.getenv( "DBUSDIR" )
 
     def enterBuildDir(self):
        
