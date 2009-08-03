@@ -66,7 +66,7 @@ class PackageBase (EmergeBase):
 
         # add package to installed database -> is this not the task of the manifest files ? 
        
-        utils.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+        portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
 
     def unmerge( self ):
