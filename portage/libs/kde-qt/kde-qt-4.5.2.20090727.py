@@ -21,8 +21,8 @@ from Packager.KDEWinPackager import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
-        self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
+        self.svnTargets['4.5.2-static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
+        self.svnTargets['gitHEAD'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
         self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.defaultTarget = '4.5.2-patched'
         ## \todo this is prelimary  and may be changed 
@@ -49,6 +49,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         PackageBase.__init__(self)
         KDEWinPackager.__init__(self)
+        self.specialPackaging = True
         
         self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-3-lib.tar.bz2"
         if self.compiler() == "msvc2005":
@@ -176,9 +177,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
                     shutil.copy( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
                 
         return True
-
-    #def make_package( self ):
-    #    #return self.doPackaging( "qt", self.buildTarget, True, True )
 
 if __name__ == '__main__':
     Package().execute()
