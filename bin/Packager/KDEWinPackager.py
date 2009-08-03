@@ -16,8 +16,8 @@ class KDEWinPackager (PackagerBase):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
 
-        if self.subinfo.options.package.fileName <> "":
-            pkgName = self.subinfo.options.package.fileName
+        if self.subinfo.options.package.packageName <> "":
+            pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package
 
