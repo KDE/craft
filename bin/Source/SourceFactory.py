@@ -21,7 +21,7 @@ def SourceFactory(settings):
     if settings.hasSvnTarget():
         url = settings.svnTarget()
         if url.find("://") == -1: 
-            source = KDESvnSource()
+            source = SvnSource()
         elif url.find("git:") >= 0:
             source = GitSource()
         elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
