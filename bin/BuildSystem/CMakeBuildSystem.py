@@ -84,10 +84,18 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         
-        command = "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
+        fastString = ""
+        if not self.noFast:
+            fastString = "/fast"
+            
+        command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.imageDir(), fastString )
+#        command = "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
         
+        print command
         #utils.debug(command,1)
         utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
+
+        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
         return True
 
     def runTest( self ):
