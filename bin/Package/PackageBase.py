@@ -23,6 +23,7 @@ class PackageBase (EmergeBase):
     def __init__(self):
         utils.debug("PackageBase.__init__ called",2)
         EmergeBase.__init__(self)
+        self.setBuildTarget()
         self.forceCreateManifestFiles = False
 
     def __installedDBPrefix(self):
@@ -123,8 +124,6 @@ class PackageBase (EmergeBase):
         """it shouldn't be called if the package is imported as a python module"""
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
-
-        self.setBuildTarget()
 
         if not cmd:
             command = sys.argv[ 1 ]
