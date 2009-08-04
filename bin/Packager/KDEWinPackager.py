@@ -9,8 +9,10 @@ class KDEWinPackager (PackagerBase):
         PackagerBase.__init__(self)
         
     def xmlTemplate(self):
-        return os.path.join(self.packageDir(),self.package+"-package.xml")
-
+        template = os.path.join(self.packageDir(),self.package+"-package.xml")
+        if not os.path.exists(template):
+            template = os.path.join(self.packageDir(),self.package+".xml")
+        return template
 
     def createPackage(self):
         """packaging according to the gnuwin32 packaging rules"""
@@ -25,11 +27,6 @@ class KDEWinPackager (PackagerBase):
         if not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
             pkgVersion = self.subinfo.buildTarget
 
-        packSources = True
-        special = False 
-        if self.specialPackaging:
-            special = True
-    
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
@@ -45,7 +42,7 @@ class KDEWinPackager (PackagerBase):
             if os.path.exists( script ):
                 if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
-                shutil.copyfile( script, destscript )
+                utils.copyFile( script, destscript )
         
         # determine source in case MultiSource is used
         if hasattr(self,'source'): 
@@ -55,7 +52,7 @@ class KDEWinPackager (PackagerBase):
         
         # todo: this is probably code for dealing with svn repositories 
         # need to be refactored
-        if ( packSources ):
+        if ( self.subinfo.options.package.packSources ):
             srcCmd = " -srcroot " + sourcedir
         else:
             srcCmd = ""
@@ -65,10 +62,12 @@ class KDEWinPackager (PackagerBase):
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+            utils.debug("using xml template for package generating",1) 
         else:
             cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+            utils.debug(" xml template %s for package generating not found" % template,1) 
         
-        if( not self.createCombinedPackage ):
+        if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):
               cmd += " -type mingw "
             elif self.compiler() == "mingw4":
@@ -80,7 +79,7 @@ class KDEWinPackager (PackagerBase):
             else:
               cmd += " -type unknown "
 
-        if special:
+        if self.subinfo.options.package.specialMode:
             cmd += " -special"
 
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )

@@ -18,11 +18,20 @@ import utils
 
 class ActionPackageOptions:
     def __init__(self):
+        ## defines the package name 
         self.packageName = ""
+        ## use compiler in package name
+        self.withCompiler = True
+        ## use special packaging mode  (only for qt)
+        self.specialMode = False
+        ## pack also sources 
+        self.packSources = True
 
 class ActionConfigureOptions:
     def __init__(self):
+        ## configure defines 
         self.defines = ""
+        ## subdir based in sourceDir() in which the main build system related config file is located 
         self.configurePath = ""
 
 class Options:
