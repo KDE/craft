@@ -45,6 +45,9 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         
         defines = self.configureDefaultDefines()
+        if not self.subinfo.options.configure.defines == None:
+            defines += " %s" % self.subinfo.options.configure.defines
+            
         if self.envPath <> '':
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
