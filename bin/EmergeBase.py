@@ -222,62 +222,6 @@ class EmergeBase():
         if hasattr(self,'source'):
             self.source.buildTarget = self.subinfo.buildTarget
         
-    ## \todo cleanup 
-    def execute( self, cmd=None ):
-        """called to run the derived class"""
-        """this will be executed from the package if the package is started on its own"""
-        """it shouldn't be called if the package is imported as a python module"""
-
-        utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
-
-        self.setBuildTarget()
-
-        if not cmd:
-            command = sys.argv[ 1 ]
-            options = ""
-            if ( len( sys.argv )  > 2 ):
-                options = sys.argv[ 2: ]
-        else:
-            command = cmd
-            options = ""
-
-        # \todo cleanup
-        self.setDirectoriesBase()
-        
-        # \todo cleanup
-        self.setDirectories()
-        
-        #if self.createCombinedPackage:
-        #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]                        
-        #    os.environ["EMERGE_BUILDTYPE"] = "Release"
-        #    self.runAction(command)
-        #    os.environ["EMERGE_BUILDTYPE"] = "Debug"
-        #    self.runAction(command)
-        #    os.environ["EMERGE_BUILDTYPE"] = oldBuildType
-        #else:
-        self.runAction(command)
-
-    def runAction( self, command ):
-        ok = True
-        utils.debug( "command: %s" % command,0 )
-        if command   == "fetch":       ok = self.fetch()
-        elif command == "cleanimage":  ok = self.cleanup()
-        elif command == "unpack":      ok = self.unpack()
-        elif command == "compile":     ok = self.compile()
-        elif command == "configure":   ok = self.configure()
-        elif command == "make":        ok = self.make()
-        elif command == "install":     ok = self.install()
-        elif command == "test":        ok = self.unittest()
-        elif command == "qmerge":      ok = self.qmerge()
-        elif command == "unmerge":     ok = self.unmerge()
-        elif command == "manifest":    ok = self.manifest()
-        elif command == "package":     ok = self.make_package()
-        else:
-            ok = utils.error( "command %s not understood" % command )
-
-        if ( not ok ):
-            utils.die( "command %s failed" % command )
-
     def setup( self, fileName, category, package, version ):
         """ called from internal instance creating """
         self.rootdir = ROOTDIR
