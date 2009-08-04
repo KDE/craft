@@ -1,7 +1,3 @@
-import base
-import utils
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -20,29 +16,15 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libzip'] = 'default'
         self.hardDependencies['gnuwin32/libarchive'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        self.buildType="Debug"
-        base.baseclass.__init__( self, args=args )
+from Package.CMakePackageBase import *
+        
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-        self.kdeCustomDefines = ""
-#        self.kdeCustomDefines += "-DBUILD_kwallet=OFF "
-#        self.kdeCustomDefines += "-DBUILD_doc=OFF"
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdeutils", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdeutils" )
+        CMakePackageBase.__init__( self )
+        #        self.subinfo.options.configure.defines += "-DBUILD_kwallet=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF"
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
+

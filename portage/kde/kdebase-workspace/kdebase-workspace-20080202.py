@@ -1,6 +1,3 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -19,50 +16,36 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
         self.hardDependencies['win32libs-bin/freetype'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "workspace"
+from Package.CMakePackageBase import *
+        
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        defines = ""
+        defines += " -DBUILD_libs=OFF"
+#        defines += " -DBUILD_systemsettings=OFF"
+        defines += " -DBUILD_kcheckpass=OFF"
+        defines += " -DBUILD_kscreensaver=OFF"
+        defines += " -DBUILD_solid=OFF"
+        defines += " -DBUILD_ksmserver=OFF"
+        defines += " -DBUILD_kcminit=OFF"
+        defines += " -DBUILD_ksplash=OFF"
+        defines += " -DBUILD_ksysguard=OFF"
+        defines += " -DBUILD_klipper=OFF"
+        defines += " -DBUILD_kmenuedit=OFF"
+#        defines += " -DBUILD_krunner=OFF"
+        defines += " -DBUILD_kwin=OFF"
+        defines += " -DBUILD_printer-applet=OFF"
+        defines += " -DBUILD_kstartupconfig=OFF"
+#        defines += " -DBUILD_khotkeys=OFF"
+#        defines += " -DBUILD_kcontrol=OFF"
+        defines += " -DBUILD_ksystraycmd=OFF"
+#        defines += " -DBUILD_doc=OFF"
+#        defines += " -DBUILD_plasma=OFF"
+#        defines += " -DBUILD_wallpapers=OFF"
+        self.subinfo.options.configure.defines = defines
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = ""
-        self.kdeCustomDefines += " -DBUILD_libs=OFF"
-#        self.kdeCustomDefines += " -DBUILD_systemsettings=OFF"
-        self.kdeCustomDefines += " -DBUILD_kcheckpass=OFF"
-        self.kdeCustomDefines += " -DBUILD_kscreensaver=OFF"
-        self.kdeCustomDefines += " -DBUILD_solid=OFF"
-        self.kdeCustomDefines += " -DBUILD_ksmserver=OFF"
-        self.kdeCustomDefines += " -DBUILD_kcminit=OFF"
-        self.kdeCustomDefines += " -DBUILD_ksplash=OFF"
-        self.kdeCustomDefines += " -DBUILD_ksysguard=OFF"
-        self.kdeCustomDefines += " -DBUILD_klipper=OFF"
-        self.kdeCustomDefines += " -DBUILD_kmenuedit=OFF"
-#        self.kdeCustomDefines += " -DBUILD_krunner=OFF"
-        self.kdeCustomDefines += " -DBUILD_kwin=OFF"
-        self.kdeCustomDefines += " -DBUILD_printer-applet=OFF"
-        self.kdeCustomDefines += " -DBUILD_kstartupconfig=OFF"
-#        self.kdeCustomDefines += " -DBUILD_khotkeys=OFF"
-#        self.kdeCustomDefines += " -DBUILD_kcontrol=OFF"
-        self.kdeCustomDefines += " -DBUILD_ksystraycmd=OFF"
-#        self.kdeCustomDefines += " -DBUILD_doc=OFF"
-#        self.kdeCustomDefines += " -DBUILD_plasma=OFF"
-#        self.kdeCustomDefines += " -DBUILD_wallpapers=OFF"
-   
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdebase-workspace", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdebase-workspace" )
-
-		
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
+

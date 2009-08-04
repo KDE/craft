@@ -1,7 +1,3 @@
-import base
-import utils
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -16,28 +12,12 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/taglib'] = 'default'
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        path = os.path.join( self.rootdir, "win32libs" )
+from Package.CMakePackageBase import *
         
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdemultimedia", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdemultimedia" )
-
+class Package(CMakePackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

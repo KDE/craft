@@ -21,27 +21,14 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libnova'] = 'default'
         self.hardDependencies['win32libs-bin/openbabel'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kdeedu"
+
+from Package.CMakePackageBase import *
+        
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = "-DBUILD_doc=OFF"
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdeedu", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdeedu" )
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF"
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

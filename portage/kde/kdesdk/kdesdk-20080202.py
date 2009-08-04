@@ -1,7 +1,4 @@
 # -*- coding: iso-8859-15 -*-
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -18,42 +15,27 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/boost'] = 'default'
         self.hardDependencies['win32libs-bin/zip'] = 'default'
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.subinfo = subinfo()
-        self.kdeCustomDefines = ""
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kate=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kapptemplate=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kbugbuster=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kcachegrind=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kdeaccounts-plugin=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kdepalettes=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_strigi-analyzer=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kioslave=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kmtrace=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kprofilemethod=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kuiviewer=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_poxml=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_scripts=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_umbrello=OFF "
-#        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
+from Package.CMakePackageBase import *
         
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdesdk", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdesdk" )
+class Package(CMakePackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        #        self.subinfo.options.configure.defines = "-DBUILD_kate=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kapptemplate=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kbugbuster=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kcachegrind=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kdeaccounts-plugin=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kdepalettes=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_strigi-analyzer=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kioslave=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kmtrace=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kprofilemethod=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_kuiviewer=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_poxml=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_scripts=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_umbrello=OFF "
+        #        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

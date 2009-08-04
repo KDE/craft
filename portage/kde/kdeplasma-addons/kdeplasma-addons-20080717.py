@@ -1,7 +1,3 @@
-import base
-import utils
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -15,28 +11,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdebase-workspace'] = 'default'
+
+from Package.CMakePackageBase import *
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-        self.kdeCustomDefines = ""
-        
-        
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kdeplasma-addons", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kdeplasma-addons" )
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
