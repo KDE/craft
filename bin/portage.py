@@ -130,11 +130,11 @@ def getNewestVersion( category, package ):
 #    if verbose() >= 1:
 #        print "getNewestVersion:", category, package
     if( category == None ):
-        die("Empty category for package '%s'" % package )
+        utils.die("Empty category for package '%s'" % package )
     if category not in os.listdir( rootDir() ):
-        die( "could not find category '%s'" % category )
+        utils.die( "could not find category '%s'" % category )
     if package not in os.listdir( os.path.join( rootDir(), category ) ):
-        die( "could not find package '%s' in category '%s'" % ( package, category ) )
+        utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
 
     packagepath = os.path.join( rootDir(), category, package )
 
@@ -189,7 +189,7 @@ def getDependencies( category, package, version ):
     if os.path.isfile( getFilename( category, package, version ) ):
         f = open( getFilename( category, package, version ), "rb" )
     else:
-        die( "package name %s/%s-%s unknown" % ( category, package, version ) )
+        utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
     lines = f.read()
     #print "lines:", lines
     # get DEPENDS=... lines
