@@ -177,13 +177,13 @@ def handlePackage( category, package, version, buildAction, opts ):
         print "%s-%s-%s" % ( package, os.getenv( "KDECOMPILER" ), version )
         success = True
     elif ( buildAction == "print-installable" ):
-        utils.printInstallables()
+        portage.printInstallables()
         success = True
     elif ( buildAction == "print-installed" ):
-        utils.printInstalled()
+        portage.printInstalled()
         success = True
     elif ( buildAction == "print-targets" ):
-        utils.printTargets( category, package, version )
+        portage.printTargets( category, package, version )
         success = True
     elif ( buildAction == "install-deps" ):
         success = True
@@ -340,7 +340,7 @@ if packageName:
     if len( packageName.split( "/" ) ) == 1:
         if portage.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
-            packageList = utils.getAllPackages( packageName )
+            packageList = portage.getAllPackages( packageName )
             categoryList = [ packageName ]
         else:
             if portage.getCategory( packageName ):
@@ -364,7 +364,7 @@ if packageName:
     else:
         utils.error( "unknown packageName" )
 elif updateAll:
-    installedPackages = utils.getInstallables()
+    installedPackages = portage.getInstallables()
     utils.debug( "Updating, no package spec given", 1 )
     packageList = []
     for category, package, version in installedPackages:
