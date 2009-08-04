@@ -53,6 +53,7 @@ class PackageBase (EmergeBase):
         if portage.isInstalled( '', self.package, '', self.buildType() ):
             self.unmerge()
 
+        utils.debug("qmerge package to %s" % self.mergeDestinationDir(),2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
         self.manifest()
 
@@ -77,6 +78,7 @@ class PackageBase (EmergeBase):
         ## package definition, which fails if this is changed 
         ## a better solution will be to save the merge sub dir into 
         ## /etc/portage/installed and to read from it on unmerge
+        utils.debug("unmerge package from %s" % self.mergeDestinationDir(),2)
         utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
         portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
