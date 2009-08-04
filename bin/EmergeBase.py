@@ -191,21 +191,27 @@ class EmergeBase():
 
     def mergeSourceDir(self):
         """return absolute path to the merge source directory of the currently active package. 
-        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used 
+        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath for a 
+        specific target or @ref self.subinfo.options.merge.sourcePath is used
         """
         if self.subinfo.hasMergeSourcePath():
-            installDir = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath())
+            dir = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath() )
+        elif not self.subinfo.options.merge.sourcePath == None:
+            dir = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
-            installDir = self.imageDir()
-        return installDir
+            dir = self.imageDir()
+        return dir
                         
     def mergeDestinationDir(self):
-        """return absolute path to the merge directory of the currently active package. 
-        This path may point to a subdir of rootdir in case @ref info.targetMergePath is used 
+        """return absolute path to the merge destination directory of the currently active package. 
+        This path may point to a subdir of rootdir in case @ref info.targetMergePath for a specific 
+        build target or @ref self.subinfo.options.merge.destinationPath is used 
         """            
 
         if self.subinfo.hasMergePath():
-            dir = os.path.join(ROOTDIR, self.subinfo.mergePath())
+            dir = os.path.join( ROOTDIR, self.subinfo.mergePath() )
+        elif not self.subinfo.options.merge.destinationPath == None:
+            dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot:
             dir = ROOTDIR
         elif self.buildType() == 'Debug':

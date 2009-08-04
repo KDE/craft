@@ -34,11 +34,18 @@ class ActionConfigureOptions:
         ## subdir based in sourceDir() in which the main build system related config file is located 
         self.configurePath = ""
 
+class ActionMergeOptions:
+    def __init__(self):
+        ## subdir based on installDir() used as merge source directory
+        self.sourceDir = None
+        ## subdir based on mergeDir() used as  merge destination directory
+        self.destinationPath = None
+        
 class Options:
 	def __init__(self):
 		self.configure = ActionConfigureOptions()
 		self.package = ActionPackageOptions()
-
+		self.merge = ActionMergeOptions()
 
 class infoclass:
     def __init__( self, RAW="" ):
