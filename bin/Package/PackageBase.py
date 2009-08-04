@@ -101,6 +101,20 @@ class PackageBase (EmergeBase):
             utils.createManifestFiles( self.mergeSourceDir(), self.mergeDestinationDir(), self.category, self.package, self.version )
         return True
 
+    def stripLibs( self, pkgName ):
+        """strip debugging informations from shared libraries"""
+        basepath = os.path.join( self.installDir() )
+        dllpath = os.path.join( basepath, "bin", "%s.dll" % pkgName )
+
+        cmd = "strip -s " + dllpath
+        os.system( cmd )
+        return True
+
+    def createImportLibs( self, pkgName ):
+        """create the import libraries for the other compiler(if ANSI-C libs)"""
+        basepath = os.path.join( self.installDir() )
+        utils.createImportLibs( pkgName, basepath )
+
     def execute( self, cmd=None ):
         """called to run the derived class"""
         """this will be executed from the package if the package is started on its own"""
