@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['win32libs-bin/libgmp'] = 'default'
+        self.hardDependencies['dev-util/gettext-tools'] = 'default'
     
 class subclass(base.baseclass):
     def __init__( self, **args ):
