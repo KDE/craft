@@ -9,10 +9,12 @@ class subinfo(info.infoclass):
         self.targets['4.0-beta1'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta1.tar.bz2'
         self.targets['4.0-beta2'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta2.tar.bz2'
         self.targets['4.0-beta4'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta4.tar.bz2'
+        self.targets['4.0-beta7'] = 'http://downloads.sourceforge.net/libmsn/libmsn-4.0-beta7.tar.bz2'
         self.targetInstSrc['4.0-beta1'] = 'libmsn-4.0-beta1'
         self.targetInstSrc['4.0-beta2'] = 'libmsn-4.0-beta2'
         self.targetInstSrc['4.0-beta4'] = 'libmsn-4.0-beta4'
-        self.defaultTarget = '4.0-beta4'
+        self.targetInstSrc['4.0-beta7'] = 'libmsn-4.0-beta7'
+        self.defaultTarget = '4.0-beta7'
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
