@@ -65,7 +65,7 @@ class KDEWinPackager (PackagerBase):
             utils.debug("using xml template for package generating",1) 
         else:
             cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
-            utils.debug(" xml template %s for package generating not found" % template,1) 
+            utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):
