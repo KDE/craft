@@ -19,7 +19,7 @@ import utils
 class ActionPackageOptions:
     def __init__(self):
         ## defines the package name 
-        self.packageName = none
+        self.packageName = None
         ## use compiler in package name
         self.withCompiler = True
         ## use special packaging mode  (only for qt)
