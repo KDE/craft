@@ -1,8 +1,3 @@
-import base
-import utils
-import shutil
-import os
-import sys
 import info
 
 class subinfo (info.infoclass):
@@ -18,41 +13,31 @@ class subinfo (info.infoclass):
         self.targetInstSrc['0.9.21b'] = os.path.join( "clucene-core-0.9.21b", "src" )
         self.defaultTarget = '0.9.21b'
 
+from Package.CMakePackageBase import *
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = "-DCLUCENE_VERSION:STRING="+self.buildTarget
 
     def unpack( self ):
-        if( not base.baseclass.unpack( self ) ):
+        if not CMakePackageBase.unpack( self ):
             return True
 
         # we have an own cmake script - copy it to the right place
-        mydir = os.path.join( self.workdir, self.instsrcdir )
         cmake_script = ""
         if self.buildTarget == '0.9.16a':
-            cmake_script = os.path.join( self.packagedir , "CMakeLists-0.9.16.txt" )
+            cmake_script = os.path.join( self.packageDir() , "CMakeLists-0.9.16.txt" )
         else:
-            cmake_script = os.path.join( self.packagedir , "CMakeLists-0.9.20.txt" )
-        cmake_dest = os.path.join( mydir, "CMakeLists.txt" )
-        shutil.copy( cmake_script, cmake_dest )
-        cmake_script = os.path.join( self.packagedir , "clucene-config.h.cmake" )
-        cmake_dest = os.path.join( mydir, "Clucene", "clucene-config.h.cmake" )
-        shutil.copy( cmake_script, cmake_dest )
+            cmake_script = os.path.join( self.packageDir() , "CMakeLists-0.9.20.txt" )
+        cmake_dest = os.path.join( self.sourceDir(), "CMakeLists.txt" )
+        utils.copyFile( cmake_script, cmake_dest )
+        cmake_script = os.path.join( self.packageDir() , "clucene-config.h.cmake" )
+        cmake_dest = os.path.join( self.sourceDir(), "Clucene", "clucene-config.h.cmake" )
+        utils.copyFile( cmake_script, cmake_dest )
 
         return True
-
-    def compile( self ):
-        self.kdeCustomDefines="-DCLUCENE_VERSION:STRING="+self.buildTarget
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "clucene-core", self.buildTarget, True )
-
     
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
