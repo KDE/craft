@@ -111,6 +111,7 @@ class Package(QMakePackageBase):
         
         os.environ[ "LIB" ] = libtmp
         os.environ[ "INCLUDE" ] = inctmp
+        return True
       
 
     def install( self ):
