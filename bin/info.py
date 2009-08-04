@@ -19,7 +19,7 @@ import utils
 class ActionPackageOptions:
     def __init__(self):
         ## defines the package name 
-        self.packageName = ""
+        self.packageName = none
         ## use compiler in package name
         self.withCompiler = True
         ## use special packaging mode  (only for qt)
@@ -30,9 +30,9 @@ class ActionPackageOptions:
 class ActionConfigureOptions:
     def __init__(self):
         ## configure defines 
-        self.defines = ""
+        self.defines = None
         ## subdir based in sourceDir() in which the main build system related config file is located 
-        self.configurePath = ""
+        self.configurePath = None
 
 class ActionMergeOptions:
     def __init__(self):
