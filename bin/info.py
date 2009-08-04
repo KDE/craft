@@ -37,7 +37,7 @@ class ActionConfigureOptions:
 class ActionMergeOptions:
     def __init__(self):
         ## subdir based on installDir() used as merge source directory
-        self.sourceDir = None
+        self.sourcePath = None
         ## subdir based on mergeDir() used as  merge destination directory
         self.destinationPath = None
         
