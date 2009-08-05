@@ -51,7 +51,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         PackageBase.__init__(self)
         KDEWinPackager.__init__(self)
-        self.specialPackaging = True
+        self.subinfo.options.package.specialMode = True
         
         self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-3-lib.tar.bz2"
         if self.compiler() == "msvc2005":
