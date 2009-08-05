@@ -149,16 +149,23 @@ class EmergeBase():
 
     def buildDir(self):        
         utils.debug("EmergeBase.buildDir() called" ,2)
-        if( self.buildType() == None ):
-            tmp = "%s-%s-%s" % (COMPILER, "default", self.buildTarget)
+        ## \todo replace by self.buildTarget()
+        self.setBuildTarget()
+        dir = ""
+        if self.subinfo.options.useCompilerType == True:
+            dir += "%s-" % COMPILER
+        if self.subinfo.options.useBuildType == False:
+            dir += "%s" % (self.buildTarget)
+        elif( self.buildType() == None ):
+            dir += "%s-%s" % ("default", self.buildTarget)
         else:
-            tmp = "%s-%s-%s" % (COMPILER, self.buildType(), self.buildTarget)
+            dir += "%s-%s" % (self.buildType(), self.buildTarget)
         
         ## \todo for what is this good ?
         #if( not self.buildNameExt == None ):
         #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
 
-        builddir = os.path.join( self.workDir(), tmp )
+        builddir = os.path.join( self.workDir(), dir )
                 
         utils.debug("package builddir is: %s" % builddir,2)
         return builddir
@@ -173,8 +180,10 @@ class EmergeBase():
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             return imagedir
         
-        imagedir += '-' + COMPILER
-        imagedir += '-' + self.buildType()
+        if self.subinfo.options.useCompilerType == True:
+            imagedir += '-' + COMPILER
+        if self.subinfo.options.useBuildType == True:
+            imagedir += '-' + self.buildType()
         imagedir += '-' + self.buildTarget
         
         return imagedir
