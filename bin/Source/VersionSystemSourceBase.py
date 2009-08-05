@@ -41,7 +41,12 @@ class VersionSystemSourceBase (SourceBase):
         if self.subinfo.hasSvnTarget():
             url = self.subinfo.svnTarget()
             if url.find("://") == -1: 
-                return os.environ["KDESVNSERVER"] + '/home/kde/' + url
+                if ( os.getenv("KDESVNSERVER") == None ):
+                    server = "svn://anonsvn.kde.org"
+                else:
+                    server = os.getenv("KDESVNSERVER")
+                
+                return server + '/home/kde/' + url
             else:
                 return url
         else:
@@ -54,7 +59,10 @@ class VersionSystemSourceBase (SourceBase):
             if self.subinfo.hasSvnTarget():
                 url = self.subinfo.svnTarget()
                 if url.find("://") == -1: 
-                    sourcedir = os.path.join( os.environ["KDESVNDIR"], url )
+                    if os.getenv("KDESVNDIR") == None:
+                        sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
+                    else:
+                        sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
                 else:
                     sourcedir = os.path.join( self.downloadDir(), "svn-src", self.package )
             else:
