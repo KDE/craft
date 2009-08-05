@@ -14,9 +14,7 @@ class KDEWinPackager (PackagerBase):
             if os.path.exists(path):
                 self.packager = path
                 break
-        if self.packager == None:
-            utils.die("could not found kdewin-packager")
-        else:
+        if not self.packager == None:
             utils.debug("using kdewin packager from %s" % self.packager,2)
             
     def xmlTemplate(self):
