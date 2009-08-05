@@ -46,6 +46,7 @@ class subinfo(info.infoclass):
 
 class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
+        self.subinfo = subinfo()
         GitSource.__init__(self)
         QMakeBuildSystem.__init__(self)
         PackageBase.__init__(self)
@@ -60,7 +61,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         elif self.compiler() == "mingw":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-mingw-1.2.4-1-lib.tar.bz2"
         self.mysql = "http://downloads.sourceforge.net/kde-windows/mysql-server-5.1.36-2-lib.tar.bz2"
-        self.subinfo = subinfo()
 
     def fetch(self):
         if not GitSource.fetch(self):
