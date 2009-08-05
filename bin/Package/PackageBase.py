@@ -27,13 +27,12 @@ class PackageBase (EmergeBase):
         self.forceCreateManifestFiles = False
 
     def __installedDBPrefix(self):
+        postfix = ''
         if self.useBuildTypeRelatedMergeRoot:
             if self.buildType() == 'Debug':
                 postfix = 'debug'
             elif self.buildType() == 'Release':
                 postfix =  'release'
-        else:
-            postfix =  ''
         return postfix
 
     def qmerge( self ):
