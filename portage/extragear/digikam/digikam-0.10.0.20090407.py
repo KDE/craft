@@ -12,6 +12,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.10.0'] = 'digikam-0.10.0'
         self.targets['1.0.0-beta1'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-1.0.0-beta1.tar.bz2'
         self.targetInstSrc['1.0.0-beta1'] = 'digikam-1.0.0-beta1'
+        self.targets['1.0.0-beta3'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-beta3/digikam-1.0.0-beta3.tar.bz2'
+        self.targetInstSrc['1.0.0-beta3'] = 'digikam-1.0.0-beta3'
         
         self.svnTargets['branch-0.10.0'] = 'branches/extragear/graphics/digikam/0.10.0-trunk'
         self.defaultTarget = 'svnHEAD'
