@@ -7,7 +7,18 @@ class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
     def __init__(self):
         PackagerBase.__init__(self)
-        
+        fileName = "bin\\kdewin-packager.exe"
+        self.packager = None
+        for dir in [".","dev-utils", "release", "debug"]:
+            path = os.path.join(self.rootdir, dir, fileName )
+            if os.path.exists(path):
+                self.packager = path
+                break
+        if self.packager == None:
+            utils.die("could not found kdewin-packager")
+        else:
+            utils.debug("using kdewin packager from %s" % self.packager,2)
+            
     def xmlTemplate(self):
         template = os.path.join(self.packageDir(),self.package+"-package.xml")
         if not os.path.exists(template):
@@ -18,7 +29,7 @@ class KDEWinPackager (PackagerBase):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
 
-        if self.subinfo.options.package.packageName <> "":
+        if self.subinfo.options.package.packageName <> None:
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package
@@ -32,9 +43,6 @@ class KDEWinPackager (PackagerBase):
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
          
-        if not utils.test4application( "kdewin-packager" ):
-            utils.die( "kdewin-packager not found - please make sure it is in your path" )
-
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
@@ -61,10 +69,10 @@ class KDEWinPackager (PackagerBase):
                   ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd )
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
-            cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
             utils.debug("using xml template for package generating",1) 
         else:
-            cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
         if( self.subinfo.options.package.withCompiler ):
