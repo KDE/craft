@@ -8,6 +8,7 @@ import imp
 import os
 import re
 import sys
+import portage_versions
 
 def __import__( module ):
     utils.debug( "module to import: %s" % module, 2 )
