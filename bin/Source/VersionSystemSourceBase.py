@@ -51,8 +51,14 @@ class VersionSystemSourceBase (SourceBase):
         if not self.noCopy:
             sourcedir = self.workDir()
         else:
-            sourcedir = os.path.join( self.downloadDir(), "svn-src", self.package )
-
+            if self.subinfo.hasSvnTarget():
+                url = self.subinfo.svnTarget()
+                if url.find("://") == -1: 
+                    sourcedir = os.path.join( os.environ["KDESVNDIR"], url )
+                else:
+                    sourcedir = os.path.join( self.downloadDir(), "svn-src", self.package )
+            else:
+                utils.die("svnTarget property not set for this target")
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
