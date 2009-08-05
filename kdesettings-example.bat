@@ -24,12 +24,19 @@ rem This path will be automatically included then.
 if %KDECOMPILER% == "msvc2005" (
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 )
+if %KDECOMPILER% == "msvc2008" (
+set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
+)
 
 rem Here you set the location of the vcvarsall.bat file that adds
 rem Visual C++ environment variables into the build environment.
 rem if you are not building on x86 change that to something appropriate.
 if %KDECOMPILER% == "msvc2005" (
 set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 8
+call "%VSDIR%\VC\vcvarsall.bat" x86
+)
+if %KDECOMPILER% == "msvc2008" (
+set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 9.0
 call "%VSDIR%\VC\vcvarsall.bat" x86
 )
 
