@@ -18,7 +18,7 @@ class Package(CMakePackageBase):
     def __init__(self):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.disableDebugBuild = True
+        self.subinfo.options.disableDebugBuild = True
         self.qtstatic = portage.getPackageInstance('libs','qt-static')
         self.subinfo.options.configure.defines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
             % os.path.join(self.qtstatic.installDir(), "bin", "qmake.exe").replace('\\', '/')
