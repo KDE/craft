@@ -393,9 +393,9 @@ for item in deplist:
     pac = item[ 1 ]
     ver = item[ 2 ]
 
-    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
-        print "remove:", cat, pac, ver
-        deplist.remove( item )
+#    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
+#        print "remove:", cat, pac, ver
+#        deplist.remove( item )
 
 if buildAction == "install-deps":
     # the first dependency is the package itself - ignore it
