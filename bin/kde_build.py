@@ -39,7 +39,7 @@ class kde_interface:
         if self.COMPILER   == "msvc2005" or self.COMPILER == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm      = "nmake"
-        elif self.COMPILER == "mingw":
+        elif self.COMPILER == "mingw" or self.COMPILER == "mingw4":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
             self.cmakeMakeProgramm      = "mingw32-make"
         else:
