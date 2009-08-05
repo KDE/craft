@@ -84,7 +84,7 @@ class PackageBase (EmergeBase):
         portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
 
-    def cleanup( self ):
+    def cleanImage( self ):
         """cleanup before install to imagedir"""
         if hasattr(self,'buildSystemType') and self.buildSystemType == 'binary' or hasattr(self,'buildsystem') and self.buildsystem.buildSystemType == 'binary':
             utils.debug("skipped cleaning image dir because we use binary build system",1)
@@ -92,6 +92,14 @@ class PackageBase (EmergeBase):
         if ( os.path.exists( self.imageDir() ) ):
             utils.debug( "cleaning image dir: %s" % self.imageDir(), 1 )
             utils.cleanDirectory( self.imageDir() )
+        return True
+
+    def cleanBuild( self ):
+        """cleanup complete build dir"""
+        if os.path.exists( self.buildRoot() ):
+            utils.cleanDirectory( self.buildRoot() )
+            utils.debug( "cleaning build dir: %s" % self.buildRoot(), 1 )
+
         return True
         
     def manifest( self ):
@@ -154,7 +162,8 @@ class PackageBase (EmergeBase):
         ok = True
         utils.debug( "command: %s" % command,0 )
         if command   == "fetch":       ok = self.fetch()
-        elif command == "cleanimage":  ok = self.cleanup()
+        elif command == "cleanimage":  ok = self.cleanImage()
+        elif command == "cleanbuild":  ok = self.cleanBuild()
         elif command == "unpack":      ok = self.unpack()
         elif command == "compile":     ok = self.compile()
         elif command == "configure":   ok = self.configure()
