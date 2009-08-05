@@ -17,7 +17,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
-        elif self.compiler() == "mingw":
+        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
