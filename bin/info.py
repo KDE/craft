@@ -59,9 +59,9 @@ class Options:
         ## set this option to false for having compiler type independent packages 
         self.useCompilerType = True
         ## skip the related package from debug builds
-        self.disableDebugBuild = True
+        self.disableDebugBuild = False
         ## skip the related package from release builds
-        self.disableReleaseBuild = True
+        self.disableReleaseBuild = False
 
 class infoclass:
     def __init__( self, RAW="" ):
