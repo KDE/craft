@@ -16,7 +16,7 @@ import utils
 # actions.package
 # -> I guess action orientated settings would be much better 
 
-class ActionPackageOptions:
+class OptionsPackage:
     def __init__(self):
         ## defines the package name 
         self.packageName = None
@@ -27,14 +27,20 @@ class ActionPackageOptions:
         ## pack also sources 
         self.packSources = True
 
-class ActionConfigureOptions:
+class OptionsConfigure:
     def __init__(self):
         ## configure defines 
         self.defines = None
         ## subdir based in sourceDir() in which the main build system related config file is located 
         self.configurePath = None
 
-class ActionMergeOptions:
+class OptionsInstall:
+    def __init__(self):
+        ## use either make tool for installing or 
+		# run cmake directly for installing 
+        self.useMakeToolForInstall = True
+
+class OptionsMerge:
     def __init__(self):
         ## subdir based on installDir() used as merge source directory
         self.sourcePath = None
@@ -42,10 +48,15 @@ class ActionMergeOptions:
         self.destinationPath = None
         
 class Options:
-	def __init__(self):
-		self.configure = ActionConfigureOptions()
-		self.package = ActionPackageOptions()
-		self.merge = ActionMergeOptions()
+    def __init__(self):
+        self.configure = OptionsConfigure()
+        self.install = OptionsInstall()
+        self.package = OptionsPackage()
+        self.merge = OptionsMerge()
+        ## set this option to false for build type independent packages 
+        self.useBuildType = True
+        ## set this option to false for having compiler type independent packages 
+        self.useCompilerType = True
 
 class infoclass:
     def __init__( self, RAW="" ):
