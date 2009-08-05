@@ -20,6 +20,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DCLUCENE_VERSION:STRING="+self.buildTarget
+        self.subinfo.options.configure.configurePath = "src"
 
     def unpack( self ):
         if not CMakePackageBase.unpack( self ):
