@@ -25,11 +25,30 @@ http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 """
 
+SRC_URI3 = """
+http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109-2.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.14.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-4.4.0-mingw32-bin.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-4.4.0-mingw32-dll.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-c++-4.4.0-mingw32-bin.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gcc-c++-4.4.0-mingw32-dll.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gmp-4.2.4-mingw32-dll.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/libiconv-1.13-mingw32-dll-2.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/mpfr-2.4.1-mingw32-dll.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/pthreads-w32-2.8.0-mingw32-dll.tar.gz
+
+"""
+
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.3.0'] = SRC_URI
         self.targets['4.4.0-tdm-r2'] = SRC_URI2
-        self.defaultTarget = '4.4.0-tdm-r2'
+        self.targets['4.4.0'] = SRC_URI2
+        self.defaultTarget = '4.4.0'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
