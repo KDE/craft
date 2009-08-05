@@ -433,6 +433,8 @@ else:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
             else:
                 if( instver != None ):
+                    ## \todo  the following unmerge should be performed immediatly before merging the updated package
+                    # In case the build fails the live system will be broken 
                     utils.debug( "found old version %s - removing" % instver )
                     handlePackage( package[0], package[1], package[2], "unmerge", opts )
 
