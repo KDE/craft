@@ -1,43 +1,29 @@
-import base
-import utils
-import sys
 import info
-import os.path
+import os
 
 class subinfo(info.infoclass):
-    def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt-static'] = 'default'
-        self.hardDependencies['dev-util/upx'] = 'default'
-
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin-installer'
         self.svnTargets['amarokHEAD'] = 'trunk/kdesupport/kdewin-installer'
         self.defaultTarget = 'svnHEAD'
 
-class subclass(base.baseclass):
-    def __init__(self, **args):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kdewin-installer"
-        self.buildType = "Release"
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['libs/qt-static'] = 'default'
+        self.hardDependencies['dev-util/upx'] = 'default'
+
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__(self):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
-            % os.path.join(self.rootdir, "qt-static", "bin", "qmake.exe").replace('\\', '/')
+        CMakePackageBase.__init__( self )
+        self.onlyReleaseBuild = True
+        self.qtstatic = portage.getPackageInstance('libs','qt-static')
+        self.subinfo.options.configure.defines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
+            % os.path.join(self.qtstatic.installDir(), "bin", "qmake.exe").replace('\\', '/')
         if self.buildTarget == 'amarokHEAD':
-            self.kdeCustomDefines += " -DBUILD_FOR_AMAROK=ON"
-
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "kdewin-installer" )
+            self.subinfo.options.configure.defines += " -DBUILD_FOR_AMAROK=ON"
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

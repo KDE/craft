@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import base
-import os
 import info
 
 class subinfo(info.infoclass):
@@ -10,16 +8,23 @@ class subinfo(info.infoclass):
         for version in ['4.5.1-1']:
             self.targets[ version ] = self.getPackage( repoUrl, "qt-static", version)
         self.defaultTarget = '4.5.1-1'
-    
-class subclass(base.baseclass):
-  def __init__(self, **args):
-    base.baseclass.__init__( self, args=args )
-    self.instdestdir = "qt-static"
-    self.subinfo = subinfo()
 
-  def unpack(self):
-    res = base.baseclass.unpack( self )
-    return res
+from Package.BinaryPackageBase import *
+        
+class Package(BinaryPackageBase):
+  def __init__( self ):
+    self.subinfo = subinfo()
+    BinaryPackageBase.__init__( self )
+    self.subinfo.options.onlyReleaseBuilds = True
+    self.subinfo.options.merge.destinationPath = "qt-static"
+
+    def merge(self):
+        """this package should not be merged into""" 
+        return True
+
+    def unmerge(self):
+        """this package should not be unmerged into""" 
+        return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
