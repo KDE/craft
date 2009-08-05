@@ -156,7 +156,12 @@ class PackageBase (EmergeBase):
         #    self.runAction(command)
         #    os.environ["EMERGE_BUILDTYPE"] = oldBuildType
         #else:
+        if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
+            print "target ignored for this build type"
+            return False
+        
         self.runAction(command)
+        return True
 
     def runAction( self, command ):
         ok = True

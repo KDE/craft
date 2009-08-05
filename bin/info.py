@@ -53,10 +53,15 @@ class Options:
         self.install = OptionsInstall()
         self.package = OptionsPackage()
         self.merge = OptionsMerge()
+        
         ## set this option to false for build type independent packages 
         self.useBuildType = True
         ## set this option to false for having compiler type independent packages 
         self.useCompilerType = True
+        ## skip the related package from debug builds
+        self.disableDebugBuild = True
+        ## skip the related package from release builds
+        self.disableReleaseBuild = True
 
 class infoclass:
     def __init__( self, RAW="" ):
