@@ -27,6 +27,9 @@ class KDEWinPackager (PackagerBase):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
 
+        if not self.packager:
+            utils.die("could not find kdewin-packager in your path!")
+
         if self.subinfo.options.package.packageName <> None:
             pkgName = self.subinfo.options.package.packageName
         else:
@@ -70,6 +73,9 @@ class KDEWinPackager (PackagerBase):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
             utils.debug("using xml template for package generating",1) 
         else:
+            print
+            print
+            print '<', self.packager, cmd, self.category, self.package, self.version
             cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
