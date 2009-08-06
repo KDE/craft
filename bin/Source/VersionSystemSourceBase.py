@@ -36,6 +36,15 @@ class VersionSystemSourceBase (SourceBase):
             utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
         return True;
 
+    def repositoryBasePath( self ):
+        """ this function should return the base path to the KDE repository """
+        if ( os.getenv("KDESVNSERVER") == None ):
+            server = "svn://anonsvn.kde.org"
+        else:
+            server = os.getenv("KDESVNSERVER")
+        
+        return server + '/home/kde/'
+        
     def repositoryPath( self ):
         """this function should return the full path into the repository"""
         if self.subinfo.hasSvnTarget():
