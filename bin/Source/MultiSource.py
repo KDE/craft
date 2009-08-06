@@ -19,3 +19,9 @@ class MultiSource():
 
     def sourceDir(self):
         return self.source.sourceDir()
+
+    def repositoryPath(self):
+        return self.source.repositoryPath()
+        
+    def applyPatches(self)
+        return self.source.applyPatches()
