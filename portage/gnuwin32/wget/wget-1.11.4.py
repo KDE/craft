@@ -1,6 +1,6 @@
-import base
 import info
 
+## \todo the dep files will let into have dll's installed multiple times 
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-%s-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-%s-dep.zip
@@ -11,19 +11,14 @@ class subinfo(info.infoclass):
         for t in ( '1.10.1', '1.11.4' ):
           self.targets[ t ] = SRC_URI % ( t, t )
         self.defaultTarget = '1.11.4'
-        self.targetMergePath['1.11.4'] = "dev-utils";
 
-from Source.ArchiveSource import *
-from BuildSystem.BinaryBuildSystem import *
-from Package.PackageBase import *
+from Package.BinaryPackageBase import *
 
-class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        ArchiveSource.__init__(self)
-        BinaryBuildSystem.__init__(self)
-        # no packager required 
+        self.subinfo.options.merge.destinationPath = "dev-utils"
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()

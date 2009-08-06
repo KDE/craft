@@ -1,4 +1,3 @@
-import base
 import info
 import os
 
@@ -14,18 +13,21 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/win32libs'] = 'default'
-        
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.subinfo = subinfo()
-        
-    def compile( self ):
-        cmd = "cd %s && patch -p0 < %s" % \
-          ( self.workdir, os.path.join( self.packagedir, "libarchive-comp.diff" ) )
-        self.system( cmd )
-        return True
     
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self):
+        self.subinfo = subinfo()
+        self.subinfo.options.merge.destinationPath = "dev-utils"
+        BinaryPackageBase.__init__(self)
+
+        
+    def unpack( self ):
+        if not BinaryPackageBase.unpack(self):
+            return False
+        utils.applyPatch( os.path.join( self.packageDir(), "libarchive-comp.diff" ) , self.sourceDir(), "0" ):
+        return True
  
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

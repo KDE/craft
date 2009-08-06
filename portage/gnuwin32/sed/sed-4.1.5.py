@@ -1,4 +1,3 @@
-import base
 import info
 
 SRC_URI = """
@@ -10,22 +9,17 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.1.5'] = SRC_URI
         self.defaultTarget = '4.1.5'
-        self.targetMergePath['4.1.5'] = "dev-utils";
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
-from Source.ArchiveSource import *
-from BuildSystem.BinaryBuildSystem import *
-from Package.PackageBase import *
+from Package.BinaryPackageBase import *
 
-class Package(PackageBase, ArchiveSource, BinaryBuildSystem):
+class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        ArchiveSource.__init__(self)
-        BinaryBuildSystem.__init__(self)
-        # no packager required 
+        self.subinfo.options.merge.destinationPath = "dev-utils"
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()
