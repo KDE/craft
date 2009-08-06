@@ -227,6 +227,8 @@ class EmergeBase():
             dir = os.path.join(ROOTDIR,'debug')
         elif self.buildType() == 'Release':
             dir = os.path.join(ROOTDIR,'release')
+        elif self.buildType() == 'RelWithDebInfo':
+            dir = os.path.join(ROOTDIR,'relwithdebinfo')
         else:
             dir = ROOTDIR
         return dir

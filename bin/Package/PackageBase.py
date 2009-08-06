@@ -33,6 +33,8 @@ class PackageBase (EmergeBase):
                 postfix = 'debug'
             elif self.buildType() == 'Release':
                 postfix =  'release'
+            elif self.buildType() == 'RelWithDebInfo':
+                postfix =  'relwithdebinfo'
         return postfix
 
     def qmerge( self ):
