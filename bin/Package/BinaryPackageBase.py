@@ -4,6 +4,7 @@ from Source.ArchiveSource import *;
 from BuildSystem.BinaryBuildSystem import *;
 from Packager.KDEWinPackager import *;
 
+## \todo rename to BinaryPackage
 class BinaryPackageBase (PackageBase, ArchiveSource, BinaryBuildSystem, KDEWinPackager):
     """provides a base class for binary packages"""
     def __init__(self):

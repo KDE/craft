@@ -4,6 +4,7 @@ from Source.MultiSource import *;
 from BuildSystem.QMakeBuildSystem import *;
 from Packager.KDEWinPackager import *;
 
+## \todo rename to QMakePackage
 class QMakePackageBase (PackageBase, MultiSource, QMakeBuildSystem, KDEWinPackager):
     """provides a base class for qmake packages from any source"""
     def __init__(self):

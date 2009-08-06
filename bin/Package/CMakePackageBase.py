@@ -4,6 +4,7 @@ from Source.MultiSource import *;
 from BuildSystem.CMakeBuildSystem import *;
 from Packager.KDEWinPackager import *;
 
+## \todo rename to CMakePackage
 class CMakePackageBase (PackageBase, MultiSource, CMakeBuildSystem, KDEWinPackager):
     """provides a base class for cmake packages from any source"""
     def __init__(self):

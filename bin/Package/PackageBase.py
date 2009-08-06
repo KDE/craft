@@ -137,7 +137,7 @@ class PackageBase (EmergeBase):
         else:
             command = cmd
             options = None
-        # \todo options are not provided by emerge.py fix it
+        # \todo options are not passed through by emerge.py fix it
         return [command, options]
 
     def execute( self, cmd=None ):
