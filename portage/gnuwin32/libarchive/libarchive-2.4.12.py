@@ -26,7 +26,7 @@ class Package(BinaryPackageBase):
     def unpack( self ):
         if not BinaryPackageBase.unpack(self):
             return False
-        utils.applyPatch( os.path.join( self.packageDir(), "libarchive-comp.diff" ) , self.sourceDir(), "0" ):
+        utils.applyPatch( os.path.join( self.packageDir(), "libarchive-comp.diff" ) , self.sourceDir(), "0" )
         return True
  
 if __name__ == '__main__':
