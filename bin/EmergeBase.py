@@ -77,10 +77,6 @@ class EmergeBase():
             self.useBuildTypeRelatedMergeRoot = False
         
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
-
-        self.setDirectoriesBase()
-        #self.msys = msys_build.msys_interface()
-        #self.kde  = KDE4BuildSystem()
         
         if os.getenv( "EMERGE_OFFLINE" ) == "True":
             self.noFetch = True
@@ -106,7 +102,8 @@ class EmergeBase():
         else:
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
-
+        self.rootdir = ROOTDIR
+            
     def abstract():
         import inspect
         caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -239,29 +236,16 @@ class EmergeBase():
         if hasattr(self,'source'):
             self.source.buildTarget = self.subinfo.buildTarget
         
-    def setup( self, fileName, category, package, version ):
-        """ called from internal instance creating """
-        self.rootdir = ROOTDIR
-        self.category = category
-        self.package = package
-        self.version = version
-        ( self.PV, ext ) = os.path.splitext( os.path.basename( fileName) )
+    def setup( self, fileName=None, category=None, package=None, version=None):
+        if fileName == None:
+            ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
+            ( self.category, self.package, self.version ) = portage.getCategoryPackageVersion( self.argv0 )
+        else:
+            self.category = category
+            self.package = package
+            self.version = version
+            ( self.PV, ext ) = os.path.splitext( os.path.basename( fileName) )
         self.setBuildTarget()
-
-    ## \todo cleanup 
-    def setDirectoriesBase( self ):
-        """setting all important stuff that isn't coped with in the c'tor"""
-        """parts will probably go to infoclass"""
-        utils.debug( "setdirectories called", 2 )
-
-        ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
-
-        ( self.category, self.package, self.version ) = \
-                       portage.getCategoryPackageVersion( self.argv0 )
-
-        utils.debug( "setdir category: %s, package: %s" % ( self.category, self.package ), 1 )
-
-        self.rootdir     = ROOTDIR
 
     def enterBuildDir(self):
        

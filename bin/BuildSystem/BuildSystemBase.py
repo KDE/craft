@@ -56,9 +56,6 @@ class BuildSystemBase(EmergeBase):
     def compile(self):
         """convencience method - runs configure() and make()"""
         return self.configure() and self.make()
-
-    def setDirectories(self):
-        return
     
     def configureSourceDir(self):
         """returns source dir used for configure step"""

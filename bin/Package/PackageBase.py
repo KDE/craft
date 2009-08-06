@@ -127,28 +127,27 @@ class PackageBase (EmergeBase):
         basepath = os.path.join( self.installDir() )
         utils.createImportLibs( pkgName, basepath )
 
+    def getAction(self, cmd = None ):
+        if not cmd:
+            command = sys.argv[ 1 ]
+            options = None
+            print sys.argv 
+            if ( len( sys.argv )  > 2 ):
+                options = sys.argv[ 2: ]
+        else:
+            command = cmd
+            options = None
+        # \todo options are not provided by emerge.py fix it
+        return [command, options]
+
     def execute( self, cmd=None ):
         """called to run the derived class"""
         """this will be executed from the package if the package is started on its own"""
         """it shouldn't be called if the package is imported as a python module"""
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
-
-        if not cmd:
-            command = sys.argv[ 1 ]
-            options = ""
-            if ( len( sys.argv )  > 2 ):
-                options = sys.argv[ 2: ]
-        else:
-            command = cmd
-            options = ""
-
-        # \todo cleanup
-        self.setDirectoriesBase()
-        
-        # \todo cleanup
-        self.setDirectories()
-        
+        (command, option) = self.getAction(cmd)
+                
         #if self.createCombinedPackage:
         #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]                        
         #    os.environ["EMERGE_BUILDTYPE"] = "Release"
@@ -185,4 +184,4 @@ class PackageBase (EmergeBase):
 
         if ( not ok ):
             utils.die( "command %s failed" % command )
-        
+        return True
