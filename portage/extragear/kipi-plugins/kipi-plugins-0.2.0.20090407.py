@@ -12,6 +12,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.2.0'] = 'kipi-plugins-0.2.0'
         self.targets['0.3.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.3.0.tar.bz2'
         self.targetInstSrc['0.3.0'] = 'kipi-plugins-0.3.0'
+        self.targets['0.5.0'] = "http://downloads.sourceforge.net/project/kipi/kipi-plugins/0.5.0/kipi-plugins-0.5.0.tar.bz2"
+        self.targetInstSrc['0.5.0'] = 'kipi-plugins-0.5.0'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
