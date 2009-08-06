@@ -23,5 +23,5 @@ class MultiSource():
     def repositoryPath(self):
         return self.source.repositoryPath()
         
-    def applyPatches(self)
+    def applyPatches(self):
         return self.source.applyPatches()
