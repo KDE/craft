@@ -57,7 +57,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 defines, \
                 self.configureOptions )
 
-        #utils.debug("cofigure command: %s" % command,1)
+        utils.debug("cofigure command: %s" % command, 0)
         utils.system( command ) or utils.die( "while configuring. cmd: %s" % command )
         return True
 
