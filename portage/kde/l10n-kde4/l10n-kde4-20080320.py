@@ -22,6 +22,14 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         CMakeBuildSystem.__init__( self )
         KDEWinPackager.__init__( self )
         self.language = 'de'
+        # because of the large amount of packages
+        # it is very annoying to restart the build, 
+        # wasting several hours, so ignore any errors 
+        # for now
+        self.subinfo.options.make.ignoreErrors = True
+        self.subinfo.options.exitOnErrors = False
+        # hardcoded for now
+        self.subinfo.options.package.version = '4.3.63'
 
     def repositoryPath(self):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
@@ -44,8 +52,11 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         # execute autogen.py and generate the CMakeLists.txt files
         cmd = "cd %s && python %s %s" % \
               (self.sourceDir()+'/..', autogen, self.language )
-        print cmd
-        utils.system( cmd )
+        return self.system( cmd )
+
+    def configure(self):
+        if not os.path.exists(os.path.join(self.buildDir(),"CMakeCache.txt")):
+            return CMakeBuildSystem.configure(self)
         return True
         
     def createPackage(self):
@@ -66,14 +77,6 @@ class MainInfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        # released target in 4.0.83
-        self.languages  = 'ar be bg ca cs csb da de '
-        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl '
-        self.languages += 'hi hu is it ja kk km ko '
-        self.languages += 'lv mk nb nds ne nl nn '
-        self.languages += 'pa pl pt pt_BR ro ru se sl sv '
-        self.languages += 'ta th tr uk wa zh_CN zh_TW '
-
         #for testing
         self.languages  = 'de'
     
@@ -88,19 +91,34 @@ class MainPackage(PackageBase):
         self.subinfo = MainInfo()
         PackageBase.__init__( self )
         self.l10n_kde4 = portage.getPackageInstance('kde','l10n-kde4')
-
+        # set to any language to start building from 
+        ## \todo when emerge.py is able to provide command line options to us
+        # it would be possible to set this from command line 
+        self.startLanguage = None 
+        
     def execute(self):
         (command, option) = self.getAction()
+        self.errors = dict()
         ## \todo does not work yet see note in PackageBase::getAction()
         if option <> None:
             languages = option.split()
         else:
             languages = self.subinfo.languages.split()
+        found=None
+            
         for language in languages:
+            if not found and self.startLanguage:
+                if self.startLanguage <> language:
+                    continue
+                else:
+                    found = True
+            
             self.l10n_kde4.language = language
             if not self.l10n_kde4.runAction(command):
-                return False
-            
+                self.errors["%s-%s" % (language, command)] = 1
+
+        print self.errors
+        return True    
         
 if __name__ == '__main__':
     MainPackage().execute()
