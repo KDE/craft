@@ -112,7 +112,7 @@ rem The directory is named like the lower cased build type
 rem When using this option you can run emerge/kdeenv.bat with the build mode type 
 rem parameter (release, releasedebug or debug) to have different shells for each 
 rem build type. 
-set EMERGE_MERGE_ROOT_WITH_BUILD_TYPE=True
+set EMERGE_MERGE_ROOT_WITH_BUILD_TYPE=False
 
 rem If you want to build all packages with buildTests option, enable
 rem this option. Applies only to the cmake based packages.
