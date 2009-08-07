@@ -94,10 +94,10 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
         
-        self.system( command ) 
+        self.system( command, "install" ) 
 
         if self.subinfo.options.install.useMakeToolForInstall == True:
-	        utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
+            utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
         return True
 
     def runTest( self ):
