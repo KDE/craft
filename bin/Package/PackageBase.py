@@ -192,8 +192,8 @@ class PackageBase (EmergeBase):
         If the system command returns with errors the methos prints an error 
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
         
-        utils.debug( command,1 )
-        if utils.system( command ) == 0:
+        utils.debug( command, 1 )
+        if utils.system( command ):
             return True
         if self.subinfo.options.exitOnErrors:
             utils.die( "while running %s cmd: %s" % (errorMessage , command) )
