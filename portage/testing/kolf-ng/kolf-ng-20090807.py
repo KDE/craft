@@ -35,6 +35,9 @@ class Package(PackageBase, SvnSource):
     def compile( self ):
         return True
 
+    def install( self ):
+        return True
+
 class MainPackage(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
         self.subinfo = subinfo()
