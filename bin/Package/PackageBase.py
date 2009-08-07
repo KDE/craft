@@ -185,3 +185,18 @@ class PackageBase (EmergeBase):
         if ( not ok ):
             utils.die( "command %s failed" % command )
         return True
+        
+    def system( self, command, errorMessage="" ):
+        """convencience function for running system commands. 
+        This method prints a debug message and then runs a system command. 
+        If the system command returns with errors the methos prints an error 
+        message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
+        
+        utils.debug( command,1 )
+        if utils.system( command ) == 0:
+            return True
+        if self.subinfo.options.exitOnErrors:
+            utils.die( "while running %s cmd: %s" % (errorMessage , command) )
+        else:
+            utils.error( "while running %s cmd: %s" % (errorMessage , command) )
+        return False
