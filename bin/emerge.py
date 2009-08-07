@@ -450,11 +450,11 @@ print
 if len( nextArguments ) > 0:
     command = "\"" + sys.executable + "\" -u " + executableName + " " + " ".join( nextArguments )
 
-    for element in environ.keys():
-        if environ[ element ]:
-            os.environ[ element ] = environ[ element ]
-        elif element == "EMERGE_VERBOSE":
-            os.environ[ element ] = "1"
-        else:
-            os.environ[ element ] = ""
+    #for element in environ.keys():
+    #    if environ[ element ]:
+    #        os.environ[ element ] = environ[ element ]
+    #    elif element == "EMERGE_VERBOSE":
+    #        os.environ[ element ] = "1"
+    #    else:
+    #        os.environ[ element ] = ""
     utils.system( command ) or utils.die( "cannot execute next commands cmd: %s" % command )
