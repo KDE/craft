@@ -71,10 +71,9 @@ class EmergeBase():
         self.createCombinedPackage  = False
      
         ## specifies if a build type related root directory should be used
-        if os.getenv("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE") <> None:
-            self.useBuildTypeRelatedMergeRoot = os.getenv("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE")
-        else:
-            self.useBuildTypeRelatedMergeRoot = False
+        self.useBuildTypeRelatedMergeRoot = False
+        if os.getenv("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE") == "True":
+            self.useBuildTypeRelatedMergeRoot = True
         
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
         
