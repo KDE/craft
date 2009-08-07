@@ -73,7 +73,7 @@ class MainPackage(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         defines += " -DBUILD_mancala=OFF"
         self.subinfo.options.configure.defines = defines
 
-        self.cmakedummy = portage.getPackageInstance('testing','kolf-ng')
+        self.cmakedummy = Package()
 
     def execute(self):
         (command, option) = self.getAction()
