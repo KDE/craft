@@ -103,6 +103,7 @@ class EmergeBase():
             print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
             exit( 1 )
         self.rootdir = ROOTDIR
+        self.setup()
             
     def abstract():
         import inspect
