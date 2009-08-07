@@ -23,6 +23,7 @@ class KDEWinPackager (PackagerBase):
             template = os.path.join(self.packageDir(),self.package+".xml")
         return template
 
+    ## \todo rename to package()
     def createPackage(self):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
@@ -36,7 +37,9 @@ class KDEWinPackager (PackagerBase):
             pkgName = self.package
 
         pkgVersion = str( datetime.date.today() ).replace('-', '')
-        if not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
+        if self.subinfo.options.package.version <> None:
+            pkgVersion = self.subinfo.options.package.version
+        elif not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
             pkgVersion = self.subinfo.buildTarget
 
         # FIXME: add a test for the installer later
@@ -73,9 +76,6 @@ class KDEWinPackager (PackagerBase):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
             utils.debug("using xml template for package generating",1) 
         else:
-            print
-            print
-            print '<', self.packager, cmd, self.category, self.package, self.version
             cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
