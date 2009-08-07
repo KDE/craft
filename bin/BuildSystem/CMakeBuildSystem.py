@@ -90,16 +90,14 @@ class CMakeBuildSystem(BuildSystemBase):
             fastString = "/fast"
 
         if self.subinfo.options.install.useMakeToolForInstall == True:          
-            # \todo is installDir() here not the right choice ? 
-            command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.imageDir(), fastString )
+            command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.installDir(), fastString )
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
         
         self.system( command ) 
 
         if self.subinfo.options.install.useMakeToolForInstall == True:
-            # \todo is installDir() here not the right choice ? 
-	        utils.fixCmakeImageDir( self.imageDir(), self.mergeDestinationDir() )
+	        utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
         return True
 
     def runTest( self ):
