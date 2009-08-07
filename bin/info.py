@@ -16,17 +16,6 @@ import utils
 # actions.package
 # -> I guess action orientated settings would be much better 
 
-class OptionsPackage:
-    def __init__(self):
-        ## defines the package name 
-        self.packageName = None
-        ## use compiler in package name
-        self.withCompiler = True
-        ## use special packaging mode  (only for qt)
-        self.specialMode = False
-        ## pack also sources 
-        self.packSources = True
-
 class OptionsConfigure:
     def __init__(self):
         ## configure defines 
@@ -34,11 +23,18 @@ class OptionsConfigure:
         ## subdir based in sourceDir() in which the main build system related config file is located 
         self.configurePath = None
 
+class OptionsMake:
+    def __init__(self):
+        ## ignore make error 
+        self.ignoreErrors = None
+        ## options for the make tool
+        self.makeOptions = None
+
 class OptionsInstall:
     def __init__(self):
         ## use either make tool for installing or 
 		# run cmake directly for installing 
-        self.useMakeToolForInstall = True
+        self.useMakeToolForInstall = False
 
 class OptionsMerge:
     def __init__(self):
@@ -46,10 +42,24 @@ class OptionsMerge:
         self.sourcePath = None
         ## subdir based on mergeDir() used as  merge destination directory
         self.destinationPath = None
+
+class OptionsPackage:
+    def __init__(self):
+        ## defines the package name 
+        self.packageName = None
+        ## defines the package version 
+        self.version = None
+        ## use compiler in package name
+        self.withCompiler = True
+        ## use special packaging mode  (only for qt)
+        self.specialMode = False
+        ## pack also sources 
+        self.packSources = True
         
 class Options:
     def __init__(self):
         self.configure = OptionsConfigure()
+        self.make = OptionsMake()
         self.install = OptionsInstall()
         self.package = OptionsPackage()
         self.merge = OptionsMerge()
@@ -62,6 +72,8 @@ class Options:
         self.disableDebugBuild = False
         ## skip the related package from release builds
         self.disableReleaseBuild = False
+        ## exit if system command returns errors
+        self.exitOnErrors = True
 
 class infoclass:
     def __init__( self, RAW="" ):

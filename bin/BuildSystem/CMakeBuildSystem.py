@@ -57,9 +57,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 defines, \
                 self.configureOptions )
 
-        utils.debug("cofigure command: %s" % command, 0)
-        utils.system( command ) or utils.die( "while configuring. cmd: %s" % command )
-        return True
+        return self.system( command, "configure" ) 
 
     def make( self ):
         """run the *make program"""
@@ -74,13 +72,16 @@ class CMakeBuildSystem(BuildSystemBase):
         if utils.verbose() > 1:
             command += " VERBOSE=1"
         
-        command += ' %s' % self.makeOptions
+        if self.subinfo.options.make.ignoreErrors:
+            command += " -i"
+            
+        if self.subinfo.options.make.makeOptions:
+            command += " %s" % self.subinfo.options.make.makeOptions
 
-        utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
-        return True
+        return self.system( command, "make" ) 
 
     def install( self):
-        """Using *make install"""
+        """install the target"""
 
         self.enterBuildDir()
         
@@ -94,9 +95,7 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
         
-        print command
-        utils.debug(command,1)
-        utils.system( command ) or utils.die( "while installing. cmd: %s" % command )
+        self.system( command ) 
 
         if self.subinfo.options.install.useMakeToolForInstall == True:
             # \todo is installDir() here not the right choice ? 
@@ -108,5 +107,4 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterbuildDir()
 
-        utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
-        return True
+        return self.system( "%s test" % ( self.cmakeMakeProgramm ), "test" )
