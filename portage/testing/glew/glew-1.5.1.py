@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['default'] = 'http://downloads.sourceforge.net/project/glew/glew/1.5.1/glew-1.5.1-win32.zip'
        
-        self.targetInstSrc['default'] = 'glew'
+        self.targetMergeSourcePath['default'] = 'glew'
         self.defaultTarget = 'default'
     
 class Package(ArchiveSource, BinaryBuildSystem, PackageBase, KDEWinPackager):
