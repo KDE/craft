@@ -57,7 +57,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 defines, \
                 self.configureOptions )
 
-        return self.system( command, "configure" ) 
+        return self.system( command, "configure", 0 ) 
 
     def make( self ):
         """run the *make program"""

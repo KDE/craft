@@ -165,7 +165,6 @@ class PackageBase (EmergeBase):
 
     def runAction( self, command ):
         ok = True
-        utils.debug( "command: %s" % command,0 )
         if command   == "fetch":       ok = self.fetch()
         elif command == "cleanimage":  ok = self.cleanImage()
         elif command == "cleanbuild":  ok = self.cleanBuild()
@@ -186,13 +185,13 @@ class PackageBase (EmergeBase):
             utils.die( "command %s failed" % command )
         return True
         
-    def system( self, command, errorMessage="" ):
+    def system( self, command, errorMessage="", debuglevel=1 ):
         """convencience function for running system commands. 
         This method prints a debug message and then runs a system command. 
         If the system command returns with errors the methos prints an error 
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
         
-        utils.debug( command, 1 )
+        utils.debug( command, debuglevel )
         if utils.system( command ):
             return True
         if self.subinfo.options.exitOnErrors:
