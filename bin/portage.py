@@ -80,7 +80,7 @@ def getAllPackages( category ):
         for entry in plist:
             if not os.path.isdir( os.path.join( rootDir(), category, entry ) ):
                 plist.remove( entry )
-        debug( plist, 2 )
+        utils.debug( plist, 2 )
         if os.path.exists( os.path.join( rootDir(), category, "dont_build.txt" ) ):
             f = open( os.path.join( rootDir(), category, "dont_build.txt" ), "r" )
             for line in f:
