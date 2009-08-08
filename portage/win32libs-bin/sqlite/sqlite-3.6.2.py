@@ -30,9 +30,9 @@ class subinfo(info.infoclass):
     
 class Package(BinaryPackageBase):
     def __init__( self, **args ):
+        self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         self.createCombinedPackage = True
-        self.subinfo = subinfo()
 
     def unpack( self ):
         BinaryPackageBase.unpack( self )
