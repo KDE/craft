@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = Emerge
-PROJECT_NUMBER         = 
+PROJECT_NUMBER         = 2009-08-07
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -89,9 +89,9 @@ INPUT                  = ../bin .
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.py *.dox
 RECURSIVE              = yes
-EXCLUDE                = base.py 
+EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = *.svn*
+EXCLUDE_PATTERNS       = *.svn* *base.py *_build.py *subversion.py *portage_tools.py *wsys-backgrounds.py *package_definition_viewer.py
 EXCLUDE_SYMBOLS        = 
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = 
