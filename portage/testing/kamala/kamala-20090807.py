@@ -1,51 +1,24 @@
 # -*- coding: utf-8 -*-
 import info
 
-from Source.SvnSource import *
-from BuildSystem.CMakeBuildSystem import *
-from Package.PackageBase import *
-from Packager.KDEWinPackager import *
-
-class dummySubinfo(info.infoclass):
-    def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "trunk/playground/games/cmake"
-        self.defaultTarget = 'svnHEAD'
+from Package.CMakePackageBase import *
         
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "trunk/playground/games/kamala"
+        self.svnTargets['svnHEAD'] = "trunk/playground/games#norecursive;trunk/playground/games/kamala;trunk/playground/games/cmake"
         self.defaultTarget = 'svnHEAD'
 
-    def configurePath( self ):
-        return ".."
-
-    def hasConfigurePath( self ):
-        return True
-
     def setDependencies( self ):
+        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
+
         self.hardDependencies['kde/kdegames'] = 'default'
 #        self.hardDependencies['testing/glew'] = 'default'
 
-class Package(PackageBase, SvnSource):
-    def __init__( self, **args ):
-        self.subinfo = dummySubinfo()
-        SvnSource.__init__(self)
-        PackageBase.__init__(self)
-        
-    def compile( self ):
-        return True
 
-    def install( self ):
-        return True
-
-class MainPackage(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-
-        PackageBase.__init__(self)
-        SvnSource.__init__(self)
-        CMakeBuildSystem.__init__(self)
-        KDEWinPackager.__init__(self)
+        CMakePackageBase.__init__(self)
         defines = ""
         defines += " -DBUILD_doc=OFF"
         defines += " -DBUILD_libksirtet=OFF"
@@ -72,15 +45,8 @@ class MainPackage(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         defines += " -DBUILD_parsek=OFF"
         defines += " -DBUILD_mancala=OFF"
         self.subinfo.options.configure.defines = defines
-
-        self.cmakedummy = Package()
-
-    def execute(self):
-        (command, option) = self.getAction()
-        ## \todo does not work yet see note in PackageBase::getAction()
-        self.runAction(command)
-        self.cmakedummy.runAction(command)
-        return True
-
+            
 if __name__ == '__main__':
-    MainPackage().execute()
+    Package().execute()
+
+    
