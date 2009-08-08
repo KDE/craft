@@ -708,16 +708,20 @@ def cleanPackageName( basename, packagename ):
     
 
 def createDir(path):
+    """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
         debug("creating directory %s " % ( path ), 2)
         os.makedirs( path )
-
+    return True
+    
 def copyFile(src,dest):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
     shutil.copy( src, dest )
+    return True
 
 def moveFile(src,dest):
     """move file from src to dest"""
     debug("move file from %s to %s" % ( src, dest ), 2)
     os.rename( src, dest )
+    return True
