@@ -33,8 +33,8 @@ class OptionsMake:
 class OptionsInstall:
     def __init__(self):
         ## use either make tool for installing or 
-		# run cmake directly for installing 
-        self.useMakeToolForInstall = False
+        # run cmake directly for installing 
+        self.useMakeToolForInstall = True
 
 class OptionsMerge:
     def __init__(self):
