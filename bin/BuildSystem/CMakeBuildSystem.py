@@ -24,7 +24,26 @@ class CMakeBuildSystem(BuildSystemBase):
             self.cmakeMakefileGenerator = "MinGW Makefiles"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
-                                
+
+    def __onlyBuildDefines( self, buildOnlyTargets ):
+        """This method returns a list of cmake defines to exclude targets from build""" 
+        defines = ""
+        sourceDir = self.sourceDir()
+        topLevelCMakeList = os.path.join(self.sourceDir(),"CMakeLists.txt")
+        if os.path.exists(topLevelCMakeList):
+            f = open(topLevelCMakeList,'r')
+            lines = f.read().splitlines()
+            f.close()
+            for line in lines:
+                if line.find("macro_optional_add_subdirectory") > -1:
+                    a = line.split("(")
+                    a = a[1].split(")")
+                    subdir = a[0]
+                    if not subdir in buildOnlyTargets:
+                        defines += " -DBUILD_%s=OFF" % subdir
+        #print defines
+        return defines
+
     def configureDefaultDefines( self ):
         """returns default configure options"""
         sourcedir = self.configureSourceDir()
@@ -50,7 +69,10 @@ class CMakeBuildSystem(BuildSystemBase):
         defines = self.configureDefaultDefines()
         if not self.subinfo.options.configure.defines == None:
             defines += " %s" % self.subinfo.options.configure.defines
-            
+
+        if self.subinfo.options.configure.onlyBuildTargets :
+            defines += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
+                
         if self.envPath <> '':
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
