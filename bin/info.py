@@ -20,7 +20,7 @@ class OptionsConfigure:
     def __init__(self):
         ## configure defines 
         self.defines = None
-        ## subdir based in sourceDir() in which the main build system related config file is located 
+        ## subdir relative to sourceDir() in which the main build system related config file is located 
         self.configurePath = None
 
 class OptionsMake:
