@@ -36,12 +36,12 @@ class SvnSource (VersionSystemSourceBase):
     def __checkout( self, url, sourcedir, recursive=True ):
         """internal method for subversion checkout and update"""
         option = ""
-        if recursive:
-            option = "-N" 
+        if not recursive:
+            option = "--depth=files" 
             
         if os.path.exists( sourcedir ):
             cmd = "%s/svn update %s %s %s" % ( self.svnInstallDir, option, url, sourcedir )
         else:
             cmd = "%s/svn checkout %s %s %s" % (self.svnInstallDir, option, url, sourcedir )
 
-        return self.system( cmd )
+        return utils.system( cmd )
