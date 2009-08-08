@@ -354,35 +354,42 @@ def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
     debug( "unmerge called: %s" % ( package ), 2 )
 
-    if os.path.exists( os.path.join( rootdir, "manifest"  ) ):
-        for file in os.listdir( os.path.join( rootdir, "manifest" ) ):
+    manifestDir = os.path.join( rootdir, "manifest"  ) 
+    if os.path.exists( manifestDir ):
+        for file in os.listdir( manifestDir ):
+            debug("file: %s" % file,2)
             if file.endswith(".mft"):
                 [ pkg, version ] = portage.packageSplit( file.replace( ".mft", "" ) )
-            if file.endswith( ".mft" ) and package==pkg:
-                fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
-                for line in fptr:
-                    line = line.replace( "\n", "" ).replace( "\r", "" )
-                    if not line.find( "  " ) == -1:
-                        [ b, a ] = line.split( "  ", 2 )
-                    elif not line.find( " " ) == -1:
-                        [ a, b ] = line.split( " ", 2 )
-                    else:
-                        a, b = line, ""
-                    if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
-                        continue
-                    if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                        hash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
-                        if b == "" or hash == b:
-                            debug( "deleting file %s" % a )
-                            os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
+                if file.endswith( ".mft" ) and package==pkg:
+                    fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
+                    for line in fptr:
+                        line = line.replace( "\n", "" ).replace( "\r", "" )
+                        if not line.find( "  " ) == -1:
+                            [ b, a ] = line.split( "  ", 2 )
+                        elif not line.find( " " ) == -1:
+                            [ a, b ] = line.split( " ", 2 )
                         else:
-                            warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
-                            if forced:
+                            a, b = line, ""
+                        if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
+                            continue
+                        if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
+                            hash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
+                            if b == "" or hash == b:
+                                debug( "deleting file %s" % a )
                                 os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
-                    elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                        warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
-                fptr.close()
-                os.remove( os.path.join( rootdir, "manifest", file ) )
+                            else:
+                                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
+                                if forced:
+                                    os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
+                        elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
+                            warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
+                    fptr.close()
+                    os.remove( os.path.join( rootdir, "manifest", file ) )
+        else:
+            debug("could not find any manifest files",2)
+    else:
+        debug("could not find manifest directory",2)
+        
     return
 
 def manifestDir( srcdir, imagedir, category, package, version ):
@@ -704,3 +711,8 @@ def copyFile(src,dest):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
     shutil.copy( src, dest )
+
+def moveFile(src,dest):
+    """move file from src to dest"""
+    debug("move file from %s to %s" % ( src, dest ), 2)
+    os.rename( src, dest )
