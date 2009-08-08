@@ -363,13 +363,18 @@ def unmerge( rootdir, package, forced = False ):
                 if file.endswith( ".mft" ) and package==pkg:
                     fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
                     for line in fptr:
-                        line = line.replace( "\n", "" ).replace( "\r", "" )
-                        if not line.find( "  " ) == -1:
-                            [ b, a ] = line.split( "  ", 2 )
-                        elif not line.find( " " ) == -1:
-                            [ a, b ] = line.split( " ", 2 )
-                        else:
-                            a, b = line, ""
+                        try:
+                            line = line.replace( "\n", "" ).replace( "\r", "" )
+                            if not line.find( "  " ) == -1:
+                                [ b, a ] = line.split( "  ", 2 )
+                            elif not line.find( " " ) == -1:
+                                [ a, b ] = line.split( " ", 2 )
+                            else:
+                                a, b = line, ""
+                        except:
+                            ## \todo fix lines with spaces in path
+                            print "could not parse line %s" % line
+                            
                         if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
                         if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
