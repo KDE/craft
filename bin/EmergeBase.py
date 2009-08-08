@@ -147,7 +147,6 @@ class EmergeBase():
 
     def buildDir(self):        
         utils.debug("EmergeBase.buildDir() called" ,2)
-        ## \todo replace by self.buildTarget()
         self.setBuildTarget()
         dir = ""
         if self.subinfo.options.useCompilerType == True:
@@ -233,6 +232,7 @@ class EmergeBase():
 
     def setBuildTarget( self, target = None):
         self.subinfo.setBuildTarget(target)
+        ## \todo replace self.buildTarget by self.buildTarget()
         self.buildTarget = self.subinfo.buildTarget
         if hasattr(self,'source'):
             self.source.buildTarget = self.subinfo.buildTarget
@@ -259,3 +259,17 @@ class EmergeBase():
         if utils.verbose() > 0:
             print "entering: %s" % self.buildDir()
 
+    def system( self, command, errorMessage="", debuglevel=1 ):
+        """convencience function for running system commands. 
+        This method prints a debug message and then runs a system command. 
+        If the system command returns with errors the methos prints an error 
+        message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
+        
+        utils.debug( command, debuglevel )
+        if utils.system( command ):
+            return True
+        if self.subinfo.options.exitOnErrors:
+            utils.die( "while running %s cmd: %s" % (errorMessage , command) )
+        else:
+            utils.error( "while running %s cmd: %s" % (errorMessage , command) )
+        return False
