@@ -11,7 +11,13 @@ rem    this file should contain all path settings - and provide thus an environm
 rem    to build and run kde programs
 rem    this file sources the kdesettings.bat file automatically
 
+if exist ..\etc\kdesettings.bat (
 call ..\etc\kdesettings.bat %1
+)
+
+if exist etc\kdesettings.bat (
+call etc\kdesettings.bat %1
+)
 
 if "%1" == "debug" ( 
 set SUBDIR=\debug
