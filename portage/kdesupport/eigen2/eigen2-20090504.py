@@ -14,29 +14,16 @@ class subinfo(info.infoclass):
         self.targets['2.0.4'] = "http://bitbucket.org/eigen/eigen2/get/2.0.4.tar.bz2"
         self.targetInstSrc['2.0.4'] = "eigen2"
         self.defaultTarget = '2.0.4'
+        
+from Package.CMakePackageBase import *
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        # header-only package
-        self.createCombinedPackage = True
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = "-DBUILD_TESTS=OFF"
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "eigen2" )
-        else:
-            return self.doPackaging( "eigen2", self.buildTarget, True )
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF"
+        # header-only package        
+        self.subinfo.options.package.withCompiler = False
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

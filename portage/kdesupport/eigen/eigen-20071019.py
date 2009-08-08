@@ -1,7 +1,4 @@
-import base
 import utils
-from utils import die
-import sys
 import info
 
 # http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz
@@ -16,27 +13,14 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.0.5'] = "eigen"
         self.defaultTarget = '1.0.5'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        # header-only package
-        self.createCombinedPackage = True
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "eigen" )
-        else:
-            return self.doPackaging( "eigen", self.buildTarget, True )
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.package.withCompiler = False
+        # header-only package
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
