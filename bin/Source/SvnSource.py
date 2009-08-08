@@ -29,7 +29,7 @@ class SvnSource (VersionSystemSourceBase):
             if self.repositoryPathOptions(i) == 'norecursive':
                 self.__checkout(url,sourcedir,False)
             else:
-                self.__checkout(url,sourcedir,False)
+                self.__checkout(url,sourcedir,True)
             i += 1
         return True
 
