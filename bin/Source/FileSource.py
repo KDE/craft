@@ -5,16 +5,16 @@
 from Source.SourceBase import *
 import utils
 
-class ArchiveSource(SourceBase):
+class FileSource(SourceBase):
     """ file download source"""
     filenames = []    
     def __init__(self):
-        utils.debug( "ArchiveSource.__init__ called", 2 )
+        utils.debug( "FileSource.__init__ called", 2 )
         SourceBase.__init__(self)
 
     def __localFileNames(self):
         """ collect local filenames """
-        utils.debug( "ArchiveSource.__localFileNames called", 2 )
+        utils.debug( "FileSource.__localFileNames called", 2 )
 
         filenames =[]
 
@@ -24,8 +24,8 @@ class ArchiveSource(SourceBase):
         return filenames
 
     def fetch(self):
-        """getting normal tarballs from SRC_URI"""
-        utils.debug( "ArchiveSource.fetch called", 2 )
+        """fetching binary files"""
+        utils.debug( "FileSource.fetch called", 2 )
             
         filenames = self.__localFileNames()
         
@@ -38,8 +38,8 @@ class ArchiveSource(SourceBase):
             return utils.getFiles( "", self.downloadDir() )
 
     def unpack(self):
-        """unpacking all zipped(gz,zip,bz2) tarballs"""        
-        utils.debug( "ArchiveSource.unpack called", 2 )
+        """copying files into local dir"""        
+        utils.debug( "FileSource.unpack called", 2 )
 
         filenames = self.__localFileNames()        
         # if using BinaryBuildSystem the files should be unpacked into imagedir
@@ -50,7 +50,7 @@ class ArchiveSource(SourceBase):
             destdir = self.workDir()
             utils.debug("unpacking files into work root %s" % destdir,1)
 
-        if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
-            return False
-
-        return self.applyPatches()
+        for filename in filenames:
+            if not utils.copyFile( os.path.join(self.downloadDir(), filename),  os.path.join(destdir,filename) ):
+                return False
+        return True

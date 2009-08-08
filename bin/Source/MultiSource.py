@@ -22,6 +22,7 @@ class MultiSource():
         return self.source.fetch()
         
     def unpack(self):
+        self.source.buildSystemType = self.buildSystemType
         return self.source.unpack()
 
     def sourceDir(self):

@@ -20,8 +20,15 @@ class SourceBase(EmergeBase):
         abstract()
         
     def sourceDir(self): 
-        """return local source dir""" 
-        abstract()
+        sourcedir = self.workDir()
+        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+            sourcedir = self.imageDir()
+
+        if self.subinfo.hasTargetSourcePath():
+            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+        if utils.verbose > 1:
+            print "using sourcedir: " + sourcedir
+        return sourcedir
 
     def applyPatches(self):
         """apply patches is available"""
