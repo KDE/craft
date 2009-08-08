@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# 
+# copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
+#
 # git support
 
 from VersionSystemSourceBase import *
@@ -13,7 +15,7 @@ class GitSource (VersionSystemSourceBase):
     def __init__(self):
         VersionSystemSourceBase.__init__(self)        
         self.shell = MSysShell()
-		# detect git installation
+        # detect git installation
         gitInstallDir = os.path.join(self.rootdir,'dev-utils','git')
         if os.path.exists(gitInstallDir):
             self.shell.msysdir = gitInstallDir

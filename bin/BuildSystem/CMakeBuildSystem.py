@@ -1,4 +1,7 @@
-# -*- coding: utf-8 -*-
+# 
+# copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
+#
+
 """@package provides cmake build system"""
 
 import os

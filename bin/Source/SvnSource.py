@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# 
+# copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
+#
 # subversion support
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes 
 

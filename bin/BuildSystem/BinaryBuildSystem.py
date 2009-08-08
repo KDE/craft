@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# 
+# copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
+#
 # installing binary packages 
 
 import os

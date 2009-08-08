@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
-# git support
+# 
+# copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
+#
+# cvs support
 
 from VersionSystemSourceBase import *
 import os
