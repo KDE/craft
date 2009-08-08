@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-# this module contains the information class
+## 
+#
+# @package  this module contains the information class
 
 # the current work here is to access members only 
 # by methods to be able to separate the access from 
@@ -9,20 +10,18 @@ import datetime
 import os
 import utils
 
-## prelimary settings/options support 
-# not clear if it would be better to use 
-# class orientated settings like PackagerSettings 
-# or action orientated settings like 
-# actions.package
-# -> I guess action orientated settings would be much better 
-
+## options for the configure action 
 class OptionsConfigure:
     def __init__(self):
-        ## configure defines 
+        ## with this option additional definitions could be added to the configure commmand line
         self.defines = None
-        ## subdir relative to sourceDir() in which the main build system related config file is located 
+        ## set source subdirectory as source root for the configuration tool.
+        # Sometimes it is required to take a subdirectory from the source tree as source root 
+        # directory for the configure tool, which could be enabled by this option. The value of
+        # this option is added to sourceDir() and the result is used as source root directory. 
         self.configurePath = None
 
+## options for the make action 
 class OptionsMake:
     def __init__(self):
         ## ignore make error 
@@ -30,12 +29,14 @@ class OptionsMake:
         ## options for the make tool
         self.makeOptions = None
 
+## options for the install action 
 class OptionsInstall:
     def __init__(self):
         ## use either make tool for installing or 
         # run cmake directly for installing 
         self.useMakeToolForInstall = True
 
+## options for the merge action 
 class OptionsMerge:
     def __init__(self):
         ## subdir based on installDir() used as merge source directory
@@ -43,6 +44,7 @@ class OptionsMerge:
         ## subdir based on mergeDir() used as  merge destination directory
         self.destinationPath = None
 
+## options for the package action 
 class OptionsPackage:
     def __init__(self):
         ## defines the package name 
@@ -56,17 +58,38 @@ class OptionsPackage:
         ## pack also sources 
         self.packSources = True
         
+## main option class
 class Options:
     def __init__(self):
+        ## options of the configure action
         self.configure = OptionsConfigure()
+        ## options of the configure action
         self.make = OptionsMake()
+        ## options of the install action
         self.install = OptionsInstall()
+        ## options of the package action
         self.package = OptionsPackage()
+        ## options of the merge action
         self.merge = OptionsMerge()
         
-        ## set this option to false for build type independent packages 
+        ## this option controls if the build type is used when creating build and install directories. 
+        # The following example shows the difference:
+        # \code
+        #                True                                False
+        # work/msvc2008-RelWithDebInfo-svnHEAD     work/msvc2008-svnHEAD  
+        # image-msvc2008-RelWithDebInfo-svnHEAD    image-msvc2008-svnHEAD
+        # \endcode
+        #
         self.useBuildType = True
-        ## set this option to false for having compiler type independent packages 
+        
+        ## this option controls if the active compiler is used when creating build and install directories. 
+        # The following example shows the difference:
+        # \code 
+        #               True                                  False
+        # work/msvc2008-RelWithDebInfo-svnHEAD     work/RelWithDebInfo-svnHEAD
+        # image-msvc2008-RelWithDebInfo-svnHEAD    image-RelWithDebInfo-svnHEAD
+        # \endcode
+        #
         self.useCompilerType = True
         ## skip the related package from debug builds
         self.disableDebugBuild = False
@@ -78,6 +101,7 @@ class Options:
 class infoclass:
     def __init__( self, RAW="" ):
         """ """
+        ### package options
         self.options = Options()
         self.targets = dict()
         self.targetInstSrc = dict()
