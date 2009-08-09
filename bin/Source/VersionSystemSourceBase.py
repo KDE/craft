@@ -55,17 +55,16 @@ class VersionSystemSourceBase (SourceBase):
 
     def unpack(self):
         self.applyPatches()
+        self.enterBuildDir()
 
         if not self.noClean:
             if utils.verbose > 0:
                 print "cleaning %s" % self.buildDir()
-            self.enterBuildDir()
             utils.cleanDirectory( self.buildDir() )
         
         if not self.noCopy:
             if utils.verbose > 0:
                 print "copying %s to %s" % (self.sourceDir(), self.buildDir())
-            self.enterBuildDir()
             utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
         return True;
         
