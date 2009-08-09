@@ -16,7 +16,7 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.buildOnlyTargets = 'umbrello' 
+        self.subinfo.options.configure.onlyBuildTargets = 'umbrello' 
             
 if __name__ == '__main__':
     Package().execute()
