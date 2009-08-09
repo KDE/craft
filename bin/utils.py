@@ -725,3 +725,11 @@ def moveFile(src,dest):
     debug("move file from %s to %s" % ( src, dest ), 2)
     os.rename( src, dest )
     return True
+    
+def deleteFile(file):
+    """delete file """
+    if not os.path.exists( file ):
+        return False
+    debug("delete file %s " % ( file ), 2)
+    os.remove( file )
+    return True
