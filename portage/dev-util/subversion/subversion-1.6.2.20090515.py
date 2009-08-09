@@ -19,5 +19,22 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__(self)
 
+    def qmerge(self):
+        if not BinaryPackageBase.qmerge(self):
+            return False
+        
+        src = os.path.join(self.packageDir(), 'svn.bat')
+        dst = os.path.join(self.rootdir, 'dev-utils', 'bin', 'svn.bat')
+        utils.copyFile(src,dst)
+        return True
+
+    def unmerge(self):
+        if not BinaryPackageBase.unmerge(self):
+            return False
+        
+        file = os.path.join(self.rootdir, 'dev-utils', 'bin', 'svn.bat')
+        utils.deleteFile(file)
+        return True
+
 if __name__ == '__main__':
     Package().execute()
