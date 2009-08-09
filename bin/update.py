@@ -59,6 +59,7 @@ perl
 pexports
 ruby
 subversion
+wget
 upx"""
     for package in packages.split():
         print package
