@@ -62,6 +62,7 @@ upx"""
 elif currentVersion == '20090808':
     utils.system("emerge --unmerge subversion")
     utils.system("emerge --qmerge subversion")
+    done = True
     
 if done:
     f = open( versionFile, "w" )
