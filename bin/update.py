@@ -28,23 +28,9 @@ if currentVersion == '20090731':
     # because the merge destination of some package in the dev-utils category has been changed, 
     # we reinstall all those packages
     
-    # delete dev-util packages 1. try 
-    path = portage.etcDir()
-    fileName = os.path.join(path,'installed')
-    if os.path.isfile( fileName ):
-        f = open( fileName, "rb" )
-        lines = f.read().splitlines()
-        f.close()
-        for line in lines:
-            (_category, _packageVersion) = line.split( "/" )
-            (_package, _version) = portage.packageSplit(_packageVersion)
-            if _category == 'dev-utils' or _package == 'base':
-                print "deleting package %s" % _package
-                utils.unmerge( rootdir, _package, True )
-                portage.remInstalled(_category, _package, _version)
-    # make sure all dev-utils package files are really deleted
     packages = """
 astyle
+base
 bjam
 cmake
 doxygen
@@ -62,10 +48,11 @@ subversion
 wget
 upx"""
     for package in packages.split():
-        print package
-        utils.unmerge(rootdir,package,True)
-    utils.cleanDirectory(os.path.join(rootdir,'dev-util'))
-    
+        print "removing package %s" % package 
+		utils.system("emerge --unmerge %s" % package)	
+	#clean directory 
+    utils.cleanDirectory(os.path.join(rootdir,'dev-utils'))
+	
     # reinstall packages
     utils.system("emerge --update base")
     done = True
