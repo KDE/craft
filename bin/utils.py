@@ -733,3 +733,9 @@ def deleteFile(file):
     debug("delete file %s " % ( file ), 2)
     os.remove( file )
     return True
+
+def putenv(name, value):
+    """set environment variable"""
+    debug("set environment variable -- set %s=%s" % ( name, value ), 2)
+    os.putenv( name, value )
+    return True
