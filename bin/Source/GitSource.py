@@ -41,9 +41,9 @@ class GitSource (VersionSystemSourceBase):
                 ret = self.shell.execute( self.sourceDir().replace(self.package,""), "git", "clone %s %s" % ( repoUrl, self.package ) )
                 
                 if ret and repoBranch:
-                    ret = self.shell.execute( self.sourceDir(), "git", "checkout --track origin/%s" % ( repoBranch ) )
+                    self.shell.execute( self.sourceDir(), "git", "checkout --track origin/%s" % ( repoBranch ) )
                 if ret and repoTag:
-                    ret = self.shell.execute( self.sourceDir(), "git", "checkout %s" % ( repoTag ) )
+                    self.shell.execute( self.sourceDir(), "git", "checkout %s" % ( repoTag ) )
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
