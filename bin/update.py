@@ -13,7 +13,7 @@ import portage
 
 rootdir = os.getenv( "KDEROOT" )
 
-newVersion = '20090808'
+newVersion = '20090809'
 
 versionFile = os.path.join(rootdir,'etc','version')
 if os.path.exists(versionFile):
@@ -50,17 +50,18 @@ wget
 upx"""
     for package in packages.split():
         print "removing package %s" % package 
-		utils.system("emerge --unmerge %s" % package)	
-		# remove all temporary files
-		utils.system("emerge --cleanbuild %s" % package)	
-	#clean directory 
+        utils.system("emerge --unmerge %s" % package)
+        # remove all temporary files
+        utils.system("emerge --cleanbuild %s" % package) 
+        #clean directory 
     utils.cleanDirectory(os.path.join(rootdir,'dev-utils'))
-	
+
     # reinstall packages
     utils.system("emerge --update base")
     done = True
-#elif currentVersion == '20090808':
-#   add stuff for update   
+elif currentVersion == '20090808':
+    utils.system("emerge --unmerge subversion")
+    utils.system("emerge --qmerge subversion")
     
 if done:
     f = open( versionFile, "w" )
