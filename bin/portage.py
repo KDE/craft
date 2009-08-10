@@ -23,9 +23,10 @@ def __import__( module ):
 def rootDir():
     portageroot = os.getenv("EMERGE_PORTAGE_ROOT")
     if not portageroot == None:
-        return portageroot
+        dir = portageroot
     else:
-        return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
+        dir = os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
+    return dir
 
 def etcDir():
     return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
