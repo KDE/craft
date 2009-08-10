@@ -38,7 +38,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 if line.find("macro_optional_add_subdirectory") > -1:
                     a = line.split("(")
                     a = a[1].split(")")
-                    subdir = a[0]
+                    subdir = a[0].strip()
                     if not subdir in buildOnlyTargets:
                         defines += " -DBUILD_%s=OFF" % subdir
         #print defines
