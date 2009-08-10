@@ -94,7 +94,7 @@ class SvnSource (VersionSystemSourceBase):
             option = "--depth=files" 
             
         if utils.verbose() < 2: 
-            options += " --quiet"
+            option += " --quiet"
             
         if os.path.exists( sourcedir ):
             cmd = "%s/svn update %s %s %s" % ( self.svnInstallDir, option, url, sourcedir )
