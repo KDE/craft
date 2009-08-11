@@ -57,6 +57,7 @@ upx"""
     utils.cleanDirectory(os.path.join(rootdir,'dev-utils'))
 
     # reinstall packages
+    utils.system("emerge --update wget")
     utils.system("emerge --update base")
     done = True
 elif currentVersion == '20090808':
