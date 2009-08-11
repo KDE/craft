@@ -12,17 +12,17 @@ import info
 from BuildSystemBase import *
 
 class BinaryBuildSystem(BuildSystemBase):
-    def __init__( self, configureOptions="", makeOptions=""):
-        BuildSystemBase.__init__(self,"binary", configureOptions,makeOptions)
+    def __init__( self):
+        BuildSystemBase.__init__(self,"binary")
         
-    def configure( self, buildType=None, customOptions="" ):
+    def configure( self ):
         return True
 
-    def make( self, buildType=None ):
+    def make( self ):
         return True
 
     # nothing to do - unpack hasd done this job already
-    def install( self, buildType=None ):
+    def install( self ):
         return True
         
     def runTest( self ):

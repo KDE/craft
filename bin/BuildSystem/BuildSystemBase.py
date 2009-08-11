@@ -14,12 +14,10 @@ class BuildSystemBase(EmergeBase):
     noClean = False
     debug = True
 
-    def __init__(self,type,configureOptions="", makeOptions=""):
+    def __init__(self,type):
         """constructor"""
         EmergeBase.__init__(self)
         self.buildSystemType = type
-        self.configureOptions = configureOptions
-        self.makeOptions = makeOptions
         self.envPath = ""
         if self.compiler() == "mingw":
             self.envPath = "mingw/bin"
@@ -71,3 +69,16 @@ class BuildSystemBase(EmergeBase):
             sourcedir = os.path.join(sourcedir,self.subinfo.configurePath())
         return sourcedir
         
+    def configureOptions(self, defines=""):
+        """return options for configure command line""" 
+        if self.subinfo.options.configure.defines != None:
+            defines += " %s" % self.subinfo.options.configure.defines
+        return defines
+
+    def makeOptions(self, defines=""):
+        """return options for configure command line""" 
+        if self.subinfo.options.make.ignoreErrors:
+            command += " -i"
+        if self.subinfo.options.make.makeOptions != None:
+            defines += " %s" % self.subinfo.options.make.makeOptions
+        return defines

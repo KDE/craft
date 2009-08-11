@@ -14,9 +14,9 @@ from BuildSystemBase import *
 
 class CMakeBuildSystem(BuildSystemBase):
     """ cmake build support """
-    def __init__( self, configureOptions="",makeOptions=""):
+    def __init__( self ):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self,"cmake",configureOptions,makeOptions)
+        BuildSystemBase.__init__(self,"cmake")
 
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             self.cmakeMakefileGenerator = "NMake Makefiles"
@@ -44,48 +44,43 @@ class CMakeBuildSystem(BuildSystemBase):
         #print defines
         return defines
 
-    def configureDefaultDefines( self ):
+    def configureOptions( self, defines=""):
         """returns default configure options"""
-        sourcedir = self.configureSourceDir()
-        options = "\"%s\" -DCMAKE_INSTALL_PREFIX=\"%s\" " % \
-              ( sourcedir, self.mergeDestinationDir().replace( "\\", "/" ) )
+        options = BuildSystemBase.configureOptions(self)
+        
+        ## \todo why is it required to replace \\ by / ? 
+        options += " -DCMAKE_INSTALL_PREFIX=\"%s\"" % self.mergeDestinationDir().replace( "\\", "/" )
 
-        options = options + "-DCMAKE_INCLUDE_PATH=\"%s\" " % \
-                os.path.join( self.mergeDestinationDir(), "include" ).replace( "\\", "/" )
+        options += " -DCMAKE_INCLUDE_PATH=\"%s\"" % \
+            os.path.join( self.mergeDestinationDir(), "include" ).replace( "\\", "/" )
 
-        options = options + "-DCMAKE_LIBRARY_PATH=\"%s\" " % \
-                os.path.join( self.mergeDestinationDir(), "lib" ).replace( "\\", "/" )
+        options += " -DCMAKE_LIBRARY_PATH=\"%s\"" % \
+            os.path.join( self.mergeDestinationDir(), "lib" ).replace( "\\", "/" )
 
         if( not self.buildType() == None ):
-            options  = options + "-DCMAKE_BUILD_TYPE=%s" % self.buildType()             
-                
-        return options
-
-    def configure( self ):
-        """Using cmake"""
-
-        self.enterBuildDir()
-        
-        defines = self.configureDefaultDefines()
-        if not self.subinfo.options.configure.defines == None:
-            defines += " %s" % self.subinfo.options.configure.defines
+            options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
 
         if self.subinfo.options.configure.onlyBuildTargets :
             defines += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
                 
+        options += " \"%s\"" % self.configureSourceDir()
+        return options
+
+    def configure( self, defines=""):
+        """implements configure step for cmake projects"""
+
+        self.enterBuildDir()
+            
         if self.envPath <> '':
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
         
-        command = r"""cmake -G "%s" %s %s""" % \
-              ( self.cmakeMakefileGenerator, \
-                defines, \
-                self.configureOptions )
+        command = r"""cmake -G "%s" %s""" % (self.cmakeMakefileGenerator, self.configureOptions(defines) )
 
         return self.system( command, "configure", 0 ) 
 
     def make( self ):
-        """run the *make program"""
+        """implements the make step for cmake projects"""
 
         self.enterBuildDir()
         if self.envPath <> '':
