@@ -95,10 +95,9 @@ if "%1" == "" (
 set EMERGE_BUILDTYPE=RelWithDebInfo
 )
 
-rem If you want to have verbose output, uncomment the following option
-rem and set it to positive integer for verbose output and to 0
-rem or disable it for normal output. Currently the highest verbosity level
-rem is 3 (equal to 'emerge -v -v -v'). level 0 equals 'emerge -q'
+rem If you want to have verbose output, set it to positive integer <= 3.
+rem Set it to 0 for normal output (equals 'emerge -q').
+rem The highest verbosity level (3) equals 'emerge -v -v -v'.
 set EMERGE_VERBOSE=1
 
 rem Enable this option if you want to have shorter build times, and less
