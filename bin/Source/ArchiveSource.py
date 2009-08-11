@@ -48,7 +48,11 @@ class ArchiveSource(SourceBase):
             utils.debug("unpacking files into image root %s" % destdir,1)
         else:
             destdir = self.workDir()
-            self.enterBuildDir()
+            
+            if ( not os.path.exists( self.buildDir()) ):
+                os.makedirs( self.buildDir() )
+                utils.debug( "creating: %s" % self.buildDir(), 0 )
+
             utils.debug("unpacking files into work root %s" % destdir,1)
 
         if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
