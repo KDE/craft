@@ -25,8 +25,12 @@ if %KDECOMPILER% == "msvc2005" (
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 )
 if %KDECOMPILER% == "msvc2008" (
-rem you may want to change v6.1 to v6.0a (installed by default by msvc2008)
-set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
+	if exist %PROGRAMFILES%\Microsoft SDKs\Windows\v6.1 (
+		set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
+	)
+	if exist %PROGRAMFILES%\Microsoft SDKs\Windows\v6.0a (
+		set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.0a
+	)
 )
 
 rem Here you set the location of the vcvarsall.bat file that adds
