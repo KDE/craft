@@ -28,5 +28,7 @@ class Package(PackageBase, GitSource, CMakeBuildSystem, KDEWinPackager):
         PackageBase.__init__(self)
         KDEWinPackager.__init__(self)
         
+        self.subinfo.options.configure.defines = "-DWITH_STATIC_LIB=ON"
+        
 if __name__ == '__main__':
     Package().execute()
