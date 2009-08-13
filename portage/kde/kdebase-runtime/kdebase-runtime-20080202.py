@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['win32libs-bin/libssh'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
 
 from Package.CMakePackageBase import *
