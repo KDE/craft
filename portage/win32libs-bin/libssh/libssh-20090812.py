@@ -7,7 +7,8 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
 
         for version in ['20090812']:
-            self.targets[ version ] = self.getPackage( repoUrl, "libssh", version )
+            self.targets[ version ] = repoUrl + """/libssh-""" + version + """-bin.tar.bz2
+                                """ + repoUrl + """/libssh-""" + version + """-lib.tar.bz2"""
 
         self.defaultTarget = '20090812'
 
