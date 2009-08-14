@@ -404,6 +404,7 @@ def addInstalled( category, package, version, buildType='' ):
         fileName = 'installed-' + buildType
     else:
         fileName = 'installed'
+    utils.debug("installing package %s - %s into %s" % (package, version, fileName), 2)
     if( os.path.isfile( os.path.join( path, fileName ) ) ):
         f = open( os.path.join( path, fileName ), "rb" )
         for line in f:
@@ -421,6 +422,7 @@ def remInstalled( category, package, version, buildType='' ):
         fileName = 'installed-' + buildType
     else:
         fileName = 'installed'
+    utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)
     dbfile = os.path.join( etcDir(), fileName )
     tmpdbfile = os.path.join( etcDir(), "TMPinstalled" )
     if os.path.exists( dbfile ):
