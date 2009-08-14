@@ -29,14 +29,16 @@ class PackageBase (EmergeBase):
         self.setBuildTarget()
         self.forceCreateManifestFiles = False
 
-    def __installedDBPrefix(self):
+    def __installedDBPrefix(self, buildType=None):
         postfix = ''
+        if buildType == None:
+            buildType = self.buildType()
         if self.useBuildTypeRelatedMergeRoot:
-            if self.buildType() == 'Debug':
+            if buildType == 'Debug':
                 postfix = 'debug'
-            elif self.buildType() == 'Release':
+            elif buildType == 'Release':
                 postfix =  'release'
-            elif self.buildType() == 'RelWithDebInfo':
+            elif buildType == 'RelWithDebInfo':
                 postfix =  'relwithdebinfo'
         return postfix
 
@@ -72,7 +74,13 @@ class PackageBase (EmergeBase):
 
         # add package to installed database -> is this not the task of the manifest files ? 
        
-        portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType:
+            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
+            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
+            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
+        else:
+            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+
         return True
 
     def unmerge( self ):
@@ -85,7 +93,12 @@ class PackageBase (EmergeBase):
         ## /etc/portage/installed and to read from it on unmerge
         utils.debug("unmerge package from %s" % self.mergeDestinationDir(),2)
         utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
-        portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType:
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
+        else:
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
 
     def cleanImage( self ):
