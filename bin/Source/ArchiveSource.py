@@ -23,6 +23,7 @@ class ArchiveSource(SourceBase):
                 filenames.append( os.path.basename( uri ) )
         return filenames
 
+                    
     def fetch(self):
         """getting normal tarballs from SRC_URI"""
         utils.debug( "ArchiveSource.fetch called", 2 )
@@ -32,6 +33,8 @@ class ArchiveSource(SourceBase):
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
             return True
+
+        self.setProxy()
         if self.subinfo.hasTarget():
             return utils.getFiles( self.subinfo.target(), self.downloadDir() )
         else:

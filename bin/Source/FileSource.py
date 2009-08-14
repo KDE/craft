@@ -32,6 +32,8 @@ class FileSource(SourceBase):
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
             return True
+
+        self.setProxy()
         if self.subinfo.hasTarget():
             return utils.getFiles( self.subinfo.target(), self.downloadDir() )
         else:

@@ -25,12 +25,7 @@ if %KDECOMPILER% == "msvc2005" (
 set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
 )
 if %KDECOMPILER% == "msvc2008" (
-	if exist %PROGRAMFILES%\Microsoft SDKs\Windows\v6.1 (
-		set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
-	)
-	if exist %PROGRAMFILES%\Microsoft SDKs\Windows\v6.0a (
-		set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.0a
-	)
+set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
 )
 
 rem Here you set the location of the vcvarsall.bat file that adds
@@ -44,6 +39,12 @@ if %KDECOMPILER% == "msvc2008" (
 set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 9.0
 call "%VSDIR%\VC\vcvarsall.bat" x86
 )
+
+rem proxy settings - in case a proxy is required uncomment the following variables 
+rem set EMERGE_PROXY_HOST=
+rem set EMERGE_PROXY_PORT=8080
+rem set EMERGE_PROXY_USERNAME=
+rem set EMERGE_PROXY_PASSWORD=
 
 rem Here you change the download directory.
 rem If you want, so you can share the same download directory between
@@ -99,9 +100,10 @@ if "%1" == "" (
 set EMERGE_BUILDTYPE=RelWithDebInfo
 )
 
-rem If you want to have verbose output, set it to positive integer <= 3.
-rem Set it to 0 for normal output (equals 'emerge -q').
-rem The highest verbosity level (3) equals 'emerge -v -v -v'.
+rem If you want to have verbose output, uncomment the following option
+rem and set it to positive integer for verbose output and to 0
+rem or disable it for normal output. Currently the highest verbosity level
+rem is 3 (equal to 'emerge -v -v -v'). level 0 equals 'emerge -q'
 set EMERGE_VERBOSE=1
 
 rem Enable this option if you want to have shorter build times, and less

@@ -12,11 +12,26 @@ class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self):
         VersionSystemSourceBase.__init__(self)
+        self.options = None
         ## \todo add internal dependency for subversion package
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
         if not os.path.exists(self.svnInstallDir):
             utils.die("required subversion package not installed")
+            
+    def setProxy(self):
+        """set proxy for fetching sources from subversion repository"""
+        (host, port, username, password) = self.proxySettings()
+        if host == None:
+            return 
+
+        proxyOptions = " --config-option servers:global:http-proxy-host=%s" % host
+        proxyOptions += " --config-option servers:global:http-proxy-port=%s" % port
+        if username != None:
+            proxyOptions += " --config-option servers:global:http-proxy-username=%s" % username
+            proxyOptions += " --config-option servers:global:http-proxy-password=%s" % password
         
+        self.options = proxyOptions
+            
     def fetch( self ):
         """ checkout or update an existing repository path """
         if self.noFetch:
@@ -95,7 +110,12 @@ class SvnSource (VersionSystemSourceBase):
             
         if utils.verbose() < 2: 
             option += " --quiet"
-            
+          
+        self.setProxy()
+        
+        if self.options != None:
+            option += self.options
+
         if os.path.exists( sourcedir ):
             cmd = "%s/svn update %s %s %s" % ( self.svnInstallDir, option, url, sourcedir )
         else:

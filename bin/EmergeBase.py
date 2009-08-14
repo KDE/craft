@@ -274,3 +274,12 @@ class EmergeBase():
         else:
             utils.error( "while running %s cmd: %s" % (errorMessage , command) )
         return False
+
+    def proxySettings(self):
+        host = os.getenv('EMERGE_PROXY_HOST')
+        port = os.getenv('EMERGE_PROXY_PORT')
+        username = os.getenv('EMERGE_PROXY_USERNAME')
+        password = os.getenv('EMERGE_PROXY_PASSWORD')
+        return [host, port, username, password]
+    
+        

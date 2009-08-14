@@ -30,6 +30,7 @@ class GitSource (VersionSystemSourceBase):
 
         ret = True
         if ( not self.noFetch ):
+            self.setProxy()
             safePath = os.environ["PATH"]
             os.environ["PATH"] = os.path.join(self.rootdir, "git", "bin") + ";" + safePath
             if os.path.exists( self.sourceDir() ):
