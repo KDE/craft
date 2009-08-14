@@ -109,6 +109,10 @@ class Package(QMakePackageBase):
 
         QMakeBuildSystem.make(self)
         
+        if not libtmp:
+            libtmp = ""
+        if not libtmp:
+            inctmp = ""
         os.environ[ "LIB" ] = libtmp
         os.environ[ "INCLUDE" ] = inctmp
         return True
