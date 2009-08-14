@@ -6,7 +6,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         svnurl = "https://windbus.svn.sourceforge.net/svnroot/windbus/"
-        self.svnTargets['1.1.2'] = svnurl + 'tags/1.1.2'
         self.svnTargets['1.2.1'] = svnurl + 'tags/1.2.1'
         self.svnTargets['1.2.3'] = svnurl + 'tags/1.2.3'
         self.svnTargets['1.2.4'] = svnurl + 'tags/1.2.4'
@@ -26,6 +25,7 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.package.packageName = 'dbus'
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):
