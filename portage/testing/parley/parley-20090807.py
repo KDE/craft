@@ -2,8 +2,8 @@ import info
        
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "trunk/KDE/kdeedu#norecursive;trunk/KDE/kdeedu/parley;trunk/KDE/kdeedu/cmake"
-        self.svnTargets['branches-4.3'] = "branches/KDE/4.3/kdeedu#norecursive;branches/KDE/4.3/kdeedu/parley;branches/KDE/4.3/kdeedu/cmake"        
+        self.svnTargets['svnHEAD'] = "trunk/KDE/kdeedu#norecursive;trunk/KDE/kdeedu/data;trunk/KDE/kdeedu/libkdeedu;trunk/KDE/kdeedu/parley;trunk/KDE/kdeedu/cmake"
+        self.svnTargets['branches-4.3'] = "branches/KDE/4.3/kdeedu#norecursive;branches/KDE/4.3/kdeedu/parley;branches/KDE/4.3/kdeedu/data;branches/KDE/4.3/kdeedu/libkdeedu;branches/KDE/4.3/kdeedu/cmake"        
         
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdeedu-4.3.' + ver + '.tar.bz2'
