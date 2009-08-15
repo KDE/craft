@@ -21,30 +21,8 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
+        self.subinfo.options.configure.onlyBuildTargets = "systemsettings krunner khotkeys kcontrol doc plasma wallpapers"
         CMakePackageBase.__init__( self )
-        defines = ""
-        defines += " -DBUILD_libs=OFF"
-#        defines += " -DBUILD_systemsettings=OFF"
-        defines += " -DBUILD_kcheckpass=OFF"
-        defines += " -DBUILD_kscreensaver=OFF"
-        defines += " -DBUILD_solid=OFF"
-        defines += " -DBUILD_ksmserver=OFF"
-        defines += " -DBUILD_kcminit=OFF"
-        defines += " -DBUILD_ksplash=OFF"
-        defines += " -DBUILD_ksysguard=OFF"
-        defines += " -DBUILD_klipper=OFF"
-        defines += " -DBUILD_kmenuedit=OFF"
-#        defines += " -DBUILD_krunner=OFF"
-        defines += " -DBUILD_kwin=OFF"
-        defines += " -DBUILD_printer-applet=OFF"
-        defines += " -DBUILD_kstartupconfig=OFF"
-#        defines += " -DBUILD_khotkeys=OFF"
-#        defines += " -DBUILD_kcontrol=OFF"
-        defines += " -DBUILD_ksystraycmd=OFF"
-#        defines += " -DBUILD_doc=OFF"
-#        defines += " -DBUILD_plasma=OFF"
-#        defines += " -DBUILD_wallpapers=OFF"
-        self.subinfo.options.configure.defines = defines
 
 if __name__ == '__main__':
     Package().execute()
