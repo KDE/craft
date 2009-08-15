@@ -363,7 +363,6 @@ def unmerge( rootdir, package, forced = False ):
     manifestDir = os.path.join( rootdir, "manifest"  ) 
     if os.path.exists( manifestDir ):
         for file in os.listdir( manifestDir ):
-            debug("file: %s" % file,2)
             if file.endswith(".mft"):
                 [ pkg, version ] = portage.packageSplit( file.replace( ".mft", "" ) )
                 if file.endswith( ".mft" ) and package==pkg:
