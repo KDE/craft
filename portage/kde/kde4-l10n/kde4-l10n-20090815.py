@@ -31,14 +31,14 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         # hardcoded for now
         #self.subinfo.options.package.version = '4.3.63'
 
-    def repositoryPath(self):
+    def repositoryPath(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
         # then is not be overrideable for unknown reasons 
-        url = SvnSource.repositoryPath(self) % self.language
+        url = SvnSource.repositoryPath(self,index) % self.language
         return url
 
-    def sourceDir(self):
-        dir = SvnSource.sourceDir(self) % self.language
+    def sourceDir(self,index=0):
+        dir = SvnSource.sourceDir(self,index) % self.language
         return dir
         
     def buildRoot(self):
@@ -78,7 +78,7 @@ class MainInfo(info.infoclass):
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
         #for testing
-        #self.languages  = 'de'
+        self.languages  = 'de'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
