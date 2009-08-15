@@ -9,6 +9,11 @@ rem * msvc2005 - use the Microsoft Visual C++ 2005 compiler
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 set KDECOMPILER=mingw
 
+rem Here you can set the architecure for which packages 
+rem are build. Currently x86 (32bit) and x64 (64) are support
+set EMERGE_ARCHITECTURE=x86
+rem set EMERGE_ARCHITECTURE=x64
+
 rem Here you set the path to your Python installation,
 rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
@@ -33,11 +38,11 @@ rem Visual C++ environment variables into the build environment.
 rem if you are not building on x86 change that to something appropriate.
 if %KDECOMPILER% == "msvc2005" (
 set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 8
-call "%VSDIR%\VC\vcvarsall.bat" x86
+call "%VSDIR%\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
 )
 if %KDECOMPILER% == "msvc2008" (
 set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 9.0
-call "%VSDIR%\VC\vcvarsall.bat" x86
+call "%VSDIR%\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
 )
 
 rem proxy settings - in case a proxy is required uncomment the following variables 
