@@ -44,6 +44,11 @@ class KDEWinPackager (PackagerBase):
         elif not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
             pkgVersion = self.subinfo.buildTarget
 
+        if os.getenv("EMERGE_ARCHITECTURE") == "x64": 
+            pkgName += "-x64"
+        #else:
+        #    pkgName += "-x86"
+            
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
