@@ -1,16 +1,14 @@
 import info
 
-## \todo the dep files will let into have dll's installed multiple times 
-SRC_URI = """
-http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-%s-bin.zip
-http://downloads.sourceforge.net/sourceforge/gnuwin32/wget-%s-dep.zip
-"""
+# because the python http implementation do not support proxies 
+# a local copy of wget is used for downloading
+# the all inclusive wget binary is taken from http://users.ugent.be/~bpuype/wget/
+# and do not have the multiple dll installation problem normal gnuwin32 package have
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for t in ( '1.10.1', '1.11.4' ):
-          self.targets[ t ] = SRC_URI % ( t, t )
-        self.defaultTarget = '1.11.4'
+        self.targets['dummy'] = 'empty'
+        self.defaultTarget = 'dummy'
 
 from Package.BinaryPackageBase import *
 
@@ -19,7 +17,18 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
+        self.subinfo.options.install.installPath = "bin"
         BinaryPackageBase.__init__(self)
+        self.localwget = os.path.join(self.packageDir(),'wget.exe')
 
+    def fetch(self):
+        return True
+        
+    def unpack(self):
+        dest = os.path.join(self.installDir(),'wget.exe')
+        if not os.path.exists(self.installDir()):
+            os.makedirs(self.installDir())
+        return utils.copyFile(self.localwget,os.path.join(self.installDir(),'wget.exe'))
+            
 if __name__ == '__main__':
     Package().execute()
