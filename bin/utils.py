@@ -176,6 +176,8 @@ def unpackFile( downloaddir, filename, workdir ):
     ( shortname, ext ) = os.path.splitext( filename )
     if ( ext == ".zip" ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
+    elif ( ext == ".7z" ):
+        return un7zip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".gz" or ext == ".bz2" ):
         ( myshortname, myext ) = os.path.splitext( shortname )
         if ( myext == ".tar" ):
@@ -188,6 +190,10 @@ def unpackFile( downloaddir, filename, workdir ):
         return True
     error( "dont know how to unpack this file: %s" % filename )
     return False
+
+def un7zip( file, destdir ):
+    command = "7za x -r -y -o%s %s" % (destdir, file)
+    return system(command)
 
 def unTar( file, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
