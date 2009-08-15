@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-import base
-import utils
-import sys
-import os
 import info
 
 class subinfo(info.infoclass):
@@ -30,29 +26,15 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "akonadi"
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
-        self.kdeCustomDefines += " -DBoost_INCLUDE_DIR=" + os.path.join( self.rootdir, "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
-        print self.kdeCustomDefines
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "akonadi" )
-        else:
-            return self.doPackaging( "akonadi", self.buildTarget, True )
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
+        self.boost = portage.getPackageInstance("win32libs-bin","boost")
+        self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
