@@ -6,16 +6,15 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '1.5.9'
         # the zip file does not have a bin dir, so we have to create it  
         # This attribute is in prelimary state
-        self.targetInstallPath['1.5.9'] = "bin";
-        # merge the package into the dev-utils tree 
-        # This attribute is in prelimary state
-        self.targetMergePath['1.5.9'] = "dev-utils";
-
+        self.targetInstallPath['1.5.9'] = "bin"
+        
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
+        self.subinfo.options.merge.ignoreBuildType = True
+        self.subinfo.options.merge.destinationPath = "dev-utils"
         BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':

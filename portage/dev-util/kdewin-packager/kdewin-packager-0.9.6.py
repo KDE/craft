@@ -10,10 +10,11 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
         
 class Package(BinaryPackageBase):
-  def __init__(self ):
-    self.subinfo = subinfo()
-    self.subinfo.options.merge.destinationPath = 'dev-utils'
-    BinaryPackageBase.__init__( self )
+    def __init__(self ):
+        self.subinfo = subinfo()
+        self.subinfo.options.merge.ignoreBuildType = True
+        self.subinfo.options.merge.destinationPath = 'dev-utils'
+        BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()

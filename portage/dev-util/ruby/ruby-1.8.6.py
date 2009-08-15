@@ -13,6 +13,7 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
+        self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
 
     def unpack(self):

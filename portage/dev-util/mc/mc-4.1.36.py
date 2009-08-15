@@ -18,6 +18,8 @@ class subclass(base.baseclass):
     base.baseclass.__init__( self, SRC_URI, args=args )
     self.instdestdir = "mc"
     self.subinfo = subinfo()
+        self.subinfo.options.merge.ignoreBuildType = True
+
 
   def compile( self ):
     print "mc compile called"

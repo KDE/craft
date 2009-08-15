@@ -16,11 +16,11 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
+        self.subinfo.options.merge.ignoreBuildType = True
 
     def execute( self ):
         base.baseclass.execute( self )
         return True
-
     def unpack( self ):
         base.baseclass.unpack( self ) or utils.die( "unpack failed" )
         if self.buildTarget == '2.6.1' and not self.compiler == "mingw":
@@ -30,7 +30,6 @@ class subclass(base.baseclass):
             cmd = "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir , "comsuppw-2.6.2.diff" ) )
             self.system( cmd )
         return True
-
     def compile( self ):
         return self.kdeCompile()
 
@@ -41,6 +40,5 @@ class subclass(base.baseclass):
     # now do packaging with kdewin-packager
         self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
         return True
-
 if __name__ == '__main__':
     subclass().execute()
