@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['kde/kdegames'] = 'default'
+        self.hardDependencies['testing/opende'] = 'default'
         self.hardDependencies['testing/glew'] = 'default'
 
 from Package.CMakePackageBase import *
