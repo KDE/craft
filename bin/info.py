@@ -40,6 +40,8 @@ class OptionsInstall:
         ## use either make tool for installing or 
         # run cmake directly for installing 
         self.useMakeToolForInstall = True
+        ## subdir based on installDir() used as install destination directory
+        self.installPath = None
 
 ## options for the merge action 
 class OptionsMerge:
