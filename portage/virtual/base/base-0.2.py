@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget']       = 'default'
+        self.hardDependencies['dev-util/7zip']       = 'default'
         self.hardDependencies['gnuwin32/patch']      = 'default'
         self.hardDependencies['gnuwin32/sed']        = 'default'
         self.hardDependencies['dev-util/cmake']      = 'default'

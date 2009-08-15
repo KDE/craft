@@ -31,6 +31,8 @@ class OptionsMake:
         self.ignoreErrors = None
         ## options for the make tool
         self.makeOptions = None
+        ## define the basename of the .sln file in case cmake.useIDE = True
+        self.slnBaseName = None
 
 ## options for the install action 
 class OptionsInstall:
@@ -65,6 +67,10 @@ class OptionsPackage:
         ## pack also sources 
         self.packSources = True
         
+class OptionsCMake:
+    def __init__(self): 
+        self.useIDE = False
+        
 ## main option class
 class Options:
     def __init__(self):
@@ -77,7 +83,9 @@ class Options:
         ## options of the package action
         self.package = OptionsPackage()
         ## options of the merge action
-        self.merge = OptionsMerge()
+        self.merge = OptionsMerge()        
+        ## options of the cmake buildSystem
+        self.cmake = OptionsCMake()
         
         ## this option controls if the build type is used when creating build and install directories. 
         # The following example shows the difference:
@@ -104,6 +112,26 @@ class Options:
         self.disableReleaseBuild = False
         ## exit if system command returns errors
         self.exitOnErrors = True
+        #
+
+        
+    def readFromEnv(self):
+        opts = os.getenv( "EMERGE_OPTION" )
+        if opts == None:
+            return False
+        opts = opts.split()
+        for entry in opts:
+            if entry.find('=') == -1:
+                utils.debug('incomplete option %s' % entry)
+                continue
+            (option,value) = entry.split('=')
+            print option + " " + value
+            if option == "cmake.useIDE":
+                self.cmake.useIDE=value
+            elif hasattr(self,option):
+                setattr(self,option,value)
+            else:
+                utils.die("unknown property %s" % option)
 
 class infoclass:
     def __init__( self, RAW="" ):
