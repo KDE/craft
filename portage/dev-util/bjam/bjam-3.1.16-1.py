@@ -19,9 +19,6 @@ class subinfo(info.infoclass):
         self.targets['3.1.16-1'] = SRC_URI
         self.targetInstSrc['3.1.16-1'] = PACKAGE_FULL_NAME + "-ntx86"
         self.defaultTarget = '3.1.16-1'
-        self.targetMergeSourcePath['3.1.16-1'] = "boost-jam-3.1.16-1-ntx86"
-        self.targetMergePath['3.1.16-1'] = "dev-utils/bin";
-
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
@@ -31,13 +28,14 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        self.subinfo.options.merge.ignoreBuildType = True
+        self.subinfo.options.merge.ignoreBuildType = True        
+        self.subinfo.options.merge.destinationPath = "dev-utils";
         BinaryPackageBase.__init__(self)
     
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False
-        ## \todo rename directory "boost-jam-3.1.16-1-ntx86" to "bin"
+        return utils.renameDir(os.path.join(self.imageDir(),'boost-jam-3.1.16-1-ntx86'),os.path.join(self.imageDir(),'bin')) 
         return True
 
 if __name__ == '__main__':
