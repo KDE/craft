@@ -31,12 +31,14 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        self.subinfo.options.merge.ignoreBuildType = True        BinaryPackageBase.__init__(self)
+        self.subinfo.options.merge.ignoreBuildType = True
+        BinaryPackageBase.__init__(self)
     
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False
         ## \todo rename directory "boost-jam-3.1.16-1-ntx86" to "bin"
+        return True
 
 if __name__ == '__main__':
     Package().execute()
