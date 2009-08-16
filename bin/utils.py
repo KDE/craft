@@ -711,7 +711,14 @@ def toMSysPath( path ):
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
     
-
+def renameDir(src,dest):
+    """ rename a directory """
+    debug("rename directory from %s to %s" % ( src, dest ), 2)
+    if os.rename( src, dest ) == 0:
+        return False
+    else:
+        return True
+        
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
