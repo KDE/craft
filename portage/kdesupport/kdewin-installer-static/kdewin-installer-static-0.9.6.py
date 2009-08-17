@@ -18,10 +18,15 @@ class Package(CMakePackageBase):
     def __init__(self):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.disableDebugBuild = True
+
         self.qtstatic = portage.getPackageInstance('libs','qt-static')
+        self.qtstatic.setBuildTarget('4.5.2-patched')
+        qmake = os.path.join(self.qtstatic.installDir(), "bin", "qmake.exe")
+        if not os.path.exists(qmake):
+            utils.die("could not found qmake")
+        ## \todo a standardized way to check if a package is installed in the image dir would be good.
         self.subinfo.options.configure.defines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
-            % os.path.join(self.qtstatic.installDir(), "bin", "qmake.exe").replace('\\', '/')
+            % qmake.replace('\\', '/')
         if self.buildTarget == 'amarokHEAD':
             self.subinfo.options.configure.defines += " -DBUILD_FOR_AMAROK=ON"
 
