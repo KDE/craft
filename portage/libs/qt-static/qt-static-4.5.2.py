@@ -92,7 +92,5 @@ class Package(QMakePackageBase):
         utils.debug("this package is not intended to be merged");
         return True
 
-    def unmerge( self ):
-        return True
 if __name__ == '__main__':
     Package().execute()
