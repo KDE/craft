@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdeedu-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdeedu-4.3.' + ver
         self.patchToApply['4.3.0'] = ('1011613.diff', 0)
+        self.patchToApply['4.3.0'] = ('kdeedu-kmplot.diff', 0)
           
         self.defaultTarget = 'svnHEAD'
     
