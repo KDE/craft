@@ -1,6 +1,3 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -17,27 +14,14 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdelibs'] = 'default'
-        self.hardDependencies['kde-4.3/kdepimlibs'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "runtime"
+from Package.CMakePackageBase import *        
+        
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kde.buildTests=False
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "kdebase-runtime", self.buildTarget, True )
-		
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
