@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -27,34 +23,20 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        self.buildType = "Debug"
-        base.baseclass.__init__( self, args=args )
+from Package.CMakePackageBase import *
+        
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        if self.compiler == "mingw":
-          self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
-        if self.compiler == "msvc2005":
-          self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
-        if self.compiler == "msvc2008":
-          self.kdeCustomDefines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
-#       self.kdeCustomDefines += " -DKDE4_ENABLE_UAC_MANIFEST=ON "
-
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def unittest( self ):
-        return self.kdeTest()
-
-    def make_package( self ):
-        return self.doPackaging( "kdelibs", self.buildTarget, True )
+        CMakePackageBase.__init__( self )
+        if self.compiler() == "mingw":
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
+        elif self.compiler() == "msvc2005":
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
+        elif self.compiler() == "msvc2008":
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+        #self.subinfo.options.configure.defines += " -DKDE4_ENABLE_UAC_MANIFEST=ON "
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
+
