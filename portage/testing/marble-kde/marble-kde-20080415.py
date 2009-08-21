@@ -7,10 +7,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu'
-        self.svnTargets['marble-gsoc-2009'] = 'branches/marble/marble-gsoc-2009'
-        self.svnTargets['4.2'] = 'branches/KDE/4.2/kdeedu'
-        self.svnTargets['4.3'] = 'branches/KDE/4.3/kdeedu'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu/marble'
+        self.svnTargets['4.2'] = 'branches/KDE/4.2/kdeedu/marble'
+        self.svnTargets['4.3'] = 'branches/KDE/4.3/kdeedu/marble'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -28,8 +27,6 @@ class subclass(base.baseclass):
 
     def compile( self ):
         self.kdeCustomDefines = ""
-        if not self.buildTarget == 'marble-gsoc-2009':
-            self.kde.sourcePath = os.path.join( self.kde.sourcePath, "marble" )
         self.kdeCustomDefines += " -DTILES_AT_COMPILETIME=OFF"
         return self.kdeCompile()
 
