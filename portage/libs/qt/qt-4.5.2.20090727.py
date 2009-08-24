@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.5.1-1'] = 'trunk/qt-copy/'
         self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
-        self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
+        self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
         self.defaultTarget = '4.5.2-patched'
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
