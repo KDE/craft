@@ -38,7 +38,7 @@ if "%1" == "" (
 
 set PATH=%KDEROOT%%SUBDIR%\bin;%PATH%
 set KDEDIRS=%KDEROOT%%SUBDIR%
-set QT_PLUGIN_PATH=%KDEROOT%%SUBDIR%\plugins
+set QT_PLUGIN_PATH=%KDEROOT%%SUBDIR%\plugins;%KDEROOT%%SUBDIR%\lib\kde4\plugins
 set XDG_DATA_DIRS=%KDEROOT%%SUBDIR%\share
 
 rem for emerge
