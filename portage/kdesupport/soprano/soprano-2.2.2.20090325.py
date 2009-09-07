@@ -5,8 +5,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base']            = 'default'
         self.hardDependencies['libs/qt']                 = 'default'
         self.hardDependencies['kdesupport/clucene-core'] = 'default'
-        #not good for 4.2 branch...
-        #self.hardDependencies['win32libs-bin/redland']   = 'default'
+        self.hardDependencies['win32libs-bin/redland']   = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
