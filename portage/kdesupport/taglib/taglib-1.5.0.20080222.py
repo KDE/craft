@@ -1,6 +1,3 @@
-import base
-import utils
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -17,33 +14,18 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/taglib'
         self.defaultTarget = 'svnHEAD'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "taglib"
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = ""
-#        self.kdeCustomDefines += " -DBUILD_TESTS=ON"
-#        self.kdeCustomDefines += " -DBUILD_EXAMPLES=ON"
-#        self.kdeCustomDefines += " -DNO_ITUNES_HACKS=ON"
-        self.kdeCustomDefines += " -DWITH_ASF=ON"
-        self.kdeCustomDefines += " -DWITH_MP4=ON"
-
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "taglib" )
-        else:
-            return self.doPackaging( "taglib", self.buildTarget, True )
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = ""
+#        self.subinfo.options.configure.defines += " -DBUILD_TESTS=ON"
+#        self.subinfo.options.configure.defines += " -DBUILD_EXAMPLES=ON"
+#        self.subinfo.options.configure.defines += " -DNO_ITUNES_HACKS=ON"
+        self.subinfo.options.configure.defines += " -DWITH_ASF=ON"
+        self.subinfo.options.configure.defines += " -DWITH_MP4=ON"
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
