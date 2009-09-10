@@ -16,9 +16,18 @@ from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
+        utils.debug( "Package __init__", 2 )
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-
+        print "calling unpack"
+        Package.unpack(self)
+	
+    def unpack(self):
+        if not BinaryPackageBase.unpack(self):
+            return False
+        utils.copyFile(os.path.join(self.packageDir(),"svn.bat"),os.path.join(self.rootdir,"dev-utils","bin","svn.bat"))
+        return True
+	
 if __name__ == '__main__':
-    Package().execute()
+    Package().execute
