@@ -1,4 +1,3 @@
-import base
 import info
 
 class subinfo(info.infoclass):
@@ -20,8 +19,6 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-        print "calling unpack"
-        Package.unpack(self)
 	
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
