@@ -751,3 +751,9 @@ def putenv(name, value):
     debug("set environment variable -- set %s=%s" % ( name, value ), 2)
     os.putenv( name, value )
     return True
+
+def applyPatch(sourceDir, file, patchLevel='0'):
+    """apply single patch"""
+    cmd = "cd %s && patch -p%s < %s" % ( sourceDir, patchLevel, file )    
+    debug("applying patch %s" % ( cmd ), 2)
+    return system( cmd )
