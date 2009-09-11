@@ -24,8 +24,8 @@ class Package(CMakePackageBase):
     def unpack(self):
         if not CMakePackageBase.unpack(self):
             return False
-        self.system( "cd %s && patch -p1 < %s" % ( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator-cmake.diff" ) ) )
-        self.system( "cd %s && patch -p1 < %s" % ( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator.diff" ) ) )
+        utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator-cmake.diff" ), 1)
+        utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator.diff" ), 1)
         return True
 
 if __name__ == '__main__':
