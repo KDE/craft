@@ -1,0 +1,13 @@
+--- a/mkspecs/win32-msvc2008/qmake.conf
++++ b/mkspecs/win32-msvc2008/qmake.conf
+@@ -19,8 +19,8 @@ QMAKE_YACCFLAGS         = -d
+ QMAKE_CFLAGS            = -nologo -Zm200 -Zc:wchar_t-
+ QMAKE_CFLAGS_WARN_ON    = -W3
+ QMAKE_CFLAGS_WARN_OFF   = -W0
+-QMAKE_CFLAGS_RELEASE    = -O2 -MD
+-QMAKE_CFLAGS_DEBUG      = -Zi -MDd
++QMAKE_CFLAGS_RELEASE    = -O2 -MT
++QMAKE_CFLAGS_DEBUG      = -Zi -MTd
+ QMAKE_CFLAGS_YACC       =
+ QMAKE_CFLAGS_LTCG       = -GL
+ 

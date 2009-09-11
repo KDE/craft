@@ -30,6 +30,12 @@ class Package(QMakePackageBase):
         QMakePackageBase.__init__(self)
         self.subinfo.options.make.makeOptions = "sub-winmain sub-tools-bootstrap sub-moc sub-rcc sub-uic sub-corelib sub-gui"
 
+    def unpack( self ):
+        if not QMakePackageBase.unpack(self):
+            return False
+        utils.applyPatch(self.sourceDir(),os.path.join(self.packageDir(),"qconf.patch"),1)
+        return True
+        
     def configure( self ):
         platform = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
@@ -69,7 +75,7 @@ class Package(QMakePackageBase):
         for target in ['winmain', 'uic', 'moc', 'rcc', 'corelib', 'gui', 'xml']:
             targets += ' sub-%s-install_subtargets' % target
          
-        if not QMakeBuildSystem.install(self, targets):
+        if not QMakePackageBase.install(self, targets):
             return False
 
         # create qt.conf 
