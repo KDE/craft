@@ -15,7 +15,6 @@ from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
-        utils.debug( "Package __init__", 2 )
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
