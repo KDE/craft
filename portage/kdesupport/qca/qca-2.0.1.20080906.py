@@ -17,25 +17,15 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qca'
         self.defaultTarget = 'svnHEAD'
 
-class subclass(base.baseclass):
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "qca"
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "qca" )
-        else:
-            return self.doPackaging( "qca", self.buildTarget, True )
+        CMakePackageBase.__init__(self)
+        self.subinfo.options.configure.onlyBuildTargets = 'umbrello' 
+            
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
+
+    
