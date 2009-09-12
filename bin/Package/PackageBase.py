@@ -92,7 +92,11 @@ class PackageBase (EmergeBase):
         ## a better solution will be to save the merge sub dir into 
         ## /etc/portage/installed and to read from it on unmerge
         utils.debug("unmerge package from %s" % self.mergeDestinationDir(),2)
-        utils.unmerge( self.mergeDestinationDir(), self.package, self.forced )
+        if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ):
+            # compatibility code: uninstall subclass based package
+            utils.unmerge( self.rootdir, self.package, self.forced )
+            portage.remInstalled( self.category, self.package, self.version, '')
+
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType:
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
