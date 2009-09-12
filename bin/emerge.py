@@ -165,7 +165,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild"] and category and package and version ):
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "createpatch"] and category and package and version ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         success = doExec( category, package, version, "cleanimage", opts )
@@ -286,7 +286,7 @@ for i in sys.argv:
         buildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
-                  "--full-package", "--cleanimage", "--cleanbuild" ] ):
+                  "--full-package", "--cleanimage", "--cleanbuild", "--createpatch"] ):
         buildAction = i[2:]
     elif ( i.startswith( "-" ) ):
         usage()

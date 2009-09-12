@@ -198,6 +198,7 @@ class PackageBase (EmergeBase):
         elif command == "unmerge":     ok = self.unmerge()
         elif command == "manifest":    ok = self.manifest()
         elif command == "package":     ok = self.createPackage()
+        elif command == "createpatch": ok = self.createPatch()
         else:
             ok = utils.error( "command %s not understood" % command )
 

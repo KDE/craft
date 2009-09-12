@@ -33,3 +33,6 @@ class MultiSource():
         
     def applyPatches(self):
         return self.source.applyPatches()
+
+    def createPatch(self):
+        return self.source.createPatch()

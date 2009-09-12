@@ -57,3 +57,7 @@ class SourceBase(EmergeBase):
                 return utils.applyPatch( patchfile, srcdir, patchdepth )
         return True
 
+    def createPatch(self):
+        """create patch file from svn source into the related package dir. 
+        The patch file is named autocreated.patch"""
+        abstract()
