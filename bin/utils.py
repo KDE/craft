@@ -359,7 +359,7 @@ def moveSrcDirToDestDir( srcdir, destdir ):
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
     debug( "unmerge called: %s" % ( package ), 2 )
-
+    removed = False
     manifestDir = os.path.join( rootdir, "manifest"  ) 
     if os.path.exists( manifestDir ):
         for file in os.listdir( manifestDir ):
@@ -395,12 +395,14 @@ def unmerge( rootdir, package, forced = False ):
                             warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
                     fptr.close()
                     os.remove( os.path.join( rootdir, "manifest", file ) )
+                    removed = True
+                    
         else:
             debug("could not find any manifest files",2)
     else:
         debug("could not find manifest directory",2)
         
-    return
+    return removed
 
 def manifestDir( srcdir, imagedir, category, package, version ):
     if not hasManifestFile( imagedir, category, package ):
