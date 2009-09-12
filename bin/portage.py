@@ -425,13 +425,21 @@ def remInstalled( category, package, version, buildType='' ):
     utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)
     dbfile = os.path.join( etcDir(), fileName )
     tmpdbfile = os.path.join( etcDir(), "TMPinstalled" )
+    found=False
     if os.path.exists( dbfile ):
         file = open( dbfile, "rb" )
         tfile = open( tmpdbfile, "wb" )
         for line in file:
+            ## \todo the category should not be part of the search string 
+            ## because otherwise it is not possible to unmerge package using 
+            ## the same name but living in different categories
             if not line.startswith("%s/%s" % ( category, package ) ):
                 tfile.write( line )
+            else:
+                found=True
         file.close()
         tfile.close()
         os.remove( dbfile )
         os.rename( tmpdbfile, dbfile )
+    return found
+
