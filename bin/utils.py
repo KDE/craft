@@ -304,6 +304,7 @@ def info( message ):
 def debug( message, level=0 ):
     if verbose() > level:
         print "emerge debug:", message
+    sys.stdout.flush()
     return True
 
 def warning( message ):
