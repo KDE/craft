@@ -1,0 +1,243 @@
+Index: krusader/krusader/Dialogs/checksumdlg.cpp
+===================================================================
+--- krusader/krusader/Dialogs/checksumdlg.cpp	(Revision 6310)
++++ krusader/krusader/Dialogs/checksumdlg.cpp	(Arbeitskopie)
+@@ -29,7 +29,7 @@
+ 
+ class CS_Tool; // forward
+ typedef void PREPARE_PROC_FUNC(KProcess& proc, CS_Tool *self, const QStringList& files,
+-	const QString checksumFile, bool recursive, const QString& type=QString());
++	const QString checksumFile, bool recursive, const QString& type);
+ typedef QStringList GET_FAILED_FUNC(const QStringList& stdOut, const QStringList& stdErr);
+ 
+ class CS_Tool {
+Index: krusader/krusader/BookMan/krbookmarkhandler.cpp
+===================================================================
+--- krusader/krusader/BookMan/krbookmarkhandler.cpp	(Revision 6310)
++++ krusader/krusader/BookMan/krbookmarkhandler.cpp	(Arbeitskopie)
+@@ -249,7 +249,7 @@
+ 	QDomElement e;
+ 	QDomDocument doc( "xbel" );
+ 	if ( !doc.setContent( &file, &errorMsg ) ) {
+-		goto ERROR;
++		goto _ERROR;
+ 	}
+ 	// iterate through the document: first child should be "xbel" (skip all until we find it)
+ 	n = doc.firstChild();	
+@@ -258,15 +258,15 @@
+ 
+ 	if (n.isNull() || n.toElement().tagName()!="xbel") {
+ 		errorMsg = i18n("%1 doesn't seem to be a valid Bookmarks file", filename);
+-		goto ERROR;
++		goto _ERROR;
+ 	} else n = n.firstChild(); // skip the xbel part
+ 	importFromFileFolder(n, _root, "", &errorMsg);
+-	goto SUCCESS;
++	goto _SUCCESS;
+ 	
+-ERROR:
++_ERROR:
+ 	KMessageBox::error(krApp, i18n("Error reading bookmarks file: %1", errorMsg), i18n( "Error" ));
+ 
+-SUCCESS:
++_SUCCESS:
+ 	file.close();
+ }
+ 
+Index: krusader/krusader/Konfigurator/kgstartup.cpp
+===================================================================
+--- krusader/krusader/Konfigurator/kgstartup.cpp	(Revision 6310)
++++ krusader/krusader/Konfigurator/kgstartup.cpp	(Arbeitskopie)
+@@ -59,7 +59,7 @@
+   QStringList profileList = ProfileManager::availableProfiles( "Panel" );
+   profileList.push_front( "<" + i18n( "Last session" ) + ">" );
+ 
+-  KONFIGURATOR_NAME_VALUE_PAIR comboItems[ profileList.count() ];
++  KONFIGURATOR_NAME_VALUE_PAIR *comboItems = new KONFIGURATOR_NAME_VALUE_PAIR[ profileList.count()];
+   for(int i=0; i != profileList.count(); i++ )
+     comboItems[ i ].text = comboItems[ i ].value = profileList [ i ];    
+   comboItems[ 0 ].value = "";
+@@ -67,6 +67,7 @@
+   profileCombo = createComboBox( "Startup", "Starter Profile Name", comboItems[ 0 ].value, comboItems, profileList.count(), panelsGrp, false, false );
+   profileCombo->setSizePolicy(  QSizePolicy::Expanding, QSizePolicy::Fixed);
+   panelsGrid->addWidget( profileCombo, 0, 1 );
++  delete [] comboItems;
+ 
+   //------------------------------------------------
+   panelsGrid->addWidget( createLine( panelsGrp ), 1, 0, 1, 2 );
+Index: krusader/krusader/Konfigurator/kglookfeel.cpp
+===================================================================
+--- krusader/krusader/Konfigurator/kglookfeel.cpp	(Revision 6310)
++++ krusader/krusader/Konfigurator/kglookfeel.cpp	(Arbeitskopie)
+@@ -154,7 +154,7 @@
+   hbox3->addWidget( lbl3 );
+ 
+   QList<KrViewInstance *> views = KrViewFactory::registeredViews();
+-  KONFIGURATOR_NAME_VALUE_PAIR panelTypes[ views.count() ];
++  KONFIGURATOR_NAME_VALUE_PAIR *panelTypes = new KONFIGURATOR_NAME_VALUE_PAIR[ views.count() ];
+ 
+   QString defType = "0";
+ 
+@@ -171,6 +171,7 @@
+   hbox3->addWidget( cmb3 );
+   QWidget * spcr3 = createSpacer ( hboxWidget3 );
+   hbox3->addWidget( spcr3 );
++  delete[] panelTypes;
+ 
+   panelGrid->addWidget( hboxWidget3, 0, 0 );
+ 
+Index: krusader/krusader/VFS/normal_vfs.cpp
+===================================================================
+--- krusader/krusader/VFS/normal_vfs.cpp	(Revision 6310)
++++ krusader/krusader/VFS/normal_vfs.cpp	(Arbeitskopie)
+@@ -271,13 +271,15 @@
+ 		}
+ 		else krOut << "Failed to read link: "<< path<<endl;
+ 	}
+-	
++
++
++	QFileInfo fi(fileName);
+ 	int rwx = 0;
+-	if( ::access( fileName.data(), R_OK ) == 0 )
++	if( fi.isReadable() )
+ 		rwx |= R_OK;
+-	if( ::access( fileName.data(), W_OK ) == 0 )
++	if( fi.isWritable() )
+ 		rwx |= W_OK;
+-	if( ::access( fileName.data(), X_OK ) == 0 )
++	if( fi.isExecutable() )
+ 		rwx |= X_OK;
+ 	
+ 	// create a new virtual file object
+Index: krusader/krusader/Queue/queue_mgr.cpp
+===================================================================
+--- krusader/krusader/Queue/queue_mgr.cpp	(Revision 6310)
++++ krusader/krusader/Queue/queue_mgr.cpp	(Arbeitskopie)
+@@ -25,7 +25,7 @@
+ 	if( queues.count() == 0 )
+ 		queues << defaultName;
+ 	
+-	Queue *queueArray [ queues.count() ];
++	Queue **queueArray = new Queue *[ queues.count() ];
+ 	
+ 	int counter = 0;
+ 	foreach( QString queueName, queues )
+Index: krusader/krusader/main.cpp
+===================================================================
+--- krusader/krusader/main.cpp	(Revision 6310)
++++ krusader/krusader/main.cpp	(Arbeitskopie)
+@@ -73,7 +73,7 @@
+ 
+   bool hasIcon = false;
+   int i = 0;
+-  char * myArgv[argc+2];
++  char **myArgv = new char *[argc+2];
+ 
+  // if no --miniicon is given, --icon is used. So we don't need to check for --miniicon separately
+   for ( i = 0; i < argc; ++i ) {
+@@ -83,7 +83,7 @@
+ 
+   static const char* const icon_text="--icon";
+   const char* icon_name=Krusader::privIcon();
+-  char addedParams[strlen(icon_text)+strlen(icon_name)+2];
++  char *addedParams = new char[strlen(icon_text)+strlen(icon_name)+2];
+ 
+   if ( ! hasIcon ) {
+     for ( i = 0; i < argc; ++i )
+@@ -266,4 +266,6 @@
+ 
+   // let's go.
+   return app.exec();
++  delete [] addedParams;
++  delete [] myArgv;
+ }
+Index: krusader/krusader/CMakeLists.txt
+===================================================================
+--- krusader/krusader/CMakeLists.txt	(Revision 6310)
++++ krusader/krusader/CMakeLists.txt	(Arbeitskopie)
+@@ -45,7 +45,7 @@
+ 
+ kde4_add_executable(krusader ${krusader_SRCS})
+ 
+-target_link_libraries(krusader BookMan Dialogs DiskUsage GUI Konfigurator KViewer MountMan Panel Queue VFS Search Splitter Synchronizer UserMenu Locate UserAction ActionMan KViewer Filter Dialogs GUI ${KDE4_KPARTS_LIBS} ${KDE4_KHTML_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBS}  ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} )
++target_link_libraries(krusader BookMan Dialogs DiskUsage GUI Konfigurator KViewer MountMan Panel Queue VFS Search Splitter Synchronizer UserMenu Locate UserAction ActionMan KViewer Filter Dialogs GUI ${KDE4_KPARTS_LIBS} ${KDE4_KHTML_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBS}  ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS})
+ 
+ install(TARGETS krusader DESTINATION ${BIN_INSTALL_DIR})
+ 
+Index: krusader/krusader/Panel/krdetailedview.cpp
+===================================================================
+--- krusader/krusader/Panel/krdetailedview.cpp	(Revision 6310)
++++ krusader/krusader/Panel/krdetailedview.cpp	(Arbeitskopie)
+@@ -1060,7 +1060,7 @@
+ 
+ void KrDetailedView::setCurrentKrViewItem( KrViewItem *item ) {
+ //	qApp->processEvents();  // Please don't remove the comment. Causes crash if it is inserted!
+-	K3ListView::setCurrentItem( static_cast<const KrDetailedViewItem*>( item ) ); 
++	K3ListView::setCurrentItem( static_cast<KrDetailedViewItem*>( item ) ); 
+ }
+ 
+ void KrDetailedView::initOperator() {
+Index: krusader/krusader/Panel/krvfsmodel.cpp
+===================================================================
+--- krusader/krusader/Panel/krvfsmodel.cpp	(Revision 6310)
++++ krusader/krusader/Panel/krvfsmodel.cpp	(Arbeitskopie)
+@@ -267,10 +267,15 @@
+ 						return QVariant();
+ 					time_t time = vf->vfile_getTime_t();
+ 					struct tm* t=localtime((time_t *)&time);
+-					
+-					QDateTime tmp(QDate(t->tm_year+1900, t->tm_mon+1, t->tm_mday), QTime(t->tm_hour, t->tm_min));
+-					return KGlobal::locale()->formatDateTime(tmp);
++					if (t) 
++					{
++						QDateTime tmp(QDate(t->tm_year+1900, t->tm_mon+1, t->tm_mday), QTime(t->tm_hour, t->tm_min));
++						return KGlobal::locale()->formatDateTime(tmp);
++					}
++					else
++						return QVariant();
+ 				}
++
+ 				case KrVfsModel::Permissions:
+ 				{
+ 					if( vf == _dummyVfile )
+Index: krusader/krArc/krarc.cpp
+===================================================================
+--- krusader/krArc/krarc.cpp	(Revision 6310)
++++ krusader/krArc/krarc.cpp	(Arbeitskopie)
+@@ -62,8 +62,12 @@
+ 	f.close();                \
+ } while(0);
+ #else
++#ifdef _MSC_VER
++#define KRDEBUG(X)
++#else
+ #define KRDEBUG(X...)
+ #endif
++#endif
+ 
+ using namespace KIO;
+ extern "C" {
+Index: krusader/krArc/CMakeLists.txt
+===================================================================
+--- krusader/krArc/CMakeLists.txt	(Revision 6310)
++++ krusader/krArc/CMakeLists.txt	(Arbeitskopie)
+@@ -1,5 +1,8 @@
++if (WIN32)
++find_package(KDEWIN REQUIRED)
++endif (WIN32)
+ 
+-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
++include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${KDEWIN_INCLUDES} )
+ 
+ 
+ ########### next target ###############
+@@ -8,7 +11,7 @@
+ 
+ kde4_add_plugin(kio_krarc ${kio_krarc_PART_SRCS})
+ 
+-target_link_libraries(kio_krarc  ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} )
++target_link_libraries(kio_krarc  ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDEWIN_LIBS})
+ 
+ install(TARGETS kio_krarc DESTINATION ${PLUGIN_INSTALL_DIR} )
+ 
