@@ -1,26 +1,34 @@
 @echo off
-rem    this file sets some environment variables that are needed
-rem    for finding programs and libraries etc.
-rem    it should be used to run the package.py script
-rem    to set up an automatic build, run this file whenever you need with the packagelist as single parameter
-rem    by Patrick Spendrin <ps_ml@gmx.de>
+rem     this file sets some environment variables that are needed
+rem     for finding programs and libraries etc.
+rem     it should be used to run the package.py script
+rem     to set up an automatic build, run this file whenever you need with the packagelist as single parameter
+rem     by Patrick Spendrin <ps_ml@gmx.de>
 
 
 call ..\etc\kdesettings.bat
 
 
-rem    adapt this file to your needs
-rem    set an smtp server from which you can send emails via authentication
+rem     adapt this file to your needs
+rem     set an smtp server from which you can send emails via authentication
 rem set EMERGE_SERVER_SERVER=smtp.googlemail.com:587
 
-rem    set the email address you want to send emails from
+rem     set the email address you want to send emails from
 rem set EMERGE_SERVER_SENDER=winbuild@googlemail.com
 
-rem    set the needed password for authenticating to the server
+rem     set the needed password for authenticating to the server
 rem set EMERGE_SERVER_PASS=
 
-rem    set the receivers list: for multiple email addresses, use a comma as separator
+rem     set the receivers list: for multiple email addresses, use a comma as separator
 rem set EMERGE_SERVER_RECEIVERS=
+
+rem     set the upload server
+rem set EMERGE_SERVER_UPLOAD_SERVER=
+
+rem     set the directory on the server
+rem set EMERGE_SERVER_UPLOAD_DIR=
+
+ 
 
 
 
