@@ -303,14 +303,13 @@ if stayQuiet == True:
 
 # get KDEROOT from env
 KDEROOT = os.getenv( "KDEROOT" )
-
 utils.debug( "buildAction: %s" % buildAction )
-utils.debug( "doPretend: %s" % doPretend )
+utils.debug( "doPretend: %s" % doPretend, 1 )
 utils.debug( "packageName: %s" % packageName )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
 utils.debug( "buildTests: %s" % os.getenv( "EMERGE_BUILDTESTS" ) )
-utils.debug( "verbose: %s" % os.getenv( "EMERGE_VERBOSE" ) )
-utils.debug( "KDEROOT: %s\n" % KDEROOT )
+utils.debug( "verbose: %s" % os.getenv( "EMERGE_VERBOSE" ), 1 )
+utils.debug( "KDEROOT: %s\n" % KDEROOT, 1 )
 utils.debug_line()
 
 def unset_var( varname ):
@@ -418,7 +417,8 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
         package = deplist[ -1 ]
     else:
         package = [ None, None, None ]
-    ok = handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts )
+    if not handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts ):
+        exit(1)
 else:
     for package in deplist:
         if ( portage.isInstalled( package[0], package[1], package[2], buildType ) and not package[ -1 ] ):
