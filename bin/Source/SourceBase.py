@@ -54,7 +54,7 @@ class SourceBase(EmergeBase):
             if file:
                 patchfile = os.path.join ( self.packageDir(), file )
                 srcdir = os.path.join ( self.sourceDir() )
-                return utils.applyPatch( patchfile, srcdir, patchdepth )
+                return utils.applyPatch( srcdir, patchfile, patchdepth )
         return True
 
     def createPatch(self):
