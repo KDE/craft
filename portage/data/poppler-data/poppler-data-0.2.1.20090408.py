@@ -1,6 +1,3 @@
-import base
-import os
-import utils
 import info
 
 class subinfo(info.infoclass):
@@ -14,25 +11,12 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.createCombinedPackage = True
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def compile( self ):
-        self.kdeCompile()
-        return True
-        
-    def install( self ):
-        self.kdeInstall()
-        return True
-        
-    def make_package( self ):
-        # now do packaging with kdewin-packager
-        self.doPackaging( "poppler-data", self.buildTarget, True )
-
-        return True
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
