@@ -67,9 +67,9 @@ goto :eof
     goto :eof
 
 :path-msvc
-    if defined PSDKDIR ( 
-        set PATH=%PSDKDIR%\bin;%PATH%
-        set INCLUDE=%PSDKDIR%\Include;%INCLUDE%
-        set LIB=%PSDKDIR%\Lib;%LIB%
+    if defined %PSDKDIR% (
+        set PATH="%PSDKDIR%\bin";%PATH%
+        set INCLUDE="%PSDKDIR%\Include";%INCLUDE%
+        set LIB="%PSDKDIR%\Lib";%LIB%
     )
     goto :eof
