@@ -17,12 +17,15 @@ class subinfo(info.infoclass):
         self.targets['3.08'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3080.tar.gz'
         self.targets['3.10'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3100.tar.gz'
         self.targets['3.14'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3140.tar.gz'
+        self.targets['3.20'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3200.tar.gz'
         self.targetInstSrc['3.08'] = "cfitsio"
         self.targetInstSrc['3.10'] = "cfitsio"
         self.targetInstSrc['3.14'] = "cfitsio"
-        self.defaultTarget = '3.14'
+        self.targetInstSrc['3.20'] = "cfitsio"
+        self.defaultTarget = '3.20'
 
     def setDependencies( self ):
+        self.hardDependencies['virtual/base']  = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
 
 class subclass(base.baseclass):
