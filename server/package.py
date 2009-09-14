@@ -26,10 +26,10 @@ class BuildError(Exception):
         
     def sendNotification( self ):
         """ this is used to send emails to """
-        if os.environ["EMERGE_SERVER_SERVER"] and \
-           os.environ["EMERGE_SERVER_SENDER"] and \
-           os.environ["EMERGE_SERVER_RECEIVERS"] and \
-           os.environ["EMERGE_SERVER_PASS"]:
+        if "EMERGE_SERVER_SERVER" in os.environ and \
+           "EMERGE_SERVER_SENDER" in os.environ and \
+           "EMERGE_SERVER_RECEIVERS" in os.environ and \
+           "EMERGE_SERVER_PASS" in os.environ:
             server = os.environ["EMERGE_SERVER_SERVER"]
             sender = os.environ["EMERGE_SERVER_SENDER"]
             pw = os.environ["EMERGE_SERVER_PASS"]
@@ -118,11 +118,69 @@ class package:
         self.emerge( "test" )
 
     def package( self ):
-        """ packages """
+        """ packages into subdirectories of the normal directory - this helps to keep the directory clean """
+        if "EMERGE_PKGDSTDIR" in os.environ:
+            outputBase = os.environ["EMERGE_PKGDSTDIR"]
+        else:
+            outputBase = os.path.join( os.environ["KDEROOT"], "tmp" )
+        os.environ["EMERGE_PKGDSTDIR"] = os.path.join( outputBase, self.packageName.replace( '/', '_' ) )
+        
+        if not os.path.exists( os.environ["EMERGE_PKGDSTDIR"] ):
+            os.mkdir( os.environ["EMERGE_PKGDSTDIR"] )
+        
         self.emerge( "package", " --patchlevel=%s" % self.patchlevel )
+        os.environ["EMERGE_PKGDSTDIR"] = outputBase
         
     def upload( self ):
         """ uploads packages to winkde server """
+        print "uploading"
+        if "EMERGE_PKGDSTDIR" in os.environ:
+            outputBase = os.environ["EMERGE_PKGDSTDIR"]
+        else:
+            outputBase = os.path.join( os.environ["KDEROOT"], "tmp" )
+        pkgdir = os.path.join( outputBase, self.packageName.replace( '/', '_' ) )
+        if os.path.exists( pkgdir ) and \
+           "EMERGE_SERVER_UPLOAD_SERVER" in os.environ and\
+           "EMERGE_SERVER_UPLOAD_DIR" in os.environ:
+            """ if there is a directory at the specified location, upload files that can be found there """
+            os.chdir( pkgdir )
+            filelist = os.listdir( pkgdir )
+            
+            for entry in os.listdir( pkgdir ):
+                """ check that all things that are uploaded are files """
+                if os.path.isdir( entry ):
+                    filelist.remove( entry )
+
+            cmdstring = "psftp " + os.environ["EMERGE_SERVER_UPLOAD_SERVER"]
+            ret = 0
+            fstderr = file( self.logfile + ".tmp", 'wb+' )
+            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
+            
+            fstderr.write( "cd " + os.environ["EMERGE_SERVER_UPLOAD_DIR"] + "\r\n" )
+            fstderr.flush()
+            p.stdin.write( "cd " + os.environ["EMERGE_SERVER_UPLOAD_DIR"] + "\r\n" )
+
+            fstderr.write( "mput " + " ".join( filelist ) + "\r\n" )
+            fstderr.flush()
+            p.stdin.write( "mput " + " ".join( filelist ) + "\r\n" )
+            
+            fstderr.write( "quit\r\n" )
+            fstderr.flush()
+            p.stdin.write( "quit\r\n" )
+            ret = p.wait()
+            log = file( self.logfile, 'ab+' )
+            fstderr.seek( os.SEEK_SET )
+            for line in fstderr:
+                log.write( line )
+            fstderr.close()
+            log.close()
+            if not ret == 0:
+                raise BuildError( self.packageName, "%s " % self.packageName + " upload FAILED\n", self.logfile )
+        else:
+            log = file( self.logfile, 'ab+' )
+            log.write("Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n"
+                      "Package directory is %s" % pkgdir )
+            raise BuildError( self.packageName, "%s " % self.packageName + " upload FAILED\n", self.logfile )
 
 logroot = os.path.join( os.environ["KDEROOT"], "emerge", "logs" )
 
@@ -156,5 +214,11 @@ for entry in packagelist:
 for entry in packagelist:
     try:
         entry.package()
+    except BuildError, ( instance ):
+        instance.sendNotification()
+
+for entry in packagelist:
+    try:
+        entry.upload()
     except BuildError, ( instance ):
         instance.sendNotification()
