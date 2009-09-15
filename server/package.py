@@ -48,7 +48,7 @@ class BuildError(Exception):
 
         # me == the sender's email address
         # you == the recipient's email address
-        msg['Subject'] = 'Build error in %s' % self.packageName
+        msg['Subject'] = 'Build error in %s on %s' % ( self.packageName, os.environ["KDECOMPILER"] )
         msg['From'] = sender
         msg['To'] = receivers[0]
         
