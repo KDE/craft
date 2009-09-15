@@ -31,7 +31,7 @@ class BuildSystemBase(EmergeBase):
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
         if EMERGE_MAKE_PROGRAM:
-            self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
+            self.makeProgramm = EMERGE_MAKE_PROGRAM
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
                 
     def configure(self): 
