@@ -63,6 +63,9 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
+        if self.buildTarget in ['master']:
+            self.kde.sourcePath = self.svndir
+
         if not self.buildTarget == 'svnHEAD':
             return self.doPackaging( "amarok", self.buildTarget, True )
         else:
