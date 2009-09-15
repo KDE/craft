@@ -66,7 +66,7 @@ class subclass(base.baseclass):
         if self.buildTarget in ['master']:
             self.kde.sourcePath = self.svndir
 
-        if not self.buildTarget == 'svnHEAD':
+        if not self.buildTarget == 'master':
             return self.doPackaging( "amarok", self.buildTarget, True )
         else:
             return self.doPackaging( "amarok" )
