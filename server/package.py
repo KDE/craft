@@ -180,7 +180,6 @@ class package:
             log = file( self.logfile, 'ab+' )
             log.write("Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n"
                       "Package directory is %s" % pkgdir )
-            raise BuildError( self.packageName, "%s " % self.packageName + " upload FAILED\n", self.logfile )
 
 logroot = os.path.join( os.environ["KDEROOT"], "emerge", "logs" )
 
