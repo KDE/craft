@@ -1,6 +1,6 @@
 import info
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
@@ -16,16 +16,16 @@ class subinfo(info.infoclass):
    
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self):
+class Package( CMakePackageBase ):
+    def __init__( self ):
         self.subinfo = subinfo()
-        CMakePackageBase.__init__(self)
+        CMakePackageBase.__init__( self )
 
-    def unpack(self):
-        if not CMakePackageBase.unpack(self):
+    def unpack( self ):
+        if not CMakePackageBase.unpack( self ):
             return False
-        utils.applyPatch( os.path.join( self.packageDir(), "qtscriptgenerator-cmake.diff" ), self.sourceDir(), 1)
-        utils.applyPatch( os.path.join( self.packageDir(), "qtscriptgenerator.diff" ), self.sourceDir(), 1)
+        utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator-cmake.diff" ), 1 )
+        utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator.diff" ), 1 )
         return True
 
 if __name__ == '__main__':
