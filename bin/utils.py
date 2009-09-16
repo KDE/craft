@@ -237,12 +237,6 @@ def unZip( file, destdir ):
 
     return True
 
-### patch file functions
-def applyPatch( patch, workdir, patchdepth ):
-    """apply patch file specified by 'patch' into 'workdir' using patch level 'patchdepth'"""
-    cmd = "cd %s && patch -p%s < %s" % ( workdir, patchdepth, patch )
-    return system( cmd )
-
 ### svn fetch/unpack functions
 
 def svnFetch( repo, destdir, username = None, password = None ):
