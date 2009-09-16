@@ -12,9 +12,10 @@ class subinfo(info.infoclass):
         for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5', '0.10.6', '0.12.0' ):
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
+        self.patchToApply['0.12.0'] = ('poppler-0.12.0.diff', 1)
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler"
 
-        self.defaultTarget = "0.10.6"
+        self.defaultTarget = "0.12.0"
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
