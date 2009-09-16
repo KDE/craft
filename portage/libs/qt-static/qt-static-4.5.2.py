@@ -33,7 +33,7 @@ class Package(QMakePackageBase):
     def unpack( self ):
         if not QMakePackageBase.unpack(self):
             return False
-        utils.applyPatch(self.sourceDir(),os.path.join(self.packageDir(),"qconf.patch"),1)
+        utils.applyPatch( self.sourceDir(), os.path.join(self.packageDir(),"qconf.patch"), 1)
         return True
         
     def configure( self ):
