@@ -4,11 +4,8 @@ import os
 import utils
 import info
 
-from Source.GitSource import *
-from BuildSystem.CMakeBuildSystem import *
-from Package.PackageBase import *
-from Packager.KDEWinPackager import *
-
+from Package.CMakePackageBase import *
+        
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -27,13 +24,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
-class Package(PackageBase, GitSource, CMakeBuildSystem, KDEWinPackager):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        GitSource.__init__(self)
-        CMakeBuildSystem.__init__(self)
-        PackageBase.__init__(self)
-        KDEWinPackager.__init__(self)
+        CMakePackageBase.__init__( self )
         
         self.subinfo.options.configure.defines = "-DBUILD_QT4_TESTS=ON"
         
