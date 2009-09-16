@@ -261,7 +261,7 @@ class baseclass:
             ( file, patchdepth ) = self.subinfo.patchToApply[ self.subinfo.buildTarget ]
             patchfile = os.path.join ( self.packagedir, file )
             srcdir = os.path.join ( self.workdir, self.instsrcdir )
-            return utils.applyPatch( patchfile, srcdir, patchdepth )
+            return utils.applyPatch( srcdir, patchfile, patchdepth )
         return True
 
     def compile( self ):
@@ -418,7 +418,7 @@ class baseclass:
                 utils.debug( "patchesToApply: %s" % file, 0 )
                 patchfile = os.path.join ( self.packagedir, file )
                 srcdir = os.path.join ( self.workdir, self.instsrcdir )
-                return utils.applyPatch( patchfile, srcdir, patchdepth )
+                return utils.applyPatch( srcdir, patchfile, patchdepth )
             return True
 
         
