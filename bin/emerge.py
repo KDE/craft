@@ -119,6 +119,8 @@ Flags:
             EMERGE_NOCOPY to "True" might slow down the build process,
             irritate you and increase the disk space roughly by the size of
             SVN source tree.
+--noremove  This option will suppress the removal of a package before installing it.
+            Using this option is probably insecure.
 --offline   do not try to connect to the internet: KDE packages will try to
             use an existing source tree and other packages would try to use
             existing packages in the download directory. If that doesn't
@@ -211,6 +213,7 @@ environ = dict()
 environ["EMERGE_NOCOPY"]        = os.getenv( "EMERGE_NOCOPY" )
 environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
 environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
+environ["EMERGE_NOREMOVE"]      = os.getenv( "EMERGE_NOREMOVE" )
 environ["EMERGE_VERBOSE"]       = os.getenv( "EMERGE_VERBOSE" )
 environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
 environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
@@ -220,10 +223,15 @@ environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
 
-if ( environ['EMERGE_NOCOPY'] == "True" ):
-    nocopy = True
-else:
+if ( environ['EMERGE_NOCOPY'] == "False" ):
     nocopy = False
+else:
+    nocopy = True
+
+if ( environ['EMERGE_NOREMOVE'] == "True" ):
+    noremove = True
+else:
+    noremove = False
 
 if ( environ['EMERGE_NOUPDATE'] == "True" ):
     noupdate = True
@@ -262,6 +270,9 @@ for i in sys.argv:
         os.environ["EMERGE_VERBOSE"] = str( verbose )
     elif ( i == "--nocopy" ):
         os.environ["EMERGE_NOCOPY"] = str( True )
+    elif ( i == "--noremove" ):
+        os.environ["EMERGE_NOREMOVE"] = str( True )
+        noremove = True
     elif ( i == "--noclean" ):
         os.environ["EMERGE_NOCLEAN"] = str( True )
     elif ( i == "--clean" ):
@@ -427,12 +438,16 @@ else:
             elif utils.verbose() > 2 and not package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
         else:
+            # find the installed version of the package
             instver = portage.findInstalled( package[0], package[1] )
+            
+            # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
             else:
-                if( instver != None ):
+                # try to remove an already installed package (requires -i)
+                if instver != None and not noremove:
                     ## \todo  the following unmerge should be performed immediatly before merging the updated package
                     # In case the build fails the live system will be broken 
                     utils.debug( "found old version %s - removing" % instver )
