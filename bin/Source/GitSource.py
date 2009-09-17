@@ -55,6 +55,7 @@ class GitSource ( VersionSystemSourceBase ):
             # the following code is for both ways the same
             track = ""
             if ret and repoBranch:
+                # grep is available already from the git package
                 if not self.shell.execute( self.sourceDir(), "git", "branch | grep -E \"%s$\"%s" % ( repoBranch, devNull ) ):
                     track = "--track origin/"
             if ret and repoBranch:
