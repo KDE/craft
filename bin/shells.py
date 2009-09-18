@@ -42,5 +42,4 @@ class MSysShell(Shell):
         cmd +="\""
         if utils.verbose() > 0:
             print "msys execute: %s" % cmd
-        utils.system( cmd, outstream=out, errstream=err ) or utils.die( "msys execute failed. cmd: %s" % cmd )
-        return True
+        return utils.system( cmd, outstream=out, errstream=err )
