@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ i ] = 'poppler-%s' % i
         self.patchToApply['0.12.0'] = ('poppler-0.12.0.diff', 1)
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler"
+        self.svnTargets['0.12-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.12"
 
         self.defaultTarget = "0.12.0"
     
