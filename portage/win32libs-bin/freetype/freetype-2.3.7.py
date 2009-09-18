@@ -12,9 +12,6 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = '2.3.7-1'
 
-    def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
-        self.hardDependencies['kdesupport/kdewin'] = 'default'
 
 class Package(BinaryPackageBase):
   def __init__(self):
