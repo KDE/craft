@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import smtplib
+import datetime
 from email.mime.text import MIMEText
 
 def die( message ):
@@ -16,6 +17,7 @@ class BuildError(Exception):
         self.packageName = packageName
         self.messageText = message
         self.logfile = logfile
+        self.revision = False
         print "Error:", self.messageText
         
     def __str__( self ):
@@ -24,7 +26,7 @@ class BuildError(Exception):
         log.close()
         return "Error:" + "".join( logtext )
         
-    def sendNotification( self ):
+    def sendNotification( self, revision=False ):
         """ this is used to send emails to """
         if "EMERGE_SERVER_SERVER" in os.environ and \
            "EMERGE_SERVER_SENDER" in os.environ and \
@@ -34,6 +36,7 @@ class BuildError(Exception):
             sender = os.environ["EMERGE_SERVER_SENDER"]
             pw = os.environ["EMERGE_SERVER_PASS"]
             receivers = os.environ["EMERGE_SERVER_RECEIVERS"].split(',')
+            self.revision = revision
             self.email( server, sender, pw, receivers )
         
     def email( self, server, sender, pw, receivers ):
@@ -48,7 +51,11 @@ class BuildError(Exception):
 
         # me == the sender's email address
         # you == the recipient's email address
-        msg['Subject'] = 'Build error in %s on %s' % ( self.packageName, os.environ["KDECOMPILER"] )
+        subject = 'Build error in %s on %s' % ( self.packageName, os.environ["KDECOMPILER"] )
+        if self.revision:
+            subject += ' in revision %s' % self.revision.strip()
+
+        msg['Subject'] = subject
         msg['From'] = sender
         msg['To'] = receivers[0]
         
@@ -79,6 +86,20 @@ class package:
             os.remove( self.logfile )
         self.enabled = True
     
+    def getRevision( self ):
+        """ runs emerge --print-revision for a specific package and returns the output """
+        ## this function must replaced in case we are using the emerge API directly
+        revision = ""
+        tempfile = file( os.path.join( logroot, "rev.tmp" ), "wb+" )
+        tempfile.close()
+        if not self.system( "--print-revision %s%s" % ( self.target, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
+            return ""
+        tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
+        revision = tempfile.readline()
+        tempfile.close()
+        os.remove( os.path.join( logroot, "rev.tmp" ) )
+        return revision
+        
     def system( self, cmdstring, logfile ):
         """ runs an emerge command """
         cmdstring = emerge + " " + cmdstring
@@ -98,7 +119,7 @@ class package:
         print "running:", cmd, self.packageName
         if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s" % ( self.target, self.packageName ), self.logfile ):
             self.enabled = False
-            raise BuildError( self.packageName, "%s " % self.packageName + cmd + " FAILED\n", self.logfile )
+            raise BuildError( self.packageName, "%s " % self.packageName + cmd + " FAILED", self.logfile )
         
     def fetch( self ):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked 
@@ -119,6 +140,9 @@ class package:
 
     def package( self ):
         """ packages into subdirectories of the normal directory - this helps to keep the directory clean """
+        if not self.enabled:
+            return
+
         if "EMERGE_PKGDSTDIR" in os.environ:
             outputBase = os.environ["EMERGE_PKGDSTDIR"]
         else:
@@ -133,6 +157,8 @@ class package:
         
     def upload( self ):
         """ uploads packages to winkde server """
+        if not self.enabled:
+            return
         print "uploading"
         if "EMERGE_PKGDSTDIR" in os.environ:
             outputBase = os.environ["EMERGE_PKGDSTDIR"]
@@ -181,7 +207,11 @@ class package:
             log.write("Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n"
                       "Package directory is %s" % pkgdir )
 
-logroot = os.path.join( os.environ["KDEROOT"], "emerge", "logs" )
+isodate = str( datetime.date.today() ).replace('-', '')
+logroot = os.path.join( os.environ["KDEROOT"], "tmp", isodate, "logs" )
+
+if not os.path.exists( logroot ):
+    os.makedirs( logroot )
 
 outfile = os.path.join( logroot, "log-%s.txt" )
 emerge = os.path.join( os.environ["KDEROOT"], "emerge", "bin", "emerge.py" )
@@ -208,16 +238,18 @@ for entry in packagelist:
     try:
         entry.build()
     except BuildError, ( instance ):
-        instance.sendNotification()
+        entry.enabled = False
+        instance.sendNotification( entry.getRevision() )
 
 for entry in packagelist:
     try:
         entry.package()
     except BuildError, ( instance ):
-        instance.sendNotification()
+        entry.enabled = False
+        instance.sendNotification( entry.getRevision() )
 
 for entry in packagelist:
     try:
         entry.upload()
     except BuildError, ( instance ):
-        instance.sendNotification()
+        instance.sendNotification( entry.getRevision() )
