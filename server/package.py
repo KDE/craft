@@ -3,6 +3,7 @@ import sys
 import subprocess
 import smtplib
 import datetime
+import time
 from email.mime.text import MIMEText
 
 def die( message ):
@@ -226,6 +227,7 @@ emerge = os.path.join( os.environ["KDEROOT"], "emerge", "bin", "emerge.py" )
 packagelist = []
 if len(sys.argv) <= 1:
     print "please add the path to the packagelist file as only argument"
+    time.sleep(6)
     exit( 0 )
     
 packagefile = file( sys.argv[1] )
