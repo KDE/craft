@@ -151,7 +151,7 @@ class PackageBase (EmergeBase):
         if not cmd:
             command = sys.argv[ 1 ]
             options = None
-            print sys.argv 
+#            print sys.argv 
             if ( len( sys.argv )  > 2 ):
                 options = sys.argv[ 2: ]
         else:
@@ -199,6 +199,7 @@ class PackageBase (EmergeBase):
         elif command == "manifest":    ok = self.manifest()
         elif command == "package":     ok = self.createPackage()
         elif command == "createpatch": ok = self.createPatch()
+        elif command == "printrev":    ok = self.sourceVersion()
         else:
             ok = utils.error( "command %s not understood" % command )
 

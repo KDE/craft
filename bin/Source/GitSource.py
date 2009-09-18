@@ -67,3 +67,21 @@ class GitSource ( VersionSystemSourceBase ):
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
+
+    def sourceVersion( self ):
+        """ return the revision returned by git show """
+        # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
+        tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergegitshow.tmp" ), "wb+" )
+        
+        # run the command
+        self.shell.execute( self.sourceDir(), "git", "show --abbrev-commit", out=tempfile )
+        tempfile.seek( os.SEEK_SET )
+
+        # read the temporary file and grab the first line
+        revision = tempfile.readline().replace("commit ", "").strip()
+        tempfile.close()
+        
+        # print the revision - everything else should be quiet now
+        print revision
+        os.remove( os.path.join( self.sourceDir().replace('/', '\\'), ".emergegitshow.tmp" ) )
+        return True

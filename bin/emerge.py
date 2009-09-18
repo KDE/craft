@@ -52,6 +52,8 @@ Commands (must have a packagename):
                     an example: You could build the latest amarok sources with
                     the target 'svnHEAD' the previous '1.80' release would be
                     contained as target '1.80'.
+--print-revision    This will print the revision that the source repository of this
+                    package currently has or nothing if there is no repository.
 
 --fetch             for most non-KDE packages: retrieve package sources.
 --unpack            for most non-KDE packages: unpack package sources and make
@@ -167,7 +169,9 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "createpatch"] and category and package and version ):
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
+                            "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "createpatch", 
+                            "printrev"] and category and package and version ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         success = doExec( category, package, version, "cleanimage", opts )
@@ -299,6 +303,9 @@ for i in sys.argv:
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
                   "--full-package", "--cleanimage", "--cleanbuild", "--createpatch"] ):
         buildAction = i[2:]
+    elif ( i == "--print-revision" ):
+        buildAction = "printrev"
+        stayQuiet = True
     elif ( i.startswith( "-" ) ):
         usage()
         exit ( 1 )

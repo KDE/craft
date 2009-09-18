@@ -36,3 +36,6 @@ class MultiSource():
 
     def createPatch(self):
         return self.source.createPatch()
+        
+    def sourceVersion(self):
+        return self.source.sourceVersion()

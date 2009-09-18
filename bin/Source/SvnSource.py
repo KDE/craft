@@ -127,3 +127,34 @@ class SvnSource (VersionSystemSourceBase):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
         cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join(self.packageDir(),"autocreated.patch" ))
         return utils.system( cmd )
+
+    def sourceVersion( self ):
+        """ return the revision returned by svn info """
+        # first, change the output to always be english
+        if "LANG" in os.environ:
+            oldLanguage = os.environ["LANG"]
+        else:
+            oldLanguage = ""
+        os.environ["LANG"] = "C"
+        
+        # set up the command
+        cmd = "%s/svn info %s" % ( self.svnInstallDir, self.sourceDir() )
+
+        # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
+        tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
+        
+        # run the command
+        utils.system( cmd, outstream=tempfile )
+        tempfile.seek(os.SEEK_SET)
+        # read the temporary file and find the line with the revision
+        for line in tempfile:
+            if line.startswith("Revision: "):
+                revision = line.replace("Revision: ", "").strip()
+                break
+        tempfile.close()
+        
+        # print the revision - everything else should be quiet now
+        print revision
+        os.environ["LANG"] = oldLanguage
+        os.remove( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ) )
+        return True
