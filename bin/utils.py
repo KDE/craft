@@ -319,12 +319,12 @@ def die( message ):
     print >> sys.stderr, "emerge fatal error: %s" % message
     exit( 1 )
 
-def system( cmdstring ):
+def system( cmdstring, outstream=sys.stdout, errstream=sys.stderr ):
     debug( "executing command: %s" % cmdstring, 1 )
-    if verbose() == 0:
+    if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
         sys.stderr = file('test.outlog', 'wb')
         sys.stdout = sys.stderr
-    p = subprocess.Popen( cmdstring, shell=True, stdout=sys.stdout, stderr=sys.stderr )
+    p = subprocess.Popen( cmdstring, shell=True, stdout=outstream, stderr=errstream )
     ret = p.wait()
     return ( ret == 0 )
 
