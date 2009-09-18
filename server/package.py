@@ -145,15 +145,17 @@ class package:
 
         if "EMERGE_PKGDSTDIR" in os.environ:
             outputBase = os.environ["EMERGE_PKGDSTDIR"]
+            oldDstDir = os.environ["EMERGE_PKGDSTDIR"]
         else:
-            outputBase = os.path.join( os.environ["KDEROOT"], "tmp" )
+            oldDstDir = ""
+            outputBase = packageroot
         os.environ["EMERGE_PKGDSTDIR"] = os.path.join( outputBase, self.packageName.replace( '/', '_' ) )
         
         if not os.path.exists( os.environ["EMERGE_PKGDSTDIR"] ):
             os.mkdir( os.environ["EMERGE_PKGDSTDIR"] )
         
         self.emerge( "package", " --patchlevel=%s" % self.patchlevel )
-        os.environ["EMERGE_PKGDSTDIR"] = outputBase
+        os.environ["EMERGE_PKGDSTDIR"] = oldDstDir
         
     def upload( self ):
         """ uploads packages to winkde server """
@@ -162,8 +164,10 @@ class package:
         print "uploading"
         if "EMERGE_PKGDSTDIR" in os.environ:
             outputBase = os.environ["EMERGE_PKGDSTDIR"]
+            oldDstDir = os.environ["EMERGE_PKGDSTDIR"]
         else:
-            outputBase = os.path.join( os.environ["KDEROOT"], "tmp" )
+            oldDstDir = ""
+            outputBase = packageroot
         pkgdir = os.path.join( outputBase, self.packageName.replace( '/', '_' ) )
         if os.path.exists( pkgdir ) and \
            "EMERGE_SERVER_UPLOAD_SERVER" in os.environ and\
@@ -206,9 +210,12 @@ class package:
             log = file( self.logfile, 'ab+' )
             log.write("Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n"
                       "Package directory is %s" % pkgdir )
+        os.environ["EMERGE_PKGDSTDIR"] = oldDstDir
+
 
 isodate = str( datetime.date.today() ).replace('-', '')
 logroot = os.path.join( os.environ["KDEROOT"], "tmp", isodate, "logs" )
+packageroot = os.path.join( os.environ["KDEROOT"], "tmp", isodate, "packages" )
 
 if not os.path.exists( logroot ):
     os.makedirs( logroot )
