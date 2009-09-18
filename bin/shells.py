@@ -6,6 +6,7 @@
 
 import os
 import utils
+import sys
 
 ## \todo requires installed msys package -> add suport for installing packages 
 
@@ -32,7 +33,7 @@ class MSysShell(Shell):
             path = '/' + path[0].lower() + '/' + path[3:]
         return path
 
-    def execute( self, path, cmd, args ):
+    def execute( self, path, cmd, args, out=sys.stdout, err=sys.stderr ):
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
         cmd = "%s --login -c \"cd %s && %s %s" % \
@@ -41,5 +42,5 @@ class MSysShell(Shell):
         cmd +="\""
         if utils.verbose() > 0:
             print "msys execute: %s" % cmd
-        utils.system( cmd ) or utils.die( "msys execute failed. cmd: %s" % cmd )
+        utils.system( cmd, outstream=out, errstream=err ) or utils.die( "msys execute failed. cmd: %s" % cmd )
         return True
