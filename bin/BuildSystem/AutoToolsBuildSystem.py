@@ -11,24 +11,35 @@ from shells import *
 from BuildSystemBase import *
 
 class AutoToolsBuildSystem(BuildSystemBase):
-    def __init__( self, configureOptions="", makeOptions=""):
-        BuildSystemBase.__init__(self,"autotools",configureOptions,makeOptions)
+    def __init__( self ):
+        BuildSystemBase.__init__(self,"autotools")
         self.shell = MSysShell()
+        self.makeProgram = "mingw32-make"
             
     def configureDefaultDefines( self ):
         """defining the default cmake cmd line"""
         return ""
 
-    def configure( self, buildType=None, customDefines="" ):
+    def configure( self, cflags="", ldflags=""):
         """configure the target"""
             
-        if not self.noClean:
-            utils.cleanDirectory( self.builddir )
-
         self.enterBuildDir()
 
-        #todo make generic
-        ret = self.shell.execute(self.sourcedir, "ruby configure", "" )
+        if self.noCopy:
+            sourcedir = self.sourceDir()
+        else: 
+            sourcedir = self.buildDir()
+        
+        configure = os.path.join(sourcedir,"configure")
+        if os.path.exists(configure):
+            mergeroot = self.mergeDestinationDir().replace('\\','/') 
+            _cflags = "-I%s/include %s" % (mergeroot, cflags)
+            _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
+            utils.putenv("CFLAGS",_cflags)
+            utils.putenv("LDFLAGS",_ldflags)
+            ret = self.shell.execute(self.buildDir(), configure, "" )
+        else:
+            ret = self.shell.execute(self.sourceDir(), "ruby configure", "" )
         return ret
 
     def make( self, buildType=None ):
@@ -36,60 +47,42 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         
-        command = "make"
+        command = self.makeProgram
         args = "-j2"
+        if self.subinfo.options.make.ignoreErrors:
+            args += " -i"
+            
+        if self.subinfo.options.make.makeOptions:
+            args += " %s" % self.subinfo.options.make.makeOptions
+        
         # adding Targets later
         if utils.verbose() > 1:
             args += " VERBOSE=1"
-        self.shell.execute(self.sourcedir, command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
-        return True
-
-    def __install( self, buildType=None ):
-        """Using *make install"""
-
-        self.enterBuildDir()
-        
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imageDir(), fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imageDir() ) )
-        return True
-
-    def compile( self, customDefines=""):
-        """making all required stuff for compiling cmake based modules"""
-        if( not self.buildType() == None ) :
-            if( not ( self.configure( self.buildType(), customDefines ) and self.make( self.buildType() ) ) ):
-                return False
-        else:
-            if( not ( self.configure( "Debug", customDefines ) and self.make( "Debug" ) ) ):
-                return False
-            if( not ( self.configure( "Release", customDefines ) and self.make( "Release" ) ) ):
-                return False
+        self.shell.execute(self.buildDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
     def install( self ):
-        """making all required stuff for installing cmake based modules"""
-        if( not self.buildType() == None ):
-            if( not self.__install( self.buildType() ) ):
-                return False
-        else:
-            if( not self.__install( "debug" ) ):
-                return False
-            if( not self.__install( "release" ) ):
-                return False
-        utils.fixCmakeImageDir( self.imageDir(), self.rootdir )
-        return True
-
-    def runTest( self ):
-        """running cmake based unittests"""
+        """Using *make install"""
 
         self.enterBuildDir()
-        
-        if utils.verbose() > 0:
-            print "builddir: " + builddir
+        args = "prefix= DESTDIR=%s install" % self.shell.toNativePath(self.installDir())             
 
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
-        utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
+        if self.subinfo.options.make.ignoreErrors:
+            args += " -i"
+            
+        if self.subinfo.options.make.makeOptions:
+            args += " %s" % self.subinfo.options.make.makeOptions
+        
+        return self.shell.execute(self.buildDir(), self.makeProgram, args ) or utils.die( "while installing. cmd: %s" % command )
+
+    def runTest( self ):
+        """running unittests"""
+        return true
+        
+    def createShell( self ):
+        """create shell in package build dir with prepared environment"""
+
+        self.enterBuildDir()
+        self.shell.openShell(self.buildDir())
         return True
+        
