@@ -46,11 +46,18 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.unpack called", 2 )
 
         filenames = self.__localFileNames()        
-        destdir = self.sourceDir()
+        # if using BinaryBuildSystem the files should be unpacked into imagedir
+        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+            destdir = self.installDir()
+            utils.debug("unpacking files into image root %s" % destdir,1)
+        else:
+            destdir = self.workDir()
             
-        if not os.path.exists( destdir):
-            os.makedirs( destdir )
-            utils.debug( "creating: %s" % destdir, 0 )
+            if ( not os.path.exists( self.buildDir()) ):
+                os.makedirs( self.buildDir() )
+                utils.debug( "creating: %s" % self.buildDir(), 0 )
+
+            utils.debug("unpacking files into work root %s" % destdir,1)
 
         if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
             return False
@@ -61,14 +68,20 @@ class ArchiveSource(SourceBase):
         """ unpacking all zipped(gz,zip,bz2) tarballs a second time and making a patch """
         # get the file paths of the tarballs
         filenames = self.__localFileNames()
-        destdir = self.sourceDir()
+
+        # if using BinaryBuildSystem the files should be unpacked into imagedir
+        if hasattr( self, 'buildSystemType' ) and self.buildSystemType == 'binary':
+            destdir = self.installDir()
+            utils.debug( "unpacking files into image root %s" % destdir, 1 )
+        else:
+            destdir = self.workDir()
 
         # it makes no sense to make a diff against nothing
-        if ( not os.path.exists( destdir ) ):
+        if ( not os.path.exists( self.buildDir() ) ):
             utils.error( "build directory doesn't exist, please run unpack first" )
             return False
 
-        utils.debug( "unpacking files into %s" % destdir, 1 )
+        utils.debug( "unpacking files into work root %s" % destdir, 1 )
 
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
