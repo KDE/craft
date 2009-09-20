@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'http://krusader.svn.sourceforge.net/svnroot/krusader/trunk/krusader_kde4'
+        self.svnTargets['svnHEAD'] = "trunk/extragear/utils/krusader"
         self.targets['2.0.0-beta2'] = 'http://prdownloads.sourceforge.net/krusader/krusader-2.0.0-beta2.tar.gz'
         self.targetInstSrc['2.0.0-beta2'] = 'krusader-2.0.0-beta2'
         self.patchToApply['2.0.0-beta2'] = ['krusader.patch',1]
