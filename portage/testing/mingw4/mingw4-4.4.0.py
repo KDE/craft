@@ -47,7 +47,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.3.0'] = SRC_URI
         self.targets['4.4.0-tdm-r2'] = SRC_URI2
-        self.targets['4.4.0'] = SRC_URI2
+        self.targets['4.4.0'] = SRC_URI3
         self.defaultTarget = '4.4.0'
     
     def setDependencies( self ):
