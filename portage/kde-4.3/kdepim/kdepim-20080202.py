@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
+        self.hardDependencies['kde-4.3/kdepimlibs'] = 'default'
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
