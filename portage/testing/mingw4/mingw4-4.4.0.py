@@ -39,8 +39,6 @@ http://downloads.sourceforge.net/sourceforge/mingw/gcc-c++-4.4.0-mingw32-dll.tar
 http://downloads.sourceforge.net/sourceforge/mingw/gmp-4.2.4-mingw32-dll.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/libiconv-1.13-mingw32-dll-2.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mpfr-2.4.1-mingw32-dll.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/pthreads-w32-2.8.0-mingw32-dll.tar.gz
-
 """
 
 class subinfo(info.infoclass):
