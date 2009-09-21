@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.0.0-beta1'] = 'digikam-1.0.0-beta1'
         self.targets['1.0.0-beta3'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-beta3/digikam-1.0.0-beta3.tar.bz2'
         self.targetInstSrc['1.0.0-beta3'] = 'digikam-1.0.0-beta3'
+        self.targets['1.0.0-beta4'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-beta4/digikam-1.0.0-beta4.tar.bz2'
+        self.targetInstSrc['1.0.0-beta4'] = 'digikam-1.0.0-beta4'
         
         self.svnTargets['branch-0.10.0'] = 'branches/extragear/graphics/digikam/0.10.0-trunk'
         self.defaultTarget = 'svnHEAD'
@@ -32,7 +34,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.10.0', '1.0.0-beta1']:
+        if self.buildTarget in ['0.10.0', '1.0.0-beta1', '1.0.0-beta3', '1.0.0-beta4']:
             if( not base.baseclass.unpack( self ) ):
                 return False
             else:
