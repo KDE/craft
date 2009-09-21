@@ -52,8 +52,12 @@ set PATH=%KDEROOT%\bin;%PATH%
 
 if %KDECOMPILER% == mingw ( 
     call :path-mingw
-) else ( 
-    call :path-msvc 
+) else (
+    if %KDECOMPILER% == mingw4 ( 
+        call :path-mingw
+    ) else ( 
+        call :path-msvc 
+    )
 )
 
 %comspec% /e:on /K "cd %KDEROOT%"
