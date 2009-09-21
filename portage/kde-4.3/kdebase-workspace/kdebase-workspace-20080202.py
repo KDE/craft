@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
+from Package.CMakePackageBase import *        
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
