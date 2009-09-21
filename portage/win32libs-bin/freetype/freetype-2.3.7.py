@@ -7,10 +7,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['2.3.7-1']:
+        for version in ['2.3.7-2']:
             self.targets[ version ] = self.getPackage( repoUrl, "freetype", version )
 
-        self.defaultTarget = '2.3.7-1'
+        self.defaultTarget = '2.3.7-2'
 
 
 class Package(BinaryPackageBase):
