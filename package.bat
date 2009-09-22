@@ -28,6 +28,11 @@ rem set EMERGE_SERVER_UPLOAD_SERVER=
 rem     set the directory on the server
 rem set EMERGE_SERVER_UPLOAD_DIR=
 
+rem     set the upload server for the build logs
+rem set EMERGE_LOG_UPLOAD_SERVER=
+
+rem     set the directory on the server for the build logs
+rem set EMERGE_LOG_UPLOAD_DIR=
  
 
 
