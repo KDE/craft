@@ -29,12 +29,13 @@ rem     set the directory on the server
 rem set EMERGE_SERVER_UPLOAD_DIR=
 
 rem     set the upload server for the build logs
-rem set EMERGE_LOG_UPLOAD_SERVER=
+rem set EMERGE_LOG_UPLOAD_SERVER=user@server
 
 rem     set the directory on the server for the build logs
-rem set EMERGE_LOG_UPLOAD_DIR=
+rem set EMERGE_LOG_UPLOAD_DIR=logs/stable/
  
-
+rem     set the Url under which the logs can be addressed (normally the upload dir)
+rem set EMERGE_LOG_URL=http://server/logs/stable/
 
 
 rem    the following do not need to be changed
