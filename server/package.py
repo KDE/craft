@@ -19,6 +19,7 @@ class BuildError(Exception):
         self.messageText = message
         self.logfile = logfile
         self.revision = False
+        self.enabled = True
         print "Error:", self.messageText
         
     def __str__( self ):
@@ -40,15 +41,47 @@ class BuildError(Exception):
             self.revision = revision
             self.email( server, sender, pw, receivers )
         
+    def uploadLog( self ):
+        """ upload logfile to the logging server """
+
+        if not self.enabled:
+            return
+        print "uploading logfile"
+        if os.path.exists( self.logfile ) and \
+           "EMERGE_LOG_UPLOAD_SERVER" in os.environ and\
+           "EMERGE_LOG_UPLOAD_DIR" in os.environ:
+            """ if there is a directory at the specified location, upload files that can be found there """
+
+            os.chdir( logroot )
+            cmdstring = "psftp " + os.environ["EMERGE_LOG_UPLOAD_SERVER"]
+            ret = 0
+
+            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE )
+            p.stdin.write( "cd " + os.environ["EMERGE_LOG_UPLOAD_DIR"] + "\r\n" )
+            p.stdin.write( "mkdir " + isodate + "\r\n" )
+            p.stdin.write( "cd " + isodate + "\r\n" )
+            p.stdin.write( "put " + self.logfile + "\r\n" )
+            p.stdin.write( "quit\r\n" )
+            ret = p.wait()
+        else:
+            print "Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n" \
+                      "Package directory is %s" % pkgdir
+
+    
     def email( self, server, sender, pw, receivers ):
         """ send an email"""
         log = file( self.logfile, 'rb' )
         logtext = log.readlines()[-20:]
         log.close()
 
+        if "EMERGE_LOG_URL" in os.environ:
+            logurltext = """The full log can be found here: """ + os.environ["EMERGE_LOG_URL"] + isodate + """/""" + os.path.basename( self.logfile ) + """\n"""
+        else:
+            logurltext = ""
+        
         # Create a text/plain message
         msg = MIMEText( self.messageText + """\n
-        """ + "".join( logtext ) )
+        """ + logurltext + "".join( logtext ) )
 
         # me == the sender's email address
         # you == the recipient's email address
