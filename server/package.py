@@ -39,6 +39,7 @@ class BuildError(Exception):
             pw = os.environ["EMERGE_SERVER_PASS"]
             receivers = os.environ["EMERGE_SERVER_RECEIVERS"].split(',')
             self.revision = revision
+            self.uploadLog()
             self.email( server, sender, pw, receivers )
         
     def uploadLog( self ):
@@ -56,13 +57,15 @@ class BuildError(Exception):
             cmdstring = "psftp " + os.environ["EMERGE_LOG_UPLOAD_SERVER"]
             ret = 0
 
-            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE )
+            devnull = file('NUL', 'w')
+            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=devnull )
             p.stdin.write( "cd " + os.environ["EMERGE_LOG_UPLOAD_DIR"] + "\r\n" )
             p.stdin.write( "mkdir " + isodate + "\r\n" )
             p.stdin.write( "cd " + isodate + "\r\n" )
             p.stdin.write( "put " + self.logfile + "\r\n" )
             p.stdin.write( "quit\r\n" )
             ret = p.wait()
+            devnull.close()
         else:
             print "Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n" \
                       "Package directory is %s" % pkgdir
