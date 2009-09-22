@@ -31,7 +31,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         
-        self.subinfo.options.configure.defines = "-DBUILD_QT4_TESTS=ON"
+        self.subinfo.options.configure.defines = "-DBUILD_QT4_TESTS=ON -DENABLE_XPDF_HEADERS=ON"
         
 if __name__ == '__main__':
     Package().execute()
