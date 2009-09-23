@@ -11,4 +11,4 @@ diff -N -u -r poppler-data-0.2.02/CMakeLists.txt poppler-data-0.2.0/CMakeLists.t
 +install(DIRECTORY ${CMAKE_SOURCE_DIR}/cMap          DESTINATION ${pkgdatadir})
 +install(DIRECTORY ${CMAKE_SOURCE_DIR}/nameToUnicode DESTINATION ${pkgdatadir})
 +install(DIRECTORY ${CMAKE_SOURCE_DIR}/unicodeMap    DESTINATION ${pkgdatadir})
-+install(FILES ${CMAKE_SOURCE_DIR}/COPYING README    DESTINATION ${pkgdatadir})
++install(FILES ${CMAKE_SOURCE_DIR}/COPYING COPYING.adobe COPYING.gpl2 README    DESTINATION ${pkgdatadir})

@@ -2,11 +2,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for v in [ '0.2.0', '0.2.1' ]:
+        for v in [ '0.2.0', '0.2.1', '0.3.0' ]:
           self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
           self.targetInstSrc[v] = 'poppler-data-' + v
           self.patchToApply[v] = ( 'poppler-data-cmake.patch', 0 )
-        self.defaultTarget = '0.2.1'
+        self.defaultTarget = '0.3.0'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
