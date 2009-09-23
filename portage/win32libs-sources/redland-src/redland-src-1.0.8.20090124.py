@@ -1,7 +1,6 @@
-import base
-import os
-import utils
 import info
+
+from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -19,19 +18,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/pcre'] = 'default'
 
 
-class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, "" )
-    self.subinfo = subinfo()
-
-  def compile( self ):
-    return self.kdeCompile()
-
-  def install( self ):
-    return self.kdeInstall()
-
-  def make_package( self ):
-    return self.doPackaging( "redland", self.buildTarget )
-
+class Package(CMakePackageBase):
+    def __init__( self, **args ):
+        self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
