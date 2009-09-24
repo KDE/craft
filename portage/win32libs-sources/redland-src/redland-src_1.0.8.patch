@@ -1,6 +1,6 @@
 diff -Nru redland-1.0.8.orig/cmake/config.cpp.in redland-1.0.8/cmake/config.cpp.in
 --- redland-1.0.8.orig/cmake/config.cpp.in	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/config.cpp.in	2009-09-23 23:40:49.729000000 +0200
++++ redland-1.0.8/cmake/config.cpp.in	2009-09-24 02:48:28.850800000 +0200
 @@ -0,0 +1,26 @@
 +#include <stdio.h>
 +#include <string.h>
@@ -30,7 +30,7 @@ diff -Nru redland-1.0.8.orig/cmake/config.cpp.in redland-1.0.8/cmake/config.cpp.
 +}
 diff -Nru redland-1.0.8.orig/cmake/FindPCRE.cmake redland-1.0.8/cmake/FindPCRE.cmake
 --- redland-1.0.8.orig/cmake/FindPCRE.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/FindPCRE.cmake	2009-09-23 23:40:49.738000000 +0200
++++ redland-1.0.8/cmake/FindPCRE.cmake	2009-09-24 02:48:28.850800000 +0200
 @@ -0,0 +1,44 @@
 +# - Try to find the PCRE regular expression library
 +# Once done this will define
@@ -78,7 +78,7 @@ diff -Nru redland-1.0.8.orig/cmake/FindPCRE.cmake redland-1.0.8/cmake/FindPCRE.c
 +mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY)
 diff -Nru redland-1.0.8.orig/cmake/FindSQLite3.cmake redland-1.0.8/cmake/FindSQLite3.cmake
 --- redland-1.0.8.orig/cmake/FindSQLite3.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/FindSQLite3.cmake	2009-09-23 23:40:49.741000000 +0200
++++ redland-1.0.8/cmake/FindSQLite3.cmake	2009-09-24 02:48:28.850800000 +0200
 @@ -0,0 +1,19 @@
 +# - Try to find the SQLite3 library
 +# Once done this will define
@@ -101,7 +101,7 @@ diff -Nru redland-1.0.8.orig/cmake/FindSQLite3.cmake redland-1.0.8/cmake/FindSQL
 +mark_as_advanced(SQLITE3_INCLUDE_DIR SQLITE3_LIBRARIES)
 diff -Nru redland-1.0.8.orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 --- redland-1.0.8.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/CMakeLists.txt	2009-09-23 23:40:49.745000000 +0200
++++ redland-1.0.8/CMakeLists.txt	2009-09-24 02:48:28.850800000 +0200
 @@ -0,0 +1,11 @@
 +project(redland)
 +cmake_minimum_required(VERSION 2.6.2)
@@ -116,7 +116,7 @@ diff -Nru redland-1.0.8.orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 +add_subdirectory(rasqal)
 diff -Nru redland-1.0.8.orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLists.txt
 --- redland-1.0.8.orig/librdf/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/librdf/CMakeLists.txt	2009-09-23 23:40:49.748000000 +0200
++++ redland-1.0.8/librdf/CMakeLists.txt	2009-09-24 02:48:28.866400000 +0200
 @@ -0,0 +1,120 @@
 +project(librdf)
 +
@@ -240,7 +240,7 @@ diff -Nru redland-1.0.8.orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLis
 +install(FILES   ${librdf_HDRS_INST} DESTINATION include/redland)
 diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win32_rdf_config.h
 --- redland-1.0.8.orig/librdf/win32_rdf_config.h	2008-07-01 05:10:26.000000000 +0200
-+++ redland-1.0.8/librdf/win32_rdf_config.h	2009-09-23 23:42:24.128000000 +0200
++++ redland-1.0.8/librdf/win32_rdf_config.h	2009-09-24 02:48:28.866400000 +0200
 @@ -43,7 +43,9 @@
  #define HAVE_STRICMP 1
  
@@ -271,7 +271,7 @@ diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win3
  /*#undef STORAGE_POSTGRESQL*/
 diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLists.txt
 --- redland-1.0.8.orig/raptor/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/raptor/CMakeLists.txt	2009-09-23 23:40:49.758000000 +0200
++++ redland-1.0.8/raptor/CMakeLists.txt	2009-09-24 02:48:28.866400000 +0200
 @@ -0,0 +1,100 @@
 +project(raptor)
 +
@@ -375,7 +375,7 @@ diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLis
 +install(FILES   ${raptor_HDRS_INST} DESTINATION include/redland)
 diff -Nru redland-1.0.8.orig/raptor/src/raptor_win32.c redland-1.0.8/raptor/src/raptor_win32.c
 --- redland-1.0.8.orig/raptor/src/raptor_win32.c	2008-06-14 05:39:35.000000000 +0200
-+++ redland-1.0.8/raptor/src/raptor_win32.c	2009-09-23 23:40:49.761000000 +0200
++++ redland-1.0.8/raptor/src/raptor_win32.c	2009-09-24 02:48:28.866400000 +0200
 @@ -33,8 +33,26 @@
  
  
@@ -405,7 +405,7 @@ diff -Nru redland-1.0.8.orig/raptor/src/raptor_win32.c redland-1.0.8/raptor/src/
  /* DLL entry point */
 diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/raptor/src/win32_raptor_config.h
 --- redland-1.0.8.orig/raptor/src/win32_raptor_config.h	2008-04-02 06:50:14.000000000 +0200
-+++ redland-1.0.8/raptor/src/win32_raptor_config.h	2009-09-23 23:41:52.458000000 +0200
++++ redland-1.0.8/raptor/src/win32_raptor_config.h	2009-09-24 02:49:14.143600000 +0200
 @@ -69,7 +69,9 @@
  #define HAVE_STRICMP 1
  
@@ -416,9 +416,17 @@ diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/rapt
  #define snprintf _snprintf
  #define access _access
  #define stricmp _stricmp
+@@ -118,6 +120,7 @@
+ #define RAPTOR_PARSER_TURTLE 1
+ #define RAPTOR_PARSER_NTRIPLES 1
+ #define RAPTOR_PARSER_RDFXML 1
++#define RAPTOR_PARSER_TRIG 1
+ 
+ #define RAPTOR_SERIALIZER_ATOM 1
+ #define RAPTOR_SERIALIZER_RSS_1_0 1
 diff -Nru redland-1.0.8.orig/rasqal/CMakeLists.txt redland-1.0.8/rasqal/CMakeLists.txt
 --- redland-1.0.8.orig/rasqal/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/rasqal/CMakeLists.txt	2009-09-23 23:40:49.764000000 +0200
++++ redland-1.0.8/rasqal/CMakeLists.txt	2009-09-24 02:48:28.866400000 +0200
 @@ -0,0 +1,63 @@
 +project(rasqal)
 +
@@ -485,7 +493,7 @@ diff -Nru redland-1.0.8.orig/rasqal/CMakeLists.txt redland-1.0.8/rasqal/CMakeLis
 +install(FILES   ${rasqal_HDRS_INST} DESTINATION include/redland)
 diff -Nru redland-1.0.8.orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/src/sparql_lexer.c
 --- redland-1.0.8.orig/rasqal/src/sparql_lexer.c	2008-06-26 20:52:33.000000000 +0200
-+++ redland-1.0.8/rasqal/src/sparql_lexer.c	2009-09-23 23:40:49.771000000 +0200
++++ redland-1.0.8/rasqal/src/sparql_lexer.c	2009-09-24 02:48:28.882000000 +0200
 @@ -1166,7 +1166,7 @@
  
  #include <rasqal.h>
@@ -497,7 +505,7 @@ diff -Nru redland-1.0.8.orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/src/
  #include <sparql_common.h>
 diff -Nru redland-1.0.8.orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src/sparql_parser.c
 --- redland-1.0.8.orig/rasqal/src/sparql_parser.c	2008-06-26 20:52:33.000000000 +0200
-+++ redland-1.0.8/rasqal/src/sparql_parser.c	2009-09-23 23:40:49.779000000 +0200
++++ redland-1.0.8/rasqal/src/sparql_parser.c	2009-09-24 02:48:28.882000000 +0200
 @@ -43,6 +43,14 @@
     define necessary library symbols; they are noted "INFRINGES ON
     USER NAME SPACE" below.  */
@@ -515,7 +523,7 @@ diff -Nru redland-1.0.8.orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src
  
 diff -Nru redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h redland-1.0.8/rasqal/src/win32_rasqal_config.h
 --- redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h	2008-06-27 04:02:09.000000000 +0200
-+++ redland-1.0.8/rasqal/src/win32_rasqal_config.h	2009-09-23 23:42:08.970000000 +0200
++++ redland-1.0.8/rasqal/src/win32_rasqal_config.h	2009-09-24 02:48:28.882000000 +0200
 @@ -40,7 +40,9 @@
  #define HAVE_STRICMP 1
  
