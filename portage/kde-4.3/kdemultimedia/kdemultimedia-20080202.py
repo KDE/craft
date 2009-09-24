@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde-4.3/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/taglib'] = 'default'
         
-from Package.CmakePackageBase import *        
+from Package.CMakePackageBase import *        
         
 class Package(CMakePackageBase):
     def __init__( self ):
