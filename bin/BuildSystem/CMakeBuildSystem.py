@@ -60,6 +60,9 @@ class CMakeBuildSystem(BuildSystemBase):
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
 
+        if not self.subinfo.options.configure.testDefine == None and "EMERGE_BUILDTESTS" in os.environ and os.environ["EMERGE_BUILDTESTS"] == "True" :
+            print self.subinfo.options.configure.testDefine
+            defines += self.subinfo.options.configure.testDefine
         if self.subinfo.options.configure.onlyBuildTargets :
             defines += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
                 
