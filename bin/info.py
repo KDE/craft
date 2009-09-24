@@ -23,6 +23,9 @@ class OptionsConfigure:
         # add build target to be included into build. This feature is cmake only and requires the 
         # usage of the 'macro_optional_add_subdirectory' macro. The value is a string.
         self.onlyBuildTargets = None 
+        
+        # add the cmake defines that are needed to build tests here
+        self.testDefine = None
 
 ## options for the make action 
 class OptionsMake:
@@ -198,6 +201,8 @@ class infoclass:
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
+        if os.getenv("KDECOMPILER") == "mingw4":
+            compiler = "mingw4"
         elif os.getenv("KDECOMPILER") == "msvc2008":
             compiler = "vc90"
 
