@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/djvu'] = 'default'
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
 
-from Package.CmakePackageBase import *        
+from Package.CMakePackageBase import *        
         
 class Package(CMakePackageBase):
     def __init__( self ):
