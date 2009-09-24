@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
 
-from Package.CmakePackageBase import *        
+from Package.CMakePackageBase import *        
         
 class Package(CMakePackageBase):
     def __init__( self ):
