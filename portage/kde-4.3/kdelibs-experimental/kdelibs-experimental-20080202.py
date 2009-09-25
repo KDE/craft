@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdelibs'] = 'default'
         
-from Package.CmakePackageBase import *        
+from Package.CMakePackageBase import *        
         
 class Package(CMakePackageBase):
     def __init__( self ):
