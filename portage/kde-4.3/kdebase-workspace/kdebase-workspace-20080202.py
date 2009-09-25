@@ -28,7 +28,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.configure.onlyBuildTargets = "systemsettings krunner khotkeys kcontrol plasma doc wallpapers"
+        self.subinfo.options.configure.onlyBuildTargets = "systemsettings krunner khotkeys kcontrol plasma doc wallpapers"
 
 if __name__ == '__main__':
     Package().execute()
