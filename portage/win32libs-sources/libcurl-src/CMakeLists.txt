@@ -46,6 +46,7 @@ set(curl_SOURCES
     lib/mprintf.c
     lib/multi.c
     lib/netrc.c
+    lib/nonblock.c
     lib/nss.c
     lib/parsedate.c
     lib/progress.c
@@ -54,6 +55,7 @@ set(curl_SOURCES
     lib/security.c
     lib/select.c
     lib/sendf.c
+    lib/slist.c
     lib/share.c
     lib/socks.c
     lib/speedcheck.c
