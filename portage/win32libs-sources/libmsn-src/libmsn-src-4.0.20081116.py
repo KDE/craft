@@ -24,6 +24,7 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.createCombinedPackage = False
+        self.subinfo.options.package.packageName = 'libmsn'
         self.subinfo = subinfo()
 
     def unpack( self ):

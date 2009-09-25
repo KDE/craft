@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = '7.19.4'
+        ver = '7.19.6'
         self.targets[ver] = 'http://curl.haxx.se/download/curl-' + ver + '.tar.bz2'
         self.targetInstSrc[ver] = 'curl-' + ver
         self.defaultTarget = ver

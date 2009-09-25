@@ -8,9 +8,9 @@ import shutil
 class subinfo(info.infoclass):
 
     def setTargets( self ):
-        self.targets['4.2.4'] = "http://ftp.gnu.org/pub/gnu/gmp/gmp-4.2.4.tar.bz2"
-        self.targetInstSrc['4.2.4'] = "gmp-4.2.4"
-        self.defaultTarget = '4.2.4'
+        self.targets['4.3.1'] = "http://ftp.gnu.org/pub/gnu/gmp/gmp-4.3.1.tar.bz2"
+        self.targetInstSrc['4.3.1'] = "gmp-4.3.1"
+        self.defaultTarget = '4.3.1'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
