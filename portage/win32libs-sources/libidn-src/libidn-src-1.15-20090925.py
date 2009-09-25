@@ -6,7 +6,7 @@ import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = '1.14'
+        ver = '1.15'
         self.targets[ver]       = 'ftp://alpha.gnu.org/pub/gnu/libidn/libidn-%s.tar.gz' % ver
         self.targetInstSrc[ver] = 'libidn-%s' % ver
         self.defaultTarget = ver
