@@ -6,11 +6,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for ver in ['1.0.8', '1.0.8-1']:
+        for ver in ['1.0.8', '1.0.8-1', '1.0.8-2']:
             self.targets[ ver ] = self.getPackage( repoUrl, "redland", ver )
 
-            
-        self.defaultTarget = '1.0.8-1'
+        self.defaultTarget = '1.0.8-2'
 
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/libcurl'] = 'default'
