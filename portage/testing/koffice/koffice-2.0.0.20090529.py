@@ -12,6 +12,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.0.0'] = 'koffice-2.0.0'
         self.targets['2.0.1'] = 'ftp://ftp.kde.org/pub/kde/stable/koffice-2.0.1/src/koffice-2.0.1.tar.bz2'
         self.targetInstSrc['2.0.1'] = 'koffice-2.0.1'
+        self.targets['2.0.82'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-2.0.82/src/koffice-2.0.82.tar.bz2'
+        self.targetInstSrc['2.0.82'] = 'koffice-2.0.82'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -44,14 +46,18 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget in ['2.0.0', '2.0.1']:
+        if self.buildTarget in ['2.0.0', '2.0.1', '2.0.82']:
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
             src = os.path.join( self.workdir, self.instsrcdir )
 
-            cmd = "cd %s && patch -p0 < %s" % \
-                  ( src, os.path.join( self.packagedir , "koffice-2.0.0.diff" ) )
+            if self.buildTarget == '2.0.82':
+                cmd = "cd %s && patch -p0 < %s" % \
+                      ( src, os.path.join( self.packagedir , "koffice-2.0.82.diff" ) )
+            else:
+                cmd = "cd %s && patch -p0 < %s" % \
+                      ( src, os.path.join( self.packagedir , "koffice-2.0.0.diff" ) )
             if utils.verbose() >= 1:
                 print cmd
             self.system( cmd ) or die( "patch" )
