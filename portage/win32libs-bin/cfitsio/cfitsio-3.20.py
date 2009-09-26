@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
 
-        for version in ['3.10', '3.14']:
+        for version in ['3.10', '3.14', '3.20']:
             self.targets[ version ] = repoUrl + """/cfitsio-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/cfitsio-""" + version + """-lib.tar.bz2"""
 
-        self.defaultTarget = '3.14'
+        self.defaultTarget = '3.20'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
