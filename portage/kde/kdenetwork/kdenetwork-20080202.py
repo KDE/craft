@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['win32libs-bin/libidn'] = 'default'
         self.hardDependencies['win32libs-bin/libmsn'] = 'default'
+        self.hardDependencies['win32libs-bin/libgmp'] = 'default'
         
 from Package.CMakePackageBase import *
         
