@@ -6,10 +6,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.3.5-2'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.5.tar.bz2"
-        self.targets['2.3.7'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.7.tar.bz2"
+        self.targets['2.3.7-2'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.7.tar.bz2"
         self.targetInstSrc['2.3.5-2'] = "freetype-2.3.5"
-        self.targetInstSrc['2.3.7'] = "freetype-2.3.7"
-        self.defaultTarget = '2.3.7'
+        self.targetInstSrc['2.3.7-2'] = "freetype-2.3.7"
+        self.defaultTarget = '2.3.7-2'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
