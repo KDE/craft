@@ -21,8 +21,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
         self.hardDependencies['win32libs-bin/freetype'] = 'default'
-        self.hardDependencies['win32libs-bin/openjpeg'] = 'default'
+        # does not work with mingw
+        #self.hardDependencies['win32libs-bin/openjpeg'] = 'default'
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
+        self.hardDependencies['win32libs-bin/jpeg'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
@@ -31,6 +33,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         
+        self.subinfo.options.package.packageName = 'poppler'
         self.subinfo.options.configure.defines = "-DBUILD_QT4_TESTS=ON -DENABLE_XPDF_HEADERS=ON"
         
 if __name__ == '__main__':
