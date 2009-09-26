@@ -6,9 +6,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for ver in ['7.19.4']:
+        for ver in ['7.19.4', '7.19.6']:
             self.targets[ ver ] = self.getPackage( repoUrl, "libcurl", ver )
-        self.defaultTarget = '7.19.4'
+        self.defaultTarget = '7.19.6'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

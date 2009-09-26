@@ -7,10 +7,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['4.0-beta2', '4.0-beta4']:
+        for version in ['4.0-beta2', '4.0-beta4', '4.0-beta8']:
             self.targets[ version ] = self.getPackage( repoUrl, "libmsn", version )
 
-        self.defaultTarget = '4.0-beta4'
+        self.defaultTarget = '4.0-beta8'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
