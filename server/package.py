@@ -69,7 +69,7 @@ class BuildError(Exception):
             devnull.close()
         else:
             print "Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n" \
-                      "Package directory is %s" % pkgdir\
+                      "Package directory is %s" % pkgdir \
                       "Logfile path is %s" % self.logfile
 
     
