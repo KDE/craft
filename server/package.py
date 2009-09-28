@@ -256,6 +256,8 @@ packageroot = os.path.join( os.environ["KDEROOT"], "tmp", isodate, "packages" )
 
 if not os.path.exists( logroot ):
     os.makedirs( logroot )
+if not os.path.exists( packageroot ):
+    os.makedirs( packageroot )
 
 outfile = os.path.join( logroot, "log-%s.txt" )
 emerge = os.path.join( os.environ["KDEROOT"], "emerge", "bin", "emerge.py" )
