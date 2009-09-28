@@ -1,6 +1,6 @@
-diff -Nru koffice-2.0.82.orig/filters/karbon/pdf/CMakeLists.txt koffice-2.0.82/filters/karbon/pdf/CMakeLists.txt
---- koffice-2.0.82.orig/filters/karbon/pdf/CMakeLists.txt	2009-09-10 18:35:37.000000000 +0200
-+++ koffice-2.0.82/filters/karbon/pdf/CMakeLists.txt	2009-09-25 03:24:46.879151700 +0200
+diff -Nru filters/karbon/pdf/CMakeLists.txt filters/karbon/pdf/CMakeLists.txt
+--- filters/karbon/pdf/CMakeLists.txt	2009-09-10 18:35:37.000000000 +0200
++++ filters/karbon/pdf/CMakeLists.txt	2009-09-25 03:24:46.879151700 +0200
 @@ -1,11 +1,10 @@
 -
 -include_directories( ${POPPLER_INCLUDE_DIR} )
@@ -15,9 +15,9 @@ diff -Nru koffice-2.0.82.orig/filters/karbon/pdf/CMakeLists.txt koffice-2.0.82/f
  
  install(TARGETS karbonpdfimport DESTINATION ${PLUGIN_INSTALL_DIR})
  
-diff -Nru koffice-2.0.82.orig/krita/plugins/formats/pdf/CMakeLists.txt koffice-2.0.82/krita/plugins/formats/pdf/CMakeLists.txt
---- koffice-2.0.82.orig/krita/plugins/formats/pdf/CMakeLists.txt	2009-09-10 18:37:35.000000000 +0200
-+++ koffice-2.0.82/krita/plugins/formats/pdf/CMakeLists.txt	2009-09-25 02:33:46.967151700 +0200
+diff -Nru krita/plugins/formats/pdf/CMakeLists.txt krita/plugins/formats/pdf/CMakeLists.txt
+--- krita/plugins/formats/pdf/CMakeLists.txt	2009-09-10 18:37:35.000000000 +0200
++++ krita/plugins/formats/pdf/CMakeLists.txt	2009-09-25 02:33:46.967151700 +0200
 @@ -13,7 +13,7 @@
  
  
@@ -27,9 +27,9 @@ diff -Nru koffice-2.0.82.orig/krita/plugins/formats/pdf/CMakeLists.txt koffice-2
  
  install(TARGETS kritapdfimport  DESTINATION ${PLUGIN_INSTALL_DIR})
  ########### install files ###############
-diff -Nru koffice-2.0.82.orig/kspread/ui/CharSelectDia.h koffice-2.0.82/kspread/ui/CharSelectDia.h
---- koffice-2.0.82.orig/kspread/ui/CharSelectDia.h	2009-09-10 18:44:24.000000000 +0200
-+++ koffice-2.0.82/kspread/ui/CharSelectDia.h	2009-09-25 01:05:37.289151700 +0200
+diff -Nru kspread/ui/CharSelectDia.h kspread/ui/CharSelectDia.h
+--- kspread/ui/CharSelectDia.h	2009-09-10 18:44:24.000000000 +0200
++++ kspread/ui/CharSelectDia.h	2009-09-25 01:05:37.289151700 +0200
 @@ -22,14 +22,13 @@
  #define KOCHARSELECTDIA_H
  
@@ -46,9 +46,9 @@ diff -Nru koffice-2.0.82.orig/kspread/ui/CharSelectDia.h koffice-2.0.82/kspread/
  {
      Q_OBJECT
  
-diff -Nru koffice-2.0.82.orig/libs/main/KoDockerManager.cpp koffice-2.0.82/libs/main/KoDockerManager.cpp
---- koffice-2.0.82.orig/libs/main/KoDockerManager.cpp	2009-09-10 18:43:28.000000000 +0200
-+++ koffice-2.0.82/libs/main/KoDockerManager.cpp	2009-09-25 01:04:08.444151700 +0200
+diff -Nru libs/main/KoDockerManager.cpp libs/main/KoDockerManager.cpp
+--- libs/main/KoDockerManager.cpp	2009-09-10 18:43:28.000000000 +0200
++++ libs/main/KoDockerManager.cpp	2009-09-25 01:04:08.444151700 +0200
 @@ -69,7 +69,7 @@
          bool isOnTop = true;
          int idx = view->children().indexOf(j.value());
@@ -67,9 +67,9 @@ diff -Nru koffice-2.0.82.orig/libs/main/KoDockerManager.cpp koffice-2.0.82/libs/
          kDebug(/*30004*/) << "removing" << j.key() << ((void*) j.value());
          j.value()->setVisible(false);
          j.value()->setEnabled(false);
-diff -Nru koffice-2.0.82.orig/libs/widgets/kowidgets_export.h koffice-2.0.82/libs/widgets/kowidgets_export.h
---- koffice-2.0.82.orig/libs/widgets/kowidgets_export.h	2009-09-10 18:43:38.000000000 +0200
-+++ koffice-2.0.82/libs/widgets/kowidgets_export.h	2009-09-25 00:54:28.997151700 +0200
+diff -Nru libs/widgets/kowidgets_export.h libs/widgets/kowidgets_export.h
+--- libs/widgets/kowidgets_export.h	2009-09-10 18:43:38.000000000 +0200
++++ libs/widgets/kowidgets_export.h	2009-09-25 00:54:28.997151700 +0200
 @@ -27,17 +27,7 @@
  #if defined _WIN32 || defined _WIN64
  
