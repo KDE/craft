@@ -41,7 +41,7 @@ class Package(QMakePackageBase):
         self.subinfo = subinfo()
         QMakePackageBase.__init__(self)
         # get instance of dbus and openssl package
-        if self.compiler() == "mingw" or self.compile() == "mingw4":
+        if self.compiler() == "mingw" or self.compiler() == "mingw4":
             self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
         else:
             self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
