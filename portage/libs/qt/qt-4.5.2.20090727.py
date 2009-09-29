@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['testing/mysql-server'] = 'default'
-        if COMPILER == "mingw":
+        if COMPILER == "mingw" or COMPILER == "mingw4":
             self.hardDependencies['win32libs-bin/dbus'] = 'default'
         else:
             self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
@@ -41,7 +41,7 @@ class Package(QMakePackageBase):
         self.subinfo = subinfo()
         QMakePackageBase.__init__(self)
         # get instance of dbus and openssl package
-        if self.compiler() == "mingw":
+        if self.compiler() == "mingw" or self.compile() == "mingw4":
             self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
         else:
             self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
@@ -60,7 +60,7 @@ class Package(QMakePackageBase):
         platform = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             platform = "win32-%s" % self.compiler()
-        elif self.compiler() == "mingw":
+        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             platform = "win32-g++"
         else:
             exit( 1 )
