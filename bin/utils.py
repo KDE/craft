@@ -640,7 +640,7 @@ def replaceGitUrl( Url ):
                 break
     return Url
 
-def createImportLibs( pkg_name, basepath ):
+def createImportLibs( dll_name, basepath ):
     """creating the import libraries for the other compiler(if ANSI-C libs)"""
 
     dst = os.path.join( basepath, "lib" )
@@ -658,11 +658,11 @@ def createImportLibs( pkg_name, basepath ):
         print "lib found:", HAVE_LIB
         print "dlltool found:", HAVE_DLLTOOL
     
-    dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
-    defpath = os.path.join( basepath, "lib", "%s.def" % pkg_name )
-    exppath = os.path.join( basepath, "lib", "%s.exp" % pkg_name )
-    imppath = os.path.join( basepath, "lib", "%s.lib" % pkg_name )
-    gccpath = os.path.join( basepath, "lib", "%s.dll.a" % pkg_name )
+    dllpath = os.path.join( basepath, "bin", "%s.dll" % dll_name )
+    defpath = os.path.join( basepath, "lib", "%s.def" % dll_name )
+    exppath = os.path.join( basepath, "lib", "%s.exp" % dll_name )
+    imppath = os.path.join( basepath, "lib", "%s.lib" % dll_name )
+    gccpath = os.path.join( basepath, "lib", "%s.dll.a" % dll_name )
 
     if not HAVE_PEXPORTS and os.path.exists( defpath ):
         HAVE_PEXPORTS = True
@@ -680,7 +680,7 @@ def createImportLibs( pkg_name, basepath ):
     if USE_PEXPORTS:
         cmd = "pexports %s > %s " % ( dllpath, defpath )
         system( cmd )
-        sedcmd = "sed -i \"s/^LIBRARY.*$/LIBRARY %s.dll/\" %s" % (pkg_name, defpath)
+        sedcmd = "sed -i \"s/^LIBRARY.*$/LIBRARY %s.dll/\" %s" % (dll_name, defpath)
         system( sedcmd )
 
     if( HAVE_LIB and not os.path.isfile( imppath ) ):
