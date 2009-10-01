@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         self.targets[ '1.3' ] = 'http://openjpeg.googlecode.com/files/openjpeg_v1_3.tar.gz'
         self.targetInstSrc[ '1.3' ] = "openjpeg_v1_3"
         self.patchToApply[ '1.3' ] = ( 'openjpeg.diff', 1 )
+        self.svnTargets['svnHEAD'] = 'http://openjpeg.googlecode.com/svn/trunk/'
         self.defaultTarget = '1.3'
 
     def setDependencies( self ):
