@@ -1,0 +1,617 @@
+diff -Nru OpenJPEG_v1_3.orig/CMakeLists.txt OpenJPEG_v1_3/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/CMakeLists.txt	2007-12-21 11:39:41.000000000 +0100
++++ OpenJPEG_v1_3/CMakeLists.txt	2009-10-01 02:30:44.713600000 +0200
+@@ -61,6 +61,17 @@
+                @ONLY IMMEDIATE)
+ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
+ 
++IF(MSVC)
++add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++set(DONT_HAVE_GETOPT ON)
++ENDIF(MSVC)
++
++INCLUDE(CheckIncludeFile)
++CHECK_INCLUDE_FILE(HAVE_STRINGS_H "strings.h")
++
++IF(HAVE_STRINGS_H)
++add_definitions(-DHAVE_STRINGS_H)
++ENDIF(HAVE_STRINGS_H)
+ #-----------------------------------------------------------------------------
+ # Always build the library
+ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+diff -Nru OpenJPEG_v1_3.orig/codec/CMakeLists.txt OpenJPEG_v1_3/codec/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/codec/CMakeLists.txt	2007-11-27 13:38:52.000000000 +0100
++++ OpenJPEG_v1_3/codec/CMakeLists.txt	2009-10-01 02:30:44.747600000 +0200
+@@ -51,7 +51,9 @@
+     TARGET_LINK_LIBRARIES(${exe} m)
+   ENDIF(UNIX)
+   # Install exe
+-  INSTALL_TARGETS(/bin/ ${exe})
++  INSTALL(TARGETS ${exe} RUNTIME DESTINATION bin 
++                         LIBRARY DESTINATION lib
++                         ARCHIVE DESTINATION lib)
+ ENDFOREACH(exe)
+ 
+ # Do testing here, once we know the examples are being built:
+diff -Nru OpenJPEG_v1_3.orig/jp3d/CMakeLists.txt OpenJPEG_v1_3/jp3d/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/jp3d/CMakeLists.txt	2007-09-06 12:51:38.000000000 +0200
++++ OpenJPEG_v1_3/jp3d/CMakeLists.txt	2009-10-01 02:30:44.760600000 +0200
+@@ -3,6 +3,10 @@
+ #VER_MAJOR = 1
+ #VER_MINOR = 0.0
+ 
++IF(MINGW)
++SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused")
++ENDIF(MINGW)
++
+ SUBDIRS(
+   libjp3dvm
+   codec
+diff -Nru OpenJPEG_v1_3.orig/jp3d/codec/CMakeLists.txt OpenJPEG_v1_3/jp3d/codec/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/jp3d/codec/CMakeLists.txt	2007-09-06 12:51:38.000000000 +0200
++++ OpenJPEG_v1_3/jp3d/codec/CMakeLists.txt	2009-10-01 02:30:44.774600000 +0200
+@@ -20,7 +20,7 @@
+   ADD_DEFINITIONS(-DDONT_HAVE_GETOPT)
+   SET(common_SRCS
+     ${common_SRCS}
+-    compat/getopt.c
++    getopt.c
+   )
+ ENDIF(DONT_HAVE_GETOPT)
+ 
+@@ -32,9 +32,9 @@
+ 
+ # Do the proper thing when building static...if only there was configured
+ # headers or def files instead
+-#IF(NOT BUILD_SHARED_LIBS)
+-#  ADD_DEFINITIONS(-DOPJ_STATIC)
+-#ENDIF(NOT BUILD_SHARED_LIBS)
++IF(NOT BUILD_SHARED_LIBS)
++  ADD_DEFINITIONS(-DOPJ_STATIC)
++ENDIF(NOT BUILD_SHARED_LIBS)
+ 
+ #FIND_PACKAGE(TIFF REQUIRED)
+ 
+@@ -47,7 +47,9 @@
+     TARGET_LINK_LIBRARIES(${exe} m)
+   ENDIF(UNIX)
+   # Install exe
+-  INSTALL_TARGETS(/bin/ ${exe})
++  INSTALL(TARGETS ${exe} RUNTIME DESTINATION bin
++                         LIBRARY DESTINATION lib
++                         ARCHIVE DESTINATION lib)
+ ENDFOREACH(exe)
+ 
+ 
+diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/CMakeLists.txt OpenJPEG_v1_3/jp3d/libjp3dvm/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/jp3d/libjp3dvm/CMakeLists.txt	2007-09-06 12:51:38.000000000 +0200
++++ OpenJPEG_v1_3/jp3d/libjp3dvm/CMakeLists.txt	2009-10-01 02:30:44.788600000 +0200
+@@ -18,7 +18,10 @@
+ ADD_LIBRARY(${OPJ_PREFIX}openjp3dvm ${JP3DVM_SRCS})
+ 
+ # Install library
+-INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjp3dvm)
++INSTALL(TARGETS ${OPJ_PREFIX}openjp3dvm RUNTIME DESTINATION bin
++                                        LIBRARY DESTINATION lib
++                                        ARCHIVE DESTINATION lib)
+ 
+ # Install includes files
+-INSTALL_FILES(/include .h)
++FILE(GLOB HEADERS "*.h")
++INSTALL(FILES ${HEADERS} DESTINATION include)
+diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/jp3d_lib.c OpenJPEG_v1_3/jp3d/libjp3dvm/jp3d_lib.c
+--- OpenJPEG_v1_3.orig/jp3d/libjp3dvm/jp3d_lib.c	2006-10-30 16:32:50.000000000 +0100
++++ OpenJPEG_v1_3/jp3d/libjp3dvm/jp3d_lib.c	2009-10-01 02:30:44.800600000 +0200
+@@ -24,7 +24,7 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#ifdef WIN32
++#ifdef _WIN32
+ #include <windows.h>
+ #else
+ #include <sys/time.h>
+diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/opj_includes.h OpenJPEG_v1_3/jp3d/libjp3dvm/opj_includes.h
+--- OpenJPEG_v1_3.orig/jp3d/libjp3dvm/opj_includes.h	2006-10-30 16:32:50.000000000 +0100
++++ OpenJPEG_v1_3/jp3d/libjp3dvm/opj_includes.h	2009-10-01 02:30:44.813600000 +0200
+@@ -54,7 +54,9 @@
+  ==========================================================
+ */
+ 
++#ifndef _WIN32
+ #include "dirent.h"
++#endif
+ #include "jp3d_lib.h"
+ #include "event.h"
+ #include "cio.h"
+diff -Nru OpenJPEG_v1_3.orig/jpwl/CMakeLists.txt OpenJPEG_v1_3/jpwl/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/jpwl/CMakeLists.txt	2007-09-06 12:23:40.000000000 +0200
++++ OpenJPEG_v1_3/jpwl/CMakeLists.txt	2009-10-01 03:16:17.745600000 +0200
+@@ -2,6 +2,8 @@
+ 
+ ADD_DEFINITIONS(-DUSE_JPWL)
+ 
++FIND_PACKAGE(TIFF REQUIRED)
++
+ SET(OPJ_SRCS 
+ ../libopenjpeg/bio.c 
+ ../libopenjpeg/cio.c 
+@@ -24,22 +26,31 @@
+ )
+ SET(JPWL_SRCS crc.c jpwl.c jpwl_lib.c rs.c)
+ 
+-ADD_LIBRARY(openjpeg_JPWL ${JPWL_SRCS} ${OPJ_SRCS})
++# Pass proper definition to preprocessor to generate shared lib
++IF(WIN32)
++  IF(BUILD_SHARED_LIBS)
++    ADD_DEFINITIONS(-DOPJ_EXPORTS)
++  ELSE(BUILD_SHARED_LIBS)
++    ADD_DEFINITIONS(-DOPJ_STATIC)
++  ENDIF(BUILD_SHARED_LIBS)
++ENDIF(WIN32)
+ 
+-# Do the proper thing when building static...if only there was configured
+-# headers or def files instead
+-#IF(NOT BUILD_SHARED_LIBS)
+-#  ADD_DEFINITIONS(-DOPJ_STATIC)
+-#ENDIF(NOT BUILD_SHARED_LIBS)
++ADD_LIBRARY(openjpeg_JPWL ${JPWL_SRCS} ${OPJ_SRCS})
+ 
+ INCLUDE_DIRECTORIES(
+   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+   )
+ 
+-FIND_PACKAGE(TIFF REQUIRED)
++IF(DONT_HAVE_GETOPT)
++  ADD_DEFINITIONS(-DDONT_HAVE_GETOPT)
++  SET(common_SRCS
++    ${common_SRCS}
++    ../codec/compat/getopt.c
++ )
++ENDIF(DONT_HAVE_GETOPT)
+ 
+ ADD_EXECUTABLE(JPWL_j2k_to_image
+-../codec/convert.c ../codec/j2k_to_image.c
++../codec/convert.c ../codec/j2k_to_image.c ../codec/index.c ${common_SRCS}
+ )
+ TARGET_LINK_LIBRARIES(JPWL_j2k_to_image openjpeg_JPWL ${TIFF_LIBRARIES})
+ IF(UNIX)
+@@ -47,7 +58,7 @@
+ ENDIF(UNIX)
+ 
+ ADD_EXECUTABLE(JPWL_image_to_j2k
+-../codec/convert.c ../codec/image_to_j2k.c)
++../codec/convert.c ../codec/image_to_j2k.c ../codec/index.c ${common_SRCS})
+ TARGET_LINK_LIBRARIES(JPWL_image_to_j2k openjpeg_JPWL ${TIFF_LIBRARIES})
+ IF(UNIX)
+   TARGET_LINK_LIBRARIES(JPWL_image_to_j2k m)
+diff -Nru OpenJPEG_v1_3.orig/jpwl/jpwl.c OpenJPEG_v1_3/jpwl/jpwl.c
+--- OpenJPEG_v1_3.orig/jpwl/jpwl.c	2007-11-29 15:38:26.000000000 +0100
++++ OpenJPEG_v1_3/jpwl/jpwl.c	2009-10-01 03:07:33.093600000 +0200
+@@ -122,19 +122,19 @@
+ 		switch (jwmarker[mm].id) {
+ 
+ 		case J2K_MS_EPB:
+-			free(jwmarker[mm].epbmark);
++			opj_free(jwmarker[mm].m.epbmark);
+ 			break;
+ 
+ 		case J2K_MS_EPC:
+-			free(jwmarker[mm].epcmark);
++			opj_free(jwmarker[mm].m.epcmark);
+ 			break;
+ 
+ 		case J2K_MS_ESD:
+-			free(jwmarker[mm].esdmark);
++			opj_free(jwmarker[mm].m.esdmark);
+ 			break;
+ 
+ 		case J2K_MS_RED:
+-			free(jwmarker[mm].redmark);
++			opj_free(jwmarker[mm].m.redmark);
+ 			break;
+ 
+ 		default:
+@@ -202,18 +202,18 @@
+ 	 EPC MS for Main Header: if we are here it's required
+ 	*/
+ 	/* create the EPC */
+-	if (epc_mark = jpwl_epc_create(
++	if ((epc_mark = jpwl_epc_create(
+ 			j2k,
+ 			j2k->cp->esd_on, /* is ESD present? */
+ 			j2k->cp->red_on, /* is RED present? */
+ 			j2k->cp->epb_on, /* is EPB present? */
+ 			false /* are informative techniques present? */
+-		)) {
++		))) {
+ 
+ 		/* Add this marker to the 'insertanda' list */
+ 		if (epc_mark) {
+ 			jwmarker[jwmarker_num].id = J2K_MS_EPC; /* its type */
+-			jwmarker[jwmarker_num].epcmark = epc_mark; /* the EPC */
++			jwmarker[jwmarker_num].m.epcmark = epc_mark; /* the EPC */
+ 			jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
+ 			jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.1; /* not so first */
+ 			jwmarker[jwmarker_num].len = epc_mark->Lepc; /* its length */
+@@ -243,7 +243,7 @@
+ 	if (j2k->cp->esd_on && (j2k->cp->sens_MH >= 0)) {
+ 
+ 		/* Create the ESD */
+-		if (esd_mark = jpwl_esd_create(
++		if ((esd_mark = jpwl_esd_create(
+ 			j2k, /* this encoder handle */
+ 			-1, /* we are averaging over all components */
+ 			(unsigned char) j2k->cp->sens_range, /* range method */
+@@ -253,12 +253,12 @@
+ 			-1, /* this ESD is in main header */
+ 			0 /*j2k->cstr_info->num*/, /* number of packets in codestream */
+ 			NULL /*sensval*/ /* pointer to sensitivity data of packets */
+-			)) {
++			))) {
+ 			
+ 			/* Add this marker to the 'insertanda' list */
+ 			if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
+ 				jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
+-				jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
++				jwmarker[jwmarker_num].m.esdmark = esd_mark; /* the EPB */
+ 				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* we choose to place it after SIZ */
+ 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
+ 				jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
+@@ -337,7 +337,7 @@
+ 			if (j2k->cp->esd_on && (sens >= 0)) {
+ 
+ 				/* Create the ESD */
+-				if (esd_mark = jpwl_esd_create(
++				if ((esd_mark = jpwl_esd_create(
+ 					j2k, /* this encoder handle */
+ 					-1, /* we are averaging over all components */
+ 					(unsigned char) j2k->cp->sens_range, /* range method */
+@@ -347,12 +347,12 @@
+ 					tileno, /* this ESD is in a tile */
+ 					0, /* number of packets in codestream */
+ 					NULL /* pointer to sensitivity data of packets */
+-					)) {
++					))) {
+ 					
+ 					/* Add this marker to the 'insertanda' list */
+ 					if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
+ 						jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
+-						jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
++						jwmarker[jwmarker_num].m.esdmark = esd_mark; /* the EPB */
+ 						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
+ 						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
+ 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
+@@ -416,7 +416,7 @@
+ 		}
+ 
+ 		/* Create the EPB */
+-		if (epb_mark = jpwl_epb_create(
++		if ((epb_mark = jpwl_epb_create(
+ 			j2k, /* this encoder handle */
+ 			true, /* is it the latest? */
+ 			true, /* is it packed? not for now */
+@@ -425,12 +425,12 @@
+ 			j2k->cp->hprot_MH, /* protection type parameters of data */
+ 			socsiz_len, /* pre-data: only SOC+SIZ */
+ 			left_MHmarks_len /* post-data: from SOC to SOT, and all JPWL markers within */
+-			)) {
++			))) {
+ 			
+ 			/* Add this marker to the 'insertanda' list */
+ 			if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
+ 				jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
+-				jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
++				jwmarker[jwmarker_num].m.epbmark = epb_mark; /* the EPB */
+ 				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
+ 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
+ 				jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
+@@ -514,7 +514,7 @@
+ 			if (j2k->cp->epb_on && (hprot > 0)) {
+ 
+ 				/* Create the EPB */
+-				if (epb_mark = jpwl_epb_create(
++				if ((epb_mark = jpwl_epb_create(
+ 					j2k, /* this encoder handle */
+ 					false, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
+ 					true, /* is it packed? yes for now */
+@@ -523,12 +523,12 @@
+ 					hprot, /* protection type parameters of following data */
+ 					sot_len + 2, /* pre-data length: only SOT */
+ 					left_THmarks_len /* post-data length: from SOT end to SOD inclusive */
+-					)) {
++					))) {
+ 					
+ 					/* Add this marker to the 'insertanda' list */
+ 					if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
+ 						jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
+-						jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
++						jwmarker[jwmarker_num].m.epbmark = epb_mark; /* the EPB */
+ 						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
+ 						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
+ 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
+@@ -712,7 +712,7 @@
+ 	int mm;
+ 	unsigned long int old_size = j2k->cstr_info->codestream_size;
+ 	unsigned long int new_size = old_size;
+-	int ciopos = cio_tell(cio), soc_pos = j2k->cstr_info->main_head_start;
++	int /*ciopos = cio_tell(cio),*/ soc_pos = j2k->cstr_info->main_head_start;
+ 	unsigned char *jpwl_buf, *orig_buf;
+ 	unsigned long int orig_pos;
+ 	double epbcoding_time = 0.0, esdcoding_time = 0.0;
+@@ -758,15 +758,15 @@
+ 		switch (jwmarker[mm].id) {
+ 
+ 		case J2K_MS_EPB:
+-			jpwl_epb_write(j2k, jwmarker[mm].epbmark, jpwl_buf);
++			jpwl_epb_write(j2k, jwmarker[mm].m.epbmark, jpwl_buf);
+ 			break;
+ 
+ 		case J2K_MS_EPC:
+-			jpwl_epc_write(j2k, jwmarker[mm].epcmark, jpwl_buf);
++			jpwl_epc_write(j2k, jwmarker[mm].m.epcmark, jpwl_buf);
+ 			break;
+ 
+ 		case J2K_MS_ESD:
+-			jpwl_esd_write(j2k, jwmarker[mm].esdmark, jpwl_buf);
++			jpwl_esd_write(j2k, jwmarker[mm].m.esdmark, jpwl_buf);
+ 			break;
+ 
+ 		case J2K_MS_RED:
+@@ -812,11 +812,11 @@
+ 			unsigned short int mycrc = 0x0000;
+ 
+ 			/* fix and fill the DL field */
+-			jwmarker[mm].epcmark->DL = new_size;
+-			orig_buf[epc_pos + 6] = (unsigned char) (jwmarker[mm].epcmark->DL >> 24);
+-			orig_buf[epc_pos + 7] = (unsigned char) (jwmarker[mm].epcmark->DL >> 16);
+-			orig_buf[epc_pos + 8] = (unsigned char) (jwmarker[mm].epcmark->DL >> 8);
+-			orig_buf[epc_pos + 9] = (unsigned char) (jwmarker[mm].epcmark->DL >> 0);
++			jwmarker[mm].m.epcmark->DL = new_size;
++			orig_buf[epc_pos + 6] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 24);
++			orig_buf[epc_pos + 7] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 16);
++			orig_buf[epc_pos + 8] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 8);
++			orig_buf[epc_pos + 9] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 0);
+ 
+ 			/* compute the CRC field (excluding itself) */
+ 			for (pp = 0; pp < 4; pp++)
+@@ -825,9 +825,9 @@
+ 				jpwl_updateCRC16(&mycrc, orig_buf[epc_pos + pp]);
+ 
+ 			/* fix and fill the CRC */
+-			jwmarker[mm].epcmark->Pcrc = mycrc;
+-			orig_buf[epc_pos + 4] = (unsigned char) (jwmarker[mm].epcmark->Pcrc >> 8);
+-			orig_buf[epc_pos + 5] = (unsigned char) (jwmarker[mm].epcmark->Pcrc >> 0);
++			jwmarker[mm].m.epcmark->Pcrc = mycrc;
++			orig_buf[epc_pos + 4] = (unsigned char) (jwmarker[mm].m.epcmark->Pcrc >> 8);
++			orig_buf[epc_pos + 5] = (unsigned char) (jwmarker[mm].m.epcmark->Pcrc >> 0);
+ 
+ 		}
+ 	}
+@@ -842,7 +842,7 @@
+ 			/* remember that they are now in a new position (dpos) */
+ 			int esd_pos = (int) jwmarker[mm].dpos;
+ 
+-			jpwl_esd_fill(j2k, jwmarker[mm].esdmark, &orig_buf[esd_pos]);
++			jpwl_esd_fill(j2k, jwmarker[mm].m.esdmark, &orig_buf[esd_pos]);
+ 		
+ 		}
+ 
+@@ -867,16 +867,16 @@
+ 			accum_len = 0;
+ 			for (nn = mm; (nn < jwmarker_num) && (jwmarker[nn].id == J2K_MS_EPB) &&
+ 				(jwmarker[nn].pos == jwmarker[mm].pos); nn++)
+-				accum_len += jwmarker[nn].epbmark->Lepb + 2;
++				accum_len += jwmarker[nn].m.epbmark->Lepb + 2;
+ 
+ 			/* fill the current (first) EPB with post-data starting from the computed position */
+-			jpwl_epb_fill(j2k, jwmarker[mm].epbmark, &orig_buf[(int) jwmarker[mm].dpos],
++			jpwl_epb_fill(j2k, jwmarker[mm].m.epbmark, &orig_buf[(int) jwmarker[mm].dpos],
+ 				&orig_buf[(int) jwmarker[mm].dpos + accum_len]);
+ 		
+ 			/* fill the remaining EPBs in the header with post-data starting from the last position */
+ 			for (nn = mm + 1; (nn < jwmarker_num) && (jwmarker[nn].id == J2K_MS_EPB) &&
+ 				(jwmarker[nn].pos == jwmarker[mm].pos); nn++)
+-				jpwl_epb_fill(j2k, jwmarker[nn].epbmark, &orig_buf[(int) jwmarker[nn].dpos], NULL);
++				jpwl_epb_fill(j2k, jwmarker[nn].m.epbmark, &orig_buf[(int) jwmarker[nn].dpos], NULL);
+ 
+ 			/* skip all the processed EPBs */
+ 			mm = nn - 1;
+@@ -1106,9 +1106,9 @@
+ 		if (((Pepb & 0xF0000000) >> 28) == 0)
+ 			sprintf(str1, "pred"); /* predefined */
+ 		else if (((Pepb & 0xF0000000) >> 28) == 1)
+-			sprintf(str1, "crc-%d", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
++			sprintf(str1, "crc-%lu", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
+ 		else if (((Pepb & 0xF0000000) >> 28) == 2)
+-			sprintf(str1, "rs(%d,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
++			sprintf(str1, "rs(%lu,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
+ 		else if (Pepb == 0xFFFFFFFF)
+ 			sprintf(str1, "nometh"); /* RS mode */
+ 		else
+diff -Nru OpenJPEG_v1_3.orig/jpwl/jpwl.h OpenJPEG_v1_3/jpwl/jpwl.h
+--- OpenJPEG_v1_3.orig/jpwl/jpwl.h	2007-11-05 14:05:07.000000000 +0100
++++ OpenJPEG_v1_3/jpwl/jpwl.h	2009-10-01 03:08:13.520600000 +0200
+@@ -179,7 +179,7 @@
+ 	/** marker value (J2K_MS_EPC, etc.) */
+ 	int id;
+ 	/** union keeping the pointer to the real marker struct */
+-	union {
++	union jpwl_marks {
+ 		/** pointer to EPB marker */
+ 		jpwl_epb_ms_t *epbmark;
+ 		/** pointer to EPC marker */
+@@ -188,7 +188,7 @@
+ 		jpwl_esd_ms_t *esdmark;
+ 		/** pointer to RED marker */
+ 		jpwl_red_ms_t *redmark;
+-	};
++	} m;
+ 	/** position where the marker should go, in the pre-JPWL codestream */ 
+ 	unsigned long int pos;
+ 	/** same as before, only written as a double, so we can sort it better */
+diff -Nru OpenJPEG_v1_3.orig/jpwl/jpwl_lib.c OpenJPEG_v1_3/jpwl/jpwl_lib.c
+--- OpenJPEG_v1_3.orig/jpwl/jpwl_lib.c	2007-11-29 15:38:26.000000000 +0100
++++ OpenJPEG_v1_3/jpwl/jpwl_lib.c	2009-10-01 03:13:01.103600000 +0200
+@@ -152,7 +152,7 @@
+ 		/* length to use */
+ 		dL4 = min(max_postlen, post_len);
+ 
+-		if (epb_mark = jpwl_epb_create(
++		if ((epb_mark = jpwl_epb_create(
+ 			j2k, /* this encoder handle */
+ 			latest ? (dL4 < max_postlen) : false, /* is it the latest? */
+ 			packed, /* is it packed? */
+@@ -161,12 +161,12 @@
+ 			hprot, /* protection type parameters of following data */
+ 			0, /* pre-data: nothing for now */
+ 			dL4 /* post-data: the stub computed previously */
+-			)) {
++			))) {
+ 			
+ 			/* Add this marker to the 'insertanda' list */
+ 			if (*jwmarker_num < JPWL_MAX_NO_MARKERS) {
+ 				jwmarker[*jwmarker_num].id = J2K_MS_EPB; /* its type */
+-				jwmarker[*jwmarker_num].epbmark = epb_mark; /* the EPB */
++				jwmarker[*jwmarker_num].m.epbmark = epb_mark; /* the EPB */
+ 				jwmarker[*jwmarker_num].pos = (int) place_pos; /* after SOT */
+ 				jwmarker[*jwmarker_num].dpos = place_pos + 0.0000001 * (double)(*idx); /* not very first! */
+ 				jwmarker[*jwmarker_num].len = epb_mark->Lepb; /* its length */
+@@ -335,7 +335,7 @@
+ 	jpwl_epc_ms_t *epc = NULL;
+ 
+ 	/* Alloc space */
+-	if (!(epc = (jpwl_epc_ms_t *) malloc((size_t) 1 * sizeof (jpwl_epc_ms_t)))) {
++	if (!(epc = (jpwl_epc_ms_t *) opj_malloc((size_t) 1 * sizeof (jpwl_epc_ms_t)))) {
+ 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for EPC MS\n");
+ 		return NULL;
+ 	};
+@@ -596,6 +596,15 @@
+ 				return true;
+ 			}
+ 
++			/* Disable correction in case of missing or bad head EPB */
++			/* We can't do better! */
++			/* PATCHED: 2008-01-25 */
++			/* MOVED UP: 2008-02-01 */
++			if (!status) {
++				j2k->cp->correct = false;
++				opj_event_msg(j2k->cinfo, EVT_WARNING, "Couldn't find the MH EPB: disabling JPWL\n");
++			}
++
+ 		}
+ 
+ 	}
+@@ -790,6 +799,8 @@
+ 
+ 	case 3:
+ 		/* automatic setup */
++		opj_event_msg(j2k->cinfo, EVT_ERROR, "Auto. setup not yet implemented\n");
++		return false;
+ 		break;
+ 
+ 	default:
+@@ -911,9 +922,9 @@
+ 	if (((Pepb & 0xF0000000) >> 28) == 0)
+ 		sprintf(str1, "pred"); /* predefined */
+ 	else if (((Pepb & 0xF0000000) >> 28) == 1)
+-		sprintf(str1, "crc-%d", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
++		sprintf(str1, "crc-%lu", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
+ 	else if (((Pepb & 0xF0000000) >> 28) == 2)
+-		sprintf(str1, "rs(%d,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
++		sprintf(str1, "rs(%lu,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
+ 	else if (Pepb == 0xFFFFFFFF)
+ 		sprintf(str1, "nometh"); /* RS mode */
+ 	else
+@@ -1196,7 +1207,7 @@
+ 	jpwl_esd_ms_t *esd = NULL;
+ 
+ 	/* Alloc space */
+-	if (!(esd = (jpwl_esd_ms_t *) malloc((size_t) 1 * sizeof (jpwl_esd_ms_t)))) {
++	if (!(esd = (jpwl_esd_ms_t *) opj_malloc((size_t) 1 * sizeof (jpwl_esd_ms_t)))) {
+ 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for ESD MS\n");
+ 		return NULL;
+ 	};
+diff -Nru OpenJPEG_v1_3.orig/jpwl/rs.h OpenJPEG_v1_3/jpwl/rs.h
+--- OpenJPEG_v1_3.orig/jpwl/rs.h	2007-03-27 14:48:17.000000000 +0200
++++ OpenJPEG_v1_3/jpwl/rs.h	2009-10-01 03:14:40.705600000 +0200
+@@ -55,7 +55,7 @@
+  * each error counting as two erasures.
+  */
+ #define MM  8		/* RS code over GF(2**MM) - change to suit */
+-static int	KK;
++int	KK;
+ 
+ /* Original code */
+ /*#define KK  239*/		/* KK = number of information symbols */
+diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/CMakeLists.txt OpenJPEG_v1_3/libopenjpeg/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/libopenjpeg/CMakeLists.txt	2007-09-25 16:54:49.000000000 +0200
++++ OpenJPEG_v1_3/libopenjpeg/CMakeLists.txt	2009-10-01 02:30:44.838600000 +0200
+@@ -36,9 +36,10 @@
+ 	${OPENJPEG_LIBRARY_PROPERTIES})
+ 
+ # Install library
+-INSTALL(TARGETS ${OPENJPEG_LIBRARY_NAME}
+-	DESTINATION lib)
++INSTALL(TARGETS ${OPENJPEG_LIBRARY_NAME} RUNTIME DESTINATION bin 
++                                         LIBRARY DESTINATION lib
++                                         ARCHIVE DESTINATION lib)
+ 
+ # Install includes files
+ INSTALL(FILES openjpeg.h
+-	DESTINATION ${INCLUDE_INSTALL_DIR}/openjpeg)
++	DESTINATION include/openjpeg)
+diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/j2k_lib.c OpenJPEG_v1_3/libopenjpeg/j2k_lib.c
+--- OpenJPEG_v1_3.orig/libopenjpeg/j2k_lib.c	2007-10-18 14:26:11.000000000 +0200
++++ OpenJPEG_v1_3/libopenjpeg/j2k_lib.c	2009-10-01 02:30:44.852600000 +0200
+@@ -24,7 +24,7 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#ifdef WIN32
++#ifdef _WIN32
+ #include <windows.h>
+ #else
+ #include <sys/time.h>
+diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/openjpeg.h OpenJPEG_v1_3/libopenjpeg/openjpeg.h
+--- OpenJPEG_v1_3.orig/libopenjpeg/openjpeg.h	2007-12-21 11:39:41.000000000 +0100
++++ OpenJPEG_v1_3/libopenjpeg/openjpeg.h	2009-10-01 02:30:44.866600000 +0200
+@@ -40,7 +40,7 @@
+ ==========================================================
+ */
+ 
+-#if defined(OPJ_STATIC) || !(defined(WIN32) || defined(__WIN32__))
++#if defined(OPJ_STATIC) || !(defined(_WIN32) || defined(WIN32) || defined(__WIN32__))
+ #define OPJ_API
+ #define OPJ_CALLCONV
+ #else
+diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/opj_malloc.h OpenJPEG_v1_3/libopenjpeg/opj_malloc.h
+--- OpenJPEG_v1_3.orig/libopenjpeg/opj_malloc.h	2007-12-21 11:19:01.000000000 +0100
++++ OpenJPEG_v1_3/libopenjpeg/opj_malloc.h	2009-10-01 02:30:44.879600000 +0200
+@@ -61,7 +61,7 @@
+ @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
+ */
+ /* FIXME: These should be set with cmake tests, but we're currently not requiring use of cmake */
+-#ifdef WIN32
++#ifdef _WIN32
+ 	/* Someone should tell the mingw people that their malloc.h ought to provide _mm_malloc() */
+ 	#ifdef __GNUC__
+ 		#include <mm_malloc.h>
+diff -Nru OpenJPEG_v1_3.orig/mj2/CMakeLists.txt OpenJPEG_v1_3/mj2/CMakeLists.txt
+--- OpenJPEG_v1_3.orig/mj2/CMakeLists.txt	2007-09-12 11:04:03.000000000 +0200
++++ OpenJPEG_v1_3/mj2/CMakeLists.txt	2009-10-01 02:30:44.891600000 +0200
+@@ -1,5 +1,6 @@
+ # Makefile for the MJ2 codecs of the OpenJPEG library: frames_to_mj2, mj2_to_frames, extract_j2k_from_mj2 and wrap_j2k_in_mj2
+ 
++IF(NOT WIN32)
+ # Headers file are located here:
+ INCLUDE_DIRECTORIES(
+   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+@@ -39,4 +40,5 @@
+ ENDIF(UNIX)
+ 
+ INSTALL(TARGETS frames_to_mj2 mj2_to_frames extract_j2k_from_mj2 wrap_j2k_in_mj2
+-	DESTINATION bin)
++        DESTINATION bin)
++ENDIF(NOT WIN32)
+\ No newline at end of file
