@@ -49,7 +49,10 @@ class GitSource ( VersionSystemSourceBase ):
             else:
                 # it doesn't exist so clone the repo
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                ret = self.shell.execute( self.sourceDir().replace( self.package, "" ), "git", "clone %s %s" % ( repoUrl, self.package ) )
+                svnsrcdir = self.sourceDir().replace( self.package, "" )
+                if not os.path.exists( svnsrcdir ):
+                    os.mkdirs( svnsrcdir )
+                ret = self.shell.execute( svnsrcdir, "git", "clone %s %s" % ( repoUrl, self.package ) )
                 
             # if a branch is given, we should check first if the branch is already downloaded locally, or if we can track the remote branch
             # the following code is for both ways the same
