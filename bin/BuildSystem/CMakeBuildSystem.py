@@ -105,7 +105,6 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def install( self):
         """install the target"""
-
         self.enterBuildDir()
         
         fastString = ""
@@ -123,9 +122,9 @@ class CMakeBuildSystem(BuildSystemBase):
             utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
         return True
 
-    def runTest( self ):
+    def unittest( self ):
         """running cmake based unittests"""
 
-        self.enterbuildDir()
+        self.enterBuildDir()
 
-        return self.system( "%s test" % ( self.cmakeMakeProgramm ), "test" )
+        return self.system( "%s test" % ( self.makeProgramm ), "test" )
