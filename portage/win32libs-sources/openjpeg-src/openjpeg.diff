@@ -98,7 +98,7 @@ diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/CMakeLists.txt OpenJPEG_v1_3/jp3d/li
  # Install includes files
 -INSTALL_FILES(/include .h)
 +FILE(GLOB HEADERS "*.h")
-+INSTALL(FILES ${HEADERS} DESTINATION include)
++INSTALL(FILES ${HEADERS} DESTINATION include/jp3dvm)
 diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/jp3d_lib.c OpenJPEG_v1_3/jp3d/libjp3dvm/jp3d_lib.c
 --- OpenJPEG_v1_3.orig/jp3d/libjp3dvm/jp3d_lib.c	2006-10-30 16:32:50.000000000 +0100
 +++ OpenJPEG_v1_3/jp3d/libjp3dvm/jp3d_lib.c	2009-10-01 02:30:44.800600000 +0200
