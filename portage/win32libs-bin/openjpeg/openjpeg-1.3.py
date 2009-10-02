@@ -21,12 +21,12 @@ j2k-images, ... """
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['1.3']:
-            self.targets[ version ] = repoUrl + "/OpenJPEG-" + version + "-bin.tar.bz2 " +\
-                                      repoUrl + "/OpenJPEG-" + version + "-lib.tar.bz2"
+        for version in ['1.3-1']:
+            self.targets[ version ] = repoUrl + "/openjpeg-" + version + "-bin.tar.bz2 " +\
+                                      repoUrl + "/openjpeg-" + version + "-lib.tar.bz2"
 
             
-        self.defaultTarget = '1.3'
+        self.defaultTarget = '1.3-1'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
