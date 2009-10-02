@@ -1,7 +1,7 @@
 diff -Nru libsamplerate-0.1.7.orig/CMakeLists.txt libsamplerate-0.1.7/CMakeLists.txt
 --- libsamplerate-0.1.7.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libsamplerate-0.1.7/CMakeLists.txt	2009-10-02 03:26:09.919966400 +0200
-@@ -0,0 +1,108 @@
+@@ -0,0 +1,112 @@
 +# a CMake build system for libsamplerate
 +# copyright Patrick Spendrin <ps_ml@gmx.de> 2009
 +#           Ralf Habacker <ralf.habacker@freenet.de> 2009
@@ -76,7 +76,11 @@ diff -Nru libsamplerate-0.1.7.orig/CMakeLists.txt libsamplerate-0.1.7/CMakeLists
 +endif(BUILD_SHARED_LIB)
 +
 +add_library(samplerate ${SR_SHARED} ${samplerate_SRCS})
-+set_target_properties(samplerate PROPERTIES OUTPUT_NAME "libsamplerate-${VERSION_MAJOR}")
++if(MSVC)
++    set_target_properties(samplerate PROPERTIES OUTPUT_NAME "libsamplerate-${VERSION_MAJOR}")
++else(MSVC)
++    set_target_properties(samplerate PROPERTIES OUTPUT_NAME "samplerate-${VERSION_MAJOR}")
++endif(MSVC)
 +
 +install(TARGETS samplerate RUNTIME DESTINATION bin
 +                           LIBRARY DESTINATION lib

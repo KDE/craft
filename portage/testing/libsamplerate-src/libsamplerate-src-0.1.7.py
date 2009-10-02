@@ -7,6 +7,8 @@ class subinfo( info.infoclass ):
         self.targets['0.1.7'] = "http://www.mega-nerd.com/SRC/libsamplerate-0.1.7.tar.gz"
         self.targetInstSrc['0.1.7'] = 'libsamplerate-0.1.7'
         self.patchToApply['0.1.7'] = ('libsamplerate-0.1.7-20091002.diff', 1)
+        self.options.package.withCompiler = False
+        self.options.package.packageName = "libsamplerate"
         self.defaultTarget = '0.1.7'
         
 class Package(CMakePackageBase):
