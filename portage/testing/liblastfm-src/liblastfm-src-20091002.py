@@ -46,7 +46,7 @@ class Package(QMakePackageBase):
     def configure( self ):
         old_dir = os.getcwd()
         os.chdir( self.sourceDir() )
-        cmd = "ruby " + os.path.join( self.sourceDir(), "configure" ) + " --skip-checks --prefix \\"
+        cmd = "ruby " + os.path.join( self.sourceDir(), "configure" ) + " --release --skip-checks --prefix \\"
         ret = self.system( cmd )
         os.chdir( old_dir )
         return ret
