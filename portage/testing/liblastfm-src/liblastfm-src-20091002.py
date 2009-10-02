@@ -31,6 +31,10 @@ class subinfo( info.infoclass ):
 class Package(QMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
+        if "PSDKDIR" in os.environ:
+            os.environ["PSDK_DIR"] = os.environ["PSDKDIR"].replace('\\', '/')
+        else:
+            print "it won't work!!!!!!!!!!!!!!!!!"
         QMakePackageBase.__init__( self )
 
     def unpack( self ):
