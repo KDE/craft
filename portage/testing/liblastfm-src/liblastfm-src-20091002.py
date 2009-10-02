@@ -7,6 +7,7 @@ from Package.QMakePackageBase import *
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "git://github.com/mxcl/liblastfm.git"
+        self.options.package.packageName = "liblastfm"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
