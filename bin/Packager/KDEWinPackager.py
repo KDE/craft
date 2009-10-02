@@ -37,12 +37,18 @@ class KDEWinPackager (PackagerBase):
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package
+            
+        if pkgName.endswith('-src'):
+            pkgName = pkgName[:-4]
 
         pkgVersion = str( datetime.date.today() ).replace('-', '')
         if self.subinfo.options.package.version <> None:
             pkgVersion = self.subinfo.options.package.version
         elif not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
             pkgVersion = self.subinfo.buildTarget
+
+        if "EMERGE_PKGPATCHLVL" in os.environ:
+            pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
 
         if os.getenv("EMERGE_ARCHITECTURE") == "x64": 
             pkgName += "-x64"
