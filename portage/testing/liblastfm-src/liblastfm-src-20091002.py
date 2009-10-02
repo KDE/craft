@@ -32,7 +32,7 @@ class Package(QMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         if "PSDKDIR" in os.environ:
-            os.environ["PSDKDIR"] = os.environ["PSDKDIR"].replace('\\', '/')
+            os.environ["PSDKDIR"] = os.environ["PSDKDIR"].replace('\\', '/').replace(' ', '\\ ')
         else:
             print "it won't work!!!!!!!!!!!!!!!!!"
         QMakePackageBase.__init__( self )
