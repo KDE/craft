@@ -13,6 +13,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['testing/libfftw'] = 'default'
+        self.hardDependencies['testing/libsamplerate'] = 'default'
 
 class Package(BinaryPackageBase):
   def __init__(self):
