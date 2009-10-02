@@ -6,7 +6,7 @@ index 1e2d334..571d13e 100755
  UI_DIR = $$BUILD_DIR
  RCC_DIR = $$BUILD_DIR
  INCLUDEPATH += $$ROOT_DIR/_include
-+INCLUDEPATH += $$(PSDKDIR)/Include/ATL
++INCLUDEPATH += "$$(PSDKDIR)/Include/ATL"
 +LIBS += -L$$(KDEROOT)/lib libfftw3f-3.lib libsamplerate-0.lib shell32.lib
  
  win32:DEFINES += _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN
