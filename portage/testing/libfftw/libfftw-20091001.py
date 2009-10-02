@@ -18,6 +18,7 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
+        self.subinfo.options.package.packSources = False
         BinaryPackageBase.__init__(self)
 
     def __move(self, filenames, destdir):
