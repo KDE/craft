@@ -8,6 +8,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['3.3.2'] = 'ftp://ftp.fftw.org/pub/fftw/fftw-3.2.2.pl1-dll32.zip'
         self.defaultTarget = '3.3.2'
+        self.options.package.packSources = False
+        self.options.package.withCompiler = False
+        self.options.package.packageName = "libfftw"
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
@@ -18,8 +21,6 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        self.subinfo.options.package.packSources = False
-        self.subinfo.options.package.withCompiler = False
         BinaryPackageBase.__init__(self)
 
     def __move(self, filenames, destdir):
