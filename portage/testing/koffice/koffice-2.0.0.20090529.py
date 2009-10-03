@@ -12,8 +12,9 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.0.0'] = 'koffice-2.0.0'
         self.targets['2.0.1'] = 'ftp://ftp.kde.org/pub/kde/stable/koffice-2.0.1/src/koffice-2.0.1.tar.bz2'
         self.targetInstSrc['2.0.1'] = 'koffice-2.0.1'
-        self.targets['2.0.82'] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-2.0.82/src/koffice-2.0.82.tar.bz2'
-        self.targetInstSrc['2.0.82'] = 'koffice-2.0.82'
+        for ver in ['2.0.82', '2.0.83']:
+            self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = 'koffice-' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -46,7 +47,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
 
     def unpack( self ):
-        if self.buildTarget in ['2.0.0', '2.0.1', '2.0.82']:
+        if self.buildTarget in ['2.0.0', '2.0.1', '2.0.82', '2.0.83']:
             if( not base.baseclass.unpack( self ) ):
                 return False
                 
