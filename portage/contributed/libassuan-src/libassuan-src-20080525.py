@@ -38,7 +38,7 @@ class subclass(base.baseclass):
             os.chdir( self.workdir )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
-#    os.system( "patch -p0 < libassuan_cmake.diff" )
+            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake-nokde.diff" ) ) )
 
             return True
         else:
