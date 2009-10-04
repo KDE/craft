@@ -4,7 +4,6 @@ import os
 import shutil
 import info
 
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = False
@@ -38,7 +37,6 @@ class subclass(base.baseclass):
             os.chdir( self.workdir )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
-            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake-nokde.diff" ) ) )
 
             return True
         else:
@@ -47,7 +45,6 @@ class subclass(base.baseclass):
             shutil.move("libassuan-1.0.5", "libassuan")
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
-            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake-nokde.diff" ) ) )
             return True
 
 
