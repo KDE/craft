@@ -14,7 +14,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
 	self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         self.hardDependencies['enterprise4/kdebase-runtime-branch'] = 'default'
-        self.hardDependencies['contributed/libassuan-src'] = 'default'
+# the libassuan CMakeLists.txt is currently dependent on KDE
+# so this must be installed later by-hand. for now.
+#        self.hardDependencies['contributed/libassuan-src'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
