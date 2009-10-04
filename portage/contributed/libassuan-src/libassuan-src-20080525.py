@@ -47,6 +47,7 @@ class subclass(base.baseclass):
             shutil.move("libassuan-1.0.5", "libassuan")
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan.diff" ) ) )
             self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake.diff" ) ) )
+            self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "libassuan-cmake-nokde.diff" ) ) )
             return True
 
 
