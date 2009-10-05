@@ -1,6 +1,6 @@
-diff -N -u -r libassuan/assuan-errors.c libassuan2/assuan-errors.c
+diff -N -u -r libassuan/assuan-errors.c libassuan/assuan-errors.c
 --- libassuan/assuan-errors.c	1970-01-01 01:00:00.000000000 +0100
-+++ libassuan2/assuan-errors.c	2007-12-14 21:34:29.790811100 +0100
++++ libassuan/assuan-errors.c	2007-12-14 21:34:29.790811100 +0100
 @@ -0,0 +1,278 @@
 +/* Generated automatically by mkerrors */
 +/* Do not edit!  See mkerrors for copyright notice. */
@@ -280,14 +280,12 @@ diff -N -u -r libassuan/assuan-errors.c libassuan2/assuan-errors.c
 +  return s;
 +}
 +
-diff -N -u -r libassuan/CMakeLists.txt libassuan2/CMakeLists.txt
+diff -N -u -r libassuan/CMakeLists.txt libassuan/CMakeLists.txt
 --- libassuan/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libassuan2/CMakeLists.txt	2007-12-14 21:39:32.741997200 +0100
-@@ -0,0 +1,70 @@
++++ libassuan/CMakeLists.txt	2007-12-14 21:39:32.741997200 +0100
+@@ -0,0 +1,75 @@
 +project( libassuan )
-+
-+find_package(KDE4 REQUIRED)
-+
++cmake_minimum_required(VERSION 2.4)
 +if (WIN32)
 +# overriding LIB_INSTALL_DIR specific for win32 to archieve 
 +# propper installation of shared library targets will also be 
@@ -298,14 +296,18 @@ diff -N -u -r libassuan/CMakeLists.txt libassuan2/CMakeLists.txt
 +  add_definitions(-DHAVE_W32_SYSTEM)
 +
 +  if(MINGW)
-+   include_directories(${KDEWIN32_INCLUDE_DIR}/mingw )
-+  else()
-+   include_directories(${KDEWIN32_INCLUDE_DIR}/msvc )
++   find_package(KDE4 REQUIRED)
++   include_directories(${KDEWIN_INCLUDE_DIR}/mingw )
 +  endif(MINGW)
 +
 +  add_definitions(-DWIN32_LEAN_AND_MEAN)
 +
 +endif (WIN32)
++include(CheckIncludeFile)
++check_include_file(HAVE_UNISTD_H "unistd.h")
++if(HAVE_UNISTD_H)
++add_definitions(-DHAVE_UNISTD_H)
++endif(HAVE_UNISTD_H)
 +
 +INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}/libassuan" 
 +  "${CMAKE_SOURCE_DIR}/libassuan/src" "${CMAKE_INSTALL_PREFIX}/include" "${CMAKE_CURRENT_BINARY_DIR}")
@@ -344,6 +346,9 @@ diff -N -u -r libassuan/CMakeLists.txt libassuan2/CMakeLists.txt
 +if (WIN32)
 +  set(assuan_LIB_SRCS ${assuan_LIB_SRCS} src/stpcpy.c src/memrchr.c src/isascii.c src/putc_unlocked.c)
 +endif (WIN32)
++if(MSVC)
++  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
 +
 +INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src) 
 +
@@ -351,12 +356,12 @@ diff -N -u -r libassuan/CMakeLists.txt libassuan2/CMakeLists.txt
 +
 +ADD_LIBRARY( assuan ${assuan_LIB_SRCS} )
 +TARGET_LINK_LIBRARIES( assuan )
-+install(TARGETS assuan DESTINATION ${LIB_INSTALL_DIR} )
-+install( FILES src/assuan.h DESTINATION ${INCLUDE_INSTALL_DIR} )
++install(TARGETS assuan DESTINATION lib )
++install( FILES src/assuan.h DESTINATION include )
 +install( FILES src/libassuan.m4 DESTINATION share/aclocal )
-diff -N -u -r libassuan/config.h.cmake libassuan2/config.h.cmake
+diff -N -u -r libassuan/config.h.cmake libassuan/config.h.cmake
 --- libassuan/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libassuan2/config.h.cmake	2007-12-14 21:34:29.790811100 +0100
++++ libassuan/config.h.cmake	2007-12-14 21:34:29.790811100 +0100
 @@ -0,0 +1,28 @@
 +/* This file is part of the KDE libraries
 +   Copyright (c) 2007 The KDE Project
