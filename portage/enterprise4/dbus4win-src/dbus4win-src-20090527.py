@@ -7,8 +7,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['dbus4win-frank'] = 'http://www.kdab.net/~frank/dbus4win-20090527-3.zip'
-        self.targets['dbus4win-noncetcp'] = 'http://www.kdab.net/~frank/dbus4win-noncetcp-20090612.zip'
+        self.targets['dbus4win-frank'] = 'ftp://ftp.kdab.net/pub/dbus4win/dbus4win-20090527-3.zip'
+        self.targets['dbus4win-noncetcp'] = 'ftp://ftp.kdab.net/pub/dbus4win/dbus4win-noncetcp-20090612.zip'
         self.targetInstSrc['dbus4win-frank'] = os.path.join( "dbus4win-20090527-3", "cmake" )
         self.targetInstSrc['dbus4win-noncetcp'] = os.path.join( "dbus4win-noncetcp-20090612", "cmake" )
         self.defaultTarget = 'dbus4win-frank'
