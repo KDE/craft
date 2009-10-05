@@ -283,7 +283,7 @@ diff -N -u -r libassuan/assuan-errors.c libassuan/assuan-errors.c
 diff -N -u -r libassuan/CMakeLists.txt libassuan/CMakeLists.txt
 --- libassuan/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libassuan/CMakeLists.txt	2007-12-14 21:39:32.741997200 +0100
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,70 @@
 +project( libassuan )
 +cmake_minimum_required(VERSION 2.4)
 +if (WIN32)
@@ -294,11 +294,6 @@ diff -N -u -r libassuan/CMakeLists.txt libassuan/CMakeLists.txt
 +# There must be a way to only patch install(TARGETS) 
 +#    set (LIB_INSTALL_DIR lib)
 +  add_definitions(-DHAVE_W32_SYSTEM)
-+
-+  if(MINGW)
-+   find_package(KDE4 REQUIRED)
-+   include_directories(${KDEWIN_INCLUDE_DIR}/mingw )
-+  endif(MINGW)
 +
 +  add_definitions(-DWIN32_LEAN_AND_MEAN)
 +
