@@ -1,0 +1,210 @@
+diff -Nru libassuan.orig/CMakeLists.txt libassuan/CMakeLists.txt
+--- libassuan.orig/CMakeLists.txt	2009-10-06 00:25:19.517000000 +0200
++++ libassuan/CMakeLists.txt	2009-10-06 00:16:23.263000000 +0200
+@@ -61,7 +61,7 @@
+   set(assuan_LIB_SRCS ${assuan_LIB_SRCS} src/stpcpy.c src/memrchr.c src/isascii.c src/putc_unlocked.c)
+ endif (WIN32)
+ if(MSVC)
+-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++  add_definitions(-D_CRT_NO_SECURE_WARNINGS)
+ endif(MSVC)
+ 
+ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src) 
+diff -Nru libassuan.orig/src/assuan-buffer.c libassuan/src/assuan-buffer.c
+--- libassuan.orig/src/assuan-buffer.c	2007-10-08 19:55:12.000000000 +0200
++++ libassuan/src/assuan-buffer.c	2009-10-06 00:16:23.290000000 +0200
+@@ -22,7 +22,9 @@
+ #include <string.h>
+ #include <stdio.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <assert.h>
+ #ifdef HAVE_W32_SYSTEM
+ #include <process.h>
+diff -Nru libassuan.orig/src/assuan-client.c libassuan/src/assuan-client.c
+--- libassuan.orig/src/assuan-client.c	2007-10-08 19:55:12.000000000 +0200
++++ libassuan/src/assuan-client.c	2009-10-06 00:16:23.293000000 +0200
+@@ -21,7 +21,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <assert.h>
+ 
+ #include "assuan-defs.h"
+diff -Nru libassuan.orig/src/assuan-connect.c libassuan/src/assuan-connect.c
+--- libassuan.orig/src/assuan-connect.c	2007-08-24 07:29:48.000000000 +0200
++++ libassuan/src/assuan-connect.c	2009-10-06 00:16:23.296000000 +0200
+@@ -25,7 +25,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <signal.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ #include <sys/types.h>
+ #ifndef HAVE_W32_SYSTEM
+diff -Nru libassuan.orig/src/assuan-defs.h libassuan/src/assuan-defs.h
+--- libassuan.orig/src/assuan-defs.h	2008-05-25 09:42:04.000000000 +0200
++++ libassuan/src/assuan-defs.h	2009-10-06 00:16:23.299000000 +0200
+@@ -29,7 +29,10 @@
+ #else
+ #include <windows.h>
+ #endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
++
+ 
+ #include "assuan.h"
+ 
+diff -Nru libassuan.orig/src/assuan-io-pth.c libassuan/src/assuan-io-pth.c
+--- libassuan.orig/src/assuan-io-pth.c	2008-05-25 09:42:04.000000000 +0200
++++ libassuan/src/assuan-io-pth.c	2009-10-06 00:16:23.302000000 +0200
+@@ -29,7 +29,9 @@
+ #if HAVE_SYS_UIO_H
+ # include <sys/uio.h>
+ #endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ #ifdef HAVE_W32_SYSTEM
+ # include <windows.h>
+diff -Nru libassuan.orig/src/assuan-io.c libassuan/src/assuan-io.c
+--- libassuan.orig/src/assuan-io.c	2008-05-25 09:42:04.000000000 +0200
++++ libassuan/src/assuan-io.c	2009-10-06 00:16:23.305000000 +0200
+@@ -21,12 +21,16 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
+ #include <sys/types.h>
+ #ifdef HAVE_SYS_SOCKET_H
+ # include <sys/socket.h>
+ #endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ #ifdef HAVE_W32_SYSTEM
+ # include <windows.h>
+diff -Nru libassuan.orig/src/assuan-listen.c libassuan/src/assuan-listen.c
+--- libassuan.orig/src/assuan-listen.c	2007-08-24 07:29:48.000000000 +0200
++++ libassuan/src/assuan-listen.c	2009-10-06 00:16:23.307000000 +0200
+@@ -21,7 +21,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ 
+ #include "assuan-defs.h"
+diff -Nru libassuan.orig/src/assuan-pipe-connect.c libassuan/src/assuan-pipe-connect.c
+--- libassuan.orig/src/assuan-pipe-connect.c	2007-11-14 16:01:53.000000000 +0100
++++ libassuan/src/assuan-pipe-connect.c	2009-10-06 00:16:23.311000000 +0200
+@@ -26,7 +26,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <signal.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sys/types.h>
+diff -Nru libassuan.orig/src/assuan-pipe-server.c libassuan/src/assuan-pipe-server.c
+--- libassuan.orig/src/assuan-pipe-server.c	2007-08-24 07:29:48.000000000 +0200
++++ libassuan/src/assuan-pipe-server.c	2009-10-06 00:16:23.314000000 +0200
+@@ -22,7 +22,9 @@
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_W32_SYSTEM
+ #include <windows.h>
+ #include <fcntl.h>
+diff -Nru libassuan.orig/src/assuan-socket-connect.c libassuan/src/assuan-socket-connect.c
+--- libassuan.orig/src/assuan-socket-connect.c	2007-10-04 09:29:19.000000000 +0200
++++ libassuan/src/assuan-socket-connect.c	2009-10-06 00:16:23.317000000 +0200
+@@ -23,7 +23,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <sys/types.h>
+ #ifndef HAVE_W32_SYSTEM
+ #include <sys/socket.h>
+diff -Nru libassuan.orig/src/assuan-socket-server.c libassuan/src/assuan-socket-server.c
+--- libassuan.orig/src/assuan-socket-server.c	2007-10-02 09:07:19.000000000 +0200
++++ libassuan/src/assuan-socket-server.c	2009-10-06 00:16:23.320000000 +0200
+@@ -21,7 +21,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <sys/types.h>
+ #ifdef HAVE_W32_SYSTEM
+ # include <windows.h>
+diff -Nru libassuan.orig/src/assuan-socket.c libassuan/src/assuan-socket.c
+--- libassuan.orig/src/assuan-socket.c	2009-10-06 00:25:19.492000000 +0200
++++ libassuan/src/assuan-socket.c	2009-10-06 00:21:15.675000000 +0200
+@@ -55,6 +55,14 @@
+ # define S_IRGRP 0
+ # define S_IWGRP 0
+ #endif
++
++#ifndef ENOFILE
++#define ENOFILE ENOENT
++#endif
++
++#define		S_IRUSR	0000400	/* read permission, owner */
++#define		S_IWUSR	0000200	/* write permission, owner */
++#define		S_IXUSR 0000100/* execute/search permission, owner */
+ #endif
+ 
+ 
+diff -Nru libassuan.orig/src/assuan-uds.c libassuan/src/assuan-uds.c
+--- libassuan.orig/src/assuan-uds.c	2007-10-05 18:06:40.000000000 +0200
++++ libassuan/src/assuan-uds.c	2009-10-06 00:16:23.323000000 +0200
+@@ -35,7 +35,9 @@
+ #if HAVE_SYS_UIO_H
+ #include <sys/uio.h>
+ #endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <fcntl.h>
+ #include <string.h>
+ #include <assert.h>
+diff -Nru libassuan.orig/src/assuan.h libassuan/src/assuan.h
+--- libassuan.orig/src/assuan.h	2008-05-25 09:45:30.000000000 +0200
++++ libassuan/src/assuan.h	2009-10-06 00:16:23.287000000 +0200
+@@ -23,7 +23,12 @@
+ 
+ #include <stdio.h>
+ #include <sys/types.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#else
++typedef int ssize_t;
++typedef int pid_t;
++#endif
+ #ifndef _ASSUAN_NO_SOCKET_WRAPPER
+ #ifdef _WIN32
+ #include <ws2tcpip.h> 
