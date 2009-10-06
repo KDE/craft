@@ -10,12 +10,9 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
         self.targets['0.10.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0.tar.bz2'
         self.targetInstSrc['0.10.0'] = 'digikam-0.10.0'
-        self.targets['1.0.0-beta1'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-1.0.0-beta1.tar.bz2'
-        self.targetInstSrc['1.0.0-beta1'] = 'digikam-1.0.0-beta1'
-        self.targets['1.0.0-beta3'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-beta3/digikam-1.0.0-beta3.tar.bz2'
-        self.targetInstSrc['1.0.0-beta3'] = 'digikam-1.0.0-beta3'
-        self.targets['1.0.0-beta4'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-beta4/digikam-1.0.0-beta4.tar.bz2'
-        self.targetInstSrc['1.0.0-beta4'] = 'digikam-1.0.0-beta4'
+        for ver in ['beta1', 'beta3', 'beta4', 'beta5']:
+            self.targets['1.0.0-' + ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-' + ver + '/digikam-1.0.0-' + ver + '.tar.bz2'
+            self.targetInstSrc['1.0.0-' + ver] = 'digikam-1.0.0-' + ver
         
         self.svnTargets['branch-0.10.0'] = 'branches/extragear/graphics/digikam/0.10.0-trunk'
         self.defaultTarget = 'svnHEAD'
@@ -34,7 +31,7 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.10.0', '1.0.0-beta1', '1.0.0-beta3', '1.0.0-beta4']:
+        if self.buildTarget in ['0.10.0', '1.0.0-beta1', '1.0.0-beta3', '1.0.0-beta4', '1.0.0-beta5']:
             if( not base.baseclass.unpack( self ) ):
                 return False
             else:
