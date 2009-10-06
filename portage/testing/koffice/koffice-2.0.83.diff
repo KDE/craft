@@ -1,0 +1,12 @@
+diff -Nru koffice-2.0.83.orig/filters/karbon/pdf/CMakeLists.txt koffice-2.0.83/filters/karbon/pdf/CMakeLists.txt
+--- koffice-2.0.83.orig/filters/karbon/pdf/CMakeLists.txt	2009-10-03 16:37:02.000000000 +0200
++++ koffice-2.0.83/filters/karbon/pdf/CMakeLists.txt	2009-10-06 16:52:54.379400000 +0200
+@@ -5,7 +5,7 @@
+ 
+ kde4_add_plugin(karbonpdfimport WITH_PREFIX ${karbonpdfimport_PART_SRCS})
+ 
+-target_link_libraries(karbonpdfimport komain poppler poppler-qt4)
++target_link_libraries(karbonpdfimport komain poppler poppler-qt4 jpeg openjpeg)
+ 
+ install(TARGETS karbonpdfimport DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
