@@ -69,7 +69,7 @@
 		</part>
 		<part name="development">
 			<files include="include/okular.*"/>
-			<files dir="lib" include="/.*okular.*\.lib"/>
+			<files dir="lib" include="/.*okular.*\.(lib|dll.a)"/>
 		</part>
         <dependency>libkdegraphics</dependency>
     </package>
