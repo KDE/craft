@@ -47,8 +47,8 @@ set(PACKAGE_BUGREPORT "https://bugs.freedesktop.org/enter_bug.cgi?product=shared
 set(PACKAGE_NAME      "shared-mime-info")
 set(PACKAGE_STRING    "shared-mime-info 0.60")
 set(PACKAGE_TARNAME   "shared-mime-info")
-set(PACKAGE_VERSION   "0.60")
-set(VERSION           "0.60")
+set(PACKAGE_VERSION   "0.70")
+set(VERSION           "0.70")
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
 set(GLIB_SOURCES

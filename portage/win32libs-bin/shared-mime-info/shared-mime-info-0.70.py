@@ -8,9 +8,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['0.51-1', '0.51-2', '0.60']:
+        for version in ['0.51-1', '0.51-2', '0.60', '0.70']:
             self.targets[ version ] = repoUrl + """/shared-mime-info-""" + version + """-bin.tar.bz2"""
-        self.defaultTarget = '0.60'
+        self.defaultTarget = '0.70'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'

@@ -7,16 +7,16 @@ import re
 
 # do not forget to update CMakeLists.txt!
 SRC_URI= """
-http://people.freedesktop.org/~hadess/shared-mime-info-0.60.tar.bz2
+http://people.freedesktop.org/~hadess/shared-mime-info-0.70.tar.bz2
 ftp://ftp.gtk.org/pub/glib/2.18/glib-2.18.3.tar.bz2
 """
 GLIB_VER = "2.18.3"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.60'] = SRC_URI
-        self.targetInstSrc['0.60'] = "shared-mime-info-0.60"
-        self.defaultTarget = '0.60'
+        self.targets['0.70'] = SRC_URI
+        self.targetInstSrc['0.70'] = "shared-mime-info-0.70"
+        self.defaultTarget = '0.70'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -32,7 +32,7 @@ class subclass(base.baseclass):
   def unpack( self ):
     if(not base.baseclass.unpack( self ) ):
       return False;
-    if not self.kde.kdeSvnUnpack( "trunk/kdesupport", "kdewin32"):
+    if not self.kde.kdeSvnUnpack( "trunk/kdesupport", "kdewin"):
       return False;
 
     # rename config.h and glibconfig.h.win32 in glib to 
@@ -67,7 +67,7 @@ class subclass(base.baseclass):
     cmake_src  = os.path.join( self.workdir, self.instsrcdir )
 
     options = "-DKDEWIN32_DIR=%s " % \
-              os.path.join( self.workdir, "kdewin32" ).replace( "\\", "/" )
+              os.path.join( self.workdir, "kdewin" ).replace( "\\", "/" )
 
     options = options + "-DGLIB_DIR=%s " % \
               os.path.join( self.workdir, "glib-" + GLIB_VER ).replace( "\\", "/" )
