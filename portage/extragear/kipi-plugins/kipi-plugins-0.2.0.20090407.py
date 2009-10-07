@@ -8,14 +8,9 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/kipi-plugins'
-        self.targets['0.2.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.2.0.tar.bz2'
-        self.targetInstSrc['0.2.0'] = 'kipi-plugins-0.2.0'
-        self.targets['0.3.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/kipi-plugins-0.3.0.tar.bz2'
-        self.targetInstSrc['0.3.0'] = 'kipi-plugins-0.3.0'
-        self.targets['0.5.0'] = "http://downloads.sourceforge.net/project/kipi/kipi-plugins/0.5.0/kipi-plugins-0.5.0.tar.bz2"
-        self.targetInstSrc['0.5.0'] = 'kipi-plugins-0.5.0'
-        self.targets['0.6.0'] = "http://downloads.sourceforge.net/project/kipi/kipi-plugins/0.6.0/kipi-plugins-0.6.0.tar.bz2"
-        self.targetInstSrc['0.6.0'] = 'kipi-plugins-0.6.0'
+        for ver in ['0.2.0', '0.3.0', '0.5.0', '0.6.0', '0.7.0']:
+            self.targets[ ver ] = "http://downloads.sourceforge.net/project/kipi/kipi-plugins/" + ver + "/kipi-plugins-" + ver + ".tar.bz2"
+            self.targetInstSrc[ ver ] = 'kipi-plugins-' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -32,8 +27,11 @@ class subclass(base.baseclass):
         self.subinfo = subinfo()
 
     def unpack( self ):
-        if self.buildTarget in ['0.2.0', '0.3.0', '0.5.0', '0.6.0']:
-            return base.baseclass.unpack( self )
+        if self.buildTarget in ['0.2.0', '0.3.0', '0.5.0', '0.6.0', '0.7.0']:
+            ret = base.baseclass.unpack( self )
+            if self.buildTarget == '0.7.0':
+                self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "kipi-twain-stable.diff" ) ) )
+            return ret
         else:
             return self.kdeSvnUnpack()
 
