@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base']            = 'default'
         self.hardDependencies['enterprise4/qt-e']        = 'default'
-        self.hardDependencies['kdesupport/clucene-core'] = 'default'
+        self.hardDependencies['kdesupport/clucene-core'] = '0.9.16a'
         self.hardDependencies['win32libs-bin/redland']   = 'default'
 
     def setTargets( self ):
