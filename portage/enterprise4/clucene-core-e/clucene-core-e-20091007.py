@@ -11,7 +11,7 @@ class subinfo (info.infoclass):
         self.targetInstSrc['0.9.20'] = os.path.join( "clucene-core-0.9.20", "src" )
         self.targets['0.9.21b'] = "http://downloads.sourceforge.net/sourceforge/clucene/clucene-core-0.9.21b.tar.bz2"
         self.targetInstSrc['0.9.21b'] = os.path.join( "clucene-core-0.9.21b", "src" )
-        self.defaultTarget = '0.9.16a'
+        self.defaultTarget = '0.9.20'
 
 from Package.CMakePackageBase import *
 
