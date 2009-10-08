@@ -1,11 +1,13 @@
+import base
+import utils
+import sys
 import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base']            = 'default'
-        self.hardDependencies['enterprise4/qt-e']        = 'default'
-        self.hardDependencies['enterprise4/clucene-core-e'] = 'default'
-        self.hardDependencies['win32libs-bin/redland']   = 'default'
+        self.hardDependencies['enterprise4/qt-e']                 = 'default'
+        self.hardDependencies['kdesupport/clucene-core'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
@@ -22,17 +24,28 @@ class subinfo(info.infoclass):
         self.svnTargets['2.2']    = 'tags/soprano/2.2'
         self.svnTargets['2.2.1']  = 'tags/soprano/2.2.1'
         self.svnTargets['2.2.2']  = 'tags/soprano/2.2.2'
-        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/soprano'
         self.defaultTarget = 'svnHEAD'
 
-from Package.CMakePackageBase import *
-
-class Package(CMakePackageBase):
-    def __init__( self ):
+class subclass(base.baseclass):
+    def __init__( self, **args ):
+        base.baseclass.__init__( self, args=args )
+        self.instsrcdir = "soprano"
         self.subinfo = subinfo()
-        CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines="-DSOPRANO_DISABLE_SESAME2_BACKEND=YES"
+
+    def unpack( self ):
+        return self.kdeSvnUnpack()
+
+    def compile( self ):
+        return self.kdeCompile()
+
+    def install( self ):
+        return self.kdeInstall()
+
+    def make_package( self ):
+        if not self.buildTarget == 'svnHEAD':
+            return self.doPackaging( "soprano", self.buildTarget, True )
+        else:
+            return self.doPackaging( "soprano", utils.cleanPackageName( sys.argv[0], "soprano" ), True )
 
 if __name__ == '__main__':
-    Package().execute()
+    subclass().execute()
