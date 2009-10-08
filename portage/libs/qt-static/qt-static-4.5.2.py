@@ -81,6 +81,11 @@ class Package(QMakePackageBase):
         # create qt.conf 
         utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
         
+        # at least in qt 4.5.2 the default mkspecs is not installed which let qmake fail with "QMAKESPEC has not been set, so configuration cannot be deduced."
+        default_mkspec = os.path.join(self.installDir(), "mkspecs", "default")
+        if not os.path.exists(default_mkspec): 
+            utils.copySrcDirToDestDir( os.path.join(self.buildDir(), "mkspecs", "default"), default_mkspec )
+        
         # install msvc debug files if available
         if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008"):
             srcdir = os.path.join( self.buildDir(), "lib" )

@@ -25,6 +25,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.5.2-patched'
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
+        self.options.package.specialMode = True
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -36,10 +37,13 @@ class subinfo(info.infoclass):
             self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
-class Package(QMakePackageBase):
+class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        QMakePackageBase.__init__(self)
+        PackageBase.__init__(self)
+        GitSource.__init__(self)
+        QMakeBuildSystem.__init__(self)
+        KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
             self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
