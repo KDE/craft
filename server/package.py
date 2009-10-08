@@ -1,17 +1,22 @@
+# copyright 2009 Patrick Spendrin <ps_ml@gmx.de>
+# License: BSD
+
 import os
 import sys
 import subprocess
 import smtplib
-import datetime
-import time
-from email.mime.text import MIMEText
+import time     # for sleep
+
+# our own headers
+from notifications import *
+import common
 
 def die( message ):
     log.write( message )
     print >> sys.stderr, "package.py fatal error: %s" % message
     exit( 1 )
 
-class BuildError(Exception):
+class BuildError( Exception ):
     """ this exception handles the error reporting """
     
     def __init__( self, packageName, message, logfile ):
@@ -27,115 +32,46 @@ class BuildError(Exception):
         logtext = log.readlines()[-20:]
         log.close()
         return "Error:" + "".join( logtext )
-        
-    def sendNotification( self, revision=False ):
-        """ this is used to send emails to """
-        if "EMERGE_SERVER_SERVER" in os.environ and \
-           "EMERGE_SERVER_SENDER" in os.environ and \
-           "EMERGE_SERVER_RECEIVERS" in os.environ and \
-           "EMERGE_SERVER_PASS" in os.environ:
-            server = os.environ["EMERGE_SERVER_SERVER"]
-            sender = os.environ["EMERGE_SERVER_SENDER"]
-            pw = os.environ["EMERGE_SERVER_PASS"]
-            receivers = os.environ["EMERGE_SERVER_RECEIVERS"].split(',')
-            self.revision = revision
-            self.uploadLog()
-            self.email( server, sender, pw, receivers )
-        
-    def uploadLog( self ):
-        """ upload logfile to the logging server """
-
-        if not self.enabled:
-            return
-        print "uploading logfile"
-        if os.path.exists( self.logfile ) and \
-           "EMERGE_LOG_UPLOAD_SERVER" in os.environ and\
-           "EMERGE_LOG_UPLOAD_DIR" in os.environ:
-            """ if there is a directory at the specified location, upload files that can be found there """
-
-            os.chdir( logroot )
-            cmdstring = "psftp " + os.environ["EMERGE_LOG_UPLOAD_SERVER"]
-            ret = 0
-
-            devnull = file('NUL', 'w')
-            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=devnull )
-            p.stdin.write( "cd " + os.environ["EMERGE_LOG_UPLOAD_DIR"] + "\r\n" )
-            p.stdin.write( "mkdir " + isodate + "\r\n" )
-            p.stdin.write( "cd " + isodate + "\r\n" )
-            p.stdin.write( "put " + self.logfile + "\r\n" )
-            p.stdin.write( "quit\r\n" )
-            ret = p.wait()
-            devnull.close()
-        else:
-            print "Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n" \
-                      "Logfile name is %s" % self.logfile
-
-    
-    def email( self, server, sender, pw, receivers ):
-        """ send an email"""
-        log = file( self.logfile, 'rb' )
-        logtext = log.readlines()[-20:]
-        log.close()
-
-        if "EMERGE_LOG_URL" in os.environ:
-            logurltext = """The full log can be found here: """ + os.environ["EMERGE_LOG_URL"] + isodate + """/""" + os.path.basename( self.logfile ) + """\n"""
-        else:
-            logurltext = ""
-        
-        # Create a text/plain message
-        msg = MIMEText( self.messageText + """\n
-        """ + logurltext + "".join( logtext ) )
-
-        # me == the sender's email address
-        # you == the recipient's email address
-        subject = 'Build error in %s on %s' % ( self.packageName, os.environ["KDECOMPILER"] )
-        if self.revision:
-            subject += ' in revision %s' % self.revision.strip()
-
-        msg['Subject'] = subject
-        msg['From'] = sender
-        msg['To'] = receivers[0]
-        
-        server = smtplib.SMTP( server )
-        # server.set_debuglevel(True) # set debuglevel to see that mail can be sent
-
-        server.starttls()
-
-        server.login( sender, pw )
-
-        server.sendmail( sender, receivers, msg.as_string() )
-        server.quit()
-
 
 class package:
     """ one object for each package to be build 
         it contains all the information needed to build """
         
-    def __init__( self, packagename, target, patchlevel ):
+    def __init__( self, category, packagename, target, patchlevel ):
+        self.category = category
         self.packageName = packagename
+        self.cleanPackageName = category + "_" + packagename
         if target:
             self.target = "--target=%s " % target
         else:
             self.target = ""
         self.patchlevel = patchlevel
-        self.logfile = outfile % packagename.replace( '/', '_' )
-        if os.path.exists( self.logfile ):
-            os.remove( self.logfile )
+        self.logfile = outfile % self.cleanPackageName
+        self.revision = None
+        log = file( self.logfile, 'wb+' )
+        log.close()
+        self.notifications = { 'email': EmailNotification( self.category, self.packageName, self.logfile ),
+                               'dashboard': DashboardNotification( self.category, self.packageName, self.logfile ),
+                               'logupload': LogUploadNotification( self.category, self.packageName, self.logfile ) }
+
+        self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
+                                                                        'pkgdstdir': packageroot,
+                                                                        'logdstdir': logroot } )
         self.enabled = True
     
     def getRevision( self ):
         """ runs emerge --print-revision for a specific package and returns the output """
         ## this function must replaced in case we are using the emerge API directly
-        revision = ""
-        tempfile = file( os.path.join( logroot, "rev.tmp" ), "wb+" )
-        tempfile.close()
-        if not self.system( "--print-revision %s%s" % ( self.target, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
-            return ""
-        tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
-        revision = tempfile.readline()
-        tempfile.close()
-        os.remove( os.path.join( logroot, "rev.tmp" ) )
-        return revision
+        if not self.revision:
+            tempfile = file( os.path.join( logroot, "rev.tmp" ), "wb+" )
+            tempfile.close()
+            if not self.system( "--print-revision %s%s/%s" % ( self.target, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
+                return ""
+            tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
+            self.revision = tempfile.readline()
+            tempfile.close()
+            os.remove( os.path.join( logroot, "rev.tmp" ) )
+        return self.revision
         
     def system( self, cmdstring, logfile ):
         """ runs an emerge command """
@@ -154,9 +90,9 @@ class package:
     def emerge( self, cmd, addParameters = "" ):
         """ runs an emerge call """
         print "running:", cmd, self.packageName
-        if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s" % ( self.target, self.packageName ), self.logfile ):
+        if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s/%s" % ( self.target, self.category, self.packageName ), self.logfile ):
             self.enabled = False
-            raise BuildError( self.packageName, "%s " % self.packageName + cmd + " FAILED", self.logfile )
+            raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + cmd + " FAILED", self.logfile )
         
     def fetch( self ):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked 
@@ -180,87 +116,59 @@ class package:
         if not self.enabled:
             return
 
-        if "EMERGE_PKGDSTDIR" in os.environ:
-            outputBase = os.environ["EMERGE_PKGDSTDIR"]
-            oldDstDir = os.environ["EMERGE_PKGDSTDIR"]
-        else:
-            oldDstDir = ""
-            outputBase = packageroot
-        os.environ["EMERGE_PKGDSTDIR"] = os.path.join( outputBase, self.packageName.replace( '/', '_' ) )
+        os.environ["EMERGE_PKGDSTDIR"] = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
         
         if not os.path.exists( os.environ["EMERGE_PKGDSTDIR"] ):
             os.mkdir( os.environ["EMERGE_PKGDSTDIR"] )
         
         self.emerge( "package", " --patchlevel=%s" % self.patchlevel )
-        os.environ["EMERGE_PKGDSTDIR"] = oldDstDir
+        
+        # cleanup behind us
+        del os.environ["EMERGE_PKGDSTDIR"]
         
     def upload( self ):
         """ uploads packages to winkde server """
         if not self.enabled:
             return
-        print "uploading"
-        if "EMERGE_PKGDSTDIR" in os.environ:
-            outputBase = os.environ["EMERGE_PKGDSTDIR"]
-            oldDstDir = os.environ["EMERGE_PKGDSTDIR"]
-        else:
-            oldDstDir = ""
-            outputBase = packageroot
-        pkgdir = os.path.join( outputBase, self.packageName.replace( '/', '_' ) )
-        if os.path.exists( pkgdir ) and \
-           "EMERGE_SERVER_UPLOAD_SERVER" in os.environ and\
-           "EMERGE_SERVER_UPLOAD_DIR" in os.environ:
+
+        print "running: upload", self.packageName
+        upload = common.Uploader( logfile=self.logfile )
+        
+        pkgdir = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
+        if os.path.exists( pkgdir ):
             """ if there is a directory at the specified location, upload files that can be found there """
             os.chdir( pkgdir )
             filelist = os.listdir( pkgdir )
             
-            for entry in os.listdir( pkgdir ):
-                """ check that all things that are uploaded are files """
-                if os.path.isdir( entry ):
-                    filelist.remove( entry )
-
-            cmdstring = "psftp " + os.environ["EMERGE_SERVER_UPLOAD_SERVER"]
             ret = 0
-            fstderr = file( self.logfile + ".tmp", 'wb+' )
-            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
+            for entry in filelist:
+                upload.upload( os.path.join( pkgdir, entry ) )
             
-            fstderr.write( "cd " + os.environ["EMERGE_SERVER_UPLOAD_DIR"] + "\r\n" )
-            fstderr.flush()
-            p.stdin.write( "cd " + os.environ["EMERGE_SERVER_UPLOAD_DIR"] + "\r\n" )
-
-            fstderr.write( "mput " + " ".join( filelist ) + "\r\n" )
-            fstderr.flush()
-            p.stdin.write( "mput " + " ".join( filelist ) + "\r\n" )
-            
-            fstderr.write( "quit\r\n" )
-            fstderr.flush()
-            p.stdin.write( "quit\r\n" )
-            ret = p.wait()
-            log = file( self.logfile, 'ab+' )
-            fstderr.seek( os.SEEK_SET )
-            for line in fstderr:
-                log.write( line )
-            fstderr.close()
-            log.close()
             if not ret == 0:
-                raise BuildError( self.packageName, "%s " % self.packageName + " upload FAILED\n", self.logfile )
+                raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )
         else:
             log = file( self.logfile, 'ab+' )
-            log.write("Package directory doesn't exist or EMERGE_SERVER_UPLOAD_SERVER or EMERGE_SERVER_UPLOAD_DIR are not set:\n"
-                      "Package directory is %s" % pkgdir )
-        os.environ["EMERGE_PKGDSTDIR"] = oldDstDir
+            log.write( "Package directory doesn't exist:\n"
+                       "Package directory is %s" % pkgdir )
 
 
-isodate = str( datetime.date.today() ).replace('-', '')
-logroot = os.path.join( os.environ["KDEROOT"], "tmp", isodate, "logs" )
-packageroot = os.path.join( os.environ["KDEROOT"], "tmp", isodate, "packages" )
+general = common.settings.getSection( "General" )
 
+if "logdstdir" in general:
+    logroot = general["logdstdir"]
+else:
+    logroot = os.path.join( general["kderoot"], "tmp", common.isodate, "logs" )
+if "pkgdstdir" in general:
+    packageroot = general["pkgdstdir"]
+else:
+    packageroot = os.path.join( general["kderoot"], "tmp", common.isodate, "packages" )
 if not os.path.exists( logroot ):
     os.makedirs( logroot )
 if not os.path.exists( packageroot ):
     os.makedirs( packageroot )
 
 outfile = os.path.join( logroot, "log-%s.txt" )
-emerge = os.path.join( os.environ["KDEROOT"], "emerge", "bin", "emerge.py" )
+emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
 
 packagelist = []
 if len(sys.argv) <= 1:
@@ -272,31 +180,47 @@ packagefile = file( sys.argv[1] )
 for line in packagefile:
     if not line.startswith( '#' ):
         entry = line.strip().split( ',' )
-        packagelist.append( package( entry[0], entry[1], entry[2] ) )
+        packagelist.append( package( entry[0], entry[1], entry[2], entry[3] ) )
 packagefile.close()
 
 for entry in packagelist:
     try:
         entry.fetch()
-    except BuildError, ( instance ):
-        instance.sendNotification()
+        entry.getRevision()
+    except BuildError:
+        entry.enabled = False
+        for i in entry.notifications:
+            if i == 'dashboard': continue
+            entry.notifications[i].error = True
+            entry.notifications[i].run()
 
 for entry in packagelist:
     try:
         entry.build()
-    except BuildError, ( instance ):
+    except BuildError:
         entry.enabled = False
-        instance.sendNotification( entry.getRevision() )
+        for i in entry.notifications:
+            entry.notifications[i].error = True
+    finally:
+        for i in entry.notifications:
+            entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
         entry.package()
-    except BuildError, ( instance ):
+    except BuildError:
         entry.enabled = False
-        instance.sendNotification( entry.getRevision() )
+        for i in entry.notifications:
+            if i == 'dashboard': continue
+            entry.notifications[i].error = True
+            entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
         entry.upload()
-    except BuildError, ( instance ):
-        instance.sendNotification( entry.getRevision() )
+    except BuildError:
+        entry.enabled = False
+        for i in entry.notifications:
+            if i == 'dashboard': continue
+            entry.notifications[i].error = True
+            entry.notifications[i].run( entry.getRevision() )
