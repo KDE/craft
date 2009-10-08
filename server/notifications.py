@@ -23,7 +23,10 @@ class Notification:
         log = file( self.logfile, 'rb' )
         logtext = log.readlines()[-20:]
         log.close()
-        self.shortLog = "".join( logtext )
+        if self.error:
+            self.shortLog = "".join( logtext )
+        else:
+            self.shortLog = ""
     
     def run( self, revision = None ):
         pass
