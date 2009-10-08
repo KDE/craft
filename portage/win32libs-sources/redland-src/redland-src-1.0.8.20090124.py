@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = '1.0.8-2'
+        ver = '1.0.8'
         self.targets[ ver ] = 'http://download.librdf.org/source/redland-1.0.8.tar.gz'
         self.targetInstSrc[ ver ] = 'redland-1.0.8'
         self.patchToApply[ ver ] = ( 'redland-src_1.0.8.patch', 1 )
