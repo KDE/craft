@@ -8,30 +8,19 @@ import sys
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/utils/krecipes'
+        self.targets['2.0-alpha3'] = 'http://sourceforge.net/projects/krecipes/files/krecipes/2.0-alpha3/krecipes-2.0-alpha3.tar.gz'
+        self.targetInstSrc['2.0-alpha3'] = 'krecipes-2.0-alpha3'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__(self)
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "krecipes", self.buildTarget, True )
-        else:
-            return self.doPackaging( "krecipes" )
-		
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
