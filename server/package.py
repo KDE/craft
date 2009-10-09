@@ -46,7 +46,6 @@ class package:
         else:
             self.target = ""
         self.patchlevel = patchlevel
-        self.logfile = outfile % self.cleanPackageName
         self.revision = None
         log = file( self.logfile, 'wb+' )
         log.close()
@@ -57,6 +56,8 @@ class package:
         self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
                                                                         'pkgdstdir': packageroot,
                                                                         'logdstdir': logroot } )
+                                                    
+        self.logfile = outfile % (self.generalSettings["platform"], self.cleanPackageName)
         self.enabled = True
     
     def getRevision( self ):
@@ -167,7 +168,7 @@ if not os.path.exists( logroot ):
 if not os.path.exists( packageroot ):
     os.makedirs( packageroot )
 
-outfile = os.path.join( logroot, "log-%s.txt" )
+outfile = os.path.join( logroot, "log-%s-%s.txt" )
 emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
 
 packagelist = []
