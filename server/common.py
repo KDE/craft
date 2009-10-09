@@ -2,11 +2,12 @@
 # License: BSD
 import os
 import sys
-from datetime import date
+from datetime import date, datetime
 from ConfigParser import ConfigParser
 import subprocess
 
 isodate = str( date.today() ).replace( '-', '' )
+isodatetime = datetime.now().strftime("%Y%m%d%H%M")
 
 class Settings:
     def __init__( self ):
@@ -59,12 +60,15 @@ class Uploader:
         self.settings = settings.getSection( self.category )
         if not self.settings:
             """ return True because we're probably simply disabled and we do not want to result in an error """
+            print "upload disabled!"
             return True
             
         if not ( self.settings["server"] and self.settings["directory"] ):
+            print "server or directory not set"
             return False
 
         if os.path.isdir( sourcefilename ):
+            print "sourcefile is a directory"
             return False
 
         cmdstring = self.settings["ftpclient"] + " " + self.settings["server"]
