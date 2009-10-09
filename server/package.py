@@ -196,6 +196,7 @@ for entry in packagelist:
 
 for entry in packagelist:
     try:
+        enabled = entry.enabled
         entry.build()
     except BuildError:
         entry.enabled = False
@@ -203,24 +204,26 @@ for entry in packagelist:
             entry.notifications[i].error = True
     finally:
         for i in entry.notifications:
-            entry.notifications[i].run( entry.getRevision() )
+            if enabled: entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
+        enabled = entry.enabled
         entry.package()
     except BuildError:
         entry.enabled = False
         for i in entry.notifications:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
-            entry.notifications[i].run( entry.getRevision() )
+            if enabled: entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
+        enabled = entry.enabled
         entry.upload()
     except BuildError:
         entry.enabled = False
         for i in entry.notifications:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
-            entry.notifications[i].run( entry.getRevision() )
+            if enabled: entry.notifications[i].run( entry.getRevision() )
