@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh/libssh.git"
         self.defaultTarget = 'gitHEAD'
         self.options.package.withCompiler = False
-        self.subinfo.options.configure.defines = "-DWITH_STATIC_LIB=ON"
+        self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
