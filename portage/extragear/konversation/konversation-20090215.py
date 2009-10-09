@@ -7,8 +7,8 @@ import sys
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.2rc1'] = 'ftp://ftp.kde.org/pub/kde/unstable/konversation/1.2-rc1/src/konversation-1.2-rc1.tar.bz2'
-        self.targetInstSrc['1.2rc1'] = 'konversation-1.2-rc1'
+        self.targets['1.2'] = 'ftp://ftp.kde.org/pub/kde/stable/konversation/1.2/src/konversation-1.2.tar.bz2'
+        self.targetInstSrc['1.2'] = 'konversation-1.2'
         self.svnTargets['svnHEAD'] = 'trunk/extragear/network/konversation'
         self.defaultTarget = 'svnHEAD'
     
