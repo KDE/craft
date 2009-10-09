@@ -47,17 +47,17 @@ class package:
             self.target = ""
         self.patchlevel = patchlevel
         self.revision = None
+        self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
+                                                                        'pkgdstdir': packageroot,
+                                                                        'logdstdir': logroot } )
+                                                    
+        self.logfile = outfile % (self.generalSettings["platform"], self.cleanPackageName)
         log = file( self.logfile, 'wb+' )
         log.close()
         self.notifications = { 'email': EmailNotification( self.category, self.packageName, self.logfile ),
                                'dashboard': DashboardNotification( self.category, self.packageName, self.logfile ),
                                'logupload': LogUploadNotification( self.category, self.packageName, self.logfile ) }
 
-        self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
-                                                                        'pkgdstdir': packageroot,
-                                                                        'logdstdir': logroot } )
-                                                    
-        self.logfile = outfile % (self.generalSettings["platform"], self.cleanPackageName)
         self.enabled = True
     
     def getRevision( self ):
