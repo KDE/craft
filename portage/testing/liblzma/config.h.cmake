@@ -267,6 +267,8 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "4.999.8beta"
 
+#define PACKAGE_HOMEPAGE "http://tukaani.org/xz/"
+
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
 #cmakedefine PTHREAD_CREATE_JOINABLE

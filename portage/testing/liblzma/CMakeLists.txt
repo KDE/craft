@@ -103,7 +103,11 @@ set(LZMA_SRC src/liblzma/common/alone_decoder.c
     src/liblzma/common/block_header_encoder.c
     src/liblzma/common/block_util.c
     src/liblzma/common/common.c
-    src/liblzma/common/easy.c
+    src/liblzma/common/easy_buffer_encoder.c
+    src/liblzma/common/easy_decoder_memusage.c
+    src/liblzma/common/easy_encoder.c
+    src/liblzma/common/easy_encoder_memusage.c
+    src/liblzma/common/easy_preset.c
     src/liblzma/common/filter_common.c
     src/liblzma/common/filter_decoder.c
     src/liblzma/common/filter_encoder.c
@@ -176,11 +180,12 @@ install(TARGETS lzmadec RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 
 set(XZ_SRC  src/xz/args.c
     src/xz/hardware.c
-    src/xz/io.c
+    src/xz/coder.c
+    src/xz/coder.h
+    src/xz/file_io.c
     src/xz/main.c
     src/xz/message.c
     src/xz/options.c
-    src/xz/process.c
     src/xz/signals.c
     src/xz/suffix.c
     src/xz/util.c)
@@ -195,3 +200,9 @@ endif(HAVE_PTHREAD)
 install(TARGETS xz RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 
 install(DIRECTORY src/liblzma/api/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+
+
+set(LZMAINFO_SRC src/lzmainfo/lzmainfo.c)
+add_executable(lzmainfo ${LZMAINFO_SRC})
+target_link_libraries(lzmainfo lzma)
+install(TARGETS lzmainfo RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
