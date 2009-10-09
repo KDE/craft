@@ -68,7 +68,8 @@ class EmailNotification(Notification):
                 server.sendmail( settings["sender"], settings["receivers"], msg.as_string() )
                 server.quit()
             else:
-                print msg.as_string()
+                print subject
+#                print msg.as_string()
             
 
 class DashboardNotification(Notification):
@@ -82,7 +83,7 @@ class DashboardNotification(Notification):
             values['category'] = self.category
             values['name'] = self.packageName
             values['platform'] = common.settings.getOption( "General", "platform" )
-            values['date'] = common.isodate
+            values['date'] = common.isodatetime
             values['failed'] = "0"
             if self.error:
                 values['failed'] = "1"
@@ -98,9 +99,8 @@ class DashboardNotification(Notification):
                 req = urllib2.Request( settings["submit-url"], data )
                 response = urllib2.urlopen( req )
                 the_page = response.read()
-                print the_page
             else:
-                print values
+                print values["logUrl"]
 
 class LogUploadNotification(Notification):
     """ this uploads the logfile to a server - it is no real notification """
@@ -109,11 +109,9 @@ class LogUploadNotification(Notification):
         if settings:
             self.setShortLog()
             upload = common.Uploader( category="LogUpload" )
+            print "uploading logfile:", self.logfile, self.dryRun
             if not self.dryRun:
                 upload.upload( self.logfile )
-            else:
-                for line in file( self.logfile, 'rb+' ):
-                    print line[:20],
 
 if __name__ == '__main__':
     email = EmailNotification( "kdesupport", "automoc", __file__ )
