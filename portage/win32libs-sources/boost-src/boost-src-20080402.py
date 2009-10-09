@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
-        if self.compiler == "mingw":
+        if self.compiler == "mingw" or self.compiler == "mingw4":
             self.toolset = "gcc"
         else:
             self.toolset = "msvc"
