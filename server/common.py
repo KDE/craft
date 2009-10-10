@@ -15,7 +15,9 @@ class Settings:
         self.configpath = os.path.normpath(os.path.join(os.path.dirname(sys.argv[0]), "..", "..", "etc", "emergeserver.conf"))
         defaults = dict()
         defaults["isodate"] = isodate
+        defaults["release"] = isodate
         defaults["ftpclient"] = "psftp"
+        defaults["sshclient"] = "plink"
         self.parser = ConfigParser( defaults )
         self.sections = dict()
         if os.path.exists( self.configpath ):
@@ -56,6 +58,28 @@ class Uploader:
         self.category = category
         self.logfile = logfile
         
+    def executeScript( self, state="common" ):
+        self.settings = settings.getSection( self.category )
+        if not self.settings:
+            print "upload disabled!"
+            return False
+
+        name = state+"-script"
+        if name in self.settings:
+            #fstderr = file( 'NUL', 'wb+' )
+            fstderr = sys.stderr
+            cmdstring = self.settings["sshclient"] + " " + self.settings["server"]
+            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
+
+            p.stdin.write( self.settings[ name ] + "\n" )
+            p.stdin.write( "exit\n" )
+            ret = p.wait()
+
+            return ret == 0
+        else:
+            print "no config for " + name + " found!"
+        return True
+
     def upload( self, sourcefilename ):
         self.settings = settings.getSection( self.category )
         if not self.settings:
@@ -63,7 +87,7 @@ class Uploader:
             print "upload disabled!"
             return True
             
-        if not ( self.settings["server"] and self.settings["directory"] ):
+        if not ( "server" in self.settings and "directory" in self.settings ):
             print "server or directory not set"
             return False
 
@@ -80,7 +104,6 @@ class Uploader:
         p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
         
         for dir in self.settings["directory"].split('/'):
-            p.stdin.write( "mkdir " + dir + "\r\n" )
             fstderr.write( "cd " + dir + "\r\n" )
             fstderr.flush()
             p.stdin.write( "cd " + dir + "\r\n" )
@@ -103,3 +126,6 @@ class Uploader:
             log.close()
 
         return ret == 0
+
+if __name__ == '__main__':
+    Uploader().executeScript("test")

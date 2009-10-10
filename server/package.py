@@ -218,6 +218,7 @@ for entry in packagelist:
             entry.notifications[i].error = True
             if enabled: entry.notifications[i].run( entry.getRevision() )
 
+common.Uploader().executeScript("prepare")
 for entry in packagelist:
     try:
         enabled = entry.enabled
@@ -228,3 +229,4 @@ for entry in packagelist:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
             if enabled: entry.notifications[i].run( entry.getRevision() )
+common.Uploader().executeScript("finish")
