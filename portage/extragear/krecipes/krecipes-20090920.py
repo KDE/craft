@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import utils
 import info
-import sys
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -15,8 +13,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
     
-from Package.CMakePackageBase import *
-
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

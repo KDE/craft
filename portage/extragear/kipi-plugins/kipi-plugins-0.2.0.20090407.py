@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import sys
 import info
-import utils
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -11,6 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['0.2.0', '0.3.0', '0.5.0', '0.6.0', '0.7.0']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/project/kipi/kipi-plugins/" + ver + "/kipi-plugins-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = 'kipi-plugins-' + ver
+        self.patchToApply[ '0.7.0' ] = ( 'kipi-twain-stable.diff', 0 )
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -20,33 +19,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
         self.hardDependencies['win32libs-bin/expat'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kipi-plugins"
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__(self)
 
-    def unpack( self ):
-        if self.buildTarget in ['0.2.0', '0.3.0', '0.5.0', '0.6.0', '0.7.0']:
-            ret = base.baseclass.unpack( self )
-            if self.buildTarget == '0.7.0':
-                self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "kipi-twain-stable.diff" ) ) )
-            return ret
-        else:
-            return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kipi-plugins", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kipi-plugins" )
-
-
-if __name__ == '__main__':		
-    subclass().execute()
+if __name__ == '__main__':
+    Package().execute()

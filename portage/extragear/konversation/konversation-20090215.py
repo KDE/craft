@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import utils
 import info
-import sys
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -17,25 +15,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__(self)
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "konversation", self.buildTarget, True )
-        else:
-            return self.doPackaging( "konversation" )
-		
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

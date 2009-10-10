@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import sys
 import info
-import utils
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -14,26 +12,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdegraphics'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        #self.instsrcdir = "kphotoalbum"
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-            return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kphotoalbum" )
-        else:
-            return self.doPackaging( "kphotoalbum", self.buildTarget, True )
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

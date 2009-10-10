@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import sys
 import info
-import utils
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -15,6 +13,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc['1.0.0-' + ver] = 'digikam-1.0.0-' + ver
         
         self.svnTargets['branch-0.10.0'] = 'branches/extragear/graphics/digikam/0.10.0-trunk'
+        self.options.configure.defines = "-DENABLE_GPHOTO2=OFF"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -24,34 +23,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "digikam"
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__(self)
 
-    def unpack( self ):
-        if self.buildTarget in ['0.10.0', '1.0.0-beta1', '1.0.0-beta3', '1.0.0-beta4', '1.0.0-beta5']:
-            if( not base.baseclass.unpack( self ) ):
-                return False
-            else:
-                return True
-        else:
-            return self.kdeSvnUnpack()
-
-    def compile( self ):
-        self.kdeCustomDefines = "-DENABLE_GPHOTO2=OFF"
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "digikam", self.buildTarget, True )
-        else:
-            return self.doPackaging( "digikam" )
-
-
-if __name__ == '__main__':		
-    subclass().execute()
+if __name__ == '__main__':
+    Package().execute()

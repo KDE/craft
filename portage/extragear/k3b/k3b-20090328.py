@@ -1,8 +1,6 @@
-import base
-import utils
-import os
-import sys
 import info
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -20,26 +18,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/libdvdcss'] = 'default'
         #        self.hardDependencies['testing/libcdio'] = 'default'
         
-class subclass(base.baseclass):
-    def __init__( self ):
-        base.baseclass.__init__( self, "" )
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "k3b", self.buildTarget, True )
-        else:
-            return self.doPackaging( "k3b", os.path.basename(sys.argv[0]).replace("k3b-", "").replace(".py", ""), True )
-
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

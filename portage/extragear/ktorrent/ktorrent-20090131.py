@@ -1,8 +1,6 @@
-import base
-import utils
-import os
-import sys
 import info
+from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -18,29 +16,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libgmp'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
     
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        self.buildType = "Debug"
-        base.baseclass.__init__( self, args=args )
+class Package(CMakePackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        if self.buildTarget in ['3.2beta1', '3.2rc1', '3.2', '3.2.2', '3.2.3', '3.3beta1']:
-            return base.baseclass.unpack( self )
-        else:
-            return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "ktorrent" )
-        else:
-            return self.doPackaging( "ktorrent", self.buildTarget, True )
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
