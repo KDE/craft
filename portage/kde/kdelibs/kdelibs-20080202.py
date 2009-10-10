@@ -29,6 +29,8 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         if self.compiler() == "mingw":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
+        elif self.compiler() == "mingw4":
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MinGW 4.4.0\" "
         elif self.compiler() == "msvc2005":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
         elif self.compiler() == "msvc2008":
