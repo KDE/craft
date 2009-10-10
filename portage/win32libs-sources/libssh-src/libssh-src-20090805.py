@@ -17,6 +17,9 @@ class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
+        if self.buildTarget == 'gitHEAD':
+            self.subinfo.options.package.withCompiler = True
+
         
 if __name__ == '__main__':
     Package().execute()
