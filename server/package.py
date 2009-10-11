@@ -184,6 +184,7 @@ for line in packagefile:
         packagelist.append( package( entry[0], entry[1], entry[2], entry[3] ) )
 packagefile.close()
 
+common.Uploader().executeScript("prepare")
 for entry in packagelist:
     try:
         entry.fetch()
@@ -218,7 +219,6 @@ for entry in packagelist:
             entry.notifications[i].error = True
             if enabled: entry.notifications[i].run( entry.getRevision() )
 
-common.Uploader().executeScript("prepare")
 for entry in packagelist:
     try:
         enabled = entry.enabled
