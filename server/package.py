@@ -6,6 +6,7 @@ import sys
 import subprocess
 import smtplib
 import time     # for sleep
+from datetime import datetime
 
 # our own headers
 from notifications import *
@@ -60,6 +61,12 @@ class package:
 
         self.enabled = True
     
+    def timeStamp( self ):
+        datetime.now().strftime("%m/%d/%Y %H:%M")
+        log = file( self.logfile, 'ab+' )
+        log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
+        log.close()
+
     def getRevision( self ):
         """ runs emerge --print-revision for a specific package and returns the output """
         ## this function must replaced in case we are using the emerge API directly
@@ -98,10 +105,12 @@ class package:
     def fetch( self ):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked 
             correctly before they are used """
+        self.timestamp()
         self.emerge( "fetch" )
         
     def build( self ):
         """ builds and installs packages locally """
+        self.timestamp()
         self.emerge( "unpack" )
         self.emerge( "compile", " -i" )
         self.emerge( "install" )
@@ -110,6 +119,7 @@ class package:
         
     def test( self ):
         """ runs unittests and submits them to cdash server """
+        self.timestamp()
         self.emerge( "test" )
 
     def package( self ):
@@ -117,6 +127,7 @@ class package:
         if not self.enabled:
             return
 
+        self.timestamp()
         os.environ["EMERGE_PKGDSTDIR"] = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
         
         if not os.path.exists( os.environ["EMERGE_PKGDSTDIR"] ):
@@ -132,6 +143,7 @@ class package:
         if not self.enabled:
             return
 
+        self.timestamp()
         print "running: upload", self.packageName
         upload = common.Uploader( logfile=self.logfile )
         
