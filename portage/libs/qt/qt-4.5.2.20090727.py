@@ -86,7 +86,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
           "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -no-vcproj -no-dsp " \
-          "-nomake demos -nomake examples -nomake docs " \
+          "-nomake demos -nomake examples " \
           "%s %s" % ( userin, configure, platform, self.installDir(), incdirs, libdirs)
         if self.buildType() == "Debug":
           command += " -debug "
