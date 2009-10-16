@@ -1,0 +1,55 @@
+diff lib/ofx_preproc.cpp lib/ofx_preproc.cpp
+--- lib/ofx_preproc.cpp
++++ lib/ofx_preproc.cpp
+@@ -186,7 +186,7 @@ CFCT int ofx_proc_file(LibofxContextPtr ctx, const char * p_filename)
+ 	    size_t inbytesleft = strlen(s_buffer.c_str());
+ 	    size_t outbytesleft = READ_BUFFER_SIZE * 2 - 1;
+ #ifdef OS_WIN32
+-	    const char * inchar = (const char *)s_buffer.c_str();
++        char * inchar = (char *)s_buffer.c_str();
+ #else
+ 	    char * inchar = (char *)s_buffer.c_str();
+ #endif
+diff lib/ofx_utilities.cpp lib/ofx_utilities.cpp
+--- lib/ofx_utilities.cpp
++++ lib/ofx_utilities.cpp
+@@ -113,7 +113,11 @@ time_t ofxdate_to_time_t(const string ofxdate)
+   char time_zone_specified = false;
+ 
+   time_t temptime;
++#ifdef OS_WIN32
++  ::time(&temptime);
++#else
+   std::time(&temptime);
++#endif
+   local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime)));
+   
+   if(ofxdate.size()!=0){
+diff lib/win32.cpp lib/win32.cpp
+--- lib/win32.cpp
++++ lib/win32.cpp
+@@ -18,7 +18,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <assert.h>
+@@ -27,6 +29,14 @@
+ 
+ #ifdef OS_WIN32
+ 
++#ifdef _MSC_VER
++#include <Windows.h>
++#include <io.h>
++#define strcasecmp strcmpi
++#define snprintf _snprintf
++#define open _open
++#endif
++
+ int mkstemp(char *tmpl) {
+   int fd=-1;
+   int len;
