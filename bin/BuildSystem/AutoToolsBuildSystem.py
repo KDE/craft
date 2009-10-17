@@ -23,7 +23,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def configure( self, cflags="", ldflags=""):
         """configure the target"""
             
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
         if self.noCopy:
             sourcedir = self.sourceDir()
@@ -37,7 +40,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
             utils.putenv("CFLAGS",_cflags)
             utils.putenv("LDFLAGS",_ldflags)
-            ret = self.shell.execute(self.buildDir(), configure, "" )
+            _prefix = "--prefix=" + mergeroot
+            if self.buildInSource:
+                ret = self.shell.execute(self.sourceDir(), configure, _prefix )
+            else:
+                ret = self.shell.execute(self.buildDir(), configure, _prefix )
         else:
             ret = self.shell.execute(self.sourceDir(), "ruby configure", "" )
         return ret
@@ -45,7 +52,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def make( self, buildType=None ):
         """Using the *make program"""
 
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
         
         command = self.makeProgram
         args = "-j2"
@@ -58,13 +68,19 @@ class AutoToolsBuildSystem(BuildSystemBase):
         # adding Targets later
         if utils.verbose() > 1:
             args += " VERBOSE=1"
-        self.shell.execute(self.buildDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
+        if self.buildInSource:
+            self.shell.execute(self.sourceDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
+        else:
+            self.shell.execute(self.buildDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
     def install( self ):
         """Using *make install"""
 
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
         args = "prefix= DESTDIR=%s install" % self.shell.toNativePath(self.installDir())             
 
         if self.subinfo.options.make.ignoreErrors:
@@ -72,8 +88,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
             
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
-        
-        return self.shell.execute(self.buildDir(), self.makeProgram, args ) or utils.die( "while installing. cmd: %s" % command )
+        if self.buildInSource:
+            return self.shell.execute(self.sourceDir(), self.makeProgram, args ) or utils.die( "while installing. cmd: %s" % command )
+        else:
+            return self.shell.execute(self.buildDir(), self.makeProgram, args ) or utils.die( "while installing. cmd: %s" % command )
 
     def runTest( self ):
         """running unittests"""
@@ -82,7 +100,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def createShell( self ):
         """create shell in package build dir with prepared environment"""
 
-        self.enterBuildDir()
-        self.shell.openShell(self.buildDir())
+        if self.buildInSource:
+            self.enterSourceDir()
+            self.shell.openShell(self.sourceDir())
+        else:
+            self.enterBuildDir()
+            self.shell.openShell(self.buildDir())
         return True
         
