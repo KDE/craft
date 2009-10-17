@@ -253,7 +253,7 @@ class EmergeBase():
 
     def enterBuildDir(self):
        
-        if ( not os.path.exists( self.buildDir()) ):
+        if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
             if utils.verbose() > 0:
                 print "creating: %s" % self.buildDir()
@@ -262,6 +262,15 @@ class EmergeBase():
         if utils.verbose() > 0:
             print "entering: %s" % self.buildDir()
 
+    def enterSourceDir(self):
+        if ( not os.path.exists( self.sourceDir() ) ):
+            return False
+        utils.warning("entering the source directory!")
+        os.chdir( self.sourceDir() )
+        if utils.verbose() > 0:
+            print "entering: %s" % self.sourceDir()
+        
+        
     def system( self, command, errorMessage="", debuglevel=1 ):
         """convencience function for running system commands. 
         This method prints a debug message and then runs a system command. 
