@@ -1,0 +1,12 @@
+diff -Nru libgcrypt-1.4.4.orig/src/Makefile.in libgcrypt-1.4.4/src/Makefile.in
+--- libgcrypt-1.4.4.orig/src/Makefile.in	2009-01-22 19:16:51.000000000 +0100
++++ libgcrypt-1.4.4/src/Makefile.in	2009-10-17 04:06:52.076349000 +0200
+@@ -897,7 +897,7 @@
+ @HAVE_W32_SYSTEM_TRUE@	$(LTRCCOMPILE) -i $< -o $@
+ 
+ @HAVE_W32_SYSTEM_TRUE@install-def-file:
+-@HAVE_W32_SYSTEM_TRUE@	$(INSTALL) $(srcdir)/libgcrypt.def $(DESTDIR)$(libdir)/libgcrypt.def
++@HAVE_W32_SYSTEM_TRUE@	$(install_sh_PROGRAM) $(srcdir)/libgcrypt.def $(DESTDIR)$(libdir)/libgcrypt.def
+ 
+ @HAVE_W32_SYSTEM_TRUE@uninstall-def-file:
+ @HAVE_W32_SYSTEM_TRUE@	-rm $(DESTDIR)$(libdir)/libgcrypt.def
