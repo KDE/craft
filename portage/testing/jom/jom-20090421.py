@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
 
     def setTargets( self ):
-        self.targets['HEAD'] = 'http://winkde.org/pub/kde/ports/win32/repository/other/jom-20090729-bin.tar.bz2'
+        self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'
         self.targetInstSrc['HEAD'] = 'jom'
         self.defaultTarget = 'HEAD'
 
@@ -24,7 +24,7 @@ class subclass(base.baseclass):
 
     def install(self):
         res = base.baseclass.install( self )
-        srcdir = os.path.join( os.path.join(self.workdir, "bin"), "jom.exe" )
+        srcdir = os.path.join( self.workdir, "jom.exe" )
         destdir = os.path.join( self.imagedir, "bin" )
         if not os.path.exists( self.imagedir ):
             os.mkdir( self.imagedir )
