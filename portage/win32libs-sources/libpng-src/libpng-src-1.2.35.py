@@ -18,9 +18,6 @@ class subclass(base.baseclass):
     self.createCombinedPackage = True
     self.buildType = "Release"
     self.subinfo = subinfo()
-    if self.compiler <> "mingw":
-      print "error: can only be build with MinGW (but in the end a mingw/msvc combined package is created"
-      exit( 1 )
 
   def unpack( self ):
     if( not self.kdeSvnUnpack() ):
