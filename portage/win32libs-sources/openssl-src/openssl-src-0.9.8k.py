@@ -22,7 +22,12 @@ class subclass(base.baseclass):
 
   def compile( self ):
     os.chdir( os.path.join( self.workdir, self.instsrcdir ) )
-    cmd = "ms\mingw32.bat"
+    cmd = ""
+    if self.compiler == "mingw" or self.compiler == "mingw4":
+      cmd = "ms\mingw32.bat"
+    else:
+      cmd = "ms\\32all.bat"
+      
     return self.system( cmd )
 
   def install( self ):
@@ -35,16 +40,24 @@ class subclass(base.baseclass):
     os.mkdir( os.path.join( dst, "lib" ) )
     os.mkdir( os.path.join( dst, "include" ) )
 
-    shutil.copy( os.path.join( src, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
-    shutil.copy( os.path.join( src, "libssl32.dll" ) , os.path.join( dst, "bin", "ssleay32.dll" ) )
-    utils.copySrcDirToDestDir( os.path.join( src, "outinc" ) , os.path.join( dst, "include" ) )
-    shutil.copy( os.path.join( src, "ms", "applink.c" ) , os.path.join( dst, "include", "openssl" ) )
+    if self.compiler == "mingw" or self.compiler == "mingw4":
+      shutil.copy( os.path.join( src, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
+      shutil.copy( os.path.join( src, "libssl32.dll" ) , os.path.join( dst, "bin", "ssleay32.dll" ) )
+      utils.copySrcDirToDestDir( os.path.join( src, "outinc" ) , os.path.join( dst, "include" ) )
+      shutil.copy( os.path.join( src, "ms", "applink.c" ) , os.path.join( dst, "include", "openssl" ) )
 
-    # auto-create both import libs with the help of pexports
-    for f in "libeay32 ssleay32".split():
-      self.stripLibs( f )
-      self.createImportLibs( f )
+      # auto-create both import libs with the help of pexports
+      for f in "libeay32 ssleay32".split():
+        self.stripLibs( f )
+        self.createImportLibs( f )
 
+    else:
+      shutil.copy( os.path.join( src, "out32dll", "libeay32.dll" ) , os.path.join( dst, "bin" ) )
+      shutil.copy( os.path.join( src, "out32dll", "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
+      shutil.copy( os.path.join( src, "out32dll", "libeay32.lib" ) , os.path.join( dst, "lib" ) )
+      shutil.copy( os.path.join( src, "out32dll", "ssleay32.lib" ) , os.path.join( dst, "lib" ) )
+      utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
+    
     return True
 
   def make_package( self ):
