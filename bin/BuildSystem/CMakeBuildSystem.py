@@ -18,7 +18,12 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self,"cmake")
 
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+        if self.compiler() == "msvc2008":
+            if self.subinfo.options.cmake.useIDE:
+                self.cmakeMakefileGenerator = "Visual Studio 9 2008"            
+            else:
+                self.cmakeMakefileGenerator = "NMake Makefiles"
+        elif self.compiler() == "msvc2005":                
             self.cmakeMakefileGenerator = "NMake Makefiles"
         elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             self.cmakeMakefileGenerator = "MinGW Makefiles"
@@ -89,17 +94,23 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.envPath <> '':
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
-        
-        command = self.makeProgramm
 
-        if utils.verbose() > 1:
-            command += " VERBOSE=1"
-        
-        if self.subinfo.options.make.ignoreErrors:
-            command += " -i"
+        if self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
+            if self.subinfo.options.make.slnBaseName:
+                command = "start %s.sln" % self.subinfo.options.make.slnBaseName
+            else:
+                command = "start %s.sln" % self.package
+        else:
+            command = self.makeProgramm
+
+            if utils.verbose() > 1:
+                command += " VERBOSE=1"
             
-        if self.subinfo.options.make.makeOptions:
-            command += " %s" % self.subinfo.options.make.makeOptions
+            if self.subinfo.options.make.ignoreErrors:
+                command += " -i"
+                
+            if self.subinfo.options.make.makeOptions:
+                command += " %s" % self.subinfo.options.make.makeOptions
 
         return self.system( command, "make" ) 
 
