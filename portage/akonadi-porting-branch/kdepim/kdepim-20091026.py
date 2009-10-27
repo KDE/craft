@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['contributed/akonadi-porting-branch/kdepimlibs'] = 'default'
+        self.hardDependencies['akonadi-porting-branch/kdepimlibs'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
 from Package.CMakePackageBase import *
