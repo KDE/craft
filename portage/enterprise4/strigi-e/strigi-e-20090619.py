@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.svnTargets['0.6.4']  = 'tags/strigi/strigi/strigi-0.6.4'
         self.svnTargets['0.6.5']  = 'tags/strigi/strigi/0.6.5'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '0.6.5'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
