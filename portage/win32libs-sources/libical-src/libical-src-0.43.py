@@ -7,10 +7,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'libical'
-        for v in [ '0.41', '0.42', '0.43']:
+        for v in [ '0.41', '0.42', '0.43', '0.44']:
             self.targets[ v ] = 'http://downloads.sourceforge.net/freeassociation/libical-' + v + '.tar.gz'
             self.targetInstSrc[ v ] = 'libical-' + v
-        self.defaultTarget = '0.43'
+        self.defaultTarget = '0.44'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -41,6 +41,7 @@ class subclass(base.baseclass):
                 self.kde.sourcePath = os.path.join( self.svndir, self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
             else:
                 return False
+        self.kdeCustomDefines = "-DUSE_BUILTIN_TZDATA=true -DICAL_UNIX_NEWLINE=false"
         return self.kdeCompile()
 
     def install( self ):
