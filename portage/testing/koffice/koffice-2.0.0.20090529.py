@@ -7,12 +7,13 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
-        for ver in ['2.0.82', '2.0.83']:
+        for ver in ['2.0.82', '2.0.83', '2.0.91']:
             self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'koffice-' + ver
         self.patchToApply['2.0.0'] = ('koffice-2.0.0.diff', 0)
         self.patchToApply['2.0.82'] = ('koffice-2.0.82.diff', 0)
         self.patchToApply['2.0.83'] = ('koffice-2.0.83.diff', 1)
+        self.patchToApply['2.0.91'] = ('koffice-2.0.91.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
