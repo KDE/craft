@@ -35,6 +35,8 @@ class GitSource ( VersionSystemSourceBase ):
 
         if utils.verbose() <= 2:
             devNull = " > /dev/null"
+        else:
+            devNull = ""
         ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
         if ( not self.noFetch ):
