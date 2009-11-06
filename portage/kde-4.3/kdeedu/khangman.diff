@@ -1,0 +1,16 @@
+Index: kdeedu/khangman/src/khangman.cpp
+===================================================================
+--- kdeedu/khangman/src/khangman.cpp
++++ kdeedu/khangman/src/khangman.cpp
+@@ -538,7 +538,10 @@
+ {
+     KUrl url = KFileDialog::getOpenUrl(QString(), KEduVocDocument::pattern(KEduVocDocument::Reading), this, i18n("Open Vocabulary Document"));
+     if ( url.isValid() )  {
+-        Prefs::setLevelFile(url.path());
++        if(url.isLocalFile())
++            Prefs::setLevelFile(url.toLocalFile());
++        else
++            Prefs::setLevelFile(url.path());
+         Prefs::self()->writeConfig();
+         changeStatusbar(url.path().section('/', -1), IDS_LEVEL);
+         changeStatusbar(i18n("Local file"), IDS_LANG);

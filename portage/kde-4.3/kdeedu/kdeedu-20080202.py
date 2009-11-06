@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.3.' + ver] = 'kdeedu-4.3.' + ver
         self.patchToApply['4.3.0'] = ('1011613.diff', 0)
         self.patchToApply['4.3.0'] = ('kdeedu-kmplot.diff', 0)
+        self.patchToApply['4.3.3'] = ('khangman.diff', 1)
           
         self.defaultTarget = 'svnHEAD'
     
