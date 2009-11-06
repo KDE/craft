@@ -53,8 +53,9 @@
 			<files include="share/apps/cmake/modules/FindMarble.*"/>
 			<files include="include/.*(marble).*"/>
 			<files include="lib/.*(marble).*"/>
-share\apps\cmake\modules\FindMarble
 		</part>
+        <dependency>kdebase-runtime</dependency>
+        <dependency>kdelibs</dependency>
     </package>
     <package name="kalzium">
         <shortDescription>Kalzium will show you information about the periodic system of the elements</shortDescription>
