@@ -1,0 +1,20 @@
+diff -Nru kipi-plugins-0.8.0.orig/CMakeLists.txt kipi-plugins-0.8.0/CMakeLists.txt
+--- kipi-plugins-0.8.0.orig/CMakeLists.txt	2009-11-02 00:01:00.000000000 +0100
++++ kipi-plugins-0.8.0/CMakeLists.txt	2009-11-06 03:17:56.511000000 +0100
+@@ -83,14 +83,14 @@
+ INCLUDE(MacroOptionalDependPackage)
+ 
+ # LINUX Only.
+-IF(NOT WIN32 AND NOT APPLE)
++IF(NOT APPLE)
+     MACRO_OPTIONAL_DEPEND_PACKAGE(KSane "ksane")
+         IF(DEPEND_PACKAGE_KSane)
+         MACRO_OPTIONAL_FIND_PACKAGE(KSane)   # For AcquireImages
+     ELSE(DEPEND_PACKAGE_KSane)
+         SET(KSANE_FOUND FALSE)
+     ENDIF(DEPEND_PACKAGE_KSane)
+-ENDIF(NOT WIN32 AND NOT APPLE)
++ENDIF(NOT APPLE)
+ 
+ # ==================================================================================================
+ # Log messages
