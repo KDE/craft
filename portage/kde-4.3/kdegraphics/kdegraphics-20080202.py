@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdegraphics-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdegraphics-4.3.' + ver
+        self.patchToApply['4.3.3'] = ('libksane.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
