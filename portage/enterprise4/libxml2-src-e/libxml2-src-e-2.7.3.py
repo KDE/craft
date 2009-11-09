@@ -13,7 +13,9 @@ PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/" + PACKAGE_FULL_NAME + ".win32.zip"
+# strigi-e 0.6.5 will not build with libxml2-2.7.6, so let's use libxml2-2.7.3
+# from oldreleases for now.
+        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/oldreleases/" + PACKAGE_FULL_NAME + ".win32.zip"
         self.targetInstSrc[PACKAGE_VER] = PACKAGE_FULL_NAME
         self.defaultTarget = PACKAGE_VER
     def setDependencies( self ):
