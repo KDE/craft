@@ -201,7 +201,7 @@ class infoclass:
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
-        if os.getenv("KDECOMPILER") == "mingw4":
+        elif os.getenv("KDECOMPILER") == "mingw4":
             compiler = "mingw4"
         elif os.getenv("KDECOMPILER") == "msvc2008":
             compiler = "vc90"
