@@ -1,0 +1,224 @@
+--- src/libical/CMakeLists.txt	Sat Sep 26 20:38:51 2009
++++ src/libical/CMakeLists.txt	Fri Oct 30 14:30:17 2009
+@@ -7,6 +7,13 @@
+   ${CMAKE_BINARY_DIR}/src/libical
+ )
+ 
++if(WIN32)
++  if(MSVC)
++    add_definitions(-DBUILD_LIBICALDLL)
++  endif(MSVC)
++endif(WIN32)
++
++
+ set(PACKAGE_DATA_DIR "\\\"${CMAKE_INSTALL_PREFIX}/share/libical\\\"")
+ add_definitions(-DPACKAGE_DATA_DIR=${PACKAGE_DATA_DIR})
+ 
+@@ -232,9 +239,14 @@
+ 
+ target_link_libraries(ical ${CMAKE_THREAD_LIBS_INIT})
+ 
++if(MSVC)
++  set_target_properties(ical PROPERTIES OUTPUT_NAME "libical")
++  set_target_properties(ical-static PROPERTIES OUTPUT_NAME "libical-static")
++else(MSVC)
++  set_target_properties(ical-static PROPERTIES OUTPUT_NAME "ical")
++endif(MSVC)
+ set_target_properties(ical PROPERTIES VERSION ${LIBICAL_LIB_VERSION_STRING} SOVERSION ${LIBICAL_LIB_MAJOR_VERSION})
+ set_target_properties(ical PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+-set_target_properties(ical-static PROPERTIES OUTPUT_NAME "ical")
+ set_target_properties(ical-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+ 
+ install(TARGETS ical ical-static ${INSTALL_TARGETS_DEFAULT_ARGS})
+--- src/libical/icalerror.h	Sat Sep 26 20:38:51 2009
++++ src/libical/icalerror.h	Fri Oct 30 13:00:11 2009
+@@ -69,7 +69,17 @@
+  *  @warning NOT THREAD SAFE -- recommended that you do not change
+  *           this in a multithreaded program.
+  */
+-extern int icalerror_errors_are_fatal;
++#ifdef _MSC_VER
++  #ifdef BUILD_LIBICALDLL
++    #define LIBICAL_EXPORT __declspec(dllexport)
++  #else
++    #define LIBICAL_EXPORT __declspec(dllimport)
++  #endif
++#else
++  #define LIBICAL_EXPORT extern
++#endif
++
++LIBICAL_EXPORT int icalerror_errors_are_fatal;
+ 
+ /* Warning messages */
+ 
+--- src/libical/icalrecur.c	Sat Sep 26 20:38:51 2009
++++ src/libical/icalrecur.c	Fri Oct 30 12:59:24 2009
+@@ -1593,11 +1593,12 @@
+       int day;
+       int days_in_month = icaltime_days_in_month(impl->last.month,
+                                                    impl->last.year);
+-      assert( BYDAYPTR[0]!=ICAL_RECURRENCE_ARRAY_MAX);
+-
+       int set_pos_counter = 0;
+       int set_pos_total = 0;
++      int found = 0;
+       
++      assert( BYDAYPTR[0]!=ICAL_RECURRENCE_ARRAY_MAX);
++
+       /* Count the past positions for the BYSETPOS calculation */
+       if(has_by_data(impl,BY_SET_POS)){
+           int last_day = impl->last.day;
+@@ -1612,8 +1613,6 @@
+ 	  }
+           impl->last.day = last_day;
+       }
+-
+-      int found = 0;
+       
+       for(day = impl->last.day+1; day <= days_in_month; day++){
+           impl->last.day = day;
+@@ -1927,8 +1926,8 @@
+     /* BY_WEEK_NO together with BY_MONTH - may conflict, in this case BY_MONTH wins */
+     if( (flags & 1<<BY_MONTH) && (flags & 1<<BY_WEEK_NO) ){
+         int valid_weeks[ICAL_BY_WEEKNO_SIZE];
+-        memset(valid_weeks, 0, sizeof(valid_weeks));
+         int valid = 1;    
++        memset(valid_weeks, 0, sizeof(valid_weeks));
+         t.year = year;
+         t.is_date = 1;
+ 
+--- src/libical/icaltimezone.c	Sat Sep 26 20:38:51 2009
++++ src/libical/icaltimezone.c	Fri Oct 30 12:58:17 2009
+@@ -54,6 +54,12 @@
+ 
+ /* The gmtime() in Microsoft's C library is MT-safe */
+ #define gmtime_r(tp,tmp) (gmtime(tp)?(*(tmp)=*gmtime(tp),(tmp)):0)
++
++// MSVC lacks the POSIX macro S_ISDIR, however it's a trivial one:
++#ifndef S_ISDIR
++#define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
++#endif
++
+ #endif
+ 
+ /** This is the toplevel directory where the timezone data is installed in. */
+--- src/libicalss/CMakeLists.txt	Sat Sep 26 20:38:52 2009
++++ src/libicalss/CMakeLists.txt	Fri Oct 30 14:32:50 2009
+@@ -76,9 +76,14 @@
+ 
+ target_link_libraries(icalss ical)
+ 
++if(MSVC)
++  set_target_properties(icalss PROPERTIES OUTPUT_NAME "libicalss")
++  set_target_properties(icalss-static PROPERTIES OUTPUT_NAME "libicalss-static")
++else(MSVC)
++  set_target_properties(icalss-static PROPERTIES OUTPUT_NAME "icalss")
++endif(MSVC)
+ set_target_properties(icalss PROPERTIES VERSION ${LIBICAL_LIB_VERSION_STRING} SOVERSION ${LIBICAL_LIB_MAJOR_VERSION})
+ set_target_properties(icalss PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+-set_target_properties(icalss-static PROPERTIES OUTPUT_NAME "icalss")
+ set_target_properties(icalss-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+ 
+ install(TARGETS icalss icalss-static ${INSTALL_TARGETS_DEFAULT_ARGS})
+--- src/libicalvcal/CMakeLists.txt	Sat Sep 26 20:38:52 2009
++++ src/libicalvcal/CMakeLists.txt	Fri Oct 30 14:34:40 2009
+@@ -32,9 +32,14 @@
+ 
+ target_link_libraries(icalvcal ical)
+ 
++if(MSVC)
++  set_target_properties(icalvcal PROPERTIES OUTPUT_NAME "libicalvcal")
++  set_target_properties(icalvcal-static PROPERTIES OUTPUT_NAME "libicalvcal-static")
++else(MSVC)
++  set_target_properties(icalvcal-static PROPERTIES OUTPUT_NAME "icalvcal")
++endif(MSVC)
+ set_target_properties(icalvcal PROPERTIES VERSION ${LIBICAL_LIB_VERSION_STRING} SOVERSION ${LIBICAL_LIB_MAJOR_VERSION})
+ set_target_properties(icalvcal PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+-set_target_properties(icalvcal-static PROPERTIES OUTPUT_NAME "icalvcal")
+ set_target_properties(icalvcal-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+ 
+ install(TARGETS icalvcal icalvcal-static ${INSTALL_TARGETS_DEFAULT_ARGS})
+--- src/ical.def	Sat Sep 26 20:38:53 2009
++++ src/ical.def	Fri Oct 30 14:49:54 2009
+@@ -1,4 +1,4 @@
+-LIBRARY ical.dll
++LIBRARY libical.dll
+ EXPORTS
+ caldat
+ compare_map DATA
+--- src/ical.h	Sat Sep 26 20:38:53 2009
++++ src/ical.h	Fri Oct 30 12:57:35 2009
+@@ -18,6 +18,9 @@
+     the License at http://www.mozilla.org/MPL/
+ 
+  ************************************************************************/
+-
++#ifdef _MSC_VER
++#pragma message("WARNING: #include <ical.h> is deprecated.  Please #include <libical/ical.h> instead.")
++#else
+ #warning "#include <ical.h> is deprecated.  Please #include <libical/ical.h> instead."
++#endif
+ #include <libical/ical.h>
+--- src/icalss.def	Sat Sep 26 20:38:53 2009
++++ src/icalss.def	Fri Oct 30 14:50:02 2009
+@@ -1,4 +1,4 @@
+-LIBRARY icalss.dll
++LIBRARY libicalss.dll
+ EXPORTS
+ icalcalendar_create
+ icalcalendar_free
+@@ -179,8 +179,6 @@
+ ss_create_buffer
+ ss_delete_buffer
+ ss_flush_buffer
+-ss_init_buffer
+-ss_load_buffer_state
+ ss_scan_buffer
+ ss_scan_bytes
+ ss_scan_string
+@@ -379,8 +377,6 @@
+ ss_create_buffer
+ ss_delete_buffer
+ ss_flush_buffer
+-ss_init_buffer
+-ss_load_buffer_state
+ ss_scan_buffer
+ ss_scan_bytes
+ ss_scan_string
+@@ -579,8 +575,6 @@
+ ss_create_buffer
+ ss_delete_buffer
+ ss_flush_buffer
+-ss_init_buffer
+-ss_load_buffer_state
+ ss_scan_buffer
+ ss_scan_bytes
+ ss_scan_string
+@@ -779,8 +773,6 @@
+ ss_create_buffer
+ ss_delete_buffer
+ ss_flush_buffer
+-ss_init_buffer
+-ss_load_buffer_state
+ ss_scan_buffer
+ ss_scan_bytes
+ ss_scan_string
+--- src/icalvcal.def	Sat Sep 26 20:38:53 2009
++++ src/icalvcal.def	Fri Oct 30 14:50:11 2009
+@@ -1,4 +1,4 @@
+-LIBRARY icalvcal.dll
++LIBRARY libicalvcal.dll
+ EXPORTS
+ Parse_MIME
+ Parse_MIME_FromFile
+--- CMakeLists.txt	Sat Sep 26 20:38:55 2009
++++ CMakeLists.txt	Fri Oct 30 12:56:20 2009
+@@ -41,7 +41,7 @@
+ # make msvc less verbose
+ if(WIN32)
+   if(MSVC)
+-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
++    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DYY_NO_UNISTD_H)
+   endif(MSVC)
+   add_definitions(-DBIG_ENDIAN=0 -DLITTLE_ENDIAN=1 -DBYTE_ORDER=BIG_ENDIAN)
+ endif(WIN32)
