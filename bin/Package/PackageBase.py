@@ -26,6 +26,7 @@ class PackageBase (EmergeBase):
     def __init__(self):
         utils.debug("PackageBase.__init__ called",2)
         EmergeBase.__init__(self)
+        self.subinfo.options.readFromEnv()
         self.setBuildTarget()
         self.forceCreateManifestFiles = False
 
