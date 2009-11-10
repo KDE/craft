@@ -351,7 +351,13 @@ deplist = []
 packageList = []
 categoryList = []
 
+
 buildType = os.environ["EMERGE_BUILDTYPE"] 
+if "EMERGE_DEFAULTCATEGORY" in os.environ:
+    defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
+else:
+    defaultCategory = "kde"
+
 
 if packageName:
     if len( packageName.split( "/" ) ) == 1:
@@ -360,11 +366,17 @@ if packageName:
             packageList = portage.getAllPackages( packageName )
             categoryList = [ packageName ]
         else:
-            if portage.getCategory( packageName ):
+        
+            if portage.isCategory( defaultCategory ) and portage.isPackage( defaultCategory, packageName ):
+                # prefer the default category
                 packageList = [ packageName ]
-                categoryList = [ portage.getCategory( packageName ) ]
+                categoryList = [ defaultCategory ]
             else:
-                utils.warning( "unknown category or package: %s" % packageName )
+                if portage.getCategory( packageName ):
+                    packageList = [ packageName ]
+                    categoryList = [ portage.getCategory( packageName ) ]
+                else:
+                    utils.warning( "unknown category or package: %s" % packageName )
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
         validPackage = False
