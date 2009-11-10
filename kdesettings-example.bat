@@ -18,7 +18,7 @@ rem Here you set the path to your Python installation,
 rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
 rem settings of Windows.
-set PYTHONPATH=%PROGRAMFILES%\python25
+set PYTHONPATH=%PROGRAMFILES%\python26
 
 rem Here you set the path to msys if you want to compile
 rem automake-based projects (only needed for some internal packages).
@@ -137,6 +137,12 @@ rem set EMERGE_PKGDSTDIR=%KDEROOT%\tmp
 rem This option can be used to override the default make program
 rem change the value to the path of the executable you want to use instead.
 rem set EMERGE_MAKE_PROGRAM=%KDEROOT%\bin\jom.exe
+
+rem This option can be used to set the default category for packages with the same name
+rem that are contained in multiple categories; This is especially useful if you want
+rem to build e.g. from the 4.3 branch: simply set the variable to kde-4.3 then
+rem for all other packages this option doesn't have any effect
+rem set EMERGE_DEFAULTCATEGORY=kde-4.3
 
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
