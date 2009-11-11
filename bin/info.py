@@ -74,7 +74,10 @@ class OptionsPackage:
         
 class OptionsCMake:
     def __init__(self): 
+        ## use IDE for msvc2008 projects
         self.useIDE = False
+        ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
+        self.openIDE = False
         
 ## main option class
 class Options:
@@ -121,7 +124,7 @@ class Options:
 
         
     def readFromEnv(self):
-        opts = os.getenv( "EMERGE_OPTION" )
+        opts = os.getenv( "EMERGE_OPTIONS" )
         if opts == None:
             return False
         opts = opts.split()
@@ -132,8 +135,12 @@ class Options:
             (option,value) = entry.split('=')
             print option + " " + value
             if option == "cmake.useIDE":
-                self.cmake.useIDE=value
+                # @todo using value from above does not work in case of value=0
+                self.cmake.useIDE=True
+            elif option == "cmake.openIDE":
+                self.cmake.openIDE=True
             elif hasattr(self,option):
+                # @todo convert "property string" into  cmake.useIDE
                 setattr(self,option,value)
             else:
                 utils.die("unknown property %s" % option)
