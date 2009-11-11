@@ -3,12 +3,12 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['20091103'] = 'tags/kdepim/pe5.20091103/kdepim'
-        self.defaultTarget = '20091103'
+        self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdepim'
+        self.defaultTarget = '20091111'
 
     def setDependencies( self ):
-        self.hardDependencies['enterprise5/kdebase-runtime'] = 'default'
         self.hardDependencies['enterprise5/kdepimlibs'] = 'default'
+        self.hardDependencies['enterprise5/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
 from Package.CMakePackageBase import *

@@ -6,8 +6,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['20091103'] = 'tags/kdepim/pe5.20091103/l10n-kde4/'
-        self.defaultTarget = '20091103'
+        self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/l10n-kde4/'
+        self.defaultTarget = '20091111'
 
         # all targets 
         self.languages  = 'de'

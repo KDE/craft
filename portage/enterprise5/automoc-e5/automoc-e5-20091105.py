@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['20091103'] = 'tags/kdepim/pe5.20091103/kdesupport/automoc'
+        self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/automoc'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/automoc'
-        self.defaultTarget = '20091103'
+        self.defaultTarget = '20091111'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

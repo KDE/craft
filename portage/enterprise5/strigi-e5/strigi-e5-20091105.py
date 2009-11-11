@@ -23,9 +23,9 @@ class subinfo(info.infoclass):
         self.svnTargets['0.6.3']  = 'tags/strigi/strigi/0.6.3'
         self.svnTargets['0.6.4']  = 'tags/strigi/strigi/strigi-0.6.4'
         self.svnTargets['0.6.5']  = 'tags/strigi/strigi/0.6.5'
-        self.svnTargets['20091103']  = 'tags/kdepim/pe5.20091103/kdesupport/strigi'
+        self.svnTargets['20091111']  = 'tags/kdepim/pe5.20091111/kdesupport/strigi'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
-        self.defaultTarget = '20091103'
+        self.defaultTarget = '20091111'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

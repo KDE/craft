@@ -10,9 +10,9 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['0.0.5'] = 'tags/qimageblitz/0.0.5'
-        self.svnTargets['20091103'] = 'tags/kdepim/pe5.20091103/kdesupport/qimageblitz'
+        self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/qimageblitz'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qimageblitz'
-        self.defaultTarget = '20091103'
+        self.defaultTarget = '20091111'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
