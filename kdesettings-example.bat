@@ -102,6 +102,12 @@ if "%1" == "" (
 set EMERGE_BUILDTYPE=RelWithDebInfo
 )
 
+rem override specific emerge options 
+rem currently only a subset of options (from bin\options.py) are setable by 
+rem this environment variable because of a not full implemented option parser. 
+rem See bin\options.py:Options::readFromEnv() for the current state
+rem set EMERGE_OPTIONS=
+
 rem If you want to have verbose output, uncomment the following option
 rem and set it to positive integer for verbose output and to 0
 rem or disable it for normal output. Currently the highest verbosity level
