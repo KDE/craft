@@ -19,7 +19,7 @@ class CMakeBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self,"cmake")
 
         if self.compiler() == "msvc2008":
-            if self.subinfo.options.cmake.useIDE:
+            if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
                 self.cmakeMakefileGenerator = "Visual Studio 9 2008"            
             else:
                 self.cmakeMakefileGenerator = "NMake Makefiles"
@@ -48,7 +48,28 @@ class CMakeBuildSystem(BuildSystemBase):
                         defines += " -DBUILD_%s=OFF" % subdir
         #print defines
         return defines
-
+    
+    def __slnFileName(self):
+        """ return solution file name """
+        slnPackage = "%s.sln" % self.package
+        if os.path.exists(os.path.join(self.buildDir(),slnPackage)):
+            return slnPackage
+        topLevelCMakeList = os.path.join(self.sourceDir(),"CMakeLists.txt")
+        if os.path.exists(topLevelCMakeList):
+            f = open(topLevelCMakeList,'r')
+            lines = f.read().splitlines()
+            f.close()
+            for line in lines:
+                if line.find("project(") > -1:
+                    a = line.split("(")
+                    a = a[1].split(")")
+                    slnname = a[0].strip()
+        if slnname:
+            return "%s.sln" % slnname
+        if self.subinfo.options.make.slnBaseName:
+            return "%s.sln" % self.subinfo.options.make.slnBaseName
+        return ""
+ 
     def configureOptions( self, defines=""):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
@@ -95,11 +116,10 @@ class CMakeBuildSystem(BuildSystemBase):
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
 
-        if self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
-            if self.subinfo.options.make.slnBaseName:
-                command = "start %s.sln" % self.subinfo.options.make.slnBaseName
-            else:
-                command = "start %s.sln" % self.package
+        if self.compiler() == "msvc2008" and self.subinfo.options.cmake.openIDE:
+            command = "start %s" % self.__slnFileName()             
+        elif self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
+            command = "vcbuild /M2 %s \"%s|Win32\"" % (self.__slnFileName(),self.buildType())
         else:
             command = self.makeProgramm
 
@@ -113,7 +133,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 command += " %s" % self.subinfo.options.make.makeOptions
 
         return self.system( command, "make" ) 
-
+        
     def install( self):
         """install the target"""
         self.enterBuildDir()
@@ -123,13 +143,16 @@ class CMakeBuildSystem(BuildSystemBase):
             fastString = "/fast"
 
         if self.subinfo.options.install.useMakeToolForInstall == True:          
-            command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.installDir(), fastString )
+            if self.compiler() == "msvc2008" and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+                command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
+            else:
+                command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.installDir(), fastString )
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
         
         self.system( command, "install" ) 
 
-        if self.subinfo.options.install.useMakeToolForInstall == True:
+        if self.subinfo.options.install.useMakeToolForInstall == True and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):        
             utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
         return True
 
