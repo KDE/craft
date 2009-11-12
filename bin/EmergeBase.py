@@ -39,6 +39,9 @@ KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
 # IMAGEDIR: the directory, under which the compiled files are installed.
 #            here rootdir/tmp/packagename/image
 
+def envAsBool(key):
+    """ return value of environment variable as bool value """
+    return os.getenv( key ) == "True" or os.getenv( key ) == "1"
 
 class EmergeBase():
     """base class for emerge system - holds attributes and methods required by base classes"""
@@ -61,34 +64,39 @@ class EmergeBase():
             self.argv0 = sys.argv[ 0 ]
             
         self.SRC_URI                = SRC_URI
-        self.noCopy                 = False
-        self.noClean                = False
-        self.noFast                 = True
-        self.buildTests             = False
-        self.forced                 = False
         self.versioned              = False
-        self.noFetch                = False
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
      
         ## specifies if a build type related root directory should be used
         self.useBuildTypeRelatedMergeRoot = False
-        if os.getenv("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE") == "True":
+        if envAsBool("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE"):
             self.useBuildTypeRelatedMergeRoot = True
         
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
         
-        if os.getenv( "EMERGE_OFFLINE" ) == "True":
+        self.noFetch = False
+        if envAsBool( "EMERGE_OFFLINE" ):
             self.noFetch = True
-        if os.getenv( "EMERGE_NOCOPY" ) == "True":
+        
+        self.noCopy = False
+        if envAsBool( "EMERGE_NOCOPY" ):
             self.noCopy = True
-        if os.getenv( "EMERGE_NOFAST" ) == "False":
+
+        self.noFast = True
+        if envAsBool( "EMERGE_NOFAST" ):
             self.noFast = False
-        if os.getenv( "EMERGE_NOCLEAN" )    == "True":
-            self.noClean     = True
-        if os.getenv( "EMERGE_FORCED" ) == "True":
+
+        self.noClean = False
+        if envAsBool( "EMERGE_NOCLEAN" ) :
+            self.noClean = True
+
+        self.forced = False
+        if envAsBool( "EMERGE_FORCED" ):
             self.forced = True
-        if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
+            
+        self.buildTests = False
+        if envAsBool( "EMERGE_BUILDTESTS" ):
             self.buildTests = True
 
         if COMPILER == "msvc2005":
