@@ -152,6 +152,8 @@ class EmergeBase():
         dir = ""
         if self.subinfo.options.useCompilerType == True:
             dir += "%s-" % COMPILER
+        if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+            dir += "ide-"
         if self.subinfo.options.useBuildType == False:
             dir += "%s" % (self.buildTarget)
         elif( self.buildType() == None ):
