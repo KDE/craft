@@ -107,6 +107,10 @@ class CMakeBuildSystem(BuildSystemBase):
         
         command = r"""cmake -G "%s" %s""" % (self.cmakeMakefileGenerator, self.configureOptions(defines) )
 
+        fc = open(os.path.join(self.buildDir(), "cmake-command.bat"), "w")
+        fc.write(command);
+        fc.close()
+    
         return self.system( command, "configure", 0 ) 
 
     def make( self ):
