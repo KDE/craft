@@ -38,8 +38,9 @@ The Emerge Root Directory is the root directory for the emerge build system. The
     kdesupport/
         kdewin/
             work/                                           -> Package Work Directory  
-                image-<compiler>-<buildType>/               -> Package Image Directory
                 <compiler>-<buildType>-<buildTarget>/       -> Package source directory
+            image-<compiler>-<buildType>/                   -> Package Image Directory
+
  svn/               -> KDE svn Download Directory 
 \endcode
 
@@ -185,14 +186,13 @@ class subinfo(info.infoclass):
         if os.getenv( "KDECOMPILER" ) == "mingw":
           self.hardDependencies['dev-util/mingw']    = 'default'
 
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
+class Package(CMakePackageBase):
+  def __init__( self ):
     self.subinfo = subinfo()
+    CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
-
+    Package().execute()
 \endcode            
 \todo complete 
 
