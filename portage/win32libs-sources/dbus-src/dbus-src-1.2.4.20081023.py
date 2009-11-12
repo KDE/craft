@@ -26,6 +26,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus'
+        self.subinfo.options.make.slnBaseName = 'dbus' 
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):
