@@ -57,7 +57,7 @@ rem Here you can tell the emerge tool in which dir you want to save the
 rem SVN checkout of KDE source code. If you have SVN account registered 
 rem within the KDE project, you can also set KDESVNUSERNAME and change 
 rem KDESVNSERVER from svn://anonsvn.kde.org to https://svn.kde.org or 
-rem svn+ssh://username@svn.kde.org, so that rem you can directly commit 
+rem svn+ssh://username@svn.kde.org, so that you can directly commit 
 rem your changes from the emerge's SVN checkout. In case you use svn+ssh, 
 rem also run plink username@svn.kde.org after executing kdeenv.bat or
 rem svn will hang forever
@@ -105,7 +105,10 @@ set EMERGE_BUILDTYPE=RelWithDebInfo
 rem override specific emerge options 
 rem currently only a subset of options (from bin\options.py) are setable by 
 rem this environment variable because of a not full implemented option parser. 
-rem See bin\options.py:Options::readFromEnv() for the current state
+rem  Options:
+rem    * cmake.useIDE=1
+rem    * cmake.openIDE=1
+rem and see bin\options.py:Options::readFromEnv() for the current state
 rem set EMERGE_OPTIONS=
 
 rem If you want to have verbose output, uncomment the following option
