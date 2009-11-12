@@ -18,15 +18,17 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self,"cmake")
 
+    def __makeFileGenerator(self):
+        """return cmake related make file generator"""
         if self.compiler() == "msvc2008":
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                self.cmakeMakefileGenerator = "Visual Studio 9 2008"            
+                return "Visual Studio 9 2008"            
             else:
-                self.cmakeMakefileGenerator = "NMake Makefiles"
+                return "NMake Makefiles"
         elif self.compiler() == "msvc2005":                
-            self.cmakeMakefileGenerator = "NMake Makefiles"
+            return "NMake Makefiles"
         elif self.compiler() == "mingw" or self.compiler() == "mingw4":
-            self.cmakeMakefileGenerator = "MinGW Makefiles"
+            return "MinGW Makefiles"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
 
@@ -105,7 +107,7 @@ class CMakeBuildSystem(BuildSystemBase):
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
         
-        command = r"""cmake -G "%s" %s""" % (self.cmakeMakefileGenerator, self.configureOptions(defines) )
+        command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
 
         fc = open(os.path.join(self.buildDir(), "cmake-command.bat"), "w")
         fc.write(command);
