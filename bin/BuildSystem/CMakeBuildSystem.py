@@ -51,9 +51,9 @@ class CMakeBuildSystem(BuildSystemBase):
     
     def __slnFileName(self):
         """ return solution file name """
-        slnPackage = "%s.sln" % self.package
-        if os.path.exists(os.path.join(self.buildDir(),slnPackage)):
-            return slnPackage
+        slnname = "%s.sln" % self.package
+        if os.path.exists(os.path.join(self.buildDir(),slnname)):
+            return slnname
         topLevelCMakeList = os.path.join(self.sourceDir(),"CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
             f = open(topLevelCMakeList,'r')
@@ -63,12 +63,13 @@ class CMakeBuildSystem(BuildSystemBase):
                 if line.find("project(") > -1:
                     a = line.split("(")
                     a = a[1].split(")")
-                    slnname = a[0].strip()
-        if slnname:
-            return "%s.sln" % slnname
-        if self.subinfo.options.make.slnBaseName:
-            return "%s.sln" % self.subinfo.options.make.slnBaseName
-        return ""
+                    slnname = "%s.sln" % a[0].strip()                    
+        if os.path.exists(os.path.join(self.buildDir(),slnname)):
+            return slnname
+        slnname = "%s.sln" % self.subinfo.options.make.slnBaseName
+        if os.path.exists(os.path.join(self.buildDir(),slnname)):
+            return slnname
+        return "NO_NAME_FOUND"
  
     def configureOptions( self, defines=""):
         """returns default configure options"""
@@ -119,7 +120,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.compiler() == "msvc2008" and self.subinfo.options.cmake.openIDE:
             command = "start %s" % self.__slnFileName()             
         elif self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
-            command = "vcbuild /M2 %s \"%s|Win32\"" % (self.__slnFileName(),self.buildType())
+            command = "vcbuild /M1 %s \"%s|Win32\"" % (self.__slnFileName(),self.buildType())
         else:
             command = self.makeProgramm
 
