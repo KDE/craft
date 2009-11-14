@@ -5,11 +5,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.3.5-2'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.5.tar.bz2"
         self.targets['2.3.7-2'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.7.tar.bz2"
-        self.targetInstSrc['2.3.5-2'] = "freetype-2.3.5"
+        self.targets['2.3.11-1'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.11.tar.bz2"
+        self.patchToApply['2.3.7-2'] = ('freetype.diff', 1)
+        self.patchToApply['2.3.11-1'] = ('freetype-2.3.11.diff', 1)
         self.targetInstSrc['2.3.7-2'] = "freetype-2.3.7"
-        self.defaultTarget = '2.3.7-2'
+        self.targetInstSrc['2.3.11-1'] = "freetype-2.3.11"
+        self.defaultTarget = '2.3.11-1'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
@@ -19,16 +21,6 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, args=args )
         self.createCombinedPackage = False
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        if( not base.baseclass.unpack( self ) ):
-            return False
-        cmd = "cd %s && patch -p1 < %s" % \
-              ( os.path.join ( self.workdir, self.instsrcdir ), \
-                os.path.join( self.packagedir, "freetype.diff" ) )
-        print "cmd: " + cmd
-        utils.system( cmd ) or utils.die( "patch" )
-        return True
 
     def compile( self ):
         return self.kdeCompile()
