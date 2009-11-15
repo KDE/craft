@@ -5,10 +5,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['7.6', '7.7', '7.8', '7.9']:
+        for ver in ['7.9', '8.00']:
           self.targets[ver] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'pcre-' + ver
-        self.defaultTarget = '7.9'
+        self.defaultTarget = '8.00'
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/libbzip2'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'

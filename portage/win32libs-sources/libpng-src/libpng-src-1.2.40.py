@@ -5,9 +5,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.2.35'] = 'http://downloads.sourceforge.net/libpng/libpng-1.2.35.tar.gz'
-        self.targetInstSrc['1.2.35'] = 'libpng-1.2.35'
-        self.defaultTarget = '1.2.35'
+        ver = '1.2.40'
+        self.targets[ver] = 'http://downloads.sourceforge.net/libpng/libpng-' + ver + '.tar.gz'
+        self.targetInstSrc[ver] = 'libpng-' + ver
+        self.defaultTarget = ver
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
