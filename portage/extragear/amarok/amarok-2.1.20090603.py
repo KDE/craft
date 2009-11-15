@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/mysql-embedded'] = 'default'
         # the following is only a runtime dependency: keep that in mind for later!!!!
         self.hardDependencies['testing/qtscriptgenerator'] = 'default'
+        self.hardDependencies['testing/liblastfm'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
 
