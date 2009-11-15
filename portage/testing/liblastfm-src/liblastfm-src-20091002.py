@@ -12,6 +12,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['dev-util/ruby'] = 'default'
         self.hardDependencies['testing/libfftw'] = 'default'
         self.hardDependencies['testing/libsamplerate'] = 'default'
 
