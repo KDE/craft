@@ -104,7 +104,7 @@ class Package(CMakePackageBase):
 	# 	 #do something with path 
 	# 	 return dir
 
-	# the same belongs to the following methos 
+	# the same belongs to the following methods 
     #def downloadDir(self): 
     #def packageDir(self): 
     #def filesDir(self):
