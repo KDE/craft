@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from Package.BinaryPackageBase import *
-import os
 import info
 
 class subinfo(info.infoclass):
@@ -14,6 +11,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+
+from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
   def __init__(self):
