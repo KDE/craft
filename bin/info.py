@@ -155,6 +155,6 @@ class infoclass:
 
     def patchesToApply(self):
         """return patch informations for the recent build target"""
-        if len( self.targets ) and self.buildTarget in self.patchToApply.keys():
+        if (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in self.patchToApply.keys():
             return self.patchToApply[ self.buildTarget ]
         return ("","")

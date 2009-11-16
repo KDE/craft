@@ -49,7 +49,7 @@ class SourceBase(EmergeBase):
         """apply patches is available"""
         utils.debug( "SourceBase.applyPatches called", 2 )
 
-        if self.subinfo.hasTarget():
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             ( file, patchdepth ) = self.subinfo.patchesToApply()
             if file:
                 patchfile = os.path.join ( self.packageDir(), file )
@@ -58,8 +58,7 @@ class SourceBase(EmergeBase):
         return True
 
     def createPatch(self):
-        """create patch file from svn source into the related package dir. 
-        The patch file is named autocreated.patch"""
+        """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
         abstract()
         
     def sourceVersion(self):
