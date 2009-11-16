@@ -1,0 +1,17 @@
+--- libssh\pcap.c.orig	2009-11-16 21:42:21.579317400 +0100
++++ libssh\pcap.c	2009-11-16 21:42:11.439081800 +0100
+@@ -26,10 +26,13 @@
+  * \addtogroup ssh_pcap
+  * @{ */
+ 
++#include "config.h"
++
+ #include <stdio.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
+ 
+-#include "config.h"
+ #include "libssh/libssh.h"
+ #include "libssh/pcap.h"
+ #include "libssh/session.h"
