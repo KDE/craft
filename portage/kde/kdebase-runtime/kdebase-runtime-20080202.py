@@ -8,10 +8,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
-        if os.getenv("KDECOMPILER") == "mingw" or os.getenv("KDECOMPILER") == "mingw4":
-            self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
-        else:
-            self.hardDependencies['win32libs-bin/libssh'] = 'default'
+        self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
 
 from Package.CMakePackageBase import *
         
