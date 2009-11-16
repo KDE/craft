@@ -16,9 +16,6 @@ for ideas and code how to do so, look at the gentoo portage system.
 - replace current implementation of option handling with a better one:
   use a parser function that returns the options as a list.
   Maybe there are already implementations for that?
-
-- include the *_build.py as modules directly into the build scripts - this gives back the possibility to
-  overload functions and thus reimplement them.
   
 - implement an option -r (recursive) so that options behind this option are given to all dependencies
   this is needed so that e.g. 'emerge.py --target=4.0 kdebase' will build only the 4.0 target and will
@@ -68,3 +65,16 @@ for ideas and code how to do so, look at the gentoo portage system.
 ## implemented as option --copy and --nocopy; --nocopy is standard now for all svn packages
 ## even packaging works from svn now
 
+- fix combined package creating 
+- complete options classes
+
+done 
+## refactored internal emerge system see doc/refactoring.xmi 
+## implement build type related merge root 
+## added buildtarget to install root 
++ rename workroot to buildRoot 
++ implement build type related merge root 
++ add buildtarget to install root 
+
+- include the *_build.py as modules directly into the build scripts - this gives back the possibility to
+  overload functions and thus reimplement them.
