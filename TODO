@@ -1,5 +1,7 @@
 this is a list of things that could be done to improve emerge:
 
+- migrate old script implementions to refactored api (see portage/template/ for hints) 
+
 - implement "emerge --digest package":
 this would create a digest file for the files needed for this package.
 the advantage would be that it would not be necessary to have internet
