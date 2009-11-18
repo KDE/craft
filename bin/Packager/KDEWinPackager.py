@@ -41,11 +41,15 @@ class KDEWinPackager (PackagerBase):
         if pkgName.endswith('-src'):
             pkgName = pkgName[:-4]
 
-        pkgVersion = str( datetime.date.today() ).replace('-', '')
         if self.subinfo.options.package.version <> None:
             pkgVersion = self.subinfo.options.package.version
-        elif not self.subinfo.buildTarget == "gitHEAD" and not self.subinfo.buildTarget == "svnHEAD":
+            pkgNotesVersion = pkgVersion
+        elif self.subinfo.buildTarget == "gitHEAD" or self.subinfo.buildTarget == "svnHEAD":
+            pkgVersion = str( datetime.date.today() ).replace('-', '')
+            pkgNotesVersion = pkgVersion
+        else: 
             pkgVersion = self.subinfo.buildTarget
+            pkgNotesVersion = pkgVersion
 
         if "EMERGE_PKGPATCHLVL" in os.environ:
             pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
@@ -86,10 +90,10 @@ class KDEWinPackager (PackagerBase):
                   ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd )
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
-            cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating",1) 
         else:
-            cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
         if( self.subinfo.options.package.withCompiler ):
@@ -104,6 +108,7 @@ class KDEWinPackager (PackagerBase):
             else:
               cmd += " -type unknown "
 
+            
         if self.subinfo.options.package.specialMode:
             cmd += " -special"
 
