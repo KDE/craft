@@ -130,9 +130,11 @@ class Options:
             print option + " " + value
             if option == "cmake.useIDE":
                 # @todo using value from above does not work in case of value=0
-                self.cmake.useIDE=True
+                self.cmake.useIDE = True
             elif option == "cmake.openIDE":
-                self.cmake.openIDE=True
+                self.cmake.openIDE = True
+            elif option == "package.version":
+                self.package.version = value
             elif hasattr(self,option):
                 # @todo convert "property string" into  cmake.useIDE
                 setattr(self,option,value)
