@@ -72,6 +72,12 @@ class GitSource ( VersionSystemSourceBase ):
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
+    
+    def createPatch( self ):
+        """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
+        ret = self.shell.execute( self.sourceDir(), "git", "diff > %s" % self.shell.toNativePath(os.path.join(self.packageDir(),"autocreated.patch" )) )
+        #cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join(self.packageDir(),"autocreated.patch" ))
+        return ret
 
     def sourceVersion( self ):
         """ return the revision returned by git show """

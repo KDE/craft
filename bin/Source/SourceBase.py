@@ -58,7 +58,7 @@ class SourceBase(EmergeBase):
         return True
 
     def createPatch(self):
-        """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
+        """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
         abstract()
         
     def sourceVersion(self):
