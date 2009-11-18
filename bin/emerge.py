@@ -170,7 +170,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             success = success and doExec( category, package, version, "package", opts )
 
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
-                            "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "createpatch", 
+                            "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
@@ -301,7 +301,7 @@ for i in sys.argv:
         buildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
-                  "--full-package", "--cleanimage", "--cleanbuild", "--createpatch"] ):
+                  "--full-package", "--cleanimage", "--cleanbuild", "--cleanallbuilds", "--createpatch"] ):
         buildAction = i[2:]
     elif ( i == "--print-revision" ):
         buildAction = "printrev"

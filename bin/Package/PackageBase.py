@@ -117,10 +117,18 @@ class PackageBase (EmergeBase):
         return True
 
     def cleanBuild( self ):
-        """cleanup complete build dir"""
+        """cleanup currently used build dir"""
+        if os.path.exists( self.buildDir() ):
+            utils.cleanDirectory( self.buildDir() )
+            utils.debug( "cleaning build dir: %s" % self.buildDir(), 1 )
+
+        return True
+
+    def cleanAllBuilds( self ):
+        """cleanup all build directories"""
         if os.path.exists( self.buildRoot() ):
             utils.cleanDirectory( self.buildRoot() )
-            utils.debug( "cleaning build dir: %s" % self.buildRoot(), 1 )
+            utils.debug( "cleaning all build dirs: %s" % self.buildRoot(), 1 )
 
         return True
         
@@ -189,6 +197,7 @@ class PackageBase (EmergeBase):
         if command   == "fetch":       ok = self.fetch()
         elif command == "cleanimage":  ok = self.cleanImage()
         elif command == "cleanbuild":  ok = self.cleanBuild()
+        elif command == "cleanallbuilds":  ok = self.cleanAllBuilds()
         elif command == "unpack":      ok = self.unpack()
         elif command == "compile":     ok = self.compile()
         elif command == "configure":   ok = self.configure()
