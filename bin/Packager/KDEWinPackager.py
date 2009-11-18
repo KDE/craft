@@ -66,7 +66,7 @@ class KDEWinPackager (PackagerBase):
          
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if os.path.exists( script ):
                 if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
