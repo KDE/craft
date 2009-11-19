@@ -1,7 +1,7 @@
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/checksumdlg.cpp
+Index: krusader/krusader/Dialogs/checksumdlg.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/checksumdlg.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/checksumdlg.cpp	(Arbeitskopie)
+--- krusader/krusader/Dialogs/checksumdlg.cpp	(Revision 1051213)
++++ krusader/krusader/Dialogs/checksumdlg.cpp	(Arbeitskopie)
 @@ -49,7 +49,7 @@
  
  class CS_Tool; // forward
@@ -11,10 +11,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/checksum
  typedef QStringList GET_FAILED_FUNC(const QStringList& stdOut, const QStringList& stdErr);
  
  class CS_Tool
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/krdialogs.cpp
+Index: krusader/krusader/Dialogs/krdialogs.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/krdialogs.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/krdialogs.cpp	(Arbeitskopie)
+--- krusader/krusader/Dialogs/krdialogs.cpp	(Revision 1051213)
++++ krusader/krusader/Dialogs/krdialogs.cpp	(Arbeitskopie)
 @@ -59,7 +59,7 @@
              u.addPath(temp.path());
              u.cleanPath();
@@ -51,10 +51,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/krdialog
                      u.setProtocol("file");
                  }
              }
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/popularurls.cpp
+Index: krusader/krusader/Dialogs/popularurls.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/popularurls.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/popularurls.cpp	(Arbeitskopie)
+--- krusader/krusader/Dialogs/popularurls.cpp	(Revision 1051213)
++++ krusader/krusader/Dialogs/popularurls.cpp	(Arbeitskopie)
 @@ -352,7 +352,7 @@
      for (it = list.begin(); it != list.end(); ++it) {
          QTreeWidgetItem *item = new QTreeWidgetItem(urls, lastItem);
@@ -64,10 +64,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Dialogs/popularu
          item->setIcon(0, (*it).isLocalFile() ? SmallIcon("folder") : SmallIcon("folder-html"));
      }
  
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/BookMan/krbookmarkhandler.cpp
+Index: krusader/krusader/BookMan/krbookmarkhandler.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/BookMan/krbookmarkhandler.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/BookMan/krbookmarkhandler.cpp	(Arbeitskopie)
+--- krusader/krusader/BookMan/krbookmarkhandler.cpp	(Revision 1051213)
++++ krusader/krusader/BookMan/krbookmarkhandler.cpp	(Arbeitskopie)
 @@ -367,7 +367,7 @@
              KUrl::List::Iterator it;
              for (it = list.begin(); it != list.end(); ++it) {
@@ -77,10 +77,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/BookMan/krbookma
                  else name = (*it).prettyUrl();
                  // note: these bookmark are put into the private collection
                  // as to not spam the general collection
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizertask.cpp
+Index: krusader/krusader/Synchronizer/synchronizertask.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizertask.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizertask.cpp	(Arbeitskopie)
+--- krusader/krusader/Synchronizer/synchronizertask.cpp	(Revision 1051213)
++++ krusader/krusader/Synchronizer/synchronizertask.cpp	(Arbeitskopie)
 @@ -141,16 +141,16 @@
      m_state = ST_STATE_PENDING;
  
@@ -101,10 +101,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/syn
              m_state = ST_STATE_ERROR;
              return;
          }
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizerdirlist.cpp
+Index: krusader/krusader/Synchronizer/synchronizerdirlist.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizerdirlist.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizerdirlist.cpp	(Arbeitskopie)
+--- krusader/krusader/Synchronizer/synchronizerdirlist.cpp	(Revision 1051213)
++++ krusader/krusader/Synchronizer/synchronizerdirlist.cpp	(Arbeitskopie)
 @@ -127,7 +127,7 @@
      }
  
@@ -114,10 +114,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/syn
          DIR* dir = opendir(path.toLocal8Bit());
          if (!dir)  {
              KMessageBox::error(parentWidget, i18n("Can't open the %1 directory!", path), i18n("Error"));
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizer.cpp
+Index: krusader/krusader/Synchronizer/synchronizer.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizer.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/synchronizer.cpp	(Arbeitskopie)
+--- krusader/krusader/Synchronizer/synchronizer.cpp	(Revision 1051213)
++++ krusader/krusader/Synchronizer/synchronizer.cpp	(Arbeitskopie)
 @@ -1031,7 +1031,7 @@
                      timestamp.actime = time(0);
                      timestamp.modtime = item->rightDate() - timeOffset;
@@ -136,10 +136,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Synchronizer/syn
  
                      uid_t newOwnerID = (uid_t) - 1; // chown(2) : -1 means no change
                      if (!item->leftOwner().isEmpty()) {
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/vfs.cpp
+Index: krusader/krusader/VFS/vfs.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/vfs.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/vfs.cpp	(Arbeitskopie)
+--- krusader/krusader/VFS/vfs.cpp	(Revision 1051213)
++++ krusader/krusader/VFS/vfs.cpp	(Arbeitskopie)
 @@ -97,7 +97,7 @@
  QString vfs::pathOrUrl(const KUrl &originIn, KUrl::AdjustPathOption trailingSlash)
  {
@@ -158,10 +158,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/vfs.cpp
          return;
      } else {
          stat_busy = true;
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/virt_vfs.cpp
+Index: krusader/krusader/VFS/virt_vfs.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/virt_vfs.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/virt_vfs.cpp	(Arbeitskopie)
+--- krusader/krusader/VFS/virt_vfs.cpp	(Revision 1051213)
++++ krusader/krusader/VFS/virt_vfs.cpp	(Arbeitskopie)
 @@ -267,7 +267,7 @@
      // get file statistics
      QString name;
@@ -171,10 +171,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/virt_vfs.cpp
      else
          name = url.prettyUrl();
  
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/abstractthreadedjob.cpp
+Index: krusader/krusader/VFS/abstractthreadedjob.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/abstractthreadedjob.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/abstractthreadedjob.cpp	(Arbeitskopie)
+--- krusader/krusader/VFS/abstractthreadedjob.cpp	(Revision 1051213)
++++ krusader/krusader/VFS/abstractthreadedjob.cpp	(Arbeitskopie)
 @@ -392,7 +392,7 @@
  QString AbstractJobThread::tempFileIfRemote(const KUrl &kurl, const QString &type)
  {
@@ -193,10 +193,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/abstractthre
      }
  
      _tempDir = new KTempDir();
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/krquery.cpp
+Index: krusader/krusader/VFS/krquery.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/krquery.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/krquery.cpp	(Arbeitskopie)
+--- krusader/krusader/VFS/krquery.cpp	(Revision 1051213)
++++ krusader/krusader/VFS/krquery.cpp	(Arbeitskopie)
 @@ -241,7 +241,7 @@
          timer.start();
  
@@ -206,10 +206,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/krquery.cpp
          } else {
              if (containOnRemote) {
                  if (processEventsConnected == 0) return false;
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/preserveattrcopyjob.cpp
+Index: krusader/krusader/VFS/preserveattrcopyjob.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/preserveattrcopyjob.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/preserveattrcopyjob.cpp	(Arbeitskopie)
+--- krusader/krusader/VFS/preserveattrcopyjob.cpp	(Revision 1051213)
++++ krusader/krusader/VFS/preserveattrcopyjob.cpp	(Arbeitskopie)
 @@ -1096,7 +1096,7 @@
          if (uDest.isLocalFile()) {
              // if the source is a devices url, handle it a littlebit special
@@ -306,10 +306,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/VFS/preserveattr
                  if (acl)
                      acl_free(acl);
              }
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krslots.cpp
+Index: krusader/krusader/krslots.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krslots.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krslots.cpp	(Arbeitskopie)
+--- krusader/krusader/krslots.cpp	(Revision 1051213)
++++ krusader/krusader/krslots.cpp	(Arbeitskopie)
 @@ -205,7 +205,7 @@
                  KMessageBox::sorry(krApp, i18n("Krusader is unable to download %1", url1.fileName()));
                  return;
@@ -334,10 +334,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krslots.cpp
      *p << diffProg << tmp1 << tmp2;
      p->start();
      if (!p->waitForStarted())
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/paneltabbar.cpp
+Index: krusader/krusader/paneltabbar.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/paneltabbar.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/paneltabbar.cpp	(Arbeitskopie)
+--- krusader/krusader/paneltabbar.cpp	(Revision 1051213)
++++ krusader/krusader/paneltabbar.cpp	(Arbeitskopie)
 @@ -35,7 +35,7 @@
  #include "Panel/listpanel.h"
  #include "defaults.h"
@@ -347,10 +347,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/paneltabbar.cpp
  
  PanelTabBar::PanelTabBar(QWidget *parent): KTabBar(parent), _maxTabLength(0)
  {
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/main.cpp
+Index: krusader/krusader/main.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/main.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/main.cpp	(Arbeitskopie)
+--- krusader/krusader/main.cpp	(Revision 1051213)
++++ krusader/krusader/main.cpp	(Arbeitskopie)
 @@ -75,7 +75,7 @@
  
      bool hasIcon = false;
@@ -385,10 +385,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/main.cpp
 +    delete [] addedParams;
 +    delete [] myArgv;  
  }
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Panel/panelfunc.cpp
+Index: krusader/krusader/Panel/panelfunc.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Panel/panelfunc.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Panel/panelfunc.cpp	(Arbeitskopie)
+--- krusader/krusader/Panel/panelfunc.cpp	(Revision 1051213)
++++ krusader/krusader/Panel/panelfunc.cpp	(Arbeitskopie)
 @@ -803,12 +803,12 @@
      } else if (url.isLocalFile()) {
          bool encrypted;
@@ -413,10 +413,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/Panel/panelfunc.
      else if (destURL.protocol() == "virt") {
          KMessageBox::error(krApp, i18n("Cannot pack files onto a virtual destination!"));
          return;
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krservices.cpp
+Index: krusader/krusader/krservices.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krservices.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krservices.cpp	(Arbeitskopie)
+--- krusader/krusader/krservices.cpp	(Revision 1051213)
++++ krusader/krusader/krservices.cpp	(Arbeitskopie)
 @@ -209,7 +209,7 @@
  
  QString KrServices::getPath(const KUrl & url, KUrl::AdjustPathOption trailing)
@@ -426,10 +426,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/krservices.cpp
      REPLACE_DIR_SEP2(path);
  
  #ifdef Q_WS_WIN
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/krviewer.cpp
+Index: krusader/krusader/KViewer/krviewer.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/krviewer.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/krviewer.cpp	(Arbeitskopie)
+--- krusader/krusader/KViewer/krviewer.cpp	(Revision 1051213)
++++ krusader/krusader/KViewer/krviewer.cpp	(Arbeitskopie)
 @@ -313,7 +313,7 @@
          // if the file is local, pass a normal path and not a url. this solves
          // the problem for editors that aren't url-aware
@@ -448,10 +448,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/krviewer
  
  
          // create a hex file
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/lister.cpp
+Index: krusader/krusader/KViewer/lister.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/lister.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/lister.cpp	(Arbeitskopie)
+--- krusader/krusader/KViewer/lister.cpp	(Revision 1051213)
++++ krusader/krusader/KViewer/lister.cpp	(Arbeitskopie)
 @@ -1241,7 +1241,7 @@
      _fileSize = 0;
  
@@ -461,10 +461,10 @@ Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krusader/KViewer/lister.c
          if (!QFile::exists(_filePath))
              return false;
          _fileSize = getFileSize();
-Index: D:/daten/kde/svn/trunk/extragear/utils/krusader/krArc/krarc.cpp
+Index: krusader/krArc/krarc.cpp
 ===================================================================
---- D:/daten/kde/svn/trunk/extragear/utils/krusader/krArc/krarc.cpp	(Revision 1051213)
-+++ D:/daten/kde/svn/trunk/extragear/utils/krusader/krArc/krarc.cpp	(Arbeitskopie)
+--- krusader/krArc/krarc.cpp	(Revision 1051213)
++++ krusader/krArc/krarc.cpp	(Arbeitskopie)
 @@ -62,8 +62,12 @@
          f.close();                \
      } while(0);
