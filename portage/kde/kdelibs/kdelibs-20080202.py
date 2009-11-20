@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
+        self.hardDependencies['kdesupport/attica'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/qimageblitz'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
