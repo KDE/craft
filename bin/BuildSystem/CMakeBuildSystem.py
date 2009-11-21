@@ -56,7 +56,7 @@ class CMakeBuildSystem(BuildSystemBase):
         slnname = "%s.sln" % self.package
         if os.path.exists(os.path.join(self.buildDir(),slnname)):
             return slnname
-        topLevelCMakeList = os.path.join(self.sourceDir(),"CMakeLists.txt")
+        topLevelCMakeList = os.path.join(self.configureSourceDir(),"CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
             f = open(topLevelCMakeList,'r')
             lines = f.read().splitlines()
