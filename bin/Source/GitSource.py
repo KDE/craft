@@ -73,6 +73,17 @@ class GitSource ( VersionSystemSourceBase ):
             utils.debug( "skipping git fetch (--offline)" )
         return ret
     
+    def applyPatches(self):
+        """apply patches to git repository"""
+        utils.debug( "GitSource.applyPatches called", 2 )
+
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
+            ( file, patchdepth ) = self.subinfo.patchesToApply()
+            if file:
+                patchfile = os.path.join ( self.packageDir(), file )
+                return self.shell.execute( self.sourceDir(), "git", "apply %s" % self.shell.toNativePath(patchfile) )
+        return True
+
     def createPatch( self ):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
         ret = self.shell.execute( self.sourceDir(), "git", "diff > %s" % self.shell.toNativePath(os.path.join(self.packageDir(),"autocreated.patch" )) )
