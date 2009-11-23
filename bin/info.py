@@ -153,8 +153,12 @@ class infoclass:
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergeSourcePath.keys():
             return self.targetMergeSourcePath[ self.buildTarget ]
 
+    def hasPatches(self):
+        """return state for having patches for the recent target"""
+        return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in self.patchToApply.keys()
+        
     def patchesToApply(self):
         """return patch informations for the recent build target"""
-        if (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in self.patchToApply.keys():
+        if self.hasPatches():
             return self.patchToApply[ self.buildTarget ]
         return ("","")
