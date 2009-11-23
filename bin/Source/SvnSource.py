@@ -16,7 +16,7 @@ class SvnSource (VersionSystemSourceBase):
         ## \todo add internal dependency for subversion package
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
         if not os.path.exists(self.svnInstallDir):
-            utils.die("required subversion package not installed")
+            utils.die("required subversion package not installed in %s" % self.svnInstallDir)
             
     def setProxy(self):
         """set proxy for fetching sources from subversion repository"""
