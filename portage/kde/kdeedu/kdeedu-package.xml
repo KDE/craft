@@ -57,11 +57,37 @@
         <dependency>kdebase-runtime</dependency>
         <dependency>kdelibs</dependency>
     </package>
+    <package name="cantor">
+        <shortDescription>Cantor is an interface to your mathematical applications</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(cantor).*"/>
+			<files include="lib/.*(cantor).*"/>
+			<files include="share/kde4/services/.*(cantor).*"/>
+			<files include="share/kde4/servicetypes/cantor.*"/>
+			<files include="share/applications/kde4/cantor.*"/>
+			<files include="share/apps/cantor.*"/>
+			<files include="share/config.*/(cantor|maximabackend).*"/>
+			<files include="share/icons/.*(cantor|maximabackend|rbackend|sagebackend).*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="rocs">
+        <shortDescription>Rocs aims to be a Graph Theory IDE</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(rocs).*"/>
+			<files include="share/applications/kde4/rocs.*"/>
+			<files include="share/apps/rocs.*"/>
+			<files include="share/config.*/(rocs).*"/>
+			<files include="share/icons/.*(rocs).*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
     <package name="kalzium">
         <shortDescription>Kalzium will show you information about the periodic system of the elements</shortDescription>
 		<part name="runtime">
-			<files include="bin/.*(kalzium|science).*"/>
+			<files include="bin/.*(kalzium|science|compoundviewer).*"/>
 			<files include="lib/kde4/.*(Calculator|didyouknow|kalzium).*"/>
+			<files include="lib/.*(compoundviewer|kalzium).*"/>
 			<files include="share/kde4/services/.*(Calculator|didyouknow|kalzium).*"/>
 			<files include="share/applications/kde4/kalzium.*"/>
 			<files include="share/apps/kalzium.*"/>
@@ -240,6 +266,7 @@
         <dependency>blinken</dependency> 
         <dependency>kalgebra</dependency> 
         <dependency>marble</dependency> 
+        <dependency>cantor</dependency> 
         <dependency>kalzium</dependency> 
         <dependency>kanagram</dependency> 
         <dependency>kbruch</dependency> 
