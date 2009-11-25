@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.0.4'] = "http://bitbucket.org/eigen/eigen2/get/2.0.4.tar.bz2"
-        self.targetInstSrc['2.0.4'] = "eigen2"
-        self.defaultTarget = '2.0.4'
+        self.targets['2.0.9'] = "http://bitbucket.org/eigen/eigen/get/2.0.9.tar.bz2"
+        self.targetInstSrc['2.0.9'] = "eigen"
+        self.defaultTarget = '2.0.9'
         
 from Package.CMakePackageBase import *
 
