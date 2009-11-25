@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
         self.hardDependencies['enterprise5/automoc-e5'] = 'default'
         self.hardDependencies['enterprise5/soprano-e5'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
-        self.boostversion = "1.37"
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80'
@@ -39,9 +38,6 @@ class subclass(base.baseclass):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        self.kdeCustomDefines = " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
-        self.kdeCustomDefines += " -DBoost_INCLUDE_DIR=" + os.path.join( self.rootdir, "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
-        print self.kdeCustomDefines
         return self.kdeCompile()
 
     def install( self ):
