@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdevelop'
+        self.svnTargets['svnHEAD'] = 'trunk/extragear/sdk/kdevelop'
         self.svnTargets['3.9.94'] = 'tags/kdevelop/3.9.94'
         self.svnTargets['3.9.96'] = 'tags/kdevelop/3.9.96'
         self.defaultTarget = 'svnHEAD'
