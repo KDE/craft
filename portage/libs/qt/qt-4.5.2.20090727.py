@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         # this version contains the patches against the 4.5.3 release and is recommended for KDE 4.3.X
         self.svnTargets['4.5.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.3-patched|"
         # this branch contains all the patches and follows the 4.6-stable branch on qt.git - it updates daily
-        self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6-stable-patched|"
+        self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
         self.defaultTarget = '4.6'
         
         ## \todo this is prelimary  and may be changed 
