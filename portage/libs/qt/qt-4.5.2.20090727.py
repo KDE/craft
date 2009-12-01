@@ -17,13 +17,16 @@ from Package.QMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.4.3-3'] = 'branches/qt/4.4'
-        self.svnTargets['4.5.1-1'] = 'trunk/qt-copy/'
-        self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
+        # the static version uses one of the stable versions
+        self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|"
+        # this is the current 4.6 version with the KDE patches.
         self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
-        self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
-        self.svnTargets['4.6-stable-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6-stable-patched|"
-        self.defaultTarget = '4.6-stable-patched'
+        # this version contains the patches against the 4.5.3 release and is recommended for KDE 4.3.X
+        self.svnTargets['4.5.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.3-patched|"
+        # this branch contains all the patches and follows the 4.6-stable branch on qt.git - it updates daily
+        self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6-stable-patched|"
+        self.defaultTarget = '4.6'
+        
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
         self.options.package.specialMode = True
@@ -142,9 +145,6 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
                 
         return True
-
-    #def make_package( self ):
-    #    #return self.doPackaging( "qt", self.buildTarget, True, True )
 
 if __name__ == '__main__':
     Package().execute()
