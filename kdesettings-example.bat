@@ -4,10 +4,12 @@ rem subsystem will live.
 set KDEROOT=c:\kderoot
 
 rem Here you set the compiler to be used.
-rem * mingw - use the mingw gcc compiler (recommended)
+rem * mingw4 - use the mingw gcc compiler (recommended)
+rem * mingw - use the mingw gcc compiler (gcc Version 3.4.5 - 
+rem           please only use this option if you are exactly sure about the consequences)
 rem * msvc2005 - use the Microsoft Visual C++ 2005 compiler
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
-set KDECOMPILER=mingw
+set KDECOMPILER=mingw4
 
 rem Here you can set the architecure for which packages 
 rem are build. Currently x86 (32bit) and x64 (64) are support
