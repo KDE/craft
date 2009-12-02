@@ -13,8 +13,9 @@ class subinfo(info.infoclass):
         self.svnTargets['0.3.9'] = 'tags/kdewin32/0.3.9'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/kdewin'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdesupport/kdewin'
+        self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdesupport/kdewin'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin'
-        self.defaultTarget = '20091123'
+        self.defaultTarget = '20091201'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

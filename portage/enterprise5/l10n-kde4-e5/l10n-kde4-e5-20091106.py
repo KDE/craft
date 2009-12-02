@@ -8,7 +8,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/l10n-kde4/'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/l10n-kde4/'
-        self.defaultTarget = '20091123'
+        self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/l10n-kde4/'
+        self.defaultTarget = '20091201'
 
         # all targets 
         self.languages  = 'de'

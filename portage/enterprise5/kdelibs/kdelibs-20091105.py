@@ -5,7 +5,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdelibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdelibs'
-        self.defaultTarget = '20091123'
+        self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdelibs'
+        self.defaultTarget = '20091201'
     
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdewin-e5'] = 'default'
