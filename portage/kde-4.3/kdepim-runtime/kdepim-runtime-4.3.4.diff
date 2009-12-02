@@ -1,0 +1,9 @@
+diff -Nru kdepim-runtime-4.3.4.orig/akonadi_next/CMakeLists.txt kdepim-runtime-4.3.4/akonadi_next/CMakeLists.txt
+--- kdepim-runtime-4.3.4.orig/akonadi_next/CMakeLists.txt
++++ kdepim-runtime-4.3.4/akonadi_next/CMakeLists.txt
+@@ -51,4 +51,4 @@
+ install(TARGETS akonadi_next ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+ add_subdirectory(tests)
+-add_subdirectory(testapp)
++#add_subdirectory(testapp)
