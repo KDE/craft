@@ -1,0 +1,280 @@
+diff -Nru kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/CMakeLists.txt kdeutils-4.3.4/okteta/program/oktetakakao/controllers/CMakeLists.txt
+--- kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/CMakeLists.txt
++++ kdeutils-4.3.4/okteta/program/oktetakakao/controllers/CMakeLists.txt
+@@ -71,7 +71,7 @@
+   view/libbytearraychecksum/algorithm/modsum32bytearraychecksumalgorithm.cpp
+   view/libbytearraychecksum/algorithm/modsum64bytearraychecksumalgorithm.cpp
+   view/libbytearraychecksum/algorithm/modsumbytearraychecksumparameterset.cpp
+-  view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.cpp
++  view/libbytearraychecksum/algorithm/blub.cpp
+   ${QCA2CHECKSUM_SRCS}
+ )
+ set( CHECKSUMCONTROLLER_SRCS
+diff -Nru kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/checksum/checksumview.cpp kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/checksum/checksumview.cpp
+--- kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/checksum/checksumview.cpp
++++ kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/checksum/checksumview.cpp
+@@ -25,7 +25,7 @@
+ // tool
+ #include "checksumtool.h"
+ // lib
+-#include <algorithm/modsumbytearraychecksumparametersetedit.h>
++#include <algorithm/blub.h>
+ #include <algorithm/nobytearraychecksumparametersetedit.h>
+ #include <abstractbytearraychecksumparametersetedit.h>
+ #include <abstractbytearraychecksumparameterset.h>
+diff -Nru kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.cpp kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.cpp
+--- kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.cpp
++++ kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.cpp
+@@ -0,0 +1,71 @@
++/*
++    This file is part of the Okteta Kakao module, part of the KDE project.
++
++    Copyright 2009 Friedrich W. H. Kossebau <kossebau@kde.org>
++
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "blub.h"
++
++// parameterset
++#include "modsumbytearraychecksumparameterset.h"
++// KDE
++#include <KLocale>
++#include <KComboBox>
++// Qt
++#include <QtGui/QLayout>
++
++
++ModSumByteArrayChecksumParameterSetEdit::ModSumByteArrayChecksumParameterSetEdit( QWidget* parent )
++  : AbstractByteArrayChecksumParameterSetEdit( parent )
++{
++    QVBoxLayout* baseLayout = new QVBoxLayout( this );
++    baseLayout->setMargin( 0 );
++
++    // TODO KDE4.4: add label
++    mEndiannessComboBox = new KComboBox( this );
++    mEndiannessComboBox->addItem( i18nc("@item:inlistbox","Little-endian") ); // add first for index
++    mEndiannessComboBox->addItem( i18nc("@item:inlistbox","Big-endian") );    // add second for index
++    connect( mEndiannessComboBox, SIGNAL(activated( int )),
++             SIGNAL(valuesChanged()) );
++
++    baseLayout->addWidget( mEndiannessComboBox );
++    baseLayout->addStretch( 10 );
++}
++
++bool ModSumByteArrayChecksumParameterSetEdit::isValid() const { return true; }
++
++void ModSumByteArrayChecksumParameterSetEdit::setParameterSet( const AbstractByteArrayChecksumParameterSet* parameterSet )
++{
++    const ModSumByteArrayChecksumParameterSet* modSumParameterSet =
++        static_cast<const ModSumByteArrayChecksumParameterSet *>( parameterSet );
++
++    mEndiannessComboBox->setCurrentIndex( modSumParameterSet->endianness() );
++}
++
++void ModSumByteArrayChecksumParameterSetEdit::getParameterSet( AbstractByteArrayChecksumParameterSet* parameterSet ) const
++{
++    ModSumByteArrayChecksumParameterSet* modSumParameterSet =
++        static_cast<ModSumByteArrayChecksumParameterSet *>( parameterSet );
++
++    modSumParameterSet->setEndianness( static_cast<Endianness>( mEndiannessComboBox->currentIndex() ) );
++}
++
++
++ModSumByteArrayChecksumParameterSetEdit::~ModSumByteArrayChecksumParameterSetEdit()
++{}
+diff -Nru kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.h kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.h
+--- kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.h
++++ kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/blub.h
+@@ -0,0 +1,49 @@
++/*
++    This file is part of the Okteta Kakao module, part of the KDE project.
++
++    Copyright 2009 Friedrich W. H. Kossebau <kossebau@kde.org>
++
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef MODSUMBYTEARRAYCHECKSUMPARAMETERSETEDIT_H
++#define MODSUMBYTEARRAYCHECKSUMPARAMETERSETEDIT_H
++
++// lib
++#include "abstractbytearraychecksumparametersetedit.h"
++
++class KComboBox;
++
++
++class ModSumByteArrayChecksumParameterSetEdit : public AbstractByteArrayChecksumParameterSetEdit
++{
++  Q_OBJECT
++
++  public:
++    ModSumByteArrayChecksumParameterSetEdit( QWidget* parent = 0 );
++    virtual ~ModSumByteArrayChecksumParameterSetEdit();
++
++  public: // AbstractByteArrayFilterParameterSetEdit API
++    virtual void setParameterSet( const AbstractByteArrayChecksumParameterSet* parameterSet );
++    virtual void getParameterSet( AbstractByteArrayChecksumParameterSet* parameterSet ) const;
++    virtual bool isValid() const;
++
++  protected:
++    KComboBox* mEndiannessComboBox;
++};
++
++#endif
+diff -Nru kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.cpp kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.cpp
+--- kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.cpp
++++ kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.cpp
+@@ -1,71 +0,0 @@
+-/*
+-    This file is part of the Okteta Kakao module, part of the KDE project.
+-
+-    Copyright 2009 Friedrich W. H. Kossebau <kossebau@kde.org>
+-
+-    This library is free software; you can redistribute it and/or
+-    modify it under the terms of the GNU Lesser General Public
+-    License as published by the Free Software Foundation; either
+-    version 2.1 of the License, or (at your option) version 3, or any
+-    later version accepted by the membership of KDE e.V. (or its
+-    successor approved by the membership of KDE e.V.), which shall
+-    act as a proxy defined in Section 6 of version 3 of the license.
+-
+-    This library is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-    Lesser General Public License for more details.
+-
+-    You should have received a copy of the GNU Lesser General Public
+-    License along with this library. If not, see <http://www.gnu.org/licenses/>.
+-*/
+-
+-#include "modsumbytearraychecksumparametersetedit.h"
+-
+-// parameterset
+-#include "modsumbytearraychecksumparameterset.h"
+-// KDE
+-#include <KLocale>
+-#include <KComboBox>
+-// Qt
+-#include <QtGui/QLayout>
+-
+-
+-ModSumByteArrayChecksumParameterSetEdit::ModSumByteArrayChecksumParameterSetEdit( QWidget* parent )
+-  : AbstractByteArrayChecksumParameterSetEdit( parent )
+-{
+-    QVBoxLayout* baseLayout = new QVBoxLayout( this );
+-    baseLayout->setMargin( 0 );
+-
+-    // TODO KDE4.4: add label
+-    mEndiannessComboBox = new KComboBox( this );
+-    mEndiannessComboBox->addItem( i18nc("@item:inlistbox","Little-endian") ); // add first for index
+-    mEndiannessComboBox->addItem( i18nc("@item:inlistbox","Big-endian") );    // add second for index
+-    connect( mEndiannessComboBox, SIGNAL(activated( int )),
+-             SIGNAL(valuesChanged()) );
+-
+-    baseLayout->addWidget( mEndiannessComboBox );
+-    baseLayout->addStretch( 10 );
+-}
+-
+-bool ModSumByteArrayChecksumParameterSetEdit::isValid() const { return true; }
+-
+-void ModSumByteArrayChecksumParameterSetEdit::setParameterSet( const AbstractByteArrayChecksumParameterSet* parameterSet )
+-{
+-    const ModSumByteArrayChecksumParameterSet* modSumParameterSet =
+-        static_cast<const ModSumByteArrayChecksumParameterSet *>( parameterSet );
+-
+-    mEndiannessComboBox->setCurrentIndex( modSumParameterSet->endianness() );
+-}
+-
+-void ModSumByteArrayChecksumParameterSetEdit::getParameterSet( AbstractByteArrayChecksumParameterSet* parameterSet ) const
+-{
+-    ModSumByteArrayChecksumParameterSet* modSumParameterSet =
+-        static_cast<ModSumByteArrayChecksumParameterSet *>( parameterSet );
+-
+-    modSumParameterSet->setEndianness( static_cast<Endianness>( mEndiannessComboBox->currentIndex() ) );
+-}
+-
+-
+-ModSumByteArrayChecksumParameterSetEdit::~ModSumByteArrayChecksumParameterSetEdit()
+-{}
+diff -Nru kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.h kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.h
+--- kdeutils-4.3.4.orig/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.h
++++ kdeutils-4.3.4/okteta/program/oktetakakao/controllers/view/libbytearraychecksum/algorithm/modsumbytearraychecksumparametersetedit.h
+@@ -1,49 +0,0 @@
+-/*
+-    This file is part of the Okteta Kakao module, part of the KDE project.
+-
+-    Copyright 2009 Friedrich W. H. Kossebau <kossebau@kde.org>
+-
+-    This library is free software; you can redistribute it and/or
+-    modify it under the terms of the GNU Lesser General Public
+-    License as published by the Free Software Foundation; either
+-    version 2.1 of the License, or (at your option) version 3, or any
+-    later version accepted by the membership of KDE e.V. (or its
+-    successor approved by the membership of KDE e.V.), which shall
+-    act as a proxy defined in Section 6 of version 3 of the license.
+-
+-    This library is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-    Lesser General Public License for more details.
+-
+-    You should have received a copy of the GNU Lesser General Public
+-    License along with this library. If not, see <http://www.gnu.org/licenses/>.
+-*/
+-
+-#ifndef MODSUMBYTEARRAYCHECKSUMPARAMETERSETEDIT_H
+-#define MODSUMBYTEARRAYCHECKSUMPARAMETERSETEDIT_H
+-
+-// lib
+-#include "abstractbytearraychecksumparametersetedit.h"
+-
+-class KComboBox;
+-
+-
+-class ModSumByteArrayChecksumParameterSetEdit : public AbstractByteArrayChecksumParameterSetEdit
+-{
+-  Q_OBJECT
+-
+-  public:
+-    ModSumByteArrayChecksumParameterSetEdit( QWidget* parent = 0 );
+-    virtual ~ModSumByteArrayChecksumParameterSetEdit();
+-
+-  public: // AbstractByteArrayFilterParameterSetEdit API
+-    virtual void setParameterSet( const AbstractByteArrayChecksumParameterSet* parameterSet );
+-    virtual void getParameterSet( AbstractByteArrayChecksumParameterSet* parameterSet ) const;
+-    virtual bool isValid() const;
+-
+-  protected:
+-    KComboBox* mEndiannessComboBox;
+-};
+-
+-#endif
