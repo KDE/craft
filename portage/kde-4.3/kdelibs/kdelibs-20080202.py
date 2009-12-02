@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.3.' + ver] = 'kdelibs-4.3.' + ver
         self.patchToApply['4.2.95'] = ('kdelibs-solid.diff', 0)
         self.patchToApply['4.3.0'] = ('kdelibs-ktimezone.diff', 0)
+        self.patchToApply['4.3.0'] = ('kdelibs-4.3.4.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

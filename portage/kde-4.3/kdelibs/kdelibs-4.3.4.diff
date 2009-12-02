@@ -1,0 +1,12 @@
+diff -Nru kdelibs-4.3.4.orig/khtml/testkhtml.cpp kdelibs-4.3.4/khtml/testkhtml.cpp
+--- kdelibs-4.3.4.orig/khtml/testkhtml.cpp
++++ kdelibs-4.3.4/khtml/testkhtml.cpp
+@@ -16,7 +16,7 @@
+ #undef protected
+ #include "misc/loader.h"
+ #include <QtGui/QCursor>
+-#include <QDomDocument>
++#include <QtXml/QDomDocument>
+ #include <dom_string.h>
+ #include "dom/dom2_range.h"
+ #include "dom/html_document.h"
