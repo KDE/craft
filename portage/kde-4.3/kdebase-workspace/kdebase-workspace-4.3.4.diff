@@ -1,0 +1,21 @@
+diff -Nru kdebase-workspace-4.3.4.orig/systemsettings/core/systemsettingsview_export.h kdebase-workspace-4.3.4/systemsettings/core/systemsettingsview_export.h
+--- kdebase-workspace-4.3.4.orig/systemsettings/core/systemsettingsview_export.h
++++ kdebase-workspace-4.3.4/systemsettings/core/systemsettingsview_export.h
+@@ -23,6 +23,7 @@
+ // needed for KDE_EXPORT and KDE_IMPORT macros
+ #include <kdemacros.h>
+  
++#ifndef __MINGW32__
+ #ifndef SYSTEMSETTINGSVIEW_EXPORT
+ # if defined(MAKE_SYSTEMSETTINGSVIEW_LIB)
+    // We are building this library
+@@ -32,6 +33,9 @@
+ #  define SYSTEMSETTINGSVIEW_EXPORT KDE_IMPORT
+ # endif
+ #endif
++#else
++# define SYSTEMSETTINGSVIEW_EXPORT
++#endif
+  
+ # ifndef SYSTEMSETTINGSVIEW_EXPORT_DEPRECATED
+ #  define SYSTEMSETTINGSVIEW_EXPORT_DEPRECATED KDE_DEPRECATED SYSTEMSETTINGSVIEW_EXPORT
