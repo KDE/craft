@@ -4,8 +4,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh/libssh.git"
-#        self.patchToApply['gitHEAD'] = ('sys_time.patch',0)
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh/libssh.git|v0-4"
+        self.defaultTarget = '0.4'
         self.options.package.withCompiler = False
         self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
 
