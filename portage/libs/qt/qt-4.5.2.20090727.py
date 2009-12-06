@@ -86,9 +86,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
-          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql " \
+          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql -plugin-sql-odbc " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
-          "-fast -no-vcproj -no-dsp " \
+          "-fast -ltcg -no-vcproj -no-dsp " \
           "-nomake demos -nomake examples " \
           "%s %s" % ( userin, configure, platform, self.installDir(), incdirs, libdirs)
         if self.buildType() == "Debug":
