@@ -1,0 +1,12 @@
+--- libssh-src/include/libssh/libssh.h	Sat Dec 05 12:52:58 2009
++++ libssh-src/include/libssh/libssh.h	Sun Dec 06 22:12:39 2009
+@@ -63,9 +63,6 @@
+ 
+ #ifdef _WIN32
+   #include <winsock2.h>
+-  #ifndef socklen_t
+-  #define socklen_t int
+-  #endif
+ #else /* _WIN32 */
+  #include <sys/select.h> /* for fd_set * */
+  #include <netdb.h>
