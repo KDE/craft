@@ -1,0 +1,16 @@
+diff -Nru koffice-2.1.0.orig/filters/karbon/CMakeLists.txt koffice-2.1.0/filters/karbon/CMakeLists.txt
+--- koffice-2.1.0.orig/filters/karbon/CMakeLists.txt	2009-11-20 21:41:21.000000000 +0100
++++ koffice-2.1.0/filters/karbon/CMakeLists.txt	2009-12-07 02:52:41.948375000 +0100
+@@ -32,9 +32,9 @@
+ add_subdirectory( wmf )
+ add_subdirectory( karbon1.x )
+ add_subdirectory( eps )
+-if (POPPLER_FOUND)
+-    add_subdirectory( pdf )
+-endif (POPPLER_FOUND)
++#if (POPPLER_FOUND)
++#    add_subdirectory( pdf )
++#endif (POPPLER_FOUND)
+ 
+ # enable again when these filters are ported
+ message(STATUS "Karbon: still need to port: applixgraphics, ai, kontour, xcf, xaml, xfig, msod and oodraw filters")

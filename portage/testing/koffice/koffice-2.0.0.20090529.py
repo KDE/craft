@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         self.patchToApply['2.0.82'] = ('koffice-2.0.82.diff', 0)
         self.patchToApply['2.0.83'] = ('koffice-2.0.83.diff', 1)
         self.patchToApply['2.0.91'] = ('koffice-2.0.91.diff', 1)
+        self.patchToApply['2.1.0'] = ('koffice-2.1.0.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
