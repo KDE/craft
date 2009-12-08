@@ -10,3 +10,165 @@ diff -Nru kdelibs-4.3.4.orig/khtml/testkhtml.cpp kdelibs-4.3.4/khtml/testkhtml.c
  #include <dom_string.h>
  #include "dom/dom2_range.h"
  #include "dom/html_document.h"
+--- C:/kde/download/svn/trunk/KDE/kdelibs/kinit/kinit_win.cpp
++++ C:/kde/download/svn/trunk/KDE/kdelibs/kinit/kinit_win.cpp
+@@ -4,6 +4,7 @@
+  *                 (c) 1999 Mario Weilguni <mweilguni@sime.com>
+  *                 (c) 2001 Lubos Lunak <l.lunak@kde.org>
+  *                 (c) 2006 Ralf Habacker <ralf.habacker@freenet.de>
++ *                 (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
+  *
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Library General Public
+@@ -29,6 +30,7 @@
+ #include <string.h>
+ 
+ #include <windows.h>
++#include <Sddl.h>
+ #include <psapi.h>
+ 
+ 
+@@ -40,6 +42,7 @@
+ #include <kstandarddirs.h>
+ #include <kapplication.h>
+ #include <kdeversion.h>
++#include <kuser.h>
+ 
+ //#define ENABLE_SUICIDE 
+ //#define ENABLE_EXIT
+@@ -56,18 +59,31 @@
+ 
+ class ProcessListEntry {
+     public:
+-       ProcessListEntry(HANDLE _handle,char *_path, int _pid ) 
++       ProcessListEntry( HANDLE _handle,char *_path, int _pid, K_UID _owner ) 
+        {    
+            QFileInfo p(_path);
+            path = p.absolutePath();
+            name = p.baseName();
+            handle = _handle; 
+-           pid = _pid; 
++           pid = _pid;
++           DWORD length = GetLengthSid(_owner);
++           owner = (PSID) new BYTE[length];
++           CopySid(length, owner, _owner);
++           owner = _owner;
+        }
++
++       ~ProcessListEntry()
++       {
++           // don't know why this crashes here.
++           // delete owner;
++           owner = 0;
++       }
++       
+        QString name;
+        QString path;
+        int pid;
+        HANDLE handle;
++       K_UID owner;
+        friend QDebug operator <<(QDebug out, const ProcessListEntry &c);
+ };
+ 
+@@ -89,7 +105,7 @@
+     public:
+        ProcessList() {initProcessList(); }
+        ~ProcessList();
+-       ProcessListEntry *hasProcessInList(const QString &name);
++       ProcessListEntry *hasProcessInList(const QString &name, K_UID owner=0 );
+        bool terminateProcess(const QString &name);
+        QList<ProcessListEntry *> &list() { return processList; }
+     private:
+@@ -102,6 +118,12 @@
+ void ProcessList::getProcessNameAndID( DWORD processID )
+ {
+     char szProcessName[MAX_PATH];
++    // by default use the current process' uid
++    KUser user;
++    K_UID processSid;
++    DWORD sidLength = GetLengthSid(user.uid());
++    processSid = (PSID)new BYTE[sidLength];
++    CopySid(sidLength, processSid, user.uid());
+ 
+     // Get a handle to the process.
+ 
+@@ -117,17 +139,47 @@
+        HMODULE hMod;
+        DWORD cbNeeded;
+ 
+-       if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod),
++        if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod),
+               &cbNeeded) )
+-       {
++        {
+             ret = GetModuleFileNameExA( hProcess, hMod, szProcessName,
+                                            sizeof(szProcessName)/sizeof(TCHAR) );
+-       }
++        }
++        
++        if (ret > 0)
++        {
++            HANDLE hToken = NULL;
++            
++            OpenProcessToken(hProcess, TOKEN_READ, &hToken);
++            if(hToken)
++            {
++                DWORD size;
++                PTOKEN_USER userStruct;
++                
++                // check how much space is needed
++                GetTokenInformation(hToken, TokenUser, NULL, 0, &size);
++                if( ERROR_INSUFFICIENT_BUFFER == GetLastError() )
++                {
++                    userStruct = reinterpret_cast<PTOKEN_USER>( new BYTE[size] );
++                    GetTokenInformation(hToken, TokenUser, userStruct, size, &size);
++
++                    sidLength = GetLengthSid(userStruct->User.Sid);
++                    delete processSid;
++                    processSid = 0;
++                    processSid = (PSID)new BYTE[sidLength];
++                    CopySid(sidLength, processSid, userStruct->User.Sid);
++
++                    CloseHandle(hToken);
++                    delete [] userStruct;
++                }
++            }
++        }
+     }
+     if (ret > 0)
+     {
+-        processList << new ProcessListEntry(hProcess,szProcessName,processID );
++        processList << new ProcessListEntry( hProcess, szProcessName, processID, processSid );
+     }
++    delete processSid;
+ }
+ 
+ 
+@@ -168,7 +220,7 @@
+ /**
+  return process list entry of given name
+ */
+-ProcessListEntry *ProcessList::hasProcessInList(const QString &name)
++ProcessListEntry *ProcessList::hasProcessInList(const QString &name, K_UID owner)
+ {
+     ProcessListEntry *ple;
+     foreach(ple,processList) {
+@@ -177,7 +229,17 @@
+             continue;
+         }
+         if (ple->name == name || ple->name == name + ".exe") {
+-            return ple;
++            if(owner)
++            {
++                // owner is set
++                if(EqualSid(owner, ple->owner)) return ple;
++            }
++            else
++            {
++                // no owner is set, use the owner of this process
++                KUser user;
++                if(EqualSid(user.uid(), ple->owner)) return ple;
++            }
+         }
+     }
+     return NULL;
