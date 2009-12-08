@@ -1,0 +1,1 @@
+runas /profile /user:kde-devel "%comspec% /e:on /C cd %CD% && %CD%\kdeenv.bat"
