@@ -10,8 +10,8 @@ diff -Nru kdelibs-4.3.4.orig/khtml/testkhtml.cpp kdelibs-4.3.4/khtml/testkhtml.c
  #include <dom_string.h>
  #include "dom/dom2_range.h"
  #include "dom/html_document.h"
---- C:/kde/download/svn/trunk/KDE/kdelibs/kinit/kinit_win.cpp
-+++ C:/kde/download/svn/trunk/KDE/kdelibs/kinit/kinit_win.cpp
+--- kdelibs-4.3.4.orig/kinit/kinit_win.cpp
++++ kdelibs-4.3.4/kinit/kinit_win.cpp
 @@ -4,6 +4,7 @@
   *                 (c) 1999 Mario Weilguni <mweilguni@sime.com>
   *                 (c) 2001 Lubos Lunak <l.lunak@kde.org>
