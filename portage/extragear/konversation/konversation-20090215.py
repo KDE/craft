@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.2.1'] = 'ftp://ftp.kde.org/pub/kde/stable/konversation/1.2.1/src/konversation-1.2.1.tar.bz2'
         self.targetInstSrc['1.2.1'] = 'konversation-1.2.1'
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/network/konversation'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://gitorious.org/konversation/konversation.git'
+        self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
