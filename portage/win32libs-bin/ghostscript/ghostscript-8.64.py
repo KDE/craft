@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targets[ version ] = self.getUnifiedPackage( repoUrl, "ghostscript", version )
 
             
-        self.defaultTarget = '1.1.4-3'
+        self.defaultTarget = '8.64'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
