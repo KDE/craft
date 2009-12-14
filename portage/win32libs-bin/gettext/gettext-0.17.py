@@ -7,8 +7,7 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['0.17-1']:
-            self.targets[ version ] = repoUrl + """/gettext-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/gettext-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getUnifiedPackage( repoUrl, "gettext", version )
 
             
         self.defaultTarget = '0.17-1'
