@@ -93,9 +93,9 @@ class CMakeBuildSystem(BuildSystemBase):
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case 
             options += " -DKDE4_BUILD_TESTS=1 "
             if not self.subinfo.options.configure.testDefine == None:
-                defines += self.subinfo.options.configure.testDefine
+                options += self.subinfo.options.configure.testDefine
         if self.subinfo.options.configure.onlyBuildTargets :
-            defines += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
+            options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
                 
         options += " \"%s\"" % self.configureSourceDir()
         return options
