@@ -1,5 +1,5 @@
---- libzip-0.8\CMakeLists.txt	2007-12-14 16:51:55.808441900 +0100
-+++ libzip-0.8\CMakeLists.txt	2007-12-14 16:52:11.429941900 +0100
+--- libzip-0.8/CMakeLists.txt	2007-12-14 16:51:55.808441900 +0100
++++ libzip-0.8/CMakeLists.txt	2007-12-14 16:52:11.429941900 +0100
 @@ -12,6 +12,8 @@
  INCLUDE(CheckFunctionExists)
  INCLUDE(CheckIncludeFiles)
@@ -22,8 +22,8 @@
  
  # Targets
  
---- libzip-0.8\lib\CMakeLists.txt	2007-12-14 16:51:55.808441900 +0100
-+++ libzip-0.8\lib\CMakeLists.txt	2007-12-14 16:52:11.429941900 +0100
+--- libzip-0.8/lib/CMakeLists.txt	2007-12-14 16:51:55.808441900 +0100
++++ libzip-0.8/lib/CMakeLists.txt	2007-12-14 16:52:11.429941900 +0100
 @@ -62,7 +62,7 @@
    zip_dirent.c
    zip_entry_free.c
