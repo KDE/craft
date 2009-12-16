@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ver] = 'pcre-' + ver
         self.defaultTarget = '8.00'
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/libbzip2'] = 'default'
+        self.hardDependencies['win32libs-sources/bzip2-src'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
 class subclass(base.baseclass):
