@@ -5,8 +5,6 @@ import utils
 import info
 
 PACKAGE_NAME         = "libbzip2"
-PACKAGE_DLL_NAME     = "bzip2"
-
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -46,13 +44,7 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
-    # auto-create both import libs with the help of pexports
-    self.stripLibs( PACKAGE_DLL_NAME )
-
-    # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
-
-    # now do packaging with kdewin-packager
+    # do packaging with kdewin-packager
     self.doPackaging( PACKAGE_NAME, self.buildTarget, True )
 
     return True
