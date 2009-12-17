@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '20091201'
     
     def setDependencies( self ):
-        self.hardDependencies['enterprise5/kdelibs'] = 'default'
+        self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'
         self.hardDependencies['enterprise5/akonadi-e5'] = 'default'
         self.hardDependencies['win32libs-sources/cyrus-sasl-src'] = 'default'
         self.hardDependencies['win32libs-sources/boost-src'] = 'default'

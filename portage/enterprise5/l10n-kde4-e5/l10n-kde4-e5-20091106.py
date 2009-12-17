@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
-        self.hardDependencies['enterprise5/kdelibs'] = 'default'
+        self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'
         
 class subclass(base.baseclass):
     def __init__( self, **args ):

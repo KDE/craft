@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '20091201'
     
     def setDependencies( self ):
-        self.hardDependencies['enterprise5/kdelibs'] = 'default'
+        self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
         self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
 
