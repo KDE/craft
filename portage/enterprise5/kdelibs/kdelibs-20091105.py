@@ -15,10 +15,29 @@ class subinfo(info.infoclass):
         self.hardDependencies['enterprise5/strigi-e5'] = 'default'
         self.hardDependencies['enterprise5/phonon-e5'] = 'default'
         self.hardDependencies['enterprise5/automoc-e5'] = 'default'
+
+        self.hardDependencies['win32libs-sources/bzip2-src']  = 'default'
+        self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
+        self.hardDependencies['win32libs-sources/openssl-src']  = 'default'
+        self.hardDependencies['win32libs-sources/pcre-src']  = 'default'
+
+# binary packages only
+        self.hardDependencies['win32libs-bin/giflib']  = 'default'
+        self.hardDependencies['win32libs-bin/jpeg']  = 'default'
+        self.hardDependencies['win32libs-bin/libxml2']  = 'default'
+        self.hardDependencies['win32libs-bin/libxslt']  = 'default'
+        self.hardDependencies['win32libs-bin/zlib']  = 'default'
+# check if the MSYS dependency for building aspell-src can be removed
+        self.hardDependencies['win32libs-bin/aspell']  = 'default'
+# gettext-src uses a weird shell script for building
+        self.hardDependencies['win32libs-bin/gettext']  = 'default'
+        
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['virtual/kdelibs-base'] = 'default'
+        self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['win32libs-bin/shared-desktop-ontologies'] = 'default'
+        self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
+        self.hardDependencies['data/aspell-data'] = 'default'
 
 from Package.CMakePackageBase import *
         
