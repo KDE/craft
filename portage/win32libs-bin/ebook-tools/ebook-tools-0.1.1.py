@@ -7,14 +7,14 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['0.1.0', '0.1.1']:
-            self.targets[ version ] = repoUrl + """/ebook-tools-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/ebook-tools-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getUnifiedPackage( repoUrl, "ebook-tools", version )
 
             
         self.defaultTarget = '0.1.1'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['win32libs-bin/libzip'] = 'default'
 
 class Package(BinaryPackageBase):
   def __init__(self):
