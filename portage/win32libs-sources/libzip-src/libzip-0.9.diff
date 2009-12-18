@@ -1,7 +1,7 @@
 diff -Nru libzip-0.9.orig/CMakeLists.txt libzip-0.9/CMakeLists.txt
 --- libzip-0.9.orig/CMakeLists.txt	2007-11-07 14:33:44.000000000 +0100
-+++ libzip-0.9/CMakeLists.txt	2009-12-15 21:36:12.746000000 +0100
-@@ -9,18 +9,24 @@
++++ libzip-0.9/CMakeLists.txt	2009-12-18 16:27:22.308754800 +0100
+@@ -9,18 +9,30 @@
  
  PROJECT(libzip C)
  
@@ -10,7 +10,13 @@ diff -Nru libzip-0.9.orig/CMakeLists.txt libzip-0.9/CMakeLists.txt
  INCLUDE(CheckIncludeFiles)
  INCLUDE(CheckSymbolExists)
 +FIND_PACKAGE(ZLIB REQUIRED)
-+INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
++INCLUDE_DIRECTORIES(
++${CMAKE_CURRENT_SOURCE_DIR}
++${CMAKE_CURRENT_BINARY_DIR}
++${CMAKE_CURRENT_SOURCE_DIR}/lib
++${CMAKE_CURRENT_BINARY_DIR}/lib
++${ZLIB_INCLUDE_DIR}
++)
  
  SET(PACKAGE "libzip")
  SET(PACKAGE_NAME ${PACKAGE})
@@ -28,7 +34,7 @@ diff -Nru libzip-0.9.orig/CMakeLists.txt libzip-0.9/CMakeLists.txt
  
  ADD_SUBDIRECTORY(lib)
  ADD_SUBDIRECTORY(man)
-@@ -34,11 +40,7 @@
+@@ -34,11 +46,7 @@
  CHECK_FUNCTION_EXISTS(mkstemp HAVE_MKSTEMP)
  CHECK_INCLUDE_FILES(unistd.h HAVE_UNISTD_H)
  
@@ -43,7 +49,7 @@ diff -Nru libzip-0.9.orig/CMakeLists.txt libzip-0.9/CMakeLists.txt
  
 diff -Nru libzip-0.9.orig/lib/CMakeLists.txt libzip-0.9/lib/CMakeLists.txt
 --- libzip-0.9.orig/lib/CMakeLists.txt	2007-06-04 12:37:04.000000000 +0200
-+++ libzip-0.9/lib/CMakeLists.txt	2009-12-15 21:36:12.751000000 +0100
++++ libzip-0.9/lib/CMakeLists.txt	2009-12-18 16:20:27.875554800 +0100
 @@ -62,7 +62,7 @@
    zip_dirent.c
    zip_entry_free.c
@@ -106,7 +112,7 @@ diff -Nru libzip-0.9.orig/lib/CMakeLists.txt libzip-0.9/lib/CMakeLists.txt
  #CREATE_LIBTOOL_FILE(zip lib)
 diff -Nru libzip-0.9.orig/lib/mkstemp.c libzip-0.9/lib/mkstemp.c
 --- libzip-0.9.orig/lib/mkstemp.c	2008-01-19 00:38:56.000000000 +0100
-+++ libzip-0.9/lib/mkstemp.c	2009-12-18 15:46:09.423000000 +0100
++++ libzip-0.9/lib/mkstemp.c	2009-12-18 16:20:27.891154800 +0100
 @@ -47,6 +47,20 @@
  #define O_BINARY 0
  #endif
@@ -148,7 +154,7 @@ diff -Nru libzip-0.9.orig/lib/mkstemp.c libzip-0.9/lib/mkstemp.c
  	}
 diff -Nru libzip-0.9.orig/lib/zip.h libzip-0.9/lib/zip.h
 --- libzip-0.9.orig/lib/zip.h	2008-05-30 11:29:58.000000000 +0200
-+++ libzip-0.9/lib/zip.h	2009-12-15 21:36:12.757000000 +0100
++++ libzip-0.9/lib/zip.h	2009-12-18 16:20:27.891154800 +0100
 @@ -37,13 +37,34 @@
  
  
@@ -195,7 +201,7 @@ diff -Nru libzip-0.9.orig/lib/zip.h libzip-0.9/lib/zip.h
  
 diff -Nru libzip-0.9.orig/lib/zip_add_dir.c libzip-0.9/lib/zip_add_dir.c
 --- libzip-0.9.orig/lib/zip_add_dir.c	2007-11-07 14:33:44.000000000 +0100
-+++ libzip-0.9/lib/zip_add_dir.c	2009-12-18 16:00:58.324000000 +0100
++++ libzip-0.9/lib/zip_add_dir.c	2009-12-18 16:20:27.891154800 +0100
 @@ -55,13 +55,13 @@
      s = NULL;
      len = strlen(name);
@@ -214,7 +220,7 @@ diff -Nru libzip-0.9.orig/lib/zip_add_dir.c libzip-0.9/lib/zip_add_dir.c
  
 diff -Nru libzip-0.9.orig/lib/zip_name_locate.c libzip-0.9/lib/zip_name_locate.c
 --- libzip-0.9.orig/lib/zip_name_locate.c	2007-11-07 14:33:45.000000000 +0100
-+++ libzip-0.9/lib/zip_name_locate.c	2009-12-18 16:01:51.874000000 +0100
++++ libzip-0.9/lib/zip_name_locate.c	2009-12-18 16:20:27.891154800 +0100
 @@ -51,7 +51,6 @@
  _zip_name_locate(struct zip *za, const char *fname, int flags,
  		 struct zip_error *error)
@@ -256,7 +262,7 @@ diff -Nru libzip-0.9.orig/lib/zip_name_locate.c libzip-0.9/lib/zip_name_locate.c
      _zip_error_set(error, ZIP_ER_NOENT, 0);
 diff -Nru libzip-0.9.orig/lib/zipint.h libzip-0.9/lib/zipint.h
 --- libzip-0.9.orig/lib/zipint.h	2008-07-21 17:14:34.000000000 +0200
-+++ libzip-0.9/lib/zipint.h	2009-12-18 15:42:38.119000000 +0100
++++ libzip-0.9/lib/zipint.h	2009-12-18 16:20:27.891154800 +0100
 @@ -36,19 +36,23 @@
  
  #include <zlib.h>
@@ -301,7 +307,7 @@ diff -Nru libzip-0.9.orig/lib/zipint.h libzip-0.9/lib/zipint.h
  #endif
 diff -Nru libzip-0.9.orig/regress/set_comment_all.c libzip-0.9/regress/set_comment_all.c
 --- libzip-0.9.orig/regress/set_comment_all.c	2008-03-10 13:40:55.000000000 +0100
-+++ libzip-0.9/regress/set_comment_all.c	2009-12-15 21:36:12.764000000 +0100
++++ libzip-0.9/regress/set_comment_all.c	2009-12-18 16:20:27.906754800 +0100
 @@ -42,6 +42,10 @@
  
  #include "zip.h"
@@ -315,7 +321,7 @@ diff -Nru libzip-0.9.orig/regress/set_comment_all.c libzip-0.9/regress/set_comme
  "multiline archive comment.\r\n"
 diff -Nru libzip-0.9.orig/regress/set_comment_localonly.c libzip-0.9/regress/set_comment_localonly.c
 --- libzip-0.9.orig/regress/set_comment_localonly.c	2008-03-10 13:40:55.000000000 +0100
-+++ libzip-0.9/regress/set_comment_localonly.c	2009-12-15 21:36:12.767000000 +0100
++++ libzip-0.9/regress/set_comment_localonly.c	2009-12-18 16:20:27.906754800 +0100
 @@ -42,6 +42,10 @@
  
  #include "zip.h"
@@ -329,7 +335,7 @@ diff -Nru libzip-0.9.orig/regress/set_comment_localonly.c libzip-0.9/regress/set
  int
 diff -Nru libzip-0.9.orig/regress/set_comment_revert.c libzip-0.9/regress/set_comment_revert.c
 --- libzip-0.9.orig/regress/set_comment_revert.c	2008-03-10 13:40:55.000000000 +0100
-+++ libzip-0.9/regress/set_comment_revert.c	2009-12-15 21:36:12.770000000 +0100
++++ libzip-0.9/regress/set_comment_revert.c	2009-12-18 16:20:27.906754800 +0100
 @@ -42,6 +42,10 @@
  
  #include "zip.h"
@@ -343,7 +349,7 @@ diff -Nru libzip-0.9.orig/regress/set_comment_revert.c libzip-0.9/regress/set_co
  "multiline archive comment.\r\n"
 diff -Nru libzip-0.9.orig/src/CMakeLists.txt libzip-0.9/src/CMakeLists.txt
 --- libzip-0.9.orig/src/CMakeLists.txt	2007-06-04 12:37:05.000000000 +0200
-+++ libzip-0.9/src/CMakeLists.txt	2009-12-15 21:36:12.772000000 +0100
++++ libzip-0.9/src/CMakeLists.txt	2009-12-18 16:20:27.906754800 +0100
 @@ -3,8 +3,23 @@
  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../lib
    ${CMAKE_CURRENT_BINARY_DIR}/..)
@@ -372,7 +378,7 @@ diff -Nru libzip-0.9.orig/src/CMakeLists.txt libzip-0.9/src/CMakeLists.txt
 +TARGET_LINK_LIBRARIES(ziptorrent zip)
 diff -Nru libzip-0.9.orig/src/unistd.c libzip-0.9/src/unistd.c
 --- libzip-0.9.orig/src/unistd.c	1970-01-01 01:00:00.000000000 +0100
-+++ libzip-0.9/src/unistd.c	2009-12-15 21:36:12.775000000 +0100
++++ libzip-0.9/src/unistd.c	2009-12-18 16:20:27.922354800 +0100
 @@ -0,0 +1,96 @@
 +#ifdef _MSC_VER
 +#include <windows.h>
@@ -472,7 +478,7 @@ diff -Nru libzip-0.9.orig/src/unistd.c libzip-0.9/src/unistd.c
 +#endif  // _MSC_VER
 diff -Nru libzip-0.9.orig/src/zipcmp.c libzip-0.9/src/zipcmp.c
 --- libzip-0.9.orig/src/zipcmp.c	2007-11-08 15:59:32.000000000 +0100
-+++ libzip-0.9/src/zipcmp.c	2009-12-15 21:36:12.778000000 +0100
++++ libzip-0.9/src/zipcmp.c	2009-12-18 16:20:27.922354800 +0100
 @@ -37,12 +37,20 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -497,7 +503,7 @@ diff -Nru libzip-0.9.orig/src/zipcmp.c libzip-0.9/src/zipcmp.c
      unsigned int size;
 diff -Nru libzip-0.9.orig/src/zipmerge.c libzip-0.9/src/zipmerge.c
 --- libzip-0.9.orig/src/zipmerge.c	2008-07-21 16:37:47.000000000 +0200
-+++ libzip-0.9/src/zipmerge.c	2009-12-15 21:36:12.781000000 +0100
++++ libzip-0.9/src/zipmerge.c	2009-12-18 16:20:27.922354800 +0100
 @@ -47,6 +47,11 @@
  
  #include "zip.h"
@@ -512,7 +518,7 @@ diff -Nru libzip-0.9.orig/src/zipmerge.c libzip-0.9/src/zipmerge.c
  char *prg;
 diff -Nru libzip-0.9.orig/src/ziptorrent.c libzip-0.9/src/ziptorrent.c
 --- libzip-0.9.orig/src/ziptorrent.c	2008-07-25 11:56:06.000000000 +0200
-+++ libzip-0.9/src/ziptorrent.c	2009-12-15 21:36:12.785000000 +0100
++++ libzip-0.9/src/ziptorrent.c	2009-12-18 16:20:27.937954800 +0100
 @@ -37,14 +37,21 @@
  #include <stdio.h>
  #include <stdlib.h>
