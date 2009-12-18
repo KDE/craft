@@ -1,0 +1,467 @@
+diff -Nru ebook-tools-0.1.1.orig/CMakeLists.txt ebook-tools-0.1.1/CMakeLists.txt
+--- ebook-tools-0.1.1.orig/CMakeLists.txt	2008-06-07 21:09:38.000000000 +0200
++++ ebook-tools-0.1.1/CMakeLists.txt	2009-12-18 18:11:53.488000000 +0100
+@@ -1,5 +1,6 @@
+ project (EBOOK-TOOLS)
+ 
++cmake_minimum_required(VERSION 2.4.0)
+ #set(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+ set(LIBRARY_OUTPUT_PATH ${EBOOK-TOOLS_BINARY_DIR}/libs)
+ set(EXECUTABLE_OUTPUT_PATH ${EBOOK-TOOLS_BINARY_DIR}/bin)
+@@ -9,7 +10,9 @@
+ find_package(LibXml2 REQUIRED)
+ find_package(LibZip REQUIRED)
+ 
+-
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
+ INCLUDE("${CMAKE_MODULE_PATH}/TargetDoc.cmake" OPTIONAL)
+ 
+ add_subdirectory (src)
+diff -Nru ebook-tools-0.1.1.orig/src/libepub/epub.c ebook-tools-0.1.1/src/libepub/epub.c
+--- ebook-tools-0.1.1.orig/src/libepub/epub.c	2008-06-07 21:09:38.000000000 +0200
++++ ebook-tools-0.1.1/src/libepub/epub.c	2009-12-18 18:11:11.707000000 +0100
+@@ -2,9 +2,16 @@
+ #include "epublib.h"
+ #include <stdarg.h>
+ 
++#ifdef _WIN32
++# define PATH_SEPARATOR '\\'
++#else
++# define PATH_SEPARATOR '/'
++#endif
++
+ struct epub *epub_open(const char *filename, int debug) {
+   char *opfName = NULL;
+   char *opfStr = NULL;
++  char *index = NULL;
+ 
+   struct epub *epub = malloc(sizeof(struct epub));
+   epub->ocf = NULL;
+@@ -29,13 +36,13 @@
+   }
+ 
+   epub->ocf->datapath = malloc(sizeof(char) *(strlen(opfName) +1));
+-  char *index = strrchr(opfName, '/');
++  index = strrchr(opfName, PATH_SEPARATOR);
+   if (index) {
+     strncpy(epub->ocf->datapath, opfName, index + 1 - opfName); 
+     epub->ocf->datapath[index - opfName + 1] = 0;
+   }    
+   else {
+-    epub->ocf->datapath[0] = '/';
++    epub->ocf->datapath[0] = PATH_SEPARATOR;
+     epub->ocf->datapath[1] = 0;
+   }
+ 
+diff -Nru ebook-tools-0.1.1.orig/src/libepub/epub.h ebook-tools-0.1.1/src/libepub/epub.h
+--- ebook-tools-0.1.1.orig/src/libepub/epub.h	2008-06-07 21:09:38.000000000 +0200
++++ ebook-tools-0.1.1/src/libepub/epub.h	2009-12-18 18:11:11.710000000 +0100
+@@ -9,6 +9,16 @@
+ struct eiterator;
+ struct titerator;
+ 
++#ifdef _WIN32
++# ifdef epub_EXPORTS
++#  define EPUB_EXPORT __declspec(dllexport)
++# else
++#  define EPUB_EXPORT __declspec(dllimport)
++# endif
++#else
++# define EPUB_EXPORT
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif // c++
+@@ -22,7 +32,7 @@
+       @return epub struct with the information of the file or NULL on error
+       
+   */
+-  struct epub *epub_open(const char *filename, int debug);
++  EPUB_EXPORT struct epub *epub_open(const char *filename, int debug);
+   
+   /**
+      This function sets the debug level to the given level.
+@@ -30,7 +40,7 @@
+      @param filename is the name of the file to open
+      @param debug is the debug level (0=none, 1=errors, 2=warnings, 3=info)
+   */
+-  void epub_set_debug(struct epub *epub, int debug);
++  EPUB_EXPORT void epub_set_debug(struct epub *epub, int debug);
+ 
+   /** 
+       returns the file with the give filename
+@@ -40,14 +50,14 @@
+       @param pointer to where the file data is stored
+       @return the number of bytes read
+   */
+-  int epub_get_ocf_file(struct epub *epub, const char *filename, char **data);
++  EPUB_EXPORT int epub_get_ocf_file(struct epub *epub, const char *filename, char **data);
+   
+   /** 
+       Frees the memory held by the given iterator
+       
+       @param it the iterator
+   */
+-  void epub_free_iterator(struct eiterator *it);
++  EPUB_EXPORT void epub_free_iterator(struct eiterator *it);
+ 
+   /** 
+       This function closes a given epub. It also frees the epub struct.
+@@ -55,14 +65,14 @@
+       
+       @param epub the struct of the epub to close.
+   */
+-  int epub_close(struct epub *epub);
++  EPUB_EXPORT int epub_close(struct epub *epub);
+   
+   /** 
+       Debugging function dumping various file information.
+       
+       @param epub the struct of the epub to close.
+   */
+-  void epub_dump(struct epub *epub);
++  EPUB_EXPORT void epub_dump(struct epub *epub);
+   
+     
+   /** 
+@@ -70,7 +80,7 @@
+ 
+       @param epub the struct .
+   */
+-  unsigned char **epub_get_metadata(struct epub *epub, enum epub_metadata type,
++  EPUB_EXPORT unsigned char **epub_get_metadata(struct epub *epub, enum epub_metadata type,
+                                     int *size);
+ 
+   /** 
+@@ -82,7 +92,7 @@
+       @param pointer to where the file data is stored
+       @return the number of bytes read
+   */
+-  int epub_get_data(struct epub *epub, const char *name, char **data);
++  EPUB_EXPORT int epub_get_data(struct epub *epub, const char *name, char **data);
+ 
+   
+   /** 
+@@ -94,7 +104,7 @@
+       @param opt other options (ignored for now)
+       @return eiterator to the epub book
+   */
+-  struct eiterator *epub_get_iterator(struct epub *epub, 
++  EPUB_EXPORT struct eiterator *epub_get_iterator(struct epub *epub, 
+                                       enum eiterator_type type, int opt);
+ 
+   /**
+@@ -104,7 +114,7 @@
+      @param it the iterator
+      @return pointer to the data
+   */
+-  char *epub_it_get_next(struct eiterator *it);
++  EPUB_EXPORT char *epub_it_get_next(struct eiterator *it);
+ 
+   /**
+      Returns a pointer to the iterator's data. the iterator handles 
+@@ -113,7 +123,7 @@
+      @param it the iterator
+      @return pointer to the data
+   */
+-  char *epub_it_get_curr(struct eiterator *it);
++  EPUB_EXPORT char *epub_it_get_curr(struct eiterator *it);
+   
+   /**
+      Returns a pointer to the url of the iterator's current data. 
+@@ -122,7 +132,7 @@
+      @param it the iterator
+      @return pointer to the current data's url
+   */
+-  char *epub_it_get_curr_url(struct eiterator *it);
++  EPUB_EXPORT char *epub_it_get_curr_url(struct eiterator *it);
+ 
+   /** 
+       Returns a book toc iterator of the requested type
+@@ -133,7 +143,7 @@
+       @param opt other options (ignored for now)
+       @return toc iterator to the epub book
+   */
+-  struct titerator *epub_get_titerator(struct epub *epub, 
++  EPUB_EXPORT struct titerator *epub_get_titerator(struct epub *epub, 
+                                        enum titerator_type type, int opt);
+ 
+   
+@@ -143,7 +153,7 @@
+      @param tit the iterator
+      @return 1 if the current entry is valid and 0 otherwise 
+   */
+-  int epub_tit_curr_valid(struct titerator *tit);
++  EPUB_EXPORT int epub_tit_curr_valid(struct titerator *tit);
+   
+   /**
+      Returns a pointer to the depth of the toc iterator's current entry. 
+@@ -152,7 +162,7 @@
+      @param tit the iterator
+      @return pointer to the current entry's depth
+   */
+-  int epub_tit_get_curr_depth(struct titerator *tit);
++  EPUB_EXPORT int epub_tit_get_curr_depth(struct titerator *tit);
+ 
+   /**
+      Returns a pointer to the link of the toc iterator's current entry. 
+@@ -161,7 +171,7 @@
+      @param tit the iterator
+      @return the current entry's depth
+   */
+-  char *epub_tit_get_curr_link(struct titerator *tit);
++  EPUB_EXPORT char *epub_tit_get_curr_link(struct titerator *tit);
+ 
+   /**
+      Returns a pointer to the label of the toc iterator's current entry. 
+@@ -170,14 +180,14 @@
+      @param tit the iterator
+      @return pointer to the current entry's lable
+   */
+-  char *epub_tit_get_curr_label(struct titerator *tit);
++  EPUB_EXPORT char *epub_tit_get_curr_label(struct titerator *tit);
+ 
+   /** 
+       Frees the memory held by the given iterator
+       
+       @param tit the iterator
+   */
+-  void epub_free_titerator(struct titerator *tit);
++  EPUB_EXPORT void epub_free_titerator(struct titerator *tit);
+   
+   /**
+      updates the iterator to the next element.
+@@ -185,12 +195,12 @@
+      @param tit the iterator
+      @return 1 on success and 0 otherwise
+   */
+-  int epub_tit_next(struct titerator *tit);
++  EPUB_EXPORT int epub_tit_next(struct titerator *tit);
+ 
+   /**
+      Cleans up after the library. Call this when you are done with the library. 
+   */
+-  void epub_cleanup();
++  EPUB_EXPORT void epub_cleanup();
+ 
+ #ifdef __cplusplus
+ }
+diff -Nru ebook-tools-0.1.1.orig/src/libepub/epublib.h ebook-tools-0.1.1/src/libepub/epublib.h
+--- ebook-tools-0.1.1.orig/src/libepub/epublib.h	2008-06-07 21:09:38.000000000 +0200
++++ ebook-tools-0.1.1/src/libepub/epublib.h	2009-12-18 18:11:11.713000000 +0100
+@@ -16,6 +16,11 @@
+ #include "linklist.h"
+ #include "epub_shared.h"
+ 
++// msvc fixes
++#ifdef _MSC_VER
++#define strdup _strdup
++#endif
++
+ ///////////////////////////////////////////////////////////
+ // OCF definions
+ ///////////////////////////////////////////////////////////
+diff -Nru ebook-tools-0.1.1.orig/src/libepub/ocf.c ebook-tools-0.1.1/src/libepub/ocf.c
+--- ebook-tools-0.1.1.orig/src/libepub/ocf.c	2008-06-07 21:09:38.000000000 +0200
++++ ebook-tools-0.1.1/src/libepub/ocf.c	2009-12-18 18:11:11.716000000 +0100
+@@ -18,17 +18,18 @@
+ 
+ int _ocf_parse_container(struct ocf *ocf) {
+ 
++  char *containerXml;
++  char *name = CONTAINER_FILENAME;
++
++  xmlTextReaderPtr reader;
++  int ret;
++
+   _epub_print_debug(ocf->epub, DEBUG_INFO, "parsing container file %s", 
+                     METAINFO_DIR "/" CONTAINER_FILENAME);
+ 
+-  char *containerXml;
+-  char *name = CONTAINER_FILENAME;
+   if (! _ocf_get_file(ocf, METAINFO_DIR "/" CONTAINER_FILENAME, &containerXml))
+     return 0;
+   
+-  xmlTextReaderPtr reader;
+-  int ret;
+-
+   reader = xmlReaderForMemory(containerXml, strlen(containerXml), 
+                               name, NULL, 0);
+   if (reader != NULL) {
+@@ -125,6 +126,8 @@
+   struct zip_file *file = NULL;
+   struct zip_stat *fileStat = malloc(sizeof(struct zip_stat));
+ 
++  int size;
++
+   *fileStr = NULL;
+ 
+   if (zip_stat(arch, filename, ZIP_FL_UNCHANGED, fileStat) == -1) {
+@@ -143,7 +146,6 @@
+ 
+   *fileStr = (char *)malloc((fileStat->size+1)* sizeof(char));
+   
+-  int size;
+   if ((size = zip_fread(file, *fileStr, fileStat->size)) == -1) {
+     _epub_print_debug(epub, DEBUG_INFO, "%s - %s", 
+                       filename, zip_strerror(arch));
+@@ -178,9 +180,9 @@
+ }
+ 
+ struct ocf *_ocf_parse(struct epub *epub, const char *filename) {
++  struct ocf *ocf = malloc(sizeof(struct ocf));
+   _epub_print_debug(epub, DEBUG_INFO, "building ocf struct");
+   
+-  struct ocf *ocf = malloc(sizeof(struct ocf));
+   ocf->epub = epub;
+   ocf->datapath = NULL;
+   ocf->roots = NewListAlloc(LIST, NULL, NULL, 
+diff -Nru ebook-tools-0.1.1.orig/src/libepub/opf.c ebook-tools-0.1.1/src/libepub/opf.c
+--- ebook-tools-0.1.1.orig/src/libepub/opf.c	2008-06-07 21:09:38.000000000 +0200
++++ ebook-tools-0.1.1/src/libepub/opf.c	2009-12-18 18:11:11.719000000 +0100
+@@ -1,17 +1,18 @@
+ #include "epublib.h"
+ 
+ struct opf *_opf_parse(struct epub *epub, char *opfStr) {
++  struct opf *opf = malloc(sizeof(struct opf));
++  xmlTextReaderPtr reader;
++  int ret;
++
+   _epub_print_debug(epub, DEBUG_INFO, "building opf struct");
+   
+-  struct opf *opf = malloc(sizeof(struct opf));
+   opf->epub = epub;
+   opf->guide = NULL;
+   opf->tours = NULL;
+   opf->toc = NULL;
+   
+  
+-  xmlTextReaderPtr reader;
+-  int ret;
+   
+   reader = xmlReaderForMemory(opfStr, strlen(opfStr), 
+                               "OPF", NULL, 0);
+@@ -124,14 +125,16 @@
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader),(xmlChar *)"metadata")) {
+ 
++    const xmlChar *local;
++    xmlChar *string;
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+       ret = xmlTextReaderRead(reader);
+       continue;
+     }
+     
+-    const xmlChar *local = xmlTextReaderConstLocalName(reader);
+-    xmlChar *string = (xmlChar *)xmlTextReaderReadString(reader);
++    local = xmlTextReaderConstLocalName(reader);
++    string = (xmlChar *)xmlTextReaderReadString(reader);
+ 
+     if (xmlStrcasecmp(local, (xmlChar *)"identifier") == 0) {
+       struct id *new = malloc(sizeof(struct id));
+@@ -649,10 +652,10 @@
+ }      
+ 
+ void _opf_parse_spine(struct opf *opf, xmlTextReaderPtr reader) {
+-  _epub_print_debug(opf->epub, DEBUG_INFO, "parsing spine");
+-
+   int ret;
+   xmlChar *linear;
++
++  _epub_print_debug(opf->epub, DEBUG_INFO, "parsing spine");
+   
+   opf->spine = NewListAlloc(LIST, NULL, NULL, NULL); 
+   opf->tocName = xmlTextReaderGetAttribute(reader, (xmlChar *)"toc");
+@@ -683,6 +686,7 @@
+   ret = xmlTextReaderRead(reader);
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader), (xmlChar *)"spine")) {
++    struct spine *item;
+   
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+@@ -690,7 +694,7 @@
+       continue;
+     }
+ 
+-    struct spine *item = malloc(sizeof(struct spine));
++    item = malloc(sizeof(struct spine));
+ 
+     item->idref = xmlTextReaderGetAttribute(reader, (xmlChar *)"idref");
+     linear = xmlTextReaderGetAttribute(reader, (xmlChar *)"linear");
+@@ -765,22 +769,23 @@
+ }
+ 
+ void _opf_parse_guide(struct opf *opf, xmlTextReaderPtr reader) {
++  int ret;
+   _epub_print_debug(opf->epub, DEBUG_INFO, "parsing guides");
+ 
+-  int ret;
+-   opf->guide = NewListAlloc(LIST, NULL, NULL, NULL);
++  opf->guide = NewListAlloc(LIST, NULL, NULL, NULL);
+ 
+   ret = xmlTextReaderRead(reader);
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader),(xmlChar *)"guides")) {
+-
++    struct guide *item;
++         
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+       ret = xmlTextReaderRead(reader);
+       continue;
+     }
+     
+-    struct guide *item = malloc(sizeof(struct guide));
++    item = malloc(sizeof(struct guide));
+     item->type = xmlTextReaderGetAttribute(reader, (xmlChar *)"type");
+     item->title = xmlTextReaderGetAttribute(reader, (xmlChar *)"title");
+     item->href = xmlTextReaderGetAttribute(reader, (xmlChar *)"href");
+@@ -801,6 +806,7 @@
+   
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader),(xmlChar *)"tour")) {
++    struct site *item;
+ 
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+@@ -808,7 +814,7 @@
+       continue;
+     }
+     
+-    struct site *item = malloc(sizeof(struct site));
++    item = malloc(sizeof(struct site));
+     item->title = xmlTextReaderGetAttribute(reader, (xmlChar *)"title");
+     item->href = xmlTextReaderGetAttribute(reader, (xmlChar *)"href");
+     _epub_print_debug(opf->epub, DEBUG_INFO, 
+@@ -823,15 +829,16 @@
+ }
+ 
+ void _opf_parse_tours(struct opf *opf, xmlTextReaderPtr reader) {
++  int ret;
+   _epub_print_debug(opf->epub, DEBUG_INFO, "parsing tours");
+ 
+-  int ret;
+   opf->tours = NewListAlloc(LIST, NULL, NULL, NULL);
+ 
+   ret = xmlTextReaderRead(reader);
+   
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader), (xmlChar *)"tours")) {
++    struct tour *item;
+     
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+@@ -839,7 +846,7 @@
+       continue;
+     }
+     
+-    struct tour *item = malloc(sizeof(struct tour));
++    item = malloc(sizeof(struct tour));
+    
+     item->title = xmlTextReaderGetAttribute(reader, (xmlChar *)"title");
+     item->id = xmlTextReaderGetAttribute(reader, (xmlChar *)"id");
