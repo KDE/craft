@@ -1,0 +1,221 @@
+diff -Nru ebook-tools/src/libepub/epub.c ebook-tools/src/libepub/epub.c
+--- ebook-tools/src/libepub/epub.c
++++ ebook-tools/src/libepub/epub.c
+@@ -11,6 +11,7 @@
+ struct epub *epub_open(const char *filename, int debug) {
+   char *opfName = NULL;
+   char *opfStr = NULL;
++  char *index = NULL;
+ 
+   struct epub *epub = malloc(sizeof(struct epub));
+   epub->ocf = NULL;
+@@ -36,7 +36,7 @@
+   }
+ 
+   epub->ocf->datapath = malloc(sizeof(char) *(strlen(opfName) +1));
+-  char *index = strrchr(opfName, PATH_SEPARATOR);
++  index = strrchr(opfName, PATH_SEPARATOR);
+   if (index) {
+     strncpy(epub->ocf->datapath, opfName, index + 1 - opfName); 
+     epub->ocf->datapath[index - opfName + 1] = 0;
+diff -Nru ebook-tools/src/libepub/ocf.c ebook-tools/src/libepub/ocf.c
+--- ebook-tools/src/libepub/ocf.c
++++ ebook-tools/src/libepub/ocf.c
+@@ -18,17 +18,18 @@
+ 
+ int _ocf_parse_container(struct ocf *ocf) {
+ 
++  char *containerXml;
++  char *name = CONTAINER_FILENAME;
++
++  xmlTextReaderPtr reader;
++  int ret;
++
+   _epub_print_debug(ocf->epub, DEBUG_INFO, "parsing container file %s", 
+                     METAINFO_DIR "/" CONTAINER_FILENAME);
+ 
+-  char *containerXml;
+-  char *name = CONTAINER_FILENAME;
+   if (! _ocf_get_file(ocf, METAINFO_DIR "/" CONTAINER_FILENAME, &containerXml))
+     return 0;
+   
+-  xmlTextReaderPtr reader;
+-  int ret;
+-
+   reader = xmlReaderForMemory(containerXml, strlen(containerXml), 
+                               name, NULL, 0);
+   if (reader != NULL) {
+@@ -125,6 +126,8 @@
+   struct zip_file *file = NULL;
+   struct zip_stat *fileStat = malloc(sizeof(struct zip_stat));
+ 
++  int size;
++
+   *fileStr = NULL;
+ 
+   if (zip_stat(arch, filename, ZIP_FL_UNCHANGED, fileStat) == -1) {
+@@ -143,7 +146,6 @@
+ 
+   *fileStr = (char *)malloc((fileStat->size+1)* sizeof(char));
+   
+-  int size;
+   if ((size = zip_fread(file, *fileStr, fileStat->size)) == -1) {
+     _epub_print_debug(epub, DEBUG_INFO, "%s - %s", 
+                       filename, zip_strerror(arch));
+@@ -178,9 +180,9 @@
+ }
+ 
+ struct ocf *_ocf_parse(struct epub *epub, const char *filename) {
++  struct ocf *ocf = malloc(sizeof(struct ocf));
+   _epub_print_debug(epub, DEBUG_INFO, "building ocf struct");
+   
+-  struct ocf *ocf = malloc(sizeof(struct ocf));
+   ocf->epub = epub;
+   ocf->datapath = NULL;
+   ocf->roots = NewListAlloc(LIST, NULL, NULL, 
+diff -Nru ebook-tools/src/libepub/opf.c ebook-tools/src/libepub/opf.c
+--- ebook-tools/src/libepub/opf.c
++++ ebook-tools/src/libepub/opf.c
+@@ -1,17 +1,18 @@
+ #include "epublib.h"
+ 
+ struct opf *_opf_parse(struct epub *epub, char *opfStr) {
++  struct opf *opf = malloc(sizeof(struct opf));
++  xmlTextReaderPtr reader;
++  int ret;
++
+   _epub_print_debug(epub, DEBUG_INFO, "building opf struct");
+   
+-  struct opf *opf = malloc(sizeof(struct opf));
+   opf->epub = epub;
+   opf->guide = NULL;
+   opf->tours = NULL;
+   opf->toc = NULL;
+   
+  
+-  xmlTextReaderPtr reader;
+-  int ret;
+   
+   reader = xmlReaderForMemory(opfStr, strlen(opfStr), 
+                               "OPF", NULL, 0);
+@@ -124,14 +125,16 @@
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader),(xmlChar *)"metadata")) {
+ 
++    const xmlChar *local;
++    xmlChar *string;
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+       ret = xmlTextReaderRead(reader);
+       continue;
+     }
+     
+-    const xmlChar *local = xmlTextReaderConstLocalName(reader);
+-    xmlChar *string = (xmlChar *)xmlTextReaderReadString(reader);
++    local = xmlTextReaderConstLocalName(reader);
++    string = (xmlChar *)xmlTextReaderReadString(reader);
+ 
+     if (xmlStrcasecmp(local, (xmlChar *)"identifier") == 0) {
+       struct id *new = malloc(sizeof(struct id));
+@@ -649,10 +652,10 @@
+ }      
+ 
+ void _opf_parse_spine(struct opf *opf, xmlTextReaderPtr reader) {
+-  _epub_print_debug(opf->epub, DEBUG_INFO, "parsing spine");
+-
+   int ret;
+   xmlChar *linear;
++
++  _epub_print_debug(opf->epub, DEBUG_INFO, "parsing spine");
+   
+   opf->spine = NewListAlloc(LIST, NULL, NULL, NULL); 
+   opf->tocName = xmlTextReaderGetAttribute(reader, (xmlChar *)"toc");
+@@ -683,6 +686,7 @@
+   ret = xmlTextReaderRead(reader);
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader), (xmlChar *)"spine")) {
++    struct spine *item;
+   
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+@@ -690,7 +694,7 @@
+       continue;
+     }
+ 
+-    struct spine *item = malloc(sizeof(struct spine));
++    item = malloc(sizeof(struct spine));
+ 
+     item->idref = xmlTextReaderGetAttribute(reader, (xmlChar *)"idref");
+     linear = xmlTextReaderGetAttribute(reader, (xmlChar *)"linear");
+@@ -765,22 +769,23 @@
+ }
+ 
+ void _opf_parse_guide(struct opf *opf, xmlTextReaderPtr reader) {
++  int ret;
+   _epub_print_debug(opf->epub, DEBUG_INFO, "parsing guides");
+ 
+-  int ret;
+-   opf->guide = NewListAlloc(LIST, NULL, NULL, NULL);
++  opf->guide = NewListAlloc(LIST, NULL, NULL, NULL);
+ 
+   ret = xmlTextReaderRead(reader);
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader),(xmlChar *)"guides")) {
+-
++    struct guide *item;
++         
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+       ret = xmlTextReaderRead(reader);
+       continue;
+     }
+     
+-    struct guide *item = malloc(sizeof(struct guide));
++    item = malloc(sizeof(struct guide));
+     item->type = xmlTextReaderGetAttribute(reader, (xmlChar *)"type");
+     item->title = xmlTextReaderGetAttribute(reader, (xmlChar *)"title");
+     item->href = xmlTextReaderGetAttribute(reader, (xmlChar *)"href");
+@@ -801,6 +806,7 @@
+   
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader),(xmlChar *)"tour")) {
++    struct site *item;
+ 
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+@@ -808,7 +814,7 @@
+       continue;
+     }
+     
+-    struct site *item = malloc(sizeof(struct site));
++    item = malloc(sizeof(struct site));
+     item->title = xmlTextReaderGetAttribute(reader, (xmlChar *)"title");
+     item->href = xmlTextReaderGetAttribute(reader, (xmlChar *)"href");
+     _epub_print_debug(opf->epub, DEBUG_INFO, 
+@@ -823,15 +829,16 @@
+ }
+ 
+ void _opf_parse_tours(struct opf *opf, xmlTextReaderPtr reader) {
++  int ret;
+   _epub_print_debug(opf->epub, DEBUG_INFO, "parsing tours");
+ 
+-  int ret;
+   opf->tours = NewListAlloc(LIST, NULL, NULL, NULL);
+ 
+   ret = xmlTextReaderRead(reader);
+   
+   while (ret == 1 && 
+          xmlStrcasecmp(xmlTextReaderConstName(reader), (xmlChar *)"tours")) {
++    struct tour *item;
+     
+     // ignore non starting tags
+     if (xmlTextReaderNodeType(reader) != 1) {
+@@ -839,7 +846,7 @@
+       continue;
+     }
+     
+-    struct tour *item = malloc(sizeof(struct tour));
++    item = malloc(sizeof(struct tour));
+    
+     item->title = xmlTextReaderGetAttribute(reader, (xmlChar *)"title");
+     item->id = xmlTextReaderGetAttribute(reader, (xmlChar *)"id");
