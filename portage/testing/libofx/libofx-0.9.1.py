@@ -23,6 +23,10 @@ class subinfo( info.infoclass ):
         self.targets['0.9.1'] = SRC_URI
         self.defaultTarget = '0.9.1'
         
+    def setDependencies( self ):
+        self.hardDependencies['testing/libopensp'] = 'default'
+        self.hardDependencies['win32libs-bin/iconv'] = 'default'
+
 class subclass( base.baseclass ):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
