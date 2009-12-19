@@ -7,10 +7,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for ver in ['0.10.3', '0.10.4', '0.10.5', '0.10.6', '0.12.0']:
+        for ver in ['0.10.3', '0.10.4', '0.10.5', '0.10.6', '0.12.0', '0.12.2']:
             self.targets[ ver ] = self.getPackage( repoUrl, "poppler", ver )
 
-        self.defaultTarget = '0.12.0'
+        self.defaultTarget = '0.12.2'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
