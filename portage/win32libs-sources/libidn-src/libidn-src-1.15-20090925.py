@@ -23,7 +23,7 @@ class subclass(base.baseclass):
 
   def execute( self ):
     base.baseclass.execute( self )
-    if self.compiler <> "mingw":
+    if not (self.compiler == "mingw" or self.compiler == "mingw4"):
       print "error: can only be build with MinGW (but in the end a \
              mingw/msvc combined package is created"
       exit( 1 )
