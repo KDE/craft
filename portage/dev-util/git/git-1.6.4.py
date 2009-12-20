@@ -20,6 +20,12 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils/git";
         BinaryPackageBase.__init__(self)
+        
+    def unpack(self):
+        if not BinaryPackageBase.unpack(self):
+            return False
+        utils.copyFile(os.path.join(self.packageDir(),"git.bat"),os.path.join(self.rootdir,"dev-utils","bin","git.bat"))
+        return True
 
 if __name__ == '__main__':
     Package().execute()
