@@ -6,8 +6,8 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
-        self.targets['0.10.0'] = 'http://digikam3rdparty.free.fr/0.10.x-releases/digikam-0.10.0.tar.bz2'
-        self.targetInstSrc['0.10.0'] = 'digikam-0.10.0'
+        self.targets['1.0.0'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0/digikam-1.0.0.tar.bz2'
+        self.targetInstSrc['1.0.0'] = 'digikam-1.0.0'
         for ver in ['beta1', 'beta3', 'beta4', 'beta5']:
             self.targets['1.0.0-' + ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-' + ver + '/digikam-1.0.0-' + ver + '.tar.bz2'
             self.targetInstSrc['1.0.0-' + ver] = 'digikam-1.0.0-' + ver
