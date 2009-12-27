@@ -1,0 +1,68 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f5e3632..29babba 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -289,7 +289,11 @@ if(WIN32)
+   link_libraries(imm32 winmm dbghelp Secur32)  # missing by default :/
+ 
+   if(HAVE_SSL)
++    if( WITH_KDE )
++        find_package(OpenSSL)
++    else( WITH_KDE )
+      link_libraries(${OPENSSL_LIBRARIES} libeay32MD)
++   endif( WITH_KDE )
+   endif(HAVE_SSL)
+ endif(WIN32)
+ 
+diff --git a/src/common/CMakeLists.txt b/src/common/CMakeLists.txt
+index f8337cb..c8e0ce5 100644
+--- a/src/common/CMakeLists.txt
++++ b/src/common/CMakeLists.txt
+@@ -27,9 +27,9 @@ set(SOURCES
+     syncableobject.cpp
+     util.cpp)
+ 
+-if(CMAKE_HOST_WIN32)
++if(CMAKE_HOST_WIN32 AND NOT MINGW)
+     set(SOURCES ${SOURCES} logbacktrace_win.cpp)
+-endif(CMAKE_HOST_WIN32)
++endif(CMAKE_HOST_WIN32 AND NOT MINGW)
+ if(CMAKE_HOST_UNIX)
+     set(SOURCES ${SOURCES} logbacktrace_unix.cpp)
+ endif(CMAKE_HOST_UNIX)
+diff --git a/src/common/identity.cpp b/src/common/identity.cpp
+index 275afcc..961c8bd 100644
+--- a/src/common/identity.cpp
++++ b/src/common/identity.cpp
+@@ -102,7 +102,7 @@ QString Identity::defaultNick() {
+   DWORD  bufCharCount = 128;
+   //if(GetUserNameEx(/* NameSamCompatible */ 1, infoBuf, &bufCharCount))
+   if(GetUserNameEx(NameSamCompatible, infoBuf, &bufCharCount)) {
+-    QString nickName(infoBuf);
++    QString nickName( QString::fromWCharArray(infoBuf));
+     int lastBs = nickName.lastIndexOf('\\');
+     if(lastBs != -1) {
+       nickName = nickName.mid(lastBs + 1);
+@@ -138,7 +138,7 @@ QString Identity::defaultRealName() {
+   TCHAR  infoBuf[128];
+   DWORD  bufCharCount = 128;
+   if(GetUserName(infoBuf, &bufCharCount))
+-    return QString(infoBuf);
++    return QString( QString::fromWCharArray(infoBuf));
+   else
+     return generalDefault;
+ #else
+diff --git a/src/common/quassel.cpp b/src/common/quassel.cpp
+index 6b7fa78..09ae0e3 100644
+--- a/src/common/quassel.cpp
++++ b/src/common/quassel.cpp
+@@ -224,7 +224,9 @@ void Quassel::handleSignal(int sig) {
+ #ifndef Q_OS_WIN32
+   case SIGBUS:
+ #endif
++#ifndef Q_CC_MINGW
+     logBacktrace(coreDumpFileName());
++#endif
+     exit(EXIT_FAILURE);
+     break;
+   default:
