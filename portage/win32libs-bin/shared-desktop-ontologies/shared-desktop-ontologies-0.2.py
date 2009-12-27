@@ -6,11 +6,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['0.1']:
+        for version in ['0.1', '0.2']:
             self.targets[ version ] = repoUrl + """/shared-desktop-ontologies-""" + version + """-bin.tar.bz2"""
 
             
-        self.defaultTarget = '0.1'
+        self.defaultTarget = '0.2'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
