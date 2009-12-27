@@ -4,13 +4,13 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = '0.1'
-        self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/oscaf/shared-desktop-ontologies-0.1.tar.bz2'
-        self.targetInstSrc[ ver ] = 'shared-desktop-ontologies-0.1'
-        self.defaultTarget = ver
+        for ver in ['0.1', '0.2']:
+            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/oscaf/shared-desktop-ontologies-' + ver + '.tar.bz2'
+            self.targetInstSrc[ ver ] = 'shared-desktop-ontologies-' + ver
+        self.options.package.withCompiler = False
+        self.defaultTarget = '0.2'
 
     def setDependencies( self ):
-#        self.hardDependencies['win32libs-bin/pcre'] = 'default'
         pass
 
 
