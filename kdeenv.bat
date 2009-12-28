@@ -11,29 +11,44 @@ rem    this file should contain all path settings - and provide thus an environm
 rem    to build and run kde programs
 rem    this file sources the kdesettings.bat file automatically
 
+set BUILDTYPE=
+set APPLICATION=
+
+:nextarg
+if "%1" == "" goto :endargs
+
+if "%1" == "debug" goto :setbuildtype
+if "%1" == "release" goto :setbuildtype
+if "%1" == "relwithdebinfo" goto :setbuildtype
+
+set APPLICATION=%1
+shift
+goto :endargs
+
+:setbuildtype
+set BUILDTYPE=%1
+
+:shiftarg
+shift
+goto :nextarg
+
+:endargs
+
 if exist ..\etc\kdesettings.bat (
-call ..\etc\kdesettings.bat %1
+call ..\etc\kdesettings.bat %BUILDTYPE%
 )
 
 if exist etc\kdesettings.bat (
-call etc\kdesettings.bat %1
+call etc\kdesettings.bat %BUILDTYPE%
 )
 
-if "%1" == "debug" ( 
-set SUBDIR=\debug
-) 
-if "%1" == "relwithdebinfo" ( 
-set SUBDIR=\relwithdebinfo
-)
-if "%1" == "release" ( 
-set SUBDIR=\release
-)
-if "%1" == "" (
-    if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
-        set SUBDIR=\relwithdebinfo
-    ) else (
-        set SUBDIR=
-    )
+set SUBDIR=
+if "%BUILDTYPE%" == "" (
+	if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
+		set SUBDIR=\%EMERGE_BUILDTYPE%
+	)
+) else (
+	set SUBDIR=\%EMERGE_BUILDTYPE%
 )
 
 set PATH=%KDEROOT%%SUBDIR%\bin;%PATH%
@@ -60,7 +75,11 @@ if %KDECOMPILER% == mingw (
     )
 )
 
-%comspec% /e:on /K "cd %KDEROOT%"
+if "%APPLICATION%" == "" (
+	%comspec% /e:on /K "cd %KDEROOT%"
+) else (
+	start %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
+)
 goto :eof
 
 :path-mingw
