@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.2.4'
         self.targetInstSrc['1.2.4'] = 'tags/1.2.4'
         self.targetConfigurePath['1.2.4'] = 'cmake'
-        self.targetConfigurePath['svnHead'] = 'cmake'
+        self.targetConfigurePath['svnHEAD'] = 'cmake'
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
