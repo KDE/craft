@@ -61,8 +61,9 @@ rem within the KDE project, you can also set KDESVNUSERNAME and change
 rem KDESVNSERVER from svn://anonsvn.kde.org to https://svn.kde.org or 
 rem svn+ssh://username@svn.kde.org, so that you can directly commit 
 rem your changes from the emerge's SVN checkout. In case you use svn+ssh, 
-rem also run plink username@svn.kde.org after executing kdeenv.bat or
-rem svn will hang forever
+rem also run 'plink username@svn.kde.org' after executing kdeenv.bat once
+rem to accept the fingerprint of the server or svn will hang forever when
+rem trying to download from the server.
 set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
