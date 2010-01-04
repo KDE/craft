@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/automoc'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
     
 
 class Package( CMakePackageBase ):
