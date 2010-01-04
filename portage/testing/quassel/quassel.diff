@@ -11,7 +11,7 @@ index c4181f9..613bbf9 100644
 +  link_libraries(imm32 winmm Secur32)  # missing by default :/
 +  if(NOT WITH_KDE) 
 +     link_libraries(dbghelp)
-+  endif(WITH_KDE)
++  endif(NOT WITH_KDE)
    if(HAVE_SSL)
 +    if( WITH_KDE )
 +        find_package(OpenSSL)
