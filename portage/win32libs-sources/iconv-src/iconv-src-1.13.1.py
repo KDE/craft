@@ -8,11 +8,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      for ver in ( '1.12', '1.13' ):
+      for ver in ( '1.12', '1.13', '1.13.1' ):
         self.targets[ver]       = 'http://ftp.gnu.org/pub/gnu/libiconv/libiconv-%s.tar.gz' % ver
         self.targetInstSrc[ver] = 'libiconv-%s' % ver
         self.patchToApply[ver]  = ( 'iconv-src-%s.patch' % ver, 0 )
-      self.defaultTarget = '1.13'
+      self.defaultTarget = '1.13.1'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'

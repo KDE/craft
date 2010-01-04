@@ -407,17 +407,13 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake fontconfig-2
 diff -N -r -u fontconfig-2.4.2-orig/CMakeLists.txt fontconfig-2.4.2/CMakeLists.txt
 --- fontconfig-2.4.2-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ fontconfig-2.4.2/CMakeLists.txt	2008-02-10 16:34:14.015625000 +0100
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,43 @@
 +project( fontconfig )
 +set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 +
 +find_package( EXPAT )
 +find_package( Freetype REQUIRED )
 +find_package( LibXML2  REQUIRED )
-+
-+if( MSVC )
-+    find_package( kdewin32 REQUIRED )
-+endif( MSVC )
 +
 +include_directories(
 +    ${FREETYPE_INCLUDE_DIR}
@@ -868,7 +864,7 @@ diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/Confi
 +check_function_exists( vprintf HAVE_VPRINTF )
 +check_function_exists( XML_SetDoctypeDeclHandler HAVE_XML_SETDOCTYPEDECLHANDLER )
 +set( FC_DEFAULT_FONTS "%WINDIR%\\fonts" )
-+add_definitions( -DHAVE_CONFIG_H )
++add_definitions( -DHAVE_CONFIG_H -DKDEWIN_EXPORT= )
 +add_definitions( -DFONTCONFIG_PATH="\\"${CMAKE_INSTALL_PREFIX}/etc/fonts\\"" )
 +set( FC_CACHEDIR "\"%TEMP%\\fc_cache\"" )
 +configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
@@ -987,7 +983,7 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt fontconfig-2.4.2
 diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-lang/CMakeLists.txt
 --- fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ fontconfig-2.4.2/fc-lang/CMakeLists.txt	2008-02-10 16:34:14.546875000 +0100
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +set( sub_dir_name fc-lang )
 +
 +file( GLOB DATA_FILE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.orth" )
@@ -995,6 +991,7 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-l
 +set( OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/fclang.h )
 +
 +file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h )
++file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/fcftaliastail.h )
 +
 +include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 +add_definitions(-Dfontconfig_EXPORTS)
@@ -1103,43 +1100,10 @@ diff -N -r -u fontconfig-2.4.2-orig/fontconfig/fontconfig.h fontconfig-2.4.2/fon
  #endif
  
  typedef unsigned char	FcChar8;
-@@ -881,25 +890,25 @@
- FcStrSetCreate (void);
- 
- FcPublic FcBool
--FcStrSetMember (FcPublic FcStrSet *set, const FcChar8 *s);
-+FcStrSetMember (FcStrSet *set, const FcChar8 *s);
- 
- FcPublic FcBool
--FcStrSetEqual (FcPublic FcStrSet *sa, FcPublic FcStrSet *sb);
-+FcStrSetEqual (FcStrSet *sa, FcStrSet *sb);
- 
- FcPublic FcBool
--FcStrSetAdd (FcPublic FcStrSet *set, const FcChar8 *s);
-+FcStrSetAdd (FcStrSet *set, const FcChar8 *s);
- 
- FcPublic FcBool
--FcStrSetAddFilename (FcPublic FcStrSet *set, const FcChar8 *s);
-+FcStrSetAddFilename (FcStrSet *set, const FcChar8 *s);
- 
- FcPublic FcBool
--FcStrSetDel (FcPublic FcStrSet *set, const FcChar8 *s);
-+FcStrSetDel (FcStrSet *set, const FcChar8 *s);
- 
- FcPublic void
--FcStrSetDestroy (FcPublic FcStrSet *set);
-+FcStrSetDestroy (FcStrSet *set);
- 
- FcPublic FcStrList *
--FcStrListCreate (FcPublic FcStrSet *set);
-+FcStrListCreate (FcStrSet *set);
- 
- FcPublic FcChar8 *
- FcStrListNext (FcStrList *list);
 diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMakeLists.txt
 --- fontconfig-2.4.2-orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ fontconfig-2.4.2/src/CMakeLists.txt	2008-02-10 16:34:15.562500000 +0100
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,48 @@
 +set(sub_dir_name src)
 +
 +set( fontconfig_SRCS
@@ -1151,6 +1115,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMak
 +fcdbg.c
 +fcdefault.c
 +fcdir.c
++fcformat.c
 +fcfreetype.c
 +fcfs.c
 +fcinit.c
@@ -1190,7 +1155,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMak
 diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 --- fontconfig-2.4.2-orig/src/dirent.c	1970-01-01 01:00:00.000000000 +0100
 +++ fontconfig-2.4.2/src/dirent.c	2008-02-10 16:34:15.828125000 +0100
-@@ -0,0 +1,158 @@
+@@ -0,0 +1,157 @@
 +/* ====================================================================
 + * The Apache Software License, Version 1.1
 + *
@@ -1249,7 +1214,6 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 + * University of Illinois, Urbana-Champaign.
 + */
 +
-+#include <winposix_export.h>
 +#include <windows.h>
 +
 +#include <malloc.h>
@@ -1273,7 +1237,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 +
 +#ifndef __MINGW32__
 +
-+KDEWIN32_EXPORT DIR * opendir(const char *dir)
++DIR * opendir(const char *dir)
 +{
 +    DIR *dp;
 +    char *filespec;
@@ -1305,7 +1269,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 +    return dp;
 +}
 +
-+KDEWIN32_EXPORT struct dirent * readdir(DIR *dp)
++struct dirent * readdir(DIR *dp)
 +{
 +    if (!dp || dp->finished) return NULL;
 +
@@ -1330,7 +1294,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 +    return &(dp->dent);
 +}
 +
-+KDEWIN32_EXPORT int closedir(DIR *dp)
++int closedir(DIR *dp)
 +{
 +    if (!dp) return 0;
 +    if ((HANDLE)dp->handle != INVALID_HANDLE_VALUE) _findclose(dp->handle);
@@ -1343,7 +1307,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 +#endif // #ifndef __MINGW32__
 +
 +
-+KDEWIN32_EXPORT struct dirent* readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
++struct dirent* readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 +{
 +	//todo: remove this when readdir_r.c will be ported
 +	result = 0;
@@ -1363,15 +1327,6 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
  /*
   * Generate a random level number, distributed
   * so that each level is 1/4 as likely as the one before
-@@ -707,7 +711,7 @@
-     parent = FcStrDirname (dir);
-     if (!parent)
- 	return FcFalse;
--    if (access ((char *) parent, W_OK|X_OK) == 0)
-+    if (access ((char *) parent, W_OK) == 0)
- 	ret = mkdir ((char *) dir, 0777) == 0;
-     else if (access ((char *) parent, F_OK) == -1)
- 	ret = FcMakeDirectory (parent) && (mkdir ((char *) dir, 0777) == 0);
 @@ -740,7 +744,7 @@
      if (!list)
  	return FcFalse;
@@ -1396,7 +1351,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fcfreetype.c fontconfig-2.4.2/src/fcfree
 diff -N -r -u fontconfig-2.4.2-orig/src/mmap.c fontconfig-2.4.2/src/mmap.c
 --- fontconfig-2.4.2-orig/src/mmap.c	1970-01-01 01:00:00.000000000 +0100
 +++ fontconfig-2.4.2/src/mmap.c	2008-02-10 16:34:15.906250000 +0100
-@@ -0,0 +1,209 @@
+@@ -0,0 +1,208 @@
 +/*
 +   This file is part of the KDE libraries
 +   Copyright (c) 2006 Christian Ehrlicher <ch.ehrlicher@gmx.de>
@@ -1420,7 +1375,6 @@ diff -N -r -u fontconfig-2.4.2-orig/src/mmap.c fontconfig-2.4.2/src/mmap.c
 +*/
 +
 +#include <winsock2.h>
-+#include <winposix_export.h>
 +#include <windows.h>
 +
 +#include <assert.h>
@@ -1609,7 +1563,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/mmap.c fontconfig-2.4.2/src/mmap.c
 diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 --- fontconfig-2.4.2-orig/src/unistd.c	1970-01-01 01:00:00.000000000 +0100
 +++ fontconfig-2.4.2/src/unistd.c	2008-02-10 16:34:15.953125000 +0100
-@@ -0,0 +1,507 @@
+@@ -0,0 +1,506 @@
 +/* This file is part of the KDE project
 +   Copyright (C) 2003-2004 Jaroslaw Staniek <js@iidea.pl>
 +
@@ -1630,7 +1584,6 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +*/
 +
 +#define _WIN32_WINNT 0x0500
-+#include <winposix_export.h>
 +#include <winsock2.h>
 +#include <windows.h>
 +
@@ -1645,24 +1598,24 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +#include <unistd.h>
 +
 +// BEGIN stat.c
-+KDEWIN32_EXPORT int lstat(const char *path, struct stat *sb)
++int lstat(const char *path, struct stat *sb)
 +{
 +  return _stat(path,(struct _stat*)sb);
 +}
 +
-+KDEWIN32_EXPORT int fchmod(int __fd, mode_t __mode)
++int fchmod(int __fd, mode_t __mode)
 +{
 +  return 0;
 +}
 +// END stat.c
 +
-+KDEWIN32_EXPORT int getgroups(int size, gid_t list[])
++int getgroups(int size, gid_t list[])
 +{
 +	/* TODO */
 +	return 0;
 +}
 +
-+KDEWIN32_EXPORT int readlink(const char *__path, char *__buf, int __buflen)
++int readlink(const char *__path, char *__buf, int __buflen)
 +{
 +    if (!__path) {
 +      errno = EINVAL;
@@ -1683,7 +1636,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +    return -1;
 +}
 +
-+KDEWIN32_EXPORT int symlink(const char *__name1, const char *__name2)
++int symlink(const char *__name1, const char *__name2)
 +{
 +	if(!CopyFileA(__name1, __name2, FALSE)) {
 +	    switch(GetLastError()) {
@@ -1702,64 +1655,64 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +	return 0;
 +}
 +
-+KDEWIN32_EXPORT int link(const char *__name1, const char *__name2)
++int link(const char *__name1, const char *__name2)
 +{
 +	return symlink(__name1, __name2);
 +}
 +
-+KDEWIN32_EXPORT int chown(const char *__path, uid_t __owner, gid_t __group)
++int chown(const char *__path, uid_t __owner, gid_t __group)
 +{ 
 +  return 0; 
 +}
 +
-+KDEWIN32_EXPORT int fchown(int __fd, uid_t __owner, gid_t __group )
++int fchown(int __fd, uid_t __owner, gid_t __group )
 +{
 +  return 0; 
 +}
 +
 +/* Get the real user ID of the calling process.  */
-+KDEWIN32_EXPORT uid_t getuid()
++uid_t getuid()
 +{
 +  return -2;    // keep in sync with Qt!
 +}
 +
 +/* Get the effective user ID of the calling process.  */
-+KDEWIN32_EXPORT uid_t geteuid (void)
++uid_t geteuid (void)
 +{
 +  return -2;    // keep in sync with Qt!
 +}
 +
 +/* Get the real group ID of the calling process.  */
-+KDEWIN32_EXPORT gid_t getgid (void)
++gid_t getgid (void)
 +{
 +  return -2;    // keep in sync with Qt!
 +}
 +
 +/* Get the effective group ID of the calling process.  */
-+KDEWIN32_EXPORT gid_t getegid (void)
++gid_t getegid (void)
 +{
 +  return -2;    // keep in sync with Qt!
 +}
 +
-+KDEWIN32_EXPORT int pipe(int *fd)
++int pipe(int *fd)
 +{
 +  /** @todo */
 +  return _pipe( fd, 256, O_BINARY ); /* OK? */
 +}
 +
-+KDEWIN32_EXPORT pid_t fork(void)
++pid_t fork(void)
 +{
 +  /** @todo */
 +  return -1;
 +}
 +
-+KDEWIN32_EXPORT pid_t setsid(void)
++pid_t setsid(void)
 +{
 +  /** @todo */
 +  return -1;
 +}
 +
-+KDEWIN32_EXPORT unsigned alarm(unsigned __secs )
++unsigned alarm(unsigned __secs )
 +{
 +  /** @todo */
 +  return 1;
@@ -1774,7 +1727,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +// which will not be done in every case
 +//http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winsock/winsock/gethostname_2.asp
 +
-+KDEWIN32_EXPORT int kde_gethostname(char *__name, size_t __len)
++int kde_gethostname(char *__name, size_t __len)
 +{
 +  DWORD len = __len;
 +  if (0==GetComputerNameA(__name, &len))
@@ -1785,7 +1738,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +#define getlogin_buf_size 255
 +char getlogin_buf[getlogin_buf_size+1];
 +
-+KDEWIN32_EXPORT char* getlogin()
++char* getlogin()
 +{
 +/*! @todo make this reentrant!*/
 +	size_t size = sizeof(getlogin_buf);
@@ -1795,18 +1748,18 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +	return getlogin_buf;
 +}
 +
-+KDEWIN32_EXPORT void usleep(unsigned int usec)
++void usleep(unsigned int usec)
 +{
 +	Sleep(usec/1000);
 +}
 +
-+KDEWIN32_EXPORT void sleep(unsigned int sec)
++void sleep(unsigned int sec)
 +{
 +	Sleep(sec*1000);
 +}
 +
 +
-+KDEWIN32_EXPORT int setreuid(uid_t ruid, uid_t euid)
++int setreuid(uid_t ruid, uid_t euid)
 +{
 +	/*! @todo */
 +	return 0;
@@ -1828,7 +1781,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +
 +   Returns a file descriptor open on the file for reading and writing.  */
 +
-+KDEWIN32_EXPORT int mkstemps (char* _template, int suffix_len)
++int mkstemps (char* _template, int suffix_len)
 +{
 +  static const char letters[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 +  char *XXXXXX;
@@ -1878,7 +1831,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +}
 +
 +// from kdecore/fakes.c
-+KDEWIN32_EXPORT int mkstemp (char* _template)
++int mkstemp (char* _template)
 +{
 +  return mkstemps( _template, 0 );
 +}
@@ -1902,7 +1855,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +
 +   Returns a file descriptor open on the file for reading and writing.  */
 +
-+KDEWIN32_EXPORT char* mkdtemp (char* _template)
++char* mkdtemp (char* _template)
 +{
 +  static const char letters[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 +  char *XXXXXX;
@@ -1946,7 +1899,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +    return 0;
 +}
 +
-+KDEWIN32_EXPORT int revoke(const char *tty)
++int revoke(const char *tty)
 +{
 +        errno = ENOTSUP;
 +        return -1;
@@ -1954,7 +1907,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +
 +/* getpagesize for windows */
 +//static 
-+KDEWIN32_EXPORT long getpagesize (void)
++long getpagesize (void)
 +{
 +    static long g_pagesize = 0;
 +    if (! g_pagesize) {
@@ -1994,7 +1947,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +int   optind = 0; 	// global argv index
 +int   opterr = 0; 	
 +
-+KDEWIN32_EXPORT int getopt(int argc, char **argv, const char *optstring)
++int getopt(int argc, char **argv, const char *optstring)
 +{
 +	static char *next = NULL;
 +	char c = '?';
@@ -2117,3 +2070,16 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +}
 +#endif  // __MINGW32__
 +
+--- fontconfig-2.7.3\src\fcformat.c.orig	2009-07-22 14:12:30.000000000 +0200
++++ fontconfig-2.7.3\src\fcformat.c	2009-11-14 22:36:52.843750000 +0100
+@@ -27,6 +27,10 @@
+ #include <string.h>
+ #include <stdarg.h>
+ 
++#ifdef snprintf
++# undef snprintf
++# define snprintf _snprintf
++#endif
+ 
+ /* The language is documented in doc/fcformat.fncs
+  * These are the features implemented:
