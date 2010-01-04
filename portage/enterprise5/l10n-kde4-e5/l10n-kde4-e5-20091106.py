@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/l10n-kde4/'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/l10n-kde4/'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/l10n-kde4/'
-        self.svnTargets['20100101'] = 'tags/kdepim/pe5.20100101/l10n-kde4/'
+        self.svnTargets['20100101'] = 'tags/kdepim/enterprise5.0.20100101.1068602/l10n-kde4/'
         self.defaultTarget = '20100101'
 
         # all targets 

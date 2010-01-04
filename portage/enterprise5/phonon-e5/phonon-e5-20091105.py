@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/phonon'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdesupport/phonon'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdesupport/phonon'
-        self.svnTargets['20100101'] = 'tags/kdepim/pe5.20100101/kdesupport/phonon'
+        self.svnTargets['20100101'] = 'tags/kdepim/enterprise5.0.20100101.1068602/kdesupport/phonon'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
         self.defaultTarget = '20100101'
 
