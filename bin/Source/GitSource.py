@@ -30,6 +30,7 @@ class GitSource ( VersionSystemSourceBase ):
             repopath = self.repositoryPath()
         
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
+        repopath = repopath.replace("[git]", "")
         repoString = utils.replaceGitUrl( repopath )
         [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
 
@@ -86,7 +87,7 @@ class GitSource ( VersionSystemSourceBase ):
 
     def createPatch( self ):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
-        ret = self.shell.execute( self.sourceDir(), "git", "diff > %s" % self.shell.toNativePath(os.path.join(self.packageDir(),"autocreated.patch" )) )
+        ret = self.shell.execute( self.sourceDir(), "git", "diff > %s" % self.shell.toNativePath( os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) ) )
         #cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join(self.packageDir(),"autocreated.patch" ))
         return ret
 
