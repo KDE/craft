@@ -9,6 +9,7 @@ from ArchiveSource import *
 from SvnSource import *
 from GitSource import *
 from CvsSource import *
+from HgSource import *
 
 def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
@@ -27,7 +28,9 @@ def SourceFactory(settings):
         url = settings.svnTarget()
         if url.find("://") == -1: 
             source = SvnSource()
-        elif url.find("git:") >= 0:
+        elif url.startswith("[hg]"):
+            source = HgSource()
+        elif url.find("git:") >= 0 or url.startswith("[git]"):
             source = GitSource()
         elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
             source = SvnSource()
