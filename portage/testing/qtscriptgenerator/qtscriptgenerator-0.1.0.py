@@ -26,6 +26,7 @@ class Package( CMakePackageBase ):
             return False
         utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator-cmake.diff" ), 1 )
         utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator.diff" ), 1 )
+        utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "qtscriptgenerator.gcc-4.4.diff" ), 1 )
         return True
 
 if __name__ == '__main__':

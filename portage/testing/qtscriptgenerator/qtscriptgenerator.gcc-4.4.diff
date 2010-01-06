@@ -1,0 +1,10 @@
+---   qtscriptgenerator-src-0.1.0.orig/generator/parser/rpp/pp.h	2009-12-16 12:24:25.845360400 +0100
++++   qtscriptgenerator-src-0.1.0/generator/parser/rpp/pp.h	2009-12-16 12:13:15.609025100 +0100
+@@ -30,6 +30,7 @@
+ #include <cctype>
+ 
+ #include <fcntl.h>
++#include <cstdio>
+ 
+ #ifdef HAVE_MMAP
+ #  include <sys/mman.h>
