@@ -326,6 +326,8 @@ def system( cmdstring, outstream=sys.stdout, errstream=sys.stderr ):
         sys.stdout = sys.stderr
     p = subprocess.Popen( cmdstring, shell=True, stdout=outstream, stderr=errstream )
     ret = p.wait()
+    sys.stderr = sys.__stderr__
+    sys.stdout = sys.__stdout__
     return ( ret == 0 )
 
 def copySrcDirToDestDir( srcdir, destdir ):
@@ -611,7 +613,8 @@ def isGitUrl( Url ):
 def splitGitUrl( Url ):
     """ this function splits up an url provided by Url into the server name, the path, a branch or tag; 
         it will return a list with 3 strings according to the following scheme:
-        git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']"""
+        git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
+        This also works for all other dvcs"""
     splitUrl = Url.split('|')
     if len(splitUrl) < 3:
         c = [x for x in splitUrl]
