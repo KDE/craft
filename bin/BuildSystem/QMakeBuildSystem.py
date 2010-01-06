@@ -46,7 +46,7 @@ class QMakeBuildSystem(BuildSystemBase):
         elif os.path.exists(configTool):
             command = "%s %s" % (configTool, self.configureOptions(configureDefines))
         elif os.path.exists(qmakeTool) and os.path.exists(topLevelProFile):
-            command = "qmake %s" % topLevelProFile % self.configureOptions(configureDefines)
+            command = "qmake -makefile %s" % (topLevelProFile) # , self.configureOptions(configureDefines)
         elif os.path.exists(qmakeTool):
             command = "qmake %s" % self.configureOptions(configureDefines)
         else:
