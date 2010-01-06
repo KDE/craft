@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['akonadi-porting-branch/kdepimlibs'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-	self.hardDependencies['akonadi-porting-branch/grantlee'] = 'default'
+        self.hardDependencies['akonadi-porting-branch/grantlee'] = 'default'
+        self.hardDependencies['contributed/libassuan-src'] = 'default'
         
 from Package.CMakePackageBase import *
         
