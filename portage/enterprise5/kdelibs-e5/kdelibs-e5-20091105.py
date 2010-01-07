@@ -10,7 +10,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = '20100101'
     
     def setDependencies( self ):
-        self.hardDependencies['enterprise5/attica-e5'] = 'default'
         self.hardDependencies['enterprise5/kdewin-e5'] = 'default'
         self.hardDependencies['enterprise5/qimageblitz-e5'] = 'default'
         self.hardDependencies['enterprise5/soprano-e5'] = 'default'
