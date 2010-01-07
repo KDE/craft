@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/taglib'] = 'default'
         self.hardDependencies['kdesupport/taglib-extras'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
+        self.hardDependencies['kdesupport/qca'] = 'default'		
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['testing/mysql-server'] = 'default'
