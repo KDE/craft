@@ -121,3 +121,9 @@ class ArchiveSource(SourceBase):
         os.rmdir( tmpdir )
 
         return True
+        
+    def sourceVersion( self ):
+        """ return a version based on the file name of the current target """
+        # we hope that the build target is equal to the version that is build
+        print self.subinfo.buildTarget
+        return True
