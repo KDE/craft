@@ -20,6 +20,8 @@ class subinfo(info.infoclass):
         self.svnTargets['0.6.3']  = 'tags/strigi/strigi/0.6.3'
         self.svnTargets['0.6.4']  = 'tags/strigi/strigi/strigi-0.6.4'
         self.svnTargets['0.6.5']  = 'tags/strigi/strigi/0.6.5'
+        self.svnTargets['0.7.0']  = 'tags/strigi/strigi/0.7.0'
+        self.svnTargets['0.7.1']  = 'tags/strigi/strigi/0.7.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
