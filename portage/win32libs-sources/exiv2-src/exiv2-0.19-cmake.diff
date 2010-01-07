@@ -39,10 +39,10 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +set( PACKAGE_BUGREPORT      "ahuggel@gmx.net" )
 +set( PACKAGE                "exiv2" )
 +set( PACKAGE_NAME           "exiv2" )
-+set( PACKAGE_STRING         "exiv2 0.18.2" )
++set( PACKAGE_STRING         "exiv2 0.19" )
 +set( PACKAGE_TARNAME        "exiv2" )
-+set( PACKAGE_VERSION        "0.18.2" )
-+set( GENERIC_LIB_VERSION    "0.18.2" )
++set( PACKAGE_VERSION        "0.19" )
++set( GENERIC_LIB_VERSION    "0.19" )
 +set( GENERIC_LIB_SOVERSION  "2" )
 +
 +# options and there default values
