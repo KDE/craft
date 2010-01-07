@@ -7,7 +7,6 @@ class subinfo(info.infoclass):
         for ver in ['90']:
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.3.' + ver + '/src/kdeedu-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdeedu-4.3.' + ver
-        self.patchToApply['4.3.95'] = ('kdeedu-kmplot.diff', 0)
         for ver in ['0', '1', '2', '3', '4']:
           self.targets['4.4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.4.' + ver + '/src/kdeedu-4.4.' + ver + '.tar.bz2'
           self.targetInstSrc['4.4.' + ver] = 'kdeedu-4.4.' + ver
