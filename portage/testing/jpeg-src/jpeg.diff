@@ -1,0 +1,573 @@
+diff -urN jpeg-7.orig/CMakeLists.txt jpeg-7/CMakeLists.txt
+--- jpeg-7.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ jpeg-7/CMakeLists.txt	2010-01-08 14:42:15.466624179 +0100
+@@ -0,0 +1,62 @@
++project(jpeg)
++
++set(JPEG_VERSION_MAJOR 7 CACHE INT "Major JPEG version number" FORCE)
++set(JPEG_VERSION_MINOR 0 CACHE INT "Minor JPEG version number" FORCE)
++set(JPEG_VERSION_PATCH 0 CACHE INT "Release JPEG version number" FORCE)
++set(JPEG_VERSION_STRING "${JPEG_VERSION_MAJOR}.${JPEG_VERSION_MINOR}.${JPEG_VERSION_PATCH}" CACHE STRING "JPEG version string" FORCE)
++
++cmake_minimum_required(VERSION 2.6)
++
++set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
++set(LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
++
++include_directories(
++    ${CMAKE_CURRENT_SOURCE_DIR}
++    ${CMAKE_CURRENT_BINARY_DIR}
++)
++
++include(CheckIncludeFile)
++check_include_file(stddef.h HAVE_STDDEF_H)
++check_include_file(stdlib.h HAVE_STDLIB_H)
++
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jconfig.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/jconfig.h)
++
++set(libjpeg_SOURCES
++    jaricom.c jcapimin.c jcapistd.c jcarith.c jccoefct.c jccolor.c
++    jcdctmgr.c jchuff.c jcinit.c jcmainct.c jcmarker.c jcmaster.c
++    jcomapi.c jcparam.c jcprepct.c jcsample.c jctrans.c jdapimin.c
++    jdapistd.c jdarith.c jdcoefct.c jdcolor.c
++    jddctmgr.c jdhuff.c jdinput.c jdmainct.c jdmarker.c jdmaster.c
++    jdmerge.c jdpostct.c jdsample.c jdtrans.c jerror.c jfdctflt.c
++    jfdctfst.c jfdctint.c jidctflt.c jidctfst.c jidctint.c jquant1.c
++    jquant2.c jutils.c jmemmgr.c jmemnobs.c
++)
++
++set(libjpeg_HEADERS
++    jpeglib.h
++    jerror.h
++    jdatadst.h
++    jdatasrc.h
++    jmorecfg.h
++)
++
++add_library(libjpeg SHARED ${libjpeg_SOURCES})
++
++set_target_properties(libjpeg PROPERTIES
++    OUTPUT_NAME jpeg
++    VERSION ${JPEG_VERSION_STRING}
++    SOVERSION ${JPEG_VERSION_MAJOR}
++)
++
++install(
++    TARGETS libjpeg
++    ARCHIVE DESTINATION ${LIB_DESTINATION}
++    LIBRARY DESTINATION ${LIB_DESTINATION}
++    RUNTIME DESTINATION bin
++)
++
++install(
++    FILES ${libjpeg_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/jconfig.h
++    DESTINATION include
++    COMPONENT Devel
++)
+diff -urN jpeg-7.orig/jconfig.h.cmake jpeg-7/jconfig.h.cmake
+--- jpeg-7.orig/jconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ jpeg-7/jconfig.h.cmake	2010-01-08 18:13:26.262624040 +0100
+@@ -0,0 +1,31 @@
++#define HAVE_PROTOTYPES
++#define HAVE_UNSIGNED_CHAR
++#define HAVE_UNSIGNED_SHORT
++#cmakedefine HAVE_STDDEF_H
++#cmakedefine HAVE_STDLIB_H
++
++#define JPEG_STDIO_IN_HEADERS
++
++#if defined(_WIN32)
++    #if defined(libjpeg_EXPORTS)
++        #define JPEG_EXPORT __declspec(dllexport)
++    #else
++        #define JPEG_EXPORT __declspec(dllimport)
++    #endif
++#else
++    #define JPEG_EXPORT 
++#endif
++
++#ifdef _WIN32
++# include <windows.h>
++/* Define "boolean" as unsigned char, not int, per Windows custom */
++# if !defined __RPCNDR_H__ || defined __MINGW32__    /* don't conflict if rpcndr.h already read */
++#  ifndef boolean     /* don't conflict if rpcndr.h already read */
++    typedef unsigned char boolean;
++#  endif /* boolean */
++# endif /* __RPCNDR_H__ */
++# define HAVE_BOOLEAN     /* prevent jmorecfg.h from redefining it */
++#endif /* _WIN32 */
++
++#define GLOBAL(type) JPEG_EXPORT type
++#define EXTERN(type) JPEG_EXPORT type
+diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
+--- jpeg-7.orig/jdatadst.h	1970-01-01 01:00:00.000000000 +0100
++++ jpeg-7/jdatadst.h	2010-01-08 18:14:40.706655399 +0100
+@@ -0,0 +1,145 @@
++/*
++ * jdatadst.c
++ *
++ * Copyright (C) 1994-1996, Thomas G. Lane.
++ * This file is part of the Independent JPEG Group's software.
++ * For conditions of distribution and use, see the accompanying README file.
++ *
++ * This file contains compression data destination routines for the case of
++ * emitting JPEG data to a file (or any stdio stream).  While these routines
++ * are sufficient for most applications, some will want to use a different
++ * destination manager.
++ * IMPORTANT: we assume that fwrite() will correctly transcribe an array of
++ * JOCTETs into 8-bit-wide elements on external storage.  If char is wider
++ * than 8 bits on your machine, you may need to do some tweaking.
++ */
++
++/* Expanded data destination object for stdio output */
++
++typedef struct {
++  struct jpeg_destination_mgr pub; /* public fields */
++
++  FILE * outfile;		/* target stream */
++  JOCTET * buffer;		/* start of buffer */
++} my_destination_mgr;
++
++typedef my_destination_mgr * my_dest_ptr;
++
++#define JDATADST_OUTPUT_BUF_SIZE  4096	/* choose an efficiently fwrite'able size */
++
++
++/*
++ * Initialize destination --- called by jpeg_start_compress
++ * before any data is actually written.
++ */
++
++METHODDEF(void)
++init_destination (j_compress_ptr cinfo)
++{
++  my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
++
++  /* Allocate the output buffer --- it will be released when done with image */
++  dest->buffer = (JOCTET *)
++      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
++				  JDATADST_OUTPUT_BUF_SIZE * sizeof(JOCTET));
++
++  dest->pub.next_output_byte = dest->buffer;
++  dest->pub.free_in_buffer = JDATADST_OUTPUT_BUF_SIZE;
++}
++
++
++/*
++ * Empty the output buffer --- called whenever buffer fills up.
++ *
++ * In typical applications, this should write the entire output buffer
++ * (ignoring the current state of next_output_byte & free_in_buffer),
++ * reset the pointer & count to the start of the buffer, and return TRUE
++ * indicating that the buffer has been dumped.
++ *
++ * In applications that need to be able to suspend compression due to output
++ * overrun, a FALSE return indicates that the buffer cannot be emptied now.
++ * In this situation, the compressor will return to its caller (possibly with
++ * an indication that it has not accepted all the supplied scanlines).  The
++ * application should resume compression after it has made more room in the
++ * output buffer.  Note that there are substantial restrictions on the use of
++ * suspension --- see the documentation.
++ *
++ * When suspending, the compressor will back up to a convenient restart point
++ * (typically the start of the current MCU). next_output_byte & free_in_buffer
++ * indicate where the restart point will be if the current call returns FALSE.
++ * Data beyond this point will be regenerated after resumption, so do not
++ * write it out when emptying the buffer externally.
++ */
++
++METHODDEF(boolean)
++empty_output_buffer (j_compress_ptr cinfo)
++{
++  my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
++
++  if (fwrite(dest->buffer, 1, JDATADST_OUTPUT_BUF_SIZE, dest->outfile) !=
++      (size_t) JDATADST_OUTPUT_BUF_SIZE)
++    ERREXIT(cinfo, JERR_FILE_WRITE);
++
++  dest->pub.next_output_byte = dest->buffer;
++  dest->pub.free_in_buffer = JDATADST_OUTPUT_BUF_SIZE;
++
++  return TRUE;
++}
++
++
++/*
++ * Terminate destination --- called by jpeg_finish_compress
++ * after all data has been written.  Usually needs to flush buffer.
++ *
++ * NB: *not* called by jpeg_abort or jpeg_destroy; surrounding
++ * application must deal with any cleanup that should happen even
++ * for error exit.
++ */
++
++METHODDEF(void)
++term_destination (j_compress_ptr cinfo)
++{
++  my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
++  size_t datacount = JDATADST_OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
++
++  /* Write any data remaining in the buffer */
++  if (datacount > 0) {
++    if (fwrite(dest->buffer, 1, datacount, dest->outfile) != datacount) 
++      ERREXIT(cinfo, JERR_FILE_WRITE);
++  }
++  fflush(dest->outfile);
++  /* Make sure we wrote the output file OK */
++  if (ferror(dest->outfile))
++    ERREXIT(cinfo, JERR_FILE_WRITE);
++}
++
++
++/*
++ * Prepare for output to a stdio stream.
++ * The caller must have already opened the stream, and is responsible
++ * for closing it after finishing compression.
++ */
++
++LOCAL(void)
++jpeg_stdio_dest (j_compress_ptr cinfo, FILE * outfile)
++{
++  my_dest_ptr dest;
++
++  /* The destination object is made permanent so that multiple JPEG images
++   * can be written to the same file without re-executing jpeg_stdio_dest.
++   * This makes it dangerous to use this manager and a different destination
++   * manager serially with the same JPEG object, because their private object
++   * sizes may be different.  Caveat programmer.
++   */
++  if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
++    cinfo->dest = (struct jpeg_destination_mgr *)
++      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
++				  sizeof(my_destination_mgr));
++  }
++
++  dest = (my_dest_ptr) cinfo->dest;
++  dest->pub.init_destination = init_destination;
++  dest->pub.empty_output_buffer = empty_output_buffer;
++  dest->pub.term_destination = term_destination;
++  dest->outfile = outfile;
++}
+diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
+--- jpeg-7.orig/jdatasrc.h	1970-01-01 01:00:00.000000000 +0100
++++ jpeg-7/jdatasrc.h	2010-01-08 18:14:40.706655399 +0100
+@@ -0,0 +1,206 @@
++/*
++ * jdatasrc.c
++ *
++ * Copyright (C) 1994-1996, Thomas G. Lane.
++ * This file is part of the Independent JPEG Group's software.
++ * For conditions of distribution and use, see the accompanying README file.
++ *
++ * This file contains decompression data source routines for the case of
++ * reading JPEG data from a file (or any stdio stream).  While these routines
++ * are sufficient for most applications, some will want to use a different
++ * source manager.
++ * IMPORTANT: we assume that fread() will correctly transcribe an array of
++ * JOCTETs from 8-bit-wide elements on external storage.  If char is wider
++ * than 8 bits on your machine, you may need to do some tweaking.
++ */
++
++/* Expanded data source object for stdio input */
++
++typedef struct {
++  struct jpeg_source_mgr pub;	/* public fields */
++
++  FILE * infile;		/* source stream */
++  JOCTET * buffer;		/* start of buffer */
++  boolean start_of_file;	/* have we gotten any data yet? */
++} my_source_mgr;
++
++typedef my_source_mgr * my_src_ptr;
++
++#define JDATASRC_INPUT_BUF_SIZE  4096	/* choose an efficiently fread'able size */
++
++
++/*
++ * Initialize source --- called by jpeg_read_header
++ * before any data is actually read.
++ */
++
++METHODDEF(void)
++init_source (j_decompress_ptr cinfo)
++{
++  my_src_ptr src = (my_src_ptr) cinfo->src;
++
++  /* We reset the empty-input-file flag for each image,
++   * but we don't clear the input buffer.
++   * This is correct behavior for reading a series of images from one source.
++   */
++  src->start_of_file = TRUE;
++}
++
++
++/*
++ * Fill the input buffer --- called whenever buffer is emptied.
++ *
++ * In typical applications, this should read fresh data into the buffer
++ * (ignoring the current state of next_input_byte & bytes_in_buffer),
++ * reset the pointer & count to the start of the buffer, and return TRUE
++ * indicating that the buffer has been reloaded.  It is not necessary to
++ * fill the buffer entirely, only to obtain at least one more byte.
++ *
++ * There is no such thing as an EOF return.  If the end of the file has been
++ * reached, the routine has a choice of ERREXIT() or inserting fake data into
++ * the buffer.  In most cases, generating a warning message and inserting a
++ * fake EOI marker is the best course of action --- this will allow the
++ * decompressor to output however much of the image is there.  However,
++ * the resulting error message is misleading if the real problem is an empty
++ * input file, so we handle that case specially.
++ *
++ * In applications that need to be able to suspend compression due to input
++ * not being available yet, a FALSE return indicates that no more data can be
++ * obtained right now, but more may be forthcoming later.  In this situation,
++ * the decompressor will return to its caller (with an indication of the
++ * number of scanlines it has read, if any).  The application should resume
++ * decompression after it has loaded more data into the input buffer.  Note
++ * that there are substantial restrictions on the use of suspension --- see
++ * the documentation.
++ *
++ * When suspending, the decompressor will back up to a convenient restart point
++ * (typically the start of the current MCU). next_input_byte & bytes_in_buffer
++ * indicate where the restart point will be if the current call returns FALSE.
++ * Data beyond this point must be rescanned after resumption, so move it to
++ * the front of the buffer rather than discarding it.
++ */
++
++METHODDEF(boolean)
++fill_input_buffer (j_decompress_ptr cinfo)
++{
++  my_src_ptr src = (my_src_ptr) cinfo->src;
++  size_t nbytes;
++
++  nbytes = fread(src->buffer, 1, JDATASRC_INPUT_BUF_SIZE, src->infile);
++
++  if (nbytes <= 0) {
++    if (src->start_of_file)	/* Treat empty input file as fatal error */
++      ERREXIT(cinfo, JERR_INPUT_EMPTY);
++    WARNMS(cinfo, JWRN_JPEG_EOF);
++    /* Insert a fake EOI marker */
++    src->buffer[0] = (JOCTET) 0xFF;
++    src->buffer[1] = (JOCTET) JPEG_EOI;
++    nbytes = 2;
++  }
++
++  src->pub.next_input_byte = src->buffer;
++  src->pub.bytes_in_buffer = nbytes;
++  src->start_of_file = FALSE;
++
++  return TRUE;
++}
++
++
++/*
++ * Skip data --- used to skip over a potentially large amount of
++ * uninteresting data (such as an APPn marker).
++ *
++ * Writers of suspendable-input applications must note that skip_input_data
++ * is not granted the right to give a suspension return.  If the skip extends
++ * beyond the data currently in the buffer, the buffer can be marked empty so
++ * that the next read will cause a fill_input_buffer call that can suspend.
++ * Arranging for additional bytes to be discarded before reloading the input
++ * buffer is the application writer's problem.
++ */
++
++METHODDEF(void)
++skip_input_data (j_decompress_ptr cinfo, long num_bytes)
++{
++  my_src_ptr src = (my_src_ptr) cinfo->src;
++
++  /* Just a dumb implementation for now.  Could use fseek() except
++   * it doesn't work on pipes.  Not clear that being smart is worth
++   * any trouble anyway --- large skips are infrequent.
++   */
++  if (num_bytes > 0) {
++    while (num_bytes > (long) src->pub.bytes_in_buffer) {
++      num_bytes -= (long) src->pub.bytes_in_buffer;
++      (void) fill_input_buffer(cinfo);
++      /* note we assume that fill_input_buffer will never return FALSE,
++       * so suspension need not be handled.
++       */
++    }
++    src->pub.next_input_byte += (size_t) num_bytes;
++    src->pub.bytes_in_buffer -= (size_t) num_bytes;
++  }
++}
++
++
++/*
++ * An additional method that can be provided by data source modules is the
++ * resync_to_restart method for error recovery in the presence of RST markers.
++ * For the moment, this source module just uses the default resync method
++ * provided by the JPEG library.  That method assumes that no backtracking
++ * is possible.
++ */
++
++
++/*
++ * Terminate source --- called by jpeg_finish_decompress
++ * after all data has been read.  Often a no-op.
++ *
++ * NB: *not* called by jpeg_abort or jpeg_destroy; surrounding
++ * application must deal with any cleanup that should happen even
++ * for error exit.
++ */
++
++METHODDEF(void)
++term_source (j_decompress_ptr cinfo)
++{
++  /* no work necessary here */
++}
++
++
++/*
++ * Prepare for input from a stdio stream.
++ * The caller must have already opened the stream, and is responsible
++ * for closing it after finishing decompression.
++ */
++
++LOCAL(void)
++jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
++{
++  my_src_ptr src;
++
++  /* The source object and input buffer are made permanent so that a series
++   * of JPEG images can be read from the same file by calling jpeg_stdio_src
++   * only before the first one.  (If we discarded the buffer at the end of
++   * one image, we'd likely lose the start of the next one.)
++   * This makes it unsafe to use this manager and a different source
++   * manager serially with the same JPEG object.  Caveat programmer.
++   */
++  if (cinfo->src == NULL) {	/* first time for this JPEG object? */
++    cinfo->src = (struct jpeg_source_mgr *)
++      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
++				  sizeof(my_source_mgr));
++    src = (my_src_ptr) cinfo->src;
++    src->buffer = (JOCTET *)
++      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
++				  JDATASRC_INPUT_BUF_SIZE * sizeof(JOCTET));
++  }
++
++  src = (my_src_ptr) cinfo->src;
++  src->pub.init_source = init_source;
++  src->pub.fill_input_buffer = fill_input_buffer;
++  src->pub.skip_input_data = skip_input_data;
++  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
++  src->pub.term_source = term_source;
++  src->infile = infile;
++  src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
++  src->pub.next_input_byte = NULL; /* until buffer loaded */
++}
+diff -urN jpeg-7.orig/jerror.h jpeg-7/jerror.h
+--- jpeg-7.orig/jerror.h	2009-03-24 22:24:32.000000000 +0100
++++ jpeg-7/jerror.h	2010-01-08 18:14:40.707665386 +0100
+@@ -14,6 +14,21 @@
+  * and/or the macros.
+  */
+ 
++#ifndef JPEG_STRCPY
++#define JPEG_STRCPY
++/* Use this instead of strncpy, which is bad */
++static void jpeg_strcpy(char *dest, const char *src, int avail)
++{
++    while (*src && avail > 1) {
++        *dest = *src;
++        dest++;
++        src++;
++        avail--;
++    }
++    *dest = '\0';
++}
++#endif
++
+ /*
+  * To define the enum list of message codes, include this file without
+  * defining macro JMESSAGE.  To create a message string table, include it
+@@ -242,7 +257,7 @@
+    (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo)))
+ #define ERREXITS(cinfo,code,str)  \
+   ((cinfo)->err->msg_code = (code), \
+-   strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
++   jpeg_strcpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
+    (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo)))
+ 
+ #define MAKESTMT(stuff)		do { stuff } while (0)
+@@ -298,7 +313,7 @@
+ 	   (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)); )
+ #define TRACEMSS(cinfo,lvl,code,str)  \
+   ((cinfo)->err->msg_code = (code), \
+-   strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
++   jpeg_strcpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
+    (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)))
+ 
+ #endif /* JERROR_H */
+diff -urN jpeg-7.orig/jmorecfg.h jpeg-7/jmorecfg.h
+--- jpeg-7.orig/jmorecfg.h	2009-04-10 11:05:41.000000000 +0200
++++ jpeg-7/jmorecfg.h	2010-01-08 18:41:49.651635843 +0100
+@@ -186,13 +186,21 @@
+  */
+ 
+ /* a function called through method pointers: */
++#ifndef METHODDEF
+ #define METHODDEF(type)		static type
++#endif
+ /* a function used only in its module: */
++#ifndef LOCAL
+ #define LOCAL(type)		static type
++#endif
+ /* a function referenced thru EXTERNs: */
++#ifndef GLOBAL
+ #define GLOBAL(type)		type
++#endif
+ /* a reference to a GLOBAL function: */
++#ifndef EXTERN
+ #define EXTERN(type)		extern type
++#endif
+ 
+ 
+ /* This macro is used to declare a "method", that is, a function pointer.
+diff -urN jpeg-7.orig/jpeglib.h jpeg-7/jpeglib.h
+--- jpeg-7.orig/jpeglib.h	2009-04-30 18:16:10.000000000 +0200
++++ jpeg-7/jpeglib.h	2010-01-08 18:14:40.709655329 +0100
+@@ -26,6 +26,19 @@
+ #endif
+ #include "jmorecfg.h"		/* seldom changed options */
+ 
++#ifdef HAVE_STDDEF_H
++#include <stddef.h>
++#endif
++
++#ifdef HAVE_STDLIB_H
++#include <stdlib.h>
++#endif
++
++#ifdef NEED_SYS_TYPES_H
++#include <sys/types.h>
++#endif
++
++#include <stdio.h>
+ 
+ #ifdef __cplusplus
+ #ifndef DONT_USE_EXTERN_C
+@@ -935,8 +948,10 @@
+ 
+ /* Standard data source and destination managers: stdio streams. */
+ /* Caller is responsible for opening the file before and closing after. */
++#ifndef JPEG_STDIO_IN_HEADERS
+ EXTERN(void) jpeg_stdio_dest JPP((j_compress_ptr cinfo, FILE * outfile));
+ EXTERN(void) jpeg_stdio_src JPP((j_decompress_ptr cinfo, FILE * infile));
++#endif
+ 
+ /* Default parameter setup for compression */
+ EXTERN(void) jpeg_set_defaults JPP((j_compress_ptr cinfo));
+@@ -1132,4 +1147,10 @@
+ #endif
+ #endif
+ 
++#if !defined(JPEG_INTERNALS) && defined(JPEG_STDIO_IN_HEADERS)
++#include "jerror.h"
++#include "jdatadst.h"
++#include "jdatasrc.h"
++#endif
++
+ #endif /* JPEGLIB_H */
