@@ -126,9 +126,9 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 +
 +  FILE * outfile;		/* target stream */
 +  JOCTET * buffer;		/* start of buffer */
-+} my_destination_mgr;
++} jdatadst_my_destination_mgr;
 +
-+typedef my_destination_mgr * my_dest_ptr;
++typedef jdatadst_my_destination_mgr * jdatadst_my_dest_ptr;
 +
 +#define JDATADST_OUTPUT_BUF_SIZE  4096	/* choose an efficiently fwrite'able size */
 +
@@ -139,9 +139,9 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 + */
 +
 +METHODDEF(void)
-+init_destination (j_compress_ptr cinfo)
++jdatadst_init_destination (j_compress_ptr cinfo)
 +{
-+  my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
++  jdatadst_my_dest_ptr dest = (jdatadst_my_dest_ptr) cinfo->dest;
 +
 +  /* Allocate the output buffer --- it will be released when done with image */
 +  dest->buffer = (JOCTET *)
@@ -177,9 +177,9 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 + */
 +
 +METHODDEF(boolean)
-+empty_output_buffer (j_compress_ptr cinfo)
++jdatadst_empty_output_buffer (j_compress_ptr cinfo)
 +{
-+  my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
++  jdatadst_my_dest_ptr dest = (jdatadst_my_dest_ptr) cinfo->dest;
 +
 +  if (fwrite(dest->buffer, 1, JDATADST_OUTPUT_BUF_SIZE, dest->outfile) !=
 +      (size_t) JDATADST_OUTPUT_BUF_SIZE)
@@ -202,9 +202,9 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 + */
 +
 +METHODDEF(void)
-+term_destination (j_compress_ptr cinfo)
++jdatadst_term_destination (j_compress_ptr cinfo)
 +{
-+  my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
++  jdatadst_my_dest_ptr dest = (jdatadst_my_dest_ptr) cinfo->dest;
 +  size_t datacount = JDATADST_OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
 +
 +  /* Write any data remaining in the buffer */
@@ -228,7 +228,7 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 +LOCAL(void)
 +jpeg_stdio_dest (j_compress_ptr cinfo, FILE * outfile)
 +{
-+  my_dest_ptr dest;
++  jdatadst_my_dest_ptr dest;
 +
 +  /* The destination object is made permanent so that multiple JPEG images
 +   * can be written to the same file without re-executing jpeg_stdio_dest.
@@ -239,13 +239,13 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 +  if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
 +    cinfo->dest = (struct jpeg_destination_mgr *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-+				  sizeof(my_destination_mgr));
++				  sizeof(jdatadst_my_destination_mgr));
 +  }
 +
-+  dest = (my_dest_ptr) cinfo->dest;
-+  dest->pub.init_destination = init_destination;
-+  dest->pub.empty_output_buffer = empty_output_buffer;
-+  dest->pub.term_destination = term_destination;
++  dest = (jdatadst_my_dest_ptr) cinfo->dest;
++  dest->pub.init_destination = jdatadst_init_destination;
++  dest->pub.empty_output_buffer = jdatadst_empty_output_buffer;
++  dest->pub.term_destination = jdatadst_term_destination;
 +  dest->outfile = outfile;
 +}
 diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
@@ -276,9 +276,9 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 +  FILE * infile;		/* source stream */
 +  JOCTET * buffer;		/* start of buffer */
 +  boolean start_of_file;	/* have we gotten any data yet? */
-+} my_source_mgr;
++} jdatasrc_my_source_mgr;
 +
-+typedef my_source_mgr * my_src_ptr;
++typedef jdatasrc_my_source_mgr * jdatasrc_my_src_ptr;
 +
 +#define JDATASRC_INPUT_BUF_SIZE  4096	/* choose an efficiently fread'able size */
 +
@@ -289,9 +289,9 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 + */
 +
 +METHODDEF(void)
-+init_source (j_decompress_ptr cinfo)
++jdatasrc_init_source (j_decompress_ptr cinfo)
 +{
-+  my_src_ptr src = (my_src_ptr) cinfo->src;
++  jdatasrc_my_src_ptr src = (jdatasrc_my_src_ptr) cinfo->src;
 +
 +  /* We reset the empty-input-file flag for each image,
 +   * but we don't clear the input buffer.
@@ -335,9 +335,9 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 + */
 +
 +METHODDEF(boolean)
-+fill_input_buffer (j_decompress_ptr cinfo)
++jdatasrc_fill_input_buffer (j_decompress_ptr cinfo)
 +{
-+  my_src_ptr src = (my_src_ptr) cinfo->src;
++  jdatasrc_my_src_ptr src = (jdatasrc_my_src_ptr) cinfo->src;
 +  size_t nbytes;
 +
 +  nbytes = fread(src->buffer, 1, JDATASRC_INPUT_BUF_SIZE, src->infile);
@@ -364,18 +364,18 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 + * Skip data --- used to skip over a potentially large amount of
 + * uninteresting data (such as an APPn marker).
 + *
-+ * Writers of suspendable-input applications must note that skip_input_data
++ * Writers of suspendable-input applications must note that jdatasrc_skip_input_data
 + * is not granted the right to give a suspension return.  If the skip extends
 + * beyond the data currently in the buffer, the buffer can be marked empty so
-+ * that the next read will cause a fill_input_buffer call that can suspend.
++ * that the next read will cause a jdatasrc_fill_input_buffer call that can suspend.
 + * Arranging for additional bytes to be discarded before reloading the input
 + * buffer is the application writer's problem.
 + */
 +
 +METHODDEF(void)
-+skip_input_data (j_decompress_ptr cinfo, long num_bytes)
++jdatasrc_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 +{
-+  my_src_ptr src = (my_src_ptr) cinfo->src;
++  jdatasrc_my_src_ptr src = (jdatasrc_my_src_ptr) cinfo->src;
 +
 +  /* Just a dumb implementation for now.  Could use fseek() except
 +   * it doesn't work on pipes.  Not clear that being smart is worth
@@ -384,8 +384,8 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 +  if (num_bytes > 0) {
 +    while (num_bytes > (long) src->pub.bytes_in_buffer) {
 +      num_bytes -= (long) src->pub.bytes_in_buffer;
-+      (void) fill_input_buffer(cinfo);
-+      /* note we assume that fill_input_buffer will never return FALSE,
++      (void) jdatasrc_fill_input_buffer(cinfo);
++      /* note we assume that jdatasrc_fill_input_buffer will never return FALSE,
 +       * so suspension need not be handled.
 +       */
 +    }
@@ -414,7 +414,7 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 + */
 +
 +METHODDEF(void)
-+term_source (j_decompress_ptr cinfo)
++jdatasrc_term_source (j_decompress_ptr cinfo)
 +{
 +  /* no work necessary here */
 +}
@@ -429,7 +429,7 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 +LOCAL(void)
 +jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
 +{
-+  my_src_ptr src;
++  jdatasrc_my_src_ptr src;
 +
 +  /* The source object and input buffer are made permanent so that a series
 +   * of JPEG images can be read from the same file by calling jpeg_stdio_src
@@ -441,21 +441,21 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 +  if (cinfo->src == NULL) {	/* first time for this JPEG object? */
 +    cinfo->src = (struct jpeg_source_mgr *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-+				  sizeof(my_source_mgr));
-+    src = (my_src_ptr) cinfo->src;
++				  sizeof(jdatasrc_my_source_mgr));
++    src = (jdatasrc_my_src_ptr) cinfo->src;
 +    src->buffer = (JOCTET *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
 +				  JDATASRC_INPUT_BUF_SIZE * sizeof(JOCTET));
 +  }
 +
-+  src = (my_src_ptr) cinfo->src;
-+  src->pub.init_source = init_source;
-+  src->pub.fill_input_buffer = fill_input_buffer;
-+  src->pub.skip_input_data = skip_input_data;
++  src = (jdatasrc_my_src_ptr) cinfo->src;
++  src->pub.init_source = jdatasrc_init_source;
++  src->pub.fill_input_buffer = jdatasrc_fill_input_buffer;
++  src->pub.skip_input_data = jdatasrc_skip_input_data;
 +  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
-+  src->pub.term_source = term_source;
++  src->pub.term_source = jdatasrc_term_source;
 +  src->infile = infile;
-+  src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
++  src->pub.bytes_in_buffer = 0; /* forces jdatasrc_fill_input_buffer on first read */
 +  src->pub.next_input_byte = NULL; /* until buffer loaded */
 +}
 diff -urN jpeg-7.orig/jerror.h jpeg-7/jerror.h
