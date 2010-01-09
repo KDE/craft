@@ -25,12 +25,16 @@ http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 """
 
+# soprano doesn't compile with 3.17 because __STRICT_ANSI__ isn't defined (see wchar.h)
+# you'll also get a mess with clucene-core because of float_t
+#http://downloads.sourceforge.net/sourceforge/mingw/mingwrt-3.17-mingw32-dll.tar.gz
+#http://downloads.sourceforge.net/sourceforge/mingw/mingwrt-3.17-mingw32-dev.tar.gz
 SRC_URI3 = """
-http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.18.50-20080109-2.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/binutils-2.20-1-mingw32-bin.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/make-3.81-20090914-mingw32-bin.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-runtime-3.14.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.11.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/gdb-6.8-mingw-3.tar.bz2
+http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.14-mingw32-dev.tar.gz
+http://downloads.sourceforge.net/sourceforge/mingw/gdb-7.0-2-mingw32-bin.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-4.4.0-mingw32-bin.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-4.4.0-mingw32-dll.tar.gz
