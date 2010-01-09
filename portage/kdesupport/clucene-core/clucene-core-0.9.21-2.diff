@@ -1,0 +1,51 @@
+--- src\CLucene\CMakeLists.txt.orig	2010-01-09 17:30:43.890625000 +0100
++++ src\CLucene\CMakeLists.txt	2010-01-09 17:30:58.250000000 +0100
+@@ -34,8 +34,9 @@
+ ENDFOREACH(inc hash_map hash_set ext/hash_map ext/hash_set stdarg.h sys/timeb.h wchar.h tchar.h)
+ 
+ 
+-INCLUDE (CheckSymbolExists)
+-CHECK_SYMBOL_EXISTS(float_t math.h _CL_HAVE_FLOAT_T)
++INCLUDE (CheckTypeSize)
++SET(CMAKE_EXTRA_INCLUDE_FILES math.h)
++CHECK_TYPE_SIZE(float_t _CL_HAVE_FLOAT_T)
+ #check wchar and intptr
+ 
+ 
+@@ -230,5 +230,6 @@
+ 		install(FILES ${file} DESTINATION include/${relpath} )
+ 	endif (relpath STREQUAL "demo")
+ endforeach(file)
++install(FILES ${clucene-core_BINARY_DIR}/clucene-config.h DESTINATION include/CLucene)
+ 
+ install(TARGETS clucene-core DESTINATION lib)
+--- src\CLucene\clucene-config.h.cmake.orig	2008-10-23 19:44:37.000000000 +0200
++++ src\CLucene\clucene-config.h.cmake	2010-01-09 17:36:28.359375000 +0100
+@@ -86,13 +86,7 @@
+ /* CMake will look for these symbols: */
+ 
+ /* Define to 1 if the system has the type `float_t'. */
+-//todo: HACK
+-#define _CL_HAVE_FLOAT_T  1 
+-
+-#ifdef __MINGW32__
+-typedef float float_t;
+-#endif
+-
++#cmakedefine _CL_HAVE_FLOAT_T  1 
+ 
+ /* Define to 1 if the system has the type `intptr_t'. */
+ //todo: HACK
+--- src\CLucene\config\CompilerGcc.h.orig	2008-10-23 19:44:36.000000000 +0200
++++ src\CLucene\config\CompilerGcc.h	2010-01-09 17:48:54.125000000 +0100
+@@ -33,10 +33,6 @@
+     #error "maybe you could implement an alternative solution for us? :)"
+ #endif
+ 
+-#ifndef _CL_HAVE_NAMESPACES
+-	#define DISABLE_NAMESPACE
+-#endif
+-
+ #define CL_NS_HASHING(func) __gnu_cxx::func
+ #ifndef _CL_HAVE_GOOGLE_DENSE_HASH_MAP
+  #define LUCENE_DISABLE_HASHING //we could enable this, but so far test show that the hashing is slower :(
