@@ -1,0 +1,21 @@
+diff -Nru kdegraphics-4.3.90.orig/libs/libkdcraw/CMakeLists.txt kdegraphics-4.3.90/libs/libkdcraw/CMakeLists.txt
+--- kdegraphics-4.3.90.orig/libs/libkdcraw/CMakeLists.txt	2009-12-01 01:33:28.000000000 +0100
++++ kdegraphics-4.3.90/libs/libkdcraw/CMakeLists.txt	2010-01-12 16:53:25.112800000 +0100
+@@ -74,7 +74,7 @@
+ MESSAGE(STATUS "CMake version (cleaned): ${VERSION_CMAKE_INFO}")
+ MACRO_ENSURE_VERSION("2.6.3" "${VERSION_CMAKE_INFO}" VERSION_CMAKE)
+ 
+-IF(VERSION_CMAKE)
++IF(VERSION_CMAKE AND NOT MSVC)
+     MACRO_OPTIONAL_FIND_PACKAGE(OpenMP)
+     IF(OPENMP_FOUND)
+         MESSAGE(STATUS "OpenMP detected: LibRaw will be compiled with parallelized code.")
+@@ -86,7 +86,7 @@
+ ELSE(VERSION_CMAKE)
+     MESSAGE(STATUS "CMake version too old: cannot detected OpenMP: LibRaw will not be compiled with parallelized code.")
+     SET(USE_OPENMP FALSE)
+-ENDIF(VERSION_CMAKE)
++ENDIF(VERSION_CMAKE AND NOT MSVC)
+ 
+ IF(OPENMP_FOUND)
+     ADD_DEFINITIONS(${OpenMP_CXX_FLAGS}) 
