@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['win32libs-bin/libical'] = 'default'
+        self.hardDependencies['win32libs-sources/libical-src'] = 'default'
         self.hardDependencies['kdesupport/akonadi'] = 'default'
         self.hardDependencies['win32libs-bin/boost'] = 'default'
         self.hardDependencies['win32libs-sources/cyrus-sasl-src'] = 'default'
