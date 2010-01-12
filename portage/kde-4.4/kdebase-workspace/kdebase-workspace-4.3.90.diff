@@ -1,0 +1,13 @@
+diff -Nru kdebase-workspace-4.3.90.orig/klipper/klipper.cpp kdebase-workspace-4.3.90/klipper/klipper.cpp
+--- kdebase-workspace-4.3.90.orig/klipper/klipper.cpp	2009-12-31 14:28:14.000000000 +0100
++++ kdebase-workspace-4.3.90/klipper/klipper.cpp	2010-01-12 02:14:55.607400000 +0100
+@@ -709,8 +709,8 @@
+         m_overflowClearTimer.start( 1000 );
+     if( ++m_overflowCounter > MAX_CLIPBOARD_CHANGES )
+         return true;
+-    return false;
+ #endif
++    return false;
+ }
+ 
+ void Klipper::slotCheckPending()
