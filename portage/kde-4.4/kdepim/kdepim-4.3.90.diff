@@ -1,0 +1,12 @@
+diff -Nru kdepim-4.3.90.orig/akonadi/kcal/akonadi-kcal_export.h kdepim-4.3.90/akonadi/kcal/akonadi-kcal_export.h
+--- kdepim-4.3.90.orig/akonadi/kcal/akonadi-kcal_export.h	2008-03-25 18:23:35.000000000 +0100
++++ kdepim-4.3.90/akonadi/kcal/akonadi-kcal_export.h	2010-01-12 04:02:30.868000000 +0100
+@@ -24,7 +24,7 @@
+ #include <kdemacros.h>
+ 
+ #ifndef AKONADI_KCAL_EXPORT
+-# if defined(MAKE_AKONADI_KCAL_LIB)
++# if defined(MAKE_AKONADI_KCAL_NEXT_LIB)
+    /* We are building this library */
+ #  define AKONADI_KCAL_EXPORT KDE_EXPORT
+ # else
