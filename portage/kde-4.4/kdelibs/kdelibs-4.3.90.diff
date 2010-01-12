@@ -1,0 +1,40 @@
+diff -Nru kdelibs-4.3.90.orig/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake kdelibs-4.3.90/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake
+--- kdelibs-4.3.90.orig/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake	2009-03-27 15:47:28.000000000 +0100
++++ kdelibs-4.3.90/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake	2010-01-12 01:47:53.638800000 +0100
+@@ -44,14 +44,16 @@
+             ENDIF ("${_CCSR_LOOP_COUNTER}" LESS 100)
+ 
+             LIST(GET _importedConfigs 0 _firstImportedConfig)
+-            GET_TARGET_PROPERTY(_firstImportedLocation ${_CURRENT_LIB} LOCATION_${_firstImportedConfig})
++            GET_TARGET_PROPERTY(_firstImportedLocation ${_CURRENT_LIB} IMPORTED_IMPLIB_${_firstImportedConfig})
+             GET_TARGET_PROPERTY(_linkInterfaceLibs ${_CURRENT_LIB} IMPORTED_LINK_INTERFACE_LIBRARIES_${_firstImportedConfig} )
+ 
+             LIST(APPEND _CCSR_NEW_REQ_LIBS  ${_firstImportedLocation})
+ #                MESSAGE(STATUS "Appending lib ${_CURRENT_LIB} as ${_firstImportedLocation}")
+             FOREACH(_currentLinkInterfaceLib ${_linkInterfaceLibs})
+ #                   MESSAGE(STATUS "Appending link interface lib ${_currentLinkInterfaceLib}")
++               IF(_currentLinkInterfaceLib)
+                LIST(APPEND _CCSR_NEW_REQ_LIBS ${_currentLinkInterfaceLib} )
++               ENDIF(_currentLinkInterfaceLib)
+             ENDFOREACH(_currentLinkInterfaceLib ${_linkInterfaceLibs})
+          ELSE(_importedConfigs)
+             # "Normal" libraries are just used as they are.
+diff -Nru kdelibs-4.3.90.orig/khtml/CMakeLists.txt kdelibs-4.3.90/khtml/CMakeLists.txt
+--- kdelibs-4.3.90.orig/khtml/CMakeLists.txt	2009-12-01 01:27:26.000000000 +0100
++++ kdelibs-4.3.90/khtml/CMakeLists.txt	2010-01-12 01:29:21.979200000 +0100
+@@ -657,11 +657,12 @@
+ 
+ ########### next target ###############
+ 
+-kde4_add_plugin(khtmladaptorpart khtmladaptorpart.cpp)
++kde4_add_plugin(kap khtmladaptorpart.cpp)
+ 
+-target_link_libraries(khtmladaptorpart ${KDE4_KPARTS_LIBS} kjs)
++target_link_libraries(kap ${KDE4_KPARTS_LIBS} kjs)
++set_target_properties(kap PROPERTIES OUTPUT_NAME khtmladaptorpart)
+ 
+-install(TARGETS khtmladaptorpart DESTINATION ${PLUGIN_INSTALL_DIR} )
++install(TARGETS kap DESTINATION ${PLUGIN_INSTALL_DIR} )
+ 
+ #######################################
+ 
