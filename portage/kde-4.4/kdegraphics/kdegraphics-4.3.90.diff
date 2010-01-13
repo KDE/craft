@@ -1,6 +1,20 @@
+diff -Nru kdegraphics-4.3.90.orig/CMakeLists.txt kdegraphics-4.3.90/CMakeLists.txt
+--- kdegraphics-4.3.90.orig/CMakeLists.txt	2010-01-06 17:59:27.000000000 +0100
++++ kdegraphics-4.3.90/CMakeLists.txt	2010-01-13 13:24:06.933400000 +0100
+@@ -58,7 +58,9 @@
+ macro_optional_add_subdirectory(kruler)
+ macro_optional_add_subdirectory(svgpart)
+ if(QIMAGEBLITZ_FOUND)
+-  macro_optional_add_subdirectory(kolourpaint)
++  if(NOT MINGW)
++    macro_optional_add_subdirectory(kolourpaint)
++  endif(NOT MINGW)
+   macro_optional_add_subdirectory(okular)
+ endif(QIMAGEBLITZ_FOUND)
+ 
 diff -Nru kdegraphics-4.3.90.orig/libs/libkdcraw/CMakeLists.txt kdegraphics-4.3.90/libs/libkdcraw/CMakeLists.txt
 --- kdegraphics-4.3.90.orig/libs/libkdcraw/CMakeLists.txt	2009-12-01 01:33:28.000000000 +0100
-+++ kdegraphics-4.3.90/libs/libkdcraw/CMakeLists.txt	2010-01-12 16:53:25.112800000 +0100
++++ kdegraphics-4.3.90/libs/libkdcraw/CMakeLists.txt	2010-01-13 03:38:59.651000000 +0100
 @@ -74,7 +74,7 @@
  MESSAGE(STATUS "CMake version (cleaned): ${VERSION_CMAKE_INFO}")
  MACRO_ENSURE_VERSION("2.6.3" "${VERSION_CMAKE_INFO}" VERSION_CMAKE)
