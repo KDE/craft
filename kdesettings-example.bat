@@ -36,7 +36,11 @@ if %KDECOMPILER% == msvc2008 (
 set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 9.0
 set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
 )
-
+rem Here you set the path to your Microsoft DirectX SDK installation 	 
+rem This is not needed if you use MinGW
+set MSDXSDKDIR=%PROGRAMFILES%\Microsoft DirectX SDK (August 2009) 	 
+call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86
+     
 rem Here you set the location of the vcvarsall.bat file that adds
 rem Visual C++ environment variables into the build environment.
 rem if you are not building on x86 change that to something appropriate.
