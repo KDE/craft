@@ -144,6 +144,7 @@ include/kprofilemethod.h
         <shortDescription>KDE software development package (umbrello, kate)</shortDescription>
 		<part name="runtime" >
 		</part>
+        <dependency>libkdesdk</dependency>
         <dependency>kcachegrind</dependency>
         <dependency>umbrello</dependency> 
         <dependency>lokalize</dependency> 
