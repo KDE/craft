@@ -13,6 +13,33 @@
         <dependency>kdebase-runtime</dependency> 
         <dependency>kdelibs</dependency>
     </package>
+    <package name="palapeli">
+        <shortDescription>a jigsaw puzzle game</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*pala.*"/>
+			<files include="share/.*(palapeli|palathumbcreator).*"/>
+		</part>
+		<part name="development">
+			<files include="lib/.*pala.*"/>
+        </part>
+        <dependency>libkdegames</dependency>
+    </package>
+    <package name="granatier">
+        <shortDescription>a ClanBomber-like game</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*granatier.*"/>
+			<files include="share/.*granatier.*"/>
+		</part>
+        <dependency>libkdegames</dependency>
+    </package>
+    <package name="kigo">
+        <shortDescription>a go game</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*kigo.*"/>
+			<files include="share/.*kigo.*"/>
+		</part>
+        <dependency>libkdegames</dependency>
+    </package>
     <package name="bomber">
         <shortDescription>arcade bombing game</shortDescription>
 		<part name="runtime">
@@ -80,7 +107,7 @@
     <package name="kbreakout">
         <shortDescription>a breakout like game</shortDescription>
 		<part name="runtime">
-			<files include="bin/.*kreakout.*"/>
+			<files include="bin/.*kbreakout.*"/>
 			<files include="share/.*kbreakout.*"/>
 		</part>
         <dependency>libkdegames</dependency>
@@ -268,7 +295,7 @@
         <shortDescription>a stamp drawing toy</shortDescription>
 		<part name="runtime">
 			<files include="bin/.*ktuberling.*"/>
-			<files include="share/.*ktuberling.*"/>
+			<files include="share/.*tuberling.*"/>
 		</part>
         <dependency>libkdegames</dependency>
     </package>
