@@ -1,0 +1,15 @@
+diff -Nru kdesdk-4.3.90.orig/CMakeLists.txt kdesdk-4.3.90/CMakeLists.txt
+--- kdesdk-4.3.90.orig/CMakeLists.txt	2009-12-05 00:09:40.000000000 +0100
++++ kdesdk-4.3.90/CMakeLists.txt	2010-01-14 16:28:01.313200000 +0100
+@@ -47,10 +47,7 @@
+   macro_optional_add_subdirectory(kdeaccounts-plugin)
+ endif(KDEPIMLIBS_FOUND)
+ 
+-if(NOT WIN32)
+-   macro_optional_add_subdirectory(kcachegrind)
+-endif(NOT WIN32)
+-
++macro_optional_add_subdirectory(kcachegrind)
+ macro_optional_add_subdirectory(kate)
+ macro_optional_add_subdirectory(kapptemplate)
+ macro_optional_add_subdirectory(kpartloader)
