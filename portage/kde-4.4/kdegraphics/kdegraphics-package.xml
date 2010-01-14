@@ -3,15 +3,15 @@
     <package name="libkdegraphics">
         <shortDescription>the kdegraphics support libraries</shortDescription>
 		<part name="runtime">
-			<files include="bin/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="bin/.*(kdcraw|kexiv|kipi|ksane).*"/>
 			<files include="lib/strigi.*"/>
 			<files include="lib/kde4/.*(gsthumbnail|msits|mobithumbnail|rawthumbnail|svgpart).*"/>
 			<files include="share/.*(kdcraw|kexiv|kipi).*"/>
 			<files include="share/.*(gsthumbnail|msits|mobithumbnail|rawthumbnail|svgpart).*"/>
 		</part>
 		<part name="development">
-			<files include="lib/.*(kdcraw|kexiv|kipi).*"/>
-			<files include="include/.*(kdcraw|kexiv|kipi).*"/>
+			<files include="lib/.*(kdcraw|kexiv|kipi|ksane).*"/>
+			<files include="include/.*(kdcraw|kexiv|kipi|ksane).*"/>
 			<files include="share/.*KSane.*"/>
 		</part>
         <dependency>kdebase-runtime</dependency> 
@@ -70,6 +70,7 @@
 		<part name="development">
 			<files include="include/okular.*"/>
 			<files dir="lib" include="/.*okular.*\.lib"/>
+			<files dir="lib" include="/.*okular.*\.dll\.a"/>
 		</part>
         <dependency>libkdegraphics</dependency>
     </package>
