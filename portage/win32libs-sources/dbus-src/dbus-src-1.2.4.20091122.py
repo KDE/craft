@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.2.4'] = 'tags/1.2.4'
         self.targetConfigurePath['1.2.4'] = 'cmake'
         self.targetConfigurePath['svnHEAD'] = 'cmake'
-        self.patchToApply['1.2.4'] = ( 'dbus-close-on-exec-win32.patch', 0 )
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
