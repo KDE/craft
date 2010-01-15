@@ -7,8 +7,9 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['20100101'] = 'tags/kdepim/enterprise5.0.20100101.1068602/kdesupport/attica'
+        self.svnTargets['20100115'] = 'tags/kdepim/enterprise5.0.20100115.1075215/kdesupport/attica'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/attica'
-        self.defaultTarget = '20100101'
+        self.defaultTarget = '20100115'
 
 from Package.CMakePackageBase import *
 
