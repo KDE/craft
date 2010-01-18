@@ -244,6 +244,8 @@ class EmergeBase():
         return dir
 
     def setBuildTarget( self, target = None):
+        utils.debug( "EmergeBase.setBuildTarget called", 2 )
+    
         self.subinfo.setBuildTarget(target)
         ## \todo replace self.buildTarget by self.buildTarget()
         self.buildTarget = self.subinfo.buildTarget
@@ -262,6 +264,7 @@ class EmergeBase():
         self.setBuildTarget()
 
     def enterBuildDir(self):
+        utils.debug( "EmergeBase.enterBuildDir called", 2 )
        
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
