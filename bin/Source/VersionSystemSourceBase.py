@@ -22,7 +22,7 @@ class VersionSystemSourceBase (SourceBase):
     def __init__(self):
         SourceBase.__init__(self)
         
-    def __getUrl( self, index ):
+    def getUrl( self, index ):
         """get the url at position 'index' from a ';' separated list of urls"""
         u = self.subinfo.svnTarget()
         if u.find(';') == -1:
@@ -38,8 +38,8 @@ class VersionSystemSourceBase (SourceBase):
         u = urls[index]
         return u
 
-    def __splitUrl( self, url ):
-        """ split url into real url and url option"""
+    def splitUrl( self, url ):
+        """ split url into real url and url option. the delimiter is '#'"""
         if url.find('#') <> -1:
             return url.split('#')
         return [url,""]
@@ -82,8 +82,8 @@ class VersionSystemSourceBase (SourceBase):
         """this function returns the full url into a version system based repository at position 'index'.
         See @ref repositoryPathCount how to define multiple repository urls."""
         if self.subinfo.hasSvnTarget():
-            u1 = self.__getUrl(index)
-            (u,dummy) = self.__splitUrl(u1)
+            u1 = self.getUrl(index)
+            (u,dummy) = self.splitUrl(u1)
             # check relative kde url
             if u.find("://") == -1: 
                 url= self.__repositoryBasePath() + u
@@ -98,8 +98,8 @@ class VersionSystemSourceBase (SourceBase):
         Options for a repository url are defined by adding '#' followed by the specific option. 
         """
         if self.subinfo.hasSvnTarget():
-            u = self.__getUrl(index)
-            (dummy,option) = self.__splitUrl(u)
+            u = self.getUrl(index)
+            (dummy,option) = self.splitUrl(u)
             return option
         return None
 
@@ -110,8 +110,8 @@ class VersionSystemSourceBase (SourceBase):
             return sourcedir
         else:
             if self.subinfo.hasSvnTarget():
-                u = self.__getUrl(index)
-                (url,dummy) = self.__splitUrl(u)
+                u = self.getUrl(index)
+                (url,dummy) = self.splitUrl(u)
 
                 if url.find("://") == -1: 
                     if os.getenv("KDESVNDIR") == None:
