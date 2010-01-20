@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.4/kdebase/workspace'
-        for ver in ['90']:
+        for ver in ['90', '95']:
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.3.' + ver + '/src/kdebase-workspace-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdebase-workspace-4.3.' + ver
         for ver in ['0', '1', '2', '3', '4']:
