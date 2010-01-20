@@ -319,6 +319,9 @@
         <shortDescription>Games applications</shortDescription>
 		<part name="runtime" >
 		</part>
+        <dependency>kigo</dependency> 
+        <dependency>palapeli</dependency> 
+        <dependency>granatier</dependency> 
         <dependency>bomber</dependency> 
         <dependency>bovo</dependency>
         <dependency>kapman</dependency> 
