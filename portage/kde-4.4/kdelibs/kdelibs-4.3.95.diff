@@ -1,0 +1,35 @@
+diff -Nru kdelibs-4.3.95.orig/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake kdelibs-4.3.95/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake
+--- kdelibs-4.3.95.orig/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake	2010-01-20 00:15:16.000000000 +0100
++++ kdelibs-4.3.95/cmake/modules/HandleImportedTargetsInCMakeRequiredLibraries.cmake	2010-01-20 15:01:04.522600000 +0100
+@@ -44,11 +44,7 @@
+             ENDIF ("${_CCSR_LOOP_COUNTER}" LESS 100)
+ 
+             LIST(GET _importedConfigs 0 _firstImportedConfig)
+-            IF(NOT WIN32)
+-               GET_TARGET_PROPERTY(_firstImportedLocation ${_CURRENT_LIB} IMPORTED_LOCATION_${_firstImportedConfig})
+-            ELSE(NOT WIN32)
+-               GET_TARGET_PROPERTY(_firstImportedLocation ${_CURRENT_LIB} IMPORTED_IMPLIB_${_firstImportedConfig})
+-            ENDIF(NOT WIN32)
++            GET_TARGET_PROPERTY(_firstImportedLocation ${_CURRENT_LIB} IMPORTED_LOCATION_${_firstImportedConfig})
+             GET_TARGET_PROPERTY(_linkInterfaceLibs ${_CURRENT_LIB} IMPORTED_LINK_INTERFACE_LIBRARIES_${_firstImportedConfig} )
+ 
+             LIST(APPEND _CCSR_NEW_REQ_LIBS  ${_firstImportedLocation})
+diff -Nru kdelibs-4.3.95.orig/khtml/CMakeLists.txt kdelibs-4.3.95/khtml/CMakeLists.txt
+--- kdelibs-4.3.95.orig/khtml/CMakeLists.txt	2009-12-01 01:27:26.000000000 +0100
++++ kdelibs-4.3.95/khtml/CMakeLists.txt	2010-01-12 01:29:21.979200000 +0100
+@@ -657,11 +657,12 @@
+ 
+ ########### next target ###############
+ 
+-kde4_add_plugin(khtmladaptorpart khtmladaptorpart.cpp)
++kde4_add_plugin(kap khtmladaptorpart.cpp)
+ 
+-target_link_libraries(khtmladaptorpart ${KDE4_KPARTS_LIBS} kjs)
++target_link_libraries(kap ${KDE4_KPARTS_LIBS} kjs)
++set_target_properties(kap PROPERTIES OUTPUT_NAME khtmladaptorpart)
+ 
+-install(TARGETS khtmladaptorpart DESTINATION ${PLUGIN_INSTALL_DIR} )
++install(TARGETS kap DESTINATION ${PLUGIN_INSTALL_DIR} )
+ 
+ #######################################
+ 
