@@ -25,7 +25,8 @@ class subinfo(info.infoclass):
         self.svnTargets['4.5.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.3-patched|"
         # this branch contains all the patches and follows the 4.6-stable branch on qt.git - it updates daily
         self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
-        self.defaultTarget = '4.6'
+        self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
+        self.defaultTarget = '4.6.1'
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
