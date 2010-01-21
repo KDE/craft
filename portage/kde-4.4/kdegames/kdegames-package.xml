@@ -319,6 +319,9 @@
         <shortDescription>Games applications</shortDescription>
 		<part name="runtime" >
 		</part>
+        <part name="source">
+            <files directory="." include="*.*" exclude=".git .svn CVS *.bak *.orig"/>
+        </part>
         <dependency>kigo</dependency> 
         <dependency>palapeli</dependency> 
         <dependency>granatier</dependency> 

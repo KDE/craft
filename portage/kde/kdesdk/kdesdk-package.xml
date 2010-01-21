@@ -50,7 +50,7 @@
         </part>
     </package>
     <package name="libkdesdk">
-        <shortDescription>KDE Software development package</shortDescription>
+        <shortDescription>additional libraries and applications for the KDE software development package</shortDescription>
         <part name="runtime" >
             <files include="bin/.*antlr.*dll.*"/>
             <files include="manifest/post-install-.*"/>
@@ -259,6 +259,12 @@ include/kprofilemethod.h
 lib/antlr.lib
             </files>
         </part>
+    </package>
+    <package name="kdesdk" comment="kdesdk meta package">
+        <shortDescription>KDE software development package</shortDescription>
+		<part name="runtime" >
+		</part>
+        <dependency>libkdesdk</dependency> 
         <dependency>umbrello</dependency> 
         <dependency>lokalize</dependency> 
         <dependency>kate</dependency> 
