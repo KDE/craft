@@ -1,0 +1,12 @@
+diff -Nru kdemultimedia-4.3.95.orig/juk/tag.cpp kdemultimedia-4.3.95/juk/tag.cpp
+--- kdemultimedia-4.3.95.orig/juk/tag.cpp	2010-01-20 00:22:05.000000000 +0100
++++ kdemultimedia-4.3.95/juk/tag.cpp	2010-01-21 01:15:56.684200000 +0100
+@@ -186,7 +186,7 @@
+ void Tag::setup(TagLib::File *file)
+ {
+     if(!file || !file->tag()) {
+-        kWarning() << "Can't setup invalid file" << file->name();
++        kWarning() << "Can't setup invalid file" << m_filename;
+         return;
+     }
+ 
