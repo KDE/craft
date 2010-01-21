@@ -3,6 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/emerge'
+        self.svnTargets['1.0'] = 'tags/emerge/1.0'
         self.defaultTarget = 'svnHEAD'
         
     def setDependencies( self ):
