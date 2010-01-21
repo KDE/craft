@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['kdesupport/phonon'] = 'default'
+        self.hardDependencies['testing/mplayer'] = 'default'
 
 from Package.CMakePackageBase import *
         
