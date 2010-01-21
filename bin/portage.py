@@ -64,7 +64,7 @@ def isPackage( category, package ):
     return os.path.exists( os.path.join( rootDir(), category, package ) )
 
 def getCategoryPackageVersion( path ):
-    utils.debug( "getCategoryPackageVersion: %s" % path ,1 )
+    utils.debug( "getCategoryPackageVersion: %s" % path ,2 )
     ( head, file ) = os.path.split( path )
     ( head, package ) = os.path.split( head )
     ( head, category ) = os.path.split( head )
@@ -290,7 +290,7 @@ def printTargets( category, package, version ):
         print i
 
 def isPackageUpdateable( category, package, version ):
-    utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+    utils.debug( "importing file %s" % getFilename( category, package, version ), 2 )
     mod = __import__( getFilename( category, package, version ) )
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()
@@ -394,7 +394,7 @@ def findInstalled( category, package, buildType='' ):
     return ret;
 
 def addInstalled( category, package, version, buildType='' ):
-    utils.debug( "addInstalled called", 1 )
+    utils.debug( "addInstalled called", 2 )
     # write a line to etc/portage/installed,
     # that contains category/package-version
     path = os.path.join( etcDir() )
@@ -417,7 +417,7 @@ def addInstalled( category, package, version, buildType='' ):
     f.close()
 
 def remInstalled( category, package, version, buildType='' ):
-    utils.debug( "remInstalled called", 1 )
+    utils.debug( "remInstalled called", 2 )
     if buildType <> '': 
         fileName = 'installed-' + buildType
     else:
