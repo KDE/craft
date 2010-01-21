@@ -6,7 +6,7 @@ diff -Nru kdemultimedia-4.3.95.orig/juk/tag.cpp kdemultimedia-4.3.95/juk/tag.cpp
  {
      if(!file || !file->tag()) {
 -        kWarning() << "Can't setup invalid file" << file->name();
-+        kWarning() << "Can't setup invalid file" << m_filename;
++        kWarning() << "Can't setup invalid file" << m_fileName;
          return;
      }
  
