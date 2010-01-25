@@ -358,8 +358,21 @@ if "EMERGE_DEFAULTCATEGORY" in os.environ:
 else:
     defaultCategory = "kde"
 
-
-if packageName:
+if updateAll:
+    installedPackages = portage.getInstallables()
+    if portage.isCategory( packageName ):
+        utils.debug( "Updating installed packages from category " + packageName, 1 ) 
+    else:
+        utils.debug( "Updating all installed packages", 1 )
+    packageList = []
+    for category, package, version in installedPackages:
+        if portage.isCategory( packageName ) and ( category != packageName ):
+            continue
+        if portage.isInstalled( category, package, version, buildType ) and portage.isPackageUpdateable( category, package, version ):
+            categoryList.append( category )
+            packageList.append( package )
+    utils.debug( "Will update packages: " + str (packageList), 1 )
+elif packageName:
     if len( packageName.split( "/" ) ) == 1:
         if portage.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
@@ -392,15 +405,6 @@ if packageName:
             utils.debug( "ignoring package %s" % packageName )
     else:
         utils.error( "unknown packageName" )
-elif updateAll:
-    installedPackages = portage.getInstallables()
-    utils.debug( "Updating, no package spec given", 1 )
-    packageList = []
-    for category, package, version in installedPackages:
-        if portage.isInstalled( category, package, version, buildType ) and portage.isPackageUpdateable( category, package, version ):
-            categoryList.append( category )
-            packageList.append( package )
-    utils.debug( "Will update packages: " + str (packageList), 1 )
 
 for entry in packageList:
     utils.debug( "%s" % entry, 1 )
