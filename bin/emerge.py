@@ -377,7 +377,7 @@ elif packageName:
         if portage.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
             packageList = portage.getAllPackages( packageName )
-            categoryList = [ packageName ]
+            categoryList = [ packageName ] * len(packageList)
         else:
         
             if portage.isCategory( defaultCategory ) and portage.isPackage( defaultCategory, packageName ):
