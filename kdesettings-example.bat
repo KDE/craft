@@ -88,6 +88,13 @@ rem and make sure that plink is in your PATH and Pageant is configured
 rem (you need to import your key)
 set SVN_SSH=plink 
 
+rem Setting up variables for git, not needed by emerge but preventing trouble with corrupted git pushes
+set GIT_SSH=plink
+set HOME=%USERPROFILE%
+set GIT_AUTHOR_NAME=authorname
+set GIT_COMMITTER_NAME=username
+set GIT_COMMITTER_EMAIL=email
+
 rem Here you can set type of the emerge build. 
 rem There are two standard build types: Debug and Release.
 rem Both are used if no EMERGE_BUILDTYPE is set.
