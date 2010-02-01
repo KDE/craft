@@ -91,9 +91,9 @@ set SVN_SSH=plink
 rem Setting up variables for git, not needed by emerge but preventing trouble with corrupted git pushes
 set GIT_SSH=plink
 set HOME=%USERPROFILE%
-set GIT_AUTHOR_NAME=authorname
-set GIT_COMMITTER_NAME=username
-set GIT_COMMITTER_EMAIL=email
+rem set GIT_AUTHOR_NAME=authorname
+rem set GIT_COMMITTER_NAME=username
+rem set GIT_COMMITTER_EMAIL=email
 
 rem Here you can set type of the emerge build. 
 rem There are two standard build types: Debug and Release.
