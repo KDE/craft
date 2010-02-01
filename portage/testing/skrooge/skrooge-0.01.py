@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt']        = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['kde/kdelibs']    = 'default'
+	self.hardDependencies['testing/libopensp'] = 'default'
         # missing: kdelibs
 
 from Package.CMakePackageBase import *
