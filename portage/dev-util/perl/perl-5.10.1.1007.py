@@ -4,9 +4,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['5.8.8'] = "http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.822-MSWin32-x86-280952.zip"
         self.targetMergeSourcePath['5.8.8'] = "ActivePerl-5.8.8.822-MSWin32-x86-280952\\perl"
-        self.targets['5.10.0'] = "http://downloads.activestate.com/ActivePerl/Windows/5.10/ActivePerl-5.10.0.1004-MSWin32-x86-287188.zip"
-        self.targetMergeSourcePath['5.10.0'] = "ActivePerl-5.10.0.1004-MSWin32-x86-287188\\perl"
-        self.defaultTarget = '5.10.0'
+        self.targets['5.10.1'] = "http://downloads.activestate.com/ActivePerl/releases/5.10.1.1007/ActivePerl-5.10.1.1007-MSWin32-x86-291969.zip"
+        self.targetMergeSourcePath['5.10.1'] = "ActivePerl-5.10.1.1007-MSWin32-x86-291969\\perl"
+        self.defaultTarget = '5.10.1'
         
 from Package.BinaryPackageBase import *
 
