@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['enterprise5/strigi-e5'] = 'default'
         self.hardDependencies['enterprise5/phonon-e5'] = 'default'
         self.hardDependencies['enterprise5/automoc-e5'] = 'default'
-				self.hardDependencies['enterprise5/attica-e5'] = 'default'
+        self.hardDependencies['enterprise5/attica-e5'] = 'default'
 
         self.hardDependencies['win32libs-sources/bzip2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
