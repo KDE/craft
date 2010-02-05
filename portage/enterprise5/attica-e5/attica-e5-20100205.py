@@ -11,7 +11,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20100122'] = 'tags/kdepim/enterprise5.0.20100122.1078631/kdesupport/attica'
         self.svnTargets['20100129'] = 'tags/kdepim/enterprise5.0.20100129.1082020/kdesupport/attica'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/attica'
-        self.defaultTarget = '20100129'
+        self.svnTargets['20100205'] = 'tags/kdepim/enterprise5.0.20100205.1085631/kdesupport/attica'
+        self.defaultTarget = '20100205'
 
 from Package.CMakePackageBase import *
 
