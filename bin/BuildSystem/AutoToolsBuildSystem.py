@@ -42,6 +42,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             utils.putenv("CFLAGS",_cflags)
             utils.putenv("LDFLAGS",_ldflags)
             _prefix = "--prefix=" + mergeroot
+            _options = BuildSystemBase.configureOptions(self)
+            if _options:
+                _prefix += " %s" % _options
             if self.buildInSource:
                 ret = self.shell.execute(self.sourceDir(), configure, _prefix )
             else:
