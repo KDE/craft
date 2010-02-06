@@ -15,8 +15,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.buildInSource = False
         BuildSystemBase.__init__(self,"autotools")
         self.shell = MSysShell()
-        self.makeProgram = "mingw32-make"
-        os.putenv("MAKE","mingw32-make")
+        self.makeProgram = "make"
+        #os.putenv("MAKE","mingw32-make")
         os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" )))
 
 
