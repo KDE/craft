@@ -33,11 +33,11 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         #libxml support wont work without pkg-config libxml stuff
         self.subinfo.options.configure.defines = """--disable-libxml --disable-pygobject"""
 
+
        
     def config( self):
         os.putenv("GMSGFMT", "%s/bin/msgfmt.exe" % os.environ.get("MSYSDIR").replace('\\','/') )
-        #os.putenv("LIBXML_CFLAGS","-I%s/include" % os.environ.get("KDEROOT").replace('\\','/') )
-        #os.putenv("LIBXML_LIBS","-L%s/lib" % os.environ.get("KDEROOT").replace('\\','/') )
+
         
 if __name__ == '__main__':
      Package().execute()
