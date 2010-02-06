@@ -16,7 +16,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self,"autotools")
         self.shell = MSysShell()
         self.makeProgram = "mingw32-make"
+        os.putenv("MAKE","mingw32-make")
         os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" )))
+
 
     def configureDefaultDefines( self ):
         """defining the default cmake cmd line"""
