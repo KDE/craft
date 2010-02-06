@@ -178,7 +178,7 @@ def unpackFile( downloaddir, filename, workdir ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir )
-    elif ( ext == ".gz" or ext == ".bz2" ):
+    elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma"):
         ( myshortname, myext ) = os.path.splitext( shortname )
         if ( myext == ".tar" ):
             return unTar( os.path.join( downloaddir, filename ), workdir )
@@ -194,7 +194,7 @@ def unpackFile( downloaddir, filename, workdir ):
 def un7zip( file, destdir ):
     command = "7za x -r -y -o%s %s" % (destdir, file)
     return system(command)
-
+	
 def unTar( file, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( file, destdir ), 1 )
@@ -205,6 +205,10 @@ def unTar( file, destdir ):
         mode = "r:gz"
     elif ( ext == ".bz2" ):
         mode = "r:bz2"
+    elif( ext == ".lzma" ):
+        un7zip( file , os.getenv("TMP") )
+        return un7zip( "%s\\%s" % (os.getenv("TMP"),file[file.rfind( "\\" ):file.find( ".lzma" ) ]), destdir )
+		
 
     tar = tarfile.open( file, mode )
 
