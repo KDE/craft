@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
                      'sed-4.2.1-1-msys-1.0.11-bin.tar.lzma','coreutils-5.97-2-msys-1.0.11-bin.tar.lzma',
                      'gawk-3.1.7-1-msys-1.0.11-bin.tar.lzma','autoconf-2.63-1-msys-1.0.11-bin.tar.lzma',
                      'autogen-5.9.2-2-msys-1.0.11-bin.tar.lzma','automake-1.11-1-msys-1.0.11-bin.tar.lzma',
+                     'm4-1.4.13-1-msys-1.0.11-bin.tar.lzma',
                      'perl-5.6.1_2-1-msys-1.0.11-bin.tar.lzma','libcrypt-1.1_1-2-msys-1.0.11-dll-0.tar.lzma'
                      ]:
             msysFiles = """%s
