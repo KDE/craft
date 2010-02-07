@@ -36,7 +36,7 @@ http://downloads.sourceforge.net/sourceforge/mingw/mingwrt-3.17-mingw32-dll.tar.
 http://downloads.sourceforge.net/sourceforge/mingw/mingwrt-3.17-mingw32-dev.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/w32api-3.14-3-msys-1.0.12-dev.tar.lzma
 http://downloads.sourceforge.net/sourceforge/mingw/gdb-7.0.50.20100202-mingw32-bin.tar.gz
-http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.4-1-mingw32-bin.tar.lzma
+http://downloads.sourceforge.net/sourceforge/mingw/mingw-utils-0.3.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-4.4.0-mingw32-bin.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-core-4.4.0-mingw32-dll.tar.gz
 http://downloads.sourceforge.net/sourceforge/mingw/gcc-c++-4.4.0-mingw32-bin.tar.gz
