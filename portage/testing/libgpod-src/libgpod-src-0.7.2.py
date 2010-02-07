@@ -31,7 +31,7 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         #libxml support wont work without pkg-config libxml stuff
-        self.subinfo.options.configure.defines = """--disable-libxml --disable-pygobject"""
+        self.subinfo.options.configure.defines = """--disable-libxml --with-python=no --disable-static"""
 
 
        
