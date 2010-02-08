@@ -1,7 +1,5 @@
-import base
 import os
-import shutil
-import utils
+from shells import MSysShell
 import info
 
 
@@ -30,10 +28,11 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
-        self.subinfo.options.configure.defines = """--with-python=no --disable-static LIBXML_LIBS=-lxml2"""
+        self.subinfo.options.configure.defines = """--with-python=no --disable-static LIBXML_CFLAGS=-I""" + \
+        MSysShell().toNativePath( os.path.join( self.rootdir, "include", "libxml" ) ) + """ LIBXML_LIBS=-lxml2"""
 
     def config( self):
-        os.putenv("GMSGFMT", "%s/bin/msgfmt.exe" % os.environ.get("MSYSDIR").replace('\\','/') )
+        os.putenv("GMSGFMT", "%s/bin/msgfmt.exe" % MSysShell().toNativePath( MSysShell().msysdir ) )
         
 if __name__ == '__main__':
      Package().execute()
