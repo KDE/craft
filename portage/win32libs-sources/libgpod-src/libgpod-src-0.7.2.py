@@ -4,17 +4,18 @@ import info
 
 
 class subinfo(info.infoclass):
-  def setDependencies( self ):
-      self.hardDependencies['dev-util/msys'] = 'default'
-      self.hardDependencies['testing/glib'] = 'default'
-      self.hardDependencies['testing/pkg-config'] = 'default'
-	  
-  def setTargets( self ):
-      self.targets['0.7.2'] = 'http://kent.dl.sourceforge.net/project/gtkpod/libgpod/libgpod-0.7.2/libgpod-0.7.2.tar.gz'
-      self.targetInstSrc['0.7.2'] = "libgpod-0.7.2"
-      self.patchToApply['0.7.2'] = ("windows.diff", 1)
-      
-      self.defaultTarget = '0.7.2'
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/msys'] = 'default'
+        self.hardDependencies['testing/glib'] = 'default'
+        self.hardDependencies['testing/pkg-config'] = 'default'
+
+    def setTargets( self ):
+        self.targets['0.7.2'] = 'http://kent.dl.sourceforge.net/project/gtkpod/libgpod/libgpod-0.7.2/libgpod-0.7.2.tar.gz'
+        self.targetInstSrc['0.7.2'] = "libgpod-0.7.2"
+        self.patchToApply['0.7.2'] = ("windows.diff", 1)
+        self.options.package.withCompiler = False
+
+        self.defaultTarget = '0.7.2'
 
 from Package.PackageBase import *
 from Source.MultiSource import *
