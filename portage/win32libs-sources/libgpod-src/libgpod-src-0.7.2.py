@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.7.2'] = 'http://kent.dl.sourceforge.net/project/gtkpod/libgpod/libgpod-0.7.2/libgpod-0.7.2.tar.gz'
         self.targetInstSrc['0.7.2'] = "libgpod-0.7.2"
-        self.patchToApply['0.7.2'] = ("windows.diff", 1)
+        self.patchToApply['0.7.2'] = ("libgpod-0.7.2.diff", 1)
         self.options.package.withCompiler = False
 
         self.defaultTarget = '0.7.2'

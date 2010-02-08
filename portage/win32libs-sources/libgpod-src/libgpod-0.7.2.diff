@@ -1,0 +1,524 @@
+diff -Nru libgpod-0.7.2.orig/src/db-artwork-writer.c libgpod-0.7.2/src/db-artwork-writer.c
+--- libgpod-0.7.2.orig/src/db-artwork-writer.c	2009-04-15 23:18:35.000000000 +0200
++++ libgpod-0.7.2/src/db-artwork-writer.c	2010-02-08 03:14:54.056000000 +0100
+@@ -44,7 +44,9 @@
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
++#ifndef WIN32
+ #include <sys/mman.h>
++#endif
+ #include <sys/stat.h>
+ #include <stdio.h>
+ #include <sys/types.h>
+diff -Nru libgpod-0.7.2.orig/src/itdb.h libgpod-0.7.2/src/itdb.h
+--- libgpod-0.7.2.orig/src/itdb.h	2009-04-15 23:18:35.000000000 +0200
++++ libgpod-0.7.2/src/itdb.h	2010-02-08 13:38:32.070000000 +0100
+@@ -50,6 +50,12 @@
+ #define G_GNUC_INTERNAL
+ #endif 
+ 
++#ifdef DLL_EXPORT   // only for usage in KDE on Windows
++#define GPOD_EXPORT __declspec(dllexport)
++#else
++#define GPOD_EXPORT __declspec(dllimport)
++#endif
++
+ /**
+  * ItdbUserDataDestroyFunc:
+  * @userdata: A #gpointer to user data
+@@ -1676,7 +1682,7 @@
+ 
+ /* Error domain */
+ #define ITDB_FILE_ERROR itdb_file_error_quark ()
+-GQuark     itdb_file_error_quark      (void);
++GPOD_EXPORT GQuark     itdb_file_error_quark      (void);
+ 
+ 
+ /* ------------------------------------------------------------ *\
+@@ -1686,233 +1692,233 @@
+ \* ------------------------------------------------------------ */
+ 
+ /* functions for reading/writing database, general itdb functions */
+-Itdb_iTunesDB *itdb_parse (const gchar *mp, GError **error);
+-Itdb_iTunesDB *itdb_parse_file (const gchar *filename, GError **error);
+-gboolean itdb_write (Itdb_iTunesDB *itdb, GError **error);
+-gboolean itdb_write_file (Itdb_iTunesDB *itdb, const gchar *filename,
++GPOD_EXPORT Itdb_iTunesDB *itdb_parse (const gchar *mp, GError **error);
++GPOD_EXPORT Itdb_iTunesDB *itdb_parse_file (const gchar *filename, GError **error);
++GPOD_EXPORT gboolean itdb_write (Itdb_iTunesDB *itdb, GError **error);
++GPOD_EXPORT gboolean itdb_write_file (Itdb_iTunesDB *itdb, const gchar *filename,
+ 			  GError **error);
+-gboolean itdb_shuffle_write (Itdb_iTunesDB *itdb, GError **error);
+-gboolean itdb_shuffle_write_file (Itdb_iTunesDB *itdb,
++GPOD_EXPORT gboolean itdb_shuffle_write (Itdb_iTunesDB *itdb, GError **error);
++GPOD_EXPORT gboolean itdb_shuffle_write_file (Itdb_iTunesDB *itdb,
+ 				  const gchar *filename, GError **error);
+-Itdb_iTunesDB *itdb_new (void);
+-void itdb_free (Itdb_iTunesDB *itdb);
+-Itdb_iTunesDB *itdb_duplicate (Itdb_iTunesDB *itdb); /* not implemented */
+-guint32 itdb_tracks_number (Itdb_iTunesDB *itdb);
+-guint32 itdb_tracks_number_nontransferred (Itdb_iTunesDB *itdb);
+-guint32 itdb_playlists_number (Itdb_iTunesDB *itdb);
++GPOD_EXPORT Itdb_iTunesDB *itdb_new (void);
++GPOD_EXPORT void itdb_free (Itdb_iTunesDB *itdb);
++GPOD_EXPORT Itdb_iTunesDB *itdb_duplicate (Itdb_iTunesDB *itdb); /* not implemented */
++GPOD_EXPORT guint32 itdb_tracks_number (Itdb_iTunesDB *itdb);
++GPOD_EXPORT guint32 itdb_tracks_number_nontransferred (Itdb_iTunesDB *itdb);
++GPOD_EXPORT guint32 itdb_playlists_number (Itdb_iTunesDB *itdb);
+ 
+ /* general file functions */
+-gint itdb_musicdirs_number (Itdb_iTunesDB *itdb);
+-gchar *itdb_resolve_path (const gchar *root,
++GPOD_EXPORT gint itdb_musicdirs_number (Itdb_iTunesDB *itdb);
++GPOD_EXPORT gchar *itdb_resolve_path (const gchar *root,
+ 			  const gchar * const * components);
+-gboolean itdb_rename_files (const gchar *mp, GError **error);
+-gchar *itdb_cp_get_dest_filename (Itdb_Track *track,
++GPOD_EXPORT gboolean itdb_rename_files (const gchar *mp, GError **error);
++GPOD_EXPORT gchar *itdb_cp_get_dest_filename (Itdb_Track *track,
+                                   const gchar *mountpoint,
+ 				  const gchar *filename,
+ 				  GError **error);
+-gboolean itdb_cp (const gchar *from_file, const gchar *to_file,
++GPOD_EXPORT gboolean itdb_cp (const gchar *from_file, const gchar *to_file,
+ 		  GError **error);
+-Itdb_Track *itdb_cp_finalize (Itdb_Track *track,
++GPOD_EXPORT Itdb_Track *itdb_cp_finalize (Itdb_Track *track,
+ 			      const gchar *mountpoint,
+ 			      const gchar *dest_filename,
+ 			      GError **error);
+-gboolean itdb_cp_track_to_ipod (Itdb_Track *track,
++GPOD_EXPORT gboolean itdb_cp_track_to_ipod (Itdb_Track *track,
+ 				const gchar *filename, GError **error);
+-void itdb_filename_fs2ipod (gchar *filename);
+-void itdb_filename_ipod2fs (gchar *ipod_file);
+-gchar *itdb_filename_on_ipod (Itdb_Track *track);
+-void itdb_set_mountpoint (Itdb_iTunesDB *itdb, const gchar *mp);
+-const gchar *itdb_get_mountpoint (Itdb_iTunesDB *itdb);
+-gchar *itdb_get_control_dir (const gchar *mountpoint);
+-gchar *itdb_get_itunes_dir (const gchar *mountpoint);
+-gchar *itdb_get_music_dir (const gchar *mountpoint);
+-gchar *itdb_get_artwork_dir (const gchar *mountpoint);
+-gchar *itdb_get_photos_dir (const gchar *mountpoint);
+-gchar *itdb_get_photos_thumb_dir (const gchar *mountpoint);
+-gchar *itdb_get_device_dir (const gchar *mountpoint);
+-gchar *itdb_get_itunesdb_path (const gchar *mountpoint);
+-gchar *itdb_get_itunessd_path (const gchar *mountpoint);
+-gchar *itdb_get_artworkdb_path (const gchar *mountpoint);
+-gchar *itdb_get_photodb_path (const gchar *mountpoint);
+-gchar *itdb_get_path (const gchar *dir, const gchar *file);
++GPOD_EXPORT void itdb_filename_fs2ipod (gchar *filename);
++GPOD_EXPORT void itdb_filename_ipod2fs (gchar *ipod_file);
++GPOD_EXPORT gchar *itdb_filename_on_ipod (Itdb_Track *track);
++GPOD_EXPORT void itdb_set_mountpoint (Itdb_iTunesDB *itdb, const gchar *mp);
++GPOD_EXPORT const gchar *itdb_get_mountpoint (Itdb_iTunesDB *itdb);
++GPOD_EXPORT gchar *itdb_get_control_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_itunes_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_music_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_artwork_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_photos_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_photos_thumb_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_device_dir (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_itunesdb_path (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_itunessd_path (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_artworkdb_path (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_photodb_path (const gchar *mountpoint);
++GPOD_EXPORT gchar *itdb_get_path (const gchar *dir, const gchar *file);
+ 
+ /* itdb_device functions */
+-Itdb_Device *itdb_device_new (void);
+-void itdb_device_free (Itdb_Device *device);
+-void itdb_device_set_mountpoint (Itdb_Device *device, const gchar *mp);
+-gboolean itdb_device_read_sysinfo (Itdb_Device *device);
+-gboolean itdb_device_write_sysinfo (Itdb_Device *device, GError **error);
+-gchar *itdb_device_get_sysinfo (const Itdb_Device *device, const gchar *field);
+-void itdb_device_set_sysinfo (Itdb_Device *device,
++GPOD_EXPORT Itdb_Device *itdb_device_new (void);
++GPOD_EXPORT void itdb_device_free (Itdb_Device *device);
++GPOD_EXPORT void itdb_device_set_mountpoint (Itdb_Device *device, const gchar *mp);
++GPOD_EXPORT gboolean itdb_device_read_sysinfo (Itdb_Device *device);
++GPOD_EXPORT gboolean itdb_device_write_sysinfo (Itdb_Device *device, GError **error);
++GPOD_EXPORT gchar *itdb_device_get_sysinfo (const Itdb_Device *device, const gchar *field);
++GPOD_EXPORT void itdb_device_set_sysinfo (Itdb_Device *device,
+ 			      const gchar *field, const gchar *value);
+-const Itdb_IpodInfo *itdb_device_get_ipod_info (const Itdb_Device *device);
+-const Itdb_IpodInfo *itdb_info_get_ipod_info_table (void);
+-gboolean itdb_device_supports_artwork (const Itdb_Device *device);
+-gboolean itdb_device_supports_chapter_image (const Itdb_Device *device);
+-gboolean itdb_device_supports_video (const Itdb_Device *device);
+-gboolean itdb_device_supports_photo (const Itdb_Device *device);
+-gboolean itdb_device_supports_podcast (const Itdb_Device *device);
+-const gchar *itdb_info_get_ipod_model_name_string (Itdb_IpodModel model);
+-const gchar *itdb_info_get_ipod_generation_string (Itdb_IpodGeneration generation);
++GPOD_EXPORT const Itdb_IpodInfo *itdb_device_get_ipod_info (const Itdb_Device *device);
++GPOD_EXPORT const Itdb_IpodInfo *itdb_info_get_ipod_info_table (void);
++GPOD_EXPORT gboolean itdb_device_supports_artwork (const Itdb_Device *device);
++GPOD_EXPORT gboolean itdb_device_supports_chapter_image (const Itdb_Device *device);
++GPOD_EXPORT gboolean itdb_device_supports_video (const Itdb_Device *device);
++GPOD_EXPORT gboolean itdb_device_supports_photo (const Itdb_Device *device);
++GPOD_EXPORT gboolean itdb_device_supports_podcast (const Itdb_Device *device);
++GPOD_EXPORT const gchar *itdb_info_get_ipod_model_name_string (Itdb_IpodModel model);
++GPOD_EXPORT const gchar *itdb_info_get_ipod_generation_string (Itdb_IpodGeneration generation);
+ 
+ /* track functions */
+-Itdb_Track *itdb_track_new (void);
+-void itdb_track_free (Itdb_Track *track);
+-void itdb_track_add (Itdb_iTunesDB *itdb, Itdb_Track *track, gint32 pos);
+-void itdb_track_remove (Itdb_Track *track);
+-void itdb_track_unlink (Itdb_Track *track);
+-Itdb_Track *itdb_track_duplicate (Itdb_Track *tr);
+-Itdb_Track *itdb_track_by_id (Itdb_iTunesDB *itdb, guint32 id);
+-GTree *itdb_track_id_tree_create (Itdb_iTunesDB *itdb);
+-void itdb_track_id_tree_destroy (GTree *idtree);
+-Itdb_Track *itdb_track_id_tree_by_id (GTree *idtree, guint32 id);
++GPOD_EXPORT Itdb_Track *itdb_track_new (void);
++GPOD_EXPORT void itdb_track_free (Itdb_Track *track);
++GPOD_EXPORT void itdb_track_add (Itdb_iTunesDB *itdb, Itdb_Track *track, gint32 pos);
++GPOD_EXPORT void itdb_track_remove (Itdb_Track *track);
++GPOD_EXPORT void itdb_track_unlink (Itdb_Track *track);
++GPOD_EXPORT Itdb_Track *itdb_track_duplicate (Itdb_Track *tr);
++GPOD_EXPORT Itdb_Track *itdb_track_by_id (Itdb_iTunesDB *itdb, guint32 id);
++GPOD_EXPORT GTree *itdb_track_id_tree_create (Itdb_iTunesDB *itdb);
++GPOD_EXPORT void itdb_track_id_tree_destroy (GTree *idtree);
++GPOD_EXPORT Itdb_Track *itdb_track_id_tree_by_id (GTree *idtree, guint32 id);
+ 
+ /* playlist functions */
+-Itdb_Playlist *itdb_playlist_new (const gchar *title, gboolean spl);
+-void itdb_playlist_free (Itdb_Playlist *pl);
+-void itdb_playlist_add (Itdb_iTunesDB *itdb, Itdb_Playlist *pl, gint32 pos);
+-void itdb_playlist_move (Itdb_Playlist *pl, guint32 pos);
+-void itdb_playlist_remove (Itdb_Playlist *pl);
+-void itdb_playlist_unlink (Itdb_Playlist *pl);
+-Itdb_Playlist *itdb_playlist_duplicate (Itdb_Playlist *pl);
+-gboolean itdb_playlist_exists (Itdb_iTunesDB *itdb, Itdb_Playlist *pl);
+-void itdb_playlist_add_track (Itdb_Playlist *pl,
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_new (const gchar *title, gboolean spl);
++GPOD_EXPORT void itdb_playlist_free (Itdb_Playlist *pl);
++GPOD_EXPORT void itdb_playlist_add (Itdb_iTunesDB *itdb, Itdb_Playlist *pl, gint32 pos);
++GPOD_EXPORT void itdb_playlist_move (Itdb_Playlist *pl, guint32 pos);
++GPOD_EXPORT void itdb_playlist_remove (Itdb_Playlist *pl);
++GPOD_EXPORT void itdb_playlist_unlink (Itdb_Playlist *pl);
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_duplicate (Itdb_Playlist *pl);
++GPOD_EXPORT gboolean itdb_playlist_exists (Itdb_iTunesDB *itdb, Itdb_Playlist *pl);
++GPOD_EXPORT void itdb_playlist_add_track (Itdb_Playlist *pl,
+ 			      Itdb_Track *track, gint32 pos);
+-Itdb_Playlist *itdb_playlist_by_id (Itdb_iTunesDB *itdb, guint64 id);
+-Itdb_Playlist *itdb_playlist_by_nr (Itdb_iTunesDB *itdb, guint32 num);
+-Itdb_Playlist *itdb_playlist_by_name (Itdb_iTunesDB *itdb, gchar *name);
+-gboolean itdb_playlist_contains_track (Itdb_Playlist *pl, Itdb_Track *track);
+-guint32 itdb_playlist_contain_track_number (Itdb_Track *tr);
+-void itdb_playlist_remove_track (Itdb_Playlist *pl, Itdb_Track *track);
+-guint32 itdb_playlist_tracks_number (Itdb_Playlist *pl);
+-void itdb_playlist_randomize (Itdb_Playlist *pl);
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_by_id (Itdb_iTunesDB *itdb, guint64 id);
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_by_nr (Itdb_iTunesDB *itdb, guint32 num);
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_by_name (Itdb_iTunesDB *itdb, gchar *name);
++GPOD_EXPORT gboolean itdb_playlist_contains_track (Itdb_Playlist *pl, Itdb_Track *track);
++GPOD_EXPORT guint32 itdb_playlist_contain_track_number (Itdb_Track *tr);
++GPOD_EXPORT void itdb_playlist_remove_track (Itdb_Playlist *pl, Itdb_Track *track);
++GPOD_EXPORT guint32 itdb_playlist_tracks_number (Itdb_Playlist *pl);
++GPOD_EXPORT void itdb_playlist_randomize (Itdb_Playlist *pl);
+ 
+ /* playlist functions for master playlist */
+-Itdb_Playlist *itdb_playlist_mpl (Itdb_iTunesDB *itdb);
+-gboolean itdb_playlist_is_mpl (Itdb_Playlist *pl);
+-void itdb_playlist_set_mpl (Itdb_Playlist *pl);
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_mpl (Itdb_iTunesDB *itdb);
++GPOD_EXPORT gboolean itdb_playlist_is_mpl (Itdb_Playlist *pl);
++GPOD_EXPORT void itdb_playlist_set_mpl (Itdb_Playlist *pl);
+ 
+ /* playlist functions for podcasts playlist */
+-Itdb_Playlist *itdb_playlist_podcasts (Itdb_iTunesDB *itdb);
+-gboolean itdb_playlist_is_podcasts (Itdb_Playlist *pl);
+-void itdb_playlist_set_podcasts (Itdb_Playlist *pl);
++GPOD_EXPORT Itdb_Playlist *itdb_playlist_podcasts (Itdb_iTunesDB *itdb);
++GPOD_EXPORT gboolean itdb_playlist_is_podcasts (Itdb_Playlist *pl);
++GPOD_EXPORT void itdb_playlist_set_podcasts (Itdb_Playlist *pl);
+ 
+ /* smart playlist functions */
+-ItdbSPLFieldType itdb_splr_get_field_type (const Itdb_SPLRule *splr);
+-ItdbSPLActionType itdb_splr_get_action_type (const Itdb_SPLRule *splr);
+-void itdb_splr_validate (Itdb_SPLRule *splr);
+-void itdb_splr_remove (Itdb_Playlist *pl, Itdb_SPLRule *splr);
+-Itdb_SPLRule *itdb_splr_new (void);
+-void itdb_splr_add (Itdb_Playlist *pl, Itdb_SPLRule *splr, gint pos);
+-Itdb_SPLRule *itdb_splr_add_new (Itdb_Playlist *pl, gint pos);
+-void itdb_spl_copy_rules (Itdb_Playlist *dest, Itdb_Playlist *src);
+-gboolean itdb_splr_eval (Itdb_SPLRule *splr, Itdb_Track *track);
+-void itdb_spl_update (Itdb_Playlist *spl);
+-void itdb_spl_update_all (Itdb_iTunesDB *itdb);
+-void itdb_spl_update_live (Itdb_iTunesDB *itdb);
++GPOD_EXPORT ItdbSPLFieldType itdb_splr_get_field_type (const Itdb_SPLRule *splr);
++GPOD_EXPORT ItdbSPLActionType itdb_splr_get_action_type (const Itdb_SPLRule *splr);
++GPOD_EXPORT void itdb_splr_validate (Itdb_SPLRule *splr);
++GPOD_EXPORT void itdb_splr_remove (Itdb_Playlist *pl, Itdb_SPLRule *splr);
++GPOD_EXPORT Itdb_SPLRule *itdb_splr_new (void);
++GPOD_EXPORT void itdb_splr_add (Itdb_Playlist *pl, Itdb_SPLRule *splr, gint pos);
++GPOD_EXPORT Itdb_SPLRule *itdb_splr_add_new (Itdb_Playlist *pl, gint pos);
++GPOD_EXPORT void itdb_spl_copy_rules (Itdb_Playlist *dest, Itdb_Playlist *src);
++GPOD_EXPORT gboolean itdb_splr_eval (Itdb_SPLRule *splr, Itdb_Track *track);
++GPOD_EXPORT void itdb_spl_update (Itdb_Playlist *spl);
++GPOD_EXPORT void itdb_spl_update_all (Itdb_iTunesDB *itdb);
++GPOD_EXPORT void itdb_spl_update_live (Itdb_iTunesDB *itdb);
+ 
+ /* thumbnails functions for coverart */
+ /* itdb_track_... */
+-gboolean itdb_track_set_thumbnails (Itdb_Track *track,
++GPOD_EXPORT gboolean itdb_track_set_thumbnails (Itdb_Track *track,
+ 				    const gchar *filename);
+-gboolean itdb_track_set_thumbnails_from_data (Itdb_Track *track,
++GPOD_EXPORT gboolean itdb_track_set_thumbnails_from_data (Itdb_Track *track,
+ 					      const guchar *image_data,
+ 					      gsize image_data_len);
+-gboolean itdb_track_set_thumbnails_from_pixbuf (Itdb_Track *track,
++GPOD_EXPORT gboolean itdb_track_set_thumbnails_from_pixbuf (Itdb_Track *track,
+                                                 gpointer pixbuf);
+-gboolean itdb_track_has_thumbnails (Itdb_Track *track);
+-void itdb_track_remove_thumbnails (Itdb_Track *track);
+-gpointer itdb_track_get_thumbnail (Itdb_Track *track, gint width, gint height);
++GPOD_EXPORT gboolean itdb_track_has_thumbnails (Itdb_Track *track);
++GPOD_EXPORT void itdb_track_remove_thumbnails (Itdb_Track *track);
++GPOD_EXPORT gpointer itdb_track_get_thumbnail (Itdb_Track *track, gint width, gint height);
+ 
+ /* photoalbum functions -- see itdb_photoalbum.c for instructions on
+  * how to use. */
+-Itdb_PhotoDB *itdb_photodb_parse (const gchar *mp, GError **error);
+-Itdb_Artwork *itdb_photodb_add_photo (Itdb_PhotoDB *db, const gchar *filename,
++GPOD_EXPORT Itdb_PhotoDB *itdb_photodb_parse (const gchar *mp, GError **error);
++GPOD_EXPORT Itdb_Artwork *itdb_photodb_add_photo (Itdb_PhotoDB *db, const gchar *filename,
+ 				      gint position, gint rotation,
+ 				      GError **error);
+-Itdb_Artwork *itdb_photodb_add_photo_from_data (Itdb_PhotoDB *db,
++GPOD_EXPORT Itdb_Artwork *itdb_photodb_add_photo_from_data (Itdb_PhotoDB *db,
+ 						const guchar *image_data,
+ 						gsize image_data_len,
+ 						gint position,
+ 						gint rotation,
+ 						GError **error);
+-Itdb_Artwork *itdb_photodb_add_photo_from_pixbuf (Itdb_PhotoDB *db,
++GPOD_EXPORT Itdb_Artwork *itdb_photodb_add_photo_from_pixbuf (Itdb_PhotoDB *db,
+ 						  gpointer pixbuf,
+ 						  gint position,
+ 						  gint rotation,
+ 						  GError **error);
+-void itdb_photodb_photoalbum_add_photo (Itdb_PhotoDB *db,
++GPOD_EXPORT void itdb_photodb_photoalbum_add_photo (Itdb_PhotoDB *db,
+ 					Itdb_PhotoAlbum *album,
+ 					Itdb_Artwork *photo,
+ 					gint position);
+-Itdb_PhotoAlbum *itdb_photodb_photoalbum_create (Itdb_PhotoDB *db,
++GPOD_EXPORT Itdb_PhotoAlbum *itdb_photodb_photoalbum_create (Itdb_PhotoDB *db,
+ 						 const gchar *albumname,
+ 						 gint pos);
+-Itdb_PhotoDB *itdb_photodb_create (const gchar *mountpoint);
+-void itdb_photodb_free (Itdb_PhotoDB *photodb);
+-gboolean itdb_photodb_write (Itdb_PhotoDB *photodb, GError **error);
+-void itdb_photodb_remove_photo (Itdb_PhotoDB *db,
++GPOD_EXPORT Itdb_PhotoDB *itdb_photodb_create (const gchar *mountpoint);
++GPOD_EXPORT void itdb_photodb_free (Itdb_PhotoDB *photodb);
++GPOD_EXPORT gboolean itdb_photodb_write (Itdb_PhotoDB *photodb, GError **error);
++GPOD_EXPORT void itdb_photodb_remove_photo (Itdb_PhotoDB *db,
+ 				Itdb_PhotoAlbum *album,
+ 				Itdb_Artwork *photo);
+-void itdb_photodb_photoalbum_remove (Itdb_PhotoDB *db,
++GPOD_EXPORT void itdb_photodb_photoalbum_remove (Itdb_PhotoDB *db,
+ 				     Itdb_PhotoAlbum *album,
+ 				     gboolean remove_pics);
+-Itdb_PhotoAlbum *itdb_photodb_photoalbum_by_name(Itdb_PhotoDB *db,
++GPOD_EXPORT Itdb_PhotoAlbum *itdb_photodb_photoalbum_by_name(Itdb_PhotoDB *db,
+ 						 const gchar *albumname );
+ 
+ /* itdb_artwork_... -- you probably won't need many of these (with
+  * the exception of itdb_artwork_get_pixbuf() probably). Use the
+  * itdb_photodb_...() functions when adding photos, and the
+  * itdb_track_...() functions when adding coverart to audio. */
+-Itdb_Artwork *itdb_artwork_new (void);
+-Itdb_Artwork *itdb_artwork_duplicate (Itdb_Artwork *artwork);
+-void itdb_artwork_free (Itdb_Artwork *artwork);
+-gboolean itdb_artwork_set_thumbnail (Itdb_Artwork *artwork,
++GPOD_EXPORT Itdb_Artwork *itdb_artwork_new (void);
++GPOD_EXPORT Itdb_Artwork *itdb_artwork_duplicate (Itdb_Artwork *artwork);
++GPOD_EXPORT void itdb_artwork_free (Itdb_Artwork *artwork);
++GPOD_EXPORT gboolean itdb_artwork_set_thumbnail (Itdb_Artwork *artwork,
+ 				     const gchar *filename,
+ 				     gint rotation, GError **error);
+-gboolean itdb_artwork_set_thumbnail_from_data (Itdb_Artwork *artwork,
++GPOD_EXPORT gboolean itdb_artwork_set_thumbnail_from_data (Itdb_Artwork *artwork,
+ 					       const guchar *image_data,
+ 					       gsize image_data_len,
+ 					       gint rotation, GError **error);
+-gboolean itdb_artwork_set_thumbnail_from_pixbuf (Itdb_Artwork *artwork,
++GPOD_EXPORT gboolean itdb_artwork_set_thumbnail_from_pixbuf (Itdb_Artwork *artwork,
+                                                  gpointer pixbuf,
+                                                  gint rotation,
+                                                  GError **error);
+-void itdb_artwork_remove_thumbnails (Itdb_Artwork *artwork);
++GPOD_EXPORT void itdb_artwork_remove_thumbnails (Itdb_Artwork *artwork);
+ /* the following function returns a pointer to a GdkPixbuf if
+    gdk-pixbuf is installed -- a NULL pointer otherwise. */
+-gpointer itdb_artwork_get_pixbuf (Itdb_Device *device, Itdb_Artwork *artwork,
++GPOD_EXPORT gpointer itdb_artwork_get_pixbuf (Itdb_Device *device, Itdb_Artwork *artwork,
+                                   gint width, gint height);
+ 
+ /* itdb_thumb_... */
+-Itdb_Thumb *itdb_thumb_duplicate (Itdb_Thumb *thumb);
+-gpointer itdb_thumb_to_pixbuf_at_size (Itdb_Device *device, Itdb_Thumb *thumb,
++GPOD_EXPORT Itdb_Thumb *itdb_thumb_duplicate (Itdb_Thumb *thumb);
++GPOD_EXPORT gpointer itdb_thumb_to_pixbuf_at_size (Itdb_Device *device, Itdb_Thumb *thumb,
+                                        gint width, gint height);
+-GList *itdb_thumb_to_pixbufs (Itdb_Device *device, Itdb_Thumb *thumb);
+-void itdb_thumb_free (Itdb_Thumb *thumb);
++GPOD_EXPORT GList *itdb_thumb_to_pixbufs (Itdb_Device *device, Itdb_Thumb *thumb);
++GPOD_EXPORT void itdb_thumb_free (Itdb_Thumb *thumb);
+ 
+ /* itdb_chapterdata_... */
+-Itdb_Chapterdata *itdb_chapterdata_new (void);
+-void itdb_chapterdata_free (Itdb_Chapterdata *chapterdata);
+-Itdb_Chapterdata *itdb_chapterdata_duplicate (Itdb_Chapterdata *chapterdata);
+-void itdb_chapterdata_remove_chapter (Itdb_Chapterdata *chapterdata, Itdb_Chapter *chapter);
+-void itdb_chapterdata_remove_chapters (Itdb_Chapterdata *chapterdata);
+-Itdb_Chapter *itdb_chapter_new (void);
+-void itdb_chapter_free (Itdb_Chapter *chapter);
+-Itdb_Chapter *itdb_chapter_duplicate (Itdb_Chapter *chapter);
+-gboolean itdb_chapterdata_add_chapter (Itdb_Chapterdata *chapterdata,
++GPOD_EXPORT Itdb_Chapterdata *itdb_chapterdata_new (void);
++GPOD_EXPORT void itdb_chapterdata_free (Itdb_Chapterdata *chapterdata);
++GPOD_EXPORT Itdb_Chapterdata *itdb_chapterdata_duplicate (Itdb_Chapterdata *chapterdata);
++GPOD_EXPORT void itdb_chapterdata_remove_chapter (Itdb_Chapterdata *chapterdata, Itdb_Chapter *chapter);
++GPOD_EXPORT void itdb_chapterdata_remove_chapters (Itdb_Chapterdata *chapterdata);
++GPOD_EXPORT Itdb_Chapter *itdb_chapter_new (void);
++GPOD_EXPORT void itdb_chapter_free (Itdb_Chapter *chapter);
++GPOD_EXPORT Itdb_Chapter *itdb_chapter_duplicate (Itdb_Chapter *chapter);
++GPOD_EXPORT gboolean itdb_chapterdata_add_chapter (Itdb_Chapterdata *chapterdata,
+ 				       gint32 startpos,
+ 				       gchar *chaptertitle);
+ 
+ #ifndef LIBGPOD_DISABLE_DEPRECATED
+ /* time functions */
+-time_t itdb_time_get_mac_time (void);
+-time_t itdb_time_mac_to_host (time_t time);
+-time_t itdb_time_host_to_mac (time_t time);
++GPOD_EXPORT time_t itdb_time_get_mac_time (void);
++GPOD_EXPORT time_t itdb_time_mac_to_host (time_t time);
++GPOD_EXPORT time_t itdb_time_host_to_mac (time_t time);
+ #endif
+ 
+ /* Initialize a blank ipod */
+-gboolean itdb_init_ipod (const gchar *mountpoint,
++GPOD_EXPORT gboolean itdb_init_ipod (const gchar *mountpoint,
+ 			 const gchar *model_number,
+ 			 const gchar *ipod_name,
+ 			 GError **error);
+diff -Nru libgpod-0.7.2.orig/src/itdb_itunesdb.c libgpod-0.7.2/src/itdb_itunesdb.c
+--- libgpod-0.7.2.orig/src/itdb_itunesdb.c	2009-04-15 23:18:35.000000000 +0200
++++ libgpod-0.7.2/src/itdb_itunesdb.c	2010-02-08 03:14:54.073000000 +0100
+@@ -5335,9 +5335,11 @@
+ 	itdb->filename = fn;
+     }
+ 
++#ifndef WIN32
+     /* make sure all buffers are flushed as some people tend to
+        disconnect as soon as gtkpod returns */
+     sync ();
++#endif
+ 
+     return result;
+ }
+@@ -5397,9 +5399,11 @@
+ 	result = itdb_rename_files (itdb_get_mountpoint (itdb), error);
+     }
+ 
++#ifndef WIN32
+     /* make sure all buffers are flushed as some people tend to
+        disconnect as soon as gtkpod returns */
+     sync ();
++#endif
+ 
+     return result;
+ }
+@@ -5556,9 +5560,11 @@
+     if (result == TRUE)
+ 	result = itdb_rename_files (itdb_get_mountpoint (itdb), error);
+ 
++#ifndef WIN32
+     /* make sure all buffers are flushed as some people tend to
+        disconnect as soon as gtkpod returns */
+     sync ();
++#endif
+ 
+     return result;
+ }
+@@ -5685,9 +5691,11 @@
+     wcontents_free (cts);
+     g_free (fexp);
+ 
++#ifndef WIN32
+     /* make sure all buffers are flushed as some people tend to
+        disconnect as soon as gtkpod returns */
+     sync ();
++#endif
+ 
+     return result;
+ }
+@@ -6372,8 +6380,13 @@
+ 	goto err_out;
+     }
+ 
++#ifdef WIN32
++    file_out =  g_open (to_file, O_CREAT|O_WRONLY|O_TRUNC|O_BINARY,
++	        0);
++#else
+     file_out =  g_open (to_file, O_CREAT|O_WRONLY|O_TRUNC|O_BINARY,
+                         S_IRWXU|S_IRWXG|S_IRWXO);
++#endif
+     if (file_out < 0)
+     {
+ 	g_set_error (error,
+diff -Nru libgpod-0.7.2.orig/src/ithumb-writer.c libgpod-0.7.2/src/ithumb-writer.c
+--- libgpod-0.7.2.orig/src/ithumb-writer.c	2009-04-15 23:18:35.000000000 +0200
++++ libgpod-0.7.2/src/ithumb-writer.c	2010-02-08 03:14:54.091000000 +0100
+@@ -673,7 +673,11 @@
+ 				return NULL;
+ 			}
+ 			dir = g_build_filename (photos_dir, "Thumbs", NULL);
+-			mkdir (dir, 0777);
++#ifdef WIN32
++	        mkdir (dir);
++#else
++	        mkdir (dir, 0777);
++#endif
+ 			g_free (dir);
+ 			g_free (photos_dir);
+ 
+@@ -697,7 +701,11 @@
+ 			return NULL;
+ 		}
+ 		dir = g_build_filename (control_dir, "Artwork", NULL);
++#ifdef WIN32
++	 mkdir (dir);
++#else
+ 		mkdir (dir, 0777);
++#endif
+ 		g_free (dir);
+ 		g_free (control_dir);
+ 
+diff -Nru libgpod-0.7.2.orig/tests/test-checksum.c libgpod-0.7.2/tests/test-checksum.c
+--- libgpod-0.7.2.orig/tests/test-checksum.c	2009-04-15 23:18:36.000000000 +0200
++++ libgpod-0.7.2/tests/test-checksum.c	2010-02-08 03:14:54.102000000 +0100
+@@ -1,3 +1,4 @@
++#ifndef WIN32
+ /*
+ |  Copyright (C) 2007 Christophe Fergeau <teuf@gnome.org>
+ |
+@@ -179,3 +180,10 @@
+ 
+     return 0;
+ }
++#else /* WIN32 */
++#warning __FILE__ " does not compile on win32"
++int main(int argc, char **argv)
++{
++    return 1;
++}
++#endif
