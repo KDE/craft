@@ -410,6 +410,18 @@ diff -Nru libgpod-0.7.2.orig/src/itdb.h libgpod-0.7.2/src/itdb.h
  			 const gchar *model_number,
  			 const gchar *ipod_name,
  			 GError **error);
+diff -Nru libgpod-0.7.2.orig/src/itdb_device.h libgpod-0.7.2/src/itdb_device.h
+--- libgpod-0.7.2.orig/src/itdb_device.h	2009-04-15 23:18:35.000000000 +0200
++++ libgpod-0.7.2/src/itdb_device.h	2010-02-08 17:09:08.719000000 +0100
+@@ -157,7 +157,7 @@
+ 
+ /* Error domain */
+ #define ITDB_DEVICE_ERROR itdb_device_error_quark ()
+-GQuark     itdb_device_error_quark      (void);
++GPOD_EXPORT GQuark     itdb_device_error_quark      (void);
+ 
+ G_GNUC_INTERNAL GList *itdb_device_get_photo_formats (const Itdb_Device *device);
+ G_GNUC_INTERNAL GList *itdb_device_get_cover_art_formats (const Itdb_Device *device);
 diff -Nru libgpod-0.7.2.orig/src/itdb_itunesdb.c libgpod-0.7.2/src/itdb_itunesdb.c
 --- libgpod-0.7.2.orig/src/itdb_itunesdb.c	2009-04-15 23:18:35.000000000 +0200
 +++ libgpod-0.7.2/src/itdb_itunesdb.c	2010-02-08 03:14:54.073000000 +0100
