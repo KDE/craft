@@ -30,14 +30,10 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
-        #libxml support wont work without pkg-config libxml stuff
-        self.subinfo.options.configure.defines = """--disable-libxml --with-python=no --disable-static"""
+        self.subinfo.options.configure.defines = """--with-python=no --disable-static LIBXML_LIBS=-lxml2"""
 
-
-       
     def config( self):
         os.putenv("GMSGFMT", "%s/bin/msgfmt.exe" % os.environ.get("MSYSDIR").replace('\\','/') )
-
         
 if __name__ == '__main__':
      Package().execute()
