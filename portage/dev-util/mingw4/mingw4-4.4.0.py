@@ -51,6 +51,7 @@ class subinfo(info.infoclass):
         self.targets['4.3.0'] = SRC_URI
         self.targets['4.4.0-tdm-r2'] = SRC_URI2
         self.targets['4.4.0'] = SRC_URI3
+        self.patchToApply['4.4.0']=('mingwrt-3.17.diff',0)
         self.defaultTarget = '4.4.0'
     
     def setDependencies( self ):

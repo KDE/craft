@@ -1,0 +1,14 @@
+--- cwchar.org  2010-02-08 01:35:30.616846500 +0100
++++ lib/gcc/mingw32/4.4.0/include/c++/cwchar      2010-02-08 01:35:41.763484100 +0100
+@@ -135,6 +135,12 @@
+ #undef wscanf
+
+ #if _GLIBCXX_USE_WCHAR_T
++#if (defined(__MINGW32__) || defined(__MINGW64__)) && (__GNUC__ == 4) &&(__GNUC_MINOR__ == 4) && (__GNUC_PATCHLEVEL__ == 0)
++// workaround a mingw bug, http://sourceforge.net/tracker/index.php?func=detail&aid=2373234&group_id=2435&atid=102435
++#include <stdarg.h>
++int swprintf (wchar_t *, size_t, const wchar_t *, ...);
++int vswprintf(wchar_t *, const wchar_t *, va_list);
++#endif
+
+ _GLIBCXX_BEGIN_NAMESPACE(std)
