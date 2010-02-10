@@ -4,6 +4,7 @@ import shutil
 import utils
 import info
 
+
 PACKAGE_NAME         = "sqlite"
 PACKAGE_DLL_NAME     = "sqlite3"
 PACKAGE_VER_MAJOR    = "3"
@@ -63,6 +64,8 @@ class Package(BinaryPackageBase):
         dst = os.path.join( self.imageDir(), "src", PACKAGE_DLL_NAME + ".c" )
         utils.moveFile( src, dst )
         utils.createImportLibs( PACKAGE_DLL_NAME, self.imageDir() )
+        os.makedirs( os.path.join( self.installDir(), "lib" ,"pkgconfig" ))
+        utils.copyFile( os.path.join( self.packageDir(), "sqlite3.pc" ), os.path.join( self.installDir(), "lib","pkgconfig", "sqlite3.pc" ) )
         return True
 
 if __name__ == '__main__':

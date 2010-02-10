@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['win32libs-bin/libidn'] = 'default'
+        self.hardDependencies['win32libs-sources/libidn-src'] = 'default'
         self.hardDependencies['win32libs-bin/libmsn'] = 'default'
         self.hardDependencies['win32libs-bin/libgmp'] = 'default'
         

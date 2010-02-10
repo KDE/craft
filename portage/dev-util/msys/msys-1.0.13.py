@@ -5,8 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/sourceforge/mingw"""
         msysFiles=""
-        for file in ['msysCORE-1.0.13-2-msys-1.0.13-bin.tar.lzma','gettext-0.17-1-msys-1.0.11-dev.tar.lzma',
-                     'gettext-0.17-1-msys-1.0.11-bin.tar.lzma','bash-3.1.17-2-msys-1.0.11-bin.tar.lzma',
+        for file in ['msysCORE-1.0.13-2-msys-1.0.13-bin.tar.lzma','bash-3.1.17-2-msys-1.0.11-bin.tar.lzma',
                      'sed-4.2.1-1-msys-1.0.11-bin.tar.lzma','coreutils-5.97-2-msys-1.0.11-bin.tar.lzma',
                      'gawk-3.1.7-1-msys-1.0.11-bin.tar.lzma','make-3.81-2-msys-1.0.11-bin.tar.lzma']:
             msysFiles = """%s
