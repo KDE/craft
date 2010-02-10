@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/amarok/amarok.git'
+        self.svnTargets['gitHEAD'] = 'git://github.com/JonathanBeck/libplist.git'
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
