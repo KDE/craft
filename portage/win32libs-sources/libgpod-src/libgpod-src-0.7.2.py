@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/glib'] = 'default'
         self.hardDependencies['testing/pkg-config'] = 'default'
         self.hardDependencies['win32libs-bin/sqllite'] = 'default'
-        self.hardDependencies['testing/libplist'] = 'default'
+        self.hardDependencies['testing/libplist-src'] = 'default'
         self.hardDependencies['testing/intltool-src'] = 'default'
 
     def setTargets( self ):
