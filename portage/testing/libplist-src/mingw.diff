@@ -1,0 +1,13 @@
+diff --git a/include/plist/Date.h b/include/plist/Date.h
+index dc12233..2ea830b 100644
+--- a/include/plist/Date.h
++++ b/include/plist/Date.h
+@@ -25,7 +25,7 @@
+ #include <plist/Node.h>
+ #include <ctime>
+ 
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #include <Winsock2.h>
+ #endif
+ 
