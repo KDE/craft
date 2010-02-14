@@ -1,0 +1,12 @@
+diff -Nru kdebase-runtime-4.4.0.orig/plasma/scriptengines/javascript/simplejavascriptapplet.cpp kdebase-runtime-4.4.0/plasma/scriptengines/javascript/simplejavascriptapplet.cpp
+--- kdebase-runtime-4.4.0.orig/plasma/scriptengines/javascript/simplejavascriptapplet.cpp	2010-02-04 10:28:14.000000000 +0100
++++ kdebase-runtime-4.4.0/plasma/scriptengines/javascript/simplejavascriptapplet.cpp	2010-02-14 14:31:48.248200000 +0100
+@@ -570,7 +570,7 @@
+     fun = m_engine->newFunction(SimpleJavaScriptApplet::print);
+     global.setProperty("print", fun);
+     fun = m_engine->newFunction(SimpleJavaScriptApplet::debug);
+-    global.setProperty("print", debug);
++    global.setProperty("print", fun);
+ 
+     // Work around bug in 4.3.0
+     qMetaTypeId<QVariant>();
