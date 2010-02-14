@@ -1,0 +1,12 @@
+diff -Nru digikam-1.1.0.orig/digikam/CMakeLists.txt digikam-1.1.0/digikam/CMakeLists.txt
+--- digikam-1.1.0.orig/digikam/CMakeLists.txt	2010-01-31 14:22:48.000000000 +0100
++++ digikam-1.1.0/digikam/CMakeLists.txt	2010-02-14 19:31:17.804400000 +0100
+@@ -175,7 +175,7 @@
+     SET_TARGET_PROPERTIES(digikamcore PROPERTIES OUTPUT_NAME digikamlib)
+ ENDIF(WIN32)
+ INSTALL(TARGETS digikamcore ${INSTALL_TARGETS_DEFAULT_ARGS})
+-
++TARGET_LINK_LIBRARIES(digikamcore LINK_INTERFACE_LIBRARIES ${QT_QT3SUPPORT_LIBRARY})
+ 
+ # Shared libdigikamdatabase ########################################################
+ 

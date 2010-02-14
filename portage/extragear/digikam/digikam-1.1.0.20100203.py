@@ -6,13 +6,14 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
-        self.targets['1.0.0'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0/digikam-1.0.0.tar.bz2'
-        self.targetInstSrc['1.0.0'] = 'digikam-1.0.0'
-        self.targets['1.1.0'] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.1.0/digikam-1.1.0.tar.bz2'
-        self.targetInstSrc['1.1.0'] = 'digikam-1.1.0'
+        for ver in ['1.0.0', '1.1.0']:
+            self.targets[ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/' + ver + '/digikam-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = 'digikam-' + ver
         for ver in ['beta1', 'beta3', 'beta4', 'beta5']:
             self.targets['1.0.0-' + ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/1.0.0-' + ver + '/digikam-1.0.0-' + ver + '.tar.bz2'
             self.targetInstSrc['1.0.0-' + ver] = 'digikam-1.0.0-' + ver
+            
+        self.patchToApply['1.1.0'] = ('digikam-1.1.0.diff', 1)
         
         self.svnTargets['branch-0.10.0'] = 'branches/extragear/graphics/digikam/0.10.0-trunk'
         self.options.configure.defines = "-DENABLE_GPHOTO2=OFF"
