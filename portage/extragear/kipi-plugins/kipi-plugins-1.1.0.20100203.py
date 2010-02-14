@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = 'kipi-plugins-' + ver
         self.patchToApply[ '0.7.0' ] = ( 'kipi-twain-stable.diff', 0 )
         self.patchToApply[ '0.8.0' ] = ( 'kipi-plugins-0.8.0-20091106.diff', 1 )
+        self.patchToApply[ '1.1.0' ] = ( 'kipi-plugins-1.1.0.diff', 1 )
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):

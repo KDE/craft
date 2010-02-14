@@ -1,0 +1,12 @@
+diff -Nru kipi-plugins-1.1.0.orig/expoblending/manager/actionthread.cpp kipi-plugins-1.1.0/expoblending/manager/actionthread.cpp
+--- kipi-plugins-1.1.0.orig/expoblending/manager/actionthread.cpp	2010-01-31 16:17:40.000000000 +0100
++++ kipi-plugins-1.1.0/expoblending/manager/actionthread.cpp	2010-02-14 19:18:18.318600000 +0100
+@@ -286,7 +286,7 @@
+                     {
+                         float val = getAverageSceneLuminance(t->urls[0].toLocalFile());
+                         if (val != -1)
+-                            avLum.setNum(log2f(val), 'g', 2);
++                            avLum.setNum(float(log(val)/log(2)), 'g', 2);
+                     }
+ 
+                     ActionData ad;
