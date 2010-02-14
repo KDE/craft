@@ -1,6 +1,6 @@
-diff -Nru kdegraphics-4.3.95.orig/CMakeLists.txt kdegraphics-4.3.95/CMakeLists.txt
---- kdegraphics-4.3.95.orig/CMakeLists.txt	2010-01-06 17:59:27.000000000 +0100
-+++ kdegraphics-4.3.95/CMakeLists.txt	2010-01-13 13:24:06.933400000 +0100
+diff -Nru kdegraphics-4.4.0.orig/CMakeLists.txt kdegraphics-4.4.0/CMakeLists.txt
+--- kdegraphics-4.4.0.orig/CMakeLists.txt	2010-01-06 17:59:27.000000000 +0100
++++ kdegraphics-4.4.0/CMakeLists.txt	2010-01-13 13:24:06.933400000 +0100
 @@ -58,7 +58,9 @@
  macro_optional_add_subdirectory(kruler)
  macro_optional_add_subdirectory(svgpart)
@@ -12,24 +12,3 @@ diff -Nru kdegraphics-4.3.95.orig/CMakeLists.txt kdegraphics-4.3.95/CMakeLists.t
    macro_optional_add_subdirectory(okular)
  endif(QIMAGEBLITZ_FOUND)
  
-diff -Nru kdegraphics-4.3.95.orig/libs/libkdcraw/CMakeLists.txt kdegraphics-4.3.95/libs/libkdcraw/CMakeLists.txt
---- kdegraphics-4.3.95.orig/libs/libkdcraw/CMakeLists.txt	2009-12-01 01:33:28.000000000 +0100
-+++ kdegraphics-4.3.95/libs/libkdcraw/CMakeLists.txt	2010-01-13 03:38:59.651000000 +0100
-@@ -74,7 +74,7 @@
- MESSAGE(STATUS "CMake version (cleaned): ${VERSION_CMAKE_INFO}")
- MACRO_ENSURE_VERSION("2.6.3" "${VERSION_CMAKE_INFO}" VERSION_CMAKE)
- 
--IF(VERSION_CMAKE)
-+IF(VERSION_CMAKE AND NOT MSVC)
-     MACRO_OPTIONAL_FIND_PACKAGE(OpenMP)
-     IF(OPENMP_FOUND)
-         MESSAGE(STATUS "OpenMP detected: LibRaw will be compiled with parallelized code.")
-@@ -86,7 +86,7 @@
- ELSE(VERSION_CMAKE)
-     MESSAGE(STATUS "CMake version too old: cannot detected OpenMP: LibRaw will not be compiled with parallelized code.")
-     SET(USE_OPENMP FALSE)
--ENDIF(VERSION_CMAKE)
-+ENDIF(VERSION_CMAKE AND NOT MSVC)
- 
- IF(OPENMP_FOUND)
-     ADD_DEFINITIONS(${OpenMP_CXX_FLAGS}) 
