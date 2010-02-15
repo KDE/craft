@@ -19,14 +19,18 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         # the static version uses one of the stable versions
         self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|"
-        # this is the current 4.6 version with the KDE patches.
+        # this is the upcoming 4.7 version with the KDE patches.
         self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
         # this version contains the patches against the 4.5.3 release and is recommended for KDE 4.3.X
         self.svnTargets['4.5.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.3-patched|"
         # this branch contains all the patches and follows the 4.6-stable branch on qt.git - it updates daily
-        self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
+        self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6-stable-patched|"
+        # those are the stable releases with the KDE patches applied on top
+        self.svnTargets['4.6.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
         self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
-        self.defaultTarget = '4.6.1'
+        self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
+
+        self.defaultTarget = '4.6.2'
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
