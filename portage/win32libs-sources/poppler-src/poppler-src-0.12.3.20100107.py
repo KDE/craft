@@ -24,7 +24,9 @@ class subinfo(info.infoclass):
         # does not work with mingw
         #self.hardDependencies['win32libs-bin/openjpeg'] = 'default'
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
+        self.hardDependencies['win32libs-bin/zlib'] = 'default'
         self.hardDependencies['win32libs-bin/jpeg'] = 'default'
+        self.hardDependencies['win32libs-bin/libpng'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
