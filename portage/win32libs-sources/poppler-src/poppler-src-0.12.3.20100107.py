@@ -27,6 +27,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
         self.hardDependencies['win32libs-bin/jpeg'] = 'default'
         self.hardDependencies['win32libs-bin/libpng'] = 'default'
+        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
