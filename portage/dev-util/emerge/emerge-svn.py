@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         
     def setDependencies( self ):
         self.hardDependencies['dev-util/doxygen'] = 'default'
+        self.hardDependencies['dev-util/subversion'] = 'default'
 
 from Package.PackageBase import *
 from Source.SvnSource import *
