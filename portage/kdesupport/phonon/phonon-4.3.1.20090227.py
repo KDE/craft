@@ -7,15 +7,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['_4.1.0'] = 'tags/phonon/4.1.0'    # tagged version, also in qt4.4.0
-        self.svnTargets['_4.2.0'] = 'tags/phonon/4.2.0'    # tagged version
-        self.svnTargets['_4.3.0'] = 'tags/phonon/4.3.0'
-        self.svnTargets['_4.3.1'] = 'tags/phonon/4.3.1'
-        self.svnTargets['_4.2'] = 'branches/phonon/4.2'
-        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/phonon'
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/phonon'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
+        self.defaultTarget = 'gitHEAD'
         self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
 
 from Package.CMakePackageBase import *
