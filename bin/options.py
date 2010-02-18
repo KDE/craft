@@ -72,6 +72,8 @@ class OptionsCMake:
         self.useIDE = False
         ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
         self.openIDE = False
+        ## use CTest instead of the make utility
+        self.useCTest = False
         
 ## main option class
 class Options:

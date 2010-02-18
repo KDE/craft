@@ -96,7 +96,9 @@ class CMakeBuildSystem(BuildSystemBase):
                 options += self.subinfo.options.configure.testDefine
         if self.subinfo.options.configure.onlyBuildTargets :
             options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
-                
+        if self.subinfo.options.cmake.useCTest:
+            options += " -DCMAKE_PROGRAM_PATH=\"%s\" " % \
+                            ( os.path.join( self.mergeDestinationDir(), "dev-utils", "svn", "bin" ).replace( "\\", "/" ) )
         options += " \"%s\"" % self.configureSourceDir()
         return options
 
@@ -129,6 +131,10 @@ class CMakeBuildSystem(BuildSystemBase):
             command = "start %s" % self.__slnFileName()             
         elif self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
             command = "vcbuild /M1 %s \"%s|Win32\"" % (self.__slnFileName(),self.buildType())
+        elif self.subinfo.options.cmake.useCTest:
+            # first make clean
+            self.system( self.makeProgramm + " clean", "make clean" ) 
+            command = "ctest -M " + "Nightly" + " -T Start -T Update -T Configure -T Build -T Submit"
         else:
             command = self.makeProgramm
 
