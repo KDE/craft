@@ -1,0 +1,21 @@
+diff -u mingw-orig/include/vmr9.h mingw/include/vmr9.h
+--- mingw-orig/include/vmr9.h	2007-12-14 19:30:38.000000000 +1000
++++ mingw/include/vmr9.h	2007-12-14 19:54:48.000000000 +1000
+@@ -61,7 +61,7 @@
+ 	MixerPref9_RenderTargetRGB = 0x00001000,
+ 	MixerPref9_RenderTargetYUV = 0x00002000,
+ 	MixerPref9_RenderTargetReserved = 0x000FC000,
+-	MixerPref9_RenderTargetMask = 0x000FF000
++	MixerPref9_RenderTargetMask = 0x000FF000,
+ 	MixerPref9_DynamicSwitchToBOB = 0x00100000,
+ 	MixerPref9_DynamicDecimateBy2 = 0x00200000,
+ 	MixerPref9_DynamicReserved = 0x00C00000,
+@@ -128,7 +128,7 @@
+ 	HMONITOR hMon;
+ 	DWORD dwFlags;
+ 	wchar_t szDevice[32];
+-	wchar_t szDescription[512]
++	wchar_t szDescription[512];
+ 	LARGE_INTEGER liDriverVersion;
+ 	DWORD dwVendorId;
+ 	DWORD dwDeviceId;
