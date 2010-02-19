@@ -6,11 +6,13 @@ import os
 # currently only needed from kdenetwork
 
 class subinfo(info.infoclass):
-    def setTargets( self ):    
-        self.targets[ '1.1.0-20100129'] = """http://nightlies.videolan.org/build/win32/trunk-20100129-1616/vlc-1.1.0-git-20100129-1616-win32.7z"""
-
-        self.defaultTarget = '1.1.0-20100129'
-        self.targetInstSrc['1.1.0-20100129'] = "vlc-1.1.0-git-20100129-1616"
+    def setTargets( self ):
+        for ver in ['20100129-1616', '20100219-0002']:
+            self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z" % (ver , ver )
+            self.targetInstSrc[ver] = "vlc-1.1.0-git-%s" % (ver)
+        
+        
+        self.defaultTarget = '20100219-0002'  
        
 
     def setDependencies( self ):
