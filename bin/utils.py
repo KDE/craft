@@ -563,6 +563,13 @@ def fixCmakeImageDir( imagedir, rootdir ):
     #print "rp:", rootpath
     if ( rootpath.startswith( "\\" ) ):
         rootpath = rootpath[1:]
+    # CMAKE_INSTALL_PREFIX = X:\
+    # -> files are installed to
+    # x:\build\foo\dbus\image\
+    # --> all fine in this case
+    #print "rp:", rootpath
+    if len(rootpath) == 0:
+      return
     tmp = os.path.join( imagedir, rootpath )
     debug( "tmp: %s" % tmp, 1 )
     tmpdir = os.path.join( imagedir, "tMpDiR" )
