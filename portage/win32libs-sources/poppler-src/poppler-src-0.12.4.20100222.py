@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
-import base
-import os
-import utils
 import info
-
 from Package.CMakePackageBase import *
-        
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for i in ( '0.10.1', '0.10.2', '0.10.3', '0.10.4', '0.10.5', '0.10.6', '0.12.0', '0.12.1', '0.12.2', '0.12.3' ):
+        for i in ( '0.12.1', '0.12.2', '0.12.3', '0.12.4' ):
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
-        self.patchToApply['0.12.0'] = ('poppler-0.12.0.diff', 1)
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
         self.svnTargets['0.12-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.12"
 
