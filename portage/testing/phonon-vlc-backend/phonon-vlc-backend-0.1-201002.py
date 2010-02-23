@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
       self.hardDependencies['testing/vlc'] = 'default'
         
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git://git.videolan.org/vlc/bindings/phonon.git'
+      self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon-vlc.git'
       self.defaultTarget = 'gitHEAD'
          
 
