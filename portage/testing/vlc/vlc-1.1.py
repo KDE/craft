@@ -7,12 +7,12 @@ import os
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['20100129-1616', '20100219-0002']:
+        for ver in ['20100129-1616', '20100219-0002', '20100223-1143']:
             self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z" % (ver , ver )
             self.targetInstSrc[ver] = "vlc-1.1.0-git-%s" % (ver)
         
         
-        self.defaultTarget = '20100219-0002'  
+        self.defaultTarget = '20100223-1143'  
        
 
     def setDependencies( self ):
