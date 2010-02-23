@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/playground/multimedia/phonon-backends"
         self.defaultTarget = 'svnHEAD'
+        self.options.configure.defines = "-DWITH_VLC=OFF"
 
     def setDependencies( self ):
         self.hardDependencies['kdesupport/phonon'] = 'default'
