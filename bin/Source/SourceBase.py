@@ -33,16 +33,15 @@ class SourceBase(EmergeBase):
     def unpack(self): 
         """unpack the source into a local destination."""
         abstract()
-        
-    def sourceDir(self): 
+
+    def sourceDir(self, index=0):
         sourcedir = self.workDir()
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             sourcedir = self.imageDir()
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
-        if utils.verbose > 1:
-            print "using sourcedir: " + sourcedir
+        utils.debug( "using sourcedir: " + sourcedir, 1 )
         return sourcedir
 
     def applyPatches(self):
@@ -60,7 +59,18 @@ class SourceBase(EmergeBase):
     def createPatch(self):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
         abstract()
-        
+
+    def repositoryPath(self,index=0):
+        """use this to get one of multiple repository paths; these can be download urls as well"""
+        abstract()
+
+    def repositoryPathCount(self):
+        """use this to get number of repository paths"""
+        abstract()
+
+    def localFileNamesBase(self):
+        abstract()
+
     def sourceVersion(self):
         """ return the current revision or version of the source directory, 
             return True in case it is not applicable and give out nothing """
