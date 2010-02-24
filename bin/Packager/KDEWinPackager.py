@@ -73,11 +73,7 @@ class KDEWinPackager (PackagerBase):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
                 utils.copyFile( script, destscript )
         
-        # determine source in case MultiSource is used
-        if hasattr(self,'source'): 
-            sourcedir = self.source.sourceDir()
-        else:
-            sourcedir = self.sourceDir()
+        sourcedir = self.sourceDir()
         
         # todo: this is probably code for dealing with svn repositories 
         # need to be refactored
