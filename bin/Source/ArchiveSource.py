@@ -13,15 +13,26 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.__init__ called", 2 )
         SourceBase.__init__(self)
 
-    def __localFileNames(self):
-        """ collect local filenames """
-        utils.debug( "ArchiveSource.__localFileNames called", 2 )
-
-        filenames =[]
-
+    def repositoryPath(self, index=0):
+        """all repository pathes"""
         if self.subinfo.hasTarget():
-            for uri in self.subinfo.target().split():
-                filenames.append( os.path.basename( uri ) )
+            return os.path.basename( self.subinfo.target().split()[index] )
+        else:
+            return False
+        
+    def repositoryPathCount(self):
+        return len( self.subinfo.target().split() )
+
+    def localFileNames( self ):
+        return self.localFileNamesBase()
+
+    def localFileNamesBase(self):
+        """ collect local filenames """
+        utils.debug( "ArchiveSource.localFileNamesBase called", 2 )
+
+        filenames = []
+        for i in range(self.repositoryPathCount()):
+            filenames.append( os.path.basename( self.repositoryPath( i ) ) )
         return filenames
 
                     
@@ -29,8 +40,8 @@ class ArchiveSource(SourceBase):
         """getting normal tarballs from SRC_URI"""
         utils.debug( "ArchiveSource.fetch called", 2 )
             
-        filenames = self.__localFileNames()
-        
+        filenames = self.localFileNames()
+
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
             return True
@@ -45,18 +56,13 @@ class ArchiveSource(SourceBase):
         """unpacking all zipped(gz,zip,bz2) tarballs"""        
         utils.debug( "ArchiveSource.unpack called", 2 )
 
-        filenames = self.__localFileNames()        
+        filenames = self.localFileNames()
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.installDir()
             utils.debug("unpacking files into image root %s" % destdir,1)
         else:
             destdir = self.workDir()
-            
-            if ( not os.path.exists( self.buildDir()) ):
-                os.makedirs( self.buildDir() )
-                utils.debug( "creating: %s" % self.buildDir(), 0 )
-
             utils.debug("unpacking files into work root %s" % destdir,1)
 
         if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
@@ -67,7 +73,7 @@ class ArchiveSource(SourceBase):
     def createPatch( self ):
         """ unpacking all zipped(gz,zip,bz2) tarballs a second time and making a patch """
         # get the file paths of the tarballs
-        filenames = self.__localFileNames()
+        filenames = self.localFileNames()
 
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr( self, 'buildSystemType' ) and self.buildSystemType == 'binary':

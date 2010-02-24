@@ -13,10 +13,14 @@ class MultiSource():
         utils.debug( "MultiSource __init__", 2 )
 
         self.source = SourceFactory(self.subinfo)
+        self.source.localFileNames = self.localFileNames.__get__(self, MultiSource)
         self.source.category = self.category
         self.source.package = self.package
         self.source.version = self.version
         self.source.PV = self.PV
+
+    def localFileNames( self ):
+        return self.source.localFileNamesBase()
 
     def fetch(self):
         return self.source.fetch()
@@ -30,7 +34,10 @@ class MultiSource():
 
     def repositoryPath(self,index=0):
         return self.source.repositoryPath(index)
-        
+
+    def repositoryPathCount(self):
+        return self.source.repositoryPathCount()
+
     def applyPatches(self):
         return self.source.applyPatches()
 

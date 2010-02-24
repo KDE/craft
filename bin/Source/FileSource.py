@@ -12,9 +12,9 @@ class FileSource(SourceBase):
         utils.debug( "FileSource.__init__ called", 2 )
         SourceBase.__init__(self)
 
-    def __localFileNames(self):
+    def localFileNamesBase(self):
         """ collect local filenames """
-        utils.debug( "FileSource.__localFileNames called", 2 )
+        utils.debug( "FileSource.localFileNamesBase called", 2 )
 
         filenames =[]
 
