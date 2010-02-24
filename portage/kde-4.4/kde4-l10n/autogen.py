@@ -213,5 +213,7 @@ if not subdirs:
     exit(1)
 
 # Go through all subdirs
-for langdir in subdirs:
-    handle_subdir(langdir, langdir)
+for i in range(0,len(subdirs),2):
+    langdir, language = subdirs[i], subdirs[i+1]
+
+    handle_subdir(langdir, language)
