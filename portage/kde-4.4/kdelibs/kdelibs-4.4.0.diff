@@ -1,0 +1,68 @@
+diff -Nru kdelibs-4.4.0.orig/kdecore/util/kuser_win.cpp kdelibs-4.4.0/kdecore/util/kuser_win.cpp
+--- kdelibs-4.4.0.orig/kdecore/util/kuser_win.cpp
++++ kdelibs-4.4.0/kdecore/util/kuser_win.cpp
+@@ -40,8 +40,21 @@
+ 
+         Private(const QString &name, PSID sid_ = 0) : userInfo(0), sid(NULL)
+         {
+-            if (NetUserGetInfo(NULL, (LPCWSTR) name.utf16(), 11, (LPBYTE *) &userInfo) != NERR_Success)
++            LPBYTE servername;
++            NET_API_STATUS status = NetGetAnyDCName(0, 0, &servername);
++            if (status != NERR_Success)
++            {
++                servername = NULL;
++            }
++            
++            if (NetUserGetInfo((LPCWSTR) servername, (LPCWSTR) name.utf16(), 11, (LPBYTE *) &userInfo) != NERR_Success) {
+                 goto error;
++            }
++            if (servername)
++            {
++                NetApiBufferFree(servername);
++                servername = 0;
++            }
+ 
+             if (!sid_) {
+                 DWORD size = 0;
+@@ -89,6 +102,11 @@
+                 NetApiBufferFree(userInfo);
+                 userInfo = 0;
+             }
++            if (servername) 
++            {
++                NetApiBufferFree(servername);
++                servername = 0;
++            }
+         }
+ 
+         ~Private()
+diff -Nru kdelibs-4.4.0.orig/kinit/kinit_win.cpp kdelibs-4.4.0/kinit/kinit_win.cpp
+--- kdelibs-4.4.0.orig/kinit/kinit_win.cpp
++++ kdelibs-4.4.0/kinit/kinit_win.cpp
+@@ -119,6 +119,17 @@
+     // by default use the current process' uid
+     KUser user;
+     K_UID processSid;
++    K_UID userId = user.uid();
++
++    if(userId == NULL) {
++        return;
++    }
++
++    if(!IsValidSid(userId))
++    {
++        return;
++    }
++
+     DWORD sidLength = GetLengthSid(user.uid());
+     processSid = (PSID) malloc(sidLength);
+     CopySid(sidLength, processSid, user.uid());
+@@ -130,7 +141,7 @@
+                                    false, processID );
+ 
+     // Get the process name.
+-    int ret;
++    int ret = 0;
+ 
+     if (NULL != hProcess )
+     {
