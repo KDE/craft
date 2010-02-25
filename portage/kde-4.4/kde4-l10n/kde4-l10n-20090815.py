@@ -46,6 +46,9 @@ class Package(CMakePackageBase):
 
     def configureSourceDir(self):
         return CMakePackageBase.configureSourceDir( self ) % self.language
+        
+    def sourceDir(self):
+        return CMakePackageBase.sourceDir( self ) % self.language
 
     def repositoryPath(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
@@ -55,6 +58,10 @@ class Package(CMakePackageBase):
 
     def workDir(self):
         dir = os.path.join(CMakePackageBase.workDir(self), self.language)
+        return dir
+
+    def installDir(self):
+        dir = os.path.join(CMakePackageBase.installDir(self), self.language)
         return dir
 
     def fetch(self):
@@ -80,14 +87,12 @@ class Package(CMakePackageBase):
         destdir = self.workDir()
         utils.debug( "unpacking files into work root %s" % destdir, 1 )
 
-        for filename in filenames:
-            utils.debug( "unpacking this file: %s" % filename, 1 )
-            if ( not utils.unpackFile( self.downloadDir(), filename, destdir ) ):
-                return False
+        if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
+            return False
 
         # execute autogen.py and generate the CMakeLists.txt files
         cmd = "cd %s && python %s %s %s" % \
-              ('..', autogen, self.sourceDir() % self.language, self.language )
+              ('..', autogen, self.sourceDir(), self.language )
         return self.system( cmd )
 
     def configure(self):
