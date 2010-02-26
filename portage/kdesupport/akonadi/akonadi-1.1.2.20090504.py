@@ -32,7 +32,8 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
+        self.subinfo.options.configure.defines  = " -DCMAKE_PROGRAM_PATH=%s " % os.path.join( os.getenv("KDEROOT") , "dev-utils" , "svn" , "bin" )
+        self.subinfo.options.configure.defines += " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
         self.boost = portage.getPackageInstance("win32libs-bin","boost")
         self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
 
