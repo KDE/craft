@@ -12,12 +12,13 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/attica'] = 'default'
+        self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
+        self.hardDependencies['kdesupport/phonon'] = 'default'
+        self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['kdesupport/qimageblitz'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
-        self.hardDependencies['kdesupport/phonon'] = 'default'
-        self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
