@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['2.0.0-5'] = 'tags/qca/2.0.0'
         self.svnTargets['2.0.1-3'] = 'tags/qca/2.0.1'
+        self.svnTargets['2.0.2-1'] = 'tags/qca/2.0.2'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qca'
