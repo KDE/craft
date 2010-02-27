@@ -27,5 +27,11 @@ class Package(CMakePackageBase):
                     os.path.join( self.sourceDir(),  "CMakeLists.txt" ) )
     return True
 
+  def createPackage( self ):
+    # auto-create both import libs with the help of pexports
+    self.createImportLibs( "libbzip2" )
+
+    return CMakePackageBase.createPackage( self )
+
 if __name__ == '__main__':
     Package().execute()

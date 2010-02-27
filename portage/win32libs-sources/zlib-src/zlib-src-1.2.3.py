@@ -16,8 +16,12 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
+        self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
 
+    def buildType( self ):
+        return "Release"
+  
     def unpack(self):
         if not CMakePackageBase.unpack( self ):
             return False
