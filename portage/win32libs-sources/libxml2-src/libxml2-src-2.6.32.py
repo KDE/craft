@@ -1,81 +1,54 @@
-import base
-import os
-import shutil
-import utils
 import info
-
-PACKAGE_NAME         = "libxml2"
-PACKAGE_VER          = "2.6.32+"
-PACKAGE_FULL_VER     = "2.6.32-1"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
-PACKAGE_DLL_NAME     = "libxml2"
-PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
+import os
+import utils
+from Package.BinaryPackageBase import *
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.targets[PACKAGE_VER] = "ftp://ftp.zlatkovic.com/pub/libxml/oldreleases/" + PACKAGE_FULL_NAME + ".win32.zip"
-        self.targetInstSrc[PACKAGE_VER] = PACKAGE_FULL_NAME
-        self.defaultTarget = PACKAGE_VER
     def setDependencies( self ):
-        return
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['dev-util/pexports'] = 'default'
 
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.createCombinedPackage = True
-    self.subinfo = subinfo()
+    def setTargets( self ):
+        ver = "2.6.32-1"
+        ver2 = "2.6.32+.win32"
+        self.targets[ ver ] = "ftp://ftp.zlatkovic.com/pub/libxml/oldreleases/libxml2-%s.zip" % ver2
+        self.targetInstSrc[ ver ] = "libxml2-%s" % ver2
+        self.defaultTarget = ver
 
-  def compile( self ):
-    # binary-only package - nothing to compile
-    return True
+class Package(BinaryPackageBase):
+    def __init__( self ):
+        print "1"
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+        # don't use shortcut to unpack into imageDir()
+        self.buildSystemType = 'custom'
+        # create combined package
+        self.subinfo.options.package.withCompiler = None
 
-  def install( self ):
-    self.instsrcdir = PACKAGE_INSTSRCDIR
-    # cleanup
-    dst = os.path.join( self.imagedir )
-    utils.cleanDirectory( dst )
-    dst = os.path.join( self.imagedir, self.instdestdir )
-    utils.cleanDirectory( dst )
+    def install( self ):
+        srcdir = self.sourceDir()
+        dstdir = self.installDir()
+        print srcdir
+        print dstdir
+        utils.cleanDirectory( dstdir )
 
-    # /bin can be used from zip package
-    src = os.path.join( self.workdir, self.instsrcdir, "bin" )
-    dst = os.path.join( self.imagedir, self.instdestdir, "bin" )
-    utils.copySrcDirToDestDir( src, dst )
+        os.makedirs( os.path.join( dstdir, "lib" ) )
+        
+        # binaries - can be used from zip package
+        utils.copyDir( os.path.join( srcdir, "bin" ),
+                       os.path.join( dstdir, "bin" ) )
+        # include - can be used from zip package
+        utils.copyDir( os.path.join( srcdir, "include" ),
+                       os.path.join( dstdir, "include" ) )
+        # contrib - readme.txt
+        os.makedirs( os.path.join( dstdir, "contrib", self.subinfo.targetSourcePath() ) )
+        utils.copyFile( os.path.join( srcdir, "readme.txt" ),
+                        os.path.join( dstdir, "contrib", self.subinfo.targetSourcePath(), "readme.txt" ) )
 
-    # /include can be used from zip package
-    src = os.path.join( self.workdir, self.instsrcdir, "include" )
-    dst = os.path.join( self.imagedir, self.instdestdir, "include" )
-    utils.copySrcDirToDestDir( src, dst )
+        # auto-create both import libs with the help of pexports
+        self.createImportLibs( "libxml2" )
 
-    # /contrib contains readme.txt
-    dst = os.path.join( self.imagedir, self.instdestdir, "contrib" )
-    utils.cleanDirectory( dst )
-    dst = os.path.join( dst, PACKAGE_NAME )
-    utils.cleanDirectory( dst )
-    dst = os.path.join( dst, PACKAGE_FULL_VER )
-    utils.cleanDirectory( dst )
-
-    src = os.path.join( self.workdir, self.instsrcdir )
-    shutil.copy( os.path.join( src, "readme.txt" ), os.path.join( dst, "readme.txt" ) )
-
-    # /lib needs a complete rebuild - done in make_package
-    src = os.path.join( self.workdir, self.instsrcdir, "lib" )
-    dst = os.path.join( self.imagedir, self.instdestdir, "lib" )
-    utils.cleanDirectory( dst )
-    # no need to recreate msvc import lib
-    shutil.copy( os.path.join( src, PACKAGE_DLL_NAME + ".lib" ), os.path.join( dst, PACKAGE_DLL_NAME + ".lib" ) )
-    
-    return True
-  def make_package( self ):
-    self.instsrcdir = PACKAGE_INSTSRCDIR
-
-    # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
-
-    # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, False )
-
-    return True
+        return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
