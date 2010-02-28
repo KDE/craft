@@ -7,12 +7,12 @@ import os
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['20100226-0002']:
-            self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z" % (ver , ver )
-            self.targetInstSrc[ver] = "vlc-1.1.0-git-%s" % (ver)
+        ver='20100228-0003'
+        self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z" % (ver , ver )
+        self.targetInstSrc[ver] = "vlc-1.1.0-git-%s" % (ver)
         
         
-        self.defaultTarget = '20100226-0002'  
+        self.defaultTarget = ver 
        
 
     def setDependencies( self ):
@@ -29,7 +29,8 @@ class Package(BinaryPackageBase):
   def install( self ):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) ) 
-    shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "lib") , os.path.join( self.installDir(), "lib" ) ) 
+    self.createImportLibs( "libvlc")
+    self.createImportLibs( "libvlccore")
     return True 
     
 if __name__ == '__main__':
