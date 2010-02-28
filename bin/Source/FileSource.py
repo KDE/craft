@@ -27,7 +27,7 @@ class FileSource(SourceBase):
         """fetching binary files"""
         utils.debug( "FileSource.fetch called", 2 )
             
-        filenames = self.__localFileNames()
+        filenames = self.localFileNames()
         
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
@@ -43,7 +43,7 @@ class FileSource(SourceBase):
         """copying files into local dir"""        
         utils.debug( "FileSource.unpack called", 2 )
 
-        filenames = self.__localFileNames()        
+        filenames = self.localFileNames()        
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.installDir()
