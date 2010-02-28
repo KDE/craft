@@ -346,27 +346,12 @@ def systemWithoutShell(cmdstring, outstream=sys.stdout, errstream=sys.stderr):
     return ( ret == 0 )
 
 def copySrcDirToDestDir( srcdir, destdir ):
-    debug( "copySrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ) , 2)
-
-    if ( not srcdir.endswith( "\\" ) ):
-        srcdir += "\\"
-    if ( not destdir.endswith( "\\" ) ):
-        destdir += "\\"
-
-    for root, dirs, files in os.walk( srcdir ):
-        # do not copy files under .svn directories, because they are write-protected
-        # and the they cannot easily be deleted...
-        if ( root.find( ".svn" ) == -1 ):
-            tmpdir = root.replace( srcdir, destdir )
-            if ( not os.path.exists( tmpdir ) ):
-                os.makedirs( tmpdir )
-            for file in files:
-                shutil.copy( os.path.join( root, file ), tmpdir )
-                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ) , 2) 
+	""" deprecated """
+	return copyDir( srcdir, destdir )
 
 def moveSrcDirToDestDir( srcdir, destdir ):
-    debug( "moveSrcDirToDestDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
-    shutil.move( srcdir, destdir )
+	""" deprecated """
+	return moveDir( srcdir, destdir )
 
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
@@ -748,6 +733,31 @@ def createDir(path):
         os.makedirs( path )
     return True
     
+def copyDir( srcdir, destdir ):
+    """ copy directory from srcdir to destdir """
+    debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ) , 2)
+
+    if ( not srcdir.endswith( "\\" ) ):
+        srcdir += "\\"
+    if ( not destdir.endswith( "\\" ) ):
+        destdir += "\\"
+
+    for root, dirs, files in os.walk( srcdir ):
+        # do not copy files under .svn directories, because they are write-protected
+        # and the they cannot easily be deleted...
+        if ( root.find( ".svn" ) == -1 ):
+            tmpdir = root.replace( srcdir, destdir )
+            if ( not os.path.exists( tmpdir ) ):
+                os.makedirs( tmpdir )
+            for file in files:
+                shutil.copy( os.path.join( root, file ), tmpdir )
+                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ) , 2) 
+
+def moveDir( srcdir, destdir ):
+    """ move directory from srcdir to destdir """
+    debug( "moveDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
+    shutil.move( srcdir, destdir )
+
 def copyFile(src,dest):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
