@@ -1,81 +1,55 @@
-import base
-import os
-import sys
-import shutil
-import utils
 import info
-
-PACKAGE_DLL_NAME     = "jpeg62"
+import utils
 
 class subinfo(info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/pexports'] = 'default'
+        self.hardDependencies['gnuwin32/sed'] = 'default'
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+
     def setTargets( self ):
-      self.targets['6b-5'] = 'http://downloads.sourceforge.net/sourceforge/gnuwin32/jpeg-6b-4.exe'
-      self.targetInstSrc['6b-5'] = ''
-      self.defaultTarget = '6b-5'
+        self.targets['6b-5'] = 'http://downloads.sourceforge.net/sourceforge/gnuwin32/jpeg-6b-4.exe'
+        self.defaultTarget = '6b-5'
 
+from Package.BinaryPackageBase import *
 
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.createCombinedPackage = True
-    self.subinfo = subinfo()
+class Package(BinaryPackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+        # don't use shortcut to unpack into imageDir()
+        self.buildSystemType = 'custom'
+        # create combined package
+        self.subinfo.options.package.withCompiler = None
 
-  def unpack( self ):
-
-    # hopefully only one...
-    for filename in self.filenames:
-        os.system( os.path.join( self.downloaddir, filename ) + " /DIR=\"" + self.workdir + "\" /SILENT")
-
-    return True
-
-  def compile( self ):
-    # binary-only package - nothing to compile
-    return True
-
-  def install( self ):
-    # cleanup
-    dst = os.path.join( self.imagedir )
-    utils.cleanDirectory( dst )
-    dst = os.path.join( self.imagedir, self.instdestdir )
-    utils.cleanDirectory( dst )
-
-    # /bin only contains zlib1.dll
-    dst = os.path.join( self.imagedir, self.instdestdir, "bin" )
-    utils.cleanDirectory( dst )
-
-    src = os.path.join( self.workdir, self.instsrcdir, "bin", PACKAGE_DLL_NAME + ".dll" )
-    dst = os.path.join( self.imagedir, self.instdestdir, "bin", PACKAGE_DLL_NAME + ".dll" )
-    shutil.copy( src, dst )
-
-    # /contrib/PACKAGE_NAME/PACKAGE_FULL_VER
-    src = os.path.join( self.workdir, self.instsrcdir, "contrib" )
-    dst = os.path.join( self.imagedir, self.instdestdir, "contrib" )
-    utils.copySrcDirToDestDir( src, dst )
-
-    # /include can be used from zip package
-    src = os.path.join( self.workdir, self.instsrcdir, "include" )
-    dst = os.path.join( self.imagedir, self.instdestdir, "include" )
-    utils.copySrcDirToDestDir( src, dst )
-
-    # /lib needs a complete rebuild - done in make_package
-    dst = os.path.join( self.imagedir, self.instdestdir, "lib" )
-    utils.cleanDirectory( dst )
-
-    return True
-
-  def qmerge( self ):
-    print >> sys.stderr, "Installing this package is not intented."
-    return False
-
-  def make_package( self ):
-    # auto-create both import libs with the help of pexports
-    if not self.createImportLibs( PACKAGE_DLL_NAME ):
-        return False
-
-    # now do packaging with kdewin-packager
-    self.doPackaging( "jpeg", self.buildTarget, False )
-
-    return True
+    def unpack( self ):
   
+        # hopefully only one...
+        for filename in self.localFileNames():
+            self.system( os.path.join( self.downloadDir(), filename ) + " /DIR=\"" + self.workDir() + "\" /SILENT")
+        return True
+
+    def install( self ):
+        srcdir = self.sourceDir()
+        dstdir = self.installDir()
+
+        utils.cleanDirectory( dstdir )
+        os.makedirs( os.path.join( dstdir, "bin" ) )
+        os.makedirs( os.path.join( dstdir, "lib" ) )
+
+        # jpeg binaries
+        utils.copyFile( os.path.join( srcdir, "Bin", "jpeg62.dll" ),
+                        os.path.join( dstdir, "bin", "jpeg.dll") )
+        # jpeg include dir
+        utils.copyDir( os.path.join( srcdir, "include" ),
+                       os.path.join( dstdir, "include" ) )
+         # contrib
+        utils.copyDir( os.path.join( srcdir, "contrib" ),
+                       os.path.join( dstdir, "contrib" ) )
+        # auto-create both import libs with the help of pexports
+        self.createImportLibs( "jpeg" )
+        
+        return True
+
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

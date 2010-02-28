@@ -17,7 +17,6 @@ class subinfo(info.infoclass):
 
 class Package(BinaryPackageBase):
     def __init__( self ):
-        print "1"
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         # don't use shortcut to unpack into imageDir()
@@ -28,8 +27,6 @@ class Package(BinaryPackageBase):
     def install( self ):
         srcdir = self.sourceDir()
         dstdir = self.installDir()
-        print srcdir
-        print dstdir
         utils.cleanDirectory( dstdir )
 
         os.makedirs( os.path.join( dstdir, "lib" ) )
