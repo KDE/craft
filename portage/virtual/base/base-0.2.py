@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/pexports']   = 'default'
 
         if os.getenv( "KDECOMPILER" ) == "mingw":
-          self.hardDependencies['dev-util/mingw']    = 'default'
+          self.hardDependencies['dev-util/mingw4']    = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
