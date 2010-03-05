@@ -7,9 +7,12 @@ import os
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver='20100228-0003'
-        self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z" % (ver , ver )
-        self.targetInstSrc[ver] = "vlc-1.1.0-git-%s" % (ver)
+        ver='20100305-0002'
+        self.targets[ "noDebug" ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z " % (ver , ver )
+        self.targetInstSrc[ "noDebug" ] = "vlc-1.1.0-git-%s" % (ver)
+        
+        self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32-debug.7z " % (ver , ver )
+        self.targetInstSrc[ ver ] = "vlc-1.1.0-git-%s" % (ver)
         
         
         self.defaultTarget = ver 
@@ -29,6 +32,7 @@ class Package(BinaryPackageBase):
   def install( self ):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) ) 
+    shutil.copy(os.path.join( self.packageDir() ,"vlc.desktop" ), os.path.join( os.getenv("KDEROOT") , "share" , "applications" , "kde4" ))
     self.createImportLibs( "libvlc")
     self.createImportLibs( "libvlccore")
     return True 
