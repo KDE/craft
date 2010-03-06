@@ -3,6 +3,7 @@ import info
 import shutil
 import os
 import re
+import urllib
 
 # currently only needed from kdenetwork
 
@@ -13,8 +14,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc[ "noDebug" ] = "vlc-1.1.0-git-%s" % ( self.getVer() )
         
         self.targets[ self.getVer() ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32-debug.7z" % ( self.getVer() )
-        self.targetInstSrc[ self.getVer()] = "vlc-1.1.0-git-%s" % ( self.getVer() )
-        
+        self.targetInstSrc[ self.getVer()] = "vlc-1.1.0-git-%s" % ( self.getVer() )        
         
         self.defaultTarget = self.getVer() 
        
@@ -23,13 +23,12 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         
     def getVer( self ):
-        try:
+        if( hasattr( self , "ver" ) ) :
           return self.ver
-        except AttributeError:            
-          utils.getFile ( "http://nightlies.videolan.org/build/win32/last/" , os.path.join( os.getenv("TMP") , "vlc-latest" ) )
-          f = open( os.path.join( os.getenv("TMP") , "vlx-latest" , "index.html" ) )
-          mstr = f.read()
-          m = re.search('\d\d\d\d\d\d\d\d-\d\d\d\d',mstr)
+        else:
+          fh = urllib.urlopen("http://nightlies.videolan.org/build/win32/last/")
+          m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
+          fh.close()
           self.ver = m.group(0)
           return self.ver
         
