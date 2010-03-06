@@ -2,29 +2,40 @@ from Package.BinaryPackageBase import *
 import info
 import shutil
 import os
+import re
 
 # currently only needed from kdenetwork
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        ver='20100305-0002'
-        self.targets[ "noDebug" ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32.7z " % (ver , ver )
-        self.targetInstSrc[ "noDebug" ] = "vlc-1.1.0-git-%s" % (ver)
+    def setTargets( self ):                
+        self.targets[ "noDebug" ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32.7z" % ( self.getVer() )
+        self.targetInstSrc[ "noDebug" ] = "vlc-1.1.0-git-%s" % ( self.getVer() )
         
-        self.targets[ ver ]  = "http://nightlies.videolan.org/build/win32/trunk-%s/vlc-1.1.0-git-%s-win32-debug.7z " % (ver , ver )
-        self.targetInstSrc[ ver ] = "vlc-1.1.0-git-%s" % (ver)
+        self.targets[ self.getVer() ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32-debug.7z" % ( self.getVer() )
+        self.targetInstSrc[ self.getVer()] = "vlc-1.1.0-git-%s" % ( self.getVer() )
         
         
-        self.defaultTarget = ver 
+        self.defaultTarget = self.getVer() 
        
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
- 
-
+        
+    def getVer( self ):
+        try:
+          return self.ver
+        except AttributeError:            
+          utils.getFile ( "http://nightlies.videolan.org/build/win32/last/" , os.path.join( os.getenv("TMP") , "vlc-latest" ) )
+          f = open( os.path.join( os.getenv("TMP") , "vlx-latest" , "index.html" ) )
+          mstr = f.read()
+          m = re.search('\d\d\d\d\d\d\d\d-\d\d\d\d',mstr)
+          self.ver = m.group(0)
+          return self.ver
+        
 class Package(BinaryPackageBase):
-  def __init__(self):
-    self.subinfo = subinfo()
+  def __init__(self):  
+    self.subinfo = subinfo()    
     self.subinfo.options.merge.ignoreBuildType = True
     BinaryPackageBase.__init__( self )
     
@@ -32,7 +43,8 @@ class Package(BinaryPackageBase):
   def install( self ):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) ) 
-    shutil.copy(os.path.join( self.packageDir() ,"vlc.desktop" ), os.path.join( os.getenv("KDEROOT") , "share" , "applications" , "kde4" ))
+    os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
+    shutil.copy(os.path.join( self.packageDir() ,"vlc.desktop" ), os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
     self.createImportLibs( "libvlc")
     self.createImportLibs( "libvlccore")
     return True 
