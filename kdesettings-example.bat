@@ -92,6 +92,7 @@ rem Setting up variables for git, not needed by emerge but preventing trouble wi
 set GIT_SSH=plink
 set HOME=%USERPROFILE%
 rem set GIT_AUTHOR_NAME=authorname
+rem set GIT_AUTHOR_EMAIL=email
 rem set GIT_COMMITTER_NAME=username
 rem set GIT_COMMITTER_EMAIL=email
 
