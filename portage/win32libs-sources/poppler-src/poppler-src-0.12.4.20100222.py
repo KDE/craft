@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
         self.svnTargets['0.12-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.12"
 
-        self.defaultTarget = "0.12.3"
+        self.defaultTarget = "0.12.4"
     
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
