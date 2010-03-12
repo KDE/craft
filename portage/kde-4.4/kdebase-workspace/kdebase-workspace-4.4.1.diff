@@ -1,0 +1,72 @@
+diff -Nru kdebase-workspace-4.4.0.orig/plasma/generic/containmentactions/minimalcontextmenu/CMakeLists.txt kdebase-workspace-4.4.0/plasma/generic/containmentactions/minimalcontextmenu/CMakeLists.txt
+--- kdebase-workspace-4.4.0.orig/plasma/generic/containmentactions/minimalcontextmenu/CMakeLists.txt
++++ kdebase-workspace-4.4.0/plasma/generic/containmentactions/minimalcontextmenu/CMakeLists.txt
+@@ -4,12 +4,12 @@
+     menu.cpp
+ )
+ 
+-kde4_add_plugin(plasma_containmentactions_minimalcontextmenu ${contextmenu_SRCS})
++kde4_add_plugin(p ${contextmenu_SRCS})
+ if(WIN32)
+-target_link_libraries(plasma_containmentactions_minimalcontextmenu ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})
++target_link_libraries(p ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})
+ else(WIN32)
+-target_link_libraries(plasma_containmentactions_minimalcontextmenu ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})
++target_link_libraries(p ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})
+ endif(WIN32)
+-
+-install(TARGETS plasma_containmentactions_minimalcontextmenu DESTINATION ${PLUGIN_INSTALL_DIR})
++set_target_properties(p PROPERTIES OUTPUT_NAME "plasma_containmentactions_minimalcontextmenu")
++install(TARGETS p DESTINATION ${PLUGIN_INSTALL_DIR})
+ install(FILES plasma-containmentactions-minimalcontextmenu.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+diff -Nru kdebase-workspace-4.4.1-orig/klipper/klipper.cpp kdebase-workspace-4.4.1/klipper/klipper.cpp
+--- kdebase-workspace-4.4.1-orig/klipper/klipper.cpp
++++ kdebase-workspace-4.4.1/klipper/klipper.cpp
+@@ -22,7 +22,9 @@
+    Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef Q_WS_X11
+ #include <config-X11.h>
++#endif
+ 
+ #include <QtDBus/QDBusConnection>
+ 
+@@ -1190,7 +1192,9 @@
+ #endif
+ KlipperEmptyDetector::KlipperEmptyDetector()
+ : m_xfixes_event_base( -1 )
++#ifdef Q_WS_X11
+ , m_xa_clipboard( None )
++#endif
+ {
+ #ifdef HAVE_XFIXES
+     m_xa_clipboard = XInternAtom( QX11Info::display(), "CLIPBOARD", False );
+@@ -1210,6 +1214,7 @@
+ #endif
+ }
+ 
++#ifdef Q_WS_X11
+ bool KlipperEmptyDetector::x11Event( XEvent* e )
+ {
+ #ifdef HAVE_XFIXES
+@@ -1237,5 +1242,6 @@
+ #endif
+     return false;
+ }
++#endif
+ 
+ #include "klipper.moc"
+diff -Nru kdebase-workspace-4.4.1-orig/klipper/klipper.h kdebase-workspace-4.4.1/klipper/klipper.h
+--- kdebase-workspace-4.4.1-orig/klipper/klipper.h
++++ kdebase-workspace-4.4.1/klipper/klipper.h
+@@ -53,7 +53,9 @@
+ signals:
+     void changed( QClipboard::Mode m );
+ protected:
++#ifdef Q_WS_X11
+     virtual bool x11Event( XEvent* e );
++#endif
+ private:
+     int m_xfixes_event_base;
+     unsigned int m_xa_clipboard;
