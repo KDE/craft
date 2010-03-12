@@ -1,0 +1,21 @@
+--- cwchar.org
++++ lib/gcc/mingw32/4.4.0/include/c++/cwchar
+@@ -156,14 +156,18 @@
+   using ::mbsrtowcs;
+   using ::putwc;
+   using ::putwchar;
++#ifndef __STRICT_ANSI__
+   using ::swprintf;
++#endif //__STRICT_ANSI__
+   using ::swscanf;
+   using ::ungetwc;
+   using ::vfwprintf;
+ #if _GLIBCXX_HAVE_VFWSCANF
+   using ::vfwscanf;
+ #endif
++#ifndef __STRICT_ANSI__
+   using ::vswprintf;
++#endif //__STRICT_ANSI__
+ #if _GLIBCXX_HAVE_VSWSCANF
+   using ::vswscanf;
+ #endif
