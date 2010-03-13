@@ -1,0 +1,14 @@
+diff -Nru kdegraphics-4.4.1.orig/CMakeLists.txt kdegraphics-4.4.1/CMakeLists.txt
+--- kdegraphics-4.4.1.orig/CMakeLists.txt
++++ kdegraphics-4.4.1/CMakeLists.txt
+@@ -58,7 +58,9 @@
+ macro_optional_add_subdirectory(kruler)
+ macro_optional_add_subdirectory(svgpart)
+ if(QIMAGEBLITZ_FOUND)
+-  macro_optional_add_subdirectory(kolourpaint)
++  if(NOT MINGW)
++    macro_optional_add_subdirectory(kolourpaint)
++  endif(NOT MINGW)
+   macro_optional_add_subdirectory(okular)
+ endif(QIMAGEBLITZ_FOUND)
+ 

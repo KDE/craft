@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.90'] = ('kdegraphics-4.3.90.diff', 1)
         self.patchToApply['4.3.95'] = ('kdegraphics-4.3.95.diff', 1)
         self.patchToApply['4.4.0'] = ('kdegraphics-4.4.0.diff', 1)
+        self.patchToApply['4.4.1'] = ('kdegraphics-4.4.1.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
