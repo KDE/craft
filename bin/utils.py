@@ -199,7 +199,7 @@ def unTar( file, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( file, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( file )
-
+	
     mode = "r"
     if ( ext == ".gz" ):
         mode = "r:gz"
@@ -207,7 +207,8 @@ def unTar( file, destdir ):
         mode = "r:bz2"
     elif( ext == ".lzma" ):
         un7zip( file , os.getenv("TMP") )
-        return un7zip( "%s\\%s" % (os.getenv("TMP"),file[file.rfind( "\\" ):file.find( ".lzma" ) ]), destdir )
+        (srcpath , tarname ) = os.path.split( shortname )
+        file=os.path.join( os.getenv("TMP") , tarname )
 		
 
     tar = tarfile.open( file, mode )
