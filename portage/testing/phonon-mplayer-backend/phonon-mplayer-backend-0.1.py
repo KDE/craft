@@ -6,10 +6,10 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-      self.hardDependencies['testing/vlc'] = 'default'
+      self.hardDependencies['testing/mplayer'] = 'default'
         
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon-vlc.git'
+      self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon-mplayer.git'
       self.defaultTarget = 'gitHEAD'
          
 
