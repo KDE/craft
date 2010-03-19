@@ -82,3 +82,8 @@ class BuildSystemBase(EmergeBase):
         if self.subinfo.options.make.makeOptions != None:
             defines += " %s" % self.subinfo.options.make.makeOptions
         return defines
+        
+    def setupCrossToolchain(self):
+        os.environ["PATH"] = os.environ["TARGET_PATH"]
+        os.environ["INCLUDE"] = os.environ["TARGET_INCLUDE"]
+        os.environ["LIB"] = os.environ["TARGET_LIB"]
