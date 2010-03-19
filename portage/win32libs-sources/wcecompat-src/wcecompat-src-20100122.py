@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+import utils
+import os
+import info
+
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['gitHEAD'] = 'git://github.com/mauricek/wcecompat.git'
+        self.defaultTarget = 'gitHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['dev-util/perl'] = 'default'
+
+from Package.BinaryPackageBase import *
+                
+class TestPackage(BinaryPackageBase):
+    def __init__( self, **args ):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+
+    def unpack(self):
+        BinaryPackageBase.unpack(self)
+        utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
+        self.enterBuildDir()
+        
+        os.environ["TARGETCPU"] = os.environ["EMERGE_TARGET_ARCHITECTURE"]
+        platform = os.environ["EMERGE_TARGET_PLATFORM"]
+        if platform == "WM50":
+            os.environ["OSVERSION"] = "WCE501"
+        elif platform == "WM60" or platform == "WM65":
+            os.environ["OSVERSION"] = "WCE502"
+            
+        command = "perl config.pl"
+        return self.system( command )
+
+    def make(self):
+        self.enterBuildDir()
+        self.setupCrossToolchain()
+        return self.system( self.makeProgramm ) 
+
+    def install(self):
+        src = self.buildDir()
+        dst = self.imageDir()
+
+        if not os.path.isdir( dst ):
+            os.mkdir( dst )
+            os.mkdir( os.path.join( dst, "lib" ) )
+
+        shutil.copy( os.path.join( src, "lib", "wcecompat.lib" ) , os.path.join( dst, "lib" ) )
+        shutil.copy( os.path.join( src, "lib", "wcecompatex.lib" ) , os.path.join( dst, "lib" ) )
+        
+        return True
+    
+if __name__ == '__main__':
+    TestPackage().execute()
