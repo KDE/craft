@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
                                                    'w32api-3.11.tar.gz',
                                                    'gdb-6.8-mingw-3.tar.bz2',
                                                    'mingw-utils-0.3.tar.gz'])
-        self.targetMergePath['4.3.0'] = "mingw";
 		  
         self.targets['4.4.0-tdm-r2'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
                                                         ['gcc-4.4.0-tdm-1-core-2.tar.gz',
@@ -25,7 +24,6 @@ class subinfo(info.infoclass):
                                                         'w32api-3.11.tar.gz',
                                                         'gdb-6.8-mingw-3.tar.bz2',
                                                         'mingw-utils-0.3.tar.gz'])
-        self.targetMergePath['4.4.0-tdm-r2'] = "mingw";
 		
         self.targets['4.4.0'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
                                                  ['binutils-2.20.1-2-mingw32-bin.tar.gz',
@@ -41,9 +39,7 @@ class subinfo(info.infoclass):
                                                  'gcc-c++-4.4.0-mingw32-dll.tar.gz',
                                                  'gmp-4.2.4-mingw32-dll.tar.gz',
                                                  'mpfr-2.4.1-mingw32-dll.tar.gz'])
-
         self.patchToApply['4.4.0']=('STRICT_ANSI.diff',0)
-        self.targetMergePath['4.4.0'] = "mingw";
         
         self.targets['4.5.0'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
                                                  ['binutils-2.20.1-2-mingw32-bin.tar.gz',
@@ -60,7 +56,7 @@ class subinfo(info.infoclass):
                                                  'libgmp-5.0.1-1-mingw32-dll-10.tar.lzma',
                                                  'libmpfr-2.4.1-1-mingw32-dll-1.tar.lzma',
                                                   'libmpc-0.8.1-1-mingw32-dll-2.tar.lzma'])
-        self.targetMergePath['4.5.0'] = "mingw";
+
 
 		
         self.defaultTarget = '4.4.0'
