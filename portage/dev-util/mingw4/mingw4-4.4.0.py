@@ -44,6 +44,23 @@ class subinfo(info.infoclass):
 
         self.patchToApply['4.4.0']=('STRICT_ANSI.diff',0)
         self.targetMergePath['4.4.0'] = "mingw";
+        
+        self.targets['4.5.0'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
+                                                 ['binutils-2.20.1-2-mingw32-bin.tar.gz',
+                                                 'make-3.81-20090914-mingw32-bin.tar.gz',
+                                                 'mingwrt-3.18-mingw32-dll.tar.gz',
+                                                 'mingwrt-3.18-mingw32-dev.tar.gz',             
+                                                 'w32api-3.14-mingw32-dev.tar.gz',
+                                                 'gdb-7.0.50.20100202-mingw32-bin.tar.gz',
+                                                 'mingw-utils-0.3.tar.gz',
+                                                 'gcc-core-4.5.0_20100311-2-mingw32-bin.tar.lzma',
+                                                 'libgcc-4.5.0_20100311-2-mingw32-dll-1.tar.lzma',
+                                                 'gcc-c++-4.5.0_20100311-2-mingw32-bin.tar.lzma',
+                                                 'libstdc++-4.5.0_20100311-2-mingw32-dll-6.tar.lzma',
+                                                 'libgmp-5.0.1-1-mingw32-dll-10.tar.lzma',
+                                                 'libmpfr-2.4.1-1-mingw32-dll-1.tar.lzma',
+                                                  'libmpc-0.8.1-1-mingw32-dll-2.tar.lzma'])
+        self.targetMergePath['4.5.0'] = "mingw";
 
 		
         self.defaultTarget = '4.4.0'
@@ -61,7 +78,13 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
         
     def install( self ):    
-        shutil.copy( os.path.join( self.imageDir() , "bin", "mingwm10.dll" ), os.path.join( os.getenv( "KDEROOT" ) , "bin" , "mingwm10.dll" ) )
+        dirs=os.listdir(self.imageDir())
+        for dir in dirs:
+           shutil.move(os.path.join( self.installDir() , dir) , os.path.join( self.installDir(), "mingw" ,dir) )
+        os.mkdir(os.path.join( self.imageDir() , "bin" ))
+        shutil.copy( os.path.join( self.imageDir() , "mingw","bin", "mingwm10.dll" ), os.path.join( self.imageDir() , "bin" , "mingwm10.dll" ) )
+        if( self.subinfo.buildTarget == '4.5.0' ):
+          shutil.copy( os.path.join( self.imageDir() ,"mingw", "bin", "libstdc++-6.dll"),os.path.join( self.imageDir() , "bin" , "libstdc++-6.dll" ))
         return True
 
 if __name__ == '__main__':
