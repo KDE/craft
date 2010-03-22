@@ -23,14 +23,13 @@ class TestPackage(BinaryPackageBase):
         BinaryPackageBase.unpack(self)
         utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
         self.enterBuildDir()
-        
-        os.environ["TARGETCPU"] = os.environ["EMERGE_TARGET_ARCHITECTURE"]
-        platform = os.environ["EMERGE_TARGET_PLATFORM"]
-        if platform == "WM50":
+
+        os.environ["TARGETCPU"] = self.targetArchitecture()
+        if self.targetPlatform() == "WM50":
             os.environ["OSVERSION"] = "WCE501"
-        elif platform == "WM60" or platform == "WM65":
+        elif self.targetPlatform() == "WM60" or self.targetPlatform() == "WM65":
             os.environ["OSVERSION"] = "WCE502"
-            
+
         command = "perl config.pl"
         return self.system( command )
 
@@ -47,6 +46,7 @@ class TestPackage(BinaryPackageBase):
             os.mkdir( dst )
             os.mkdir( os.path.join( dst, "lib" ) )
 
+        utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
         shutil.copy( os.path.join( src, "lib", "wcecompat.lib" ) , os.path.join( dst, "lib" ) )
         shutil.copy( os.path.join( src, "lib", "wcecompatex.lib" ) , os.path.join( dst, "lib" ) )
         
