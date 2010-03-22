@@ -18,6 +18,8 @@ import datetime;
 
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
+TARGETPLATFORM = os.getenv( "EMERGE_TARGET_PLATFORM" )
+TARGETARCH = os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
 DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
 if ( DOWNLOADDIR == None ):
     DOWNLOADDIR=os.path.join( ROOTDIR, "distfiles" )
@@ -131,6 +133,14 @@ class EmergeBase():
     def compiler(self):
         """return currently selected compiler"""
         return self.__compiler
+        
+    def targetPlatform(self):
+        """return the cross-compiling target platform"""
+        return TARGETPLATFORM
+        
+    def targetArchitecture(self):
+        """return the target CPU architecture"""
+        return TARGETARCH
 
     def downloadDir(self): 
         """ location of directory where fetched files are  stored """
