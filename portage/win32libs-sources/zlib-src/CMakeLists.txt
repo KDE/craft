@@ -6,7 +6,10 @@ set(zlib_SRCS
     compress.c
     crc32.c
     deflate.c
-    gzio.c
+    gzclose.c
+    gzlib.c
+    gzread.c
+    gzwrite.c
     infback.c
     inffast.c
     inflate.c
@@ -19,6 +22,7 @@ set(zlib_SRCS
 set(zlib_HDRS
     crc32.h
     deflate.h
+    gzguts.h
     inffast.h
     inffixed.h
     inflate.h

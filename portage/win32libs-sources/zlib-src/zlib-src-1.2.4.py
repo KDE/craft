@@ -6,8 +6,8 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = '1.2.3-3'
-        self.targets[ ver ] = 'http://www.zlib.net/zlib-1.2.3.tar.gz'
-        self.targetInstSrc[ ver ] = 'zlib-1.2.3'
+        self.targets[ ver ] = 'http://www.zlib.net/zlib-1.2.4.tar.gz'
+        self.targetInstSrc[ ver ] = 'zlib-1.2.4'
         self.defaultTarget = ver
 
     def setDependencies( self ):
