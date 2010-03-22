@@ -9,12 +9,16 @@ class subinfo(info.infoclass):
         self.targets['0.9.8k'] = 'http://www.openssl.org/source/openssl-0.9.8k.tar.gz'
         self.targetInstSrc['0.9.8k'] = 'openssl-0.9.8k'
         self.patchToApply['0.9.8k'] = ('openssl-0.9.8k.diff', 1)
+        self.targets['0.9.8m'] = 'http://www.openssl.org/source/openssl-0.9.8m.tar.gz'
+        self.targetInstSrc['0.9.8m'] = 'openssl-0.9.8m'
+        self.patchToApply['0.9.8m'] = ('openssl-wince5.patch', 0)
         self.options.package.withCompiler = False
-        self.defaultTarget = '0.9.8k'
+        self.defaultTarget = '0.9.8m'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
+        self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
         
 from Package.CMakePackageBase import *
         
@@ -29,8 +33,27 @@ class Package(CMakePackageBase):
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
             cmd = "ms\mingw32.bat"
         else:
-            cmd = "ms\\32all.bat"
-      
+            if self.targetPlatform() != "":
+                """cross-building environment setup"""
+                self.setupCrossToolchain()
+                os.environ["WCECOMPAT"] = self.rootdir
+                os.environ["TARGETCPU"] = self.targetArchitecture() 
+                os.environ["PLATFORM"] = self.targetPlatform()
+                if self.targetPlatform() == "WM50":
+                    os.environ["OSVERSION"] = "WCE501"
+                elif self.targetPlatform() == "WM60" or self.targetPlatform() == "WM65":
+                    os.environ["OSVERSION"] = "WCE502"
+
+                if not self.system( "perl Configure VC-CE", "configure" ):
+                    return False
+
+                if not self.system( "ms\do_ms.bat", "configure" ):
+                    return False
+
+                cmd = "nmake -f ms\cedll.mak"
+            else:
+                cmd = "ms\\32all.bat"
+
         return self.system( cmd )
 
     def install( self ):
@@ -55,10 +78,14 @@ class Package(CMakePackageBase):
                 self.createImportLibs( f )
 
         else:
-            shutil.copy( os.path.join( src, "out32dll", "libeay32.dll" ) , os.path.join( dst, "bin" ) )
-            shutil.copy( os.path.join( src, "out32dll", "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
-            shutil.copy( os.path.join( src, "out32dll", "libeay32.lib" ) , os.path.join( dst, "lib" ) )
-            shutil.copy( os.path.join( src, "out32dll", "ssleay32.lib" ) , os.path.join( dst, "lib" ) )
+            outdir = "out32dll"
+            if self.targetPlatform() != "":
+                outdir += "_" + self.targetArchitecture()
+
+            shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
+            shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
+            shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )
+            shutil.copy( os.path.join( src, outdir, "ssleay32.lib" ) , os.path.join( dst, "lib" ) )
             utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
 
         return True
