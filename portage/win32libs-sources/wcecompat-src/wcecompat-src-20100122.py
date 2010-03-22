@@ -6,6 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/mauricek/wcecompat.git'
+        self.patchToApply['gitHEAD'] = ('wcecompat-wince5.patch', 0)
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):

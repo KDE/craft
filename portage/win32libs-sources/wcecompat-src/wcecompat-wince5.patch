@@ -1,0 +1,60 @@
+--- include/io.h	Mon Jan 19 14:26:36 1970
++++ include/io.h	Mon Jan 19 14:26:36 1970
+@@ -39,17 +39,19 @@
+ FILE* _wcefdopen( int handle, const char *mode );
+ 
+ #define access _wceaccess
++#define _access _wceaccess
+ #define open _wceopen
+ #define _open _wceopen
+ #define close _wceclose
++#define _close _wceclose
+ #define read _wceread
++#define _read _wceread
+ #define write _wcewrite
++#define _write _wcewrite
+ #define lseek _wcelseek
+ #define _lseek _wcelseek
+ #define unlink _wceunlink
+-#ifdef rename
+-#undef rename
+-#endif
++#define _unlink _wceunlink
+ #define rename _wcerename
+ #define _rename _wcerename
+ #define fdopen _wcefdopen
+--- include/winsock_extras.h	Mon Jan 19 14:26:36 1970
++++ include/winsock_extras.h	Mon Jan 19 14:26:36 1970
+@@ -22,6 +22,7 @@
+ #ifndef __wcecompat__WINSOCK_EXTRAS_H__
+ #define __wcecompat__WINSOCK_EXTRAS_H__
+ 
++#if 0
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -42,5 +43,6 @@
+ }
+ #endif
+ 
++#endif
+ 
+ #endif // __wcecompat__WINSOCK_EXTRAS_H__
+--- src/winsock_extras.cpp	Mon Jan 19 14:26:36 1970
++++ src/winsock_extras.cpp	Mon Jan 19 14:26:36 1970
+@@ -18,6 +18,8 @@
+  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
++#if 0
++
+ #include <winsock_extras.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -204,3 +206,5 @@
+ 
+         return &se;
+ }
++
++#endif
+\ No newline at end of file
