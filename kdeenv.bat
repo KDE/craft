@@ -120,8 +120,8 @@ goto :eof
         if exist "%TARGET_SDKDIR%" (
             echo Using Mobile SDK: !TARGET_SDKDIR!
             set TARGET_PATH=!VSDIR!\VC\ce\bin\x86_arm;!PATH!
-            set TARGET_INCLUDE=!TARGET_SDKDIR!\include\%EMERGE_TARGET_ARCHITECTURE%;!TARGET_SDKDIR!\include;!VSDIR!\VC\ce\include
-            set TARGET_LIB=!TARGET_SDKDIR!\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\lib\%EMERGE_TARGET_ARCHITECTURE%
+            set TARGET_INCLUDE=!VSDIR!\VC\ce\include;!TARGET_SDKDIR!\include\%EMERGE_TARGET_ARCHITECTURE%;!TARGET_SDKDIR!\include;!VSDIR!\VC\ce\atlmfc\include
+            set TARGET_LIB=!TARGET_SDKDIR!\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\atlmfc\lib\%EMERGE_TARGET_ARCHITECTURE%
         ) else (
             echo Couldn't find the SDK for target platform %EMERGE_TARGET_PLATFORM%-%EMERGE_TARGET_ARCHITECTURE% ^^! 
         )
