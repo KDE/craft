@@ -107,7 +107,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         if self.hasTargetPlatform():
             command = r"echo %s | %s -opensource -platform %s -xplatform %s -prefix %s " \
-              "-no-phonon -no-webkit -openssl -qdbus -dbus-linked " \
+              "-no-phonon -no-webkit -openssl " \
               "-fast -ltcg -no-vcproj -no-dsp " \
               "-nomake demos -nomake examples " \
               "%s %s" % ( userin, configure, platform, xplatform, self.installDir(), incdirs, libdirs)
