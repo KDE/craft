@@ -158,6 +158,15 @@ class infoclass:
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergeSourcePath.keys():
             return self.targetMergeSourcePath[ self.buildTarget ]
 
+    def hasTargetPlatform(self):
+        return self.targetPlatform() != ""
+
+    def targetPlatform(self):
+        return os.getenv( "EMERGE_TARGET_PLATFORM" )
+
+    def targetArchitecture(self):
+        return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
+
     def hasPatches(self):
         """return state for having patches for the recent target"""
         return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in self.patchToApply.keys()
