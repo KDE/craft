@@ -17,11 +17,6 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/r-base'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
 
-# TODO:
-# - Move files out of the way that are already provided by dependencies:
-#     - lib\R\library\R.css
-#     - share\apps\katepart\syntax\r.xml
-#     - When to do this? Safely possible within install, or can that go directly into KDEROOT at times?
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -45,7 +40,11 @@ class subclass(base.baseclass):
         return self.kde.kdeCompile(" -DR_EXECUTABLE=" + self.rootdir + "/lib/R/bin/R.exe")
 
     def install( self ):
-        return self.kde.kdeInstall()
+        ok = self.kde.kdeInstall()
+        # These files are already provided by katepart and R, respectively:
+        os.remove (os.path.join (self.imagedir, "share", "apps", "katepart", "syntax", "r.xml"))
+        os.remove (os.path.join (self.imagedir, "lib", "R", "library", "R.css"))
+        return ok
 
     def getSvnVersion( self ):
         svninfo = subprocess.Popen(['svn', 'info', '--xml', self.realSvnPath()], shell=True, stdout=subprocess.PIPE).communicate()[0]
