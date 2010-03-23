@@ -1,0 +1,294 @@
+From 0ed294ffa5d0709678221f1d93a70d7843e592ed Mon Sep 17 00:00:00 2001
+From: herbst <template.meta.programmer@googlemail.com>
+Date: Thu, 21 Jan 2010 21:01:58 +0000
+Subject: [PATCH 3/3] applied wince-cmakefiles-supprt-3.patch
+
+---
+ Modules/CMakeTestCLMachineType.c     |    1 +
+ Modules/Platform/WinCE-cl.cmake      |   34 ++++++++
+ Modules/Platform/WinCE.cmake         |   26 ++++++
+ Modules/Platform/Windows-cl.cmake    |  146 ++++++++++++++++++++++++++-------
+ Modules/Platform/Windows-cl.cmake.in |    1 +
+ 5 files changed, 177 insertions(+), 31 deletions(-)
+ create mode 100644 Modules/CMakeTestCLMachineType.c
+ create mode 100644 Modules/Platform/WinCE-cl.cmake
+ create mode 100644 Modules/Platform/WinCE.cmake
+
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c
+new file mode 100644
+index 0000000..0540eda
+--- /dev/null
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c
+@@ -0,0 +1 @@
++int dummy() { return 0;}
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
+new file mode 100644
+index 0000000..f18b109
+--- /dev/null
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
+@@ -0,0 +1,46 @@
++
++IF(NOT CMAKE_WINDOWS_STACKSIZE )
++    SET(CMAKE_WINDOWS_STACKSIZE 65536) ## stacksize is set to 65kb
++ENDIF(NOT CMAKE_WINDOWS_STACKSIZE )
++
++# OLDNAMES.lib is not available for WinCE
++SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MANIFEST:NO /NODEFAULTLIB:\"oldnames.lib\"")
++
++INCLUDE(Platform/Windows-cl)
++
++IF(MSVC_VERSION GREATER 1310)
++    # Windows-cl.cmake sets /RTC1, we remove that here
++    SET (CMAKE_CXX_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi /Ob0 /Od")
++    SET (CMAKE_C_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi  /Ob0 /Od")
++    # We deactivate Manifest creation
++    SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MANIFEST:NO")
++    SET (CMAKE_SHARED_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT}  /MANIFEST:NO")
++    SET (CMAKE_MODULE_LINKER_FLAGS_INIT "${CMAKE_SHARED_LINKER_FLAGS_INIT} /MANIFEST:NO")
++ENDIF(MSVC_VERSION GREATER 1310)
++
++# Add architecture-based flags, needed by the C runtimes and Platform SDK
++IF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
++    ADD_DEFINITIONS(
++        -DARM
++        -D_ARM_
++        -D_M_ARMT
++        -DARMV4I
++        -D_ARMV4I_
++    )
++ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
++# TODO: add flags for other architectures
++
++SET(CMAKE_C_STANDARD_LIBRARIES_INIT "coredll.lib corelibc.lib")
++SET(CMAKE_CXX_STANDARD_LIBRARIES_INIT "${CMAKE_C_STANDARD_LIBRARIES_INIT}")
++
++IF(CMAKE_SYSTEM_VERSION)
++    SET(CMAKE_CREATE_WIN32_EXE "/SUBSYSTEM:WINDOWSCE,${CMAKE_SYSTEM_VERSION}")
++## TODO: setting the entry point is not always supported, some versions of
++## WinCE only support creating a "win32 exe"
++    SET(CMAKE_CREATE_CONSOLE_EXE "/SUBSYSTEM:WINDOWSCE,${CMAKE_SYSTEM_VERSION} /ENTRY:mainACRTStartup")
++ELSE(CMAKE_SYSTEM_VERSION)
++# according to msdn version would default to 2.00
++    SET(CMAKE_CREATE_WIN32_EXE "/SUBSYSTEM:WINDOWSCE")
++    SET(CMAKE_CREATE_CONSOLE_EXE "/SUBSYSTEMY:WINDOWSCE /ENTRY:mainACRTStartup")
++ENDIF(CMAKE_SYSTEM_VERSION)
++
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake
+new file mode 100644
+index 0000000..2b37179
+--- /dev/null
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake
+@@ -0,0 +1,26 @@
++SET(WINCE 1)
++
++INCLUDE(Platform/Windows)
++
++IF(CMAKE_SYSTEM_VERSION)
++    IF(CMAKE_SYSTEM_VERSION MATCHES "[0-9]+\\.[0-9][0-9]")
++        STRING(REGEX REPLACE "([0-9]*)\\.([0-9]*)" "0x\\1\\2" CMAKE_SYSTEM_VERSION_HEX  "${CMAKE_SYSTEM_VERSION}" )
++    ELSE(CMAKE_SYSTEM_VERSION MATCHES "[0-9]+\\.[0-9][0-9]")
++        MESSAGE(SEND_ERROR "Please set a CMAKE_SYSTEM_VERSION that matches: [0-9]+'.'[0-9][0-9]" )
++        SET(CMAKE_SYSTEM_VERSION_HEX "0x200")
++    ENDIF(CMAKE_SYSTEM_VERSION MATCHES "[0-9]+\\.[0-9][0-9]")
++
++ELSE(CMAKE_SYSTEM_VERSION)
++    IF(CMAKE_GENERATOR MATCHES "Visual Studio")
++        SET(CMAKE_SYSTEM_VERSION_HEX  "$(CEVER)")
++    ELSE(CMAKE_GENERATOR MATCHES "Visual Studio")
++        SET(CMAKE_SYSTEM_VERSION_HEX  "0x200")
++    ENDIF(CMAKE_GENERATOR MATCHES "Visual Studio")
++ENDIF(CMAKE_SYSTEM_VERSION)
++
++ADD_DEFINITIONS(
++        -DUNDER_CE=${CMAKE_SYSTEM_VERSION_HEX}
++        -D_WIN32_WCE=${CMAKE_SYSTEM_VERSION_HEX}
++        -DWIN32
++        )
++
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
+index 303ef34..2492f42 100644
+--- cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
+@@ -140,37 +140,114 @@ IF(CMAKE_GENERATOR MATCHES "Makefiles")
+       MESSAGE(STATUS "Check if this is a free VC compiler - no")
+       SET(CMAKE_USING_VC_FREE_TOOLS 0)
+     ENDIF(CMAKE_COMPILER_RETURN)
++  ENDIF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
++ENDIF(CMAKE_GENERATOR MATCHES "Makefiles")
++    
++# Testing the machine type of the generated binaries:
++IF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
++
++  ## IF CMAKE_CL_MACHINE_TYPE has been set in the toolchain file, we do not look for dumpbin
++  IF(NOT CMAKE_CL_MACHINE_TYPE)
++    FIND_PROGRAM(CMAKE_DUMPBIN
++      NAMES dumpbin
++      PATHS
++      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\9.0\\Setup\\VC;ProductDir]
++      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\8.0\\Setup\\VC;ProductDir]
++      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC;ProductDir]
++      "$ENV{ProgramFiles}/Microsoft Visual Studio 9.0/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio9.0/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio 9.0/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio9.0/VC/bin"
++      "/Program Files/Microsoft Visual Studio 9.0/VC/bin/"
++      "/Program Files/Microsoft Visual Studio 8/VC/bin/"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio 8/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio8/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio 8/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio8/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio .NET/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio .NET/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio .NET/VC/bin"
++      "c:/Program Files/Microsoft Visual Studio .NET/VC/bin"
++      "c:/Program Files/Microsoft Visual Studio.NET/VC/bin"
++      "/Program Files/Microsoft Visual Studio .NET/VC/bin/"
++      )
++ 
++    MESSAGE(STATUS "Check CL platform:")
++    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++            "Checking CL platform using dumpbin ${CMAKE_DUMPBIN}" )
+     MAKE_DIRECTORY("${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3")
+-    MESSAGE(STATUS "Check CL platform")
+-    EXEC_PROGRAM(${CMAKE_TEST_COMPILER} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3
+-      ARGS /nologo
+-      \"${testForFreeVCFile}\"
+-      /link /machine:i386
+-      OUTPUT_VARIABLE CMAKE_COMPILER_OUTPUT 
+-      RETURN_VALUE CMAKE_COMPILER_RETURN
++    IF(NOT CMAKE_DUMPBIN STREQUAL CMAKE_DUMPBIN-NOTFOUND)
++      GET_FILENAME_COMPONENT(CL_PATH ${CMAKE_C_COMPILER} PATH)
++      GET_FILENAME_COMPONENT(MAKE_PATH ${CMAKE_MAKE_PROGRAM} PATH)
++      GET_FILENAME_COMPONENT(DUMPBIN_PATH ${CMAKE_DUMPBIN} PATH)
++      SET(ENV{PATH} "${MAKE_PATH};${CL_PATH};${DUMPBIN_PATH};$ENV{PATH}")
++ 
++      # We compile a trivial source file and run dumpbin on the object file
++      # the headers section should contain the machine type that the selected cl
++      # produces. 
++ 
++      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++          "Dumpbin found as ${CMAKE_DUMPBIN}\n" )
++      SET(testForCLMachineType
++        "${CMAKE_ROOT}/Modules/CMakeTestCLMachineType.c")
++      SET(testForCLMachineTypeOutput CMakeTestCLMachineType.obj)
++      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++          "\n\nRunning cl: ${CMAKE_C_COMPILER} -c \"${testForCLMachineType}\" " )
++      EXECUTE_PROCESS(COMMAND "${CMAKE_C_COMPILER}" -c "${testForCLMachineType}"
++              WORKING_DIRECTORY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3" 
++              ERROR_VARIABLE testForCLMachineType_DUMP
++              OUTPUT_VARIABLE testForCLMachineType_DUMP
+       )
+-    # if there was an error assume it is a 64bit system
+-    IF(CMAKE_COMPILER_RETURN)
+-      FILE(APPEND 
+-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+-        "Determining if this is a 64 bit system passed:\n"
+-        "${CMAKE_COMPILER_OUTPUT}\n\n")
+-      MESSAGE(STATUS "Check CL platform - 64 bit")
+-      SET(CMAKE_CL_64 1)
+-    ELSE(CMAKE_COMPILER_RETURN)
+       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+-        "Determining if this is a 32 bit system passed:\n"
+-        "${CMAKE_COMPILER_OUTPUT}\n\n")
+-      MESSAGE(STATUS "Check CL platform - 32 bit")
+-      SET(CMAKE_CL_64 0)
+-    ENDIF(CMAKE_COMPILER_RETURN)
+-  ENDIF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
+-ENDIF(CMAKE_GENERATOR MATCHES "Makefiles")
++          "${testForCLMachineType_DUMP}\n\nRunning dumpbin: ${CMAKE_DUMPBIN} /HEADERS ${testForCLMachineType}" )
++      EXECUTE_PROCESS(COMMAND "${CMAKE_DUMPBIN}" /HEADERS ${testForCLMachineTypeOutput} 
++              WORKING_DIRECTORY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3"
++              OUTPUT_VARIABLE testForCLMachineType_DUMPBIN_OUTPUT 
++              ERROR_VARIABLE testForCLMachineType_DUMP 
++              )
++      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++          "${testForCLMachineType_DUMP}\n${testForCLMachineType_DUMPBIN_OUTPUT}" )
++      STRING(REGEX MATCH "machine \\(([^\\)]*)\\)" DUMPBIN_REGEX_RESULT ${testForCLMachineType_DUMPBIN_OUTPUT})
++      SET(CMAKE_CL_MACHINE_TYPE ${CMAKE_MATCH_1})
++ 
++    ELSE(NOT CMAKE_DUMPBIN STREQUAL CMAKE_DUMPBIN-NOTFOUND)
++      MESSAGE(Status "Check CL platform: dumpbin.exe was not found - assuimg i386")
++      MESSAGE(Status "You can override the setting by clearing the build path and setting CMAKE_CL_MACHINE_TYPE")
++      SET(CMAKE_CL_MACHINE_TYPE i386)
++    ENDIF(NOT CMAKE_DUMPBIN STREQUAL CMAKE_DUMPBIN-NOTFOUND)
++  ENDIF(NOT CMAKE_CL_MACHINE_TYPE)
++
++## TODO add further dumpbin machine to visual studio machine type conversion here, 
++## if required
++  IF(CMAKE_CL_MACHINE_TYPE STREQUAL x86)
++    SET(CMAKE_CL_MACHINE_TYPE i386)
++  ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL x86)
++
++  IF(CMAKE_CL_MACHINE_TYPE MATCHES ARM)
++    IF(NOT CMAKE_FORCE_NON_THUMB)
++      SET(CMAKE_CL_MACHINE_TYPE THUMB)
++    ENDIF(NOT CMAKE_FORCE_NON_THUMB)
++  ENDIF(CMAKE_CL_MACHINE_TYPE MATCHES ARM)
++
++  ## If everything above failed, we default to i386
++  IF(NOT CMAKE_CL_MACHINE_TYPE)
++    SET (CMAKE_CL_MACHINE_TYPE "i386")
++  ENDIF(NOT CMAKE_CL_MACHINE_TYPE)  
++
++  MESSAGE(STATUS "Check CL platform: ${CMAKE_CL_MACHINE_TYPE}" )
+ 
+ IF(CMAKE_FORCE_WIN64)
+-  SET(CMAKE_CL_64 1)
++    SET(CMAKE_CL_MACHINE_TYPE x64)
++    MESSAGE(STATUS "CL platform was forced to:${CMAKE_CL_MACHINE_TYPE}" )
+ ENDIF(CMAKE_FORCE_WIN64)
+ 
++
++  ## CMAKE_CL_64 is set for compatibility reasons
++  IF(CMAKE_CL_MACHINE_TYPE STREQUAL x64)
++    SET(CMAKE_CL_64 1)
++  ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL x64)
++
++ENDIF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
+ IF("${MSVC_VERSION}" GREATER 1599)
+   SET(MSVC_INCREMENTAL_DEFAULT ON)
+ ENDIF()
+@@ -234,14 +311,21 @@ SET(CMAKE_CXX_STANDARD_LIBRARIES_INIT "${CMAKE_C_STANDARD_LIBRARIES_INIT}")
+ 
+ # executable linker flags
+ SET (CMAKE_LINK_DEF_FILE_FLAG "/DEF:")
+-# set the stack size and the machine type
+-IF(CMAKE_CL_64)
+-  SET (CMAKE_EXE_LINKER_FLAGS_INIT
+-    "${CMAKE_EXE_LINKER_FLAGS_INIT} /STACK:10000000 /machine:x64")
+-ELSE(CMAKE_CL_64)
++
++IF(NOT CMAKE_WINDOWS_STACKSIZE)
++   SET(CMAKE_WINDOWS_STACKSIZE 10000000) 
++ENDIF(NOT CMAKE_WINDOWS_STACKSIZE)
++ 
+   SET (CMAKE_EXE_LINKER_FLAGS_INIT
+-    "${CMAKE_EXE_LINKER_FLAGS_INIT} /STACK:10000000 /machine:I386")
+-ENDIF(CMAKE_CL_64)
++    "${CMAKE_EXE_LINKER_FLAGS_INIT} /STACK:${CMAKE_WINDOWS_STACKSIZE}" )
++    
++
++SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MACHINE:${CMAKE_CL_MACHINE_TYPE}")
++
++  # append /ARMPADCODE
++IF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
++  SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /ARMPADCODE")
++ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
+ 
+ # add /debug and /INCREMENTAL:YES to DEBUG and RELWITHDEBINFO also add pdbtyp
+ # on versions that support it
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
+index 1a889f2..999d7dd 100644
+--- cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
+@@ -3,6 +3,7 @@ SET(CMAKE_COMPILER_SUPPORTS_PDBTYPE @CMAKE_COMPILER_SUPPORTS_PDBTYPE@)
+ SET(CMAKE_COMPILER_2005 @CMAKE_COMPILER_2005@)
+ SET(CMAKE_USING_VC_FREE_TOOLS @CMAKE_USING_VC_FREE_TOOLS@)
+ SET(CMAKE_CL_64 @CMAKE_CL_64@)
++SET(CMAKE_CL_MACHINE_TYPE @CMAKE_CL_MACHINE_TYPE@)
+ SET(MSVC60 @MSVC60@)
+ SET(MSVC70 @MSVC70@)
+ SET(MSVC71 @MSVC71@)
+-- 
+1.6.5.1.1367.gcd48
+
