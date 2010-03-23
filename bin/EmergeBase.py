@@ -133,11 +133,14 @@ class EmergeBase():
     def compiler(self):
         """return currently selected compiler"""
         return self.__compiler
-        
+
+    def hasTargetPlatform(self):
+        return TARGETPLATFORM != ""
+
     def targetPlatform(self):
         """return the cross-compiling target platform"""
         return TARGETPLATFORM
-        
+
     def targetArchitecture(self):
         """return the target CPU architecture"""
         return TARGETARCH
