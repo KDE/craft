@@ -105,20 +105,19 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -l libmysql "
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
+        
+        command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), platform )
         if self.hasTargetPlatform():
-            command = r"echo %s | %s -opensource -prefix %s " \
-              "-platform %s -xplatform %s " \
-              "-no-phonon -no-webkit -openssl " \
-              "-fast -ltcg -no-vcproj -no-dsp " \
-              "-nomake demos -nomake examples " \
-              "%s %s" % ( userin, configure, self.installDir(), platform, xplatform, incdirs, libdirs)
+            command += "-xplatform %s " % xplatform
+            command += "-no-phonon -no-webkit -openssl "
         else:
-            command = r"echo %s | %s -opensource -platform %s -prefix %s " \
-              "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql -plugin-sql-odbc " \
-              "-no-phonon -qdbus -openssl -dbus-linked " \
-              "-fast -ltcg -no-vcproj -no-dsp " \
-              "-nomake demos -nomake examples " \
-              "%s %s" % ( userin, configure, platform, self.installDir(), incdirs, libdirs)
+            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql -plugin-sql-odbc "
+            command += "-no-phonon -qdbus -openssl -dbus-linked "
+
+        command += "-fast -ltcg -no-vcproj -no-dsp "
+        command += "-nomake demos -nomake examples "
+        command += "%s %s" % ( incdirs, libdirs )
+
         if self.buildType() == "Debug":
           command += " -debug "
         else:
