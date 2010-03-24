@@ -106,11 +106,12 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         if self.hasTargetPlatform():
-            command = r"echo %s | %s -opensource -platform %s -xplatform %s -prefix %s " \
+            command = r"echo %s | %s -opensource -prefix %s " \
+              "-platform %s -xplatform %s " \
               "-no-phonon -no-webkit -openssl " \
               "-fast -ltcg -no-vcproj -no-dsp " \
               "-nomake demos -nomake examples " \
-              "%s %s" % ( userin, configure, platform, xplatform, self.installDir(), incdirs, libdirs)
+              "%s %s" % ( userin, configure, self.installDir(), platform, xplatform, incdirs, libdirs)
         else:
             command = r"echo %s | %s -opensource -platform %s -prefix %s " \
               "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql -plugin-sql-odbc " \
@@ -142,6 +143,18 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
       
 
     def install( self ):
+        if self.hasTargetPlatform():
+            # Configuring Qt for WinCE ignores the -prefix option,
+            # so we have to do the job manually...
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "include" ) , os.path.join( self.installDir(), "include" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
+            # create qt.conf 
+            utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
+            return True
+
         if not QMakeBuildSystem.install(self):
             return False
 
