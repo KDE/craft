@@ -5,10 +5,10 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = '1.2.3-3'
-        self.targets[ ver ] = 'http://www.zlib.net/zlib-1.2.4.tar.gz'
-        self.targetInstSrc[ ver ] = 'zlib-1.2.4'
-        self.defaultTarget = ver
+       ver= '1.2.4'
+       self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/libpng/zlib-%s.tar.gz' % ver
+       self.targetInstSrc[ ver ] = "zlib-"+ver
+       self.defaultTarget = ver
 
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
@@ -19,20 +19,15 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
 
-    def buildType( self ):
-        return "Release"
-  
     def unpack(self):
         if not CMakePackageBase.unpack( self ):
-            return False
-        # copy CMakeLists.txt
-        utils.copyFile( os.path.join( self.packageDir(), "CMakeLists.txt" ),
-                        os.path.join( self.sourceDir(),  "CMakeLists.txt" ) )
+            return False       
+        os.remove(os.path.join( self.sourceDir() , "zconf.h" ))
         return True
 
     def createPackage( self ):
         # auto-create both import libs with the help of pexports
-        self.createImportLibs( "zlib" )
+        self.createImportLibs( "zlib1" )
 
         return CMakePackageBase.createPackage( self )
 
