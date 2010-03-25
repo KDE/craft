@@ -1,7 +1,6 @@
-import info
 import os
-import utils
-from Package.BinaryPackageBase import *
+from shells import MSysShell
+import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -9,43 +8,30 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/pexports'] = 'default'
 
     def setTargets( self ):
-        ver = "2.6.32-1"
-        ver2 = "2.6.32+.win32"
-        self.targets[ ver ] = "ftp://ftp.zlatkovic.com/pub/libxml/oldreleases/libxml2-%s.zip" % ver2
-        self.targetInstSrc[ ver ] = "libxml2-%s" % ver2
-        self.defaultTarget = ver
+        self.targets[ '2.7.7' ] = "ftp://xmlsoft.org/libxml2/libxml2-2.7.7.tar.gz"
+        self.targetInstSrc[ '2.7.7' ] = "libxml2-2.7.7"
+        #self.patchToApply['2.7.7']=('pthreads.diff',1)
+        self.defaultTarget = '2.7.7'
 
-class Package(BinaryPackageBase):
+from Package.PackageBase import *
+from Source.MultiSource import *
+from BuildSystem.AutoToolsBuildSystem import *
+from Packager.KDEWinPackager import *;
+
+class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
     def __init__( self ):
         self.subinfo = subinfo()
-        BinaryPackageBase.__init__( self )
-        # don't use shortcut to unpack into imageDir()
-        self.buildSystemType = 'custom'
-        # create combined package
-        self.subinfo.options.package.withCompiler = None
-
-    def install( self ):
-        srcdir = self.sourceDir()
-        dstdir = self.installDir()
-        utils.cleanDirectory( dstdir )
-
-        os.makedirs( os.path.join( dstdir, "lib" ) )
+        PackageBase.__init__(self)
+        MultiSource.__init__(self)
+        AutoToolsBuildSystem.__init__(self)
+        KDEWinPackager.__init__(self)
+        self.subinfo.options.configure.defines =" --disable-static --enable-shared LDFLAGS=\"-L%s -lz\""%(MSysShell().toNativePath(os.path.join( os.environ.get( "KDEROOT" ) , "lib" )))
         
-        # binaries - can be used from zip package
-        utils.copyDir( os.path.join( srcdir, "bin" ),
-                       os.path.join( dstdir, "bin" ) )
-        # include - can be used from zip package
-        utils.copyDir( os.path.join( srcdir, "include" ),
-                       os.path.join( dstdir, "include" ) )
-        # contrib - readme.txt
-        os.makedirs( os.path.join( dstdir, "contrib", self.subinfo.targetSourcePath() ) )
-        utils.copyFile( os.path.join( srcdir, "readme.txt" ),
-                        os.path.join( dstdir, "contrib", self.subinfo.targetSourcePath(), "readme.txt" ) )
-
+    def createPackage( self ):
         # auto-create both import libs with the help of pexports
-        self.createImportLibs( "libxml2" )
+        self.createImportLibs( "xml2" )
+        return KDEWinPackager.createPackage( self )
 
-        return True
-
+           
 if __name__ == '__main__':
-    Package().execute()
+     Package().execute()
