@@ -10,13 +10,13 @@ import urllib
 
 class subinfo(info.infoclass):
     def setTargets( self ):                
-        self.targets[ "noDebug" ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32.7z" % ( self.getVer() )
-        self.targetInstSrc[ "noDebug" ] = "vlc-1.1.0-git-%s" % ( self.getVer() )
+        self.targets[ self.getVer()  ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32.7z" % ( self.getVer() )
+        self.targetInstSrc[ self.getVer() ] = "vlc-1.1.0-git-%s" % ( self.getVer() )
         
-        self.targets[ self.getVer() ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32-debug.7z" % ( self.getVer() )
-        self.targetInstSrc[ self.getVer()] = "vlc-1.1.0-git-%s" % ( self.getVer() )        
+        self.targets[ self.getVer()+"-debug" ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32-debug.7z" % ( self.getVer() )
+        self.targetInstSrc[ self.getVer()+"-debug" ] = "vlc-1.1.0-git-%s" % ( self.getVer() )        
         
-        self.defaultTarget = self.getVer() 
+        self.defaultTarget = self.getVer()
        
 
     def setDependencies( self ):
@@ -36,6 +36,8 @@ class Package(BinaryPackageBase):
   def __init__(self):  
     self.subinfo = subinfo()    
     self.subinfo.options.merge.ignoreBuildType = True
+    self.subinfo.options.package.packSources = False
+    self.subinfo.options.package.withCompiler = None
     BinaryPackageBase.__init__( self )
     
     
