@@ -14,9 +14,6 @@ SRC_URI= """
 http://download.videolan.org/pub/libdvdcss/1.2.10/libdvdcss-1.2.10.tar.bz2
 """
 
-DEPEND = """
-"""
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.2.10'] = SRC_URI
