@@ -15,9 +15,6 @@ http://downloads.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-lib.zip
 """
 
-DEPEND = """
-"""
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['3.8.2'] = SRC_URI
