@@ -15,9 +15,6 @@ http://downloads.sourceforge.net/project/libofx/libofx/0.9.1/libofx-0.9.1.tar.gz
 """
 #http://sourceforge.net/projects/libofx/files/libofx/0.9.1/libofx-0.9.1.tar.gz/download
 
-DEPEND = """
-"""
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['0.9.1'] = SRC_URI
