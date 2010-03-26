@@ -13,9 +13,6 @@ SRC_URI= """
 http://downloads.sourceforge.net/sourceforge/mingw/""" + PACKAGE_FULL_NAME + """.tar.gz
 """
 
-DEPEND = """
-"""
-
 class subclass(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, SRC_URI, args=args )
