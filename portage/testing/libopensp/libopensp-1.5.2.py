@@ -14,9 +14,6 @@ SRC_URI= """
 http://surfnet.dl.sourceforge.net/project/openjade/opensp/1.5.2/OpenSP-1.5.2.tar.gz
 """
 
-DEPEND = """
-"""
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.5.2'] = SRC_URI
