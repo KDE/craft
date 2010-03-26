@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdebase'] = 'default'
+        self.hardDependencies['kde/kdebase-runtime'] = 'default'
 
-        self.softDependencies['kdesupport/eigen'] = 'default'
+        self.softDependencies['kdesupport/eigen2'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
         self.softDependencies['testing/gsl'] = 'default'
     
