@@ -18,12 +18,6 @@ class subinfo(info.infoclass):
         self.softDependencies['testing/gsl'] = 'default'
     
 
-DEPEND = """
-win32libs-sources/lcms-src
-kde/kdelibs
-kde/kdepimlibs
-"""
-
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
