@@ -1,13 +1,12 @@
-- expat-src binary
+- expat-src msys
 - gettext-src binary
-- giflib-src binary
+- giflib-src binary --> fixed cmake build system
 - iconv-src msys
 - jpeg-src binary, replace with bic-version jpeg7
 - libgmp-src msys
 - libgpod-src msys
 - libnova-src msys
-- libpng-src mingw only?
-- libxml2-src binary/msys
+- libxml2-src binary/msys --> Patrick
 - libxslt-src binary
 - openssl-src platform specific
 - tiff-src binary
