@@ -23,7 +23,8 @@ class Package(BinaryPackageBase):
     BinaryPackageBase.__init__( self )
     
   def install( self ):
-    shutil.move( os.path.join( self.installDir() , "mplayer.exe" ) , os.path.join( self.installDir(), "bin" , "mplayer" , "mplayer.exe" ) )
+    os.makedirs( os.path.join( self.imageDir(), "bin" , "mplayer" ))
+    shutil.move( os.path.join( self.imageDir() , "mplayer.exe" ) , os.path.join( self.imageDir(), "bin" , "mplayer" , "mplayer.exe" ) )
     return True
 
 if __name__ == '__main__':
