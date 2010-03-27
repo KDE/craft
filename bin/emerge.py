@@ -359,14 +359,14 @@ else:
     defaultCategory = "kde"
 
 if updateAll:
-    installedPackages = portage.getInstallables()
-    if portage.isCategory( packageName ):
+    installedPackages = portage.PortageInstance.getInstallables()
+    if portage.PortageInstance.isCategory( packageName ):
         utils.debug( "Updating installed packages from category " + packageName, 1 ) 
     else:
         utils.debug( "Updating all installed packages", 1 )
     packageList = []
     for category, package, version in installedPackages:
-        if portage.isCategory( packageName ) and ( category != packageName ):
+        if portage.PortageInstance.isCategory( packageName ) and ( category != packageName ):
             continue
         if portage.isInstalled( category, package, version, buildType ) and portage.isPackageUpdateable( category, package, version ):
             categoryList.append( category )
@@ -374,30 +374,30 @@ if updateAll:
     utils.debug( "Will update packages: " + str (packageList), 1 )
 elif packageName:
     if len( packageName.split( "/" ) ) == 1:
-        if portage.isCategory( packageName ):
+        if portage.PortageInstance.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
-            packageList = portage.getAllPackages( packageName )
+            packageList = portage.PortageInstance.getAllPackages( packageName )
             categoryList = [ packageName ] * len(packageList)
         else:
         
-            if portage.isCategory( defaultCategory ) and portage.isPackage( defaultCategory, packageName ):
+            if portage.PortageInstance.isCategory( defaultCategory ) and portage.PortageInstance.isPackage( defaultCategory, packageName ):
                 # prefer the default category
                 packageList = [ packageName ]
                 categoryList = [ defaultCategory ]
             else:
-                if portage.getCategory( packageName ):
+                if portage.PortageInstance.getCategory( packageName ):
                     packageList = [ packageName ]
-                    categoryList = [ portage.getCategory( packageName ) ]
+                    categoryList = [ portage.PortageInstance.getCategory( packageName ) ]
                 else:
                     utils.warning( "unknown category or package: %s" % packageName )
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
         validPackage = False
-        if portage.isCategory( cat ):
+        if portage.PortageInstance.isCategory( cat ):
             categoryList = [ cat ]
         else:
             utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
-        if len( categoryList ) > 0 and portage.isPackage( categoryList[0], pac ):
+        if len( categoryList ) > 0 and portage.PortageInstance.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
         if len( categoryList ) and len( packageList ):
             utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )

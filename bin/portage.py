@@ -31,37 +31,15 @@ def rootDir():
 def etcDir():
     return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
 
-def getFilename( category, package, version ):
-    """ return absolute filename for a given category, package and version"""
-    file = os.path.join( rootDir(), category, package, "%s-%s.py" % ( package, version ) )
+def getDirname( category, package ):
+    """ return absolute pathname for a given category and package """
+    file = os.path.join( rootDir(), category, package )
     return file
-
-def getCategory( package ):
-    """returns the category of this package"""
-    utils.debug( "getCategory: %s" % package, 2 )
-    basedir = rootDir()
-
-    for cat in os.listdir( basedir ):
-        #print "category:", cat
-        catpath = os.path.join( basedir, cat )
-        if ( os.path.isdir( catpath ) ):
-            for pack in os.listdir( catpath ):
-                #print "    package:", pack
-                if ( pack == package ):
-                    utils.debug( "found: category %s for package %s" % ( cat, pack ), 1 )
-                    return cat
-    return False
-
-def isCategory( category ):
-    if category in os.listdir( rootDir() ):
-        catpath = os.path.join( rootDir(), category )
-        utils.debug( "isCategory: catpath=%s" % catpath, 2 )
-        if os.path.isdir( catpath ):
-            return True
-    return False
-
-def isPackage( category, package ):
-    return os.path.exists( os.path.join( rootDir(), category, package ) )
+    
+def getFilename( category, package, version ):
+    """ return absolute filename for a given category, package and version """
+    file = os.path.join( getDirname( category, package ), "%s-%s.py" % ( package, version ) )
+    return file
 
 def getCategoryPackageVersion( path ):
     utils.debug( "getCategoryPackageVersion: %s" % path ,2 )
@@ -74,93 +52,158 @@ def getCategoryPackageVersion( path ):
     utils.debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
     return [ category, package, version ]
 
-def getAllPackages( category ):
-    if isCategory( category ):
-        plist = os.listdir( os.path.join( rootDir(), category ) )
-        if ".svn" in plist: plist.remove( ".svn" )
-        for entry in plist:
-            if not os.path.isdir( os.path.join( rootDir(), category, entry ) ):
-                plist.remove( entry )
-        utils.debug( plist, 2 )
-        if os.path.exists( os.path.join( rootDir(), category, "dont_build.txt" ) ):
-            f = open( os.path.join( rootDir(), category, "dont_build.txt" ), "r" )
-            for line in f:
-                try:
-                    plist.remove( line.strip() )
-                except:
-                    utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
-        return plist
-    else:
-        return
+class Portage:
+    def __init__( self ):
+        """ """
+        self.categories = {}
+        self.portages = {}
+
+    def addPortageDir( self, dir ):
+        """ adds the categories and packages of a portage directory """
+        if not os.path.exists( dir ): return
+
+        categoryList = os.listdir( dir )
+
+        # remove vcs directories
+        for vcsdir in [ '.svn', 'CVS', '.hg', '.git' ]:
+            if vcsdir in categoryList:
+                categoryList.remove( vcsdir )
+
+        self.portages[ dir ] = []
+        for category in categoryList:
+            if not os.path.isdir( os.path.join( dir, category ) ): continue
+            self.portages[ dir ].append( category )
+
+            packageList = os.listdir( os.path.join( dir, category ) )
+
+            # remove vcs directories
+            for vcsdir in [ '.svn', 'CVS', '.hg', '.git' ]:
+                if vcsdir in packageList:
+                    packageList.remove( vcsdir )
+
+            self.categories[ category ] = []
+            for package in packageList:
+                if not os.path.isdir( os.path.join( dir, category, package ) ): continue
+                self.categories[ category ].append( package )
+            
+
+    def getCategory( self, package ):
+        """ returns the category of this package """
+        utils.debug( "getCategory: %s" % package, 2 )
+
+        for cat in self.categories.keys():
+            if package in self.categories[ cat ]:
+                utils.debug( "found: category %s for package %s" % ( cat, package ), 1 )
+                return cat
+        return False
+
+    def isCategory( self, category ):
+        """ returns whether a certain category exists """
+        return category in self.categories.keys()
+
+    def isPackage( self, category, package ):
+        """ returns whether a certain package exists within a category """
+        return package in self.categories[ category ]
+
+    def getAllPackages( self, category ):
+        """ returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory """
+        """ in case the category doesn't exist, nothing is returned """
+        if isCategory( category ):
+            plist = self.categories[ category ]
+            if os.path.exists( os.path.join( rootDir(), category, "dont_build.txt" ) ):
+                f = open( os.path.join( rootDir(), category, "dont_build.txt" ), "r" )
+                for line in f:
+                    try:
+                        plist.remove( line.strip() )
+                    except:
+                        utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
+            return plist
+        else:
+            return
+
+    def getPackageInstance( self, category, package ):
+        """return instance of class Package from package file"""
+
+        version = self.getNewestVersion( category, package )
+        fileName = getFilename( category, package, version )
+        module = __import__( fileName )
+        p = module.Package()
+        p.setup(fileName, category, package, version)
+        return p
+    
+    def getDefaultTarget( self, category, package, version ):
+        """ returns the default package of a specified package """
+        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            return mod.subinfo().defaultTarget
+        else:
+            return None
+
+    def getAllTargets( self, category, package, version ):
+        """ returns all targets of a specified package """
+        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            tagDict = info.svnTargets
+            tagDict.update( info.targets )
+            utils.debug( tagDict )
+            return tagDict
+        else:
+            return dict()
+
+    def getNewestVersion( self, category, package ):
+        """ returns the newest version of this category/package """
+        if( category == None ):
+            utils.die( "Empty category for package '%s'" % package )
+        if not self.isCategory( category ):
+            utils.die( "could not find category '%s'" % category )
+        if not self.isPackage( category, package ):
+            utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
+
+        versions = []
+        for file in os.listdir( getDirname( category, package ) ):
+            (shortname, ext) = os.path.splitext( file )
+            if ( ext != ".py" ):
+                continue
+            if ( shortname.startswith( package ) ):
+                versions.append( shortname )
+
+        tmpver = ""
+        for ver in versions:
+            if ( tmpver == "" ):
+                tmpver = ver
+            else:
+                ret = portage_versions.pkgcmp(portage_versions.pkgsplit(ver), \
+                                              portage_versions.pkgsplit(tmpver))
+                if ( ret == 1 ):
+                    tmpver = ver
+
+        ret = packageSplit( tmpver )
+        #print "ret:", ret
+        return ret[ 1 ]
+
+    def getInstallables( self ):
+        """ get all the packages that are within the portage directory """
+        instList = list()
+        for category in self.categories.keys():
+            for package in self.categories[ category ]:
+                for script in os.listdir( getDirname( category, package ) ):
+                    if script.endswith( '.py' ):
+                        version = script.replace('.py', '').replace(package + '-', '')
+                        instList.append([category, package, version])
+        return instList
+
+
+# when importing this, this static Object should get added
+PortageInstance = Portage()
+PortageInstance.addPortageDir( rootDir() )
 
 def getPackageInstance( category, package ):
     """return instance of class Package from package file"""
-    version = getNewestVersion( category, package )
-    fileName = getFilename( category, package, version )
-    module = __import__( fileName )
-    p = module.Package()
-    p.setup(fileName, category, package, version)
-    return p
-    
-def getDefaultTarget( category, package, version ):
-    """ """
-    utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
-    mod = __import__( getFilename( category, package, version ) )
-    if hasattr( mod, 'subinfo' ):
-        info = mod.subinfo()
-        return mod.subinfo().defaultTarget
-    else:
-        return None
-
-def getAllTags( category, package, version ):
-    """ """
-    utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
-    mod = __import__( getFilename( category, package, version ) )
-    if hasattr( mod, 'subinfo' ):
-        info = mod.subinfo()
-        tagDict = info.svnTargets
-        tagDict.update( info.targets )
-        utils.debug( tagDict )
-        return tagDict
-    else:
-        return dict()
-
-def getNewestVersion( category, package ):
-    """
-    returns the newest version of this category/package
-    """
-#    if verbose() >= 1:
-#        print "getNewestVersion:", category, package
-    if( category == None ):
-        utils.die("Empty category for package '%s'" % package )
-    if category not in os.listdir( rootDir() ):
-        utils.die( "could not find category '%s'" % category )
-    if package not in os.listdir( os.path.join( rootDir(), category ) ):
-        utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
-
-    packagepath = os.path.join( rootDir(), category, package )
-
-    versions = []
-    for file in os.listdir( packagepath ):
-        (shortname, ext) = os.path.splitext( file )
-        if ( ext != ".py" ):
-            continue
-        if ( shortname.startswith( package ) ):
-            versions.append( shortname )
-
-    tmpver = ""
-    for ver in versions:
-        if ( tmpver == "" ):
-            tmpver = ver
-        else:
-            ret = portage_versions.pkgcmp(portage_versions.pkgsplit(ver), \
-                                          portage_versions.pkgsplit(tmpver))
-            if ( ret == 1 ):
-                tmpver = ver
-
-    ret = packageSplit( tmpver )
-    #print "ret:", ret
-    return ret[ 1 ]
+    return PortageInstance.getPackageInstance( category, package )
 
 def isVersion( part ):
     ver_regexp = re.compile("^(cvs\\.)?(\\d+)((\\.\\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\\d*)*)(-r(\\d+))?$")
@@ -188,57 +231,32 @@ def getDependencies( category, package, version ):
     returns the dependencies of this package as list of strings:
     category/package
     """
-    if os.path.isfile( getFilename( category, package, version ) ):
-        f = open( getFilename( category, package, version ), "rb" )
-    else:
+    if not os.path.isfile( getFilename( category, package, version ) ):
         utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
-    lines = f.read()
-    #print "lines:", lines
-    # get DEPENDS=... lines
-    deplines = []
-    inDepend = False
 
-    utils.debug( "solving package: %s-%s" % ( package, version ), 2 )
-    # FIXME make this more clever
-    for line in lines.splitlines():
-        if ( inDepend == True ):
-            if ( line.find( "\"\"\"" ) != -1 ):
-                break
-            deplines.append( [ line, 'default' ] )
-        if ( line.startswith( "DEPEND" ) ):
-            inDepend = True
-    if not len(deplines) > 0:
-        utils.debug( "%s %s %s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
-        mod = __import__( getFilename( category, package, version ) )
-        if hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
-            for line in info.hardDependencies.keys():
-                deplines.append( [line, info.hardDependencies[ line ] ] )
-                #warning( "%s %s" % (line, info.hardDependencies[ line ] ) )
-
-#    if verbose() >= 1 and len( deplines ) > 0:
-#        print "deplines:", deplines
+    utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
+    mod = __import__( getFilename( category, package, version ) )
 
     deps = []
-    for line in deplines:
-        if len(line) <= 1 or len(line[ 0 ]) <= 1:
-            """if empty or if first argument is empty """
-            continue
-        (category, package) = line[ 0 ].split( "/" )
-        version = getNewestVersion( category, package )
-        deps.append( [ category, package, version, line[ 1 ] ] )
+    if hasattr( mod, 'subinfo' ):
+        info = mod.subinfo()
+        for line in info.hardDependencies.keys():
+            (category, package) = line.split( "/" )
+            version = PortageInstance.getNewestVersion( category, package )
+            deps.append( [ category, package, version, info.hardDependencies[ line ] ] )
+
     return deps
 
 def solveDependencies( category, package, version, deplist ):
     if ( category == "" ):
-        category = getCategory( package )
+        category = PortageInstance.getCategory( package )
 
     if ( version == "" ):
-        version = getNewestVersion( category, package )
+        version = PortageInstance.getNewestVersion( category, package )
 
     tag = 1
     if ( tag == "" ):
-        tag = getAllTags( category, package, version ).keys()[ 0 ]
+        tag = PortageInstance.getAllTargets( category, package, version ).keys()[ 0 ]
 
     if [ category, package, version, tag ] in deplist:
         deplist.remove( [ category, package, version, tag ] )
@@ -255,29 +273,10 @@ def solveDependencies( category, package, version, deplist ):
     # for every dep call solvedeps
     #return deplist
 
-def getInstallables():
-    """get all the packages that are within the portage directory"""
-    instList = list()
-    catdirs = os.listdir( rootDir() )
-    if '.svn' in catdirs:
-        catdirs.remove( '.svn' )
-    for category in catdirs:
-        pakdirs = os.listdir( os.path.join( rootDir(), category ) )
-        if '.svn' in pakdirs:
-            pakdirs.remove( '.svn' )
-        for package in pakdirs:
-            if os.path.isdir( os.path.join( rootDir(), category, package ) ):
-                scriptdirs = os.listdir( os.path.join( rootDir(), category, package ) )
-                for script in scriptdirs:
-                    if script.endswith( '.py' ):
-                        version = script.replace('.py', '').replace(package + '-', '')
-                        instList.append([category, package, version])
-    return instList
-
 def printTargets( category, package, version ):
     """ """
-    targetsDict = getAllTags( category, package, version )
-    defaultTarget = getDefaultTarget( category, package, version )
+    targetsDict = PortageInstance.getAllTargets( category, package, version )
+    defaultTarget = PortageInstance.getDefaultTarget( category, package, version )
     if not targetsDict['svnHEAD']:
         del targetsDict['svnHEAD']
     targetsDictKeys = targetsDict.keys()
@@ -317,11 +316,11 @@ def printInstallables():
     """get all the packages that can be installed"""
     def alwaysTrue( category, package, version ):
         return True
-    printCategoriesPackagesAndVersions( getInstallables(), alwaysTrue )
+    printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), alwaysTrue )
 
 def printInstalled():
     """get all the packages that are already installed"""
-    printCategoriesPackagesAndVersions( getInstallables(), isInstalled )
+    printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
     
     
 def isInstalled( category, package, version, buildType='' ):
