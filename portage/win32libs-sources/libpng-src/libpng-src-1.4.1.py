@@ -20,15 +20,12 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
         self.subinfo.options.package.withCompiler = None
-        if not (self.compiler() == "mingw" or self.compiler() == "mingw4"):
-            print "error: can only be build with MinGW (but in the end a MinGW/MSVC combined package is created)"
-            exit( 1 )
             
             
     def unpack( self ):
         if( not CMakePackageBase.unpack( self ) ):
           return False 
-        if(self.subinfo.buildTarget.startswith('1.4')):
+        if(self.subinfo.buildTarget in ['1.4.1']):
           return True
         # the cmake script is in libpng-src/scripts	 
         srcdir  = os.path.join( self.sourceDir(), "scripts", "CMakeLists.txt" )	 
