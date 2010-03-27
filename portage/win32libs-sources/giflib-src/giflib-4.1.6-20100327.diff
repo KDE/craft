@@ -1,0 +1,578 @@
+diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
+--- giflib-4.1.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ giflib-4.1.6/CMakeLists.txt	2010-03-27 17:43:12.136583600 +0100
+@@ -0,0 +1,207 @@
++project (libgif)
++
++cmake_minimum_required(VERSION 2.6)
++
++find_package(X11)
++
++# you will need non-standard irixGL for this to work
++#find_package(OpenGL)
++# I had no way to get this library, so keep that for later
++#find_package(LibRle)
++
++option(BUILD_utils "build also some small helper executables to transform gif files into other formats" ON)
++
++#/* Set to an unsigned 32 bit integer available on this system */
++set(UINT32 "unsigned long")
++if(X11_FOUND)
++    set(HAVE_LIBX11 ON)
++endif(X11_FOUND)
++
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("io.h" HAVE_IO_H)
++check_include_file("stdarg.h" HAVE_STDARG_H)
++check_include_file("gl/gl.h" HAVE_GL_GL_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("rle.h" HAVE_RLE_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("varargs.h" HAVE_VARARGS_H)
++
++check_function_exists("strdup" HAVE_STRDUP)
++check_function_exists("vprintf" HAVE_VPRINTF)
++
++set(PACKAGE "giflib")
++set(PACKAGE_BUGREPORT "abadger1999@sourceforge.net")
++set(PACKAGE_NAME "giflib")
++set(PACKAGE_STRING "giflib-4.1.6")
++set(PACKAGE_TARNAME "")
++set(PACKAGE_VERSION "4.1.6")
++#cmakedefine VERSION
++
++configure_file(config.h.cmake config.h)
++include_directories(lib ${CMAKE_BINARY_DIR}) 
++if(OPENGL_FOUND)
++    include_directories(${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR}/GL)
++endif(OPENGL_FOUND)
++
++add_definitions(-DHAVE_CONFIG_H)
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++set(libgif_SRCS 
++lib/dev2gif.c
++lib/dgif_lib.c
++lib/egif_lib.c
++lib/gif_err.c
++lib/gif_font.c
++lib/gif_hash.c
++lib/gifalloc.c
++lib/qprintf.c
++lib/quantize.c
++)
++
++add_library(gif SHARED ${libgif_SRCS})
++install(TARGETS gif RUNTIME DESTINATION bin
++                    LIBRARY DESTINATION lib
++                    ARCHIVE DESTINATION lib)
++set_target_properties(gif PROPERTIES OUTPUT_NAME giflib4)
++if(X11_FOUND)
++    target_link_libraries(gif ${X11_X11_LIB})
++endif(X11_FOUND)
++
++install(FILES lib/gif_lib.h DESTINATION include)
++
++if(BUILD_utils)
++# add a convenience library so that this file is not recompiled for each target
++add_library(getarg STATIC lib/getarg.c)
++
++macro(compileUtils)
++foreach(srcfile ${ARGN})
++    add_executable(${srcfile} util/${srcfile}.c)
++    target_link_libraries(${srcfile} gif getarg)
++    install(TARGETS ${srcfile} RUNTIME DESTINATION bin
++                               LIBRARY DESTINATION lib
++                               ARCHIVE DESTINATION lib)
++endforeach(srcfile ${ARGN})
++endmacro(compileUtils)
++
++compileUtils(
++gifinfo
++gif2epsn
++gif2ps
++gif2rgb
++gifasm
++gifbg
++gifclip
++gifcomb
++giffix
++gifflip
++gifhisto
++gifinter
++gifinto
++gifovly
++gifpos
++gifrsize
++giftext
++gifwedge
++raw2gif
++rgb2gif
++text2gif
++gifspnge
++giffiltr
++icon2gif
++gifcolor
++gifclrmp
++gifrotat
++)
++
++if(OPENGL_FOUND)
++    compileUtils(
++    gif2iris
++    )
++    target_link_libraries(gif2iris ${OPENGL_gl_LIBRARY})
++endif(OPENGL_FOUND)
++
++if(X11_FOUND)
++    compileUtils(
++    gif2x11
++    )
++    target_link_libraries(gif2x11 ${X11_X11_LIB})
++endif(X11_FOUND)
++
++if(RLE_FOUND)
++    compileUtils(
++    gif2rle
++    rle2gif
++    )
++    target_link_libraries(gif2rle ${rle_LIBRARIES})
++    target_link_libraries(rle2gif ${rle_LIBRARIES})
++endif(RLE_FOUND)
++
++#gif2x11_CFLAGS = @X_CFLAGS@ $(AM_CFLAGS)
++if(X11_FOUND)
++endif(X11_FOUND)
++
++if(OPENGL_FOUND)
++endif(OPENGL_FOUND)
++
++if(NOT WIN32)
++    target_link_libraries(gifclrmp m)
++    target_link_libraries(gifrotat m)
++endif(NOT WIN32)
++endif(BUILD_utils)
++
++
++# documentation
++install(FILES 
++doc/gif2bgi.html
++doc/gif2epsn.html
++doc/gif2herc.html
++doc/gif2iris.html
++doc/gif2ps.html
++doc/gif2rgb.html
++doc/gif2rle.html
++doc/gif2x11.html
++doc/gifasm.html
++doc/gifbg.html
++doc/gifburst.html
++doc/gifclip.html
++doc/gifclrmp.html
++doc/gifcolor.html
++doc/gifcomb.html
++doc/gifcompose.html
++doc/giffiltr.html
++doc/giffix.html
++doc/gifflip.html
++doc/gifhisto.html
++doc/gifinter.html
++doc/gifinto.html
++doc/gifovly.html
++doc/gifpos.html
++doc/gifrotat.html
++doc/gifrsize.html
++doc/gifspnge.html
++doc/giftext.html
++doc/gifwedge.html
++doc/icon2gif.html
++doc/raw2gif.html
++doc/rgb2gif.html
++doc/rle2gif.html
++doc/text2gif.html
++doc/GifFileType.png
++doc/gif89.txt
++doc/gif_lib.html
++doc/index.html
++doc/liberror.html
++doc/lzgif.txt
++DESTINATION doc/libungif/html)
+\ No newline at end of file
+diff -Nru giflib-4.1.6.orig/config.h.cmake giflib-4.1.6/config.h.cmake
+--- giflib-4.1.6.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ giflib-4.1.6/config.h.cmake	2010-03-27 17:40:34.196583600 +0100
+@@ -0,0 +1,126 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H
++
++/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
++#cmakedefine HAVE_DOPRNT
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H
++
++/* Define to 1 if you have the <gl/gl.h> header file. */
++#cmakedefine HAVE_GL_GL_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H
++
++/* Define if the gl_s library is installed (SGI GL library) */
++#cmakedefine HAVE_LIBGL_S
++
++/* Define if the X11 library is installed */
++#cmakedefine HAVE_LIBX11
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H
++
++/* Define to 1 if you have the <rle.h> header file. */
++#cmakedefine HAVE_RLE_H
++
++/* Define to 1 if you have the <stdarg.h> header file. */
++#cmakedefine HAVE_STDARG_H
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H
++
++/* Define to 1 if you have the `strdup' function. */
++#cmakedefine HAVE_STRDUP
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H
++
++/* Define to 1 if the system has the type `uint32_t'. */
++#cmakedefine HAVE_UINT32_T
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H
++
++/* Define to 1 if the system has the type `u_int32_t'. */
++#cmakedefine HAVE_U_INT32_T
++
++/* Define to 1 if you have the <varargs.h> header file. */
++#cmakedefine HAVE_VARARGS_H
++
++/* Define to 1 if you have the `vprintf' function. */
++#cmakedefine HAVE_VPRINTF
++
++/* Define to 1 if you have the <X11/Xlib.h> header file. */
++#cmakedefine HAVE_X11_XLIB_H
++
++/* Define to 1 if you have the <X11/Xutil.h> header file. */
++#cmakedefine HAVE_X11_XUTIL_H
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++#cmakedefine NO_MINUS_C_MINUS_O
++
++/* Name of package */
++#cmakedefine PACKAGE
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION
++
++/* Define to 1 if the C compiler supports function prototypes. */
++#cmakedefine PROTOTYPES
++
++/* Define to 1 if the `setvbuf' function takes the buffering type as its
++   second argument and the buffer pointer as the third, as on System V before
++   release 3. */
++#cmakedefine SETVBUF_REVERSED
++
++/* The size of `unsigned int', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_INT
++
++/* The size of `unsigned long', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_LONG
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS
++
++/* Set to an unsigned 32 bit integer available on this system */
++#cmakedefine UINT32 @UINT32@
++
++/* Version number of package */
++#cmakedefine VERSION
++
++/* Define to 1 if the X Window System is missing or not being used. */
++#cmakedefine X_DISPLAY_MISSING
++
++/* Define like PROTOTYPES; this can be used by system headers. */
++#cmakedefine __PROTOTYPES
++
++/* Define to empty if `const' does not conform to ANSI C. */
++#cmakedefine const
+diff -Nru giflib-4.1.6.orig/lib/gif_lib.h giflib-4.1.6/lib/gif_lib.h
+--- giflib-4.1.6.orig/lib/gif_lib.h	2005-10-10 08:22:21.000000000 +0200
++++ giflib-4.1.6/lib/gif_lib.h	2010-03-27 17:40:34.200583600 +0100
+@@ -120,6 +120,20 @@
+ typedef int (*OutputFunc) (GifFileType *, const GifByteType *, int);
+ 
+ /******************************************************************************
++ *  Windows exports                                            
++******************************************************************************/
++#if defined(_WIN32) || defined(_WIN64)
++# ifdef gif_EXPORTS
++#  define GIF_EXPORT __declspec(dllexport)
++# else
++#  define GIF_EXPORT __declspec(dllimport)
++# endif
++#else
++# define GIF_EXPORT
++#endif
++
++ 
++/******************************************************************************
+  *  GIF89 extension function codes                                             
+ ******************************************************************************/
+ 
+@@ -133,37 +147,37 @@
+  * (GIF_LIB file EGIF_LIB.C).                              
+ ******************************************************************************/
+ 
+-GifFileType *EGifOpenFileName(const char *GifFileName,
++GIF_EXPORT GifFileType *EGifOpenFileName(const char *GifFileName,
+                               int GifTestExistance);
+-GifFileType *EGifOpenFileHandle(int GifFileHandle);
+-GifFileType *EGifOpen(void *userPtr, OutputFunc writeFunc);
++GIF_EXPORT GifFileType *EGifOpenFileHandle(int GifFileHandle);
++GIF_EXPORT GifFileType *EGifOpen(void *userPtr, OutputFunc writeFunc);
+ 
+-int EGifSpew(GifFileType * GifFile);
+-void EGifSetGifVersion(const char *Version);
+-int EGifPutScreenDesc(GifFileType * GifFile,
++GIF_EXPORT int EGifSpew(GifFileType * GifFile);
++GIF_EXPORT void EGifSetGifVersion(const char *Version);
++GIF_EXPORT int EGifPutScreenDesc(GifFileType * GifFile,
+                       int GifWidth, int GifHeight, int GifColorRes,
+                       int GifBackGround,
+                       const ColorMapObject * GifColorMap);
+-int EGifPutImageDesc(GifFileType * GifFile, int GifLeft, int GifTop,
++GIF_EXPORT int EGifPutImageDesc(GifFileType * GifFile, int GifLeft, int GifTop,
+                      int Width, int GifHeight, int GifInterlace,
+                      const ColorMapObject * GifColorMap);
+-int EGifPutLine(GifFileType * GifFile, GifPixelType * GifLine,
++GIF_EXPORT int EGifPutLine(GifFileType * GifFile, GifPixelType * GifLine,
+                 int GifLineLen);
+-int EGifPutPixel(GifFileType * GifFile, GifPixelType GifPixel);
+-int EGifPutComment(GifFileType * GifFile, const char *GifComment);
+-int EGifPutExtensionFirst(GifFileType * GifFile, int GifExtCode,
++GIF_EXPORT int EGifPutPixel(GifFileType * GifFile, GifPixelType GifPixel);
++GIF_EXPORT int EGifPutComment(GifFileType * GifFile, const char *GifComment);
++GIF_EXPORT int EGifPutExtensionFirst(GifFileType * GifFile, int GifExtCode,
+                           int GifExtLen, const VoidPtr GifExtension);
+-int EGifPutExtensionNext(GifFileType * GifFile, int GifExtCode,
++GIF_EXPORT int EGifPutExtensionNext(GifFileType * GifFile, int GifExtCode,
+                          int GifExtLen, const VoidPtr GifExtension);
+-int EGifPutExtensionLast(GifFileType * GifFile, int GifExtCode,
++GIF_EXPORT int EGifPutExtensionLast(GifFileType * GifFile, int GifExtCode,
+                          int GifExtLen, const VoidPtr GifExtension);
+-int EGifPutExtension(GifFileType * GifFile, int GifExtCode, int GifExtLen,
++GIF_EXPORT int EGifPutExtension(GifFileType * GifFile, int GifExtCode, int GifExtLen,
+                      const VoidPtr GifExtension);
+-int EGifPutCode(GifFileType * GifFile, int GifCodeSize,
++GIF_EXPORT int EGifPutCode(GifFileType * GifFile, int GifCodeSize,
+                 const GifByteType * GifCodeBlock);
+-int EGifPutCodeNext(GifFileType * GifFile,
++GIF_EXPORT int EGifPutCodeNext(GifFileType * GifFile,
+                     const GifByteType * GifCodeBlock);
+-int EGifCloseFile(GifFileType * GifFile);
++GIF_EXPORT int EGifCloseFile(GifFileType * GifFile);
+ 
+ #define E_GIF_ERR_OPEN_FAILED    1    /* And EGif possible errors. */
+ #define E_GIF_ERR_WRITE_FAILED   2
+@@ -181,26 +195,26 @@
+  * (GIF_LIB file DGIF_LIB.C).                              
+  *****************************************************************************/
+ #ifndef _GBA_NO_FILEIO
+-GifFileType *DGifOpenFileName(const char *GifFileName);
+-GifFileType *DGifOpenFileHandle(int GifFileHandle);
+-int DGifSlurp(GifFileType * GifFile);
++GIF_EXPORT GifFileType *DGifOpenFileName(const char *GifFileName);
++GIF_EXPORT GifFileType *DGifOpenFileHandle(int GifFileHandle);
++GIF_EXPORT int DGifSlurp(GifFileType * GifFile);
+ #endif /* _GBA_NO_FILEIO */
+-GifFileType *DGifOpen(void *userPtr, InputFunc readFunc);    /* new one
++GIF_EXPORT GifFileType *DGifOpen(void *userPtr, InputFunc readFunc);    /* new one
+                                                              * (TVT) */
+-int DGifGetScreenDesc(GifFileType * GifFile);
+-int DGifGetRecordType(GifFileType * GifFile, GifRecordType * GifType);
+-int DGifGetImageDesc(GifFileType * GifFile);
+-int DGifGetLine(GifFileType * GifFile, GifPixelType * GifLine, int GifLineLen);
+-int DGifGetPixel(GifFileType * GifFile, GifPixelType GifPixel);
+-int DGifGetComment(GifFileType * GifFile, char *GifComment);
+-int DGifGetExtension(GifFileType * GifFile, int *GifExtCode,
++GIF_EXPORT int DGifGetScreenDesc(GifFileType * GifFile);
++GIF_EXPORT int DGifGetRecordType(GifFileType * GifFile, GifRecordType * GifType);
++GIF_EXPORT int DGifGetImageDesc(GifFileType * GifFile);
++GIF_EXPORT int DGifGetLine(GifFileType * GifFile, GifPixelType * GifLine, int GifLineLen);
++GIF_EXPORT int DGifGetPixel(GifFileType * GifFile, GifPixelType GifPixel);
++GIF_EXPORT int DGifGetComment(GifFileType * GifFile, char *GifComment);
++GIF_EXPORT int DGifGetExtension(GifFileType * GifFile, int *GifExtCode,
+                      GifByteType ** GifExtension);
+-int DGifGetExtensionNext(GifFileType * GifFile, GifByteType ** GifExtension);
+-int DGifGetCode(GifFileType * GifFile, int *GifCodeSize,
++GIF_EXPORT int DGifGetExtensionNext(GifFileType * GifFile, GifByteType ** GifExtension);
++GIF_EXPORT int DGifGetCode(GifFileType * GifFile, int *GifCodeSize,
+                 GifByteType ** GifCodeBlock);
+-int DGifGetCodeNext(GifFileType * GifFile, GifByteType ** GifCodeBlock);
+-int DGifGetLZCodes(GifFileType * GifFile, int *GifCode);
+-int DGifCloseFile(GifFileType * GifFile);
++GIF_EXPORT int DGifGetCodeNext(GifFileType * GifFile, GifByteType ** GifCodeBlock);
++GIF_EXPORT int DGifGetLZCodes(GifFileType * GifFile, int *GifCode);
++GIF_EXPORT int DGifCloseFile(GifFileType * GifFile);
+ 
+ #define D_GIF_ERR_OPEN_FAILED    101    /* And DGif possible errors. */
+ #define D_GIF_ERR_READ_FAILED    102
+@@ -219,7 +233,7 @@
+ /******************************************************************************
+  * O.K., here are the routines from GIF_LIB file QUANTIZE.C.              
+ ******************************************************************************/
+-int QuantizeBuffer(unsigned int Width, unsigned int Height,
++GIF_EXPORT int QuantizeBuffer(unsigned int Width, unsigned int Height,
+                    int *ColorMapSize, GifByteType * RedInput,
+                    GifByteType * GreenInput, GifByteType * BlueInput,
+                    GifByteType * OutputBuffer,
+@@ -228,26 +242,26 @@
+ /******************************************************************************
+  * O.K., here are the routines from GIF_LIB file QPRINTF.C.              
+ ******************************************************************************/
+-extern int GifQuietPrint;
++GIF_EXPORT extern int GifQuietPrint;
+ 
+ #ifdef HAVE_STDARG_H
+-    extern void GifQprintf(char *Format, ...);
++GIF_EXPORT     extern void GifQprintf(char *Format, ...);
+ #elif defined (HAVE_VARARGS_H)
+-    extern void GifQprintf();
++GIF_EXPORT     extern void GifQprintf();
+ #endif /* HAVE_STDARG_H */
+ 
+ /******************************************************************************
+  * O.K., here are the routines from GIF_LIB file GIF_ERR.C.              
+ ******************************************************************************/
+ #ifndef _GBA_NO_FILEIO
+-extern void PrintGifError(void);
++GIF_EXPORT extern void PrintGifError(void);
+ #endif /* _GBA_NO_FILEIO */
+-extern int GifLastError(void);
++GIF_EXPORT extern int GifLastError(void);
+ 
+ /******************************************************************************
+  * O.K., here are the routines from GIF_LIB file DEV2GIF.C.              
+ ******************************************************************************/
+-extern int DumpScreen2Gif(const char *FileName,
++GIF_EXPORT extern int DumpScreen2Gif(const char *FileName,
+                           int ReqGraphDriver,
+                           long ReqGraphMode1,
+                           long ReqGraphMode2,
+@@ -264,13 +278,13 @@
+  * Color Map handling from ALLOCGIF.C                          
+  *****************************************************************************/
+ 
+-extern ColorMapObject *MakeMapObject(int ColorCount,
++GIF_EXPORT extern ColorMapObject *MakeMapObject(int ColorCount,
+                                      const GifColorType * ColorMap);
+-extern void FreeMapObject(ColorMapObject * Object);
+-extern ColorMapObject *UnionColorMap(const ColorMapObject * ColorIn1,
++GIF_EXPORT extern void FreeMapObject(ColorMapObject * Object);
++GIF_EXPORT extern ColorMapObject *UnionColorMap(const ColorMapObject * ColorIn1,
+                                      const ColorMapObject * ColorIn2,
+                                      GifPixelType ColorTransIn2[]);
+-extern int BitSize(int n);
++GIF_EXPORT extern int BitSize(int n);
+ 
+ /******************************************************************************
+  * Support for the in-core structures allocation (slurp mode).              
+@@ -292,14 +306,14 @@
+     ExtensionBlock *ExtensionBlocks;    /* on malloc(3) heap */
+ } SavedImage;
+ 
+-extern void ApplyTranslation(SavedImage * Image, GifPixelType Translation[]);
+-extern void MakeExtension(SavedImage * New, int Function);
+-extern int AddExtensionBlock(SavedImage * New, int Len,
++GIF_EXPORT extern void ApplyTranslation(SavedImage * Image, GifPixelType Translation[]);
++GIF_EXPORT extern void MakeExtension(SavedImage * New, int Function);
++GIF_EXPORT extern int AddExtensionBlock(SavedImage * New, int Len,
+                              unsigned char ExtData[]);
+-extern void FreeExtension(SavedImage * Image);
+-extern SavedImage *MakeSavedImage(GifFileType * GifFile,
++GIF_EXPORT extern void FreeExtension(SavedImage * Image);
++GIF_EXPORT extern SavedImage *MakeSavedImage(GifFileType * GifFile,
+                                   const SavedImage * CopyFrom);
+-extern void FreeSavedImages(GifFileType * GifFile);
++GIF_EXPORT extern void FreeSavedImages(GifFileType * GifFile);
+ 
+ /******************************************************************************
+  * The library's internal utility font                          
+@@ -307,25 +321,25 @@
+ 
+ #define GIF_FONT_WIDTH  8
+ #define GIF_FONT_HEIGHT 8
+-extern unsigned char AsciiTable[][GIF_FONT_WIDTH];
++GIF_EXPORT extern unsigned char AsciiTable[][GIF_FONT_WIDTH];
+ 
+-#ifdef _WIN32
+-    extern void DrawGifText(SavedImage * Image,
++#if defined(_WIN32) || defined(_WIN64)
++GIF_EXPORT     extern void DrawGifText(SavedImage * Image,
+ #else
+-    extern void DrawText(SavedImage * Image,
++GIF_EXPORT     extern void DrawText(SavedImage * Image,
+ #endif
+                      const int x, const int y,
+                      const char *legend, const int color);
+ 
+-extern void DrawBox(SavedImage * Image,
++GIF_EXPORT extern void DrawBox(SavedImage * Image,
+                     const int x, const int y,
+                     const int w, const int d, const int color);
+ 
+-void DrawRectangle(SavedImage * Image,
++GIF_EXPORT void DrawRectangle(SavedImage * Image,
+                    const int x, const int y,
+                    const int w, const int d, const int color);
+ 
+-extern void DrawBoxedText(SavedImage * Image,
++GIF_EXPORT extern void DrawBoxedText(SavedImage * Image,
+                           const int x, const int y,
+                           const char *legend,
+                           const int border, const int bg, const int fg);
