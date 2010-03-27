@@ -1,7 +1,10 @@
 diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
 --- giflib-4.1.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ giflib-4.1.6/CMakeLists.txt	2010-03-27 17:43:12.136583600 +0100
-@@ -0,0 +1,207 @@
+@@ -0,0 +1,210 @@
++# This file is copyrighted under the BSD-license for buildsystem files of KDE
++# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
++
 +project (libgif)
 +
 +cmake_minimum_required(VERSION 2.6)
