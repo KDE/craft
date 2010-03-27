@@ -16,7 +16,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self,"autotools")
         self.shell = MSysShell()
         self.makeProgram = "make"
-        #os.putenv("MAKE","mingw32-make")
         os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" )))
 
 
@@ -39,12 +38,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
         
         configure = os.path.join(sourcedir,"configure")
         if os.path.exists(configure):
-            mergeroot = self.mergeDestinationDir().replace('\\','/') 
+            mergeroot = self.shell.toNativePath( self.mergeDestinationDir() )
             _cflags = "-I%s/include %s" % (mergeroot, cflags)
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
             utils.putenv("CFLAGS",_cflags)
             utils.putenv("LDFLAGS",_ldflags)
-            _prefix = "--prefix=" + mergeroot
+            if(self.buildInSource):
+              _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
+            else:
+              _prefix = "--prefix=" + mergeroot
             _options = BuildSystemBase.configureOptions(self)
             if _options:
                 _prefix += " %s" % _options
@@ -87,9 +89,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.buildInSource:
             self.enterSourceDir()
         else:
-            self.enterBuildDir()
-        args = "prefix= DESTDIR=%s install" % self.shell.toNativePath(self.installDir())             
+            self.enterBuildDir()           
 
+        args="install"
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
             
