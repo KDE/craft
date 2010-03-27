@@ -1,0 +1,23 @@
+- expat-src binary
+- gettext-src binary
+- giflib-src binary
+- iconv-src msys
+- jpeg-src binary, replace with bic-version jpeg7
+- libgmp-src msys
+- libgpod-src msys
+- libnova-src msys
+- libpng-src mingw only?
+- libxml2-src binary/msys
+- libxslt-src binary
+- openssl-src platform specific
+- tiff-src binary
+
+
+mhhh
+- boost headers
+
+special libs which need both compilers
+- dbus
+
+don't know how to compile this
+- subversion
