@@ -67,7 +67,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
         
         command = self.makeProgram
-        args = "-j2"
+        args = ""
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
             
