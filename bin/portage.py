@@ -195,6 +195,15 @@ class Portage:
                         version = script.replace('.py', '').replace(package + '-', '')
                         instList.append([category, package, version])
         return instList
+        
+    def getCorrespondingSourcePackage( self, package ):
+        category = self.getCategory( package + "-src" )
+        if category:
+            # we found a corresponding package
+            utils.debug( "replacing package %s with its source package" % ( package ), 1 )
+            return [ category, package + "-src" ]
+        else:
+            return False
 
 
 # when importing this, this static Object should get added
@@ -248,6 +257,13 @@ def getDependencies( category, package, version ):
     return deps
 
 def solveDependencies( category, package, version, deplist ):
+    p = PortageInstance.getCorrespondingSourcePackage( package )
+    if p and os.getenv("EMERGE_SOURCEONLY") == "True":
+        # we found such a package and we're allowed to replace it
+        category = p[0]
+        package = p[1]
+        version = PortageInstance.getNewestVersion( category, package )
+
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
 
@@ -365,7 +381,7 @@ def isInstalled( category, package, version, buildType='' ):
         lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.ver"), category, package, version )
         found = found or bin or lib
 
-    if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" ):
+    if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or os.getenv( "EMERGE_SOURCEONLY" ) == "True" ):
         """ check for any installation """
         if package.endswith( "-src" ):
             package = package[:-4]
