@@ -14,11 +14,13 @@ Index: CMakeLists.txt
 ===================================================================
 --- CMakeLists.txt	(revision 0)
 +++ CMakeLists.txt	(revision 0)
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,37 @@
 +project(win_iconv)
 +
 +cmake_minimum_required(VERSION 2.6)
 +
++set(CPACK_GENERATOR "TBZ2")
++include(CPack)
 +option(BUILD_TEST "build test executable" ON)
 +if(BUILD_TEST)
 +    enable_testing()
@@ -50,7 +52,6 @@ Index: CMakeLists.txt
 +    add_executable(win_iconv_test win_iconv_test.c)
 +    add_test(win_iconv_test win_iconv_test)
 +endif(BUILD_TEST)
-\ No newline at end of file
 Index: win_iconv.c
 ===================================================================
 --- win_iconv.c	(revision 2)
