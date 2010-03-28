@@ -1,0 +1,197 @@
+diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
+--- expat-2.0.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ expat-2.0.1/CMakeLists.txt	2010-03-29 01:10:43.484000000 +0200
+@@ -0,0 +1,49 @@
++# This file is copyrighted under the BSD-license for buildsystem files of KDE
++# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
++
++project(expat)
++
++cmake_minimum_required(VERSION 2.6)
++set(PACKAGE_BUGREPORT "expat-bugs@libexpat.org")
++set(PACKAGE_NAME "expat")
++set(PACKAGE_STRING "expat 2.0.1")
++set(PACKAGE_TARNAME "expat")
++set(PACKAGE_VERSION "2.0.1")
++
++include(ConfigureChecks.cmake)
++
++include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/lib)
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++set(expat_SRCS
++lib/xmlparse.c
++lib/xmlrole.c
++lib/xmltok.c 
++lib/xmltok_impl.c 
++lib/xmltok_ns.c
++)
++
++if(WIN32)
++    set(expat_SRCS ${expat_SRCS} lib/libexpat.def)
++endif(WIN32)
++
++add_library(expat SHARED ${expat_SRCS})
++
++set(xmlwf_SRCS
++xmlwf/xmlwf.c
++xmlwf/xmlfile.c
++xmlwf/codepage.c
++xmlwf/readfilemap.c
++)
++
++add_executable(xmlwf ${xmlwf_SRCS})
++target_link_libraries(xmlwf expat)
++
++install(TARGETS expat xmlwf RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++
++install(FILES lib/expat.h lib/expat_external.h DESTINATION include)
++install(FILES doc/xmlwf.1 DESTINATION man/man1)
+\ No newline at end of file
+diff -Nru expat-2.0.1.orig/ConfigureChecks.cmake expat-2.0.1/ConfigureChecks.cmake
+--- expat-2.0.1.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ expat-2.0.1/ConfigureChecks.cmake	2010-03-28 23:55:23.255000000 +0200
+@@ -0,0 +1,44 @@
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++include(CheckSymbolExists)
++
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++
++check_function_exists("getpagesize" HAVE_GETPAGESIZE)
++check_function_exists("bcopy" HAVE_BCOPY)
++check_symbol_exists("memmove" "string.h" HAVE_MEMMOVE)
++check_function_exists("mmap" HAVE_MMAP)
++
++#/* Define to 1 if you have the ANSI C header files. */
++set(STDC_HEADERS 1)
++# to lazy to implement:
++#set(WORDS_BIGENDIAN ON)
++#/* 1234 = LIL_ENDIAN, 4321 = BIGENDIAN */
++set(BYTEORDER 1234)
++#/* Define to specify how much context to retain around the current parse point. */
++set(XML_CONTEXT_BYTES 1024)
++#/* Define to make parameter entity parsing functionality available. */
++set(XML_DTD 1)
++#/* Define to make XML Namespaces functionality available. */
++set(XML_NS 1)
++
++if(HAVE_SYS_TYPES_H)
++    check_symbol_exists("off_t" "sys/types.h" OFF_T)
++    check_symbol_exists("size_t" "sys/types.h" SIZE_T)
++else(HAVE_SYS_TYPES_H)
++    set(OFF_T "long")
++    set(SIZE_T "unsigned")
++endif(HAVE_SYS_TYPES_H)
++
++configure_file(expat_config.h.cmake expat_config.h)
++add_definitions(-DHAVE_EXPAT_CONFIG_H)
+diff -Nru expat-2.0.1.orig/expat_config.h.cmake expat-2.0.1/expat_config.h.cmake
+--- expat-2.0.1.orig/expat_config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ expat-2.0.1/expat_config.h.cmake	2010-03-28 23:43:32.502000000 +0200
+@@ -0,0 +1,91 @@
++/* expat_config.h.in.  Generated from configure.in by autoheader.  */
++
++/* 1234 = LIL_ENDIAN, 4321 = BIGENDIAN */
++#cmakedefine BYTEORDER @BYTEORDER@
++
++/* Define to 1 if you have the `bcopy' function. */
++#cmakedefine HAVE_BCOPY
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H
++
++/* Define to 1 if you have the `getpagesize' function. */
++#cmakedefine HAVE_GETPAGESIZE
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H
++
++/* Define to 1 if you have the `memmove' function. */
++#cmakedefine HAVE_MEMMOVE
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H
++
++/* Define to 1 if you have a working `mmap' system call. */
++#cmakedefine HAVE_MMAP
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS
++
++/* whether byteorder is bigendian */
++#cmakedefine WORDS_BIGENDIAN
++
++/* Define to specify how much context to retain around the current parse
++   point. */
++#cmakedefine XML_CONTEXT_BYTES @XML_CONTEXT_BYTES@
++
++/* Define to make parameter entity parsing functionality available. */
++#cmakedefine XML_DTD
++
++/* Define to make XML Namespaces functionality available. */
++#cmakedefine XML_NS
++
++/* Define to __FUNCTION__ or "" if `__func__' does not conform to ANSI C. */
++#ifdef _MSC_VER
++# define __func__ __FUNCTION__
++#endif
++
++/* Define to `long' if <sys/types.h> does not define. */
++#cmakedefine off_t @OFF_T@
++
++/* Define to `unsigned' if <sys/types.h> does not define. */
++#cmakedefine size_t @SIZE_T@
