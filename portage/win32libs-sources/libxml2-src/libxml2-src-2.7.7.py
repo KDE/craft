@@ -12,7 +12,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.7.7'
 
     def setDependencies( self ):
-        pass
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+        self.hardDependencies['win32libs-sources/win_iconv-src'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

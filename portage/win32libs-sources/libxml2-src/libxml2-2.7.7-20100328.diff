@@ -586,11 +586,10 @@ diff -Nru libxml2-2.7.7.orig/config.h.cmake libxml2-2.7.7/config.h.cmake
 +#ifdef _MSC_VER
 +#define snprintf _snprintf
 +#endif
-\ No newline at end of file
 diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks.cmake
 --- libxml2-2.7.7.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ libxml2-2.7.7/ConfigureChecks.cmake	2010-03-27 22:46:33.688583600 +0100
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,138 @@
 +#some configure checks
 +
 +# LIBXML_ENABLE_THREADS
@@ -629,6 +628,7 @@ diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks
 +set(CMAKE_REQUIRED_LIBRARIES ${ZLIB_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES})
 +include(CheckIncludeFile)
 +include(CheckFunctionExists)
++include(CheckSymbolExists)
 +
 +check_include_file("fcntl.h" HAVE_FCNTL_H)
 +check_include_file("pthread.h" HAVE_PTHREAD_H)
@@ -717,6 +717,16 @@ diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks
 +if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +endif(MSVC)
++
++if(ZLIB_FOUND)
++    # disable large file support in case the functions are not contained in the dll
++    check_symbol_exists("gzopen64" "zlib.h" GZOPEN64)
++    if(NOT GZOPEN64)
++        add_definitions(-DNO_LARGEFILE_SOURCE)
++        message(STATUS "No Large File Support in libz!")
++    endif(NOT GZOPEN64)
++endif(ZLIB_FOUND)
++
 +configure_file(config.h.cmake config.h)
 \ No newline at end of file
 diff -Nru libxml2-2.7.7.orig/nanoftp.c libxml2-2.7.7/nanoftp.c
