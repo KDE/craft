@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
        for ver in [ '1.2.4' ]:
            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/libpng/zlib-%s.tar.gz' % ver
            self.targetInstSrc[ ver ] = "zlib-" + ver
+       self.patchToApply['1.2.4'] = ("zlib-src-1.2.4-20100329.diff", 1)
        self.defaultTarget = '1.2.4'
 
     def setDependencies( self ):
