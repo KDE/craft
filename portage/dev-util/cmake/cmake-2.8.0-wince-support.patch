@@ -26,7 +26,7 @@ new file mode 100644
 index 0000000..f18b109
 --- /dev/null
 +++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,44 @@
 +
 +IF(NOT CMAKE_WINDOWS_STACKSIZE )
 +    SET(CMAKE_WINDOWS_STACKSIZE 65536) ## stacksize is set to 65kb
@@ -36,6 +36,9 @@ index 0000000..f18b109
 +SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MANIFEST:NO /NODEFAULTLIB:\"oldnames.lib\"")
 +
 +INCLUDE(Platform/Windows-cl)
++
++SET (CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} /DUNICODE /D_UNICODE")
++SET (CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /DUNICODE /D_UNICODE")
 +
 +IF(MSVC_VERSION GREATER 1310)
 +    # Windows-cl.cmake sets /RTC1, we remove that here
@@ -49,13 +52,8 @@ index 0000000..f18b109
 +
 +# Add architecture-based flags, needed by the C runtimes and Platform SDK
 +IF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
-+    ADD_DEFINITIONS(
-+        -DARM
-+        -D_ARM_
-+        -D_M_ARMT
-+        -DARMV4I
-+        -D_ARMV4I_
-+    )
++    SET (CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} /DARM /D_ARM_ /D_M_ARMT /DARMV4I /D_ARMV4I_")
++    SET (CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /DARM /D_ARM_ /D_M_ARMT /DARMV4I /D_ARMV4I_")
 +ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
 +# TODO: add flags for other architectures
 +
