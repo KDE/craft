@@ -11,7 +11,8 @@
 - openssl-src platform specific
 - tiff-src binary
 - sqlite-src
-
+- libcurl-src add cmake install targets to cmake
+- shared-mime-info-src update buldscript fix x64 compilation
 
 mhhh
 - boost headers

@@ -1,0 +1,110 @@
+diff -Nru K:\curl\curl-7.20.0\/CMakeLists.txt ./CMakeLists.txt
+--- K:\curl\curl-7.20.0\/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
++++ ./CMakeLists.txt	2010-03-30 15:24:23.967276300 +0200
+@@ -119,21 +119,7 @@
+ mark_as_advanced(CURL_DISABLE_LDAPS)
+ if(WIN32)
+   set(CURL_DEFAULT_DISABLE_LDAP OFF)
+-  # some windows compilers do not have wldap32 
+-  if( NOT HAVE_WLDAP32)
+-    set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
+-    message(STATUS "wldap32 not found CURL_DISABLE_LDAP set ON")
+-    option(CURL_LDAP_WIN "Use W$ LDAP implementation" OFF)
+-  else()
+-    option(CURL_LDAP_WIN "Use W$ LDAP implementation" ON)
+-  endif()
+-  mark_as_advanced(CURL_LDAP_WIN)
+-  set(CURL_LDAP_HYBRID OFF)
+-else()
+-  option(CURL_LDAP_HYBRID "W$ LDAP with non-W$ compiler" OFF)
+-  mark_as_advanced(CURL_LDAP_HYBRID)
+-  set(CURL_LDAP_WIN OFF)
+-endif()
++endif(WIN32)
+ 
+ if(HTTP_ONLY)
+   set(CURL_DISABLE_FTP ON)
+@@ -156,20 +142,6 @@
+ option(ENABLE_IPV6 "Define if you want to enable IPv6 support" OFF)
+ mark_as_advanced(ENABLE_IPV6)
+ 
+-if(WIN32)
+-  list_spaces_append_once(CMAKE_C_STANDARD_LIBRARIES wsock32.lib ws2_32.lib)  # bufferoverflowu.lib
+-  if(CURL_DISABLE_LDAP)
+-    # Remove wldap32.lib from space-separated list
+-    string(REPLACE " " ";" _LIST ${CMAKE_C_STANDARD_LIBRARIES})
+-    list(REMOVE_ITEM _LIST "wldap32.lib")
+-    to_list_spaces(_LIST CMAKE_C_STANDARD_LIBRARIES)
+-  else()
+-    # Append wldap32.lib
+-    list_spaces_append_once(CMAKE_C_STANDARD_LIBRARIES wldap32.lib)
+-  endif()
+-  set(CMAKE_C_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES}"   CACHE STRING "" FORCE)
+-endif()
+-
+ 
+ # We need ansi c-flags, especially on HP
+ set(CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
+@@ -235,6 +207,34 @@
+ check_library_exists_concat("winmm"  getch        HAVE_LIBWINMM)
+ check_library_exists("wldap32" cldap_open "" HAVE_WLDAP32)
+ 
++if(WIN32)
++  if(HAVE_LIBWS2_32)
++    link_libraries( ws2_32 ) 
++  endif(HAVE_LIBWS2_32)
++  if(HAVE_LIBWINMM)
++    link_libraries( wsock32)
++  endif(HAVE_LIBWINMM)
++  if(NOT CURL_DISABLE_LDAP AND HAVE_WLDAP32)
++    link_libraries(wldap32)
++  endif(NOT CURL_DISABLE_LDAP AND HAVE_WLDAP32)
++
++ if( NOT HAVE_WLDAP32)
++    set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
++    message(STATUS "wldap32 not found CURL_DISABLE_LDAP set ON")
++    option(CURL_LDAP_WIN "Use W$ LDAP implementation" OFF)
++  else(NOT HAVE_WLDAP32)
++    option(CURL_LDAP_WIN "Use W$ LDAP implementation" ON)
++  endif(NOT HAVE_WLDAP32)
++  mark_as_advanced(CURL_LDAP_WIN)
++  set(CURL_LDAP_HYBRID OFF)
++else(WIN32)
++  option(CURL_LDAP_HYBRID "W$ LDAP with non-W$ compiler" OFF)
++  mark_as_advanced(CURL_LDAP_HYBRID)
++  set(CURL_LDAP_WIN OFF)
++endif(WIN32)
++
++
++
+ # IF(NOT CURL_SPECIAL_LIBZ)
+ #  CHECK_LIBRARY_EXISTS_CONCAT("z"      inflateEnd   HAVE_LIBZ)
+ # ENDIF(NOT CURL_SPECIAL_LIBZ)
+diff -Nru K:\curl\curl-7.20.0\/lib/CMakeLists.txt ./lib/CMakeLists.txt
+--- K:\curl\curl-7.20.0\/lib/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
++++ ./lib/CMakeLists.txt	2010-03-30 15:25:33.303242100 +0200
+@@ -98,7 +98,7 @@
+ 
+ if(WIN32)
+   add_definitions( -D_USRDLL )
+-endif()
++endif(WIN32)
+ 
+ set_target_properties(${LIB_NAME} PROPERTIES COMPILE_DEFINITIONS BUILDING_LIBCURL)
+ 
+@@ -113,12 +113,10 @@
+     # Ugly workaround to remove the "/debug" or "/release" in each output
+     set_target_properties(${LIB_NAME} PROPERTIES PREFIX "../")
+     set_target_properties(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
+-  endif()
+-endif()
++  endif(NOT BUILD_RELEASE_DEBUG_DIRS)
+ 
+-if(WIN32)
+   if(NOT CURL_STATICLIB)
+     # Add "_imp" as a suffix before the extension to avoid conflicting with the statically linked "libcurl.lib"
+     set_target_properties(${LIB_NAME} PROPERTIES IMPORT_SUFFIX "_imp.lib")
+-  endif()
+-endif()
++  endif(NOT CURL_STATICLIB)
++endif(MSVC)
