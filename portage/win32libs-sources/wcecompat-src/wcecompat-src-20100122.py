@@ -46,8 +46,9 @@ class TestPackage(BinaryPackageBase):
         if not os.path.isdir( dst ):
             os.mkdir( dst )
             os.mkdir( os.path.join( dst, "lib" ) )
+            os.mkdir( os.path.join( dst, "include" ) )
 
-        utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
+        utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( os.path.join( dst, "include" ), "wcecompat" ) )
         shutil.copy( os.path.join( src, "lib", "wcecompat.lib" ) , os.path.join( dst, "lib" ) )
         shutil.copy( os.path.join( src, "lib", "wcecompatex.lib" ) , os.path.join( dst, "lib" ) )
         
