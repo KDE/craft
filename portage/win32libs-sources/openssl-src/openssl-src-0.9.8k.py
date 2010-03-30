@@ -50,6 +50,11 @@ class Package(CMakePackageBase):
                 if not self.system( "ms\do_ms.bat", "configure" ):
                     return False
 
+                # Set the include path for the wcecompat files (e.g. errno.h). Setting it through
+                # the Configure script generates errors due to the the backslashes in the path
+                wcecompatincdir = os.path.join( os.path.join( self.rootdir, "include" ), "wcecompat" )
+                os.putenv( "INCLUDE", wcecompatincdir + ";" + os.getenv("INCLUDE") )
+
                 cmd = "nmake -f ms\cedll.mak"
             else:
                 cmd = "ms\\32all.bat"
