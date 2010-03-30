@@ -1,51 +1,66 @@
 import info
 import os
 import utils
-from Package.BinaryPackageBase import *
 
 class subinfo(info.infoclass):
-    def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
-        self.hardDependencies['dev-util/pexports'] = 'default'
-
     def setTargets( self ):
-        ver = "2.6.32-1"
-        ver2 = "2.6.32+.win32"
-        self.targets[ ver ] = "ftp://ftp.zlatkovic.com/pub/libxml/oldreleases/libxml2-%s.zip" % ver2
-        self.targetInstSrc[ ver ] = "libxml2-%s" % ver2
-        self.defaultTarget = ver
-
-class Package(BinaryPackageBase):
-    def __init__( self ):
-        self.subinfo = subinfo()
-        BinaryPackageBase.__init__( self )
-        # don't use shortcut to unpack into imageDir()
-        self.buildSystemType = 'custom'
-        # create combined package
-        self.subinfo.options.package.withCompiler = None
-
-    def install( self ):
-        srcdir = self.sourceDir()
-        dstdir = self.installDir()
-        utils.cleanDirectory( dstdir )
-
-        os.makedirs( os.path.join( dstdir, "lib" ) )
+        self.targets['2.7.7'] = "ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.7.tar.gz"
+        self.targetInstSrc['2.7.7'] = 'libxml2-2.7.7'
+        self.defaultTarget = '2.7.7'
         
-        # binaries - can be used from zip package
-        utils.copyDir( os.path.join( srcdir, "bin" ),
-                       os.path.join( dstdir, "bin" ) )
-        # include - can be used from zip package
-        utils.copyDir( os.path.join( srcdir, "include" ),
-                       os.path.join( dstdir, "include" ) )
-        # contrib - readme.txt
-        os.makedirs( os.path.join( dstdir, "contrib", self.subinfo.targetSourcePath() ) )
-        utils.copyFile( os.path.join( srcdir, "readme.txt" ),
-                        os.path.join( dstdir, "contrib", self.subinfo.targetSourcePath(), "readme.txt" ) )
+        if self.hasTargetPlatform():
+            self.patchToApply['2.7.7'] = ('libxml2-2.7.7-wince5.patch', 0)
 
-        # auto-create both import libs with the help of pexports
-        self.createImportLibs( "libxml2" )
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
 
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self, **args ):
+        self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        
+    def unpack(self):
+        CMakePackageBase.unpack(self)
+        src = os.path.join( os.path.join( self.sourceDir(), "win32" ), "wince" )
+        utils.copyFile( os.path.join( src, "wincecompat.h" ), os.path.join(self.sourceDir(), "wincecompat.h") )
+        utils.copyFile( os.path.join( src, "wincecompat.c" ), os.path.join(self.sourceDir(), "wincecompat.c") )
         return True
+
+    def configure(self):
+        os.chdir( os.path.join( self.sourceDir(), "win32" ) )
+
+        if self.buildType() == "Debug":
+            cruntime="/MDd"
+            dbg="yes"
+        else:
+            cruntime="/MD"
+            dbg="no"
+
+        if "msvc" in self.compiler():
+            compiler="msvc"
+        else:
+            compiler="mingw"
+
+        command =  r"cscript configure.js compiler=%s cruntime=%s vcmanifest=yes " % (compiler,cruntime)
+        command += r"prefix=%s sodir=$(PREFIX)\bin " % self.installDir()
+        command += r"debug=%s threads=no iconv=no xml_debug=no ftp=no http=no" % dbg
+        
+        return self.system( command )
+        
+    def make(self):
+        os.chdir( os.path.join( self.sourceDir(), "win32" ) )
+        
+        if self.hasTargetPlatform():
+            self.setupCrossToolchain()
+
+        return self.system( "nmake /f Makefile.msvc rebuild" )
+        
+    def install(self):
+        os.chdir( os.path.join( self.sourceDir(), "win32" ) )
+        return self.system( "nmake /f Makefile.msvc install" )
+
 
 if __name__ == '__main__':
     Package().execute()
