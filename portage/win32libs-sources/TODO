@@ -1,4 +1,4 @@
-- expat-src msys --> Patrick
+- expat-src msys --> fixed cmake build system
 - gettext-src binary
 - giflib-src binary --> fixed cmake build system
 - iconv-src --> fixed cmake build system for win_iconv-src
@@ -13,6 +13,7 @@
 - sqlite-src
 - libcurl-src add cmake install targets to cmake
 - shared-mime-info-src update buldscript fix x64 compilation
+- lcms-src msys
 
 mhhh
 - boost headers
