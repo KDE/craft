@@ -1,6 +1,6 @@
 diff -Nru K:\curl\curl-7.20.0\/CMakeLists.txt ./CMakeLists.txt
 --- K:\curl\curl-7.20.0\/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
-+++ ./CMakeLists.txt	2010-03-30 15:24:23.967276300 +0200
++++ ./CMakeLists.txt	2010-03-30 16:38:16.709814700 +0200
 @@ -119,21 +119,7 @@
  mark_as_advanced(CURL_DISABLE_LDAPS)
  if(WIN32)
@@ -82,7 +82,7 @@ diff -Nru K:\curl\curl-7.20.0\/CMakeLists.txt ./CMakeLists.txt
  # ENDIF(NOT CURL_SPECIAL_LIBZ)
 diff -Nru K:\curl\curl-7.20.0\/lib/CMakeLists.txt ./lib/CMakeLists.txt
 --- K:\curl\curl-7.20.0\/lib/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
-+++ ./lib/CMakeLists.txt	2010-03-30 15:25:33.303242100 +0200
++++ ./lib/CMakeLists.txt	2010-03-30 16:39:02.910457200 +0200
 @@ -98,7 +98,7 @@
  
  if(WIN32)
@@ -92,7 +92,7 @@ diff -Nru K:\curl\curl-7.20.0\/lib/CMakeLists.txt ./lib/CMakeLists.txt
  
  set_target_properties(${LIB_NAME} PROPERTIES COMPILE_DEFINITIONS BUILDING_LIBCURL)
  
-@@ -113,12 +113,10 @@
+@@ -113,12 +113,16 @@
      # Ugly workaround to remove the "/debug" or "/release" in each output
      set_target_properties(${LIB_NAME} PROPERTIES PREFIX "../")
      set_target_properties(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
@@ -108,3 +108,20 @@ diff -Nru K:\curl\curl-7.20.0\/lib/CMakeLists.txt ./lib/CMakeLists.txt
 -endif()
 +  endif(NOT CURL_STATICLIB)
 +endif(MSVC)
++
++install(TARGETS ${LIB_NAME}  
++	RUNTIME DESTINATION bin
++        ARCHIVE DESTINATION lib
++        LIBRARY DESTINATION lib )
++install(FILES ${HHEADERS}  DESTINATION include/curl)
+\ No newline at end of file
+diff -Nru K:\curl\curl-7.20.0\/src/CMakeLists.txt ./src/CMakeLists.txt
+--- K:\curl\curl-7.20.0\/src/CMakeLists.txt	2009-07-22 22:09:54.000000000 +0200
++++ ./src/CMakeLists.txt	2010-03-30 16:24:47.438527000 +0200
+@@ -53,4 +53,6 @@
+   endif()
+ endif()
+ 
++install(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin)
++
+ #INCLUDE(ModuleInstall OPTIONAL)
