@@ -88,6 +88,13 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
+            
+        if self.targetPlatform() == "WM60":
+            options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.02"
+        elif self.targetPlatform() == "WM65":
+            options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.02"
+        elif self.targetPlatform() == "WM50":
+            options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.01"
 
         if self.buildTests:
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case 
@@ -116,7 +123,10 @@ class CMakeBuildSystem(BuildSystemBase):
         fc = open(os.path.join(self.buildDir(), "cmake-command.bat"), "w")
         fc.write(command);
         fc.close()
-    
+
+        if self.hasTargetPlatform():
+            self.setupCrossToolchain()
+
         return self.system( command, "configure", 0 ) 
 
     def make( self ):
@@ -147,6 +157,9 @@ class CMakeBuildSystem(BuildSystemBase):
             if self.subinfo.options.make.makeOptions:
                 command += " %s" % self.subinfo.options.make.makeOptions
 
+        if self.hasTargetPlatform():
+            self.setupCrossToolchain()
+
         return self.system( command, "make" ) 
         
     def install( self):
@@ -164,7 +177,10 @@ class CMakeBuildSystem(BuildSystemBase):
                 command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.installDir(), fastString )
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
-        
+
+        if self.hasTargetPlatform():
+            self.setupCrossToolchain()
+
         self.system( command, "install" ) 
 
         if self.subinfo.options.install.useMakeToolForInstall == True and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):        
