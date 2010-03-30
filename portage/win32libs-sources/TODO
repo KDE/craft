@@ -7,7 +7,7 @@
 - libgpod-src msys
 - libnova-src msys
 - libxml2-src binary/msys --> fixed cmake build system
-- libxslt-src binary
+- libxslt-src binary --> Patrick
 - openssl-src platform specific
 - tiff-src binary
 - sqlite-src
