@@ -19,7 +19,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = " BUILD_CURL_TESTS=OFF"
+        self.subinfo.options.configure.defines = " -DBUILD_CURL_TESTS=OFF"
 
     def unpack(self):
         if not CMakePackageBase.unpack( self ):
