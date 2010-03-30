@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/qjson/qjson.git'
         for ver in ['0.7.1']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/qjson/qjson-" + ver + ".tar.bz2"
-        # 0.7.1 doesn't contain a CMakeLists.txt so won't work!
-        self.defaultTarget = 'gitHEAD'
+            self.targetInstSrc[ ver ] = "qjson"
+        self.defaultTarget = '0.7.1'
         self.options.configure.defines = ""
 
 from Package.CMakePackageBase import *
