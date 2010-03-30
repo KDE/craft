@@ -1,0 +1,13 @@
+--- FSDirectory.cpp	2008-10-23 20:01:52.000000000 +0200
++++ src\CLucene\store\FSDirectory.cpp	2010-03-30 20:41:34.531849900 +0200
+@@ -10,7 +10,9 @@
+ #include "CLucene/util/Misc.h"
+ #include "CLucene/util/MD5Digester.h"
+ #include "CLucene/debug/condition.h"
+-
++#ifdef _WIN32
++#include <direct.h>
++#endif
+ #include "CLucene/util/dirent.h" //if we have dirent, then the native one will be used
+ 
+ CL_NS_DEF(store)
