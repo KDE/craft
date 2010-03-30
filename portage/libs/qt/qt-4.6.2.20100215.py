@@ -40,12 +40,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
+        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         if not self.hasTargetPlatform():
             self.hardDependencies['testing/mysql-server'] = 'default'
-            if COMPILER == "mingw" or COMPILER == "mingw4":
-                self.hardDependencies['win32libs-bin/dbus'] = 'default'
-            else:
-                self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -56,13 +53,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
+        self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         if not self.hasTargetPlatform():
-            if self.compiler() == "mingw" or self.compiler() == "mingw4":
-                self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
-            else:
-                self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
             self.mysql_server = portage.getPackageInstance('testing','mysql-server')
-        
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -97,9 +90,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
 
         incdirs = " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+        incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+        libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         if not self.hasTargetPlatform():
-            incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
-            libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
@@ -109,11 +102,11 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), platform )
         if self.hasTargetPlatform():
             command += "-xplatform %s " % xplatform
-            command += "-no-phonon -no-webkit -openssl "
         else:
-            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql -plugin-sql-odbc "
-            command += "-no-phonon -qdbus -openssl -dbus-linked "
-
+            command += "-plugin-sql-mysql -plugin-sql-odbc "
+        
+        command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
+        command += "-no-phonon -qdbus -openssl -dbus-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
@@ -134,7 +127,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             self.setupCrossToolchain()
             # This is needed to find some wcecompat files (e.g. errno.h) included by some openssl headers
             # but we make sure to add it at the very end so it doesn't disrupt the rest of the Qt build
-            os.putenv( "INCLUDE", os.getenv("INCLUDE") + ";" + os.path.join( self.rootdir, "include" ) )
+            os.putenv( "INCLUDE", os.getenv("INCLUDE") + ";" + os.path.join( self.rootdir, "include", "wcecompat" ) )
 
         QMakeBuildSystem.make(self)
         
