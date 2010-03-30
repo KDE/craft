@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kdesupport/qjson'] = 'default'
     
 class Package(CMakePackageBase):
     def __init__( self):
