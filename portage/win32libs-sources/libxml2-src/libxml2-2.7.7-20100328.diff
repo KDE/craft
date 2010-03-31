@@ -207,7 +207,7 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +include/libxml/xmlsave.h
 +include/libxml/schematron.h)
 +
-+install(FILES ${libxml2_HDRS} DESTINATION include/libxml2)
++install(FILES ${libxml2_HDRS} DESTINATION include/libxml)
 +
 +set(_html_DOCS 
 +doc/xml.html
