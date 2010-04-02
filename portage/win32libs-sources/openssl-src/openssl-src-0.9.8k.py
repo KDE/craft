@@ -9,6 +9,9 @@ class subinfo(info.infoclass):
         self.targets['0.9.8k'] = 'http://www.openssl.org/source/openssl-0.9.8k.tar.gz'
         self.targetInstSrc['0.9.8k'] = 'openssl-0.9.8k'
         self.patchToApply['0.9.8k'] = ('openssl-0.9.8k.diff', 1)
+        self.targets['1.0.0'] = 'http://www.openssl.org/source/openssl-1.0.0.tar.gz'
+        self.targetInstSrc['1.0.0'] = 'openssl-1.0.0'
+        self.patchToApply['1.0.0'] = ('openssl-1.0.0-20100402.diff', 1)
         self.options.package.withCompiler = False
         self.defaultTarget = '0.9.8k'
 
