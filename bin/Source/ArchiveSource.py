@@ -83,8 +83,8 @@ class ArchiveSource(SourceBase):
             destdir = self.workDir()
 
         # it makes no sense to make a diff against nothing
-        if ( not os.path.exists( self.buildDir() ) ):
-            utils.error( "build directory doesn't exist, please run unpack first" )
+        if ( not os.path.exists( self.sourceDir() ) ):
+            utils.error( "source directory doesn't exist, please run unpack first" )
             return False
 
         utils.debug( "unpacking files into work root %s" % destdir, 1 )
