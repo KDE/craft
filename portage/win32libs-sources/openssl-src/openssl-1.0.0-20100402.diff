@@ -1,6 +1,15 @@
 diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
 --- openssl-1.0.0.orig/Configure	2010-01-19 22:40:54.000000000 +0100
 +++ openssl-1.0.0/Configure	2010-04-02 23:18:26.216627800 +0200
+@@ -503,7 +503,7 @@
+ "BC-32","bcc32::::WIN32::BN_LLONG DES_PTR RC4_INDEX EXPORT_VAR_AS_FN:${no_asm}:win32",
+ 
+ # MinGW
+-"mingw", "gcc:-mno-cygwin -DL_ENDIAN -DWIN32_LEAN_AND_MEAN -fomit-frame-pointer -O3 -march=i486 -Wall:::MINGW32:-lws2_32 -lgdi32 -lcrypt32:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts} EXPORT_VAR_AS_FN:${x86_asm}:coff:win32:cygwin-shared:-D_WINDLL -DOPENSSL_USE_APPLINK:-mno-cygwin:.dll.a",
++"mingw", "gcc:-mno-cygwin -DL_ENDIAN -DOPENSSL_NO_CAPIENG -DWIN32_LEAN_AND_MEAN -fomit-frame-pointer -O3 -march=i486 -Wall:::MINGW32:-lws2_32 -lgdi32 -lcrypt32:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts} EXPORT_VAR_AS_FN:${x86_asm}:coff:win32:cygwin-shared:-D_WINDLL -DOPENSSL_USE_APPLINK:-mno-cygwin:.dll.a",
+ # As for OPENSSL_USE_APPLINK. Applink makes it possible to use .dll
+ # compiled with one compiler with application compiled with another
+ # compiler. It's possible to engage Applink support in mingw64 build,
 @@ -584,7 +584,7 @@
  
  my @MK1MF_Builds=qw(VC-WIN64I VC-WIN64A
@@ -104,3 +113,15 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +
 +:end
 +
+diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
+--- openssl-1.0.0.orig/util/pl/Mingw32.pl	2008-04-17 12:19:16.000000000 +0200
++++ openssl-1.0.0/util/pl/Mingw32.pl	2010-04-03 02:10:16.863000000 +0200
+@@ -19,7 +19,7 @@
+ if ($debug)
+ 	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -g2 -ggdb"; }
+ else
+-	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -fomit-frame-pointer -O3 -mcpu=i486 -Wall"; }
++	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -fomit-frame-pointer -O3 -march=i486 -Wall"; }
+ 
+ if ($gaswin and !$no_asm)
+ 	{

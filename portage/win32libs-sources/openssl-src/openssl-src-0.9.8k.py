@@ -30,7 +30,10 @@ class Package(CMakePackageBase):
         os.chdir( self.sourceDir() )
         cmd = ""
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
-            cmd = "ms\mingw32.bat"
+            if self.buildTarget == "1.0.0":
+                cmd = "ms\mingw32.bat no-asm no-capieng"
+            else:
+                cmd = "ms\mingw32.bat"
         else:
             cmd = "ms\\32all.bat"
       
