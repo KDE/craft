@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = '4.6.2'
         
-        self.patchToApply['4.6.2'] = ( 'qt-dbus-wince-support.patch', 0 )
+        self.patchToApply['4.6.2'] = ( 'qt-dbus-support-wince.patch', 0 )
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
