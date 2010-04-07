@@ -142,7 +142,13 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # so we have to do the job manually...
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
-            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "include" ) , os.path.join( self.installDir(), "include" ) )
+            #utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "include" ) , os.path.join( self.installDir(), "include" ) )
+            qtdir_save = os.getenv( "QTDIR" )
+            os.putenv( "QTDIR", self.sourceDir() )
+            command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
+            command += " -outdir \"" + self.installDir() + "\""
+            utils.system( command )
+            os.putenv( "QTDIR", qtdir_save )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
             # create qt.conf 
