@@ -47,6 +47,7 @@ rem Here you can adjust the path to the Windows Mobile SDK installation
 rem This is used to set up the cross-compilation environment automatically
 if "%EMERGE_TARGET_PLATFORM%" == "WM50" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 5.0 SDK R2\PocketPC
 if "%EMERGE_TARGET_PLATFORM%" == "WM60" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 6 Professional SDK\PocketPC
+if "%EMERGE_TARGET_PLATFORM%" == "WM65" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 6 Professional SDK\PocketPC
 
 rem Here you can set a specific platform SDK to use with the Visual Studio toolchain
 rem Normally this is not needed as a default platform SDK is set by the build environment script
