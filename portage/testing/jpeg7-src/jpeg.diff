@@ -1,7 +1,7 @@
-diff -urN jpeg-7.orig/CMakeLists.txt jpeg-7/CMakeLists.txt
---- jpeg-7.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-7/CMakeLists.txt	2010-01-08 14:42:15.466624179 +0100
-@@ -0,0 +1,62 @@
+diff -Nru jpeg-7.orig/CMakeLists.txt jpeg-7/CMakeLists.txt
+--- jpeg-7.orig/CMakeLists.txt	Thu Jan 01 01:00:00 1970
++++ jpeg-7/CMakeLists.txt	Fri Apr 09 10:55:10 2010
+@@ -0,0 +1,66 @@
 +project(jpeg)
 +
 +set(JPEG_VERSION_MAJOR 7 CACHE INT "Major JPEG version number" FORCE)
@@ -22,6 +22,10 @@ diff -urN jpeg-7.orig/CMakeLists.txt jpeg-7/CMakeLists.txt
 +include(CheckIncludeFile)
 +check_include_file(stddef.h HAVE_STDDEF_H)
 +check_include_file(stdlib.h HAVE_STDLIB_H)
++
++if(WINCE)
++    add_definitions(-DNO_GETENV)
++endif(WINCE)
 +
 +configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jconfig.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/jconfig.h)
 +
@@ -64,9 +68,9 @@ diff -urN jpeg-7.orig/CMakeLists.txt jpeg-7/CMakeLists.txt
 +    DESTINATION include
 +    COMPONENT Devel
 +)
-diff -urN jpeg-7.orig/jconfig.h.cmake jpeg-7/jconfig.h.cmake
---- jpeg-7.orig/jconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-7/jconfig.h.cmake	2010-01-08 18:13:26.262624040 +0100
+diff -Nru jpeg-7.orig/jconfig.h.cmake jpeg-7/jconfig.h.cmake
+--- jpeg-7.orig/jconfig.h.cmake	Thu Jan 01 01:00:00 1970
++++ jpeg-7/jconfig.h.cmake	Fri Apr 09 10:44:36 2010
 @@ -0,0 +1,31 @@
 +#define HAVE_PROTOTYPES
 +#define HAVE_UNSIGNED_CHAR
@@ -99,9 +103,9 @@ diff -urN jpeg-7.orig/jconfig.h.cmake jpeg-7/jconfig.h.cmake
 +
 +#define GLOBAL(type) JPEG_EXPORT type
 +#define EXTERN(type) JPEG_EXPORT type
-diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
---- jpeg-7.orig/jdatadst.h	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-7/jdatadst.h	2010-01-08 18:14:40.706655399 +0100
+diff -Nru jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
+--- jpeg-7.orig/jdatadst.h	Thu Jan 01 01:00:00 1970
++++ jpeg-7/jdatadst.h	Fri Apr 09 10:44:36 2010
 @@ -0,0 +1,145 @@
 +/*
 + * jdatadst.c
@@ -248,9 +252,9 @@ diff -urN jpeg-7.orig/jdatadst.h jpeg-7/jdatadst.h
 +  dest->pub.term_destination = jdatadst_term_destination;
 +  dest->outfile = outfile;
 +}
-diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
---- jpeg-7.orig/jdatasrc.h	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-7/jdatasrc.h	2010-01-08 18:14:40.706655399 +0100
+diff -Nru jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
+--- jpeg-7.orig/jdatasrc.h	Thu Jan 01 01:00:00 1970
++++ jpeg-7/jdatasrc.h	Fri Apr 09 10:44:36 2010
 @@ -0,0 +1,206 @@
 +/*
 + * jdatasrc.c
@@ -458,9 +462,9 @@ diff -urN jpeg-7.orig/jdatasrc.h jpeg-7/jdatasrc.h
 +  src->pub.bytes_in_buffer = 0; /* forces jdatasrc_fill_input_buffer on first read */
 +  src->pub.next_input_byte = NULL; /* until buffer loaded */
 +}
-diff -urN jpeg-7.orig/jerror.h jpeg-7/jerror.h
---- jpeg-7.orig/jerror.h	2009-03-24 22:24:32.000000000 +0100
-+++ jpeg-7/jerror.h	2010-01-08 18:14:40.707665386 +0100
+diff -Nru jpeg-7.orig/jerror.h jpeg-7/jerror.h
+--- jpeg-7.orig/jerror.h	Tue Mar 24 23:24:32 2009
++++ jpeg-7/jerror.h	Fri Apr 09 10:44:36 2010
 @@ -14,6 +14,21 @@
   * and/or the macros.
   */
@@ -501,9 +505,9 @@ diff -urN jpeg-7.orig/jerror.h jpeg-7/jerror.h
     (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)))
  
  #endif /* JERROR_H */
-diff -urN jpeg-7.orig/jmorecfg.h jpeg-7/jmorecfg.h
---- jpeg-7.orig/jmorecfg.h	2009-04-10 11:05:41.000000000 +0200
-+++ jpeg-7/jmorecfg.h	2010-01-08 18:41:49.651635843 +0100
+diff -Nru jpeg-7.orig/jmorecfg.h jpeg-7/jmorecfg.h
+--- jpeg-7.orig/jmorecfg.h	Fri Apr 10 11:05:41 2009
++++ jpeg-7/jmorecfg.h	Fri Apr 09 10:44:36 2010
 @@ -186,13 +186,21 @@
   */
  
@@ -526,9 +530,9 @@ diff -urN jpeg-7.orig/jmorecfg.h jpeg-7/jmorecfg.h
  
  
  /* This macro is used to declare a "method", that is, a function pointer.
-diff -urN jpeg-7.orig/jpeglib.h jpeg-7/jpeglib.h
---- jpeg-7.orig/jpeglib.h	2009-04-30 18:16:10.000000000 +0200
-+++ jpeg-7/jpeglib.h	2010-01-08 18:14:40.709655329 +0100
+diff -Nru jpeg-7.orig/jpeglib.h jpeg-7/jpeglib.h
+--- jpeg-7.orig/jpeglib.h	Thu Apr 30 18:16:10 2009
++++ jpeg-7/jpeglib.h	Fri Apr 09 10:44:36 2010
 @@ -26,6 +26,19 @@
  #endif
  #include "jmorecfg.h"		/* seldom changed options */
@@ -560,14 +564,16 @@ diff -urN jpeg-7.orig/jpeglib.h jpeg-7/jpeglib.h
  
  /* Default parameter setup for compression */
  EXTERN(void) jpeg_set_defaults JPP((j_compress_ptr cinfo));
-@@ -1132,4 +1147,10 @@
+@@ -1130,6 +1145,12 @@
+ #ifndef DONT_USE_EXTERN_C
+ }
  #endif
- #endif
- 
++#endif
++
 +#if !defined(JPEG_INTERNALS) && defined(JPEG_STDIO_IN_HEADERS)
 +#include "jerror.h"
 +#include "jdatadst.h"
 +#include "jdatasrc.h"
-+#endif
-+
+ #endif
+ 
  #endif /* JPEGLIB_H */
