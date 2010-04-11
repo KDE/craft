@@ -211,11 +211,23 @@ def unTar( file, destdir ):
         file=os.path.join( os.getenv("TMP") , tarname )
 		
 
-    tar = tarfile.open( file, mode )
+    if not os.path.exists( file ):
+        error( "couldn't find file %s" % file )
+        return False
+
+    try:
+        tar = tarfile.open( file, mode )
+    except:
+        error( "could not open existing tar archive: %s" % file )
+        return False
 
     # FIXME how to handle errors here ?
     for foo in tar:
-        tar.extract( foo, destdir )
+        try:
+            tar.extract( foo, destdir )
+        except:
+            error( "couldn't extract file %s to directory %s" % ( foo, destdir ) )
+            return False
 
     return True
 
@@ -226,7 +238,11 @@ def unZip( file, destdir ):
     if not os.path.exists( destdir ):
         os.makedirs( destdir )
 
-    zip = zipfile.ZipFile( file )
+    try:
+        zip = zipfile.ZipFile( file )
+    except:
+        error( "couldn't extract file %s" % file )
+        return False
 
     for i, name in enumerate( zip.namelist() ):
         if not name.endswith( '/' ):
