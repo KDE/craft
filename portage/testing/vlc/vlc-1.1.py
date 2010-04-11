@@ -9,12 +9,14 @@ import urllib
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):                
-        self.targets[ self.getVer()  ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32.7z" % ( self.getVer() )
-        self.targetInstSrc[ self.getVer() ] = "vlc-1.1.0-git-%s" % ( self.getVer() )
+    def setTargets( self ):    
+	self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win32/last/'
+	self.vlcTagName = 'vlc-1.1.0-pre1'
+        self.targets[ self.getVer()  ]  =  self.vlcBaseUrl + self.vlcTagName + "-" + self.getVer() + "-win32.7z" 
+        self.targetInstSrc[ self.getVer() ] = self.vlcTagName + "-" + self.getVer()    
         
-        self.targets[ self.getVer()+"-debug" ]  = "http://nightlies.videolan.org/build/win32/last/vlc-1.1.0-git-%s-win32-debug.7z" % ( self.getVer() )
-        self.targetInstSrc[ self.getVer()+"-debug" ] = "vlc-1.1.0-git-%s" % ( self.getVer() )        
+        self.targets[ self.getVer()+"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + "-" + self.getVer() + "-win32-debug.7z"
+        self.targetInstSrc[ self.getVer()+"-debug" ] = self.vlcTagName + "-" + self.getVer()        
         
         self.defaultTarget = self.getVer()
        
