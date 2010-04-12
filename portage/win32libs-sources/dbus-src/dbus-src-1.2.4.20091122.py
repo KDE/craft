@@ -9,14 +9,20 @@ class subinfo(info.infoclass):
         self.svnTargets['1.2.1'] = svnurl + 'tags/1.2.1'
         self.svnTargets['1.2.3'] = svnurl + 'tags/1.2.3'
         self.svnTargets['1.2.4'] = svnurl + 'tags/1.2.4'
-        self.svnTargets['svnHEAD'] = svnurl + 'trunk'
-        self.defaultTarget = '1.2.4'
         self.targetInstSrc['1.2.4'] = 'tags/1.2.4'
         self.targetConfigurePath['1.2.4'] = 'cmake'
-        self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
-        self.targetConfigurePath['gitHEAD'] = 'cmake'
+
+        self.svnTargets['svnHEAD'] = svnurl + 'trunk'
         self.targetConfigurePath['svnHEAD'] = 'cmake'
-    
+
+        self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
+        self.targetSrcSuffix['gitHEAD'] = 'git'
+        self.targetConfigurePath['gitHEAD'] = 'cmake'
+
+        self.defaultTarget = 'gitHEAD'
+        self.options.package.version = '1.3.1'
+
+        
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['win32libs-bin/expat'] = 'default'
