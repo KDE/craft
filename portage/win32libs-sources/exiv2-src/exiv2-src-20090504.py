@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.19'
     
     def setDependencies( self ):
-        #self.hardDependencies['win32libs-bin/iconv']   = 'default'
+        self.hardDependencies['win32libs-bin/iconv']   = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/expat']   = 'default'
         self.hardDependencies['win32libs-bin/zlib']    = 'default'
