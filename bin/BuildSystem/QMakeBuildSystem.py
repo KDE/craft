@@ -14,6 +14,13 @@ from BuildSystemBase import *
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self):
         BuildSystemBase.__init__(self,"qmake")
+        self.platform = ""
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+            self.platform = "win32-%s" % self.compiler()
+        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
+            self.platform = "win32-g++"
+        else:
+            exit( 1 )
 
     def setPathes(self):
             # for qmake
@@ -22,9 +29,8 @@ class QMakeBuildSystem(BuildSystemBase):
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
         # to be sure 
-        utils.putenv( "QMAKESPEC", " " )
+        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(),'mkspecs',self.platform ))
 
-    
     def configure( self, configureTool=None, configureDefines="" ):
         """inplements configure step for Qt projects"""
             
