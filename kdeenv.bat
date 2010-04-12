@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 rem    this file sets some environment variables that are needed
 rem    for finding programs and libraries etc.
 rem    by Holger Schroeder <schroder@kde.org>
@@ -83,7 +83,11 @@ if "%APPLICATION%" == "" (
 goto :eof
 
 :path-mingw
-    set PATH=%KDEROOT%\mingw\bin;%PATH%
+    if %EMERGE_ARCHITECTURE% == x64 ( 
+        set PATH=%KDEROOT%\mingw64\bin;%PATH%
+    ) else (
+        set PATH=%KDEROOT%\mingw\bin;%PATH%
+    )
     goto :eof
 
 :path-msvc

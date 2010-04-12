@@ -19,7 +19,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/pexports']   = 'default'
 
         if os.getenv( "KDECOMPILER" ) == "mingw":
-          self.hardDependencies['dev-util/mingw4']    = 'default'
+            if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+                self.hardDependencies['dev-util/mingw-w64']    = 'default'
+            else:
+                self.hardDependencies['dev-util/mingw4']    = 'default'
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
