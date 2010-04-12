@@ -122,6 +122,10 @@ class VersionSystemSourceBase (SourceBase):
                     sourcedir = os.path.join( self.downloadDir(), "svn-src", self.package )
             else:
                 utils.die("svnTarget property not set for this target")
+
+        if self.subinfo.targetSourceSuffix() != None:
+            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+           
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 

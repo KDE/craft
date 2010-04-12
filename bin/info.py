@@ -17,7 +17,12 @@ class infoclass:
         ### package options
         self.options = Options()
         self.targets = dict()
+        """Specifiy that the fetched source should be placed into a 
+        subdirectory of the default source directory"""
         self.targetInstSrc = dict()
+        """Specifiy that the default source directory should have a suffix after 
+        the package name. This is usefull for package which needs different sources."""
+        self.targetSrcSuffix = dict()
         self.targetConfigurePath = dict()
         self.targetInstallPath = dict()
         self.targetMergeSourcePath = dict()
@@ -111,6 +116,11 @@ class infoclass:
         if self.buildTarget in self.svnTargets.keys():
             return self.svnTargets[self.buildTarget]
         return ""
+
+    def targetSourceSuffix(self):
+        """return local source path suffix for the recent target"""
+        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetSrcSuffix.keys():
+            return self.targetSrcSuffix[ self.buildTarget ]
 
     def hasTargetSourcePath(self):
         """return true if relative path appendable to local source path is given for the recent target"""
