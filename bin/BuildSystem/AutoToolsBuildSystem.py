@@ -91,6 +91,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         else:
             self.enterBuildDir()           
 
+        command = self.makeProgram
         args="install"
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
@@ -98,9 +99,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
         if self.buildInSource:
-            return self.shell.execute(self.sourceDir(), self.makeProgram, args ) or utils.die( "while installing. cmd: %s" % command )
+            return self.shell.execute(self.sourceDir(), command, args ) or utils.die( "while installing. cmd: %s %s" % (command, args) )
         else:
-            return self.shell.execute(self.buildDir(), self.makeProgram, args ) or utils.die( "while installing. cmd: %s" % command )
+            return self.shell.execute(self.buildDir(), command, args ) or utils.die( "while installing. cmd: %s %s" % (command, args) )
 
     def runTest( self ):
         """running unittests"""
