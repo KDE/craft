@@ -116,7 +116,9 @@ class Options:
         self.disableReleaseBuild = False
         ## exit if system command returns errors
         self.exitOnErrors = True
-        #
+        ## use short pathes (usefull for mingw to 
+		#  avoid exceeding the maximum path length)
+        self.useShortPathes = False
 
         
     def readFromEnv(self):

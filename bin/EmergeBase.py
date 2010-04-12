@@ -7,6 +7,7 @@ import portage;
 import os;
 import sys;
 import datetime;
+from ctypes import *
 
 ## @todo complete a release and binary merge dir below rootdir 
 # 1.  enable build type related merge install settings
@@ -113,7 +114,21 @@ class EmergeBase():
         self.rootdir = ROOTDIR
         if hasattr(self, "subinfo"):
             self.setup()
-            
+
+    def __adjustPath(self, dir):
+        """return adjusted path"""
+        if not self.subinfo.options.useShortPathes: 
+            return dir
+        path = c_char_p(dir)
+        len = windll.kernel32.GetShortPathNameA(path, 0, 0)
+        if len == 0:
+            return dir
+        buffer = create_string_buffer('\000' * (len + 1))
+        len1 = windll.kernel32.GetShortPathNameA(path, byref(buffer), len+1)
+        if utils.verbose() > 0:
+	        print "converting " + dir + " to " + buffer.value
+        return buffer.value
+    
     def abstract():
         import inspect
         caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -134,25 +149,25 @@ class EmergeBase():
 
     def downloadDir(self): 
         """ location of directory where fetched files are  stored """
-        return DOWNLOADDIR
+        return self.__adjustPath(DOWNLOADDIR)
         
     def packageDir(self): 
         """ add documentation """
-        return os.path.join( portage.rootDir(), self.category, self.package )
+        return self.__adjustPath(os.path.join( portage.rootDir(), self.category, self.package ))
     
     def filesDir(self):
         """ add documentation """
-        return os.path.join( self.packageDir(), "files" )
+        return self.__adjustPath(os.path.join( self.packageDir(), "files" ))
         
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
         buildroot    = os.path.join( ROOTDIR, "build", self.category, self.PV )
-        return buildroot
+        return self.__adjustPath(buildroot)
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
         _workDir = os.path.join( self.buildRoot(), "work" )
-        return _workDir
+        return self.__adjustPath(_workDir)
 
     def buildDir(self):        
         utils.debug("EmergeBase.buildDir() called" ,2)
@@ -176,7 +191,7 @@ class EmergeBase():
         builddir = os.path.join( self.workDir(), dir )
                 
         utils.debug("package builddir is: %s" % builddir,2)
-        return builddir
+        return self.__adjustPath(builddir)
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
@@ -194,7 +209,7 @@ class EmergeBase():
             imagedir += '-' + self.buildType()
         imagedir += '-' + self.buildTarget
         
-        return imagedir
+        return self.__adjustPath(imagedir)
 
     def installDir(self):
         """return absolute path to the install directory of the currently active package. 
@@ -206,7 +221,7 @@ class EmergeBase():
             installDir = os.path.join(self.imageDir(), self.subinfo.options.install.installPath)
         else:
             installDir = self.imageDir()
-        return installDir
+        return self.__adjustPath(installDir)
 
     def mergeSourceDir(self):
         """return absolute path to the merge source directory of the currently active package. 
@@ -219,7 +234,7 @@ class EmergeBase():
             dir = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
             dir = self.imageDir()
-        return dir
+        return self.__adjustPath(dir)
                         
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package. 
@@ -241,7 +256,7 @@ class EmergeBase():
             dir = os.path.join(ROOTDIR,'relwithdebinfo')
         else:
             dir = ROOTDIR
-        return dir
+        return self.__adjustPath(dir)
 
     def setBuildTarget( self, target = None):
         utils.debug( "EmergeBase.setBuildTarget called", 2 )
