@@ -5,6 +5,7 @@ import info
 
 SRC_URI = """
 http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100410/mingw-w64-bin_x86_64-mingw_20100410_sezero.zip
+http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
 """
 
 class subinfo(info.infoclass):
