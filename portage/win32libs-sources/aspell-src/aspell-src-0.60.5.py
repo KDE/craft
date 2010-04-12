@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default' # buildtime dependency
         self.hardDependencies['dev-util/msys'] = 'default' # buildtime dependency
 
-class subclass(base.baseclass):
+class Package(base.baseclass):
   def __init__( self, **args ):
     base.baseclass.__init__( self, args=args )
     self.createCombinedPackage = True

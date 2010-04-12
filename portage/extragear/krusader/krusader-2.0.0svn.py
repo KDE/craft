@@ -5,6 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/extragear/utils/krusader"
+        self.patchToApply['svnHEAD'] = ['krusader-svn.patch',1]
         self.targets['2.0.0-beta2'] = 'http://prdownloads.sourceforge.net/krusader/krusader-2.0.0-beta2.tar.gz'
         self.targetInstSrc['2.0.0-beta2'] = 'krusader-2.0.0-beta2'
         self.patchToApply['2.0.0-beta2'] = ['krusader.patch',1]

@@ -29,8 +29,12 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
         self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
-
-        self.defaultTarget = '4.6.2'
+        self.svnTargets['4.6.2-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.6_jjc|"
+        self.targetSrcSuffix['4.6.2-mingw-x64'] = "x64"
+        if (COMPILER == "mingw" or COMPILER == "mingw4") and os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+            self.defaultTarget = '4.6.2-mingw-x64'
+        else:
+            self.defaultTarget = '4.6.2'
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
@@ -40,11 +44,15 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['testing/mysql-server'] = 'default'
-        if COMPILER == "mingw" or COMPILER == "mingw4":
-            self.hardDependencies['win32libs-bin/dbus'] = 'default'
-        else:
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
             self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-        self.hardDependencies['win32libs-bin/openssl'] = 'default'
+            self.hardDependencies['testing/openssl_beta-src'] = 'default'
+        elif  COMPILER == "msvc2008":
+            self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
+            self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        else:
+            self.hardDependencies['win32libs-bin/dbus'] = 'default'
+            self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -54,29 +62,21 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        if self.compiler() == "mingw" or self.compiler() == "mingw4":
-            self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
-        else:
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
             self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
+            self.openssl = portage.getPackageInstance('testing','openssl_beta-src')
+        elif COMPILER == "msvc2008":
+            self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
+            self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
+        else:
+            self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
+            self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
+
         self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
-
-        # 
-        os.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
-
-        # so that the mkspecs can be found, when -prefix is set
-        os.putenv( "QMAKEPATH", self.sourceDir() )
-
-        platform = ""
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
-            platform = "win32-%s" % self.compiler()
-        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
-            platform = "win32-g++"
-        else:
-            exit( 1 )
+        self.setPathes()
 
         os.environ[ "USERIN" ] = "y"
         userin = "y"
@@ -95,7 +95,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -ltcg -no-vcproj -no-dsp " \
           "-nomake demos -nomake examples " \
-          "%s %s" % ( userin, configure, platform, self.installDir(), incdirs, libdirs)
+          "%s %s" % ( userin, configure, self.platform, self.installDir(), incdirs, libdirs)
         if self.buildType() == "Debug":
           command += " -debug "
         else:
@@ -117,9 +117,6 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         os.environ[ "INCLUDE" ] = "%s%s" % (inctmp, incdirs)
         os.environ[ "LIB" ] = "%s%s" % (libtmp, libdirs)
         
-        # so that the mkspecs can be found, when -prefix is set
-        os.putenv( "QMAKEPATH", self.sourceDir() )
-
         QMakeBuildSystem.make(self)
         
         if not libtmp:

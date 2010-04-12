@@ -16,6 +16,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.onlyBuildTargets = 'umbrello' 
+        self.subinfo.options.make.slnBaseName = 'kdesdk' 
             
 if __name__ == '__main__':
     Package().execute()
