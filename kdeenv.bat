@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 rem    this file sets some environment variables that are needed
 rem    for finding programs and libraries etc.
 rem    by Holger Schroeder <schroder@kde.org>
