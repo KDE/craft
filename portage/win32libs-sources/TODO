@@ -10,7 +10,7 @@
 - libxslt-src binary --> fixed cmake build system
 - openssl-src platform specific
 - tiff-src binary
-- sqlite-src
+- sqlite-src msys
 - libcurl-src add cmake install targets to cmake
 - shared-mime-info-src update buldscript fix x64 compilation
 - lcms-src msys
