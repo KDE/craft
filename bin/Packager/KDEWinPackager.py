@@ -82,7 +82,7 @@ class KDEWinPackager (PackagerBase):
         else:
             srcCmd = ""
             
-        cmd = "-name %s -root %s -version %s -destdir %s %s" % \
+        cmd = "-name %s -root %s -version %s -destdir %s %s -checksum sha1" % \
                   ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd )
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
