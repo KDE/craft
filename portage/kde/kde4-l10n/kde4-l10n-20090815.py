@@ -29,7 +29,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         self.subinfo.options.make.ignoreErrors = True
         self.subinfo.options.exitOnErrors = False
         # hardcoded for now
-        self.subinfo.options.package.version = '4.3.65'
+        #self.subinfo.options.package.version = '4.3.63'
 
     def repositoryPath(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
@@ -60,8 +60,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         return True
         
     def createPackage(self):
-        self.subinfo.options.package.packageName = 'kde4-l10n-%s' % self.language
-        self.subinfo.options.package.version = '4.3.68'
+        self.subinfo.options.package.packageName = 'l10n-kde4-%s' % self.language
         self.subinfo.options.package.withCompiler = False
         return KDEWinPackager.createPackage(self)
         
@@ -73,18 +72,18 @@ class MainInfo(info.infoclass):
         # all targets in svn
         self.languages  = 'af ar be bg bn bn_IN br ca cs csb cy da de '
         self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl gu '
-        self.languages += 'ha he hi hne hr hsb hu hy is it ja ka kk km kn ko ku '
-        self.languages += 'lb lt lv mai mk ml mr ms mt nb nds ne nl nn nso oc '
+        self.languages += 'ha he hi hr hsb hu hy is it ja ka kk km kn ko ku '
+        self.languages += 'lb lt lv mk ml ms mt nb nds ne nl nn nso oc '
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
         #for testing
-        #self.languages  = 'de'
+        self.languages  = 'de'
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
-        #self.ardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
     
     
 class MainPackage(PackageBase):

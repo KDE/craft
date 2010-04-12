@@ -36,7 +36,6 @@ class Package(BinaryPackageBase):
         self.createCombinedPackage = True
 
     def install( self ):
-        BinaryPackageBase.unpack(self)
         dst = os.path.join( self.imageDir(), "bin" )
         utils.cleanDirectory( dst )
         dst = os.path.join( self.imageDir(), "include" )
