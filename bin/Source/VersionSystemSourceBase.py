@@ -44,8 +44,8 @@ class VersionSystemSourceBase (SourceBase):
             return url.split('#')
         return [url,""]
         
-    def __repositoryBasePath( self ):
-        """ this function return the base path to the KDE repository """
+    def __repositoryBaseUrl( self ):
+        """ this function return the base url to the KDE repository """
         if ( os.getenv("KDESVNSERVER") == None ):
             server = "svn://anonsvn.kde.org"
         else:
@@ -68,7 +68,7 @@ class VersionSystemSourceBase (SourceBase):
             utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
         return True;
         
-    def repositoryPathCount( self ):
+    def repositoryUrlCount( self ):
         """return the number of provided repository url's. Multiple repository urls' are delimited by ';'"""
         if not self.subinfo.hasSvnTarget():
             return 0
@@ -78,22 +78,22 @@ class VersionSystemSourceBase (SourceBase):
         urls = u.split(';')
         return len(urls)
     
-    def repositoryPath( self, index=0 ):
+    def repositoryUrl( self, index=0 ):
         """this function returns the full url into a version system based repository at position 'index'.
-        See @ref repositoryPathCount how to define multiple repository urls."""
+        See @ref repositoryUrlCount how to define multiple repository urls."""
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
             (u,dummy) = self.splitUrl(u1)
             # check relative kde url
             if u.find("://") == -1: 
-                url= self.__repositoryBasePath() + u
+                url= self.__repositoryBaseUrl() + u
             else:
                 url = u
             return url            
         else:
             return False
-            
-    def repositoryPathOptions( self, index=0 ):
+
+    def repositoryUrlOptions( self, index=0 ):
         """this function return options for the repository url at position 'index'. 
         Options for a repository url are defined by adding '#' followed by the specific option. 
         """

@@ -13,14 +13,14 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.__init__ called", 2 )
         SourceBase.__init__(self)
 
-    def repositoryPath(self, index=0):
+    def repositoryUrl(self, index=0):
         """all repository pathes"""
         if self.subinfo.hasTarget():
             return os.path.basename( self.subinfo.target().split()[index] )
         else:
             return False
         
-    def repositoryPathCount(self):
+    def repositoryUrlCount(self):
         return len( self.subinfo.target().split() )
 
     def localFileNames( self ):
@@ -31,8 +31,8 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.localFileNamesBase called", 2 )
 
         filenames = []
-        for i in range(self.repositoryPathCount()):
-            filenames.append( os.path.basename( self.repositoryPath( i ) ) )
+        for i in range(self.repositoryUrlCount()):
+            filenames.append( os.path.basename( self.repositoryUrl( i ) ) )
         return filenames
 
                     

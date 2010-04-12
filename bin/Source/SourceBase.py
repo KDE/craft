@@ -60,11 +60,11 @@ class SourceBase(EmergeBase):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
         abstract()
 
-    def repositoryPath(self,index=0):
+    def repositoryUrl(self,index=0):
         """use this to get one of multiple repository paths; these can be download urls as well"""
         abstract()
 
-    def repositoryPathCount(self):
+    def repositoryUrlCount(self):
         """use this to get number of repository paths"""
         abstract()
 

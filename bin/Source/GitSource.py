@@ -27,7 +27,7 @@ class GitSource ( VersionSystemSourceBase ):
     def fetch( self, repopath=None ):
         # get the path where the repositories should be stored to
         if repopath == None:
-            repopath = self.repositoryPath()
+            repopath = self.repositoryUrl()
         
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")

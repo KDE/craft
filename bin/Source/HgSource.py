@@ -26,7 +26,7 @@ class HgSource ( VersionSystemSourceBase ):
 
         # get the path where the repositories should be stored to
         if repopath == None:
-            repopath = self.repositoryPath()
+            repopath = self.repositoryUrl()
         
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
 #        repoString = utils.replaceGitUrl( repopath )

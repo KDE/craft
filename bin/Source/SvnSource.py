@@ -38,10 +38,10 @@ class SvnSource (VersionSystemSourceBase):
             utils.debug( "skipping svn fetch (--offline)" )
             return True
 
-        for i in range(0, self.repositoryPathCount()):
-            url = self.repositoryPath(i)
+        for i in range(0, self.repositoryUrlCount()):
+            url = self.repositoryUrl(i)
             sourcedir = self.sourceDir(i)
-            if self.repositoryPathOptions(i) == 'norecursive':
+            if self.repositoryUrlOptions(i) == 'norecursive':
                 self.__tryCheckoutFromRoot(url,sourcedir,False)
             else:
                 self.__tryCheckoutFromRoot(url,sourcedir,True)

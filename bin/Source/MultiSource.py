@@ -32,11 +32,11 @@ class MultiSource():
     def sourceDir(self):
         return self.source.sourceDir()
 
-    def repositoryPath(self,index=0):
-        return self.source.repositoryPath(index)
+    def repositoryUrl(self,index=0):
+        return self.source.repositoryUrl(index)
 
-    def repositoryPathCount(self):
-        return self.source.repositoryPathCount()
+    def repositoryUrlCount(self):
+        return self.source.repositoryUrlCount()
 
     def applyPatches(self):
         return self.source.applyPatches()
