@@ -1,25 +1,62 @@
-- expat-src msys --> fixed cmake build system
+- aspell-src msys
+- boost-src: special
+- cfitsio-src msys
+- chm-src added cmake build system
+- cyrus-sasl-src added cmake build system
+- dbus-src native cmake build system
+- djvu-src added cmake build system
+- ebook-tools (libepub) added cmake build system
+- exiv-src added cmake build system
+- expat-src --> added cmake build system
+- fontconfig-src added cmake build system
+- freetype-src added cmake build system
 - gettext-src binary
-- giflib-src binary --> fixed cmake build system
-- iconv-src --> fixed cmake build system for win_iconv-src
-- jpeg-src binary, replace with bic-version jpeg7
+- gettext-tools-src binary
+- giflib-src --> added cmake build system
+- iconv-src --> added cmake build system for win_iconv-src
+- jpeg7-src added cmake build system
+- jasper-src added cmake build system
+- lcms-src msys
+- libarchive-src native cmake build system
+- libbzip2-src added cmake build system
+- libcurl-src native cmake build system (with patches)
 - libgmp-src msys
 - libgpod-src msys
+- libical-src native cmake build system (with patches)
+- libidn-src added cmake build system
+- liblzma-src added cmake build system
+- libmsn-src native cmake build system
 - libnova-src msys
-- libxml2-src binary/msys --> fixed cmake build system
-- libxslt-src binary --> fixed cmake build system
-- openssl-src platform specific
-- tiff-src binary
+- libpng-src native cmake build system
+- libssh-src native cmake build system
+- libxml2-src --> added cmake build system
+- libxslt-src --> added cmake build system
+- libzip-src native cmake build system (with patches)
+- openbabel-src native cmake build system
+- openjpeg-src native cmake build system (with patches)
+- openslp-src added cmake build system
+- openssl-src special
+- pcre-src native cmake build system
+- poppler-src native cmake build system
+- redland-src added cmake build system
+- shared-desktop-ontologies-src native cmake build system
+- shared-mime-info-src update buldscript fix x64 compilation+added cmake build system
 - sqlite-src -->added cmake build system
-- libcurl-src add cmake install targets to cmake
-- shared-mime-info-src update buldscript fix x64 compilation
-- lcms-src msys
+- tiff-src binary
+- win_iconv-src added cmake build system
+- zlib-src added cmake build system
+______________________________________________________
+5 msys
+13 native
+22 added
+3 binary
+2 special
 
 mhhh
 - boost headers
 
 special libs which need both compilers
-- dbus
+- dbus, pcre
 
 don't know how to compile this
 - subversion
