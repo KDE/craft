@@ -48,10 +48,14 @@ class ArchiveSource(SourceBase):
 
         self.setProxy()
         if self.subinfo.hasTarget():
-            return utils.getFiles( self.subinfo.target(), self.downloadDir() )
+            result = utils.getFiles( self.subinfo.target(), self.downloadDir() )
+            if result and self.subinfo.hasTargetDigestUrls():
+                return utils.getFiles( self.subinfo.targetDigestUrls(), self.downloadDir() )
+            else:
+                return True
         else:
             return utils.getFiles( "", self.downloadDir() )
-
+            
     def unpack(self):
         """unpacking all zipped(gz,zip,bz2) tarballs"""        
         utils.debug( "ArchiveSource.unpack called", 2 )
@@ -64,6 +68,21 @@ class ArchiveSource(SourceBase):
         else:
             destdir = self.workDir()
             utils.debug("unpacking files into work root %s" % destdir,1)
+
+        if self.subinfo.hasTargetDigestUrls():
+            utils.debug("check digests urls",1)
+            if not utils.checkFilesDigests( self.downloadDir(), filenames):
+                utils.error("invalid digest file")
+                return False
+        elif self.subinfo.hasTargetDigests():
+            utils.debug("check digests",1)
+            if not utils.checkFilesDigests( self.downloadDir(), filenames, self.subinfo.targetDigest()):
+                utils.error("invalid digest file")
+                return False
+        else: 
+            utils.debug("print source file digests",1)
+            digests = utils.createFilesDigests( self.downloadDir(), filenames )
+            utils.printFilesDigests( digests,self.subinfo.buildTarget)
 
         if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
             return False

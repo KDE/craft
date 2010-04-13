@@ -158,6 +158,78 @@ def getHttpFile( host, path, destdir, filename ):
     return True
 
 
+def checkFilesDigests( downloaddir, filenames, digests=None ):
+    """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
+    if digests != None:
+        if type(digests) == list:
+            digestList = digests
+        else:
+            digestList = digests.splitLines()
+
+    i = 0
+    for filename in filenames:
+        debug( "checking digest of: %s" % filename, 1 )
+        file = os.path.join( downloaddir,filename )
+        if digests == None:
+            digestFile = file + '.sha1'
+            if not os.path.exists( digestFile ):
+                error( "digest validation request for file %s, but no digest  file present" % file )
+                return False
+            hash = digestFileSha1( file )
+            f = open( digestFile , "r" )
+            line = f.readline()
+            f.close()
+            if line.find(' ') == -1:
+                digest = line.strip()
+            else:
+                [ dummy, digest] = line.split( "  ", 2 )
+
+            if len(digest) != len(hash) or digest.find(hash) == -1:
+                error( "digest value for file %s (%s) do not match (%s)" % (file, hash, digest) )
+                return False
+        # checksums provided in checksums parameter
+        else:
+            hash = digestFileSha1( file )
+            digest = digestList[i].strip()
+            if len(digest) != len(hash) or digest.find(hash) == -1:
+                error( "digest value for file %s (%s) do not match (%s)" % (file, hash, digest) )
+                return False
+        i = i + 1
+    return True
+
+    
+def createFilesDigests( downloaddir, filenames ):
+    """create digests of (multiple) files specified by 'filenames' from 'downloaddir'"""
+    digestList = list()
+    for filename in filenames:
+        file = os.path.join( downloaddir,filename )
+        digest = digestFileSha1( file )
+        entry = filename, digest
+        digestList.append(entry)
+    return digestList
+    
+def printFilesDigests( digestFiles, buildTarget=None):
+    size = len( digestFiles )
+    i = 0
+    for (file,digest) in digestFiles:
+        print "%40s %s" % ( file, digest ),
+        if buildTarget==None:
+            if i == 0: 
+                print "      ['%s'," % ( digest )
+            elif i == size-1: 
+                print "       '%s']" % ( digest )
+            else:
+                print "       '%s'," % ( digest )
+            i = i + 1
+        else:
+            if i == 0: 
+                print "self.targetDigests['%s'] = ['%s'," % ( buildTarget,digest )
+            elif i == size-1: 
+                print "                             '%s']" % ( digest )
+            else:
+                print "                             '%s'," % ( digest )
+            i = i + 1
+    
 ### unpack functions
 
 def unpackFiles( downloaddir, filenames, workdir ):
@@ -617,6 +689,15 @@ def sedFile( directory, file, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     hash = hashlib.md5()
+    file = open( filepath, "rb" )
+    for line in file:
+        hash.update( line )
+    file.close()
+    return hash.hexdigest()
+
+def digestFileSha1( filepath ):
+    """ sha1-digests a file """
+    hash = hashlib.sha1()
     file = open( filepath, "rb" )
     for line in file:
         hash.update( line )

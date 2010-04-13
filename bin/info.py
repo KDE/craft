@@ -27,6 +27,9 @@ class infoclass:
         self.targetInstallPath = dict()
         self.targetMergeSourcePath = dict()
         self.targetMergePath = dict()
+        
+        self.targetDigests = dict()
+        self.targetDigestUrls = dict()
         ## \todo prelimary 
         self.svnTargets = dict()
         self.hardDependencies = dict()
@@ -177,3 +180,24 @@ class infoclass:
         if self.hasPatches():
             return self.patchToApply[ self.buildTarget ]
         return ("","")
+
+    def hasTargetDigests(self):
+        """return state if target has digest(s) for the recent build target"""
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetDigests.keys()
+
+    def targetDigest(self):
+        """return digest(s) for the recent build target. The return value could be a string or a list"""
+        if self.hasTargetDigests():
+            return self.targetDigests[ self.buildTarget ]
+        return ''
+
+    def hasTargetDigestUrls(self):
+        """return state if target has digest url(s) for the recent build target"""
+        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetDigestUrls.keys()
+
+    def targetDigestUrl(self):
+        """return digest url(s) for the recent build target.  The return value could be a string or a list"""
+        if self.hasTargetDigestUrls():
+            return self.targetDigestUrls[ self.buildTarget ]
+        return ''
+            
