@@ -1,0 +1,63 @@
+diff -Nru sqlite-3.6.23.1.orig/CMakeLists.txt sqlite-3.6.23.1/CMakeLists.txt
+--- sqlite-3.6.23.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ sqlite-3.6.23.1/CMakeLists.txt	2010-04-13 06:24:32.537000000 +0200
+@@ -0,0 +1,19 @@
++project( Sqlite )
++cmake_minimum_required( VERSION 2.6 )
++
++set( sqlite_HEADER sqlite3.h sqlite3ext.h )
++
++set( libsqlite_SRC sqlite3.c  )
++set( sqlite_SRC shell.c )
++
++add_library( libsqlite3 SHARED  ${libsqlite_SRC} )
++set_target_properties( libsqlite3 PROPERTIES OUTPUT_NAME "sqlite3" )
++
++install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++add_executable( sqlite3 ${sqlite_SRC} )
++target_link_libraries( sqlite3 libsqlite3 )
++
++install( TARGETS sqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++install( FILES ${sqlite_HEADER} DESTINATION include )
+diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
+--- sqlite-3.6.23.1.orig/sqlite3.c	2010-03-29 21:51:07.000000000 +0200
++++ sqlite-3.6.23.1/sqlite3.c	2010-04-13 06:22:44.523000000 +0200
+@@ -23,7 +23,15 @@
+ # define SQLITE_PRIVATE static
+ #endif
+ #ifndef SQLITE_API
+-# define SQLITE_API
++# ifdef _MSC_VER
++#  ifdef libsqlite3_EXPORTS
++#   define SQLITE_API __declspec(dllexport)
++#  else
++#   define SQLITE_API __declspec(dllimport)
++#  endif
++# else
++#  define SQLITE_API
++# endif
+ #endif
+ /************** Begin file sqliteInt.h ***************************************/
+ /*
+diff -Nru sqlite-3.6.23.1.orig/sqlite3.h sqlite-3.6.23.1/sqlite3.h
+--- sqlite-3.6.23.1.orig/sqlite3.h	2010-03-29 21:51:07.000000000 +0200
++++ sqlite-3.6.23.1/sqlite3.h	2010-04-13 06:23:01.449000000 +0200
+@@ -50,7 +50,15 @@
+ #endif
+ 
+ #ifndef SQLITE_API
+-# define SQLITE_API
++# ifdef _MSC_VER
++#  ifdef libsqlite3_EXPORTS
++#   define SQLITE_API __declspec(dllexport)
++#  else
++#   define SQLITE_API __declspec(dllimport)
++#  endif
++# else
++#  define SQLITE_API
++# endif
+ #endif
+ 
+ 
