@@ -11,14 +11,18 @@ import urllib
 class subinfo(info.infoclass):
     def setTargets( self ):    
 	self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win32/last/'
-	self.vlcTagName = 'vlc-1.1.0-pre1'
-        self.targets[ self.getVer()  ]  =  self.vlcBaseUrl + self.vlcTagName + "-" + self.getVer() + "-win32.7z" 
-        self.targetInstSrc[ self.getVer() ] = self.vlcTagName + "-" + self.getVer()    
+	self.vlcTagName = 'vlc-1.2.0-git-'
+        self.targets[ self.vlcTagName + self.getVer() ]  =  self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32.7z" 
+        self.targetInstSrc[ self.vlcTagName + self.getVer() ] = self.vlcTagName + self.getVer()    
         
-        self.targets[ self.getVer()+"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + "-" + self.getVer() + "-win32-debug.7z"
-        self.targetInstSrc[ self.getVer()+"-debug" ] = self.vlcTagName + "-" + self.getVer()        
+        self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32-debug.7z"
+        self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = self.vlcTagName +  self.getVer()      
         
-        self.defaultTarget = self.getVer()
+        self.targets[ 'vlc-1.1.0-pre1'] = "http://download.videolan.org/pub/videolan/testing/vlc-1.1.0-pre1/win32/vlc-1.1.0-pre1-win32.7z"
+        self.targetDigests['vlc-1.1.0-pre1'] = ['1ed828a27723db1626b20ba29c44b7b1d97c28d5']
+        self.targetInstSrc[ 'vlc-1.1.0-pre1' ] = "vlc-1.1.0-pre1"
+        
+        self.defaultTarget = 'vlc-1.1.0-pre1'
        
 
     def setDependencies( self ):
