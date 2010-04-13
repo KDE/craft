@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
         self.svnTargets['4.6.2-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.6_jjc|"
         self.targetSrcSuffix['4.6.2-mingw-x64'] = "x64"
-        if (COMPILER == "mingw" or COMPILER == "mingw4") and os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '4.6.2-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
@@ -62,7 +62,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == 'mingw4':
             self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
             self.openssl = portage.getPackageInstance('testing','openssl_beta-src')
         elif COMPILER == "msvc2008":
@@ -89,7 +89,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
         libdirs += " -l libmysql "
 
-        if (COMPILER == "mingw" or COMPILER == "mingw4") and os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
             mysql_plugin = ''
         else: 
             mysql_plugin = '-plugin-sql-mysql'

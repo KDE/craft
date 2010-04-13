@@ -12,7 +12,13 @@ rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 set KDECOMPILER=mingw4
 
 rem Here you can set the architecure for which packages 
-rem are build. Currently x86 (32bit) and x64 (64) are support
+rem are build. Currently x86 (32bit) and x64 (64) are supported
+rem 
+rem  compiler supported build mode
+rem  mingw4       x86  x64 
+rem  mingw        x86  ---
+rem  msvc2005     x86  --- 
+rem  msvc2008     x86  --- 
 set EMERGE_ARCHITECTURE=x86
 rem set EMERGE_ARCHITECTURE=x64
 

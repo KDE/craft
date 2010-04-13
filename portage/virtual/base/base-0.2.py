@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         # for creating combined packages
         self.hardDependencies['dev-util/pexports']   = 'default'
 
-        if os.getenv( "KDECOMPILER" ) == "mingw":
+        if os.getenv( "KDECOMPILER" ) == "mingw4":
             if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
                 self.hardDependencies['dev-util/mingw-w64']    = 'default'
             else:

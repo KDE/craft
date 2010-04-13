@@ -6,6 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.0.0'] = 'http://www.openssl.org/source/openssl-1.0.0.tar.gz'
+        self.targetcheckSumFile['1.0.0'] = 'http://www.openssl.org/source/openssl-1.0.0.tar.gz.sha1'
         self.targetInstSrc['1.0.0'] = "openssl-1.0.0"
         self.defaultTarget = '1.0.0'
 
@@ -29,10 +30,10 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         
         self.buildInSource=True
         compiler = self.compiler()
-        if(compiler == "mingw4"):
-            compiler="mingw"
-        elif( os.getenv("EMERGE_ARCHITECTURE")=="x64" and compiler == "mingw"):
+        if os.getenv("EMERGE_ARCHITECTURE")=="x64" and compiler == "mingw4":
             compiler="mingw64"
+        elif(compiler == "mingw4"):
+            compiler="mingw"
         else:
             utils.die("msvc is not supported");
 
