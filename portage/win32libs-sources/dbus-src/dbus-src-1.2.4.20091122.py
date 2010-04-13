@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.svnTargets['git-wince'] = 'git://repo.or.cz/dbus4win.git|marcus-dbus-master-wince-upstream'
         self.targetInstSrc['git-wince'] = 'dbus4win-wince'
-        self.patchToApply['git-wince'] = ('dbus-wince5-msvc.patch', 1)
 
         self.targetConfigurePath['1.2.4'] = 'cmake'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
