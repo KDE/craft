@@ -163,8 +163,10 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
     if digests != None:
         if type(digests) == list:
             digestList = digests
+        elif digests.find("\n") != -1:
+            	digestList = digests.splitLines()
         else:
-            digestList = digests.splitLines()
+            	digestList = [digests]
 
     i = 0
     for filename in filenames:
@@ -213,22 +215,28 @@ def printFilesDigests( digestFiles, buildTarget=None):
     i = 0
     for (file,digest) in digestFiles:
         print "%40s %s" % ( file, digest ),
-        if buildTarget==None:
-            if i == 0: 
-                print "      ['%s'," % ( digest )
-            elif i == size-1: 
-                print "       '%s']" % ( digest )
+        if size == 1:
+            if buildTarget==None:
+                print "      '%s'" % ( digest )
             else:
-                print "       '%s'," % ( digest )
-            i = i + 1
+                print "self.targetDigests['%s'] = '%s'" % ( buildTarget,digest )
         else:
-            if i == 0: 
-                print "self.targetDigests['%s'] = ['%s'," % ( buildTarget,digest )
-            elif i == size-1: 
-                print "                             '%s']" % ( digest )
+            if buildTarget==None:
+                if i == 0: 
+                    print "      ['%s'," % ( digest )
+                elif i == size-1: 
+                    print "       '%s']" % ( digest )
+                else:
+                    print "       '%s'," % ( digest )
+                i = i + 1
             else:
-                print "                             '%s'," % ( digest )
-            i = i + 1
+                if i == 0: 
+                    print "self.targetDigests['%s'] = ['%s'," % ( buildTarget,digest )
+                elif i == size-1: 
+                    print "                             '%s']" % ( digest )
+                else:
+                    print "                             '%s'," % ( digest )
+                i = i + 1
     
 ### unpack functions
 
