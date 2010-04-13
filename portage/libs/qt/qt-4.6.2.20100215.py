@@ -88,14 +88,19 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
         libdirs += " -l libmysql "
+
+        if (COMPILER == "mingw" or COMPILER == "mingw4") and os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+            mysql_plugin = ''
+        else: 
+            mysql_plugin = '-plugin-sql-mysql'
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -platform %s -prefix %s " \
-          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -plugin-sql-mysql -plugin-sql-odbc " \
+          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff %s -plugin-sql-odbc " \
           "-no-phonon -qdbus -openssl -dbus-linked " \
           "-fast -ltcg -no-vcproj -no-dsp " \
           "-nomake demos -nomake examples " \
-          "%s %s" % ( userin, configure, self.platform, self.installDir(), incdirs, libdirs)
+          "%s %s" % ( userin, configure, self.platform, self.installDir(), mysql_plugin, incdirs, libdirs)
         if self.buildType() == "Debug":
           command += " -debug "
         else:
