@@ -892,6 +892,6 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, file, patchLevel='0'):
     """apply single patch"""
-    cmd = "cd %s && patch -p%s < %s" % ( sourceDir, patchLevel, file )    
+    cmd = "patch -d %s -p%s < %s" % ( sourceDir, patchLevel, file )    
     debug("applying patch %s" % ( cmd ), 2)
     return system( cmd )
