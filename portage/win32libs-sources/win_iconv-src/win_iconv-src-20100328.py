@@ -4,7 +4,6 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'http://win-iconv.googlecode.com/svn/trunk'
         self.defaultTarget = 'svnHEAD'
-        self.patchToApply['svnHEAD'] = ('win_iconv-src-20100328.diff', 0)
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
