@@ -4,21 +4,25 @@ rem subsystem will live.
 set KDEROOT=c:\kderoot
 
 rem Here you set the compiler to be used.
-rem * mingw4 - use the mingw gcc compiler (recommended)
-rem * mingw - use the mingw gcc compiler (gcc Version 3.4.5 - 
-rem           please only use this option if you are exactly sure about the consequences)
-rem * msvc2005 - use the Microsoft Visual C++ 2005 compiler
+rem * mingw4   - use the mingw gcc compiler (recommended)
+rem * mingw    - use the mingw gcc compiler (gcc Version 3.4.5 - 
+rem               please only use this option if you are exactly 
+rem               sure about the consequences)
+rem * msvc2005 - use the Microsoft Visual C++ 2005 compiler (deprecated, may not work at all) 
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 set KDECOMPILER=mingw4
 
-rem Here you can set the architecure for which packages 
-rem are build. Currently x86 (32bit) and x64 (64) are supported
+rem Here you can set the architecure for which packages are build. 
+rem Currently x86 (32bit), x64 (64) and arm (wince) are supported
 rem 
-rem  compiler supported build mode
-rem  mingw4       x86  x64 
-rem  mingw        x86  ---
-rem  msvc2005     x86  --- 
-rem  msvc2008     x86  --- 
+rem               x86  x64  arm-wince
+rem  mingw4        x    x       x[1] 
+rem  mingw         x   ---     ---
+rem  msvc2005      x   ---     ---  
+rem  msvc2008      x   ---     ---
+rem 
+rem [1] by dev-utils/cegcc-arm-wince package
+rem 
 set EMERGE_ARCHITECTURE=x86
 rem set EMERGE_ARCHITECTURE=x64
 
