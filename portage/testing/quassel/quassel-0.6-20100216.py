@@ -7,6 +7,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/quassel/quassel.git'
+        self.svnTargets['0.6'] = 'git://gitorious.org/quassel/quassel.git|0.6|'
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
