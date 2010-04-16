@@ -1,0 +1,219 @@
+diff -Nru lcms-1.19.orig/CMakeLists.txt lcms-1.19/CMakeLists.txt
+--- lcms-1.19.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms-1.19/CMakeLists.txt	2010-04-16 09:13:03.704800000 +0200
+@@ -0,0 +1,41 @@
++project(lcms)
++
++cmake_minimum_required(VERSION 2.6)
++
++option(BUILD_TOOLS "build jpegicc, tifficc and tiffdiff" ON)
++option(BUILD_TESTS "build test application" ON)
++option(BUILD_SAMPLES "build sample applications" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif(BUILD_TESTS)
++
++include_directories(
++${CMAKE_BINARY_DIR}/include 
++${CMAKE_SOURCE_DIR}/include
++)
++
++add_definitions(-DLCMS_DLL)
++
++add_subdirectory(src)
++
++if(BUILD_TOOLS)
++    find_package(JPEG)
++    find_package(TIFF)
++
++    if(JPEG_FOUND)
++        add_subdirectory(jpegicc)
++    endif(JPEG_FOUND)
++
++    if(TIFF_FOUND)
++        add_subdirectory(tifficc)
++    endif(TIFF_FOUND)
++endif(BUILD_TOOLS)
++
++if(BUILD_SAMPLES)
++    add_subdirectory(samples)
++endif(BUILD_SAMPLES)
++
++if(BUILD_TESTS)
++    add_subdirectory(testbed)
++endif(BUILD_TESTS)
+diff -Nru lcms-1.19.orig/include/lcms.h lcms-1.19/include/lcms.h
+--- lcms-1.19.orig/include/lcms.h	2009-10-30 16:57:45.000000000 +0100
++++ lcms-1.19/include/lcms.h	2010-04-16 09:13:03.720400000 +0200
+@@ -371,7 +371,7 @@
+ #      define LCMSAPI
+ #   else
+        // VC++
+-#       define LCMSEXPORT  _stdcall
++#       define LCMSEXPORT  cdecl
+ #       ifdef LCMS_DLL_BUILD
+ #           define LCMSAPI     __declspec(dllexport)
+ #       else
+diff -Nru lcms-1.19.orig/jpegicc/CMakeLists.txt lcms-1.19/jpegicc/CMakeLists.txt
+--- lcms-1.19.orig/jpegicc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms-1.19/jpegicc/CMakeLists.txt	2010-04-16 09:13:03.720400000 +0200
+@@ -0,0 +1,18 @@
++set(jpegicc_SRCS
++    jpegicc.c 
++    iccjpeg.c 
++    ../samples/xgetopt.c 
++    ../samples/vprf.c
++)
++
++include_directories(${JPEG_INCLUDE_DIR})
++
++add_executable(jpegicc ${jpegicc_SRCS})
++target_link_libraries(jpegicc lcms ${JPEG_LIBRARIES})
++
++install(TARGETS jpegicc RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++                        
++install(FILES jpegicc.1 DESTINATION man/man1)
++install(FILES iccjpeg.h DESTINATION include)
+diff -Nru lcms-1.19.orig/samples/CMakeLists.txt lcms-1.19/samples/CMakeLists.txt
+--- lcms-1.19.orig/samples/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms-1.19/samples/CMakeLists.txt	2010-04-16 09:13:03.720400000 +0200
+@@ -0,0 +1,35 @@
++set(icctrans_SRCS
++    icctrans.c 
++    xgetopt.c 
++    vprf.c
++)
++add_executable(icctrans ${icctrans_SRCS})
++target_link_libraries(icctrans lcms)
++
++set(wtpt_SRCS
++    wtpt.c 
++    xgetopt.c 
++)
++add_executable(wtpt ${wtpt_SRCS})
++target_link_libraries(wtpt lcms)
++
++set(icc2ps_SRCS
++    icc2ps.c 
++    xgetopt.c 
++)
++add_executable(icc2ps ${icc2ps_SRCS})
++target_link_libraries(icc2ps lcms)
++
++set(icclink_SRCS
++    icclink.c 
++    xgetopt.c 
++    vprf.c
++)
++add_executable(icclink ${icclink_SRCS})
++target_link_libraries(icclink lcms)
++
++install(TARGETS icctrans wtpt icc2ps icclink RUNTIME DESTINATION bin
++                                             LIBRARY DESTINATION lib
++                                             ARCHIVE DESTINATION lib)
++                                             
++install(FILES icctrans.1 wtpt.1 icc2ps.1 icclink.1 DESTINATION man/man1)
+diff -Nru lcms-1.19.orig/src/CMakeLists.txt lcms-1.19/src/CMakeLists.txt
+--- lcms-1.19.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms-1.19/src/CMakeLists.txt	2010-04-16 09:14:34.417200000 +0200
+@@ -0,0 +1,38 @@
++set(lcms_SRCS
++  cmscnvrt.c 
++  cmserr.c 
++  cmsgamma.c 
++  cmsgmt.c 
++  cmsintrp.c 
++  cmsio0.c 
++  cmsio1.c 
++  cmslut.c
++  cmsmatsh.c
++  cmsmtrx.c
++  cmspack.c
++  cmspcs.c
++  cmswtpnt.c
++  cmsxform.c
++  cmssamp.c
++  cmscam97.c
++  cmsnamed.c
++  cmsps2.c
++  cmscam02.c
++  cmsvirt.c
++  cmscgats.c
++)
++
++if(WIN32)
++    set(lcms_SRCS ${lcms_SRCS} lcms.def)
++    add_definitions(-DLCMS_DLL)
++endif(WIN32)
++
++add_library(lcms SHARED ${lcms_SRCS})
++set_target_properties(lcms PROPERTIES OUTPUT_NAME "lcms-1"
++                                      DEFINE_SYMBOL LCMS_DLL_BUILD)
++
++install(TARGETS lcms RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++
++install(FILES ../include/icc34.h ../include/lcms.h DESTINATION include)
+\ No newline at end of file
+diff -Nru lcms-1.19.orig/src/lcms.def lcms-1.19/src/lcms.def
+--- lcms-1.19.orig/src/lcms.def	2007-04-27 09:58:26.000000000 +0200
++++ lcms-1.19/src/lcms.def	2010-04-16 09:13:03.720400000 +0200
+@@ -1,4 +1,4 @@
+-LIBRARY     LCMS.DLL
++;;LIBRARY     LCMS.DLL
+ 
+ EXPORTS
+     _cmsICCcolorSpace            = _cmsICCcolorSpace
+@@ -180,6 +180,9 @@
+     cmsSetCMYKPreservationStrategy = cmsSetCMYKPreservationStrategy
+     cmsFreeProfileSequenceDescription = cmsFreeProfileSequenceDescription
+     _cmsAddChromaticAdaptationTag = _cmsAddChromaticAdaptationTag
++    cmsAllocNamedColorList       = cmsAllocNamedColorList
++    cmsFreeNamedColorList        = cmsFreeNamedColorList
++    _cmsIdentifyWhitePoint       = _cmsIdentifyWhitePoint
+     
+     
+ 
+diff -Nru lcms-1.19.orig/testbed/CMakeLists.txt lcms-1.19/testbed/CMakeLists.txt
+--- lcms-1.19.orig/testbed/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms-1.19/testbed/CMakeLists.txt	2010-04-16 09:13:03.720400000 +0200
+@@ -0,0 +1,7 @@
++add_executable(testcms testcms.c)
++target_link_libraries(testcms lcms)
++
++add_test(testcms testcms)
++
++configure_file("sRGB Color Space Profile.icm" "${CMAKE_CURRENT_BINARY_DIR}/sRGB Color Space Profile.icm" COPYONLY)
++configure_file("sRGBSpac.icm" "${CMAKE_CURRENT_BINARY_DIR}/sRGBSpac.icm" COPYONLY)
+diff -Nru lcms-1.19.orig/tifficc/CMakeLists.txt lcms-1.19/tifficc/CMakeLists.txt
+--- lcms-1.19.orig/tifficc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms-1.19/tifficc/CMakeLists.txt	2010-04-16 09:13:03.736000000 +0200
+@@ -0,0 +1,24 @@
++include_directories(${TIFF_INCLUDE_DIR})
++
++set(tifficc_SRCS
++    tifficc.c 
++    ../samples/xgetopt.c 
++    ../samples/vprf.c)
++    
++
++add_executable(tifficc ${tifficc_SRCS})
++target_link_libraries(tifficc lcms ${TIFF_LIBRARY})
++
++set(tiffdiff_SRCS
++    tiffdiff.c
++    ../samples/xgetopt.c
++)
++
++add_executable(tiffdiff ${tiffdiff_SRCS})
++target_link_libraries(tiffdiff lcms ${TIFF_LIBRARY})
++
++install(TARGETS tifficc tiffdiff RUNTIME DESTINATION bin
++                                 LIBRARY DESTINATION lib
++                                 ARCHIVE DESTINATION lib)
++                                 
++install(FILES tifficc.1 DESTINATION man/man1)
