@@ -16,7 +16,7 @@
 - iconv-src --> added cmake build system for win_iconv-src
 - jpeg7-src added cmake build system
 - jasper-src added cmake build system
-- lcms-src msys
+- lcms-src added cmake build system
 - libarchive-src native cmake build system
 - libbzip2-src added cmake build system
 - libcurl-src native cmake build system (with patches)
@@ -46,9 +46,9 @@
 - win_iconv-src added cmake build system
 - zlib-src added cmake build system
 ______________________________________________________
-5 msys
+4 msys
 13 native
-22 added
+23 added
 3 binary
 2 special
 
