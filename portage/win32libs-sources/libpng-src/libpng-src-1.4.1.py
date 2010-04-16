@@ -4,10 +4,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['1.4.1','1.2.40']:
+        for ver in ['1.4.1','1.2.43']:
             self.targets[ver] = 'http://downloads.sourceforge.net/libpng/libpng-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libpng-' + ver
-        
         self.defaultTarget = '1.4.1'
 
     def setDependencies( self ):
@@ -20,20 +19,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
         self.subinfo.options.package.withCompiler = None
-            
-            
-    def unpack( self ):
-        if( not CMakePackageBase.unpack( self ) ):
-          return False 
-        if(self.subinfo.buildTarget in ['1.4.1']):
-          return True
-        # the cmake script is in libpng-src/scripts	 
-        srcdir  = os.path.join( self.sourceDir(), "scripts", "CMakeLists.txt" )	 
-        destdir = os.path.join( self.sourceDir(),            "CMakeLists.txt" )	 
-        shutil.copy( srcdir, destdir )
-        return True
-        
-        
+
     def createPackage( self ): 
         if(self.subinfo.buildTarget.startswith('1.2')):
            libName="libpng12" 
