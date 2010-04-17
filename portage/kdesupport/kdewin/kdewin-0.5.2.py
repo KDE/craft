@@ -21,7 +21,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        self.subinfo.options.package.version = '0.5.1'
+        self.subinfo.options.package.version = '0.5.2'
         self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=On -DBUILD_QT_LIB=On -DBUILD_TOOLS=On'
         CMakePackageBase.__init__( self )
 
