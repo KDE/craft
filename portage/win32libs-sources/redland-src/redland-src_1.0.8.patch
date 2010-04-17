@@ -534,3 +534,26 @@ diff -Nru redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h redland-1.0.8/rasq
  #define snprintf _snprintf
  #define access _access
  #define stricmp _stricmp
+
+
+diff -Nru orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
+--- orig/cmake/FindOpenSSL.cmake        1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.8/cmake/FindOpenSSL.cmake       2010-04-17 21:42:40.023483300 +0200
+@@ -0,0 +1,16 @@
++
++FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h)
++
++FIND_LIBRARY(OPENSSL_SSL_LIBRARIES NAMES ssl ssleay32 ssleay32MD)
++FIND_LIBRARY(OPENSSL_CRYPTO_LIBRARIES NAMES crypto)
++MARK_AS_ADVANCED(OPENSSL_CRYPTO_LIBRARIES OPENSSL_SSL_LIBRARIES)
++
++SET(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(OpenSSL DEFAULT_MSG
++  OPENSSL_LIBRARIES
++  OPENSSL_INCLUDE_DIR
++)
++
++MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
+
