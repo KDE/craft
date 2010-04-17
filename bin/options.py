@@ -1,9 +1,22 @@
 ## 
 #
 # @package  this module contains the option class
+#
 
 import os
 
+## options for the fetch action 
+class OptionsFetch:
+    def __init__(self):
+        ## option comment
+        self.option = None
+        
+## options for the unpack action 
+class OptionsUnpack:
+    def __init__(self):
+        ## option comment
+        self.option = None
+        
 ## options for the configure action 
 class OptionsConfigure:
     def __init__(self):
@@ -78,6 +91,10 @@ class OptionsCMake:
 ## main option class
 class Options:
     def __init__(self):
+        ## options of the fetch action
+        self.unpack = OptionsFetch()
+        ## options of the unpack action
+        self.unpack = OptionsUnpack()
         ## options of the configure action
         self.configure = OptionsConfigure()
         ## options of the configure action
