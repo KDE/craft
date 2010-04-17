@@ -1,6 +1,6 @@
-diff -Nru K:\curl\curl-7.20.0\/CMakeLists.txt ./CMakeLists.txt
---- K:\curl\curl-7.20.0\/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
-+++ ./CMakeLists.txt	2010-03-30 16:38:16.709814700 +0200
+diff -Nru curl-7.20.0.orig/CMakeLists.txt curl-7.20.0/CMakeLists.txt
+--- curl-7.20.0.orig/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
++++ curl-7.20.0/CMakeLists.txt	2010-04-17 20:33:01.489484900 +0200
 @@ -119,21 +119,7 @@
  mark_as_advanced(CURL_DISABLE_LDAPS)
  if(WIN32)
@@ -80,9 +80,34 @@ diff -Nru K:\curl\curl-7.20.0\/CMakeLists.txt ./CMakeLists.txt
  # IF(NOT CURL_SPECIAL_LIBZ)
  #  CHECK_LIBRARY_EXISTS_CONCAT("z"      inflateEnd   HAVE_LIBZ)
  # ENDIF(NOT CURL_SPECIAL_LIBZ)
-diff -Nru K:\curl\curl-7.20.0\/lib/CMakeLists.txt ./lib/CMakeLists.txt
---- K:\curl\curl-7.20.0\/lib/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
-+++ ./lib/CMakeLists.txt	2010-03-30 16:39:02.910457200 +0200
+@@ -882,3 +882,5 @@
+ if(NOT CURL_CONFIG_HAS_BEEN_RUN_BEFORE)
+   set(CURL_CONFIG_HAS_BEEN_RUN_BEFORE 1 CACHE INTERNAL "Flag to track whether this is the first time running CMake or if CMake has been configured before")
+ endif()
++
++add_subdirectory(include/curl)
+\ No newline at end of file
+diff -Nru curl-7.20.0.orig/include/curl/CMakeLists.txt curl-7.20.0/include/curl/CMakeLists.txt
+--- curl-7.20.0.orig/include/curl/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ curl-7.20.0/include/curl/CMakeLists.txt	2010-04-17 20:35:08.625756700 +0200
+@@ -0,0 +1,13 @@
++set(pkginclude_HEADERS
++    curl.h
++    curlver.h 
++    easy.h 
++    mprintf.h 
++    stdcheaders.h 
++    types.h multi.h 
++    typecheck-gcc.h
++    curlbuild.h
++    curlrules.h)
++
++
++install(FILES ${pkginclude_HEADERS}  DESTINATION include/curl)
+\ No newline at end of file
+diff -Nru curl-7.20.0.orig/lib/CMakeLists.txt curl-7.20.0/lib/CMakeLists.txt
+--- curl-7.20.0.orig/lib/CMakeLists.txt	2009-07-22 22:09:53.000000000 +0200
++++ curl-7.20.0/lib/CMakeLists.txt	2010-03-30 16:39:02.910457200 +0200
 @@ -98,7 +98,7 @@
  
  if(WIN32)
@@ -115,9 +140,9 @@ diff -Nru K:\curl\curl-7.20.0\/lib/CMakeLists.txt ./lib/CMakeLists.txt
 +        LIBRARY DESTINATION lib )
 +install(FILES ${HHEADERS}  DESTINATION include/curl)
 \ No newline at end of file
-diff -Nru K:\curl\curl-7.20.0\/src/CMakeLists.txt ./src/CMakeLists.txt
---- K:\curl\curl-7.20.0\/src/CMakeLists.txt	2009-07-22 22:09:54.000000000 +0200
-+++ ./src/CMakeLists.txt	2010-03-30 16:24:47.438527000 +0200
+diff -Nru curl-7.20.0.orig/src/CMakeLists.txt curl-7.20.0/src/CMakeLists.txt
+--- curl-7.20.0.orig/src/CMakeLists.txt	2009-07-22 22:09:54.000000000 +0200
++++ curl-7.20.0/src/CMakeLists.txt	2010-03-30 16:24:47.438527000 +0200
 @@ -53,4 +53,6 @@
    endif()
  endif()
