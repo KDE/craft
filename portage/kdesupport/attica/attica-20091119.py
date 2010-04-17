@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/attica'
+        self.targets['1.3.1'] = 'ftp://ftp.kde.org/pub/kde/stable/attica/attica-0.1.3.tar.bz2'
+        self.targetInstSrc['1.3.1'] = 'attica-0.1.3'
         self.defaultTarget = 'svnHEAD'
 
 from Package.CMakePackageBase import *

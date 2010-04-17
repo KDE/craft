@@ -24,6 +24,8 @@ class subinfo(info.infoclass):
         self.svnTargets['2.3.0']  = 'tags/soprano/2.3.0'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/soprano'
+        for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/kdesupport/soprano'
         self.defaultTarget = 'svnHEAD'
 
 from Package.CMakePackageBase import *
