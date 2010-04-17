@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qimageblitz'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/kdesupport/qimageblitz'
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/qimageblitz'
         self.defaultTarget = 'svnHEAD'
 
 from Package.CMakePackageBase import *
