@@ -64,6 +64,14 @@ class Package(CMakePackageBase):
       dst = os.path.join( self.sourceDir(), "config.h.cmake" )
       shutil.copy( src, dst )
 
+      src = os.path.join( self.packageDir() , "dirent.c" )
+      dst = os.path.join( self.sourceDir(), "dirent.c" )
+      shutil.copy( src, dst )
+
+      src = os.path.join( self.packageDir() , "unistd.c" )
+      dst = os.path.join( self.sourceDir(), "unistd.c" )
+      shutil.copy( src, dst )
+
       return True
 
   

@@ -30,6 +30,8 @@ find_package(LIBXML2 REQUIRED)
 find_package(Libintl REQUIRED)
 find_package(Kdewin REQUIRED)
 
+include_directories(${KDEWIN_INCLUDES})
+
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
 check_include_files(locale.h    HAVE_LOCALE_H)
@@ -46,10 +48,10 @@ check_symbol_exists(LC_MESSAGES locale.h HAVE_LC_MESSAGES)
 set(PACKAGE           "update-mime-database")
 set(PACKAGE_BUGREPORT "https://bugs.freedesktop.org/enter_bug.cgi?product=shared-mime-info")
 set(PACKAGE_NAME      "shared-mime-info")
-set(PACKAGE_STRING    "shared-mime-info 0.60")
+set(PACKAGE_STRING    "shared-mime-info 0.71")
 set(PACKAGE_TARNAME   "shared-mime-info")
-set(PACKAGE_VERSION   "0.70")
-set(VERSION           "0.70")
+set(PACKAGE_VERSION   "0.71")
+set(VERSION           "0.71")
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
 set(GLIB_SOURCES
@@ -97,10 +99,12 @@ include_directories(
    ${CMAKE_BINARY_DIR}
 )
 
+if(MSVC)
+    add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -wd4018)
+    set(additional_SOURCES dirent.c unistd.c)
+endif(MSVC)
 
-
-
-add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT=  -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
+add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT= -DKDEWIN_EXPORT= -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
 
 add_executable(update-mime-database update-mime-database.c ${GLIB_SOURCES} ${additional_SOURCES})
 
