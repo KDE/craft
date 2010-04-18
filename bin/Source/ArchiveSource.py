@@ -50,7 +50,7 @@ class ArchiveSource(SourceBase):
         if self.subinfo.hasTarget():
             result = utils.getFiles( self.subinfo.target(), self.downloadDir() )
             if result and self.subinfo.hasTargetDigestUrls():
-                return utils.getFiles( self.subinfo.targetDigestUrls(), self.downloadDir() )
+                return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() )
             else:
                 return True
         else:
