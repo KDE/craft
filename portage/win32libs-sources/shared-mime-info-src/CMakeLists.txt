@@ -21,13 +21,15 @@ endif(COMMAND cmake_policy)
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 
-set(KDEWIN32_DIR "" CACHE FILEPATH "Path to kdewin32 sources")
+
 set(GLIB_DIR     "" CACHE FILEPATH "Path to glib sources")
 
 # libxml2
 find_package(LIBXML2 REQUIRED)
 # libintl
 find_package(Libintl REQUIRED)
+find_package(Kdewin REQUIRED)
+find_package(Iconv REQUIRED)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
@@ -97,21 +99,8 @@ include_directories(
    ${CMAKE_BINARY_DIR}
 )
 
-if(MSVC)
-  include_directories(
-     ${KDEWIN32_DIR}/include/msvc
-   )
-endif(MSVC)
-if(MINGW)
-  include_directories(
-     ${KDEWIN32_DIR}/include/mingw
-   )
-endif(MINGW)
 
-if(MSVC)
-  add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -wd4018)
-  set(additional_SOURCES ${KDEWIN32_DIR}/src/dirent.c ${KDEWIN32_DIR}/src/unistd.c)
-endif(MSVC)
+
 
 add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT= -DWIN32_LEAN_AND_MEAN -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
 
@@ -120,7 +109,6 @@ add_executable(update-mime-database update-mime-database.c ${GLIB_SOURCES} ${add
 target_link_libraries(update-mime-database
         ${LIBINTL_LIBRARIES}
         ${LIBXML2_LIBRARIES}
-        ole32
 )
 
 install(TARGETS update-mime-database RUNTIME DESTINATION bin)
