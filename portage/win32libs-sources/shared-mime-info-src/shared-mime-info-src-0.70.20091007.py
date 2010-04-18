@@ -8,16 +8,16 @@ import info
 from Package.CMakePackageBase import *
 # do not forget to update CMakeLists.txt!
 SRC_URI= """
-http://people.freedesktop.org/~hadess/shared-mime-info-0.70.tar.bz2
-ftp://ftp.gtk.org/pub/glib/2.24/glib-2.24.0.tar.bz2
+http://people.freedesktop.org/~hadess/shared-mime-info-0.71.tar.bz2
+ftp://ftp.gtk.org/pub/glib/2.18/glib-2.18.3.tar.bz2
 """
-GLIB_VER = "2.24.0"
+GLIB_VER = "2.18.3"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.70'] = SRC_URI
-        self.targetInstSrc['0.70'] = "shared-mime-info-0.70"
-        self.defaultTarget = '0.70'
+        self.targets['0.71'] = SRC_URI
+        self.targetInstSrc['0.71'] = "shared-mime-info-0.71"
+        self.defaultTarget = '0.71'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'

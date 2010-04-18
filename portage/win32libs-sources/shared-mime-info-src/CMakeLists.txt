@@ -29,7 +29,6 @@ find_package(LIBXML2 REQUIRED)
 # libintl
 find_package(Libintl REQUIRED)
 find_package(Kdewin REQUIRED)
-find_package(Iconv REQUIRED)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
@@ -94,7 +93,6 @@ include_directories(
    ${GLIB_DIR}
    ${GLIB_DIR}/glib
    ${LIBINTL_INCLUDE_DIR}
-   ${KDEWIN32_DIR}/include
    ${LIBXML2_INCLUDE_DIR}
    ${CMAKE_BINARY_DIR}
 )
@@ -102,7 +100,7 @@ include_directories(
 
 
 
-add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT= -DWIN32_LEAN_AND_MEAN -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
+add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT=  -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
 
 add_executable(update-mime-database update-mime-database.c ${GLIB_SOURCES} ${additional_SOURCES})
 
