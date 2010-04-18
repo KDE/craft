@@ -59,11 +59,6 @@ class Package(CMakePackageBase):
       src = os.path.join( self.packageDir() , "FindKDEWin.cmake" )
       dst = os.path.join( self.sourceDir(), "FindKDEWin.cmake" )
       shutil.copy( src, dst )
-      
-      
-      src = os.path.join( self.packageDir() , "FindIconv.cmake" )
-      dst = os.path.join( self.sourceDir(), "FindIconv.cmake" )
-      shutil.copy( src, dst )
 
       src = os.path.join( self.packageDir() , "config.h.cmake" )
       dst = os.path.join( self.sourceDir(), "config.h.cmake" )
