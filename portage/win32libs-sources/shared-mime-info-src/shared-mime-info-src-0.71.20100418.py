@@ -9,9 +9,9 @@ from Package.CMakePackageBase import *
 # do not forget to update CMakeLists.txt!
 SRC_URI= """
 http://people.freedesktop.org/~hadess/shared-mime-info-0.71.tar.bz2
-ftp://ftp.gtk.org/pub/glib/2.18/glib-2.18.3.tar.bz2
+http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.0.tar.bz2
 """
-GLIB_VER = "2.18.3"
+GLIB_VER = "2.24.0"
 
 class subinfo(info.infoclass):
     def setTargets( self ):

@@ -58,6 +58,7 @@ set(GLIB_SOURCES
     ${GLIB_DIR}/glib/galiasdef.c
     ${GLIB_DIR}/glib/gatomic.c
     ${GLIB_DIR}/glib/garray.c
+    ${GLIB_DIR}/glib/gbitlock.c
     ${GLIB_DIR}/glib/gconvert.c
     ${GLIB_DIR}/glib/gdataset.c
     ${GLIB_DIR}/glib/gerror.c
@@ -67,9 +68,11 @@ set(GLIB_SOURCES
     ${GLIB_DIR}/glib/gmain.c
     ${GLIB_DIR}/glib/gmem.c
     ${GLIB_DIR}/glib/gmessages.c
+    ${GLIB_DIR}/glib/gpoll.c
     ${GLIB_DIR}/glib/gprimes.c
     ${GLIB_DIR}/glib/gprintf.c
     ${GLIB_DIR}/glib/gqsort.c
+    ${GLIB_DIR}/glib/gqueue.c
     ${GLIB_DIR}/glib/grand.c
     ${GLIB_DIR}/glib/gutf8.c
     ${GLIB_DIR}/glib/gutils.c
