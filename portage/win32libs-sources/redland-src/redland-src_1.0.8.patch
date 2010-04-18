@@ -557,3 +557,336 @@ diff -Nru orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
 +
 +MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
 
+--- redland-1.0.8.orig\librdf\rdf_storage_sqlite.c	2008-07-01 05:10:26.000000000 +0200
++++ redland-1.0.81\librdf\rdf_storage_sqlite.c	2010-04-18 12:00:37.195375100 +0200
+@@ -44,8 +44,9 @@
+ #include <redland.h>
+ #include <rdf_storage.h>
+ 
+-
+-#if SQLITE_API == 3
++#undef SQLITE_API
++#define _SQLITE_API_VER  3
++#if _SQLITE_API_VER == 3
+ #include <sqlite3.h>
+ #define sqlite_DB sqlite3
+ #define sqlite_STATEMENT sqlite3_stmt
+@@ -57,7 +58,7 @@
+ #define sqlite_last_insert_rowid sqlite3_last_insert_rowid
+ #endif
+ 
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+ #include <sqlite.h>
+ #define sqlite_DB sqlite
+ #define sqlite_STATEMENT sqlite_vm
+@@ -68,11 +69,11 @@
+ #endif
+ 
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+   #define GET_COLUMN_VALUE_TEXT(vm, col) sqlite3_column_text(vm, col)
+   #define GET_COLUMN_VALUE_INT(vm, col) sqlite3_column_int(vm, col)
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+   #define GET_COLUMN_VALUE_TEXT(vm, col) (unsigned char*)pazValue[col]
+   #define GET_COLUMN_VALUE_INT(vm, col) atoi(pazValue[col])
+ #endif
+@@ -759,7 +760,7 @@
+   librdf_storage_sqlite_context *context=(librdf_storage_sqlite_context*)storage->context;
+   int rc=SQLITE_OK;
+   char *errmsg=NULL;
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+   int mode=0;
+ #endif
+   int db_file_exists=0;
+@@ -772,13 +773,13 @@
+   if(context->is_new && db_file_exists)
+     unlink(context->name);
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+   context->db=NULL;
+   rc=sqlite3_open(context->name, &context->db);
+   if(rc != SQLITE_OK)
+     errmsg=(char*)sqlite3_errmsg(context->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+   context->db=sqlite_open(context->name, mode, &errmsg);
+   if(context->db == NULL)
+     rc=SQLITE_ERROR;
+@@ -787,7 +788,7 @@
+     librdf_log(storage->world, 0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                "SQLite database %s open failed - %s", 
+                context->name, errmsg);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     sqlite_FREE(errmsg);
+ #endif
+     librdf_storage_sqlite_close(storage);
+@@ -1252,7 +1253,7 @@
+ 
+   LIBRDF_DEBUG2("SQLite prepare '%s'\n", request);
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+   status=sqlite3_prepare(context->db,
+                          (const char*)request,
+                          raptor_stringbuffer_length(sb),
+@@ -1261,7 +1262,7 @@
+   if(status != SQLITE_OK)
+     errmsg=(char*)sqlite3_errmsg(context->db);
+ #endif
+-#if SQLITE_API == 2  
++#if _SQLITE_API_VER == 2  
+   status=sqlite_compile(context->db,
+                         (const char*)request,
+                         &scontext->zTail,
+@@ -1301,7 +1302,7 @@
+                                       librdf_statement **statement,
+                                       librdf_node **context_node) {
+   int status=SQLITE_BUSY;
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+   int pN;
+   const char **pazValue;   /* Column data */
+   const char **pazColName; /* Column names and datatypes */
+@@ -1315,10 +1316,10 @@
+    * SQLITE_MISUSE.
+   */
+   do {
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_step(vm);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_step(vm, &pN, &pazValue, &pazColName);
+ #endif
+     if(status == SQLITE_BUSY) {
+@@ -1450,12 +1451,12 @@
+   if(status == SQLITE_ERROR) {
+     char *errmsg=NULL;
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_finalize(vm);
+     if(status != SQLITE_OK)
+       errmsg=(char*)sqlite3_errmsg(scontext->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_finalize(vm, &errmsg);
+ #endif
+     if(status != SQLITE_OK) {
+@@ -1463,7 +1464,7 @@
+                  0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                  "SQLite database %s finalize failed - %s (%d)", 
+                  scontext->name, errmsg, status);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+       sqlite_FREE(errmsg);
+ #endif
+     }
+@@ -1554,12 +1555,12 @@
+     char *errmsg=NULL;
+     int status;
+     
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_finalize(scontext->vm);
+     if(status != SQLITE_OK)
+       errmsg=(char*)sqlite3_errmsg(scontext->sqlite_context->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_finalize(scontext->vm, &errmsg);
+ #endif
+     if(status != SQLITE_OK) {
+@@ -1567,7 +1568,7 @@
+                  0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                  "SQLite database %s finalize failed - %s (%d)", 
+                  scontext->sqlite_context->name, errmsg, status);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+       sqlite_FREE(errmsg);
+ #endif
+     }
+@@ -1704,7 +1705,7 @@
+ 
+   LIBRDF_DEBUG2("SQLite prepare '%s'\n", request);
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+   status=sqlite3_prepare(context->db,
+                          (const char*)request,
+                          raptor_stringbuffer_length(sb),
+@@ -1713,7 +1714,7 @@
+   if(status != SQLITE_OK)
+     errmsg=(char*)sqlite3_errmsg(context->db);
+ #endif
+-#if SQLITE_API == 2  
++#if _SQLITE_API_VER == 2  
+   status=sqlite_compile(context->db,
+                         (const char*)request,
+                         &scontext->zTail, 
+@@ -1826,12 +1827,12 @@
+     char *errmsg=NULL;
+     int status;
+     
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_finalize(scontext->vm);
+     if(status != SQLITE_OK)
+       errmsg=(char*)sqlite3_errmsg(scontext->sqlite_context->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_finalize(scontext->vm, &errmsg);
+ #endif
+     if(status != SQLITE_OK) {
+@@ -1839,7 +1840,7 @@
+                  0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                  "SQLite database %s finalize failed - %s (%d)", 
+                  scontext->sqlite_context->name, errmsg, status);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+       sqlite_FREE(errmsg);
+ #endif
+     }
+@@ -2148,7 +2149,7 @@
+ 
+   LIBRDF_DEBUG2("SQLite prepare '%s'\n", request);
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+   status=sqlite3_prepare(context->db,
+                          (const char*)request,
+                          raptor_stringbuffer_length(sb),
+@@ -2157,7 +2158,7 @@
+   if(status != SQLITE_OK)
+     errmsg=(char*)sqlite3_errmsg(context->db);
+ #endif
+-#if SQLITE_API == 2  
++#if _SQLITE_API_VER == 2  
+   status=sqlite_compile(context->db,
+                         (const char*)request,
+                         &scontext->zTail,
+@@ -2271,12 +2272,12 @@
+     char *errmsg=NULL;
+     int status;
+     
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_finalize(scontext->vm);
+     if(status != SQLITE_OK)
+       errmsg=(char*)sqlite3_errmsg(scontext->sqlite_context->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_finalize(scontext->vm, &errmsg);
+ #endif
+     if(status != SQLITE_OK) {
+@@ -2284,7 +2285,7 @@
+                  0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                  "SQLite database %s finalize failed - %s (%d)", 
+                  scontext->sqlite_context->name, errmsg, status);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+       sqlite_FREE(errmsg);
+ #endif
+     }
+@@ -2328,7 +2329,7 @@
+                                               sqlite_STATEMENT *vm,
+                                               librdf_node **context_node) {
+   int status=SQLITE_BUSY;
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+   int pN;
+   const char **pazValue;   /* Column data */
+   const char **pazColName; /* Column names and datatypes */
+@@ -2342,10 +2343,10 @@
+    * SQLITE_MISUSE.
+   */
+   do {
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_step(vm);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_step(vm, &pN, &pazValue, &pazColName);
+ #endif
+     if(status == SQLITE_BUSY) {
+@@ -2397,12 +2398,12 @@
+   if(status == SQLITE_ERROR) {
+     char *errmsg=NULL;
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_finalize(vm);
+     if(status != SQLITE_OK)
+       errmsg=(char*)sqlite3_errmsg(scontext->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_finalize(vm, &errmsg);
+ #endif
+     if(status != SQLITE_OK) {
+@@ -2410,7 +2411,7 @@
+                  0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                  "SQLite database %s finalize failed - %s (%d)", 
+                  scontext->name, errmsg, status);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+       sqlite_FREE(errmsg);
+ #endif
+     }
+@@ -2509,12 +2510,12 @@
+     char *errmsg=NULL;
+     int status;
+     
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+     status=sqlite3_finalize(icontext->vm);
+     if(status != SQLITE_OK)
+       errmsg=(char*)sqlite3_errmsg(icontext->sqlite_context->db);
+ #endif
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+     status=sqlite_finalize(icontext->vm, &errmsg);
+ #endif
+     if(status != SQLITE_OK) {
+@@ -2522,7 +2523,7 @@
+                  0, LIBRDF_LOG_ERROR, LIBRDF_FROM_STORAGE, NULL,
+                  "SQLite database %s finalize failed - %s (%d)", 
+                  icontext->sqlite_context->name, errmsg, status);
+-#if SQLITE_API == 2
++#if _SQLITE_API_VER == 2
+       sqlite_FREE(errmsg);
+ #endif
+     }
+@@ -2587,7 +2588,7 @@
+ 
+   LIBRDF_DEBUG2("SQLite prepare '%s'\n", request);
+ 
+-#if SQLITE_API == 3
++#if _SQLITE_API_VER == 3
+   status=sqlite3_prepare(context->db,
+                          (const char*)request,
+                          raptor_stringbuffer_length(sb),
+@@ -2596,7 +2597,7 @@
+   if(status != SQLITE_OK)
+     errmsg=(char*)sqlite3_errmsg(context->db);
+ #endif
+-#if SQLITE_API == 2  
++#if _SQLITE_API_VER == 2  
+   status=sqlite_compile(context->db,
+                         (const char*)request,
+                         &icontext->zTail,
+
+
