@@ -23,6 +23,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
