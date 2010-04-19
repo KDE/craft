@@ -15,6 +15,13 @@ class subinfo(info.infoclass):
             msysFiles = """%s
                         %s/%s""" % ( msysFiles , repoUrl , file )
         self.targets['1.0.13'] = msysFiles
+        self.targetDigests['1.0.13'] = ['fff020614bd796697739887c636f15a42b4b14aa',
+                                        'd068b4a415c46801b7fa1c50c2e9e07bb0c09d1d',
+                                        '9b92104c8182b4ef5f155aa887f606adeae11d08',
+                                        '01007bff4cf8a21740bb9e5bb9bf8745f83a81b1',
+                                        '521f076f6db7c8415698b4999baca99ab8754de1',
+                                        '0752b40a23f312523239b629af62be0a7ffee746',
+                                        '1bde43d6f06173ffb8c0764f13f2345667c99ad0']
         self.defaultTarget = '1.0.13'
         # This attribute is in prelimary state
         ## \todo move to dev-utils/msys
