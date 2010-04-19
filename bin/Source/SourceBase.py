@@ -38,7 +38,11 @@ class SourceBase(EmergeBase):
         """ return absolute path of the directory where sources are fetched into.
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc 
         controls parts of the name of the generated path. """
-        sourcedir = self.workDir()
+        
+        if self.subinfo.options.unpack.unpackIntoBuildDir:
+            sourcedir = self.buildDir()
+        else:
+            sourcedir = self.workDir()
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             sourcedir = self.imageDir()
 

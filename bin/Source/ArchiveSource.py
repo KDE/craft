@@ -23,10 +23,10 @@ class ArchiveSource(SourceBase):
     def repositoryUrlCount(self):
         return len( self.subinfo.target().split() )
 
-    def localFileNames( self ):
+    def localFileNames(self):
         return self.localFileNamesBase()
 
-    def localFileNamesBase(self):
+    def localFileNamesBase( self):
         """ collect local filenames """
         utils.debug( "ArchiveSource.localFileNamesBase called", 2 )
 
@@ -35,7 +35,21 @@ class ArchiveSource(SourceBase):
             filenames.append( os.path.basename( self.repositoryUrl( i ) ) )
         return filenames
 
-                    
+    def __checkFilesPresent(self,filenames):
+        """check if all files for the current target are available"""
+        available = True
+        for filename in filenames:
+            path =os.path.join(self.downloadDir(), filename)
+            if self.subinfo.hasTargetDigests():
+                if not os.path.exists(path):
+                    available = False    
+            elif self.subinfo.hasTargetDigestUrls(): 
+                if not os.path.exists("%s.sha1" % path):
+                    available = False    
+            elif not os.path.exists(path):
+                available = False    
+        return available
+
     def fetch(self):
         """getting normal tarballs from SRC_URI"""
         utils.debug( "ArchiveSource.fetch called", 2 )
@@ -48,6 +62,10 @@ class ArchiveSource(SourceBase):
 
         self.setProxy()
         if self.subinfo.hasTarget():
+            if self.__checkFilesPresent(filenames):
+                utils.debug("files and digests available, no need to download files",1)
+                return True
+
             result = utils.getFiles( self.subinfo.target(), self.downloadDir() )
             if result and self.subinfo.hasTargetDigestUrls():
                 return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() )
@@ -55,16 +73,24 @@ class ArchiveSource(SourceBase):
                 return True
         else:
             return utils.getFiles( "", self.downloadDir() )
-            
+
     def unpack(self):
         """unpacking all zipped(gz,zip,bz2) tarballs"""        
         utils.debug( "ArchiveSource.unpack called", 2 )
 
         filenames = self.localFileNames()
+        ## @todo: unpack destination is probably sourceDir()
+        # unfortunally subinfo.targetInstSrc attribute is only for accessing a source subdir
+        # for unpacking into a subdir we need an additional property
+        
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.installDir()
             utils.debug("unpacking files into image root %s" % destdir,1)
+        # tempory solution
+        elif self.subinfo.options.unpack.unpackToBuildDir:
+            destdir = self.buildDir()
+            utils.debug("unpacking files into build dir %s" % destdir,1)
         else:
             destdir = self.workDir()
             utils.debug("unpacking files into work root %s" % destdir,1)

@@ -14,8 +14,9 @@ class OptionsFetch:
 ## options for the unpack action 
 class OptionsUnpack:
     def __init__(self):
-        ## option comment
-        self.option = None
+        ## By default archives are unpackaged into the workdir. 
+        #  Use this option to unpack archives into recent build directory
+        self.unpackIntoBuildDir = False
         
 ## options for the configure action 
 class OptionsConfigure:
