@@ -358,8 +358,11 @@ class baseclass:
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
         elif COMPILER == "mingw" or COMPILER == "mingw4":
-            self.cmakeMakefileGenerator = "MinGW Makefiles"
-            self.cmakeMakeProgramm = "mingw32-make"
+             self.cmakeMakefileGenerator = "MinGW Makefiles"
+             if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+                self.cmakeMakeProgramm = "gmake"
+             else:
+                self.cmakeMakeProgramm = "mingw32-make"
         else:
             utils.die( "KDECOMPILER: %s not understood" % COMPILER )
 
