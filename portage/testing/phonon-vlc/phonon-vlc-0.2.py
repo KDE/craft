@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
       self.hardDependencies['testing/vlc'] = 'default'
       if COMPILER == "msvc2008":
         self.hardDependencies['kdesupport/kdewin'] = 'default'
-        self.patchToApply['gitHEAD'] = ['0001-msvc-build-fixes.patch',1]
         
     def setTargets( self ):
       self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon-vlc.git'
