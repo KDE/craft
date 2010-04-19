@@ -4,7 +4,6 @@
 # Packager base
 
 from Packager.PackagerBase import *
-import dump
 
 class InnoSetupPackager (PackagerBase):
     """Packager for Inno Setup installations"""
