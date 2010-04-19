@@ -29,6 +29,8 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
         self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
+        self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
+        self.targetInstSrc['4.7'] = 'qt-4.7'
 
         self.defaultTarget = '4.6.2'
         
@@ -108,7 +110,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-plugin-sql-mysql -plugin-sql-odbc "
         
         command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
-        command += "-no-phonon -qdbus -openssl -dbus-linked "
+        command += "-no-phonon -qdbus -openssl-linked -dbus-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
@@ -143,6 +145,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
             # headers need to be copied using syncqt because of the relative paths
+            os.putenv( "PATH", os.path.join( self.sourceDir(), "bin" ) + ";" + os.getenv("PATH") )
             command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
             command += " -base-dir \"" + self.sourceDir() + "\""
             command += " -outdir \"" + self.imageDir() + "\""
