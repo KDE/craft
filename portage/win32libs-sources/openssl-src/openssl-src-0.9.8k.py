@@ -33,7 +33,7 @@ class Package(CMakePackageBase):
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
             cmd = "ms\mingw32.bat"
         else:
-            if self.targetPlatform() != "":
+            if self.hasTargetPlatform():
                 """cross-building environment setup"""
                 self.setupCrossToolchain()
                 os.environ["WCECOMPAT"] = self.rootdir
@@ -67,8 +67,11 @@ class Package(CMakePackageBase):
 
         if not os.path.isdir( dst ):
             os.mkdir( dst )
+        if not os.path.isdir( os.path.join( dst, "bin" ) ):
             os.mkdir( os.path.join( dst, "bin" ) )
+        if not os.path.isdir( os.path.join( dst, "lib" ) ):
             os.mkdir( os.path.join( dst, "lib" ) )
+        if not os.path.isdir( os.path.join( dst, "include" ) ):
             os.mkdir( os.path.join( dst, "include" ) )
 
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
@@ -84,7 +87,7 @@ class Package(CMakePackageBase):
 
         else:
             outdir = "out32dll"
-            if self.targetPlatform() != "":
+            if self.hasTargetPlatform():
                 outdir += "_" + self.targetArchitecture()
 
             shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )

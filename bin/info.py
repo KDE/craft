@@ -43,6 +43,7 @@ class infoclass:
         self.setTargets()
         self.setSVNTargets()
         self.setBuildTarget()
+        self.setBuildOptions()
 
     # abstract method for setting dependencies, override to set individual targets
     def setDependencies( self ):
@@ -55,8 +56,8 @@ class infoclass:
     # abstract method for setting svn targets, override to set individual targets
     def setSVNTargets( self ):
         """ """
-    
-    # setup current build target 
+
+    # setup current build target
     def setBuildTarget( self, buildTarget = None):
         self.buildTarget = self.defaultTarget
         if not buildTarget == None:
@@ -66,7 +67,12 @@ class infoclass:
         if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
             self.buildTarget = self.defaultTarget
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()), 1)
-    
+
+    # abstract method for setting build options, override to set individual targets
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = False
+
     # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
         compiler = "msvc"
@@ -159,7 +165,7 @@ class infoclass:
             return self.targetMergeSourcePath[ self.buildTarget ]
 
     def hasTargetPlatform(self):
-        return self.targetPlatform() != ""
+        return self.targetPlatform() != "" and self.targetPlatform() != None
 
     def targetPlatform(self):
         return os.getenv( "EMERGE_TARGET_PLATFORM" )

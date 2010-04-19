@@ -145,7 +145,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # headers need to be copied using syncqt because of the relative paths
             command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
             command += " -base-dir \"" + self.sourceDir() + "\""
-            command += " -outdir \"" + self.installDir() + "\""
+            command += " -outdir \"" + self.imageDir() + "\""
             command += " -copy"
             # 4.7 has a -quiet option, enable it when we switch
             #command += " -quiet"

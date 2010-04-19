@@ -46,40 +46,42 @@ Commands (no packagename needed - will be ignored when given):
 
 Commands (must have a packagename):
 
---print-targets     This will print all the different targets 
-                    one package can contain: different releases might have
-                    different tags that are build as targets of a package. As
-                    an example: You could build the latest amarok sources with
-                    the target 'svnHEAD' the previous '1.80' release would be
-                    contained as target '1.80'.
---print-revision    This will print the revision that the source repository of this
-                    package currently has or nothing if there is no repository.
+--print-targets         This will print all the different targets 
+                        one package can contain: different releases might have
+                        different tags that are build as targets of a package. As
+                        an example: You could build the latest amarok sources with
+                        the target 'svnHEAD' the previous '1.80' release would be
+                        contained as target '1.80'.
+--print-revision        This will print the revision that the source repository of this
+                        package currently has or nothing if there is no repository.
 
---fetch             for most non-KDE packages: retrieve package sources.
---unpack            for most non-KDE packages: unpack package sources and make
-                    up the build directory.
-                    for KDE packages: get package source from SVN and make up
-                    the build directory.
---compile           compile the sources: this includes configure'ing/cmake'ing
-                    and running [mingw32-|n|]make.
---configure         configure the sources (support is package specific)
---make              run [mingw32-|n|]make (support is package specific)
---install           This will run [mingw32-|n|]make install into the image 
-                    directory of each package.
---manifest          This step creates the files contained in the manifest dir.
---qmerge            This will merge the image directory into the KDEROOT
---test              This will run the unittests if they are present
---package           This step will create a package out of the image directory
-                    instead of merge'ing the image directory into the KDEROOT
-                    (Requires the packager to be installed already.)
---full-package      This will create packages instead of installing stuff to
-                    KDEROOT
---install-deps      This will fetch and install all required dependencies for 
-                    the specified package
---unmerge           this uninstalls a package from KDEROOT - it requires a
-                    working manifest directory. unmerge only delete unmodified 
-                    files by default. You may use the -f or --force option to 
-                    let unmerge delete all files unconditional.
+--fetch                 for most non-KDE packages: retrieve package sources.
+--unpack                for most non-KDE packages: unpack package sources and make
+                        up the build directory.
+                        for KDE packages: get package source from SVN and make up
+                        the build directory.
+--compile               compile the sources: this includes configure'ing/cmake'ing
+                        and running [mingw32-|n|]make.
+--configure             configure the sources (support is package specific)
+--make                  run [mingw32-|n|]make (support is package specific)
+--install               This will run [mingw32-|n|]make install into the image 
+                        directory of each package.
+--manifest              This step creates the files contained in the manifest dir.
+--qmerge                This will merge the image directory into the KDEROOT
+--test                  This will run the unittests if they are present
+--package               This step will create a package out of the image directory
+                        instead of merge'ing the image directory into the KDEROOT
+                        (Requires the packager to be installed already.)
+--full-package          This will create packages instead of installing stuff to
+                        KDEROOT
+--install-deps          This will fetch and install all required dependencies for 
+                        the specified package
+--unmerge               this uninstalls a package from KDEROOT - it requires a
+                        working manifest directory. unmerge only delete unmodified 
+                        files by default. You may use the -f or --force option to 
+                        let unmerge delete all files unconditional.
+--disable-buildhost     This disables the building for the host.
+--disable-buildtarget   This disables the building for the target.
 
 Flags:
 
@@ -140,6 +142,13 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
+def hasTargetPlatform():
+    return targetPlatform() != "" and targetPlatform() != None
+
+def targetPlatform():
+    """return the cross-compiling target platform"""
+    return os.getenv( "EMERGE_TARGET_PLATFORM" )
+
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
     fileName = portage.getFilename( category, package, version )
@@ -159,6 +168,24 @@ def handlePackage( category, package, version, buildAction, opts ):
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
+        if hasTargetPlatform() and not disableHostBuild:
+            saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+            os.putenv( "EMERGE_TARGET_PLATFORM", "" )
+            success = success and doExec( category, package, version, "compile", opts )
+            success = success and doExec( category, package, version, "cleanimage", opts )
+            success = success and doExec( category, package, version, "install", opts )
+            if ( buildAction == "all" ):
+                success = success and doExec( category, package, version, "manifest", opts )
+            if ( buildAction == "all" ):
+                success = success and doExec( category, package, version, "qmerge", opts )
+            if( buildAction == "full-package" ):
+                success = success and doExec( category, package, version, "package", opts )
+            os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
+                
+        
+        if hasTargetPlatform() and disableTargetBuild:
+            return success
+            
         success = success and doExec( category, package, version, "compile", opts )
         success = success and doExec( category, package, version, "cleanimage", opts )
         success = success and doExec( category, package, version, "install", opts )
@@ -172,10 +199,23 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
-        success = doExec( category, package, version, buildAction, opts )
+        if hasTargetPlatform() and not disableHostBuild and disableTargetBuild:
+            aveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+            os.putenv( "EMERGE_TARGET_PLATFORM", "" )
+            success = doExec( category, package, version, buildAction, opts )
+            os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
+        else:
+            success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
-        success = doExec( category, package, version, "cleanimage", opts )
-        success = success and doExec( category, package, version, "install", opts )
+        if hasTargetPlatform() and not disableHostBuild and disableTargetBuild:
+            aveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+            os.putenv( "EMERGE_TARGET_PLATFORM", "" )
+            success = doExec( category, package, version, "cleanimage", opts )
+            success = success and doExec( category, package, version, "install", opts )
+            os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
+        else:
+            success = doExec( category, package, version, "cleanimage", opts )
+            success = success and doExec( category, package, version, "install", opts )
     elif ( buildAction == "version-dir" ):
         print "%s-%s" % ( package, version )
         success = True
@@ -206,6 +246,8 @@ buildAction = "all"
 packageName = None
 doPretend = False
 stayQuiet = False
+disableHostBuild = False
+disableTargetBuild = False
 ignoreInstalled = False
 updateAll = False
 opts = ""
@@ -225,7 +267,7 @@ environ["EMERGE_FORCED"]        = os.getenv( "EMERGE_FORCED" )
 environ["EMERGE_VERSION"]       = os.getenv( "EMERGE_VERSION" )
 environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
-environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
+environ["EMERGE_PKGPATCHLVL"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
 
 if ( environ['EMERGE_NOCOPY'] == "False" ):
     nocopy = False
@@ -306,6 +348,10 @@ for i in sys.argv:
     elif ( i == "--print-revision" ):
         buildAction = "printrev"
         stayQuiet = True
+    elif ( i == "--disable-buildhost" ):
+        disableHostBuild = True
+    elif ( i == "--disable-buildtarget" ):
+        disableTargetBuild = True
     elif ( i.startswith( "-" ) ):
         usage()
         exit ( 1 )
@@ -450,9 +496,11 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
     if packageName and len(deplist) >= 1:
         package = deplist[ -1 ]
     else:
-        package = [ None, None, None ]
+        package = [ None, None, None ]  
+
     if not handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts ):
         exit(1)
+
 else:
     for package in deplist:
         if ( portage.isInstalled( package[0], package[1], package[2], buildType ) and not package[ -1 ] ):
@@ -479,6 +527,7 @@ else:
                 action = buildAction
                 if buildAction == "install-deps":
                   action = "all"
+                
                 if not handlePackage( package[0], package[1], package[2], action, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         (package[0], package[1], package[2], buildAction) )

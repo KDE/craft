@@ -18,7 +18,6 @@ import datetime;
 
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
-TARGETPLATFORM = os.getenv( "EMERGE_TARGET_PLATFORM" )
 TARGETARCH = os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
 DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
 if ( DOWNLOADDIR == None ):
@@ -135,11 +134,11 @@ class EmergeBase():
         return self.__compiler
 
     def hasTargetPlatform(self):
-        return TARGETPLATFORM != ""
+        return self.targetPlatform() != "" and self.targetPlatform() != None
 
     def targetPlatform(self):
         """return the cross-compiling target platform"""
-        return TARGETPLATFORM
+        return os.getenv( "EMERGE_TARGET_PLATFORM" )
 
     def targetArchitecture(self):
         """return the target CPU architecture"""
@@ -173,6 +172,8 @@ class EmergeBase():
         dir = ""
         if self.subinfo.options.useCompilerType == True:
             dir += "%s-" % COMPILER
+        if self.hasTargetPlatform():
+            dir += "%s-" % self.targetPlatform()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             dir += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -203,6 +204,8 @@ class EmergeBase():
         
         if self.subinfo.options.useCompilerType == True:
             imagedir += '-' + COMPILER
+        if self.hasTargetPlatform():
+            imagedir += "-%s" % self.targetPlatform()
         if self.subinfo.options.useBuildType == True:
             imagedir += '-' + self.buildType()
         imagedir += '-' + self.buildTarget
@@ -242,6 +245,8 @@ class EmergeBase():
 
         if self.subinfo.hasMergePath():
             dir = os.path.join( ROOTDIR, self.subinfo.mergePath() )
+        elif self.hasTargetPlatform():
+            dir = os.path.join(ROOTDIR, self.targetPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
             dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot:

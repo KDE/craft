@@ -58,8 +58,9 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
 
-        if portage.isInstalled( '', self.package, '', self.buildType() ):
-            self.unmerge()
+
+        #if portage.isInstalled( '', self.package, '', self.buildType() ):
+        #    self.unmerge()
 
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(),2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
@@ -114,6 +115,7 @@ class PackageBase (EmergeBase):
         if ( os.path.exists( self.imageDir() ) ):
             utils.debug( "cleaning image dir: %s" % self.imageDir(), 1 )
             utils.cleanDirectory( self.imageDir() )
+            os.rmdir(self.imageDir())
         return True
 
     def cleanBuild( self ):
@@ -139,7 +141,7 @@ class PackageBase (EmergeBase):
         utils.debug("base manifest called",2)
         if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
             utils.debug("creating of manifest files triggered", 1)
-            utils.createManifestFiles( self.mergeSourceDir(), self.mergeDestinationDir(), self.category, self.package, self.version )
+            utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
         return True
 
     def stripLibs( self, pkgName ):
@@ -188,6 +190,14 @@ class PackageBase (EmergeBase):
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
             print "target ignored for this build type"
             return False
+        
+        if not self.subinfo.hasTargetPlatform() and self.subinfo.disableHostBuild:
+            print "host build disabled, skipping host build"
+            return True
+            
+        if self.subinfo.hasTargetPlatform() and self.subinfo.disableTargetBuild:
+            print "target build disabled, skipping target build"
+            return True
         
         self.runAction(command)
         return True

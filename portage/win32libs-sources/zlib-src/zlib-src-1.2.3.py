@@ -5,10 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = '1.2.3-3'
-        self.targets[ ver ] = 'http://www.zlib.net/zlib-1.2.3.tar.gz'
-        self.targetInstSrc[ ver ] = 'zlib-1.2.3'
-        self.defaultTarget = ver
+        self.targets[ '1.2.3-3' ] = 'http://www.zlib.net/zlib-1.2.3.tar.gz'
+        self.targets[ '1.2.4' ] = 'http://zlib.net/zlib-1.2.4.tar.gz'
+        self.defaultTarget = '1.2.4'
 
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
