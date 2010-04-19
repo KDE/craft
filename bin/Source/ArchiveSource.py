@@ -70,7 +70,7 @@ class ArchiveSource(SourceBase):
             destdir = self.installDir()
             utils.debug("unpacking files into image root %s" % destdir,1)
         # tempory solution
-        elif self.subinfo.options.unpack.unpackToBuildDir:
+        elif self.subinfo.options.unpack.unpackIntoBuildDir:
             destdir = self.buildDir()
             utils.debug("unpacking files into build dir %s" % destdir,1)
         else:
