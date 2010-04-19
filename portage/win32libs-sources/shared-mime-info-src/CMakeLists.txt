@@ -21,6 +21,10 @@ endif(COMMAND cmake_policy)
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 
+if(MINGW)
+	# set MINGW32 or MINGW64
+	INCLUDE(CheckMingwVersion)
+endif(MINGW)
 
 set(GLIB_DIR     "" CACHE FILEPATH "Path to glib sources")
 
@@ -28,9 +32,11 @@ set(GLIB_DIR     "" CACHE FILEPATH "Path to glib sources")
 find_package(LIBXML2 REQUIRED)
 # libintl
 find_package(Libintl REQUIRED)
-find_package(Kdewin REQUIRED)
 
-include_directories(${KDEWIN_INCLUDES})
+if (MINGW32 OR MSVC)
+    find_package(Kdewin REQUIRED)
+    include_directories(${KDEWIN_INCLUDES})
+endif(MINGW32 OR MSVC)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)

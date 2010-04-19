@@ -63,6 +63,10 @@ class Package(CMakePackageBase):
       dst = os.path.join( self.sourceDir(), "FindKDEWin.cmake" )
       shutil.copy( src, dst )
 
+      src = os.path.join( self.packageDir() , "CheckMingwVersion.cmake" )
+      dst = os.path.join( self.sourceDir(), "CheckMingwVersion.cmake" )
+      shutil.copy( src, dst )
+
       src = os.path.join( self.packageDir() , "config.h.cmake" )
       dst = os.path.join( self.sourceDir(), "config.h.cmake" )
       shutil.copy( src, dst )
