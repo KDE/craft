@@ -42,7 +42,7 @@
 - shared-desktop-ontologies-src native cmake build system
 - shared-mime-info-src update buldscript fix x64 compilation+added cmake build system
 - sqlite-src -->added cmake build system
-- tiff-src binary
+- tiff-src -->added cmake build system
 - win_iconv-src added cmake build system
 - zlib-src added cmake build system
 ______________________________________________________
