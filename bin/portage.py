@@ -258,7 +258,7 @@ def getDependencies( category, package, version ):
 
 def solveDependencies( category, package, version, deplist ):
     p = PortageInstance.getCorrespondingSourcePackage( package )
-    if p and os.getenv("EMERGE_SOURCEONLY") == "True":
+    if p and (os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1"):
         # we found such a package and we're allowed to replace it
         category = p[0]
         package = p[1]
