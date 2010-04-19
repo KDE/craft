@@ -35,21 +35,7 @@ class ArchiveSource(SourceBase):
             filenames.append( os.path.basename( self.repositoryUrl( i ) ) )
         return filenames
 
-    def __checkFilesPresent(self,filenames):
-        """check if all files for the current target are available"""
-        available = True
-        for filename in filenames:
-            path =os.path.join(self.downloadDir(), filename)
-            if self.subinfo.hasTargetDigests():
-                if not os.path.exists(path):
-                    available = False    
-            elif self.subinfo.hasTargetDigestUrls(): 
-                if not os.path.exists("%s.sha1" % path):
-                    available = False    
-            elif not os.path.exists(path):
-                available = False    
-        return available
-
+                    
     def fetch(self):
         """getting normal tarballs from SRC_URI"""
         utils.debug( "ArchiveSource.fetch called", 2 )
@@ -62,10 +48,6 @@ class ArchiveSource(SourceBase):
 
         self.setProxy()
         if self.subinfo.hasTarget():
-            if self.__checkFilesPresent(filenames):
-                utils.debug("files and digests available, no need to download files",1)
-                return True
-
             result = utils.getFiles( self.subinfo.target(), self.downloadDir() )
             if result and self.subinfo.hasTargetDigestUrls():
                 return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() )
