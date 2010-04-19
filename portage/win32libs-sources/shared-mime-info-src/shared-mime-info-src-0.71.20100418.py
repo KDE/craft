@@ -17,6 +17,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.71'] = SRC_URI
         self.targetInstSrc['0.71'] = "shared-mime-info-0.71"
+        self.targetDigests['0.71'] = ['6f3d3379662857646b0c5b95d5d26e47c0b6250a',
+                                      '32714e64fff52d18db5f077732910215790e0c5b']
         self.defaultTarget = '0.71'
 
     def setDependencies( self ):
@@ -72,6 +74,8 @@ class Package(CMakePackageBase):
       src = os.path.join( self.packageDir() , "unistd.c" )
       dst = os.path.join( self.sourceDir(), "unistd.c" )
       shutil.copy( src, dst )
+      
+      utils.applyPatch( self.glibDir , os.path.join( self.packageDir(), "glib-x64.diff" ), 0 )
 
       return True
 

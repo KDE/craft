@@ -1,0 +1,15 @@
+diff -Nru glib-2.24.0.orig/config.h.win32 glib-2.24.0/config.h.win32
+--- config.h.win32	2010-03-26 17:50:29.000000000 +0100
++++ config.h.win32	2010-04-19 09:48:43.904844100 +0200
+@@ -75,7 +75,11 @@
+ 
+ /* i486 atomic implementation */
+ #ifndef _MSC_VER
+-#define G_ATOMIC_I486 1
++#ifdef _WIN64
++# define G_ATOMIC_X86_64 1
++#else
++# define G_ATOMIC_I486 1
++#endif
+ #endif /* _MSC_VER */
+ 
