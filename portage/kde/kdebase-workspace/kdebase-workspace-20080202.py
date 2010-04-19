@@ -15,6 +15,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
         self.hardDependencies['win32libs-bin/freetype'] = 'default'
+        self.hardDependencies['win32libs-bin/boost'] = 'default'
+        self.hardDependencies['kdesupport/akonadi'] = 'default'
     
 from Package.CMakePackageBase import *
         
