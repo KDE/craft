@@ -12,44 +12,36 @@ class subinfo(info.infoclass):
         self.targets[ver]       = 'http://ftp.gnu.org/pub/gnu/libiconv/libiconv-%s.tar.gz' % ver
         self.targetInstSrc[ver] = 'libiconv-%s' % ver
         self.patchToApply[ver]  = ( 'iconv-src-%s.patch' % ver, 0 )
+
+      self.targetDigests['1.13.1'] = '5b0524131cf0d7abd50734077f13aaa5508f6bbe'
       self.defaultTarget = '1.13.1'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
 
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.createCombinedPackage = True
-    self.subinfo = subinfo()
+from Package.AutoToolsPackageBase import *
 
-  def compile( self ):
-    return self.msysCompile()
+class Package(AutoToolsPackageBase):
+    def __init__( self, **args ):
+        self.subinfo = subinfo()
+        self.subinfo.options.package.packageName = 'iconv'
+        AutoToolsPackageBase.__init__(self)        
+        
+    def install( self ):
+        if not AutoToolsPackageBase.install( self ):
+            return False
+        ## @todo move to AutoToolsPackageBase::install
+        utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir().replace(":","\\" ) )
 
-  def install( self ):
-    return self.msysInstall()
+        # do not create msvc import libs in x64 mode
+        if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+            return True
+            
+        for libs in "libiconv-2 libcharset-1".split():
+            if not self.createImportLibs( libs ):
+                return False;
+        return True
 
-  def qmerge( self ):
-    print >> sys.stderr, "Installing this package is not intented."
-    return False
-
-  def make_package( self ):
-    # libxml2.dll is linked against iconv.dll ... :(
-    in_lib  = os.path.join( self.imagedir, "bin", "libiconv-2.dll" )
-    out_lib = os.path.join( self.imagedir, "bin", "iconv.dll" )
-    if os.path.exists( in_lib ):
-      shutil.copy( in_lib, out_lib )
-
-    # auto-create both import libs with the help of pexports
-    for libs in "libiconv-2 libcharset-1".split():
-        if not self.createImportLibs( libs ):
-            return False;
-
-    # now do packaging with kdewin-packager
-    self.doPackaging( "iconv", self.buildTarget )
-
-    return True
-  
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
