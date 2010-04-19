@@ -178,6 +178,11 @@ rem to build e.g. from the 4.3 branch: simply set the variable to kde-4.3 then
 rem for all other packages this option doesn't have any effect
 rem set EMERGE_DEFAULTCATEGORY=kde-4.3
 
+rem This option can be used to set a directory where build logs are saved
+rem instead of being printed to the console. Logging information is appended to
+rem existing logs.
+rem set EMERGE_LOG_DIR=%KDEROOT%\buildlogs
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 

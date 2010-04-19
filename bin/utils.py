@@ -420,15 +420,26 @@ def die( message ):
     print >> sys.stderr, "emerge fatal error: %s" % message
     exit( 1 )
 
-def system( cmdstring, outstream=sys.stdout, errstream=sys.stderr ):
+def system( cmdstring, outstream=None, errstream=None ):
+
+    if outstream is None: outstream = sys.stdout
+    if errstream is None: errstream = sys.stderr
+
     debug( "executing command: %s" % cmdstring, 1 )
-    if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
-        sys.stderr = file('test.outlog', 'wb')
-        sys.stdout = sys.stderr
-    p = subprocess.Popen( cmdstring, shell=True, stdout=outstream, stderr=errstream )
-    ret = p.wait()
-    sys.stderr = sys.__stderr__
-    sys.stdout = sys.__stdout__
+    redirected = False
+    try:
+        if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
+            redirected = True
+            sys.stderr = file('test.outlog', 'wb')
+            sys.stdout = sys.stderr
+
+        p = subprocess.Popen( cmdstring, shell=True, stdout=outstream, stderr=errstream )
+        ret = p.wait()
+    finally:
+        if redirected:
+            sys.stderr = sys.__stderr__
+            sys.stdout = sys.__stdout__
+
     return ( ret == 0 )
 
 def systemWithoutShell(cmdstring, outstream=sys.stdout, errstream=sys.stderr):
@@ -895,3 +906,31 @@ def applyPatch(sourceDir, file, patchLevel='0'):
     cmd = "patch -d %s -p%s < %s" % ( sourceDir, patchLevel, file )    
     debug("applying patch %s" % ( cmd ), 2)
     return system( cmd )
+
+def log(fn):
+    def inner(*args, **argv):
+
+        logdir = os.environ.get('EMERGE_LOG_DIR')
+
+        if not logdir:
+            return fn(*args, **argv)
+
+        if not os.path.exists(logdir):
+            os.mkdir(logdir)
+        
+        logfile = "%s-%s-%s.log" % (args[0], args[1], args[2])
+
+        logfile = os.path.join(logdir, logfile)
+        f = open(logfile, "a+")
+        try:
+            old_out = sys.stdout
+            old_err = sys.stderr
+            sys.stdout = f
+            sys.stderr = f
+            return fn(*args, **argv)
+        finally:
+            sys.stdout = old_out
+            sys.stderr = old_err
+            f.close()
+
+    return inner

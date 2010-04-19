@@ -92,6 +92,9 @@ Flags:
                                 star in the printout of --print-targets
 --patchlevel=[PATCHLEVEL]       This will add a patch level when used together 
                                 with --package                               
+--log-dir=[LOG_DIR]             This will log the build output to a logfile in
+                                LOG_DIR for each package. Logging information
+                                is appended to existing logs.
 
 -i          ignore install: using this option will install a package over an
             existing install. This can be useful if you want to check some
@@ -140,6 +143,7 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
+@utils.log
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
     fileName = portage.getFilename( category, package, version )
@@ -226,6 +230,7 @@ environ["EMERGE_VERSION"]       = os.getenv( "EMERGE_VERSION" )
 environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
+environ["EMERGE_LOG_DIR"]       = os.getenv( "EMERGE_LOG_DIR" )
 
 if ( environ['EMERGE_NOCOPY'] == "False" ):
     nocopy = False
@@ -269,6 +274,8 @@ for i in sys.argv:
         os.environ["EMERGE_TARGET"] = i.replace( "--target=", "" )
     elif ( i.startswith( "--patchlevel=" ) ):
         os.environ["EMERGE_PKGPATCHLVL"] = i.replace( "--patchlevel=", "" )
+    elif ( i.startswith( "--log-dir=" ) ):
+        os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
     elif ( i == "-v" ):
         verbose = verbose + 1
         os.environ["EMERGE_VERBOSE"] = str( verbose )
