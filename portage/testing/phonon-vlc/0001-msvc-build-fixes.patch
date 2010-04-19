@@ -1,0 +1,53 @@
+From b21ed71a1c23ead08430ec89356d648c2e5375ff Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Mon, 19 Apr 2010 13:25:46 +0200
+Subject: [PATCH] msvc build fixes
+
+---
+ vlc/CMakeLists.txt  |   10 ++++++++++
+ vlc/streamhooks.cpp |    1 +
+ 2 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/vlc/CMakeLists.txt b/vlc/CMakeLists.txt
+index a721b7d..6c02a6e 100644
+--- a/vlc/CMakeLists.txt
++++ b/vlc/CMakeLists.txt
+@@ -2,6 +2,12 @@ project(phonon-vlc)
+ include_directories(${QT_INCLUDES}
+                     ${LIBVLC_INCLUDE_DIR}
+                     ${CMAKE_CURRENT_SOURCE_DIR})
++                    
++if (MSVC)
++    set (CMAKE_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/apps/cmake/modules)
++    find_package(KDEWIN REQUIRED)
++    include_directories(${KDEWIN_INCLUDES}/msvc)
++endif (MSVC)
+ 
+ add_definitions(-D_PHONON_BACKEND_VERSION_4_2)
+ 
+@@ -32,6 +38,10 @@ set_target_properties(phonon_vlc PROPERTIES PREFIX "")
+ target_link_libraries(phonon_vlc ${PHONON_LIBS} ${LIBVLC_LIBRARY}
+     ${LIBVLCCORE_LIBRARY} )
+ 
++if (MSVC)    
++    target_link_libraries(phonon_vlc ${KDEWIN_LIBRARIES})
++endif (MSVC)    
++
+ if(WIN32)
+     install(TARGETS phonon_vlc DESTINATION bin/phonon_backend)
+ else(WIN32)
+diff --git a/vlc/streamhooks.cpp b/vlc/streamhooks.cpp
+index 47f51dc..580c938 100644
+--- a/vlc/streamhooks.cpp
++++ b/vlc/streamhooks.cpp
+@@ -54,6 +54,7 @@ extern "C"
+     int streamReadDoneCallback(void *data, const char *cookie, size_t sz, void *buf)
+     {
+         delete buf;
++        return 0;
+     }
+ }
+ 
+-- 
+1.7.0.2.msysgit.0
+
