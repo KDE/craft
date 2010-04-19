@@ -89,9 +89,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
             
-        if self.targetPlatform() == "WM60":
-            options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.02"
-        elif self.targetPlatform() == "WM65":
+        if self.targetPlatform() == "WM60" or self.targetPlatform() == "WM65":
             options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.02"
         elif self.targetPlatform() == "WM50":
             options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.01"
