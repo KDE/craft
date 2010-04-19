@@ -18,18 +18,12 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = '0.40.6'
 
-from Package.PackageBase import *
-from Source.MultiSource import *
-from BuildSystem.AutoToolsBuildSystem import *
-from Packager.KDEWinPackager import *;
+from Package.AutoToolsPackageBase import *
 
-class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
+class Package( AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)
-        KDEWinPackager.__init__(self)
+        AutoToolsPackageBase.__init__(self)
 
         
 if __name__ == '__main__':
