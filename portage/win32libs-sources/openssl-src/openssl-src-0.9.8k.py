@@ -18,7 +18,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+        if self.hasTargetPlatform():
+            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
         
 from Package.CMakePackageBase import *
         
@@ -34,7 +35,7 @@ class Package(CMakePackageBase):
             cmd = "ms\mingw32.bat"
         else:
             if self.hasTargetPlatform():
-                """cross-building environment setup"""
+                """WinCE cross-building environment setup"""
                 self.setupCrossToolchain()
                 os.environ["WCECOMPAT"] = self.rootdir
                 os.environ["TARGETCPU"] = self.targetArchitecture() 
