@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.40.6'] = 'http://ftp.acc.umu.se/pub/gnome/sources/intltool/0.40/intltool-0.40.6.tar.bz2'
         self.targetInstSrc['0.40.6'] = "intltool-0.40.6"
+        self.targetDigests['0.40.6'] = '4f6469e09e2c06a8072dffff36f84ff401d7ea75'        
         self.options.package.withCompiler = False
         
         self.targetMergePath['0.40.6']= "msys";
