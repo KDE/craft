@@ -77,6 +77,9 @@ class infoclass:
     
     # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
+        arch=""
+        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
+	  arch="-x64"
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
@@ -85,13 +88,16 @@ class infoclass:
         elif os.getenv("KDECOMPILER") == "msvc2008":
             compiler = "vc90"
 
-        return repoUrl + '/' + name + '-' + compiler + '-' + version + '-bin' + ext + '\n' + \
-               repoUrl + '/' + name + '-' + compiler + '-' + version + '-lib' + ext + '\n'
+        return repoUrl + '/' + name + arch + '-' + compiler + '-' + version + '-bin' + ext + '\n' + \
+               repoUrl + '/' + name + arch + '-' + compiler + '-' + version + '-lib' + ext + '\n'
 
     # return archive file based package url for unified packages
     def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2' ):
-        return repoUrl + '/' + name + '-' + version + '-bin' + ext + '\n' + \
-               repoUrl + '/' + name + '-' + version + '-lib' + ext + '\n'
+        arch=""
+        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
+	  arch="-x64"
+        return repoUrl + '/' + name + arch + '-' + version + '-bin' + ext + '\n' + \
+               repoUrl + '/' + name + arch + '-' + version + '-lib' + ext + '\n'
                
     #returns a package url for multiple files from the same base url
     def getPackageList( self , baseUrl , files ):
