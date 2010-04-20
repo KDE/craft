@@ -915,8 +915,14 @@ def log(fn):
         if not logdir:
             return fn(*args, **argv)
 
+        if os.path.isfile(logdir):
+            die("EMERGE_LOG_DIR %s is a file" % logdir)
+
         if not os.path.exists(logdir):
-            os.mkdir(logdir)
+            try:
+                os.mkdir(logdir)
+            except:
+                die("EMERGE_LOG_DIR %s can not be created" % logdir)
         
         logfile = "%s-%s-%s.log" % (args[0], args[1], args[2])
 
