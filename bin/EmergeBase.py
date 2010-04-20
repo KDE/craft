@@ -18,7 +18,6 @@ import datetime;
 
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
-TARGETARCH = os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
 DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
 if ( DOWNLOADDIR == None ):
     DOWNLOADDIR=os.path.join( ROOTDIR, "distfiles" )
@@ -133,16 +132,20 @@ class EmergeBase():
         """return currently selected compiler"""
         return self.__compiler
 
-    def hasTargetPlatform(self):
-        return self.targetPlatform() != "" and self.targetPlatform() != None
+    def isTargetBuild(self):
+        return self.buildPlatform() != "" and self.buildPlatform() != None
+        
+    def isHostBuild(self):
+        return not self.isTargetBuild()
 
-    def targetPlatform(self):
+    def buildPlatform(self):
         """return the cross-compiling target platform"""
         return os.getenv( "EMERGE_TARGET_PLATFORM" )
 
-    def targetArchitecture(self):
+    def buildArchitecture(self):
         """return the target CPU architecture"""
-        return TARGETARCH
+        return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
+
 
     def downloadDir(self): 
         """ location of directory where fetched files are  stored """
@@ -172,8 +175,8 @@ class EmergeBase():
         dir = ""
         if self.subinfo.options.useCompilerType == True:
             dir += "%s-" % COMPILER
-        if self.hasTargetPlatform():
-            dir += "%s-" % self.targetPlatform()
+        if self.isTargetBuild():
+            dir += "%s-" % self.buildPlatform()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             dir += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -204,8 +207,8 @@ class EmergeBase():
         
         if self.subinfo.options.useCompilerType == True:
             imagedir += '-' + COMPILER
-        if self.hasTargetPlatform():
-            imagedir += "-%s" % self.targetPlatform()
+        if self.isTargetBuild():
+            imagedir += "-%s" % self.buildPlatform()
         if self.subinfo.options.useBuildType == True:
             imagedir += '-' + self.buildType()
         imagedir += '-' + self.buildTarget
@@ -245,8 +248,8 @@ class EmergeBase():
 
         if self.subinfo.hasMergePath():
             dir = os.path.join( ROOTDIR, self.subinfo.mergePath() )
-        elif self.hasTargetPlatform():
-            dir = os.path.join(ROOTDIR, self.targetPlatform())
+        elif self.isTargetBuild():
+            dir = os.path.join(ROOTDIR, self.buildPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
             dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot:

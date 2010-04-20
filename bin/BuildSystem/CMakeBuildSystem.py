@@ -89,9 +89,9 @@ class CMakeBuildSystem(BuildSystemBase):
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
             
-        if self.targetPlatform() == "WM60" or self.targetPlatform() == "WM65":
+        if self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
             options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.02"
-        elif self.targetPlatform() == "WM50":
+        elif self.buildPlatform() == "WM50":
             options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.01"
 
         if self.buildTests:
@@ -122,8 +122,8 @@ class CMakeBuildSystem(BuildSystemBase):
         fc.write(command);
         fc.close()
 
-        if self.hasTargetPlatform():
-            self.setupCrossToolchain()
+        if self.isTargetBuild():
+            self.setupTargetToolchain()
 
         return self.system( command, "configure", 0 ) 
 
@@ -155,8 +155,8 @@ class CMakeBuildSystem(BuildSystemBase):
             if self.subinfo.options.make.makeOptions:
                 command += " %s" % self.subinfo.options.make.makeOptions
 
-        if self.hasTargetPlatform():
-            self.setupCrossToolchain()
+        if self.isTargetBuild():
+            self.setupTargetToolchain()
 
         return self.system( command, "make" ) 
         
@@ -176,8 +176,8 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 
-        if self.hasTargetPlatform():
-            self.setupCrossToolchain()
+        if self.isTargetBuild():
+            self.setupTargetToolchain()
 
         self.system( command, "install" ) 
 

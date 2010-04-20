@@ -142,13 +142,6 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def hasTargetPlatform():
-    return targetPlatform() != "" and targetPlatform() != None
-
-def targetPlatform():
-    """return the cross-compiling target platform"""
-    return os.getenv( "EMERGE_TARGET_PLATFORM" )
-
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
     fileName = portage.getFilename( category, package, version )
@@ -170,7 +163,7 @@ def handlePackage( category, package, version, buildAction, opts ):
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
-        if hasTargetPlatform() and not disableHostBuild:
+        if utils.isCrossCompilingEnabled() and not disableHostBuild:
             os.putenv( "EMERGE_TARGET_PLATFORM", "" )
             success = success and doExec( category, package, version, "compile", opts )
             success = success and doExec( category, package, version, "cleanimage", opts )
@@ -184,7 +177,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
                 
         
-        if hasTargetPlatform() and disableTargetBuild:
+        if utils.isCrossCompilingEnabled() and disableTargetBuild:
             return success
             
         success = success and doExec( category, package, version, "compile", opts )
@@ -200,16 +193,16 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
-        if hasTargetPlatform() and not disableHostBuild and disableTargetBuild:
-            aveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+        if utils.isCrossCompilingEnabled() and not disableHostBuild and disableTargetBuild:
+            saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
             os.putenv( "EMERGE_TARGET_PLATFORM", "" )
             success = doExec( category, package, version, buildAction, opts )
             os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
         else:
             success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
-        if hasTargetPlatform() and not disableHostBuild and disableTargetBuild:
-            aveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+        if utils.isCrossCompilingEnabled() and not disableHostBuild and disableTargetBuild:
+            saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
             os.putenv( "EMERGE_TARGET_PLATFORM", "" )
             success = doExec( category, package, version, "cleanimage", opts )
             success = success and doExec( category, package, version, "install", opts )

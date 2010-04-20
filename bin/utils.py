@@ -790,3 +790,12 @@ def applyPatch(sourceDir, file, patchLevel='0'):
     cmd = "cd %s && patch -p%s < %s" % ( sourceDir, patchLevel, file )    
     debug("applying patch %s" % ( cmd ), 2)
     return system( cmd )
+
+def targetPlatform():
+    """return the cross-compiling target platform, if set in kdesettings.bat"""
+    return os.getenv( "EMERGE_TARGET_PLATFORM" )
+
+def isCrossCompilingEnabled():
+    """define if cross-compiling is enabled"""
+    return targetPlatform() != "" and targetPlatform() != None
+

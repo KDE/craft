@@ -191,12 +191,12 @@ class PackageBase (EmergeBase):
             print "target ignored for this build type"
             return False
         
-        if not self.subinfo.hasTargetPlatform() and self.subinfo.disableHostBuild:
-            print "host build disabled, skipping host build"
+        if self.isHostBuild() and self.subinfo.disableHostBuild:
+            utils.debug( "host build disabled, skipping host build", 1 )
             return True
             
-        if self.subinfo.hasTargetPlatform() and self.subinfo.disableTargetBuild:
-            print "target build disabled, skipping target build"
+        if self.isTargetBuild() and self.subinfo.disableTargetBuild:
+            utils.debug( "target build disabled, skipping target build", 1 )
             return True
         
         self.runAction(command)
