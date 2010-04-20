@@ -45,8 +45,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-        if not self.hasTargetPlatform():
-            self.hardDependencies['testing/mysql-server'] = 'default'
+        self.hardDependencies['testing/mysql-server'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -58,8 +57,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        if not self.hasTargetPlatform():
-            self.mysql_server = portage.getPackageInstance('testing','mysql-server')
+        self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -79,12 +77,12 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             exit( 1 )
 
         xplatform = ""
-        if self.hasTargetPlatform():
-            if self.targetPlatform() == "WM60":
+        if self.isTargetBuild():
+            if self.buildPlatform() == "WM60":
                 xplatform = "wincewm60professional-%s" % self.compiler()
-            elif self.targetPlatform() == "WM65":
+            elif self.buildPlatform() == "WM65":
                 xplatform = "wincewm65professional-%s" % self.compiler()
-            elif self.targetPlatform() == "WM50":
+            elif self.buildPlatform() == "WM50":
                 xplatform = "wincewm50pocket-%s" % self.compiler()
             else:
                 exit( 1 )
@@ -96,7 +94,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
         libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        if not self.hasTargetPlatform():
+        if self.isHostBuild():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
@@ -104,7 +102,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), platform )
-        if self.hasTargetPlatform():
+        if self.isTargetBuild():
             command += "-xplatform %s " % xplatform
         else:
             command += "-plugin-sql-mysql -plugin-sql-odbc "
@@ -127,11 +125,11 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # so that the mkspecs can be found, when -prefix is set
         os.putenv( "QMAKEPATH", self.sourceDir() )
 
-        if self.hasTargetPlatform():
-            self.setupCrossToolchain()
+        if self.isTargetBuild():
+            self.setupTargetToolchain()
             # This is needed to find some wcecompat files (e.g. errno.h) included by some openssl headers
             # but we make sure to add it at the very end so it doesn't disrupt the rest of the Qt build
-            os.putenv( "INCLUDE", os.getenv("INCLUDE") + ";" + os.path.join( self.rootdir, "include", "wcecompat" ) )
+            os.putenv( "INCLUDE", os.getenv("INCLUDE") + ";" + os.path.join( self.mergeDestinationDir(), "include", "wcecompat" ) )
 
         QMakeBuildSystem.make(self)
         
@@ -139,7 +137,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
       
 
     def install( self ):
-        if self.hasTargetPlatform():
+        if self.isTargetBuild():
             # Configuring Qt for WinCE ignores the -prefix option,
             # so we have to do the job manually...
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
