@@ -194,7 +194,6 @@ def handlePackage( category, package, version, buildAction, opts ):
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
         if utils.isCrossCompilingEnabled() and not disableHostBuild and disableTargetBuild:
-            saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
             os.putenv( "EMERGE_TARGET_PLATFORM", "" )
             success = doExec( category, package, version, buildAction, opts )
             os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
@@ -202,7 +201,6 @@ def handlePackage( category, package, version, buildAction, opts ):
             success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
         if utils.isCrossCompilingEnabled() and not disableHostBuild and disableTargetBuild:
-            saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
             os.putenv( "EMERGE_TARGET_PLATFORM", "" )
             success = doExec( category, package, version, "cleanimage", opts )
             success = success and doExec( category, package, version, "install", opts )
