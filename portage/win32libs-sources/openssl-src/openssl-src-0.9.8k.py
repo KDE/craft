@@ -12,17 +12,19 @@ class subinfo(info.infoclass):
         self.targets['0.9.8m'] = 'http://www.openssl.org/source/openssl-0.9.8m.tar.gz'
         self.targetInstSrc['0.9.8m'] = 'openssl-0.9.8m'
         self.patchToApply['0.9.8m'] = ('openssl-wince5.patch', 0)
-        self.options.package.withCompiler = False
+        
         self.defaultTarget = '0.9.8m'
+        
+        self.options.package.withCompiler = False
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        if self.hasTargetPlatform():
+        if utils.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
-        
+
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
@@ -34,31 +36,34 @@ class Package(CMakePackageBase):
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
             cmd = "ms\mingw32.bat"
         else:
-            if self.hasTargetPlatform():
+            if self.isTargetBuild():
                 """WinCE cross-building environment setup"""
-                self.setupCrossToolchain()
-                os.environ["WCECOMPAT"] = self.rootdir
-                os.environ["TARGETCPU"] = self.targetArchitecture() 
-                os.environ["PLATFORM"] = self.targetPlatform()
-                if self.targetPlatform() == "WM50":
+                config = "VC-CE"
+                os.environ["WCECOMPAT"] = self.mergeDestinationDir()
+                os.environ["TARGETCPU"] = self.buildArchitecture() 
+                os.environ["PLATFORM"] = self.buildPlatform()
+                if self.buildPlatform() == "WM50":
                     os.environ["OSVERSION"] = "WCE501"
-                elif self.targetPlatform() == "WM60" or self.targetPlatform() == "WM65":
+                elif self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
                     os.environ["OSVERSION"] = "WCE502"
+            else:
+                config = "VC-WIN32"
 
-                if not self.system( "perl Configure VC-CE", "configure" ):
-                    return False
+            if not self.system( "perl Configure %s" % config, "configure" ):
+                return False
 
-                if not self.system( "ms\do_ms.bat", "configure" ):
-                    return False
-
+            if not self.system( "ms\do_ms.bat", "configure" ):
+                return False
+                
+            if self.isTargetBuild():
+                self.setupTargetToolchain()
                 # Set the include path for the wcecompat files (e.g. errno.h). Setting it through
                 # the Configure script generates errors due to the the backslashes in the path
-                wcecompatincdir = os.path.join( os.path.join( self.rootdir, "include" ), "wcecompat" )
+                wcecompatincdir = os.path.join( os.path.join( self.mergeDestinationDir(), "include" ), "wcecompat" )
                 os.putenv( "INCLUDE", wcecompatincdir + ";" + os.getenv("INCLUDE") )
-
-                cmd = "nmake -f ms\cedll.mak"
+                cmd = r"nmake -f ms\cedll.mak"
             else:
-                cmd = "ms\\32all.bat"
+                cmd = r"nmake -f ms\ntdll.mak"
 
         return self.system( cmd )
 
@@ -88,8 +93,8 @@ class Package(CMakePackageBase):
 
         else:
             outdir = "out32dll"
-            if self.hasTargetPlatform():
-                outdir += "_" + self.targetArchitecture()
+            if self.isTargetBuild():
+                outdir += "_" + self.buildArchitecture()
 
             shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
             shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
