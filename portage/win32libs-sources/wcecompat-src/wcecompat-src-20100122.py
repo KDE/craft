@@ -13,22 +13,32 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
 
-from Package.BinaryPackageBase import *
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
+from Package.CMakePackageBase import *
                 
-class TestPackage(BinaryPackageBase):
+class TestPackage(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        BinaryPackageBase.__init__( self )
+        CMakePackageBase.__init__( self )
 
     def unpack(self):
-        BinaryPackageBase.unpack(self)
+        # FIXME : find a way to do something like svn export or make out-of-source builds work
+        # Currently the emerge fails to clean the build dir due to a .git file which can't be deleted
+        # (filename too long probably), which means only the first build succeeds
+        CMakePackageBase.unpack( self )
         utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
+        return True
+        
+    def configure(self):
         self.enterBuildDir()
 
-        os.environ["TARGETCPU"] = self.targetArchitecture()
-        if self.targetPlatform() == "WM50":
+        os.environ["TARGETCPU"] = self.buildArchitecture()
+        if self.buildPlatform() == "WM50":
             os.environ["OSVERSION"] = "WCE501"
-        elif self.targetPlatform() == "WM60" or self.targetPlatform() == "WM65":
+        elif self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
             os.environ["OSVERSION"] = "WCE502"
 
         command = "perl config.pl"
@@ -36,7 +46,7 @@ class TestPackage(BinaryPackageBase):
 
     def make(self):
         self.enterBuildDir()
-        self.setupCrossToolchain()
+        self.setupTargetToolchain()
         return self.system( self.makeProgramm ) 
 
     def install(self):
