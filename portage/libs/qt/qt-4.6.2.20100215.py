@@ -31,8 +31,10 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
         self.svnTargets['4.6.2-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.6_jjc|"
         self.targetSrcSuffix['4.6.2-mingw-x64'] = "x64"
+        self.svnTargets['4.7-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.7-WebKit|"
+        self.targetSrcSuffix['4.7-mingw-x64'] = "x64"
         if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
-            self.defaultTarget = '4.6.2-mingw-x64'
+            self.defaultTarget = '4.7-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
         
