@@ -1,4 +1,3 @@
-import base
 import os
 import shutil
 import re
@@ -22,52 +21,53 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['dev-util/bjam'] = 'default'
+        
+from Package.CMakePackageBase import *
 
-class subclass(base.baseclass):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        if self.compiler == "mingw" or self.compiler == "mingw4":
-            self.toolset = "gcc"
-        else:
-            self.toolset = "msvc"
         self.subinfo = subinfo()
-
-    def execute( self ):
-        base.baseclass.execute( self )
+        CMakePackageBase.__init__(self)
 
     def libsToBuild( self ):
         libs = " --with-python --with-program_options "
         return libs
-
-    def compile( self ):
-        cmd  = "cd %s && bjam --toolset=%s --prefix=%s --build-type=complete install " % \
-               ( os.path.join( self.workdir, self.instsrcdir ),
-                 self.toolset, os.path.join( self.workdir, self.imagedir ))
+        
+    def configure( self, unused1=None, unused2=""):
+        return True
+        
+    def make(self, unused=''):
+        self.enterSourceDir()
+        
+        toolset = ""
+        if self.compiler == "mingw" or self.compiler == "mingw4":
+            toolset = "gcc"
+        else:
+            toolset = "msvc"
+            
+        cmd = "bjam --toolset=%s --prefix=%s --build-type=complete install " % \
+                (toolset,
+                self.imageDir())
+                
         cmd += self.libsToBuild()
-        if utils.verbose() >= 1:
-            print cmd
-        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        print "command: ", cmd
+        utils.system( cmd )
+        return True
+        
+    def cleanImage( self ):
         return True
 
     def install( self ):
-        cmd  = "cd %s && bjam --toolset=%s --prefix=%s --build-type=complete install" % \
-               ( os.path.join( self.workdir, self.instsrcdir ),
-                 self.toolset, os.path.join( self.workdir, self.imagedir ))
-        cmd += self.libsToBuild()
-
-        if utils.verbose() >= 1:
-            print cmd
-        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
 
         # copy runtime libraries to the bin folder
-        cmd = "cd %s && mkdir bin && move lib\\*.dll bin" % ( os.path.join( self.workdir, self.imagedir ) )
-        if utils.verbose() >= 1:
-            print cmd
-        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        self.enterImageDir()
+        cmd = "mkdir bin && move lib\\*.dll bin"
+        print "command: ", cmd
+        utils.system( cmd )
         return True
 
     def make_package( self ):
         return self.doPackaging( "boost", self.buildTarget, True )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

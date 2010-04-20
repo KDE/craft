@@ -165,11 +165,12 @@ def doExec( category, package, version, action, opts ):
 def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
 
+    saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+    
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
         if hasTargetPlatform() and not disableHostBuild:
-            saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
             os.putenv( "EMERGE_TARGET_PLATFORM", "" )
             success = success and doExec( category, package, version, "compile", opts )
             success = success and doExec( category, package, version, "cleanimage", opts )

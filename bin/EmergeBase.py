@@ -300,6 +300,14 @@ class EmergeBase():
         os.chdir( self.sourceDir() )
         if utils.verbose() > 0:
             print "entering: %s" % self.sourceDir()
+            
+    def enterImageDir(self):
+        if ( not os.path.exists( self.imageDir() ) ):
+            return False
+        utils.warning("entering the image directory!")
+        os.chdir( self.imageDir() )
+        if utils.verbose() > 0:
+            print "entering: %s" % self.imageDir()
         
         
     def system( self, command, errorMessage="", debuglevel=1 ):
