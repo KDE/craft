@@ -6,6 +6,11 @@ class subinfo(info.infoclass):
         self.targetMergeSourcePath['0.43'] = 'pexports-0.43'
         self.defaultTarget = '0.43'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+
+
 from Package.BinaryPackageBase import *        
         
 class Package(BinaryPackageBase):
