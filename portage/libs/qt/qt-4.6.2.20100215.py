@@ -97,7 +97,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         
-        command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), platform )
+        command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         if self.isTargetBuild():
             command += "-xplatform %s " % xplatform
         else:
