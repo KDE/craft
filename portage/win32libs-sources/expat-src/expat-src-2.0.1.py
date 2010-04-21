@@ -5,7 +5,6 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/msys'] = 'default'
         self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
 
     def setTargets( self ):
