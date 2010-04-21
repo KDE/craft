@@ -14,18 +14,18 @@ Subject: [PATCH 3/3] applied wince-cmakefiles-supprt-3.patch
  create mode 100644 Modules/Platform/WinCE-cl.cmake
  create mode 100644 Modules/Platform/WinCE.cmake
 
-diff --git cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c
 new file mode 100644
 index 0000000..0540eda
 --- /dev/null
-+++ cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/CMakeTestCLMachineType.c
 @@ -0,0 +1 @@
 +int dummy() { return 0;}
-diff --git cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
 new file mode 100644
 index 0000000..f18b109
 --- /dev/null
-+++ cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE-cl.cmake
 @@ -0,0 +1,44 @@
 +
 +IF(NOT CMAKE_WINDOWS_STACKSIZE )
@@ -71,11 +71,11 @@ index 0000000..f18b109
 +    SET(CMAKE_CREATE_CONSOLE_EXE "/SUBSYSTEMY:WINDOWSCE /ENTRY:mainACRTStartup")
 +ENDIF(CMAKE_SYSTEM_VERSION)
 +
-diff --git cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake
 new file mode 100644
 index 0000000..2b37179
 --- /dev/null
-+++ cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/WinCE.cmake
 @@ -0,0 +1,26 @@
 +SET(WINCE 1)
 +
@@ -103,10 +103,10 @@ index 0000000..2b37179
 +        -DWIN32
 +        )
 +
-diff --git cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
 index 303ef34..2492f42 100644
---- cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
-+++ cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
+--- cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake
 @@ -140,37 +140,114 @@ IF(CMAKE_GENERATOR MATCHES "Makefiles")
        MESSAGE(STATUS "Check if this is a free VC compiler - no")
        SET(CMAKE_USING_VC_FREE_TOOLS 0)
@@ -275,10 +275,10 @@ index 303ef34..2492f42 100644
  
  # add /debug and /INCREMENTAL:YES to DEBUG and RELWITHDEBINFO also add pdbtyp
  # on versions that support it
-diff --git cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
+diff --git cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
 index 1a889f2..999d7dd 100644
---- cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
-+++ cmake-2.8.1-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
+--- cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
++++ cmake-2.8.0-win32-x86/share/cmake-2.8/Modules/Platform/Windows-cl.cmake.in
 @@ -3,6 +3,7 @@ SET(CMAKE_COMPILER_SUPPORTS_PDBTYPE @CMAKE_COMPILER_SUPPORTS_PDBTYPE@)
  SET(CMAKE_COMPILER_2005 @CMAKE_COMPILER_2005@)
  SET(CMAKE_USING_VC_FREE_TOOLS @CMAKE_USING_VC_FREE_TOOLS@)
