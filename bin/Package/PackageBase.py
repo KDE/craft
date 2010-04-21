@@ -191,11 +191,11 @@ class PackageBase (EmergeBase):
             print "target ignored for this build type"
             return False
         
-        if self.isHostBuild() and self.subinfo.disableHostBuild:
+        if self.isHostBuild() and self.subinfo.disableHostBuild and not command == "fetch" and not command == "unpack":
             utils.debug( "host build disabled, skipping host build", 1 )
             return True
             
-        if self.isTargetBuild() and self.subinfo.disableTargetBuild:
+        if self.isTargetBuild() and self.subinfo.disableTargetBuild and not command == "fetch" and not command == "unpack":
             utils.debug( "target build disabled, skipping target build", 1 )
             return True
         
