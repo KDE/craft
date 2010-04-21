@@ -38,7 +38,7 @@ class KDEWinPackager (PackagerBase):
         else:
             pkgName = self.package
             
-        if pkgName.endswith('-src'):
+        if pkgName.endswith('-src') or pkgName.endswith('-pkg'):
             pkgName = pkgName[:-4]
 
         if self.subinfo.options.package.version <> None:
