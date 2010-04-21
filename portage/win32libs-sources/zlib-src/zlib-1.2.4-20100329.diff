@@ -18,6 +18,17 @@ diff -Nru zlib-1.2.4.orig/CMakeLists.txt zlib-1.2.4/CMakeLists.txt
      add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
      add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
  endif()
+@@ -142,6 +143,10 @@
+ 
+ set_target_properties(zlib PROPERTIES SOVERSION 1)
+ 
++if(WINCE)
++    target_link_libraries(zlib wcecompat)
++endif(WINCE)
++
+ if(NOT CYGWIN)
+     # This property causes shared libraries on Linux to have the full version
+     # encoded into their final filename.  We disable this on Cygwin because
 diff -Nru zlib-1.2.4.orig/zconf.h zlib-1.2.4/zconf.h
 --- zlib-1.2.4.orig/zconf.h	2010-02-21 23:38:24.000000000 +0100
 +++ zlib-1.2.4/zconf.h	1970-01-01 01:00:00.000000000 +0100
