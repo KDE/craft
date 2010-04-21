@@ -95,6 +95,9 @@ class ArchiveSource(SourceBase):
             destdir = self.workDir()
             utils.debug("unpacking files into work root %s" % destdir,1)
 
+        if hasattr(self.subinfo.options.unpack, 'unpackDir'):
+            destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
+
         if self.subinfo.hasTargetDigestUrls():
             utils.debug("check digests urls",1)
             if not utils.checkFilesDigests( self.downloadDir(), filenames):
@@ -137,13 +140,21 @@ class ArchiveSource(SourceBase):
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
         tmpdir = os.path.join( destdir, "tmp" )
-        if ( not os.path.exists( tmpdir ) ):
-            os.mkdir( tmpdir )
+        unpackDir = tmpdir
+
+        if ( not os.path.exists( unpackDir ) ):
+            os.mkdir( unpackDir )
+        
+        if hasattr( self.subinfo.options.unpack, 'unpackDir' ):
+            unpackDir = os.path.join( unpackDir, self.subinfo.options.unpack.unpackDir )
+
+            if ( not os.path.exists( unpackDir ) ):
+                os.mkdir( unpackDir )
 
         # unpack all packages
         for filename in filenames:
             utils.debug( "unpacking this file: %s" % filename, 1 )
-            if ( not utils.unpackFile( self.downloadDir(), filename, tmpdir ) ):
+            if ( not utils.unpackFile( self.downloadDir(), filename, unpackDir ) ):
                 return False
 
         packagelist = os.listdir( tmpdir )
