@@ -26,6 +26,12 @@ rem
 set EMERGE_ARCHITECTURE=x86
 rem set EMERGE_ARCHITECTURE=x64
 
+rem substitute pathes by drives (set to 1 to activate)
+set EMERGE_USE_SHORT_PATH=0
+set EMERGE_ROOT_DRIVE=r:
+set EMERGE_SVN_DRIVE=s:
+set EMERGE_DOWNLOAD_DRIVE=t:
+
 rem Here you set the path to your Python installation,
 rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
@@ -185,6 +191,21 @@ rem set EMERGE_LOG_DIR=%KDEROOT%\buildlogs
 
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
+
+rem handle drive substitution
+if %EMERGE_USE_SHORT_PATH% == 1 (
+    subst %EMERGE_ROOT_DRIVE% /D
+    subst %EMERGE_SVN_DRIVE% /D
+    subst %EMERGE_DOWNLOAD_DRIVE% /D
+
+    subst %EMERGE_ROOT_DRIVE% %KDEROOT%
+    subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
+    subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
+    set KDEROOT=%EMERGE_ROOT_DRIVE%\
+    set KDESVNDIR=%EMERGE_SVN_DRIVE%\
+    set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
+    %EMERGE_ROOT_DRIVE%
+)
 
 set PATH=%PYTHONPATH%;%PATH%
 
