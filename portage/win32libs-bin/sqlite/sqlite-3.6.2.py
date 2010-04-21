@@ -25,6 +25,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets[PACKAGE_VER] = SRC_URI
         self.defaultTarget = PACKAGE_VER
+        self.targetDigests[PACKAGE_VER] = ['78b3c8758ee4eb6cb4404283a1e754e7d35a6a87',
+                                           '1464dfe5469c8ba108f2d55a19bfa049659eb120',
+                                           '11e3419fab41ffc9c7213e211e301195f3519be0']        
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/sed'] = 'default'
