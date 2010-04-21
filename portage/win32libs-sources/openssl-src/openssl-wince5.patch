@@ -1,0 +1,136 @@
+--- e_os.h	Mon Jan 19 14:26:36 1970
++++ e_os.h	Mon Jan 19 14:26:36 1970
+@@ -292,7 +292,7 @@
+ #      undef isupper
+ #      undef isxdigit
+ #    endif
+-#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin)
++#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin) && !defined(_WIN32_WCE)
+ #      if _MSC_VER>=1300
+ #        undef stdin
+ #        undef stdout
+@@ -321,10 +321,6 @@
+ #  include <io.h>
+ #  include <fcntl.h>
+ 
+-#  ifdef OPENSSL_SYS_WINCE
+-#    include <winsock_extras.h>
+-#  endif
+-
+ #  define ssize_t long
+ 
+ #  if defined (__BORLANDC__)
+@@ -480,7 +476,7 @@
+ #      define SHUTDOWN(fd)		close(fd)
+ #      define SHUTDOWN2(fd)		close(fd)
+ #    elif !defined(__DJGPP__)
+-#      include <winsock.h>
++#      include <winsock2.h>
+ extern HINSTANCE _hInstance;
+ #      ifdef _WIN64
+ /*
+--- apps/apps.h	Mon Jan 19 14:26:36 1970
++++ apps/apps.h	Mon Jan 19 14:26:36 1970
+@@ -137,7 +137,7 @@
+                                        * (see e_os.h).  The string is
+                                        * destroyed! */
+ 
+-#ifdef OPENSSL_SYS_WIN32
++#if defined(OPENSSL_SYS_WIN32) && !defined(OPENSSL_SYS_WINCE)
+ #define rename(from,to) WIN32_rename((from),(to))
+ int WIN32_rename(const char *oldname,const char *newname);
+ #endif
+--- crypto/rand/randfile.c	Mon Jan 19 14:26:36 1970
++++ crypto/rand/randfile.c	Mon Jan 19 14:26:36 1970
+@@ -81,7 +81,7 @@
+ # include <sys/stat.h>
+ #endif
+ 
+-#ifdef _WIN32
++#if defined(OPENSSL_SYS_WIN32) && !defined(OPENSSL_SYS_WINCE)
+ #define stat	_stat
+ #define chmod	_chmod
+ #define open	_open
+--- crypto/x509/by_dir.c	Mon Jan 19 14:26:36 1970
++++ crypto/x509/by_dir.c	Mon Jan 19 14:26:36 1970
+@@ -74,7 +74,7 @@
+ #include <openssl/lhash.h>
+ #include <openssl/x509.h>
+ 
+-#ifdef _WIN32
++#if defined(OPENSSL_SYS_WIN32) && !defined(OPENSSL_SYS_WINCE)
+ #define stat	_stat
+ #endif
+ 
+--- ssl/dtls1.h	Mon Jan 19 14:26:36 1970
++++ ssl/dtls1.h	Mon Jan 19 14:26:36 1970
+@@ -68,7 +68,7 @@
+ #endif
+ #ifdef OPENSSL_SYS_WIN32
+ /* Needed for struct timeval */
+-#include <winsock.h>
++#include <winsock2.h>
+ #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
+ #include <sys/timeval.h>
+ #else
+--- ssl/ssltest.c	Mon Jan 19 14:26:36 1970
++++ ssl/ssltest.c	Mon Jan 19 14:26:36 1970
+@@ -161,7 +161,7 @@
+ 				  */
+ 
+ #ifdef OPENSSL_SYS_WINDOWS
+-#include <winsock.h>
++#include <winsock2.h>
+ #else
+ #include OPENSSL_UNISTD
+ #endif
+--- util/pl/VC-32.pl	Mon Jan 19 14:26:36 1970
++++ util/pl/VC-32.pl	Mon Jan 19 14:26:36 1970
+@@ -103,7 +103,7 @@
+     }
+ 
+     $cc='$(CC)';
+-    $base_cflags=' /W3 /WX /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -I$(WCECOMPAT)/include -DOPENSSL_SMALL_FOOTPRINT';
++    $base_cflags=' /W3 /WX /wd4748 /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -I$(WCECOMPAT)/include -DOPENSSL_SMALL_FOOTPRINT';
+     $base_cflags.=" $wcecdefs";
+     $opt_cflags=' /MC /O1i';	# optimize for space, but with intrinsics...
+     $dbg_clfags=' /MC /Od -DDEBUG -D_DEBUG';
+@@ -146,7 +146,7 @@
+ $efile="/out:";
+ $exep='.exe';
+ if ($no_sock)		{ $ex_libs=''; }
+-elsif ($FLAVOR =~ /CE/)	{ $ex_libs='winsock.lib'; }
++elsif ($FLAVOR =~ /CE/)	{ $ex_libs='ws2.lib'; }
+ else			{ $ex_libs='wsock32.lib'; }
+ 
+ my $oflow;
+@@ -163,8 +163,7 @@
+ 
+ if ($FLAVOR =~ /CE/)
+ 	{
+-	$ex_libs.=' $(WCECOMPAT)/lib/wcecompatex.lib';
+-	$ex_libs.=' /nodefaultlib:oldnames.lib coredll.lib corelibc.lib' if ($ENV{'TARGETCPU'} eq "X86");
++	$ex_libs.=' $(WCECOMPAT)/lib/wcecompatex.lib coredll.lib corelibc.lib /nodefaultlib:oldnames.lib';
+ 	}
+ else
+ 	{
+@@ -363,7 +362,7 @@
+ 			}
+ 		elsif ($FLAVOR =~ /CE/)
+ 			{
+-			$ex.=' winsock.lib $(WCECOMPAT)/lib/wcecompatex.lib';
++			$ex.=' $(EX_LIBS)';
+ 			}
+ 		else
+ 			{
+--- e_os2.h
++++ e_os2.h
+@@ -264,7 +264,7 @@
+ # define OPENSSL_IMPLEMENT_GLOBAL(type,name)			     \
+ 	extern type _hide_##name;				     \
+ 	type *_shadow_##name(void) { return &_hide_##name; }	     \
+-	static type _hide_##name
++	type _hide_##name
+ # define OPENSSL_DECLARE_GLOBAL(type,name) type *_shadow_##name(void)
+ # define OPENSSL_GLOBAL_REF(name) (*(_shadow_##name()))
+ #else

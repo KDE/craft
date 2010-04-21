@@ -1,4 +1,5 @@
 @echo off
+
 rem Here you set the base directory under which the whole KDE
 rem subsystem will live.
 set KDEROOT=c:\kderoot
@@ -32,37 +33,46 @@ set EMERGE_ROOT_DRIVE=r:
 set EMERGE_SVN_DRIVE=s:
 set EMERGE_DOWNLOAD_DRIVE=t:
 
+rem The following variables are used for cross-compiling to Windows Mobile / WinCE
+rem when uncommented, the proper toolchain is set up for the specified target OS and architecture.
+rem EMERGE_TARGET_PLATFORM currently supports :
+rem * WM50 - Windows Mobile 5.0 PocketPC (based on WinCE 5.01)
+rem * WM60 - Windows Mobile 6.0 Professional (based on WinCE 5.02)
+rem * WM65 - Windows Mobile 6.5 Professional (based on WinCE 5.02)
+rem EMERGE_TARGET_ARCHITECTURE currently supports :
+rem * ARMV4I (all platforms)
+rem set EMERGE_TARGET_PLATFORM=WM60
+rem set EMERGE_TARGET_ARCHITECTURE=ARMV4I
+
 rem Here you set the path to your Python installation,
 rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
 rem settings of Windows.
-set PYTHONPATH=%PROGRAMFILES%\python26
+set PYTHONPATH=%PROGRAM_FILES%\python26
 
 rem Here you set the path to msys if you want to compile
 rem automake-based projects (only needed for some internal packages).
 set MSYSDIR=%KDEROOT%\msys
 
-rem Here you set the path to your platform SDK installation.
-rem This path will be automatically included then.
-if %KDECOMPILER% == msvc2005 (
-set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 8
-set PSDKDIR=%PROGRAMFILES%\Microsoft Platform SDK for Windows Server 2003 R2
-)
-if %KDECOMPILER% == msvc2008 (
-set VSDIR=%PROGRAMFILES%\Microsoft Visual Studio 9.0
-set PSDKDIR=%PROGRAMFILES%\Microsoft SDKs\Windows\v6.1
-)
-rem Here you set the path to your Microsoft DirectX SDK installation
-rem This is not needed if you use MinGW
-set MSDXSDKDIR=%PROGRAMFILES%\Microsoft DirectX SDK (August 2009)
-call "%MSDXSDKDIR%\Utilities\bin\dx_setenv.cmd" x86
-     
-rem Here you set the location of the vcvarsall.bat file that adds
-rem Visual C++ environment variables into the build environment.
-rem if you are not building on x86 change that to something appropriate.
-if not "%VSDIR%" == "" (
-call "%VSDIR%\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
-)
+rem Here you can adjust the path to your Visual Studio installation if needed
+rem This is used to set up the build environment automatically
+if %KDECOMPILER% == msvc2005 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 8
+if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9
+
+rem Here you can adjust the path to the Windows Mobile SDK installation
+rem This is used to set up the cross-compilation environment automatically
+if "%EMERGE_TARGET_PLATFORM%" == "WM50" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 5.0 SDK R2\PocketPC
+if "%EMERGE_TARGET_PLATFORM%" == "WM60" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 6 Professional SDK\PocketPC
+if "%EMERGE_TARGET_PLATFORM%" == "WM65" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 6 Professional SDK\PocketPC
+
+rem Here you can set a specific platform SDK to use with the Visual Studio toolchain
+rem Normally this is not needed as a default platform SDK is set by the build environment script
+rem set PSDKDIR=%PROGRAM_FILES%\Microsoft SDKs\Windows\v6.0A
+
+rem Here you can set the path to your Microsoft DirectX SDK installation
+rem This is not needed if you use MinGW or won't use the directx backend for Phonon
+rem set MSDXSDKDIR=%PROGRAM_FILES%\Microsoft DirectX SDK (August 2009)
+
 
 rem proxy settings - in case a proxy is required uncomment the following variables 
 rem set EMERGE_PROXY_HOST=

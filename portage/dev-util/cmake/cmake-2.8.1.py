@@ -5,6 +5,7 @@ class subinfo( info.infoclass ):
         self.targets['2.4.8'] = 'http://www.cmake.org/files/v2.4/cmake-2.4.8-win32-x86.zip'
         self.targets['2.6.4'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.zip'
         self.targets['2.8.1'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.1-win32-x86.zip'
+        self.patchToApply['2.8.1'] = ('cmake-2.8.1-wince-support.patch', 0)
         self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.1'] = 'cmake-2.8.1-win32-x86'

@@ -147,6 +147,21 @@ class EmergeBase():
         """return currently selected compiler"""
         return self.__compiler
 
+    def isTargetBuild(self):
+        return self.buildPlatform() != "" and self.buildPlatform() != None
+        
+    def isHostBuild(self):
+        return not self.isTargetBuild()
+
+    def buildPlatform(self):
+        """return the cross-compiling target platform"""
+        return os.getenv( "EMERGE_TARGET_PLATFORM" )
+
+    def buildArchitecture(self):
+        """return the target CPU architecture"""
+        return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
+
+
     def downloadDir(self): 
         """ location of directory where fetched files are  stored """
         return self.__adjustPath(DOWNLOADDIR)
@@ -175,6 +190,8 @@ class EmergeBase():
         dir = ""
         if self.subinfo.options.useCompilerType == True:
             dir += "%s-" % COMPILER
+        if self.isTargetBuild():
+            dir += "%s-" % self.buildPlatform()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             dir += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -205,6 +222,8 @@ class EmergeBase():
         
         if self.subinfo.options.useCompilerType == True:
             imagedir += '-' + COMPILER
+        if self.isTargetBuild():
+            imagedir += "-%s" % self.buildPlatform()
         if self.subinfo.options.useBuildType == True:
             imagedir += '-' + self.buildType()
         imagedir += '-' + self.buildTarget
@@ -244,6 +263,8 @@ class EmergeBase():
 
         if self.subinfo.hasMergePath():
             dir = os.path.join( ROOTDIR, self.subinfo.mergePath() )
+        elif self.isTargetBuild():
+            dir = os.path.join(ROOTDIR, self.buildPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
             dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot:
@@ -297,6 +318,14 @@ class EmergeBase():
         os.chdir( self.sourceDir() )
         if utils.verbose() > 0:
             print "entering: %s" % self.sourceDir()
+            
+    def enterImageDir(self):
+        if ( not os.path.exists( self.imageDir() ) ):
+            return False
+        utils.warning("entering the image directory!")
+        os.chdir( self.imageDir() )
+        if utils.verbose() > 0:
+            print "entering: %s" % self.imageDir()
         
         
     def system( self, command, errorMessage="", debuglevel=1 ):

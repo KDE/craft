@@ -6,8 +6,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         svnurl = "https://windbus.svn.sourceforge.net/svnroot/windbus/"
-        self.svnTargets['1.2.1'] = svnurl + 'tags/1.2.1'
-        self.svnTargets['1.2.3'] = svnurl + 'tags/1.2.3'
         self.svnTargets['1.2.4'] = svnurl + 'tags/1.2.4'
         self.targetInstSrc['1.2.4'] = 'tags/1.2.4'
         self.targetConfigurePath['1.2.4'] = 'cmake'
@@ -24,9 +22,10 @@ class subinfo(info.infoclass):
 
         
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
-        self.hardDependencies['win32libs-bin/expat'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-bin/expat'] = 'default'
+        if utils.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
 
 from Package.CMakePackageBase import *
                 
@@ -35,8 +34,11 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus'
-        self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON -DDBUS_DISABLE_EXECUTABLE_DEBUG_POSTFIX=ON"
         self.subinfo.options.make.slnBaseName = 'dbus'
+        if self.isTargetBuild():
+            self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=OFF"
+        else:
+            self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON"
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):

@@ -38,6 +38,8 @@ class subinfo(info.infoclass):
         else:
             self.defaultTarget = '4.6.2'
         
+        self.patchToApply['4.6.2'] = ( 'qt-dbus-support-wince.patch', 1 )
+        
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
         self.options.package.specialMode = True
@@ -45,16 +47,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
+        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
+        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         self.hardDependencies['testing/mysql-server'] = 'default'
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
-            self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-            self.hardDependencies['testing/openssl_beta-src'] = 'default'
-        elif  COMPILER == "msvc2008":
-            self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-            self.hardDependencies['win32libs-bin/openssl'] = 'default'
-        else:
-            self.hardDependencies['win32libs-bin/dbus'] = 'default'
-            self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -64,45 +59,56 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == 'mingw4':
-            self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-            self.openssl = portage.getPackageInstance('testing','openssl_beta-src')
-        elif COMPILER == "msvc2008":
-            self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-            self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
-        else:
-            self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
-            self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
-
+        self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
+        self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
         self.setPathes()
 
+        xplatform = ""
+        if self.isTargetBuild():
+            if self.buildPlatform() == "WM60":
+                xplatform = "wincewm60professional-%s" % self.compiler()
+            elif self.buildPlatform() == "WM65":
+                xplatform = "wincewm65professional-%s" % self.compiler()
+            elif self.buildPlatform() == "WM50":
+                xplatform = "wincewm50pocket-%s" % self.compiler()
+            else:
+                exit( 1 )
+
         os.environ[ "USERIN" ] = "y"
         userin = "y"
 
-        incdirs =  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
-        libdirs =  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
-        incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
-        libdirs += " -l libmysql "
+        incdirs = " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
+        libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+        incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+        libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
+        if self.isHostBuild():
+            incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
+            libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
+            libdirs += " -l libmysql "
 
         if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
-            mysql_plugin = ''
+            mysql_plugin = ""
         else: 
-            mysql_plugin = '-plugin-sql-mysql'
+            mysql_plugin = "-plugin-sql-mysql "
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
-        command = r"echo %s | %s -opensource -platform %s -prefix %s " \
-          "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff %s -plugin-sql-odbc " \
-          "-no-phonon -qdbus -openssl -dbus-linked " \
-          "-fast -ltcg -no-vcproj -no-dsp " \
-          "-nomake demos -nomake examples " \
-          "%s %s" % ( userin, configure, self.platform, self.installDir(), mysql_plugin, incdirs, libdirs)
+        
+        command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), platform )
+        if self.isTargetBuild():
+            command += "-xplatform %s " % xplatform
+        else:
+            command += "-plugin-sql-odbc " + mysql_plugin
+        
+        command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
+        command += "-no-phonon -qdbus -openssl-linked -dbus-linked "
+        command += "-fast -ltcg -no-vcproj -no-dsp "
+        command += "-nomake demos -nomake examples "
+        command += "%s %s" % ( incdirs, libdirs )
+
         if self.buildType() == "Debug":
           command += " -debug "
         else:
@@ -111,31 +117,39 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         utils.system( command )
         return True        
         
-    def make(self, unused=''):
-        libtmp = os.getenv( "LIB" )
-        inctmp = os.getenv( "INCLUDE" )
+    def make(self, unused=''):        
+        if self.isTargetBuild():
+            self.setupTargetToolchain()
+            # This is needed to find some wcecompat files (e.g. errno.h) included by some openssl headers
+            # but we make sure to add it at the very end so it doesn't disrupt the rest of the Qt build
+            os.putenv( "INCLUDE", os.getenv("INCLUDE") + ";" + os.path.join( self.mergeDestinationDir(), "include", "wcecompat" ) )
 
-        incdirs =  ";" + os.path.join( self.dbus.installDir(), "include" )
-        libdirs =  ";" + os.path.join( self.dbus.installDir(), "lib" )
-        incdirs += ";" + os.path.join( self.openssl.installDir(), "include" )
-        libdirs += ";" + os.path.join( self.openssl.installDir(), "lib" )
-        incdirs += ";" + os.path.join( self.mysql_server.installDir(), "include" )
-        libdirs += ";" + os.path.join( self.mysql_server.installDir(), "lib" )
-        os.environ[ "INCLUDE" ] = "%s%s" % (inctmp, incdirs)
-        os.environ[ "LIB" ] = "%s%s" % (libtmp, libdirs)
-        
         QMakeBuildSystem.make(self)
         
-        if not libtmp:
-            libtmp = ""
-        if not libtmp:
-            inctmp = ""
-        os.environ[ "LIB" ] = libtmp
-        os.environ[ "INCLUDE" ] = inctmp
         return True
       
 
     def install( self ):
+        if self.isTargetBuild():
+            # Configuring Qt for WinCE ignores the -prefix option,
+            # so we have to do the job manually...
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
+            # headers need to be copied using syncqt because of the relative paths
+            os.putenv( "PATH", os.path.join( self.sourceDir(), "bin" ) + ";" + os.getenv("PATH") )
+            command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
+            command += " -base-dir \"" + self.sourceDir() + "\""
+            command += " -outdir \"" + self.imageDir() + "\""
+            command += " -copy"
+            # 4.7 has a -quiet option, enable it when we switch
+            #command += " -quiet"
+            utils.system( command )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
+            # create qt.conf 
+            utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
+            return True
+
         if not QMakeBuildSystem.install(self):
             return False
 

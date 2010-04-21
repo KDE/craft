@@ -1,0 +1,173 @@
+--- testapi.c	Mon Jan 19 14:26:36 1970
++++ testapi.c	Mon Jan 19 14:26:36 1970
+@@ -128,7 +128,7 @@
+     int blocks, mem;
+ 
+     /* access to the proxy can slow up regression tests a lot */
+-    putenv((char *) "http_proxy=");
++    //putenv((char *) "http_proxy=");
+ 
+     memset(chartab, 0, sizeof(chartab));
+     strncpy((char *) chartab, "  chartab\n", 20);
+--- testSAX.c	Mon Jan 19 14:26:36 1970
++++ testSAX.c	Mon Jan 19 14:26:36 1970
+@@ -185,10 +185,11 @@
+      * We cannot do anything because we don't have a timing function
+      */
+ #ifdef HAVE_STDARG_H
++    va_list ap;
+     va_start(ap, format);
+     vfprintf(stderr, format, ap);
+     va_end(ap);
+-    fprintf(stderr, " was not timed\n", msec);
++    fprintf(stderr, " was not timed\n");
+ #else
+     /* We don't have gettimeofday, time or stdarg.h, what crazy world is
+      * this ?!
+--- xmlcatalog.c	Mon Jan 19 14:26:36 1970
++++ xmlcatalog.c	Mon Jan 19 14:26:36 1970
+@@ -482,7 +482,7 @@
+ 		    FILE *out;
+ 
+ 		    if (xmlCatalogIsEmpty(catal)) {
+-			remove(argv[i + 1]);
++			//remove(argv[i + 1]);
+ 		    } else {
+ 			out = fopen(argv[i + 1], "w");
+ 			if (out == NULL) {
+@@ -497,7 +497,7 @@
+ 		    }
+ 		    if (!no_super_update && super != NULL) {
+ 			if (xmlCatalogIsEmpty(super)) {
+-			    remove(XML_SGML_DEFAULT_CATALOG);
++			    //remove(XML_SGML_DEFAULT_CATALOG);
+ 			} else {
+ 			    out = fopen(XML_SGML_DEFAULT_CATALOG, "w");
+ 			    if (out == NULL) {
+--- xmllint.c	Mon Jan 19 14:26:36 1970
++++ xmllint.c	Mon Jan 19 14:26:36 1970
+@@ -15,7 +15,7 @@
+ #if defined (_WIN32) && !defined(__CYGWIN__)
+ #if defined (_MSC_VER) || defined(__BORLANDC__)
+ #include <winsock2.h>
+-#pragma comment(lib, "ws2_32.lib")
++//#pragma comment(lib, "ws2_32.lib")
+ #define gettimeofday(p1,p2)
+ #endif /* _MSC_VER */
+ #endif /* _WIN32 */
+@@ -516,10 +516,11 @@
+      * We cannot do anything because we don't have a timing function
+      */
+ #ifdef HAVE_STDARG_H
++    va_list ap;
+     va_start(ap, format);
+     vfprintf(stderr, format, ap);
+     va_end(ap);
+-    fprintf(stderr, " was not timed\n", msec);
++    fprintf(stderr, " was not timed\n");
+ #else
+     /* We don't have gettimeofday, time or stdarg.h, what crazy world is
+      * this ?!
+--- win32/Makefile.msvc	Mon Jan 19 14:26:36 1970
++++ win32/Makefile.msvc	Mon Jan 19 14:26:36 1970
+@@ -43,7 +43,7 @@
+ 
+ # The compiler and its options.
+ CC = cl.exe
+-CFLAGS = /nologo /D "WIN32" /D "_WINDOWS" /D "_MBCS" /W1 $(CRUNTIME)
++CFLAGS = /nologo /D "WIN32" /D "_WINDOWS" /D "_MBCS" /W1 $(CRUNTIME) /D _WIN32_WCE=0x502 /D "ARM" /D "_ARM_" /D "_M_ARM" /D "ARMV4I" /D "_ARMV4I_" /D UNDER_CE=502 /D "UNICODE" /D "_UNICODE"
+ CFLAGS = $(CFLAGS) /I$(XML_SRCDIR) /I$(XML_SRCDIR)\include /I$(INCPREFIX)
+ !if "$(WITH_THREADS)" != "no"
+ CFLAGS = $(CFLAGS) /D "_REENTRANT"
+@@ -58,12 +58,13 @@
+ !if "$(WITH_ZLIB)" == "1"
+ CFLAGS = $(CFLAGS) /D "HAVE_ZLIB_H"
+ !endif
+-CFLAGS = $(CFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE
++CFLAGS = $(CFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /GS-
+ 
+ # The linker and its options.
+ LD = link.exe
+ LDFLAGS = /nologo /VERSION:$(LIBXML_MAJOR_VERSION).$(LIBXML_MINOR_VERSION)
+ LDFLAGS = $(LDFLAGS) /LIBPATH:$(BINDIR) /LIBPATH:$(LIBPREFIX)
++LDFLAGS = $(LDFLAGS) /SUBSYSTEM:windowsce,5.02 /MACHINE:THUMB /nodefaultlib:oldnames.lib
+ LIBS =
+ !if "$(WITH_FTP)" == "1" || "$(WITH_HTTP)" == "1"
+ LIBS = $(LIBS) wsock32.lib ws2_32.lib
+@@ -78,7 +79,7 @@
+ LIBS = $(LIBS) pthreadVC.lib
+ !endif
+ !if "$(WITH_MODULES)" == "1"
+-LIBS = $(LIBS) kernel32.lib
++LIBS = $(LIBS) corelibc.lib coredll.lib 
+ !endif
+ 
+ # The archiver and its options.
+@@ -137,7 +138,8 @@
+ 	$(XML_INTDIR)\xmlwriter.obj\
+ 	$(XML_INTDIR)\xpath.obj\
+ 	$(XML_INTDIR)\xpointer.obj\
+-	$(XML_INTDIR)\xmlstring.obj
++	$(XML_INTDIR)\xmlstring.obj\
++	$(XML_INTDIR)\wincecompat.obj
+ 
+ # Static libxml object files.
+ XML_OBJS_A = $(XML_INTDIR_A)\c14n.obj\
+@@ -182,7 +184,8 @@
+ 	$(XML_INTDIR_A)\xmlwriter.obj\
+ 	$(XML_INTDIR_A)\xpath.obj\
+ 	$(XML_INTDIR_A)\xpointer.obj\
+-	$(XML_INTDIR_A)\xmlstring.obj
++	$(XML_INTDIR_A)\xmlstring.obj\
++	$(XML_INTDIR_A)\wincecompat.obj
+ 
+ # Static libxml object files.
+ XML_OBJS_A_DLL = $(XML_INTDIR_A_DLL)\c14n.obj\
+@@ -227,7 +230,8 @@
+ 	$(XML_INTDIR_A_DLL)\xmlwriter.obj\
+ 	$(XML_INTDIR_A_DLL)\xpath.obj\
+ 	$(XML_INTDIR_A_DLL)\xpointer.obj\
+-	$(XML_INTDIR_A_DLL)\xmlstring.obj
++	$(XML_INTDIR_A_DLL)\xmlstring.obj\
++	$(XML_INTDIR_A_DLL)\wincecompat.obj
+ 
+ # Xmllint and friends executables.
+ UTILS = $(BINDIR)\xmllint.exe\
+@@ -244,8 +248,8 @@
+ 	$(BINDIR)\testSchemas.exe\
+ 	$(BINDIR)\testURI.exe\
+ 	$(BINDIR)\testXPath.exe\
+-	$(BINDIR)\runtest.exe\
+-	$(BINDIR)\runsuite.exe\
++#	$(BINDIR)\runtest.exe\
++#	$(BINDIR)\runsuite.exe\
+ 	$(BINDIR)\testapi.exe
+ 	
+ !if "$(WITH_THREADS)" == "yes" || "$(WITH_THREADS)" == "ctls" || "$(WITH_THREADS)" == "native"
+@@ -357,7 +361,7 @@
+ 
+ # Creates the libxml shared object.
+ $(BINDIR)\$(XML_SO) : $(BINDIR) $(XML_OBJS) $(XML_INTDIR)\$(XML_DEF)
+-	$(LD) $(LDFLAGS) /DLL \
++	$(LD) $(LDFLAGS) /DLL /base:"0x00100000" /stack:0x10000,0x1000 /align:"4096" \
+ 		/IMPLIB:$(BINDIR)\$(XML_IMP) /OUT:$(BINDIR)\$(XML_SO) $(XML_OBJS) $(LIBS)
+ 	@$(_VC_MANIFEST_EMBED_DLL)
+ 
+@@ -380,13 +384,13 @@
+ # An implicit rule for xmllint and friends.
+ !if "$(STATIC)" == "1"
+ {$(UTILS_SRCDIR)}.c{$(BINDIR)}.exe:
+-	$(CC) /D "LIBXML_STATIC" $(CFLAGS) /Fo$(UTILS_INTDIR)\ /c $< 
+-	$(LD) $(LDFLAGS) /OUT:$@ $(XML_A) $(LIBS) $(UTILS_INTDIR)\$(<B).obj
++	$(CC) /D "LIBXML_STATIC" $(CFLAGS) /Fo$(UTILS_INTDIR)\ /c ..\wincecompat.c $< 
++	$(LD) $(LDFLAGS) /OUT:$@ /ENTRY:mainACRTStartup $(XML_A) $(LIBS) $(UTILS_INTDIR)\wincecompat.obj $(UTILS_INTDIR)\$(<B).obj
+ 	@$(_VC_MANIFEST_EMBED_EXE)
+ !else
+ {$(UTILS_SRCDIR)}.c{$(BINDIR)}.exe:
+-	$(CC) $(CFLAGS) /Fo$(UTILS_INTDIR)\ /c $< 
+-	$(LD) $(LDFLAGS) /OUT:$@ $(XML_IMP) $(LIBS) $(UTILS_INTDIR)\$(<B).obj
++	$(CC) $(CFLAGS) /Fo$(UTILS_INTDIR)\ /c ..\wincecompat.c $< 
++	$(LD) $(LDFLAGS) /OUT:$@ /ENTRY:mainACRTStartup $(XML_IMP) $(LIBS) $(UTILS_INTDIR)\wincecompat.obj $(UTILS_INTDIR)\$(<B).obj
+ 	@$(_VC_MANIFEST_EMBED_EXE)
+ !endif
+ 

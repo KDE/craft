@@ -11,6 +11,8 @@ rem    this file should contain all path settings - and provide thus an environm
 rem    to build and run kde programs
 rem    this file sources the kdesettings.bat file automatically
 
+SETLOCAL ENABLEDELAYEDEXPANSION
+
 set BUILDTYPE=
 set APPLICATION=
 
@@ -34,6 +36,16 @@ goto :nextarg
 
 :endargs
 
+rem On win64 we have both %ProgramFiles% and %ProgramFiles(x86)%,
+rem but the latter is actually used for most of the paths (e.g. for Visual Studio)
+rem so we create a wrapper to use the right variable on both win32 and win64
+rem 
+rem NB: note that we can't use the usual if () else () there because
+rem     of a bug in the batch script parser which makes the parenthesis from
+rem     the variable being interpreted as the closing block parenthesis...
+if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
+if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
+
 if exist ..\etc\kdesettings.bat (
 call ..\etc\kdesettings.bat %BUILDTYPE%
 )
@@ -44,11 +56,11 @@ call etc\kdesettings.bat %BUILDTYPE%
 
 set SUBDIR=
 if "%BUILDTYPE%" == "" (
-	if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
-		set SUBDIR=\%EMERGE_BUILDTYPE%
-	)
+    if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
+        set SUBDIR=\%EMERGE_BUILDTYPE%
+    )
 ) else (
-	set SUBDIR=\%EMERGE_BUILDTYPE%
+    set SUBDIR=\%EMERGE_BUILDTYPE%
 )
 
 set PATH=%KDEROOT%%SUBDIR%\bin;%PATH%
@@ -76,9 +88,9 @@ if %KDECOMPILER% == mingw (
 )
 
 if "%APPLICATION%" == "" (
-	%comspec% /e:on /K "cd %KDEROOT%"
+    %comspec% /e:on /K "cd %KDEROOT%"
 ) else (
-	start %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
+    start %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
 )
 goto :eof
 
@@ -95,13 +107,33 @@ goto :eof
     goto :eof
 
 :path-msvc
-    if defined PSDKDIR ( 
-        goto :path-psdk
+    rem MSVC extra setup
+    rem nb: we need delayed var expansion (!VAR!) to avoid confusing the batch script parser
+    rem in case the expanded vars contain parentheses (same problem as above)
+    if defined VSDIR (
+        call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
     )
+    if defined PSDKDIR (
+        echo Using Platform SDK: !PSDKDIR!
+        set PATH=!PSDKDIR!\bin;!PATH!
+        set INCLUDE=!PSDKDIR!\Include;!INCLUDE!
+        set LIB=!PSDKDIR!\Lib;!LIB!
+    )
+    
+    if defined MSDXSDKDIR (
+        call "!MSDXSDKDIR!\Utilities\bin\dx_setenv.cmd" %EMERGE_ARCHITECTURE%
+    )
+
+    if defined TARGET_SDKDIR (
+        if exist "%TARGET_SDKDIR%" (
+            echo Using Mobile SDK: !TARGET_SDKDIR!
+            set TARGET_PATH=!VSDIR!\VC\ce\bin\x86_arm;!PATH!
+            set TARGET_INCLUDE=!VSDIR!\VC\ce\include;!TARGET_SDKDIR!\include\%EMERGE_TARGET_ARCHITECTURE%;!TARGET_SDKDIR!\include;!VSDIR!\VC\ce\atlmfc\include
+            set TARGET_LIB=!TARGET_SDKDIR!\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\atlmfc\lib\%EMERGE_TARGET_ARCHITECTURE%
+        ) else (
+            echo Couldn't find the SDK for target platform %EMERGE_TARGET_PLATFORM%-%EMERGE_TARGET_ARCHITECTURE% ^^! 
+        )
+    )
+
     goto :eof
 
-:path-psdk
-    set PATH=%PSDKDIR%\bin;%PATH%
-    set INCLUDE=%PSDKDIR%\Include;%INCLUDE%
-    set LIB=%PSDKDIR%\Lib;%LIB%
-    goto :eof
