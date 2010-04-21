@@ -26,6 +26,16 @@ class Package(CMakePackageBase):
         if os.path.exists(os.path.join( self.sourceDir() , "zconf.h" )):
             os.remove(os.path.join( self.sourceDir() , "zconf.h" ))
         return True
+        
+    def make(self, unused=''):        
+        if self.isTargetBuild():
+           # This is needed to find some wcecompat files (e.g. errno.h) included by some openssl headers
+           # but we make sure to add it at the very end so it doesn't disrupt the rest of the Qt build
+           os.environ["TARGET_INCLUDE"] = os.getenv("TARGET_INCLUDE") + ";" + os.path.join( self.mergeDestinationDir(), "include", "wcecompat" )
+
+        CMakeBuildSystem.make(self)
+        
+        return True
 
     def createPackage( self ):
         # auto-create both import libs with the help of pexports
