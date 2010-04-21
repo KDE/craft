@@ -10,7 +10,10 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.hardDependencies['dev-util/7zip']   = 'default'
-
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
         
 from Package.BinaryPackageBase import *
 

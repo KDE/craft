@@ -17,7 +17,10 @@ class subinfo( info.infoclass ):
             self.defaultTarget = '2.8.0'
         else:
             self.defaultTarget = '2.8.1'
-
+            
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

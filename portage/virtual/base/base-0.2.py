@@ -25,6 +25,10 @@ class subinfo(info.infoclass):
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
                 self.hardDependencies['dev-util/mingw4']    = 'default'
+                
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True              
 
 class subclass(base.baseclass):
   def __init__( self, **args ):

@@ -7,6 +7,10 @@ class subinfo(info.infoclass):
         self.targetInstallPath['4.65'] = "bin"
         self.defaultTarget = '4.65'
     
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+    
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

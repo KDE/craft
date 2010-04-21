@@ -9,6 +9,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['dummy'] = 'empty'
         self.defaultTarget = 'dummy'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 
