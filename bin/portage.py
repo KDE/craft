@@ -383,6 +383,8 @@ def isInstalled( category, package, version, buildType='' ):
 
     if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or os.getenv( "EMERGE_SOURCEONLY" ) == "True" ):
         """ check for any installation """
+        if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
+            return False
         if package.endswith( "-src" ):
             package = package[:-4]
         for filename in os.listdir( os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
