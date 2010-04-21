@@ -21,14 +21,23 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.41.0'] = 'boost_1_41_0'
         self.defaultTarget = '1.41.0'
     
-#    def setDependencies( self ):
-#        self.hardDependencies['dev-util/bjam'] = 'default'
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
         
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
+        
+        self.subinfo.options.configure.defines = "-DBUILD_PROJECTS=python;program_options " + \
+                                                 "-DENABLE_STATIC=OFF -DENABLE_STATIC_RUNTIME=OFF " + \
+                                                 "-DBOOST_RUNTIME_INSTALL_DIR=bin "
+                                                 
+        if self.buildType() == "Debug":
+            self.subinfo.options.configure.defines += "-DENABLE_DEBUG=ON -DENABLE_RELEASE=OFF "
+        else:
+            self.subinfo.options.configure.defines += "-DENABLE_DEBUG=OFF -DENABLE_RELEASE=ON "
         CMakePackageBase.__init__(self)
 
         
