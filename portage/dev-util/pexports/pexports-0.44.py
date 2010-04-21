@@ -2,9 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.43'] = 'http://www.emmestech.com/software/pexports-0.43/pexports-0.43.zip'
-        self.targetMergeSourcePath['0.43'] = 'pexports-0.43'
-        self.defaultTarget = '0.43'
+        self.targets['0.44'] =  self.getUnifiedPackage( 'http://downloads.sourceforge.net/kde-windows' , "pexports" , '0.44' ,packagetypes=['bin'] )
+        self.defaultTarget = '0.44'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
