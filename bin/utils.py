@@ -940,8 +940,19 @@ def log(fn):
 
     return inner
 
+def buildArchitecture(self):
+    """return the compiling CPU architecture."""
+    return os.getenv( "EMERGE_ARCHITECTURE" )
+
+def targetPlatform(self):
+    """return the cross-compiling target platform."""
+    return os.getenv( "EMERGE_TARGET_PLATFORM" )
+
+def targetArchitecture(self):
+    """return the cross-compiling target CPU architecture."""
+    return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
+
 def isCrossCompilingEnabled():
     """define if cross-compiling is enabled"""
-    targetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
-    return targetPlatform != None and targetPlatform != ""
+    return targetPlatform() != None and targetPlatform() != ""
 

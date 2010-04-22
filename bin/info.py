@@ -215,26 +215,3 @@ class infoclass:
         if self.hasTargetDigestUrls():
             return self.targetDigestUrls[ self.buildTarget ]
         return ''
-
-    def isTargetBuild(self):
-        """This method is duplicated from EmergeBase"""
-        return os.getenv( "EMERGE_BUILD_STEP" ) == "target"
-        
-    def isHostBuild(self):
-        """This method is duplicated from EmergeBase"""
-        return os.getenv( "EMERGE_BUILD_STEP" ) == "host"
-
-    def buildPlatform(self):
-        """return the cross-compiling target platform. This method is duplicated from EmergeBase"""
-        if self.isTargetBuild():
-            return os.getenv( "EMERGE_TARGET_PLATFORM" )
-        else:
-            return "WIN32"
-
-    def buildArchitecture(self):
-        """return the target CPU architecture. This method is duplicated from EmergeBase"""
-        if self.isTargetBuild():
-            return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
-        else:
-            return os.getenv( "EMERGE_ARCHITECTURE" )
-
