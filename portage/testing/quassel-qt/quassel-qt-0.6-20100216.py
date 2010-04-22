@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['kdesupport/kdewin'] = 'default'
      
 
 class Package( CMakePackageBase ):
