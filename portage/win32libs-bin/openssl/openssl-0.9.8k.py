@@ -6,7 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         for version in [ '0.9.8j-1', '0.9.8k-3', '1.0.0' ]:
-            self.targets[ version ] = self.getPackage( 'http://downloads.sourceforge.net/kde-windows' , "openssl" , version )
+            self.targets[ version ] = self.getUnifiedPackage( 'http://downloads.sourceforge.net/kde-windows' , "openssl" , version )
             
         if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '1.0.0'
