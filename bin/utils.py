@@ -95,7 +95,7 @@ def getFile( url, destdir ):
 def wgetFile( url, destdir ):
     """download file with wget from 'url' into 'destdir'"""
     compath = WGetExecutable
-    command = "%s -c -t 1 -P %s %s" % ( compath, destdir, url )
+    command = "%s --no-check-certificate -c -t 1 -P %s %s" % ( compath, destdir, url )
     debug( "wgetfile called", 1 )
     attempts = 1
     if url.lower().startswith( "http://downloads.sourceforge.net" ):
