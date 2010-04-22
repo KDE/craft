@@ -17,6 +17,9 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        # both examples and tests can be run here
+        self.subinfo.options.configure.defines = "-DBUILD_tests=ON -DBUILD_examples=ON"
+        self.subinfo.options.package.withCompiler = None
         
     def createPackage( self ):
         libName="expat" 
@@ -24,7 +27,6 @@ class Package(CMakePackageBase):
         # auto-create both import libs with the help of pexports	 
         self.createImportLibs( libName )
         return KDEWinPackager.createPackage( self )
-
            
 if __name__ == '__main__':
      Package().execute()
