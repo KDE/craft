@@ -8,7 +8,8 @@ class subinfo(info.infoclass):
         
         for version in ['0.17-1']:
             self.targets[ version ] = self.getUnifiedPackage( repoUrl, "gettext", version )
-
+        self.targetDigests['0.17-1'] = ['5c21b674addf0607ba0ec4cb8833ce2c7825dbf6',
+                                        'dbf633faf50f55eed9b95b26171a2f70645e446e']
             
         self.defaultTarget = '0.17-1'
 
