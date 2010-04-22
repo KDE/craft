@@ -46,7 +46,7 @@ class InnoSetupPackager (PackagerBase):
         if "EMERGE_PKGPATCHLVL" in os.environ:
             pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
 
-        if os.getenv("EMERGE_ARCHITECTURE") == "x64": 
+        if self.buildArchitecture() == "x64": 
             pkgName += "-x64"
         #else:
         #    pkgName += "-x86"
