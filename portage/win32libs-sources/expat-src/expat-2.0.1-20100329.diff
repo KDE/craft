@@ -77,7 +77,6 @@ diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 +    target_link_libraries(runtestspp expat)
 +    add_test(runtestspp runtestspp)
 +endif(BUILD_tests)
-\ No newline at end of file
 diff -Nru expat-2.0.1.orig/ConfigureChecks.cmake expat-2.0.1/ConfigureChecks.cmake
 --- expat-2.0.1.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ expat-2.0.1/ConfigureChecks.cmake	2010-03-28 23:55:23.255000000 +0200
