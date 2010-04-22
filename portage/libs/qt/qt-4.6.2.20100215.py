@@ -66,9 +66,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
         if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
-	   self.openssl = portage.getPackageInstance('testing','openssl-src')
+	   self.openssl = portage.getPackageInstance('testing','openssl-msys-src')
         else:
-	  self.openssl = portage.getPackageInstance('win32libs-sources','openssl-msys-src')
+	  self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
