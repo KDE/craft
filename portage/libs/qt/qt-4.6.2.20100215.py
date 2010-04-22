@@ -33,12 +33,15 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['4.6.2-mingw-x64'] = "x64"
         self.svnTargets['4.7-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.7-WebKit|"
         self.targetSrcSuffix['4.7-mingw-x64'] = "x64"
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
+        self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
+        self.targetSrcSuffix['4.7'] = "4.7"
+        
+        if utils.isCrossCompilingEnabled():
+            self.defaultTarget = '4.7'
+        elif os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '4.7-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
-        
-        self.patchToApply['4.6.2'] = ( 'qt-dbus-support-wince.patch', 1 )
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
