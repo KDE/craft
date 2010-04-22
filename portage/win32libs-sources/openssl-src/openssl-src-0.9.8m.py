@@ -6,30 +6,27 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):   
-	for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0' ]
-	  self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
-	  self.targetInstSrc[ver] = 'openssl-'+ver
-	  self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
-	
-	if(os.getenv("EMERGE_ARCHITECTURE") == 'x64'):
-	  self.defaultTarget = '1.0.0-msys'
-        else:
-	  self.defaultTarget = '0.9.8m'
-	
-	self.options.package.withCompiler = False
+        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0' ]:
+            self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
+            self.targetInstSrc[ver] = 'openssl-'+ver
+            self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
         
-     
-       
+        if(os.getenv("EMERGE_ARCHITECTURE") == 'x64'):
+            self.defaultTarget = '1.0.0-msys'
+        else:
+            self.defaultTarget = '0.9.8m'
+        
+        self.options.package.withCompiler = False
 
     def setDependencies( self ):
         if( os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
-	  self.hardDependencies['testing/openssl-msys-src'] = 'default'
+            self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
-	  self.hardDependencies['virtual/base'] = 'default'
-          self.hardDependencies['dev-util/perl'] = 'default'
-          if utils.isCrossCompilingEnabled():
-	    self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
-      
+            self.hardDependencies['virtual/base'] = 'default'
+            self.hardDependencies['dev-util/perl'] = 'default'
+            if utils.isCrossCompilingEnabled():
+                self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+
 
 from Package.CMakePackageBase import *
 
