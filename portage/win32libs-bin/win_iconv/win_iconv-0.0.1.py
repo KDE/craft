@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         
         for version in ['0.0.1']:
             self.targets[ version ] = self.getUnifiedPackage( repoUrl, "win_iconv", version )
+            self.targetDigestUrls[ version ] = 'auto'
 
         self.defaultTarget = '0.0.1'
 
