@@ -53,7 +53,7 @@ def verbose():
     else:
         return 0
 
-def getFiles( urls, destdir ):
+def getFiles( urls, destdir, suffix=''):
     """download files from 'url' into 'destdir'"""
     debug( "getfiles called. urls: %s" % urls, 1 )
     # make sure distfiles dir exists
@@ -61,8 +61,7 @@ def getFiles( urls, destdir ):
         os.makedirs( destdir )
 
     for url in urls.split():
-        #print "getfiles url:", url
-        if ( not getFile( url, destdir ) ):
+        if ( not getFile( url + suffix, destdir ) ):
             return False
 
     return True
@@ -184,12 +183,12 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
             if line.find(' ') == -1:
                 digest = line.strip()
             else:
-                [ dummy, digest] = line.split( "  ", 2 )
+                [ digest, _filename ] = line.split( "  ", 2 )
 
             if len(digest) != len(hash) or digest.find(hash) == -1:
                 error( "digest value for file %s (%s) do not match (%s)" % (file, hash, digest) )
                 return False
-        # checksums provided in checksums parameter
+        # digest provided in digests parameter
         else:
             hash = digestFileSha1( file )
             digest = digestList[i].strip()
