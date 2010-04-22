@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        self.options.package.withCompiler = None
 
 from Package.CMakePackageBase import *        
         
