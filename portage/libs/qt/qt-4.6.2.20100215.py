@@ -50,7 +50,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+	  self.hardDependencies['testing/openssl-msys-src'] = 'default'
+        else:
+	  self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         self.hardDependencies['testing/mysql-server'] = 'default'
 
@@ -62,7 +65,10 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
+        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+	   self.openssl = portage.getPackageInstance('testing','openssl-src')
+        else:
+	  self.openssl = portage.getPackageInstance('win32libs-sources','openssl-msys-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
