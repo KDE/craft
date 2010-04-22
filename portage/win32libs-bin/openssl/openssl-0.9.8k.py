@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         for version in [ '0.9.8j-1', '0.9.8k-3', '1.0.0' ]:
             self.targets[ version ] = self.getUnifiedPackage( 'http://downloads.sourceforge.net/kde-windows' , "openssl" , version )
             
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
+        if self.buildArchitecture() == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '1.0.0'
         else:
             self.defaultTarget = '0.9.8k-3'

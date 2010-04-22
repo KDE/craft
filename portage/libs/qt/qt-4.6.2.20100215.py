@@ -38,7 +38,7 @@ class subinfo(info.infoclass):
         
         if utils.isCrossCompilingEnabled():
             self.defaultTarget = '4.7'
-        elif os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
+        elif self.buildArchitecture() == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '4.7-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
@@ -50,7 +50,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+        if self.buildArchitecture() == 'x64':
 	  self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
 	  self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
@@ -65,7 +65,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+        if self.buildArchitecture() == 'x64':
 	   self.openssl = portage.getPackageInstance('testing','openssl-msys-src')
         else:
 	  self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
@@ -99,7 +99,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
 
-        if os.getenv("EMERGE_ARCHITECTURE") == 'x64' and COMPILER == "mingw4":
+        if self.buildArchitecture() == 'x64' and COMPILER == "mingw4":
             mysql_plugin = ""
         else: 
             mysql_plugin = "-plugin-sql-mysql "

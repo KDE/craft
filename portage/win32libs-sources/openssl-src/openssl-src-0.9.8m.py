@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'openssl-'+ver
             self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
         
-        if(os.getenv("EMERGE_ARCHITECTURE") == 'x64'):
+        if(self.buildArchitecture() == 'x64'):
             self.targets['1.0.0-msys'] = ''
             self.defaultTarget = '1.0.0-msys'
         else:
@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        if( os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
+        if( self.buildArchitecture() == 'x64' ):
             self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
             self.hardDependencies['virtual/base'] = 'default'
@@ -37,7 +37,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
     def compile( self ):
-        if(os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
+        if(self.buildArchitecture() == 'x64' ):
 	  return True
         os.chdir( self.sourceDir() )
         cmd = ""
@@ -79,7 +79,7 @@ class Package(CMakePackageBase):
         return self.system( cmd )
 
     def install( self ):
-        if(os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
+        if(self.buildArchitecture() == 'x64' ):
            return True
         src = self.sourceDir()
         dst = self.imageDir()

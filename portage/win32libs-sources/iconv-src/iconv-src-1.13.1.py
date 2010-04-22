@@ -35,7 +35,7 @@ class Package(AutoToolsPackageBase):
         utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir().replace(":","\\" ) )
 
         # do not create msvc import libs in x64 mode
-        if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+        if self.buildArchitecture() == "x64":
             return True
             
         for libs in "libiconv-2 libcharset-1".split():

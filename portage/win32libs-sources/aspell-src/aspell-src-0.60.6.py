@@ -37,7 +37,7 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         self.buildInSource=True
         
         compiler = self.compiler()
-        if os.getenv("EMERGE_ARCHITECTURE")=="x64" and compiler == "mingw4":
+        if self.buildArchitecture()=="x64" and compiler == "mingw4":
             compiler="mingw64"
         elif(compiler == "mingw4"):
             compiler="mingw"
