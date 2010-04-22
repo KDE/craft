@@ -1,6 +1,6 @@
 diff -Nru zlib-1.2.4.orig/CMakeLists.txt zlib-1.2.4/CMakeLists.txt
 --- zlib-1.2.4.orig/CMakeLists.txt	Tue Feb 23 15:53:58 2010
-+++ zlib-1.2.4/CMakeLists.txt	Thu Apr 22 13:18:38 2010
++++ zlib-1.2.4/CMakeLists.txt	Thu Apr 22 13:29:48 2010
 @@ -1,8 +1,15 @@
 -cmake_minimum_required(VERSION 2.4.4)
 +cmake_minimum_required(VERSION 2.6)
@@ -35,17 +35,32 @@ diff -Nru zlib-1.2.4.orig/CMakeLists.txt zlib-1.2.4/CMakeLists.txt
      add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
      add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
  endif()
-@@ -141,6 +149,10 @@
- set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
+@@ -142,6 +150,10 @@
  
  set_target_properties(zlib PROPERTIES SOVERSION 1)
-+
+ 
 +if(WINCE)
 +    target_link_libraries(zlib ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
- 
++
  if(NOT CYGWIN)
      # This property causes shared libraries on Linux to have the full version
+     # encoded into their final filename.  We disable this on Cygwin because
+@@ -178,12 +190,14 @@
+ # Example binaries
+ #============================================================================
+ 
++if(NOT WINCE)
+ add_executable(example example.c)
+ target_link_libraries(example zlib)
+ add_test(example example)
+ 
+ add_executable(minigzip minigzip.c)
+ target_link_libraries(minigzip zlib)
++endif(NOT WINCE)
+ 
+ if(HAVE_OFF64_T)
+     add_executable(example64 example.c)
 diff -Nru zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.4/cmake/modules/FindWcecompat.cmake
 --- zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
 +++ zlib-1.2.4/cmake/modules/FindWcecompat.cmake	Thu Apr 22 12:48:01 2010
