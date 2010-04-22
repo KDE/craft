@@ -28,7 +28,8 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         self.subinfo.options.package.packageName = 'openssl'
-        self.options.package.withCompiler = False
+        self.subinfo.options.package.withCompiler = False
+        self.subinfo.options.package.packSources = False
         self.shell = MSysShell()
         
         self.buildInSource=True
