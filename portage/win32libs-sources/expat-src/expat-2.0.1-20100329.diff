@@ -14,8 +14,8 @@ diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 +set(PACKAGE_TARNAME "expat")
 +set(PACKAGE_VERSION "2.0.1")
 +
-+option(BUILD_examples "build the examples for expat library" OFF)
-+option(BUILD_tests "build the tests for expat library" OFF)
++option(BUILD_examples "build the examples for expat library" ON)
++option(BUILD_tests "build the tests for expat library" ON)
 +
 +if(BUILD_tests)
 +    enable_testing()
