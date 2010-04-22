@@ -27,6 +27,8 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
+        self.subinfo.options.package.packageName = 'openssl'
+        self.shell = MSysShell()
         
         self.buildInSource=True
         compiler = self.compiler()
@@ -39,7 +41,16 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
 
         # target install needs perl with native path on configure time
         os.putenv("PERL",MSysShell().toNativePath(os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" , "perl.exe" )))
-        self.subinfo.options.configure.defines = " shared -enable-md2  zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler )
+        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler )
            
+      
+    def install (self):
+      if(not AutoToolsBuildSystem.install(self)):
+	return False
+      self.shell.execute(os.path.join( self.imageDir() , "lib"), "chmod" ,"664 *")
+      self.shell.execute(os.path.join( self.imageDir() , "lib" , "engines" ), "chmod" , "755 *")
+      shutil.move( os.path.join( self.imageDir(),  "lib" , "libcrypto.dll.a" ) , os.path.join( self.imageDir() , "lib" , "libeay32.dll.a" ) )
+      shutil.move( os.path.join( self.imageDir(), "lib" , "libssl.dll.a" ) , os.path.join( self.imageDir() , "lib" , "ssleay32.dll.a" ) )
+      return True
 if __name__ == '__main__':
      Package().execute()
