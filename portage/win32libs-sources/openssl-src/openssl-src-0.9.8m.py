@@ -5,26 +5,31 @@ import utils
 import info
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.targets['0.9.8k'] = 'http://www.openssl.org/source/openssl-0.9.8k.tar.gz'
-        self.targetInstSrc['0.9.8k'] = 'openssl-0.9.8k'
-        self.patchToApply['0.9.8k'] = ('openssl-0.9.8k.diff', 1)
-        self.targets['1.0.0'] = 'http://www.openssl.org/source/openssl-1.0.0.tar.gz'
-        self.targetInstSrc['1.0.0'] = 'openssl-1.0.0'
-        self.patchToApply['1.0.0'] = ('openssl-1.0.0-20100402.diff', 1)
-        self.targets['0.9.8m'] = 'http://www.openssl.org/source/openssl-0.9.8m.tar.gz'
-        self.targetInstSrc['0.9.8m'] = 'openssl-0.9.8m'
-        self.patchToApply['0.9.8m'] = ('openssl-wince5.patch', 0)
+    def setTargets( self ):   
+	for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0' ]
+	  self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
+	  self.targetInstSrc[ver] = 'openssl-'+ver
+	  self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
+	
+	if(os.getenv("EMERGE_ARCHITECTURE") == 'x64'):
+	  self.defaultTarget = '1.0.0-msys'
+        else:
+	  self.defaultTarget = '0.9.8m'
+	
+	self.options.package.withCompiler = False
         
-        self.defaultTarget = '0.9.8m'
-        
-        self.options.package.withCompiler = False
+     
+       
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/perl'] = 'default'
-        if utils.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+        if( os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
+	  self.hardDependencies['testing/openssl-msys-src'] = 'default'
+        else:
+	  self.hardDependencies['virtual/base'] = 'default'
+          self.hardDependencies['dev-util/perl'] = 'default'
+          if utils.isCrossCompilingEnabled():
+	    self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+      
 
 from Package.CMakePackageBase import *
 

@@ -1,5 +1,5 @@
---- e_os.h	Mon Jan 19 14:26:36 1970
-+++ e_os.h	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/e_os.h	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/e_os.h	Mon Jan 19 14:26:36 1970
 @@ -292,7 +292,7 @@
  #      undef isupper
  #      undef isxdigit
@@ -29,8 +29,8 @@
  extern HINSTANCE _hInstance;
  #      ifdef _WIN64
  /*
---- apps/apps.h	Mon Jan 19 14:26:36 1970
-+++ apps/apps.h	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/apps/apps.h	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/apps/apps.h	Mon Jan 19 14:26:36 1970
 @@ -137,7 +137,7 @@
                                         * (see e_os.h).  The string is
                                         * destroyed! */
@@ -40,8 +40,8 @@
  #define rename(from,to) WIN32_rename((from),(to))
  int WIN32_rename(const char *oldname,const char *newname);
  #endif
---- crypto/rand/randfile.c	Mon Jan 19 14:26:36 1970
-+++ crypto/rand/randfile.c	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/crypto/rand/randfile.c	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/crypto/rand/randfile.c	Mon Jan 19 14:26:36 1970
 @@ -81,7 +81,7 @@
  # include <sys/stat.h>
  #endif
@@ -51,8 +51,8 @@
  #define stat	_stat
  #define chmod	_chmod
  #define open	_open
---- crypto/x509/by_dir.c	Mon Jan 19 14:26:36 1970
-+++ crypto/x509/by_dir.c	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/crypto/x509/by_dir.c	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/crypto/x509/by_dir.c	Mon Jan 19 14:26:36 1970
 @@ -74,7 +74,7 @@
  #include <openssl/lhash.h>
  #include <openssl/x509.h>
@@ -62,8 +62,8 @@
  #define stat	_stat
  #endif
  
---- ssl/dtls1.h	Mon Jan 19 14:26:36 1970
-+++ ssl/dtls1.h	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/ssl/dtls1.h	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/ssl/dtls1.h	Mon Jan 19 14:26:36 1970
 @@ -68,7 +68,7 @@
  #endif
  #ifdef OPENSSL_SYS_WIN32
@@ -73,8 +73,8 @@
  #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
  #include <sys/timeval.h>
  #else
---- ssl/ssltest.c	Mon Jan 19 14:26:36 1970
-+++ ssl/ssltest.c	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/ssl/ssltest.c	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/ssl/ssltest.c	Mon Jan 19 14:26:36 1970
 @@ -161,7 +161,7 @@
  				  */
  
@@ -84,8 +84,8 @@
  #else
  #include OPENSSL_UNISTD
  #endif
---- util/pl/VC-32.pl	Mon Jan 19 14:26:36 1970
-+++ util/pl/VC-32.pl	Mon Jan 19 14:26:36 1970
+--- openssl-0.9.8m.orig/util/pl/VC-32.pl	Mon Jan 19 14:26:36 1970
++++ openssl-0.9.8m/util/pl/VC-32.pl	Mon Jan 19 14:26:36 1970
 @@ -103,7 +103,7 @@
      }
  
@@ -123,8 +123,8 @@
  			}
  		else
  			{
---- e_os2.h
-+++ e_os2.h
+--- openssl-0.9.8m.orig/e_os2.h
++++ openssl-0.9.8m/e_os2.h
 @@ -264,7 +264,7 @@
  # define OPENSSL_IMPLEMENT_GLOBAL(type,name)			     \
  	extern type _hide_##name;				     \
