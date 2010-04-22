@@ -3,6 +3,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'http://win-iconv.googlecode.com/svn/trunk'
+        self.targets['0.0.1'] = 'http://win-iconv.googlecode.com/files/win-iconv-0.0.1.tar.bz2'
+        self.targetInstSrc['0.0.1'] = 'win-iconv-0.0.1'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
