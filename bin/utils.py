@@ -941,11 +941,8 @@ def log(fn):
 
     return inner
 
-def targetPlatform():
-    """return the cross-compiling target platform, if set in kdesettings.bat"""
-    return os.getenv( "EMERGE_TARGET_PLATFORM" )
-
 def isCrossCompilingEnabled():
     """define if cross-compiling is enabled"""
-    return targetPlatform() != "" and targetPlatform() != None
+    targetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
+    return targetPlatform != None and targetPlatform != ""
 

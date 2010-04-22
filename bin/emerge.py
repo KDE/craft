@@ -161,29 +161,29 @@ def doExec( category, package, version, action, opts ):
 
 def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
-
-    saveTargetPlatform = os.getenv( "EMERGE_TARGET_PLATFORM" )
     
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
-        if utils.isCrossCompilingEnabled() and not disableHostBuild:
-            os.putenv( "EMERGE_TARGET_PLATFORM", "" )
-            success = success and doExec( category, package, version, "compile", opts )
-            success = success and doExec( category, package, version, "cleanimage", opts )
-            success = success and doExec( category, package, version, "install", opts )
-            if ( buildAction == "all" ):
-                success = success and doExec( category, package, version, "manifest", opts )
-            if ( buildAction == "all" ):
-                success = success and doExec( category, package, version, "qmerge", opts )
-            if( buildAction == "full-package" ):
-                success = success and doExec( category, package, version, "package", opts )
-            os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
-                
+        if utils.isCrossCompilingEnabled():
+            if not disableHostBuild:
+                os.putenv( "EMERGE_BUILD_STEP", "host" )
+                success = success and doExec( category, package, version, "compile", opts )
+                success = success and doExec( category, package, version, "cleanimage", opts )
+                success = success and doExec( category, package, version, "install", opts )
+                if ( buildAction == "all" ):
+                    success = success and doExec( category, package, version, "manifest", opts )
+                if ( buildAction == "all" ):
+                    success = success and doExec( category, package, version, "qmerge", opts )
+                if( buildAction == "full-package" ):
+                    success = success and doExec( category, package, version, "package", opts )
+            if disableTargetBuild:
+                return success
+            else:
+                os.putenv( "EMERGE_BUILD_STEP", "target" )
+        else:
+            os.putenv( "EMERGE_BUILD_STEP", "" )
         
-        if utils.isCrossCompilingEnabled() and disableTargetBuild:
-            return success
-            
         success = success and doExec( category, package, version, "compile", opts )
         success = success and doExec( category, package, version, "cleanimage", opts )
         success = success and doExec( category, package, version, "install", opts )
@@ -197,21 +197,26 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
-        if utils.isCrossCompilingEnabled() and not disableHostBuild and disableTargetBuild:
-            os.putenv( "EMERGE_TARGET_PLATFORM", "" )
-            success = doExec( category, package, version, buildAction, opts )
-            os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
+        if utils.isCrossCompilingEnabled():
+            # target build is the default for single build actions, unless explicitely disabled
+            if not disableHostBuild and disableTargetBuild:
+                os.putenv( "EMERGE_BUILD_STEP", "host" )
+            else:
+                os.putenv( "EMERGE_BUILD_STEP", "target" )
         else:
-            success = doExec( category, package, version, buildAction, opts )
+            os.putenv( "EMERGE_BUILD_STEP", "" )
+        success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
-        if utils.isCrossCompilingEnabled() and not disableHostBuild and disableTargetBuild:
-            os.putenv( "EMERGE_TARGET_PLATFORM", "" )
-            success = doExec( category, package, version, "cleanimage", opts )
-            success = success and doExec( category, package, version, "install", opts )
-            os.putenv( "EMERGE_TARGET_PLATFORM", saveTargetPlatform )
+        if utils.isCrossCompilingEnabled():
+            # target build is the default for single build actions, unless explicitely disabled
+            if not disableHostBuild and disableTargetBuild:
+                os.putenv( "EMERGE_BUILD_STEP", "host" )
+            else:
+                os.putenv( "EMERGE_BUILD_STEP", "target" )
         else:
-            success = doExec( category, package, version, "cleanimage", opts )
-            success = success and doExec( category, package, version, "install", opts )
+            os.putenv( "EMERGE_BUILD_STEP", "" )
+        success = doExec( category, package, version, "cleanimage", opts )
+        success = success and doExec( category, package, version, "install", opts )
     elif ( buildAction == "version-dir" ):
         print "%s-%s" % ( package, version )
         success = True

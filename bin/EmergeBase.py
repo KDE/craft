@@ -148,18 +148,24 @@ class EmergeBase():
         return self.__compiler
 
     def isTargetBuild(self):
-        return self.buildPlatform() != "" and self.buildPlatform() != None
+        return os.getenv( "EMERGE_BUILD_STEP" ) == "target"
         
     def isHostBuild(self):
-        return not self.isTargetBuild()
+        return os.getenv( "EMERGE_BUILD_STEP" ) == "host"
 
     def buildPlatform(self):
         """return the cross-compiling target platform"""
-        return os.getenv( "EMERGE_TARGET_PLATFORM" )
+        if self.isTargetBuild():
+            return os.getenv( "EMERGE_TARGET_PLATFORM" )
+        else:
+            return "WIN32"
 
     def buildArchitecture(self):
         """return the target CPU architecture"""
-        return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
+        if self.isTargetBuild():
+            return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
+        else:
+            return os.getenv( "EMERGE_ARCHITECTURE" )
 
 
     def downloadDir(self): 
