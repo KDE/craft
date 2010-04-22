@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/perl'] = 'default' # buildtime dependency
         self.hardDependencies['dev-util/msys'] = 'default' # buildtime dependency
-        self.hardDependencies['win32libs-bin/iconv'] = 'default'
+        self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
 
 
 from Package.PackageBase import *
