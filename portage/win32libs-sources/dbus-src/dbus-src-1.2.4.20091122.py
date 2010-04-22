@@ -2,6 +2,7 @@
 import utils
 import os
 import info
+import platform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -24,7 +25,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-bin/expat'] = 'default'
-        if utils.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
 
 from Package.CMakePackageBase import *

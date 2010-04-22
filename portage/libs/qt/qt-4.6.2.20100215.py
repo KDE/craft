@@ -5,6 +5,7 @@ from utils import die
 import os
 import info
 import portage
+import platform
 
 from Package.QMakePackageBase import *
 
@@ -36,9 +37,9 @@ class subinfo(info.infoclass):
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.targetSrcSuffix['4.7'] = "4.7"
         
-        if utils.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled():
             self.defaultTarget = '4.7'
-        elif utils.hostArchitecture() == 'x64' and COMPILER == "mingw4":
+        elif platform.buildArchitecture() == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '4.7-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
@@ -50,12 +51,12 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        if utils.hostArchitecture() == 'x64':
+        if platform.buildArchitecture() == 'x64':
             self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
             self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-        if not utils.isCrossCompilingEnabled():
+        if not platform.isCrossCompilingEnabled():
             self.hardDependencies['testing/mysql-server'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
@@ -71,7 +72,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
             self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        if not utils.isCrossCompilingEnabled():
+        if not platform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
     def configure( self, unused1=None, unused2=""):
@@ -96,7 +97,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
         libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        if not utils.isCrossCompilingEnabled():
+        if not platform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
@@ -116,7 +117,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
             # both cc-target and non-cc builds
             command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
-        if not utils.isCrossCompilingEnabled():
+        if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
             if not (self.buildArchitecture() == 'x64' and COMPILER == "mingw4"):

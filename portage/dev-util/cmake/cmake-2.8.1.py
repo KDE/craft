@@ -1,4 +1,5 @@
 import info
+import platform
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -13,7 +14,7 @@ class subinfo( info.infoclass ):
 
         self.patchToApply['2.8.0'] = ('cmake-2.8.0-wince-support.patch', 0)
 
-        if utils.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0'
         else:
             self.defaultTarget = '2.8.1'

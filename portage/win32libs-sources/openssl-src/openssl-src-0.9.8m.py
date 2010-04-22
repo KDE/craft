@@ -3,6 +3,7 @@ import os
 import shutil
 import utils
 import info
+import platform
 
 class subinfo(info.infoclass):
     def setTargets( self ):   
@@ -11,7 +12,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'openssl-'+ver
             self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
         
-        if utils.hostArchitecture() == 'x64':
+        if platform.buildArchitecture() == 'x64':
             self.targets['1.0.0-msys'] = ''
             self.defaultTarget = '1.0.0-msys'
         else:
@@ -20,12 +21,12 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        if utils.hostArchitecture() == 'x64':
+        if platform.buildArchitecture() == 'x64':
             self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
             self.hardDependencies['virtual/base'] = 'default'
             self.hardDependencies['dev-util/perl'] = 'default'
-            if utils.isCrossCompilingEnabled():
+            if platform.isCrossCompilingEnabled():
                 self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
 

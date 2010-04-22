@@ -9,6 +9,7 @@ import sys
 import os
 import utils
 import portage
+import platform
 
 def usage():
     print """
@@ -165,7 +166,7 @@ def handlePackage( category, package, version, buildAction, opts ):
     if ( buildAction == "all" or buildAction == "full-package" ):
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
-        if utils.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
                 success = success and doExec( category, package, version, "compile", opts )
@@ -197,7 +198,7 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
-        if utils.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled():
             # target build is the default for single build actions, unless explicitely disabled
             if not disableHostBuild and disableTargetBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
@@ -207,7 +208,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             os.putenv( "EMERGE_BUILD_STEP", "" )
         success = doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
-        if utils.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled():
             # target build is the default for single build actions, unless explicitely disabled
             if not disableHostBuild and disableTargetBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
