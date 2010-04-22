@@ -38,7 +38,7 @@ class subinfo(info.infoclass):
         
         if utils.isCrossCompilingEnabled():
             self.defaultTarget = '4.7'
-        elif self.buildArchitecture() == 'x64' and COMPILER == "mingw4":
+        elif utils.hostArchitecture() == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '4.7-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
@@ -50,12 +50,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        if self.buildArchitecture() == 'x64':
-	  self.hardDependencies['testing/openssl-msys-src'] = 'default'
+        if utils.hostArchitecture() == 'x64':
+            self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
-	  self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
+            self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-        self.hardDependencies['testing/mysql-server'] = 'default'
+        if not utils.isCrossCompilingEnabled():
+            self.hardDependencies['testing/mysql-server'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -66,11 +67,12 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
         if self.buildArchitecture() == 'x64':
-	   self.openssl = portage.getPackageInstance('testing','openssl-msys-src')
+            self.openssl = portage.getPackageInstance('testing','openssl-msys-src')
         else:
-	  self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
+            self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        self.mysql_server = portage.getPackageInstance('testing','mysql-server')
+        if not utils.isCrossCompilingEnabled():
+            self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -94,26 +96,33 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
         libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        if self.isHostBuild():
+        if not utils.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
-
-        if self.buildArchitecture() == 'x64' and COMPILER == "mingw4":
-            mysql_plugin = ""
-        else: 
-            mysql_plugin = "-plugin-sql-mysql "
         
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         if self.isTargetBuild():
             command += "-xplatform %s " % xplatform
-        else:
-            command += "-plugin-sql-odbc " + mysql_plugin
         
-        command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
-        command += "-no-phonon -qdbus -openssl-linked -dbus-linked "
+        if self.isHostBuild():
+            # cc-host : only core stuff will be needed, so disable all the unnecessary parts
+            # too bad there's no -no-gui :-(
+            command += "-no-webkit -no-script -no-scripttools -no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
+            command += "-no-gif -no-libpng -no-libjpeg -no-libtiff "
+            command += "-no-accessibility -nomake docs -nomake translations "
+        else:
+            # both cc-target and non-cc builds
+            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
+        if not utils.isCrossCompilingEnabled():
+            # non-cc builds only
+            command += "-plugin-sql-odbc "
+            if not (self.buildArchitecture() == 'x64' and COMPILER == "mingw4"):
+                command += "-plugin-sql-mysql "
+        # all builds
+        command += "-no-phonon -qdbus -dbus-linked -openssl-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
