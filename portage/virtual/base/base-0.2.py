@@ -19,9 +19,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/pexports']   = 'default'
 
         if os.getenv( "KDECOMPILER" ) == "mingw4":
-            if self.buildArchitecture() == 'x64':
+            if utils.hostArchitecture() == 'x64':
                 self.hardDependencies['dev-util/mingw-w64']    = 'default'
-            elif self.buildArchitecture() == 'arm-wince':
+            elif utils.hostArchitecture() == 'arm-wince':
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
                 self.hardDependencies['dev-util/mingw4']    = 'default'
