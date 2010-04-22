@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
        for ver in [ '1.2.4' ]:
            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/libpng/zlib-%s.tar.gz' % ver
            self.targetInstSrc[ ver ] = "zlib-" + ver
-       self.patchToApply['1.2.4'] = ("zlib-1.2.4-20100329.diff", 1)
+       self.patchToApply['1.2.4'] = ("zlib-1.2.4-20100422.diff", 1)
        self.defaultTarget = '1.2.4'
 
     def setDependencies( self ):
@@ -25,16 +25,6 @@ class Package(CMakePackageBase):
             return False       
         if os.path.exists(os.path.join( self.sourceDir() , "zconf.h" )):
             os.remove(os.path.join( self.sourceDir() , "zconf.h" ))
-        return True
-        
-    def make(self, unused=''):        
-        if self.isTargetBuild():
-           # This is needed to find some wcecompat files (e.g. errno.h) included by some openssl headers
-           # but we make sure to add it at the very end so it doesn't disrupt the rest of the Qt build
-           os.environ["TARGET_INCLUDE"] = os.getenv("TARGET_INCLUDE") + ";" + os.path.join( self.mergeDestinationDir(), "include", "wcecompat" )
-
-        CMakeBuildSystem.make(self)
-        
         return True
 
     def createPackage( self ):
