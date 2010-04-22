@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
             self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
         
         if(os.getenv("EMERGE_ARCHITECTURE") == 'x64'):
+            self.targets['1.0.0-msys'] = ''
             self.defaultTarget = '1.0.0-msys'
         else:
             self.defaultTarget = '0.9.8m'
@@ -36,6 +37,8 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
     def compile( self ):
+        if(os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
+	  return True
         os.chdir( self.sourceDir() )
         cmd = ""
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
@@ -76,6 +79,8 @@ class Package(CMakePackageBase):
         return self.system( cmd )
 
     def install( self ):
+        if(os.getenv("EMERGE_ARCHITECTURE") == 'x64' ):
+           return True
         src = self.sourceDir()
         dst = self.imageDir()
 
