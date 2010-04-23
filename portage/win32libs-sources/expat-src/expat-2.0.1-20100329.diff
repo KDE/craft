@@ -1,7 +1,7 @@
 diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 --- expat-2.0.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ expat-2.0.1/CMakeLists.txt	2010-03-29 01:10:43.484000000 +0200
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,78 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -29,11 +29,11 @@ diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 +endif(MSVC)
 +
 +set(expat_SRCS
-+lib/xmlparse.c
-+lib/xmlrole.c
-+lib/xmltok.c 
-+lib/xmltok_impl.c 
-+lib/xmltok_ns.c
++    lib/xmlparse.c
++    lib/xmlrole.c
++    lib/xmltok.c 
++    lib/xmltok_impl.c 
++    lib/xmltok_ns.c
 +)
 +
 +if(WIN32)
@@ -42,22 +42,25 @@ diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 +
 +add_library(expat SHARED ${expat_SRCS})
 +
-+set(xmlwf_SRCS
-+xmlwf/xmlwf.c
-+xmlwf/xmlfile.c
-+xmlwf/codepage.c
-+xmlwf/readfilemap.c
-+)
-+
-+add_executable(xmlwf ${xmlwf_SRCS})
-+target_link_libraries(xmlwf expat)
-+
-+install(TARGETS expat xmlwf RUNTIME DESTINATION bin
-+                            LIBRARY DESTINATION lib
-+                            ARCHIVE DESTINATION lib)
++install(TARGETS expat RUNTIME DESTINATION bin
++                      LIBRARY DESTINATION lib
++                      ARCHIVE DESTINATION lib)
 +
 +install(FILES lib/expat.h lib/expat_external.h DESTINATION include)
-+install(FILES doc/xmlwf.1 DESTINATION man/man1)
++
++if(NOT WINCE)
++    set(xmlwf_SRCS
++        xmlwf/xmlwf.c
++        xmlwf/xmlfile.c
++        xmlwf/codepage.c
++        xmlwf/readfilemap.c
++    )
++
++    add_executable(xmlwf ${xmlwf_SRCS})
++    target_link_libraries(xmlwf expat)
++    install(TARGETS xmlwf DESTINATION bin)
++    install(FILES doc/xmlwf.1 DESTINATION man/man1)
++endif(NOT WINCE)
 +
 +if(BUILD_examples)
 +    add_executable(elements examples/elements.c)
