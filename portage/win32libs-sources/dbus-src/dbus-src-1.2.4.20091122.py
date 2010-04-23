@@ -25,8 +25,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-bin/expat'] = 'default'
-        if platform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
 
 from Package.CMakePackageBase import *
                 
@@ -36,10 +34,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus'
         self.subinfo.options.make.slnBaseName = 'dbus'
-        if self.isTargetBuild():
-            self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=OFF"
-        else:
-            self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON"
+        self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON"
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):
