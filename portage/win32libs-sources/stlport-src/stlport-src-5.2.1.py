@@ -80,7 +80,7 @@ class Package(QMakePackageBase):
         else:
             utils.copySrcDirToDestDir( os.path.join( self.sourceDir(), "bin", "evc9-arm" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.sourceDir(), "lib", "evc9-arm" ) , os.path.join( self.installDir(), "lib" ) )
-        utils.copySrcDirToDestDir( os.path.join( self.sourceDir(), "stlport" ) , os.path.join( self.installDir(), "include" ) )
+        utils.copySrcDirToDestDir( os.path.join( self.sourceDir(), "stlport" ) , os.path.join( self.installDir(), "include", "stlport" ) )
         
         return True
 
