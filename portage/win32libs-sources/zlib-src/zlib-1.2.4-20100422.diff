@@ -97,7 +97,7 @@ diff -Nru zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.4/cmake/mod
 +include(FindPackageHandleStandardArgs)
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  LIBICONV_CONST  WCECOMPAT_LIB_FOUND)
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru zlib-1.2.4.orig/zconf.h zlib-1.2.4/zconf.h
 --- zlib-1.2.4.orig/zconf.h	Sun Feb 21 22:38:24 2010
 +++ zlib-1.2.4/zconf.h	Thu Jan  1 00:00:00 1970
