@@ -54,8 +54,8 @@ class subinfo(info.infoclass):
         if platform.buildArchitecture() == 'x64':
             self.hardDependencies['testing/openssl-msys-src'] = 'default'
         else:
-            self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
-        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
+            self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        self.hardDependencies['win32libs-bin/dbus'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['testing/mysql-server'] = 'default'
 
@@ -70,8 +70,8 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         if self.buildArchitecture() == 'x64':
             self.openssl = portage.getPackageInstance('testing','openssl-msys-src')
         else:
-            self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
-        self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
+            self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
+        self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
         if not platform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-server')
 
