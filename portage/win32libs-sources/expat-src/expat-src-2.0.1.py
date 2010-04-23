@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.targets['2.0.1'] = 'http://downloads.sourceforge.net/sourceforge/expat/expat-2.0.1.tar.gz'
