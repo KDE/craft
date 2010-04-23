@@ -93,10 +93,11 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         os.environ[ "USERIN" ] = "y"
         userin = "y"
 
-        incdirs = " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
-        libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
-        incdirs +=  " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
-        libdirs +=  " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
+        incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+        libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
+        if not self.isHostBuild():
+            incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
+            libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         if not platform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
@@ -112,18 +113,18 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # cc-host : only core stuff will be needed, so disable all the unnecessary parts
             # too bad there's no -no-gui :-(
             command += "-no-webkit -no-script -no-scripttools -no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
-            command += "-no-gif -no-libpng -no-libjpeg -no-libtiff "
-            command += "-no-accessibility -nomake docs -nomake translations "
+            command += "-no-gif -no-libpng -no-libjpeg -no-libtiff -no-libmng "
+            command += "-no-accessibility -nomake docs -nomake translations -nomake tools "
         else:
             # both cc-target and non-cc builds
-            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff "
+            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked "
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
             if not (self.buildArchitecture() == 'x64' and COMPILER == "mingw4"):
                 command += "-plugin-sql-mysql "
         # all builds
-        command += "-no-phonon -qdbus -dbus-linked -openssl-linked "
+        command += "-no-phonon -qdbus -dbus-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
