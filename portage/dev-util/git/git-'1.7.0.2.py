@@ -4,9 +4,11 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.6.3'] = "http://winkde.org/pub/kde/ports/win32/repository/other/Git-1.6.3-preview20090507-2.tar.bz2"
-        self.targets['1.6.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.6.4-preview20090729.7z"
         self.targetInstSrc['1.6.3'] = ""
-        self.defaultTarget = '1.6.4'
+        self.targets['1.6.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.6.4-preview20090729.7z"
+        self.targets['1.7.0.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.0.2-preview20100309.7z"
+        
+        self.defaultTarget = '1.7.0.2'
 
     def setDependencies(self):
         self.hardDependencies['dev-util/7zip']   = 'default'
