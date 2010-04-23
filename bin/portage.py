@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import portage_versions
+import platform
 
 def __import__( module ):
     utils.debug( "module to import: %s" % module, 2 )
@@ -121,9 +122,15 @@ class Portage:
         else:
             return
 
-    def getPackageInstance( self, category, package ):
+    def getPackageInstance( self, category, package, sourcePackageAllowed=True ):
         """return instance of class Package from package file"""
-
+        
+        if sourcePackageAllowed:
+            sp = self.getCorrespondingSourcePackage( package )
+            if sp:
+                category = sp[0]
+                package = sp[1]
+                
         version = self.getNewestVersion( category, package )
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
@@ -257,12 +264,14 @@ def getDependencies( category, package, version ):
     return deps
 
 def solveDependencies( category, package, version, deplist ):
-    p = PortageInstance.getCorrespondingSourcePackage( package )
-    if p and (os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1"):
-        # we found such a package and we're allowed to replace it
-        category = p[0]
-        package = p[1]
-        version = PortageInstance.getNewestVersion( category, package )
+    if platform.isCrossCompilingEnabled() \
+    or os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1":
+        sp = PortageInstance.getCorrespondingSourcePackage( package )
+        if sp:
+            # we found such a package and we're allowed to replace it
+            category = sp[0]
+            package = sp[1]
+            version = PortageInstance.getNewestVersion( category, package )
 
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
