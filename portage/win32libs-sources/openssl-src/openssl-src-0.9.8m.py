@@ -29,6 +29,10 @@ class subinfo(info.infoclass):
             if platform.isCrossCompilingEnabled():
                 self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 
 from Package.CMakePackageBase import *
 
