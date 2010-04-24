@@ -1,6 +1,7 @@
 import base
 import info
 import os
+import platform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
