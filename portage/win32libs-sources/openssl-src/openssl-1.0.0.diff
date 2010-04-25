@@ -1,6 +1,6 @@
 diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
 --- openssl-1.0.0.orig/Configure	2010-01-19 22:40:54.000000000 +0100
-+++ openssl-1.0.0/Configure	2010-04-02 23:18:26.216627800 +0200
++++ openssl-1.0.0/Configure	2010-04-25 16:23:07.241942800 +0200
 @@ -503,7 +503,7 @@
  "BC-32","bcc32::::WIN32::BN_LLONG DES_PTR RC4_INDEX EXPORT_VAR_AS_FN:${no_asm}:win32",
  
@@ -19,9 +19,21 @@ diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
  		    netware-clib netware-clib-bsdsock
  		    netware-libc netware-libc-bsdsock);
  
+diff -Nru openssl-1.0.0.orig/include/openssl/dtls1.h openssl-1.0.0/include/openssl/dtls1.h
+--- openssl-1.0.0.orig/include/openssl/dtls1.h	2009-09-09 19:05:42.000000000 +0200
++++ openssl-1.0.0/include/openssl/dtls1.h	2010-04-25 16:27:01.187323700 +0200
+@@ -68,7 +68,7 @@
+ #endif
+ #ifdef OPENSSL_SYS_WIN32
+ /* Needed for struct timeval */
+-#include <winsock.h>
++#include <winsock2.h>
+ #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
+ #include <sys/timeval.h>
+ #else
 diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 --- openssl-1.0.0.orig/ms/mingw64.bat	1970-01-01 01:00:00.000000000 +0100
-+++ openssl-1.0.0/ms/mingw64.bat	2010-04-02 22:49:07.047337900 +0200
++++ openssl-1.0.0/ms/mingw64.bat	2010-04-25 16:23:07.295945900 +0200
 @@ -0,0 +1,90 @@
 +@rem OpenSSL with Mingw32+GNU as
 +@rem ---------------------------
@@ -113,9 +125,33 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +
 +:end
 +
+diff -Nru openssl-1.0.0.orig/ssl/dtls1.h openssl-1.0.0/ssl/dtls1.h
+--- openssl-1.0.0.orig/ssl/dtls1.h	2009-09-09 19:05:42.000000000 +0200
++++ openssl-1.0.0/ssl/dtls1.h	2010-04-25 16:26:18.163862900 +0200
+@@ -68,7 +68,7 @@
+ #endif
+ #ifdef OPENSSL_SYS_WIN32
+ /* Needed for struct timeval */
+-#include <winsock.h>
++#include <winsock2.h>
+ #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
+ #include <sys/timeval.h>
+ #else
+diff -Nru openssl-1.0.0.orig/ssl/ssltest.c openssl-1.0.0/ssl/ssltest.c
+--- openssl-1.0.0.orig/ssl/ssltest.c	2010-01-24 17:57:38.000000000 +0100
++++ openssl-1.0.0/ssl/ssltest.c	2010-04-25 16:26:51.252755500 +0200
+@@ -190,7 +190,7 @@
+ 				  */
+ 
+ #ifdef OPENSSL_SYS_WINDOWS
+-#include <winsock.h>
++#include <winsock2.h>
+ #else
+ #include OPENSSL_UNISTD
+ #endif
 diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
 --- openssl-1.0.0.orig/util/pl/Mingw32.pl	2008-04-17 12:19:16.000000000 +0200
-+++ openssl-1.0.0/util/pl/Mingw32.pl	2010-04-03 02:10:16.863000000 +0200
++++ openssl-1.0.0/util/pl/Mingw32.pl	2010-04-25 16:23:07.307946600 +0200
 @@ -19,7 +19,7 @@
  if ($debug)
  	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -g2 -ggdb"; }
