@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.softDependencies['kde-4.3/kdevplatform'] = 'default'
         
-from Package.CmakePackageBase import *        
+from Package.CMakePackageBase import *        
         
 class Package(CMakePackageBase):
     def __init__( self ):

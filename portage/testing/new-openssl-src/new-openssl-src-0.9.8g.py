@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.9.8g'
     
     def setDependencies( self ):
-        self.hardDependency['dev-util/perl'] = 'default'
+        self.hardDependencies['dev-util/perl'] = 'default'
 
 # if you update openssl please make sure that the install section contains an error - please make double sure that you get all stuff
     
