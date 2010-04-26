@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
         for ver in ['0.7.1']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/qjson/qjson-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = "qjson"
+
+        self.targetDigests['0.7.1'] = '19bbef24132b238e99744bb35194c6dadece98f9'            
         self.defaultTarget = '0.7.1'
         self.options.configure.defines = ""
 
