@@ -474,15 +474,21 @@ def unmerge( rootdir, package, forced = False ):
                     for line in fptr:
                         try:
                             line = line.replace( "\n", "" ).replace( "\r", "" )
+                            # check for digest having two spaces between filename and hash
                             if not line.find( "  " ) == -1:
-                                [ b, a ] = line.split( "  ", 2 )
+                                [ b, a ] = line.rsplit( "  ", 2 )
+                            # check for filname have spaces
+                            elif line.count(" ") > 1:
+                                ri = line.rindex(" ")
+                                b = line[ri:]
+                                a = line[:ri-1]
+                            # check for digest having one spaces
                             elif not line.find( " " ) == -1:
-                                [ a, b ] = line.split( " ", 2 )
+                                [ a, b ] = line.rsplit( " ", 2 )
                             else:
                                 a, b = line, ""
                         except:
-                            ## \todo fix lines with spaces in path
-                            print "could not parse line %s" % line
+                            utils.die("could not parse line %s" % line,1)
                             
                         if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
