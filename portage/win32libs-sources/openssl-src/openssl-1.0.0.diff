@@ -161,3 +161,120 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  
  if ($gaswin and !$no_asm)
  	{
+--- openssl-1.0.0.orig/e_os.h	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/e_os.h	Mon Jan 19 23:26:36 1970
+@@ -308,7 +308,7 @@
+ #      undef isupper
+ #      undef isxdigit
+ #    endif
+-#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin)
++#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin) && !defined(_WIN32_WCE)
+ #      if _MSC_VER>=1300
+ #        undef stdin
+ #        undef stdout
+@@ -337,7 +337,7 @@
+ #  include <io.h>
+ #  include <fcntl.h>
+ 
+-#  ifdef OPENSSL_SYS_WINCE
++#  if defined(OPENSSL_SYS_WINCE) && !defined(open)
+ #    define OPENSSL_NO_POSIX_IO
+ #  endif
+ 
+@@ -499,7 +499,8 @@
+ #      endif
+ #      if !defined(IPPROTO_IP)
+          /* winsock[2].h was included already? */
+-#        include <winsock.h>
++#        include <winsock2.h>
++#        include <ws2tcpip.h>
+ #      endif
+ #      ifdef getservbyname
+ #        undef getservbyname
+--- openssl-1.0.0.orig/apps/apps.c	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/apps/apps.c	Mon Jan 19 23:26:36 1970
+@@ -147,7 +147,7 @@
+ #include "apps.h"
+ #undef NON_MAIN
+ 
+-#ifdef _WIN32
++#if defined(OPENSSL_SYS_WIN32) && !defined(rename)
+ static int WIN32_rename(const char *from, const char *to);
+ #define rename(from,to) WIN32_rename((from),(to))
+ #endif
+--- openssl-1.0.0.orig/crypto/rand/randfile.c	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/crypto/rand/randfile.c	Mon Jan 19 23:26:36 1970
+@@ -79,11 +79,19 @@
+ # include <sys/stat.h>
+ #endif
+ 
+-#ifdef _WIN32
++#ifdef OPENSSL_SYS_WIN32
++#ifndef stat
+ #define stat	_stat
++#endif
++#ifndef chmod
+ #define chmod	_chmod
++#endif
++#ifndef open
+ #define open	_open
++#endif
++#ifndef fdopen
+ #define fdopen	_fdopen
++#endif
+ #endif
+ 
+ #undef BUFSIZE
+--- openssl-1.0.0.orig/util/pl/VC-32.pl	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/util/pl/VC-32.pl	Mon Jan 19 23:26:36 1970
+@@ -103,12 +103,12 @@
+     }
+ 
+     $cc='$(CC)';
+-    $base_cflags=' /W3 /WX /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -DOPENSSL_SMALL_FOOTPRINT';
++    $base_cflags=' /W3 /WX /wd4748 /wd4101 /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -DOPENSSL_SMALL_FOOTPRINT -DOPENSSL_NO_CAPIENG';
+     $base_cflags.=" $wcecdefs";
+     $base_cflags.=' -I$(WCECOMPAT)/include'		if (defined($ENV{'WCECOMPAT'}));
+     $base_cflags.=' -I$(PORTSDK_LIBPATH)/../../include'	if (defined($ENV{'PORTSDK_LIBPATH'}));
+-    $opt_cflags=' /MC /O1i';	# optimize for space, but with intrinsics...
+-    $dbg_clfags=' /MC /Od -DDEBUG -D_DEBUG';
++    $opt_cflags=' /O1i';	# optimize for space, but with intrinsics...
++    $dbg_clfags=' /Od -DDEBUG -D_DEBUG';
+     $lflags="/nologo /opt:ref $wcelflag";
+     }
+ else	# Win32
+@@ -147,14 +147,14 @@
+ $efile="/out:";
+ $exep='.exe';
+ if ($no_sock)		{ $ex_libs=''; }
+-elsif ($FLAVOR =~ /CE/)	{ $ex_libs='winsock.lib'; }
++elsif ($FLAVOR =~ /CE/)	{ $ex_libs='ws2.lib'; }
+ else			{ $ex_libs='ws2_32.lib'; }
+ 
+ if ($FLAVOR =~ /CE/)
+ 	{
+-	$ex_libs.=' $(WCECOMPAT)/lib/wcecompatex.lib'	if (defined($ENV{'WCECOMPAT'}));
++	$ex_libs.=' $(WCECOMPAT)/lib/wcecompat.lib'	if (defined($ENV{'WCECOMPAT'}));
+ 	$ex_libs.=' $(PORTSDK_LIBPATH)/portlib.lib'	if (defined($ENV{'PORTSDK_LIBPATH'}));
+-	$ex_libs.=' /nodefaultlib:oldnames.lib coredll.lib corelibc.lib' if ($ENV{'TARGETCPU'} eq "X86");
++	$ex_libs.=' /nodefaultlib:oldnames.lib coredll.lib corelibc.lib';
+ 	}
+ else
+ 	{
+@@ -261,10 +261,15 @@
+ elsif ($shlib && $FLAVOR =~ /CE/)
+ 	{
+ 	$mlflags.=" $lflags /dll";
+-	$lflags.=' /entry:mainCRTstartup' if(defined($ENV{'PORTSDK_LIBPATH'}));
+ 	$lib_cflag=" -D_WINDLL -D_DLL";
+ 	$out_def='out32dll_$(TARGETCPU)';
+ 	$tmp_def='tmp32dll_$(TARGETCPU)';
++	}
++
++if ($FLAVOR =~ /CE/)
++	{
++	$lflags.=' /entry:mainCRTstartup' if(defined($ENV{'PORTSDK_LIBPATH'}));
++	$lflags.=' /entry:mainACRTStartup' if(defined($ENV{'WCECOMPAT'}));
+ 	}
+ 
+ $cflags.=" /Fd$out_def";
