@@ -7,9 +7,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.6.3'] = ""
         self.targets['1.6.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.6.4-preview20090729.7z"
         self.targets['1.7.0.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.0.2-preview20100309.7z"
+        self.targetDigests['1.7.0.2'] = '96c3720dec940c4b8da8a09bfdcfa7ed56c2f016'
         
         self.defaultTarget = '1.7.0.2'
-
+    
     def setDependencies(self):
         self.hardDependencies['dev-util/7zip']   = 'default'
         
