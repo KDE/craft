@@ -59,8 +59,8 @@ class PackageBase (EmergeBase):
                 utils.copyFile( script, destscript )
 
 
-        #if portage.isInstalled( '', self.package, '', self.buildType() ):
-        #    self.unmerge()
+        if portage.isInstalled( '', self.package, '', self.buildType() ):
+            self.unmerge()
 
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(),2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
