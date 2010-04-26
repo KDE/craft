@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         self.targetMergeSourcePath['5.8.8'] = "ActivePerl-5.8.8.822-MSWin32-x86-280952\\perl"
         self.targets['5.10.1'] = "http://downloads.activestate.com/ActivePerl/releases/5.10.1.1007/ActivePerl-5.10.1.1007-MSWin32-x86-291969.zip"
         self.targetMergeSourcePath['5.10.1'] = "ActivePerl-5.10.1.1007-MSWin32-x86-291969\\perl"
+        self.targetDigests['5.10.1'] = '9122a828b32d8b8499c73b61972eaec303698961'
         self.defaultTarget = '5.10.1'
 
     def setBuildOptions( self ):
