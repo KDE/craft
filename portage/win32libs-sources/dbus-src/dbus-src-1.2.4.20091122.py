@@ -39,7 +39,7 @@ class Package(CMakePackageBase):
     def unpack(self):
         if not CMakePackageBase.unpack(self):
             return False
-        if self.buildTarget in ['1.2.1', '1.2.3', '1.2.4', 'svnHEAD']:
+        if self.buildTarget in ['1.2.1', '1.2.3', '1.2.4', 'svnHEAD', 'gitHEAD']:
             utils.copyFile( os.path.join(self.packageDir(), "wspiapi.h"), os.path.join(self.buildDir(), "wspiapi.h") )
         return True
 
