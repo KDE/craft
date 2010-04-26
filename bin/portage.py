@@ -434,10 +434,11 @@ def addInstalled( category, package, version, buildType='' ):
     if( os.path.isfile( os.path.join( path, fileName ) ) ):
         f = open( os.path.join( path, fileName ), "rb" )
         for line in f:
-            # FIXME: this is not a good definition of a package entry
-            if line.startswith( "%s/%s-" % ( category, package ) ):
-                utils.warning( "already installed" )
+            if line.startswith( "%s/%s-%s" % ( category, package, version) ):
+                utils.warning( "version already installed" )
                 return
+            elif line.startswith( "%s/%s-" % ( category, package ) ):
+                utils.die( "already installed, this should no happen",1 )
     f = open( os.path.join( path, fileName ), "ab" )
     f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
     f.close()
