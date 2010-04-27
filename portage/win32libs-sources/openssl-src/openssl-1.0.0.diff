@@ -278,3 +278,63 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  	}
  
  $cflags.=" /Fd$out_def";
+--- openssl-1.0.0.orig/crypto/buffer/buffer.h	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/crypto/buffer/buffer.h	Mon Jan 19 23:26:36 1970
+@@ -67,10 +67,6 @@
+ 
+ #include <stddef.h>
+ 
+-#if !defined(NO_SYS_TYPES_H)
+-#include <sys/types.h>
+-#endif
+-
+ /* Already declared in ossl_typ.h */
+ /* typedef struct buf_mem_st BUF_MEM; */
+ 
+--- openssl-1.0.0.orig/crypto/err/err.h	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/crypto/err/err.h	Mon Jan 19 23:26:36 1970
+@@ -137,8 +137,6 @@
+ #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
+ #endif
+ 
+-#include <errno.h>
+-
+ #define ERR_TXT_MALLOCED	0x01
+ #define ERR_TXT_STRING		0x02
+ 
+--- openssl-1.0.0.orig/include/openssl/buffer.h	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/include/openssl/buffer.h	Mon Jan 19 23:26:36 1970
+@@ -67,10 +67,6 @@
+ 
+ #include <stddef.h>
+ 
+-#if !defined(NO_SYS_TYPES_H)
+-#include <sys/types.h>
+-#endif
+-
+ /* Already declared in ossl_typ.h */
+ /* typedef struct buf_mem_st BUF_MEM; */
+ 
+--- openssl-1.0.0.orig/include/openssl/err.h	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/include/openssl/err.h	Mon Jan 19 23:26:36 1970
+@@ -137,8 +137,6 @@
+ #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
+ #endif
+ 
+-#include <errno.h>
+-
+ #define ERR_TXT_MALLOCED	0x01
+ #define ERR_TXT_STRING		0x02
+ 
+--- openssl-1.0.0.orig/engines/ccgost/gost_lcl.h	Mon Jan 19 23:26:36 1970
++++ openssl-1.0.0/engines/ccgost/gost_lcl.h	Mon Jan 19 23:26:36 1970
+@@ -18,6 +18,9 @@
+ #include <openssl/ec.h>
+ #include "gost89.h"
+ #include "gosthash.h"
++
++#include <sys/types.h>
++
+ /* Control commands */
+ #define GOST_PARAM_CRYPT_PARAMS 0
+ #define GOST_PARAM_MAX 0
