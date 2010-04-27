@@ -114,7 +114,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # too bad there's no -no-gui :-(
             command += "-no-webkit -no-script -no-scripttools -no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
             command += "-no-gif -no-libpng -no-libjpeg -no-libtiff -no-libmng "
-            command += "-no-accessibility -nomake docs -nomake translations -nomake tools "
+            command += "-no-accessibility -nomake docs -nomake translations "
         else:
             # both cc-target and non-cc builds
             command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked "
@@ -140,10 +140,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def make(self, unused=''):        
         if self.isTargetBuild():
             self.setupTargetToolchain()
-            # This is needed to find some wcecompat files (e.g. errno.h) included by some openssl headers
-            # but we make sure to add it at the very end so it doesn't disrupt the rest of the Qt build
-            os.putenv( "INCLUDE", os.getenv("INCLUDE") + ";" + os.path.join( self.mergeDestinationDir(), "include", "wcecompat" ) )
-
+        
         QMakeBuildSystem.make(self)
         
         return True
