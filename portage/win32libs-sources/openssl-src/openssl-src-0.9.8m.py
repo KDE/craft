@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
             self.targets['1.0.0-msys'] = ''
             self.defaultTarget = '1.0.0-msys'
         else:
-            self.defaultTarget = '0.9.8m'
+            self.defaultTarget = '1.0.0'
         
         self.options.package.withCompiler = False
 
