@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
 http://downloads.sourceforge.net/kde-windows/mysql-server-5.1.36-3-bin.tar.bz2
 http://downloads.sourceforge.net/kde-windows/mysql-server-5.1.36-3-lib.tar.bz2
 """
+        self.targetDigests['5.1.36-3'] = ['75a2dd72879bc71ea80c2b06e90d37792d80782d',
+                                          'b94d2fbb213d6f5244e402977dacd10605657d4a']
         self.targetInstSrc['5.1.36-3'] = ""
         self.defaultTarget = '5.1.36-3'
 
