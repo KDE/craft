@@ -164,6 +164,7 @@ def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
     
     if ( buildAction == "all" or buildAction == "full-package" ):
+        os.putenv( "EMERGE_BUILD_STEP", "" )
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
         if platform.isCrossCompilingEnabled():
@@ -180,10 +181,7 @@ def handlePackage( category, package, version, buildAction, opts ):
                     success = success and doExec( category, package, version, "package", opts )
             if disableTargetBuild:
                 return success
-            else:
-                os.putenv( "EMERGE_BUILD_STEP", "target" )
-        else:
-            os.putenv( "EMERGE_BUILD_STEP", "" )
+            os.putenv( "EMERGE_BUILD_STEP", "target" )
         
         success = success and doExec( category, package, version, "compile", opts )
         success = success and doExec( category, package, version, "cleanimage", opts )
@@ -198,25 +196,28 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
+        os.putenv( "EMERGE_BUILD_STEP", "" )
+        success = True
         if platform.isCrossCompilingEnabled():
-            # target build is the default for single build actions, unless explicitely disabled
-            if not disableHostBuild and disableTargetBuild:
+            if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
-            else:
-                os.putenv( "EMERGE_BUILD_STEP", "target" )
-        else:
-            os.putenv( "EMERGE_BUILD_STEP", "" )
-        success = doExec( category, package, version, buildAction, opts )
+                success = doExec( category, package, version, buildAction, opts )
+            if disableTargetBuild:
+                return success
+            os.putenv( "EMERGE_BUILD_STEP", "target" )
+        success = success and doExec( category, package, version, buildAction, opts )
     elif ( buildAction == "install" ):
+        os.putenv( "EMERGE_BUILD_STEP", "" )
+        success = True
         if platform.isCrossCompilingEnabled():
-            # target build is the default for single build actions, unless explicitely disabled
-            if not disableHostBuild and disableTargetBuild:
+            if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
-            else:
-                os.putenv( "EMERGE_BUILD_STEP", "target" )
-        else:
-            os.putenv( "EMERGE_BUILD_STEP", "" )
-        success = doExec( category, package, version, "cleanimage", opts )
+                success = doExec( category, package, version, "cleanimage", opts )
+                success = success and doExec( category, package, version, "install", opts )
+            if disableTargetBuild:
+                return success
+            os.putenv( "EMERGE_BUILD_STEP", "target" )
+        success = success and doExec( category, package, version, "cleanimage", opts )
         success = success and doExec( category, package, version, "install", opts )
     elif ( buildAction == "version-dir" ):
         print "%s-%s" % ( package, version )
