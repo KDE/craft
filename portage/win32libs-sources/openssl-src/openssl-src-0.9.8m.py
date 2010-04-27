@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
             self.targetInstSrc[ver] = 'openssl-'+ver
             self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
+        self.targetDigests['0.9.8m'] = '2511c709a47f34d5fa6cd1a1c9cb1699bdffa912'        
         
         if platform.buildArchitecture() == 'x64':
             self.targets['1.0.0-msys'] = ''
@@ -43,6 +44,7 @@ class Package(CMakePackageBase):
 
     def compile( self ):
         if self.buildArchitecture() == 'x64':
+            print "nothing to do, x64 openssl-src uses 'testing/openssl-msys-src'"
             return True
         
         os.chdir( self.sourceDir() )
