@@ -23,6 +23,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
         
 from Package.CMakePackageBase import *
 
@@ -30,9 +31,9 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         
-        self.subinfo.options.configure.defines = "-DBUILD_PROJECTS=python;program_options " + \
-                                                 "-DENABLE_STATIC=OFF -DENABLE_STATIC_RUNTIME=OFF " + \
-                                                 "-DBOOST_RUNTIME_INSTALL_DIR=bin "
+        self.subinfo.options.configure.defines = "-DBUILD_PROJECTS=python;program_options "
+        #                                         "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
+        #                                         "-DBOOST_RUNTIME_INSTALL_DIR=bin "
                                                  
         if self.buildType() == "Debug":
             self.subinfo.options.configure.defines += "-DENABLE_DEBUG=ON -DENABLE_RELEASE=OFF "

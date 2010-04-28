@@ -1,0 +1,69 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 551b8f8..21b4c2d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -27,6 +27,11 @@
+ cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
+ project(Boost)
+ 
++if (WINCE)
++    include_directories(${CMAKE_INCLUDE_PATH}/stlport)
++    link_directories(${CMAKE_LIBRARY_PATH})
++endif (WINCE)
++
+ ##########################################################################
+ # Boost CMake modules                                                    #
+ ##########################################################################
+diff --git a/boost/program_options/parsers.hpp b/boost/program_options/parsers.hpp
+index eca8c2e..a720fa5 100644
+--- a/boost/program_options/parsers.hpp
++++ b/boost/program_options/parsers.hpp
+@@ -172,6 +172,7 @@ namespace boost { namespace program_options {
+     collect_unrecognized(const std::vector< basic_option<charT> >& options,
+                          enum collect_unrecognized_mode mode);
+ 
++#ifndef _WIN32_WCE
+     /** Parse environment. 
+ 
+         For each environment variable, the 'name_mapper' function is called to
+@@ -201,7 +202,8 @@ namespace boost { namespace program_options {
+     */
+     BOOST_PROGRAM_OPTIONS_DECL parsed_options
+     parse_environment(const options_description&, const char* prefix);
+-
++#endif
++    
+     #ifdef _WIN32
+     /** Parses the char* string which is passed to WinMain function on
+         windows. This function is provided for convenience, and because it's
+diff --git a/libs/program_options/src/parsers.cpp b/libs/program_options/src/parsers.cpp
+index 1154d3a..7639f21 100644
+--- a/libs/program_options/src/parsers.cpp
++++ b/libs/program_options/src/parsers.cpp
+@@ -13,7 +13,9 @@
+ #include <boost/program_options/positional_options.hpp>
+ #include <boost/program_options/detail/cmdline.hpp>
+ #include <boost/program_options/detail/config_file.hpp>
++#ifndef _WIN32_WCE
+ #include <boost/program_options/environment_iterator.hpp>
++#endif
+ #include <boost/program_options/detail/convert.hpp>
+ 
+ #include <boost/bind.hpp>
+@@ -150,6 +152,7 @@ namespace boost { namespace program_options {
+     }
+ #endif
+ 
++#ifndef _WIN32_WCE
+     BOOST_PROGRAM_OPTIONS_DECL parsed_options
+     parse_environment(const options_description& desc, 
+                       const function1<std::string, std::string>& name_mapper)
+@@ -207,7 +210,7 @@ namespace boost { namespace program_options {
+     {
+         return parse_environment(desc, string(prefix));
+     }
+-
++#endif
+ 
+ 
+ 
