@@ -17,6 +17,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/git'] = 'default'
         self.hardDependencies['testing/libantlr'] = 'default'
         pass
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
