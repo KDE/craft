@@ -53,6 +53,8 @@ class OptionsInstall:
         self.useMakeToolForInstall = True
         ## subdir based on installDir() used as install destination directory
         self.installPath = None
+        ## add DESTDIR=xxx support for autotools build system
+        self.useDestDir = False
 
 ## options for the merge action 
 class OptionsMerge:
