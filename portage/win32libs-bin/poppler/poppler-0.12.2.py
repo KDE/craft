@@ -21,6 +21,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/jpeg'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 class Package(BinaryPackageBase):
   def __init__(self):

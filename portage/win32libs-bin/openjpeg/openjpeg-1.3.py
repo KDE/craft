@@ -30,6 +30,10 @@ j2k-images, ... """
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 class Package(BinaryPackageBase):
   def __init__(self):

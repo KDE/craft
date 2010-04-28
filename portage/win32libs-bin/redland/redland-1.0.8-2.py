@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         for ver in ['1.0.8', '1.0.8-1', '1.0.8-2']:
             self.targets[ ver ] = self.getPackage( repoUrl, "redland", ver )
 
-        self.targetDigests['1.0.8-2'] = ['06a4856aa41efec0c812d50c57f49fdf0ab7dfbf',
-                                         '3f20e15a2c42676fced3bf3a779ff8b1b277ea24']
+        #self.targetDigests['1.0.8-2'] = ['06a4856aa41efec0c812d50c57f49fdf0ab7dfbf',
+        #                                 '3f20e15a2c42676fced3bf3a779ff8b1b277ea24']
         self.defaultTarget = '1.0.8-2'
 
     def setDependencies( self ):

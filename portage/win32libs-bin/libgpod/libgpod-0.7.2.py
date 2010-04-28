@@ -18,6 +18,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/glib'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 class Package(BinaryPackageBase):
   def __init__(self):

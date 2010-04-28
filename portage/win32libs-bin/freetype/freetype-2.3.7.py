@@ -11,6 +11,10 @@ class subinfo(info.infoclass):
             self.targets[ version ] = self.getPackage( repoUrl, "freetype", version )
 
         self.defaultTarget = '2.3.7-2'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 
 class Package(BinaryPackageBase):

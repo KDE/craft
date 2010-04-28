@@ -17,6 +17,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
         self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 
