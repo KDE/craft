@@ -25,7 +25,7 @@ class Package( AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-
+        self.buildInSource = True
         
 if __name__ == '__main__':
      Package().execute()
