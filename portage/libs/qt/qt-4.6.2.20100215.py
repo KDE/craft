@@ -36,6 +36,7 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['4.7-mingw-x64'] = "x64"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.targetSrcSuffix['4.7'] = "4.7"
+        self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
         
         if platform.isCrossCompilingEnabled():
             self.defaultTarget = '4.7'
@@ -156,11 +157,13 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             os.putenv( "PATH", os.path.join( self.sourceDir(), "bin" ) + ";" + os.getenv("PATH") )
             command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
             command += " -base-dir \"" + self.sourceDir() + "\""
-            command += " -outdir \"" + self.imageDir() + "\""
+            command += " -outdir \"" + self.installDir() + "\""
             command += " -copy"
             # 4.7 has a -quiet option, enable it when we switch
             #command += " -quiet"
             utils.system( command )
+            # qconfig.h isn't copied by syncqt
+            utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "include", "QtCore" , "qconfig.h" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
             # create qt.conf 
