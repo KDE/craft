@@ -7,8 +7,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-        self.hardDependencies['win32libs-bin/boost']   = 'default'
-        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
+        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         self.boostversion = "1.37"
 
@@ -38,6 +37,26 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
         self.boost = portage.getPackageInstance("win32libs-bin","boost")
         self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
+        
+        self.subinfo.options.configure.defines = ""
+        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
+        if not os.path.exists(qmake):
+            print("<%s>") % qmake
+            utils.die("could not found qmake")
+        ## \todo a standardized way to check if a package is installed in the image dir would be good.
+        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
+            % qmake.replace('\\', '/')
+            
+        self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
+            % os.path.join(ROOTDIR, "bin")
+            
+        automoc = os.path.join(os.getenv( "KDEROOT" ), "lib", "automoc4", "Automoc4Config.cmake")
+        if not os.path.exists(automoc):
+            print("<%s>") % automoc
+            utils.die("could not found automoc")
+        ## \todo a standardized way to check if a package is installed in the image dir would be good.
+        self.subinfo.options.configure.defines += "-DAUTOMOC4_CONFIG_FILE:FILEPATH=%s " \
+            % automoc.replace('\\', '/')
 
 if __name__ == '__main__':
     Package().execute()
