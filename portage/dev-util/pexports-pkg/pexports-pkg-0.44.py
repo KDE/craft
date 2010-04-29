@@ -22,6 +22,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.merge.destinationPath = 'dev-utils'
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.unpack.unpackDir = 'pexports-0.44'
+        self.subinfo.options.package.packageName = 'pexports'
         CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
-        self.hardDependencies['win32libs-sources/win_iconv-src'] = 'default'
+        self.hardDependencies['win32libs-sources/iconv-src'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
+        #self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
         
 from Package.CMakePackageBase import *
 
