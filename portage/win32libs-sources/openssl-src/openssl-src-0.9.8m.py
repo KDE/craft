@@ -14,17 +14,21 @@ class subinfo(info.infoclass):
         self.targetDigests['0.9.8m'] = '2511c709a47f34d5fa6cd1a1c9cb1699bdffa912'        
         
         if platform.buildArchitecture() == 'x64':
-            self.defaultTarget = '1.0.0'
+            self.targets['1.0.0-msys'] = ''
+            self.defaultTarget = '1.0.0-msys'
         else:
             self.defaultTarget = '1.0.0'
         
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/perl'] = 'default'
-        if platform.isCrossCompilingEnabled():
-           self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+        if platform.buildArchitecture() == 'x64':
+            self.hardDependencies['testing/openssl-msys-src'] = 'default'
+        else:
+            self.hardDependencies['virtual/base'] = 'default'
+            self.hardDependencies['dev-util/perl'] = 'default'
+            if platform.isCrossCompilingEnabled():
+                self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
@@ -39,17 +43,17 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
     def compile( self ):
+        if self.buildArchitecture() == 'x64':
+            print "nothing to do, x64 openssl-src uses 'testing/openssl-msys-src'"
+            return True
         
         os.chdir( self.sourceDir() )
         cmd = ""
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
-            if platform.buildArchitecture() == 'x64':
-              cmd = "ms\mingw64.bat with-md2"
+            if self.buildTarget == "1.0.0":
+                cmd = "ms\mingw32.bat no-asm no-capieng"
             else:
-              if self.buildTarget == "1.0.0":
-                  cmd = "ms\mingw32.bat no-asm no-capieng with-md2"
-              else:
-                  cmd = "ms\mingw32.bat"
+                cmd = "ms\mingw32.bat"
         else:
             if self.isTargetBuild():
                 """WinCE cross-building environment setup"""
@@ -83,6 +87,9 @@ class Package(CMakePackageBase):
         return self.system( cmd )
 
     def install( self ):
+        if self.buildArchitecture() == 'x64':
+            return True
+        
         src = self.sourceDir()
         dst = self.imageDir()
 

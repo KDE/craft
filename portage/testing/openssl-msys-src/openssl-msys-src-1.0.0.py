@@ -33,7 +33,6 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.package.packSources = False
-        self.subinfo.options.configure.defines = " LDFLAGS=\"-lws2_32\""
         self.shell = MSysShell()
         
         self.buildInSource=True

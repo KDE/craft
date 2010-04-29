@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
         self.defaultTarget = 'gitHEAD'
-        self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF -DBUILD_PHONON_DS9=OFF"
+        self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
 
 from Package.CMakePackageBase import *
 

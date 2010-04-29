@@ -3,10 +3,16 @@ import shutil
 import os
 import info
 
+SRC_URI = """
+http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100410/mingw-w64-bin_x86_64-mingw_20100410_sezero.zip
+http://downloads.sourceforge.net/sourceforge/mingw/mingw32-make-3.81-20080326.tar.gz
+"""
+
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['20100428'] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100428_new/mingw-w64-bin_x86_64-mingw_20100428_sezero.zip"
-        self.defaultTarget = '20100428'
+        self.targets['20100411'] = SRC_URI
+        self.targetMergePath['20100411'] = ""
+        self.defaultTarget = '20100411'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
@@ -19,12 +25,6 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-		
-    def install(self):
-        if not BinaryPackageBase.install():
-          return False
-        shutil.copy(os.path.join( self.installDir() , "mingw64" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw64" , "bin" , "mingw32-make.exe") )
-        return True
 
 if __name__ == '__main__':
     Package().execute()
