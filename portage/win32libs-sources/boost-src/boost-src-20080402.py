@@ -20,6 +20,8 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.37.0'] = 'boost_1_37_0'
         self.targetInstSrc['1.41.0'] = 'boost_1_41_0'
         self.defaultTarget = '1.41.0'
+        
+        self.patchToApply['1.41.0'] = ("boost-src-20100428.patch", 1)
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
