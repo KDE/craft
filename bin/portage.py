@@ -438,7 +438,7 @@ def addInstalled( category, package, version, buildType='' ):
                 utils.warning( "version already installed" )
                 return
             elif line.startswith( "%s/%s-" % ( category, package ) ):
-                utils.die( "already installed, this should no happen",1 )
+                utils.die( "already installed, this should no happen" )
     f = open( os.path.join( path, fileName ), "ab" )
     f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
     f.close()
