@@ -3,6 +3,7 @@ import shutil
 import re
 import utils
 import info
+import platform
 
 # #########################################################################################
 # ATTENTION: currently the only libraries that are built are boost.python libs
@@ -33,7 +34,12 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         
-        self.subinfo.options.configure.defines = "-DBUILD_PROJECTS=python;program_options "
+        self.subinfo.options.configure.defines = "-DBUILD_PROJECTS=program_options"
+		#TODO:python support is for now disabled on x64 because the symbol Py_InitModule4 is renamed to Py_InitModule4_64
+		#see http://www.python.org/dev/peps/pep-0353/
+        if( not platform.buildArchitecture() == 'x64' ):
+           self.subinfo.options.configure.defines += ";python"
+        self.subinfo.options.configure.defines +=" "
         #                                         "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
         #                                         "-DBOOST_RUNTIME_INSTALL_DIR=bin "
                                                  
