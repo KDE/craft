@@ -62,7 +62,7 @@ class EmergeBase():
         if "args" in args.keys() and "argv0" in args["args"].keys():
             self.argv0 = args["args"]["argv0"]
         else:
-            self.argv0 = utils.getscriptname()
+            self.argv0 = sys.argv[ 0 ]
 
             
         self.SRC_URI                = SRC_URI
