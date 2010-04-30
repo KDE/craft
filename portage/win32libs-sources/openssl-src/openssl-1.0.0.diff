@@ -328,12 +328,14 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  
 --- openssl-1.0.0.orig/engines/ccgost/gost_lcl.h	Mon Jan 19 23:26:36 1970
 +++ openssl-1.0.0/engines/ccgost/gost_lcl.h	Mon Jan 19 23:26:36 1970
-@@ -18,6 +18,9 @@
+@@ -18,6 +18,11 @@
  #include <openssl/ec.h>
  #include "gost89.h"
  #include "gosthash.h"
 +
++#if !defined(NO_SYS_TYPES_H)
 +#include <sys/types.h>
++#endif
 +
  /* Control commands */
  #define GOST_PARAM_CRYPT_PARAMS 0
