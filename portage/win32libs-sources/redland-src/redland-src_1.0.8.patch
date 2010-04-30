@@ -28,6 +28,26 @@ diff -Nru redland-1.0.8.orig/cmake/config.cpp.in redland-1.0.8/cmake/config.cpp.
 +    }
 +    return 1;
 +}
+diff -Nru redland-1.0.8.orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
+--- redland-1.0.8.orig/cmake/FindOpenSSL.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.8/cmake/FindOpenSSL.cmake	2010-04-30 13:54:44.015200000 +0200
+@@ -0,0 +1,16 @@
++
++FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h)
++
++FIND_LIBRARY(OPENSSL_SSL_LIBRARIES NAMES ssl ssleay32 ssleay32MD)
++FIND_LIBRARY(OPENSSL_CRYPTO_LIBRARIES NAMES crypto libeay32)
++MARK_AS_ADVANCED(OPENSSL_CRYPTO_LIBRARIES OPENSSL_SSL_LIBRARIES)
++
++SET(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(OpenSSL DEFAULT_MSG
++  OPENSSL_LIBRARIES
++  OPENSSL_INCLUDE_DIR
++)
++
++MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
 diff -Nru redland-1.0.8.orig/cmake/FindPCRE.cmake redland-1.0.8/cmake/FindPCRE.cmake
 --- redland-1.0.8.orig/cmake/FindPCRE.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ redland-1.0.8/cmake/FindPCRE.cmake	2009-09-24 02:48:28.850800000 +0200
@@ -238,327 +258,9 @@ diff -Nru redland-1.0.8.orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLis
 +
 +install(TARGETS rdf redland-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 +install(FILES   ${librdf_HDRS_INST} DESTINATION include/redland)
-diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win32_rdf_config.h
---- redland-1.0.8.orig/librdf/win32_rdf_config.h	2008-07-01 05:10:26.000000000 +0200
-+++ redland-1.0.8/librdf/win32_rdf_config.h	2009-09-24 02:48:28.866400000 +0200
-@@ -43,7 +43,9 @@
- #define HAVE_STRICMP 1
- 
- /* MS names for these functions */
-+#ifndef _MSC_VER
- #define vsnprintf _vsnprintf
-+#endif
- #define snprintf _snprintf
- #define access _access
- #define stricmp _stricmp
-@@ -87,7 +89,7 @@
- #define HAVE_BDB_FD_2_ARGS 1
- 
- /* Have BDB hash support */
--#define HAVE_BDB_HASH 1
-+//#define HAVE_BDB_HASH 1
- 
- /* BDB has open method with 6 args */
- /* #undef HAVE_BDB_OPEN_6_ARGS */
-@@ -255,7 +257,7 @@
- #define STORAGE_FILE 1
- 
- /* Building MySQL storage */
--#define STORAGE_MYSQL 1
-+/*#define STORAGE_MYSQL 1*/
- 
- /* Building PostgreSQL storage */
- /*#undef STORAGE_POSTGRESQL*/
-diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLists.txt
---- redland-1.0.8.orig/raptor/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/raptor/CMakeLists.txt	2009-09-24 02:48:28.866400000 +0200
-@@ -0,0 +1,100 @@
-+project(raptor)
-+
-+find_package(CURL REQUIRED)
-+find_package(LibXml2 REQUIRED)
-+find_package(LibXslt REQUIRED)
-+
-+set(raptor_SRCS
-+    src/n3_lexer.c
-+    src/n3_parser.c
-+    src/ntriples_parse.c
-+    src/parsedate.c
-+    src/raptor_abbrev.c
-+    src/raptor_avltree.c
-+#    src/raptor_expat.c
-+    src/raptor_feature.c
-+    src/raptor_general.c
-+    src/raptor_grddl.c
-+    src/raptor_guess.c
-+    src/raptor_identifier.c
-+    src/raptor_iostream.c
-+    src/raptor_json_writer.c
-+#    src/raptor_librdfa.c
-+    src/raptor_libxml.c
-+    src/raptor_locator.c
-+    src/raptor_namespace.c
-+    src/raptor_nfc.c
-+    src/raptor_nfc_data.c
-+#    src/raptor_nfc_test.c
-+    src/raptor_parse.c
-+    src/raptor_qname.c
-+    src/raptor_rdfxml.c
-+    src/raptor_rfc2396.c
-+    src/raptor_rss.c
-+    src/raptor_rss_common.c
-+    src/raptor_sax2.c
-+    src/raptor_sequence.c
-+    src/raptor_serialize.c
-+    src/raptor_serialize_dot.c
-+    src/raptor_serialize_json.c
-+    src/raptor_serialize_ntriples.c
-+    src/raptor_serialize_rdfxml.c
-+    src/raptor_serialize_rdfxmla.c
-+    src/raptor_serialize_rss.c
-+    src/raptor_serialize_simple.c
-+    src/raptor_serialize_turtle.c
-+    src/raptor_set.c
-+    src/raptor_statement.c
-+    src/raptor_stringbuffer.c
-+    src/raptor_turtle_writer.c
-+    src/raptor_uri.c
-+    src/raptor_utf8.c
-+    src/raptor_win32.c
-+    src/raptor_www.c
-+    src/raptor_www_curl.c
-+    src/raptor_www_libfetch.c
-+    src/raptor_www_libxml.c
-+#    src/raptor_www_test.c
-+    src/raptor_xml.c
-+    src/raptor_xml_writer.c
-+    src/raptor_xsd.c
-+    src/snprintf.c
-+    src/strcasecmp.c
-+    src/turtle_common.c
-+    src/turtle_lexer.c
-+    src/turtle_parser.c
-+)
-+
-+set(raptor_HDRS
-+    src/n3_common.h
-+    src/n3_lexer.h
-+    src/n3_parser.h
-+    src/raptor.h
-+    src/raptor_internal.h
-+    src/raptor_nfc.h
-+    src/raptor_rss.h
-+    src/turtle_common.h
-+    src/turtle_lexer.h
-+    src/turtle_parser.h
-+    src/win32_raptor_config.h
-+)
-+
-+set(raptor_HDRS_INST
-+    src/raptor.h
-+)
-+
-+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-+include_directories(${CURL_INCLUDE_DIR})
-+include_directories(${LIBXML2_INCLUDE_DIR})
-+include_directories(${LIBXSLT_INCLUDE_DIR})
-+add_library(raptor SHARED ${raptor_SRCS} ${raptor_HDRS} ${raptor_HDRS_INST})
-+set_target_properties(raptor PROPERTIES DEFINE_SYMBOL RAPTOR_INTERNAL)
-+target_link_libraries(raptor ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
-+
-+set(PROGRAMM raptor)
-+configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.cpp)
-+add_executable(raptor-config ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.cpp)
-+target_link_libraries(raptor-config raptor)
-+
-+install(TARGETS raptor raptor-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
-+install(FILES   ${raptor_HDRS_INST} DESTINATION include/redland)
-diff -Nru redland-1.0.8.orig/raptor/src/raptor_win32.c redland-1.0.8/raptor/src/raptor_win32.c
---- redland-1.0.8.orig/raptor/src/raptor_win32.c	2008-06-14 05:39:35.000000000 +0200
-+++ redland-1.0.8/raptor/src/raptor_win32.c	2009-09-24 02:48:28.866400000 +0200
-@@ -33,8 +33,26 @@
- 
- 
- #ifdef WIN32
-+#include <windows.h>
-+#include <Winsock2.h>
-+
-+#define KDE_SECONDS_SINCE_1601	11644473600LL
-+#define KDE_USEC_IN_SEC			1000000LL
- 
- /* Only on WIN32 systems */
-+int gettimeofday(struct timeval *__p, void *__t)
-+{
-+	union {
-+		unsigned long long ns100; /*time since 1 Jan 1601 in 100ns units */
-+		FILETIME ft;
-+	} now;
-+
-+	GetSystemTimeAsFileTime (&now.ft);
-+	__p->tv_usec = (long) ((now.ns100 / 10LL) % KDE_USEC_IN_SEC);
-+	__p->tv_sec  = (long)(((now.ns100 / 10LL ) / KDE_USEC_IN_SEC) - KDE_SECONDS_SINCE_1601);
-+
-+	return (0);
-+}
- 
- 
- /* DLL entry point */
-diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/raptor/src/win32_raptor_config.h
---- redland-1.0.8.orig/raptor/src/win32_raptor_config.h	2008-04-02 06:50:14.000000000 +0200
-+++ redland-1.0.8/raptor/src/win32_raptor_config.h	2009-09-24 02:49:14.143600000 +0200
-@@ -69,7 +69,9 @@
- #define HAVE_STRICMP 1
- 
- /* MS names for these functions */
-+#ifndef _MSC_VER
- #define vsnprintf _vsnprintf
-+#endif
- #define snprintf _snprintf
- #define access _access
- #define stricmp _stricmp
-@@ -118,6 +120,7 @@
- #define RAPTOR_PARSER_TURTLE 1
- #define RAPTOR_PARSER_NTRIPLES 1
- #define RAPTOR_PARSER_RDFXML 1
-+#define RAPTOR_PARSER_TRIG 1
- 
- #define RAPTOR_SERIALIZER_ATOM 1
- #define RAPTOR_SERIALIZER_RSS_1_0 1
-diff -Nru redland-1.0.8.orig/rasqal/CMakeLists.txt redland-1.0.8/rasqal/CMakeLists.txt
---- redland-1.0.8.orig/rasqal/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/rasqal/CMakeLists.txt	2009-09-24 02:48:28.866400000 +0200
-@@ -0,0 +1,63 @@
-+project(rasqal)
-+
-+find_package(PCRE REQUIRED)
-+
-+set(rasqal_SRCS
-+    src/rasqal_datetime.c
-+    src/rasqal_decimal.c
-+    src/rasqal_engine.c
-+    src/rasqal_expr.c
-+    src/rasqal_feature.c
-+    src/rasqal_general.c
-+    src/rasqal_graph_pattern.c
-+#    src/rasqal_limit_test.c
-+    src/rasqal_literal.c
-+    src/rasqal_map.c
-+    src/rasqal_query.c
-+    src/rasqal_query_results.c
-+    src/rasqal_query_test.c
-+    src/rasqal_raptor.c
-+# only when rasqal links against redland and not the other way round
-+#    src/rasqal_redland.c
-+    src/rasqal_result_formats.c
-+    src/rasqal_rowsource.c
-+    src/rasqal_sparql_xml.c
-+    src/rasqal_xsd_datatypes.c
-+    src/rdql_lexer.c
-+    src/rdql_parser.c
-+    src/sparql_lexer.c
-+    src/sparql_parser.c
-+    src/strcasecmp.c
-+)
-+
-+set(rasqal_HDRS
-+    src/rasqal_internal.h
-+    src/rdql_common.h
-+    src/rdql_lexer.h
-+    src/rdql_parser.h
-+    src/sparql_common.h
-+    src/sparql_lexer.h
-+    src/sparql_parser.h
-+    src/win32_rasqal_config.h
-+)
-+
-+set(rasqal_HDRS_INST
-+    src/rasqal.h
-+)
-+
-+add_definitions(-DRASQAL_DECIMAL_NONE)
-+include_directories(${CMAKE_SOURCE_DIR}/raptor/src)
-+include_directories(${CMAKE_SOURCE_DIR}/librdf)
-+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-+include_directories(${PCRE_INCLUDE_DIR})
-+add_library(rasqal SHARED ${rasqal_SRCS})
-+set_target_properties(rasqal PROPERTIES DEFINE_SYMBOL RASQAL_INTERNAL)
-+target_link_libraries(rasqal raptor ${PCRE_LIBRARIES})
-+
-+set(PROGRAMM rasqal)
-+configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
-+add_executable(rasqal-config ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
-+target_link_libraries(rasqal-config rasqal)
-+
-+install(TARGETS rasqal rasqal-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
-+install(FILES   ${rasqal_HDRS_INST} DESTINATION include/redland)
-diff -Nru redland-1.0.8.orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/src/sparql_lexer.c
---- redland-1.0.8.orig/rasqal/src/sparql_lexer.c	2008-06-26 20:52:33.000000000 +0200
-+++ redland-1.0.8/rasqal/src/sparql_lexer.c	2009-09-24 02:48:28.882000000 +0200
-@@ -1166,7 +1166,7 @@
- 
- #include <rasqal.h>
- #include <rasqal_internal.h>
--
-+#undef DELETE
- #include <sparql_parser.h>
- 
- #include <sparql_common.h>
-diff -Nru redland-1.0.8.orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src/sparql_parser.c
---- redland-1.0.8.orig/rasqal/src/sparql_parser.c	2008-06-26 20:52:33.000000000 +0200
-+++ redland-1.0.8/rasqal/src/sparql_parser.c	2009-09-24 02:48:28.882000000 +0200
-@@ -43,6 +43,14 @@
-    define necessary library symbols; they are noted "INFRINGES ON
-    USER NAME SPACE" below.  */
- 
-+#ifdef WIN32
-+//undefine some constants which are used below
-+#define _WINSOCK2_H
-+#include <windows.h>
-+#undef DELETE
-+#undef OPTIONAL
-+#endif
-+
- /* Identify Bison output.  */
- #define YYBISON 1
- 
-diff -Nru redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h redland-1.0.8/rasqal/src/win32_rasqal_config.h
---- redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h	2008-06-27 04:02:09.000000000 +0200
-+++ redland-1.0.8/rasqal/src/win32_rasqal_config.h	2009-09-24 02:48:28.882000000 +0200
-@@ -40,7 +40,9 @@
- #define HAVE_STRICMP 1
- 
- /* MS names for these functions */
-+#ifndef _MSC_VER
- #define vsnprintf _vsnprintf
-+#endif
- #define snprintf _snprintf
- #define access _access
- #define stricmp _stricmp
-
-
-diff -Nru orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
---- orig/cmake/FindOpenSSL.cmake        1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/FindOpenSSL.cmake       2010-04-17 21:42:40.023483300 +0200
-@@ -0,0 +1,16 @@
-+
-+FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h)
-+
-+FIND_LIBRARY(OPENSSL_SSL_LIBRARIES NAMES ssl ssleay32 ssleay32MD)
-+FIND_LIBRARY(OPENSSL_CRYPTO_LIBRARIES NAMES crypto)
-+MARK_AS_ADVANCED(OPENSSL_CRYPTO_LIBRARIES OPENSSL_SSL_LIBRARIES)
-+
-+SET(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(OpenSSL DEFAULT_MSG
-+  OPENSSL_LIBRARIES
-+  OPENSSL_INCLUDE_DIR
-+)
-+
-+MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
-
---- redland-1.0.8.orig\librdf\rdf_storage_sqlite.c	2008-07-01 05:10:26.000000000 +0200
-+++ redland-1.0.81\librdf\rdf_storage_sqlite.c	2010-04-18 12:00:37.195375100 +0200
+diff -Nru redland-1.0.8.orig/librdf/rdf_storage_sqlite.c redland-1.0.8/librdf/rdf_storage_sqlite.c
+--- redland-1.0.8.orig/librdf/rdf_storage_sqlite.c	2008-07-01 05:10:26.000000000 +0200
++++ redland-1.0.8/librdf/rdf_storage_sqlite.c	2010-04-30 13:50:54.341200000 +0200
 @@ -44,8 +44,9 @@
  #include <redland.h>
  #include <rdf_storage.h>
@@ -888,5 +590,313 @@ diff -Nru orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
    status=sqlite_compile(context->db,
                          (const char*)request,
                          &icontext->zTail,
-
-
+diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win32_rdf_config.h
+--- redland-1.0.8.orig/librdf/win32_rdf_config.h	2008-07-01 05:10:26.000000000 +0200
++++ redland-1.0.8/librdf/win32_rdf_config.h	2010-04-30 13:50:54.306200000 +0200
+@@ -43,7 +43,9 @@
+ #define HAVE_STRICMP 1
+ 
+ /* MS names for these functions */
++#ifndef _MSC_VER
+ #define vsnprintf _vsnprintf
++#endif
+ #define snprintf _snprintf
+ #define access _access
+ #define stricmp _stricmp
+@@ -87,7 +89,7 @@
+ #define HAVE_BDB_FD_2_ARGS 1
+ 
+ /* Have BDB hash support */
+-#define HAVE_BDB_HASH 1
++//#define HAVE_BDB_HASH 1
+ 
+ /* BDB has open method with 6 args */
+ /* #undef HAVE_BDB_OPEN_6_ARGS */
+@@ -255,7 +257,7 @@
+ #define STORAGE_FILE 1
+ 
+ /* Building MySQL storage */
+-#define STORAGE_MYSQL 1
++/*#define STORAGE_MYSQL 1*/
+ 
+ /* Building PostgreSQL storage */
+ /*#undef STORAGE_POSTGRESQL*/
+diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLists.txt
+--- redland-1.0.8.orig/raptor/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.8/raptor/CMakeLists.txt	2010-04-30 13:50:54.309200000 +0200
+@@ -0,0 +1,100 @@
++project(raptor)
++
++find_package(CURL REQUIRED)
++find_package(LibXml2 REQUIRED)
++find_package(LibXslt REQUIRED)
++
++set(raptor_SRCS
++    src/n3_lexer.c
++    src/n3_parser.c
++    src/ntriples_parse.c
++    src/parsedate.c
++    src/raptor_abbrev.c
++    src/raptor_avltree.c
++#    src/raptor_expat.c
++    src/raptor_feature.c
++    src/raptor_general.c
++    src/raptor_grddl.c
++    src/raptor_guess.c
++    src/raptor_identifier.c
++    src/raptor_iostream.c
++    src/raptor_json_writer.c
++#    src/raptor_librdfa.c
++    src/raptor_libxml.c
++    src/raptor_locator.c
++    src/raptor_namespace.c
++    src/raptor_nfc.c
++    src/raptor_nfc_data.c
++#    src/raptor_nfc_test.c
++    src/raptor_parse.c
++    src/raptor_qname.c
++    src/raptor_rdfxml.c
++    src/raptor_rfc2396.c
++    src/raptor_rss.c
++    src/raptor_rss_common.c
++    src/raptor_sax2.c
++    src/raptor_sequence.c
++    src/raptor_serialize.c
++    src/raptor_serialize_dot.c
++    src/raptor_serialize_json.c
++    src/raptor_serialize_ntriples.c
++    src/raptor_serialize_rdfxml.c
++    src/raptor_serialize_rdfxmla.c
++    src/raptor_serialize_rss.c
++    src/raptor_serialize_simple.c
++    src/raptor_serialize_turtle.c
++    src/raptor_set.c
++    src/raptor_statement.c
++    src/raptor_stringbuffer.c
++    src/raptor_turtle_writer.c
++    src/raptor_uri.c
++    src/raptor_utf8.c
++    src/raptor_win32.c
++    src/raptor_www.c
++    src/raptor_www_curl.c
++    src/raptor_www_libfetch.c
++    src/raptor_www_libxml.c
++#    src/raptor_www_test.c
++    src/raptor_xml.c
++    src/raptor_xml_writer.c
++    src/raptor_xsd.c
++    src/snprintf.c
++    src/strcasecmp.c
++    src/turtle_common.c
++    src/turtle_lexer.c
++    src/turtle_parser.c
++)
++
++set(raptor_HDRS
++    src/n3_common.h
++    src/n3_lexer.h
++    src/n3_parser.h
++    src/raptor.h
++    src/raptor_internal.h
++    src/raptor_nfc.h
++    src/raptor_rss.h
++    src/turtle_common.h
++    src/turtle_lexer.h
++    src/turtle_parser.h
++    src/win32_raptor_config.h
++)
++
++set(raptor_HDRS_INST
++    src/raptor.h
++)
++
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
++include_directories(${CURL_INCLUDE_DIR})
++include_directories(${LIBXML2_INCLUDE_DIR})
++include_directories(${LIBXSLT_INCLUDE_DIR})
++add_library(raptor SHARED ${raptor_SRCS} ${raptor_HDRS} ${raptor_HDRS_INST})
++set_target_properties(raptor PROPERTIES DEFINE_SYMBOL RAPTOR_INTERNAL)
++target_link_libraries(raptor ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
++
++set(PROGRAMM raptor)
++configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.cpp)
++add_executable(raptor-config ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.cpp)
++target_link_libraries(raptor-config raptor)
++
++install(TARGETS raptor raptor-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++install(FILES   ${raptor_HDRS_INST} DESTINATION include/redland)
+diff -Nru redland-1.0.8.orig/raptor/src/raptor_win32.c redland-1.0.8/raptor/src/raptor_win32.c
+--- redland-1.0.8.orig/raptor/src/raptor_win32.c	2008-06-14 05:39:35.000000000 +0200
++++ redland-1.0.8/raptor/src/raptor_win32.c	2010-04-30 13:50:54.311200000 +0200
+@@ -33,8 +33,26 @@
+ 
+ 
+ #ifdef WIN32
++#include <windows.h>
++#include <Winsock2.h>
++
++#define KDE_SECONDS_SINCE_1601	11644473600LL
++#define KDE_USEC_IN_SEC			1000000LL
+ 
+ /* Only on WIN32 systems */
++int gettimeofday(struct timeval *__p, void *__t)
++{
++	union {
++		unsigned long long ns100; /*time since 1 Jan 1601 in 100ns units */
++		FILETIME ft;
++	} now;
++
++	GetSystemTimeAsFileTime (&now.ft);
++	__p->tv_usec = (long) ((now.ns100 / 10LL) % KDE_USEC_IN_SEC);
++	__p->tv_sec  = (long)(((now.ns100 / 10LL ) / KDE_USEC_IN_SEC) - KDE_SECONDS_SINCE_1601);
++
++	return (0);
++}
+ 
+ 
+ /* DLL entry point */
+diff -Nru redland-1.0.8.orig/raptor/src/raptor_www.c redland-1.0.8/raptor/src/raptor_www.c
+--- redland-1.0.8.orig/raptor/src/raptor_www.c	2008-06-14 05:39:51.000000000 +0200
++++ redland-1.0.8/raptor/src/raptor_www.c	2010-04-30 14:04:52.311200000 +0200
+@@ -41,6 +41,10 @@
+ #include <sys/stat.h>
+ #endif
+ 
++#ifdef _MSC_VER
++#define EACCES 13
++#endif
++
+ /* Raptor includes */
+ #include "raptor.h"
+ #include "raptor_internal.h"
+diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/raptor/src/win32_raptor_config.h
+--- redland-1.0.8.orig/raptor/src/win32_raptor_config.h	2008-04-02 06:50:14.000000000 +0200
++++ redland-1.0.8/raptor/src/win32_raptor_config.h	2010-04-30 13:50:54.314200000 +0200
+@@ -69,7 +69,9 @@
+ #define HAVE_STRICMP 1
+ 
+ /* MS names for these functions */
++#ifndef _MSC_VER
+ #define vsnprintf _vsnprintf
++#endif
+ #define snprintf _snprintf
+ #define access _access
+ #define stricmp _stricmp
+@@ -118,6 +120,7 @@
+ #define RAPTOR_PARSER_TURTLE 1
+ #define RAPTOR_PARSER_NTRIPLES 1
+ #define RAPTOR_PARSER_RDFXML 1
++#define RAPTOR_PARSER_TRIG 1
+ 
+ #define RAPTOR_SERIALIZER_ATOM 1
+ #define RAPTOR_SERIALIZER_RSS_1_0 1
+diff -Nru redland-1.0.8.orig/rasqal/CMakeLists.txt redland-1.0.8/rasqal/CMakeLists.txt
+--- redland-1.0.8.orig/rasqal/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.8/rasqal/CMakeLists.txt	2010-04-30 13:50:54.317200000 +0200
+@@ -0,0 +1,63 @@
++project(rasqal)
++
++find_package(PCRE REQUIRED)
++
++set(rasqal_SRCS
++    src/rasqal_datetime.c
++    src/rasqal_decimal.c
++    src/rasqal_engine.c
++    src/rasqal_expr.c
++    src/rasqal_feature.c
++    src/rasqal_general.c
++    src/rasqal_graph_pattern.c
++#    src/rasqal_limit_test.c
++    src/rasqal_literal.c
++    src/rasqal_map.c
++    src/rasqal_query.c
++    src/rasqal_query_results.c
++    src/rasqal_query_test.c
++    src/rasqal_raptor.c
++# only when rasqal links against redland and not the other way round
++#    src/rasqal_redland.c
++    src/rasqal_result_formats.c
++    src/rasqal_rowsource.c
++    src/rasqal_sparql_xml.c
++    src/rasqal_xsd_datatypes.c
++    src/rdql_lexer.c
++    src/rdql_parser.c
++    src/sparql_lexer.c
++    src/sparql_parser.c
++    src/strcasecmp.c
++)
++
++set(rasqal_HDRS
++    src/rasqal_internal.h
++    src/rdql_common.h
++    src/rdql_lexer.h
++    src/rdql_parser.h
++    src/sparql_common.h
++    src/sparql_lexer.h
++    src/sparql_parser.h
++    src/win32_rasqal_config.h
++)
++
++set(rasqal_HDRS_INST
++    src/rasqal.h
++)
++
++add_definitions(-DRASQAL_DECIMAL_NONE)
++include_directories(${CMAKE_SOURCE_DIR}/raptor/src)
++include_directories(${CMAKE_SOURCE_DIR}/librdf)
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
++include_directories(${PCRE_INCLUDE_DIR})
++add_library(rasqal SHARED ${rasqal_SRCS})
++set_target_properties(rasqal PROPERTIES DEFINE_SYMBOL RASQAL_INTERNAL)
++target_link_libraries(rasqal raptor ${PCRE_LIBRARIES})
++
++set(PROGRAMM rasqal)
++configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
++add_executable(rasqal-config ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
++target_link_libraries(rasqal-config rasqal)
++
++install(TARGETS rasqal rasqal-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++install(FILES   ${rasqal_HDRS_INST} DESTINATION include/redland)
+diff -Nru redland-1.0.8.orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/src/sparql_lexer.c
+--- redland-1.0.8.orig/rasqal/src/sparql_lexer.c	2008-06-26 20:52:33.000000000 +0200
++++ redland-1.0.8/rasqal/src/sparql_lexer.c	2010-04-30 13:50:54.323200000 +0200
+@@ -1166,7 +1166,7 @@
+ 
+ #include <rasqal.h>
+ #include <rasqal_internal.h>
+-
++#undef DELETE
+ #include <sparql_parser.h>
+ 
+ #include <sparql_common.h>
+diff -Nru redland-1.0.8.orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src/sparql_parser.c
+--- redland-1.0.8.orig/rasqal/src/sparql_parser.c	2008-06-26 20:52:33.000000000 +0200
++++ redland-1.0.8/rasqal/src/sparql_parser.c	2010-04-30 13:50:54.329200000 +0200
+@@ -43,6 +43,14 @@
+    define necessary library symbols; they are noted "INFRINGES ON
+    USER NAME SPACE" below.  */
+ 
++#ifdef WIN32
++//undefine some constants which are used below
++#define _WINSOCK2_H
++#include <windows.h>
++#undef DELETE
++#undef OPTIONAL
++#endif
++
+ /* Identify Bison output.  */
+ #define YYBISON 1
+ 
+diff -Nru redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h redland-1.0.8/rasqal/src/win32_rasqal_config.h
+--- redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h	2008-06-27 04:02:09.000000000 +0200
++++ redland-1.0.8/rasqal/src/win32_rasqal_config.h	2010-04-30 13:50:54.332200000 +0200
+@@ -40,7 +40,9 @@
+ #define HAVE_STRICMP 1
+ 
+ /* MS names for these functions */
++#ifndef _MSC_VER
+ #define vsnprintf _vsnprintf
++#endif
+ #define snprintf _snprintf
+ #define access _access
+ #define stricmp _stricmp
