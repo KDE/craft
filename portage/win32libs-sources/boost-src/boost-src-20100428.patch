@@ -32,7 +32,7 @@ index eca8c2e..a720fa5 100644
      parse_environment(const options_description&, const char* prefix);
 -
 +#endif
-+    
++
      #ifdef _WIN32
      /** Parses the char* string which is passed to WinMain function on
          windows. This function is provided for convenience, and because it's
