@@ -945,3 +945,9 @@ def log(fn):
             f.close()
 
     return inner
+
+def getscriptname():
+    if __name__ == '__main__':
+        return sys.argv[ 0 ]
+    else:
+        return __name__
