@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['testing/kdevplatform'] = 'default'
-        self.hardDependencies['win32libs-bin/zip'] = 'default'
+        self.hardDependencies['dev-utils/zip'] = 'default'
     
 from Package.CMakePackageBase import *
 
