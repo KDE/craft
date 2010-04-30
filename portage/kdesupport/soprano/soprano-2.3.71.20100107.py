@@ -5,8 +5,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base']            = 'default'
         self.hardDependencies['libs/qt']                 = 'default'
-        self.hardDependencies['kdesupport/clucene-core'] = 'default'
         if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['kdesupport/clucene-core'] = 'default'
             self.hardDependencies['win32libs-bin/redland']   = 'default'
 
     def setTargets( self ):
