@@ -15,6 +15,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

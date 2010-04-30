@@ -16,6 +16,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
         self.hardDependencies['win32libs-sources/win_iconv-src'] = 'default'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
