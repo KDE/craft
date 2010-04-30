@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['kdesupport/qimageblitz'] = 'default'
+        self.hardDependencies['kdesupport/dbusmenu-qt'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
