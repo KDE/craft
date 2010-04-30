@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
 import info
+import platform
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
-        self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
+        self.hardDependencies['win32libs-bin/boost']   = 'default'
+        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
+        
+        # temporary, until we have ported some of the indirect dependencies
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
+
         self.boostversion = "1.37"
 
     def setTargets( self ):
@@ -26,6 +32,10 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/akonadi'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
+
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
 
