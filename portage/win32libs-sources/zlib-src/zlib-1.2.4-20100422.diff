@@ -98,6 +98,21 @@ diff -Nru zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.4/cmake/mod
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru zlib-1.2.4.orig/win32/zlib1.rc zlib-1.2.4/win32/zlib1.rc
+--- zlib-1.2.4.orig/win32/zlib1.rc	2006-05-21 05:55:00.000000000 +0200
++++ zlib-1.2.4/win32/zlib1.rc	2010-04-30 15:24:41.422451200 +0200
+@@ -10,9 +10,9 @@
+   PRODUCTVERSION	ZLIB_VER_MAJOR,ZLIB_VER_MINOR,ZLIB_VER_REVISION,0
+   FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
+ #ifdef _DEBUG
+-  FILEFLAGS		1
++  FILEFLAGS		0x1L
+ #else
+-  FILEFLAGS		0
++  FILEFLAGS		0x0L
+ #endif
+   FILEOS		VOS__WINDOWS32
+   FILETYPE		VFT_DLL
 diff -Nru zlib-1.2.4.orig/zconf.h zlib-1.2.4/zconf.h
 --- zlib-1.2.4.orig/zconf.h	Sun Feb 21 22:38:24 2010
 +++ zlib-1.2.4/zconf.h	Thu Jan  1 00:00:00 1970
