@@ -156,9 +156,10 @@ def doExec( category, package, version, action, opts ):
     utils.debug( "file: " + fileName, 1 )
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
-        #utils.system( commandstring ) or utils.die( "running %s" % commandstring )
-        mod = portage.__import__( fileName )
-        mod.Package().execute(action)
+        #makes touble for xcompile -> changed back
+        utils.system( commandstring ) or utils.die( "running %s" % commandstring )
+        #mod = portage.__import__( fileName )
+        #mod.Package().execute(action)
     except:
         return False
     return True
