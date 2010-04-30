@@ -14,6 +14,10 @@ class subinfo (info.infoclass):
         self.patchToApply['0.9.21b'] = ("0.9.21.diff", 2)
         self.defaultTarget = '0.9.21b'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
