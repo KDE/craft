@@ -26,22 +26,27 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
-        
+        if platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
+
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         
-        self.subinfo.options.configure.defines = "-DBUILD_PROJECTS=program_options"
-		#TODO:python support is for now disabled on x64 because the symbol Py_InitModule4 is renamed to Py_InitModule4_64
-		#see http://www.python.org/dev/peps/pep-0353/
-        if( not platform.buildArchitecture() == 'x64' ):
-           self.subinfo.options.configure.defines += ";python"
-        self.subinfo.options.configure.defines +=" "
-        #                                         "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
-        #                                         "-DBOOST_RUNTIME_INSTALL_DIR=bin "
+        projects = "program_options"
+        # only enable python for standard win32 builds, as x64 has problems with symbols and wince isn't supported
+        if not platform.isCrossCompilingEnabled() and platform.buildArchitecture() == "x86":
+            projects += ";python"
+            
+        self.subinfo.options.configure.defines =  "-DBUILD_PROJECTS=%s " % projects
+        self.subinfo.options.configure.defines += "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
+                                                  "-DBOOST_RUNTIME_INSTALL_DIR=bin "
                                                  
         if self.buildType() == "Debug":
             self.subinfo.options.configure.defines += "-DENABLE_DEBUG=ON -DENABLE_RELEASE=OFF "
