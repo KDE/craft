@@ -1,6 +1,18 @@
+diff -Nru openssl-1.0.0.orig/apps/apps.c openssl-1.0.0/apps/apps.c
+--- openssl-1.0.0.orig/apps/apps.c	2009-10-31 14:34:19.000000000 +0100
++++ openssl-1.0.0/apps/apps.c	2010-05-02 01:05:30.448498800 +0200
+@@ -147,7 +147,7 @@
+ #include "apps.h"
+ #undef NON_MAIN
+ 
+-#ifdef _WIN32
++#if defined(OPENSSL_SYS_WIN32) && !defined(rename)
+ static int WIN32_rename(const char *from, const char *to);
+ #define rename(from,to) WIN32_rename((from),(to))
+ #endif
 diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
 --- openssl-1.0.0.orig/Configure	2010-01-19 22:40:54.000000000 +0100
-+++ openssl-1.0.0/Configure	2010-04-25 16:23:07.241942800 +0200
++++ openssl-1.0.0/Configure	2010-05-02 01:05:30.452499000 +0200
 @@ -503,7 +503,7 @@
  "BC-32","bcc32::::WIN32::BN_LLONG DES_PTR RC4_INDEX EXPORT_VAR_AS_FN:${no_asm}:win32",
  
@@ -19,21 +31,143 @@ diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
  		    netware-clib netware-clib-bsdsock
  		    netware-libc netware-libc-bsdsock);
  
-diff -Nru openssl-1.0.0.orig/include/openssl/dtls1.h openssl-1.0.0/include/openssl/dtls1.h
---- openssl-1.0.0.orig/include/openssl/dtls1.h	2009-09-09 19:05:42.000000000 +0200
-+++ openssl-1.0.0/include/openssl/dtls1.h	2010-04-25 16:27:01.187323700 +0200
-@@ -68,7 +68,7 @@
+diff -Nru openssl-1.0.0.orig/crypto/buffer/buffer.h openssl-1.0.0/crypto/buffer/buffer.h
+--- openssl-1.0.0.orig/crypto/buffer/buffer.h	2007-10-09 17:52:07.000000000 +0200
++++ openssl-1.0.0/crypto/buffer/buffer.h	2010-05-02 01:05:30.453499100 +0200
+@@ -67,10 +67,6 @@
+ 
+ #include <stddef.h>
+ 
+-#if !defined(NO_SYS_TYPES_H)
+-#include <sys/types.h>
+-#endif
+-
+ /* Already declared in ossl_typ.h */
+ /* typedef struct buf_mem_st BUF_MEM; */
+ 
+diff -Nru openssl-1.0.0.orig/crypto/err/err.h openssl-1.0.0/crypto/err/err.h
+--- openssl-1.0.0.orig/crypto/err/err.h	2008-10-26 19:40:51.000000000 +0100
++++ openssl-1.0.0/crypto/err/err.h	2010-05-02 01:05:30.455499200 +0200
+@@ -137,8 +137,6 @@
+ #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
  #endif
- #ifdef OPENSSL_SYS_WIN32
- /* Needed for struct timeval */
--#include <winsock.h>
-+#include <winsock2.h>
- #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
- #include <sys/timeval.h>
- #else
+ 
+-#include <errno.h>
+-
+ #define ERR_TXT_MALLOCED	0x01
+ #define ERR_TXT_STRING		0x02
+ 
+diff -Nru openssl-1.0.0.orig/crypto/rand/rand.h openssl-1.0.0/crypto/rand/rand.h
+--- openssl-1.0.0.orig/crypto/rand/rand.h	2008-11-12 04:58:04.000000000 +0100
++++ openssl-1.0.0/crypto/rand/rand.h	2010-05-02 01:05:30.456499300 +0200
+@@ -63,6 +63,7 @@
+ #include <openssl/ossl_typ.h>
+ #include <openssl/e_os2.h>
+ 
++#undef OPENSSL_SYS_WINDOWS
+ #if defined(OPENSSL_SYS_WINDOWS)
+ #include <windows.h>
+ #endif
+diff -Nru openssl-1.0.0.orig/crypto/rand/randfile.c openssl-1.0.0/crypto/rand/randfile.c
+--- openssl-1.0.0.orig/crypto/rand/randfile.c	2010-01-26 19:07:41.000000000 +0100
++++ openssl-1.0.0/crypto/rand/randfile.c	2010-05-02 01:05:30.458499400 +0200
+@@ -79,12 +79,20 @@
+ # include <sys/stat.h>
+ #endif
+ 
+-#ifdef _WIN32
++#ifdef OPENSSL_SYS_WIN32
++#ifndef stat
+ #define stat	_stat
++#endif
++#ifndef chmod
+ #define chmod	_chmod
++#endif
++#ifndef open
+ #define open	_open
++#endif
++#ifndef fdopen
+ #define fdopen	_fdopen
+ #endif
++#endif
+ 
+ #undef BUFSIZE
+ #define BUFSIZE	1024
+diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
+--- openssl-1.0.0.orig/e_os.h	2009-08-26 17:13:43.000000000 +0200
++++ openssl-1.0.0/e_os.h	2010-05-02 01:05:30.460499500 +0200
+@@ -308,7 +308,7 @@
+ #      undef isupper
+ #      undef isxdigit
+ #    endif
+-#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin)
++#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin) && !defined(_WIN32_WCE)
+ #      if _MSC_VER>=1300
+ #        undef stdin
+ #        undef stdout
+@@ -337,7 +337,7 @@
+ #  include <io.h>
+ #  include <fcntl.h>
+ 
+-#  ifdef OPENSSL_SYS_WINCE
++#  if defined(OPENSSL_SYS_WINCE) && !defined(open)
+ #    define OPENSSL_NO_POSIX_IO
+ #  endif
+ 
+@@ -499,7 +499,8 @@
+ #      endif
+ #      if !defined(IPPROTO_IP)
+          /* winsock[2].h was included already? */
+-#        include <winsock.h>
++#        include <winsock2.h>
++#        include <ws2tcpip.h>
+ #      endif
+ #      ifdef getservbyname
+ #        undef getservbyname
+diff -Nru openssl-1.0.0.orig/engines/ccgost/gost_lcl.h openssl-1.0.0/engines/ccgost/gost_lcl.h
+--- openssl-1.0.0.orig/engines/ccgost/gost_lcl.h	2009-06-16 18:39:20.000000000 +0200
++++ openssl-1.0.0/engines/ccgost/gost_lcl.h	2010-05-02 01:05:30.461499600 +0200
+@@ -18,6 +18,11 @@
+ #include <openssl/ec.h>
+ #include "gost89.h"
+ #include "gosthash.h"
++
++#if !defined(NO_SYS_TYPES_H)
++#include <sys/types.h>
++#endif
++
+ /* Control commands */
+ #define GOST_PARAM_CRYPT_PARAMS 0
+ #define GOST_PARAM_MAX 0
+diff -Nru openssl-1.0.0.orig/include/openssl/buffer.h openssl-1.0.0/include/openssl/buffer.h
+--- openssl-1.0.0.orig/include/openssl/buffer.h	2007-10-09 17:52:07.000000000 +0200
++++ openssl-1.0.0/include/openssl/buffer.h	2010-05-02 01:05:30.463499700 +0200
+@@ -67,10 +67,6 @@
+ 
+ #include <stddef.h>
+ 
+-#if !defined(NO_SYS_TYPES_H)
+-#include <sys/types.h>
+-#endif
+-
+ /* Already declared in ossl_typ.h */
+ /* typedef struct buf_mem_st BUF_MEM; */
+ 
+diff -Nru openssl-1.0.0.orig/include/openssl/err.h openssl-1.0.0/include/openssl/err.h
+--- openssl-1.0.0.orig/include/openssl/err.h	2008-10-26 19:40:51.000000000 +0100
++++ openssl-1.0.0/include/openssl/err.h	2010-05-02 01:05:30.470500100 +0200
+@@ -137,8 +137,6 @@
+ #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
+ #endif
+ 
+-#include <errno.h>
+-
+ #define ERR_TXT_MALLOCED	0x01
+ #define ERR_TXT_STRING		0x02
+ 
 diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 --- openssl-1.0.0.orig/ms/mingw64.bat	1970-01-01 01:00:00.000000000 +0100
-+++ openssl-1.0.0/ms/mingw64.bat	2010-04-25 16:23:07.295945900 +0200
++++ openssl-1.0.0/ms/mingw64.bat	2010-05-02 01:05:30.464499700 +0200
 @@ -0,0 +1,90 @@
 +@rem OpenSSL with Mingw32+GNU as
 +@rem ---------------------------
@@ -102,7 +236,7 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +
 +echo Generating makefile
 +perl util\mkfiles.pl >MINFO
-+perl util\mk1mf.pl gaswin Mingw32 >ms\mingw32a.mak
++perl util\mk1mf.pl gaswin Mingw64 >ms\mingw32a.mak
 +echo Generating DLL definition files
 +perl util\mkdef.pl 32 libeay >ms\libeay32.def
 +if errorlevel 1 goto end
@@ -125,33 +259,31 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +
 +:end
 +
-diff -Nru openssl-1.0.0.orig/ssl/dtls1.h openssl-1.0.0/ssl/dtls1.h
---- openssl-1.0.0.orig/ssl/dtls1.h	2009-09-09 19:05:42.000000000 +0200
-+++ openssl-1.0.0/ssl/dtls1.h	2010-04-25 16:26:18.163862900 +0200
-@@ -68,7 +68,7 @@
- #endif
- #ifdef OPENSSL_SYS_WIN32
- /* Needed for struct timeval */
--#include <winsock.h>
-+#include <winsock2.h>
- #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
- #include <sys/timeval.h>
- #else
-diff -Nru openssl-1.0.0.orig/ssl/ssltest.c openssl-1.0.0/ssl/ssltest.c
---- openssl-1.0.0.orig/ssl/ssltest.c	2010-01-24 17:57:38.000000000 +0100
-+++ openssl-1.0.0/ssl/ssltest.c	2010-04-25 16:26:51.252755500 +0200
-@@ -190,7 +190,7 @@
- 				  */
- 
- #ifdef OPENSSL_SYS_WINDOWS
--#include <winsock.h>
-+#include <winsock2.h>
- #else
- #include OPENSSL_UNISTD
- #endif
+diff -Nru openssl-1.0.0.orig/util/mk1mf.pl openssl-1.0.0/util/mk1mf.pl
+--- openssl-1.0.0.orig/util/mk1mf.pl	2009-09-20 14:47:04.000000000 +0200
++++ openssl-1.0.0/util/mk1mf.pl	2010-05-02 01:08:00.741095100 +0200
+@@ -68,6 +68,7 @@
+ 	"VC-NT",   "Microsoft Visual C++ [4-6] - Windows NT ONLY",
+ 	"Mingw32", "GNU C++ - Windows NT or 9x",
+ 	"Mingw32-files", "Create files with DOS copy ...",
++	"Mingw64", "GNU C++ - Win64",
+ 	"BC-NT",   "Borland C++ 4.5 - Windows NT",
+ 	"linux-elf","Linux elf",
+ 	"ultrix-mips","DEC mips ultrix",
+@@ -181,6 +182,10 @@
+ 	{
+ 	require 'Mingw32.pl';
+ 	}
++elsif ($platform eq "Mingw64")
++	{
++	require 'Mingw64.pl';
++	}
+ elsif ($platform eq "Mingw32-files")
+ 	{
+ 	require 'Mingw32f.pl';
 diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
 --- openssl-1.0.0.orig/util/pl/Mingw32.pl	2008-04-17 12:19:16.000000000 +0200
-+++ openssl-1.0.0/util/pl/Mingw32.pl	2010-04-25 16:23:07.307946600 +0200
++++ openssl-1.0.0/util/pl/Mingw32.pl	2010-05-02 01:05:30.465499800 +0200
 @@ -19,7 +19,7 @@
  if ($debug)
  	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -g2 -ggdb"; }
@@ -161,72 +293,117 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  
  if ($gaswin and !$no_asm)
  	{
---- openssl-1.0.0.orig/e_os.h	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/e_os.h	Mon Jan 19 23:26:36 1970
-@@ -308,7 +308,7 @@
- #      undef isupper
- #      undef isxdigit
- #    endif
--#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin)
-+#    if defined(_MSC_VER) && !defined(_DLL) && defined(stdin) && !defined(_WIN32_WCE)
- #      if _MSC_VER>=1300
- #        undef stdin
- #        undef stdout
-@@ -337,7 +337,7 @@
- #  include <io.h>
- #  include <fcntl.h>
- 
--#  ifdef OPENSSL_SYS_WINCE
-+#  if defined(OPENSSL_SYS_WINCE) && !defined(open)
- #    define OPENSSL_NO_POSIX_IO
- #  endif
- 
-@@ -499,7 +499,8 @@
- #      endif
- #      if !defined(IPPROTO_IP)
-          /* winsock[2].h was included already? */
--#        include <winsock.h>
-+#        include <winsock2.h>
-+#        include <ws2tcpip.h>
- #      endif
- #      ifdef getservbyname
- #        undef getservbyname
---- openssl-1.0.0.orig/apps/apps.c	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/apps/apps.c	Mon Jan 19 23:26:36 1970
-@@ -147,7 +147,7 @@
- #include "apps.h"
- #undef NON_MAIN
- 
--#ifdef _WIN32
-+#if defined(OPENSSL_SYS_WIN32) && !defined(rename)
- static int WIN32_rename(const char *from, const char *to);
- #define rename(from,to) WIN32_rename((from),(to))
- #endif
---- openssl-1.0.0.orig/crypto/rand/randfile.c	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/crypto/rand/randfile.c	Mon Jan 19 23:26:36 1970
-@@ -79,11 +79,19 @@
- # include <sys/stat.h>
- #endif
- 
--#ifdef _WIN32
-+#ifdef OPENSSL_SYS_WIN32
-+#ifndef stat
- #define stat	_stat
-+#endif
-+#ifndef chmod
- #define chmod	_chmod
-+#endif
-+#ifndef open
- #define open	_open
-+#endif
-+#ifndef fdopen
- #define fdopen	_fdopen
-+#endif
- #endif
- 
- #undef BUFSIZE
---- openssl-1.0.0.orig/util/pl/VC-32.pl	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/util/pl/VC-32.pl	Mon Jan 19 23:26:36 1970
+diff -Nru openssl-1.0.0.orig/util/pl/Mingw64.pl openssl-1.0.0/util/pl/Mingw64.pl
+--- openssl-1.0.0.orig/util/pl/Mingw64.pl	1970-01-01 01:00:00.000000000 +0100
++++ openssl-1.0.0/util/pl/Mingw64.pl	2010-05-02 01:05:30.467499900 +0200
+@@ -0,0 +1,104 @@
++#!/usr/local/bin/perl
++#
++# Mingw64.pl -- Mingw-w64
++#
++
++$o='/';
++$cp='cp';
++$rm='rm -f';
++$mkdir='gmkdir';
++
++$o='\\';
++$cp='copy';
++$rm='del';
++$mkdir='mkdir';
++
++# C compiler stuff
++
++$cc='gcc';
++if ($debug)
++	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -g2 -ggdb"; }
++else
++	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -fomit-frame-pointer -O3 -Wall"; }
++
++if ($gaswin and !$no_asm)
++	{
++        $bn_asm_obj='$(OBJ_D)\bn-win32.o';
++        $bn_asm_src='crypto/bn/asm/bn-win32.s';
++        $bnco_asm_obj='$(OBJ_D)\co-win32.o';
++        $bnco_asm_src='crypto/bn/asm/co-win32.s';
++        $des_enc_obj='$(OBJ_D)\d-win32.o $(OBJ_D)\y-win32.o';
++        $des_enc_src='crypto/des/asm/d-win32.s crypto/des/asm/y-win32.s';
++        $bf_enc_obj='$(OBJ_D)\b-win32.o';
++        $bf_enc_src='crypto/bf/asm/b-win32.s';
++#       $cast_enc_obj='$(OBJ_D)\c-win32.o';
++#       $cast_enc_src='crypto/cast/asm/c-win32.s';
++        $rc4_enc_obj='$(OBJ_D)\r4-win32.o';
++        $rc4_enc_src='crypto/rc4/asm/r4-win32.s';
++        $rc5_enc_obj='$(OBJ_D)\r5-win32.o';
++        $rc5_enc_src='crypto/rc5/asm/r5-win32.s';
++        $md5_asm_obj='$(OBJ_D)\m5-win32.o';
++        $md5_asm_src='crypto/md5/asm/m5-win32.s';
++        $rmd160_asm_obj='$(OBJ_D)\rm-win32.o';
++        $rmd160_asm_src='crypto/ripemd/asm/rm-win32.s';
++        $sha1_asm_obj='$(OBJ_D)\s1-win32.o';
++        $sha1_asm_src='crypto/sha/asm/s1-win32.s';
++	$cflags.=" -DBN_ASM -DMD5_ASM -DSHA1_ASM -DOPENSSL_BN_ASM_PART_WORDS";
++	}
++
++
++$obj='.o';
++$ofile='-o ';
++
++# EXE linking stuff
++$link='${CC}';
++$lflags='${CFLAGS}';
++$efile='-o ';
++$exep='';
++$ex_libs="-lws2_32 -lgdi32";
++
++# static library stuff
++$mklib='ar r';
++$mlflags='';
++$ranlib='ranlib';
++$plib='lib';
++$libp=".a";
++$shlibp=".a";
++$lfile='';
++
++$asm='as';
++$afile='-o ';
++#$bn_asm_obj="";
++#$bn_asm_src="";
++#$des_enc_obj="";
++#$des_enc_src="";
++#$bf_enc_obj="";
++#$bf_enc_src="";
++
++sub do_lib_rule
++	{
++	local($obj,$target,$name,$shlib)=@_;
++	local($ret,$_,$Name);
++
++	$target =~ s/\//$o/g if $o ne '/';
++	$target="$target";
++	($Name=$name) =~ tr/a-z/A-Z/;
++
++	$ret.="$target: \$(${Name}OBJ)\n";
++	$ret.="\tif exist $target \$(RM) $target\n";
++	$ret.="\t\$(MKLIB) $target \$(${Name}OBJ)\n";
++	$ret.="\t\$(RANLIB) $target\n\n";
++	}
++
++sub do_link_rule
++	{
++	local($target,$files,$dep_libs,$libs)=@_;
++	local($ret,$_);
++	
++	$file =~ s/\//$o/g if $o ne '/';
++	$n=&bname($target);
++	$ret.="$target: $files $dep_libs\n";
++	$ret.="\t\$(LINK) ${efile}$target \$(LFLAGS) $files $libs\n\n";
++	return($ret);
++	}
++1;
+diff -Nru openssl-1.0.0.orig/util/pl/VC-32.pl openssl-1.0.0/util/pl/VC-32.pl
+--- openssl-1.0.0.orig/util/pl/VC-32.pl	2010-01-20 15:04:55.000000000 +0100
++++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 01:05:30.469500000 +0200
 @@ -103,12 +103,12 @@
      }
  
@@ -261,7 +438,7 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  	}
  else
  	{
-@@ -261,10 +261,15 @@
+@@ -261,12 +261,17 @@
  elsif ($shlib && $FLAVOR =~ /CE/)
  	{
  	$mlflags.=" $lflags /dll";
@@ -269,74 +446,14 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  	$lib_cflag=" -D_WINDLL -D_DLL";
  	$out_def='out32dll_$(TARGETCPU)';
  	$tmp_def='tmp32dll_$(TARGETCPU)';
-+	}
-+
+ 	}
+ 
 +if ($FLAVOR =~ /CE/)
 +	{
 +	$lflags.=' /entry:mainCRTstartup' if(defined($ENV{'PORTSDK_LIBPATH'}));
 +	$lflags.=' /entry:mainACRTStartup' if(defined($ENV{'WCECOMPAT'}));
- 	}
- 
++	}
++
  $cflags.=" /Fd$out_def";
---- openssl-1.0.0.orig/crypto/buffer/buffer.h	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/crypto/buffer/buffer.h	Mon Jan 19 23:26:36 1970
-@@ -67,10 +67,6 @@
  
- #include <stddef.h>
- 
--#if !defined(NO_SYS_TYPES_H)
--#include <sys/types.h>
--#endif
--
- /* Already declared in ossl_typ.h */
- /* typedef struct buf_mem_st BUF_MEM; */
- 
---- openssl-1.0.0.orig/crypto/err/err.h	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/crypto/err/err.h	Mon Jan 19 23:26:36 1970
-@@ -137,8 +137,6 @@
- #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
- #endif
- 
--#include <errno.h>
--
- #define ERR_TXT_MALLOCED	0x01
- #define ERR_TXT_STRING		0x02
- 
---- openssl-1.0.0.orig/include/openssl/buffer.h	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/include/openssl/buffer.h	Mon Jan 19 23:26:36 1970
-@@ -67,10 +67,6 @@
- 
- #include <stddef.h>
- 
--#if !defined(NO_SYS_TYPES_H)
--#include <sys/types.h>
--#endif
--
- /* Already declared in ossl_typ.h */
- /* typedef struct buf_mem_st BUF_MEM; */
- 
---- openssl-1.0.0.orig/include/openssl/err.h	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/include/openssl/err.h	Mon Jan 19 23:26:36 1970
-@@ -137,8 +137,6 @@
- #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
- #endif
- 
--#include <errno.h>
--
- #define ERR_TXT_MALLOCED	0x01
- #define ERR_TXT_STRING		0x02
- 
---- openssl-1.0.0.orig/engines/ccgost/gost_lcl.h	Mon Jan 19 23:26:36 1970
-+++ openssl-1.0.0/engines/ccgost/gost_lcl.h	Mon Jan 19 23:26:36 1970
-@@ -18,6 +18,11 @@
- #include <openssl/ec.h>
- #include "gost89.h"
- #include "gosthash.h"
-+
-+#if !defined(NO_SYS_TYPES_H)
-+#include <sys/types.h>
-+#endif
-+
- /* Control commands */
- #define GOST_PARAM_CRYPT_PARAMS 0
- #define GOST_PARAM_MAX 0
+ sub do_lib_rule
