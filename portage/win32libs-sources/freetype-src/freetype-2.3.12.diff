@@ -104,7 +104,7 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +install( FILES ${include_files} DESTINATION include/freetype2/freetype )
 +install( FILES ${include_config_files} DESTINATION include/freetype2/freetype/config )
 +install( FILES ${include_internal_files} DESTINATION include/freetype2/freetype/internal )
-+install( FILES include/ft2build.h DESTINATION include/freetype2 )
++install( FILES include/ft2build.h DESTINATION include )
 diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cmake
 --- freetype-2.3.5-orig/ftconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ freetype-2.3.5/ftconfig.h.cmake	2008-02-07 18:59:09.312500000 +0100
