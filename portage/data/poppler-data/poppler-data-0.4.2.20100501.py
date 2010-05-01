@@ -2,12 +2,14 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for v in [ '0.2.0', '0.2.1', '0.3.0', '0.4.0', '0.4.1' ]:
+        for v in [ '0.2.0', '0.2.1', '0.3.0', '0.4.0', '0.4.1', '0.4.2' ]:
           self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
           self.targetInstSrc[v] = 'poppler-data-' + v
-          self.patchToApply[v] = ( 'poppler-data-cmake.patch', 0 )
+          if v not in ['0.4.2']:
+            self.patchToApply[v] = ( 'poppler-data-cmake.patch', 0 )
+
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler-data"
-        self.defaultTarget = '0.4.1'
+        self.defaultTarget = '0.4.2'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
