@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
           self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
           self.targetInstSrc[v] = 'poppler-data-' + v
           self.patchToApply[v] = ( 'poppler-data-cmake.patch', 0 )
+        self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler-data"
         self.defaultTarget = '0.4.1'
 
     def setDependencies( self ):
