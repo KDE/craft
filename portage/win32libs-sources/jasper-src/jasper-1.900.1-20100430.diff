@@ -1,7 +1,7 @@
 diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/libjasper/CMakeLists.txt
 --- jasper-1.900.1.orig/src/libjasper/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ jasper-1.900.1/src/libjasper/CMakeLists.txt	2010-04-30 16:08:23.293200000 +0200
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,120 @@
 +# echo EXPORTS > libjasper.def
 +# nm libjasper.dll | grep " T _" | sed "s/.* T _//" >> libjasper.def
 +# lib /machine:i386 /def:libjasper.def
@@ -100,6 +100,7 @@ diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/li
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -wd4996)
 +    add_definitions(-DWIN32 -DJAS_WIN_MSVC_BUILD)
++    set(jasper_base_SRCS ${jasper_base_SRCS} jasper.def)
 +endif(MSVC)
 +
 +add_library(jasper SHARED ${jasper_base_SRCS}
@@ -121,3 +122,376 @@ diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/li
 +                ARCHIVE DESTINATION lib
 +)
 +install(FILES ${jasper_headers} DESTINATION include/jasper)
+diff -Nru jasper-1.900.1.orig/src/libjasper/jasper.def jasper-1.900.1/src/libjasper/jasper.def
+--- jasper-1.900.1.orig/src/libjasper/jasper.def	1970-01-01 01:00:00.000000000 +0100
++++ jasper-1.900.1/src/libjasper/jasper.def	2010-05-02 02:18:18.364200000 +0200
+@@ -0,0 +1,369 @@
++EXPORTS
++JPC_ISTERMINATED
++JPC_NOMINALGAIN
++JPC_PASSTYPE
++JPC_SEGPASSCNT
++JPC_SEGTYPE
++bmp_decode
++bmp_encode
++bmp_info_create
++bmp_info_destroy
++bmp_isgrayscalepal
++bmp_numcmpts
++bmp_validate
++calcrdslopes
++decopts DATA
++dump_layeringinfo
++dump_passes
++encopts DATA
++getthebyte
++jas_calloc
++jas_cleanup
++jas_clrspc_numchans
++jas_cmprof_copy
++jas_cmprof_createfromclrspc
++jas_cmprof_createfromiccprof
++jas_cmprof_destroy
++jas_cmxform_apply
++jas_cmxform_create
++jas_cmxform_destroy
++jas_eprintf
++jas_free
++jas_getdbglevel
++jas_getopt
++jas_getversion
++jas_iccattrtab_dump
++jas_iccattrval_allowmodify
++jas_iccattrval_clone
++jas_iccattrval_create
++jas_iccattrval_destroy
++jas_iccattrval_dump
++jas_iccattrvalinfos DATA
++jas_iccprof_copy
++jas_iccprof_createfrombuf
++jas_iccprof_createfromclrspc
++jas_iccprof_createfromcmprof
++jas_iccprof_destroy
++jas_iccprof_dump
++jas_iccprof_getattr
++jas_iccprof_gethdr
++jas_iccprof_load
++jas_iccprof_save
++jas_iccprof_setattr
++jas_iccprof_sethdr
++jas_iccprofdata_sgray DATA
++jas_iccprofdata_sgraylen DATA
++jas_iccprofdata_srgb DATA
++jas_iccprofdata_srgblen DATA
++jas_image_addcmpt
++jas_image_addfmt
++jas_image_chclrspc
++jas_image_clearfmts
++jas_image_copy
++jas_image_copycmpt
++jas_image_create
++jas_image_create0
++jas_image_decode
++jas_image_delcmpt
++jas_image_depalettize
++jas_image_destroy
++jas_image_dump
++jas_image_encode
++jas_image_fmtfromname
++jas_image_fmttostr
++jas_image_getcmptbytype
++jas_image_getfmt
++jas_image_ishomosamp
++jas_image_lookupfmtbyid
++jas_image_lookupfmtbyname
++jas_image_rawsize
++jas_image_readcmpt
++jas_image_readcmpt2
++jas_image_readcmptsample
++jas_image_sampcmpt
++jas_image_strtofmt
++jas_image_writecmpt
++jas_image_writecmpt2
++jas_image_writecmptsample
++jas_init
++jas_malloc
++jas_matrix_asl
++jas_matrix_asr
++jas_matrix_bindsub
++jas_matrix_clip
++jas_matrix_cmp
++jas_matrix_copy
++jas_matrix_create
++jas_matrix_destroy
++jas_matrix_divpow2
++jas_matrix_resize
++jas_matrix_setall
++jas_memdump
++jas_optarg DATA
++jas_opterr DATA
++jas_optind DATA
++jas_realloc
++jas_seq2d_bindsub
++jas_seq2d_copy
++jas_seq2d_create
++jas_seq2d_input
++jas_seq2d_output
++jas_setdbglevel
++jas_strdup
++jas_stream_close
++jas_stream_copy
++jas_stream_display
++jas_stream_fdopen
++jas_stream_fillbuf
++jas_stream_flush
++jas_stream_flushbuf
++jas_stream_fopen
++jas_stream_freopen
++jas_stream_getc_func
++jas_stream_gets
++jas_stream_gobble
++jas_stream_isseekable
++jas_stream_length
++jas_stream_memopen
++jas_stream_pad
++jas_stream_printf
++jas_stream_putc_func
++jas_stream_puts
++jas_stream_read
++jas_stream_rewind
++jas_stream_seek
++jas_stream_setrwcount
++jas_stream_tell
++jas_stream_tmpfile
++jas_stream_ungetc
++jas_stream_write
++jas_taginfo_nonull
++jas_taginfos_lookup
++jas_tvparser_create
++jas_tvparser_destroy
++jas_tvparser_gettag
++jas_tvparser_getval
++jas_tvparser_next
++jp2_box_create
++jp2_box_destroy
++jp2_box_dump
++jp2_box_get
++jp2_box_put
++jp2_boxinfo_unk DATA
++jp2_boxinfolookup
++jp2_boxinfos DATA
++jp2_cdef_lookup
++jp2_decode
++jp2_encode
++jp2_validate
++jpc_atoaf
++jpc_bitstream_align
++jpc_bitstream_close
++jpc_bitstream_fillbuf
++jpc_bitstream_getbit_func
++jpc_bitstream_getbits
++jpc_bitstream_inalign
++jpc_bitstream_needalign
++jpc_bitstream_outalign
++jpc_bitstream_pending
++jpc_bitstream_putbit_func
++jpc_bitstream_putbits
++jpc_bitstream_sopen
++jpc_cod_gettsfb
++jpc_cstate_create
++jpc_cstate_destroy
++jpc_dec_decodecblks
++jpc_dec_decodepkts
++jpc_dec_lookahead
++jpc_dec_mstab DATA
++jpc_dec_pi_create
++jpc_decode
++jpc_enc_cp_destroy
++jpc_enc_create
++jpc_enc_destroy
++jpc_enc_dump
++jpc_enc_enccblk
++jpc_enc_enccblks
++jpc_enc_encodetiledata
++jpc_enc_encpkt
++jpc_enc_encpkts
++jpc_enc_pi_create
++jpc_enc_tile_create
++jpc_enc_tile_destroy
++jpc_encode
++jpc_firstone
++jpc_floorlog2
++jpc_ft_analyze
++jpc_ft_fwdlift_col
++jpc_ft_fwdlift_colgrp
++jpc_ft_fwdlift_colres
++jpc_ft_fwdlift_row
++jpc_ft_hpenergywts DATA
++jpc_ft_invlift_col
++jpc_ft_invlift_colgrp
++jpc_ft_invlift_colres
++jpc_ft_invlift_row
++jpc_ft_lpenergywts DATA
++jpc_ft_qmfb2d DATA
++jpc_ft_synthesize
++jpc_getdata
++jpc_getmagctxno
++jpc_getms
++jpc_getscctxno
++jpc_getsignmsedec_func
++jpc_getspb
++jpc_getuint16
++jpc_getuint32
++jpc_getuint8
++jpc_getzcctxno
++jpc_ict
++jpc_iict
++jpc_init_t2state
++jpc_initctxs
++jpc_initluts
++jpc_initmqctxs
++jpc_irct
++jpc_magctxnolut DATA
++jpc_mct_getsynweight
++jpc_mqctxs DATA
++jpc_mqdec_create
++jpc_mqdec_destroy
++jpc_mqdec_dump
++jpc_mqdec_getbit_func
++jpc_mqdec_init
++jpc_mqdec_lpsexchrenormd
++jpc_mqdec_mpsexchrenormd
++jpc_mqdec_setctx
++jpc_mqdec_setctxs
++jpc_mqdec_setinput
++jpc_mqenc_codelps
++jpc_mqenc_codemps2
++jpc_mqenc_create
++jpc_mqenc_destroy
++jpc_mqenc_dump
++jpc_mqenc_flush
++jpc_mqenc_getstate
++jpc_mqenc_init
++jpc_mqenc_putbit_func
++jpc_mqenc_setctxs
++jpc_mqstates DATA
++jpc_ms_create
++jpc_ms_destroy
++jpc_ms_dump
++jpc_ns_analyze
++jpc_ns_fwdlift_col
++jpc_ns_fwdlift_colgrp
++jpc_ns_fwdlift_colres
++jpc_ns_fwdlift_row
++jpc_ns_hpenergywts DATA
++jpc_ns_invlift_col
++jpc_ns_invlift_colgrp
++jpc_ns_invlift_colres
++jpc_ns_invlift_row
++jpc_ns_lpenergywts DATA
++jpc_ns_qmfb2d DATA
++jpc_ns_synthesize
++jpc_pchg_copy
++jpc_pchg_destroy
++jpc_pchglist_copy
++jpc_pchglist_create
++jpc_pchglist_destroy
++jpc_pchglist_get
++jpc_pchglist_insert
++jpc_pchglist_numpchgs
++jpc_pchglist_remove
++jpc_pi_addpchg
++jpc_pi_create0
++jpc_pi_destroy
++jpc_pi_init
++jpc_pi_next
++jpc_pow2i
++jpc_ppmstabtostreams
++jpc_pptstabwrite
++jpc_ppxstab_create
++jpc_ppxstab_destroy
++jpc_ppxstab_grow
++jpc_ppxstab_insert
++jpc_ppxstabent_create
++jpc_ppxstabent_destroy
++jpc_putdata
++jpc_putms
++jpc_putuint16
++jpc_putuint32
++jpc_putuint8
++jpc_qmfb_join_col
++jpc_qmfb_join_colgrp
++jpc_qmfb_join_colres
++jpc_qmfb_join_row
++jpc_qmfb_split_col
++jpc_qmfb_split_colgrp
++jpc_qmfb_split_colres
++jpc_qmfb_split_row
++jpc_quantize
++jpc_rct
++jpc_refnmsedec DATA
++jpc_refnmsedec0 DATA
++jpc_restore_t2state
++jpc_save_t2state
++jpc_scctxnolut DATA
++jpc_seg_alloc
++jpc_seg_destroy
++jpc_seglist_insert
++jpc_seglist_remove
++jpc_seq_conv
++jpc_seq_norm
++jpc_seq_upsample
++jpc_signmsedec DATA
++jpc_signmsedec0 DATA
++jpc_spblut DATA
++jpc_streamlist_create
++jpc_streamlist_destroy
++jpc_streamlist_get
++jpc_streamlist_insert
++jpc_streamlist_numstreams
++jpc_streamlist_remove
++jpc_tagtree_copy
++jpc_tagtree_create
++jpc_tagtree_decode
++jpc_tagtree_destroy
++jpc_tagtree_dump
++jpc_tagtree_encode
++jpc_tagtree_getleaf
++jpc_tagtree_reset
++jpc_tagtree_setvalue
++jpc_tsfb_analyze
++jpc_tsfb_analyze2
++jpc_tsfb_destroy
++jpc_tsfb_getbands
++jpc_tsfb_getbands2
++jpc_tsfb_synthesize
++jpc_tsfb_synthesize2
++jpc_validate
++jpc_zcctxnolut DATA
++jpg_decode
++jpg_encode
++jpg_validate
++mif_decode
++mif_encode
++mif_tags DATA
++mif_tags2 DATA
++mif_validate
++modetab DATA
++pgx_decode
++pgx_dumphdr
++pgx_encode
++pgx_validate
++pnm_decode
++pnm_encode
++pnm_fmt
++pnm_maxvaltodepth
++pnm_opttab DATA
++pnm_type
++pnm_validate
++prgordtab DATA
++ras_decode
++ras_dummy DATA
++ras_encode
++ras_validate
++rateallocate
++ratestrtosize
