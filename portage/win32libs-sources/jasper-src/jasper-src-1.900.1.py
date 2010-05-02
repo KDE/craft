@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.900.1-2'
 
     def setDependencies( self ):
-        self.hardDependencies['testing/jpeg7-src'] = 'default'
+        self.hardDependencies['win32libs-sources/jpeg-src'] = 'default'
 
 from Package.CMakePackageBase import *
 
