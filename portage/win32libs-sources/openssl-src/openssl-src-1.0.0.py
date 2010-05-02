@@ -40,10 +40,10 @@ class Package(CMakePackageBase):
         cmd = ""
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
             if self.buildTarget == "1.0.0":
-	          if platform.buildArchitecture() == 'x64':
-		    cmd = "ms\mingw64.bat enable-md2 no-asm enable-shared"
-		  else:
-		    cmd = "ms\mingw32.bat enable-md2 no-asm enable-shared"
+                if platform.buildArchitecture() == 'x64':
+                    cmd = "ms\mingw64.bat enable-md2 no-asm enable-shared"
+                else:
+                    cmd = "ms\mingw32.bat enable-md2 no-asm enable-shared"
             else:
                 cmd = "ms\mingw32.bat"
         else:

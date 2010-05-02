@@ -13,15 +13,6 @@ diff -Nru openssl-1.0.0.orig/apps/apps.c openssl-1.0.0/apps/apps.c
 diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
 --- openssl-1.0.0.orig/Configure	2010-01-19 22:40:54.000000000 +0100
 +++ openssl-1.0.0/Configure	2010-05-02 16:36:22.685459500 +0200
-@@ -503,7 +503,7 @@
- "BC-32","bcc32::::WIN32::BN_LLONG DES_PTR RC4_INDEX EXPORT_VAR_AS_FN:${no_asm}:win32",
- 
- # MinGW
--"mingw", "gcc:-mno-cygwin -DL_ENDIAN -DWIN32_LEAN_AND_MEAN -fomit-frame-pointer -O3 -march=i486 -Wall:::MINGW32:-lws2_32 -lgdi32 -lcrypt32:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts} EXPORT_VAR_AS_FN:${x86_asm}:coff:win32:cygwin-shared:-D_WINDLL -DOPENSSL_USE_APPLINK:-mno-cygwin:.dll.a",
-+"mingw", "gcc:-mno-cygwin -DL_ENDIAN -DOPENSSL_NO_CAPIENG -DWIN32_LEAN_AND_MEAN -fomit-frame-pointer -O3 -march=i486 -Wall:::MINGW32:-lws2_32 -lgdi32 -lcrypt32:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts} EXPORT_VAR_AS_FN:${x86_asm}:coff:win32:cygwin-shared:-D_WINDLL -DOPENSSL_USE_APPLINK:-mno-cygwin:.dll.a",
- # As for OPENSSL_USE_APPLINK. Applink makes it possible to use .dll
- # compiled with one compiler with application compiled with another
- # compiler. It's possible to engage Applink support in mingw64 build,
 @@ -584,7 +584,7 @@
  
  my @MK1MF_Builds=qw(VC-WIN64I VC-WIN64A
@@ -238,7 +229,7 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +if errorlevel 1 goto end
 +
 +echo Generating the DLLs and input libraries
-+dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32
++dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32 -lcrypt32
 +if errorlevel 1 goto end
 +dllwrap --dllname libssl32.dll --output-lib out/libssl32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a
 +if errorlevel 1 goto end
@@ -342,7 +333,7 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw64.pl openssl-1.0.0/util/pl/Mingw64.pl
 +$lflags='${CFLAGS}';
 +$efile='-o ';
 +$exep='';
-+$ex_libs="-lws2_32 -lgdi32";
++$ex_libs="-lws2_32 -lgdi32 -lcrypt32";
 +
 +# static library stuff
 +$mklib='ar r';
