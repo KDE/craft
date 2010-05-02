@@ -8,6 +8,8 @@ class subinfo(info.infoclass):
         self.targets['1.0.0'] = 'http://www.openssl.org/source/openssl-1.0.0.tar.gz'
         self.targetDigestUrls['1.0.0'] = 'http://www.openssl.org/source/openssl-1.0.0.tar.gz.sha1'
         self.targetInstSrc['1.0.0'] = "openssl-1.0.0"
+        self.patchToApply['1.0.0'] = ('openssl-1.0.0.diff', 1)
+        
         
         
         self.defaultTarget = '1.0.0'
