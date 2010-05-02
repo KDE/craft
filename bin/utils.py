@@ -92,10 +92,15 @@ def getFile( url, destdir ):
         error( "getFile: protocol not understood" )
         return False
 
-def wgetFile( url, destdir ):
-    """download file with wget from 'url' into 'destdir'"""
+def wgetFile( url, destdir , filename=''):
+    """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     compath = WGetExecutable
-    command = "%s --no-check-certificate -c -t 1 -P %s %s" % ( compath, destdir, url )
+    command = "%s --no-check-certificate -c -t 1" %  compath
+    if(filename ==''):
+       command += "  -P %s" % destdir
+    else:
+       command += " -O %s" % os.path.join( destdir , filename )
+    command += " %s" % url
     debug( "wgetfile called", 1 )
     attempts = 1
     if url.lower().startswith( "http://downloads.sourceforge.net" ):
