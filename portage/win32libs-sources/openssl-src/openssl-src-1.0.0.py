@@ -11,20 +11,13 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
             self.targetInstSrc[ver] = 'openssl-'+ver
             self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
-        self.targetDigests['0.9.8m'] = '2511c709a47f34d5fa6cd1a1c9cb1699bdffa912'        
-        
-        if platform.buildArchitecture() == 'x64':
-            self.targets['1.0.0-msys'] = ''
-            self.defaultTarget = '1.0.0-msys'
-        else:
+            self.targetDigestUrls[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz.sha1'      
+
             self.defaultTarget = '1.0.0'
         
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        if platform.buildArchitecture() == 'x64':
-            self.hardDependencies['testing/openssl-msys-src'] = 'default'
-        else:
             self.hardDependencies['virtual/base'] = 'default'
             self.hardDependencies['dev-util/perl'] = 'default'
             if platform.isCrossCompilingEnabled():
@@ -42,16 +35,15 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
-    def compile( self ):
-        if self.buildArchitecture() == 'x64':
-            print "nothing to do, x64 openssl-src uses 'testing/openssl-msys-src'"
-            return True
-        
+    def compile( self ):       
         os.chdir( self.sourceDir() )
         cmd = ""
         if self.compiler() == "mingw" or self.compiler() == "mingw4":
             if self.buildTarget == "1.0.0":
-                cmd = "ms\mingw32.bat no-asm no-capieng"
+	          if platform.buildArchitecture() == 'x64':
+		    cmd = "ms\mingw64.bat enable-md2 no-asm enable-shared"
+		  else:
+		    cmd = "ms\mingw32.bat enable-md2 no-asm enable-shared"
             else:
                 cmd = "ms\mingw32.bat"
         else:
@@ -86,10 +78,7 @@ class Package(CMakePackageBase):
 
         return self.system( cmd )
 
-    def install( self ):
-        if self.buildArchitecture() == 'x64':
-            return True
-        
+    def install( self ):        
         src = self.sourceDir()
         dst = self.imageDir()
 

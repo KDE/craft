@@ -1,6 +1,6 @@
 diff -Nru openssl-1.0.0.orig/apps/apps.c openssl-1.0.0/apps/apps.c
 --- openssl-1.0.0.orig/apps/apps.c	2009-10-31 14:34:19.000000000 +0100
-+++ openssl-1.0.0/apps/apps.c	2010-05-02 01:05:30.448498800 +0200
++++ openssl-1.0.0/apps/apps.c	2010-05-02 15:07:53.686802100 +0200
 @@ -147,7 +147,7 @@
  #include "apps.h"
  #undef NON_MAIN
@@ -12,7 +12,7 @@ diff -Nru openssl-1.0.0.orig/apps/apps.c openssl-1.0.0/apps/apps.c
  #endif
 diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
 --- openssl-1.0.0.orig/Configure	2010-01-19 22:40:54.000000000 +0100
-+++ openssl-1.0.0/Configure	2010-05-02 01:05:30.452499000 +0200
++++ openssl-1.0.0/Configure	2010-05-02 15:07:53.716803800 +0200
 @@ -503,7 +503,7 @@
  "BC-32","bcc32::::WIN32::BN_LLONG DES_PTR RC4_INDEX EXPORT_VAR_AS_FN:${no_asm}:win32",
  
@@ -33,7 +33,7 @@ diff -Nru openssl-1.0.0.orig/Configure openssl-1.0.0/Configure
  
 diff -Nru openssl-1.0.0.orig/crypto/buffer/buffer.h openssl-1.0.0/crypto/buffer/buffer.h
 --- openssl-1.0.0.orig/crypto/buffer/buffer.h	2007-10-09 17:52:07.000000000 +0200
-+++ openssl-1.0.0/crypto/buffer/buffer.h	2010-05-02 01:05:30.453499100 +0200
++++ openssl-1.0.0/crypto/buffer/buffer.h	2010-05-02 15:07:53.740805200 +0200
 @@ -67,10 +67,6 @@
  
  #include <stddef.h>
@@ -47,7 +47,7 @@ diff -Nru openssl-1.0.0.orig/crypto/buffer/buffer.h openssl-1.0.0/crypto/buffer/
  
 diff -Nru openssl-1.0.0.orig/crypto/err/err.h openssl-1.0.0/crypto/err/err.h
 --- openssl-1.0.0.orig/crypto/err/err.h	2008-10-26 19:40:51.000000000 +0100
-+++ openssl-1.0.0/crypto/err/err.h	2010-05-02 01:05:30.455499200 +0200
++++ openssl-1.0.0/crypto/err/err.h	2010-05-02 15:07:53.757806200 +0200
 @@ -137,8 +137,6 @@
  #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
  #endif
@@ -57,20 +57,9 @@ diff -Nru openssl-1.0.0.orig/crypto/err/err.h openssl-1.0.0/crypto/err/err.h
  #define ERR_TXT_MALLOCED	0x01
  #define ERR_TXT_STRING		0x02
  
-diff -Nru openssl-1.0.0.orig/crypto/rand/rand.h openssl-1.0.0/crypto/rand/rand.h
---- openssl-1.0.0.orig/crypto/rand/rand.h	2008-11-12 04:58:04.000000000 +0100
-+++ openssl-1.0.0/crypto/rand/rand.h	2010-05-02 01:05:30.456499300 +0200
-@@ -63,6 +63,7 @@
- #include <openssl/ossl_typ.h>
- #include <openssl/e_os2.h>
- 
-+#undef OPENSSL_SYS_WINDOWS
- #if defined(OPENSSL_SYS_WINDOWS)
- #include <windows.h>
- #endif
 diff -Nru openssl-1.0.0.orig/crypto/rand/randfile.c openssl-1.0.0/crypto/rand/randfile.c
 --- openssl-1.0.0.orig/crypto/rand/randfile.c	2010-01-26 19:07:41.000000000 +0100
-+++ openssl-1.0.0/crypto/rand/randfile.c	2010-05-02 01:05:30.458499400 +0200
++++ openssl-1.0.0/crypto/rand/randfile.c	2010-05-02 15:07:53.797808500 +0200
 @@ -79,12 +79,20 @@
  # include <sys/stat.h>
  #endif
@@ -95,7 +84,16 @@ diff -Nru openssl-1.0.0.orig/crypto/rand/randfile.c openssl-1.0.0/crypto/rand/ra
  #define BUFSIZE	1024
 diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
 --- openssl-1.0.0.orig/e_os.h	2009-08-26 17:13:43.000000000 +0200
-+++ openssl-1.0.0/e_os.h	2010-05-02 01:05:30.460499500 +0200
++++ openssl-1.0.0/e_os.h	2010-05-02 15:12:52.877914900 +0200
+@@ -272,7 +272,7 @@
+ 	*/
+ #      define _WIN32_WINNT 0x0400
+ #    endif
+-#    if !defined(OPENSSL_NO_SOCK) && defined(_WIN32_WINNT)
++#    if !defined(OPENSSL_NO_SOCK) && defined(OPENSSL_SYS_WIN32)
+        /*
+         * Just like defining _WIN32_WINNT including winsock2.h implies
+         * certain "discipline" for maintaining [broad] binary compatibility.
 @@ -308,7 +308,7 @@
  #      undef isupper
  #      undef isxdigit
@@ -114,19 +112,9 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
  #    define OPENSSL_NO_POSIX_IO
  #  endif
  
-@@ -499,7 +499,8 @@
- #      endif
- #      if !defined(IPPROTO_IP)
-          /* winsock[2].h was included already? */
--#        include <winsock.h>
-+#        include <winsock2.h>
-+#        include <ws2tcpip.h>
- #      endif
- #      ifdef getservbyname
- #        undef getservbyname
 diff -Nru openssl-1.0.0.orig/engines/ccgost/gost_lcl.h openssl-1.0.0/engines/ccgost/gost_lcl.h
 --- openssl-1.0.0.orig/engines/ccgost/gost_lcl.h	2009-06-16 18:39:20.000000000 +0200
-+++ openssl-1.0.0/engines/ccgost/gost_lcl.h	2010-05-02 01:05:30.461499600 +0200
++++ openssl-1.0.0/engines/ccgost/gost_lcl.h	2010-05-02 15:07:53.839810900 +0200
 @@ -18,6 +18,11 @@
  #include <openssl/ec.h>
  #include "gost89.h"
@@ -141,7 +129,7 @@ diff -Nru openssl-1.0.0.orig/engines/ccgost/gost_lcl.h openssl-1.0.0/engines/ccg
  #define GOST_PARAM_MAX 0
 diff -Nru openssl-1.0.0.orig/include/openssl/buffer.h openssl-1.0.0/include/openssl/buffer.h
 --- openssl-1.0.0.orig/include/openssl/buffer.h	2007-10-09 17:52:07.000000000 +0200
-+++ openssl-1.0.0/include/openssl/buffer.h	2010-05-02 01:05:30.463499700 +0200
++++ openssl-1.0.0/include/openssl/buffer.h	2010-05-02 15:07:53.859812000 +0200
 @@ -67,10 +67,6 @@
  
  #include <stddef.h>
@@ -155,7 +143,7 @@ diff -Nru openssl-1.0.0.orig/include/openssl/buffer.h openssl-1.0.0/include/open
  
 diff -Nru openssl-1.0.0.orig/include/openssl/err.h openssl-1.0.0/include/openssl/err.h
 --- openssl-1.0.0.orig/include/openssl/err.h	2008-10-26 19:40:51.000000000 +0100
-+++ openssl-1.0.0/include/openssl/err.h	2010-05-02 01:05:30.470500100 +0200
++++ openssl-1.0.0/include/openssl/err.h	2010-05-02 15:07:53.879813200 +0200
 @@ -137,8 +137,6 @@
  #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
  #endif
@@ -167,7 +155,7 @@ diff -Nru openssl-1.0.0.orig/include/openssl/err.h openssl-1.0.0/include/openssl
  
 diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 --- openssl-1.0.0.orig/ms/mingw64.bat	1970-01-01 01:00:00.000000000 +0100
-+++ openssl-1.0.0/ms/mingw64.bat	2010-05-02 01:05:30.464499700 +0200
++++ openssl-1.0.0/ms/mingw64.bat	2010-05-02 15:07:53.899814300 +0200
 @@ -0,0 +1,90 @@
 +@rem OpenSSL with Mingw32+GNU as
 +@rem ---------------------------
@@ -261,7 +249,7 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +
 diff -Nru openssl-1.0.0.orig/util/mk1mf.pl openssl-1.0.0/util/mk1mf.pl
 --- openssl-1.0.0.orig/util/mk1mf.pl	2009-09-20 14:47:04.000000000 +0200
-+++ openssl-1.0.0/util/mk1mf.pl	2010-05-02 01:08:00.741095100 +0200
++++ openssl-1.0.0/util/mk1mf.pl	2010-05-02 15:07:53.911815000 +0200
 @@ -68,6 +68,7 @@
  	"VC-NT",   "Microsoft Visual C++ [4-6] - Windows NT ONLY",
  	"Mingw32", "GNU C++ - Windows NT or 9x",
@@ -283,7 +271,7 @@ diff -Nru openssl-1.0.0.orig/util/mk1mf.pl openssl-1.0.0/util/mk1mf.pl
  	require 'Mingw32f.pl';
 diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
 --- openssl-1.0.0.orig/util/pl/Mingw32.pl	2008-04-17 12:19:16.000000000 +0200
-+++ openssl-1.0.0/util/pl/Mingw32.pl	2010-05-02 01:05:30.465499800 +0200
++++ openssl-1.0.0/util/pl/Mingw32.pl	2010-05-02 15:07:53.935816400 +0200
 @@ -19,7 +19,7 @@
  if ($debug)
  	{ $cflags="-DL_ENDIAN -DDSO_WIN32 -g2 -ggdb"; }
@@ -295,7 +283,7 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw32.pl openssl-1.0.0/util/pl/Mingw32.pl
  	{
 diff -Nru openssl-1.0.0.orig/util/pl/Mingw64.pl openssl-1.0.0/util/pl/Mingw64.pl
 --- openssl-1.0.0.orig/util/pl/Mingw64.pl	1970-01-01 01:00:00.000000000 +0100
-+++ openssl-1.0.0/util/pl/Mingw64.pl	2010-05-02 01:05:30.467499900 +0200
++++ openssl-1.0.0/util/pl/Mingw64.pl	2010-05-02 15:07:53.955817500 +0200
 @@ -0,0 +1,104 @@
 +#!/usr/local/bin/perl
 +#
@@ -403,7 +391,7 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw64.pl openssl-1.0.0/util/pl/Mingw64.pl
 +1;
 diff -Nru openssl-1.0.0.orig/util/pl/VC-32.pl openssl-1.0.0/util/pl/VC-32.pl
 --- openssl-1.0.0.orig/util/pl/VC-32.pl	2010-01-20 15:04:55.000000000 +0100
-+++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 01:05:30.469500000 +0200
++++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 15:07:53.970818400 +0200
 @@ -103,12 +103,12 @@
      }
  
