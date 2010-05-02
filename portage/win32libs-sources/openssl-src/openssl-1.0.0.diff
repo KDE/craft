@@ -225,7 +225,7 @@ diff -Nru openssl-1.0.0.orig/ms/mingw64.bat openssl-1.0.0/ms/mingw64.bat
 +rem copy ms\tlhelp32.h outinc
 +
 +echo Building the libraries
-+mingw32-make -f ms/mingw32a.mak
++gmake -f ms/mingw32a.mak
 +if errorlevel 1 goto end
 +
 +echo Generating the DLLs and input libraries
