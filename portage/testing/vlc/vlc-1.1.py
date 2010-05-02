@@ -18,11 +18,11 @@ class subinfo(info.infoclass):
         self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32-debug.7z"
         self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = self.vlcTagName +  self.getVer()      
         
-        self.targets[ 'vlc-1.1.0-pre1'] = "http://download.videolan.org/pub/videolan/testing/vlc-1.1.0-pre1/win32/vlc-1.1.0-pre1-win32.7z"
-        self.targetDigests['vlc-1.1.0-pre1'] = ['1ed828a27723db1626b20ba29c44b7b1d97c28d5']
-        self.targetInstSrc[ 'vlc-1.1.0-pre1' ] = "vlc-1.1.0-pre1"
+        self.targets[ 'vlc-1.1.0-pre2'] = "http://download.videolan.org/pub/videolan/testing/vlc-1.1.0-pre2/win32/vlc-1.1.0-pre2-win32.7z"
+        self.targetDigests['vlc-1.1.0-pre2'] = 'b6839ddefa78e976efd00093605be59723f9d7ad'
+        self.targetInstSrc[ 'vlc-1.1.0-pre2' ] = "vlc-1.1.0-pre2"
         
-        self.defaultTarget = 'vlc-1.1.0-pre1'
+        self.defaultTarget = 'vlc-1.1.0-pre2'
        
 
     def setDependencies( self ):
@@ -50,8 +50,9 @@ class Package(BinaryPackageBase):
   def install( self ):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) ) 
+    shutil.rmtree( os.path.join( self.installDir() , "bin" , "sdk" ) )
     os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
-    shutil.copy(os.path.join( self.packageDir() ,"vlc.desktop" ), os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
+    utils.wgetFile( "http://git.videolan.org/?p=vlc.git;a=blob_plain;f=share/vlc.desktop" , os.path.join( self.installDir() , "share" , "applications" , "kde4" ) , "vlc.desktop"  )
     self.createImportLibs( "libvlc")
     self.createImportLibs( "libvlccore")
     return True 
