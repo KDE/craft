@@ -1,7 +1,3 @@
-import base
-import utils
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
@@ -11,31 +7,19 @@ class subinfo(info.infoclass):
         self.svnTargets['0.6.1'] = 'branches/KDE/4.1/kdeedu/marble'
         self.svnTargets['0.7.1'] = 'branches/KDE/4.2/kdeedu/marble'
         self.svnTargets['0.8.0'] = 'tags/marble/0.8.0'
+        self.svnTargets['0.9.2'] = 'branches/KDE/4.4/kdeedu/marble'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.subinfo = subinfo()
-        self.kdeCustomDefines = "-DQTONLY=ON -DBUILD_MARBLE_TESTS=ON"
+from Package.CMakePackageBase import *
         
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "marble", self.buildTarget, True )
-        else:
-            return self.doPackaging( "marble", os.path.basename(sys.argv[0]).replace("marble-", "").replace(".py", ""), True )
+class Package(CMakePackageBase):
+    def __init__( self, **args ):
+        self.subinfo = subinfo()
+        self.subinfo.options.configure.defines = "-DQTONLY=ON -DBUILD_MARBLE_TESTS=OFF"
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
