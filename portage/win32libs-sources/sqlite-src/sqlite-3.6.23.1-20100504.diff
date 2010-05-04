@@ -1,0 +1,111 @@
+diff -Nru sqlite-3.6.23.1.orig/CMakeLists.txt sqlite-3.6.23.1/CMakeLists.txt
+--- sqlite-3.6.23.1.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ sqlite-3.6.23.1/CMakeLists.txt	Tue May  4 07:10:26 2010
+@@ -0,0 +1,30 @@
++project( Sqlite )
++cmake_minimum_required( VERSION 2.6 )
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
++set( sqlite_HEADER sqlite3.h sqlite3ext.h )
++
++set( libsqlite_SRC sqlite3.c  )
++set( sqlite_SRC shell.c )
++
++add_library( libsqlite3 SHARED  ${libsqlite_SRC} )
++set_target_properties( libsqlite3 PROPERTIES OUTPUT_NAME "sqlite3" )
++
++if(WINCE)
++    target_link_libraries(libsqlite3 ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
++install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++add_executable( sqlite3 ${sqlite_SRC} )
++target_link_libraries( sqlite3 libsqlite3 )
++
++install( TARGETS sqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++install( FILES ${sqlite_HEADER} DESTINATION include )
+diff -Nru sqlite-3.6.23.1.orig/cmake/modules/FindWcecompat.cmake sqlite-3.6.23.1/cmake/modules/FindWcecompat.cmake
+--- sqlite-3.6.23.1.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ sqlite-3.6.23.1/cmake/modules/FindWcecompat.cmake	Fri Apr 30 14:49:51 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
+--- sqlite-3.6.23.1.orig/sqlite3.c	Mon Mar 29 19:51:07 2010
++++ sqlite-3.6.23.1/sqlite3.c	Tue May  4 07:13:49 2010
+@@ -23,7 +23,15 @@
+ # define SQLITE_PRIVATE static
+ #endif
+ #ifndef SQLITE_API
+-# define SQLITE_API
++# ifdef _MSC_VER
++#  ifdef libsqlite3_EXPORTS
++#   define SQLITE_API __declspec(dllexport)
++#  else
++#   define SQLITE_API __declspec(dllimport)
++#  endif
++# else
++#  define SQLITE_API
++# endif
+ #endif
+ /************** Begin file sqliteInt.h ***************************************/
+ /*
+diff -Nru sqlite-3.6.23.1.orig/sqlite3.h sqlite-3.6.23.1/sqlite3.h
+--- sqlite-3.6.23.1.orig/sqlite3.h	Mon Mar 29 19:51:07 2010
++++ sqlite-3.6.23.1/sqlite3.h	Tue May  4 07:14:31 2010
+@@ -50,7 +50,15 @@
+ #endif
+ 
+ #ifndef SQLITE_API
+-# define SQLITE_API
++# ifdef _MSC_VER
++#  ifdef libsqlite3_EXPORTS
++#   define SQLITE_API __declspec(dllexport)
++#  else
++#   define SQLITE_API __declspec(dllimport)
++#  endif
++# else
++#  define SQLITE_API
++# endif
+ #endif
+ 
+ 
