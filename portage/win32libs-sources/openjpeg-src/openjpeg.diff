@@ -99,6 +99,26 @@ diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/CMakeLists.txt OpenJPEG_v1_3/jp3d/li
 -INSTALL_FILES(/include .h)
 +FILE(GLOB HEADERS "*.h")
 +INSTALL(FILES ${HEADERS} DESTINATION include/jp3dvm)
+diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/event.c OpenJPEG_v1_3/jp3d/libjp3dvm/event.c
+--- OpenJPEG_v1_3.orig/jp3d/libjp3dvm/event.c	2006-10-30 16:32:50.000000000 +0100
++++ OpenJPEG_v1_3/jp3d/libjp3dvm/event.c	2010-05-04 20:53:33.361915200 +0200
+@@ -46,6 +46,7 @@
+  @param r Base of value; must be in the range 2 - 36
+  @return Returns a
+ */
++#ifndef __MINGW32__
+ static char *
+ _itoa(int i, char *a, int r) {
+ 	r = ((r < 2) || (r > 36)) ? 10 : r;
+@@ -56,7 +57,7 @@
+ 	else *i2a(i, a, r) = 0;
+ 	return a;
+ }
+-
++#endif // !__MINGW32__
+ #endif // !WIN32
+ 
+ /* ----------------------------------------------------------------------- */
 diff -Nru OpenJPEG_v1_3.orig/jp3d/libjp3dvm/jp3d_lib.c OpenJPEG_v1_3/jp3d/libjp3dvm/jp3d_lib.c
 --- OpenJPEG_v1_3.orig/jp3d/libjp3dvm/jp3d_lib.c	2006-10-30 16:32:50.000000000 +0100
 +++ OpenJPEG_v1_3/jp3d/libjp3dvm/jp3d_lib.c	2009-10-01 02:30:44.800600000 +0200
@@ -561,6 +581,22 @@ diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/CMakeLists.txt OpenJPEG_v1_3/libopenjpe
  INSTALL(FILES openjpeg.h
 -	DESTINATION ${INCLUDE_INSTALL_DIR}/openjpeg)
 +	DESTINATION include/openjpeg)
+diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/dwt.c OpenJPEG_v1_3/libopenjpeg/dwt.c
+--- OpenJPEG_v1_3.orig/libopenjpeg/dwt.c	2007-12-19 15:45:35.000000000 +0100
++++ OpenJPEG_v1_3/libopenjpeg/dwt.c	2010-05-04 20:46:44.306518600 +0200
+@@ -31,11 +31,11 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#include "opj_includes.h"
+ #ifdef __SSE__
+ #include <xmmintrin.h>
+ #endif
+ 
+-#include "opj_includes.h"
+ 
+ /** @defgroup DWT DWT - Implementation of a discrete wavelet transform */
+ /*@{*/
 diff -Nru OpenJPEG_v1_3.orig/libopenjpeg/j2k_lib.c OpenJPEG_v1_3/libopenjpeg/j2k_lib.c
 --- OpenJPEG_v1_3.orig/libopenjpeg/j2k_lib.c	2007-10-18 14:26:11.000000000 +0200
 +++ OpenJPEG_v1_3/libopenjpeg/j2k_lib.c	2009-10-01 02:30:44.852600000 +0200
