@@ -380,6 +380,18 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw64.pl openssl-1.0.0/util/pl/Mingw64.pl
 +	return($ret);
 +	}
 +1;
+diff -Nru openssl-1.0.0.orig/ssl/dtls1.h openssl-1.0.0/ssl/dtls1.h
+--- openssl-1.0.0.orig/ssl/dtls1.h	Wed Sep  9 17:05:42 2009
++++ openssl-1.0.0/ssl/dtls1.h	Tue May  4 15:02:29 2010
+@@ -68,7 +68,7 @@
+ #endif
+ #ifdef OPENSSL_SYS_WIN32
+ /* Needed for struct timeval */
+-#include <winsock.h>
++#include <winsock2.h>
+ #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
+ #include <sys/timeval.h>
+ #else
 diff -Nru openssl-1.0.0.orig/util/pl/VC-32.pl openssl-1.0.0/util/pl/VC-32.pl
 --- openssl-1.0.0.orig/util/pl/VC-32.pl	2010-01-20 15:04:55.000000000 +0100
 +++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 16:36:22.909472300 +0200
