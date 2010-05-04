@@ -30,7 +30,8 @@ class Package(CMakePackageBase):
         wcecompatincdir = os.path.join( os.path.join( self.mergeDestinationDir(), "include" ), "wcecompat" )
         os.environ["TARGET_INCLUDE"] = wcecompatincdir + ";" + os.getenv("TARGET_INCLUDE")
         
-    CMakePackageBase.make( self )
+    return CMakePackageBase.make( self )
+
 
 if __name__ == '__main__':
     Package().execute()
