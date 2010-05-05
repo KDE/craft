@@ -47,7 +47,7 @@ class Package(CMakePackageBase):
     shutil.copytree( os.path.join( self.sourceDir() , "include" ) , os.path.join( self.installDir(), "include") )
     shutil.copytree( os.path.join( self.sourceDir() , "scripts" ) , os.path.join( self.installDir(), "scripts") )
     shutil.copytree( os.path.join( self.sourceDir() , "share" ) , os.path.join( self.installDir(), "share") )
-    os.makedirs(os.path.join( self.sourceDir() , "share" , "licence" , "mysql" ) )
+    os.makedirs(os.path.join( self.installDir() , "share" , "licence" , "mysql" ) )
     shutil.copy( os.path.join( self.sourceDir() , "COPYING" ) , os.path.join( self.installDir() , "share" , "licence" , "mysql" ,  "COPYING"  ) )
     shutil.copy( os.path.join( self.sourceDir() , "EXCEPTIONS-CLIENT" ) , os.path.join( self.installDir() , "share" , "licence" , "mysql" ,  "EXCEPTIONS-CLIENT"  ) )
     shutil.copytree( os.path.join( self.sourceDir() , "data" ) , os.path.join( self.installDir(), "data") )
