@@ -2,10 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/sdk/kdevplatform'
-        self.svnTargets['0.9.94'] = 'tags/kdevplatform/0.9.94'
-        self.svnTargets['0.9.96'] = 'tags/kdevplatform/0.9.96'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://gitorious.org/kdevelop/kdevplatform.git'
+        self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
