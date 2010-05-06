@@ -30,18 +30,12 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
         self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
-        self.svnTargets['4.6.2-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.6_jjc|"
-        self.targetSrcSuffix['4.6.2-mingw-x64'] = "x64"
-        self.svnTargets['4.7-mingw-x64'] = "git://gitorious.org/+qt-mingw-w64/qt/qt-mingw-w64-qt.git|4.7-WebKit|"
-        self.targetSrcSuffix['4.7-mingw-x64'] = "x64"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
         
-        if platform.isCrossCompilingEnabled():
+        if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
             self.defaultTarget = '4.7'
-        elif platform.buildArchitecture() == 'x64' and COMPILER == "mingw4":
-            self.defaultTarget = '4.7-mingw-x64'
         else:
             self.defaultTarget = '4.6.2'
         
@@ -55,7 +49,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
         self.hardDependencies['win32libs-bin/dbus'] = 'default'
         if not platform.isCrossCompilingEnabled():
-            self.hardDependencies['testing/mysql-server'] = 'default'
+            self.hardDependencies['testing/mysql-pkg'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -68,7 +62,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
         self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
         if not platform.isCrossCompilingEnabled():
-            self.mysql_server = portage.getPackageInstance('testing','mysql-server')
+            self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -116,12 +110,13 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
-            if not (self.buildArchitecture() == 'x64' and COMPILER == "mingw4"):
-                command += "-plugin-sql-mysql "
+            command += "-plugin-sql-mysql "
         # all builds
         command += "-no-phonon -qdbus -dbus-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
+        if ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
+            command += "-qt-style-windowsxp -qt-style-windowsvista "
         command += "%s %s" % ( incdirs, libdirs )
 
         if self.buildType() == "Debug":
