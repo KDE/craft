@@ -42,7 +42,7 @@ class Package(CMakePackageBase):
         if not os.path.exists(qmake):
             utils.die("could not found qmake")
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
+        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
             % qmake.replace('\\', '/')
 
 if __name__ == '__main__':
