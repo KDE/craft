@@ -28,7 +28,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20100326'] = 'tags/kdepim/enterprise5.0.20100326.1107645/kdesupport/qimageblitz'
         self.svnTargets['20100401'] = 'tags/kdepim/enterprise5.0.20100401.1110042/kdesupport/qimageblitz'
         self.svnTargets['20100409'] = 'tags/kdepim/enterprise5.0.20100409.1112952/kdesupport/qimageblitz'
-        self.defaultTarget = '20100409'
+        self.svnTargets['20100507'] = 'tags/kdepim/enterprise5.0.20100507.1123982/kdesupport/qimageblitz'
+        self.defaultTarget = '20100507'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
