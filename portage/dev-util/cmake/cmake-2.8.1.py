@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
         self.targets['2.6.4'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.zip'
         self.targets['2.8.0'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.0-win32-x86.zip'
         self.targets['2.8.1'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.1-win32-x86.zip'
+        self.targets['2.8.1-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.1-bin.tar.bz2'
         self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.0'] = 'cmake-2.8.0-win32-x86'
@@ -15,7 +16,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['2.8.0'] = ('cmake-2.8.0-wince-support.patch', 0)
 
         if platform.isCrossCompilingEnabled():
-            self.defaultTarget = '2.8.0'
+            self.defaultTarget = '2.8.1-ce'
         else:
             self.defaultTarget = '2.8.1'
             
