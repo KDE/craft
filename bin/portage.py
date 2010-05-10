@@ -122,10 +122,10 @@ class Portage:
         else:
             return
 
-    def getPackageInstance( self, category, package, sourcePackageAllowed=True ):
+    def getPackageInstance( self, category, package ):
         """return instance of class Package from package file"""
-        
-        if sourcePackageAllowed:
+        if platform.isCrossCompilingEnabled() \
+        or os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1":
             sp = self.getCorrespondingSourcePackage( package )
             if sp:
                 category = sp[0]
