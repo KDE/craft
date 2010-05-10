@@ -103,6 +103,16 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
  #    define OPENSSL_NO_POSIX_IO
  #  endif
  
+@@ -499,7 +499,8 @@
+ #      endif
+ #      if !defined(IPPROTO_IP)
+          /* winsock[2].h was included already? */
+-#        include <winsock.h>
++#        include <winsock2.h>
++#        include <ws2tcpip.h>
+ #      endif
+ #      ifdef getservbyname
+ #        undef getservbyname
 diff -Nru openssl-1.0.0.orig/engines/ccgost/gost_lcl.h openssl-1.0.0/engines/ccgost/gost_lcl.h
 --- openssl-1.0.0.orig/engines/ccgost/gost_lcl.h	2009-06-16 18:39:20.000000000 +0200
 +++ openssl-1.0.0/engines/ccgost/gost_lcl.h	2010-05-02 16:36:22.787465300 +0200
@@ -132,6 +142,18 @@ diff -Nru openssl-1.0.0.orig/include/openssl/buffer.h openssl-1.0.0/include/open
  /* Already declared in ossl_typ.h */
  /* typedef struct buf_mem_st BUF_MEM; */
  
+diff -Nru openssl-1.0.0.orig/include/openssl/dtls1.h openssl-1.0.0/include/openssl/dtls1.h
+--- openssl-1.0.0.orig/include/openssl/dtls1.h	2009-09-09 19:05:42.000000000 +0200
++++ openssl-1.0.0/include/openssl/dtls1.h	2010-04-25 16:27:01.187323700 +0200
+@@ -68,7 +68,7 @@
+ #endif
+ #ifdef OPENSSL_SYS_WIN32
+ /* Needed for struct timeval */
+-#include <winsock.h>
++#include <winsock2.h>
+ #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
+ #include <sys/timeval.h>
+ #else
 diff -Nru openssl-1.0.0.orig/include/openssl/err.h openssl-1.0.0/include/openssl/err.h
 --- openssl-1.0.0.orig/include/openssl/err.h	2008-10-26 19:40:51.000000000 +0100
 +++ openssl-1.0.0/include/openssl/err.h	2010-05-02 16:36:22.825467500 +0200
@@ -381,8 +403,8 @@ diff -Nru openssl-1.0.0.orig/util/pl/Mingw64.pl openssl-1.0.0/util/pl/Mingw64.pl
 +	}
 +1;
 diff -Nru openssl-1.0.0.orig/ssl/dtls1.h openssl-1.0.0/ssl/dtls1.h
---- openssl-1.0.0.orig/ssl/dtls1.h	Wed Sep  9 17:05:42 2009
-+++ openssl-1.0.0/ssl/dtls1.h	Tue May  4 15:02:29 2010
+--- openssl-1.0.0.orig/ssl/dtls1.h	2009-09-09 19:05:42.000000000 +0200
++++ openssl-1.0.0/ssl/dtls1.h	2010-04-25 16:26:18.163862900 +0200
 @@ -68,7 +68,7 @@
  #endif
  #ifdef OPENSSL_SYS_WIN32
@@ -392,6 +414,18 @@ diff -Nru openssl-1.0.0.orig/ssl/dtls1.h openssl-1.0.0/ssl/dtls1.h
  #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
  #include <sys/timeval.h>
  #else
+diff -Nru openssl-1.0.0.orig/ssl/ssltest.c openssl-1.0.0/ssl/ssltest.c
+--- openssl-1.0.0.orig/ssl/ssltest.c	2010-01-24 17:57:38.000000000 +0100
++++ openssl-1.0.0/ssl/ssltest.c	2010-04-25 16:26:51.252755500 +0200
+@@ -190,7 +190,7 @@
+ 				  */
+ 
+ #ifdef OPENSSL_SYS_WINDOWS
+-#include <winsock.h>
++#include <winsock2.h>
+ #else
+ #include OPENSSL_UNISTD
+ #endif
 diff -Nru openssl-1.0.0.orig/util/pl/VC-32.pl openssl-1.0.0/util/pl/VC-32.pl
 --- openssl-1.0.0.orig/util/pl/VC-32.pl	2010-01-20 15:04:55.000000000 +0100
 +++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 16:36:22.909472300 +0200
