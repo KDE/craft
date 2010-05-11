@@ -22,7 +22,10 @@ class CMakeBuildSystem(BuildSystemBase):
         """return cmake related make file generator"""
         if self.compiler() == "msvc2008":
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                return "Visual Studio 9 2008"            
+                if self.isTargetBuild():
+                    return "Visual Studio 9.0 Windows Mobile 6 Professional SDK (ARMV4I)"  
+                else:
+                    return "Visual Studio 9 2008"            
             else:
                 return "NMake Makefiles"
         elif self.compiler() == "msvc2005":                
@@ -138,7 +141,10 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.compiler() == "msvc2008" and self.subinfo.options.cmake.openIDE:
             command = "start %s" % self.__slnFileName()             
         elif self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
-            command = "vcbuild /M1 %s \"%s|Win32\"" % (self.__slnFileName(),self.buildType())
+            if self.isTargetBuild():
+                command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(),self.buildType())
+            else:
+                command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(),self.buildType())
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system( self.makeProgramm + " clean", "make clean" ) 
@@ -170,7 +176,10 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.install.useMakeToolForInstall == True:          
             if self.compiler() == "msvc2008" and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
-                command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
+                if self.isTargetBuild():
+                    command = "vcbuild INSTALL.vcproj \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % self.buildType()
+                else:
+                    command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
             else:
                 command = "%s DESTDIR=%s install%s" % ( self.makeProgramm, self.installDir(), fastString )
         else:
