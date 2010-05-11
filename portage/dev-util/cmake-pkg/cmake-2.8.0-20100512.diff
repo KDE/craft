@@ -1,0 +1,1957 @@
+diff --git a/Source/cmGeneratorFactory.h b/Source/cmGeneratorFactory.h
+--- /dev/null
++++ b/Source/cmGeneratorFactory.h
+@@ -0,0 +1,61 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: ,v $
++  Language:  C++
++  Date:      $Date: 2008-02-15 16:49:58 $
++  Version:   $Revision: 1.13 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even 
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++#ifndef cmGeneratorFactory_h
++#define cmGeneratorFactory_h
++
++
++class cmGlobalGenerator;
++
++/*!
++ * \brief Factory interface for global generators
++ *
++ * \note if we had a functor type like boost.function + binders we could 
++ * avoid that. 
++ */
++class cmGeneratorFactory
++{
++public:
++    virtual cmGlobalGenerator* Create() = 0;
++    virtual ~cmGeneratorFactory() {};
++
++};
++
++/*!
++ * \brief Default Factory for Global Generators, requires only 
++ * a simple factory function.
++ */
++class cmFunctionGeneratorFactory : public cmGeneratorFactory
++{
++public:
++    typedef cmGlobalGenerator* (*CreateGeneratorFunctionType)();
++
++    cmFunctionGeneratorFactory( CreateGeneratorFunctionType Fun )
++        : fun(Fun)
++    {
++    }
++
++    virtual cmGlobalGenerator* Create()
++    {
++        return fun();
++    }
++private:
++    CreateGeneratorFunctionType fun;
++};
++
++
++#endif
++
+diff --git a/Source/cmake.cxx b/Source/cmake.cxx
+--- a/Source/cmake.cxx
++++ b/Source/cmake.cxx
+@@ -1754,7 +1754,7 @@ cmGlobalGenerator* cmake::CreateGlobalGenerator(const char* name)
+       }
+   }
+ 
+-  generator = (genIt->second)();
++  generator = (genIt->second)->Create();
+   generator->SetCMakeInstance(this);
+   generator->SetExternalMakefileProjectGenerator(extraGenerator);
+   return generator;
+@@ -2409,37 +2409,33 @@ void cmake::AddDefaultGenerators()
+ #if defined(_WIN32) && !defined(__CYGWIN__)
+ # if !defined(CMAKE_BOOT_MINGW)
+   this->Generators[cmGlobalVisualStudio6Generator::GetActualName()] =
+-    &cmGlobalVisualStudio6Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio6Generator::New);
+   this->Generators[cmGlobalVisualStudio7Generator::GetActualName()] =
+-    &cmGlobalVisualStudio7Generator::New;
+-  this->Generators[cmGlobalVisualStudio10Generator::GetActualName()] =
+-    &cmGlobalVisualStudio10Generator::New;
+-  this->Generators[cmGlobalVisualStudio10Win64Generator::GetActualName()] =
+-    &cmGlobalVisualStudio10Win64Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio7Generator::New);
+   this->Generators[cmGlobalVisualStudio71Generator::GetActualName()] =
+-    &cmGlobalVisualStudio71Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio71Generator::New);
+   this->Generators[cmGlobalVisualStudio8Generator::GetActualName()] =
+-    &cmGlobalVisualStudio8Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio8Generator::New);
+   this->Generators[cmGlobalVisualStudio9Generator::GetActualName()] =
+-    &cmGlobalVisualStudio9Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio9Generator::New);
+   this->Generators[cmGlobalVisualStudio9Win64Generator::GetActualName()] =
+-    &cmGlobalVisualStudio9Win64Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio9Win64Generator::New);
+   this->Generators[cmGlobalVisualStudio8Win64Generator::GetActualName()] =
+-    &cmGlobalVisualStudio8Win64Generator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalVisualStudio8Win64Generator::New);
+   this->Generators[cmGlobalBorlandMakefileGenerator::GetActualName()] =
+-    &cmGlobalBorlandMakefileGenerator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalBorlandMakefileGenerator::New);
+   this->Generators[cmGlobalNMakeMakefileGenerator::GetActualName()] =
+-    &cmGlobalNMakeMakefileGenerator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalNMakeMakefileGenerator::New);
+   this->Generators[cmGlobalWatcomWMakeGenerator::GetActualName()] =
+-    &cmGlobalWatcomWMakeGenerator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalWatcomWMakeGenerator::New);
+ # endif
+   this->Generators[cmGlobalMSYSMakefileGenerator::GetActualName()] =
+-    &cmGlobalMSYSMakefileGenerator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalMSYSMakefileGenerator::New);
+   this->Generators[cmGlobalMinGWMakefileGenerator::GetActualName()] =
+-    &cmGlobalMinGWMakefileGenerator::New;
++    new cmFunctionGeneratorFactory(&cmGlobalMinGWMakefileGenerator::New);
+ #endif
+   this->Generators[cmGlobalUnixMakefileGenerator3::GetActualName()] =
+-    &cmGlobalUnixMakefileGenerator3::New;
++    new cmFunctionGeneratorFactory(&cmGlobalUnixMakefileGenerator3::New);
+ #ifdef CMAKE_USE_XCODE
+   this->Generators[cmGlobalXCodeGenerator::GetActualName()] =
+     &cmGlobalXCodeGenerator::New;
+@@ -2538,7 +2534,7 @@ void cmake::GetGeneratorDocumentation(std::vector<cmDocumentationEntry>& v)
+       i != this->Generators.end(); ++i)
+     {
+     cmDocumentationEntry e;
+-    cmGlobalGenerator* generator = (i->second)();
++    cmGlobalGenerator* generator = (i->second)->Create();
+     generator->GetDocumentation(e);
+     delete generator;
+     v.push_back(e);
+diff --git a/Source/cmake.h b/Source/cmake.h
+index f983dc2..0dd2b1a 100644
+--- a/Source/cmake.h
++++ b/Source/cmake.h
+@@ -38,6 +38,7 @@
+ #include "cmSystemTools.h"
+ #include "cmPropertyDefinitionMap.h"
+ #include "cmPropertyMap.h"
++#include "cmGeneratorFactory.h"
+ 
+ class cmGlobalGenerator;
+ class cmLocalGenerator;
+@@ -51,6 +52,9 @@ class cmDocumentationSection;
+ class cmPolicies;
+ class cmListFileBacktrace;
+ 
++
++
++
+ class cmake
+ {
+  public:
+@@ -371,9 +375,8 @@ protected:
+   typedef std::map<cmStdString,
+                 CreateExtraGeneratorFunctionType> RegisteredExtraGeneratorsMap;
+ 
+-  typedef cmGlobalGenerator* (*CreateGeneratorFunctionType)();
+   typedef std::map<cmStdString,
+-                   CreateGeneratorFunctionType> RegisteredGeneratorsMap;
++                   cmGeneratorFactory*> RegisteredGeneratorsMap;
+   RegisteredCommandsMap Commands;
+   RegisteredGeneratorsMap Generators;
+   RegisteredExtraGeneratorsMap ExtraGenerators;
+-- 
+1.6.5.1.1367.gcd48
+
+diff --git a/Source/CMakeLists.txt b/Source/CMakeLists.txt
+--- a/Source/CMakeLists.txt
++++ b/Source/CMakeLists.txt
+@@ -275,6 +275,8 @@ IF (WIN32)
+ 
+   IF(NOT UNIX)
+     SET(SRCS ${SRCS}
++      cmSDKConfigParser.cxx
++      cmSDKConfigParser.h
+       cmGlobalBorlandMakefileGenerator.cxx
+       cmGlobalBorlandMakefileGenerator.h
+       cmGlobalMSYSMakefileGenerator.cxx
+@@ -289,8 +291,12 @@ IF (WIN32)
+       cmGlobalVisualStudio7Generator.h
+       cmGlobalVisualStudio8Generator.cxx
+       cmGlobalVisualStudio8Generator.h
++      cmGlobalVisualStudio8_SDKGenerator.cxx
++      cmGlobalVisualStudio8_SDKGenerator.h
+       cmGlobalVisualStudio9Generator.cxx
+       cmGlobalVisualStudio9Generator.h
++      cmGlobalVisualStudio9_SDKGenerator.cxx
++      cmGlobalVisualStudio9_SDKGenerator.h
+       cmGlobalVisualStudio8Win64Generator.cxx
+       cmGlobalVisualStudio8Win64Generator.h
+       cmGlobalVisualStudio9Win64Generator.cxx
+diff --git a/Source/cmGlobalVisualStudio71Generator.cxx b/Source/cmGlobalVisualStudio71Generator.cxx
+--- a/Source/cmGlobalVisualStudio71Generator.cxx
++++ b/Source/cmGlobalVisualStudio71Generator.cxx
+@@ -29,6 +29,7 @@ cmLocalGenerator *cmGlobalVisualStudio71Generator::CreateLocalGenerator()
+   cmLocalVisualStudio7Generator *lg = new cmLocalVisualStudio7Generator;
+   lg->SetVersion71();
+   lg->SetExtraFlagTable(this->GetExtraFlagTableVS7());
++  lg->SetExtraLinkFlagTable(0);
+   lg->SetGlobalGenerator(this);
+   return lg;
+ }
+diff --git a/Source/cmGlobalVisualStudio7Generator.cxx b/Source/cmGlobalVisualStudio7Generator.cxx
+--- a/Source/cmGlobalVisualStudio7Generator.cxx
++++ b/Source/cmGlobalVisualStudio7Generator.cxx
+@@ -134,6 +134,7 @@ cmLocalGenerator *cmGlobalVisualStudio7Generator::CreateLocalGenerator()
+ {
+   cmLocalVisualStudio7Generator *lg = new cmLocalVisualStudio7Generator;
+   lg->SetExtraFlagTable(this->GetExtraFlagTableVS7());
++  lg->SetExtraLinkFlagTable(0);
+   lg->SetGlobalGenerator(this);
+   return lg;
+ }
+@@ -578,6 +579,11 @@ std::vector<std::string> *cmGlobalVisualStudio7Generator::GetConfigurations()
+   return &this->Configurations;
+ };
+ 
++PlatformDefs const& cmGlobalVisualStudio7Generator::GetPlatformDef() const
++{
++  return m_platform;
++}
++
+ //----------------------------------------------------------------------------
+ void cmGlobalVisualStudio7Generator
+ ::GetDocumentation(cmDocumentationEntry& entry) const
+diff --git a/Source/cmGlobalVisualStudio7Generator.h b/Source/cmGlobalVisualStudio7Generator.h
+--- a/Source/cmGlobalVisualStudio7Generator.h
++++ b/Source/cmGlobalVisualStudio7Generator.h
+@@ -13,6 +13,7 @@
+ #define cmGlobalVisualStudio7Generator_h
+ 
+ #include "cmGlobalVisualStudioGenerator.h"
++#include "cmSDKConfigParser.h"
+ 
+ class cmTarget;
+ struct cmIDEFlagTable;
+@@ -76,6 +77,12 @@ public:
+    */
+   std::vector<std::string> *GetConfigurations();
+   
++  /**
++   * Get the platform definition
++   */
++  virtual PlatformDefs const& GetPlatformDef() const;
++
++
+   ///! Create a GUID or get an existing one.
+   void CreateGUID(const char* name);
+   std::string GetGUID(const char* name);
+@@ -145,8 +152,12 @@ protected:
+   // Set during OutputSLNFile with the name of the current project.
+   // There is one SLN file per project.
+   std::string CurrentProject;
++
++  //! Platform definitions, uninitialized when not used with a WinCE SDK
++  PlatformDefs m_platform;
+ };
+ 
+ #define CMAKE_CHECK_BUILD_SYSTEM_TARGET "ZERO_CHECK"
+ 
+ #endif
++
+diff --git a/Source/cmGlobalVisualStudio8Generator.cxx b/Source/cmGlobalVisualStudio8Generator.cxx
+--- a/Source/cmGlobalVisualStudio8Generator.cxx
++++ b/Source/cmGlobalVisualStudio8Generator.cxx
+@@ -31,6 +31,7 @@ cmLocalGenerator *cmGlobalVisualStudio8Generator::CreateLocalGenerator()
+   cmLocalVisualStudio7Generator *lg = new cmLocalVisualStudio7Generator;
+   lg->SetVersion8();
+   lg->SetExtraFlagTable(this->GetExtraFlagTableVS8());
++  lg->SetExtraLinkFlagTable(0);
+   lg->SetGlobalGenerator(this);
+   return lg;
+ }
+@@ -323,6 +324,10 @@ static cmVS7FlagTable cmVS8ExtraFlagTable[] =
+    cmVS7FlagTable::UserValueRequired},
+   // There is no YX option in the VS8 IDE.
+ 
++  // WHY WAS THIS REMOVED FROM VS7 to VS8?
++  {"LinkTimeCodeGeneration", "LTCG", "LinkTimeCodeGeneration", "1", 0},
++  {"WholeProgramOptimization", "GL", "WholeProgramOptimization", "TRUE", 0},
++
+   // Exception handling mode.  If no entries match, it will be FALSE.
+   {"ExceptionHandling", "GX", "enable c++ exceptions", "1", 0},
+   {"ExceptionHandling", "EHsc", "enable c++ exceptions", "1", 0},
+diff --git a/Source/cmGlobalVisualStudio8Generator.h b/Source/cmGlobalVisualStudio8Generator.h
+--- a/Source/cmGlobalVisualStudio8Generator.h
++++ b/Source/cmGlobalVisualStudio8Generator.h
+@@ -71,7 +71,7 @@ protected:
+ 
+   void AddCheckTarget();
+ 
+-  static cmIDEFlagTable const* GetExtraFlagTableVS8();
++  virtual cmIDEFlagTable const* GetExtraFlagTableVS8();
+   virtual void AddPlatformDefinitions(cmMakefile* mf);
+   virtual void WriteSLNHeader(std::ostream& fout);
+   virtual void WriteSolutionConfigurations(std::ostream& fout);
+diff --git a/Source/cmGlobalVisualStudio8Win64Generator.cxx b/Source/cmGlobalVisualStudio8Win64Generator.cxx
+--- a/Source/cmGlobalVisualStudio8Win64Generator.cxx
++++ b/Source/cmGlobalVisualStudio8Win64Generator.cxx
+@@ -29,6 +29,7 @@ cmLocalGenerator *cmGlobalVisualStudio8Win64Generator::CreateLocalGenerator()
+   lg->SetVersion8();
+   lg->SetPlatformName(this->PlatformName.c_str());
+   lg->SetExtraFlagTable(this->GetExtraFlagTableVS8());
++  lg->SetExtraLinkFlagTable(0);
+   lg->SetGlobalGenerator(this);
+   return lg;
+ }
+diff --git a/Source/cmGlobalVisualStudio8_SDKGenerator.cxx b/Source/cmGlobalVisualStudio8_SDKGenerator.cxx
+--- /dev/null
++++ b/Source/cmGlobalVisualStudio8_SDKGenerator.cxx
+@@ -0,0 +1,243 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: cmGlobalVisualStudio8_WindowsMobile_Generator.cxx,v $
++  Language:  C++
++  Date:      $Date: 2008-04-02 13:16:04 $
++  Version:   $Revision: 1.36.2.1 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even 
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++#include "windows.h" // this must be first to define GetCurrentDirectory
++#include "cmGlobalVisualStudio8_SDKGenerator.h"
++#include "cmLocalVisualStudio7Generator.h"
++#include "cmMakefile.h"
++#include "cmake.h"
++#include "cmGeneratedFileStream.h"
++
++
++cmGlobalVisualStudio8_SDKGenerator::cmGlobalVisualStudio8_SDKGenerator(
++    PlatformDefs const& platform
++    )
++: m_platformName("Mobile Platform"), 
++  m_actualGeneratorName("Visual Studio 8.0 " + platform.PlatformName)
++{
++  m_platform = platform;
++  FindMakeProgramFile = "CMakeVS8FindMake.cmake";
++  ProjectConfigurationSectionName = "ProjectConfigurationPlatforms";
++}
++
++//----------------------------------------------------------------------------
++///! Create a local generator appropriate to this Global Generator
++cmLocalGenerator *cmGlobalVisualStudio8_SDKGenerator::CreateLocalGenerator()
++{
++  cmLocalVisualStudio7Generator *lg = new cmLocalVisualStudio7Generator;
++  lg->SetPlatformName(m_platformName.c_str());
++  lg->SetVersion8();
++  lg->SetExtraFlagTable(this->GetExtraFlagTableVS8());
++  lg->SetExtraLinkFlagTable(this->GetExtraLinkFlagTableVS8());
++  lg->SetGlobalGenerator(this);
++  return lg;
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio8_SDKGenerator
++::GetDocumentation(cmDocumentationEntry& entry) const
++{
++  entry.Name = this->GetName();
++  entry.Brief = 
++    "Generates Visual Studio .NET 2005 project files with SDK support.";
++  entry.Full = "";
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio8_SDKGenerator::AddPlatformDefinitions(
++  cmMakefile* mf
++  )
++{
++  mf->AddDefinition("MSVC80", "1");
++  mf->AddCacheDefinition("CMAKE_C_COMPILER",m_platform.Compiler.c_str(),
++                         "C Compiler",cmCacheManager::FILEPATH,true);
++  mf->AddCacheDefinition("CMAKE_CXX_COMPILER",m_platform.Compiler.c_str(),
++                         "C++ Compiler",cmCacheManager::FILEPATH,true);
++  mf->AddCacheDefinition("CMAKE_SYSTEM_NAME","WinCE",
++                         "Operating System",cmCacheManager::STRING,true);
++  mf->AddCacheDefinition("CMAKE_SYSTEM_VERSION",
++                         m_platform.SystemVersion.c_str(),"CE Version",
++                         cmCacheManager::STRING,true);
++
++  if(!m_platform.Archfam.empty())
++    mf->AddDefineFlag(("-D"+m_platform.Archfam).c_str());
++
++  // this one should never be empty 
++  if(!m_platform.Archfam_.empty())
++    mf->AddDefineFlag(("-D"+m_platform.Archfam_).c_str());
++
++  if(!m_platform.InstructionSet.empty())
++    mf->AddDefineFlag(("-D"+m_platform.InstructionSet).c_str());
++
++  // can be empty
++  if(!m_platform.PlatformDefines.empty())
++    mf->AddDefineFlag(("-D"+m_platform.PlatformDefines).c_str());
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio8_SDKGenerator::Configure()
++{
++  this->cmGlobalVisualStudio7Generator::Configure();
++  this->CreateGUID(CMAKE_CHECK_BUILD_SYSTEM_TARGET);
++}
++
++//----------------------------------------------------------------------------
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio8_SDKGenerator::WriteSolutionConfigurations(
++  std::ostream& fout
++  )
++{
++  fout << "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n";
++  for(std::vector<std::string>::iterator i = this->Configurations.begin();
++      i != this->Configurations.end(); ++i)
++    {
++    fout << "\t\t" << *i << "|" << m_platform.PlatformName 
++      << " = " << *i << "|" <<  m_platform.PlatformName << "\n";
++    }
++  fout << "\tEndGlobalSection\n";
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio8_SDKGenerator::WriteProjectConfigurations(
++  std::ostream& fout, const char* name,
++  bool partOfDefaultBuild)
++{
++  std::string guid = this->GetGUID(name);
++  for(std::vector<std::string>::iterator i = this->Configurations.begin();
++      i != this->Configurations.end(); ++i)
++    {
++    fout << "\t\t{" << guid << "}." << *i
++      << "|" << m_platform.PlatformName << ".ActiveCfg = "
++      << *i << "|" << m_platform.PlatformName << "\n";
++    if(partOfDefaultBuild)
++      {
++      fout << "\t\t{" << guid << "}." << *i
++        << "|" << m_platform.PlatformName << ".Build.0 = "
++        << *i << "|" << m_platform.PlatformName << "\n";
++      }
++    }
++}
++
++//----------------------------------------------------------------------------
++static cmVS7FlagTable cmVS8SDKExtraFlagTable[] =
++{ 
++  {"CallingConvention", "Gd", "cdecl", "0", 0 },
++  {"CallingConvention", "Gr", "fastcall", "1", 0 },
++  {"CallingConvention", "Gz", "stdcall", "2", 0 },
++
++  {"Detect64BitPortabilityProblems", "Wp64",
++  "Detect 64Bit Portability Problems", "true", 0 },
++  {"ErrorReporting", "errorReport:prompt", "Report immediately", "1", 0 },
++  {"ErrorReporting", "errorReport:queue", "Queue for next login", "2", 0 },
++  // Precompiled header and related options.  Note that the
++  // UsePrecompiledHeader entries are marked as "Continue" so that the
++  // corresponding PrecompiledHeaderThrough entry can be found.
++  {"UsePrecompiledHeader", "Yu", "Use Precompiled Header", "2",
++  cmVS7FlagTable::UserValueIgnored | cmVS7FlagTable::Continue},
++  {"PrecompiledHeaderThrough", "Yu", "Precompiled Header Name", "",
++  cmVS7FlagTable::UserValueRequired},
++  // There is no YX option in the VS8 IDE.
++
++  {"LinkTimeCodeGeneration", "LTCG", "LinkTimeCodeGeneration", "1", 0},
++  {"WholeProgramOptimization", "GL", "WholeProgramOptimization", "TRUE", 0},
++
++  // Exception handling mode.  If no entries match, it will be FALSE.
++  {"ExceptionHandling", "GX", "enable c++ exceptions", "1", 0},
++  {"ExceptionHandling", "EHsc", "enable c++ exceptions", "1", 0},
++  {"ExceptionHandling", "EHa", "enable SEH exceptions", "2", 0}, 
++
++  // Compile for special architecture
++  {"CompileForArchitecture", "QRarch4", 
++      "ARM4 without Thumb instructions", "0", 0},
++  {"CompileForArchitecture", "QRarch5", 
++      "ARM5 without Thumb instructions", "1", 0},
++  {"CompileForArchitecture", "QRarch4t", 
++      "ARM4 with Thumb instructions", "2", 0},
++  {"CompileForArchitecture", "QRarch5t", 
++      "ARM5 with Thumb instructions", "3", 0},
++
++  {0,0,0,0,0}
++};
++
++cmVS7FlagTable const* 
++cmGlobalVisualStudio8_SDKGenerator::GetExtraFlagTableVS8()
++{
++  return cmVS8SDKExtraFlagTable;
++}
++
++//----------------------------------------------------------------------------
++static cmVS7FlagTable cmVS8SDKExtraLinkFlagTable[] =
++{ 
++  // Optimization
++  {"OptimizeReferences", "OPT:NOREF", "ReferenceOptimization off", "1",  0},
++  {"OptimizeReferences", "OPT:REF", "ReferenceOptimization on", "2",  0},
++  {"EnableCOMDATFolding", "OPT:NOICF", "COMDATFolding off", "1",  0},
++  {"EnableCOMDATFolding", "OPT:ICF", "COMDATFolding on", "2",  0},
++
++  // Link Time Code Generation (this is also in LinkFlagTable!?)
++  {"LinkTimeCodeGeneration", "LTCG", "LinkTimeCodeGeneration", "1", 0},
++
++  // Link for special target machine
++  {"TargetMachine", "MACHINE:X86", "X86 compatible", "1",  0},
++  {"TargetMachine", "MACHINE:AM33", "AM33 compatible", "2",  0},
++  {"TargetMachine", "MACHINE:ARM", "ARM compatible", "3",  0},
++  {"TargetMachine", "MACHINE:EBC", "EBC compatible", "4",  0},
++  {"TargetMachine", "MACHINE:IA64", "IA64 compatible", "5",  0},
++  {"TargetMachine", "MACHINE:M32R", "M32R compatible", "6",  0},
++  {"TargetMachine", "MACHINE:MIPS", "MIPS compatible", "7",  0},
++  {"TargetMachine", "MACHINE:MIPS16", "MIPS16 compatible", "8",  0},
++  {"TargetMachine", "MACHINE:MIPSFPU", "MIPSFPU compatible", "9",  0},
++  {"TargetMachine", "MACHINE:MIPSFPU16", "MIPSFPU16 compatible", "10",  0},
++  {"TargetMachine", "MACHINE:MIPSR41XX", "MIPSR41XX compatible", "11",  0},
++  {"TargetMachine", "MACHINE:SH3", "SH3 compatible", "12",  0},
++  {"TargetMachine", "MACHINE:SH3DSP", "SH3DSP compatible", "13",  0},
++  {"TargetMachine", "MACHINE:SH4", "SH4 compatible", "14",  0},
++  {"TargetMachine", "MACHINE:SH5", "SH5 compatible", "15",  0},
++  {"TargetMachine", "MACHINE:THUMB", "THUMB compatible", "16",  0},
++  {"TargetMachine", "MACHINE:X64", "X64 compatible", "17",  0},
++
++  // Subsystem to link for
++  // Subsystems have an optional version number, but vcproj xml has no 
++  // attribute to store that value, so a subsystem with version number
++  // will be treated as "additional" option then.
++  {"SubSystem", "SUBSYSTEM:CONSOLE", "Console applicationoutput", "1", 0},
++  {"SubSystem", "SUBSYSTEM:WINDOWS", "Windows application output", "2", 0},
++  {"SubSystem", "SUBSYSTEM:NATIVE", "Native application output", "3",  0},
++  {"SubSystem", "SUBSYSTEM:EFI_APPLICATION", 
++    "EFI application output", "4",  0},
++  {"SubSystem", "SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER", 
++    "EFI boot service output", "5", 0},
++  {"SubSystem", "SUBSYSTEM:EFI_ROM", "EFI ROM output", "6", 0},
++  {"SubSystem", "SUBSYSTEM:EFI_RUNTIME_DRIVER", 
++    "EFI runtime driver output", "7", 0},
++  {"SubSystem", "SUBSYSTEM:POSIX", 
++    "Posix application output", "8", 0}, //THIS IS ONLY AVAILABLE ON VC 8
++  {"SubSystem", "SUBSYSTEM:WINDOWSCE", "WinCE application output", "9", 0 },
++
++  {"EntryPointSymbol", "ENTRY:", 
++    "Entry Point Symbol","", cmVS7FlagTable::UserValue},
++  // Stack size to reserve
++  {"StackReserveSize", "STACK:", 
++    "set the default stack size", "", cmVS7FlagTable::UserValue},
++
++  {0,0,0,0,0}
++};
++
++cmVS7FlagTable const* 
++cmGlobalVisualStudio8_SDKGenerator::GetExtraLinkFlagTableVS8()
++{
++  return cmVS8SDKExtraLinkFlagTable;
++}
+diff --git a/Source/cmGlobalVisualStudio8_SDKGenerator.h b/Source/cmGlobalVisualStudio8_SDKGenerator.h
+--- /dev/null
++++ b/Source/cmGlobalVisualStudio8_SDKGenerator.h
+@@ -0,0 +1,81 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: cmGlobalVisualStudio8_WindowsMobile.h,v $
++  Language:  C++
++  Date:      $Date: 2008-02-15 16:49:58 $
++  Version:   $Revision: 1.13 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++#ifndef cmGlobalVisualStudio8_SDKGenerator_h
++#define cmGlobalVisualStudio8_SDKGenerator_h
++
++#include "cmGlobalVisualStudio8Generator.h"
++#include "cmGeneratorFactory.h"
++
++template<typename Generator>
++class cmSDKGeneratorFactory : public cmGeneratorFactory
++{
++public:
++  cmSDKGeneratorFactory(PlatformDefs const& platform)
++    : m_platform(platform)
++    {}
++
++  cmGlobalGenerator * Create() {
++    return new Generator(m_platform);
++  }
++private:
++  PlatformDefs m_platform;
++};
++
++/**
++ * \brief Creates Visual Studio 8 project files based on a platform
++ * SDK description
++ *
++ */
++class cmGlobalVisualStudio8_SDKGenerator :
++  public cmGlobalVisualStudio8Generator
++{
++public:
++  cmGlobalVisualStudio8_SDKGenerator(PlatformDefs const& platform);
++
++  ///! Get the name for the generator.
++  virtual const char* GetName() const {
++    return m_actualGeneratorName.c_str();}
++
++  /** Get the documentation entry for this generator.  */
++  virtual void GetDocumentation(cmDocumentationEntry& entry) const;
++
++  ///! Create a local generator appropriate to this Global Generator
++  virtual cmLocalGenerator *CreateLocalGenerator();
++
++  /**
++   * Override Configure and Generate to add the build-system check
++   * target.
++   */
++  virtual void Configure();
++
++protected:
++
++  virtual bool VSLinksDependencies() const { return false; }
++
++  virtual cmIDEFlagTable const* GetExtraFlagTableVS8();
++  virtual cmIDEFlagTable const* GetExtraLinkFlagTableVS8();
++  virtual void WriteSolutionConfigurations(std::ostream& fout);
++  virtual void WriteProjectConfigurations(std::ostream& fout,
++                                          const char* name,
++                                          bool partOfDefaultBuild);
++  virtual void AddPlatformDefinitions(cmMakefile* mf);
++
++  std::string m_platformName;
++  std::string m_actualGeneratorName;
++};
++#endif
++
+diff --git a/Source/cmGlobalVisualStudio9Generator.cxx b/Source/cmGlobalVisualStudio9Generator.cxx
+--- a/Source/cmGlobalVisualStudio9Generator.cxx
++++ b/Source/cmGlobalVisualStudio9Generator.cxx
+@@ -41,6 +41,7 @@ cmLocalGenerator *cmGlobalVisualStudio9Generator::CreateLocalGenerator()
+   cmLocalVisualStudio7Generator *lg = new cmLocalVisualStudio7Generator;
+   lg->SetVersion9();
+   lg->SetExtraFlagTable(this->GetExtraFlagTableVS8());
++  lg->SetExtraLinkFlagTable(0);
+   lg->SetGlobalGenerator(this);
+   return lg;
+ }
+diff --git a/Source/cmGlobalVisualStudio9Win64Generator.cxx b/Source/cmGlobalVisualStudio9Win64Generator.cxx
+--- a/Source/cmGlobalVisualStudio9Win64Generator.cxx
++++ b/Source/cmGlobalVisualStudio9Win64Generator.cxx
+@@ -26,6 +26,7 @@ cmLocalGenerator *cmGlobalVisualStudio9Win64Generator::CreateLocalGenerator()
+   lg->SetVersion9();
+   lg->SetPlatformName(this->PlatformName.c_str());
+   lg->SetExtraFlagTable(this->GetExtraFlagTableVS8());
++  lg->SetExtraLinkFlagTable(0);
+   lg->SetGlobalGenerator(this);
+   return lg;
+ }
+diff --git a/Source/cmGlobalVisualStudio9_SDKGenerator.cxx b/Source/cmGlobalVisualStudio9_SDKGenerator.cxx
+--- /dev/null
++++ b/Source/cmGlobalVisualStudio9_SDKGenerator.cxx
+@@ -0,0 +1,199 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: cmGlobalVisualStudio9_WindowsMobile_Generator.cxx,v $
++  Language:  C++
++  Date:      $Date: 2008-02-15 16:49:58 $
++  Version:   $Revision: 1.6 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even 
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++#include "windows.h" // this must be first to define GetCurrentDirectory
++#include "cmGlobalVisualStudio9_SDKGenerator.h"
++#include "cmLocalVisualStudio7Generator.h"
++#include "cmMakefile.h"
++#include "cmake.h"
++
++
++//----------------------------------------------------------------------------
++cmGlobalVisualStudio9_SDKGenerator::cmGlobalVisualStudio9_SDKGenerator(
++  PlatformDefs const& platform
++  )
++: cmGlobalVisualStudio8_SDKGenerator(platform)
++{
++  this->FindMakeProgramFile = "CMakeVS9FindMake.cmake";
++  this->ProjectConfigurationSectionName = "ProjectConfigurationPlatforms";
++  this->PlatformName = "Mobile Platform";
++  m_actualGeneratorName = "Visual Studio 9.0 " + m_platform.PlatformName;
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio9_SDKGenerator::AddPlatformDefinitions(
++  cmMakefile* mf
++  )
++{
++  mf->AddDefinition("MSVC90", "1");
++  mf->AddCacheDefinition("CMAKE_C_COMPILER",m_platform.Compiler.c_str(),
++                         "C Compiler",cmCacheManager::FILEPATH,true);
++  mf->AddCacheDefinition("CMAKE_CXX_COMPILER",m_platform.Compiler.c_str(),
++                         "C++ Compiler",cmCacheManager::FILEPATH,true);
++  mf->AddCacheDefinition("CMAKE_SYSTEM_NAME","WinCE","Operating System",
++                         cmCacheManager::STRING,true);
++  mf->AddCacheDefinition("CMAKE_SYSTEM_VERSION",
++                         m_platform.SystemVersion.c_str(),
++                         "CE Version",cmCacheManager::STRING,true);
++
++  if(!m_platform.Archfam.empty())
++    mf->AddDefineFlag(("-D"+m_platform.Archfam).c_str());
++
++  // this one should never be empty 
++  if(!m_platform.Archfam_.empty())
++    mf->AddDefineFlag(("-D"+m_platform.Archfam_).c_str());
++
++  if(!m_platform.InstructionSet.empty())
++    mf->AddDefineFlag(("-D"+m_platform.InstructionSet).c_str());
++
++  // can be empty
++  if(!m_platform.PlatformDefines.empty())
++    mf->AddDefineFlag(("-D"+m_platform.PlatformDefines).c_str());
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio9_SDKGenerator::WriteSLNHeader(std::ostream& fout)
++{
++  fout << "Microsoft Visual Studio Solution File, Format Version 10.00\n";
++  fout << "# Visual Studio 2008\n";
++}
++
++//----------------------------------------------------------------------------
++///! Create a local generator appropriate to this Global Generator
++cmLocalGenerator *cmGlobalVisualStudio9_SDKGenerator::CreateLocalGenerator()
++{
++  cmLocalVisualStudio7Generator *lg = new cmLocalVisualStudio7Generator;
++  lg->SetPlatformName(this->PlatformName.c_str());
++  lg->SetVersion9();
++  lg->SetExtraFlagTable(this->GetExtraFlagTableVS8());
++  lg->SetExtraLinkFlagTable(this->GetExtraLinkFlagTableVS8());
++  lg->SetGlobalGenerator(this);
++  return lg;
++}
++
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio9_SDKGenerator
++::GetDocumentation(cmDocumentationEntry& entry) const
++{
++  entry.Name = this->GetName();
++  entry.Brief = 
++    "Generates Visual Studio 9 2008 project files with SDK support.";
++  entry.Full = "";
++}
++
++//----------------------------------------------------------------------------
++void cmGlobalVisualStudio9_SDKGenerator::EnableLanguage(
++    std::vector<std::string>const & lang, 
++    cmMakefile *mf, bool optional)
++{
++  cmGlobalVisualStudio8Generator::EnableLanguage(lang, mf, optional);
++}
++
++//----------------------------------------------------------------------------
++std::string cmGlobalVisualStudio9_SDKGenerator::GetUserMacrosDirectory()
++{
++  std::string base;
++  std::string path;
++
++  // base begins with the VisualStudioProjectsLocation reg value...
++  if (cmSystemTools::ReadRegistryValue(
++      "HKEY_CURRENT_USER\\Software\\Microsoft\\VisualStudio\\9.0;"
++      "VisualStudioProjectsLocation",
++      base))
++    {
++    cmSystemTools::ConvertToUnixSlashes(base);
++
++    // 9.0 macros folder:
++    path = base + "/VSMacros80";
++    // *NOT* a typo; right now in Visual Studio 2008 beta the macros
++    // folder is VSMacros80... They may change it to 90 before final
++    // release of 2008 or they may not... we'll have to keep our eyes
++    // on it
++    }
++
++  // path is (correctly) still empty if we did not read the base value from
++  // the Registry value
++  return path;
++}
++
++//----------------------------------------------------------------------------
++std::string cmGlobalVisualStudio9_SDKGenerator::GetUserMacrosRegKeyBase()
++{
++  return "Software\\Microsoft\\VisualStudio\\9.0\\vsmacros";
++}
++
++//----------------------------------------------------------------------------
++static cmVS7FlagTable cmVS9SDKExtraLinkFlagTable[] =
++{ 
++  // Optimization
++  {"OptimizeReferences", "OPT:NOREF", "ReferenceOptimization off", "1",  0},
++  {"OptimizeReferences", "OPT:REF", "ReferenceOptimization on", "2",  0},
++  {"EnableCOMDATFolding", "OPT:NOICF", "COMDATFolding off", "1",  0},
++  {"EnableCOMDATFolding", "OPT:ICF", "COMDATFolding on", "2",  0},
++
++  // Link Time Code Generation (this is also in LinkFlagTable!?)
++  {"LinkTimeCodeGeneration", "LTCG", "LinkTimeCodeGeneration", "1", 0},
++
++  // Link for special target machine
++  {"TargetMachine", "MACHINE:X86", "X86 compatible", "1",  0},
++  {"TargetMachine", "MACHINE:AM33", "AM33 compatible", "2",  0},
++  {"TargetMachine", "MACHINE:ARM", "ARM compatible", "3",  0},
++  {"TargetMachine", "MACHINE:EBC", "EBC compatible", "4",  0},
++  {"TargetMachine", "MACHINE:IA64", "IA64 compatible", "5",  0},
++  {"TargetMachine", "MACHINE:M32R", "M32R compatible", "6",  0},
++  {"TargetMachine", "MACHINE:MIPS", "MIPS compatible", "7",  0},
++  {"TargetMachine", "MACHINE:MIPS16", "MIPS16 compatible", "8",  0},
++  {"TargetMachine", "MACHINE:MIPSFPU", "MIPSFPU compatible", "9",  0},
++  {"TargetMachine", "MACHINE:MIPSFPU16", "MIPSFPU16 compatible", "10",  0},
++  {"TargetMachine", "MACHINE:MIPSR41XX", "MIPSR41XX compatible", "11",  0},
++  {"TargetMachine", "MACHINE:SH3", "SH3 compatible", "12",  0},
++  {"TargetMachine", "MACHINE:SH3DSP", "SH3DSP compatible", "13",  0},
++  {"TargetMachine", "MACHINE:SH4", "SH4 compatible", "14",  0},
++  {"TargetMachine", "MACHINE:SH5", "SH5 compatible", "15",  0},
++  {"TargetMachine", "MACHINE:THUMB", "THUMB compatible", "16",  0},
++  {"TargetMachine", "MACHINE:X64", "X64 compatible", "17",  0},
++
++  // Subsystem to link for
++  // Subsystems have an optional version number, but vcproj xml has no 
++  // attribute to store that value, so a subsystem with version number
++  // will be treated as "additional" option then.
++  {"SubSystem", "SUBSYSTEM:CONSOLE", "Console applicationoutput", "1", 0},
++  {"SubSystem", "SUBSYSTEM:WINDOWS", "Windows application output", "2", 0},
++  {"SubSystem", "SUBSYSTEM:NATIVE", "Native application output", "3",  0},
++  {"SubSystem", "SUBSYSTEM:EFI_APPLICATION", 
++      "EFI application output", "4",  0},
++  {"SubSystem", "SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER", 
++      "EFI boot service output", "5", 0},
++  {"SubSystem", "SUBSYSTEM:EFI_ROM", "EFI ROM output", "6", 0},
++  {"SubSystem", "SUBSYSTEM:EFI_RUNTIME_DRIVER", 
++      "EFI runtime driver output", "7",  0},
++  {"SubSystem", "SUBSYSTEM:WINDOWSCE", "WinCE application output", "8", 0},
++  
++  {"EntryPointSymbol", "ENTRY:", 
++    "Entry Point Symbol","", cmVS7FlagTable::UserValue},
++  // Stack size to reserve
++  {"StackReserveSize", "STACK:", "set the default stack size", 
++      "", cmVS7FlagTable::UserValue},
++
++  {0,0,0,0,0}
++};
++
++cmVS7FlagTable const* cmGlobalVisualStudio9_SDKGenerator
++::GetExtraLinkFlagTableVS8()
++{
++  return cmVS9SDKExtraLinkFlagTable;
++}
+diff --git a/Source/cmGlobalVisualStudio9_SDKGenerator.h b/Source/cmGlobalVisualStudio9_SDKGenerator.h
+--- /dev/null
++++ b/Source/cmGlobalVisualStudio9_SDKGenerator.h
+@@ -0,0 +1,68 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: cmGlobalVisualStudio9_WindowsMobile_Generator.h,v $
++  Language:  C++
++  Date:      $Date: 2008-02-15 16:49:58 $
++  Version:   $Revision: 1.4 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++#ifndef cmGlobalVisualStudio9_SDKGenerator_h
++#define cmGlobalVisualStudio9_SDKGenerator_h
++
++#include "cmGlobalVisualStudio8_SDKGenerator.h"
++
++
++/**
++ * \brief Generates Visual Studio 9 projects based on a
++ * select Platform.
++ *
++ */
++class cmGlobalVisualStudio9_SDKGenerator :
++  public cmGlobalVisualStudio8_SDKGenerator
++{
++public:
++  cmGlobalVisualStudio9_SDKGenerator(PlatformDefs const& platformDefs );
++
++  virtual void AddPlatformDefinitions(cmMakefile* mf);
++
++  /** Get the documentation entry for this generator.  */
++  virtual void GetDocumentation(cmDocumentationEntry& entry) const;
++
++  ///! create the correct local generator
++  virtual cmLocalGenerator *CreateLocalGenerator();
++
++  /**
++   * Try to determine system infomation such as shared library
++   * extension, pthreads, byte order etc.
++   */
++  virtual void EnableLanguage(std::vector<std::string>const& languages,
++                              cmMakefile *, bool optional);
++
++  virtual void WriteSLNHeader(std::ostream& fout);
++
++  /**
++   * Where does this version of Visual Studio look for macros for the
++   * current user? Returns the empty string if this version of Visual
++   * Studio does not implement support for VB macros.
++   */
++  virtual std::string GetUserMacrosDirectory();
++
++  /**
++   * What is the reg key path to "vsmacros" for this version of Visual
++   * Studio?
++   */
++  virtual std::string GetUserMacrosRegKeyBase();
++
++protected:
++  virtual cmIDEFlagTable const* GetExtraLinkFlagTableVS8();
++};
++#endif
++
+diff --git a/Source/cmLocalVisualStudio7Generator.cxx b/Source/cmLocalVisualStudio7Generator.cxx
+--- a/Source/cmLocalVisualStudio7Generator.cxx
++++ b/Source/cmLocalVisualStudio7Generator.cxx
+@@ -539,9 +539,10 @@ private:
+ };
+ 
+ //----------------------------------------------------------------------------
+-void cmLocalVisualStudio7Generator::WriteConfiguration(std::ostream& fout,
++void cmLocalVisualStudio7Generator::WritePlatformConfiguration(std::ostream& fout,
+                                                        const char* configName,
+                                                        const char *libName,
++  const char *platformName,
+                                                        cmTarget &target)
+ {
+   const char* mfcFlag = this->Makefile->GetDefinition("CMAKE_MFC_FLAG");
+@@ -550,7 +551,7 @@ void cmLocalVisualStudio7Generator::WriteConfiguration(std::ostream& fout,
+     mfcFlag = "0";
+     }
+   fout << "\t\t<Configuration\n"
+-       << "\t\t\tName=\"" << configName << "|" << this->PlatformName << "\"\n"
++       << "\t\t\tName=\"" << configName << "|" << platformName << "\"\n"
+        << "\t\t\tOutputDirectory=\"" << configName << "\"\n";
+   // This is an internal type to Visual Studio, it seems that:
+   // 4 == static library
+@@ -821,10 +822,33 @@ void cmLocalVisualStudio7Generator::WriteConfiguration(std::ostream& fout,
+     }
+ 
+   this->OutputTargetRules(fout, configName, target, libName);
+-  this->OutputBuildTool(fout, configName, target, targetOptions.IsDebug());
++  this->OutputBuildTool(fout, configName, platformName, target, targetOptions.IsDebug());
+   fout << "\t\t</Configuration>\n";
+ }
+ 
++void cmLocalVisualStudio7Generator::WriteConfiguration(std::ostream& fout,
++                                                       const char *configName,
++                                                       const char *libName,
++                                                       cmTarget &target)
++{
++  if(PlatformName == "Mobile Platform")
++    {
++    cmGlobalVisualStudio7Generator *gg = 
++      static_cast<cmGlobalVisualStudio7Generator*>(this->GlobalGenerator);
++    WritePlatformConfiguration(
++      fout,configName,libName,
++      gg->GetPlatformDef().PlatformName.c_str(),
++      target);
++    }
++  else
++    {
++    WritePlatformConfiguration(
++      fout,configName,libName,
++      PlatformName.c_str(),
++      target);
++    }
++}
++
+ //----------------------------------------------------------------------------
+ std::string
+ cmLocalVisualStudio7Generator
+@@ -843,6 +867,7 @@ cmLocalVisualStudio7Generator
+ 
+ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+                                                     const char* configName,
++                                                    const char* platformName,
+                                                     cmTarget &target,
+                                                     bool isDebug)
+ {
+@@ -888,7 +913,8 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+     extraLinkOptions += targetLinkFlags;
+     }
+   Options linkOptions(this, this->Version, Options::Linker,
+-                      cmLocalVisualStudio7GeneratorLinkFlagTable);
++                      cmLocalVisualStudio7GeneratorLinkFlagTable,
++                      this->ExtraLinkFlagTable); 
+   linkOptions.Parse(extraLinkOptions.c_str());
+   if(!this->ModuleDefinitionFile.empty())
+     {
+@@ -990,6 +1016,7 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+       {
+       fout << "\t\t\t\tStackReserveSize=\"" << stackVal  << "\"\n";
+       }
++
+     temp = target.GetDirectory(configName, true);
+     temp += "/";
+     temp += targetNameImport;
+@@ -1031,6 +1058,29 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+       {
+       fout << "\t\t\t\tLinkLibraryDependencies=\"false\"\n";
+       }
++
++    if(strcmp(platformName,"Win32") != 0 && strcmp(platformName,"x64") != 0)
++      {
++      // Here we set the subsystem and the entry point
++      char const* pSubSystem = NULL; 
++      if ( ! target.GetPropertyAsBool("WIN32_EXECUTABLE") )
++        {
++        pSubSystem = Makefile->GetDefinition("CMAKE_CREATE_CONSOLE_EXE");
++        }
++      else
++        {
++        pSubSystem = Makefile->GetDefinition("CMAKE_CREATE_WIN32_EXE");
++        }
++
++      linkOptions.Parse(pSubSystem);
++
++      // TODO: Comment why this is required!
++      fout << "\t\t\t\tDelayLoadDLLs=\"$(NOINHERIT)\"\n";
++      fout << "\t\t\t\tRandomizedBaseAddress=\"1\"\n";
++      fout << "\t\t\t\tDataExecutionPrevention=\"0\"\n";
++      }
++
++
+     linkOptions.OutputAdditionalOptions(fout, "\t\t\t\t", "\n");
+     // Use the NOINHERIT macro to avoid getting VS project default
+     // libraries which may be set by the user to something bad.
+@@ -1039,6 +1089,7 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+          << " ";
+     this->Internal->OutputLibraries(fout, cli.GetItems());
+     fout << "\"\n";
++
+     temp = target.GetDirectory(configName);
+     temp += "/";
+     temp += targetNameFull;
+@@ -1052,10 +1103,14 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+     fout << "\t\t\t\tProgramDataBaseFile=\""
+          << target.GetDirectory(configName) << "/" << targetNamePDB
+          << "\"\n";
++
+     if(isDebug)
+       {
+       fout << "\t\t\t\tGenerateDebugInformation=\"TRUE\"\n";
+       }
++      if(strcmp(platformName,"Win32") == 0 || 
++         strcmp(platformName,"x64") == 0) 
++        {
+     if ( target.GetPropertyAsBool("WIN32_EXECUTABLE") )
+       {
+       fout << "\t\t\t\tSubSystem=\"2\"\n";
+@@ -1064,6 +1119,7 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+       {
+       fout << "\t\t\t\tSubSystem=\"1\"\n";
+       }
++        }
+     std::string stackVar = "CMAKE_";
+     stackVar += linkLanguage;
+     stackVar += "_STACK_SIZE";
+@@ -1072,6 +1128,7 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
+       {
+       fout << "\t\t\t\tStackReserveSize=\"" << stackVal << "\"";
+       }
++
+     temp = target.GetDirectory(configName, true);
+     temp += "/";
+     temp += targetNameImport;
+@@ -1397,6 +1454,9 @@ void cmLocalVisualStudio7Generator
+   std::string dir_max;
+   this->ComputeMaxDirectoryLength(dir_max, target);
+ 
++  cmGlobalVisualStudio7Generator * gg = 
++    static_cast<cmGlobalVisualStudio7Generator *>(this->GlobalGenerator);
++
+   // Loop through each source in the source group.
+   std::string objectName;
+   for(std::vector<const cmSourceFile *>::const_iterator sf =
+@@ -1450,6 +1510,51 @@ void cmLocalVisualStudio7Generator
+               fci = fcinfo.FileConfigMap.begin();
+             fci != fcinfo.FileConfigMap.end(); ++fci)
+           {
++          if(PlatformName == "Mobile Platform")
++            {
++            PlatformDefs const& pldef = gg->GetPlatformDef();
++            cmLVS7GFileConfig const& fc = fci->second;
++            fout << "\t\t\t\t<FileConfiguration\n"
++              << "\t\t\t\t\tName=\""  << fci->first
++              << "|" << pldef.PlatformName << "\"";
++            if(fc.ExcludedFromBuild)
++              {
++              fout << " ExcludedFromBuild=\"true\"";
++              }
++            fout << ">\n";
++            fout << "\t\t\t\t\t<Tool\n"
++              << "\t\t\t\t\tName=\"" << aCompilerTool << "\"\n";
++            if(!fc.CompileFlags.empty() ||
++               !fc.CompileDefs.empty() ||
++               !fc.CompileDefsConfig.empty())
++              {
++              Options fileOptions(this, this->Version, Options::Compiler,
++                                  cmLocalVisualStudio7GeneratorFlagTable,
++                                  this->ExtraFlagTable);
++              fileOptions.Parse(fc.CompileFlags.c_str());
++              fileOptions.AddDefines(fc.CompileDefs.c_str());
++              fileOptions.AddDefines(fc.CompileDefsConfig.c_str());
++              fileOptions.OutputAdditionalOptions(fout, "\t\t\t\t\t", "\n");
++              fileOptions.OutputFlagMap(fout, "\t\t\t\t\t");
++              fileOptions.OutputPreprocessorDefinitions(fout,
++                                                        "\t\t\t\t\t", "\n");
++              }
++            if(!fc.AdditionalDeps.empty())
++              {
++              fout << "\t\t\t\t\tAdditionalDependencies=\""
++                << fc.AdditionalDeps.c_str() << "\"\n";
++              }
++            if(!fc.ObjectName.empty())
++              {
++              fout << "\t\t\t\t\tObjectFile=\"$(IntDir)/"
++                << fc.ObjectName.c_str() << "\"\n";
++              }
++            fout << "\t\t\t\t\t/>\n"
++              << "\t\t\t\t</FileConfiguration>\n";
++
++            }
++          else 
++            {
+           cmLVS7GFileConfig const& fc = fci->second;
+           fout << "\t\t\t\t<FileConfiguration\n"
+                << "\t\t\t\t\tName=\""  << fci->first
+@@ -1490,6 +1595,7 @@ void cmLocalVisualStudio7Generator
+                << "\t\t\t\t</FileConfiguration>\n";
+           }
+         }
++        }
+       fout << "\t\t\t</File>\n";
+       }
+     }
+@@ -1518,9 +1624,9 @@ WriteCustomRule(std::ostream& fout,
+   
+   // Write the rule for each configuration.
+   std::vector<std::string>::iterator i;
+-  std::vector<std::string> *configs =
+-    static_cast<cmGlobalVisualStudio7Generator *>
+-    (this->GlobalGenerator)->GetConfigurations();
++  cmGlobalVisualStudio7Generator * gg = 
++    static_cast<cmGlobalVisualStudio7Generator *>(this->GlobalGenerator);
++  std::vector<std::string> *configs = gg->GetConfigurations();
+   const char* compileTool = "VCCLCompilerTool";
+   if(this->FortranProject)
+     {
+@@ -1533,6 +1639,83 @@ WriteCustomRule(std::ostream& fout,
+     }
+   for(i = configs->begin(); i != configs->end(); ++i)
+     {
++    if( PlatformName == "Mobile Platform")
++      {
++      PlatformDefs const &pldef = gg->GetPlatformDef();
++      cmLVS7GFileConfig const& fc = fcinfo.FileConfigMap[*i];
++      fout << "\t\t\t\t<FileConfiguration\n";
++      fout << "\t\t\t\t\tName=\"" << *i << "|" 
++           << pldef.PlatformName << "\">\n";
++      if(!fc.CompileFlags.empty())
++        {
++        fout << "\t\t\t\t\t<Tool\n"
++          << "\t\t\t\t\tName=\"" << compileTool << "\"\n"
++          << "\t\t\t\t\tAdditionalOptions=\""
++          << this->EscapeForXML(fc.CompileFlags.c_str()) << "\"/>\n";
++        }
++
++      std::string script = 
++        this->ConstructScript(command.GetCommandLines(),
++                              command.GetWorkingDirectory(),
++                              i->c_str(),
++                              command.GetEscapeOldStyle(),
++                              command.GetEscapeAllowMakeVars());
++      fout << "\t\t\t\t\t<Tool\n"
++        << "\t\t\t\t\tName=\"" << customTool << "\"\n"
++        << "\t\t\t\t\tDescription=\"" 
++        << this->EscapeForXML(comment.c_str()) << "\"\n"
++        << "\t\t\t\t\tCommandLine=\"" 
++        << this->EscapeForXML(script.c_str()) << "\"\n"
++        << "\t\t\t\t\tAdditionalDependencies=\"";
++      if(command.GetDepends().empty())
++        {
++        // There are no real dependencies.  Produce an artificial one to
++        // make sure the rule runs reliably.
++        if(!cmSystemTools::FileExists(source))
++          {
++          std::ofstream depout(source);
++          depout << "Artificial dependency for a custom command.\n";
++          }
++        fout << this->ConvertToXMLOutputPath(source);
++        }
++      else
++        {
++        // Write out the dependencies for the rule.
++        for(std::vector<std::string>::const_iterator d = 
++            command.GetDepends().begin();
++            d != command.GetDepends().end(); 
++            ++d)
++          {
++          // Get the real name of the dependency in case it is a CMake target.
++          std::string dep = this->GetRealDependency(d->c_str(), i->c_str());
++          fout << this->ConvertToXMLOutputPath(dep.c_str())
++            << ";";
++          }
++        }
++      fout << "\"\n";
++      fout << "\t\t\t\t\tOutputs=\"";
++      if(command.GetOutputs().empty())
++        {
++        fout << source << "_force";
++        }
++      else
++        {
++        // Write a rule for the output generated by this command.
++        const char* sep = "";
++        for(std::vector<std::string>::const_iterator o = 
++            command.GetOutputs().begin(); 
++            o != command.GetOutputs().end(); 
++            ++o)
++          {
++          fout << sep << this->ConvertToXMLOutputPathSingle(o->c_str());
++          sep = ";";
++          }
++        }
++      fout << "\"/>\n";
++      fout << "\t\t\t\t</FileConfiguration>\n";
++      }
++    else
++      {
+     cmLVS7GFileConfig const& fc = fcinfo.FileConfigMap[*i];
+     fout << "\t\t\t\t<FileConfiguration\n";
+     fout << "\t\t\t\t\tName=\"" << *i << "|" << this->PlatformName << "\">\n";
+@@ -1605,6 +1788,7 @@ WriteCustomRule(std::ostream& fout,
+     fout << "\t\t\t\t</FileConfiguration>\n";
+     }
+ }
++}
+ 
+ 
+ void cmLocalVisualStudio7Generator::WriteVCProjBeginGroup(std::ostream& fout,
+@@ -1727,13 +1911,18 @@ cmLocalVisualStudio7Generator
+     }
+   if(projectType)
+     {
+-    fout << "\tProjectType=\"" << projectType << "\"\n";
++    fout << "\tProjectType=\"" << projectType << "\">\n";
+     }
+   fout<< "\tKeyword=\"" << keyword << "\">\n" 
+        << "\tProjectGUID=\"{" << gg->GetGUID(libName) << "}\">\n"
+-       << "\t<Platforms>\n"
+-       << "\t\t<Platform\n\t\t\tName=\"" << this->PlatformName << "\"/>\n"
+-       << "\t</Platforms>\n";
++       << "\t<Platforms>\n";
++  
++  if(PlatformName == "Mobile Platform")
++    fout << "\t\t<Platform\n\t\t\tName=\"" 
++         << gg->GetPlatformDef().PlatformName << "\"/>\n";
++  else
++    fout << "\t\t<Platform\n\t\t\tName=\"" << this->PlatformName << "\"/>\n";
++  fout << "\t</Platforms>\n";
+ }
+ 
+ 
+@@ -1774,6 +1963,7 @@ cmLocalVisualStudio7Generator::WriteProjectStart(std::ostream& fout,
+   const char* vsProvider = target.GetProperty("VS_SCC_PROVIDER");
+   cmGlobalVisualStudio7Generator* gg =
+     static_cast<cmGlobalVisualStudio7Generator *>(this->GlobalGenerator);
++  
+   fout << "\tName=\"" << projLabel << "\"\n";
+   if(this->Version >= 8)
+     {
+@@ -1788,9 +1978,14 @@ cmLocalVisualStudio7Generator::WriteProjectStart(std::ostream& fout,
+          << "\tSccProvider=\"" << vsProvider << "\"\n";
+     }
+   fout << "\tKeyword=\"" << keyword << "\">\n"
+-       << "\t<Platforms>\n"
+-       << "\t\t<Platform\n\t\t\tName=\"" << this->PlatformName << "\"/>\n"
+-       << "\t</Platforms>\n";
++    << "\t<Platforms>\n";
++
++  if(PlatformName == "Mobile Platform")
++    fout << "\t\t<Platform\n\t\t\tName=\"" 
++         << gg->GetPlatformDef().PlatformName << "\"/>\n";
++  else
++    fout << "\t\t<Platform\n\t\t\tName=\"" << this->PlatformName << "\"/>\n";
++  fout << "\t</Platforms>\n";
+ }
+ 
+ 
+diff --git a/Source/cmLocalVisualStudio7Generator.h b/Source/cmLocalVisualStudio7Generator.h
+index 19f7b97..e6d4ef3 100644
+--- a/Source/cmLocalVisualStudio7Generator.h
++++ b/Source/cmLocalVisualStudio7Generator.h
+@@ -64,6 +64,8 @@ public:
+ 
+   void SetExtraFlagTable(cmVS7FlagTable const* table)
+     { this->ExtraFlagTable = table; }
++  void SetExtraLinkFlagTable(cmVS7FlagTable const* table)
++    { this->ExtraLinkFlagTable = table; }
+   virtual std::string GetTargetDirectory(cmTarget const&) const;
+   cmSourceFile* CreateVCProjBuildRule();
+   void WriteStampFiles();
+@@ -88,6 +90,11 @@ private:
+   void CreateSingleVCProj(const char *lname, cmTarget &tgt);
+   void WriteVCProjFile(std::ostream& fout, const char *libName, 
+                        cmTarget &tgt);
++  void WritePlatformConfiguration(std::ostream& fout,
++                                   const char* configName,
++                                   const char *libName,
++                                   const char *platformName,
++                                   cmTarget &target);
+   void WriteConfigurations(std::ostream& fout,
+                            const char *libName, cmTarget &tgt);
+   void WriteConfiguration(std::ostream& fout,
+@@ -99,7 +106,7 @@ private:
+   void OutputTargetRules(std::ostream& fout, const char* configName, 
+                          cmTarget &target, const char *libName);
+   void OutputBuildTool(std::ostream& fout, const char* configName,
+-                       cmTarget& t, bool debug);
++                       const char* platformName, cmTarget& t, bool debug);
+   void OutputLibraryDirectories(std::ostream& fout,
+                                 std::vector<std::string> const& dirs);
+   void WriteProjectStart(std::ostream& fout, const char *libName,
+@@ -128,6 +135,7 @@ private:
+   friend class EventWriter;
+ 
+   cmVS7FlagTable const* ExtraFlagTable;
++  cmVS7FlagTable const* ExtraLinkFlagTable;
+   std::string ModuleDefinitionFile;
+   int Version;
+   bool FortranProject;
+diff --git a/Source/cmSDKConfigParser.cxx b/Source/cmSDKConfigParser.cxx
+--- /dev/null
++++ b/Source/cmSDKConfigParser.cxx
+@@ -0,0 +1,205 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: cmGlobalVisualStudio8_WindowsMobile_Generator.cxx,v $
++  Language:  C++
++  Date:      $Date: 2008-04-02 13:16:04 $
++  Version:   $Revision: 1.36.2.1 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even 
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++
++#include <iomanip>
++#include <sstream>
++#include "cmSDKConfigParser.h"
++#include "cmake.h"
++
++cmSDKConfigParser::cmSDKConfigParser(std::string const& basePath)
++: m_vsBasePath(basePath)
++{
++  current_platform_valid = false;
++}
++
++void cmSDKConfigParser::StartElement(const char* name, const char** atts)
++{
++  if ( strcmp(name, "Platform") == 0 )
++    {
++    PlatformDefs nPlatform;
++    platformVec.push_back(nPlatform);
++    current_platform_valid = true;
++    }
++  if ( strcmp(name, "Directories") == 0 )
++    {
++    const char* includes = this->FindAttribute(atts, "Include");
++    if (includes)
++      {
++      platformVec.back().IncludePaths = std::string(includes);
++      }
++    const char* libs = this->FindAttribute(atts, "Library");
++    if (libs)
++      {
++      platformVec.back().LibraryPaths = std::string(libs);
++      }
++    }
++  if ( strcmp(name, "Macro") == 0 )
++    {
++    const char* rev = this->FindAttribute(atts, "Name");
++    if (rev)
++      {
++      if ( strcmp(rev, "PLATFORMDEFINES") == 0 && current_platform_valid)
++        {
++        rev = this->FindAttribute(atts, "Value");
++        if(rev)
++          platformVec.back().PlatformDefines = std::string(rev);
++        }
++      else if ( strcmp(rev, "CEVER") == 0 && current_platform_valid)
++        {
++        rev = this->FindAttribute(atts, "Value");
++        if(rev)
++          platformVec.back().CEver = std::string(rev);
++        }
++      else if ( strcmp(rev, "ARCHFAM") == 0 && current_platform_valid)
++        {
++        rev = this->FindAttribute(atts, "Value");
++        if(rev)
++          platformVec.back().Archfam = std::string(rev);
++        }
++      else if ( strcmp(rev, "_ARCHFAM_") == 0 && current_platform_valid)
++        {
++        rev = this->FindAttribute(atts, "Value");
++        if(rev)
++          platformVec.back().Archfam_ = std::string(rev);
++        }
++      else if ( strcmp(rev, "INSTRUCTIONSET") == 0 && current_platform_valid)
++        {
++        rev = this->FindAttribute(atts, "Value");
++        if(rev)
++          platformVec.back().InstructionSet= std::string(rev);
++        }
++      }
++    }
++  this->CharacterData.clear();
++}
++
++void cmSDKConfigParser::EndElement(const char* name)
++{
++  if ( strcmp(name, "PlatformName") == 0 )
++    {
++    platformVec.back().PlatformName = 
++      std::string(this->CharacterData.begin(),this->CharacterData.end());
++    }
++  else if ( strcmp(name, "OSMinorVersion") == 0 && current_platform_valid)
++    {
++    platformVec.back().MinorVer = 
++      atoi(std::string(
++          this->CharacterData.begin(),
++          this->CharacterData.end()
++          ).c_str());
++    }
++  else if ( strcmp(name, "OSMajorVersion") == 0 && current_platform_valid)
++    {
++    platformVec.back().MajorVer = 
++      atoi(std::string(
++          this->CharacterData.begin(),this->CharacterData.end()
++          ).c_str());
++    }
++  if ( strcmp(name, "Platform") == 0 )
++    {
++    // done with parsing the platform now we set the compiler path
++    // that can be used by the generators. 
++    if( platformVec.back().Archfam.find("ARM") != std::string::npos ||
++        platformVec.back().Archfam.find("arm") != std::string::npos)
++      {
++      platformVec.back().Compiler = 
++        this->m_vsBasePath+"/VC/ce/bin/x86_arm/cl.exe";
++      }
++    else if( platformVec.back().Archfam.find("SH") != std::string::npos ||
++             platformVec.back().Archfam.find("sh") != std::string::npos)
++      {
++      platformVec.back().Compiler = 
++        this->m_vsBasePath+"/VC/ce/bin/x86_sh/cl.exe";
++      }
++    else if( platformVec.back().Archfam.find("MIPS") != std::string::npos ||
++             platformVec.back().Archfam.find("mips") != std::string::npos )
++      {
++      platformVec.back().Compiler = 
++        this->m_vsBasePath+"/VC/ce/bin/x86_mips/cl.exe";
++      }
++    // could be a special x86 wince platform - we have to do more parsing if 
++    // wince gets a 64bit version
++    else 
++      {
++      platformVec.back().Compiler = this->m_vsBasePath+"/VC/bin/cl.exe";
++      }
++
++    std::ostringstream out;
++    out << platformVec.back().MajorVer << '.' 
++      << std::setw(2)<< std::setfill('0')
++      << platformVec.back().MinorVer;
++    platformVec.back().SystemVersion = out.str();
++    }
++
++  this->CharacterData.clear();
++}
++
++void cmSDKConfigParser::CharacterDataHandler(const char* data, int length)
++{
++  this->CharacterData.insert(this->CharacterData.end(), data, data+length);
++}
++
++const char* cmSDKConfigParser::FindAttribute(
++  const char** atts, 
++  const char* attribute )
++{
++  if ( !atts || !attribute )
++    {
++    return 0;
++    }
++  const char **atr = atts;
++  while ( *atr && **atr && **(atr+1) )
++    {
++    if ( strcmp(*atr, attribute) == 0 )
++      {
++      return *(atr+1);
++      }
++    atr+=2;
++    }
++  return 0;
++}
++
++
++void cmSDKConfigParser::GetSDKsInstalled(
++  std::string vsVersionString, 
++  std::vector<PlatformDefs> & platformSDKs )
++{
++  platformSDKs.clear();
++
++  std::string regkey(
++    "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\"
++    );
++  regkey += vsVersionString + "\\Setup\\VS;ProductDir";
++
++  std::string base;
++
++  if (!cmSystemTools::ReadRegistryValue(regkey.c_str(),base))
++    { 
++    return;
++    }
++
++  cmSystemTools::ConvertToUnixSlashes(base);
++
++  // NOW READ THE CONFIG FILE FOR THE SDKs
++  std::string configFilename = base + "/VC/vcpackages/WCE.VCPlatform.config";
++  cmSDKConfigParser parser(base); 
++  if(parser.ParseFile(configFilename.c_str()) == 0) {
++    return;
++  }
++  swap(platformSDKs, parser.getPlatforms());
++}
++
+diff --git a/Source/cmSDKConfigParser.h b/Source/cmSDKConfigParser.h
+--- /dev/null
++++ b/Source/cmSDKConfigParser.h
+@@ -0,0 +1,72 @@
++/*=========================================================================
++
++  Program:   CMake - Cross-Platform Makefile Generator
++  Module:    $RCSfile: ,v $
++  Language:  C++
++  Date:      $Date: 2008-02-15 16:49:58 $
++  Version:   $Revision: 1.13 $
++
++  Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
++
++     This software is distributed WITHOUT ANY WARRANTY; without even
++     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
++     PURPOSE.  See the above copyright notices for more information.
++
++=========================================================================*/
++#ifndef cmSDKConfigParser_h
++#define cmSDKConfigParser_h
++
++#include "cmXMLParser.h"
++
++typedef struct {
++  int MajorVer;
++  int MinorVer;
++  std::string PlatformDefines;
++  std::string SystemVersion; //! CMAKE_SYSTEM_VERSION
++  std::string CEver; //! == UNDER_CE
++  std::string Archfam;
++  std::string Archfam_;
++  std::string InstructionSet;
++  std::string PlatformName;
++  std::string LibraryPaths;
++  std::string IncludePaths;
++  std::string Compiler; // cl compiler with absolute path
++} PlatformDefs;
++
++
++/*!
++ * \brief Parser for *.VCPlatform.config xml files.
++ *
++ */
++class cmSDKConfigParser : public cmXMLParser
++{
++public:
++  cmSDKConfigParser(std::string const& vsPath);
++
++  std::vector<PlatformDefs> & getPlatforms() {return platformVec;};
++  std::vector<PlatformDefs> const& getPlatforms() const {return platformVec;};
++
++  /*!
++    \brief Parses the Windows CE SDKs installed for the given visual studio
++    version.
++    \param VSversionString visual studio version, i.e. 8.0 or 9.0
++    */
++  static void GetSDKsInstalled(
++    std::string VSversionString,
++    std::vector<PlatformDefs> & platformSDKs
++    );
++protected:
++  void StartElement(const char* name, const char** atts);
++  void EndElement(const char* name);
++  void CharacterDataHandler(const char* data, int length);
++  const char* FindAttribute( const char** atts, const char* attribute );
++private:
++  std::vector<char> CharacterData;
++  std::vector<PlatformDefs> platformVec;
++  bool current_platform_valid;
++  std::string m_vsBasePath;
++};
++
++#endif
++
+diff --git a/Source/cmake.cxx b/Source/cmake.cxx
+--- a/Source/cmake.cxx
++++ b/Source/cmake.cxx
+@@ -60,7 +60,9 @@
+ #    include "cmGlobalVisualStudio7Generator.h"
+ #    include "cmGlobalVisualStudio71Generator.h"
+ #    include "cmGlobalVisualStudio8Generator.h"
++#    include "cmGlobalVisualStudio8_SDKGenerator.h"
+ #    include "cmGlobalVisualStudio9Generator.h"
++#    include "cmGlobalVisualStudio9_SDKGenerator.h"
+ #    include "cmGlobalVisualStudio9Win64Generator.h"
+ #    include "cmGlobalVisualStudio10Generator.h"
+ #    include "cmGlobalVisualStudio10Win64Generator.h"
+@@ -2418,6 +2420,25 @@ void cmake::AddDefaultGenerators()
+     new cmFunctionGeneratorFactory(&cmGlobalVisualStudio8Generator::New);
+   this->Generators[cmGlobalVisualStudio9Generator::GetActualName()] =
+     new cmFunctionGeneratorFactory(&cmGlobalVisualStudio9Generator::New);
++
++  std::vector<PlatformDefs> vs8Platforms;
++  cmSDKConfigParser::GetSDKsInstalled("8.0", vs8Platforms);
++  for(  std::vector<PlatformDefs>::const_iterator it = vs8Platforms.begin(),
++      e = vs8Platforms.end(); it != e; ++it)
++  {
++    this->Generators["Visual Studio 8.0 " + it->PlatformName] =
++    new cmSDKGeneratorFactory<cmGlobalVisualStudio8_SDKGenerator>(*it);
++  }
++  
++  std::vector<PlatformDefs> vs9Platforms;
++  cmSDKConfigParser::GetSDKsInstalled("9.0", vs9Platforms);
++  for(  std::vector<PlatformDefs>::const_iterator it = vs9Platforms.begin(),
++      e = vs9Platforms.end(); it != e; ++it)
++  {
++    this->Generators["Visual Studio 9.0 " + it->PlatformName] =
++    new cmSDKGeneratorFactory<cmGlobalVisualStudio9_SDKGenerator>(*it);
++  }
++
+   this->Generators[cmGlobalVisualStudio9Win64Generator::GetActualName()] =
+     new cmFunctionGeneratorFactory(&cmGlobalVisualStudio9Win64Generator::New);
+   this->Generators[cmGlobalVisualStudio8Win64Generator::GetActualName()] =
+-- 
+1.6.5.1.1367.gcd48
+
+diff --git a/Modules/CMakeTestCLMachineType.c b/Modules/CMakeTestCLMachineType.c
+--- /dev/null
++++ b/Modules/CMakeTestCLMachineType.c
+@@ -0,0 +1 @@
++int dummy() { return 0;}
+diff --git a/Modules/Platform/WinCE-cl.cmake b/Modules/Platform/WinCE-cl.cmake
+--- /dev/null
++++ b/Modules/Platform/WinCE-cl.cmake
+@@ -0,0 +1,43 @@
++
++IF(NOT CMAKE_WINDOWS_STACKSIZE )
++    SET(CMAKE_WINDOWS_STACKSIZE 65536) ## stacksize is set to 65kb
++ENDIF(NOT CMAKE_WINDOWS_STACKSIZE )
++
++INCLUDE(Platform/Windows-cl)
++
++SET (CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} /DUNICODE /D_UNICODE")
++SET (CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /DUNICODE /D_UNICODE")
++
++IF(MSVC_VERSION GREATER 1310)
++    # Windows-cl.cmake sets /RTC1, we remove that here
++    SET (CMAKE_CXX_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi /Ob0 /Od")
++    SET (CMAKE_C_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi  /Ob0 /Od")
++    # We deactivate Manifest creation
++    SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MANIFEST:NO")
++    SET (CMAKE_SHARED_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT}  /MANIFEST:NO")
++    SET (CMAKE_MODULE_LINKER_FLAGS_INIT "${CMAKE_SHARED_LINKER_FLAGS_INIT} /MANIFEST:NO")
++ENDIF(MSVC_VERSION GREATER 1310)
++
++# Add architecture-based flags, needed by the C runtimes and Platform SDK
++IF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
++    SET (CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} /DARM /D_ARM_ /D_M_ARMT /DARMV4I /D_ARMV4I_")
++    SET (CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /DARM /D_ARM_ /D_M_ARMT /DARMV4I /D_ARMV4I_")
++ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
++# TODO: add flags for other architectures
++
++SET(CMAKE_C_STANDARD_LIBRARIES_INIT "coredll.lib corelibc.lib /NODEFAULTLIB:oldnames.lib")
++SET(CMAKE_CXX_STANDARD_LIBRARIES_INIT "${CMAKE_C_STANDARD_LIBRARIES_INIT}")
++
++IF(CMAKE_SYSTEM_VERSION)
++    SET(CMAKE_CREATE_WIN32_EXE "/SUBSYSTEM:WINDOWSCE,${CMAKE_SYSTEM_VERSION}")
++## TODO: setting the entry point is not always supported, some versions of
++## WinCE only support creating a "win32 exe"
++    SET(CMAKE_CREATE_CONSOLE_EXE "/SUBSYSTEM:WINDOWSCE,${CMAKE_SYSTEM_VERSION} /ENTRY:mainACRTStartup")
++    SET(CMAKE_SHARED_LINKER_FLAGS_INIT "${CMAKE_SHARED_LINKER_FLAGS_INIT} /SUBSYSTEM:WINDOWSCE,${CMAKE_SYSTEM_VERSION}")
++ELSE(CMAKE_SYSTEM_VERSION)
++# according to msdn version would default to 2.00
++    SET(CMAKE_CREATE_WIN32_EXE "/SUBSYSTEM:WINDOWSCE")
++    SET(CMAKE_CREATE_CONSOLE_EXE "/SUBSYSTEM:WINDOWSCE /ENTRY:mainACRTStartup")
++    SET(CMAKE_SHARED_LINKER_FLAGS_INIT "${CMAKE_SHARED_LINKER_FLAGS_INIT} /SUBSYSTEM:WINDOWSCE")
++ENDIF(CMAKE_SYSTEM_VERSION)
++
+diff --git a/Modules/Platform/WinCE.cmake b/Modules/Platform/WinCE.cmake
+--- /dev/null
++++ b/Modules/Platform/WinCE.cmake
+@@ -0,0 +1,26 @@
++SET(WINCE 1)
++
++INCLUDE(Platform/Windows)
++
++IF(CMAKE_SYSTEM_VERSION)
++    IF(CMAKE_SYSTEM_VERSION MATCHES "[0-9]+\\.[0-9][0-9]")
++        STRING(REGEX REPLACE "([0-9]*)\\.([0-9]*)" "0x\\1\\2" CMAKE_SYSTEM_VERSION_HEX  "${CMAKE_SYSTEM_VERSION}" )
++    ELSE(CMAKE_SYSTEM_VERSION MATCHES "[0-9]+\\.[0-9][0-9]")
++        MESSAGE(SEND_ERROR "Please set a CMAKE_SYSTEM_VERSION that matches: [0-9]+'.'[0-9][0-9]" )
++        SET(CMAKE_SYSTEM_VERSION_HEX "0x200")
++    ENDIF(CMAKE_SYSTEM_VERSION MATCHES "[0-9]+\\.[0-9][0-9]")
++
++ELSE(CMAKE_SYSTEM_VERSION)
++    IF(CMAKE_GENERATOR MATCHES "Visual Studio")
++        SET(CMAKE_SYSTEM_VERSION_HEX  "$(CEVER)")
++    ELSE(CMAKE_GENERATOR MATCHES "Visual Studio")
++        SET(CMAKE_SYSTEM_VERSION_HEX  "0x200")
++    ENDIF(CMAKE_GENERATOR MATCHES "Visual Studio")
++ENDIF(CMAKE_SYSTEM_VERSION)
++
++ADD_DEFINITIONS(
++        -DUNDER_CE=${CMAKE_SYSTEM_VERSION_HEX}
++        -D_WIN32_WCE=${CMAKE_SYSTEM_VERSION_HEX}
++        -DWIN32
++        )
++
+diff --git a/Modules/Platform/Windows-cl.cmake b/Modules/Platform/Windows-cl.cmake
+--- a/Modules/Platform/Windows-cl.cmake
++++ b/Modules/Platform/Windows-cl.cmake
+@@ -140,37 +140,114 @@ IF(CMAKE_GENERATOR MATCHES "Makefiles")
+       MESSAGE(STATUS "Check if this is a free VC compiler - no")
+       SET(CMAKE_USING_VC_FREE_TOOLS 0)
+     ENDIF(CMAKE_COMPILER_RETURN)
++  ENDIF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
++ENDIF(CMAKE_GENERATOR MATCHES "Makefiles")
++    
++# Testing the machine type of the generated binaries:
++IF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
++
++  ## IF CMAKE_CL_MACHINE_TYPE has been set in the toolchain file, we do not look for dumpbin
++  IF(NOT CMAKE_CL_MACHINE_TYPE)
++    FIND_PROGRAM(CMAKE_DUMPBIN
++      NAMES dumpbin
++      PATHS
++      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\9.0\\Setup\\VC;ProductDir]
++      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\8.0\\Setup\\VC;ProductDir]
++      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC;ProductDir]
++      "$ENV{ProgramFiles}/Microsoft Visual Studio 9.0/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio9.0/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio 9.0/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio9.0/VC/bin"
++      "/Program Files/Microsoft Visual Studio 9.0/VC/bin/"
++      "/Program Files/Microsoft Visual Studio 8/VC/bin/"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio 8/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio8/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio 8/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio8/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio .NET/VC/bin"
++      "$ENV{ProgramFiles} (x86)/Microsoft Visual Studio .NET/VC/bin"
++      "$ENV{ProgramFiles}/Microsoft Visual Studio .NET/VC/bin"
++      "c:/Program Files/Microsoft Visual Studio .NET/VC/bin"
++      "c:/Program Files/Microsoft Visual Studio.NET/VC/bin"
++      "/Program Files/Microsoft Visual Studio .NET/VC/bin/"
++      )
++ 
++    MESSAGE(STATUS "Check CL platform:")
++    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++            "Checking CL platform using dumpbin ${CMAKE_DUMPBIN}" )
+     MAKE_DIRECTORY("${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3")
+-    MESSAGE(STATUS "Check CL platform")
+-    EXEC_PROGRAM(${CMAKE_TEST_COMPILER} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3
+-      ARGS /nologo
+-      \"${testForFreeVCFile}\"
+-      /link /machine:i386
+-      OUTPUT_VARIABLE CMAKE_COMPILER_OUTPUT 
+-      RETURN_VALUE CMAKE_COMPILER_RETURN
++    IF(NOT CMAKE_DUMPBIN STREQUAL CMAKE_DUMPBIN-NOTFOUND)
++      GET_FILENAME_COMPONENT(CL_PATH ${CMAKE_C_COMPILER} PATH)
++      GET_FILENAME_COMPONENT(MAKE_PATH ${CMAKE_MAKE_PROGRAM} PATH)
++      GET_FILENAME_COMPONENT(DUMPBIN_PATH ${CMAKE_DUMPBIN} PATH)
++      SET(ENV{PATH} "${MAKE_PATH};${CL_PATH};${DUMPBIN_PATH};$ENV{PATH}")
++ 
++      # We compile a trivial source file and run dumpbin on the object file
++      # the headers section should contain the machine type that the selected cl
++      # produces. 
++ 
++      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++          "Dumpbin found as ${CMAKE_DUMPBIN}\n" )
++      SET(testForCLMachineType
++        "${CMAKE_ROOT}/Modules/CMakeTestCLMachineType.c")
++      SET(testForCLMachineTypeOutput CMakeTestCLMachineType.obj)
++      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++          "\n\nRunning cl: ${CMAKE_C_COMPILER} -c \"${testForCLMachineType}\" " )
++      EXECUTE_PROCESS(COMMAND "${CMAKE_C_COMPILER}" -c "${testForCLMachineType}"
++              WORKING_DIRECTORY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3" 
++              ERROR_VARIABLE testForCLMachineType_DUMP
++              OUTPUT_VARIABLE testForCLMachineType_DUMP
+       )
+-    # if there was an error assume it is a 64bit system
+-    IF(CMAKE_COMPILER_RETURN)
+-      FILE(APPEND 
+-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+-        "Determining if this is a 64 bit system passed:\n"
+-        "${CMAKE_COMPILER_OUTPUT}\n\n")
+-      MESSAGE(STATUS "Check CL platform - 64 bit")
+-      SET(CMAKE_CL_64 1)
+-    ELSE(CMAKE_COMPILER_RETURN)
+       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+-        "Determining if this is a 32 bit system passed:\n"
+-        "${CMAKE_COMPILER_OUTPUT}\n\n")
+-      MESSAGE(STATUS "Check CL platform - 32 bit")
+-      SET(CMAKE_CL_64 0)
+-    ENDIF(CMAKE_COMPILER_RETURN)
+-  ENDIF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
+-ENDIF(CMAKE_GENERATOR MATCHES "Makefiles")
++          "${testForCLMachineType_DUMP}\n\nRunning dumpbin: ${CMAKE_DUMPBIN} /HEADERS ${testForCLMachineType}" )
++      EXECUTE_PROCESS(COMMAND "${CMAKE_DUMPBIN}" /HEADERS ${testForCLMachineTypeOutput} 
++              WORKING_DIRECTORY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp3"
++              OUTPUT_VARIABLE testForCLMachineType_DUMPBIN_OUTPUT 
++              ERROR_VARIABLE testForCLMachineType_DUMP 
++              )
++      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
++          "${testForCLMachineType_DUMP}\n${testForCLMachineType_DUMPBIN_OUTPUT}" )
++      STRING(REGEX MATCH "machine \\(([^\\)]*)\\)" DUMPBIN_REGEX_RESULT ${testForCLMachineType_DUMPBIN_OUTPUT})
++      SET(CMAKE_CL_MACHINE_TYPE ${CMAKE_MATCH_1})
++ 
++    ELSE(NOT CMAKE_DUMPBIN STREQUAL CMAKE_DUMPBIN-NOTFOUND)
++      MESSAGE(Status "Check CL platform: dumpbin.exe was not found - assuimg i386")
++      MESSAGE(Status "You can override the setting by clearing the build path and setting CMAKE_CL_MACHINE_TYPE")
++      SET(CMAKE_CL_MACHINE_TYPE i386)
++    ENDIF(NOT CMAKE_DUMPBIN STREQUAL CMAKE_DUMPBIN-NOTFOUND)
++  ENDIF(NOT CMAKE_CL_MACHINE_TYPE)
++
++## TODO add further dumpbin machine to visual studio machine type conversion here, 
++## if required
++  IF(CMAKE_CL_MACHINE_TYPE STREQUAL x86)
++    SET(CMAKE_CL_MACHINE_TYPE i386)
++  ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL x86)
++
++  IF(CMAKE_CL_MACHINE_TYPE MATCHES ARM)
++    IF(NOT CMAKE_FORCE_NON_THUMB)
++      SET(CMAKE_CL_MACHINE_TYPE THUMB)
++    ENDIF(NOT CMAKE_FORCE_NON_THUMB)
++  ENDIF(CMAKE_CL_MACHINE_TYPE MATCHES ARM)
++
++  ## If everything above failed, we default to i386
++  IF(NOT CMAKE_CL_MACHINE_TYPE)
++    SET (CMAKE_CL_MACHINE_TYPE "i386")
++  ENDIF(NOT CMAKE_CL_MACHINE_TYPE)  
++
++  MESSAGE(STATUS "Check CL platform: ${CMAKE_CL_MACHINE_TYPE}" )
+ 
+ IF(CMAKE_FORCE_WIN64)
+-  SET(CMAKE_CL_64 1)
++    SET(CMAKE_CL_MACHINE_TYPE x64)
++    MESSAGE(STATUS "CL platform was forced to:${CMAKE_CL_MACHINE_TYPE}" )
+ ENDIF(CMAKE_FORCE_WIN64)
+ 
++
++  ## CMAKE_CL_64 is set for compatibility reasons
++  IF(CMAKE_CL_MACHINE_TYPE STREQUAL x64)
++    SET(CMAKE_CL_64 1)
++  ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL x64)
++
++ENDIF(NOT CMAKE_VC_COMPILER_TESTS_RUN)
+ IF("${MSVC_VERSION}" GREATER 1599)
+   SET(MSVC_INCREMENTAL_DEFAULT ON)
+ ENDIF()
+@@ -234,14 +311,21 @@ SET(CMAKE_CXX_STANDARD_LIBRARIES_INIT "${CMAKE_C_STANDARD_LIBRARIES_INIT}")
+ 
+ # executable linker flags
+ SET (CMAKE_LINK_DEF_FILE_FLAG "/DEF:")
+-# set the stack size and the machine type
+-IF(CMAKE_CL_64)
+-  SET (CMAKE_EXE_LINKER_FLAGS_INIT
+-    "${CMAKE_EXE_LINKER_FLAGS_INIT} /STACK:10000000 /machine:x64")
+-ELSE(CMAKE_CL_64)
++
++IF(NOT CMAKE_WINDOWS_STACKSIZE)
++   SET(CMAKE_WINDOWS_STACKSIZE 10000000) 
++ENDIF(NOT CMAKE_WINDOWS_STACKSIZE)
++ 
+   SET (CMAKE_EXE_LINKER_FLAGS_INIT
+-    "${CMAKE_EXE_LINKER_FLAGS_INIT} /STACK:10000000 /machine:I386")
+-ENDIF(CMAKE_CL_64)
++    "${CMAKE_EXE_LINKER_FLAGS_INIT} /STACK:${CMAKE_WINDOWS_STACKSIZE}" )
++    
++
++SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MACHINE:${CMAKE_CL_MACHINE_TYPE}")
++
++  # append /ARMPADCODE
++IF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
++  SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /ARMPADCODE")
++ENDIF(CMAKE_CL_MACHINE_TYPE STREQUAL THUMB)
+ 
+ # add /debug and /INCREMENTAL:YES to DEBUG and RELWITHDEBINFO also add pdbtyp
+ # on versions that support it
+diff --git a/Modules/Platform/Windows-cl.cmake.in b/Modules/Platform/Windows-cl.cmake.in
+--- a/Modules/Platform/Windows-cl.cmake.in
++++ b/Modules/Platform/Windows-cl.cmake.in
+@@ -3,6 +3,7 @@ SET(CMAKE_COMPILER_SUPPORTS_PDBTYPE @CMAKE_COMPILER_SUPPORTS_PDBTYPE@)
+ SET(CMAKE_COMPILER_2005 @CMAKE_COMPILER_2005@)
+ SET(CMAKE_USING_VC_FREE_TOOLS @CMAKE_USING_VC_FREE_TOOLS@)
+ SET(CMAKE_CL_64 @CMAKE_CL_64@)
++SET(CMAKE_CL_MACHINE_TYPE @CMAKE_CL_MACHINE_TYPE@)
+ SET(MSVC60 @MSVC60@)
+ SET(MSVC70 @MSVC70@)
+ SET(MSVC71 @MSVC71@)
+-- 
+1.6.5.1.1367.gcd48
+
