@@ -1,0 +1,327 @@
+diff -Nru SSH.orig/CMakeLists.txt SSH/CMakeLists.txt
+--- SSH.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ SSH/CMakeLists.txt	Wed May 12 10:29:02 2010
+@@ -0,0 +1,9 @@
++cmake_minimum_required(VERSION 2.6)
++
++project(openssh)
++
++add_subdirectory(sshcompat)
++add_subdirectory(openbsd_compat)
++add_subdirectory(sshd)
++add_subdirectory(scp)
++add_subdirectory(sftp)
+diff -Nru SSH.orig/SCP/CMakeLists.txt SSH/SCP/CMakeLists.txt
+--- SSH.orig/SCP/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ SSH/SCP/CMakeLists.txt	Mon May 10 12:09:46 2010
+@@ -0,0 +1,26 @@
++cmake_minimum_required(VERSION 2.6)
++set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
++
++project(scp C)
++
++find_package(openssl REQUIRED)
++find_package(zlib REQUIRED)
++
++include_directories( ${CMAKE_SOURCE_DIR}/includes ${CMAKE_CURRENT_SOURCE_DIR}/includes ${OPENSSL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/SSHCOMPAT/includes ${CMAKE_SOURCE_DIR}/openbsd_compat/includes ${CMAKE_SOURCE_DIR}/sshd/includes)
++
++
++#============================================================================
++# scp
++#============================================================================
++
++set(SCP_SRCS
++  SCP.c
++  xmalloc.c
++  atomicio.c
++)
++
++add_executable(scp ${SCP_SRCS})
++
++target_link_libraries(scp ${OPENSSL_LIBRARIES} sshcompat OpenBSDCompat WS2)
++
++install( TARGETS scp RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
+diff -Nru SSH.orig/SCP/SCP.c SSH/SCP/SCP.c
+--- SSH.orig/SCP/SCP.c	Wed May 12 10:29:34 2010
++++ SSH/SCP/SCP.c	Mon May 10 11:52:15 2010
+@@ -281,7 +281,7 @@
+ 
+ 
+ int
+-main(int argc, char **argv)
++mymain(int argc, char **argv)
+ {
+ 	int ch, fflag, tflag, status=0;
+ 	double speed;
+@@ -376,6 +376,7 @@
+ 		sink(argc, argv);
+ 		exit(errs != 0);
+ 	}
++    return 0;
+ }
+ 
+ 
+@@ -1227,7 +1228,7 @@
+ 		exit(1);
+ }
+ 
+-int _tmain(int argc, TCHAR *argv[], TCHAR *envp[])
++int main(int argc, TCHAR *argv[], TCHAR *envp[])
+ {
+ 	int i;
+ 	char** _argv = (char**) malloc(argc * sizeof(char*));
+@@ -1236,7 +1237,7 @@
+ 		_argv[i] = strdupUnicodeToAscii(argv[i]);
+ 	}
+     
+-	main(argc,_argv);
++	mymain(argc,_argv);
+ 	
+ 	for (i=0;i<argc;i++)
+ 	{
+diff -Nru SSH.orig/SFTP/CMakeLists.txt SSH/SFTP/CMakeLists.txt
+--- SSH.orig/SFTP/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ SSH/SFTP/CMakeLists.txt	Mon May 10 14:40:07 2010
+@@ -0,0 +1,29 @@
++cmake_minimum_required(VERSION 2.6)
++set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
++
++project(sftp-server C)
++
++find_package(openssl REQUIRED)
++find_package(zlib REQUIRED)
++
++include_directories( ${CMAKE_SOURCE_DIR}/includes ${OPENSSL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/SSHCOMPAT/includes ${CMAKE_SOURCE_DIR}/openbsd_compat/includes ${CMAKE_SOURCE_DIR}/sshd/includes ${CMAKE_SOURCE_DIR}/sshdevice/includes)
++
++
++#============================================================================
++# sftp-server
++#============================================================================
++
++set(SFTP_SRCS
++  SFTPmain.c
++  sftp-server.c
++  sftp-common.c
++  buffer.c
++  bufaux.c
++  xmalloc.c
++)
++
++add_executable(sftp-server ${SFTP_SRCS})
++
++target_link_libraries(sftp-server ${OPENSSL_LIBRARIES} sshcompat OpenBSDCompat)
++
++install( TARGETS sftp-server RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
+diff -Nru SSH.orig/SFTP/SFTPmain.c SSH/SFTP/SFTPmain.c
+--- SSH.orig/SFTP/SFTPmain.c	Wed May 12 10:29:34 2010
++++ SSH/SFTP/SFTPmain.c	Mon May 10 11:55:09 2010
+@@ -4,7 +4,7 @@
+ #include "stdafx.h"
+ 
+ extern int sftp_main();
+-int _tmain(int argc, TCHAR *argv[], TCHAR *envp[])
++int main(int argc, TCHAR *argv[], TCHAR *envp[])
+ {
+     //_tprintf(_T("Hello World!\n"));
+ 	sftp_main();
+diff -Nru SSH.orig/SFTP/sftp-server.c SSH/SFTP/sftp-server.c
+--- SSH.orig/SFTP/sftp-server.c	Wed May 12 10:29:34 2010
++++ SSH/SFTP/sftp-server.c	Mon May 10 12:33:30 2010
+@@ -30,6 +30,8 @@
+ #include "stat.h"
+ #include "strings.h"
+ 
++#include "winioctl.h"
++
+ #include "SSHDeviceIoctl.h"
+ 
+ long_long i;
+diff -Nru SSH.orig/SSHCOMPAT/CMakeLists.txt SSH/SSHCOMPAT/CMakeLists.txt
+--- SSH.orig/SSHCOMPAT/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ SSH/SSHCOMPAT/CMakeLists.txt	Mon May 10 10:00:17 2010
+@@ -0,0 +1,26 @@
++cmake_minimum_required(VERSION 2.6)
++set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
++
++project(sshcompat C)
++
++include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/includes)
++
++
++#============================================================================
++# sshcompat
++#============================================================================
++
++set(SSHCOMPAT_SRCS
++    dllmain.c
++    strings.c
++    file.c
++    process.c
++    time.c
++    error.c
++    syslog.c
++    SSHcompat.def
++)
++
++add_library(sshcompat SHARED ${SSHCOMPAT_SRCS})
++
++install( TARGETS sshcompat RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
+diff -Nru SSH.orig/openbsd_compat/CMakeLists.txt SSH/openbsd_compat/CMakeLists.txt
+--- SSH.orig/openbsd_compat/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ SSH/openbsd_compat/CMakeLists.txt	Mon May 10 10:19:24 2010
+@@ -0,0 +1,42 @@
++cmake_minimum_required(VERSION 2.6)
++set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
++
++project(openbsd_compat C)
++
++find_package(openssl REQUIRED)
++
++include_directories( ${CMAKE_SOURCE_DIR}/includes ${CMAKE_CURRENT_SOURCE_DIR}/includes ${OPENSSL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/SSHCOMPAT/includes)
++
++
++#============================================================================
++# openbsdcompat
++#============================================================================
++
++set(OPENBSDCOMPAT_SRCS
++	dllmain.cpp
++  	bsd-snprintf.c
++	vis.c
++	openssl-compat.c
++	strsep.c
++	strlcpy.c
++	strtonum.c
++	strtoll.c
++	bsd-asprintf.c
++	strlcat.c
++	bsd-arc4random.c
++	fatal.c
++	log.c
++	fake-rfc2553.c
++	inet_aton.c
++	inet_ntop.c
++	base64.c
++	strmode.c
++	getopt.c
++    OpenBSDCompat.def
++)
++
++add_library(OpenBSDCompat SHARED ${OPENBSDCOMPAT_SRCS})
++
++target_link_libraries(OpenBSDCompat ${OPENSSL_LIBRARIES} sshcompat WS2)
++
++install( TARGETS OpenBSDCompat RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
+diff -Nru SSH.orig/sshd/CMakeLists.txt SSH/sshd/CMakeLists.txt
+--- SSH.orig/sshd/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ SSH/sshd/CMakeLists.txt	Mon May 10 11:41:16 2010
+@@ -0,0 +1,79 @@
++cmake_minimum_required(VERSION 2.6)
++set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
++
++project(sshd C)
++
++find_package(openssl REQUIRED)
++find_package(zlib REQUIRED)
++
++include_directories( ${CMAKE_SOURCE_DIR}/includes ${CMAKE_CURRENT_SOURCE_DIR}/includes ${OPENSSL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/SSHCOMPAT/includes ${CMAKE_SOURCE_DIR}/openbsd_compat/includes ${ZLIB_INCLUDE_DIRS})
++
++
++#============================================================================
++# sshd
++#============================================================================
++
++set(SSHD_SRCS
++	sshmain.cpp
++	sshd.c
++	servconf.c
++	mac.c
++	cipher.c
++	xmalloc.c
++	misc.c
++	buffer.c
++	cipher-ctr.c
++	cipher-3des1.c
++	cipher-acss.c
++	cipher-aes.c
++	cipher-bf1.c
++	acss.c
++	channels.c
++	crc32.c
++	compress.c
++	packet.c
++	deattack.c
++	match.c
++	compat.c
++	nchan.c
++	bufaux.c
++	canohost.c
++	cleanup.c
++	kex.c
++	dispatch.c
++	key.c
++	uuencode.c
++	rsa.c
++	ssh-rsa.c
++	ssh-dss.c
++	authfile.c
++	atomicio.c
++	socket.c
++	auth2.c
++	kexgexs.c
++	kexdhs.c
++	auth2-hostbased.c
++	auth2-kbdint.c
++	auth2-none.c
++	auth2-passwd.c
++	auth2-pubkey.c
++	auth2-chall.c
++	auth2-gss.c
++	auth-rhosts.c
++	auth-options.c
++	kexgex.c
++	dh.c
++	kexdh.c
++	hostfile.c
++	session.c
++	serverloop.c
++	SocketToFile.c
++	threadlocal.c
++	path.c
++)
++
++add_executable(sshd ${SSHD_SRCS})
++
++target_link_libraries(sshd ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES} sshcompat OpenBSDCompat WS2 authhlp)
++
++install( TARGETS sshd RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
+diff -Nru SSH.orig/sshd/auth-options.c SSH/sshd/auth-options.c
+--- SSH.orig/sshd/auth-options.c	Wed May 12 10:29:34 2010
++++ SSH/sshd/auth-options.c	Mon May 10 11:23:52 2010
+@@ -21,8 +21,12 @@
+ #include "servconf.h"
+ #include "misc.h"
+ //#include "monitor_wrap.h"
+-#include "e_os.h"
+-#include "auth.h"
++#include "openssl/e_os2.h"
++#include "auth.h"
++
++#ifdef _WIN32
++#define strncasecmp _strnicmp
++#endif
+ 
+ #include "ThreadLocal.h"
+ 
+diff -Nru SSH.orig/sshd/sshmain.cpp SSH/sshd/sshmain.cpp
+--- SSH.orig/sshd/sshmain.cpp	Wed May 12 10:29:34 2010
++++ SSH/sshd/sshmain.cpp	Mon May 10 11:41:11 2010
+@@ -11,7 +11,7 @@
+ 
+ #define ACKNOWLEDGEMENT L"This project makes use of OpenSSL and ZLIB projects"
+ 
+-int _tmain(int argc, TCHAR *argv[], TCHAR *envp[])
++int main(int argc, TCHAR *argv[], TCHAR *envp[])
+ {
+     _tprintf(_T("sshd!\r\n%s\r\n%s\r\n"),TEXT(SSH_VERSION),ACKNOWLEDGEMENT);
+ 	
