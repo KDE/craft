@@ -106,7 +106,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-no-accessibility -nomake docs -nomake translations "
         else:
             # both cc-target and non-cc builds
-            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked "
+            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked -webkit "
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
