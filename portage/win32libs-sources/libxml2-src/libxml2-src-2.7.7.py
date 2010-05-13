@@ -4,11 +4,11 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['2.7.7']:
+        for ver in ['2.7.6','2.7.7']:
             self.targets[ver] = 'ftp://xmlsoft.org/libxml2/libxml2-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libxml2-' + ver
-        self.patchToApply['2.7.7'] = ("libxml2-2.7.7-20100328.diff", 1)
-        
+            self.patchToApply[ver] = ("libxml2-2.7.7-20100328.diff", 1)
+  
         self.defaultTarget = '2.7.7'
 
     def setDependencies( self ):
