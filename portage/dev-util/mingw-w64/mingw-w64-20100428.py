@@ -7,12 +7,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['20100427-old'] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100427_old/mingw-w64-bin_x86_64-mingw_20100427_sezero.zip"
         self.targetDigests['20100427-old'] = '0d1d8e67fe86bfd125e497dae18e55d691ad0f1a'
-
+	self.patchToApply['20100427-old'] = ( "gcc_Exit.diff" , 1 )
         
-        self.targets['20100428-new'] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100428_new/mingw-w64-bin_x86_64-mingw_20100428_sezero.zip"
-        self.targetDigests['20100428-new'] = 'db65818e7c9382d64c775289b132ea6bd64b383b'
-        
-        self.defaultTarget = '20100427-old'
+        self.targets['20100505_exp'] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100505_exp/mingw-w64-bin_x86_64-mingw_20100505_sezero.7z"
+        self.patchToApply['20100505_exp'] = ( "gcc_Exit.diff" , 0 )
+        self.defaultTarget = '20100505_exp'
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
