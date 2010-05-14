@@ -1,4 +1,5 @@
 import info
+import platform
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -10,6 +11,8 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
         self.defaultTarget = 'gitHEAD'
         self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
+        if COMPILER == "mingw4":
+          self.options.configure.defines +=" -DBUILD_PHONON_DS9=OFF"
 
 from Package.CMakePackageBase import *
 
