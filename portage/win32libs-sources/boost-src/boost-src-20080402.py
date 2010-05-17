@@ -42,9 +42,13 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         
         projects = ""
+        
+        if not platform.isCrossCompilingEnabled()
+            projects += "program_options"
+
         # only enable python for standard win32 builds, as x64 has problems with symbols and wince isn't supported
         if not platform.isCrossCompilingEnabled() and platform.buildArchitecture() == "x86":
-            projects += "program_options;python"
+            projects += ";python"
             
         self.subinfo.options.configure.defines =  "-DBUILD_PROJECTS=%s " % projects
         self.subinfo.options.configure.defines += "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
