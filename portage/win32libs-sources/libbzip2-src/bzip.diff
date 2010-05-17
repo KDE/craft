@@ -1,6 +1,142 @@
---- bzlib.h.orig	2007-01-03 03:00:55.000000000 +0100
-+++ bzlib.h	2007-04-08 13:00:16.000000000 +0200
-@@ -81,19 +81,46 @@
+diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
+--- bzip2-1.0.5.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ bzip2-1.0.5/CMakeLists.txt	Mon May 17 12:52:18 2010
+@@ -0,0 +1,82 @@
++project(bzip2)
++cmake_minimum_required(VERSION 2.6)
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
++set(bzip2_lib_SRCS
++    blocksort.c
++    huffman.c
++    crctable.c
++    randtable.c
++    compress.c
++    decompress.c
++    bzlib.c
++)
++
++set(bzip2_scripts
++    bzdiff
++    bzgrep
++    bzmore
++)
++set(bzip2_docs
++    bzip2.txt
++    manual.pdf
++)
++set(bzip2_html
++    manual.html
++)
++
++set(CMAKE_DEBUG_POSTFIX "d")
++if(MSVC)
++  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
++  set(CMAKE_C_FLAGS_RELEASE             "${CMAKE_C_FLAGS_RELEASE} /GL")
++  set(CMAKE_CXX_FLAGS_RELEASE           "${CMAKE_CXX_FLAGS_RELEASE} /GL")
++  set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /LTCG")
++  set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} /LTCG")
++  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /LTCG")
++endif(MSVC)
++
++add_library(bzip2 SHARED ${bzip2_lib_SRCS})
++if(WIN32)
++  set_target_properties(bzip2 PROPERTIES PREFIX "")
++endif(WIN32)
++
++if(WINCE)
++    target_link_libraries(bzip2 ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
++# bzip2recover
++add_executable(bzip2recover bzip2recover.c)
++target_link_libraries(bzip2recover bzip2)
++# bzip2
++# disabled bin for wince because of problems with the file system
++if(NOT WINCE)
++add_executable(bzip2_bin bzip2.c)
++target_link_libraries(bzip2_bin bzip2)
++set_target_properties(bzip2_bin PROPERTIES OUTPUT_NAME bzip2)
++endif(NOT WINCE)
++
++file(GLOB man1 ${bzip2_SOURCE_DIR}/*.1)
++
++install_targets(/lib bzip2)
++install_targets(/bin bzip2recover)
++if(NOT WINCE)
++install_targets(/bin bzip2_bin)
++endif(NOT WINCE)
++if(NOT WIN32)
++  install(PROGRAMS ${bzip2_scripts} DESTINATION bin)
++endif(NOT WIN32)
++install(FILES ${man1}          DESTINATION man/man1)
++install(FILES ${bzip2_docs}    DESTINATION doc)
++install(FILES ${bzip2_html}    DESTINATION doc/html)
++install(FILES bzlib.h          DESTINATION include)
++
++# echo EXPORTS > bzip2.def
++# nm bzip2.dll | grep ' T _' | sed 's/.* T _//' >> bzip2.def
++# pexports bzip2.dll > bzip2.def
++# lib /def:bzip2.def /machine:x86
+diff -Nru bzip2-1.0.5.orig/bzip2.c bzip2-1.0.5/bzip2.c
+--- bzip2-1.0.5.orig/bzip2.c	Sun Dec  9 12:22:06 2007
++++ bzip2-1.0.5/bzip2.c	Mon May 17 12:44:37 2010
+@@ -153,6 +153,10 @@
+ #endif /* BZ_LCCWIN32 */
+ 
+ 
++#ifdef _WIN32_WCE
++#define setmode _setmode
++#endif
++
+ /*---------------------------------------------*/
+ /*--
+   Some more stuff for all platforms :-)
+@@ -1805,7 +1809,9 @@
+    i = j = 0; /* avoid bogus warning from egcs-1.1.X */
+ 
+    /*-- Set up signal handlers for mem access errors --*/
++#ifndef _WIN32_WCE
+    signal (SIGSEGV, mySIGSEGVorSIGBUScatcher);
++#endif
+ #  if BZ_UNIX
+ #  ifndef __DJGPP__
+    signal (SIGBUS,  mySIGSEGVorSIGBUScatcher);
+@@ -1949,8 +1955,10 @@
+    if (opMode != OM_Z) blockSize100k = 0;
+ 
+    if (srcMode == SM_F2F) {
++#ifndef _WIN32_WCE
+       signal (SIGINT,  mySignalCatcher);
+       signal (SIGTERM, mySignalCatcher);
++#endif
+ #     if BZ_UNIX
+       signal (SIGHUP,  mySignalCatcher);
+ #     endif
+diff -Nru bzip2-1.0.5.orig/bzlib.c bzip2-1.0.5/bzlib.c
+--- bzip2-1.0.5.orig/bzlib.c	Sun Dec  9 13:57:21 2007
++++ bzip2-1.0.5/bzlib.c	Mon May 17 12:31:17 2010
+@@ -30,6 +30,10 @@
+ 
+ #include "bzlib_private.h"
+ 
++#ifdef _WIN32_WCE
++#define setmode _setmode
++#endif
++
+ 
+ /*---------------------------------------------------*/
+ /*--- Compression stuff                           ---*/
+diff -Nru bzip2-1.0.5.orig/bzlib.h bzip2-1.0.5/bzlib.h
+--- bzip2-1.0.5.orig/bzlib.h	Sun Dec  9 12:34:39 2007
++++ bzip2-1.0.5/bzlib.h	Mon May 17 12:54:09 2010
+@@ -81,18 +81,45 @@
        /* windows.h define small to char */
  #      undef small
  #   endif
@@ -49,10 +185,46 @@
 +#else /* __WIN32__ */
 +# define BZIP2_DLL_IMPEXP  
  #endif
- 
++
 +#define BZ_API(func) func
 +#define BZ_EXTERN BZIP2_DLL_IMPEXP
-+
+ 
  
  /*-- Core (low-level) library functions --*/
- 
+diff -Nru bzip2-1.0.5.orig/cmake/modules/FindWcecompat.cmake bzip2-1.0.5/cmake/modules/FindWcecompat.cmake
+--- bzip2-1.0.5.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ bzip2-1.0.5/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
