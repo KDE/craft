@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['1.4.1','1.2.43']:
             self.targets[ver] = 'http://downloads.sourceforge.net/libpng/libpng-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libpng-' + ver
+        self.patchToApply['1.4.1'] = ("libpng-1.4.1-20100517.diff", 1)
         self.defaultTarget = '1.4.1'
 
     def setDependencies( self ):

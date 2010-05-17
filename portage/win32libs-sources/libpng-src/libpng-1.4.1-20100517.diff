@@ -1,0 +1,72 @@
+diff -Nru libpng-1.4.1.orig/CMakeLists.txt libpng-1.4.1/CMakeLists.txt
+--- libpng-1.4.1.orig/CMakeLists.txt	Thu Feb 25 11:38:30 2010
++++ libpng-1.4.1/CMakeLists.txt	Mon May 17 09:30:31 2010
+@@ -1,6 +1,8 @@
+-cmake_minimum_required(VERSION 2.4.3)
++cmake_minimum_required(VERSION 2.6)
+ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ 
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
+ if(UNIX AND NOT DEFINED CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING 
+       "Choose the type of build, options are:
+@@ -14,6 +16,11 @@
+ project(libpng C)
+ enable_testing()
+ 
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
+ # Copyright (C) 2007-2010 Glenn Randers-Pehrson
+ 
+ # This code is released under the libpng license.
+@@ -169,6 +176,9 @@
+     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
+   endif()
+   target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${M_LIBRARY})
++  if(WINCE)
++    target_link_libraries(${PNG_LIB_NAME} ${WCECOMPAT_LIBRARIES})
++  endif(WINCE)
+ endif()
+ 
+ if(PNG_STATIC)
+diff -Nru libpng-1.4.1.orig/cmake/modules/FindWcecompat.cmake libpng-1.4.1/cmake/modules/FindWcecompat.cmake
+--- libpng-1.4.1.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ libpng-1.4.1/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
