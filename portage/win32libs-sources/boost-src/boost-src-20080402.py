@@ -22,12 +22,14 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.41.0'] = 'boost_1_41_0'
         self.defaultTarget = '1.41.0'
         
-        self.patchToApply['1.41.0'] = ("boost-src-20100428.patch", 1)
+        #disables due to cmake boost does not support stlport yet
+        #self.patchToApply['1.41.0'] = ("boost-src-20100428.patch", 1)
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        if platform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
+        #disables due to cmake boost does not support stlport yet
+        #if platform.isCrossCompilingEnabled():
+        #    self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
@@ -39,10 +41,10 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         
-        projects = "program_options"
+        projects = ""
         # only enable python for standard win32 builds, as x64 has problems with symbols and wince isn't supported
         if not platform.isCrossCompilingEnabled() and platform.buildArchitecture() == "x86":
-            projects += ";python"
+            projects += "program_options;python"
             
         self.subinfo.options.configure.defines =  "-DBUILD_PROJECTS=%s " % projects
         self.subinfo.options.configure.defines += "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
