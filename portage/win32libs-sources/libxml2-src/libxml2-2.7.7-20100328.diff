@@ -151,7 +151,6 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +include/libxml/HTMLparser.h
 +include/libxml/HTMLtree.h
 +include/libxml/debugXML.h
-
 +include/libxml/tree.h
 +include/libxml/list.h
 +include/libxml/hash.h
@@ -465,7 +464,6 @@ diff -Nru libxml2-2.7.7.orig/cmake/modules/FindWcecompat.cmake libxml2-2.7.7/cma
 +
 +if(WCECOMPAT_INCLUDE_DIR)
 +    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-
 +    if(WCECOMPAT_LIBRARIES)
 +      set(WCECOMPAT_LIB_FOUND TRUE)
 +    endif(WCECOMPAT_LIBRARIES)
