@@ -1,81 +1,7 @@
-diff -Nru libxml2-2.7.6.orig/cmake/modules/FindLibiconv.cmake libxml2-2.7.6/cmake/modules/FindLibiconv.cmake
---- libxml2-2.7.6.orig/cmake/modules/FindLibiconv.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.6/cmake/modules/FindLibiconv.cmake	2010-05-13 12:45:03.176319700 +0200
-@@ -0,0 +1,33 @@
-+# Try to find Libiconv functionality
-+# Once done this will define
-+#
-+#  LIBICONV_FOUND - system has Libiconv
-+#  LIBICONV_INCLUDE_DIR - Libiconv include directory
-+#  LIBICONV_LIBRARIES - Libraries needed to use Libiconv
-+#
-+# Copyright (c) 2010, Patrick Spendrin, <ps_ml@gmx.de>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(LIBICONV_INCLUDE_DIR AND LIBICONV_LIB_FOUND)
-+  set(Libiconv_FIND_QUIETLY TRUE)
-+endif(LIBICONV_INCLUDE_DIR AND LIBICONV_LIB_FOUND)
-+
-+find_path(LIBICONV_INCLUDE_DIR iconv.h)
-+
-+set(LIBICONV_LIB_FOUND FALSE)
-+
-+if(LIBICONV_INCLUDE_DIR)
-+    find_library(LIBICONV_LIBRARIES NAMES iconv iconv2 iconv-2 libiconv libiconv2 libiconv-2 )
-+    if(LIBICONV_LIBRARIES)
-+      set(LIBICONV_LIB_FOUND TRUE)
-+    endif(LIBICONV_LIBRARIES)
-+endif(LIBICONV_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(LIBICONV_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Libiconv  DEFAULT_MSG  LIBICONV_LIBRARIES  LIBICONV_LIB_FOUND)
-+
-+mark_as_advanced(LIBICONV_INCLUDE_DIR  LIBICONV_LIBRARIES  LIBICONV_CONST  LIBICONV_LIB_FOUND)
-diff -Nru libxml2-2.7.6.orig/cmake/modules/FindWcecompat.cmake libxml2-2.7.6/cmake/modules/FindWcecompat.cmake
---- libxml2-2.7.6.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.6/cmake/modules/FindWcecompat.cmake	2010-05-13 12:45:03.196320900 +0200
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-diff -Nru libxml2-2.7.6.orig/CMakeLists.txt libxml2-2.7.6/CMakeLists.txt
---- libxml2-2.7.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.6/CMakeLists.txt	2010-05-13 12:48:48.338198300 +0200
-@@ -0,0 +1,258 @@
+diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
+--- libxml2-2.7.7.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ libxml2-2.7.7/CMakeLists.txt	Wed May 12 15:30:05 2010
+@@ -0,0 +1,257 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -225,7 +151,7 @@ diff -Nru libxml2-2.7.6.orig/CMakeLists.txt libxml2-2.7.6/CMakeLists.txt
 +include/libxml/HTMLparser.h
 +include/libxml/HTMLtree.h
 +include/libxml/debugXML.h
-+
+
 +include/libxml/tree.h
 +include/libxml/list.h
 +include/libxml/hash.h
@@ -334,9 +260,227 @@ diff -Nru libxml2-2.7.6.orig/CMakeLists.txt libxml2-2.7.6/CMakeLists.txt
 +    )
 +endif(WIN32)
 +endif(BUILD_tests)
-diff -Nru libxml2-2.7.6.orig/config.h.cmake libxml2-2.7.6/config.h.cmake
---- libxml2-2.7.6.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.6/config.h.cmake	2010-05-13 12:45:03.218322100 +0200
+diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks.cmake
+--- libxml2-2.7.7.orig/ConfigureChecks.cmake	Thu Jan  1 00:00:00 1970
++++ libxml2-2.7.7/ConfigureChecks.cmake	Wed May 12 13:25:55 2010
+@@ -0,0 +1,138 @@
++#some configure checks
++
++# LIBXML_ENABLE_THREADS
++if(ENABLE_THREADS)
++    if(UNIX)
++        add_definitions(-DLIBXML_THREAD_ENABLED)
++    else(UNIX)
++        add_definitions(-DHAVE_WIN32_THREADS)
++    endif(UNIX)
++endif(ENABLE_THREADS)
++
++# set ICONV_CONST
++set(ICONV_CONST ${LIBICONV_CONST})
++
++# HAVE_LIBZ
++if(ZLIB_FOUND)
++    set(HAVE_LIBZ ON)
++endif(ZLIB_FOUND)
++
++# HAVE_LIBM
++if(UNIX)
++    set(HAVE_LIBM ON)
++endif(UNIX)
++
++# HAVE_LIBPTHREAD
++if(CMAKE_SYSTEM_NAME STREQUAL GNU)
++    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pthread")
++    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -pthread")
++    set(HAVE_LIBPTHREAD ON)
++endif(CMAKE_SYSTEM_NAME STREQUAL GNU)
++
++# HAVE_LIBHISTORY
++# HAVE_LIBREADLINE
++
++set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES})
++set(CMAKE_REQUIRED_LIBRARIES ${ZLIB_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES})
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++include(CheckSymbolExists)
++
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("pthread.h" HAVE_PTHREAD_H)
++check_include_file("ansidecl.h" HAVE_ANSIDECL_H)
++check_include_file("arpa/inet.h" HAVE_ARPA_INET_H)
++check_include_file("arpa/nameser.h" HAVE_ARPA_NAMESER_H)
++check_include_file("ctype.h" HAVE_CTYPE_H)
++check_include_file("dirent.h" HAVE_DIRENT_H)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("dl.h" HAVE_DL_H)
++check_include_file("errno.h" HAVE_ERRNO_H)
++check_include_file("float.h" HAVE_FLOAT_H)
++check_include_file("fp_class.h" HAVE_FP_CLASS_H)
++check_include_file("ieeefp.h" HAVE_IEEEFP_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("inttypes.h.h" HAVE_INTTYPES_H_H)
++check_include_file("limits.h" HAVE_LIMITS_H)
++check_include_file("malloc.h" HAVE_MALLOC_H)
++check_include_file("math.h" HAVE_MATH_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("nan.h" HAVE_NAN_H)
++check_include_file("ndir.h" HAVE_NDIR_H)
++check_include_file("netdb.h" HAVE_NETDB_H)
++check_include_file("netinet/in.h" HAVE_NETINET_IN_H)
++check_include_file("poll.h" HAVE_POLL_H)
++check_include_file("pthread.h" HAVE_PTHREAD_H)
++check_include_file("resolv.h" HAVE_RESOLV_H)
++check_include_file("signal.h" HAVE_SIGNAL_H)
++check_include_file("stdarg.h" HAVE_STDARG_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/dir.h" HAVE_SYS_DIR_H)
++check_include_file("sys/mman.h" HAVE_SYS_MMAN_H)
++check_include_file("sys/ndir.h" HAVE_SYS_NDIR_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/socket.h" HAVE_SYS_SOCKET_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/timeb.h" HAVE_SYS_TIMEB_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("time.h" HAVE_TIME_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("zlib.h" HAVE_ZLIB_H)
++
++if(NOT HAVE_RESOLV_H)
++set(SUPPORT_IP6 OFF)
++endif(NOT HAVE_RESOLV_H)
++
++#/* Whether struct sockaddr::__ss_family exists */ ???
++#cmakedefine HAVE_BROKEN_SS_FAMILY
++
++check_function_exists("strdup" HAVE_STRDUP)
++check_function_exists("getaddrinfo" HAVE_GETADDRINFO)
++check_function_exists("class" HAVE_CLASS)
++check_function_exists("dlopen" HAVE_DLOPEN)
++check_function_exists("shl_load" HAVE_SHLLOAD)
++check_function_exists("finite" HAVE_FINITE)
++check_function_exists("fpclass" HAVE_FPCLASS)
++check_function_exists("fprintf" HAVE_FPRINTF)
++check_function_exists("fp_class" HAVE_FP_CLASS)
++check_function_exists("ftime" HAVE_FTIME)
++check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
++check_function_exists("isinf" HAVE_ISINF)
++check_function_exists("isnan" HAVE_ISNAN)
++check_function_exists("isnand" HAVE_ISNAND)
++check_function_exists("localtime" HAVE_LOCALTIME)
++check_function_exists("printf" HAVE_PRINTF)
++check_function_exists("signal" HAVE_SIGNAL)
++check_function_exists("snprintf" HAVE_SNPRINTF)
++check_function_exists("sprintf" HAVE_SPRINTF)
++check_function_exists("sscanf" HAVE_SSCANF)
++check_function_exists("stat" HAVE_STAT)
++check_function_exists("strdup" HAVE_STRDUP)
++check_function_exists("strerror" HAVE_STRERROR)
++check_function_exists("strftime" HAVE_STRFTIME)
++check_function_exists("strndup" HAVE_STRNDUP)
++check_function_exists("vfprintf" HAVE_VFPRINTF)
++check_function_exists("vsnprintf" HAVE_VSNPRINTF)
++check_function_exists("vsprintf" HAVE_VSPRINTF)
++check_function_exists("va_copy" HAVE_VA_COPY)
++check_function_exists("_stat" HAVE__STAT)
++check_function_exists("__va_copy" HAVE___VA_COPY)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++if(ZLIB_FOUND)
++    # disable large file support in case the functions are not contained in the dll
++    check_symbol_exists("gzopen64" "zlib.h" GZOPEN64)
++    if(NOT GZOPEN64)
++        add_definitions(-DNO_LARGEFILE_SOURCE)
++        message(STATUS "No Large File Support in libz!")
++    endif(NOT GZOPEN64)
++endif(ZLIB_FOUND)
++
++configure_file(config.h.cmake config.h)
+\ No newline at end of file
+diff -Nru libxml2-2.7.7.orig/cmake/modules/FindLibiconv.cmake libxml2-2.7.7/cmake/modules/FindLibiconv.cmake
+--- libxml2-2.7.7.orig/cmake/modules/FindLibiconv.cmake	Thu Jan  1 00:00:00 1970
++++ libxml2-2.7.7/cmake/modules/FindLibiconv.cmake	Wed May 12 13:25:55 2010
+@@ -0,0 +1,33 @@
++# Try to find Libiconv functionality
++# Once done this will define
++#
++#  LIBICONV_FOUND - system has Libiconv
++#  LIBICONV_INCLUDE_DIR - Libiconv include directory
++#  LIBICONV_LIBRARIES - Libraries needed to use Libiconv
++#
++# Copyright (c) 2010, Patrick Spendrin, <ps_ml@gmx.de>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(LIBICONV_INCLUDE_DIR AND LIBICONV_LIB_FOUND)
++  set(Libiconv_FIND_QUIETLY TRUE)
++endif(LIBICONV_INCLUDE_DIR AND LIBICONV_LIB_FOUND)
++
++find_path(LIBICONV_INCLUDE_DIR iconv.h)
++
++set(LIBICONV_LIB_FOUND FALSE)
++
++if(LIBICONV_INCLUDE_DIR)
++    find_library(LIBICONV_LIBRARIES NAMES iconv iconv2 iconv-2 libiconv libiconv2 libiconv-2 )
++    if(LIBICONV_LIBRARIES)
++      set(LIBICONV_LIB_FOUND TRUE)
++    endif(LIBICONV_LIBRARIES)
++endif(LIBICONV_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(LIBICONV_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Libiconv  DEFAULT_MSG  LIBICONV_LIBRARIES  LIBICONV_LIB_FOUND)
++
++mark_as_advanced(LIBICONV_INCLUDE_DIR  LIBICONV_LIBRARIES  LIBICONV_CONST  LIBICONV_LIB_FOUND)
+diff -Nru libxml2-2.7.7.orig/cmake/modules/FindWcecompat.cmake libxml2-2.7.7/cmake/modules/FindWcecompat.cmake
+--- libxml2-2.7.7.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ libxml2-2.7.7/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
+
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru libxml2-2.7.7.orig/config.h.cmake libxml2-2.7.7/config.h.cmake
+--- libxml2-2.7.7.orig/config.h.cmake	Thu Jan  1 00:00:00 1970
++++ libxml2-2.7.7/config.h.cmake	Wed May 12 13:25:55 2010
 @@ -0,0 +1,312 @@
 +/* config.h.in.  Generated from configure.in by autoheader.  */
 +#cmakedefine PACKAGE
@@ -650,152 +794,9 @@ diff -Nru libxml2-2.7.6.orig/config.h.cmake libxml2-2.7.6/config.h.cmake
 +#ifdef _MSC_VER
 +#define snprintf _snprintf
 +#endif
-diff -Nru libxml2-2.7.6.orig/ConfigureChecks.cmake libxml2-2.7.6/ConfigureChecks.cmake
---- libxml2-2.7.6.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.6/ConfigureChecks.cmake	2010-05-13 12:45:03.135317400 +0200
-@@ -0,0 +1,138 @@
-+#some configure checks
-+
-+# LIBXML_ENABLE_THREADS
-+if(ENABLE_THREADS)
-+    if(UNIX)
-+        add_definitions(-DLIBXML_THREAD_ENABLED)
-+    else(UNIX)
-+        add_definitions(-DHAVE_WIN32_THREADS)
-+    endif(UNIX)
-+endif(ENABLE_THREADS)
-+
-+# set ICONV_CONST
-+set(ICONV_CONST ${LIBICONV_CONST})
-+
-+# HAVE_LIBZ
-+if(ZLIB_FOUND)
-+    set(HAVE_LIBZ ON)
-+endif(ZLIB_FOUND)
-+
-+# HAVE_LIBM
-+if(UNIX)
-+    set(HAVE_LIBM ON)
-+endif(UNIX)
-+
-+# HAVE_LIBPTHREAD
-+if(CMAKE_SYSTEM_NAME STREQUAL GNU)
-+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pthread")
-+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -pthread")
-+    set(HAVE_LIBPTHREAD ON)
-+endif(CMAKE_SYSTEM_NAME STREQUAL GNU)
-+
-+# HAVE_LIBHISTORY
-+# HAVE_LIBREADLINE
-+
-+set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES})
-+set(CMAKE_REQUIRED_LIBRARIES ${ZLIB_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES})
-+include(CheckIncludeFile)
-+include(CheckFunctionExists)
-+include(CheckSymbolExists)
-+
-+check_include_file("fcntl.h" HAVE_FCNTL_H)
-+check_include_file("pthread.h" HAVE_PTHREAD_H)
-+check_include_file("ansidecl.h" HAVE_ANSIDECL_H)
-+check_include_file("arpa/inet.h" HAVE_ARPA_INET_H)
-+check_include_file("arpa/nameser.h" HAVE_ARPA_NAMESER_H)
-+check_include_file("ctype.h" HAVE_CTYPE_H)
-+check_include_file("dirent.h" HAVE_DIRENT_H)
-+check_include_file("dlfcn.h" HAVE_DLFCN_H)
-+check_include_file("dl.h" HAVE_DL_H)
-+check_include_file("errno.h" HAVE_ERRNO_H)
-+check_include_file("float.h" HAVE_FLOAT_H)
-+check_include_file("fp_class.h" HAVE_FP_CLASS_H)
-+check_include_file("ieeefp.h" HAVE_IEEEFP_H)
-+check_include_file("inttypes.h" HAVE_INTTYPES_H)
-+check_include_file("inttypes.h.h" HAVE_INTTYPES_H_H)
-+check_include_file("limits.h" HAVE_LIMITS_H)
-+check_include_file("malloc.h" HAVE_MALLOC_H)
-+check_include_file("math.h" HAVE_MATH_H)
-+check_include_file("memory.h" HAVE_MEMORY_H)
-+check_include_file("nan.h" HAVE_NAN_H)
-+check_include_file("ndir.h" HAVE_NDIR_H)
-+check_include_file("netdb.h" HAVE_NETDB_H)
-+check_include_file("netinet/in.h" HAVE_NETINET_IN_H)
-+check_include_file("poll.h" HAVE_POLL_H)
-+check_include_file("pthread.h" HAVE_PTHREAD_H)
-+check_include_file("resolv.h" HAVE_RESOLV_H)
-+check_include_file("signal.h" HAVE_SIGNAL_H)
-+check_include_file("stdarg.h" HAVE_STDARG_H)
-+check_include_file("stdint.h" HAVE_STDINT_H)
-+check_include_file("stdlib.h" HAVE_STDLIB_H)
-+check_include_file("strings.h" HAVE_STRINGS_H)
-+check_include_file("string.h" HAVE_STRING_H)
-+check_include_file("sys/dir.h" HAVE_SYS_DIR_H)
-+check_include_file("sys/mman.h" HAVE_SYS_MMAN_H)
-+check_include_file("sys/ndir.h" HAVE_SYS_NDIR_H)
-+check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
-+check_include_file("sys/socket.h" HAVE_SYS_SOCKET_H)
-+check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
-+check_include_file("sys/timeb.h" HAVE_SYS_TIMEB_H)
-+check_include_file("sys/time.h" HAVE_SYS_TIME_H)
-+check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
-+check_include_file("time.h" HAVE_TIME_H)
-+check_include_file("unistd.h" HAVE_UNISTD_H)
-+check_include_file("zlib.h" HAVE_ZLIB_H)
-+
-+if(NOT HAVE_RESOLV_H)
-+set(SUPPORT_IP6 OFF)
-+endif(NOT HAVE_RESOLV_H)
-+
-+#/* Whether struct sockaddr::__ss_family exists */ ???
-+#cmakedefine HAVE_BROKEN_SS_FAMILY
-+
-+check_function_exists("strdup" HAVE_STRDUP)
-+check_function_exists("getaddrinfo" HAVE_GETADDRINFO)
-+check_function_exists("class" HAVE_CLASS)
-+check_function_exists("dlopen" HAVE_DLOPEN)
-+check_function_exists("shl_load" HAVE_SHLLOAD)
-+check_function_exists("finite" HAVE_FINITE)
-+check_function_exists("fpclass" HAVE_FPCLASS)
-+check_function_exists("fprintf" HAVE_FPRINTF)
-+check_function_exists("fp_class" HAVE_FP_CLASS)
-+check_function_exists("ftime" HAVE_FTIME)
-+check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
-+check_function_exists("isinf" HAVE_ISINF)
-+check_function_exists("isnan" HAVE_ISNAN)
-+check_function_exists("isnand" HAVE_ISNAND)
-+check_function_exists("localtime" HAVE_LOCALTIME)
-+check_function_exists("printf" HAVE_PRINTF)
-+check_function_exists("signal" HAVE_SIGNAL)
-+check_function_exists("snprintf" HAVE_SNPRINTF)
-+check_function_exists("sprintf" HAVE_SPRINTF)
-+check_function_exists("sscanf" HAVE_SSCANF)
-+check_function_exists("stat" HAVE_STAT)
-+check_function_exists("strdup" HAVE_STRDUP)
-+check_function_exists("strerror" HAVE_STRERROR)
-+check_function_exists("strftime" HAVE_STRFTIME)
-+check_function_exists("strndup" HAVE_STRNDUP)
-+check_function_exists("vfprintf" HAVE_VFPRINTF)
-+check_function_exists("vsnprintf" HAVE_VSNPRINTF)
-+check_function_exists("vsprintf" HAVE_VSPRINTF)
-+check_function_exists("va_copy" HAVE_VA_COPY)
-+check_function_exists("_stat" HAVE__STAT)
-+check_function_exists("__va_copy" HAVE___VA_COPY)
-+
-+if(MSVC)
-+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-+endif(MSVC)
-+
-+if(ZLIB_FOUND)
-+    # disable large file support in case the functions are not contained in the dll
-+    check_symbol_exists("gzopen64" "zlib.h" GZOPEN64)
-+    if(NOT GZOPEN64)
-+        add_definitions(-DNO_LARGEFILE_SOURCE)
-+        message(STATUS "No Large File Support in libz!")
-+    endif(NOT GZOPEN64)
-+endif(ZLIB_FOUND)
-+
-+configure_file(config.h.cmake config.h)
-\ No newline at end of file
-diff -Nru libxml2-2.7.6.orig/include/wsockcompat.h libxml2-2.7.6/include/wsockcompat.h
---- libxml2-2.7.6.orig/include/wsockcompat.h	2009-09-24 17:31:59.000000000 +0200
-+++ libxml2-2.7.6/include/wsockcompat.h	2010-05-13 12:45:03.236323200 +0200
+diff -Nru libxml2-2.7.7.orig/include/wsockcompat.h libxml2-2.7.7/include/wsockcompat.h
+--- libxml2-2.7.7.orig/include/wsockcompat.h	Thu Sep 24 15:31:59 2009
++++ libxml2-2.7.7/include/wsockcompat.h	Wed May 12 14:27:35 2010
 @@ -6,7 +6,7 @@
  #define __XML_WSOCKCOMPAT_H__
  
@@ -805,9 +806,9 @@ diff -Nru libxml2-2.7.6.orig/include/wsockcompat.h libxml2-2.7.6/include/wsockco
  #else
  #undef HAVE_ERRNO_H
  #include <winsock2.h>
-diff -Nru libxml2-2.7.6.orig/nanoftp.c libxml2-2.7.6/nanoftp.c
---- libxml2-2.7.6.orig/nanoftp.c	2009-09-24 17:31:59.000000000 +0200
-+++ libxml2-2.7.6/nanoftp.c	2010-05-13 12:45:03.260324500 +0200
+diff -Nru libxml2-2.7.7.orig/nanoftp.c libxml2-2.7.7/nanoftp.c
+--- libxml2-2.7.7.orig/nanoftp.c	Thu Sep 24 15:31:59 2009
++++ libxml2-2.7.7/nanoftp.c	Wed May 12 15:37:59 2010
 @@ -77,7 +77,7 @@
  #endif
  
@@ -817,9 +818,9 @@ diff -Nru libxml2-2.7.6.orig/nanoftp.c libxml2-2.7.6/nanoftp.c
  #define _WINSOCKAPI_
  #include <wsockcompat.h>
  #include <winsock2.h>
-diff -Nru libxml2-2.7.6.orig/nanohttp.c libxml2-2.7.6/nanohttp.c
---- libxml2-2.7.6.orig/nanohttp.c	2009-09-24 17:31:59.000000000 +0200
-+++ libxml2-2.7.6/nanohttp.c	2010-05-13 12:45:03.304327100 +0200
+diff -Nru libxml2-2.7.7.orig/nanohttp.c libxml2-2.7.7/nanohttp.c
+--- libxml2-2.7.7.orig/nanohttp.c	Mon Oct 19 11:55:48 2009
++++ libxml2-2.7.7/nanohttp.c	Wed May 12 15:38:21 2010
 @@ -78,7 +78,7 @@
  #define SOCKET int
  #endif
@@ -829,9 +830,9 @@ diff -Nru libxml2-2.7.6.orig/nanohttp.c libxml2-2.7.6/nanohttp.c
  #define _WINSOCKAPI_
  #include <wsockcompat.h>
  #include <winsock2.h>
-diff -Nru libxml2-2.7.6.orig/threads.c libxml2-2.7.6/threads.c
---- libxml2-2.7.6.orig/threads.c	2009-10-02 17:28:18.000000000 +0200
-+++ libxml2-2.7.6/threads.c	2010-05-13 12:45:03.340329100 +0200
+diff -Nru libxml2-2.7.7.orig/threads.c libxml2-2.7.7/threads.c
+--- libxml2-2.7.7.orig/threads.c	Fri Oct  2 15:28:18 2009
++++ libxml2-2.7.7/threads.c	Wed May 12 15:04:12 2010
 @@ -28,6 +28,9 @@
  #include <pthread.h>
  #elif defined HAVE_WIN32_THREADS
