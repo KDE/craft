@@ -1,15 +1,23 @@
 diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
---- giflib-4.1.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ giflib-4.1.6/CMakeLists.txt	2010-03-27 17:43:12.136583600 +0100
-@@ -0,0 +1,210 @@
+--- giflib-4.1.6.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ giflib-4.1.6/CMakeLists.txt	Mon May 17 13:17:03 2010
+@@ -0,0 +1,223 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
 +project (libgif)
 +
 +cmake_minimum_required(VERSION 2.6)
 +
 +find_package(X11)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
 +
 +# you will need non-standard irixGL for this to work
 +#find_package(OpenGL)
@@ -78,6 +86,11 @@ diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
 +)
 +
 +add_library(gif SHARED ${libgif_SRCS})
++
++if(WINCE)
++    target_link_libraries(gif ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
 +install(TARGETS gif RUNTIME DESTINATION bin
 +                    LIBRARY DESTINATION lib
 +                    ARCHIVE DESTINATION lib)
@@ -213,9 +226,46 @@ diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
 +doc/lzgif.txt
 +DESTINATION doc/libungif/html)
 \ No newline at end of file
+diff -Nru giflib-4.1.6.orig/cmake/modules/FindWcecompat.cmake giflib-4.1.6/cmake/modules/FindWcecompat.cmake
+--- giflib-4.1.6.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ giflib-4.1.6/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru giflib-4.1.6.orig/config.h.cmake giflib-4.1.6/config.h.cmake
---- giflib-4.1.6.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ giflib-4.1.6/config.h.cmake	2010-03-27 17:40:34.196583600 +0100
+--- giflib-4.1.6.orig/config.h.cmake	Thu Jan  1 00:00:00 1970
++++ giflib-4.1.6/config.h.cmake	Mon May 17 13:05:33 2010
 @@ -0,0 +1,126 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -344,8 +394,8 @@ diff -Nru giflib-4.1.6.orig/config.h.cmake giflib-4.1.6/config.h.cmake
 +/* Define to empty if `const' does not conform to ANSI C. */
 +#cmakedefine const
 diff -Nru giflib-4.1.6.orig/lib/gif_lib.h giflib-4.1.6/lib/gif_lib.h
---- giflib-4.1.6.orig/lib/gif_lib.h	2005-10-10 08:22:21.000000000 +0200
-+++ giflib-4.1.6/lib/gif_lib.h	2010-03-27 17:40:34.200583600 +0100
+--- giflib-4.1.6.orig/lib/gif_lib.h	Mon Oct 10 06:22:21 2005
++++ giflib-4.1.6/lib/gif_lib.h	Mon May 17 13:43:19 2010
 @@ -120,6 +120,20 @@
  typedef int (*OutputFunc) (GifFileType *, const GifByteType *, int);
  
