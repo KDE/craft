@@ -5,8 +5,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['4.2'] = 'http://www.docbook.org/xml/4.2/docbook-xml-4.2.tar.bz2'
-        self.defaultTarget = '4.2'
+        self.targets['4.5'] = 'http://www.docbook.org/xml/4.5/docbook-xml-4.5.zip'
+        self.defaultTarget = '4.5'
 
 from Package.BinaryPackageBase import *
 
@@ -14,7 +14,7 @@ class Package(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.install.installPath = 'share/xml/docbook/schema/dtd/4.2'
+        self.subinfo.options.install.installPath = 'share/xml/docbook/schema/dtd/4.5'
 
 if __name__ == '__main__':
     Package().execute()
