@@ -4,6 +4,7 @@
 
 from KDEWinPackager import *;
 from CPackPackager import *;
+from SevenZipPackager import *;
 from MSInstallerPackager import *;
 from InnoSetupPackager import *;
 
@@ -18,6 +19,8 @@ class MultiPackager():
             self.packager = KDEWinPackager()
         elif packagerType == 'CPack':
             self.packager = CPackPackager()
+        elif packagerType == '7z':
+            self.packager = SevenZipPackager()
         elif packagerType == 'Inno' or packagerType == 'inno':
             self.packager = InnoSetupPackager()
         else:

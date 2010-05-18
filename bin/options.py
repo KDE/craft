@@ -81,6 +81,15 @@ class OptionsPackage:
         self.specialMode = False
         ## pack also sources 
         self.packSources = True
+        ## pack from subdir of imageDir() 
+        # currently supported by SevenZipPackager
+        self.packageFromSubDir = None
+        ## use architecture in package name
+        # currently supported by SevenZipPackager
+        self.withArchitecture = False
+        ## add file digests to the package located in the manifest sub dir
+        # currently supported by SevenZipPackager
+        self.withDigests = True
         
 class OptionsCMake:
     def __init__(self): 
