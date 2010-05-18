@@ -24,7 +24,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
         self.hardDependencies['win32libs-sources/shared-desktop-ontologies-src'] = 'default'
-        self.hardDependencies['testing/docbook-dtd'] = 'default'
+        self.hardDependencies['data/docbook-dtd'] = 'default'
+        self.hardDependencies['data/docbook-xsl'] = 'default'
 
 from Package.CMakePackageBase import *
         
