@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
            arch='64'
         for version in ['0.23-3']: 
             self.targets[ version ] = "http://ftp.gnome.org/pub/gnome/binaries/win"+ arch+"/dependencies/pkg-config_"+version+"_win"+arch+".zip"
-
+        self.targetDigests['0.23-3'] = 'd063e705812e1ee7feb8f35d51b3cad04ca13b0d'
         self.defaultTarget = '0.23-3'
 
     def setDependencies( self ):
