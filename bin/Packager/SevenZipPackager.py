@@ -95,7 +95,9 @@ class SevenZipPackager (PackagerBase):
             pkgSuffix = ''
 
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, os.path.join(destPath,archiveName), '*.*')
+        fileName = os.path.join(destPath,archiveName)
+        utils.deleteFile(fileName)
+        cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, fileName, '*.*')
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
 
         if not self.subinfo.options.package.packSources:
@@ -103,6 +105,8 @@ class SevenZipPackager (PackagerBase):
 
         pkgSuffix = '-src'
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, os.path.join(destPath,archiveName), '*.*')
+        fileName = os.path.join(destPath,archiveName)
+        utils.deleteFile(fileName)
+        cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, fileName, '*.*')
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
         return True
