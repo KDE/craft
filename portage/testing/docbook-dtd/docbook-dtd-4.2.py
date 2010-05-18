@@ -5,8 +5,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['4.2'] = 'http://www.docbook.org/xml/4.2/docbook-xml-4.2.zip'
-        self.targetDigests['4.2'] = '5e3a35663cd028c5c5fbb959c3858fec2d7f8b9e'		
+        self.targets['4.2'] = 'http://www.docbook.org/xml/4.2/docbook-xml-4.2.tar.bz2'
         self.defaultTarget = '4.2'
 
 from Package.BinaryPackageBase import *
