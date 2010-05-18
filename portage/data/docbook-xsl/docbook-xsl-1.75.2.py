@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['1.75.2'] = 'http://downloads.sourceforge.net/docbook/docbook-xsl-1.75.2.tar.bz2'
+        self.targetDigests['1.75.2'] = 'cd146012c07f3c2c79c1cd927ad1faf5bee6cc74'
         self.defaultTarget = '1.75.2'
 
 from Package.BinaryPackageBase import *
