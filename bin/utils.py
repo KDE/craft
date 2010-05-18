@@ -532,7 +532,7 @@ def hasManifestFile( imagedir, category, package ):
     
 def createManifestFiles( imagedir, destdir, category, package, version ):
     """create the manifest files for an imagedir like the kdewin-packager does"""
-    debug( "manifestDir called: %s %s" % ( imagedir, destdir ), 1 )
+    debug( "createManifestFiles called: %s %s %s %s %s" % ( imagedir, destdir, category, package, version ), 1 )
 
     myimagedir = imagedir
     if ( not imagedir.endswith( "\\" ) ):
