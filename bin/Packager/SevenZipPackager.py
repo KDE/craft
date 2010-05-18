@@ -27,7 +27,7 @@ class SevenZipPackager (PackagerBase):
                 break
         if not self.packager == None:
             utils.debug("using 7za from %s" % self.packager,2)
-            
+
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
 
@@ -74,7 +74,7 @@ class SevenZipPackager (PackagerBase):
         destPath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not destPath:
             destPath = os.path.join( self.rootdir, "tmp" )
-         
+
         if self.subinfo.options.package.withCompiler:
             if( self.compiler() == "mingw"):
               pkgCompiler = "-mingw"
@@ -93,12 +93,16 @@ class SevenZipPackager (PackagerBase):
             pkgSuffix = self.subinfo.options.package.packageSuffix
         else:
             pkgSuffix = ''
-            
+
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
         cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, os.path.join(destPath,archiveName), '*.*')
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+
+        if not self.subinfo.options.package.packSources:
+            return True
+
+        pkgSuffix = '-src'
+        archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
+        cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, os.path.join(destPath,archiveName), '*.*')
+        utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
         return True
-
-
-
-
