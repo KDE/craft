@@ -1,0 +1,111 @@
+diff -Nru pcre-8.02.orig/CMakeLists.txt pcre-8.02/CMakeLists.txt
+--- pcre-8.02.orig/CMakeLists.txt	Tue Mar  2 11:56:31 2010
++++ pcre-8.02/CMakeLists.txt	Tue May 18 08:13:03 2010
+@@ -44,6 +44,12 @@
+ 
+ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake) # for FindReadline.cmake
+ 
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    #include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
+ # external packages
+ FIND_PACKAGE( BZip2 )
+ FIND_PACKAGE( ZLIB )
+@@ -381,6 +387,9 @@
+ # pcrecpp
+ IF(PCRE_BUILD_PCRECPP)
+   ADD_LIBRARY(pcrecpp ${PCRECPP_HEADERS} ${PCRECPP_SOURCES})
++  if(WINCE)
++    TARGET_LINK_LIBRARIES(pcrecpp ${WCECOMPAT_LIBRARIES})
++  endif(WINCE)
+ SET(targets ${targets} pcrecpp)
+   TARGET_LINK_LIBRARIES(pcrecpp pcre)
+ 
+@@ -413,6 +422,9 @@
+ 
+ IF(PCRE_BUILD_PCREGREP)
+   ADD_EXECUTABLE(pcregrep pcregrep.c)
++  if(WINCE)
++    target_link_libraries(pcregrep ${WCECOMPAT_LIBRARIES})
++  endif(WINCE)
+   SET(targets ${targets} pcregrep)
+   TARGET_LINK_LIBRARIES(pcregrep pcreposix ${PCREGREP_LIBS})
+ ENDIF(PCRE_BUILD_PCREGREP)
+diff -Nru pcre-8.02.orig/cmake/FindWcecompat.cmake pcre-8.02/cmake/FindWcecompat.cmake
+--- pcre-8.02.orig/cmake/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ pcre-8.02/cmake/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru pcre-8.02.orig/pcrecpp.cc pcre-8.02/pcrecpp.cc
+--- pcre-8.02.orig/pcrecpp.cc	Tue Jan  5 17:36:08 2010
++++ pcre-8.02/pcrecpp.cc	Tue May 18 08:01:27 2010
+@@ -38,7 +38,11 @@
+ #include <ctype.h>
+ #include <limits.h>      /* for SHRT_MIN, USHRT_MAX, etc */
+ #include <assert.h>
++#ifndef _WIN32_WCE
+ #include <errno.h>
++#else
++#include <wcecompat/errno.h>
++#endif
+ #include <string>
+ #include <algorithm>
+ 
+diff -Nru pcre-8.02.orig/pcregrep.c pcre-8.02/pcregrep.c
+--- pcre-8.02.orig/pcregrep.c	Mon Oct  5 10:40:30 2009
++++ pcre-8.02/pcregrep.c	Tue May 18 08:11:46 2010
+@@ -46,10 +46,19 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h>
++#ifndef _WIN32_WCE
+ #include <errno.h>
++#else
++#include <wcecompat/errno.h>
++#endif
+ 
++#ifndef _WIN32_WCE
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#else
++#include <wcecompat/sys/types.h>
++#include <wcecompat/sys/stat.h>
++#endif
+ 
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
