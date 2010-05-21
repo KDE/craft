@@ -1,21 +1,93 @@
 diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 --- gettext-0.18.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/CMakeLists.txt	Thu May 20 14:12:22 2010
-@@ -0,0 +1,10 @@
++++ gettext-0.18/CMakeLists.txt	Fri May 21 08:21:22 2010
+@@ -0,0 +1,18 @@
 +cmake_minimum_required(VERSION 2.6)
-+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
 +project(gettext)
 +
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
++
 +find_package(Libiconv)
-+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${LIBICONV_INCLUDES})
++set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${LIBICONV_INCLUDE_DIR})
++set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${LIBICONV_LIBRARIES})
++
++include_directories(${LIBICONV_INCLUDE_DIR})
++
++if(MSVC)
++    add_definitions(-wd4996 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
 +
 +add_subdirectory(gettext-runtime)
 +#add_subdirectory(gettext-tools)
+diff -Nru gettext-0.18.orig/cmake/Modules/FindLibiconv.cmake gettext-0.18/cmake/Modules/FindLibiconv.cmake
+--- gettext-0.18.orig/cmake/Modules/FindLibiconv.cmake	Thu Jan  1 00:00:00 1970
++++ gettext-0.18/cmake/Modules/FindLibiconv.cmake	Fri May 21 09:13:23 2010
+@@ -0,0 +1,60 @@
++# - Try to find Iconv 
++# Once done this will define 
++# 
++#  ICONV_FOUND - system has Iconv 
++#  ICONV_INCLUDE_DIR - the Iconv include directory 
++#  ICONV_LIBRARIES - Link these to use Iconv 
++#  ICONV_SECOND_ARGUMENT_IS_CONST - the second argument for iconv() is const
++# 
++include(CheckCXXSourceCompiles)
++
++IF (ICONV_INCLUDE_DIR AND ICONV_LIBRARIES)
++  # Already in cache, be silent
++  SET(ICONV_FIND_QUIETLY TRUE)
++ENDIF (ICONV_INCLUDE_DIR AND ICONV_LIBRARIES)
++
++FIND_PATH(ICONV_INCLUDE_DIR iconv.h) 
++ 
++FIND_LIBRARY(ICONV_LIBRARIES NAMES iconv libiconv libiconv-2 c)
++ 
++IF(ICONV_INCLUDE_DIR AND ICONV_LIBRARIES) 
++   SET(ICONV_FOUND TRUE) 
++ENDIF(ICONV_INCLUDE_DIR AND ICONV_LIBRARIES) 
++
++set(CMAKE_REQUIRED_INCLUDES ${ICONV_INCLUDE_DIR})
++set(CMAKE_REQUIRED_LIBRARIES ${ICONV_LIBRARIES})
++IF(ICONV_FOUND)
++  check_cxx_source_compiles("
++  #include <iconv.h>
++  int main(){
++    iconv_t conv = 0;
++    const char* in = 0;
++    size_t ilen = 0;
++    char* out = 0;
++    size_t olen = 0;
++    iconv(conv, &in, &ilen, &out, &olen);
++    return 0;
++  }
++" ICONV_SECOND_ARGUMENT_IS_CONST )
++  IF(ICONV_SECOND_ARGUMENT_IS_CONST)
++    SET(ICONV_CONST "const")
++  ENDIF(ICONV_SECOND_ARGUMENT_IS_CONST)
++ENDIF(ICONV_FOUND)
++set(CMAKE_REQUIRED_INCLUDES)
++set(CMAKE_REQUIRED_LIBRARIES)
++
++IF(ICONV_FOUND) 
++  IF(NOT ICONV_FIND_QUIETLY) 
++    MESSAGE(STATUS "Found Iconv: ${ICONV_LIBRARIES}") 
++  ENDIF(NOT ICONV_FIND_QUIETLY) 
++ELSE(ICONV_FOUND) 
++  IF(Iconv_FIND_REQUIRED) 
++    MESSAGE(FATAL_ERROR "Could not find Iconv") 
++  ENDIF(Iconv_FIND_REQUIRED) 
++ENDIF(ICONV_FOUND) 
++
++MARK_AS_ADVANCED(
++  ICONV_INCLUDE_DIR
++  ICONV_LIBRARIES
++  ICONV_SECOND_ARGUMENT_IS_CONST
++)
 diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-runtime/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/CMakeLists.txt	Thu May 20 12:25:48 2010
-@@ -0,0 +1,24 @@
++++ gettext-0.18/gettext-runtime/CMakeLists.txt	Fri May 21 08:37:53 2010
+@@ -0,0 +1,23 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -24,7 +96,6 @@ diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-
 +include(ConfigureChecks.cmake)
 +
 +include_directories(${CMAKE_CURRENT_BINARY_DIR})
-+
 +
 +
 +#add_subdirectory(doc)
@@ -42,8 +113,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-
 +
 diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
 --- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Thu May 20 15:29:55 2010
-@@ -0,0 +1,135 @@
++++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Fri May 21 08:16:39 2010
+@@ -0,0 +1,136 @@
 +include(CheckFunctionExists)
 +include(CheckIncludeFile)
 +include(CheckTypeSize)
@@ -173,17 +244,18 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 +if(WIN32)
 +    set(FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1)
 +    set(FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1)
++else(WIN32)
++    set(FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 0)
 +endif(WIN32)
 +
-+
-+configure_file(config.h.cmake config.h)
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 +
 +add_definitions(-DHAVE_CONFIG_H)
 \ No newline at end of file
 diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-runtime/config.h.cmake
 --- gettext-0.18.orig/gettext-runtime/config.h.cmake	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/config.h.cmake	Thu May 20 12:20:03 2010
-@@ -0,0 +1,1265 @@
++++ gettext-0.18/gettext-runtime/config.h.cmake	Fri May 21 08:59:47 2010
+@@ -0,0 +1,1269 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define if the compiler is building for multiple architectures of Apple
@@ -191,19 +263,19 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#cmakedefine AA_APPLE_UNIVERSAL_BUILD
 +
 +/* Define to the number of bits in type 'ptrdiff_t'. */
-+#cmakedefine BITSIZEOF_PTRDIFF_T
++#cmakedefine BITSIZEOF_PTRDIFF_T @BITSIZEOF_PTRDIFF_T@
 +
 +/* Define to the number of bits in type 'sig_atomic_t'. */
-+#cmakedefine BITSIZEOF_SIG_ATOMIC_T
++#cmakedefine BITSIZEOF_SIG_ATOMIC_T @BITSIZEOF_SIG_ATOMIC_T@
 +
 +/* Define to the number of bits in type 'size_t'. */
-+#cmakedefine BITSIZEOF_SIZE_T
++#cmakedefine BITSIZEOF_SIZE_T @BITSIZEOF_SIZE_T@
 +
 +/* Define to the number of bits in type 'wchar_t'. */
-+#cmakedefine BITSIZEOF_WCHAR_T
++#cmakedefine BITSIZEOF_WCHAR_T @BITSIZEOF_WCHAR_T@
 +
 +/* Define to the number of bits in type 'wint_t'. */
-+#cmakedefine BITSIZEOF_WINT_T
++#cmakedefine BITSIZEOF_WINT_T @BITSIZEOF_WINT_T@
 +
 +/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
 +   systems. This function is required for `alloca.c' support on those systems.
@@ -236,7 +308,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +
 +/* Define if the backslash character may also serve as a file name component
 +   separator. */
-+#cmakedefine FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
++#cmakedefine FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR @FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR@
 +
 +/* Define if a drive letter prefix denotes a relative path if it is not
 +   followed by a file name component separator. */
@@ -492,7 +564,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#cmakedefine HAVE_GETUID
 +
 +/* Define if you have the iconv() function and it works. */
-+#cmakedefine HAVE_ICONV
++#cmakedefine HAVE_ICONV @HAVE_ICONV@
 +
 +/* Define to 1 if you have the <iconv.h> header file. */
 +#cmakedefine HAVE_ICONV_H
@@ -1449,10 +1521,14 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +# include "intl/os2compat.h"
 +#endif
 +
++#ifdef _MSC_VER
++#define inline __inline
++#endif
++
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Thu May 20 11:45:54 2010
-@@ -0,0 +1,51 @@
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 21 08:42:21 2010
+@@ -0,0 +1,55 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1504,6 +1580,10 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +)
 +
 +add_library(libintl ${INTL_SRCS})
++
++add_definitions(-DLOCALE_ALIAS_PATH="")
++add_definitions(-DLOCALEDIR="")
++
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
 --- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	Sun May  9 18:54:29 2010
 +++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	Thu May 20 11:47:39 2010
@@ -1520,7 +1600,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/ge
  # include <xlocale.h>
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
 --- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	Sun Jun 28 19:44:04 2009
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Thu May 20 12:03:21 2010
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Fri May 21 08:33:15 2010
 @@ -27,6 +27,10 @@
  # include <config.h>
  #endif
@@ -1570,7 +1650,12 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  					 MAP_PRIVATE, fd, 0);
  
    if (__builtin_expect (data != (struct mo_file_header *) -1, 1))
-@@ -867,7 +873,7 @@
+@@ -863,11 +869,11 @@
+       size_t to_read;
+       char *read_ptr;
+ 
+-      data = (struct mo_file_header *) malloc (size);
++      data = (struct mo_file_header *) malloc (_size);
        if (data == NULL)
  	goto out;
  
