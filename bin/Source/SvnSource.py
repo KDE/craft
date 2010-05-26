@@ -115,6 +115,9 @@ class SvnSource (VersionSystemSourceBase):
         
         if self.options != None:
             option += self.options
+            
+        if self.subinfo.options.fetch.ignoreExternals:
+            option += " --ignore-externals "
 
         url = utils.replaceVCSUrl( url )
 

@@ -10,6 +10,7 @@ class OptionsFetch:
     def __init__(self):
         ## option comment
         self.option = None
+        self.ignoreExternals = False
         
 ## options for the unpack action 
 class OptionsUnpack:
@@ -104,7 +105,7 @@ class OptionsCMake:
 class Options:
     def __init__(self):
         ## options of the fetch action
-        self.unpack = OptionsFetch()
+        self.fetch = OptionsFetch()
         ## options of the unpack action
         self.unpack = OptionsUnpack()
         ## options of the configure action
