@@ -116,6 +116,8 @@ class SvnSource (VersionSystemSourceBase):
         if self.options != None:
             option += self.options
 
+        url = utils.replaceVCSUrl( url )
+
         if os.path.exists( sourcedir ):
             cmd = "%s/svn update %s %s %s" % ( self.svnInstallDir, option, url, sourcedir )
         else:

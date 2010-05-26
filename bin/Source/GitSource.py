@@ -31,7 +31,7 @@ class GitSource ( VersionSystemSourceBase ):
         
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
-        repoString = utils.replaceGitUrl( repopath )
+        repoString = utils.replaceVCSUrl( repopath )
         [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
 
         if utils.verbose() <= 2:

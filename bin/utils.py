@@ -757,7 +757,7 @@ def splitGitUrl( Url ):
         c = splitUrl[0:3]
     return c
 
-def replaceGitUrl( Url ):
+def replaceVCSUrl( Url ):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
     configfile = os.path.join( portage.etcDir(), "..", "emergehosts.conf" )
