@@ -24,8 +24,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20100401'] = 'tags/kdepim/enterprise5.0.20100401.1110042/l10n-kde4'
         self.svnTargets['20100409'] = 'tags/kdepim/enterprise5.0.20100409.1112952/l10n-kde4'
         self.svnTargets['20100507'] = 'tags/kdepim/enterprise5.0.20100507.1123982/l10n-kde4'
-        self.svnTargets['20100521'] = 'tags/kdepim/enterprise5.0.20100521.1129114/l10n-kde4'
-        self.defaultTarget = '20100521'
+        self.defaultTarget = '20100507'
 
         # all targets 
         self.languages  = 'de'
