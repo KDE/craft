@@ -1,7 +1,7 @@
 diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 --- gettext-0.18.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/CMakeLists.txt	Fri May 21 11:41:06 2010
-@@ -0,0 +1,28 @@
++++ gettext-0.18/CMakeLists.txt	Fri May 21 12:52:53 2010
+@@ -0,0 +1,34 @@
 +cmake_minimum_required(VERSION 2.6)
 +
 +project(gettext)
@@ -18,6 +18,12 @@ diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 +
 +include(MacroBoolTo01)
 +
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
 +find_package(iconv)
 +set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${ICONV_INCLUDE_DIR})
 +set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${ICONV_LIBRARIES})
@@ -30,6 +36,43 @@ diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 +
 +add_subdirectory(gettext-runtime)
 +#add_subdirectory(gettext-tools)
+diff -Nru gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake gettext-0.18/cmake/Modules/FindWcecompat.cmake
+--- gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ gettext-0.18/cmake/Modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru gettext-0.18.orig/cmake/Modules/Findiconv.cmake gettext-0.18/cmake/Modules/Findiconv.cmake
 --- gettext-0.18.orig/cmake/Modules/Findiconv.cmake	Thu Jan  1 00:00:00 1970
 +++ gettext-0.18/cmake/Modules/Findiconv.cmake	Fri May 21 09:13:23 2010
@@ -147,8 +190,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-
 +
 diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
 --- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Fri May 21 11:43:16 2010
-@@ -0,0 +1,146 @@
++++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Fri May 21 12:58:05 2010
+@@ -0,0 +1,150 @@
 +include(CheckFunctionExists)
 +include(CheckIncludeFile)
 +include(CheckTypeSize)
@@ -277,13 +320,17 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 +CHECK_TYPE_SIZE("wint_t" BITSIZEOF_WINT_T)
 +
 +if(ICONV_SECOND_ARGUMENT_IS_CONST)
-+set(ICONV_CONST const)
++    set(ICONV_CONST const)
 +endif(ICONV_SECOND_ARGUMENT_IS_CONST)
 +
 +if(MSVC)
 +    set(uintmax_t "unsigned __int64")
 +    set(intmax_t "__int64")
 +endif(MSVC)
++
++if(WINCE)
++    set(INTDIV0_RAISES_SIGFPE 1)
++endif(WINCE)
 +
 +if(WIN32)
 +    set(FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1)
@@ -298,8 +345,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 \ No newline at end of file
 diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-runtime/config.h.cmake
 --- gettext-0.18.orig/gettext-runtime/config.h.cmake	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/config.h.cmake	Fri May 21 11:42:11 2010
-@@ -0,0 +1,1270 @@
++++ gettext-0.18/gettext-runtime/config.h.cmake	Fri May 21 13:09:50 2010
+@@ -0,0 +1,1269 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define if the compiler is building for multiple architectures of Apple
@@ -1253,7 +1300,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#cmakedefine INSTALLPREFIX
 +
 +/* Define if integer division by zero raises signal SIGFPE. */
-+#cmakedefine INTDIV0_RAISES_SIGFPE
++#cmakedefine INTDIV0_RAISES_SIGFPE 1
 +
 +#if FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
 +# define ISSLASH(C) ((C) == '/' || (C) == '\\')
@@ -1569,11 +1616,10 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#ifdef _MSC_VER
 +#define inline __inline
 +#endif
-+
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 21 12:43:31 2010
-@@ -0,0 +1,54 @@
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 21 13:17:10 2010
+@@ -0,0 +1,58 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1628,6 +1674,10 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +
 +add_library(libintl SHARED ${INTL_SRCS})
 +target_link_libraries(libintl ${ICONV_LIBRARIES})
++
++if(WINCE)
++    target_link_libraries(libintl ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
 --- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	Sun May  9 18:54:29 2010
 +++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	Thu May 20 11:47:39 2010
@@ -1728,6 +1778,48 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettex
  
  /* A version of getenv() that works from DLLs */
  extern unsigned long DosScanEnv (const unsigned char *pszName, unsigned char **ppszValue);
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-0.18/gettext-runtime/intl/printf-parse.c
+--- gettext-0.18.orig/gettext-runtime/intl/printf-parse.c	Sat Dec 12 15:08:01 2009
++++ gettext-0.18/gettext-runtime/intl/printf-parse.c	Fri May 21 13:15:26 2010
+@@ -75,6 +75,11 @@
+ # include "c-ctype.h"
+ #endif
+ 
++#if defined(_WIN32_WCE) && !defined(_PTRDIFF_T_DEFINED)
++  typedef int ptrdiff_t;
++# define _PTRDIFF_T_DEFINED
++#endif
++
+ #ifdef STATIC
+ STATIC
+ #endif
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettext-runtime/intl/setlocale.c
+--- gettext-0.18.orig/gettext-runtime/intl/setlocale.c	Sat Dec 26 03:15:07 2009
++++ gettext-0.18/gettext-runtime/intl/setlocale.c	Fri May 28 07:10:40 2010
+@@ -42,6 +42,10 @@
+ # define DLL_EXPORTED
+ #endif
+ 
++#ifdef _WIN32_WCE
++# define strdup _strdup
++#endif
++
+ #include "gettextP.h"
+ 
+ #if (defined __APPLE__ && defined __MACH__) || defined _WIN32 || defined __WIN32__ || defined __CYGWIN__
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-runtime/intl/xsize.h
+--- gettext-0.18.orig/gettext-runtime/intl/xsize.h	Sun Jun 28 19:44:04 2009
++++ gettext-0.18/gettext-runtime/intl/xsize.h	Fri May 21 13:10:02 2010
+@@ -25,6 +25,9 @@
+ 
+ /* Get SIZE_MAX.  */
+ #include <limits.h>
++#ifdef _WIN32_WCE
++#define SIZE_MAX  _UI32_MAX
++#endif
+ #if HAVE_STDINT_H
+ # include <stdint.h>
+ #endif
 diff -Nru gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt gettext-0.18/gettext-runtime/src/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt	Thu Jan  1 00:00:00 1970
 +++ gettext-0.18/gettext-runtime/src/CMakeLists.txt	Thu May 20 11:22:16 2010
