@@ -1,6 +1,6 @@
 diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 --- gettext-0.18.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/CMakeLists.txt	Fri May 28 13:43:07 2010
++++ gettext-0.18/CMakeLists.txt	Fri May 28 14:20:12 2010
 @@ -0,0 +1,34 @@
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -1623,8 +1623,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#endif
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 28 13:14:29 2010
-@@ -0,0 +1,58 @@
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 28 14:29:09 2010
+@@ -0,0 +1,64 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1683,6 +1683,12 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +if(WINCE)
 +    target_link_libraries(libintl ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
++
++install(TARGETS libintl RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME intl.h)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
 --- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	Sat Dec 26 13:42:37 2009
 +++ gettext-0.18/gettext-runtime/intl/dcigettext.c	Fri May 28 12:39:44 2010
@@ -1716,7 +1722,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/ge
  # include <xlocale.h>
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
 --- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	Sun Jun 28 19:44:04 2009
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Fri May 28 13:25:54 2010
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Fri May 28 14:27:47 2010
 @@ -40,7 +40,9 @@
  #else
  # ifdef _MSC_VER
@@ -1727,16 +1733,15 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  # else
  #  if defined HAVE_ALLOCA_H || defined _LIBC
  #   include <alloca.h>
-@@ -499,6 +501,8 @@
+@@ -499,7 +501,6 @@
  # define O_BINARY 0
  #endif
  
-+#include <unistd.h>
-+
- 
+-
  /* We need a sign, whether a new catalog was loaded, which can be associated
     with all translations.  This is important if the translations are
-@@ -782,7 +786,7 @@
+    cached by one of GCC's features.  */
+@@ -782,7 +783,7 @@
  {
    __libc_lock_define_initialized_recursive (static, lock)
    int fd = -1;
@@ -1745,7 +1750,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  #ifdef _LIBC
    struct stat64 st;
  #else
-@@ -836,15 +840,15 @@
+@@ -836,15 +837,15 @@
  #else
        __builtin_expect (fstat (fd, &st) != 0, 0)
  #endif
@@ -1764,7 +1769,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  					 MAP_PRIVATE, fd, 0);
  
    if (__builtin_expect (data != (struct mo_file_header *) -1, 1))
-@@ -863,11 +867,11 @@
+@@ -863,11 +864,11 @@
        size_t to_read;
        char *read_ptr;
  
@@ -1778,7 +1783,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
        read_ptr = (char *) data;
        do
  	{
-@@ -897,7 +901,7 @@
+@@ -897,7 +898,7 @@
        /* The magic number is wrong: not a message catalog file.  */
  #ifdef HAVE_MMAP
        if (use_mmap)
@@ -1787,7 +1792,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
        else
  #endif
  	free (data);
-@@ -911,7 +915,7 @@
+@@ -911,7 +912,7 @@
  
    domain->data = (char *) data;
    domain->use_mmap = use_mmap;
