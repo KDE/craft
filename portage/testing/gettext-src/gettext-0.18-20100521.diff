@@ -1,6 +1,6 @@
 diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 --- gettext-0.18.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/CMakeLists.txt	Fri May 21 12:52:53 2010
++++ gettext-0.18/CMakeLists.txt	Fri May 28 13:43:07 2010
 @@ -0,0 +1,34 @@
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -190,8 +190,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-
 +
 diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
 --- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Fri May 21 12:58:05 2010
-@@ -0,0 +1,150 @@
++++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Fri May 28 12:26:45 2010
+@@ -0,0 +1,152 @@
 +include(CheckFunctionExists)
 +include(CheckIncludeFile)
 +include(CheckTypeSize)
@@ -200,6 +200,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 +CHECK_INCLUDE_FILE("alloca.h" HAVE_ALLOCA_H)
 +CHECK_INCLUDE_FILE("bp-sym.h" HAVE_BP_SYM_H)
 +CHECK_INCLUDE_FILE("dlfcn.h" HAVE_DLFCN_H)
++CHECK_INCLUDE_FILE("direct.h" HAVE_DIRECT_H)
 +CHECK_INCLUDE_FILE("errno.h" HAVE_ERRNO_H)
 +CHECK_INCLUDE_FILE("getopt.h" HAVE_GETOPT_H)
 +CHECK_INCLUDE_FILE("iconv.h" HAVE_ICONV_H)
@@ -244,6 +245,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 +CHECK_FUNCTION_EXISTS("CFLocaleCopyCurrent" HAVE_CFLOCALECOPYCURRENT)
 +CHECK_FUNCTION_EXISTS("fwprintf" HAVE_FWPRINTF)
 +CHECK_FUNCTION_EXISTS("getcwd" HAVE_GETCWD)
++CHECK_FUNCTION_EXISTS("_getcwd" HAVE_GETCWD2)
 +CHECK_FUNCTION_EXISTS("getegid" HAVE_GETEGID)
 +CHECK_FUNCTION_EXISTS("geteuid" HAVE_GETEUID)
 +CHECK_FUNCTION_EXISTS("getgid" HAVE_GETGID)
@@ -345,8 +347,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 \ No newline at end of file
 diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-runtime/config.h.cmake
 --- gettext-0.18.orig/gettext-runtime/config.h.cmake	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/config.h.cmake	Fri May 21 13:09:50 2010
-@@ -0,0 +1,1269 @@
++++ gettext-0.18/gettext-runtime/config.h.cmake	Fri May 28 12:04:17 2010
+@@ -0,0 +1,1272 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define if the compiler is building for multiple architectures of Apple
@@ -629,6 +631,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +
 +/* Define to 1 if you have the `getcwd' function. */
 +#cmakedefine HAVE_GETCWD 1
++
++/* Define to 1 if you have the `_getcwd' function. */
++#cmakedefine HAVE_GETCWD2 1
 +
 +/* Define to 1 if you have the `getegid' function. */
 +#cmakedefine HAVE_GETEGID 1
@@ -1618,7 +1623,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#endif
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 21 13:17:10 2010
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 28 13:14:29 2010
 @@ -0,0 +1,58 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
@@ -1678,6 +1683,23 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +if(WINCE)
 +    target_link_libraries(libintl ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
+--- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	Sat Dec 26 13:42:37 2009
++++ gettext-0.18/gettext-runtime/intl/dcigettext.c	Fri May 28 12:39:44 2010
+@@ -140,8 +140,12 @@
+ # define tfind __tfind
+ #else
+ # if !defined HAVE_GETCWD
++#  ifndef _WIN32_WCE
+ char *getwd ();
+-#  define getcwd(buf, max) getwd (buf)
++#   define getcwd(buf, max) getwd (buf)
++#  else
++#    define getcwd _getcwd
++#  endif
+ # else
+ #  if VMS
+ #   define getcwd(buf, max) (getcwd) (buf, max, 0)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
 --- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	Sun May  9 18:54:29 2010
 +++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	Thu May 20 11:47:39 2010
@@ -1694,7 +1716,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/ge
  # include <xlocale.h>
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
 --- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	Sun Jun 28 19:44:04 2009
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Fri May 21 09:48:55 2010
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Fri May 28 13:25:54 2010
 @@ -40,7 +40,9 @@
  #else
  # ifdef _MSC_VER
@@ -1705,7 +1727,16 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  # else
  #  if defined HAVE_ALLOCA_H || defined _LIBC
  #   include <alloca.h>
-@@ -782,7 +784,7 @@
+@@ -499,6 +501,8 @@
+ # define O_BINARY 0
+ #endif
+ 
++#include <unistd.h>
++
+ 
+ /* We need a sign, whether a new catalog was loaded, which can be associated
+    with all translations.  This is important if the translations are
+@@ -782,7 +786,7 @@
  {
    __libc_lock_define_initialized_recursive (static, lock)
    int fd = -1;
@@ -1714,7 +1745,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  #ifdef _LIBC
    struct stat64 st;
  #else
-@@ -836,15 +838,15 @@
+@@ -836,15 +840,15 @@
  #else
        __builtin_expect (fstat (fd, &st) != 0, 0)
  #endif
@@ -1733,7 +1764,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  					 MAP_PRIVATE, fd, 0);
  
    if (__builtin_expect (data != (struct mo_file_header *) -1, 1))
-@@ -863,11 +865,11 @@
+@@ -863,11 +867,11 @@
        size_t to_read;
        char *read_ptr;
  
@@ -1747,7 +1778,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
        read_ptr = (char *) data;
        do
  	{
-@@ -897,7 +899,7 @@
+@@ -897,7 +901,7 @@
        /* The magic number is wrong: not a message catalog file.  */
  #ifdef HAVE_MMAP
        if (use_mmap)
@@ -1756,7 +1787,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
        else
  #endif
  	free (data);
-@@ -911,7 +913,7 @@
+@@ -911,7 +915,7 @@
  
    domain->data = (char *) data;
    domain->use_mmap = use_mmap;
@@ -1765,6 +1796,20 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
    domain->must_swap = data->magic != _MAGIC;
    domain->malloced = NULL;
  
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gettext-runtime/intl/localename.c
+--- gettext-0.18.orig/gettext-runtime/intl/localename.c	Sun May  9 02:27:13 2010
++++ gettext-0.18/gettext-runtime/intl/localename.c	Fri May 28 13:47:20 2010
+@@ -1128,6 +1128,10 @@
+ # endif
+ #endif
+ 
++#ifdef _WIN32_WCE
++#define GetThreadLocale GetUserDefaultLCID
++#endif
++
+ 
+ #if HAVE_CFLOCALECOPYCURRENT || HAVE_CFPREFERENCESCOPYAPPVALUE
+ /* MacOS X 10.2 or newer */
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettext-runtime/intl/os2compat.c
 --- gettext-0.18.orig/gettext-runtime/intl/os2compat.c	Sun Jun 28 19:44:04 2009
 +++ gettext-0.18/gettext-runtime/intl/os2compat.c	Fri May 21 11:27:03 2010
