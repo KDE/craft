@@ -43,7 +43,7 @@ class Package(CMakePackageBase):
         
         projects = ""
         
-        if not platform.isCrossCompilingEnabled()
+        if not platform.isCrossCompilingEnabled():
             projects += "program_options"
 
         # only enable python for standard win32 builds, as x64 has problems with symbols and wince isn't supported
