@@ -1688,7 +1688,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
 +
-+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME intl.h)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME libintl.h)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
 --- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	Sat Dec 26 13:42:37 2009
 +++ gettext-0.18/gettext-runtime/intl/dcigettext.c	Fri May 28 12:39:44 2010
