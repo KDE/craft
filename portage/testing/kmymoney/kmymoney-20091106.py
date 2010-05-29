@@ -16,6 +16,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/mysql-server'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         self.softDependencies['testing/libofx'] = 'default'
+        self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        self.hardDependencies['dev-util/gettext-tools'] = 'default'
     
 from Package.CMakePackageBase import *
 
