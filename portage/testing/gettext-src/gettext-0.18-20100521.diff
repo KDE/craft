@@ -1623,8 +1623,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#endif
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri May 28 14:29:09 2010
-@@ -0,0 +1,64 @@
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Mon May 31 13:49:10 2010
+@@ -0,0 +1,65 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1676,6 +1676,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +add_definitions(-DLOCALE_ALIAS_PATH="")
 +add_definitions(-DLOCALEDIR="")
 +add_definitions(-DIN_LIBINTL)
++#add_definitions(-DBUILDING_DLL)
 +
 +add_library(libintl SHARED ${INTL_SRCS})
 +target_link_libraries(libintl ${ICONV_LIBRARIES})
@@ -1688,7 +1689,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
 +
-+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME intl.h)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME libintl.h)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
 --- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	Sat Dec 26 13:42:37 2009
 +++ gettext-0.18/gettext-runtime/intl/dcigettext.c	Fri May 28 12:39:44 2010
@@ -1934,18 +1935,49 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-0.18/get
  #endif
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettext-runtime/intl/setlocale.c
 --- gettext-0.18.orig/gettext-runtime/intl/setlocale.c	Sat Dec 26 03:15:07 2009
-+++ gettext-0.18/gettext-runtime/intl/setlocale.c	Fri May 28 07:10:40 2010
-@@ -42,6 +42,10 @@
- # define DLL_EXPORTED
- #endif
++++ gettext-0.18/gettext-runtime/intl/setlocale.c	Mon May 31 14:17:33 2010
+@@ -16,6 +16,7 @@
+    License along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+    USA.  */
++   
  
-+#ifdef _WIN32_WCE
-+# define strdup _strdup
-+#endif
-+
- #include "gettextP.h"
+ #ifdef HAVE_CONFIG_H
+ # include <config.h>
+@@ -46,6 +47,9 @@
  
  #if (defined __APPLE__ && defined __MACH__) || defined _WIN32 || defined __WIN32__ || defined __CYGWIN__
+ 
++/* FIXME: In Windwos CE the function setlocale is not defined */
++# ifndef _WIN32_WCE
++
+ # undef setlocale
+ # undef newlocale
+ 
+@@ -816,10 +820,14 @@
+ #  define setlocale_single setlocale_unixlike
+ # endif
+ 
++# endif
++
+ DLL_EXPORTED
+ char *
+ libintl_setlocale (int category, const char *locale)
+ {
++/* FIXME: In Windwos CE we dont need setlocale */
++#ifndef _WIN32_WCE
+   if (locale != NULL && locale[0] == '\0')
+     {
+       /* A request to the set the current locale to the default locale.  */
+@@ -899,6 +907,8 @@
+     }
+   else
+     return setlocale_single (category, locale);
++#endif    
++    return NULL;
+ }
+ 
+ # if HAVE_NEWLOCALE
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-runtime/intl/xsize.h
 --- gettext-0.18.orig/gettext-runtime/intl/xsize.h	Sun Jun 28 19:44:04 2009
 +++ gettext-0.18/gettext-runtime/intl/xsize.h	Fri May 21 13:10:02 2010
