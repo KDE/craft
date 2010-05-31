@@ -1708,12 +1708,12 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gette
  #   define getcwd(buf, max) (getcwd) (buf, max, 0)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettext-runtime/intl/langprefs.c
 --- gettext-0.18.orig/gettext-runtime/intl/langprefs.c	Sat Dec 12 15:08:01 2009
-+++ gettext-0.18/gettext-runtime/intl/langprefs.c	Mon May 31 12:16:18 2010
++++ gettext-0.18/gettext-runtime/intl/langprefs.c	Mon May 31 13:18:57 2010
 @@ -53,6 +53,8 @@
  extern const char *_nl_locale_name_from_win32_LANGID (LANGID langid);
  extern const char *_nl_locale_name_from_win32_LCID (LCID lcid);
  
-+#ifdef _WIN32_WCE
++#ifndef _WIN32_WCE
 +
  /* Get the preferences list through the MUI APIs. This works on Windows Vista
     and newer.  */
@@ -1736,28 +1736,19 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettex
  #endif
  
  /* Determine the user's language preferences, as a colon separated list of
-@@ -318,7 +322,7 @@
-   }
- #endif
- 
--#ifdef WIN32_NATIVE
-+#if defined(WIN32_NATIVE) && !defined(_WIN32_WCE)
-   {
-     /* Cache the preferences list, since computing it is expensive.  */
+@@ -324,6 +328,7 @@
      static const char *cached_languages;
-@@ -348,6 +352,27 @@
+     static int cache_initialized;
+ 
++#ifndef _WIN32_WCE
+     /* Activate the new code only when the GETTEXT_MUI environment variable is
+        set, for the time being, since the new code is not well tested.  */
+     if (!cache_initialized && getenv ("GETTEXT_MUI") != NULL)
+@@ -346,10 +351,21 @@
+         cached_languages = languages;
+         cache_initialized = 1;
        }
-     if (cached_languages != NULL)
-       return cached_languages;
-+  }
-+#endif
-+
-+#ifdef _WIN32_WCE
-+  {
-+    /* Cache the preferences list, since computing it is expensive.  */
-+    static const char *cached_languages;
-+    static int cache_initialized;
-+    
++#else
 +    if (!cache_initialized)
 +      {
 +        LCID lcid;
@@ -1768,11 +1759,14 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettex
 +        cached_languages = _nl_locale_name_from_win32_LCID(lcid);
 +        cache_initialized = 1;
 +      }
-+     if (cached_languages != NULL)
-+      return cached_languages;    
++#endif
+     if (cached_languages != NULL)
+       return cached_languages;
    }
  #endif
- 
+-
+   return NULL;
+ }
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
 --- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	Sun May  9 18:54:29 2010
 +++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	Thu May 20 11:47:39 2010
