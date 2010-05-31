@@ -1688,7 +1688,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
 +
-+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME libintl.h)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME intl.h)
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
 --- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	Sat Dec 26 13:42:37 2009
 +++ gettext-0.18/gettext-runtime/intl/dcigettext.c	Fri May 28 12:39:44 2010
@@ -1706,6 +1706,73 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gette
  # else
  #  if VMS
  #   define getcwd(buf, max) (getcwd) (buf, max, 0)
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettext-runtime/intl/langprefs.c
+--- gettext-0.18.orig/gettext-runtime/intl/langprefs.c	Sat Dec 12 15:08:01 2009
++++ gettext-0.18/gettext-runtime/intl/langprefs.c	Mon May 31 12:16:18 2010
+@@ -53,6 +53,8 @@
+ extern const char *_nl_locale_name_from_win32_LANGID (LANGID langid);
+ extern const char *_nl_locale_name_from_win32_LCID (LCID lcid);
+ 
++#ifdef _WIN32_WCE
++
+ /* Get the preferences list through the MUI APIs. This works on Windows Vista
+    and newer.  */
+ static const char *
+@@ -205,6 +207,8 @@
+   return NULL;
+ }
+ 
++
++
+ /* Get the system's preference.  This can be used as a fallback.  */
+ static BOOL CALLBACK
+ ret_first_language (HMODULE h, LPCSTR type, LPCSTR name, WORD lang, LONG_PTR param)
+@@ -222,7 +226,7 @@
+                          ret_first_language, (LONG_PTR)&languages);
+   return languages;
+ }
+-
++#endif
+ #endif
+ 
+ /* Determine the user's language preferences, as a colon separated list of
+@@ -318,7 +322,7 @@
+   }
+ #endif
+ 
+-#ifdef WIN32_NATIVE
++#if defined(WIN32_NATIVE) && !defined(_WIN32_WCE)
+   {
+     /* Cache the preferences list, since computing it is expensive.  */
+     static const char *cached_languages;
+@@ -348,6 +352,27 @@
+       }
+     if (cached_languages != NULL)
+       return cached_languages;
++  }
++#endif
++
++#ifdef _WIN32_WCE
++  {
++    /* Cache the preferences list, since computing it is expensive.  */
++    static const char *cached_languages;
++    static int cache_initialized;
++    
++    if (!cache_initialized)
++      {
++        LCID lcid;
++        
++        /* Use native Win32 API locale ID.  */
++        lcid = GetSystemDefaultLCID ();
++        
++        cached_languages = _nl_locale_name_from_win32_LCID(lcid);
++        cache_initialized = 1;
++      }
++     if (cached_languages != NULL)
++      return cached_languages;    
+   }
+ #endif
+ 
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
 --- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	Sun May  9 18:54:29 2010
 +++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	Thu May 20 11:47:39 2010
@@ -1722,8 +1789,20 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/ge
  # include <xlocale.h>
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
 --- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	Sun Jun 28 19:44:04 2009
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Fri May 28 14:27:47 2010
-@@ -40,7 +40,9 @@
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Mon May 31 09:53:25 2010
+@@ -33,6 +33,11 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ 
++#ifdef _WIN32_WCE
++# include <io.h>
++#define open(a,b) _wceopen(a,b,0)
++#endif
++
+ #ifdef __GNUC__
+ # undef  alloca
+ # define alloca __builtin_alloca
+@@ -40,7 +45,9 @@
  #else
  # ifdef _MSC_VER
  #  include <malloc.h>
@@ -1733,7 +1812,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  # else
  #  if defined HAVE_ALLOCA_H || defined _LIBC
  #   include <alloca.h>
-@@ -499,7 +501,6 @@
+@@ -499,7 +506,6 @@
  # define O_BINARY 0
  #endif
  
@@ -1741,7 +1820,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  /* We need a sign, whether a new catalog was loaded, which can be associated
     with all translations.  This is important if the translations are
     cached by one of GCC's features.  */
-@@ -782,7 +783,7 @@
+@@ -782,7 +788,7 @@
  {
    __libc_lock_define_initialized_recursive (static, lock)
    int fd = -1;
@@ -1750,7 +1829,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  #ifdef _LIBC
    struct stat64 st;
  #else
-@@ -836,15 +837,15 @@
+@@ -836,15 +842,15 @@
  #else
        __builtin_expect (fstat (fd, &st) != 0, 0)
  #endif
@@ -1769,7 +1848,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  					 MAP_PRIVATE, fd, 0);
  
    if (__builtin_expect (data != (struct mo_file_header *) -1, 1))
-@@ -863,11 +864,11 @@
+@@ -863,11 +869,11 @@
        size_t to_read;
        char *read_ptr;
  
@@ -1783,7 +1862,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
        read_ptr = (char *) data;
        do
  	{
-@@ -897,7 +898,7 @@
+@@ -897,7 +903,7 @@
        /* The magic number is wrong: not a message catalog file.  */
  #ifdef HAVE_MMAP
        if (use_mmap)
@@ -1792,7 +1871,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
        else
  #endif
  	free (data);
-@@ -911,7 +912,7 @@
+@@ -911,7 +917,7 @@
  
    domain->data = (char *) data;
    domain->use_mmap = use_mmap;
@@ -1803,7 +1882,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
  
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gettext-runtime/intl/localename.c
 --- gettext-0.18.orig/gettext-runtime/intl/localename.c	Sun May  9 02:27:13 2010
-+++ gettext-0.18/gettext-runtime/intl/localename.c	Fri May 28 13:47:20 2010
++++ gettext-0.18/gettext-runtime/intl/localename.c	Mon May 31 12:16:09 2010
 @@ -1128,6 +1128,10 @@
  # endif
  #endif
@@ -1815,6 +1894,22 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gette
  
  #if HAVE_CFLOCALECOPYCURRENT || HAVE_CFPREFERENCESCOPYAPPVALUE
  /* MacOS X 10.2 or newer */
+@@ -1448,6 +1452,7 @@
+ const char *
+ gl_locale_name_from_win32_LANGID (LANGID langid)
+ {
++#ifndef _WIN32_WCE
+   /* Activate the new code only when the GETTEXT_MUI environment variable is
+      set, for the time being, since the new code is not well tested.  */
+   if (getenv ("GETTEXT_MUI") != NULL)
+@@ -1465,6 +1470,7 @@
+           return namebuf;
+         }
+     }
++#endif
+   /* Internet Explorer has an LCID to RFC3066 name mapping stored in
+      HKEY_CLASSES_ROOT\Mime\Database\Rfc1766.  But we better don't use that
+      since IE's i18n subsystem is known to be inconsistent with the Win32 base
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettext-runtime/intl/os2compat.c
 --- gettext-0.18.orig/gettext-runtime/intl/os2compat.c	Sun Jun 28 19:44:04 2009
 +++ gettext-0.18/gettext-runtime/intl/os2compat.c	Fri May 21 11:27:03 2010
