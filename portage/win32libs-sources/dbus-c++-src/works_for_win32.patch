@@ -1,0 +1,960 @@
+diff --git a/examples/echo/Makefile.am b/examples/echo/Makefile.am
+index 63fe2eb..d208bc0 100644
+--- a/examples/echo/Makefile.am
++++ b/examples/echo/Makefile.am
+@@ -10,11 +10,11 @@ echo_server_LDADD = $(top_builddir)/src/libdbus-c++-1.la
+ echo-server-glue.h: echo-introspect.xml
+ 	$(top_builddir)/tools/dbusxx-xml2cpp $^ --adaptor=$@
+
+-noinst_PROGRAMS += echo-client-mt
+-
+-echo_client_mt_SOURCES = echo-client-glue.h echo-client.h echo-client.cpp
+-echo_client_mt_LDADD = $(top_builddir)/src/libdbus-c++-1.la @PTHREAD_LIBS@
+-echo_client_mt_CXXFLAGS = @PTHREAD_CFLAGS@
++#noinst_PROGRAMS += echo-client-mt
++#
++#echo_client_mt_SOURCES = echo-client-glue.h echo-client.h echo-client.cpp
++#echo_client_mt_LDADD = $(top_builddir)/src/libdbus-c++-1.la @PTHREAD_LIBS@
++#echo_client_mt_CXXFLAGS = @PTHREAD_CFLAGS@
+
+ echo-client-glue.h: echo-introspect.xml
+ 	$(top_builddir)/tools/dbusxx-xml2cpp $^ --proxy=$@
+diff --git a/examples/echo/echo-server.cpp b/examples/echo/echo-server.cpp
+index cbcd517..40dcdac 100644
+--- a/examples/echo/echo-server.cpp
++++ b/examples/echo/echo-server.cpp
+@@ -9,6 +9,17 @@
+ #include <stdio.h>
+ #include <limits.h>
+
++#ifdef _WIN32
++
++#include <winsock2.h>
++#define HOST_NAME_MAX 1024
++
++char *getlogin(){
++	return getenv("USERNAME");
++}
++
++#endif
++
+ static const char *ECHO_SERVER_NAME = "org.freedesktop.DBus.Examples.Echo";
+ static const char *ECHO_SERVER_PATH = "/org/freedesktop/DBus/Examples/Echo";
+
+diff --git a/include/dbus-c++/connection.h b/include/dbus-c++/connection.h
+index 3f8aaf6..b766ac4 100644
+--- a/include/dbus-c++/connection.h
++++ b/include/dbus-c++/connection.h
+@@ -26,6 +26,14 @@
+ #define __DBUSXX_CONNECTION_H
+
+ #include <list>
++/*
++ * 'interface' is defined somewhere in the Windows header files.
++ * Possible includes: <list>
++ * This macro is deleted here to avoid conflicts and compile errors.
++ */
++#ifdef _WIN32
++#undef interface
++#endif
+
+ #include "api.h"
+ #include "types.h"
+diff --git a/include/dbus-c++/eventloop-integration.h b/include/dbus-c++/eventloop-integration.h
+index b8e02c7..20eae42 100644
+--- a/include/dbus-c++/eventloop-integration.h
++++ b/include/dbus-c++/eventloop-integration.h
+@@ -31,6 +31,16 @@
+ #include "util.h"
+ #include "eventloop.h"
+
++#ifdef _WIN32
++#include <direct.h>
++static inline int pipe(int pipefd[2]){
++  const unsigned int buffer_size = 4096;
++  const int flags = 0;
++  return _pipe(pipefd, buffer_size, flags);
++}
++#endif
++
++
+ namespace DBus {
+
+ /* 
+diff --git a/include/dbus-c++/eventloop.h b/include/dbus-c++/eventloop.h
+index 5b1b808..3bf4997 100644
+--- a/include/dbus-c++/eventloop.h
++++ b/include/dbus-c++/eventloop.h
+@@ -27,10 +27,79 @@
+
+ #include <pthread.h>
+ #include <list>
++/*
++ * 'interface' is defined somewhere in the Windows header files.
++ * Possible includes: <list>
++ * This macro is deleted here to avoid conflicts and compile errors.
++ */
++#ifdef _WIN32
++#undef interface
++#endif
+
+ #include "api.h"
+ #include "util.h"
+
++
++extern "C" {
++
++  /* AIX uses different values for poll */
++  #ifdef _AIX
++    /** There is data to read */
++    #define _DBUS_POLLIN      0x0001
++    /** There is urgent data to read */
++    #define _DBUS_POLLPRI     0x0004
++    /** Writing now will not block */
++    #define _DBUS_POLLOUT     0x0002
++    /** Error condition */
++    #define _DBUS_POLLERR     0x4000
++    /** Hung up */
++    #define _DBUS_POLLHUP     0x2000
++    /** Invalid request: fd not open */
++    #define _DBUS_POLLNVAL    0x8000
++
++  #elif defined(__HAIKU__)
++    /** There is data to read */
++    #define _DBUS_POLLIN      0x0001
++    /** Writing now will not block */
++    #define _DBUS_POLLOUT     0x0002
++    /** Error condition */
++    #define _DBUS_POLLERR     0x0004
++    /** There is urgent data to read */
++    #define _DBUS_POLLPRI     0x0020
++    /** Hung up */
++    #define _DBUS_POLLHUP     0x0080
++    /** Invalid request: fd not open */
++    #define _DBUS_POLLNVAL    0x1000
++
++  #else
++    /** There is data to read */
++    #define _DBUS_POLLIN      0x0001
++    /** There is urgent data to read */
++    #define _DBUS_POLLPRI     0x0002
++    /** Writing now will not block */
++    #define _DBUS_POLLOUT     0x0004
++    /** Error condition */
++    #define _DBUS_POLLERR     0x0008
++    /** Hung up */
++    #define _DBUS_POLLHUP     0x0010
++    /** Invalid request: fd not open */
++    #define _DBUS_POLLNVAL    0x0020
++  #endif
++
++  /**
++   * A portable struct pollfd wrapper.
++   */
++  typedef struct
++  {
++    int fd;
++    short events;
++    short revents;
++  } DBusPollFD;
++
++  int _dbus_poll( DBusPollFD *fds, int n_fds, int timeout_milliseconds );
++
++}
++
+ namespace DBus {
+
+ /*
+diff --git a/include/dbus-c++/object.h b/include/dbus-c++/object.h
+index 962bf77..a5ea0f2 100644
+--- a/include/dbus-c++/object.h
++++ b/include/dbus-c++/object.h
+@@ -27,6 +27,14 @@
+
+ #include <string>
+ #include <list>
++/*
++ * 'interface' is defined somewhere in the Windows header files.
++ * Possible includes: <list>
++ * This macro is deleted here to avoid conflicts and compile errors.
++ */
++#ifdef _WIN32
++#undef interface
++#endif
+
+ #include "api.h"
+ #include "interface.h"
+diff --git a/include/dbus-c++/server.h b/include/dbus-c++/server.h
+index 30879bf..c0a95c9 100644
+--- a/include/dbus-c++/server.h
++++ b/include/dbus-c++/server.h
+@@ -26,6 +26,14 @@
+ #define __DBUSXX_SERVER_H
+
+ #include <list>
++/*
++ * 'interface' is defined somewhere in the Windows header files.
++ * Possible includes: <list>
++ * This macro is deleted here to avoid conflicts and compile errors.
++ */
++#ifdef _WIN32
++#undef interface
++#endif
+
+ #include "api.h"
+ #include "error.h"
+diff --git a/src/dispatcher.cpp b/src/dispatcher.cpp
+index 2da4e86..818f222 100644
+--- a/src/dispatcher.cpp
++++ b/src/dispatcher.cpp
+@@ -69,7 +69,7 @@ Watch::Watch(Watch::Internal *i)
+
+ int Watch::descriptor() const
+ {
+-#if HAVE_WIN32
++#if _WIN32
+ 	return dbus_watch_get_socket((DBusWatch*)_int);
+ #else
+ 	return dbus_watch_get_unix_fd((DBusWatch*)_int);
+diff --git a/src/eventloop-integration.cpp b/src/eventloop-integration.cpp
+index d801574..cb3f052 100644
+--- a/src/eventloop-integration.cpp
++++ b/src/eventloop-integration.cpp
+@@ -25,13 +25,17 @@
+ #include <config.h>
+ #endif
+
++#ifdef _WIN32
++#include <io.h>
++#include <process.h>
++#endif
++
++
+ #include <string.h>
+
+ #include <dbus-c++/eventloop-integration.h>
+ #include <dbus-c++/debug.h>
+
+-#include <sys/poll.h>
+-
+ #include <dbus/dbus.h>
+ #include <errno.h>
+
+@@ -53,12 +57,12 @@ void BusTimeout::toggle()
+ BusWatch::BusWatch(Watch::Internal *wi, BusDispatcher *bd)
+ : Watch(wi), DefaultWatch(Watch::descriptor(), 0, bd)
+ {
+-	int flags = POLLHUP | POLLERR;
++	int flags = _DBUS_POLLHUP | _DBUS_POLLERR;
+
+ 	if (Watch::flags() & DBUS_WATCH_READABLE)
+-		flags |= POLLIN;
++		flags |= _DBUS_POLLIN;
+ 	if (Watch::flags() & DBUS_WATCH_WRITABLE)
+-		flags |= POLLOUT;
++		flags |= _DBUS_POLLOUT;
+
+ 	DefaultWatch::flags(flags);
+ 	DefaultWatch::enabled(Watch::enabled());
+@@ -161,13 +165,13 @@ void BusDispatcher::watch_ready(DefaultWatch &ew)
+
+ 	int flags = 0;
+
+-	if (watch->state() & POLLIN)
++	if (watch->state() & _DBUS_POLLIN)
+ 		flags |= DBUS_WATCH_READABLE;
+-	if (watch->state() & POLLOUT)
++	if (watch->state() & _DBUS_POLLOUT)
+ 		flags |= DBUS_WATCH_WRITABLE;
+-	if (watch->state() & POLLHUP)
++	if (watch->state() & _DBUS_POLLHUP)
+ 		flags |= DBUS_WATCH_HANGUP;
+-	if (watch->state() & POLLERR)
++	if (watch->state() & _DBUS_POLLERR)
+ 		flags |= DBUS_WATCH_ERROR;
+
+ 	watch->handle(flags);
+diff --git a/src/eventloop.cpp b/src/eventloop.cpp
+index 76b94f8..4fdaa7a 100644
+--- a/src/eventloop.cpp
++++ b/src/eventloop.cpp
+@@ -28,7 +28,6 @@
+ #include <dbus-c++/eventloop.h>
+ #include <dbus-c++/debug.h>
+
+-#include <sys/poll.h>
+ #include <sys/time.h>
+
+ #include <dbus/dbus.h>
+@@ -149,12 +148,14 @@ void DefaultMainLoop::dispatch()
+
+ 	int nfd = _watches.size();
+
++#ifndef _WIN32
+ 	if(_fdunlock)
+ 	{
+ 		nfd=nfd+2;
+ 	}
++#endif
+
+-	pollfd fds[nfd];
++	DBusPollFD fds[nfd];
+
+ 	DefaultWatches::iterator wi = _watches.begin();
+
+@@ -170,16 +171,18 @@ void DefaultMainLoop::dispatch()
+ 		}
+ 	}
+
++#ifndef _WIN32
+ 	if(_fdunlock){
+ 		fds[nfd].fd = _fdunlock[0];
+-		fds[nfd].events = POLLIN | POLLOUT | POLLPRI ;
++		fds[nfd].events = _DBUS_POLLIN | _DBUS_POLLOUT | _DBUS_POLLPRI ;
+ 		fds[nfd].revents = 0;
+ 		
+ 		nfd++;
+ 		fds[nfd].fd = _fdunlock[1];
+-		fds[nfd].events = POLLIN | POLLOUT | POLLPRI ;
++		fds[nfd].events = _DBUS_POLLIN | _DBUS_POLLOUT | _DBUS_POLLPRI ;
+ 		fds[nfd].revents = 0;
+ 	}
++#endif
+
+ 	_mutex_w.unlock();
+
+@@ -197,7 +200,7 @@ void DefaultMainLoop::dispatch()
+
+ 	_mutex_t.unlock();
+
+-	poll(fds, nfd, wait_min);
++	_dbus_poll(fds, nfd, wait_min);
+
+ 	timeval now;
+ 	gettimeofday(&now, NULL);
+@@ -240,10 +243,13 @@ void DefaultMainLoop::dispatch()
+ 			DefaultWatches::iterator tmp = wi;
+ 			++tmp;
+
++			debug_log("mainlooping...");
+ 			if ((*wi)->enabled() && (*wi)->_fd == fds[j].fd)
+ 			{
++				debug_log("filtering...%d", (*wi)->_fd );
+ 				if (fds[j].revents)
+ 				{
++					debug_log("triggering...");
+ 					(*wi)->_state = fds[j].revents;
+
+ 					(*wi)->ready(*(*wi));
+@@ -258,3 +264,90 @@ void DefaultMainLoop::dispatch()
+ 	_mutex_w.unlock();
+ }
+
++
++#ifdef _WIN32
++#include <winsock2.h>
++#endif
++
++int _dbus_poll (DBusPollFD *fds, int n_fds, int timeout_milliseconds)
++{
++
++	fd_set read_set, write_set, err_set;
++	int max_fd = 0;
++	int i;
++	struct timeval tv;
++	int ready;
++
++	FD_ZERO (&read_set);
++	FD_ZERO (&write_set);
++	FD_ZERO (&err_set);
++
++	for (i = 0; i < n_fds; i++)
++	{
++		DBusPollFD *fdp = &fds[i];
++
++#ifdef _WIN32
++		if ( fdp->fd < 1024 ){
++			continue;
++		}
++#endif
++
++		debug_log("adding (fd: %d) for selecting set...\n", fdp->fd  );
++
++		if (fdp->events & _DBUS_POLLIN){
++			FD_SET (fdp->fd, &read_set);
++		}
++
++		if (fdp->events & _DBUS_POLLOUT){
++			FD_SET (fdp->fd, &write_set);
++		}
++
++		FD_SET (fdp->fd, &err_set);
++
++		max_fd = ( max_fd > fdp->fd ) ? max_fd : fdp->fd;
++	}
++
++	tv.tv_sec = timeout_milliseconds / 1000;
++	tv.tv_usec = (timeout_milliseconds % 1000) * 1000;
++
++	debug_log("before selecting...(max_fd: %d, tv_sec:%d, tv_usec: %d) \n", max_fd, tv.tv_sec, tv.tv_usec );
++	ready = select (max_fd + 1, &read_set, &write_set, &err_set, timeout_milliseconds < 0 ? NULL : &tv);
++	debug_log("after selecting (return: %d)... \n", ready );
++
++	if (ready > 0)
++	{
++		debug_log("select: ready for triggering \n");
++		for (i = 0; i < n_fds; i++)
++		{
++			DBusPollFD *fdp = &fds[i];
++
++			fdp->revents = 0;
++
++			if (FD_ISSET (fdp->fd, &read_set)){
++				fdp->revents |= _DBUS_POLLIN;
++			}
++
++			if (FD_ISSET (fdp->fd, &write_set)){
++				fdp->revents |= _DBUS_POLLOUT;
++			}
++
++			if (FD_ISSET (fdp->fd, &err_set)){
++				fdp->revents |= _DBUS_POLLERR;
++			}
++		}
++	}
++	else if (ready == 0)
++	{
++		debug_log("select timeout \n");
++	}
++	else
++	{
++		debug_log( "select failed!\n" );
++#ifdef _WIN32
++		int error_number = WSAGetLastError();
++		debug_log("select: error number is ( %d )\n", error_number );
++#endif
++	}
++
++	return ready;
++}
+diff --git a/tools/generate_proxy.cpp b/tools/generate_proxy.cpp
+index a46fc32..6079ab2 100644
+--- a/tools/generate_proxy.cpp
++++ b/tools/generate_proxy.cpp
+@@ -29,6 +29,10 @@
+ #include "generator_utils.h"
+ #include "generate_proxy.h"
+
++#ifdef _WIN32
++typedef unsigned int uint;
++#endif
++
+ using namespace std;
+ using namespace DBus;
+
+diff --git a/tools/introspect.cpp b/tools/introspect.cpp
+index 8ce9f3a..17563cf 100644
+--- a/tools/introspect.cpp
++++ b/tools/introspect.cpp
+@@ -27,6 +27,22 @@
+ #include <iostream>
+ #include "introspect.h"
+
++#ifdef _WIN32
++ #include <windows.h>
++
++ #ifndef SIGALRM
++  #define SIGALRM 14
++ #endif
++
++VOID CALLBACK raiseSigAlarm(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
++{
++    raise(SIGALRM);
++}
++  #define alarm(delay) SetTimer(NULL, NULL, delay, (TIMERPROC) raiseSigAlarm)
++
++
++#endif
++
+ DBus::BusDispatcher dispatcher;
+ static bool systembus;
+ static char *path;
+--- /dev/null
++++ a/cmake/CMakeLists.txt
+@@ -0,0 +1,88 @@
++project(dbus-c++)
++
++set (DBUS_CPLUSPLUS_VERSION 0.5.0)
++set (DBUS_CPLUSPLUS_VERSION_STRING "${DBUS_CPLUSPLUS_VERSION}")
++
++# we need to be up to date
++CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4 FATAL_ERROR)
++if(COMMAND cmake_policy)
++    cmake_policy(SET CMP0003 NEW)
++endif(COMMAND cmake_policy)
++
++# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
++set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
++
++#enable building of shared library
++SET(BUILD_SHARED_LIBS ON)
++
++if (CYGWIN)
++   set (WIN32)
++endif (CYGWIN)
++
++# include local header first to avoid using old installed header
++set (CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/..)
++
++include(Win32Macros)
++addExplorerWrapper(${CMAKE_PROJECT_NAME})
++
++# search for required packages
++find_package(LibExpat)
++find_package(Dbus)
++
++find_library(PTHREAD_LIBS
++        NAMES pthread
++        PATHS /libs
++)
++message( STATUS "pthread .... ${PTHREAD_LIBS}")
++
++
++# do config checks
++INCLUDE(ConfigureChecks.cmake)
++
++# @TODO: how to remove last dir from ${CMAKE_SOURCE_DIR} ?
++SET(DBUS_CPLUSPLUS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
++set(CMAKE_DEBUG_POSTFIX "d")
++SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -D_DEBUG")
++
++
++set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
++set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
++
++include_directories(
++	${CMAKE_SOURCE_DIR}/..
++	${CMAKE_SOURCE_DIR}/../include
++	${CMAKE_BINARY_DIR}
++	${CMAKE_INCLUDE_PATH}
++	${CMAKE_LIBRARY_PATH}
++	${DBUS_INCLUDES}
++)
++
++# linker search directories
++link_directories(
++	${LIBRARY_OUTPUT_PATH}
++	#${DBUS_LIBS}
++	${CMAKE_LIBRARY_PATH}
++)
++
++set (EXT ".exe")
++
++########### create config.h ###############
++# better use flags for gcc
++if (MINGW)
++	set (HAVE_GNUC_VARARGS 1)
++endif(MINGW)
++
++# compiler definitions
++add_definitions(-DHAVE_CONFIG_H=1)
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
++
++########### subdirs ###############
++
++add_subdirectory( include )
++add_subdirectory( src )
++add_subdirectory( tools )
++#add_subdirectory( examples )
++
++
++GET_FILENAME_COMPONENT(C_COMPILER ${CMAKE_C_COMPILER} NAME)
++GET_FILENAME_COMPONENT(CXX_COMPILER ${CMAKE_CXX_COMPILER} NAME)
+--- /dev/null
++++ a/cmake/ConfigureChecks.cmake
+@@ -0,0 +1,22 @@
++include(CheckIncludeFile)
++include(CheckSymbolExists)
++include(CheckTypeSize)
++
++check_include_file(stdint.h     HAVE_STDINT_H)
++check_include_file(stdlib.h     HAVE_STDLIB_H)
++check_include_file(strings.h    HAVE_STRINGS_H)
++check_include_file(string.h     HAVE_STRING_H)
++check_include_file(sys/stat.h   HAVE_SYS_STAT_H)
++check_include_file(sys/types.h  HAVE_SYS_TYPES_H)
++check_include_file(unistd.h     HAVE_UNISTD_H)
++check_include_file(dlfcn.h      HAVE_DLFCN_H)
++check_include_file(expat.h      HAVE_EXPAT_H)
++check_include_file(inttypes.h   HAVE_INTTYPES_H)
++check_include_file(memory.h     HAVE_MEMORY_H)
++
++check_type_size("short"     SIZEOF_SHORT)
++check_type_size("int"       SIZEOF_INT)
++check_type_size("long"      SIZEOF_LONG)
++check_type_size("long long" SIZEOF_LONG_LONG)
++check_type_size("__int64"   SIZEOF___INT64)
++
+--- /dev/null
++++ a/cmake/config.h.cmake
+@@ -0,0 +1,51 @@
++/* config.h. Generated by cmake from config.h.cmake */
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* dbus_threads_init_default (needs DBus >= 0.93) */
++#cmakedefine DBUS_HAS_THREADS_INIT_DEFAULT
++
++/* Define to enable debug build */
++#cmakedefine DEBUG
++
++/* to enable hidden symbols */
++#cmakedefine GCC_HASCLASSVISIBILITY
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H
++
++/* Define to 1 if you have the <expat.h> header file. */
++#cmakedefine HAVE_EXPAT_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H
++
++/* Define if you have POSIX threads libraries and header files. */
++#cmakedefine HAVE_PTHREAD
++
++/* Define to enable pthread support */
++#cmakedefine HAVE_PTHREAD_H
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H
++
+--- /dev/null
++++ a/cmake/examples/CMakeLists.txt
+@@ -0,0 +1,2 @@
++add_subdirectory( properties )
++
+--- /dev/null
++++ a/cmake/examples/properties/CMakeLists.txt
+@@ -0,0 +1,36 @@
++project(properties)
++
++####################
++#  propsgs-server
++####################
++ADD_CUSTOM_COMMAND(
++	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/propsgs-glue-adaptor.h
++	COMMAND ${CMAKE_BINARY_DIR}/bin/dbusxx-xml2cpp ${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-introspect.xml --adaptor=${CMAKE_CURRENT_BINARY_DIR}/propsgs-glue-adaptor.h --
++	DEPENDS ${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-introspect.xml
++)
++
++add_executable(propsgs-server
++	${CMAKE_CURRENT_BINARY_DIR}/propsgs-glue-adaptor.h
++	${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-server.cpp
++	${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-server.h
++)
++target_link_libraries(propsgs-server dbus-c++-1 ${DBUS_LIBS})
++
++
++
++####################
++#  propsgs-client
++####################
++ADD_CUSTOM_COMMAND(
++	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/propsgs-glue-proxy.h
++	COMMAND ${CMAKE_BINARY_DIR}/bin/dbusxx-xml2cpp ${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-introspect.xml --proxy=${CMAKE_CURRENT_BINARY_DIR}/propsgs-glue-proxy.h --
++	DEPENDS ${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-introspect.xml
++)
++
++#add_executable(propsgs-client
++#	${CMAKE_CURRENT_BINARY_DIR}/propsgs-glue-proxy.h
++#	${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-client.cpp
++#	${CMAKE_SOURCE_DIR}/../examples/properties/propsgs-client.h
++#
++#)
++#target_link_libraries(propsgs-client dbus-c++-1 ${DBUS_LIBS} ${LIBEXPAT_LIBRARIES})
+--- /dev/null
++++ a/cmake/include/CMakeLists.txt
+@@ -0,0 +1,22 @@
++project(dbus-c++-inc)
++
++install_files(/include/dbus-1.0/dbus-c++ FILES
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/api.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/connection.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/dbus.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/debug.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/dispatcher.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/error.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/eventloop-integration.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/eventloop.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/interface.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/introspection.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/message.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/object.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/pendingcall.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/property.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/refptr_impl.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/server.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/types.h
++	${CMAKE_SOURCE_DIR}/../include/dbus-c++/util.h
++)
+--- /dev/null
++++ a/cmake/modules/FindDbus.cmake
+@@ -0,0 +1,49 @@
++set(HAVE_DBUS FALSE)
++
++# will be empty if not WIN32
++file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
++
++find_path(DBUS_HEADER_INCLUDE_DIR dbus/dbus.h
++   PATHS
++   ${_progFiles}/dbus/include ${CMAKE_INSTALL_PATH}/dbus/include
++   PATH_SUFFIXES dbus-1.0
++)
++
++find_library(DBUS_LIBS NAMES dbus-1 dbus-1d
++   PATHS
++   ${_progFiles}/dbus/lib ${CMAKE_INSTALL_PATH}/dbus/lib
++)
++
++find_library(DBUS_DEBUG_LIBS NAMES dbus-1d
++   PATHS
++   ${_progFiles}/dbus/lib ${CMAKE_INSTALL_PATH}/dbus/lib
++)
++
++
++if (DBUS_LIBS)
++
++   get_filename_component(_dbusLibPath ${DBUS_LIBS} PATH)
++
++   if (DBUS_DEBUG_LIBS)
++      set(DBUS_LIBS
++         optimized ${DBUS_LIBS}
++         debug ${DBUS_DEBUG_LIBS}
++      )
++   endif (DBUS_DEBUG_LIBS)
++
++   find_path(DBUS_LIB_INCLUDE_DIR dbus/dbus-arch-deps.h
++      PATHS
++      ${_dbusLibPath}
++      ${_progFiles}/dbus/include
++      PATH_SUFFIXES dbus-1.0/include
++   )
++endif (DBUS_LIBS)
++
++set(DBUS_INCLUDES ${DBUS_HEADER_INCLUDE_DIR} ${DBUS_LIB_INCLUDE_DIR})
++
++if (DBUS_INCLUDES AND DBUS_LIBS)
++   set(DBUS_FOUND TRUE)
++else (DBUS_INCLUDES AND DBUS_LIBS)
++   set(DBUS_FOUND FALSE)
++endif (DBUS_INCLUDES AND DBUS_LIBS)
++
+--- /dev/null
++++ a/cmake/modules/FindLibExpat.cmake
+@@ -0,0 +1,61 @@
++# - Try to find LIBEXPAT
++# Once done this will define
++#
++#  LIBEXPAT_FOUND - system has LIBEXPAT
++#  LIBEXPAT_INCLUDE_DIR - the LIBEXPAT include directory
++#  LIBEXPAT_LIBRARIES - the libraries needed to use LIBEXPAT
++#  LIBEXPAT_DEFINITIONS - Compiler switches required for using LIBEXPAT
++
++if (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++
++    # in cache already
++    SET(LIBEXPAT_FOUND TRUE)
++
++else (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++
++    IF (WIN32)
++		file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
++		find_FILE(LIBEXPAT_DIR expat Source/lib/expat.h
++			PATHS
++			"${_progFiles}"
++		)
++        if (LIBEXPAT_DIR)
++            set (_LIBEXPATIncDir  ${LIBEXPAT_DIR}/Source/lib)
++            set (_LIBEXPATLinkDir ${LIBEXPAT_DIR}/libs)
++        endif (LIBEXPAT_DIR)
++    ELSE (WIN32)
++        # use pkg-config to get the directories and then use these values
++        # in the FIND_PATH() and FIND_LIBRARY() calls
++        INCLUDE(UsePkgConfig)
++        PKGCONFIG(LIBEXPAT-2.0 _LIBEXPATIncDir _LIBEXPATLinkDir _LIBEXPATLinkFlags _LiIconvCflags)
++        SET(LIBEXPAT_DEFINITIONS ${_LIBEXPATCflags})
++    ENDIF (WIN32)
++
++    FIND_PATH(LIBEXPAT_INCLUDE_DIR expat.h
++      PATHS
++     ${_LIBEXPATIncDir}
++      PATH_SUFFIXES LIBEXPAT
++    )
++
++    FIND_LIBRARY(LIBEXPAT_LIBRARIES NAMES expat libexpat
++      PATHS
++      ${_LIBEXPATLinkDir}
++    )
++
++    if (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++       set(LIBEXPAT_FOUND TRUE)
++    endif (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++
++    if (LIBEXPAT_FOUND)
++      if (NOT LIBEXPAT_FIND_QUIETLY)
++        message(STATUS "Found libexpat: ${LIBEXPAT_LIBRARIES}")
++      endif (NOT LIBEXPAT_FIND_QUIETLY)
++    else (LIBEXPAT_FOUND)
++      if (LIBEXPAT_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find libexpat")
++      endif (LIBEXPAT_FIND_REQUIRED)
++    endif (LIBEXPAT_FOUND)
++
++    MARK_AS_ADVANCED(LIBEXPAT_INCLUDE_DIR LIBEXPAT_LIBRARIES)
++
++endif (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
+--- /dev/null
++++ a/cmake/modules/MacroGetenvWinPath.cmake
+@@ -0,0 +1,5 @@
++
++MACRO (MACRO_GETENV_WIN_PATH var name)
++   set(${var} $ENV{${name}})
++   STRING(REGEX REPLACE "\\\\" "/" ${var} "${${var}}")
++ENDMACRO (MACRO_GETENV_WIN_PATH var name)
+--- /dev/null
++++ a/cmake/modules/Win32Macros.cmake
+@@ -0,0 +1,44 @@
++#
++# win32 macros
++#
++# Copyright (c) 2006-2007, Ralf Habacker
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++#
++
++if (WIN32)
++    #
++    # addExplorerWrapper creates batch files for fast access
++    # to the build environment from the win32 explorer.
++    #
++    # For mingw and nmake projects it's opens a command shell,
++    # for Visual Studio IDE's (at least tested with VS 8 2005) it
++    # opens the related .sln file with paths setting specified at
++    # configure time.
++    #
++    MACRO (addExplorerWrapper _projectname)
++        # write explorer wrappers
++        get_filename_component(CMAKE_BIN_PATH ${CMAKE_COMMAND} PATH)
++        set (ADD_PATH "${CMAKE_BIN_PATH}")
++
++        if (QT_QMAKE_EXECUTABLE)
++            get_filename_component(QT_BIN_PATH ${QT_QMAKE_EXECUTABLE} PATH)
++            set (ADD_PATH "${ADD_PATH};${QT_BIN_PATH}")
++        endif (QT_QMAKE_EXECUTABLE)
++
++        # add here more pathes
++
++        if (MINGW)
++            get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
++            set (ADD_PATH "${ADD_PATH};${MINGW_BIN_PATH}")
++            write_file (${CMAKE_BINARY_DIR}/${_projectname}-shell.bat "set PATH=${ADD_PATH};%PATH%\ncmd.exe")
++        else (MINGW)
++            if (CMAKE_BUILD_TOOL STREQUAL  "nmake")
++                get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
++                write_file (${CMAKE_BINARY_DIR}/${_projectname}-shell.bat "set PATH=${ADD_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
++            else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
++                write_file (${CMAKE_BINARY_DIR}/${_projectname}-sln.bat "set PATH=${ADD_PATH};%PATH%\nstart ${_projectname}.sln")
++            endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
++        endif (MINGW)
++    ENDMACRO (addExplorerWrapper)
++endif(WIN32)
+--- /dev/null
++++ a/cmake/src/CMakeLists.txt
+@@ -0,0 +1,33 @@
++project(libdbus-c++)
++
++add_library(dbus-c++-1 SHARED
++	${CMAKE_SOURCE_DIR}/../src/connection.cpp
++	${CMAKE_SOURCE_DIR}/../src/debug.cpp
++	${CMAKE_SOURCE_DIR}/../src/dispatcher.cpp
++	${CMAKE_SOURCE_DIR}/../src/error.cpp
++	${CMAKE_SOURCE_DIR}/../src/eventloop-integration.cpp
++	${CMAKE_SOURCE_DIR}/../src/eventloop.cpp
++	${CMAKE_SOURCE_DIR}/../src/interface.cpp
++	${CMAKE_SOURCE_DIR}/../src/introspection.cpp
++	${CMAKE_SOURCE_DIR}/../src/message.cpp
++	${CMAKE_SOURCE_DIR}/../src/object.cpp
++	${CMAKE_SOURCE_DIR}/../src/pendingcall.cpp
++	${CMAKE_SOURCE_DIR}/../src/property.cpp
++	${CMAKE_SOURCE_DIR}/../src/server.cpp
++	${CMAKE_SOURCE_DIR}/../src/types.cpp
++	${CMAKE_SOURCE_DIR}/../src/connection_p.h
++	${CMAKE_SOURCE_DIR}/../src/dispatcher_p.h
++	${CMAKE_SOURCE_DIR}/../src/internalerror.h
++	${CMAKE_SOURCE_DIR}/../src/message_p.h
++	${CMAKE_SOURCE_DIR}/../src/pendingcall_p.h
++	${CMAKE_SOURCE_DIR}/../src/server_p.h
++)
++
++target_link_libraries(dbus-c++-1
++	ws2_32
++	${DBUS_LIBS}
++	${PTHREAD_LIBS}
++)
++
++install_targets(/lib dbus-c++-1 )
++
+--- /dev/null
++++ a/cmake/tools/CMakeLists.txt
+@@ -0,0 +1,30 @@
++project(tools)
++
++####################
++#  dbusxx-introspect
++####################
++add_executable(dbusxx-introspect
++	${CMAKE_SOURCE_DIR}/../tools/introspect.h
++	${CMAKE_SOURCE_DIR}/../tools/introspect.cpp
++)
++target_link_libraries(dbusxx-introspect dbus-c++-1 ${DBUS_LIBS})
++install_targets(/bin dbusxx-introspect)
++
++
++####################
++#  dbusxx-xml2cpp
++####################
++add_executable(dbusxx-xml2cpp
++	${CMAKE_SOURCE_DIR}/../tools/xml.h
++	${CMAKE_SOURCE_DIR}/../tools/xml.cpp
++	${CMAKE_SOURCE_DIR}/../tools/xml2cpp.h
++	${CMAKE_SOURCE_DIR}/../tools/xml2cpp.cpp
++	${CMAKE_SOURCE_DIR}/../tools/generate_adaptor.cpp
++	${CMAKE_SOURCE_DIR}/../tools/generate_adaptor.h
++	${CMAKE_SOURCE_DIR}/../tools/generate_proxy.cpp
++	${CMAKE_SOURCE_DIR}/../tools/generate_proxy.h
++	${CMAKE_SOURCE_DIR}/../tools/generator_utils.cpp
++	${CMAKE_SOURCE_DIR}/../tools/generator_utils.h
++)
++target_link_libraries(dbusxx-xml2cpp dbus-c++-1  ${DBUS_LIBS} ${LIBEXPAT_LIBRARIES})
++install_targets(/bin dbusxx-xml2cpp)
