@@ -1978,6 +1978,20 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettex
  }
  
  # if HAVE_NEWLOCALE
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c gettext-0.18/gettext-runtime/intl/vasnprintf.c
+--- gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c	Sun May  9 10:54:20 2010
++++ gettext-0.18/gettext-runtime/intl/vasnprintf.c	Mon May 31 14:43:07 2010
+@@ -86,6 +86,10 @@
+ # endif
+ #endif
+ 
++#ifdef _WIN32_WCE
++#include <wchar.h>
++#endif
++
+ /* Checked size_t computations.  */
+ #include "xsize.h"
+ 
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-runtime/intl/xsize.h
 --- gettext-0.18.orig/gettext-runtime/intl/xsize.h	Sun Jun 28 19:44:04 2009
 +++ gettext-0.18/gettext-runtime/intl/xsize.h	Fri May 21 13:10:02 2010
