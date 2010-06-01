@@ -20,7 +20,6 @@ class subinfo(info.infoclass):
           self.targets[ 'mysql-sever-5.1.46'] = self.baseURL+"mysql-noinstall-5.1.46-win32.zip"
           self.targetInstSrc[ 'mysql-sever-5.1.46' ] = "mysql-5.1.46-win32"
           self.targetDigests[ 'mysql-sever-5.1.46' ] = 'd1149263a9fc02ab4a1067a10e0eb7df35708290'
-          self.patchToApply[ 'mysql-sever-5.1.46' ] = [ 'mysql-5.1.46.patch',0 ]
           
         self.defaultTarget = 'mysql-sever-5.1.46'
        
@@ -45,13 +44,15 @@ class Package(CMakePackageBase):
     if( not self.cleanImage()):
       return False
     shutil.copytree( os.path.join( self.sourceDir() , "bin" ) , os.path.join( self.installDir(), "bin") , ignore=shutil.ignore_patterns('*.pdb','*.map','*test.exe','mysqld-debug.exe') )
+    # do not create lib files, just take the given ones, because of the stdcall problem
+    shutil.copy( os.path.join( self.sourceDir() , "lib" , "opt" , "libmysql.lib" ) , os.path.join( self.installDir(), "lib" , "libmysql.lib" ) )
     shutil.copy( os.path.join( self.sourceDir() , "Embedded" , "DLL" , "release" , "libmysqld.dll" ) , os.path.join( self.installDir(), "bin" , "libmysqld.dll" ) )
+    shutil.copy( os.path.join( self.sourceDir() , "Embedded" , "DLL" , "release" , "libmysqld.lib" ) , os.path.join( self.installDir(), "lib" , "libmysqld.lib" ) )
     shutil.copytree( os.path.join( self.sourceDir() , "include" ) , os.path.join( self.installDir(), "include" ) ,  ignore=shutil.ignore_patterns('*.def') )
     shutil.copytree( os.path.join( self.sourceDir() , "scripts" ) , os.path.join( self.installDir(), "scripts" ) )
     shutil.copytree( os.path.join( self.sourceDir() , "share" ) , os.path.join( self.installDir(), "share" ) , ignore=shutil.ignore_patterns('Makefile*') )
     shutil.copytree( os.path.join( self.sourceDir() , "data" ) , os.path.join( self.installDir(), "data" ) )
-    self.createImportLibs( "libmysql")
-    self.createImportLibs( "libmysqld")
+    
     return True 
     
 if __name__ == '__main__':
