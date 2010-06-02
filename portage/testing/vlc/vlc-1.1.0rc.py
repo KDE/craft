@@ -18,11 +18,11 @@ class subinfo(info.infoclass):
         self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32-debug.7z"
         self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = self.vlcTagName +  self.getVer()      
         
-        self.targets[ 'vlc-1.1.0-pre2'] = "http://download.videolan.org/pub/videolan/testing/vlc-1.1.0-pre2/win32/vlc-1.1.0-pre2-win32.7z"
-        self.targetDigests['vlc-1.1.0-pre2'] = 'b6839ddefa78e976efd00093605be59723f9d7ad'
-        self.targetInstSrc[ 'vlc-1.1.0-pre2' ] = "vlc-1.1.0-pre2"
+        self.targets[ 'vlc-1.1.0-rc'] = "http://download.videolan.org/pub/videolan/testing/vlc-1.1.0-rc/win32/vlc-1.1.0-rc-win32.7z"
+        self.targetDigests['vlc-1.1.0-rc'] = 'd89cb40947cc75cea5799d396b7576cf1cafd4f2'
+        self.targetInstSrc[ 'vlc-1.1.0-rc' ] = "vlc-1.1.0-rc"
         
-        self.defaultTarget = 'vlc-1.1.0-pre2'
+        self.defaultTarget = 'vlc-1.1.0-rc'
        
 
     def setDependencies( self ):
