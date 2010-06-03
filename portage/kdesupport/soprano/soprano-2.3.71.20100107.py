@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['kdesupport/clucene-core'] = 'default'
             self.hardDependencies['win32libs-bin/redland']   = 'default'
+            self.hardDependencies['testing/virtuoso']   = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
