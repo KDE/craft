@@ -1624,7 +1624,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
 +++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Mon May 31 13:49:10 2010
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,68 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1676,16 +1676,19 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +add_definitions(-DLOCALE_ALIAS_PATH="")
 +add_definitions(-DLOCALEDIR="")
 +add_definitions(-DIN_LIBINTL)
-+#add_definitions(-DBUILDING_DLL)
++add_definitions(-DBUILDING_DLL)
++if(CMAKE_COMPILER_IS_GNUCXX)
++    add_definitions(-DHAVE_VISIBILITY)
++endif(CMAKE_COMPILER_IS_GNUCXX)
 +
-+add_library(libintl SHARED ${INTL_SRCS})
-+target_link_libraries(libintl ${ICONV_LIBRARIES})
++add_library(intl SHARED ${INTL_SRCS})
++target_link_libraries(intl ${ICONV_LIBRARIES})
 +
 +if(WINCE)
-+    target_link_libraries(libintl ${WCECOMPAT_LIBRARIES})
++    target_link_libraries(intl ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
 +
-+install(TARGETS libintl RUNTIME DESTINATION bin
++install(TARGETS intl RUNTIME DESTINATION bin
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
 +
