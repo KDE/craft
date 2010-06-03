@@ -37,7 +37,7 @@ class Package(CMakePackageBase):
     if( not self.cleanImage()):
       return False
     
-    shutil.copytree( self.sourceDir() , self.installDir() )
+    shutil.copytree( self.sourceDir() , self.installDir(),ignore=shutil.ignore_patterns('libexpat.dll' ))
     
     return True 
     
