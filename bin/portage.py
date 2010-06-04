@@ -409,7 +409,7 @@ def findInstalled( category, package, buildType='' ):
 
     ret = None
     f = open( fileName, "rb" )
-    str = "^%s/%s-(.*)$" % ( category, package )
+    str = "^%s/%s-(.*)$" % ( category, re.escape(package) )
     regex = re.compile( str )
     for line in f.read().splitlines():
         match = regex.match( line )
