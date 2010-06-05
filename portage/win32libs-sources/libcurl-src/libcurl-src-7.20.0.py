@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
        self.defaultTarget = '7.20.0'
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
