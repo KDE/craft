@@ -22,8 +22,8 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
 
     def install(self):
-        shutil.move( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw" ) )
-        shutil.copy(os.path.join( self.installDir() , "mingw" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw" , "bin" , "mingw32-make.exe") )
+        shutil.move( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw4" ) )
+        shutil.copy( os.path.join( self.installDir() , "mingw4" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw4" , "bin" , "mingw32-make.exe") )
         return True
 
 if __name__ == '__main__':
