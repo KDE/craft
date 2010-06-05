@@ -15,6 +15,9 @@ class subinfo(info.infoclass):
         self.patchToApply['1.0.5-1'] = ("bzip.diff", 1)
         self.defaultTarget = '1.0.5-1'
 
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
 class Package(CMakePackageBase):
   def __init__( self ):
     self.subinfo = subinfo()
