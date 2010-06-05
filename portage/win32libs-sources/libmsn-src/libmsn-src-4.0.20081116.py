@@ -18,7 +18,9 @@ class subinfo(info.infoclass):
         self.patchToApply['4.0-beta2'] = ('libmsn_b2.diff', 0)
         self.patchToApply['4.0-beta4'] = ('libmsn_b4.diff', 0)
         self.defaultTarget = '4.0'
+
     def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
 
 from Package.CMakePackageBase import *
