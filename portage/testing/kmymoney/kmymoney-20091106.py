@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
         #since you'll get an 'dont know how to unpack this file: download' error because of the way the filename is extracted from the URL
         self.targets['3.98.1'] = 'http://ftp.heanet.ie/mirrors/sourceforge/k/project/km/kmymoney2/KMyMoney-KDE4/3.98/kmymoney-3.98.1.tar.bz2'
         self.targetInstSrc['3.98.1'] = 'kmymoney-3.98.1'
+        self.targets['3.98.1'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-3.98.1.tar.bz2'
+        self.targetInstSrc['3.98.1'] = 'kmymoney-3.98.1'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -15,7 +17,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['testing/mysql-server'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        self.softDependencies['testing/libofx'] = 'default'
+#        self.softDependencies['testing/libofx'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
     
