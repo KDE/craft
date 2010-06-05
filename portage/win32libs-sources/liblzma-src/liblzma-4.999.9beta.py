@@ -11,6 +11,9 @@ class subinfo(info.infoclass):
         self.targets[ver] = 'http://tukaani.org/xz/xz-4.999.9beta.tar.gz'
         self.targetInstSrc[ver] = 'xz-' + ver
         self.defaultTarget = ver
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
 
 class subclass(base.baseclass):
   def __init__( self, **args ):
