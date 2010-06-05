@@ -15,7 +15,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.2.0'] = 'openbabel-2.2.0'
         self.targetInstSrc['2.2.3'] = 'openbabel-2.2.3'
         self.defaultTarget = '2.2.3'
-        
+
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
