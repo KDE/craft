@@ -1,7 +1,7 @@
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/kde_file_win.h
+Index: kdewin/include/kde_file_win.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/kde_file_win.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/kde_file_win.h	(Arbeitskopie)
+--- kdewin/include/kde_file_win.h	(Revision 1128080)
++++ kdewin/include/kde_file_win.h	(Arbeitskopie)
 @@ -23,7 +23,11 @@
  #include <string.h>
  #include <stdio.h>
@@ -14,10 +14,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/kde_file_win.h
  #include <fcntl.h>
  #include <ctype.h>
  
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/limits.h
+Index: kdewin/include/msvc/limits.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/limits.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/limits.h	(Arbeitskopie)
+--- kdewin/include/msvc/limits.h	(Revision 1128080)
++++ kdewin/include/msvc/limits.h	(Arbeitskopie)
 @@ -24,7 +24,11 @@
  #include <sys/types.h>
  
@@ -30,10 +30,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/limits.h
  
  // FIXME: really needed?
  #include "sys/param.h"
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/string.h
+Index: kdewin/include/msvc/string.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/string.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/string.h	(Arbeitskopie)
+--- kdewin/include/msvc/string.h	(Revision 1128080)
++++ kdewin/include/msvc/string.h	(Arbeitskopie)
 @@ -24,7 +24,11 @@
  #include <sys/types.h>
  
@@ -46,10 +46,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/string.h
  
  #ifndef strncasecmp
  #define strncasecmp strnicmp
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/fcntl.h
+Index: kdewin/include/msvc/fcntl.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/fcntl.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/fcntl.h	(Arbeitskopie)
+--- kdewin/include/msvc/fcntl.h	(Revision 1128080)
++++ kdewin/include/msvc/fcntl.h	(Arbeitskopie)
 @@ -24,8 +24,13 @@
  #include <sys/types.h>
  
@@ -64,10 +64,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/fcntl.h
  #ifdef __cplusplus
  extern "C" {
  #endif
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdlib.h
+Index: kdewin/include/msvc/stdlib.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdlib.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdlib.h	(Arbeitskopie)
+--- kdewin/include/msvc/stdlib.h	(Revision 1128080)
++++ kdewin/include/msvc/stdlib.h	(Arbeitskopie)
 @@ -24,7 +24,11 @@
  #include <sys/types.h>
  
@@ -80,10 +80,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdlib.h
  
  #ifdef __cplusplus
  extern "C" {
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdio.h
+Index: kdewin/include/msvc/stdio.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdio.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdio.h	(Arbeitskopie)
+--- kdewin/include/msvc/stdio.h	(Revision 1128080)
++++ kdewin/include/msvc/stdio.h	(Arbeitskopie)
 @@ -25,7 +25,11 @@
  #include <sys/types.h>
  
@@ -96,10 +96,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/stdio.h
  
  
  #ifdef __cplusplus
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/utime.h
+Index: kdewin/include/msvc/utime.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/utime.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/utime.h	(Arbeitskopie)
+--- kdewin/include/msvc/utime.h	(Revision 1128080)
++++ kdewin/include/msvc/utime.h	(Arbeitskopie)
 @@ -24,6 +24,10 @@
  #include <sys/types.h>
  
@@ -111,10 +111,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/utime.h
 +#endif
  
  #endif  // KDEWIN_UTIME_H
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/dirent.h
+Index: kdewin/include/msvc/dirent.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/dirent.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/dirent.h	(Arbeitskopie)
+--- kdewin/include/msvc/dirent.h	(Revision 1128080)
++++ kdewin/include/msvc/dirent.h	(Arbeitskopie)
 @@ -25,9 +25,16 @@
  // include everywhere
  #include <sys/types.h>
@@ -132,10 +132,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/dirent.h
  
  #include <sys/lock.h>
  
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/math.h
+Index: kdewin/include/msvc/math.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/math.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/math.h	(Arbeitskopie)
+--- kdewin/include/msvc/math.h	(Revision 1128080)
++++ kdewin/include/msvc/math.h	(Arbeitskopie)
 @@ -34,8 +34,13 @@
  #ifndef _USE_MATH_DEFINES
  # define _USE_MATH_DEFINES
@@ -186,10 +186,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/math.h
  /* 7.12.12.2 */
  KDEWIN_EXPORT __inline double fmax (double a, double b)
  {
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/windows.h
+Index: kdewin/include/msvc/windows.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/windows.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/windows.h	(Arbeitskopie)
+--- kdewin/include/msvc/windows.h	(Revision 1128080)
++++ kdewin/include/msvc/windows.h	(Arbeitskopie)
 @@ -27,6 +27,10 @@
  #endif
  
@@ -201,10 +201,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/windows.h
 +#endif
  
  #endif /* KDEWIN_WINDOWS_H */
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/time.h
+Index: kdewin/include/msvc/time.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/time.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/time.h	(Arbeitskopie)
+--- kdewin/include/msvc/time.h	(Revision 1128080)
++++ kdewin/include/msvc/time.h	(Arbeitskopie)
 @@ -23,7 +23,11 @@
  // include everywhere
  #include <sys/types.h>
@@ -217,10 +217,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/time.h
  
  #ifdef __cplusplus
  extern "C" {
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/wchar.h
+Index: kdewin/include/msvc/wchar.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/wchar.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/wchar.h	(Arbeitskopie)
+--- kdewin/include/msvc/wchar.h	(Revision 1128080)
++++ kdewin/include/msvc/wchar.h	(Arbeitskopie)
 @@ -22,7 +22,11 @@
  #define KDEWIN_WCHAR_H
  
@@ -233,10 +233,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/wchar.h
  
  #ifndef wcscasecmp
  #define wcscasecmp _wcsicmp
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/unistd.h
+Index: kdewin/include/msvc/unistd.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/unistd.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/unistd.h	(Arbeitskopie)
+--- kdewin/include/msvc/unistd.h	(Revision 1128080)
++++ kdewin/include/msvc/unistd.h	(Arbeitskopie)
 @@ -23,10 +23,17 @@
  // include everywhere
  #include <sys/types.h>
@@ -255,10 +255,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/unistd.h
  /* include most headers here to avoid redefining gethostname() */
  #include <sys/time.h>
  #include <sys/resource.h>
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/signal.h
+Index: kdewin/include/msvc/signal.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/signal.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/signal.h	(Arbeitskopie)
+--- kdewin/include/msvc/signal.h	(Revision 1128080)
++++ kdewin/include/msvc/signal.h	(Arbeitskopie)
 @@ -24,7 +24,11 @@
  #include <sys/types.h>
  
@@ -271,10 +271,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/signal.h
  
  #ifdef  __cplusplus
  extern "C" {
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/ctype.h
+Index: kdewin/include/msvc/ctype.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/ctype.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/ctype.h	(Arbeitskopie)
+--- kdewin/include/msvc/ctype.h	(Revision 1128080)
++++ kdewin/include/msvc/ctype.h	(Arbeitskopie)
 @@ -23,7 +23,11 @@
  // include everywhere
  #include <sys/types.h>
@@ -287,10 +287,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/ctype.h
  
  #ifdef __cplusplus
  inline int KDE_isspace(int c) { return ((unsigned)(c + 1) <= 256) && isspace(c); }
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/errno.h
+Index: kdewin/include/msvc/errno.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/errno.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/errno.h	(Arbeitskopie)
+--- kdewin/include/msvc/errno.h	(Revision 1128080)
++++ kdewin/include/msvc/errno.h	(Arbeitskopie)
 @@ -21,7 +21,11 @@
  #define _KDEWIN_ERRNO_H
  
@@ -303,10 +303,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/errno.h
  
  #ifndef _CRT_ERRNO_DEFINED
  #define _CRT_ERRNO_DEFINED
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/types.h
+Index: kdewin/include/msvc/sys/types.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/types.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/types.h	(Arbeitskopie)
+--- kdewin/include/msvc/sys/types.h	(Revision 1128080)
++++ kdewin/include/msvc/sys/types.h	(Arbeitskopie)
 @@ -23,7 +23,11 @@
  #include <kdewin_export.h>
  
@@ -319,10 +319,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/types.h
  
  #include <BaseTsd.h>
  
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/stat.h
+Index: kdewin/include/msvc/sys/stat.h
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/stat.h	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/stat.h	(Arbeitskopie)
+--- kdewin/include/msvc/sys/stat.h	(Revision 1128080)
++++ kdewin/include/msvc/sys/stat.h	(Arbeitskopie)
 @@ -23,11 +23,16 @@
  #include <kdewin_export.h>
  
@@ -341,10 +341,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/include/msvc/sys/stat.h
  
  #ifdef __cplusplus
  extern "C" {
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/qt/CMakeLists.txt
+Index: kdewin/qt/CMakeLists.txt
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/qt/CMakeLists.txt	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/qt/CMakeLists.txt	(Arbeitskopie)
+--- kdewin/qt/CMakeLists.txt	(Revision 1128080)
++++ kdewin/qt/CMakeLists.txt	(Arbeitskopie)
 @@ -16,7 +16,11 @@
  
  if (BUILD_QT_LIB)
@@ -358,10 +358,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/qt/CMakeLists.txt
      set_target_properties(kdewin-qt PROPERTIES DEFINE_SYMBOL MAKE_KDEWIN_QT_LIB )
      set_target_properties(kdewin-qt PROPERTIES VERSION ${KDEWIN_VERSION_STR} )
  
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/qt/linkfile.cpp
+Index: kdewin/qt/linkfile.cpp
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/qt/linkfile.cpp	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/qt/linkfile.cpp	(Arbeitskopie)
+--- kdewin/qt/linkfile.cpp	(Revision 1128080)
++++ kdewin/qt/linkfile.cpp	(Arbeitskopie)
 @@ -134,6 +134,7 @@
  
  bool LinkFile::read()
@@ -395,10 +395,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/qt/linkfile.cpp
  }
  
  bool LinkFile::remove()
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/realpath.c
+Index: kdewin/src/realpath.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/realpath.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/realpath.c	(Arbeitskopie)
+--- kdewin/src/realpath.c	(Revision 1128080)
++++ kdewin/src/realpath.c	(Arbeitskopie)
 @@ -26,7 +26,11 @@
  #include <string.h>
  #include <sys/stat.h>
@@ -411,10 +411,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/realpath.c
  
  /** @return the canonicalized absolute pathname */
  KDEWIN_EXPORT char *realpath(const char *path,char *resolved_path)
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/uname.c
+Index: kdewin/src/uname.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/uname.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/uname.c	(Arbeitskopie)
+--- kdewin/src/uname.c	(Revision 1128080)
++++ kdewin/src/uname.c	(Arbeitskopie)
 @@ -17,12 +17,22 @@
     Boston, MA 02110-1301, USA.
  */
@@ -928,10 +928,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/uname.c
 -	return 0;
 +  return 0;
  }
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/unistd.c
+Index: kdewin/src/unistd.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/unistd.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/unistd.c	(Arbeitskopie)
+--- kdewin/src/unistd.c	(Revision 1128080)
++++ kdewin/src/unistd.c	(Arbeitskopie)
 @@ -21,7 +21,11 @@
  #include <kdewin_export.h>
  #include <windows.h>
@@ -956,10 +956,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/unistd.c
  		return _template;	
      }
      return 0;
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/math/math.c
+Index: kdewin/src/math/math.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/math/math.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/math/math.c	(Arbeitskopie)
+--- kdewin/src/math/math.c	(Revision 1128080)
++++ kdewin/src/math/math.c	(Arbeitskopie)
 @@ -6,8 +6,13 @@
  #ifndef _USE_MATH_DEFINES
  # define _USE_MATH_DEFINES
@@ -974,10 +974,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/math/math.c
  
  #include <kdewin_export.h>
  #include <errno.h>
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/signal.c
+Index: kdewin/src/signal.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/signal.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/signal.c	(Arbeitskopie)
+--- kdewin/src/signal.c	(Revision 1128080)
++++ kdewin/src/signal.c	(Arbeitskopie)
 @@ -69,6 +69,7 @@
      return -1;
    }
@@ -1012,10 +1012,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/signal.c
      return signal(signum, handler);
    return SIG_ERR;
  }
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/kde_file_win.c
+Index: kdewin/src/kde_file_win.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/kde_file_win.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/kde_file_win.c	(Arbeitskopie)
+--- kdewin/src/kde_file_win.c	(Revision 1128080)
++++ kdewin/src/kde_file_win.c	(Arbeitskopie)
 @@ -20,7 +20,11 @@
  #include <kdewin_export.h>
  #include <windows.h>
@@ -1038,10 +1038,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/kde_file_win.c
 +    return mkdir(path,0);
 +#endif
  }
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/fsync.c
+Index: kdewin/src/fsync.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/fsync.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/fsync.c	(Arbeitskopie)
+--- kdewin/src/fsync.c	(Revision 1128080)
++++ kdewin/src/fsync.c	(Arbeitskopie)
 @@ -20,7 +20,11 @@
  #include <kdewin_export.h>
  #include <windows.h>
@@ -1054,10 +1054,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/fsync.c
  
  KDEWIN_EXPORT int fsync(int fd)
  {
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/mmap.c
+Index: kdewin/src/mmap.c
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/mmap.c	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/mmap.c	(Arbeitskopie)
+--- kdewin/src/mmap.c	(Revision 1128080)
++++ kdewin/src/mmap.c	(Arbeitskopie)
 @@ -26,7 +26,12 @@
  #include <assert.h>
  #include <stdlib.h>
@@ -1071,10 +1071,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/mmap.c
  #include <sys/mman.h>
  #include <sys/socket.h>
  
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/CMakeLists.txt
+Index: kdewin/src/CMakeLists.txt
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/src/CMakeLists.txt	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/src/CMakeLists.txt	(Arbeitskopie)
+--- kdewin/src/CMakeLists.txt	(Revision 1128080)
++++ kdewin/src/CMakeLists.txt	(Arbeitskopie)
 @@ -59,7 +59,11 @@
  # for compatibility
  set(CMAKE_DEBUG_POSTFIX "d")
@@ -1088,10 +1088,10 @@ Index: C:/kderootce/svn/trunk/kdesupport/kdewin/src/CMakeLists.txt
  set_target_properties(kdewin32 PROPERTIES DEFINE_SYMBOL MAKE_KDEWIN32_LIB )
  set_target_properties(kdewin32 PROPERTIES VERSION ${KDEWIN_VERSION_STR} )
  set_target_properties(kdewin32 PROPERTIES COMPILE_FLAGS "-I${target_include_directories}")
-Index: C:/kderootce/svn/trunk/kdesupport/kdewin/CMakeLists.txt
+Index: kdewin/CMakeLists.txt
 ===================================================================
---- C:/kderootce/svn/trunk/kdesupport/kdewin/CMakeLists.txt	(Revision 1128080)
-+++ C:/kderootce/svn/trunk/kdesupport/kdewin/CMakeLists.txt	(Arbeitskopie)
+--- kdewin/CMakeLists.txt	(Revision 1128080)
++++ kdewin/CMakeLists.txt	(Arbeitskopie)
 @@ -8,6 +8,13 @@
  
  set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
