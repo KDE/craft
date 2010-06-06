@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kde-4.4/kdebase-runtime'] = 'default'
-        self.hardDependencies['win32libs-bin/zip'] = 'default'
+        self.hardDependencies['dev-util/zip'] = 'default'
         
 from Package.CMakePackageBase import *
 
