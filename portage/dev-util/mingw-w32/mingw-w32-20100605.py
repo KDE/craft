@@ -6,8 +6,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['20100527'] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/sezero_20100527/mingw-w32-bin_i686-mingw_20100527_sezero.zip"
-        self.defaultTarget = '20100527'
+        ver="20100604"
+        self.targets[ver] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/sezero_"+ver+"/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
+        self.defaultTarget = ver
             
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
