@@ -6,6 +6,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['2.3.1'] = 'git://gitorious.org/amarok/amarok.git|2.3.1'
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/amarok/amarok.git'
         self.defaultTarget = 'gitHEAD'
     
