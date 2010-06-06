@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.95'] = ('kdebase-workspace-4.3.95.diff', 1)
         self.patchToApply['4.4.0'] = ('kdebase-workspace-4.4.0.diff', 1)
         self.patchToApply['4.4.1'] = ('kdebase-workspace-4.4.1.diff', 1)
+        self.patchToApply['4.4.4'] = ('kdebase-workspace-4.4.4.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
