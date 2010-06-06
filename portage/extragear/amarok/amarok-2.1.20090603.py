@@ -16,9 +16,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/qca'] = 'default'		
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['testing/mysql-server'] = 'default'
-        self.hardDependencies['testing/mysql-embedded'] = 'default'
-        # the following is only a runtime dependency: keep that in mind for later!!!!
+        self.hardDependencies['testing/mysql-pkg'] = 'default'
+       # the following is only a runtime dependency: keep that in mind for later!!!!
         self.hardDependencies['testing/qtscriptgenerator'] = 'default'
         self.compiler=os.getenv('KDECOMPILER')
         if self.compiler != "mingw" and self.compiler != "mingw4":
