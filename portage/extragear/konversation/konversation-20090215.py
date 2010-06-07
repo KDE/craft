@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['1.2.1', '1.2.2', '1.2.3']:
+        for ver in ['1.2.1', '1.2.2', '1.2.3', '1.3']:
             self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/konversation/' + ver + '/src/konversation-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'konversation-' + ver
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/konversation/konversation.git'
