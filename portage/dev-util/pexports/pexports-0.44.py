@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget']       = 'default'
 
 from Package.BinaryPackageBase import *        
         
