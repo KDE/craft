@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/network/libktorrent'
-		self.svnTargets['1.0.0'] = 'tags/libktorrent/1.0.0'
+        self.svnTargets['1.0.0'] = 'tags/libktorrent/1.0.0'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
