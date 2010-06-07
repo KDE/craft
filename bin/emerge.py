@@ -149,7 +149,7 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def cleanUP(root,files):
+def cleanup(root,files):
         isValid = False
         for f in files:
           if(f.startswith(".svn")):
@@ -157,14 +157,14 @@ def cleanUP(root,files):
             continue
           if(os.path.isdir(os.path.join( root , f ))):
             isValid = True
-            cleanUP( os.path.join( root , f ) , os.listdir(os.path.join( root , f )) ) 
+            cleanup( os.path.join( root , f ) , os.listdir(os.path.join( root , f )) ) 
           else:
             if( f.endswith( ".py" ) ):
               isValid = True
             if( f.endswith( ".pyc" ) ):
               os.remove(os.path.join( root , f ))
         if( not isValid ):
-           utils.debug( "Removing unclean directory%s\n" % root , 2 )
+           utils.debug( "Removing unclean directory %s\n" % root , 2 )
            shutil.rmtree(  root  )
         return isValid
         
@@ -385,9 +385,8 @@ for i in sys.argv:
     elif ( i == "--disable-buildtarget" ):
         disableTargetBuild = True
     elif( i == "--cleanup" ):
-        portageDir=os.path.join( os.getenv("KDEROOT") , "emerge" , "portage" )
         utils.debug("Starting to clean your portage directory" , 1 )
-        cleanUP( portageDir , os.listdir( portageDir ) )
+        cleanup( portage.rootDir() , os.listdir( portage.rootDir() ) )
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
