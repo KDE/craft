@@ -141,7 +141,7 @@ class Repository ( tools.Object ):
         log = os.tmpfile()
         ret = self.system( command, capture_output=log )
         log.seek( 0 )
-        if self.verbose() > 1:
+        if self.verbose() > 0:
             for line in log:
                 print line,
         if ( ret == 0 ):

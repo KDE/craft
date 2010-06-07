@@ -10,6 +10,7 @@ import os
 import utils
 import portage
 import platform
+import shutil
 
 def usage():
     print """
@@ -135,6 +136,8 @@ Flags:
             work, the build will fail.
 --update    this option is the same as '-i --noclean'. It will update a single
             package that is already installed.
+--cleanup   Clean your portage directory, to prevent emerge errors, removes
+            empty directories and *.pyc files
 
 Internal options or options that aren't fully implemented yet:
 PLEASE DO NOT USE!
@@ -146,6 +149,25 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
+def cleanUP(root,files):
+        isValid = False
+        for f in files:
+          if(f.startswith(".svn")):
+            isValid = True
+            continue
+          if(os.path.isdir(os.path.join( root , f ))):
+            isValid = True
+            cleanUP( os.path.join( root , f ) , os.listdir(os.path.join( root , f )) ) 
+          else:
+            if( f.endswith( ".py" ) ):
+              isValid = True
+            if( f.endswith( ".pyc" ) ):
+              os.remove(os.path.join( root , f ))
+        if( not isValid ):
+           utils.debug( "Removing unclean directory%s\n" % root , 2 )
+           shutil.rmtree(  root  )
+        return isValid
+        
 @utils.log
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
@@ -362,6 +384,11 @@ for i in sys.argv:
         disableHostBuild = True
     elif ( i == "--disable-buildtarget" ):
         disableTargetBuild = True
+    elif( i == "--cleanup" ):
+        portageDir=os.path.join( os.getenv("KDEROOT") , "emerge" , "portage" )
+        utils.debug("Starting to clean your portage directory" , 1 )
+        cleanUP( portageDir , os.listdir( portageDir ) )
+        exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
         exit ( 1 )
@@ -555,3 +582,4 @@ if len( nextArguments ) > 0:
     #    else:
     #        os.environ[ element ] = ""
     utils.system( command ) or utils.die( "cannot execute next commands cmd: %s" % command )
+    
