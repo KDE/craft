@@ -23,16 +23,15 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.package.version = '0.5.2'
-        self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=On -DBUILD_QT_LIB=On -DBUILD_TOOLS=On'
+        self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON -DBUILD_TOOLS=ON'
         CMakePackageBase.__init__( self )
         
-        self.subinfo.options.configure.defines = ""
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
             utils.die("could not found qmake")
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
+        self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
 
 if __name__ == '__main__':
