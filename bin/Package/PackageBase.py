@@ -68,12 +68,15 @@ class PackageBase (EmergeBase):
         self.manifest()
 
         # run post-install scripts
-        for pkgtype in ['bin', 'lib', 'doc', 'src']:
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
-            script = os.path.join( self.rootdir, "manifest", scriptName )
-            if os.path.exists( script ):
-                cmd = "cd %s && %s" % ( self.rootdir, script )
-                utils.system( cmd ) or utils.warning("%s failed!" % cmd )
+        if not os.getenv("EMERGE_NO_POST_INSTALL") == "True":
+            for pkgtype in ['bin', 'lib', 'doc', 'src']:
+                scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+                script = os.path.join( self.rootdir, "manifest", scriptName )
+                if os.path.exists( script ):
+                    cmd = "cd %s && %s" % ( self.rootdir, script )
+                    utils.system( cmd ) or utils.warning("%s failed!" % cmd )
+        else:
+            utils.debug("running of post-install scripts disabled!", 0)
 
         # add package to installed database -> is this not the task of the manifest files ? 
        
