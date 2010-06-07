@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
     
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget']       = 'default'
         self.hardDependencies['dev-util/7zip']       = 'default'
         self.hardDependencies['gnuwin32/patch']      = 'default'
         self.hardDependencies['gnuwin32/sed']        = 'default'
@@ -18,6 +17,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/git']        = 'default'
         # for creating combined packages
         self.hardDependencies['dev-util/pexports']   = 'default'
+        self.hardDependencies['gnuwin32/wget']       = 'default'
 
         if os.getenv( "KDECOMPILER" ) == "mingw4":
             if platform.buildArchitecture() == 'x64':
