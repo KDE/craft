@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdereview/kmymoney'
         self.targets['3.98.1'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-3.98.1.tar.bz2'
         self.targetInstSrc['3.98.1'] = 'kmymoney-3.98.1'
+        self.patchToApply['3.98.1'] = ('kmymoney-3.98.1.diff', 1)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
