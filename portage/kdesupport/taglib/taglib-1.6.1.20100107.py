@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        for v in ['1.4', '1.5', '1.6', '1.6.1']:
+        for v in ['1.4', '1.5', '1.6', '1.6.1' , '1.6.3' ]:
           self.targets[ v ] = 'http://developer.kde.org/~wheeler/files/src/taglib-%s.tar.gz' % v
           self.targetInstSrc[ v ] = 'taglib-%s' % v
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
