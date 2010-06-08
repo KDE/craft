@@ -141,8 +141,15 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
       return True
       
 
+if COMPILER.startswith( "mingw" ):
+    class Package(PackageMSys):
+        def __init__( self ):
+            PackageMSys.__init__( self )
+else:
+    class Package(PackageCMake):
+        def __init__( self ):
+            PackageCMake.__init__( self )
+            
 if __name__ == '__main__':
-    if COMPILER.startswith( "mingw" ):
-      PackageMSys().execute()
-    else:
-      PackageCMake().execute()
+      Package().execute()
+
