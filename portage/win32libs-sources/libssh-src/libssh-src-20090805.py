@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         # should be zlib-src, but it's not a real source package...
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
-        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'        
+        self.hardDependencies['win32libs-bin/openssl'] = 'default'        
 
 from Package.CMakePackageBase import *
 
