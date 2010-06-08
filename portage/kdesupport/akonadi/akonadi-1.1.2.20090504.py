@@ -48,7 +48,6 @@ class Package(CMakePackageBase):
         self.boost = portage.getPackageInstance("win32libs-bin","boost")
         self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
         
-        self.subinfo.options.configure.defines = ""
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
