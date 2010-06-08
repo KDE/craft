@@ -9,7 +9,8 @@ class subinfo(info.infoclass):
         for version in ['1.2.3-2']:
             self.targets[ version ] = repoUrl + """/zlib-""" + version + """-bin.zip
                                 """ + repoUrl + """/zlib-""" + version + """-lib.zip"""
-            
+        self.targetDigests['1.2.3-2'] = ['9858eb8f17ebc714d2f66b1a3118341a7d01b3fe',
+                                         'cfc5dfef71162a6240ea0a8f8f8eed63fe82a882']
         self.defaultTarget = '1.2.3-2'
 
     def setDependencies( self ):

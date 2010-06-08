@@ -9,7 +9,8 @@ class subinfo(info.infoclass):
         
         for ver in ['0.18', '0.18.1', '0.18.2', '0.19']:
             self.targets[ ver ] = self.getPackage( repoUrl, "exiv2", ver )
-
+        self.targetDigests['0.19'] = ['c253b2b463fe62cc552028b26a21ed4bad6096bf',
+                                      '7d6b5c2003e32c980b7bb64dfd8dd9942a46e5e6']
         self.defaultTarget = '0.19'
 
     def setDependencies( self ):

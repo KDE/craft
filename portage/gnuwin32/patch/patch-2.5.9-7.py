@@ -5,6 +5,7 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.5.9'] = "http://downloads.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip"
+        self.targetDigests['2.5.9'] = '7b2ec738881f4e962e54e0f330b67c42635266b7'
         self.defaultTarget = '2.5.9'
 
     def setDependencies( self ):
