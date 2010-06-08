@@ -17,7 +17,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell = MSysShell()
         self.makeProgram = "make"
         os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" )))
-        os.putenv("PERL",MSysShell().toNativePath(os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" , "perl.exe" )))
+        #seting perl to prevent msys from using msys-perl
+        perl=self.shell.toNativePath(os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" , "perl.exe" ))
+        os.putenv("PERL",perl)
+        os.putenv("INTLTOOL_PERL",perl)
 
 
     def configureDefaultDefines( self ):
