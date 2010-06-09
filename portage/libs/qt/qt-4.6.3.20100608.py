@@ -38,7 +38,7 @@ class subinfo(info.infoclass):
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
             self.defaultTarget = '4.7'
         else:
-            self.defaultTarget = '4.6.3'
+            self.defaultTarget = '4.6.2'
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
