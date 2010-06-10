@@ -35,7 +35,7 @@ class Package(QMakePackageBase):
         if "PSDKDIR" in os.environ:
             os.environ["PSDKDIR"] = os.environ["PSDKDIR"].replace('\\', '/').replace(' ', '\\ ')
         else:
-            print "it won't work!!!!!!!!!!!!!!!!!"
+            print "Compilation won't work until the PSDKDIR environment variable is set!"
         QMakePackageBase.__init__( self )
 
     def unpack( self ):
