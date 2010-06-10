@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
         for version in ['20091002']:
-            self.targets[ version ] = 'http://downloads.sourceforge.net/kde-windows/liblastfm-vc90-20091002-bin.tar.bz2'#self.getPackage( repoUrl, "liblastfm", version )
+            self.targets[ version ] = self.getPackage( repoUrl, "liblastfm", version )
 
         self.defaultTarget = '20091002'
 
