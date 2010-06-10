@@ -131,13 +131,14 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
            
       
     def install (self):
-      if(not AutoToolsBuildSystem.install(self)):
-	return False
+      self.enterSourceDir()       
+      self.shell.execute(self.sourceDir(), self.makeProgram, "install_sw" )
       self.shell.execute(os.path.join( self.imageDir() , "lib"), "chmod" ,"664 *")
       self.shell.execute(os.path.join( self.imageDir() , "lib" , "engines" ), "chmod" , "755 *")
       shutil.move( os.path.join( self.imageDir(),  "lib" , "libcrypto.dll.a" ) , os.path.join( self.imageDir() , "lib" , "libeay32.dll.a" ) )
       shutil.move( os.path.join( self.imageDir(), "lib" , "libssl.dll.a" ) , os.path.join( self.imageDir() , "lib" , "ssleay32.dll.a" ) )
       return True
+      
       
 
 if COMPILER.startswith( "mingw" ):
