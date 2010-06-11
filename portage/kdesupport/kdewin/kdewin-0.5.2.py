@@ -1,4 +1,6 @@
 import info
+import platform
+import utils
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -14,7 +16,6 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/kdewin'
-        self.patchToApply['svnHEAD'] = ("kdewin-20100527.patch", 1)
         self.defaultTarget = 'svnHEAD'
 
 from Package.CMakePackageBase import *
@@ -33,6 +34,11 @@ class Package(CMakePackageBase):
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
         self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
+			
+    def make(self ):
+        if self.isTargetBuild():
+            os.environ["TARGET_INCLUDE"] = "%s;%s" % (os.path.join(self.mergeDestinationDir(), "include", "wcecompat"), os.getenv("TARGET_INCLUDE"))
+        return CMakePackageBase.make( self )
 
 if __name__ == '__main__':
     Package().execute()
