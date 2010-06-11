@@ -35,10 +35,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20100401'] = 'tags/kdepim/enterprise5.0.20100401.1110042/kdesupport/phonon'
         self.svnTargets['20100409'] = 'tags/kdepim/enterprise5.0.20100409.1112952/kdesupport/phonon'
         self.svnTargets['20100507'] = 'tags/kdepim/enterprise5.0.20100507.1123982/kdesupport/phonon'
-        self.svnTargets['20100528'] = 'tags/kdepim/enterprise5.0.20100528.1131643/kdesupport/phonon'
-        self.svnTargets['20100604'] = 'tags/kdepim/enterprise5.0.20100604.1134428/kdesupport/phonon'
-        self.svnTargets['20100611'] = 'tags/kdepim/enterprise5.0.20100611.1136974/kdesupport/phonon'
-        self.defaultTarget = '20100611'
+        self.defaultTarget = '20100507'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
