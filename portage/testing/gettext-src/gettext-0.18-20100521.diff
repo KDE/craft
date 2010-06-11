@@ -1623,8 +1623,8 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#endif
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Mon May 31 13:49:10 2010
-@@ -0,0 +1,68 @@
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri Jun 11 09:30:35 2010
+@@ -0,0 +1,67 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1671,15 +1671,14 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +  intl-compat.c
 +  libintl.rc
 +  plural.c
++  intl.def
 +)
 +
 +add_definitions(-DLOCALE_ALIAS_PATH="")
 +add_definitions(-DLOCALEDIR="")
 +add_definitions(-DIN_LIBINTL)
-+add_definitions(-DBUILDING_DLL)
-+if(CMAKE_COMPILER_IS_GNUCXX)
-+    add_definitions(-DHAVE_VISIBILITY)
-+endif(CMAKE_COMPILER_IS_GNUCXX)
++#add_definitions(-DBUILDING_DLL)
++#add_definitions(-DHAVE_VISIBILITY)
 +
 +add_library(intl SHARED ${INTL_SRCS})
 +target_link_libraries(intl ${ICONV_LIBRARIES})
@@ -1710,6 +1709,62 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gette
  # else
  #  if VMS
  #   define getcwd(buf, max) (getcwd) (buf, max, 0)
+diff -Nru gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-runtime/intl/intl.def
+--- gettext-0.18.orig/gettext-runtime/intl/intl.def	Thu Jan  1 00:00:00 1970
++++ gettext-0.18/gettext-runtime/intl/intl.def	Fri Jun 11 09:50:03 2010
+@@ -0,0 +1,51 @@
++LIBRARY libintl.DLL
++EXPORTS
++;_imp___ctype_ptr
++_nl_expand_alias
++_nl_explode_name
++_nl_find_domain
++_nl_find_msg
++_nl_language_preferences_default
++_nl_load_domain
++_nl_locale_name
++_nl_locale_name_default
++_nl_locale_name_environ
++_nl_locale_name_posix
++_nl_locale_name_thread_unsafe
++_nl_log_untranslated
++_nl_make_l10nflist
++_nl_msg_cat_cntr
++_nl_normalize_codeset
++bind_textdomain_codeset
++bindtextdomain
++dcgettext
++dcngettext
++dgettext
++dngettext
++gettext
++gl_locale_name_thread
++libintl_bind_textdomain_codeset
++libintl_bindtextdomain
++libintl_dcgettext
++libintl_dcigettext
++libintl_dcngettext
++libintl_dgettext
++libintl_dngettext
++libintl_gettext
++libintl_gettext_extract_plural
++libintl_gettext_free_exp
++libintl_gettext_germanic_plural
++libintl_gettextparse
++libintl_hash_string
++libintl_ngettext
++libintl_nl_current_default_domain
++libintl_nl_default_default_domain
++libintl_nl_default_dirname
++libintl_nl_domain_bindings
++;libintl_relocate
++;libintl_set_relocation_prefix
++libintl_textdomain
++libintl_version
++locale_charset
++ngettext
++textdomain
+\ No newline at end of file
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettext-runtime/intl/langprefs.c
 --- gettext-0.18.orig/gettext-runtime/intl/langprefs.c	Sat Dec 12 15:08:01 2009
 +++ gettext-0.18/gettext-runtime/intl/langprefs.c	Mon May 31 13:18:57 2010
@@ -1787,14 +1842,14 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/ge
  # include <xlocale.h>
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
 --- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	Sun Jun 28 19:44:04 2009
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Mon May 31 09:53:25 2010
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	Thu Jun  3 12:49:25 2010
 @@ -33,6 +33,11 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  
 +#ifdef _WIN32_WCE
 +# include <io.h>
-+#define open(a,b) _wceopen(a,b,0)
++#define open(a,b) _open(a,b,0)
 +#endif
 +
  #ifdef __GNUC__
