@@ -118,12 +118,12 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # non-cc builds only
             command += "-plugin-sql-odbc "
             command += "-plugin-sql-mysql "
+			command += "-qt-style-windowsxp "
+            command += "-qt-style-windowsvista "
         # all builds
         command += "-no-phonon -qdbus -dbus-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
-        if ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
-            command += "-qt-style-windowsxp -qt-style-windowsvista "
         command += "%s %s" % ( incdirs, libdirs )
 
         if self.buildType() == "Debug":
