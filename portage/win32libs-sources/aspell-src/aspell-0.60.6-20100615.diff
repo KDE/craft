@@ -1,7 +1,7 @@
 diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
---- aspell-0.60.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/CMakeLists.txt	2010-06-01 23:27:33.447400000 +0200
-@@ -0,0 +1,133 @@
+--- aspell-0.60.6.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ aspell-0.60.6/CMakeLists.txt	Tue Jun 15 11:22:30 2010
+@@ -0,0 +1,154 @@
 +project(aspell)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -19,6 +19,8 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +    ${CMAKE_CURRENT_BINARY_DIR} 
 +    ${CMAKE_CURRENT_BINARY_DIR}/gen
 +    ${CMAKE_CURRENT_SOURCE_DIR}/common
++    ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/cc
++    ${CMAKE_CURRENT_SOURCE_DIR}/modules/speller/default
 +)
 +
 +set(static_optfiles
@@ -49,7 +51,7 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gen/static_filters.src.cpp
 +                   COMMAND ${PERL_EXECUTABLE} ARGS ${CMAKE_CURRENT_SOURCE_DIR}/gen/mk-static-filter.pl ${static_optfiles}
 +                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-+                   
++        
 +set(aspell_SRCS
 +  common/cache.cpp
 +  common/string.cpp
@@ -109,6 +111,7 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +  lib/speller-c.cpp
 +  lib/string_pair_enumeration-c.cpp
 +  lib/new_checker.cpp
++  symbols.def
 +)
 +
 +if(COMPILE_IN_FILTERS)
@@ -135,9 +138,27 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +
 +add_library(aspell SHARED ${aspell_SRCS})
 +set_target_properties(aspell PROPERTIES DEFINE_SYMBOL MAKE_ASPELL_LIB)
++
++add_library(pspell SHARED lib/dummy.cpp)
++target_link_libraries(pspell aspell)
++
++add_executable(aspell_bin prog/aspell.cpp prog/check_funs.cpp prog/checker_string.cpp)
++target_link_libraries(aspell_bin aspell)
++set_target_properties(aspell_bin PROPERTIES RUNTIME_OUTPUT_NAME aspell)
++
++add_executable(prezip-bin prog/prezip.c)
++
++add_executable(word-list-compress prog/compress.c)
++
++install(TARGETS aspell pspell aspell_bin prezip-bin word-list-compress RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++
++install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/cc/aspell.h DESTINATION include)  
++install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/cc/aspell.h DESTINATION include/pspell) 
 diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_export.h
---- aspell-0.60.6.orig/common/aspell_export.h	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/common/aspell_export.h	2010-06-02 00:10:02.143400000 +0200
+--- aspell-0.60.6.orig/common/aspell_export.h	Thu Jan  1 00:00:00 1970
++++ aspell-0.60.6/common/aspell_export.h	Tue Jun 15 09:49:56 2010
 @@ -0,0 +1,22 @@
 +// This file is added to The New Aspell
 +// Copyright (C) 2010 by Patrick Spendrin under the GNU LGPL license
@@ -151,7 +172,7 @@ diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_
 +# ifndef ASPELL_EXPORT // check that it isn't defined (e.g. )
 +#  if defined(_WIN32) || defined(_WIN64)
 +#   pragma warning( disable: 4251 )
-+#   ifdef MAKE_ASPELL_LIB
++#   ifdef MAKE_ASPELL_LIB || MAKE_PSPELL_LIB
 +#    define ASPELL_EXPORT __declspec(dllexport)
 +#   else
 +#    define ASPELL_EXPORT __declspec(dllimport)
@@ -161,10 +182,10 @@ diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_
 +#  define ASPELL_EXPORT
 +# endif
 +#endif // ASPELL_EXPORT_HPP
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru aspell-0.60.6.orig/common/cache-t.hpp aspell-0.60.6/common/cache-t.hpp
---- aspell-0.60.6.orig/common/cache-t.hpp	2004-06-19 08:37:06.000000000 +0200
-+++ aspell-0.60.6/common/cache-t.hpp	2010-06-01 23:24:48.776400000 +0200
+--- aspell-0.60.6.orig/common/cache-t.hpp	Sat Jun 19 06:37:06 2004
++++ aspell-0.60.6/common/cache-t.hpp	Tue Jun 15 11:29:42 2010
 @@ -8,7 +8,7 @@
  
  namespace acommon {
@@ -174,9 +195,38 @@ diff -Nru aspell-0.60.6.orig/common/cache-t.hpp aspell-0.60.6/common/cache-t.hpp
  {
  public:
    mutable Mutex lock;
+diff -Nru aspell-0.60.6.orig/common/cache.hpp aspell-0.60.6/common/cache.hpp
+--- aspell-0.60.6.orig/common/cache.hpp	Sat Jun 19 06:37:06 2004
++++ aspell-0.60.6/common/cache.hpp	Tue Jun 15 09:07:34 2010
+@@ -2,6 +2,7 @@
+ #define ACOMMON_CACHE__HPP
+ 
+ #include "posib_err.hpp"
++#include "aspell_export.h"
+ 
+ namespace acommon {
+ 
+@@ -25,7 +26,7 @@
+   release_cache_data(const_cast<GlobalCacheBase *>(c),d);
+ }
+ 
+-class Cacheable
++class ASPELL_EXPORT Cacheable
+ {
+ public: // but don't use
+   Cacheable * next;
+@@ -74,7 +75,7 @@
+   return no_err;
+ }
+ 
+-bool reset_cache(const char * = 0);
++bool ASPELL_EXPORT reset_cache(const char * = 0);
+ 
+ }
+ 
 diff -Nru aspell-0.60.6.orig/common/can_have_error.hpp aspell-0.60.6/common/can_have_error.hpp
---- aspell-0.60.6.orig/common/can_have_error.hpp	2002-08-26 23:42:05.000000000 +0200
-+++ aspell-0.60.6/common/can_have_error.hpp	2010-06-02 00:09:49.333400000 +0200
+--- aspell-0.60.6.orig/common/can_have_error.hpp	Mon Aug 26 21:42:05 2002
++++ aspell-0.60.6/common/can_have_error.hpp	Tue Jun 15 11:30:12 2010
 @@ -7,6 +7,8 @@
  #ifndef ASPELL_CAN_HAVE_ERROR__HPP
  #define ASPELL_CAN_HAVE_ERROR__HPP
@@ -196,8 +246,8 @@ diff -Nru aspell-0.60.6.orig/common/can_have_error.hpp aspell-0.60.6/common/can_
    CanHaveError(Error * e = 0);
    CopyPtr<Error> err_;
 diff -Nru aspell-0.60.6.orig/common/config.hpp aspell-0.60.6/common/config.hpp
---- aspell-0.60.6.orig/common/config.hpp	2004-11-18 03:01:53.000000000 +0100
-+++ aspell-0.60.6/common/config.hpp	2010-06-01 23:23:49.034400000 +0200
+--- aspell-0.60.6.orig/common/config.hpp	Thu Nov 18 02:01:53 2004
++++ aspell-0.60.6/common/config.hpp	Tue Jun 15 11:30:30 2010
 @@ -79,7 +79,7 @@
    // -- setting a list item directly, ie with out a prefix, is the same as 
    //    setting it to a single value
@@ -230,8 +280,8 @@ diff -Nru aspell-0.60.6.orig/common/config.hpp aspell-0.60.6/common/config.hpp
  
  }
 diff -Nru aspell-0.60.6.orig/common/convert.cpp aspell-0.60.6/common/convert.cpp
---- aspell-0.60.6.orig/common/convert.cpp	2007-12-03 07:55:45.000000000 +0100
-+++ aspell-0.60.6/common/convert.cpp	2010-05-22 00:12:57.450373600 +0200
+--- aspell-0.60.6.orig/common/convert.cpp	Mon Dec  3 06:55:45 2007
++++ aspell-0.60.6/common/convert.cpp	Tue Jun 15 11:30:56 2010
 @@ -24,6 +24,10 @@
  
  #include "gettext.h"
@@ -244,8 +294,8 @@ diff -Nru aspell-0.60.6.orig/common/convert.cpp aspell-0.60.6/common/convert.cpp
  
    typedef unsigned char  byte;
 diff -Nru aspell-0.60.6.orig/common/convert.hpp aspell-0.60.6/common/convert.hpp
---- aspell-0.60.6.orig/common/convert.hpp	2004-11-01 21:22:03.000000000 +0100
-+++ aspell-0.60.6/common/convert.hpp	2010-06-01 23:22:35.622400000 +0200
+--- aspell-0.60.6.orig/common/convert.hpp	Mon Nov  1 20:22:03 2004
++++ aspell-0.60.6/common/convert.hpp	Tue Jun 15 11:31:16 2010
 @@ -92,7 +92,7 @@
  
    typedef FilterCharVector ConvertBuffer;
@@ -255,6 +305,27 @@ diff -Nru aspell-0.60.6.orig/common/convert.hpp aspell-0.60.6/common/convert.hpp
    private:
      CachePtr<Decode> decode_c;
      StackPtr<Decode> decode_s;
+@@ -195,16 +195,16 @@
+     
+   };
+ 
+-  bool operator== (const Convert & rhs, const Convert & lhs);
++  bool ASPELL_EXPORT operator== (const Convert & rhs, const Convert & lhs);
+ 
+-  const char * fix_encoding_str(ParmStr enc, String & buf);
++  const ASPELL_EXPORT char * fix_encoding_str(ParmStr enc, String & buf);
+ 
+   // also returns true if the encoding is unknown
+-  bool ascii_encoding(const Config & c, ParmStr enc0);
++  bool ASPELL_EXPORT ascii_encoding(const Config & c, ParmStr enc0);
+ 
+   enum Normalize {NormNone, NormFrom, NormTo};
+ 
+-  PosibErr<Convert *> internal_new_convert(const Config & c, 
++  PosibErr<Convert *> ASPELL_EXPORT internal_new_convert(const Config & c, 
+                                            ParmString in, ParmString out,
+                                            bool if_needed,
+                                            Normalize n);
 @@ -223,7 +223,7 @@
      return internal_new_convert(c,in,out,true,n);
    }
@@ -264,9 +335,18 @@ diff -Nru aspell-0.60.6.orig/common/convert.hpp aspell-0.60.6/common/convert.hpp
      Convert * ptr;
      ConvObj(Convert * c = 0) : ptr(c) {}
      ~ConvObj() {delete ptr;}
+@@ -402,7 +402,7 @@
+     }
+   };
+ 
+-  struct MBLen 
++  struct ASPELL_EXPORT MBLen 
+   {
+     enum Encoding {Other, UTF8, UCS2, UCS4} encoding;
+     MBLen() : encoding(Other) {}
 diff -Nru aspell-0.60.6.orig/common/document_checker.hpp aspell-0.60.6/common/document_checker.hpp
---- aspell-0.60.6.orig/common/document_checker.hpp	2002-08-10 17:17:06.000000000 +0200
-+++ aspell-0.60.6/common/document_checker.hpp	2010-06-02 00:22:49.691400000 +0200
+--- aspell-0.60.6.orig/common/document_checker.hpp	Sat Aug 10 15:17:06 2002
++++ aspell-0.60.6/common/document_checker.hpp	Tue Jun 15 11:31:35 2010
 @@ -13,12 +13,13 @@
  #include "can_have_error.hpp"
  #include "filter_char.hpp"
@@ -309,8 +389,8 @@ diff -Nru aspell-0.60.6.orig/common/document_checker.hpp aspell-0.60.6/common/do
  }
  
 diff -Nru aspell-0.60.6.orig/common/error.hpp aspell-0.60.6/common/error.hpp
---- aspell-0.60.6.orig/common/error.hpp	2004-02-21 22:19:36.000000000 +0100
-+++ aspell-0.60.6/common/error.hpp	2010-06-01 23:49:38.202400000 +0200
+--- aspell-0.60.6.orig/common/error.hpp	Sat Feb 21 21:19:36 2004
++++ aspell-0.60.6/common/error.hpp	Tue Jun 15 11:31:44 2010
 @@ -7,11 +7,13 @@
  #ifndef ASPELL_ERROR__HPP
  #define ASPELL_ERROR__HPP
@@ -327,8 +407,8 @@ diff -Nru aspell-0.60.6.orig/common/error.hpp aspell-0.60.6/common/error.hpp
    const ErrorInfo * err;
  
 diff -Nru aspell-0.60.6.orig/common/file_data_util.hpp aspell-0.60.6/common/file_data_util.hpp
---- aspell-0.60.6.orig/common/file_data_util.hpp	2004-03-31 13:16:05.000000000 +0200
-+++ aspell-0.60.6/common/file_data_util.hpp	2010-06-01 23:20:16.382400000 +0200
+--- aspell-0.60.6.orig/common/file_data_util.hpp	Wed Mar 31 11:16:05 2004
++++ aspell-0.60.6/common/file_data_util.hpp	Tue Jun 15 11:31:54 2010
 @@ -7,11 +7,11 @@
  
  namespace acommon {
@@ -345,8 +425,8 @@ diff -Nru aspell-0.60.6.orig/common/file_data_util.hpp aspell-0.60.6/common/file
                   const String & name, 
                   ParmString preext, ParmString ext);
 diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util.cpp
---- aspell-0.60.6.orig/common/file_util.cpp	2004-11-15 13:29:53.000000000 +0100
-+++ aspell-0.60.6/common/file_util.cpp	2010-05-21 23:40:53.311373600 +0200
+--- aspell-0.60.6.orig/common/file_util.cpp	Mon Nov 15 12:29:53 2004
++++ aspell-0.60.6/common/file_util.cpp	Tue Jun 15 11:32:02 2010
 @@ -25,14 +25,12 @@
  #include <dirent.h>
  
@@ -364,8 +444,8 @@ diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util
  #  define ACCESS access
  
 diff -Nru aspell-0.60.6.orig/common/file_util.hpp aspell-0.60.6/common/file_util.hpp
---- aspell-0.60.6.orig/common/file_util.hpp	2004-06-17 14:41:33.000000000 +0200
-+++ aspell-0.60.6/common/file_util.hpp	2010-06-01 23:19:43.748400000 +0200
+--- aspell-0.60.6.orig/common/file_util.hpp	Thu Jun 17 12:41:33 2004
++++ aspell-0.60.6/common/file_util.hpp	Tue Jun 15 11:32:14 2010
 @@ -18,32 +18,32 @@
    class Config;
    class StringList;
@@ -414,9 +494,18 @@ diff -Nru aspell-0.60.6.orig/common/file_util.hpp aspell-0.60.6/common/file_util
      String suffix;
      String path;
 diff -Nru aspell-0.60.6.orig/common/filter.hpp aspell-0.60.6/common/filter.hpp
---- aspell-0.60.6.orig/common/filter.hpp	2004-10-28 02:41:04.000000000 +0200
-+++ aspell-0.60.6/common/filter.hpp	2010-06-01 23:19:06.600400000 +0200
-@@ -24,7 +24,7 @@
+--- aspell-0.60.6.orig/common/filter.hpp	Thu Oct 28 00:41:04 2004
++++ aspell-0.60.6/common/filter.hpp	Tue Jun 15 11:32:24 2010
+@@ -14,6 +14,8 @@
+ #include "vector.hpp"
+ #include "string_pair_enumeration.hpp"
+ 
++#include "aspell_export.h"
++
+ #include <stdio.h>
+ 
+ namespace acommon {
+@@ -24,7 +26,7 @@
    class StringList;
    struct ConfigModule;
  
@@ -425,9 +514,44 @@ diff -Nru aspell-0.60.6.orig/common/filter.hpp aspell-0.60.6/common/filter.hpp
    public:
      
      bool empty() const {return filters_.empty();}
+@@ -42,25 +44,25 @@
+     Filters filters_;
+   };
+ 
+-  PosibErr<void> set_mode_from_extension(Config * config,
++  PosibErr<void> ASPELL_EXPORT set_mode_from_extension(Config * config,
+                                          ParmString filename,
+                                          FILE * in = NULL);
+   
+-  PosibErr<void> setup_filter(Filter &, Config *, 
++  PosibErr<void> ASPELL_EXPORT setup_filter(Filter &, Config *, 
+ 			      bool use_decoder, 
+ 			      bool use_filter, 
+ 			      bool use_encoder);
+-  void activate_dynamic_filteroptions(Config *c);
+-  void activate_filter_modes(Config * config);
++  void ASPELL_EXPORT activate_dynamic_filteroptions(Config *c);
++  void ASPELL_EXPORT activate_filter_modes(Config * config);
+ 
+-  void load_all_filters(Config * config);
++  void ASPELL_EXPORT load_all_filters(Config * config);
+ 
+-  PosibErr<bool> verify_version(const char * relOp, 
++  PosibErr<bool> ASPELL_EXPORT verify_version(const char * relOp, 
+                                 const char * actual, const char * required);
+-  PosibErr<void> check_version(const char * requirement);
++  PosibErr<void> ASPELL_EXPORT check_version(const char * requirement);
+ 
+-  PosibErr<StringPairEnumeration *> available_filters(Config *);
+-  PosibErr<StringPairEnumeration *> available_filter_modes(Config *);
++  PosibErr<StringPairEnumeration *> ASPELL_EXPORT available_filters(Config *);
++  PosibErr<StringPairEnumeration *> ASPELL_EXPORT available_filter_modes(Config *);
+ 
+ };
+ 
 diff -Nru aspell-0.60.6.orig/common/filter_char_vector.hpp aspell-0.60.6/common/filter_char_vector.hpp
---- aspell-0.60.6.orig/common/filter_char_vector.hpp	2004-02-20 22:24:16.000000000 +0100
-+++ aspell-0.60.6/common/filter_char_vector.hpp	2010-06-01 23:18:32.737400000 +0200
+--- aspell-0.60.6.orig/common/filter_char_vector.hpp	Fri Feb 20 21:24:16 2004
++++ aspell-0.60.6/common/filter_char_vector.hpp	Tue Jun 15 11:32:33 2010
 @@ -12,7 +12,7 @@
  
  namespace acommon {
@@ -438,8 +562,8 @@ diff -Nru aspell-0.60.6.orig/common/filter_char_vector.hpp aspell-0.60.6/common/
      typedef Vector<FilterChar> Base;
    public:
 diff -Nru aspell-0.60.6.orig/common/fstream.hpp aspell-0.60.6/common/fstream.hpp
---- aspell-0.60.6.orig/common/fstream.hpp	2004-06-17 14:41:35.000000000 +0200
-+++ aspell-0.60.6/common/fstream.hpp	2010-06-01 23:18:19.577400000 +0200
+--- aspell-0.60.6.orig/common/fstream.hpp	Thu Jun 17 12:41:35 2004
++++ aspell-0.60.6/common/fstream.hpp	Tue Jun 15 11:32:42 2010
 @@ -20,7 +20,7 @@
  namespace acommon {
    class String;
@@ -450,8 +574,8 @@ diff -Nru aspell-0.60.6.orig/common/fstream.hpp aspell-0.60.6/common/fstream.hpp
    private:
      FILE * file_;
 diff -Nru aspell-0.60.6.orig/common/getdata.hpp aspell-0.60.6/common/getdata.hpp
---- aspell-0.60.6.orig/common/getdata.hpp	2004-06-17 14:41:35.000000000 +0200
-+++ aspell-0.60.6/common/getdata.hpp	2010-06-01 23:15:58.610400000 +0200
+--- aspell-0.60.6.orig/common/getdata.hpp	Thu Jun 17 12:41:35 2004
++++ aspell-0.60.6/common/getdata.hpp	Tue Jun 15 11:32:53 2010
 @@ -26,9 +26,9 @@
      DataPair() : line_num(0) {}
    };
@@ -501,8 +625,8 @@ diff -Nru aspell-0.60.6.orig/common/getdata.hpp aspell-0.60.6/common/getdata.hpp
  }
  #endif
 diff -Nru aspell-0.60.6.orig/common/indiv_filter.hpp aspell-0.60.6/common/indiv_filter.hpp
---- aspell-0.60.6.orig/common/indiv_filter.hpp	2004-06-27 06:54:00.000000000 +0200
-+++ aspell-0.60.6/common/indiv_filter.hpp	2010-06-01 23:12:43.585400000 +0200
+--- aspell-0.60.6.orig/common/indiv_filter.hpp	Sun Jun 27 04:54:00 2004
++++ aspell-0.60.6/common/indiv_filter.hpp	Tue Jun 15 11:33:05 2010
 @@ -17,7 +17,7 @@
  
    class Config;
@@ -522,8 +646,8 @@ diff -Nru aspell-0.60.6.orig/common/indiv_filter.hpp aspell-0.60.6/common/indiv_
  
      // sets up the filter 
 diff -Nru aspell-0.60.6.orig/common/info.hpp aspell-0.60.6/common/info.hpp
---- aspell-0.60.6.orig/common/info.hpp	2004-05-30 12:49:17.000000000 +0200
-+++ aspell-0.60.6/common/info.hpp	2010-06-01 23:12:30.698400000 +0200
+--- aspell-0.60.6.orig/common/info.hpp	Sun May 30 10:49:17 2004
++++ aspell-0.60.6/common/info.hpp	Tue Jun 15 11:33:15 2010
 @@ -34,7 +34,7 @@
      StringList * dict_dirs;
    };
@@ -580,9 +704,34 @@ diff -Nru aspell-0.60.6.orig/common/info.hpp aspell-0.60.6/common/info.hpp
    public:
      const DictInfoNode * node_;
      DictInfoEnumeration(const DictInfoNode * n) : node_(n) {}
+diff -Nru aspell-0.60.6.orig/common/iostream.hpp aspell-0.60.6/common/iostream.hpp
+--- aspell-0.60.6.orig/common/iostream.hpp	Sat Sep 25 12:47:47 2004
++++ aspell-0.60.6/common/iostream.hpp	Tue Jun 15 09:07:43 2010
+@@ -9,6 +9,8 @@
+ 
+ #include "fstream.hpp"
+ 
++#include "aspell_export.h"
++
+ namespace acommon {
+ 
+   // These streams for the time being will be based on stdin, stdout,
+@@ -16,9 +18,9 @@
+   // functions.  It is also safe to assume that modifications to the
+   // state of the standard streams will effect these.
+ 
+-  extern FStream CIN;
+-  extern FStream COUT;
+-  extern FStream CERR;
++  extern ASPELL_EXPORT FStream CIN;
++  extern ASPELL_EXPORT FStream COUT;
++  extern ASPELL_EXPORT FStream CERR;
+ }
+ 
+ #endif
 diff -Nru aspell-0.60.6.orig/common/istream.hpp aspell-0.60.6/common/istream.hpp
---- aspell-0.60.6.orig/common/istream.hpp	2004-02-21 21:43:31.000000000 +0100
-+++ aspell-0.60.6/common/istream.hpp	2010-06-01 23:09:45.507400000 +0200
+--- aspell-0.60.6.orig/common/istream.hpp	Sat Feb 21 20:43:31 2004
++++ aspell-0.60.6/common/istream.hpp	Tue Jun 15 11:33:25 2010
 @@ -11,7 +11,7 @@
  
    class String;
@@ -593,8 +742,8 @@ diff -Nru aspell-0.60.6.orig/common/istream.hpp aspell-0.60.6/common/istream.hpp
      char delem;
    public:
 diff -Nru aspell-0.60.6.orig/common/itemize.hpp aspell-0.60.6/common/itemize.hpp
---- aspell-0.60.6.orig/common/itemize.hpp	2002-07-22 09:07:24.000000000 +0200
-+++ aspell-0.60.6/common/itemize.hpp	2010-06-01 23:07:37.208400000 +0200
+--- aspell-0.60.6.orig/common/itemize.hpp	Mon Jul 22 07:07:24 2002
++++ aspell-0.60.6/common/itemize.hpp	Tue Jun 15 11:33:36 2010
 @@ -7,13 +7,15 @@
  #ifndef ITEMIZE__HPP
  #define ITEMIZE__HPP
@@ -613,8 +762,8 @@ diff -Nru aspell-0.60.6.orig/common/itemize.hpp aspell-0.60.6/common/itemize.hpp
  }
  
 diff -Nru aspell-0.60.6.orig/common/lock.hpp aspell-0.60.6/common/lock.hpp
---- aspell-0.60.6.orig/common/lock.hpp	2004-09-23 15:25:24.000000000 +0200
-+++ aspell-0.60.6/common/lock.hpp	2010-06-01 23:07:10.285400000 +0200
+--- aspell-0.60.6.orig/common/lock.hpp	Thu Sep 23 13:25:24 2004
++++ aspell-0.60.6/common/lock.hpp	Tue Jun 15 11:33:45 2010
 @@ -15,6 +15,8 @@
  #ifndef DISTRIBNET_LOCK__HPP
  #define DISTRIBNET_LOCK__HPP
@@ -652,8 +801,8 @@ diff -Nru aspell-0.60.6.orig/common/lock.hpp aspell-0.60.6/common/lock.hpp
      Lock(const Lock &);
      void operator= (const Lock &);
 diff -Nru aspell-0.60.6.orig/common/mutable_container.hpp aspell-0.60.6/common/mutable_container.hpp
---- aspell-0.60.6.orig/common/mutable_container.hpp	2004-06-17 14:41:47.000000000 +0200
-+++ aspell-0.60.6/common/mutable_container.hpp	2010-06-01 23:04:55.872400000 +0200
+--- aspell-0.60.6.orig/common/mutable_container.hpp	Thu Jun 17 12:41:47 2004
++++ aspell-0.60.6/common/mutable_container.hpp	Tue Jun 15 11:33:54 2010
 @@ -7,18 +7,20 @@
  #ifndef ASPELL_MUTABLE_CONTAINER__HPP
  #define ASPELL_MUTABLE_CONTAINER__HPP
@@ -678,8 +827,8 @@ diff -Nru aspell-0.60.6.orig/common/mutable_container.hpp aspell-0.60.6/common/m
    virtual PosibErr<bool> remove(ParmStr to_rem) = 0;
    virtual PosibErr<void> clear() = 0;
 diff -Nru aspell-0.60.6.orig/common/objstack.cpp aspell-0.60.6/common/objstack.cpp
---- aspell-0.60.6.orig/common/objstack.cpp	2006-11-24 04:46:09.000000000 +0100
-+++ aspell-0.60.6/common/objstack.cpp	2010-05-22 00:13:47.555373600 +0200
+--- aspell-0.60.6.orig/common/objstack.cpp	Fri Nov 24 03:46:09 2006
++++ aspell-0.60.6/common/objstack.cpp	Tue Jun 15 11:34:04 2010
 @@ -1,5 +1,6 @@
  
  #include "objstack.hpp"
@@ -688,8 +837,8 @@ diff -Nru aspell-0.60.6.orig/common/objstack.cpp aspell-0.60.6/common/objstack.c
  namespace acommon {
  
 diff -Nru aspell-0.60.6.orig/common/objstack.hpp aspell-0.60.6/common/objstack.hpp
---- aspell-0.60.6.orig/common/objstack.hpp	2006-11-24 04:37:39.000000000 +0100
-+++ aspell-0.60.6/common/objstack.hpp	2010-06-01 23:03:58.743400000 +0200
+--- aspell-0.60.6.orig/common/objstack.hpp	Fri Nov 24 03:37:39 2006
++++ aspell-0.60.6/common/objstack.hpp	Tue Jun 15 11:34:14 2010
 @@ -2,13 +2,15 @@
  #ifndef ACOMMON_OBJSTACK__HPP
  #define ACOMMON_OBJSTACK__HPP
@@ -708,8 +857,8 @@ diff -Nru aspell-0.60.6.orig/common/objstack.hpp aspell-0.60.6/common/objstack.h
    typedef unsigned char byte;
    struct Node
 diff -Nru aspell-0.60.6.orig/common/ostream.hpp aspell-0.60.6/common/ostream.hpp
---- aspell-0.60.6.orig/common/ostream.hpp	2004-07-24 14:03:58.000000000 +0200
-+++ aspell-0.60.6/common/ostream.hpp	2010-06-01 23:29:24.569400000 +0200
+--- aspell-0.60.6.orig/common/ostream.hpp	Sat Jul 24 12:03:58 2004
++++ aspell-0.60.6/common/ostream.hpp	Tue Jun 15 11:34:37 2010
 @@ -9,6 +9,8 @@
  
  #include <stdarg.h>
@@ -729,8 +878,8 @@ diff -Nru aspell-0.60.6.orig/common/ostream.hpp aspell-0.60.6/common/ostream.hpp
      virtual void write (char c) = 0;
      virtual void write (ParmStr) = 0;
 diff -Nru aspell-0.60.6.orig/common/parm_string.hpp aspell-0.60.6/common/parm_string.hpp
---- aspell-0.60.6.orig/common/parm_string.hpp	2005-02-20 22:47:07.000000000 +0100
-+++ aspell-0.60.6/common/parm_string.hpp	2010-06-01 23:03:16.040400000 +0200
+--- aspell-0.60.6.orig/common/parm_string.hpp	Sun Feb 20 21:47:07 2005
++++ aspell-0.60.6/common/parm_string.hpp	Tue Jun 15 11:34:45 2010
 @@ -10,6 +10,8 @@
  #include <string.h>
  #include <limits.h>
@@ -750,8 +899,8 @@ diff -Nru aspell-0.60.6.orig/common/parm_string.hpp aspell-0.60.6/common/parm_st
      ParmString() : str_(0) {}
      ParmString(const char * str, unsigned int sz = UINT_MAX) 
 diff -Nru aspell-0.60.6.orig/common/posib_err.cpp aspell-0.60.6/common/posib_err.cpp
---- aspell-0.60.6.orig/common/posib_err.cpp	2004-11-21 03:52:22.000000000 +0100
-+++ aspell-0.60.6/common/posib_err.cpp	2010-05-22 00:12:10.678373600 +0200
+--- aspell-0.60.6.orig/common/posib_err.cpp	Sun Nov 21 02:52:22 2004
++++ aspell-0.60.6/common/posib_err.cpp	Tue Jun 15 11:34:52 2010
 @@ -14,6 +14,9 @@
  
  #include "gettext.h"
@@ -763,8 +912,8 @@ diff -Nru aspell-0.60.6.orig/common/posib_err.cpp aspell-0.60.6/common/posib_err
  namespace acommon {
  
 diff -Nru aspell-0.60.6.orig/common/posib_err.hpp aspell-0.60.6/common/posib_err.hpp
---- aspell-0.60.6.orig/common/posib_err.hpp	2004-12-17 09:23:33.000000000 +0100
-+++ aspell-0.60.6/common/posib_err.hpp	2010-06-01 22:20:44.164400000 +0200
+--- aspell-0.60.6.orig/common/posib_err.hpp	Fri Dec 17 08:23:33 2004
++++ aspell-0.60.6/common/posib_err.hpp	Tue Jun 15 11:35:01 2010
 @@ -7,6 +7,8 @@
  #ifndef PCOMMON_POSIB_ERR__HPP
  #define PCOMMON_POSIB_ERR__HPP
@@ -784,8 +933,8 @@ diff -Nru aspell-0.60.6.orig/common/posib_err.hpp aspell-0.60.6/common/posib_err
      struct ErrPtr {
        const Error * err;
 diff -Nru aspell-0.60.6.orig/common/speller.hpp aspell-0.60.6/common/speller.hpp
---- aspell-0.60.6.orig/common/speller.hpp	2007-10-13 10:20:16.000000000 +0200
-+++ aspell-0.60.6/common/speller.hpp	2010-06-01 20:05:20.183000000 +0200
+--- aspell-0.60.6.orig/common/speller.hpp	Sat Oct 13 08:20:16 2007
++++ aspell-0.60.6/common/speller.hpp	Tue Jun 15 11:35:09 2010
 @@ -15,6 +15,8 @@
  #ifndef ASPELL_SPELLER__HPP
  #define ASPELL_SPELLER__HPP
@@ -818,8 +967,8 @@ diff -Nru aspell-0.60.6.orig/common/speller.hpp aspell-0.60.6/common/speller.hpp
  }
  
 diff -Nru aspell-0.60.6.orig/common/string.hpp aspell-0.60.6/common/string.hpp
---- aspell-0.60.6.orig/common/string.hpp	2007-12-03 03:08:11.000000000 +0100
-+++ aspell-0.60.6/common/string.hpp	2010-06-01 20:03:57.888000000 +0200
+--- aspell-0.60.6.orig/common/string.hpp	Mon Dec  3 02:08:11 2007
++++ aspell-0.60.6/common/string.hpp	Tue Jun 15 11:35:19 2010
 @@ -12,6 +12,8 @@
  
  #include <algorithm>
@@ -839,8 +988,8 @@ diff -Nru aspell-0.60.6.orig/common/string.hpp aspell-0.60.6/common/string.hpp
    public:
      typedef const char * const_iterator;
 diff -Nru aspell-0.60.6.orig/common/string_enumeration.hpp aspell-0.60.6/common/string_enumeration.hpp
---- aspell-0.60.6.orig/common/string_enumeration.hpp	2004-02-02 03:48:50.000000000 +0100
-+++ aspell-0.60.6/common/string_enumeration.hpp	2010-06-01 20:03:27.156000000 +0200
+--- aspell-0.60.6.orig/common/string_enumeration.hpp	Mon Feb  2 02:48:50 2004
++++ aspell-0.60.6/common/string_enumeration.hpp	Tue Jun 15 11:35:29 2010
 @@ -7,6 +7,8 @@
  #ifndef ASPELL_STRING_ENUMERATION__HPP
  #define ASPELL_STRING_ENUMERATION__HPP
@@ -860,8 +1009,8 @@ diff -Nru aspell-0.60.6.orig/common/string_enumeration.hpp aspell-0.60.6/common/
      typedef const char * Value;
      virtual bool at_end() const = 0;
 diff -Nru aspell-0.60.6.orig/common/string_list.hpp aspell-0.60.6/common/string_list.hpp
---- aspell-0.60.6.orig/common/string_list.hpp	2004-06-17 14:41:47.000000000 +0200
-+++ aspell-0.60.6/common/string_list.hpp	2010-06-01 20:03:23.580000000 +0200
+--- aspell-0.60.6.orig/common/string_list.hpp	Thu Jun 17 12:41:47 2004
++++ aspell-0.60.6/common/string_list.hpp	Tue Jun 15 11:35:39 2010
 @@ -6,6 +6,8 @@
  #ifndef STRING_LIST_HP_HEADER
  #define STRING_LIST_HP_HEADER
@@ -908,8 +1057,8 @@ diff -Nru aspell-0.60.6.orig/common/string_list.hpp aspell-0.60.6/common/string_
  }
  #endif
 diff -Nru aspell-0.60.6.orig/common/string_map.hpp aspell-0.60.6/common/string_map.hpp
---- aspell-0.60.6.orig/common/string_map.hpp	2004-06-17 14:41:47.000000000 +0200
-+++ aspell-0.60.6/common/string_map.hpp	2010-06-01 20:03:19.404000000 +0200
+--- aspell-0.60.6.orig/common/string_map.hpp	Thu Jun 17 12:41:47 2004
++++ aspell-0.60.6/common/string_map.hpp	Tue Jun 15 11:35:47 2010
 @@ -7,6 +7,8 @@
  #ifndef ASPELL_STRING_MAP__HPP
  #define ASPELL_STRING_MAP__HPP
@@ -938,8 +1087,8 @@ diff -Nru aspell-0.60.6.orig/common/string_map.hpp aspell-0.60.6/common/string_m
  
  }
 diff -Nru aspell-0.60.6.orig/common/string_pair.hpp aspell-0.60.6/common/string_pair.hpp
---- aspell-0.60.6.orig/common/string_pair.hpp	2004-02-19 10:14:06.000000000 +0100
-+++ aspell-0.60.6/common/string_pair.hpp	2010-06-02 00:34:29.283400000 +0200
+--- aspell-0.60.6.orig/common/string_pair.hpp	Thu Feb 19 09:14:06 2004
++++ aspell-0.60.6/common/string_pair.hpp	Tue Jun 15 11:35:57 2010
 @@ -7,10 +7,9 @@
  #ifndef ASPELL_STRING_PAIR__HPP
  #define ASPELL_STRING_PAIR__HPP
@@ -962,8 +1111,8 @@ diff -Nru aspell-0.60.6.orig/common/string_pair.hpp aspell-0.60.6/common/string_
  }
  
 diff -Nru aspell-0.60.6.orig/common/string_pair_enumeration.hpp aspell-0.60.6/common/string_pair_enumeration.hpp
---- aspell-0.60.6.orig/common/string_pair_enumeration.hpp	2008-04-07 06:31:19.000000000 +0200
-+++ aspell-0.60.6/common/string_pair_enumeration.hpp	2010-06-02 00:31:52.423400000 +0200
+--- aspell-0.60.6.orig/common/string_pair_enumeration.hpp	Mon Apr  7 04:31:19 2008
++++ aspell-0.60.6/common/string_pair_enumeration.hpp	Tue Jun 15 11:36:04 2010
 @@ -9,13 +9,15 @@
  #ifndef ASPELL_STRING_PAIR_ENUMERATION__HPP
  #define ASPELL_STRING_PAIR_ENUMERATION__HPP
@@ -982,8 +1131,8 @@ diff -Nru aspell-0.60.6.orig/common/string_pair_enumeration.hpp aspell-0.60.6/co
    virtual bool at_end() const = 0;
    virtual StringPair next() = 0;
 diff -Nru aspell-0.60.6.orig/common/strtonum.hpp aspell-0.60.6/common/strtonum.hpp
---- aspell-0.60.6.orig/common/strtonum.hpp	2004-10-28 02:41:04.000000000 +0200
-+++ aspell-0.60.6/common/strtonum.hpp	2010-06-01 20:01:35.962000000 +0200
+--- aspell-0.60.6.orig/common/strtonum.hpp	Thu Oct 28 00:41:04 2004
++++ aspell-0.60.6/common/strtonum.hpp	Tue Jun 15 11:36:14 2010
 @@ -7,12 +7,14 @@
  #ifndef ASPELL_STRTONUM__HPP
  #define ASPELL_STRTONUM__HPP
@@ -1002,8 +1151,8 @@ diff -Nru aspell-0.60.6.orig/common/strtonum.hpp aspell-0.60.6/common/strtonum.h
  }
  
 diff -Nru aspell-0.60.6.orig/common/tokenizer.cpp aspell-0.60.6/common/tokenizer.cpp
---- aspell-0.60.6.orig/common/tokenizer.cpp	2004-04-13 09:13:39.000000000 +0200
-+++ aspell-0.60.6/common/tokenizer.cpp	2010-06-02 00:18:48.421400000 +0200
+--- aspell-0.60.6.orig/common/tokenizer.cpp	Tue Apr 13 07:13:39 2004
++++ aspell-0.60.6/common/tokenizer.cpp	Tue Jun 15 11:36:24 2010
 @@ -28,4 +28,6 @@
      end = end;
    }
@@ -1012,8 +1161,8 @@ diff -Nru aspell-0.60.6.orig/common/tokenizer.cpp aspell-0.60.6/common/tokenizer
 +
  }
 diff -Nru aspell-0.60.6.orig/common/tokenizer.hpp aspell-0.60.6/common/tokenizer.hpp
---- aspell-0.60.6.orig/common/tokenizer.hpp	2004-06-02 17:07:34.000000000 +0200
-+++ aspell-0.60.6/common/tokenizer.hpp	2010-06-02 00:18:43.743400000 +0200
+--- aspell-0.60.6.orig/common/tokenizer.hpp	Wed Jun  2 15:07:34 2004
++++ aspell-0.60.6/common/tokenizer.hpp	Tue Jun 15 11:36:33 2010
 @@ -7,6 +7,8 @@
  #ifndef ACOMMON_TOKENIZER__HPP
  #define ACOMMON_TOKENIZER__HPP
@@ -1042,8 +1191,8 @@ diff -Nru aspell-0.60.6.orig/common/tokenizer.hpp aspell-0.60.6/common/tokenizer
  }
  
 diff -Nru aspell-0.60.6.orig/gen/mk-static-filter.pl aspell-0.60.6/gen/mk-static-filter.pl
---- aspell-0.60.6.orig/gen/mk-static-filter.pl	2007-12-03 07:43:09.000000000 +0100
-+++ aspell-0.60.6/gen/mk-static-filter.pl	2010-05-22 01:09:21.304373600 +0200
+--- aspell-0.60.6.orig/gen/mk-static-filter.pl	Mon Dec  3 06:43:09 2007
++++ aspell-0.60.6/gen/mk-static-filter.pl	Tue Jun 15 11:37:44 2010
 @@ -12,7 +12,6 @@
  %filters=();
  
@@ -1073,23 +1222,117 @@ diff -Nru aspell-0.60.6.orig/gen/mk-static-filter.pl aspell-0.60.6/gen/mk-static
      ( $firstopt != 1 ) && ( printf STATICFILTERS ",\n" );
      $firstopt = 0;
      printf STATICFILTERS "    {\n".
-@@ -155,6 +158,13 @@
+@@ -154,6 +157,13 @@
+     print STATICFILTERS     "      \"".${$option}{"DEFAULT"}."\",\n".
                              "      \"".${$option}{"DESCRIPTION"}."\"\n".
                              "    }";
-   }
++  }
 +  if( $needdummy ) {
 +    printf STATICFILTERS "    {\n      \"f-${$filter}{NAME}-$name\",\n";
 +    printf STATICFILTERS "      KeyInfoBool,\n";
 +    print STATICFILTERS  "      \"false\",\n".
 +                         "      \"dummy option\"\n".
 +                         "    }";
-+  }
+   }
    printf STATICFILTERS "\n  };\n";
    printf STATICFILTERS "\n  const KeyInfo * ".${$filter}{"NAME"}."_options_begin = ".
-                                               ${$filter}{"NAME"}."_options;\n";
+diff -Nru aspell-0.60.6.orig/lib/dummy.cpp aspell-0.60.6/lib/dummy.cpp
+--- aspell-0.60.6.orig/lib/dummy.cpp	Mon Sep  9 05:57:09 2002
++++ aspell-0.60.6/lib/dummy.cpp	Tue Jun 15 11:27:21 2010
+@@ -1 +1,5 @@
++#include <aspell_export.h>
++
++void ASPELL_EXPORT pspell_aspell_dummy();
++
+ void pspell_aspell_dummy() {}
+diff -Nru aspell-0.60.6.orig/modules/speller/default/affix.hpp aspell-0.60.6/modules/speller/default/affix.hpp
+--- aspell-0.60.6.orig/modules/speller/default/affix.hpp	Mon Dec  3 01:51:23 2007
++++ aspell-0.60.6/modules/speller/default/affix.hpp	Tue Jun 15 09:08:53 2010
+@@ -19,6 +19,8 @@
+ #include "char_vector.hpp"
+ #include "objstack.hpp"
+ 
++#include "aspell_export.h"
++
+ #define SETSIZE         256
+ #define MAXAFFIXES      256
+ #define MAXWORDLEN      255
+@@ -58,7 +60,7 @@
+ 
+   enum CheckAffixRes {InvalidAffix, InapplicableAffix, ValidAffix};
+ 
+-  class AffixMgr
++  class ASPELL_EXPORT AffixMgr
+   {
+     const Language * lang;
+ 
+diff -Nru aspell-0.60.6.orig/modules/speller/default/data.hpp aspell-0.60.6/modules/speller/default/data.hpp
+--- aspell-0.60.6.orig/modules/speller/default/data.hpp	Mon May 24 04:50:27 2004
++++ aspell-0.60.6/modules/speller/default/data.hpp	Tue Jun 15 09:22:05 2010
+@@ -15,6 +15,8 @@
+ #include "cache.hpp"
+ #include "wordinfo.hpp"
+ 
++#include "aspell_export.h"
++
+ using namespace acommon;
+ 
+ namespace acommon {
+@@ -31,7 +33,7 @@
+   typedef Enumeration<WordEntry *> WordEntryEnumeration;
+   typedef Enumeration<Dictionary *> DictsEnumeration;
+ 
+-  class SoundslikeEnumeration 
++  class ASPELL_EXPORT SoundslikeEnumeration 
+   {
+   public:
+     virtual WordEntry * next(int) = 0;
+@@ -170,7 +172,7 @@
+     return !(rhs == lhs);
+   }
+ 
+-  class DictList {
++  class ASPELL_EXPORT DictList {
+     // well a stack at the moment but it may eventually become a list
+     // NOT necessarily first in first out
+     Vector<Dict *> data;
+@@ -195,7 +197,7 @@
+   static const DataType DT_Any          = 0xFF;
+ 
+   // any new extra dictionaries that were loaded will be ii
+-  PosibErr<Dict *> add_data_set(ParmString file_name,
++  PosibErr<Dict *> ASPELL_EXPORT add_data_set(ParmString file_name,
+                                 Config &,
+                                 DictList * other_dicts = 0,
+                                 SpellerImpl * = 0,
+@@ -203,19 +205,19 @@
+                                 DataType allowed = DT_Any);
+   
+   // implemented in readonly_ws.cc
+-  Dictionary * new_default_readonly_dict();
++  ASPELL_EXPORT Dictionary * new_default_readonly_dict();
+   
+-  PosibErr<void> create_default_readonly_dict(StringEnumeration * els,
++  PosibErr<void> ASPELL_EXPORT create_default_readonly_dict(StringEnumeration * els,
+                                               Config & config);
+   
+   // implemented in multi_ws.cc
+-  MultiDict * new_default_multi_dict();
++  ASPELL_EXPORT MultiDict * new_default_multi_dict();
+ 
+   // implemented in writable.cpp
+-  Dictionary * new_default_writable_dict();
++  ASPELL_EXPORT Dictionary * new_default_writable_dict();
+ 
+   // implemented in writable.cpp
+-  ReplacementDict * new_default_replacement_dict();
++  ASPELL_EXPORT ReplacementDict * new_default_replacement_dict();
+ }
+ 
+ #endif
 diff -Nru aspell-0.60.6.orig/modules/speller/default/language.cpp aspell-0.60.6/modules/speller/default/language.cpp
---- aspell-0.60.6.orig/modules/speller/default/language.cpp	2005-02-20 22:47:07.000000000 +0100
-+++ aspell-0.60.6/modules/speller/default/language.cpp	2010-05-22 00:16:03.784373600 +0200
+--- aspell-0.60.6.orig/modules/speller/default/language.cpp	Sun Feb 20 21:47:07 2005
++++ aspell-0.60.6/modules/speller/default/language.cpp	Tue Jun 15 11:38:19 2010
 @@ -26,6 +26,10 @@
  
  #include "gettext.h"
@@ -1101,9 +1344,65 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/language.cpp aspell-0.60.6/
  namespace aspeller {
  
    static const char TO_CHAR_TYPE[256] = {
+diff -Nru aspell-0.60.6.orig/modules/speller/default/language.hpp aspell-0.60.6/modules/speller/default/language.hpp
+--- aspell-0.60.6.orig/modules/speller/default/language.hpp	Sun Feb 20 21:47:08 2005
++++ aspell-0.60.6/modules/speller/default/language.hpp	Tue Jun 15 09:14:54 2010
+@@ -14,6 +14,8 @@
+ #include "objstack.hpp"
+ #include "string_enumeration.hpp"
+ 
++#include "aspell_export.h"
++
+ #include "iostream.hpp"
+ 
+ using namespace acommon;
+@@ -60,7 +62,7 @@
+ 
+   enum StoreAs {Stripped, Lower};
+ 
+-  class Language : public Cacheable {
++  class ASPELL_EXPORT Language : public Cacheable {
+   public:
+     typedef const Config CacheConfig;
+     typedef String       CacheKey;
+@@ -424,7 +426,7 @@
+     char * operator() (ParmStr word, char * aff);
+   };
+ 
+-  class WordListIterator
++  class ASPELL_EXPORT WordListIterator
+   {
+   public:
+     struct Value {
+@@ -458,18 +460,18 @@
+     CleanAffix clean_affix;
+   };
+ 
+-  String get_stripped_chars(const Language & l);
++  String ASPELL_EXPORT get_stripped_chars(const Language & l);
+ 
+-  String get_clean_chars(const Language & l);
++  String ASPELL_EXPORT get_clean_chars(const Language & l);
+   
+-  PosibErr<void> check_if_valid(const Language & l, ParmStr word);
+-  PosibErr<void> validate_affix(const Language & l, ParmStr word, ParmStr aff);
++  PosibErr<void> ASPELL_EXPORT check_if_valid(const Language & l, ParmStr word);
++  PosibErr<void> ASPELL_EXPORT validate_affix(const Language & l, ParmStr word, ParmStr aff);
+ 
+-  bool find_language(Config & c);
++  bool ASPELL_EXPORT find_language(Config & c);
+ 
+-  PosibErr<Language *> new_language(const Config &, ParmStr lang = 0);
++  PosibErr<Language *> ASPELL_EXPORT new_language(const Config &, ParmStr lang = 0);
+ 
+-  PosibErr<void> open_affix_file(const Config &, FStream & o);
++  PosibErr<void> ASPELL_EXPORT open_affix_file(const Config &, FStream & o);
+ }
+ 
+ 
 diff -Nru aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp aspell-0.60.6/modules/speller/default/speller_impl.hpp
---- aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp	2007-10-13 10:20:17.000000000 +0200
-+++ aspell-0.60.6/modules/speller/default/speller_impl.hpp	2010-06-02 00:17:17.588400000 +0200
+--- aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp	Sat Oct 13 08:20:17 2007
++++ aspell-0.60.6/modules/speller/default/speller_impl.hpp	Tue Jun 15 11:38:28 2010
 @@ -27,7 +27,7 @@
  namespace aspeller {
  
@@ -1113,10 +1412,33 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp aspell-0.6
    class Suggest;
  
    enum SpecialId {main_id, personal_id, session_id, 
+diff -Nru aspell-0.60.6.orig/modules/speller/default/wordinfo.hpp aspell-0.60.6/modules/speller/default/wordinfo.hpp
+--- aspell-0.60.6.orig/modules/speller/default/wordinfo.hpp	Mon May 24 04:50:29 2004
++++ aspell-0.60.6/modules/speller/default/wordinfo.hpp	Tue Jun 15 09:16:12 2010
+@@ -6,6 +6,8 @@
+ #include <assert.h>
+ #include "string.hpp"
+ 
++#include "aspell_export.h"
++
+ namespace acommon {
+   class OStream;
+   class Convert;
+@@ -35,7 +37,7 @@
+   struct ConvertWord;
+ 
+   // WordEntry is an entry in the dictionary.  
+-  struct WordEntry
++  struct ASPELL_EXPORT WordEntry
+   {
+     const char * word;
+     const char * aff;
 diff -Nru aspell-0.60.6.orig/symbols.def aspell-0.60.6/symbols.def
---- aspell-0.60.6.orig/symbols.def	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/symbols.def	2010-06-01 19:47:17.988000000 +0200
-@@ -0,0 +1,208 @@
+--- aspell-0.60.6.orig/symbols.def	Thu Jan  1 00:00:00 1970
++++ aspell-0.60.6/symbols.def	Tue Jun 15 08:22:04 2010
+@@ -0,0 +1,210 @@
++LIBRARY aspell.DLL
++EXPORTS
 +aerror_affix
 +aerror_bad_file_format
 +aerror_bad_input
@@ -1321,13 +1643,13 @@ diff -Nru aspell-0.60.6.orig/symbols.def aspell-0.60.6/symbols.def
 +new_aspell_speller
 +new_aspell_string_list
 +new_aspell_string_map
-+perror_bad_file_format
++;perror_bad_file_format
 +to_aspell_document_checker
 +to_aspell_filter
 +to_aspell_speller
 diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
---- aspell-0.60.6.orig/win32/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/win32/dirent.c	2010-05-21 23:31:03.586373600 +0200
+--- aspell-0.60.6.orig/win32/dirent.c	Thu Jan  1 00:00:00 1970
++++ aspell-0.60.6/win32/dirent.c	Tue Jun 15 07:36:51 2010
 @@ -0,0 +1,149 @@
 +/* ====================================================================
 + * The Apache Software License, Version 1.1
@@ -1479,8 +1801,8 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +
 +#endif // #ifndef __MINGW32__
 diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
---- aspell-0.60.6.orig/win32/dirent.h	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/win32/dirent.h	2010-05-21 23:38:25.474373600 +0200
+--- aspell-0.60.6.orig/win32/dirent.h	Thu Jan  1 00:00:00 1970
++++ aspell-0.60.6/win32/dirent.h	Tue Jun 15 07:36:51 2010
 @@ -0,0 +1,112 @@
 +/* This file is part of the KDE project
 +   Copyright (C) 2000 Werner Almesberger
@@ -1595,8 +1917,8 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 +
 +#endif  // ASPELL_DIRENT_H
 diff -Nru aspell-0.60.6.orig/win32/settings.h aspell-0.60.6/win32/settings.h
---- aspell-0.60.6.orig/win32/settings.h	2006-11-13 08:28:59.000000000 +0100
-+++ aspell-0.60.6/win32/settings.h	2010-05-22 01:19:15.753373600 +0200
+--- aspell-0.60.6.orig/win32/settings.h	Mon Nov 13 07:28:59 2006
++++ aspell-0.60.6/win32/settings.h	Tue Jun 15 11:39:47 2010
 @@ -90,3 +90,5 @@
  
  /* Version number of package */
