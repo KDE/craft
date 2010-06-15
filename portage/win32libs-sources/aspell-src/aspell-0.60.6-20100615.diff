@@ -194,7 +194,7 @@ diff -Nru aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake aspell-0.60.6/cma
 +
 +if(WCECOMPAT_INCLUDE_DIR)
 +    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-
++
 +    if(WCECOMPAT_LIBRARIES)
 +      set(WCECOMPAT_LIB_FOUND TRUE)
 +    endif(WCECOMPAT_LIBRARIES)
