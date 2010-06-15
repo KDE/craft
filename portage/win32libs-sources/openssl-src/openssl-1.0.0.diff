@@ -6,7 +6,7 @@ diff -Nru openssl-1.0.0.orig/apps/apps.c openssl-1.0.0/apps/apps.c
  #undef NON_MAIN
  
 -#ifdef _WIN32
-+#if defined(OPENSSL_SYS_WIN32) && !defined(rename)
++#if defined(OPENSSL_SYS_WIN32) && !defined(WCECOMPAT)
  static int WIN32_rename(const char *from, const char *to);
  #define rename(from,to) WIN32_rename((from),(to))
  #endif
@@ -99,7 +99,7 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
  #  include <fcntl.h>
  
 -#  ifdef OPENSSL_SYS_WINCE
-+#  if defined(OPENSSL_SYS_WINCE) && !defined(open)
++#  if defined(OPENSSL_SYS_WINCE) && !defined(WCECOMPAT)
  #    define OPENSSL_NO_POSIX_IO
  #  endif
  
@@ -429,13 +429,14 @@ diff -Nru openssl-1.0.0.orig/ssl/ssltest.c openssl-1.0.0/ssl/ssltest.c
 diff -Nru openssl-1.0.0.orig/util/pl/VC-32.pl openssl-1.0.0/util/pl/VC-32.pl
 --- openssl-1.0.0.orig/util/pl/VC-32.pl	2010-01-20 15:04:55.000000000 +0100
 +++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 16:36:22.909472300 +0200
-@@ -103,12 +103,12 @@
+@@ -103,12 +103,13 @@
      }
  
      $cc='$(CC)';
 -    $base_cflags=' /W3 /WX /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -DOPENSSL_SMALL_FOOTPRINT';
 +    $base_cflags=' /W3 /WX /wd4748 /wd4101 /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -DOPENSSL_SMALL_FOOTPRINT -DOPENSSL_NO_CAPIENG';
      $base_cflags.=" $wcecdefs";
++    $base_cflags.=' -DWCECOMPAT'    if (defined($ENV{'WCECOMPAT'}));
      $base_cflags.=' -I$(WCECOMPAT)/include'		if (defined($ENV{'WCECOMPAT'}));
      $base_cflags.=' -I$(PORTSDK_LIBPATH)/../../include'	if (defined($ENV{'PORTSDK_LIBPATH'}));
 -    $opt_cflags=' /MC /O1i';	# optimize for space, but with intrinsics...
