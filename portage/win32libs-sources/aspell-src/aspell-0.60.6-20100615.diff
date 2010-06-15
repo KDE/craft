@@ -1,19 +1,28 @@
 diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 --- aspell-0.60.6.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ aspell-0.60.6/CMakeLists.txt	Tue Jun 15 11:22:30 2010
-@@ -0,0 +1,154 @@
++++ aspell-0.60.6/CMakeLists.txt	Tue Jun 15 12:22:19 2010
+@@ -0,0 +1,167 @@
 +project(aspell)
 +
 +cmake_minimum_required(VERSION 2.6)
 +
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
 +option(COMPILE_IN_FILTERS "include some filters into the library" ON)
 +
-+if(WIN32)
++if(WIN32 OR WINCE)
 +    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/win32)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996 -wd4351 -wd4800 -wd4521 -wd4522)
 +    
 +    add_definitions(-DENABLE_WIN32_RELOCATABLE)
-+endif(WIN32)
++endif(WIN32 OR WINCE)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +
 +include_directories(
 +    ${CMAKE_CURRENT_BINARY_DIR} 
@@ -139,6 +148,10 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +add_library(aspell SHARED ${aspell_SRCS})
 +set_target_properties(aspell PROPERTIES DEFINE_SYMBOL MAKE_ASPELL_LIB)
 +
++if(WINCE)
++    target_link_libraries(aspell ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
 +add_library(pspell SHARED lib/dummy.cpp)
 +target_link_libraries(pspell aspell)
 +
@@ -156,9 +169,47 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +
 +install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/cc/aspell.h DESTINATION include)  
 +install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/cc/aspell.h DESTINATION include/pspell) 
+diff -Nru aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake aspell-0.60.6/cmake/modules/FindWcecompat.cmake
+--- aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ aspell-0.60.6/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
+
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_export.h
 --- aspell-0.60.6.orig/common/aspell_export.h	Thu Jan  1 00:00:00 1970
-+++ aspell-0.60.6/common/aspell_export.h	Tue Jun 15 09:49:56 2010
++++ aspell-0.60.6/common/aspell_export.h	Tue Jun 15 12:01:22 2010
 @@ -0,0 +1,22 @@
 +// This file is added to The New Aspell
 +// Copyright (C) 2010 by Patrick Spendrin under the GNU LGPL license
