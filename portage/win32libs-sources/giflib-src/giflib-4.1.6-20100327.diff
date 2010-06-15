@@ -1,7 +1,7 @@
 diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
 --- giflib-4.1.6.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ giflib-4.1.6/CMakeLists.txt	Mon May 17 13:17:03 2010
-@@ -0,0 +1,223 @@
++++ giflib-4.1.6/CMakeLists.txt	Tue Jun 15 13:57:57 2010
+@@ -0,0 +1,224 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -17,6 +17,7 @@ diff -Nru giflib-4.1.6.orig/CMakeLists.txt giflib-4.1.6/CMakeLists.txt
 +    find_package(Wcecompat REQUIRED)
 +    include_directories(${WCECOMPAT_INCLUDE_DIR})
 +    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
 +
 +# you will need non-standard irixGL for this to work
