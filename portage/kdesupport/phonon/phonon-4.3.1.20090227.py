@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
         self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
         if COMPILER == "mingw4":
-            self.options.configure.defines +=" -DBUILD_PHONON_DS9=OFF"
+            self.options.configure.defines +=" -DBUILD_PHONON_DS9=OFF "
           
     def setBuildOptions( self ):
         self.disableHostBuild = True
@@ -26,7 +26,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         
-        self.subinfo.options.configure.defines = ""
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
