@@ -1,0 +1,1305 @@
+From 80c070e9c7770af490aa21e881d53c2408879133 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Wed, 16 Jun 2010 13:12:07 +0200
+Subject: [PATCH] add cmake build system
+
+---
+ CMakeLists.txt        |   25 +++
+ ConfigureChecks.cmake |  272 ++++++++++++++++++++++++
+ config.h.cmake        |  545 +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/CMakeLists.txt    |  419 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1261 insertions(+), 0 deletions(-)
+ create mode 100644 CMakeLists.txt
+ create mode 100644 ConfigureChecks.cmake
+ create mode 100644 config.h.cmake
+ create mode 100644 src/CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..bc64d05
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,25 @@
++project(testdisk)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_PREFIX_PATH}/share/apps/cmake/modules)
++
++find_package(Qt4)
++find_package(JPEG)
++find_package(ZLIB)
++
++
++include_directories(${CMAKE_BINARY_DIR} ${JPEG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS})
++message(STATUS     "${CMAKE_BINARY_DIR} ${JPEG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS}")
++if(MSVC)
++    find_package(KDEWin REQUIRED)
++    
++    include_directories(${KDEWIN_INCLUDES})
++endif(MSVC)
++
++# make configure checks instead
++#add_definitions(-DHAVE_SYS_STAT_H)
++set(VERSION "\"6.12.0\"")
++set(TESTDISKDATE "\"20100614\"")
++include(ConfigureChecks.cmake)
++add_subdirectory(src)
+\ No newline at end of file
+diff --git a/ConfigureChecks.cmake b/ConfigureChecks.cmake
+new file mode 100644
+index 0000000..e522d8e
+--- /dev/null
++++ b/ConfigureChecks.cmake
+@@ -0,0 +1,272 @@
++# see also config.h.in
++
++##/* Define if building universal (internal helper macro) */
++#undef AC_APPLE_UNIVERSAL_BUILD
++
++include(CheckIncludeFile)
++include(CheckIncludeFiles)
++include(CheckFunctionExists)
++
++check_include_file("byteswap.h" HAVE_BYTESWAP_H)
++check_include_file("curses.h" HAVE_CURSES_H)
++check_include_file("cygwin/fs.h" HAVE_CYGWIN_FS_H)
++check_include_file("cygwin/version.h" HAVE_CYGWIN_VERSION_H)
++check_include_file("dal/file_dal.h" HAVE_DAL_FILE_DAL_H)
++check_include_file("dal/file.h" HAVE_DAL_FILE_H)
++check_include_file("ddk/ntddstor.h" HAVE_DDK_NTDDSTOR_H)
++check_include_file("dirent.h" HAVE_DIRENT_H)
++check_include_file("endian.h" HAVE_ENDIAN_H)
++check_include_file("errno.h" HAVE_ERRNO_H)
++check_include_file("ext2fs/ext2fs.h" HAVE_EXT2FS_EXT2FS_H)
++check_include_file("ext2fs/ext2_fs.h" HAVE_EXT2FS_EXT2_FS_H)
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("features.h" HAVE_FEATURES_H)
++check_include_file("giconv.h" HAVE_GICONV_H)
++check_include_file("glob.h" HAVE_GLOB_H)
++check_include_file("iconv.h" HAVE_ICONV_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("io.h" HAVE_IO_H)
++check_include_file("jpeglib.h" HAVE_JPEGLIB_H)
++check_include_file("libcarvpath.h" HAVE_LIBCARVPATH_H)
++check_include_file("libewf.h" HAVE_LIBEWF_H)
++check_include_file("libgen.h" HAVE_LIBGEN_H)
++check_include_file("limits.h" HAVE_LIMITS_H)
++check_include_file("linux/fs.h" HAVE_LINUX_FS_H)
++check_include_file("linux/hdreg.h" HAVE_LINUX_HDREG_H)
++check_include_file("linux/types.h" HAVE_LINUX_TYPES_H)
++check_include_file("locale.h" HAVE_LOCALE_H)
++check_include_file("machine/endian.h" HAVE_MACHINE_ENDIAN_H)
++check_include_file("malloc.h" HAVE_MALLOC_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("ncursesw/ncurses.h" HAVE_NCURSESW_NCURSES_H)
++check_include_file("ncurses/curses.h" HAVE_NCURSES_CURSES_H)
++check_include_file("ncurses.h" HAVE_NCURSES_H)
++check_include_file("ncurses/ncurses.h" HAVE_NCURSES_NCURSES_H)
++check_include_file("ntfs/attrib.h" HAVE_NTFS_ATTRIB_H)
++check_include_file("ntfs/version.h" HAVE_NTFS_VERSION_H)
++check_include_file("ntfs/volume.h" HAVE_NTFS_VOLUME_H)
++check_include_file("openssl/md5.h" HAVE_OPENSSL_MD5_H)
++check_include_file("openssl/opensslv.h" HAVE_OPENSSL_OPENSSLV_H)
++check_include_file("scsi/scsi.h" HAVE_SCSI_SCSI_H)
++check_include_file("scsi/scsi_ioctl.h" HAVE_SCSI_SCSI_IOCTL_H)
++check_include_file("scsi/sg.h" HAVE_SCSI_SG_H)
++check_include_file("pwd.h" HAVE_PWD_H)
++check_include_file("setjmp.h" HAVE_SETJMP_H)
++check_include_file("signal.h" HAVE_SIGNAL_H)
++check_include_file("stdarg.h" HAVE_STDARG_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/cygwin.h" HAVE_SYS_CYGWIN_H)
++check_include_file("sys/disklabel.h" HAVE_SYS_DISKLABEL_H)
++check_include_file("sys/disk.h" HAVE_SYS_DISK_H)
++check_include_file("sys/dkio.h" HAVE_SYS_DKIO_H)
++check_include_file("sys/endian.h" HAVE_SYS_ENDIAN_H)
++check_include_file("sys/ioctl.h" HAVE_SYS_IOCTL_H)
++check_include_file("sys/mount.h" HAVE_SYS_MOUNT_H)
++check_include_file("sys/param.h" HAVE_SYS_PARAM_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("sys/utsname.h" HAVE_SYS_UTSNAME_H)
++check_include_file("sys/uuid.h" HAVE_SYS_UUID_H)
++check_include_file("sys/vtoc.h" HAVE_SYS_VTOC_H)
++check_include_file("sys/wait.h" HAVE_SYS_WAIT_H)
++check_include_file("time.h" HAVE_TIME_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("utime.h" HAVE_UTIME_H)
++check_include_file("varargs.h" HAVE_VARARGS_H)
++check_include_file("uuid.h" HAVE_UUID_H)
++check_include_file("uuid/uuid.h" HAVE_UUID_UUID_H)
++check_include_file("w32api/ddk/ntdddisk.h" HAVE_W32API_DDK_NTDDDISK_H)
++check_include_file("windows.h" HAVE_WINDOWS_H)
++check_include_files("windows.h;windef.h" HAVE_WINDEF_H)
++check_include_files("windows.h;winbase.h" HAVE_WINBASE_H)
++check_include_files("windows.h;winioctl.h" HAVE_WINIOCTL_H)
++check_include_file("zlib.h" HAVE_ZLIB_H)
++
++##############################################################################
++
++#/* Define to 1 if you have the com_err library (-lcom_err). */
++#undef HAVE_LIBCOMM_ERR
++
++#check_function_exists("crypto' library (-lcrypto). */
++#undef HAVE_LIBCRYPTO
++
++#/* Define to 1 if you have the ewf library (-lewf). */
++#undef HAVE_LIBEWF
++
++#/* Define to 1 if you have the ext2fs library (-lext2fs). */
++#undef HAVE_LIBEXT2FS
++
++#/* Define to 1 if you have the jpeg library (-ljpeg). */
++#undef HAVE_LIBJPEG
++
++#/* Define to 1 if you have the ntfs library (-lntfs). */
++#undef HAVE_LIBNTFS
++
++#/* Define to 1 if you have the reiserfs library (-lreiserfs). */
++#undef HAVE_LIBREISERFS
++
++#check_function_exists("z' library (-lz). */
++#undef HAVE_LIBZ
++
++#/* Define to 1 if you have one of the ncursesw/ncurses/pdcurses/curses
++#   library. */
++#undef HAVE_NCURSES
++
++#/* Define if you have POSIX threads libraries and header files. */
++#undef HAVE_PTHREAD
++
++#/* Define to 1 if you have the tinfo library (-ltinfo). */
++#undef HAVE_TINFO
++
++######################################################################################
++
++
++check_function_exists("atexit" HAVE_ATEXIT)
++check_function_exists("atoll" HAVE_ATOLL)
++check_function_exists("chdir" HAVE_CHDIR)
++check_function_exists("chmod" HAVE_CHMOD)
++check_function_exists("delscreen" HAVE_DELSCREEN)
++check_function_exists("dirname" HAVE_DIRNAME)
++check_function_exists("dup2" HAVE_DUP2)
++check_function_exists("execv" HAVE_EXECV)
++check_function_exists("ext2fs_get_generic_bitmap_start" HAVE_EXT2FS_GET_GENERIC_BITMAP_START)
++check_function_exists("fsync" HAVE_FSYNC)
++check_function_exists("ftruncate" HAVE_FTRUNCATE)
++check_function_exists("getcwd" HAVE_GETCWD)
++check_function_exists("geteuid" HAVE_GETEUID)
++#/* Define if you have this function */
++#undef HAVE_GICONV)
++#/* Define if you have this function */
++#undef HAVE_ICONV)
++check_function_exists("lstat" HAVE_LSTAT)
++check_function_exists("memalign" HAVE_MEMALIGN)
++check_function_exists("memset" HAVE_MEMSET)
++check_function_exists("ntfs_libntfs_version" HAVE_NTFS_LIBNTFS_VERSION)
++check_function_exists("ntfs_volume_startup" HAVE_NTFS_VOLUME_STARTUP)
++check_function_exists("mkdir" HAVE_MKDIR)
++#/* Define to 1 if off64_t isn't available */
++#undef HAVE_OFF64_T)
++check_function_exists("posix_fadvise" HAVE_POSIX_FADVISE)
++check_function_exists("posix_memalign" HAVE_POSIX_MEMALIGN)
++check_function_exists("pread" HAVE_PREAD)
++check_function_exists("pwrite" HAVE_PWRITE)
++check_function_exists("readlink" HAVE_READLINK)
++check_function_exists("reiserfs_fs_open_fast" HAVE_REISERFS_FS_OPEN_FAST)
++check_function_exists("setenv" HAVE_SETENV)
++check_function_exists("setlocale" HAVE_SETLOCALE)
++check_function_exists("sigaction" HAVE_SIGACTION)
++check_function_exists("signal" HAVE_SIGNAL)
++check_function_exists("sleep" HAVE_SLEEP)
++check_function_exists("snprintf" HAVE_SNPRINTF)
++check_function_exists("strchr" HAVE_STRCHR)
++check_function_exists("strdup" HAVE_STRDUP)
++check_function_exists("strerror" HAVE_STRERROR)
++check_function_exists("strncasecmp" HAVE_STRNCASECMP)
++check_function_exists("strtol" HAVE_STRTOL)
++#/* Define to 1 if `block_size' is a member of `dal_t'. */
++#undef HAVE_DAL_T_BLOCK_SIZE)
++#/* Define to 1 if `entity' is a member of `dal_t'. */
++#undef HAVE_DAL_T_ENTITY)
++#/* Define to 1 if `error' is a member of `dal_t'. */
++#undef HAVE_DAL_T_ERROR)
++#/* Define to 1 if `name' is a member of `dal_t'. */
++#undef HAVE_DAL_T_NAME)
++#/* Define to 1 if `dev' is a member of `struct dal_ops'. */
++#undef HAVE_STRUCT_DAL_OPS_DEV)
++#/* Define to 1 if `st_blksize' is a member of `struct stat'. */
++#undef HAVE_STRUCT_STAT_ST_BLKSIZE)
++#/* Define to 1 if `st_blocks' is a member of `struct stat'. */
++#undef HAVE_STRUCT_STAT_ST_BLOCKS)
++#/* Define to 1 if `st_rdev' is a member of `struct stat'. */
++#undef HAVE_STRUCT_STAT_ST_RDEV)
++#/* Define to 1 if `set_option' is a member of `struct struct_io_manager'. */
++#undef HAVE_STRUCT_STRUCT_IO_MANAGER_SET_OPTION)
++#/* Define to 1 if `tm_gmtoff' is a member of `struct tm'. */
++#undef HAVE_STRUCT_TM_TM_GMTOFF)
++#/* Define to 1 if your `struct stat' has `st_blocks'. Deprecated, use
++#   `HAVE_STRUCT_STAT_ST_BLOCKS)' instead. */
++#undef HAVE_ST_BLOCKS)
++check_function_exists("touchwin" HAVE_TOUCHWIN)
++check_function_exists("utime" HAVE_UTIME)
++check_function_exists("uuidgen" HAVE_UUIDGEN)
++check_function_exists("uuid_create" HAVE_UUID_CREATE)
++check_function_exists("uuid_generate" HAVE_UUID_GENERATE)
++check_function_exists("vsnprintf" HAVE_VSNPRINTF)
++#/* Define if libewf_get_bytes_per_sector takes two parameters. */
++#undef LIBEWF_GET_BYTES_PER_SECTOR_HAVE_TWO_ARGUMENTS)
++#/* Define if libewf_get_media_size takes two parameters. */
++#undef LIBEWF_GET_MEDIA_SIZE_HAVE_TWO_ARGUMENTS)
++#/* Name of package */
++#undef PACKAGE
++#/* Define to the address where bug reports for this package should be sent. */
++#undef PACKAGE_BUGREPORT
++#/* Define to the full name of this package. */
++#undef PACKAGE_NAME
++#/* Define to the full name and version of this package. */
++#undef PACKAGE_STRING
++#/* Define to the one symbol short name of this package. */
++#undef PACKAGE_TARNAME
++#/* Define to the home page for this package. */
++#undef PACKAGE_URL
++#/* Define to the version of this package. */
++#undef PACKAGE_VERSION
++#/* Define to necessary symbol if this constant uses a non-standard name on
++#   your system. */
++#undef PTHREAD_CREATE_JOINABLE
++#/* Define to 1 if you have the ANSI C header files. */
++#undef STDC_HEADERS
++#/* Path to sudo for privileged operations */
++#undef SUDO_BIN
++#/* Define for BSD target */
++#undef TARGET_BSD
++#/* Define for LINUX target */
++#undef TARGET_LINUX
++#/* Define for SOLARIS target */
++#undef TARGET_SOLARIS
++#/* Define to 1 if your processor stores words with the least significant byte
++#   first (like Intel and VAX, unlike Motorola and SPARC). */
++#undef TESTDISK_LSB
++#/* Define to 1 if your <sys/time.h> declares `struct tm'. */
++#undef TM_IN_SYS_TIME
++#/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
++#   significant byte first (like Motorola and SPARC, unlike Intel). */
++#if defined AC_APPLE_UNIVERSAL_BUILD
++# if defined __BIG_ENDIAN__
++#  define WORDS_BIGENDIAN 1
++# endif
++#else
++# ifndef WORDS_BIGENDIAN
++#  undef WORDS_BIGENDIAN
++# endif
++#endif
++
++#/* Number of bits in a file offset, on hosts where this is settable. */
++#undef _FILE_OFFSET_BITS
++#/* enable compile-time and run-time bounds-checking, and some warnings */
++#undef _FORTIFY_SOURCE
++#/* Enable GNU extensions */
++#undef _GNU_SOURCE
++#/* Define for large files, on AIX-style hosts. */
++#undef _LARGE_FILES
++#/* Define for freebsd4 target and progsreiserfs compatibility */
++#undef __freebsd__
++#/* Define to empty if `const' does not conform to ANSI C. */
++#undef const
++#/* Define to `__inline__' or `__inline' if that's what the C compiler
++#   calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef __cplusplus
++#undef inline
++#endif
++#/* Define to `long int' if <sys/types.h> does not define. */
++#undef off_t
++#/* Define to `unsigned int' if <sys/types.h> does not define. */
++#undef size_t
++
++configure_file(config.h.cmake config.h)
++
++add_definitions(-DHAVE_CONFIG_H)
+diff --git a/config.h.cmake b/config.h.cmake
+new file mode 100644
+index 0000000..e9fa7cf
+--- /dev/null
++++ b/config.h.cmake
+@@ -0,0 +1,545 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Define if building universal (internal helper macro) */
++#cmakedefine AC_APPLE_UNIVERSAL_BUILD
++
++/* Define to 1 if you have the `atexit' function. */
++#cmakedefine HAVE_ATEXIT
++
++/* Define to 1 if you have the `atoll' function. */
++#cmakedefine HAVE_ATOLL
++
++/* Define to 1 if you have the <byteswap.h> header file. */
++#cmakedefine HAVE_BYTESWAP_H
++
++/* Define to 1 if you have the `chdir' function. */
++#cmakedefine HAVE_CHDIR
++
++/* Define to 1 if you have the `chmod' function. */
++#cmakedefine HAVE_CHMOD
++
++/* Define to 1 if you have the <curses.h> header file. */
++#cmakedefine HAVE_CURSES_H
++
++/* Define to 1 if you have the <cygwin/fs.h> header file. */
++#cmakedefine HAVE_CYGWIN_FS_H
++
++/* Define to 1 if you have the <cygwin/version.h> header file. */
++#cmakedefine HAVE_CYGWIN_VERSION_H
++
++/* Define to 1 if you have the <dal/file_dal.h> header file. */
++#cmakedefine HAVE_DAL_FILE_DAL_H
++
++/* Define to 1 if you have the <dal/file.h> header file. */
++#cmakedefine HAVE_DAL_FILE_H
++
++/* Define to 1 if `block_size' is a member of `dal_t'. */
++#cmakedefine HAVE_DAL_T_BLOCK_SIZE
++
++/* Define to 1 if `entity' is a member of `dal_t'. */
++#cmakedefine HAVE_DAL_T_ENTITY
++
++/* Define to 1 if `error' is a member of `dal_t'. */
++#cmakedefine HAVE_DAL_T_ERROR
++
++/* Define to 1 if `name' is a member of `dal_t'. */
++#cmakedefine HAVE_DAL_T_NAME
++
++/* Define to 1 if you have the <ddk/ntddstor.h> header file. */
++#cmakedefine HAVE_DDK_NTDDSTOR_H
++
++/* Define to 1 if you have the `delscreen' function. */
++#cmakedefine HAVE_DELSCREEN
++
++/* Define to 1 if you have the <dirent.h> header file. */
++#cmakedefine HAVE_DIRENT_H
++
++/* Define to 1 if you have the `dirname' function. */
++#cmakedefine HAVE_DIRNAME
++
++/* Define to 1 if you have the `dup2' function. */
++#cmakedefine HAVE_DUP2
++
++/* Define to 1 if you have the <endian.h> header file. */
++#cmakedefine HAVE_ENDIAN_H
++
++/* Define to 1 if you have the <errno.h> header file. */
++#cmakedefine HAVE_ERRNO_H
++
++/* Define to 1 if you have the `execv' function. */
++#cmakedefine HAVE_EXECV
++
++/* Define to 1 if you have the <ext2fs/ext2fs.h> header file. */
++#cmakedefine HAVE_EXT2FS_EXT2FS_H
++
++/* Define to 1 if you have the <ext2fs/ext2_fs.h> header file. */
++#cmakedefine HAVE_EXT2FS_EXT2_FS_H
++
++/* Define to 1 if you have the `ext2fs_get_generic_bitmap_start' function. */
++#cmakedefine HAVE_EXT2FS_GET_GENERIC_BITMAP_START
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H
++
++/* Define to 1 if you have the <features.h> header file. */
++#cmakedefine HAVE_FEATURES_H
++
++/* Define to 1 if you have the `fsync' function. */
++#cmakedefine HAVE_FSYNC
++
++/* Define to 1 if you have the `ftruncate' function. */
++#cmakedefine HAVE_FTRUNCATE
++
++/* Define to 1 if you have the `getcwd' function. */
++#cmakedefine HAVE_GETCWD
++
++/* Define to 1 if you have the `geteuid' function. */
++#cmakedefine HAVE_GETEUID
++
++/* Define if you have this function */
++#cmakedefine HAVE_GICONV
++
++/* Define to 1 if you have the <giconv.h> header file. */
++#cmakedefine HAVE_GICONV_H
++
++/* Define to 1 if you have the <glob.h> header file. */
++#cmakedefine HAVE_GLOB_H
++
++/* Define if you have this function */
++#cmakedefine HAVE_ICONV
++
++/* Define to 1 if you have the <iconv.h> header file. */
++#cmakedefine HAVE_ICONV_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H
++
++/* Define to 1 if you have the <io.h> header file. */
++#cmakedefine HAVE_IO_H
++
++/* Define to 1 if you have the <jpeglib.h> header file. */
++#cmakedefine HAVE_JPEGLIB_H
++
++/* Define to 1 if you have the <libcarvpath.h> header file. */
++#cmakedefine HAVE_LIBCARVPATH_H
++
++/* Define to 1 if you have the com_err library (-lcom_err). */
++#cmakedefine HAVE_LIBCOMM_ERR
++
++/* Define to 1 if you have the `crypto' library (-lcrypto). */
++#cmakedefine HAVE_LIBCRYPTO
++
++/* Define to 1 if you have the ewf library (-lewf). */
++#cmakedefine HAVE_LIBEWF
++
++/* Define to 1 if you have the <libewf.h> header file. */
++#cmakedefine HAVE_LIBEWF_H
++
++/* Define to 1 if you have the ext2fs library (-lext2fs). */
++#cmakedefine HAVE_LIBEXT2FS
++
++/* Define to 1 if you have the <libgen.h> header file. */
++#cmakedefine HAVE_LIBGEN_H
++
++/* Define to 1 if you have the jpeg library (-ljpeg). */
++#cmakedefine HAVE_LIBJPEG
++
++/* Define to 1 if you have the ntfs library (-lntfs). */
++#cmakedefine HAVE_LIBNTFS
++
++/* Define to 1 if you have the reiserfs library (-lreiserfs). */
++#cmakedefine HAVE_LIBREISERFS
++
++/* Define to 1 if you have the `z' library (-lz). */
++#cmakedefine HAVE_LIBZ
++
++/* Define to 1 if you have the <limits.h> header file. */
++#cmakedefine HAVE_LIMITS_H
++
++/* Define to 1 if you have the <linux/fs.h> header file. */
++#cmakedefine HAVE_LINUX_FS_H
++
++/* Define to 1 if you have the <linux/hdreg.h> header file. */
++#cmakedefine HAVE_LINUX_HDREG_H
++
++/* Define to 1 if you have the <linux/types.h> header file. */
++#cmakedefine HAVE_LINUX_TYPES_H
++
++/* Define to 1 if you have the <locale.h> header file. */
++#cmakedefine HAVE_LOCALE_H
++
++/* Define to 1 if you have the `lstat' function. */
++#cmakedefine HAVE_LSTAT
++
++/* Define to 1 if you have the <machine/endian.h> header file. */
++#cmakedefine HAVE_MACHINE_ENDIAN_H
++
++/* Define to 1 if you have the <malloc.h> header file. */
++#cmakedefine HAVE_MALLOC_H
++
++/* Define to 1 if you have the `memalign' function. */
++#cmakedefine HAVE_MEMALIGN
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H
++
++/* Define to 1 if you have the `memset' function. */
++#cmakedefine HAVE_MEMSET
++
++/* Define to 1 if you have the `mkdir' function. */
++#cmakedefine HAVE_MKDIR
++
++/* Define to 1 if you have one of the ncursesw/ncurses/pdcurses/curses
++   library. */
++#cmakedefine HAVE_NCURSES
++
++/* Define to 1 if you have the <ncursesw/ncurses.h> header file. */
++#cmakedefine HAVE_NCURSESW_NCURSES_H
++
++/* Define to 1 if you have the <ncurses/curses.h> header file. */
++#cmakedefine HAVE_NCURSES_CURSES_H
++
++/* Define to 1 if you have the <ncurses.h> header file. */
++#cmakedefine HAVE_NCURSES_H
++
++/* Define to 1 if you have the <ncurses/ncurses.h> header file. */
++#cmakedefine HAVE_NCURSES_NCURSES_H
++
++/* Define to 1 if you have the <ntfs/attrib.h> header file. */
++#cmakedefine HAVE_NTFS_ATTRIB_H
++
++/* Define to 1 if you have the `ntfs_libntfs_version' function. */
++#cmakedefine HAVE_NTFS_LIBNTFS_VERSION
++
++/* Define to 1 if you have the <ntfs/version.h> header file. */
++#cmakedefine HAVE_NTFS_VERSION_H
++
++/* Define to 1 if you have the <ntfs/volume.h> header file. */
++#cmakedefine HAVE_NTFS_VOLUME_H
++
++/* Define to 1 if you have the `ntfs_volume_startup' function. */
++#cmakedefine HAVE_NTFS_VOLUME_STARTUP
++
++/* Define to 1 if off64_t isn't available */
++#cmakedefine HAVE_OFF64_T
++
++/* Define to 1 if you have the <openssl/md5.h> header file. */
++#cmakedefine HAVE_OPENSSL_MD5_H
++
++/* Define to 1 if you have the <openssl/opensslv.h> header file. */
++#cmakedefine HAVE_OPENSSL_OPENSSLV_H
++
++/* Define to 1 if you have the `posix_fadvise' function. */
++#cmakedefine HAVE_POSIX_FADVISE
++
++/* Define to 1 if you have the `posix_memalign' function. */
++#cmakedefine HAVE_POSIX_MEMALIGN
++
++/* Define to 1 if you have the `pread' function. */
++#cmakedefine HAVE_PREAD
++
++/* Define if you have POSIX threads libraries and header files. */
++#cmakedefine HAVE_PTHREAD
++
++/* Define to 1 if you have the <pwd.h> header file. */
++#cmakedefine HAVE_PWD_H
++
++/* Define to 1 if you have the `pwrite' function. */
++#cmakedefine HAVE_PWRITE
++
++/* Define to 1 if you have the `readlink' function. */
++#cmakedefine HAVE_READLINK
++
++/* Define to 1 if you have the `reiserfs_fs_open_fast' function. */
++#cmakedefine HAVE_REISERFS_FS_OPEN_FAST
++
++/* Define to 1 if you have the <scsi/scsi.h> header file. */
++#cmakedefine HAVE_SCSI_SCSI_H
++
++/* Define to 1 if you have the <scsi/scsi_ioctl.h> header file. */
++#cmakedefine HAVE_SCSI_SCSI_IOCTL_H
++
++/* Define to 1 if you have the <scsi/sg.h> header file. */
++#cmakedefine HAVE_SCSI_SG_H
++
++/* Define to 1 if you have the `setenv' function. */
++#cmakedefine HAVE_SETENV
++
++/* Define to 1 if you have the <setjmp.h> header file. */
++#cmakedefine HAVE_SETJMP_H
++
++/* Define to 1 if you have the `setlocale' function. */
++#cmakedefine HAVE_SETLOCALE
++
++/* Define to 1 if you have the `sigaction' function. */
++#cmakedefine HAVE_SIGACTION
++
++/* Define to 1 if you have the `signal' function. */
++#cmakedefine HAVE_SIGNAL
++
++/* Define to 1 if you have the <signal.h> header file. */
++#cmakedefine HAVE_SIGNAL_H
++
++/* Define to 1 if you have the `sleep' function. */
++#cmakedefine HAVE_SLEEP
++
++/* Define to 1 if you have the `snprintf' function. */
++#cmakedefine HAVE_SNPRINTF
++
++/* Define to 1 if you have the <stdarg.h> header file. */
++#cmakedefine HAVE_STDARG_H
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H
++
++/* Define to 1 if you have the `strchr' function. */
++#cmakedefine HAVE_STRCHR
++
++/* Define to 1 if you have the `strdup' function. */
++#cmakedefine HAVE_STRDUP
++
++/* Define to 1 if you have the `strerror' function. */
++#cmakedefine HAVE_STRERROR
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H
++
++/* Define to 1 if you have the `strncasecmp' function. */
++#cmakedefine HAVE_STRNCASECMP
++
++/* Define to 1 if you have the `strtol' function. */
++#cmakedefine HAVE_STRTOL
++
++/* Define to 1 if `dev' is a member of `struct dal_ops'. */
++#cmakedefine HAVE_STRUCT_DAL_OPS_DEV
++
++/* Define to 1 if `st_blksize' is a member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_BLKSIZE
++
++/* Define to 1 if `st_blocks' is a member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_BLOCKS
++
++/* Define to 1 if `st_rdev' is a member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_RDEV
++
++/* Define to 1 if `set_option' is a member of `struct struct_io_manager'. */
++#cmakedefine HAVE_STRUCT_STRUCT_IO_MANAGER_SET_OPTION
++
++/* Define to 1 if `tm_gmtoff' is a member of `struct tm'. */
++#cmakedefine HAVE_STRUCT_TM_TM_GMTOFF
++
++/* Define to 1 if your `struct stat' has `st_blocks'. Deprecated, use
++   `HAVE_STRUCT_STAT_ST_BLOCKS' instead. */
++#cmakedefine HAVE_ST_BLOCKS
++
++/* Define to 1 if you have the <sys/cygwin.h> header file. */
++#cmakedefine HAVE_SYS_CYGWIN_H
++
++/* Define to 1 if you have the <sys/disklabel.h> header file. */
++#cmakedefine HAVE_SYS_DISKLABEL_H
++
++/* Define to 1 if you have the <sys/disk.h> header file. */
++#cmakedefine HAVE_SYS_DISK_H
++
++/* Define to 1 if you have the <sys/dkio.h> header file. */
++#cmakedefine HAVE_SYS_DKIO_H
++
++/* Define to 1 if you have the <sys/endian.h> header file. */
++#cmakedefine HAVE_SYS_ENDIAN_H
++
++/* Define to 1 if you have the <sys/ioctl.h> header file. */
++#cmakedefine HAVE_SYS_IOCTL_H
++
++/* Define to 1 if you have the <sys/mount.h> header file. */
++#cmakedefine HAVE_SYS_MOUNT_H
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#cmakedefine HAVE_SYS_PARAM_H
++
++/* Define to 1 if you have the <sys/select.h> header file. */
++#cmakedefine HAVE_SYS_SELECT_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <sys/utsname.h> header file. */
++#cmakedefine HAVE_SYS_UTSNAME_H
++
++/* Define to 1 if you have the <sys/uuid.h> header file. */
++#cmakedefine HAVE_SYS_UUID_H
++
++/* Define to 1 if you have the <sys/vtoc.h> header file. */
++#cmakedefine HAVE_SYS_VTOC_H
++
++/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
++#cmakedefine HAVE_SYS_WAIT_H
++
++/* Define to 1 if you have the <time.h> header file. */
++#cmakedefine HAVE_TIME_H
++
++/* Define to 1 if you have the tinfo library (-ltinfo). */
++#cmakedefine HAVE_TINFO
++
++/* Define to 1 if you have the `touchwin' function. */
++#cmakedefine HAVE_TOUCHWIN
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H
++
++/* Define to 1 if you have the `utime' function. */
++#cmakedefine HAVE_UTIME
++
++/* Define to 1 if you have the <utime.h> header file. */
++#cmakedefine HAVE_UTIME_H
++
++/* Define to 1 if you have the `uuidgen' function. */
++#cmakedefine HAVE_UUIDGEN
++
++/* Define to 1 if you have the `uuid_create' function. */
++#cmakedefine HAVE_UUID_CREATE
++
++/* Define to 1 if you have the `uuid_generate' function. */
++#cmakedefine HAVE_UUID_GENERATE
++
++/* Define to 1 if you have the <uuid.h> header file. */
++#cmakedefine HAVE_UUID_H
++
++/* Define to 1 if you have the <uuid/uuid.h> header file. */
++#cmakedefine HAVE_UUID_UUID_H
++
++/* Define to 1 if you have the <varargs.h> header file. */
++#cmakedefine HAVE_VARARGS_H
++
++/* Define to 1 if you have the `vsnprintf' function. */
++#cmakedefine HAVE_VSNPRINTF
++
++/* Define to 1 if you have the <w32api/ddk/ntdddisk.h> header file. */
++#cmakedefine HAVE_W32API_DDK_NTDDDISK_H
++
++/* Define to 1 if you have the <winbase.h> header file. */
++#cmakedefine HAVE_WINBASE_H
++
++/* Define to 1 if you have the <windef.h> header file. */
++#cmakedefine HAVE_WINDEF_H
++
++/* Define to 1 if you have the <windows.h> header file. */
++#cmakedefine HAVE_WINDOWS_H
++
++/* Define to 1 if you have the <winioctl.h> header file. */
++#cmakedefine HAVE_WINIOCTL_H
++
++/* Define to 1 if you have the <zlib.h> header file. */
++#cmakedefine HAVE_ZLIB_H
++
++/* Define if libewf_get_bytes_per_sector takes two parameters. */
++#cmakedefine LIBEWF_GET_BYTES_PER_SECTOR_HAVE_TWO_ARGUMENTS
++
++/* Define if libewf_get_media_size takes two parameters. */
++#cmakedefine LIBEWF_GET_MEDIA_SIZE_HAVE_TWO_ARGUMENTS
++
++/* Name of package */
++#cmakedefine PACKAGE
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME
++
++/* Define to the home page for this package. */
++#cmakedefine PACKAGE_URL
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION
++
++/* Define to necessary symbol if this constant uses a non-standard name on
++   your system. */
++#cmakedefine PTHREAD_CREATE_JOINABLE
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS
++
++/* Path to sudo for privileged operations */
++#cmakedefine SUDO_BIN
++
++/* Define for BSD target */
++#cmakedefine TARGET_BSD
++
++/* Define for LINUX target */
++#cmakedefine TARGET_LINUX
++
++/* Define for SOLARIS target */
++#cmakedefine TARGET_SOLARIS
++
++/* Date of release */
++#cmakedefine TESTDISKDATE @TESTDISKDATE@
++
++/* Define to 1 if your processor stores words with the least significant byte
++   first (like Intel and VAX, unlike Motorola and SPARC). */
++#cmakedefine TESTDISK_LSB
++
++/* Define to 1 if your <sys/time.h> declares `struct tm'. */
++#cmakedefine TM_IN_SYS_TIME
++
++/* Version number of package */
++#cmakedefine VERSION @VERSION@
++
++/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
++   significant byte first (like Motorola and SPARC, unlike Intel). */
++#if defined AC_APPLE_UNIVERSAL_BUILD
++# if defined __BIG_ENDIAN__
++#  define WORDS_BIGENDIAN 1
++# endif
++#else
++# ifndef WORDS_BIGENDIAN
++#  undef WORDS_BIGENDIAN
++# endif
++#endif
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#cmakedefine _FILE_OFFSET_BITS
++
++/* enable compile-time and run-time bounds-checking, and some warnings */
++#cmakedefine _FORTIFY_SOURCE
++
++/* Enable GNU extensions */
++#cmakedefine _GNU_SOURCE
++
++/* Define for large files, on AIX-style hosts. */
++#cmakedefine _LARGE_FILES
++
++/* Define for freebsd4 target and progsreiserfs compatibility */
++#cmakedefine __freebsd__
++
++/* Define to empty if `const' does not conform to ANSI C. */
++#cmakedefine const
++
++/* Define to `__inline__' or `__inline' if that's what the C compiler
++   calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef __cplusplus
++#cmakedefine inline
++#endif
++
++/* Define to `long int' if <sys/types.h> does not define. */
++#cmakedefine off_t
++
++/* Define to `unsigned int' if <sys/types.h> does not define. */
++#cmakedefine size_t
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+new file mode 100644
+index 0000000..a81a2da
+--- /dev/null
++++ b/src/CMakeLists.txt
+@@ -0,0 +1,419 @@
++set(base_SRCS 
++    autoset.c
++    common.c
++    crc.c
++    ewf.c
++    fnctdsk.c
++    hdaccess.c
++    hdcache.c
++    hdwin32.c
++    hidden.c
++    hpa_dco.c
++    intrf.c
++    iso.c
++    log.c
++    log_part.c
++    misc.c
++    msdos.c
++    parti386.c
++    partgpt.c
++    partmac.c
++    partsun.c
++    partnone.c
++    partxbox.c
++    io_redir.c
++    ntfs_io.c
++    ntfs_utl.c
++    partauto.c
++    sudo.c
++    unicode.c
++    win32.c
++)
++
++set(fs_SRCS
++    analyse.c
++    bfs.c
++    bsd.c
++    cramfs.c
++    exfat.c
++    fat.c
++    fatx.c
++    ext2.c
++    jfs.c
++    hfs.c
++    hfsp.c
++    hpfs.c
++    luks.c
++    lvm.c
++    md.c
++    netware.c
++    ntfs.c
++    rfs.c
++    savehdr.c
++    sun.c
++    swap.c
++    sysv.c
++    ufs.c
++    xfs.c
++    zfs.c
++)
++
++set(testdisk_ncurses_SRCS
++    addpart.c
++    adv.c
++    askloc.c
++    chgtype.c
++    chgtypen.c
++    dimage.c
++    dirn.c
++    dirpart.c
++    diskacc.c
++    diskcapa.c
++    edit.c
++    ext2_sb.c
++    ext2_sbn.c
++    fat1x.c
++    fat32.c
++    fat_adv.c
++    fat_cluster.c
++    fatn.c
++    geometry.c
++    godmode.c
++    hiddenn.c
++    intrface.c
++    intrfn.c
++    nodisk.c
++    ntfs_adv.c
++    ntfs_fix.c
++    ntfs_udl.c
++    parti386n.c
++    partgptn.c
++    partmacn.c
++    partsunn.c
++    partxboxn.c
++    tanalyse.c
++    tbanner.c
++    tdelete.c
++    tdiskop.c
++    tdisksel.c
++    testdisk.c
++    thfs.c
++    tload.c
++    tlog.c
++    tmbrcode.c
++    tntfs.c
++    toptions.c
++    tpartwr.c 
++)
++ 
++set(file_SRCS
++    filegen.c
++    file_list.c
++    file_1cd.c
++    file_7z.c
++    file_DB.c
++    file_a.c
++    file_ab.c
++    file_abcdp.c
++    file_ace.c
++    file_ahn.c
++    file_aif.c
++    file_all.c
++    file_als.c
++    file_amd.c
++    file_amr.c
++    file_apa.c
++    file_ape.c
++    file_apple.c
++    file_arj.c
++    file_asf.c
++    file_asm.c
++    file_atd.c
++    file_au.c
++    file_bac.c
++    file_bkf.c
++    file_bld.c
++    file_bmp.c
++    file_bz2.c
++    file_cab.c
++    file_cam.c
++    file_chm.c
++    file_class.c
++    file_cm.c
++    file_compress.c
++    file_cow.c
++    file_crw.c
++    file_ctg.c
++    file_cwk.c
++    file_d2s.c
++    file_dat.c
++    file_dbf.c
++    file_dbn.c
++    file_dex.c
++    file_dim.c
++    file_dir.c
++    file_djv.c
++    file_doc.c
++    file_dpx.c
++    file_drw.c
++    file_ds2.c
++    file_dsc.c
++    file_dss.c
++    file_dta.c
++    file_dump.c
++    file_dv.c
++    file_dwg.c
++    file_dxf.c
++    file_e01.c
++    file_edb.c
++    file_ecryptfs.c
++    file_elf.c
++    file_emf.c
++    file_evt.c
++    file_exe.c
++    file_ext.c
++    file_ext2.c
++    file_fat.c
++    file_fbk.c
++    file_fcp.c
++    file_fcs.c
++    file_fdb.c
++    file_fh10.c
++    file_fh5.c
++    file_fits.c
++    file_flac.c
++    file_flp.c
++    file_flv.c
++    file_fob.c
++    file_fp5.c
++    file_fp7.c
++    file_frm.c
++    file_fs.c
++    file_gho.c
++    file_gif.c
++    file_gm6.c
++    file_gp5.c
++    file_gpg.c
++    file_gz.c
++    file_hds.c
++    file_hr9.c
++    file_icc.c
++    file_ico.c
++    file_ifo.c
++    file_imb.c
++    file_indd.c
++    file_iso.c
++    file_itu.c
++    file_jpg.c
++    file_kdb.c
++    file_ldf.c
++    file_lnk.c
++    file_logic.c
++    file_m2ts.c
++    file_mat.c
++    file_max.c
++    file_mb.c
++    file_mcd.c
++    file_mdb.c
++    file_mdf.c
++    file_mfa.c
++    file_mfg.c
++    file_mid.c
++    file_mk5.c
++    file_mkv.c
++    file_mov.c
++    file_mp3.c
++    file_mpg.c
++    file_mrw.c
++    file_mus.c
++    file_mxf.c
++    file_myo.c
++    file_mysql.c
++    file_nds.c
++    file_njx.c
++    file_nk2.c
++    file_ogg.c
++    file_one.c
++    file_orf.c
++    file_paf.c
++    file_pap.c
++    file_pcap.c
++    file_pct.c
++    file_pcx.c
++    file_pdf.c
++    file_pfx.c
++    file_png.c
++    file_pnm.c
++    file_prc.c
++    file_prt.c
++    file_ps.c
++    file_psd.c
++    file_psp.c
++    file_pst.c
++    file_ptb.c
++    file_pyc.c
++    file_pzf.c
++    file_pzh.c
++    file_qbb.c
++    file_qdf.c
++    file_qxd.c
++    file_r3d.c
++    file_ra.c
++    file_raf.c
++    file_rar.c
++    file_raw.c
++    file_rdc.c
++    file_reg.c
++    file_res.c
++    file_riff.c
++    file_rm.c
++    file_rns.c
++    file_rpm.c
++    file_rw2.c
++    file_ses.c
++    file_sib.c
++    file_sit.c
++    file_skd.c
++    file_skp.c
++    file_sp3.c
++    file_spe.c
++    file_spf.c
++    file_spss.c
++    file_sql.c
++    file_sqm.c
++    file_stl.c
++    file_stu.c
++    file_swf.c
++    file_tar.c
++    file_tax.c
++    file_tib.c
++    file_tiff.c
++    file_tph.c
++    file_ttf.c
++    file_txt.c
++    file_tz.c
++    file_veg.c
++    file_vfb.c
++    file_vmdk.c
++    file_wdp.c
++    file_win.c
++    file_wks.c
++    file_wmf.c
++    file_wnk.c
++    file_wpd.c
++    file_wv.c
++    file_x3f.c
++    file_xcf.c
++    file_xm.c
++    file_xsv.c
++    file_xpt.c
++    file_xv.c
++    file_zip.c 
++)
++
++set(photorec_SRCS
++    photorec.c
++    phcfg.c
++    dir.c
++    ext2grp.c
++    ext2_dir.c
++    ext2p.c
++    fat_dir.c
++    fatp.c
++    file_found.c
++    list.c
++    ntfs_dir.c
++    ntfsp.c
++    sessionp.c
++    setdate.c
++)
++
++set(photorec_ncurses_SRCS
++    addpart.c
++    askloc.c
++    chgtype.c
++    chgtypen.c
++    fat_cluster.c
++    fat_unformat.c
++    geometry.c
++    hiddenn.c
++    intrfn.c
++    nodisk.c
++    parti386n.c
++    partgptn.c
++    partmacn.c
++    partsunn.c
++    partxboxn.c
++    pbanner.c
++    pblocksize.c
++    pdisksel.c
++    pfree_whole.c
++    phbf.c
++    phbs.c
++    phnc.c
++    phrecn.c
++    ppartsel.c
++)
++
++set(testdisk_SRCS
++    ${testdisk_ncurses_SRCS}
++    dir.c
++    ext2_dir.c
++    fat_dir.c
++    ntfs_dir.c
++    partgptw.c
++    rfs_dir.c
++    setdate.c
++    next.c
++)
++
++set(photorec_SRCS
++    phmain.c
++    partgptro.c
++    suspend_no.c
++    ${photorec_SRCS}
++    ${photorec_ncurses_SRCS}
++)
++
++set(photorecf_SRCS
++    phmain.c
++    partgptro.c
++    suspend.c
++    ${photorec_SRCS}
++    ${photorec_ncurses_SRCS}
++)
++
++
++set(fidentify_SRCS
++    fidentify.c
++    common.c
++    phcfg.c
++    setdate.c
++    log.c
++    crc.c
++    fat_common.c
++    suspend_no.c
++)
++
++add_library(tdbase STATIC ${base_SRCS})
++add_library(tdfile STATIC ${file_SRCS})
++add_library(tdfs STATIC ${fs_SRCS})
++
++add_executable(fidentify ${fidentify_SRCS})
++target_link_libraries(fidentify tdfile)
++
++add_executable(photorec ${photorec_SRCS})
++target_link_libraries(photorec tdfile tdbase tdfs)
++
++add_executable(photorecf ${photorecf_SRCS})
++target_link_libraries(photorecf tdfile tdbase tdfs)
++
++add_executable(testdisk ${testdisk_SRCS})
++target_link_libraries(testdisk tdbase tdfs)
++
++#qphotorec_SOURCES	= qmainrec.cpp qphotorec.cpp qphotorec.h chgtype.c chgtype.h $(photorec_C) $(photorec_H) $(file_C) $(file_H) $(base_C) $(base_H) $(fs_C) $(fs_H) $(ICON_PHOTOREC)
++
++install(TARGETS fidentify photorec photorecf testdisk RUNTIME DESTINATION bin
++                                                      LIBRARY DESTINATION lib
++                                                      ARCHIVE DESTINATION lib)
++
+-- 
+1.7.0.2.msysgit.0
+
