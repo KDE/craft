@@ -10,6 +10,8 @@ import subprocess
 COMPILER=os.getenv("KDECOMPILER")
 
 def getGCCTarget():
+   if not isMinGW():
+     return False
    result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
    utils.debug("GCC Target Processor:%s" % result, 1 )
    return result.strip()
