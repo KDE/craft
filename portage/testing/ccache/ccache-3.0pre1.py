@@ -28,6 +28,8 @@ class Package(BinaryPackageBase):
     BinaryPackageBase.__init__( self )
 
   def install(self):
+    if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
+      os.makedirs( os.path.join( self.installDir() , "bin" ) )
     shutil.move(os.path.join( self.installDir() , "ccache-win32-1.exe") , os.path.join( self.installDir() , "bin" , "ccache.exe") )
     return True
     
