@@ -43,13 +43,24 @@ def isMSVC2005():
    
 def getCompilerName():
    if isMinGW():
-     if isMinGW32():
-       return "mingw32"
-     elif isMinGW_W32():
+     if isMinGW_W32():
        return "mingw-w32"
      elif isMinGW_W64():
        return "mingw-w64"
+     elif isMinGW32():
+       return "mingw32"
    elif isMSVC():
      return COMPILER
+   else:
+     return "Unknown Compiler"
+     
+def getSimpleCompilerName():
+   if isMinGW():
+     if isMinGW_W64():
+       return "mingw64"
+     else:
+       return "mingw"
+   elif isMSVC():
+     return "msvc"
    else:
      return "Unknown Compiler"
