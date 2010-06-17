@@ -13,15 +13,13 @@ class subinfo(info.infoclass):
     def setTargets( self ):   
         self.baseURL = "http://artfiles.org/mysql/Downloads/MySQL-5.1/"
         if( platform.buildArchitecture() == 'x64' ):
-          self.targets[ 'mysql-sever-5.1.46'] = self.baseURL+"mysql-noinstall-5.1.46-winx64.zip"
-          self.targetInstSrc[ 'mysql-sever-5.1.46' ] = "mysql-5.1.46-winx64"
-          self.targetDigests[ 'mysql-sever-5.1.46' ] = 'eafb5d40ae09e8f208151c934089e6dd1ded98b4'
+          self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-winx64.zip"
+          self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-winx64"
         else:
-          self.targets[ 'mysql-sever-5.1.46'] = self.baseURL+"mysql-noinstall-5.1.46-win32.zip"
-          self.targetInstSrc[ 'mysql-sever-5.1.46' ] = "mysql-5.1.46-win32"
-          self.targetDigests[ 'mysql-sever-5.1.46' ] = 'd1149263a9fc02ab4a1067a10e0eb7df35708290'
+          self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-win32.zip"
+          self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-win32"
           
-        self.defaultTarget = 'mysql-sever-5.1.46'
+        self.defaultTarget = '5.1.48'
        
 
     def setDependencies( self ):
