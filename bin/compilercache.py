@@ -27,6 +27,12 @@ def getMsysMakeArguments():
   return ""
 
 def getQmakeMakeArguments():
+  if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
+    ccache = os.path.join( os.getenv( "KDEROOT" ) , "bin" , "ccache.exe" )
+    os.putenv("CXX" , "%s g++" % ccache )
+    os.putenv("CC" , "%s gcc" % ccache )
+    return " -e "
+   
   return ""
 
 
