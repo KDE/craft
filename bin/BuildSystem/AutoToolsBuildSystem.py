@@ -6,6 +6,7 @@ import utils
 
 import base
 import info
+import compilercache
 from shells import *
 
 from BuildSystemBase import *
@@ -22,8 +23,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
         os.putenv("PERL",perl)
         os.putenv("INTLTOOL_PERL",perl)
 
-
     def configureDefaultDefines( self ):
+        
         """defining the default cmake cmd line"""
         return ""
 
@@ -71,7 +72,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
         
         command = self.makeProgram
-        args = ""
+        args = compilercache.getMsysMakeArguments()
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
             

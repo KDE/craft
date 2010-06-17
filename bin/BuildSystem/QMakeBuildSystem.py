@@ -8,7 +8,7 @@ import utils
 
 import base
 import info
-
+import compilercache
 from BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
@@ -67,6 +67,7 @@ class QMakeBuildSystem(BuildSystemBase):
         self.setPathes()
 
         command = self.makeProgramm 
+        command += compilercache.getQmakeMakeArguments()
         
         if utils.verbose() > 1:
             command += " VERBOSE=1"
