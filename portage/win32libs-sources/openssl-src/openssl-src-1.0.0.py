@@ -4,19 +4,21 @@ import shutil
 import utils
 import info
 import platform
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):   
         for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0' , '1.0.0a']:
             self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
             self.targetInstSrc[ver] = 'openssl-'+ver
-            if not COMPILER.startswith( "mingw" ):
+            if compiler.isMSVC():
               self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
-            self.targetDigestUrls[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz.sha1'      
-            if not COMPILER.startswith( "mingw" ):
-              self.defaultTarget = '1.0.0'
-            else:
-              self.defaultTarget = '1.0.0a'
+            self.targetDigestUrls[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz.sha1'
+            
+        if compiler.isMinGW():
+            self.defaultTarget = '1.0.0a'
+        else:
+            self.defaultTarget = '1.0.0'
         
         self.options.package.withCompiler = False
 
@@ -25,7 +27,7 @@ class subinfo(info.infoclass):
             self.hardDependencies['dev-util/perl'] = 'default'
             if platform.isCrossCompilingEnabled():
                 self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
-            if COMPILER.startswith( "mingw" ):
+            if compiler.isMinGW():
                 self.hardDependencies['dev-util/msys'] = 'default'
                 self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
@@ -119,15 +121,9 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
         self.shell = MSysShell()
         
         self.buildInSource=True
-        if self.buildArchitecture()=="x64" and COMPILER == "mingw4":
-            compiler="mingw64"
-        elif(COMPILER == "mingw4"):
-            compiler="mingw"
-        else:
-            utils.die("msvc is not supported");
 
         # target install needs perl with native path on configure time
-        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler )
+        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler.getSimpleCompilerName() )
            
       
     def install (self):
@@ -141,7 +137,7 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
       
       
 
-if COMPILER.startswith( "mingw" ):
+if compiler.isMinGW():
     class Package(PackageMSys):
         def __init__( self ):
             PackageMSys.__init__( self )
