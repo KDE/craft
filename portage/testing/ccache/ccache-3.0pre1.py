@@ -2,19 +2,17 @@ from Package.BinaryPackageBase import *
 import info
 import shutil
 import os
-import re
-import urllib
+import utils
 
 # currently only needed from kdenetwork
 
 
 class subinfo(info.infoclass):
   def setTargets( self ):    
-    self.targets[ "ccache-win32-2.4" ]  =  "http://ccache-win32.googlecode.com/files/ccache-win32-2.4.zip"
-    self.targetDigests['ccache-win32-2.4'] = 'b57ca0910f1fb4eb2d8b99974de71cb1018234f4'
+    self.targets[ "ccache-3.0pre1" ]  =  "http://ramiro.arrozcru.org/ccache-win32-1.exe"
 
     
-    self.defaultTarget = "ccache-win32-2.4"
+    self.defaultTarget = "ccache-3.0pre1"
     
 
   def setDependencies( self ):
@@ -28,8 +26,10 @@ class Package(BinaryPackageBase):
     self.subinfo.options.package.packSources = False
     self.subinfo.options.package.withCompiler = None
     BinaryPackageBase.__init__( self )
-    self.subinfo.options.merge.destinationPath = "bin"
-    
+
+  def install(self):
+    shutil.move(os.path.join( self.installDir() , "ccache-win32-1.exe") , os.path.join( self.installDir() , "bin" , "ccache.exe") )
+    return True
     
 if __name__ == '__main__':
     Package().execute()
