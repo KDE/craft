@@ -3,6 +3,7 @@ import utils
 import os
 import info
 import platform
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -39,7 +40,7 @@ class Package(CMakePackageBase):
     def unpack(self):
         if not CMakePackageBase.unpack(self):
             return False      
-        if not  platform.buildArchitecture() == 'x64' and COMPILER == "mingw4":
+        if compiler.isMinGW32():
           if self.buildTarget in ['1.2.1', '1.2.3', '1.2.4', 'svnHEAD', 'gitHEAD']:
               utils.copyFile( os.path.join(self.packageDir(), "wspiapi.h"), os.path.join(self.buildDir(), "wspiapi.h") )
         return True
