@@ -24,11 +24,7 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-        
-        
-    def install(self):
-        shutil.move( os.path.join( self.installDir() , "autotools" ) , os.path.join( self.installDir(), "msys" ) )
-        return True
+        self.subinfo.options.merge.destinationPath = "msys/opt"
 
 if __name__ == '__main__':
     Package().execute()
