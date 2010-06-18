@@ -42,12 +42,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
             sourcedir = self.buildDir()
         
         configure = os.path.join(sourcedir,"configure")
-        if os.path.exists(configure):
+        if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
             mergeroot = self.shell.toNativePath( self.mergeDestinationDir() )
             _cflags = "-I%s/include %s" % (mergeroot, cflags)
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
             utils.putenv("CFLAGS",_cflags)
             utils.putenv("LDFLAGS",_ldflags)
+            if self.subinfo.options.configure.bootstrap == True:
+              autogen = os.path.join(sourcedir,"autogen.sh" )
+              if os.path.exists(autogen):
+                os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "MSYSDIR" ) , "opt" , "autotools" , "bin" )))
+                self.shell.execute(self.sourceDir(), autogen , "" )
             if(self.buildInSource):
               _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
             else:

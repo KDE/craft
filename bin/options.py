@@ -35,6 +35,9 @@ class OptionsConfigure:
         
         # add the cmake defines that are needed to build tests here
         self.testDefine = None
+        
+        ## run autogen in autotools
+        self.bootstrap=False
 
 ## options for the make action 
 class OptionsMake:
