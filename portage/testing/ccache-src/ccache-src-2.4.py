@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['3.0-pre1'] = "ccache-3.0pre1"
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.defaultTarget = '2.4'
-        self.options.package.withCompiler = False
+        
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -28,9 +28,12 @@ class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
         AutoToolsBuildSystem.__init__(self)        
         MultiPackager.__init__(self)
         self.buildInSource = True
+        self.subinfo.options.package.withCompiler = False
         
     def configure( self ):
         if self.buildTarget in ['gitHEAD', '3.0-pre1']:
+            if self.buildTarget in ['gitHEAD']:
+              self.subinfo.options.configure.bootstrap = True
             return AutoToolsBuildSystem.configure( self )
         return True
 
