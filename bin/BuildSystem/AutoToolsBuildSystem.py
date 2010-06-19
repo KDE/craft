@@ -53,7 +53,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
               if os.path.exists(autogen):
                 os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "MSYSDIR" ) , "opt" , "autotools" , "bin" )))
                 self.shell.execute(self.sourceDir(), autogen , "" )
-            if(self.buildInSource):
+            if self.subinfo.options.install.useDestDir == False:
               _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
             else:
               _prefix = "--prefix=" + mergeroot
