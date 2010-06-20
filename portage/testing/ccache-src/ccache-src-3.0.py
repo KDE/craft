@@ -9,9 +9,11 @@ from Package.PackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://gitorious.org/ccache-win/ccache-win.git|windows"
-        self.targetSrcSuffix['gitHEAD'] = 'git'
-        self.defaultTarget = 'gitHEAD'
+         self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
+         self.targetSrcSuffix['gitHEAD'] = 'git'
+        self.svnTargets['win_branch'] = "git://gitorious.org/ccache-win/ccache-win.git|windows"
+        self.targetSrcSuffix['win_branch'] = 'git-win'
+        self.defaultTarget = 'win_branch'
         
 
     def setDependencies( self ):
