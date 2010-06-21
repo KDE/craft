@@ -1,5 +1,4 @@
 import os
-from shells import MSysShell
 import info
 
 
@@ -8,12 +7,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/msys'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.2.8'] = 'http://ftp.gnu.org/gnu/libtool/libtool-2.2.8.tar.gz'
+        self.targets['2.2.8'] = 'http://ftp.gnu.org/gnu/libtool/libtool-2.2.8.tar.lzma'
+        self.targetDigests['2.2.8'] = 'e160056cab3b0d31db6c929f12ddd4a77e2a024d'
         self.targetInstSrc['2.2.8'] = "libtool-2.2.8"
-        self.targetDigests['2.2.8'] = 'e0fd6f9d39c81c2da8b548411c74a46c24442abf'
-        self.options.package.withCompiler = False
-        
-        self.targetMergePath['2.2.8']= "msys";
 
         self.defaultTarget = '2.2.8'
 
@@ -23,7 +19,8 @@ class Package( AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-        self.buildInSource = True
+        self.subinfo.options.merge.destinationPath = 'msys'
+        self.subinfo.options.package.withCompiler = False
         
 if __name__ == '__main__':
      Package().execute()
