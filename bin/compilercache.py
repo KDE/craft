@@ -10,7 +10,9 @@ import compiler
 
 
 if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
-  os.putenv("CCACHE_DIR",os.path.join(os.getenv("KDEROOT") , "build" , "CCACHE" ) )
+  utils.putenv( "CCACHE_DIR" , os.path.join( os.getenv("KDEROOT") , "build" , "CCACHE" ) )
+  if int(os.getenv("EMERGE_VERBOSE")) > 1:
+    utils.putenv( "CCACHE_LOGFILE" , os.path.join( str(os.getenv("CCACHE_DIR")) , "ccachelog.txt" ) )
 
 def getCMakeArguments():
   if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
