@@ -40,6 +40,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
             sourcedir = self.sourceDir()
         else: 
             sourcedir = self.buildDir()
+            
+        if self.buildType() == "RelWithDebInfo": 
+            cflags += " -O2 -g "
+        elif self.buildType() == "Debug":
+            cflags += " -O0 -g3 "
         
         configure = os.path.join(sourcedir,"configure")
         if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
