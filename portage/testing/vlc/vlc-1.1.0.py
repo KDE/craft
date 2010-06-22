@@ -18,10 +18,11 @@ class subinfo(info.infoclass):
     self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32-debug.7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = self.vlcTagName +  self.getVer()      
     
-    self.targets[ 'vlc-1.1.0-rc4'] = "http://download.videolan.org/pub/videolan/testing/vlc-1.1.0-rc4/win32/vlc-1.1.0-rc4-win32.7z"
-    self.targetInstSrc[ 'vlc-1.1.0-rc4' ] = "vlc-1.1.0-rc4"
+    self.targets[ 'vlc-1.1.0'] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-1.1.0-win32.7z"
+    self.targetDigests['vlc-1.1.0'] = 'a644aadd8686fbc65361ca4e361c6cba668c8d75'
+    self.targetInstSrc[ 'vlc-1.1.0' ] = "vlc-1.1.0"
     
-    self.defaultTarget = 'vlc-1.1.0-rc4'
+    self.defaultTarget = 'vlc-1.1.0'
     
 
   def setDependencies( self ):
@@ -31,7 +32,10 @@ class subinfo(info.infoclass):
     if( hasattr( self , "ver" ) ) :
       return self.ver
     else:
-      fh = urllib.urlopen("http://nightlies.videolan.org/build/win32/last/")
+      try:
+        fh = urllib.urlopen("http://nightlies.videolan.org/build/win32/last/" , timeout = 10)
+      except:
+        return " Nightlys Unavailible "
       m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
       fh.close()
       self.ver = m.group(0)
