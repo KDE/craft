@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import info
+import os
 
 from Source.MultiSource import *
 from BuildSystem.AutoToolsBuildSystem import *
 from Packager.MultiPackager import *
 from Package.PackageBase import *
+
+
+os.putenv("EMERGE_USE_CCACHE","False")
 
 
 class subinfo(info.infoclass):
@@ -29,6 +33,7 @@ class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
         MultiPackager.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.bootstrap = True
+        self.subinfo.options.configure.defines = " --enable-dev "
 
 if __name__ == '__main__':
     Package().execute()
