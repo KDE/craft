@@ -91,6 +91,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
         options += " -DCMAKE_LIBRARY_PATH=\"%s\"" % \
             os.path.join( self.mergeDestinationDir(), "lib" ).replace( "\\", "/" )
+            
+        options += " -DCMAKE_PREFIX_PATH=\"%s\"" % \
+            self.mergeDestinationDir().replace( "\\", "/" )
 
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
