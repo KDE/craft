@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
                 self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
     def setBuildOptions( self ):
-        self.disableHostBuild = True
+        self.disableHostBuild = False
         self.disableTargetBuild = False
 
 
