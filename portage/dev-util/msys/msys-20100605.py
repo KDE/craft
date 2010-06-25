@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "20100605"
         self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/MSYS-"+ver+".zip"
-        self.targetDigests[ ver ] = '442c1a44f5ec791c8b9ffd8ff19c09e6fae01af7'
+        self.targetDigests[ ver ] = '24132f624f0401bf72b15fa81dfe0e8deb37c05e'
         self.defaultTarget = ver
         
     
