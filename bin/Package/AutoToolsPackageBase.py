@@ -8,7 +8,7 @@ from BuildSystem.AutoToolsBuildSystem import *;
 from Packager.KDEWinPackager import *;
 
 class AutoToolsPackageBase (PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
-    """provides a base class for cmake packages from any source"""
+    """provides a base class for autotools based packages from any source"""
     def __init__(self):
         utils.debug("AutoToolsPackageBase.__init__ called",2)
         PackageBase.__init__(self)
