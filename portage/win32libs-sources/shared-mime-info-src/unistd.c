@@ -183,12 +183,12 @@ char* getlogin()
 	return getlogin_buf;
 }
 
-void usleep(unsigned int usec)
+int usleep(unsigned int usec)
 {
 	Sleep(usec/1000);
 }
 
-void sleep(unsigned int sec)
+int sleep(unsigned int sec)
 {
 	Sleep(sec*1000);
 }
