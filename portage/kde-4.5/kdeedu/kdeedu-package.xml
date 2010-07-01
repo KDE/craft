@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="kdeedu">
+    <package name="libkdeedu">
+        <shortDescription>the kdeedu support libraries</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kdeeduui|keduvocdocument).*"/>
+			<files include="share/apps/(kvtml|libkdeedu).*"/>
+			<files include="share/config.kcfg/.*settings.*"/>
+		</part>
+		<part name="development">
+			<files include="share/apps/cmake/modules/FindKDEEdu.cmake"/>
+			<files include="include/.*(libkdeedu|keduvocdocument).*"/>
+			<files include="lib/.*(kdeeduui|keduvocdocument|science|SatLib|htmesh|analitza).*"/>
+		</part>
+        <dependency>kdebase-runtime</dependency> 
+        <dependency>kdelibs</dependency>
+    </package>
+    <package name="blinken">
+        <shortDescription>Blinken is the KDE version of the well-known game Simon Says</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*blinken.*"/>
+			<files include="share/applications/kde4/blinken.*"/>
+			<files include="share/apps/blinken.*"/>
+			<files include="share/config.kcfg/blinken.*"/>
+			<files include="share/icons/.*blinken.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kalgebra">
+        <shortDescription>KAlgebra is a mathematical calculator based content markup MathML language</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kalgebra|analitza).*"/>
+			<files include="lib/kde4/.*(plasma_.*_kalgebra).*"/>
+			<files include="share/kde4/services/.*kalgebra.*"/>
+			<files include="share/applications/kde4/kalgebra.*"/>
+			<files include="share/icons/.*kalgebra.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="marble">
+        <shortDescription>Marble is a Virtual Globe and World Atlas</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(marble|geodatatest|tilecreator).*"/>
+			<files include="share/applications/kde4/marble.*"/>
+			<files include="share/icons/.*marble.*"/>
+			<files include="lib/kde4/.*(marble_part|worldclock).*"/>
+			<files include="share/kde4/services.*(marble_part|worldclock).*"/>
+			<files include="lib/kde4/plugins/.*(designer|marble).*"/>
+			<files include="share/apps/marble.*"/>
+			<files include="share/config.kcfg/marble.*"/>
+		</part>
+		<part name="development">
+			<files include="share/apps/cmake/modules/FindMarble.*"/>
+			<files include="include/.*(marble).*"/>
+			<files include="lib/.*(marble).*"/>
+		</part>
+        <dependency>kdebase-runtime</dependency>
+        <dependency>kdelibs</dependency>
+    </package>
+    <package name="cantor">
+        <shortDescription>Cantor is an interface to your mathematical applications</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(cantor).*"/>
+			<files include="lib/.*(cantor).*"/>
+			<files include="share/kde4/services/.*(cantor).*"/>
+			<files include="share/kde4/servicetypes/cantor.*"/>
+			<files include="share/applications/kde4/cantor.*"/>
+			<files include="share/apps/cantor.*"/>
+			<files include="share/config.*/(cantor|maximabackend).*"/>
+			<files include="share/icons/.*(cantor|maximabackend|rbackend|sagebackend).*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="rocs">
+        <shortDescription>Rocs aims to be a Graph Theory IDE</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(rocs).*"/>
+			<files include="share/applications/kde4/rocs.*"/>
+			<files include="share/apps/rocs.*"/>
+			<files include="share/config.*/(rocs).*"/>
+			<files include="share/icons/.*(rocs).*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kalzium">
+        <shortDescription>Kalzium will show you information about the periodic system of the elements</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kalzium|science|compoundviewer).*"/>
+			<files include="lib/kde4/.*(Calculator|didyouknow|kalzium).*"/>
+			<files include="lib/.*(compoundviewer|kalzium).*"/>
+			<files include="share/kde4/services/.*(Calculator|didyouknow|kalzium).*"/>
+			<files include="share/applications/kde4/kalzium.*"/>
+			<files include="share/apps/kalzium.*"/>
+			<files include="share/apps/desktoptheme/.*chalkboard.*"/>
+			<files include="share/config.*/kalzium.*"/>
+			<files include="share/icons/.*kalzium.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kanagram">
+        <shortDescription>Kanagram is a game that mixes up the letters of a word (creating an anagram)</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kanagram).*"/>
+			<files include="share/applications/kde4/kanagram.*"/>
+			<files include="share/apps/kanagram.*"/>
+			<files include="share/config.*kanagram.*"/>
+			<files include="share/icons/.*kanagram.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kbruch">
+        <shortDescription>KBruch is a small program to practice calculating with fractions</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kbruch).*"/>
+			<files include="share/applications/kde4/kbruch.*"/>
+			<files include="share/apps/kbruch.*"/>
+			<files include="share/icons/.*kbruch.*"/>
+			<files include="share/config.kcfg/kbruch.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kgeography">
+        <shortDescription>KGeography is a geography learning program</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kgeography).*"/>
+			<files include="share/applications/kde4/kgeography.*"/>
+			<files include="share/apps/kgeography.*"/>
+			<files include="share/icons/.*kgeography.*"/>
+			<files include="share/config.kcfg/kgeography.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="khangman">
+        <shortDescription>KHangman is the classical hangman game</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(khangman).*"/>
+			<files include="share/applications/kde4/khangman.*"/>
+			<files include="share/apps/khangman.*"/>
+			<files include="share/config.*khangman.*"/>
+			<files include="share/icons/.*khangman.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kig">
+        <shortDescription>Kig is a program for exploring geometric constructions</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kig).*"/>
+			<files include="lib/kde4/.*(kig).*"/>
+			<files include="share/kde4/services.*(kig).*"/>
+			<files include="share/applications/kde4/kig.*"/>
+			<files include="share/apps/kig.*"/>
+			<files include="share/icons/.*kig.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kiten">
+        <shortDescription>Kiten is a Japanese reference/learning tool</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kiten).*"/>
+			<files include="share/applications/kde4/kiten.*"/>
+			<files include="share/apps/kiten.*"/>
+			<files include="share/icons/.*kiten.*"/>
+			<files include="share/config.kcfg/kiten.*"/>
+		</part>
+		<part name="development">
+			<files include="include/.*(kiten).*"/>
+			<files include="lib/.*(kiten).*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="klettres">
+        <shortDescription>KLettres aims to help to learn the alphabet</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(klettres).*"/>
+			<files include="share/applications/kde4/klettres.*"/>
+			<files include="share/apps/klettres.*"/>
+			<files include="share/config.*klettres.*"/>
+			<files include="share/icons/.*klettres.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kmplot">
+        <shortDescription>KmPlot is a mathematical function plotter for the KDE-Desktop</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kmplot).*"/>
+			<files include="lib/kde4/.*(kmplot).*"/>
+			<files include="share/kde4/services.*(kmplot).*"/>
+			<files include="share/applications/kde4/kmplot.*"/>
+			<files include="share/apps/kmplot.*"/>
+			<files include="share/icons/.*kmplot.*"/>
+			<files include="share/dbus-1/.*kmplot.*"/>
+			<files include="share/config.kcfg/kmplot.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kstars">
+        <shortDescription>KStars is a Desktop Planetarium for KDE</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kstars|SatLib).*"/>
+			<files include="share/applications/kde4/kstars.*"/>
+			<files include="share/apps/kstars.*"/>
+			<files include="share/config.*kstars.*"/>
+			<files include="share/icons/.*kstars.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="ktouch">
+        <shortDescription>KTouch is a program for learning touch typing</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(ktouch).*"/>
+			<files include="share/applications/kde4/ktouch.*"/>
+			<files include="share/apps/ktouch.*"/>
+			<files include="share/icons/.*ktouch.*"/>
+			<files include="share/config.kcfg/ktouch.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kturtle">
+        <shortDescription>KTurtle is an educational programming environment</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kturtle).*"/>
+			<files include="share/applications/kde4/kturtle.*"/>
+			<files include="share/apps/kturtle.*"/>
+			<files include="share/icons/.*kturtle.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="kwordquiz">
+        <shortDescription>KWordQuiz is a general purpose flash card program</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kwordquiz).*"/>
+			<files include="share/applications/kde4/kwordquiz.*"/>
+			<files include="share/apps/kwordquiz.*"/>
+			<files include="share/config.*kwordquiz.*"/>
+			<files include="share/icons/.*kwordquiz.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+    <package name="parley">
+        <shortDescription>Parley is a program to help you memorize things</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(parley).*"/>
+			<files include="lib/kde4/.*(plasma.*parley).*"/>
+			<files include="share/kde4/services.*(plasma.*parley).*"/>
+			<files include="share/applications/kde4/parley.*"/>
+			<files include="share/apps/parley.*"/>
+			<files include="share/apps/desktoptheme/.*parley.*"/>
+			<files include="share/config.*parley.*"/>
+			<files include="share/icons/.*parley.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>
+<!--    <package name="step">
+        <shortDescription>Step is an interactive physics simulator</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(step).*"/>
+			<files include="share/applications/kde4/step.*"/>
+			<files include="share/icons/.*step.*"/>
+		</part>
+        <dependency>libkdeedu</dependency>
+    </package>-->
+    <package name="kdeedu" comment="kdeedu meta package">
+        <shortDescription>Educational applications</shortDescription>
+		<part name="runtime" >
+		</part>
+        <dependency>blinken</dependency> 
+        <dependency>kalgebra</dependency> 
+        <dependency>marble</dependency> 
+        <dependency>cantor</dependency> 
+        <dependency>kalzium</dependency> 
+        <dependency>kanagram</dependency> 
+        <dependency>kbruch</dependency> 
+        <dependency>kgeography</dependency> 
+        <dependency>khangman</dependency> 
+        <dependency>kig</dependency> 
+        <dependency>kiten</dependency> 
+        <dependency>klettres</dependency> 
+        <dependency>kmplot</dependency> 
+        <dependency>kstars</dependency> 
+        <dependency>ktouch</dependency> 
+        <dependency>kturtle</dependency> 
+        <dependency>kwordquiz</dependency> 
+        <dependency>parley</dependency> 
+        <dependency>step</dependency> 
+    </package>
+    <files exclude=".*manifest/.*"/>
+</module>
