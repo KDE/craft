@@ -31,9 +31,6 @@ class subinfo(info.infoclass):
         #if platform.isCrossCompilingEnabled():
         #    self.hardDependencies['win32libs-sources/stlport-src'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
 
@@ -43,7 +40,7 @@ class Package(CMakePackageBase):
         
         projects = ""
         
-        if not platform.isCrossCompilingEnabled():
+        if self.isHostBuild():
             projects += "program_options"
 
         # only enable python for standard win32 builds, as x64 has problems with symbols and wince isn't supported
