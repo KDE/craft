@@ -32,13 +32,13 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
         self.svnTargets['4.6.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.3-patched|"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
-        self.svnTargets['v4.7.0-tp1'] = "git://gitorious.org/qt/qt.git|4.7|v4.7.0-tp1|"
+        self.svnTargets['v4.7.0-beta1'] = "git://gitorious.org/qt/qt.git|4.7|v4.7.0-beta1|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
             if platform.isCrossCompilingEnabled():
-                self.defaultTarget = 'v4.7.0-tp1'
+                self.defaultTarget = 'v4.7.0-beta1'
             else:
                 self.defaultTarget = '4.7'
         else:
