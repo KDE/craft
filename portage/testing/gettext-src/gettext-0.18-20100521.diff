@@ -1751,6 +1751,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-r
 +libintl_gettext_free_exp
 +libintl_gettext_germanic_plural
 +libintl_gettextparse
++libintl_fprintf
 +libintl_hash_string
 +libintl_ngettext
 +libintl_nl_current_default_domain
