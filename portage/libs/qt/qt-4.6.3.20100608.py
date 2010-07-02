@@ -91,9 +91,8 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
 
         incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        if not self.isHostBuild():
-            incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
-            libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+        incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
+        libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         if not platform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
@@ -104,16 +103,13 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         if self.isTargetBuild():
             command += "-xplatform %s " % xplatform
-        
+            
         if self.isHostBuild():
-            # cc-host : only core stuff will be needed, so disable all the unnecessary parts
-            # too bad there's no -no-gui :-(
-            command += "-no-webkit -no-script -no-scripttools -no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
-            command += "-no-gif -no-libpng -no-libjpeg -no-libtiff -no-libmng "
-            command += "-no-accessibility -nomake docs -nomake translations "
-        else:
-            # both cc-target and non-cc builds
-            command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked -webkit "
+            command += "-no-xmlpatterns "
+        
+
+        command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked -webkit "
+            
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
@@ -123,7 +119,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # all builds
         command += "-no-phonon -qdbus -dbus-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
-        command += "-nomake demos -nomake examples "
+        command += "-nomake demos -nomake examples -stl "
         command += "%s %s" % ( incdirs, libdirs )
 
         if self.buildType() == "Debug":
@@ -147,6 +143,10 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         if self.isTargetBuild():
             # Configuring Qt for WinCE ignores the -prefix option,
             # so we have to do the job manually...
+            
+            # delete this because it is not working for windows
+            utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearerd4.dll" ))
+            utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearer4.dll" ))
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
             # headers need to be copied using syncqt because of the relative paths
