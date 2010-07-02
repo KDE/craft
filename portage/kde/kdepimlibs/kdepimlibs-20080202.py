@@ -15,7 +15,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/cyrus-sasl-src'] = 'default'
         self.hardDependencies['win32libs-sources/libical-src'] = 'default'
         self.hardDependencies['win32libs-bin/boost'] = 'default'
-        self.hardDependencies['win32libs-bin/gpgme'] = 'default'
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-bin/gpgme'] = 'default'
 
 from Package.CMakePackageBase import *
         
