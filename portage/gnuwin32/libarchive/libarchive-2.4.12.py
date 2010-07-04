@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.4.12-1'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/win32libs'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
     
 from Package.BinaryPackageBase import *
 
@@ -20,7 +20,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
-        self.subinfo.options.merge.destinationPath = "dev-utils"
+        #self.subinfo.options.merge.destinationPath = "dev-utils"
         BinaryPackageBase.__init__(self)
 
         
