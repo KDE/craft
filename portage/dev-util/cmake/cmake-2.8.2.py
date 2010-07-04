@@ -7,19 +7,21 @@ class subinfo( info.infoclass ):
         self.targets['2.6.4'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.zip'
         self.targets['2.8.0'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.0-win32-x86.zip'
         self.targets['2.8.1'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.1-win32-x86.zip'
+        self.targets['2.8.2'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.2-win32-x86.zip'
         self.targets['2.8.0-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.0-bin.tar.bz2'
         self.targets['2.8.1-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.1-bin.tar.bz2'
         self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.0'] = 'cmake-2.8.0-win32-x86'
         self.targetMergeSourcePath['2.8.1'] = 'cmake-2.8.1-win32-x86'
+        self.targetMergeSourcePath['2.8.2'] = 'cmake-2.8.2-win32-x86'
         self.targetDigests['2.8.1'] = '2f3b6f14502f0d5c3b1a8e13633789b9995b4629'
         self.patchToApply['2.8.0'] = ('cmake-2.8.0-wince-support.patch', 0)
 
         if platform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0-ce'
         else:
-            self.defaultTarget = '2.8.1'
+            self.defaultTarget = '2.8.2'
             
     def setBuildOptions( self ):
         self.disableHostBuild = False
