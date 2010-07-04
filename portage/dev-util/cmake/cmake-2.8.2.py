@@ -16,6 +16,7 @@ class subinfo( info.infoclass ):
         self.targetMergeSourcePath['2.8.1'] = 'cmake-2.8.1-win32-x86'
         self.targetMergeSourcePath['2.8.2'] = 'cmake-2.8.2-win32-x86'
         self.targetDigests['2.8.1'] = '2f3b6f14502f0d5c3b1a8e13633789b9995b4629'
+		self.targetDigests['2.8.2'] = '3bc9e0861b8cd5d4b4532a47ded7ca0d6f9c85bc'
         self.patchToApply['2.8.0'] = ('cmake-2.8.0-wince-support.patch', 0)
 
         if platform.isCrossCompilingEnabled():
