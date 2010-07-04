@@ -1624,7 +1624,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	Thu Jan  1 00:00:00 1970
 +++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	Fri Jun 11 09:30:35 2010
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,70 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 +
@@ -1682,6 +1682,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +
 +add_library(intl SHARED ${INTL_SRCS})
 +target_link_libraries(intl ${ICONV_LIBRARIES})
++if(MSVC)
++set_target_properties(intl PROPERTIES OUTPUT_NAME "libintl")
++endif(MSVC)
 +
 +if(WINCE)
 +    target_link_libraries(intl ${WCECOMPAT_LIBRARIES})
