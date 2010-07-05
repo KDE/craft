@@ -26,6 +26,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
