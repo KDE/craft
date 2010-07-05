@@ -30,6 +30,18 @@ index a14a82d..ac140eb 100755
          my $dots = "";
          for(my $i = 0; $i < $count; $i++) {
              $dots .= "../";
+diff --git a/tools/qml/qml.pro b/tools/qml/qml.pro
+index 1ed8b2c..edbaa0a 100644
+--- a/tools/qml/qml.pro
++++ b/tools/qml/qml.pro
+@@ -41,7 +41,6 @@ INSTALLS += target
+ wince* {
+ QT += scripttools \
+     xml \
+-    phonon
+ 
+     contains(QT_CONFIG, xmlpatterns) {
+         QT += xmlpatterns
 diff --git a/projects.pro b/projects.pro
 index aa1eb71..8ae64c2 100644
 --- a/projects.pro
