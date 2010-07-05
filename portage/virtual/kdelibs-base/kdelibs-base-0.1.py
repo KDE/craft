@@ -11,8 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/aspell']  = 'default'
 #        self.hardDependencies['win32libs-bin/enchant']  = 'default'
         self.hardDependencies['win32libs-bin/gettext']  = 'default'
-        if not platform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/giflib']  = 'default'
+        self.hardDependencies['win32libs-bin/giflib']  = 'default'
 #        self.hardDependencies['win32libs-bin/gssapi']  = 'default'
 #        self.hardDependencies['win32libs-bin/hspell']  = 'default'
         if not platform.isCrossCompilingEnabled():
