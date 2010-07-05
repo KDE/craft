@@ -7,10 +7,92 @@ Index: cmake/modules/FindGIF.cmake
  FIND_PATH(GIF_INCLUDE_DIR gif_lib.h)
  
 -SET(POTENTIAL_GIF_LIBS gif libgif ungif libungif giflib)
-+SET(POTENTIAL_GIF_LIBS gif libgif ungif libungif giflib gif4 giflib4)
++SET(POTENTIAL_GIF_LIBS gif libgif ungif libungif giflib gif4 giflib4 gif4d giflib4d)
  FIND_LIBRARY(GIF_LIBRARIES NAMES ${POTENTIAL_GIF_LIBS})
  
  IF (GIF_INCLUDE_DIR AND GIF_LIBRARIES)
+Index: cmake/modules/FindPNG.cmake
+===================================================================
+--- cmake/modules/FindPNG.cmake
++++ cmake/modules/FindPNG.cmake
+@@ -0,0 +1,61 @@
++# - Find the native PNG includes and library
++#
++# This module defines
++#  PNG_INCLUDE_DIR, where to find png.h, etc.
++#  PNG_LIBRARIES, the libraries to link against to use PNG.
++#  PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
++#  PNG_FOUND, If false, do not try to use PNG.
++# also defined, but not for general use are
++#  PNG_LIBRARY, where to find the PNG library.
++# None of the above will be defined unles zlib can be found.
++# PNG depends on Zlib
++
++#=============================================================================
++# Copyright 2002-2009 Kitware, Inc.
++#
++# Distributed under the OSI-approved BSD License (the "License");
++# see accompanying file Copyright.txt for details.
++#
++# This software is distributed WITHOUT ANY WARRANTY; without even the
++# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++# See the License for more information.
++#=============================================================================
++# (To distributed this file outside of CMake, substitute the full
++#  License text for the above reference.)
++
++if(PNG_FIND_QUIETLY)
++  set(_FIND_ZLIB_ARG QUIET)
++endif(PNG_FIND_QUIETLY)
++find_package(ZLIB ${_FIND_ZLIB_ARG})
++
++if(ZLIB_FOUND)
++  find_path(PNG_PNG_INCLUDE_DIR png.h
++  /usr/local/include/libpng             # OpenBSD
++  )
++
++  set(PNG_NAMES ${PNG_NAMES} png libpng png12 libpng12 png14 libpng14 png14d libpng14d)
++  find_library(PNG_LIBRARY NAMES ${PNG_NAMES} )
++
++  if (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
++      # png.h includes zlib.h. Sigh.
++      SET(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} )
++      SET(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
++
++      if (CYGWIN)
++        if(BUILD_SHARED_LIBS)
++           # No need to define PNG_USE_DLL here, because it's default for Cygwin.
++        else(BUILD_SHARED_LIBS)
++          SET (PNG_DEFINITIONS -DPNG_STATIC)
++        endif(BUILD_SHARED_LIBS)
++      endif (CYGWIN)
++
++  endif (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
++
++endif(ZLIB_FOUND)
++
++# handle the QUIETLY and REQUIRED arguments and set PNG_FOUND to TRUE if
++# all listed variables are TRUE
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(PNG  DEFAULT_MSG  PNG_LIBRARY PNG_PNG_INCLUDE_DIR)
++
++mark_as_advanced(PNG_PNG_INCLUDE_DIR PNG_LIBRARY )
+Index: cmake/modules/FindPCRE.cmake
+===================================================================
+--- cmake/modules/FindPCRE.cmake
++++ cmake/modules/FindPCRE.cmake
+@@ -32,9 +32,9 @@
+           HINTS ${PC_PCRE_INCLUDEDIR} ${PC_PCRE_INCLUDE_DIRS} 
+           PATH_SUFFIXES pcre)
+ 
+-find_library(PCRE_PCRE_LIBRARY NAMES pcre HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
++find_library(PCRE_PCRE_LIBRARY NAMES pcre pcred HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
+ 
+-find_library(PCRE_PCREPOSIX_LIBRARY NAMES pcreposix HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
++find_library(PCRE_PCREPOSIX_LIBRARY NAMES pcreposix pcreposixd HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
+ 
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(PCRE DEFAULT_MSG PCRE_INCLUDE_DIR PCRE_PCRE_LIBRARY PCRE_PCREPOSIX_LIBRARY )
 Index: cmake/modules/FindWcecompat.cmake
 ===================================================================
 --- cmake/modules/FindWcecompat.cmake
@@ -419,6 +501,21 @@ Index: kinit/kioslave.cpp
       else {
          QString slaveDebugPopup( QString::fromLocal8Bit( qgetenv("KDE_SLAVE_DEBUG_POPUP") ) );
          if (slaveDebugPopup == QLatin1String("all") || slaveDebugPopup == argv[2]) {
+Index: kinit/kinit.cpp
+===================================================================
+--- kinit/kinit.cpp
++++ kinit/kinit.cpp
+@@ -1606,8 +1606,10 @@
+ 
+ int main(int argc, char **argv, char **envp)
+ {
++#ifndef _WIN32_WCE
+     setlocale (LC_ALL, "");
+     setlocale (LC_NUMERIC, "C");
++#endif
+ 
+    pid_t pid;
+    bool do_fork = true;
 Index: kinit/kinit_win.cpp
 ===================================================================
 --- kinit/kinit_win.cpp
@@ -962,6 +1059,20 @@ Index: kdecore/localization/kencodingprober.cpp
  }
  
  QByteArray KEncodingProber::encoding() const
+Index: kdecore/localization/kcatalog.cpp
+===================================================================
+--- kdecore/localization/kcatalog.cpp
++++ kdecore/localization/kcatalog.cpp
+@@ -39,7 +39,9 @@
+ // a Q[Core]Application exists (David)
+ int kInitializeLocale()
+ {
++#ifndef _WIN32_WCE
+     setlocale(LC_ALL, "");
++#endif
+     extern Q_CORE_EXPORT bool qt_locale_initialized; // in Qt since 4.5.0
+     qt_locale_initialized = true; // as recommended by Thiago
+     s_localeSet = true;
 Index: kdecore/network/netsupp.cpp
 ===================================================================
 --- kdecore/network/netsupp.cpp
