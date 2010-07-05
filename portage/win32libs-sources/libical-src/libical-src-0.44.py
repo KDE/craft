@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
             self.targets[ v ] = 'http://downloads.sourceforge.net/freeassociation/libical-' + v + '.tar.gz'
             self.targetInstSrc[ v ] = 'libical-' + v
         self.defaultTarget = '0.44'
-        self.patchToApply['0.44'] = ( 'libical-src-0.44.patch', 0 )
+        self.patchToApply['0.44'] = ( 'libical-src-0.44.patch', 1 )
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
