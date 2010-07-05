@@ -1763,6 +1763,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-r
 +libintl_nl_domain_bindings
 +;libintl_relocate
 +;libintl_set_relocation_prefix
++libintl_setlocale
 +libintl_textdomain
 +libintl_version
 +locale_charset
