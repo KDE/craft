@@ -5,18 +5,23 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdelibs'
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdelibs'
+        self.svnTargets['komobranch'] = 'branches/work/komo/kdelibs'
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdelibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdelibs-4.0.' + ver
-        self.defaultTarget = 'svnHEAD'
+        if not platform.isCrossCompilingEnabled():
+            self.defaultTarget = 'svnHEAD'
+        else:
+            self.defaultTarget = 'komobranch'
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/attica'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
-        self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['kdesupport/qimageblitz'] = 'default'
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['kdesupport/qca'] = 'default'
+            self.hardDependencies['kdesupport/qimageblitz'] = 'default'
         self.hardDependencies['kdesupport/dbusmenu-qt'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
@@ -41,6 +46,17 @@ class Package(CMakePackageBase):
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
         elif self.compiler() == "msvc2008":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+          
+        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
+        if not os.path.exists(qmake):
+            print("<%s>") % qmake
+            utils.die("could not found qmake")
+        ## \todo a standardized way to check if a package is installed in the image dir would be good.
+        self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
+            % qmake.replace('\\', '/')
+
+        self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
+            % os.path.join(ROOTDIR, "bin")
 
 if __name__ == '__main__':
     Package().execute()
