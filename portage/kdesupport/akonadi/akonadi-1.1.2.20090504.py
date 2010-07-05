@@ -11,9 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         
-        # temporary, until we have ported some of the indirect dependencies
-        if not platform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
+        self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
 
         self.boostversion = "1.37"
 
@@ -32,10 +30,6 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/akonadi'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
 
