@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
             self.options.configure.defines +=" -DBUILD_PHONON_DS9=OFF "
           
     def setBuildOptions( self ):
-        self.disableHostBuild = True
+        self.disableHostBuild = False
         self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
