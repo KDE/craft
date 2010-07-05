@@ -1,7 +1,7 @@
-diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
---- cyrus-sasl-2.1.22-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ cyrus-sasl-2.1.22/CMakeLists.txt	2009-04-11 16:17:44.515625000 +0200
-@@ -0,0 +1,166 @@
+diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
+--- cyrus-sasl-2.1.22.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
++++ cyrus-sasl-2.1.22/CMakeLists.txt	Mon Jul  5 15:54:54 2010
+@@ -0,0 +1,179 @@
 +project(cyrus-sasl)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(PACKAGE "cyrus-sasl")
@@ -10,9 +10,19 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +set(PLUGINDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
 +set(CONFIGDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
 +
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
 +include(CheckIncludeFiles)
 +check_include_files(sys/socket.h   HAVE_SYS_SOCKET_H)
 +check_include_files(syslog.h       HAVE_SYSLOG)
+
 +check_include_files(time.h         HAVE_TIME_H)
 +check_include_files(unistd.h       HAVE_UNISTD_H)
 +
@@ -46,9 +56,13 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +
 +configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 +
-+if(WIN32)
++if(WIN32 AND NOT WINCE)
 +set(additional_link_libs ws2_32)
-+endif(WIN32)
++endif(WIN32 AND NOT WINCE)
++
++if(WINCE)
++set(additional_link_libs ws2 ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +
 +set(sasl_SRCS
 +  lib/auxprop.c
@@ -168,9 +182,46 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists
 +add_executable(sasl2_pluginviewer utils/pluginviewer.c)
 +target_link_libraries(sasl2_pluginviewer sasl2 ${additional_link_libs})
 +install(TARGETS sasl2_pluginviewer DESTINATION bin)
-diff -u -r -N cyrus-sasl-2.1.22-orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
---- cyrus-sasl-2.1.22-orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ cyrus-sasl-2.1.22/config.h.cmake	2009-04-11 15:24:44.546875000 +0200
+diff -Nru cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake
+--- cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake	Mon Jul  5 15:05:47 2010
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
+--- cyrus-sasl-2.1.22.orig/config.h.cmake	Thu Jan  1 00:00:00 1970
++++ cyrus-sasl-2.1.22/config.h.cmake	Mon Jul  5 15:14:01 2010
 @@ -0,0 +1,108 @@
 +#ifndef CONFIG_H
 +#define CONFIG_H
@@ -280,9 +331,9 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/config.h.cmake cyrus-sasl-2.1.22/config.h.c
 +# define HIER_DELIMITER @HIER_DELIMITER@
 +#endif
 +#endif
-diff -u -r -N cyrus-sasl-2.1.22-orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
---- cyrus-sasl-2.1.22-orig/include/gai.h	2006-04-10 15:36:20.000000000 +0200
-+++ cyrus-sasl-2.1.22/include/gai.h	2009-04-11 15:24:44.593750000 +0200
+diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
+--- cyrus-sasl-2.1.22.orig/include/gai.h	Mon Apr 10 13:36:20 2006
++++ cyrus-sasl-2.1.22/include/gai.h	Mon Jul  5 16:13:29 2010
 @@ -54,6 +54,8 @@
  #ifndef _GAI_H_
  #define _GAI_H_
@@ -312,9 +363,50 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/include/gai.h cyrus-sasl-2.1.22/include/gai
  #endif
  
  #ifdef __cplusplus
-diff -u -r -N cyrus-sasl-2.1.22-orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
---- cyrus-sasl-2.1.22-orig/lib/saslutil.c	2006-03-13 19:26:36.000000000 +0100
-+++ cyrus-sasl-2.1.22/lib/saslutil.c	2009-06-21 23:46:30.391000000 +0200
+diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
+--- cyrus-sasl-2.1.22.orig/lib/common.c	Wed Apr 19 18:39:59 2006
++++ cyrus-sasl-2.1.22/lib/common.c	Mon Jul  5 16:12:13 2010
+@@ -1435,6 +1435,7 @@
+ #ifdef WIN32
+     /* for win32, try using the GetUserName standard call */
+     {
++#ifndef _WIN32_WCE
+ 	DWORD i;
+ 	BOOL rval;
+ 	static char sender[128];
+@@ -1446,6 +1447,11 @@
+ 		if (len) *len = strlen(sender);
+ 		return SASL_OK;
+ 	}
++#else
++    static char *sender = "wince";
++    *result = sender;
++    return SASL_OK;
++#endif
+     }
+ #endif /* WIN32 */
+     return SASL_FAIL;
+@@ -2399,6 +2405,8 @@
+ 		     &cbData);
+ 
+     switch (ValueType) {
++// There are no enviroment variables under wince
++#ifndef _WIN32_WCE
+     case REG_EXPAND_SZ:
+         /* : A random starting guess */
+         cbExpandedData = cbData + 1024;
+@@ -2447,7 +2455,7 @@
+         ExpandedValueData = NULL;
+ 
+         break;
+-
++#endif
+     case REG_MULTI_SZ:
+         tmp = ValueData;
+ 
+diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
+--- cyrus-sasl-2.1.22.orig/lib/saslutil.c	Mon Mar 13 18:26:36 2006
++++ cyrus-sasl-2.1.22/lib/saslutil.c	Mon Jul  5 16:13:56 2010
 @@ -469,7 +469,7 @@
      memset(buf, 0, len);
  }
@@ -324,9 +416,128 @@ diff -u -r -N cyrus-sasl-2.1.22-orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslut
  /***************************************************************************** 
   * 
   *  MODULE NAME : GETOPT.C 
-diff -u -r -N cyrus-sasl-2.1.22-orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pluginviewer.c
---- cyrus-sasl-2.1.22-orig/utils/pluginviewer.c	2006-05-17 18:46:17.000000000 +0200
-+++ cyrus-sasl-2.1.22/utils/pluginviewer.c	2009-04-11 16:22:20.046875000 +0200
+@@ -659,6 +659,8 @@
+ 	register c;
+ 	static char pbuf[PASSWORD_MAX];
+ 
++//There is no console under wince
++#ifndef _WIN32_WCE    
+ 	fprintf(stderr, "%s", prompt); (void) fflush(stderr);
+ 	for (p=pbuf; (c = _getch())!=13 && c!=EOF;) {
+ 		if (p < &pbuf[sizeof(pbuf)-1])
+@@ -666,6 +668,9 @@
+ 	}
+ 	*p = '\0';
+ 	fprintf(stderr, "\n"); (void) fflush(stderr);
++#else
++    *pbuf = '\0';
++#endif    
+ 	return(pbuf);
+ }
+ 
+diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen.c
+--- cyrus-sasl-2.1.22.orig/lib/windlopen.c	Mon Oct 20 15:19:59 2003
++++ cyrus-sasl-2.1.22/lib/windlopen.c	Mon Jul  5 15:34:42 2010
+@@ -69,6 +69,10 @@
+ 		       const char *entryname,
+ 		       void **entry_point) 
+ {
++#ifdef _WIN32_WCE
++    wchar_t *wentryname;
++    wentryname = wce_mbtowc(entryname);
++#endif
+     if(entryname == NULL) {
+ 	_sasl_log(NULL, SASL_LOG_ERR,
+ 		  "no entryname in _sasl_locate_entry");
+@@ -86,8 +90,13 @@
+ 		  "no entrypoint output pointer in _sasl_locate_entry");
+ 	return SASL_BADPARAM;
+     }
+-
++    
++#ifndef _WIN32_WCE
+     *entry_point = GetProcAddress(library, entryname);
++#else
++    *entry_point = GetProcAddressW(library, wentryname);
++    free(wentryname);
++#endif
+ 
+     if (*entry_point == NULL) {
+ #if 0 /* This message appears to confuse people */
+@@ -257,9 +266,12 @@
+ 	    }
+ 
+ /* : Check that it is not a directory */
++/* It is not implemented in wince */
++#ifndef _WIN32_WCE
+ 	    if ((finddata.attrib & _A_SUBDIR) == _A_SUBDIR) {
+ 		continue;
+ 	    }
++#endif
+ 
+ /* : Construct full name from prefix and name */
+ 
+diff -Nru cyrus-sasl-2.1.22.orig/plugins/plugin_common.c cyrus-sasl-2.1.22/plugins/plugin_common.c
+--- cyrus-sasl-2.1.22.orig/plugins/plugin_common.c	Wed Jun 23 18:43:37 2004
++++ cyrus-sasl-2.1.22/plugins/plugin_common.c	Mon Jul  5 15:52:41 2010
+@@ -819,7 +819,7 @@
+ 
+ void _plug_snprintf_os_info (char * osbuf, int osbuf_len)
+ {
+-#ifdef WIN32
++#if defined(WIN32) && !defined(_WIN32_WCE)
+     OSVERSIONINFOEX versioninfo;
+     char *sysname;
+ 
+@@ -905,7 +905,45 @@
+ 
+ SKIP_OS_INFO:
+     ;
++#elif defined(_WIN32_WCE)
+ 
++    OSVERSIONINFO version;
++    char *sysname;
++    
++      version.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
++    if (!GetVersionEx (&version))
++    {
++        *osbuf = 0;
++        return;
++    }
++    
++     switch (version.dwPlatformId) {
++		case VER_PLATFORM_WIN32s:
++		    sysname = "Windows 3.1";
++		    break;
++		case VER_PLATFORM_WIN32_WINDOWS:
++            if (version.dwMinorVersion == 0)
++                sysname = "Windows 95";
++            else
++                sysname = "Windows 98";
++		    break;
++		case VER_PLATFORM_WIN32_NT:
++		    sysname = "Windows NT";
++		    break;
++        case VER_PLATFORM_WIN32_CE:
++		    sysname = "Windows CE";
++		    break;
++		default:
++		    sysname = "Unknown Windows 9X/ME series";
++		    break;
++	    }
++    
++    snprintf(osbuf, osbuf_len,
++	     "%s %s (Build %u)",
++	     sysname,
++	     version.szCSDVersion,
++	     version.dwBuildNumber
++	     );
+ #else /* !WIN32 */
+     struct utsname os;
+ 
+diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pluginviewer.c
+--- cyrus-sasl-2.1.22.orig/utils/pluginviewer.c	Wed May 17 16:46:17 2006
++++ cyrus-sasl-2.1.22/utils/pluginviewer.c	Mon Jul  5 16:14:26 2010
 @@ -84,6 +84,85 @@
  #include <unistd.h>
  #endif

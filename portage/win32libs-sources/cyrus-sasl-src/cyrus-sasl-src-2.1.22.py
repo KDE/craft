@@ -1,8 +1,6 @@
-import base
 import utils
-import os
-import shutil
 import info
+from Package.CMakePackageBase import *
 
 # see http://wiki.mozilla.org/LDAP_C_SDK_SASL_Windows
 
@@ -16,26 +14,11 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
 
-class subclass(base.baseclass):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.createCombinedPackage = True
         self.subinfo = subinfo()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        # auto-create both import libs with the help of pexports
-        self.stripLibs( "libsasl2" )
-
-        # auto-create both import libs with the help of pexports
-        self.createImportLibs( "libsasl2" )
-
-        return self.doPackaging( "cyrus-sasl", self.buildTarget, True )
+        self.subinfo.options.package.withCompiler = None
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
