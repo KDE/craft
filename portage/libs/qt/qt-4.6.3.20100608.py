@@ -42,7 +42,7 @@ class subinfo(info.infoclass):
             else:
                 self.defaultTarget = '4.7'
         else:
-            self.defaultTarget = '4.6.2'
+            self.defaultTarget = '4.6.3'
         
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
