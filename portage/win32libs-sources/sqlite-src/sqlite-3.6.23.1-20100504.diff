@@ -89,6 +89,15 @@ diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
  #endif
  /************** Begin file sqliteInt.h ***************************************/
  /*
+@@ -11440,7 +11448,7 @@
+ ** localtime_s().
+ */
+ #if !defined(HAVE_LOCALTIME_R) && !defined(HAVE_LOCALTIME_S) && \
+-     defined(_MSC_VER) && defined(_CRT_INSECURE_DEPRECATE)
++     defined(_MSC_VER) && defined(_CRT_INSECURE_DEPRECATE) && !defined(_WIN32_WCE)
+ #define HAVE_LOCALTIME_S 1
+ #endif
+ 
 diff -Nru sqlite-3.6.23.1.orig/sqlite3.h sqlite-3.6.23.1/sqlite3.h
 --- sqlite-3.6.23.1.orig/sqlite3.h	Mon Mar 29 19:51:07 2010
 +++ sqlite-3.6.23.1/sqlite3.h	Tue May  4 07:14:31 2010
