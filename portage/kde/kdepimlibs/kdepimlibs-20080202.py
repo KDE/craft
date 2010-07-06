@@ -17,6 +17,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/boost'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/gpgme'] = 'default'
+        else:
+            self.hardDependencies['win32libs-bin/gpgme-pkg'] = 'default'
 
 from Package.CMakePackageBase import *
         
