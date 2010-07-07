@@ -1,33 +1,24 @@
 # -*- coding: utf-8 -*-
 import info
 
-from Source.MultiSource import *
-from BuildSystem.AutoToolsBuildSystem import *
-from Packager.MultiPackager import *
-from Package.PackageBase import *
-from shells import *
-
+from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.0.21'] = 'http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.21.tar.gz'
         self.targetInstSrc['1.0.21'] = 'libsndfile-1.0.21'
-        self.defaultTarget = '1.0.21'
         self.options.package.withCompiler = False
+        self.options.package.packageName = "libsndfile"
+        self.defaultTarget = '1.0.21'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
-        self.hardDependencies['dev-util/msys'] = 'default'
         
-class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)        
-        MultiPackager.__init__(self)
-        self.buildInSource = True
-        self.subinfo.options.configure.defines = " --docdir=" + MSysShell().toNativePath(self.imageDir()[2:])
+        self.subinfo.options.configure.defines = " -DBUILD_SHARED_LIB=ON"
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()
