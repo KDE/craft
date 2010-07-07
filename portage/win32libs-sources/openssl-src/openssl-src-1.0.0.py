@@ -124,7 +124,10 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
         self.buildInSource=True
 
         # target install needs perl with native path on configure time
-        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler.getSimpleCompilerName() )
+        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (
+            MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler.getSimpleCompilerName() )
+        if compiler.isMinGW32() and not compiler.isMinGW_W32():
+            self.subinfo.options.configure.defines += " -DOPENSSL_NO_CAPIENG"
            
       
     def install (self):
