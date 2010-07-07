@@ -12,6 +12,8 @@ COMPILER=os.getenv("KDECOMPILER")
 def getGCCTarget():
    if not isMinGW():
      return False
+   # FIXME: This is broken because the invariant that a compiler is installed is
+   # not fulfilled at every time especially when building the dependency tree
    result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
    utils.debug("GCC Target Processor:%s" % result, 1 )
    return result.strip()
