@@ -444,7 +444,7 @@ diff -Nru libsndfile-1.0.21.orig/src/GSM610/gsm610_priv.h libsndfile-1.0.21/src/
 +static inline longword
 +GSM_L_MULT (word a, word b)
 +{	return ((longword) (a)) * ((longword) (b)) << 1 ;
-
++
 +} /* GSM_L_MULT */
 +
 +static inline longword
@@ -4699,7 +4699,7 @@ diff -Nru libsndfile-1.0.21.orig/src/common.h libsndfile-1.0.21/src/common.h
 +#else
 +typedef __int16 sfwchar_t ;
 +#endif
-
++
 +
 +
 +typedef struct
@@ -5045,7 +5045,7 @@ diff -Nru libsndfile-1.0.21.orig/src/common.h libsndfile-1.0.21/src/common.h
 +
 +	SFE_MAT5_BAD_ENDIAN,
 +	SFE_MAT5_NO_BLOCK,
-
++
 +	SFE_MAT5_SAMPLE_RATE,
 +
 +	SFE_PVF_NO_PVF1,
