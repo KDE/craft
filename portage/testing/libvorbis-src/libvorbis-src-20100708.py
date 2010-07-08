@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['testing/libogg-src'] = 'default'
         
 class Package(CMakePackageBase):
     def __init__( self, **args ):

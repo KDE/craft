@@ -10,7 +10,8 @@ class subinfo( info.infoclass ):
         
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['testing/openal-soft'] = 'default'
+        self.hardDependencies['testing/openal-soft-src'] = 'default'
+        self.hardDependencies['testing/libsndfile-src'] = 'default'
         
 class Package(CMakePackageBase):
     def __init__( self, **args ):
