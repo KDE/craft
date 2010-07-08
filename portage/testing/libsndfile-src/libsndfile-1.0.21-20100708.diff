@@ -1,0 +1,840 @@
+diff -Nru libsndfile-1.0.21.orig/CMakeLists.txt libsndfile-1.0.21/CMakeLists.txt
+--- libsndfile-1.0.21.orig/CMakeLists.txt	Thu Jan  1 02:00:00 1970
++++ libsndfile-1.0.21/CMakeLists.txt	Thu Jul  8 10:37:41 2010
+@@ -0,0 +1,5 @@
++project (libsndfile)
++
++cmake_minimum_required (VERSION 2.6)
++
++add_subdirectory(src)
+diff -Nru libsndfile-1.0.21.orig/src/CMakeLists.txt libsndfile-1.0.21/src/CMakeLists.txt
+--- libsndfile-1.0.21.orig/src/CMakeLists.txt	Thu Jan  1 02:00:00 1970
++++ libsndfile-1.0.21/src/CMakeLists.txt	Thu Jul  8 11:04:54 2010
+@@ -0,0 +1,96 @@
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++find_package(OggVorbis REQUIRED)
++
++if(MSVC)
++    add_definitions(/wd 4244 /D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++add_definitions(-DHAVE_EXTERNAL_LIBS)
++
++include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${VORBIS_INCLUDE_DIR})
++
++set(sndfile_SRCS
++audio_detect.c
++sndfile.c
++common.c
++chanmap.c
++chunk.c
++file_io.c
++command.c
++pcm.c
++ulaw.c
++alaw.c
++float32.c
++double64.c
++ima_adpcm.c
++ima_oki_adpcm.c
++ms_adpcm.c
++gsm610.c
++dwvw.c
++vox_adpcm.c
++interleave.c
++strings.c
++dither.c
++broadcast.c
++aiff.c
++au.c
++g72x.c
++avr.c
++caf.c
++ircam.c
++macbinary3.c
++macos.c
++mat4.c
++mat5.c
++mpc2k.c
++nist.c
++paf.c
++pvf.c
++raw.c
++rf64.c
++svx.c
++voc.c
++htk.c
++dwd.c
++ogg.c
++rx2.c
++sd2.c
++sds.c
++txw.c
++wve.c
++w64.c
++wav_w64.c
++wav.c
++xi.c
++flac.c
++G72x/g72x.c
++G72x/g721.c
++G72x/g723_16.c
++G72x/g723_24.c
++G72x/g723_40.c
++GSM610/add.c
++GSM610/decode.c
++GSM610/gsm_decode.c
++GSM610/gsm_encode.c
++GSM610/long_term.c
++GSM610/preprocess.c
++GSM610/short_term.c
++GSM610/code.c
++GSM610/gsm_create.c
++GSM610/gsm_destroy.c
++GSM610/gsm_option.c
++GSM610/lpc.c
++GSM610/rpe.c
++GSM610/table.c
++sndfile.def
++libsndfile.rc)
++
++add_library (sndfile SHARED ${sndfile_SRCS})
++target_link_libraries(sndfile ${VORBIS_LIBRARY} ${OGG_LIBRARY})
++
++install(TARGETS sndfile RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++                           
++install(FILES sndfile.h DESTINATION include)
+diff -Nru libsndfile-1.0.21.orig/src/GSM610/gsm610_priv.h libsndfile-1.0.21/src/GSM610/gsm610_priv.h
+--- libsndfile-1.0.21.orig/src/GSM610/gsm610_priv.h	Sun Mar 22 21:17:14 2009
++++ libsndfile-1.0.21/src/GSM610/gsm610_priv.h	Thu Jul  8 11:14:24 2010
+@@ -18,6 +18,10 @@
+ /* Added by Erik de Castro Lopo */
+ 
+ 
++#ifdef _MSC_VER
++#define inline _inline
++#endif
++
+ 
+ typedef short				word;		/* 16 bit signed int	*/
+ typedef int					longword;	/* 32 bit signed int	*/
+@@ -113,6 +117,7 @@
+ static inline longword
+ GSM_L_MULT (word a, word b)
+ {	return ((longword) (a)) * ((longword) (b)) << 1 ;
++
+ } /* GSM_L_MULT */
+ 
+ static inline longword
+@@ -298,4 +303,3 @@
+ #endif /* !NDEBUG */
+ 
+ #endif	/* PRIVATE_H */
+-
+diff -Nru libsndfile-1.0.21.orig/src/aiff.c libsndfile-1.0.21/src/aiff.c
+--- libsndfile-1.0.21.orig/src/aiff.c	Thu Dec 10 20:49:30 2009
++++ libsndfile-1.0.21/src/aiff.c	Thu Jul  8 11:15:05 2010
+@@ -24,13 +24,14 @@
+ #include <string.h>
+ #include <time.h>
+ #include <ctype.h>
+-#include <inttypes.h>
+ 
+ #include "sndfile.h"
+ #include "sfendian.h"
+ #include "common.h"
+ #include "chanmap.h"
+ 
++#define snprintf _snprintf
++
+ /*------------------------------------------------------------------------------
+  * Macros to handle big/little endian issues.
+  */
+@@ -492,7 +493,7 @@
+ 						psf->peak_info->peaks [dword].value = value ;
+ 						psf->peak_info->peaks [dword].position = position ;
+ 
+-						snprintf (cptr, sizeof (psf->u.scbuf), "    %2d   %-12" PRId64 "   %g\n",
++						snprintf (cptr, sizeof (psf->u.scbuf), "    %2d   %-12" "%lld" "   %g\n",
+ 								dword, psf->peak_info->peaks [dword].position, psf->peak_info->peaks [dword].value) ;
+ 						cptr [sizeof (psf->u.scbuf) - 1] = 0 ;
+ 						psf_log_printf (psf, "%s", cptr) ;
+diff -Nru libsndfile-1.0.21.orig/src/broadcast.c libsndfile-1.0.21/src/broadcast.c
+--- libsndfile-1.0.21.orig/src/broadcast.c	Fri Sep 25 11:41:20 2009
++++ libsndfile-1.0.21/src/broadcast.c	Thu Jul  8 11:15:40 2010
+@@ -25,6 +25,8 @@
+ 
+ #include "common.h"
+ 
++#define snprintf _snprintf
++
+ static void strncpy_crlf (char *dest, const char *src, size_t destmax, size_t srcmax) ;
+ static int gen_coding_history (char * added_history, int added_history_max, const SF_INFO * psfinfo) ;
+ 
+diff -Nru libsndfile-1.0.21.orig/src/caf.c libsndfile-1.0.21/src/caf.c
+--- libsndfile-1.0.21.orig/src/caf.c	Thu Dec 10 20:49:30 2009
++++ libsndfile-1.0.21/src/caf.c	Thu Jul  8 11:15:52 2010
+@@ -23,13 +23,14 @@
+ #include	<string.h>
+ #include	<ctype.h>
+ #include	<math.h>
+-#include	<inttypes.h>
+ 
+ #include	"sndfile.h"
+ #include	"sfendian.h"
+ #include	"common.h"
+ #include	"chanmap.h"
+ 
++#define snprintf _snprintf
++
+ /*------------------------------------------------------------------------------
+ ** Macros to handle big/little endian issues.
+ */
+@@ -350,7 +351,7 @@
+ 					psf->peak_info->peaks [k].value = value ;
+ 					psf->peak_info->peaks [k].position = position ;
+ 
+-					snprintf (psf->u.cbuf, sizeof (psf->u.cbuf), "    %2d   %-12" PRId64 "   %g\n", k, position, value) ;
++					snprintf (psf->u.cbuf, sizeof (psf->u.cbuf), "    %2d   %-12" "%lld" "   %g\n", k, position, value) ;
+ 					psf_log_printf (psf, psf->u.cbuf) ;
+ 					} ;
+ 
+diff -Nru libsndfile-1.0.21.orig/src/cmake/modules/FindOggVorbis.cmake libsndfile-1.0.21/src/cmake/modules/FindOggVorbis.cmake
+--- libsndfile-1.0.21.orig/src/cmake/modules/FindOggVorbis.cmake	Thu Jan  1 02:00:00 1970
++++ libsndfile-1.0.21/src/cmake/modules/FindOggVorbis.cmake	Sun Jun 13 15:28:22 2010
+@@ -0,0 +1,89 @@
++# - Try to find the OggVorbis libraries
++# Once done this will define
++#
++#  OGGVORBIS_FOUND - system has OggVorbis
++#  OGGVORBIS_VERSION - set either to 1 or 2
++#  OGGVORBIS_INCLUDE_DIR - the OggVorbis include directory
++#  OGGVORBIS_LIBRARIES - The libraries needed to use OggVorbis
++#  OGG_LIBRARY         - The Ogg library
++#  VORBIS_LIBRARY      - The Vorbis library
++#  VORBISFILE_LIBRARY  - The VorbisFile library
++#  VORBISENC_LIBRARY   - The VorbisEnc library
++
++# Copyright (c) 2006, Richard Laerkaeng, <richard@goteborg.utfors.se>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++include (CheckLibraryExists)
++
++find_path(VORBIS_INCLUDE_DIR vorbis/vorbisfile.h)
++find_path(OGG_INCLUDE_DIR ogg/ogg.h)
++
++find_library(OGG_LIBRARY NAMES ogg)
++find_library(VORBIS_LIBRARY NAMES vorbis)
++find_library(VORBISFILE_LIBRARY NAMES vorbisfile)
++find_library(VORBISENC_LIBRARY NAMES vorbisenc)
++
++mark_as_advanced(VORBIS_INCLUDE_DIR OGG_INCLUDE_DIR
++                 OGG_LIBRARY VORBIS_LIBRARY VORBISFILE_LIBRARY VORBISENC_LIBRARY)
++
++
++if (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY AND VORBISENC_LIBRARY)
++   set(OGGVORBIS_FOUND TRUE)
++
++   set(OGGVORBIS_LIBRARIES ${OGG_LIBRARY} ${VORBIS_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBISENC_LIBRARY})
++
++   set(_CMAKE_REQUIRED_LIBRARIES_TMP ${CMAKE_REQUIRED_LIBRARIES})
++   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${OGGVORBIS_LIBRARIES})
++   check_library_exists(vorbis vorbis_bitrate_addblock "" HAVE_LIBVORBISENC2)
++   set(CMAKE_REQUIRED_LIBRARIES ${_CMAKE_REQUIRED_LIBRARIES_TMP})
++
++   if (HAVE_LIBVORBISENC2)
++      set (OGGVORBIS_VERSION 2)
++   else (HAVE_LIBVORBISENC2)
++      set (OGGVORBIS_VERSION 1)
++   endif (HAVE_LIBVORBISENC2)
++
++else (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY AND VORBISENC_LIBRARY)
++   set (OGGVORBIS_VERSION)
++   set(OGGVORBIS_FOUND FALSE)
++endif (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY AND VORBISENC_LIBRARY)
++
++
++if (OGGVORBIS_FOUND)
++   if (NOT OggVorbis_FIND_QUIETLY)
++      message(STATUS "Found OggVorbis: ${OGGVORBIS_LIBRARIES}")
++   endif (NOT OggVorbis_FIND_QUIETLY)
++else (OGGVORBIS_FOUND)
++   if (OggVorbis_FIND_REQUIRED)
++      message(FATAL_ERROR "Could NOT find OggVorbis libraries")
++   endif (OggVorbis_FIND_REQUIRED)
++   if (NOT OggVorbis_FIND_QUITELY)
++      message(STATUS "Could NOT find OggVorbis libraries")
++   endif (NOT OggVorbis_FIND_QUITELY)
++endif (OGGVORBIS_FOUND)
++
++#check_include_files(vorbis/vorbisfile.h HAVE_VORBISFILE_H)
++#check_library_exists(ogg ogg_page_version "" HAVE_LIBOGG)
++#check_library_exists(vorbis vorbis_info_init "" HAVE_LIBVORBIS)
++#check_library_exists(vorbisfile ov_open "" HAVE_LIBVORBISFILE)
++#check_library_exists(vorbisenc vorbis_info_clear "" HAVE_LIBVORBISENC)
++#check_library_exists(vorbis vorbis_bitrate_addblock "" HAVE_LIBVORBISENC2)
++
++#if (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
++#    message(STATUS "Ogg/Vorbis found")
++#    set (VORBIS_LIBS "-lvorbis -logg")
++#    set (VORBISFILE_LIBS "-lvorbisfile")
++#    set (VORBISENC_LIBS "-lvorbisenc")
++#    set (OGGVORBIS_FOUND TRUE)
++#    if (HAVE_LIBVORBISENC2)
++#        set (HAVE_VORBIS 2)
++#    else (HAVE_LIBVORBISENC2)
++#        set (HAVE_VORBIS 1)
++#    endif (HAVE_LIBVORBISENC2)
++#else (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
++#    message(STATUS "Ogg/Vorbis not found")
++#endif (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
++
+diff -Nru libsndfile-1.0.21.orig/src/common.c libsndfile-1.0.21/src/common.c
+--- libsndfile-1.0.21.orig/src/common.c	Thu Dec 10 20:49:31 2009
++++ libsndfile-1.0.21/src/common.c	Thu Jul  8 11:16:02 2010
+@@ -23,12 +23,24 @@
+ #include	<ctype.h>
+ #include	<math.h>
+ #include	<time.h>
+-#include	<sys/time.h>
++//#include	<sys/time.h>
+ 
+ #include	"sndfile.h"
+ #include	"sfendian.h"
+ #include	"common.h"
+ 
++#ifdef _MSC_VER
++long lrint(double x)
++{
++    return (long)(x + 0.5);
++}
++
++long lrintf(float x)
++{ 
++    return (long)(x + 0.5);
++}
++#endif
++
+ /*-----------------------------------------------------------------------------------------------
+ ** psf_log_printf allows libsndfile internal functions to print to an internal logbuffer which
+ ** can later be displayed.
+@@ -1291,9 +1303,9 @@
+ **	SF_PRIVATE struct.
+ */
+ 
+-int32_t
++int
+ psf_rand_int32 (void)
+-{	static int32_t value = -1 ;
++{	static int value = -1 ;
+ 	int k, count ;
+ 
+ 	if (value == -1)
+diff -Nru libsndfile-1.0.21.orig/src/common.h libsndfile-1.0.21/src/common.h
+--- libsndfile-1.0.21.orig/src/common.h	Thu Dec 10 20:49:31 2009
++++ libsndfile-1.0.21/src/common.h	Thu Jul  8 11:19:46 2010
+@@ -21,6 +21,7 @@
+ 
+ #include "sfconfig.h"
+ 
++#include <stdio.h>
+ #include <stdlib.h>
+ 
+ #if HAVE_STDINT_H
+@@ -37,6 +38,13 @@
+ #error "This code is not designed to be compiled with a C++ compiler."
+ #endif
+ 
++#ifdef _MSC_VER
++#define snprintf _snprintf
++long lrint(double x);
++long lrintf(float x);
++#define __func__ __FUNCTION__
++#endif
++
+ #if (SIZEOF_LONG == 8)
+ #	define	SF_PLATFORM_S64(x)		x##l
+ #elif (SIZEOF_LONG_LONG == 8)
+@@ -243,7 +251,7 @@
+ #if SIZEOF_WCHAR_T == 2
+ typedef wchar_t	sfwchar_t ;
+ #else
+-typedef int16_t sfwchar_t ;
++typedef __int16 sfwchar_t ;
+ #endif
+ 
+ 
+@@ -655,7 +663,7 @@
+ void	psf_log_printf		(SF_PRIVATE *psf, const char *format, ...) ;
+ void	psf_log_SF_INFO 	(SF_PRIVATE *psf) ;
+ 
+-int32_t	psf_rand_int32 (void) ;
++int	psf_rand_int32 (void) ;
+ 
+ void append_snprintf (char * dest, size_t maxlen, const char * fmt, ...) ;
+ 
+@@ -884,4 +892,3 @@
+ #endif
+ 
+ #endif /* SNDFILE_COMMON_H */
+-
+diff -Nru libsndfile-1.0.21.orig/src/config.h libsndfile-1.0.21/src/config.h
+--- libsndfile-1.0.21.orig/src/config.h	Thu Jan  1 02:00:00 1970
++++ libsndfile-1.0.21/src/config.h	Thu Jul  8 11:16:21 2010
+@@ -0,0 +1,256 @@
++/* src/config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Set to 1 if the compile is GNU GCC. */
++#undef COMPILER_IS_GCC
++
++/* Target processor clips on negative float to int conversion. */
++#define CPU_CLIPS_NEGATIVE 1
++
++/* Target processor clips on positive float to int conversion. */
++#define CPU_CLIPS_POSITIVE 1
++
++/* Target processor is big endian. */
++#define CPU_IS_BIG_ENDIAN 0
++
++/* Target processor is little endian. */
++#define CPU_IS_LITTLE_ENDIAN 1
++
++/* Set to 1 to enable experimental code. */
++#define ENABLE_EXPERIMENTAL_CODE 1
++
++/* Major version of GCC or 3 otherwise. */
++#undef GCC_MAJOR_VERSION
++
++/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
++#undef HAVE_ALSA_ASOUNDLIB_H
++
++/* Define to 1 if you have the <byteswap.h> header file. */
++#undef HAVE_BYTESWAP_H
++
++/* Define to 1 if you have the `calloc' function. */
++#undef HAVE_CALLOC
++
++/* Define to 1 if you have the `ceil' function. */
++#undef HAVE_CEIL
++
++/* Set to 1 if S_IRGRP is defined. */
++#undef HAVE_DECL_S_IRGRP
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#undef HAVE_DLFCN_H
++
++/* Define to 1 if you have the <endian.h> header file. */
++#define HAVE_ENDIAN_H
++
++/* Define to 1 if you have libflac 1.1.1 */
++#undef HAVE_FLAC_1_1_1
++
++/* Define to 1 if you have the <FLAC/all.h> header file. */
++#undef HAVE_FLAC_ALL_H
++
++/* Set to 1 if the compile supports the struct hack. */
++#undef HAVE_FLEXIBLE_ARRAY
++
++/* Define to 1 if you have the `floor' function. */
++#undef HAVE_FLOOR
++
++/* Define to 1 if you have the `fmod' function. */
++#undef HAVE_FMOD
++
++/* Define to 1 if you have the `free' function. */
++#undef HAVE_FREE
++
++/* Define to 1 if you have the `fstat' function. */
++#undef HAVE_FSTAT
++
++/* Define to 1 if you have the `fsync' function. */
++#undef HAVE_FSYNC
++
++/* Define to 1 if you have the `ftruncate' function. */
++#undef HAVE_FTRUNCATE
++
++/* Define to 1 if you have the `getpagesize' function. */
++#undef HAVE_GETPAGESIZE
++
++/* Define to 1 if you have the `gmtime' function. */
++#undef HAVE_GMTIME
++
++/* Define to 1 if you have the `gmtime_r' function. */
++#undef HAVE_GMTIME_R
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#undef HAVE_INTTYPES_H
++
++/* Define to 1 if you have the `m' library (-lm). */
++#undef HAVE_LIBM
++
++/* Define to 1 if you have the <locale.h> header file. */
++#undef HAVE_LOCALE_H
++
++/* Define if you have C99's lrint function. */
++#undef HAVE_LRINT
++
++/* Define if you have C99's lrintf function. */
++#undef HAVE_LRINTF
++
++/* Define to 1 if you have the `lseek' function. */
++#undef HAVE_LSEEK
++
++/* Define to 1 if you have the `malloc' function. */
++#define HAVE_MALLOC 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#undef HAVE_MEMORY_H
++
++/* Define to 1 if you have the `mmap' function. */
++#undef HAVE_MMAP
++
++/* Define to 1 if you have the `open' function. */
++#undef HAVE_OPEN
++
++/* Define to 1 if you have the `pread' function. */
++#undef HAVE_PREAD
++
++/* Define to 1 if you have the `pwrite' function. */
++#undef HAVE_PWRITE
++
++/* Define to 1 if you have the `read' function. */
++#undef HAVE_READ
++
++/* Define to 1 if you have the `realloc' function. */
++#undef HAVE_REALLOC
++
++/* Define to 1 if you have the `setlocale' function. */
++#undef HAVE_SETLOCALE
++
++/* Define to 1 if you have the `snprintf' function. */
++#undef HAVE_SNPRINTF
++
++/* Set to 1 if you have libsqlite3. */
++#undef HAVE_SQLITE3
++
++/* Define to 1 if the system has the type `ssize_t'. */
++#undef HAVE_SSIZE_T
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#undef HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#undef HAVE_STDLIB_H
++
++/* Define to 1 if you have the <strings.h> header file. */
++#undef HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#undef HAVE_STRING_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#undef HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#undef HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
++#undef HAVE_SYS_WAIT_H
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#undef HAVE_UNISTD_H
++
++/* Define to 1 if you have the `vsnprintf' function. */
++#undef HAVE_VSNPRINTF
++
++/* Define to 1 if you have the `write' function. */
++#undef HAVE_WRITE
++
++/* Set to 1 if compiling for MacOSX */
++#undef OS_IS_MACOSX
++
++/* Set to 1 if compiling for Win32 */
++#define	OS_IS_WIN32 1
++
++/* Name of package */
++#define PACKAGE "libsndfile"
++
++/* Define to the address where bug reports for this package should be sent. */
++#undef PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "libsndfile"
++
++/* Define to the full name and version of this package. */
++#undef PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#undef PACKAGE_TARNAME
++
++/* Define to the version of this package. */
++#define PACKAGE_VERSION "1.0.17-msvc"
++
++/* Set to maximum allowed value of sf_count_t type. */
++#undef SF_COUNT_MAX
++
++/* The size of `double', as computed by sizeof. */
++#undef SIZEOF_DOUBLE
++
++/* The size of `float', as computed by sizeof. */
++#undef SIZEOF_FLOAT
++
++/* The size of `int', as computed by sizeof. */
++#undef SIZEOF_INT
++
++/* The size of `int64_t', as computed by sizeof. */
++#undef SIZEOF_INT64_T
++
++/* The size of `loff_t', as computed by sizeof. */
++#undef SIZEOF_LOFF_T
++
++/* The size of `long', as computed by sizeof. */
++#undef SIZEOF_LONG
++
++/* The size of `long long', as computed by sizeof. */
++#undef SIZEOF_LONG_LONG
++
++/* The size of `off64_t', as computed by sizeof. */
++#undef SIZEOF_OFF64_T
++
++/* The size of `off_t', as computed by sizeof. */
++#undef SIZEOF_OFF_T
++
++/* Set to sizeof (long) if unknown. */
++#define SIZEOF_SF_COUNT_T 4
++
++/* The size of `short', as computed by sizeof. */
++#undef SIZEOF_SHORT
++
++/* The size of `size_t', as computed by sizeof. */
++#undef SIZEOF_SIZE_T
++
++/* The size of `ssize_t', as computed by sizeof. */
++#undef SIZEOF_SSIZE_T
++
++/* The size of `void*', as computed by sizeof. */
++#undef SIZEOF_VOIDP
++
++/* Define to 1 if you have the ANSI C header files. */
++#undef STDC_HEADERS
++
++/* Set to long if unknown. */
++#undef TYPEOF_SF_COUNT_T
++
++/* Set to 1 to use the native windows API */
++#define USE_WINDOWS_API 1
++
++/* Version number of package */
++#define VERSION  "1.0.17-msvc"
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#undef _FILE_OFFSET_BITS
++
++/* Define to make fseeko etc. visible, on some hosts. */
++#undef _LARGEFILE_SOURCE
++
++/* Define for large files, on AIX-style hosts. */
++#undef _LARGE_FILES
++
++#define inline _inline
++
+diff -Nru libsndfile-1.0.21.orig/src/file_io.c libsndfile-1.0.21/src/file_io.c
+--- libsndfile-1.0.21.orig/src/file_io.c	Sat Sep 26 15:05:03 2009
++++ libsndfile-1.0.21/src/file_io.c	Thu Jul  8 11:16:29 2010
+@@ -55,6 +55,11 @@
+ 
+ #define	SENSIBLE_SIZE	(0x40000000)
+ 
++#if _WIN32
++#define snprintf _snprintf
++#define ssize_t SSIZE_T
++#endif
++
+ /*
+ **	Neat solution to the Win32/OS2 binary file flage requirement.
+ **	If O_BINARY isn't already defined by the inclusion of the system
+diff -Nru libsndfile-1.0.21.orig/src/flac.c libsndfile-1.0.21/src/flac.c
+--- libsndfile-1.0.21.orig/src/flac.c	Tue Oct 13 23:36:23 2009
++++ libsndfile-1.0.21/src/flac.c	Thu Jul  8 11:03:20 2010
+@@ -29,7 +29,7 @@
+ #include	"sndfile.h"
+ #include	"common.h"
+ 
+-#if HAVE_EXTERNAL_LIBS
++#if HAVE_FLAC_LIBS
+ 
+ #include	<FLAC/stream_decoder.h>
+ #include	<FLAC/stream_encoder.h>
+diff -Nru libsndfile-1.0.21.orig/src/libsndfile-1.def libsndfile-1.0.21/src/libsndfile-1.def
+--- libsndfile-1.0.21.orig/src/libsndfile-1.def	Mon Nov 30 23:31:18 2009
++++ libsndfile-1.0.21/src/libsndfile-1.def	Thu Jul  8 11:16:49 2010
+@@ -1,6 +1,6 @@
+ ; Auto-generated by create_symbols_file.py
+ 
+-LIBRARY libsndfile-1.dll
++LIBRARY sndfile.dll
+ EXPORTS
+ 
+ sf_command           @1
+diff -Nru libsndfile-1.0.21.orig/src/libsndfile.rc libsndfile-1.0.21/src/libsndfile.rc
+--- libsndfile-1.0.21.orig/src/libsndfile.rc	Thu Jan  1 02:00:00 1970
++++ libsndfile-1.0.21/src/libsndfile.rc	Thu Jul  8 11:16:40 2010
+@@ -0,0 +1,32 @@
++#include <winver.h>
++
++VS_VERSION_INFO	VERSIONINFO
++FILEVERSION 	1,0,17
++PRODUCTVERSION	1,0,17
++#ifdef DEBUG
++FILEFLAGS	(VS_FF_DEBUG | VS_FF_PRERELEASE)
++#else
++FILEFLAGS	VS_FF_PRERELEASE
++#endif
++FILEOS		VOS__WINDOWS32
++FILETYPE	VFT_DLL
++FILESUBTYPE	VFT2_UNKNOWN
++BEGIN
++	BLOCK "StringFileInfo"
++	BEGIN 
++		BLOCK "040904E4"
++		BEGIN
++		VALUE "FileDescription",  "sndfile"
++		VALUE "LegalCopyright", "Erik de Castro Lopo <erikd@mega-nerd.com>"
++		VALUE "FileVersion", "1.0.21"
++		VALUE "OriginalFilename", "sndfile.dll"
++		VALUE "Comments", "Compilied using MSVC 2008"
++		END
++	END
++
++	BLOCK "VarFileInfo"
++	BEGIN
++		VALUE "Translation", 0x0409, 0x04E4
++	END
++END
++
+diff -Nru libsndfile-1.0.21.orig/src/mpc2k.c libsndfile-1.0.21/src/mpc2k.c
+--- libsndfile-1.0.21.orig/src/mpc2k.c	Fri Sep 25 14:54:49 2009
++++ libsndfile-1.0.21/src/mpc2k.c	Thu Jul  8 11:17:00 2010
+@@ -139,7 +139,7 @@
+ 	psf_binheader_writef (psf, "e11b", 1, 4, sample_name, make_size_t (HEADER_NAME_LEN)) ;
+ 	psf_binheader_writef (psf, "e111", 100, 0, (psf->sf.channels - 1) & 1) ;
+ 	psf_binheader_writef (psf, "et4888", 0, psf->sf.frames, psf->sf.frames, psf->sf.frames) ;
+-	psf_binheader_writef (psf, "e112", 0, 1, (uint16_t) psf->sf.samplerate) ;
++	psf_binheader_writef (psf, "e112", 0, 1, (unsigned __int16) psf->sf.samplerate) ;
+ 
+ 	/* Always 16 bit little endian data. */
+ 	psf->bytewidth = 2 ;
+@@ -162,8 +162,8 @@
+ mpc2k_read_header (SF_PRIVATE *psf)
+ {	char sample_name [HEADER_NAME_LEN + 1] ;
+ 	unsigned char bytes [4] ;
+-	uint32_t sample_start, loop_end, sample_frames, loop_length ;
+-	uint16_t sample_rate ;
++	unsigned __int32 sample_start, loop_end, sample_frames, loop_length ;
++	unsigned __int16 sample_rate ;
+ 
+ 	psf_binheader_readf (psf, "pebb", 0, bytes, 2, sample_name, make_size_t (HEADER_NAME_LEN)) ;
+ 
+diff -Nru libsndfile-1.0.21.orig/src/ogg.c libsndfile-1.0.21/src/ogg.c
+--- libsndfile-1.0.21.orig/src/ogg.c	Sat Dec 12 23:47:49 2009
++++ libsndfile-1.0.21/src/ogg.c	Thu Jul  8 11:02:11 2010
+@@ -72,6 +72,10 @@
+ #include <vorbis/codec.h>
+ #include <vorbis/vorbisenc.h>
+ 
++#ifdef _MSC_VER
++typedef unsigned __int32 uint32_t;
++#endif
++
+ typedef int convert_func (int, void *, int, int, float **) ;
+ 
+ static int	ogg_read_header (SF_PRIVATE *psf, int log_data) ;
+diff -Nru libsndfile-1.0.21.orig/src/sndfile.def libsndfile-1.0.21/src/sndfile.def
+--- libsndfile-1.0.21.orig/src/sndfile.def	Thu Jan  1 02:00:00 1970
++++ libsndfile-1.0.21/src/sndfile.def	Thu Jul  8 11:17:14 2010
+@@ -0,0 +1,39 @@
++; Auto-generated by create_symbols_file.py
++
++LIBRARY sndfile.dll
++EXPORTS
++
++sf_command           @1
++sf_open              @2
++sf_close             @3
++sf_seek              @4
++sf_error             @7
++sf_perror            @8
++sf_error_str         @9
++sf_error_number      @10
++sf_format_check      @11
++sf_read_raw          @16
++sf_readf_short       @17
++sf_readf_int         @18
++sf_readf_float       @19
++sf_readf_double      @20
++sf_read_short        @21
++sf_read_int          @22
++sf_read_float        @23
++sf_read_double       @24
++sf_write_raw         @32
++sf_writef_short      @33
++sf_writef_int        @34
++sf_writef_float      @35
++sf_writef_double     @36
++sf_write_short       @37
++sf_write_int         @38
++sf_write_float       @39
++sf_write_double      @40
++sf_strerror          @50
++sf_get_string        @60
++sf_set_string        @61
++sf_open_fd           @70
++sf_open_virtual      @80
++sf_write_sync        @90
++
+diff -Nru libsndfile-1.0.21.orig/src/strings.c libsndfile-1.0.21/src/strings.c
+--- libsndfile-1.0.21.orig/src/strings.c	Fri Sep 25 11:35:26 2009
++++ libsndfile-1.0.21/src/strings.c	Thu Jul  8 11:17:28 2010
+@@ -25,6 +25,8 @@
+ #include	"sndfile.h"
+ #include	"common.h"
+ 
++#define __func__ __FUNCTION__
++
+ #define STRINGS_DEBUG 0
+ #if STRINGS_DEBUG
+ static void hexdump (void *data, int len) ;
+diff -Nru libsndfile-1.0.21.orig/src/wav.c libsndfile-1.0.21/src/wav.c
+--- libsndfile-1.0.21.orig/src/wav.c	Thu Dec 10 20:49:31 2009
++++ libsndfile-1.0.21/src/wav.c	Thu Jul  8 11:17:37 2010
+@@ -24,13 +24,14 @@
+ #include	<string.h>
+ #include	<ctype.h>
+ #include	<time.h>
+-#include	<inttypes.h>
+ 
+ #include	"sndfile.h"
+ #include	"sfendian.h"
+ #include	"common.h"
+ #include	"wav_w64.h"
+ 
++#define snprintf _snprintf
++
+ /*------------------------------------------------------------------------------
+  * Macros to handle big/little endian issues.
+  */
+@@ -492,7 +493,7 @@
+ 						psf->peak_info->peaks [dword].value = value ;
+ 						psf->peak_info->peaks [dword].position = position ;
+ 
+-						snprintf (cptr, sizeof (psf->u.cbuf), "    %2d   %-12" PRId64 "   %g\n",
++						snprintf (cptr, sizeof (psf->u.cbuf), "    %2d   %-12" "%lld" "   %g\n",
+ 								dword, psf->peak_info->peaks [dword].position, psf->peak_info->peaks [dword].value) ;
+ 						cptr [sizeof (psf->u.cbuf) - 1] = 0 ;
+ 						psf_log_printf (psf, "%s", cptr) ;
