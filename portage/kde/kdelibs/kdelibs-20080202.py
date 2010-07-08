@@ -5,15 +5,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdelibs'
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdelibs'
-        self.svnTargets['komobranch'] = 'branches/work/komo/kdelibs'
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdelibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdelibs-4.0.' + ver
-        self.patchToApply['komobranch'] = ("kdelibs-20100705.patch", 0)
-        if not platform.isCrossCompilingEnabled():
-            self.defaultTarget = 'svnHEAD'
-        else:
-            self.defaultTarget = 'komobranch'
+        self.patchToApply['svnHEAD'] = ("kdelibs-20100705.patch", 0)
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/attica'] = 'default'
