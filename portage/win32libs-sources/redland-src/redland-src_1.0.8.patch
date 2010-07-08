@@ -762,7 +762,7 @@ diff -Nru redland-1.0.8.orig/raptor/src/raptor_www.c redland-1.0.8/raptor/src/ra
  #include <sys/stat.h>
  #endif
  
-+#ifdef _MSC_VER
++#ifndef EACCES
 +#define EACCES 13
 +#endif
 +
