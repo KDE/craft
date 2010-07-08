@@ -222,7 +222,7 @@ diff -Nru libsndfile-1.0.21.orig/src/cmake/modules/FindOggVorbis.cmake libsndfil
 +#
 +# Redistribution and use is allowed according to the terms of the BSD license.
 +# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
-
++
 +
 +
 +include (CheckLibraryExists)
