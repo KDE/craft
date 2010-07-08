@@ -1,0 +1,46 @@
+diff -Nru glew-1.5.4.orig/CMakeLists.txt glew-1.5.4/CMakeLists.txt
+--- glew-1.5.4.orig/CMakeLists.txt	Thu Jan  1 02:00:00 1970
++++ glew-1.5.4/CMakeLists.txt	Thu Jul  8 21:02:57 2010
+@@ -0,0 +1,6 @@
++project (glew)
++
++cmake_minimum_required (VERSION 2.6)
++
++add_subdirectory(include)
++add_subdirectory(src)
+diff -Nru glew-1.5.4.orig/include/CMakeLists.txt glew-1.5.4/include/CMakeLists.txt
+--- glew-1.5.4.orig/include/CMakeLists.txt	Thu Jan  1 02:00:00 1970
++++ glew-1.5.4/include/CMakeLists.txt	Thu Jul  8 21:04:33 2010
+@@ -0,0 +1 @@
++install(FILES GL/glew.h GL/glxew.h GL/wglew.h DESTINATION include/GL)
+\ No newline at end of file
+diff -Nru glew-1.5.4.orig/src/CMakeLists.txt glew-1.5.4/src/CMakeLists.txt
+--- glew-1.5.4.orig/src/CMakeLists.txt	Thu Jan  1 02:00:00 1970
++++ glew-1.5.4/src/CMakeLists.txt	Thu Jul  8 21:22:00 2010
+@@ -0,0 +1,25 @@
++set(glew_SRCS
++glew.c
++../build/vc6/glew.rc
++)
++
++set(glewinfo_SRCS
++glewinfo.c
++)
++
++set(visualinfo_SRCS
++visualinfo.c
++)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ../include)
++
++add_library(glew SHARED ${glew_SRCS})
++target_link_libraries(glew opengl32.lib)
++add_executable(glewinfo ${glewinfo_SRCS})
++target_link_libraries(glewinfo glew)
++add_executable(visualinfo ${visualinfo_SRCS})
++target_link_libraries(visualinfo glew opengl32.lib glu32.lib)
++
++install(TARGETS glew glewinfo visualinfo RUNTIME DESTINATION bin
++                           LIBRARY DESTINATION lib
++                           ARCHIVE DESTINATION lib)
+\ No newline at end of file
