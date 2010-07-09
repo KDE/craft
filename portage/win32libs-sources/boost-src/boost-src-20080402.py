@@ -15,12 +15,18 @@ class subinfo(info.infoclass):
         self.targets['1.34.1'] = 'http://downloads.sourceforge.net/boost/boost_1_34_1.tar.bz2'
         self.targets['1.35.0'] = 'http://downloads.sourceforge.net/boost/boost_1_35_0.tar.bz2'
         self.targets['1.37.0'] = 'http://downloads.sourceforge.net/boost/boost_1_37_0.tar.bz2'
+        self.svnTargets['1.40.0'] = "git://gitorious.org/boost/cmake.git|1.40.0|"
         self.svnTargets['1.41.0'] = "git://gitorious.org/boost/cmake.git"
         self.targetInstSrc['1.34.1'] = 'boost_1_34_1'
         self.targetInstSrc['1.35.0'] = 'boost_1_35_0'
         self.targetInstSrc['1.37.0'] = 'boost_1_37_0'
         self.targetInstSrc['1.41.0'] = 'boost_1_41_0'
-        self.defaultTarget = '1.41.0'
+        
+        if not platform.isCrossCompilingEnabled():
+            self.defaultTarget = '1.41.0'
+        else:
+            self.patchToApply['1.40.0'] = ("boost-src-20100709", 1)
+            self.defaultTarget = '1.40.0'
         
         #disables due to cmake boost does not support stlport yet
         #self.patchToApply['1.41.0'] = ("boost-src-20100428.patch", 1)
@@ -49,7 +55,8 @@ class Package(CMakePackageBase):
             
         self.subinfo.options.configure.defines =  "-DBUILD_PROJECTS=%s " % projects
         self.subinfo.options.configure.defines += "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
-                                                  "-DBOOST_RUNTIME_INSTALL_DIR=bin "
+                                                  "-DBOOST_RUNTIME_INSTALL_DIR=bin " + \
+                                                  "-DINSTALL_VERSIONED=ON "
                                                  
         if self.buildType() == "Debug":
             self.subinfo.options.configure.defines += "-DENABLE_DEBUG=ON -DENABLE_RELEASE=OFF "
