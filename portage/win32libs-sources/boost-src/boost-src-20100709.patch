@@ -7,7 +7,7 @@ index d2bc809..b33be8e 100644
  ##########################################################################
  
 -if(NOT BUILD_PROJECTS STREQUAL "NONE") 
-+if(NOT BUILD_PROJECTS) 
++if(NOT BUILD_PROJECTS AND NOT WINCE) 
    install(EXPORT Boost DESTINATION ${BOOST_INSTALL_EXPORTS_FILE})
  endif()
  
