@@ -45,7 +45,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
         if not platform.isCrossCompilingEnabled():
             self.boost = portage.getPackageInstance("win32libs-bin","boost")
-        else
+        else:
             self.boost = portage.getPackageInstance("win32libs-sources","boost-src")
         self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
         if platform.isCrossCompilingEnabled():
