@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for i in ( '0.12.1', '0.12.2', '0.12.3', '0.12.4', '0.14.0' ):
+        for i in ( '0.12.1', '0.12.2', '0.12.3', '0.12.4', '0.14.0', '0.14.1' ):
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
