@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
 import platform
+import os
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -12,8 +13,11 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
         
         self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-
-        self.boostversion = "1.37"
+        
+        if not platform.isCrossCompilingEnabled():
+            self.boostversion = "1.37"
+        else:
+            self.boostversion = "1.40.0"
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80'
@@ -39,8 +43,14 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines  = " -DCMAKE_PROGRAM_PATH=%s " % os.path.join( os.getenv("KDEROOT") , "dev-utils" , "svn" , "bin" )
         self.subinfo.options.configure.defines += " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
-        self.boost = portage.getPackageInstance("win32libs-bin","boost")
+        if not platform.isCrossCompilingEnabled():
+            self.boost = portage.getPackageInstance("win32libs-bin","boost")
+        else
+            self.boost = portage.getPackageInstance("win32libs-sources","boost-src")
         self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
+        if platform.isCrossCompilingEnabled():
+            os.environ["BOOST_LIBRARYDIR"]  = os.path.join(self.boost.mergeDestinationDir(), "lib", "boost-" + self.subinfo.boostversion.replace(".", "_") )
+        self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE "
         
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
