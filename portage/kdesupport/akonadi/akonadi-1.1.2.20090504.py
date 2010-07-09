@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.boostversion = "1.37"
         else:
+            self.hardDependencies['win32libs-sources/sqlite-src'] = 'default'
             self.boostversion = "1.40.0"
 
     def setTargets( self ):
