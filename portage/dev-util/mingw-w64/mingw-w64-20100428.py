@@ -4,13 +4,9 @@ import os
 import info
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.targets['20100427-old'] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_20100427_old/mingw-w64-bin_x86_64-mingw_20100427_sezero.zip"
-        self.targetDigests['20100427-old'] = '0d1d8e67fe86bfd125e497dae18e55d691ad0f1a'
-	self.patchToApply['20100427-old'] = ( "gcc_Exit.diff" , 1 )
-        
-        ver = "20100604"
-        self.targets[ver] = "http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/sezero_"+ver+"/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
+    def setTargets( self ):        
+        ver = "20100702"
+        self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
         self.defaultTarget = ver
             
     def setDependencies( self ):
