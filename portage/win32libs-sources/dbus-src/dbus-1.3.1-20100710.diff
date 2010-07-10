@@ -1,0 +1,3956 @@
+diff -Nru dbus-1.3.1.orig/bus/main.c dbus-1.3.1/bus/main.c
+--- dbus-1.3.1.orig/bus/main.c	2010-06-23 03:06:47.000000000 +0200
++++ dbus-1.3.1/bus/main.c	2010-07-10 14:55:11.866078200 +0200
+@@ -458,12 +458,6 @@
+       exit (1);
+     }
+ 
+-  is_session_bus = bus_context_get_type(context) != NULL
+-      && strcmp(bus_context_get_type(context),"session") == 0;
+-
+-  if (is_session_bus)
+-    _dbus_daemon_publish_session_bus_address (bus_context_get_address (context));
+-
+   /* bus_context_new() closes the print_addr_pipe and
+    * print_pid_pipe
+    */
+@@ -484,8 +478,5 @@
+   bus_context_unref (context);
+   bus_selinux_shutdown ();
+ 
+-  if (is_session_bus)
+-    _dbus_daemon_unpublish_session_bus_address ();
+-
+   return 0;
+ }
+diff -Nru dbus-1.3.1.orig/cmake/bus/CMakeLists.txt dbus-1.3.1/cmake/bus/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/bus/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/bus/CMakeLists.txt	2010-07-03 16:33:38.759081500 +0200
+@@ -0,0 +1,181 @@
++project(bus)
++
++add_definitions(-DDBUS_COMPILATION)
++
++SET(EFENCE "")
++SET(BUS_DIR ${CMAKE_SOURCE_DIR}/../bus)
++
++set (config_DATA
++	session.conf				
++	system.conf
++)
++
++# config files for installation 
++FOREACH(file ${config_DATA})
++	CONFIGURE_FILE( "${CMAKE_CURRENT_SOURCE_DIR}/${file}.cmake" "${CMAKE_CURRENT_BINARY_DIR}/${file}" IMMEDIATE @ONLY)
++ENDFOREACH(file)
++
++# copy services for local daemon start to local service dir data/dbus-1/services
++SET (SERVICE_FILES test/data/valid-service-files)
++FILE(GLOB FILES "${CMAKE_SOURCE_DIR}/../${SERVICE_FILES}/*.service.in" )
++FOREACH(FILE ${FILES})	
++	GET_FILENAME_COMPONENT(FILENAME ${FILE} NAME_WE)
++	SET (TARGET ${CMAKE_BINARY_DIR}/data/dbus-1/services/${FILENAME}.service)
++	IF (CONFIG_VERBOSE)
++		MESSAGE("FROM: ${FILE}\nTO: ${TARGET}\n")
++	ENDIF (CONFIG_VERBOSE)
++	configure_file(${FILE} ${TARGET} )
++ENDFOREACH(FILE)
++
++if(DBUS_USE_EXPAT)
++    SET (XML_SOURCES ${BUS_DIR}/config-loader-expat.c)
++else(DBUS_USE_EXPAT)
++    SET (XML_SOURCES ${BUS_DIR}/config-loader-libxml.c)
++endif (DBUS_USE_EXPAT)
++
++# after next cvs update
++#set (DIR_WATCH_SOURCE ${BUS_DIR}/dir-watch-default.c)
++set (DIR_WATCH_SOURCE )
++
++set (BUS_SOURCES 
++	${BUS_DIR}/activation.c				
++	${BUS_DIR}/activation.h				
++	${BUS_DIR}/bus.c					
++	${BUS_DIR}/bus.h					
++	${BUS_DIR}/config-parser.c				
++	${BUS_DIR}/config-parser.h
++    ${BUS_DIR}/config-parser-common.c
++    ${BUS_DIR}/config-parser-common.h
++#    ${BUS_DIR}/config-parser-trivial.c
++	${BUS_DIR}/connection.c
++	${BUS_DIR}/connection.h				
++	${BUS_DIR}/desktop-file.c				
++	${BUS_DIR}/desktop-file.h				
++	${BUS_DIR}/dir-watch-default.c				
++	${BUS_DIR}/dir-watch.h				
++	${BUS_DIR}/dispatch.c				
++	${BUS_DIR}/dispatch.h				
++	${BUS_DIR}/driver.c				
++	${BUS_DIR}/driver.h				
++	${BUS_DIR}/expirelist.c				
++	${BUS_DIR}/expirelist.h				
++	${BUS_DIR}/policy.c				
++	${BUS_DIR}/policy.h				
++	${BUS_DIR}/selinux.h				
++	${BUS_DIR}/selinux.c				
++	${BUS_DIR}/services.c				
++	${BUS_DIR}/services.h				
++	${BUS_DIR}/signals.c				
++	${BUS_DIR}/signals.h				
++	${BUS_DIR}/test.c					
++	${BUS_DIR}/test.h					
++	${BUS_DIR}/utils.c					
++	${BUS_DIR}/utils.h					
++	${XML_SOURCES}
++	${DIR_WATCH_SOURCE}
++)
++
++include_directories(${XML_INCLUDE_DIR})
++
++add_executable(dbus-daemon ${BUS_SOURCES} ${BUS_DIR}/main.c)
++target_link_libraries(dbus-daemon ${DBUS_INTERNAL_LIBRARIES} ${XML_LIBRARY})
++set_target_properties(dbus-daemon PROPERTIES OUTPUT_NAME ${DBUS_DAEMON_NAME})
++set_target_properties(dbus-daemon PROPERTIES COMPILE_FLAGS ${DBUS_INTERNAL_CLIENT_DEFINITIONS})
++
++install_targets(/bin dbus-daemon)
++install_files(/etc/dbus-1 FILES ${config_DATA})
++
++if (DBUS_SERVICE)
++	set (dbus_service_SOURCES 
++		${BUS_DIR}/bus-service-win.c
++	# TODO: add additional files
++	#	${BUS_DIR}/service-main.c
++	#	${BUS_SOURCES} 
++	)
++
++	add_executable(dbus-service ${dbus_service_SOURCES} )
++	target_link_libraries(dbus-service ${DBUS_INTERNAL_LIBRARIES} ${XML_LIBRARY})
++	set_target_properties(dbus-service PROPERTIES COMPILE_FLAGS ${DBUS_INTERNAL_CLIENT_DEFINITIONS})
++	install_targets(/bin dbus-service )
++endif (DBUS_SERVICE)
++
++if (DBUS_BUILD_TESTS)	
++	add_executable(bus-test ${BUS_SOURCES} ${BUS_DIR}/test-main.c)
++	target_link_libraries(bus-test ${DBUS_INTERNAL_LIBRARIES} ${XML_LIBRARY})
++	set_target_properties(bus-test PROPERTIES COMPILE_FLAGS ${DBUS_INTERNAL_CLIENT_DEFINITIONS})
++	add_test(bus-test ${EXECUTABLE_OUTPUT_PATH}/bus-test ${CMAKE_BINARY_DIR}/test/data)
++endif (DBUS_BUILD_TESTS)
++
++if(MSVC)
++	project_source_group(${GROUP_CODE} bus_test_SOURCES dummy)
++endif(MSVC)
++
++## mop up the gcov files
++#clean-local:
++#	/bin/rm *.bb *.bbg *.da *.gcov || true
++
++#install-data-hook:
++#	$(mkinstalldirs) $(DESTDIR)/$(localstatedir)/run/dbus
++#	$(mkinstalldirs) $(DESTDIR)/$(configdir)/system.d
++#	$(mkinstalldirs) $(DESTDIR)/$(datadir)/dbus-1/services
++
++##install_file(${configdir}/system.d FILE
++
++
++set(LAUNCH_HELPER_SOURCES ${XML_SOURCES}
++    ${BUS_DIR}/config-parser-common.c
++    ${BUS_DIR}/config-parser-trivial.c
++    ${BUS_DIR}/desktop-file.c
++    ${BUS_DIR}/utils.c
++    ${BUS_DIR}/activation-helper.c
++
++)
++
++if(NOT WIN32)
++# TODO PENDING(kdab) fix build on windows (activation-helper.c)
++   add_executable(dbus-daemon-launch-helper ${LAUNCH_HELPER_SOURCES} ${BUS_DIR}/activation-helper-bin.c )
++   target_link_libraries(dbus-daemon-launch-helper ${DBUS_INTERNAL_LIBRARIES} ${XML_LIBRARY} )
++   
++   add_executable(dbus-daemon-launch-helper-test ${LAUNCH_HELPER_SOURCES}     ${BUS_DIR}/activation-helper-bin.c)
++   set_target_properties(dbus-daemon-launch-helper-test PROPERTIES COMPILE_FLAGS "-DACTIVATION_LAUNCHER_TEST")
++   target_link_libraries(dbus-daemon-launch-helper-test ${DBUS_INTERNAL_LIBRARIES} ${XML_LIBRARY} )
++   
++   add_executable(bus-test-launch-helper ${LAUNCH_HELPER_SOURCES}  ${BUS_DIR}/test-launch-helper.c)
++   set_target_properties(bus-test-launch-helper PROPERTIES COMPILE_FLAGS "-DACTIVATION_LAUNCHER_TEST -DACTIVATION_LAUNCHER_DO_OOM")
++   target_link_libraries(bus-test-launch-helper ${DBUS_INTERNAL_LIBRARIES} ${XML_LIBRARY} )
++   add_test(bus-test-launch-helper ${EXECUTABLE_OUTPUT_PATH}/bus-test-launch-helper )
++
++endif(NOT WIN32)
++
++#### Init scripts fun
++#SCRIPT_IN_FILES=messagebus.in
++#		rc.messagebus.in
++
++## Red Hat start
++#if DBUS_INIT_SCRIPTS_RED_HAT
++
++#initddir=$(sysconfdir)/rc.d/init.d
++
++#initd_SCRIPTS= 	
++#	messagebus
++
++#endif
++# ## Red Hat end
++
++## Slackware start
++#if DBUS_INIT_SCRIPTS_SLACKWARE
++
++#initddir=$(sysconfdir)/rc.d/
++
++#initd_SCRIPTS= 	
++#	rc.messagebus
++
++#endif
++## Slackware end
++
++#MAN_IN_FILES=dbus-daemon.1.in
++#man_MANS = dbus-daemon.1
++
++#### Extra dist 
++
++#EXTRA_DIST=$(CONFIG_IN_FILES) $(SCRIPT_IN_FILES) $(man_MANS) $(MAN_IN_FILES)
+diff -Nru dbus-1.3.1.orig/cmake/bus/service.cmake dbus-1.3.1/cmake/bus/service.cmake
+--- dbus-1.3.1.orig/cmake/bus/service.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/bus/service.cmake	2010-07-03 16:33:38.760081500 +0200
+@@ -0,0 +1,3 @@
++[D-BUS Service]
++Name=org.freedektop.DBus.ServiceName
++Exec=notepad
+diff -Nru dbus-1.3.1.orig/cmake/bus/session.conf.cmake dbus-1.3.1/cmake/bus/session.conf.cmake
+--- dbus-1.3.1.orig/cmake/bus/session.conf.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/bus/session.conf.cmake	2010-07-03 16:33:38.761081600 +0200
+@@ -0,0 +1,30 @@
++<!-- This configuration file controls the per-user-login-session message bus.
++     Add a session-local.conf and edit that rather than changing this 
++     file directly. -->
++
++<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
++ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
++<busconfig>
++  <!-- Our well-known bus type, don't change this -->
++  <type>session</type>
++
++  <listen>@DBUS_SESSION_BUS_DEFAULT_ADDRESS@</listen>
++
++  <standard_session_servicedirs />
++
++  <policy context="default">
++    <!-- Allow everything to be sent -->
++    <allow send_destination="*"/>
++    <!-- Allow everything to be received -->
++    <allow eavesdrop="true"/>
++    <!-- Allow anyone to own anything -->
++    <allow own="*"/>
++  </policy>
++
++  <!-- This is included last so local configuration can override what's 
++       in this standard file -->
++  <include ignore_missing="yes">session-local.conf</include>
++
++  <include if_selinux_enabled="yes" selinux_root_relative="yes">contexts/dbus_contexts</include>
++
++</busconfig>
+diff -Nru dbus-1.3.1.orig/cmake/bus/system.conf.cmake dbus-1.3.1/cmake/bus/system.conf.cmake
+--- dbus-1.3.1.orig/cmake/bus/system.conf.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/bus/system.conf.cmake	2010-07-03 16:33:38.761081600 +0200
+@@ -0,0 +1,62 @@
++<!-- This configuration file controls the systemwide message bus.
++     Add a system-local.conf and edit that rather than changing this 
++     file directly. -->
++
++<!-- Note that there are any number of ways you can hose yourself
++     security-wise by screwing up this file; in particular, you
++     probably don't want to listen on any more addresses, add any more
++     auth mechanisms, run as a different user, etc. -->
++
++<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
++ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
++<busconfig>
++
++  <!-- Our well-known bus type, do not change this -->
++  <type>system</type>
++
++  <!-- Run as special user -->
++  <user>@DBUS_USER@</user>
++
++  <!-- Fork into daemon mode -->
++  <fork/>
++
++  <!-- Write a pid file -->
++  <pidfile>@DBUS_SYSTEM_PID_FILE@</pidfile>
++
++  <!-- Only allow socket-credentials-based authentication -->
++  <auth>EXTERNAL</auth>
++
++  <!-- Only listen on a local socket. (abstract=/path/to/socket 
++       means use abstract namespace, don't really create filesystem 
++       file; only Linux supports this. Use path=/whatever on other 
++       systems.) -->
++  <listen>@DBUS_SYSTEM_BUS_DEFAULT_ADDRESS@</listen>
++
++  <policy context="default">
++    <!-- Deny everything then punch holes -->
++    <deny send_interface="*"/>
++    <deny receive_interface="*"/>
++    <deny own="*"/>
++    <!-- But allow all users to connect -->
++    <allow user="*"/>
++    <!-- Allow anyone to talk to the message bus -->
++    <!-- FIXME I think currently these allow rules are always implicit 
++         even if they aren't in here -->
++    <allow send_destination="org.freedesktop.DBus"/>
++    <allow receive_sender="org.freedesktop.DBus"/>
++    <!-- valid replies are always allowed -->
++    <allow send_requested_reply="true"/>
++    <allow receive_requested_reply="true"/>
++  </policy>
++
++  <!-- Config files are placed here that among other things, punch 
++       holes in the above policy for specific services. -->
++  <includedir>system.d</includedir>
++
++  <!-- This is included last so local configuration can override what's 
++       in this standard file -->
++  <include ignore_missing="yes">system-local.conf</include>
++
++  <include if_selinux_enabled="yes" selinux_root_relative="yes">contexts/dbus_contexts</include>
++
++</busconfig>
+diff -Nru dbus-1.3.1.orig/cmake/bus-test.bat.cmake dbus-1.3.1/cmake/bus-test.bat.cmake
+--- dbus-1.3.1.orig/cmake/bus-test.bat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/bus-test.bat.cmake	2010-07-03 16:33:38.758081400 +0200
+@@ -0,0 +1,14 @@
++:: bus-test wrapper
++@echo off
++
++:: session bus address
++set DBUS_STARTER_BUS=tcp:host=localhost,port=1234
++
++if NOT "%1" == "" (
++	SET DATADIR=%1
++) else (
++	SET DATADIR=test\data
++)
++
++bin\bus-test.exe test\data
++
+diff -Nru dbus-1.3.1.orig/cmake/CMakeLists.txt dbus-1.3.1/cmake/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/CMakeLists.txt	2010-07-03 16:33:38.756081300 +0200
+@@ -0,0 +1,594 @@
++project(dbus)
++
++set (DBUS_MAJOR_VERSION "1")
++set (DBUS_MINOR_VERSION "3")
++set (DBUS_MICRO_VERSION "1")
++# used by file version info
++set (DBUS_PATCH_VERSION "1")
++set (DBUS_VERSION ${DBUS_MAJOR_VERSION}.${DBUS_MINOR_VERSION}.${DBUS_MICRO_VERSION})
++endif (DBUS_PATCH_VERSION)
++
++set (DBUS_VERSION_STRING "${DBUS_VERSION}")
++
++if (NOT DBUS_BUILD_TIMESTAMP)
++    message(STATUS "FIXME set DBUS_BUILD_TIMESTAMP to current date or fix current time stamp generation for having actual build date in version file info")
++    set (DBUS_BUILD_TIMESTAMP 20091231)
++endif (NOT DBUS_BUILD_TIMESTAMP)
++
++# we need to be up to date
++CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4 FATAL_ERROR)
++if(COMMAND cmake_policy)
++    cmake_policy(SET CMP0003 NEW)
++endif(COMMAND cmake_policy)
++
++# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
++set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
++
++#enable building of shared library
++SET(BUILD_SHARED_LIBS ON)
++
++if (CYGWIN)
++   set (WIN32)
++endif (CYGWIN)
++
++# search for required packages
++if (WIN32)
++    # include local header first to avoid using old installed header
++    set (CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/..)
++	find_package(LibIconv)
++    include(Win32Macros)
++    addExplorerWrapper(${CMAKE_PROJECT_NAME})
++endif (WIN32)
++find_package(LibXml2)
++find_package(LibExpat)
++find_package(X11)
++
++if(NOT WIN32)
++	OPTION(DBUS_ENABLE_ABSTRACT_SOCKETS "enable support for abstract sockets" ON)
++endif(NOT WIN32)
++
++#AC_ARG_ENABLE(asserts, AS_HELP_STRING([--enable-asserts],[include assertion checks]),enable_asserts=$enableval,enable_asserts=$USE_MAINTAINER_MODE)
++OPTION(DBUS_DISABLE_ASSERTS "Disable assertion checking" OFF)
++
++# do config checks
++INCLUDE(ConfigureChecks.cmake)
++
++# @TODO: how to remove last dir from ${CMAKE_SOURCE_DIR} ?
++SET(DBUS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
++
++# make some more macros available
++include (MacroLibrary)
++
++if(VCS)
++	set(DBUS_VERBOSE_C_S 1 CACHE TYPE STRING FORCE)
++	set(DBUS_VERBOSE_C_S 1)
++endif(VCS)
++
++if(WIN32)
++	set(CMAKE_DEBUG_POSTFIX "d")
++	if(MSVC)
++		# controll folders in msvc projects
++		include(ProjectSourceGroup)
++		if(NOT GROUP_CODE)
++			#set(GROUP_CODE split) #cmake default
++			set(GROUP_CODE flat)
++		endif(NOT GROUP_CODE)
++		ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
++
++
++		# Use the highest warning level
++		if (WALL)
++			set(WALL 1 CACHE TYPE STRING FORCE)
++			set(CMAKE_CXX_WARNING_LEVEL 4 CACHE TYPE STRING FORCE)
++
++			if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
++				STRING(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
++			else(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
++				SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
++			endif(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
++
++			if(CMAKE_C_FLAGS MATCHES "/W[0-4]")
++				STRING(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
++			else(CMAKE_C_FLAGS MATCHES "/W[0-4]")
++				SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
++			endif(CMAKE_C_FLAGS MATCHES "/W[0-4]")
++		else (WALL)
++			set(CMAKE_CXX_WARNING_LEVEL 3 CACHE TYPE STRING FORCE)
++		endif (WALL)
++
++		SET(MSVC_W_ERROR   " /we4028 /we4013 /we4133 /we4047 /we4031 /we4002 /we4003 /we4114")
++		SET(MSVC_W_DISABLE " /wd4127 /wd4090 /wd4101 /wd4244")
++
++		SET(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   /FIconfig.h ${MSVC_W_ERROR} ${MSVC_W_DISABLE}")
++		SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /FIconfig.h ${MSVC_W_ERROR} ${MSVC_W_DISABLE}")
++	endif(MSVC)
++endif(WIN32)
++
++if (UNIX AND NOT DBUS_DISABLE_ASSERTS)
++	# required for backtrace
++	SET(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -Wl,--export-dynamic")
++	SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wl,--export-dynamic")
++	add_definitions(-DDBUS_BUILT_R_DYNAMIC)
++endif (UNIX AND NOT DBUS_DISABLE_ASSERTS)
++
++SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -D_DEBUG")
++
++#########################################################################
++# Windows CE (>= 5.0.0)
++#
++# WinCE support now relies on the presence of platform files, found in cmake/modules/platform
++# Cmake 2.8.0 doesn't include WinCE platform files by default, but working ones can be found
++# on CMake's bugtracker :
++# http://public.kitware.com/Bug/view.php?id=7919
++#
++# for cmake 2.8.0 get the following patch only :
++# http://public.kitware.com/Bug/file_download.php?file_id=2944&type=bug
++#
++# after applying the patch, you can enable the WinCE build by specifying :
++# cmake [...] -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=X.XX
++# (where X.XX is your actual WinCE version, e.g. 5.02 for Windows Mobile 6)
++#
++# Note that you should have a proper cross-compilation environment set up prior to running
++# cmake, ie. the PATH, INCLUDE and LIB env vars pointing to your CE SDK/toolchain.
++#
++if(WINCE)
++
++MESSAGE("Building for WinCE (${CMAKE_SYSTEM_VERSION})")
++
++endif(WINCE)
++#########################################################################
++
++
++ENABLE_TESTING()
++
++#########################################################################
++# Disallow in-source build
++#macro_ensure_out_of_source_build("dbus requires an out of source build. Please create a separate build directory and run 'cmake path_to_dbus [options]' there.")
++
++# ... and warn in case of an earlier in-source build
++#set(generatedFileInSourceDir EXISTS ${dbus_SOURCE_DIR}/config.h)
++#if(${generatedFileInSourceDir})
++#   message(STATUS "config.h exists in your source directory.")
++#endif(${generatedFileInSourceDir})
++#########################################################################
++
++if (WIN32 OR CYGWIN)
++	set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
++else (WIN32 OR CYGWIN)
++	set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
++endif (WIN32 OR CYGWIN)
++
++set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
++
++# for including config.h and for includes like <dir/foo.h>
++include_directories( ${CMAKE_SOURCE_DIR}/.. ${CMAKE_BINARY_DIR} ${CMAKE_INCLUDE_PATH} )
++
++# linker search directories
++link_directories(${DBUS_LIB_DIR} ${LIBRARY_OUTPUT_PATH} )
++include_directories( ${CMAKE_LIBRARY_PATH}  )
++
++set(DBUS_INCLUDES)
++
++ENABLE_TESTING()
++
++
++########### basic vars ###############
++
++if (DBUSDIR)
++	set(DBUS_INSTALL_DIR "${DBUSDIR}")
++endif (DBUSDIR)
++if ($ENV{DBUSDIR})
++	set(DBUS_INSTALL_DIR "$ENV{DBUSDIR}")
++endif ($ENV{DBUSDIR})
++
++if (DBUS_INSTALL_DIR)
++	set(CMAKE_INSTALL_PREFIX "${DBUS_INSTALL_DIR}" CACHE TYPE PATH FORCE)
++else (DBUS_INSTALL_DIR)
++	set(DBUS_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
++endif (DBUS_INSTALL_DIR)
++
++set(prefix                   ${DBUS_INSTALL_DIR})
++set(exec_prefix              ${prefix})
++set(EXPANDED_LIBDIR          ${DBUS_INSTALL_DIR}/lib)
++set(EXPANDED_INCLUDEDIR      ${DBUS_INSTALL_DIR}/include)
++set(EXPANDED_BINDIR          ${DBUS_INSTALL_DIR}/bin)
++set(EXPANDED_SYSCONFDIR      ${DBUS_INSTALL_DIR}/etc)
++set(EXPANDED_DATADIR         ${DBUS_INSTALL_DIR}/data)
++set(DBUS_MACHINE_UUID_FILE   ${DBUS_INSTALL_DIR}/lib/dbus/machine-id)
++set(DBUS_BINDIR              ${EXPANDED_BINDIR})
++set(DBUS_DAEMONDIR 			 ${EXPANDED_BINDIR})
++
++########### command line options ###############
++# TODO: take check from configure.in
++
++#AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[enable unit test code]),enable_tests=$enableval,enable_tests=$USE_MAINTAINER_MODE)
++OPTION(DBUS_BUILD_TESTS "enable unit test code" ON)
++ 
++if(DBUS_BUILD_TESTS)
++    add_definitions(-DDBUS_BUILD_TESTS)
++endif(DBUS_BUILD_TESTS)
++
++OPTION(DBUS_USE_OUTPUT_DEBUG_STRING "enable win32 debug port for message output" OFF)
++if(DBUS_USE_OUTPUT_DEBUG_STRING)
++    add_definitions(-DDBUS_USE_OUTPUT_DEBUG_STRING)
++endif(DBUS_USE_OUTPUT_DEBUG_STRING)
++
++if(WIN32)
++	# win32 dbus service support - this support is not complete
++	OPTION(DBUS_SERVICE "enable dbus service installer" OFF)
++endif(WIN32)
++
++#AC_ARG_ENABLE(ansi, AS_HELP_STRING([--enable-ansi],[enable -ansi -pedantic gcc flags]),enable_ansi=$enableval,enable_ansi=no)
++OPTION(DBUS_ENABLE_ANSI "enable -ansi -pedantic gcc flags" OFF)
++if(DBUS_ENABLE_ANSI)
++   if(NOT MSVC)
++        add_definitions(-ansi -D_POSIX_C_SOURCE=199309L -D_BSD_SOURCE -pedantic)
++   else(NOT MSVC)
++        add_definitions(-Za -D_POSIX_C_SOURCE=199309L -D_BSD_SOURCE -W4)
++   endif(NOT MSVC)
++endif(DBUS_ENABLE_ANSI)
++
++#AC_ARG_ENABLE(verbose-mode, AS_HELP_STRING([--enable-verbose-mode],[support verbose debug mode]),enable_verbose_mode=$enableval,enable_verbose_mode=$USE_MAINTAINER_MODE)
++OPTION(DBUS_ENABLE_VERBOSE_MODE "support verbose debug mode" ON)
++
++#AC_ARG_ENABLE(checks, AS_HELP_STRING([--enable-checks],[include sanity checks on public API]),enable_checks=$enableval,enable_checks=yes)
++OPTION(DBUS_DISABLE_CHECKS "Disable public API sanity checking" OFF)
++
++if(NOT MSVC)
++    #AC_ARG_ENABLE(gcov, AS_HELP_STRING([--enable-gcov],[compile with coverage profiling instrumentation (gcc only)]),enable_gcov=$enableval,enable_gcov=no)
++    OPTION(DBUS_GCOV_ENABLED "compile with coverage profiling instrumentation (gcc only)" OFF)
++    if(DBUS_GCOV_ENABLED)
++            add_definitions(-fprofile-arcs -ftest-coverage)
++            # FIXME!!!!
++            ## remove optimization
++    #        CFLAGS=`echo "$CFLAGS" | sed -e 's/-O[0-9]*//g'`
++    endif(DBUS_GCOV_ENABLED)
++endif(NOT MSVC)
++
++#AC_ARG_ENABLE(abstract-sockets, AS_HELP_STRING([--enable-abstract-sockets],[use abstract socket namespace (linux only)]),enable_abstract_sockets=$enableval,enable_abstract_sockets=auto)
++# -> moved before include(ConfigureChecks.cmake)
++
++#AC_ARG_ENABLE(selinux, AS_HELP_STRING([--enable-selinux],[build with SELinux support]),enable_selinux=$enableval,enable_selinux=auto)
++#selinux missing
++
++#AC_ARG_ENABLE(dnotify, AS_HELP_STRING([--enable-dnotify],[build with dnotify support (linux only)]),enable_dnotify=$enableval,enable_dnotify=auto)
++if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
++    OPTION(DBUS_BUS_ENABLE_DNOTIFY_ON_LINUX "build with dnotify support (linux only)" ON) # add a check !
++endif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
++
++#AC_ARG_ENABLE(kqueue, AS_HELP_STRING([--enable-kqueue],[build with kqueue support (FreeBSD only)]),enable_kqueue=$enableval,enable_kqueue=auto)
++#missing
++
++#AC_ARG_ENABLE(console-owner-file, AS_HELP_STRING([--enable-console-owner-file],[enable console owner file]),enable_console_owner_file=$enableval,enable_console_owner_file=auto)
++STRING(TOUPPER ${CMAKE_SYSTEM_NAME} sysname)
++if("${sysname}" MATCHES ".*SOLARIS.*")
++    OPTION(HAVE_CONSOLE_OWNER_FILE "enable console owner file (solaris only)" ON)
++    if(HAVE_CONSOLE_OWNER_FILE)
++        SET(DBUS_CONSOLE_OWNER_FILE "/dev/console" CACHE STRING "Directory to check for console ownerhip")
++    endif(HAVE_CONSOLE_OWNER_FILE)
++endif("${sysname}" MATCHES ".*SOLARIS.*")
++
++#AC_ARG_WITH(xml, AS_HELP_STRING([--with-xml=[libxml/expat]],[XML library to use]))
++if(NOT LIBXML2_FOUND AND NOT LIBEXPAT_FOUND)
++    message(FATAL "Neither expat nor libxml2 found!")
++endif(NOT LIBXML2_FOUND AND NOT LIBEXPAT_FOUND)
++
++if(LIBEXPAT_FOUND)
++    OPTION(DBUS_USE_EXPAT "Use expat (== ON) or libxml2 (==OFF)" ON)
++else(LIBEXPAT_FOUND)
++    OPTION(DBUS_USE_EXPAT "Use expat (== ON) or libxml2 (==OFF)" OFF)
++endif(LIBEXPAT_FOUND)
++
++if(DBUS_USE_EXPAT)
++    SET(XML_LIB "Expat")
++    SET(XML_LIBRARY     ${LIBEXPAT_LIBRARIES})
++    SET(XML_INCLUDE_DIR ${LIBEXPAT_INCLUDE_DIR})
++else(DBUS_USE_EXPAT)
++    SET(XML_LIB "LibXML2")
++    SET(XML_LIBRARY     ${LIBXML2_LIBRARIES})
++    SET(XML_INCLUDE_DIR ${LIBXML2_INCLUDE_DIR})
++endif(DBUS_USE_EXPAT)
++
++
++#AC_ARG_WITH(init-scripts, AS_HELP_STRING([--with-init-scripts=[redhat]],[Style of init scripts to install]))
++#AC_ARG_WITH(session-socket-dir, AS_HELP_STRING([--with-session-socket-dir=[dirname]],[Where to put sockets for the per-login-session message bus]))
++#AC_ARG_WITH(test-socket-dir, AS_HELP_STRING([--with-test-socket-dir=[dirname]],[Where to put sockets for make check]))
++#AC_ARG_WITH(system-pid-file, AS_HELP_STRING([--with-system-pid-file=[pidfile]],[PID file for systemwide daemon]))
++#AC_ARG_WITH(system-socket, AS_HELP_STRING([--with-system-socket=[filename]],[UNIX domain socket for systemwide daemon]))
++#AC_ARG_WITH(console-auth-dir, AS_HELP_STRING([--with-console-auth-dir=[dirname]],[directory to check for console ownerhip]))
++#AC_ARG_WITH(console-owner-file, AS_HELP_STRING([--with-console-owner-file=[filename]],[file whose owner determines current console owner]))
++#AC_ARG_WITH(dbus_user, AS_HELP_STRING([--with-dbus-user=<user>],[User for running the DBUS daemon (messagebus)]))
++#AC_ARG_WITH(dbus_daemondir, AS_HELP_STRING([--with-dbus-daemondir=[dirname]],[Directory for installing the DBUS daemon]))
++# all missing or hardcoded for now
++
++# 'hidden' ones
++set(atomic_int OFF)
++set(atomic_int486 OFF)
++if(CMAKE_COMPILER_IS_GNUCC AND NOT DBUS_ENABLE_ANSI)
++    FIND_PROGRAM(UNAME_EXECUTABLE
++                    NAMES uname
++                    PATHS /bin /usr/bin /usr/local/bin c:/Programme/MSys/bin d:/Programme/MSys/bin)
++
++    if(UNAME_EXECUTABLE)
++        EXECUTE_PROCESS(COMMAND ${UNAME_EXECUTABLE} "-m"
++                        OUTPUT_VARIABLE UNAME_OUTPUT)
++
++        if("UNAME_OUTPUT" MATCHES "^.*i[0123]86.*$")
++            set(atomic_int ON)
++        else("UNAME_OUTPUT" MATCHES "^.*i[0123]86.*$")
++            if("UNAME_OUTPUT" MATCHES "^.*i?86.*$")
++                set(atomic_int ON)
++                set(atomic_int_486 ON)
++            endif("UNAME_OUTPUT" MATCHES "^.*i?86.*$")
++        endif("UNAME_OUTPUT" MATCHES "^.*i[0123]86.*$")
++    endif(UNAME_EXECUTABLE)
++endif(CMAKE_COMPILER_IS_GNUCC AND NOT DBUS_ENABLE_ANSI)
++
++OPTION(DBUS_HAVE_ATOMIC_INT    "Some atomic integer implementation present" ${atomic_int})
++OPTION(DBUS_USE_ATOMIC_INT_486 "Use atomic integer implementation for 486" ${atomic_int_486})
++
++if(X11_FOUND)
++  OPTION(DBUS_BUILD_X11 "Build X11-dependent code " ON)
++endif(X11_FOUND)
++
++# test binary names
++if (WIN32)
++	set (EXT ".exe")
++endif(WIN32)
++
++if (MSVC_IDE)
++    if(CMAKE_BUILD_TYPE MATCHES Debug)
++		set(IDE_BIN Debug/ )
++		message(STATUS)
++		message(STATUS "Visual Studio: test programs will only work with 'Debug' configuration!")
++		message(STATUS "To run tests with 'Release' configuration use -DCMAKE_BUILD_TYPE=Release")
++		message(STATUS "Add '..\\..\\test\\data' to the command line option of the test programs")
++		message(STATUS)
++    else(CMAKE_BUILD_TYPE MATCHES Debug)
++		set(IDE_BIN Release/)
++		message(STATUS)
++		message(STATUS "Visual Studio: test programs will only work with 'Release' configuration!")
++		message(STATUS "To run tests with 'Debug' configuration use -DCMAKE_BUILD_TYPE=Debug")
++		message(STATUS "Add '..\\..\\test\\data' to the command line option of the test programs")
++		message(STATUS)
++    endif(CMAKE_BUILD_TYPE MATCHES Debug)
++	set (TEST_PATH_FORCE FORCE)
++	FILE(REMOVE ${CMAKE_BINARY_DIR}/data/dbus-1/services)
++endif (MSVC_IDE)
++
++set(TEST_SERVICE_DIR          ${CMAKE_BINARY_DIR}/test/data/valid-service-files     CACHE STRING "Full path to test file test/data/valid-service-files in builddir" )
++set(TEST_SERVICE_BINARY       ${CMAKE_BINARY_DIR}/bin/${IDE_BIN}test-service${EXT}       CACHE STRING "Full path to test file test/test-service in builddir" ${TEST_PATH_FORCE})
++set(TEST_SHELL_SERVICE_BINARY ${CMAKE_BINARY_DIR}/bin/${IDE_BIN}test-shell-service${EXT} CACHE STRING "Full path to test file test/test-shell-service in builddir" ${TEST_PATH_FORCE})
++set(TEST_EXIT_BINARY          ${CMAKE_BINARY_DIR}/bin/${IDE_BIN}test-exit${EXT}          CACHE STRING "Full path to test file test/test-exit in builddir" ${TEST_PATH_FORCE})
++set(TEST_SEGFAULT_BINARY      ${CMAKE_BINARY_DIR}/bin/${IDE_BIN}test-segfault${EXT}      CACHE STRING "Full path to test file test/test-segfault in builddir" ${TEST_PATH_FORCE})
++set(TEST_SLEEP_FOREVER_BINARY ${CMAKE_BINARY_DIR}/bin/${IDE_BIN}test-sleep-forever${EXT} CACHE STRING "Full path to test file test/test-sleep-forever in builddir" ${TEST_PATH_FORCE})
++
++#### Find socket directories
++ if (NOT $ENV{TMPDIR} STREQUAL "")
++     set (DBUS_SESSION_SOCKET_DIR $ENV{TMPDIR})
++ else (NOT $ENV{TMPDIR} STREQUAL "")
++     if (NOT $ENV{TEMP} STREQUAL "")
++         set (DBUS_SESSION_SOCKET_DIR $ENV{TEMP})
++     else (NOT $ENV{TEMP} STREQUAL "")
++         if (NOT $ENV{TMP} STREQUAL "")
++             set (DBUS_SESSION_SOCKET_DIR $ENV{TMP})
++         else (NOT $ENV{TMP} STREQUAL "")
++         if (WIN32)
++             #Should never happen, both TMP and TEMP seem always set on Windows
++             message(FATAL "Could not determine a usable temporary directory")
++         else(WIN32)
++            set (DBUS_SESSION_SOCKET_DIR /tmp)
++         endif(WIN32)
++         endif (NOT $ENV{TMP} STREQUAL "")
++     endif (NOT $ENV{TEMP} STREQUAL "")
++ endif (NOT $ENV{TMPDIR} STREQUAL "")
++
++#AC_ARG_WITH(test-socket-dir, AS_HELP_STRING([--with-test-socket-dir=[dirname]],[Where to put sockets for make check]))
++
++#AC_ARG_WITH(system-pid-file, AS_HELP_STRING([--with-system-pid-file=[pidfile]],[PID file for systemwide daemon]))
++
++#if ! test -z "$with_system_pid_file"; then
++#   DBUS_SYSTEM_PID_FILE=$with_system_pid_file
++#elif test x$operating_system = xredhat ; then
++#   DBUS_SYSTEM_PID_FILE=${EXPANDED_LOCALSTATEDIR}/run/messagebus.pid
++#else
++#   DBUS_SYSTEM_PID_FILE=${EXPANDED_LOCALSTATEDIR}/run/dbus/pid
++#fi
++# TODO: fix redhet
++if (WIN32)
++  # bus-test expects a non empty string
++	set (DBUS_SYSTEM_PID_FILE "/dbus-pid")
++else (WIN32)
++	set (DBUS_SYSTEM_PID_FILE ${EXPANDED_LOCALSTATEDIR}/run/dbus/pid)
++endif (WIN32)
++
++#AC_ARG_WITH(system-socket, AS_HELP_STRING([--with-system-socket=[filename]],[UNIX domain socket for systemwide daemon]))
++
++#AC_ARG_WITH(console-auth-dir, AS_HELP_STRING([--with-console-auth-dir=[dirname]],[directory to check for console ownerhip]))
++
++if (WIN32)
++	set (DBUS_CONSOLE_AUTH_DIR "")
++else (WIN32)
++	set (DBUS_CONSOLE_AUTH_DIR "/var/run/console/")
++endif (WIN32)
++
++#AC_ARG_WITH(dbus_user, AS_HELP_STRING([--with-dbus-user=<user>],[User for running the DBUS daemon (messagebus)]))
++
++set (DBUS_USER )
++
++
++if (WIN32)
++  set (DBUS_SYSTEM_BUS_DEFAULT_ADDRESS "nonce-tcp:" CACHE STRING "system bus default address" )
++  set (DBUS_SESSION_BUS_DEFAULT_ADDRESS "nonce-tcp:" CACHE STRING "session bus default address" )
++
++  set (DBUS_SYSTEM_CONFIG_FILE "etc/dbus-1/system.conf")
++  set (DBUS_SESSION_CONFIG_FILE "etc/dbus-1/session.conf")
++  # bus-test expects a non empty string
++  set (DBUS_USER "Administrator")
++  set (DBUS_DATADIR "data")
++else (WIN32)
++  set (DBUS_SYSTEM_BUS_DEFAULT_ADDRESS "unix:tmpdir=" CACHE STRING "system bus default address" )
++  set (DBUS_SESSION_BUS_DEFAULT_ADDRESS "unix:path=${DBUS_SESSION_SOCKET_DIR}" CACHE STRING "session bus default address" )
++  set (sysconfdir "")
++  set (configdir ${sysconfdir}/dbus-1 )
++  set (DBUS_SYSTEM_CONFIG_FILE  ${configdir}/system.conf)
++  set (DBUS_SESSION_CONFIG_FILE ${configdir}/session.conf)
++  set (DBUS_USER "root")
++  set (DBUS_DATADIR ${EXPANDED_DATADIR})
++endif (WIN32)
++
++set(DBUS_DAEMON_NAME dbus-daemon CACHE STRING "The name of the dbus daemon executable")
++
++########### create config.h ###############
++
++#include(ConfigureChecks.cmake)
++
++# better use flags for gcc
++if (MINGW)
++	set (HAVE_GNUC_VARARGS 1)
++endif(MINGW)
++
++# compiler definitions
++add_definitions(-DHAVE_CONFIG_H=1)
++add_definitions(${DBUS_BUS_CFLAGS} -DDBUS_API_SUBJECT_TO_CHANGE)
++
++
++if (DBUS_BUILD_TESTS)
++    # set variables used for the .in files (substituted by configure_file) in test/data:
++    set(TEST_VALID_SERVICE_DIR ${CMAKE_BINARY_DIR}/test/data/valid-service-files)
++    set(TEST_VALID_SERVICE_SYSTEM_DIR ${CMAKE_BINARY_DIR}/test/data/valid-service-files-system)
++    set(TEST_INVALID_SERVICE_SYSTEM_DIR ${CMAKE_BINARY_DIR}/test/data/invalid-service-files-system)
++    set(TEST_SOCKET_DIR ${DBUS_SESSION_SOCKET_DIR} )
++    set(TEST_LAUNCH_HELPER_BINARY ${EXECUTABLE_OUTPUT_PATH}/dbus-daemon-launch-helper-test)
++    set(TEST_PRIVSERVER_BINARY ${EXECUTABLE_OUTPUT_PATH}/test-privserver)
++    if (UNIX)
++        set (TEST_LISTEN "debug-pipe:name=test-server")
++        set (TEST_CONNECTION "${TEST_LISTEN}")
++    endif (UNIX)
++    if (WIN32)
++        set (TEST_LISTEN "tcp:host=localhost,port=12436")
++        set (TEST_CONNECTION "${TEST_LISTEN}")
++    endif (WIN32)
++endif  (DBUS_BUILD_TESTS)
++
++set(DBUS_LIBRARIES dbus-1)
++set(DBUS_INTERNAL_LIBRARIES dbus-internal)
++
++# settings for building and using static internal lib
++# important note: DBUS_INTERNAL_xxxxx_DEFINITIONS must *not* be set when building dbus-1 library
++set (DBUS_INTERNAL_ADD_LIBRARY_OPTIONS STATIC)
++set (DBUS_INTERNAL_LIBRARY_DEFINITIONS "-DDBUS_STATIC_BUILD")
++set (DBUS_INTERNAL_CLIENT_DEFINITIONS "-DDBUS_STATIC_BUILD")
++
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dbus-env.bat.cmake ${CMAKE_BINARY_DIR}/bin/dbus-env.bat )
++install_files(/bin FILES ${CMAKE_BINARY_DIR}/bin/dbus-env.bat)
++add_definitions(-DHAVE_CONFIG_H=1)
++
++########### subdirs ###############
++
++add_subdirectory( dbus )
++add_subdirectory( bus )
++if (DBUS_BUILD_TESTS)
++	add_subdirectory( test )
++endif (DBUS_BUILD_TESTS)
++add_subdirectory( tools )
++add_subdirectory( doc )
++
++
++OPTION(DBUS_INSTALL_SYSTEM_LIBS "install required system libraries" OFF)
++MESSAGE(" ")
++MESSAGE("set -DDBUS_INSTALL_SYSTEM_LIBS=1 to install runtime libraries too")
++MESSAGE("set DBUSDIR (environment or cmake option) to overwrite the default install directory ")
++MESSAGE(" ")
++MESSAGE(" ")
++GET_FILENAME_COMPONENT(C_COMPILER ${CMAKE_C_COMPILER} NAME)
++GET_FILENAME_COMPONENT(CXX_COMPILER ${CMAKE_CXX_COMPILER} NAME)
++
++message("                  D-BUS ${DBUS_VERSION}                               ")
++message("                  ===========                                         ")
++message("                                                                      ")
++message("        install prefix:           ${prefix}                           ")
++message("        install exec_prefix:      ${exec_prefix}                      ")
++message("        install libdir:           ${EXPANDED_LIBDIR}                  ")
++message("        install bindir:           ${EXPANDED_BINDIR}                  ")
++message("        install sysconfdir:       ${EXPANDED_SYSCONFDIR}              ")
++#message("        install localstatedir:    ${EXPANDED_LOCALSTATEDIR}           ")
++message("        install datadir:          ${EXPANDED_DATADIR}                 ")
++message("        source code location:     ${DBUS_SOURCE_DIR}                  ")
++message("        build dir:                ${CMAKE_BINARY_DIR}                 ")
++message("        c compiler:               ${C_COMPILER}                       ")
++message("        cflags:                   ${CMAKE_C_FLAGS}                    ")
++message("        cflags debug:             ${CMAKE_C_FLAGS_DEBUG}              ")
++message("        cflags release:           ${CMAKE_C_FLAGS_RELEASE}            ")
++message("        cxx compiler:             ${CXX_COMPILER}                     ")
++message("        cxxflags:                 ${CMAKE_CXX_FLAGS}                  ")
++message("        cxxflags debug:           ${CMAKE_CXX_FLAGS_DEBUG}            ")
++message("        cxxflags release:         ${CMAKE_CXX_FLAGS_RELEASE}          ")
++message("        64-bit int:               ${DBUS_INT64_TYPE}                  ")
++message("        32-bit int:               ${DBUS_INT32_TYPE}                  ")
++message("        16-bit int:               ${DBUS_INT16_TYPE}                  ")
++message("        Doxygen:                  ${DOXYGEN}                          ")
++message("        Docbook Generator:        ${DOCBOOK_GENERATOR_NAME}           ")
++
++
++#message("        Maintainer mode:          ${USE_MAINTAINER_MODE}              ")
++message("        gcc coverage profiling:   ${DBUS_GCOV_ENABLED}                ")
++message("        Building unit tests:      ${DBUS_BUILD_TESTS}                 ")
++message("        Building verbose mode:    ${DBUS_ENABLE_VERBOSE_MODE}         ")
++message("        Building w/o assertions:  ${DBUS_DISABLE_ASSERTS}             ")
++message("        Building w/o checks:      ${DBUS_DISABLE_CHECKS}              ")
++message("        installing system libs:   ${DBUS_INSTALL_SYSTEM_LIBS}         ")
++#message("        Building SELinux support: ${have_selinux}                     ")
++#message("        Building dnotify support: ${have_dnotify}                     ")
++message("        Building Doxygen docs:    ${DBUS_ENABLE_DOXYGEN_DOCS}         ")
++message("        Building XML docs:        ${DBUS_ENABLE_XML_DOCS}             ")
++#message("        Gettext libs (empty OK):  ${INTLLIBS}                         ")
++message("        Using XML parser:         ${XML_LIB}                          ")
++message("        Daemon executable name:   ${DBUS_DAEMON_NAME}")
++if (WIN32)
++message("        System bus address:       ${DBUS_SYSTEM_BUS_DEFAULT_ADDRESS}  ")
++message("        Session bus address:      ${DBUS_SESSION_BUS_DEFAULT_ADDRESS} ")
++else (WIN32)
++#message("        Init scripts style:       ${with_init_scripts}                ")
++#message("        Abstract socket names:    ${have_abstract_sockets}            ")
++message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
++message("        System bus address:       ${DBUS_SYSTEM_BUS_DEFAULT_ADDRESS}  ")
++message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
++message("        Session bus socket dir:   ${DBUS_SESSION_SOCKET_DIR}          ")
++message("        Console auth dir:         ${DBUS_CONSOLE_AUTH_DIR}            ")
++message("        System bus user:          ${DBUS_USER}                        ")
++message("        'make check' socket dir:  ${TEST_SOCKET_DIR}                  ")
++endif (WIN32)
++message("        Test listen address:      ${TEST_LISTEN}                      ")
++if (MSVC)
++message("        build timestamp:          ${DBUS_BUILD_TIMESTAMP}             ")
++endif (MSVC)
++
++MESSAGE(" ")
++if (DBUS_BUILD_TESTS)
++    message("NOTE: building with unit tests increases the size of the installed library and renders it insecure.")
++endif(DBUS_BUILD_TESTS)
++
++if (DBUS_BUILD_TESTS AND DBUS_DISABLE_ASSERTS)
++    message("NOTE: building with unit tests but without assertions means tests may not properly report failures (this configuration is only useful when doing something like profiling the tests)")
++endif(DBUS_BUILD_TESTS AND DBUS_DISABLE_ASSERTS)
++
++if (DBUS_GCOV_ENABLED)
++    message("NOTE: building with coverage profiling is definitely for developers only.")
++endif(DBUS_GCOV_ENABLED)
++
++if (DBUS_ENABLE_VERBOSE_MODE)
++    message("NOTE: building with verbose mode increases library size, may slightly increase security risk, and decreases performance.")
++endif(DBUS_ENABLE_VERBOSE_MODE)
++
++if(NOT DBUS_DISABLE_ASSERTS)
++    message("NOTE: building with assertions increases library size and decreases performance.")
++endif(NOT DBUS_DISABLE_ASSERTS)
++
++if (DBUS_DISABLE_CHECKS)
++    message("NOTE: building without checks for arguments passed to public API makes it harder to debug apps using D-BUS, but will slightly decrease D-BUS library size and _very_ slightly improve performance.")
++endif(DBUS_DISABLE_CHECKS)
++MESSAGE(" ")
++
++INCLUDE(modules/CPackInstallConfig.cmake)
+diff -Nru dbus-1.3.1.orig/cmake/config.h.cmake dbus-1.3.1/cmake/config.h.cmake
+--- dbus-1.3.1.orig/cmake/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/config.h.cmake	2010-07-10 08:26:37.131856200 +0200
+@@ -0,0 +1,250 @@
++/* config.h. Generated by cmake from config.h.cmake */
++
++#ifndef _DBUS_CONFIG_H
++#define _DBUS_CONFIG_H
++/****************************/
++/* indicate that we are building with cmake */
++#define DBUS_CMAKE 1
++
++#cmakedefine HAVE_GNUC_VARARGS 1
++
++#cmakedefine DBUS_CONSOLE_AUTH_DIR "@DBUS_CONSOLE_AUTH_DIR@"
++#cmakedefine DBUS_DATADIR  "@DBUS_DATADIR@"
++#cmakedefine DBUS_BINDIR   "@DBUS_BINDIR@"
++#cmakedefine DBUS_SYSTEM_CONFIG_FILE  "@DBUS_SYSTEM_CONFIG_FILE@"
++#cmakedefine DBUS_SESSION_CONFIG_FILE "@DBUS_SESSION_CONFIG_FILE@"
++#cmakedefine DBUS_DAEMON_NAME "@DBUS_DAEMON_NAME@"
++#cmakedefine DBUS_SYSTEM_BUS_DEFAULT_ADDRESS  "@DBUS_SYSTEM_BUS_DEFAULT_ADDRESS@"
++#cmakedefine DBUS_MACHINE_UUID_FILE "@DBUS_MACHINE_UUID_FILE@"
++#cmakedefine DBUS_SESSION_BUS_DEFAULT_ADDRESS "@DBUS_SESSION_BUS_DEFAULT_ADDRESS@"
++#cmakedefine DBUS_DAEMONDIR "@DBUS_DAEMONDIR@"
++#cmakedefine PACKAGE "@PACKAGE@"
++/* Version number of package */
++#cmakedefine DBUS_MAJOR_VERSION @DBUS_MAJOR_VERSION@
++#cmakedefine DBUS_MINOR_VERSION @DBUS_MINOR_VERSION@
++#cmakedefine DBUS_MICRO_VERSION @DBUS_MICRO_VERSION@
++#cmakedefine DBUS_VERSION ((@DBUS_MAJOR_VERSION@ << 16) | (@DBUS_MINOR_VERSION@ << 8) | (@DBUS_MICRO_VERSION@))
++#cmakedefine DBUS_VERSION_STRING "@DBUS_VERSION_STRING@"
++
++#define VERSION DBUS_VERSION_STRING
++
++#define TEST_LISTEN       "@TEST_LISTEN@"
++#define TEST_CONNECTION   "@TEST_CONNECTION@"
++
++// test binaries
++/* Full path to test file test/test-exit in builddir */
++#define TEST_BUS_BINARY          "@TEST_BUS_BINARY@"
++/* Full path to test file test/test-exit in builddir */
++#define TEST_EXIT_BINARY          "@TEST_EXIT_BINARY@"
++/* Full path to test file test/test-segfault in builddir */
++#define TEST_SEGFAULT_BINARY      "@TEST_SEGFAULT_BINARY@"
++/* Full path to test file test/test-service in builddir */
++#define TEST_SERVICE_BINARY       "@TEST_SERVICE_BINARY@"
++/* Full path to test file test/test-shell-service in builddir */
++#define TEST_SHELL_SERVICE_BINARY "@TEST_SHELL_SERVICE_BINARY@"
++/* Full path to test file test/test-sleep-forever in builddir */
++#define TEST_SLEEP_FOREVER_BINARY "@TEST_SLEEP_FOREVER_BINARY@"
++
++/* Some dbus features */
++#cmakedefine DBUS_BUILD_TESTS 1
++#cmakedefine DBUS_ENABLE_ANSI 1
++#cmakedefine DBUS_ENABLE_VERBOSE_MODE 1
++#cmakedefine DBUS_DISABLE_ASSERTS 1
++#cmakedefine DBUS_DISABLE_CHECKS 1
++/* xmldocs */
++/* doxygen */
++#cmakedefine DBUS_GCOV_ENABLED 1
++
++/* abstract-sockets */
++
++#cmakedefine HAVE_ABSTRACT_SOCKETS 1
++
++#cmakedefine DBUS_PATH_OR_ABSTRACT_VALUE 1
++
++#if (defined DBUS_PATH_OR_ABSTRACT_VALUE)
++#define DBUS_PATH_OR_ABSTRACT @DBUS_PATH_OR_ABSTRACT_VALUE@
++#endif
++
++#ifdef DBUS_PATH_OR_ABSTRACT_VALUE
++#undef DBUS_PATH_OR_ABSTRACT_VALUE
++#endif
++
++/* selinux */
++#cmakedefine DBUS_BUS_ENABLE_DNOTIFY_ON_LINUX 1
++/* kqueue */
++#cmakedefine HAVE_CONSOLE_OWNER_FILE 1
++#define DBUS_CONSOLE_OWNER_FILE "@DBUS_CONSOLE_OWNER_FILE@"
++
++#cmakedefine DBUS_HAVE_ATOMIC_INT 1
++#cmakedefine DBUS_USE_ATOMIC_INT_486 1
++#if (defined(__i386__) || defined(__x86_64__))
++# define DBUS_HAVE_ATOMIC_INT 1
++# define DBUS_USE_ATOMIC_INT_486 1
++#endif
++
++#cmakedefine DBUS_BUILD_X11 1
++
++#define _DBUS_VA_COPY_ASSIGN(a1,a2) { a1 = a2; }
++
++#cmakedefine DBUS_VA_COPY_FUNC
++#if (defined DBUS_VA_COPY_FUNC)
++# define DBUS_VA_COPY @DBUS_VA_COPY_FUNC@
++#endif
++
++#ifdef DBUS_VA_COPY_FUNC
++#undef DBUS_VA_COPY_FUNC
++#endif
++
++#cmakedefine DBUS_VA_COPY_AS_ARRAY @DBUS_VA_COPY_AS_ARRAY@
++
++// headers
++/* Define to 1 if you have dirent.h */
++#cmakedefine   HAVE_DIRENT_H 1
++
++/* Define to 1 if you have io.h */
++#cmakedefine   HAVE_IO_H 1
++
++/* Define to 1 if you have grp.h */
++#cmakedefine   HAVE_GRP_H 1
++
++/* Define to 1 if you have sys/poll.h */
++#cmakedefine    HAVE_POLL 1
++
++/* Define to 1 if you have sys/time.h */
++#cmakedefine    HAVE_SYS_TIME 1
++
++/* Define to 1 if you have sys/wait.h */
++#cmakedefine    HAVE_SYS_WAIT 1
++
++/* Define to 1 if you have time.h */
++#cmakedefine   HAVE_TIME_H 1
++
++/* Define to 1 if you have ws2tcpip.h */
++#cmakedefine   HAVE_WS2TCPIP_H
++
++/* Define to 1 if you have wspiapi.h */
++#cmakedefine   HAVE_WSPIAPI_H 1
++
++/* Define to 1 if you have unistd.h */
++#cmakedefine   HAVE_UNISTD_H 1
++
++/* Define to 1 if you have stdio.h */
++#cmakedefine   HAVE_STDIO_H 1
++
++/* Define to 1 if you have sys/syslimits.h */
++#cmakedefine   HAVE_SYS_SYSLIMITS_H 1
++
++/* Define to 1 if you have errno.h */
++#cmakedefine   HAVE_ERRNO_H 1
++
++/* Define to 1 if you have signal.h */
++#cmakedefine   HAVE_SIGNAL_H 1
++
++/* Define to 1 if you have locale.h */
++#cmakedefine   HAVE_LOCALE_H 1
++
++/* Define to 1 if you have inttypes.h */
++#cmakedefine   HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have stdint.h */
++#cmakedefine   HAVE_STDINT_H 1
++
++// symbols
++/* Define to 1 if you have backtrace */
++#cmakedefine   HAVE_BACKTRACE 1
++
++/* Define to 1 if you have getgrouplist */
++#cmakedefine   HAVE_GETGROUPLIST 1
++
++/* Define to 1 if you have getpeerucred */
++#cmakedefine   HAVE_GETPEERUCRED 1
++
++/* Define to 1 if you have nanosleep */
++#cmakedefine   HAVE_NANOSLEEP 1
++
++/* Define to 1 if you have getpwnam_r */
++#cmakedefine   HAVE_POSIX_GETPWNAM_R 1
++
++/* Define to 1 if you have socketpair */
++#cmakedefine   HAVE_SOCKETPAIR 1
++
++/* Define to 1 if you have setenv */
++#cmakedefine   HAVE_SETENV 1
++
++/* Define to 1 if you have unsetenv */
++#cmakedefine   HAVE_UNSETENV 1
++
++/* Define to 1 if you have clearenv */
++#cmakedefine   HAVE_CLEARENV 1
++
++/* Define to 1 if you have writev */
++#cmakedefine   HAVE_WRITEV 1
++
++/* Define to 1 if you have socklen_t */
++#cmakedefine   HAVE_SOCKLEN_T 1
++
++/* Define to 1 if you have setlocale */
++#cmakedefine   HAVE_SETLOCALE 1
++
++/* Define to 1 if you have localeconv */
++#cmakedefine   HAVE_LOCALECONV 1
++
++/* Define to 1 if you have strtoll */
++#cmakedefine   HAVE_STRTOLL 1
++
++/* Define to 1 if you have strtoull */
++#cmakedefine   HAVE_STRTOULL 1
++
++// structs
++/* Define to 1 if you have struct cmsgred */
++#cmakedefine    HAVE_CMSGCRED 1
++
++// system type defines
++#if defined(_WIN32) || defined(_WIN64) || defined (_WIN32_WCE)
++# define DBUS_WIN
++# define DBUS_WIN_FIXME 1
++# ifdef _WIN32_WCE
++#  define DBUS_WINCE
++# else
++#  define DBUS_WIN32
++# endif
++#else
++# define DBUS_UNIX
++#endif 
++
++#if defined(_WIN32) || defined(_WIN64)
++// mingw mode_t
++# ifdef HAVE_STDIO_H
++#  include <stdio.h>
++# endif
++# ifndef _MSC_VER
++#  define uid_t int
++#  define gid_t int
++# else
++#  define snprintf _snprintf
++   typedef int mode_t;
++#  if !defined(_WIN32_WCE)
++#    define strtoll _strtoi64
++#    define strtoull _strtoui64
++#    define HAVE_STRTOLL 1
++#    define HAVE_STRTOULL 1
++#  endif
++# endif
++#endif	// defined(_WIN32) || defined(_WIN64)
++
++#ifdef interface
++#undef interface
++#endif
++
++#ifndef SIGHUP
++#define SIGHUP	1
++#endif
++
++#cmakedefine DBUS_VERBOSE_C_S 1
++#ifdef DBUS_VERBOSE_C_S
++#define _dbus_verbose_C_S printf
++#else
++#define _dbus_verbose_C_S _dbus_verbose
++#endif 
++
++#endif  // _DBUS_CONFIG_H
+diff -Nru dbus-1.3.1.orig/cmake/ConfigureChecks.cmake dbus-1.3.1/cmake/ConfigureChecks.cmake
+--- dbus-1.3.1.orig/cmake/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/ConfigureChecks.cmake	2010-07-03 16:33:38.757081300 +0200
+@@ -0,0 +1,164 @@
++include(CheckIncludeFile)
++include(CheckSymbolExists)
++include(CheckStructMember)
++include(CheckTypeSize)
++
++check_include_file(dirent.h     HAVE_DIRENT_H)  # dbus-sysdeps-util.c
++check_include_file(io.h         HAVE_IO_H)      # internal
++check_include_file(grp.h        HAVE_GRP_H)     # dbus-sysdeps-util-win.c
++check_include_file(sys/poll.h   HAVE_POLL)      # dbus-sysdeps.c, dbus-sysdeps-win.c
++check_include_file(sys/time.h   HAVE_SYS_TIME_H)# dbus-sysdeps-win.c
++check_include_file(sys/wait.h   HAVE_SYS_WAIT_H)# dbus-sysdeps-win.c
++check_include_file(time.h       HAVE_TIME_H)    # dbus-sysdeps-win.c
++check_include_file(ws2tcpip.h   HAVE_WS2TCPIP_H)# dbus-sysdeps-win.c
++check_include_file(wspiapi.h    HAVE_WSPIAPI_H) # dbus-sysdeps-win.c
++check_include_file(unistd.h     HAVE_UNISTD_H)  # dbus-sysdeps-util-win.c
++check_include_file(stdio.h      HAVE_STDIO_H)   # dbus-sysdeps.h
++check_include_file(sys/syslimits.h    HAVE_SYS_SYSLIMITS_H)   # dbus-sysdeps-unix.c
++check_include_file(errno.h     HAVE_ERRNO_H)    # dbus-sysdeps.c
++check_include_file(signal.h     HAVE_SIGNAL_H)
++check_include_file(locale.h     HAVE_LOCALE_H)
++check_include_file(inttypes.h     HAVE_INTTYPES_H)   # dbus-pipe.h
++check_include_file(stdint.h     HAVE_STDINT_H)   # dbus-pipe.h
++
++check_symbol_exists(backtrace    "execinfo.h"       HAVE_BACKTRACE)          #  dbus-sysdeps.c, dbus-sysdeps-win.c
++check_symbol_exists(getgrouplist "grp.h"            HAVE_GETGROUPLIST)       #  dbus-sysdeps.c
++check_symbol_exists(getpeerucred "ucred.h"          HAVE_GETPEERUCRED)       #  dbus-sysdeps.c, dbus-sysdeps-win.c
++check_symbol_exists(nanosleep    "time.h"           HAVE_NANOSLEEP)          #  dbus-sysdeps.c
++check_symbol_exists(getpwnam_r   "errno.h pwd.h"    HAVE_POSIX_GETPWNAM_R)   #  dbus-sysdeps-util-unix.c
++check_symbol_exists(setenv       "stdlib.h"         HAVE_SETENV)             #  dbus-sysdeps.c
++check_symbol_exists(unsetenv     "stdlib.h"         HAVE_UNSETENV)           #  dbus-sysdeps.c
++check_symbol_exists(clearenv     "stdlib.h"         HAVE_CLEARENV)           #  dbus-sysdeps.c
++check_symbol_exists(writev       "sys/uio.h"        HAVE_WRITEV)             #  dbus-sysdeps.c, dbus-sysdeps-win.c
++check_symbol_exists(setrlimit    "sys/resource.h"   HAVE_SETRLIMIT)          #  dbus-sysdeps.c, dbus-sysdeps-win.c, test/test-segfault.c
++check_symbol_exists(socketpair   "sys/socket.h"     HAVE_SOCKETPAIR)         #  dbus-sysdeps.c
++check_symbol_exists(socklen_t    "sys/socket.h"     HAVE_SOCKLEN_T)          #  dbus-sysdeps-unix.c
++check_symbol_exists(setlocale    "locale.h"         HAVE_SETLOCALE)          #  dbus-test-main.c
++check_symbol_exists(localeconv   "locale.h"         HAVE_LOCALECONV)         #  dbus-sysdeps.c
++check_symbol_exists(strtoll      "stdlib.h"         HAVE_STRTOLL)            #  dbus-send.c
++check_symbol_exists(strtoull     "stdlib.h"         HAVE_STRTOULL)           #  dbus-send.c
++
++check_struct_member(cmsgcred cmcred_pid "sys/types.h sys/socket.h" HAVE_CMSGCRED)   #  dbus-sysdeps.c
++
++# missing:
++# HAVE_ABSTRACT_SOCKETS
++# DBUS_HAVE_GCC33_GCOV
++
++check_type_size("short"     SIZEOF_SHORT)
++check_type_size("int"       SIZEOF_INT)
++check_type_size("long"      SIZEOF_LONG)
++check_type_size("long long" SIZEOF_LONG_LONG)
++check_type_size("__int64"   SIZEOF___INT64)
++
++# DBUS_INT64_TYPE
++if(SIZEOF_INT EQUAL 8)
++    set (DBUS_HAVE_INT64 1)
++    set (DBUS_INT64_TYPE "int")
++else(SIZEOF_INT EQUAL 8)
++    if(SIZEOF_LONG EQUAL 8)
++        set (DBUS_HAVE_INT64 1)
++        set (DBUS_INT64_TYPE "long")
++    else(SIZEOF_LONG EQUAL 8)
++        if(SIZEOF_LONG_LONG EQUAL 8)
++            set (DBUS_HAVE_INT64 1)
++            set (DBUS_INT64_TYPE "long long")
++        else(SIZEOF_LONG_LONG EQUAL 8)
++            if(SIZEOF___INT64 EQUAL 8)
++                set (DBUS_HAVE_INT64 1)
++                set (DBUS_INT64_TYPE "__int64")
++            endif(SIZEOF___INT64 EQUAL 8)
++        endif(SIZEOF_LONG_LONG EQUAL 8)
++    endif(SIZEOF_LONG EQUAL 8)
++endif(SIZEOF_INT EQUAL 8)
++
++# DBUS_INT32_TYPE
++if(SIZEOF_INT EQUAL 4)
++    set (DBUS_INT32_TYPE "int")
++else(SIZEOF_INT EQUAL 4)
++    if(SIZEOF_LONG EQUAL 4)
++        set (DBUS_INT32_TYPE "long")
++    else(SIZEOF_LONG EQUAL 4)
++        if(SIZEOF_LONG_LONG EQUAL 4)
++            set (DBUS_INT32_TYPE "long long")
++        endif(SIZEOF_LONG_LONG EQUAL 4)
++    endif(SIZEOF_LONG EQUAL 4)
++endif(SIZEOF_INT EQUAL 4)
++
++# DBUS_INT16_TYPE
++if(SIZEOF_INT EQUAL 2)
++    set (DBUS_INT16_TYPE "int")
++else(SIZEOF_INT EQUAL 2)
++    if(SIZEOF_SHORT EQUAL 2)
++        set (DBUS_INT16_TYPE "short")
++    endif(SIZEOF_SHORT EQUAL 2)
++endif(SIZEOF_INT EQUAL 2)
++
++find_program(DOXYGEN doxygen)
++find_program(XMLTO xmlto)
++
++if(MSVC)
++   SET(DBUS_VA_COPY_FUNC "_DBUS_VA_COPY_ASSIGN";)
++else(MSVC)
++write_file("${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/cmake_try_compile.c" "#include <stdarg.h>
++	#include <stdlib.h>
++        static void f (int i, ...) {
++	va_list args1, args2;
++	va_start (args1, i);
++	va_copy (args2, args1);
++	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
++	  exit (1);
++	va_end (args1); va_end (args2);
++	}
++	int main() {
++	  f (0, 42);
++	  return 0;
++	}
++")
++try_compile(DBUS_HAVE_VA_COPY
++            ${CMAKE_BINARY_DIR}
++            ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/cmake_try_compile.c)
++
++if(DBUS_HAVE_VA_COPY)
++  SET(DBUS_VA_COPY_FUNC va_copy CACHE STRING "va_copy function")
++else(DBUS_HAVE_VA_COPY)
++  write_file("${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/cmake_try_compile.c" "#include <stdarg.h>
++          #include <stdlib.h>
++	  static void f (int i, ...) {
++	  va_list args1, args2;
++	  va_start (args1, i);
++	  __va_copy (args2, args1);
++	  if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
++	    exit (1);
++	  va_end (args1); va_end (args2);
++	  }
++	  int main() {
++	    f (0, 42);
++	    return 0;
++	  }
++  ")
++  try_compile(DBUS_HAVE___VA_COPY
++              ${CMAKE_BINARY_DIR}
++              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/cmake_try_compile.c)
++  if(DBUS_HAVE___VA_COPY)
++    SET(DBUS_VA_COPY_FUNC __va_copy CACHE STRING "va_copy function")
++  else(DBUS_HAVE___VA_COPY)
++    SET(DBUS_VA_COPY_AS_ARRAY "1" CACHE STRING "'va_lists' cannot be copies as values")
++  endif(DBUS_HAVE___VA_COPY)
++endif(DBUS_HAVE_VA_COPY)
++endif(MSVC) # _not_ MSVC
++#### Abstract sockets
++
++if (DBUS_ENABLE_ABSTRACT_SOCKETS)
++
++  try_compile(HAVE_ABSTRACT_SOCKETS
++              ${CMAKE_BINARY_DIR}
++              ${CMAKE_SOURCE_DIR}/modules/CheckForAbstractSockets.c)
++
++endif(DBUS_ENABLE_ABSTRACT_SOCKETS)
++
++if(HAVE_ABSTRACT_SOCKETS)
++  set(DBUS_PATH_OR_ABSTRACT_VALUE abstract)
++else(HAVE_ABSTRACT_SOCKETS)
++  set(DBUS_PATH_OR_ABSTRACT_VALUE path)
++endif(HAVE_ABSTRACT_SOCKETS)
++
+diff -Nru dbus-1.3.1.orig/cmake/cross-compile.sh dbus-1.3.1/cmake/cross-compile.sh
+--- dbus-1.3.1.orig/cmake/cross-compile.sh	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/cross-compile.sh	2010-07-03 16:33:38.762081600 +0200
+@@ -0,0 +1,105 @@
++#!/bin/sh
++#
++#  cross compile script for cmake
++# 
++# initial written by Fridrich Strba
++# refactored to debian/lenny by Ralf Habacker
++#
++#  reported to work at least on debian/lenny 
++# 
++
++if test -f /usr/bin/i686-pc-mingw32-gcc; then
++    cross_cc=i686-pc-mingw32
++elif test -f /usr/bin/i586-mingw32msvc-gcc; then
++    cross_cc=i586-mingw32msvc
++else
++    echo "could not determine mingw cross compiler"
++    exit 1
++fi
++
++if test -d ~/$cross_cc; then
++    cross_root=~/$cross_cc
++elif test -d /usr/$cross_cc/sys-root/mingw; then
++    cross_root=/usr/$cross_cc/sys-root/mingw
++elif test -d /usr/$cross_cc/lib; then
++    cross_root=/usr/$cross_cc
++else
++    echo "could not determine mingw cross compiler sdk"
++    exit 1
++fi
++
++# make cmake happy 
++export TEMP=/tmp
++
++HOST_CC=gcc; export HOST_CC;
++
++if test -d $cross_root/lib/pkgconfig; then 
++    PKG_CONFIG_PATH="$cross_root/lib/pkgconfig:$cross_root/share/pkgconfig"; export PKG_CONFIG_PATH;
++fi 
++
++if test -d "$MINGW32_CLASSPATH" ||  test -f "$cross_root/share/java/libgcj.jar";  then 
++    CLASSPATH="$CLASSPATH:${MINGW32_CLASSPATH:-$cross_root/share/java/libgcj.jar:$cross_root/share/java/libgcj-tools.jar}"; export CLASSPATH;
++fi
++
++_PREFIX="/usr/bin/$cross_cc-";
++for i in `ls -1 ${_PREFIX}* | grep -v 'gcc-'`; do
++    x=`echo $i|sed "s,${_PREFIX},,"|sed "s,\.awk*,,"|tr "a-z+-" "A-ZX_"`;
++    declare -x $x="$i" ; export $x;
++done;
++unset _PREFIX;
++
++CC="${MINGW32_CC:-$cross_cc-gcc}"; export CC;
++CFLAGS="${MINGW32_CFLAGS:--O2 -g -pipe -Wall -fexceptions -fno-omit-frame-pointer -fno-optimize-sibling-calls --param=ssp-buffer-size=4 -mms-bitfields}"; export CFLAGS;
++LDFLAGS="${MINGW32_LDFLAGS:--Wl,--exclude-libs=libintl.a -Wl,--exclude-libs=libiconv.a}"; export LDFLAGS;
++
++if [ -x "/usr/bin/$cross_cc-g++" ]; then
++    CXX="${MINGW32_CXX:-$cross_cc-g++}"; export CXX;
++    CXXFLAGS="${MINGW32_CXXFLAGS:--O2 -g -pipe -Wall -fexceptions -fno-omit-frame-pointer -fno-optimize-sibling-calls --param=ssp-buffer-size=4 -mms-bitfields}"; export CXXFLAGS;
++else
++    CXX=; export CXX;
++    ac_cv_prog_CXX=no; export ac_cv_prog_CXX;
++    CXXFLAGS=; export CXXFLAGS;
++fi;
++for i in `ls $cross_root/bin/*|grep -- "-config$"` ; do
++    x=`basename $i|tr "a-z+-" "A-ZX_"|sed "s,\.,,"`;
++    declare -x $x="$i" ; export $x;
++done;
++unset x i ;
++
++if ! test -f "$cross_root/lib/libexpat.dll.a"; then
++    (cd /tmp; wget http://www.winkde.org/pub/kde/ports/win32/repository/win32libs/expat-2.0.1-bin.zip)
++    (cd /tmp; wget http://www.winkde.org/pub/kde/ports/win32/repository/win32libs/expat-2.0.1-lib.zip)
++    (cd $cross_root; unzip -x /tmp/expat-2.0.1-bin.zip)
++    (cd $cross_root; unzip -x /tmp/expat-2.0.1-lib.zip)
++fi 
++
++if test -f "$cross_root/lib/libexpat.dll.a"; then
++    xml_library=-DDBUS_USE_EXPAT=On -DLIBEXPAT_INCLUDE_DIR:PATH=$cross_root/include -DLIBEXPAT_LIBRARIES:PATH=$cross_root/lib/libexpat.dll.a 
++else
++    echo "could not find a cross compile xml libraray"
++    exit 1
++fi
++
++cmake \
++    -DCMAKE_SYSTEM_NAME="Windows" \
++    -DCMAKE_VERBOSE_MAKEFILE=ON \
++    -DCMAKE_INSTALL_PREFIX:PATH=$cross_root \
++    -DCMAKE_INSTALL_LIBDIR:PATH=$cross_root/lib \
++    -DINCLUDE_INSTALL_DIR:PATH=$cross_root/include \
++    -DLIB_INSTALL_DIR:PATH=$cross_root/lib \
++    -DSYSCONF_INSTALL_DIR:PATH=$cross_root/etc \
++    -DSHARE_INSTALL_PREFIX:PATH=$cross_root/share \
++    -DBUILD_SHARED_LIBS:BOOL=ON \
++    -DCMAKE_C_COMPILER="/usr/bin/$cross_cc-gcc" \
++    -DCMAKE_CXX_COMPILER="/usr/bin/$cross_cc-g++" \
++    -DCMAKE_FIND_ROOT_PATH="$cross_root" \
++    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
++    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
++    -DCMAKE_CXX_COMPILER="/usr/bin/$cross_cc-g++" \
++    -DCMAKE_FIND_ROOT_PATH="$cross_root" \
++    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
++    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
++    $xml_library \
++    -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER \
++    $*
++
+diff -Nru dbus-1.3.1.orig/cmake/dbus/CMakeLists.txt dbus-1.3.1/cmake/dbus/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/dbus/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/dbus/CMakeLists.txt	2010-07-03 16:33:38.763081700 +0200
+@@ -0,0 +1,312 @@
++project(dbus-lib)
++
++SET(DBUS_DIR ${CMAKE_SOURCE_DIR}/../dbus)
++
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dbus-arch-deps.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/dbus-arch-deps.h )
++
++add_definitions(-DDBUS_COMPILATION)
++
++set (dbusinclude_HEADERS
++	${DBUS_DIR}/dbus.h
++	${DBUS_DIR}/dbus-address.h
++	${DBUS_DIR}/dbus-bus.h
++	${DBUS_DIR}/dbus-connection.h
++	${DBUS_DIR}/dbus-errors.h
++	${DBUS_DIR}/dbus-macros.h
++	${DBUS_DIR}/dbus-memory.h
++	${DBUS_DIR}/dbus-message.h
++	${DBUS_DIR}/dbus-misc.h
++	${DBUS_DIR}/dbus-pending-call.h
++	${DBUS_DIR}/dbus-protocol.h
++	${DBUS_DIR}/dbus-server.h
++	${DBUS_DIR}/dbus-shared.h
++	${DBUS_DIR}/dbus-signature.h
++	${DBUS_DIR}/dbus-threads.h
++	${DBUS_DIR}/dbus-types.h
++	dbus-arch-deps.h
++)
++
++### source code that goes in the installed client library
++### and is specific to library functionality
++set (DBUS_LIB_SOURCES
++	${DBUS_DIR}/dbus-address.c
++	${DBUS_DIR}/dbus-auth.c
++	${DBUS_DIR}/dbus-auth-script.c
++	${DBUS_DIR}/dbus-bus.c
++	${DBUS_DIR}/dbus-connection.c
++	${DBUS_DIR}/dbus-credentials.c
++	${DBUS_DIR}/dbus-errors.c
++	${DBUS_DIR}/dbus-keyring.c
++	${DBUS_DIR}/dbus-marshal-header.c
++	${DBUS_DIR}/dbus-marshal-byteswap.c
++	${DBUS_DIR}/dbus-marshal-recursive.c
++	${DBUS_DIR}/dbus-marshal-validate.c
++	${DBUS_DIR}/dbus-message.c
++	${DBUS_DIR}/dbus-misc.c
++	${DBUS_DIR}/dbus-nonce.c
++	${DBUS_DIR}/dbus-object-tree.c
++	${DBUS_DIR}/dbus-pending-call.c
++	${DBUS_DIR}/dbus-resources.c
++	${DBUS_DIR}/dbus-server.c
++	${DBUS_DIR}/dbus-server-socket.c
++	${DBUS_DIR}/dbus-server-debug-pipe.c
++	${DBUS_DIR}/dbus-sha.c
++	${DBUS_DIR}/dbus-signature.c
++	${DBUS_DIR}/dbus-timeout.c
++	${DBUS_DIR}/dbus-threads.c
++	${DBUS_DIR}/dbus-transport.c
++	${DBUS_DIR}/dbus-transport-socket.c
++	${DBUS_DIR}/dbus-watch.c
++#dbus-md5.c
++#
++#  find a clean Windows implementation
++#  and move code to a *-win.c file
++)
++
++
++if(UNIX)
++	set (DBUS_LIB_SOURCES ${DBUS_LIB_SOURCES} 
++		${DBUS_DIR}/dbus-transport-unix.c
++		${DBUS_DIR}/dbus-server-unix.c
++	)
++else(UNIX)
++	set (DBUS_LIB_SOURCES ${DBUS_LIB_SOURCES} 
++		${DBUS_DIR}/dbus-transport-win.c
++		${DBUS_DIR}/dbus-server-win.c
++	)
++endif(UNIX)
++
++set (DBUS_LIB_HEADERS
++	${DBUS_DIR}/dbus-auth.h
++	${DBUS_DIR}/dbus-auth-script.h
++	${DBUS_DIR}/dbus-connection-internal.h
++	${DBUS_DIR}/dbus-credentials.h
++	${DBUS_DIR}/dbus-keyring.h
++	${DBUS_DIR}/dbus-marshal-header.h
++	${DBUS_DIR}/dbus-marshal-byteswap.h
++	${DBUS_DIR}/dbus-marshal-recursive.h
++	${DBUS_DIR}/dbus-marshal-validate.h
++	${DBUS_DIR}/dbus-message-internal.h
++	${DBUS_DIR}/dbus-message-private.h
++	${DBUS_DIR}/dbus-misc.h
++	${DBUS_DIR}/dbus-object-tree.h
++	${DBUS_DIR}/dbus-protocol.h
++	${DBUS_DIR}/dbus-resources.h
++	${DBUS_DIR}/dbus-server-debug-pipe.h
++	${DBUS_DIR}/dbus-server-protected.h
++	${DBUS_DIR}/dbus-server-unix.h
++	${DBUS_DIR}/dbus-sha.h
++	${DBUS_DIR}/dbus-timeout.h
++	${DBUS_DIR}/dbus-threads.h
++	${DBUS_DIR}/dbus-threads-internal.h
++	${DBUS_DIR}/dbus-transport.h
++	${DBUS_DIR}/dbus-transport-protected.h
++	${DBUS_DIR}/dbus-watch.h
++	${CMAKE_BINARY_DIR}/config.h
++##dbus-md5.h
++)
++if(UNIX)
++	set (DBUS_LIB_HEADERS ${DBUS_LIB_HEADERS} 
++		${DBUS_DIR}/dbus-transport-unix.h
++	)
++else(UNIX)
++	set (DBUS_LIB_HEADERS ${DBUS_LIB_HEADERS} 
++		${DBUS_DIR}/dbus-transport-win.h
++	)
++endif(UNIX)
++
++
++### source code that goes in the installed client library
++### AND is generic utility functionality used by the 
++### daemon or test programs (all symbols in here should 
++### be underscore-prefixed)
++set (DBUS_SHARED_SOURCES
++	${DBUS_DIR}/dbus-dataslot.c
++	${DBUS_DIR}/dbus-file.c
++	${DBUS_DIR}/dbus-hash.c
++	${DBUS_DIR}/dbus-internals.c
++	${DBUS_DIR}/dbus-list.c
++	${DBUS_DIR}/dbus-marshal-basic.c
++	${DBUS_DIR}/dbus-memory.c
++	${DBUS_DIR}/dbus-mempool.c
++	${DBUS_DIR}/dbus-string.c
++	${DBUS_DIR}/dbus-sysdeps.c
++	${DBUS_DIR}/dbus-pipe.c
++)
++
++set (DBUS_SHARED_HEADERS
++	${DBUS_DIR}/dbus-dataslot.h
++	${DBUS_DIR}/dbus-file.h
++	${DBUS_DIR}/dbus-hash.h
++	${DBUS_DIR}/dbus-internals.h
++	${DBUS_DIR}/dbus-list.h
++	${DBUS_DIR}/dbus-marshal-basic.h
++	${DBUS_DIR}/dbus-mempool.h
++	${DBUS_DIR}/dbus-string.h
++	${DBUS_DIR}/dbus-string-private.h
++	${DBUS_DIR}/dbus-pipe.h
++	${DBUS_DIR}/dbus-sysdeps.h
++)
++
++### source code that is generic utility functionality used
++### by the bus daemon or test apps, but is NOT included
++### in the D-BUS client library (all symbols in here 
++### should be underscore-prefixed but don't really need 
++### to be unless they move to DBUS_SHARED_SOURCES later)
++set (DBUS_UTIL_SOURCES
++	${DBUS_DIR}/dbus-auth-util.c
++	${DBUS_DIR}/dbus-credentials-util.c
++	${DBUS_DIR}/dbus-mainloop.c
++	${DBUS_DIR}/dbus-marshal-byteswap-util.c
++	${DBUS_DIR}/dbus-marshal-recursive-util.c
++	${DBUS_DIR}/dbus-marshal-validate-util.c
++	${DBUS_DIR}/dbus-message-factory.c
++	${DBUS_DIR}/dbus-message-util.c
++	${DBUS_DIR}/dbus-shell.c
++	${DBUS_DIR}/dbus-string-util.c
++	${DBUS_DIR}/dbus-sysdeps-util.c
++)
++
++if (DBUS_BUILD_TESTS)
++	set (DBUS_UTIL_SOURCES 
++		${DBUS_UTIL_SOURCES}
++		${DBUS_DIR}/dbus-test.c
++	)
++endif (DBUS_BUILD_TESTS)
++
++set (DBUS_UTIL_HEADERS
++	${DBUS_DIR}/dbus-mainloop.h
++	${DBUS_DIR}/dbus-message-factory.h
++	${DBUS_DIR}/dbus-shell.h
++	${DBUS_DIR}/dbus-spawn.h
++	${DBUS_DIR}/dbus-test.h
++)
++
++### platform specific settings
++if (WIN32)
++	set (DBUS_SHARED_SOURCES ${DBUS_SHARED_SOURCES} 
++		${DBUS_DIR}/dbus-file-win.c
++		${DBUS_DIR}/dbus-sysdeps-win.c
++		${DBUS_DIR}/dbus-pipe-win.c
++		${DBUS_DIR}/dbus-sysdeps-thread-win.c
++	)
++	set (DBUS_SHARED_HEADERS ${DBUS_SHARED_HEADERS} 
++		${DBUS_DIR}/dbus-sockets-win.h
++		${DBUS_DIR}/dbus-sysdeps-win.h
++	)
++	set (DBUS_UTIL_SOURCES ${DBUS_UTIL_SOURCES}
++		${DBUS_DIR}/dbus-spawn-win.c
++		${DBUS_DIR}/dbus-sysdeps-util-win.c
++	)
++	if(WINCE)
++	set (DBUS_SHARED_SOURCES ${DBUS_SHARED_SOURCES}
++		${DBUS_DIR}/dbus-sysdeps-wince-glue.c
++	)
++	set (DBUS_SHARED_HEADERS ${DBUS_SHARED_HEADERS}
++		${DBUS_DIR}/dbus-sysdeps-wince-glue.h
++	)
++	endif(WINCE)
++else (WIN32)
++	set (DBUS_SHARED_SOURCES ${DBUS_SHARED_SOURCES} 
++		${DBUS_DIR}/dbus-file-unix.c
++		${DBUS_DIR}/dbus-pipe-unix.c
++		${DBUS_DIR}/dbus-sysdeps-unix.c
++		${DBUS_DIR}/dbus-sysdeps-pthread.c
++		${DBUS_DIR}/dbus-userdb.c
++	)
++	set (DBUS_SHARED_HEADERS ${DBUS_SHARED_HEADERS} 
++		${DBUS_DIR}/dbus-server-unix.h
++		${DBUS_DIR}/dbus-transport-unix.h
++		${DBUS_DIR}/dbus-sysdeps-unix.h
++		${DBUS_DIR}/dbus-userdb.h
++	)
++	set (DBUS_UTIL_SOURCES ${DBUS_UTIL_SOURCES}
++		${DBUS_DIR}/dbus-spawn.c
++		${DBUS_DIR}/dbus-userdb-util.c
++		${DBUS_DIR}/dbus-sysdeps-util-unix.c
++	)
++endif (WIN32)
++
++set(libdbus_SOURCES
++	${DBUS_LIB_SOURCES}
++	${DBUS_SHARED_SOURCES}
++	# for debugging
++	${DBUS_UTIL_SOURCES}
++)
++
++set(libdbus_HEADERS 
++	${DBUS_LIB_HEADERS}
++	${DBUS_SHARED_HEADERS}
++	# for debugging
++	${DBUS_UTIL_HEADERS}
++)
++if (MSVC)
++    set (BUILD_FILEVERSION ${DBUS_MAJOR_VERSION},${DBUS_MINOR_VERSION},${DBUS_MICRO_VERSION},${DBUS_PATCH_VERSION})
++    set (BUILD_TIMESTAMP ${DBUS_BUILD_TIMESTAMP})
++    
++    configure_file(${DBUS_DIR}/versioninfo.rc.in ${CMAKE_CURRENT_BINARY_DIR}/versioninfo.rc)
++    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/afxres.h "")
++    list(APPEND libdbus_SOURCES versioninfo.rc)
++    set_source_files_properties(versioninfo.rc COMPILE_FLAGS "-D__LINE__=1")
++endif (MSVC)
++
++if(MSVC_IDE)
++	project_source_group(${GROUP_CODE} DBUS_LIB_SOURCES DBUS_LIB_HEADERS)
++	project_source_group(${GROUP_CODE} DBUS_SHARED_SOURCES DBUS_SHARED_HEADERS)
++	project_source_group(${GROUP_CODE} DBUS_UTIL_SOURCES DBUS_UTIL_SOURCES)
++endif(MSVC_IDE)
++
++### Client library
++
++add_library(dbus-1 SHARED
++			${DBUS_LIB_SOURCES}
++			${DBUS_SHARED_SOURCES}
++			${DBUS_LIB_HEADERS}
++			${DBUS_SHARED_HEADERS})
++if(WIN32)
++    if(WINCE)
++        target_link_libraries(dbus-1 ws2)
++    else(WINCE)
++        target_link_libraries(dbus-1 ws2_32 advapi32 netapi32)
++    endif(WINCE)
++endif(WIN32)
++
++install_targets(/lib dbus-1 )
++install_files(/include/dbus FILES ${dbusinclude_HEADERS})
++
++### Internal library, used for the daemon, tools and tests, compiled statically.
++
++add_library(dbus-internal ${DBUS_INTERNAL_ADD_LIBRARY_OPTIONS}
++			${DBUS_LIB_SOURCES}
++			${DBUS_LIB_HEADERS}
++			${DBUS_SHARED_SOURCES}
++			${DBUS_SHARED_HEADERS}
++			${DBUS_UTIL_SOURCES}
++			${DBUS_UTIL_HEADERS}
++)
++target_link_libraries(dbus-internal)
++set_target_properties(dbus-internal PROPERTIES COMPILE_FLAGS ${DBUS_INTERNAL_LIBRARY_DEFINITIONS})
++if(WIN32)
++    if(WINCE)
++        target_link_libraries(dbus-internal ws2)
++    else(WINCE)
++        target_link_libraries(dbus-internal ws2_32 advapi32 netapi32)
++    endif(WINCE)
++endif(WIN32)
++
++if (DBUS_BUILD_TESTS)
++	set (TESTS_ENVIRONMENT "DBUS_TEST_DATA=${CMAKE_SOURCE_DIR}/test/data DBUS_TEST_HOMEDIR=${CMAKE_BUILD_DIR}/dbus")
++	ADD_EXECUTABLE(dbus-test ${CMAKE_SOURCE_DIR}/../dbus/dbus-test-main.c)
++	target_link_libraries(dbus-test ${DBUS_INTERNAL_LIBRARIES})
++	add_test(dbus-test ${EXECUTABLE_OUTPUT_PATH}/dbus-test ${CMAKE_SOURCE_DIR}/../test/data)
++	set_target_properties(dbus-test PROPERTIES COMPILE_FLAGS ${DBUS_INTERNAL_CLIENT_DEFINITIONS})
++ENDIF (DBUS_BUILD_TESTS)
++
++if (UNIX)
++# set version info
++ENDIF (UNIX)
++
++
++## mop up the gcov files
++#clean-local:
++#/bin/rm *.bb *.bbg *.da *.gcov .libs/*.da .libs/*.bbg || true
+diff -Nru dbus-1.3.1.orig/cmake/dbus/dbus-arch-deps.h.cmake dbus-1.3.1/cmake/dbus/dbus-arch-deps.h.cmake
+--- dbus-1.3.1.orig/cmake/dbus/dbus-arch-deps.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/dbus/dbus-arch-deps.h.cmake	2010-07-03 16:33:38.763081700 +0200
+@@ -0,0 +1,56 @@
++/* -*- mode: C; c-file-style: "gnu" -*- */
++/* dbus-arch-deps.h Header with architecture/compiler specific information, installed to libdir
++ *
++ * Copyright (C) 2003 Red Hat, Inc.
++ *
++ * Licensed under the Academic Free License version 2.0
++ * 
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ *
++ */
++#if !defined (DBUS_INSIDE_DBUS_H) && !defined (DBUS_COMPILATION)
++#error "Only <dbus/dbus.h> can be included directly, this file may disappear or change contents."
++#endif
++
++#ifndef DBUS_ARCH_DEPS_H
++#define DBUS_ARCH_DEPS_H
++
++#include <dbus/dbus-macros.h>
++
++DBUS_BEGIN_DECLS;
++
++#cmakedefine DBUS_HAVE_INT64 1
++#if DBUS_HAVE_INT64
++typedef @DBUS_INT64_TYPE@ dbus_int64_t;
++typedef unsigned @DBUS_INT64_TYPE@ dbus_uint64_t;
++
++#define DBUS_INT64_CONSTANT(val)  (val##LL)
++#define DBUS_UINT64_CONSTANT(val) (val##ULL)
++
++#else
++#undef DBUS_HAVE_INT64
++#undef DBUS_INT64_CONSTANT
++#undef DBUS_UINT64_CONSTANT
++#endif
++
++typedef @DBUS_INT32_TYPE@ dbus_int32_t;
++typedef unsigned @DBUS_INT32_TYPE@ dbus_uint32_t;
++
++typedef @DBUS_INT16_TYPE@ dbus_int16_t;
++typedef unsigned @DBUS_INT16_TYPE@ dbus_uint16_t;
++
++DBUS_END_DECLS;
++
++#endif /* DBUS_ARCH_DEPS_H */
+diff -Nru dbus-1.3.1.orig/cmake/dbus-env.bat.cmake dbus-1.3.1/cmake/dbus-env.bat.cmake
+--- dbus-1.3.1.orig/cmake/dbus-env.bat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/dbus-env.bat.cmake	2010-07-03 16:33:38.762081600 +0200
+@@ -0,0 +1,8 @@
++:: environment setting for dbus clients
++@echo off
++
++:: session bus address
++set DBUS_SESSION_BUS_ADDRESS=@DBUS_SESSION_BUS_DEFAULT_ADDRESS@
++
++:: system bus address
++set DBUS_SYSTEM_BUS_DEFAULT_ADDRESS=@DBUS_SYSTEM_BUS_DEFAULT_ADDRESS@ 
+\ No newline at end of file
+diff -Nru dbus-1.3.1.orig/cmake/doc/CMakeLists.txt dbus-1.3.1/cmake/doc/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/doc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/doc/CMakeLists.txt	2010-07-03 16:33:38.764081700 +0200
+@@ -0,0 +1,120 @@
++find_package(Doxygen)
++
++if(DOXYGEN_EXECUTABLE)
++  OPTION(DBUS_ENABLE_DOXYGEN_DOCS "build DOXYGEN documentation (requires Doxygen)" ON)
++endif(DOXYGEN_EXECUTABLE)
++
++if (DBUS_ENABLE_DOXYGEN_DOCS)
++    set (top_srcdir ${CMAKE_SOURCE_DIR}/..)
++    configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.cmake ${CMAKE_BINARY_DIR}/Doxyfile )
++    add_custom_target(doc 
++        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
++    )
++endif (DBUS_ENABLE_DOXYGEN_DOCS)
++
++#
++# find docbook generator
++# 
++find_program(MEINPROC4_EXECUTABLE meinproc4)
++
++find_program(XMLTO_EXECUTABLE xmlto)
++
++if (MEINPROC4_EXECUTABLE OR XMLTO_EXECUTABLE)
++  OPTION(DBUS_ENABLE_XML_DOCS "build XML  documentation (requires xmlto or meinproc4)" ON)
++endif (MEINPROC4_EXECUTABLE OR XMLTO_EXECUTABLE)
++
++if (MEINPROC4_EXECUTABLE)
++	set(DOCBOOK_GENERATOR_NAME "meinproc4" PARENT_SCOPE)
++	set(DBUS_XML_DOCS_ENABLED 1)
++	if(WIN32)
++		get_filename_component(_a ${MEINPROC4_EXECUTABLE} PATH)
++		get_filename_component(_meinproc_install_path ${_a} PATH)
++	else(WIN32)
++		set(_meinproc_install_path ${CMAKE_INSTALL_PREFIX})
++	endif(WIN32)
++	set(STYLESHEET "${_meinproc_install_path}/share/apps/ksgmltools2/docbook/xsl/html/docbook.xsl")
++endif (MEINPROC4_EXECUTABLE)
++  
++ 
++if (XMLTO_EXECUTABLE)
++	set (DOCBOOK_GENERATOR_NAME "xmlto" PARENT_SCOPE)
++	set(DBUS_XML_DOCS_ENABLED 1)
++	MESSAGE(STATUS "xmlto docbook generator found")
++endif (XMLTO_EXECUTABLE)
++
++if (DBUS_ENABLE_XML_DOCS)
++
++macro (DOCBOOK _sources _options)
++  get_filename_component(_infile ${_sources} ABSOLUTE)
++  get_filename_component(_basename ${_infile} NAME_WE)
++  set(_outfile ${CMAKE_CURRENT_BINARY_DIR}/${_basename}.html)
++
++  if (EXISTS ${_sources})
++	  if (MEINPROC4_EXECUTABLE)
++		  ADD_CUSTOM_TARGET(${_basename}.html ALL
++			${MEINPROC4_EXECUTABLE} --stylesheet ${STYLESHEET} -o ${_outfile} ${_infile} 
++			DEPENDS ${_infile} 
++			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
++		)
++	  endif ()
++	  if (XMLTO_EXECUTABLE)
++		  ADD_CUSTOM_TARGET(${_basename}.html ALL
++			${XMLTO_EXECUTABLE} -vv ${_options} ${_infile} 
++			DEPENDS ${_infile} 
++			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
++		)
++	  endif ()
++	  install(FILES ${_outfile} DESTINATION share/doc/dbus)
++  else ()
++	  MESSAGE(STATUS "skipping xml doc generating for ${_infile}, file not found")
++  endif ()
++	  
++endmacro (DOCBOOK)
++
++### copy tests to builddir so that generated tests and static tests 
++### are all in one place.
++### todo how to add more filetypes 
++MACRO (COPYDIR _src _type)
++    FOREACH(FILE_TYPE ${_type})
++    	FOREACH(DIR ${_src})
++    		FILE(GLOB FILES "${CMAKE_SOURCE_DIR}/../${DIR}/${FILE_TYPE}" )
++    		FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${DIR})
++    		FOREACH(FILE ${FILES})
++    			GET_FILENAME_COMPONENT(FILENAME ${FILE} NAME)
++    			SET (TARGET ${CMAKE_BINARY_DIR}/${DIR}/${FILENAME})
++    			configure_file(${FILE} ${TARGET} COPYONLY)
++    			IF (CONFIG_VERBOSE)
++    				MESSAGE("FROM: ${FILE}\nTO: ${TARGET}\n")
++    			ENDIF (CONFIG_VERBOSE)
++    		ENDFOREACH(FILE)
++    	ENDFOREACH(DIR)
++    ENDFOREACH(FILE_TYPE)
++ENDMACRO (COPYDIR)
++
++COPYDIR(doc *.png)
++COPYDIR(doc *.svg)
++
++DOCBOOK(${CMAKE_SOURCE_DIR}/../doc/dbus-test-plan.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/../doc/dbus-tutorial.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/../doc/dbus-specification.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/../doc/dbus-faq.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/bus/dbus-daemon.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/tools/dbus-monitor.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/tools/dbus-send.xml html-nochunks)
++DOCBOOK(${CMAKE_SOURCE_DIR}/tools/dbus-launch.xml html-nochunks)
++
++#
++# handle html index file
++#
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/index.html.cmake ${CMAKE_CURRENT_BINARY_DIR}/index.html )
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/index.html DESTINATION share/doc/dbus)
++
++set (EXTRA_DIST 	
++	${CMAKE_SOURCE_DIR}/../doc/busconfig.dtd			
++	${CMAKE_SOURCE_DIR}/../doc/introspect.dtd			
++	${CMAKE_SOURCE_DIR}/../doc/introspect.xsl
++)
++
++install(FILES ${EXTRA_DIST} DESTINATION share/doc/dbus)
++
++endif(DBUS_ENABLE_XML_DOCS)
+diff -Nru dbus-1.3.1.orig/cmake/doc/index.html.cmake dbus-1.3.1/cmake/doc/index.html.cmake
+--- dbus-1.3.1.orig/cmake/doc/index.html.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/doc/index.html.cmake	2010-07-03 16:33:38.764081700 +0200
+@@ -0,0 +1,55 @@
++<html>
++<head>
++<title>D-Bus Documentation Index</title>
++</head>
++<body>
++<h1>D-Bus Documentation Index</h1>
++<p>Version @DBUS_VERSION_STRING@</p>
++
++<table>
++ <tr>
++  <th width=10%>
++  </th>
++  <th width=30% align=left>
++   generic documentation
++  </th>
++  <th width=30% align=left>
++application manuals
++  </th>
++ </tr>
++ <tr>
++  <td valign=top>
++  </td>
++  <td valign=top>
++<a href="http://dbus.freedesktop.org">D-Bus Website</a>
++  <br>
++  <br>
++<a href="dbus-tutorial.html">D-Bus Tutorial</a>
++  <br>
++  <br>
++<a href="dbus-specification.html">D-Bus Specification</a>
++   <br>
++   <br>
++<a href="dbus-faq.html">D-Bus FAQ</a>
++   <br>
++   <br>
++<a href="dbus-test-plan.html">D-Bus Test Plan</a>
++   <br>
++   <br>
++  </td>
++  <td  valign=top>
++<a href="dbus-daemon.html">D-Bus Daemon manual</a>
++   <br>
++   <br>
++<a href="dbus-launch.html">D-Bus launch manual</a>
++   <br>
++   <br>
++<a href="dbus-send.html">D-Bus send tool manual</a>
++   <br>
++   <br>
++<a href="dbus-monitor.html">D-Bus monitor manual</a>
++  </td>
++ </tr>
++</table>
++</body>
++</html>
+diff -Nru dbus-1.3.1.orig/cmake/Doxyfile.cmake dbus-1.3.1/cmake/Doxyfile.cmake
+--- dbus-1.3.1.orig/cmake/Doxyfile.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/Doxyfile.cmake	2010-07-03 16:33:38.757081300 +0200
+@@ -0,0 +1,182 @@
++# Doxyfile 0.1
++
++#---------------------------------------------------------------------------
++# General configuration options
++#---------------------------------------------------------------------------
++PROJECT_NAME           = D-Bus
++PROJECT_NUMBER         = @VERSION@
++OUTPUT_DIRECTORY       = api
++OUTPUT_LANGUAGE        = English
++EXTRACT_ALL            = NO
++EXTRACT_PRIVATE        = NO
++EXTRACT_STATIC         = NO
++HIDE_UNDOC_MEMBERS     = NO
++HIDE_UNDOC_CLASSES     = NO
++BRIEF_MEMBER_DESC      = YES
++REPEAT_BRIEF           = YES
++ALWAYS_DETAILED_SEC    = NO
++FULL_PATH_NAMES        = NO
++STRIP_FROM_PATH        = 
++INTERNAL_DOCS          = NO
++STRIP_CODE_COMMENTS    = YES
++CASE_SENSE_NAMES       = YES
++SHORT_NAMES            = NO
++HIDE_SCOPE_NAMES       = NO
++VERBATIM_HEADERS       = YES
++SHOW_INCLUDE_FILES     = YES
++JAVADOC_AUTOBRIEF      = YES
++INHERIT_DOCS           = YES
++INLINE_INFO            = YES
++SORT_MEMBER_DOCS       = YES
++DISTRIBUTE_GROUP_DOC   = NO
++TAB_SIZE               = 8
++GENERATE_TODOLIST      = YES
++GENERATE_TESTLIST      = YES
++GENERATE_BUGLIST       = YES
++ALIASES                = 
++ENABLED_SECTIONS       = 
++MAX_INITIALIZER_LINES  = 30
++OPTIMIZE_OUTPUT_FOR_C  = YES
++SHOW_USED_FILES        = YES
++#---------------------------------------------------------------------------
++# configuration options related to warning and progress messages
++#---------------------------------------------------------------------------
++QUIET                  = YES
++WARNINGS               = YES
++WARN_IF_UNDOCUMENTED   = YES
++WARN_FORMAT            = 
++WARN_LOGFILE           = 
++#---------------------------------------------------------------------------
++# configuration options related to the input files
++#---------------------------------------------------------------------------
++INPUT                  = @top_srcdir@/dbus
++FILE_PATTERNS          = *.c *.h
++RECURSIVE              = YES
++#EXCLUDE                = test
++
++# If the value of the INPUT tag contains directories, you can use the 
++# EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude 
++# certain files from those directories.
++
++EXCLUDE_PATTERNS       = Makefile.* ChangeLog CHANGES CHANGES.* README \
++                         README.* *.png AUTHORS DESIGN DESIGN.* *.desktop \
++                         DESKTOP* COMMENTS HOWTO magic NOTES TODO THANKS
++
++# The EXAMPLE_PATH tag can be used to specify one or more files or 
++# directories that contain example code fragments that are included (see 
++# the \include command).
++
++EXAMPLE_PATH           = 
++EXAMPLE_PATTERNS       = 
++EXAMPLE_RECURSIVE      = NO
++IMAGE_PATH             = 
++INPUT_FILTER           = 
++FILTER_SOURCE_FILES    = NO
++#---------------------------------------------------------------------------
++# configuration options related to source browsing
++#---------------------------------------------------------------------------
++SOURCE_BROWSER         = YES
++INLINE_SOURCES         = NO
++REFERENCED_BY_RELATION = YES
++REFERENCES_RELATION    = YES
++#---------------------------------------------------------------------------
++# configuration options related to the alphabetical class index
++#---------------------------------------------------------------------------
++ALPHABETICAL_INDEX     = NO
++COLS_IN_ALPHA_INDEX    = 5
++IGNORE_PREFIX          = 
++#---------------------------------------------------------------------------
++# configuration options related to the HTML output
++#---------------------------------------------------------------------------
++GENERATE_HTML          = YES
++HTML_OUTPUT            = 
++HTML_HEADER            = 
++HTML_FOOTER            = 
++HTML_STYLESHEET        = 
++HTML_ALIGN_MEMBERS     = YES
++GENERATE_HTMLHELP      = NO
++GENERATE_CHI           = NO
++BINARY_TOC             = NO
++TOC_EXPAND             = NO
++DISABLE_INDEX          = NO
++ENUM_VALUES_PER_LINE   = 4
++GENERATE_TREEVIEW      = NO
++TREEVIEW_WIDTH         = 250
++#---------------------------------------------------------------------------
++# configuration options related to the LaTeX output
++#---------------------------------------------------------------------------
++GENERATE_LATEX         = NO
++LATEX_OUTPUT           = 
++COMPACT_LATEX          = NO
++PAPER_TYPE             = a4wide
++EXTRA_PACKAGES         = 
++LATEX_HEADER           = 
++PDF_HYPERLINKS         = NO
++USE_PDFLATEX           = NO
++LATEX_BATCHMODE        = NO
++#---------------------------------------------------------------------------
++# configuration options related to the RTF output
++#---------------------------------------------------------------------------
++GENERATE_RTF           = NO
++RTF_OUTPUT             = 
++COMPACT_RTF            = NO
++RTF_HYPERLINKS         = NO
++RTF_STYLESHEET_FILE    = 
++RTF_EXTENSIONS_FILE    = 
++#---------------------------------------------------------------------------
++# configuration options related to the man page output
++#---------------------------------------------------------------------------
++GENERATE_MAN           = YES
++MAN_OUTPUT             = man
++MAN_EXTENSION          = .3dbus
++MAN_LINKS              = YES
++#---------------------------------------------------------------------------
++# configuration options related to the XML output
++#---------------------------------------------------------------------------
++GENERATE_XML           = NO
++#---------------------------------------------------------------------------
++# Configuration options related to the preprocessor   
++#---------------------------------------------------------------------------
++ENABLE_PREPROCESSING   = YES
++MACRO_EXPANSION        = YES
++EXPAND_ONLY_PREDEF     = YES
++SEARCH_INCLUDES        = YES
++INCLUDE_PATH           = 
++INCLUDE_FILE_PATTERNS  = 
++PREDEFINED             = "DBUS_BEGIN_DECLS=" 			\
++			 "DBUS_END_DECLS=" 			\
++			 "DOXYGEN_SHOULD_SKIP_THIS" 		\
++                         "DBUS_GNUC_DEPRECATED="                \
++			 "_DBUS_DEFINE_GLOBAL_LOCK(name)="	\
++			 "_DBUS_GNUC_PRINTF(from,to)=" \
++			 "DBUS_EXPORT="
++SKIP_FUNCTION_MACROS   = YES
++#---------------------------------------------------------------------------
++# Configuration::addtions related to external references   
++#---------------------------------------------------------------------------
++TAGFILES               = 
++GENERATE_TAGFILE       = 
++ALLEXTERNALS           = NO
++PERL_PATH              = 
++#---------------------------------------------------------------------------
++# Configuration options related to the dot tool   
++#---------------------------------------------------------------------------
++CLASS_DIAGRAMS         = YES
++HAVE_DOT               = NO
++CLASS_GRAPH            = YES
++COLLABORATION_GRAPH    = YES
++TEMPLATE_RELATIONS     = YES
++HIDE_UNDOC_RELATIONS   = YES
++INCLUDE_GRAPH          = YES
++INCLUDED_BY_GRAPH      = YES
++GRAPHICAL_HIERARCHY    = YES
++DOT_PATH               = 
++DOTFILE_DIRS           = 
++MAX_DOT_GRAPH_WIDTH    = 640
++MAX_DOT_GRAPH_HEIGHT   = 1024
++GENERATE_LEGEND        = YES
++DOT_CLEANUP            = YES
++#---------------------------------------------------------------------------
++# Configuration::addtions related to the search engine   
++#---------------------------------------------------------------------------
++SEARCHENGINE           = NO
+diff -Nru dbus-1.3.1.orig/cmake/modules/CheckForAbstractSockets.c dbus-1.3.1/cmake/modules/CheckForAbstractSockets.c
+--- dbus-1.3.1.orig/cmake/modules/CheckForAbstractSockets.c	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/CheckForAbstractSockets.c	2010-07-03 16:33:38.765081800 +0200
+@@ -0,0 +1,33 @@
++#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <errno.h>
++
++int main() {
++  int listen_fd;
++  struct sockaddr_un addr;
++
++  listen_fd = socket (PF_UNIX, SOCK_STREAM, 0);
++
++  if (listen_fd < 0)
++    {
++      fprintf (stderr, "socket() failed: %s\n", strerror (errno));
++      exit (1);
++    }
++
++  memset (&addr, '\0', sizeof (addr));
++  addr.sun_family = AF_UNIX;
++  strcpy (addr.sun_path, "X/tmp/dbus-fake-socket-path-used-in-configure-test");
++  addr.sun_path[0] = '\0'; /* this is what makes it abstract */
++
++  if (bind (listen_fd, (struct sockaddr*) &addr, SUN_LEN (&addr)) < 0)
++    {
++      fprintf (stderr, "Abstract socket namespace bind() failed: %s\n",
++                strerror (errno));
++      exit (1);
++    }
++  else
++    exit (0);
++}
+\ No newline at end of file
+diff -Nru dbus-1.3.1.orig/cmake/modules/CheckPrototypeExists.cmake dbus-1.3.1/cmake/modules/CheckPrototypeExists.cmake
+--- dbus-1.3.1.orig/cmake/modules/CheckPrototypeExists.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/CheckPrototypeExists.cmake	2010-07-03 16:33:38.766081900 +0200
+@@ -0,0 +1,35 @@
++# - Check if the prototype for a function exists.
++# CHECK_PROTOTYPE_EXISTS (FUNCTION HEADER VARIABLE)
++#
++#  FUNCTION - the name of the function you are looking for
++#  HEADER - the header(s) where the prototype should be declared
++#  VARIABLE - variable to store the result
++#
++# The following variables may be set before calling this macro to
++# modify the way the check is run:
++#
++#  CMAKE_REQUIRED_FLAGS = string of compile command line flags
++#  CMAKE_REQUIRED_DEFINITIONS = list of macros to define (-DFOO=bar)
++#  CMAKE_REQUIRED_INCLUDES = list of include directories
++
++INCLUDE(CheckCXXSourceCompiles)
++
++MACRO (CHECK_PROTOTYPE_EXISTS _SYMBOL _HEADER _RESULT)
++   SET(_INCLUDE_FILES)
++   FOREACH (it ${_HEADER})
++      SET(_INCLUDE_FILES "${_INCLUDE_FILES}#include <${it}>\n")
++   ENDFOREACH (it)
++
++   SET(_CHECK_PROTO_EXISTS_SOURCE_CODE "
++${_INCLUDE_FILES}
++int main()
++{
++#ifndef ${_SYMBOL}
++   int i = sizeof(&${_SYMBOL});
++#endif
++  return 0;
++}
++")
++   CHECK_CXX_SOURCE_COMPILES("${_CHECK_PROTO_EXISTS_SOURCE_CODE}" ${_RESULT})
++ENDMACRO (CHECK_PROTOTYPE_EXISTS _SYMBOL _HEADER _RESULT)
++
+diff -Nru dbus-1.3.1.orig/cmake/modules/CheckStructMember.cmake dbus-1.3.1/cmake/modules/CheckStructMember.cmake
+--- dbus-1.3.1.orig/cmake/modules/CheckStructMember.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/CheckStructMember.cmake	2010-07-03 16:33:38.766081900 +0200
+@@ -0,0 +1,36 @@
++# - Check if the given struct or class has the specified member variable
++# CHECK_STRUCT_MEMBER (STRUCT MEMBER HEADER VARIABLE)
++#
++#  STRUCT - the name of the struct or class you are interested in
++#  MEMBER - the member which existence you want to check
++#  HEADER - the header(s) where the prototype should be declared
++#  VARIABLE - variable to store the result
++#
++# The following variables may be set before calling this macro to
++# modify the way the check is run:
++#
++#  CMAKE_REQUIRED_FLAGS = string of compile command line flags
++#  CMAKE_REQUIRED_DEFINITIONS = list of macros to define (-DFOO=bar)
++#  CMAKE_REQUIRED_INCLUDES = list of include directories
++
++INCLUDE(CheckCXXSourceCompiles)
++
++MACRO (CHECK_STRUCT_MEMBER _STRUCT _MEMBER _HEADER _RESULT)
++   SET(_INCLUDE_FILES)
++   FOREACH (it ${_HEADER})
++      SET(_INCLUDE_FILES "${_INCLUDE_FILES}#include <${it}>\n")
++   ENDFOREACH (it)
++
++   SET(_CHECK_STRUCT_MEMBER_SOURCE_CODE "
++${_INCLUDE_FILES}
++int main()
++{
++   ${_STRUCT}* tmp;
++   tmp->${_MEMBER};
++  return 0;
++}
++")
++   CHECK_CXX_SOURCE_COMPILES("${_CHECK_STRUCT_MEMBER_SOURCE_CODE}" ${_RESULT})
++
++ENDMACRO (CHECK_STRUCT_MEMBER)
++
+diff -Nru dbus-1.3.1.orig/cmake/modules/CPackInstallConfig.cmake dbus-1.3.1/cmake/modules/CPackInstallConfig.cmake
+--- dbus-1.3.1.orig/cmake/modules/CPackInstallConfig.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/CPackInstallConfig.cmake	2010-07-03 16:33:38.765081800 +0200
+@@ -0,0 +1,44 @@
++
++if (DBUS_INSTALL_SYSTEM_LIBS)
++	if (MINGW)
++		if (DBUS_USE_EXPAT)
++			# expat
++			install_files(/bin FILES ${LIBEXPAT_LIBRARIES})	
++		else (DBUS_USE_EXPAT)
++			# xml2
++			install_files(/bin FILES ${LIBXML2_LIBRARIES})	
++			install_files(/bin FILES ${LIBICONV_LIBRARIES})	
++		endif (DBUS_USE_EXPAT)
++	else (MINGW)
++		INCLUDE(InstallRequiredSystemLibraries)
++	endif (MINGW)
++endif (DBUS_INSTALL_SYSTEM_LIBS)
++
++SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "D-BUS For Windows")
++SET(CPACK_PACKAGE_VENDOR "D-BUS Windows Team")
++SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/../README")
++SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/../COPYING")
++# duplicated from VERSION
++SET(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
++SET(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
++SET(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
++#SET(CPACK_PACKAGE_INSTALL_DIRECTORY "dbus ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
++SET(CPACK_PACKAGE_INSTALL_DIRECTORY "dbus")
++IF(WIN32 AND NOT UNIX)
++  SET(CPACK_GENERATOR NSIS ZIP)     # can be NSIS, STGZ, TBZ2, TGZ, TZ and ZIP
++  SET(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
++  # There is a bug in NSI that does not handle full unix paths properly. Make
++  # sure there is at least one set of four (4) backlasshes.
++# SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
++  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\dbus-launch.bat")
++  SET(CPACK_NSIS_DISPLAY_NAME "D-Bus for Windows")
++  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\sourceforge.net/projects/windbus")
++  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\sourceforge.net/projects/windbus")
++  SET(CPACK_NSIS_CONTACT "me@my-personal-home-page.com")
++  SET(CPACK_NSIS_MODIFY_PATH ON)
++ELSE(WIN32 AND NOT UNIX)
++  SET(CPACK_STRIP_FILES "bin/MyExecutable")
++  SET(CPACK_SOURCE_STRIP_FILES "")
++ENDIF(WIN32 AND NOT UNIX)
++SET(CPACK_PACKAGE_EXECUTABLES "dbus-launch" "D-Bus Daemon")
++INCLUDE(CPack)
+diff -Nru dbus-1.3.1.orig/cmake/modules/FindDoxygen.cmake dbus-1.3.1/cmake/modules/FindDoxygen.cmake
+--- dbus-1.3.1.orig/cmake/modules/FindDoxygen.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/FindDoxygen.cmake	2010-07-03 16:33:38.767081900 +0200
+@@ -0,0 +1,3 @@
++
++find_program(DOXYGEN_EXECUTABLE NAMES doxygen DOC "doxygen executable")
++mark_as_advanced(DOXYGEN_EXECUTABLE)
+diff -Nru dbus-1.3.1.orig/cmake/modules/FindGLIB.cmake dbus-1.3.1/cmake/modules/FindGLIB.cmake
+--- dbus-1.3.1.orig/cmake/modules/FindGLIB.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/FindGLIB.cmake	2010-07-03 16:33:38.767081900 +0200
+@@ -0,0 +1,42 @@
++# - Try to find the GLIB library
++# Once done this will define
++#
++#  GLIB_FOUND - system has GLIB
++#  GLIB_INCLUDES - the GLIB include directories
++#  GLIB_LIBRARIES - The libraries needed to use GLIB
++
++if (WIN32)
++
++INCLUDE(MacroGetenvWinPath)
++
++MACRO_GETENV_WIN_PATH(_program_FILES_DIR PROGRAMFILES)
++
++FIND_PATH(GLIB_INCLUDE_DIR glib.h
++   ${_program_FILES_DIR}/glib/include/glib-2.0
++)
++
++
++# search for GLIB in the default install directory for applications (default of (n)make install)
++FIND_LIBRARY(GLIB_LIBRARY NAMES glib-2.0
++   PATHS
++   ${_program_FILES_DIR}/glib/lib
++)
++
++if (GLIB_LIBRARY AND GLIB_INCLUDE_DIR)
++   set(GLIB_FOUND TRUE)
++   set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${GLIB_INCLUDES})
++   set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${GLIB_LIBRARIES})
++   
++endif (GLIB_LIBRARY AND GLIB_INCLUDE_DIR)
++
++if (GLIB_FOUND)
++   if (NOT GLIB_FIND_QUIETLY)
++      message(STATUS "Found GLIB: ${GLIB_LIBRARY}")
++   endif (NOT GLIB_FIND_QUIETLY)
++else (GLIB_FOUND)
++   if (GLIB_FIND_REQUIRED)
++      message(FATAL_ERROR "Could NOT find GLIB library")
++   endif (GLIB_FIND_REQUIRED)
++endif (GLIB_FOUND)
++
++endif (WIN32)
+diff -Nru dbus-1.3.1.orig/cmake/modules/FindLibExpat.cmake dbus-1.3.1/cmake/modules/FindLibExpat.cmake
+--- dbus-1.3.1.orig/cmake/modules/FindLibExpat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/FindLibExpat.cmake	2010-07-03 16:33:38.767081900 +0200
+@@ -0,0 +1,61 @@
++# - Try to find LIBEXPAT
++# Once done this will define
++#
++#  LIBEXPAT_FOUND - system has LIBEXPAT
++#  LIBEXPAT_INCLUDE_DIR - the LIBEXPAT include directory
++#  LIBEXPAT_LIBRARIES - the libraries needed to use LIBEXPAT
++#  LIBEXPAT_DEFINITIONS - Compiler switches required for using LIBEXPAT
++
++if (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++
++    # in cache already
++    SET(LIBEXPAT_FOUND TRUE)
++
++else (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++
++    IF (WIN32)
++		file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
++		find_FILE(LIBEXPAT_DIR expat Source/lib/expat.h
++   			PATHS
++   			"${_progFiles}"
++		)
++        if (LIBEXPAT_DIR)
++            set (_LIBEXPATIncDir  ${LIBEXPAT_DIR}/Source/lib)
++            set (_LIBEXPATLinkDir ${LIBEXPAT_DIR}/libs)
++        endif (LIBEXPAT_DIR)
++    ELSE (WIN32)
++        # use pkg-config to get the directories and then use these values
++        # in the FIND_PATH() and FIND_LIBRARY() calls
++        INCLUDE(UsePkgConfig)
++        PKGCONFIG(LIBEXPAT-2.0 _LIBEXPATIncDir _LIBEXPATLinkDir _LIBEXPATLinkFlags _LiIconvCflags)
++        SET(LIBEXPAT_DEFINITIONS ${_LIBEXPATCflags})
++    ENDIF (WIN32)
++
++    FIND_PATH(LIBEXPAT_INCLUDE_DIR expat.h
++      PATHS
++     ${_LIBEXPATIncDir}
++      PATH_SUFFIXES LIBEXPAT
++    )
++
++    FIND_LIBRARY(LIBEXPAT_LIBRARIES NAMES expat libexpat
++      PATHS
++      ${_LIBEXPATLinkDir}
++    )
++
++    if (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++       set(LIBEXPAT_FOUND TRUE)
++    endif (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
++
++    if (LIBEXPAT_FOUND)
++      if (NOT LIBEXPAT_FIND_QUIETLY)
++        message(STATUS "Found libexpat: ${LIBEXPAT_LIBRARIES}")
++      endif (NOT LIBEXPAT_FIND_QUIETLY)
++    else (LIBEXPAT_FOUND)
++      if (LIBEXPAT_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find libexpat")
++      endif (LIBEXPAT_FIND_REQUIRED)
++    endif (LIBEXPAT_FOUND)
++
++    MARK_AS_ADVANCED(LIBEXPAT_INCLUDE_DIR LIBEXPAT_LIBRARIES)
++
++endif (LIBEXPAT_INCLUDE_DIR AND LIBEXPAT_LIBRARIES)
+diff -Nru dbus-1.3.1.orig/cmake/modules/FindLibIconv.cmake dbus-1.3.1/cmake/modules/FindLibIconv.cmake
+--- dbus-1.3.1.orig/cmake/modules/FindLibIconv.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/FindLibIconv.cmake	2010-07-03 16:33:38.768082000 +0200
+@@ -0,0 +1,52 @@
++# - Try to find LibIconv
++# Once done this will define
++#
++#  LIBICONV_FOUND - system has LibIconv
++#  LIBICONV_INCLUDE_DIR - the LibIconv include directory
++#  LIBICONV_LIBRARIES - the libraries needed to use LibIconv
++#  LIBICONV_DEFINITIONS - Compiler switches required for using LibIconv
++
++if (LIBICONV_INCLUDE_DIR AND LIBICONV_LIBRARIES)
++
++    # in cache already
++    SET(LIBICONV_FOUND TRUE)
++
++else (LIBICONV_INCLUDE_DIR AND LIBICONV_LIBRARIES)
++
++    IF (NOT WIN32)
++        MESSAGE(FATAL_ERROR "Please set this to the correct values!")
++        # use pkg-config to get the directories and then use these values
++        # in the FIND_PATH() and FIND_LIBRARY() calls
++        INCLUDE(UsePkgConfig)
++        PKGCONFIG(libiconv-1.9 _LibIconvIncDir _LibIconvLinkDir _LibIconvLinkFlags _LiIconvCflags)
++        SET(LIBICONV_DEFINITIONS ${_LibIconvCflags})
++    ENDIF (NOT WIN32)
++
++    FIND_PATH(LIBICONV_INCLUDE_DIR iconv.h
++      PATHS
++     ${_LibIconvIncDir}
++      PATH_SUFFIXES libiconv
++    )
++
++    FIND_LIBRARY(LIBICONV_LIBRARIES NAMES iconv libiconv
++      PATHS
++      ${_LibIconvLinkDir}
++    )
++
++    if (LIBICONV_INCLUDE_DIR AND LIBICONV_LIBRARIES)
++       set(LIBICONV_FOUND TRUE)
++    endif (LIBICONV_INCLUDE_DIR AND LIBICONV_LIBRARIES)
++
++    if (LIBICONV_FOUND)
++      if (NOT LibIconv_FIND_QUIETLY)
++        message(STATUS "Found LibIconv: ${LIBICONV_LIBRARIES}")
++      endif (NOT LibIconv_FIND_QUIETLY)
++    else (LIBICONV_FOUND)
++      if (LibIconv_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find LibIconv")
++      endif (LibIconv_FIND_REQUIRED)
++    endif (LIBICONV_FOUND)
++
++    MARK_AS_ADVANCED(LIBICONV_INCLUDE_DIR LIBICONV_LIBRARIES)
++
++endif (LIBICONV_INCLUDE_DIR AND LIBICONV_LIBRARIES)
+diff -Nru dbus-1.3.1.orig/cmake/modules/MacroGetenvWinPath.cmake dbus-1.3.1/cmake/modules/MacroGetenvWinPath.cmake
+--- dbus-1.3.1.orig/cmake/modules/MacroGetenvWinPath.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/MacroGetenvWinPath.cmake	2010-07-03 16:33:38.768082000 +0200
+@@ -0,0 +1,5 @@
++
++MACRO (MACRO_GETENV_WIN_PATH var name)
++   set(${var} $ENV{${name}})
++   STRING(REGEX REPLACE "\\\\" "/" ${var} "${${var}}")
++ENDMACRO (MACRO_GETENV_WIN_PATH var name)
+diff -Nru dbus-1.3.1.orig/cmake/modules/MacroLibrary.cmake dbus-1.3.1/cmake/modules/MacroLibrary.cmake
+--- dbus-1.3.1.orig/cmake/modules/MacroLibrary.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/MacroLibrary.cmake	2010-07-03 16:33:38.768082000 +0200
+@@ -0,0 +1,9 @@
++# - include MacroLibrary offers a collection of macros which extend the built-in cmake commands
++# OPTIONAL_FIND_PACKAGE( <name> [QUIT] )
++
++INCLUDE(MacroOptionalFindPackage)
++#INCLUDE(MacroAdditionalCleanFiles)
++#INCLUDE(MacroAddFileDependencies)
++#INCLUDE(MacroGetenvWinPath)
++#INCLUDE(MacroEnsureOutOfSourceBuild)
++
+diff -Nru dbus-1.3.1.orig/cmake/modules/MacroOptionalFindPackage.cmake dbus-1.3.1/cmake/modules/MacroOptionalFindPackage.cmake
+--- dbus-1.3.1.orig/cmake/modules/MacroOptionalFindPackage.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/MacroOptionalFindPackage.cmake	2010-07-03 16:33:38.769082000 +0200
+@@ -0,0 +1,22 @@
++# - MACRO_OPTIONAL_FIND_PACKAGE() combines FIND_PACKAGE() with an OPTION()
++# MACRO_OPTIONAL_FIND_PACKAGE( <name> [QUIT] )
++# This macro is a combination of OPTION() and FIND_PACKAGE(), it
++# works like FIND_PACKAGE(), but additionally it automatically creates
++# an option name WITH_<name>, which can be disabled via the cmake GUI.
++# or via -DWITH_<name>=OFF
++# The standard <name>_FOUND variables can be used in the same way
++# as when using the normal FIND_PACKAGE()
++
++MACRO (MACRO_OPTIONAL_FIND_PACKAGE _name )
++   OPTION(WITH_${_name} "Search for ${_name} package" ON)
++   if (WITH_${_name})
++      FIND_PACKAGE(${_name} ${ARGN})
++   else (WITH_${_name})
++      set(${_name}_FOUND)
++      set(${_name}_INCLUDE_DIR)
++      set(${_name}_INCLUDES)
++      set(${_name}_LIBRARY)
++      set(${_name}_LIBRARIES)
++   endif (WITH_${_name})
++ENDMACRO (MACRO_OPTIONAL_FIND_PACKAGE)
++
+diff -Nru dbus-1.3.1.orig/cmake/modules/ProjectSourceGroup.cmake dbus-1.3.1/cmake/modules/ProjectSourceGroup.cmake
+--- dbus-1.3.1.orig/cmake/modules/ProjectSourceGroup.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/ProjectSourceGroup.cmake	2010-07-03 16:33:38.769082000 +0200
+@@ -0,0 +1,18 @@
++# folders in the msvc projects
++# mode==flat  : headers and ourses in no folders
++# mode==split : standard behavior of cmake, split headers and sources
++# mode== <other values" : code is in this folder
++macro(project_source_group mode sources headers)
++	#message(STATUS ${mode})
++	#message(STATUS ${sources} ${headers})
++	if(${mode} MATCHES "flat")
++		source_group("Source Files" Files)
++		source_group("Header Files" Files)
++		source_group("cmake" FILES CMakeLists.txt)
++	else(${mode} MATCHES "flat")
++		if(NOT ${mode} MATCHES "split")
++			source_group("${mode}" FILES ${${sources}} ${${headers}})
++		endif(NOT ${mode} MATCHES "split")
++	endif(${mode} MATCHES "flat")
++endmacro(project_source_group mode sources headers)
++
+diff -Nru dbus-1.3.1.orig/cmake/modules/Win32Macros.cmake dbus-1.3.1/cmake/modules/Win32Macros.cmake
+--- dbus-1.3.1.orig/cmake/modules/Win32Macros.cmake	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/modules/Win32Macros.cmake	2010-07-03 16:33:38.769082000 +0200
+@@ -0,0 +1,44 @@
++#
++# win32 macros 
++# 
++# Copyright (c) 2006-2007, Ralf Habacker
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++#
++
++if (WIN32)
++    #
++    # addExplorerWrapper creates batch files for fast access 
++    # to the build environment from the win32 explorer. 
++    # 
++    # For mingw and nmake projects it's opens a command shell,
++    # for Visual Studio IDE's (at least tested with VS 8 2005) it
++    # opens the related .sln file with paths setting specified at 
++    # configure time. 
++    #
++    MACRO (addExplorerWrapper _projectname)
++        # write explorer wrappers
++        get_filename_component(CMAKE_BIN_PATH ${CMAKE_COMMAND} PATH)
++        set (ADD_PATH "${CMAKE_BIN_PATH}")
++
++        if (QT_QMAKE_EXECUTABLE)
++            get_filename_component(QT_BIN_PATH ${QT_QMAKE_EXECUTABLE} PATH)
++            set (ADD_PATH "${ADD_PATH};${QT_BIN_PATH}")
++        endif (QT_QMAKE_EXECUTABLE)
++        
++        # add here more pathes 
++        
++        if (MINGW)
++            get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
++            set (ADD_PATH "${ADD_PATH};${MINGW_BIN_PATH}")
++            write_file (${CMAKE_BINARY_DIR}/${_projectname}-shell.bat "set PATH=${ADD_PATH};%PATH%\ncmd.exe")
++        else (MINGW)
++            if (CMAKE_BUILD_TOOL STREQUAL  "nmake")
++                get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
++                write_file (${CMAKE_BINARY_DIR}/${_projectname}-shell.bat "set PATH=${ADD_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
++            else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
++                write_file (${CMAKE_BINARY_DIR}/${_projectname}-sln.bat "set PATH=${ADD_PATH};%PATH%\nstart ${_projectname}.sln")
++            endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
++        endif (MINGW)
++    ENDMACRO (addExplorerWrapper)
++endif(WIN32)
+diff -Nru dbus-1.3.1.orig/cmake/readme-cmake.txt dbus-1.3.1/cmake/readme-cmake.txt
+--- dbus-1.3.1.orig/cmake/readme-cmake.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/readme-cmake.txt	2010-07-03 16:33:38.770082100 +0200
+@@ -0,0 +1,54 @@
++This directory contains configuration files for the cmake build system 
++
++Requirements 
++------------
++- cmake version >= 2.4.4 see http://www.cmake.org 
++- installed libxml2 or libexpat 
++
++Building 
++--------
++
++unix
++1. install cmake and libxml or libexpat 
++2. get dbus sources 
++3. mkdir dbus-build 
++4. cd dbus-build 
++5. cmake <dbus-src-root>/cmake or cmake -DDBUS_USE_EXPAT=on <dbus-src-root>/cmake in case libexpat should de used
++5. make 
++6. make install
++
++win32-mingw
++1. install cmake and libxml or libexpat in <ProgramDir>\gnuwin32
++2. get dbus sources 
++3. mkdir dbus-build 
++4. cd dbus-build 
++5. cmake -G "MinGW Makefiles" <dbus-src-root>/cmake
++6. make 
++7. make install
++
++win32-msvc
++1. install cmake and libxml or libexpat in <ProgramDir>\gnuwin32
++2. get dbus sources 
++3. mkdir dbus-build 
++4. cd dbus-build 
++5. cmake -G <msvc available target, see cmake --help for a list" <dbus-src-root>/cmake
++6. make 
++7. make install
++
++
++Some build options (use -D<key>=<value> on command line)
++------------------
++    key                        description                            default value
++    ---                        -----------                            -------------
++DBUS_USE_EXPAT              "Use expat (== ON) or libxml2 (==OFF)         OFF
++DBUS_DISABLE_ASSERTS        "Disable assertion checking"                  OFF
++DBUS_BUILD_TESTS            "enable unit test code"                       ON
++DBUS_ENABLE_ANSI            "enable -ansi -pedantic gcc flags"            OFF
++DBUS_ENABLE_GCOV            "compile with coverage profiling 
++                             instrumentation (gcc only)"                  OFF
++DBUS_ENABLE_VERBOSE_MODE    "support verbose debug mode"                  ON
++DBUS_DISABLE_CHECKS         "Disable public API sanity checking"          OFF
++DBUS_INSTALL_SYSTEM_LIBS    "install required system libraries 
++                             (mingw: libxml2, libiconv, mingw10)"         OFF
++CMAKE_BUILD_TYPE            "build type (== debug) or (== release)        release
++
+diff -Nru dbus-1.3.1.orig/cmake/test/CMakeLists.txt dbus-1.3.1/cmake/test/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/test/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/test/CMakeLists.txt	2010-07-03 16:33:38.771082100 +0200
+@@ -0,0 +1,172 @@
++project(test)
++
++add_definitions(${DBUS_INTERNAL_CLIENT_DEFINITIONS})
++
++add_library(dbus_testutils STATIC
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.h
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.c
++)
++target_link_libraries(dbus_testutils ${DBUS_INTERNAL_LIBRARIES})
++
++add_subdirectory( name-test )
++
++set (test-service_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/test-service.c
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.c
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.h
++)
++
++set (test-names_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/test-names.c
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.c
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.h
++)
++
++set (break_loader_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/break-loader.c
++)
++
++set (test-shell-service_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/test-shell-service.c
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.c
++    ${CMAKE_SOURCE_DIR}/../test/test-utils.h
++)
++
++set (shell-test_SOURCES
++        ${CMAKE_SOURCE_DIR}/../test/shell-test.c
++)
++
++set (spawn-test_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/spawn-test.c
++)
++
++set (test-exit_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/test-exit.c
++)
++
++set (test-segfault_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/test-segfault.c
++)
++
++set (test-sleep-forever_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/test-sleep-forever.c
++)
++
++set (decode_gcov_SOURCES
++    ${CMAKE_SOURCE_DIR}/../test/decode-gcov.c
++)
++
++add_executable(test-service ${test-service_SOURCES})
++target_link_libraries(test-service ${DBUS_INTERNAL_LIBRARIES})
++
++add_executable(test-names ${test-names_SOURCES})
++target_link_libraries(test-names ${DBUS_INTERNAL_LIBRARIES})
++
++add_executable(shell-test ${shell-test_SOURCES})
++target_link_libraries(shell-test ${DBUS_INTERNAL_LIBRARIES})
++ADD_TEST(shell-test ${EXECUTABLE_OUTPUT_PATH}/shell-test${EXT})
++
++add_executable(test-shell-service ${test-shell-service_SOURCES})
++target_link_libraries(test-shell-service ${DBUS_INTERNAL_LIBRARIES})
++
++add_executable(spawn-test ${spawn-test_SOURCES})
++target_link_libraries(spawn-test ${DBUS_INTERNAL_LIBRARIES})
++
++add_executable(test-exit ${test-exit_SOURCES})
++target_link_libraries(test-exit ${DBUS_INTERNAL_LIBRARIES})
++
++add_executable(test-segfault ${test-segfault_SOURCES})
++target_link_libraries(test-segfault ${DBUS_INTERNAL_LIBRARIES})
++
++add_executable(test-sleep-forever ${test-sleep-forever_SOURCES})
++target_link_libraries(test-sleep-forever ${DBUS_INTERNAL_LIBRARIES})
++
++#add_executable(decode-gcov ${decode_gcov_SOURCES})
++#target_link_libraries(decode-gcov ${DBUS_INTERNAL_LIBRARIES})
++
++### keep these in creation order, i.e. uppermost dirs first 
++set (TESTDIRS
++    test/data
++    test/data/valid-messages
++    test/data/invalid-messages
++    test/data/incomplete-messages
++    test/data/auth
++    test/data/sha-1
++    test/data/valid-config-files
++    test/data/valid-config-files/basic.d
++    test/data/valid-config-files/system.d
++    test/data/valid-config-files-system
++    test/data/valid-introspection-files
++    test/data/valid-messages
++    test/data/valid-service-files
++    test/data/valid-service-files-system
++    test/data/invalid-config-files
++    test/data/invalid-config-files-system
++    test/data/invalid-messages
++    test/data/invalid-service-files-system
++    test/data/equiv-config-files
++    test/data/equiv-config-files/basic
++    test/data/equiv-config-files/basic/basic.d
++    test/data/equiv-config-files/entities
++    test/data/equiv-config-files/entities/basic.d
++)
++set (CONFIG_VERBOSE 0)
++
++### copy tests to builddir so that generated tests and static tests 
++### are all in one place.
++MESSAGE(STATUS "Copying test files to test directory")
++FOREACH(FILE_TYPE *.message *.message-raw *.auth-script *.sha1 *.txt *.conf *.service)
++    FOREACH(DIR ${TESTDIRS})
++        FILE(GLOB FILES "${CMAKE_SOURCE_DIR}/../${DIR}/${FILE_TYPE}" )
++        FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${DIR})
++        FOREACH(FILE ${FILES})
++            GET_FILENAME_COMPONENT(FILENAME ${FILE} NAME)
++            SET (TARGET ${CMAKE_BINARY_DIR}/${DIR}/${FILENAME})
++            configure_file(${FILE} ${TARGET} COPYONLY)
++            IF (CONFIG_VERBOSE)
++                MESSAGE("${FILE}")
++            ENDIF (CONFIG_VERBOSE)
++        ENDFOREACH(FILE)
++    ENDFOREACH(DIR)
++ENDFOREACH(FILE_TYPE)
++
++### generate test files
++MESSAGE(STATUS "Generating test files from templates into test directory")
++
++FOREACH(FILE_TYPE *.conf.in *.service.in)
++  FOREACH(DIR ${TESTDIRS})
++    FILE(GLOB FILES "${CMAKE_SOURCE_DIR}/../${DIR}/${FILE_TYPE}" )
++    FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${DIR})
++    FOREACH(FILE ${FILES})
++      GET_FILENAME_COMPONENT(FILENAME ${FILE} NAME)
++      STRING(REGEX REPLACE "\\.in$" "" FILENAME ${FILENAME})
++      SET (TARGET ${CMAKE_BINARY_DIR}/${DIR}/${FILENAME})
++      STRING(REGEX REPLACE "\\.in$" ".cmake" _file ${FILE})
++      IF (EXISTS ${_file})
++        SET (FILE ${_file})
++      ENDIF (EXISTS ${_file})
++      configure_file(${FILE} ${TARGET} @ONLY IMMEDIATE)
++      IF (CONFIG_VERBOSE)
++        MESSAGE("${FILE}")
++      ENDIF (CONFIG_VERBOSE)
++    ENDFOREACH(FILE)
++  ENDFOREACH(DIR)
++ENDFOREACH(FILE_TYPE)
++
++MESSAGE(STATUS "Copying generated bus config files to test directory")
++set (OUTDIR ${CMAKE_BINARY_DIR}/test/data/valid-config-files)
++
++FILE(GLOB FILES "${CMAKE_BINARY_DIR}/bus/*.conf" )
++FILE(MAKE_DIRECTORY ${OUTDIR})
++FOREACH(FILE ${FILES})
++    GET_FILENAME_COMPONENT(FILENAME ${FILE} NAME)
++    SET (TARGET ${OUTDIR}/${FILENAME})
++    configure_file(${FILE} ${TARGET} COPYONLY)
++    IF (CONFIG_VERBOSE)
++        MESSAGE("FROM: ${FILE}\nTO: ${TARGET}\n")
++    ENDIF (CONFIG_VERBOSE)
++ENDFOREACH(FILE)
++
++# todo: for installation the TEST_..._BINARY variables must reflect the 
++#       installation dir or has to be defined relative
++#
+diff -Nru dbus-1.3.1.orig/cmake/test/name-test/CMakeLists.txt dbus-1.3.1/cmake/test/name-test/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/test/name-test/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/test/name-test/CMakeLists.txt	2010-07-03 16:33:38.771082100 +0200
+@@ -0,0 +1,35 @@
++if (DBUS_BUILD_TESTS)
++
++set (NAMEtest-DIR ../../../test/name-test)
++
++add_definitions(-DDBUS_COMPILATION)
++
++add_executable(test-pending-call-dispatch ${NAMEtest-DIR}/test-pending-call-dispatch.c)
++target_link_libraries(test-pending-call-dispatch ${DBUS_INTERNAL_LIBRARIES})
++ADD_TEST(test-pending-call-dispatch ${EXECUTABLE_OUTPUT_PATH}/test-pending-call-dispatch)
++
++add_executable(test-pending-call-timeout ${NAMEtest-DIR}/test-pending-call-timeout.c)
++target_link_libraries(test-pending-call-timeout ${DBUS_INTERNAL_LIBRARIES})
++ADD_TEST(test-pending-call-timeout ${EXECUTABLE_OUTPUT_PATH}/test-pending-call-timeout)
++
++add_executable(test-thread-init ${NAMEtest-DIR}/test-threads-init.c)
++target_link_libraries(test-thread-init ${DBUS_INTERNAL_LIBRARIES})
++ADD_TEST(test-thread-init ${EXECUTABLE_OUTPUT_PATH}/test-thread-init)
++
++add_executable(test-ids ${NAMEtest-DIR}/test-ids.c)
++target_link_libraries(test-ids ${DBUS_INTERNAL_LIBRARIES})
++ADD_TEST(test-ids ${EXECUTABLE_OUTPUT_PATH}/test-ids)
++
++add_executable(test-shutdown ${NAMEtest-DIR}/test-shutdown.c)
++target_link_libraries(test-shutdown ${DBUS_INTERNAL_LIBRARIES} dbus_testutils)
++ADD_TEST(test-shutdown ${EXECUTABLE_OUTPUT_PATH}/test-shutdown)
++
++add_executable(test-privserver ${NAMEtest-DIR}/test-privserver.c)
++target_link_libraries(test-privserver ${DBUS_INTERNAL_LIBRARIES} dbus_testutils)
++ADD_TEST(test-privserver ${EXECUTABLE_OUTPUT_PATH}/test-privserver)
++
++add_executable(test-privserver-client ${NAMEtest-DIR}/test-privserver-client.c)
++target_link_libraries(test-privserver-client ${DBUS_INTERNAL_LIBRARIES} dbus_testutils)
++ADD_TEST(test-privserver-client ${EXECUTABLE_OUTPUT_PATH}/test-privserver-client)
++
++endif (DBUS_BUILD_TESTS)
+diff -Nru dbus-1.3.1.orig/cmake/tools/CMakeLists.txt dbus-1.3.1/cmake/tools/CMakeLists.txt
+--- dbus-1.3.1.orig/cmake/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/tools/CMakeLists.txt	2010-07-03 16:33:38.772082200 +0200
+@@ -0,0 +1,57 @@
++project(tools)
++
++set (dbus_send_SOURCES
++	../../tools/dbus-print-message.c			
++	../../tools/dbus-print-message.h			
++	../../tools/dbus-send.c
++)
++
++set (dbus_monitor_SOURCES
++	../../tools/dbus-monitor.c				
++	../../tools/dbus-print-message.c			
++	../../tools/dbus-print-message.h
++)
++
++if (WIN32)
++set (dbus_launch_SOURCES
++	../../tools/dbus-launch-win.c
++)
++else (WIN32)
++set (dbus_launch_SOURCES
++	../../tools/dbus-launch.c
++)
++endif (WIN32)
++
++if (DBUS_BUILD_X11)
++set (dbus_launch_SOURCES
++     ${dbus_launch_SOURCES}
++     ../../tools/dbus-launch-x11.c
++)
++endif(DBUS_BUILD_X11)
++
++set (dbus_cleanup_sockets_SOURCES
++	../../tools/dbus-cleanup-sockets.c
++)
++
++set (dbus_viewer_SOURCES
++	../../tools/dbus-names-model.c			
++	../../tools/dbus-names-model.h			
++	../../tools/dbus-tree-view.c			
++	../../tools/dbus-tree-view.h			
++	../../tools/dbus-viewer.c
++)
++
++add_executable(dbus-send ${dbus_send_SOURCES})
++target_link_libraries(dbus-send ${DBUS_LIBRARIES})
++install_targets(/bin dbus-send )
++
++add_executable(dbus-launch ${dbus_launch_SOURCES})
++target_link_libraries(dbus-launch )
++if (DBUS_BUILD_X11)
++  target_link_libraries(dbus-launch ${X11_LIBRARIES} )
++endif (DBUS_BUILD_X11)
++install_targets(/bin dbus-launch )
++
++add_executable(dbus-monitor ${dbus_monitor_SOURCES})
++target_link_libraries(dbus-monitor ${DBUS_LIBRARIES})
++install_targets(/bin dbus-monitor )
+diff -Nru dbus-1.3.1.orig/cmake/tools/dbus-launch.xml dbus-1.3.1/cmake/tools/dbus-launch.xml
+--- dbus-1.3.1.orig/cmake/tools/dbus-launch.xml	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/tools/dbus-launch.xml	2010-07-03 16:33:38.773082300 +0200
+@@ -0,0 +1,240 @@
++<?xml version="1.0" encoding="ISO-8859-1"?>
++<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
++                   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
++<!-- lifted from troff+man by doclifter -->
++<refentry id='dbuslaunch1'>
++<!--   -->
++<!--  dbus\-launch manual page. -->
++<!--  Copyright (C) 2003 Red Hat, Inc. -->
++
++<refmeta>
++<refentrytitle>dbus-launch</refentrytitle>
++<manvolnum>1</manvolnum>
++</refmeta>
++<refnamediv id='name'>
++<refname>dbus-launch</refname>
++<refpurpose>Utility to start a message bus from a shell script</refpurpose>
++</refnamediv>
++<!-- body begins here -->
++<refsynopsisdiv id='synopsis'>
++<cmdsynopsis>
++  <command>dbus-launch</command>    <arg choice='opt'>--version </arg>
++    <arg choice='opt'>--sh-syntax </arg>
++    <arg choice='opt'>--csh-syntax </arg>
++    <arg choice='opt'>--auto-syntax </arg>
++    <arg choice='opt'>--exit-with-session </arg>
++    <arg choice='opt'>--autolaunch=<replaceable>MACHINEID</replaceable></arg>
++    <arg choice='opt'>--config-file=<replaceable>FILENAME</replaceable></arg>
++    <arg choice='opt'><replaceable>PROGRAM</replaceable></arg>
++    <arg choice='opt' rep='repeat'><replaceable>ARGS</replaceable></arg>
++    <sbr/>
++</cmdsynopsis>
++</refsynopsisdiv>
++
++
++<refsect1 id='description'><title>DESCRIPTION</title>
++<para>The <command>dbus-launch</command> command is used to start a session bus 
++instance of <emphasis remap='I'>dbus-daemon</emphasis> from a shell script.
++It would normally be called from a user's login
++scripts. Unlike the daemon itself, <command>dbus-launch</command> exits, so
++backticks or the $() construct can be used to read information from
++<command>dbus-launch</command>.</para>
++
++<para>With no arguments, <command>dbus-launch</command> will launch a session bus
++instance and print the address and pid of that instance to standard
++output.</para>
++
++<para>You may specify a program to be run; in this case, <command>dbus-launch</command>
++will launch a session bus instance, set the appropriate environment
++variables so the specified program can find the bus, and then execute the
++specified program, with the specified arguments.  See below for
++examples.</para>
++
++<para>If you launch a program, <command>dbus-launch</command> will not print the
++information about the new bus to standard output.</para>
++
++<para>When <command>dbus-launch</command> prints bus information to standard output, by
++default it is in a simple key-value pairs format. However, you may 
++request several alternate syntaxes using the --sh-syntax, --csh-syntax,
++--binary-syntax, or
++--auto-syntax options. Several of these cause <command>dbus-launch</command> to emit shell code
++to set up the environment.</para>
++
++<para>With the --auto-syntax option, <command>dbus-launch</command> looks at the value
++of the SHELL environment variable to determine which shell syntax
++should be used.  If SHELL ends in "csh", then csh-compatible code is
++emitted; otherwise Bourne shell code is emitted.  Instead of passing
++--auto-syntax, you may explicity specify a particular one by using
++--sh-syntax for Bourne syntax, or --csh-syntax for csh syntax.
++In scripts, it's more robust to avoid --auto-syntax and you hopefully
++know which shell your script is written in.</para>
++
++
++<para>See <ulink url='http://www.freedesktop.org/software/dbus/'>http://www.freedesktop.org/software/dbus/</ulink> for more information
++about D-Bus. See also the man page for <emphasis remap='I'>dbus-daemon</emphasis>.</para>
++
++
++<para>Here is an example of how to use <command>dbus-launch</command> with an 
++sh-compatible shell to start the per-session bus daemon:</para>
++<literallayout remap='.nf'>
++
++  ## test for an existing bus daemon, just to be safe
++  if test -z "$DBUS_SESSION_BUS_ADDRESS" ; then
++      ## if not found, launch a new one
++      eval `dbus-launch --sh-syntax --exit-with-session`
++      echo "D-Bus per-session daemon address is: $DBUS_SESSION_BUS_ADDRESS"
++  fi
++
++</literallayout> <!-- .fi -->
++<para>You might run something like that in your login scripts.</para>
++
++
++<para>Another way to use <command>dbus-launch</command> is to run your main session
++program, like so:</para>
++<literallayout remap='.nf'>
++
++dbus-launch gnome-session
++
++</literallayout> <!-- .fi -->
++<para>The above would likely be appropriate for ~/.xsession or ~/.Xclients.</para>
++
++</refsect1>
++
++<refsect1 id='automatic_launching'><title>AUTOMATIC LAUNCHING</title>
++<para>If DBUS_SESSION_BUS_ADDRESS is not set for a process that tries to use
++D-Bus, by default the process will attempt to invoke dbus-launch with
++the --autolaunch option to start up a new session bus or find the 
++existing bus address on the X display or in a file in
++~/.dbus/session-bus/</para>
++
++
++<para>Whenever an autolaunch occurs, the application that had to
++start a new bus will be in its own little world; it can effectively
++end up starting a whole new session if it tries to use a lot of 
++bus services. This can be suboptimal or even totally broken, depending
++on the app and what it tries to do.</para>
++
++
++<para>There are two common reasons for autolaunch. One is ssh to a remote
++machine. The ideal fix for that would be forwarding of
++DBUS_SESSION_BUS_ADDRESS in the same way that DISPLAY is forwarded.
++In the meantime, you can edit the session.conf config file to 
++have your session bus listen on TCP, and manually set
++DBUS_SESSION_BUS_ADDRESS, if you like.</para>
++
++
++<para>The second common reason for autolaunch is an su to another user, and
++display of X applications running as the second user on the display
++belonging to the first user. Perhaps the ideal fix in this case
++would be to allow the second user to connect to the session bus of the
++first user, just as they can connect to the first user's display.
++However, a mechanism for that has not been coded.</para>
++
++
++<para>You can always avoid autolaunch by manually setting
++DBUS_SESSION_BUS_ADDRESS. Autolaunch happens because the default
++address if none is set is "autolaunch:", so if any other address is
++set there will be no autolaunch. You can however include autolaunch in
++an explicit session bus address as a fallback, for example
++DBUS_SESSION_BUS_ADDRESS="something:,autolaunch:" - in that case if
++the first address doesn't work, processes will autolaunch. (The bus
++address variable contains a comma-separated list of addresses to try.)</para>
++
++
++<para>The --autolaunch option is considered an internal implementation
++detail of libdbus, and in fact there are plans to change it. There's
++no real reason to use it outside of the libdbus implementation anyhow.</para>
++
++</refsect1>
++
++<refsect1 id='options'><title>OPTIONS</title>
++<para>The following options are supported:</para>
++<variablelist remap='TP'>
++  <varlistentry>
++  <term><option>--auto-syntax</option></term>
++  <listitem>
++<para>Choose --csh-syntax or --sh-syntax based on the SHELL environment variable.</para>
++
++<para><option>--binary-syntax</option>
++Write to stdout a nul-terminated bus address, then the bus PID as a
++binary integer of size sizeof(pid_t), then the bus X window ID as a
++binary integer of size sizeof(long). Integers are in the machine's
++byte order, not network byte order or any other canonical byte order.</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--close-stderr</option></term>
++  <listitem>
++<para>Close the standard error output stream before starting the D-Bus
++daemon. This is useful if you want to capture dbus-launch error
++messages but you don't want dbus-daemon to keep the stream open to
++your application.</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--config-file=FILENAME</option></term>
++  <listitem>
++<para>Pass --config-file=FILENAME to the bus daemon, instead of passing it 
++the --session argument. See the man page for dbus-daemon</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--csh-syntax</option></term>
++  <listitem>
++<para>Emit csh compatible code to set up environment variables.</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--exit-with-session</option></term>
++  <listitem>
++<para>If this option is provided, a persistent "babysitter" process will be 
++created that watches stdin for HUP and tries to connect to the X
++server. If this process gets a HUP on stdin or loses its X connection,
++it kills the message bus daemon.</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--autolaunch=MACHINEID</option></term>
++  <listitem>
++<para>This option implies that <command>dbus-launch</command> should scan for a
++previously-started session and reuse the values found there. If no
++session is found, it will start a new session. The
++--exit-with-session option is implied if --autolaunch is given.
++This option is for the exclusive use of libdbus, you do not want to
++use it manually. It may change in the future.</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--sh-syntax</option></term>
++  <listitem>
++<para>Emit Bourne-shell compatible code to set up environment variables.</para>
++
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--version</option></term>
++  <listitem>
++<para>Print the version of dbus-launch</para>
++
++  </listitem>
++  </varlistentry>
++</variablelist>
++</refsect1>
++
++<refsect1 id='author'><title>AUTHOR</title>
++<para>See <ulink url='http://www.freedesktop.org/software/dbus/doc/AUTHORS'>http://www.freedesktop.org/software/dbus/doc/AUTHORS</ulink></para>
++
++</refsect1>
++
++<refsect1 id='bugs'><title>BUGS</title>
++<para>Please send bug reports to the D-Bus mailing list or bug tracker,
++see <ulink url='http://www.freedesktop.org/software/dbus/'>http://www.freedesktop.org/software/dbus/</ulink></para>
++</refsect1>
++</refentry>
++
+diff -Nru dbus-1.3.1.orig/cmake/tools/dbus-monitor.xml dbus-1.3.1/cmake/tools/dbus-monitor.xml
+--- dbus-1.3.1.orig/cmake/tools/dbus-monitor.xml	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/tools/dbus-monitor.xml	2010-07-03 16:33:38.774082300 +0200
+@@ -0,0 +1,121 @@
++<?xml version="1.0" encoding="ISO-8859-1"?>
++<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
++                   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
++<!-- lifted from troff+man by doclifter -->
++<refentry id='dbusmonitor1'>
++<!--   -->
++<!--  dbus\-monitor manual page. -->
++<!--  Copyright (C) 2003 Red Hat, Inc. -->
++
++<refmeta>
++<refentrytitle>dbus-monitor</refentrytitle>
++<manvolnum>1</manvolnum>
++</refmeta>
++<refnamediv id='name'>
++<refname>dbus-monitor</refname>
++<refpurpose>debug probe to print message bus messages</refpurpose>
++</refnamediv>
++<!-- body begins here -->
++<refsynopsisdiv id='synopsis'>
++<cmdsynopsis>
++  <command>dbus-monitor</command>    
++    <group choice='opt'><arg choice='plain'>--system </arg><arg choice='plain'>--session </arg><arg choice='plain'>--address <replaceable>ADDRESS</replaceable></arg></group>
++    <group choice='opt'><arg choice='plain'>--profile </arg><arg choice='plain'>--monitor </arg></group>
++    <arg choice='opt'><arg choice='plain'><replaceable>watch</replaceable></arg><arg choice='plain'><replaceable>expressions</replaceable></arg></arg>
++    <sbr/>
++</cmdsynopsis>
++</refsynopsisdiv>
++
++
++<refsect1 id='description'><title>DESCRIPTION</title>
++<para>The <command>dbus-monitor</command> command is used to monitor messages going
++through a D-Bus message bus.  See
++<ulink url='http://www.freedesktop.org/software/dbus/'>http://www.freedesktop.org/software/dbus/</ulink> for more information about
++the big picture.</para>
++
++
++<para>There are two well-known message buses: the systemwide message bus
++(installed on many systems as the "messagebus" service) and the
++per-user-login-session message bus (started each time a user logs in).
++The --system and --session options direct <command>dbus-monitor</command> to
++monitor the system or session buses respectively.  If neither is
++specified, <command>dbus-monitor</command> monitors the session bus.</para>
++
++
++<para><command>dbus-monitor</command> has two different output modes, the 'classic'-style
++monitoring mode and profiling mode. The profiling format is a compact
++format with a single line per message and microsecond-resolution timing
++information. The --profile and --monitor options select the profiling
++and monitoring output format respectively. If neither is specified,
++<command>dbus-monitor</command> uses the monitoring output format.</para>
++
++
++<para>In order to get <command>dbus-monitor</command> to see the messages you are interested
++in, you should specify a set of watch expressions as you would expect to
++be passed to the <emphasis remap='I'>dbus_bus_add_match</emphasis> function.</para>
++
++
++<para>The message bus configuration may keep <command>dbus-monitor</command> from seeing
++all messages, especially if you run the monitor as a non-root user.</para>
++
++</refsect1>
++
++<refsect1 id='options'><title>OPTIONS</title>
++<variablelist remap='TP'>
++  <varlistentry>
++  <term><option>--system</option></term>
++  <listitem>
++<para>Monitor the system message bus.</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--session</option></term>
++  <listitem>
++<para>Monitor the session message bus.  (This is the default.)</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--address ADDRESS</option></term>
++  <listitem>
++<para>Monitor an arbitrary message bus given at ADDRESS.</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--profile</option></term>
++  <listitem>
++<para>Use the profiling output format.</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--monitor</option></term>
++  <listitem>
++<para>Use the monitoring output format.  (This is the default.)</para>
++
++  </listitem>
++  </varlistentry>
++</variablelist>
++</refsect1>
++
++<refsect1 id='example'><title>EXAMPLE</title>
++<para>Here is an example of using dbus-monitor to watch for the gnome typing
++monitor to say things</para>
++<literallayout remap='.nf'>
++
++  dbus-monitor "type='signal',sender='org.gnome.TypingMonitor',interface='org.gnome.TypingMonitor'"
++
++</literallayout> <!-- .fi -->
++
++</refsect1>
++
++<refsect1 id='author'><title>AUTHOR</title>
++<para>dbus-monitor was written by Philip Blundell.
++The profiling output mode was added by Olli Salli.</para>
++
++</refsect1>
++
++<refsect1 id='bugs'><title>BUGS</title>
++<para>Please send bug reports to the D-Bus mailing list or bug tracker,
++see <ulink url='http://www.freedesktop.org/software/dbus/'>http://www.freedesktop.org/software/dbus/</ulink></para>
++</refsect1>
++</refentry>
++
+diff -Nru dbus-1.3.1.orig/cmake/tools/dbus-send.xml dbus-1.3.1/cmake/tools/dbus-send.xml
+--- dbus-1.3.1.orig/cmake/tools/dbus-send.xml	1970-01-01 01:00:00.000000000 +0100
++++ dbus-1.3.1/cmake/tools/dbus-send.xml	2010-07-03 16:33:38.774082300 +0200
+@@ -0,0 +1,143 @@
++<?xml version="1.0" encoding="ISO-8859-1"?>
++<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
++                   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
++<!-- lifted from troff+man by doclifter -->
++<refentry id='dbussend1'>
++<!--   -->
++<!--  dbus\-send manual page. -->
++<!--  Copyright (C) 2003 Red Hat, Inc. -->
++
++<refmeta>
++<refentrytitle>dbus-send</refentrytitle>
++<manvolnum>1</manvolnum>
++</refmeta>
++<refnamediv id='name'>
++<refname>dbus-send</refname>
++<refpurpose>Send a message to a message bus</refpurpose>
++</refnamediv>
++<!-- body begins here -->
++<refsynopsisdiv id='synopsis'>
++<cmdsynopsis>
++  <command>dbus-send</command>    
++    <group choice='opt'><arg choice='plain'>--system </arg><arg choice='plain'>--session </arg></group>
++    <arg choice='opt'>--dest=<replaceable>NAME</replaceable></arg>
++    <arg choice='opt'>--print-reply </arg>
++    <arg choice='opt'>--type=<replaceable>TYPE</replaceable></arg>
++    <arg choice='plain'><replaceable>&lt;destination</replaceable></arg>
++    <arg choice='plain'><replaceable>object</replaceable></arg>
++    <arg choice='plain'><replaceable>path&gt;</replaceable></arg>
++    <arg choice='plain'><replaceable>&lt;message</replaceable></arg>
++    <arg choice='plain'><replaceable>name&gt;</replaceable></arg>
++    <arg choice='opt' rep='repeat'><replaceable>contents</replaceable></arg>
++    <sbr/>
++</cmdsynopsis>
++</refsynopsisdiv>
++
++
++<refsect1 id='description'><title>DESCRIPTION</title>
++<para>The <command>dbus-send</command> command is used to send a message to a D-Bus message
++bus. See <ulink url='http://www.freedesktop.org/software/dbus/'>http://www.freedesktop.org/software/dbus/</ulink> for more 
++information about the big picture.</para>
++
++
++<para>There are two well-known message buses: the systemwide message bus 
++(installed on many systems as the "messagebus" service) and the 
++per-user-login-session message bus (started each time a user logs in).
++The --system and --session options direct <command>dbus-send</command> to send
++messages to the system or session buses respectively.  If neither is
++specified, <command>dbus-send</command> sends to the session bus.</para>
++
++
++<para>Nearly all uses of <command>dbus-send</command> must provide the --dest argument
++which is the name of a connection on the bus to send the message to. If
++--dest is omitted, no destination is set.</para>
++
++
++<para>The object path and the name of the message to send must always be
++specified. Following arguments, if any, are the message contents
++(message arguments).  These are given as type-specified values and 
++may include containers (arrays, dicts, and variants) as described below.</para>
++
++<literallayout remap='.nf'>
++&lt;contents&gt;   ::= &lt;item&gt; | &lt;container&gt; [ &lt;item&gt; | &lt;container&gt;...]
++&lt;item&gt;       ::= &lt;type&gt;:&lt;value&gt;
++&lt;container&gt;  ::= &lt;array&gt; | &lt;dict&gt; | &lt;variant&gt;
++&lt;array&gt;      ::= array:&lt;type&gt;:&lt;value&gt;[,&lt;value&gt;...] 
++&lt;dict&gt;       ::= dict:&lt;type&gt;:&lt;type&gt;:&lt;key&gt;,&lt;value&gt;[,&lt;key&gt;,&lt;value&gt;...]
++&lt;variant&gt;    ::= variant:&lt;type&gt;:&lt;value&gt;
++&lt;type&gt;       ::= string | int16 | uint 16 | int32 | uint32 | int64 | uint64 | double | byte | boolean | objpath
++</literallayout> <!-- .fi -->
++
++<para>D-Bus supports more types than these, but <command>dbus-send</command> currently
++does not.  Also, <command>dbus-send</command> does not permit empty containers
++or nested containers (e.g. arrays of variants).</para>
++
++
++<para>Here is an example invocation:</para>
++<literallayout remap='.nf'>
++
++  dbus-send --dest=org.freedesktop.ExampleName               \
++            /org/freedesktop/sample/object/name              \
++            org.freedesktop.ExampleInterface.ExampleMethod   \
++            int32:47 string:'hello world' double:65.32       \
++            array:string:"1st item","next item","last item"  \
++            dict:string:int32:"one",1,"two",2,"three",3      \
++            variant:int32:-8                                 \
++            objpath:/org/freedesktop/sample/object/name 
++
++</literallayout> <!-- .fi -->
++
++<para>Note that the interface is separated from a method or signal 
++name by a dot, though in the actual protocol the interface
++and the interface member are separate fields.</para>
++
++</refsect1>
++
++<refsect1 id='options'><title>OPTIONS</title>
++<para>The following options are supported:</para>
++<variablelist remap='TP'>
++  <varlistentry>
++  <term><option>--dest=NAME</option></term>
++  <listitem>
++<para>Specify the name of the connection to receive the message.</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--print-reply</option></term>
++  <listitem>
++<para>Block for a reply to the message sent, and print any reply received.</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--system</option></term>
++  <listitem>
++<para>Send to the system message bus.</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--session</option></term>
++  <listitem>
++<para>Send to the session message bus.  (This is the default.)</para>
++  </listitem>
++  </varlistentry>
++  <varlistentry>
++  <term><option>--type=TYPE</option></term>
++  <listitem>
++<para>Specify "method_call" or "signal" (defaults to "signal").</para>
++
++  </listitem>
++  </varlistentry>
++</variablelist>
++</refsect1>
++
++<refsect1 id='author'><title>AUTHOR</title>
++<para>dbus-send was written by Philip Blundell.</para>
++
++</refsect1>
++
++<refsect1 id='bugs'><title>BUGS</title>
++<para>Please send bug reports to the D-Bus mailing list or bug tracker,
++see <ulink url='http://www.freedesktop.org/software/dbus/'>http://www.freedesktop.org/software/dbus/</ulink></para>
++</refsect1>
++</refentry>
++
+diff -Nru dbus-1.3.1.orig/dbus/dbus-server-protected.h dbus-1.3.1/dbus/dbus-server-protected.h
+--- dbus-1.3.1.orig/dbus/dbus-server-protected.h	2010-05-20 21:22:12.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-server-protected.h	2010-07-10 15:15:16.105956700 +0200
+@@ -50,6 +50,7 @@
+ };
+ 
+ /**
++ * @ingroup DBusServerInternals
+  * Internals of DBusServer object
+  */
+ struct DBusServer
+@@ -66,7 +67,8 @@
+   DBusTimeoutList *timeouts;                  /**< Our timeouts */  
+ 
+   char *address;                              /**< Address this server is listening on. */
+-  
++  dbus_bool_t published_address;              /**< flag which indicates that server has published its bus address. */
++
+   int max_connections;                        /**< Max number of connections allowed at once. */
+ 
+   DBusDataSlotList slot_list;   /**< Data stored by allocated integer ID */
+diff -Nru dbus-1.3.1.orig/dbus/dbus-server-socket.c dbus-1.3.1/dbus/dbus-server-socket.c
+--- dbus-1.3.1.orig/dbus/dbus-server-socket.c	2010-05-20 21:22:12.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-server-socket.c	2010-07-10 15:15:16.109957000 +0200
+@@ -251,6 +251,9 @@
+       _dbus_delete_file (&tmp, NULL);
+     }
+ 
++  if (server->published_address)
++      _dbus_daemon_unpublish_session_bus_address();
++
+   HAVE_LOCK_CHECK (server);
+ }
+ 
+diff -Nru dbus-1.3.1.orig/dbus/dbus-server-socket.h dbus-1.3.1/dbus/dbus-server-socket.h
+--- dbus-1.3.1.orig/dbus/dbus-server-socket.h	2010-05-25 02:29:21.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-server-socket.h	2010-07-10 15:15:16.113957200 +0200
+@@ -33,6 +33,8 @@
+                                                    int               n_fds,
+                                                    const DBusString *address,
+                                                    DBusNonceFile    *noncefile);
++DBusServer* _dbus_server_new_for_autolaunch       (const DBusString *address,
++                                                   DBusError        *error);
+ DBusServer* _dbus_server_new_for_tcp_socket       (const char       *host,
+                                                    const char       *bind,
+                                                    const char       *port,
+diff -Nru dbus-1.3.1.orig/dbus/dbus-server-win.c dbus-1.3.1/dbus/dbus-server-win.c
+--- dbus-1.3.1.orig/dbus/dbus-server-win.c	2010-05-20 21:22:12.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-server-win.c	2010-07-10 15:15:16.117957400 +0200
+@@ -83,11 +83,35 @@
+           return DBUS_SERVER_LISTEN_DID_NOT_CONNECT;
+         }
+     }
++  else if (strcmp (method, "autolaunch") == 0)
++    {
++      const char *host = "localhost";
++      const char *bind = "localhost";
++      const char *port = "0";
++      const char *family = "ipv4";
++      const char *scope = dbus_address_entry_get_value (entry, "scope");
++
++      *server_p = _dbus_server_new_for_tcp_socket (host, bind, port,
++                                                   family, error, FALSE);
++      if (*server_p)
++        {
++          _DBUS_ASSERT_ERROR_IS_CLEAR(error);
++          /// @todo should we return an error when address could not be published ?
++          (*server_p)->published_address =
++              _dbus_daemon_publish_session_bus_address ((*server_p)->address, scope);
++          return DBUS_SERVER_LISTEN_OK;
++        }
++      else
++        {
++          _DBUS_ASSERT_ERROR_IS_SET(error);
++          return DBUS_SERVER_LISTEN_DID_NOT_CONNECT;
++        }
++    }
+   else
+     {
+-  _DBUS_ASSERT_ERROR_IS_CLEAR(error);
+-  return DBUS_SERVER_LISTEN_NOT_HANDLED;
+-}
++       _DBUS_ASSERT_ERROR_IS_CLEAR(error);
++       return DBUS_SERVER_LISTEN_NOT_HANDLED;
++    }
+ }
+ 
+ /** @} */
+diff -Nru dbus-1.3.1.orig/dbus/dbus-server.c dbus-1.3.1/dbus/dbus-server.c
+--- dbus-1.3.1.orig/dbus/dbus-server.c	2010-05-20 21:22:12.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-server.c	2010-07-10 15:15:16.120957600 +0200
+@@ -104,6 +104,7 @@
+   server->address = NULL;
+   server->watches = NULL;
+   server->timeouts = NULL;
++  server->published_address = FALSE;
+ 
+   if (!_dbus_string_init (&server->guid_hex))
+     return FALSE;
+diff -Nru dbus-1.3.1.orig/dbus/dbus-sysdeps-win.c dbus-1.3.1/dbus/dbus-sysdeps-win.c
+--- dbus-1.3.1.orig/dbus/dbus-sysdeps-win.c	2010-05-20 21:22:12.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-sysdeps-win.c	2010-07-10 15:15:16.126957900 +0200
+@@ -37,6 +37,7 @@
+ #endif
+ 
+ #include "dbus-internals.h"
++#include "dbus-sha.h"
+ #include "dbus-sysdeps.h"
+ #include "dbus-threads.h"
+ #include "dbus-protocol.h"
+@@ -2546,35 +2547,139 @@
+ // mutex to determine if dbus-daemon is already started (per user)
+ static const char *cDBusDaemonMutex = "DBusDaemonMutex";
+ // named shm for dbus adress info (per user)
+-#ifdef _DEBUG
+-static const char *cDBusDaemonAddressInfo = "DBusDaemonAddressInfoDebug";
+-#else
+ static const char *cDBusDaemonAddressInfo = "DBusDaemonAddressInfo";
+-#endif
+ 
++dbus_bool_t
++_dbus_get_install_root(char *prefix, int len);
+ 
+-void
+-_dbus_daemon_publish_session_bus_address (const char* address)
++static dbus_bool_t
++_dbus_get_install_root_as_hash(DBusString *out)
++{
++    DBusString install_path;
++
++    char path[MAX_PATH*2];
++    int path_size = sizeof(path);
++
++    if (!_dbus_get_install_root(path,path_size))
++        return FALSE;
++
++    _dbus_string_init(&install_path);
++    _dbus_string_append(&install_path,path);
++
++    _dbus_string_init(out);
++    _dbus_string_tolower_ascii(&install_path,0,_dbus_string_get_length(&install_path));
++
++    if (!_dbus_sha_compute (&install_path, out))
++        return FALSE;
++
++    return TRUE;
++}
++
++
++static dbus_bool_t
++_dbus_get_shm_address(DBusString *out,const char *scope)
++{
++  _dbus_string_init(out);
++  _dbus_string_append(out,cDBusDaemonAddressInfo);
++
++  if (strcmp(scope,"install-path") == 0)
++    {
++      DBusString temp;
++
++      if (!_dbus_get_install_root_as_hash(&temp))
++        {
++          _dbus_string_free(out);
++           return FALSE;
++        }
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,_dbus_string_get_const_data(&temp));
++      _dbus_string_free(&temp);
++      return TRUE;
++    }
++  else if (strlen(scope) > 0)
++    {
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,scope);
++      return TRUE;
++    }
++  else
++    {
++      return TRUE;
++    }
++}
++
++static dbus_bool_t
++_dbus_get_mutex_name(DBusString *out,const char *scope)
++{
++  _dbus_string_init(out);
++  _dbus_string_append(out,cDBusDaemonMutex);
++
++  if (strcmp(scope,"install-path") == 0)
++    {
++      DBusString temp;
++
++      if (!_dbus_get_install_root_as_hash(&temp))
++        {
++          _dbus_string_free(out);
++          return FALSE;
++        }
++
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,_dbus_string_get_const_data(&temp));
++      _dbus_string_free(&temp);
++      return TRUE;
++    }
++  else if (strlen(scope) > 0)
++    {
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,scope);
++      return TRUE;
++    }
++  else
++    {
++      return TRUE;
++    }
++}
++
++dbus_bool_t
++_dbus_daemon_publish_session_bus_address (const char* address, const char *scope)
+ {
+   HANDLE lock;
+   char *shared_addr = NULL;
+   DWORD ret;
++  char addressInfo[1024];
++  DBusString shm_address;
++  DBusString mutex_address;
+ 
+   _dbus_assert (address);
++
++  if (!_dbus_get_mutex_name(&mutex_address,scope))
++    {
++      _dbus_string_free( &mutex_address );
++      return FALSE;
++    }
++
+   // before _dbus_global_lock to keep correct lock/release order
+-  hDBusDaemonMutex = CreateMutexA( NULL, FALSE, cDBusDaemonMutex );
++  hDBusDaemonMutex = CreateMutexA( NULL, FALSE, _dbus_string_get_const_data(&mutex_address) );
+   ret = WaitForSingleObject( hDBusDaemonMutex, 1000 );
+   if ( ret != WAIT_OBJECT_0 ) {
+-    _dbus_warn("Could not lock mutex %s (return code %ld). daemon already running? Bus address not published.\n", cDBusDaemonMutex, ret );
+-    return;
++    _dbus_warn("Could not lock mutex %s (return code %d). daemon already running? Bus address not published.\n", _dbus_string_get_const_data(&mutex_address), ret );
++    return FALSE;
+   }
+ 
++  if (!_dbus_get_shm_address(&shm_address,scope))
++    {
++      _dbus_string_free( &mutex_address );
++      _dbus_string_free( &shm_address );
++      return FALSE;
++    }
++
+   // sync _dbus_daemon_publish_session_bus_address, _dbus_daemon_unpublish_session_bus_address and _dbus_daemon_already_runs
+   lock = _dbus_global_lock( cUniqueDBusInitMutex );
+ 
+   // create shm
+   hDBusSharedMem = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
+-                                      0, strlen( address ) + 1, cDBusDaemonAddressInfo );
++                                       0, strlen( address ) + 1, _dbus_string_get_const_data(&shm_address) );
+   _dbus_assert( hDBusSharedMem );
+ 
+   shared_addr = MapViewOfFile( hDBusSharedMem, FILE_MAP_WRITE, 0, 0, 0 );
+@@ -2587,6 +2692,9 @@
+   UnmapViewOfFile( shared_addr );
+ 
+   _dbus_global_unlock( lock );
++  _dbus_string_free( &shm_address );
++  _dbus_string_free( &mutex_address );
++  return TRUE;
+ }
+ 
+ void
+@@ -2611,7 +2719,7 @@
+ }
+ 
+ static dbus_bool_t
+-_dbus_get_autolaunch_shm (DBusString *address)
++_dbus_get_autolaunch_shm (DBusString *address, DBusString *shm_address)
+ {
+   HANDLE sharedMem;
+   char *shared_addr;
+@@ -2620,7 +2728,7 @@
+   // read shm
+   for(i=0;i<20;++i) {
+       // we know that dbus-daemon is available, so we wait until shm is available
+-      sharedMem = OpenFileMappingA( FILE_MAP_READ, FALSE, cDBusDaemonAddressInfo );
++      sharedMem = OpenFileMappingA( FILE_MAP_READ, FALSE, _dbus_string_get_const_data(shm_address));
+       if( sharedMem == 0 )
+           Sleep( 100 );
+       if ( sharedMem != 0)
+@@ -2648,39 +2756,48 @@
+ }
+ 
+ static dbus_bool_t
+-_dbus_daemon_already_runs (DBusString *address)
++_dbus_daemon_already_runs (DBusString *address, DBusString *shm_address, const char *scope)
+ {
+   HANDLE lock;
+   HANDLE daemon;
++  DBusString mutex_address;
+   dbus_bool_t bRet = TRUE;
+ 
+   // sync _dbus_daemon_publish_session_bus_address, _dbus_daemon_unpublish_session_bus_address and _dbus_daemon_already_runs
+   lock = _dbus_global_lock( cUniqueDBusInitMutex );
+ 
++  if (!_dbus_get_mutex_name(&mutex_address,scope))
++    {
++      _dbus_string_free( &mutex_address );
++      return FALSE;
++    }
++
+   // do checks
+-  daemon = CreateMutexA( NULL, FALSE, cDBusDaemonMutex );
++  daemon = CreateMutexA( NULL, FALSE, _dbus_string_get_const_data(&mutex_address) );
+   if(WaitForSingleObject( daemon, 10 ) != WAIT_TIMEOUT)
+     {
+       ReleaseMutex (daemon);
+       CloseHandle (daemon);
+ 
+       _dbus_global_unlock( lock );
++      _dbus_string_free( &mutex_address );
+       return FALSE;
+     }
+ 
+   // read shm
+-  bRet = _dbus_get_autolaunch_shm( address );
++  bRet = _dbus_get_autolaunch_shm( address, shm_address );
+ 
+   // cleanup
+   CloseHandle ( daemon );
+ 
+   _dbus_global_unlock( lock );
++  _dbus_string_free( &mutex_address );
+ 
+   return bRet;
+ }
+ 
+ dbus_bool_t
+-_dbus_get_autolaunch_address (DBusString *address, 
++_dbus_get_autolaunch_address (const char *scope, DBusString *address,
+                               DBusError *error)
+ {
+   HANDLE mutex;
+@@ -2691,12 +2808,19 @@
+   char dbus_exe_path[MAX_PATH];
+   char dbus_args[MAX_PATH * 2];
+   const char * daemon_name = DBUS_DAEMON_NAME ".exe";
++  DBusString shm_address;
+ 
+   mutex = _dbus_global_lock ( cDBusAutolaunchMutex );
+ 
+   _DBUS_ASSERT_ERROR_IS_CLEAR (error);
+ 
+-  if (_dbus_daemon_already_runs(address))
++  if (!_dbus_get_shm_address(&shm_address,scope))
++    {
++        dbus_set_error_const (error, DBUS_ERROR_FAILED, "could not determine shm address");
++        return FALSE;
++    }
++
++  if (_dbus_daemon_already_runs(address,&shm_address,scope))
+     {
+         _dbus_verbose("found already running dbus daemon\n");
+         retval = TRUE;
+@@ -2723,7 +2847,7 @@
+     {
+       CloseHandle (pi.hThread);
+       CloseHandle (pi.hProcess);
+-      retval = _dbus_get_autolaunch_shm( address );
++      retval = _dbus_get_autolaunch_shm( address, &shm_address );
+     }
+   
+   if (retval == FALSE)
+diff -Nru dbus-1.3.1.orig/dbus/dbus-sysdeps.h dbus-1.3.1/dbus/dbus-sysdeps.h
+--- dbus-1.3.1.orig/dbus/dbus-sysdeps.h	2010-06-23 03:03:39.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-sysdeps.h	2010-07-10 15:15:16.130958200 +0200
+@@ -207,7 +207,7 @@
+ dbus_bool_t _dbus_append_keyring_directory_for_credentials (DBusString      *directory,
+                                                             DBusCredentials *credentials);
+ 
+-void _dbus_daemon_publish_session_bus_address (const char* address);
++dbus_bool_t _dbus_daemon_publish_session_bus_address (const char* address, const char* shm_address);
+ 
+ void _dbus_daemon_unpublish_session_bus_address (void);
+ 
+@@ -474,8 +474,9 @@
+       _DBUS_BYTE_OF_PRIMITIVE (a, 6) == _DBUS_BYTE_OF_PRIMITIVE (b, 6) &&       \
+       _DBUS_BYTE_OF_PRIMITIVE (a, 7) == _DBUS_BYTE_OF_PRIMITIVE (b, 7))
+ 
+-dbus_bool_t _dbus_get_autolaunch_address (DBusString *address, 
+-					  DBusError *error);
++dbus_bool_t _dbus_get_autolaunch_address (const char *scope,
++                                          DBusString *address,
++					                      DBusError  *error);
+ 
+ dbus_bool_t _dbus_lookup_session_address (dbus_bool_t *supported,
+                                           DBusString  *address,
+diff -Nru dbus-1.3.1.orig/dbus/dbus-transport.c dbus-1.3.1/dbus/dbus-transport.c
+--- dbus-1.3.1.orig/dbus/dbus-transport.c	2010-05-20 21:22:12.000000000 +0200
++++ dbus-1.3.1/dbus/dbus-transport.c	2010-07-10 15:15:16.136958500 +0200
+@@ -273,7 +273,7 @@
+  * @returns a new transport, or #NULL on failure.
+  */
+ static DBusTransport*
+-_dbus_transport_new_for_autolaunch (DBusError      *error)
++_dbus_transport_new_for_autolaunch (const char *scope, DBusError *error)
+ {
+   DBusString address;
+   DBusTransport *result = NULL;
+@@ -286,7 +286,7 @@
+       return NULL;
+     }
+ 
+-  if (!_dbus_get_autolaunch_address (&address, error))
++  if (!_dbus_get_autolaunch_address (scope, &address, error))
+     {
+       _DBUS_ASSERT_ERROR_IS_SET (error);
+       goto out;
+@@ -315,7 +315,9 @@
+ 
+   if (strcmp (method, "autolaunch") == 0)
+     {
+-      *transport_p = _dbus_transport_new_for_autolaunch (error);
++      const char *scope = dbus_address_entry_get_value (entry, "scope");
++
++      *transport_p = _dbus_transport_new_for_autolaunch (scope, error);
+ 
+       if (*transport_p == NULL)
+         {
