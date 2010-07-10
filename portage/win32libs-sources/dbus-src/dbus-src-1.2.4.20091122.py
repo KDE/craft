@@ -11,6 +11,12 @@ class subinfo(info.infoclass):
         self.svnTargets['1.2.4'] = svnurl + 'tags/1.2.4'
         self.targetInstSrc['1.2.4'] = 'tags/1.2.4'
         self.targetConfigurePath['1.2.4'] = 'cmake'
+        
+        self.targets['1.3.1'] = 'http://dbus.freedesktop.org/releases/dbus/dbus-1.3.1.tar.gz'
+        self.targetInstSrc['1.3.1'] = 'dbus-1.3.1'
+        self.targetConfigurePath['1.3.1'] = 'cmake'
+        self.patchToApply['1.3.1'] = ('dbus-1.3.1-20100710.diff', 1)
+        #self.patchToApply['1.3.1'] = ('dbus-scopes.diff', 1)
 
         self.svnTargets['svnHEAD'] = svnurl + 'trunk'
         self.targetConfigurePath['svnHEAD'] = 'cmake'
@@ -35,7 +41,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus'
         self.subinfo.options.make.slnBaseName = 'dbus'
-        self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON"
+        self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=autolaunch:scope=install-path"
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):
