@@ -1,6 +1,7 @@
 import os
 import info
 import utils
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -10,7 +11,9 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
-        
+        if compiler.isMinGW():
+            self.hardDependencies['dev-util/uactools'] = 'default'
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -27,12 +30,11 @@ class Package(BinaryPackageBase):
     def install( self ):
         if not BinaryPackageBase.install( self ): 
             return False
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
-            manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
-            patch = os.path.join( self.installDir(), "bin", "patch.exe" )
-            cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
-            utils.system( cmd )
-    
+        manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
+        patch = os.path.join( self.installDir(), "bin", "patch.exe" )
+        cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
+        utils.system( cmd )
+
         return True
         
 if __name__ == '__main__':
