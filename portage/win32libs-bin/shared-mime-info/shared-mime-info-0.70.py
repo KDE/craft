@@ -16,22 +16,21 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
+        self.hardDependencies['dev-util/uactools'] = 'default'
 
 class Package(BinaryPackageBase):
-  def __init__(self):
-    self.subinfo = subinfo()
-    BinaryPackageBase.__init__( self )
+    def __init__(self):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
 
-  def install( self ):
-    BinaryPackageBase.install( self )
-    print "self.compiler: " + self.compiler()
-    if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
-      manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
-      patch = os.path.join( self.imageDir(), "bin", "update-mime-database.exe" )
-      cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
-      utils.system( cmd )
-    
-    return True
+    def install( self ):
+        BinaryPackageBase.install( self )
+        manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
+        patch = os.path.join( self.imageDir(), "bin", "update-mime-database.exe" )
+        cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
+        utils.system( cmd )
+
+        return True
 
 if __name__ == '__main__':
     Package().execute()
