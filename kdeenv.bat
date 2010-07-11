@@ -63,19 +63,22 @@ if "%BUILDTYPE%" == "" (
     set SUBDIR=\%EMERGE_BUILDTYPE%
 )
 
-set PATH=%KDEROOT%%SUBDIR%\bin;%PATH%
+rem nb: we need delayed var expansion (!VAR!) to avoid confusing the batch script parser
+rem in case the expanded vars contain parentheses (same problem as above)
+
+set PATH=%KDEROOT%%SUBDIR%\bin;!PATH!
 set KDEDIRS=%KDEROOT%%SUBDIR%
 set QT_PLUGIN_PATH=%KDEROOT%%SUBDIR%\plugins;%KDEROOT%%SUBDIR%\lib\kde4\plugins
 set XDG_DATA_DIRS=%KDEROOT%%SUBDIR%\share
 
 rem for emerge
-set PATH=%KDEROOT%\emerge\bin;%PATH%
+set PATH=%KDEROOT%\emerge\bin;!PATH!
 
 rem for dev-utils
-set PATH=%KDEROOT%\dev-utils\bin;%PATH%
+set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 
 rem for old packages
-set PATH=%KDEROOT%\bin;%PATH%
+set PATH=%KDEROOT%\bin;!PATH!
 
 if %KDECOMPILER% == mingw ( 
     call :path-mingw
@@ -96,20 +99,18 @@ goto :eof
 
 :path-mingw
     if %EMERGE_ARCHITECTURE% == x64 ( 
-        set PATH=%KDEROOT%\mingw64\bin;%PATH%
+        set PATH=%KDEROOT%\mingw64\bin;!PATH!
         goto :eof
     ) 
     if %EMERGE_ARCHITECTURE% == arm-wince ( 
-        set PATH=%KDEROOT%\cegcc-arm-wince\arm-mingw32ce\bin;%KDEROOT%\cegcc-arm-wince\libexec\gcc\arm-mingw32ce\4.4.0;%PATH%
+        set PATH=%KDEROOT%\cegcc-arm-wince\arm-mingw32ce\bin;%KDEROOT%\cegcc-arm-wince\libexec\gcc\arm-mingw32ce\4.4.0;!PATH!
         goto :eof
     ) 
-    set PATH=%KDEROOT%\mingw\bin;%PATH%
+    set PATH=%KDEROOT%\mingw\bin;!PATH!
     goto :eof
 
 :path-msvc
     rem MSVC extra setup
-    rem nb: we need delayed var expansion (!VAR!) to avoid confusing the batch script parser
-    rem in case the expanded vars contain parentheses (same problem as above)
     if defined VSDIR (
         call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
     )
