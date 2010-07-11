@@ -3,6 +3,7 @@ import os
 import info
 import shutil
 import utils
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -16,7 +17,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
-        self.hardDependencies['dev-util/uactools'] = 'default'
+        if compiler.isMinGW():
+            self.hardDependencies['dev-util/uactools'] = 'default'
 
 class Package(BinaryPackageBase):
     def __init__(self):
