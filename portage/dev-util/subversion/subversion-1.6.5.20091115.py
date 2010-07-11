@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.6.5'] = "http://subversion.tigris.org/files/documents/15/46518/svn-win32-1.6.5.zip"
+        self.targets['1.6.5'] = "http://subversion.tigris.org/files/documents/15/47906/svn-win32-1.6.5.zip"
         # this location affects class SvnSource 
         self.targetMergePath['1.6.5'] = "dev-utils/svn";
         self.targetMergeSourcePath['1.6.5'] = "svn-win32-1.6.5";
