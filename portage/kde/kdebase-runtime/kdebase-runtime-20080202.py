@@ -3,8 +3,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
-        if platform.isCrossCompilingEnabled():
-            self.patchToApply['svnHEAD'] = ("kdebase-runtime-20100707.patch", 0)
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
