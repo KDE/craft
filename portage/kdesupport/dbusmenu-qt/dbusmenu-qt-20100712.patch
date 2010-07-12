@@ -1,23 +1,16 @@
-diff --git a/.gitattributes b/.gitattributes
-index e4d0b34..c9bcc1a 100644
---- a/.gitattributes
-+++ b/.gitattributes
-@@ -1 +1 @@
--org.ayatana.dbusmenu.xml -crlf
-+org.ayatana.dbusmenu.xml -crlf
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4ca634c..0287b92 100644
+index 251d5ad..af3b64b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -43,6 +43,11 @@ include_directories(
-     ${QT_QTXML_INCLUDE_DIR}
+@@ -47,6 +47,11 @@ include_directories(
      ${QT_QTGUI_INCLUDE_DIR}
      )
-+    
+ 
 +if(WINCE)
 +    SET(QT_DBUSCPP2XML_EXECUTABLE ${HOST_BINDIR}/qdbuscpp2xml.exe)
 +    SET(QT_DBUSXML2CPP_EXECUTABLE ${HOST_BINDIR}/qdbusxml2cpp.exe)
 +endif(WINCE)
- 
++
  configure_file(dbusmenu-qt.pc.in ${CMAKE_BINARY_DIR}/dbusmenu-qt.pc @ONLY)
  
+ install(FILES ${CMAKE_BINARY_DIR}/dbusmenu-qt.pc

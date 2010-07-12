@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = ' git://gitorious.org/dbusmenu/dbusmenu-qt.git'
-        self.patchToApply['gitHEAD'] = ("dbusmenu-qt-20100517.patch", 1)
+        self.patchToApply['gitHEAD'] = ("dbusmenu-qt-20100712.patch", 1)
         self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
