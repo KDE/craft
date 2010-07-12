@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.defaultTarget = '1.41.0'
         else:
-            self.patchToApply['1.40.0'] = ("boost-src-20100709", 1)
+            self.patchToApply['1.40.0'] = ("boost-src-20100712.patch", 1)
             self.defaultTarget = '1.40.0'
         
         #disables due to cmake boost does not support stlport yet

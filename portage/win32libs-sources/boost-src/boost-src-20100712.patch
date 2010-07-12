@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d2bc809..608aeab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -334,8 +334,8 @@ add_subdirectory(libs)
+ add_subdirectory(tools)
+ ##########################################################################
+ 
+-if(NOT BUILD_PROJECTS STREQUAL "NONE") 
+-  install(EXPORT Boost DESTINATION ${BOOST_INSTALL_EXPORTS_FILE})
++if(NOT BUILD_PROJECTS AND NOT WINCE)
++    install(EXPORT Boost DESTINATION ${BOOST_INSTALL_EXPORTS_FILE})
+ endif()
+ 
+ add_subdirectory(tools/build/CMake)
