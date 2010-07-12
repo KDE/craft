@@ -262,7 +262,9 @@ def unpackFile( downloaddir, filename, workdir ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir )
-    elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma"):
+    elif ( ext == ".tgz" ):
+        return unTar( os.path.join( downloaddir, filename ), workdir )
+    elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma" ):
         ( myshortname, myext ) = os.path.splitext( shortname )
         if ( myext == ".tar" ):
             return unTar( os.path.join( downloaddir, filename ), workdir )
