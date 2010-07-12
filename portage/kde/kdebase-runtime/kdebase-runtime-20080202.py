@@ -19,6 +19,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = ""
         #FIXME: meinproc4 throughs an error, dont know really why
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
