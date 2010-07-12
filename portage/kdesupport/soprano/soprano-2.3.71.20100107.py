@@ -39,6 +39,10 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines="-DSOPRANO_DISABLE_SESAME2_BACKEND=YES "
         
+        #disable redland for target build because he finds the host reland and gets very confused
+        if self.isTargetBuild():
+            self.subinfo.options.configure.defines += "-DSOPRANO_DISABLE_REDLAND_BACKEND=YES -DSOPRANO_DISABLE_RAPTOR_PARSER=YES -DSOPRANO_DISABLE_RAPTOR_SERIALIZER=YES "
+        
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             utils.die("could not found qmake")
