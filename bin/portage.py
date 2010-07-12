@@ -109,7 +109,7 @@ class Portage:
     def getAllPackages( self, category ):
         """ returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory """
         """ in case the category doesn't exist, nothing is returned """
-        if isCategory( category ):
+        if self.isCategory( category ):
             plist = self.categories[ category ]
             if os.path.exists( os.path.join( rootDir(), category, "dont_build.txt" ) ):
                 f = open( os.path.join( rootDir(), category, "dont_build.txt" ), "r" )
