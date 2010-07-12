@@ -28,6 +28,50 @@ diff -Nru redland-1.0.8.orig/cmake/config.cpp.in redland-1.0.8/cmake/config.cpp.
 +    }
 +    return 1;
 +}
+diff -Nru redland-1.0.8.orig/cmake/FindCURL.cmake redland-1.0.8/cmake/FindCURL.cmake
+--- redland-1.0.8.orig/cmake/FindCURL.cmake	Thu Jan  1 00:00:00 1970
++++ redland-1.0.8/cmake/FindCURL.cmake	Mon Jul 12 08:28:52 2010
+@@ -0,0 +1,40 @@
++# - Find curl
++# Find the native CURL headers and libraries.
++#
++#  CURL_INCLUDE_DIRS - where to find curl/curl.h, etc.
++#  CURL_LIBRARIES    - List of libraries when using curl.
++#  CURL_FOUND        - True if curl found.
++
++#=============================================================================
++# Copyright 2006-2009 Kitware, Inc.
++#
++# Distributed under the OSI-approved BSD License (the "License");
++# see accompanying file Copyright.txt for details.
++#
++# This software is distributed WITHOUT ANY WARRANTY; without even the
++# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++# See the License for more information.
++#=============================================================================
++# (To distributed this file outside of CMake, substitute the full
++#  License text for the above reference.)
++
++# Look for the header file.
++FIND_PATH(CURL_INCLUDE_DIR NAMES curl/curl.h)
++MARK_AS_ADVANCED(CURL_INCLUDE_DIR)
++
++# Look for the library.
++FIND_LIBRARY(CURL_LIBRARY NAMES curl libcurl_imp)
++MARK_AS_ADVANCED(CURL_LIBRARY)
++
++# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
++# all listed variables are TRUE
++INCLUDE(FindPackageHandleStandardArgs)
++FIND_PACKAGE_HANDLE_STANDARD_ARGS(CURL DEFAULT_MSG CURL_LIBRARY CURL_INCLUDE_DIR)
++
++IF(CURL_FOUND)
++  SET(CURL_LIBRARIES ${CURL_LIBRARY})
++  SET(CURL_INCLUDE_DIRS ${CURL_INCLUDE_DIR})
++ELSE(CURL_FOUND)
++  SET(CURL_LIBRARIES)
++  SET(CURL_INCLUDE_DIRS)
++ENDIF(CURL_FOUND)
 diff -Nru redland-1.0.8.orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
 --- redland-1.0.8.orig/cmake/FindOpenSSL.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ redland-1.0.8/cmake/FindOpenSSL.cmake	2010-04-30 13:54:44.015200000 +0200

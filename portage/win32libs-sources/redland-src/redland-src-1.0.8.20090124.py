@@ -18,6 +18,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
         self.hardDependencies['win32libs-bin/pcre'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
