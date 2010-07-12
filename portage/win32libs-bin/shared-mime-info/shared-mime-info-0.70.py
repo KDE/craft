@@ -17,8 +17,6 @@ class subinfo(info.infoclass):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
-        if compiler.isMinGW():
-            self.hardDependencies['dev-util/uactools'] = 'default'
 
 class Package(BinaryPackageBase):
     def __init__(self):
@@ -27,10 +25,11 @@ class Package(BinaryPackageBase):
 
     def install( self ):
         BinaryPackageBase.install( self )
-        manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
-        patch = os.path.join( self.imageDir(), "bin", "update-mime-database.exe" )
-        cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
-        utils.system( cmd )
+        if compiler.isMSVC():
+            manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
+            patch = os.path.join( self.imageDir(), "bin", "update-mime-database.exe" )
+            cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
+            utils.system( cmd )
 
         return True
 
