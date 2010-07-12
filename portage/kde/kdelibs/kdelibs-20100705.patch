@@ -1856,19 +1856,32 @@ Index: CMakeLists.txt
  # win32: give kde home in debug mode a different name as the  release home dir because the settings and caches are different
  if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
      set (_KDE_DEFAULT_HOME_POSTFIX "-debug" CACHE STRING "default KDE home directory postfix" )
-@@ -109,6 +113,11 @@
+@@ -97,7 +101,11 @@
+ macro_log_feature(OPENGL_FOUND "OpenGL" "API for developing portable, interactive 2D and 3D graphics applications" "http://mesa3d.sourceforge.net" FALSE "" "STRONGLY RECOMMENDED: The 3D hardware acceleration available through the OpenGL API is used in applications ranging from graphics and modellers to screensavers and video players.")
+ 
+ set(SOPRANO_MIN_VERSION "2.4.63")
++if(NOT WINCE)
+ macro_optional_find_package(Soprano ${SOPRANO_MIN_VERSION} COMPONENTS PLUGIN_RAPTORPARSER PLUGIN_REDLANDBACKEND)
++else(NOT WINCE)
++macro_optional_find_package(Soprano ${SOPRANO_MIN_VERSION})
++endif(NOT WINCE)
+ macro_log_feature(SOPRANO_FOUND "Soprano" "Semantic Desktop Storing" "http://soprano.sourceforge.net" FALSE "${SOPRANO_MIN_VERSION}" "Provide metadata support (for semantic desktop).")
+ macro_log_feature(SOPRANO_PLUGIN_RAPTORPARSER_FOUND "Soprano Raptor Parser" "RDF parser plugin for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano raptor parser plugin is required to build the Nepomuk semantic desktop system.")
+ macro_log_feature(SOPRANO_PLUGIN_REDLANDBACKEND_FOUND "Soprano Redland Backend" "Redland storage backend for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano redland backend is required to build the Nepomuk semantic desktop system.")
+@@ -109,6 +117,12 @@
  macro_optional_find_package(QCA2)
  macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed for the plasma remote widgets functionality.")
  
 +if(WINCE)
 +    SET(QT_DBUSCPP2XML_EXECUTABLE ${HOST_BINDIR}/qdbuscpp2xml.exe)
 +    SET(QT_DBUSXML2CPP_EXECUTABLE ${HOST_BINDIR}/qdbusxml2cpp.exe)
++    SET(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE ${HOST_BINDIR}/onto2vocabularyclass.exe)
 +endif(WINCE)
 +
  find_package(DBusMenuQt)
  macro_log_feature(DBUSMENUQT_FOUND "DBusMenuQt" "API to import export QMenu instance using DBusMenu protocol" "git clone git://gitorious.org/dbusmenu/dbusmenu-qt.git" TRUE "" "dbusmenu-qt is a standalone library providing a way to import and export QMenu instances using the DBusMenu protocol.")
  
-@@ -146,9 +155,13 @@
+@@ -146,9 +160,13 @@
  
  set(KDE4_KJS_INCLUDES ${CMAKE_SOURCE_DIR}/kjs
                        ${CMAKE_BINARY_DIR}/kjs)
@@ -1883,7 +1896,7 @@ Index: CMakeLists.txt
                            ${CMAKE_SOURCE_DIR}/kdecore
                            ${CMAKE_BINARY_DIR}/kdecore
                            ${CMAKE_SOURCE_DIR}/kdecore/compression
-@@ -211,7 +224,9 @@
+@@ -211,7 +229,9 @@
                                ${CMAKE_SOURCE_DIR}/kde3support/kio
                                ${KDE4_KPARTS_INCLUDES})
  
@@ -1894,7 +1907,7 @@ Index: CMakeLists.txt
  
  
  ################# configure checks and create the configured files #################
-@@ -256,8 +271,10 @@
+@@ -256,8 +276,10 @@
     add_subdirectory( kpty )
     add_subdirectory( kdesu )
  endif (UNIX)
@@ -1905,7 +1918,7 @@ Index: CMakeLists.txt
  add_subdirectory( kio )
  add_subdirectory( solid )
  add_subdirectory( kded       )
-@@ -266,7 +283,9 @@
+@@ -266,7 +288,9 @@
  endif (QT_QT3SUPPORT_FOUND)
  add_subdirectory( kfile )
  add_subdirectory( kconf_update )
@@ -1915,7 +1928,7 @@ Index: CMakeLists.txt
  add_subdirectory( kioslave   )
  add_subdirectory( knewstuff  )
  add_subdirectory( kparts     )
-@@ -276,14 +295,20 @@
+@@ -276,14 +300,20 @@
  add_subdirectory( kinit  )
  add_subdirectory( threadweaver )
  add_subdirectory( sonnet  )
@@ -1936,7 +1949,7 @@ Index: CMakeLists.txt
  add_subdirectory( dnssd )
  add_subdirectory( kross )
  add_subdirectory( security )
-@@ -292,7 +317,9 @@
+@@ -292,7 +322,9 @@
  add_subdirectory( kdewebkit )
  add_subdirectory( includes )
  
