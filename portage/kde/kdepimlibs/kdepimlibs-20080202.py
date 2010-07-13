@@ -29,6 +29,9 @@ class Package(CMakePackageBase):
         self.boost = portage.getPackageInstance('win32libs-bin','boost')
         path = self.boost.installDir()
         os.putenv( "BOOST_ROOT", path )
+        
+        self.subinfo.options.configure.defines = "-DHOST_BINDIR=%s " \
+            % os.path.join(ROOTDIR, "bin")
 
 if __name__ == '__main__':
     Package().execute()
