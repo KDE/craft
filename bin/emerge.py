@@ -99,11 +99,7 @@ Flags:
 
 -i          ignore install: using this option will install a package over an
             existing install. This can be useful if you want to check some
-            new code and your last build isn't that old. This option might
-            cause some problems though: if you want to update Qt e.g. the
-            building of qmake depends on the existance on the system - thus
-            using -i will result in a wrong qt package (as has happened when
-            updating from qt4.3 to qt4.4).
+            new code and your last build isn't that old.
 -p          probing: emerge will only look which files it has to build
             according to the list of installed files and according to the
             dependencies of the package.
