@@ -57,11 +57,8 @@ Commands (must have a packagename):
 --print-revision        This will print the revision that the source repository of this
                         package currently has or nothing if there is no repository.
 
---fetch                 for most non-KDE packages: retrieve package sources.
---unpack                for most non-KDE packages: unpack package sources and make
-                        up the build directory.
-                        for KDE packages: get package source from SVN and make up
-                        the build directory.
+--fetch                 retrieve package sources (also checkout sources from svn or git).
+--unpack                unpack package sources and make up the build directory.
 --compile               compile the sources: this includes configure'ing/cmake'ing
                         and running [mingw32-|n|]make.
 --configure             configure the sources (support is package specific)
