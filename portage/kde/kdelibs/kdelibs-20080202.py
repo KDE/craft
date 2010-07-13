@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdelibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdelibs-4.0.' + ver
-        self.patchToApply['svnHEAD'] = ("kdelibs-20100705.patch", 0)
         self.defaultTarget = 'svnHEAD'
 
     
