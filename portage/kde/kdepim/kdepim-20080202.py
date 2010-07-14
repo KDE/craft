@@ -22,8 +22,20 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON"
-        #        self.subinfo.options.configure.defines += " -DBUILD_doc=OFF"
+        self.subinfo.options.configure.defines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
+        if self.isTargetBuild():
+            self.subinfo.options.configure.defines += " -DBUILD_kleopatra=OFF "
+            self.subinfo.options.configure.defines += " -DBUILD_blogilo=OFF "
+            self.subinfo.options.configure.defines += " -DBUILD_kjots=OFF "
+            self.subinfo.options.configure.defines += " -DBUILD_knotes=OFF "
+            self.subinfo.options.configure.defines += " -DBUILD_kaddressbook=OFF "
+
+        if platform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
+            
+        
+        self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
+            % os.path.join(ROOTDIR, "bin")
 
 if __name__ == '__main__':
     Package().execute()
