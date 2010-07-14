@@ -35,7 +35,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/cyrus-sasl-src'] = 'default'
         self.hardDependencies['win32libs-sources/boost-src'] = 'default'
         self.hardDependencies['win32libs-sources/libical-src'] = 'default'
-        self.hardDependencies['win32libs-bin/gpgme'] = 'default'
+        self.hardDependencies['contributed/gpg4win-dev'] = 'default'
 
 from Package.CMakePackageBase import *
         
