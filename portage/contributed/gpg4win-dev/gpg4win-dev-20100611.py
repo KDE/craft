@@ -29,6 +29,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        if platform.isCrossCompilingEnabled():
+            self.hardDependencies['contributed/gpg-wce-dev'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
