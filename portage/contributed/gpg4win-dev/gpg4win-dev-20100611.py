@@ -14,6 +14,8 @@
 
 from Package.CMakePackageBase import *
 import info
+import glob
+import compiler
 
 class subinfo(info.infoclass):
 
@@ -27,7 +29,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -46,6 +48,13 @@ class Package(CMakePackageBase):
     def install( self ):
         if( not self.cleanImage()):
             return False
+    # This package is built with MinGW gcc, since the msvc expects a different
+    # Name it shall get it.
+        if compiler.isMSVC():
+            gcc_names = glob.glob( self.sourceDir() + '/lib/*.dll.a' )
+            for gcc_name in gcc_names:
+                msvc_name = gcc_name.replace( ".dll.a", ".lib" )
+                shutil.move(gcc_name, msvc_name)
         shutil.copytree( self.sourceDir() , self.installDir() )
         return True
 
