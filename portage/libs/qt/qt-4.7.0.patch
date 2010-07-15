@@ -30,32 +30,6 @@ index a14a82d..ac140eb 100755
          my $dots = "";
          for(my $i = 0; $i < $count; $i++) {
              $dots .= "../";
-diff --git a/tools/qml/qml.pro b/tools/qml/qml.pro
-index 1ed8b2c..edbaa0a 100644
---- a/tools/qml/qml.pro
-+++ b/tools/qml/qml.pro
-@@ -41,7 +41,6 @@ INSTALLS += target
- wince* {
- QT += scripttools \
-     xml \
--    phonon
- 
-     contains(QT_CONFIG, xmlpatterns) {
-         QT += xmlpatterns
-diff --git a/projects.pro b/projects.pro
-index aa1eb71..8ae64c2 100644
---- a/projects.pro
-+++ b/projects.pro
-@@ -149,6 +149,9 @@ unix {
-    DEFAULT_QMAKESPEC ~= s,^.*mkspecs/,,g
-    mkspecs.commands += $(DEL_FILE) $(INSTALL_ROOT)$$mkspecs.path/default; $(SYMLINK) $$DEFAULT_QMAKESPEC $(INSTALL_ROOT)$$mkspecs.path/default
- }
-+win32 {
-+   mkspecs.files += $$QT_BUILD_TREE/mkspecs/default
-+}
- INSTALLS += mkspecs
- 
- false:macx { #mac install location
 diff --git a/src/tools/moc/main.cpp b/src/tools/moc/main.cpp
 index 8e033b7..b5b2edd 100644
 --- a/src/tools/moc/main.cpp
