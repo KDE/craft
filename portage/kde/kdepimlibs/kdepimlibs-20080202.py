@@ -32,6 +32,9 @@ class Package(CMakePackageBase):
         
         self.subinfo.options.configure.defines = "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
+            
+        if platform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()
