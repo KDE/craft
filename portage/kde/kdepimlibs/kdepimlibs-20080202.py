@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         else:
-            self.hardDependencies['win32libs-bin/gpg4win-dev'] = 'default'
+            self.hardDependencies['contributed/gpg4win-dev'] = 'default'
 
 from Package.CMakePackageBase import *
         
