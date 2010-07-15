@@ -1,3 +1,28 @@
+diff --git a/Source/kwsys/SystemTools.cxx b/Source/kwsys/SystemTools.cxx
+--- a/Source/kwsys/SystemTools.cxx
++++ b/Source/kwsys/SystemTools.cxx
+@@ -2603,7 +2603,7 @@ bool SystemTools::FileIsDirectory(const char* name)
+   char buffer[KWSYS_SYSTEMTOOLS_MAXPATH];
+   size_t last = strlen(name)-1;
+   if(last > 0 && (name[last] == '/' || name[last] == '\\')
+-    && strcmp(name, "/") !=0)
++    && strcmp(name, "/") !=0 && name[last-1] != ':')
+     {
+     memcpy(buffer, name, last);
+     buffer[last] = 0;
+@@ -2913,6 +2913,12 @@ SystemToolsAppendComponents(
+ kwsys_stl::string SystemTools::CollapseFullPath(const char* in_path,
+                                                 const char* in_base)
+ {
++#if defined(_WIN32) && !defined(__CYGWIN__)
++  if(in_path[0] == '/' && in_path[1] == 0) {
++    in_path = in_base; 
++  }
++#endif
++  
+   // Collect the output path components.
+   kwsys_stl::vector<kwsys_stl::string> out_components;
+ 
 diff --git a/Modules/FindPNG.cmake b/Modules/FindPNG.cmake
 --- a/Modules/FindPNG.cmake
 +++ b/Modules/FindPNG.cmake
