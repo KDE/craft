@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-        self.hardDependencies['win32libs-bin/boost']   = 'default'
+        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
         self.hardDependencies['enterprise5/automoc-e5'] = 'default'
         self.hardDependencies['enterprise5/soprano-e5'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
@@ -56,6 +56,7 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "akonadi"
         self.subinfo = subinfo()
+        self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
 
     def unpack( self ):
         return self.kdeSvnUnpack()
