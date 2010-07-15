@@ -1,14 +1,10 @@
-import os
-import shutil
+import os.path
 import re
+import traceback
+import shutil
 import utils
 import info
 import platform
-
-# #########################################################################################
-# ATTENTION: currently the only libraries that are built are boost.python libs
-# that implies that the bin package requires the lib package as well to be used for compilation
-# #########################################################################################
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -55,9 +51,8 @@ class Package(CMakePackageBase):
             
         self.subinfo.options.configure.defines =  "-DBUILD_PROJECTS=%s " % projects
         self.subinfo.options.configure.defines += "-DENABLE_STATIC=ON -DENABLE_STATIC_RUNTIME=ON " + \
-                                                  "-DBOOST_RUNTIME_INSTALL_DIR=bin " + \
                                                   "-DINSTALL_VERSIONED=ON "
-                                                 
+
         if self.buildType() == "Debug":
             self.subinfo.options.configure.defines += "-DENABLE_DEBUG=ON -DENABLE_RELEASE=OFF "
         else:
@@ -101,14 +96,31 @@ class Package(CMakePackageBase):
 #    def cleanImage( self ):
 #        return True
 
-#    def install( self ):
+    def install( self ):
+        """ copy runtime libraries to the bin folder """
 
-        # copy runtime libraries to the bin folder
-#        self.enterImageDir()
-#        cmd = "mkdir bin && move lib\\*.dll bin"
-#        print "command: ", cmd
-#        utils.system( cmd )
-#        return True
+        # The Cmake variant of Boost names the libraries gcc44 in case they are compiled
+        # with MinGW4. FindBoost.cmake expects mgw44 named dlls on windows systems though.
+        # To enable FindBoost to find the installed Boost package without special options
+        # Dll files also get installed into the the bin dir with the expected name.
+        # To increase compatibility with different ways of finding boost the
+        # Dlls are copied and the default installation remains untouched.
+        if not CMakePackageBase.install( self ):
+            return False
+
+        DLL = re.compile(r".*\.[dD][lL][lL]$")
+
+        try:
+            if not os.path.exists(os.path.join(self.imageDir(), "bin")):
+                os.mkdir(os.path.join(self.imageDir(), "bin"))
+            for f in sum([[os.path.join(dp, f) for f in fns if DLL.match(f)]
+                for dp, _, fns in os.walk(os.path.join(self.imageDir(), "lib"))], []):
+                shutil.copy(f, os.path.join(self.imageDir(), "bin" ,
+                               os.path.basename(f).replace("gcc44", "mgw44")))
+        except:
+            traceback.print_exc()
+            utils.die("Error installing boost-src")
+        return True
 
 #    def make_package( self ):
 #        return self.doPackaging( "boost", self.buildTarget, True )
