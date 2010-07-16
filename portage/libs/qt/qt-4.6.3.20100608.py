@@ -146,6 +146,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearer4.dll" ))
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
+            # syncqt expects qconfig.h to be in the install dir and fails if not
+            utils.createDir( os.path.join( self.installDir(), "src", "corelib", "global") )
+            utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "src", "corelib" , "global", "qconfig.h" ) )
             # headers need to be copied using syncqt because of the relative paths
             os.putenv( "PATH", os.path.join( self.sourceDir(), "bin" ) + ";" + os.getenv("PATH") )
             command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
@@ -155,8 +158,6 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # 4.7 has a -quiet option, enable it when we switch
             #command += " -quiet"
             utils.system( command )
-            # qconfig.h isn't copied by syncqt
-            utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "include", "QtCore" , "qconfig.h" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
             # create qt.conf 
