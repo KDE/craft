@@ -4,6 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['3.0.3'] = "http://www.winkde.org/pub/kde/ports/win32/repository/other/upx-3.0.3-bin.zip"
+        self.targetDigests['3.0.3'] = '6cbceca56b8c83b23e9665f8ba8b14e73aefa58d'
         self.defaultTarget = '3.0.3'
     
 from Package.BinaryPackageBase import *
