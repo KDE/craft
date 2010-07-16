@@ -35,6 +35,7 @@ class subinfo(info.infoclass):
         self.svnTargets['v4.7.0-beta2'] = "git://gitorious.org/qt/qt.git|4.7|v4.7.0-beta2|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.targetSrcSuffix['v4.7.0-beta2'] = "4.7"
+        self.patchToApply['4.6.3'] = ('qt-4.6.3.patch', 1)
         self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
         self.patchToApply['v4.7.0-beta2'] = ('qt-4.7.0.patch', 1)
         
