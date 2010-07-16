@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         
 
     def setDependencies( self ):
-        #self.hardDependencies['virtual/base'] = 'default'
+        ´self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['testing/autotools'] = 'default'
         
 class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
