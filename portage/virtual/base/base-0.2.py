@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/cmake']      = 'default'
         self.hardDependencies['dev-util/subversion'] = 'default'
         self.hardDependencies['dev-util/git']        = 'default'
+        self.hardDependencies['dev-util/putty']      = 'default'
         # for creating combined packages
         self.hardDependencies['dev-util/pexports']   = 'default'
 
