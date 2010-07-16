@@ -50,3 +50,553 @@ index 8e033b7..b5b2edd 100644
  
 -- 
 1.6.5.1.1367.gcd48
+
+From 573da53983e355f65cd9f568c8a81fb2af153a9b Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Fri, 16 Jul 2010 13:48:49 +0200
+Subject: fixed the export macro for the QtDbus module
+
+---
+ src/corelib/global/qglobal.h        |    8 ++++++
+ src/dbus/dbus.pro                   |    2 +-
+ src/dbus/qdbusabstractadaptor.h     |    2 +-
+ src/dbus/qdbusabstractinterface.h   |    4 +-
+ src/dbus/qdbusargument.h            |   48 +++++++++++++++++-----------------
+ src/dbus/qdbusconnection.cpp        |    2 +-
+ src/dbus/qdbusconnection.h          |    2 +-
+ src/dbus/qdbusconnectioninterface.h |    2 +-
+ src/dbus/qdbuscontext.h             |    2 +-
+ src/dbus/qdbuserror.h               |    4 +-
+ src/dbus/qdbusextratypes.h          |    4 +-
+ src/dbus/qdbusintegrator.cpp        |    2 +-
+ src/dbus/qdbusinterface.h           |    2 +-
+ src/dbus/qdbusintrospection_p.h     |    2 +-
+ src/dbus/qdbusmacros.h              |    8 ------
+ src/dbus/qdbusmessage.h             |    4 +-
+ src/dbus/qdbusmetaobject_p.h        |    2 +-
+ src/dbus/qdbusmetatype.h            |    2 +-
+ src/dbus/qdbuspendingcall.h         |    4 +-
+ src/dbus/qdbuspendingreply.h        |    2 +-
+ src/dbus/qdbusreply.h               |    2 +-
+ src/dbus/qdbusserver.h              |    2 +-
+ src/dbus/qdbusservicewatcher.h      |    2 +-
+ src/dbus/qdbusthreaddebug_p.h       |    4 +-
+ src/dbus/qdbusutil_p.h              |   20 +++++++-------
+ src/dbus/qdbusxmlgenerator.cpp      |    2 +-
+ 26 files changed, 70 insertions(+), 70 deletions(-)
+
+diff --git a/src/corelib/global/qglobal.h b/src/corelib/global/qglobal.h
+index 1eab394..61320b8 100644
+--- a/src/corelib/global/qglobal.h
++++ b/src/corelib/global/qglobal.h
+@@ -1278,6 +1278,11 @@ class QDataStream;
+ #    else
+ #      define Q_COMPAT_EXPORT Q_DECL_IMPORT
+ #    endif
++#    if defined(QT_BUILD_DBUS_LIB)
++#      define Q_DBUS_EXPORT Q_DECL_EXPORT
++#    else
++#      define Q_DBUS_EXPORT Q_DECL_IMPORT
++#    endif
+ #    define Q_TEMPLATEDLL
+ #  elif defined(QT_DLL) /* use a Qt DLL library */
+ #    define Q_CORE_EXPORT Q_DECL_IMPORT
+@@ -1295,6 +1300,7 @@ class QDataStream;
+ #    define Q_SCRIPT_EXPORT Q_DECL_IMPORT
+ #    define Q_SCRIPTTOOLS_EXPORT Q_DECL_IMPORT
+ #    define Q_COMPAT_EXPORT Q_DECL_IMPORT
++#    define Q_DBUS_EXPORT Q_DECL_IMPORT
+ #    define Q_TEMPLATEDLL
+ #  endif
+ #  define Q_NO_DECLARED_NOT_DEFINED
+@@ -1323,6 +1329,7 @@ class QDataStream;
+ #    define Q_SCRIPT_EXPORT Q_DECL_EXPORT
+ #    define Q_SCRIPTTOOLS_EXPORT Q_DECL_EXPORT
+ #    define Q_COMPAT_EXPORT Q_DECL_EXPORT
++#    define Q_DBUS_EXPORT Q_DECL_EXPORT
+ #  else
+ #    define Q_CORE_EXPORT
+ #    define Q_GUI_EXPORT
+@@ -1337,6 +1344,7 @@ class QDataStream;
+ #    define Q_SCRIPT_EXPORT
+ #    define Q_SCRIPTTOOLS_EXPORT
+ #    define Q_COMPAT_EXPORT
++#    define Q_DBUS_EXPORT
+ #  endif
+ #endif
+ 
+diff --git a/src/dbus/dbus.pro b/src/dbus/dbus.pro
+index 7c59808..46a723a 100644
+--- a/src/dbus/dbus.pro
++++ b/src/dbus/dbus.pro
+@@ -3,7 +3,7 @@ QPRO_PWD = $$PWD
+ QT = core \
+     xml
+ CONFIG += link_pkgconfig
+-DEFINES += QDBUS_MAKEDLL \
++DEFINES += QT_BUILD_DBUS_LIB \
+     DBUS_API_SUBJECT_TO_CHANGE
+ QMAKE_CXXFLAGS += $$QT_CFLAGS_DBUS
+ contains(QT_CONFIG, dbus-linked) { 
+diff --git a/src/dbus/qdbusabstractadaptor.h b/src/dbus/qdbusabstractadaptor.h
+index fa64aef..af5a3ce 100644
+--- a/src/dbus/qdbusabstractadaptor.h
++++ b/src/dbus/qdbusabstractadaptor.h
+@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
+ QT_MODULE(DBus)
+ 
+ class QDBusAbstractAdaptorPrivate;
+-class QDBUS_EXPORT QDBusAbstractAdaptor: public QObject
++class Q_DBUS_EXPORT QDBusAbstractAdaptor: public QObject
+ {
+     Q_OBJECT
+ protected:
+diff --git a/src/dbus/qdbusabstractinterface.h b/src/dbus/qdbusabstractinterface.h
+index 44f79a1..177af67 100644
+--- a/src/dbus/qdbusabstractinterface.h
++++ b/src/dbus/qdbusabstractinterface.h
+@@ -64,7 +64,7 @@ class QDBusPendingCall;
+ 
+ class QDBusAbstractInterfacePrivate;
+ 
+-class QDBUS_EXPORT QDBusAbstractInterfaceBase: public QObject
++class Q_DBUS_EXPORT QDBusAbstractInterfaceBase: public QObject
+ {
+ public:
+     int qt_metacall(QMetaObject::Call, int, void**);
+@@ -74,7 +74,7 @@ private:
+     Q_DECLARE_PRIVATE(QDBusAbstractInterface)
+ };
+ 
+-class QDBUS_EXPORT QDBusAbstractInterface:
++class Q_DBUS_EXPORT QDBusAbstractInterface:
+ #ifdef Q_QDOC
+         public QObject
+ #else
+diff --git a/src/dbus/qdbusargument.h b/src/dbus/qdbusargument.h
+index 73558b6..30f2cda 100644
+--- a/src/dbus/qdbusargument.h
++++ b/src/dbus/qdbusargument.h
+@@ -64,7 +64,7 @@ QT_MODULE(DBus)
+ class QDBusArgumentPrivate;
+ class QDBusDemarshaller;
+ class QDBusMarshaller;
+-class QDBUS_EXPORT QDBusArgument
++class Q_DBUS_EXPORT QDBusArgument
+ {
+ public:
+     enum ElementType {
+@@ -184,43 +184,43 @@ template<> inline QVariant qdbus_cast<QVariant>(const QVariant &v, QVariant *)
+     return qdbus_cast<QDBusVariant>(v).variant();
+ }
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QVariant &v);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QVariant &v);
+ 
+ // QVariant types
+ #ifndef QDBUS_NO_SPECIALTYPES
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QDate &date);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QDate &date);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QDate &date);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QDate &date);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QTime &time);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QTime &time);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QTime &time);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QTime &time);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QDateTime &dt);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QDateTime &dt);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QDateTime &dt);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QDateTime &dt);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QRect &rect);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QRect &rect);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QRect &rect);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QRect &rect);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QRectF &rect);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QRectF &rect);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QRectF &rect);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QRectF &rect);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QSize &size);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QSize &size);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QSize &size);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QSize &size);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QSizeF &size);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QSizeF &size);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QSizeF &size);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QSizeF &size);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QPoint &pt);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QPoint &pt);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QPoint &pt);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QPoint &pt);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QPointF &pt);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QPointF &pt);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QPointF &pt);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QPointF &pt);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QLine &line);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QLine &line);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QLine &line);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QLine &line);
+ 
+-QDBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QLineF &line);
+-QDBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QLineF &line);
++Q_DBUS_EXPORT const QDBusArgument &operator>>(const QDBusArgument &a, QLineF &line);
++Q_DBUS_EXPORT QDBusArgument &operator<<(QDBusArgument &a, const QLineF &line);
+ #endif
+ 
+ template<template <typename> class Container, typename T>
+diff --git a/src/dbus/qdbusconnection.cpp b/src/dbus/qdbusconnection.cpp
+index 4382032..6f86856 100644
+--- a/src/dbus/qdbusconnection.cpp
++++ b/src/dbus/qdbusconnection.cpp
+@@ -125,7 +125,7 @@ QDBusConnectionManager::~QDBusConnectionManager()
+     connectionHash.clear();
+ }
+ 
+-QDBUS_EXPORT void qDBusBindToApplication();
++Q_DBUS_EXPORT void qDBusBindToApplication();
+ void qDBusBindToApplication()
+ {
+ }
+diff --git a/src/dbus/qdbusconnection.h b/src/dbus/qdbusconnection.h
+index a8ca551..0f365ec 100644
+--- a/src/dbus/qdbusconnection.h
++++ b/src/dbus/qdbusconnection.h
+@@ -72,7 +72,7 @@ class QDBusConnectionInterface;
+ class QObject;
+ 
+ class QDBusConnectionPrivate;
+-class QDBUS_EXPORT QDBusConnection
++class Q_DBUS_EXPORT QDBusConnection
+ {
+     Q_GADGET
+     Q_ENUMS(BusType UnregisterMode)
+diff --git a/src/dbus/qdbusconnectioninterface.h b/src/dbus/qdbusconnectioninterface.h
+index 1a020b7..4650e12 100644
+--- a/src/dbus/qdbusconnectioninterface.h
++++ b/src/dbus/qdbusconnectioninterface.h
+@@ -62,7 +62,7 @@ class QByteArray;
+ /*
+  * Proxy class for interface org.freedesktop.DBus
+  */
+-class QDBUS_EXPORT QDBusConnectionInterface: public QDBusAbstractInterface
++class Q_DBUS_EXPORT QDBusConnectionInterface: public QDBusAbstractInterface
+ {
+     Q_OBJECT
+     Q_ENUMS(ServiceQueueOptions ServiceReplacementOptions RegisterServiceReply)
+diff --git a/src/dbus/qdbuscontext.h b/src/dbus/qdbuscontext.h
+index 13fbe4b..cb9310c 100644
+--- a/src/dbus/qdbuscontext.h
++++ b/src/dbus/qdbuscontext.h
+@@ -57,7 +57,7 @@ class QDBusConnection;
+ class QDBusMessage;
+ 
+ class QDBusContextPrivate;
+-class QDBUS_EXPORT QDBusContext
++class Q_DBUS_EXPORT QDBusContext
+ {
+ public:
+     QDBusContext();
+diff --git a/src/dbus/qdbuserror.h b/src/dbus/qdbuserror.h
+index ff9d1df..72736d0 100644
+--- a/src/dbus/qdbuserror.h
++++ b/src/dbus/qdbuserror.h
+@@ -57,7 +57,7 @@ QT_MODULE(DBus)
+ 
+ class QDBusMessage;
+ 
+-class QDBUS_EXPORT QDBusError
++class Q_DBUS_EXPORT QDBusError
+ {
+ public:
+     enum ErrorType {
+@@ -115,7 +115,7 @@ private:
+ };
+ 
+ #ifndef QT_NO_DEBUG_STREAM
+-QDBUS_EXPORT QDebug operator<<(QDebug, const QDBusError &);
++Q_DBUS_EXPORT QDebug operator<<(QDebug, const QDBusError &);
+ #endif
+ 
+ QT_END_NAMESPACE
+diff --git a/src/dbus/qdbusextratypes.h b/src/dbus/qdbusextratypes.h
+index 205baff..544e63f 100644
+--- a/src/dbus/qdbusextratypes.h
++++ b/src/dbus/qdbusextratypes.h
+@@ -59,7 +59,7 @@ QT_MODULE(DBus)
+ // defined in qhash.cpp
+ Q_CORE_EXPORT uint qHash(const QString &key);
+ 
+-class QDBUS_EXPORT QDBusObjectPath : private QString
++class Q_DBUS_EXPORT QDBusObjectPath : private QString
+ {
+ public:
+     inline QDBusObjectPath() { }
+@@ -109,7 +109,7 @@ inline uint qHash(const QDBusObjectPath &objectPath)
+ { return qHash(objectPath.path()); }
+ 
+ 
+-class QDBUS_EXPORT QDBusSignature : private QString
++class Q_DBUS_EXPORT QDBusSignature : private QString
+ {
+ public:
+     inline QDBusSignature() { }
+diff --git a/src/dbus/qdbusintegrator.cpp b/src/dbus/qdbusintegrator.cpp
+index efa6744..1f44bd2 100644
+--- a/src/dbus/qdbusintegrator.cpp
++++ b/src/dbus/qdbusintegrator.cpp
+@@ -508,7 +508,7 @@ static bool shouldWatchService(const QString &service)
+     return !service.isEmpty() && !service.startsWith(QLatin1Char(':'));
+ }
+ 
+-extern QDBUS_EXPORT void qDBusAddSpyHook(QDBusSpyHook);
++extern Q_DBUS_EXPORT void qDBusAddSpyHook(QDBusSpyHook);
+ void qDBusAddSpyHook(QDBusSpyHook hook)
+ {
+     qDBusSpyHookList()->append(hook);
+diff --git a/src/dbus/qdbusinterface.h b/src/dbus/qdbusinterface.h
+index 02a9059..141fbe5 100644
+--- a/src/dbus/qdbusinterface.h
++++ b/src/dbus/qdbusinterface.h
+@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
+ QT_MODULE(DBus)
+ 
+ class QDBusInterfacePrivate;
+-class QDBUS_EXPORT QDBusInterface: public QDBusAbstractInterface
++class Q_DBUS_EXPORT QDBusInterface: public QDBusAbstractInterface
+ {
+     friend class QDBusConnection;
+ private:
+diff --git a/src/dbus/qdbusintrospection_p.h b/src/dbus/qdbusintrospection_p.h
+index aa1ae57..3a69321 100644
+--- a/src/dbus/qdbusintrospection_p.h
++++ b/src/dbus/qdbusintrospection_p.h
+@@ -63,7 +63,7 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-class QDBUS_EXPORT QDBusIntrospection
++class Q_DBUS_EXPORT QDBusIntrospection
+ {
+ public:
+     // forward declarations
+diff --git a/src/dbus/qdbusmacros.h b/src/dbus/qdbusmacros.h
+index 693a350..d8bfda5 100644
+--- a/src/dbus/qdbusmacros.h
++++ b/src/dbus/qdbusmacros.h
+@@ -46,14 +46,6 @@
+ #include <QtCore/qmetatype.h>
+ #include <QtCore/qvariant.h>
+ 
+-#if defined(QDBUS_MAKEDLL)
+-# define QDBUS_EXPORT Q_DECL_EXPORT
+-#elif defined(QT_SHARED)
+-# define QDBUS_EXPORT Q_DECL_IMPORT
+-#else
+-# define QDBUS_EXPORT
+-#endif
+-
+ #ifndef Q_MOC_RUN
+ # define Q_NOREPLY
+ #endif
+diff --git a/src/dbus/qdbusmessage.h b/src/dbus/qdbusmessage.h
+index f2e64b9..fa1f2c9 100644
+--- a/src/dbus/qdbusmessage.h
++++ b/src/dbus/qdbusmessage.h
+@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
+ QT_MODULE(DBus)
+ 
+ class QDBusMessagePrivate;
+-class QDBUS_EXPORT QDBusMessage
++class Q_DBUS_EXPORT QDBusMessage
+ {
+ public:
+     enum MessageType {
+@@ -120,7 +120,7 @@ private:
+ };
+ 
+ #ifndef QT_NO_DEBUG_STREAM
+-QDBUS_EXPORT QDebug operator<<(QDebug, const QDBusMessage &);
++Q_DBUS_EXPORT QDebug operator<<(QDebug, const QDBusMessage &);
+ #endif
+ 
+ QT_END_NAMESPACE
+diff --git a/src/dbus/qdbusmetaobject_p.h b/src/dbus/qdbusmetaobject_p.h
+index 777ef54..07f1cc0 100644
+--- a/src/dbus/qdbusmetaobject_p.h
++++ b/src/dbus/qdbusmetaobject_p.h
+@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
+ class QDBusError;
+ 
+ struct QDBusMetaObjectPrivate;
+-struct QDBUS_EXPORT QDBusMetaObject: public QMetaObject
++struct Q_DBUS_EXPORT QDBusMetaObject: public QMetaObject
+ {
+     bool cached;
+ 
+diff --git a/src/dbus/qdbusmetatype.h b/src/dbus/qdbusmetatype.h
+index b487e23..9ae1944 100644
+--- a/src/dbus/qdbusmetatype.h
++++ b/src/dbus/qdbusmetatype.h
+@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
+ 
+ QT_MODULE(DBus)
+ 
+-class QDBUS_EXPORT QDBusMetaType
++class Q_DBUS_EXPORT QDBusMetaType
+ {
+ public:
+     typedef void (*MarshallFunction)(QDBusArgument &, const void *);
+diff --git a/src/dbus/qdbuspendingcall.h b/src/dbus/qdbuspendingcall.h
+index ca0eaaa..492eb3c 100644
+--- a/src/dbus/qdbuspendingcall.h
++++ b/src/dbus/qdbuspendingcall.h
+@@ -62,7 +62,7 @@ class QDBusError;
+ class QDBusPendingCallWatcher;
+ 
+ class QDBusPendingCallPrivate;
+-class QDBUS_EXPORT QDBusPendingCall
++class Q_DBUS_EXPORT QDBusPendingCall
+ {
+ public:
+     QDBusPendingCall(const QDBusPendingCall &other);
+@@ -96,7 +96,7 @@ private:
+ };
+ 
+ class QDBusPendingCallWatcherPrivate;
+-class QDBUS_EXPORT QDBusPendingCallWatcher: public QObject, public QDBusPendingCall
++class Q_DBUS_EXPORT QDBusPendingCallWatcher: public QObject, public QDBusPendingCall
+ {
+     Q_OBJECT
+ public:
+diff --git a/src/dbus/qdbuspendingreply.h b/src/dbus/qdbuspendingreply.h
+index 4757115..61e561e 100644
+--- a/src/dbus/qdbuspendingreply.h
++++ b/src/dbus/qdbuspendingreply.h
+@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
+ 
+ QT_MODULE(DBus)
+ 
+-class QDBUS_EXPORT QDBusPendingReplyData: public QDBusPendingCall
++class Q_DBUS_EXPORT QDBusPendingReplyData: public QDBusPendingCall
+ {
+ protected:
+     QDBusPendingReplyData();
+diff --git a/src/dbus/qdbusreply.h b/src/dbus/qdbusreply.h
+index fbe7459..ba25308 100644
+--- a/src/dbus/qdbusreply.h
++++ b/src/dbus/qdbusreply.h
+@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
+ 
+ QT_MODULE(DBus)
+ 
+-QDBUS_EXPORT void qDBusReplyFill(const QDBusMessage &reply, QDBusError &error, QVariant &data);
++Q_DBUS_EXPORT void qDBusReplyFill(const QDBusMessage &reply, QDBusError &error, QVariant &data);
+ 
+ template<typename T>
+ class QDBusReply
+diff --git a/src/dbus/qdbusserver.h b/src/dbus/qdbusserver.h
+index 90d40f5..8e824a8 100644
+--- a/src/dbus/qdbusserver.h
++++ b/src/dbus/qdbusserver.h
+@@ -57,7 +57,7 @@ class QDBusConnectionPrivate;
+ class QDBusError;
+ class QDBusConnection;
+ 
+-class QDBUS_EXPORT QDBusServer: public QObject
++class Q_DBUS_EXPORT QDBusServer: public QObject
+ {
+     Q_OBJECT
+ public:
+diff --git a/src/dbus/qdbusservicewatcher.h b/src/dbus/qdbusservicewatcher.h
+index c7609a8..d9a0d92 100644
+--- a/src/dbus/qdbusservicewatcher.h
++++ b/src/dbus/qdbusservicewatcher.h
+@@ -56,7 +56,7 @@ QT_MODULE(DBus)
+ class QDBusConnection;
+ 
+ class QDBusServiceWatcherPrivate;
+-class QDBUS_EXPORT QDBusServiceWatcher: public QObject
++class Q_DBUS_EXPORT QDBusServiceWatcher: public QObject
+ {
+     Q_OBJECT
+     Q_PROPERTY(QStringList watchedServices READ watchedServices WRITE setWatchedServices)
+diff --git a/src/dbus/qdbusthreaddebug_p.h b/src/dbus/qdbusthreaddebug_p.h
+index e8d90c5..87cb4d6 100644
+--- a/src/dbus/qdbusthreaddebug_p.h
++++ b/src/dbus/qdbusthreaddebug_p.h
+@@ -63,8 +63,8 @@
+ #if QDBUS_THREAD_DEBUG
+ QT_BEGIN_NAMESPACE
+ typedef void (*qdbusThreadDebugFunc)(int, int, QDBusConnectionPrivate *);
+-QDBUS_EXPORT void qdbusDefaultThreadDebug(int, int, QDBusConnectionPrivate *);
+-extern QDBUS_EXPORT qdbusThreadDebugFunc qdbusThreadDebug;
++Q_DBUS_EXPORT void qdbusDefaultThreadDebug(int, int, QDBusConnectionPrivate *);
++extern Q_DBUS_EXPORT qdbusThreadDebugFunc qdbusThreadDebug;
+ QT_END_NAMESPACE
+ #endif
+ 
+diff --git a/src/dbus/qdbusutil_p.h b/src/dbus/qdbusutil_p.h
+index 8a1846a..2b53c6b 100644
+--- a/src/dbus/qdbusutil_p.h
++++ b/src/dbus/qdbusutil_p.h
+@@ -67,25 +67,25 @@ QT_BEGIN_NAMESPACE
+ 
+ namespace QDBusUtil
+ {
+-    QDBUS_EXPORT bool isValidInterfaceName(const QString &ifaceName);
++    Q_DBUS_EXPORT bool isValidInterfaceName(const QString &ifaceName);
+ 
+-    QDBUS_EXPORT bool isValidUniqueConnectionName(const QString &busName);
++    Q_DBUS_EXPORT bool isValidUniqueConnectionName(const QString &busName);
+ 
+-    QDBUS_EXPORT bool isValidBusName(const QString &busName);
++    Q_DBUS_EXPORT bool isValidBusName(const QString &busName);
+ 
+-    QDBUS_EXPORT bool isValidMemberName(const QString &memberName);
++    Q_DBUS_EXPORT bool isValidMemberName(const QString &memberName);
+ 
+-    QDBUS_EXPORT bool isValidErrorName(const QString &errorName);
++    Q_DBUS_EXPORT bool isValidErrorName(const QString &errorName);
+ 
+-    QDBUS_EXPORT bool isValidPartOfObjectPath(const QString &path);
++    Q_DBUS_EXPORT bool isValidPartOfObjectPath(const QString &path);
+ 
+-    QDBUS_EXPORT bool isValidObjectPath(const QString &path);
++    Q_DBUS_EXPORT bool isValidObjectPath(const QString &path);
+ 
+-    QDBUS_EXPORT bool isValidSignature(const QString &signature);
++    Q_DBUS_EXPORT bool isValidSignature(const QString &signature);
+ 
+-    QDBUS_EXPORT bool isValidSingleSignature(const QString &signature);
++    Q_DBUS_EXPORT bool isValidSingleSignature(const QString &signature);
+ 
+-    QDBUS_EXPORT QString argumentToString(const QVariant &variant);
++    Q_DBUS_EXPORT QString argumentToString(const QVariant &variant);
+ 
+     enum AllowEmptyFlag {
+         EmptyAllowed,
+diff --git a/src/dbus/qdbusxmlgenerator.cpp b/src/dbus/qdbusxmlgenerator.cpp
+index 463ac73..7cc5acb 100644
+--- a/src/dbus/qdbusxmlgenerator.cpp
++++ b/src/dbus/qdbusxmlgenerator.cpp
+@@ -53,7 +53,7 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-extern QDBUS_EXPORT QString qDBusGenerateMetaObjectXml(QString interface, const QMetaObject *mo,
++extern Q_DBUS_EXPORT QString qDBusGenerateMetaObjectXml(QString interface, const QMetaObject *mo,
+                                                        const QMetaObject *base, int flags);
+ 
+ static inline QString typeNameToXml(const char *typeName)
+-- 
+1.6.5.1.1367.gcd48
+
