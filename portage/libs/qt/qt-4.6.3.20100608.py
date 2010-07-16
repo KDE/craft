@@ -39,10 +39,7 @@ class subinfo(info.infoclass):
         self.patchToApply['v4.7.0-beta2'] = ('qt-4.7.0.patch', 1)
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
-            if platform.isCrossCompilingEnabled():
-                self.defaultTarget = 'v4.7.0-beta2'
-            else:
-                self.defaultTarget = '4.7'
+            self.defaultTarget = '4.7'
         else:
             self.defaultTarget = '4.6.3'
         
@@ -105,21 +102,20 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-xplatform %s " % xplatform
             
         if self.isHostBuild():
-            command += "-no-xmlpatterns "
-        
-
-        command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked -webkit "
-            
+            command += "-no-webkit -no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
+                    
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
             command += "-plugin-sql-mysql "
             command += "-qt-style-windowsxp "
             command += "-qt-style-windowsvista "
+            command += "-webkit "
         # all builds
-        command += "-no-phonon -qdbus -dbus-linked "
-        command += "-fast -ltcg -no-vcproj -no-dsp "
-        command += "-nomake demos -nomake examples -stl "
+        command += "-qt-libpng -qt-libjpeg -qt-libtiff "
+        command += "-qdbus -dbus-linked -openssl-linked -no-phonon "
+        command += "-fast -ltcg -stl -no-vcproj -no-dsp "
+        command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
 
         if self.buildType() == "Debug":
