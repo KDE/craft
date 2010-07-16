@@ -613,3 +613,20 @@ index 3a80019..ba2bdd8 100644
 -- 
 1.6.5.1.1367.gcd48
 
+From: TheOneRing
+Subject: [PATCH] Fix for X64
+
+diff --git a/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp b/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp
+index daa945c..4fe954e 100644
+--- a/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp
++++ b/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp
+@@ -65,7 +65,7 @@ using namespace std;
+
+ namespace JSC {
+
+-#if OS(DARWIN) || OS(WINDOWS)
++#if OS(DARWIN) || (OS(WINDOWS) && !CPU(X86_64))
+ #define SYMBOL_STRING(name) "_" #name
+ #else
+ #define SYMBOL_STRING(name) #name
+
