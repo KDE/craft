@@ -597,6 +597,19 @@ index 463ac73..7cc5acb 100644
                                                         const QMetaObject *base, int flags);
  
  static inline QString typeNameToXml(const char *typeName)
+diff --git a/tools/qdbus/qdbuscpp2xml/qdbuscpp2xml.cpp b/tools/qdbus/qdbuscpp2xml/qdbuscpp2xml.cpp
+index 3a80019..ba2bdd8 100644
+--- a/tools/qdbus/qdbuscpp2xml/qdbuscpp2xml.cpp
++++ b/tools/qdbus/qdbuscpp2xml/qdbuscpp2xml.cpp
+@@ -64,7 +64,7 @@ static const char docTypeHeader[] =
+ 
+ // in qdbusxmlgenerator.cpp
+ QT_BEGIN_NAMESPACE
+-extern QDBUS_EXPORT QString qDBusGenerateMetaObjectXml(QString interface, const QMetaObject *mo,
++extern Q_DBUS_EXPORT QString qDBusGenerateMetaObjectXml(QString interface, const QMetaObject *mo,
+                                                        const QMetaObject *base, int flags);
+ QT_END_NAMESPACE
+ 
 -- 
 1.6.5.1.1367.gcd48
 
