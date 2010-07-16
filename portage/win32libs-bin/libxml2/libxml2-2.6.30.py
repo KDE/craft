@@ -17,7 +17,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
-        self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
+        # 2.6.x needs iconv !
+        #self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
+        self.hardDependencies['win32libs-bin/iconv'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False
