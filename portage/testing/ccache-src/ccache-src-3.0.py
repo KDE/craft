@@ -15,13 +15,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
         self.targetSrcSuffix['gitHEAD'] = 'git'
-        self.svnTargets['win_branch'] = "git://gitorious.org/ccache-win/ccache-win.git|windows"
-        self.targetSrcSuffix['win_branch'] = 'git-win'
-        self.defaultTarget = 'win_branch'
+        self.defaultTarget = 'gitHEAD'
         
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        #self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['testing/autotools'] = 'default'
         
 class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
@@ -33,7 +31,6 @@ class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
         MultiPackager.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.bootstrap = True
-        self.subinfo.options.configure.defines = " --enable-dev "
 
 if __name__ == '__main__':
     Package().execute()
