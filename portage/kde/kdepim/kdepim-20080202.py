@@ -29,6 +29,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DBUILD_kjots=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_knotes=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_kaddressbook=OFF "
+            self.subinfo.options.configure.defines += " -DKDEPIM_MOBILE_UI=TRUE "
 
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
