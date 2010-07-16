@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         # this location affects class SvnSource 
         self.targetMergePath['1.6.5'] = "dev-utils/svn";
         self.targetMergeSourcePath['1.6.5'] = "svn-win32-1.6.5";
+        self.targetDigests['1.6.5'] = '0df7b20e0bf0fa82ca3a9ededb9207ba50df063e'
         self.defaultTarget = '1.6.5'
 
     def setDependencies( self ):
