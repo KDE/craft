@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
             self.targets[ version ] = repoUrl + """/libpng-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libpng-""" + version + """-lib.tar.bz2"""
 
-            
+        self.targetDigests['1.2.35'] = ['6a55cf096f990168396c79f329084b149dc819fe',
+                                        '29f8b950e4f6971f6eee20424fe27bf66b171e1b']            
         self.defaultTarget = '1.2.35'
 
     def setDependencies( self ):
