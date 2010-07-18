@@ -12,8 +12,9 @@ class subinfo (info.infoclass):
         self.targets['0.9.21b'] = "http://downloads.sourceforge.net/sourceforge/clucene/clucene-core-0.9.21b.tar.bz2"
         self.targetInstSrc['0.9.21b'] = os.path.join( "clucene-core-0.9.21b", "src" )
         self.patchToApply['0.9.21b'] = ("0.9.21.diff", 2)
+        self.targetDigests['0.9.21b'] = '8bc505b64f82723c2dc901036cb0607500870973'
         self.defaultTarget = '0.9.21b'
-
+ 
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
