@@ -20,6 +20,10 @@ class subinfo(info.infoclass):
         else:
             self.hardDependencies['contributed/gpg4win-dev'] = 'default'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

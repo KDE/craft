@@ -18,6 +18,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/boost'] = 'default'
         self.hardDependencies['kdesupport/akonadi'] = 'default'
     
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

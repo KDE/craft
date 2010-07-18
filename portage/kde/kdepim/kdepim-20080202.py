@@ -16,6 +16,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/grantlee'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

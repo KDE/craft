@@ -11,6 +11,10 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):
