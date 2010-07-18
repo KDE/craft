@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
             self.targets[ version ] = repoUrl + """/libxslt-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libxslt-""" + version + """-lib.tar.bz2"""
 
-            
+        self.targetDigests['1.1.23-3'] = ['15940112e47bd1fd4433dcdcd62ae9a2687c321a',
+                                          'cf787d1d33187abc69e2e705b206657316843d49']
         self.defaultTarget = '1.1.23-3'
 
     def setDependencies( self ):
