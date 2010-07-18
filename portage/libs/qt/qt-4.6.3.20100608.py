@@ -103,7 +103,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-xplatform %s " % xplatform
             
         if self.isHostBuild():
-            command += "-no-webkit -no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
+            command += "-no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
                     
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
@@ -111,10 +111,10 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-plugin-sql-mysql "
             command += "-qt-style-windowsxp "
             command += "-qt-style-windowsvista "
-            command += "-webkit "
         # all builds
+        command += "-webkit -no-phonon "
         command += "-qt-libpng -qt-libjpeg -qt-libtiff "
-        command += "-qdbus -dbus-linked -openssl-linked -no-phonon "
+        command += "-qdbus -dbus-linked -openssl-linked "
         command += "-fast -ltcg -stl -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
