@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
             self.targets[ version ] = repoUrl + """/iconv-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/iconv-""" + version + """-lib.tar.bz2"""
 
+        self.targetDigests['1.13-2'] = ['88c02623292d5e40fc908b0be7f90da53cf49c6b',
+                                        'ce91f1105699b7cb67d71fab597efb3d4f178b83']
         self.defaultTarget = '1.13-2'
 
     def setDependencies( self ):
