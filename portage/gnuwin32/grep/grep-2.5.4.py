@@ -1,4 +1,5 @@
 import info
+import os
 
 ## \todo the dep files will let into have dll's installed multiple times 
 SRC_URI = """
@@ -18,12 +19,23 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
-    def __init__( self):
+    def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
-        BinaryPackageBase.__init__(self)
+        BinaryPackageBase.__init__( self )
+        
+    def install( self ):
+        if not BinaryPackageBase.install( self ):
+            return False
+        
+        manifestDir = os.path.join( self.imageDir(), "manifest"  ) 
+        if os.path.exists( manifestDir ):
+            for file in os.listdir( manifestDir ):
+                if file.endswith( '.mft' ):
+                    os.remove( os.path.join( manifestDir, file ) )
+        return True
 
 if __name__ == '__main__':
     Package().execute()
