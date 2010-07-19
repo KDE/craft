@@ -1,3 +1,15 @@
+diff --git a/Modules/FindThreads.cmake b/Modules/FindThreads.cmake
+--- a/Modules/FindThreads.cmake
++++ b/Modules/FindThreads.cmake
+@@ -114,7 +114,7 @@ IF(CMAKE_THREAD_LIBS_INIT)
+   SET(Threads_FOUND TRUE)
+ ENDIF()
+ 
+-IF(CMAKE_SYSTEM MATCHES "Windows")
++IF(CMAKE_SYSTEM MATCHES "Win*")
+   SET(CMAKE_USE_WIN32_THREADS_INIT 1)
+   SET(Threads_FOUND TRUE)
+ ENDIF()
 diff --git a/Source/kwsys/SystemTools.cxx b/Source/kwsys/SystemTools.cxx
 --- a/Source/kwsys/SystemTools.cxx
 +++ b/Source/kwsys/SystemTools.cxx
