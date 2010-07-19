@@ -24,8 +24,7 @@ class subinfo(info.infoclass):
 #        self.hardDependencies['win32libs-bin/openexr']  = 'default'
         self.hardDependencies['win32libs-bin/openssl']  = 'default'
         self.hardDependencies['win32libs-bin/pcre']  = 'default'
-        if not platform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
+        self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
         self.hardDependencies['win32libs-bin/zlib']  = 'default'
     
 class subclass(base.baseclass):
