@@ -1,4 +1,5 @@
 import info
+import platform
 
 from Package.CMakePackageBase import *
 
@@ -7,8 +8,7 @@ class subinfo(info.infoclass):
         ver = '1.0.8'
         self.targets[ ver ] = 'http://download.librdf.org/source/redland-1.0.8.tar.gz'
         self.targetInstSrc[ ver ] = 'redland-1.0.8'
-        self.patchToApply[ ver ] = ( 'redland-src_1.0.8.patch', 1 )
-        self.targetDigests['1.0.8'] = '9501b95a2b668067e2dcb0ab3bdb59e0376144de'
+        self.patchToApply[ ver ] = ( 'redland-1.0.8-20100719.diff', 1 )
         self.defaultTarget = ver
 
     def setDependencies( self ):
@@ -19,10 +19,12 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
         self.hardDependencies['win32libs-bin/pcre'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
+        if platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False
-        self.disableTargetBuild = True
+        self.disableTargetBuild = False
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

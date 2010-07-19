@@ -1,6 +1,6 @@
 diff -Nru redland-1.0.8.orig/cmake/config.cpp.in redland-1.0.8/cmake/config.cpp.in
 --- redland-1.0.8.orig/cmake/config.cpp.in	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/config.cpp.in	2009-09-24 02:48:28.850800000 +0200
++++ redland-1.0.8/cmake/config.cpp.in	2010-07-19 14:20:58.387367500 +0200
 @@ -0,0 +1,26 @@
 +#include <stdio.h>
 +#include <string.h>
@@ -29,8 +29,8 @@ diff -Nru redland-1.0.8.orig/cmake/config.cpp.in redland-1.0.8/cmake/config.cpp.
 +    return 1;
 +}
 diff -Nru redland-1.0.8.orig/cmake/FindCURL.cmake redland-1.0.8/cmake/FindCURL.cmake
---- redland-1.0.8.orig/cmake/FindCURL.cmake	Thu Jan  1 00:00:00 1970
-+++ redland-1.0.8/cmake/FindCURL.cmake	Mon Jul 12 08:28:52 2010
+--- redland-1.0.8.orig/cmake/FindCURL.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.8/cmake/FindCURL.cmake	2010-07-19 14:20:58.457680000 +0200
 @@ -0,0 +1,40 @@
 +# - Find curl
 +# Find the native CURL headers and libraries.
@@ -74,7 +74,7 @@ diff -Nru redland-1.0.8.orig/cmake/FindCURL.cmake redland-1.0.8/cmake/FindCURL.c
 +ENDIF(CURL_FOUND)
 diff -Nru redland-1.0.8.orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpenSSL.cmake
 --- redland-1.0.8.orig/cmake/FindOpenSSL.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/FindOpenSSL.cmake	2010-04-30 13:54:44.015200000 +0200
++++ redland-1.0.8/cmake/FindOpenSSL.cmake	2010-07-19 14:20:58.457680000 +0200
 @@ -0,0 +1,16 @@
 +
 +FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h)
@@ -94,7 +94,7 @@ diff -Nru redland-1.0.8.orig/cmake/FindOpenSSL.cmake redland-1.0.8/cmake/FindOpe
 +MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
 diff -Nru redland-1.0.8.orig/cmake/FindPCRE.cmake redland-1.0.8/cmake/FindPCRE.cmake
 --- redland-1.0.8.orig/cmake/FindPCRE.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/FindPCRE.cmake	2009-09-24 02:48:28.850800000 +0200
++++ redland-1.0.8/cmake/FindPCRE.cmake	2010-07-19 14:20:58.457680000 +0200
 @@ -0,0 +1,44 @@
 +# - Try to find the PCRE regular expression library
 +# Once done this will define
@@ -142,7 +142,7 @@ diff -Nru redland-1.0.8.orig/cmake/FindPCRE.cmake redland-1.0.8/cmake/FindPCRE.c
 +mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY)
 diff -Nru redland-1.0.8.orig/cmake/FindSQLite3.cmake redland-1.0.8/cmake/FindSQLite3.cmake
 --- redland-1.0.8.orig/cmake/FindSQLite3.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/cmake/FindSQLite3.cmake	2009-09-24 02:48:28.850800000 +0200
++++ redland-1.0.8/cmake/FindSQLite3.cmake	2010-07-19 14:20:58.527992500 +0200
 @@ -0,0 +1,19 @@
 +# - Try to find the SQLite3 library
 +# Once done this will define
@@ -163,13 +163,57 @@ diff -Nru redland-1.0.8.orig/cmake/FindSQLite3.cmake redland-1.0.8/cmake/FindSQL
 +find_package_handle_standard_args(SQLite3 DEFAULT_MSG SQLITE3_INCLUDE_DIR SQLITE3_LIBRARIES)
 +
 +mark_as_advanced(SQLITE3_INCLUDE_DIR SQLITE3_LIBRARIES)
+diff -Nru redland-1.0.8.orig/cmake/FindWcecompat.cmake redland-1.0.8/cmake/FindWcecompat.cmake
+--- redland-1.0.8.orig/cmake/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.8/cmake/FindWcecompat.cmake	2010-07-19 14:20:58.551430000 +0200
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru redland-1.0.8.orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 --- redland-1.0.8.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/CMakeLists.txt	2009-09-24 02:48:28.850800000 +0200
-@@ -0,0 +1,11 @@
++++ redland-1.0.8/CMakeLists.txt	2010-07-19 14:20:58.551430000 +0200
+@@ -0,0 +1,18 @@
 +project(redland)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +
 +if(MSVC)
 +  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
@@ -178,9 +222,10 @@ diff -Nru redland-1.0.8.orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 +add_subdirectory(librdf)
 +add_subdirectory(raptor)
 +add_subdirectory(rasqal)
+Files redland-1.0.8.orig/librdf/.win32_rdf_config.h.swp and redland-1.0.8/librdf/.win32_rdf_config.h.swp differ
 diff -Nru redland-1.0.8.orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLists.txt
 --- redland-1.0.8.orig/librdf/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/librdf/CMakeLists.txt	2009-09-24 02:48:28.866400000 +0200
++++ redland-1.0.8/librdf/CMakeLists.txt	2010-07-19 14:20:58.551430000 +0200
 @@ -0,0 +1,120 @@
 +project(librdf)
 +
@@ -302,9 +347,22 @@ diff -Nru redland-1.0.8.orig/librdf/CMakeLists.txt redland-1.0.8/librdf/CMakeLis
 +
 +install(TARGETS rdf redland-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 +install(FILES   ${librdf_HDRS_INST} DESTINATION include/redland)
+diff -Nru redland-1.0.8.orig/librdf/rdf_init.c redland-1.0.8/librdf/rdf_init.c
+--- redland-1.0.8.orig/librdf/rdf_init.c	2008-07-01 05:10:26.000000000 +0200
++++ redland-1.0.8/librdf/rdf_init.c	2010-07-19 15:45:48.727283000 +0200
+@@ -61,6 +61,9 @@
+ #ifdef HAVE_UNISTD
+ #include <unistd.h>
+ #endif
++#ifdef _WIN32_WCE
++#include <process.h>
++#endif
+ 
+ #ifdef MODULAR_LIBRDF
+ #include <ltdl.h>
 diff -Nru redland-1.0.8.orig/librdf/rdf_storage_sqlite.c redland-1.0.8/librdf/rdf_storage_sqlite.c
 --- redland-1.0.8.orig/librdf/rdf_storage_sqlite.c	2008-07-01 05:10:26.000000000 +0200
-+++ redland-1.0.8/librdf/rdf_storage_sqlite.c	2010-04-30 13:50:54.341200000 +0200
++++ redland-1.0.8/librdf/rdf_storage_sqlite.c	2010-07-19 14:20:58.574867500 +0200
 @@ -44,8 +44,9 @@
  #include <redland.h>
  #include <rdf_storage.h>
@@ -636,7 +694,7 @@ diff -Nru redland-1.0.8.orig/librdf/rdf_storage_sqlite.c redland-1.0.8/librdf/rd
                          &icontext->zTail,
 diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win32_rdf_config.h
 --- redland-1.0.8.orig/librdf/win32_rdf_config.h	2008-07-01 05:10:26.000000000 +0200
-+++ redland-1.0.8/librdf/win32_rdf_config.h	2010-04-30 13:50:54.306200000 +0200
++++ redland-1.0.8/librdf/win32_rdf_config.h	2010-07-19 16:42:49.442806600 +0200
 @@ -43,7 +43,9 @@
  #define HAVE_STRICMP 1
  
@@ -656,7 +714,23 @@ diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win3
  
  /* BDB has open method with 6 args */
  /* #undef HAVE_BDB_OPEN_6_ARGS */
-@@ -255,7 +257,7 @@
+@@ -153,10 +155,14 @@
+ #define HAVE_MEMORY_H 1
+ 
+ /* Define to 1 if you have the `mkstemp' function. */
+-/* #undef HAVE_MKSTEMP */
++#ifdef _WIN32_WCE
++#define HAVE_MKSTEMP 1
++#endif
+ 
+ /* Define to 1 if you have the `mktemp' function. */
++#ifndef _WIN32_WCE
+ #define HAVE_MKTEMP 1
++#endif
+ 
+ /* MySQL libraries are present */
+ #define HAVE_MYSQL 1
+@@ -255,7 +261,7 @@
  #define STORAGE_FILE 1
  
  /* Building MySQL storage */
@@ -665,13 +739,16 @@ diff -Nru redland-1.0.8.orig/librdf/win32_rdf_config.h redland-1.0.8/librdf/win3
  
  /* Building PostgreSQL storage */
  /*#undef STORAGE_POSTGRESQL*/
+Files redland-1.0.8.orig/raptor/.CMakeLists.txt.swp and redland-1.0.8/raptor/.CMakeLists.txt.swp differ
 diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLists.txt
 --- redland-1.0.8.orig/raptor/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/raptor/CMakeLists.txt	2010-04-30 13:50:54.309200000 +0200
-@@ -0,0 +1,100 @@
++++ redland-1.0.8/raptor/CMakeLists.txt	2010-07-19 15:39:20.939809700 +0200
+@@ -0,0 +1,105 @@
 +project(raptor)
 +
++if(NOT WINCE)
 +find_package(CURL REQUIRED)
++endif(NOT WINCE)
 +find_package(LibXml2 REQUIRED)
 +find_package(LibXslt REQUIRED)
 +
@@ -761,6 +838,9 @@ diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLis
 +add_library(raptor SHARED ${raptor_SRCS} ${raptor_HDRS} ${raptor_HDRS_INST})
 +set_target_properties(raptor PROPERTIES DEFINE_SYMBOL RAPTOR_INTERNAL)
 +target_link_libraries(raptor ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
++if(WINCE)
++   target_link_libraries(raptor ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +
 +set(PROGRAMM raptor)
 +configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.cpp)
@@ -769,19 +849,95 @@ diff -Nru redland-1.0.8.orig/raptor/CMakeLists.txt redland-1.0.8/raptor/CMakeLis
 +
 +install(TARGETS raptor raptor-config RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 +install(FILES   ${raptor_HDRS_INST} DESTINATION include/redland)
+Files redland-1.0.8.orig/raptor/src/.raptor_config.h.in.swp and redland-1.0.8/raptor/src/.raptor_config.h.in.swp differ
+Files redland-1.0.8.orig/raptor/src/.turtle_parser.c.swp and redland-1.0.8/raptor/src/.turtle_parser.c.swp differ
+Files redland-1.0.8.orig/raptor/src/.win32_raptor_config.h.swp and redland-1.0.8/raptor/src/.win32_raptor_config.h.swp differ
+diff -Nru redland-1.0.8.orig/raptor/src/n3_parser.c redland-1.0.8/raptor/src/n3_parser.c
+--- redland-1.0.8.orig/raptor/src/n3_parser.c	2008-06-20 07:48:37.000000000 +0200
++++ redland-1.0.8/raptor/src/n3_parser.c	2010-07-19 15:09:55.854008300 +0200
+@@ -43,9 +43,28 @@
+    define necessary library symbols; they are noted "INFRINGES ON
+    USER NAME SPACE" below.  */
+ 
++
++#ifdef HAVE_CONFIG_H
++#include <raptor_config.h>
++#endif
++
++#ifdef WIN32
++#include <win32_raptor_config.h>
++#endif
++
++#include <stdio.h>
++#include <string.h>
++#include <ctype.h>
++#include <stdarg.h>
++#ifdef HAVE_ERRNO_H
++#include <errno.h>
++#endif
++#ifdef HAVE_STDLIB_H
++#include <stdlib.h>
++#endif
++
+ /* Identify Bison output.  */
+ #define YYBISON 1
+-
+ /* Bison version.  */
+ #define YYBISON_VERSION "2.3"
+ 
+@@ -124,25 +143,6 @@
+ /* Copy the first part of user declarations.  */
+ #line 27 "./n3_parser.y"
+ 
+-#ifdef HAVE_CONFIG_H
+-#include <raptor_config.h>
+-#endif
+-
+-#ifdef WIN32
+-#include <win32_raptor_config.h>
+-#endif
+-
+-#include <stdio.h>
+-#include <string.h>
+-#include <ctype.h>
+-#include <stdarg.h>
+-#ifdef HAVE_ERRNO_H
+-#include <errno.h>
+-#endif
+-#ifdef HAVE_STDLIB_H
+-#include <stdlib.h>
+-#endif
+-
+ #include <raptor.h>
+ #include <raptor_internal.h>
+ 
+diff -Nru redland-1.0.8.orig/raptor/src/raptor_serialize_rss.c redland-1.0.8/raptor/src/raptor_serialize_rss.c
+--- redland-1.0.8.orig/raptor/src/raptor_serialize_rss.c	2008-06-18 23:42:54.000000000 +0200
++++ redland-1.0.8/raptor/src/raptor_serialize_rss.c	2010-07-19 15:32:36.241540200 +0200
+@@ -43,6 +43,9 @@
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+ #endif
++#ifdef _WIN32_WCE
++#include <Winsock2.h>
++#endif
+ 
+ /* Raptor includes */
+ #include "raptor.h"
 diff -Nru redland-1.0.8.orig/raptor/src/raptor_win32.c redland-1.0.8/raptor/src/raptor_win32.c
 --- redland-1.0.8.orig/raptor/src/raptor_win32.c	2008-06-14 05:39:35.000000000 +0200
-+++ redland-1.0.8/raptor/src/raptor_win32.c	2010-04-30 13:50:54.311200000 +0200
-@@ -33,8 +33,26 @@
++++ redland-1.0.8/raptor/src/raptor_win32.c	2010-07-19 15:41:06.074281800 +0200
+@@ -33,9 +33,28 @@
  
  
  #ifdef WIN32
 +#include <windows.h>
 +#include <Winsock2.h>
-+
+ 
 +#define KDE_SECONDS_SINCE_1601	11644473600LL
 +#define KDE_USEC_IN_SEC			1000000LL
- 
++
++#ifndef _WIN32_WCE
  /* Only on WIN32 systems */
 +int gettimeofday(struct timeval *__p, void *__t)
 +{
@@ -793,15 +949,16 @@ diff -Nru redland-1.0.8.orig/raptor/src/raptor_win32.c redland-1.0.8/raptor/src/
 +	GetSystemTimeAsFileTime (&now.ft);
 +	__p->tv_usec = (long) ((now.ns100 / 10LL) % KDE_USEC_IN_SEC);
 +	__p->tv_sec  = (long)(((now.ns100 / 10LL ) / KDE_USEC_IN_SEC) - KDE_SECONDS_SINCE_1601);
-+
+ 
 +	return (0);
 +}
- 
++#endif
  
  /* DLL entry point */
+ BOOL APIENTRY
 diff -Nru redland-1.0.8.orig/raptor/src/raptor_www.c redland-1.0.8/raptor/src/raptor_www.c
 --- redland-1.0.8.orig/raptor/src/raptor_www.c	2008-06-14 05:39:51.000000000 +0200
-+++ redland-1.0.8/raptor/src/raptor_www.c	2010-04-30 14:04:52.311200000 +0200
++++ redland-1.0.8/raptor/src/raptor_www.c	2010-07-19 14:20:58.574867500 +0200
 @@ -41,6 +41,10 @@
  #include <sys/stat.h>
  #endif
@@ -813,10 +970,86 @@ diff -Nru redland-1.0.8.orig/raptor/src/raptor_www.c redland-1.0.8/raptor/src/ra
  /* Raptor includes */
  #include "raptor.h"
  #include "raptor_internal.h"
+diff -Nru redland-1.0.8.orig/raptor/src/turtle_parser.c redland-1.0.8/raptor/src/turtle_parser.c
+--- redland-1.0.8.orig/raptor/src/turtle_parser.c	2008-06-20 07:48:36.000000000 +0200
++++ redland-1.0.8/raptor/src/turtle_parser.c	2010-07-19 15:35:31.474127300 +0200
+@@ -58,6 +58,29 @@
+ /* Using locations.  */
+ #define YYLSP_NEEDED 0
+ 
++#ifdef HAVE_CONFIG_H
++#include <raptor_config.h>
++#endif
++
++#ifdef WIN32
++#include <win32_raptor_config.h>
++#endif
++
++#include <stdio.h>
++#include <string.h>
++#include <ctype.h>
++#include <stdarg.h>
++#ifdef HAVE_ERRNO_H
++#include <errno.h>
++#endif
++#ifdef HAVE_STDLIB_H
++#include <stdlib.h>
++#endif
++
++#include <raptor.h>
++#include <raptor_internal.h>
++
++#include <turtle_parser.h>
+ /* Substitute the variable and function names.  */
+ #define yyparse turtle_parser_parse
+ #define yylex   turtle_parser_lex
+@@ -136,29 +159,6 @@
+ /* Copy the first part of user declarations.  */
+ #line 30 "./turtle_parser.y"
+ 
+-#ifdef HAVE_CONFIG_H
+-#include <raptor_config.h>
+-#endif
+-
+-#ifdef WIN32
+-#include <win32_raptor_config.h>
+-#endif
+-
+-#include <stdio.h>
+-#include <string.h>
+-#include <ctype.h>
+-#include <stdarg.h>
+-#ifdef HAVE_ERRNO_H
+-#include <errno.h>
+-#endif
+-#ifdef HAVE_STDLIB_H
+-#include <stdlib.h>
+-#endif
+-
+-#include <raptor.h>
+-#include <raptor_internal.h>
+-
+-#include <turtle_parser.h>
+ 
+ #define YY_DECL int turtle_lexer_lex (YYSTYPE *turtle_parser_lval, yyscan_t yyscanner)
+ #define YY_NO_UNISTD_H 1
 diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/raptor/src/win32_raptor_config.h
 --- redland-1.0.8.orig/raptor/src/win32_raptor_config.h	2008-04-02 06:50:14.000000000 +0200
-+++ redland-1.0.8/raptor/src/win32_raptor_config.h	2010-04-30 13:50:54.314200000 +0200
-@@ -69,7 +69,9 @@
++++ redland-1.0.8/raptor/src/win32_raptor_config.h	2010-07-19 16:51:14.627080300 +0200
+@@ -36,8 +36,11 @@
+ /* getopt is not in standard win32 C library - define if we have it */
+ /* #define HAVE_GETOPT_H 1 */
+ 
++#ifndef _WIN32_WCE
+ #define HAVE_STDLIB_H 1
+-
++#endif
++/* Errno is taken from WCECOMPAT for Windows CE */
++#define HAVE_ERRNO_H 1
+ #if 0
+ /* For using expat on win32 */
+ #define RAPTOR_XML_EXPAT 1
+@@ -69,7 +72,9 @@
  #define HAVE_STRICMP 1
  
  /* MS names for these functions */
@@ -826,7 +1059,7 @@ diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/rapt
  #define snprintf _snprintf
  #define access _access
  #define stricmp _stricmp
-@@ -118,6 +120,7 @@
+@@ -118,6 +123,7 @@
  #define RAPTOR_PARSER_TURTLE 1
  #define RAPTOR_PARSER_NTRIPLES 1
  #define RAPTOR_PARSER_RDFXML 1
@@ -834,9 +1067,22 @@ diff -Nru redland-1.0.8.orig/raptor/src/win32_raptor_config.h redland-1.0.8/rapt
  
  #define RAPTOR_SERIALIZER_ATOM 1
  #define RAPTOR_SERIALIZER_RSS_1_0 1
+@@ -125,8 +131,10 @@
+ #define RAPTOR_SERIALIZER_RDFXML_ABBREV 1
+ #define RAPTOR_SERIALIZER_NTRIPLES 1
+ 
+-#define RAPTOR_WWW_LIBCURL 1
+-
++#ifndef _WIN32_WCE
++/* No Libcurl for Windows CE */
++# define RAPTOR_WWW_LIBCURL 1
++#endif
+ 
+ #include <windows.h>
+ 
 diff -Nru redland-1.0.8.orig/rasqal/CMakeLists.txt redland-1.0.8/rasqal/CMakeLists.txt
 --- redland-1.0.8.orig/rasqal/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.8/rasqal/CMakeLists.txt	2010-04-30 13:50:54.317200000 +0200
++++ redland-1.0.8/rasqal/CMakeLists.txt	2010-07-19 14:20:58.598305000 +0200
 @@ -0,0 +1,63 @@
 +project(rasqal)
 +
@@ -903,7 +1149,7 @@ diff -Nru redland-1.0.8.orig/rasqal/CMakeLists.txt redland-1.0.8/rasqal/CMakeLis
 +install(FILES   ${rasqal_HDRS_INST} DESTINATION include/redland)
 diff -Nru redland-1.0.8.orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/src/sparql_lexer.c
 --- redland-1.0.8.orig/rasqal/src/sparql_lexer.c	2008-06-26 20:52:33.000000000 +0200
-+++ redland-1.0.8/rasqal/src/sparql_lexer.c	2010-04-30 13:50:54.323200000 +0200
++++ redland-1.0.8/rasqal/src/sparql_lexer.c	2010-07-19 14:20:58.598305000 +0200
 @@ -1166,7 +1166,7 @@
  
  #include <rasqal.h>
@@ -915,7 +1161,7 @@ diff -Nru redland-1.0.8.orig/rasqal/src/sparql_lexer.c redland-1.0.8/rasqal/src/
  #include <sparql_common.h>
 diff -Nru redland-1.0.8.orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src/sparql_parser.c
 --- redland-1.0.8.orig/rasqal/src/sparql_parser.c	2008-06-26 20:52:33.000000000 +0200
-+++ redland-1.0.8/rasqal/src/sparql_parser.c	2010-04-30 13:50:54.329200000 +0200
++++ redland-1.0.8/rasqal/src/sparql_parser.c	2010-07-19 14:20:58.598305000 +0200
 @@ -43,6 +43,14 @@
     define necessary library symbols; they are noted "INFRINGES ON
     USER NAME SPACE" below.  */
@@ -933,7 +1179,7 @@ diff -Nru redland-1.0.8.orig/rasqal/src/sparql_parser.c redland-1.0.8/rasqal/src
  
 diff -Nru redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h redland-1.0.8/rasqal/src/win32_rasqal_config.h
 --- redland-1.0.8.orig/rasqal/src/win32_rasqal_config.h	2008-06-27 04:02:09.000000000 +0200
-+++ redland-1.0.8/rasqal/src/win32_rasqal_config.h	2010-04-30 13:50:54.332200000 +0200
++++ redland-1.0.8/rasqal/src/win32_rasqal_config.h	2010-07-19 14:20:58.598305000 +0200
 @@ -40,7 +40,9 @@
  #define HAVE_STRICMP 1
  
