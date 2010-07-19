@@ -25,6 +25,9 @@ class MultiSource():
     def fetch(self):
         return self.source.fetch()
         
+    def checkDigest(self):
+        return self.source.checkDigest()
+
     def unpack(self):
         self.source.buildSystemType = self.buildSystemType
         return self.source.unpack()

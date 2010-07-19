@@ -224,6 +224,7 @@ class PackageBase (EmergeBase):
         elif command == "package":     ok = self.createPackage()
         elif command == "createpatch": ok = self.createPatch()
         elif command == "printrev":    ok = self.sourceVersion()
+        elif command == "checkdigest": ok = self.checkDigest()
         else:
             ok = utils.error( "command %s not understood" % command )
 

@@ -30,6 +30,10 @@ class SourceBase(EmergeBase):
         """fetch the source from a remote host and save it into a local destination"""
         abstract()
 
+    def checkDigest(self): 
+        """check source digest of the package."""
+        return True
+
     def unpack(self): 
         """unpack the source into a local destination."""
         abstract()

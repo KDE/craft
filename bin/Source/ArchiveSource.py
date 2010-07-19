@@ -79,6 +79,25 @@ class ArchiveSource(SourceBase):
         else:
             return utils.getFiles( "", self.downloadDir() )
 
+    def checkDigest(self):
+        utils.debug( "ArchiveSource.checkDigest called", 2 )
+        filenames = self.localFileNames()
+        if self.subinfo.hasTargetDigestUrls():
+            utils.debug("check digests urls",1)
+            if not utils.checkFilesDigests( self.downloadDir(), filenames):
+                utils.error("invalid digest file")
+                return False
+        elif self.subinfo.hasTargetDigests():
+            utils.debug("check digests",1)
+            if not utils.checkFilesDigests( self.downloadDir(), filenames, self.subinfo.targetDigest()):
+                utils.error("invalid digest file")
+                return False
+        else: 
+            utils.debug("print source file digests",1)
+            digests = utils.createFilesDigests( self.downloadDir(), filenames )
+            utils.printFilesDigests( digests,self.subinfo.buildTarget)
+        return True
+
     def unpack(self):
         """unpacking all zipped(gz,zip,bz2) tarballs"""        
         utils.debug( "ArchiveSource.unpack called", 2 )

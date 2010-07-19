@@ -79,6 +79,8 @@ Commands (must have a packagename):
                         working manifest directory. unmerge only delete unmodified 
                         files by default. You may use the -f or --force option to 
                         let unmerge delete all files unconditional.
+--checkdigest           Check digest for the specified package. If no digest is 
+                        available calculate and print digests. 
 --disable-buildhost     This disables the building for the host.
 --disable-buildtarget   This disables the building for the target.
 
@@ -212,7 +214,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
@@ -367,7 +369,7 @@ for i in sys.argv:
         ignoreInstalled = True
         buildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
-                  "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
+                  "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest",
                   "--full-package", "--cleanimage", "--cleanbuild", "--cleanallbuilds", "--createpatch"] ):
         buildAction = i[2:]
     elif ( i == "--print-revision" ):
