@@ -57,7 +57,7 @@ class subclass(base.baseclass):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "akonadi"
         self.subinfo = subinfo()
-        self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
+        self.subinfo.options.configure.defines = " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
 
     def unpack( self ):
         return self.kdeSvnUnpack()
