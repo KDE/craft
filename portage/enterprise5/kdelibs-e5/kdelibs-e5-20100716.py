@@ -40,6 +40,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['enterprise5/automoc-e5'] = 'default'
         self.hardDependencies['enterprise5/attica-e5'] = 'default'
 
+        # Take dbusmenu-qt from kdesupport as long as there are no differences
+        self.hardDependencies['kdesupport/dbusmenu-qt'] = 'default'
+
         self.hardDependencies['win32libs-sources/libbzip2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
         self.hardDependencies['win32libs-sources/openssl-src']  = 'default'
@@ -61,6 +64,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
         self.hardDependencies['data/aspell-data'] = 'default'
+        self.hardDependencies['data/docbook-xsl'] = 'default'
+        self.hardDependencies['data/docbook-dtd'] = 'default'
 
 from Package.CMakePackageBase import *
         
