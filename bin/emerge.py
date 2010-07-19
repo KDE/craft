@@ -79,8 +79,17 @@ Commands (must have a packagename):
                         working manifest directory. unmerge only delete unmodified 
                         files by default. You may use the -f or --force option to 
                         let unmerge delete all files unconditional.
+--cleanallbuilds        Clean complete build directory. 
+--cleanbuild            Clean build directory for the specified package. This cleans also 
+                        all the image directories of all targets of the specified package.
+                        available calculate and print digests. 
 --checkdigest           Check digest for the specified package. If no digest is 
                         available calculate and print digests. 
+--cleanimage            Clean image directory for the specified package and target.
+                        available calculate and print digests. 
+--createpatch           Create source patch file for the specific package based on the 
+                        original archive file or checkout revision of the used software 
+                        revision control system.
 --disable-buildhost     This disables the building for the host.
 --disable-buildtarget   This disables the building for the target.
 
