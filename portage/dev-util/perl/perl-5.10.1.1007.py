@@ -15,6 +15,9 @@ class subinfo(info.infoclass):
            self.targetMergeSourcePath['5.10.1'] = "ActivePerl-5.10.1.1007-MSWin32-x86-291969\\perl"       
         self.defaultTarget = '5.10.1'
 
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True

@@ -11,6 +11,9 @@ class subinfo(info.infoclass):
         self.targetInstallPath['0.60'] = "bin"
         self.defaultTarget = '0.60'
 
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+
 from Package.BinaryPackageBase import *        
         
 class Package(BinaryPackageBase):
