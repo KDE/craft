@@ -12,6 +12,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
