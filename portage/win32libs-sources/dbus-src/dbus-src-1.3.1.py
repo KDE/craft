@@ -47,9 +47,9 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.packageName = 'dbus'
         self.subinfo.options.make.slnBaseName = 'dbus'
         if self.buildTarget == '1.3.1' or self.buildTarget == 'gitHEAD':
-            self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=autolaunch:scope=install-path"
+            self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=autolaunch:scope=install-path"
         else:
-            self.subinfo.options.configure.defines = "-DDBUS_USE_EXPAT=ON"
+            self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON"
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):
