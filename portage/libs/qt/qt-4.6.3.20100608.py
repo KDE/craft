@@ -102,7 +102,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         if self.isTargetBuild():
             command += "-xplatform %s " % xplatform
             
-        if self.isHostBuild():
+        if platform.isCrossCompilingEnabled() and self.isHostBuild():
             command += "-no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
                     
         if not platform.isCrossCompilingEnabled():
