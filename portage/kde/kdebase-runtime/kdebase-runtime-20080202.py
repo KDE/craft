@@ -24,10 +24,13 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = ""
         #FIXME: meinproc4 throughs an error, dont know really why
         if platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
+            self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
         
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
+            
+        if self.isTargetBuild():
+            self.subinfo.options.configure.defines += "-DKDEBASE_DISABLE_MULTIMEDIA=ON "
 
 if __name__ == '__main__':
     Package().execute()
