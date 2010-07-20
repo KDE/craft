@@ -153,8 +153,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += " -base-dir \"" + self.sourceDir() + "\""
             command += " -outdir \"" + self.installDir() + "\""
             command += " -copy"
-            # 4.7 has a -quiet option, enable it when we switch
-            #command += " -quiet"
+            command += " -quiet"
             utils.system( command )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
