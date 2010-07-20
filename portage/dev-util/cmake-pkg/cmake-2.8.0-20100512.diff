@@ -1745,7 +1745,7 @@ diff --git a/Modules/CMakeTestCLMachineType.c b/Modules/CMakeTestCLMachineType.c
 diff --git a/Modules/Platform/WinCE-cl.cmake b/Modules/Platform/WinCE-cl.cmake
 --- /dev/null
 +++ b/Modules/Platform/WinCE-cl.cmake
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,47 @@
 +
 +IF(NOT CMAKE_WINDOWS_STACKSIZE )
 +    SET(CMAKE_WINDOWS_STACKSIZE 65536) ## stacksize is set to 65kb
@@ -1754,12 +1754,16 @@ diff --git a/Modules/Platform/WinCE-cl.cmake b/Modules/Platform/WinCE-cl.cmake
 +INCLUDE(Platform/Windows-cl)
 +
 +SET (CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} /DUNICODE /D_UNICODE")
-+SET (CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /DUNICODE /D_UNICODE")
++# Window-cl.cmake enables RTTI and Exceptions by default, disable them as they increase code size
++SET (CMAKE_CXX_FLAGS_INIT "/DWIN32 /D_WINDOWS /W3 /Zm1000 /DUNICODE /D_UNICODE")
 +
 +IF(MSVC_VERSION GREATER 1310)
 +    # Windows-cl.cmake sets /RTC1, we remove that here
 +    SET (CMAKE_CXX_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi /Ob0 /Od")
 +    SET (CMAKE_C_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi  /Ob0 /Od")
++    # We prefer /O1 (favor size) to /O2 (favor perf) for RelWithDebInfo
++    SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "/MD /Zi /O1 /D NDEBUG")
++    SET (CMAKE_C_FLAGS_RELWITHDEBINFO_INIT "/MD /Zi /O1 /D NDEBUG")
 +    # We deactivate Manifest creation
 +    SET (CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT} /MANIFEST:NO")
 +    SET (CMAKE_SHARED_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT}  /MANIFEST:NO")
@@ -1822,7 +1826,7 @@ diff --git a/Modules/Platform/WinCE.cmake b/Modules/Platform/WinCE.cmake
 diff --git a/Modules/Platform/Windows-cl.cmake b/Modules/Platform/Windows-cl.cmake
 --- a/Modules/Platform/Windows-cl.cmake
 +++ b/Modules/Platform/Windows-cl.cmake
-@@ -140,37 +140,114 @@ IF(CMAKE_GENERATOR MATCHES "Makefiles")
+@@ -140,37 +140,114 @@
        MESSAGE(STATUS "Check if this is a free VC compiler - no")
        SET(CMAKE_USING_VC_FREE_TOOLS 0)
      ENDIF(CMAKE_COMPILER_RETURN)
@@ -1961,7 +1965,18 @@ diff --git a/Modules/Platform/Windows-cl.cmake b/Modules/Platform/Windows-cl.cma
  IF("${MSVC_VERSION}" GREATER 1599)
    SET(MSVC_INCREMENTAL_DEFAULT ON)
  ENDIF()
-@@ -234,14 +311,21 @@ SET(CMAKE_CXX_STANDARD_LIBRARIES_INIT "${CMAKE_C_STANDARD_LIBRARIES_INIT}")
+@@ -190,8 +267,8 @@
+   SET(CMAKE_BUILD_TYPE_INIT Debug)
+   SET (CMAKE_CXX_FLAGS_INIT "/DWIN32 /D_WINDOWS /W3 /Zm1000 /EHsc /GR")
+   SET (CMAKE_CXX_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi /Ob0 /Od /RTC1")
+-  SET (CMAKE_CXX_FLAGS_MINSIZEREL_INIT "/MD /O1 /Ob1 /D NDEBUG")
+-  SET (CMAKE_CXX_FLAGS_RELEASE_INIT "/MD /O2 /Ob2 /D NDEBUG")
++  SET (CMAKE_CXX_FLAGS_MINSIZEREL_INIT "/MD /O1 /Ob1 /GL /D NDEBUG")
++  SET (CMAKE_CXX_FLAGS_RELEASE_INIT "/MD /O2 /Ob2 /GL /D NDEBUG")
+   SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "/MD /Zi /O2 /Ob1 /D NDEBUG")
+   SET (CMAKE_C_FLAGS_INIT "/DWIN32 /D_WINDOWS /W3 /Zm1000")
+   SET (CMAKE_C_FLAGS_DEBUG_INIT "/D_DEBUG /MDd /Zi  /Ob0 /Od /RTC1")
+@@ -234,14 +311,21 @@
  
  # executable linker flags
  SET (CMAKE_LINK_DEF_FILE_FLAG "/DEF:")
@@ -1990,6 +2005,17 @@ diff --git a/Modules/Platform/Windows-cl.cmake b/Modules/Platform/Windows-cl.cma
  
  # add /debug and /INCREMENTAL:YES to DEBUG and RELWITHDEBINFO also add pdbtyp
  # on versions that support it
+@@ -258,8 +342,8 @@
+   SET (CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT "/debug ${MSVC_INCREMENTAL_YES_FLAG}")
+ ENDIF (CMAKE_COMPILER_SUPPORTS_PDBTYPE)
+ # for release and minsize release default to no incremental linking
+-SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL_INIT "/INCREMENTAL:NO")
+-SET(CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT "/INCREMENTAL:NO")
++SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL_INIT "/INCREMENTAL:NO /LTCG")
++SET(CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT "/INCREMENTAL:NO /LTCG")
+ 
+ # copy the EXE_LINKER flags to SHARED and MODULE linker flags
+ # shared linker flags
 diff --git a/Modules/Platform/Windows-cl.cmake.in b/Modules/Platform/Windows-cl.cmake.in
 --- a/Modules/Platform/Windows-cl.cmake.in
 +++ b/Modules/Platform/Windows-cl.cmake.in
