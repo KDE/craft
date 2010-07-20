@@ -38,17 +38,9 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines="-DSOPRANO_DISABLE_SESAME2_BACKEND=YES "
-        
-        #disable redland for target build because he finds the host reland and gets very confused
-        if self.isTargetBuild():
-            self.subinfo.options.configure.defines += "-DSOPRANO_DISABLE_REDLAND_BACKEND=YES -DSOPRANO_DISABLE_RAPTOR_PARSER=YES -DSOPRANO_DISABLE_RAPTOR_SERIALIZER=YES "
-        
-        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
-        if not os.path.exists(qmake):
-            utils.die("could not found qmake")
-        ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
-            % qmake.replace('\\', '/')
+            
+        self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
+            % os.path.join(ROOTDIR, "bin")
 
 if __name__ == '__main__':
     Package().execute()
