@@ -144,8 +144,6 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # delete this because it is not working for windows
             utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearerd4.dll" ))
             utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearer4.dll" ))
-            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
-            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
             # syncqt expects qconfig.h to be in the install dir and fails if not
             utils.createDir( os.path.join( self.installDir(), "src", "corelib", "global") )
             utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "src", "corelib" , "global", "qconfig.h" ) )
@@ -158,6 +156,12 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # 4.7 has a -quiet option, enable it when we switch
             #command += " -quiet"
             utils.system( command )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
+            utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
+            # the dlls must be copied to the bin dir too
+            for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
+                if file.endswith( ".dll" ):
+                    utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
             # create qt.conf 
