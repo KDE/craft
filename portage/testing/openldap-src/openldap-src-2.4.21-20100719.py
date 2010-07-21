@@ -58,7 +58,7 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
         self.buildInSource=True
 
         # Only build the client and libraries and not the OpenLDAP server
-        self.subinfo.options.configure.defines = "--disable-slapd"
+        self.subinfo.options.configure.defines = "--disable-slapd --with-cyrus_sasl=no"
 
     def install (self):
         self.enterSourceDir()
