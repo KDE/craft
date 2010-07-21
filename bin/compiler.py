@@ -12,11 +12,11 @@ COMPILER=os.getenv("KDECOMPILER")
 def getGCCTarget():
     if not isMinGW():
         return False
-   # FIXME: This is broken because the invariant that a compiler is installed is
-   # not fulfilled at every time especially when building the dependency tree
-   result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
-   utils.debug("GCC Target Processor:%s" % result, 1 )
-   return result.strip()
+    # FIXME: This is broken because the invariant that a compiler is installed is
+    # not fulfilled at every time especially when building the dependency tree
+    result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
+    utils.debug("GCC Target Processor:%s" % result, 1 )
+    return result.strip()
 
 def isMinGW():
     return COMPILER.startswith("mingw")
@@ -47,22 +47,22 @@ def getCompilerName():
     if isMinGW():
         if isMinGW_W32():
             return "mingw-w32"
-     elif isMinGW_W64():
-         return "mingw-w64"
-     elif isMinGW32():
-         return "mingw32"
-   elif isMSVC():
-       return COMPILER
-   else:
-       return "Unknown Compiler"
+    elif isMinGW_W64():
+        return "mingw-w64"
+    elif isMinGW32():
+        return "mingw32"
+    elif isMSVC():
+        return COMPILER
+    else:
+        return "Unknown Compiler"
 
 def getSimpleCompilerName():
     if isMinGW():
         if isMinGW_W64():
             return "mingw64"
-     else:
-         return "mingw"
-   elif isMSVC():
-       return "msvc"
-   else:
-       return "Unknown Compiler"
+        else:
+            return "mingw"
+    elif isMSVC():
+        return "msvc"
+    else:
+        return "Unknown Compiler"
