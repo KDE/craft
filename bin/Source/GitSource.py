@@ -80,6 +80,7 @@ class GitSource ( VersionSystemSourceBase ):
             ( file, patchdepth ) = self.subinfo.patchesToApply()
             if file:
                 patchfile = os.path.join ( self.packageDir(), file )
+                return self.shell.execute( self.sourceDir(), "git", "checkout -f" )
                 return self.shell.execute( self.sourceDir(), "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)) )
         return True
 
