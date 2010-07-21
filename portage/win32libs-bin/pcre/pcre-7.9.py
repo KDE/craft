@@ -2,6 +2,7 @@
 from Package.BinaryPackageBase import *
 import os
 import info
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -9,9 +10,12 @@ class subinfo(info.infoclass):
         
         for version in ['7.8','7.9']:
             self.targets[ version ] = self.getPackage( repoUrl, "pcre", version )
-
-        self.targetDigests['7.9'] = ['eea9c07409dbb0fb048bb2f699b62265cc98a90a',
-                                     '4ae2a3ae0ba493a630c25879a7201d153314e9c4']
+        if compiler.isMSVC():
+            self.targetDigests['7.9'] = ['eea9c07409dbb0fb048bb2f699b62265cc98a90a',
+                                         '4ae2a3ae0ba493a630c25879a7201d153314e9c4']
+        if compiler.isMinGW():
+            self.targetDigests['7.9'] = ['85ad8e9ccaa3d3fcab072338eb8640fdbe16809e',
+                                         'd84f74784693e38c86fa750806068374453f9f60']
         self.defaultTarget = '7.9'
 
     def setDependencies( self ):
