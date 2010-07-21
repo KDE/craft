@@ -613,17 +613,743 @@ index 3a80019..ba2bdd8 100644
 -- 
 1.6.5.1.1367.gcd48
 
-From fa602d46626b9584605b56ffc893437de91ab9e4 Mon Sep 17 00:00:00 2001
+From 48d263d0b829f517a99799d2c8e1599bbe64e855 Mon Sep 17 00:00:00 2001
 From: Romain Pokrzywka <romain@kdab.com>
-Date: Tue, 20 Jul 2010 16:46:59 +0200
-Subject: [PATCH] enable size minimizing optimizations for wince and generate debug info for release builds
+Date: Wed, 21 Jul 2010 12:43:27 +0200
+Subject: [PATCH 1/3] fix WebCore build with various features disabled
 
 ---
- mkspecs/common/wince/qmake.conf |    4 ++--
+ .../webkit/WebCore/bindings/js/JSNodeCustom.cpp    |    1 +
+ .../webkit/WebCore/generated/JSConsole.cpp         |   12 ++++
+ .../webkit/WebCore/generated/JSDOMWindow.cpp       |   70 ++++++++++++++++++++
+ .../webkit/WebCore/generated/JSDocument.cpp        |   12 ++++
+ .../WebCore/generated/JSHTMLEmbedElement.cpp       |    5 +-
+ .../WebCore/generated/JSHTMLFrameElement.cpp       |    5 +-
+ .../WebCore/generated/JSHTMLIFrameElement.cpp      |    5 +-
+ .../WebCore/generated/JSHTMLObjectElement.cpp      |    5 +-
+ .../webkit/WebCore/generated/JSNavigator.cpp       |    4 +
+ .../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp |    8 ++-
+ 10 files changed, 121 insertions(+), 6 deletions(-)
+
+diff --git a/src/3rdparty/webkit/WebCore/bindings/js/JSNodeCustom.cpp b/src/3rdparty/webkit/WebCore/bindings/js/JSNodeCustom.cpp
+index bf6c633..e396141 100644
+--- a/src/3rdparty/webkit/WebCore/bindings/js/JSNodeCustom.cpp
++++ b/src/3rdparty/webkit/WebCore/bindings/js/JSNodeCustom.cpp
+@@ -34,6 +34,7 @@
+ #include "DocumentType.h"
+ #include "Entity.h"
+ #include "EntityReference.h"
++#include "ExceptionCode.h"
+ #include "HTMLElement.h"
+ #include "JSAttr.h"
+ #include "JSCDATASection.h"
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSConsole.cpp b/src/3rdparty/webkit/WebCore/generated/JSConsole.cpp
+index 964d333..9235ea7 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSConsole.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSConsole.cpp
+@@ -36,7 +36,9 @@ ASSERT_CLASS_FITS_IN_CELL(JSConsole);
+ 
+ static const HashTableValue JSConsoleTableValues[2] =
+ {
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+     { "profiles", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsConsoleProfiles), (intptr_t)0 },
++#endif
+     { 0, 0, 0, 0 }
+ };
+ 
+@@ -62,8 +64,12 @@ static const HashTableValue JSConsolePrototypeTableValues[18] =
+     { "assert", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionAssert), (intptr_t)1 },
+     { "count", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionCount), (intptr_t)0 },
+     { "markTimeline", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionMarkTimeline), (intptr_t)0 },
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+     { "profile", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionProfile), (intptr_t)1 },
++#endif
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+     { "profileEnd", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionProfileEnd), (intptr_t)1 },
++#endif
+     { "time", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionTime), (intptr_t)1 },
+     { "timeEnd", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionTimeEnd), (intptr_t)1 },
+     { "group", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionGroup), (intptr_t)0 },
+@@ -123,11 +129,13 @@ bool JSConsole::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
+     return getStaticValueDescriptor<JSConsole, Base>(exec, &JSConsoleTable, this, propertyName, descriptor);
+ }
+ 
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+ JSValue jsConsoleProfiles(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSConsole* castedThis = static_cast<JSConsole*>(asObject(slotBase));
+     return castedThis->profiles(exec);
+ }
++#endif
+ 
+ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionDebug(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+@@ -273,6 +281,7 @@ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionMarkTimeline(ExecState* exec, JS
+     return jsUndefined();
+ }
+ 
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfile(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -286,7 +295,9 @@ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfile(ExecState* exec, JSObjec
+     imp->profile(title, &callStack);
+     return jsUndefined();
+ }
++#endif
+ 
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfileEnd(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -300,6 +311,7 @@ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfileEnd(ExecState* exec, JSOb
+     imp->profileEnd(title, &callStack);
+     return jsUndefined();
+ }
++#endif
+ 
+ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionTime(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSDOMWindow.cpp b/src/3rdparty/webkit/WebCore/generated/JSDOMWindow.cpp
+index 11dfd2e..f1ecd54 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSDOMWindow.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSDOMWindow.cpp
+@@ -397,9 +397,15 @@ static const HashTableValue JSDOMWindowTableValues[409] =
+     { "document", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowDocument), (intptr_t)0 },
+     { "styleMedia", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowStyleMedia), (intptr_t)0 },
+     { "devicePixelRatio", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowDevicePixelRatio), (intptr_t)setJSDOMWindowDevicePixelRatio },
++#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+     { "applicationCache", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowApplicationCache), (intptr_t)0 },
++#endif
++#if ENABLE(DOM_STORAGE)
+     { "sessionStorage", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSessionStorage), (intptr_t)0 },
++#endif
++#if ENABLE(DOM_STORAGE)
+     { "localStorage", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowLocalStorage), (intptr_t)0 },
++#endif
+     { "console", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowConsole), (intptr_t)setJSDOMWindowConsole },
+     { "onabort", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowOnabort), (intptr_t)setJSDOMWindowOnabort },
+     { "onbeforeunload", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowOnbeforeunload), (intptr_t)setJSDOMWindowOnbeforeunload },
+@@ -659,17 +665,27 @@ static const HashTableValue JSDOMWindowTableValues[409] =
+ #endif
+     { "MessagePort", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMessagePortConstructor), (intptr_t)setJSDOMWindowMessagePortConstructor },
+     { "MessageChannel", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMessageChannelConstructor), (intptr_t)setJSDOMWindowMessageChannelConstructor },
++#if ENABLE(WORKERS)
+     { "Worker", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowWorkerConstructor), (intptr_t)setJSDOMWindowWorkerConstructor },
++#endif
++#if ENABLE(SHARED_WORKERS)
+     { "SharedWorker", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSharedWorkerConstructor), (intptr_t)setJSDOMWindowSharedWorkerConstructor },
++#endif
++#if ENABLE(WEB_SOCKETS)
+     { "WebSocket", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowWebSocketConstructor), (intptr_t)setJSDOMWindowWebSocketConstructor },
++#endif
+     { "Plugin", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowPluginConstructor), (intptr_t)setJSDOMWindowPluginConstructor },
+     { "PluginArray", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowPluginArrayConstructor), (intptr_t)setJSDOMWindowPluginArrayConstructor },
+     { "MimeType", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMimeTypeConstructor), (intptr_t)setJSDOMWindowMimeTypeConstructor },
+     { "MimeTypeArray", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMimeTypeArrayConstructor), (intptr_t)setJSDOMWindowMimeTypeArrayConstructor },
+     { "ClientRect", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowClientRectConstructor), (intptr_t)setJSDOMWindowClientRectConstructor },
+     { "ClientRectList", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowClientRectListConstructor), (intptr_t)setJSDOMWindowClientRectListConstructor },
++#if ENABLE(DOM_STORAGE)
+     { "Storage", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowStorageConstructor), (intptr_t)setJSDOMWindowStorageConstructor },
++#endif
++#if ENABLE(DOM_STORAGE)
+     { "StorageEvent", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowStorageEventConstructor), (intptr_t)setJSDOMWindowStorageEventConstructor },
++#endif
+ #if ENABLE(VIDEO)
+     { "Audio", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowAudioConstructor), (intptr_t)setJSDOMWindowAudioConstructor },
+ #endif
+@@ -685,9 +701,16 @@ static const HashTableValue JSDOMWindowTableValues[409] =
+ #if ENABLE(VIDEO)
+     { "MediaError", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMediaErrorConstructor), (intptr_t)setJSDOMWindowMediaErrorConstructor },
+ #endif
++#if ENABLE(XPATH)
+     { "XPathEvaluator", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowXPathEvaluatorConstructor), (intptr_t)setJSDOMWindowXPathEvaluatorConstructor },
++#endif
++#if ENABLE(XPATH)
+     { "XPathResult", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowXPathResultConstructor), (intptr_t)setJSDOMWindowXPathResultConstructor },
++#endif
++#if ENABLE(XPATH)
+     { "XPathException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowXPathExceptionConstructor), (intptr_t)setJSDOMWindowXPathExceptionConstructor },
++#endif
++#if ENABLE(SVG)
+     { "SVGAElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGAElementConstructor), (intptr_t)setJSDOMWindowSVGAElementConstructor },
+     { "SVGAngle", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGAngleConstructor), (intptr_t)setJSDOMWindowSVGAngleConstructor },
+     { "SVGAnimatedAngle", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGAnimatedAngleConstructor), (intptr_t)setJSDOMWindowSVGAnimatedAngleConstructor },
+@@ -805,6 +828,7 @@ static const HashTableValue JSDOMWindowTableValues[409] =
+     { "SVGFETileElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGFETileElementConstructor), (intptr_t)setJSDOMWindowSVGFETileElementConstructor },
+     { "SVGFETurbulenceElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGFETurbulenceElementConstructor), (intptr_t)setJSDOMWindowSVGFETurbulenceElementConstructor },
+     { "SVGFilterElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGFilterElementConstructor), (intptr_t)setJSDOMWindowSVGFilterElementConstructor },
++#endif
+ #if ENABLE(TOUCH_EVENTS)
+     { "TouchEvent", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTouchEventConstructor), (intptr_t)setJSDOMWindowTouchEventConstructor },
+ #endif
+@@ -846,7 +870,9 @@ static const HashTableValue JSDOMWindowPrototypeTableValues[37] =
+     { "getMatchedCSSRules", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionGetMatchedCSSRules), (intptr_t)3 },
+     { "webkitConvertPointFromPageToNode", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionWebkitConvertPointFromPageToNode), (intptr_t)2 },
+     { "webkitConvertPointFromNodeToPage", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionWebkitConvertPointFromNodeToPage), (intptr_t)2 },
++#if ENABLE(DATABASE)
+     { "openDatabase", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionOpenDatabase), (intptr_t)5 },
++#endif
+     { "postMessage", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionPostMessage), (intptr_t)3 },
+     { "setTimeout", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionSetTimeout), (intptr_t)2 },
+     { "clearTimeout", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionClearTimeout), (intptr_t)1 },
+@@ -1326,6 +1352,7 @@ JSValue jsDOMWindowDevicePixelRatio(ExecState* exec, JSValue slotBase, const Ide
+     return result;
+ }
+ 
++#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+ JSValue jsDOMWindowApplicationCache(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -1336,7 +1363,9 @@ JSValue jsDOMWindowApplicationCache(ExecState* exec, JSValue slotBase, const Ide
+     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->applicationCache()));
+     return result;
+ }
++#endif
+ 
++#if ENABLE(DOM_STORAGE)
+ JSValue jsDOMWindowSessionStorage(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -1347,7 +1376,9 @@ JSValue jsDOMWindowSessionStorage(ExecState* exec, JSValue slotBase, const Ident
+     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->sessionStorage()));
+     return result;
+ }
++#endif
+ 
++#if ENABLE(DOM_STORAGE)
+ JSValue jsDOMWindowLocalStorage(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -1359,6 +1390,7 @@ JSValue jsDOMWindowLocalStorage(ExecState* exec, JSValue slotBase, const Identif
+     setDOMException(exec, ec);
+     return result;
+ }
++#endif
+ 
+ JSValue jsDOMWindowConsole(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+@@ -3765,6 +3797,7 @@ JSValue jsDOMWindowMessageChannelConstructor(ExecState* exec, JSValue slotBase,
+     return castedThis->messageChannel(exec);
+ }
+ 
++#if ENABLE(WORKERS)
+ JSValue jsDOMWindowWorkerConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3772,7 +3805,9 @@ JSValue jsDOMWindowWorkerConstructor(ExecState* exec, JSValue slotBase, const Id
+         return jsUndefined();
+     return castedThis->worker(exec);
+ }
++#endif
+ 
++#if ENABLE(SHARED_WORKERS)
+ JSValue jsDOMWindowSharedWorkerConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3780,7 +3815,9 @@ JSValue jsDOMWindowSharedWorkerConstructor(ExecState* exec, JSValue slotBase, co
+         return jsUndefined();
+     return castedThis->sharedWorker(exec);
+ }
++#endif
+ 
++#if ENABLE(WEB_SOCKETS)
+ JSValue jsDOMWindowWebSocketConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3788,6 +3825,7 @@ JSValue jsDOMWindowWebSocketConstructor(ExecState* exec, JSValue slotBase, const
+         return jsUndefined();
+     return castedThis->webSocket(exec);
+ }
++#endif
+ 
+ JSValue jsDOMWindowPluginConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+@@ -3837,6 +3875,7 @@ JSValue jsDOMWindowClientRectListConstructor(ExecState* exec, JSValue slotBase,
+     return JSClientRectList::getConstructor(exec, castedThis);
+ }
+ 
++#if ENABLE(DOM_STORAGE)
+ JSValue jsDOMWindowStorageConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3844,7 +3883,9 @@ JSValue jsDOMWindowStorageConstructor(ExecState* exec, JSValue slotBase, const I
+         return jsUndefined();
+     return JSStorage::getConstructor(exec, castedThis);
+ }
++#endif
+ 
++#if ENABLE(DOM_STORAGE)
+ JSValue jsDOMWindowStorageEventConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3852,6 +3893,7 @@ JSValue jsDOMWindowStorageEventConstructor(ExecState* exec, JSValue slotBase, co
+         return jsUndefined();
+     return JSStorageEvent::getConstructor(exec, castedThis);
+ }
++#endif
+ 
+ #if ENABLE(VIDEO)
+ JSValue jsDOMWindowAudioConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+@@ -3903,6 +3945,7 @@ JSValue jsDOMWindowMediaErrorConstructor(ExecState* exec, JSValue slotBase, cons
+ }
+ #endif
+ 
++#if ENABLE(XPATH)
+ JSValue jsDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3910,7 +3953,9 @@ JSValue jsDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSValue slotBase,
+         return jsUndefined();
+     return JSXPathEvaluator::getConstructor(exec, castedThis);
+ }
++#endif
+ 
++#if ENABLE(XPATH)
+ JSValue jsDOMWindowXPathResultConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3918,7 +3963,9 @@ JSValue jsDOMWindowXPathResultConstructor(ExecState* exec, JSValue slotBase, con
+         return jsUndefined();
+     return JSXPathResult::getConstructor(exec, castedThis);
+ }
++#endif
+ 
++#if ENABLE(XPATH)
+ JSValue jsDOMWindowXPathExceptionConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -3926,7 +3973,9 @@ JSValue jsDOMWindowXPathExceptionConstructor(ExecState* exec, JSValue slotBase,
+         return jsUndefined();
+     return JSXPathException::getConstructor(exec, castedThis);
+ }
++#endif
+ 
++#if ENABLE(SVG)
+ JSValue jsDOMWindowSVGAElementConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+ {
+     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
+@@ -4862,6 +4911,7 @@ JSValue jsDOMWindowSVGFilterElementConstructor(ExecState* exec, JSValue slotBase
+         return jsUndefined();
+     return JSSVGFilterElement::getConstructor(exec, castedThis);
+ }
++#endif
+ 
+ #if ENABLE(TOUCH_EVENTS)
+ JSValue jsDOMWindowTouchEventConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+@@ -7043,6 +7093,7 @@ void setJSDOMWindowMessageChannelConstructor(ExecState* exec, JSObject* thisObje
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "MessageChannel"), value);
+ }
+ 
++#if ENABLE(WORKERS)
+ void setJSDOMWindowWorkerConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7050,7 +7101,9 @@ void setJSDOMWindowWorkerConstructor(ExecState* exec, JSObject* thisObject, JSVa
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "Worker"), value);
+ }
++#endif
+ 
++#if ENABLE(SHARED_WORKERS)
+ void setJSDOMWindowSharedWorkerConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7058,7 +7111,9 @@ void setJSDOMWindowSharedWorkerConstructor(ExecState* exec, JSObject* thisObject
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "SharedWorker"), value);
+ }
++#endif
+ 
++#if ENABLE(WEB_SOCKETS)
+ void setJSDOMWindowWebSocketConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7066,6 +7121,7 @@ void setJSDOMWindowWebSocketConstructor(ExecState* exec, JSObject* thisObject, J
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "WebSocket"), value);
+ }
++#endif
+ 
+ void setJSDOMWindowPluginConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+@@ -7115,6 +7171,7 @@ void setJSDOMWindowClientRectListConstructor(ExecState* exec, JSObject* thisObje
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "ClientRectList"), value);
+ }
+ 
++#if ENABLE(DOM_STORAGE)
+ void setJSDOMWindowStorageConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7122,7 +7179,9 @@ void setJSDOMWindowStorageConstructor(ExecState* exec, JSObject* thisObject, JSV
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "Storage"), value);
+ }
++#endif
+ 
++#if ENABLE(DOM_STORAGE)
+ void setJSDOMWindowStorageEventConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7130,6 +7189,7 @@ void setJSDOMWindowStorageEventConstructor(ExecState* exec, JSObject* thisObject
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "StorageEvent"), value);
+ }
++#endif
+ 
+ #if ENABLE(VIDEO)
+ void setJSDOMWindowAudioConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+@@ -7181,6 +7241,7 @@ void setJSDOMWindowMediaErrorConstructor(ExecState* exec, JSObject* thisObject,
+ }
+ #endif
+ 
++#if ENABLE(XPATH)
+ void setJSDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7188,7 +7249,9 @@ void setJSDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSObject* thisObje
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "XPathEvaluator"), value);
+ }
++#endif
+ 
++#if ENABLE(XPATH)
+ void setJSDOMWindowXPathResultConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7196,7 +7259,9 @@ void setJSDOMWindowXPathResultConstructor(ExecState* exec, JSObject* thisObject,
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "XPathResult"), value);
+ }
++#endif
+ 
++#if ENABLE(XPATH)
+ void setJSDOMWindowXPathExceptionConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -7204,7 +7269,9 @@ void setJSDOMWindowXPathExceptionConstructor(ExecState* exec, JSObject* thisObje
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "XPathException"), value);
+ }
++#endif
+ 
++#if ENABLE(SVG)
+ void setJSDOMWindowSVGAElementConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+ {
+     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
+@@ -8140,6 +8207,7 @@ void setJSDOMWindowSVGFilterElementConstructor(ExecState* exec, JSObject* thisOb
+     // Shadowing a built-in constructor
+     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "SVGFilterElement"), value);
+ }
++#endif
+ 
+ #if ENABLE(TOUCH_EVENTS)
+ void setJSDOMWindowTouchEventConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+@@ -8533,6 +8601,7 @@ JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionWebkitConvertPointFromNodeToPa
+     return result;
+ }
+ 
++#if ENABLE(DATABASE)
+ JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionOpenDatabase(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -8543,6 +8612,7 @@ JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionOpenDatabase(ExecState* exec,
+         return jsUndefined();
+     return castedThisObj->openDatabase(exec, args);
+ }
++#endif
+ 
+ JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionPostMessage(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSDocument.cpp b/src/3rdparty/webkit/WebCore/generated/JSDocument.cpp
+index a1821a2..9c1514d 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSDocument.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSDocument.cpp
+@@ -261,9 +261,15 @@ static const HashTableValue JSDocumentPrototypeTableValues[38] =
+     { "createNodeIterator", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateNodeIterator), (intptr_t)4 },
+     { "createTreeWalker", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateTreeWalker), (intptr_t)4 },
+     { "getOverrideStyle", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionGetOverrideStyle), (intptr_t)2 },
++#if ENABLE(XPATH)
+     { "createExpression", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateExpression), (intptr_t)2 },
++#endif
++#if ENABLE(XPATH)
+     { "createNSResolver", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateNSResolver), (intptr_t)1 },
++#endif
++#if ENABLE(XPATH)
+     { "evaluate", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionEvaluate), (intptr_t)5 },
++#endif
+     { "execCommand", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionExecCommand), (intptr_t)3 },
+     { "queryCommandEnabled", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionQueryCommandEnabled), (intptr_t)1 },
+     { "queryCommandIndeterm", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionQueryCommandIndeterm), (intptr_t)1 },
+@@ -1911,6 +1917,7 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionGetOverrideStyle(ExecState* exe
+     return result;
+ }
+ 
++#if ENABLE(XPATH)
+ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateExpression(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -1934,7 +1941,9 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateExpression(ExecState* exe
+     setDOMException(exec, ec);
+     return result;
+ }
++#endif
+ 
++#if ENABLE(XPATH)
+ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateNSResolver(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -1948,7 +1957,9 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateNSResolver(ExecState* exe
+     JSC::JSValue result = toJS(exec, castedThisObj->globalObject(), WTF::getPtr(imp->createNSResolver(nodeResolver)));
+     return result;
+ }
++#endif
+ 
++#if ENABLE(XPATH)
+ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionEvaluate(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -1975,6 +1986,7 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionEvaluate(ExecState* exec, JSObj
+     setDOMException(exec, ec);
+     return result;
+ }
++#endif
+ 
+ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionExecCommand(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSHTMLEmbedElement.cpp b/src/3rdparty/webkit/WebCore/generated/JSHTMLEmbedElement.cpp
+index c39c0f9..87dcb89 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSHTMLEmbedElement.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSHTMLEmbedElement.cpp
+@@ -110,7 +110,9 @@ bool JSHTMLEmbedElementConstructor::getOwnPropertyDescriptor(ExecState* exec, co
+ 
+ static const HashTableValue JSHTMLEmbedElementPrototypeTableValues[2] =
+ {
++#if ENABLE(SVG)
+     { "getSVGDocument", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsHTMLEmbedElementPrototypeFunctionGetSVGDocument), (intptr_t)0 },
++#endif
+     { 0, 0, 0, 0 }
+ };
+ 
+@@ -277,6 +279,7 @@ JSValue JSHTMLEmbedElement::getConstructor(ExecState* exec, JSGlobalObject* glob
+     return getDOMConstructor<JSHTMLEmbedElementConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+ }
+ 
++#if ENABLE(SVG)
+ JSValue JSC_HOST_CALL jsHTMLEmbedElementPrototypeFunctionGetSVGDocument(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -293,6 +296,6 @@ JSValue JSC_HOST_CALL jsHTMLEmbedElementPrototypeFunctionGetSVGDocument(ExecStat
+     setDOMException(exec, ec);
+     return result;
+ }
+-
++#endif
+ 
+ }
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSHTMLFrameElement.cpp b/src/3rdparty/webkit/WebCore/generated/JSHTMLFrameElement.cpp
+index c5a227e..579c256 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSHTMLFrameElement.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSHTMLFrameElement.cpp
+@@ -121,7 +121,9 @@ bool JSHTMLFrameElementConstructor::getOwnPropertyDescriptor(ExecState* exec, co
+ 
+ static const HashTableValue JSHTMLFrameElementPrototypeTableValues[2] =
+ {
++#if ENABLE(SVG)
+     { "getSVGDocument", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsHTMLFrameElementPrototypeFunctionGetSVGDocument), (intptr_t)0 },
++#endif
+     { 0, 0, 0, 0 }
+ };
+ 
+@@ -360,6 +362,7 @@ JSValue JSHTMLFrameElement::getConstructor(ExecState* exec, JSGlobalObject* glob
+     return getDOMConstructor<JSHTMLFrameElementConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+ }
+ 
++#if ENABLE(SVG)
+ JSValue JSC_HOST_CALL jsHTMLFrameElementPrototypeFunctionGetSVGDocument(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -376,6 +379,6 @@ JSValue JSC_HOST_CALL jsHTMLFrameElementPrototypeFunctionGetSVGDocument(ExecStat
+     setDOMException(exec, ec);
+     return result;
+ }
+-
++#endif
+ 
+ }
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSHTMLIFrameElement.cpp b/src/3rdparty/webkit/WebCore/generated/JSHTMLIFrameElement.cpp
+index c9db0ff..c5db9df 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSHTMLIFrameElement.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSHTMLIFrameElement.cpp
+@@ -120,7 +120,9 @@ bool JSHTMLIFrameElementConstructor::getOwnPropertyDescriptor(ExecState* exec, c
+ 
+ static const HashTableValue JSHTMLIFrameElementPrototypeTableValues[2] =
+ {
++#if ENABLE(SVG)
+     { "getSVGDocument", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsHTMLIFrameElementPrototypeFunctionGetSVGDocument), (intptr_t)0 },
++#endif
+     { 0, 0, 0, 0 }
+ };
+ 
+@@ -375,6 +377,7 @@ JSValue JSHTMLIFrameElement::getConstructor(ExecState* exec, JSGlobalObject* glo
+     return getDOMConstructor<JSHTMLIFrameElementConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+ }
+ 
++#if ENABLE(SVG)
+ JSValue JSC_HOST_CALL jsHTMLIFrameElementPrototypeFunctionGetSVGDocument(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -391,6 +394,6 @@ JSValue JSC_HOST_CALL jsHTMLIFrameElementPrototypeFunctionGetSVGDocument(ExecSta
+     setDOMException(exec, ec);
+     return result;
+ }
+-
++#endif
+ 
+ }
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSHTMLObjectElement.cpp b/src/3rdparty/webkit/WebCore/generated/JSHTMLObjectElement.cpp
+index 973a893..49560a6 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSHTMLObjectElement.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSHTMLObjectElement.cpp
+@@ -128,7 +128,9 @@ bool JSHTMLObjectElementConstructor::getOwnPropertyDescriptor(ExecState* exec, c
+ 
+ static const HashTableValue JSHTMLObjectElementPrototypeTableValues[2] =
+ {
++#if ENABLE(SVG)
+     { "getSVGDocument", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsHTMLObjectElementPrototypeFunctionGetSVGDocument), (intptr_t)0 },
++#endif
+     { 0, 0, 0, 0 }
+ };
+ 
+@@ -480,6 +482,7 @@ JSValue JSHTMLObjectElement::getConstructor(ExecState* exec, JSGlobalObject* glo
+     return getDOMConstructor<JSHTMLObjectElementConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+ }
+ 
++#if ENABLE(SVG)
+ JSValue JSC_HOST_CALL jsHTMLObjectElementPrototypeFunctionGetSVGDocument(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -496,6 +499,6 @@ JSValue JSC_HOST_CALL jsHTMLObjectElementPrototypeFunctionGetSVGDocument(ExecSta
+     setDOMException(exec, ec);
+     return result;
+ }
+-
++#endif
+ 
+ }
+diff --git a/src/3rdparty/webkit/WebCore/generated/JSNavigator.cpp b/src/3rdparty/webkit/WebCore/generated/JSNavigator.cpp
+index 6a4fe41..a4298c5 100644
+--- a/src/3rdparty/webkit/WebCore/generated/JSNavigator.cpp
++++ b/src/3rdparty/webkit/WebCore/generated/JSNavigator.cpp
+@@ -70,7 +70,9 @@ static JSC_CONST_HASHTABLE HashTable JSNavigatorTable =
+ static const HashTableValue JSNavigatorPrototypeTableValues[5] =
+ {
+     { "javaEnabled", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionJavaEnabled), (intptr_t)0 },
++#if ENABLE(DOM_STORAGE)
+     { "getStorageUpdates", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionGetStorageUpdates), (intptr_t)0 },
++#endif
+     { "registerProtocolHandler", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionRegisterProtocolHandler), (intptr_t)3 },
+     { "registerContentHandler", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionRegisterContentHandler), (intptr_t)3 },
+     { 0, 0, 0, 0 }
+@@ -267,6 +269,7 @@ JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionJavaEnabled(ExecState* exec, J
+     return result;
+ }
+ 
++#if ENABLE(DOM_STORAGE)
+ JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionGetStorageUpdates(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+     UNUSED_PARAM(args);
+@@ -278,6 +281,7 @@ JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionGetStorageUpdates(ExecState* e
+     imp->getStorageUpdates();
+     return jsUndefined();
+ }
++#endif
+ 
+ JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionRegisterProtocolHandler(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+ {
+diff --git a/src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp b/src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp
+index 2d11700..826eb79 100644
+--- a/src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp
++++ b/src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp
+@@ -103,7 +103,9 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
+     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
+     inspector->d->setFrontend(inspectorView);
+ 
++#if ENABLE(INSPECTOR)
+     inspectorView->page()->d->page->inspectorController()->setInspectorFrontendClient(new InspectorFrontendClientQt(m_inspectedWebPage, inspectorView));
++#endif
+ }
+ 
+ void InspectorClientQt::highlight(Node*)
+@@ -183,6 +185,8 @@ static QVariant settingToVariant(const String& setting)
+     return retVal;
+ }
+ 
++#if ENABLE(INSPECTOR)
++
+ InspectorFrontendClientQt::InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView)
+     : InspectorFrontendClientLocal(inspectedWebPage->d->page->inspectorController(), inspectorView->page()->d->page) 
+     , m_inspectedWebPage(inspectedWebPage)
+@@ -222,9 +226,7 @@ void InspectorFrontendClientQt::closeWindow()
+ 
+     // Clear reference from QWebInspector to the frontend view.
+     m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(0);
+-#if ENABLE(INSPECTOR)
+     m_inspectedWebPage->d->inspectorController()->disconnectFrontend();
+-#endif
+     // Clear pointer before deleting WebView to avoid recursive calls to its destructor.
+     delete m_inspectorView.release();
+ }
+@@ -258,6 +260,8 @@ void InspectorFrontendClientQt::updateWindowTitle()
+     }
+ }
+ 
++#endif
++
+ }
+ 
+ #include "InspectorClientQt.moc"
+-- 
+1.6.5.1.1367.gcd48
+
+From 89f2e08e440f9d3b77bdff6667d41b442087fe8f Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Wed, 21 Jul 2010 12:47:09 +0200
+Subject: [PATCH 2/3] disable annoying Webkit build warnings
+
+---
+ mkspecs/win32-msvc2008/qmake.conf |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/mkspecs/win32-msvc2008/qmake.conf b/mkspecs/win32-msvc2008/qmake.conf
+index 9805e90..f502445 100644
+--- a/mkspecs/win32-msvc2008/qmake.conf
++++ b/mkspecs/win32-msvc2008/qmake.conf
+@@ -25,8 +25,8 @@ QMAKE_CFLAGS_YACC       =
+ QMAKE_CFLAGS_LTCG       = -GL
+ 
+ QMAKE_CXX               = $$QMAKE_CC
+-QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS
+-QMAKE_CXXFLAGS_WARN_ON  = $$QMAKE_CFLAGS_WARN_ON -w34100 -w34189
++QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS -MP
++QMAKE_CXXFLAGS_WARN_ON  = $$QMAKE_CFLAGS_WARN_ON -w34100 -w34189 -wd4344 -wd4396
+ QMAKE_CXXFLAGS_WARN_OFF = $$QMAKE_CFLAGS_WARN_OFF
+ QMAKE_CXXFLAGS_RELEASE  = $$QMAKE_CFLAGS_RELEASE
+ QMAKE_CXXFLAGS_DEBUG    = $$QMAKE_CFLAGS_DEBUG
+-- 
+1.6.5.1.1367.gcd48
+
+From b77e02f645730c346d6c849d65a8d26d2e8906a6 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Wed, 21 Jul 2010 12:49:05 +0200
+Subject: [PATCH 3/3] optimize release flags for wince, but keep debug info on
+
+---
+ mkspecs/common/wince/qmake.conf |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
 diff --git a/mkspecs/common/wince/qmake.conf b/mkspecs/common/wince/qmake.conf
-index 57b89b9..518dc60 100644
+index 57b89b9..6d98bf2 100644
 --- a/mkspecs/common/wince/qmake.conf
 +++ b/mkspecs/common/wince/qmake.conf
 @@ -19,7 +19,7 @@ QMAKE_YACCFLAGS		= -d
@@ -635,7 +1361,16 @@ index 57b89b9..518dc60 100644
  QMAKE_CFLAGS_LTCG       = -GL
  QMAKE_CFLAGS_DEBUG	= -DDEBUG -D_DEBUG -Zi -MDd
  QMAKE_CFLAGS_YACC	=
-@@ -37,7 +37,7 @@ QMAKE_CXXFLAGS_RELEASE	= $$QMAKE_CFLAGS_RELEASE
+@@ -30,14 +30,14 @@ QMAKE_CFLAGS_YACC	=
+ # QMAKE_CFLAGS_RELEASE += -Os
+ 
+ QMAKE_CXX		= $$QMAKE_CC
+-QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS
+-QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON -w34100 -w34189
++QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS -MP
++QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON -w34100 -w34189 -wd4344 -wd4396
+ QMAKE_CXXFLAGS_WARN_OFF	= $$QMAKE_CFLAGS_WARN_OFF
+ QMAKE_CXXFLAGS_RELEASE	= $$QMAKE_CFLAGS_RELEASE
  QMAKE_CXXFLAGS_DEBUG	= $$QMAKE_CFLAGS_DEBUG
  QMAKE_CXXFLAGS_LTCG     = $$QMAKE_CFLAGS_LTCG
  QMAKE_CXXFLAGS_YACC	= $$QMAKE_CFLAGS_YACC
@@ -644,6 +1379,15 @@ index 57b89b9..518dc60 100644
  QMAKE_CXXFLAGS_STL_OFF	=
  QMAKE_CXXFLAGS_RTTI_ON	= -GR
  QMAKE_CXXFLAGS_RTTI_OFF	=
+@@ -57,7 +57,7 @@ QMAKE_RUN_CXX_IMP_BATCH	= $(CXX) -c $(CXXFLAGS) $(INCPATH) -Fo$@ @<<
+ 
+ QMAKE_LINK		= link
+ QMAKE_LFLAGS		= /NOLOGO /NODEFAULTLIB:OLDNAMES.LIB
+-QMAKE_LFLAGS_RELEASE    = /INCREMENTAL:NO
++QMAKE_LFLAGS_RELEASE    = /INCREMENTAL:NO /DEBUG
+ QMAKE_LFLAGS_DEBUG	= /DEBUG
+ QMAKE_LFLAGS_LTCG       = /LTCG
+ QMAKE_LIBS_NETWORK      = ws2.lib
 -- 
 1.6.5.1.1367.gcd48
 
