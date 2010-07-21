@@ -24,8 +24,8 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-' +\
                                  ver + '.tgz'
             self.targetInstSrc[ver] = 'openldap-' + ver
-           # self.targetDigestUrls[ver] = 'ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/' +\
-           #                              'openldap-'+ver+'.sha1'
+            self.targetDigestUrls[ver] = 'ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/' +\
+                                         'openldap-'+ver+'.sha1'
             self.defaultTarget = '2.4.21'
 
         if compiler.isMSVC():
