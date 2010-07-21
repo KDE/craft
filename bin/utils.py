@@ -21,6 +21,7 @@ import hashlib
 import subprocess
 import info
 import portage
+import re
 
 import ConfigParser
 
@@ -179,17 +180,22 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
         if digests == None:
             digestFile = file + '.sha1'
             if not os.path.exists( digestFile ):
-                error( "digest validation request for file %s, but no digest  file present" % file )
-                return False
+                digestFile, _ = os.path.splitext( file )
+                digestFile += '.sha1'
+                if not os.path.exists( digestFile ):
+                    error( "digest validation request for file %s, but no digest  file present" %
+                            file )
+                    return False
             hash = digestFileSha1( file )
             f = open( digestFile , "r" )
             line = f.readline()
             f.close()
-            if line.find(' ') == -1:
-                digest = line.strip()
-            else:
-                [ digest, _filename ] = line.split( "  ", 2 )
-
+            digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
+            if not digest:
+                error( " digestFile %s for file %s does not contain a valid checksum" % (digestFile,
+                        file,) )
+                return False
+            digest = digest.group(0)
             if len(digest) != len(hash) or digest.find(hash) == -1:
                 error( "digest value for file %s (%s) do not match (%s)" % (file, hash, digest) )
                 return False
