@@ -11,6 +11,8 @@ class subinfo(info.infoclass):
         
         for version in ['0.51-1', '0.51-2', '0.60', '0.70']:
             self.targets[ version ] = repoUrl + """/shared-mime-info-""" + version + """-bin.tar.bz2"""
+
+        self.targetDigests['0.70'] = '07b21cc6a86a1f39bcb1b0136f117a23e43ab977'            
         self.defaultTarget = '0.70'
 
     def setDependencies( self ):

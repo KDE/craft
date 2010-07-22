@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
             self.targets[ version ] = repoUrl + """/giflib-""" + version + """-bin.zip
                                 """ + repoUrl + """/giflib-""" + version + """-lib.zip"""
 
-            
+        self.targetDigests['4.1.4-1'] = ['8bb64ce3e75513c6bf2e799d41278121cb7fc33e',
+                                         'fbbac3488180eb91850d7a09f38cee1c66ee79c8']            
         self.defaultTarget = '4.1.4-1'
 
     def setDependencies( self ):

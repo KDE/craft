@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
             self.targets[ version ] = repoUrl + """/aspell-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/aspell-""" + version + """-lib.tar.bz2"""
 
-            
+        self.targetDigests['0.60.5-1'] = ['49390a52915739ac8edd345a5fe2c54dfbd07ecd',
+                                          '68cd4dc50d26f524965df8d792668af4f413ebd3']
         self.defaultTarget = '0.60.5-1'
 
     def setDependencies( self ):
