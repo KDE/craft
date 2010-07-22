@@ -34,7 +34,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
             
-        automoc = os.path.join(os.getenv( "KDEROOT" ), "lib", "automoc4", "Automoc4Config.cmake")
+        automoc = os.path.join(self.mergeDestinationDir(), "lib", "automoc4", "Automoc4Config.cmake")
         if not os.path.exists(automoc):
             print("<%s>") % automoc
             utils.die("could not found automoc")

@@ -66,7 +66,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
             
-        automoc = os.path.join(os.getenv( "KDEROOT" ), "lib", "automoc4", "Automoc4Config.cmake")
+        automoc = os.path.join(self.mergeDestinationDir(), "lib", "automoc4", "Automoc4Config.cmake")
         if not os.path.exists(automoc):
             print("<%s>") % automoc
             utils.die("could not found automoc")
