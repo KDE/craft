@@ -29,7 +29,8 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
-        self.patchToApply['gitHEAD'] = ('dbus-scopes.diff', 1)
+        if not platform.isCrossCompilingEnabled()
+            self.patchToApply['gitHEAD'] = ('dbus-scopes.diff', 1)
 
         self.defaultTarget = 'gitHEAD'
         self.options.package.version = '1.3.1-1'
