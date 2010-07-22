@@ -19,7 +19,18 @@ def __import__( module ):
         sys.path.append( os.path.dirname( module ) )
         fileHdl = open( module )
         modulename = os.path.basename( module ).replace('.py', '')
-        return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
+
+        suff_index = None
+        for suff in imp.get_suffixes():
+            if suff[0] == ".py":
+                suff_index = suff
+                break
+
+        if suff_index is None:
+            utils.die("no .py suffix found")
+
+        return imp.load_module( modulename.replace('.', '_'), 
+            fileHdl, module, suff_index )
 
 def rootDir():
     portageroot = os.getenv("EMERGE_PORTAGE_ROOT")
