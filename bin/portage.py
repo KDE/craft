@@ -481,3 +481,49 @@ def remInstalled( category, package, version, buildType='' ):
         os.rename( tmpdbfile, dbfile )
     return found
 
+def getPackagesCategories(packageName, defaultCategory = None):
+
+    if defaultCategory is None:
+        if "EMERGE_DEFAULTCATEGORY" in os.environ:
+            defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
+        else:
+            defaultCategory = "kde"
+
+    packageList, categoryList = [], []
+
+    if len( packageName.split( "/" ) ) == 1:
+        if PortageInstance.isCategory( packageName ):
+            utils.debug( "isCategory=True", 2 )
+            packageList = PortageInstance.getAllPackages( packageName )
+            categoryList = [ packageName ] * len(packageList)
+        else:
+        
+            if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
+                # prefer the default category
+                packageList = [ packageName ]
+                categoryList = [ defaultCategory ]
+            else:
+                if PortageInstance.getCategory( packageName ):
+                    packageList = [ packageName ]
+                    categoryList = [ PortageInstance.getCategory( packageName ) ]
+                else:
+                    utils.warning( "unknown category or package: %s" % packageName )
+    elif len( packageName.split( "/" ) ) == 2:
+        [ cat, pac ] = packageName.split( "/" )
+        validPackage = False
+        if PortageInstance.isCategory( cat ):
+            categoryList = [ cat ]
+        else:
+            utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
+        if len( categoryList ) > 0 and PortageInstance.isPackage( categoryList[0], pac ):
+            packageList = [ pac ]
+        if len( categoryList ) and len( packageList ):
+            utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
+        else:
+            utils.debug( "ignoring package %s" % packageName )
+    else:
+        utils.error( "unknown packageName" )
+
+    return packageList, categoryList
+
+
