@@ -75,12 +75,11 @@ class GitSource ( VersionSystemSourceBase ):
     def applyPatches(self):
         """apply patches to git repository"""
         utils.debug( "GitSource.applyPatches called", 2 )
-
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             ( file, patchdepth ) = self.subinfo.patchesToApply()
             if file:
                 patchfile = os.path.join ( self.packageDir(), file )
-                return self.shell.execute( self.sourceDir(), "git", "checkout -f" )
+                self.shell.execute( self.sourceDir(), "git", "checkout -f" )
                 return self.shell.execute( self.sourceDir(), "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)) )
         return True
 
