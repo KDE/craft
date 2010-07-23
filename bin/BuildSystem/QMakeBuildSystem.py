@@ -15,7 +15,7 @@ class QMakeBuildSystem(BuildSystemBase):
     def __init__( self):
         BuildSystemBase.__init__(self,"qmake")
         self.platform = ""
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
             self.platform = "win32-%s" % self.compiler()
         elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             self.platform = "win32-g++"

@@ -40,6 +40,9 @@ def isMSVC():
 def isMSVC2008():
     return COMPILER == "msvc2008"
 
+def isMSVC2010():
+   return COMPILER == "msvc2010"
+   
 def isMSVC2005():
     return COMPILER == "msvc2005"
 

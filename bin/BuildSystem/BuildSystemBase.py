@@ -24,7 +24,7 @@ class BuildSystemBase(EmergeBase):
         if self.compiler() == "mingw4":
             self.envPath = "mingw4/bin"
 
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
             self.makeProgramm = "nmake /NOLOGO"
         elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             if self.buildArchitecture() == "x64":

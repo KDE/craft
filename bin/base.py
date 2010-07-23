@@ -134,6 +134,8 @@ class baseclass:
             self.compiler = "msvc2005"
         elif COMPILER == "msvc2008":
             self.compiler = "msvc2008"
+        elif COMPILER == "msvc2010":
+            self.compiler = "msvc2010"
         elif COMPILER == "mingw":
             self.compiler = "mingw"
         elif COMPILER == "mingw4":
@@ -354,7 +356,7 @@ class baseclass:
         self.cmakeInstallPrefix = ROOTDIR.replace( "\\", "/" )
         utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix )
 
-        if COMPILER == "msvc2005" or COMPILER == "msvc2008":
+        if COMPILER == "msvc2005" or COMPILER == "msvc2008" or COMPILER == "msvc2010":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
         elif COMPILER == "mingw" or COMPILER == "mingw4":

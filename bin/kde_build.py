@@ -36,7 +36,7 @@ class kde_interface:
         """ """
         self.subinfo = infoobject
 
-        if self.COMPILER   == "msvc2005" or self.COMPILER == "msvc2008":
+        if self.COMPILER   == "msvc2005" or self.COMPILER == "msvc2008" or self.COMPILER == "msvc2010":
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm      = "nmake"
         elif self.COMPILER == "mingw" or self.COMPILER == "mingw4":

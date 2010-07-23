@@ -30,7 +30,7 @@ class CMakeBuildSystem(BuildSystemBase):
                     return "Visual Studio 9 2008"            
             else:
                 return "NMake Makefiles"
-        elif self.compiler() == "msvc2005":                
+        elif self.compiler() == "msvc2005" or self.compiler() == "msvc2010":                
             return "NMake Makefiles"
         elif self.compiler() == "mingw" or self.compiler() == "mingw4":
             return "MinGW Makefiles"
