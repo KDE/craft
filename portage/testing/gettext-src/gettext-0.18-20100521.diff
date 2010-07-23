@@ -191,7 +191,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-
 diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
 --- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	Thu Jan  1 00:00:00 1970
 +++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	Fri May 28 12:26:45 2010
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,161 @@
 +include(CheckFunctionExists)
 +include(CheckIncludeFile)
 +include(CheckTypeSize)
@@ -321,14 +321,23 @@ diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/g
 +CHECK_TYPE_SIZE("wchar_t" BITSIZEOF_WCHAR_T)
 +CHECK_TYPE_SIZE("wint_t" BITSIZEOF_WINT_T)
 +
++CHECK_TYPE_SIZE("intmax_t" INTMAX_T)
++
++CHECK_TYPE_SIZE("uintmax_t" UINTMAX_T)
++if(HAVE_UINTMAX_T)
++set(HAVE_STDINT_H_WITH_UINTMAX true)
++endif(HAVE_UINTMAX_T)
++
 +if(ICONV_SECOND_ARGUMENT_IS_CONST)
 +    set(ICONV_CONST const)
 +endif(ICONV_SECOND_ARGUMENT_IS_CONST)
 +
-+if(MSVC)
++if(NOT HAVE_UINTMAX_T)
 +    set(uintmax_t "unsigned __int64")
++endif(NOT HAVE_UINTMAX_T)
++if(NOT HAVE_INTMAX_T)
 +    set(intmax_t "__int64")
-+endif(MSVC)
++endif(NOT HAVE_INTMAX_T)
 +
 +if(WINCE)
 +    set(INTDIV0_RAISES_SIGFPE 1)
@@ -666,14 +675,14 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#cmakedefine HAVE_ICONV_H 1
 +
 +/* Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>. */
-+#cmakedefine HAVE_INTMAX_T
++#cmakedefine HAVE_INTMAX_T 1
 +
 +/* Define to 1 if you have the <inttypes.h> header file. */
 +#cmakedefine HAVE_INTTYPES_H 1
 +
 +/* Define if <inttypes.h> exists, doesn't clash with <sys/types.h>, and
 +   declares uintmax_t. */
-+#cmakedefine HAVE_INTTYPES_H_WITH_UINTMAX
++#cmakedefine HAVE_INTTYPES_H_WITH_UINTMAX 1
 +
 +/* Define to 1 if you have the `iswblank' function. */
 +#cmakedefine HAVE_ISWBLANK 1
@@ -1168,7 +1177,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +
 +/* Define if <stdint.h> exists, doesn't clash with <sys/types.h>, and declares
 +   uintmax_t. */
-+#cmakedefine HAVE_STDINT_H_WITH_UINTMAX
++#cmakedefine HAVE_STDINT_H_WITH_UINTMAX 1
 +
 +/* Define to 1 if you have the <stdio.h> header file. */
 +#cmakedefine HAVE_STDIO_H 1

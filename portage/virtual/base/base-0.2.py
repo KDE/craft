@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
                 self.hardDependencies['dev-util/mingw4']    = 'default'
-        if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
+        if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005" or os.getenv( "KDECOMPILER" ) == "msvc2010") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
             self.hardDependencies['dev-util/jom']        = 'default'
                 
     def setBuildOptions( self ):

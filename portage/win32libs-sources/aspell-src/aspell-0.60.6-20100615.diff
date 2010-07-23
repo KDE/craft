@@ -426,7 +426,7 @@ diff -Nru aspell-0.60.6.orig/common/document_checker.hpp aspell-0.60.6/common/do
    private:
      CopyPtr<Filter> filter_;
      CopyPtr<Tokenizer> tokenizer_;
-+#ifdef _MSC_VER
++#if _MSC_VER < 1600
 +    template class ASPELL_EXPORT CopyPtr<Tokenizer>;
 +#endif
      void (* status_fun_)(void *, Token, int);

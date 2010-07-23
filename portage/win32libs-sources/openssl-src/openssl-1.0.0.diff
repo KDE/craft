@@ -75,8 +75,18 @@ diff -Nru openssl-1.0.0.orig/crypto/rand/randfile.c openssl-1.0.0/crypto/rand/ra
  #define BUFSIZE	1024
 diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
 --- openssl-1.0.0.orig/e_os.h	2009-08-26 17:13:43.000000000 +0200
-+++ openssl-1.0.0/e_os.h	2010-05-02 16:36:22.767464200 +0200
-@@ -272,7 +272,7 @@
++++ openssl-1.0.0/e_os.h	2010-07-18 16:16:22.093517500 +0200
+@@ -150,7 +150,9 @@
+ #define clear_socket_error()	WSASetLastError(0)
+ #define readsocket(s,b,n)	recv((s),(b),(n),0)
+ #define writesocket(s,b,n)	send((s),(b),(n),0)
++#if _MSC_VER < 1600
+ #define EADDRINUSE		WSAEADDRINUSE
++#endif
+ #elif defined(__DJGPP__)
+ #define WATT32
+ #define get_last_socket_error()	errno
+@@ -272,7 +274,7 @@
  	*/
  #      define _WIN32_WINNT 0x0400
  #    endif
@@ -85,7 +95,7 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
         /*
          * Just like defining _WIN32_WINNT including winsock2.h implies
          * certain "discipline" for maintaining [broad] binary compatibility.
-@@ -308,7 +308,7 @@
+@@ -308,7 +310,7 @@
  #      undef isupper
  #      undef isxdigit
  #    endif
@@ -94,7 +104,7 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
  #      if _MSC_VER>=1300
  #        undef stdin
  #        undef stdout
-@@ -337,7 +337,7 @@
+@@ -337,7 +339,7 @@
  #  include <io.h>
  #  include <fcntl.h>
  
@@ -103,7 +113,7 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
  #    define OPENSSL_NO_POSIX_IO
  #  endif
  
-@@ -499,7 +499,8 @@
+@@ -499,7 +501,8 @@
  #      endif
  #      if !defined(IPPROTO_IP)
           /* winsock[2].h was included already? */

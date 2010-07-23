@@ -39,7 +39,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
         self.patchToApply['v4.7.0-beta2'] = ('qt-4.7.0.patch', 1)
         
-        if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
+        if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
             self.defaultTarget = '4.7'
         else:
             self.defaultTarget = '4.6.3'
@@ -183,7 +183,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
         
         # install msvc debug files if available
-        if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008"):
+        if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010"):
             srcdir = os.path.join( self.buildDir(), "lib" )
             destdir = os.path.join( self.installDir(), "lib" )
 

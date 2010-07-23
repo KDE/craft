@@ -35,14 +35,17 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = ""
         if self.compiler() == "mingw":
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
         elif self.compiler() == "mingw4":
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MinGW 4.4.0\" "
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 4.4.0\" "
         elif self.compiler() == "msvc2005":
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
         elif self.compiler() == "msvc2008":
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+        elif self.compiler() == "msvc2010":
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2010\" "
           
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
