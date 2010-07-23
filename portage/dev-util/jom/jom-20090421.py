@@ -10,32 +10,17 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'
-        self.targetInstSrc['HEAD'] = 'jom'
+        self.targetInstallPath['HEAD'] = "bin"
         self.defaultTarget = 'HEAD'
-        
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instdestdir = "dev-utils"
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return base.baseclass.unpack( self )
-
-    def install(self):
-        res = base.baseclass.install( self )
-        srcdir = os.path.join( self.workdir, "jom.exe" )
-        destdir = os.path.join( self.imagedir, "bin" )
-        if not os.path.exists( self.imagedir ):
-            os.mkdir( self.imagedir )
-        if not os.path.exists( destdir ):
-            os.mkdir( destdir )
-        shutil.copy( srcdir, os.path.join( destdir, "jom.exe" ) )
-        return res
+        self.subinfo.options.merge.ignoreBuildType = True
+        self.subinfo.options.merge.destinationPath = "dev-utils"
+        BinaryPackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
