@@ -22,6 +22,7 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
 
     def install(self):
+        utils.applyPatch( self.imageDir(), os.path.join( self.packageDir(), "gcc_Exit.diff"), 1 )
         shutil.copy(os.path.join( self.installDir() , "mingw64" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw64" , "bin" , "mingw32-make.exe") )
         return True
 

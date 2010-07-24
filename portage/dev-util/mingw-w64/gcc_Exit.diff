@@ -1,11 +1,14 @@
---- mingw64/include/c++/4.4.4/cstdlib.orig	Tue Apr 20 20:10:57 2010
-+++ mingw64/include/c++/4.4.4/cstdlib	Tue Apr 20 20:14:34 2010
+diff -Nru mingw32/include/c++/4.4.5/cstdlib mingw/include/c++/4.4.5/cstdlib
+--- a/mingw64/include/c++/4.4.5/cstdlib   2010-07-11 17:26:46.000000000 +0200
++++ b/mingw64/include/c++/4.4.5/cstdlib     2010-07-23 14:06:32.554310500 +0200
 @@ -154,6 +154,8 @@
  #undef strtof
  #undef strtold
- 
-+extern "C" void (_Exit)(int);
+
++  extern "C" void (_Exit)(int);
 +
  _GLIBCXX_BEGIN_NAMESPACE(__gnu_cxx)
- 
+
  #if !_GLIBCXX_USE_C99_LONG_LONG_DYNAMIC
+
+ 
