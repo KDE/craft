@@ -15,9 +15,11 @@ class Package(BinaryPackageBase):
     def __init__(self):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.package.version = '9.0.21022.8'
-        if os.getenv( "KDECOMPILER" ) <> "msvc2008":
-            utils.die("this package is currently indented only for msvc 2008 compilers")
+        if COMPILER == "msvc2008":
+            self.subinfo.options.package.version = '9.0.21022.8'
+        elif COMPILER == "mingw4":
+            self.subinfo.options.package.version = '4.4.0'
+        
 
     def fetch(self):
         return True
@@ -26,8 +28,18 @@ class Package(BinaryPackageBase):
         destdir = os.path.join(self.installDir(),"bin")
         utils.createDir(self.workDir())
         utils.createDir(destdir)
-        for file in [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll"]:
-            utils.copyFile(os.path.join(self.packageDir(),file), os.path.join(destdir,file))
+        if COMPILER == "msvc2008":
+            srcdir = self.packageDir()
+            files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll"]
+        elif COMPILER == "mingw4":
+            srcdir = os.path.join(self.rootdir,"mingw","bin")
+            files = ['mingwm10.dll','libgcc_s_dw2-1.dll']
+        
+        # todo do other compiler mingw_w32,  mingw_w64 need similar runtime files ? 
+
+        for file in files:
+            utils.copyFile(os.path.join(srcdir,file), os.path.join(destdir,file))
+            
         return True
 
 if __name__ == '__main__':
