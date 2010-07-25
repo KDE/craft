@@ -331,8 +331,8 @@ diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
 +#endif
 +#endif
 diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
---- cyrus-sasl-2.1.22.orig/include/gai.h	Mon Apr 10 13:36:20 2006
-+++ cyrus-sasl-2.1.22/include/gai.h	Mon Jul  5 16:13:29 2010
+--- cyrus-sasl-2.1.22.orig/include/gai.h	2006-04-10 15:36:20.000000000 +0200
++++ cyrus-sasl-2.1.22/include/gai.h	2010-07-25 20:43:51.977312400 +0200
 @@ -54,6 +54,8 @@
  #ifndef _GAI_H_
  #define _GAI_H_
@@ -342,7 +342,22 @@ diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
  #ifndef NI_MAXHOST
  #define	NI_MAXHOST	1025
  #endif
-@@ -90,15 +92,15 @@
+@@ -73,6 +75,7 @@
+ #ifndef AI_PASSIVE
+ #define AI_PASSIVE	1
+ #define AI_CANONNAME	2
++#if _MSC_VER < 1600
+ struct addrinfo {
+ 	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
+ 	int	ai_family;	/* PF_xxx */
+@@ -84,21 +87,22 @@
+ 	struct addrinfo *ai_next;	/* next structure in linked list */
+ };
+ #endif
++#endif
+ 
+ #ifdef __cplusplus
+ extern "C" {
  #endif
  
  #ifndef HAVE_GETNAMEINFO
