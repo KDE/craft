@@ -1,6 +1,6 @@
-diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake fontconfig-2.4.2/cmake/modules/FindFreetype.cmake
---- fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindFreetype.cmake	2008-02-10 16:34:13.625000000 +0100
+diff -Nru fontconfig-2.8.0.orig/cmake/modules/FindFreetype.cmake fontconfig-2.8.0/cmake/modules/FindFreetype.cmake
+--- fontconfig-2.8.0.orig/cmake/modules/FindFreetype.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/cmake/modules/FindFreetype.cmake	2010-07-25 20:29:22.913030400 +0200
 @@ -0,0 +1,73 @@
 +# - Try to find the freetype library
 +# Once done this will define
@@ -75,9 +75,9 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindFreetype.cmake fontconfig-
 +  ENDIF (FREETYPE_FOUND)
 +
 +endif (FREETYPE_LIBRARIES AND FREETYPE_INCLUDE_DIR)
-diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake
---- fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindKDEWIN.cmake	2008-02-10 16:34:13.640625000 +0100
+diff -Nru fontconfig-2.8.0.orig/cmake/modules/FindKDEWIN.cmake fontconfig-2.8.0/cmake/modules/FindKDEWIN.cmake
+--- fontconfig-2.8.0.orig/cmake/modules/FindKDEWIN.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/cmake/modules/FindKDEWIN.cmake	2010-07-25 20:29:22.923030900 +0200
 @@ -0,0 +1,64 @@
 +# - Try to find the directory in which the kdewin32 library and other win32 related libraries lives
 +# 
@@ -143,9 +143,9 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN.cmake fontconfig-2.
 +   endif(KDEWIN_DIR)
 +  
 +endif (WIN32)
-diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake
---- fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindKDEWIN32.cmake	2008-02-10 16:34:13.687500000 +0100
+diff -Nru fontconfig-2.8.0.orig/cmake/modules/FindKDEWIN32.cmake fontconfig-2.8.0/cmake/modules/FindKDEWIN32.cmake
+--- fontconfig-2.8.0.orig/cmake/modules/FindKDEWIN32.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/cmake/modules/FindKDEWIN32.cmake	2010-07-25 20:29:22.934031600 +0200
 @@ -0,0 +1,74 @@
 +# - Try to find the KDEWIN32 library
 +# 
@@ -221,9 +221,9 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindKDEWIN32.cmake fontconfig-
 +    endif (KDEWIN32_FIND_REQUIRED)
 +  endif (KDEWIN32_FOUND)
 +endif (WIN32)
-diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake
---- fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindLibraryWithDebug.cmake	2008-02-10 16:34:14.000000000 +0100
+diff -Nru fontconfig-2.8.0.orig/cmake/modules/FindLibraryWithDebug.cmake fontconfig-2.8.0/cmake/modules/FindLibraryWithDebug.cmake
+--- fontconfig-2.8.0.orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/cmake/modules/FindLibraryWithDebug.cmake	2010-07-25 20:29:22.951032500 +0200
 @@ -0,0 +1,113 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -338,9 +338,9 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibraryWithDebug.cmake fon
 +  ENDIF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
 +
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
-diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake
---- fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/cmake/modules/FindLibXml2.cmake	2008-02-10 16:34:14.015625000 +0100
+diff -Nru fontconfig-2.8.0.orig/cmake/modules/FindLibXml2.cmake fontconfig-2.8.0/cmake/modules/FindLibXml2.cmake
+--- fontconfig-2.8.0.orig/cmake/modules/FindLibXml2.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/cmake/modules/FindLibXml2.cmake	2010-07-25 20:29:22.961033100 +0200
 @@ -0,0 +1,62 @@
 +# - Try to find LibXml2
 +# Once done this will define
@@ -404,9 +404,9 @@ diff -N -r -u fontconfig-2.4.2-orig/cmake/modules/FindLibXml2.cmake fontconfig-2
 +
 +MARK_AS_ADVANCED(LIBXML2_INCLUDE_DIR LIBXML2_LIBRARIES)
 +
-diff -N -r -u fontconfig-2.4.2-orig/CMakeLists.txt fontconfig-2.4.2/CMakeLists.txt
---- fontconfig-2.4.2-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/CMakeLists.txt	2008-02-10 16:34:14.015625000 +0100
+diff -Nru fontconfig-2.8.0.orig/CMakeLists.txt fontconfig-2.8.0/CMakeLists.txt
+--- fontconfig-2.8.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/CMakeLists.txt	2010-07-25 20:29:22.970033600 +0200
 @@ -0,0 +1,43 @@
 +project( fontconfig )
 +set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
@@ -451,171 +451,17 @@ diff -N -r -u fontconfig-2.4.2-orig/CMakeLists.txt fontconfig-2.4.2/CMakeLists.t
 +add_subdirectory( doc )
 +add_subdirectory( test )
 +
-diff -N -r -u fontconfig-2.4.2-orig/conf.d/CMakeLists.txt fontconfig-2.4.2/conf.d/CMakeLists.txt
---- fontconfig-2.4.2-orig/conf.d/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/conf.d/CMakeLists.txt	2008-02-10 16:34:14.031250000 +0100
+diff -Nru fontconfig-2.8.0.orig/conf.d/CMakeLists.txt fontconfig-2.8.0/conf.d/CMakeLists.txt
+--- fontconfig-2.8.0.orig/conf.d/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/conf.d/CMakeLists.txt	2010-07-25 20:29:22.978034100 +0200
 @@ -0,0 +1,3 @@
 +file( GLOB conf_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.conf" )
 +install( FILES README ${conf_files} DESTINATION etc/fonts/conf.d )
 +install( FILES README ${conf_files} DESTINATION etc/fonts/conf.avail )
 \ No newline at end of file
-diff -N -r -u fontconfig-2.4.2-orig/fonts.conf.cmake fontconfig-2.4.2/fonts.conf.cmake
---- fontconfig-2.4.2-orig/fonts.conf.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fonts.conf.cmake	2008-02-10 16:34:14.078125000 +0100
-@@ -0,0 +1,150 @@
-+<?xml version="1.0"?>
-+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-+<!-- /etc/fonts/fonts.conf file to configure system font access -->
-+<fontconfig>
-+
-+<!--
-+	DO NOT EDIT THIS FILE.
-+	IT WILL BE REPLACED WHEN FONTCONFIG IS UPDATED.
-+	LOCAL CHANGES BELONG IN 'local.conf'.
-+
-+	The intent of this standard configuration file is to be adequate for
-+	most environments.  If you have a reasonably normal environment and
-+	have found problems with this configuration, they are probably
-+	things that others will also want fixed.  Please submit any
-+	problems to the fontconfig bugzilla system located at fontconfig.org
-+
-+	Note that the normal 'make install' procedure for fontconfig is to
-+	replace any existing fonts.conf file with the new version.  Place
-+	any local customizations in local.conf which this file references.
-+
-+	Keith Packard
-+-->
-+
-+<!-- Font directory list -->
-+
-+	<dir>@FC_DEFAULT_FONTS@</dir>
-+	@FC_FONTPATH@
-+	<dir>~/.fonts</dir>
-+
-+<!-- Font cache directory list -->
-+
-+	<cachedir>@FC_CACHEDIR@</cachedir>
-+	<cachedir>~/.fontconfig</cachedir>
-+
-+<!--
-+  Accept deprecated 'mono' alias, replacing it with 'monospace'
-+-->
-+	<match target="pattern">
-+		<test qual="any" name="family">
-+			<string>mono</string>
-+		</test>
-+		<edit name="family" mode="assign">
-+			<string>monospace</string>
-+		</edit>
-+	</match>
-+
-+<!--
-+  Accept alternate 'sans serif' spelling, replacing it with 'sans-serif'
-+-->
-+	<match target="pattern">
-+		<test qual="any" name="family">
-+			<string>sans serif</string>
-+		</test>
-+		<edit name="family" mode="assign">
-+			<string>sans-serif</string>
-+		</edit>
-+	</match>
-+
-+<!--
-+  Accept deprecated 'sans' alias, replacing it with 'sans-serif'
-+-->
-+	<match target="pattern">
-+		<test qual="any" name="family">
-+			<string>sans</string>
-+		</test>
-+		<edit name="family" mode="assign">
-+			<string>sans-serif</string>
-+		</edit>
-+	</match>
-+
-+<!--
-+  Load local system customization file
-+-->
-+	<include ignore_missing="yes">conf.d</include>
-+
-+	<config>
-+<!--
-+  These are the default Unicode chars that are expected to be blank
-+  in fonts.  All other blank chars are assumed to be broken and
-+  won't appear in the resulting charsets
-+ -->
-+		<blank>
-+			<int>0x0020</int>	<!-- SPACE -->
-+			<int>0x00A0</int>	<!-- NO-BREAK SPACE -->
-+			<int>0x00AD</int>	<!-- SOFT HYPHEN -->
-+			<int>0x034F</int>	<!-- COMBINING GRAPHEME JOINER -->
-+			<int>0x0600</int>	<!-- ARABIC NUMBER SIGN -->
-+			<int>0x0601</int>	<!-- ARABIC SIGN SANAH -->
-+			<int>0x0602</int>	<!-- ARABIC FOOTNOTE MARKER -->
-+			<int>0x0603</int>	<!-- ARABIC SIGN SAFHA -->
-+			<int>0x06DD</int>	<!-- ARABIC END OF AYAH -->
-+			<int>0x070F</int>	<!-- SYRIAC ABBREVIATION MARK -->
-+			<int>0x115F</int>	<!-- HANGUL CHOSEONG FILLER -->
-+			<int>0x1160</int>	<!-- HANGUL JUNGSEONG FILLER -->
-+			<int>0x1680</int>	<!-- OGHAM SPACE MARK -->
-+			<int>0x17B4</int>	<!-- KHMER VOWEL INHERENT AQ -->
-+			<int>0x17B5</int>	<!-- KHMER VOWEL INHERENT AA -->
-+			<int>0x180E</int>	<!-- MONGOLIAN VOWEL SEPARATOR -->
-+			<int>0x2000</int>	<!-- EN QUAD -->
-+			<int>0x2001</int>	<!-- EM QUAD -->
-+			<int>0x2002</int>	<!-- EN SPACE -->
-+			<int>0x2003</int>	<!-- EM SPACE -->
-+			<int>0x2004</int>	<!-- THREE-PER-EM SPACE -->
-+			<int>0x2005</int>	<!-- FOUR-PER-EM SPACE -->
-+			<int>0x2006</int>	<!-- SIX-PER-EM SPACE -->
-+			<int>0x2007</int>	<!-- FIGURE SPACE -->
-+			<int>0x2008</int>	<!-- PUNCTUATION SPACE -->
-+			<int>0x2009</int>	<!-- THIN SPACE -->
-+			<int>0x200A</int>	<!-- HAIR SPACE -->
-+			<int>0x200B</int>	<!-- ZERO WIDTH SPACE -->
-+			<int>0x200C</int>	<!-- ZERO WIDTH NON-JOINER -->
-+			<int>0x200D</int>	<!-- ZERO WIDTH JOINER -->
-+			<int>0x200E</int>	<!-- LEFT-TO-RIGHT MARK -->
-+			<int>0x200F</int>	<!-- RIGHT-TO-LEFT MARK -->
-+			<int>0x2028</int>	<!-- LINE SEPARATOR -->
-+			<int>0x2029</int>	<!-- PARAGRAPH SEPARATOR -->
-+			<int>0x202A</int>	<!-- LEFT-TO-RIGHT EMBEDDING -->
-+			<int>0x202B</int>	<!-- RIGHT-TO-LEFT EMBEDDING -->
-+			<int>0x202C</int>	<!-- POP DIRECTIONAL FORMATTING -->
-+			<int>0x202D</int>	<!-- LEFT-TO-RIGHT OVERRIDE -->
-+			<int>0x202E</int>	<!-- RIGHT-TO-LEFT OVERRIDE -->
-+			<int>0x202F</int>	<!-- NARROW NO-BREAK SPACE -->
-+			<int>0x205F</int>	<!-- MEDIUM MATHEMATICAL SPACE -->
-+			<int>0x2060</int>	<!-- WORD JOINER -->
-+			<int>0x2061</int>	<!-- FUNCTION APPLICATION -->
-+			<int>0x2062</int>	<!-- INVISIBLE TIMES -->
-+			<int>0x2063</int>	<!-- INVISIBLE SEPARATOR -->
-+			<int>0x206A</int>	<!-- INHIBIT SYMMETRIC SWAPPING -->
-+			<int>0x206B</int>	<!-- ACTIVATE SYMMETRIC SWAPPING -->
-+			<int>0x206C</int>	<!-- INHIBIT ARABIC FORM SHAPING -->
-+			<int>0x206D</int>	<!-- ACTIVATE ARABIC FORM SHAPING -->
-+			<int>0x206E</int>	<!-- NATIONAL DIGIT SHAPES -->
-+			<int>0x206F</int>	<!-- NOMINAL DIGIT SHAPES -->
-+			<int>0x3000</int>	<!-- IDEOGRAPHIC SPACE -->
-+			<int>0x3164</int>	<!-- HANGUL FILLER -->
-+			<int>0xFEFF</int>	<!-- ZERO WIDTH NO-BREAK SPACE -->
-+			<int>0xFFA0</int>	<!-- HALFWIDTH HANGUL FILLER -->
-+			<int>0xFFF9</int>	<!-- INTERLINEAR ANNOTATION ANCHOR -->
-+			<int>0xFFFA</int>	<!-- INTERLINEAR ANNOTATION SEPARATOR -->
-+			<int>0xFFFB</int>	<!-- INTERLINEAR ANNOTATION TERMINATOR -->
-+		</blank>
-+ <!--
-+   Rescan configuration every 30 seconds when FcFontSetList is called
-+ -->
-+		<rescan>
-+			<int>30</int>
-+		</rescan>
-+	</config>
-+
-+</fontconfig>
-diff -N -r -u fontconfig-2.4.2-orig/config.h.cmake fontconfig-2.4.2/config.h.cmake
---- fontconfig-2.4.2-orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/config.h.cmake	2008-02-10 16:34:14.078125000 +0100
+diff -Nru fontconfig-2.8.0.orig/config.h.cmake fontconfig-2.8.0/config.h.cmake
+--- fontconfig-2.8.0.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/config.h.cmake	2010-07-25 20:29:22.997035200 +0200
 @@ -0,0 +1,179 @@
 +/* config.h.in.  Generated from configure.in by autoheader.  */
 +
@@ -796,9 +642,9 @@ diff -N -r -u fontconfig-2.4.2-orig/config.h.cmake fontconfig-2.4.2/config.h.cma
 +
 +/* Version number of package */
 +#define VERSION "2.4.2"
-diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/ConfigureChecks.cmake
---- fontconfig-2.4.2-orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/ConfigureChecks.cmake	2008-02-10 16:34:14.203125000 +0100
+diff -Nru fontconfig-2.8.0.orig/ConfigureChecks.cmake fontconfig-2.8.0/ConfigureChecks.cmake
+--- fontconfig-2.8.0.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/ConfigureChecks.cmake	2010-07-25 20:29:23.007035700 +0200
 @@ -0,0 +1,70 @@
 +# Checking Headers and Functions for fontconfig
 +
@@ -870,9 +716,9 @@ diff -N -r -u fontconfig-2.4.2-orig/ConfigureChecks.cmake fontconfig-2.4.2/Confi
 +configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 +configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/fonts.conf.cmake ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf )
 +install( FILES ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf DESTINATION etc/fonts )
-diff -N -r -u fontconfig-2.4.2-orig/doc/CMakeLists.txt fontconfig-2.4.2/doc/CMakeLists.txt
---- fontconfig-2.4.2-orig/doc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/doc/CMakeLists.txt	2008-02-10 16:34:14.359375000 +0100
+diff -Nru fontconfig-2.8.0.orig/doc/CMakeLists.txt fontconfig-2.8.0/doc/CMakeLists.txt
+--- fontconfig-2.8.0.orig/doc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/doc/CMakeLists.txt	2010-07-25 20:29:23.015036200 +0200
 @@ -0,0 +1,16 @@
 +set( sub_dir_name edit-sgml )
 +
@@ -890,9 +736,9 @@ diff -N -r -u fontconfig-2.4.2-orig/doc/CMakeLists.txt fontconfig-2.4.2/doc/CMak
 +install( FILES ${man5_srcs} DESTINATION share/man/man5 )
 +install( FILES ${html_srcs} DESTINATION share/doc/fontconfig )
 +install( FILES fontconfig-devel.pdf fontconfig-user.pdf fontconfig-devel.txt fontconfig-user.txt  fontconfig-user.html DESTINATION share/doc/fontconfig )
-diff -N -r -u fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt fontconfig-2.4.2/fc-arch/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-arch/CMakeLists.txt	2008-02-10 16:34:14.390625000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-arch/CMakeLists.txt fontconfig-2.8.0/fc-arch/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-arch/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-arch/CMakeLists.txt	2010-07-25 20:29:23.023036700 +0200
 @@ -0,0 +1,13 @@
 +set( sub_dir_name fc-arch )
 +
@@ -907,9 +753,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-arch/CMakeLists.txt fontconfig-2.4.2/fc-a
 +add_custom_command( TARGET ${sub_dir_name} POST_BUILD
 +                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} ARGS ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE} 
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
-diff -N -r -u fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt fontconfig-2.4.2/fc-cache/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-cache/CMakeLists.txt	2008-02-10 16:34:14.437500000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-cache/CMakeLists.txt fontconfig-2.8.0/fc-cache/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-cache/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-cache/CMakeLists.txt	2010-07-25 20:29:23.033037200 +0200
 @@ -0,0 +1,15 @@
 +set( sub_dir_name fc-cache )
 +
@@ -927,9 +773,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-cache/CMakeLists.txt fontconfig-2.4.2/fc-
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
 \ No newline at end of file
-diff -N -r -u fontconfig-2.4.2-orig/fc-case/CMakeLists.txt fontconfig-2.4.2/fc-case/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-case/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-case/CMakeLists.txt	2008-02-10 16:34:14.500000000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-case/CMakeLists.txt fontconfig-2.8.0/fc-case/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-case/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-case/CMakeLists.txt	2010-07-25 20:29:23.045037900 +0200
 @@ -0,0 +1,13 @@
 +set( sub_dir_name fc-case )
 +
@@ -944,9 +790,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-case/CMakeLists.txt fontconfig-2.4.2/fc-c
 +add_custom_command( TARGET ${sub_dir_name} POST_BUILD
 +                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} ARGS ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE} 
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
-diff -N -r -u fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt fontconfig-2.4.2/fc-cat/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-cat/CMakeLists.txt	2008-02-10 16:34:14.500000000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-cat/CMakeLists.txt fontconfig-2.8.0/fc-cat/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-cat/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-cat/CMakeLists.txt	2010-07-25 20:29:23.055038500 +0200
 @@ -0,0 +1,14 @@
 +set( sub_dir_name fc-cat )
 +
@@ -963,9 +809,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-cat/CMakeLists.txt fontconfig-2.4.2/fc-ca
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
 \ No newline at end of file
-diff -N -r -u fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt fontconfig-2.4.2/fc-glyphname/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-glyphname/CMakeLists.txt	2008-02-10 16:34:14.531250000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-glyphname/CMakeLists.txt fontconfig-2.8.0/fc-glyphname/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-glyphname/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-glyphname/CMakeLists.txt	2010-07-25 20:29:23.065039100 +0200
 @@ -0,0 +1,13 @@
 +set( sub_dir_name fc-glyphname )
 +
@@ -980,9 +826,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-glyphname/CMakeLists.txt fontconfig-2.4.2
 +add_custom_command( TARGET ${sub_dir_name} POST_BUILD
 +                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} ARGS ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE} 
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} VERBATIM )
-diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-lang/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-lang/CMakeLists.txt	2008-02-10 16:34:14.546875000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-lang/CMakeLists.txt fontconfig-2.8.0/fc-lang/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-lang/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-lang/CMakeLists.txt	2010-07-25 20:29:23.073039500 +0200
 @@ -0,0 +1,16 @@
 +set( sub_dir_name fc-lang )
 +
@@ -1000,9 +846,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-lang/CMakeLists.txt fontconfig-2.4.2/fc-l
 +add_custom_command( TARGET ${sub_dir_name} POST_BUILD
 +                    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${sub_dir_name} -d . ${DATA_FILE} < ${TEMPLATE_FILE} > ${OUTPUT_FILE}
 +                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} VERBATIM )
-diff -N -r -u fontconfig-2.4.2-orig/fc-list/CMakeLists.txt fontconfig-2.4.2/fc-list/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-list/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-list/CMakeLists.txt	2008-02-10 16:34:14.546875000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-list/CMakeLists.txt fontconfig-2.8.0/fc-list/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-list/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-list/CMakeLists.txt	2010-07-25 20:29:23.081040000 +0200
 @@ -0,0 +1,14 @@
 +set( sub_dir_name fc-list )
 +
@@ -1019,9 +865,9 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-list/CMakeLists.txt fontconfig-2.4.2/fc-l
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
 \ No newline at end of file
-diff -N -r -u fontconfig-2.4.2-orig/fc-match/CMakeLists.txt fontconfig-2.4.2/fc-match/CMakeLists.txt
---- fontconfig-2.4.2-orig/fc-match/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fc-match/CMakeLists.txt	2008-02-10 16:34:14.593750000 +0100
+diff -Nru fontconfig-2.8.0.orig/fc-match/CMakeLists.txt fontconfig-2.8.0/fc-match/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fc-match/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fc-match/CMakeLists.txt	2010-07-25 20:29:23.090040500 +0200
 @@ -0,0 +1,14 @@
 +set( sub_dir_name fc-match )
 +
@@ -1038,17 +884,17 @@ diff -N -r -u fontconfig-2.4.2-orig/fc-match/CMakeLists.txt fontconfig-2.4.2/fc-
 +
 +install( TARGETS ${sub_dir_name} DESTINATION bin )
 \ No newline at end of file
-diff -N -r -u fontconfig-2.4.2-orig/fontconfig/CMakeLists.txt fontconfig-2.4.2/fontconfig/CMakeLists.txt
---- fontconfig-2.4.2-orig/fontconfig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/fontconfig/CMakeLists.txt	2008-02-10 16:34:14.625000000 +0100
+diff -Nru fontconfig-2.8.0.orig/fontconfig/CMakeLists.txt fontconfig-2.8.0/fontconfig/CMakeLists.txt
+--- fontconfig-2.8.0.orig/fontconfig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fontconfig/CMakeLists.txt	2010-07-25 20:29:23.098040900 +0200
 @@ -0,0 +1,3 @@
 +# fontconfig
 +
 +install( FILES fcfreetype.h fcprivate.h fontconfig.h DESTINATION include/fontconfig )
 \ No newline at end of file
-diff -N -r -u fontconfig-2.4.2-orig/fontconfig/fcfreetype.h fontconfig-2.4.2/fontconfig/fcfreetype.h
---- fontconfig-2.4.2-orig/fontconfig/fcfreetype.h	2006-12-02 21:31:21.000000000 +0100
-+++ fontconfig-2.4.2/fontconfig/fcfreetype.h	2008-02-10 16:45:34.609375000 +0100
+diff -Nru fontconfig-2.8.0.orig/fontconfig/fcfreetype.h fontconfig-2.8.0/fontconfig/fcfreetype.h
+--- fontconfig-2.8.0.orig/fontconfig/fcfreetype.h	2009-11-16 18:24:52.000000000 +0100
++++ fontconfig-2.8.0/fontconfig/fcfreetype.h	2010-07-25 20:29:23.107041500 +0200
 @@ -27,8 +27,16 @@
  #include <ft2build.h>
  #include FT_FREETYPE_H
@@ -1068,22 +914,20 @@ diff -N -r -u fontconfig-2.4.2-orig/fontconfig/fcfreetype.h fontconfig-2.4.2/fon
  #endif
  
  _FCFUNCPROTOBEGIN
-diff -N -r -u fontconfig-2.4.2-orig/fontconfig/fontconfig.h fontconfig-2.4.2/fontconfig/fontconfig.h
---- fontconfig-2.4.2-orig/fontconfig/fontconfig.h	2006-12-03 00:24:50.000000000 +0100
-+++ fontconfig-2.4.2/fontconfig/fontconfig.h	2008-02-10 16:34:15.265625000 +0100
-@@ -27,17 +27,25 @@
+diff -Nru fontconfig-2.8.0.orig/fontconfig/fontconfig.h fontconfig-2.8.0/fontconfig/fontconfig.h
+--- fontconfig-2.8.0.orig/fontconfig/fontconfig.h	2009-11-19 00:49:23.000000000 +0100
++++ fontconfig-2.8.0/fontconfig/fontconfig.h	2010-07-25 20:29:23.117042000 +0200
+@@ -27,7 +27,9 @@
  
  #include <sys/types.h>
  #include <sys/stat.h>
--#include <unistd.h>
 +#ifdef HAVE_UNISTD_H
-+#include <unistd.h>
+ #include <unistd.h>
 +#endif
  #include <stdarg.h>
  
  #if defined(__GNUC__) && (__GNUC__ >= 4)
- #define FC_ATTRIBUTE_SENTINEL(x) __attribute__((__sentinel__(0)))
- #else
+@@ -36,8 +38,14 @@
  #define FC_ATTRIBUTE_SENTINEL(x)
  #endif
  
@@ -1100,9 +944,163 @@ diff -N -r -u fontconfig-2.4.2-orig/fontconfig/fontconfig.h fontconfig-2.4.2/fon
  #endif
  
  typedef unsigned char	FcChar8;
-diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMakeLists.txt
---- fontconfig-2.4.2-orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/CMakeLists.txt	2008-02-10 16:34:15.562500000 +0100
+diff -Nru fontconfig-2.8.0.orig/fonts.conf.cmake fontconfig-2.8.0/fonts.conf.cmake
+--- fontconfig-2.8.0.orig/fonts.conf.cmake	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/fonts.conf.cmake	2010-07-25 20:29:22.987034600 +0200
+@@ -0,0 +1,150 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<!-- /etc/fonts/fonts.conf file to configure system font access -->
++<fontconfig>
++
++<!--
++	DO NOT EDIT THIS FILE.
++	IT WILL BE REPLACED WHEN FONTCONFIG IS UPDATED.
++	LOCAL CHANGES BELONG IN 'local.conf'.
++
++	The intent of this standard configuration file is to be adequate for
++	most environments.  If you have a reasonably normal environment and
++	have found problems with this configuration, they are probably
++	things that others will also want fixed.  Please submit any
++	problems to the fontconfig bugzilla system located at fontconfig.org
++
++	Note that the normal 'make install' procedure for fontconfig is to
++	replace any existing fonts.conf file with the new version.  Place
++	any local customizations in local.conf which this file references.
++
++	Keith Packard
++-->
++
++<!-- Font directory list -->
++
++	<dir>@FC_DEFAULT_FONTS@</dir>
++	@FC_FONTPATH@
++	<dir>~/.fonts</dir>
++
++<!-- Font cache directory list -->
++
++	<cachedir>@FC_CACHEDIR@</cachedir>
++	<cachedir>~/.fontconfig</cachedir>
++
++<!--
++  Accept deprecated 'mono' alias, replacing it with 'monospace'
++-->
++	<match target="pattern">
++		<test qual="any" name="family">
++			<string>mono</string>
++		</test>
++		<edit name="family" mode="assign">
++			<string>monospace</string>
++		</edit>
++	</match>
++
++<!--
++  Accept alternate 'sans serif' spelling, replacing it with 'sans-serif'
++-->
++	<match target="pattern">
++		<test qual="any" name="family">
++			<string>sans serif</string>
++		</test>
++		<edit name="family" mode="assign">
++			<string>sans-serif</string>
++		</edit>
++	</match>
++
++<!--
++  Accept deprecated 'sans' alias, replacing it with 'sans-serif'
++-->
++	<match target="pattern">
++		<test qual="any" name="family">
++			<string>sans</string>
++		</test>
++		<edit name="family" mode="assign">
++			<string>sans-serif</string>
++		</edit>
++	</match>
++
++<!--
++  Load local system customization file
++-->
++	<include ignore_missing="yes">conf.d</include>
++
++	<config>
++<!--
++  These are the default Unicode chars that are expected to be blank
++  in fonts.  All other blank chars are assumed to be broken and
++  won't appear in the resulting charsets
++ -->
++		<blank>
++			<int>0x0020</int>	<!-- SPACE -->
++			<int>0x00A0</int>	<!-- NO-BREAK SPACE -->
++			<int>0x00AD</int>	<!-- SOFT HYPHEN -->
++			<int>0x034F</int>	<!-- COMBINING GRAPHEME JOINER -->
++			<int>0x0600</int>	<!-- ARABIC NUMBER SIGN -->
++			<int>0x0601</int>	<!-- ARABIC SIGN SANAH -->
++			<int>0x0602</int>	<!-- ARABIC FOOTNOTE MARKER -->
++			<int>0x0603</int>	<!-- ARABIC SIGN SAFHA -->
++			<int>0x06DD</int>	<!-- ARABIC END OF AYAH -->
++			<int>0x070F</int>	<!-- SYRIAC ABBREVIATION MARK -->
++			<int>0x115F</int>	<!-- HANGUL CHOSEONG FILLER -->
++			<int>0x1160</int>	<!-- HANGUL JUNGSEONG FILLER -->
++			<int>0x1680</int>	<!-- OGHAM SPACE MARK -->
++			<int>0x17B4</int>	<!-- KHMER VOWEL INHERENT AQ -->
++			<int>0x17B5</int>	<!-- KHMER VOWEL INHERENT AA -->
++			<int>0x180E</int>	<!-- MONGOLIAN VOWEL SEPARATOR -->
++			<int>0x2000</int>	<!-- EN QUAD -->
++			<int>0x2001</int>	<!-- EM QUAD -->
++			<int>0x2002</int>	<!-- EN SPACE -->
++			<int>0x2003</int>	<!-- EM SPACE -->
++			<int>0x2004</int>	<!-- THREE-PER-EM SPACE -->
++			<int>0x2005</int>	<!-- FOUR-PER-EM SPACE -->
++			<int>0x2006</int>	<!-- SIX-PER-EM SPACE -->
++			<int>0x2007</int>	<!-- FIGURE SPACE -->
++			<int>0x2008</int>	<!-- PUNCTUATION SPACE -->
++			<int>0x2009</int>	<!-- THIN SPACE -->
++			<int>0x200A</int>	<!-- HAIR SPACE -->
++			<int>0x200B</int>	<!-- ZERO WIDTH SPACE -->
++			<int>0x200C</int>	<!-- ZERO WIDTH NON-JOINER -->
++			<int>0x200D</int>	<!-- ZERO WIDTH JOINER -->
++			<int>0x200E</int>	<!-- LEFT-TO-RIGHT MARK -->
++			<int>0x200F</int>	<!-- RIGHT-TO-LEFT MARK -->
++			<int>0x2028</int>	<!-- LINE SEPARATOR -->
++			<int>0x2029</int>	<!-- PARAGRAPH SEPARATOR -->
++			<int>0x202A</int>	<!-- LEFT-TO-RIGHT EMBEDDING -->
++			<int>0x202B</int>	<!-- RIGHT-TO-LEFT EMBEDDING -->
++			<int>0x202C</int>	<!-- POP DIRECTIONAL FORMATTING -->
++			<int>0x202D</int>	<!-- LEFT-TO-RIGHT OVERRIDE -->
++			<int>0x202E</int>	<!-- RIGHT-TO-LEFT OVERRIDE -->
++			<int>0x202F</int>	<!-- NARROW NO-BREAK SPACE -->
++			<int>0x205F</int>	<!-- MEDIUM MATHEMATICAL SPACE -->
++			<int>0x2060</int>	<!-- WORD JOINER -->
++			<int>0x2061</int>	<!-- FUNCTION APPLICATION -->
++			<int>0x2062</int>	<!-- INVISIBLE TIMES -->
++			<int>0x2063</int>	<!-- INVISIBLE SEPARATOR -->
++			<int>0x206A</int>	<!-- INHIBIT SYMMETRIC SWAPPING -->
++			<int>0x206B</int>	<!-- ACTIVATE SYMMETRIC SWAPPING -->
++			<int>0x206C</int>	<!-- INHIBIT ARABIC FORM SHAPING -->
++			<int>0x206D</int>	<!-- ACTIVATE ARABIC FORM SHAPING -->
++			<int>0x206E</int>	<!-- NATIONAL DIGIT SHAPES -->
++			<int>0x206F</int>	<!-- NOMINAL DIGIT SHAPES -->
++			<int>0x3000</int>	<!-- IDEOGRAPHIC SPACE -->
++			<int>0x3164</int>	<!-- HANGUL FILLER -->
++			<int>0xFEFF</int>	<!-- ZERO WIDTH NO-BREAK SPACE -->
++			<int>0xFFA0</int>	<!-- HALFWIDTH HANGUL FILLER -->
++			<int>0xFFF9</int>	<!-- INTERLINEAR ANNOTATION ANCHOR -->
++			<int>0xFFFA</int>	<!-- INTERLINEAR ANNOTATION SEPARATOR -->
++			<int>0xFFFB</int>	<!-- INTERLINEAR ANNOTATION TERMINATOR -->
++		</blank>
++ <!--
++   Rescan configuration every 30 seconds when FcFontSetList is called
++ -->
++		<rescan>
++			<int>30</int>
++		</rescan>
++	</config>
++
++</fontconfig>
+diff -Nru fontconfig-2.8.0.orig/src/CMakeLists.txt fontconfig-2.8.0/src/CMakeLists.txt
+--- fontconfig-2.8.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/src/CMakeLists.txt	2010-07-25 20:29:23.129042700 +0200
 @@ -0,0 +1,48 @@
 +set(sub_dir_name src)
 +
@@ -1152,9 +1150,9 @@ diff -N -r -u fontconfig-2.4.2-orig/src/CMakeLists.txt fontconfig-2.4.2/src/CMak
 +
 +install( TARGETS fontconfig RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
-diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
---- fontconfig-2.4.2-orig/src/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/dirent.c	2008-02-10 16:34:15.828125000 +0100
+diff -Nru fontconfig-2.8.0.orig/src/dirent.c fontconfig-2.8.0/src/dirent.c
+--- fontconfig-2.8.0.orig/src/dirent.c	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/src/dirent.c	2010-07-25 20:29:23.143043500 +0200
 @@ -0,0 +1,157 @@
 +/* ====================================================================
 + * The Apache Software License, Version 1.1
@@ -1313,10 +1311,19 @@ diff -N -r -u fontconfig-2.4.2-orig/src/dirent.c fontconfig-2.4.2/src/dirent.c
 +	result = 0;
 +	return 0;
 +}
-diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
---- fontconfig-2.4.2-orig/src/fccache.c	2006-12-02 22:33:41.000000000 +0100
-+++ fontconfig-2.4.2/src/fccache.c	2008-02-10 16:34:15.875000000 +0100
-@@ -224,6 +224,10 @@
+diff -Nru fontconfig-2.8.0.orig/src/fccache.c fontconfig-2.8.0/src/fccache.c
+--- fontconfig-2.8.0.orig/src/fccache.c	2009-11-16 18:24:52.000000000 +0100
++++ fontconfig-2.8.0/src/fccache.c	2010-07-25 20:29:49.807541900 +0200
+@@ -33,7 +33,7 @@
+ #  include <unistd.h>
+ #  include <sys/mman.h>
+ #elif defined(_WIN32)
+-#  define _WIN32_WINNT 0x0500
++#  define _WIN32_WINNT 0x0502
+ #  include <windows.h>
+ #endif
+ 
+@@ -308,6 +308,10 @@
  #  endif
  # endif
  #endif
@@ -1327,7 +1334,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
  /*
   * Generate a random level number, distributed
   * so that each level is 1/4 as likely as the one before
-@@ -740,7 +744,7 @@
+@@ -859,7 +863,7 @@
      if (!list)
  	return FcFalse;
      while ((test_dir = FcStrListNext (list))) {
@@ -1336,10 +1343,24 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fccache.c fontconfig-2.4.2/src/fccache.c
  	{
  	    cache_dir = test_dir;
  	    break;
-diff -N -r -u fontconfig-2.4.2-orig/src/fcfreetype.c fontconfig-2.4.2/src/fcfreetype.c
---- fontconfig-2.4.2-orig/src/fcfreetype.c	2006-12-02 21:32:15.000000000 +0100
-+++ fontconfig-2.4.2/src/fcfreetype.c	2008-02-10 16:34:15.890625000 +0100
-@@ -1818,7 +1818,7 @@
+diff -Nru fontconfig-2.8.0.orig/src/fcformat.c fontconfig-2.8.0/src/fcformat.c
+--- fontconfig-2.8.0.orig/src/fcformat.c	2009-11-16 18:24:52.000000000 +0100
++++ fontconfig-2.8.0/src/fcformat.c	2010-07-25 20:29:23.214047600 +0200
+@@ -27,6 +27,10 @@
+ #include <string.h>
+ #include <stdarg.h>
+ 
++#ifdef snprintf
++# undef snprintf
++# define snprintf _snprintf
++#endif
+ 
+ /* The language is documented in doc/fcformat.fncs
+  * These are the features implemented:
+diff -Nru fontconfig-2.8.0.orig/src/fcfreetype.c fontconfig-2.8.0/src/fcfreetype.c
+--- fontconfig-2.8.0.orig/src/fcfreetype.c	2009-11-18 15:21:00.000000000 +0100
++++ fontconfig-2.8.0/src/fcfreetype.c	2010-07-25 20:29:23.176045400 +0200
+@@ -1774,7 +1774,7 @@
  #define FT_Get_Next_Char(face, ucs4, gi) ((ucs4) >= 0xffffff ? \
  					  (*(gi) = 0), 0 : \
  					  (*(gi) = 1), (ucs4) + 1)
@@ -1348,9 +1369,9 @@ diff -N -r -u fontconfig-2.4.2-orig/src/fcfreetype.c fontconfig-2.4.2/src/fcfree
  #endif
  
  typedef struct _FcCharEnt {
-diff -N -r -u fontconfig-2.4.2-orig/src/mmap.c fontconfig-2.4.2/src/mmap.c
---- fontconfig-2.4.2-orig/src/mmap.c	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/mmap.c	2008-02-10 16:34:15.906250000 +0100
+diff -Nru fontconfig-2.8.0.orig/src/mmap.c fontconfig-2.8.0/src/mmap.c
+--- fontconfig-2.8.0.orig/src/mmap.c	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/src/mmap.c	2010-07-25 20:29:23.192046300 +0200
 @@ -0,0 +1,208 @@
 +/*
 +   This file is part of the KDE libraries
@@ -1560,9 +1581,9 @@ diff -N -r -u fontconfig-2.4.2-orig/src/mmap.c fontconfig-2.4.2/src/mmap.c
 +    
 +    return 0;
 +}
-diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
---- fontconfig-2.4.2-orig/src/unistd.c	1970-01-01 01:00:00.000000000 +0100
-+++ fontconfig-2.4.2/src/unistd.c	2008-02-10 16:34:15.953125000 +0100
+diff -Nru fontconfig-2.8.0.orig/src/unistd.c fontconfig-2.8.0/src/unistd.c
+--- fontconfig-2.8.0.orig/src/unistd.c	1970-01-01 01:00:00.000000000 +0100
++++ fontconfig-2.8.0/src/unistd.c	2010-07-25 20:29:23.203047000 +0200
 @@ -0,0 +1,506 @@
 +/* This file is part of the KDE project
 +   Copyright (C) 2003-2004 Jaroslaw Staniek <js@iidea.pl>
@@ -1583,7 +1604,7 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +   Boston, MA 02110-1301, USA.
 +*/
 +
-+#define _WIN32_WINNT 0x0500
++#define _WIN32_WINNT 0x0502
 +#include <winsock2.h>
 +#include <windows.h>
 +
@@ -2070,16 +2091,3 @@ diff -N -r -u fontconfig-2.4.2-orig/src/unistd.c fontconfig-2.4.2/src/unistd.c
 +}
 +#endif  // __MINGW32__
 +
---- fontconfig-2.7.3\src\fcformat.c.orig	2009-07-22 14:12:30.000000000 +0200
-+++ fontconfig-2.7.3\src\fcformat.c	2009-11-14 22:36:52.843750000 +0100
-@@ -27,6 +27,10 @@
- #include <string.h>
- #include <stdarg.h>
- 
-+#ifdef snprintf
-+# undef snprintf
-+# define snprintf _snprintf
-+#endif
- 
- /* The language is documented in doc/fcformat.fncs
-  * These are the features implemented:
