@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
             self.targets[ ver ] = self.getPackage( repoUrl, "exiv2", ver )
 
         ## @todo url's returned from self.getPackage are compiler specific, hard coded digests does not work yet
-        self.targetDigests['0.19'] = ['c253b2b463fe62cc552028b26a21ed4bad6096bf',
-                                      '7d6b5c2003e32c980b7bb64dfd8dd9942a46e5e6']
+        #self.targetDigests['0.19'] = ['c253b2b463fe62cc552028b26a21ed4bad6096bf',
+        #                              '7d6b5c2003e32c980b7bb64dfd8dd9942a46e5e6']
         self.defaultTarget = '0.19'
 
     def setDependencies( self ):
