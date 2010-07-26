@@ -1,6 +1,6 @@
 diff -Nru aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake aspell-0.60.6/cmake/modules/FindWcecompat.cmake
 --- aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/cmake/modules/FindWcecompat.cmake	2010-06-16 13:54:43.749942400 +0200
++++ aspell-0.60.6/cmake/modules/FindWcecompat.cmake	2010-07-26 10:33:21.280819200 +0200
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -37,8 +37,8 @@ diff -Nru aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake aspell-0.60.6/cma
 +
 diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 --- aspell-0.60.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/CMakeLists.txt	2010-06-16 13:54:43.762943100 +0200
-@@ -0,0 +1,168 @@
++++ aspell-0.60.6/CMakeLists.txt	2010-07-26 10:35:49.741627700 +0200
+@@ -0,0 +1,167 @@
 +project(aspell)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -158,7 +158,6 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +  lib/speller-c.cpp
 +  lib/string_pair_enumeration-c.cpp
 +  lib/new_checker.cpp
-+  symbols.def
 +)
 +
 +if(COMPILE_IN_FILTERS)
@@ -209,7 +208,7 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/cc/aspell.h DESTINATION include/pspell) 
 diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_export.h
 --- aspell-0.60.6.orig/common/aspell_export.h	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/common/aspell_export.h	2010-06-16 13:55:22.942184100 +0200
++++ aspell-0.60.6/common/aspell_export.h	2010-07-26 10:33:21.901854700 +0200
 @@ -0,0 +1,22 @@
 +// This file is added to The New Aspell
 +// Copyright (C) 2010 by Patrick Spendrin under the GNU LGPL license
@@ -236,7 +235,7 @@ diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_
 \ No newline at end of file
 diff -Nru aspell-0.60.6.orig/common/cache-t.hpp aspell-0.60.6/common/cache-t.hpp
 --- aspell-0.60.6.orig/common/cache-t.hpp	2004-06-19 08:37:06.000000000 +0200
-+++ aspell-0.60.6/common/cache-t.hpp	2010-06-16 13:54:43.784944400 +0200
++++ aspell-0.60.6/common/cache-t.hpp	2010-07-26 10:33:21.911855300 +0200
 @@ -8,7 +8,7 @@
  
  namespace acommon {
@@ -248,7 +247,7 @@ diff -Nru aspell-0.60.6.orig/common/cache-t.hpp aspell-0.60.6/common/cache-t.hpp
    mutable Mutex lock;
 diff -Nru aspell-0.60.6.orig/common/cache.hpp aspell-0.60.6/common/cache.hpp
 --- aspell-0.60.6.orig/common/cache.hpp	2004-06-19 08:37:06.000000000 +0200
-+++ aspell-0.60.6/common/cache.hpp	2010-06-16 13:54:43.794945000 +0200
++++ aspell-0.60.6/common/cache.hpp	2010-07-26 10:33:21.922855900 +0200
 @@ -2,6 +2,7 @@
  #define ACOMMON_CACHE__HPP
  
@@ -257,7 +256,14 @@ diff -Nru aspell-0.60.6.orig/common/cache.hpp aspell-0.60.6/common/cache.hpp
  
  namespace acommon {
  
-@@ -25,7 +26,7 @@
+@@ -19,13 +20,13 @@
+                                 const typename Data::CacheKey &);
+ 
+ class Cacheable;
+-void release_cache_data(GlobalCacheBase *, const Cacheable *);
++void ASPELL_EXPORT release_cache_data(GlobalCacheBase *, const Cacheable *);
+ static inline void release_cache_data(const GlobalCacheBase * c, const Cacheable * d)
+ {
    release_cache_data(const_cast<GlobalCacheBase *>(c),d);
  }
  
@@ -277,7 +283,7 @@ diff -Nru aspell-0.60.6.orig/common/cache.hpp aspell-0.60.6/common/cache.hpp
  
 diff -Nru aspell-0.60.6.orig/common/can_have_error.hpp aspell-0.60.6/common/can_have_error.hpp
 --- aspell-0.60.6.orig/common/can_have_error.hpp	2002-08-26 23:42:05.000000000 +0200
-+++ aspell-0.60.6/common/can_have_error.hpp	2010-06-16 13:54:43.805945600 +0200
++++ aspell-0.60.6/common/can_have_error.hpp	2010-07-26 10:33:21.933856500 +0200
 @@ -7,6 +7,8 @@
  #ifndef ASPELL_CAN_HAVE_ERROR__HPP
  #define ASPELL_CAN_HAVE_ERROR__HPP
@@ -298,7 +304,7 @@ diff -Nru aspell-0.60.6.orig/common/can_have_error.hpp aspell-0.60.6/common/can_
    CopyPtr<Error> err_;
 diff -Nru aspell-0.60.6.orig/common/config.hpp aspell-0.60.6/common/config.hpp
 --- aspell-0.60.6.orig/common/config.hpp	2004-11-18 03:01:53.000000000 +0100
-+++ aspell-0.60.6/common/config.hpp	2010-06-16 13:54:43.816946200 +0200
++++ aspell-0.60.6/common/config.hpp	2010-07-26 10:33:21.945857200 +0200
 @@ -79,7 +79,7 @@
    // -- setting a list item directly, ie with out a prefix, is the same as 
    //    setting it to a single value
@@ -332,7 +338,7 @@ diff -Nru aspell-0.60.6.orig/common/config.hpp aspell-0.60.6/common/config.hpp
  }
 diff -Nru aspell-0.60.6.orig/common/convert.cpp aspell-0.60.6/common/convert.cpp
 --- aspell-0.60.6.orig/common/convert.cpp	2007-12-03 07:55:45.000000000 +0100
-+++ aspell-0.60.6/common/convert.cpp	2010-06-16 13:54:43.831947100 +0200
++++ aspell-0.60.6/common/convert.cpp	2010-07-26 10:33:21.962858200 +0200
 @@ -24,6 +24,10 @@
  
  #include "gettext.h"
@@ -346,7 +352,7 @@ diff -Nru aspell-0.60.6.orig/common/convert.cpp aspell-0.60.6/common/convert.cpp
    typedef unsigned char  byte;
 diff -Nru aspell-0.60.6.orig/common/convert.hpp aspell-0.60.6/common/convert.hpp
 --- aspell-0.60.6.orig/common/convert.hpp	2004-11-01 21:22:03.000000000 +0100
-+++ aspell-0.60.6/common/convert.hpp	2010-06-16 13:54:43.843947800 +0200
++++ aspell-0.60.6/common/convert.hpp	2010-07-26 10:33:21.978859100 +0200
 @@ -92,7 +92,7 @@
  
    typedef FilterCharVector ConvertBuffer;
@@ -397,7 +403,7 @@ diff -Nru aspell-0.60.6.orig/common/convert.hpp aspell-0.60.6/common/convert.hpp
      MBLen() : encoding(Other) {}
 diff -Nru aspell-0.60.6.orig/common/document_checker.hpp aspell-0.60.6/common/document_checker.hpp
 --- aspell-0.60.6.orig/common/document_checker.hpp	2002-08-10 17:17:06.000000000 +0200
-+++ aspell-0.60.6/common/document_checker.hpp	2010-06-16 13:54:43.854948400 +0200
++++ aspell-0.60.6/common/document_checker.hpp	2010-07-26 10:33:21.989859800 +0200
 @@ -13,12 +13,13 @@
  #include "can_have_error.hpp"
  #include "filter_char.hpp"
@@ -426,7 +432,7 @@ diff -Nru aspell-0.60.6.orig/common/document_checker.hpp aspell-0.60.6/common/do
    private:
      CopyPtr<Filter> filter_;
      CopyPtr<Tokenizer> tokenizer_;
-+#if _MSC_VER < 1600
++#if defined(_MSC_VER) && _MSC_VER < 1600
 +    template class ASPELL_EXPORT CopyPtr<Tokenizer>;
 +#endif
      void (* status_fun_)(void *, Token, int);
@@ -443,7 +449,7 @@ diff -Nru aspell-0.60.6.orig/common/document_checker.hpp aspell-0.60.6/common/do
  
 diff -Nru aspell-0.60.6.orig/common/error.hpp aspell-0.60.6/common/error.hpp
 --- aspell-0.60.6.orig/common/error.hpp	2004-02-21 22:19:36.000000000 +0100
-+++ aspell-0.60.6/common/error.hpp	2010-06-16 13:54:43.865949000 +0200
++++ aspell-0.60.6/common/error.hpp	2010-07-26 10:33:22.000860400 +0200
 @@ -7,11 +7,13 @@
  #ifndef ASPELL_ERROR__HPP
  #define ASPELL_ERROR__HPP
@@ -459,9 +465,194 @@ diff -Nru aspell-0.60.6.orig/common/error.hpp aspell-0.60.6/common/error.hpp
    const char * mesg; // expected to be allocated with malloc
    const ErrorInfo * err;
  
+diff -Nru aspell-0.60.6.orig/common/errors.hpp aspell-0.60.6/common/errors.hpp
+--- aspell-0.60.6.orig/common/errors.hpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/common/errors.hpp	2010-07-26 10:33:22.012861100 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -14,91 +15,91 @@
+ 
+ struct ErrorInfo;
+ 
+-extern "C" const ErrorInfo * const aerror_other;
+-extern "C" const ErrorInfo * const aerror_operation_not_supported;
+-extern "C" const ErrorInfo * const   aerror_cant_copy;
+-extern "C" const ErrorInfo * const   aerror_unimplemented_method;
+-extern "C" const ErrorInfo * const aerror_file;
+-extern "C" const ErrorInfo * const   aerror_cant_open_file;
+-extern "C" const ErrorInfo * const     aerror_cant_read_file;
+-extern "C" const ErrorInfo * const     aerror_cant_write_file;
+-extern "C" const ErrorInfo * const   aerror_invalid_name;
+-extern "C" const ErrorInfo * const   aerror_bad_file_format;
+-extern "C" const ErrorInfo * const aerror_dir;
+-extern "C" const ErrorInfo * const   aerror_cant_read_dir;
+-extern "C" const ErrorInfo * const aerror_config;
+-extern "C" const ErrorInfo * const   aerror_unknown_key;
+-extern "C" const ErrorInfo * const   aerror_cant_change_value;
+-extern "C" const ErrorInfo * const   aerror_bad_key;
+-extern "C" const ErrorInfo * const   aerror_bad_value;
+-extern "C" const ErrorInfo * const   aerror_duplicate;
+-extern "C" const ErrorInfo * const   aerror_key_not_string;
+-extern "C" const ErrorInfo * const   aerror_key_not_int;
+-extern "C" const ErrorInfo * const   aerror_key_not_bool;
+-extern "C" const ErrorInfo * const   aerror_key_not_list;
+-extern "C" const ErrorInfo * const   aerror_no_value_reset;
+-extern "C" const ErrorInfo * const   aerror_no_value_enable;
+-extern "C" const ErrorInfo * const   aerror_no_value_disable;
+-extern "C" const ErrorInfo * const   aerror_no_value_clear;
+-extern "C" const ErrorInfo * const aerror_language_related;
+-extern "C" const ErrorInfo * const   aerror_unknown_language;
+-extern "C" const ErrorInfo * const   aerror_unknown_soundslike;
+-extern "C" const ErrorInfo * const   aerror_language_not_supported;
+-extern "C" const ErrorInfo * const   aerror_no_wordlist_for_lang;
+-extern "C" const ErrorInfo * const   aerror_mismatched_language;
+-extern "C" const ErrorInfo * const aerror_affix;
+-extern "C" const ErrorInfo * const   aerror_corrupt_affix;
+-extern "C" const ErrorInfo * const   aerror_invalid_cond;
+-extern "C" const ErrorInfo * const   aerror_invalid_cond_strip;
+-extern "C" const ErrorInfo * const   aerror_incorrect_encoding;
+-extern "C" const ErrorInfo * const aerror_encoding;
+-extern "C" const ErrorInfo * const   aerror_unknown_encoding;
+-extern "C" const ErrorInfo * const   aerror_encoding_not_supported;
+-extern "C" const ErrorInfo * const   aerror_conversion_not_supported;
+-extern "C" const ErrorInfo * const aerror_pipe;
+-extern "C" const ErrorInfo * const   aerror_cant_create_pipe;
+-extern "C" const ErrorInfo * const   aerror_process_died;
+-extern "C" const ErrorInfo * const aerror_bad_input;
+-extern "C" const ErrorInfo * const   aerror_invalid_string;
+-extern "C" const ErrorInfo * const   aerror_invalid_word;
+-extern "C" const ErrorInfo * const   aerror_invalid_affix;
+-extern "C" const ErrorInfo * const   aerror_inapplicable_affix;
+-extern "C" const ErrorInfo * const   aerror_unknown_unichar;
+-extern "C" const ErrorInfo * const   aerror_word_list_flags;
+-extern "C" const ErrorInfo * const     aerror_invalid_flag;
+-extern "C" const ErrorInfo * const     aerror_conflicting_flags;
+-extern "C" const ErrorInfo * const aerror_version_control;
+-extern "C" const ErrorInfo * const   aerror_bad_version_string;
+-extern "C" const ErrorInfo * const aerror_filter;
+-extern "C" const ErrorInfo * const   aerror_cant_dlopen_file;
+-extern "C" const ErrorInfo * const   aerror_empty_filter;
+-extern "C" const ErrorInfo * const   aerror_no_such_filter;
+-extern "C" const ErrorInfo * const   aerror_confusing_version;
+-extern "C" const ErrorInfo * const   aerror_bad_version;
+-extern "C" const ErrorInfo * const   aerror_identical_option;
+-extern "C" const ErrorInfo * const   aerror_options_only;
+-extern "C" const ErrorInfo * const   aerror_invalid_option_modifier;
+-extern "C" const ErrorInfo * const   aerror_cant_describe_filter;
+-extern "C" const ErrorInfo * const aerror_filter_mode_file;
+-extern "C" const ErrorInfo * const   aerror_mode_option_name;
+-extern "C" const ErrorInfo * const   aerror_no_filter_to_option;
+-extern "C" const ErrorInfo * const   aerror_bad_mode_key;
+-extern "C" const ErrorInfo * const   aerror_expect_mode_key;
+-extern "C" const ErrorInfo * const   aerror_mode_version_requirement;
+-extern "C" const ErrorInfo * const   aerror_confusing_mode_version;
+-extern "C" const ErrorInfo * const   aerror_bad_mode_version;
+-extern "C" const ErrorInfo * const   aerror_missing_magic_expression;
+-extern "C" const ErrorInfo * const   aerror_empty_file_ext;
+-extern "C" const ErrorInfo * const aerror_filter_mode_expand;
+-extern "C" const ErrorInfo * const   aerror_unknown_mode;
+-extern "C" const ErrorInfo * const   aerror_mode_extend_expand;
+-extern "C" const ErrorInfo * const aerror_filter_mode_magic;
+-extern "C" const ErrorInfo * const   aerror_file_magic_pos;
+-extern "C" const ErrorInfo * const   aerror_file_magic_range;
+-extern "C" const ErrorInfo * const   aerror_missing_magic;
+-extern "C" const ErrorInfo * const   aerror_bad_magic;
+-extern "C" const ErrorInfo * const aerror_expression;
+-extern "C" const ErrorInfo * const   aerror_invalid_expression;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_other;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_operation_not_supported;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_copy;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unimplemented_method;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_file;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_open_file;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const     aerror_cant_read_file;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const     aerror_cant_write_file;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_name;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_file_format;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_dir;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_read_dir;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_config;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unknown_key;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_change_value;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_key;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_value;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_duplicate;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_key_not_string;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_key_not_int;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_key_not_bool;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_key_not_list;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_value_reset;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_value_enable;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_value_disable;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_value_clear;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_language_related;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unknown_language;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unknown_soundslike;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_language_not_supported;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_wordlist_for_lang;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_mismatched_language;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_affix;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_corrupt_affix;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_cond;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_cond_strip;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_incorrect_encoding;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_encoding;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unknown_encoding;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_encoding_not_supported;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_conversion_not_supported;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_pipe;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_create_pipe;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_process_died;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_bad_input;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_string;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_word;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_affix;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_inapplicable_affix;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unknown_unichar;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_word_list_flags;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const     aerror_invalid_flag;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const     aerror_conflicting_flags;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_version_control;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_version_string;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_filter;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_dlopen_file;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_empty_filter;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_such_filter;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_confusing_version;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_version;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_identical_option;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_options_only;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_option_modifier;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_cant_describe_filter;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_filter_mode_file;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_mode_option_name;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_no_filter_to_option;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_mode_key;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_expect_mode_key;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_mode_version_requirement;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_confusing_mode_version;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_mode_version;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_missing_magic_expression;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_empty_file_ext;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_filter_mode_expand;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_unknown_mode;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_mode_extend_expand;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_filter_mode_magic;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_file_magic_pos;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_file_magic_range;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_missing_magic;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_bad_magic;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const aerror_expression;
++extern "C" ASPELL_EXPORT  const ErrorInfo * const   aerror_invalid_expression;
+ 
+ 
+ static const ErrorInfo * const other_error = aerror_other;
 diff -Nru aspell-0.60.6.orig/common/file_data_util.hpp aspell-0.60.6/common/file_data_util.hpp
 --- aspell-0.60.6.orig/common/file_data_util.hpp	2004-03-31 13:16:05.000000000 +0200
-+++ aspell-0.60.6/common/file_data_util.hpp	2010-06-16 13:54:43.877949700 +0200
++++ aspell-0.60.6/common/file_data_util.hpp	2010-07-26 10:33:22.023861700 +0200
 @@ -7,11 +7,11 @@
  
  namespace acommon {
@@ -479,7 +670,7 @@ diff -Nru aspell-0.60.6.orig/common/file_data_util.hpp aspell-0.60.6/common/file
                   ParmString preext, ParmString ext);
 diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util.cpp
 --- aspell-0.60.6.orig/common/file_util.cpp	2004-11-15 13:29:53.000000000 +0100
-+++ aspell-0.60.6/common/file_util.cpp	2010-06-16 13:54:43.890950500 +0200
++++ aspell-0.60.6/common/file_util.cpp	2010-07-26 10:33:22.035862400 +0200
 @@ -25,14 +25,12 @@
  #include <dirent.h>
  
@@ -498,7 +689,7 @@ diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util
  
 diff -Nru aspell-0.60.6.orig/common/file_util.hpp aspell-0.60.6/common/file_util.hpp
 --- aspell-0.60.6.orig/common/file_util.hpp	2004-06-17 14:41:33.000000000 +0200
-+++ aspell-0.60.6/common/file_util.hpp	2010-06-16 13:54:43.902951200 +0200
++++ aspell-0.60.6/common/file_util.hpp	2010-07-26 10:33:22.046863000 +0200
 @@ -18,32 +18,32 @@
    class Config;
    class StringList;
@@ -548,7 +739,7 @@ diff -Nru aspell-0.60.6.orig/common/file_util.hpp aspell-0.60.6/common/file_util
      String path;
 diff -Nru aspell-0.60.6.orig/common/filter.hpp aspell-0.60.6/common/filter.hpp
 --- aspell-0.60.6.orig/common/filter.hpp	2004-10-28 02:41:04.000000000 +0200
-+++ aspell-0.60.6/common/filter.hpp	2010-06-16 13:54:43.914951800 +0200
++++ aspell-0.60.6/common/filter.hpp	2010-07-26 10:33:22.060863800 +0200
 @@ -14,6 +14,8 @@
  #include "vector.hpp"
  #include "string_pair_enumeration.hpp"
@@ -604,7 +795,7 @@ diff -Nru aspell-0.60.6.orig/common/filter.hpp aspell-0.60.6/common/filter.hpp
  
 diff -Nru aspell-0.60.6.orig/common/filter_char_vector.hpp aspell-0.60.6/common/filter_char_vector.hpp
 --- aspell-0.60.6.orig/common/filter_char_vector.hpp	2004-02-20 22:24:16.000000000 +0100
-+++ aspell-0.60.6/common/filter_char_vector.hpp	2010-06-16 13:54:43.924952400 +0200
++++ aspell-0.60.6/common/filter_char_vector.hpp	2010-07-26 10:33:22.074864600 +0200
 @@ -12,7 +12,7 @@
  
  namespace acommon {
@@ -616,7 +807,7 @@ diff -Nru aspell-0.60.6.orig/common/filter_char_vector.hpp aspell-0.60.6/common/
    public:
 diff -Nru aspell-0.60.6.orig/common/fstream.hpp aspell-0.60.6/common/fstream.hpp
 --- aspell-0.60.6.orig/common/fstream.hpp	2004-06-17 14:41:35.000000000 +0200
-+++ aspell-0.60.6/common/fstream.hpp	2010-06-16 13:54:43.934953000 +0200
++++ aspell-0.60.6/common/fstream.hpp	2010-07-26 10:33:22.086865300 +0200
 @@ -20,7 +20,7 @@
  namespace acommon {
    class String;
@@ -628,7 +819,7 @@ diff -Nru aspell-0.60.6.orig/common/fstream.hpp aspell-0.60.6/common/fstream.hpp
      FILE * file_;
 diff -Nru aspell-0.60.6.orig/common/getdata.hpp aspell-0.60.6/common/getdata.hpp
 --- aspell-0.60.6.orig/common/getdata.hpp	2004-06-17 14:41:35.000000000 +0200
-+++ aspell-0.60.6/common/getdata.hpp	2010-06-16 13:54:43.945953600 +0200
++++ aspell-0.60.6/common/getdata.hpp	2010-07-26 10:33:22.100866100 +0200
 @@ -26,9 +26,9 @@
      DataPair() : line_num(0) {}
    };
@@ -677,9 +868,26 @@ diff -Nru aspell-0.60.6.orig/common/getdata.hpp aspell-0.60.6/common/getdata.hpp
  
  }
  #endif
+diff -Nru aspell-0.60.6.orig/common/gettext.h aspell-0.60.6/common/gettext.h
+--- aspell-0.60.6.orig/common/gettext.h	2004-11-21 03:52:22.000000000 +0100
++++ aspell-0.60.6/common/gettext.h	2010-07-26 10:33:22.111866700 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Convenience header for conditional use of GNU <libintl.h>.
+    Copyright (C) 1995-1998, 2000-2002 Free Software Foundation, Inc.
+ 
+@@ -92,7 +93,7 @@
+   return str[0] == '\0' ? str : _(str);
+ }
+ 
+-extern "C" void aspell_gettext_init();
++extern "C" ASPELL_EXPORT  void aspell_gettext_init();
+ 
+ /* NOTE: DO NOT USE "gettext", ALWAYS USE "_" BECAUSE WHEN ASPELL IS USED
+    AS A LIBRARY THE DOMAIN IS NOT GUARANTEED TO BE ASPELL */
 diff -Nru aspell-0.60.6.orig/common/indiv_filter.hpp aspell-0.60.6/common/indiv_filter.hpp
 --- aspell-0.60.6.orig/common/indiv_filter.hpp	2004-06-27 06:54:00.000000000 +0200
-+++ aspell-0.60.6/common/indiv_filter.hpp	2010-06-16 13:54:43.956954200 +0200
++++ aspell-0.60.6/common/indiv_filter.hpp	2010-07-26 10:33:22.123867400 +0200
 @@ -17,7 +17,7 @@
  
    class Config;
@@ -700,7 +908,7 @@ diff -Nru aspell-0.60.6.orig/common/indiv_filter.hpp aspell-0.60.6/common/indiv_
      // sets up the filter 
 diff -Nru aspell-0.60.6.orig/common/info.hpp aspell-0.60.6/common/info.hpp
 --- aspell-0.60.6.orig/common/info.hpp	2004-05-30 12:49:17.000000000 +0200
-+++ aspell-0.60.6/common/info.hpp	2010-06-16 13:54:43.969955000 +0200
++++ aspell-0.60.6/common/info.hpp	2010-07-26 10:33:22.134868000 +0200
 @@ -34,7 +34,7 @@
      StringList * dict_dirs;
    };
@@ -759,7 +967,7 @@ diff -Nru aspell-0.60.6.orig/common/info.hpp aspell-0.60.6/common/info.hpp
      DictInfoEnumeration(const DictInfoNode * n) : node_(n) {}
 diff -Nru aspell-0.60.6.orig/common/iostream.hpp aspell-0.60.6/common/iostream.hpp
 --- aspell-0.60.6.orig/common/iostream.hpp	2004-09-25 14:47:47.000000000 +0200
-+++ aspell-0.60.6/common/iostream.hpp	2010-06-16 13:54:43.982955700 +0200
++++ aspell-0.60.6/common/iostream.hpp	2010-07-26 10:33:22.145868700 +0200
 @@ -9,6 +9,8 @@
  
  #include "fstream.hpp"
@@ -784,7 +992,7 @@ diff -Nru aspell-0.60.6.orig/common/iostream.hpp aspell-0.60.6/common/iostream.h
  #endif
 diff -Nru aspell-0.60.6.orig/common/istream.hpp aspell-0.60.6/common/istream.hpp
 --- aspell-0.60.6.orig/common/istream.hpp	2004-02-21 21:43:31.000000000 +0100
-+++ aspell-0.60.6/common/istream.hpp	2010-06-16 13:54:43.994956400 +0200
++++ aspell-0.60.6/common/istream.hpp	2010-07-26 10:33:22.157869400 +0200
 @@ -11,7 +11,7 @@
  
    class String;
@@ -796,7 +1004,7 @@ diff -Nru aspell-0.60.6.orig/common/istream.hpp aspell-0.60.6/common/istream.hpp
    public:
 diff -Nru aspell-0.60.6.orig/common/itemize.hpp aspell-0.60.6/common/itemize.hpp
 --- aspell-0.60.6.orig/common/itemize.hpp	2002-07-22 09:07:24.000000000 +0200
-+++ aspell-0.60.6/common/itemize.hpp	2010-06-16 13:54:44.004957000 +0200
++++ aspell-0.60.6/common/itemize.hpp	2010-07-26 10:33:22.169870000 +0200
 @@ -7,13 +7,15 @@
  #ifndef ITEMIZE__HPP
  #define ITEMIZE__HPP
@@ -816,7 +1024,7 @@ diff -Nru aspell-0.60.6.orig/common/itemize.hpp aspell-0.60.6/common/itemize.hpp
  
 diff -Nru aspell-0.60.6.orig/common/lock.hpp aspell-0.60.6/common/lock.hpp
 --- aspell-0.60.6.orig/common/lock.hpp	2004-09-23 15:25:24.000000000 +0200
-+++ aspell-0.60.6/common/lock.hpp	2010-06-16 13:54:44.014957600 +0200
++++ aspell-0.60.6/common/lock.hpp	2010-07-26 10:33:22.180870700 +0200
 @@ -15,6 +15,8 @@
  #ifndef DISTRIBNET_LOCK__HPP
  #define DISTRIBNET_LOCK__HPP
@@ -855,7 +1063,7 @@ diff -Nru aspell-0.60.6.orig/common/lock.hpp aspell-0.60.6/common/lock.hpp
      void operator= (const Lock &);
 diff -Nru aspell-0.60.6.orig/common/mutable_container.hpp aspell-0.60.6/common/mutable_container.hpp
 --- aspell-0.60.6.orig/common/mutable_container.hpp	2004-06-17 14:41:47.000000000 +0200
-+++ aspell-0.60.6/common/mutable_container.hpp	2010-06-16 13:54:44.024958100 +0200
++++ aspell-0.60.6/common/mutable_container.hpp	2010-07-26 10:33:22.190871200 +0200
 @@ -7,18 +7,20 @@
  #ifndef ASPELL_MUTABLE_CONTAINER__HPP
  #define ASPELL_MUTABLE_CONTAINER__HPP
@@ -881,7 +1089,7 @@ diff -Nru aspell-0.60.6.orig/common/mutable_container.hpp aspell-0.60.6/common/m
    virtual PosibErr<void> clear() = 0;
 diff -Nru aspell-0.60.6.orig/common/objstack.cpp aspell-0.60.6/common/objstack.cpp
 --- aspell-0.60.6.orig/common/objstack.cpp	2006-11-24 04:46:09.000000000 +0100
-+++ aspell-0.60.6/common/objstack.cpp	2010-06-16 13:54:44.034958700 +0200
++++ aspell-0.60.6/common/objstack.cpp	2010-07-26 10:33:22.201871900 +0200
 @@ -1,5 +1,6 @@
  
  #include "objstack.hpp"
@@ -891,7 +1099,7 @@ diff -Nru aspell-0.60.6.orig/common/objstack.cpp aspell-0.60.6/common/objstack.c
  
 diff -Nru aspell-0.60.6.orig/common/objstack.hpp aspell-0.60.6/common/objstack.hpp
 --- aspell-0.60.6.orig/common/objstack.hpp	2006-11-24 04:37:39.000000000 +0100
-+++ aspell-0.60.6/common/objstack.hpp	2010-06-16 13:54:44.044959300 +0200
++++ aspell-0.60.6/common/objstack.hpp	2010-07-26 10:33:22.211872500 +0200
 @@ -2,13 +2,15 @@
  #ifndef ACOMMON_OBJSTACK__HPP
  #define ACOMMON_OBJSTACK__HPP
@@ -911,7 +1119,7 @@ diff -Nru aspell-0.60.6.orig/common/objstack.hpp aspell-0.60.6/common/objstack.h
    struct Node
 diff -Nru aspell-0.60.6.orig/common/ostream.hpp aspell-0.60.6/common/ostream.hpp
 --- aspell-0.60.6.orig/common/ostream.hpp	2004-07-24 14:03:58.000000000 +0200
-+++ aspell-0.60.6/common/ostream.hpp	2010-06-16 13:54:44.058960100 +0200
++++ aspell-0.60.6/common/ostream.hpp	2010-07-26 10:33:22.266875600 +0200
 @@ -9,6 +9,8 @@
  
  #include <stdarg.h>
@@ -932,7 +1140,7 @@ diff -Nru aspell-0.60.6.orig/common/ostream.hpp aspell-0.60.6/common/ostream.hpp
      virtual void write (ParmStr) = 0;
 diff -Nru aspell-0.60.6.orig/common/parm_string.hpp aspell-0.60.6/common/parm_string.hpp
 --- aspell-0.60.6.orig/common/parm_string.hpp	2005-02-20 22:47:07.000000000 +0100
-+++ aspell-0.60.6/common/parm_string.hpp	2010-06-16 13:54:44.072960900 +0200
++++ aspell-0.60.6/common/parm_string.hpp	2010-07-26 10:33:22.283876600 +0200
 @@ -10,6 +10,8 @@
  #include <string.h>
  #include <limits.h>
@@ -953,7 +1161,7 @@ diff -Nru aspell-0.60.6.orig/common/parm_string.hpp aspell-0.60.6/common/parm_st
      ParmString(const char * str, unsigned int sz = UINT_MAX) 
 diff -Nru aspell-0.60.6.orig/common/posib_err.cpp aspell-0.60.6/common/posib_err.cpp
 --- aspell-0.60.6.orig/common/posib_err.cpp	2004-11-21 03:52:22.000000000 +0100
-+++ aspell-0.60.6/common/posib_err.cpp	2010-06-16 13:54:44.086961700 +0200
++++ aspell-0.60.6/common/posib_err.cpp	2010-07-26 10:33:22.294877200 +0200
 @@ -14,6 +14,9 @@
  
  #include "gettext.h"
@@ -966,7 +1174,7 @@ diff -Nru aspell-0.60.6.orig/common/posib_err.cpp aspell-0.60.6/common/posib_err
  
 diff -Nru aspell-0.60.6.orig/common/posib_err.hpp aspell-0.60.6/common/posib_err.hpp
 --- aspell-0.60.6.orig/common/posib_err.hpp	2004-12-17 09:23:33.000000000 +0100
-+++ aspell-0.60.6/common/posib_err.hpp	2010-06-16 13:54:44.099962400 +0200
++++ aspell-0.60.6/common/posib_err.hpp	2010-07-26 10:33:22.305877800 +0200
 @@ -7,6 +7,8 @@
  #ifndef PCOMMON_POSIB_ERR__HPP
  #define PCOMMON_POSIB_ERR__HPP
@@ -987,7 +1195,7 @@ diff -Nru aspell-0.60.6.orig/common/posib_err.hpp aspell-0.60.6/common/posib_err
        const Error * err;
 diff -Nru aspell-0.60.6.orig/common/speller.hpp aspell-0.60.6/common/speller.hpp
 --- aspell-0.60.6.orig/common/speller.hpp	2007-10-13 10:20:16.000000000 +0200
-+++ aspell-0.60.6/common/speller.hpp	2010-06-16 13:54:44.112963200 +0200
++++ aspell-0.60.6/common/speller.hpp	2010-07-26 10:33:22.317878500 +0200
 @@ -15,6 +15,8 @@
  #ifndef ASPELL_SPELLER__HPP
  #define ASPELL_SPELLER__HPP
@@ -1021,7 +1229,7 @@ diff -Nru aspell-0.60.6.orig/common/speller.hpp aspell-0.60.6/common/speller.hpp
  
 diff -Nru aspell-0.60.6.orig/common/string.hpp aspell-0.60.6/common/string.hpp
 --- aspell-0.60.6.orig/common/string.hpp	2007-12-03 03:08:11.000000000 +0100
-+++ aspell-0.60.6/common/string.hpp	2010-06-16 13:54:44.124963900 +0200
++++ aspell-0.60.6/common/string.hpp	2010-07-26 10:33:22.329879200 +0200
 @@ -12,6 +12,8 @@
  
  #include <algorithm>
@@ -1042,7 +1250,7 @@ diff -Nru aspell-0.60.6.orig/common/string.hpp aspell-0.60.6/common/string.hpp
      typedef const char * const_iterator;
 diff -Nru aspell-0.60.6.orig/common/string_enumeration.hpp aspell-0.60.6/common/string_enumeration.hpp
 --- aspell-0.60.6.orig/common/string_enumeration.hpp	2004-02-02 03:48:50.000000000 +0100
-+++ aspell-0.60.6/common/string_enumeration.hpp	2010-06-16 13:54:44.141964800 +0200
++++ aspell-0.60.6/common/string_enumeration.hpp	2010-07-26 10:33:22.341879900 +0200
 @@ -7,6 +7,8 @@
  #ifndef ASPELL_STRING_ENUMERATION__HPP
  #define ASPELL_STRING_ENUMERATION__HPP
@@ -1063,7 +1271,7 @@ diff -Nru aspell-0.60.6.orig/common/string_enumeration.hpp aspell-0.60.6/common/
      virtual bool at_end() const = 0;
 diff -Nru aspell-0.60.6.orig/common/string_list.hpp aspell-0.60.6/common/string_list.hpp
 --- aspell-0.60.6.orig/common/string_list.hpp	2004-06-17 14:41:47.000000000 +0200
-+++ aspell-0.60.6/common/string_list.hpp	2010-06-16 13:54:44.153965500 +0200
++++ aspell-0.60.6/common/string_list.hpp	2010-07-26 10:33:22.352880500 +0200
 @@ -6,6 +6,8 @@
  #ifndef STRING_LIST_HP_HEADER
  #define STRING_LIST_HP_HEADER
@@ -1111,7 +1319,7 @@ diff -Nru aspell-0.60.6.orig/common/string_list.hpp aspell-0.60.6/common/string_
  #endif
 diff -Nru aspell-0.60.6.orig/common/string_map.hpp aspell-0.60.6/common/string_map.hpp
 --- aspell-0.60.6.orig/common/string_map.hpp	2004-06-17 14:41:47.000000000 +0200
-+++ aspell-0.60.6/common/string_map.hpp	2010-06-16 13:54:44.168966400 +0200
++++ aspell-0.60.6/common/string_map.hpp	2010-07-26 10:33:22.371881600 +0200
 @@ -7,6 +7,8 @@
  #ifndef ASPELL_STRING_MAP__HPP
  #define ASPELL_STRING_MAP__HPP
@@ -1141,7 +1349,7 @@ diff -Nru aspell-0.60.6.orig/common/string_map.hpp aspell-0.60.6/common/string_m
  }
 diff -Nru aspell-0.60.6.orig/common/string_pair.hpp aspell-0.60.6/common/string_pair.hpp
 --- aspell-0.60.6.orig/common/string_pair.hpp	2004-02-19 10:14:06.000000000 +0100
-+++ aspell-0.60.6/common/string_pair.hpp	2010-06-16 13:54:44.181967100 +0200
++++ aspell-0.60.6/common/string_pair.hpp	2010-07-26 10:33:22.382882200 +0200
 @@ -7,10 +7,9 @@
  #ifndef ASPELL_STRING_PAIR__HPP
  #define ASPELL_STRING_PAIR__HPP
@@ -1165,7 +1373,7 @@ diff -Nru aspell-0.60.6.orig/common/string_pair.hpp aspell-0.60.6/common/string_
  
 diff -Nru aspell-0.60.6.orig/common/string_pair_enumeration.hpp aspell-0.60.6/common/string_pair_enumeration.hpp
 --- aspell-0.60.6.orig/common/string_pair_enumeration.hpp	2008-04-07 06:31:19.000000000 +0200
-+++ aspell-0.60.6/common/string_pair_enumeration.hpp	2010-06-16 13:54:44.190967600 +0200
++++ aspell-0.60.6/common/string_pair_enumeration.hpp	2010-07-26 10:33:22.394882900 +0200
 @@ -9,13 +9,15 @@
  #ifndef ASPELL_STRING_PAIR_ENUMERATION__HPP
  #define ASPELL_STRING_PAIR_ENUMERATION__HPP
@@ -1185,7 +1393,7 @@ diff -Nru aspell-0.60.6.orig/common/string_pair_enumeration.hpp aspell-0.60.6/co
    virtual StringPair next() = 0;
 diff -Nru aspell-0.60.6.orig/common/strtonum.hpp aspell-0.60.6/common/strtonum.hpp
 --- aspell-0.60.6.orig/common/strtonum.hpp	2004-10-28 02:41:04.000000000 +0200
-+++ aspell-0.60.6/common/strtonum.hpp	2010-06-16 13:54:44.200968200 +0200
++++ aspell-0.60.6/common/strtonum.hpp	2010-07-26 10:33:22.405883500 +0200
 @@ -7,12 +7,14 @@
  #ifndef ASPELL_STRTONUM__HPP
  #define ASPELL_STRTONUM__HPP
@@ -1205,7 +1413,7 @@ diff -Nru aspell-0.60.6.orig/common/strtonum.hpp aspell-0.60.6/common/strtonum.h
  
 diff -Nru aspell-0.60.6.orig/common/tokenizer.cpp aspell-0.60.6/common/tokenizer.cpp
 --- aspell-0.60.6.orig/common/tokenizer.cpp	2004-04-13 09:13:39.000000000 +0200
-+++ aspell-0.60.6/common/tokenizer.cpp	2010-06-16 13:54:44.209968700 +0200
++++ aspell-0.60.6/common/tokenizer.cpp	2010-07-26 10:33:22.416884200 +0200
 @@ -28,4 +28,6 @@
      end = end;
    }
@@ -1215,7 +1423,7 @@ diff -Nru aspell-0.60.6.orig/common/tokenizer.cpp aspell-0.60.6/common/tokenizer
  }
 diff -Nru aspell-0.60.6.orig/common/tokenizer.hpp aspell-0.60.6/common/tokenizer.hpp
 --- aspell-0.60.6.orig/common/tokenizer.hpp	2004-06-02 17:07:34.000000000 +0200
-+++ aspell-0.60.6/common/tokenizer.hpp	2010-06-16 13:54:44.219969300 +0200
++++ aspell-0.60.6/common/tokenizer.hpp	2010-07-26 10:33:22.427884800 +0200
 @@ -7,6 +7,8 @@
  #ifndef ACOMMON_TOKENIZER__HPP
  #define ACOMMON_TOKENIZER__HPP
@@ -1243,9 +1451,81 @@ diff -Nru aspell-0.60.6.orig/common/tokenizer.hpp aspell-0.60.6/common/tokenizer
  
  }
  
+diff -Nru aspell-0.60.6.orig/export2.pl aspell-0.60.6/export2.pl
+--- aspell-0.60.6.orig/export2.pl	1970-01-01 01:00:00.000000000 +0100
++++ aspell-0.60.6/export2.pl	2010-07-26 10:33:22.437885400 +0200
+@@ -0,0 +1,68 @@
++use Cwd;
++
++sub trim($)
++{
++	my $string = shift;
++	$string =~ s/^\s+//;
++	$string =~ s/\s+$//;
++	return $string;
++}
++
++$cwd = getcwd();
++@fl= ('/common/errors.hpp','/common/gettext.h','/lib/filter-c.cpp','/lib/word_list-c.cpp','/lib/info-c.cpp','/lib/mutable_container-c.cpp','/lib/error-c.cpp','/lib/document_checker-c.cpp','/lib/string_map-c.cpp','/lib/config-c.cpp','/lib/string_enumeration-c.cpp','/lib/can_have_error-c.cpp','/lib/string_list-c.cpp','/lib/speller-c.cpp','/lib/string_pair_enumeration-c.cpp');
++@filelist = ();
++foreach $flName (@fl){
++    $tmp = scalar(grep(/.*$flName.*/,@filelist));
++    print $flName."\n";
++    print $tmp;
++    if(scalar($tmp) ==0 ){
++        push(@filelist,$cwd.$flName );
++    }
++}
++
++
++open(FILE, "symbols.def")||die("Shit couldnt open symbols.def");
++@symbols = <FILE>;
++$symbols_length = scalar (@symbols);
++close(FILE);
++
++
++foreach(@filelist){
++    $fileName = $_;
++    open(FILE, $fileName )||die("File ".$fileName." not found");
++    @content = <FILE>;
++    unshift(@content,"#include \"aspell_export.h\"\n");
++    close(FILE);
++    for($i=0;$i<$symbols_length;++$i){
++        $sym = trim($symbols[$i]);
++        if( ! defined $sym ){
++            delete $symbols[$i];
++            next;
++        }else{
++            foreach $line (@content){
++                if($line =~ m/^\s*extern "C".*$sym\s*\(.*\).*/ 
++				|| $line =~ m/^\s*extern "C".*$sym;/){
++                    print "Found Symbols: ". $symbols[$i]." in File: ".$fileName;
++                    @sp = split(/\"C\"/, trim($line));
++                    $tmp = $sp[0]."\"C\" ASPELL_EXPORT ".$sp[1];
++                    $tmp = $tmp."\n";
++                    
++                    print "modified\n".$line."\nto\n".$tmp;
++                    print $line
++                    $line = $tmp;
++                }
++            }
++        }
++    }
++    open(FILE, ">" ,$fileName );
++    print FILE @content;
++    close(FILE);
++}
++
++#foreach(@symbols){
++#    if(defined $_){
++#        print "\ncouldn't find ".$_; 
++#    }
++#}
++
++
 diff -Nru aspell-0.60.6.orig/gen/mk-static-filter.pl aspell-0.60.6/gen/mk-static-filter.pl
 --- aspell-0.60.6.orig/gen/mk-static-filter.pl	2007-12-03 07:43:09.000000000 +0100
-+++ aspell-0.60.6/gen/mk-static-filter.pl	2010-06-16 13:54:44.230969900 +0200
++++ aspell-0.60.6/gen/mk-static-filter.pl	2010-07-26 10:33:22.448886000 +0200
 @@ -12,7 +12,6 @@
  %filters=();
  
@@ -1289,18 +1569,941 @@ diff -Nru aspell-0.60.6.orig/gen/mk-static-filter.pl aspell-0.60.6/gen/mk-static
    printf STATICFILTERS "\n  };\n";
    printf STATICFILTERS "\n  const KeyInfo * ".${$filter}{"NAME"}."_options_begin = ".
                                                ${$filter}{"NAME"}."_options;\n";
+diff -Nru aspell-0.60.6.orig/lib/can_have_error-c.cpp aspell-0.60.6/lib/can_have_error-c.cpp
+--- aspell-0.60.6.orig/lib/can_have_error-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/can_have_error-c.cpp	2010-07-26 10:33:22.461886800 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -14,22 +15,22 @@
+ class CanHaveError;
+ struct Error;
+ 
+-extern "C" unsigned int aspell_error_number(const CanHaveError * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_error_number(const CanHaveError * ths)
+ {
+   return ths->err_ == 0 ? 0 : 1;
+ }
+ 
+-extern "C" const char * aspell_error_message(const CanHaveError * ths)
++extern "C" ASPELL_EXPORT  const char * aspell_error_message(const CanHaveError * ths)
+ {
+   return ths->err_ ? ths->err_->mesg : "";
+ }
+ 
+-extern "C" const Error * aspell_error(const CanHaveError * ths)
++extern "C" ASPELL_EXPORT  const Error * aspell_error(const CanHaveError * ths)
+ {
+   return ths->err_;
+ }
+ 
+-extern "C" void delete_aspell_can_have_error(CanHaveError * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_can_have_error(CanHaveError * ths)
+ {
+   delete ths;
+ }
+diff -Nru aspell-0.60.6.orig/lib/config-c.cpp aspell-0.60.6/lib/config-c.cpp
+--- aspell-0.60.6.orig/lib/config-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/config-c.cpp	2010-07-26 10:33:22.475887600 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -20,72 +21,72 @@
+ class MutableContainer;
+ class StringPairEnumeration;
+ 
+-extern "C" int aspell_key_info_enumeration_at_end(const KeyInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  int aspell_key_info_enumeration_at_end(const KeyInfoEnumeration * ths)
+ {
+   return ths->at_end();
+ }
+ 
+-extern "C" const KeyInfo * aspell_key_info_enumeration_next(KeyInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  const KeyInfo * aspell_key_info_enumeration_next(KeyInfoEnumeration * ths)
+ {
+   return ths->next();
+ }
+ 
+-extern "C" void delete_aspell_key_info_enumeration(KeyInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_key_info_enumeration(KeyInfoEnumeration * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" KeyInfoEnumeration * aspell_key_info_enumeration_clone(const KeyInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  KeyInfoEnumeration * aspell_key_info_enumeration_clone(const KeyInfoEnumeration * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_key_info_enumeration_assign(KeyInfoEnumeration * ths, const KeyInfoEnumeration * other)
++extern "C" ASPELL_EXPORT  void aspell_key_info_enumeration_assign(KeyInfoEnumeration * ths, const KeyInfoEnumeration * other)
+ {
+   ths->assign(other);
+ }
+ 
+-extern "C" Config * new_aspell_config()
++extern "C" ASPELL_EXPORT  Config * new_aspell_config()
+ {
+   return new_config();
+ }
+ 
+-extern "C" void delete_aspell_config(Config * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_config(Config * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" Config * aspell_config_clone(const Config * ths)
++extern "C" ASPELL_EXPORT  Config * aspell_config_clone(const Config * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_config_assign(Config * ths, const Config * other)
++extern "C" ASPELL_EXPORT  void aspell_config_assign(Config * ths, const Config * other)
+ {
+   ths->assign(other);
+ }
+ 
+-extern "C" unsigned int aspell_config_error_number(const Config * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_config_error_number(const Config * ths)
+ {
+   return ths->err_ == 0 ? 0 : 1;
+ }
+ 
+-extern "C" const char * aspell_config_error_message(const Config * ths)
++extern "C" ASPELL_EXPORT  const char * aspell_config_error_message(const Config * ths)
+ {
+   return ths->err_ ? ths->err_->mesg : "";
+ }
+ 
+-extern "C" const Error * aspell_config_error(const Config * ths)
++extern "C" ASPELL_EXPORT  const Error * aspell_config_error(const Config * ths)
+ {
+   return ths->err_;
+ }
+ 
+-extern "C" void aspell_config_set_extra(Config * ths, const KeyInfo * begin, const KeyInfo * end)
++extern "C" ASPELL_EXPORT  void aspell_config_set_extra(Config * ths, const KeyInfo * begin, const KeyInfo * end)
+ {
+   ths->set_extra(begin, end);
+ }
+ 
+-extern "C" const KeyInfo * aspell_config_keyinfo(Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  const KeyInfo * aspell_config_keyinfo(Config * ths, const char * key)
+ {
+   PosibErr<const KeyInfo *> ret = ths->keyinfo(key);
+   ths->err_.reset(ret.release_err());
+@@ -93,12 +94,12 @@
+   return ret.data;
+ }
+ 
+-extern "C" KeyInfoEnumeration * aspell_config_possible_elements(Config * ths, int include_extra)
++extern "C" ASPELL_EXPORT  KeyInfoEnumeration * aspell_config_possible_elements(Config * ths, int include_extra)
+ {
+   return ths->possible_elements(include_extra);
+ }
+ 
+-extern "C" const char * aspell_config_get_default(Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  const char * aspell_config_get_default(Config * ths, const char * key)
+ {
+   PosibErr<String> ret = ths->get_default(key);
+   ths->err_.reset(ret.release_err());
+@@ -107,12 +108,12 @@
+   return ths->temp_str.c_str();
+ }
+ 
+-extern "C" StringPairEnumeration * aspell_config_elements(Config * ths)
++extern "C" ASPELL_EXPORT  StringPairEnumeration * aspell_config_elements(Config * ths)
+ {
+   return ths->elements();
+ }
+ 
+-extern "C" int aspell_config_replace(Config * ths, const char * key, const char * value)
++extern "C" ASPELL_EXPORT  int aspell_config_replace(Config * ths, const char * key, const char * value)
+ {
+   PosibErr<void> ret = ths->replace(key, value);
+   ths->err_.reset(ret.release_err());
+@@ -120,7 +121,7 @@
+   return 1;
+ }
+ 
+-extern "C" int aspell_config_remove(Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  int aspell_config_remove(Config * ths, const char * key)
+ {
+   PosibErr<void> ret = ths->remove(key);
+   ths->err_.reset(ret.release_err());
+@@ -128,12 +129,12 @@
+   return 1;
+ }
+ 
+-extern "C" int aspell_config_have(const Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  int aspell_config_have(const Config * ths, const char * key)
+ {
+   return ths->have(key);
+ }
+ 
+-extern "C" const char * aspell_config_retrieve(Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  const char * aspell_config_retrieve(Config * ths, const char * key)
+ {
+   PosibErr<String> ret = ths->retrieve(key);
+   ths->err_.reset(ret.release_err());
+@@ -142,7 +143,7 @@
+   return ths->temp_str.c_str();
+ }
+ 
+-extern "C" int aspell_config_retrieve_list(Config * ths, const char * key, MutableContainer * lst)
++extern "C" ASPELL_EXPORT  int aspell_config_retrieve_list(Config * ths, const char * key, MutableContainer * lst)
+ {
+   PosibErr<void> ret = ths->retrieve_list(key, lst);
+   ths->err_.reset(ret.release_err());
+@@ -150,7 +151,7 @@
+   return 1;
+ }
+ 
+-extern "C" int aspell_config_retrieve_bool(Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  int aspell_config_retrieve_bool(Config * ths, const char * key)
+ {
+   PosibErr<bool> ret = ths->retrieve_bool(key);
+   ths->err_.reset(ret.release_err());
+@@ -158,7 +159,7 @@
+   return ret.data;
+ }
+ 
+-extern "C" int aspell_config_retrieve_int(Config * ths, const char * key)
++extern "C" ASPELL_EXPORT  int aspell_config_retrieve_int(Config * ths, const char * key)
+ {
+   PosibErr<unsigned int> ret = ths->retrieve_int(key);
+   ths->err_.reset(ret.release_err());
+diff -Nru aspell-0.60.6.orig/lib/document_checker-c.cpp aspell-0.60.6/lib/document_checker-c.cpp
+--- aspell-0.60.6.orig/lib/document_checker-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/document_checker-c.cpp	2010-07-26 10:33:22.486888200 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -17,27 +18,27 @@
+ class Filter;
+ class Speller;
+ 
+-extern "C" void delete_aspell_document_checker(DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_document_checker(DocumentChecker * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" unsigned int aspell_document_checker_error_number(const DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_document_checker_error_number(const DocumentChecker * ths)
+ {
+   return ths->err_ == 0 ? 0 : 1;
+ }
+ 
+-extern "C" const char * aspell_document_checker_error_message(const DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  const char * aspell_document_checker_error_message(const DocumentChecker * ths)
+ {
+   return ths->err_ ? ths->err_->mesg : "";
+ }
+ 
+-extern "C" const Error * aspell_document_checker_error(const DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  const Error * aspell_document_checker_error(const DocumentChecker * ths)
+ {
+   return ths->err_;
+ }
+ 
+-extern "C" CanHaveError * new_aspell_document_checker(Speller * speller)
++extern "C" ASPELL_EXPORT  CanHaveError * new_aspell_document_checker(Speller * speller)
+ {
+   PosibErr<DocumentChecker *> ret = new_document_checker(speller);
+   if (ret.has_err()) {
+@@ -47,27 +48,27 @@
+   }
+ }
+ 
+-extern "C" DocumentChecker * to_aspell_document_checker(CanHaveError * obj)
++extern "C" ASPELL_EXPORT  DocumentChecker * to_aspell_document_checker(CanHaveError * obj)
+ {
+   return static_cast<DocumentChecker *>(obj);
+ }
+ 
+-extern "C" void aspell_document_checker_reset(DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  void aspell_document_checker_reset(DocumentChecker * ths)
+ {
+   ths->reset();
+ }
+ 
+-extern "C" void aspell_document_checker_process(DocumentChecker * ths, const char * str, int size)
++extern "C" ASPELL_EXPORT  void aspell_document_checker_process(DocumentChecker * ths, const char * str, int size)
+ {
+   ths->process(str, size);
+ }
+ 
+-extern "C" Token aspell_document_checker_next_misspelling(DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  Token aspell_document_checker_next_misspelling(DocumentChecker * ths)
+ {
+   return ths->next_misspelling();
+ }
+ 
+-extern "C" Filter * aspell_document_checker_filter(DocumentChecker * ths)
++extern "C" ASPELL_EXPORT  Filter * aspell_document_checker_filter(DocumentChecker * ths)
+ {
+   return ths->filter();
+ }
 diff -Nru aspell-0.60.6.orig/lib/dummy.cpp aspell-0.60.6/lib/dummy.cpp
 --- aspell-0.60.6.orig/lib/dummy.cpp	2002-09-09 07:57:09.000000000 +0200
-+++ aspell-0.60.6/lib/dummy.cpp	2010-06-16 13:54:44.240970500 +0200
++++ aspell-0.60.6/lib/dummy.cpp	2010-07-26 10:33:22.496888800 +0200
 @@ -1 +1,5 @@
 +#include <aspell_export.h>
 +
 +void ASPELL_EXPORT pspell_aspell_dummy();
 +
  void pspell_aspell_dummy() {}
+diff -Nru aspell-0.60.6.orig/lib/error-c.cpp aspell-0.60.6/lib/error-c.cpp
+--- aspell-0.60.6.orig/lib/error-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/error-c.cpp	2010-07-26 10:33:22.506889300 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -13,7 +14,7 @@
+ struct Error;
+ struct ErrorInfo;
+ 
+-extern "C" int aspell_error_is_a(const Error * ths, const ErrorInfo * e)
++extern "C" ASPELL_EXPORT  int aspell_error_is_a(const Error * ths, const ErrorInfo * e)
+ {
+   return ths->is_a(e);
+ }
+diff -Nru aspell-0.60.6.orig/lib/filter-c.cpp aspell-0.60.6/lib/filter-c.cpp
+--- aspell-0.60.6.orig/lib/filter-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/filter-c.cpp	2010-07-26 10:33:22.518890000 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -15,27 +16,27 @@
+ struct Error;
+ class Filter;
+ 
+-extern "C" void delete_aspell_filter(Filter * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_filter(Filter * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" unsigned int aspell_filter_error_number(const Filter * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_filter_error_number(const Filter * ths)
+ {
+   return ths->err_ == 0 ? 0 : 1;
+ }
+ 
+-extern "C" const char * aspell_filter_error_message(const Filter * ths)
++extern "C" ASPELL_EXPORT  const char * aspell_filter_error_message(const Filter * ths)
+ {
+   return ths->err_ ? ths->err_->mesg : "";
+ }
+ 
+-extern "C" const Error * aspell_filter_error(const Filter * ths)
++extern "C" ASPELL_EXPORT  const Error * aspell_filter_error(const Filter * ths)
+ {
+   return ths->err_;
+ }
+ 
+-extern "C" Filter * to_aspell_filter(CanHaveError * obj)
++extern "C" ASPELL_EXPORT  Filter * to_aspell_filter(CanHaveError * obj)
+ {
+   return static_cast<Filter *>(obj);
+ }
+diff -Nru aspell-0.60.6.orig/lib/info-c.cpp aspell-0.60.6/lib/info-c.cpp
+--- aspell-0.60.6.orig/lib/info-c.cpp	2004-01-25 04:20:28.000000000 +0100
++++ aspell-0.60.6/lib/info-c.cpp	2010-07-26 10:33:22.530890700 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* This file is part of The New Aspell
+  * Copyright (C) 2001-2002 by Kevin Atkinson under the GNU LGPL
+  * license version 2.0 or 2.1.  You should have received a copy of the
+@@ -16,92 +17,92 @@
+ class ModuleInfoEnumeration;
+ class ModuleInfoList;
+ 
+-extern "C" ModuleInfoList * get_aspell_module_info_list(Config * config)
++extern "C" ASPELL_EXPORT  ModuleInfoList * get_aspell_module_info_list(Config * config)
+ {
+   return const_cast<ModuleInfoList *>(get_module_info_list(config));
+ }
+ 
+-extern "C" int aspell_module_info_list_empty(const ModuleInfoList * ths)
++extern "C" ASPELL_EXPORT  int aspell_module_info_list_empty(const ModuleInfoList * ths)
+ {
+   return ths->empty();
+ }
+ 
+-extern "C" unsigned int aspell_module_info_list_size(const ModuleInfoList * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_module_info_list_size(const ModuleInfoList * ths)
+ {
+   return ths->size();
+ }
+ 
+-extern "C" ModuleInfoEnumeration * aspell_module_info_list_elements(const ModuleInfoList * ths)
++extern "C" ASPELL_EXPORT  ModuleInfoEnumeration * aspell_module_info_list_elements(const ModuleInfoList * ths)
+ {
+   return ths->elements();
+ }
+ 
+-extern "C" DictInfoList * get_aspell_dict_info_list(Config * config)
++extern "C" ASPELL_EXPORT  DictInfoList * get_aspell_dict_info_list(Config * config)
+ {
+   return const_cast<DictInfoList *>(get_dict_info_list(config));
+ }
+ 
+-extern "C" int aspell_dict_info_list_empty(const DictInfoList * ths)
++extern "C" ASPELL_EXPORT  int aspell_dict_info_list_empty(const DictInfoList * ths)
+ {
+   return ths->empty();
+ }
+ 
+-extern "C" unsigned int aspell_dict_info_list_size(const DictInfoList * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_dict_info_list_size(const DictInfoList * ths)
+ {
+   return ths->size();
+ }
+ 
+-extern "C" DictInfoEnumeration * aspell_dict_info_list_elements(const DictInfoList * ths)
++extern "C" ASPELL_EXPORT  DictInfoEnumeration * aspell_dict_info_list_elements(const DictInfoList * ths)
+ {
+   return ths->elements();
+ }
+ 
+-extern "C" int aspell_module_info_enumeration_at_end(const ModuleInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  int aspell_module_info_enumeration_at_end(const ModuleInfoEnumeration * ths)
+ {
+   return ths->at_end();
+ }
+ 
+-extern "C" const ModuleInfo * aspell_module_info_enumeration_next(ModuleInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  const ModuleInfo * aspell_module_info_enumeration_next(ModuleInfoEnumeration * ths)
+ {
+   return ths->next();
+ }
+ 
+-extern "C" void delete_aspell_module_info_enumeration(ModuleInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_module_info_enumeration(ModuleInfoEnumeration * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" ModuleInfoEnumeration * aspell_module_info_enumeration_clone(const ModuleInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  ModuleInfoEnumeration * aspell_module_info_enumeration_clone(const ModuleInfoEnumeration * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_module_info_enumeration_assign(ModuleInfoEnumeration * ths, const ModuleInfoEnumeration * other)
++extern "C" ASPELL_EXPORT  void aspell_module_info_enumeration_assign(ModuleInfoEnumeration * ths, const ModuleInfoEnumeration * other)
+ {
+   ths->assign(other);
+ }
+ 
+-extern "C" int aspell_dict_info_enumeration_at_end(const DictInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  int aspell_dict_info_enumeration_at_end(const DictInfoEnumeration * ths)
+ {
+   return ths->at_end();
+ }
+ 
+-extern "C" const DictInfo * aspell_dict_info_enumeration_next(DictInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  const DictInfo * aspell_dict_info_enumeration_next(DictInfoEnumeration * ths)
+ {
+   return ths->next();
+ }
+ 
+-extern "C" void delete_aspell_dict_info_enumeration(DictInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_dict_info_enumeration(DictInfoEnumeration * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" DictInfoEnumeration * aspell_dict_info_enumeration_clone(const DictInfoEnumeration * ths)
++extern "C" ASPELL_EXPORT  DictInfoEnumeration * aspell_dict_info_enumeration_clone(const DictInfoEnumeration * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_dict_info_enumeration_assign(DictInfoEnumeration * ths, const DictInfoEnumeration * other)
++extern "C" ASPELL_EXPORT  void aspell_dict_info_enumeration_assign(DictInfoEnumeration * ths, const DictInfoEnumeration * other)
+ {
+   ths->assign(other);
+ }
+diff -Nru aspell-0.60.6.orig/lib/mutable_container-c.cpp aspell-0.60.6/lib/mutable_container-c.cpp
+--- aspell-0.60.6.orig/lib/mutable_container-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/mutable_container-c.cpp	2010-07-26 10:33:22.541891300 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -13,22 +14,22 @@
+ 
+ class MutableContainer;
+ 
+-extern "C" int aspell_mutable_container_add(MutableContainer * ths, const char * to_add)
++extern "C" ASPELL_EXPORT  int aspell_mutable_container_add(MutableContainer * ths, const char * to_add)
+ {
+   return ths->add(to_add);
+ }
+ 
+-extern "C" int aspell_mutable_container_remove(MutableContainer * ths, const char * to_rem)
++extern "C" ASPELL_EXPORT  int aspell_mutable_container_remove(MutableContainer * ths, const char * to_rem)
+ {
+   return ths->remove(to_rem);
+ }
+ 
+-extern "C" void aspell_mutable_container_clear(MutableContainer * ths)
++extern "C" ASPELL_EXPORT  void aspell_mutable_container_clear(MutableContainer * ths)
+ {
+   ths->clear();
+ }
+ 
+-extern "C" MutableContainer * aspell_mutable_container_to_mutable_container(MutableContainer * ths)
++extern "C" ASPELL_EXPORT  MutableContainer * aspell_mutable_container_to_mutable_container(MutableContainer * ths)
+ {
+   return ths;
+ }
+diff -Nru aspell-0.60.6.orig/lib/speller-c.cpp aspell-0.60.6/lib/speller-c.cpp
+--- aspell-0.60.6.orig/lib/speller-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/speller-c.cpp	2010-07-26 10:33:22.553892000 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -21,7 +22,7 @@
+ class Speller;
+ class WordList;
+ 
+-extern "C" CanHaveError * new_aspell_speller(Config * config)
++extern "C" ASPELL_EXPORT  CanHaveError * new_aspell_speller(Config * config)
+ {
+   PosibErr<Speller *> ret = new_speller(config);
+   if (ret.has_err()) {
+@@ -31,37 +32,37 @@
+   }
+ }
+ 
+-extern "C" Speller * to_aspell_speller(CanHaveError * obj)
++extern "C" ASPELL_EXPORT  Speller * to_aspell_speller(CanHaveError * obj)
+ {
+   return static_cast<Speller *>(obj);
+ }
+ 
+-extern "C" void delete_aspell_speller(Speller * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_speller(Speller * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" unsigned int aspell_speller_error_number(const Speller * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_speller_error_number(const Speller * ths)
+ {
+   return ths->err_ == 0 ? 0 : 1;
+ }
+ 
+-extern "C" const char * aspell_speller_error_message(const Speller * ths)
++extern "C" ASPELL_EXPORT  const char * aspell_speller_error_message(const Speller * ths)
+ {
+   return ths->err_ ? ths->err_->mesg : "";
+ }
+ 
+-extern "C" const Error * aspell_speller_error(const Speller * ths)
++extern "C" ASPELL_EXPORT  const Error * aspell_speller_error(const Speller * ths)
+ {
+   return ths->err_;
+ }
+ 
+-extern "C" Config * aspell_speller_config(Speller * ths)
++extern "C" ASPELL_EXPORT  Config * aspell_speller_config(Speller * ths)
+ {
+   return ths->config();
+ }
+ 
+-extern "C" int aspell_speller_check(Speller * ths, const char * word, int word_size)
++extern "C" ASPELL_EXPORT  int aspell_speller_check(Speller * ths, const char * word, int word_size)
+ {
+   ths->temp_str_0.clear();
+   ths->to_internal_->convert(word, word_size, ths->temp_str_0);
+@@ -72,7 +73,7 @@
+   return ret.data;
+ }
+ 
+-extern "C" int aspell_speller_add_to_personal(Speller * ths, const char * word, int word_size)
++extern "C" ASPELL_EXPORT  int aspell_speller_add_to_personal(Speller * ths, const char * word, int word_size)
+ {
+   ths->temp_str_0.clear();
+   ths->to_internal_->convert(word, word_size, ths->temp_str_0);
+@@ -83,7 +84,7 @@
+   return 1;
+ }
+ 
+-extern "C" int aspell_speller_add_to_session(Speller * ths, const char * word, int word_size)
++extern "C" ASPELL_EXPORT  int aspell_speller_add_to_session(Speller * ths, const char * word, int word_size)
+ {
+   ths->temp_str_0.clear();
+   ths->to_internal_->convert(word, word_size, ths->temp_str_0);
+@@ -94,7 +95,7 @@
+   return 1;
+ }
+ 
+-extern "C" const WordList * aspell_speller_personal_word_list(Speller * ths)
++extern "C" ASPELL_EXPORT  const WordList * aspell_speller_personal_word_list(Speller * ths)
+ {
+   PosibErr<const WordList *> ret = ths->personal_word_list();
+   ths->err_.reset(ret.release_err());
+@@ -104,7 +105,7 @@
+   return ret.data;
+ }
+ 
+-extern "C" const WordList * aspell_speller_session_word_list(Speller * ths)
++extern "C" ASPELL_EXPORT  const WordList * aspell_speller_session_word_list(Speller * ths)
+ {
+   PosibErr<const WordList *> ret = ths->session_word_list();
+   ths->err_.reset(ret.release_err());
+@@ -114,7 +115,7 @@
+   return ret.data;
+ }
+ 
+-extern "C" const WordList * aspell_speller_main_word_list(Speller * ths)
++extern "C" ASPELL_EXPORT  const WordList * aspell_speller_main_word_list(Speller * ths)
+ {
+   PosibErr<const WordList *> ret = ths->main_word_list();
+   ths->err_.reset(ret.release_err());
+@@ -124,7 +125,7 @@
+   return ret.data;
+ }
+ 
+-extern "C" int aspell_speller_save_all_word_lists(Speller * ths)
++extern "C" ASPELL_EXPORT  int aspell_speller_save_all_word_lists(Speller * ths)
+ {
+   PosibErr<void> ret = ths->save_all_word_lists();
+   ths->err_.reset(ret.release_err());
+@@ -132,7 +133,7 @@
+   return 1;
+ }
+ 
+-extern "C" int aspell_speller_clear_session(Speller * ths)
++extern "C" ASPELL_EXPORT  int aspell_speller_clear_session(Speller * ths)
+ {
+   PosibErr<void> ret = ths->clear_session();
+   ths->err_.reset(ret.release_err());
+@@ -140,7 +141,7 @@
+   return 1;
+ }
+ 
+-extern "C" const WordList * aspell_speller_suggest(Speller * ths, const char * word, int word_size)
++extern "C" ASPELL_EXPORT  const WordList * aspell_speller_suggest(Speller * ths, const char * word, int word_size)
+ {
+   ths->temp_str_0.clear();
+   ths->to_internal_->convert(word, word_size, ths->temp_str_0);
+@@ -153,7 +154,7 @@
+   return ret.data;
+ }
+ 
+-extern "C" int aspell_speller_store_replacement(Speller * ths, const char * mis, int mis_size, const char * cor, int cor_size)
++extern "C" ASPELL_EXPORT  int aspell_speller_store_replacement(Speller * ths, const char * mis, int mis_size, const char * cor, int cor_size)
+ {
+   ths->temp_str_0.clear();
+   ths->to_internal_->convert(mis, mis_size, ths->temp_str_0);
+diff -Nru aspell-0.60.6.orig/lib/string_enumeration-c.cpp aspell-0.60.6/lib/string_enumeration-c.cpp
+--- aspell-0.60.6.orig/lib/string_enumeration-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/string_enumeration-c.cpp	2010-07-26 10:33:22.564892600 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -13,27 +14,27 @@
+ 
+ class StringEnumeration;
+ 
+-extern "C" void delete_aspell_string_enumeration(StringEnumeration * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_string_enumeration(StringEnumeration * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" StringEnumeration * aspell_string_enumeration_clone(const StringEnumeration * ths)
++extern "C" ASPELL_EXPORT  StringEnumeration * aspell_string_enumeration_clone(const StringEnumeration * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_string_enumeration_assign(StringEnumeration * ths, const StringEnumeration * other)
++extern "C" ASPELL_EXPORT  void aspell_string_enumeration_assign(StringEnumeration * ths, const StringEnumeration * other)
+ {
+   ths->assign(other);
+ }
+ 
+-extern "C" int aspell_string_enumeration_at_end(const StringEnumeration * ths)
++extern "C" ASPELL_EXPORT  int aspell_string_enumeration_at_end(const StringEnumeration * ths)
+ {
+   return ths->at_end();
+ }
+ 
+-extern "C" const char * aspell_string_enumeration_next(StringEnumeration * ths)
++extern "C" ASPELL_EXPORT  const char * aspell_string_enumeration_next(StringEnumeration * ths)
+ {
+   const char * s = ths->next();
+   if (s == 0 || ths->from_internal_ == 0) {
+diff -Nru aspell-0.60.6.orig/lib/string_list-c.cpp aspell-0.60.6/lib/string_list-c.cpp
+--- aspell-0.60.6.orig/lib/string_list-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/string_list-c.cpp	2010-07-26 10:33:22.576893300 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -15,57 +16,57 @@
+ class StringEnumeration;
+ class StringList;
+ 
+-extern "C" StringList * new_aspell_string_list()
++extern "C" ASPELL_EXPORT  StringList * new_aspell_string_list()
+ {
+   return new_string_list();
+ }
+ 
+-extern "C" int aspell_string_list_empty(const StringList * ths)
++extern "C" ASPELL_EXPORT  int aspell_string_list_empty(const StringList * ths)
+ {
+   return ths->empty();
+ }
+ 
+-extern "C" unsigned int aspell_string_list_size(const StringList * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_string_list_size(const StringList * ths)
+ {
+   return ths->size();
+ }
+ 
+-extern "C" StringEnumeration * aspell_string_list_elements(const StringList * ths)
++extern "C" ASPELL_EXPORT  StringEnumeration * aspell_string_list_elements(const StringList * ths)
+ {
+   return ths->elements();
+ }
+ 
+-extern "C" int aspell_string_list_add(StringList * ths, const char * to_add)
++extern "C" ASPELL_EXPORT  int aspell_string_list_add(StringList * ths, const char * to_add)
+ {
+   return ths->add(to_add);
+ }
+ 
+-extern "C" int aspell_string_list_remove(StringList * ths, const char * to_rem)
++extern "C" ASPELL_EXPORT  int aspell_string_list_remove(StringList * ths, const char * to_rem)
+ {
+   return ths->remove(to_rem);
+ }
+ 
+-extern "C" void aspell_string_list_clear(StringList * ths)
++extern "C" ASPELL_EXPORT  void aspell_string_list_clear(StringList * ths)
+ {
+   ths->clear();
+ }
+ 
+-extern "C" MutableContainer * aspell_string_list_to_mutable_container(StringList * ths)
++extern "C" ASPELL_EXPORT  MutableContainer * aspell_string_list_to_mutable_container(StringList * ths)
+ {
+   return ths;
+ }
+ 
+-extern "C" void delete_aspell_string_list(StringList * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_string_list(StringList * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" StringList * aspell_string_list_clone(const StringList * ths)
++extern "C" ASPELL_EXPORT  StringList * aspell_string_list_clone(const StringList * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_string_list_assign(StringList * ths, const StringList * other)
++extern "C" ASPELL_EXPORT  void aspell_string_list_assign(StringList * ths, const StringList * other)
+ {
+   ths->assign(other);
+ }
+diff -Nru aspell-0.60.6.orig/lib/string_map-c.cpp aspell-0.60.6/lib/string_map-c.cpp
+--- aspell-0.60.6.orig/lib/string_map-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/string_map-c.cpp	2010-07-26 10:33:22.586893900 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -15,72 +16,72 @@
+ class StringMap;
+ class StringPairEnumeration;
+ 
+-extern "C" StringMap * new_aspell_string_map()
++extern "C" ASPELL_EXPORT  StringMap * new_aspell_string_map()
+ {
+   return new_string_map();
+ }
+ 
+-extern "C" int aspell_string_map_add(StringMap * ths, const char * to_add)
++extern "C" ASPELL_EXPORT  int aspell_string_map_add(StringMap * ths, const char * to_add)
+ {
+   return ths->add(to_add);
+ }
+ 
+-extern "C" int aspell_string_map_remove(StringMap * ths, const char * to_rem)
++extern "C" ASPELL_EXPORT  int aspell_string_map_remove(StringMap * ths, const char * to_rem)
+ {
+   return ths->remove(to_rem);
+ }
+ 
+-extern "C" void aspell_string_map_clear(StringMap * ths)
++extern "C" ASPELL_EXPORT  void aspell_string_map_clear(StringMap * ths)
+ {
+   ths->clear();
+ }
+ 
+-extern "C" MutableContainer * aspell_string_map_to_mutable_container(StringMap * ths)
++extern "C" ASPELL_EXPORT  MutableContainer * aspell_string_map_to_mutable_container(StringMap * ths)
+ {
+   return ths;
+ }
+ 
+-extern "C" void delete_aspell_string_map(StringMap * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_string_map(StringMap * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" StringMap * aspell_string_map_clone(const StringMap * ths)
++extern "C" ASPELL_EXPORT  StringMap * aspell_string_map_clone(const StringMap * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_string_map_assign(StringMap * ths, const StringMap * other)
++extern "C" ASPELL_EXPORT  void aspell_string_map_assign(StringMap * ths, const StringMap * other)
+ {
+   ths->assign(other);
+ }
+ 
+-extern "C" int aspell_string_map_empty(const StringMap * ths)
++extern "C" ASPELL_EXPORT  int aspell_string_map_empty(const StringMap * ths)
+ {
+   return ths->empty();
+ }
+ 
+-extern "C" unsigned int aspell_string_map_size(const StringMap * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_string_map_size(const StringMap * ths)
+ {
+   return ths->size();
+ }
+ 
+-extern "C" StringPairEnumeration * aspell_string_map_elements(const StringMap * ths)
++extern "C" ASPELL_EXPORT  StringPairEnumeration * aspell_string_map_elements(const StringMap * ths)
+ {
+   return ths->elements();
+ }
+ 
+-extern "C" int aspell_string_map_insert(StringMap * ths, const char * key, const char * value)
++extern "C" ASPELL_EXPORT  int aspell_string_map_insert(StringMap * ths, const char * key, const char * value)
+ {
+   return ths->insert(key, value);
+ }
+ 
+-extern "C" int aspell_string_map_replace(StringMap * ths, const char * key, const char * value)
++extern "C" ASPELL_EXPORT  int aspell_string_map_replace(StringMap * ths, const char * key, const char * value)
+ {
+   return ths->replace(key, value);
+ }
+ 
+-extern "C" const char * aspell_string_map_lookup(const StringMap * ths, const char * key)
++extern "C" ASPELL_EXPORT  const char * aspell_string_map_lookup(const StringMap * ths, const char * key)
+ {
+   return ths->lookup(key);
+ }
+diff -Nru aspell-0.60.6.orig/lib/string_pair_enumeration-c.cpp aspell-0.60.6/lib/string_pair_enumeration-c.cpp
+--- aspell-0.60.6.orig/lib/string_pair_enumeration-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/string_pair_enumeration-c.cpp	2010-07-26 10:33:22.596894500 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -13,27 +14,27 @@
+ 
+ class StringPairEnumeration;
+ 
+-extern "C" int aspell_string_pair_enumeration_at_end(const StringPairEnumeration * ths)
++extern "C" ASPELL_EXPORT  int aspell_string_pair_enumeration_at_end(const StringPairEnumeration * ths)
+ {
+   return ths->at_end();
+ }
+ 
+-extern "C" StringPair aspell_string_pair_enumeration_next(StringPairEnumeration * ths)
++extern "C" ASPELL_EXPORT  StringPair aspell_string_pair_enumeration_next(StringPairEnumeration * ths)
+ {
+   return ths->next();
+ }
+ 
+-extern "C" void delete_aspell_string_pair_enumeration(StringPairEnumeration * ths)
++extern "C" ASPELL_EXPORT  void delete_aspell_string_pair_enumeration(StringPairEnumeration * ths)
+ {
+   delete ths;
+ }
+ 
+-extern "C" StringPairEnumeration * aspell_string_pair_enumeration_clone(const StringPairEnumeration * ths)
++extern "C" ASPELL_EXPORT  StringPairEnumeration * aspell_string_pair_enumeration_clone(const StringPairEnumeration * ths)
+ {
+   return ths->clone();
+ }
+ 
+-extern "C" void aspell_string_pair_enumeration_assign(StringPairEnumeration * ths, const StringPairEnumeration * other)
++extern "C" ASPELL_EXPORT  void aspell_string_pair_enumeration_assign(StringPairEnumeration * ths, const StringPairEnumeration * other)
+ {
+   ths->assign(other);
+ }
+diff -Nru aspell-0.60.6.orig/lib/word_list-c.cpp aspell-0.60.6/lib/word_list-c.cpp
+--- aspell-0.60.6.orig/lib/word_list-c.cpp	2008-04-07 06:31:19.000000000 +0200
++++ aspell-0.60.6/lib/word_list-c.cpp	2010-07-26 10:33:22.636896800 +0200
+@@ -1,3 +1,4 @@
++#include "aspell_export.h"
+ /* Automatically generated file.  Do not edit directly. */
+ 
+ /* This file is part of The New Aspell
+@@ -14,17 +15,17 @@
+ class StringEnumeration;
+ class WordList;
+ 
+-extern "C" int aspell_word_list_empty(const WordList * ths)
++extern "C" ASPELL_EXPORT  int aspell_word_list_empty(const WordList * ths)
+ {
+   return ths->empty();
+ }
+ 
+-extern "C" unsigned int aspell_word_list_size(const WordList * ths)
++extern "C" ASPELL_EXPORT  unsigned int aspell_word_list_size(const WordList * ths)
+ {
+   return ths->size();
+ }
+ 
+-extern "C" StringEnumeration * aspell_word_list_elements(const WordList * ths)
++extern "C" ASPELL_EXPORT  StringEnumeration * aspell_word_list_elements(const WordList * ths)
+ {
+   StringEnumeration * els = ths->elements();
+   els->from_internal_ = ths->from_internal_;
 diff -Nru aspell-0.60.6.orig/modules/speller/default/affix.hpp aspell-0.60.6/modules/speller/default/affix.hpp
 --- aspell-0.60.6.orig/modules/speller/default/affix.hpp	2007-12-03 02:51:23.000000000 +0100
-+++ aspell-0.60.6/modules/speller/default/affix.hpp	2010-06-16 13:54:44.250971100 +0200
++++ aspell-0.60.6/modules/speller/default/affix.hpp	2010-07-26 10:33:22.645897300 +0200
 @@ -19,6 +19,8 @@
  #include "char_vector.hpp"
  #include "objstack.hpp"
@@ -1321,7 +2524,7 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/affix.hpp aspell-0.60.6/mod
  
 diff -Nru aspell-0.60.6.orig/modules/speller/default/data.hpp aspell-0.60.6/modules/speller/default/data.hpp
 --- aspell-0.60.6.orig/modules/speller/default/data.hpp	2004-05-24 06:50:27.000000000 +0200
-+++ aspell-0.60.6/modules/speller/default/data.hpp	2010-06-16 13:54:44.261971700 +0200
++++ aspell-0.60.6/modules/speller/default/data.hpp	2010-07-26 10:33:22.657898000 +0200
 @@ -15,6 +15,8 @@
  #include "cache.hpp"
  #include "wordinfo.hpp"
@@ -1385,7 +2588,7 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/data.hpp aspell-0.60.6/modu
  #endif
 diff -Nru aspell-0.60.6.orig/modules/speller/default/language.cpp aspell-0.60.6/modules/speller/default/language.cpp
 --- aspell-0.60.6.orig/modules/speller/default/language.cpp	2005-02-20 22:47:07.000000000 +0100
-+++ aspell-0.60.6/modules/speller/default/language.cpp	2010-06-16 13:54:44.276972500 +0200
++++ aspell-0.60.6/modules/speller/default/language.cpp	2010-07-26 10:33:22.673898900 +0200
 @@ -26,6 +26,10 @@
  
  #include "gettext.h"
@@ -1399,7 +2602,7 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/language.cpp aspell-0.60.6/
    static const char TO_CHAR_TYPE[256] = {
 diff -Nru aspell-0.60.6.orig/modules/speller/default/language.hpp aspell-0.60.6/modules/speller/default/language.hpp
 --- aspell-0.60.6.orig/modules/speller/default/language.hpp	2005-02-20 22:47:08.000000000 +0100
-+++ aspell-0.60.6/modules/speller/default/language.hpp	2010-06-16 13:54:44.290973300 +0200
++++ aspell-0.60.6/modules/speller/default/language.hpp	2010-07-26 10:33:22.689899800 +0200
 @@ -14,6 +14,8 @@
  #include "objstack.hpp"
  #include "string_enumeration.hpp"
@@ -1455,7 +2658,7 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/language.hpp aspell-0.60.6/
  
 diff -Nru aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp aspell-0.60.6/modules/speller/default/speller_impl.hpp
 --- aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp	2007-10-13 10:20:17.000000000 +0200
-+++ aspell-0.60.6/modules/speller/default/speller_impl.hpp	2010-06-16 13:54:44.303974100 +0200
++++ aspell-0.60.6/modules/speller/default/speller_impl.hpp	2010-07-26 10:33:22.703900600 +0200
 @@ -27,7 +27,7 @@
  namespace aspeller {
  
@@ -1467,7 +2670,7 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/speller_impl.hpp aspell-0.6
    enum SpecialId {main_id, personal_id, session_id, 
 diff -Nru aspell-0.60.6.orig/modules/speller/default/wordinfo.hpp aspell-0.60.6/modules/speller/default/wordinfo.hpp
 --- aspell-0.60.6.orig/modules/speller/default/wordinfo.hpp	2004-05-24 06:50:29.000000000 +0200
-+++ aspell-0.60.6/modules/speller/default/wordinfo.hpp	2010-06-16 13:54:44.313974700 +0200
++++ aspell-0.60.6/modules/speller/default/wordinfo.hpp	2010-07-26 10:33:22.717901400 +0200
 @@ -6,6 +6,8 @@
  #include <assert.h>
  #include "string.hpp"
@@ -1488,7 +2691,7 @@ diff -Nru aspell-0.60.6.orig/modules/speller/default/wordinfo.hpp aspell-0.60.6/
      const char * aff;
 diff -Nru aspell-0.60.6.orig/symbols.def aspell-0.60.6/symbols.def
 --- aspell-0.60.6.orig/symbols.def	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/symbols.def	2010-06-16 13:54:44.324975300 +0200
++++ aspell-0.60.6/symbols.def	2010-07-26 10:33:22.730902100 +0200
 @@ -0,0 +1,210 @@
 +LIBRARY aspell.DLL
 +EXPORTS
@@ -1702,7 +2905,7 @@ diff -Nru aspell-0.60.6.orig/symbols.def aspell-0.60.6/symbols.def
 +to_aspell_speller
 diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 --- aspell-0.60.6.orig/win32/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/win32/dirent.c	2010-06-16 13:54:44.334975900 +0200
++++ aspell-0.60.6/win32/dirent.c	2010-07-26 10:33:22.741902800 +0200
 @@ -0,0 +1,149 @@
 +/* ====================================================================
 + * The Apache Software License, Version 1.1
@@ -1855,7 +3058,7 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +#endif // #ifndef __MINGW32__
 diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 --- aspell-0.60.6.orig/win32/dirent.h	1970-01-01 01:00:00.000000000 +0100
-+++ aspell-0.60.6/win32/dirent.h	2010-06-16 13:54:44.345976500 +0200
++++ aspell-0.60.6/win32/dirent.h	2010-07-26 10:33:22.750903300 +0200
 @@ -0,0 +1,112 @@
 +/* This file is part of the KDE project
 +   Copyright (C) 2000 Werner Almesberger
@@ -1971,7 +3174,7 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 +#endif  // ASPELL_DIRENT_H
 diff -Nru aspell-0.60.6.orig/win32/settings.h aspell-0.60.6/win32/settings.h
 --- aspell-0.60.6.orig/win32/settings.h	2006-11-13 08:28:59.000000000 +0100
-+++ aspell-0.60.6/win32/settings.h	2010-06-16 13:54:44.355977100 +0200
++++ aspell-0.60.6/win32/settings.h	2010-07-26 10:33:22.759903800 +0200
 @@ -90,3 +90,5 @@
  
  /* Version number of package */

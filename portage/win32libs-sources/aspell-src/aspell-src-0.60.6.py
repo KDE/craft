@@ -8,8 +8,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.60.6'] = 'ftp://ftp.gnu.org/gnu/aspell/aspell-0.60.6.tar.gz'
+        self.targetDigests['0.60.6'] = '335bcb560e00f59d89ec9e4c4114c325fb0e65f4'
         self.targetInstSrc['0.60.6'] = 'aspell-0.60.6'
-        self.patchToApply['0.60.6'] = ('aspell-0.60.6-20100615.diff', 1)
+        self.patchToApply['0.60.6'] = ('aspell-0.60.6-20100726.diff', 1)
         self.defaultTarget = '0.60.6'
         
     def setDependencies( self ):
