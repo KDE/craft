@@ -1,3 +1,4 @@
+import compiler
 import info
 
 class subinfo(info.infoclass):
@@ -11,7 +12,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['win32libs-bin/libidn'] = 'default'
         self.hardDependencies['win32libs-bin/libmsn'] = 'default'
-        self.hardDependencies['win32libs-bin/libgmp'] = 'default'
+        #mingw already contains libgmp
+        if not compiler.isMinGW():
+            self.hardDependencies['win32libs-bin/libgmp'] = 'default'
         
 from Package.CMakePackageBase import *
         
