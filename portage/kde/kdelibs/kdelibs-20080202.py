@@ -60,6 +60,8 @@ class Package(CMakePackageBase):
             
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
+            if self.isTargetBuild():
+                self.subinfo.options.configure.defines += "-DKDE_PLATFORM_PROFILE=Mobile "
 
 if __name__ == '__main__':
     Package().execute()
