@@ -80,7 +80,7 @@ diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
  #define clear_socket_error()	WSASetLastError(0)
  #define readsocket(s,b,n)	recv((s),(b),(n),0)
  #define writesocket(s,b,n)	send((s),(b),(n),0)
-+#if _MSC_VER < 1600
++#if defined(_MSC_VER) && _MSC_VER < 1600
  #define EADDRINUSE		WSAEADDRINUSE
 +#endif
  #elif defined(__DJGPP__)
