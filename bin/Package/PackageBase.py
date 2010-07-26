@@ -80,7 +80,9 @@ class PackageBase (EmergeBase):
 
         # add package to installed database -> is this not the task of the manifest files ? 
        
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType:
+        # only packages using a specific merge destination path are shared between build types 
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
+                and self.subinfo.options.merge.destinationPath != None:
             portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
             portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
             portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
@@ -103,7 +105,9 @@ class PackageBase (EmergeBase):
             utils.unmerge( self.rootdir, self.package, self.forced )
             portage.remInstalled( self.category, self.package, self.version, '')
 
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType:
+        # only packages using a specific merge destination path are shared between build types 
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
+                and self.subinfo.options.merge.destinationPath != None:
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
