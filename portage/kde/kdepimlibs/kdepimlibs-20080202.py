@@ -39,6 +39,8 @@ class Package(CMakePackageBase):
             
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
+            if self.isTargetBuild():
+                self.subinfo.options.configure.defines += "-DKDEPIM_NO_KRESOURCES=ON "
 
 if __name__ == '__main__':
     Package().execute()
