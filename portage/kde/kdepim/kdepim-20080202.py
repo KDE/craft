@@ -32,6 +32,8 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DBUILD_blogilo=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_kjots=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_knotes=OFF "
+            self.subinfo.options.configure.defines += " -DBUILD_kmail=OFF "
+            self.subinfo.options.configure.defines += " -DBUILD_korganizer=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_kaddressbook=OFF "
             self.subinfo.options.configure.defines += " -DKDEPIM_MOBILE_UI=TRUE "
 
