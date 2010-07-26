@@ -459,39 +459,8 @@ if updateAll:
             packageList.append( package )
     utils.debug( "Will update packages: " + str (packageList), 1 )
 elif packageName:
-    if len( packageName.split( "/" ) ) == 1:
-        if portage.PortageInstance.isCategory( packageName ):
-            utils.debug( "isCategory=True", 2 )
-            packageList = portage.PortageInstance.getAllPackages( packageName )
-            categoryList = [ packageName ] * len(packageList)
-        else:
-        
-            if portage.PortageInstance.isCategory( defaultCategory ) and portage.PortageInstance.isPackage( defaultCategory, packageName ):
-                # prefer the default category
-                packageList = [ packageName ]
-                categoryList = [ defaultCategory ]
-            else:
-                if portage.PortageInstance.getCategory( packageName ):
-                    packageList = [ packageName ]
-                    categoryList = [ portage.PortageInstance.getCategory( packageName ) ]
-                else:
-                    utils.warning( "unknown category or package: %s" % packageName )
-    elif len( packageName.split( "/" ) ) == 2:
-        [ cat, pac ] = packageName.split( "/" )
-        validPackage = False
-        if portage.PortageInstance.isCategory( cat ):
-            categoryList = [ cat ]
-        else:
-            utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
-        if len( categoryList ) > 0 and portage.PortageInstance.isPackage( categoryList[0], pac ):
-            packageList = [ pac ]
-        if len( categoryList ) and len( packageList ):
-            utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
-        else:
-            utils.debug( "ignoring package %s" % packageName )
-    else:
-        utils.error( "unknown packageName" )
-
+    packageList, categoryList = portage.getPackagesCategories(packageName)
+    
 for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
