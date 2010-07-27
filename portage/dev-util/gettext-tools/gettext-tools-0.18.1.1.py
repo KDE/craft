@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.18.1.1'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/gettext'] = 'default'
+        self.hardDependencies['gnuwin32/wget'] = 'default'
 
 from Package.BinaryPackageBase import *
 
