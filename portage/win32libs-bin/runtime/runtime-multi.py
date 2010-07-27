@@ -29,8 +29,12 @@ class Package(BinaryPackageBase):
         utils.createDir(self.workDir())
         utils.createDir(destdir)
         if COMPILER == "msvc2008":
-            srcdir = self.packageDir()
-            files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll"]
+            if self.buildType() == "debug":
+                srcdir = os.patch.join(self.packageDir(),"redist","Debug_NonRedist","x86","Microsoft.VC90.DebugCRT")
+                files = [ "Microsoft.VC90.DebugCRT.manifest", "msvcr90d.dll", "msvcp90d.dll", "msvcm90d.dll"]
+            else:
+                srcdir = os.patch.join(self.packageDir(),"redist","x86","Microsoft.VC90.CRT")
+                files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll"]
         elif COMPILER == "mingw4":
             srcdir = os.path.join(self.rootdir,"mingw","bin")
             files = ['mingwm10.dll','libgcc_s_dw2-1.dll']
