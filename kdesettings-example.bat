@@ -186,7 +186,7 @@ rem set EMERGE_PKGDSTDIR=%KDEROOT%\tmp
 
 rem This option can be used to override the default make program
 rem change the value to the path of the executable you want to use instead.
-rem set EMERGE_MAKE_PROGRAM=%KDEROOT%\bin\jom.exe
+rem set EMERGE_MAKE_PROGRAM=%KDEROOT%\dev-utils\bin\jom.exe
 
 rem This option can be used to set the default category for packages with the same name
 rem that are contained in multiple categories; This is especially useful if you want

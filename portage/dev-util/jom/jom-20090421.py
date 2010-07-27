@@ -12,6 +12,10 @@ class subinfo(info.infoclass):
         self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'
         self.targetInstallPath['HEAD'] = "bin"
         self.defaultTarget = 'HEAD'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 
