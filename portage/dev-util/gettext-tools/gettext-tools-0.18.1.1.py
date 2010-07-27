@@ -2,8 +2,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.17'] = 'http://winkde.org/pub/kde/ports/win32/repository/win32libs/gettext-tools-0.17-bin.tar.bz2'
-        self.defaultTarget = '0.17'
+        self.targets['0.18.1.1'] = 'http://downloads.sourceforge.net/sourceforge/kde-windows/gettext-tools-0.18.1.1-bin.tar.bz2'
+        self.targetDigestUrls['0.18.1.1'] = 'http://downloads.sourceforge.net/sourceforge/kde-windows/gettext-tools-0.18.1.1-bin.tar.bz2.sha1'
+        self.defaultTarget = '0.18.1.1'
 
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
