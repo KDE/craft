@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['gnuwin32/regex'] = 'default'
+        self.hardDependencies['testing/regex'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
 
 
