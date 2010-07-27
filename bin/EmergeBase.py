@@ -283,7 +283,7 @@ class EmergeBase():
             dir = os.path.join(ROOTDIR, self.buildPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
             dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
-        elif not self.useBuildTypeRelatedMergeRoot:
+        elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
             dir = ROOTDIR
         elif self.buildType() == 'Debug':
             dir = os.path.join(ROOTDIR,'debug')
