@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.patchToApply['gitHEAD'] = ('dbus-scopes.diff', 1)
 
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '1.3.1'
         self.options.package.version = '1.3.1-1'
         
     def setDependencies( self ):
