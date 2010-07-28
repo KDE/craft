@@ -346,7 +346,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
  #ifndef AI_PASSIVE
  #define AI_PASSIVE	1
  #define AI_CANONNAME	2
-+#if defined(_MSC_VER) && _MSC_VER < 1600
++#if !(defined(_MSC_VER) && _MSC_VER >= 1600)
  struct addrinfo {
  	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
  	int	ai_family;	/* PF_xxx */
