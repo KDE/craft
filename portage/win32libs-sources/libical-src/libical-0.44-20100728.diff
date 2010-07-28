@@ -1,34 +1,6 @@
-diff -Nru libical-0.44.orig/CMakeLists.txt libical-0.44/CMakeLists.txt
---- libical-0.44.orig/CMakeLists.txt	Sun Sep 27 02:38:55 2009
-+++ libical-0.44/CMakeLists.txt	Mon Jul  5 14:56:11 2010
-@@ -27,6 +27,15 @@
- #cannot use the following line with cmake 2.4.x
- #cmake_policy(VERSION 2.6)
- 
-+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-+
-+if(WINCE)
-+    find_package(Wcecompat REQUIRED)
-+    include_directories(${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
-+endif(WINCE)
-+
- set(LIBICAL_LIB_MAJOR_VERSION "0")
- set(LIBICAL_LIB_MINOR_VERSION "44")
- set(LIBICAL_LIB_PATCH_VERSION "0")
-@@ -41,7 +50,7 @@
- # make msvc less verbose
- if(WIN32)
-   if(MSVC)
--    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DYY_NO_UNISTD_H)
-   endif(MSVC)
-   add_definitions(-DBIG_ENDIAN=0 -DLITTLE_ENDIAN=1 -DBYTE_ORDER=BIG_ENDIAN)
- endif(WIN32)
 diff -Nru libical-0.44.orig/cmake/modules/FindWcecompat.cmake libical-0.44/cmake/modules/FindWcecompat.cmake
---- libical-0.44.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ libical-0.44/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+--- libical-0.44.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libical-0.44/cmake/modules/FindWcecompat.cmake	2010-07-28 10:20:53.642311400 +0200
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -63,9 +35,61 @@ diff -Nru libical-0.44.orig/cmake/modules/FindWcecompat.cmake libical-0.44/cmake
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru libical-0.44.orig/CMakeLists.txt libical-0.44/CMakeLists.txt
+--- libical-0.44.orig/CMakeLists.txt	2009-09-27 04:38:55.000000000 +0200
++++ libical-0.44/CMakeLists.txt	2010-07-28 10:20:53.626310500 +0200
+@@ -27,6 +27,15 @@
+ #cannot use the following line with cmake 2.4.x
+ #cmake_policy(VERSION 2.6)
+ 
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
+ set(LIBICAL_LIB_MAJOR_VERSION "0")
+ set(LIBICAL_LIB_MINOR_VERSION "44")
+ set(LIBICAL_LIB_PATCH_VERSION "0")
+@@ -41,7 +50,7 @@
+ # make msvc less verbose
+ if(WIN32)
+   if(MSVC)
+-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
++    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DYY_NO_UNISTD_H)
+   endif(MSVC)
+   add_definitions(-DBIG_ENDIAN=0 -DLITTLE_ENDIAN=1 -DBYTE_ORDER=BIG_ENDIAN)
+ endif(WIN32)
+diff -Nru libical-0.44.orig/config.h.cmake libical-0.44/config.h.cmake
+--- libical-0.44.orig/config.h.cmake	2009-09-27 04:38:55.000000000 +0200
++++ libical-0.44/config.h.cmake	2010-07-28 10:43:16.293276000 +0200
+@@ -158,3 +158,9 @@
+ #define strcasecmp stricmp
+ #define snprintf _snprintf
+ #endif
++
++#cmakedefine HAVE_PID_T 1
++#if !HAVE_PID_T
++typedef int pid_t;
++#endif
++
+diff -Nru libical-0.44.orig/ConfigureChecks.cmake libical-0.44/ConfigureChecks.cmake
+--- libical-0.44.orig/ConfigureChecks.cmake	2009-09-27 04:38:55.000000000 +0200
++++ libical-0.44/ConfigureChecks.cmake	2010-07-28 10:40:27.018105100 +0200
+@@ -32,6 +32,7 @@
+ check_type_size(mode_t SIZEOF_MODE_T)
+ check_type_size(size_t SIZEOF_SIZE_T)
+ check_type_size(intptr_t INTPTR_T) # please do not rename HAVE_INTPTR_T will automatically be defined
++check_type_size(pid_t HAVE_PID_T)
+ 
+ include(FindThreads)
+ check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
 diff -Nru libical-0.44.orig/src/ical.def libical-0.44/src/ical.def
---- libical-0.44.orig/src/ical.def	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/ical.def	Mon Jul  5 14:56:59 2010
+--- libical-0.44.orig/src/ical.def	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/ical.def	2010-07-28 10:20:53.664312600 +0200
 @@ -1,4 +1,4 @@
 -LIBRARY ical.dll
 +LIBRARY libical.dll
@@ -73,8 +97,8 @@ diff -Nru libical-0.44.orig/src/ical.def libical-0.44/src/ical.def
  caldat
  compare_map DATA
 diff -Nru libical-0.44.orig/src/ical.h libical-0.44/src/ical.h
---- libical-0.44.orig/src/ical.h	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/ical.h	Mon Jul  5 14:57:08 2010
+--- libical-0.44.orig/src/ical.h	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/ical.h	2010-07-28 10:20:53.679313500 +0200
 @@ -18,6 +18,9 @@
      the License at http://www.mozilla.org/MPL/
  
@@ -87,8 +111,8 @@ diff -Nru libical-0.44.orig/src/ical.h libical-0.44/src/ical.h
 +#endif
  #include <libical/ical.h>
 diff -Nru libical-0.44.orig/src/icalss.def libical-0.44/src/icalss.def
---- libical-0.44.orig/src/icalss.def	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/icalss.def	Mon Jul  5 14:57:18 2010
+--- libical-0.44.orig/src/icalss.def	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/icalss.def	2010-07-28 10:20:53.692314200 +0200
 @@ -1,4 +1,4 @@
 -LIBRARY icalss.dll
 +LIBRARY libicalss.dll
@@ -132,8 +156,8 @@ diff -Nru libical-0.44.orig/src/icalss.def libical-0.44/src/icalss.def
  ss_scan_bytes
  ss_scan_string
 diff -Nru libical-0.44.orig/src/icalvcal.def libical-0.44/src/icalvcal.def
---- libical-0.44.orig/src/icalvcal.def	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/icalvcal.def	Mon Jul  5 14:57:26 2010
+--- libical-0.44.orig/src/icalvcal.def	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/icalvcal.def	2010-07-28 10:20:53.705315000 +0200
 @@ -1,4 +1,4 @@
 -LIBRARY icalvcal.dll
 +LIBRARY libicalvcal.dll
@@ -141,8 +165,8 @@ diff -Nru libical-0.44.orig/src/icalvcal.def libical-0.44/src/icalvcal.def
  Parse_MIME
  Parse_MIME_FromFile
 diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/CMakeLists.txt
---- libical-0.44.orig/src/libical/CMakeLists.txt	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/CMakeLists.txt	Mon Jul  5 14:58:38 2010
+--- libical-0.44.orig/src/libical/CMakeLists.txt	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/CMakeLists.txt	2010-07-28 10:20:53.719315800 +0200
 @@ -7,6 +7,13 @@
    ${CMAKE_BINARY_DIR}/src/libical
  )
@@ -178,8 +202,8 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
  
  install(TARGETS ical ical-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libical/icalerror.h libical-0.44/src/libical/icalerror.h
---- libical-0.44.orig/src/libical/icalerror.h	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalerror.h	Mon Jul  5 15:00:11 2010
+--- libical-0.44.orig/src/libical/icalerror.h	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalerror.h	2010-07-28 10:20:53.732316500 +0200
 @@ -69,7 +69,17 @@
   *  @warning NOT THREAD SAFE -- recommended that you do not change
   *           this in a multithreaded program.
@@ -200,8 +224,8 @@ diff -Nru libical-0.44.orig/src/libical/icalerror.h libical-0.44/src/libical/ica
  /* Warning messages */
  
 diff -Nru libical-0.44.orig/src/libical/icalperiod.c libical-0.44/src/libical/icalperiod.c
---- libical-0.44.orig/src/libical/icalperiod.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalperiod.c	Fri Jul  2 09:55:51 2010
+--- libical-0.44.orig/src/libical/icalperiod.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalperiod.c	2010-07-28 10:20:53.745317300 +0200
 @@ -117,8 +117,8 @@
  char* icalperiodtype_as_ical_string_r(struct icalperiodtype p)
  {
@@ -214,8 +238,8 @@ diff -Nru libical-0.44.orig/src/libical/icalperiod.c libical-0.44/src/libical/ic
      char *buf;
      size_t buf_size = 40;
 diff -Nru libical-0.44.orig/src/libical/icalrecur.c libical-0.44/src/libical/icalrecur.c
---- libical-0.44.orig/src/libical/icalrecur.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalrecur.c	Mon Jul  5 14:58:50 2010
+--- libical-0.44.orig/src/libical/icalrecur.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalrecur.c	2010-07-28 10:20:53.759318100 +0200
 @@ -1593,11 +1593,12 @@
        int day;
        int days_in_month = icaltime_days_in_month(impl->last.month,
@@ -251,8 +275,8 @@ diff -Nru libical-0.44.orig/src/libical/icalrecur.c libical-0.44/src/libical/ica
          t.is_date = 1;
  
 diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/icaltimezone.c
---- libical-0.44.orig/src/libical/icaltimezone.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icaltimezone.c	Mon Jul  5 14:58:57 2010
+--- libical-0.44.orig/src/libical/icaltimezone.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icaltimezone.c	2010-07-28 10:20:53.773318900 +0200
 @@ -45,7 +45,9 @@
  #include <sys/stat.h>
  
@@ -360,8 +384,8 @@ diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/
  #endif
  }
 diff -Nru libical-0.44.orig/src/libical/icaltz-util.c libical-0.44/src/libical/icaltz-util.c
---- libical-0.44.orig/src/libical/icaltz-util.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icaltz-util.c	Mon Jul  5 14:59:03 2010
+--- libical-0.44.orig/src/libical/icaltz-util.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icaltz-util.c	2010-07-28 10:20:53.785319600 +0200
 @@ -297,12 +297,16 @@
  	icalproperty *icalprop;
  	icaltimetype dtstart, icaltime;
@@ -384,8 +408,8 @@ diff -Nru libical-0.44.orig/src/libical/icaltz-util.c libical-0.44/src/libical/i
  	if ((f = fopen (full_path, "rb")) == 0) {
  		icalerror_set_errno (ICAL_FILE_ERROR);
 diff -Nru libical-0.44.orig/src/libical/icalvalue.c libical-0.44/src/libical/icalvalue.c
---- libical-0.44.orig/src/libical/icalvalue.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalvalue.c	Fri Jul  2 12:29:41 2010
+--- libical-0.44.orig/src/libical/icalvalue.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalvalue.c	2010-07-28 10:20:53.799320400 +0200
 @@ -307,7 +307,9 @@
  #define TMP_NUM_SIZE 100
      char *start=NULL, *end=NULL, *cur=(char*)from ;
@@ -415,8 +439,8 @@ diff -Nru libical-0.44.orig/src/libical/icalvalue.c libical-0.44/src/libical/ica
          *to = end ;
      *result = atof(tmp_buf) ;
 diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libicalss/CMakeLists.txt
---- libical-0.44.orig/src/libicalss/CMakeLists.txt	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalss/CMakeLists.txt	Mon Jul  5 14:59:18 2010
+--- libical-0.44.orig/src/libicalss/CMakeLists.txt	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalss/CMakeLists.txt	2010-07-28 10:20:53.812321100 +0200
 @@ -76,9 +76,14 @@
  
  target_link_libraries(icalss ical)
@@ -434,8 +458,8 @@ diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libica
  
  install(TARGETS icalss icalss-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libicalss/icalfileset.c libical-0.44/src/libicalss/icalfileset.c
---- libical-0.44.orig/src/libicalss/icalfileset.c	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalss/icalfileset.c	Mon Jul  5 14:12:36 2010
+--- libical-0.44.orig/src/libicalss/icalfileset.c	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalss/icalfileset.c	2010-07-28 10:20:53.824321800 +0200
 @@ -38,8 +38,10 @@
  #include <unistd.h> /* for stat, getpid */
  #else
@@ -519,8 +543,8 @@ diff -Nru libical-0.44.orig/src/libicalss/icalfileset.c libical-0.44/src/libical
      
      return ICAL_NO_ERROR;
 diff -Nru libical-0.44.orig/src/libicalss/icalsslexer.c libical-0.44/src/libicalss/icalsslexer.c
---- libical-0.44.orig/src/libicalss/icalsslexer.c	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalss/icalsslexer.c	Mon Jul  5 14:36:39 2010
+--- libical-0.44.orig/src/libicalss/icalsslexer.c	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalss/icalsslexer.c	2010-07-28 10:20:53.838322600 +0200
 @@ -39,6 +39,10 @@
  #include <errno.h>
  #include <stdlib.h>
@@ -533,8 +557,8 @@ diff -Nru libical-0.44.orig/src/libicalss/icalsslexer.c libical-0.44/src/libical
  
  /* flex integer type definitions */
 diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libicalvcal/CMakeLists.txt
---- libical-0.44.orig/src/libicalvcal/CMakeLists.txt	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalvcal/CMakeLists.txt	Mon Jul  5 14:59:28 2010
+--- libical-0.44.orig/src/libicalvcal/CMakeLists.txt	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalvcal/CMakeLists.txt	2010-07-28 10:20:53.850323300 +0200
 @@ -32,9 +32,14 @@
  
  target_link_libraries(icalvcal ical)
@@ -552,8 +576,8 @@ diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libi
  
  install(TARGETS icalvcal icalvcal-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libicalvcal/icalvcal.c libical-0.44/src/libicalvcal/icalvcal.c
---- libical-0.44.orig/src/libicalvcal/icalvcal.c	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalvcal/icalvcal.c	Mon Jul  5 14:39:40 2010
+--- libical-0.44.orig/src/libicalvcal/icalvcal.c	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalvcal/icalvcal.c	2010-07-28 10:20:53.938328300 +0200
 @@ -51,6 +51,10 @@
  #define strcasecmp	stricmp
  #endif
@@ -565,3 +589,17 @@ diff -Nru libical-0.44.orig/src/libicalvcal/icalvcal.c libical-0.44/src/libicalv
  enum datatype {
      COMPONENT,
      PROPERTY,
+diff -Nru libical-0.44.orig/src/test/regression.c libical-0.44/src/test/regression.c
+--- libical-0.44.orig/src/test/regression.c	2009-09-27 04:38:49.000000000 +0200
++++ libical-0.44/src/test/regression.c	2010-07-28 10:43:06.792985500 +0200
+@@ -54,10 +54,6 @@
+ #endif
+ #include <sys/types.h> /* For wait pid */
+ 
+-#ifdef WIN32
+-typedef int pid_t;
+-#endif
+-
+ 
+ /* For GNU libc, strcmp appears to be a macro, so using strcmp in
+  assert results in incomprehansible assertion messages. This
