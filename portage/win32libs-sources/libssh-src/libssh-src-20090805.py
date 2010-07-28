@@ -10,12 +10,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh/libssh.git"
         self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh/libssh.git|v0-4"
 
-        # There is a problem in libssh with mingw building till thats fixed we use the
-        # 0.4.4 release with MinGW
-        if compiler.isMinGW():
-            self.defaultTarget = '0.4.4'
-        else:
-            self.defaultTarget = '0.4'
+        self.defaultTarget = '0.4.4'
         self.options.package.withCompiler = False
         self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
 
