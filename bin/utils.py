@@ -934,6 +934,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
             stdin=subprocess.PIPE)
         p.communicate(unixToDos(f))
+        return p.wait() == 0
     else:
         return system( cmd )
 
