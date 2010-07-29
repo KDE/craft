@@ -8,7 +8,7 @@ contents:
 5. Authors, Contact and License
 
 1. step-by-step guide
-    - Get Python >= 2.5 ( e.g. from http://www.python.org ).
+    - Get Python >= 2.6 ( e.g. from http://www.python.org ).
     - If you can read this file you probably already got the svn-sources.
       If not, get an svn client, preferrably TortoiseSVN ( from 
       http://tortoisesvn.net/downloads ).
@@ -51,7 +51,7 @@ There are some special folders that have another meaning though:
             You can of course use this compiler outside of KDE as well.
 
 4. remarks to the step-by-step guide
-    - Get Python >= 2.5 ( e.g. from http://www.python.org ).
+    - Get Python >= 2.6 ( e.g. from http://www.python.org ).
 
 Python should be within your path ( which is normally set automatically ).
 You don't have to register python with the file ending .py though the author
