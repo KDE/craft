@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.3.1'] = 'e8fa74ad6f2294bdf7d22aed25896d8943287c32'
         self.targetInstSrc['1.3.1'] = 'dbus-1.3.1'
         self.targetConfigurePath['1.3.1'] = 'cmake'
-        self.patchToApply['1.3.1'] = ('dbus-scopes.diff', 1)
+        self.patchToApply['1.3.1'] = ('dbus-scopes-crlf.diff', 1)
         
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
