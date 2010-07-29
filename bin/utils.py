@@ -163,7 +163,7 @@ def getHttpFile( host, path, destdir, filename ):
 
 def isCrEol(filename):
     with open(filename, "rb") as f:
-        return not f.readline().endswith("\r\n")
+        return f.readline().endswith("\r\n")
 
 def checkFilesDigests( downloaddir, filenames, digests=None ):
     """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
@@ -921,36 +921,21 @@ def putenv(name, value):
     os.putenv( name, value )
     return True
 
-def unixToDos(src, dst):
-    f = None
-    try:
-        f = open(src, "rb")
-        content = f.read()
-        f.close(); f = None
-        content = content.replace('\n', '\r\n')
-        f = open(dst, "wb")
-        f.write(content)
-        f.flush()
-    except:
-        if f: f.close()
+def unixToDos(filename):
+    with open(filename, "rb") as f:
+        return f.read().replace('\n', '\r\n')
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    if isCrEol(f):
-        # XXX: security issue is recognized
-        dos_file = os.tempnam()
-        unixToDos(f, dos_file)
-        f = dos_file
-    else:
-        dos_file = None
-    cmd = "patch -d %s -p%s < %s" % ( sourceDir, patchLevel, f )    
+    cmd = "patch -d %s -p%s < %s" % (sourceDir, patchLevel, f)
     debug("applying patch %s" % cmd, 2)
-    try:
+    if not isCrEol(f):
+        p = subprocess.Popen([
+            "patch", "-d", sourceDir, "-p", str(patchLevel)],
+            stdin=subprocess.PIPE)
+        p.communicate(unixToDos(f))
+    else:
         return system( cmd )
-    finally:
-        if dos_file:
-            try: os.remove(dos_file)
-            except: pass
 
 def log(fn):
     def inner(*args, **argv):
