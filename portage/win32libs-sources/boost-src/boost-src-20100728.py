@@ -103,9 +103,9 @@ class Package(CMakePackageBase):
         # with MinGW4. FindBoost.cmake expects mgw44 named dlls on windows systems though.
         # To enable FindBoost to find the installed Boost package without special options
         # Dll files also get installed into the the bin dir with the expected name.
-        # Also the Dll's get moved to bin. MSVC Dlls only get moved to bin.
+        # Also the Dll's get copied to bin. MSVC Dlls only get copied to bin.
 
-        #TODO: fix FindBoost cmake, or the CMakeified boost and remove the part below
+        #FIXME: fix FindBoost cmake, or the CMakeified boost and remove the part below
         if not CMakePackageBase.install( self ):
             return False
 
@@ -118,7 +118,7 @@ class Package(CMakePackageBase):
                 for dp, _, fns in os.walk(os.path.join(self.imageDir(), "lib"))], []):
                 shutil.copy(f, os.path.join(self.imageDir(), "bin" ,
                                os.path.basename(f).replace("gcc44", "mgw44")))
-                shutil.move(f, os.path.join(self.imageDir(), "bin"))
+                shutil.copy(f, os.path.join(self.imageDir(), "bin"))
         except:
             traceback.print_exc()
             utils.die("Error installing boost-src")
