@@ -85,7 +85,7 @@ class infoclass:
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
         arch=""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-	  arch="-x64"
+            arch="-x64"
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
@@ -98,7 +98,43 @@ class infoclass:
             ret += repoUrl + '/' + name + arch + '-' + compiler + '-' + version + '-' + type + ext + '\n'
         return ret
 
-    # return archive file based package url for unified packages
+    def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
+        """ return archive file based package digests relating to info.infoclass.packageUrls()
+
+The expected digest keys are build in the form <version>[<architecture>]-<compiler>-<packagetype> where 
+version=<value from version parameter>
+compiler='vc90'|'mingw4'
+packagetype=<keys from packagestypes parameter>
+architecture=<empty for x86>|'-x64'
+
+example: 
+    # for x86 
+    self.targetDigests['2.4.2-3-vc90-bin'] = '1b7c2171fb60669924c9d7174fc2e39161f7ef7b'
+    self.targetDigests['2.4.2-3-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
+    # for x64 
+    self.targetDigests['2.4.2-3-x64-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
+
+    self.targets['2.4.2-3'] = self.packageUrls(repoUrl, "fontconfig", "2.4.2-3")
+    self.targetDigests['2.4.2-3'] = self.packageDigests("fontconfig", "2.4.2-3")
+
+        """
+        arch=""
+        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
+            arch="-x64"
+        compiler = "msvc"
+        if os.getenv("KDECOMPILER") == "mingw":
+            compiler = "mingw"
+        elif os.getenv("KDECOMPILER") == "mingw4":
+            compiler = "mingw4"
+        elif os.getenv("KDECOMPILER") == "msvc2008":
+            compiler = "vc90"
+        ret=[]
+        for type in packagetypes:
+            key = version + '-' + compiler + '-' + type + arch
+            ret.append(self.targetDigests[key])
+        return ret
+
+    #return archive file based package url for unified packages
     def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
         arch=""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
