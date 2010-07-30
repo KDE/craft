@@ -1,0 +1,48 @@
+# This Whitelist contains patterns for files that the KDEPIM Package for
+# Windows CE should contain.
+
+# Kmail-mobile and dependencies:
+WM60\\bin\\kmail-mobile\.exe
+WM60\\bin\\notes-mobile\.exe
+WM60\\bin\\zlib1\.dll
+WM60\\bin\\streams\.dll
+WM60\\bin\\streamanalyzer\.dll
+WM60\\bin\\ssleay32\.dll
+WM60\\bin\\soprano\.dll
+WM60\\bin\\sopranoclient\.dll
+WM60\\bin\\solid\.dll
+WM60\\bin\\qtxml4\.dll
+WM60\\bin\\qtwebkit4\.dll
+WM60\\bin\\qtsql4\.dll
+WM60\\bin\\qtscript4\.dll
+WM60\\bin\\qtnetwork4\.dll
+WM60\\bin\\qtgui4\.dll
+WM60\\bin\\qtdeclarative4\.dll
+WM60\\bin\\qtdbus4\.dll
+WM60\\bin\\qtcore4\.dll
+WM60\\bin\\nepomuk\.dll
+WM60\\bin\\libxml2\.dll
+WM60\\bin\\libintl\.dll
+WM60\\bin\\libeay32\.dll
+WM60\\bin\\kparts\.dll
+WM60\\bin\\kio\.dll
+WM60\\bin\\kemoticons\.dll
+WM60\\bin\\kdewin\.dll
+WM60\\bin\\kdewebkit\.dll
+WM60\\bin\\kdeui\.dll
+WM60\\bin\\kdecore\.dll
+WM60\\bin\\kcmutils\.dll
+WM60\\bin\\iconv\.dll
+WM60\\bin\\dbus-1\.dll
+WM60\\bin\\bzuip2\.dll
+WM60\\bin\\akonadiprotocolinternals\.dll
+
+#D-Bus and dependencies:
+WM60\\bin\\dbus-daemon\.exe
+WM60\\bin\\dbus-launch\.exe
+WM60\\bin\\expat\.dll
+
+#Akonadi and dependencies
+WM60\\bin\\akonadiserver\.exe
+WM60\\bin\\akonadictl\.exe
+WM60\\bin\\akonadiprivate\.dll

@@ -1,0 +1,33 @@
+[Version]
+Signature = "$$Windows NT$$"
+Provider = "KDE"
+CESignature = "$$Windows CE$$"
+
+[CEStrings]
+AppName = "Kontact-Mobile"
+InstallDir = %CE1%\%AppName%
+ 
+[DefaultInstall]
+CopyFiles = $SECTIONNAMES
+AddReg = RegSettings
+CEShortcuts = Shortcuts
+ 
+$SECTIONS
+ 
+[RegSettings]
+HKLM, Software\kde, KDEDIRS, 0, %InstallDir%
+HKLM, Software\freedesktop\DBus, Install Directory, 0, %InstallDir%/bin
+
+[Shortcuts]
+%AppName%,0,kmail-mobile.exe
+%AppName%,0,notes-mobile.exe
+ 
+[SourceDisksNames]
+$SOURCEDISKNAMES
+ 
+[SourceDisksFiles]
+$SOURCEDISKFILES
+
+[DestinationDirs]
+$DESTINATIONDIRS
+Shortcuts = 0,%CE11%
