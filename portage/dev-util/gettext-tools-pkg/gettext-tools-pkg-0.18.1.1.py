@@ -5,8 +5,14 @@ import shutil
 import utils
 import info
 from shells import *
-print """The use of this package is not recommed, use the binary package instead
-To be shure that gettext-tools is linked completly static I recomed a clean setup and libiconv has to be build in a static way"""
+
+print """
+The use of this package is not recommend, use the binary package instead
+For a static build I currently know no easier way then installing win_iconv with -DBUILD_STATIC and
+remove the following dynamic import libs:
+libiconv.dll.a
+libgomp.dll.a
+"""
 
 class subinfo(info.infoclass):
     def setTargets( self ):
