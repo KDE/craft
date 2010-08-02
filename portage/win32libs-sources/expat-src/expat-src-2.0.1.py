@@ -22,7 +22,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.withCompiler = None
         
     def createPackage( self ):
-        libName="expat" 
+        libName="libexpat" 
         self.stripLibs( libName )
         return KDEWinPackager.createPackage( self )
            
