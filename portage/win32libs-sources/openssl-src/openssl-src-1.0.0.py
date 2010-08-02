@@ -19,8 +19,6 @@ class subinfo(info.infoclass):
             self.defaultTarget = '1.0.0a'
         else:
             self.defaultTarget = '1.0.0'
-        
-        self.options.package.withCompiler = False
 
     def setDependencies( self ):
             self.hardDependencies['virtual/base'] = 'default'
@@ -116,7 +114,6 @@ class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         self.subinfo.options.package.packageName = 'openssl'
-        self.subinfo.options.package.withCompiler = False
         self.subinfo.options.package.packSources = False
         self.subinfo.options.install.useDestDir = False
         self.shell = MSysShell()
