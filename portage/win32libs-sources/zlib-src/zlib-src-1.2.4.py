@@ -29,9 +29,7 @@ class Package(CMakePackageBase):
         return True
 
     def createPackage( self ):
-        # auto-create both import libs with the help of pexports
-        self.createImportLibs( "libzlib1" )
-
+        self.stripLibs( "libzlib1" )
         return CMakePackageBase.createPackage( self )
 
 if __name__ == '__main__':
