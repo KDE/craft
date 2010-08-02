@@ -23,7 +23,11 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_TOOL=OFF -DBUILD_TESTS=ON"
+        self.subinfo.options.configure.defines = "-DBUILD_TOOL=OFF -DBUILD_TESTS=ON "
+        if platform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines += "-DTARGET_CPP:STRING=\"" + os.getenv("VCINSTALLDIR").replace("\\", "/") + "/ce/bin/x86_arm/cl.exe\" "
+            if self.isTargetBuild():
+                self.subinfo.options.configure.defines += "-DBUILD_CROSS_TOOLS=OFF "
 
 
 if __name__ == '__main__':

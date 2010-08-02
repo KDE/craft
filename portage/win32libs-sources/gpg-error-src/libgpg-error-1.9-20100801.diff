@@ -1,19 +1,22 @@
 diff -Nru libgpg-error-1.9.orig/CMakeLists.txt libgpg-error-1.9/CMakeLists.txt
 --- libgpg-error-1.9.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libgpg-error-1.9/CMakeLists.txt	2010-08-01 00:28:44.906318600 +0200
-@@ -0,0 +1,159 @@
+@@ -0,0 +1,211 @@
 +project(gpg-error)
 +
 +cmake_minimum_required(VERSION 2.6)
 +
-+option(BUILD_STATIC "build a static library and no shared library"  OFF)
-+option(BUILD_TOOL   "build with tool executable"                    ON)
-+option(BUILD_TESTS  "build with test executables"                   OFF)
++############## the options that can be set from outside ##########################################
++#option(BUILD_STATIC         "build a static library and no shared library"  OFF)
++option(BUILD_TOOL           "build with tool executable"                    ON)
++option(BUILD_TESTS          "build with test executables"                   OFF)
++option(BUILD_CROSS_TOOLS    "use external tools"                            ON)
 +
 +if(BUILD_TESTS)
 +    enable_testing()
 +endif(BUILD_TESTS)
 +
++############## search for external tools that are needed for header generation ###################
 +find_program(AWK_EXECUTABLE NAMES awk gawk)
 +
 +if(NOT AWK_EXECUTABLE)
@@ -30,17 +33,30 @@ diff -Nru libgpg-error-1.9.orig/CMakeLists.txt libgpg-error-1.9/CMakeLists.txt
 +    message(STATUS "Found grep: ${GREP_EXECUTABLE}")
 +endif(NOT GREP_EXECUTABLE)
 +
++############## include the configure checks and set some import basic variables ##################
 +include(ConfigureChecks.cmake)
 +
 +set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 +set(BIN_DIR ${CMAKE_CURRENT_BINARY_DIR})
 +if(WIN32)
-+    set(NULL_DEVICE NUL)
++    set(NULL_DEVICE 2> NUL)
 +else(WIN32)
-+    set(NULL_DEVICE /dev/null)
++    set(NULL_DEVICE 2> /dev/null)
 +endif(WIN32)
 +
-+############## generate file extra-h.in ###################################################
++# For debugging purposes
++set(NULL_DEVICE)
++
++# if set, TARGET_CPP is the compiler of the target platform
++if(TARGET_CPP)
++    set(ERR_COMPILER ${TARGET_CPP})
++    set(INCLUDE_STRING "%TARGET_INCLUDE%")
++else(TARGET_CPP)
++    set(ERR_COMPILER ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1})
++    set(INCLUDE_STRING "$ENV{INCLUDE}")
++endif(TARGET_CPP)
++
++############## generate files ####################################################################
 +file(WRITE ${BIN_DIR}/extra-h.in "")
 +if(WIN32)
 +    file(READ ${SRC_DIR}/w32-add.h W32ADD_TMP)
@@ -52,6 +68,26 @@ diff -Nru libgpg-error-1.9.orig/CMakeLists.txt libgpg-error-1.9/CMakeLists.txt
 +endif(WINCE)
 +file(APPEND ${BIN_DIR}/extra-h.in "\nEOF")
 +
++file(MAKE_DIRECTORY ${BIN_DIR}/gpg-extra)
++if(WINCE)
++file(WRITE ${BIN_DIR}/gpg-extra/errno.h "/* some CE compat taken over from dbus */
++#ifdef HAVE_W32CE_SYSTEM
++#include <windows.h>
++#define errno ((int)GetLastError ())
++#define abort() exit(3)
++
++#ifndef TLS_OUT_OF_INDEXES
++# define TLS_OUT_OF_INDEXES 0xffffffff
++#endif
++
++#define EINVAL      ERROR_INVALID_PARAMETER
++#define ERANGE      ERROR_ARITHMETIC_OVERFLOW
++#define ENOMEM      ERROR_NOT_ENOUGH_MEMORY
++#endif /* HAVE_W32CE_SYSTEM */
++")
++else(WINCE)
++    file(WRITE ${BIN_DIR}/gpg-extra/errno.h)
++endif(WINCE)
 +
 +set(gpg_error_GENERATED_SRCS)
 +
@@ -70,30 +106,46 @@ diff -Nru libgpg-error-1.9.orig/CMakeLists.txt libgpg-error-1.9/CMakeLists.txt
 +awk_generate(code-to-errno.h mkerrnos.awk ${SRC_DIR}/errnos.in)
 +awk_generate(gpg-error.h mkheader.awk ${SRC_DIR}/err-sources.h.in ${SRC_DIR}/err-codes.h.in ${SRC_DIR}/errnos.in ${BIN_DIR}/extra-h.in ${SRC_DIR}/gpg-error.h.in)
 +
-+add_custom_command(OUTPUT ${BIN_DIR}/mkerrcodes.h COMMAND ${AWK_EXECUTABLE} -f ${SRC_DIR}/mkerrcodes1.awk ${SRC_DIR}/errnos.in > ${BIN_DIR}/_mkerrcodes.h
-+                                                  COMMAND ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} -E ${BIN_DIR}/_mkerrcodes.h 2> ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
++add_custom_command(OUTPUT ${BIN_DIR}/mkerrcodes.h  COMMAND ${AWK_EXECUTABLE} -f ${SRC_DIR}/mkerrcodes1.awk ${SRC_DIR}/errnos.in > ${BIN_DIR}/_mkerrcodes.h
++                                                   COMMAND set INCLUDE="\"${INCLUDE_STRING}\""
++                                                   COMMAND ${ERR_COMPILER} -E ${BIN_DIR}/_mkerrcodes.h -I ${BIN_DIR}/gpg-extra ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
 +                                                       "\"${AWK_EXECUTABLE}\"" -f ${SRC_DIR}/mkerrcodes.awk > ${BIN_DIR}/mkerrcodes.h)
++add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.tab.h COMMAND ${ERR_COMPILER} -E -DRESOLVE_MACROS ${SRC_DIR}/mkw32errmap.c ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" \"{&mkw32errmap_marker\" > ${BIN_DIR}/mkw32errmap.tab.h)
 +
++if(BUILD_CROSS_TOOLS)
++    add_executable(mkw32errmap src/mkw32errmap.c ${BIN_DIR}/mkw32errmap.tab.h)
++    add_executable(mkerrcodes ${BIN_DIR}/mkerrcodes.h src/mkerrcodes.c)
++    get_target_property(MKW32ERRMAP mkw32errmap LOCATION)
++    get_target_property(MKERRCODES mkerrcodes LOCATION)
++    if(TARGET_CPP)
++        # if TARGET_CPP is set, we want to compile for another platform. To get the correct 
++        install(TARGETS mkw32errmap mkerrcodes RUNTIME DESTINATION bin
++                                               LIBRARY DESTINATION lib
++                                               ARCHIVE DESTINATION lib)
++    endif(TARGET_CPP)
++else(BUILD_CROSS_TOOLS)
++    find_program(MKW32ERRMAP mkw32errmap)
++    find_program(MKERRCODES mkerrcodes)
++    if(NOT MKW32ERRMAP OR NOT MKERRCODES)
++        message(FATAL_ERROR "could not find mkw32errmap or mkerrcodes")
++    endif(NOT MKW32ERRMAP OR NOT MKERRCODES)
++    include_directories(${BIN_DIR}/gpg-extra)
++    message(STATUS "${MKW32ERRMAP} - ${MKERRCODES}")
++endif(BUILD_CROSS_TOOLS)
 +
 +if(WINCE)
-+    add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.tab.h COMMAND ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} -E -DRESOLVE_MACROS ${SRC_DIR}/mkw32errmap.c 2> ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" \"{&mkw32errmap_marker\" > ${BIN_DIR}/mkw32errmap.tab.h)
-+
-+    add_executable(mkw32errmap src/mkw32errmap.c ${BIN_DIR}/mkw32errmap.tab.h)
-+    
-+    add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.map.c COMMAND mkw32errmap --map > ${BIN_DIR}/mkw32errmap.map.c DEPENDS mkw32errmap)
++    add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.map.c COMMAND ${MKW32ERRMAP} --map > ${BIN_DIR}/mkw32errmap.map.c DEPENDS ${MKW32ERRMAP})
 +else(WINCE)
 +    file(WRITE ${BIN_DIR}/mkw32errmap.map.c "/*dummy*/")
 +endif(WINCE)
 +
-+add_executable(mkerrcodes mkerrcodes.h src/mkerrcodes.c)
-+
-+add_custom_command(OUTPUT ${BIN_DIR}/code-from-errno.h COMMAND ${BIN_DIR}/mkerrcodes | "\"${AWK_EXECUTABLE}\"" -f ${SRC_DIR}/mkerrcodes2.awk > ${BIN_DIR}/code-from-errno.h DEPENDS mkerrcodes)
++add_custom_command(OUTPUT ${BIN_DIR}/code-from-errno.h COMMAND ${MKERRCODES} | "\"${AWK_EXECUTABLE}\"" -f ${SRC_DIR}/mkerrcodes2.awk > ${BIN_DIR}/code-from-errno.h DEPENDS ${MKERRCODES})
 +set(gpg_error_GENERATED_SRCS ${gpg_error_GENERATED_SRCS} ${BIN_DIR}/code-from-errno.h)
 +
 +file(READ ${SRC_DIR}/gpg-error.def.in GPG_ERROR_DEF_TMP)
 +file(WRITE ${BIN_DIR}/gpg-error.def.h "${GPG_ERROR_DEF_TMP}")
 +
-+add_custom_command(OUTPUT ${BIN_DIR}/gpg-error.def COMMAND ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} -E -I "${BIN_DIR}" "${BIN_DIR}/gpg-error.def.h" 2> ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" -v "\"^#\"" > ${BIN_DIR}/gpg-error.def.tmp
++add_custom_command(OUTPUT ${BIN_DIR}/gpg-error.def COMMAND ${ERR_COMPILER} -E -I "${BIN_DIR}" "${BIN_DIR}/gpg-error.def.h" ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" -v "\"^#\"" > ${BIN_DIR}/gpg-error.def.tmp
 +                                                   COMMAND ${GREP_EXECUTABLE} -v "\"^$$\"" ${BIN_DIR}/gpg-error.def.tmp > ${BIN_DIR}/gpg-error.def
 +                                                   DEPENDS ${BIN_DIR}/gpg-error.def.h)
 +
@@ -119,12 +171,12 @@ diff -Nru libgpg-error-1.9.orig/CMakeLists.txt libgpg-error-1.9/CMakeLists.txt
 +
 +include_directories(${BIN_DIR} ${SRC_DIR})
 +
-+if(BUILD_STATIC)
-+    set(_shared STATIC)
-+else(BUILD_STATIC)
++#if(BUILD_STATIC)
++#    set(_shared STATIC)
++#else(BUILD_STATIC)
 +    set(_shared SHARED)
 +    set(gpg_error_SRCS ${gpg_error_SRCS} ${BIN_DIR}/gpg-error.def)
-+endif(BUILD_STATIC)
++#endif(BUILD_STATIC)
 +
 +add_library(gpg-error ${_shared} ${gpg_error_SRCS} ${gpg_error_GENERATED_SRCS})
 +set_target_properties(gpg-error PROPERTIES DEFINE_SYMBOL DLL_EXPORT)
@@ -538,10 +590,16 @@ diff -Nru libgpg-error-1.9.orig/src/strsource.c libgpg-error-1.9/src/strsource.c
 diff -Nru libgpg-error-1.9.orig/src/w32-gettext.c libgpg-error-1.9/src/w32-gettext.c
 --- libgpg-error-1.9.orig/src/w32-gettext.c	2010-03-01 14:54:53.000000000 +0100
 +++ libgpg-error-1.9/src/w32-gettext.c	2010-08-01 00:27:14.919171600 +0200
-@@ -32,7 +32,17 @@
+@@ -30,9 +30,23 @@
+ #include <string.h>
+ #include <errno.h>
  #include <ctype.h>
++#ifdef HAVE_SYS_TYPES_H
  #include <sys/types.h>
++#endif
++#ifdef HAVE_SYS_STAT_H
  #include <sys/stat.h>
++#endif
 +#ifdef HAVE_STDINT_H
  #include <stdint.h>
 +#else
@@ -556,7 +614,17 @@ diff -Nru libgpg-error-1.9.orig/src/w32-gettext.c libgpg-error-1.9/src/w32-gette
  #ifndef HAVE_W32CE_SYSTEM
  # include <locale.h>
  #endif /*HAVE_W32CE_SYSTEM*/
-@@ -1147,9 +1157,14 @@
+@@ -611,7 +625,9 @@
+ static const char *
+ my_nl_locale_name (const char *categoryname)
+ {
++#ifndef HAVE_W32CE_SYSTEM
+   const char *retval;
++#endif
+   LCID lcid;
+   LANGID langid;
+   int primary, sub;
+@@ -1147,9 +1163,14 @@
  
  
  /* Constructor for this module.  Called from DllMain.  */
@@ -573,3 +641,29 @@ diff -Nru libgpg-error-1.9.orig/src/w32-gettext.c libgpg-error-1.9/src/w32-gette
  {
    InitializeCriticalSection (&domainlist_access_cs);
  }
+@@ -1177,7 +1198,9 @@
+ {
+   FILE *fp;
+   size_t size;
++#ifndef HAVE_W32CE_SYSTEM
+   struct stat st;
++#endif
+   struct mo_file_header *data = NULL;
+   struct loaded_domain *domain = NULL;
+   size_t to_read;
+@@ -1188,6 +1211,7 @@
+     {
+       return NULL;
+     }
++#ifndef HAVE_W32CE_SYSTEM
+   if (fstat (fileno (fp), &st)
+       || (size = (size_t) st.st_size) != st.st_size
+       || size < sizeof (struct mo_file_header))
+@@ -1195,6 +1219,7 @@
+       fclose (fp);
+       return NULL;
+     }
++#endif
+ 
+   data = (2*size <= size)? NULL : jnlib_malloc (2*size);
+   if (!data)
