@@ -19,7 +19,6 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
 
     def unpack(self):
@@ -31,7 +30,7 @@ class Package(CMakePackageBase):
 
     def createPackage( self ):
         # auto-create both import libs with the help of pexports
-        self.createImportLibs( "zlib1" )
+        self.createImportLibs( "libzlib1" )
 
         return CMakePackageBase.createPackage( self )
 
