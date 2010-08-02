@@ -25,7 +25,7 @@ class Package(CMakePackageBase):
             
             
     def createPackage( self ): 
-        libName="giflib4" 
+        libName="libgiflib4" 
         self.stripLibs( libName )
         # auto-create both import libs with the help of pexports	 
         self.createImportLibs( libName )

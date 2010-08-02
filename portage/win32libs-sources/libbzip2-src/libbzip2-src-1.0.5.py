@@ -28,7 +28,7 @@ class Package(CMakePackageBase):
 
   def createPackage( self ):
     # auto-create both import libs with the help of pexports
-    self.createImportLibs( "libbzip2" )
+    self.createImportLibs( "bzip2" )
 
     return CMakePackageBase.createPackage( self )
 
