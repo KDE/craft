@@ -11,7 +11,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kdesupport/grantlee'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
@@ -27,19 +28,11 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
-        if self.isTargetBuild():
-            self.subinfo.options.configure.defines += " -DBUILD_kleopatra=OFF "
-            self.subinfo.options.configure.defines += " -DBUILD_blogilo=OFF "
-            self.subinfo.options.configure.defines += " -DBUILD_kjots=OFF "
-            self.subinfo.options.configure.defines += " -DBUILD_knotes=OFF "
-            self.subinfo.options.configure.defines += " -DBUILD_kmail=OFF "
-            self.subinfo.options.configure.defines += " -DBUILD_korganizer=OFF "
-            self.subinfo.options.configure.defines += " -DBUILD_kaddressbook=OFF "
-            self.subinfo.options.configure.defines += " -DKDEPIM_MOBILE_UI=TRUE "
 
         if platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
-            
+            self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
+            self.subinfo.options.configure.defines += " -DKDEPIM_MOBILE_UI=TRUE "
+            self.subinfo.options.configure.defines += " -DBUILD_mobile=ON "
         
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
