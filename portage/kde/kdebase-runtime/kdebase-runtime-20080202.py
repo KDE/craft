@@ -22,9 +22,8 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
-        #FIXME: meinproc4 throughs an error, dont know really why
         if platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
+            self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
         
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")

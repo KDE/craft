@@ -59,7 +59,7 @@ class Package(CMakePackageBase):
             % os.path.join(ROOTDIR, "bin")
             
         if platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
+            self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
             if self.isTargetBuild():
                 self.subinfo.options.configure.defines += "-DKDE_PLATFORM_PROFILE=Mobile "
 
