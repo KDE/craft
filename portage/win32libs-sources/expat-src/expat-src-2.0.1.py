@@ -24,8 +24,6 @@ class Package(CMakePackageBase):
     def createPackage( self ):
         libName="expat" 
         self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports	 
-        self.createImportLibs( libName )
         return KDEWinPackager.createPackage( self )
            
 if __name__ == '__main__':
