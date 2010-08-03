@@ -304,7 +304,7 @@ class EmergeBase():
         if hasattr(self,'source'):
             self.source.buildTarget = self.subinfo.buildTarget
         
-    def setup( self, fileName=None, category=None, package=None, version=None):
+    def setup( self, fileName=None, category=None, package=None, version=None, buildTarget=None):
         if fileName == None:
             ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
             ( self.category, self.package, self.version ) = portage.getCategoryPackageVersion( self.argv0 )
@@ -313,7 +313,7 @@ class EmergeBase():
             self.package = package
             self.version = version
             ( self.PV, ext ) = os.path.splitext( os.path.basename( fileName) )
-        self.setBuildTarget()
+        self.setBuildTarget(buildTarget)
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )
