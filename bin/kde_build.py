@@ -128,7 +128,8 @@ class kde_interface:
             print "kdesinglecheckout:pwd ", ownpath
             print "kdesinglecheckout:   ", svncmd
         os.chdir( ownpath )
-        utils.system( svncmd ) or utils.die( "while checking out. cmd: %s" % svncmd )
+        with utils.LockFile(utils.svnLockFileName()):
+            utils.system( svncmd ) or utils.die( "while checking out. cmd: %s" % svncmd )
 
     def kdeSvnFetch( self, svnpath, packagedir ):
         """svnpath is the part of the repo url after /home/kde, for example"""

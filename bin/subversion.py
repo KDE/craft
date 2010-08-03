@@ -5,6 +5,7 @@ import tools
 import re
 import sys
 import ConfigParser
+import util
 
 class Repo_info:
     def __init__( self ):
@@ -115,7 +116,8 @@ class Repository ( tools.Object ):
         if ( self.rinfo.password != None ):
             command = command + " --password " + self.rinfo.password
         log = os.tmpfile()
-        ret = self.system( command, capture_output=log )
+        with utils.LockFile(utils.svnLockFileName()):
+            ret = self.system( command, capture_output=log )
         log.seek( 0 )
         if self.verbose() > 1:
             for line in log:
@@ -139,7 +141,8 @@ class Repository ( tools.Object ):
         if ( self.rinfo.password != None ):
             command = command + " --password " + self.rinfo.password
         log = os.tmpfile()
-        ret = self.system( command, capture_output=log )
+        with utils.LockFile(utils.svnLockFileName()):
+            ret = self.system( command, capture_output=log )
         log.seek( 0 )
         if self.verbose() > 1:
             for line in log:
@@ -214,7 +217,8 @@ class Repository ( tools.Object ):
                 
             command = "svn status %s" % target
             statuslog = os.tmpfile()
-            self.system( command, capture_output=statuslog )
+            with utils.LockFile(utils.svnLockFileName()):
+                self.system( command, capture_output=statuslog )
             statuslog.seek( 0 )
             
             for line in statuslog:
@@ -252,7 +256,8 @@ class Repository ( tools.Object ):
                 
             command = "svn cleanup %s" % target
             log = os.tmpfile()
-            ret = self.system( command, capture_output=log )
+            with utils.LockFile(utils.svnLockFileName()):
+                ret = self.system( command, capture_output=log )
             log.seek( 0 )
             if self.verbose() > 1:
                 for line in log:
@@ -271,7 +276,8 @@ class Repository ( tools.Object ):
         os.chdir( self.rinfo.repodir )
         self.debug( self.rinfo.repodir )
         log = os.tmpfile()
-        self.system( "svn info", capture_output=log )
+        with utils.LockFile(utils.svnLockFileName()):
+            self.system( "svn info", capture_output=log )
         log.seek( 0 )
         infos = dict()
         for line in log:

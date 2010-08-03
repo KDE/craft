@@ -5,7 +5,9 @@
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes 
 
 from VersionSystemSourceBase import *
-import os
+
+import os.path
+
 import utils
 
 class SvnSource (VersionSystemSourceBase):
@@ -126,12 +128,14 @@ class SvnSource (VersionSystemSourceBase):
         else:
             cmd = "%s/svn checkout %s %s %s" % (self.svnInstallDir, option, url, sourcedir )
 
-        return utils.system( cmd )
+        with utils.LockFile(utils.svnLockFileName()):
+            return utils.system( cmd )
 
     def createPatch( self ):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
         cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
-        return utils.system( cmd )
+        with utils.LockFile(utils.svnLockFileName()):
+            return utils.system( cmd )
 
     def sourceVersion( self ):
         """ return the revision returned by svn info """
@@ -149,7 +153,9 @@ class SvnSource (VersionSystemSourceBase):
         tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
         
         # run the command
-        utils.system( cmd, outstream=tempfile )
+        with utils.LockFile(utils.svnLockFileName()):
+            utils.system( cmd, outstream=tempfile )
+
         tempfile.seek(os.SEEK_SET)
         # read the temporary file and find the line with the revision
         for line in tempfile:
