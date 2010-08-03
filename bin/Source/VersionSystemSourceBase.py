@@ -61,11 +61,14 @@ class VersionSystemSourceBase (SourceBase):
             if utils.verbose > 0:
                 print "cleaning %s" % self.buildDir()
             utils.cleanDirectory( self.buildDir() )
-        
         if not self.noCopy:
+            # work around that if noCopy is already set, this sourceDir will return the wrong source directory.
+            self.noCopy = True
+            sourceDir = self.sourceDir()
+            self.noCopy = False
             if utils.verbose > 0:
-                print "copying %s to %s" % (self.sourceDir(), self.buildDir())
-            utils.copySrcDirToDestDir(self.sourceDir(), self.buildDir())
+                print "copying %s to %s" % (sourceDir, self.buildDir())
+            utils.copySrcDirToDestDir(sourceDir, self.buildDir())
         return True;
         
     def repositoryUrlCount( self ):
