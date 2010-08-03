@@ -39,8 +39,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/boost-src'] = 'default'
         self.hardDependencies['win32libs-sources/libical-src'] = 'default'
         self.hardDependencies['contributed/gpg4win-dev'] = 'default'
-        if compiler.isMinGW():
-            self.hardDependencies['testing/openldap-src'] = 'default'
+#        if compiler.isMinGW():
+#            self.hardDependencies['testing/openldap-src'] = 'default'
 
 from Package.CMakePackageBase import *
         
