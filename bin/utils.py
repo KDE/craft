@@ -21,6 +21,7 @@ import traceback
 import tempfile
 import getpass
 import subprocess
+import re
 
 if os.name == 'nt': import msvcrt
 else:               import fcntl
