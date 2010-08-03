@@ -133,7 +133,7 @@ class Portage:
         else:
             return
 
-    def getPackageInstance( self, category, package ):
+    def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
         if platform.isCrossCompilingEnabled() \
         or os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1":
@@ -146,7 +146,7 @@ class Portage:
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
         p = module.Package()
-        p.setup(fileName, category, package, version)
+        p.setup(fileName, category, package, version, buildtarget)
         return p
     
     def getDefaultTarget( self, category, package, version ):
@@ -228,9 +228,9 @@ class Portage:
 PortageInstance = Portage()
 PortageInstance.addPortageDir( rootDir() )
 
-def getPackageInstance( category, package ):
+def getPackageInstance(category, package, buildtarget=None):
     """return instance of class Package from package file"""
-    return PortageInstance.getPackageInstance( category, package )
+    return PortageInstance.getPackageInstance(category, package, buildtarget)
 
 def isVersion( part ):
     ver_regexp = re.compile("^(cvs\\.)?(\\d+)((\\.\\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\\d*)*)(-r(\\d+))?$")
