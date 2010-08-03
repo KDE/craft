@@ -10,15 +10,21 @@ this file contains some helper functions for emerge
 
 import httplib
 import ftplib
-import os
+import os.path
 import sys
-import re
 import urlparse
 import shutil
 import zipfile
 import tarfile
 import hashlib
+import traceback
+import tempfile
+import getpass
 import subprocess
+
+if os.name == 'nt': import msvcrt
+else:               import fcntl
+
 import info
 import portage
 
@@ -26,6 +32,69 @@ import ConfigParser
 
 import portage_versions
 
+
+SVN_LOCK_FILE = "emergesvn-%s.lck"
+
+def svnLockFileName():
+    '''Generate a user global svn lock file.
+       TODO: generate it smarter to prevent security issues
+             and possible collisions.
+    '''
+    do_lock = os.environ.get("EMERGE_SVN_LOCK")
+    if not do_lock or do_lock.strip().lower() not in ("true", "yes"):
+        return None
+
+    try:
+        return os.environ["EMERGE_SVN_LOCK_FILE"]
+    except KeyError:
+        pass
+
+    return os.path.join(
+        tempfile.gettempdir(), SVN_LOCK_FILE % getpass.getuser())
+
+class LockFile(object):
+    """Context manager for a user global lock file"""
+
+    def __init__(self, file_name):
+        self.file_name   = file_name
+        self.file_handle = None
+
+    def __enter__(self):
+        if not self.file_name: return
+
+        self.file_handle = open(self.file_name, 'a')
+        fh = self.file_handle
+
+        if os.name == 'nt':
+            fh.seek(0)
+            while True:
+                try:
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647L)
+                except IOError, msg:
+                    # after 15 secs (every 1 sec, 1 attempt -> 15 secs)
+                    # a exception is raised but we want to continue trying.
+                    continue
+                break
+        else:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+
+        fh.truncate(0)
+        print >> fh, "%d" % os.getpid()
+        fh.flush()
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        fh = self.file_handle
+        if fh is None: return
+        self.file_handle = None
+        if os.name == 'nt':
+            fh.seek(0)
+            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647L)
+        else:
+            fcntl.flock(fh, fcntl.LOCK_UN)
+        try:
+            fh.close()
+        except:
+            traceback.print_exc()
 
 ### fetch functions
 
@@ -373,13 +442,15 @@ def svnFetch( repo, destdir, username = None, password = None ):
             command = command + " --username " + username
         if ( password != None ):
             command = command + " --password " + password
-        ret = system( command )
+        with LockFile(svnLockFileName()):
+            ret = system( command )
     else:
         # already checked out, so only update
         mode = "update"
         os.chdir( path )
         debug( "svn up cwd: %s" % os.getcwd(), 1 )
-        ret = system( "svn update" )
+        with LockFile(svnLockFileName()):
+            ret = system( "svn update" )
 
     if ( ret == 0 ):
         return True
