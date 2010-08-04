@@ -136,7 +136,7 @@ class VersionSystemSourceBase (SourceBase):
 
             return sourcedir
         else:
-            sourcedir = checkoutDir( index )
+            sourcedir = self.checkoutDir( index )
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
