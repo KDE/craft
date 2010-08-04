@@ -199,6 +199,12 @@ rem instead of being printed to the console. Logging information is appended to
 rem existing logs.
 rem set EMERGE_LOG_DIR=%KDEROOT%\buildlogs
 
+rem This option can be used to integrate packages from other portage directories
+rem or override the default packages. The default directory can be overridden by
+rem not including it in this list. If you do not set this option emerge will take
+rem the current portage directory instead.
+rem set EMERGE_PORTAGE_ROOT=C:\test\portage;%KDEROOT%\emerge\portage
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
