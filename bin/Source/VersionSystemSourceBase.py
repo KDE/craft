@@ -54,7 +54,6 @@ class VersionSystemSourceBase (SourceBase):
         return server + '/home/kde/'
 
     def unpack( self ):
-        self.applyPatches()
         self.enterBuildDir()
 
         if not self.noClean:
@@ -66,6 +65,7 @@ class VersionSystemSourceBase (SourceBase):
             if utils.verbose > 0:
                 print "copying %s to %s" % (sourceDir, self.buildDir())
             utils.copySrcDirToDestDir(sourceDir, self.buildDir())
+        self.applyPatches()
         return True;
         
     def repositoryUrlCount( self ):

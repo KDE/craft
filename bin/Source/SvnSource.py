@@ -20,6 +20,21 @@ class SvnSource (VersionSystemSourceBase):
         if not os.path.exists(self.svnInstallDir):
             utils.die("required subversion package not installed in %s" % self.svnInstallDir)
             
+    def applyPatches(self):
+        """apply patches is available"""
+        utils.debug( "SvnSource.applyPatches called", 2 )
+
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
+            ( file, patchdepth ) = self.subinfo.patchesToApply()
+            if file:
+                patchfile = os.path.join ( self.packageDir(), file )
+                if self.noCopy:
+                    srcdir = self.sourceDir()
+                else:
+                    srcdir = self.buildDir()
+                return utils.applyPatch( srcdir, patchfile, patchdepth )
+        return True
+
     def setProxy(self):
         """set proxy for fetching sources from subversion repository"""
         (host, port, username, password) = self.proxySettings()
