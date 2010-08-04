@@ -133,7 +133,7 @@ class SvnSource (VersionSystemSourceBase):
 
     def createPatch( self ):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
-        cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
+        cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.checkoutDir(), os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
         with utils.LockFile(utils.svnLockFileName()):
             return utils.system( cmd )
 
