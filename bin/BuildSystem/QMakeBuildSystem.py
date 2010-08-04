@@ -22,8 +22,8 @@ class QMakeBuildSystem(BuildSystemBase):
         else:
             exit( 1 )
 
-    def setPathes(self):
-            # for qmake
+    def setPathes( self ):
+            # for building qt with qmake
         utils.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
         
         # so that the mkspecs can be found, when -prefix is set
@@ -35,7 +35,6 @@ class QMakeBuildSystem(BuildSystemBase):
         """inplements configure step for Qt projects"""
             
         self.enterBuildDir()
-        self.setPathes()
 
         # here follows some automatic configure tool detection
         # 1. search for configure.exe in the order 
@@ -62,9 +61,7 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def make( self, options=""):
         """implements the make step for Qt projects"""
-
         self.enterBuildDir()
-        self.setPathes()
 
         command = self.makeProgramm 
         command += compilercache.getQmakeMakeArguments()
