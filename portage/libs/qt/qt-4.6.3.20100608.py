@@ -139,7 +139,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def make(self, unused=''):        
         if self.isTargetBuild():
             self.setupTargetToolchain()
-        
+
+        self.setPathes()
+
         QMakeBuildSystem.make(self)
         
         return True
