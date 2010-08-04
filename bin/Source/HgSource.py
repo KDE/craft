@@ -45,14 +45,14 @@ class HgSource ( VersionSystemSourceBase ):
             # question whether mercurial stuff uses these proxies
             self.setProxy()
 
-            if os.path.exists( self.sourceDir() ):
+            if os.path.exists( self.checkoutDir() ):
                 # if directory already exists, simply do an update but obey to offline
-                os.chdir( self.sourceDir() )
+                os.chdir( self.checkoutDir() )
                 ret = self.system( "hg update" )
                 
             else:
                 # it doesn't exist so clone the repo
-                svnsrcdir = self.sourceDir().replace( self.package, "" )
+                svnsrcdir = self.checkoutDir().replace( self.package, "" )
                 if not os.path.exists( svnsrcdir ):
                     os.makedirs( svnsrcdir )
 
@@ -88,7 +88,7 @@ class HgSource ( VersionSystemSourceBase ):
         if self.enableHg:
         
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-            tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" )
+            tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" )
             
             # run the command
             ret = utils.system( "hg tip", tempfile )
@@ -100,6 +100,6 @@ class HgSource ( VersionSystemSourceBase ):
             
             # print the revision - everything else should be quiet now
             print revision
-            os.remove( os.path.join( self.sourceDir().replace('/', '\\'), ".emergehgtip.tmp" ) )
+            os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ) )
         # always return True to not break something serious
         return True

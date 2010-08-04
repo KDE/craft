@@ -42,7 +42,7 @@ class SvnSource (VersionSystemSourceBase):
 
         for i in range(0, self.repositoryUrlCount()):
             url = self.repositoryUrl(i)
-            sourcedir = self.sourceDir(i)
+            sourcedir = self.checkoutDir(i)
             if self.repositoryUrlOptions(i) == 'norecursive':
                 self.__tryCheckoutFromRoot(url,sourcedir,False)
             else:
@@ -147,10 +147,10 @@ class SvnSource (VersionSystemSourceBase):
         os.environ["LANG"] = "C"
         
         # set up the command
-        cmd = "%s/svn info %s" % ( self.svnInstallDir, self.sourceDir() )
+        cmd = "%s/svn info %s" % ( self.svnInstallDir, self.checkoutDir() )
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
+        tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
         
         # run the command
         with utils.LockFile(utils.svnLockFileName()):
@@ -167,5 +167,5 @@ class SvnSource (VersionSystemSourceBase):
         # print the revision - everything else should be quiet now
         print revision
         os.environ["LANG"] = oldLanguage
-        os.remove( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ) )
+        os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ) )
         return True

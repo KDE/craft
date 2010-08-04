@@ -53,7 +53,7 @@ class VersionSystemSourceBase (SourceBase):
         
         return server + '/home/kde/'
 
-    def unpack(self):
+    def unpack( self ):
         self.applyPatches()
         self.enterBuildDir()
 
@@ -62,10 +62,7 @@ class VersionSystemSourceBase (SourceBase):
                 print "cleaning %s" % self.buildDir()
             utils.cleanDirectory( self.buildDir() )
         if not self.noCopy:
-            # work around that if noCopy is already set, this sourceDir will return the wrong source directory.
-            self.noCopy = True
-            sourceDir = self.sourceDir()
-            self.noCopy = False
+            sourceDir = self.checkoutDir()
             if utils.verbose > 0:
                 print "copying %s to %s" % (sourceDir, self.buildDir())
             utils.copySrcDirToDestDir(sourceDir, self.buildDir())
@@ -106,35 +103,43 @@ class VersionSystemSourceBase (SourceBase):
             return option
         return None
 
+    def checkoutDir( self, index=0 ):
+        if self.subinfo.hasSvnTarget():
+            u = self.getUrl(index)
+            (url,dummy) = self.splitUrl(u)
+
+            if url.find("://") == -1: 
+                if os.getenv("KDESVNDIR") == None:
+                    sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
+                else:
+                    sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
+            else:
+                sourcedir = os.path.join( self.downloadDir(), "svn-src" )
+                if utils.isGitUrl(url) and self.subinfo.hasTargetSourcePath():
+                    sourcedir = os.path.join( sourcedir, self.subinfo.targetSourcePath() )
+                sourcedir = os.path.join( sourcedir, self.package )
+        else:
+            utils.die("svnTarget property not set for this target")
+
+        if self.subinfo.targetSourceSuffix() != None:
+            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+
+        return sourcedir
+        
     def sourceDir(self, index=0 ): 
         if not self.noCopy:
             # need to check index ?
             sourcedir = self.workDir()
+
+            if self.subinfo.targetSourceSuffix() != None:
+                sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+
             return sourcedir
         else:
-            if self.subinfo.hasSvnTarget():
-                u = self.getUrl(index)
-                (url,dummy) = self.splitUrl(u)
+            sourcedir = checkoutDir( index )
 
-                if url.find("://") == -1: 
-                    if os.getenv("KDESVNDIR") == None:
-                        sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
-                    else:
-                        sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
-                else:
-                    sourcedir = os.path.join( self.downloadDir(), "svn-src" )
-                    if utils.isGitUrl(url) and self.subinfo.hasTargetSourcePath():
-                        sourcedir = os.path.join( sourcedir, self.subinfo.targetSourcePath() )
-                    sourcedir = os.path.join( sourcedir, self.package )
-            else:
-                utils.die("svnTarget property not set for this target")
-
-        if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
-           
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
-
         utils.debug("using sourcedir: %s" % sourcedir,2)
         return sourcedir
 

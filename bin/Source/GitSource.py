@@ -45,29 +45,29 @@ class GitSource ( VersionSystemSourceBase ):
             safePath = os.environ["PATH"]
             # add the git path to the PATH variable so that git can be called without path
             os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
-            if os.path.exists( self.sourceDir() ):
+            if os.path.exists( self.checkoutDir() ):
                 # if directory already exists, simply do a pull but obey to offline
-                ret = self.shell.execute( self.sourceDir(), "git", "pull" )
+                ret = self.shell.execute( self.checkoutDir(), "git", "pull" )
                 
             else:
                 # it doesn't exist so clone the repo
-                os.makedirs( self.sourceDir() )
+                os.makedirs( self.checkoutDir() )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                ret = self.shell.execute( self.sourceDir(), "git", "clone %s ." % ( repoUrl ) )
+                ret = self.shell.execute( self.checkoutDir(), "git", "clone %s ." % ( repoUrl ) )
                 
             # if a branch is given, we should check first if the branch is already downloaded locally, or if we can track the remote branch
             # the following code is for both ways the same
             track = ""
             if ret and repoBranch:
                 # grep is available already from the git package
-                if not self.shell.execute( self.sourceDir(), "git", "branch | grep -E \"%s$\"%s" % ( repoBranch, devNull ) ):
+                if not self.shell.execute( self.checkoutDir(), "git", "branch | grep -E \"%s$\"%s" % ( repoBranch, devNull ) ):
                     track = "--track origin/"
             if ret and repoBranch:
-                ret = self.shell.execute( self.sourceDir(), "git", "checkout %s%s" % ( track, repoBranch ) )
+                ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s%s" % ( track, repoBranch ) )
                 
             # pay attention that after checkout of a tag, the next git pull might not work because of merging problems
             if ret and repoTag:
-                ret = self.shell.execute( self.sourceDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
+                ret = self.shell.execute( self.checkoutDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
@@ -91,10 +91,10 @@ class GitSource ( VersionSystemSourceBase ):
     def sourceVersion( self ):
         """ return the revision returned by git show """
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergegitshow.tmp" ), "wb+" )
+        tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergegitshow.tmp" ), "wb+" )
         
         # run the command
-        self.shell.execute( self.sourceDir(), "git", "show --abbrev-commit", out=tempfile )
+        self.shell.execute( self.checkoutDir(), "git", "show --abbrev-commit", out=tempfile )
         tempfile.seek( os.SEEK_SET )
 
         # read the temporary file and grab the first line
@@ -103,5 +103,5 @@ class GitSource ( VersionSystemSourceBase ):
         
         # print the revision - everything else should be quiet now
         print revision
-        os.remove( os.path.join( self.sourceDir().replace('/', '\\'), ".emergegitshow.tmp" ) )
+        os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergegitshow.tmp" ) )
         return True
