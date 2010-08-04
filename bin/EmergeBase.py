@@ -184,7 +184,7 @@ class EmergeBase():
         
     def packageDir(self): 
         """ add documentation """
-        return self.__adjustPath(os.path.join( portage.rootDir(), self.category, self.package ))
+        return self.__adjustPath(os.path.join( portage.rootDirForPackage( self.category, self.package ), self.category, self.package ))
     
     def filesDir(self):
         """ add documentation """

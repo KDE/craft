@@ -390,7 +390,8 @@ for i in sys.argv:
         disableTargetBuild = True
     elif( i == "--cleanup" ):
         utils.debug("Starting to clean your portage directory" , 1 )
-        cleanup( portage.rootDir() , os.listdir( portage.rootDir() ) )
+        for _dir in portageRootDirectories():
+            cleanup( _dir , os.listdir( _dir ) )
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()

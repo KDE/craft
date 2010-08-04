@@ -377,7 +377,7 @@ class baseclass:
         self.workdir     = os.path.join( ROOTDIR, "tmp", self.PV, "work" )
         self.imagedir    = os.path.join( ROOTDIR, "tmp", self.PV, "image-" + COMPILER )
 
-        self.packagedir = os.path.join( portage.rootDir(), self.category, self.package )
+        self.packagedir = os.path.join( portage.rootDirForPackage( self.category, self.package ), self.category, self.package )
         self.filesdir = os.path.join( self.packagedir, "files" )
         self.kdesvndir = KDESVNDIR
         self.kdesvnserver = KDESVNSERVER

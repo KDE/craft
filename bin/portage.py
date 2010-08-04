@@ -32,20 +32,46 @@ def __import__( module ):
         return imp.load_module( modulename.replace('.', '_'), 
             fileHdl, module, suff_index )
 
-def rootDir():
-    portageroot = os.getenv("EMERGE_PORTAGE_ROOT")
-    if not portageroot == None:
-        dir = portageroot
+def rootDirectories():
+    # this function should return all currently set portage directories
+    if os.getenv( "EMERGE_PORTAGE_ROOT" ):
+        rootDirs = os.getenv( "EMERGE_PORTAGE_ROOT" ).split( ";" )
     else:
-        dir = os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
-    return dir
+        rootDirs = []
+    if len( rootDirs ) == 0:
+        rootDirs = [ os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" ) ]
+    return rootDirs
+
+def rootDir():
+    # this function should return the portage directory, either the first set 
+    # via the environment, or the default one
+    # keep this function for compat reasons
+    return rootDirectories()[0]
+    
+def rootDirForCategory( category ):
+    # this function should return the portage directory where it finds the
+    # first occurance of a category or the default value
+    for i in rootDirectories():
+        if os.path.exists( os.path.join( i, category ) ):
+            return i
+    # as a fall back return the default even if it might be wrong
+    return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
+
+def rootDirForPackage( category, package ):
+    # this function should return the portage directory where it finds the
+    # first occurance of a package or the default value
+    for i in rootDirectories():
+        if os.path.exists( os.path.join( i, category, package ) ):
+            return i
+    # as a fall back return the default even if it might be wrong
+    return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
 
 def etcDir():
     return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
-    file = os.path.join( rootDir(), category, package )
+    file = os.path.join( rootDirForPackage( category, package ), category, package )
     return file
     
 def getFilename( category, package, version ):
@@ -84,6 +110,8 @@ class Portage:
         self.portages[ dir ] = []
         for category in categoryList:
             if not os.path.isdir( os.path.join( dir, category ) ): continue
+            if category in self.categories.keys(): continue
+
             self.portages[ dir ].append( category )
 
             packageList = os.listdir( os.path.join( dir, category ) )
@@ -96,7 +124,8 @@ class Portage:
             self.categories[ category ] = []
             for package in packageList:
                 if not os.path.isdir( os.path.join( dir, category, package ) ): continue
-                self.categories[ category ].append( package )
+                if not package in self.categories[ category ]:
+                    self.categories[ category ].append( package )
             
 
     def getCategory( self, package ):
@@ -122,8 +151,8 @@ class Portage:
         """ in case the category doesn't exist, nothing is returned """
         if self.isCategory( category ):
             plist = self.categories[ category ]
-            if os.path.exists( os.path.join( rootDir(), category, "dont_build.txt" ) ):
-                f = open( os.path.join( rootDir(), category, "dont_build.txt" ), "r" )
+            if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
+                f = open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" )
                 for line in f:
                     try:
                         plist.remove( line.strip() )
@@ -226,7 +255,8 @@ class Portage:
 
 # when importing this, this static Object should get added
 PortageInstance = Portage()
-PortageInstance.addPortageDir( rootDir() )
+for _dir in rootDirectories():
+    PortageInstance.addPortageDir( _dir )
 
 def getPackageInstance(category, package, buildtarget=None):
     """return instance of class Package from package file"""
