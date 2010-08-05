@@ -17,7 +17,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         
-        self.subinfo.options.configure.defines = ""
+        self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF "
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
