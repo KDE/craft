@@ -25,7 +25,9 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.package.version = '0.5.3'
-        self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON -DBUILD_TOOLS=ON'
+        self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON '
+        if not platform.isCrossCompilingEnabled() or self.isHostBuild():
+            self.subinfo.options.configure.defines += ' -DBUILD_TOOLS=ON '
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
         CMakePackageBase.__init__( self )
