@@ -10,6 +10,7 @@ import re
 import sys
 import portage_versions
 import platform
+import copy
 
 def __import__( module ):
     utils.debug( "module to import: %s" % module, 2 )
@@ -150,7 +151,7 @@ class Portage:
         """ returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory """
         """ in case the category doesn't exist, nothing is returned """
         if self.isCategory( category ):
-            plist = self.categories[ category ]
+            plist = copy.copy(self.categories[ category ])
             if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
                 f = open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" )
                 for line in f:
