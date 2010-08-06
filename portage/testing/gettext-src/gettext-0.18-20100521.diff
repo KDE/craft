@@ -1,7 +1,7 @@
 diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 --- gettext-0.18.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
 +++ gettext-0.18/CMakeLists.txt	Fri May 28 14:20:12 2010
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,38 @@
 +cmake_minimum_required(VERSION 2.6)
 +
 +project(gettext)
@@ -22,6 +22,10 @@ diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 +    find_package(Wcecompat REQUIRED)
 +    include_directories(${WCECOMPAT_INCLUDE_DIR})
 +    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(LIBRARY_TYPE STATIC)
++    add_definitions(-DGETTEXT_STATIC_LIBS)
++else(WINCE)
++    set(LIBRARY_TYPE SHARED)
 +endif(WINCE)
 +
 +find_package(iconv)
@@ -1689,7 +1693,7 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +#add_definitions(-DBUILDING_DLL)
 +#add_definitions(-DHAVE_VISIBILITY)
 +
-+add_library(intl SHARED ${INTL_SRCS})
++add_library(intl ${LIBRARY_TYPE} ${INTL_SRCS})
 +target_link_libraries(intl ${ICONV_LIBRARIES})
 +if(MSVC)
 +set_target_properties(intl PROPERTIES OUTPUT_NAME "libintl")

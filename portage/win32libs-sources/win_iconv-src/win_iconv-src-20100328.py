@@ -18,5 +18,8 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         
+        if platform.isCrossCompilingEnabled() and self.isTargetBuild():
+            self.subinfo.options.configure.defines = "-DBUILD_STATIC=ON "
+        
 if __name__ == '__main__':
     Package().execute()
