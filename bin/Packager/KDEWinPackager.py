@@ -86,7 +86,7 @@ class KDEWinPackager (PackagerBase):
         symCmd += "-symroot " + os.path.join( self.buildDir(), "bin" )
         utils.debug ( symCmd )
             
-        cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 -verbose" % \
+        cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
                   ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd, symCmd )
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
