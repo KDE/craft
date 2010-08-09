@@ -966,6 +966,11 @@ def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
     debug( "moveDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
     shutil.move( srcdir, destdir )
+    
+def rmtree( dir ):
+    """ recursively delete dir """
+    debug( "rmtree called. dir: %s" % ( dir ), 2 )
+    shutil.rmtree ( dir, True ) # ignore errors
 
 def copyFile(src,dest):
     """ copy file from src to dest"""

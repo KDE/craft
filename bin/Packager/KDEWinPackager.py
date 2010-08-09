@@ -81,11 +81,42 @@ class KDEWinPackager (PackagerBase):
             srcCmd = " -srcroot " + sourcedir
         else:
             srcCmd = ""
+        
+        # copy pdb/sym files to a temporary directory, because they can be scattered all over the build directory
+        #
+        # plus, different build types copy files to different directories (could be buildDir(), buildDir()/bin, buildDir()/bin/Debug...),
+        # so let's copy them to one precise location, package them, then delete that dir
+        
+        # directories to ignore: cmake temporary files, and dbg so it won't try to copy a file to itself
+        dirsToIgnore = [ 'cmake', 'CMakeFiles', 'CMakeTmp', 'CMakeTmp2', 'CMakeTmp3', 'dbg' ]
+        path = self.buildDir()
+        # where to copy the debugging information files
+        symPath = os.path.join( self.buildDir(), "dbg" )
+        if not os.path.exists( symPath ):
+            utils.createDir( symPath )
+        # shouldn't be needed, usually; but if files are present, that could lead to errors
+        utils.cleanDirectory ( symPath )
+
+        utils.debug( "Copying debugging files to 'dbg'..." )
+        for ( path, dirs, files ) in os.walk( path ):
+            found = 0
+            for dir in range( 0, len( dirsToIgnore ) ):
+                if path.find( dirsToIgnore[dir] ) > 0:
+                    found = 1;
+                    break;
+            if found == 1:
+                continue;
+            utils.debug( "Checking: %s" % path, 3 )
+            for file in files:
+                if ( not file.endswith( ".pdb" ) and not file.endswith( ".sym" )):
+                    continue
+                actualfile = os.path.join( path, file )
+                utils.copyFile( actualfile, os.path.join( symPath, file ) )
             
         symCmd = "-debug-package "
-        symCmd += "-symroot " + os.path.join( self.buildDir(), "bin" )
-        utils.debug ( symCmd )
-            
+        symCmd += "-symroot " + symPath
+        utils.debug ( symCmd, 2 )
+        
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
                   ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd, symCmd )
         xmltemplate=self.xmlTemplate()
@@ -113,8 +144,6 @@ class KDEWinPackager (PackagerBase):
             cmd += " -special"
 
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+        
+        utils.rmtree( symPath )
         return True
-
-
-
-
