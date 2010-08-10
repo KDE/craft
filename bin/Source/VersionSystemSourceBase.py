@@ -115,8 +115,6 @@ class VersionSystemSourceBase (SourceBase):
                     sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
             else:
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
-                if utils.isGitUrl(url) and self.subinfo.hasTargetSourcePath():
-                    sourcedir = os.path.join( sourcedir, self.subinfo.targetSourcePath() )
                 sourcedir = os.path.join( sourcedir, self.package )
         else:
             utils.die("svnTarget property not set for this target")
