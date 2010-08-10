@@ -44,6 +44,9 @@ class MultiSource():
     def applyPatches(self):
         return self.source.applyPatches()
 
+    def applyPatch(self):
+        return self.source.applyPatch()
+
     def createPatch(self):
         return self.source.createPatch()
         

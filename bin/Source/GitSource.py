@@ -72,15 +72,12 @@ class GitSource ( VersionSystemSourceBase ):
             utils.debug( "skipping git fetch (--offline)" )
         return ret
     
-    def applyPatches(self):
-        """apply patches to git repository"""
-        utils.debug( "GitSource.applyPatches called", 2 )
-        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
-            ( file, patchdepth ) = self.subinfo.patchesToApply()
-            if file:
-                patchfile = os.path.join ( self.packageDir(), file )
-                self.shell.execute( self.sourceDir(), "git", "checkout -f" )
-                return self.shell.execute( self.sourceDir(), "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)) )
+    def applyPatch(self, file, patchdepth):
+        """apply single patch o git repository"""
+        if file:
+            patchfile = os.path.join ( self.packageDir(), file )
+            self.shell.execute( self.sourceDir(), "git", "checkout -f" )
+            return self.shell.execute( self.sourceDir(), "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)) )
         return True
 
     def createPatch( self ):
