@@ -83,7 +83,6 @@ class KDEWinPackager (PackagerBase):
             srcCmd = ""
         
         # copy pdb/sym files to a temporary directory, because they can be scattered all over the build directory
-        #
         # plus, different build types copy files to different directories (could be buildDir(), buildDir()/bin, buildDir()/bin/Debug...),
         # so let's copy them to one precise location, package them, then delete that dir
         
@@ -96,7 +95,7 @@ class KDEWinPackager (PackagerBase):
             utils.createDir( symPath )
         # shouldn't be needed, usually; but if files are present, that could lead to errors
         utils.cleanDirectory ( symPath )
-
+        
         utils.debug( "Copying debugging files to 'dbg'..." )
         for ( path, dirs, files ) in os.walk( path ):
             found = 0
@@ -108,12 +107,19 @@ class KDEWinPackager (PackagerBase):
                 continue;
             utils.debug( "Checking: %s" % path, 3 )
             for file in files:
-                if ( not file.endswith( ".pdb" ) and not file.endswith( ".sym" )):
-                    continue
-                actualfile = os.path.join( path, file )
-                utils.copyFile( actualfile, os.path.join( symPath, file ) )
-            
-        symCmd = "-debug-package "
+                if ( file.endswith( ".exe" ) or file.endswith( ".dll" ) ):
+                    if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
+                        symFilename = file[:-4] + ".sym"
+                        utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, file ) )
+                        # utils.system( "strip --strip-all " + os.path.join( path, file ) )
+                        utils.copyFile( os.path.join(path, symFilename) , os.path.join( symPath, symFilename ) )
+                elif ( file.endswith( ".pdb" ) ):
+                    utils.copyFile( os.path.join( path, file ), os.path.join( symPath, file ) )
+        
+        symCmd = ""
+        if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
+            symCmd += "-strip "
+        symCmd += "-debug-package "
         symCmd += "-symroot " + symPath
         utils.debug ( symCmd, 2 )
         
