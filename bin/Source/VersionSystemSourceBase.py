@@ -140,8 +140,8 @@ class VersionSystemSourceBase (SourceBase):
             # need to check index ?
             sourcedir = self.workDir()
         
-        if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+        	if self.subinfo.targetSourceSuffix() != None:
+            	sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
            
             return sourcedir
         else:
