@@ -19,6 +19,30 @@ class SvnSource (VersionSystemSourceBase):
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
         if not os.path.exists(self.svnInstallDir):
             utils.die("required subversion package not installed in %s" % self.svnInstallDir)
+
+    def checkoutDir( self, index=0 ):
+        if self.subinfo.hasSvnTarget():
+            u = self.getUrl(index)
+            (url,dummy) = self.splitUrl(u)
+
+            if url.find("://") == -1: 
+                if os.getenv("KDESVNDIR") == None:
+                    sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
+                else:
+                    sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
+            else:
+                sourcedir = os.path.join( self.downloadDir(), "svn-src" )
+                sourcedir = os.path.join( sourcedir, self.package )
+                (basePath,path) = self.__splitPath(url)
+                if path and os.getenv("EMERGE_SVN_STDLAYOUT") == '1':
+                    sourcedir = os.path.join( sourcedir, path )
+        else:
+            utils.die("svnTarget property not set for this target")
+
+        if self.subinfo.targetSourceSuffix() != None:
+            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+
+        return sourcedir
             
     def applyPatch(self, file, patchdepth):
         """apply a patch to a svn repository checkout"""

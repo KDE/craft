@@ -43,13 +43,7 @@ class VersionSystemSourceBase (SourceBase):
         if url.find('#') <> -1:
             return url.split('#')
         return [url,""]
-        
-    def splitPath(self, path):
-        """ split repository path into a base part and a relative part. 
-        The real implementation is repository type specific
-        """
-        return [path,""]
-    
+           
     def __repositoryBaseUrl( self ):
         """ this function return the base url to the KDE repository """
         # @todo move to SvnSource
@@ -113,20 +107,8 @@ class VersionSystemSourceBase (SourceBase):
 
     def checkoutDir( self, index=0 ):
         if self.subinfo.hasSvnTarget():
-            u = self.getUrl(index)
-            (url,dummy) = self.splitUrl(u)
-
-            if url.find("://") == -1: 
-                if os.getenv("KDESVNDIR") == None:
-                    sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
-                else:
-                    sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
-            else:
-                sourcedir = os.path.join( self.downloadDir(), "svn-src" )
-                sourcedir = os.path.join( sourcedir, self.package )
-                (basePath,path) = self.splitPath(url)
-                if path:
-                    sourcedir = os.path.join( sourcedir, path )
+            sourcedir = os.path.join( self.downloadDir(), "svn-src" )
+            sourcedir = os.path.join( sourcedir, self.package )
         else:
             utils.die("svnTarget property not set for this target")
 

@@ -98,6 +98,13 @@ set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
 
+rem Non kde svn repository checkouts will be placed below %DOWNLOADDIR%/svn-src/<package>
+rem By default the emerge svn module supports only single branch svn checkouts.
+rem With this option emerge assumes that the svn repository have the svn standard layout 
+rem and will create related subdirectories for trunk, branches and tags below the above 
+rem mentioned root directory. 
+rem set EMERGE_SVN_STDLAYOUT=1
+
 rem Here you can tell the emerge tool password for the SVN access
 rem if you have SVN account registered within the KDE project.
 rem For security reasons you should better log in to the KDE server by hand
