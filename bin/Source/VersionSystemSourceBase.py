@@ -112,23 +112,23 @@ class VersionSystemSourceBase (SourceBase):
         return None
 
     def checkoutDir( self, index=0 ):
-            if self.subinfo.hasSvnTarget():
-                u = self.getUrl(index)
-                (url,dummy) = self.splitUrl(u)
+        if self.subinfo.hasSvnTarget():
+            u = self.getUrl(index)
+            (url,dummy) = self.splitUrl(u)
 
-                if url.find("://") == -1: 
-                    if os.getenv("KDESVNDIR") == None:
-                        sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
-                    else:
-                        sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
+            if url.find("://") == -1: 
+                if os.getenv("KDESVNDIR") == None:
+                    sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
                 else:
-                    sourcedir = os.path.join( self.downloadDir(), "svn-src" )
-                    sourcedir = os.path.join( sourcedir, self.package )
-                    (basePath,path) = self.splitPath(url)
-                    if path:
-                        sourcedir = os.path.join( sourcedir, path )
+                    sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
             else:
-                utils.die("svnTarget property not set for this target")
+                sourcedir = os.path.join( self.downloadDir(), "svn-src" )
+                sourcedir = os.path.join( sourcedir, self.package )
+                (basePath,path) = self.splitPath(url)
+                if path:
+                    sourcedir = os.path.join( sourcedir, path )
+        else:
+            utils.die("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
