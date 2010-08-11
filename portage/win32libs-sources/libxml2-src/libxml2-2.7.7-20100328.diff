@@ -111,7 +111,7 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +        set_target_properties(xml2 PROPERTIES OUTPUT_NAME libxml2)
 +    endif(MSVC)
 +    if(WINCE)
-+        target_link_libraries(xml2 ws2)
++        target_link_libraries(xml2 ws2 ${WCECOMPAT_LIBRARIES})
 +    else(WINCE)
 +        target_link_libraries(xml2 ws2_32)
 +    endif(WINCE)
