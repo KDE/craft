@@ -1,0 +1,277 @@
+From 6b52fb142fdd358994eb03e42e6f6d0fee61e22a Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Wed, 11 Aug 2010 14:05:31 +0200
+Subject: cleanup: removed unused code; fixed Winsock error handling; fixed code indentation
+
+---
+ dbus/dbus-sysdeps-win.c |  104 ++++++++++++++++++++--------------------------
+ 1 files changed, 45 insertions(+), 59 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index 7f9d559..c2fe8d7 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -352,9 +352,10 @@ _dbus_set_fd_nonblocking (int             handle,
+ 
+   if (ioctlsocket (handle, FIONBIO, &one) == SOCKET_ERROR)
+     {
+-      dbus_set_error (error, _dbus_error_from_errno (WSAGetLastError ()),
++      DBUS_SOCKET_SET_ERRNO ();
++      dbus_set_error (error, _dbus_error_from_errno (errno),
+                       "Failed to set socket %d:%d to nonblocking: %s", handle,
+-                      _dbus_strerror (WSAGetLastError ()));
++                      _dbus_strerror_from_errno ());
+       return FALSE;
+     }
+ 
+@@ -431,7 +432,7 @@ _dbus_write_socket_two (int               fd,
+                 NULL, 
+                 NULL);
+                 
+-  if (rc < 0)
++  if (rc == SOCKET_ERROR)
+     {
+       DBUS_SOCKET_SET_ERRNO ();
+       _dbus_verbose ("WSASend: failed: %s\n", _dbus_strerror_from_errno ());
+@@ -831,7 +832,7 @@ _dbus_full_duplex_pipe (int        *fd1,
+   saddr.sin_port = 0;
+   saddr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+ 
+-  if (bind (temp, (struct sockaddr *)&saddr, sizeof (saddr)))
++  if (bind (temp, (struct sockaddr *)&saddr, sizeof (saddr)) == SOCKET_ERROR)
+     {
+       DBUS_SOCKET_SET_ERRNO ();
+       goto out0;
+@@ -844,7 +845,7 @@ _dbus_full_duplex_pipe (int        *fd1,
+     }
+ 
+   len = sizeof (saddr);
+-  if (getsockname (temp, (struct sockaddr *)&saddr, &len))
++  if (getsockname (temp, (struct sockaddr *)&saddr, &len) == SOCKET_ERROR)
+     {
+       DBUS_SOCKET_SET_ERRNO ();
+       goto out0;
+@@ -1266,21 +1267,6 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+ 
+   _dbus_win_startup_winsock ();
+ 
+-  fd = socket (AF_INET, SOCK_STREAM, 0);
+-
+-  if (DBUS_SOCKET_IS_INVALID (fd))
+-    {
+-      DBUS_SOCKET_SET_ERRNO ();
+-      dbus_set_error (error,
+-                      _dbus_error_from_errno (errno),
+-                      "Failed to create socket: %s",
+-                      _dbus_strerror_from_errno ());
+-
+-      return -1;
+-    }
+-
+-  _DBUS_ASSERT_ERROR_IS_CLEAR(error);
+-
+   _DBUS_ZERO (hints);
+ 
+   if (!family)
+@@ -1292,9 +1278,8 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+   else
+     {
+       dbus_set_error (error,
+-                      _dbus_error_from_errno (errno),
++                      DBUS_ERROR_INVALID_ARGS,
+                       "Unknown address family %s", family);
+-      closesocket (fd);
+       return -1;
+     }
+   hints.ai_protocol = IPPROTO_TCP;
+@@ -1305,37 +1290,35 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+   hints.ai_flags = 0;
+ #endif
+ 
+-  if ((res = getaddrinfo(host, port, &hints, &ai)) != 0)
++  if ((res = getaddrinfo(host, port, &hints, &ai)) != 0 || !ai)
+     {
+       dbus_set_error (error,
+-                      _dbus_error_from_errno (errno),
++                      _dbus_error_from_errno (res),
+                       "Failed to lookup host/port: \"%s:%s\": %s (%d)",
+-                      host, port, gai_strerror(res), res);
+-      closesocket (fd);
++                      host, port, _dbus_strerror(res), res);
+       return -1;
+     }
+ 
+-  closesocket (fd);
+-  fd = -1;
+-
+   tmp = ai;
+   while (tmp)
+     {
+-      if ((fd = socket (tmp->ai_family, SOCK_STREAM, 0)) < 0)
++      if ((fd = socket (tmp->ai_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
+         {
++          DBUS_SOCKET_SET_ERRNO ();
++          dbus_set_error (error,
++                          _dbus_error_from_errno (errno),
++                          "Failed to open socket: %s",
++                          _dbus_strerror_from_errno ());
+           freeaddrinfo(ai);
+-      dbus_set_error (error,
+-                      _dbus_error_from_errno (errno),
+-                         "Failed to open socket: %s",
+-                         _dbus_strerror_from_errno ());
+           return -1;
+         }
+       _DBUS_ASSERT_ERROR_IS_CLEAR(error);
+ 
+-      if (connect (fd, (struct sockaddr*) tmp->ai_addr, tmp->ai_addrlen) != 0)
++      if (connect (fd, (struct sockaddr*) tmp->ai_addr, tmp->ai_addrlen) == SOCKET_ERROR)
+         {
++          DBUS_SOCKET_SET_ERRNO ();
+           closesocket(fd);
+-      fd = -1;
++          fd = -1;
+           tmp = tmp->ai_next;
+           continue;
+         }
+@@ -1349,11 +1332,11 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+       dbus_set_error (error,
+                       _dbus_error_from_errno (errno),
+                       "Failed to connect to socket \"%s:%s\" %s",
+-                      host, port, _dbus_strerror(errno));
++                      host, port, _dbus_strerror_from_errno ());
+       return -1;
+     }
+ 
+-  if ( noncefile != NULL )
++  if (noncefile != NULL)
+     {
+       DBusString noncefileStr;
+       dbus_bool_t ret;
+@@ -1363,20 +1346,20 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+           closesocket (fd);
+           dbus_set_error (error, DBUS_ERROR_NO_MEMORY, NULL);
+           return -1;
+-       }
++        }
+ 
+       ret = _dbus_send_nonce (fd, &noncefileStr, error);
+ 
+       _dbus_string_free (&noncefileStr);
+ 
+       if (!ret)
+-    {
+-      closesocket (fd);
++        {
++          closesocket (fd);
+           return -1;
+         }
+     }
+ 
+-  if (!_dbus_set_fd_nonblocking (fd, error) )
++  if (!_dbus_set_fd_nonblocking (fd, error))
+     {
+       closesocket (fd);
+       return -1;
+@@ -1438,7 +1421,7 @@ _dbus_listen_tcp_socket (const char     *host,
+   else
+     {
+       dbus_set_error (error,
+-                      _dbus_error_from_errno (errno),
++                      DBUS_ERROR_INVALID_ARGS,
+                       "Unknown address family %s", family);
+       return -1;
+     }
+@@ -1455,9 +1438,9 @@ _dbus_listen_tcp_socket (const char     *host,
+   if ((res = getaddrinfo(host, port, &hints, &ai)) != 0 || !ai)
+     {
+       dbus_set_error (error,
+-                      _dbus_error_from_errno (errno),
++                      _dbus_error_from_errno (res),
+                       "Failed to lookup host/port: \"%s:%s\": %s (%d)",
+-                      host ? host : "*", port, gai_strerror(res), res);
++                      host ? host : "*", port, _dbus_strerror(res), res);
+       return -1;
+     }
+ 
+@@ -1465,8 +1448,9 @@ _dbus_listen_tcp_socket (const char     *host,
+   while (tmp)
+     {
+       int fd = -1, *newlisten_fd;
+-      if ((fd = socket (tmp->ai_family, SOCK_STREAM, 0)) < 0)
++      if ((fd = socket (tmp->ai_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
+         {
++          DBUS_SOCKET_SET_ERRNO ();
+           dbus_set_error (error,
+                           _dbus_error_from_errno (errno),
+                          "Failed to open socket: %s",
+@@ -1477,31 +1461,32 @@ _dbus_listen_tcp_socket (const char     *host,
+ 
+       if (bind (fd, (struct sockaddr*) tmp->ai_addr, tmp->ai_addrlen) == SOCKET_ERROR)
+         {
+-          closesocket (fd);
++          DBUS_SOCKET_SET_ERRNO ();
+           dbus_set_error (error, _dbus_error_from_errno (errno),
+                           "Failed to bind socket \"%s:%s\": %s",
+                           host ? host : "*", port, _dbus_strerror_from_errno ());
++          closesocket (fd);
+           goto failed;
+     }
+ 
+       if (listen (fd, 30 /* backlog */) == SOCKET_ERROR)
+         {
+-          closesocket (fd);
++          DBUS_SOCKET_SET_ERRNO ();
+           dbus_set_error (error, _dbus_error_from_errno (errno),
+                           "Failed to listen on socket \"%s:%s\": %s",
+                           host ? host : "*", port, _dbus_strerror_from_errno ());
++          closesocket (fd);
+           goto failed;
+         }
+ 
+       newlisten_fd = dbus_realloc(listen_fd, sizeof(int)*(nlisten_fd+1));
+       if (!newlisten_fd)
+-    {
++        {
+           closesocket (fd);
+-      dbus_set_error (error, _dbus_error_from_errno (errno),
+-                          "Failed to allocate file handle array: %s",
+-                          _dbus_strerror_from_errno ());
++          dbus_set_error (error, DBUS_ERROR_NO_MEMORY,
++                          "Failed to allocate file handle array");
+           goto failed;
+-    }
++        }
+       listen_fd = newlisten_fd;
+       listen_fd[nlisten_fd] = fd;
+       nlisten_fd++;
+@@ -1518,11 +1503,12 @@ _dbus_listen_tcp_socket (const char     *host,
+               socklen_t addrlen = sizeof(addr);
+               char portbuf[10];
+ 
+-              if ((res = getsockname(fd, &addr.Address, &addrlen)) != 0)
+-    {
+-      dbus_set_error (error, _dbus_error_from_errno (errno),
+-                                  "Failed to resolve port \"%s:%s\": %s (%d)",
+-                                  host ? host : "*", port, gai_strerror(res), res);
++              if (getsockname(fd, &addr.Address, &addrlen) == SOCKET_ERROR)
++                {
++                  DBUS_SOCKET_SET_ERRNO ();
++                  dbus_set_error (error, _dbus_error_from_errno (errno),
++                                  "Failed to resolve port \"%s:%s\": %s",
++                                  host ? host : "*", port, _dbus_strerror_from_errno());
+                   goto failed;
+                 }
+               snprintf( portbuf, sizeof( portbuf ) - 1, "%d", addr.AddressIn.sin_port );
+@@ -1530,7 +1516,7 @@ _dbus_listen_tcp_socket (const char     *host,
+                 {
+                   dbus_set_error (error, DBUS_ERROR_NO_MEMORY, NULL);
+                   goto failed;
+-    }
++                }
+ 
+               /* Release current address list & redo lookup */
+               port = _dbus_string_get_const_data(retport);
+-- 
+1.6.5.1.1367.gcd48
+
