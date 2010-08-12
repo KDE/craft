@@ -36,14 +36,17 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = ""
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = "-DBUILD_DAEMON=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_CLUECENE=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_CPPUNIT=OFF "
-		
-        self.subinfo.options.configure.defines = ""
+            if self.isTargetBuild():
+                self.subinfo.options.configure.defines += \
+                        "-DICONV_SECOND_ARGUMENT_IS_CONST=ON "
+
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
