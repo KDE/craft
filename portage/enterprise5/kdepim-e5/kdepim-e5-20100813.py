@@ -32,7 +32,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20100723'] = 'tags/kdepim/enterprise5.0.20100723.1153624/kdepim'
         self.svnTargets['20100730'] = 'tags/kdepim/enterprise5.0.20100730.1157241/kdepim'
         self.svnTargets['20100805'] = 'tags/kdepim/enterprise5.0.20100805.1159431/kdepim'
-        self.defaultTarget = '20100805'
+        self.svnTargets['20100813'] = 'tags/kdepim/enterprise5.0.20100813.1163234/kdepim'
+        self.defaultTarget = '20100813'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdepimlibs-e5'] = 'default'
