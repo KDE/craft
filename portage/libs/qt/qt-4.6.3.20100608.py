@@ -97,7 +97,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
             
-        utils.copyFile( "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
+        utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
 
         
         # Disable Webkit parts that aren't used to save space and time
