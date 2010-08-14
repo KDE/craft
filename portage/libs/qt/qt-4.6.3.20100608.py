@@ -32,12 +32,13 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
         self.svnTargets['4.6.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.3-patched|"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
-        self.svnTargets['v4.7.0-beta2'] = "git://gitorious.org/qt/qt.git|4.7|v4.7.0-beta2|"
         self.targetSrcSuffix['4.7'] = "4.7"
-        self.targetSrcSuffix['v4.7.0-beta2'] = "4.7"
         self.patchToApply['4.6.3'] = ('qt-4.6.3.patch', 1)
-        self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
-        self.patchToApply['v4.7.0-beta2'] = ('qt-4.7.0.patch', 1)
+        self.patchToApply['4.7'] = [
+            ('qt-4.7.0-out-of-source-build.patch', 1),
+            ('qt-4.7.0-webkit-fixes.patch', 1),
+            ('qt-4.7.0-wince-fixes.patch', 1)
+                                   ]
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
             self.defaultTarget = '4.7'
@@ -95,6 +96,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
+            
+        utils.copyFile( "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
+
         
         # Disable Webkit parts that aren't used to save space and time
         defines = ""
@@ -108,21 +112,21 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
-        if self.isTargetBuild():
-            command += "-xplatform %s " % xplatform
+        if platform.isCrossCompilingEnabled():
+            if self.isTargetBuild():
+                command += "-xplatform %s -qconfig kde-wince " % xplatform
+                command += "-no-exceptions -no-stl -no-rtti "
+            if self.isHostBuild():
+                command += "-no-xmlpatterns -no-declarative -no-opengl "
+            command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif "
             
-        if platform.isCrossCompilingEnabled() and self.isHostBuild():
-            command += "-no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
-                    
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
-            command += "-plugin-sql-odbc "
-            command += "-plugin-sql-mysql "
-            command += "-qt-style-windowsxp "
-            command += "-qt-style-windowsvista "
+            command += "-plugin-sql-odbc -plugin-sql-mysql "
+            command += "-qt-style-windowsxp -qt-style-windowsvista "
+            command += "-qt-libpng -qt-libjpeg -qt-libtiff "
         # all builds
         command += "-webkit -no-phonon "
-        command += "-qt-libpng -qt-libjpeg -qt-libtiff "
         command += "-qdbus -dbus-linked -openssl-linked "
         command += "-fast -ltcg -stl -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "

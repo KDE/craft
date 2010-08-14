@@ -1,0 +1,53 @@
+From 77e7acc841d412eff7d2693e7445f12ab7956b29 Mon Sep 17 00:00:00 2001
+From: Christian Ehrlicher <ch.ehrlicher@gmx.de>
+Date: Fri, 19 Sep 2008 17:41:26 +0200
+Subject: [PATCH] Fix configure.exe to do an out-of-source build on windows
+
+qt-bugs@ issue : N227213
+Trolltech task ID : none yet
+---
+ bin/syncqt             |    6 +++++-
+ projects.pro           |    3 +++
+ src/tools/moc/main.cpp |    6 ++++++
+ 3 files changed, 14 insertions(+), 1 deletions(-)
+
+diff --git a/bin/syncqt b/bin/syncqt
+index a14a82d..ac140eb 100755
+--- a/bin/syncqt
++++ b/bin/syncqt
+@@ -366,9 +366,13 @@ sub fixPaths {
+         $match_dir = $tmp;
+         $i = $slash;
+     }
++    my $cnt_ofs = 0;
++    if($match_dir =~ /^[a-zA-Z]:$/) {
++      $cnt_ofs = 1;
++    }
+     if($match_dir) {
+         my $after = substr($dir, length($match_dir));
+-        my $count = ($after =~ tr,/,,);
++        my $count = ($after =~ tr,/,,) - $cnt_ofs;
+         my $dots = "";
+         for(my $i = 0; $i < $count; $i++) {
+             $dots .= "../";
+diff --git a/src/tools/moc/main.cpp b/src/tools/moc/main.cpp
+index 8e033b7..b5b2edd 100644
+--- a/src/tools/moc/main.cpp
++++ b/src/tools/moc/main.cpp
+@@ -94,7 +94,13 @@ static QByteArray combinePath(const char *infile, const char *outfile)
+         inSplitted.prepend(QLatin1String(".."));
+     }
+     inSplitted.append(inFileInfo.fileName());
++#ifdef Q_WS_WIN
++    const QString rel = inSplitted.join(QLatin1String("/"));
++    const QString abs = inFileInfo.absoluteFilePath();
++    return QFile::encodeName(rel.length() < abs.length() ? rel : abs);
++#else
+     return QFile::encodeName(inSplitted.join(QLatin1String("/")));
++#endif
+ }
+ 
+ 
+-- 
+1.6.5.1.1367.gcd48
+
