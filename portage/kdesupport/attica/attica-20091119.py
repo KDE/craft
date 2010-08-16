@@ -10,6 +10,10 @@ class subinfo(info.infoclass):
         self.targets['0.1.3'] = 'ftp://ftp.kde.org/pub/kde/stable/attica/attica-0.1.3.tar.bz2'
         self.targetInstSrc['0.1.3'] = 'attica-0.1.3'
         self.defaultTarget = 'svnHEAD'
+        
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
 
 from Package.CMakePackageBase import *
 
