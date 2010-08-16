@@ -37,7 +37,8 @@ class subinfo(info.infoclass):
         self.patchToApply['4.7'] = [
             ('qt-4.7.0-out-of-source-build.patch', 1),
             ('qt-4.7.0-webkit-fixes.patch', 1),
-            ('qt-4.7.0-wince-fixes.patch', 1)
+            ('qt-4.7.0-custom-flags-for-wince.patch', 1),
+            ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1)
                                    ]
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
@@ -128,7 +129,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # all builds
         command += "-webkit -no-phonon "
         command += "-qdbus -dbus-linked -openssl-linked "
-        command += "-fast -ltcg -stl -no-vcproj -no-dsp "
+        command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s %s" % ( defines, incdirs, libdirs )
 

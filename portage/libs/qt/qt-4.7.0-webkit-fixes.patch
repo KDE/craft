@@ -714,3 +714,64 @@ index daa945c..4fe954e 100644
  #else
  #define SYMBOL_STRING(name) #name
 
+From 060115a3a24149db2cb056a48e86b21c956d4c8d Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 16 Aug 2010 11:26:07 +0200
+Subject: fix webkit build with QT_NO_BEARERMANAGEMENT
+
+---
+ .../platform/network/qt/NetworkStateNotifierQt.cpp |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/src/3rdparty/webkit/WebCore/platform/network/qt/NetworkStateNotifierQt.cpp b/src/3rdparty/webkit/WebCore/platform/network/qt/NetworkStateNotifierQt.cpp
+index 3aae92a..3d7d8df 100644
+--- a/src/3rdparty/webkit/WebCore/platform/network/qt/NetworkStateNotifierQt.cpp
++++ b/src/3rdparty/webkit/WebCore/platform/network/qt/NetworkStateNotifierQt.cpp
+@@ -91,6 +91,7 @@ void NetworkStateNotifier::setNetworkAccessAllowed(bool isAllowed)
+ 
+ } // namespace WebCore
+ 
++#include "moc_NetworkStateNotifierPrivate.cpp"
++
+ #endif
+ 
+-#include "moc_NetworkStateNotifierPrivate.cpp"
+-- 
+1.6.5.1.1367.gcd48
+
+From 5878280b38e5db1916112e61ffd3bfcf93c67ad9 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 16 Aug 2010 11:33:38 +0200
+Subject: apply msvc flags to wince too
+
+---
+ src/3rdparty/webkit/WebCore/WebCore.pro |    2 +-
+ src/3rdparty/webkit/WebKit.pri          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/3rdparty/webkit/WebCore/WebCore.pro b/src/3rdparty/webkit/WebCore/WebCore.pro
+index 2047143..c02a673 100644
+--- a/src/3rdparty/webkit/WebCore/WebCore.pro
++++ b/src/3rdparty/webkit/WebCore/WebCore.pro
+@@ -104,7 +104,7 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
+ DEFINES += BUILD_WEBKIT
+ 
+ # Remove whole program optimizations due to miscompilations
+-win32-msvc2005|win32-msvc2008:{
++win32-msvc2005|win32-msvc2008|wince*:{
+     QMAKE_CFLAGS_RELEASE -= -GL
+     QMAKE_CXXFLAGS_RELEASE -= -GL
+ }
+diff --git a/src/3rdparty/webkit/WebKit.pri b/src/3rdparty/webkit/WebKit.pri
+index a080c43..bb3fd71 100644
+--- a/src/3rdparty/webkit/WebKit.pri
++++ b/src/3rdparty/webkit/WebKit.pri
+@@ -79,5 +79,5 @@ contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
+ 
+ # Disable a few warnings on Windows. The warnings are also
+ # disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
+-win32-msvc*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -wd4996
++win32-msvc*|wince*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -wd4996
+ 
+-- 
+1.6.5.1.1367.gcd48

@@ -1,0 +1,48 @@
+From 103f896b0b010fa3e9f83c9fb829cd44de1f2ca3 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 16 Aug 2010 11:41:16 +0200
+Subject: fix build with QT_NO_SVG
+
+---
+ src/declarative/declarative.pro           |    2 +-
+ src/plugins/iconengines/iconengines.pro   |    2 +-
+ src/plugins/imageformats/imageformats.pro |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/declarative/declarative.pro b/src/declarative/declarative.pro
+index 510e7a5..9aa939b 100644
+--- a/src/declarative/declarative.pro
++++ b/src/declarative/declarative.pro
+@@ -1,7 +1,7 @@
+ TARGET     = QtDeclarative
+ QPRO_PWD   = $$PWD
+ QT         = core gui script network
+-contains(QT_CONFIG, svg): QT += svg
++!wince*:contains(QT_CONFIG, svg): QT += svg
+ contains(QT_CONFIG, opengl): QT += opengl
+ DEFINES   += QT_BUILD_DECLARATIVE_LIB QT_NO_URL_CAST_FROM_STRING
+ win32-msvc*|win32-icc:QMAKE_LFLAGS += /BASE:0x66000000
+diff --git a/src/plugins/iconengines/iconengines.pro b/src/plugins/iconengines/iconengines.pro
+index bef8995..045f565 100644
+--- a/src/plugins/iconengines/iconengines.pro
++++ b/src/plugins/iconengines/iconengines.pro
+@@ -1,3 +1,3 @@
+ TEMPLATE = subdirs
+ 
+-contains(QT_CONFIG, svg): SUBDIRS += svgiconengine
++!wince*:contains(QT_CONFIG, svg): SUBDIRS += svgiconengine
+diff --git a/src/plugins/imageformats/imageformats.pro b/src/plugins/imageformats/imageformats.pro
+index 5fff2de..b626ef9 100644
+--- a/src/plugins/imageformats/imageformats.pro
++++ b/src/plugins/imageformats/imageformats.pro
+@@ -3,6 +3,6 @@ TEMPLATE = subdirs
+ !contains(QT_CONFIG, no-jpeg):!contains(QT_CONFIG, jpeg):SUBDIRS += jpeg
+ !contains(QT_CONFIG, no-gif):!contains(QT_CONFIG, gif):SUBDIRS += gif
+ !contains(QT_CONFIG, no-mng):!contains(QT_CONFIG, mng):SUBDIRS += mng
+-contains(QT_CONFIG, svg):SUBDIRS += svg
++!wince*:contains(QT_CONFIG, svg):SUBDIRS += svg
+ !contains(QT_CONFIG, no-tiff):!contains(QT_CONFIG, tiff):SUBDIRS += tiff
+ !contains(QT_CONFIG, no-ico):SUBDIRS += ico
+-- 
+1.6.5.1.1367.gcd48
+

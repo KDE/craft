@@ -1,0 +1,36 @@
+From 5adf42172f23404e87bab219b200aa5c2dcfacd6 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 16 Aug 2010 11:40:18 +0200
+Subject: custom flags for wince: optimize for size, and reduce debug libs size
+
+---
+ mkspecs/common/wince/qmake.conf |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mkspecs/common/wince/qmake.conf b/mkspecs/common/wince/qmake.conf
+index 57b89b9..e1c1e95 100644
+--- a/mkspecs/common/wince/qmake.conf
++++ b/mkspecs/common/wince/qmake.conf
+@@ -19,7 +19,7 @@ QMAKE_YACCFLAGS		= -d
+ QMAKE_CFLAGS		= -nologo -Zm200 -Zc:wchar_t-
+ QMAKE_CFLAGS_WARN_ON	= -W3
+ QMAKE_CFLAGS_WARN_OFF	= -W0
+-QMAKE_CFLAGS_RELEASE    = -O2 -MD
++QMAKE_CFLAGS_RELEASE    = -O1 -MD
+ QMAKE_CFLAGS_LTCG       = -GL
+ QMAKE_CFLAGS_DEBUG	= -DDEBUG -D_DEBUG -Zi -MDd
+ QMAKE_CFLAGS_YACC	=
+@@ -57,8 +57,8 @@ QMAKE_RUN_CXX_IMP_BATCH	= $(CXX) -c $(CXXFLAGS) $(INCPATH) -Fo$@ @<<
+ 
+ QMAKE_LINK		= link
+ QMAKE_LFLAGS		= /NOLOGO /NODEFAULTLIB:OLDNAMES.LIB
+-QMAKE_LFLAGS_RELEASE    = /INCREMENTAL:NO
+-QMAKE_LFLAGS_DEBUG	= /DEBUG
++QMAKE_LFLAGS_RELEASE    = /INCREMENTAL:NO /OPT:REF /OPT:ICF
++QMAKE_LFLAGS_DEBUG	= /DEBUG /OPT:REF
+ QMAKE_LFLAGS_LTCG       = /LTCG
+ QMAKE_LIBS_NETWORK      = ws2.lib
+ QMAKE_LIBS_OPENGL       = 
+-- 
+1.6.5.1.1367.gcd48
+
