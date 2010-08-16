@@ -1,0 +1,134 @@
+From 6445a0f439f5ffe6e4f259df2bd5855d39d2b1bb Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 16 Aug 2010 15:00:18 +0200
+Subject: wince build fixes
+
+---
+ phonon/CMakeLists.txt   |    2 ++
+ phonon/globalconfig.cpp |   23 +++++++++++++++--------
+ 2 files changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/phonon/CMakeLists.txt b/phonon/CMakeLists.txt
+index 1c00872..d8f1f8a 100644
+--- a/phonon/CMakeLists.txt
++++ b/phonon/CMakeLists.txt
+@@ -2,7 +2,9 @@ if (PHONON_BUILD_TESTS)
+     add_subdirectory(tests)
+ endif (PHONON_BUILD_TESTS)
+ 
++if (NOT WINCE)
+ add_subdirectory(experimental)
++endif(NOT WINCE)
+ 
+ set(PULSEAUDIO_MINIMUM_VERSION "0.9.15")
+ macro_optional_find_package(PulseAudio)
+diff --git a/phonon/globalconfig.cpp b/phonon/globalconfig.cpp
+index be751ce..c87e626 100644
+--- a/phonon/globalconfig.cpp
++++ b/phonon/globalconfig.cpp
+@@ -82,7 +82,6 @@ static void filter(ObjectDescriptionType type, BackendInterface *backendIface, Q
+             if (var.isValid() && var.toBool()) {
+                 it.remove();
+                 continue;
+-#ifndef QT_NO_PHONON_SETTINGSGROUP
+             }
+         }
+         if (whatToFilter & FilterUnavailableDevices) {
+@@ -95,6 +94,7 @@ static void filter(ObjectDescriptionType type, BackendInterface *backendIface, Q
+     }
+ }
+ 
++#ifndef QT_NO_PHONON_SETTINGSGROUP
+ static QList<int> sortDevicesByCategoryPriority(const GlobalConfig *config, const QSettingsGroup *backendConfig, ObjectDescriptionType type, Phonon::Category category, QList<int> &defaultList)
+ {
+     Q_ASSERT(config);
+@@ -149,20 +149,27 @@ static QList<int> sortDevicesByCategoryPriority(const GlobalConfig *config, cons
+ 
+     return deviceList;
+ }
++#endif QT_NO_PHONON_SETTINGSGROUP
+ 
+ bool GlobalConfig::hideAdvancedDevices() const
+ {
+     K_D(const GlobalConfig);
++#ifndef QT_NO_PHONON_SETTINGSGROUP
+     //The devices need to be stored independently for every backend
+     const QSettingsGroup generalGroup(&d->config, QLatin1String("General"));
+     return generalGroup.value(QLatin1String("HideAdvancedDevices"), true);
++#else
++    return false;
++#endif
+ }
+ 
+ void GlobalConfig::setHideAdvancedDevices(bool hide)
+ {
+     K_D(GlobalConfig);
++#ifndef QT_NO_PHONON_SETTINGSGROUP
+     QSettingsGroup generalGroup(&d->config, QLatin1String("General"));
+     generalGroup.setValue(QLatin1String("HideAdvancedDevices"), hide);
++#endif
+ }
+ 
+ static bool isHiddenAudioOutputDevice(const GlobalConfig *config, int i)
+@@ -264,6 +271,7 @@ void GlobalConfig::setAudioOutputDeviceListFor(Phonon::Category category, QList<
+     }
+ 
+     K_D(GlobalConfig);
++#ifndef QT_NO_PHONON_SETTINGSGROUP
+     QSettingsGroup backendConfig(&d->config, QLatin1String("AudioOutputDevice")); // + Factory::identifier());
+ 
+     order = reindexList(this, category, order, true);
+@@ -274,10 +282,9 @@ void GlobalConfig::setAudioOutputDeviceListFor(Phonon::Category category, QList<
+     } else {
+         backendConfig.setValue(QLatin1String("Category_") + QString::number(category), order);
+     }
++#endif
+ }
+-#endif //QT_NO_PHONON_SETTINGSGROUP
+ 
+-#ifndef QT_NO_PHONON_SETTINGSGROUP
+ QList<int> GlobalConfig::audioOutputDeviceListFor(Phonon::Category category, int override) const
+ {
+     K_D(const GlobalConfig);
+@@ -298,6 +305,7 @@ QList<int> GlobalConfig::audioOutputDeviceListFor(Phonon::Category category, int
+                     );
+         }
+     } else {
++#ifndef QT_NO_PHONON_SETTINGSGROUP
+         BackendInterface *backendIface = qobject_cast<BackendInterface *>(Factory::backend());
+ 
+ #ifndef QT_NO_PHONON_PLATFORMPLUGIN
+@@ -336,8 +344,11 @@ QList<int> GlobalConfig::audioOutputDeviceListFor(Phonon::Category category, int
+ 
+     const QSettingsGroup backendConfig(&d->config, QLatin1String("AudioOutputDevice")); // + Factory::identifier());
+     return sortDevicesByCategoryPriority(this, &backendConfig, AudioOutputDeviceType, category, defaultList);
++#else
++        return QList<int>();
++    }
++#endif
+ }
+-#endif //QT_NO_PHONON_SETTINGSGROUP
+ int GlobalConfig::audioOutputDeviceFor(Phonon::Category category, int override) const
+ {
+ #ifndef QT_NO_PHONON_SETTINGSGROUP
+@@ -351,7 +362,6 @@ int GlobalConfig::audioOutputDeviceFor(Phonon::Category category, int override)
+ #ifndef QT_NO_PHONON_AUDIOCAPTURE
+ void GlobalConfig::setAudioCaptureDeviceListFor(Phonon::Category category, QList<int> order)
+ {
+-#ifndef QT_NO_PHONON_SETTINGSGROUP
+     PulseSupport *pulse = PulseSupport::getInstance();
+     if (pulse->isActive()) {
+         pulse->setCaptureDevicePriorityForCategory(category, order);
+@@ -394,9 +404,6 @@ QList<int> GlobalConfig::audioCaptureDeviceListFor(Phonon::Category category, in
+         BackendInterface *backendIface = qobject_cast<BackendInterface *>(Factory::backend());
+ 
+ #ifndef QT_NO_PHONON_PLATFORMPLUGIN
+-#else //QT_NO_SETTINGSGROUP
+-    return QList<int>();
+-#endif //QT_NO_SETTINGSGROUP
+         if (PlatformPlugin *platformPlugin = Factory::platformPlugin()) {
+             // the platform plugin lists the audio devices for the platform
+             // this list already is in default order (as defined by the platform plugin)
+-- 
+1.6.5.1.1367.gcd48
+

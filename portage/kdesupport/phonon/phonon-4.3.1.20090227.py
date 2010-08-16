@@ -11,6 +11,8 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
         self.svnTargets['4.4'] = 'git://gitorious.org/phonon/phonon.git|4.4'
         self.defaultTarget = 'gitHEAD'
+        self.patchToApply['gitHEAD'] = ('wince-build-fixes.patch', 1)
+        
         self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
         if COMPILER == "mingw4":
             self.options.configure.defines +=" -DBUILD_PHONON_DS9=OFF "
