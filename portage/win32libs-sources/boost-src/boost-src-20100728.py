@@ -13,11 +13,7 @@ class subinfo(info.infoclass):
         self.targets['1.37.0'] = 'http://downloads.sourceforge.net/boost/boost_1_37_0.tar.bz2'
         self.svnTargets['1.40.0'] = "git://gitorious.org/boost/cmake.git|1.40.0|"
         self.svnTargets['1.41.0'] = "git://gitorious.org/boost/cmake.git"
-        self.targetInstSrc['1.34.1'] = 'boost_1_34_1'
-        self.targetInstSrc['1.35.0'] = 'boost_1_35_0'
-        self.targetInstSrc['1.37.0'] = 'boost_1_37_0'
-        self.targetInstSrc['1.41.0'] = 'boost_1_41_0'
-        
+
         if not platform.isCrossCompilingEnabled():
             self.defaultTarget = '1.41.0'
         else:
