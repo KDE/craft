@@ -856,3 +856,48 @@ diff -Nru libxml2-2.7.7.orig/threads.c libxml2-2.7.7/threads.c
  
  #ifdef HAVE_PTHREAD_H
  static pthread_key_t globalkey;
+diff -Nru libxml2-2.7.7.orig/debugXML.c libxml2-2.7.7/debugXML.c
+--- libxml2-2.7.7.orig/debugXML.c	2009-09-24 17:31:59.000000000 +0200
++++ libxml2-2.7.7/debugXML.c	2010-08-17 04:00:26.159977200 +0200
+@@ -116,6 +116,8 @@
+ 	    while (cur != NULL) {
+ 	        if (cur == ns)
+ 		    return(1);
++        if (xmlStrEqual(cur->prefix, ns->prefix) && xmlStrEqual(cur->href, ns->href))
++            return(1);
+ 		if (xmlStrEqual(cur->prefix, ns->prefix))
+ 		    return(-2);
+ 		cur = cur->next;
+diff -Nru libxml2-2.7.7.orig/tree.c libxml2-2.7.7/tree.c
+--- libxml2-2.7.7.orig/tree.c	2010-03-08 16:42:54.000000000 +0100
++++ libxml2-2.7.7/tree.c	2010-08-17 03:55:14.186133400 +0200
+@@ -3291,6 +3291,29 @@
+ 	    xmlFreeNode(cur);
+ 	    return(parent->last);
+ 	}
++
++    /*
++     * If cur is nbktext, merge with previous node
++     */
++	if ((parent->last != NULL) && (parent->last->type == XML_TEXT_NODE) &&
++	    (xmlStrEqual(cur->name, "nbktext")) &&
++	    (parent->last != cur)) {
++	    xmlNodeAddContent(parent->last, cur->content);
++	    xmlFreeNode(cur);
++	    return(parent->last);
++	}
++
++    /*
++     * If parent->last is nbktext and we're not, merge with current node
++     */
++	if ((parent->last != NULL) && (parent->last->type == XML_TEXT_NODE) &&
++	    (xmlStrEqual(parent->last->name, "nbktext")) &&
++	    (parent->last != cur)) {
++	    xmlNodeAddContent(parent->last, cur->content);
++        parent->last->name = xmlStringText;
++	    xmlFreeNode(cur);
++	    return(parent->last);
++	}
+     }
+ 
+     /*
