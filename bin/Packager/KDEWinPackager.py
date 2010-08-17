@@ -130,7 +130,7 @@ class KDEWinPackager (PackagerBase):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating",1) 
         else:
-            cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 1 "
+            cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
         if( self.subinfo.options.package.withCompiler ):
