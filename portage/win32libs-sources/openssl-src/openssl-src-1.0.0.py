@@ -88,12 +88,13 @@ class PackageCMake(CMakePackageBase):
         if not os.path.isdir( os.path.join( dst, "include" ) ):
             os.mkdir( os.path.join( dst, "include" ) )
 
-        outdir = "out32"
+        outdir = "out32dll"
         if self.isTargetBuild():
-            outdir += "_" + self.buildArchitecture()
+            outdir = "out32_" + self.buildArchitecture()
 
-        #shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
-        #shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
+		if not self.isTargetBuild():
+            shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
+            shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
         shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )
         shutil.copy( os.path.join( src, outdir, "ssleay32.lib" ) , os.path.join( dst, "lib" ) )
         utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
