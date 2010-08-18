@@ -58,6 +58,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['testing/mysql-pkg'] = 'default'
+        else:
+            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -95,7 +97,8 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
+        if self.isTargetBuild():
+            libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
         if not platform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
