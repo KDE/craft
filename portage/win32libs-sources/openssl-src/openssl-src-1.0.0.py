@@ -92,7 +92,7 @@ class PackageCMake(CMakePackageBase):
         if self.isTargetBuild():
             outdir = "out32_" + self.buildArchitecture()
 
-		if not self.isTargetBuild():
+        if not self.isTargetBuild():
             shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
             shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
         shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )
