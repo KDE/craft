@@ -21,14 +21,14 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
-        self.hardDependencies['kdesupport/attica'] = 'default'
         if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['kdesupport/attica'] = 'default'
             self.hardDependencies['kdesupport/dbusmenu-qt'] = 'default'
+            self.hardDependencies['kdesupport/phonon'] = 'default'
             self.hardDependencies['kdesupport/qca'] = 'default'
             self.hardDependencies['kdesupport/qimageblitz'] = 'default'
         self.hardDependencies['data/docbook-dtd'] = 'default'
         self.hardDependencies['data/docbook-xsl'] = 'default'
-        self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
         self.hardDependencies['win32libs-sources/shared-desktop-ontologies-src'] = 'default'
@@ -65,7 +65,7 @@ class Package(CMakePackageBase):
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
             if self.isTargetBuild():
-                self.subinfo.options.configure.defines += "-DKDE_PLATFORM_PROFILE=Mobile "
+                self.subinfo.options.configure.defines += "-DKDE_PLATFORM_PROFILE=Mobile -DBUILD_kutils=TRUE "
 
 if __name__ == '__main__':
     Package().execute()
