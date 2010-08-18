@@ -69,7 +69,7 @@ class PackageCMake(CMakePackageBase):
             # the Configure script generates errors due to the the backslashes in the path
             wcecompatincdir = os.path.join( os.path.join( self.mergeDestinationDir(), "include" ), "wcecompat" )
             os.putenv( "INCLUDE", wcecompatincdir + ";" + os.getenv("INCLUDE") )
-            cmd = r"nmake -f ms\cedll.mak"
+            cmd = r"nmake -f ms\ce.mak"
         else:
             cmd = r"nmake -f ms\ntdll.mak"
 
@@ -88,12 +88,12 @@ class PackageCMake(CMakePackageBase):
         if not os.path.isdir( os.path.join( dst, "include" ) ):
             os.mkdir( os.path.join( dst, "include" ) )
 
-        outdir = "out32dll"
+        outdir = "out32"
         if self.isTargetBuild():
             outdir += "_" + self.buildArchitecture()
 
-        shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
-        shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
+        #shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
+        #shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
         shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )
         shutil.copy( os.path.join( src, outdir, "ssleay32.lib" ) , os.path.join( dst, "lib" ) )
         utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )

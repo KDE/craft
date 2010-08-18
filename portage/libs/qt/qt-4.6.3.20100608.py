@@ -39,6 +39,7 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-webkit-fixes.patch', 1),
             ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1)
+            ('qt-4.7.0-openssl-static-linking.patch', 1)
                                    ]
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
@@ -68,6 +69,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
+        self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
         if not platform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
 
@@ -93,6 +95,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+        libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
         if not platform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""

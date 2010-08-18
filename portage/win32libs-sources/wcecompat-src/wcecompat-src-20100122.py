@@ -18,10 +18,11 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
                 
-class TestPackage(CMakePackageBase):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.package.packageName = 'wcecompat'
         self.subinfo.options.configure.defines = "-DWCECOMPAT_INSTALL_INC_DIR=include/wcecompat"
 
 if __name__ == '__main__':
