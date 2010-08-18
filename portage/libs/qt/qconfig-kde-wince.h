@@ -92,9 +92,6 @@
 #ifndef QT_NO_CONCURRENT
 #  define QT_NO_CONCURRENT
 #endif
-#ifndef QT_NO_CSSPARSER
-#  define QT_NO_CSSPARSER
-#endif
 #ifndef QT_NO_CURSOR
 #  define QT_NO_CURSOR
 #endif
@@ -302,9 +299,6 @@
 #ifndef QT_NO_STYLE_PLASTIQUE
 #  define QT_NO_STYLE_PLASTIQUE
 #endif
-#ifndef QT_NO_STYLE_STYLESHEET
-#  define QT_NO_STYLE_STYLESHEET
-#endif
 #ifndef QT_NO_STYLE_WINDOWSCE
 #  define QT_NO_STYLE_WINDOWSCE
 #endif
@@ -392,9 +386,6 @@
 #endif
 #ifndef QT_NO_TOOLBOX
 #  define QT_NO_TOOLBOX
-#endif
-#ifndef QT_NO_TREEWIDGET
-#  define QT_NO_TREEWIDGET
 #endif
 
 /* Windows */
