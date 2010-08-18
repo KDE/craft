@@ -116,7 +116,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         if platform.isCrossCompilingEnabled():
             if self.isTargetBuild():
                 command += "-xplatform %s -qconfig kde-wince " % xplatform
-                command += "-no-exceptions -no-stl -no-rtti "
+                command += "-webkit -no-exceptions -no-stl -no-rtti "
             if self.isHostBuild():
                 command += "-no-webkit -no-xmlpatterns -no-declarative -no-opengl "
             command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif "
