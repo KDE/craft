@@ -118,7 +118,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
                 command += "-xplatform %s -qconfig kde-wince " % xplatform
                 command += "-no-exceptions -no-stl -no-rtti "
             if self.isHostBuild():
-                command += "-no-xmlpatterns -no-declarative -no-opengl "
+                command += "-no-webkit -no-xmlpatterns -no-declarative -no-opengl "
             command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif "
             
         if not platform.isCrossCompilingEnabled():
@@ -127,7 +127,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-qt-style-windowsxp -qt-style-windowsvista "
             command += "-qt-libpng -qt-libjpeg -qt-libtiff "
         # all builds
-        command += "-webkit -no-phonon "
+        command += "-no-phonon "
         command += "-qdbus -dbus-linked -openssl-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
