@@ -70,7 +70,7 @@ class MainPackage(CMakePackageBase):
                      os.path.abspath(fname))
             return False
         for line in fileinput.input(fname):
-            d# Cleanup white spaces / line endings
+            # Cleanup white spaces / line endings
             line = line.splitlines()
             line = line[0].rstrip()
             if line.startswith("#") or len(line) == 0:
