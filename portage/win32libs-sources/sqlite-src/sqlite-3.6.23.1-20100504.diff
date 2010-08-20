@@ -1,40 +1,6 @@
-diff -Nru sqlite-3.6.23.1.orig/CMakeLists.txt sqlite-3.6.23.1/CMakeLists.txt
---- sqlite-3.6.23.1.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ sqlite-3.6.23.1/CMakeLists.txt	Tue May  4 07:10:26 2010
-@@ -0,0 +1,30 @@
-+project( Sqlite )
-+cmake_minimum_required( VERSION 2.6 )
-+
-+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-+
-+if(WINCE)
-+    find_package(Wcecompat REQUIRED)
-+    include_directories(${WCECOMPAT_INCLUDE_DIR})
-+endif(WINCE)
-+
-+set( sqlite_HEADER sqlite3.h sqlite3ext.h )
-+
-+set( libsqlite_SRC sqlite3.c  )
-+set( sqlite_SRC shell.c )
-+
-+add_library( libsqlite3 SHARED  ${libsqlite_SRC} )
-+set_target_properties( libsqlite3 PROPERTIES OUTPUT_NAME "sqlite3" )
-+
-+if(WINCE)
-+    target_link_libraries(libsqlite3 ${WCECOMPAT_LIBRARIES})
-+endif(WINCE)
-+
-+install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
-+
-+add_executable( sqlite3 ${sqlite_SRC} )
-+target_link_libraries( sqlite3 libsqlite3 )
-+
-+install( TARGETS sqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
-+
-+install( FILES ${sqlite_HEADER} DESTINATION include )
 diff -Nru sqlite-3.6.23.1.orig/cmake/modules/FindWcecompat.cmake sqlite-3.6.23.1/cmake/modules/FindWcecompat.cmake
---- sqlite-3.6.23.1.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ sqlite-3.6.23.1/cmake/modules/FindWcecompat.cmake	Fri Apr 30 14:49:51 2010
+--- sqlite-3.6.23.1.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ sqlite-3.6.23.1/cmake/modules/FindWcecompat.cmake	2010-08-20 14:43:08.794846400 +0200
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -69,16 +35,57 @@ diff -Nru sqlite-3.6.23.1.orig/cmake/modules/FindWcecompat.cmake sqlite-3.6.23.1
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru sqlite-3.6.23.1.orig/CMakeLists.txt sqlite-3.6.23.1/CMakeLists.txt
+--- sqlite-3.6.23.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ sqlite-3.6.23.1/CMakeLists.txt	2010-08-20 14:43:08.796846500 +0200
+@@ -0,0 +1,34 @@
++project( Sqlite )
++cmake_minimum_required( VERSION 2.6 )
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(LIBRARY_TYPE STATIC)
++  add_definitions(-DSQLITE3_STATIC_LIBS)
++else(WINCE)
++  set(LIBRARY_TYPE SHARED)
++endif(WINCE)
++
++set( sqlite_HEADER sqlite3.h sqlite3ext.h )
++
++set( libsqlite_SRC sqlite3.c  )
++set( sqlite_SRC shell.c )
++
++add_library( libsqlite3 ${LIBRARY_TYPE}  ${libsqlite_SRC} )
++set_target_properties( libsqlite3 PROPERTIES OUTPUT_NAME "sqlite3" )
++
++if(WINCE)
++    target_link_libraries(libsqlite3 ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
++install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++add_executable( sqlite3 ${sqlite_SRC} )
++target_link_libraries( sqlite3 libsqlite3 )
++
++install( TARGETS sqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++install( FILES ${sqlite_HEADER} DESTINATION include )
 diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
---- sqlite-3.6.23.1.orig/sqlite3.c	Mon Mar 29 19:51:07 2010
-+++ sqlite-3.6.23.1/sqlite3.c	Tue May  4 07:13:49 2010
-@@ -23,7 +23,15 @@
+--- sqlite-3.6.23.1.orig/sqlite3.c	2010-03-29 21:51:07.000000000 +0200
++++ sqlite-3.6.23.1/sqlite3.c	2010-08-20 14:51:41.001142900 +0200
+@@ -23,7 +23,18 @@
  # define SQLITE_PRIVATE static
  #endif
  #ifndef SQLITE_API
 -# define SQLITE_API
 +# ifdef _MSC_VER
-+#  ifdef libsqlite3_EXPORTS
++#  if defined(SQLITE3_STATIC_LIBS)
++    /* No export/import for static libraries */
++#   define SQLITE_API
++#  elif defined(libsqlite3_EXPORTS)
 +#   define SQLITE_API __declspec(dllexport)
 +#  else
 +#   define SQLITE_API __declspec(dllimport)
@@ -89,7 +96,7 @@ diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
  #endif
  /************** Begin file sqliteInt.h ***************************************/
  /*
-@@ -11440,7 +11448,7 @@
+@@ -11440,7 +11451,7 @@
  ** localtime_s().
  */
  #if !defined(HAVE_LOCALTIME_R) && !defined(HAVE_LOCALTIME_S) && \
@@ -98,16 +105,50 @@ diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
  #define HAVE_LOCALTIME_S 1
  #endif
  
+@@ -28368,30 +28379,6 @@
+ ** This section contains code for WinCE only.
+ */
+ /*
+-** WindowsCE does not have a localtime() function.  So create a
+-** substitute.
+-*/
+-struct tm *__cdecl localtime(const time_t *t)
+-{
+-  static struct tm y;
+-  FILETIME uTm, lTm;
+-  SYSTEMTIME pTm;
+-  sqlite3_int64 t64;
+-  t64 = *t;
+-  t64 = (t64 + 11644473600)*10000000;
+-  uTm.dwLowDateTime = (DWORD)(t64 & 0xFFFFFFFF);
+-  uTm.dwHighDateTime= (DWORD)(t64 >> 32);
+-  FileTimeToLocalFileTime(&uTm,&lTm);
+-  FileTimeToSystemTime(&lTm,&pTm);
+-  y.tm_year = pTm.wYear - 1900;
+-  y.tm_mon = pTm.wMonth - 1;
+-  y.tm_wday = pTm.wDayOfWeek;
+-  y.tm_mday = pTm.wDay;
+-  y.tm_hour = pTm.wHour;
+-  y.tm_min = pTm.wMinute;
+-  y.tm_sec = pTm.wSecond;
+-  return &y;
+-}
+ 
+ /* This will never be called, but defined to make the code compile */
+ #define GetTempPathA(a,b)
 diff -Nru sqlite-3.6.23.1.orig/sqlite3.h sqlite-3.6.23.1/sqlite3.h
---- sqlite-3.6.23.1.orig/sqlite3.h	Mon Mar 29 19:51:07 2010
-+++ sqlite-3.6.23.1/sqlite3.h	Tue May  4 07:14:31 2010
-@@ -50,7 +50,15 @@
+--- sqlite-3.6.23.1.orig/sqlite3.h	2010-03-29 21:51:07.000000000 +0200
++++ sqlite-3.6.23.1/sqlite3.h	2010-08-20 14:43:08.869850700 +0200
+@@ -50,7 +50,18 @@
  #endif
  
  #ifndef SQLITE_API
 -# define SQLITE_API
 +# ifdef _MSC_VER
-+#  ifdef libsqlite3_EXPORTS
++#  if defined(SQLITE3_STATIC_LIBS)
++    /* No export/import for static libraries */
++#   define SQLITE_API
++#  elif defined(libsqlite3_EXPORTS)
 +#   define SQLITE_API __declspec(dllexport)
 +#  else
 +#   define SQLITE_API __declspec(dllimport)
