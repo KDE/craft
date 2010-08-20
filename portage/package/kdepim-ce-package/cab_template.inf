@@ -20,7 +20,6 @@ HKLM, Software\freedesktop\DBus, Install Directory, 0, %InstallDir%/bin
 
 [Shortcuts]
 %AppName%,0,kmail-mobile.exe
-%AppName%,0,notes-mobile.exe
  
 [SourceDisksNames]
 $SOURCEDISKNAMES

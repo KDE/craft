@@ -3,6 +3,8 @@
 # This package will create a CAB Installer that can be used to install
 # Software on Windows CE based on the filename patterns in whitelist.txt
 
+# TODO: Make the WinCE build dir configurable currently WM65 is hardcoded
+
 __author__  = "Andre Heinecke <aheinecke@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
 
@@ -68,13 +70,14 @@ class MainPackage(CMakePackageBase):
                      os.path.abspath(fname))
             return False
         for line in fileinput.input(fname):
-            # Cleanup white spaces / line endings
+            d# Cleanup white spaces / line endings
             line = line.splitlines()
             line = line[0].rstrip()
             if line.startswith("#") or len(line) == 0:
                 continue
             try:
-                exp = re.compile(re.escape(self.rootdir)+line)
+                exp = re.compile(re.escape(os.path.join(self.rootdir,
+                          "WM65")+ os.path.sep) + line)
                 self.whitelist.append(exp)
                 utils.debug("%s added to whitelist as %s" % (line,
                     exp.pattern), 2)
@@ -86,16 +89,40 @@ class MainPackage(CMakePackageBase):
             Copy the binaries for the Package from kderoot to the image
             directory
         '''
+        wm_root = os.path.join(self.rootdir, "WM65") + os.path.sep
         utils.createDir(self.workDir())
-        utils.debug("Copying from %s to %s ..." % (self.rootdir,
+        utils.debug("Copying from %s to %s ..." % (wm_root,
             self.workDir()), 1)
-        for entry in self.traverse(self.rootdir, self.whitelisted):
-            entry_target = entry.replace(self.rootdir,
+        uniquebasenames = []
+        unique_names = []
+        duplicates = []
+
+        for entry in self.traverse(wm_root, self.whitelisted):
+            if os.path.basename(entry) in uniquebasenames:
+                utils.debug("Found duplicate filename: %s" % \
+                        os.path.basename(entry), 2)
+                duplicates.append(entry)
+            else:
+                unique_names.append(entry)
+                uniquebasenames.append(os.path.basename(entry))
+
+        for entry in unique_names:
+            entry_target = entry.replace(wm_root,
                     os.path.join(self.workDir()+"\\"))
             if not os.path.exists(os.path.dirname(entry_target)):
                 utils.createDir(os.path.dirname(entry_target))
             shutil.copy(entry, entry_target)
             utils.debug("Copied %s to %s" % (entry, entry_target),2)
+        dups=0
+        for entry in duplicates:
+            entry_target = entry.replace(wm_root,
+                    os.path.join(self.workDir()+"\\"))
+            entry_target = "%s_dup%d" % (entry_target, dups)
+            dups += 1
+            if not os.path.exists(os.path.dirname(entry_target)):
+                utils.createDir(os.path.dirname(entry_target))
+            shutil.copy(entry, entry_target)
+            utils.debug("Copied %s to %s" % (entry, entry_target), 2)
 
     def traverse(self, directory, whitelist = lambda f: True):
         '''
@@ -155,8 +182,13 @@ class MainPackage(CMakePackageBase):
 
         rn = "\r\n".join
 
-        sections = ["[a%d]\r\n%s" % (dir_id, rn(fs))
-            for dir_id, fs in files.iteritems()]
+        sections = []
+        for dir_id in files.iterkeys():
+            sections.append("[a%d]\r\n" % dir_id)
+            for f in files.get(dir_id):
+                sections.append("%s,%s,,0\r\n" % (re.sub("_dup[0-9]+","",f), f))
+       # sections = ["[a%d]\r\n%s,%s,,0" % (dir_id, rn(replace(fs)), fs)
+       #     for dir_id, fs in files.iteritems()]
         sectionnames = ["a%d" % dir_id for dir_id in files.iterkeys()]
 
         with open(os.path.join(self.workDir(), "Kontact-Mobile.inf"), "wb") \
@@ -165,7 +197,7 @@ class MainPackage(CMakePackageBase):
                SOURCEDISKNAMES = rn(sourcedisknames),
                SOURCEDISKFILES = rn(sourcediskfiles),
                DESTINATIONDIRS = rn(destinationdirs),
-               SECTIONS        = rn(sections),
+               SECTIONS        = "".join(sections),
                SECTIONNAMES    = ", ".join(sectionnames))
             return output.name
 
