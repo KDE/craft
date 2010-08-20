@@ -102,7 +102,10 @@ class OptionsCMake:
         ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
         self.openIDE = False
         ## use CTest instead of the make utility
-        self.useCTest = False
+        if "EMERGE_USECTEST" in os.environ and os.getenv("EMERGE_USECTEST") in ["True", "1"]:
+            self.useCTest = True
+        else:
+            self.useCTest = False
         
 ## main option class
 class Options:
