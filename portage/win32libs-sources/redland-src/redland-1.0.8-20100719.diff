@@ -203,7 +203,7 @@ diff -Nru redland-1.0.8.orig/cmake/FindWcecompat.cmake redland-1.0.8/cmake/FindW
 diff -Nru redland-1.0.8.orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 --- redland-1.0.8.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ redland-1.0.8/CMakeLists.txt	2010-07-19 14:20:58.551430000 +0200
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,19 @@
 +project(redland)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -213,6 +213,7 @@ diff -Nru redland-1.0.8.orig/CMakeLists.txt redland-1.0.8/CMakeLists.txt
 +    include_directories(${WCECOMPAT_INCLUDE_DIR})
 +    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
 +    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++    add_definitions(-DSQLITE3_STATIC_LIBS)
 +endif(WINCE)
 +
 +if(MSVC)
