@@ -33,6 +33,8 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
             self.subinfo.options.configure.defines += " -DKDEPIM_MOBILE_UI=TRUE "
             self.subinfo.options.configure.defines += " -DBUILD_mobile=ON -DBUILD_messagecomposer=ON  -DBUILD_runtime=ON "
+            self.subinfo.options.configure.defines += " -DMESSAGEVIEWER_NO_WEBKIT=ON "
+            self.subinfo.options.configure.defines += " -DTEMPLATEPARSER_NO_WEBKIT=ON "
         
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
