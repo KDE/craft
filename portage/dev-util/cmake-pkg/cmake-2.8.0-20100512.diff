@@ -1748,7 +1748,7 @@ diff --git a/Modules/Platform/WinCE-cl.cmake b/Modules/Platform/WinCE-cl.cmake
 @@ -0,0 +1,47 @@
 +
 +IF(NOT CMAKE_WINDOWS_STACKSIZE )
-+    SET(CMAKE_WINDOWS_STACKSIZE 65536) ## stacksize is set to 65kb
++    SET(CMAKE_WINDOWS_STACKSIZE 1048576) ## stacksize is set to 1MB
 +ENDIF(NOT CMAKE_WINDOWS_STACKSIZE )
 +
 +INCLUDE(Platform/Windows-cl)
