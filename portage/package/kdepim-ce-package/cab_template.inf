@@ -16,6 +16,7 @@ $SECTIONS
  
 [RegSettings]
 HKLM, Software\kde, KDEDIRS, 0, %InstallDir%
+HKLM, Software\Akonadi\Akonadi\AgentProviders, "Storage Card", 0, %InstallDir%
 HKLM, Software\freedesktop\DBus, Install Directory, 0, %InstallDir%/bin
 
 [Shortcuts]
