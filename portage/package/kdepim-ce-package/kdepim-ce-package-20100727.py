@@ -124,6 +124,13 @@ class MainPackage(CMakePackageBase):
             shutil.copy(entry, entry_target)
             utils.debug("Copied %s to %s" % (entry, entry_target), 2)
 
+        # Create an empty file for DBus and his /etc/dbus-1/session.d
+        dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",
+                "session.d")
+        os.mkdir(dbus_session_d)
+        f = open(os.path.join(dbus_session_d, "stub"), "w")
+        f.close()
+
     def traverse(self, directory, whitelist = lambda f: True):
         '''
             Traverse through a directory tree and return every
