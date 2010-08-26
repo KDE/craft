@@ -64,6 +64,7 @@ lib\\kde4\\messageviewer_bodypartformatter_text_calendar\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_vcard\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_xdiff\.dll
 plugins\\imageformats\\qjpeg4\.dll
+plugins\\sqldrivers\\qsqlite3\.dll
 
 share\\applications\\kde4\\kaddressbook-mobile\.desktop
 share\\applications\\kde4\\kmail-mobile\.desktop
