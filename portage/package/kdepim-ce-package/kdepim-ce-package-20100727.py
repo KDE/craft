@@ -127,7 +127,7 @@ class MainPackage(CMakePackageBase):
         # Create an empty file for DBus and his /etc/dbus-1/session.d
         dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",
                 "session.d")
-        os.mkdir(dbus_session_d)
+        if not os.path.exists(dbus_session_d): os.mkdir(dbus_session_d)
         f = open(os.path.join(dbus_session_d, "stub"), "w")
         f.close()
 
