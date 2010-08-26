@@ -10,7 +10,10 @@ class subinfo(info.infoclass):
         self.targetDigests['20100823'] = "34a922ac947e90828cae9ad471ca6ae56495b1dd"
         self.targets['20100823'] = \
                 """http://files.kolab.org/local/windows-ce/gpg_wince-dev-230810.zip"""
-        self.defaultTarget = '20100823'
+        self.targetDigests['20100826'] = "ff6c1d6b0ac663e08cba28ac96d1f7e17c223da1"
+        self.targets['20100826'] = \
+                """http://files.kolab.org/local/windows-ce/gpg_wince-dev-260810.zip"""
+        self.defaultTarget = '20100826'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
