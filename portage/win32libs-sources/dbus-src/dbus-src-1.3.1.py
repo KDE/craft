@@ -56,6 +56,8 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=autolaunch:scope=install-path"
         else:
             self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON"
+        if platform.isCrossCompilingEnabled() and not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
+            self.subinfo.options.configure.defines += " -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=tcp:host=localhost,port=12434 "
         
     def unpack(self):
         if not CMakePackageBase.unpack(self):
