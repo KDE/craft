@@ -1,0 +1,42 @@
+From a3efa3eee3139740cd613c0afa7918e30955adc9 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Fri, 27 Aug 2010 17:03:16 +0200
+Subject: [PATCH 2/2] Fixed case when no scope attribute is used.
+
+---
+ dbus/dbus-sysdeps-win.c |   12 ++++++++++--
+ 1 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index b02ea20..a273365 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -2586,7 +2586,11 @@ _dbus_get_shm_address(DBusString *out,const char *scope)
+   _dbus_string_init(out);
+   _dbus_string_append(out,cDBusDaemonAddressInfo);
+ 
+-  if (strcmp(scope,"install-path") == 0)
++  if (!scope)
++    {
++      return TRUE;
++    }
++  else if (strcmp(scope,"install-path") == 0)
+     {
+       DBusString temp;
+ 
+@@ -2618,7 +2622,11 @@ _dbus_get_mutex_name(DBusString *out,const char *scope)
+   _dbus_string_init(out);
+   _dbus_string_append(out,cDBusDaemonMutex);
+ 
+-  if (strcmp(scope,"install-path") == 0)
++  if (!scope)
++    {
++      return TRUE;
++    }
++  else if (strcmp(scope,"install-path") == 0)
+     {
+       DBusString temp;
+ 
+-- 
+1.7.0.2.msysgit.0
+

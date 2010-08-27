@@ -1,7 +1,26 @@
+From 09ab8e4ba7fd9e25de157cd22b339b114d55ccb2 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Fri, 27 Aug 2010 16:51:44 +0200
+Subject: [PATCH 1/2] Extended autolaunch protocol with scope attribute.
+
+---
+ bus/main.c                   |    9 ---
+ cmake/config.h.cmake         |    2 +-
+ dbus/dbus-server-protected.h |    4 +-
+ dbus/dbus-server-socket.c    |    3 +
+ dbus/dbus-server-socket.h    |    2 +
+ dbus/dbus-server-win.c       |   30 +++++++-
+ dbus/dbus-server.c           |    1 +
+ dbus/dbus-sysdeps-win.c      |  160 +++++++++++++++++++++++++++++++++++++-----
+ dbus/dbus-sysdeps.h          |    7 +-
+ dbus/dbus-transport.c        |    8 ++-
+ 10 files changed, 188 insertions(+), 38 deletions(-)
+
 diff --git a/bus/main.c b/bus/main.c
+index b25c945..53038db 100644
 --- a/bus/main.c
 +++ b/bus/main.c
-@@ -458,12 +458,6 @@ main (int argc, char **argv)
+@@ -503,12 +503,6 @@ main (int argc, char **argv)
        exit (1);
      }
  
@@ -14,7 +33,7 @@ diff --git a/bus/main.c b/bus/main.c
    /* bus_context_new() closes the print_addr_pipe and
     * print_pid_pipe
     */
-@@ -484,8 +478,5 @@ main (int argc, char **argv)
+@@ -529,8 +523,5 @@ main (int argc, char **argv)
    bus_context_unref (context);
    bus_selinux_shutdown ();
  
@@ -24,6 +43,7 @@ diff --git a/bus/main.c b/bus/main.c
    return 0;
  }
 diff --git a/cmake/config.h.cmake b/cmake/config.h.cmake
+index 956c6d2..c1b8aeb 100644
 --- a/cmake/config.h.cmake
 +++ b/cmake/config.h.cmake
 @@ -16,7 +16,7 @@
@@ -36,6 +56,7 @@ diff --git a/cmake/config.h.cmake b/cmake/config.h.cmake
  #cmakedefine PACKAGE "@PACKAGE@"
  /* Version number of package */
 diff --git a/dbus/dbus-server-protected.h b/dbus/dbus-server-protected.h
+index cc2de8d..9e759c1 100644
 --- a/dbus/dbus-server-protected.h
 +++ b/dbus/dbus-server-protected.h
 @@ -50,6 +50,7 @@ struct DBusServerVTable
@@ -57,6 +78,7 @@ diff --git a/dbus/dbus-server-protected.h b/dbus/dbus-server-protected.h
  
    DBusDataSlotList slot_list;   /**< Data stored by allocated integer ID */
 diff --git a/dbus/dbus-server-socket.c b/dbus/dbus-server-socket.c
+index dbd7213..758742d 100644
 --- a/dbus/dbus-server-socket.c
 +++ b/dbus/dbus-server-socket.c
 @@ -251,6 +251,9 @@ socket_disconnect (DBusServer *server)
@@ -70,6 +92,7 @@ diff --git a/dbus/dbus-server-socket.c b/dbus/dbus-server-socket.c
  }
  
 diff --git a/dbus/dbus-server-socket.h b/dbus/dbus-server-socket.h
+index 0a7c789..3aec712 100644
 --- a/dbus/dbus-server-socket.h
 +++ b/dbus/dbus-server-socket.h
 @@ -33,6 +33,8 @@ DBusServer* _dbus_server_new_for_socket           (int              *fds,
@@ -82,6 +105,7 @@ diff --git a/dbus/dbus-server-socket.h b/dbus/dbus-server-socket.h
                                                     const char       *bind,
                                                     const char       *port,
 diff --git a/dbus/dbus-server-win.c b/dbus/dbus-server-win.c
+index 5cfb73e..860978d 100644
 --- a/dbus/dbus-server-win.c
 +++ b/dbus/dbus-server-win.c
 @@ -83,11 +83,35 @@ _dbus_server_listen_platform_specific (DBusAddressEntry *entry,
@@ -124,6 +148,7 @@ diff --git a/dbus/dbus-server-win.c b/dbus/dbus-server-win.c
  
  /** @} */
 diff --git a/dbus/dbus-server.c b/dbus/dbus-server.c
+index 18fa8c4..91fdcb6 100644
 --- a/dbus/dbus-server.c
 +++ b/dbus/dbus-server.c
 @@ -104,6 +104,7 @@ _dbus_server_init_base (DBusServer             *server,
@@ -135,6 +160,7 @@ diff --git a/dbus/dbus-server.c b/dbus/dbus-server.c
    if (!_dbus_string_init (&server->guid_hex))
      return FALSE;
 diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index 7f9d559..b02ea20 100644
 --- a/dbus/dbus-sysdeps-win.c
 +++ b/dbus/dbus-sysdeps-win.c
 @@ -37,6 +37,7 @@
@@ -145,7 +171,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
  #include "dbus-sysdeps.h"
  #include "dbus-threads.h"
  #include "dbus-protocol.h"
-@@ -2546,35 +2547,139 @@ static const char *cDBusAutolaunchMutex = "DBusAutolaunchMutex";
+@@ -2550,35 +2551,139 @@ static const char *cDBusAutolaunchMutex = "DBusAutolaunchMutex";
  // mutex to determine if dbus-daemon is already started (per user)
  static const char *cDBusDaemonMutex = "DBusDaemonMutex";
  // named shm for dbus adress info (per user)
@@ -295,7 +321,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
    _dbus_assert( hDBusSharedMem );
  
    shared_addr = MapViewOfFile( hDBusSharedMem, FILE_MAP_WRITE, 0, 0, 0 );
-@@ -2587,6 +2692,9 @@ _dbus_daemon_publish_session_bus_address (const char* address)
+@@ -2591,6 +2696,9 @@ _dbus_daemon_publish_session_bus_address (const char* address)
    UnmapViewOfFile( shared_addr );
  
    _dbus_global_unlock( lock );
@@ -305,7 +331,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
  }
  
  void
-@@ -2611,7 +2719,7 @@ _dbus_daemon_unpublish_session_bus_address (void)
+@@ -2615,7 +2723,7 @@ _dbus_daemon_unpublish_session_bus_address (void)
  }
  
  static dbus_bool_t
@@ -314,7 +340,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
  {
    HANDLE sharedMem;
    char *shared_addr;
-@@ -2620,7 +2728,7 @@ _dbus_get_autolaunch_shm (DBusString *address)
+@@ -2624,7 +2732,7 @@ _dbus_get_autolaunch_shm (DBusString *address)
    // read shm
    for(i=0;i<20;++i) {
        // we know that dbus-daemon is available, so we wait until shm is available
@@ -323,7 +349,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
        if( sharedMem == 0 )
            Sleep( 100 );
        if ( sharedMem != 0)
-@@ -2648,39 +2756,48 @@ _dbus_get_autolaunch_shm (DBusString *address)
+@@ -2652,39 +2760,48 @@ _dbus_get_autolaunch_shm (DBusString *address)
  }
  
  static dbus_bool_t
@@ -376,7 +402,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
                                DBusError *error)
  {
    HANDLE mutex;
-@@ -2691,12 +2808,19 @@ _dbus_get_autolaunch_address (DBusString *address,
+@@ -2695,12 +2812,19 @@ _dbus_get_autolaunch_address (DBusString *address,
    char dbus_exe_path[MAX_PATH];
    char dbus_args[MAX_PATH * 2];
    const char * daemon_name = DBUS_DAEMON_NAME ".exe";
@@ -397,7 +423,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
      {
          _dbus_verbose("found already running dbus daemon\n");
          retval = TRUE;
-@@ -2723,7 +2847,7 @@ _dbus_get_autolaunch_address (DBusString *address,
+@@ -2727,7 +2851,7 @@ _dbus_get_autolaunch_address (DBusString *address,
      {
        CloseHandle (pi.hThread);
        CloseHandle (pi.hProcess);
@@ -407,6 +433,7 @@ diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
    
    if (retval == FALSE)
 diff --git a/dbus/dbus-sysdeps.h b/dbus/dbus-sysdeps.h
+index c98db36..a0f62ee 100644
 --- a/dbus/dbus-sysdeps.h
 +++ b/dbus/dbus-sysdeps.h
 @@ -207,7 +207,7 @@ dbus_bool_t _dbus_windows_user_is_process_owner (const char        *windows_sid)
@@ -431,7 +458,7 @@ diff --git a/dbus/dbus-sysdeps.h b/dbus/dbus-sysdeps.h
  dbus_bool_t _dbus_lookup_session_address (dbus_bool_t *supported,
                                            DBusString  *address,
 diff --git a/dbus/dbus-transport.c b/dbus/dbus-transport.c
---- a/dbus/dbus-transport.c
+index f33dc60..a078f7c 100644
 --- a/dbus/dbus-transport.c
 +++ b/dbus/dbus-transport.c
 @@ -273,7 +273,7 @@ check_address (const char *address, DBusError *error)
@@ -463,3 +490,6 @@ diff --git a/dbus/dbus-transport.c b/dbus/dbus-transport.c
  
        if (*transport_p == NULL)
          {
+-- 
+1.7.0.2.msysgit.0
+

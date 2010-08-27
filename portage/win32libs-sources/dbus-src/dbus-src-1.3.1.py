@@ -24,14 +24,17 @@ class subinfo(info.infoclass):
         self.targetDigests['1.3.1'] = 'e8fa74ad6f2294bdf7d22aed25896d8943287c32'
         self.targetInstSrc['1.3.1'] = 'dbus-1.3.1'
         self.targetConfigurePath['1.3.1'] = 'cmake'
-        self.patchToApply['gitHEAD'] = [('dbus-scopes.diff', 1)]
+        self.patchToApply['gitHEAD'] = [('0001-Extended-autolaunch-protocol-with-scope-attribute.patch', 1),
+                                        ('0002-Fixed-case-when-no-scope-attribute-is-used.patch', 1)]
         if platform.isCrossCompilingEnabled():
             if not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
                 self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1) , ('no-auth.diff', 1)]
             else: 
                 self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1)]
         else:
-            self.patchToApply['1.3.1'] = [('dbus-scopes.diff', 1),('dbus-1.3.1.diff', 1)]
+            self.patchToApply['1.3.1'] = [('0001-Extended-autolaunch-protocol-with-scope-attribute.patch', 1),
+                                          ('0002-Fixed-case-when-no-scope-attribute-is-used.patch', 1),
+                                          ('dbus-1.3.1.diff', 1)]
         
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
