@@ -1,6 +1,7 @@
 # Akonadi Ressources to package:
 bin\\akonadi_ical_resource\.exe
 bin\\akonadi_maildir_resource\.exe
+bin\\akonadi_maildispatcher_agent\.exe
 bin\\akonadi_contacts_resource\.exe
 bin\\akonadi_notes_resource\.exe
 
@@ -66,6 +67,11 @@ lib\\kde4\\messageviewer_bodypartformatter_text_xdiff\.dll
 plugins\\imageformats\\qjpeg4\.dll
 plugins\\sqldrivers\\qsqlite3\.dll
 
+share\\akonadi\\agents\\contactsresource\.desktop
+share\\akonadi\\agents\\icalresource\.desktop
+share\\akonadi\\agents\\maildirresource\.desktop
+share\\akonadi\\agents\\maildispatcheragent\.desktop
+share\\akonadi\\agents\\notesresource\.desktop
 share\\applications\\kde4\\kaddressbook-mobile\.desktop
 share\\applications\\kde4\\kmail-mobile\.desktop
 share\\applications\\kde4\\korganizer-mobile\.desktop
@@ -86,12 +92,7 @@ share\\apps\\akonadi\\contact\\icons\\oxygen\\16x16\\apps\\yahoo_protocol\.png
 share\\apps\\akonadi\\contact\\pics\\world\.jpg
 share\\apps\\akonadi-kde\\kcfg2dbus\.xsl
 share\\apps\\kabc\\countrytransl\.map
-share\\apps\\kaddressbook-mobile\\contact-editor\.qml
-share\\apps\\kaddressbook-mobile\\contactgroup-editor\.qml
-share\\apps\\kaddressbook-mobile\\ContactListView\.qml
-share\\apps\\kaddressbook-mobile\\KAddressBookActions\.qml
-share\\apps\\kaddressbook-mobile\\kaddressbook-mobile-background\.png
-share\\apps\\kaddressbook-mobile\\kaddressbook-mobile\.qml
+share\\apps\\kaddressbook-mobile\\
 share\\apps\\kauth\\dbus_policy\.stub
 share\\apps\\kauth\\dbus_service\.stub
 share\\apps\\kcharselect\\kcharselect-data
@@ -136,15 +137,7 @@ share\\apps\\kdeui\\pics\\kdeprint_nup4\.png
 share\\apps\\kdeui\\pics\\kdeprint_nupother\.png
 share\\apps\\kdeui\\pics\\ktip-bulb\.png
 share\\apps\\kdeui\\rgb\.txt
-share\\apps\\kmail-mobile\\action-item-email\.png
-share\\apps\\kmail-mobile\\EditorView\.qml
-share\\apps\\kmail-mobile\\HeaderView\.qml
-share\\apps\\kmail-mobile\\important-email\.png
-share\\apps\\kmail-mobile\\KMailActions\.qml
-share\\apps\\kmail-mobile\\kmail-composer\.qml
-share\\apps\\kmail-mobile\\kmail-mobile-background\.png
-share\\apps\\kmail-mobile\\kmail-mobile\.notifyrc
-share\\apps\\kmail-mobile\\kmail-mobile\.qml
+share\\apps\\kmail-mobile\\
 share\\apps\\kmail\\pics\\key_bad\.png
 share\\apps\\kmail\\pics\\key_ok\.png
 share\\apps\\kmail\\pics\\key\.png
@@ -153,9 +146,7 @@ share\\apps\\knode\\pics\\key_bad\.png
 share\\apps\\knode\\pics\\key_ok\.png
 share\\apps\\knode\\pics\\key\.png
 share\\apps\\knode\\pics\\key_unknown\.png
-share\\apps\\korganizer-mobile\\KorganizerActions\.qml
-share\\apps\\korganizer-mobile\\korganizer-mobile-background\.png
-share\\apps\\korganizer-mobile\\korganizer-mobile\.qml
+share\\apps\\korganizer-mobile\\
 share\\apps\\kssl\\ca-bundle\.crt
 share\\apps\\libkholidays\\plan2\\holiday_ar_es
 share\\apps\\libkholidays\\plan2\\holiday_at_de
@@ -275,24 +266,9 @@ share\\apps\\LICENSES\\GPL_V3
 share\\apps\\LICENSES\\LGPL_V2
 share\\apps\\LICENSES\\LGPL_V3
 share\\apps\\LICENSES\\QPL_V1\.0
-share\\apps\\messageviewer\\plugins\\bodypartformatter\\text_calendar\.desktop
-share\\apps\\messageviewer\\plugins\\bodypartformatter\\text_vcard\.desktop
-share\\apps\\messageviewer\\plugins\\bodypartformatter\\text_xdiff\.desktop
-share\\apps\\mobileui\\back-to-list-button\.png
-share\\apps\\mobileui\\delete-button\.png
-share\\apps\\mobileui\\edit-button\.png
-share\\apps\\mobileui\\incidence-editor\.qml
-share\\apps\\mobileui\\splashscreenstatic\.png
-share\\apps\\mobileui\\stylesheet\.css
-share\\apps\\mobileui\\top\.png
-share\\apps\\notes-mobile\\NoteActions\.qml
-share\\apps\\notes-mobile\\NotesListView\.qml
-share\\apps\\notes-mobile\\notes-mobile-background\.png
-share\\apps\\notes-mobile\\notes\.qml
-share\\apps\\notes-mobile\\NoteView\.qml
-share\\apps\\tasks-mobile\\TaskActions\.qml
-share\\apps\\tasks-mobile\\tasks-mobile-background\.png
-share\\apps\\tasks-mobile\\tasks\.qml
+share\\apps\\messageviewer\\plugins\\
+share\\apps\\mobileui\\
+share\\apps\\notes-mobile\\
 share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfig\.cmake
 share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfigVersion\.cmake
 share\\common-lisp\\source\\gpg-error\\gpg-error\.asd
@@ -303,8 +279,6 @@ share\\common-lisp\\source\\gpgme\\gpgme\.asd
 share\\common-lisp\\source\\gpgme\\gpgme\.lisp
 share\\common-lisp\\source\\gpgme\\gpgme-package\.lisp
 share\\config\\accept-languages\.codes
-share\\config\\akonadi\\mysql-global\.conf
-share\\config\\akonadi\\mysql-global-mobile\.conf
 share\\config\\colors\\40\.colors
 share\\config\\colors\\Oxygen\.colors
 share\\config\\colors\\Rainbow\.colors
