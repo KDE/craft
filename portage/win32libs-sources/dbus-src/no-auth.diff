@@ -1,0 +1,16 @@
+diff -Nru dbus-1.3.1.orig/dbus/dbus-auth.c dbus-1.3.1/dbus/dbus-auth.c
+--- dbus-1.3.1.orig/dbus/dbus-auth.c	Wed Jun 23 14:13:43 2010
++++ dbus-1.3.1/dbus/dbus-auth.c	Fri Aug 27 07:40:57 2010
+@@ -1094,8 +1094,12 @@
+       return send_rejected (auth);
+     }
+   
++#if 0
+   if (_dbus_credentials_are_superset (auth->credentials,
+                                       auth->desired_identity))
++#else
++  if (TRUE)
++#endif
+     {
+       /* client has authenticated */
+       if (!_dbus_credentials_add_credentials (auth->authorized_identity,

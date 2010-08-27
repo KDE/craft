@@ -26,7 +26,10 @@ class subinfo(info.infoclass):
         self.targetConfigurePath['1.3.1'] = 'cmake'
         self.patchToApply['gitHEAD'] = [('dbus-scopes.diff', 1)]
         if platform.isCrossCompilingEnabled():
-            self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1)]
+            if not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
+                self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1) , ('no-auth.diff', 1)]
+            else: 
+                self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1)]
         else:
             self.patchToApply['1.3.1'] = [('dbus-scopes.diff', 1),('dbus-1.3.1.diff', 1)]
         
