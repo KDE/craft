@@ -49,7 +49,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus'
         self.subinfo.options.make.slnBaseName = 'dbus'
-        if self.buildTarget == '1.3.1' or self.buildTarget == 'gitHEAD':
+        if (self.buildTarget == '1.3.1' or self.buildTarget == 'gitHEAD') and not platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=autolaunch:scope=install-path"
         else:
             self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON"
