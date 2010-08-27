@@ -260,10 +260,8 @@ class baseclass:
         if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
             return False
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
-            ( file, patchdepth ) = self.subinfo.patchToApply[ self.subinfo.buildTarget ]
-            patchfile = os.path.join ( self.packagedir, file )
             srcdir = os.path.join ( self.workdir, self.instsrcdir )
-            return utils.applyPatch( srcdir, patchfile, patchdepth )
+            return utils.applyPatches(srcdir, self.subinfo.patchToApply[self.subinfo.buildTarget])
         return True
 
     def compile( self ):
