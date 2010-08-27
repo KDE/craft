@@ -3,7 +3,7 @@ bin\\akonadi_ical_resource\.exe
 bin\\akonadi_maildir_resource\.exe
 bin\\akonadi_maildispatcher_agent\.exe
 bin\\akonadi_contacts_resource\.exe
-bin\\akonadi_notes_resource\.exe
+bin\\akonadi_akonotes_resource\.exe
 
 # Add the Qt Conf
 bin\\qt\.conf
@@ -71,7 +71,7 @@ share\\akonadi\\agents\\contactsresource\.desktop
 share\\akonadi\\agents\\icalresource\.desktop
 share\\akonadi\\agents\\maildirresource\.desktop
 share\\akonadi\\agents\\maildispatcheragent\.desktop
-share\\akonadi\\agents\\notesresource\.desktop
+share\\akonadi\\agents\\akonotesresource\.desktop
 share\\applications\\kde4\\kaddressbook-mobile\.desktop
 share\\applications\\kde4\\kmail-mobile\.desktop
 share\\applications\\kde4\\korganizer-mobile\.desktop
