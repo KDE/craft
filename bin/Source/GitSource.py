@@ -24,7 +24,7 @@ class GitSource ( VersionSystemSourceBase ):
             self.shell.msysdir = gitInstallDir
             utils.debug( 'using shell from %s' % gitInstallDir, 1 )
 
-    def fetch( self, repopath=None ):
+    def __fetchSingleBranch(self, repopath=None):
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
@@ -72,13 +72,77 @@ class GitSource ( VersionSystemSourceBase ):
             utils.debug( "skipping git fetch (--offline)" )
         return ret
     
+    def __fetchMultipleBranch(self, repopath=None):
+        # get the path where the repositories should be stored to
+        if repopath == None:
+            repopath = self.repositoryUrl()
+        
+        # in case you need to move from a read only Url to a writeable one, here it gets replaced
+        repopath = repopath.replace("[git]", "")
+        repoString = utils.replaceVCSUrl( repopath )
+        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+
+        if utils.verbose() <= 2:
+            devNull = " > /dev/null"
+        else:
+            devNull = ""
+        ret = True
+        # only run if wanted (e.g. no --offline is given on the commandline)
+        if ( not self.noFetch ):
+            self.setProxy()
+            safePath = os.environ["PATH"]
+            # add the git path to the PATH variable so that git can be called without path
+            os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
+            rootCheckoutDir = os.path.join(self.checkoutDir(),'.git')
+            if not os.path.exists( rootCheckoutDir ):
+                # it doesn't exist so clone the repo
+                os.makedirs( rootCheckoutDir )
+                ret = self.shell.execute( self.shell.toNativePath(rootCheckoutDir), "git", "clone --mirror %s ." % ( repoUrl ) )
+                
+            if repoBranch == "":
+                repoBranch = "master"
+            if ret:
+                branchDir = os.path.join(self.checkoutDir(),repoBranch)
+                if not os.path.exists(branchDir):
+                    os.makedirs(branchDir)
+                    ret = self.shell.execute(branchDir, "git", "clone --local --shared -b %s %s %s" % \
+                        (repoBranch, self.shell.toNativePath(rootCheckoutDir), self.shell.toNativePath(branchDir)))
+            if ret: 
+                #ret = self.shell.execute(branchDir, "git", "checkout -f")
+                if repoTag:
+                    ret = self.shell.execute(branchDir, "git", "checkout -f %s" % (repoTag))
+                else:
+                    ret = self.shell.execute(branchDir, "git", "checkout -f %s" % (repoBranch))
+        else:
+            utils.debug( "skipping git fetch (--offline)" )
+        return ret
+        
+    
+    def fetch(self, repopath=None):
+        if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
+            return self.__fetchMultipleBranch(repopath)
+        else:
+            return self.__fetchSingleBranch(repopath)
+
     def applyPatch(self, file, patchdepth):
         """apply single patch o git repository"""
         if file:
             patchfile = os.path.join ( self.packageDir(), file )
-            #FIXME this reverts previously applied patches !
-            #self.shell.execute( self.sourceDir(), "git", "checkout -f" )
-            return self.shell.execute( self.sourceDir(), "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)) )
+            if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
+                repopath = self.repositoryUrl()
+                # in case you need to move from a read only Url to a writeable one, here it gets replaced
+                repopath = repopath.replace("[git]", "")
+                repoString = utils.replaceVCSUrl( repopath )
+                [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+                if repoBranch == "":
+                    repoBranch = "master"
+                sourceDir = os.path.join(self.checkoutDir(),repoBranch)
+                return self.shell.execute(sourceDir, "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)))
+            else:
+                sourceDir = self.sourceDir()            
+                #FIXME this reverts previously applied patches !
+                #self.shell.execute(sourceDir, "git", "checkout -f")
+                return self.shell.execute(sourceDir, "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)))
         return True
 
     def createPatch( self ):
@@ -103,3 +167,20 @@ class GitSource ( VersionSystemSourceBase ):
         print revision
         os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergegitshow.tmp" ) )
         return True
+        
+    def sourceDir(self, index=0 ): 
+        repopath = self.repositoryUrl()
+        # in case you need to move from a read only Url to a writeable one, here it gets replaced
+        repopath = repopath.replace("[git]", "")
+        repoString = utils.replaceVCSUrl( repopath )
+        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+        if repoBranch == "":
+            repoBranch = "master"
+        sourcedir = os.path.join(self.checkoutDir(index),repoBranch)
+
+        if self.subinfo.hasTargetSourcePath():
+            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+
+        utils.debug("using sourcedir: %s" % sourcedir,2)
+        return sourcedir
+

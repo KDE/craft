@@ -121,6 +121,13 @@ rem and make sure that plink is in your PATH and Pageant is configured
 rem (you need to import your key)
 set SVN_SSH=plink 
 
+rem With this option set to 1 emerge checks out each git repository branch into a 
+rem separate subdirectory (see git clone --mirror at git clone  --shared --local).
+rem Without this option changing the branch will overwrite previous checkouts.
+rem Note: Changing the value invalidates available checkouts of related packages 
+rem and requires a remove of the complete source dir.
+rem set EMERGE_GIT_MULTIBRANCH=1
+
 rem Setting up variables for git, not needed by emerge but preventing trouble with corrupted git pushes
 set GIT_SSH=plink
 set HOME=%USERPROFILE%
