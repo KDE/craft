@@ -106,26 +106,15 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             
         utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
 
-        
-        # Disable Webkit parts that aren't used to save space and time
-        defines = ""
-        if platform.isCrossCompilingEnabled():
-            # cf http://trac.webkit.org/wiki/Porting%20Macros%20plan for the reference list of parts
-            webkit_disabled_parts =  "3D_CANVAS 3D_RENDERING DATABASE DOM_STORAGE FILTERS FTPDIR "
-            webkit_disabled_parts += "GEOLOCATION ICONDATABASE INSPECTOR JAVASCRIPT_DEBUGGER JIT NETSCAPE_PLUGIN_API "
-            webkit_disabled_parts += "OFFLINE_WEB_APPLICATIONS RUBY SHARED_WORKERS SQLITE SVG VIDEO WEB_SOCKETS WORKERS XPATH XSLT"
-            for part in webkit_disabled_parts.split():
-                defines +="-D ENABLE_" + part +"=0 "
-
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         if platform.isCrossCompilingEnabled():
             if self.isTargetBuild():
                 command += "-xplatform %s -qconfig kde-wince " % xplatform
-                command += "-webkit -no-exceptions -no-stl -no-rtti "
+                command += "-no-exceptions -no-stl -no-rtti "
             if self.isHostBuild():
-                command += "-no-webkit -no-xmlpatterns -no-declarative -no-opengl "
-            command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif "
+                command += "-no-xmlpatterns -no-declarative -no-opengl "
+            command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif -no-webkit "
             
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
@@ -137,7 +126,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-qdbus -dbus-linked -openssl-linked "
         command += "-fast -ltcg -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
-        command += "%s %s %s" % ( defines, incdirs, libdirs )
+        command += "%s %s" % ( incdirs, libdirs )
 
         if self.buildType() == "Debug":
           command += " -debug "
