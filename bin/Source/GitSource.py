@@ -176,7 +176,10 @@ class GitSource ( VersionSystemSourceBase ):
         [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
         if repoBranch == "":
             repoBranch = "master"
-        sourcedir = os.path.join(self.checkoutDir(index),repoBranch)
+        if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
+            sourcedir = os.path.join(self.checkoutDir(index),repoBranch)
+        else:
+            sourcedir = self.checkoutDir(index)
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
