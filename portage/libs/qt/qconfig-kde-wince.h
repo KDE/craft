@@ -11,6 +11,9 @@
 #ifndef QT_NO_ERRORMESSAGE
 #  define QT_NO_ERRORMESSAGE
 #endif
+#ifndef QT_NO_FILEDIALOG
+#  define QT_NO_FILEDIALOG
+#endif
 #ifndef QT_NO_FONTDIALOG
 #  define QT_NO_FONTDIALOG
 #endif
@@ -23,11 +26,19 @@
 #ifndef QT_NO_PRINTPREVIEWDIALOG
 #  define QT_NO_PRINTPREVIEWDIALOG
 #endif
+#ifndef QT_NO_PROGRESSDIALOG
+#  define QT_NO_PROGRESSDIALOG
+#endif
 #ifndef QT_NO_TABDIALOG
 #  define QT_NO_TABDIALOG
 #endif
 #ifndef QT_NO_WIZARD
 #  define QT_NO_WIZARD
+#endif
+
+/* File I/O */
+#ifndef QT_NO_FILESYSTEMMODEL
+#  define QT_NO_FILESYSTEMMODEL
 #endif
 
 /* Fonts */
@@ -81,6 +92,9 @@
 #endif
 
 /* ItemViews */
+#ifndef QT_NO_DIRMODEL
+#  define QT_NO_DIRMODEL
+#endif
 #ifndef QT_NO_COLUMNVIEW
 #  define QT_NO_COLUMNVIEW
 #endif
@@ -147,6 +161,12 @@
 #endif
 #ifndef QT_NO_SOCKS5
 #  define QT_NO_SOCKS5
+#endif
+#ifndef QT_NO_UDPSOCKET
+#  define QT_NO_UDPSOCKET
+#endif
+#ifndef QT_NO_URLINFO
+#  define QT_NO_URLINFO
 #endif
 #ifndef QT_NO_FTP
 #  define QT_NO_FTP
@@ -302,6 +322,9 @@
 #ifndef QT_NO_STYLE_WINDOWSCE
 #  define QT_NO_STYLE_WINDOWSCE
 #endif
+#ifndef QT_NO_STYLE_WINDOWSMOBILE
+#  define QT_NO_STYLE_WINDOWSMOBILE
+#endif
 #ifndef QT_NO_STYLE_WINDOWSXP
 #  define QT_NO_STYLE_WINDOWSXP
 #endif
@@ -315,6 +338,9 @@
 #endif
 #ifndef QT_NO_FSCOMPLETER
 #  define QT_NO_FSCOMPLETER
+#endif
+#ifndef QT_NO_GESTURES
+#  define QT_NO_GESTURES
 #endif
 #ifndef QT_NO_SYSTEMTRAYICON
 #  define QT_NO_SYSTEMTRAYICON
@@ -338,6 +364,9 @@
 #endif
 #ifndef QT_NO_FONTCOMBOBOX
 #  define QT_NO_FONTCOMBOBOX
+#endif
+#ifndef QT_NO_CONTEXTMENU
+#  define QT_NO_CONTEXTMENU
 #endif
 #ifndef QT_NO_MAINWINDOW
 #  define QT_NO_MAINWINDOW

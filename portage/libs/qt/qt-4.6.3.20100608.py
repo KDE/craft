@@ -39,6 +39,7 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-webkit-fixes.patch', 1),
             ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
+            ('qt-4.7.0-fix-build-with-QT_NO_GESTURES.patch', 1),
             ('qt-4.7.0-openssl-static-linking.patch', 1)
                                    ]
         

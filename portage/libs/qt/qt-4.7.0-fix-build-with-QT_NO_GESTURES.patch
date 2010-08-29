@@ -1,0 +1,30 @@
+From c2c7a592e8fec520af9f0455fb38a70fe8adadfa Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Thu, 19 Aug 2010 14:59:21 +0200
+Subject: fix build with QT_NO_GESTURES
+
+---
+ src/gui/kernel/qapplication_p.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/gui/kernel/qapplication_p.h b/src/gui/kernel/qapplication_p.h
+index 8dc16e0..83ca730 100644
+--- a/src/gui/kernel/qapplication_p.h
++++ b/src/gui/kernel/qapplication_p.h
+@@ -528,12 +528,12 @@ public:
+ #ifndef QT_NO_GESTURES
+     QGestureManager *gestureManager;
+     QWidget *gestureWidget;
++#endif
+ #if defined(Q_WS_X11) || defined(Q_WS_WIN)
+     QPixmap *move_cursor;
+     QPixmap *copy_cursor;
+     QPixmap *link_cursor;
+ #endif
+-#endif
+ #if defined(Q_WS_WIN)
+     QPixmap *ignore_cursor;
+ #endif
+-- 
+1.6.5.1.1367.gcd48
+
