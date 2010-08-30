@@ -19,9 +19,15 @@ HKLM, Software\kde, KDEDIRS, 0, %InstallDir%
 HKLM, Software\Akonadi\Akonadi\AgentProviders, Install Directory, 0, %InstallDir%
 HKLM, Software\freedesktop\DBus, Install Directory, 0, %InstallDir%/bin
 
+[Autostart]
+dbus-launch.exe,0,dbus-launch.exe
+
 [Shortcuts]
-%AppName%,0,kmail-mobile.exe
- 
+KMail-Mobile,0,kmail-mobile.exe
+Notes-Mobile,0,notes-mobile.exe
+KAddressbook-Mobile,0,kaddressbook-mobile.exe
+KOrganizer-Mobile,0,korganizer-mobile.exe
+
 [SourceDisksNames]
 $SOURCEDISKNAMES
  
@@ -31,3 +37,4 @@ $SOURCEDISKFILES
 [DestinationDirs]
 $DESTINATIONDIRS
 Shortcuts = 0,%CE11%
+Autostart = 0,%CE4%
