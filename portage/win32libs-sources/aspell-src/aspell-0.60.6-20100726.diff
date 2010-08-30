@@ -671,7 +671,7 @@ diff -Nru aspell-0.60.6.orig/common/file_data_util.hpp aspell-0.60.6/common/file
 diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util.cpp
 --- aspell-0.60.6.orig/common/file_util.cpp	2004-11-15 13:29:53.000000000 +0100
 +++ aspell-0.60.6/common/file_util.cpp	2010-07-26 10:33:22.035862400 +0200
-@@ -25,14 +25,12 @@
+@@ -25,14 +25,13 @@
  #include <dirent.h>
  
  #ifdef WIN32
@@ -681,6 +681,7 @@ diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util
 +#  define asc_isalpha isalpha
  #  include <windows.h>
  #  include <winbase.h>
++#  include <ctype.h>
 -
  #else
 -
