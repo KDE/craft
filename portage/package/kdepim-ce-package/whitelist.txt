@@ -791,10 +791,6 @@ share\\libical\\zoneinfo\\Pacific\\Wake\.ics
 share\\libical\\zoneinfo\\Pacific\\Wallis\.ics
 share\\libical\\zoneinfo\\zones\.tab
 share\\locale\\all_languages
-share\\mime\\packages\\akonadi-mime\.xml
-share\\mime\\packages\\kdepimlibs-mime\.xml
-share\\mime\\packages\\kdepim-mime\.xml
-share\\mime\\packages\\kde\.xml
 share\\ontology\\core\\rdf\.ontology
 share\\ontology\\core\\rdfs\.ontology
 share\\ontology\\core\\rdfs\.trig
