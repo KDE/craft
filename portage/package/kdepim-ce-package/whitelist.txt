@@ -67,6 +67,9 @@ lib\\kde4\\messageviewer_bodypartformatter_text_xdiff\.dll
 plugins\\imageformats\\qjpeg4\.dll
 plugins\\sqldrivers\\qsqlite3\.dll
 
+# Shared mime info
+share\\mime\\
+
 share\\akonadi\\agents\\contactsresource\.desktop
 share\\akonadi\\agents\\icalresource\.desktop
 share\\akonadi\\agents\\maildirresource\.desktop
