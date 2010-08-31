@@ -478,7 +478,41 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
  
      if (*entry_point == NULL) {
  #if 0 /* This message appears to confuse people */
-@@ -257,9 +266,12 @@
+@@ -128,6 +137,8 @@
+     int r = 0;
+     HINSTANCE library;
+     lib_list_t *newhead;
++    wchar_t *wfile;
++    
+     
+     r = ((sasl_verifyfile_t *)(verifyfile_cb->proc))
+ 		    (verifyfile_cb->context, file, SASL_VRFY_PLUGIN);
+@@ -136,12 +147,23 @@
+     newhead = sasl_ALLOC(sizeof(lib_list_t));
+     if(!newhead) return SASL_NOMEM;
+ 
+-    if (!(library = LoadLibrary (file))) {
++#ifdef _WIN32_WCE
++    wfile = wce_mbtowc(file);
++    if (!(library = LoadLibraryW (wfile))) {
++#else
++    if (!(library = LoadLibraryW (file))) {
++#endif
+ 	_sasl_log(NULL, SASL_LOG_ERR,
+ 		  "unable to LoadLibrary %s: %s", file, GetLastError());
+ 	sasl_FREE(newhead);
++#ifdef _WIN32_WCE
++    free(wfile);
++#endif
+ 	return SASL_FAIL;
+     }
++#ifdef _WIN32_WCE
++    free(wfile);
++#endif
+ 
+     newhead->library = library;
+     newhead->next = lib_list_head;
+@@ -257,9 +279,12 @@
  	    }
  
  /* : Check that it is not a directory */
