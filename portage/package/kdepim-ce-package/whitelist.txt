@@ -14,7 +14,6 @@ bin\\qt\.conf
 bin\\akonadi_control\.exe
 bin\\akonadictl\.exe
 bin\\akonadiserver\.exe
-bin\\bzip2\.dll
 bin\\dbus-1\.dll
 bin\\dbus-daemon\.exe
 bin\\dbus-launch\.exe
