@@ -283,6 +283,7 @@ share\\apps\\LICENSES\\QPL_V1\.0
 share\\apps\\messageviewer\\plugins\\
 share\\apps\\mobileui\\
 share\\apps\\notes-mobile\\
+share\\apps\\tasks-mobile\\
 share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfig\.cmake
 share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfigVersion\.cmake
 share\\common-lisp\\source\\gpg-error\\gpg-error\.asd
