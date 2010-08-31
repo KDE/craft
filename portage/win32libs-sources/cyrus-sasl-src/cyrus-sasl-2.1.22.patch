@@ -1,7 +1,7 @@
 diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
---- cyrus-sasl-2.1.22.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ cyrus-sasl-2.1.22/CMakeLists.txt	Mon Jul  5 15:54:54 2010
-@@ -0,0 +1,179 @@
+--- cyrus-sasl-2.1.22.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.22/CMakeLists.txt	2010-08-31 13:59:57.846186300 +0200
+@@ -0,0 +1,237 @@
 +project(cyrus-sasl)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(PACKAGE "cyrus-sasl")
@@ -9,6 +9,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +set(PLUGINDESTINATION lib/sasl2)
 +set(PLUGINDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
 +set(CONFIGDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
++
++option(STATIC_PLUGIN "test" ON)
++option(STATIC_LIBRARY "test" ON)
 +
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
@@ -63,6 +66,61 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +set(additional_link_libs ws2 ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
 +
++set(plugin_SRCS
++  plugins/plugin_common.c
++  plugins/plugin_common.h
++)
++
++if(STATIC_LIBRARY)
++    add_definitions(-DLIBSASL_STATIC)
++endif(STATIC_LIBRARY)
++
++if(STATIC_PLUGIN)
++    add_definitions(-DSTATIC_PLUGIN
++                    -DSTATIC_ANONYMOUS
++                    -DSTATIC_CRAMMD5
++                    -DSTATIC_DIGESTMD5
++                    -DSTATIC_LOGIN
++                    -DSTATIC_PLAIN)
++
++    #
++    # ANONYMOUS
++    #
++    set(anonymous_SRCS
++      plugins/anonymous.c
++      plugins/anonymous_init.c
++    )
++    #
++    # LOGIN
++    #
++    set(login_SRCS
++      plugins/login.c
++      plugins/login_init.c
++    )
++    #
++    # PLAIN
++    #
++    set(plain_SRCS
++      plugins/plain.c
++      plugins/plain_init.c
++    )
++    #
++    # CRAMMD5
++    #
++    set(crammd5_SRCS
++      plugins/cram.c
++      plugins/crammd5_init.c
++    )
++    #
++    # DIGESTMD5
++    #
++    set(digestmd5_SRCS
++      plugins/digestmd5.c
++      plugins/digestmd5_init.c
++    )
++    set(plugin_SRCS ${plugin_SRCS} ${anonymous_SRCS} ${login_SRCS} ${plain_SRCS} ${crammd5_SRCS} ${digestmd5_SRCS})
++endif(STATIC_PLUGIN)
++
 +set(sasl_SRCS
 +  lib/auxprop.c
 +  lib/canonusr.c
@@ -104,76 +162,76 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +  include/saslutil.h
 +)
 +
-+set(plugin_SRCS
-+  plugins/plugin_common.c
-+  plugins/plugin_common.h
-+)
-+
 +include_directories(
 +  ${CMAKE_SOURCE_DIR}/include
 +  ${CMAKE_CURRENT_BINARY_DIR}
 +)
-+add_library(sasl2 SHARED ${sasl_SRCS} ${sasl_HDRS} ${sasl_inc_HDRS} ${plugin_SRCS})
-+set_target_properties(sasl2 PROPERTIES DEFINE_SYMBOL LIBSASL_EXPORTS)
++if(STATIC_LIBRARY)
++    add_library(sasl2 STATIC ${sasl_SRCS} ${sasl_HDRS} ${sasl_inc_HDRS} ${plugin_SRCS})
++else(STATIC_LIBRARY)
++    add_library(sasl2 SHARED ${sasl_SRCS} ${sasl_HDRS} ${sasl_inc_HDRS} ${plugin_SRCS})
++    set_target_properties(sasl2 PROPERTIES DEFINE_SYMBOL LIBSASL_EXPORTS)
++endif(STATIC_LIBRARY)
 +target_link_libraries(sasl2 ${additional_link_libs})
 +install(TARGETS sasl2 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 +install(FILES ${sasl_inc_HDRS} DESTINATION include/sasl)
 +
-+#
-+# ANONYMOUS
-+#
-+set(anonymous_SRCS
-+  plugins/anonymous.c
-+  plugins/anonymous_init.c
-+)
-+add_library(saslANONYMOUS MODULE ${anonymous_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslANONYMOUS sasl2 ${additional_link_libs})
-+install(TARGETS saslANONYMOUS DESTINATION ${PLUGINDESTINATION})
++if(NOT STATIC_PLUGIN)
++    #
++    # ANONYMOUS
++    #
++    set(anonymous_SRCS
++      plugins/anonymous.c
++      plugins/anonymous_init.c
++    )
++    add_library(saslANONYMOUS MODULE ${anonymous_SRCS} ${plugin_SRCS})
++    target_link_libraries(saslANONYMOUS sasl2 ${additional_link_libs})
++    install(TARGETS saslANONYMOUS DESTINATION ${PLUGINDESTINATION})
 +
-+#
-+# LOGIN
-+#
-+set(login_SRCS
-+  plugins/login.c
-+  plugins/login_init.c
-+)
-+add_library(saslLOGIN MODULE ${login_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslLOGIN sasl2 ${additional_link_libs})
-+install(TARGETS saslLOGIN DESTINATION ${PLUGINDESTINATION})
++    #
++    # LOGIN
++    #
++    set(login_SRCS
++      plugins/login.c
++      plugins/login_init.c
++    )
++    add_library(saslLOGIN MODULE ${login_SRCS} ${plugin_SRCS})
++    target_link_libraries(saslLOGIN sasl2 ${additional_link_libs})
++    install(TARGETS saslLOGIN DESTINATION ${PLUGINDESTINATION})
 +
-+#
-+# PLAIN
-+#
-+set(plain_SRCS
-+  plugins/plain.c
-+  plugins/plain_init.c
-+)
-+add_library(saslPLAIN MODULE ${plain_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslPLAIN sasl2 ${additional_link_libs})
-+install(TARGETS saslPLAIN DESTINATION ${PLUGINDESTINATION})
++    #
++    # PLAIN
++    #
++    set(plain_SRCS
++      plugins/plain.c
++      plugins/plain_init.c
++    )
++    add_library(saslPLAIN MODULE ${plain_SRCS} ${plugin_SRCS})
++    target_link_libraries(saslPLAIN sasl2 ${additional_link_libs})
++    install(TARGETS saslPLAIN DESTINATION ${PLUGINDESTINATION})
 +
-+#
-+# CRAMMD5
-+#
-+set(crammd5_SRCS
-+  plugins/cram.c
-+  plugins/crammd5_init.c
-+)
-+add_library(saslCRAMMD5 MODULE ${crammd5_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslCRAMMD5 sasl2 ${additional_link_libs})
-+install(TARGETS saslCRAMMD5 DESTINATION ${PLUGINDESTINATION})
++    #
++    # CRAMMD5
++    #
++    set(crammd5_SRCS
++      plugins/cram.c
++      plugins/crammd5_init.c
++    )
++    add_library(saslCRAMMD5 MODULE ${crammd5_SRCS} ${plugin_SRCS})
++    target_link_libraries(saslCRAMMD5 sasl2 ${additional_link_libs})
++    install(TARGETS saslCRAMMD5 DESTINATION ${PLUGINDESTINATION})
 +
-+#
-+# DIGESTMD5
-+#
-+set(digestmd5_SRCS
-+  plugins/digestmd5.c
-+  plugins/digestmd5_init.c
-+)
-+add_library(saslDIGESTMD5 MODULE ${digestmd5_SRCS} ${plugin_SRCS})
-+target_link_libraries(saslDIGESTMD5 sasl2 ${additional_link_libs})
-+install(TARGETS saslDIGESTMD5 DESTINATION ${PLUGINDESTINATION})
-+
++    #
++    # DIGESTMD5
++    #
++    set(digestmd5_SRCS
++      plugins/digestmd5.c
++      plugins/digestmd5_init.c
++    )
++    add_library(saslDIGESTMD5 MODULE ${digestmd5_SRCS} ${plugin_SRCS})
++    target_link_libraries(saslDIGESTMD5 sasl2 ${additional_link_libs})
++    install(TARGETS saslDIGESTMD5 DESTINATION ${PLUGINDESTINATION})
++endif(NOT STATIC_PLUGIN)
 +
 +#
 +# Pluginviewer
@@ -377,6 +435,38 @@ diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
  #endif
  
  #ifdef __cplusplus
+diff -Nru cyrus-sasl-2.1.22.orig/include/prop.h cyrus-sasl-2.1.22/include/prop.h
+--- cyrus-sasl-2.1.22.orig/include/prop.h	2003-12-12 01:47:22.000000000 +0100
++++ cyrus-sasl-2.1.22/include/prop.h	2010-08-31 11:40:06.383222000 +0200
+@@ -33,18 +33,22 @@
+ /* Under Unix, life is simpler: we just need to mark library functions
+  * as extern.  (Technically, we don't even have to do that.) */
+ #ifdef WIN32
+-# ifdef LIBSASL_EXPORTS
+-#  define LIBSASL_API  __declspec(dllexport)
+-# else /* LIBSASL_EXPORTS */
+-#  define LIBSASL_API  __declspec(dllimport)
+-# endif /* LIBSASL_EXPORTS */
++# ifndef LIBSASL_STATIC
++#  ifdef LIBSASL_EXPORTS
++#   define LIBSASL_API  __declspec(dllexport)
++#  else /* LIBSASL_EXPORTS */
++#   define LIBSASL_API  __declspec(dllimport)
++#  endif /* LIBSASL_EXPORTS */
++# else /* LIBSASL_STATIC */
++#  define LIBSASL_API
++# endif
+ #else /* WIN32 */
+ # define LIBSASL_API extern
+ #endif /* WIN32 */
+ 
+ /* Same as above, but used during a variable declaration. Only Unix definition
+  * is different, as we can't assign an initial value to an extern variable */ 
+-#ifdef WIN32
++#if defined(WIN32) && !defined(LIBSASL_STATIC)
+ # ifdef LIBSASL_EXPORTS
+ #  define LIBSASL_VAR  __declspec(dllexport)
+ # else /* LIBSASL_EXPORTS */
 diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
 --- cyrus-sasl-2.1.22.orig/lib/common.c	Wed Apr 19 18:39:59 2006
 +++ cyrus-sasl-2.1.22/lib/common.c	Mon Jul  5 16:12:13 2010
@@ -418,6 +508,45 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
      case REG_MULTI_SZ:
          tmp = ValueData;
  
+diff -Nru cyrus-sasl-2.1.22.orig/lib/dlopen.c cyrus-sasl-2.1.22/lib/dlopen.c
+--- cyrus-sasl-2.1.22.orig/lib/dlopen.c	2005-03-15 14:33:30.000000000 +0100
++++ cyrus-sasl-2.1.22/lib/dlopen.c	2010-08-31 11:18:47.142053600 +0200
+@@ -56,7 +56,7 @@
+ #include <sasl.h>
+ #include "saslint.h"
+ 
+-#ifndef PIC
++#if !defined(PIC) || defined(STATIC_PLUGIN)
+ #include <saslplug.h>
+ #include "staticopen.h"
+ #endif
+@@ -393,7 +393,7 @@
+     DIR *dp;
+     struct dirent *dir;
+ #endif
+-#ifndef PIC
++#if !defined(PIC) || defined(STATIC_PLUGIN)
+     add_plugin_t *add_plugin;
+     _sasl_plug_type type;
+     _sasl_plug_rec *p;
+@@ -408,7 +408,7 @@
+ 	|| ! verifyfile_cb->proc)
+ 	return SASL_BADPARAM;
+ 
+-#ifndef PIC
++#if !defined(PIC) || defined(STATIC_PLUGIN)
+     /* do all the static plugins first */
+ 
+     for(cur_ep = entrypoints; cur_ep->entryname; cur_ep++) {
+@@ -435,7 +435,7 @@
+ 	    	result = add_plugin(p->name, p->plug);
+ 	}
+     }
+-#endif /* !PIC */
++#endif /* !PIC || STATIC_PLUGIN */
+ 
+ /* only do the following if:
+  * 
 diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
 --- cyrus-sasl-2.1.22.orig/lib/saslutil.c	Mon Mar 13 18:26:36 2006
 +++ cyrus-sasl-2.1.22/lib/saslutil.c	Mon Jul  5 16:13:56 2010
@@ -451,8 +580,20 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  
 diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen.c
 --- cyrus-sasl-2.1.22.orig/lib/windlopen.c	Mon Oct 20 15:19:59 2003
-+++ cyrus-sasl-2.1.22/lib/windlopen.c	Mon Jul  5 15:34:42 2010
-@@ -69,6 +69,10 @@
++++ cyrus-sasl-2.1.22/lib/windlopen.c	2010-08-31 11:18:47.144053700 +0200
+@@ -50,6 +50,11 @@
+ #include <sasl.h>
+ #include "saslint.h"
+ 
++#ifdef STATIC_PLUGIN
++#include <saslplug.h>
++#include "staticopen.h"
++#endif
++
+ #define DLL_SUFFIX	".dll"
+ #define DLL_MASK	"*" DLL_SUFFIX
+ #define DLL_MASK_LEN	5
+@@ -69,6 +74,10 @@
  		       const char *entryname,
  		       void **entry_point) 
  {
@@ -463,7 +604,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
      if(entryname == NULL) {
  	_sasl_log(NULL, SASL_LOG_ERR,
  		  "no entryname in _sasl_locate_entry");
-@@ -86,8 +90,13 @@
+@@ -86,8 +95,13 @@
  		  "no entrypoint output pointer in _sasl_locate_entry");
  	return SASL_BADPARAM;
      }
@@ -478,41 +619,71 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
  
      if (*entry_point == NULL) {
  #if 0 /* This message appears to confuse people */
-@@ -128,6 +137,8 @@
-     int r = 0;
-     HINSTANCE library;
-     lib_list_t *newhead;
-+    wchar_t *wfile;
+@@ -159,19 +173,27 @@
+ 		       const sasl_callback_t *verifyfile_cb)
+ {
+     int result;
++    const add_plugin_list_t *cur_ep;
++
++#ifdef STATIC_PLUGIN /* STATIC_PLUGIN 2 */
++    add_plugin_t *add_plugin;
++    _sasl_plug_type type;
++    _sasl_plug_rec *p;
++#else /* STATIC_PLUGIN 2 */
+     char cur_dir[PATH_MAX], full_name[PATH_MAX+2], prefix[PATH_MAX+2];
+ 				/* 1 for '\\' 1 for trailing '\0' */
++
+     char * pattern;
+     char c;
+     int pos;
+     const char *path=NULL;
+     int position;
+-    const add_plugin_list_t *cur_ep;
+     struct stat statbuf;		/* filesystem entry information */
+     intptr_t fhandle;			/* file handle for _findnext function */
+     struct _finddata_t finddata;	/* data returned by _findnext() */
+     size_t prefix_len;
+-
++#endif /* STATIC_PLUGIN 2 */
 +    
-     
-     r = ((sasl_verifyfile_t *)(verifyfile_cb->proc))
- 		    (verifyfile_cb->context, file, SASL_VRFY_PLUGIN);
-@@ -136,12 +147,23 @@
-     newhead = sasl_ALLOC(sizeof(lib_list_t));
-     if(!newhead) return SASL_NOMEM;
+     if (! entrypoints
+ 	|| ! getpath_cb
+ 	|| getpath_cb->id != SASL_CB_GETPATH
+@@ -181,6 +203,33 @@
+ 	|| ! verifyfile_cb->proc)
+ 	return SASL_BADPARAM;
  
--    if (!(library = LoadLibrary (file))) {
-+#ifdef _WIN32_WCE
-+    wfile = wce_mbtowc(file);
-+    if (!(library = LoadLibraryW (wfile))) {
-+#else
-+    if (!(library = LoadLibraryW (file))) {
-+#endif
- 	_sasl_log(NULL, SASL_LOG_ERR,
- 		  "unable to LoadLibrary %s: %s", file, GetLastError());
- 	sasl_FREE(newhead);
-+#ifdef _WIN32_WCE
-+    free(wfile);
-+#endif
- 	return SASL_FAIL;
-     }
-+#ifdef _WIN32_WCE
-+    free(wfile);
-+#endif
- 
-     newhead->library = library;
-     newhead->next = lib_list_head;
-@@ -257,9 +279,12 @@
++#ifdef STATIC_PLUGIN /* STATIC_PLUGIN 3 */
++    /* do all the static plugins first */
++    for(cur_ep = entrypoints; cur_ep->entryname; cur_ep++) {
++
++	/* What type of plugin are we looking for? */
++	if(!strcmp(cur_ep->entryname, "sasl_server_plug_init")) {
++	    type = SERVER;
++	    add_plugin = (add_plugin_t *)sasl_server_add_plugin;
++	} else if (!strcmp(cur_ep->entryname, "sasl_client_plug_init")) {
++	    type = CLIENT;
++	    add_plugin = (add_plugin_t *)sasl_client_add_plugin;
++	} else if (!strcmp(cur_ep->entryname, "sasl_auxprop_plug_init")) {
++	    type = AUXPROP;
++	    add_plugin = (add_plugin_t *)sasl_auxprop_add_plugin;
++	} else if (!strcmp(cur_ep->entryname, "sasl_canonuser_init")) {
++	    type = CANONUSER;
++	    add_plugin = (add_plugin_t *)sasl_canonuser_add_plugin;
++	} else {
++	    /* What are we looking for then? */
++	    return SASL_FAIL;
++	}
++	for (p=_sasl_static_plugins; p->type; p++) {
++	    if(type == p->type)
++	    	result = add_plugin(p->name, p->plug);
++	}
++    }
++#else /* STATIC_PLUGIN 3 */
+     /* get the path to the plugins */
+     result = ((sasl_getpath_t *)(getpath_cb->proc))(getpath_cb->context,
+ 						    &path);
+@@ -257,9 +306,12 @@
  	    }
  
  /* : Check that it is not a directory */
@@ -525,9 +696,127 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
  
  /* : Construct full name from prefix and name */
  
+@@ -287,6 +339,7 @@
+ 	_findclose (fhandle);
+ 
+     } while ((c!='=') && (c!=0));
++#endif /* STATIC_PLUGIN 3 */
+ 
+     return SASL_OK;
+ }
+diff -Nru cyrus-sasl-2.1.22.orig/plugins/anonymous_init.c cyrus-sasl-2.1.22/plugins/anonymous_init.c
+--- cyrus-sasl-2.1.22.orig/plugins/anonymous_init.c	2006-05-19 16:49:30.000000000 +0200
++++ cyrus-sasl-2.1.22/plugins/anonymous_init.c	2010-08-31 14:12:01.252562700 +0200
+@@ -20,7 +20,7 @@
+ #include <sasl_anonymous_plugin_decl.h>
+ #endif
+ 
+-#ifdef WIN32
++#if defined(WIN32) && !defined(STATIC_PLUGIN)
+ BOOL APIENTRY DllMain( HANDLE hModule, 
+                        DWORD  ul_reason_for_call, 
+                        LPVOID lpReserved
+@@ -36,8 +36,7 @@
+     }
+     return TRUE;
+ }
+-#endif
+ 
+ SASL_CLIENT_PLUG_INIT( anonymous )
+ SASL_SERVER_PLUG_INIT( anonymous )
+-
++#endif
+diff -Nru cyrus-sasl-2.1.22.orig/plugins/crammd5_init.c cyrus-sasl-2.1.22/plugins/crammd5_init.c
+--- cyrus-sasl-2.1.22.orig/plugins/crammd5_init.c	2006-05-19 16:49:30.000000000 +0200
++++ cyrus-sasl-2.1.22/plugins/crammd5_init.c	2010-08-31 14:11:48.820851700 +0200
+@@ -20,7 +20,7 @@
+ #include <sasl_crammd5_plugin_decl.h>
+ #endif
+ 
+-#ifdef WIN32
++#if defined(WIN32) && !defined(STATIC_PLUGIN)
+ BOOL APIENTRY DllMain( HANDLE hModule, 
+                        DWORD  ul_reason_for_call, 
+                        LPVOID lpReserved
+@@ -36,8 +36,7 @@
+     }
+     return TRUE;
+ }
+-#endif
+ 
+ SASL_CLIENT_PLUG_INIT( crammd5 )
+ SASL_SERVER_PLUG_INIT( crammd5 )
+-
++#endif
+diff -Nru cyrus-sasl-2.1.22.orig/plugins/digestmd5_init.c cyrus-sasl-2.1.22/plugins/digestmd5_init.c
+--- cyrus-sasl-2.1.22.orig/plugins/digestmd5_init.c	2006-05-19 16:49:30.000000000 +0200
++++ cyrus-sasl-2.1.22/plugins/digestmd5_init.c	2010-08-31 14:11:33.662984700 +0200
+@@ -20,7 +20,7 @@
+ #include <sasl_digestmd5_plugin_decl.h>
+ #endif
+ 
+-#ifdef WIN32
++#if defined(WIN32) && !defined(STATIC_PLUGIN)
+ BOOL APIENTRY DllMain( HANDLE hModule, 
+                        DWORD  ul_reason_for_call, 
+                        LPVOID lpReserved
+@@ -36,8 +36,7 @@
+     }
+     return TRUE;
+ }
+-#endif
+ 
+ SASL_CLIENT_PLUG_INIT( digestmd5 )
+ SASL_SERVER_PLUG_INIT( digestmd5 )
+-
++#endif
+diff -Nru cyrus-sasl-2.1.22.orig/plugins/login_init.c cyrus-sasl-2.1.22/plugins/login_init.c
+--- cyrus-sasl-2.1.22.orig/plugins/login_init.c	2006-05-19 16:49:30.000000000 +0200
++++ cyrus-sasl-2.1.22/plugins/login_init.c	2010-08-31 14:12:24.362884600 +0200
+@@ -20,7 +20,7 @@
+ #include <sasl_login_plugin_decl.h>
+ #endif
+ 
+-#ifdef WIN32
++#if defined(WIN32) && !defined(STATIC_PLUGIN)
+ BOOL APIENTRY DllMain( HANDLE hModule, 
+                        DWORD  ul_reason_for_call, 
+                        LPVOID lpReserved
+@@ -36,8 +36,7 @@
+     }
+     return TRUE;
+ }
+-#endif
+ 
+ SASL_CLIENT_PLUG_INIT( login )
+ SASL_SERVER_PLUG_INIT( login )
+-
++#endif
+diff -Nru cyrus-sasl-2.1.22.orig/plugins/plain_init.c cyrus-sasl-2.1.22/plugins/plain_init.c
+--- cyrus-sasl-2.1.22.orig/plugins/plain_init.c	2006-05-19 16:49:30.000000000 +0200
++++ cyrus-sasl-2.1.22/plugins/plain_init.c	2010-08-31 14:12:09.585039300 +0200
+@@ -20,7 +20,7 @@
+ #include <sasl_plain_plugin_decl.h>
+ #endif
+ 
+-#ifdef WIN32
++#if defined(WIN32) && !defined(STATIC_PLUGIN)
+ BOOL APIENTRY DllMain( HANDLE hModule, 
+                        DWORD  ul_reason_for_call, 
+                        LPVOID lpReserved
+@@ -36,8 +36,7 @@
+     }
+     return TRUE;
+ }
+-#endif
+ 
+ SASL_CLIENT_PLUG_INIT( plain )
+ SASL_SERVER_PLUG_INIT( plain )
+-
++#endif
 diff -Nru cyrus-sasl-2.1.22.orig/plugins/plugin_common.c cyrus-sasl-2.1.22/plugins/plugin_common.c
 --- cyrus-sasl-2.1.22.orig/plugins/plugin_common.c	Wed Jun 23 18:43:37 2004
-+++ cyrus-sasl-2.1.22/plugins/plugin_common.c	Mon Jul  5 15:52:41 2010
++++ cyrus-sasl-2.1.22/plugins/plugin_common.c	2010-08-31 11:12:40.213066500 +0200
 @@ -819,7 +819,7 @@
  
  void _plug_snprintf_os_info (char * osbuf, int osbuf_len)
@@ -585,12 +874,28 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/plugin_common.c cyrus-sasl-2.1.22/plugi
  
 diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pluginviewer.c
 --- cyrus-sasl-2.1.22.orig/utils/pluginviewer.c	Wed May 17 16:46:17 2006
-+++ cyrus-sasl-2.1.22/utils/pluginviewer.c	Mon Jul  5 16:14:26 2010
-@@ -84,6 +84,85 @@
++++ cyrus-sasl-2.1.22/utils/pluginviewer.c	2010-08-31 11:57:28.282815300 +0200
+@@ -49,9 +49,15 @@
+ #include <stdlib.h>
+ #ifdef WIN32
+ # include <winsock.h>
++# ifndef LIBSASL_STATIC
+ __declspec(dllimport) char *optarg;
+ __declspec(dllimport) int optind;
+ __declspec(dllimport) int getsubopt(char **optionp, const char * const *tokens, char **valuep);
++#else
++extern char *optarg;
++extern int optind;
++extern int getsubopt(char **optionp, const char * const *tokens, char **valuep);
++# endif /* LIBSASL_STATIC */
+ #else  /* WIN32 */
+ # include <netinet/in.h>
+ #endif /* WIN32 */
+@@ -84,6 +90,85 @@
  #include <unistd.h>
  #endif
  
-+#ifndef HAVE_GETOPT_H
++#if !defined(HAVE_GETOPT_H) && !defined(LIBSASL_STATIC)
 +
 +int	opterr = 1,		/* if error message should be printed */
 +    optind = 1,		/* index into parent argv vector */
