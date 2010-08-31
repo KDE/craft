@@ -27,6 +27,7 @@ KMail-Mobile,0,kmail-mobile.exe
 Notes-Mobile,0,notes-mobile.exe
 KAddressbook-Mobile,0,kaddressbook-mobile.exe
 KOrganizer-Mobile,0,korganizer-mobile.exe
+KOrganizer-Mobile,0,tasks-mobile.exe
 
 [SourceDisksNames]
 $SOURCEDISKNAMES
