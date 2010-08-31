@@ -4,6 +4,8 @@ bin\\akonadi_maildir_resource\.exe
 bin\\akonadi_maildispatcher_agent\.exe
 bin\\akonadi_contacts_resource\.exe
 bin\\akonadi_akonotes_resource\.exe
+bin\\akonadi_imap_resource\.exe
+bin\\akonadi_kolabproxy_resource\.exe
 
 # Add the Qt Conf
 bin\\qt\.conf
@@ -43,6 +45,13 @@ bin\\sqlite3\.dll
 bin\\ssleay32\.dll
 bin\\tasks-mobile\.exe
 bin\\zlib1\.dll
+bin\\sasl2\.dll
+
+# to debug, later on can be deleted
+bin\\akonadi_rds\.exe
+
+# sasl plugins
+lib\\sasl2\\
 
 # DBus-Default configuration
 etc\\dbus-1\\session\.conf
@@ -75,6 +84,8 @@ share\\akonadi\\agents\\icalresource\.desktop
 share\\akonadi\\agents\\maildirresource\.desktop
 share\\akonadi\\agents\\maildispatcheragent\.desktop
 share\\akonadi\\agents\\akonotesresource\.desktop
+share\\akonadi\\agents\\imapresource\.desktop
+share\\akonadi\\agents\\kolabproxyresource\.desktop
 share\\applications\\kde4\\kaddressbook-mobile\.desktop
 share\\applications\\kde4\\kmail-mobile\.desktop
 share\\applications\\kde4\\korganizer-mobile\.desktop
