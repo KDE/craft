@@ -193,7 +193,7 @@ diff -Nru libical-0.44.orig/src/java/CMakeLists.txt libical-0.44/src/java/CMakeL
 diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/CMakeLists.txt
 --- libical-0.44.orig/src/libical/CMakeLists.txt	Sun Sep 27 02:38:51 2009
 +++ libical-0.44/src/libical/CMakeLists.txt	Tue Sep  7 08:13:34 2010
-@@ -2,11 +2,23 @@
+@@ -2,11 +2,20 @@
  
  include_directories(
    ${CMAKE_BINARY_DIR}
@@ -209,15 +209,20 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
 +  endif(MSVC)
 +endif(WIN32)
 +
-+if(STATIC_LIBRARY)
-+    configure_file(icalerror.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/icalerror.h)
-+endif(STATIC_LIBRARY)
-+
++configure_file(icalerror.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/icalerror.h)
 +
  set(PACKAGE_DATA_DIR "\\\"${CMAKE_INSTALL_PREFIX}/share/libical\\\"")
  add_definitions(-DPACKAGE_DATA_DIR=${PACKAGE_DATA_DIR})
  
-@@ -225,16 +237,25 @@
+@@ -178,7 +187,6 @@
+    icalenums.c
+    icalenums.h
+    icalerror.c
+-   icalerror.h
+    icalmemory.c
+    icalmemory.h
+    icalmime.c
+@@ -225,16 +233,25 @@
    endif(MSVC)
  endif(NOT WIN32)
  
@@ -245,7 +250,7 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
  set_target_properties(ical-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
  
  install(TARGETS ical ical-static ${INSTALL_TARGETS_DEFAULT_ARGS})
-@@ -253,7 +274,7 @@
+@@ -253,7 +270,7 @@
    ${CMAKE_BINARY_DIR}/src/libical/icalderivedvalue.h
    icalduration.h
    icalenums.h
@@ -255,8 +260,8 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
    icalmemory.h
    icalmime.h
 diff -Nru libical-0.44.orig/src/libical/ical_file.cmake libical-0.44/src/libical/ical_file.cmake
---- libical-0.44.orig/src/libical/ical_file.cmake	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/ical_file.cmake	Tue Sep  7 08:06:12 2010
+--- libical-0.44.orig/src/libical/ical_file.cmake	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/ical_file.cmake	2010-09-07 14:28:59.700798000 +0200
 @@ -21,7 +21,7 @@
     ${TOPS}/src/libical/icaltimezone.h
     ${TOPS}/src/libical/icalparser.h
