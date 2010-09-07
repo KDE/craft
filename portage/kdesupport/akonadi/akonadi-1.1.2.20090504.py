@@ -63,6 +63,7 @@ class Package(CMakePackageBase):
             if not os.path.exists(automoc):
                 print("<%s>") % automoc
                 utils.die("could not found automoc")
+            self.subinfo.options.configure.defines += "-DDATABASE_BACKEND=SQLITE "
             ## \todo a standardized way to check if a package is installed in the image dir would be good.
             self.subinfo.options.configure.defines += "-DAUTOMOC4_CONFIG_FILE:FILEPATH=%s " \
                 % automoc.replace('\\', '/')
