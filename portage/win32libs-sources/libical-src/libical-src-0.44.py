@@ -21,6 +21,9 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = " -DUSE_BUILTIN_TZDATA=true -DICAL_UNIX_NEWLINE=false "
+        
+        if platform.isCrossCompilingEnabled() and self.isTargetBuild():
+            self.subinfo.options.configure.defines = " -DSTATIC_LIBRARY=ON "
 
 if __name__ == '__main__':
     Package().execute()

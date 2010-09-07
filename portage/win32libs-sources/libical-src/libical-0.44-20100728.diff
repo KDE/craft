@@ -1,6 +1,59 @@
+diff -Nru libical-0.44.orig/CMakeLists.txt libical-0.44/CMakeLists.txt
+--- libical-0.44.orig/CMakeLists.txt	Sun Sep 27 02:38:55 2009
++++ libical-0.44/CMakeLists.txt	Tue Sep  7 08:12:48 2010
+@@ -27,6 +27,15 @@
+ #cannot use the following line with cmake 2.4.x
+ #cmake_policy(VERSION 2.6)
+ 
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
+ set(LIBICAL_LIB_MAJOR_VERSION "0")
+ set(LIBICAL_LIB_MINOR_VERSION "44")
+ set(LIBICAL_LIB_PATCH_VERSION "0")
+@@ -35,13 +44,21 @@
+ set(PROJECT_VERSION "${LIBICAL_LIB_MAJOR_VERSION}.${LIBICAL_LIB_MINOR_VERSION}")
+ set(PROJECT_URL "http://freeassociation.sf.net/")
+ 
++if(STATIC_LIBRARY)
++    set(LIBICAL_STATIC 1)
++    add_definitions(-DLIBICAL_STATIC)
++    set(LIBRARY_TYPE STATIC)
++else(STATIC_LIBRARY)
++    set(LIBRARY_TYPE SHARED)
++endif(STATIC_LIBRARY)
++
+ # must have Perl to create the derived stuff
+ find_package(Perl REQUIRED)
+ 
+ # make msvc less verbose
+ if(WIN32)
+   if(MSVC)
+-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
++    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DYY_NO_UNISTD_H)
+   endif(MSVC)
+   add_definitions(-DBIG_ENDIAN=0 -DLITTLE_ENDIAN=1 -DBYTE_ORDER=BIG_ENDIAN)
+ endif(WIN32)
+diff -Nru libical-0.44.orig/ConfigureChecks.cmake libical-0.44/ConfigureChecks.cmake
+--- libical-0.44.orig/ConfigureChecks.cmake	Sun Sep 27 02:38:55 2009
++++ libical-0.44/ConfigureChecks.cmake	Tue Sep  7 08:13:08 2010
+@@ -32,6 +32,7 @@
+ check_type_size(mode_t SIZEOF_MODE_T)
+ check_type_size(size_t SIZEOF_SIZE_T)
+ check_type_size(intptr_t INTPTR_T) # please do not rename HAVE_INTPTR_T will automatically be defined
++check_type_size(pid_t HAVE_PID_T)
+ 
+ include(FindThreads)
+ check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
 diff -Nru libical-0.44.orig/cmake/modules/FindWcecompat.cmake libical-0.44/cmake/modules/FindWcecompat.cmake
---- libical-0.44.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libical-0.44/cmake/modules/FindWcecompat.cmake	2010-07-28 10:20:53.642311400 +0200
+--- libical-0.44.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ libical-0.44/cmake/modules/FindWcecompat.cmake	Tue Sep  7 08:00:24 2010
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -35,37 +88,9 @@ diff -Nru libical-0.44.orig/cmake/modules/FindWcecompat.cmake libical-0.44/cmake
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
-diff -Nru libical-0.44.orig/CMakeLists.txt libical-0.44/CMakeLists.txt
---- libical-0.44.orig/CMakeLists.txt	2009-09-27 04:38:55.000000000 +0200
-+++ libical-0.44/CMakeLists.txt	2010-07-28 10:20:53.626310500 +0200
-@@ -27,6 +27,15 @@
- #cannot use the following line with cmake 2.4.x
- #cmake_policy(VERSION 2.6)
- 
-+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-+
-+if(WINCE)
-+    find_package(Wcecompat REQUIRED)
-+    include_directories(${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
-+endif(WINCE)
-+
- set(LIBICAL_LIB_MAJOR_VERSION "0")
- set(LIBICAL_LIB_MINOR_VERSION "44")
- set(LIBICAL_LIB_PATCH_VERSION "0")
-@@ -41,7 +50,7 @@
- # make msvc less verbose
- if(WIN32)
-   if(MSVC)
--    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DYY_NO_UNISTD_H)
-   endif(MSVC)
-   add_definitions(-DBIG_ENDIAN=0 -DLITTLE_ENDIAN=1 -DBYTE_ORDER=BIG_ENDIAN)
- endif(WIN32)
 diff -Nru libical-0.44.orig/config.h.cmake libical-0.44/config.h.cmake
---- libical-0.44.orig/config.h.cmake	2009-09-27 04:38:55.000000000 +0200
-+++ libical-0.44/config.h.cmake	2010-07-28 10:43:16.293276000 +0200
+--- libical-0.44.orig/config.h.cmake	Sun Sep 27 02:38:55 2009
++++ libical-0.44/config.h.cmake	Tue Sep  7 08:12:56 2010
 @@ -158,3 +158,9 @@
  #define strcasecmp stricmp
  #define snprintf _snprintf
@@ -76,20 +101,9 @@ diff -Nru libical-0.44.orig/config.h.cmake libical-0.44/config.h.cmake
 +typedef int pid_t;
 +#endif
 +
-diff -Nru libical-0.44.orig/ConfigureChecks.cmake libical-0.44/ConfigureChecks.cmake
---- libical-0.44.orig/ConfigureChecks.cmake	2009-09-27 04:38:55.000000000 +0200
-+++ libical-0.44/ConfigureChecks.cmake	2010-07-28 10:40:27.018105100 +0200
-@@ -32,6 +32,7 @@
- check_type_size(mode_t SIZEOF_MODE_T)
- check_type_size(size_t SIZEOF_SIZE_T)
- check_type_size(intptr_t INTPTR_T) # please do not rename HAVE_INTPTR_T will automatically be defined
-+check_type_size(pid_t HAVE_PID_T)
- 
- include(FindThreads)
- check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
 diff -Nru libical-0.44.orig/src/ical.def libical-0.44/src/ical.def
---- libical-0.44.orig/src/ical.def	2009-09-27 04:38:53.000000000 +0200
-+++ libical-0.44/src/ical.def	2010-07-28 10:20:53.664312600 +0200
+--- libical-0.44.orig/src/ical.def	Sun Sep 27 02:38:53 2009
++++ libical-0.44/src/ical.def	Tue Sep  7 08:19:57 2010
 @@ -1,4 +1,4 @@
 -LIBRARY ical.dll
 +LIBRARY libical.dll
@@ -97,8 +111,8 @@ diff -Nru libical-0.44.orig/src/ical.def libical-0.44/src/ical.def
  caldat
  compare_map DATA
 diff -Nru libical-0.44.orig/src/ical.h libical-0.44/src/ical.h
---- libical-0.44.orig/src/ical.h	2009-09-27 04:38:53.000000000 +0200
-+++ libical-0.44/src/ical.h	2010-07-28 10:20:53.679313500 +0200
+--- libical-0.44.orig/src/ical.h	Sun Sep 27 02:38:53 2009
++++ libical-0.44/src/ical.h	Tue Sep  7 08:19:49 2010
 @@ -18,6 +18,9 @@
      the License at http://www.mozilla.org/MPL/
  
@@ -111,8 +125,8 @@ diff -Nru libical-0.44.orig/src/ical.h libical-0.44/src/ical.h
 +#endif
  #include <libical/ical.h>
 diff -Nru libical-0.44.orig/src/icalss.def libical-0.44/src/icalss.def
---- libical-0.44.orig/src/icalss.def	2009-09-27 04:38:53.000000000 +0200
-+++ libical-0.44/src/icalss.def	2010-07-28 10:20:53.692314200 +0200
+--- libical-0.44.orig/src/icalss.def	Sun Sep 27 02:38:53 2009
++++ libical-0.44/src/icalss.def	Tue Sep  7 08:20:07 2010
 @@ -1,4 +1,4 @@
 -LIBRARY icalss.dll
 +LIBRARY libicalss.dll
@@ -156,18 +170,36 @@ diff -Nru libical-0.44.orig/src/icalss.def libical-0.44/src/icalss.def
  ss_scan_bytes
  ss_scan_string
 diff -Nru libical-0.44.orig/src/icalvcal.def libical-0.44/src/icalvcal.def
---- libical-0.44.orig/src/icalvcal.def	2009-09-27 04:38:53.000000000 +0200
-+++ libical-0.44/src/icalvcal.def	2010-07-28 10:20:53.705315000 +0200
+--- libical-0.44.orig/src/icalvcal.def	Sun Sep 27 02:38:53 2009
++++ libical-0.44/src/icalvcal.def	Tue Sep  7 08:20:16 2010
 @@ -1,4 +1,4 @@
 -LIBRARY icalvcal.dll
 +LIBRARY libicalvcal.dll
  EXPORTS
  Parse_MIME
  Parse_MIME_FromFile
+diff -Nru libical-0.44.orig/src/java/CMakeLists.txt libical-0.44/src/java/CMakeLists.txt
+--- libical-0.44.orig/src/java/CMakeLists.txt	Sun Sep 27 02:38:49 2009
++++ libical-0.44/src/java/CMakeLists.txt	Tue Sep  7 08:13:21 2010
+@@ -25,7 +25,7 @@
+    net_cp_jlibical_VComponent_cxx.h
+ )
+ 
+-add_library(ical_jni SHARED ${ical_jni_LIB_SRCS})
++add_library(ical_jni ${LIBRARY_TYPE} ${ical_jni_LIB_SRCS})
+ 
+ target_link_libraries(ical_jni ical_cxx)
+ 
 diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/CMakeLists.txt
---- libical-0.44.orig/src/libical/CMakeLists.txt	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/CMakeLists.txt	2010-07-28 10:20:53.719315800 +0200
-@@ -7,6 +7,13 @@
+--- libical-0.44.orig/src/libical/CMakeLists.txt	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/CMakeLists.txt	Tue Sep  7 08:13:34 2010
+@@ -2,11 +2,23 @@
+ 
+ include_directories(
+   ${CMAKE_BINARY_DIR}
++  ${CMAKE_BINARY_DIR}/src
+   ${CMAKE_SOURCE_DIR}/src
+   ${CMAKE_SOURCE_DIR}/src/libical
    ${CMAKE_BINARY_DIR}/src/libical
  )
  
@@ -177,11 +209,23 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
 +  endif(MSVC)
 +endif(WIN32)
 +
++if(STATIC_LIBRARY)
++    configure_file(icalerror.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/icalerror.h)
++endif(STATIC_LIBRARY)
++
 +
  set(PACKAGE_DATA_DIR "\\\"${CMAKE_INSTALL_PREFIX}/share/libical\\\"")
  add_definitions(-DPACKAGE_DATA_DIR=${PACKAGE_DATA_DIR})
  
-@@ -232,9 +239,18 @@
+@@ -225,16 +237,25 @@
+   endif(MSVC)
+ endif(NOT WIN32)
+ 
+-add_library(ical SHARED ${ical_LIB_SRCS})
++add_library(ical ${LIBRARY_TYPE} ${ical_LIB_SRCS})
+ add_library(ical-static STATIC ${ical_LIB_SRCS})
+ 
+ add_dependencies(ical ical-header)
  
  target_link_libraries(ical ${CMAKE_THREAD_LIBS_INIT})
  
@@ -201,16 +245,275 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
  set_target_properties(ical-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
  
  install(TARGETS ical ical-static ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -253,7 +274,7 @@
+   ${CMAKE_BINARY_DIR}/src/libical/icalderivedvalue.h
+   icalduration.h
+   icalenums.h
+-  icalerror.h
++  ${CMAKE_BINARY_DIR}/src/libical/icalerror.h
+   icallangbind.h
+   icalmemory.h
+   icalmime.h
+diff -Nru libical-0.44.orig/src/libical/ical_file.cmake libical-0.44/src/libical/ical_file.cmake
+--- libical-0.44.orig/src/libical/ical_file.cmake	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/ical_file.cmake	Tue Sep  7 08:06:12 2010
+@@ -21,7 +21,7 @@
+    ${TOPS}/src/libical/icaltimezone.h
+    ${TOPS}/src/libical/icalparser.h
+    ${TOPS}/src/libical/icalmemory.h
+-   ${TOPS}/src/libical/icalerror.h
++   ${TOPB}/src/libical/icalerror.h
+    ${TOPS}/src/libical/icalrestriction.h
+    ${TOPS}/src/libical/sspm.h
+    ${TOPS}/src/libical/icalmime.h
 diff -Nru libical-0.44.orig/src/libical/icalerror.h libical-0.44/src/libical/icalerror.h
---- libical-0.44.orig/src/libical/icalerror.h	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/icalerror.h	2010-07-28 10:20:53.732316500 +0200
-@@ -69,7 +69,17 @@
-  *  @warning NOT THREAD SAFE -- recommended that you do not change
-  *           this in a multithreaded program.
-  */
+--- libical-0.44.orig/src/libical/icalerror.h	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/icalerror.h	Thu Jan  1 00:00:00 1970
+@@ -1,163 +0,0 @@
+-/* -*- Mode: C -*- */
+-/*======================================================================
+-  FILE: icalerror.h
+-  CREATOR: eric 09 May 1999
+-  
+-  $Id: icalerror.h,v 1.17 2008-01-15 23:17:40 dothebart Exp $
+-
+-
+- (C) COPYRIGHT 2000, Eric Busboom <eric@softwarestudio.org>
+-     http://www.softwarestudio.org
+-
+- This program is free software; you can redistribute it and/or modify
+- it under the terms of either: 
+-
+-    The LGPL as published by the Free Software Foundation, version
+-    2.1, available at: http://www.fsf.org/copyleft/lesser.html
+-
+-  Or:
+-
+-    The Mozilla Public License Version 1.0. You may obtain a copy of
+-    the License at http://www.mozilla.org/MPL/
+-
+-  The original code is icalerror.h
+-
+-======================================================================*/
+-
+-
+-#ifndef ICALERROR_H
+-#define ICALERROR_H
+-
+-#include <assert.h>
+-#include <stdio.h> /* For icalerror_warn() */
+-
+-
+-#ifdef HAVE_CONFIG_H
+-#include "config.h"
+-#endif
+-
+-#define ICAL_SETERROR_ISFUNC
+-
+-
+-/** This routine is called before any error is triggered. It is called
+-   by icalerror_set_errno, so it does not appear in all of the macros
+-   below */
+-void icalerror_stop_here(void);
+-
+-void icalerror_crash_here(void);
+-
+-typedef enum icalerrorenum {
+-    ICAL_NO_ERROR,     /* icalerrno may not be initialized - put it first so and pray that the compiler initialize things to zero */    
+-    ICAL_BADARG_ERROR,
+-    ICAL_NEWFAILED_ERROR,
+-    ICAL_ALLOCATION_ERROR,
+-    ICAL_MALFORMEDDATA_ERROR, 
+-    ICAL_PARSE_ERROR,
+-    ICAL_INTERNAL_ERROR, /* Like assert --internal consist. prob */
+-    ICAL_FILE_ERROR,
+-    ICAL_USAGE_ERROR,
+-    ICAL_UNIMPLEMENTED_ERROR,
+-    ICAL_UNKNOWN_ERROR  /* Used for problems in input to icalerror_strerror()*/
+-
+-} icalerrorenum;
+-
+-icalerrorenum * icalerrno_return(void);
+-#define icalerrno (*(icalerrno_return()))
+-
+-/** If true, libicl aborts after a call to icalerror_set_error
+- *
+- *  @warning NOT THREAD SAFE -- recommended that you do not change
+- *           this in a multithreaded program.
+- */
 -extern int icalerror_errors_are_fatal;
+-
+-/* Warning messages */
+-
+-#ifdef __GNUC__ca
+-#define icalerror_warn(message) {fprintf(stderr,"%s(), %s:%d: %s\n",__FUNCTION__,__FILE__,__LINE__,message);}
+-#else /* __GNU_C__ */
+-#define icalerror_warn(message) {fprintf(stderr,"%s:%d: %s\n",__FILE__,__LINE__,message);}
+-#endif /* __GNU_C__ */
+-
+-
+-void icalerror_clear_errno(void);
+-void _icalerror_set_errno(icalerrorenum);
+-
+-/* Make an individual error fatal or non-fatal. */
+-typedef enum icalerrorstate { 
+-    ICAL_ERROR_FATAL,     /* Not fata */
+-    ICAL_ERROR_NONFATAL,  /* Fatal */
+-    ICAL_ERROR_DEFAULT,   /* Use the value of icalerror_errors_are_fatal*/
+-    ICAL_ERROR_UNKNOWN    /* Asked state for an unknown error type */
+-} icalerrorstate ;
+-
+-const char* icalerror_strerror(icalerrorenum e);
+-const char* icalerror_perror(void);
+-void ical_bt(void);
+-void icalerror_set_error_state( icalerrorenum error, icalerrorstate);
+-icalerrorstate icalerror_get_error_state( icalerrorenum error);
+-
+-#ifndef ICAL_SETERROR_ISFUNC
+-#define icalerror_set_errno(x) \
+-icalerrno = x; \
+-if(icalerror_get_error_state(x)==ICAL_ERROR_FATAL || \
+-   (icalerror_get_error_state(x)==ICAL_ERROR_DEFAULT && \
+-    icalerror_errors_are_fatal == 1 )){ \
+-   icalerror_warn(icalerror_strerror(x)); \
+-   ical_bt(); \
+-   assert(0); \
+-} }
+-#else
+-void icalerror_set_errno(icalerrorenum x); 
+-#endif
+-
+-#ifdef ICAL_ERRORS_ARE_FATAL
+-#undef NDEBUG
+-#endif
+-
+-#define icalerror_check_value_type(value,type);
+-#define icalerror_check_property_type(value,type);
+-#define icalerror_check_parameter_type(value,type);
+-#define icalerror_check_component_type(value,type);
+-
+-/* Assert with a message */
+-#ifdef ICAL_ERRORS_ARE_FATAL
+-
+-#ifdef __GNUC__
+-#define icalerror_assert(test,message) if(!(test)){fprintf(stderr,"%s(), %s:%d: %s\n",__FUNCTION__,__FILE__,__LINE__,message);icalerror_stop_here(); abort();}
+-#else /*__GNUC__*/
+-#define icalerror_assert(test,message) if(!(test)){fprintf(stderr,"%s:%d: %s\n",__FILE__,__LINE__,message);icalerror_stop_here(); abort();}
+-#endif /*__GNUC__*/
+-
+-#else /* ICAL_ERRORS_ARE_FATAL */
+-#define icalerror_assert(test,message) 
+-#endif /* ICAL_ERRORS_ARE_FATAL */
+-
+-/* Check & abort if check fails */
+-#define icalerror_check_arg(test,arg) if(!(test)) { icalerror_set_errno(ICAL_BADARG_ERROR); }
+-
+-/* Check & return void if check fails*/
+-#define icalerror_check_arg_rv(test,arg) if(!(test)) {icalerror_set_errno(ICAL_BADARG_ERROR); return; }
+-
+-/* Check & return 0 if check fails*/
+-#define icalerror_check_arg_rz(test,arg) if(!(test)) { icalerror_set_errno(ICAL_BADARG_ERROR); return 0;}
+-
+-/* Check & return an error if check fails*/
+-#define icalerror_check_arg_re(test,arg,error) if(!(test)) { icalerror_stop_here(); assert(0); return error;}
+-
+-/* Check & return something*/
+-#define icalerror_check_arg_rx(test,arg,x) if(!(test)) { icalerror_set_errno(ICAL_BADARG_ERROR); return x;}
+-
+-
+-
+-/* String interfaces to set an error to NONFATAL and restore it to its
+-   original value */
+-
+-icalerrorstate icalerror_supress(const char* error);
+-void icalerror_restore(const char* error, icalerrorstate es);
+-
+-
+-#endif /* !ICALERROR_H */
+-
+-
+-
+diff -Nru libical-0.44.orig/src/libical/icalerror.h.cmake libical-0.44/src/libical/icalerror.h.cmake
+--- libical-0.44.orig/src/libical/icalerror.h.cmake	Thu Jan  1 00:00:00 1970
++++ libical-0.44/src/libical/icalerror.h.cmake	Tue Sep  7 08:13:48 2010
+@@ -0,0 +1,177 @@
++/* -*- Mode: C -*- */
++/*======================================================================
++  FILE: icalerror.h
++  CREATOR: eric 09 May 1999
++  
++  $Id: icalerror.h,v 1.17 2008-01-15 23:17:40 dothebart Exp $
++
++
++ (C) COPYRIGHT 2000, Eric Busboom <eric@softwarestudio.org>
++     http://www.softwarestudio.org
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of either: 
++
++    The LGPL as published by the Free Software Foundation, version
++    2.1, available at: http://www.fsf.org/copyleft/lesser.html
++
++  Or:
++
++    The Mozilla Public License Version 1.0. You may obtain a copy of
++    the License at http://www.mozilla.org/MPL/
++
++  The original code is icalerror.h
++
++======================================================================*/
++
++
++#ifndef ICALERROR_H
++#define ICALERROR_H
++
++#include <assert.h>
++#include <stdio.h> /* For icalerror_warn() */
++
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#define ICAL_SETERROR_ISFUNC
++
++
++/** This routine is called before any error is triggered. It is called
++   by icalerror_set_errno, so it does not appear in all of the macros
++   below */
++void icalerror_stop_here(void);
++
++void icalerror_crash_here(void);
++
++typedef enum icalerrorenum {
++    ICAL_NO_ERROR,     /* icalerrno may not be initialized - put it first so and pray that the compiler initialize things to zero */    
++    ICAL_BADARG_ERROR,
++    ICAL_NEWFAILED_ERROR,
++    ICAL_ALLOCATION_ERROR,
++    ICAL_MALFORMEDDATA_ERROR, 
++    ICAL_PARSE_ERROR,
++    ICAL_INTERNAL_ERROR, /* Like assert --internal consist. prob */
++    ICAL_FILE_ERROR,
++    ICAL_USAGE_ERROR,
++    ICAL_UNIMPLEMENTED_ERROR,
++    ICAL_UNKNOWN_ERROR  /* Used for problems in input to icalerror_strerror()*/
++
++} icalerrorenum;
++
++icalerrorenum * icalerrno_return(void);
++#define icalerrno (*(icalerrno_return()))
++
++#cmakedefine LIBICAL_STATIC 1
++
++/** If true, libicl aborts after a call to icalerror_set_error
++ *
++ *  @warning NOT THREAD SAFE -- recommended that you do not change
++ *           this in a multithreaded program.
++ */
 +#ifdef _MSC_VER
-+  #ifdef BUILD_LIBICALDLL
++  #if defined(LIBICAL_STATIC)
++    #define LIBICAL_EXPORT extern
++  #elif defined(BUILD_LIBICALDLL)
 +    #define LIBICAL_EXPORT __declspec(dllexport)
 +  #else
 +    #define LIBICAL_EXPORT __declspec(dllimport)
@@ -220,12 +523,100 @@ diff -Nru libical-0.44.orig/src/libical/icalerror.h libical-0.44/src/libical/ica
 +#endif
 +
 +LIBICAL_EXPORT int icalerror_errors_are_fatal;
- 
- /* Warning messages */
- 
++
++/* Warning messages */
++
++#ifdef __GNUC__ca
++#define icalerror_warn(message) {fprintf(stderr,"%s(), %s:%d: %s\n",__FUNCTION__,__FILE__,__LINE__,message);}
++#else /* __GNU_C__ */
++#define icalerror_warn(message) {fprintf(stderr,"%s:%d: %s\n",__FILE__,__LINE__,message);}
++#endif /* __GNU_C__ */
++
++
++void icalerror_clear_errno(void);
++void _icalerror_set_errno(icalerrorenum);
++
++/* Make an individual error fatal or non-fatal. */
++typedef enum icalerrorstate { 
++    ICAL_ERROR_FATAL,     /* Not fata */
++    ICAL_ERROR_NONFATAL,  /* Fatal */
++    ICAL_ERROR_DEFAULT,   /* Use the value of icalerror_errors_are_fatal*/
++    ICAL_ERROR_UNKNOWN    /* Asked state for an unknown error type */
++} icalerrorstate ;
++
++const char* icalerror_strerror(icalerrorenum e);
++const char* icalerror_perror(void);
++void ical_bt(void);
++void icalerror_set_error_state( icalerrorenum error, icalerrorstate);
++icalerrorstate icalerror_get_error_state( icalerrorenum error);
++
++#ifndef ICAL_SETERROR_ISFUNC
++#define icalerror_set_errno(x) \
++icalerrno = x; \
++if(icalerror_get_error_state(x)==ICAL_ERROR_FATAL || \
++   (icalerror_get_error_state(x)==ICAL_ERROR_DEFAULT && \
++    icalerror_errors_are_fatal == 1 )){ \
++   icalerror_warn(icalerror_strerror(x)); \
++   ical_bt(); \
++   assert(0); \
++} }
++#else
++void icalerror_set_errno(icalerrorenum x); 
++#endif
++
++#ifdef ICAL_ERRORS_ARE_FATAL
++#undef NDEBUG
++#endif
++
++#define icalerror_check_value_type(value,type);
++#define icalerror_check_property_type(value,type);
++#define icalerror_check_parameter_type(value,type);
++#define icalerror_check_component_type(value,type);
++
++/* Assert with a message */
++#ifdef ICAL_ERRORS_ARE_FATAL
++
++#ifdef __GNUC__
++#define icalerror_assert(test,message) if(!(test)){fprintf(stderr,"%s(), %s:%d: %s\n",__FUNCTION__,__FILE__,__LINE__,message);icalerror_stop_here(); abort();}
++#else /*__GNUC__*/
++#define icalerror_assert(test,message) if(!(test)){fprintf(stderr,"%s:%d: %s\n",__FILE__,__LINE__,message);icalerror_stop_here(); abort();}
++#endif /*__GNUC__*/
++
++#else /* ICAL_ERRORS_ARE_FATAL */
++#define icalerror_assert(test,message) 
++#endif /* ICAL_ERRORS_ARE_FATAL */
++
++/* Check & abort if check fails */
++#define icalerror_check_arg(test,arg) if(!(test)) { icalerror_set_errno(ICAL_BADARG_ERROR); }
++
++/* Check & return void if check fails*/
++#define icalerror_check_arg_rv(test,arg) if(!(test)) {icalerror_set_errno(ICAL_BADARG_ERROR); return; }
++
++/* Check & return 0 if check fails*/
++#define icalerror_check_arg_rz(test,arg) if(!(test)) { icalerror_set_errno(ICAL_BADARG_ERROR); return 0;}
++
++/* Check & return an error if check fails*/
++#define icalerror_check_arg_re(test,arg,error) if(!(test)) { icalerror_stop_here(); assert(0); return error;}
++
++/* Check & return something*/
++#define icalerror_check_arg_rx(test,arg,x) if(!(test)) { icalerror_set_errno(ICAL_BADARG_ERROR); return x;}
++
++
++
++/* String interfaces to set an error to NONFATAL and restore it to its
++   original value */
++
++icalerrorstate icalerror_supress(const char* error);
++void icalerror_restore(const char* error, icalerrorstate es);
++
++
++#endif /* !ICALERROR_H */
++
++
++
 diff -Nru libical-0.44.orig/src/libical/icalperiod.c libical-0.44/src/libical/icalperiod.c
---- libical-0.44.orig/src/libical/icalperiod.c	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/icalperiod.c	2010-07-28 10:20:53.745317300 +0200
+--- libical-0.44.orig/src/libical/icalperiod.c	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/icalperiod.c	Tue Sep  7 08:14:02 2010
 @@ -117,8 +117,8 @@
  char* icalperiodtype_as_ical_string_r(struct icalperiodtype p)
  {
@@ -238,8 +629,8 @@ diff -Nru libical-0.44.orig/src/libical/icalperiod.c libical-0.44/src/libical/ic
      char *buf;
      size_t buf_size = 40;
 diff -Nru libical-0.44.orig/src/libical/icalrecur.c libical-0.44/src/libical/icalrecur.c
---- libical-0.44.orig/src/libical/icalrecur.c	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/icalrecur.c	2010-07-28 10:20:53.759318100 +0200
+--- libical-0.44.orig/src/libical/icalrecur.c	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/icalrecur.c	Tue Sep  7 08:14:11 2010
 @@ -1593,11 +1593,12 @@
        int day;
        int days_in_month = icaltime_days_in_month(impl->last.month,
@@ -275,8 +666,8 @@ diff -Nru libical-0.44.orig/src/libical/icalrecur.c libical-0.44/src/libical/ica
          t.is_date = 1;
  
 diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/icaltimezone.c
---- libical-0.44.orig/src/libical/icaltimezone.c	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/icaltimezone.c	2010-07-28 10:20:53.773318900 +0200
+--- libical-0.44.orig/src/libical/icaltimezone.c	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/icaltimezone.c	Tue Sep  7 08:14:19 2010
 @@ -45,7 +45,9 @@
  #include <sys/stat.h>
  
@@ -384,8 +775,8 @@ diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/
  #endif
  }
 diff -Nru libical-0.44.orig/src/libical/icaltz-util.c libical-0.44/src/libical/icaltz-util.c
---- libical-0.44.orig/src/libical/icaltz-util.c	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/icaltz-util.c	2010-07-28 10:20:53.785319600 +0200
+--- libical-0.44.orig/src/libical/icaltz-util.c	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/icaltz-util.c	Tue Sep  7 08:15:36 2010
 @@ -297,12 +297,16 @@
  	icalproperty *icalprop;
  	icaltimetype dtstart, icaltime;
@@ -408,8 +799,8 @@ diff -Nru libical-0.44.orig/src/libical/icaltz-util.c libical-0.44/src/libical/i
  	if ((f = fopen (full_path, "rb")) == 0) {
  		icalerror_set_errno (ICAL_FILE_ERROR);
 diff -Nru libical-0.44.orig/src/libical/icalvalue.c libical-0.44/src/libical/icalvalue.c
---- libical-0.44.orig/src/libical/icalvalue.c	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/icalvalue.c	2010-07-28 10:20:53.799320400 +0200
+--- libical-0.44.orig/src/libical/icalvalue.c	Sun Sep 27 02:38:51 2009
++++ libical-0.44/src/libical/icalvalue.c	Tue Sep  7 08:15:44 2010
 @@ -307,7 +307,9 @@
  #define TMP_NUM_SIZE 100
      char *start=NULL, *end=NULL, *cur=(char*)from ;
@@ -439,9 +830,17 @@ diff -Nru libical-0.44.orig/src/libical/icalvalue.c libical-0.44/src/libical/ica
          *to = end ;
      *result = atof(tmp_buf) ;
 diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libicalss/CMakeLists.txt
---- libical-0.44.orig/src/libicalss/CMakeLists.txt	2009-09-27 04:38:52.000000000 +0200
-+++ libical-0.44/src/libicalss/CMakeLists.txt	2010-07-28 10:20:53.812321100 +0200
-@@ -76,9 +76,14 @@
+--- libical-0.44.orig/src/libicalss/CMakeLists.txt	Sun Sep 27 02:38:52 2009
++++ libical-0.44/src/libicalss/CMakeLists.txt	Tue Sep  7 08:16:00 2010
+@@ -69,16 +69,21 @@
+     list(APPEND icalss_LIB_SRCS ../icalss.def)
+ endif(MSVC)
+ 
+-add_library(icalss SHARED ${icalss_LIB_SRCS})
++add_library(icalss ${LIBRARY_TYPE} ${icalss_LIB_SRCS})
+ add_library(icalss-static STATIC ${icalss_LIB_SRCS})
+ 
+ add_dependencies(icalss icalss-header)
  
  target_link_libraries(icalss ical)
  
@@ -458,8 +857,8 @@ diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libica
  
  install(TARGETS icalss icalss-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libicalss/icalfileset.c libical-0.44/src/libicalss/icalfileset.c
---- libical-0.44.orig/src/libicalss/icalfileset.c	2009-09-27 04:38:52.000000000 +0200
-+++ libical-0.44/src/libicalss/icalfileset.c	2010-07-28 10:20:53.824321800 +0200
+--- libical-0.44.orig/src/libicalss/icalfileset.c	Sun Sep 27 02:38:52 2009
++++ libical-0.44/src/libicalss/icalfileset.c	Tue Sep  7 08:16:09 2010
 @@ -38,8 +38,10 @@
  #include <unistd.h> /* for stat, getpid */
  #else
@@ -543,8 +942,8 @@ diff -Nru libical-0.44.orig/src/libicalss/icalfileset.c libical-0.44/src/libical
      
      return ICAL_NO_ERROR;
 diff -Nru libical-0.44.orig/src/libicalss/icalsslexer.c libical-0.44/src/libicalss/icalsslexer.c
---- libical-0.44.orig/src/libicalss/icalsslexer.c	2009-09-27 04:38:52.000000000 +0200
-+++ libical-0.44/src/libicalss/icalsslexer.c	2010-07-28 10:20:53.838322600 +0200
+--- libical-0.44.orig/src/libicalss/icalsslexer.c	Sun Sep 27 02:38:52 2009
++++ libical-0.44/src/libicalss/icalsslexer.c	Tue Sep  7 08:17:00 2010
 @@ -39,6 +39,10 @@
  #include <errno.h>
  #include <stdlib.h>
@@ -557,9 +956,15 @@ diff -Nru libical-0.44.orig/src/libicalss/icalsslexer.c libical-0.44/src/libical
  
  /* flex integer type definitions */
 diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libicalvcal/CMakeLists.txt
---- libical-0.44.orig/src/libicalvcal/CMakeLists.txt	2009-09-27 04:38:52.000000000 +0200
-+++ libical-0.44/src/libicalvcal/CMakeLists.txt	2010-07-28 10:20:53.850323300 +0200
-@@ -32,9 +32,14 @@
+--- libical-0.44.orig/src/libicalvcal/CMakeLists.txt	Sun Sep 27 02:38:52 2009
++++ libical-0.44/src/libicalvcal/CMakeLists.txt	Tue Sep  7 08:17:34 2010
+@@ -27,14 +27,19 @@
+     list(APPEND icalvcal_LIB_SRCS ../icalvcal.def)
+ endif(MSVC)
+ 
+-add_library(icalvcal SHARED ${icalvcal_LIB_SRCS})
++add_library(icalvcal ${LIBRARY_TYPE} ${icalvcal_LIB_SRCS})
+ add_library(icalvcal-static STATIC ${icalvcal_LIB_SRCS})
  
  target_link_libraries(icalvcal ical)
  
@@ -576,8 +981,8 @@ diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libi
  
  install(TARGETS icalvcal icalvcal-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libicalvcal/icalvcal.c libical-0.44/src/libicalvcal/icalvcal.c
---- libical-0.44.orig/src/libicalvcal/icalvcal.c	2009-09-27 04:38:52.000000000 +0200
-+++ libical-0.44/src/libicalvcal/icalvcal.c	2010-07-28 10:20:53.938328300 +0200
+--- libical-0.44.orig/src/libicalvcal/icalvcal.c	Sun Sep 27 02:38:52 2009
++++ libical-0.44/src/libicalvcal/icalvcal.c	Tue Sep  7 08:17:42 2010
 @@ -51,6 +51,10 @@
  #define strcasecmp	stricmp
  #endif
@@ -589,9 +994,21 @@ diff -Nru libical-0.44.orig/src/libicalvcal/icalvcal.c libical-0.44/src/libicalv
  enum datatype {
      COMPONENT,
      PROPERTY,
+diff -Nru libical-0.44.orig/src/python/CMakeLists.txt libical-0.44/src/python/CMakeLists.txt
+--- libical-0.44.orig/src/python/CMakeLists.txt	Sun Sep 27 02:38:49 2009
++++ libical-0.44/src/python/CMakeLists.txt	Tue Sep  7 08:18:39 2010
+@@ -7,7 +7,7 @@
+    LibicalWrap.c
+ )
+ 
+-add_library(LibicalWrap SHARED ${LibicalWrap_LIB_SRCS})
++add_library(LibicalWrap ${LIBRARY_TYPE} ${LibicalWrap_LIB_SRCS})
+ 
+ target_link_libraries(LibicalWrap)
+ 
 diff -Nru libical-0.44.orig/src/test/regression.c libical-0.44/src/test/regression.c
---- libical-0.44.orig/src/test/regression.c	2009-09-27 04:38:49.000000000 +0200
-+++ libical-0.44/src/test/regression.c	2010-07-28 10:43:06.792985500 +0200
+--- libical-0.44.orig/src/test/regression.c	Sun Sep 27 02:38:49 2009
++++ libical-0.44/src/test/regression.c	Tue Sep  7 08:18:52 2010
 @@ -54,10 +54,6 @@
  #endif
  #include <sys/types.h> /* For wait pid */
