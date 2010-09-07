@@ -22,6 +22,8 @@ class Package(CMakePackageBase):
   def __init__( self ):
     self.subinfo = subinfo()
     CMakePackageBase.__init__(self)
+    if platform.isCrossCompilingEnabled() and self.isTargetBuild():
+        self.subinfo.options.configure.defines = "-DSTATIC_LIBRARY=ON"
     
   def make(self, unused=''):
     if self.isTargetBuild():
