@@ -103,7 +103,7 @@ diff -Nru sqlite-3.6.23.1.orig/sqlite3.c sqlite-3.6.23.1/sqlite3.c
 -# define SQLITE_API
 +# ifdef _MSC_VER
 +#cmakedefine SQLITE3_STATIC 1
-+#  if defined(SQLITE3_STATIC_LIBS)
++#  if defined(SQLITE3_STATIC)
 +    /* No export/import for static libraries */
 +#   define SQLITE_API
 +#  elif defined(libsqlite3_EXPORTS)
@@ -169,7 +169,7 @@ diff -Nru sqlite-3.6.23.1.orig/sqlite3.h sqlite-3.6.23.1/sqlite3.h
  #ifndef SQLITE_API
 -# define SQLITE_API
 +# ifdef _MSC_VER
-+#  if defined(SQLITE3_STATIC_LIBS)
++#  if defined(SQLITE3_STATIC)
 +    /* No export/import for static libraries */
 +#   define SQLITE_API
 +#  elif defined(libsqlite3_EXPORTS)
