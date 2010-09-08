@@ -32,7 +32,6 @@ bin\\libgcc_s_sjlj-1\.dll
 bin\\libgpg-error-0\.dll
 bin\\libgpgme-11\.dll
 bin\\libical\.dll
-bin\\libicalss\.dll
 bin\\msvcr90\.dll
 bin\\notes-mobile\.exe
 bin\\notes-mobile-real\.exe
