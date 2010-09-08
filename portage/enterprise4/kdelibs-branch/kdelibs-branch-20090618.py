@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/jpeg']  = 'default'
 # jasper-src doesn't build with msvc (it uses unsupported C99 stdbool.h and stdint.h) 
 #        self.hardDependencies['win32libs-sources/jasper-src']  = 'default'
-        self.hardDependencies['win32libs-sources/bzip2-src']  = 'default'
+        self.hardDependencies['win32libs-sources/libbzip2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
         self.hardDependencies['enterprise4/libxml2-src-e']  = 'default'
 # libxslt-src patch failed
