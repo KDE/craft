@@ -8,7 +8,10 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://cvs.gnupg.org/wincetools.git'
+        self.svnTargets['kdepimcetools'] = \
+                'git://cvs.gnupg.org/wincetools.git|kdepimcetools|'
         self.targetConfigurePath['gitHEAD'] = 'loader'
+        self.targetConfigurePath['kdepimcetools'] = 'loader'
         self.defaultTarget = 'gitHEAD'
         
     def setDependencies( self ):
