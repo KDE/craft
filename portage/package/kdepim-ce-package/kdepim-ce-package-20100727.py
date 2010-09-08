@@ -30,6 +30,7 @@ class subinfo(info.infoclass):
         self.disableTargetBuild = False
 
     def setDependencies( self ):
+        self.hardDependencies['testing/wincetools'] = 'kdepimcetools'
         self.hardDependencies['kde/kdepim'] = 'default'
 
 class MainPackage(CMakePackageBase):
@@ -40,6 +41,12 @@ class MainPackage(CMakePackageBase):
                        "supported for packaging for WinCE.")
         CMakePackageBase.__init__( self )
         self.whitelist = []
+        # Add here files that should be loaded into the high memory slots
+        self.loader_executables = [ "bin\\kmail-mobile.exe",
+                                    "bin\\kaddressbook-mobile.exe",
+                                    "bin\\korganizer-mobile.exe",
+                                    "bin\\notes-mobile.exe",
+                                    "bin\\tasks-mobile.exe" ]
 
     def execute(self):
         (command, option) = self.getAction()
@@ -130,6 +137,30 @@ class MainPackage(CMakePackageBase):
         if not os.path.exists(dbus_session_d): os.mkdir(dbus_session_d)
         f = open(os.path.join(dbus_session_d, "stub"), "w")
         f.close()
+        # Rename applications that should be started by the loader
+        for f in self.loader_executables:
+            path2file = os.path.join(wm_root, f)
+            if not os.path.isfile(path2file):
+                utils.debug("Createloaderfiles: Could not find %s at %s " % \
+                        (f, path2file))
+                continue
+            realpath = path2file.replace(f, os.path.splitext(f)[0] +
+                    "-real.exe")
+            shutil.copy(path2file, realpath.replace(wm_root,
+                    os.path.join(self.workDir()+"\\")))
+            customloader = path2file.replace(f, os.path.splitext(f)[0] +
+                    "-loader.exe")
+            defaultloader = os.path.join(wm_root, "bin", "himemce.exe")
+            path2file = path2file.replace(wm_root,
+                    os.path.join(self.workDir()+"\\"))
+            if os.path.isfile(customloader):
+                shutil.copy(customloader, path2file)
+            elif os.path.isfile(defaultloader):
+                shutil.copy(defaultloader, path2file)
+            else:
+                utils.die("Trying to use the custom loader but no loader \
+found in: %s \n Please ensure that package wincetools is installed" %\
+                os.path.join(wm_root, "bin"))
 
     def traverse(self, directory, whitelist = lambda f: True):
         '''

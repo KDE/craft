@@ -21,16 +21,21 @@ bin\\dbus-monitor\.exe
 bin\\dbus-send\.exe
 bin\\expat\.dll
 bin\\kaddressbook-mobile\.exe
+bin\\kaddressbook-mobile-real\.exe
 bin\\kmail-mobile\.exe
+bin\\kmail-mobile-real\.exe
 bin\\korganizer-mobile\.exe
+bin\\korganizer-mobile-real\.exe
 bin\\libassuan-0\.dll
 bin\\libeay32\.dll
 bin\\libgcc_s_sjlj-1\.dll
 bin\\libgpg-error-0\.dll
 bin\\libgpgme-11\.dll
 bin\\libical\.dll
+bin\\libicalss\.dll
 bin\\msvcr90\.dll
 bin\\notes-mobile\.exe
+bin\\notes-mobile-real\.exe
 bin\\QtCore4\.dll
 bin\\QtDBus4\.dll
 bin\\QtDeclarative4\.dll
@@ -43,6 +48,7 @@ bin\\QtXml4\.dll
 bin\\sqlite3\.dll
 bin\\ssleay32\.dll
 bin\\tasks-mobile\.exe
+bin\\tasks-mobile-real\.exe
 bin\\zlib1\.dll
 bin\\sasl2\.dll
 
