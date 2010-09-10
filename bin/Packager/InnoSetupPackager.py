@@ -15,8 +15,22 @@ class InnoSetupPackager (PackagerBase):
             
     def configFile(self):
         """ return path of installer config file"""
-        return os.path.join(self.packageDir(),"installer-config.iss")
+        utils.debug("searching package dir for setup config",2)
 
+        file = os.path.join(self.buildDir(),"setup.iss")
+        utils.debug("searching build dir for setup config %s" % file ,2)
+        if os.path.exists(file):
+            return file
+
+            file = os.path.join(self.packageDir(),"setup.iss")
+        if os.path.exists(file):
+            return file
+
+        file = os.path.join(self.packageDir(),"installer-config.iss")
+        if os.path.exists(file):
+            return file
+        return None
+        
     ## \todo rename to package()
     def createPackage(self):
         """packaging """
@@ -106,6 +120,8 @@ class InnoSetupPackager (PackagerBase):
         # create config file from config File
         # 
         infile = self.configFile()
+        if infile == None:
+            utils.die("could not find config file %s" % infile)
         _in = open(infile,'r')
         lines = _in.read().splitlines()
         _in.close()
