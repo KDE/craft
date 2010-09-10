@@ -114,7 +114,12 @@ class InnoSetupPackager (PackagerBase):
             else:
               pkgName += "-unknown "
 
-        cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe,self.buildRoot(),pkgName,pkgVersion)
+        ## \todo do we have a wrapper for this ?
+        destPath = os.getenv( "EMERGE_PKGDSTDIR" )
+        if not destPath:
+            destPath = os.path.join( self.rootdir, "tmp" )
+              
+        cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe,destPath,pkgName,pkgVersion)
 
         #
         # create config file from config File
