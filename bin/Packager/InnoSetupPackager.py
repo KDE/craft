@@ -46,6 +46,14 @@ class InnoSetupPackager (PackagerBase):
         if "EMERGE_PKGPATCHLVL" in os.environ:
             pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
 
+        # perform variable substitution 
+		# variablenames are wrapped with '#..#' to not get 
+		# in conflict with cmake or other config file patching tools
+        self.replacementPatterns = []
+        self.replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#",pkgVersion])
+        self.replacementPatterns.append(["#EMERGE_INSTALL_DIR#",self.installDir()])
+        self.replacementPatterns.append(["#EMERGE_MERGE_DESTINATION_DIR#",self.mergeDestinationDir()])
+            
         if self.buildArchitecture() == "x64": 
             pkgName += "-x64"
         #else:
@@ -106,16 +114,11 @@ class InnoSetupPackager (PackagerBase):
         out = open(outfile,'w')
 
         for line in lines:
-            pattern = "@EMERGE_PACKAGE_VERSION@"
             a = line
-            if a.find(pattern) > -1:
-                a = line.replace(pattern,pkgVersion)
-            pattern = "@EMERGE_INSTALL_DIR@"
-            if a.find(pattern) > -1:
-                a = line.replace(pattern,self.installDir())
-            pattern = "@EMERGE_MERGE_DESTINATION_DIR@"
-            if a.find(pattern) > -1:
-                a = line.replace(pattern,self.mergeDestinationDir())
+            for pattern in self.replacementPatterns:
+                search = pattern[0]
+                if a.find(search) > -1:
+                    a = line.replace(search,pattern[1])
             out.write(a + "\n")
         out.close();
 
