@@ -278,13 +278,6 @@ share\\apps\\notes-mobile\\
 share\\apps\\tasks-mobile\\
 share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfig\.cmake
 share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfigVersion\.cmake
-share\\common-lisp\\source\\gpg-error\\gpg-error\.asd
-share\\common-lisp\\source\\gpg-error\\gpg-error-codes\.lisp
-share\\common-lisp\\source\\gpg-error\\gpg-error\.lisp
-share\\common-lisp\\source\\gpg-error\\gpg-error-package\.lisp
-share\\common-lisp\\source\\gpgme\\gpgme\.asd
-share\\common-lisp\\source\\gpgme\\gpgme\.lisp
-share\\common-lisp\\source\\gpgme\\gpgme-package\.lisp
 share\\config\\accept-languages\.codes
 share\\config\\colors\\40\.colors
 share\\config\\colors\\Oxygen\.colors
