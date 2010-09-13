@@ -2,6 +2,7 @@ from Package.BinaryPackageBase import *
 import os
 import info
 import utils
+import subprocess
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -23,9 +24,23 @@ class subinfo(info.infoclass):
         self.disableTargetBuild = False
 
 class Package(BinaryPackageBase):
-  def __init__(self):
-    self.subinfo = subinfo()
-    BinaryPackageBase.__init__( self )
+    def __init__(self):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+
+    def execute(self):
+        (command, option) = self.getAction()
+        if command == "install":
+            self.runAction(command)
+            utils.debug("Generating libgpgme.lib", 2)
+            deffile = os.path.join(self.imageDir(), "lib", "gpgme.def")
+            outfile = os.path.join(self.imageDir(), "lib", "libgpgme.lib")
+            args = ["lib", "/machine:thumb", "/name:libgpgme-11",
+                    "/out:%s" % outfile, "/def:%s" %deffile]
+            return subprocess.call(args) == 0
+        else:
+            return self.runAction(command) == 0
+
 
 if __name__ == '__main__':
     Package().execute()
