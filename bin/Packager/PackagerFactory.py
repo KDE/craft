@@ -58,8 +58,11 @@ def PackagerFactory(parent,packagerType):
         if packager.configFile() <> None:
             packagers.append(packager)
 
-        if packagers.len() == 0:
-            utils.die("none or unsupported packager found")
+        # default packager
+        if len(packagers) == 0:
+            packager = KDEWinPackager()
+            init(packager,parent)
+            packagers.append(packager)
 
         return packagers
 
