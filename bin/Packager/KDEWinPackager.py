@@ -48,6 +48,10 @@ class KDEWinPackager (PackagerBase):
         #else:
         #    pkgName += "-x86"
             
+        # kdewin packager creates his own manifest files, so there is no need to add 
+        # if self.subinfo.options.package.withDigests:
+        #    utils.createManifestFiles(filesDir, filesDir,"",self.package,pkgVersion)
+
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:

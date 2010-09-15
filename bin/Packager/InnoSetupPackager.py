@@ -103,6 +103,9 @@ class InnoSetupPackager (PackagerBase):
             else:
               pkgName += "-unknown "
 
+        if self.subinfo.options.package.withDigests:
+            utils.createManifestFiles(filesDir, filesDir,"",self.package,pkgVersion)
+              
         ## \todo do we have a wrapper for this ?
         destPath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not destPath:
