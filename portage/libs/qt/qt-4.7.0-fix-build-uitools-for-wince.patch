@@ -1,0 +1,226 @@
+From d9f04dd1c0c6f221b142df25196e79cadfe5d03e Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andy@kdab.com>
+Date: Wed, 15 Sep 2010 14:43:05 +0200
+Subject: [PATCH 2/2] - build uitools for wince
+
+---
+ .../designer/src/lib/uilib/abstractformbuilder.cpp |   32 ++++++++++++++++---
+ tools/designer/src/uitools/quiloader.cpp           |    6 ++-
+ tools/tools.pro                                    |    7 ++--
+ 3 files changed, 35 insertions(+), 10 deletions(-)
+
+diff --git a/tools/designer/src/lib/uilib/abstractformbuilder.cpp b/tools/designer/src/lib/uilib/abstractformbuilder.cpp
+index 6f009e3..674869f 100644
+--- a/tools/designer/src/lib/uilib/abstractformbuilder.cpp
++++ b/tools/designer/src/lib/uilib/abstractformbuilder.cpp
+@@ -70,7 +70,9 @@
+ #include <QtGui/QPixmap>
+ #include <QtGui/QStatusBar>
+ #include <QtGui/QTreeWidget>
+-#include <QtGui/QTableWidget>
++#ifndef QT_NO_TABLEWIDGET
++#  include <QtGui/QTableWidget>
++#endif
+ #include <QtGui/QWidget>
+ #include <QtGui/QSplitter>
+ #include <QtGui/QScrollArea>
+@@ -452,6 +454,7 @@ bool QAbstractFormBuilder::addItem(DomWidget *ui_widget, QWidget *widget, QWidge
+         return QMetaObject::invokeMethod(parentWidget, addPageMethod.toUtf8().constData(), Qt::DirectConnection, Q_ARG(QWidget*, widget));
+     }
+ 
++#ifndef QT_NO_MAINWINDOW    
+     if (QMainWindow *mw = qobject_cast<QMainWindow*>(parentWidget)) {
+ 
+ #ifndef QT_NO_MENUBAR
+@@ -511,6 +514,7 @@ bool QAbstractFormBuilder::addItem(DomWidget *ui_widget, QWidget *widget, QWidge
+             return true;
+         }
+     }
++#endif
+ 
+ #ifndef QT_NO_TABWIDGET
+     else if (QTabWidget *tabWidget = qobject_cast<QTabWidget*>(parentWidget)) {
+@@ -2023,6 +2027,7 @@ void QAbstractFormBuilder::saveTreeWidgetExtraInfo(QTreeWidget *treeWidget, DomW
+ /*!
+     \internal
+ */
++#ifndef QT_NO_TABLEWIDGET
+ void QAbstractFormBuilder::saveTableWidgetExtraInfo(QTableWidget *tableWidget, DomWidget *ui_widget, DomWidget *ui_parentWidget)
+ {
+     Q_UNUSED(ui_parentWidget);
+@@ -2073,6 +2078,7 @@ void QAbstractFormBuilder::saveTableWidgetExtraInfo(QTableWidget *tableWidget, D
+ 
+     ui_widget->setElementItem(items);
+ }
++#endif
+ 
+ /*!
+     \internal
+@@ -2194,7 +2200,9 @@ void QAbstractFormBuilder::saveItemViewExtraInfo(const QAbstractItemView *itemVi
+             }
+         }
+         ui_widget->setElementAttribute(viewProperties);
+-    } else if (const QTableView *tableView = qobject_cast<const QTableView*>(itemView)) {
++    }
++#ifndef QT_NO_TABLEWIDGET
++     else if (const QTableView *tableView = qobject_cast<const QTableView*>(itemView)) {
+         static QStringList headerPrefixes =
+                 (QStringList() << QLatin1String("horizontalHeader")
+                                << QLatin1String("verticalHeader"));
+@@ -2220,6 +2228,7 @@ void QAbstractFormBuilder::saveItemViewExtraInfo(const QAbstractItemView *itemVi
+         }
+         ui_widget->setElementAttribute(viewProperties);
+     }
++#endif
+ }
+ 
+ /*!
+@@ -2270,13 +2279,19 @@ void QAbstractFormBuilder::saveExtraInfo(QWidget *widget, DomWidget *ui_widget,
+ {
+     if (QListWidget *listWidget = qobject_cast<QListWidget*>(widget)) {
+         saveListWidgetExtraInfo(listWidget, ui_widget, ui_parentWidget);
+-    } else if (QTreeWidget *treeWidget = qobject_cast<QTreeWidget*>(widget)) {
++    }
++#ifndef QT_NO_TABLEWIDGET
++    else if (QTreeWidget *treeWidget = qobject_cast<QTreeWidget*>(widget)) {
+         saveTreeWidgetExtraInfo(treeWidget, ui_widget, ui_parentWidget);
+     } else if (QTableWidget *tableWidget = qobject_cast<QTableWidget*>(widget)) {
+         saveTableWidgetExtraInfo(tableWidget, ui_widget, ui_parentWidget);
+-    } else if (QComboBox *comboBox = qobject_cast<QComboBox*>(widget)) {
++    }
++#endif
++    else if (QComboBox *comboBox = qobject_cast<QComboBox*>(widget)) {
++#ifndef QT_NO_FONTCOMBOBOX
+         if (!qobject_cast<QFontComboBox*>(widget))
+             saveComboBoxExtraInfo(comboBox, ui_widget, ui_parentWidget);
++#endif
+     } else if(QAbstractButton *ab = qobject_cast<QAbstractButton *>(widget)) {
+         saveButtonExtraInfo(ab, ui_widget, ui_parentWidget);
+     }
+@@ -2414,6 +2429,7 @@ void QAbstractFormBuilder::loadTreeWidgetExtraInfo(DomWidget *ui_widget, QTreeWi
+ /*!
+     \internal
+ */
++#ifndef QT_NO_TABLEWIDGET
+ void QAbstractFormBuilder::loadTableWidgetExtraInfo(DomWidget *ui_widget, QTableWidget *tableWidget, QWidget *parentWidget)
+ {
+     Q_UNUSED(parentWidget);
+@@ -2455,6 +2471,7 @@ void QAbstractFormBuilder::loadTableWidgetExtraInfo(DomWidget *ui_widget, QTable
+         }
+     }
+ }
++#endif
+ 
+ /*!
+     \internal
+@@ -2576,7 +2593,9 @@ void QAbstractFormBuilder::loadItemViewExtraInfo(DomWidget *ui_widget, QAbstract
+             }
+         }
+         applyProperties(treeView->header(), headerProperties);
+-    } else if (QTableView *tableView = qobject_cast<QTableView*>(itemView)) {
++    }
++#ifndef QT_NO_TABLEWIDGET
++    else if (QTableView *tableView = qobject_cast<QTableView*>(itemView)) {
+         static QStringList headerPrefixes =
+                 (QStringList() << QLatin1String("horizontalHeader")
+                                << QLatin1String("verticalHeader"));
+@@ -2601,6 +2620,7 @@ void QAbstractFormBuilder::loadItemViewExtraInfo(DomWidget *ui_widget, QAbstract
+                 applyProperties(tableView->verticalHeader(), headerProperties);
+         }
+     }
++#endif
+ }
+ 
+ /*!
+@@ -2624,9 +2644,11 @@ void QAbstractFormBuilder::loadExtraInfo(DomWidget *ui_widget, QWidget *widget,
+ #endif
+ #ifndef QT_NO_COMBOBOX
+     } else if (QComboBox *comboBox = qobject_cast<QComboBox*>(widget)) {
++#ifndef QT_NO_FONTCOMBOBOX
+         if (!qobject_cast<QFontComboBox *>(widget))
+             loadComboBoxExtraInfo(ui_widget, comboBox, parentWidget);
+ #endif
++#endif
+ #ifndef QT_NO_TABWIDGET
+     } else if (QTabWidget *tabWidget = qobject_cast<QTabWidget*>(widget)) {
+         const DomProperty *currentIndex = propertyMap(ui_widget->elementProperty()).value(strings.currentIndexProperty);
+diff --git a/tools/designer/src/uitools/quiloader.cpp b/tools/designer/src/uitools/quiloader.cpp
+index c7e7829..5dce6a5 100644
+--- a/tools/designer/src/uitools/quiloader.cpp
++++ b/tools/designer/src/uitools/quiloader.cpp
+@@ -181,11 +181,13 @@ static void reTranslateWidgetItem(T *item, const QByteArray &class_name)
+     }
+ }
+ 
++#ifndef QT_NO_TABLEWIDGET
+ static void reTranslateTableItem(QTableWidgetItem *item, const QByteArray &class_name)
+ {
+     if (item)
+         reTranslateWidgetItem(item, class_name);
+ }
++#endif
+ 
+ #define RETRANSLATE_SUBWIDGET_PROP(mainWidget, setter, propName) \
+     do { \
+@@ -266,7 +268,7 @@ public:
+                         reTranslateTableItem(tablew->item(i, j), m_className);
+                 }
+ #endif
+-#ifndef QT_NO_COMBOBOX
++#if !defined(QT_NO_COMBOBOX) && !defined(QT_NO_FONTCOMBOBOX)
+             } else if (QComboBox *combow = qobject_cast<QComboBox*>(o)) {
+                 if (!qobject_cast<QFontComboBox*>(o)) {
+                     const int cnt = combow->count();
+@@ -466,7 +468,7 @@ QWidget *FormBuilderPrivate::create(DomWidget *ui_widget, QWidget *parentWidget)
+ #ifndef QT_NO_TABLEWIDGET
+     } else if (qobject_cast<QTableWidget*>(w)) {
+ #endif
+-#ifndef QT_NO_COMBOBOX
++#if !defined(QT_NO_COMBOBOX) && !defined(QT_NO_FONTCOMBOBOX)
+     } else if (qobject_cast<QComboBox*>(w)) {
+         if (qobject_cast<QFontComboBox*>(w))
+             return w;
+diff --git a/tools/tools.pro b/tools/tools.pro
+index 8f23fe4..55c6052 100644
+--- a/tools/tools.pro
++++ b/tools/tools.pro
+@@ -1,4 +1,5 @@
+ TEMPLATE        = subdirs
++TEMPLATE        = subdirs
+ 
+ !contains(QT_CONFIG, no-gui) {
+     no-png {
+@@ -19,11 +20,11 @@ TEMPLATE        = subdirs
+             } else {
+                 SUBDIRS += designer
+             }
++            contains(QT_CONFIG, declarative):SUBDIRS += qml
+         }
+         unix:!mac:!embedded:contains(QT_CONFIG, qt3support):SUBDIRS += qtconfig
+         win32:!wince*:SUBDIRS += activeqt
+     }
+-    contains(QT_CONFIG, declarative):SUBDIRS += qml
+ }
+ 
+ !wince*:!symbian:SUBDIRS += linguist
+@@ -34,7 +35,7 @@ mac {
+ 
+ embedded:SUBDIRS += kmap2qmap
+ 
+-contains(QT_CONFIG, dbus):SUBDIRS += qdbus
++!wince*:contains(QT_CONFIG, dbus):SUBDIRS += qdbus
+ # We don't need these command line utilities on embedded platforms.
+ !wince*:!symbian:contains(QT_CONFIG, xmlpatterns): SUBDIRS += xmlpatterns xmlpatternsvalidator
+ embedded: SUBDIRS += makeqpf
+@@ -42,7 +43,7 @@ embedded: SUBDIRS += makeqpf
+ !wince*:!cross_compile:SUBDIRS += qdoc3
+ 
+ CONFIG+=ordered
+-QTDIR_build:REQUIRES = "contains(QT_CONFIG, full-config)"
++!wince*:QTDIR_build:REQUIRES = "contains(QT_CONFIG, full-config)"
+ 
+ !win32:!embedded:!mac:!symbian:CONFIG += x11
+ 
+-- 
+1.7.0.2.msysgit.0
+
