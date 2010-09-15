@@ -1,0 +1,14 @@
+diff --git a/phonon/experimental/videoframe.h b/phonon/experimental/videoframe.h
+diff --git a/phonon/experimental/videoframe2.h b/phonon/experimental/videoframe2.h
+index 02d3485..5ec15bc 100644
+--- a/phonon/experimental/videoframe2.h
++++ b/phonon/experimental/videoframe2.h
+@@ -40,7 +40,7 @@ namespace Experimental
+      *
+      * \author Matthias Kretz <kretz@kde.org>
+      */
+-    struct PHONONEXPERIMENTAL_EXPORT VideoFrame2
++    struct PHONON_EXPORT VideoFrame2
+     {
+         /**
+          * Video frames come in a variety of formats. Depending on the format

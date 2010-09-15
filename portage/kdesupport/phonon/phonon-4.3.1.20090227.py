@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
         self.svnTargets['4.4'] = 'git://gitorious.org/phonon/phonon.git|4.4'
+        self.patchToApply['gitHEAD'] = ("phonon-20100915.diff", 1)
         self.defaultTarget = 'gitHEAD'
         
         self.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
