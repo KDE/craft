@@ -104,6 +104,10 @@ class InnoSetupPackager (PackagerBase):
               pkgName += "-unknown "
 
         if self.subinfo.options.package.withDigests:
+            if self.subinfo.options.package.packageFromSubDir:
+                filesDir = os.path.join(self.imageDir(),self.subinfo.options.package.packageFromSubDir)
+            else:
+                filesDir = self.imageDir()
             utils.createManifestFiles(filesDir, filesDir,"",self.package,pkgVersion)
               
         ## \todo do we have a wrapper for this ?
