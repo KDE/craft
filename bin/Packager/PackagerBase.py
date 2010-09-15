@@ -10,6 +10,22 @@ class PackagerBase(EmergeBase):
     def __init__(self):
         EmergeBase.__init__(self)
     
+    def getPackageVersion(self):
+        """ return version information for the currently used package"""
+        if self.subinfo.options.package.version <> None:
+            pkgVersion = self.subinfo.options.package.version
+            pkgNotesVersion = pkgVersion
+        elif self.subinfo.buildTarget == "gitHEAD" or self.subinfo.buildTarget == "svnHEAD":
+            pkgVersion = str( datetime.date.today() ).replace('-', '')
+            pkgNotesVersion = pkgVersion
+        else:
+            pkgVersion = self.subinfo.buildTarget
+            pkgNotesVersion = pkgVersion
+
+        if "EMERGE_PKGPATCHLVL" in os.environ:
+            pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
+        return [pkgVersion, pkgNotesVersion]
+    
     #""" create a package """
     def createPackage(self): abstract()
 

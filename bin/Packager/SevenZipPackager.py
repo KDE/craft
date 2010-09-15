@@ -42,19 +42,7 @@ class SevenZipPackager (PackagerBase):
         if pkgName.endswith('-src') or pkgName.endswith('-pkg'):
             pkgName = pkgName[:-4]
 
-        ## \todo move this to PackagerBase because it is common to all Packagers
-        if self.subinfo.options.package.version <> None:
-            pkgVersion = self.subinfo.options.package.version
-            pkgNotesVersion = pkgVersion
-        elif self.subinfo.buildTarget == "gitHEAD" or self.subinfo.buildTarget == "svnHEAD":
-            pkgVersion = str( datetime.date.today() ).replace('-', '')
-            pkgNotesVersion = pkgVersion
-        else: 
-            pkgVersion = self.subinfo.buildTarget
-            pkgNotesVersion = pkgVersion
-
-        if "EMERGE_PKGPATCHLVL" in os.environ:
-            pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
+        pkgVersion, pkgNotesVersion = self.getPackageVersion()
 
         if self.subinfo.options.package.withArchitecture:
             if self.buildArchitecture() == "x64": 
