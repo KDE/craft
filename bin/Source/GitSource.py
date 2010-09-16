@@ -137,17 +137,21 @@ class GitSource ( VersionSystemSourceBase ):
                 if repoBranch == "":
                     repoBranch = "master"
                 sourceDir = os.path.join(self.checkoutDir(),repoBranch)
-                return self.shell.execute(sourceDir, "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)))
+                return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
+                        (patchdepth, self.shell.toNativePath(patchfile)))
             else:
                 sourceDir = self.sourceDir()            
                 #FIXME this reverts previously applied patches !
                 #self.shell.execute(sourceDir, "git", "checkout -f")
-                return self.shell.execute(sourceDir, "git", "apply -p %s %s" % (patchdepth, self.shell.toNativePath(patchfile)))
+                return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
+                        (patchdepth, self.shell.toNativePath(patchfile)))
         return True
 
     def createPatch( self ):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
-        ret = self.shell.execute( self.sourceDir(), "git", "diff > %s" % self.shell.toNativePath( os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) ) )
+        ret = self.shell.execute( self.sourceDir(), "git", "diff --ignore-all-space > %s" % \
+                self.shell.toNativePath( os.path.join( self.packageDir(), "%s-%s.patch" % \
+                ( self.package, str( datetime.date.today() ).replace('-', '') ) ) ) )
         return ret
 
     def sourceVersion( self ):
