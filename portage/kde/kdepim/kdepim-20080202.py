@@ -43,23 +43,21 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
 
-    def execute(self):
-        (command, option) = self.getAction()
-        if self.isTargetBuild() and command == "qmerge":
-            # Probably a good idea for host / normal build, too?
-            ret = self.runAction(command) == 0
+
+    def qmerge(self):
+        ret = CMakePackageBase.qmerge(self)
+        if self.isTargetBuild():
             mime_update = os.path.join(ROOTDIR, "bin",
                     "update-mime-database.exe")
-            if not os.path.isfile(mime_update):
-                return ret
-            else:
+            if os.path.isfile(mime_update):
                 target_mimedb = os.path.join(ROOTDIR, self.buildPlatform(),
                         "share", "mime")
                 utils.debug("calling update-mime-database: on %s " %\
                         target_mimedb, 1)
                 cmd = "%s %s" % (mime_update, target_mimedb)
                 return utils.system(cmd)
-        return self.runAction(command) == 0
+        return ret
+
 
 if __name__ == '__main__':
     Package().execute()
