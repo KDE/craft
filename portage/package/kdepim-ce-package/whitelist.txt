@@ -11,6 +11,7 @@ bin\\akonadi_kolabproxy_resource\.exe
 bin\\qt\.conf
 
 # A selection of Binaries
+bin\\accountwizard\.exe
 bin\\akonadi_control\.exe
 bin\\akonadictl\.exe
 bin\\akonadiserver\.exe
@@ -53,9 +54,6 @@ bin\\sasl2\.dll
 
 # to debug, later on can be deleted
 bin\\akonadi_rds\.exe
-
-# sasl plugins
-lib\\sasl2\\
 
 # DBus-Default configuration
 etc\\dbus-1\\session\.conf
