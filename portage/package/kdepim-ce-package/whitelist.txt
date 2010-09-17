@@ -88,11 +88,7 @@ share\\akonadi\\agents\\maildispatcheragent\.desktop
 share\\akonadi\\agents\\akonotesresource\.desktop
 share\\akonadi\\agents\\imapresource\.desktop
 share\\akonadi\\agents\\kolabproxyresource\.desktop
-share\\applications\\kde4\\kaddressbook-mobile\.desktop
-share\\applications\\kde4\\kmail-mobile\.desktop
-share\\applications\\kde4\\korganizer-mobile\.desktop
-share\\applications\\kde4\\notes-mobile\.desktop
-share\\applications\\kde4\\tasks-mobile\.desktop
+share\\applications\\kde4\\
 share\\apps\\akonadi\\
 share\\apps\\akonadi-kde\\kcfg2dbus\.xsl
 share\\apps\\kabc\\countrytransl\.map
