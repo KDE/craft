@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.targets[ ver ] = 'http://download.librdf.org/source/redland-1.0.8.tar.gz'
         self.targetInstSrc[ ver ] = 'redland-1.0.8'
         self.patchToApply[ ver ] = ( 'redland-1.0.8-20100719.diff', 1 )
+        self.targetDigests['1.0.8'] = '9501b95a2b668067e2dcb0ab3bdb59e0376144de'
         self.defaultTarget = ver
 
     def setDependencies( self ):
