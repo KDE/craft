@@ -103,8 +103,8 @@ class CMakeDependencies:
         print "A [Label=\"\"];"
         print "B [Label=\"\" shape=record];"
         print "C [Label=\"\"];"
-        print "A -> B [color=green,label=\"file A includes cmake package B\"];"
-        print "B -> C [label=\"file C uses variables provided by cmake package B\"];"
+        print "A -> B [color=green,label=\"directory A includes cmake package B\"];"
+        print "B -> C [label=\"directory C uses variables provided by cmake package B\"];"
         print "}"
         
 
