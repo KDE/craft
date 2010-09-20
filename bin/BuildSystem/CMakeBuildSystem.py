@@ -213,6 +213,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         srcDir = self.sourceDir()
         outDir = self.buildDir()
+        self.enterBuildDir()
         outFile = os.path.join(outDir,self.package+'.dot')
         a = CMakeDependencies(self)
         a.parse(srcDir)
