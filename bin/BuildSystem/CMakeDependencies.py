@@ -78,7 +78,8 @@ class CMakeDependencies:
                 for key in self.packageIncludes: 
                     keyInclude = "%s_INCLUDE" % key
                     keyLib = "%s_LIBRAR" % key
-                    if line.find(keyInclude) > -1 or line.find(keyLib) > -1:
+                    keyExec = "%s_EXEC" % key
+                    if line.find(keyInclude) > -1 or line.find(keyLib) > -1 or line.find(keyExec) > -1:
                         if not file in self.files2:
                             self.files2.append(file)
                         if key in self.packageUsage:
