@@ -177,6 +177,40 @@ class EmergeBase():
         else:
             return os.getenv( "EMERGE_ARCHITECTURE" )
 
+    def workDirPattern(self):
+        """return base directory name for package related work dir"""
+        dir = ""
+        if self.subinfo.options.useCompilerType == True:
+            dir += "%s-" % COMPILER
+        if self.isTargetBuild():
+            dir += "%s-" % self.buildPlatform()
+        if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+            dir += "ide-"
+        if self.subinfo.options.useBuildType == False:
+            dir += "%s" % (self.buildTarget)
+        elif( self.buildType() == None ):
+            dir += "%s-%s" % ("default", self.buildTarget)
+        else:
+            dir += "%s-%s" % (self.buildType(), self.buildTarget)
+        return dir
+
+    def imageDirPattern(self):
+        """return base directory name for package related image dir"""
+        dir = "image"
+
+        # we assume that binary packages are for all compiler and targets
+        ## \todo add image dir support for using binary packages for a specific compiler and build type
+        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+            return dir
+        
+        if self.subinfo.options.useCompilerType == True:
+            dir += '-' + COMPILER
+        if self.isTargetBuild():
+            dir += "-%s" % self.buildPlatform()
+        if self.subinfo.options.useBuildType == True:
+            dir += '-' + self.buildType()
+        dir += '-' + self.buildTarget
+        return dir
 
     def downloadDir(self): 
         """ location of directory where fetched files are  stored """
@@ -203,48 +237,15 @@ class EmergeBase():
     def buildDir(self):        
         utils.debug("EmergeBase.buildDir() called" ,2)
         self.setBuildTarget()
-        dir = ""
-        if self.subinfo.options.useCompilerType == True:
-            dir += "%s-" % COMPILER
-        if self.isTargetBuild():
-            dir += "%s-" % self.buildPlatform()
-        if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-            dir += "ide-"
-        if self.subinfo.options.useBuildType == False:
-            dir += "%s" % (self.buildTarget)
-        elif( self.buildType() == None ):
-            dir += "%s-%s" % ("default", self.buildTarget)
-        else:
-            dir += "%s-%s" % (self.buildType(), self.buildTarget)
-        
-        ## \todo for what is this good ?
-        #if( not self.buildNameExt == None ):
-        #    tmp = "%s-%s" % (COMPILER, self.buildNameExt)
-
-        builddir = os.path.join( self.workDir(), dir )
-                
+        builddir = os.path.join(self.workDir(), self.workDirPattern())
         utils.debug("package builddir is: %s" % builddir,2)
         return self.__adjustPath(builddir)
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        imagedir = os.path.join( self.buildRoot(), "image" )
-
-        # we assume that binary packages are for all compiler and targets
-        ## \todo add image dir support for using binary packages for a specific compiler and build type
-        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
-            return imagedir
-        
-        if self.subinfo.options.useCompilerType == True:
-            imagedir += '-' + COMPILER
-        if self.isTargetBuild():
-            imagedir += "-%s" % self.buildPlatform()
-        if self.subinfo.options.useBuildType == True:
-            imagedir += '-' + self.buildType()
-        imagedir += '-' + self.buildTarget
-        
-        return self.__adjustPath(imagedir)
+        imageDir =  os.path.join( self.buildRoot(), self.imageDirPattern() )
+        return self.__adjustPath(imageDir)
 
     def installDir(self):
         """return absolute path to the install directory of the currently active package. 
