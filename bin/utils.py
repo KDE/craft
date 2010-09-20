@@ -993,7 +993,7 @@ def deleteFile(file):
     return True
 
 def findFiles( dir, pattern=None, list=None):
-	"""find files recursivly""" 
+    """find files recursivly""" 
     if list == None: 
         list = []
         pattern = pattern.lower()
