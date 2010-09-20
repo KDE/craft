@@ -90,3 +90,7 @@ class BuildSystemBase(EmergeBase):
         os.environ["PATH"] = os.environ["TARGET_PATH"]
         os.environ["INCLUDE"] = os.environ["TARGET_INCLUDE"]
         os.environ["LIB"] = os.environ["TARGET_LIB"]
+
+    def dumpDependencies(self):
+        """dump package dependencies """
+        abstract()

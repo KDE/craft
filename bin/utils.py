@@ -992,6 +992,21 @@ def deleteFile(file):
     os.remove( file )
     return True
 
+def findFiles( dir, pattern=None, list=None):
+	"""find files recursivly""" 
+    if list == None: 
+        list = []
+        pattern = pattern.lower()
+    for entry in os.listdir(dir):
+        if entry.find(".svn") > -1 or entry.find(".bak") > -1:
+            continue
+        file = os.path.join(dir, entry)
+        if os.path.isdir(file):
+            findFiles(file,pattern,list)
+        elif os.path.isfile(file) and pattern == None or entry.lower().find(pattern) > -1:
+            list.append(file)
+    return list
+    
 def putenv(name, value):
     """set environment variable"""
     debug("set environment variable -- set %s=%s" % ( name, value ), 2)

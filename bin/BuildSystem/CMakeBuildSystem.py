@@ -11,6 +11,7 @@ import base
 import info
 import compiler
 import compilercache
+from CMakeDependencies import *
 
 from BuildSystemBase import *
 
@@ -206,3 +207,21 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         return self.system( "%s test" % ( self.makeProgramm ), "test" )
+
+    def dumpDependencies( self ):
+        """dump package dependencies as pdf (requires installed dot)"""
+
+        srcDir = self.sourceDir()
+        outDir = self.buildDir()
+        outFile = os.path.join(outDir,self.package+'.dot')
+        a = CMakeDependencies()
+        a.parse(srcDir)
+        title = "%s cmake dependency chart - version %s" % (self.package, self.version)
+        if not a.toDot(title,srcDir,outFile):
+            return False
+
+        if not self.system("dot -Tpdf -o%s %s" % (outFile+'.pdf', outFile), "create pdf"):
+            return false
+
+        return self.system("start %s " % (outFile+'.pdf'), "start pdf" )
+            
