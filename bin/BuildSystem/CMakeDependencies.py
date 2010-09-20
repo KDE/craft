@@ -41,7 +41,7 @@ class CMakeDependencies:
             if key == None:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_ALL_ACCESS)
             if key <> None:
-                self.dotPath = QueryValueEx(key, "InstallPath")        
+                self.graphVizInstallPath = QueryValueEx(key, "InstallPath")        
         except:
             # @todo triggers installing of dev-utils/graphviz package 
             utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download..php")
@@ -136,7 +136,7 @@ class CMakeDependencies:
         return True
 
     def runDot(self, inFile, dotFormat="pdf", outFile=None):
-        return self.parent.system("dot -T%s -o%s %s" % (dotFormat, outFile, inFile), "create %s" % outFile)
+        return self.parent.system("%s/bin/dot -T%s -o%s %s" % (self.graphVizInstallPath, dotFormat, outFile, inFile), "create %s" % outFile)
     
     def openOutput(self, file):
         return self.parent.system("start %s " % file, "start %s" % file )
