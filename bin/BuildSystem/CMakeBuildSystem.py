@@ -214,14 +214,14 @@ class CMakeBuildSystem(BuildSystemBase):
         srcDir = self.sourceDir()
         outDir = self.buildDir()
         outFile = os.path.join(outDir,self.package+'.dot')
-        a = CMakeDependencies()
+        a = CMakeDependencies(self)
         a.parse(srcDir)
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         if not a.toDot(title,srcDir,outFile):
             return False
 
-        if not self.system("dot -Tpdf -o%s %s" % (outFile+'.pdf', outFile), "create pdf"):
+        if not a.runDot(outFile, 'pdf', outFile+'.pdf'):
             return false
 
-        return self.system("start %s " % (outFile+'.pdf'), "start pdf" )
-            
+        return a.openOutput(outFile+'.pdf')
+           
