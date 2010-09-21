@@ -208,6 +208,10 @@ class CMakeBuildSystem(BuildSystemBase):
         return self.system( "%s test" % ( self.makeProgramm ), "test" )
 
     def dumpDependencies( self ):
+        self.dumpCMakeDependencies()
+        return self.dumpEmergeDependencies()
+
+    def dumpCMakeDependencies(self):
         """dump package dependencies as pdf (requires installed dot)"""
 
         srcDir = self.sourceDir()
