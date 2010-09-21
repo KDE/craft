@@ -13,6 +13,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        else:
+            self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kdesupport/grantlee'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
