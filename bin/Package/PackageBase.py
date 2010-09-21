@@ -6,6 +6,8 @@ from EmergeBase import *;
 import os;
 import utils;
 import platform;
+from graphviz import *;
+import dependencies;
 
 class PackageBase (EmergeBase):
     """
@@ -237,3 +239,21 @@ class PackageBase (EmergeBase):
             utils.die( "command %s failed" % command )
         return True
         
+    def dumpEmergeDependencies(self):
+		"""dump emerge package dependencies"""
+        output = dependencies.dumpDependencies(self.package)
+        outDir = self.buildDir()
+        outFile = os.path.join(outDir,self.package+'-emerge.dot')
+        f = open(outFile,"w")
+        f.write(output);
+        f.close()
+
+        graphviz = GraphViz(self)
+
+        if not graphviz.runDot(outFile, outFile+'.pdf', 'pdf'):
+            return False
+
+        return graphviz.openOutput()
+        
+        return True
+                
