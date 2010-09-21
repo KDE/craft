@@ -240,7 +240,7 @@ class PackageBase (EmergeBase):
         return True
         
     def dumpEmergeDependencies(self):
-		"""dump emerge package dependencies"""
+        """dump emerge package dependencies"""
         output = dependencies.dumpDependencies(self.package)
         outDir = self.buildDir()
         outFile = os.path.join(outDir,self.package+'-emerge.dot')
