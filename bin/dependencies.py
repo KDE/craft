@@ -246,11 +246,17 @@ def main():
             if a == "xml": output_type = OUTPUT_XML
             else:          output_type = OUTPUT_DOT
 
+
+    output = dumpDependencies(argv[0], output_type)
+
+    print output
+            
+def dumpDependencies(category, output_type=OUTPUT_DOT):
     # little workaround to not display debug infos in generated output
     old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
     os.environ['EMERGE_VERBOSE'] = '0'
 
-    packageList, categoryList = portage.getPackagesCategories(args[0])
+    packageList, categoryList = portage.getPackagesCategories(category)
 
     dep_tree = DependenciesTree()
 
@@ -263,9 +269,7 @@ def main():
     if   output_type == OUTPUT_XML: creator = XMLCreator()
     elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
 
-    output = creator.createOutput(dep_tree)
-
-    print output
+    return creator.createOutput(dep_tree)
 
 if __name__ == '__main__':
     main()
