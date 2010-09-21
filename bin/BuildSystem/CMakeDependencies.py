@@ -10,7 +10,7 @@ from _winreg import *
 
 def toNodeName(file):
     """convert filename to dot node name"""
-    return file.replace('\\','').replace('-','').replace('.','').replace(':','').replace('/','')
+    return file.replace('\\','').replace('-','').replace('.','').replace(':','').replace('/','').replace('+','')
 
 def toNodeLabel(file,baseDir=None):
     """convert filename to dot node label"""
