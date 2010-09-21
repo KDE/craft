@@ -6,14 +6,13 @@
 
 import os
 import utils
-
 import base
 import info
 import compiler
 import compilercache
 from CMakeDependencies import *
-
 from BuildSystemBase import *
+from graphviz import *
 
 class CMakeBuildSystem(BuildSystemBase):
     """ cmake build support """
@@ -214,17 +213,20 @@ class CMakeBuildSystem(BuildSystemBase):
         srcDir = self.sourceDir()
         outDir = self.buildDir()
         self.enterBuildDir()
-        outFile = os.path.join(outDir,self.package+'.dot')
-        a = CMakeDependencies(self)
+        outFile = os.path.join(outDir,self.package+'-cmake.dot')
+        a = CMakeDependencies()
         if not a.parse(srcDir): 
             utils.debug("could not find source files",0)
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         if not a.toDot(title,srcDir,outFile):
+            utils.debug("could not create dot file",0)
+            return False
+        
+        graphviz = GraphViz(self)
+
+        if not graphviz.runDot(outFile, outFile+'.pdf', 'pdf'):
             return False
 
-        if not a.runDot(outFile, 'pdf', outFile+'.pdf'):
-            return false
+        return graphviz.openOutput()
 
-        return a.openOutput(outFile+'.pdf')
-           
