@@ -216,7 +216,9 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         outFile = os.path.join(outDir,self.package+'.dot')
         a = CMakeDependencies(self)
-        a.parse(srcDir)
+        if not a.parse(srcDir): 
+            utils.debug("could not find source files",0)
+            return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         if not a.toDot(title,srcDir,outFile):
             return False

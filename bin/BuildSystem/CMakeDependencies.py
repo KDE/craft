@@ -50,6 +50,8 @@ class CMakeDependencies:
         
     def parse(self,dir):
         """find CMakeLists.txt and parse it"""
+        if not os.path.exists(dir):
+            return False
         list = utils.findFiles(dir,"CMakelists.txt")
         for file in list:
             f = open(file,"r")
