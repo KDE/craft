@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
                 'git://cvs.gnupg.org/wincetools.git|kdepimcetools|'
         self.targetConfigurePath['gitHEAD'] = 'loader'
         self.targetConfigurePath['kdepimcetools'] = 'loader'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'kdepimcetools'
         
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
