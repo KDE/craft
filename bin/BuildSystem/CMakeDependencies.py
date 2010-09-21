@@ -6,7 +6,6 @@ import os;
 import utils;
 import re;
 import sys;
-from _winreg import *
 
 def toNodeName(file):
     """convert filename to dot node name"""
@@ -31,22 +30,11 @@ def toNodeLabel(file,baseDir=None):
     return s;
 
 class CMakeDependencies:
-    def __init__(self,parent):
-        self.parent = parent
+    def __init__(self):
         self.files1 = []
         self.files2 = []
         self.packageIncludes = dict() # where a package is included 
         self.packageUsage = dict()    # where package related variables are used (search string=xxx_INCLUDE or xxx_LIBRAR)
-        try: 
-            key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_ALL_ACCESS)
-            if key == None:
-                key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_ALL_ACCESS)
-            if key <> None:
-                [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
-        except:
-            # @todo triggers installing of dev-utils/graphviz package 
-            utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download..php")
-        
         
     def parse(self,dir):
         """find CMakeLists.txt and parse it"""
@@ -89,7 +77,7 @@ class CMakeDependencies:
                                 self.packageUsage[key].append(file)
                         else:
                             self.packageUsage[key] = [file]
-    
+        return True
 
     def toDot(self,title="",baseDir=None,outFile=None):
         """dump out internal structure as dot file"""
@@ -138,13 +126,6 @@ class CMakeDependencies:
         if outFile <> None:
             sys.stdout=sys.__stdout__   
         return True
-
-    def runDot(self, inFile, dotFormat="pdf", outFile=None):
-        dotExecutable= os.path.join(self.graphVizInstallPath,'bin','dot.exe')
-        return self.parent.system("\"%s\" -T%s -o%s %s" % (dotExecutable, dotFormat, outFile, inFile), "create %s" % outFile)
-    
-    def openOutput(self, file):
-        return self.parent.system("start %s " % file, "start %s" % file )
     
 
 if __name__ == '__main__':
