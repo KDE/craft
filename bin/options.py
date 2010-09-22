@@ -4,6 +4,7 @@
 #
 
 import os
+import utils
 
 ## options for the fetch action 
 class OptionsFetch:
