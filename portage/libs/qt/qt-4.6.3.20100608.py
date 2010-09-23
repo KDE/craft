@@ -31,9 +31,19 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
         self.svnTargets['4.6.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.3-patched|"
+        self.svnTargets['4.7.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.patchToApply['4.6.3'] = ('qt-4.6.3.patch', 1)
+#        self.patchToApply['4.7.0'] = [
+#            ('qt-4.7.0-out-of-source-build.patch', 1),
+#            ('qt-4.7.0-webkit-fixes.patch', 1),
+#            ('qt-4.7.0-custom-flags-for-wince.patch', 1),
+#            ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
+#            ('qt-4.7.0-fix-build-with-QT_NO_GESTURES.patch', 1),
+#            ('qt-4.7.0-openssl-static-linking.patch', 1),
+#            ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1)
+#                                   ]
         self.patchToApply['4.7'] = [
             ('qt-4.7.0-out-of-source-build.patch', 1),
             ('qt-4.7.0-webkit-fixes.patch', 1),
