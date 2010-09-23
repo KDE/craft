@@ -1,5 +1,5 @@
 import info
-
+import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
+        if compiler.isMinGW_WXX():
+            self.hardDependencies['win32libs-sources/binutils-src'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
