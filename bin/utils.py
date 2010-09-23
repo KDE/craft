@@ -342,7 +342,7 @@ def unpackFile( downloaddir, filename, workdir ):
         return un7zip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".tgz" ):
         return unTar( os.path.join( downloaddir, filename ), workdir )
-    elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma" ):
+    elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma" or ext == ".xz" ):
         ( myshortname, myext ) = os.path.splitext( shortname )
         if ( myext == ".tar" ):
             return unTar( os.path.join( downloaddir, filename ), workdir )
@@ -369,11 +369,10 @@ def unTar( file, destdir ):
         mode = "r:gz"
     elif ( ext == ".bz2" ):
         mode = "r:bz2"
-    elif( ext == ".lzma" ):
+    elif( ext == ".lzma" or ext == ".xz" ):
         un7zip( file , os.getenv("TMP") )
         (srcpath , tarname ) = os.path.split( shortname )
         file=os.path.join( os.getenv("TMP") , tarname )
-		
 
     if not os.path.exists( file ):
         error( "couldn't find file %s" % file )
