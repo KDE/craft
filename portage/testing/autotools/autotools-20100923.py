@@ -3,9 +3,9 @@ import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20100118"
-        self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/autotools-"+ver+".tar.bz2"
-        self.targetDigests[ ver ] = 'dfb63c7894e1b373df49120988726bc736ac8ba5'
+        ver = "20100923"
+        self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/autotools-"+ver+".tar.xz"
+        self.targetDigests[ ver ] = '73fe57bec9f3813556a38602daf4e9ea9b4b0dba'
         
         self.defaultTarget = ver
         
