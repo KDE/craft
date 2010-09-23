@@ -3,9 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.65'] = "http://downloads.sourceforge.net/project/sevenzip/7-Zip/4.65/7za465.zip"
-        self.targetInstallPath['4.65'] = "bin"
-        self.defaultTarget = '4.65'
+        self.targets['9.16'] = "http://downloads.sourceforge.net/sourceforge/sevenzip/7za916.zip"
+        self.targetDigests['9.16'] = 'b389a6e2f93c18daae20393532af0e4e85ebe6f4'
+        self.targetInstallPath['9.16'] = "bin"
+        self.defaultTarget = '9.16'
     
     def setBuildOptions( self ):
         self.disableHostBuild = False
