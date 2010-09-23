@@ -87,6 +87,21 @@ class Package(CMakePackageBase):
 
       return True
 
-  
+    def qmerge( self ):
+        # When crosscompiling also install into the targets directory
+        ret = CMakePackageBase.qmerge(self)
+        if platform.isCrossCompilingEnabled():
+            target_mimedir = os.path.join(ROOTDIR, platform.targetPlatform(),
+                            "share", "mime", "packages")
+            build_mime = os.path.join(self.imageDir(), "share", "mime",
+                         "packages", "freedesktop.org.xml")
+            utils.createDir(target_mimedir)
+            if not os.path.exists(build_mime):
+                utils.error("Could not find mime file: %s" % build_mime)
+                return False
+            utils.copyFile(build_mime, target_mimedir)
+        return ret
+
+
 if __name__ == '__main__':
     Package().execute()
