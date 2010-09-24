@@ -4,11 +4,13 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['1.4.1','1.2.43']:
+        for ver in ['1.4.4','1.2.43']:
             self.targets[ver] = 'http://downloads.sourceforge.net/libpng/libpng-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libpng-' + ver
-        self.patchToApply['1.4.1'] = ("libpng-1.4.1-20100517.diff", 1)
-        self.defaultTarget = '1.4.1'
+        self.patchToApply['1.4.4'] = ("libpng-1.4.4-20100517.diff", 1)
+        self.targetDigests['1.4.4'] = '245490b22086a6aff8964b7d32383a17814d8ebf'
+        self.defaultTarget = '1.4.4'
+        
 
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/zlib'] = 'default'

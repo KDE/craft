@@ -2,7 +2,7 @@ diff -Nru libpng-1.4.1.orig/CMakeLists.txt libpng-1.4.1/CMakeLists.txt
 --- libpng-1.4.1.orig/CMakeLists.txt	Thu Feb 25 11:38:30 2010
 +++ libpng-1.4.1/CMakeLists.txt	Mon May 17 09:30:31 2010
 @@ -1,6 +1,8 @@
--cmake_minimum_required(VERSION 2.4.3)
+-cmake_minimum_required(VERSION 2.4.4)
 +cmake_minimum_required(VERSION 2.6)
  set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
  
