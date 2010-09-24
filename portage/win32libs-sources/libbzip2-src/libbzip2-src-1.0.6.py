@@ -10,11 +10,11 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.0.5-1'] = 'http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz'
-        self.targetInstSrc['1.0.5-1'] = "bzip2-1.0.5"
-        self.patchToApply['1.0.5-1'] = ("bzip.diff", 1)
-        self.targetDigests['1.0.5-1'] = '8b02713ea0c8eb501cc8bdac4432d7f29700f767'
-        self.defaultTarget = '1.0.5-1'
+        self.targets['1.0.6-1'] = 'http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz'
+        self.targetInstSrc['1.0.6-1'] = "bzip2-1.0.6"
+        self.patchToApply['1.0.6-1'] = ("bzip.diff", 1)
+        self.targetDigests['1.0.6-1'] = '3f89f861209ce81a6bab1fd1998c0ef311712002'
+        self.defaultTarget = '1.0.6-1'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
