@@ -5,11 +5,12 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-       for ver in [ '1.2.4' ]:
+       for ver in [ '1.2.5' ]:
            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/libpng/zlib-%s.tar.gz' % ver
            self.targetInstSrc[ ver ] = "zlib-" + ver
-       self.patchToApply['1.2.4'] = ("zlib-1.2.4-20100422.diff", 1)
-       self.defaultTarget = '1.2.4'
+       self.patchToApply['1.2.5'] = ("zlib-1.2.5-20100422.diff", 1)
+       self.targetDigests['1.2.5'] = '8e8b93fa5eb80df1afe5422309dca42964562d7e'
+       self.defaultTarget = '1.2.5'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
