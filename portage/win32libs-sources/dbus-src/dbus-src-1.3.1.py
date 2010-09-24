@@ -48,28 +48,44 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/expat'] = 'default'
 
 from Package.CMakePackageBase import *
-                
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus'
         self.subinfo.options.make.slnBaseName = 'dbus'
-        if (self.buildTarget == '1.3.1' or self.buildTarget == 'gitHEAD') and not platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=autolaunch:scope=install-path"
-        else:
-            self.subinfo.options.configure.defines = "-DDBUS_ENABLE_XML_DOCS=OFF -DDBUS_USE_EXPAT=ON"
-        if platform.isCrossCompilingEnabled() and not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
-            self.subinfo.options.configure.defines += " -DDBUS_SESSION_BUS_DEFAULT_ADDRESS:STRING=tcp:host=localhost,port=12434 "
-        
+        self.subinfo.options.configure.defines = (
+                "-DDBUS_BUILD_TESTS=OFF "
+                "-DDBUS_ENABLE_XML_DOCS=OFF "
+                "-DDBUS_USE_EXPAT=ON ")
+
+        if (self.buildType == "Release"):
+            self.subinfo.options.configure.defines += (
+                    "-DDBUS_ENABLE_VERBOSE_MODE=OFF "
+                    "-DDBUS_DISABLE_ASSERTS=ON ")
+
+        if (self.buildTarget == '1.3.1' or self.buildTarget == 'gitHEAD')\
+                and not platform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines += (
+                    "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
+                    "STRING=autolaunch:scope=install-path ")
+
+        if platform.isCrossCompilingEnabled() \
+                and not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
+            self.subinfo.options.configure.defines += (
+                    "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
+                    "STRING=tcp:host=localhost,port=12434 ")
+
     def unpack(self):
         if not CMakePackageBase.unpack(self):
             return False      
         if compiler.isMinGW32():
           if self.buildTarget in ['1.2.1', '1.2.3', '1.2.4', 'svnHEAD']:
-              utils.copyFile( os.path.join(self.packageDir(), "wspiapi.h"), os.path.join(self.buildDir(), "wspiapi.h") )
+              utils.copyFile( os.path.join(self.packageDir(), "wspiapi.h"),
+                      os.path.join(self.buildDir(), "wspiapi.h") )
         return True
 
-    
+
 if __name__ == '__main__':
     Package().execute()
