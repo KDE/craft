@@ -202,6 +202,19 @@ class DependenciesTree(object):
 
     def buildDepNode(self, category, package, version, tag):
         """Recursive method to construct the nodes of the dependency tree."""
+
+        pi = portage.PortageInstance
+
+        if portage.platform.isCrossCompilingEnabled() \
+        or os.getenv("EMERGE_SOURCEONLY") == "True" \
+        or os.getenv("EMERGE_SOURCEONLY") == "1":
+            sp = pi.getCorrespondingSourcePackage(package)
+            if sp:
+                # we found such a package and we're allowed to replace it
+                category = sp[0]
+                package = sp[1]
+                version = pi.getNewestVersion(category, package)
+
         key = "%s-%s-%s-%s" % (category, package, version, tag)
         try:
             node = self.key2node[key]
