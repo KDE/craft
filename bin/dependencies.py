@@ -28,7 +28,7 @@ __license__ = "GNU General Public License (GPL)"
 import portage
 import sys
 import os
-import getopt
+from optparse import OptionParser
 
 OUTPUT_DOT = 0
 OUTPUT_XML = 1
@@ -175,7 +175,8 @@ class DependenciesTree(object):
         pi = portage.PortageInstance
 
         if portage.platform.isCrossCompilingEnabled() \
-        or os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1":
+        or os.getenv("EMERGE_SOURCEONLY") == "True" \
+        or os.getenv("EMERGE_SOURCEONLY") == "1":
             sp = pi.getCorrespondingSourcePackage(package)
             if sp:
                 # we found such a package and we're allowed to replace it
@@ -227,37 +228,41 @@ class DependenciesTree(object):
         for root in self.roots:
             root.visit(visitor, context)
 
+def parseOptions():
+    usage = "usage: %prog [options] CATEGORY/PACKAGE"
+    parser = OptionParser(usage=usage)
+
+    parser.add_option("-t", "--type", action="store", default = OUTPUT_DOT,
+            help=("Change the output format type "
+                  "possible values: xml"))
+
+    (options, args) = parser.parse_args()
+    if len(args) != 1:
+        parser.error("Incorrect number of arguments")
+        sys.exit(1)
+    if len(args[0].split("/")) != 2:
+        parser.error("Not a valid Category/Package name")
+        sys.exit(1)
+    return (options, args)
+
 def main():
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "t:", ["type="])
-    except getopt.GetoptError, err:
-        print >> sys.stderr, str(err)
-        sys.exit(1)
+    opts, args = parseOptions()
+    if opts.type == "xml": 
+        output_type = OUTPUT_XML
+    else:
+        output_type = OUTPUT_DOT
 
-    if len(args) < 1:
-        print >> sys.stderr, "missing package"
-        sys.exit(1)
-
-    output_type = OUTPUT_DOT
-
-    for o, a in opts:
-        if o in ("-t", "--type"):
-            if a == "xml": output_type = OUTPUT_XML
-            else:          output_type = OUTPUT_DOT
-
-
-    output = dumpDependencies(argv[0], output_type)
+    output = dumpDependencies(args[0], output_type)
 
     print output
-            
+
 def dumpDependencies(category, output_type=OUTPUT_DOT):
     # little workaround to not display debug infos in generated output
     old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
     os.environ['EMERGE_VERBOSE'] = '0'
 
     packageList, categoryList = portage.getPackagesCategories(category)
-
     dep_tree = DependenciesTree()
 
     for catagory, package in zip(categoryList, packageList):
