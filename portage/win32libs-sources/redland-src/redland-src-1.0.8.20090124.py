@@ -14,11 +14,11 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        self.hardDependencies['win32libs-bin/libcurl'] = 'default'
+        self.hardDependencies['win32libs-sources/libcurl-src'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
-        self.hardDependencies['win32libs-bin/openssl'] = 'default'
-        self.hardDependencies['win32libs-bin/pcre'] = 'default'
+        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
+        self.hardDependencies['win32libs-sources/pcre-src'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         if platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
