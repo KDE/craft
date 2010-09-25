@@ -1,6 +1,6 @@
-diff -Nru libpng-1.4.1.orig/CMakeLists.txt libpng-1.4.1/CMakeLists.txt
---- libpng-1.4.1.orig/CMakeLists.txt	Thu Feb 25 11:38:30 2010
-+++ libpng-1.4.1/CMakeLists.txt	Mon May 17 09:30:31 2010
+diff -Nru libpng-1.4.4.orig/CMakeLists.txt libpng-1.4.4/CMakeLists.txt
+--- libpng-1.4.4.orig/CMakeLists.txt	Thu Feb 25 11:38:30 2010
++++ libpng-1.4.4/CMakeLists.txt	Mon May 17 09:30:31 2010
 @@ -1,6 +1,8 @@
 -cmake_minimum_required(VERSION 2.4.4)
 +cmake_minimum_required(VERSION 2.6)
@@ -9,9 +9,9 @@ diff -Nru libpng-1.4.1.orig/CMakeLists.txt libpng-1.4.1/CMakeLists.txt
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
  if(UNIX AND NOT DEFINED CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING 
-       "Choose the type of build, options are:
-@@ -14,6 +16,11 @@
+   if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
+     # workaround CMake 2.4.x bug
+@@ -19,6 +21,11 @@
  project(libpng C)
  enable_testing()
  
@@ -23,8 +23,8 @@ diff -Nru libpng-1.4.1.orig/CMakeLists.txt libpng-1.4.1/CMakeLists.txt
  # Copyright (C) 2007-2010 Glenn Randers-Pehrson
  
  # This code is released under the libpng license.
-@@ -169,6 +176,9 @@
-     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
+@@ -175,6 +182,9 @@
+     set_target_properties(${PNG_LIB_NAME} PROPERTIES IMPORT_PREFIX "lib")
    endif()
    target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${M_LIBRARY})
 +  if(WINCE)
@@ -33,9 +33,9 @@ diff -Nru libpng-1.4.1.orig/CMakeLists.txt libpng-1.4.1/CMakeLists.txt
  endif()
  
  if(PNG_STATIC)
-diff -Nru libpng-1.4.1.orig/cmake/modules/FindWcecompat.cmake libpng-1.4.1/cmake/modules/FindWcecompat.cmake
---- libpng-1.4.1.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ libpng-1.4.1/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+diff -Nru libpng-1.4.4.orig/cmake/modules/FindWcecompat.cmake libpng-1.4.4/cmake/modules/FindWcecompat.cmake
+--- libpng-1.4.4.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
++++ libpng-1.4.4/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -70,3 +70,15 @@ diff -Nru libpng-1.4.1.orig/cmake/modules/FindWcecompat.cmake libpng-1.4.1/cmake
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru libpng-1.4.4.orig/pngconf.h libpng-1.4.4/pngconf.h
+--- libpng-1.4.4.orig/pngconf.h	Mon Jan 19 23:26:36 1970
++++ libpng-1.4.4/pngconf.h	Mon Jan 19 23:26:36 1970
+@@ -1449,7 +1449,7 @@
+ #  define png_memset  _fmemset
+ #  define png_sprintf sprintf
+ #else
+-#  if (defined(_Windows) || defined(_WINDOWS) || defined(_WINDOWS_))
++#  if (defined(_Windows) || defined(_WINDOWS) || defined(_WINDOWS_)) && !defined(_WIN32_WCE)
+ #    /* Favor Windows over C runtime fns */
+ #    define CVT_PTR(ptr)         (ptr)
+ #    define CVT_PTR_NOCHECK(ptr) (ptr)
