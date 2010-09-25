@@ -111,7 +111,6 @@ class Portage:
         self.portages[ dir ] = []
         for category in categoryList:
             if not os.path.isdir( os.path.join( dir, category ) ): continue
-            if category in self.categories.keys(): continue
 
             self.portages[ dir ].append( category )
 
@@ -122,7 +121,7 @@ class Portage:
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
 
-            self.categories[ category ] = []
+            if not category in self.categories.keys(): self.categories[ category ] = []
             for package in packageList:
                 if not os.path.isdir( os.path.join( dir, category, package ) ): continue
                 if not package in self.categories[ category ]:
