@@ -1,0 +1,10 @@
+--- poppler-0.14.3\cpp\poppler-document.cpp.orig	2010-09-26 15:51:53.000000000 +0200
++++ poppler-0.14.3\cpp\poppler-document.cpp	2010-09-26 15:50:13.468750000 +0200
+@@ -33,6 +33,7 @@
+ 
+ #include <algorithm>
+ #include <memory>
++#include <iterator>
+ 
+ using namespace poppler;
+ 
