@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/cfitsio'] = 'default'
         self.hardDependencies['win32libs-bin/libnova'] = 'default'
         self.hardDependencies['win32libs-bin/openbabel'] = 'default'
-    
+        self.hardDependencies['win32libs-bin/boost'] = 'default'
 
 from Package.CMakePackageBase import *
         
