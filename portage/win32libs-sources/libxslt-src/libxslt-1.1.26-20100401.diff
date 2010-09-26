@@ -1,7 +1,7 @@
 diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
 --- libxslt-1.1.26.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
 +++ libxslt-1.1.26/CMakeLists.txt	Mon May 17 07:14:26 2010
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,110 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -9,7 +9,6 @@ diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
 +
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
-+cmake_minimum_required(VERSION 2.6)
 +cmake_minimum_required(VERSION 2.6)
 +set(PACKAGE_NAME "libxslt")
 +set(PACKAGE_VERSION "1.1.26")
@@ -66,6 +65,9 @@ diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
 +#set_target_properties(xslt PROPERTIES DEFINE_SYMBOL IN_LIBXSLT)
 +target_link_libraries(xslt ${LIBXML2_LIBRARIES})
 +target_link_libraries(xslt ${LIBXML2_LIBRARIES})
++if(MSVC)
++    set_target_properties(xslt PROPERTIES OUTPUT_NAME libxslt)
++endif(MSVC)
 +if(WINCE)
 +    target_link_libraries(xslt ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
@@ -85,6 +87,9 @@ diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
 +
 +add_library(exslt SHARED ${exslt_SRCS})
 +target_link_libraries(exslt xslt)
++if(MSVC)
++    set_target_properties(exslt PROPERTIES OUTPUT_NAME libexslt)
++endif(MSVC)
 +
 +set(xsltproc_SRCS 
 +xsltproc/xsltproc.c

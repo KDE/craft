@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'ftp://xmlsoft.org/libxslt/libxslt-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libxslt-' + ver
         self.patchToApply['1.1.26'] = ("libxslt-1.1.26-20100401.diff", 1)
+        self.targetDigests['1.1.26'] = '69f74df8228b504a87e2b257c2d5238281c65154'
         
         self.defaultTarget = '1.1.26'
 
