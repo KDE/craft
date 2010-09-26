@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         self.patchToApply['2.3.12-1'] = ('freetype-2.3.12.diff', 1)
         self.targetInstSrc['2.3.12-1'] = "freetype-2.3.12"
         self.defaultTarget = '2.3.12-1'
+        self.targetDigests['2.3.12-1'] = 'ebf0438429c0bedd310059326d91646c3c91016b'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
