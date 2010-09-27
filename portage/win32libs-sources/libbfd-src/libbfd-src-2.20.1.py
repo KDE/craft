@@ -11,7 +11,7 @@ from Package.PackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.20.1'] = "http://ftp.gnu.org/gnu/binutils/binutils-2.20.1.tar.gz"
-        self.targetInstSrc['2.20.1'] = 'binutils-2.20.1'
+        self.targetInstSrc['2.20.1'] = 'binutils-2.20.1/bfd'
         self.targetDigests['2.20.1'] = 'd4428deccc9d1d170929a820d04f5d90a1b524ac'
         self.defaultTarget = '2.20.1'
         
