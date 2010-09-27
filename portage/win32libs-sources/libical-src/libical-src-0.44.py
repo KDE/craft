@@ -12,6 +12,8 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        if platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
 from Package.CMakePackageBase import *
         
