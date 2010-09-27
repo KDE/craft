@@ -41,6 +41,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DRUNTIME_PLUGINS_STATIC=ON "
             self.subinfo.options.configure.defines += " -DKDEQMLPLUGIN_STATIC=ON "
             self.subinfo.options.configure.defines += " -DACCOUNTWIZARD_NO_GHNS=ON "
+           # self.subinfo.options.configure.defines += " -DBUILD_kleopatra=ON "
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
