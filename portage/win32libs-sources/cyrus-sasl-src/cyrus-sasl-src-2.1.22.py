@@ -13,6 +13,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        if platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
