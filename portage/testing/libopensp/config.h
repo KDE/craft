@@ -26,6 +26,12 @@
 #endif
 #endif /* __GNUG__ */
 
+#ifdef __MINGW32__
+#define SP_HAVE_BOOL
+#define SP_HAVE_TYPENAME
+#define SP_DEFINE_TEMPLATES
+#endif /* __MINGW32__ */
+
 #if defined(sun) || defined(__sun)
 // struct stat has st_blksize member
 #define SP_STAT_BLKSIZE
