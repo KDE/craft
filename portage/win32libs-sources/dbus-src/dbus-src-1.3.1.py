@@ -27,10 +27,7 @@ class subinfo(info.infoclass):
         self.patchToApply['gitHEAD'] = [('0001-Extended-autolaunch-protocol-with-scope-attribute.patch', 1),
                                         ('0002-Fixed-case-when-no-scope-attribute-is-used.patch', 1)]
         if platform.isCrossCompilingEnabled():
-            if not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
-                self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1) , ('no-auth.diff', 1)]
-            else: 
-                self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1)]
+            self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1) , ('no-auth.diff', 1)]
         else:
             self.patchToApply['1.3.1'] = [('0001-Extended-autolaunch-protocol-with-scope-attribute.patch', 1),
                                           ('0002-Fixed-case-when-no-scope-attribute-is-used.patch', 1),
@@ -71,8 +68,7 @@ class Package(CMakePackageBase):
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=autolaunch:scope=install-path ")
 
-        if platform.isCrossCompilingEnabled() \
-                and not os.getenv( "EMERGE_DBUS_NO_AUTH" ) == None:
+        if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=tcp:host=localhost,port=12434 ")
