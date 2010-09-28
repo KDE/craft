@@ -32,6 +32,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['testing/wincetools'] = 'kdepimcetools'
         self.hardDependencies['kde/kdepim'] = 'default'
+        self.hardDependencies['testing/pinentry-qt'] = 'default'
 
 class MainPackage(CMakePackageBase):
     def __init__(self):
@@ -104,6 +105,7 @@ class MainPackage(CMakePackageBase):
         unique_names = []
         duplicates = []
 
+
         for entry in self.traverse(wm_root, self.whitelisted):
             if os.path.basename(entry) in uniquebasenames:
                 utils.debug("Found duplicate filename: %s" % \
@@ -130,6 +132,12 @@ class MainPackage(CMakePackageBase):
                 utils.createDir(os.path.dirname(entry_target))
             shutil.copy(entry, entry_target)
             utils.debug("Copied %s to %s" % (entry, entry_target), 2)
+
+        # Handle special cases
+        pinentry = os.path.join(wm_root, "bin", "pinentry-qt.exe")
+        if os.path.isfile(pinentry):
+            utils.copyFile(pinentry, os.path.join(self.workDir(), "bin",
+                "pinentry.exe"))
 
         # Create an empty file for DBus and his /etc/dbus-1/session.d
         dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",

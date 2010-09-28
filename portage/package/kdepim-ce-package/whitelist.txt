@@ -18,8 +18,6 @@ bin\\akonadiserver\.exe
 bin\\dbus-1\.dll
 bin\\dbus-daemon\.exe
 bin\\dbus-launch\.exe
-bin\\dbus-monitor\.exe
-bin\\dbus-send\.exe
 bin\\expat\.dll
 bin\\kaddressbook-mobile\.exe
 bin\\kaddressbook-mobile-real\.exe
@@ -27,11 +25,7 @@ bin\\kmail-mobile\.exe
 bin\\kmail-mobile-real\.exe
 bin\\korganizer-mobile\.exe
 bin\\korganizer-mobile-real\.exe
-bin\\libassuan-0\.dll
 bin\\libeay32\.dll
-bin\\libgcc_s_sjlj-1\.dll
-bin\\libgpg-error-0\.dll
-bin\\libgpgme-11\.dll
 bin\\libical\.dll
 bin\\msvcr90\.dll
 bin\\notes-mobile\.exe
@@ -43,7 +37,6 @@ bin\\QtGui4\.dll
 bin\\QtNetwork4\.dll
 bin\\QtScript4\.dll
 bin\\QtSql4\.dll
-bin\\QtWebKit4\.dll
 bin\\QtXml4\.dll
 bin\\sqlite3\.dll
 bin\\ssleay32\.dll
@@ -52,7 +45,29 @@ bin\\tasks-mobile-real\.exe
 bin\\zlib1\.dll
 bin\\sasl2\.dll
 
+# GNUPG
+bin\\libgpgme-11\.dll
+bin\\libgcc_s_sjlj-1\.dll
+bin\\libassuan-0\.dll
+bin\\libgpg-error-0\.dll
+bin\\dirmngr\.exe
+bin\\gpg-agent\.exe
+bin\\gpg\.exe
+bin\\gpgcedev\.dll
+bin\\gpgcemgr\.exe
+bin\\gpgconf\.exe
+bin\\gpgsm\.exe
+bin\\libgcrypt-11\.dll
+bin\\libksba-8\.dll
+bin\\libw32pth-0\.dll
+bin\\pinentry\.exe
+share\\gnupg\\qualified\.txt
+share\\gnupg\\com-certs\.pem
+share\\gnupg\\gpg-conf\.skel
 # to debug, later on can be deleted
+
+bin\\gpgme-tool\.exe
+bin\\gpg-connect-agent\.exe
 bin\\akonadi_rds\.exe
 
 # DBus-Default configuration
@@ -821,7 +836,7 @@ share\\soprano\\rules\\nrl\.rules
 share\\soprano\\rules\\rdfs\.rules
 
 # Qxygen Icon theme
-oxygen\\index\.theme
+index\.theme
 
 ##############################################################################
 # Icons referenced in KDEPIM QML
