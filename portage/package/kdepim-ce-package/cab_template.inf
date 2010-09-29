@@ -18,6 +18,9 @@ $SECTIONS
 HKLM, Software\kde, KDEDIRS, 0, %InstallDir%
 HKLM, Software\Akonadi\Akonadi\AgentProviders, Install Directory, 0, %InstallDir%
 HKLM, Software\freedesktop\DBus, Install Directory, 0, %InstallDir%/bin
+HKLM, Drivers\GnuPG_Device, dll, 0, gpgcedev.dll
+HKLM, Drivers\GnuPG_Device, prefix, 0,  GPG
+HKLM, Drivers\GnuPG_Device, Index, 0x00010001, 1
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
