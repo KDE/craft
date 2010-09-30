@@ -65,7 +65,7 @@ rem the packagelist file is a simple file containing lines of the following form
 rem     packagename,target,patchlevel
 rem # at the beginning of a line is a comment
 rem if the default target or patchlevel should be used, keep the space empty but keep the commata
-python server/package.py %1
+python %dp0\server\package.py %1
 goto :eof
 
 :path-mingw
