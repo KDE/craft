@@ -6,7 +6,7 @@ rem     to set up an automatic build, run this file whenever you need with the p
 rem     by Patrick Spendrin <ps_ml@gmx.de>
 
 
-call ..\etc\kdesettings.bat
+call %~dp0\etc\kdesettings.bat
 
 
 rem     adapt this file to your needs
