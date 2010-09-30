@@ -115,10 +115,10 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
-            
-        utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
-        utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.c" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.c" ) )
-        utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
+        else:
+            utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.c" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.c" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
