@@ -50,7 +50,8 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
             ('qt-4.7.0-openssl-static-linking.patch', 1),
-            ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1)
+            ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1),
+            ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1)
                                    ]
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
@@ -116,6 +117,8 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -l libmysql "
             
         utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
+        utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.c" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.c" ) )
+        utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
