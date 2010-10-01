@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'
-        self.targetDigests['HEAD'] = '1f946283866cd6f40a5888088f6c7d840b62af2d'        
+#        self.targetDigests['HEAD'] = '1f946283866cd6f40a5888088f6c7d840b62af2d'        
         self.targetInstallPath['HEAD'] = "bin"
         self.defaultTarget = 'HEAD'
         
