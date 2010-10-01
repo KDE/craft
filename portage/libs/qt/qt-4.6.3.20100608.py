@@ -35,30 +35,23 @@ class subinfo(info.infoclass):
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.patchToApply['4.6.3'] = ('qt-4.6.3.patch', 1)
-#        self.patchToApply['4.7.0'] = [
-#            ('qt-4.7.0-out-of-source-build.patch', 1),
-#            ('qt-4.7.0-webkit-fixes.patch', 1),
-#            ('qt-4.7.0-custom-flags-for-wince.patch', 1),
-#            ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
-#            ('qt-4.7.0-fix-build-with-QT_NO_GESTURES.patch', 1),
-#            ('qt-4.7.0-openssl-static-linking.patch', 1),
-#            ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1)
-#                                   ]
         self.patchToApply['4.7'] = [
             ('qt-4.7.0-out-of-source-build.patch', 1),
             ('qt-4.7.0-webkit-fixes.patch', 1),
-            ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
-            ('qt-4.7.0-openssl-static-linking.patch', 1),
+            ('qt-4.7.0-openssl-static-linking.patch', 1) ]
+        if platform.isCrossCompilingEnabled():
+            self.patchToApply['4.7'] = [
+            ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1),
-            ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1)
-                                   ]
-        
+            ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1),
+            ('qt-4.7.0-Override-new-in-qt-dlls-to-use-dlmalloc.patch',1)
+            ]
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
             self.defaultTarget = '4.7'
         else:
             self.defaultTarget = '4.6.3'
-        
+
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
         self.options.package.specialMode = True
@@ -116,9 +109,14 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
         else:
-            utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.c" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.c" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.h" ), os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ),
+                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.c" ),
+                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.c" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.h" ),
+                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "new.cpp" ),
+                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "new.cpp" ) )
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )

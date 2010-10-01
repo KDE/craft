@@ -1,0 +1,240 @@
+From bb3fab7d301b522fbf0728602810a5a5c2ead2c5 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
+Date: Fri, 1 Oct 2010 10:19:00 +0200
+Subject: [PATCH] Override new in qt-dlls to use dlmalloc
+
+---
+ src/activeqt/activeqt.pro       |    3 +++
+ src/corelib/corelib.pro         |    3 +++
+ src/dbus/dbus.pro               |    3 +++
+ src/declarative/declarative.pro |    3 +++
+ src/gui/gui.pro                 |    3 +++
+ src/multimedia/multimedia.pro   |    3 +++
+ src/network/network.pro         |    3 +++
+ src/opengl/opengl.pro           |    3 +++
+ src/openvg/openvg.pro           |    3 +++
+ src/phonon/phonon.pro           |    3 +++
+ src/script/script.pro           |    3 +++
+ src/scripttools/scripttools.pro |    3 +++
+ src/sql/sql.pro                 |    3 +++
+ src/svg/svg.pro                 |    3 +++
+ src/testlib/testlib.pro         |    3 +++
+ src/tools/tools.pro             |    3 +++
+ src/winmain/winmain.pro         |    3 +++
+ src/xml/xml.pro                 |    3 +++
+ src/xmlpatterns/xmlpatterns.pro |    3 +++
+ 19 files changed, 57 insertions(+), 0 deletions(-)
+
+diff --git a/src/activeqt/activeqt.pro b/src/activeqt/activeqt.pro
+index 0948ea0..33382dd 100644
+--- a/src/activeqt/activeqt.pro
++++ b/src/activeqt/activeqt.pro
+@@ -3,3 +3,6 @@ TEMPLATE = subdirs
+ CONFIG	+= ordered
+ SUBDIRS	= container
+ !wince*: SUBDIRS += control
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/corelib/corelib.pro b/src/corelib/corelib.pro
+index b7d6034..1f570d7 100644
+--- a/src/corelib/corelib.pro
++++ b/src/corelib/corelib.pro
+@@ -43,4 +43,7 @@ neon {
+     QMAKE_CXXFLAGS *= -mfpu=neon
+ }
+ 
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+ 
+diff --git a/src/dbus/dbus.pro b/src/dbus/dbus.pro
+index 46a723a..72fe7c7 100644
+--- a/src/dbus/dbus.pro
++++ b/src/dbus/dbus.pro
+@@ -86,3 +86,6 @@ SOURCES += qdbusconnection.cpp \
+     qdbuspendingreply.cpp \
+     qdbus_symbols.cpp \
+     qdbusservicewatcher.cpp
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/declarative/declarative.pro b/src/declarative/declarative.pro
+index 510e7a5..83fbe2d 100644
+--- a/src/declarative/declarative.pro
++++ b/src/declarative/declarative.pro
+@@ -26,3 +26,6 @@ include(qml/qml.pri)
+ include(debugger/debugger.pri)
+ 
+ symbian:TARGET.UID3=0x2001E623
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/gui/gui.pro b/src/gui/gui.pro
+index 90b5de5..f958856 100644
+--- a/src/gui/gui.pro
++++ b/src/gui/gui.pro
+@@ -221,3 +221,6 @@ contains(QMAKE_MAC_XARCH, no) {
+         iwmmxt: SOURCES += $$IWMMXT_SOURCES
+     }
+ }
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/multimedia/multimedia.pro b/src/multimedia/multimedia.pro
+index 852322d..f8d5de0 100644
+--- a/src/multimedia/multimedia.pro
++++ b/src/multimedia/multimedia.pro
+@@ -14,3 +14,6 @@ include(video/video.pri)
+ symbian: {
+     TARGET.UID3 = 0x2001E627
+ }
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/network/network.pro b/src/network/network.pro
+index 7ed7d3a..c8a4fd9 100644
+--- a/src/network/network.pro
++++ b/src/network/network.pro
+@@ -29,3 +29,6 @@ symbian {
+    TARGET.UID3=0x2001B2DE
+    LIBS += -lesock -linsock -lcertstore -lefsrv -lctframework
+ }
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/opengl/opengl.pro b/src/opengl/opengl.pro
+index 0e82467..3b879e6 100644
+--- a/src/opengl/opengl.pro
++++ b/src/opengl/opengl.pro
+@@ -158,3 +158,6 @@ symbian {
+ }
+ 
+ INCLUDEPATH += ../3rdparty/harfbuzz/src
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/openvg/openvg.pro b/src/openvg/openvg.pro
+index eb60331..e7e7ceb 100644
+--- a/src/openvg/openvg.pro
++++ b/src/openvg/openvg.pro
+@@ -62,3 +62,6 @@ contains(QT_CONFIG, openvg_on_opengl) {
+ }
+ 
+ INCLUDEPATH += ../3rdparty/harfbuzz/src
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/phonon/phonon.pro b/src/phonon/phonon.pro
+index 7f79d0b..cfeaf68 100644
+--- a/src/phonon/phonon.pro
++++ b/src/phonon/phonon.pro
+@@ -143,3 +143,6 @@ symbian: {
+     
+     TARGET.UID3 = 0x2001E624
+ }
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/script/script.pro b/src/script/script.pro
+index 4ee86d7..c1fb1b7 100644
+--- a/src/script/script.pro
++++ b/src/script/script.pro
+@@ -86,3 +86,6 @@ symbian {
+ 
+ # WebKit doesn't compile in C++0x mode
+ *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/scripttools/scripttools.pro b/src/scripttools/scripttools.pro
+index b1df7aa..856ccaf 100644
+--- a/src/scripttools/scripttools.pro
++++ b/src/scripttools/scripttools.pro
+@@ -13,3 +13,6 @@ include(../qbase.pri)
+ include(debugging/debugging.pri)
+ 
+ symbian:TARGET.UID3=0x2001E625
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/sql/sql.pro b/src/sql/sql.pro
+index b8f819d..9dff633 100644
+--- a/src/sql/sql.pro
++++ b/src/sql/sql.pro
+@@ -24,3 +24,6 @@ symbian: {
+     MMP_RULES -= PAGED
+     MMP_RULES *= UNPAGED
+ }
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/svg/svg.pro b/src/svg/svg.pro
+index 7b5251a..c2e604d 100644
+--- a/src/svg/svg.pro
++++ b/src/svg/svg.pro
+@@ -43,3 +43,6 @@ INCLUDEPATH += ../3rdparty/harfbuzz/src
+ symbian:TARGET.UID3=0x2001B2E2
+ 
+ include(../3rdparty/zlib_dependency.pri)
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/testlib/testlib.pro b/src/testlib/testlib.pro
+index a8186d8..66fa854 100644
+--- a/src/testlib/testlib.pro
++++ b/src/testlib/testlib.pro
+@@ -79,3 +79,6 @@ QMAKE_TARGET_DESCRIPTION = Qt \
+     Testing \
+     Library
+ symbian:TARGET.UID3=0x2001B2DF
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/tools/tools.pro b/src/tools/tools.pro
+index 4736d09..33d20ac 100644
+--- a/src/tools/tools.pro
++++ b/src/tools/tools.pro
+@@ -71,3 +71,6 @@ EXTRA_RELEASE_TARGETS =
+ 
+ SUBDIRS = $$TOOLS_SUBDIRS $$SUBDIRS
+ isEqual(TARGET,tools): SUBDIRS += $$SRC_SUBDIRS
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/winmain/winmain.pro b/src/winmain/winmain.pro
+index 8c2710c..7653685 100644
+--- a/src/winmain/winmain.pro
++++ b/src/winmain/winmain.pro
+@@ -19,3 +19,6 @@ win32 {
+ include(../qbase.pri)
+ wince*:QMAKE_POST_LINK =
+ 
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/xml/xml.pro b/src/xml/xml.pro
+index 8d1bf68..8bde181 100644
+--- a/src/xml/xml.pro
++++ b/src/xml/xml.pro
+@@ -20,3 +20,6 @@ include(sax/sax.pri)
+ include(stream/stream.pri)
+ 
+ symbian:TARGET.UID3=0x2001B2E0
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+diff --git a/src/xmlpatterns/xmlpatterns.pro b/src/xmlpatterns/xmlpatterns.pro
+index e50d184..034c51d 100644
+--- a/src/xmlpatterns/xmlpatterns.pro
++++ b/src/xmlpatterns/xmlpatterns.pro
+@@ -35,3 +35,6 @@ wince* {
+ }
+ 
+ symbian:TARGET.UID3 = 0x2001E62B
++wince*: {
++        SOURCES += ../corelib/global/new.cpp
++}
+-- 
+1.5.6.5
+

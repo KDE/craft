@@ -1,27 +1,26 @@
-From 5349e6be9f81f5b0bd86b191c3649150e472a63a Mon Sep 17 00:00:00 2001
-From: Andreas Holzammer <andy@kdab.com>
-Date: Thu, 30 Sep 2010 09:24:55 +0200
-Subject: [PATCH] - exchange malloc against dlmalloc for wince
+From 1fa84886d07b4b2418fbbbee27ab67d86a5ee9ef Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
+Date: Fri, 1 Oct 2010 10:17:10 +0200
+Subject: [PATCH] exchange-malloc-against-dlmalloc-for-wince
 
 ---
  src/corelib/global/global.pri  |    4 ++++
- src/corelib/global/qmalloc.cpp |   20 +++++++++++++++++---
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ src/corelib/global/qmalloc.cpp |   22 ++++++++++++++++++----
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/global/global.pri b/src/corelib/global/global.pri
-index 4800716..91239de 100644
+index 4800716..9730818 100644
 --- a/src/corelib/global/global.pri
 +++ b/src/corelib/global/global.pri
-@@ -6,6 +6,8 @@ HEADERS +=  \
-         global/qendian.h \
+@@ -7,12 +7,16 @@ HEADERS +=  \
          global/qnumeric_p.h \
          global/qnumeric.h
-+        
-+wince*:HEADERS += global/dlmalloc.h
  
++wince*:HEADERS += global/dlmalloc.h
++
  SOURCES += \
  	global/qglobal.cpp \
-@@ -13,6 +15,8 @@ SOURCES += \
+         global/qlibraryinfo.cpp \
  	global/qmalloc.cpp \
          global/qnumeric.cpp
  
@@ -31,7 +30,7 @@ index 4800716..91239de 100644
  INCLUDEPATH += $$QT_BUILD_TREE/src/corelib/global
  
 diff --git a/src/corelib/global/qmalloc.cpp b/src/corelib/global/qmalloc.cpp
-index 090998c..6bb8691 100644
+index 090998c..be9b274 100644
 --- a/src/corelib/global/qmalloc.cpp
 +++ b/src/corelib/global/qmalloc.cpp
 @@ -41,6 +41,8 @@
@@ -76,6 +75,15 @@ index 090998c..6bb8691 100644
  }
  
  void *qMallocAligned(size_t size, size_t alignment)
+@@ -120,7 +134,7 @@ void qFreeAligned(void *ptr)
+     if (!ptr)
+         return;
+     void **ptr2 = static_cast<void **>(ptr);
+-    free(ptr2[-1]);
++    qFree(ptr2[-1]);
+ }
+ 
+ QT_END_NAMESPACE
 -- 
-1.7.0.2.msysgit.0
+1.5.6.5
 
