@@ -41,7 +41,7 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
             ('qt-4.7.0-openssl-static-linking.patch', 1) ]
         if platform.isCrossCompilingEnabled():
-            self.patchToApply['4.7'] = [
+            self.patchToApply['4.7'] += [
             ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1),
             ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1),
