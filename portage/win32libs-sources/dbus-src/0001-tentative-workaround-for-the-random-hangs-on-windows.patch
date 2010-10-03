@@ -1,0 +1,33 @@
+From 422ba1d97813b4791452f6cc0829e49393fce812 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 4 Oct 2010 01:46:42 +0200
+Subject: [PATCH] tentative workaround for the random hangs on windows
+
+---
+ dbus/dbus-sysdeps-win.c |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index 3c8da94..b437e05 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -1129,12 +1129,11 @@ _dbus_poll (DBusPollFD *fds,
+       max_fd = MAX (max_fd, fdp->fd);
+     }
+ 
++  // Avoid random lockups with send(), for lack of a better solution so far
++  tv.tv_sec = timeout_milliseconds < 0 ? 5 : timeout_milliseconds / 1000;
++  tv.tv_usec = timeout_milliseconds < 0 ? 0 : (timeout_milliseconds % 1000) * 1000;
+ 
+-  tv.tv_sec = timeout_milliseconds / 1000;
+-  tv.tv_usec = (timeout_milliseconds % 1000) * 1000;
+-
+-  ready = select (max_fd + 1, &read_set, &write_set, &err_set,
+-                  timeout_milliseconds < 0 ? NULL : &tv);
++  ready = select (max_fd + 1, &read_set, &write_set, &err_set, &tv);
+ 
+   if (DBUS_SOCKET_API_RETURNS_ERROR (ready))
+     {
+-- 
+1.6.5.1.1367.gcd48
+
