@@ -1,0 +1,33 @@
+From 4f5202467de6e81c541fa1a2fc604009846b0558 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 4 Oct 2010 12:33:36 +0200
+Subject: [PATCH] restore the close_on_exec flag on windows
+
+---
+ dbus/dbus-sysdeps-win.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index b437e05..9be5104 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -1359,6 +1359,8 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+         }
+     }
+ 
++  _dbus_fd_set_close_on_exec (fd);
++
+   if (!_dbus_set_fd_nonblocking (fd, error))
+     {
+       closesocket (fd);
+@@ -1551,6 +1553,7 @@ _dbus_listen_tcp_socket (const char     *host,
+ 
+   for (i = 0 ; i < nlisten_fd ; i++)
+     {
++      _dbus_fd_set_close_on_exec (listen_fd[i]);
+       if (!_dbus_set_fd_nonblocking (listen_fd[i], error))
+         {
+           goto failed;
+-- 
+1.6.5.1.1367.gcd48
+
