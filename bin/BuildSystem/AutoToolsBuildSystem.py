@@ -12,11 +12,15 @@ from shells import *
 from BuildSystemBase import *
 
 class AutoToolsBuildSystem(BuildSystemBase):
-    def __init__( self ):
+    def __init__( self ):        
         self.buildInSource = False
         BuildSystemBase.__init__(self,"autotools")
         self.shell = MSysShell()
-        self.makeProgram = "make"
+        self.makeProgram = "make"    
+        #unset make to remove things like jom
+        os.unsetenv("MAKE")
+        
+
         os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" )))
         #seting perl to prevent msys from using msys-perl
         perl=self.shell.toNativePath(os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" , "perl.exe" ))
