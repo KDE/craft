@@ -73,7 +73,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=tcp:host=localhost,port=12434 ")
-        else
+        else:
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=autolaunch:scope=install-path ")
