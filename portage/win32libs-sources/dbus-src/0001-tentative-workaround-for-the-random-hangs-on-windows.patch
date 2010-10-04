@@ -16,7 +16,7 @@ index 3c8da94..b437e05 100644
      }
  
 +  // Avoid random lockups with send(), for lack of a better solution so far
-+  tv.tv_sec = timeout_milliseconds < 0 ? 5 : timeout_milliseconds / 1000;
++  tv.tv_sec = timeout_milliseconds < 0 ? 1 : timeout_milliseconds / 1000;
 +  tv.tv_usec = timeout_milliseconds < 0 ? 0 : (timeout_milliseconds % 1000) * 1000;
  
 -  tv.tv_sec = timeout_milliseconds / 1000;
