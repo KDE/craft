@@ -1,0 +1,747 @@
+From 86db8cb7f4d4ed406aaaf0ffc09b75e4d24729aa Mon Sep 17 00:00:00 2001
+From: Marcus Brinkmann <marcus.brinkmann@ruhr-uni-bochum.de>
+Date: Mon, 6 Sep 2010 15:50:16 +0200
+Subject: [PATCH 02/12] Fix use of _dbus_make_file_world_readable.
+
+---
+ dbus/dbus-file-win.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/dbus/dbus-file-win.c b/dbus/dbus-file-win.c
+index 53a3fc5..8b858b0 100644
+--- a/dbus/dbus-file-win.c
++++ b/dbus/dbus-file-win.c
+@@ -275,7 +275,10 @@ _dbus_string_save_to_file (const DBusString *str,
+       goto out;
+     }
+   if (world_readable)
+-    _dbus_make_file_world_readable (tmp_filename_c);
++    {
++      if (! _dbus_make_file_world_readable (tmp_filename, error))
++        goto out;
++    }
+ 
+   _dbus_verbose ("tmp file %s hnd %p opened\n", tmp_filename_c, hnd);
+ 
+-- 
+1.6.5.1.1367.gcd48
+
+From af06a472d44d8ee220de1a8ea5ec237b9a29284f Mon Sep 17 00:00:00 2001
+From: Marcus Brinkmann <marcus.brinkmann@ruhr-uni-bochum.de>
+Date: Thu, 9 Sep 2010 14:15:45 +0200
+Subject: [PATCH 03/12] Fix typo in creating temp file.
+
+---
+ dbus/dbus-file-win.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/dbus/dbus-file-win.c b/dbus/dbus-file-win.c
+index 8b858b0..06a8ea1 100644
+--- a/dbus/dbus-file-win.c
++++ b/dbus/dbus-file-win.c
+@@ -276,7 +276,7 @@ _dbus_string_save_to_file (const DBusString *str,
+     }
+   if (world_readable)
+     {
+-      if (! _dbus_make_file_world_readable (tmp_filename, error))
++      if (! _dbus_make_file_world_readable (&tmp_filename, error))
+         goto out;
+     }
+ 
+-- 
+1.6.5.1.1367.gcd48
+
+From 63d3e3d9d4ebc808eaa1b12a0e4f603c04854e9f Mon Sep 17 00:00:00 2001
+From: Christian Dywan <christian.dywan@lanedo.com>
+Date: Thu, 23 Sep 2010 14:38:15 +0200
+Subject: [PATCH 05/12] Add return_if_fail watch != NULL in public DBusWatch API
+
+Reviewed-by: Havoc Pennington <hp@pobox.com>
+Signed-off-by: Will Thompson <will.thompson@collabora.co.uk>
+---
+ dbus/dbus-watch.c |   16 +++++++++++++++-
+ 1 files changed, 15 insertions(+), 1 deletions(-)
+
+diff --git a/dbus/dbus-watch.c b/dbus/dbus-watch.c
+index 5acb202..8d759e5 100644
+--- a/dbus/dbus-watch.c
++++ b/dbus/dbus-watch.c
+@@ -496,6 +496,8 @@ _dbus_watch_set_handler (DBusWatch        *watch,
+ int
+ dbus_watch_get_fd (DBusWatch *watch)
+ {
++  _dbus_return_val_if_fail (watch != NULL, -1);
++
+   return dbus_watch_get_unix_fd(watch);
+ }
+ 
+@@ -515,6 +517,8 @@ dbus_watch_get_fd (DBusWatch *watch)
+ int
+ dbus_watch_get_unix_fd (DBusWatch *watch)
+ {
++  _dbus_return_val_if_fail (watch != NULL, -1);
++
+   /* FIXME remove #ifdef and do this on a lower level
+    * (watch should have set_socket and set_unix_fd and track
+    * which it has, and the transport should provide the
+@@ -542,6 +546,8 @@ dbus_watch_get_unix_fd (DBusWatch *watch)
+ int
+ dbus_watch_get_socket (DBusWatch *watch)
+ {
++  _dbus_return_val_if_fail (watch != NULL, -1);
++
+   return watch->fd;
+ }
+ 
+@@ -561,6 +567,7 @@ dbus_watch_get_socket (DBusWatch *watch)
+ unsigned int
+ dbus_watch_get_flags (DBusWatch *watch)
+ {
++  _dbus_return_val_if_fail (watch != NULL, 0);
+   _dbus_assert ((watch->flags & VALID_WATCH_FLAGS) == watch->flags);
+ 
+   return watch->flags;
+@@ -576,6 +583,8 @@ dbus_watch_get_flags (DBusWatch *watch)
+ void*
+ dbus_watch_get_data (DBusWatch *watch)
+ {
++  _dbus_return_val_if_fail (watch != NULL, NULL);
++
+   return watch->data;
+ }
+ 
+@@ -595,6 +604,8 @@ dbus_watch_set_data (DBusWatch        *watch,
+                      void             *data,
+                      DBusFreeFunction  free_data_function)
+ {
++  _dbus_return_if_fail (watch != NULL);
++
+   _dbus_verbose ("Setting watch fd %d data to data = %p function = %p from data = %p function = %p\n",
+                  dbus_watch_get_socket (watch),
+                  data, free_data_function, watch->data, watch->free_data_function);
+@@ -616,7 +627,8 @@ dbus_watch_set_data (DBusWatch        *watch,
+ dbus_bool_t
+ dbus_watch_get_enabled (DBusWatch *watch)
+ {
+-  _dbus_assert (watch != NULL);
++  _dbus_return_val_if_fail (watch != NULL, FALSE);
++
+   return watch->enabled;
+ }
+ 
+@@ -647,6 +659,8 @@ dbus_bool_t
+ dbus_watch_handle (DBusWatch    *watch,
+                    unsigned int  flags)
+ {
++  _dbus_return_val_if_fail (watch != NULL, FALSE);
++
+ #ifndef DBUS_DISABLE_CHECKS
+   if (watch->fd < 0 || watch->flags == 0)
+     {
+-- 
+1.6.5.1.1367.gcd48
+
+From f6a67597dcba127ceafa5322152a468069912422 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Fri, 27 Aug 2010 16:51:44 +0200
+Subject: [PATCH 06/12] Extended autolaunch protocol with scope attribute.
+
+---
+ bus/main.c                   |    9 ---
+ cmake/config.h.cmake         |    2 +-
+ dbus/dbus-server-protected.h |    4 +-
+ dbus/dbus-server-socket.c    |    3 +
+ dbus/dbus-server-socket.h    |    2 +
+ dbus/dbus-server-win.c       |   30 +++++++-
+ dbus/dbus-server.c           |    1 +
+ dbus/dbus-sysdeps-win.c      |  160 +++++++++++++++++++++++++++++++++++++-----
+ dbus/dbus-sysdeps.h          |    7 +-
+ dbus/dbus-transport.c        |    8 ++-
+ 10 files changed, 188 insertions(+), 38 deletions(-)
+
+diff --git a/bus/main.c b/bus/main.c
+index b25c945..53038db 100644
+--- a/bus/main.c
++++ b/bus/main.c
+@@ -503,12 +503,6 @@ main (int argc, char **argv)
+       exit (1);
+     }
+ 
+-  is_session_bus = bus_context_get_type(context) != NULL
+-      && strcmp(bus_context_get_type(context),"session") == 0;
+-
+-  if (is_session_bus)
+-    _dbus_daemon_publish_session_bus_address (bus_context_get_address (context));
+-
+   /* bus_context_new() closes the print_addr_pipe and
+    * print_pid_pipe
+    */
+@@ -529,8 +523,5 @@ main (int argc, char **argv)
+   bus_context_unref (context);
+   bus_selinux_shutdown ();
+ 
+-  if (is_session_bus)
+-    _dbus_daemon_unpublish_session_bus_address ();
+-
+   return 0;
+ }
+diff --git a/cmake/config.h.cmake b/cmake/config.h.cmake
+index 956c6d2..c1b8aeb 100644
+--- a/cmake/config.h.cmake
++++ b/cmake/config.h.cmake
+@@ -16,7 +16,7 @@
+ #cmakedefine DBUS_DAEMON_NAME "@DBUS_DAEMON_NAME@"
+ #cmakedefine DBUS_SYSTEM_BUS_DEFAULT_ADDRESS  "@DBUS_SYSTEM_BUS_DEFAULT_ADDRESS@"
+ #cmakedefine DBUS_MACHINE_UUID_FILE "@DBUS_MACHINE_UUID_FILE@"
+-//#cmakedefine DBUS_SESSION_BUS_DEFAULT_ADDRESS "@DBUS_SESSION_BUS_DEFAULT_ADDRESS@"
++#cmakedefine DBUS_SESSION_BUS_DEFAULT_ADDRESS "@DBUS_SESSION_BUS_DEFAULT_ADDRESS@"
+ #cmakedefine DBUS_DAEMONDIR "@DBUS_DAEMONDIR@"
+ #cmakedefine PACKAGE "@PACKAGE@"
+ /* Version number of package */
+diff --git a/dbus/dbus-server-protected.h b/dbus/dbus-server-protected.h
+index cc2de8d..9e759c1 100644
+--- a/dbus/dbus-server-protected.h
++++ b/dbus/dbus-server-protected.h
+@@ -50,6 +50,7 @@ struct DBusServerVTable
+ };
+ 
+ /**
++ * @ingroup DBusServerInternals
+  * Internals of DBusServer object
+  */
+ struct DBusServer
+@@ -66,7 +67,8 @@ struct DBusServer
+   DBusTimeoutList *timeouts;                  /**< Our timeouts */  
+ 
+   char *address;                              /**< Address this server is listening on. */
+-  
++  dbus_bool_t published_address;              /**< flag which indicates that server has published its bus address. */
++
+   int max_connections;                        /**< Max number of connections allowed at once. */
+ 
+   DBusDataSlotList slot_list;   /**< Data stored by allocated integer ID */
+diff --git a/dbus/dbus-server-socket.c b/dbus/dbus-server-socket.c
+index dbd7213..758742d 100644
+--- a/dbus/dbus-server-socket.c
++++ b/dbus/dbus-server-socket.c
+@@ -251,6 +251,9 @@ socket_disconnect (DBusServer *server)
+       _dbus_delete_file (&tmp, NULL);
+     }
+ 
++  if (server->published_address)
++      _dbus_daemon_unpublish_session_bus_address();
++
+   HAVE_LOCK_CHECK (server);
+ }
+ 
+diff --git a/dbus/dbus-server-socket.h b/dbus/dbus-server-socket.h
+index 0a7c789..3aec712 100644
+--- a/dbus/dbus-server-socket.h
++++ b/dbus/dbus-server-socket.h
+@@ -33,6 +33,8 @@ DBusServer* _dbus_server_new_for_socket           (int              *fds,
+                                                    int               n_fds,
+                                                    const DBusString *address,
+                                                    DBusNonceFile    *noncefile);
++DBusServer* _dbus_server_new_for_autolaunch       (const DBusString *address,
++                                                   DBusError        *error);
+ DBusServer* _dbus_server_new_for_tcp_socket       (const char       *host,
+                                                    const char       *bind,
+                                                    const char       *port,
+diff --git a/dbus/dbus-server-win.c b/dbus/dbus-server-win.c
+index 5cfb73e..860978d 100644
+--- a/dbus/dbus-server-win.c
++++ b/dbus/dbus-server-win.c
+@@ -83,11 +83,35 @@ _dbus_server_listen_platform_specific (DBusAddressEntry *entry,
+           return DBUS_SERVER_LISTEN_DID_NOT_CONNECT;
+         }
+     }
++  else if (strcmp (method, "autolaunch") == 0)
++    {
++      const char *host = "localhost";
++      const char *bind = "localhost";
++      const char *port = "0";
++      const char *family = "ipv4";
++      const char *scope = dbus_address_entry_get_value (entry, "scope");
++
++      *server_p = _dbus_server_new_for_tcp_socket (host, bind, port,
++                                                   family, error, FALSE);
++      if (*server_p)
++        {
++          _DBUS_ASSERT_ERROR_IS_CLEAR(error);
++          /// @todo should we return an error when address could not be published ?
++          (*server_p)->published_address =
++              _dbus_daemon_publish_session_bus_address ((*server_p)->address, scope);
++          return DBUS_SERVER_LISTEN_OK;
++        }
++      else
++        {
++          _DBUS_ASSERT_ERROR_IS_SET(error);
++          return DBUS_SERVER_LISTEN_DID_NOT_CONNECT;
++        }
++    }
+   else
+     {
+-  _DBUS_ASSERT_ERROR_IS_CLEAR(error);
+-  return DBUS_SERVER_LISTEN_NOT_HANDLED;
+-}
++       _DBUS_ASSERT_ERROR_IS_CLEAR(error);
++       return DBUS_SERVER_LISTEN_NOT_HANDLED;
++    }
+ }
+ 
+ /** @} */
+diff --git a/dbus/dbus-server.c b/dbus/dbus-server.c
+index 18fa8c4..91fdcb6 100644
+--- a/dbus/dbus-server.c
++++ b/dbus/dbus-server.c
+@@ -104,6 +104,7 @@ _dbus_server_init_base (DBusServer             *server,
+   server->address = NULL;
+   server->watches = NULL;
+   server->timeouts = NULL;
++  server->published_address = FALSE;
+ 
+   if (!_dbus_string_init (&server->guid_hex))
+     return FALSE;
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index c2fe8d7..97256c6 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -37,6 +37,7 @@
+ #endif
+ 
+ #include "dbus-internals.h"
++#include "dbus-sha.h"
+ #include "dbus-sysdeps.h"
+ #include "dbus-threads.h"
+ #include "dbus-protocol.h"
+@@ -2536,35 +2537,139 @@ static const char *cDBusAutolaunchMutex = "DBusAutolaunchMutex";
+ // mutex to determine if dbus-daemon is already started (per user)
+ static const char *cDBusDaemonMutex = "DBusDaemonMutex";
+ // named shm for dbus adress info (per user)
+-#ifdef _DEBUG
+-static const char *cDBusDaemonAddressInfo = "DBusDaemonAddressInfoDebug";
+-#else
+ static const char *cDBusDaemonAddressInfo = "DBusDaemonAddressInfo";
+-#endif
+ 
++dbus_bool_t
++_dbus_get_install_root(char *prefix, int len);
+ 
+-void
+-_dbus_daemon_publish_session_bus_address (const char* address)
++static dbus_bool_t
++_dbus_get_install_root_as_hash(DBusString *out)
++{
++    DBusString install_path;
++
++    char path[MAX_PATH*2];
++    int path_size = sizeof(path);
++
++    if (!_dbus_get_install_root(path,path_size))
++        return FALSE;
++
++    _dbus_string_init(&install_path);
++    _dbus_string_append(&install_path,path);
++
++    _dbus_string_init(out);
++    _dbus_string_tolower_ascii(&install_path,0,_dbus_string_get_length(&install_path));
++
++    if (!_dbus_sha_compute (&install_path, out))
++        return FALSE;
++
++    return TRUE;
++}
++
++
++static dbus_bool_t
++_dbus_get_shm_address(DBusString *out,const char *scope)
++{
++  _dbus_string_init(out);
++  _dbus_string_append(out,cDBusDaemonAddressInfo);
++
++  if (strcmp(scope,"install-path") == 0)
++    {
++      DBusString temp;
++
++      if (!_dbus_get_install_root_as_hash(&temp))
++        {
++          _dbus_string_free(out);
++           return FALSE;
++        }
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,_dbus_string_get_const_data(&temp));
++      _dbus_string_free(&temp);
++      return TRUE;
++    }
++  else if (strlen(scope) > 0)
++    {
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,scope);
++      return TRUE;
++    }
++  else
++    {
++      return TRUE;
++    }
++}
++
++static dbus_bool_t
++_dbus_get_mutex_name(DBusString *out,const char *scope)
++{
++  _dbus_string_init(out);
++  _dbus_string_append(out,cDBusDaemonMutex);
++
++  if (strcmp(scope,"install-path") == 0)
++    {
++      DBusString temp;
++
++      if (!_dbus_get_install_root_as_hash(&temp))
++        {
++          _dbus_string_free(out);
++          return FALSE;
++        }
++
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,_dbus_string_get_const_data(&temp));
++      _dbus_string_free(&temp);
++      return TRUE;
++    }
++  else if (strlen(scope) > 0)
++    {
++      _dbus_string_append(out,"-");
++      _dbus_string_append(out,scope);
++      return TRUE;
++    }
++  else
++    {
++      return TRUE;
++    }
++}
++
++dbus_bool_t
++_dbus_daemon_publish_session_bus_address (const char* address, const char *scope)
+ {
+   HANDLE lock;
+   char *shared_addr = NULL;
+   DWORD ret;
++  char addressInfo[1024];
++  DBusString shm_address;
++  DBusString mutex_address;
+ 
+   _dbus_assert (address);
++
++  if (!_dbus_get_mutex_name(&mutex_address,scope))
++    {
++      _dbus_string_free( &mutex_address );
++      return FALSE;
++    }
++
+   // before _dbus_global_lock to keep correct lock/release order
+-  hDBusDaemonMutex = CreateMutexA( NULL, FALSE, cDBusDaemonMutex );
++  hDBusDaemonMutex = CreateMutexA( NULL, FALSE, _dbus_string_get_const_data(&mutex_address) );
+   ret = WaitForSingleObject( hDBusDaemonMutex, 1000 );
+   if ( ret != WAIT_OBJECT_0 ) {
+-    _dbus_warn("Could not lock mutex %s (return code %ld). daemon already running? Bus address not published.\n", cDBusDaemonMutex, ret );
+-    return;
++    _dbus_warn("Could not lock mutex %s (return code %d). daemon already running? Bus address not published.\n", _dbus_string_get_const_data(&mutex_address), ret );
++    return FALSE;
+   }
+ 
++  if (!_dbus_get_shm_address(&shm_address,scope))
++    {
++      _dbus_string_free( &mutex_address );
++      _dbus_string_free( &shm_address );
++      return FALSE;
++    }
++
+   // sync _dbus_daemon_publish_session_bus_address, _dbus_daemon_unpublish_session_bus_address and _dbus_daemon_already_runs
+   lock = _dbus_global_lock( cUniqueDBusInitMutex );
+ 
+   // create shm
+   hDBusSharedMem = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
+-                                      0, strlen( address ) + 1, cDBusDaemonAddressInfo );
++                                       0, strlen( address ) + 1, _dbus_string_get_const_data(&shm_address) );
+   _dbus_assert( hDBusSharedMem );
+ 
+   shared_addr = MapViewOfFile( hDBusSharedMem, FILE_MAP_WRITE, 0, 0, 0 );
+@@ -2577,6 +2682,9 @@ _dbus_daemon_publish_session_bus_address (const char* address)
+   UnmapViewOfFile( shared_addr );
+ 
+   _dbus_global_unlock( lock );
++  _dbus_string_free( &shm_address );
++  _dbus_string_free( &mutex_address );
++  return TRUE;
+ }
+ 
+ void
+@@ -2601,7 +2709,7 @@ _dbus_daemon_unpublish_session_bus_address (void)
+ }
+ 
+ static dbus_bool_t
+-_dbus_get_autolaunch_shm (DBusString *address)
++_dbus_get_autolaunch_shm (DBusString *address, DBusString *shm_address)
+ {
+   HANDLE sharedMem;
+   char *shared_addr;
+@@ -2610,7 +2718,7 @@ _dbus_get_autolaunch_shm (DBusString *address)
+   // read shm
+   for(i=0;i<20;++i) {
+       // we know that dbus-daemon is available, so we wait until shm is available
+-      sharedMem = OpenFileMappingA( FILE_MAP_READ, FALSE, cDBusDaemonAddressInfo );
++      sharedMem = OpenFileMappingA( FILE_MAP_READ, FALSE, _dbus_string_get_const_data(shm_address));
+       if( sharedMem == 0 )
+           Sleep( 100 );
+       if ( sharedMem != 0)
+@@ -2638,39 +2746,48 @@ _dbus_get_autolaunch_shm (DBusString *address)
+ }
+ 
+ static dbus_bool_t
+-_dbus_daemon_already_runs (DBusString *address)
++_dbus_daemon_already_runs (DBusString *address, DBusString *shm_address, const char *scope)
+ {
+   HANDLE lock;
+   HANDLE daemon;
++  DBusString mutex_address;
+   dbus_bool_t bRet = TRUE;
+ 
+   // sync _dbus_daemon_publish_session_bus_address, _dbus_daemon_unpublish_session_bus_address and _dbus_daemon_already_runs
+   lock = _dbus_global_lock( cUniqueDBusInitMutex );
+ 
++  if (!_dbus_get_mutex_name(&mutex_address,scope))
++    {
++      _dbus_string_free( &mutex_address );
++      return FALSE;
++    }
++
+   // do checks
+-  daemon = CreateMutexA( NULL, FALSE, cDBusDaemonMutex );
++  daemon = CreateMutexA( NULL, FALSE, _dbus_string_get_const_data(&mutex_address) );
+   if(WaitForSingleObject( daemon, 10 ) != WAIT_TIMEOUT)
+     {
+       ReleaseMutex (daemon);
+       CloseHandle (daemon);
+ 
+       _dbus_global_unlock( lock );
++      _dbus_string_free( &mutex_address );
+       return FALSE;
+     }
+ 
+   // read shm
+-  bRet = _dbus_get_autolaunch_shm( address );
++  bRet = _dbus_get_autolaunch_shm( address, shm_address );
+ 
+   // cleanup
+   CloseHandle ( daemon );
+ 
+   _dbus_global_unlock( lock );
++  _dbus_string_free( &mutex_address );
+ 
+   return bRet;
+ }
+ 
+ dbus_bool_t
+-_dbus_get_autolaunch_address (DBusString *address, 
++_dbus_get_autolaunch_address (const char *scope, DBusString *address,
+                               DBusError *error)
+ {
+   HANDLE mutex;
+@@ -2681,12 +2798,19 @@ _dbus_get_autolaunch_address (DBusString *address,
+   char dbus_exe_path[MAX_PATH];
+   char dbus_args[MAX_PATH * 2];
+   const char * daemon_name = DBUS_DAEMON_NAME ".exe";
++  DBusString shm_address;
+ 
+   mutex = _dbus_global_lock ( cDBusAutolaunchMutex );
+ 
+   _DBUS_ASSERT_ERROR_IS_CLEAR (error);
+ 
+-  if (_dbus_daemon_already_runs(address))
++  if (!_dbus_get_shm_address(&shm_address,scope))
++    {
++        dbus_set_error_const (error, DBUS_ERROR_FAILED, "could not determine shm address");
++        return FALSE;
++    }
++
++  if (_dbus_daemon_already_runs(address,&shm_address,scope))
+     {
+         _dbus_verbose("found already running dbus daemon\n");
+         retval = TRUE;
+@@ -2713,7 +2837,7 @@ _dbus_get_autolaunch_address (DBusString *address,
+     {
+       CloseHandle (pi.hThread);
+       CloseHandle (pi.hProcess);
+-      retval = _dbus_get_autolaunch_shm( address );
++      retval = _dbus_get_autolaunch_shm( address, &shm_address );
+     }
+   
+   if (retval == FALSE)
+diff --git a/dbus/dbus-sysdeps.h b/dbus/dbus-sysdeps.h
+index c98db36..a0f62ee 100644
+--- a/dbus/dbus-sysdeps.h
++++ b/dbus/dbus-sysdeps.h
+@@ -207,7 +207,7 @@ dbus_bool_t _dbus_windows_user_is_process_owner (const char        *windows_sid)
+ dbus_bool_t _dbus_append_keyring_directory_for_credentials (DBusString      *directory,
+                                                             DBusCredentials *credentials);
+ 
+-void _dbus_daemon_publish_session_bus_address (const char* address);
++dbus_bool_t _dbus_daemon_publish_session_bus_address (const char* address, const char* shm_address);
+ 
+ void _dbus_daemon_unpublish_session_bus_address (void);
+ 
+@@ -474,8 +474,9 @@ void _dbus_system_logv (DBusSystemLogSeverity severity, const char *msg, va_list
+       _DBUS_BYTE_OF_PRIMITIVE (a, 6) == _DBUS_BYTE_OF_PRIMITIVE (b, 6) &&       \
+       _DBUS_BYTE_OF_PRIMITIVE (a, 7) == _DBUS_BYTE_OF_PRIMITIVE (b, 7))
+ 
+-dbus_bool_t _dbus_get_autolaunch_address (DBusString *address, 
+-					  DBusError *error);
++dbus_bool_t _dbus_get_autolaunch_address (const char *scope,
++                                          DBusString *address,
++					                      DBusError  *error);
+ 
+ dbus_bool_t _dbus_lookup_session_address (dbus_bool_t *supported,
+                                           DBusString  *address,
+diff --git a/dbus/dbus-transport.c b/dbus/dbus-transport.c
+index f33dc60..a078f7c 100644
+--- a/dbus/dbus-transport.c
++++ b/dbus/dbus-transport.c
+@@ -273,7 +273,7 @@ check_address (const char *address, DBusError *error)
+  * @returns a new transport, or #NULL on failure.
+  */
+ static DBusTransport*
+-_dbus_transport_new_for_autolaunch (DBusError      *error)
++_dbus_transport_new_for_autolaunch (const char *scope, DBusError *error)
+ {
+   DBusString address;
+   DBusTransport *result = NULL;
+@@ -286,7 +286,7 @@ _dbus_transport_new_for_autolaunch (DBusError      *error)
+       return NULL;
+     }
+ 
+-  if (!_dbus_get_autolaunch_address (&address, error))
++  if (!_dbus_get_autolaunch_address (scope, &address, error))
+     {
+       _DBUS_ASSERT_ERROR_IS_SET (error);
+       goto out;
+@@ -315,7 +315,9 @@ _dbus_transport_open_autolaunch (DBusAddressEntry  *entry,
+ 
+   if (strcmp (method, "autolaunch") == 0)
+     {
+-      *transport_p = _dbus_transport_new_for_autolaunch (error);
++      const char *scope = dbus_address_entry_get_value (entry, "scope");
++
++      *transport_p = _dbus_transport_new_for_autolaunch (scope, error);
+ 
+       if (*transport_p == NULL)
+         {
+-- 
+1.6.5.1.1367.gcd48
+
+From 72ce31c59fa5e9c89355bad2c9eeb9488d829475 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Fri, 27 Aug 2010 17:03:16 +0200
+Subject: [PATCH 07/12] Fixed case when no scope attribute is used.
+
+---
+ dbus/dbus-sysdeps-win.c |   12 ++++++++++--
+ 1 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index 97256c6..821bc7b 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -2572,7 +2572,11 @@ _dbus_get_shm_address(DBusString *out,const char *scope)
+   _dbus_string_init(out);
+   _dbus_string_append(out,cDBusDaemonAddressInfo);
+ 
+-  if (strcmp(scope,"install-path") == 0)
++  if (!scope)
++    {
++      return TRUE;
++    }
++  else if (strcmp(scope,"install-path") == 0)
+     {
+       DBusString temp;
+ 
+@@ -2604,7 +2608,11 @@ _dbus_get_mutex_name(DBusString *out,const char *scope)
+   _dbus_string_init(out);
+   _dbus_string_append(out,cDBusDaemonMutex);
+ 
+-  if (strcmp(scope,"install-path") == 0)
++  if (!scope)
++    {
++      return TRUE;
++    }
++  else if (strcmp(scope,"install-path") == 0)
+     {
+       DBusString temp;
+ 
+-- 
+1.6.5.1.1367.gcd48
+
+From 4510983f13c8a403a0e4a916119667f24920bdd5 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Tue, 28 Sep 2010 08:17:38 +0200
+Subject: [PATCH 10/12] When launching dbus-daemon be more verbose in error case.
+
+---
+ dbus/dbus-sysdeps-win.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index 821bc7b..3c8da94 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -2846,10 +2846,14 @@ _dbus_get_autolaunch_address (const char *scope, DBusString *address,
+       CloseHandle (pi.hThread);
+       CloseHandle (pi.hProcess);
+       retval = _dbus_get_autolaunch_shm( address, &shm_address );
++      if (retval == FALSE)
++        dbus_set_error_const (error, DBUS_ERROR_FAILED, "Failed to get autolaunch address from launched dbus-daemon");
++    }
++  else
++    {
++      dbus_set_error_const (error, DBUS_ERROR_FAILED, "Failed to launch dbus-daemon");
++      retval == FALSE;
+     }
+-  
+-  if (retval == FALSE)
+-    dbus_set_error_const (error, DBUS_ERROR_FAILED, "Failed to launch dbus-daemon");
+ 
+ out:
+   if (retval)
+-- 
+1.6.5.1.1367.gcd48
+
+From 4f5202467de6e81c541fa1a2fc604009846b0558 Mon Sep 17 00:00:00 2001
+From: Romain Pokrzywka <romain@kdab.com>
+Date: Mon, 4 Oct 2010 12:33:36 +0200
+Subject: [PATCH 12/12] restore the close_on_exec flag on windows
+
+---
+ dbus/dbus-sysdeps-win.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-win.c b/dbus/dbus-sysdeps-win.c
+index b437e05..9be5104 100644
+--- a/dbus/dbus-sysdeps-win.c
++++ b/dbus/dbus-sysdeps-win.c
+@@ -1359,6 +1359,8 @@ _dbus_connect_tcp_socket_with_nonce (const char     *host,
+         }
+     }
+ 
++  _dbus_fd_set_close_on_exec (fd);
++
+   if (!_dbus_set_fd_nonblocking (fd, error))
+     {
+       closesocket (fd);
+@@ -1551,6 +1553,7 @@ _dbus_listen_tcp_socket (const char     *host,
+ 
+   for (i = 0 ; i < nlisten_fd ; i++)
+     {
++      _dbus_fd_set_close_on_exec (listen_fd[i]);
+       if (!_dbus_set_fd_nonblocking (listen_fd[i], error))
+         {
+           goto failed;
+-- 
+1.6.5.1.1367.gcd48
+

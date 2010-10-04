@@ -24,27 +24,28 @@ class subinfo(info.infoclass):
         self.targetDigests['1.3.1'] = 'e8fa74ad6f2294bdf7d22aed25896d8943287c32'
         self.targetInstSrc['1.3.1'] = 'dbus-1.3.1'
         self.targetConfigurePath['1.3.1'] = 'cmake'
-        self.patchToApply['gitHEAD'] = [('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                        ('dbus-gitHEAD-restore-the-close_on_exec-flag-on-windows.patch', 1)
-                                        ]
-        if platform.isCrossCompilingEnabled():
-            self.patchToApply['1.3.1'] = [('dbus-1.3.1.diff', 1) ,
-                                          ('no-auth.diff', 1),
-                                          ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                          ('dbus-1.3.1-restore-the-close_on_exec-flag-on-windows.patch', 0)]
-        else:
-            self.patchToApply['1.3.1'] = [('0001-Extended-autolaunch-protocol-with-scope-attribute.patch', 1),
-                                          ('0002-Fixed-case-when-no-scope-attribute-is-used.patch', 1),
-                                          ('dbus-1.3.1.diff', 1),
-                                          ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                          ('dbus-1.3.1-restore-the-close_on_exec-flag-on-windows.patch', 0)]
-        
+        self.targets['1.4.0'] = 'http://cgit.freedesktop.org/dbus/dbus/snapshot/dbus-1.4.0.tar.bz2'
+        self.targetDigests['1.4.0'] = '3983d9a1456e5772fa4cb5e2818ed015b2f6131b'
+        self.targetInstSrc['1.4.0'] = 'dbus-1.4.0'
+        self.targetConfigurePath['1.4.0'] = 'cmake'
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
 
-        self.defaultTarget = '1.3.1'
-        self.options.package.version = '1.3.1-1'
+        self.patchToApply['gitHEAD'] = [('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
+                                        ('dbus-gitHEAD-restore-the-close_on_exec-flag-on-windows.patch', 1)
+                                        ]
+                                        
+        if platform.isCrossCompilingEnabled():
+            self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
+                                          ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
+                                          ('no-auth.diff', 1)]
+        else:
+            self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
+                                          ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1)]
+        
+        self.defaultTarget = '1.4.0'
+        self.options.package.version = '1.4.0-1'
         
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
