@@ -24,6 +24,7 @@ HKLM, Drivers\GnuPG_Device, Index, 0x00010001, 1
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
+akonadictl.exe,0,akonadictl.exe
 
 [Shortcuts]
 KMail-Mobile,0,kmail-mobile.exe
