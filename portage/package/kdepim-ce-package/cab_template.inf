@@ -21,17 +21,22 @@ HKLM, Software\freedesktop\DBus, Install Directory, 0, %InstallDir%/bin
 HKLM, Drivers\GnuPG_Device, dll, 0, gpgcedev.dll
 HKLM, Drivers\GnuPG_Device, prefix, 0,  GPG
 HKLM, Drivers\GnuPG_Device, Index, 0x00010001, 1
+HKLM, Security\Shell\StartInfo\Start\KDE Mail.lnk, Icon, 0, %InstallDir%/share/icons/mail-90.png
+HKLM, Security\Shell\StartInfo\Start\KDE Notes.lnk, Icon, 0, %InstallDir%/share/icons/notes-90.png
+HKLM, Security\Shell\StartInfo\Start\KDE Calendar.lnk, Icon, 0, %InstallDir%/share/icons/organizer-90.png
+HKLM, Security\Shell\StartInfo\Start\KDE Contacts.lnk, Icon, 0, %InstallDir%/share/icons/contacts-90.png
+HKLM, Security\Shell\StartInfo\Start\KDE Tasks.lnk, Icon, 0, %InstallDir%/share/icons/tasks-90.png
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
 akonadictl.exe,0,akonadictl.exe
 
 [Shortcuts]
-KMail-Mobile,0,kmail-mobile.exe
-Notes-Mobile,0,notes-mobile.exe
-KAddressbook-Mobile,0,kaddressbook-mobile.exe
-KOrganizer-Mobile,0,korganizer-mobile.exe
-Tasks-Mobile,0,tasks-mobile.exe
+KDE Mail,0,kmail-mobile.exe
+KDE Notes,0,notes-mobile.exe
+KDE Contacts,0,kaddressbook-mobile.exe
+KDE Calendar,0,korganizer-mobile.exe
+KDE Tasks,0,tasks-mobile.exe
 
 [SourceDisksNames]
 $SOURCEDISKNAMES

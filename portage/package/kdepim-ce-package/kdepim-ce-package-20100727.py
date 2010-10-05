@@ -48,9 +48,15 @@ class MainPackage(CMakePackageBase):
                                     "bin\\korganizer-mobile.exe",
                                     "bin\\notes-mobile.exe",
                                     "bin\\tasks-mobile.exe" ]
-
+        # Icons for the Start Menu
+        self.menu_icons = [ "contacts-90.png",
+                            "mail-90.png",
+                            "notes-90.png",
+                            "organizer-90.png",
+                            "tasks-90.png" ]
     def execute(self):
         (command, option) = self.getAction()
+        if self.isHostBuild(): return True
         if command == "compile":
             whitelist = "whitelist.txt"
             whitelist = os.path.join(self.packageDir(), whitelist)
@@ -169,6 +175,14 @@ class MainPackage(CMakePackageBase):
                 utils.die("Trying to use the custom loader but no loader \
 found in: %s \n Please ensure that package wincetools is installed" %\
                 os.path.join(wm_root, "bin"))
+        # Add start menu icons to the Package
+        for f in self.menu_icons:
+            path2file = os.path.join(self.packageDir(), "icons", f)
+            if os.path.isfile(path2file):
+                utils.copyFile(path2file, os.path.join(self.workDir(),
+                    "share", "icons"))
+            else:
+                utils.debug("Failed to copy %s not a file: %s" % path2file, 1)
 
     def traverse(self, directory, whitelist = lambda f: True):
         '''
