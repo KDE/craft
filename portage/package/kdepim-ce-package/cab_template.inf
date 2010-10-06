@@ -29,7 +29,6 @@ HKLM, Security\Shell\StartInfo\Start\KDE Tasks.lnk, Icon, 0, %InstallDir%/share/
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
-akonadictl.exe,0,akonadictl.exe
 
 [Shortcuts]
 KDE Mail,0,kmail-mobile.exe
