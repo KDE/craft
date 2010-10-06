@@ -63,13 +63,16 @@ diff --git a/src/declarative/declarative.pro b/src/declarative/declarative.pro
 index 510e7a5..83fbe2d 100644
 --- a/src/declarative/declarative.pro
 +++ b/src/declarative/declarative.pro
-@@ -26,3 +26,6 @@ include(qml/qml.pri)
+@@ -26,6 +26,9 @@ include(qml/qml.pri)
  include(debugger/debugger.pri)
  
  symbian:TARGET.UID3=0x2001E623
 +wince*: {
 +        SOURCES += ../corelib/global/new.cpp
 +}
+ 
+ DEFINES += QT_NO_OPENTYPE
+ INCLUDEPATH += ../3rdparty/harfbuzz/src
 diff --git a/src/gui/gui.pro b/src/gui/gui.pro
 index 90b5de5..f958856 100644
 --- a/src/gui/gui.pro
