@@ -1805,8 +1805,8 @@ static FORCEINLINE int win32_acquire_lock (MLOCK_T *sl) {
         return 0;
       }
     }
-    //    if ((++spins & SPINS_PER_YIELD) == 0)
-    //      SleepEx(0, FALSE);
+    if ((++spins & SPINS_PER_YIELD) == 0)
+        Sleep(0);
   }
 }
 
@@ -1898,7 +1898,7 @@ static void init_malloc_global_mutex() {
       interlockedexchange(&malloc_global_mutex_status,1);
       return;
     }
-    //    SleepEx(0, FALSE);
+    Sleep(0);
   }
 }
 
