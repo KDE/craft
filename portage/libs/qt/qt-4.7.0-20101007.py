@@ -47,7 +47,7 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1),
             ('qt-4.7.0-Override-new-in-qt-dlls-to-use-dlmalloc.patch',1)
             ]
-        if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ) or COMPILER == "msvc2010":
+        if platform.isCrossCompilingEnabled() or  COMPILER == "msvc2010":
             self.defaultTarget = '4.7'
         else:
             self.defaultTarget = '4.7.0'
