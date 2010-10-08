@@ -787,14 +787,18 @@ def cleanDirectory( dir ):
 
 def sedFile( directory, file, sedcommand ):
     """ runs the given sed command on the given file """
-    os.chdir( directory )
-    backup = "%s.orig" % file
-    if( os.path.isfile( backup ) ):
-        os.remove( backup )
+    olddir = os.getcwd()
+    try:
+        os.chdir( directory )
+        backup = "%s.orig" % file
+        if( os.path.isfile( backup ) ):
+            os.remove( backup )
 
-    command = "sed -i.orig %s %s" % ( sedcommand, file )
+        command = "sed -i.orig %s %s" % ( sedcommand, file )
 
-    system( command )
+        system( command )
+    finally:
+        os.chdir( olddir )
 
 def digestFile( filepath ):
     """ md5-digests a file """
