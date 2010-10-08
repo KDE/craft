@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/qjson'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ' git://gitorious.org/~saroengels/dbusmenu/saroengels-dbusmenu-qt.git'
+        self.svnTargets['gitHEAD'] = 'git://gitorious.org/dbusmenu/dbusmenu-qt.git'
         self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
