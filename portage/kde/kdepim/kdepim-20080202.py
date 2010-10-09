@@ -16,7 +16,8 @@ class subinfo(info.infoclass):
         else:
             self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['kdesupport/grantlee'] = 'default'
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['kdesupport/grantlee'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         
     def setBuildOptions( self ):
