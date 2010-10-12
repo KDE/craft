@@ -1,0 +1,15 @@
+diff -Nru libmsn-4.0.orig/msn/CMakeLists.txt libmsn-4.0/msn/CMakeLists.txt
+--- libmsn-4.0.orig/msn/CMakeLists.txt	2009-11-10 18:09:35.000000000 +0100
++++ libmsn-4.0/msn/CMakeLists.txt	2010-10-12 18:26:34.090090900 +0200
+@@ -18,11 +18,6 @@
+     passport.cpp
+ )
+ 
+-if(WIN32)
+-set(msn_STAT_SRCS   ${msn_STAT_SRCS}
+-                    ${OPENSSL_INCLUDE_DIR}/openssl/applink.c)
+-endif(WIN32)
+-
+ set(msn_HEADERS
+     authdata.h
+     message.h
