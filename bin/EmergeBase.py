@@ -345,19 +345,19 @@ class EmergeBase():
             print "entering: %s" % self.imageDir()
         
         
-    def system( self, command, errorMessage="", debuglevel=1 ):
+    def system( self, command, errorMessage="", debuglevel=1, *args, **kw):
         """convencience function for running system commands. 
         This method prints a debug message and then runs a system command. 
         If the system command returns with errors the methos prints an error 
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
         
-        utils.debug( command, debuglevel )
-        if utils.system( command ):
+        utils.debug( str(command), debuglevel )
+        if utils.system( command, *args, **kw):
             return True
         if self.subinfo.options.exitOnErrors:
-            utils.die( "while running %s cmd: %s" % (errorMessage , command) )
+            utils.die( "while running %s cmd: %s" % (errorMessage , str(command)) )
         else:
-            utils.error( "while running %s cmd: %s" % (errorMessage , command) )
+            utils.error( "while running %s cmd: %s" % (errorMessage , str(command)) )
         return False
 
     def proxySettings(self):

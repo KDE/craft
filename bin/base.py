@@ -537,11 +537,17 @@ class baseclass:
     def msysInstall( self, bOutOfSource = True ):
         return self.msys.msysInstall( bOutOfSource )
 
-    def system( self, command , infileName = None, outfileName = os.path.join( ROOTDIR, "out.log" ), errfileName = os.path.join( ROOTDIR, "out.log" ) ):
-        """this function should be called instead of os.system it will return the errorstatus"""
-        """and take the name of a possible command file and the names of stdout and stderr"""
-        """logfiles. it should be called  """
-        utils.system( command ) or utils.die( "os.system ( %s ) failed" % command )
+    def system( self, command, *args, **kw ):
+        """
+            This function should be called instead of os.system it provides
+            an entry point to modifiy system calls globally.
+            The return value of the called command is checked and on failure
+            emerge exits accordingly.
+            For available keyword options please refer to the python 
+            documentation of system.popen
+        """
+        utils.system( command, *args, **kw ) or \
+                utils.die( "os.system ( %s ) failed" % ( command ) )
         return True
 
 # ############################################################################################

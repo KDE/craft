@@ -505,12 +505,12 @@ def die( message ):
     print >> sys.stderr, "emerge fatal error: %s" % message
     exit( 1 )
 
-def system( cmdstring, outstream=None, errstream=None ):
+def system( cmd, outstream=None, errstream=None, *args, **kw ):
 
     if outstream is None: outstream = sys.stdout
     if errstream is None: errstream = sys.stderr
 
-    debug( "executing command: %s" % cmdstring, 1 )
+    debug( "executing command: %s" % str(cmd), 1 )
     redirected = False
     try:
         if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
@@ -518,7 +518,8 @@ def system( cmdstring, outstream=None, errstream=None ):
             sys.stderr = file('test.outlog', 'wb')
             sys.stdout = sys.stderr
 
-        p = subprocess.Popen( cmdstring, shell=True, stdout=outstream, stderr=errstream )
+        p = subprocess.Popen( cmd, shell=True, stdout=outstream,
+                stderr=errstream, *args, **kw )
         ret = p.wait()
     finally:
         if redirected:
