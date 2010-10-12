@@ -31,14 +31,14 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         # hardcoded for now
         #self.subinfo.options.package.version = '4.3.63'
 
-    def repositoryPath(self,index=0):
+    def repositoryUrl(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
         # then is not be overrideable for unknown reasons 
-        url = SvnSource.repositoryPath(self,index) % self.language
+        url = SvnSource.repositoryUrl(self,index) % self.language
         return url
 
-    def sourceDir(self,index=0):
-        dir = SvnSource.sourceDir(self,index) % self.language
+    def checkoutDir(self,index=0):
+        dir = SvnSource.checkoutDir(self,index) % self.language
         return dir
         
     def buildRoot(self):
@@ -47,12 +47,11 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
 
     def unpack(self):
         autogen = os.path.join( self.packageDir() , "autogen.py" )
-        if not SvnSource.unpack(self): 
+        if not SvnSource.unpack(self):
             return False
         # execute autogen.py and generate the CMakeLists.txt files
-        cmd = "cd %s && python %s %s" % \
-              (self.sourceDir()+'/..', autogen, self.language )
-        return self.system( cmd )
+        cmd = ( "python", autogen, self.language )
+        return self.system( cmd, cwd=os.path.join( self.sourceDir(), ".." ) )
 
     def configure(self):
         if not os.path.exists(os.path.join(self.buildDir(),"CMakeCache.txt")):
