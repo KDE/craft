@@ -1,0 +1,24 @@
+From 779fee2ae3275f337dfb345c510570c6fd98b738 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
+Date: Wed, 13 Oct 2010 16:28:49 +0200
+Subject: [PATCH] Fix one possible WinCE hang in qt event loop
+
+---
+ src/corelib/kernel/qeventdispatcher_win.cpp |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
+index 153ccdf..2399477 100644
+--- a/src/corelib/kernel/qeventdispatcher_win.cpp
++++ b/src/corelib/kernel/qeventdispatcher_win.cpp
+@@ -816,6 +816,7 @@ bool QEventDispatcherWin32::processEvents(QEventLoop::ProcessEventsFlags flags)
+ 
+         // still nothing - wait for message or signalled objects
+         canWait = (!retVal
++                   && !needWM_QT_SENDPOSTEDEVENTS
+                    && !d->interrupt
+                    && (flags & QEventLoop::WaitForMoreEvents));
+         if (canWait) {
+-- 
+1.5.6.5
+
