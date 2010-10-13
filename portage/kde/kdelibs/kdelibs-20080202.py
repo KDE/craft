@@ -22,8 +22,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
+        self.hardDependencies['kdesupport/attica'] = 'default'
         if not platform.isCrossCompilingEnabled():
-            self.hardDependencies['kdesupport/attica'] = 'default'
             self.hardDependencies['kdesupport/dbusmenu-qt'] = 'default'
             self.hardDependencies['kdesupport/qca'] = 'default'
             self.hardDependencies['kdesupport/qimageblitz'] = 'default'
