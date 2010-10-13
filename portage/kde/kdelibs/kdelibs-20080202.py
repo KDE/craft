@@ -62,10 +62,13 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
             
-        if platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
-            if self.isTargetBuild():
-                self.subinfo.options.configure.defines += "-DKDE_PLATFORM_PROFILE=Mobile -DBUILD_kutils=TRUE -DBUILD_kross=TRUE "
+        if self.isTargetBuild():
+            self.subinfo.options.configure.defines += \
+                    "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
+            self.subinfo.options.configure.defines += \
+                    "-DKDE_PLATFORM_PROFILE=Mobile "\
+                    "-DBUILD_kutils=TRUE "\
+                    "-DBUILD_kross=TRUE "
 
 if __name__ == '__main__':
     Package().execute()
