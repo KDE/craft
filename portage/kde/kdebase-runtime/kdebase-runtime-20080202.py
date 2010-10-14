@@ -3,7 +3,11 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['komobranch'] = 'branches/work/komo/kdebase/runtime'
+        if platform.isCrossCompilingEnabled():
+            self.defaultTarget = 'komobranch'
+        else:
+            self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
@@ -26,7 +30,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = ""
         if platform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
-        
+
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
             
