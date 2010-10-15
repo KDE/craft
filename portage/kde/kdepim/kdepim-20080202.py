@@ -38,7 +38,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DBUILD_mobile=ON -DBUILD_messagecomposer=ON  -DBUILD_runtime=ON "
             self.subinfo.options.configure.defines += " -DMESSAGEVIEWER_NO_WEBKIT=ON "
             self.subinfo.options.configure.defines += " -DTEMPLATEPARSER_NO_WEBKIT=ON "
-            self.subinfo.options.configure.defines += " -DIMAPRESOURCE_NO_SOLID=ON "
+            #self.subinfo.options.configure.defines += " -DIMAPRESOURCE_NO_SOLID=ON "
             self.subinfo.options.configure.defines += " -DRUNTIME_PLUGINS_STATIC=ON "
             self.subinfo.options.configure.defines += " -DKDEQMLPLUGIN_STATIC=ON "
             self.subinfo.options.configure.defines += " -DACCOUNTWIZARD_NO_GHNS=ON "
