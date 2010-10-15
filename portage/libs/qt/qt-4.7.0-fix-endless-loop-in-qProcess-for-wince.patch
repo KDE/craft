@@ -1,0 +1,28 @@
+From 428ddc8bba928b5c3859cae943eddcdcce57fd66 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andy@kdab.com>
+Date: Fri, 15 Oct 2010 12:09:47 +0200
+Subject: [PATCH 2/2] -fix endless loop in qProcess for wince
+
+---
+ src/corelib/io/qprocess_win.cpp |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/src/corelib/io/qprocess_win.cpp b/src/corelib/io/qprocess_win.cpp
+index 702349f..39186fb 100644
+--- a/src/corelib/io/qprocess_win.cpp
++++ b/src/corelib/io/qprocess_win.cpp
+@@ -440,9 +440,11 @@ void QProcessPrivate::startProcess()
+         processFinishedNotifier = new QWinEventNotifier(pid->hProcess, q);
+         QObject::connect(processFinishedNotifier, SIGNAL(activated(HANDLE)), q, SLOT(_q_processDied()));
+         processFinishedNotifier->setEnabled(true);
++#if !defined(Q_OS_WINCE)
+         notifier = new QTimer(q);
+         QObject::connect(notifier, SIGNAL(timeout()), q, SLOT(_q_notified()));
+         notifier->start(NOTIFYTIMEOUT);
++#endif
+     }
+ 
+     // give the process a chance to start ...
+-- 
+1.7.0.2.msysgit.0
+

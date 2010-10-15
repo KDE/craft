@@ -1,17 +1,47 @@
-From 779fee2ae3275f337dfb345c510570c6fd98b738 Mon Sep 17 00:00:00 2001
-From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
-Date: Wed, 13 Oct 2010 16:28:49 +0200
-Subject: [PATCH] Fix one possible WinCE hang in qt event loop
+From 38a2cd34c36f03e51e6a57a29199fdf57406bfa8 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andy@kdab.com>
+Date: Fri, 15 Oct 2010 11:54:35 +0200
+Subject: [PATCH] - fix async handler thread
 
 ---
- src/corelib/kernel/qeventdispatcher_win.cpp |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ src/corelib/kernel/qeventdispatcher_win.cpp |   13 +++++++++----
+ 1 files changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
-index 153ccdf..2399477 100644
+index 153ccdf..ff346c1 100644
 --- a/src/corelib/kernel/qeventdispatcher_win.cpp
 +++ b/src/corelib/kernel/qeventdispatcher_win.cpp
-@@ -816,6 +816,7 @@ bool QEventDispatcherWin32::processEvents(QEventLoop::ProcessEventsFlags flags)
+@@ -249,21 +249,25 @@ namespace {
+     }
+ } // namespace
+ 
+-Q_GLOBAL_STATIC(SocketAsyncHandler, qt_async_handler)
++QThreadStorage<SocketAsyncHandler *> qt_async_handler;
+ 
+ int WSAAsyncSelect(SOCKET sock, HWND handle, unsigned int msg, long ev)
+ {
++    if (!qt_async_handler.hasLocalData()){
++      qt_async_handler.setLocalData(new SocketAsyncHandler());
++    }
++
+     if (sock == 0 || handle == 0 || handle == INVALID_HANDLE_VALUE) {
+         WSASetLastError(WSAEINVAL);
+         return SOCKET_ERROR;
+     }
+ 
+     if (msg == 0 && ev == 0)
+-        qt_async_handler()->safeRemove(sock);
++        qt_async_handler.localData()->safeRemove(sock);
+     else
+-        qt_async_handler()->select(sock, handle, msg, ev);
++        qt_async_handler.localData()->select(sock, handle, msg, ev);
+ 
+-    qt_async_handler()->start(QThread::LowPriority);
++    qt_async_handler.localData()->start();
+     WSASetLastError(0);
+     return 0;
+ }
+@@ -816,6 +820,7 @@ bool QEventDispatcherWin32::processEvents(QEventLoop::ProcessEventsFlags flags)
  
          // still nothing - wait for message or signalled objects
          canWait = (!retVal
@@ -20,5 +50,5 @@ index 153ccdf..2399477 100644
                     && (flags & QEventLoop::WaitForMoreEvents));
          if (canWait) {
 -- 
-1.5.6.5
+1.7.0.2.msysgit.0
 
