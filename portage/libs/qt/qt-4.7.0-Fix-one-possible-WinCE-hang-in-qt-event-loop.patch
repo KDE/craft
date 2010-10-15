@@ -1,17 +1,26 @@
-From 38a2cd34c36f03e51e6a57a29199fdf57406bfa8 Mon Sep 17 00:00:00 2001
+From e541ce0bc44b3799ea386e71c37419ad82fad932 Mon Sep 17 00:00:00 2001
 From: Andreas Holzammer <andy@kdab.com>
-Date: Fri, 15 Oct 2010 11:54:35 +0200
+Date: Fri, 15 Oct 2010 13:01:54 +0200
 Subject: [PATCH] - fix async handler thread
 
 ---
- src/corelib/kernel/qeventdispatcher_win.cpp |   13 +++++++++----
- 1 files changed, 9 insertions(+), 4 deletions(-)
+ src/corelib/kernel/qeventdispatcher_win.cpp |   15 +++++++++++----
+ 1 files changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
-index 153ccdf..ff346c1 100644
+index 153ccdf..607061c 100644
 --- a/src/corelib/kernel/qeventdispatcher_win.cpp
 +++ b/src/corelib/kernel/qeventdispatcher_win.cpp
-@@ -249,21 +249,25 @@ namespace {
+@@ -97,6 +97,8 @@ QT_BEGIN_INCLUDE_NAMESPACE
+ #include <qmutex.h>
+ QT_END_INCLUDE_NAMESPACE
+ 
++#include <qthreadstorage.h>
++
+ //#define QCE_ASYNC_DEBUG
+ 
+ namespace {
+@@ -249,21 +251,25 @@ namespace {
      }
  } // namespace
  
@@ -41,7 +50,7 @@ index 153ccdf..ff346c1 100644
      WSASetLastError(0);
      return 0;
  }
-@@ -816,6 +820,7 @@ bool QEventDispatcherWin32::processEvents(QEventLoop::ProcessEventsFlags flags)
+@@ -816,6 +822,7 @@ bool QEventDispatcherWin32::processEvents(QEventLoop::ProcessEventsFlags flags)
  
          // still nothing - wait for message or signalled objects
          canWait = (!retVal
