@@ -1,7 +1,44 @@
+diff -Nru cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake
+--- cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake	2010-10-06 18:51:42.109171900 +0200
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 --- cyrus-sasl-2.1.22.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ cyrus-sasl-2.1.22/CMakeLists.txt	2010-08-31 14:41:46.271660000 +0200
-@@ -0,0 +1,240 @@
+@@ -0,0 +1,276 @@
 +project(cyrus-sasl)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(PACKAGE "cyrus-sasl")
@@ -10,8 +47,8 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +set(PLUGINDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
 +set(CONFIGDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
 +
-+option(STATIC_PLUGIN "test" ON)
-+option(STATIC_LIBRARY "test" ON)
++option(STATIC_PLUGIN "build the sasl plugins statically" ON)
++option(STATIC_LIBRARY "build the sasl library statically" ON)
 +
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
@@ -24,16 +61,51 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +
 +include(CheckIncludeFiles)
 +check_include_files(sys/socket.h   HAVE_SYS_SOCKET_H)
-+check_include_files(syslog.h       HAVE_SYSLOG)
++check_include_files(syslog.h       HAVE_SYSLOG_H)
++check_include_files(getopt.h       HAVE_GETOPT_H)
 +check_include_files(time.h         HAVE_TIME_H)
 +check_include_files(unistd.h       HAVE_UNISTD_H)
++check_include_files(des.h          HAVE_DES_H)
++check_include_files(dirent.h       HAVE_DIRENT_H)
++check_include_files(dlfcn.h        HAVE_DLFCN_H)
++check_include_files(fcntl.h  HAVE_FCNTL_H)
++check_include_files(gssapi.h  HAVE_GSSAPI_H)
++check_include_files(inttypes.h  HAVE_INTTYPES_H)
++check_include_files(lber.h  HAVE_LBER_H)
++check_include_files(ldap.h  HAVE_LDAP_H)
++check_include_files(limits.h  HAVE_LIMITS_H)
++check_include_files(malloc.h  HAVE_MALLOC_H)
++check_include_files(memory.h  HAVE_MEMORY_H)
++check_include_files(ndir.h  HAVE_NDIR_H)
++check_include_files(pam/pam_appl.h  HAVE_PAM_PAM_APPL_H)
++check_include_files(paths.h  HAVE_PATHS_H)
++check_include_files(security/pam_appl.h  HAVE_SECURITY_PAM_APPL_H)
++check_include_files(stdarg.h  HAVE_STDARG_H)
++check_include_files(stdint.h  HAVE_STDINT_H)
++check_include_files(stdlib.h  HAVE_STDLIB_H)
++check_include_files(strings.h  HAVE_STRINGS_H)
++check_include_files(string.h  HAVE_STRING_H)
++check_include_files(sysexits.h  HAVE_SYSEXITS_H)
++check_include_files(syslog.h  HAVE_SYSLOG_H)
++check_include_files(sys/dir.h  HAVE_SYS_DIR_H)
++check_include_files(sys/file.h  HAVE_SYS_FILE_H)
++check_include_files(sys/ndir.h HAVE_SYS_NDIR_H)
++check_include_files(sys/param.h  HAVE_SYS_PARAM_H)
++check_include_files(sys/stat.h  HAVE_SYS_STAT_H)
++check_include_files(sys/time.h  HAVE_SYS_TIME_H)
++check_include_files(sys/types.h  HAVE_SYS_TYPES_H)
++check_include_files(sys/uio.h  HAVE_SYS_UIO_H)
++check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
++check_include_files(unistd.h  HAVE_UNISTD_H)
++check_include_files(varargs.h  HAVE_VARARGS_H)
 +
 +include(CheckFunctionExists)
 +check_function_exists(getaddrinfo       HAVE_GETADDRINFO)
 +check_function_exists(getnameinfo       HAVE_GETNAMEINFO)
++check_function_exists(syslog            HAVE_SYSLOG)
 +#check_function_exists(getpid            HAVE_GETPID)
 +check_function_exists(gettimeofday      HAVE_GETTIMEOFDAY)
-+check_include_files(snprintf       HAVE_SNPRINTF)
++check_include_files(snprintf            HAVE_SNPRINTF)
 +if(WIN32)
 +  set(HAVE_SNPRINTF 1)
 +endif(WIN32)
@@ -74,6 +146,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +if(STATIC_LIBRARY)
 +    set(LIBSASL_STATIC 1)
 +    configure_file(include/prop.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/prop.h)
++    message(STATUS "building static library version")
 +    add_definitions(-DLIBSASL_STATIC)
 +endif(STATIC_LIBRARY)
 +
@@ -242,53 +315,118 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +add_executable(sasl2_pluginviewer utils/pluginviewer.c)
 +target_link_libraries(sasl2_pluginviewer sasl2 ${additional_link_libs})
 +install(TARGETS sasl2_pluginviewer DESTINATION bin)
-diff -Nru cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake
---- cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake	Mon Jul  5 15:05:47 2010
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
---- cyrus-sasl-2.1.22.orig/config.h.cmake	Thu Jan  1 00:00:00 1970
-+++ cyrus-sasl-2.1.22/config.h.cmake	Mon Jul  5 15:14:01 2010
-@@ -0,0 +1,108 @@
+--- cyrus-sasl-2.1.22.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.22/config.h.cmake	2010-10-06 18:51:42.114171900 +0200
+@@ -0,0 +1,210 @@
 +#ifndef CONFIG_H
 +#define CONFIG_H
 +/* Name of package */
 +#cmakedefine PACKAGE "@PACKAGE@"
 +
 +#cmakedefine VERSION "@VERSION@"
++
++/* Define to 1 if you have the <des.h> header file. */
++#cmakedefine HAVE_DES_H
++
++/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
++   */
++#cmakedefine HAVE_DIRENT_H
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H
++
++/* Define if you have the gssapi.h header file */
++#cmakedefine HAVE_GSSAPI_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H
++
++/* Define to 1 if you have the <lber.h> header file. */
++#cmakedefine HAVE_LBER_H
++
++/* Define to 1 if you have the <ldap.h> header file. */
++#cmakedefine HAVE_LDAP_H
++
++/* Define to 1 if you have the <limits.h> header file. */
++#cmakedefine HAVE_LIMITS_H
++
++/* Define to 1 if you have the <malloc.h> header file. */
++#cmakedefine HAVE_MALLOC_H
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H
++
++/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
++#cmakedefine HAVE_NDIR_H
++
++/* Define to 1 if you have the <pam/pam_appl.h> header file. */
++#cmakedefine HAVE_PAM_PAM_APPL_H
++
++/* Define to 1 if you have the <paths.h> header file. */
++#cmakedefine HAVE_PATHS_H
++
++/* Define to 1 if you have the <security/pam_appl.h> header file. */
++#cmakedefine HAVE_SECURITY_PAM_APPL_H
++
++/* Define to 1 if you have the <stdarg.h> header file. */
++#cmakedefine HAVE_STDARG_H
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H
++
++/* Define to 1 if you have the <sysexits.h> header file. */
++#cmakedefine HAVE_SYSEXITS_H
++
++/* Define to 1 if you have the <syslog.h> header file. */
++#cmakedefine HAVE_SYSLOG_H
++
++/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
++   */
++#cmakedefine HAVE_SYS_DIR_H
++
++/* Define to 1 if you have the <sys/file.h> header file. */
++#cmakedefine HAVE_SYS_FILE_H
++
++/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
++   */
++#cmakedefine HAVE_SYS_NDIR_H
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#cmakedefine HAVE_SYS_PARAM_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <sys/uio.h> header file. */
++#cmakedefine HAVE_SYS_UIO_H
++
++/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
++#cmakedefine HAVE_SYS_WAIT_H
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H
++
++/* Define to 1 if you have the <varargs.h> header file. */
++#cmakedefine HAVE_VARARGS_H
 +
 +/* Do we have a getnameinfo() function? */
 +#cmakedefine HAVE_GETNAMEINFO 1
@@ -327,7 +465,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
 +
 +#cmakedefine HAVE_TIME_H 1
 +
-+#cmakedefine HAVE_UNISTD_H 1
++#cmakedefine HAVE_GETOPT_H 1
 +
 +#include <stdlib.h>
 +#include <string.h>
@@ -343,13 +481,13 @@ diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
 +#cmakedefine CONFIGDIR "@CONFIGDIR@"
 +
 +#ifndef HAVE_GETADDRINFO
-+#define	getaddrinfo	sasl_getaddrinfo
++#define	getaddrinfo	    sasl_getaddrinfo
 +#define	freeaddrinfo	sasl_freeaddrinfo
 +#define	gai_strerror	sasl_gai_strerror
 +#endif
 +
 +#ifndef HAVE_GETNAMEINFO
-+#define	getnameinfo	sasl_getnameinfo
++#define	getnameinfo	    sasl_getnameinfo
 +#endif
 +
 +#if !defined(HAVE_GETNAMEINFO) || !defined(HAVE_GETADDRINFO)
@@ -912,7 +1050,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
   * character that was detected. 
   * 
   * If the special option "--" is detected, or all options have been 
-@@ -543,15 +543,14 @@
+@@ -543,15 +543,19 @@
  #include <string.h>                 /* for strchr() */ 
   
  /* static (global) variables that are specified as exported by getopt() */ 
@@ -920,9 +1058,14 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
 -__declspec(dllexport) int   optind = 1;       /* number of the next argv[] to be evaluated    */ 
 -__declspec(dllexport) int   opterr = 1;       /* non-zero if a question mark should be returned */
 -
-+__declspec(dllexport) char *sasl_optarg = NULL;    /* pointer to the start of the option argument  */ 
-+__declspec(dllexport) int   sasl_optind = 1;       /* number of the next argv[] to be evaluated    */ 
-+__declspec(dllexport) int   sasl_opterr = 1;       /* non-zero if a question mark should be returned */
++#ifndef LIBSASL_STATIC
++#define SASL_GETOPT_EXPORT __declspec(dllexport)
++#else
++#define SASL_GETOPT_EXPORT
++#endif
++SASL_GETOPT_EXPORT char *sasl_optarg = NULL;    /* pointer to the start of the option argument  */ 
++SASL_GETOPT_EXPORT int   sasl_optind = 1;       /* number of the next argv[] to be evaluated    */ 
++SASL_GETOPT_EXPORT int   sasl_opterr = 1;       /* non-zero if a question mark should be returned */
   
  /* handle possible future character set concerns by putting this in a macro */ 
  #define _next_char(string)  (char)(*(string+1)) 
@@ -932,7 +1075,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  { 
      static char *pIndexPosition = NULL; /* place inside current argv string */ 
      char *pArgString = NULL;        /* where to start from next */ 
-@@ -568,7 +567,7 @@
+@@ -568,7 +572,7 @@
   
      if (pArgString == NULL) { 
          /* we didn't leave off in the middle of an argv string */ 
@@ -941,7 +1084,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              /* more command-line arguments than the argument count */ 
              pIndexPosition = NULL;  /* not in the middle of anything */ 
              return EOF;             /* used up all command-line arguments */ 
-@@ -577,12 +576,12 @@
+@@ -577,12 +581,12 @@
          /*--------------------------------------------------------------------- 
           * If the next argv[] is not an option, there can be no more options. 
           *-------------------------------------------------------------------*/ 
@@ -957,7 +1100,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              pIndexPosition = NULL;  /* not in the middle of anything */ 
              return EOF;             /* used up all the command-line flags */ 
          } 
-@@ -590,7 +589,7 @@
+@@ -590,7 +594,7 @@
          /* check for special end-of-flags markers */ 
          if ((strcmp(pArgString, "-") == 0) || 
              (strcmp(pArgString, "--") == 0)) { 
@@ -966,7 +1109,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              pIndexPosition = NULL;  /* not in the middle of anything */ 
              return EOF;             /* encountered the special flag */ 
          } 
-@@ -600,18 +599,18 @@
+@@ -600,18 +604,18 @@
   
      if (':' == *pArgString) {       /* is it a colon? */ 
          /*--------------------------------------------------------------------- 
@@ -989,7 +1132,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
      } 
      else { 
          /*--------------------------------------------------------------------- 
-@@ -620,26 +619,26 @@
+@@ -620,26 +624,26 @@
          if (':' == _next_char(pOptString)) { /* is the next letter a colon? */ 
              /* It is a colon.  Look for an argument string. */ 
              if ('\0' != _next_char(pArgString)) {  /* argument in this argv? */ 
@@ -1023,7 +1166,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              pIndexPosition = pArgString;    /* point to the letter we're on */ 
          } 
          return (int)*pArgString;    /* return the letter that matched */ 
-@@ -659,6 +658,8 @@
+@@ -659,6 +663,8 @@
  	register c;
  	static char pbuf[PASSWORD_MAX];
  
@@ -1032,7 +1175,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  	fprintf(stderr, "%s", prompt); (void) fflush(stderr);
  	for (p=pbuf; (c = _getch())!=13 && c!=EOF;) {
  		if (p < &pbuf[sizeof(pbuf)-1])
-@@ -666,6 +667,9 @@
+@@ -666,6 +672,9 @@
  	}
  	*p = '\0';
  	fprintf(stderr, "\n"); (void) fflush(stderr);
@@ -1492,13 +1635,13 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
  #else  /* WIN32 */
  # include <netinet/in.h>
  #endif /* WIN32 */
-@@ -84,6 +91,94 @@
+@@ -84,6 +91,95 @@
  #include <unistd.h>
  #endif
  
 +#if !defined(HAVE_GETOPT_H)
 +
-+#ifdef HAVE_SASL_OPTIND
++#ifndef HAVE_SASL_OPTIND
 +int	 sasl_optind = 1;		/* index into parent argv vector */
 +char	*sasl_optarg;		/* argument associated with option */
 +#endif
@@ -1582,12 +1725,13 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
 +# define sasl_opterr opterr
 +# define sasl_optind optind
 +# define sasl_optarg optarg
++# define _sasl_getopt getopt
 +#endif
 +
  #ifndef HAVE_GETSUBOPT
  int getsubopt(char **optionp, const char * const *tokens, char **valuep);
  #endif
-@@ -413,7 +508,7 @@
+@@ -413,7 +509,7 @@
      secprops.maxbufsize = SAMPLE_SEC_BUF_SIZE;
      secprops.max_ssf = UINT_MAX;
  
@@ -1596,7 +1740,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
          switch (c) {
          case 'a':
  	    list_auxprop_plugins = 1;
-@@ -421,7 +516,7 @@
+@@ -421,7 +517,7 @@
  	    break;
  
          case 'x':
@@ -1605,7 +1749,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              break;
  
          case 'c':
-@@ -435,7 +530,7 @@
+@@ -435,7 +531,7 @@
  	    break;
  
          case 'b':
@@ -1614,7 +1758,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              while (*options != '\0') {
  	        switch(getsubopt(&options, (const char * const *)bit_subopts, &value)) {
  	        case OPT_MIN:
-@@ -460,7 +555,7 @@
+@@ -460,7 +556,7 @@
              break;
  
          case 'e':
@@ -1623,7 +1767,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              while (*options != '\0') {
  	        switch(getsubopt(&options, (const char * const *)ext_subopts, &value)) {
  	        case OPT_EXT_SSF:
-@@ -485,11 +580,11 @@
+@@ -485,11 +581,11 @@
              break;
  
          case 'm':
@@ -1637,7 +1781,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              while (*options != '\0') {
  	        switch(getsubopt(&options, (const char * const *)flag_subopts, &value)) {
  	        case OPT_NOPLAIN:
-@@ -519,7 +614,7 @@
+@@ -519,7 +615,7 @@
              break;
  
          case 'p':
@@ -1646,7 +1790,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              break;
  
          default:			/* unknown flag */
-@@ -527,7 +622,7 @@
+@@ -527,7 +623,7 @@
              break;
          }
  
@@ -1655,7 +1799,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
          /* We don't *have* extra arguments */
          errflag = 1;
      }
-@@ -578,7 +673,7 @@
+@@ -578,7 +674,7 @@
          ++callback;
      }
  
@@ -1664,7 +1808,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
      callback->id = SASL_CB_GETOPT;
      callback->proc = &sasl_getopt;
      callback->context = NULL;
-@@ -665,7 +760,7 @@
+@@ -665,7 +761,7 @@
              saslfail(result, "Setting security properties", NULL);
          }
  
@@ -1673,7 +1817,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
          result = sasl_listmech(server_conn,
  			    ext_authid,
  			    NULL,
-@@ -758,7 +853,7 @@
+@@ -758,7 +854,7 @@
              saslfail(result, "Setting security properties", NULL);
          }
  
