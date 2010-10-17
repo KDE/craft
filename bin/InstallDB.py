@@ -1,10 +1,42 @@
 import os
 import utils
-from portage import *
+import portage
+import portage_versions
 import sqlite3
 
+class InstallPackage:
+    """ install package finalizes an installation """
+    def __init__( self, cursor, lastId ):
+        self.cursor = cursor
+        self.lastId = lastId
+        self.fileDict = dict()
+
+    def addFiles( self, fileDict ):
+        """ appending files to the list of files to be installed """
+        self.fileDict.update(fileDict)
+
+    def install( self ):
+        """ marking the package & package file list installed """
+        fileNumber = len( self.fileDict )
+        # keys() and values will stay in the same order if no changes are done in between calls
+        # structure of each tuple:
+        # fileId | lastId == package Id | filenames | file hashes
+        dataList = zip( [ None ] * fileNumber, [ self.lastId ] * fileNumber, self.fileDict.keys(), self.fileDict.values() )
+
+        cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
+        utils.debug( "executing sqlcmd '%s' %s times" % ( cmd, len(self.fileDict) ), 1 )
+        self.cursor.executemany(cmd, dataList)
+
+        # at last, commit all the changes so that they are committed only after everything is written to the
+        # database
+        self.cursor.connection.commit()
+
+
 class InstallDB:
-    def __init__( self, filename = os.path.join( etcDir(), 'install.db' ) ):
+    """ a database object which provides the methods for adding and removing a package and 
+        checking its installation status.
+    """
+    def __init__( self, filename = os.path.join( portage.etcDir(), 'install.db' ) ):
         self.dbfilename = filename
         if not os.path.exists( filename ):
             utils.debug( "database does not exist yet: creating database & importing old data" )
@@ -13,7 +45,18 @@ class InstallDB:
             utils.debug( "found database", 1 )
             self.connection = sqlite3.connect( self.dbfilename )
     
+    def getLastId( self ):
+        """ returns the last id from a table """
+        cmd = '''SELECT max(packageId) FROM packageList;'''
+        
+        cursor = self.connection.cursor()
+        cursor.execute(cmd)
+        lastId = cursor.fetchall()[0]
+        return lastId[0]
+        
     def isInstalled( self, category, package, version='', prefix='' ):
+        """ returns whether a package is installed. If version and prefix are empty, all versions 
+            and prefixes will be checked. """
         cmd = '''SELECT * FROM packageList'''
         params = []
         parametersUsed = False
@@ -46,9 +89,11 @@ class InstallDB:
         cursor.execute(cmd, tuple(params))
         isPackageInstalled = len(cursor.fetchall()) > 0
         if isPackageInstalled:
-            utils.debug( "The package %s/%s has been installed in prefix '%s' with version '%s'." % (category, package, prefix, version), 1 )
+            utils.debug( """The package %s/%s has been installed in prefix '%s' with 
+                            version '%s'.""" % (category, package, prefix, version), 1 )
         else:
-            utils.debug( "Couldn't find a trace that the package %s/%s has been installed in prefix '%s' with version '%s'" % (category, package, prefix, version), 1 )
+            utils.debug( """Couldn't find a trace that the package %s/%s has been installed in 
+                            prefix '%s' with version '%s'""" % (category, package, prefix, version), 1 )
         cursor.close()
         return isPackageInstalled
         
@@ -56,6 +101,9 @@ class InstallDB:
         pass
 
     def getInstalled( self, package='', category='', prefix='' ):
+        """ returns a list of the installed packages, which can be restricted by adding
+            package, category and prefix.
+        """
         cmd = '''SELECT category, packageName, version, prefix FROM packageList'''
         params = []
         parametersUsed = False
@@ -78,34 +126,32 @@ class InstallDB:
             if parametersUsed:
                 cmd += ''' AND'''
             cmd += ''' packageName=?'''
-            params.append(package)
+            params.append( package )
             parametersUsed = True
 
         cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple(params) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         
         cursor = self.connection.cursor()
-        cursor.execute(cmd, tuple(params))
+        cursor.execute( cmd, tuple( params ) )
         values = cursor.fetchall()
-        for entry in values:
-            utils.debug( "entry: %s" % str(entry), 1 )
         cursor.close()
         return values
 
     def addInstalled( self, category, package, version, prefix='' ):
+        """ adds an installed package """
         if self.isInstalled( category, package, version, prefix ):
-            return
+            raise Exception( 'package %s/%s-%s already installed (prefix %s)' % ( category, package, version, prefix ) )
 
         cursor = self.connection.cursor()
-        params = [None, prefix, category, package, version]
+        params = [ None, prefix, category, package, version ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?)'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple(params) ), 1 )
-        cursor.execute(cmd, tuple(params))
-        self.connection.commit()
-        cursor.close()
-        return
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        cursor.execute( cmd, tuple( params ) )
+        return InstallPackage( cursor, self.getLastId() )
         
     def remInstalled( self, category, package, version, prefix='' ):
+        """ removes an installed package """
         cmd = '''DELETE FROM packageList'''
         params = []
         parametersUsed = False
@@ -114,61 +160,64 @@ class InstallDB:
 
         if not prefix == '':
             cmd += ''' prefix=?'''
-            params.append(prefix)
+            params.append( prefix )
             parametersUsed = True
 
         if not category == '':
             if parametersUsed:
                 cmd += ''' AND'''
             cmd += ''' category=?'''
-            params.append(category)
+            params.append( category )
             parametersUsed = True
 
         if not package == '':
             if parametersUsed:
                 cmd += ''' AND'''
             cmd += ''' packageName=?'''
-            params.append(package)
+            params.append( package )
             parametersUsed = True
 
         if not version == '':
             if parametersUsed:
                 cmd += ''' AND'''
             cmd += ''' version=?'''
-            params.append(version)
+            params.append( version )
             parametersUsed = True
 
         cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple(params) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         
         cursor = self.connection.cursor()
-        cursor.execute(cmd, tuple(params))
+        cursor.execute( cmd, tuple( params ) )
         cursor.close()
         
     def _prepareDatabase( self ):
         self.connection = sqlite3.connect( self.dbfilename )
         cursor = self.connection.cursor()
 
-        # first, create the required table
-        cursor.execute('''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT, prefix TEXT, category TEXT, packageName TEXT, version TEXT)''')
+        # first, create the required tables
+        cursor.execute( '''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
+                           prefix TEXT, category TEXT, packageName TEXT, version TEXT)''' )
+        cursor.execute( '''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
+                           packageId INTEGER, filename TEXT, fileHash TEXT)''' )
         self.connection.commit()
 
         cursor.close()
 
     def _importExistingDatabase( self ):
-        for category, package, version in PortageInstance.getInstallables():
-            if self._isInstalled(category, package, version):
-                utils.debug('adding installed package %s/%s-%s' % (category, package, version))
-                self.addInstalled(category, package, version)
+        for category, package, version in portage.PortageInstance.getInstallables():
+            if self._isInstalled( category, package, version ):
+                utils.debug( 'adding installed package %s/%s-%s' % ( category, package, version ) )
+                self.addInstalled( category, package, version )
 
 
 
     def _isInstalled( self, category, package, version, buildType='' ):
-        """ check if a package with a certain category, package and version is currently installed """
+        """ check if a package with a certain category, package and version is installed """
 
         # find in old style database
-        path = etcDir()
-        fileName = os.path.join(path,'installed')
+        path = portage.etcDir()
+        fileName = os.path.join( path, 'installed' )
         if not os.path.isfile( fileName ):
             return False
 
@@ -176,8 +225,9 @@ class InstallDB:
         f = open( fileName, "rb" )
         for line in f.read().splitlines():
             (_category, _packageVersion) = line.split( "/" )
-            (_package, _version) = packageSplit(_packageVersion)
-            if category <> '' and version <> '' and category == _category and package == _package and version == _version:
+            (_package, _version) = portage.packageSplit(_packageVersion)
+            if category <> '' and version <> '' and category == _category and package == _package \
+                              and version == _version:
                 found = True
                 break
             elif category == '' and version == '' and package == _package:
@@ -192,7 +242,7 @@ class InstallDB:
                 f = open( fileName, "rb" )
                 for line in f.read().splitlines():
                     (_category, _packageVersion) = line.split( "/" )
-                    (_package, _version) = packageSplit(_packageVersion)
+                    (_package, _version) = portage.packageSplit(_packageVersion)
                     if category <> '' and version <> '' and category == _category and package == _package and version == _version:
                         found = True
                         break
@@ -222,7 +272,7 @@ class InstallDB:
     def _findInstalled( self, category, package, buildType='' ):
         """ find a package of a certain category and packagename and return the full install line """
 
-        fileName = os.path.join( etcDir(), "installed" )
+        fileName = os.path.join( portage.etcDir(), "installed" )
         if ( not os.path.isfile( fileName ) ):
             return None
 
@@ -244,7 +294,7 @@ class InstallDB:
         utils.debug( "addInstalled called", 2 )
         # write a line to etc/portage/installed,
         # that contains category/package-version
-        path = os.path.join( etcDir() )
+        path = os.path.join( portage.etcDir() )
         if ( not os.path.isdir( path ) ):
             os.makedirs( path )
         if buildType <> '': 
@@ -273,8 +323,8 @@ class InstallDB:
         else:
             fileName = 'installed'
         utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)
-        dbfile = os.path.join( etcDir(), fileName )
-        tmpdbfile = os.path.join( etcDir(), "TMPinstalled" )
+        dbfile = os.path.join( portage.etcDir(), fileName )
+        tmpdbfile = os.path.join( portage.etcDir(), "TMPinstalled" )
         found=False
         if os.path.exists( dbfile ):
             file = open( dbfile, "rb" )
@@ -303,14 +353,19 @@ if __name__ == '__main__':
     utils.debug( 'testing if package win32libs-sources/dbus-src with version 1.4.0 is installed:' )
     utils.debug( db._isInstalled('win32libs-sources', 'dbus-src', '1.4.0') )
 
-    db.addInstalled('win32libs-sources', 'dbus-src', '1.4.0', 'release')
+    if db.isInstalled('win32libs-sources', 'dbus-src', '1.4.0', 'release'):
+        db.remInstalled('win32libs-sources', 'dbus-src', '1.4.0', 'release')
+    package = db.addInstalled('win32libs-sources', 'dbus-src', '1.4.0', 'release')
+    package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))
+    package.install()
     db.getInstalled()
     db.getInstalled(category='win32libs-sources', prefix='debug')
     db.getInstalled(package='dbus-src')
-    print db.getInstalled('dbus-src', 'win32libs-sources', 'release')
+    print "getInstalled:", db.getInstalled('dbus-src', 'win32libs-sources', 'release')
     db.isInstalled('win32libs-sources', 'dbus-src')
     db.remInstalled('win32libs-sources', 'dbus-src', '1.4.0')
-    print db.getInstalled('dbus-src', 'win32libs-sources', 'release')
+    print "getInstalled:", db.getInstalled('dbus-src', 'win32libs-sources', 'release')
 
     db_temp._importExistingDatabase()
-    print db_temp.getInstalled()
+    print "getInstalled:", db_temp.getInstalled()
+    print "findInstalled:", portage.findInstalled('win32libs-sources', 'dbus-src')
