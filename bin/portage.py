@@ -33,7 +33,7 @@ def __import__( module ):
         return imp.load_module( modulename.replace('.', '_'), 
             fileHdl, module, suff_index )
 
-def buildType( self ):
+def buildType():
     """return currently selected build type"""
     Type=os.getenv( "EMERGE_BUILDTYPE" )
     if ( not Type == None ):
@@ -42,17 +42,10 @@ def buildType( self ):
         buildType = None
     return buildType
 
-def prefixForBuildType( self, buildType=None ):
+def prefixForBuildType( self, _buildType=None ):
     postfix = ''
-    if buildType == None:
-        buildType = buildType()
-    if self.useBuildTypeRelatedMergeRoot:
-        if buildType == 'Debug':
-            postfix = 'debug'
-        elif buildType == 'Release':
-            postfix =  'release'
-        elif buildType == 'RelWithDebInfo':
-            postfix =  'relwithdebinfo'
+    if _buildType == None:
+        _buildType = buildType()
     return postfix
 
 
