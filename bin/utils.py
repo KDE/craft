@@ -590,6 +590,22 @@ def getFileListFromManifest( rootdir, package ):
         debug( "could not find manifest directory", 2 )
     return fileList
 
+def unmergeFileList( rootdir, fileDict, forced = False ):
+    """ delete files in the fileDict """
+    debug( "unmergeFileList called for %s files", str( len( fileDict ) ), 2 )
+    for filename in fileDict.keys():
+        if os.path.isfile( os.path.join( rootdir, os.path.normcase( filename ) ) ):
+            hash = digestFile( os.path.join( rootdir, os.path.normcase( filename ) ) )
+            if hash == fileDict[ filename ] or fileDict[ filename ] == "":
+                debug( "deleting file %s" % filename )
+                os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
+            else:
+                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( filename ), hash, fileDict[ filename ] ) )
+                if forced:
+                    os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
+        elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
+            warning( "file %s does not exist" % ( os.path.normcase( filename ) ) )
+        
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
     debug( "unmerge called: %s" % ( package ), 2 )
