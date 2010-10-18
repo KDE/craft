@@ -33,6 +33,20 @@ def __import__( module ):
         return imp.load_module( modulename.replace('.', '_'), 
             fileHdl, module, suff_index )
 
+def prefixForBuildType(self, buildType=None):
+    postfix = ''
+    if buildType == None:
+        buildType = self.buildType()
+    if self.useBuildTypeRelatedMergeRoot:
+        if buildType == 'Debug':
+            postfix = 'debug'
+        elif buildType == 'Release':
+            postfix =  'release'
+        elif buildType == 'RelWithDebInfo':
+            postfix =  'relwithdebinfo'
+    return postfix
+
+
 def rootDirectories():
     # this function should return all currently set portage directories
     if os.getenv( "EMERGE_PORTAGE_ROOT" ):
