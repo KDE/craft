@@ -16,13 +16,16 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/cmake']      = 'default'
         self.hardDependencies['dev-util/subversion'] = 'default'
         self.hardDependencies['dev-util/git']        = 'default'
-        self.hardDependencies['dev-util/putty']      = 'default'
         # for creating combined packages
         self.hardDependencies['dev-util/pexports']   = 'default'
         
         #add c++ runtime if we xcompile
         if platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/runtime-ce']   = 'default'
+
+        if os.getenv( "SVN_SSH" ) == "plink" or \
+                os.getenv( "GIT_SSH" ) == "plink":
+            self.hardDependencies['dev-util/putty']      = 'default'
 
         if os.getenv( "KDECOMPILER" ) == "mingw4":
             if platform.buildArchitecture() == 'x64':
