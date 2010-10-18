@@ -1635,16 +1635,12 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
  #else  /* WIN32 */
  # include <netinet/in.h>
  #endif /* WIN32 */
-@@ -84,6 +91,95 @@
+@@ -84,6 +91,91 @@
  #include <unistd.h>
  #endif
  
 +#if !defined(HAVE_GETOPT_H)
 +
-+#ifndef HAVE_SASL_OPTIND
-+int	 sasl_optind = 1;		/* index into parent argv vector */
-+char	*sasl_optarg;		/* argument associated with option */
-+#endif
 +#if defined(LIBSASL_STATIC)
 +extern int sasl_opterr; /* if error message should be printed */
 +#else
