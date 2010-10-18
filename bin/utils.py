@@ -492,6 +492,10 @@ def warning( message ):
         print "emerge warning: %s" % message
     return True
 
+def new_line( level=0 ):
+    if verbose() > level:
+        print
+
 def debug_line( level=0 ):
     if verbose() > level:
         print "_" * 80
@@ -546,6 +550,45 @@ def copySrcDirToDestDir( srcdir, destdir ):
 def moveSrcDirToDestDir( srcdir, destdir ):
 	""" deprecated """
 	return moveDir( srcdir, destdir )
+
+def getFileListFromManifest( rootdir, package ):
+    """ return file list according to the manifest files for deletion/import """
+    fileList = []
+    manifestDir = os.path.join( rootdir, "manifest" )
+    if os.path.exists( manifestDir ):
+        for file in os.listdir( manifestDir ):
+            if file.endswith( ".mft" ):
+                [ pkg, version ] = portage.packageSplit( file.replace( ".mft", "" ) )
+                if file.endswith( ".mft" ) and package==pkg:
+                    fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
+                    for line in fptr:
+                        try:
+                            line = line.replace( "\n", "" ).replace( "\r", "" )
+                            # check for digest having two spaces between filename and hash
+                            if not line.find( "  " ) == -1:
+                                [ b, a ] = line.rsplit( "  ", 2 )
+                            # check for filname have spaces
+                            elif line.count( " " ) > 1:
+                                ri = line.rindex( " " )
+                                b = line[ ri: ]
+                                a = line[ : ri - 1 ]
+                            # check for digest having one spaces
+                            elif not line.find( " " ) == -1:
+                                [ a, b ] = line.rsplit( " ", 2 )
+                            else:
+                                a, b = line, ""
+                        except:
+                            utils.die( "could not parse line %s" % line, 1 )
+                            
+                        if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
+                            continue
+                        fileList.append( ( a, b ) )
+                    fptr.close()
+        else:
+            debug( "could not find any manifest files", 2 )
+    else:
+        debug( "could not find manifest directory", 2 )
+    return fileList
 
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
