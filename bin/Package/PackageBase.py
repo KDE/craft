@@ -65,9 +65,10 @@ class PackageBase (EmergeBase):
         if portage.isInstalled( '', self.package, '', self.buildType() ):
             self.unmerge()
 
+        self.manifest()
+
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(),2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
-        self.manifest()
 
         # run post-install scripts
         if not os.getenv("EMERGE_NO_POST_INSTALL") == "True":
