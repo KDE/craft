@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):        
-        ver = "20100914"
+        ver = "20101003"
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
         self.defaultTarget = ver
             
