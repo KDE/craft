@@ -18,11 +18,12 @@ class subinfo(info.infoclass):
     self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32-debug.7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = self.vlcTagName +  self.getVer()      
     
-    self.targets[ 'vlc-1.1.2'] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-1.1.2-win32.7z"
-    self.targetDigests['vlc-1.1.2'] = '2c66818b0686841c565b90f20075c9d6aca3ad57'
-    self.targetInstSrc[ 'vlc-1.1.2' ] = "vlc-1.1.2"
+    releaseTag = 'vlc-1.1.4'
+    self.targets[ releaseTag] = "http://downloads.sourceforge.net/sourceforge/vlc/"+releaseTag+"-win32.7z"
+    #self.targetDigests[ releaseTag ] = '2c66818b0686841c565b90f20075c9d6aca3ad57'
+    self.targetInstSrc[ releaseTag ] = releaseTag
     
-    self.defaultTarget = 'vlc-1.1.2'
+    self.defaultTarget = 'vlc-1.1.4'
     
 
   def setDependencies( self ):
