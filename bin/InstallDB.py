@@ -1,8 +1,11 @@
-import os
-import utils
-import portage
-import portage_versions
-import sqlite3
+import os;
+import utils;
+import portage;
+import portage_versions;
+import sqlite3;
+
+def isDBEnabled():
+    return (os.getenv("EMERGE_ENABLE_SQLITEDB") == "True")
 
 class InstallPackage:
     """ install package finalizes an installation """
@@ -34,6 +37,7 @@ class InstallPackage:
         cmd = '''DELETE FROM packageList WHERE packageId=?;'''
         utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
         self.cursor.execute(cmd, (self.packageId,))
+        self.cursor.connection.commit()
 
     def install( self ):
         """ marking the package & package file list installed """
@@ -118,9 +122,14 @@ class InstallDB:
         return isPackageInstalled
         
     def findInstalled( self, category, package, prefix='' ):
-        pass
+        """ get the version of a package that is installed """
+        f = self.getInstalled( category, package, prefix )
+        if len(f) == 3:
+            return f[2]
+        else:
+            return None
 
-    def getInstalled( self, package='', category='', prefix='' ):
+    def getInstalled( self, category='', package='', prefix='' ):
         """ returns a list of the installed packages, which can be restricted by adding
             package, category and prefix.
         """
@@ -411,7 +420,9 @@ class InstallDB:
             os.rename( tmpdbfile, dbfile )
         return found
 
-
+# get a global object
+if os.getenv("EMERGE_ENABLE_SQLITEDB") == "True":
+    installdb = InstallDB()
 
 # Testing the class
 
