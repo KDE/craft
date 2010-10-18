@@ -7,6 +7,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.1.22'] = 'ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/cyrus-sasl-2.1.22.tar.gz'
+        self.targetDigests['2.1.22'] = 'd23454ab12054714ab97d229c86cb934ce63fbb1'
         self.targetInstSrc['2.1.22'] = 'cyrus-sasl-2.1.22'
         self.patchToApply['2.1.22'] = ( 'cyrus-sasl-2.1.22.patch', 1 )
         self.defaultTarget = '2.1.22'
