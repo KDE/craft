@@ -8,6 +8,7 @@ import utils;
 import platform;
 from graphviz import *;
 import dependencies;
+from InstallDB import *;
 
 class PackageBase (EmergeBase):
     """
@@ -34,17 +35,17 @@ class PackageBase (EmergeBase):
         self.forceCreateManifestFiles = False
 
     def __installedDBPrefix(self, buildType=None):
-        postfix = ''
-        if buildType == None:
-            buildType = self.buildType()
         if self.useBuildTypeRelatedMergeRoot:
-            if buildType == 'Debug':
+            postfix = ''
+            if _buildType == 'Debug':
                 postfix = 'debug'
-            elif buildType == 'Release':
+            elif _buildType == 'Release':
                 postfix =  'release'
-            elif buildType == 'RelWithDebInfo':
+            elif _buildType == 'RelWithDebInfo':
                 postfix =  'relwithdebinfo'
-        return postfix
+            return postfix
+        else:
+            return portage.prefixForBuildType( buildType )
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
@@ -61,9 +62,12 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
 
-
-        if portage.isInstalled( '', self.package, '', self.buildType() ):
-            self.unmerge()
+        if isDBEnabled():
+            if installdb.isInstalled( category='', package=self.package, prefix=self.__installedDBPrefix( self.buildType() ) ):
+                self.unmerge()
+        else:
+            if portage.isInstalled( '', self.package, '', self.buildType() ):
+                self.unmerge()
 
         self.manifest()
 
@@ -86,34 +90,59 @@ class PackageBase (EmergeBase):
         # only packages using a specific merge destination path are shared between build types 
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
-            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
-            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
-            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
+            for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
+                if isDBEnabled():
+                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
+                    package.addFiles( utils.getFileListFromManifest(  self.__installedDBPrefix( prefix ), self.package ) )
+                    package.install()
+                else:
+                    portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
         else:
-            portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+            if isDBEnabled():
+                package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+                package.install()
+            else:
+                portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
 
         return True
 
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
-        utils.debug("Packagebase unmerge called",2)
+        utils.debug( "Packagebase unmerge called", 2 )
 
         ## \todo mergeDestinationDir() reads the real used merge dir from the 
         ## package definition, which fails if this is changed 
         ## a better solution will be to save the merge sub dir into 
         ## /etc/portage/installed and to read from it on unmerge
-        utils.debug("unmerge package from %s" % self.mergeDestinationDir(),2)
-        if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not platform.isCrossCompilingEnabled():
-            # compatibility code: uninstall subclass based package
-            utils.unmerge( self.rootdir, self.package, self.forced )
-            portage.remInstalled( self.category, self.package, self.version, '')
+        utils.debug( "unmerge package from %s" % self.mergeDestinationDir(), 2 )
+        if isDBEnabled():
+            if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
+                    and self.subinfo.options.merge.destinationPath != None:
+                for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
+                    packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
+                    for package in packageList:
+                        fileList = package.getFiles()
+                        utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+                        package.uninstall()
+            else:
+                packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                for package in packageList:
+                    fileList = package.getFiles()
+                    utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+                    package.uninstall()
+        else:
+            if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not platform.isCrossCompilingEnabled():
+                # compatibility code: uninstall subclass based package
+                utils.unmerge( self.rootdir, self.package, self.forced )
+                portage.remInstalled( self.category, self.package, self.version, '')               
 
         # only packages using a specific merge destination path are shared between build types 
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "Release" ) )
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "RelWithDebInfo" ) )
+            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "Debug" ) )
         else:
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
