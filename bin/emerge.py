@@ -5,12 +5,13 @@
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 
-import sys
-import os
-import utils
-import portage
-import platform
-import shutil
+import sys;
+import os;
+import utils;
+import portage;
+import platform;
+import shutil;
+from InstallDB import *;
 
 def usage():
     print """
@@ -513,14 +514,21 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
 
 else:
     for package in deplist:
-        if ( portage.isInstalled( package[0], package[1], package[2], buildType ) and not package[ -1 ] ):
+        if isDBEnabled():
+            isInstalled = installdb.isInstalled( category=package[0], package=package[1], version=package[2], prefix=portage.prefixForBuildType( buildType ) )
+        else:
+            isInstalled = portage.isInstalled( package[0], package[1], package[2], buildType )
+        if ( isInstalled and not package[ -1 ] ):
             if utils.verbose() > 1 and package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
             elif utils.verbose() > 2 and not package[1] == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
         else:
             # find the installed version of the package
-            instver = portage.findInstalled( package[0], package[1] )
+            if isDBEnabled():
+                instver = installdb.findInstalled( package[0], package[1] )
+            else:
+                instver = portage.findInstalled( package[0], package[1] )
             
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
