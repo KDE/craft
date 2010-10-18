@@ -551,6 +551,19 @@ def moveSrcDirToDestDir( srcdir, destdir ):
 	""" deprecated """
 	return moveDir( srcdir, destdir )
 
+def getFileListFromDirectory( imagedir ):
+    """ create a file list containing hashes """
+    ret = []
+    
+    myimagedir = imagedir
+    if ( not imagedir.endswith( "\\" ) ):
+        myimagedir = myimagedir + "\\"
+
+    for root, dirs, files in os.walk( imagedir ):
+        for file in files:
+            ret.append( ( os.path.join( root, file ).replace( myimagedir, "" ), digestFile( os.path.join( root, file ) ) ) )
+    return ret
+    
 def getFileListFromManifest( rootdir, package ):
     """ return file list according to the manifest files for deletion/import """
     fileList = []
@@ -590,17 +603,17 @@ def getFileListFromManifest( rootdir, package ):
         debug( "could not find manifest directory", 2 )
     return fileList
 
-def unmergeFileList( rootdir, fileDict, forced = False ):
-    """ delete files in the fileDict """
-    debug( "unmergeFileList called for %s files", str( len( fileDict ) ), 2 )
-    for filename in fileDict.keys():
+def unmergeFileList( rootdir, fileList, forced = False ):
+    """ delete files in the fileList """
+    debug( "unmergeFileList called for %s files" % str( len( fileList ) ), 2 )
+    for (filename, filehash) in fileList:
         if os.path.isfile( os.path.join( rootdir, os.path.normcase( filename ) ) ):
             hash = digestFile( os.path.join( rootdir, os.path.normcase( filename ) ) )
-            if hash == fileDict[ filename ] or fileDict[ filename ] == "":
+            if hash == filehash or filehash == "":
                 debug( "deleting file %s" % filename )
                 os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
             else:
-                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( filename ), hash, fileDict[ filename ] ) )
+                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( filename ), hash, filehash ) )
                 if forced:
                     os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
