@@ -1,6 +1,6 @@
-From e541ce0bc44b3799ea386e71c37419ad82fad932 Mon Sep 17 00:00:00 2001
+From 8f83576de54db15344e253ef1b2dc5ab1b3761c6 Mon Sep 17 00:00:00 2001
 From: Andreas Holzammer <andy@kdab.com>
-Date: Fri, 15 Oct 2010 13:01:54 +0200
+Date: Mon, 18 Oct 2010 11:28:09 +0200
 Subject: [PATCH] - fix async handler thread
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] - fix async handler thread
  1 files changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
-index 153ccdf..607061c 100644
+index 153ccdf..c4e0ffb 100644
 --- a/src/corelib/kernel/qeventdispatcher_win.cpp
 +++ b/src/corelib/kernel/qeventdispatcher_win.cpp
 @@ -97,6 +97,8 @@ QT_BEGIN_INCLUDE_NAMESPACE
@@ -46,7 +46,7 @@ index 153ccdf..607061c 100644
 +        qt_async_handler.localData()->select(sock, handle, msg, ev);
  
 -    qt_async_handler()->start(QThread::LowPriority);
-+    qt_async_handler.localData()->start();
++    qt_async_handler.localData()->start(QThread::NormalPriority);
      WSASetLastError(0);
      return 0;
  }

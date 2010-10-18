@@ -46,7 +46,8 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1),
             ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1),
             ('qt-4.7.0-Override-new-in-qt-dlls-to-use-dlmalloc.patch', 1),
-            ('qt-4.7.0-Fix-one-possible-WinCE-hang-in-qt-event-loop.patch', 1)
+            ('qt-4.7.0-Fix-one-possible-WinCE-hang-in-qt-event-loop.patch', 1),
+            ('qt-4.7.0-fix-endless-loop-in-qProcess-for-wince.patch', 1)
             ]
         if platform.isCrossCompilingEnabled() or  COMPILER == "msvc2010":
             self.defaultTarget = '4.7'
