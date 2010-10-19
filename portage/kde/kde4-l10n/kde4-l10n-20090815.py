@@ -45,12 +45,26 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         dir = os.path.join(PackageBase.buildRoot(self), self.language)
         return dir
 
+    def qmerge(self):
+        ''' When crosscompiling install l10n files
+            also into the targets directory '''
+        ret = PackageBase.qmerge(self)
+        if platform.isCrossCompilingEnabled():
+            utils.copyDir(self.imageDir(),
+                    os.path.join(self.rootdir,
+                    os.environ["EMERGE_TARGET_PLATFORM"]))
+        return ret
+
     def unpack(self):
         autogen = os.path.join( self.packageDir() , "autogen.py" )
         if not SvnSource.unpack(self):
             return False
         # execute autogen.py and generate the CMakeLists.txt files
-        cmd = ( "python", autogen, self.language )
+        # Possible autogen options are --disable-messages,
+        # --disable-docs, --disable-data and --disable-scripts
+        cmd = [ "python", autogen, self.language ]
+        if platform.isCrossCompilingEnabled():
+            cmd.append( "--disable-docs" )
         return self.system( cmd, cwd=os.path.join( self.sourceDir(), ".." ) )
 
     def configure(self):
@@ -83,8 +97,11 @@ class MainInfo(info.infoclass):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
-    
-    
+
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+
 class MainPackage(PackageBase):
     def __init__( self  ):
         self.subinfo = MainInfo()
@@ -97,6 +114,7 @@ class MainPackage(PackageBase):
         
     def execute(self):
         (command, option) = self.getAction()
+        if self.isTargetBuild(): return True
         self.errors = dict()
         ## \todo does not work yet see note in PackageBase::getAction()
         if option <> None:
