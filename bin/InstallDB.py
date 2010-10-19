@@ -5,17 +5,47 @@ import portage_versions;
 import sqlite3;
 
 def isDBEnabled():
-    return (os.getenv("EMERGE_ENABLE_SQLITEDB") == "True")
+    """ this function returns whether sqlite database should be used """
+    return ( os.getenv( "EMERGE_ENABLE_SQLITEDB" ) == "True" )
 
 class InstallPackage:
-    """ install package finalizes an installation """
+    """ InstallPackage finalizes an installation.
+
+        If you call addInstalled or remInstalled an InstallPackage object is returned which
+        you can use to handle file information with the InstallDB. For installation use code
+        similar to this one:
+
+        # get an InstallPackage object p
+        p = InstallDB.installdb.addInstalled( "cat", "pac", "ver", "prefix" )
+        # add files ( including the hash )
+        p.addFiles( [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ] )
+        if failed:
+            # in case we somehow need to go back
+            p.revert()
+        else:
+            # finalize the installation
+            p.install()
+
+        Deinstallation works similar:
+        p = InstallDB.installdb.remInstalled( "cat", "pac", "ver", "prefix" )
+        # get the files ( including the hash )
+        f = p.getFiles()
+        # f now contains [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ]
+        if failed:
+            # in case we somehow need to go back
+            p.revert()
+        else:
+            # finalize the uninstall
+            p.uninstall()
+    """
+
     def __init__( self, cursor, packageId ):
         self.cursor = cursor
         self.packageId = packageId
         self.fileDict = dict()
 
     def addFiles( self, fileDict ):
-        """ appending files to the list of files to be installed """
+        """ appends files to the list of files to be installed """
         self.fileDict.update( fileDict )
 
     def getFiles( self ):
@@ -59,7 +89,9 @@ class InstallPackage:
 class InstallDB:
     """ a database object which provides the methods for adding and removing a package and 
         checking its installation status.
+        In case the database doesn't exist if the constructor is called, a new database is constructed
     """
+
     def __init__( self, filename = os.path.join( portage.etcDir(), 'install.db' ) ):
         self.dbfilename = filename
         if not os.path.exists( filename ):
@@ -70,7 +102,7 @@ class InstallDB:
             self.connection = sqlite3.connect( self.dbfilename )
     
     def getLastId( self ):
-        """ returns the last id from a table """
+        """ returns the last id from a table, which is essentially the  """
         cmd = '''SELECT max(packageId) FROM packageList;'''
         
         cursor = self.connection.cursor()
@@ -78,34 +110,32 @@ class InstallDB:
         lastId = cursor.fetchall()[0]
         return lastId[0]
         
+    def __constructWhereStmt( self, _dict ):
+        params = []
+        parametersUsed = False
+        stmt = ""
+#        if not prefix == '' or not category == '' or not package == '':
+#            cmd += ''' WHERE'''
+#
+        for key in _dict.keys():
+            if not key == '':
+                if parametersUsed:
+                    stmt += ''' AND'''
+                stmt += ''' %s=?''' % key
+                params.append( _dict[ key ] )
+                parametersUsed = True
+        if not stmt == "":
+            stmt = ''' WHERE''' + stmt
+
+        return stmt, params
+
     def isInstalled( self, category, package, version='', prefix='' ):
         """ returns whether a package is installed. If version and prefix are empty, all versions 
             and prefixes will be checked. """
         cmd = '''SELECT * FROM packageList'''
-        params = []
-        parametersUsed = False
-        if not prefix == '' or not category == '' or not package == '':
-            cmd += ''' WHERE'''
-
-        if not prefix == '':
-            cmd += ''' prefix=?'''
-            params.append( prefix )
-            parametersUsed = True
-
-        if not category == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' category=?'''
-            params.append( category )
-            parametersUsed = True
-
-        if not package == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' packageName=?'''
-            params.append( package )
-            parametersUsed = True
-
+        
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         
@@ -134,30 +164,8 @@ class InstallDB:
             package, category and prefix.
         """
         cmd = '''SELECT category, packageName, version, prefix FROM packageList'''
-        params = []
-        parametersUsed = False
-        if not prefix == '' or not category == '' or not package == '':
-            cmd += ''' WHERE'''
-
-        if not prefix == '':
-            cmd += ''' prefix=?'''
-            params.append( prefix )
-            parametersUsed = True
-
-        if not category == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' category=?'''
-            params.append( category )
-            parametersUsed = True
-
-        if not package == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' packageName=?'''
-            params.append( package )
-            parametersUsed = True
-
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         
@@ -172,37 +180,8 @@ class InstallDB:
             package, category and prefix.
         """
         cmd = '''SELECT packageId FROM packageList'''
-        params = []
-        parametersUsed = False
-        if not prefix == '' or not category == '' or not package == '':
-            cmd += ''' WHERE'''
-
-        if not prefix == '':
-            cmd += ''' prefix=?'''
-            params.append( prefix )
-            parametersUsed = True
-
-        if not category == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' category=?'''
-            params.append( category )
-            parametersUsed = True
-
-        if not package == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' packageName=?'''
-            params.append( package )
-            parametersUsed = True
-
-        if not version == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' version=?'''
-            params.append( version )
-            parametersUsed = True
-
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
+        cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         
@@ -228,37 +207,8 @@ class InstallDB:
     def remInstalled( self, category, package, version, prefix='' ):
         """ removes an installed package """
         cmd = '''DELETE FROM packageList'''
-        params = []
-        parametersUsed = False
-        if not prefix == '' or not category == '' or not package == '':
-            cmd += ''' WHERE'''
-
-        if not prefix == '':
-            cmd += ''' prefix=?'''
-            params.append( prefix )
-            parametersUsed = True
-
-        if not category == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' category=?'''
-            params.append( category )
-            parametersUsed = True
-
-        if not package == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' packageName=?'''
-            params.append( package )
-            parametersUsed = True
-
-        if not version == '':
-            if parametersUsed:
-                cmd += ''' AND'''
-            cmd += ''' version=?'''
-            params.append( version )
-            parametersUsed = True
-
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
+        cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         
@@ -267,6 +217,7 @@ class InstallDB:
         return [ InstallPackage( cursor, id ) for id in self.getPackageIds( category, package, version, prefix ) ]
         
     def _prepareDatabase( self ):
+        """ prepare a new database and add the required table layout """
         self.connection = sqlite3.connect( self.dbfilename )
         cursor = self.connection.cursor()
 
@@ -277,20 +228,20 @@ class InstallDB:
                            packageId INTEGER, filename TEXT, fileHash TEXT)''' )
         self.connection.commit()
 
-        cursor.close()
-
     def _importExistingDatabase( self ):
         """ imports from the previous installation database system """
         for category, package, version in portage.PortageInstance.getInstallables():
+            # FIXME: we need to adapt this to use prefixes as well
+            print category, package, version
             if self._isInstalled( category, package, version ):
                 utils.debug( 'adding installed package %s/%s-%s' % ( category, package, version ), 1 )
                 packageObject = self.addInstalled( category, package, version )
-                packageObject.addFiles(utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
+                packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
                 packageObject.install()
 
 
     def _isInstalled( self, category, package, version, buildType='' ):
-        """ check if a package with a certain category, package and version is installed """
+        """ check if a package with a certain category, package and version is installed (used for import) """
 
         # find in old style database
         path = portage.etcDir()
@@ -327,109 +278,29 @@ class InstallDB:
                         found = True
                         break
                 f.close()
-
-#        if ( not found ):
-#            """ try to detect packages from the installer """
-#            bin = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-bin.ver"), category, package, version )
-#            lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.ver"), category, package, version )
-#            found = found or bin or lib
-#
-#        if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or os.getenv( "EMERGE_SOURCEONLY" ) == "True" ):
-#            """ check for any installation """
-#            if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
-#                return False
-#            if package.endswith( "-src" ):
-#                package = package[:-4]
-#            for filename in os.listdir( os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
-#                if filename.startswith( package ):
-#                    found = True
-#                    break
-        return found
-
-    def _findInstalled( self, category, package, buildType='' ):
-        """ find a package of a certain category and packagename and return the full install line """
-
-        fileName = os.path.join( portage.etcDir(), "installed" )
-        if ( not os.path.isfile( fileName ) ):
-            return None
-
-        ret = None
-        f = open( fileName, "rb" )
-        str = "^%s/%s-(.*)$" % ( category, re.escape( package ) )
-        regex = re.compile( str )
-        for line in f.read().splitlines():
-            match = regex.match( line )
-            if match:
-                utils.debug( "found: " + match.group( 1 ), 2 )
-                ret = match.group( 1 )
-        f.close()
-        return ret;
-
-    def _addInstalled( self, category, package, version, buildType='' ):
-        """ add a package to the old style installation database in etc/portage/installed """
-
-        utils.debug( "addInstalled called", 2 )
-        # write a line to etc/portage/installed,
-        # that contains category/package-version
-        path = os.path.join( portage.etcDir() )
-        if ( not os.path.isdir( path ) ):
-            os.makedirs( path )
-        if buildType <> '': 
-            fileName = 'installed-' + buildType
-        else:
-            fileName = 'installed'
-        utils.debug( "installing package %s - %s into %s" % ( package, version, fileName ), 2 )
-        if( os.path.isfile( os.path.join( path, fileName ) ) ):
-            f = open( os.path.join( path, fileName ), "rb" )
-            for line in f:
-                if line.startswith( "%s/%s-%s" % ( category, package, version ) ):
-                    utils.warning( "version already installed" )
-                    return
-                elif line.startswith( "%s/%s-" % ( category, package ) ):
-                    utils.die( "already installed, this should no happen" )
-        f = open( os.path.join( path, fileName ), "ab" )
-        f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
-        f.close()
-
-    def _remInstalled( self, category, package, version, buildType='' ):
-        """ remove an installed package """
-
-        utils.debug( "remInstalled called", 2 )
-        if buildType <> '': 
-            fileName = 'installed-' + buildType
-        else:
-            fileName = 'installed'
-        utils.debug( "removing package %s - %s from %s" % ( package, version, fileName ), 2 )
-        dbfile = os.path.join( portage.etcDir(), fileName )
-        tmpdbfile = os.path.join( portage.etcDir(), "TMPinstalled" )
-        found=False
-        if os.path.exists( dbfile ):
-            file = open( dbfile, "rb" )
-            tfile = open( tmpdbfile, "wb" )
-            for line in file:
-                ## \todo the category should not be part of the search string 
-                ## because otherwise it is not possible to unmerge package using 
-                ## the same name but living in different categories
-                if not line.startswith( "%s/%s" % ( category, package ) ):
-                    tfile.write( line )
-                else:
-                    found=True
-            file.close()
-            tfile.close()
-            os.remove( dbfile )
-            os.rename( tmpdbfile, dbfile )
         return found
 
 # get a global object
-if os.getenv("EMERGE_ENABLE_SQLITEDB") == "True":
+if isDBEnabled():
     installdb = InstallDB()
 
 # Testing the class
-
 if __name__ == '__main__':
-    # add two databases, one default database, and a temporary one
-    db_temp = InstallDB()
-    db = InstallDB( "C:/kde/kde-msvc/temp.db" )
+    # add two databases
+    tempdbpath1 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp1.db" )
+    tempdbpath2 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp2.db" )
+
+    if not os.path.exists( os.path.join( os.getenv( "KDEROOT" ), "tmp" ) ):
+        os.makedirs( os.path.join( os.getenv( "KDEROOT" ), "tmp" ) )
+
+    if os.path.exists( tempdbpath1 ):
+        os.remove( tempdbpath1 )
+    if os.path.exists( tempdbpath2 ):
+        os.remove( tempdbpath2 )
+
+    db_temp = InstallDB( tempdbpath1 )
+    db = InstallDB( tempdbpath2 )
+
     utils.debug( 'testing installation database' )
     
     utils.debug( 'testing if package win32libs-sources/dbus-src with version 1.4.0 is installed: %s' % 
@@ -461,8 +332,8 @@ if __name__ == '__main__':
     
     utils.new_line()
     utils.debug( 'checking installed packages' )
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
 
     utils.new_line()
     utils.debug( 'now trying to remove package & revert it again later' )
@@ -477,8 +348,8 @@ if __name__ == '__main__':
 
     utils.new_line()
     utils.debug( 'checking installed packages' )
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
     utils.debug_line()
     
     utils.new_line()
@@ -488,8 +359,8 @@ if __name__ == '__main__':
         pac.revert()
 
     utils.debug( 'checking installed packages' )
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
     utils.debug_line()
 
     db.getInstalled()
@@ -503,8 +374,8 @@ if __name__ == '__main__':
         utils.debug( 'removing %s files' % len( pac.getFiles() ) )
         pac.uninstall()
 
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'dbus-src', 'win32libs-sources', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
     utils.debug_line()
 
     # test the import from the old style (manifest based) databases
@@ -512,4 +383,4 @@ if __name__ == '__main__':
     db_temp._importExistingDatabase()
     print "getInstalled:", db_temp.getInstalled()
     print "findInstalled:", portage.findInstalled( 'win32libs-sources', 'dbus-src' )
-    print "getFileListFromManifest:", len( utils.getFileListFromManifest( 'C:/kde/kde-msvc', 'dbus-src' ) )
+    print "getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) )
