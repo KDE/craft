@@ -4,10 +4,11 @@
 #
 # git support
 
-from VersionSystemSourceBase import *
-import os
-import utils
-from shells import *
+from VersionSystemSourceBase import *;
+import os;
+import utils;
+from shells import *;
+import tempfile;
 
 ## \todo requires installed git package -> add suport for installing packages 
 
@@ -46,9 +47,33 @@ class GitSource ( VersionSystemSourceBase ):
             # add the git path to the PATH variable so that git can be called without path
             os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
             if os.path.exists( self.checkoutDir() ):
+                tmpFile = tempfile.TemporaryFile()
+                self.shell.execute( self.checkoutDir(), "git", "status | grep -E \"On branch\"", out=tmpFile )
+                tmpFile.seek( 0 )
+                currentBranch = tmpFile.read().replace( "\n", "" ).replace( "# On branch ", "" )
                 # if directory already exists, simply do a pull but obey to offline
+                tmpFile2 = tempfile.TemporaryFile()
+                self.shell.execute( self.checkoutDir(), "git", "status | grep -E \"nothing to commit\"", out=tmpFile2 )
+                tmpFile2.seek( 0 )
+                data = tmpFile2.read().replace( "\n", "" )
+                changed = ( data == "" )
+                if changed:
+                    ret = self.shell.execute( self.checkoutDir(), "git", "stash" )
                 ret = self.shell.execute( self.checkoutDir(), "git", "pull origin master" )
+                print "changed:", changed, currentBranch != repoBranch, currentBranch != "_" + repoTag
+                if changed and ( currentBranch == repoBranch or currentBranch == "_" + repoTag ):
+                    ret = self.shell.execute( self.checkoutDir(), "git", "stash pop" )
+                else:
+                    if currentBranch != repoBranch and currentBranch != "_" + repoTag:
+                        utils.warning( "change of branches! Please check conflict branch by hand!" )
+                        if currentBranch != "_" + repoTag:
+                            branch = "_" + repoTag
+                        else:
+                            branch = repoBranch
+                        ret = self.shell.execute( self.checkoutDir(), "git", "stash branch %s" % ( currentBranch + "_vs_" + branch + "_conflict" ) )
+                        self.shell.execute( self.checkoutDir(), "git", "commit -am \"Emergency commit %s\"" % ( currentBranch + "_vs_" + branch + "_conflict" ) )
             else:
+                currentBranch = ""
                 # it doesn't exist so clone the repo
                 os.makedirs( self.checkoutDir() )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
@@ -66,12 +91,17 @@ class GitSource ( VersionSystemSourceBase ):
                 
             if ret and repoTag:
                 if not self.shell.execute( self.checkoutDir(), "git", "tag | grep -E \"%s$\"%s" % ( repoTag, devNull ) ):
-                    utils.warning( "no tag %s found, assuming revision hash" % repoTag, 1 )
+                    utils.warning( "no tag %s found, assuming revision hash" % repoTag )
                 else:
                     utils.debug( "found tag %s" % repoTag, 1 )
                 repoTagBranch = "_" + repoTag
 
-                if not self.shell.execute( self.checkoutDir(), "git", "branch | grep -E \"%s$\"%s" % ( repoTagBranch, devNull ) ):
+                tmpFile3 = tempfile.TemporaryFile()
+                self.shell.execute( self.checkoutDir(), "git", "branch | grep -E \"%s$\"" % repoTagBranch, out=tmpFile3 )
+                tmpFile3.seek(0)
+                data = tmpFile3.read().replace("\n", "")
+                print data, data == ""
+                if data == "":
                     track = "%s -b %s" % ( repoTag, repoTagBranch )
                 else:
                     track = "%s" % repoTagBranch
