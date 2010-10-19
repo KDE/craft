@@ -3,8 +3,6 @@
 # This package will create a CAB Installer that can be used to install
 # Software on Windows CE based on the filename patterns in whitelist.txt
 
-# TODO: Make the WinCE build dir configurable currently WM65 is hardcoded
-
 __author__  = "Andre Heinecke <aheinecke@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
 
@@ -22,8 +20,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0'] = ""
-        self.defaultTarget = '0'
+        self.targets['de'] = ""
+        self.targets['en'] = ""
+        self.defaultTarget = 'de'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
@@ -33,6 +32,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/wincetools'] = 'kdepimcetools'
         self.hardDependencies['kde/kdepim'] = 'default'
         self.hardDependencies['testing/pinentry-qt'] = 'default'
+        if not self.buildTarget == 'en':
+            self.hardDependencies['kde/kde4-l10n'] = 'default'
 
 class MainPackage(CMakePackageBase):
     def __init__(self):
@@ -62,6 +63,12 @@ class MainPackage(CMakePackageBase):
             whitelist = os.path.join(self.packageDir(), whitelist)
             utils.info("Reading whitelist from %s" % whitelist)
             self.read_whitelist(whitelist)
+            if self.buildTarget == 'de':
+                whitelist = "whitelist_de.txt"
+                whitelist = os.path.join(self.packageDir(), whitelist)
+                utils.info("Reading additonal locale whitelist from %s" %\
+                        whitelist)
+                self.read_whitelist(whitelist)
             utils.info("Copying files")
             self.copy_files()
             return True
@@ -91,7 +98,8 @@ class MainPackage(CMakePackageBase):
                 continue
             try:
                 exp = re.compile(re.escape(os.path.join(self.rootdir,
-                          "WM65")+ os.path.sep) + line)
+                          os.environ["EMERGE_TARGET_PLATFORM"])+ os.path.sep)\
+                          + line)
                 self.whitelist.append(exp)
                 utils.debug("%s added to whitelist as %s" % (line,
                     exp.pattern), 2)
@@ -103,7 +111,8 @@ class MainPackage(CMakePackageBase):
             Copy the binaries for the Package from kderoot to the image
             directory
         '''
-        wm_root = os.path.join(self.rootdir, "WM65") + os.path.sep
+        wm_root = os.path.join(self.rootdir,
+                os.environ["EMERGE_TARGET_PLATFORM"]) + os.path.sep
         utils.createDir(self.workDir())
         utils.debug("Copying from %s to %s ..." % (wm_root,
             self.workDir()), 1)
@@ -233,7 +242,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             sourcediskfiles.append("%s=%d" % (os.path.basename(f), dir_id))
             files.setdefault(dir_id, []).append(os.path.basename(f))
 
-        destinationdirs = ["a%d = 0,%%InstallDir%%%s" % (
+        destinationdirs = ["a%d = 0,%%CE1%%/Kontact-Mobile/%s" % (
             dir_id, d.replace(self.workDir(), ""))
             for d, dir_id in sourcedisknames.iteritems()]
 
@@ -251,8 +260,8 @@ found in: %s \n Please ensure that package wincetools is installed" %\
        #     for dir_id, fs in files.iteritems()]
         sectionnames = ["a%d" % dir_id for dir_id in files.iterkeys()]
 
-        with open(os.path.join(self.workDir(), "Kontact-Mobile.inf"), "wb") \
-            as output:
+        with open(os.path.join(self.workDir(), "..", "Kontact-Mobile.inf"),
+                "wb") as output:
             print >> output, cabtemplate.substitute(
                SOURCEDISKNAMES = rn(sourcedisknames),
                SOURCEDISKFILES = rn(sourcediskfiles),
