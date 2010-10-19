@@ -47,8 +47,7 @@ class GitSource ( VersionSystemSourceBase ):
             os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
             if os.path.exists( self.checkoutDir() ):
                 # if directory already exists, simply do a pull but obey to offline
-                ret = self.shell.execute( self.checkoutDir(), "git", "pull" )
-                
+                ret = self.shell.execute( self.checkoutDir(), "git", "pull origin master" )
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs( self.checkoutDir() )
@@ -65,9 +64,18 @@ class GitSource ( VersionSystemSourceBase ):
             if ret and repoBranch:
                 ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s%s" % ( track, repoBranch ) )
                 
-            # pay attention that after checkout of a tag, the next git pull might not work because of merging problems
             if ret and repoTag:
-                ret = self.shell.execute( self.checkoutDir(), "git", "checkout -b %s %s" % ( repoTag, repoTag ) )
+                if not self.shell.execute( self.checkoutDir(), "git", "tag | grep -E \"%s$\"%s" % ( repoTag, devNull ) ):
+                    utils.warning( "no tag %s found, assuming revision hash" % repoTag, 1 )
+                else:
+                    utils.debug( "found tag %s" % repoTag, 1 )
+                repoTagBranch = "_" + repoTag
+
+                if not self.shell.execute( self.checkoutDir(), "git", "branch | grep -E \"%s$\"%s" % ( repoTagBranch, devNull ) ):
+                    track = "%s -b %s" % ( repoTag, repoTagBranch )
+                else:
+                    track = "%s" % repoTagBranch
+                ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s" % ( track ) )
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
