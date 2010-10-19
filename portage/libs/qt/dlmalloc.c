@@ -8,6 +8,14 @@
 #define DEFAULT_MMAP_THRESHOLD (2* 1024 * 1024)
 /* Maybe replace this with something more appropriate.  */
 #define ABORT exit(1)
+/* Use mutex instead of spin locks.  Both locking strategies have
+   approximately the same performance, but note that Windows CE is a
+   fixed priority system with only limited priority inversion
+   handling.  */
+#define USE_SPIN_LOCKS 0
+
+/* Define if you want to debug virtualalloc/virtualfree.  */
+#undef DEBUG_VIRTUALALLOC
 
 /*
   This is a version (aka dlmalloc) of malloc/free/realloc written by
@@ -1368,7 +1376,7 @@ LONG __cdecl _InterlockedExchange(LONG volatile *Target, LONG Value);
 #endif /* _M_AMD64 */
 #pragma intrinsic (_InterlockedCompareExchange)
 #pragma intrinsic (_InterlockedExchange)
-#define interlockedcompareexchange _InterlockedCompareExchange
+#define interlockedcompareexchange InterlockedCompareExchange
 #define interlockedexchange _InterlockedExchange
 #endif /* Win32 */
 #endif /* USE_LOCKS */
@@ -1516,10 +1524,21 @@ static FORCEINLINE void* win32mmap(size_t size) {
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
   return (ptr != 0)? ptr: MFAIL;
 #else
+  void *nptr;
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
   if (ptr == 0)
     return MFAIL;
-  VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE);
+  nptr = VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE);
+#ifdef DEBUG_VIRTUALALLOC
+  printf ("[0x%08x]: win32mmap(0x%x): %p %p\n", GetCurrentThreadId(),
+ 	  size, ptr, nptr);
+#endif
+  if (!nptr)
+  {
+	  VirtualFree (ptr, 0, MEM_RELEASE);
+	  return MFAIL;
+  }
+  assert (ptr == nptr);
   return ptr;
 #endif
 }
@@ -1527,15 +1546,26 @@ static FORCEINLINE void* win32mmap(size_t size) {
 /* For direct MMAP, use MEM_TOP_DOWN to minimize interference */
 static FORCEINLINE void* win32direct_mmap(size_t size) {
 #if 0
-  void* ptr = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
-  if (ptr == 0)
-    return MFAIL;
-  VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE);
-  return ptr;
-#else
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT|MEM_TOP_DOWN,
                            PAGE_READWRITE);
   return (ptr != 0)? ptr: MFAIL;
+#else
+  void *nptr;
+  void* ptr = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
+  if (ptr == 0)
+    return MFAIL;
+  nptr = VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE);
+#ifdef DEBUG_VIRTUALALLOC
+  printf ("[0x%08x]: win32direct_mmap(0x%x): %p %p\n", GetCurrentThreadId(),
+	  size, ptr, nptr);
+#endif
+  if (!nptr)
+  {
+	  VirtualFree (ptr, 0, MEM_RELEASE);
+	  return MFAIL;
+  }
+  assert (ptr == nptr);
+  return ptr;
 #endif
 }
 
@@ -1549,8 +1579,16 @@ static FORCEINLINE int win32munmap(void* ptr, size_t size) {
     if (minfo.BaseAddress != cptr || minfo.AllocationBase != cptr ||
         minfo.State != MEM_COMMIT || minfo.RegionSize > size)
       return -1;
-    if (VirtualFree(cptr, 0, MEM_RELEASE) == 0)
-      return -1;
+#ifdef DEBUG_VIRTUALALLOC
+    printf ("[0x%08x]: win32munmap(%p)\n", GetCurrentThreadId(), cptr);
+#endif
+	if (VirtualFree(cptr, 0, MEM_RELEASE) == 0)
+	{
+#ifdef DEBUG_VIRTUALALLOC
+	printf ("[0x%08x]: failed: %d\n", GetCurrentThreadId(), GetLastError());
+#endif
+	  return -1;
+	}
     cptr += minfo.RegionSize;
     size -= minfo.RegionSize;
   }
@@ -1876,10 +1914,10 @@ static int pthread_init_lock (MLOCK_T *sl) {
 /* Win32 critical sections */
 #define MLOCK_T               CRITICAL_SECTION
 #define CURRENT_THREAD        GetCurrentThreadId()
-#define INITIAL_LOCK(s)       (!InitializeCriticalSectionAndSpinCount((s), 0x80000000|4000))
-#define ACQUIRE_LOCK(s)       (EnterCriticalSection(sl), 0)
-#define RELEASE_LOCK(s)       LeaveCriticalSection(sl)
-#define TRY_LOCK(s)           TryEnterCriticalSection(sl)
+#define INITIAL_LOCK(sl)       InitializeCriticalSection(sl)
+#define ACQUIRE_LOCK(sl)       (EnterCriticalSection(sl), 0)
+#define RELEASE_LOCK(sl)       LeaveCriticalSection(sl)
+#define TRY_LOCK(sl)           TryEnterCriticalSection(sl)
 #define NEED_GLOBAL_LOCK_INIT
 
 static MLOCK_T malloc_global_mutex;
