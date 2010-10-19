@@ -27,5 +27,16 @@ class Package(CMakePackageBase):
         self.subinfo.options.useCompilerType = False
         CMakePackageBase.__init__( self )
 
+    def qmerge( self ):
+        ''' When crosscompiling install oxygen files
+            also into the targets directory '''
+        ret = CMakePackageBase.qmerge(self)
+        if platform.isCrossCompilingEnabled():
+            utils.copyDir(self.imageDir(),
+                    os.path.join(self.rootdir, 
+                    os.environ["EMERGE_TARGET_PLATFORM"]))
+        return ret
+
+
 if __name__ == '__main__':
     Package().execute()
