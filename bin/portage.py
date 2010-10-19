@@ -406,6 +406,7 @@ def printInstalled():
     
     
 def isInstalled( category, package, version, buildType='' ):
+    """ deprecated, use InstallDB.installdb.isInstalled() instead """
     # find in old style database
     path = etcDir()
     fileName = os.path.join(path,'installed')
@@ -460,6 +461,7 @@ def isInstalled( category, package, version, buildType='' ):
     return found
 
 def findInstalled( category, package, buildType='' ):
+    """ deprecated, use InstallDB.installdb.findInstalled() instead """
     fileName = os.path.join( etcDir(), "installed" )
     if ( not os.path.isfile( fileName ) ):
         return None
@@ -477,6 +479,7 @@ def findInstalled( category, package, buildType='' ):
     return ret;
 
 def addInstalled( category, package, version, buildType='' ):
+    """ deprecated, use InstallDB.installdb.addInstalled() instead """
     utils.debug( "addInstalled called", 2 )
     # write a line to etc/portage/installed,
     # that contains category/package-version
@@ -501,6 +504,7 @@ def addInstalled( category, package, version, buildType='' ):
     f.close()
 
 def remInstalled( category, package, version, buildType='' ):
+    """ deprecated, use InstallDB.installdb.remInstalled() instead """
     utils.debug( "remInstalled called", 2 )
     if buildType <> '': 
         fileName = 'installed-' + buildType
