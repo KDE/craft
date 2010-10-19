@@ -535,13 +535,6 @@ else:
                 if utils.verbose() > 0:
                     utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
             else:
-                # try to remove an already installed package (requires -i)
-                if instver != None and not noremove:
-                    ## \todo  the following unmerge should be performed immediatly before merging the updated package
-                    # In case the build fails the live system will be broken 
-                    utils.debug( "found old version %s - removing" % instver )
-                    handlePackage( package[0], package[1], package[2], "unmerge", opts )
-
                 action = buildAction
                 if buildAction == "install-deps":
                   action = "all"
@@ -551,7 +544,7 @@ else:
                         (package[0], package[1], package[2], buildAction) )
                     exit( 1 )
 
-print                        
+utils.new_line()
 if len( nextArguments ) > 0:
     command = "\"" + sys.executable + "\" -u " + executableName + " " + " ".join( nextArguments )
 
