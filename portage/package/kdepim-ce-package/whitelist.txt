@@ -6,6 +6,13 @@ bin\\akonadi_contacts_resource\.exe
 bin\\akonadi_akonotes_resource\.exe
 bin\\akonadi_imap_resource\.exe
 bin\\akonadi_kolabproxy_resource\.exe
+lib\\kde4\\akonadi_ical_resource\.dll
+lib\\kde4\\akonadi_maildir_resource\.dll
+lib\\kde4\\akonadi_maildispatcher_agent\.dll
+lib\\kde4\\akonadi_contacts_resource\.dll
+lib\\kde4\\akonadi_akonotes_resource\.dll
+lib\\kde4\\akonadi_imap_resource\.dll
+lib\\kde4\\akonadi_kolabproxy_resource\.dll
 
 # Add the Qt Conf
 bin\\qt\.conf
@@ -85,7 +92,6 @@ lib\\kde4\\imports\\
 
 # Some additional plugins
 lib\\kde4\\kcm_akonadicontact_actions\.dll
-lib\\kde4\\akonadi.*
 lib\\kde4\\kcm_ldap\.dll
 lib\\kde4\\kio_pop3\.dll
 lib\\kde4\\kio_sieve\.dll
