@@ -16,6 +16,7 @@ bin\\akonadi_control\.exe
 bin\\akonadictl\.exe
 bin\\akonadiserver\.exe
 bin\\akonadi_agent_server\.exe
+bin\\akonadi_agent_launcher\.exe
 bin\\dbus-1\.dll
 bin\\dbus-daemon\.exe
 bin\\dbus-launch\.exe
