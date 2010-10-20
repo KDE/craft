@@ -15,6 +15,7 @@ bin\\accountwizard\.exe
 bin\\akonadi_control\.exe
 bin\\akonadictl\.exe
 bin\\akonadiserver\.exe
+bin\\akonadi_agent_server\.exe
 bin\\dbus-1\.dll
 bin\\dbus-daemon\.exe
 bin\\dbus-launch\.exe
@@ -83,6 +84,7 @@ lib\\kde4\\imports\\
 
 # Some additional plugins
 lib\\kde4\\kcm_akonadicontact_actions\.dll
+lib\\kde4\\akonadi.*
 lib\\kde4\\kcm_ldap\.dll
 lib\\kde4\\kio_pop3\.dll
 lib\\kde4\\kio_sieve\.dll
