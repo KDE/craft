@@ -62,7 +62,7 @@ class Package(CMakePackageBase):
                 "command: %s failed" % (cmd))
         shutil.copytree(os.path.join(self.imageDir(), "lib"),
                          os.path.join(self.imageDir(), "bin"),
-                         ignore=shutil.ignore_patterns('*.a'))
+                         ignore=shutil.ignore_patterns('*.a','*.lib'))
         shutil.move(os.path.join(self.imageDir(), "include", "boost-1_44",
                     "boost"),
                     os.path.join(self.imageDir(),"include","boost"))
