@@ -11,9 +11,11 @@
 #ifndef QT_NO_ERRORMESSAGE
 #  define QT_NO_ERRORMESSAGE
 #endif
+/*
 #ifndef QT_NO_FILEDIALOG
 #  define QT_NO_FILEDIALOG
 #endif
+*/
 #ifndef QT_NO_FONTDIALOG
 #  define QT_NO_FONTDIALOG
 #endif
