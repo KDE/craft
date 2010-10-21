@@ -8,17 +8,14 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
-        self.hardDependencies['win32libs-bin/boost']   = 'default'
+        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         
         self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
         
-        if not platform.isCrossCompilingEnabled():
-            self.boostversion = "1.37"
-        else:
+        if platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/sqlite-src'] = 'default'
-            self.boostversion = "1.40.0"
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80'
@@ -45,19 +42,11 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines  = " -DCMAKE_PROGRAM_PATH=%s " % os.path.join( os.getenv("KDEROOT") , "dev-utils" , "svn" , "bin" )
-        self.subinfo.options.configure.defines += " -DBoost_ADDITIONAL_VERSIONS=" + self.subinfo.boostversion
-        if not platform.isCrossCompilingEnabled():
-            self.boost = portage.getPackageInstance("win32libs-bin","boost")
-        else:
-            self.boost = portage.getPackageInstance("win32libs-sources","boost-src")
-        self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
         if platform.isCrossCompilingEnabled():
-            os.environ["BOOST_LIBRARYDIR"]  = os.path.join(self.boost.mergeDestinationDir(), "lib", "boost-" + self.subinfo.boostversion.replace(".", "_") )
-        self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE "
-            
-        self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
-            % os.path.join(ROOTDIR, "bin")
-            
+            self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE "
+            self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
+                % os.path.join(ROOTDIR, "bin")
+
         if self.isTargetBuild():
             automoc = os.path.join(self.rootdir, "lib", "automoc4", "Automoc4Config.cmake")
             if not os.path.exists(automoc):
