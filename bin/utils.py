@@ -361,11 +361,11 @@ def unpackFile( downloaddir, filename, workdir ):
 
 def un7zip( file, destdir ):
     command = "7za x -r -y -o%s %s" % ( destdir, file )
-    if verbose() > 0:
+    if verbose() > 1:
         return system( command )
     else:
         tmp = tempfile.TemporaryFile()
-        return system( command, tmp, tmp )
+        return system( command, tmp )
 	
 def unTar( file, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
