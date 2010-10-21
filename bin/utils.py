@@ -22,6 +22,7 @@ import tempfile
 import getpass
 import subprocess
 import re
+import tempfile
 
 if os.name == 'nt': import msvcrt
 else:               import fcntl
@@ -33,6 +34,9 @@ import ConfigParser
 
 import portage_versions
 
+
+def isSourceOnly():
+    return os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1"
 
 SVN_LOCK_FILE = "emergesvn-%s.lck"
 
@@ -356,8 +360,12 @@ def unpackFile( downloaddir, filename, workdir ):
     return False
 
 def un7zip( file, destdir ):
-    command = "7za x -r -y -o%s %s" % (destdir, file)
-    return system(command)
+    command = "7za x -r -y -o%s %s" % ( destdir, file )
+    if verbose() > 0:
+        return system( command )
+    else:
+        tmp = tempfile.TemporaryFile()
+        return system( command, tmp, tmp )
 	
 def unTar( file, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
