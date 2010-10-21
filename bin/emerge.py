@@ -13,6 +13,8 @@ import platform;
 import shutil;
 from InstallDB import *;
 
+
+
 def usage():
     print """
 Usage:
@@ -157,7 +159,7 @@ Send feedback to <kde-windows@kde.org>.
 def cleanup(root,files):
         isValid = False
         for f in files:
-          if(f.startswith(".svn")):
+          if(f.startswith(".svn") or f.startswith(".git") ):
             isValid = True
             continue
           if(os.path.isdir(os.path.join( root , f ))):
@@ -391,7 +393,7 @@ for i in sys.argv:
         disableTargetBuild = True
     elif( i == "--cleanup" ):
         utils.debug("Starting to clean your portage directory" , 1 )
-        for _dir in portageRootDirectories():
+        for _dir in portage.rootDirectories():
             cleanup( _dir , os.listdir( _dir ) )
         exit(0)
     elif ( i.startswith( "-" ) ):
