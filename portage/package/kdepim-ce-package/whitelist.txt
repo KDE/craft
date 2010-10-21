@@ -845,7 +845,7 @@ share\\soprano\\rules\\nrl\.rules
 share\\soprano\\rules\\rdfs\.rules
 
 # Qxygen Icon theme
-share\\icons\\oxygen\index\.theme
+share\\icons\\oxygen\\index\.theme
 
 ##############################################################################
 #Icons referenced in KDEPIM QML
@@ -882,7 +882,7 @@ share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\character-set\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\computer\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\configure\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\contact-new\.png
-share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\dialog-cancel\.png
+share\\icons\\oxygen\\(16x16|32x32|48x48|64x64)\\.*\\dialog-cancel\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\dialog-close\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\dialog-error\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\dialog-information\.png

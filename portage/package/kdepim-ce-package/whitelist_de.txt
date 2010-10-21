@@ -2,6 +2,7 @@
 # for the german localization of Kontact Mobile
 share\\locale\\de\\entry\.desktop
 share\\locale\\de\\LC_MESSAGES\\gnupg2\.mo
+share\\locale\\de\\LC_MESSAGES\\libgpg-error\.mo
 
 share\\locale\\de\\LC_MESSAGES\\accountwizard_imap\.mo
 share\\locale\\de\\LC_MESSAGES\\accountwizard_kolab\.mo
