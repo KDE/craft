@@ -29,7 +29,10 @@ class Package(CMakePackageBase):
                 " --prefix=" + self.imageDir() + \
                 " --stagedir=" + os.path.join(self.buildDir(),"stage") + \
                 " threading=multi"
-                " variant=")
+                " link=shared"
+                " runtime-link=shared")
+
+        self.subinfo.options.configure.defines += " variant="
         if self.buildType() == "Debug":
             self.subinfo.options.configure.defines += "debug"
         else:
@@ -41,14 +44,9 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += "msvc"
         if self.isHostBuild():
             self.subinfo.options.configure.defines += " --with-program_options"
-        if platform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += (
-                    " link=static"
-                    " runtime-link=static")
-        else:
-            self.subinfo.options.configure.defines += (" link=shared"
-                                                       " runtime-link=shared"
-                                                       " --with-python")
+        if not platform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines += " --with-python"
+
     def configure(self):
         return True
 
