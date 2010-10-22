@@ -78,7 +78,7 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 +configure_file(${CMAKE_CURRENT_SOURCE_DIR}/idn-int.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/idn-int.h)
 +
-+add_library(idn-11 SHARED ${libIDN_srcs})
++add_library(idn-11 STATIC ${libIDN_srcs})
 +add_executable(idn ${IDN_srcs})
 +target_link_libraries(idn idn-11)
 +
@@ -129,33 +129,6 @@ diff -Nru libidn-1.19.orig/idn-int.h.cmake libidn-1.19/idn-int.h.cmake
 +#else
 +# include <stdint.h>
 +#endif
-diff -Nru libidn-1.19.orig/lib/stringprep.h libidn-1.19/lib/stringprep.h
---- libidn-1.19.orig/lib/stringprep.h	2010-04-12 20:50:09.000000000 +0200
-+++ libidn-1.19/lib/stringprep.h	2010-10-22 16:03:58.285445000 +0200
-@@ -136,8 +136,10 @@
- 
-   extern IDNAPI const Stringprep_profile stringprep_nameprep[];
- 
-+#if defined(LIBIDN_BUILDING)
- # define stringprep_nameprep(in, maxlen)			\
-   stringprep(in, maxlen, 0, stringprep_nameprep)
-+#endif
- 
- # define stringprep_nameprep_no_unassigned(in, maxlen)			\
-   stringprep(in, maxlen, STRINGPREP_NO_UNASSIGNED, stringprep_nameprep)
-@@ -165,10 +167,12 @@
-   extern IDNAPI const Stringprep_profile stringprep_xmpp_resourceprep[];
-   extern IDNAPI const Stringprep_table_element stringprep_xmpp_nodeprep_prohibit[];
- 
-+#if defined(LIBIDN_BUILDING)
- # define stringprep_xmpp_nodeprep(in, maxlen)		\
-   stringprep(in, maxlen, 0, stringprep_xmpp_nodeprep)
- # define stringprep_xmpp_resourceprep(in, maxlen)		\
-   stringprep(in, maxlen, 0, stringprep_xmpp_resourceprep)
-+#endif
- 
-   /* iSCSI */
- 
 diff -Nru libidn-1.19.orig/win32/getopt.c libidn-1.19/win32/getopt.c
 --- libidn-1.19.orig/win32/getopt.c	1970-01-01 01:00:00.000000000 +0100
 +++ libidn-1.19/win32/getopt.c	2010-10-22 16:03:31.566916800 +0200
