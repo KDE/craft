@@ -178,6 +178,8 @@ def wgetFile( url, destdir , filename=''):
        command += " -O %s" % os.path.join( destdir , filename )
     command += " %s" % url
     debug( "wgetfile called", 1 )
+    ret = system( command )
+    debug( "wget ret: %s" % ret, 2)
     return ret
 
 def getFtpFile( host, path, destdir, filename ):
