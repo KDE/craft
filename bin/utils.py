@@ -169,8 +169,8 @@ def getFile( url, destdir ):
 def wgetFile( url, destdir , filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     compath = WGetExecutable
-    command = "%s --no-check-certificate -c -t 1" % compath
-    if not os.environ.get("EMERGE_PASSIVE_FTP"):
+    command = "%s --no-check-certificate -c -t 10" % compath
+    if os.environ.get("EMERGE_NO_PASSIVE_FTP"):
         command += " --no-passive-ftp "
     if(filename ==''):
        command += "  -P %s" % destdir
@@ -178,19 +178,6 @@ def wgetFile( url, destdir , filename=''):
        command += " -O %s" % os.path.join( destdir , filename )
     command += " %s" % url
     debug( "wgetfile called", 1 )
-    attempts = 1
-    if url.lower().startswith( "http://downloads.sourceforge.net" ):
-        debug( "Detected downloads.sourceforge.net... Trying three times." )
-        attempts=3
-
-    while( attempts > 0 ):
-        attempts -= 1
-        ret = system( command )
-        debug( "wget ret: %s" % ret )
-        if ret == True:
-            # success stop early.
-            break;
-
     return ret
 
 def getFtpFile( host, path, destdir, filename ):
