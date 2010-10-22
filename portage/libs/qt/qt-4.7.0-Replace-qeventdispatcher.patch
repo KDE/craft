@@ -1,15 +1,15 @@
-From 2170da9aa4ad78b7d51a1484ee1cc7efd8317725 Mon Sep 17 00:00:00 2001
+From 1ff5ae0e4796c912c4310375681a16b841ebdd3d Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
-Date: Fri, 22 Oct 2010 10:41:37 +0200
+Date: Fri, 22 Oct 2010 12:16:18 +0200
 Subject: [PATCH] Replace qeventdispatcher
 
     Add a more easy to debug and battery saving eventdispatcher.
     Created by Marcus Brinkmann.
 ---
  mkspecs/wince60standard-armv4i-msvc2005/qmake.conf |    2 +-
- src/corelib/kernel/qeventdispatcher_win.cpp        | 1423 +++++++++-----------
+ src/corelib/kernel/qeventdispatcher_win.cpp        | 1435 +++++++++-----------
  src/corelib/kernel/qeventdispatcher_win_p.h        |   49 +-
- 3 files changed, 688 insertions(+), 786 deletions(-)
+ 3 files changed, 694 insertions(+), 792 deletions(-)
 
 diff --git a/mkspecs/wince60standard-armv4i-msvc2005/qmake.conf b/mkspecs/wince60standard-armv4i-msvc2005/qmake.conf
 index 3bb18af..8c61a10 100644
@@ -25,7 +25,7 @@ index 3bb18af..8c61a10 100644
  QMAKE_LIBS_NETWORK      = ws2.lib $$QMAKE_LIBS_GUI
  QMAKE_LIBS_OPENGL       = 
 diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
-index 153ccdf..039359f 100644
+index 153ccdf..f05dcc3 100644
 --- a/src/corelib/kernel/qeventdispatcher_win.cpp
 +++ b/src/corelib/kernel/qeventdispatcher_win.cpp
 @@ -39,6 +39,8 @@
@@ -696,7 +696,7 @@ index 153ccdf..039359f 100644
 +	bool haveMessage = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
 +	if (!haveMessage)
 +	  break;
-+
++	
 +	if ((flags & QEventLoop::ExcludeUserInputEvents)
 +	    && ((msg.message >= WM_KEYFIRST
 +		 && msg.message <= WM_KEYLAST)
@@ -728,7 +728,7 @@ index 153ccdf..039359f 100644
 +	}
 +      next_msg:
 +	if (interrupt) {
-+            delete[] events;
++            delete[] events;       
 +	    return nevents;
 +	}
 +	/* Avoid live lock by processing events for a maximum of
@@ -736,7 +736,7 @@ index 153ccdf..039359f 100644
 +	if (timerList.updateCurrentTime() - currentTime > MAXIMUM_MSG_TIME)
 +	  break;
 +    }
-+
++    
 +    /* Now process the sockets and winEvents.  Note that we work on
 +       the list of pending items to prevent a live lock.  The
 +       unregister functions make sure to remove objects from there,
@@ -779,7 +779,7 @@ index 153ccdf..039359f 100644
 +	    qWarning ("could not enumerate network events: %d", WSAGetLastError());
 +	    sn_pending_list.takeFirst();
 +	    continue;
-+	}
++	} 
 +
 +	QEvent event(QEvent::SockAct);
 +	if (sn->obj[0] && ne.lNetworkEvents & (FD_READ | FD_CLOSE | FD_ACCEPT)) {
@@ -986,10 +986,24 @@ index 153ccdf..039359f 100644
          }
      }
 +    return true;
++}
++
++QList<QPair<int, int> > QTimerInfoList::registeredTimers(QObject *object) const
++{
++    QList<QPair<int, int> > list;
++    for (int i = 0; i < count(); ++i) {
++        register const QTimerInfo * const t = at(i);
++        if (t->obj == object)
++            list << QPair<int, int>(t->id, t->interval);
++    }
++    return list;
  }
  
 -void QEventDispatcherWin32Private::doWsaAsyncSelect(int socket)
-+QList<QPair<int, int> > QTimerInfoList::registeredTimers(QObject *object) const
++/*
++    Activate pending timers, returning how many where activated.
++*/
++int QTimerInfoList::activateTimers()
  {
 -    Q_ASSERT(internalHwnd);
 -    int sn_event = 0;
@@ -1002,20 +1016,6 @@ index 153ccdf..039359f 100644
 -    // BoundsChecker may emit a warning for WSAAsyncSelect when sn_event == 0
 -    // This is a BoundsChecker bug and not a Qt bug
 -    WSAAsyncSelect(socket, internalHwnd, sn_event ? WM_QT_SOCKETNOTIFIER : 0, sn_event);
-+    QList<QPair<int, int> > list;
-+    for (int i = 0; i < count(); ++i) {
-+        register const QTimerInfo * const t = at(i);
-+        if (t->obj == object)
-+            list << QPair<int, int>(t->id, t->interval);
-+    }
-+    return list;
-+}
-+
-+/*
-+    Activate pending timers, returning how many where activated.
-+*/
-+int QTimerInfoList::activateTimers()
-+{
 +    if (isEmpty())
 +        return 0; // nothing to do
 +
@@ -1131,13 +1131,8 @@ index 153ccdf..039359f 100644
 -        createInternalHwnd();
 -
      d->interrupt = false;
-+
-+    // we are awake, broadcast it
-     emit awake();
-+    QCoreApplicationPrivate::sendPostedEvents(0, 0, d->threadData);
-+    if (d->interrupt)
-+        goto out;
- 
+-    emit awake();
+-
 -    bool canWait;
 -    bool retVal = false;
 -    bool seenWM_QT_SENDPOSTEDEVENTS = false;
@@ -1202,8 +1197,7 @@ index 153ccdf..039359f 100644
 -                // WinCE doesn't support hooks at all, so we have to call this by hand :(
 -                (void) qt_GetMessageHook(0, PM_REMOVE, (LPARAM) &msg);
 -#endif
-+    int nevents = 0;
- 
+-
 -                if (d->internalHwnd == msg.hwnd && msg.message == WM_QT_SENDPOSTEDEVENTS) {
 -                    if (seenWM_QT_SENDPOSTEDEVENTS) {
 -                        // when calling processEvents() "manually", we only want to send posted
@@ -1240,19 +1234,6 @@ index 153ccdf..039359f 100644
 -            }
 -            retVal = true;
 -        }
-+    if (!(flags & QEventLoop::ExcludeUserInputEvents)) {
-+	// process queued user input events
-+	while (!d->queuedUserInputEvents.isEmpty()) {
-+            MSG msg = d->queuedUserInputEvents.takeFirst();
-+	    if (!filterEvent(&msg)) {
-+	        ++nevents;
-+	        TranslateMessage(&msg);
-+	        DispatchMessage(&msg);
-+	    }
-+	    if (d->interrupt)
-+	        goto out;
-+	}
-+    }
  
 -        // still nothing - wait for message or signalled objects
 -        canWait = (!retVal
@@ -1273,29 +1254,54 @@ index 153ccdf..039359f 100644
 -            }
 -        }
 -    } while (canWait);
-+    const bool canWait = (d->threadData->canWait
-+                          && (flags & QEventLoop::WaitForMoreEvents));
-+    if (canWait)
-+        emit aboutToBlock();
- 
+-
 -    if (!seenWM_QT_SENDPOSTEDEVENTS && (flags & QEventLoop::EventLoopExec) == 0) {
 -        // when called "manually", always send posted events
 -        QCoreApplicationPrivate::sendPostedEvents(0, 0, d->threadData);
 -    }
+-
+-    if (needWM_QT_SENDPOSTEDEVENTS)
+-        PostMessage(d->internalHwnd, WM_QT_SENDPOSTEDEVENTS, 0, 0);
+-
+-    return retVal;
++    // we are awake, broadcast it
++    emit awake();
++    QCoreApplicationPrivate::sendPostedEvents(0, 0, d->threadData);
++    if (d->interrupt)
++        goto out;
++
++    int nevents = 0;
++
++    if (!(flags & QEventLoop::ExcludeUserInputEvents)) {
++	// process queued user input events
++	while (!d->queuedUserInputEvents.isEmpty()) {
++            MSG msg = d->queuedUserInputEvents.takeFirst();
++	    if (!filterEvent(&msg)) {
++	        ++nevents;
++	        TranslateMessage(&msg);
++	        DispatchMessage(&msg);
++	    }
++	    if (d->interrupt)
++	        goto out;
++	}
++    }
++
++    const bool canWait = (d->threadData->canWait
++                          && (flags & QEventLoop::WaitForMoreEvents));
++    if (canWait)
++        emit aboutToBlock();
++
 +    // Determine the maximum time we can wait for an event.
 +    ticks_t tm = INFINITE;
 +    if (!canWait)
 +        tm = 0;
 +    else if (!(flags & QEventLoop::X11ExcludeTimers))
 +        d->timerList.timerWait(tm);
- 
--    if (needWM_QT_SENDPOSTEDEVENTS)
--        PostMessage(d->internalHwnd, WM_QT_SENDPOSTEDEVENTS, 0, 0);
++    
 +    nevents += d->doSelect(flags, tm);
 +    if (d->interrupt)
 +        goto out;
- 
--    return retVal;
++
 +    // activate timers
 +    if (! (flags & QEventLoop::X11ExcludeTimers)) {
 +        nevents += d->activateTimers();
@@ -1353,7 +1359,7 @@ index 153ccdf..039359f 100644
 +    int i;
 +    for (i = 0; i < d->sockets.size(); ++i)
 +      {
-+	if (d->sockets[i]->sockfd = sockfd)
++	if (d->sockets[i]->sockfd == sockfd)
 +	  break;
 +      }
 +    if (i < d->sockets.size())
@@ -1433,7 +1439,7 @@ index 153ccdf..039359f 100644
 +    int i;
 +    for (i = 0; i < d->sockets.size(); ++i)
 +      {
-+	if (d->sockets[i]->sockfd = sockfd)
++	if (d->sockets[i]->sockfd == sockfd)
 +	  break;
 +      }
 +    if (i == d->sockets.size())
@@ -1457,7 +1463,7 @@ index 153ccdf..039359f 100644
 +      flags |= FD_WRITE | FD_CONNECT;
 +    if (sn->obj[2])
 +      flags |= FD_OOB;
-+
++    
 +    if (flags == 0)
 +      {
 +	WSACloseEvent (sn->event);
