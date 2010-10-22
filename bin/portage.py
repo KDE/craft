@@ -181,7 +181,7 @@ class Portage:
     def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
         if platform.isCrossCompilingEnabled() \
-        or os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1":
+        or utils.isSourceOnly():
             sp = self.getCorrespondingSourcePackage( package )
             if sp:
                 category = sp[0]
@@ -322,12 +322,12 @@ def getDependencies( category, package, version ):
 
 def solveDependencies( category, package, version, deplist ):
     if platform.isCrossCompilingEnabled() \
-    or os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1":
+    or utils.isSourceOnly():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
         if sp:
             # we found such a package and we're allowed to replace it
-            category = sp[0]
-            package = sp[1]
+            category = sp[ 0 ]
+            package = sp[ 1 ]
             version = PortageInstance.getNewestVersion( category, package )
 
     if ( category == "" ):
@@ -448,7 +448,7 @@ def isInstalled( category, package, version, buildType='' ):
         lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.ver"), category, package, version )
         found = found or bin or lib
 
-    if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or os.getenv( "EMERGE_SOURCEONLY" ) == "True" ):
+    if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or utils.isSourceOnly() ):
         """ check for any installation """
         if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             return False
