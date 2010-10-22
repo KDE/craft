@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['9.0release'] = "http://officespace.kdab.com/~andy/runtime-wince-release.zip"
-        self.targets['9.0debug'] = "http://officespace.kdab.com/~andy/runtime-wince-debug.zip"
+        self.targets['9.0release'] = "http://kdab.com/~andy/runtime-wince-release.zip"
+        self.targets['9.0debug'] = "http://kdab.com/~andy/runtime-wince-debug.zip"
         if EmergeBase().buildType() == "Debug":
             self.defaultTarget = '9.0debug'
         else:
