@@ -24,13 +24,5 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
-    def createPackage( self ): 
-
-        self.stripLibs( "libidn-11" )
-        self.createImportLibs( "libidn-11" )
-
-        # now do packaging with kdewin-packager
-        return CMakePackageBase.createPackage( self )
-
 if __name__ == '__main__':
      Package().execute()

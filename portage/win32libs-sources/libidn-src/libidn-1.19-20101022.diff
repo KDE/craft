@@ -8,7 +8,7 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +
 +set(PACKAGE "libidn")
 +set(PACKAGE_NAME "GNU Libidn")
-+set(PACKAGE_VERSION "1.15")
++set(PACKAGE_VERSION "1.19")
 +set(PACKAGE_BUGREPORT "bug-libidn@gnu.org")
 +set(LOCALEDIR .)
 +
@@ -74,7 +74,7 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/idn-int.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/idn-int.h)
 +endif(MINGW)
 +
-+add_library(idn-11 SHARED ${libIDN_srcs})
++add_library(idn-11 STATIC ${libIDN_srcs})
 +add_executable(idn ${IDN_srcs})
 +target_link_libraries(idn idn-11)
 +
