@@ -227,6 +227,8 @@ class InstallDB:
         cursor.execute( '''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
                            packageId INTEGER, filename TEXT, fileHash TEXT)''' )
         self.connection.commit()
+        
+        self._importExistingDatabase()
 
     def _importExistingDatabase( self ):
         """ imports from the previous installation database system """
