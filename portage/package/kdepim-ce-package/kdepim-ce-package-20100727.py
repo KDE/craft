@@ -120,7 +120,6 @@ class MainPackage(CMakePackageBase):
         unique_names = []
         duplicates = []
 
-
         for entry in self.traverse(wm_root, self.whitelisted):
             if os.path.basename(entry) in uniquebasenames:
                 utils.debug("Found duplicate filename: %s" % \
@@ -192,6 +191,16 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                     "share", "icons"))
             else:
                 utils.debug("Failed to copy %s not a file: %s" % path2file, 1)
+
+        # Configure localization
+        if self.buildTarget == 'de':
+            confdir = os.path.join(self.workDir(), "share", "config")
+            if not os.path.isdir(confdir):
+                os.makedirs(confdir)
+            with open(os.path.join(confdir, "kdeglobals"),"w") as f:
+                f.write('[Locale]\n')
+                f.write('Country=de\n')
+                f.write('Language=de\n')
 
     def traverse(self, directory, whitelist = lambda f: True):
         '''
