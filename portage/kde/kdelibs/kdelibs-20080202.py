@@ -68,7 +68,8 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += \
                     "-DKDE_PLATFORM_PROFILE=Mobile "\
                     "-DBUILD_kutils=TRUE "\
-                    "-DBUILD_kross=TRUE "
+                    "-DBUILD_kross=TRUE "\
+                    "-DBUILD_interfaces=TRUE "
 
 if __name__ == '__main__':
     Package().execute()
