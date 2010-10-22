@@ -80,6 +80,10 @@ rem set EMERGE_PROXY_PORT=8080
 rem set EMERGE_PROXY_USERNAME=
 rem set EMERGE_PROXY_PASSWORD=
 
+rem Here you can set if emerge should try to download files in passive mode if
+rem possible
+rem set EMERGE_PASSIVE_FTP=True
+
 rem Here you change the download directory.
 rem If you want, so you can share the same download directory between
 rem mingw and msvc.

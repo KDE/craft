@@ -169,7 +169,9 @@ def getFile( url, destdir ):
 def wgetFile( url, destdir , filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     compath = WGetExecutable
-    command = "%s --no-check-certificate -c -t 1" %  compath
+    command = "%s --no-check-certificate -c -t 1" % compath
+    if not os.environ["EMERGE_PASSIVE_FTP"]:
+        command += " --no-passive-ftp "
     if(filename ==''):
        command += "  -P %s" % destdir
     else:
