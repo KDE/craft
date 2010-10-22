@@ -1528,6 +1528,14 @@ static FORCEINLINE void* win32mmap(size_t size) {
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
   if (ptr == 0)
     return MFAIL;
+  if (ptr < 32*1024*1024)
+      {
+      printf ("[0x%08x]: win32mmap(0x%x): Got %p, deny allocation in low memory to make system malloc allocations identifiable.\n",
+          GetCurrentThreadId(), size, ptr);
+      VirtualFree (ptr, 0, MEM_RELEASE);
+    return MFAIL;
+      }
+
   nptr = VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE);
 #ifdef DEBUG_VIRTUALALLOC
   printf ("[0x%08x]: win32mmap(0x%x): %p %p\n", GetCurrentThreadId(),
@@ -1554,6 +1562,15 @@ static FORCEINLINE void* win32direct_mmap(size_t size) {
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
   if (ptr == 0)
     return MFAIL;
+  if (ptr < 32*1024*1024)
+      {
+#ifdef DEBUG_VIRTUALALLOC
+      printf ("[0x%08x]: win32mmap(0x%x): Got %p, denying to prevent eternal confusion.\n",
+          GetCurrentThreadId(), size, ptr);
+#endif
+      VirtualFree (ptr, 0, MEM_RELEASE);
+    return MFAIL;
+      }
   nptr = VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE);
 #ifdef DEBUG_VIRTUALALLOC
   printf ("[0x%08x]: win32direct_mmap(0x%x): %p %p\n", GetCurrentThreadId(),
@@ -4791,7 +4808,16 @@ void dlfree(void* mem) {
      free chunks, if they exist, and then place in a bin.  Intermixed
      with special cases for top, dv, mmapped chunks, and usage errors.
   */
-
+  if (mem < 32*1024*1024)
+      {
+#ifdef DEBUG_VIRTUALALLOC
+  printf ("[0x%08x]: win32mmap(0x%x): Someone tryed to free memory that was not allocated by dlmalloc\n",
+  GetCurrentThreadId();
+#endif
+ /* Maybe QDBus deallocates dbus allocated memory.  */
+      free (mem);
+        return;
+      }
   if (mem != 0) {
     mchunkptr p  = mem2chunk(mem);
 #if FOOTERS
