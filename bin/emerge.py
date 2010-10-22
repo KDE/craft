@@ -506,44 +506,45 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
         This is still a bit problematic since packageName might not be a valid
         package"""
         
-    if packageName and len(deplist) >= 1:
-        package = deplist[ -1 ]
+    if packageName and len( deplist ) >= 1:
+        category, package, version, tag, ignoreInstalled = deplist[ -1 ]
     else:
-        package = [ None, None, None ]  
+        category, package, version = None, None, None
 
-    if not handlePackage( package[ 0 ], package[ 1 ], package[ 2 ], buildAction, opts ):
+    if not handlePackage( category, package, version, buildAction, opts ):
         exit(1)
 
 else:
-    for package in deplist:
+    for category, package, version, tag, ignoreInstalled in deplist:
+#        print category, package, version, tag, ignoreInstalled
         if isDBEnabled():
-            isInstalled = installdb.isInstalled( category=package[0], package=package[1], version=package[2], prefix=portage.prefixForBuildType( buildType ) )
+            isInstalled = installdb.isInstalled( category, package, version, portage.prefixForBuildType( buildType ) )
         else:
-            isInstalled = portage.isInstalled( package[0], package[1], package[2], buildType )
-        if ( isInstalled and not package[ -1 ] ):
-            if utils.verbose() > 1 and package[1] == packageName:
-                utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
-            elif utils.verbose() > 2 and not package[1] == packageName:
-                utils.warning( "already installed %s/%s-%s" % ( package[0], package[1], package[2] ) )
+            isInstalled = portage.isInstalled( category, package, version, buildType )
+        if ( isInstalled and not ignoreInstalled ):
+            if utils.verbose() > 1 and package == packageName:
+                utils.warning( "already installed %s/%s-%s" % ( category, package, version ) )
+            elif utils.verbose() > 2 and not package == packageName:
+                utils.warning( "already installed %s/%s-%s" % ( category, package, version ) )
         else:
             # find the installed version of the package
             if isDBEnabled():
-                instver = installdb.findInstalled( package[0], package[1] )
+                instver = installdb.findInstalled( category, package )
             else:
-                instver = portage.findInstalled( package[0], package[1] )
+                instver = portage.findInstalled( category, package )
             
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
-                    utils.warning( "pretending %s/%s-%s" % ( package[0], package[1], package[2] ) )
+                    utils.warning( "pretending %s/%s-%s" % ( category, package, version ) )
             else:
                 action = buildAction
                 if buildAction == "install-deps":
                   action = "all"
                 
-                if not handlePackage( package[0], package[1], package[2], action, opts ):
+                if not handlePackage( category, package, version, action, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
-                        (package[0], package[1], package[2], buildAction) )
+                        ( category, package, version, buildAction ) )
                     exit( 1 )
 
 utils.new_line()
