@@ -216,6 +216,37 @@ class Portage:
             return tagDict
         else:
             return dict()
+    
+    def getAllVCSTargets( self, category, package, version ):
+        """ returns all version control system targets of a specified package,
+            excluding those which do contain tags """
+        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            tagDict = info.svnTargets
+            for key in tagDict:
+                utils.debug( '%s: %s' % ( key, tagDict[key] ), 2 )
+            return tagDict
+        else:
+            return dict()
+
+    def getUpdatableVCSTargets( self, category, package, version ):
+        """ check if the targets are tags or not """
+        targetDict = PortageInstance.getAllVCSTargets( category, package, version )
+        retList = []
+        for key in targetDict:
+            url = targetDict[ key ]
+            if url:
+                type = utils.getVCSType( url )
+                if type == "svn":
+                    # for svn, ignore tags
+                    if not url.startswith( "tags/" ) and not "/tags/" in url:
+                        retList.append( key )
+                elif not type == "":
+                    # for all other vcs types, simply rebuild everything for now
+                    retList.append( key )
+        return retList
 
     def getNewestVersion( self, category, package ):
         """ returns the newest version of this category/package """

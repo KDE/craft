@@ -3,6 +3,7 @@
 #
 
 import info
+import utils
 
 from FileSource import *
 from ArchiveSource import *
@@ -27,17 +28,15 @@ def SourceFactory(settings):
 
     ## \todo move settings access into info class 
     if settings.hasSvnTarget():
-        url = settings.svnTarget()
-        if url.find("://") == -1: 
+        type = utils.getVCSType( settings.svnTarget() )
+        if type == "svn":
             source = SvnSource()
-        elif url.startswith("[hg]"):
+        elif type == "hg":
             source = HgSource()
-        elif url.find("git:") >= 0 or url.startswith("[git]"):
+        elif "git":
             source = GitSource()
-        elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
-            source = SvnSource()
         ## \todo complete more cvs access schemes 
-        elif url.find("pserver:") >= 0: 
+        elif "cvs": 
             source = CvsSource()
 
     if source == None:

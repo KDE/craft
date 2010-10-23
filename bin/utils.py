@@ -890,14 +890,33 @@ def digestFileSha1( filepath ):
     file.close()
     return hash.hexdigest()
 
+def getVCSType( url ):
+    """ return the type of the vcs url """
+    if url.find("://") == -1:
+        return "svn"
+    elif url.startswith("[hg]"):
+        return "hg"
+    elif isGitUrl( url ):
+        return "git"
+    elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
+        return "svn"
+    ## \todo complete more cvs access schemes 
+    elif url.find("pserver:") >= 0: 
+        return "cvs"
+    else:
+        return ""
+
 def isGitUrl( Url ):
     """ this function returns true, if the Url given as parameter is a git url:
-        it either starts with git:// or the first part before the first '|' ends with .git"""
+        it either starts with git:// or the first part before the first '|' ends with .git
+        or if the url starts with the token [git] """
     if Url.startswith('git://'):
         return True
     # split away branch and tags
     splitUrl = Url.split('|')
     if splitUrl[0].endswith(".git"):
+        return True
+    if Url.startswith("[git]"):
         return True
     return False
 
