@@ -28,7 +28,8 @@ def SourceFactory(settings):
 
     ## \todo move settings access into info class 
     if settings.hasSvnTarget():
-        type = utils.getVCSType( settings.svnTarget() )
+        url = settings.svnTarget()
+        type = utils.getVCSType( url )
         if type == "svn":
             source = SvnSource()
         elif type == "hg":
