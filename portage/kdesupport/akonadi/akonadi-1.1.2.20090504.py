@@ -33,7 +33,8 @@ class subinfo(info.infoclass):
         for i in ['4.5.0', '4.5']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.5/kdesupport/akonadi'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/akonadi.git'
+        self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
 
@@ -51,7 +52,7 @@ class Package(CMakePackageBase):
             automoc = os.path.join(self.rootdir, "lib", "automoc4", "Automoc4Config.cmake")
             if not os.path.exists(automoc):
                 print("<%s>") % automoc
-                utils.die("could not found automoc")
+                utils.die("could not find automoc")
             self.subinfo.options.configure.defines += "-DDATABASE_BACKEND=SQLITE -DAKONADI_STATIC_SQLITE=TRUE "
             ## \todo a standardized way to check if a package is installed in the image dir would be good.
             self.subinfo.options.configure.defines += "-DAUTOMOC4_CONFIG_FILE:FILEPATH=%s " \
