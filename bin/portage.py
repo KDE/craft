@@ -12,6 +12,9 @@ import portage_versions
 import platform
 import copy
 
+modDict = dict()
+packageDict = dict()
+
 def __import__( module ):
     utils.debug( "module to import: %s" % module, 2 )
     if not os.path.isfile( module ):
@@ -32,6 +35,56 @@ def __import__( module ):
 
         return imp.load_module( modulename.replace('.', '_'), 
             fileHdl, module, suff_index )
+
+class DependencyPackage:
+    """ This class wraps each package and constructs the dependency tree
+        """
+    def __init__( self, category, name, version ):
+        self.category = category
+        self.name = name
+        self.version = version
+        self.children = []
+        self.__readChildren()
+
+    def ident( self ):
+        return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name, self.version ) ]
+
+    def __readChildren( self ):
+        identFileName = getFilename( self.category, self.name, self.version )
+        if not os.path.isfile( identFileName ):
+            utils.die( "package name %s/%s-%s unknown" % ( self.category, self.name, self.version ) )
+
+        utils.debug( "solving package %s/%s-%s %s" % ( self.category, self.name, self.version, identFileName ), 2 )
+        if not identFileName in modDict.keys():
+            mod = __import__( identFileName )
+            modDict[ identFileName ] = mod
+
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            for line in info.hardDependencies.keys():
+                ( category, package ) = line.split( "/" )
+                if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
+                    sp = PortageInstance.getCorrespondingSourcePackage( package )
+                    if sp:
+                        # we found such a package and we're allowed to replace it
+                        category = sp[ 0 ]
+                        package = sp[ 1 ]
+                        line = "%s/%s" % ( category, package )
+
+                version = PortageInstance.getNewestVersion( category, package )
+                if not line in packageDict.keys():
+                    p = DependencyPackage( category, package, version )
+                    utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
+                    packageDict[ line ] = p
+                    self.children.append( p )
+
+    def getDependencies( self, depList = [] ):
+        """ returns all dependencies """
+        for p in self.children:
+            if not p in depList:
+                p.getDependencies( depList )
+        depList.append( self )
+        return depList
 
 def buildType():
     """return currently selected build type"""
@@ -351,9 +404,8 @@ def getDependencies( category, package, version ):
 
     return deps
 
-def solveDependencies( category, package, version, deplist ):
-    if platform.isCrossCompilingEnabled() \
-    or utils.isSourceOnly():
+def solveDependencies( category, package, version, depList ):
+    if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
         if sp:
             # we found such a package and we're allowed to replace it
@@ -366,25 +418,9 @@ def solveDependencies( category, package, version, deplist ):
 
     if ( version == "" ):
         version = PortageInstance.getNewestVersion( category, package )
-
-    tag = 1
-    if ( tag == "" ):
-        tag = PortageInstance.getAllTargets( category, package, version ).keys()[ 0 ]
-
-    if [ category, package, version, tag ] in deplist:
-        deplist.remove( [ category, package, version, tag ] )
-
-    deplist.append( [ category, package, version, tag ] )
-
-    mydeps = getDependencies( category, package, version )
-#    if verbose() >= 1:
-#        print "mydeps:", mydeps
-    for dep in mydeps:
-        solveDependencies( dep[0], dep[1], dep[2], deplist )
-    # if package not in list, prepend it to list
-    # get deps of this package
-    # for every dep call solvedeps
-    #return deplist
+    depList = [ p.ident() for p in DependencyPackage( category, package, version ).getDependencies() ]
+    depList.reverse()
+    return depList
 
 def printTargets( category, package, version ):
     """ """
