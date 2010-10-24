@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
+        self.hardDependencies['dev-util/7zip'] = 'default'
         self.hardDependencies['testing/libtool-src'] = 'default'
         
     def setBuildOptions( self ):
