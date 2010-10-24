@@ -942,6 +942,9 @@ def replaceVCSUrl( Url ):
     if os.path.exists( configfile ):
         config = ConfigParser.ConfigParser()
         config.read( configfile )
+        # add the default KDE stuff if the KDE username is set.
+        if not os.getenv( "KDESVNUSERNAME" ) == "":
+            replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
         for section in config.sections():
             host = config.get( section, "host" )
             replace = config.get( section, "replace" )
