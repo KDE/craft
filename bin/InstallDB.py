@@ -95,6 +95,8 @@ class InstallDB:
     def __init__( self, filename = os.path.join( portage.etcDir(), 'install.db' ) ):
         self.dbfilename = filename
         if not os.path.exists( filename ):
+            if not os.path.exists( portage.etcDir() ):
+                os.makedirs( portage.etcDir() )
             utils.debug( "database does not exist yet: creating database & importing old data" )
             self._prepareDatabase()
         else:
