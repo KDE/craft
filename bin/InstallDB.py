@@ -234,7 +234,7 @@ class InstallDB:
         """ imports from the previous installation database system """
         for category, package, version in portage.PortageInstance.getInstallables():
             # FIXME: we need to adapt this to use prefixes as well
-            print category, package, version
+            utils.debug( "importing package %s/%s-%s ..." % ( category, package, version ) )
             if self._isInstalled( category, package, version ):
                 utils.debug( 'adding installed package %s/%s-%s' % ( category, package, version ), 1 )
                 packageObject = self.addInstalled( category, package, version )
