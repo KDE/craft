@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
                 self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
             if compiler.isMinGW():
                 self.hardDependencies['dev-util/msys'] = 'default'
-                self.hardDependencies['win32libs-bin/zlib'] = 'default'
+                self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

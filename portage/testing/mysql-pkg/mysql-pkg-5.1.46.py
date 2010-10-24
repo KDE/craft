@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         if( platform.buildArchitecture() == 'x64' ):
           self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-winx64.zip"
           self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-winx64"
+          self.targetDigests[ '5.1.48' ] = '092e7534f96f17a84f705ab7a520f1bf76d0fb04'
         else:
           self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-win32.zip"
           self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-win32"

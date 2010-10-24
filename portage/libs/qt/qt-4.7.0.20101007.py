@@ -65,7 +65,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['testing/mysql-pkg'] = 'default'
@@ -82,7 +82,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
+        #self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
         if not platform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
 
