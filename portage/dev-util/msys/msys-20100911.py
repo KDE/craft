@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False
