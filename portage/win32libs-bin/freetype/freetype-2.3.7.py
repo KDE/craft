@@ -12,6 +12,9 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = '2.3.7-2'
         
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
