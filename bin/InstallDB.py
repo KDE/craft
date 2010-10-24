@@ -118,7 +118,7 @@ class InstallDB:
 #            cmd += ''' WHERE'''
 #
         for key in _dict.keys():
-            if not key == '':
+            if not _dict[ key ] == '':
                 if parametersUsed:
                     stmt += ''' AND'''
                 stmt += ''' %s=?''' % key
