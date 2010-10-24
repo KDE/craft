@@ -125,6 +125,9 @@ Flags:
             cmake, make and other programs that are used. verbose level 2
             adds an option VERBOSE=1 to make and emerge is more verbose
             highest level is verbose level 3.
+-z          if packages from version control system sources are installed, 
+            it marks them as out of date and rebuilds them (tags are not 
+            marked as out of date).
 --noclean   this option will try to use an existing build directory. Please
             handle this option with care - it will possibly break if the
             directory isn't existing.
@@ -281,6 +284,7 @@ def handlePackage( category, package, version, buildAction, opts ):
 buildAction = "all"
 packageName = None
 doPretend = False
+outDateVCS = False
 stayQuiet = False
 disableHostBuild = False
 disableTargetBuild = False
@@ -333,6 +337,8 @@ executableName = sys.argv.pop( 0 )
 for i in sys.argv:
     if ( i == "-p" ):
         doPretend = True
+    elif ( i == "-z" ):
+        outDateVCS = True
     elif ( i == "-q" ):
         stayQuiet = True
     elif ( i == "-t" ):
@@ -470,7 +476,7 @@ for entry in packageList:
 utils.debug_line( 1 )
 
 for category, entry in zip (categoryList, packageList):
-    portage.solveDependencies( category, entry, "", deplist )
+    deplist = portage.solveDependencies( category, entry, "", deplist )
 
 for item in range( len( deplist ) ):
     if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:
@@ -480,10 +486,10 @@ for item in range( len( deplist ) ):
 
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
-for item in deplist:
-    cat = item[ 0 ]
-    pac = item[ 1 ]
-    ver = item[ 2 ]
+#for item in deplist:
+#    cat = item[ 0 ]
+#    pac = item[ 1 ]
+#    ver = item[ 2 ]
 
 #    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
 #        print "remove:", cat, pac, ver
@@ -515,13 +521,20 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
         exit(1)
 
 else:
-    for category, package, version, tag, ignoreInstalled in deplist:
-#        print category, package, version, tag, ignoreInstalled
+    for category, package, version, defaultTarget, ignoreInstalled in deplist:
+        target = ""
+        targetList = []
+        if outDateVCS:
+            target = os.getenv( "EMERGE_TARGET" )
+            if not target or target not in portage.PortageInstance.getAllTargets( category, package, version ).keys():
+                # if no target or a wrong one is defined, simply set the default target here
+                target = defaultTarget
+            targetList = portage.PortageInstance.getUpdatableVCSTargets( category, package, version )
         if isDBEnabled():
             isInstalled = installdb.isInstalled( category, package, version, portage.prefixForBuildType( buildType ) )
         else:
             isInstalled = portage.isInstalled( category, package, version, buildType )
-        if ( isInstalled and not ignoreInstalled ):
+        if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and outDateVCS and target in targetList ):
             if utils.verbose() > 1 and package == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( category, package, version ) )
             elif utils.verbose() > 2 and not package == packageName:
