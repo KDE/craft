@@ -5,7 +5,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
-        
+
         for version in ['2.0.1']:
             self.targets[ version ] = repoUrl + """/expat-""" + version + """-bin.zip
                                 """ + repoUrl + """/expat-""" + version + """-lib.zip"""
@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
