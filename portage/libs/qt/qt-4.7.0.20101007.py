@@ -80,7 +80,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
+        self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         #self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
         if not platform.isCrossCompilingEnabled():
