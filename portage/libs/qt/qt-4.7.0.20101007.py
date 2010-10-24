@@ -82,9 +82,10 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        #self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
         if not platform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
+        else:
+            self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
