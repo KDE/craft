@@ -65,6 +65,9 @@ class Package(CMakePackageBase):
                     "boost"),
                     os.path.join(self.imageDir(),"include","boost"))
         shutil.rmtree(os.path.join(self.imageDir(),"include","boost-1_44"))
+        if self.isTargetBuild():
+            shutil.rmtree(os.path.join(self.imageDir(), "lib"))
+            shutil.rmtree(os.path.join(self.imageDir(), "bin"))
         return True
 
     def runTest(self):
