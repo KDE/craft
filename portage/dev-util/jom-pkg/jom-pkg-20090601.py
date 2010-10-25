@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         self.svnTargets['mingw'] = "git://gitorious.org/~saroengels/qt-labs/jom-mingw.git"
         self.svnTargets['cmake'] = "git://gitorious.org/~saroengels/qt-labs/jom-cmake.git"
         self.svnTargets['static'] = "git://qt.gitorious.org/qt-labs/jom.git"
+        self.targetSrcSuffix['cmake'] = "mingw"
+        self.targetSrcSuffix['mingw'] = "cmake"
         
         self.defaultTarget = 'svnHEAD'
 
