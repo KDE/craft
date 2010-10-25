@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests['094'] = '1f946283866cd6f40a5888088f6c7d840b62af2d'
         self.targets['100'] = 'ftp://ftp.qt.nokia.com/jom/jom100.zip'
         self.targetDigests['100'] = '545e964c606d28edce582f167574298589970fb4'
-        self.defaultTarget = '100'
+        self.defaultTarget = '094'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
