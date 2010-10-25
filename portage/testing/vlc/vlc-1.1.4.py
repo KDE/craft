@@ -3,15 +3,19 @@ import info
 import shutil
 import os
 import re
-import urllib
+import urllib2
 
 # currently only needed from kdenetwork
 
 
 class subinfo(info.infoclass):
   def setTargets( self ):    
-    self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win32/last/'
+    self.vlcArch = "32"
+    if( platform.buildArchitecture() == 'x64' ):
+        self.vlcArch = "64"
+    self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
     self.vlcTagName = 'vlc-1.2.0-git-'
+
     self.targets[ self.vlcTagName + self.getVer() ]  =  self.vlcBaseUrl + self.vlcTagName + self.getVer() + "-win32.7z" 
     self.targetInstSrc[ self.vlcTagName + self.getVer() ] = self.vlcTagName + self.getVer()    
     
@@ -20,10 +24,12 @@ class subinfo(info.infoclass):
     
     releaseTag = 'vlc-1.1.4'
     self.targets[ releaseTag] = "http://downloads.sourceforge.net/sourceforge/vlc/"+releaseTag+"-win32.7z"
-    #self.targetDigests[ releaseTag ] = '2c66818b0686841c565b90f20075c9d6aca3ad57'
     self.targetInstSrc[ releaseTag ] = releaseTag
     
-    self.defaultTarget = 'vlc-1.1.4'
+    if( platform.buildArchitecture() == 'x64' ):
+        self.defaultTarget = self.vlcTagName + self.getVer()
+    else:
+        self.defaultTarget = 'vlc-1.1.4'
     
 
   def setDependencies( self ):
@@ -34,9 +40,10 @@ class subinfo(info.infoclass):
       return self.ver
     else:
       try:
-        fh = urllib.urlopen("http://nightlies.videolan.org/build/win32/last/" , timeout = 10)
-      except:
-        return " Nightlys Unavailible "
+        fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
+        
+      except Exception, e:
+        return "Nightlys Unavailible:"+str(e)
       m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
       fh.close()
       self.ver = m.group(0)
