@@ -939,7 +939,9 @@ def replaceVCSUrl( Url ):
     configfile = os.path.join( portage.etcDir(), "..", "emergehosts.conf" )
     replacedict = dict()
 
-    if not os.getenv( "KDESVNUSERNAME" ) == "":
+    # FIXME handle svn/git usernames and settings with a distinct naming
+    if ( os.getenv( "KDESVNUSERNAME" ) and
+         os.getenv( "KDESVNUSERNAME" ) != "username" ) :
         replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
         config = ConfigParser.ConfigParser()
