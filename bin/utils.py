@@ -939,21 +939,21 @@ def replaceVCSUrl( Url ):
     configfile = os.path.join( portage.etcDir(), "..", "emergehosts.conf" )
     replacedict = dict()
 
+    if not os.getenv( "KDESVNUSERNAME" ) == "":
+        replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
         config = ConfigParser.ConfigParser()
         config.read( configfile )
         # add the default KDE stuff if the KDE username is set.
-        if not os.getenv( "KDESVNUSERNAME" ) == "":
-            replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
         for section in config.sections():
             host = config.get( section, "host" )
             replace = config.get( section, "replace" )
             replacedict[ host ] = replace
             
-        for host in replacedict.keys():
-            if not Url.find( host ) == -1:
-                Url = Url.replace( host, replacedict[ host ] )
-                break
+    for host in replacedict.keys():
+        if not Url.find( host ) == -1:
+            Url = Url.replace( host, replacedict[ host ] )
+            break
     return Url
 
 def createImportLibs( dll_name, basepath ):
