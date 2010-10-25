@@ -13,7 +13,7 @@
 """
 
 __author__ = "Patrick Spendrin ( ps_ml at gmx dot de )"
-__license__ = "GNU General Public License (GPL)"
+__license__ = "the emerge license (BSD)"
 
 import os
 import sys
