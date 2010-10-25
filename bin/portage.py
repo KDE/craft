@@ -58,6 +58,8 @@ class DependencyPackage:
         if not identFileName in modDict.keys():
             mod = __import__( identFileName )
             modDict[ identFileName ] = mod
+        else:
+            mod = modDict[ identFileName ]
 
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
