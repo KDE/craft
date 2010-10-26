@@ -6,10 +6,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/attica'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/attica'
         self.targets['0.1.3'] = 'ftp://ftp.kde.org/pub/kde/stable/attica/attica-0.1.3.tar.bz2'
         self.targetInstSrc['0.1.3'] = 'attica-0.1.3'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'gitHEAD'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False
@@ -26,7 +26,7 @@ class Package(CMakePackageBase):
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
-            utils.die("could not found qmake")
+            utils.die("could not find qmake")
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
         self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
