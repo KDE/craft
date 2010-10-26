@@ -17,7 +17,6 @@ class GraphViz:
         except:
             try:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
-                print key
             except:
                 # @todo triggers installing of dev-utils/graphviz package 
                 utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
