@@ -19,7 +19,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['2.8.1'] = '2f3b6f14502f0d5c3b1a8e13633789b9995b4629'
         self.targetDigests['2.8.2'] = '3bc9e0861b8cd5d4b4532a47ded7ca0d6f9c85bc'
         self.targetDigests['v2.8.2'] = 'de516a570808c7a022139b55e758d5f7b378ec7d'
-        self.patchToApply[ 'v2.8.2' ] = ( 'findtiff.diff', 1 )
+        self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
 
         if platform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0-ce'
@@ -32,6 +32,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget']       = 'default'
+        self.hardDependencies['gnuwin32/patch'] = 'default'
 
 from Package.BinaryPackageBase import *
 

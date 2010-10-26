@@ -1,5 +1,5 @@
---- cmake-2.8.orig/Modules/FindTIFF.cmake	Wed Jul 07 20:06:45 2010
-+++ cmake-2.8/Modules/FindTIFF.cmake	Tue Oct 26 19:12:47 2010
+--- share.orig/cmake-2.8/Modules/FindTIFF.cmake	Wed Jul 07 20:06:45 2010
++++ share/cmake-2.8/Modules/FindTIFF.cmake	Tue Oct 26 19:12:47 2010
 @@ -22,7 +22,7 @@
  
  FIND_PATH(TIFF_INCLUDE_DIR tiff.h)
