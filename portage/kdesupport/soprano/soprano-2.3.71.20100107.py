@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/soprano.git'
         self.svnTargets['2.0.0']  = 'tags/soprano/2.0.0'
         self.svnTargets['2.0.1']  = 'tags/soprano/2.0.1'
         self.svnTargets['2.0.2']  = 'tags/soprano/2.0.2'
@@ -29,7 +30,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/soprano'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/soprano'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
 
