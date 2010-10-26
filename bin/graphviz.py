@@ -12,15 +12,16 @@ class GraphViz:
     def __init__(self,parent):
         self.parent = parent
         self.output = False
-        try: 
-            key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_ALL_ACCESS)
-            if key == None:
-                key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_ALL_ACCESS)
-            if key <> None:
-                [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
+        try:
+            key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_READ)
         except:
-            # @todo triggers installing of dev-utils/graphviz package 
-            utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download..php")
+            try:
+                key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
+                print key
+            except:
+                # @todo triggers installing of dev-utils/graphviz package 
+                utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
+        [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
     
     def runDot(self, inFile, outFile, dotFormat="pdf"):
         dotExecutable= os.path.join(self.graphVizInstallPath,'bin','dot.exe')
