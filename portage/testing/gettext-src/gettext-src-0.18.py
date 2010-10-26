@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
        self.defaultTarget = '0.18'
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-sources/win_iconv-src'] = 'default'
 
 class Package(CMakePackageBase):
