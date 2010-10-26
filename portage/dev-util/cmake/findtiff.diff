@@ -1,0 +1,11 @@
+--- cmake-2.8.orig/Modules/FindTIFF.cmake	Wed Jul 07 20:06:45 2010
++++ cmake-2.8/Modules/FindTIFF.cmake	Tue Oct 26 19:12:47 2010
+@@ -22,7 +22,7 @@
+ 
+ FIND_PATH(TIFF_INCLUDE_DIR tiff.h)
+ 
+-SET(TIFF_NAMES ${TIFF_NAMES} tiff libtiff libtiff3)
++SET(TIFF_NAMES ${TIFF_NAMES} tiff3 tiff libtiff libtiff3)
+ FIND_LIBRARY(TIFF_LIBRARY NAMES ${TIFF_NAMES} )
+ 
+ # handle the QUIETLY and REQUIRED arguments and set TIFF_FOUND to TRUE if 

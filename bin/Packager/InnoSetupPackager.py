@@ -100,6 +100,8 @@ class InnoSetupPackager (PackagerBase):
               pkgName += "-msvc"
             elif self.compiler() == "msvc2008":
               pkgName += "-vc90"
+            elif self.compiler() == "msvc2010":
+              pkgName += "-vc100"
             else:
               pkgName += "-unknown "
 

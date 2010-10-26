@@ -135,6 +135,8 @@ class KDEWinPackager (PackagerBase):
               cmd += " -type msvc "
             elif self.compiler() == "msvc2008":
               cmd += " -type vc90 "
+            elif self.compiler() == "msvc2010":
+              cmd += " -type vc100 "
             else:
               cmd += " -type unknown "
 

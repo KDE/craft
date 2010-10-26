@@ -93,6 +93,8 @@ class infoclass:
             compiler = "mingw4"
         elif os.getenv("KDECOMPILER") == "msvc2008":
             compiler = "vc90"
+        elif os.getenv("KDECOMPILER") == "msvc2010":
+            compiler = "vc100"
         ret=''
         for type in packagetypes:
             ret += repoUrl + '/' + name + arch + '-' + compiler + '-' + version + '-' + type + ext + '\n'
@@ -128,6 +130,8 @@ example:
             compiler = "mingw4"
         elif os.getenv("KDECOMPILER") == "msvc2008":
             compiler = "vc90"
+        elif os.getenv("KDECOMPILER") == "msvc2010":
+            compiler = "vc100"
         ret=[]
         for type in packagetypes:
             key = version + '-' + compiler + '-' + type + arch

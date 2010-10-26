@@ -72,6 +72,8 @@ class SevenZipPackager (PackagerBase):
               pkgCompiler = "-msvc"
             elif self.compiler() == "msvc2008":
               pkgCompiler = "-vc90"
+            elif self.compiler() == "msvc2010":
+              pkgCompiler = "-vc100"
             else:
               pkgCompiler = "-unknown"
         else:

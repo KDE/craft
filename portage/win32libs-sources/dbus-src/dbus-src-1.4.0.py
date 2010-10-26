@@ -33,16 +33,21 @@ class subinfo(info.infoclass):
         self.targetConfigurePath['gitHEAD'] = 'cmake'
 
         self.patchToApply['gitHEAD'] = [('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                        ('dbus-gitHEAD-restore-the-close_on_exec-flag-on-windows.patch', 1)
+                                        ('dbus-gitHEAD-restore-the-close_on_exec-flag-on-windows.patch', 1),
+										('msvc2010-has-errnoh.diff', 1)
                                         ]
                                         
         if platform.isCrossCompilingEnabled():
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                          ('no-auth.diff', 1)]
+                                          ('no-auth.diff', 1),
+										  ('msvc2010-has-errnoh.diff', 1)
+										  ]
         else:
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
-                                          ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1)]
+                                          ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
+										  ('msvc2010-has-errnoh.diff', 1)
+										  ]
         
         self.defaultTarget = '1.4.0'
         self.options.package.version = '1.4.0-1'
