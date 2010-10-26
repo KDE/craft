@@ -51,6 +51,7 @@ __license__ = "New-style BSD"
 import portage
 import sys
 import os
+import utils
 from optparse import OptionParser
 
 OUTPUT_DOT = 0
