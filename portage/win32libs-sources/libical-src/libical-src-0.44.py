@@ -20,7 +20,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = " -DUSE_BUILTIN_TZDATA=true -DICAL_UNIX_NEWLINE=false "
         

@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = 'shared-desktop-ontologies-' + ver
         self.targetDigests['0.4'] = '7ca3522dd9d58329966f46a3b18fa57b0b2280a8'
         self.targetDigests['0.5'] = '672e10ba113314083b43702d9456a9c92e4f501f'
-        self.options.package.withCompiler = False
         self.defaultTarget = '0.5'
 
     def setDependencies( self ):

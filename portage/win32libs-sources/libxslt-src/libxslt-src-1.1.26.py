@@ -25,7 +25,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'libxslt'
-        self.subinfo.options.package.withCompiler = None
             
             
     def createPackage( self ): 

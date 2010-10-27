@@ -22,7 +22,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
-        self.subinfo.options.package.withCompiler = None
 
     def createPackage( self ): 
         if(self.subinfo.buildTarget.startswith('1.2')):

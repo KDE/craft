@@ -26,7 +26,6 @@ class Package(CMakePackageBase):
     self.subinfo = subinfo()
     CMakePackageBase.__init__(self)
     self.subinfo.options.package.packageName = 'libbzip2'
-    self.subinfo.options.package.withCompiler = None
 
   def createPackage( self ):
     # auto-create both import libs with the help of pexports

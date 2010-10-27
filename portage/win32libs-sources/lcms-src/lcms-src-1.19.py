@@ -20,7 +20,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         # both examples and tests can be run here
         self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF -DBUILD_SAMPLES=ON -DBUILD_TOOLS=OFF"
-        self.subinfo.options.package.withCompiler = None
 
 if __name__ == '__main__':
     Package().execute()

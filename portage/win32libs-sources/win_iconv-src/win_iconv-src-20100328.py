@@ -5,11 +5,10 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'http://win-iconv.googlecode.com/svn/trunk'
         self.targets['0.0.1'] = 'http://win-iconv.googlecode.com/files/win-iconv-0.0.1.tar.bz2'
         self.targetInstSrc['0.0.1'] = 'win-iconv-0.0.1'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '0.0.1'
     
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.options.package.withCompiler = None
         if platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 

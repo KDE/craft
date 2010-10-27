@@ -10,7 +10,6 @@ class subinfo(info.infoclass):
         self.patchToApply['8.0'] = ( 'jpeg8.diff', 1 )
 
         self.defaultTarget = '7.0'
-        self.options.package.withCompiler = False
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'

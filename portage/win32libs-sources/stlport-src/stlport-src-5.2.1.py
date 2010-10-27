@@ -11,8 +11,6 @@ class subinfo(info.infoclass):
         
         self.defaultTarget = '5.2.1'
         
-        self.options.package.withCompiler = False
-
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
 

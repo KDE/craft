@@ -11,7 +11,6 @@ class subinfo(info.infoclass):
         self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh/libssh.git|v0-4"
 
         self.defaultTarget = '0.4.4'
-        self.options.package.withCompiler = False
         self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
 
     def setDependencies( self ):

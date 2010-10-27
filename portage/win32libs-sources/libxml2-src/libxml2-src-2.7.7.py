@@ -27,7 +27,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'libxml2'
         self.subinfo.options.configure.defines = "-DBUILD_tests=OFF"
-        self.subinfo.options.package.withCompiler = None
             
             
     def createPackage( self ): 

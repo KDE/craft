@@ -7,7 +7,6 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.9.0'] = "libzip-0.9"
         self.patchToApply['0.9.0'] = ( 'libzip-0.9.diff', 1 )
         self.defaultTarget = '0.9.0'
-        self.options.package.withCompiler = False
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'

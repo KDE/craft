@@ -22,7 +22,6 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        self.subinfo.options.package.withCompiler = None
         CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':

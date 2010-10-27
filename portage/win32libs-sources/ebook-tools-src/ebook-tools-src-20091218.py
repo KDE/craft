@@ -12,7 +12,6 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.1.1'] = 'ebook-tools-0.1.1'
         self.patchToApply['0.1.1'] = ('ebook-tools-0.1.1.diff', 1)
         self.defaultTarget = '0.1.1'
-        self.options.package.withCompiler = False
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
