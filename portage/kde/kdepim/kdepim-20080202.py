@@ -5,6 +5,8 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepim'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepim'
+        if platform.isCrossCompilingEnabled():
+          self.patchToApply['svnHEAD'] = [ ('kadressbook_without_crypto.patch', 0) ]
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdepim-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdepim-4.0.' + ver
