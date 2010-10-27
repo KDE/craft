@@ -214,7 +214,7 @@ class DependenciesTree(object):
             version = pi.getNewestVersion(category, package)
 
         try:
-            tag = pi.getAllTargets(category, package, version ).keys()[0]
+            tag = pi.getDefaultTarget( category, package, version )
         except:
             tag = "1"
 
@@ -236,6 +236,11 @@ class DependenciesTree(object):
                 category = sp[0]
                 package = sp[1]
                 version = pi.getNewestVersion(category, package)
+
+        try:
+            tag = pi.getDefaultTarget( category, package, version )
+        except:
+            tag = "1"
 
         key = "%s-%s-%s-%s" % (category, package, version, tag)
         try:
