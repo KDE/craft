@@ -1,0 +1,13 @@
+Index: mailtransport/smtp/smtpsession.cpp
+===================================================================
+--- mailtransport/smtp/smtpsession.cpp	(revision 1190210)
++++ mailtransport/smtp/smtpsession.cpp	(working copy)
+@@ -113,7 +113,7 @@
+                  << "and the list of SSL errors contains"
+                  << socket->sslErrors().count() << "items.";
+ 
+-        if ( KIO::SslUi::askIgnoreSslErrors( socket ) ) {
++        if ( true ) {
+           return true;
+         } else {
+           return false;

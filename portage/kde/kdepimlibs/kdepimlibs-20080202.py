@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
             self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         else:
             self.hardDependencies['contributed/gpg4win-dev'] = 'default'
+            self.patchToApply['svnHEAD'] = ( 'wince_ignore_ssl_errors.diff', 0 )
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
