@@ -7,7 +7,7 @@ Index: runtime/resources/imap/sessionuiproxy.h
    public:
      bool ignoreSslError(const KSslErrorUiData& errorData) {
 -      if (KIO::SslUi::askIgnoreSslErrors(errorData, KIO::SslUi::RecallAndStoreRules)) {
-+      if ( true )) {
++      if ( true ) {
          return true;
        } else {
          return false;
