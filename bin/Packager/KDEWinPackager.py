@@ -8,7 +8,7 @@ from Packager.PackagerBase import *
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
     def __init__(self):
-        PackagerBase.__init__(self)
+        PackagerBase.__init__(self,"KDEWinPackager")
         fileName = "bin\\kdewin-packager.exe"
         self.packager = None
         for dir in [".","dev-utils", "release", "debug"]:

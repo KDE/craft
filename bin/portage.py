@@ -53,7 +53,11 @@ class DependencyPackage:
         identFileName = getFilename( self.category, self.name, self.version )
         if not os.path.isfile( identFileName ):
             utils.die( "package name %s/%s-%s unknown" % ( self.category, self.name, self.version ) )
-
+        
+        # if we are an emerge internal package and already in the dictionary, ignore childrens 
+        # To avoid possible endless recursion this may be also make sense for all packages  
+        if self.category == 'emerge' and identFileName in modDict.keys():
+            return
         utils.debug( "solving package %s/%s-%s %s" % ( self.category, self.name, self.version, identFileName ), 2 )
         if not identFileName in modDict.keys():
             mod = __import__( identFileName )
@@ -61,9 +65,17 @@ class DependencyPackage:
         else:
             mod = modDict[ identFileName ]
 
-        if hasattr( mod, 'subinfo' ):
+        if hasattr( mod, 'Package' ):
+            _package = mod.Package()
+            deps = _package.subinfo.hardDependencies.keys()
+            
+        elif hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
-            for line in info.hardDependencies.keys():
+            deps = info.hardDependencies.keys()
+            
+        if deps:
+            
+            for line in deps:
                 ( category, package ) = line.split( "/" )
                 if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
                     sp = PortageInstance.getCorrespondingSourcePackage( package )
@@ -85,7 +97,9 @@ class DependencyPackage:
         for p in self.children:
             if not p in depList:
                 p.getDependencies( depList )
+
         depList.append( self )
+
         return depList
 
 def buildType():
