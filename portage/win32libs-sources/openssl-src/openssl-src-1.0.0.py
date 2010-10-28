@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             if compiler.isMSVC():
               self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
             self.targetDigestUrls[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz.sha1'
-            
+        self.targets['1.0.1-snapshot'] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
         if compiler.isMinGW():
             self.defaultTarget = '1.0.0a'
         else:
