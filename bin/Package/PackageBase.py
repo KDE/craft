@@ -37,7 +37,7 @@ class PackageBase (EmergeBase):
     def __installedDBPrefix(self, buildType=None):
         postfix = ''
         if buildType == None:
-           buildType = buildType()
+           buildType = self.buildType()
         if self.useBuildTypeRelatedMergeRoot:
             if buildType == 'Debug':
                 postfix = 'debug'
