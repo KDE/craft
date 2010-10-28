@@ -35,17 +35,17 @@ class PackageBase (EmergeBase):
         self.forceCreateManifestFiles = False
 
     def __installedDBPrefix(self, buildType=None):
+        postfix = ''
+        if buildType == None:
+           buildType = buildType()
         if self.useBuildTypeRelatedMergeRoot:
-            postfix = ''
-            if _buildType == 'Debug':
+            if buildType == 'Debug':
                 postfix = 'debug'
-            elif _buildType == 'Release':
+            elif buildType == 'Release':
                 postfix =  'release'
-            elif _buildType == 'RelWithDebInfo':
+            elif buildType == 'RelWithDebInfo':
                 postfix =  'relwithdebinfo'
-            return postfix
-        else:
-            return portage.prefixForBuildType( buildType )
+        return postfix
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
