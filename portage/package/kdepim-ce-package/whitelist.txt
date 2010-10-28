@@ -844,6 +844,9 @@ share\\soprano\\plugins\\redlandbackend\.desktop
 share\\soprano\\rules\\nrl\.rules
 share\\soprano\\rules\\rdfs\.rules
 
+# Hicolor kolab
+share\\icons\\hicolor\\64x64\\apps\\kolab\.png
+
 # Qxygen Icon theme
 share\\icons\\oxygen\\index\.theme
 
