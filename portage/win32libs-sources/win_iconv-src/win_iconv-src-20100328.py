@@ -4,6 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'http://win-iconv.googlecode.com/svn/trunk'
         self.targets['0.0.1'] = 'http://win-iconv.googlecode.com/files/win-iconv-0.0.1.tar.bz2'
+        self.targetDigests['0.0.1'] = 'faf4f1f311f92f2a80afe275f43fabb047f23308'
         self.targetInstSrc['0.0.1'] = 'win-iconv-0.0.1'
         self.defaultTarget = '0.0.1'
     
