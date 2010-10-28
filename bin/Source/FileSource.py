@@ -8,9 +8,11 @@ import utils
 class FileSource(SourceBase):
     """ file download source"""
     filenames = []    
-    def __init__(self):
+    def __init__(self,subinfo=None):
         utils.debug( "FileSource.__init__ called", 2 )
-        SourceBase.__init__(self)
+        if subinfo:
+            self.subinfo = subinfo
+        SourceBase.__init__(self,"FileSource")
 
     def localFileNamesBase(self):
         """ collect local filenames """

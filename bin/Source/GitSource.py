@@ -14,8 +14,11 @@ from shells import *
 
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
-    def __init__( self ):
-        VersionSystemSourceBase.__init__( self )
+    def __init__(self,subinfo=None):
+        if subinfo:
+            self.subinfo = subinfo
+        VersionSystemSourceBase.__init__(self,"GitSource")
+        
         # get a shell since git doesn't run natively at the moment
         self.shell = MSysShell()
         

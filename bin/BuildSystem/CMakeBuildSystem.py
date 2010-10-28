@@ -18,7 +18,7 @@ class CMakeBuildSystem(BuildSystemBase):
     """ cmake build support """
     def __init__( self ):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self,"cmake")
+        BuildSystemBase.__init__(self,"cmake","CMakeBuildSystem")
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""

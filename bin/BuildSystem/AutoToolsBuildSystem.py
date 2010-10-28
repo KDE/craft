@@ -14,7 +14,7 @@ from BuildSystemBase import *
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):        
         self.buildInSource = False
-        BuildSystemBase.__init__(self,"autotools")
+        BuildSystemBase.__init__(self,"autotools","AutoToolsBuildSystem")
         self.shell = MSysShell()
         self.makeProgram = "make"    
         #unset make to remove things like jom

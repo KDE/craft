@@ -12,8 +12,10 @@ import utils
 
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
-    def __init__(self):
-        VersionSystemSourceBase.__init__(self)
+    def __init__(self,subinfo=None):
+        if subinfo:
+            self.subinfo = subinfo
+        VersionSystemSourceBase.__init__(self,"SvnSource")
         self.options = None
         ## \todo add internal dependency for subversion package
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')

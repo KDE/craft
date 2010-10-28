@@ -22,27 +22,27 @@ def SourceFactory(settings):
         if url.startswith("[archive]"):
             source = ArchiveSource()
         elif url.find(".exe") <> -1 or url.find(".bat") <> -1:
-            source = FileSource()
+            source = FileSource(settings)
         else:
-            source = ArchiveSource()
+            source = ArchiveSource(settings)
 
     ## \todo move settings access into info class 
     if settings.hasSvnTarget():
         url = settings.svnTarget()
         type = utils.getVCSType( url )
         if type == "svn":
-            source = SvnSource()
+            source = SvnSource(settings)
         elif type == "hg":
-            source = HgSource()
+            source = HgSource(settings)
         elif "git":
-            source = GitSource()
+            source = GitSource(settings)
         ## \todo complete more cvs access schemes 
         elif "cvs": 
-            source = CvsSource()
+            source = CvsSource(settings)
 
     if source == None:
         utils.die("none or unsupported source system set")
-        
-    source.subinfo = settings
+    if not source.subinfo:    
+        source.subinfo = settings
     source.url = url
     return source

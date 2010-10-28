@@ -19,8 +19,8 @@ class VersionSystemSourceBase (SourceBase):
     # complete local path for currently used source
     svndir = ""
         
-    def __init__(self):
-        SourceBase.__init__(self)
+    def __init__(self,className=None):
+        SourceBase.__init__(self,className=None)
         
     def getUrl( self, index ):
         """get the url at position 'index' from a ';' separated list of urls"""

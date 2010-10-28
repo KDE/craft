@@ -48,13 +48,20 @@ def envAsBool(key):
 class EmergeBase():
     """base class for emerge system - holds attributes and methods required by base classes"""
     
-    def __init__( self, SRC_URI="", **args ):
+    def __init__( self, className=None, **args):
         utils.debug( "EmergeBase.__init__ called", 2 )
+
         if hasattr(self,'alreadyCalled'):
             return
         self.alreadyCalled = True
         self.buildTarget = None
 
+        # if class name has been provided add implicit build time dependency 
+        #if className:
+        #    packageName = 'emerge/%s' % className
+        #    if not packageName in self.subinfo.hardDependencies:
+        #        self.subinfo.hardDependencies[packageName] = 'default'
+            
         if "args" in args.keys() and "env" in args["args"].keys():
             env = args["args"]["env"]
         else:
@@ -65,8 +72,6 @@ class EmergeBase():
         else:
             self.argv0 = sys.argv[ 0 ]
 
-            
-        self.SRC_URI                = SRC_URI
         self.versioned              = False
         self.CustomDefines       = ""
         self.createCombinedPackage  = False

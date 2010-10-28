@@ -9,9 +9,11 @@ import shutil
 class ArchiveSource(SourceBase):
     """ file download source"""
     filenames = []    
-    def __init__(self):
+    def __init__(self,subinfo=None):
         utils.debug( "ArchiveSource.__init__ called", 2 )
-        SourceBase.__init__(self)
+        if subinfo:
+            self.subinfo = subinfo
+        SourceBase.__init__(self,"ArchiveSource")
 
     def repositoryUrl(self, index=0):
         """all repository pathes"""
@@ -51,7 +53,7 @@ class ArchiveSource(SourceBase):
         return available
 
     def fetch(self):
-        """getting normal tarballs from SRC_URI"""
+        """fetch normal tarballs"""
         utils.debug( "ArchiveSource.fetch called", 2 )
             
         filenames = self.localFileNames()
