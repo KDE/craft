@@ -1,6 +1,7 @@
 import os;
 import utils;
 import portage;
+import platform;
 import portage_versions;
 import sqlite3;
 
@@ -120,7 +121,7 @@ class InstallDB:
 #            cmd += ''' WHERE'''
 #
         for key in _dict.keys():
-            if not _dict[ key ] == '':
+            if _dict[ key ]:
                 if parametersUsed:
                     stmt += ''' AND'''
                 stmt += ''' %s=?''' % key
@@ -131,7 +132,7 @@ class InstallDB:
 
         return stmt, params
 
-    def isInstalled( self, category, package, version='', prefix='' ):
+    def isInstalled( self, category, package, version=None, prefix=None ):
         """ returns whether a package is installed. If version and prefix are empty, all versions 
             and prefixes will be checked. """
         cmd = '''SELECT * FROM packageList'''
@@ -153,7 +154,7 @@ class InstallDB:
         cursor.close()
         return isPackageInstalled
         
-    def findInstalled( self, category, package, prefix='' ):
+    def findInstalled( self, category, package, prefix=None ):
         """ get the version of a package that is installed """
         f = self.getInstalled( category, package, prefix )
         if len(f) == 3:
@@ -161,7 +162,7 @@ class InstallDB:
         else:
             return None
 
-    def getInstalled( self, category='', package='', prefix='' ):
+    def getInstalled( self, category=None, package=None, prefix=None ):
         """ returns a list of the installed packages, which can be restricted by adding
             package, category and prefix.
         """
@@ -177,7 +178,7 @@ class InstallDB:
         cursor.close()
         return values
 
-    def getPackageIds( self, category='', package='', version='', prefix='' ):
+    def getPackageIds( self, category=None, package=None, version=None, prefix=None ):
         """ returns a list of the ids of the packages, which can be restricted by adding
             package, category and prefix.
         """
@@ -194,7 +195,7 @@ class InstallDB:
             values.append( row[0] )
         return values
 
-    def addInstalled( self, category, package, version, prefix='' ):
+    def addInstalled( self, category, package, version, prefix=None ):
         """ adds an installed package """
         if self.isInstalled( category, package, version, prefix ):
             raise Exception( 'package %s/%s-%s already installed (prefix %s)' % ( category, package, version, prefix ) )
@@ -206,7 +207,7 @@ class InstallDB:
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
         
-    def remInstalled( self, category, package, version, prefix='' ):
+    def remInstalled( self, category, package, version, prefix=None ):
         """ removes an installed package """
         cmd = '''DELETE FROM packageList'''
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
@@ -242,6 +243,13 @@ class InstallDB:
                 packageObject = self.addInstalled( category, package, version )
                 packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
                 packageObject.install()
+                if platform.isCrossCompilingEnabled():
+                    targetObject = self.addInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                    targetObject.addFiles( utils.getFileListFromManifest( os.path.join( os.getenv( "KDEROOT" ), os.getenv( "EMERGE_TARGET_PLATFORM" ) ), package ) )
+                    targetObject.install()
+                # check PackageBase.mergeDestinationDir() for further things regarding the import from other prefixes
+                
+
 
 
     def _isInstalled( self, category, package, version, buildType='' ):

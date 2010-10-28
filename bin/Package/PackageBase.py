@@ -63,8 +63,13 @@ class PackageBase (EmergeBase):
                 utils.copyFile( script, destscript )
 
         if isDBEnabled():
-            if installdb.isInstalled( category='', package=self.package, prefix=self.__installedDBPrefix( self.buildType() ) ):
-                self.unmerge()
+            if platform.isCrossCompilingEnabled():
+                if self.isTargetBuild():
+                    if installdb.isInstalled( category='', package=self.package, prefix=os.getenv( "EMERGE_TARGET_PLATFORM" ) ):
+                        self.unmerge()
+            else:
+                if installdb.isInstalled( category='', package=self.package, prefix=self.__installedDBPrefix( self.buildType() ) ):
+                    self.unmerge()
         else:
             if portage.isInstalled( '', self.package, '', self.buildType() ):
                 self.unmerge()
@@ -99,9 +104,17 @@ class PackageBase (EmergeBase):
                     portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
         else:
             if isDBEnabled():
-                package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
-                package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
-                package.install()
+                if platform.isCrossCompilingEnabled():
+                    if self.isTargetBuild():
+                        package = installdb.addInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                    else:
+                        package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                    package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+                    package.install()
+                else:
+                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                    package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+                    package.install()
             else:
                 portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
 
@@ -126,10 +139,16 @@ class PackageBase (EmergeBase):
                         utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                         package.uninstall()
             else:
-                packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                if self.isTargetBuild():
+                    packageList = installdb.remInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                else:
+                    packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
                 for package in packageList:
                     fileList = package.getFiles()
-                    utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+                    if self.isTargetBuild():
+                        utils.unmergeFileList( os.path.join( self.mergeDestinationDir(), os.getenv( "EMERGE_TARGET_PLATFORM" ) ), fileList, self.forced )
+                    else:
+                        utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
             if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not platform.isCrossCompilingEnabled():
