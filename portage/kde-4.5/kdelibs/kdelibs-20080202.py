@@ -42,6 +42,8 @@ class Package(CMakePackageBase):
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
         elif self.compiler() == "msvc2008":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+        elif self.compiler() == "msvc2010":
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2010\" "
 
 if __name__ == '__main__':
     Package().execute()
