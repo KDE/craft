@@ -19,8 +19,6 @@ class SvnSource (VersionSystemSourceBase):
         self.options = None
         ## \todo add internal dependency for subversion package
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
-        if not os.path.exists(self.svnInstallDir):
-            utils.die("required subversion package not installed in %s" % self.svnInstallDir)
 
     def checkoutDir( self, index=0 ):
         if self.subinfo.hasSvnTarget():
@@ -78,6 +76,9 @@ class SvnSource (VersionSystemSourceBase):
             utils.debug( "skipping svn fetch (--offline)" )
             return True
 
+        if not os.path.exists(self.svnInstallDir):
+            utils.die("required subversion package not installed in %s" % self.svnInstallDir)
+            
         for i in range(0, self.repositoryUrlCount()):
             url = self.repositoryUrl(i)
             sourcedir = self.checkoutDir(i)
