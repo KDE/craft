@@ -121,7 +121,7 @@ class InstallDB:
 #            cmd += ''' WHERE'''
 #
         for key in _dict.keys():
-            if _dict[ key ]:
+            if not _dict[ key ] == None:
                 if parametersUsed:
                     stmt += ''' AND'''
                 stmt += ''' %s=?''' % key
@@ -150,7 +150,7 @@ class InstallDB:
                             version '%s'.""" % ( category, package, prefix, version ), 1 )
         else:
             utils.debug( """Couldn't find a trace that the package %s/%s has been installed in 
-                            prefix '%s' with version '%s'""" % (category, package, prefix, version), 1 )
+                            prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1 )
         cursor.close()
         return isPackageInstalled
         
@@ -158,7 +158,7 @@ class InstallDB:
         """ get the version of a package that is installed """
         f = self.getInstalled( category, package, prefix )
         if len(f) == 3:
-            return f[2]
+            return f[ 2 ]
         else:
             return None
 
@@ -195,12 +195,12 @@ class InstallDB:
             values.append( row[0] )
         return values
 
-    def addInstalled( self, category, package, version, prefix=None ):
+    def addInstalled( self, category, package, version, prefix=None, ignoreInstalled=False ):
         """ adds an installed package """
-        if self.isInstalled( category, package, version, prefix ):
+        cursor = self.connection.cursor()
+        if self.isInstalled( category, package, version, prefix ) and not ignoreInstalled:
             raise Exception( 'package %s/%s-%s already installed (prefix %s)' % ( category, package, version, prefix ) )
 
-        cursor = self.connection.cursor()
         params = [ None, prefix, category, package, version ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?)'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )

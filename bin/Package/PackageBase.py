@@ -61,17 +61,20 @@ class PackageBase (EmergeBase):
                 utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
-
+        ignoreInstalled = False
         if isDBEnabled():
-            if platform.isCrossCompilingEnabled():
-                if self.isTargetBuild():
-                    if installdb.isInstalled( category='', package=self.package, prefix=os.getenv( "EMERGE_TARGET_PLATFORM" ) ):
-                        self.unmerge()
+            if self.isTargetBuild():
+                if installdb.isInstalled( category=None, package=self.package, prefix=os.getenv( "EMERGE_TARGET_PLATFORM" ) ):
+                    ignoreInstalled = True
+                    self.unmerge()
             else:
-                if installdb.isInstalled( category='', package=self.package, prefix=self.__installedDBPrefix( self.buildType() ) ):
+                prefixPath=self.__installedDBPrefix( self.buildType() )
+                if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
+                    ignoreInstalled = True
                     self.unmerge()
         else:
             if portage.isInstalled( '', self.package, '', self.buildType() ):
+                ignoreInstalled = True
                 self.unmerge()
 
         self.manifest()
@@ -97,7 +100,7 @@ class PackageBase (EmergeBase):
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
                 if isDBEnabled():
-                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
+                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ), ignoreInstalled )
                     package.addFiles( utils.getFileListFromManifest(  self.__installedDBPrefix( prefix ), self.package ) )
                     package.install()
                 else:
@@ -106,13 +109,13 @@ class PackageBase (EmergeBase):
             if isDBEnabled():
                 if platform.isCrossCompilingEnabled():
                     if self.isTargetBuild():
-                        package = installdb.addInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                        package = installdb.addInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ), ignoreInstalled )
                     else:
                         package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
                     package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
                     package.install()
                 else:
-                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix(), ignoreInstalled )
                     package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
                     package.install()
             else:
@@ -145,10 +148,7 @@ class PackageBase (EmergeBase):
                     packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
                 for package in packageList:
                     fileList = package.getFiles()
-                    if self.isTargetBuild():
-                        utils.unmergeFileList( os.path.join( self.mergeDestinationDir(), os.getenv( "EMERGE_TARGET_PLATFORM" ) ), fileList, self.forced )
-                    else:
-                        utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+                    utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
             if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not platform.isCrossCompilingEnabled():

@@ -609,14 +609,14 @@ def unmergeFileList( rootdir, fileList, forced = False ):
         if os.path.isfile( os.path.join( rootdir, os.path.normcase( filename ) ) ):
             hash = digestFile( os.path.join( rootdir, os.path.normcase( filename ) ) )
             if hash == filehash or filehash == "":
-                debug( "deleting file %s" % filename )
+                debug( "deleting file %s" % os.path.join( rootdir, os.path.normcase( filename ) ) )
                 os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
             else:
-                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( filename ), hash, filehash ) )
+                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.join( rootdir, os.path.normcase( filename ) ), hash, filehash ) )
                 if forced:
                     os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
-            warning( "file %s does not exist" % ( os.path.normcase( filename ) ) )
+            warning( "file %s does not exist" % ( os.path.join( rootdir, os.path.normcase( filename ) ) ) )
         
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
