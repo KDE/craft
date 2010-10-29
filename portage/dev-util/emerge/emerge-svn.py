@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
         
     def setDependencies( self ):
         self.hardDependencies['dev-util/doxygen'] = 'default'
-        self.hardDependencies['dev-util/subversion'] = 'default'
 
 from Package.PackageBase import *
 from Source.SvnSource import *
@@ -22,14 +21,14 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
         SvnSource.__init__(self)
         BuildSystemBase.__init__(self,"")
 
-    def sourceDir(self, index=0 ): 
+    def checkoutDir(self, index=0 ): 
         return os.path.join(ROOTDIR,"emerge")
 
     def configure(self):
-        doxygenSourcePathes = "%s %s" % (os.path.join(self.sourceDir(),'bin'),os.path.join(self.sourceDir(),'doc'))
+        doxygenSourcePathes = "%s %s" % (os.path.join(self.checkoutDir(),'bin'),os.path.join(self.checkoutDir(),'doc'))
 
         # copy and patch template
-        sourceDoxyFile = os.path.join(self.sourceDir(),'doc','Doxyfile')
+        sourceDoxyFile = os.path.join(self.checkoutDir(),'doc','Doxyfile')
         destPath = os.path.join(self.buildDir(),'doc')
         destDoxyFile = os.path.join(destPath,'Doxyfile')
 
