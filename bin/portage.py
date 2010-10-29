@@ -12,6 +12,8 @@ import portage_versions
 import platform
 import copy
 
+internalCategory = 'internal'
+
 modDict = dict()
 packageDict = dict()
 
@@ -56,7 +58,7 @@ class DependencyPackage:
         
         # if we are an emerge internal package and already in the dictionary, ignore childrens 
         # To avoid possible endless recursion this may be also make sense for all packages  
-        if self.category == 'emerge' and identFileName in modDict.keys():
+        if self.category == internalCategory and identFileName in modDict.keys():
             return
         utils.debug( "solving package %s/%s-%s %s" % ( self.category, self.name, self.version, identFileName ), 2 )
         if not identFileName in modDict.keys():
@@ -74,7 +76,6 @@ class DependencyPackage:
             deps = info.hardDependencies.keys()
             
         if deps:
-            
             for line in deps:
                 ( category, package ) = line.split( "/" )
                 if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
@@ -98,7 +99,8 @@ class DependencyPackage:
             if not p in depList:
                 p.getDependencies( depList )
 
-        depList.append( self )
+        #if self.category <> internalCategory:
+        #    depList.append( self )
 
         return depList
 
