@@ -3,11 +3,11 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['7.9', '8.00', '8.02']:
+        for ver in ['7.9', '8.00', '8.02', '8.10']:
           self.targets[ver] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'pcre-' + ver
         self.patchToApply['8.02'] = ("pcre-8.02-20100518.diff", 1)
-        self.defaultTarget = '8.02'
+        self.defaultTarget = '8.10'
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['win32libs-sources/libbzip2-src'] = 'default'
