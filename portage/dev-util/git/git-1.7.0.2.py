@@ -31,6 +31,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.unpack(self):
             return False
         utils.copyFile(os.path.join(self.packageDir(),"git.bat"),os.path.join(self.rootdir,"dev-utils","bin","git.bat"))
+        utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))
         return True
 
 if __name__ == '__main__':
