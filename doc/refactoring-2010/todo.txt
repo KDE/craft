@@ -1,0 +1,40 @@
+
+1. separate package build time dependencies from development system build 
+   time dependencies 
+   Background: Recent package dependencies are a mixture of package and development system 
+               dependencies. For automatic release dependency creating the development 
+               system dependencies should be separated from the package dependencies. 
+   
+   link: emerge-development-system-dependencies.pdf
+   
+   contact: Ralf Habacker
+   
+   tester: Patrick von Reth
+   
+   state: started 
+          initial implementation is in trunk and could be enabled by setting the following 
+          environment variable: 
+          
+            set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
+            
+          after settings this variable, running emerge -v development system dependencies 
+          are collected from the portage/internal category 
+          
+            emerge debug: dependency: ['kdesupport', 'taglib', '1.6.1.20100107', 'svnHEAD', False]
+            emerge debug: dependency: ['virtual', 'base', '0.2', '0.2', False]
+            emerge debug: dependency: ['dev-util', 'pexports', '0.44', '0.44', False]
+            emerge debug: dependency: ['internal', 'CMakeBuildSystem', 'internal', 'svnHEAD', False]
+            emerge debug: dependency: ['dev-util', 'cmake', '2.8.2', 'v2.8.2', False]
+            emerge debug: dependency: ['dev-util', 'jom', '100-20101025', '094', False]
+            emerge debug: dependency: ['internal', 'ArchiveSource', 'internal', 'svnHEAD', False]
+            emerge debug: dependency: ['gnuwin32', 'patch', '2.5.9-7', '2.5.9', False]
+            emerge debug: dependency: ['internal', 'KDEWinPackager', 'internal', 'svnHEAD', False]
+            emerge debug: dependency: ['dev-util', 'kdewin-packager', '0.9.6', '0.9.6', False]
+            emerge debug: dependency: ['internal', 'FileSource', 'internal', 'svnHEAD', False]
+            emerge debug: dependency: ['gnuwin32', 'wget', '1.11.4', 'dummy', False]
+            emerge debug: dependency: ['dev-util', '7zip', '9.16', '9.16', False]
+            emerge debug: dependency: ['internal', 'KDEWinPackager', 'internal', 'svnHEAD', False]
+            emerge debug: dependency: ['internal', 'BinaryBuildSystem', 'internal', 'svnHEAD', False]
+            emerge debug: dependency: ['internal', 'ArchiveSource', 'internal', 'svnHEAD', False]          
+               
+    
