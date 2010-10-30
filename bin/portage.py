@@ -100,7 +100,7 @@ class DependencyPackage:
                 p.getDependencies( depList )
 
         #if self.category <> internalCategory:
-        #    depList.append( self )
+        depList.append( self )
 
         return depList
 
