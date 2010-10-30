@@ -115,7 +115,7 @@ class VersionSystemSourceBase (SourceBase):
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
 
-        return sourcedir
+        return os.path.abspath(sourcedir)
         
     def sourceDir(self, index=0 ): 
         if not self.noCopy:
@@ -133,5 +133,5 @@ class VersionSystemSourceBase (SourceBase):
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
         utils.debug("using sourcedir: %s" % sourcedir,2)
-        return sourcedir
+        return os.path.abspath(sourcedir)
 
