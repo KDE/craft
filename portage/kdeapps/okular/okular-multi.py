@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics#norecursive;trunk/KDE/kdegraphics/okular'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics#norecursive;trunk/KDE/kdegraphics/okular;;trunk/KDE/kdegraphics/cmake'
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
