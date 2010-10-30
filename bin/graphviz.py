@@ -12,15 +12,21 @@ class GraphViz:
     def __init__(self,parent):
         self.parent = parent
         self.output = False
+        if not self.isInstalled():
+            utils.system("emerge.bat graphviz");
+            if not self.isInstalled():
+				utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
+
+    def isInstalled(self):
         try:
             key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_READ)
         except:
             try:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
             except:
-                # @todo triggers installing of dev-utils/graphviz package 
-                utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
+                return False
         [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
+        return True
     
     def runDot(self, inFile, outFile, dotFormat="pdf"):
         dotExecutable= os.path.join(self.graphVizInstallPath,'bin','dot.exe')
