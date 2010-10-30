@@ -21,7 +21,7 @@ def SourceFactory(settings):
         url = settings.target()
         if url.startswith("[archive]"):
             source = ArchiveSource()
-        elif url.find(".exe") <> -1 or url.find(".bat") <> -1:
+        elif url.find(".exe") <> -1 or url.find(".bat") <> -1 or url.find(".msi") <> -1:
             source = FileSource(settings)
         else:
             source = ArchiveSource(settings)
