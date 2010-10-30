@@ -347,7 +347,10 @@ def unpackFile( downloaddir, filename, workdir ):
     elif ( ext == ".exe" ):
         warning( "unpack ignoring exe file" )
         return True
-    error( "dont know how to unpack this file: %s" % filename )
+    elif ( ext == ".msi" ):
+        return system("msiexec /package %s" % os.path.abspath(os.path.join(downloaddir, filename)))
+    else:
+        error( "dont know how to unpack this file: %s" % filename )
     return False
 
 def un7zip( file, destdir ):
