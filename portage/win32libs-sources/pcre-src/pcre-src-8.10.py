@@ -6,7 +6,8 @@ class subinfo(info.infoclass):
         for ver in ['7.9', '8.00', '8.02', '8.10']:
           self.targets[ver] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'pcre-' + ver
-        self.patchToApply['8.02'] = ("pcre-8.02-20100518.diff", 1)
+        if platform.isCrossCompilingEnabled():
+          self.patchToApply['8.10'] = ("pcre-8.02-20100518.diff", 1)
         self.defaultTarget = '8.10'
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
