@@ -11,11 +11,11 @@ class subinfo(info.infoclass):
         for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0' , '1.0.0a']:
             self.targets[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz'
             self.targetInstSrc[ver] = 'openssl-'+ver
-            if compiler.isMSVC():
+            if compiler.isMSVC() and ver != '1.0.0a':
               self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
             self.targetDigestUrls[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz.sha1'
         self.targets['1.0.1-snapshot'] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
-        if compiler.isMinGW():
+        if compiler.isMinGW() or platform.buildArchitecture() == "x64":
             self.defaultTarget = '1.0.0a'
         else:
             self.defaultTarget = '1.0.0'
@@ -54,14 +54,20 @@ class PackageCMake(CMakePackageBase):
                 os.environ["OSVERSION"] = "WCE501"
             elif self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
                 os.environ["OSVERSION"] = "WCE502"
+        elif platform.buildArchitecture() == "x64":
+            config = "VC-WIN64A"
         else:
             config = "VC-WIN32"
 
         if not self.system( "perl Configure %s" % config, "configure" ):
             return False
 
-        if not self.system( "ms\do_ms.bat", "configure" ):
-            return False
+        if platform.buildArchitecture() == "x64":
+            if not self.system( "ms\do_win64a.bat", "configure" ):
+                return False
+        else:
+            if not self.system( "ms\do_ms.bat", "configure" ):
+                return False
             
         if self.isTargetBuild():
             self.setupTargetToolchain()
