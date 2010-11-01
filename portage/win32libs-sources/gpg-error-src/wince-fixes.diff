@@ -1,0 +1,576 @@
+Index: src/init.c
+===================================================================
+--- src/init.c	(Revision 255)
++++ src/init.c	(Revision 263)
+@@ -33,6 +33,13 @@
+ 
+ #ifdef HAVE_W32CE_SYSTEM
+ # include "mkw32errmap.map.c"  /* Generated map_w32codes () */
++# ifndef TLS_OUT_OF_INDEXES
++#  define TLS_OUT_OF_INDEXES 0xFFFFFFFF
++# endif
++# ifndef __MINGW32CE__
++#  /* Replace the Mingw32CE provided abort function.  */
++#  define abort() do { TerminateProcess (GetCurrentProcess(), 8); } while (0)
++# endif
+ #endif
+ 
+ 
+@@ -380,6 +387,10 @@
+       tls_index = TlsAlloc ();
+       if (tls_index == TLS_OUT_OF_INDEXES)
+         return FALSE; 
++#ifndef _GPG_ERR_HAVE_CONSTRUCTOR
++      /* If we have not constructors (e.g. MSC) we call it here.  */
++      _gpg_w32__init_gettext_module ();
++#endif
+       /* falltru.  */
+     case DLL_THREAD_ATTACH:
+       tls = LocalAlloc (LPTR, sizeof *tls);
+Index: src/mkstrtable.awk
+===================================================================
+--- src/mkstrtable.awk	(Revision 255)
++++ src/mkstrtable.awk	(Revision 263)
+@@ -157,7 +157,7 @@
+   print "    " pos[coded_msgs];
+   print "  };";
+   print "";
+-  print "static inline int";
++  print "static GPG_ERR_INLINE int";
+   print namespace "msgidxof (int code)";
+   print "{";
+   print "  return (0 ? 0";
+Index: src/gpg-error.h.in
+===================================================================
+--- src/gpg-error.h.in	(Revision 255)
++++ src/gpg-error.h.in	(Revision 263)
+@@ -25,6 +25,8 @@
+ 
+ #ifdef __GNUC__
+ #define GPG_ERR_INLINE __inline__
++#elif _MSC_VER >= 1300
++#define GPG_ERR_INLINE __inline
+ #elif __STDC_VERSION__ >= 199901L
+ #define GPG_ERR_INLINE inline
+ #else
+Index: src/w32-gettext.c
+===================================================================
+--- src/w32-gettext.c	(Revision 255)
++++ src/w32-gettext.c	(Revision 263)
+@@ -30,8 +30,9 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <ctype.h>
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
+-#include <sys/stat.h>
++#endif
+ #include <stdint.h>
+ #ifndef HAVE_W32CE_SYSTEM
+ # include <locale.h>
+@@ -50,8 +51,40 @@
+ #endif /*!jnlib_malloc*/
+ 
+ #include "init.h"
++#include "gpg-error.h"
+ 
++#ifdef HAVE_W32CE_SYSTEM
++/* Forward declaration.  */
++static wchar_t *utf8_to_wchar (const char *string, size_t length, size_t *retlen);
+ 
++static HANDLE
++MyCreateFileA (LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwSharedMode,
++	     LPSECURITY_ATTRIBUTES lpSecurityAttributes,
++	     DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes,
++	     HANDLE hTemplateFile)
++{
++  wchar_t *filename;
++  HANDLE result;
++  int err;
++  size_t size;
++
++  filename = utf8_to_wchar (lpFileName, -1, &size);
++  if (!filename)
++    return INVALID_HANDLE_VALUE;
++
++  result = CreateFileW (filename, dwDesiredAccess, dwSharedMode,
++			lpSecurityAttributes, dwCreationDisposition,
++			dwFlagsAndAttributes, hTemplateFile);
++
++  err = GetLastError ();
++  free (filename);
++  SetLastError (err);
++  return result;
++}
++#undef CreateFileA
++#define CreateFileA MyCreateFileA
++#endif
++
+ 
+ /* localname.c from gettext BEGIN.  */
+ 
+@@ -611,7 +644,9 @@
+ static const char *
+ my_nl_locale_name (const char *categoryname)
+ {
++#ifndef HAVE_W32CE_SYSTEM
+   const char *retval;
++#endif
+   LCID lcid;
+   LANGID langid;
+   int primary, sub;
+@@ -1026,7 +1061,7 @@
+ 
+ /* Support functions.  */
+ 
+-static __inline__ uint32_t
++static GPG_ERR_INLINE uint32_t
+ do_swap_u32 (uint32_t i)
+ {
+   return (i << 24) | ((i & 0xff00) << 8) | ((i >> 8) & 0xff00) | (i >> 24);
+@@ -1041,8 +1076,8 @@
+ /* The so called `hashpjw' function by P.J. Weinberger
+    [see Aho/Sethi/Ullman, COMPILERS: Principles, Techniques and Tools,
+    1986, 1987 Bell Telephone Laboratories, Inc.]  */
+-static __inline__ unsigned long
+-hash_string( const char *str_param )
++static GPG_ERR_INLINE unsigned long
++hash_string (const char *str_param)
+ {
+   unsigned long int hval, g;
+   const char *str = str_param;
+@@ -1147,11 +1182,11 @@
+ 
+ 
+ /* Constructor for this module.  This can only be used if we are a
+-   DLL.  IF used as a static lib we can't control the process set; for
++   DLL.  If used as a static lib we can't control the process set; for
+    example it might be used with a main module which is not build with
+    mingw and thus does not know how to call the constructors.  */
+ #ifdef DLL_EXPORT
+-static void module_init (void) __attribute__ ((__constructor__));
++static void module_init (void) _GPG_ERR_CONSTRUCTOR;
+ #endif
+ static void
+ module_init (void)
+@@ -1165,7 +1200,7 @@
+     }
+ }
+ 
+-#ifndef DLL_EXPORT
++#if !defined(DLL_EXPORT) || !defined(_GPG_ERR_HAVE_CONSTRUCTOR)
+ void
+ _gpg_w32__init_gettext_module (void)
+ {
+@@ -1194,31 +1229,29 @@
+ static struct loaded_domain *
+ load_domain (const char *filename)
+ {
+-  FILE *fp;
+-  size_t size;
+-  struct stat st;
++  HANDLE fh;
++  DWORD size;
+   struct mo_file_header *data = NULL;
+   struct loaded_domain *domain = NULL;
+   size_t to_read;
+   char *read_ptr;
+-  
+-  fp = fopen (filename, "rb");
+-  if (!fp)
++
++  fh = CreateFileA (filename, GENERIC_READ, FILE_SHARE_WRITE, NULL,
++                    OPEN_EXISTING, 0, NULL);
++  if (fh == INVALID_HANDLE_VALUE)
++    return NULL;
++
++  size = GetFileSize (fh, NULL);
++  if (size == INVALID_FILE_SIZE)
+     {
++      CloseHandle (fh);
+       return NULL;
+     }
+-  if (fstat (fileno (fp), &st)
+-      || (size = (size_t) st.st_size) != st.st_size
+-      || size < sizeof (struct mo_file_header))
+-    {
+-      fclose (fp);
+-      return NULL;
+-    }
+ 
+   data = (2*size <= size)? NULL : jnlib_malloc (2*size);
+   if (!data)
+     {
+-      fclose (fp);
++      CloseHandle (fh);
+       return NULL;
+     }
+ 
+@@ -1226,10 +1259,13 @@
+   read_ptr = (char *) data;
+   do
+     {
+-      long int nb = fread (read_ptr, 1, to_read, fp);
+-      if (nb < to_read)
++      BOOL res;
++      DWORD nb;
++
++      res = ReadFile (fh, read_ptr, to_read, &nb, NULL);
++      if (! res || nb < to_read)
+ 	{
+-	  fclose (fp);
++	  CloseHandle (fh);
+ 	  jnlib_free (data);
+ 	  return NULL;
+ 	}
+@@ -1237,7 +1273,7 @@
+       to_read -= nb;
+     }
+   while (to_read > 0);
+-  fclose (fp);
++  CloseHandle (fh);
+ 
+   /* Using the magic number we can test whether it really is a message
+      catalog file.  */
+Index: ChangeLog
+===================================================================
+--- ChangeLog	(Revision 255)
++++ ChangeLog	(Revision 263)
+@@ -1,3 +1,34 @@
++2010-11-01  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
++
++	* src/w32-gettext.c (CreateFileA): Rename to ...
++	(MyCreateFileA): ... this, but provide macro CreateFileA.
++
++2010-10-31  Werner Koch  <wk@g10code.com>
++
++	* src/init.c (abort): Use TerminateProcess; exit would call atexit
++	functions.
++
++2010-10-29  Marcus Brinkmann  <marcus@g10code.de>
++
++	* src/w32-gettext.c: Guard include of <sys/types.h>.  Do not
++	include <sys/stat.h>.
++	(CreateFileA) [HAVE_W32CE_SYSTEM]: New wrapper function.
++	(load_domain): Use native Windows API.
++
++	* src/init.c (TLS_OUT_OF_INDEXES) [HAVE_W32CE_SYSTEM,
++	!TLS_OUT_OF_INDEXES]: Define it.
++	(abort) [!__MINGW32CE__]: Define it.
++
++2010-10-28  Werner Koch  <wk@g10code.com>
++
++	* src/mkstrtable.awk: s/inline/GPG_ERR_INLINE/
++	* src/w32-gettext.c: Include gpg-error.h and replace all
++	__inline__ by GPG_ERR_INLINE.
++	(module_init):  Use _GPG_ERR_CONSTRUCTOR.
++	(_gpg_w32__init_gettext_module): Build also if we don't have
++	constructors
++	* src/gpg-error.h.in (GPG_ERR_INLINE) [_MSC_VER]: Define as __inline.
++
+ 2010-10-26  Werner Koch  <wk@g10code.com>
+ 
+ 	Release 1.10.
+Index: contrib/conf-w32ce-msc/build.mk
+===================================================================
+--- contrib/conf-w32ce-msc/build.mk	(Revision 0)
++++ contrib/conf-w32ce-msc/build.mk	(Revision 263)
+@@ -0,0 +1,118 @@
++# build.mk - Makefile to build libgpg-error using Visual-C
++# Copyright 2010 g10 Code GmbH
++#
++# This file is free software; as a special exception the author gives
++# unlimited permission to copy and/or distribute it, with or without
++# modifications, as long as this notice is preserved.
++#
++# This file is distributed in the hope that it will be useful, but
++# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
++# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++
++# This is a helper make script to build libgpg-error for WindowsCE
++# using the Microsoft Visual C compiler.  
++
++# The target build directry where we run the Visual C compiler/
++# This needs to be an absolute directory name.
++targetdir = /home/smb/xppro-gnu/src/libgpg-error
++
++
++help:
++	@echo "Run "
++	@echo "  make -f ../contrib/conf-w32ce-msc/build.mk copy-source"
++	@echo "on the POSIX system and then"
++	@echo "  nmake -f build.mk all"
++	@echo "on the Windows system"
++
++ce_defines = -DWINCE -D_WIN32_WCE=0x502 -DUNDER_CE \
++             -DWIN32_PLATFORM_PSPC -D_UNICODE -DUNICODE \
++             -D_CONSOLE -DARM -D_ARM_
++#-D_DEBUG -DDEBUG 
++
++# Some options of Visual-C:
++# -W3   Set warning level 3
++# -Zi   Generate debug info
++# -Od   Disable optimization
++# -Gm   Enable minimal rebuild (for C++)
++# -EHsc Exception handling model sc 
++# -MTd  Create a debug multithreaded executable
++# -fp:  Floating point behaviour
++# -GR-  Disable runtime type information
++# -Os   Favor small code
++# -LD   Create a DLL
++# -Fe   Set executable output name (may be only a directory)
++CFLAGS = -nologo -W3 -fp:fast -Os $(ce_defines) \
++         -DHAVE_CONFIG_H -DDLL_EXPORT -I. -Igpg-extra
++
++LDFLAGS =
++
++# Standard source files
++sources = \
++	init.c init.h      \
++	strsource.c	   \
++	strerror.c	   \
++	code-to-errno.c	   \
++	code-from-errno.c  \
++	w32-gettext.c      \
++        gettext.h          \
++	err-sources.h 	   \
++	err-codes.h
++
++# Sources files in this directory inclduing this Makefile
++conf_sources = \
++	build.mk \
++	config.h
++
++# Source files built by running the standard build system.
++built_sources = \
++	code-from-errno.h \
++	code-to-errno.h	  \
++	err-codes-sym.h	  \
++	err-sources-sym.h \
++	errnos-sym.h	  \
++	gpg-error.h	  \
++	mkerrcodes.h	  \
++	mkw32errmap.map.c \
++	gpg-error.def     \
++	gpg-extra/errno.h
++
++copy-static-source:
++	@if [ ! -f ./w32-gettext.c ]; then \
++           echo "Please cd to the src/ directory first"; \
++	   exit 1; \
++        fi
++	cp -t $(targetdir) $(sources);
++	cd ../contrib/conf-w32ce-msc ; cp -t $(targetdir) $(conf_sources)
++
++
++copy-built-source:
++	@if [ ! -f ./mkw32errmap.map.c ]; then \
++           echo "Please build using ./autogen.sh --build-w32ce first"; \
++	   exit 1; \
++        fi
++	cp -t $(targetdir) $(built_sources)
++
++copy-source: copy-static-source copy-built-source
++
++
++all:  $(sources) $(conf_sources) $(built_sources)
++	$(CC) $(CFLAGS) -c w32-gettext.c
++	$(CC) $(CFLAGS) -c init.c
++	$(CC) $(CFLAGS) -c strsource.c
++	$(CC) $(CFLAGS) -c strerror.c
++	$(CC) $(CFLAGS) -c code-to-errno.c
++	$(CC) $(CFLAGS) -c code-from-errno.c
++	link.exe /DLL /IMPLIB:libgpg-error-0-msc.lib \
++	        /OUT:libgpg-error-0-msc.dll \
++		/DEF:gpg-error.def /NOLOGO /MANIFEST:NO \
++		/NODEFAULTLIB:"oldnames.lib" /DYNAMICBASE:NO \
++	        w32-gettext.obj init.obj strsource.obj strerror.obj \
++	  	code-to-errno.obj code-from-errno.obj \
++		coredll.lib corelibc.lib ole32.lib oleaut32.lib uuid.lib \
++		commctrl.lib /subsystem:windowsce,5.02
++
++# Note that install needs to be run on the POSIX platform and the all
++# is only to make sure we build everything; it won't compile anything
++# because Visual-C is probably not installed on that platform.
++install: all
++	@echo fixme Install the files
+
+EigenschaftsÑnderungen: contrib\conf-w32ce-msc\build.mk
+___________________________________________________________________
+HinzugefÅgt: svn:executable
+   + *
+
+Index: contrib/conf-w32ce-msc/config.h
+===================================================================
+--- contrib/conf-w32ce-msc/config.h	(Revision 0)
++++ contrib/conf-w32ce-msc/config.h	(Revision 263)
+@@ -0,0 +1,153 @@
++/* config.h for building with Visual-C for WindowsCE. 
++ * Copyright 2010 g10 Code GmbH
++ * 
++ * This file is free software; as a special exception the author gives
++ * unlimited permission to copy and/or distribute it, with or without
++ * modifications, as long as this notice is preserved.
++ * 
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
++ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ */
++
++/* This file was originally created by running 
++ *   ./autogen.sh --build-w32ce
++ * on svn revision 253 (libgpg-error 1.10) and then adjusted to work
++ * with Visual-C.
++ */
++
++/* Define to the version of this package. */
++#define PACKAGE_VERSION "1.11-msc1"
++
++
++/* Name of package */
++#define PACKAGE "libgpg-error"
++
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT "bug-gnupg@gnupg.org"
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "libgpg-error"
++
++/* Define to the full name and version of this package. */
++#define PACKAGE_STRING "libgpg-error " PACKAGE_VERSION
++
++/* Define to the one symbol short name of this package. */
++#define PACKAGE_TARNAME "libgpg-error"
++
++/* Define to the home page for this package. */
++#define PACKAGE_URL ""
++
++
++
++/* Define to 1 if translation of program messages to the user's native
++   language is requested. */
++/* #undef ENABLE_NLS */
++
++/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
++   CoreFoundation framework. */
++/* #undef HAVE_CFLOCALECOPYCURRENT */
++
++/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
++   the CoreFoundation framework. */
++/* #undef HAVE_CFPREFERENCESCOPYAPPVALUE */
++
++/* Define if the GNU dcgettext() function is already present or preinstalled.
++   */
++/* #undef HAVE_DCGETTEXT */
++
++/* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
++   don't. */
++#define HAVE_DECL_STRERROR_R 0
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++/* #undef HAVE_DLFCN_H */
++
++/* Define if the GNU gettext() function is already present or preinstalled. */
++/* #undef HAVE_GETTEXT */
++
++/* Define if you have the iconv() function and it works. */
++/* #undef HAVE_ICONV */
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#define HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the <locale.h> header file. */
++/* #undef HAVE_LOCALE_H */
++
++/* Define to 1 if you have the <memory.h> header file. */
++#define HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#define HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the `strerror_r' function. */
++/* #undef HAVE_STRERROR_R */
++
++/* Define to 1 if you have the <strings.h> header file. */
++#define HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#define HAVE_STRING_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#undef HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#undef HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#define HAVE_UNISTD_H 1
++
++/* Defined if we run on WindowsCE */
++#define HAVE_W32CE_SYSTEM 1
++
++/* Defined if we run on a W32 API based system */
++#define HAVE_W32_SYSTEM 1
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#define LT_OBJDIR ".libs/"
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++/* #undef NO_MINUS_C_MINUS_O */
++
++/* Define to 1 if you have the ANSI C header files. */
++#define STDC_HEADERS 1
++
++/* Define to 1 if strerror_r returns char *. */
++/* #undef STRERROR_R_CHAR_P */
++
++
++/* Version number of package */
++#define VERSION PACKAGE_VERSION
++
++/* Define to 1 if on MINIX. */
++/* #undef _MINIX */
++
++/* Define to 2 if the system does not provide POSIX.1 features except with
++   this defined. */
++/* #undef _POSIX_1_SOURCE */
++
++/* Define to 1 if you need to in order for `stat' and other things to work. */
++/* #undef _POSIX_SOURCE */
++
++/* Define to empty if `const' does not conform to ANSI C. */
++/* #undef const */
++
++
++/* Force using of NLS for W32 even if no libintl has been found.  This is 
++   okay because we have our own gettext implementation for W32.  */
++#if defined(HAVE_W32_SYSTEM) && !defined(ENABLE_NLS)
++#define ENABLE_NLS 1
++#endif
++/* For building we need to define these macro.  */
++#define GPG_ERR_ENABLE_GETTEXT_MACROS 1
++#define GPG_ERR_ENABLE_ERRNO_MACROS 1
++
++/* snprintf is not part of oldnames.lib thus we redefine it here. */
++#define snprintf _snprintf
++
+
+EigenschaftsÑnderungen: contrib\conf-w32ce-msc\config.h
+___________________________________________________________________
+HinzugefÅgt: svn:executable
+   + *
+
+Index: contrib/ChangeLog
+===================================================================
+--- contrib/ChangeLog	(Revision 0)
++++ contrib/ChangeLog	(Revision 263)
+@@ -0,0 +1,5 @@
++2010-10-28  Werner Koch  <wk@g10code.com>
++
++	* contrib/conf-w32ce-msc/build.mk: New.
++	* contrib/conf-w32ce-msc/config.h: New.
++

@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'libgpg-error-' + ver
         self.patchToApply['1.9'] = ('libgpg-error-1.9-20100801.diff', 1)
-        self.patchToApply['1.10'] = ('libgpg-error-1.10-20101031.diff', 1)
+        self.patchToApply['1.10'] = [('wince-fixes.diff', 0), ('libgpg-error-1.10-20101031.diff', 1)]
         self.targetDigests['1.10'] = '95b324359627fbcb762487ab6091afbe59823b29'
         self.targetDigests['1.9'] = '6836579e42320b057a2372bbcd0325130fe2561e'
         self.defaultTarget = '1.10'

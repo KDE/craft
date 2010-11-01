@@ -1,7 +1,7 @@
 diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 --- libgpg-error-1.10.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.10/CMakeLists.txt	2010-10-31 15:30:55.165297400 +0100
-@@ -0,0 +1,211 @@
++++ libgpg-error-1.10/CMakeLists.txt	2010-11-01 23:23:05.213156400 +0100
+@@ -0,0 +1,220 @@
 +project(gpg-error)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -38,6 +38,9 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +
 +set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 +set(BIN_DIR ${CMAKE_CURRENT_BINARY_DIR})
++
++include_directories(${BIN_DIR} ${SRC_DIR})
++
 +if(WIN32)
 +    set(NULL_DEVICE 2> NUL)
 +else(WIN32)
@@ -53,6 +56,7 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +    set(INCLUDE_STRING "%TARGET_INCLUDE%")
 +else(TARGET_CPP)
 +    set(ERR_COMPILER ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1})
++	set(HOST_COMPILER ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1})
 +    set(INCLUDE_STRING "%INCLUDE%")
 +endif(TARGET_CPP)
 +
@@ -65,12 +69,12 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +if(WINCE)
 +    file(READ ${SRC_DIR}/w32ce-add.h W32CEADD_TMP)
 +    file(APPEND ${BIN_DIR}/extra-h.in "${W32CEADD_TMP}")
++	add_definitions(-DGPG_ERR_ENABLE_ERRNO_MACROS)
 +endif(WINCE)
 +file(APPEND ${BIN_DIR}/extra-h.in "\nEOF")
 +
-+file(MAKE_DIRECTORY ${BIN_DIR}/gpg-extra)
 +if(WINCE)
-+file(WRITE ${BIN_DIR}/gpg-extra/errno.h "/* some CE compat taken over from dbus */
++#	file(WRITE ${BIN_DIR}/gpg-extra/errno.h "/* some CE compat taken over from dbus */
 +#ifdef HAVE_W32CE_SYSTEM
 +#include <windows.h>
 +#define errno ((int)GetLastError ())
@@ -84,9 +88,7 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +#define ERANGE      ERROR_ARITHMETIC_OVERFLOW
 +#define ENOMEM      ERROR_NOT_ENOUGH_MEMORY
 +#endif /* HAVE_W32CE_SYSTEM */
-+")
-+else(WINCE)
-+    file(WRITE ${BIN_DIR}/gpg-extra/errno.h)
++#")
 +endif(WINCE)
 +
 +set(gpg_error_GENERATED_SRCS)
@@ -107,8 +109,8 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +awk_generate(gpg-error.h mkheader.awk ${SRC_DIR}/err-sources.h.in ${SRC_DIR}/err-codes.h.in ${SRC_DIR}/errnos.in ${BIN_DIR}/extra-h.in ${SRC_DIR}/gpg-error.h.in)
 +
 +add_custom_command(OUTPUT ${BIN_DIR}/mkerrcodes.h  COMMAND ${AWK_EXECUTABLE} -f ${SRC_DIR}/mkerrcodes1.awk ${SRC_DIR}/errnos.in > ${BIN_DIR}/_mkerrcodes.h
-+                                                   COMMAND set INCLUDE="\"${INCLUDE_STRING}\""
-+                                                   COMMAND ${ERR_COMPILER} -E ${BIN_DIR}/_mkerrcodes.h -I ${BIN_DIR}/gpg-extra ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
++                                                   #COMMAND set INCLUDE="\"${INCLUDE_STRING}\""
++                                                   COMMAND ${CMAKE_C_COMPILER} -E ${BIN_DIR}/_mkerrcodes.h ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
 +                                                       "\"${AWK_EXECUTABLE}\"" -f ${SRC_DIR}/mkerrcodes.awk > ${BIN_DIR}/mkerrcodes.h)
 +add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.tab.h COMMAND ${ERR_COMPILER} -E -DRESOLVE_MACROS ${SRC_DIR}/mkw32errmap.c ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" \"{&mkw32errmap_marker\" > ${BIN_DIR}/mkw32errmap.tab.h)
 +
@@ -129,12 +131,15 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +    if(NOT MKW32ERRMAP OR NOT MKERRCODES)
 +        message(FATAL_ERROR "could not find mkw32errmap or mkerrcodes")
 +    endif(NOT MKW32ERRMAP OR NOT MKERRCODES)
-+    include_directories(${BIN_DIR}/gpg-extra)
 +    message(STATUS "${MKW32ERRMAP} - ${MKERRCODES}")
++	include_directories(${BIN_DIR}/gpg-extra)
 +endif(BUILD_CROSS_TOOLS)
 +
 +if(WINCE)
++	file(MAKE_DIRECTORY ${BIN_DIR}/gpg-extra)
 +    add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.map.c COMMAND ${MKW32ERRMAP} --map > ${BIN_DIR}/mkw32errmap.map.c DEPENDS ${MKW32ERRMAP})
++    add_custom_command(OUTPUT ${BIN_DIR}/gpg-extra/errno.h COMMAND ${MKW32ERRMAP} > ${BIN_DIR}/gpg-extra/errno.h DEPENDS ${MKW32ERRMAP})
++	install(FILES ${BIN_DIR}/gpg-extra/errno.h DESTINATION include/gpg-extra)
 +else(WINCE)
 +    file(WRITE ${BIN_DIR}/mkw32errmap.map.c "/*dummy*/")
 +endif(WINCE)
@@ -167,9 +172,13 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +    if(MSVC)
 +        add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -D__inline__=__inline -wd4996 -Dsnprintf=_snprintf -Dstrncasecmp=strnicmp -Dstrcasecmp=stricmp)
 +    endif(MSVC)
++	if(WINCE)
++		set(gpg_error_SRCS
++			${BIN_DIR}/gpg-extra/errno.h
++			${gpg_error_SRCS}
++		)
++	endif(WINCE)
 +endif(WIN32)
-+
-+include_directories(${BIN_DIR} ${SRC_DIR})
 +
 +#if(BUILD_STATIC)
 +#    set(_shared STATIC)
@@ -216,8 +225,8 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 \ No newline at end of file
 diff -Nru libgpg-error-1.10.orig/config.h.cmake libgpg-error-1.10/config.h.cmake
 --- libgpg-error-1.10.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.10/config.h.cmake	2010-10-31 15:30:55.340307400 +0100
-@@ -0,0 +1,151 @@
++++ libgpg-error-1.10/config.h.cmake	2010-11-01 23:25:20.957920600 +0100
+@@ -0,0 +1,156 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define to 1 if translation of program messages to the user's native
@@ -366,12 +375,17 @@ diff -Nru libgpg-error-1.10.orig/config.h.cmake libgpg-error-1.10/config.h.cmake
 +#if defined(HAVE_W32_SYSTEM) && !defined(ENABLE_NLS)
 +#define ENABLE_NLS 1
 +#endif
-+/* For building we need to define this macro.  */
-+#define GPG_ERR_ENABLE_GETTEXT_MACROS
++/* For building we need to define these macro.  */
++#define GPG_ERR_ENABLE_GETTEXT_MACROS 1
++#define GPG_ERR_ENABLE_ERRNO_MACROS 1
 +
++#if defined(HAVE_W32_SYSTEM)
++#define uint32_t unsigned __int32
++#define uint16_t unsigned __int16
++#endif
 diff -Nru libgpg-error-1.10.orig/ConfigureChecks.cmake libgpg-error-1.10/ConfigureChecks.cmake
 --- libgpg-error-1.10.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.10/ConfigureChecks.cmake	2010-10-31 15:30:55.458314100 +0100
++++ libgpg-error-1.10/ConfigureChecks.cmake	2010-11-01 23:19:38.163313900 +0100
 @@ -0,0 +1,96 @@
 +#undef ENABLE_NLS
 +
@@ -470,202 +484,29 @@ diff -Nru libgpg-error-1.10.orig/ConfigureChecks.cmake libgpg-error-1.10/Configu
 +
 +configure_file(config.h.cmake config.h)
 \ No newline at end of file
-diff -Nru libgpg-error-1.10.orig/src/gettext.h libgpg-error-1.10/src/gettext.h
---- libgpg-error-1.10.orig/src/gettext.h	2010-01-20 15:04:38.000000000 +0100
-+++ libgpg-error-1.10/src/gettext.h	2010-10-31 15:30:55.460314200 +0100
-@@ -25,6 +25,7 @@
- #if HAVE_W32_SYSTEM
-   /* We have a gettext implementation in gpg-error.h which get
-      included anyway.  */
-+    void module_init_internal (void);
- #else /*!HAVE_W32_SYSTEM*/
-   /* Get declarations of GNU message catalog functions.  */
- # include <libintl.h>
-diff -Nru libgpg-error-1.10.orig/src/gpg-error.c libgpg-error-1.10/src/gpg-error.c
---- libgpg-error-1.10.orig/src/gpg-error.c	2010-10-20 16:36:29.000000000 +0200
-+++ libgpg-error-1.10/src/gpg-error.c	2010-10-31 15:30:55.463314400 +0100
-@@ -34,7 +34,7 @@
- #endif
- #ifdef ENABLE_NLS
- #ifdef HAVE_W32_SYSTEM
--# include "gettext.h"
-+# include <gettext.h>
- #else
- # include <libintl.h>
- #endif
-diff -Nru libgpg-error-1.10.orig/src/init.c libgpg-error-1.10/src/init.c
---- libgpg-error-1.10.orig/src/init.c	2010-10-20 17:13:07.000000000 +0200
-+++ libgpg-error-1.10/src/init.c	2010-10-31 15:30:55.466314600 +0100
-@@ -28,7 +28,7 @@
+diff -Nru libgpg-error-1.10.orig/src/init.h libgpg-error-1.10/src/init.h
+--- libgpg-error-1.10.orig/src/init.h	2010-09-16 20:32:44.000000000 +0200
++++ libgpg-error-1.10/src/init.h	2010-11-01 23:27:29.773288400 +0100
+@@ -61,9 +61,7 @@
  
- #include <gpg-error.h>
  
--#include "gettext.h"
-+#include <gettext.h>
- #include "init.h"
+ /* Explicit constructor for w32-gettext.c  */
+-#ifndef DLL_EXPORT
+ void _gpg_w32__init_gettext_module (void);
+-#endif
  
- #ifdef HAVE_W32CE_SYSTEM
-@@ -47,6 +47,9 @@
- static char *get_locale_dir (void);
- static void drop_locale_dir (char *locale_dir);
+ #endif /*HAVE_W32_SYSTEM*/
  
-+# ifdef _MSC_VER
-+void module_init_internal (void);
-+# endif
- #else /*!HAVE_W32_SYSTEM*/
- 
- #define get_locale_dir() LOCALEDIR
-@@ -83,6 +86,9 @@
-      called.  The problem with that is that the TLS has not been setup
-      and w32-gettext.c requires TLS.  To solve this we do nothing here
-      but call the actual init code from our DllMain.  */
-+/*#  ifdef _MSC_VER
-+    module_init_internal();
-+#  endif*/
- # else /*!DLL_EXPORT*/
-   /* Note that if the TLS is actually used, we can't release the TLS
-      as there is no way to know when a thread terminates (i.e. no
-@@ -377,6 +383,7 @@
-   switch (reason)
-     {
-     case DLL_PROCESS_ATTACH:
-+      module_init_internal();
-       tls_index = TlsAlloc ();
-       if (tls_index == TLS_OUT_OF_INDEXES)
-         return FALSE; 
-diff -Nru libgpg-error-1.10.orig/src/strerror-sym.c libgpg-error-1.10/src/strerror-sym.c
---- libgpg-error-1.10.orig/src/strerror-sym.c	2008-08-26 14:45:58.000000000 +0200
-+++ libgpg-error-1.10/src/strerror-sym.c	2010-10-31 15:30:55.469314700 +0100
-@@ -26,8 +26,8 @@
- 
- #include <gpg-error.h>
- 
--#include "err-codes-sym.h"
--#include "errnos-sym.h"
-+#include <err-codes-sym.h>
-+#include <errnos-sym.h>
- 
- /* Return a pointer to a string containing the name of the symbol of
-    the error code in the error value ERR.  Returns NULL if the error
-diff -Nru libgpg-error-1.10.orig/src/strerror.c libgpg-error-1.10/src/strerror.c
---- libgpg-error-1.10.orig/src/strerror.c	2008-08-26 14:45:58.000000000 +0200
-+++ libgpg-error-1.10/src/strerror.c	2010-10-31 15:30:55.471314900 +0100
-@@ -29,8 +29,8 @@
- 
- #include <gpg-error.h>
- 
--#include "gettext.h"
--#include "err-codes.h"
-+#include <gettext.h>
-+#include <err-codes.h>
- 
- /* Return a pointer to a string containing a description of the error
-    code in the error value ERR.  This function is not thread-safe.  */
-diff -Nru libgpg-error-1.10.orig/src/strsource-sym.c libgpg-error-1.10/src/strsource-sym.c
---- libgpg-error-1.10.orig/src/strsource-sym.c	2008-08-26 14:45:58.000000000 +0200
-+++ libgpg-error-1.10/src/strsource-sym.c	2010-10-31 15:30:55.473315000 +0100
-@@ -26,7 +26,7 @@
- 
- #include <gpg-error.h>
- 
--#include "err-sources-sym.h"
-+#include <err-sources-sym.h>
- 
- /* Return a pointer to a string containing the name of the symbol of
-    the error source in the error value ERR.  Returns NULL if the error
-diff -Nru libgpg-error-1.10.orig/src/strsource.c libgpg-error-1.10/src/strsource.c
---- libgpg-error-1.10.orig/src/strsource.c	2008-08-26 14:45:58.000000000 +0200
-+++ libgpg-error-1.10/src/strsource.c	2010-10-31 15:30:55.475315100 +0100
-@@ -24,8 +24,8 @@
- 
- #include <gpg-error.h>
- 
--#include "gettext.h"
--#include "err-sources.h"
-+#include <gettext.h>
-+#include <err-sources.h>
- 
- /* Return a pointer to a string containing a description of the error
-    source in the error value ERR.  */
 diff -Nru libgpg-error-1.10.orig/src/w32-gettext.c libgpg-error-1.10/src/w32-gettext.c
---- libgpg-error-1.10.orig/src/w32-gettext.c	2010-10-20 16:50:42.000000000 +0200
-+++ libgpg-error-1.10/src/w32-gettext.c	2010-10-31 15:36:37.154858000 +0100
-@@ -30,9 +30,23 @@
- #include <string.h>
- #include <errno.h>
- #include <ctype.h>
-+#ifdef HAVE_SYS_TYPES_H
+--- libgpg-error-1.10.orig/src/w32-gettext.c	2010-11-01 23:27:43.412068500 +0100
++++ libgpg-error-1.10/src/w32-gettext.c	2010-11-01 23:19:57.285407600 +0100
+@@ -33,7 +33,9 @@
+ #ifdef HAVE_SYS_TYPES_H
  #include <sys/types.h>
-+#endif
-+#ifdef HAVE_SYS_STAT_H
- #include <sys/stat.h>
-+#endif
+ #endif
 +#ifdef HAVE_STDINT_H
  #include <stdint.h>
-+#else
-+#define uint32_t unsigned __int32
-+#define uint16_t unsigned __int16
 +#endif
-+
-+#ifdef _MSC_VER
-+#define __attribute__(x)
-+#endif
-+
  #ifndef HAVE_W32CE_SYSTEM
  # include <locale.h>
  #endif /*HAVE_W32CE_SYSTEM*/
-@@ -611,7 +625,9 @@
- static const char *
- my_nl_locale_name (const char *categoryname)
- {
-+#ifndef HAVE_W32CE_SYSTEM
-   const char *retval;
-+#endif
-   LCID lcid;
-   LANGID langid;
-   int primary, sub;
-@@ -1150,11 +1166,16 @@
-    DLL.  IF used as a static lib we can't control the process set; for
-    example it might be used with a main module which is not build with
-    mingw and thus does not know how to call the constructors.  */
-+void module_init_internal (void);
- #ifdef DLL_EXPORT
- static void module_init (void) __attribute__ ((__constructor__));
- #endif
--static void
--module_init (void)
-+static void module_init (void)
-+{
-+    module_init_internal();
-+}
-+
-+void module_init_internal (void)
- {
-   static int init_done;
- 
-@@ -1196,7 +1217,9 @@
- {
-   FILE *fp;
-   size_t size;
-+#ifndef HAVE_W32CE_SYSTEM
-   struct stat st;
-+#endif
-   struct mo_file_header *data = NULL;
-   struct loaded_domain *domain = NULL;
-   size_t to_read;
-@@ -1207,6 +1230,7 @@
-     {
-       return NULL;
-     }
-+#ifndef HAVE_W32CE_SYSTEM
-   if (fstat (fileno (fp), &st)
-       || (size = (size_t) st.st_size) != st.st_size
-       || size < sizeof (struct mo_file_header))
-@@ -1214,6 +1238,7 @@
-       fclose (fp);
-       return NULL;
-     }
-+#endif
- 
-   data = (2*size <= size)? NULL : jnlib_malloc (2*size);
-   if (!data)
