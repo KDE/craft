@@ -60,29 +60,30 @@ class SourceBase(EmergeBase):
 
     def applyPatches(self):
         """apply patches is available"""
-        utils.debug( "SourceBase.applyPatches called", 2 )
+        utils.debug( "SourceBase.applyPatches called", 0 )
         
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if type(patches) == list:
                 ret = True
                 for file, patchdepth in patches:
-                    print file, patchdepth
-                    if not self.applyPatch(file, patchdepth):
+                    utils.debug( "applying %s with patchlevel: %s" % ( file, patchdepth ) )
+                    if not self.applyPatch( file, patchdepth ):
                         ret = False
                 return ret
             else:
                 ( file, patchdepth ) = patches
-                return self.applyPatch(file, patchdepth)
+                return self.applyPatch( file, patchdepth )
 
         return True
             
-    def applyPatch(self, file, patchdepth):
+    def applyPatch(self, file, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
         utils.debug( "SourceBase.applyPatch called", 2 )
+        if not srcdir:
+            srcdir=self.sourceDir()
         if file:
             patchfile = os.path.join ( self.packageDir(), file )
-            srcdir = os.path.join ( self.sourceDir() )
             return utils.applyPatch( srcdir, patchfile, patchdepth )
         return True
 
