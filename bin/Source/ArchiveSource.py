@@ -184,7 +184,18 @@ class ArchiveSource(SourceBase):
                 return False
 
         packagelist = os.listdir( tmpdir )
-        
+
+        # apply all patches only ommitting the last one, this makes it possible to always work on the latest patch
+        # for future work, it might be interesting to switch patches on and off at will, this probably needs an
+        # own patch management though
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
+            patches = self.subinfo.patchesToApply()
+            if type(patches) == list:
+                for file, patchdepth in patches[:-1]:
+                    utils.debug( "applying patch %s with patchlevel: %s" % ( file, patchdepth ) )
+                    if not self.applyPatch( file, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
+                        return False
+
         # move the packages up and rename them to be different from the original source directory
         for dir in packagelist:
             # if the source or dest directory already exists, remove the occurance instead
