@@ -118,7 +118,7 @@ class EmergeBase():
         elif COMPILER == "mingw4":
             self.__compiler = "mingw4"
         else:
-            print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
+            print >> sys.stderr, "emerge error: KDECOMPILER: '%s' not understood" % COMPILER
             exit( 1 )
         self.rootdir = ROOTDIR
         if hasattr(self, "subinfo"):
