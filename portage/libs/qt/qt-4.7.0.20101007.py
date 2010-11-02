@@ -53,6 +53,7 @@ class subinfo(info.infoclass):
             ]
         if platform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
+        else:
             self.defaultTarget = '4.7'
 
         ## \todo this is prelimary  and may be changed 
