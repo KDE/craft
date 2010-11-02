@@ -53,10 +53,7 @@ class subinfo(info.infoclass):
             ]
         if platform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
-        elif COMPILER == "msvc2010":
             self.defaultTarget = '4.7'
-        else:
-            self.defaultTarget = '4.7.0'
 
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
