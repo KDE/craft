@@ -1,7 +1,44 @@
+diff -Nru libxslt-1.1.26.orig/cmake/modules/FindWcecompat.cmake libxslt-1.1.26/cmake/modules/FindWcecompat.cmake
+--- libxslt-1.1.26.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libxslt-1.1.26/cmake/modules/FindWcecompat.cmake	2010-11-02 14:22:37.296875000 +0100
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
---- libxslt-1.1.26.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ libxslt-1.1.26/CMakeLists.txt	Mon May 17 07:14:26 2010
-@@ -0,0 +1,110 @@
+--- libxslt-1.1.26.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libxslt-1.1.26/CMakeLists.txt	2010-11-02 14:31:23.046875000 +0100
+@@ -0,0 +1,111 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -29,12 +66,13 @@ diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
 +find_package(LibXml2 REQUIRED)
 +include(ConfigureChecks.cmake)
 +include_directories(
-+    ${CMAKE_INCLUDE_PATH}
 +    ${CMAKE_BINARY_DIR} 
 +    ${CMAKE_SOURCE_DIR} 
 +    ${CMAKE_SOURCE_DIR}/libxslt 
 +    ${CMAKE_SOURCE_DIR}/libexslt
-+    ${LIBXML2_INCLUDE_DIR})
++    ${LIBXML2_INCLUDE_DIR}
++    ${CMAKE_INCLUDE_PATH}
++)
 +if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +endif(MSVC)
@@ -112,167 +150,9 @@ diff -Nru libxslt-1.1.26.orig/CMakeLists.txt libxslt-1.1.26/CMakeLists.txt
 +
 +
 +#install(FILES doc/xmlwf.1 DESTINATION man/man1)
-diff -Nru libxslt-1.1.26.orig/ConfigureChecks.cmake libxslt-1.1.26/ConfigureChecks.cmake
---- libxslt-1.1.26.orig/ConfigureChecks.cmake	Thu Jan  1 00:00:00 1970
-+++ libxslt-1.1.26/ConfigureChecks.cmake	Mon May 17 07:51:05 2010
-@@ -0,0 +1,116 @@
-+include(CheckIncludeFile)
-+include(CheckFunctionExists)
-+include(CheckSymbolExists)
-+
-+check_include_file("ansidecl.h" HAVE_ANSIDECL_H)
-+check_include_file("dlfcn.h" HAVE_DLFCN_H)
-+check_include_file("float.h" HAVE_FLOAT_H)
-+check_include_file("fp_class.h" HAVE_FP_CLASS_H)
-+check_include_file("ieeefp.h" HAVE_IEEEFP_H)
-+check_include_file("inttypes.h" HAVE_INTTYPES_H)
-+check_include_file("locale.h" HAVE_LOCALE_H)
-+check_include_file("math.h" HAVE_MATH_H)
-+check_include_file("memory.h" HAVE_MEMORY_H)
-+check_include_file("nan.h" HAVE_NAN_H)
-+check_include_file("pthread.h" HAVE_PTHREAD_H)
-+check_include_file("stdarg.h" HAVE_STDARG_H)
-+check_include_file("stdint.h" HAVE_STDINT_H)
-+check_include_file("stdlib.h" HAVE_STDLIB_H)
-+check_include_file("strings.h" HAVE_STRINGS_H)
-+check_include_file("string.h" HAVE_STRING_H)
-+check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
-+check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
-+check_include_file("sys/timeb.h" HAVE_SYS_TIMEB_H)
-+check_include_file("sys/time.h" HAVE_SYS_TIME_H)
-+check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
-+check_include_file("time.h" HAVE_TIME_H)
-+check_include_file("unistd.h" HAVE_UNISTD_H)
-+check_include_file("xlocale.h" HAVE_XLOCALE_H)
-+
-+check_function_exists("asctime" HAVE_ASCTIME)
-+check_function_exists("fprintf" HAVE_FPRINTF)
-+check_function_exists("ftime" HAVE_FTIME)
-+check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
-+check_function_exists("gmtime_r" HAVE_GMTIME_R)
-+check_function_exists("localtime" HAVE_LOCALTIME)
-+check_function_exists("localtime_r" HAVE_LOCALTIME_R)
-+check_function_exists("mktime" HAVE_MKTIME)
-+check_function_exists("printf" HAVE_PRINTF)
-+check_function_exists("snprintf" HAVE_SNPRINTF)
-+check_function_exists("sprintf" HAVE_SPRINTF)
-+check_function_exists("sscanf" HAVE_SSCANF)
-+check_function_exists("stat" HAVE_STAT)
-+check_function_exists("time" HAVE_TIME)
-+check_function_exists("vfprintf" HAVE_VFPRINTF)
-+check_function_exists("vsnprintf" HAVE_VSNPRINTF)
-+check_function_exists("vsprintf" HAVE_VSPRINTF)
-+check_function_exists("_stat" HAVE__STAT)
-+
-+#/* Define if gcrypt library is available. */
-+#undef HAVE_GCRYPT
-+#/* Define if pthread library is there (-lpthread) */
-+#undef HAVE_LIBPTHREAD
-+#/* Define to the sub-directory in which libtool stores uninstalled libraries.   */
-+#undef LT_OBJDIR
-+
-+
-+#/* Define to 1 if you have the ANSI C header files. */
-+#undef STDC_HEADERS
-+
-+#/* Enable extensions on AIX 3, Interix.  */
-+#ifndef _ALL_SOURCE
-+# undef _ALL_SOURCE
-+#endif
-+#/* Enable GNU extensions on systems that have them.  */
-+#ifndef _GNU_SOURCE
-+# undef _GNU_SOURCE
-+#endif
-+#/* Enable threading extensions on Solaris.  */
-+#ifndef _POSIX_PTHREAD_SEMANTICS
-+# undef _POSIX_PTHREAD_SEMANTICS
-+#endif
-+#/* Enable extensions on HP NonStop.  */
-+#ifndef _TANDEM_SOURCE
-+# undef _TANDEM_SOURCE
-+#endif
-+#/* Enable general extensions on Solaris.  */
-+#ifndef __EXTENSIONS__
-+# undef __EXTENSIONS__
-+#endif
-+#/* Define to 1 if on MINIX. */
-+#undef _MINIX
-+
-+#/* Define to 2 if the system does not provide POSIX.1 features except with this defined. */
-+#undef _POSIX_1_SOURCE
-+
-+#/* Define to 1 if you need to in order for `stat' and other things to work. */
-+#undef _POSIX_SOURCE
-+
-+#/* Win32 Std C name mangling work-around */
-+#undef snprintf
-+
-+#/* Win32 Std C name mangling work-around */
-+#undef vsnprintf
-+
-+set(WITH_XSLT_DEBUG 1)
-+set(XSLT_LOCALE_WINAPI 0)
-+set(XSLT_LOCALE_XLOCALE 0)
-+set(WITH_MEM_DEBUG 1)
-+set(WITH_TRIO 0)
-+set(WITH_DEBUGGER 1)
-+set(WITH_MODULES 1)
-+if(WIN32)
-+    if(NOT WINCE)
-+        set(XSLT_LOCALE_WINAPI 1)
-+    else(NOT WINCE)
-+        set(XSLT_LOCALE_NONE 1)
-+    endif(NOT WINCE)
-+    set(LIBXSLT_DEFAULT_PLUGINS_PATH "")
-+else(WIN32)
-+    set(XSLT_LOCALE_XLOCALE 1)
-+    set(LIBXSLT_DEFAULT_PLUGINS_PATH "/usr/lib/libxslt-plugins")
-+endif(WIN32)
-+
-+configure_file(libxslt/xsltconfig.h.in libxslt/xsltconfig.h)
-+#configure_file(libexslt/exsltconfig.h.in libexslt/exsltconfig.h)
-+configure_file(config.h.cmake config.h)
-\ No newline at end of file
-diff -Nru libxslt-1.1.26.orig/cmake/modules/FindWcecompat.cmake libxslt-1.1.26/cmake/modules/FindWcecompat.cmake
---- libxslt-1.1.26.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ libxslt-1.1.26/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru libxslt-1.1.26.orig/config.h.cmake libxslt-1.1.26/config.h.cmake
---- libxslt-1.1.26.orig/config.h.cmake	Thu Jan  1 00:00:00 1970
-+++ libxslt-1.1.26/config.h.cmake	Mon May 17 06:40:16 2010
+--- libxslt-1.1.26.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libxslt-1.1.26/config.h.cmake	2010-11-02 14:22:37.312500000 +0100
 @@ -0,0 +1,208 @@
 +/* config.h.in.  Generated from configure.in by autoheader.  */
 +#cmakedefine HAVE_ISINF
@@ -482,9 +362,130 @@ diff -Nru libxslt-1.1.26.orig/config.h.cmake libxslt-1.1.26/config.h.cmake
 +
 +/* Win32 Std C name mangling work-around */
 +#cmakedefine vsnprintf
+diff -Nru libxslt-1.1.26.orig/ConfigureChecks.cmake libxslt-1.1.26/ConfigureChecks.cmake
+--- libxslt-1.1.26.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libxslt-1.1.26/ConfigureChecks.cmake	2010-11-02 14:22:37.296875000 +0100
+@@ -0,0 +1,116 @@
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++include(CheckSymbolExists)
++
++check_include_file("ansidecl.h" HAVE_ANSIDECL_H)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("float.h" HAVE_FLOAT_H)
++check_include_file("fp_class.h" HAVE_FP_CLASS_H)
++check_include_file("ieeefp.h" HAVE_IEEEFP_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("locale.h" HAVE_LOCALE_H)
++check_include_file("math.h" HAVE_MATH_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("nan.h" HAVE_NAN_H)
++check_include_file("pthread.h" HAVE_PTHREAD_H)
++check_include_file("stdarg.h" HAVE_STDARG_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/timeb.h" HAVE_SYS_TIMEB_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("time.h" HAVE_TIME_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("xlocale.h" HAVE_XLOCALE_H)
++
++check_function_exists("asctime" HAVE_ASCTIME)
++check_function_exists("fprintf" HAVE_FPRINTF)
++check_function_exists("ftime" HAVE_FTIME)
++check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
++check_function_exists("gmtime_r" HAVE_GMTIME_R)
++check_function_exists("localtime" HAVE_LOCALTIME)
++check_function_exists("localtime_r" HAVE_LOCALTIME_R)
++check_function_exists("mktime" HAVE_MKTIME)
++check_function_exists("printf" HAVE_PRINTF)
++check_function_exists("snprintf" HAVE_SNPRINTF)
++check_function_exists("sprintf" HAVE_SPRINTF)
++check_function_exists("sscanf" HAVE_SSCANF)
++check_function_exists("stat" HAVE_STAT)
++check_function_exists("time" HAVE_TIME)
++check_function_exists("vfprintf" HAVE_VFPRINTF)
++check_function_exists("vsnprintf" HAVE_VSNPRINTF)
++check_function_exists("vsprintf" HAVE_VSPRINTF)
++check_function_exists("_stat" HAVE__STAT)
++
++#/* Define if gcrypt library is available. */
++#undef HAVE_GCRYPT
++#/* Define if pthread library is there (-lpthread) */
++#undef HAVE_LIBPTHREAD
++#/* Define to the sub-directory in which libtool stores uninstalled libraries.   */
++#undef LT_OBJDIR
++
++
++#/* Define to 1 if you have the ANSI C header files. */
++#undef STDC_HEADERS
++
++#/* Enable extensions on AIX 3, Interix.  */
++#ifndef _ALL_SOURCE
++# undef _ALL_SOURCE
++#endif
++#/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif
++#/* Enable threading extensions on Solaris.  */
++#ifndef _POSIX_PTHREAD_SEMANTICS
++# undef _POSIX_PTHREAD_SEMANTICS
++#endif
++#/* Enable extensions on HP NonStop.  */
++#ifndef _TANDEM_SOURCE
++# undef _TANDEM_SOURCE
++#endif
++#/* Enable general extensions on Solaris.  */
++#ifndef __EXTENSIONS__
++# undef __EXTENSIONS__
++#endif
++#/* Define to 1 if on MINIX. */
++#undef _MINIX
++
++#/* Define to 2 if the system does not provide POSIX.1 features except with this defined. */
++#undef _POSIX_1_SOURCE
++
++#/* Define to 1 if you need to in order for `stat' and other things to work. */
++#undef _POSIX_SOURCE
++
++#/* Win32 Std C name mangling work-around */
++#undef snprintf
++
++#/* Win32 Std C name mangling work-around */
++#undef vsnprintf
++
++set(WITH_XSLT_DEBUG 1)
++set(XSLT_LOCALE_WINAPI 0)
++set(XSLT_LOCALE_XLOCALE 0)
++set(WITH_MEM_DEBUG 1)
++set(WITH_TRIO 0)
++set(WITH_DEBUGGER 1)
++set(WITH_MODULES 1)
++if(WIN32)
++    if(NOT WINCE)
++        set(XSLT_LOCALE_WINAPI 1)
++    else(NOT WINCE)
++        set(XSLT_LOCALE_NONE 1)
++    endif(NOT WINCE)
++    set(LIBXSLT_DEFAULT_PLUGINS_PATH "")
++else(WIN32)
++    set(XSLT_LOCALE_XLOCALE 1)
++    set(LIBXSLT_DEFAULT_PLUGINS_PATH "/usr/lib/libxslt-plugins")
++endif(WIN32)
++
++configure_file(libxslt/xsltconfig.h.in libxslt/xsltconfig.h)
++#configure_file(libexslt/exsltconfig.h.in libexslt/exsltconfig.h)
++configure_file(config.h.cmake config.h)
+\ No newline at end of file
 diff -Nru libxslt-1.1.26.orig/libexslt/crypto.c libxslt-1.1.26/libexslt/crypto.c
---- libxslt-1.1.26.orig/libexslt/crypto.c	Wed Sep 16 13:51:00 2009
-+++ libxslt-1.1.26/libexslt/crypto.c	Mon May 17 08:23:58 2010
+--- libxslt-1.1.26.orig/libexslt/crypto.c	2009-09-16 15:51:00.000000000 +0200
++++ libxslt-1.1.26/libexslt/crypto.c	2010-11-02 14:22:37.312500000 +0100
 @@ -121,7 +121,11 @@
  
  #include <windows.h>
@@ -498,8 +499,8 @@ diff -Nru libxslt-1.1.26.orig/libexslt/crypto.c libxslt-1.1.26/libexslt/crypto.c
  static void
  exsltCryptoCryptoApiReportError (xmlXPathParserContextPtr ctxt,
 diff -Nru libxslt-1.1.26.orig/libexslt/math.c libxslt-1.1.26/libexslt/math.c
---- libxslt-1.1.26.orig/libexslt/math.c	Thu Sep 17 14:51:10 2009
-+++ libxslt-1.1.26/libexslt/math.c	Mon May 17 08:34:21 2010
+--- libxslt-1.1.26.orig/libexslt/math.c	2009-09-17 16:51:10.000000000 +0200
++++ libxslt-1.1.26/libexslt/math.c	2010-11-02 14:22:37.312500000 +0100
 @@ -503,7 +503,7 @@
  
  #endif /* defined(HAVE_STDLIB_H) && defined(RAND_MAX) */
@@ -528,8 +529,8 @@ diff -Nru libxslt-1.1.26.orig/libexslt/math.c libxslt-1.1.26/libexslt/math.c
                                     (const xmlChar *) "abs",
                                     (const xmlChar *) EXSLT_MATH_NAMESPACE,
 diff -Nru libxslt-1.1.26.orig/libxslt/extensions.c libxslt-1.1.26/libxslt/extensions.c
---- libxslt-1.1.26.orig/libxslt/extensions.c	Mon Sep 21 09:05:49 2009
-+++ libxslt-1.1.26/libxslt/extensions.c	Mon May 17 08:07:00 2010
+--- libxslt-1.1.26.orig/libxslt/extensions.c	2009-09-21 11:05:49.000000000 +0200
++++ libxslt-1.1.26/libxslt/extensions.c	2010-11-02 14:22:37.328125000 +0100
 @@ -34,7 +34,7 @@
  
  #ifdef _WIN32
@@ -540,8 +541,8 @@ diff -Nru libxslt-1.1.26.orig/libxslt/extensions.c libxslt-1.1.26/libxslt/extens
  #endif
  #endif
 diff -Nru libxslt-1.1.26.orig/libxslt/namespaces.c libxslt-1.1.26/libxslt/namespaces.c
---- libxslt-1.1.26.orig/libxslt/namespaces.c	Thu Sep 17 09:03:22 2009
-+++ libxslt-1.1.26/libxslt/namespaces.c	Mon May 17 08:15:20 2010
+--- libxslt-1.1.26.orig/libxslt/namespaces.c	2009-09-17 11:03:22.000000000 +0200
++++ libxslt-1.1.26/libxslt/namespaces.c	2010-11-02 14:22:37.343750000 +0100
 @@ -38,6 +38,10 @@
  #include <trio.h>
  #endif
@@ -554,8 +555,8 @@ diff -Nru libxslt-1.1.26.orig/libxslt/namespaces.c libxslt-1.1.26/libxslt/namesp
  #include <libxml/tree.h>
  #include <libxml/hash.h>
 diff -Nru libxslt-1.1.26.orig/libxslt/security.c libxslt-1.1.26/libxslt/security.c
---- libxslt-1.1.26.orig/libxslt/security.c	Thu Aug 13 13:04:24 2009
-+++ libxslt-1.1.26/libxslt/security.c	Mon May 17 08:36:14 2010
+--- libxslt-1.1.26.orig/libxslt/security.c	2009-08-13 15:04:24.000000000 +0200
++++ libxslt-1.1.26/libxslt/security.c	2010-11-02 14:22:37.343750000 +0100
 @@ -343,7 +343,11 @@
  	    }
  	    ret = xsltCheckWritePath(sec, ctxt, directory);
@@ -570,8 +571,8 @@ diff -Nru libxslt-1.1.26.orig/libxslt/security.c libxslt-1.1.26/libxslt/security
  	xmlFree(directory);
  	if (ret < 0)
 diff -Nru libxslt-1.1.26.orig/libxslt/win32config.h libxslt-1.1.26/libxslt/win32config.h
---- libxslt-1.1.26.orig/libxslt/win32config.h	Tue May 12 06:29:34 2009
-+++ libxslt-1.1.26/libxslt/win32config.h	Mon May 17 06:48:01 2010
+--- libxslt-1.1.26.orig/libxslt/win32config.h	2009-05-12 08:29:34.000000000 +0200
++++ libxslt-1.1.26/libxslt/win32config.h	2010-11-02 14:22:37.390625000 +0100
 @@ -77,7 +77,7 @@
  #endif /* _MSC_VER */
  
@@ -582,8 +583,8 @@ diff -Nru libxslt-1.1.26.orig/libxslt/win32config.h libxslt-1.1.26/libxslt/win32
  #define snprintf _snprintf
  #if _MSC_VER < 1500
 diff -Nru libxslt-1.1.26.orig/libxslt/xsltlocale.h libxslt-1.1.26/libxslt/xsltlocale.h
---- libxslt-1.1.26.orig/libxslt/xsltlocale.h	Wed Sep 16 13:25:05 2009
-+++ libxslt-1.1.26/libxslt/xsltlocale.h	Mon May 17 08:36:42 2010
+--- libxslt-1.1.26.orig/libxslt/xsltlocale.h	2009-09-16 15:25:05.000000000 +0200
++++ libxslt-1.1.26/libxslt/xsltlocale.h	2010-11-02 14:22:37.390625000 +0100
 @@ -11,6 +11,10 @@
  #ifndef __XML_XSLTLOCALE_H__
  #define __XML_XSLTLOCALE_H__
@@ -596,9 +597,9 @@ diff -Nru libxslt-1.1.26.orig/libxslt/xsltlocale.h libxslt-1.1.26/libxslt/xsltlo
  
  #ifdef XSLT_LOCALE_XLOCALE
 diff -Nru libxslt-1.1.26.orig/libxslt/xsltutils.c libxslt-1.1.26/libxslt/xsltutils.c
---- libxslt-1.1.26.orig/libxslt/xsltutils.c	Tue May 12 06:29:34 2009
-+++ libxslt-1.1.26/libxslt/xsltutils.c	Mon May 17 08:13:48 2010
-@@ -45,12 +45,20 @@
+--- libxslt-1.1.26.orig/libxslt/xsltutils.c	2009-05-12 08:29:34.000000000 +0200
++++ libxslt-1.1.26/libxslt/xsltutils.c	2010-11-02 14:22:37.390625000 +0100
+@@ -45,13 +45,21 @@
  #if defined(WIN32) && !defined(__CYGWIN__)
  #ifdef _MSC_VER
  #include <winsock2.h>
@@ -612,16 +613,17 @@ diff -Nru libxslt-1.1.26.orig/libxslt/xsltutils.c libxslt-1.1.26/libxslt/xsltuti
  #define XSLT_WIN32_PERFORMANCE_COUNTER
  #endif /* _MS_VER */
  #endif /* WIN32 */
-+
+ 
 +#ifdef _WIN32_WCE
 +#define vsnprintf _vsnprintf
 +#endif
- 
++
  /************************************************************************
   * 									*
+  * 			Convenience function				*
 diff -Nru libxslt-1.1.26.orig/xsltproc/xsltproc.c libxslt-1.1.26/xsltproc/xsltproc.c
---- libxslt-1.1.26.orig/xsltproc/xsltproc.c	Sun Aug 23 12:53:33 2009
-+++ libxslt-1.1.26/xsltproc/xsltproc.c	Mon May 17 08:37:29 2010
+--- libxslt-1.1.26.orig/xsltproc/xsltproc.c	2009-08-23 14:53:33.000000000 +0200
++++ libxslt-1.1.26/xsltproc/xsltproc.c	2010-11-02 14:22:37.406250000 +0100
 @@ -6,6 +6,20 @@
   * daniel@veillard.com
   */
