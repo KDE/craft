@@ -32,8 +32,19 @@ class infoclass:
         self.targetDigestUrls = dict()
         ## \todo prelimary 
         self.svnTargets = dict()
+
         self.hardDependencies = dict()
         self.softDependencies = dict()
+
+        # dependencies is the common way to define dependencies that are both
+        # run time and build time dependencies, it is equivalent to hardDependencies
+        # runtimeDependencies and buildDependencies are not different when looking
+        # at the build process itself, they will only make a difference when getting
+        # output of the dependencies
+        self.dependencies = dict()
+        self.runtimeDependencies = dict()
+        self.buildDependencies = dict()
+
         self.patchToApply = dict()  # list ( 'patchname', patchdepth for patch )
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
         self.svnTargets['svnHEAD'] = False

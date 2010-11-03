@@ -410,7 +410,7 @@ def packageSplit( fullname ):
         version += '-' + part
     return [ package, version ]
 
-def getDependencies( category, package, version ):
+def getDependencies( category, package, version, runtimeOnly=False ):
     """
     returns the dependencies of this package as list of strings:
     category/package
@@ -424,10 +424,16 @@ def getDependencies( category, package, version ):
     deps = []
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()
-        for line in info.hardDependencies.keys():
+        depDict = info.hardDependencies
+        depDict.update( info.dependencies )
+        depDict.update( info.runtimeDependencies )
+        if not runtimeOnly:
+            depDict.update( info.buildDependencies )
+
+        for line in depDict.keys():
             (category, package) = line.split( "/" )
             version = PortageInstance.getNewestVersion( category, package )
-            deps.append( [ category, package, version, info.hardDependencies[ line ] ] )
+            deps.append( [ category, package, version, depDict[ line ] ] )
 
     return deps
 
