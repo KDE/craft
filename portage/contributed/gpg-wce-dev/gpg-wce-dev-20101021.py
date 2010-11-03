@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.targetDigests['20101011'] = "164dfb1bbb62db1e23bf80bcbb46338b6c95df2c"
         self.targets['20101011'] = \
         self.targets['20101021'] = (
-                "http://files.kolab.org/local/windows-ce/gpg-snapshots/gpg_wince-dev-211010.zip"
+                "http://files.kolab.org/local/windows-ce/gpg-snapshots/gpg_wince-dev-211010.zip "
                 "http://files.kolab.org/local/windows-ce/gpg-msc-dev.zip")
         self.defaultTarget = '20101021'
 
