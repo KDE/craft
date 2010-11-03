@@ -40,6 +40,7 @@ def __import__( module ):
 
 class DependencyPackage:
     """ This class wraps each package and constructs the dependency tree
+        original code is from dependencies.py, integration will come later...
         """
     def __init__( self, category, name, version ):
         self.category = category
@@ -86,6 +87,7 @@ class DependencyPackage:
                         package = sp[ 1 ]
                         line = "%s/%s" % ( category, package )
 
+                utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
                 if not line in packageDict.keys():
                     p = DependencyPackage( category, package, version )
@@ -140,7 +142,7 @@ def rootDirForCategory( category ):
     # this function should return the portage directory where it finds the
     # first occurance of a category or the default value
     for i in rootDirectories():
-        if os.path.exists( os.path.join( i, category ) ):
+        if category and os.path.exists( os.path.join( i, category ) ):
             return i
     # as a fall back return the default even if it might be wrong
     return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
@@ -149,7 +151,7 @@ def rootDirForPackage( category, package ):
     # this function should return the portage directory where it finds the
     # first occurance of a package or the default value
     for i in rootDirectories():
-        if os.path.exists( os.path.join( i, category, package ) ):
+        if category and package and os.path.exists( os.path.join( i, category, package ) ):
             return i
     # as a fall back return the default even if it might be wrong
     return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
@@ -159,7 +161,10 @@ def etcDir():
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
-    file = os.path.join( rootDirForPackage( category, package ), category, package )
+    if category and package:
+        file = os.path.join( rootDirForPackage( category, package ), category, package )
+    else:
+        file = ""
     return file
     
 def getFilename( category, package, version ):
@@ -268,6 +273,8 @@ class Portage:
     def getDefaultTarget( self, category, package, version ):
         """ returns the default package of a specified package """
         utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        if not ( category and package and version ):
+            return dict()
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
@@ -278,6 +285,8 @@ class Portage:
     def getAllTargets( self, category, package, version ):
         """ returns all targets of a specified package """
         utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        if not ( category and package and version ):
+            return dict()
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
@@ -444,7 +453,7 @@ def printTargets( category, package, version ):
     """ """
     targetsDict = PortageInstance.getAllTargets( category, package, version )
     defaultTarget = PortageInstance.getDefaultTarget( category, package, version )
-    if not targetsDict['svnHEAD']:
+    if 'svnHEAD' in targetsDict and not targetsDict['svnHEAD']:
         del targetsDict['svnHEAD']
     targetsDictKeys = targetsDict.keys()
     targetsDictKeys.sort()
