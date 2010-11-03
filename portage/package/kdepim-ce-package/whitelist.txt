@@ -55,10 +55,10 @@ bin\\zlib1\.dll
 bin\\sasl2\.dll
 
 # GNUPG
-bin\\libgpgme-11\.dll
+bin\\libgpgme-*.\.dll
 bin\\libgcc_s_sjlj-1\.dll
-bin\\libassuan-0\.dll
-bin\\libgpg-error-0\.dll
+bin\\libassuan-*.\.dll
+bin\\libgpg-error-*.\.dll
 bin\\dirmngr\.exe
 bin\\gpg-agent\.exe
 bin\\gpg\.exe
