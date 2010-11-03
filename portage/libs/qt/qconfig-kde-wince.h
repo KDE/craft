@@ -100,9 +100,6 @@
 #endif
 
 /* Kernel */
-#ifndef QT_NO_CLIPBOARD
-#  define QT_NO_CLIPBOARD
-#endif
 #ifndef QT_NO_CONCURRENT
 #  define QT_NO_CONCURRENT
 #endif
