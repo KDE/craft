@@ -17,7 +17,6 @@ class subinfo(info.infoclass):
             self.hardDependencies['kde/kdebase-runtime'] = 'default'
         else:
             self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
-            self.patchToApply['svnHEAD'] = ( 'wince_ignore_ssl_errors.diff', 0 )
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['kdesupport/grantlee'] = 'default'
