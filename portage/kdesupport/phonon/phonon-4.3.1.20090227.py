@@ -32,8 +32,7 @@ class Package(CMakePackageBase):
         if self.isTargetBuild():
             automoc = os.path.join(self.rootdir, "lib", "automoc4", "Automoc4Config.cmake")
             if not os.path.exists(automoc):
-                print("<%s>") % automoc
-                utils.die("could not found automoc")
+                utils.warning("could not find automoc in <%s>" % automoc)
             ## \todo a standardized way to check if a package is installed in the image dir would be good.
             self.subinfo.options.configure.defines += "-DAUTOMOC4_CONFIG_FILE:FILEPATH=%s " \
                 % automoc.replace('\\', '/')
