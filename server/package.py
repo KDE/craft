@@ -4,7 +4,6 @@
 import os
 import sys
 import subprocess
-import smtplib
 import time     # for sleep
 from datetime import datetime
 
