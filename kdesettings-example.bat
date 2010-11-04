@@ -102,6 +102,10 @@ set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
 
+rem This option moves the git checkouts (and 3rdparty svn checkouts) to the 
+rem specified location instead of having them below the download directory.
+rem set KDEGITDIR=%KDEROOT%\git
+
 rem Non kde svn repository checkouts will be placed below %DOWNLOADDIR%/svn-src/<package>
 rem By default the emerge svn module supports only single branch svn checkouts.
 rem With this option emerge assumes that the svn repository have the svn standard layout 

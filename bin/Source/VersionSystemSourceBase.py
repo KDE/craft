@@ -108,6 +108,8 @@ class VersionSystemSourceBase (SourceBase):
     def checkoutDir( self, index=0 ):
         if self.subinfo.hasSvnTarget():
             sourcedir = os.path.join( self.downloadDir(), "svn-src" )
+            if os.getenv( "KDEGITDIR" ):
+                sourcedir = os.getenv( "KDEGITDIR" )
             sourcedir = os.path.join( sourcedir, self.package )
         else:
             utils.die("svnTarget property not set for this target")
