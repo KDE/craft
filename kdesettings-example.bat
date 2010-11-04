@@ -47,7 +47,8 @@ rem set EMERGE_TARGET_ARCHITECTURE=ARMV4I
 rem Here you set the path to your Python installation,
 rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
-rem settings of Windows.
+rem settings of Windows. In case python is distributed with emerge the 
+rem following setting is not used. 
 set PYTHONPATH="%PROGRAM_FILES%\python26"
 
 rem Here you set the path to msys if you want to compile
@@ -246,7 +247,18 @@ if %EMERGE_USE_SHORT_PATH% == 1 (
     %EMERGE_ROOT_DRIVE%
 )
 
-set PATH=%PYTHONPATH%;%PATH%
+rem use local python installation if present
+if exist %KDEROOT%\emerge\python (
+    set PYTHONPATH=%KDEROOT%\emerge\python
+) else (
+    if %PYTHONPATH% == "" ( 
+       echo Couldn't find local python installation - please set PYTHONPATH in %KDEROOT%\etc\kdesettings.bat ! 
+    )
+)
+
+if NOT %PYTHONPATH% == "" ( 
+    set PATH=%PYTHONPATH%;%PATH%
+)
 
 echo kdesettings.bat executed
 echo KDEROOT     : %KDEROOT%
