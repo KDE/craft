@@ -226,6 +226,16 @@ rem set EMERGE_PORTAGE_ROOT=C:\test\portage;%KDEROOT%\emerge\portage
 rem This option can be used to build only source packages and don't use binary packages
 rem it is needed for mingw-w32, mingw-w64 and wince builds, but works everywhere
 rem set EMERGE_SOURCEONLY=True
+
+rem This option enables separating of package build dependencies from emerge internal 
+rem dependencies. When enabled packages depends on packages from the internal category 
+rem too. The packages from the internal package belongs to the related python class 
+rem with the same name. They provide a standardized way to define runtime dependencies 
+rem for emerge itself. 
+rem note: After finishing the testing phase this feature will be enabled by default 
+rem and this option removed. 
+rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
