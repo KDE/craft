@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.3.1'] = ('libvorbis-1.3.1-20100708.diff', 1)
         self.options.package.withCompiler = False
         self.options.package.packageName = "libvorbis"
+        self.targetDigests['1.3.1'] = '0874dd08699240b868b22979da4c95ae6325006b'
         self.defaultTarget = '1.3.1'
 
     def setDependencies( self ):
