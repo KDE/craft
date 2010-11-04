@@ -292,7 +292,7 @@ class Portage:
             info = mod.subinfo()
             tagDict = info.svnTargets
             tagDict.update( info.targets )
-            utils.debug( tagDict )
+            utils.debug( tagDict, 2 )
             return tagDict
         else:
             return dict()
