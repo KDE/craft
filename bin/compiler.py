@@ -49,10 +49,10 @@ def getCompilerName():
     if isMinGW():
         if isMinGW_W32():
             return "mingw-w32"
-    elif isMinGW_W64():
-        return "mingw-w64"
-    elif isMinGW32():
-        return "mingw32"
+        elif isMinGW_W64():
+            return "mingw-w64"
+        elif isMinGW32():
+            return "mingw32"
     elif isMSVC():
         return COMPILER
     else:
