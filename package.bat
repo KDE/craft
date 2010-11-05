@@ -6,7 +6,7 @@ rem     to set up an automatic build, run this file whenever you need with the p
 rem     by Patrick Spendrin <ps_ml@gmx.de>
 
 
-call %~dp0\etc\kdesettings.bat
+call %~dp0\..\etc\kdesettings.bat
 
 
 rem     adapt this file to your needs
@@ -65,7 +65,7 @@ rem the packagelist file is a simple file containing lines of the following form
 rem     packagename,target,patchlevel
 rem # at the beginning of a line is a comment
 rem if the default target or patchlevel should be used, keep the space empty but keep the commata
-python %dp0\server\package.py %1
+python %~dp0\server\package.py %1
 goto :eof
 
 :path-mingw
