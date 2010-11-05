@@ -6,6 +6,7 @@
 import os
 import utils
 import subprocess
+import platform 
 
 COMPILER=os.getenv("KDECOMPILER")
 
@@ -15,7 +16,8 @@ def getGCCTarget():
         utils.debug("GCC Target Processor:%s" % result, 1 )
         return result.strip()
     except:
-        return ""
+        #if no mingw is installed return mingw-w32 it is part of base
+        return "i686-w64-mingw32"
 
 def isMinGW():
     return COMPILER.startswith("mingw")
@@ -30,7 +32,7 @@ def isMinGW_W32():
     return getGCCTarget() == "i686-w64-mingw32"
 
 def isMinGW_W64():
-    return getGCCTarget() == "x86_64-w64-mingw32"
+    return isMinGW() and platform.buildArchitecture() == "x64"
 
 
 def isMSVC():
