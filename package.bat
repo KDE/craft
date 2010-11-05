@@ -9,35 +9,6 @@ rem     by Patrick Spendrin <ps_ml@gmx.de>
 call %~dp0\..\etc\kdesettings.bat
 
 
-rem     adapt this file to your needs
-rem     set an smtp server from which you can send emails via authentication
-rem set EMERGE_SERVER_SERVER=smtp.googlemail.com:587
-
-rem     set the email address you want to send emails from
-rem set EMERGE_SERVER_SENDER=winbuild@googlemail.com
-
-rem     set the needed password for authenticating to the server
-rem set EMERGE_SERVER_PASS=
-
-rem     set the receivers list: for multiple email addresses, use a comma as separator
-rem set EMERGE_SERVER_RECEIVERS=
-
-rem     set the upload server
-rem set EMERGE_SERVER_UPLOAD_SERVER=
-
-rem     set the directory on the server
-rem set EMERGE_SERVER_UPLOAD_DIR=
-
-rem     set the upload server for the build logs
-rem set EMERGE_LOG_UPLOAD_SERVER=user@server
-
-rem     set the directory on the server for the build logs
-rem set EMERGE_LOG_UPLOAD_DIR=logs/stable/
- 
-rem     set the Url under which the logs can be addressed (normally the upload dir)
-rem set EMERGE_LOG_URL=http://server/logs/stable/
-
-
 rem    the following do not need to be changed
 set PATH=%KDEROOT%\bin;%PATH%
 set KDEDIRS=%KDEROOT%
