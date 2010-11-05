@@ -1,0 +1,2 @@
+win32libs-sources,libpng-src,,
+win32libs-sources,jpeg-src,,
