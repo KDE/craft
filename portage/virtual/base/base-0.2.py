@@ -2,6 +2,7 @@ import base
 import info
 import os
 import platform
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -36,7 +37,10 @@ class subinfo(info.infoclass):
                 elif platform.buildArchitecture() == 'arm-wince':
                     self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
                 else:
-                    self.hardDependencies['dev-util/mingw4']    = 'default'
+                    if compiler. isMinGW32():
+                        self.hardDependencies['dev-util/mingw4']    = 'default'
+                    else:
+                        self.hardDependencies['dev-util/mingw-w32']    = 'default'
             if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005" or os.getenv( "KDECOMPILER" ) == "msvc2010") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
                 self.hardDependencies['dev-util/jom']        = 'default'
                 
