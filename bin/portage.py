@@ -46,7 +46,8 @@ class DependencyPackage:
         self.category = category
         self.name = name
         self.version = version
-        self.children = []
+        self.runtimeChildren = []
+        self.buildChildren = []
         self.__readChildren()
 
     def ident( self ):
@@ -70,12 +71,27 @@ class DependencyPackage:
 
         if hasattr( mod, 'Package' ):
             _package = mod.Package()
-            deps = _package.subinfo.hardDependencies.keys()
-            
+            subinfo = _package.subinfo
         elif hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
-            deps = info.hardDependencies.keys()
+            subinfo = mod.subinfo()
+        else:
+            subinfo = dict()
+        
+        runtimeDependencies = subinfo.runtimeDependencies
+        buildDependencies = subinfo.buildDependencies
+
+        # hardDependencies
+        commonDependencies = subinfo.hardDependencies
+        commonDependencies.update( subinfo.dependencies )
+        for key in commonDependencies:
+            runtimeDependencies[ key ] = commonDependencies[ key ]
+            buildDependencies[ key ] = commonDependencies[ key ]
             
+        self.runtimeChildren = self.__readDependenciesForChildren( runtimeDependencies.keys() )
+        self.buildChildren = self.__readDependenciesForChildren( buildDependencies.keys() )
+
+    def __readDependenciesForChildren( self, deps ):
+        children = []
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
@@ -93,13 +109,24 @@ class DependencyPackage:
                     p = DependencyPackage( category, package, version )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
                     packageDict[ line ] = p
-                    self.children.append( p )
+                else:
+                    p = packageDict[ line ]
+                children.append( p )
+        return children
 
-    def getDependencies( self, depList = [] ):
+    def getDependencies( self, depList = [], type="both" ):
         """ returns all dependencies """
-        for p in self.children:
+        
+        if type == "runtime":
+            children = self.runtimeChildren
+        elif type == "buildtime":
+            children = self.buildChildren
+        else:
+            children = self.runtimeChildren + self.buildChildren
+
+        for p in children:
             if not p in depList:
-                p.getDependencies( depList )
+                p.getDependencies( depList, type )
 
         #if self.category <> internalCategory:
         depList.append( self )
@@ -437,7 +464,7 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
     return deps
 
-def solveDependencies( category, package, version, depList ):
+def solveDependencies( category, package, version, depList, type='both' ):
     if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
         if sp:
@@ -451,7 +478,7 @@ def solveDependencies( category, package, version, depList ):
 
     if ( version == "" ):
         version = PortageInstance.getNewestVersion( category, package )
-    depList = [ p.ident() for p in DependencyPackage( category, package, version ).getDependencies() ]
+    depList = [ p.ident() for p in DependencyPackage( category, package, version ).getDependencies( type=type ) ]
     depList.reverse()
     return depList
 
