@@ -8,11 +8,14 @@ class subinfo(info.infoclass):
         self.targetInstSrc['8.0'] = "jpeg-8"
         self.patchToApply['7.0'] = ( 'jpeg7.diff', 1 )
         self.patchToApply['8.0'] = ( 'jpeg8.diff', 1 )
+        
+        self.description = 'A library for manipulating JPEG image format files'
+        self.categoryName = 'win32libs'
 
         self.defaultTarget = '7.0'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
         

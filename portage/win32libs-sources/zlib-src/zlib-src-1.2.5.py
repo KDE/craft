@@ -10,10 +10,13 @@ class subinfo(info.infoclass):
            self.targetInstSrc[ ver ] = "zlib-" + ver
        self.patchToApply['1.2.5'] = ("zlib-1.2.5-20100422.diff", 1)
        self.targetDigests['1.2.5'] = '8e8b93fa5eb80df1afe5422309dca42964562d7e'
+       
+       self.description = 'The zlib compression and decompression library'
+       self.categoryName = 'win32libs'
        self.defaultTarget = '1.2.5'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         if platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
 
