@@ -44,6 +44,12 @@ class infoclass:
         self.dependencies = dict()
         self.runtimeDependencies = dict()
         self.buildDependencies = dict()
+        
+        # a long and a short description for the package
+        self.longDescription = ''
+        self.description = ''
+        # the category that will be used in the installer for this package
+        self.categoryName = ''
 
         self.patchToApply = dict()  # list ( 'patchname', patchdepth for patch )
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
