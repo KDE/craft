@@ -18,7 +18,7 @@ def getGCCTarget():
         return ""
 
 def isMinGW():
-    return COMPILER.startswith("mingw") and not getGCCTarget() == ""
+    return COMPILER.startswith("mingw")
 
 def isMinGW32():
     return getGCCTarget() == "mingw32"
