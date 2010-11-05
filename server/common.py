@@ -1,10 +1,11 @@
-# copyright 2009 Patrick Spendrin <ps_ml@gmx.de>
+# copyright 2009; 2010 Patrick Spendrin <ps_ml@gmx.de>
 # License: BSD
 import os
 import sys
 from datetime import date, datetime
 from ConfigParser import ConfigParser
 import subprocess
+import time
 
 isodate = str( date.today() ).replace( '-', '' )
 isodatetime = datetime.now().strftime("%Y%m%d%H%M")
@@ -58,6 +59,14 @@ class Uploader:
         self.category = category
         self.logfile = logfile
         
+        self.fstderr = sys.stderr
+        self.pstdin = None
+        
+    def ftpExecute( self, cmd ):
+        self.fstderr.write( cmd + "\r\n" )
+        self.fstderr.flush()
+        self.pstdin.write( cmd + "\r\n" )        
+
     def executeScript( self, state="common" ):
         self.settings = settings.getSection( self.category )
         if not self.settings:
@@ -66,11 +75,10 @@ class Uploader:
 
         name = state+"-script"
         if name in self.settings:
-            #fstderr = file( 'NUL', 'wb+' )
-            fstderr = sys.stderr
+            self.fstderr = file( 'NUL', 'wb+' )
             cmdstring = self.settings["sshclient"] + " " + self.settings["server"]
-            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
-
+            p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
+            self.pstdin = p.stdin
             p.stdin.write( self.settings[ name ] + "\n" )
             p.stdin.write( "exit\n" )
             ret = p.wait()
@@ -95,26 +103,22 @@ class Uploader:
             print "sourcefile is a directory"
             return False
 
-        cmdstring = self.settings["ftpclient"] + " " + self.settings["server"]
+        cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         ret = 0
         if self.logfile:
             fstderr = file( self.logfile + ".tmp", 'wb+' )
         else:
             fstderr = file( 'NUL', 'wb+' )
         p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
+        self.fstderr = fstderr
+        self.pstdin = p.stdin
         
-        for dir in self.settings["directory"].split('/'):
-            fstderr.write( "cd " + dir + "\r\n" )
-            fstderr.flush()
-            p.stdin.write( "cd " + dir + "\r\n" )
+        for dir in self.settings[ "directory" ].split( '/' ):
+            self.ftpExecute( "cd " + dir )
 
-        fstderr.write( "put " + sourcefilename + "\r\n" )
-        fstderr.flush()
-        p.stdin.write( "put " + sourcefilename + "\r\n" )
-        
-        fstderr.write( "quit\r\n" )
-        fstderr.flush()
-        p.stdin.write( "quit\r\n" )
+        self.ftpExecute( "put " + sourcefilename )
+        self.ftpExecute( "quit" )
+
         ret = p.wait()
 
         if self.logfile:
@@ -127,5 +131,61 @@ class Uploader:
 
         return ret == 0
 
+class SourceForgeUploader ( Uploader ):
+    def __init__( self, category='SFUpload', logfile=None ):
+        Uploader.__init__( self, category, logfile )
+        self.category = category
+        self.logfile = logfile
+
+    def upload( self, packageName, packageVersion, sourcefilename ):
+        self.settings = settings.getSection( self.category )
+        if not self.settings:
+            """ return True because we're probably simply disabled and we do not want to result in an error """
+            print "upload disabled!"
+            return True
+            
+        if not ( "server" in self.settings and "directory" in self.settings ):
+            print "server or directory not set"
+            return False
+
+        if os.path.isdir( sourcefilename ):
+            print "sourcefile is a directory"
+            return False
+
+        cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
+        ret = 0
+        if self.logfile:
+            self.fstderr = file( self.logfile + ".tmp", 'wb+' )
+        else:
+            self.fstderr = file( 'NUL', 'wb+' )
+
+        p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
+        self.pstdin = p.stdin
+
+        directoryName = self.settings[ "directory" ]
+        for dir in directoryName.split('/'):
+            if dir == "":
+                dir = "/"
+            self.ftpExecute( "cd " + dir )
+        
+        self.ftpExecute( "mkdir " + packageName )
+        self.ftpExecute( "cd " + packageName )
+        self.ftpExecute( "mkdir " + packageVersion )
+        self.ftpExecute( "cd " + packageVersion )
+        self.ftpExecute( "put " + sourcefilename )
+        self.ftpExecute( "quit" )
+        ret = p.wait()
+
+        if self.logfile:
+            log = file( self.logfile, 'ab+' )
+            self.fstderr.seek( os.SEEK_SET )
+            for line in self.fstderr:
+                log.write( line )
+            self.fstderr.close()
+            log.close()
+
+        return ret == 0
+
 if __name__ == '__main__':
     Uploader().executeScript("test")
+    SourceForgeUploader().upload("win_iconv", "0.0.1", "C:\\kde\\test.cpp")
