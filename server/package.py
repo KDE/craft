@@ -182,6 +182,10 @@ class package:
 
 
 
+general = common.settings.getSection( "General" )
+
+emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
+
 # first check whether the kdewin-packager is installed at all
 
 ver = portage.PortageInstance.getNewestVersion( "dev-util", "kdewin-packager" )
@@ -193,8 +197,6 @@ if not isInstalled:
     cmdstring = emerge + " kdewin-packager"
     p = subprocess.Popen( cmdstring, shell=True, stdout=fstderr, stderr=fstderr )
     p.wait()
-
-general = common.settings.getSection( "General" )
 
 if "logdstdir" in general:
     logroot = general["logdstdir"]
@@ -210,7 +212,6 @@ if not os.path.exists( packageroot ):
     os.makedirs( packageroot )
 
 outfile = os.path.join( logroot, "log-%s-%s.txt" )
-emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
 
 packagelist = []
 if len(sys.argv) <= 1:
