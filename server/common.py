@@ -139,6 +139,8 @@ class SourceForgeUploader ( Uploader ):
 
     def upload( self, packageName, packageVersion, sourcefilename ):
         self.settings = settings.getSection( self.category )
+        if packageName.endswith("-src"):
+            packageName = packageName[:-4]
         if not self.settings:
             """ return True because we're probably simply disabled and we do not want to result in an error """
             print "sfupload disabled!"
