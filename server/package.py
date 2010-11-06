@@ -184,7 +184,7 @@ class package:
 
 # first check whether the kdewin-packager is installed at all
 
-ver = portage.PortageInstance.getNewestVersion( category, package )
+ver = portage.PortageInstance.getNewestVersion( "dev-util", "kdewin-packager" )
 if isDBEnabled():
     isInstalled = installdb.isInstalled( "dev-util", "kdewin-packager", ver )
 else:
