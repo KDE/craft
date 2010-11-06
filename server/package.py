@@ -186,8 +186,12 @@ general = common.settings.getSection( "General" )
 
 emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
 
-# first check whether the kdewin-packager is installed at all
+# first emerge base, so that the base is installed everywhere
+cmdstring = emerge + " base"
+p = subprocess.Popen( cmdstring, shell=True )
+p.wait()
 
+# second check whether the kdewin-packager is installed at all
 ver = portage.PortageInstance.getNewestVersion( "dev-util", "kdewin-packager" )
 if isDBEnabled():
     isInstalled = installdb.isInstalled( "dev-util", "kdewin-packager", ver )
