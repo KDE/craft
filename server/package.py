@@ -1,16 +1,18 @@
 # copyright 2009,2010 Patrick Spendrin <ps_ml@gmx.de>
 # License: BSD
 
-import os
-import sys
-import subprocess
-import time     # for sleep
-from datetime import datetime
+import os;
+import sys;
+import subprocess;
+import time;     # for sleep
+from datetime import datetime;
+
 
 # extend sys.path so that we can use the emerge stuff
 sys.path = [ os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", "bin" ) ) ] + sys.path
-import portage
-import emergePlatform
+import portage;
+import emergePlatform;
+from InstallDB import *;
 
 # our own headers
 from notifications import *
@@ -230,7 +232,12 @@ for [cat, pac, ver, tar] in depList:
     if not [cat, pac, ver, tar] in runtimeDepList:
         print "could not find package %s in runtime dependencies" % pac
         p.buildTimeOnly = True
-    packagelist.append( p )
+    if isDBEnabled():
+        isInstalled = installdb.isInstalled( cat, pac, ver )
+    else:
+        isInstalled = portage.isInstalled( cat, pac, ver )
+    if not isInstalled:
+        packagelist.append( p )
 
 common.Uploader().executeScript("prepare")
 for entry in packagelist:
@@ -254,7 +261,7 @@ for entry in packagelist:
             entry.notifications[i].error = True
     finally:
         for i in entry.notifications:
-            if enabled: entry.notifications[i].run( entry.getRevision() )
+            if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
@@ -265,7 +272,7 @@ for entry in packagelist:
         for i in entry.notifications:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
-            if enabled: entry.notifications[i].run( entry.getRevision() )
+            if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
@@ -276,5 +283,5 @@ for entry in packagelist:
         for i in entry.notifications:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
-            if enabled: entry.notifications[i].run( entry.getRevision() )
+            if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
 common.Uploader().executeScript("finish")
