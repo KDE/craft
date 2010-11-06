@@ -51,7 +51,7 @@ class package:
             self.targetString = "--target=%s " % target
         else:
             self.targetString = ""
-            version = portage.PortageInstance.getNewestVersion( category, package )
+            version = portage.PortageInstance.getNewestVersion( category, self.packageName )
             self.target = portage.PortageInstance.getDefaultTarget( self.category, self.packageName, version )
         self.patchlevel = patchlevel
         self.revision = None
