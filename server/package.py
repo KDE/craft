@@ -1,4 +1,4 @@
-# copyright 2009 Patrick Spendrin <ps_ml@gmx.de>
+# copyright 2009,2010 Patrick Spendrin <ps_ml@gmx.de>
 # License: BSD
 
 import os
@@ -6,6 +6,11 @@ import sys
 import subprocess
 import time     # for sleep
 from datetime import datetime
+
+# extend sys.path so that we can use the emerge stuff
+sys.path = [ os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", "bin" ) ) ] + sys.path
+import platform
+import portage
 
 # our own headers
 from notifications import *
@@ -59,8 +64,9 @@ class package:
                                'logupload': LogUploadNotification( self.category, self.packageName, self.logfile ) }
 
         self.enabled = True
+        self.buildTimeOnly = False
     
-    def timeStamp( self ):
+    def timestamp( self ):
         datetime.now().strftime("%m/%d/%Y %H:%M")
         log = file( self.logfile, 'ab+' )
         log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
@@ -125,6 +131,8 @@ class package:
         """ packages into subdirectories of the normal directory - this helps to keep the directory clean """
         if not self.enabled:
             return
+        if self.buildTimeOnly:
+            return
 
         self.timestamp()
         os.environ["EMERGE_PKGDSTDIR"] = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
@@ -141,10 +149,13 @@ class package:
         """ uploads packages to winkde server """
         if not self.enabled:
             return
+        if self.buildTimeOnly:
+            return
 
         self.timestamp()
         print "running: upload", self.packageName
         upload = common.Uploader( logfile=self.logfile )
+        sfupload = common.SourceForgeUploader( logfile=self.logfile )
         
         pkgdir = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
         if os.path.exists( pkgdir ):
@@ -155,6 +166,7 @@ class package:
             ret = 0
             for entry in filelist:
                 upload.upload( os.path.join( pkgdir, entry ) )
+                sfupload.upload( os.path.join( pkgdir, entry ), self.category, self.packageName )
             
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )
@@ -189,11 +201,33 @@ if len(sys.argv) <= 1:
     exit( 0 )
     
 packagefile = file( sys.argv[1] )
+
+addInfo = dict()
+_depList = []
+_runtimeDepList = []
 for line in packagefile:
     if not line.startswith( '#' ):
-        entry = line.strip().split( ',' )
-        packagelist.append( package( entry[0], entry[1], entry[2], entry[3] ) )
+        cat, pac, target, patchlvl = line.strip().split( ',' )
+        addInfo[ cat + "/" + pac ] = ( target, patchlvl )
+        portage.solveDependencies( cat, pac, "", _depList, type='both' )
+        portage.solveDependencies( cat, pac, "", _runtimeDepList, type='runtime' )
 packagefile.close()
+
+_depList.reverse()
+_runtimeDepList.reverse()
+
+runtimeDepList = [x.ident() for x in _runtimeDepList]
+depList = [x.ident() for x in _depList]
+
+for [cat, pac, ver, tar] in depList:
+    target, patchlvl = '', ''
+    if cat + "/" + pac in addInfo.keys():
+        target, patchlvl = addInfo[ cat + "/" + pac ]
+    p = package( cat, pac, target, patchlvl )
+    if not [cat, pac, ver, tar] in runtimeDepList:
+        print "could not find package %s in runtime dependencies" % pac
+        p.buildTimeOnly = True
+    packagelist.append( p )
 
 common.Uploader().executeScript("prepare")
 for entry in packagelist:
