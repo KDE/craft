@@ -102,6 +102,10 @@ set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
 
+rem If you do not mind getting the output of the svn commands, then enable this
+rem option
+rem set KDESVNVERBOSE=True
+
 rem This option moves the git checkouts (and 3rdparty svn checkouts) to the 
 rem specified location instead of having them below the download directory.
 rem set KDEGITDIR=%KDEROOT%\git

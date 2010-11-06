@@ -148,8 +148,8 @@ class SvnSource (VersionSystemSourceBase):
         option = ""
         if not recursive:
             option = "--depth=files" 
-            
-        if utils.verbose() < 2: 
+
+        if utils.verbose() < 2 and not os.getenv("KDESVNVERBOSE") == "True":
             option += " --quiet"
           
         self.setProxy()
