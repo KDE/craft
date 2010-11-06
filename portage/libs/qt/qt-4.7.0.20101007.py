@@ -5,7 +5,7 @@ from utils import die
 import os
 import info
 import portage
-import platform
+import emergePlatform
 
 from Package.QMakePackageBase import *
 
@@ -51,7 +51,7 @@ class subinfo(info.infoclass):
 #           ('qt-4.7.0-Fix-one-possible-WinCE-hang-in-qt-event-loop.patch', 1),
             ('qt-4.7.0-fix-endless-loop-in-qProcess-for-wince.patch', 1)
             ]
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
         else:
             self.defaultTarget = '4.7'
@@ -65,7 +65,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['testing/mysql-pkg'] = 'default'
         else:
             self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
@@ -80,7 +80,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
         self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
         else:
             self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
@@ -109,7 +109,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         if self.isTargetBuild():
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
@@ -125,7 +125,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             if self.isTargetBuild():
                 command += "-xplatform %s -qconfig kde-wince " % xplatform
                 command += "-no-exceptions -no-stl -no-rtti "
@@ -133,7 +133,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
                 command += "-no-xmlpatterns -no-declarative -no-opengl "
             command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif -no-webkit "
             
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc -plugin-sql-mysql "
             command += "-qt-style-windowsxp -qt-style-windowsvista "

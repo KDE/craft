@@ -11,7 +11,7 @@ import os
 import shutil
 import utils
 import info
-import platform
+import emergePlatform
 import compiler
 from Package.PackageBase import *
 from Source.MultiSource import *

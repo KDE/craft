@@ -11,7 +11,7 @@ import urllib2
 class subinfo(info.infoclass):
   def setTargets( self ):    
     self.vlcArch = "32"
-    if( platform.buildArchitecture() == 'x64' ):
+    if( emergePlatform.buildArchitecture() == 'x64' ):
         self.vlcArch = "64"
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
     self.vlcTagName = 'vlc-1.2.0-git-'
@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
     self.targets[ releaseTag] = "http://downloads.sourceforge.net/sourceforge/vlc/"+releaseTag+"-win32.7z"
     self.targetInstSrc[ releaseTag ] = releaseTag
     
-    if( platform.buildArchitecture() == 'x64' ):
+    if( emergePlatform.buildArchitecture() == 'x64' ):
         self.defaultTarget = self.vlcTagName + self.getVer()
     else:
         self.defaultTarget = 'vlc-1.1.4'

@@ -4,7 +4,7 @@ import shutil
 import os
 import re
 import urllib
-import platform
+import emergePlatform
 
 # currently only needed from kdenetwork
 
@@ -12,7 +12,7 @@ import platform
 class subinfo(info.infoclass):
     def setTargets( self ):   
         self.baseURL = "http://artfiles.org/mysql/Downloads/MySQL-5.1/"
-        if( platform.buildArchitecture() == 'x64' ):
+        if( emergePlatform.buildArchitecture() == 'x64' ):
           self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-winx64.zip"
           self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-winx64"
           self.targetDigests[ '5.1.48' ] = '092e7534f96f17a84f705ab7a520f1bf76d0fb04'

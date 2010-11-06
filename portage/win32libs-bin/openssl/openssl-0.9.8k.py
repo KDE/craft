@@ -2,7 +2,7 @@
 from Package.BinaryPackageBase import *
 import os
 import info
-import platform
+import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.9.8k-3'] = ['0c451b00d2a3691f58f2997b95afcde8511bbd1b',
                                           'ac3b1517d9c0e1132f18909caeab0d9b804e1406']
             
-        if platform.buildArchitecture() == 'x64' and COMPILER == "mingw4":
+        if emergePlatform.buildArchitecture() == 'x64' and COMPILER == "mingw4":
             self.defaultTarget = '1.0.0'
         else:
             self.defaultTarget = '0.9.8k-3'

@@ -1,5 +1,5 @@
 import info
-import platform
+import emergePlatform
 
 from Package.CMakePackageBase import *
 
@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
         self.hardDependencies['win32libs-sources/pcre-src'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
         
     def setBuildOptions( self ):

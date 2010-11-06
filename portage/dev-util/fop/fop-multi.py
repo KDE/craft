@@ -1,5 +1,5 @@
 import info
-import platform
+import emergePlatform
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

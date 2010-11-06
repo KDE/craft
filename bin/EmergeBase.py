@@ -7,7 +7,7 @@ import portage;
 import os;
 import sys;
 import datetime;
-import platform;
+import emergePlatform;
 from ctypes import *
 
 ## @todo complete a release and binary merge dir below rootdir 
@@ -157,13 +157,13 @@ class EmergeBase():
         return self.__compiler
 
     def isTargetBuild(self):
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             return False 
         else:
             return os.getenv( "EMERGE_BUILD_STEP" ) == "target"
         
     def isHostBuild(self):
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             return True
         else:
             return os.getenv( "EMERGE_BUILD_STEP" ) == "host"

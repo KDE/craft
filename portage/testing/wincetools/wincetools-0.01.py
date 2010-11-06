@@ -2,7 +2,7 @@
 import utils
 import os
 import info
-import platform
+import emergePlatform
 import compiler
 
 class subinfo(info.infoclass):

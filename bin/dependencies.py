@@ -198,7 +198,7 @@ class DependenciesTree(object):
 
         pi = portage.PortageInstance
 
-        if portage.platform.isCrossCompilingEnabled() \
+        if portage.emergePlatform.isCrossCompilingEnabled() \
         or utils.isSourceOnly():
             sp = pi.getCorrespondingSourcePackage(package)
             if sp:
@@ -228,7 +228,7 @@ class DependenciesTree(object):
 
         pi = portage.PortageInstance
 
-        if portage.platform.isCrossCompilingEnabled() \
+        if portage.emergePlatform.isCrossCompilingEnabled() \
         or utils.isSourceOnly():
             sp = pi.getCorrespondingSourcePackage(package)
             if sp:

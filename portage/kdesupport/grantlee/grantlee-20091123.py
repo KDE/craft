@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import platform
+import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -21,7 +21,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = '-DBUILD_TESTS=OFF'
         CMakePackageBase.__init__(self)
         

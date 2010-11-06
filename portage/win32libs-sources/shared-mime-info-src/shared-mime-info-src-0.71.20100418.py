@@ -100,8 +100,8 @@ class Package(CMakePackageBase):
     def qmerge( self ):
         # When crosscompiling also install into the targets directory
         ret = CMakePackageBase.qmerge(self)
-        if platform.isCrossCompilingEnabled():
-            target_mimedir = os.path.join(ROOTDIR, platform.targetPlatform(),
+        if emergePlatform.isCrossCompilingEnabled():
+            target_mimedir = os.path.join(ROOTDIR, emergePlatform.targetPlatform(),
                             "share", "mime", "packages")
             build_mime = os.path.join(self.imageDir(), "share", "mime",
                          "packages", "freedesktop.org.xml")

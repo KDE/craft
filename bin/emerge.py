@@ -9,7 +9,7 @@ import sys;
 import os;
 import utils;
 import portage;
-import platform;
+import emergePlatform;
 import shutil;
 from InstallDB import *;
 
@@ -203,7 +203,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
                 success = success and doExec( category, package, version, "compile", opts )
@@ -234,7 +234,7 @@ def handlePackage( category, package, version, buildAction, opts ):
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
                 success = doExec( category, package, version, buildAction, opts )
@@ -245,7 +245,7 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction == "install" ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
                 success = doExec( category, package, version, "cleanimage", opts )

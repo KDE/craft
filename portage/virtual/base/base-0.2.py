@@ -1,7 +1,7 @@
 import base
 import info
 import os
-import platform
+import emergePlatform
 import compiler
 
 class subinfo(info.infoclass):
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/pexports']   = 'default'
         
         #add c++ runtime if we xcompile
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/runtime-ce']   = 'default'
 
         if not os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
@@ -32,9 +32,9 @@ class subinfo(info.infoclass):
                 self.hardDependencies['dev-util/putty']      = 'default'
 
             if os.getenv( "KDECOMPILER" ) == "mingw4":
-                if platform.buildArchitecture() == 'x64':
+                if emergePlatform.buildArchitecture() == 'x64':
                     self.hardDependencies['dev-util/mingw-w64']    = 'default'
-                elif platform.buildArchitecture() == 'arm-wince':
+                elif emergePlatform.buildArchitecture() == 'arm-wince':
                     self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
                 else:
                     if compiler. isMinGW32():

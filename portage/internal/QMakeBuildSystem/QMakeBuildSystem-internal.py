@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
 
         # find a way to share this with other build systems
         if os.getenv( "KDECOMPILER" ) == "mingw4":
-            if platform.buildArchitecture() == 'x64':
+            if emergePlatform.buildArchitecture() == 'x64':
                 self.hardDependencies['dev-util/mingw-w64']    = 'default'
-            elif platform.buildArchitecture() == 'arm-wince':
+            elif emergePlatform.buildArchitecture() == 'arm-wince':
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
                 self.hardDependencies['dev-util/mingw4']    = 'default'

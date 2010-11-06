@@ -9,7 +9,7 @@ import os
 import re
 import sys
 import portage_versions
-import platform
+import emergePlatform
 import copy
 
 internalCategory = 'internal'
@@ -95,7 +95,7 @@ class DependencyPackage:
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
-                if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
+                if emergePlatform.isCrossCompilingEnabled() or utils.isSourceOnly():
                     sp = PortageInstance.getCorrespondingSourcePackage( package )
                     if sp:
                         # we found such a package and we're allowed to replace it
@@ -283,7 +283,7 @@ class Portage:
 
     def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
-        if platform.isCrossCompilingEnabled() \
+        if emergePlatform.isCrossCompilingEnabled() \
         or utils.isSourceOnly():
             sp = self.getCorrespondingSourcePackage( package )
             if sp:
@@ -466,7 +466,7 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
 def solveDependencies( category, package, version, depList, type='both' ):
     depList.reverse()
-    if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
+    if emergePlatform.isCrossCompilingEnabled() or utils.isSourceOnly():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
         if sp:
             # we found such a package and we're allowed to replace it

@@ -1,5 +1,5 @@
 import info
-import platform
+import emergePlatform
 import utils
 import compiler
 
@@ -27,7 +27,7 @@ class Package(CMakePackageBase):
         # required for package generating because we build from svnHEAD by default
         self.subinfo.options.package.version = '0.5.4'
         self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON '
-        if not platform.isCrossCompilingEnabled() or self.isHostBuild():
+        if not emergePlatform.isCrossCompilingEnabled() or self.isHostBuild():
             self.subinfo.options.configure.defines += ' -DBUILD_TOOLS=ON '
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '

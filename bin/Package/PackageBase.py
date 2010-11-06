@@ -5,7 +5,7 @@
 from EmergeBase import *;
 import os;
 import utils;
-import platform;
+import emergePlatform;
 from graphviz import *;
 import dependencies;
 from InstallDB import *;
@@ -107,7 +107,7 @@ class PackageBase (EmergeBase):
                     portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
         else:
             if isDBEnabled():
-                if platform.isCrossCompilingEnabled():
+                if emergePlatform.isCrossCompilingEnabled():
                     if self.isTargetBuild():
                         package = installdb.addInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ), ignoreInstalled )
                     else:
@@ -151,7 +151,7 @@ class PackageBase (EmergeBase):
                     utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
-            if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not platform.isCrossCompilingEnabled():
+            if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not emergePlatform.isCrossCompilingEnabled():
                 # compatibility code: uninstall subclass based package
                 utils.unmerge( self.rootdir, self.package, self.forced )
                 portage.remInstalled( self.category, self.package, self.version, '')               
@@ -250,11 +250,11 @@ class PackageBase (EmergeBase):
             print "target ignored for this build type"
             return False
         
-        if platform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild and not command == "fetch" and not command == "unpack":
+        if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild and not command == "fetch" and not command == "unpack":
             utils.debug( "host build disabled, skipping host build", 1 )
             return True
             
-        if platform.isCrossCompilingEnabled() and self.isTargetBuild() and self.subinfo.disableTargetBuild and not command == "fetch" and not command == "unpack":
+        if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild() and self.subinfo.disableTargetBuild and not command == "fetch" and not command == "unpack":
             utils.debug( "target build disabled, skipping target build", 1 )
             return True
         

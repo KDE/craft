@@ -1,6 +1,6 @@
 import base
 import info
-import platform
+import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/giflib']  = 'default'
 #        self.hardDependencies['win32libs-bin/gssapi']  = 'default'
 #        self.hardDependencies['win32libs-bin/hspell']  = 'default'
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/jasper']  = 'default'
         self.hardDependencies['win32libs-bin/jpeg']  = 'default'
         self.hardDependencies['win32libs-bin/libbzip2']  = 'default'

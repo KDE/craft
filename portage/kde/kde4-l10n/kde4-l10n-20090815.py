@@ -49,7 +49,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         ''' When crosscompiling install l10n files
             also into the targets directory '''
         ret = PackageBase.qmerge(self)
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             utils.copyDir(self.imageDir(),
                     os.path.join(self.rootdir,
                     os.environ["EMERGE_TARGET_PLATFORM"]))
@@ -63,7 +63,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         # Possible autogen options are --disable-messages,
         # --disable-docs, --disable-data and --disable-scripts
         cmd = [ "python", autogen, self.language ]
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             cmd.append( "--disable-docs" )
         return self.system( cmd, cwd=os.path.join( self.sourceDir(), ".." ) )
 

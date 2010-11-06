@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['kdesupport/clucene-core'] = 'default'
             self.hardDependencies['win32libs-bin/exiv2'] = 'default'
         self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
@@ -37,7 +37,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = "-DBUILD_DAEMON=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "

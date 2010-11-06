@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdelibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdelibs-4.0.' + ver
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'komobranch'
         else:
             self.defaultTarget = 'svnHEAD'
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kdesupport/attica'] = 'default'
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['kdesupport/dbusmenu-qt'] = 'default'
             self.hardDependencies['kdesupport/qca'] = 'default'
             self.hardDependencies['kdesupport/qimageblitz'] = 'default'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import platform
+import emergePlatform
 import os
 
 class subinfo(info.infoclass):
@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         
         self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
         
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/sqlite-src'] = 'default'
 
     def setTargets( self ):
@@ -43,7 +43,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines  = " -DCMAKE_PROGRAM_PATH=%s " % os.path.join( os.getenv("KDEROOT") , "dev-utils" , "svn" , "bin" )
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE "
             self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
                 % os.path.join(ROOTDIR, "bin")

@@ -1,7 +1,7 @@
 import os;
 import utils;
 import portage;
-import platform;
+import emergePlatform;
 import portage_versions;
 import sqlite3;
 
@@ -243,7 +243,7 @@ class InstallDB:
                 packageObject = self.addInstalled( category, package, version )
                 packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
                 packageObject.install()
-                if platform.isCrossCompilingEnabled():
+                if emergePlatform.isCrossCompilingEnabled():
                     targetObject = self.addInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
                     targetObject.addFiles( utils.getFileListFromManifest( os.path.join( os.getenv( "KDEROOT" ), os.getenv( "EMERGE_TARGET_PLATFORM" ) ), package ) )
                     targetObject.install()

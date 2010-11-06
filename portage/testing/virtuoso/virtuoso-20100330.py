@@ -4,7 +4,7 @@ import shutil
 import os
 import re
 import urllib
-import platform
+import emergePlatform
 
 # currently only needed from kdenetwork
 
@@ -12,7 +12,7 @@ import platform
 class subinfo(info.infoclass):
     def setTargets( self ):   
         arch = 'win32'
-        if platform.buildArchitecture() == 'x64':
+        if emergePlatform.buildArchitecture() == 'x64':
           arch = 'win64'
         self.targets[ '20100330' ] =  'http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.1/vos6-' + arch + '-20100330.zip'
         self.targetInstSrc[ '20100330' ] = "virtuoso-opensource"

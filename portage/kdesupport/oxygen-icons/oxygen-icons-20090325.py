@@ -31,7 +31,7 @@ class Package(CMakePackageBase):
         ''' When crosscompiling install oxygen files
             also into the targets directory '''
         ret = CMakePackageBase.qmerge(self)
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             utils.copyDir(self.imageDir(),
                     os.path.join(self.rootdir, 
                     os.environ["EMERGE_TARGET_PLATFORM"]))

@@ -1,5 +1,5 @@
 import info
-import platform
+import emergePlatform
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['v2.8.2'] = 'de516a570808c7a022139b55e758d5f7b378ec7d'
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
 
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0-ce'
         else:
             self.defaultTarget = 'v2.8.2'

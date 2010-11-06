@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
         self.svnTargets['komobranch'] = 'branches/work/komo/kdebase/runtime'
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'komobranch'
         else:
             self.defaultTarget = 'svnHEAD'
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
         if compiler.isMinGW_WXX():
             self.hardDependencies['win32libs-sources/libbfd-src'] = 'default'
@@ -28,7 +28,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \

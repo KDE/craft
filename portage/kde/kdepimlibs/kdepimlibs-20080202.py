@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/cyrus-sasl-src'] = 'default'
         self.hardDependencies['win32libs-sources/libical-src'] = 'default'
         self.hardDependencies['win32libs-bin/boost'] = 'default'
-        if not platform.isCrossCompilingEnabled():
+        if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         else:
             self.hardDependencies['contributed/gpg4win-dev'] = 'default'
@@ -37,7 +37,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
             
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
             if self.isTargetBuild():
                 self.subinfo.options.configure.defines += "-DKDEPIM_NO_KRESOURCES=ON -DMAILTRANSPORT_INPROCESS_SMTP=ON "

@@ -2,7 +2,7 @@
 import utils
 import os
 import info
-import platform
+import emergePlatform
 import compiler
 
 class subinfo(info.infoclass):
@@ -37,7 +37,7 @@ class subinfo(info.infoclass):
 										('msvc2010-has-errnoh.diff', 1)
                                         ]
                                         
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
                                           ('no-auth.diff', 1),
@@ -74,7 +74,7 @@ class Package(CMakePackageBase):
                     "-DDBUS_ENABLE_VERBOSE_MODE=OFF "
                     "-DDBUS_DISABLE_ASSERTS=ON ")
 
-        if platform.isCrossCompilingEnabled():
+        if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=tcp:host=localhost,port=12434 ")

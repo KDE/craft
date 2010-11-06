@@ -3,7 +3,7 @@ import os
 import shutil
 import utils
 import info
-import platform
+import emergePlatform
 import compiler
 
 class subinfo(info.infoclass):
@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
               self.patchToApply[ver] = ('openssl-'+ver+'.diff', 1)
             self.targetDigestUrls[ver] = 'http://www.openssl.org/source/openssl-'+ver+'.tar.gz.sha1'
         self.targets['1.0.1-snapshot'] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
-        if compiler.isMinGW() or platform.buildArchitecture() == "x64":
+        if compiler.isMinGW() or emergePlatform.buildArchitecture() == "x64":
             self.defaultTarget = '1.0.0a'
         else:
             self.defaultTarget = '1.0.0'
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
             self.hardDependencies['virtual/base'] = 'default'
             self.hardDependencies['dev-util/perl'] = 'default'
-            if platform.isCrossCompilingEnabled():
+            if emergePlatform.isCrossCompilingEnabled():
                 self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
             if compiler.isMinGW():
                 self.hardDependencies['dev-util/msys'] = 'default'
@@ -54,7 +54,7 @@ class PackageCMake(CMakePackageBase):
                 os.environ["OSVERSION"] = "WCE501"
             elif self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
                 os.environ["OSVERSION"] = "WCE502"
-        elif platform.buildArchitecture() == "x64":
+        elif emergePlatform.buildArchitecture() == "x64":
             config = "VC-WIN64A"
         else:
             config = "VC-WIN32"
@@ -62,7 +62,7 @@ class PackageCMake(CMakePackageBase):
         if not self.system( "perl Configure %s" % config, "configure" ):
             return False
 
-        if platform.buildArchitecture() == "x64":
+        if emergePlatform.buildArchitecture() == "x64":
             if not self.system( "ms\do_win64a.bat", "configure" ):
                 return False
         else:
