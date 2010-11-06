@@ -9,8 +9,8 @@ from datetime import datetime
 
 # extend sys.path so that we can use the emerge stuff
 sys.path = [ os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", "bin" ) ) ] + sys.path
-import platform
 import portage
+import emergePlatform
 
 # our own headers
 from notifications import *
@@ -46,10 +46,13 @@ class package:
         self.category = category
         self.packageName = packagename
         self.cleanPackageName = category + "_" + packagename
+        self.target = target
         if target:
-            self.target = "--target=%s " % target
+            self.targetString = "--target=%s " % target
         else:
-            self.target = ""
+            self.targetString = ""
+            version = portage.PortageInstance.getNewestVersion( category, package )
+            self.target = portage.PortageInstance.getDefaultTarget( self.category, self.packageName, version )
         self.patchlevel = patchlevel
         self.revision = None
         self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
@@ -78,7 +81,7 @@ class package:
         if not self.revision:
             tempfile = file( os.path.join( logroot, "rev.tmp" ), "wb+" )
             tempfile.close()
-            if not self.system( "--print-revision %s%s/%s" % ( self.target, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
+            if not self.system( "--print-revision %s%s/%s" % ( self.targetString, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
                 return ""
             tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
             self.revision = tempfile.readline()
@@ -103,7 +106,7 @@ class package:
     def emerge( self, cmd, addParameters = "" ):
         """ runs an emerge call """
         print "running:", cmd, self.packageName
-        if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s/%s" % ( self.target, self.category, self.packageName ), self.logfile ):
+        if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s/%s" % ( self.targetString, self.category, self.packageName ), self.logfile ):
             self.enabled = False
             raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + cmd + " FAILED", self.logfile )
         
@@ -166,7 +169,7 @@ class package:
             ret = 0
             for entry in filelist:
                 upload.upload( os.path.join( pkgdir, entry ) )
-                sfupload.upload( os.path.join( pkgdir, entry ), self.category, self.packageName )
+                sfupload.upload( self.packageName, self.target, os.path.join( pkgdir, entry ) )
             
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )

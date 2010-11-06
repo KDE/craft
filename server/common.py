@@ -141,7 +141,7 @@ class SourceForgeUploader ( Uploader ):
         self.settings = settings.getSection( self.category )
         if not self.settings:
             """ return True because we're probably simply disabled and we do not want to result in an error """
-            print "upload disabled!"
+            print "sfupload disabled!"
             return True
             
         if not ( "server" in self.settings and "directory" in self.settings ):
