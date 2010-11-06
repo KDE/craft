@@ -195,7 +195,7 @@ else:
     isInstalled = portage.isInstalled( "dev-util", "kdewin-packager", ver )
 if not isInstalled:
     cmdstring = emerge + " kdewin-packager"
-    p = subprocess.Popen( cmdstring, shell=True, stdout=fstderr, stderr=fstderr )
+    p = subprocess.Popen( cmdstring, shell=True )
     p.wait()
 
 if "logdstdir" in general:
