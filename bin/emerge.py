@@ -443,6 +443,7 @@ os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH" ) + ";" +\
                            os.path.join( os.getcwd(), os.path.dirname( executableName ) )
 sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) )
 
+_deplist = []
 deplist = []
 packageList = []
 categoryList = []
@@ -476,7 +477,9 @@ for entry in packageList:
 utils.debug_line( 1 )
 
 for category, entry in zip (categoryList, packageList):
-    deplist = portage.solveDependencies( category, entry, "", deplist )
+    _deplist = portage.solveDependencies( category, entry, "", _deplist )
+
+deplist = [p.ident() for p in _deplist]
 
 for item in range( len( deplist ) ):
     if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:

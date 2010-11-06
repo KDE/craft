@@ -465,6 +465,7 @@ def getDependencies( category, package, version, runtimeOnly=False ):
     return deps
 
 def solveDependencies( category, package, version, depList, type='both' ):
+    depList.reverse()
     if platform.isCrossCompilingEnabled() or utils.isSourceOnly():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
         if sp:
@@ -478,7 +479,10 @@ def solveDependencies( category, package, version, depList, type='both' ):
 
     if ( version == "" ):
         version = PortageInstance.getNewestVersion( category, package )
-    depList = [ p.ident() for p in DependencyPackage( category, package, version ).getDependencies( type=type ) ]
+
+    pac = DependencyPackage( category, package, version )
+    depList = pac.getDependencies( depList, type=type )
+
     depList.reverse()
     return depList
 
