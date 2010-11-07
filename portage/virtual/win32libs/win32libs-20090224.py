@@ -1,4 +1,4 @@
-import base
+from Package.BinaryPackageBase import *
 import os
 import utils
 import shutil
@@ -37,10 +37,13 @@ class subinfo(info.infoclass):
         for package in PACKAGES.split():
             self.hardDependencies['win32libs-bin/' + package] = 'default'
     
-class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, "" )
-    self.subinfo = subinfo()
+class Package( BinaryPackageBase ):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+
+    def unpack( self ):
+        return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

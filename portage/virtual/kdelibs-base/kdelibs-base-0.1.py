@@ -1,4 +1,4 @@
-import base
+from Package.BinaryPackageBase import *
 import info
 import emergePlatform
 
@@ -27,10 +27,13 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
         self.hardDependencies['win32libs-bin/zlib']  = 'default'
     
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.subinfo = subinfo()
+class Package( BinaryPackageBase ):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+
+    def unpack( self ):
+        return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
