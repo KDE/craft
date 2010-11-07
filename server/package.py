@@ -160,7 +160,7 @@ class package:
         self.timestamp()
         print "running: upload", self.packageName
         upload = common.Uploader( logfile=self.logfile )
-        sfupload = common.SourceForgeUploader( logfile=self.logfile )
+        sfupload = common.SourceForgeUploader( self.packageName, self.target, logfile=self.logfile )
         
         pkgdir = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
         if os.path.exists( pkgdir ):
@@ -171,7 +171,7 @@ class package:
             ret = 0
             for entry in filelist:
                 upload.upload( os.path.join( pkgdir, entry ) )
-                sfupload.upload( self.packageName, self.target, os.path.join( pkgdir, entry ) )
+                sfupload.upload( os.path.join( pkgdir, entry ) )
             
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )

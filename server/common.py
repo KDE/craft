@@ -132,54 +132,48 @@ class Uploader:
         return ret == 0
 
 class SourceForgeUploader ( Uploader ):
-    def __init__( self, category='SFUpload', logfile=None ):
+    def __init__( self, packageName, packageVersion, category='SFUpload', logfile=None ):
         Uploader.__init__( self, category, logfile )
         self.category = category
         self.logfile = logfile
-
-    def upload( self, packageName, packageVersion, sourcefilename ):
-        self.settings = settings.getSection( self.category )
         if packageName.endswith("-src"):
             packageName = packageName[:-4]
+        self.packageName = packageName
+        self.packageVersion = packageVersion
+        
+        self.settings = settings.getSection( self.category )
+
         if not self.settings:
-            """ return True because we're probably simply disabled and we do not want to result in an error """
-            print "sfupload disabled!"
-            return True
-            
+            self.disabled = True
+        else:
+            self.disabled = False
+
         if not ( "server" in self.settings and "directory" in self.settings ):
             print "server or directory not set"
-            return False
-
-        if os.path.isdir( sourcefilename ):
-            print "sourcefile is a directory"
-            return False
+            self.disabled = True
+            return
 
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
-        ret = 0
         if self.logfile:
             self.fstderr = file( self.logfile + ".tmp", 'wb+' )
         else:
             self.fstderr = file( 'NUL', 'wb+' )
 
-        p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
-        self.pstdin = p.stdin
+        self.p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
+        self.pstdin = self.p.stdin
 
         directoryName = self.settings[ "directory" ]
         for dir in directoryName.split( '/' ):
             if dir == "":
                 dir = "/"
             self.ftpExecute( "cd " + dir )
-        
-        self.ftpExecute( "mkdir " + packageName )
-        self.ftpExecute( "chmod 775 " + packageName )
-        self.ftpExecute( "cd " + packageName )
-        self.ftpExecute( "mkdir " + packageVersion )
-        self.ftpExecute( "chmod 775 " + packageVersion )
-        self.ftpExecute( "cd " + packageVersion )
-        self.ftpExecute( "put " + sourcefilename )
-        self.ftpExecute( "chmod 664 " + os.path.basename( sourcefilename ) )
+
+    def __del__( self ):
+        if self.disabled:
+            return
+
         self.ftpExecute( "quit" )
-        ret = p.wait()
+        self.p.wait()
 
         if self.logfile:
             log = file( self.logfile, 'ab+' )
@@ -188,6 +182,26 @@ class SourceForgeUploader ( Uploader ):
                 log.write( line )
             self.fstderr.close()
             log.close()
+            
+        self.ftpExecute( "mkdir " + self.packageName )
+        self.ftpExecute( "chmod 775 " + self.packageName )
+        self.ftpExecute( "cd " + self.packageName )
+        self.ftpExecute( "mkdir " + self.packageVersion )
+        self.ftpExecute( "chmod 775 " + self.packageVersion )
+        self.ftpExecute( "cd " + self.packageVersion )
+
+    def upload( self, sourcefilename ):
+        if self.disabled:
+            """ return True because we're probably simply disabled and we do not want to result in an error """
+            print "sfupload disabled!"
+            return True
+            
+        if os.path.isdir( sourcefilename ):
+            print "sourcefile is a directory"
+            return False
+
+        self.ftpExecute( "put " + sourcefilename )
+        self.ftpExecute( "chmod 664 " + os.path.basename( sourcefilename ) )
 
         return ret == 0
 
