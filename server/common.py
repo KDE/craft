@@ -113,8 +113,7 @@ class Uploader:
         self.fstderr = fstderr
         self.pstdin = p.stdin
         
-        for dir in self.settings[ "directory" ].split( '/' ):
-            self.ftpExecute( "cd " + dir )
+        self.ftpExecute( "cd " + self.settings[ "directory" ] )
 
         self.ftpExecute( "put " + sourcefilename )
         self.ftpExecute( "quit" )
@@ -164,11 +163,7 @@ class SourceForgeUploader ( Uploader ):
         self.p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
         self.pstdin = self.p.stdin
 
-        directoryName = self.settings[ "directory" ]
-        for dir in directoryName.split( '/' ):
-            if dir == "":
-                dir = "/"
-            self.ftpExecute( "cd " + dir )
+        self.ftpExecute( "cd " + self.settings[ "directory" ] )
 
         self.ftpExecute( "mkdir " + self.packageName )
         self.ftpExecute( "chmod 775 " + self.packageName )
