@@ -57,8 +57,8 @@ set MSYSDIR=%KDEROOT%\msys
 
 rem Here you can adjust the path to your Visual Studio installation if needed
 rem This is used to set up the build environment automatically
-if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9
-if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10
+if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9.0
+if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10.0
 
 rem Here you can adjust the path to the Windows Mobile SDK installation
 rem This is used to set up the cross-compilation environment automatically
