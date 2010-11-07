@@ -46,12 +46,12 @@ rem     the variable being interpreted as the closing block parenthesis...
 if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
 if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
-if exist ..\etc\kdesettings.bat (
-call ..\etc\kdesettings.bat %BUILDTYPE%
+if exist %~dp0\..\etc\kdesettings.bat (
+call %~dp0\..\etc\kdesettings.bat %BUILDTYPE%
 )
 
-if exist etc\kdesettings.bat (
-call etc\kdesettings.bat %BUILDTYPE%
+if exist %~dp0\etc\kdesettings.bat (
+call %~dp0\etc\kdesettings.bat %BUILDTYPE%
 )
 
 set SUBDIR=
