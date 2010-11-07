@@ -1,8 +1,8 @@
-import base
 import info
 import os
 import emergePlatform
 import compiler
+from Package.BinaryPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -43,15 +43,18 @@ class subinfo(info.infoclass):
                         self.hardDependencies['dev-util/mingw-w32']    = 'default'
             if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005" or os.getenv( "KDECOMPILER" ) == "msvc2010") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
                 self.hardDependencies['dev-util/jom']        = 'default'
-                
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
-        self.disableTargetBuild = True              
+        self.disableTargetBuild = True
 
-class subclass(base.baseclass):
-  def __init__( self, **args ):
-    base.baseclass.__init__( self, args=args )
-    self.subinfo = subinfo()
+class Package( BinaryPackageBase ):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        BinaryPackageBase.__init__( self )
+
+    def unpack( self ):
+        return True
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
