@@ -406,6 +406,16 @@ class Portage:
         else:
             return False
 
+    def getCorrespondingBinaryPackage( self, package ):
+        if not package.endswith( "-src" ):
+            return False
+        category = self.getCategory( package[ :-4 ] )
+        if category:
+            # we found a corresponding package
+            utils.debug( "replacing package %s with its binary package" % ( package ), 1 )
+            return [ category, package[ :-4 ] ]
+        else:
+            return False
 
 # when importing this, this static Object should get added
 PortageInstance = Portage()
