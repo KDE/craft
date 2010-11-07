@@ -207,7 +207,7 @@ class SourceForgeUploader ( Uploader ):
         self.ftpExecute( "put " + sourcefilename )
         self.fileList.append( sourcefilename )
 
-        return ret == 0
+        return True
 
 if __name__ == '__main__':
     Uploader().executeScript( "test" )
