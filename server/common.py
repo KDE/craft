@@ -165,16 +165,19 @@ class SourceForgeUploader ( Uploader ):
         self.pstdin = p.stdin
 
         directoryName = self.settings[ "directory" ]
-        for dir in directoryName.split('/'):
+        for dir in directoryName.split( '/' ):
             if dir == "":
                 dir = "/"
             self.ftpExecute( "cd " + dir )
         
         self.ftpExecute( "mkdir " + packageName )
+        self.ftpExecute( "chmod 775 " + packageName )
         self.ftpExecute( "cd " + packageName )
         self.ftpExecute( "mkdir " + packageVersion )
         self.ftpExecute( "cd " + packageVersion )
+        self.ftpExecute( "chmod 775 " + packageVersion )
         self.ftpExecute( "put " + sourcefilename )
+        self.ftpExecute( "chmod 664 " + sourcefilename )
         self.ftpExecute( "quit" )
         ret = p.wait()
 
@@ -189,5 +192,5 @@ class SourceForgeUploader ( Uploader ):
         return ret == 0
 
 if __name__ == '__main__':
-    Uploader().executeScript("test")
-    SourceForgeUploader().upload("win_iconv", "0.0.1", "C:\\kde\\test.cpp")
+    Uploader().executeScript( "test" )
+    SourceForgeUploader().upload( "win_iconv", "0.0.1", "C:\\kde\\test.cpp" )
