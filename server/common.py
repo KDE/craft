@@ -177,7 +177,7 @@ class SourceForgeUploader ( Uploader ):
         self.ftpExecute( "chmod 775 " + packageVersion )
         self.ftpExecute( "cd " + packageVersion )
         self.ftpExecute( "put " + sourcefilename )
-        self.ftpExecute( "chmod 664 " + sourcefilename )
+        self.ftpExecute( "chmod 664 " + os.path.basename( sourcefilename ) )
         self.ftpExecute( "quit" )
         ret = p.wait()
 
