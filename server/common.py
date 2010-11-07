@@ -205,7 +205,7 @@ class SourceForgeUploader ( Uploader ):
             return False
 
         self.ftpExecute( "put " + sourcefilename )
-        self.fileList.append( sourcefilename )
+        self.fileList.append( os.path.basename( sourcefilename ) )
 
         return True
 
