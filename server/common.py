@@ -141,6 +141,8 @@ class SourceForgeUploader ( Uploader ):
         self.packageName = packageName
         self.packageVersion = packageVersion
         
+        self.fileList = []
+        
         self.settings = settings.getSection( self.category )
 
         if not self.settings:
@@ -168,10 +170,19 @@ class SourceForgeUploader ( Uploader ):
                 dir = "/"
             self.ftpExecute( "cd " + dir )
 
-    def __del__( self ):
+        self.ftpExecute( "mkdir " + self.packageName )
+        self.ftpExecute( "chmod 775 " + self.packageName )
+        self.ftpExecute( "cd " + self.packageName )
+        self.ftpExecute( "mkdir " + self.packageVersion )
+        self.ftpExecute( "chmod 775 " + self.packageVersion )
+        self.ftpExecute( "cd " + self.packageVersion )
+
+
+    def finalize( self ):
         if self.disabled:
             return
 
+        self.ftpExecute( "chmod 664 " + " ".join( self.fileList ) )
         self.ftpExecute( "quit" )
         self.p.wait()
 
@@ -183,13 +194,6 @@ class SourceForgeUploader ( Uploader ):
             self.fstderr.close()
             log.close()
             
-        self.ftpExecute( "mkdir " + self.packageName )
-        self.ftpExecute( "chmod 775 " + self.packageName )
-        self.ftpExecute( "cd " + self.packageName )
-        self.ftpExecute( "mkdir " + self.packageVersion )
-        self.ftpExecute( "chmod 775 " + self.packageVersion )
-        self.ftpExecute( "cd " + self.packageVersion )
-
     def upload( self, sourcefilename ):
         if self.disabled:
             """ return True because we're probably simply disabled and we do not want to result in an error """
@@ -201,7 +205,7 @@ class SourceForgeUploader ( Uploader ):
             return False
 
         self.ftpExecute( "put " + sourcefilename )
-        self.ftpExecute( "chmod 664 " + os.path.basename( sourcefilename ) )
+        self.fileList.append( sourcefilename )
 
         return ret == 0
 

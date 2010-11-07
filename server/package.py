@@ -172,6 +172,7 @@ class package:
             for entry in filelist:
                 upload.upload( os.path.join( pkgdir, entry ) )
                 sfupload.upload( os.path.join( pkgdir, entry ) )
+            sfupload.finalize()
             
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )
