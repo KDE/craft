@@ -1,9 +1,15 @@
 import info
 
-# because the python http implementation do not support proxies 
-# a local copy of wget is used for downloading
-# the all inclusive wget binary is taken from http://users.ugent.be/~bpuype/wget/
-# and do not have the multiple dll installation problem normal gnuwin32 package have
+# notes: 
+# 1. because the python http implementation do not support 
+#    proxies a local copy of wget is used for downloading
+#    the all inclusive wget binary is taken from 
+#    http://users.ugent.be/~bpuype/wget/
+#    and do not have the multiple dll installation 
+#    problem normal gnuwin32 package have
+# 
+# 2. This package do not use the class base class BinaryPackageBase 
+#    because of not wanted cyclic dependencies 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -14,15 +20,17 @@ class subinfo(info.infoclass):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-from Package.BinaryPackageBase import *
+from Package.PackageBase import *
+from BuildSystem.BinaryBuildSystem import *
 
-class Package(BinaryPackageBase):
+class Package(PackageBase,BinaryBuildSystem):
     def __init__( self):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.install.installPath = "bin"
-        BinaryPackageBase.__init__(self)
+        PackageBase.__init__(self)
+        BinaryBuildSystem.__init__(self)
         self.localwget = os.path.join(self.packageDir(),'wget.exe')
 
     def fetch(self):
