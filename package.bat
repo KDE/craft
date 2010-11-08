@@ -28,8 +28,12 @@ set PATH=%KDEROOT%\bin;!PATH!
 
 if %KDECOMPILER% == mingw ( 
     call :path-mingw
-) else ( 
-    call :path-msvc 
+) else (
+    if %KDECOMPILER% == mingw4 (
+        call :path-mingw
+    ) else (
+        call :path-msvc
+    )
 )
 
 rem give over the first argument which should contain the path to the packagelist file
