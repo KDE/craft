@@ -6,23 +6,25 @@ rem     to set up an automatic build, run this file whenever you need with the p
 rem     by Patrick Spendrin <ps_ml@gmx.de>
 
 
+SETLOCAL ENABLEDELAYEDEXPANSION
+
 call %~dp0\..\etc\kdesettings.bat
 
 
 rem    the following do not need to be changed
-set PATH=%KDEROOT%\bin;%PATH%
+set PATH=%KDEROOT%\bin;!PATH!
 set KDEDIRS=%KDEROOT%
 set QT_PLUGIN_PATH=%KDEROOT%\plugins
 set XDG_DATA_DIRS=%KDEROOT%\share
 
 rem for emerge
-set PATH=%KDEROOT%\emerge\bin;%PATH%
+set PATH=%KDEROOT%\emerge\bin;!PATH!
 
 rem for dev-utils
-set PATH=%KDEROOT%\dev-utils\bin;%PATH%
+set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 
 rem for non-subdir packages
-set PATH=%KDEROOT%\bin;%PATH%
+set PATH=%KDEROOT%\bin;!PATH!
 
 if %KDECOMPILER% == mingw ( 
     call :path-mingw
@@ -41,13 +43,23 @@ timeout /T 300
 goto :eof
 
 :path-mingw
-    set PATH=%KDEROOT%\mingw\bin;%PATH%
+    set PATH=%KDEROOT%\mingw\bin;!PATH!
     goto :eof
 
 :path-msvc
-    if defined %PSDKDIR% (
-        set PATH="%PSDKDIR%\bin";%PATH%
-        set INCLUDE="%PSDKDIR%\Include";%INCLUDE%
-        set LIB="%PSDKDIR%\Lib";%LIB%
+    rem MSVC extra setup
+    if defined VSDIR (
+        call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
     )
+    if defined PSDKDIR (
+        echo Using Platform SDK: !PSDKDIR!
+        set PATH=!PSDKDIR!\bin;!PATH!
+        set INCLUDE=!PSDKDIR!\Include;!INCLUDE!
+        set LIB=!PSDKDIR!\Lib;!LIB!
+    )
+    
+    if defined MSDXSDKDIR (
+        call "!MSDXSDKDIR!\Utilities\bin\dx_setenv.cmd" %EMERGE_ARCHITECTURE%
+    )
+
     goto :eof
