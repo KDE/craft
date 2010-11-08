@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if not os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             self.hardDependencies['gnuwin32/wget'] = 'default'
+            self.hardDependencies['gnuwin32/patch'] = 'default'
 
 from Package.BinaryPackageBase import *
         
