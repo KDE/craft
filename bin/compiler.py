@@ -6,7 +6,7 @@
 import os
 import utils
 import subprocess
-import platform 
+import emergePlatform
 
 COMPILER=os.getenv("KDECOMPILER")
 
@@ -32,7 +32,7 @@ def isMinGW_W32():
     return getGCCTarget() == "i686-w64-mingw32"
 
 def isMinGW_W64():
-    return isMinGW() and platform.buildArchitecture() == "x64"
+    return isMinGW() and emergePlatform.buildArchitecture() == "x64"
 
 
 def isMSVC():
