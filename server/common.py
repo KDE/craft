@@ -64,7 +64,7 @@ class Uploader:
         self.settings = settings.getSection( self.category )
         if not self.settings:
             print "upload disabled!"
-            return False
+            return
         
     def ftpExecute( self, cmd ):
         self.fstderr.write( cmd + "\r\n" )
@@ -142,6 +142,7 @@ class SourceForgeUploader ( Uploader ):
         self.settings = settings.getSection( self.category )
 
         if not self.settings:
+            print "sfupload disabled"
             self.disabled = True
         else:
             self.disabled = False
@@ -189,7 +190,6 @@ class SourceForgeUploader ( Uploader ):
     def upload( self, sourcefilename ):
         if self.disabled:
             """ return True because we're probably simply disabled and we do not want to result in an error """
-            print "sfupload disabled!"
             return True
             
         if os.path.isdir( sourcefilename ):
