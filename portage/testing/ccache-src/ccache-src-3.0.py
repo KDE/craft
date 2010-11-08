@@ -13,22 +13,22 @@ os.putenv("EMERGE_USE_CCACHE","False")
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
+        self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"   
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.defaultTarget = 'gitHEAD'
         
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['testing/autotools'] = 'default'
         
-class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
+class Package(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         PackageBase.__init__(self)
         MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)        
-        MultiPackager.__init__(self)
+        AutoToolsBuildSystem.__init__(self)
+        KDEWinPackager.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.bootstrap = True
 
