@@ -75,7 +75,7 @@ class DependencyPackage:
         elif hasattr( mod, 'subinfo' ):
             subinfo = mod.subinfo()
         else:
-            subinfo = dict()
+            subinfo = None
         
         runtimeDependencies = subinfo.runtimeDependencies
         buildDependencies = subinfo.buildDependencies
