@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.5.9'
 
     def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
         if compiler.isMinGW():
             self.hardDependencies['dev-util/uactools'] = 'default'
 
