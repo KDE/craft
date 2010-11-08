@@ -1,0 +1,54 @@
+diff -Nru qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CMakeLists.txt
+--- qtsoap-2.7_1-opensource.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ qtsoap-2.7_1-opensource/CMakeLists.txt	2010-11-08 23:41:11.354981800 +0100
+@@ -0,0 +1,50 @@
++project( qtsoap )
++cmake_minimum_required( VERSION 2.8 )
++add_definitions( -Wall )
++
++set(CMAKE_INCLUDE_CURRENT_DIR ON)
++
++find_package( Qt4 REQUIRED )
++
++include( ${QT_USE_FILE} )
++include_directories(
++        ${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR}
++        ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
++        ${QT_QTNETWORK_INCLUDE_DIR} )
++
++
++if (CMAKE_COMPILER_IS_GNUCXX)
++   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
++   set(CMAKE_CXX_FLAGS_RELEASE        "-O2 -DNDEBUG -DQT_NO_DEBUG")
++   set(CMAKE_CXX_FLAGS_DEBUG          "-g -O2 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
++   set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fno-inline")
++   set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fno-inline -ftest-coverage -fprofile-arcs")
++   set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
++   set(CMAKE_C_FLAGS_RELEASE          "-O2 -DNDEBUG -DQT_NO_DEBUG")
++   set(CMAKE_C_FLAGS_DEBUG            "-g -O2 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
++   set(CMAKE_C_FLAGS_DEBUGFULL        "-g3 -fno-inline")
++   set(CMAKE_C_FLAGS_PROFILE          "-g3 -fno-inline -ftest-coverage -fprofile-arcs")
++
++   if (CMAKE_SYSTEM_NAME MATCHES Linux)
++     set ( CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
++     set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
++     add_definitions (-D_BSD_SOURCE)
++   endif (CMAKE_SYSTEM_NAME MATCHES Linux)
++
++endif(CMAKE_COMPILER_IS_GNUCXX)
++
++set(CMAKE_DEBUG_POSTFIX "d")
++
++QT4_WRAP_CPP(MOC_SOURCE src/qtsoap.h)
++
++add_library(qtsoap SHARED src/qtsoap.cpp ${MOC_SOURCE})
++set_target_properties( qtsoap PROPERTIES OUTPUT_NAME "QtSolutions_SOAP-2.7" DEFINE_SYMBOL "QT_QTSOAP_EXPORT" )
++target_link_libraries(qtsoap ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
++
++install(TARGETS qtsoap
++  LIBRARY DESTINATION lib
++  RUNTIME DESTINATION bin
++  ARCHIVE DESTINATION lib
++)
++
++install(FILES src/qtsoap.h DESTINATION include)
