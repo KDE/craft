@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
         else:
           self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-win32.zip"
           self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-win32"
+          self.targetDigests['5.1.48'] = '57178fd287d92127fd943079d1e4cdf7709d2cca'          
           
         self.defaultTarget = '5.1.48'
        
