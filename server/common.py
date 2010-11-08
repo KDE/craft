@@ -72,6 +72,9 @@ class Uploader:
         self.pstdin.write( cmd + "\r\n" )        
 
     def executeScript( self, state="common" ):
+        if not self.settings:
+            return False
+
         name = state+"-script"
         if name in self.settings:
             self.fstderr = file( 'NUL', 'wb+' )
