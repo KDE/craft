@@ -1,12 +1,12 @@
-From 1fa84886d07b4b2418fbbbee27ab67d86a5ee9ef Mon Sep 17 00:00:00 2001
-From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
-Date: Fri, 1 Oct 2010 10:17:10 +0200
-Subject: [PATCH] exchange-malloc-against-dlmalloc-for-wince
+From a3294cce332d4d1c209b6d4c6fc2456803db2715 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andy@kdab.com>
+Date: Mon, 8 Nov 2010 16:05:09 +0100
+Subject: [PATCH] exchange malloc against dlmalloc for wince
 
 ---
- src/corelib/global/global.pri  |    4 ++++
- src/corelib/global/qmalloc.cpp |   22 ++++++++++++++++++----
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ src/corelib/global/global.pri  |    4 +++
+ src/corelib/global/qmalloc.cpp |   56 +++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 56 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/global/global.pri b/src/corelib/global/global.pri
 index 4800716..9730818 100644
@@ -30,7 +30,7 @@ index 4800716..9730818 100644
  INCLUDEPATH += $$QT_BUILD_TREE/src/corelib/global
  
 diff --git a/src/corelib/global/qmalloc.cpp b/src/corelib/global/qmalloc.cpp
-index 090998c..be9b274 100644
+index 090998c..9b8fc6f 100644
 --- a/src/corelib/global/qmalloc.cpp
 +++ b/src/corelib/global/qmalloc.cpp
 @@ -41,6 +41,8 @@
@@ -42,13 +42,37 @@ index 090998c..be9b274 100644
  #include <stdlib.h>
  
  /*
-@@ -52,17 +54,29 @@ QT_BEGIN_NAMESPACE
+@@ -50,19 +52,65 @@
  
+ QT_BEGIN_NAMESPACE
+ 
++static bool initialized = false;
++static bool use_dlmalloc = false;
++
++void qmalloc_init()
++{
++  TCHAR filename[MAX_PATH];
++  GetModuleFileName(GetModuleHandle(NULL), filename, MAX_PATH );
++  use_dlmalloc = (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kmail-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kaddressbook-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\korganizer-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\notes-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile.exe") == 0);
++  initialized = true;
++}
++
  void *qMalloc(size_t size)
  {
 -    return ::malloc(size);
 +#ifdef _WIN32_WCE
-+    return ::dlmalloc(size);
++    if (!initialized) {
++        qmalloc_init();
++    }
++    if (use_dlmalloc) {
++        return ::dlmalloc(size);
++    } else {
++        return ::malloc(size);
++    }
 +#else
 +	return ::malloc(size);
 +#endif
@@ -58,7 +82,14 @@ index 090998c..be9b274 100644
  {
 -    ::free(ptr);
 +#ifdef _WIN32_WCE
-+    ::dlfree(ptr);
++    if (!initialized) {
++        qmalloc_init();
++    }
++    if (use_dlmalloc) {
++        ::dlfree(ptr);
++    } else {
++        ::free(ptr);
++    }
 +#else
 +	::free(ptr);
 +#endif
@@ -68,14 +99,19 @@ index 090998c..be9b274 100644
  {
 -    return ::realloc(ptr, size);
 +#ifdef _WIN32_WCE
-+    return ::dlrealloc(ptr, size);
++    if (!initialized)
++        qmalloc_init();
++    if (use_dlmalloc)
++        return ::dlrealloc(ptr, size);
++    else
++        return realloc(ptr, size);
 +#else
 +	return realloc(ptr, size);
 +#endif
  }
  
  void *qMallocAligned(size_t size, size_t alignment)
-@@ -120,7 +134,7 @@ void qFreeAligned(void *ptr)
+@@ -120,7 +168,7 @@ void qFreeAligned(void *ptr)
      if (!ptr)
          return;
      void **ptr2 = static_cast<void **>(ptr);
@@ -85,5 +121,5 @@ index 090998c..be9b274 100644
  
  QT_END_NAMESPACE
 -- 
-1.5.6.5
+1.7.0.2.msysgit.0
 
