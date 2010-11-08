@@ -61,6 +61,10 @@ class Uploader:
         
         self.fstderr = sys.stderr
         self.pstdin = None
+        self.settings = settings.getSection( self.category )
+        if not self.settings:
+            print "upload disabled!"
+            return False
         
     def ftpExecute( self, cmd ):
         self.fstderr.write( cmd + "\r\n" )
@@ -68,11 +72,6 @@ class Uploader:
         self.pstdin.write( cmd + "\r\n" )        
 
     def executeScript( self, state="common" ):
-        self.settings = settings.getSection( self.category )
-        if not self.settings:
-            print "upload disabled!"
-            return False
-
         name = state+"-script"
         if name in self.settings:
             self.fstderr = file( 'NUL', 'wb+' )
