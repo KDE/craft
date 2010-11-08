@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
         self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
+        self.svnTargets['4.7.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|"
         self.defaultTarget = '4.5.2-patched'
         self.options.package.packageName = 'qt'
 
@@ -28,12 +29,16 @@ class Package(QMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__(self)
+        self.subinfo.options.merge.destinationPath = "qt-static"
         self.subinfo.options.make.makeOptions = "sub-winmain sub-tools-bootstrap sub-moc sub-rcc sub-uic sub-corelib sub-gui"
 
     def unpack( self ):
         if not QMakePackageBase.unpack(self):
             return False
         utils.applyPatch( self.sourceDir(), os.path.join(self.packageDir(),"qconf.patch"), 1)
+        default_mkspec = os.path.join( self.installDir(), "mkspecs" )
+        if not os.path.exists( default_mkspec ): 
+            utils.copySrcDirToDestDir( os.path.join( self.sourceDir(), "mkspecs" ), default_mkspec )
         return True
         
     def configure( self ):
@@ -72,7 +77,7 @@ class Package(QMakePackageBase):
 
     def install( self ):
         targets = 'install_qmake install_mkspecs'
-        for target in ['winmain', 'uic', 'moc', 'rcc', 'corelib', 'gui', 'xml']:
+        for target in ['winmain', 'uic', 'moc', 'rcc', 'corelib', 'gui', 'xml', 'network']:
             targets += ' sub-%s-install_subtargets' % target
          
         if not QMakePackageBase.install(self, targets):
@@ -97,10 +102,6 @@ class Package(QMakePackageBase):
                 if file.endswith( ".pdb" ):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
                 
-        return True
-
-    def qmerge( self ):
-        utils.debug("this package is not intended to be merged");
         return True
 
 if __name__ == '__main__':
