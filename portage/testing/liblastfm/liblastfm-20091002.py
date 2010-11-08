@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '20091002'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['testing/libfftw'] = 'default'
         self.hardDependencies['testing/libsamplerate'] = 'default'
 

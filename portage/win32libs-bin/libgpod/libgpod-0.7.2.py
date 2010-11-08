@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.7.2'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['testing/glib'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'

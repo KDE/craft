@@ -8,7 +8,7 @@ PACKAGE_PATH            = '/bin/windows/base/'
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
 
     def setTargets( self ):
         self.targets['stable_latest'] = PACKAGE_CRAN_MIRROR + PACKAGE_PATH + 'R-release.exe'

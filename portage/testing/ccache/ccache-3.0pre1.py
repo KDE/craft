@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
     
 
   def setDependencies( self ):
-    self.hardDependencies['gnuwin32/wget'] = 'default'
+    self.hardDependencies['virtual/bin-base'] = 'default'
     
 
 class Package(BinaryPackageBase):

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.19'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['win32libs-bin/expat'] = 'default'
         
     def setBuildOptions( self ):

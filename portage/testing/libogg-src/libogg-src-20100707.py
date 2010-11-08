@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.2.0'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         
 class Package(CMakePackageBase):
     def __init__( self, **args ):

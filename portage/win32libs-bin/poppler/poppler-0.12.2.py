@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.12.2'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
         self.hardDependencies['win32libs-bin/freetype'] = 'default'
         self.hardDependencies['win32libs-bin/openjpeg'] = 'default'

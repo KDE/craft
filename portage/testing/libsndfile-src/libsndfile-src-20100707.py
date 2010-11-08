@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.21'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['testing/libogg-src'] = 'default'
         self.hardDependencies['testing/libvorbis-src'] = 'default'
         

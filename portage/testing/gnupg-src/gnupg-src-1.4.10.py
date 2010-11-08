@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         
 class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
     def __init__( self, **args ):

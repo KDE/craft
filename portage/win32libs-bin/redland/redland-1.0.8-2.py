@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
         self.hardDependencies['win32libs-bin/pcre'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

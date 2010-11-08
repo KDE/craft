@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.3.2'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
 
 class Package(BinaryPackageBase):
   def __init__(self):

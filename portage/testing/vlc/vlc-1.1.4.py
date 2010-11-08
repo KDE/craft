@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
     
 
   def setDependencies( self ):
-    self.hardDependencies['gnuwin32/wget'] = 'default'
+    self.hardDependencies['virtual/bin-base'] = 'default'
     
   def getVer( self ):
     if( hasattr( self , "ver" ) ) :

@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.6.30-3'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
         # 2.6.x needs iconv !
         #self.hardDependencies['win32libs-bin/win_iconv'] = 'default'

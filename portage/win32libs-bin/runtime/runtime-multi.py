@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'vc90-9.0.21022.8'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
 
 from Package.BinaryPackageBase import *
         

@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'HEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         for package in PACKAGES.split():
             self.hardDependencies['win32libs-bin/' + package] = 'default'
     

@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '8.64'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

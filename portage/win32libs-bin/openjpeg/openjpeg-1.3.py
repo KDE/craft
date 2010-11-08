@@ -29,7 +29,7 @@ j2k-images, ... """
         self.defaultTarget = '1.3-1'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

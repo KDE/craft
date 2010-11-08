@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.disableTargetBuild = True
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget']       = 'default'
+        self.hardDependencies['virtual/bin-base']       = 'default'
 
 from Package.BinaryPackageBase import *        
         

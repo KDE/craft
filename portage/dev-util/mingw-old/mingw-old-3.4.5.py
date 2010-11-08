@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.4.5'
     
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['gnuwin32/patch'] = 'default'
         
 from Package.BinaryPackageBase import *

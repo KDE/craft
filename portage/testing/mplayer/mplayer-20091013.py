@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '20100211'
 
     def setDependencies( self ):
-        self.hardDependencies['gnuwin32/wget'] = 'default'
+        self.hardDependencies['virtual/bin-base'] = 'default'
 
 class Package(BinaryPackageBase):
   def __init__(self):
