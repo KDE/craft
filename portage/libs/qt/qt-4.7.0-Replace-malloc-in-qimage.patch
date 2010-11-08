@@ -1,0 +1,86 @@
+From efaa0fba11b734cc63514396f9d7a55c608ed385 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
+Date: Mon, 8 Nov 2010 10:49:36 +0100
+Subject: [PATCH] Replace qmalloc in qimage
+
+---
+ src/corelib/tools/qbytearray.cpp |    8 ++++----
+ src/gui/image/qimage.cpp         |    7 +++++++
+ src/gui/image/qmnghandler.cpp    |    4 ++--
+ 3 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/src/corelib/tools/qbytearray.cpp b/src/corelib/tools/qbytearray.cpp
+index fac0f45..e7d057a 100644
+--- a/src/corelib/tools/qbytearray.cpp
++++ b/src/corelib/tools/qbytearray.cpp
+@@ -1913,13 +1913,13 @@ QByteArray &QByteArray::replace(const char *before, int bsize, const char *after
+     const char *a = after;
+     const char *b = before;
+     if (after >= d->data && after < d->data + d->size) {
+-        char *copy = (char *)malloc(asize);
++        char *copy = (char *)qMalloc(asize);
+         Q_CHECK_PTR(copy);
+         memcpy(copy, after, asize);
+         a = copy;
+     }
+     if (before >= d->data && before < d->data + d->size) {
+-        char *copy = (char *)malloc(bsize);
++        char *copy = (char *)qMalloc(bsize);
+         Q_CHECK_PTR(copy);
+         memcpy(copy, before, bsize);
+         b = copy;
+@@ -2011,9 +2011,9 @@ QByteArray &QByteArray::replace(const char *before, int bsize, const char *after
+     }
+ 
+     if (a != after)
+-        ::free((char *)a);
++        ::qFree((char *)a);
+     if (b != before)
+-        ::free((char *)b);
++        ::qFree((char *)b);
+     
+     
+     return *this;
+diff --git a/src/gui/image/qimage.cpp b/src/gui/image/qimage.cpp
+index 1157b93..e679db0 100644
+--- a/src/gui/image/qimage.cpp
++++ b/src/gui/image/qimage.cpp
+@@ -66,6 +66,13 @@
+ 
+ #include <private/qimage_p.h>
+ 
++#ifdef _WIN32_WCE
++# undef malloc
++# undef free
++# define malloc qMalloc
++# define free qFree
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ static inline bool checkPixelSize(const QImage::Format format)
+diff --git a/src/gui/image/qmnghandler.cpp b/src/gui/image/qmnghandler.cpp
+index cf53af0..6576d6e 100644
+--- a/src/gui/image/qmnghandler.cpp
++++ b/src/gui/image/qmnghandler.cpp
+@@ -104,7 +104,7 @@ static mng_bool myerror(mng_handle /*hMNG*/,
+ static mng_ptr myalloc(mng_size_t iSize)
+ {
+ #if defined(Q_OS_WINCE)
+-    mng_ptr ptr = malloc(iSize);
++    mng_ptr ptr = qMalloc(iSize);
+     memset(ptr, 0, iSize);
+     return ptr;
+ #else
+@@ -114,7 +114,7 @@ static mng_ptr myalloc(mng_size_t iSize)
+ 
+ static void myfree(mng_ptr pPtr, mng_size_t /*iSize*/)
+ {
+-    free(pPtr);
++    qFree(pPtr);
+ }
+ 
+ static mng_bool myopenstream(mng_handle)
+-- 
+1.5.6.5
+
