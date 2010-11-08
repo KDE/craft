@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'git://anongit.kde.org/automoc'
+        self.svnTargets['svnHEAD'] = 'git://git.kde.org/automoc'
         self.svnTargets['0.9.83'] = 'tags/automoc4/0.9.83'
         self.svnTargets['0.9.84'] = 'tags/automoc4/0.9.84'
         self.svnTargets['0.9.87'] = 'tags/automoc4/0.9.87'
