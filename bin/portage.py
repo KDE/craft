@@ -69,7 +69,7 @@ class DependencyPackage:
         else:
             mod = modDict[ identFileName ]
 
-        if hasattr( mod, 'Package' ):
+        if os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
             _package = mod.Package()
             subinfo = _package.subinfo
         elif hasattr( mod, 'subinfo' ):
