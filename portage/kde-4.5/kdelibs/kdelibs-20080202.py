@@ -13,7 +13,6 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['kdesupport/attica'] = 'default'
-        self.hardDependencies['kdesupport/automoc'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
@@ -23,6 +22,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/strigi'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
+        self.hardDependencies['dev-util/automoc'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
         self.hardDependencies['win32libs-sources/shared-desktop-ontologies-src'] = 'default'
         self.hardDependencies['data/docbook-dtd'] = 'default'

@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['kdesupport/automoc'] = 'default'
+        self.hardDependencies['dev-util/automoc'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kdesupport/attica'] = 'default'

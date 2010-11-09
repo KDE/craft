@@ -6,7 +6,7 @@ import os
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['kdesupport/automoc'] = 'default'
+        self.hardDependencies['dev-util/automoc'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['win32libs-sources/boost-src']   = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
