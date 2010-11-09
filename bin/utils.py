@@ -895,6 +895,8 @@ def digestFileSha1( filepath ):
 
 def getVCSType( url ):
     """ return the type of the vcs url """
+    if not url:
+        return ""
     if url.find("://") == -1:
         return "svn"
     elif url.startswith("[hg]"):
