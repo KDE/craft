@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
         
     def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/doxygen'] = 'default'
 
 from Package.PackageBase import *
@@ -21,6 +22,7 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
         PackageBase.__init__(self)
         SvnSource.__init__(self)
         BuildSystemBase.__init__(self,"")
+        print self.subinfo.hardDependencies
 
     def checkoutDir(self, index=0 ): 
         return os.path.join(ROOTDIR,"emerge")
