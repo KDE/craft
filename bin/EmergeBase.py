@@ -11,7 +11,7 @@ import emergePlatform;
 from ctypes import *
 
 ## @todo complete a release and binary merge dir below rootdir 
-# 1.  enable build type related merge install settings
+# 1.  enable build type related otDmerge install settings
 # 2a. use different install databases for debug and release
 # 3. binary packages which are build type independent should be 
 # marked in both databases or should have a separate install database
@@ -216,6 +216,10 @@ class EmergeBase():
             dir += '-' + self.buildType()
         dir += '-' + self.buildTarget
         return dir
+
+    def devUtilsRoot(self): 
+        """ location of directory where development utils package are merged to"""
+        return os.path.join(ROOTDIR, 'dev-utils')
 
     def downloadDir(self): 
         """ location of directory where fetched files are  stored """
