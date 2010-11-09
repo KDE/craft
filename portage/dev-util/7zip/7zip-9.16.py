@@ -38,7 +38,9 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         return utils.getFiles( self.subinfo.target(), self.downloadDir() )
 
     def unpack( self ):
-        return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
+        return utils.unpackFiles( self.downloadDir(),
+                [ os.path.basename( self.subinfo.target() ) ],
+                os.path.join( self.imageDir(), "bin" ) )
 
 if __name__ == '__main__':
     Package().execute()
