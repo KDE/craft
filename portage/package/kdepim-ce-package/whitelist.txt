@@ -62,7 +62,6 @@ bin\\libgpg-error-.*\.dll
 bin\\dirmngr\.exe
 bin\\gpg-agent\.exe
 bin\\gpg\.exe
-bin\\gpgcedev\.dll
 bin\\gpgcemgr\.exe
 bin\\gpgconf\.exe
 bin\\gpgsm\.exe
@@ -930,6 +929,8 @@ share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\emblem-unlocked\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\encrypted\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\esd\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\fill-color\.png
+share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\flag-green\.png
+share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\chronometer\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\folder\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\folder-new\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\folder-open\.png
@@ -1045,6 +1046,8 @@ share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\task-ongoing\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\task-reject\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\task-reminder\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\text-html\.png
+share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\text-directory\.png
+share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\text-calendar\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\text-plain\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\text-speak\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\text-x-generic\.png
