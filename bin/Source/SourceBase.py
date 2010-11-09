@@ -70,6 +70,8 @@ class SourceBase(EmergeBase):
                     utils.debug( "applying %s with patchlevel: %s" % ( file, patchdepth ) )
                     if not self.applyPatch( file, patchdepth ):
                         ret = False
+                        if os.getenv("EMERGE_STRICT_PATCHING"):
+                            utils.die("Patch %s failed to apply!" % file)
                 return ret
             else:
                 ( file, patchdepth ) = patches

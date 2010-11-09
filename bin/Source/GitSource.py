@@ -148,15 +148,14 @@ class GitSource ( VersionSystemSourceBase ):
                 if repoBranch == "":
                     repoBranch = "master"
                 sourceDir = os.path.join(self.checkoutDir(),repoBranch)
+                return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
+                        (patchdepth, self.shell.toNativePath(patchfile)))
             else:
-                sourceDir = self.sourceDir()
+                sourceDir = self.sourceDir()            
                 #FIXME this reverts previously applied patches !
                 #self.shell.execute(sourceDir, "git", "checkout -f")
-            success = self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
+                return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
                         (patchdepth, self.shell.toNativePath(patchfile)))
-            if not success and os.getenv("EMERGE_STRICT_PATCHING"):
-                utils.die("Applying patch %s failed!" % patchfile )
-            return success
         return True
 
     def createPatch( self ):
