@@ -34,6 +34,9 @@ def isMinGW_W32():
 def isMinGW_W64():
     return isMinGW() and emergePlatform.buildArchitecture() == "x64"
 
+def isMinGW_ARM():
+    return isMinGW() and emergePlatform.buildArchitecture() == 'arm-wince'
+
 
 def isMSVC():
     return COMPILER.startswith("msvc")
@@ -55,6 +58,8 @@ def getCompilerName():
             return "mingw-w64"
         elif isMinGW32():
             return "mingw32"
+        elif isMinGW_ARM():
+            return "arm-wince"
     elif isMSVC():
         return COMPILER
     else:

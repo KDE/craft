@@ -4,13 +4,13 @@ import compiler
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'     
-        if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005" or os.getenv( "KDECOMPILER" ) == "msvc2010") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
+        if compiler.isMSVC() and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
             self.hardDependencies['dev-util/jom'] = 'default'
 
-        if os.getenv( "KDECOMPILER" ) == "mingw4":
-            if emergePlatform.buildArchitecture() == 'x64':
+        if compiler.isMinGW():
+            if compiler.isMinGW_W64():
                 self.hardDependencies['dev-util/mingw-w64']    = 'default'
-            elif emergePlatform.buildArchitecture() == 'arm-wince':
+            elif compiler.isMinGW_ARM():
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
                 if compiler.isMinGW32():
