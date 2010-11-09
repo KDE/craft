@@ -15,3 +15,6 @@ class AutoToolsPackageBase (PackageBase, MultiSource, AutoToolsBuildSystem, KDEW
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
+        #needed to run autogen sh, this is needed in all checkouts but normaly not in a tarball
+        if self.subinfo.hasSvnTarget():
+            self.subinfo.options.configure.bootstrap = True
