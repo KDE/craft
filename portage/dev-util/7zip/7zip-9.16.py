@@ -23,7 +23,6 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.install.installPath = "bin"
         SourceBase.__init__( self )
         PackageBase.__init__( self )
         BinaryBuildSystem.__init__( self )
