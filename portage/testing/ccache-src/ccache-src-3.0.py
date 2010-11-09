@@ -2,12 +2,6 @@
 import info
 import os
 
-from Source.MultiSource import *
-from BuildSystem.AutoToolsBuildSystem import *
-from Packager.MultiPackager import *
-from Package.PackageBase import *
-
-
 os.putenv("EMERGE_USE_CCACHE","False")
 
 
@@ -19,16 +13,16 @@ class subinfo(info.infoclass):
         
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['testing/autotools'] = 'default'
         
-class Package(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
+
+from Package.AutoToolsPackageBase import *
+
+class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)
-        KDEWinPackager.__init__(self)
+        AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.bootstrap = True
 
