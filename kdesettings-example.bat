@@ -235,6 +235,10 @@ rem This option can be used to build only source packages and don't use binary p
 rem it is needed for mingw-w32, mingw-w64 and wince builds, but works everywhere
 rem set EMERGE_SOURCEONLY=True
 
+rem This option can be used to make emerge fail when a patch fails. By default
+rem emerge tries to build a package even when patches fail to apply.
+rem set EMERGE_STRICT_PATCHING=True
+
 rem This option enables separating of package build dependencies from emerge internal 
 rem dependencies. When enabled packages depends on packages from the internal category 
 rem too. The packages from the internal package belongs to the related python class 
