@@ -17,16 +17,33 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
-        self.hardDependencies['dev-util/7zip'] = 'default'
 
-from Package.BinaryPackageBase import *
+from Source.SourceBase import *
+from Package.PackageBase import *
+from BuildSystem.BinaryBuildSystem import *
 
-class Package(BinaryPackageBase):
-    def __init__( self):
+class Package( PackageBase, SourceBase, BinaryBuildSystem ):
+    def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        BinaryPackageBase.__init__(self)
+        self.subinfo.options.install.installPath = "bin"
+        SourceBase.__init__( self )
+        PackageBase.__init__( self )
+        BinaryBuildSystem.__init__( self )
+        
+    def fetch( self ):
+        filenames = [ os.path.basename( self.subinfo.target() ) ]
+
+        if ( self.noFetch ):
+            utils.debug( "skipping fetch (--offline)" )
+            return True
+
+        self.setProxy()
+        return utils.getFiles( self.subinfo.target(), self.downloadDir() )
+
+    def unpack( self ):
+        return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
 
 if __name__ == '__main__':
     Package().execute() 
