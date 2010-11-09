@@ -1,4 +1,5 @@
 import info
+import compiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -12,8 +13,11 @@ class subinfo(info.infoclass):
             elif emergePlatform.buildArchitecture() == 'arm-wince':
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
-                self.hardDependencies['dev-util/mingw4']    = 'default'
-
+                if compiler.isMinGW32():
+                    self.hardDependencies['dev-util/mingw4']    = 'default'
+                else:
+                    self.hardDependencies['dev-util/mingw-w32']    = 'default'
+                    
 from Package.InternalPackageBase import * 
 
 class Package(InternalPackageBase):
