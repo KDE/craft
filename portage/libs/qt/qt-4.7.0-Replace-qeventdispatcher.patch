@@ -1,18 +1,16 @@
-From 4ee5943244061d2e6305e5881472544b37b229b8 Mon Sep 17 00:00:00 2001
+From b203ab8d9530a66ea79e5d735fa570d68610df1d Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <Andre Heinecke aheinecke@intevation.de>
-Date: Fri, 22 Oct 2010 15:07:16 +0200
-Subject: [PATCH] Replace qeventdispatcher
+Date: Tue, 9 Nov 2010 15:12:07 +0100
+Subject: [PATCH] Replace qeventdispatcher and add wcecompat dep.
 
-    Add a more easy to debug and battery saving eventdispatcher.
-    Created by Marcus Brinkmann.
 ---
- mkspecs/wincewm50pocket-msvc2005/qmake.conf |    2 +-
+ mkspecs/wincewm50pocket-msvc2005/qmake.conf |    4 +-
  src/corelib/kernel/qeventdispatcher_win.cpp | 1423 ++++++++++++---------------
  src/corelib/kernel/qeventdispatcher_win_p.h |   49 +-
- 3 files changed, 688 insertions(+), 786 deletions(-)
+ 3 files changed, 689 insertions(+), 787 deletions(-)
 
 diff --git a/mkspecs/wincewm50pocket-msvc2005/qmake.conf b/mkspecs/wincewm50pocket-msvc2005/qmake.conf
-index 676be5a..0753c2d 100644
+index 676be5a..772f075 100644
 --- a/mkspecs/wincewm50pocket-msvc2005/qmake.conf
 +++ b/mkspecs/wincewm50pocket-msvc2005/qmake.conf
 @@ -16,6 +16,6 @@ QMAKE_LFLAGS_DLL        = /SUBSYSTEM:WINDOWSCE,5.01 /MACHINE:THUMB /DLL
@@ -22,7 +20,8 @@ index 676be5a..0753c2d 100644
 -QMAKE_LIBS_CORE         = corelibc.lib ole32.lib oleaut32.lib uuid.lib commctrl.lib coredll.lib winsock.lib
 +QMAKE_LIBS_CORE         = corelibc.lib ole32.lib oleaut32.lib uuid.lib commctrl.lib coredll.lib winsock.lib ws2.lib
  QMAKE_LIBS_GUI          = ceshell.lib ole32.lib uuid.lib
- QMAKE_LIBS_NETWORK      = ws2.lib
+-QMAKE_LIBS_NETWORK      = ws2.lib
++QMAKE_LIBS_NETWORK      = ws2.lib wcecompat.lib
 diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
 index 153ccdf..00739f9 100644
 --- a/src/corelib/kernel/qeventdispatcher_win.cpp
