@@ -46,7 +46,7 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
 
     def install( self ):
-        if not BinaryPackageBase.install( self ): 
+        if not BinaryBuildSystem.install( self ):
             return False
         manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
         patch = os.path.join( self.installDir(), "bin", "patch.exe" )
