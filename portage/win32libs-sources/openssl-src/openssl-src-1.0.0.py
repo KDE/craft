@@ -108,18 +108,12 @@ class PackageCMake(CMakePackageBase):
         return True
         
         
-from Package.PackageBase import *
-from Source.MultiSource import *
-from BuildSystem.AutoToolsBuildSystem import *
-from Packager.KDEWinPackager import *;
+from Package.AutoToolsPackageBase import *
 
-class PackageMSys(PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
+class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)
-        KDEWinPackager.__init__(self)
+        AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False
         self.subinfo.options.install.useDestDir = False
