@@ -2,7 +2,7 @@ import info
 import os
 import emergePlatform
 import compiler
-from Package.BinaryPackageBase import *
+from Package.VirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -37,7 +37,7 @@ class subinfo(info.infoclass):
                 elif emergePlatform.buildArchitecture() == 'arm-wince':
                     self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
                 else:
-                    if compiler. isMinGW32():
+                    if compiler.isMinGW32():
                         self.hardDependencies['dev-util/mingw4']    = 'default'
                     else:
                         self.hardDependencies['dev-util/mingw-w32']    = 'default'
@@ -48,10 +48,10 @@ class subinfo(info.infoclass):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-class Package( BinaryPackageBase ):
+class Package( VirtualPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
-        BinaryPackageBase.__init__( self )
+        VirtualPackageBase.__init__( self )
 
     def unpack( self ):
         return True
