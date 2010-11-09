@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['testing/autotools'] = 'default'
         
 
 from Package.AutoToolsPackageBase import *
@@ -24,7 +23,6 @@ class Package(AutoToolsPackageBase):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
-        self.subinfo.options.configure.bootstrap = True
 
 if __name__ == '__main__':
     Package().execute()
