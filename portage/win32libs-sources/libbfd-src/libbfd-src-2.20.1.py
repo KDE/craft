@@ -20,13 +20,13 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
         
-class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
+class Package(PackageBase, MultiSource, AutoToolsBuildSystem,  KDEWinPackager):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)        
-        MultiPackager.__init__(self)
+        KDEWinPackager.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()
