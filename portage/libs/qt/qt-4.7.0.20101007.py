@@ -40,18 +40,15 @@ class subinfo(info.infoclass):
         self.patchToApply['4.7'] = [
             ('qt-4.7.0-out-of-source-build.patch', 1),
             ('qt-4.7.0-webkit-fixes.patch', 1),
-            ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1),
-            ('qt-4.7.0-openssl-static-linking.patch', 1) ]
+            ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1) ]
         self.patchToApply['wince'] = self.patchToApply['4.7'] + [
             ('qt-4.7.0-Replace-qeventdispatcher.patch', 1),
             ('qt-4.7.0-custom-flags-for-wince.patch', 1),
             ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1),
             ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1),
             ('qt-4.7.0-Override-new-in-qt-dlls-to-use-dlmalloc.patch', 1),
-#           ('qt-4.7.0-Fix-one-possible-WinCE-hang-in-qt-event-loop.patch', 1),
             ('qt-4.7.0-fix-endless-loop-in-qProcess-for-wince.patch', 1),
-            ('qt-4.7.0-Replace-malloc-in-qimage.patch', 1)
-            ]
+            ('qt-4.7.0-Replace-malloc-in-qimage.patch', 1) ]
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
         else:
