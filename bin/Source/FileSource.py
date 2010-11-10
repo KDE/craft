@@ -25,6 +25,9 @@ class FileSource(SourceBase):
                 filenames.append( os.path.basename( uri ) )
         return filenames
 
+    def localFileNames(self):
+        return self.localFileNamesBase()
+
     def fetch(self):
         """fetching binary files"""
         utils.debug( "FileSource.fetch called", 2 )
