@@ -552,23 +552,39 @@ def isPackageUpdateable( category, package, version ):
     else:
         return False
 
-def printCategoriesPackagesAndVersions(lines, condition):
+def alwaysTrue( category, package, version ):
+    return True
+
+def getHostAndTarget( cat, pack, ver, hostEnabled, targetEnabled ):
+    str = ""
+    if hostEnabled or targetEnabled: str += "("
+    if hostEnabled: str += "H"
+    if hostEnabled and targetEnabled: str += "/"
+    if hostEnabled: str += "T"
+    if hostEnabled or targetEnabled: str += ")"
+    return str
+
+def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue, targetEnabled=alwaysTrue ):
     """prints a number of 'lines', each consisting of category, package and version field"""
-    def printLine(cat, pack, ver):
+    def printLine( cat, pack, ver, hnt="" ):
         catlen = 25
         packlen = 25
         print cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver
 
-    printLine('Category', 'Package', 'Version')
-    printLine('--------', '-------', '-------')
+    printLine( 'Category', 'Package', 'Version' )
+    printLine( '--------', '-------', '-------' )
     for category, package, version in lines:
-        if condition( category, package, version ):
-            printLine(category, package, version)
+        if emergePlatform.isCrossCompilingEnabled():
+            show = condition( category, package, version ) or hostEnabled( category, package, version ) or targetEnabled( category, package, version )
+            str = getHostAndTarget( category, package, version, hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
+        else:
+            show = condition( category, package, version )
+            str = ""
+        if show:
+            printLine( category, package, version, str )
 
 def printInstallables():
     """get all the packages that can be installed"""
-    def alwaysTrue( category, package, version ):
-        return True
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), alwaysTrue )
 
 def printInstalled():
