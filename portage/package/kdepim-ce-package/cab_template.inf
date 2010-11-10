@@ -3,6 +3,9 @@ Signature = "$$Windows NT$$"
 Provider = "KDE"
 CESignature = "$$Windows CE$$"
 
+[InstallSection]
+SmartReboot=I
+
 [CEStrings]
 AppName = "Kontact-Mobile"
 InstallDir = %CE1%\%AppName%
