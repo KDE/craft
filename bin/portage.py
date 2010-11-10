@@ -20,7 +20,11 @@ packageDict = dict()
 def __import__( module ):
     utils.debug( "module to import: %s" % module, 2 )
     if not os.path.isfile( module ):
-        return __builtin__.__import__( module )
+        try:
+            return __builtin__.__import__( module )
+        except:
+            utils.warning( 'import failed for module %s' % module )
+            return None
     else:
         sys.path.append( os.path.dirname( module ) )
         fileHdl = open( module )
@@ -35,8 +39,12 @@ def __import__( module ):
         if suff_index is None:
             utils.die("no .py suffix found")
 
-        return imp.load_module( modulename.replace('.', '_'), 
+        try:
+            return imp.load_module( modulename.replace('.', '_'), 
             fileHdl, module, suff_index )
+        except:
+            utils.warning( "Import failed for file %s" % module )
+            return None
 
 class DependencyPackage:
     """ This class wraps each package and constructs the dependency tree
@@ -560,7 +568,7 @@ def getHostAndTarget( cat, pack, ver, hostEnabled, targetEnabled ):
     if hostEnabled or targetEnabled: str += "("
     if hostEnabled: str += "H"
     if hostEnabled and targetEnabled: str += "/"
-    if hostEnabled: str += "T"
+    if targetEnabled: str += "T"
     if hostEnabled or targetEnabled: str += ")"
     return str
 
@@ -569,18 +577,16 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     def printLine( cat, pack, ver, hnt="" ):
         catlen = 25
         packlen = 25
-        print cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver
+        print cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver, hnt
 
     printLine( 'Category', 'Package', 'Version' )
     printLine( '--------', '-------', '-------' )
     for category, package, version in lines:
         if emergePlatform.isCrossCompilingEnabled():
-            show = condition( category, package, version ) or hostEnabled( category, package, version ) or targetEnabled( category, package, version )
             str = getHostAndTarget( category, package, version, hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
         else:
-            show = condition( category, package, version )
             str = ""
-        if show:
+        if condition( category, package, version ):
             printLine( category, package, version, str )
 
 def printInstallables():

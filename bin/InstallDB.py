@@ -178,6 +178,22 @@ class InstallDB:
         cursor.close()
         return values
 
+    def getDistinctInstalled( self, category=None, package=None, prefix=None ):
+        """ returns a list of the installed packages, which can be restricted by adding
+            package, category and prefix.
+        """
+        cmd = '''SELECT DISTINCT category, packageName, version FROM packageList'''
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        cmd += stmt
+        cmd += ''';'''
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        
+        cursor = self.connection.cursor()
+        cursor.execute( cmd, tuple( params ) )
+        values = cursor.fetchall()
+        cursor.close()
+        return values
+
     def getPackageIds( self, category=None, package=None, version=None, prefix=None ):
         """ returns a list of the ids of the packages, which can be restricted by adding
             package, category and prefix.
@@ -296,12 +312,6 @@ class InstallDB:
 if isDBEnabled():
     installdb = InstallDB()
 
-def isPlatformInstalled( category, package, version ):
-    if emergePlatform.isCrossCompilingEnabled():
-        return installdb.isInstalled( category, package, version, "" ) or installdb.isInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
-    else:
-        return installdb.isInstalled( category, package, version )
-    
 # an additional function from portage.py
 def printInstalled():
     """get all the packages that are already installed"""
@@ -309,7 +319,7 @@ def printInstalled():
     if emergePlatform.isCrossCompilingEnabled():
         host = portage.isHostBuildEnabled
         target = portage.isTargetBuildEnabled
-    portage.printCategoriesPackagesAndVersions( portage.PortageInstance.getInstallables(), isPlatformInstalled )
+    portage.printCategoriesPackagesAndVersions( installdb.getDistinctInstalled(), portage.alwaysTrue, host, target )
 
 
 # Testing the class
