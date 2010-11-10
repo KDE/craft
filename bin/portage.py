@@ -511,7 +511,7 @@ def printTargets( category, package, version ):
             print ' ',
         print i
 
-def isHostBuildEnabled( self, category, package, version ):
+def isHostBuildEnabled( category, package, version ):
     """ returns whether this package's host build is enabled. This will only work if 
         isCrossCompilingEnabled() == True """
     
@@ -526,7 +526,7 @@ def isHostBuildEnabled( self, category, package, version ):
     else:
         utils.die( "This function must not be used outside of cross-compiling environments!" )
 
-def isTargetBuildEnabled( self, category, package, version ):
+def isTargetBuildEnabled( category, package, version ):
     """ returns whether this package's target build is enabled. This will only work if 
         isCrossCompilingEnabled() == True """
     
