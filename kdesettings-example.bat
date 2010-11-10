@@ -248,6 +248,10 @@ rem note: After finishing the testing phase this feature will be enabled by defa
 rem and this option removed. 
 rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
 
+rem The following option makes the emerge run fail if applying patches fails
+rem the default is that failing patches do not result in a stop
+rem set EMERGE_HOLD_ON_PATCH_FAIL=True
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 

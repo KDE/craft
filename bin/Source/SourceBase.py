@@ -60,8 +60,8 @@ class SourceBase(EmergeBase):
 
     def applyPatches(self):
         """apply patches is available"""
-        utils.debug( "SourceBase.applyPatches called", 0 )
-        
+        utils.debug( "SourceBase.applyPatches called", 1 )
+
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if type(patches) == list:
@@ -69,6 +69,7 @@ class SourceBase(EmergeBase):
                 for file, patchdepth in patches:
                     utils.debug( "applying %s with patchlevel: %s" % ( file, patchdepth ) )
                     if not self.applyPatch( file, patchdepth ):
+                        utils.warning( "applying %s failed!" % ( file ) )
                         ret = False
                         if os.getenv("EMERGE_STRICT_PATCHING"):
                             utils.die("Patch %s failed to apply!" % file)
