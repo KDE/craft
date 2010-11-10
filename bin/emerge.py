@@ -564,8 +564,8 @@ else:
                 if utils.verbose() > 0:
                     str = ""
                     if emergePlatform.isCrossCompilingEnabled():
-                        str = getHostAndTarget( not portage.isHostBuildEnabled( category, package, version ), 
-                                                not portage.isTargetBuildEnabled( category, package, version ) )
+                        str = portage.getHostAndTarget( not portage.isHostBuildEnabled( category, package, version ), 
+                                                        not portage.isTargetBuildEnabled( category, package, version ) )
                     utils.warning( "pretending %s/%s-%s%s" % ( category, package, version, str ) )
             else:
                 action = buildAction
