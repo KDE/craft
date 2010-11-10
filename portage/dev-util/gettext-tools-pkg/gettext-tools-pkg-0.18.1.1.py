@@ -6,14 +6,6 @@ import utils
 import info
 from shells import *
 
-print """
-The use of this package is not recommend, use the binary package instead
-For a static build I currently know no easier way then installing win_iconv with -DBUILD_STATIC and
-remove the following dynamic import libs:
-libiconv.dll.a
-libgomp.dll.a
-"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.18.1.1'] = 'http://ftp.gnu.org/pub/gnu/gettext/gettext-0.18.1.1.tar.gz'
