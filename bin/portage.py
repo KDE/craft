@@ -511,6 +511,36 @@ def printTargets( category, package, version ):
             print ' ',
         print i
 
+def isHostBuildEnabled( self, category, package, version ):
+    """ returns whether this package's host build is enabled. This will only work if 
+        isCrossCompilingEnabled() == True """
+    
+    if emergePlatform.isCrossCompilingEnabled():
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            return not info.disableHostBuild
+        else:
+            return False
+        return True
+    else:
+        utils.die( "This function must not be used outside of cross-compiling environments!" )
+
+def isTargetBuildEnabled( self, category, package, version ):
+    """ returns whether this package's target build is enabled. This will only work if 
+        isCrossCompilingEnabled() == True """
+    
+    if emergePlatform.isCrossCompilingEnabled():
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            return not info.disableTargetBuild
+        else:
+            return False
+        return True
+    else:
+        utils.die( "This function must not be used outside of cross-compiling environments!" )
+
 def isPackageUpdateable( category, package, version ):
     utils.debug( "importing file %s" % getFilename( category, package, version ), 2 )
     mod = __import__( getFilename( category, package, version ) )
