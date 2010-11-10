@@ -1,0 +1,489 @@
+diff -Nru gloox-1.0.orig/cmake/modules/FindIDN.cmake gloox-1.0/cmake/modules/FindIDN.cmake
+--- gloox-1.0.orig/cmake/modules/FindIDN.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0/cmake/modules/FindIDN.cmake	2010-11-11 00:08:01.322020900 +0100
+@@ -0,0 +1,44 @@
++# cmake macro to test IDN library
++
++# Copyright (c) 2006, Will Stephenson <wstephenson@kde.org>
++
++#  IDN_FOUND - Test has found IDN dependencies
++#  IDN_INCLUDE_DIR - Include needed for IDN
++#  IDN_LIBRARIES - Libraries needed for IDN
++#  IDN_DEFINITIONS - Compiler switches required for using IDN
++
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++        # cached
++        SET(IDN_FOUND TRUE)
++else (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++        if (NOT WIN32)
++                find_package(PkgConfig)
++                if(PKG_CONFIG_EXECUTABLE)
++                        pkg_check_modules(IDN libidn)
++                endif(PKG_CONFIG_EXECUTABLE)
++        endif (NOT WIN32)
++
++        if(NOT IDN_FOUND)
++                find_path(IDN_INCLUDEDIR idna.h)
++                find_library(IDN_LIBRARIES NAMES idn libidn idn-11 libidn-11)
++                if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++                        SET(IDN_FOUND TRUE)
++                endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++        endif(NOT IDN_FOUND)
++
++        if(IDN_FOUND)
++                set(IDN_DEFINITIONS ${IDN_CFLAGS})
++                if(NOT IDN_FIND_QUIETLY)
++                        message(STATUS "Found libidn: ${IDN_LIBRARIES}")
++                endif(NOT IDN_FIND_QUIETLY)
++                set(IDN_INCLUDE_DIR ${IDN_INCLUDEDIR})
++                mark_as_advanced( IDN_INCLUDE_DIR )
++        else(IDN_FOUND)
++                if (IDN_FIND_REQUIRED)
++                        message(FATAL_ERROR "Not found required libidn")
++                endif (IDN_FIND_REQUIRED)
++        endif(IDN_FOUND)
++endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru gloox-1.0.orig/CMakeLists.txt gloox-1.0/CMakeLists.txt
+--- gloox-1.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0/CMakeLists.txt	2010-11-11 00:08:48.924743600 +0100
+@@ -0,0 +1,262 @@
++project(gloox)
++
++cmake_minimum_required(VERSION 2.6)
++
++include(ConfigureChecks.cmake)
++
++set(libgloox_HEADERS
++    adhoccommandprovider.h
++    privacymanager.h
++    tag.h
++    adhoc.h
++    attention.h
++    iqhandler.h
++    privatexml.h
++    annotations.h
++    client.h
++    privatexmlhandler.h
++    annotationshandler.h
++    component.h
++    registration.h
++    bookmarkhandler.h
++    registrationhandler.h
++    jid.h
++    bookmarkstorage.h
++    messagehandler.h
++    rosteritem.h
++    clientbase.h
++    rosterlistener.h
++    taghandler.h
++    connectionlistener.h
++    rostermanager.h
++    gloox.h
++    glooxversion.h
++    disco.h
++    presencehandler.h
++    subscriptionhandler.h
++    discohandler.h
++    privacyitem.h
++    stanza.h
++    disconodehandler.h
++    privacylisthandler.h
++    loghandler.h
++    lastactivity.h
++    lastactivityhandler.h
++    flexoff.h
++    flexoffhandler.h
++    dataform.h
++    dataformfield.h
++    dataformitem.h
++    dataformfieldcontainer.h
++    dataformreported.h
++    macros.h
++    logsink.h
++    messagesession.h
++    messageeventhandler.h
++    messagesessionhandler.h
++    chatstatehandler.h
++    chatstatefilter.h
++    messageeventfilter.h
++    inbandbytestream.h
++    messagefilter.h
++    vcard.h
++    vcardmanager.h
++    vcardhandler.h
++    adhochandler.h
++    search.h
++    searchhandler.h
++    statisticshandler.h
++    resource.h
++    mucroom.h
++    mucroomhandler.h
++    mucroomconfighandler.h
++    parser.h
++    mucinvitationhandler.h
++    stanzaextension.h
++    oob.h
++    vcardupdate.h
++    delayeddelivery.h
++    base64.h
++    gpgencrypted.h
++    gpgsigned.h
++    md5.h
++    sha.h
++    uniquemucroom.h
++    instantmucroom.h
++    tlsbase.h
++    tlshandler.h
++    connectionbase.h
++    connectiondatahandler.h
++    compressiondatahandler.h
++    compressionbase.h
++    connectiontcpclient.h
++    connectionhttpproxy.h
++    tlsdefault.h
++    simanager.h
++    siprofilehandler.h
++    sihandler.h
++    siprofileft.h
++    siprofilefthandler.h
++    socks5bytestreammanager.h
++    connectionsocks5proxy.h
++    event.h
++    socks5bytestream.h
++    socks5bytestreamserver.h
++    softwareversion.h
++    eventhandler.h
++    mutex.h
++    mutexguard.h
++    connectiontcpbase.h
++    connectiontcpserver.h
++    amp.h
++    pubsubmanager.h
++    iq.h
++    pubsub.h
++    pubsubresulthandler.h
++    error.h
++    chatstate.h
++    connectionhandler.h
++    message.h
++    presence.h
++    subscription.h
++    bytestream.h
++    bytestreamdatahandler.h
++    bytestreamhandler.h
++    capabilities.h
++    connectionbosh.h
++    featureneg.h
++    connectiontls.h
++    messageevent.h
++    receipt.h
++    nickname.h
++    pubsubevent.h
++    xhtmlim.h
++    eventdispatcher.h
++    pubsubitem.h
++    shim.h
++    util.h
++    connectiontlsserver.h
++    compressiondefault.h
++)
++
++set(libgloox_FILES 
++    jid.cpp
++    parser.cpp
++    connectiontcpclient.cpp
++    clientbase.cpp
++    tag.cpp
++    stanza.cpp
++    logsink.cpp
++    dns.cpp
++    prep.cpp
++    base64.cpp
++    client.cpp
++    component.cpp
++    disco.cpp
++    adhoc.cpp
++    privatexml.cpp
++    registration.cpp
++    nonsaslauth.cpp
++    rosteritem.cpp
++    rostermanager.cpp
++    privacyitem.cpp
++    bookmarkstorage.cpp
++    annotations.cpp
++    privacymanager.cpp
++    lastactivity.cpp
++    flexoff.cpp
++    dataform.cpp
++    dataformfield.cpp
++    dataformfieldcontainer.cpp
++    messagesession.cpp
++    messageeventfilter.cpp
++    chatstatefilter.cpp
++    gloox.cpp
++    inbandbytestream.cpp
++    messagefilter.cpp
++    vcard.cpp
++    vcardmanager.cpp
++    md5.cpp
++    sha.cpp
++    search.cpp
++    dataformreported.cpp
++    dataformitem.cpp
++    mucroom.cpp
++    mucmessagesession.cpp
++    oob.cpp
++    vcardupdate.cpp
++    stanzaextensionfactory.cpp
++    delayeddelivery.cpp
++    gpgencrypted.cpp
++    gpgsigned.cpp
++    uniquemucroom.cpp
++    instantmucroom.cpp
++    compressionzlib.cpp
++    tlsgnutlsclient.cpp
++    connectionhttpproxy.cpp
++    tlsgnutlsserveranon.cpp
++    tlsgnutlsbase.cpp
++    tlsgnutlsclientanon.cpp
++    tlsschannel.cpp
++    tlsdefault.cpp
++    simanager.cpp
++    siprofileft.cpp
++    mutex.cpp
++    connectionsocks5proxy.cpp
++    socks5bytestreammanager.cpp
++    socks5bytestream.cpp
++    connectiontcpbase.cpp
++    connectiontcpserver.cpp
++    socks5bytestreamserver.cpp
++    amp.cpp
++    pubsubitem.cpp
++    pubsubmanager.cpp
++    error.cpp
++    util.cpp
++    iq.cpp
++    message.cpp
++    presence.cpp
++    subscription.cpp
++    capabilities.cpp
++    chatstate.cpp
++    connectionbosh.cpp
++    connectiontls.cpp
++    messageevent.cpp
++    receipt.cpp
++    nickname.cpp
++    eventdispatcher.cpp
++    pubsubevent.cpp
++    xhtmlim.cpp
++    featureneg.cpp
++    shim.cpp
++    softwareversion.cpp
++    attention.cpp
++    tlsopensslclient.cpp
++    tlsopensslbase.cpp
++    tlsopensslserver.cpp
++    compressiondefault.cpp
++    connectiontlsserver.cpp
++)
++
++foreach(_file ${libgloox_FILES})
++    list(APPEND libgloox_SRCS src/${_file})
++endforeach(_file ${libgloox_FILES})
++
++foreach(_file ${libgloox_HEADERS})
++    list(APPEND libgloox_HDRS src/${_file})
++endforeach(_file ${libgloox_HEADERS})
++
++add_library(gloox SHARED ${libgloox_SRCS})
++set_target_properties(gloox PROPERTIES DEFINE_SYMBOL GLOOX_EXPORTS)
++if(ZLIB_FOUND)
++    target_link_libraries(gloox ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(gloox ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++
++install(TARGETS gloox   RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++
++install(FILES ${libgloox_HDRS} DESTINATION include/gloox)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru gloox-1.0.orig/config.h.win.cmake gloox-1.0/config.h.win.cmake
+--- gloox-1.0.orig/config.h.win.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0/config.h.win.cmake	2010-11-11 00:08:01.328021300 +0100
+@@ -0,0 +1,45 @@
++
++/**
++ * Uncomment whichever lib you have installed.
++ */
++
++/* Uncomment if you have zlib available and want to use it */
++#cmakedefine HAVE_ZLIB 1
++
++/* Comment out if you don't want to use Win's native TLS functions */
++#cmakedefine HAVE_WINTLS 1
++
++/* Uncomment if you have GnuTLS available and want to use it */
++// #define HAVE_GNUTLS 1
++
++/* Uncomment if you have OpenSSL available and want to use it */
++#cmakedefine HAVE_OPENSSL 1
++
++/* Uncomment if you have LibIDN available and want to use it */
++#cmakedefine HAVE_LIBIDN 1
++
++/* Uncomment if you have the getaddrinfo function and want IPv6 support (XP and up) */
++#cmakedefine HAVE_GETADDRINFO 1
++
++/* Comment out if you don't have windns.h (e.g. if you use an old Platform SDK) */
++#cmakedefine HAVE_WINDNS_H 1
++
++/* Comment out if you don't have the `setsockopt' function. Usually available. */
++#cmakedefine HAVE_SETSOCKOPT 1
++
++#ifdef _MSC_VER
++#pragma comment( lib, "Dnsapi.lib" )
++#pragma comment( lib, "Secur32.lib" )
++#pragma comment( lib, "Crypt32.lib" )
++#pragma comment( lib, "ws2_32.lib" )
++
++/* The following silences a few C4355 warnings ('this' : used in member initializer list).
++   This is only used with Parser which doesn't do anything with its TagHandler in the ctor,
++   so muting C4355 is safe. */
++#pragma warning( disable : 4355 )
++
++/* The following silcences warnings concerning "unsafe" functions (sprintf, strncpy, etc.).
++   They are used in a safe way here, though. */
++#pragma warning( disable : 4996 )
++#define _WIN32_WINNT 0x0400
++#endif
+diff -Nru gloox-1.0.orig/ConfigureChecks.cmake gloox-1.0/ConfigureChecks.cmake
+--- gloox-1.0.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0/ConfigureChecks.cmake	2010-11-11 00:08:01.329021300 +0100
+@@ -0,0 +1,41 @@
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++find_package(ZLIB)
++find_package(OpenSSL)
++find_package(IDN)
++
++#/* Uncomment if you have zlib available and want to use it */
++set( HAVE_ZLIB ${ZLIB_FOUND} )
++if(ZLIB_FOUND)
++    include_directories(${ZLIB_INCLUDE_DIR})
++endif(ZLIB_FOUND)
++
++#/* Comment out if you don't want to use Win's native TLS functions */
++set( HAVE_WINTLS 1 )
++
++#/* Uncomment if you have GnuTLS available and want to use it */
++#set( HAVE_GNUTLS 1 )
++
++#/* Uncomment if you have OpenSSL available and want to use it */
++set( HAVE_OPENSSL ${OPENSSL_FOUND} )
++if(OPENSSL_FOUND)
++    include_directories(${OPENSSL_INCLUDE_DIR})
++endif(OPENSSL_FOUND)
++
++#/* Uncomment if you have LibIDN available and want to use it */
++#set( HAVE_LIBIDN ${IDN_FOUND} )
++#if(IDN_FOUND)
++#    include_directories(${IDN_INCLUDE_DIR})
++#endif(IDN_FOUND)
++
++#/* Uncomment if you have the getaddrinfo function and want IPv6 support (XP and up) */
++# set( HAVE_GETADDRINFO 1 )
++
++#/* Comment out if you don't have windns.h (e.g. if you use an old Platform SDK) */
++set( HAVE_WINDNS_H 1 )
++
++#/* Comment out if you don't have the `setsockopt' function. Usually available. */
++set( HAVE_SETSOCKOPT 1 )
++
++configure_file(config.h.win.cmake config.h)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru gloox-1.0.orig/src/config.h gloox-1.0/src/config.h
+--- gloox-1.0.orig/src/config.h	2009-10-12 19:46:44.000000000 +0200
++++ gloox-1.0/src/config.h	1970-01-01 01:00:00.000000000 +0100
+@@ -1,27 +0,0 @@
+-/*
+-  Copyright (c) 2009 by Jakob Schroeter <js@camaya.net>
+-  This file is part of the gloox library. http://camaya.net/gloox
+-
+-  This software is distributed under a license. The full license
+-  agreement can be found in the file LICENSE in this distribution.
+-  This software may not be copied, modified, sold or distributed
+-  other than expressed in the named license agreement.
+-
+-  This software is distributed without any warranty.
+-*/
+-
+-
+-#ifndef CONFIG_H__
+-#define CONFIG_H__
+-
+-#if ( defined _WIN32 ) && !defined( __SYMBIAN32__ )
+-# include "../config.h.win"
+-#elif defined( _WIN32_WCE )
+-# include "../config.h.win"
+-#elif defined( __SYMBIAN32__ )
+-# include "../config.h.symbian"
+-#else
+-# include "config.h.unix" // run ./configure to create config.h.unix
+-#endif
+-
+-#endif // CONFIG_H__
+diff -Nru gloox-1.0.orig/src/dns.h gloox-1.0/src/dns.h
+--- gloox-1.0.orig/src/dns.h	2009-10-02 10:21:30.000000000 +0200
++++ gloox-1.0/src/dns.h	2010-11-11 00:08:01.333021500 +0100
+@@ -17,7 +17,7 @@
+ #include "macros.h"
+ #include "logsink.h"
+ 
+-#ifdef __MINGW32__
++#ifdef _WIN32
+ # include <windows.h>
+ # include <windns.h>
+ #endif
+diff -Nru gloox-1.0.orig/src/mutex.cpp gloox-1.0/src/mutex.cpp
+--- gloox-1.0.orig/src/mutex.cpp	2009-10-30 14:32:05.000000000 +0100
++++ gloox-1.0/src/mutex.cpp	2010-11-11 00:08:01.335021700 +0100
+@@ -17,6 +17,7 @@
+ 
+ #if defined( _WIN32 ) && !defined( __SYMBIAN32__ )
+ # include <windows.h>
++# include <winbase.h>
+ #endif
+ 
+ #ifdef _WIN32_WCE
+diff -Nru gloox-1.0.orig/src/tlsopensslclient.h gloox-1.0/src/tlsopensslclient.h
+--- gloox-1.0.orig/src/tlsopensslclient.h	2009-10-12 18:26:54.000000000 +0200
++++ gloox-1.0/src/tlsopensslclient.h	2010-11-11 00:08:01.337021800 +0100
+@@ -47,7 +47,7 @@
+        */
+       virtual ~OpenSSLClient();
+ 
+-    private:
++    protected:
+       // reimplemented from OpenSSLBase
+       virtual bool setType();
+ 
+diff -Nru gloox-1.0.orig/src/tlsopensslserver.h gloox-1.0/src/tlsopensslserver.h
+--- gloox-1.0.orig/src/tlsopensslserver.h	2009-10-12 18:27:05.000000000 +0200
++++ gloox-1.0/src/tlsopensslserver.h	2010-11-11 00:08:01.340022000 +0100
+@@ -46,7 +46,7 @@
+        */
+       virtual ~OpenSSLServer();
+ 
+-    private:
++    protected:
+       // reimplemented from OpenSSLBase
+       virtual bool privateInit();
+       // reimplemented from OpenSSLBase
