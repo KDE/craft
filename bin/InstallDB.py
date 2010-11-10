@@ -296,10 +296,20 @@ class InstallDB:
 if isDBEnabled():
     installdb = InstallDB()
 
+def isPlatformInstalled( category, package, version ):
+    if emergePlatform.isCrossCompilingEnabled():
+        return installdb.isInstalled( category, package, version, "" ) or installdb.isInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+    else:
+        return installdb.isInstalled( category, package, version )
+    
 # an additional function from portage.py
 def printInstalled():
     """get all the packages that are already installed"""
-    portage.printCategoriesPackagesAndVersions( portage.PortageInstance.getInstallables(), installdb.isInstalled )
+    host = target = portage.alwaysTrue
+    if emergePlatform.isCrossCompilingEnabled():
+        host = portage.isHostBuildEnabled
+        target = portage.isTargetBuildEnabled
+    portage.printCategoriesPackagesAndVersions( portage.PortageInstance.getInstallables(), isPlatformInstalled )
 
 
 # Testing the class
