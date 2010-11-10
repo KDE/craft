@@ -10,15 +10,19 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/bin-base'] = 'default'
 
 from Package.BinaryPackageBase import *
-        
+import compiler  
+    
+    
 class Package(BinaryPackageBase):
     def __init__(self):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
-        if COMPILER == "msvc2008":
+        if compiler.isMSVC2008():
             self.subinfo.options.package.version = '9.0.30729.1'
-        elif COMPILER == "mingw4":
+        elif compiler.isMinGW32():
             self.subinfo.options.package.version = '4.4.0'
+        elif compiler.isMinGW_WXX():
+            self.subinfo.options.package.version = '4.4.5'
         
 
     def fetch(self):
@@ -28,18 +32,24 @@ class Package(BinaryPackageBase):
         destdir = os.path.join(self.installDir(),"bin")
         utils.createDir(self.workDir())
         utils.createDir(destdir)
-        if COMPILER == "msvc2008":
+        if compiler.isMSVC2008():
             if self.buildType() == "Debug":
                 srcdir = os.path.join(self.packageDir(),"redist","Debug_NonRedist","x86","Microsoft.VC90.DebugCRT")
                 files = [ "Microsoft.VC90.DebugCRT.manifest", "msvcr90d.dll", "msvcp90d.dll", "msvcm90d.dll"]
             else:
                 srcdir = os.path.join(self.packageDir(),"redist","x86","Microsoft.VC90.CRT")
                 files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll"]
-        elif COMPILER == "mingw4":
-            srcdir = os.path.join(self.rootdir,"mingw","bin")
-            files = ['mingwm10.dll','libgcc_s_dw2-1.dll']
+        elif compiler.isMinGW():
+            if compiler.isMinGW32():
+                srcdir = os.path.join(self.rootdir,"mingw","bin")
+                files = ['mingwm10.dll','libgcc_s_dw2-1.dll']
+            elif compiler.isMinGW_W32():
+                srcdir = os.path.join(self.rootdir,"mingw","bin")
+                files = ['libgcc_s_sjlj-1.dll']
+            elif compler.isMinGW_W64():
+                srcdir = os.path.join(self.rootdir,"mingw64","bin")
+                files = ['libgcc_s_sjlj-1.dll']
         
-        # todo do other compiler mingw_w32,  mingw_w64 need similar runtime files ? 
 
         for file in files:
             utils.copyFile(os.path.join(srcdir,file), os.path.join(destdir,file))
