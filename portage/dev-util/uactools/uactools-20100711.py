@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = latest
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        self.hardDependencies['gnuwin32/wget'] = 'default'
 
 from Source.SourceBase import *
 from Package.PackageBase import *
