@@ -534,7 +534,14 @@ else:
                 target = defaultTarget
             targetList = portage.PortageInstance.getUpdatableVCSTargets( category, package, version )
         if isDBEnabled():
-            isInstalled = installdb.isInstalled( category, package, version, portage.prefixForBuildType( buildType ) )
+            if emergePlatform.isCrossCompilingEnabled():
+                hostEnabled = portage.isHostBuildEnabled( category, package, version )
+                targetEnabled = portage.isTargetBuildEnabled( category, package, version )
+                hostInstalled = installdb.isInstalled( category, package, version, "" )
+                targetInstalled = installdb.isInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                isInstalled = ( not hostEnabled or hostInstalled ) and ( not targetEnabled or targetInstalled )
+            else:
+                isInstalled = installdb.isInstalled( category, package, version, portage.prefixForBuildType( buildType ) )
         else:
             isInstalled = portage.isInstalled( category, package, version, buildType )
         if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and outDateVCS and target in targetList ):
