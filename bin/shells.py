@@ -40,5 +40,5 @@ class MSysShell(Shell):
               ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
 
         cmd +="\""
-        utils.debug( "msys execute: %s" % cmd )
+        utils.debug( "msys execute: %s" % cmd, 1 )
         return utils.system( cmd, outstream=out, errstream=err )
