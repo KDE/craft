@@ -33,12 +33,12 @@ class MSysShell(Shell):
             path = '/' + path[0].lower() + '/' + path[3:]
         return path
 
-    def execute( self, path, cmd, args, out=sys.stdout, err=sys.stderr ):
+    def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
         cmd = "%s --login -c \"cd %s && %s %s" % \
               ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
 
         cmd +="\""
-        utils.debug( "msys execute: %s" % cmd, 1 )
+        utils.debug( "msys execute: %s" % cmd, debugLvl )
         return utils.system( cmd, outstream=out, errstream=err )

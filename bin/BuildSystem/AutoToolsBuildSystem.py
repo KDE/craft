@@ -61,7 +61,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
               autogen = os.path.join(sourcedir,"autogen.sh" )
               if os.path.exists(autogen):
                 os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "MSYSDIR" ) , "opt" , "autotools" , "bin" )))
-                self.shell.execute(self.sourceDir(), autogen , "" )
+                self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
             if self.subinfo.options.install.useDestDir == False:
               _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
             else:
@@ -70,11 +70,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if _options:
                 _prefix += " %s" % _options
             if self.buildInSource:
-                ret = self.shell.execute(self.sourceDir(), configure, _prefix )
+                ret = self.shell.execute(self.sourceDir(), configure, _prefix, debugLvl=0 )
             else:
-                ret = self.shell.execute(self.buildDir(), configure, _prefix )
+                ret = self.shell.execute(self.buildDir(), configure, _prefix, debugLvl=0  )
         else:
-            ret = self.shell.execute(self.sourceDir(), "ruby configure", "" )
+            ret = self.shell.execute(self.sourceDir(), "ruby", "configure", debugLvl=0 )
         return ret
 
     def make( self, buildType=None ):
@@ -97,9 +97,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if utils.verbose() > 1:
             args += " VERBOSE=1"
         if self.buildInSource:
-            self.shell.execute(self.sourceDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
+            self.shell.execute(self.sourceDir(), command, args, debugLvl=0 ) or utils.die( "while Make'ing. cmd: %s" % command )
         else:
-            self.shell.execute(self.buildDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
+            self.shell.execute(self.buildDir(), command, args, debugLvl=0 ) or utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
     def install( self ):
@@ -122,9 +122,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
         if self.buildInSource:
-            return self.shell.execute(self.sourceDir(), command, args ) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+            return self.shell.execute(self.sourceDir(), command, args, debugLvl=0 ) or utils.die( "while installing. cmd: %s %s" % (command, args) )
         else:
-            return self.shell.execute(self.buildDir(), command, args ) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+            return self.shell.execute(self.buildDir(), command, args, debugLvl=0 ) or utils.die( "while installing. cmd: %s %s" % (command, args) )
 
     def runTest( self ):
         """running unittests"""
