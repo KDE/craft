@@ -142,7 +142,10 @@ class ArchiveSource(SourceBase):
         if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
             return False
 
-        return self.applyPatches()
+        ret = self.applyPatches()
+        if os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "True" or os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "1":
+            return ret;
+        return True;
 
     def createPatch( self ):
         """ unpacking all zipped(gz,zip,bz2) tarballs a second time and making a patch """

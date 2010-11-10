@@ -68,7 +68,7 @@ class VersionSystemSourceBase (SourceBase):
             utils.copySrcDirToDestDir(sourceDir, self.buildDir())
         ret = self.applyPatches()
         if os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "True" or os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "1":
-            return ret
+            return ret;
         return True;
         
     def repositoryUrlCount( self ):
