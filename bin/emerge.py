@@ -562,7 +562,11 @@ else:
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
-                    utils.warning( "pretending %s/%s-%s" % ( category, package, version ) )
+                    str = ""
+                    if emergePlatform.isCrossCompilingEnabled():
+                        str = getHostAndTarget( not portage.isHostBuildEnabled( category, package, version ), 
+                                                not portage.isTargetBuildEnabled( category, package, version ) )
+                    utils.warning( "pretending %s/%s-%s%s" % ( category, package, version, str ) )
             else:
                 action = buildAction
                 if buildAction == "install-deps":
