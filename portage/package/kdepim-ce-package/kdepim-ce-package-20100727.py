@@ -255,7 +255,10 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             sourcediskfiles.append("%s=%d" % (os.path.basename(f), dir_id))
             files.setdefault(dir_id, []).append(os.path.basename(f))
 
-        destinationdirs = ["a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
+
+        destinationdirs = [
+            (d.endswith("Windows") and "a%d = 0,\\%s"
+                    or "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
 
