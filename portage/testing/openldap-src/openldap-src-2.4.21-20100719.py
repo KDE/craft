@@ -28,9 +28,6 @@ class subinfo(info.infoclass):
                                          'openldap-'+ver+'.sha1'
             self.defaultTarget = '2.4.21'
 
-        if compiler.isMSVC():
-            utils.die ( "MSVC Build of openldap-src is unsupported" )
-
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
