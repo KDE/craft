@@ -23,13 +23,13 @@ def isMinGW():
     return COMPILER.startswith("mingw")
 
 def isMinGW32():
-    return getGCCTarget() == "mingw32"
+    return isMinGW() and getGCCTarget() == "mingw32"
 
 def isMinGW_WXX():
     return isMinGW_W32() or isMinGW_W64()
 
 def isMinGW_W32():
-    return getGCCTarget() == "i686-w64-mingw32"
+    return isMinGW()and getGCCTarget() == "i686-w64-mingw32"
 
 def isMinGW_W64():
     return isMinGW() and emergePlatform.buildArchitecture() == "x64"
