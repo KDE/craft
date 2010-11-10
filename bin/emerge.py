@@ -562,10 +562,16 @@ else:
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
-                    str = ""
+                    str = " "
                     if emergePlatform.isCrossCompilingEnabled():
-                        str = portage.getHostAndTarget( not portage.isHostBuildEnabled( category, package, version ), 
-                                                        not portage.isTargetBuildEnabled( category, package, version ) )
+                        if isDBEnabled():
+                            hostEnabled = portage.isHostBuildEnabled( category, package, version )
+                            targetEnabled = portage.isTargetBuildEnabled( category, package, version )
+                            hostInstalled = installdb.isInstalled( category, package, version, "" )
+                            targetInstalled = installdb.isInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                            str += portage.getHostAndTarget( hostEnabled and not hostInstalled, targetEnabled and not targetInstalled )
+                        else:
+                            str = ""
                     utils.warning( "pretending %s/%s-%s%s" % ( category, package, version, str ) )
             else:
                 action = buildAction

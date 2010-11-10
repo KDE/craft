@@ -563,7 +563,7 @@ def isPackageUpdateable( category, package, version ):
 def alwaysTrue( category, package, version ):
     return True
 
-def getHostAndTarget( cat, pack, ver, hostEnabled, targetEnabled ):
+def getHostAndTarget( hostEnabled, targetEnabled ):
     str = ""
     if hostEnabled or targetEnabled: str += "("
     if hostEnabled: str += "H"
@@ -583,7 +583,7 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     printLine( '--------', '-------', '-------' )
     for category, package, version in lines:
         if emergePlatform.isCrossCompilingEnabled():
-            str = getHostAndTarget( category, package, version, hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
+            str = getHostAndTarget( hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
         else:
             str = ""
         if condition( category, package, version ):
