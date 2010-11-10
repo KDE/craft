@@ -36,9 +36,12 @@ class MSysShell(Shell):
     def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
-        cmd = "%s --login -c \"cd %s && %s %s" % \
+        command = "%s --login -c \"cd %s && %s %s" % \
               ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
 
-        cmd +="\""
-        utils.debug( "msys execute: %s" % cmd, debugLvl )
-        return utils.system( cmd, outstream=out, errstream=err )
+        command +="\""
+        if debugLvl == 0:
+            print "%s %s" %(cmd , args)
+        else:
+            utils.debug( "msys execute: %s" % command, debugLvl )
+        return utils.system( command, outstream=out, errstream=err )
