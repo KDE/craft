@@ -296,6 +296,12 @@ class InstallDB:
 if isDBEnabled():
     installdb = InstallDB()
 
+# an additional function from portage.py
+def printInstalled():
+    """get all the packages that are already installed"""
+    portage.printCategoriesPackagesAndVersions( portage.PortageInstance.getInstallables(), installdb.isInstalled )
+
+
 # Testing the class
 if __name__ == '__main__':
     # add two databases

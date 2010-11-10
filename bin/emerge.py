@@ -265,7 +265,10 @@ def handlePackage( category, package, version, buildAction, opts ):
         portage.printInstallables()
         success = True
     elif ( buildAction == "print-installed" ):
-        portage.printInstalled()
+        if isDBEnabled():
+            printInstalled()
+        else:
+            portage.printInstalled()
         success = True
     elif ( buildAction == "print-targets" ):
         portage.printTargets( category, package, version )
