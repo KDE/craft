@@ -13,6 +13,7 @@ class subinfo( info.infoclass ):
 
         for version in [ ${versionTargets} ]:
             self.targets[ version ] = self.getPackage( repoUrl, '${package}', version )
+            targetDigestUrls[ version ] = self.getPackage( repoUrl, '${package}', version , '.tar.bz2.sha1' )
 
         self.defaultTarget = '${defaultTarget}'
 
