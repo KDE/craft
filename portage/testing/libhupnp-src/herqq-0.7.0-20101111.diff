@@ -1,0 +1,18 @@
+diff -Nru herqq-0.7.0.orig/hupnp/src/hupnp_core/hupnp_core.pro herqq-0.7.0/hupnp/src/hupnp_core/hupnp_core.pro
+--- herqq-0.7.0.orig/hupnp/src/hupnp_core/hupnp_core.pro	2010-11-11 14:59:09.998529900 +0100
++++ herqq-0.7.0/hupnp/src/hupnp_core/hupnp_core.pro	2010-11-11 14:57:43.297491400 +0100
+@@ -16,11 +16,11 @@
+ debug:DEFINES += DEBUG
+ 
+ win32 {
+-    debug {
+-        LIBS += -lQtSolutions_SOAP-2.7d
++    release {
++        LIBS += -lQtSolutions_SOAP-2.7
+     }
+     else {
+-        LIBS += -lQtSolutions_SOAP-2.7
++        LIBS += -lQtSolutions_SOAP-2.7d
+     }
+ 
+     LIBS += -lws2_32
