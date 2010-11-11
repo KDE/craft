@@ -187,6 +187,11 @@ general = common.settings.getSection( "General" )
 
 emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
 
+# first cleanup
+cmdstring = emerge + " --cleanup"
+p = subprocess.Popen( cmdstring, shell=True )
+p.wait()
+
 # first emerge base, so that the base is installed everywhere
 cmdstring = emerge + " base"
 p = subprocess.Popen( cmdstring, shell=True )
