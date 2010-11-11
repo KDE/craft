@@ -1,22 +1,25 @@
 import info
 import os
+import compiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
         utils.debug("emergebuildsystem:subinfo.setDependencies not implemented yet",1)
         # we need at least qmake 
         #self.hardDependencies['libs/qt'] = 'default'     
-        if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005" or os.getenv( "KDECOMPILER" ) == "msvc2010") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
+        if compiler.isMSVC() and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
             self.hardDependencies['dev-util/jom'] = 'default'
 
-        # find a way to share this with other build systems
-        if os.getenv( "KDECOMPILER" ) == "mingw4":
-            if emergePlatform.buildArchitecture() == 'x64':
+        if compiler.isMinGW():
+            if compiler.isMinGW_W64():
                 self.hardDependencies['dev-util/mingw-w64']    = 'default'
-            elif emergePlatform.buildArchitecture() == 'arm-wince':
+            elif compiler.isMinGW_ARM():
                 self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
-                self.hardDependencies['dev-util/mingw4']    = 'default'
+                if compiler.isMinGW32():
+                    self.hardDependencies['dev-util/mingw4']    = 'default'
+                else:
+                    self.hardDependencies['dev-util/mingw-w32']    = 'default'
 
 from Package.InternalPackageBase import * 
 
