@@ -23,6 +23,12 @@ for line in packagefile:
         addInfo[ cat + "/" + pac ] = ( target, patchlvl )
 packagefile.close()
 
+baseDependencies = """
+    def setDependencies( self ):
+        if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
+            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+"""
+
 for packageKey in addInfo:
     category, package = packageKey.split( '/' )
     version = portage.PortageInstance.getNewestVersion( category, package )
@@ -38,9 +44,28 @@ for packageKey in addInfo:
         buildTarget = addInfo[ packageKey ] [ 0 ]
         if buildTarget == '':
             buildTarget = portage.PortageInstance.getDefaultTarget( category, package, version )
+        regenerateFile = False
         if not buildTarget in binTargets:
             utils.warning( "key %s not contained in binary package %s" % ( buildTarget, binPackage ) )
+            regenerateFile = True
+        
+        dependencies = baseDependencies
+        # get buildDependencies from the source package
+        runtimeDependencies, buildDependencies = portage.readChildren( category, package, version )
+        binRuntimeDependencies, binBuildDependencies = portage.readChildren( binCategory, binPackage, binVersion )
+        commonDependencies = dict()
 
+        for i in runtimeDependencies:
+            if i in runtimeDependencies and i in buildDependencies:
+                commonDependencies[ i ] = buildDependencies[ i ]
+                if not i in binRuntimeDependencies:
+                    regenerateFile = True
+
+        for key in commonDependencies:
+            dependencies += "        self.runtimeDependencies[ '%s' ] = '%s'\n" % ( key, commonDependencies[ key ] )
+
+
+        if regenerateFile:
             template = Template( file( 'C:/kde/kde-msvc/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = binTargets.keys()
             if 'svnHEAD' in binTargets and binTargets['svnHEAD'] == False:
@@ -50,21 +75,23 @@ for packageKey in addInfo:
             result = template.safe_substitute( { 'revision': '1', 
                                                  'package': binPackage, 
                                                  'versionTargets': targetsString,
-                                                 'defaultTarget': buildTarget
+                                                 'defaultTarget': buildTarget,
+                                                 'dependencies': dependencies
                                                } )
 
             currentName = portage.getFilename( binCategory, binPackage, binVersion )
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
-            
-            cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
+        
+            if not currentName == newName:
+                cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
 
-            utils.debug( "running command: %s" % cmd )
-            p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
-            ret = p.wait()
-            
-            if not ret == 0:
-                utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
-                continue
+                utils.debug( "running command: %s" % cmd )
+                p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
+                ret = p.wait()
+                
+                if not ret == 0:
+                    utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
+                    continue
             
             f = file( newName, 'w+b' )
             f.write( result )
@@ -78,6 +105,7 @@ for packageKey in addInfo:
 #            if not srcKey in binTargets:
 #                utils.warning( "key %s not contained in binary package %s" % ( srcKey, binPackage ) )
 #        utils.new_line()
+        utils.info( "working on package %s" % package )
         utils.new_line()
     else:
         utils.warning( "no corresponding binary Package is available!" )
