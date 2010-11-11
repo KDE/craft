@@ -1,6 +1,6 @@
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/clucene-config.h.cmake clucene-core-0.9.21b/src/CLucene/clucene-config.h.cmake
---- clucene-core-0.9.21b.orig/src/CLucene/clucene-config.h.cmake
-+++ clucene-core-0.9.21b/src/CLucene/clucene-config.h.cmake
+--- clucene-core-0.9.21b.orig/src/CLucene/clucene-config.h.cmake	2008-10-23 19:44:37.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/clucene-config.h.cmake	2010-11-10 17:33:19.641239200 +0100
 @@ -1,378 +1,518 @@
  #ifndef _SRC_CLUCENE_CLUCENE_CONFIG_H
  #define _SRC_CLUCENE_CLUCENE_CONFIG_H 1
@@ -699,9 +699,34 @@ diff -Nru clucene-core-0.9.21b.orig/src/CLucene/clucene-config.h.cmake clucene-c
 +_SRC_CLUCENE_CLUCENE_CONFIG_H
 +*/
  #endif
+diff -Nru clucene-core-0.9.21b.orig/src/CLucene/CMakeLists.txt clucene-core-0.9.21b/src/CLucene/CMakeLists.txt
+--- clucene-core-0.9.21b.orig/src/CLucene/CMakeLists.txt	2008-10-23 19:44:37.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/CMakeLists.txt	2010-11-11 11:24:13.371478000 +0100
+@@ -210,6 +210,13 @@
+ 	./util/ThreadLocal.cpp
+ 	./StdHeader.cpp
+ )
++
++IF(WINCE)
++SET(clucene_core_Files
++  ${clucene_core_Files}
++  ./config/repl_tchar.cpp
++)
++endif(WINCE)
+ IF( MSVC OR MINGW )
+ 	add_library(clucene-core STATIC 
+ 		${clucene_core_Files}
+@@ -220,6 +227,7 @@
+ 	)
+ ENDIF( MSVC OR MINGW )
+ 
++
+ file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/src/*.h)
+ 
+ foreach(file ${HEADERS})
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/compiler.h clucene-core-0.9.21b/src/CLucene/config/compiler.h
---- clucene-core-0.9.21b.orig/src/CLucene/config/compiler.h
-+++ clucene-core-0.9.21b/src/CLucene/config/compiler.h
+--- clucene-core-0.9.21b.orig/src/CLucene/config/compiler.h	2008-10-23 19:44:36.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/config/compiler.h	2010-11-10 17:33:19.644239300 +0100
 @@ -202,7 +202,8 @@
  		 // long double's are not working (reported by Mark Ashworth on Solaris 64)
  		 //   typedef long double float_t;    /* `float' expressions are evaluated as `long double'.  */
@@ -713,8 +738,8 @@ diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/compiler.h clucene-core-0
  		#endif
  
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/define_std.h clucene-core-0.9.21b/src/CLucene/config/define_std.h
---- clucene-core-0.9.21b.orig/src/CLucene/config/define_std.h
-+++ clucene-core-0.9.21b/src/CLucene/config/define_std.h
+--- clucene-core-0.9.21b.orig/src/CLucene/config/define_std.h	2008-10-23 19:44:36.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/config/define_std.h	2010-11-10 17:33:19.647239500 +0100
 @@ -11,8 +11,12 @@
  //Of course it is preferable to use the autoconf generated
  //list, but then not all systems can do this :)
@@ -728,37 +753,46 @@ diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/define_std.h clucene-core
  
  //support namespaces
  #define _CL_HAVE_NAMESPACES
+diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/repl_tchar.cpp clucene-core-0.9.21b/src/CLucene/config/repl_tchar.cpp
+--- clucene-core-0.9.21b.orig/src/CLucene/config/repl_tchar.cpp	1970-01-01 01:00:00.000000000 +0100
++++ clucene-core-0.9.21b/src/CLucene/config/repl_tchar.cpp	2010-11-11 11:21:14.290235100 +0100
+@@ -0,0 +1,14 @@
++#include <repl_tchar.h>
++#include <QString>
++
++TCHAR* i64tot(__int64 value, TCHAR* str, int radix)
++{
++  _tcscpy(str, (TCHAR *) QString::number(value, radix).utf16());
++  return str;
++}
++
++__int64 tcstoi64(const TCHAR *nptr, TCHAR **endptr, int base)
++{
++  bool ok;
++  return QString::fromUtf16((ushort*) nptr).toInt(&ok, base);
++}
+\ No newline at end of file
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/repl_tchar.h clucene-core-0.9.21b/src/CLucene/config/repl_tchar.h
---- clucene-core-0.9.21b.orig/src/CLucene/config/repl_tchar.h
-+++ clucene-core-0.9.21b/src/CLucene/config/repl_tchar.h
-@@ -90,6 +90,24 @@
+--- clucene-core-0.9.21b.orig/src/CLucene/config/repl_tchar.h	2008-10-23 19:44:36.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/config/repl_tchar.h	2010-11-11 11:21:47.211118100 +0100
+@@ -90,6 +90,14 @@
  #else //HAVE_TCHAR_H
   #include <tchar.h>
   
 +  #ifdef _WIN32_WCE
-+  #include <QString>
 +  #define _i64tot i64tot
-+  inline TCHAR* i64tot(__int64 value, TCHAR* str, int radix)
-+  {
-+    _tcscpy(str, (TCHAR *) QString::number(value, radix).utf16());
-+    return str;
-+  }
++  TCHAR* i64tot(__int64 value, TCHAR* str, int radix);
 +
 +  #define _tcstoi64 tcstoi64
-+  inline __int64 tcstoi64(const TCHAR *nptr, TCHAR **endptr, int base)
-+  {
-+    bool ok;
-+    return QString::fromUtf16((ushort*) nptr).toInt(&ok, base);
-+  }
-+
++  __int64 tcstoi64(const TCHAR *nptr, TCHAR **endptr, int base);
 +  #endif //_WIN32_WCE
 + 
   //some tchar headers miss these...
   #ifndef _tcstoi64
   	#if defined(_UCS2)
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/document/DateField.cpp clucene-core-0.9.21b/src/CLucene/document/DateField.cpp
---- clucene-core-0.9.21b.orig/src/CLucene/document/DateField.cpp
-+++ clucene-core-0.9.21b/src/CLucene/document/DateField.cpp
+--- clucene-core-0.9.21b.orig/src/CLucene/document/DateField.cpp	2008-10-23 19:44:37.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/document/DateField.cpp	2010-11-10 17:33:19.654239900 +0100
 @@ -11,6 +11,17 @@
  CL_NS_USE(util)
  CL_NS_DEF(document)
@@ -790,8 +824,8 @@ diff -Nru clucene-core-0.9.21b.orig/src/CLucene/document/DateField.cpp clucene-c
  	
  	CND_PRECONDITION (bufLen <= DATEFIELD_DATE_LEN, "timeToString length is greater than 9");
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/StdHeader.cpp clucene-core-0.9.21b/src/CLucene/StdHeader.cpp
---- clucene-core-0.9.21b.orig/src/CLucene/StdHeader.cpp
-+++ clucene-core-0.9.21b/src/CLucene/StdHeader.cpp
+--- clucene-core-0.9.21b.orig/src/CLucene/StdHeader.cpp	2008-10-23 19:44:37.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/StdHeader.cpp	2010-11-10 17:33:19.657240100 +0100
 @@ -15,8 +15,10 @@
  #if defined(_CLCOMPILER_MSVC) && defined(_DEBUG)
  	#define CRTDBG_MAP_ALLOC
@@ -804,8 +838,8 @@ diff -Nru clucene-core-0.9.21b.orig/src/CLucene/StdHeader.cpp clucene-core-0.9.2
  CL_NS_USE(util)
  
 diff -Nru clucene-core-0.9.21b.orig/src/CLucene/store/FSDirectory.cpp clucene-core-0.9.21b/src/CLucene/store/FSDirectory.cpp
---- clucene-core-0.9.21b.orig/src/CLucene/store/FSDirectory.cpp
-+++ clucene-core-0.9.21b/src/CLucene/store/FSDirectory.cpp
+--- clucene-core-0.9.21b.orig/src/CLucene/store/FSDirectory.cpp	2008-10-23 20:01:52.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/store/FSDirectory.cpp	2010-11-10 17:33:19.661240300 +0100
 @@ -10,7 +10,9 @@
  #include "CLucene/util/Misc.h"
  #include "CLucene/util/MD5Digester.h"
@@ -818,8 +852,8 @@ diff -Nru clucene-core-0.9.21b.orig/src/CLucene/store/FSDirectory.cpp clucene-co
  
  CL_NS_DEF(store)
 diff -Nru clucene-core-0.9.21b.orig/src/cmake/FindWcecompat.cmake clucene-core-0.9.21b/src/cmake/FindWcecompat.cmake
---- clucene-core-0.9.21b.orig/src/cmake/FindWcecompat.cmake
-+++ clucene-core-0.9.21b/src/cmake/FindWcecompat.cmake
+--- clucene-core-0.9.21b.orig/src/cmake/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ clucene-core-0.9.21b/src/cmake/FindWcecompat.cmake	2010-11-10 17:33:19.664240500 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -855,8 +889,8 @@ diff -Nru clucene-core-0.9.21b.orig/src/cmake/FindWcecompat.cmake clucene-core-0
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru clucene-core-0.9.21b.orig/src/CMakeLists.txt clucene-core-0.9.21b/src/CMakeLists.txt
---- clucene-core-0.9.21b.orig/src/CMakeLists.txt
-+++ clucene-core-0.9.21b/src/CMakeLists.txt
+--- clucene-core-0.9.21b.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ clucene-core-0.9.21b/src/CMakeLists.txt	2010-11-10 17:33:19.669240800 +0100
 @@ -0,0 +1,409 @@
 +project(CLucene)
 +cmake_minimum_required(VERSION 2.4)

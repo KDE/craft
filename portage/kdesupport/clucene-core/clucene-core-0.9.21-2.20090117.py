@@ -36,17 +36,18 @@ class Package(CMakePackageBase):
         if not CMakePackageBase.unpack( self ):
             return True
 
-        # we have an own cmake script - copy it to the right place
-        cmake_script = ""
-        if self.buildTarget == '0.9.16a':
-            cmake_script = os.path.join( self.packageDir() , "CMakeLists-0.9.16.txt" )
-        else:
-            cmake_script = os.path.join( self.packageDir() , "CMakeLists-0.9.20.txt" )
-        cmake_dest = os.path.join( self.sourceDir(), "CMakeLists.txt" )
-        utils.copyFile( cmake_script, cmake_dest )
-        cmake_script = os.path.join( self.packageDir() , "clucene-config.h.cmake" )
-        cmake_dest = os.path.join( self.sourceDir(), "Clucene", "clucene-config.h.cmake" )
-        utils.copyFile( cmake_script, cmake_dest )
+        if not emergePlatform.isCrossCompilingEnabled():
+            # we have an own cmake script - copy it to the right place
+            cmake_script = ""
+            if self.buildTarget == '0.9.16a':
+                cmake_script = os.path.join( self.packageDir() , "CMakeLists-0.9.16.txt" )
+            else:
+                cmake_script = os.path.join( self.packageDir() , "CMakeLists-0.9.20.txt" )
+            cmake_dest = os.path.join( self.sourceDir(), "CMakeLists.txt" )
+            utils.copyFile( cmake_script, cmake_dest )
+            cmake_script = os.path.join( self.packageDir() , "clucene-config.h.cmake" )
+            cmake_dest = os.path.join( self.sourceDir(), "Clucene", "clucene-config.h.cmake" )
+            utils.copyFile( cmake_script, cmake_dest )
 
         return True
     
