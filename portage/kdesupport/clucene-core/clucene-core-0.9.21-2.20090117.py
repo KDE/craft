@@ -21,7 +21,7 @@ class subinfo (info.infoclass):
  
     def setBuildOptions( self ):
         self.disableHostBuild = False
-        self.disableTargetBuild = True
+        self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
 
