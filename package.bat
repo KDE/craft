@@ -47,6 +47,14 @@ timeout /T 60
 goto :eof
 
 :path-mingw
+    if %EMERGE_ARCHITECTURE% == x64 ( 
+        set PATH=%KDEROOT%\mingw64\bin;!PATH!
+        goto :eof
+    ) 
+    if %EMERGE_ARCHITECTURE% == arm-wince ( 
+        set PATH=%KDEROOT%\cegcc-arm-wince\arm-mingw32ce\bin;%KDEROOT%\cegcc-arm-wince\libexec\gcc\arm-mingw32ce\4.4.0;!PATH!
+        goto :eof
+    ) 
     set PATH=%KDEROOT%\mingw\bin;!PATH!
     goto :eof
 
