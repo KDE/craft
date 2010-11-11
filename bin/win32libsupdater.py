@@ -10,9 +10,18 @@ import info;
 import subprocess;
 from string import Template;
 
-if len( sys.argv ) < 2:
+doPretend = False
+if "-p" in sys.argv:
+    doPretend = True
+    sys.argv.remove('-p')
+
+if len( sys.argv ) < 2 or not os.path.isfile( sys.argv[ 1 ] ):
     print "packageList as first argument required!"
+    print
+    print "%s [-p] packagelist" % sys.argv[ 0 ]
+    print "The option -p shows what"
     exit( 1 )
+
 
 # parse the package file
 packagefile = file( sys.argv[ 1 ] )
@@ -68,9 +77,10 @@ for packageKey in addInfo:
         if regenerateFile:
             template = Template( file( 'C:/kde/kde-msvc/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = binTargets.keys()
-            if 'svnHEAD' in binTargets and binTargets['svnHEAD'] == False:
+            if 'svnHEAD' in binTargets and binTargets[ 'svnHEAD' ] == False:
                 targetkeys.remove( 'svnHEAD' )
-            targetkeys.append( buildTarget )
+            if not buildTarget in targetkeys:
+                targetkeys.append( buildTarget )
             targetsString = "'" + "', '".join( targetkeys ) + "'"
             result = template.safe_substitute( { 'revision': '1', 
                                                  'package': binPackage, 
@@ -82,20 +92,21 @@ for packageKey in addInfo:
             currentName = portage.getFilename( binCategory, binPackage, binVersion )
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
         
-            if not currentName == newName:
-                cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
+            if not doPretend:
+                if not currentName == newName:
+                    cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
 
-                utils.debug( "running command: %s" % cmd )
-                p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
-                ret = p.wait()
+                    utils.debug( "running command: %s" % cmd )
+                    p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
+                    ret = p.wait()
+                    
+                    if not ret == 0:
+                        utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
+                        continue
                 
-                if not ret == 0:
-                    utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
-                    continue
-            
-            f = file( newName, 'w+b' )
-            f.write( result )
-            f.close()
+                f = file( newName, 'w+b' )
+                f.write( result )
+                f.close()
             
 
         # check that all targets from the source package are contained in the binTargets
@@ -105,7 +116,7 @@ for packageKey in addInfo:
 #            if not srcKey in binTargets:
 #                utils.warning( "key %s not contained in binary package %s" % ( srcKey, binPackage ) )
 #        utils.new_line()
-        utils.info( "working on package %s" % package )
-        utils.new_line()
+#        utils.info( "working on package %s" % package )
+#        utils.new_line()
     else:
         utils.warning( "no corresponding binary Package is available!" )
