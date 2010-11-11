@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.19'
     
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/win_iconv']   = 'default'
-        self.hardDependencies['win32libs-bin/gettext'] = 'default'
-        self.hardDependencies['win32libs-bin/expat']   = 'default'
-        self.hardDependencies['win32libs-bin/zlib']    = 'default'
-        self.hardDependencies['virtual/base']          = 'default'
+        self.dependencies['win32libs-bin/win_iconv']    = 'default'
+        self.dependencies['win32libs-bin/gettext']      = 'default'
+        self.dependencies['win32libs-bin/expat']        = 'default'
+        self.dependencies['win32libs-bin/zlib']         = 'default'
+        self.buildDependencies['virtual/base']          = 'default'
         
 from Package.CMakePackageBase import *
 

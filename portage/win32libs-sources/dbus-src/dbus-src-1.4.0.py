@@ -53,8 +53,8 @@ class subinfo(info.infoclass):
         self.options.package.version = '1.4.0-1'
         
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/expat-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/expat'] = 'default'
 
 from Package.CMakePackageBase import *
 

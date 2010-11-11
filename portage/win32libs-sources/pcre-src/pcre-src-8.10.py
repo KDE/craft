@@ -10,9 +10,9 @@ class subinfo(info.infoclass):
           self.patchToApply['8.10'] = ("pcre-8.02-20100518.diff", 1)
         self.defaultTarget = '8.10'
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/libbzip2-src'] = 'default'
-        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/libbzip2'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

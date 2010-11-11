@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.900.1-2'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/jpeg-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/jpeg'] = 'default'
 
 from Package.CMakePackageBase import *
 

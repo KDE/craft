@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
        self.defaultTarget = '7.20.0'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 
 from Package.CMakePackageBase import *

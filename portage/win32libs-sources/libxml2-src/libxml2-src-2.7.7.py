@@ -13,9 +13,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.7.7'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
-        self.hardDependencies['win32libs-sources/win_iconv-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
+        self.dependencies['win32libs-bin/win_iconv'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

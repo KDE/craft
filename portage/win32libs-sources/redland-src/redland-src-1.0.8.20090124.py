@@ -13,15 +13,15 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        self.hardDependencies['win32libs-sources/libcurl-src'] = 'default'
-        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
-        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
-        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
-        self.hardDependencies['win32libs-sources/pcre-src'] = 'default'
-        self.hardDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['win32libs-bin/libcurl'] = 'default'
+        self.dependencies['win32libs-bin/libxml2'] = 'default'
+        self.dependencies['win32libs-bin/libxslt'] = 'default'
+        self.dependencies['win32libs-bin/openssl'] = 'default'
+        self.dependencies['win32libs-bin/pcre'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         if emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+            self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

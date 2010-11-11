@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.1.26'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/libxml2'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
