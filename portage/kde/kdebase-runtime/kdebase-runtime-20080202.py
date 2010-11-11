@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
-        if compiler.isMinGW_WXX() and not compiler.isMSVC():
+        if compiler.isMinGW_WXX():
             self.hardDependencies['win32libs-sources/libbfd-src'] = 'default'
 
     def setBuildOptions( self ):
