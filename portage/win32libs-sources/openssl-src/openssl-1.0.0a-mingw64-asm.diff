@@ -1,0 +1,14 @@
+diff -Nru openssl-1.0.0a.orig/crypto/sha/Makefile openssl-1.0.0a/crypto/sha/Makefile
+--- openssl-1.0.0a.orig/crypto/sha/Makefile	2008-11-12 09:19:03.000000000 +0100
++++ openssl-1.0.0a/crypto/sha/Makefile	2010-11-11 21:59:19.757999934 +0100
+@@ -61,8 +61,8 @@
+ 
+ # Solaris make has to be explicitly told
+ sha1-x86_64.s:	asm/sha1-x86_64.pl;	$(PERL) asm/sha1-x86_64.pl $(PERLASM_SCHEME) > $@
+-sha256-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
+-sha512-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
++sha256-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) > $@
++sha512-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) > $@
+ sha1-sparcv9.s:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
+ sha256-sparcv9.s:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+ sha512-sparcv9.s:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
