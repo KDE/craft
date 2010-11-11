@@ -56,6 +56,7 @@ share\\locale\\de\\LC_MESSAGES\\kres_remote\.mo
 share\\locale\\de\\LC_MESSAGES\\ktexteditorkabcbridge_plugin\.mo
 share\\locale\\de\\LC_MESSAGES\\ktimetracker\.mo
 share\\locale\\de\\LC_MESSAGES\\kwatchgnupg\.mo
+share\\locale\\de\\LC_MESSAGES\\libakonadi-kmime\.mo
 share\\locale\\de\\LC_MESSAGES\\libeventviews\.mo
 share\\locale\\de\\LC_MESSAGES\\libincidenceeditors\.mo
 share\\locale\\de\\LC_MESSAGES\\libkdepimmobileui\.mo
@@ -63,7 +64,7 @@ share\\locale\\de\\LC_MESSAGES\\libkdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\libkleopatra\.mo
 share\\locale\\de\\LC_MESSAGES\\libkpgp\.mo
 share\\locale\\de\\LC_MESSAGES\\libksieve\.mo
-share\\locale\\de\\LC_MESSAGES\\libmessagecommoser\.mo
+share\\locale\\de\\LC_MESSAGES\\libmessagecomposer\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagecore\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagelist\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessageviewer\.mo
