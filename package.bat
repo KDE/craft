@@ -43,7 +43,7 @@ rem     packagename,target,patchlevel
 rem # at the beginning of a line is a comment
 rem if the default target or patchlevel should be used, keep the space empty but keep the commata
 python %~dp0\server\package.py %1
-timeout /T 300
+timeout /T 60
 goto :eof
 
 :path-mingw
