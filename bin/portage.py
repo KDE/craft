@@ -62,39 +62,7 @@ class DependencyPackage:
         return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name, self.version ) ]
 
     def __readChildren( self ):
-        identFileName = getFilename( self.category, self.name, self.version )
-        if not os.path.isfile( identFileName ):
-            utils.die( "package name %s/%s-%s unknown" % ( self.category, self.name, self.version ) )
-        
-        # if we are an emerge internal package and already in the dictionary, ignore childrens 
-        # To avoid possible endless recursion this may be also make sense for all packages  
-        if self.category == internalCategory and identFileName in modDict.keys():
-            return
-        utils.debug( "solving package %s/%s-%s %s" % ( self.category, self.name, self.version, identFileName ), 2 )
-        if not identFileName in modDict.keys():
-            mod = __import__( identFileName )
-            modDict[ identFileName ] = mod
-        else:
-            mod = modDict[ identFileName ]
-
-        if os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
-            _package = mod.Package()
-            subinfo = _package.subinfo
-        elif hasattr( mod, 'subinfo' ):
-            subinfo = mod.subinfo()
-        else:
-            subinfo = None
-        
-        runtimeDependencies = subinfo.runtimeDependencies
-        buildDependencies = subinfo.buildDependencies
-
-        # hardDependencies
-        commonDependencies = subinfo.hardDependencies
-        commonDependencies.update( subinfo.dependencies )
-        for key in commonDependencies:
-            runtimeDependencies[ key ] = commonDependencies[ key ]
-            buildDependencies[ key ] = commonDependencies[ key ]
-            
+        runtimeDependencies, buildDependencies = readChildren( self.category, self.name, self.version )
         self.runtimeChildren = self.__readDependenciesForChildren( runtimeDependencies.keys() )
         self.buildChildren = self.__readDependenciesForChildren( buildDependencies.keys() )
 
@@ -518,6 +486,42 @@ def printTargets( category, package, version ):
         else:
             print ' ',
         print i
+
+def readChildren( category, package, version ):
+    identFileName = getFilename( category, package, version )
+    if not os.path.isfile( identFileName ):
+        utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
+    
+    # if we are an emerge internal package and already in the dictionary, ignore childrens 
+    # To avoid possible endless recursion this may be also make sense for all packages  
+    if category == internalCategory and identFileName in modDict.keys():
+        return
+    utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, identFileName ), 2 )
+    if not identFileName in modDict.keys():
+        mod = __import__( identFileName )
+        modDict[ identFileName ] = mod
+    else:
+        mod = modDict[ identFileName ]
+
+    if os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
+        _package = mod.Package()
+        subinfo = _package.subinfo
+    elif hasattr( mod, 'subinfo' ):
+        subinfo = mod.subinfo()
+    else:
+        subinfo = None
+    
+    runtimeDependencies = subinfo.runtimeDependencies
+    buildDependencies = subinfo.buildDependencies
+
+    # hardDependencies
+    commonDependencies = subinfo.hardDependencies
+    commonDependencies.update( subinfo.dependencies )
+    for key in commonDependencies:
+        runtimeDependencies[ key ] = commonDependencies[ key ]
+        buildDependencies[ key ] = commonDependencies[ key ]
+    
+    return ( runtimeDependencies, buildDependencies )
 
 def isHostBuildEnabled( category, package, version ):
     """ returns whether this package's host build is enabled. This will only work if 
