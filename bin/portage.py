@@ -495,7 +495,7 @@ def readChildren( category, package, version ):
     # if we are an emerge internal package and already in the dictionary, ignore childrens 
     # To avoid possible endless recursion this may be also make sense for all packages  
     if category == internalCategory and identFileName in modDict.keys():
-        return
+        return ( dict(), dict() )
     utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, identFileName ), 2 )
     if not identFileName in modDict.keys():
         mod = __import__( identFileName )
