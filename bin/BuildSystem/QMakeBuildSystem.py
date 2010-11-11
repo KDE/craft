@@ -45,7 +45,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # 4. otherwise run qmake without any pro file given 
         configTool = os.path.join(self.sourceDir(),"configure.exe")
         qmakeTool = os.path.join(self.mergeDestinationDir(),"bin","qmake.exe")
-        topLevelProFile = os.path.join(self.sourceDir(),self.package + ".pro")
+        topLevelProFile = self.sourceDir()
         if configureTool != None:
             command = "%s %s" % (configureTool, self.configureOptions(configureDefines))
         elif os.path.exists(configTool):
