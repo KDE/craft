@@ -279,7 +279,7 @@ if exist %KDEROOT%\emerge\python (
 )
 
 if NOT %PYTHONPATH% == "" ( 
-    set PATH=%PYTHONPATH%;%PATH%
+    set PATH=%PYTHONPATH%;!PATH!
 )
 
 echo kdesettings.bat executed
