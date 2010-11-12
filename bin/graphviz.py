@@ -9,8 +9,10 @@ import utils
 from _winreg import *
 
 class GraphViz:
-    def __init__(self,parent):
-        self.parent = parent
+    def __init__( self, parent=None ):
+        self.parent = self
+        if parent:
+            self.parent = parent
         self.output = False
         if not self.isInstalled():
             utils.system("emerge.bat graphviz");
@@ -28,6 +30,12 @@ class GraphViz:
         [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
         return True
     
+    def system( command, errorMessage ):
+        if utils.system( command ):
+            return True
+        else:
+            utils.die( "while running %s cmd: %s" % ( errorMessage , str( command ) ) )
+
     def runDot(self, inFile, outFile, dotFormat="pdf"):
         dotExecutable= os.path.join(self.graphVizInstallPath,'bin','dot.exe')
         self.outFile = outFile
