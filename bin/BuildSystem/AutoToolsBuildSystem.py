@@ -7,6 +7,7 @@ import utils
 import base
 import info
 import compilercache
+import compiler
 from shells import *
 
 from BuildSystemBase import *
@@ -14,7 +15,7 @@ from BuildSystemBase import *
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):        
         self.buildInSource = False
-        BuildSystemBase.__init__(self,"autotools","AutoToolsBuildSystem")
+        BuildSystemBase.__init__(self, "autotools", "AutoToolsBuildSystem")
         self.shell = MSysShell()
         self.makeProgram = "make"    
         #unset make to remove things like jom
@@ -44,11 +45,12 @@ class AutoToolsBuildSystem(BuildSystemBase):
             sourcedir = self.sourceDir()
         else: 
             sourcedir = self.buildDir()
-            
-        if self.buildType() == "RelWithDebInfo": 
-            cflags += " -O2 -g "
-        elif self.buildType() == "Debug":
-            cflags += " -O0 -g3 "
+        
+        if compiler.isMinGW():
+            if self.buildType() == "RelWithDebInfo": 
+                cflags += " -O2 -g "
+            elif self.buildType() == "Debug":
+                cflags += " -O0 -g3 "
         
         configure = os.path.join(sourcedir,"configure")
         if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
@@ -57,6 +59,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
             utils.putenv("CFLAGS",_cflags)
             utils.putenv("LDFLAGS",_ldflags)
+            if compiler.isMSVC():
+                utils.putenv("LD", "link.exe")
             if self.subinfo.options.configure.bootstrap == True:
               autogen = os.path.join(sourcedir,"autogen.sh")
               if os.path.exists(autogen):
