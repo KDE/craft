@@ -24,6 +24,9 @@ class FileSource(SourceBase):
             for uri in self.subinfo.target().split():
                 filenames.append( os.path.basename( uri ) )
         return filenames
+        
+    def localFileNames(self):
+        return self.localFileNamesBase()
 
     def localFileNames(self):
         return self.localFileNamesBase()
