@@ -24,7 +24,7 @@ class KDEWinPackager (PackagerBase):
             utils.debug("using kdewin packager from %s" % self.packager,2)
         if self.packager:
             tmp = tempfile.TemporaryFile()
-            subprocess.Popen(self.packager, shell=True, stdout=tmp)
+            subprocess.Popen(self.packager, shell=True, stdout=tmp, stderr=tmp)
             tmp.seek( 0 )
             for line in tmp:
                 if "symroot" in line:
