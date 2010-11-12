@@ -9,6 +9,7 @@
 import datetime
 import os
 import utils
+import compiler
 from options import *
 
 class infoclass:
@@ -104,6 +105,8 @@ class infoclass:
         arch=""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch="-x64"
+        if compiler.isMinGW_W32():
+            arch="-x86"
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
@@ -126,6 +129,7 @@ version=<value from version parameter>
 compiler='vc90'|'mingw4'
 packagetype=<keys from packagestypes parameter>
 architecture=<empty for x86>|'-x64'
+exception: the mingw-w32 compiler uses x86-mingw4 to not collide with the mingw.org compiler
 
 example: 
     # for x86 
@@ -141,6 +145,8 @@ example:
         arch=""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch="-x64"
+        if compiler.isMinGW_W32():
+            arch="-x86"
         compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compiler = "mingw"
