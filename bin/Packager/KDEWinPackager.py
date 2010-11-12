@@ -4,6 +4,7 @@
 # Packager base
 
 from Packager.PackagerBase import *
+import compiler
 
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
@@ -45,8 +46,8 @@ class KDEWinPackager (PackagerBase):
 
         if self.buildArchitecture() == "x64": 
             pkgName += "-x64"
-        #else:
-        #    pkgName += "-x86"
+        elif compiler.isMinGW_W32():
+            pkgName += "-x86"
             
         # kdewin packager creates his own manifest files, so there is no need to add 
         # if self.subinfo.options.package.withDigests:
