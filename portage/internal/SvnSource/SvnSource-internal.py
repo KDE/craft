@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/subversion'] = 'default'     
-        self.hardDependencies['dev-util/putty'] = 'default'     
+        self.buildDependencies['dev-util/subversion'] = 'default'     
+        self.buildDependencies['dev-util/putty'] = 'default'     
 
 from Package.InternalPackageBase import * 
 

@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'     
+        self.buildDependencies['dev-util/cmake'] = 'default'     
 
 from Package.InternalPackageBase import * 
 

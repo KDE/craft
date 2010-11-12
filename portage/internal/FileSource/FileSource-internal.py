@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.hardDependencies['gnuwin32/wget'] = 'default'     
+        self.buildDependencies['gnuwin32/wget'] = 'default'     
 
 from Package.InternalPackageBase import * 
 

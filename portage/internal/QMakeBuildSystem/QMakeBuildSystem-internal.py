@@ -6,20 +6,20 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         utils.debug("emergebuildsystem:subinfo.setDependencies not implemented yet",1)
         # we need at least qmake 
-        #self.hardDependencies['libs/qt'] = 'default'     
+        #self.dependencies['libs/qt'] = 'default'     
         if compiler.isMSVC() and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
-            self.hardDependencies['dev-util/jom'] = 'default'
+            self.buildDependencies['dev-util/jom'] = 'default'
 
         if compiler.isMinGW():
             if compiler.isMinGW_W64():
-                self.hardDependencies['dev-util/mingw-w64']    = 'default'
+                self.buildDependencies['dev-util/mingw-w64']    = 'default'
             elif compiler.isMinGW_ARM():
-                self.hardDependencies['dev-util/cegcc-arm-wince'] = 'default'
+                self.buildDependencies['dev-util/cegcc-arm-wince'] = 'default'
             else:
                 if compiler.isMinGW32():
-                    self.hardDependencies['dev-util/mingw4']    = 'default'
+                    self.buildDependencies['dev-util/mingw4']    = 'default'
                 else:
-                    self.hardDependencies['dev-util/mingw-w32']    = 'default'
+                    self.buildDependencies['dev-util/mingw-w32']    = 'default'
 
 from Package.InternalPackageBase import * 
 

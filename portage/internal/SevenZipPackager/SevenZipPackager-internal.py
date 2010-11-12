@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/7zip'] = 'default'     
+        self.buildDependencies['dev-util/7zip'] = 'default'     
 
 from Package.InternalPackageBase import * 
 

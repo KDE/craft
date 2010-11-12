@@ -2,9 +2,9 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/msys'] = 'default'     
-        self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['dev-util/autotools'] = 'default'        
+        self.buildDependencies['dev-util/msys'] = 'default'     
+        self.buildDependencies['dev-util/perl'] = 'default'
+        self.buildDependencies['dev-util/autotools'] = 'default'        
 
 from Package.InternalPackageBase import * 
 
