@@ -43,7 +43,7 @@ class Package(CMakePackageBase):
         else:
             self.subinfo.options.configure.defines += "msvc"
         if self.isHostBuild():
-            self.subinfo.options.configure.defines += " --with-program_options"
+            self.subinfo.options.configure.defines += " --with-program_options --with-serialization"
         if not emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += " --with-python"
 
