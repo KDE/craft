@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-        self.dependencies['win32libs-sources/win_iconv-src'] = 'default'
+        self.dependencies['win32libs-bin/win_iconv'] = 'default'
 
 
 from Package.CMakePackageBase import *
