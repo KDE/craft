@@ -55,7 +55,7 @@ class EmergeBase():
         if className and os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             packageName = 'internal/%s' % className
             if not packageName in self.subinfo.hardDependencies:
-                self.subinfo.hardDependencies[packageName] = 'default'
+                self.subinfo.buildDependencies[packageName] = 'default'
 
         if hasattr(self,'alreadyCalled'):
             return
