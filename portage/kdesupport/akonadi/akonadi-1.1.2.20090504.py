@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/automoc'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
-        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
+        self.hardDependencies['win32libs-bin/boost']   = 'default'
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         
