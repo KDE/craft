@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '0.9.8k-3', '1.0.0', '0.9.8j-1' ]:
+        for version in [ '0.9.8k-3', '0.9.8j-1', '1.0.0' ]:
             self.targets[ version ]          = self.getPackage( repoUrl, 'openssl', version )
             self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'openssl', version , '.tar.bz2.sha1' )
 
@@ -21,8 +21,6 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'dev-util/perl' ] = 'default'
-        self.runtimeDependencies[ 'virtual/base' ] = 'default'
 
 
     def setBuildOptions( self ):
