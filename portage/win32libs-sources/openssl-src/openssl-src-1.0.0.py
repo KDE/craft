@@ -24,13 +24,13 @@ class subinfo(info.infoclass):
             self.patchToApply['1.0.0a'] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
 
     def setDependencies( self ):
-            self.hardDependencies['virtual/base'] = 'default'
-            self.hardDependencies['dev-util/perl'] = 'default'
+            self.buildDependencies['virtual/base'] = 'default'
+            self.buildDependencies['dev-util/perl'] = 'default'
             if emergePlatform.isCrossCompilingEnabled():
-                self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+                self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
             if compiler.isMinGW():
-                self.hardDependencies['dev-util/msys'] = 'default'
-                self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+                self.buildDependencies['dev-util/msys'] = 'default'
+                self.dependencies['win32libs-bin/zlib'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
