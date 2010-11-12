@@ -152,6 +152,12 @@ class MainPackage(CMakePackageBase):
         utils.copyFile(pinentry, os.path.join(self.workDir(), "bin",
                 "pinentry.exe"))
 
+        #The Kolab icon is in hicolor but we only package oxygen for CE
+        kolabicon = os.path.join(wm_root, "share", "icons", "hicolor",
+                                 "64x64", "apps", "kolab.png")
+        utils.copyFile(kolabicon, os.path.join(self.workDir(), "share",
+                       "icons", "oxygen", "64x64", "apps", "kolab.png"))
+
         # Drivers need to be installed in the root direcotry
         gpgcedev = os.path.join(wm_root, "bin", "gpgcedev.dll")
         os.mkdir(os.path.join(self.workDir(), "Windows"))

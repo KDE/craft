@@ -813,9 +813,6 @@ share\\soprano\\plugins\\redlandbackend\.desktop
 share\\soprano\\rules\\nrl\.rules
 share\\soprano\\rules\\rdfs\.rules
 
-# Hicolor kolab
-share\\icons\\hicolor\\64x64\\apps\\kolab\.png
-
 # Qxygen Icon theme
 share\\icons\\oxygen\\index\.theme
 
@@ -991,6 +988,7 @@ share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\news-subscribe\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\news-unsubscribe\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\object-locked\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\office-address-book\.png
+share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\office-calendar\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\preferences-desktop\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\preferences-desktop-notification\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\preferences-desktop-notification-bell\.png
