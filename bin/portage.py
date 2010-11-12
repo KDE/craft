@@ -58,6 +58,12 @@ class DependencyPackage:
         self.buildChildren = []
         self.__readChildren()
 
+    def __eq__( self, other ):
+        return self.category == other.category and self.name == other.name and self.version == other.version
+
+    def __ne__( self, other ):
+        return self.category <> other.category or self.name <> other.name or self.version <> other.version
+
     def ident( self ):
         return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name, self.version ) ]
 
@@ -105,7 +111,8 @@ class DependencyPackage:
                 p.getDependencies( depList, type )
 
         #if self.category <> internalCategory:
-        depList.append( self )
+        if not self in depList:
+            depList.append( self )
 
         return depList
 
