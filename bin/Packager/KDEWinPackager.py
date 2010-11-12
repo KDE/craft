@@ -5,6 +5,8 @@
 
 from Packager.PackagerBase import *
 import compiler
+import subprocess
+import tempfile
 
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
@@ -12,6 +14,7 @@ class KDEWinPackager (PackagerBase):
         PackagerBase.__init__(self,"KDEWinPackager")
         fileName = "bin\\kdewin-packager.exe"
         self.packager = None
+        self.useDebugPackages = False
         for dir in [".","dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, dir, fileName )
             if os.path.exists(path):
@@ -19,6 +22,15 @@ class KDEWinPackager (PackagerBase):
                 break
         if not self.packager == None:
             utils.debug("using kdewin packager from %s" % self.packager,2)
+        if self.packager:
+            tmp = tempfile.TemporaryFile()
+            subprocess.Popen(self.packager, shell=True, stdout=tmp)
+            tmp.seek( 0 )
+            for line in tmp:
+                if "symroot" in line:
+                    self.useDebugPackages = True
+                    break
+
             
     def xmlTemplate(self):
         template = os.path.join(self.packageDir(),self.package+"-package.xml")
@@ -80,42 +92,43 @@ class KDEWinPackager (PackagerBase):
         # plus, different build types copy files to different directories (could be buildDir(), buildDir()/bin, buildDir()/bin/Debug...),
         # so let's copy them to one precise location, package them, then delete that dir
         
-        # directories to ignore: cmake temporary files, and dbg so it won't try to copy a file to itself
-        dirsToIgnore = [ 'cmake', 'CMakeFiles', 'CMakeTmp', 'CMakeTmp2', 'CMakeTmp3', 'dbg' ]
-        path = self.buildDir()
-        # where to copy the debugging information files
-        symPath = os.path.join( self.buildDir(), "dbg" )
-        if not os.path.exists( symPath ):
-            utils.createDir( symPath )
-        # shouldn't be needed, usually; but if files are present, that could lead to errors
-        utils.cleanDirectory ( symPath )
-        
-        utils.debug( "Copying debugging files to 'dbg'..." )
-        for ( path, dirs, files ) in os.walk( path ):
-            found = 0
-            for dir in range( 0, len( dirsToIgnore ) ):
-                if path.find( dirsToIgnore[dir] ) > 0:
-                    found = 1;
-                    break;
-            if found == 1:
-                continue;
-            utils.debug( "Checking: %s" % path, 3 )
-            for file in files:
-                if ( file.endswith( ".exe" ) or file.endswith( ".dll" ) ):
-                    if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
-                        symFilename = file[:-4] + ".sym"
-                        utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, file ) )
-                        # utils.system( "strip --strip-all " + os.path.join( path, file ) )
-                        utils.copyFile( os.path.join(path, symFilename) , os.path.join( symPath, symFilename ) )
-                elif ( file.endswith( ".pdb" ) ):
-                    utils.copyFile( os.path.join( path, file ), os.path.join( symPath, file ) )
-        
         symCmd = ""
-        if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
-            symCmd += "-strip "
-        symCmd += "-debug-package "
-        symCmd += "-symroot " + symPath
-        utils.debug ( symCmd, 2 )
+        if self.useDebugPackages:
+            # directories to ignore: cmake temporary files, and dbg so it won't try to copy a file to itself
+            dirsToIgnore = [ 'cmake', 'CMakeFiles', 'CMakeTmp', 'CMakeTmp2', 'CMakeTmp3', 'dbg' ]
+            path = self.buildDir()
+            # where to copy the debugging information files
+            symPath = os.path.join( self.buildDir(), "dbg" )
+            if not os.path.exists( symPath ):
+                utils.createDir( symPath )
+            # shouldn't be needed, usually; but if files are present, that could lead to errors
+            utils.cleanDirectory ( symPath )
+            
+            utils.debug( "Copying debugging files to 'dbg'..." )
+            for ( path, dirs, files ) in os.walk( path ):
+                found = 0
+                for dir in range( 0, len( dirsToIgnore ) ):
+                    if path.find( dirsToIgnore[dir] ) > 0:
+                        found = 1;
+                        break;
+                if found == 1:
+                    continue;
+                utils.debug( "Checking: %s" % path, 3 )
+                for file in files:
+                    if ( file.endswith( ".exe" ) or file.endswith( ".dll" ) ):
+                        if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
+                            symFilename = file[:-4] + ".sym"
+                            utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, file ) )
+                            # utils.system( "strip --strip-all " + os.path.join( path, file ) )
+                            utils.copyFile( os.path.join(path, symFilename) , os.path.join( symPath, symFilename ) )
+                    elif ( file.endswith( ".pdb" ) ):
+                        utils.copyFile( os.path.join( path, file ), os.path.join( symPath, file ) )
+            
+            if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
+                symCmd += "-strip "
+            symCmd += "-debug-package "
+            symCmd += "-symroot " + symPath
+            utils.debug ( symCmd, 2 )
         
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
                   ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd, symCmd )
@@ -147,5 +160,6 @@ class KDEWinPackager (PackagerBase):
 
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
         
-        utils.rmtree( symPath )
+        if self.useDebugPackages:
+            utils.rmtree( symPath )
         return True
