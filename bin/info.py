@@ -107,18 +107,18 @@ class infoclass:
             arch="-x64"
         if compiler.isMinGW_W32():
             arch="-x86"
-        compiler = "msvc"
+        _compiler = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
+            compilerName = "mingw"
         elif os.getenv("KDECOMPILER") == "mingw4":
-            compiler = "mingw4"
+            compilerName = "mingw4"
         elif os.getenv("KDECOMPILER") == "msvc2008":
-            compiler = "vc90"
+            compilerName = "vc90"
         elif os.getenv("KDECOMPILER") == "msvc2010":
-            compiler = "vc100"
+            compilerName = "vc100"
         ret=''
         for type in packagetypes:
-            ret += repoUrl + '/' + name + arch + '-' + compiler + '-' + version + '-' + type + ext + '\n'
+            ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + type + ext + '\n'
         return ret
 
     def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
