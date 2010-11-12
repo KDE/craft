@@ -11,16 +11,18 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.18', '1.19' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'lcms', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'lcms', version , '.tar.bz2.sha1' )
+        for version in [ '20091008', '0.4.4', '20090812' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'libssh', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'libssh', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.19'
+        self.defaultTarget = '0.4.4'
 
 
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/zlib' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/openssl' ] = 'default'
 
 
     def setBuildOptions( self ):

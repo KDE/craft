@@ -11,13 +11,17 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '6.b-5', '7.0' ]:
-            self.targets[ version ] = self.getPackage( repoUrl, 'jpeg', version )
+        for version in [ '7.0', '6.b-5' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'jpeg', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'jpeg', version , '.tar.bz2.sha1' )
 
         self.defaultTarget = '7.0'
 
+
     def setDependencies( self ):
-        self.hardDependencies[ 'gnuwin32/wget' ] = 'default'
+        if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
+            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

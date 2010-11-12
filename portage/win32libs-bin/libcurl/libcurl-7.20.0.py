@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.18', '1.19' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'lcms', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'lcms', version , '.tar.bz2.sha1' )
+        for version in [ '7.20.0', '7.19.4', '7.19.6' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'libcurl', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'libcurl', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.19'
+        self.defaultTarget = '7.20.0'
 
 
     def setDependencies( self ):

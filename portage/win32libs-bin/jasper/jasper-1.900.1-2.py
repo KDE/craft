@@ -11,16 +11,17 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.18', '1.19' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'lcms', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'lcms', version , '.tar.bz2.sha1' )
+        for version in [ '1.900.1-2' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'jasper', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'jasper', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.19'
+        self.defaultTarget = '1.900.1-2'
 
 
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/jpeg' ] = 'default'
 
 
     def setBuildOptions( self ):

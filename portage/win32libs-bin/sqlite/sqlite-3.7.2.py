@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.18', '1.19' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'lcms', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'lcms', version , '.tar.bz2.sha1' )
+        for version in [ '3.6.2', '3.7.2' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'sqlite', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'sqlite', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.19'
+        self.defaultTarget = '3.7.2'
 
 
     def setDependencies( self ):

@@ -11,13 +11,18 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.2.35', '1.2.34', '1.4.4' ]:
-            self.targets[ version ] = self.getPackage( repoUrl, 'libpng', version )
+        for version in [ '1.2.35', '1.4.4', '1.2.34' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'libpng', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'libpng', version , '.tar.bz2.sha1' )
 
         self.defaultTarget = '1.4.4'
 
+
     def setDependencies( self ):
-        self.hardDependencies[ 'gnuwin32/wget' ] = 'default'
+        if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
+            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/zlib' ] = 'default'
+
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

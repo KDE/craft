@@ -11,13 +11,18 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.2.4-1', '1.4.0' ]:
-            self.targets[ version ] = self.getPackage( repoUrl, 'dbus', version )
+        for version in [ '1.4.0', '1.2.4-1' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'dbus', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'dbus', version , '.tar.bz2.sha1' )
 
         self.defaultTarget = '1.4.0'
 
+
     def setDependencies( self ):
-        self.hardDependencies[ 'gnuwin32/wget' ] = 'default'
+        if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
+            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/expat' ] = 'default'
+
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

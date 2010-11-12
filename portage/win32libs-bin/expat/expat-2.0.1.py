@@ -1,21 +1,27 @@
+# This package-script is automatically updated by the script win32libsupdater.py
+# which can be found in your emerge/bin folder. To update this package, run
+# win32libsupdater.py (and commit the results)
+# based on revision 1
+
 from Package.BinaryPackageBase import *
 import os
 import info
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
-        repoUrl = """http://downloads.sourceforge.net/kde-windows"""
+        repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in ['2.0.1']:
-            self.targets[ version ] = repoUrl + """/expat-""" + version + """-bin.zip
-                                """ + repoUrl + """/expat-""" + version + """-lib.zip"""
+        for version in [ '2.0.1' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'expat', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'expat', version , '.tar.bz2.sha1' )
 
-        self.targetDigests['2.0.1'] = ['6c3cb5e87480003b42f19a45f6da27202732f137',
-                                       '66799455180b0ddf66cd1da404948e5945b28139']            
         self.defaultTarget = '2.0.1'
 
+
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
+            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
