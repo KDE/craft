@@ -288,7 +288,7 @@ class PackageBase (EmergeBase):
             utils.die( "command %s failed" % command )
         return True
         
-    def dumpEmergeDependencies(self):
+    def dumpDependencies(self):
         """dump emerge package dependencies"""
         output = dependencies.dumpDependencies(self.package)
         outDir = self.buildDir()
