@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-sources/win_iconv-src' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/win_iconv' ] = 'default'
 
 
     def setBuildOptions( self ):
