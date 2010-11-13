@@ -6,6 +6,7 @@ import common
 import smtplib
 import urllib
 import urllib2
+import json
 
 class Notification:
     """ this class is the base class for notifications """
@@ -102,7 +103,7 @@ class DashboardNotification(Notification):
             else:
                 print values["logUrl"]
 
-class LogUploadNotification(Notification):
+class LogUploadNotification( Notification ):
     """ this uploads the logfile to a server - it is no real notification """
     def run( self, revision = None ):
         settings = common.settings.getSection( "LogUpload" )
@@ -113,14 +114,50 @@ class LogUploadNotification(Notification):
             if not self.dryRun:
                 upload.upload( self.logfile )
 
+class StatusNotification(Notification):
+    """ this writes the status of the package into a file """
+    def run( self, revision = None ):
+        settings = common.settings.getSection( "StatusNotes", common.settings.getSection( "General" ) )
+        if settings:
+            self.setShortLog()
+            values = dict()
+            values[ 'category' ] = self.category
+            values[ 'name' ] = self.packageName
+            values[ 'platform' ] = common.settings.getOption( "General", "platform" )
+            values[ 'date' ] = common.isodatetime
+            values[ 'failed' ] = "0"
+            if self.error:
+                values[ 'failed' ] = "1"
+            values[ 'revision' ] = revision
+            values[ 'log' ] = self.shortLog
+            if self.settings and self.settings[ "link-url" ]:
+                logurltext = self.settings[ "link-url" ] + "/" + os.path.basename( self.logfile )
+            else:
+                logurltext = ""
+            values[ 'logUrl' ] = logurltext
+            
+            filename = os.path.join( settings[ 'directory' ], self.category + "_" + self.packageName + ".json" )
+            if not self.dryRun:
+                if not os.path.exists( settings[ 'directory' ] ):
+                    os.makedirs( settings[ 'directory' ] )
+
+                jsondump = file( filename, "w+b" )
+                jsondump.write( json.dumps( values, sort_keys=True, indent=4 ) )
+                jsondump.close()
+            else:
+                print "writing to filename:", filename
+                print json.dumps( values, sort_keys=True, indent=4 )
+
 if __name__ == '__main__':
     email = EmailNotification( "kdesupport", "automoc", __file__ )
     email.dryRun = True
     email.run()
     dashboard = DashboardNotification( "kdesupport", "automoc", __file__ )
     dashboard.dryRun = True
-    dashboard.run(revision="1224")
+    dashboard.run( revision="1224" )
     logupload = LogUploadNotification( "kdesupport", "automoc", __file__ )
     logupload.dryRun = True
-    logupload.run(revision="1224")
-    
+    logupload.run( revision="1224" )
+    status = StatusNotification( "kdesupport", "automoc", __file__ )
+#    status.dryRun = True
+    status.run( revision="1224" )
