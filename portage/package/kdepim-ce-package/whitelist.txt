@@ -47,6 +47,7 @@ bin\\QtNetwork4\.dll
 bin\\QtScript4\.dll
 bin\\QtSql4\.dll
 bin\\QtXml4\.dll
+bin\\splashscreen\.dll
 bin\\sqlite3\.dll
 bin\\ssleay32\.dll
 bin\\tasks-mobile\.exe
