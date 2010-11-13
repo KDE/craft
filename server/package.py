@@ -66,10 +66,15 @@ class package:
         log.close()
         self.notifications = { 'email': EmailNotification( self.category, self.packageName, self.logfile ),
                                'dashboard': DashboardNotification( self.category, self.packageName, self.logfile ),
-                               'logupload': LogUploadNotification( self.category, self.packageName, self.logfile ) }
+                               'logupload': LogUploadNotification( self.category, self.packageName, self.logfile ),
+                               'statusnotes': StatusNotification( self.category, self.packageName, self.logfile ) }
 
-        self.enabled = True
+
+        self.enabled = common.settings.getSectionEnabled( "Build" )
         self.buildTimeOnly = False
+
+    def __str__( self ):
+        return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
     
     def timestamp( self ):
         datetime.now().strftime("%m/%d/%Y %H:%M")
