@@ -1,0 +1,65 @@
+From 8a2990ff0bbacf358d2417ff6ff11dab026065f2 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andreas.holzammer@kdab.com>
+Date: Sat, 13 Nov 2010 19:56:30 +0100
+Subject: [PATCH] - show only softkeyboard hint and make it standard for wince
+
+---
+ src/gui/kernel/qapplication.cpp        |    4 +---
+ src/gui/kernel/qguifunctions_wince.cpp |   27 ++++++++++++++++-----------
+ 2 files changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/src/gui/kernel/qapplication.cpp b/src/gui/kernel/qapplication.cpp
+index 3323fbc..62d8def 100644
+--- a/src/gui/kernel/qapplication.cpp
++++ b/src/gui/kernel/qapplication.cpp
+@@ -164,10 +164,8 @@ bool QApplicationPrivate::quitOnLastWindowClosed = true;
+ 
+ #ifdef Q_WS_WINCE
+ int QApplicationPrivate::autoMaximizeThreshold = -1;
+-bool QApplicationPrivate::autoSipEnabled = false;
+-#else
+-bool QApplicationPrivate::autoSipEnabled = true;
+ #endif
++bool QApplicationPrivate::autoSipEnabled = true;
+ 
+ QApplicationPrivate::QApplicationPrivate(int &argc, char **argv, QApplication::Type type)
+     : QCoreApplicationPrivate(argc, argv)
+diff --git a/src/gui/kernel/qguifunctions_wince.cpp b/src/gui/kernel/qguifunctions_wince.cpp
+index 377dfe3..55f7765 100644
+--- a/src/gui/kernel/qguifunctions_wince.cpp
++++ b/src/gui/kernel/qguifunctions_wince.cpp
+@@ -393,15 +393,20 @@ void qt_wince_full_screen(HWND hwnd, bool fullScreen, UINT swpf) {
+ 
+ void qt_wince_show_SIP(bool show)
+ {
+-    resolveAygLibs();
+-    if (!ptrAygSHSipInfo)
+-        return;
+-
+-    AygSIPINFO si;
+-    memset(&si, 0, sizeof(si));
+-    si.cbSize = sizeof(si);
+-    ptrAygSHSipInfo(SPI_GETSIPINFO, 0, &si, 0);
+-    si.cbSize = sizeof(si);
+-    si.fdwFlags = (show ? SIPF_ON : SIPF_OFF);
+-    ptrAygSHSipInfo(SPI_SETSIPINFO, 0, &si, 0);
++		HWND hWnd = ::FindWindow( _T( "MS_SIPBUTTON" ), NULL );
++    if (hWnd != NULL) {
++        ::ShowWindow( hWnd, show ? SW_SHOW : SW_HIDE );
++    } else {
++        resolveAygLibs();
++        if (!ptrAygSHSipInfo)
++            return;
++
++        AygSIPINFO si;
++        memset(&si, 0, sizeof(si));
++        si.cbSize = sizeof(si);
++        ptrAygSHSipInfo(SPI_GETSIPINFO, 0, &si, 0);
++        si.cbSize = sizeof(si);
++        si.fdwFlags = (show ? SIPF_ON : SIPF_OFF);
++        ptrAygSHSipInfo(SPI_SETSIPINFO, 0, &si, 0);
++    }
+ }
+-- 
+1.7.0.2.msysgit.0
+
