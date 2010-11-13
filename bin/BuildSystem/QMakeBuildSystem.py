@@ -66,9 +66,6 @@ class QMakeBuildSystem(BuildSystemBase):
         command = self.makeProgramm 
         command += compilercache.getQmakeMakeArguments()
         
-        if utils.verbose() > 1:
-            command += " VERBOSE=1"
-            
         command += " %s" % self.makeOptions(options)
             
         return self.system( command, "make" )
