@@ -15,7 +15,7 @@ class subinfo (info.infoclass):
         if emergePlatform.isCrossCompilingEnabled():
             self.patchToApply['0.9.21b'] = ( "clucene-core-0.9.21b-20101110.diff", 2 )
         else:
-            self.patchToApply['0.9.21b'] = ( "0.9.21", 2 )
+            self.patchToApply['0.9.21b'] = ( "0.9.21.diff", 2 )
         self.targetDigests['0.9.21b'] = '8bc505b64f82723c2dc901036cb0607500870973'
         self.defaultTarget = '0.9.21b'
  
