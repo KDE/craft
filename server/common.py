@@ -8,49 +8,54 @@ import subprocess
 import time
 
 isodate = str( date.today() ).replace( '-', '' )
-isodatetime = datetime.now().strftime("%Y%m%d%H%M")
+isodatetime = datetime.now().strftime( "%Y%m%d%H%M" )
 
 class Settings:
     def __init__( self ):
         # this means emerge/server/../../etc/emergeserver.conf
-        self.configpath = os.path.normpath(os.path.join(os.path.dirname(sys.argv[0]), "..", "..", "etc", "emergeserver.conf"))
+        self.configpath = os.path.normpath( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "..", "..", "etc", "emergeserver.conf" ) )
         defaults = dict()
-        defaults["isodate"] = isodate
-        defaults["release"] = isodate
-        defaults["ftpclient"] = "psftp"
-        defaults["sshclient"] = "plink"
+        defaults[ "isodate" ] = isodate
+        defaults[ "release" ] = isodate
+        defaults[ "ftpclient" ] = "psftp"
+        defaults[ "sshclient" ] = "plink"
         self.parser = ConfigParser( defaults )
         self.sections = dict()
+        
+        self.enabled = False
         if os.path.exists( self.configpath ):
             self.parser.read( self.configpath )
-            if not self.parser.has_section('General'):
+            if not self.parser.has_section( 'General' ):
                 # enable all other sections
                 for sec in self.parser.sections():
-                    self.sections[sec] = True
+                    self.sections[ sec ] = True
             else:
                 for sec in self.parser.sections():
-                    if self.parser.has_option('General', 'enable-' + sec.lower()):
-                        try:
-                            self.sections[sec] = self.parser.getboolean('General', 'enable-' + sec.lower())
-                        except:
-                            self.sections[sec] = False
-                    else:
-                        self.sections[sec] = True
+                    self.sections[ sec ] = self.getSectionEnabled( sec )
             self.enabled = True
-        else:
-            self.enabled = False
             
     def getSection( self, section, additionalvars=None ):
-        if self.enabled and self.sections[section]:
-            return dict( self.parser.items(section, False, additionalvars) )
+        if self.enabled and self.sections[ section ]:
+            return dict( self.parser.items( section, False, additionalvars ) )
         else:
             return False
             
     def getOption( self, section, option, additionalvars=None ):
-        if self.enabled and self.sections[section]:
-            return self.parser.get(section, option, False, additionalvars )
+        if self.enabled and self.sections[ section ]:
+            return self.parser.get( section, option, False, additionalvars )
         else:
             return False
+            
+    def getSectionEnabled( self, section ):
+        keyname = "enable-" + section.lower()
+        if self.enabled and self.parser.has_option( 'General', keyname ):
+            try:
+                result = self.parser.getboolean( 'General', keyname )
+            except:
+                result = False
+            return result
+        else:
+            return True
 
 settings = Settings()
 
@@ -78,7 +83,7 @@ class Uploader:
         name = state+"-script"
         if name in self.settings:
             self.fstderr = file( 'NUL', 'wb+' )
-            cmdstring = self.settings["sshclient"] + " " + self.settings["server"]
+            cmdstring = self.settings[ "sshclient" ] + " " + self.settings[ "server" ]
             p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
             self.pstdin = p.stdin
             p.stdin.write( self.settings[ name ] + "\n" )
@@ -135,8 +140,8 @@ class SourceForgeUploader ( Uploader ):
         Uploader.__init__( self, category, logfile )
         self.category = category
         self.logfile = logfile
-        if packageName.endswith("-src"):
-            packageName = packageName[:-4]
+        if packageName.endswith( "-src" ):
+            packageName = packageName[ : -4 ]
         self.packageName = packageName
         self.packageVersion = packageVersion
         
