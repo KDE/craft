@@ -19,16 +19,16 @@ $SECTIONS
  
 [RegSettings]
 HKLM, Software\kde, KDEDIRS, 0, %CE1%/Kontact-Mobile
-HKLM, Software\Akonadi\Akonadi\AgentProviders, %CE1%/Kontact-Mobile, 0, %KDEInstallDir%
+HKLM, Software\Akonadi\Akonadi\AgentProviders, InstallDir, 0, %CE1%/Kontact-Mobile
 HKLM, Software\freedesktop\DBus, Install Directory, 0, %CE1%/Kontact-Mobile/bin
 HKLM, Drivers\GnuPG_Device, dll, 0, gpgcedev.dll
 HKLM, Drivers\GnuPG_Device, prefix, 0,  GPG
 HKLM, Drivers\GnuPG_Device, Index, 0x00010001, 1
-HKLM, Security\Shell\StartInfo\Start\Mail.lnk, Icon, 0, %KDEInstallDir%/share/icons/mail-90.png
-HKLM, Security\Shell\StartInfo\Start\Notes.lnk, Icon, 0, %KDEInstallDir%/share/icons/notes-90.png
-HKLM, Security\Shell\StartInfo\Start\Calendar.lnk, Icon, 0, %KDEInstallDir%/share/icons/organizer-90.png
-HKLM, Security\Shell\StartInfo\Start\Contacts.lnk, Icon, 0, %KDEInstallDir%/share/icons/contacts-90.png
-HKLM, Security\Shell\StartInfo\Start\Tasks.lnk, Icon, 0, %KDEInstallDir%/share/icons/tasks-90.png
+HKLM, Security\Shell\StartInfo\Start\Mail.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/mail-90.png
+HKLM, Security\Shell\StartInfo\Start\Notes.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/notes-90.png
+HKLM, Security\Shell\StartInfo\Start\Calendar.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/organizer-90.png
+HKLM, Security\Shell\StartInfo\Start\Contacts.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/contacts-90.png
+HKLM, Security\Shell\StartInfo\Start\Tasks.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/tasks-90.png
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
