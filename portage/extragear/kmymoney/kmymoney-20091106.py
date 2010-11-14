@@ -4,6 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/office/kmymoney'
         self.targets['4.5.1'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-4.5.1.tar.bz2'
+        self.targetInstSrc['4.5.1'] = 'kmymoney-4.5.1'
         self.targets['4.5.0'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-4.5.tar.bz2'
         self.targetInstSrc['4.5.0'] = 'kmymoney-4.5'
         self.targets['3.98.1'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-3.98.1.tar.bz2'
