@@ -52,6 +52,7 @@ import portage
 import sys
 import os
 import utils
+import graphviz
 from optparse import OptionParser
 
 OUTPUT_DOT = 0
@@ -193,7 +194,7 @@ class DependenciesTree(object):
         self.roots    = []
         self.key2node = {}
 
-    def addDependencies(self, category, package, version = ""):
+    def addDependencies(self, category, package, version = "", type="both"):
         """Add a new root dependency tree to this graph."""
 
         pi = portage.PortageInstance
@@ -218,12 +219,12 @@ class DependenciesTree(object):
         except:
             tag = "1"
 
-        node = self.buildDepNode(category, package, version, tag)
+        node = self.buildDepNode(category, package, version, tag, type)
 
         if not node in self.roots:
             self.roots.append(node)
 
-    def buildDepNode(self, category, package, version, tag):
+    def buildDepNode(self, category, package, version, tag, type="both"):
         """Recursive method to construct the nodes of the dependency tree."""
 
         pi = portage.PortageInstance
@@ -251,10 +252,9 @@ class DependenciesTree(object):
 
         children = []
 
-        for t in portage.getDependencies(category, package, version):
-            sub_node = self.buildDepNode(t[0], t[1], t[2], tag)
+        for t in portage.getDependencies(category, package, version, (type=="runtime")):
+            sub_node = self.buildDepNode(t[0], t[1], t[2], tag, type)
             children.append(sub_node)
-
         node = DependenciesNode(category, package, version, tag, children)
         for child in children:
             child.parents.append(node)
@@ -269,21 +269,45 @@ class DependenciesTree(object):
             root.visit(visitor, context)
 
 def parseOptions():
-    usage = "usage: %prog [options] CATEGORY/PACKAGE"
+    usage = "usage: %prog [options] CATEGORY/PACKAGE\n" \
+            "   or: %prog -f packagelist.txt\n" \
+            "   or: %prog --file=packagelist.txt\n"
     parser = OptionParser(usage=usage)
 
-    parser.add_option("-t", "--type", action="store", default = OUTPUT_DOT,
+    parser.add_option("-t", "--type", action = "store", default = OUTPUT_DOT,
             help=("Change the output format type "
                   "possible values: xml"))
+    parser.add_option("-f", "--file", dest = "filename", metavar = "FILENAME",
+            help="add a filename for a packageList ")
+    parser.add_option("-o", "--output", dest = "outputname", metavar = "FILENAME",
+            help=" ")
+    parser.add_option("-d", "--depstyle", action = "store", default = "both",
+            help="possible values: both, runtime")
 
     (options, args) = parser.parse_args()
-    if len(args) != 1:
-        parser.error("Incorrect number of arguments")
-        sys.exit(1)
-    if len(args[0].split("/")) != 2:
-        parser.error("Not a valid Category/Package name")
-        sys.exit(1)
+    if not (hasattr(options, "filename") and not options.filename == None):
+        if len(args) < 1:
+            parser.error("Incorrect number of arguments")
+            sys.exit(1)
+        if len(args[0].split("/")) != 2:
+            parser.error("Not a valid Category/Package name")
+            sys.exit(1)
     return (options, args)
+
+def parsePackageListFile( filename ):
+    packagelist = []
+    packagefile = file( filename )
+
+    depList = []
+    for line in packagefile:
+        if not line.startswith( '#' ):
+            cat, pac, target, patchlvl = line.strip().split( ',' )
+            if pac.endswith( "-src" ):
+                cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(pac)
+            depList.append( ( cat, pac, target, patchlvl ) )
+    packagefile.close()
+    return depList
+
 
 def main():
 
@@ -293,11 +317,34 @@ def main():
     else:
         output_type = OUTPUT_DOT
 
-    output = dumpDependencies(args[0], output_type)
+    depstyle = opts.depstyle
+    if not opts.depstyle in ['both', 'runtime']:
+        depstyle = "both"
+    output = ""
+    if hasattr(opts, "filename") and opts.filename <> None:
+        packageList = parsePackageListFile( opts.filename )
+        output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
+    else:
+        output = dumpDependencies(args[0], output_type, depstyle)
 
-    print output
+    if hasattr(opts, "outputname") and opts.outputname:
+        print "writing file ", opts.outputname, os.path.dirname( opts.outputname )
+        if os.path.dirname( opts.outputname ) and not os.path.exists( os.path.dirname( opts.outputname ) ):
+            os.makedirs( os.path.dirname( opts.outputname ) )
+        f = open( opts.outputname, "w" )
+        f.write( output );
+        f.close()
 
-def dumpDependencies(category, output_type=OUTPUT_DOT):
+        _graphviz = graphviz.GraphViz()
+
+        if not _graphviz.runDot( opts.outputname, opts.outputname + '.pdf', 'pdf' ):
+            exit( 1 )
+
+        _graphviz.openOutput()
+    else:
+        print output
+
+def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     # little workaround to not display debug infos in generated output
     old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
     os.environ['EMERGE_VERBOSE'] = '0'
@@ -305,8 +352,26 @@ def dumpDependencies(category, output_type=OUTPUT_DOT):
     packageList, categoryList = portage.getPackagesCategories(category)
     dep_tree = DependenciesTree()
 
-    for catagory, package in zip(categoryList, packageList):
-        dep_tree.addDependencies(catagory, package)
+    for _category, _package in zip(categoryList, packageList):
+        dep_tree.addDependencies(_category, _package, type=dep_type)
+
+    if old_emerge_verbose is not None:
+        os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
+
+    if   output_type == OUTPUT_XML: creator = XMLCreator()
+    elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
+
+    return creator.createOutput(dep_tree)
+
+def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type="both"):
+    # little workaround to not display debug infos in generated output
+    old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
+    os.environ['EMERGE_VERBOSE'] = '0'
+
+    dep_tree = DependenciesTree()
+
+    for category, package, target, patchlevel in packageList:
+        dep_tree.addDependencies(category, package)
 
     if old_emerge_verbose is not None:
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
