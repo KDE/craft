@@ -32,10 +32,12 @@ share\\locale\\de\\LC_MESSAGES\\akonadi_serializer_plugins\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_singlefile_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_vcarddir_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_vcard_resource\.mo
+share\\locale\\de\\LC_MESSAGES\\akonadicontact\.mo
 share\\locale\\de\\LC_MESSAGES\\calendarsupmort\.mo
 share\\locale\\de\\LC_MESSAGES\\cryptopageplugin\.mo
 share\\locale\\de\\LC_MESSAGES\\desktop_kdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\kabc_akonadi\.mo
+share\\locale\\de\\LC_MESSAGES\\kabc\.mo
 share\\locale\\de\\LC_MESSAGES\\kaddressbookmigrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kaddressbook-mobile\.mo
 share\\locale\\de\\LC_MESSAGES\\kalarm\.mo
@@ -59,6 +61,7 @@ share\\locale\\de\\LC_MESSAGES\\kwatchgnupg\.mo
 share\\locale\\de\\LC_MESSAGES\\libakonadi-kmime\.mo
 share\\locale\\de\\LC_MESSAGES\\libeventviews\.mo
 share\\locale\\de\\LC_MESSAGES\\libincidenceeditors\.mo
+share\\locale\\de\\LC_MESSAGES\\libkcal\.mo
 share\\locale\\de\\LC_MESSAGES\\libkdepimmobileui\.mo
 share\\locale\\de\\LC_MESSAGES\\libkdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\libkleopatra\.mo
@@ -68,6 +71,7 @@ share\\locale\\de\\LC_MESSAGES\\libmessagecomposer\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagecore\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagelist\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessageviewer\.mo
+share\\locale\\de\\LC_MESSAGES\\libmailcommon\.mo
 share\\locale\\de\\LC_MESSAGES\\libtemplateparser\.mo
 share\\locale\\de\\LC_MESSAGES\\mailreader\.mo
 share\\locale\\de\\LC_MESSAGES\\messageviewer_text_calendar_plugin\.mo
