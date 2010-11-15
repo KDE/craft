@@ -30,7 +30,7 @@ class GraphViz:
         [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
         return True
     
-    def system( command, errorMessage ):
+    def system( self, command, errorMessage ):
         if utils.system( command ):
             return True
         else:
