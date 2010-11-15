@@ -270,9 +270,12 @@
 #ifndef QT_NO_SXE
 #  define QT_NO_SXE
 #endif
+/*
+ * Needed for QT_CLIPBOARD
 #ifndef QT_NO_QWS_PROPERTIES
 #  define QT_NO_QWS_PROPERTIES
 #endif
+*/
 #ifndef QT_NO_QWS_PROXYSCREEN
 #  define QT_NO_QWS_PROXYSCREEN
 #endif
