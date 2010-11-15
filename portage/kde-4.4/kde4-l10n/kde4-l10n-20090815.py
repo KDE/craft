@@ -3,20 +3,17 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/%s'
-        self.defaultTarget = 'svnHEAD'
+        for ver in ['4.0', '4.1', '4.2', '4.3', '4.4']:
+          self.targets['4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.' + ver + '/src/kde-l10n/kde-l10n-%s-4.' + ver + '.tar.bz2'
+          self.targetInstSrc['4.' + ver] = 'kde-l10n-%s-4.' + ver
+
         self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/%s'
-        for ver in ['0', '1', '2', '3', '4']:
-          self.targets['4.4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.4.' + ver + '/src/kde-l10n/kde-l10n-%s-4.4.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.4.' + ver] = 'kde-l10n-%s-4.4.' + ver
         self.defaultTarget = 'svnHEAD'
-        
     
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
-#        self.hardDependencies['kde-4.4/kdelibs'] = 'default'
-    
+        self.buildDependencies['dev-util/cmake'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+   
 
 from Package.CMakePackageBase import *
 
@@ -39,9 +36,8 @@ class Package(CMakePackageBase):
 
     def localFileNames(self):
         filenames = []
-        for i in range( self.repositoryPathCount() ):
-            filenames.append( os.path.basename( self.repositoryPath( i ) ) )
-            print i
+        for i in range( self.repositoryUrlCount() ):
+            filenames.append( os.path.basename( self.repositoryUrl( i ) ) )
         return filenames
 
     def configureSourceDir(self):
@@ -50,10 +46,10 @@ class Package(CMakePackageBase):
     def sourceDir(self):
         return CMakePackageBase.sourceDir( self ) % self.language
 
-    def repositoryPath(self,index=0):
+    def repositoryUrl(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
         # then is not be overrideable for unknown reasons 
-        url = CMakePackageBase.repositoryPath(self,index) % self.language
+        url = CMakePackageBase.repositoryUrl(self,index) % self.language
         return url
 
     def workDir(self):
@@ -95,11 +91,6 @@ class Package(CMakePackageBase):
               ('..', autogen, self.sourceDir(), self.language )
         return self.system( cmd )
 
-    def configure(self):
-        if not os.path.exists(os.path.join(self.buildDir(),"CMakeCache.txt")):
-            return CMakePackageBase.configure(self)
-        return True
-        
     def createPackage(self):
         self.subinfo.options.package.packageName = 'kde4-l10n-%s' % self.language
         self.subinfo.options.package.withCompiler = False
@@ -109,31 +100,30 @@ class Package(CMakePackageBase):
 class MainInfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/scripts'
-        for ver in ['0', '1', '2', '3', '4']:
-          self.targets['4.4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.4.' + ver + '/src/kde-l10n/kde4-l10n-' + 'de' + '-4.4.' + ver + '.tar.bz2' 
         self.defaultTarget = 'svnHEAD'
-        # all targets in svn
-        self.languages  = 'af ar be bg bn bn_IN br ca cs csb cy da de '
-        self.languages += 'el en_GB eo es et eu fa fi fr fy ga gl gu '
-        self.languages += 'ha he hi hr hsb hu hy is it ja ka kk km kn ko ku '
-        self.languages += 'lb lt lv mk ml ms mt nb nds ne nl nn nso oc '
-        self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
-        self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
+        self.languages = dict()
+        
+        self.languages['4.4.4'] = 'ar bg ca ca@valencia cs csb da de el en_GB eo es et eu fi fr fy ga'
+        self.languages['4.4.4'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds'
+        self.languages['4.4.4'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
+
+        self.languages['svnHEAD'] = 'ar bg ca ca@valencia cs csb da de el en_GB eo es et eu fi fr fy ga'
+        self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds' 
+        self.languages['svnHEAD'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
 
         #for testing
-        self.languages  = 'fr de'
+        #self.languages  = 'de'
     
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
-#        self.hardDependencies['kde-4.4/kdelibs'] = 'default'
-    
+        self.buildDependencies['dev-util/cmake'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
     
 class MainPackage(CMakePackageBase):
     def __init__( self  ):
         self.subinfo = MainInfo()
         CMakePackageBase.__init__( self )
-        self.kde4_l10n = portage.getPackageInstance('kde-4.4','kde4-l10n')
+        self.kde4_l10n = Package()
+
         # set to any language to start building from 
         ## \todo when emerge.py is able to provide command line options to us
         # it would be possible to set this from command line 
@@ -146,7 +136,7 @@ class MainPackage(CMakePackageBase):
 #        if option <> None:
 #            languages = option.split()
 #        else:
-        languages = self.subinfo.languages.split()
+        languages = self.subinfo.languages[self.buildTarget].split()
         found=None
         for language in languages:
             if not found and self.startLanguage:
@@ -156,11 +146,12 @@ class MainPackage(CMakePackageBase):
                     found = True
             
             self.kde4_l10n.language = language
-            utils.debug("current language: %s" % self.kde4_l10n.language, 1)
+            utils.debug("current language: %s current command: %s" % (self.kde4_l10n.language,command), 1)
             self.kde4_l10n.runAction(command)
 #                self.errors["%s-%s" % (language, command)] = 1
 
-        utils.debug("Errors that happened while executing last command: %s" % self.errors, 2)
+        if self.errors:
+            utils.debug("Errors that happened while executing last command: %s" % self.errors, 2)
         return True    
         
 if __name__ == '__main__':
