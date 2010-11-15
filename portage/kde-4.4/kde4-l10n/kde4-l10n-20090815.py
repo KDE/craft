@@ -46,6 +46,9 @@ class Package(CMakePackageBase):
     def sourceDir(self):
         return CMakePackageBase.sourceDir( self ) % self.language
 
+    def imageDir(self):
+        return os.path.join(CMakePackageBase.imageDir(self),self.language)
+        
     def repositoryUrl(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
         # then is not be overrideable for unknown reasons 
@@ -54,10 +57,6 @@ class Package(CMakePackageBase):
 
     def workDir(self):
         dir = os.path.join(CMakePackageBase.workDir(self), self.language)
-        return dir
-
-    def installDir(self):
-        dir = os.path.join(CMakePackageBase.installDir(self), self.language)
         return dir
 
     def fetch(self):
@@ -90,6 +89,12 @@ class Package(CMakePackageBase):
         cmd = "cd %s && python %s %s %s" % \
               ('..', autogen, self.sourceDir(), self.language )
         return self.system( cmd )
+
+    def install(self):
+        self.subinfo.options.install.useMakeToolForInstall = False
+        CMakePackageBase.install(self)
+        #ignore errors
+        return True
 
     def createPackage(self):
         self.subinfo.options.package.packageName = 'kde4-l10n-%s' % self.language
@@ -127,7 +132,7 @@ class MainPackage(CMakePackageBase):
         # set to any language to start building from 
         ## \todo when emerge.py is able to provide command line options to us
         # it would be possible to set this from command line 
-        self.startLanguage = None 
+        self.startLanguage = os.getenv("STARTLANGUAGE")
         
     def execute(self):
         (command, option) = self.getAction()
