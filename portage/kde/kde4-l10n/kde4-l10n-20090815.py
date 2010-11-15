@@ -46,6 +46,9 @@ class Package(CMakePackageBase):
     def sourceDir(self):
         return CMakePackageBase.sourceDir( self ) % self.language
 
+    def imageDir(self):
+        return os.path.join(CMakePackageBase.imageDir(self),self.language)
+        
     def repositoryUrl(self,index=0):
         # \todo we cannot use CMakePackageBase here because repositoryPath 
         # then is not be overrideable for unknown reasons 
@@ -54,10 +57,6 @@ class Package(CMakePackageBase):
 
     def workDir(self):
         dir = os.path.join(CMakePackageBase.workDir(self), self.language)
-        return dir
-
-    def installDir(self):
-        dir = os.path.join(CMakePackageBase.installDir(self), self.language)
         return dir
 
     def fetch(self):
