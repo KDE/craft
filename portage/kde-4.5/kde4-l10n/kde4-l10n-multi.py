@@ -28,8 +28,6 @@ class Package(CMakePackageBase):
         # for now
         self.subinfo.options.make.ignoreErrors = True
         self.subinfo.options.exitOnErrors = False
-        # hardcoded for now
-        #self.subinfo.options.package.version = '4.4.63'
         # overwrite the workDir function that is inherited from SourceBase
         self.source.workDir = self.workDir.__get__(self, Package)
         self.source.localFileNames = self.localFileNames.__get__(self, Package)
@@ -90,6 +88,12 @@ class Package(CMakePackageBase):
               ('..', autogen, self.sourceDir(), self.language )
         return self.system( cmd )
 
+    def install(self):
+        self.subinfo.options.install.useMakeToolForInstall = False
+        CMakePackageBase.install(self)
+        #ignore errors
+        return True
+
     def createPackage(self):
         self.subinfo.options.package.packageName = 'kde4-l10n-%s' % self.language
         self.subinfo.options.package.withCompiler = False
@@ -106,8 +110,11 @@ class MainInfo(info.infoclass):
         self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds' 
         self.languages['svnHEAD'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
 
+        self.languages['4.5.3'] = 'ar bg ca ca@valencia cs da de el en_GB eo es et eu fi fr fy ga'
+        self.languages['4.5.3'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv ml nb nds' 
+        self.languages['4.5.3'] += ' nl nn pa pl pt pt_BR ro ru sk sl sr sv tr uk wa zh_CN zh_TW'
         #for testing
-        #self.languages  = 'de'
+        #self.languages['svnHEAD']  = 'de'
     
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
@@ -122,7 +129,7 @@ class MainPackage(CMakePackageBase):
         # set to any language to start building from 
         ## \todo when emerge.py is able to provide command line options to us
         # it would be possible to set this from command line 
-        self.startLanguage = None 
+        self.startLanguage = None
         
     def execute(self):
         (command, option) = self.getAction()
@@ -131,6 +138,9 @@ class MainPackage(CMakePackageBase):
 #        if option <> None:
 #            languages = option.split()
 #        else:
+
+        # build target is not set here for unknown reasons, set manually for now
+        self.buildTarget='4.5.3'
         if self.subinfo.languages[self.buildTarget]: 
             languages = self.subinfo.languages[self.buildTarget].split()
         else:
