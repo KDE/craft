@@ -61,7 +61,6 @@ share\\locale\\de\\LC_MESSAGES\\kwatchgnupg\.mo
 share\\locale\\de\\LC_MESSAGES\\libakonadi-kmime\.mo
 share\\locale\\de\\LC_MESSAGES\\libeventviews\.mo
 share\\locale\\de\\LC_MESSAGES\\libincidenceeditors\.mo
-share\\locale\\de\\LC_MESSAGES\\libkcal\.mo
 share\\locale\\de\\LC_MESSAGES\\libkdepimmobileui\.mo
 share\\locale\\de\\LC_MESSAGES\\libkdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\libkleopatra\.mo
