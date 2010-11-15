@@ -30,6 +30,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['testing/wincetools'] = 'kdepimcetools'
+        self.hardDependencies['testing/setupdll-wince'] = 'default'
         self.hardDependencies['kde/kdepim'] = 'default'
         self.hardDependencies['testing/pinentry-qt'] = 'default'
         if not self.buildTarget == 'en':
