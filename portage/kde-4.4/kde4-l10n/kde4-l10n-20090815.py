@@ -136,7 +136,11 @@ class MainPackage(CMakePackageBase):
 #        if option <> None:
 #            languages = option.split()
 #        else:
-        languages = self.subinfo.languages[self.buildTarget].split()
+        if self.subinfo.languages[self.buildTarget]: 
+            languages = self.subinfo.languages[self.buildTarget].split()
+        else:
+            languages = self.subinfo.languages['svnHEAD'].split()
+        
         found=None
         for language in languages:
             if not found and self.startLanguage:
