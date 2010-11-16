@@ -4,6 +4,10 @@ import sys
 import info
 
 class subinfo(info.infoclass):
+    def setBuildOptions( self ):
+        self.disableHostBuild = False
+        self.disableTargetBuild = True
+
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
@@ -23,6 +27,7 @@ class subinfo(info.infoclass):
         self.svnTargets['0.6.3']  = 'tags/strigi/strigi/0.6.3'
         self.svnTargets['0.6.4']  = 'tags/strigi/strigi/strigi-0.6.4'
         self.svnTargets['0.6.5']  = 'tags/strigi/strigi/0.6.5'
+        self.svnTargets['4.4'] = 'tags/kdesupport-for-4.4/strigi'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/strigi'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdesupport/strigi'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdesupport/strigi'
@@ -68,26 +73,32 @@ class subinfo(info.infoclass):
         self.svnTargets['20101112'] = 'tags/kdepim/enterprise5.0.20101112.1196098/kdesupport/strigi'
         self.defaultTarget = '20101112'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "strigi"
+        if emergePlatform.isCrossCompilingEnabled():
+            self.defaultTarget = '4.4'
+
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = ""
+        if emergePlatform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines = "-DBUILD_DAEMON=OFF "
+            self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
+            self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_CLUECENE=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_CPPUNIT=OFF "
+            if self.isTargetBuild():
+                self.subinfo.options.configure.defines += \
+                        "-DICONV_SECOND_ARGUMENT_IS_CONST=ON "
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "strigi" )
-        else:
-            return self.doPackaging( "strigi", self.buildTarget, True )
+        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
+        if not os.path.exists(qmake):
+            utils.warning("could not find qmake in <%s>" % qmake)
+        ## \todo a standardized way to check if a package is installed in the image dir would be good.
+        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
+            % qmake.replace('\\', '/')
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
