@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kde/kdepim'] = 'default'
         self.hardDependencies['testing/pinentry-qt'] = 'default'
         if not self.buildTarget == 'en':
-            self.hardDependencies['kde/kde4-l10n'] = 'default'
+            self.hardDependencies['kde/l10n-wce-e5'] = 'default'
 
 class MainPackage(CMakePackageBase):
     def __init__(self):
