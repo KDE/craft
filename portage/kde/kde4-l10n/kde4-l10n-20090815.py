@@ -106,9 +106,12 @@ class MainInfo(info.infoclass):
         self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds' 
         self.languages['svnHEAD'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
 
-        #for testing
-        #self.languages  = 'de'
-    
+        # Add a single language svnHEAD target for each language
+        # so you can call emerge --target=nl kde4-l10n
+        for s in self.languages['svnHEAD'].split(" "):
+            self.svnTargets[s] = 'trunk/l10n-kde4/scripts'
+            self.languages[s] = s
+
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
