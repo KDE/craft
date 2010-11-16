@@ -1,6 +1,6 @@
 diff -Nru djvulibre-3.5.23.orig/CMakeLists.txt djvulibre-3.5.23/CMakeLists.txt
 --- djvulibre-3.5.23.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.23/CMakeLists.txt	2010-11-16 22:17:32.661592300 +0100
++++ djvulibre-3.5.23/CMakeLists.txt	2010-11-16 23:27:15.884859000 +0100
 @@ -0,0 +1,36 @@
 +project(djvulibre)
 +
@@ -40,7 +40,7 @@ diff -Nru djvulibre-3.5.23.orig/CMakeLists.txt djvulibre-3.5.23/CMakeLists.txt
 +add_subdirectory(xmltools)
 diff -Nru djvulibre-3.5.23.orig/gui/CMakeLists.txt djvulibre-3.5.23/gui/CMakeLists.txt
 --- djvulibre-3.5.23.orig/gui/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.23/gui/CMakeLists.txt	2010-11-16 22:09:27.973869800 +0100
++++ djvulibre-3.5.23/gui/CMakeLists.txt	2010-11-16 23:27:15.888859200 +0100
 @@ -0,0 +1,22 @@
 +include_directories( ../libdjvu 
 +                     ..)
@@ -66,7 +66,7 @@ diff -Nru djvulibre-3.5.23.orig/gui/CMakeLists.txt djvulibre-3.5.23/gui/CMakeLis
 +endif(X11_FOUND)
 diff -Nru djvulibre-3.5.23.orig/libdjvu/Arrays.h djvulibre-3.5.23/libdjvu/Arrays.h
 --- djvulibre-3.5.23.orig/libdjvu/Arrays.h	2007-05-19 05:07:33.000000000 +0200
-+++ djvulibre-3.5.23/libdjvu/Arrays.h	2010-11-16 22:09:27.976869900 +0100
++++ djvulibre-3.5.23/libdjvu/Arrays.h	2010-11-16 23:27:15.890859300 +0100
 @@ -129,7 +129,7 @@
  //@{
  
@@ -87,7 +87,7 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/Arrays.h djvulibre-3.5.23/libdjvu/Arrays
     _ArrayBase(void) : rep(0) {}
 diff -Nru djvulibre-3.5.23.orig/libdjvu/atomic.h djvulibre-3.5.23/libdjvu/atomic.h
 --- djvulibre-3.5.23.orig/libdjvu/atomic.h	2008-08-03 05:54:01.000000000 +0200
-+++ djvulibre-3.5.23/libdjvu/atomic.h	2010-11-16 22:09:27.979870100 +0100
++++ djvulibre-3.5.23/libdjvu/atomic.h	2010-11-16 23:27:15.893859500 +0100
 @@ -78,24 +78,35 @@
  # ifdef __cplusplus
  extern "C" {
@@ -133,7 +133,7 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/atomic.h djvulibre-3.5.23/libdjvu/atomic
  # ifdef __cplusplus
 diff -Nru djvulibre-3.5.23.orig/libdjvu/CMakeLists.txt djvulibre-3.5.23/libdjvu/CMakeLists.txt
 --- djvulibre-3.5.23.orig/libdjvu/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.23/libdjvu/CMakeLists.txt	2010-11-16 22:09:27.982870300 +0100
++++ djvulibre-3.5.23/libdjvu/CMakeLists.txt	2010-11-16 23:27:15.895859600 +0100
 @@ -0,0 +1,81 @@
 +# ******************************************************************************
 +# building djvu library
@@ -218,13 +218,16 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/CMakeLists.txt djvulibre-3.5.23/libdjvu/
 +endforeach(filename ${datafiles})
 diff -Nru djvulibre-3.5.23.orig/libdjvu/DjVuGlobal.h djvulibre-3.5.23/libdjvu/DjVuGlobal.h
 --- djvulibre-3.5.23.orig/libdjvu/DjVuGlobal.h	2007-05-19 05:07:33.000000000 +0200
-+++ djvulibre-3.5.23/libdjvu/DjVuGlobal.h	2010-11-16 22:12:30.745323700 +0100
-@@ -72,10 +72,11 @@
- #elif defined(AUTOCONF) && defined(HAVE_STDINCLUDES)
++++ djvulibre-3.5.23/libdjvu/DjVuGlobal.h	2010-11-16 23:28:30.119105000 +0100
+@@ -69,13 +69,14 @@
+ # ifndef __WCEALT_H__
+ inline void * operator new(size_t, void * ptr) { return ptr; }
+ # endif
+-#elif defined(AUTOCONF) && defined(HAVE_STDINCLUDES)
++#elif defined(AUTOCONF) && defined(HAVE_STDINCLUDES) || defined(__MINGW32__)
  # include <new>
  #else
--# include <new.h>
-+# include <new>
+ # include <new.h>
  #endif
  
  #ifdef WIN32
@@ -234,7 +237,7 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/DjVuGlobal.h djvulibre-3.5.23/libdjvu/Dj
  # else
 diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.cpp djvulibre-3.5.23/libdjvu/GString.cpp
 --- djvulibre-3.5.23.orig/libdjvu/GString.cpp	2009-12-29 17:26:19.000000000 +0100
-+++ djvulibre-3.5.23/libdjvu/GString.cpp	2010-11-16 22:09:27.989870700 +0100
++++ djvulibre-3.5.23/libdjvu/GString.cpp	2010-11-16 23:27:15.900859900 +0100
 @@ -2599,6 +2599,8 @@
    else 
      init(fmt); 
@@ -246,7 +249,7 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.cpp djvulibre-3.5.23/libdjvu/GSt
  { init(GStringRep::UTF8::create(str)); }
 diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.h djvulibre-3.5.23/libdjvu/GString.h
 --- djvulibre-3.5.23.orig/libdjvu/GString.h	2009-07-30 03:49:02.000000000 +0200
-+++ djvulibre-3.5.23/libdjvu/GString.h	2010-11-16 22:09:27.994871000 +0100
++++ djvulibre-3.5.23/libdjvu/GString.h	2010-11-16 23:27:15.904860100 +0100
 @@ -1429,9 +1429,6 @@
  
  inline GUTF8String::GUTF8String(void) { }
@@ -259,7 +262,7 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.h djvulibre-3.5.23/libdjvu/GStri
  
 diff -Nru djvulibre-3.5.23.orig/libdjvu/GThreads.h djvulibre-3.5.23/libdjvu/GThreads.h
 --- djvulibre-3.5.23.orig/libdjvu/GThreads.h	2007-03-25 22:48:32.000000000 +0200
-+++ djvulibre-3.5.23/libdjvu/GThreads.h	2010-11-16 22:09:27.998871200 +0100
++++ djvulibre-3.5.23/libdjvu/GThreads.h	2010-11-16 23:27:15.907860300 +0100
 @@ -361,7 +361,7 @@
      as private members. It is therefore not possible to make multiple copies
      of instances of this class, as implied by the class semantic. */
@@ -280,7 +283,7 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/GThreads.h djvulibre-3.5.23/libdjvu/GThr
     volatile long flags;
 diff -Nru djvulibre-3.5.23.orig/tools/CMakeLists.txt djvulibre-3.5.23/tools/CMakeLists.txt
 --- djvulibre-3.5.23.orig/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.23/tools/CMakeLists.txt	2010-11-16 22:09:28.005871600 +0100
++++ djvulibre-3.5.23/tools/CMakeLists.txt	2010-11-16 23:27:15.910860500 +0100
 @@ -0,0 +1,53 @@
 +# libdjvu tools
 +
@@ -337,7 +340,7 @@ diff -Nru djvulibre-3.5.23.orig/tools/CMakeLists.txt djvulibre-3.5.23/tools/CMak
 +endif(NOT WIN32)
 diff -Nru djvulibre-3.5.23.orig/xmltools/CMakeLists.txt djvulibre-3.5.23/xmltools/CMakeLists.txt
 --- djvulibre-3.5.23.orig/xmltools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.23/xmltools/CMakeLists.txt	2010-11-16 22:09:28.008871800 +0100
++++ djvulibre-3.5.23/xmltools/CMakeLists.txt	2010-11-16 23:27:15.918860900 +0100
 @@ -0,0 +1,27 @@
 +include_directories( ../libdjvu 
 +                     ..)
@@ -368,7 +371,7 @@ diff -Nru djvulibre-3.5.23.orig/xmltools/CMakeLists.txt djvulibre-3.5.23/xmltool
 +install(FILES ${docdefs} DESTINATION ${DATA_INSTALL_DIR}/djvu/pubtest)
 diff -Nru djvulibre-3.5.23.orig/xmltools/djvuxml.1.cmake djvulibre-3.5.23/xmltools/djvuxml.1.cmake
 --- djvulibre-3.5.23.orig/xmltools/djvuxml.1.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.23/xmltools/djvuxml.1.cmake	2010-11-16 22:09:28.010871900 +0100
++++ djvulibre-3.5.23/xmltools/djvuxml.1.cmake	2010-11-16 23:27:15.921861100 +0100
 @@ -0,0 +1,288 @@
 +.\" Copyright (c) 2002 Bill C. Riemers
 +.\"
