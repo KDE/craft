@@ -1,0 +1,1951 @@
+Index: cmake/FindWcecompat.cmake
+===================================================================
+--- cmake/FindWcecompat.cmake
++++ cmake/FindWcecompat.cmake
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+Index: strigidaemon/include/strigi/socketclient.h
+===================================================================
+--- strigidaemon/include/strigi/socketclient.h
++++ strigidaemon/include/strigi/socketclient.h
+@@ -34,7 +34,8 @@
+     bool readResponse(int sd);
+     bool sendRequest(int sd);
+ public:
+-    SocketClient() :ClientInterface(0) {}
++    SocketClient();
++    ~SocketClient();
+     const std::string& getError() const { return error; }
+     void setSocketName(const std::string& socketname);
+     int32_t countHits(const std::string &query);
+Index: strigidaemon/lib/asyncsocket.cpp
+===================================================================
+--- strigidaemon/lib/asyncsocket.cpp
++++ strigidaemon/lib/asyncsocket.cpp
+@@ -19,10 +19,14 @@
+  */
+ #include <strigi/asyncsocket.h>
+ #include <sys/types.h>
++#ifndef _WIN32_WCE
+ #include <sys/socket.h>
+ #include <sys/un.h>
++#include <unistd.h>
++#else
++#include <winsock2.h>
++#endif
+ #include <errno.h>
+-#include <unistd.h>
+ #include <string.h>
+ #include <stdio.h>
+ 
+@@ -39,12 +43,24 @@
+ 
+ AsyncSocket::AsyncSocket() {
+     status = Idle;
++#ifdef _WIN32
++    INT iRet = 0;
++    WSADATA wsaData;
++    iRet = WSAStartup(MAKEWORD(2,2), &wsaData);
++    if (iRet != 0){
++        perror("WSAStartup failed ");
++    }
++#endif
+ }
+ AsyncSocket::~AsyncSocket() {
+     close();
++#ifdef _WIN32
++        WSACleanup();
++#endif
+ }
+ void
+ AsyncSocket::open() {
++#ifndef _WIN32
+     struct sockaddr_un  serv_addr;
+ 
+     // create a socket
+@@ -71,11 +87,40 @@
+         ::close(socket);
+         socket = -1;
+     }
++#else
++    sockaddr_in serv_addr;
++
++    // create a socket
++    socket = (int)::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP);
++    if (socket == INVALID_SOCKET) {
++        error = "Could not create socket: ";
++        error += strerror(errno);
++        return;
++    }
++
++    // set the address
++    serv_addr.sin_family = AF_INET;
++    serv_addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++    serv_addr.sin_port = htons( 5555 );
++
++    // connect to the server
++    int r = connect((SOCKET)socket, (SOCKADDR*) &serv_addr, sizeof(serv_addr));
++    if (r != 0) {
++        error = "Could not connect to server: ";
++        error += strerror(errno);
++        ::closesocket((SOCKET)socket);
++        socket = -1;
++    }
++#endif
+ }
+ void
+ AsyncSocket::close() {
+     if (socket >= 0) {
++#ifndef _WIN32
+         ::close(socket);
++#else
++        closesocket((SOCKET)socket);
++#endif
+     }
+ }
+ bool
+@@ -108,7 +153,12 @@
+ }
+ void
+ AsyncSocket::write() {
+-    ssize_t r = send(socket, request.c_str()+writepos,
++#ifndef _WIN32
++    ssize_t r;
++#else
++    int r;
++#endif
++    r = send((SOCKET)socket, request.c_str()+writepos,
+         request.length()-writepos, SOCKET_NOSIGNAL);
+     if (r != -1) {
+         writepos += (unsigned)r;
+@@ -130,7 +180,16 @@
+ AsyncSocket::read() {
+     char c;
+     while (true) {
+-        ssize_t r = recv(socket, &c, 1, MSG_DONTWAIT|SOCKET_NOSIGNAL);
++#ifndef _WIN32
++        ssize_t r;
++#else
++        int r;
++#endif
++#ifndef _WIN32_WCE
++        r = recv(socket, &c, 1, MSG_DONTWAIT|SOCKET_NOSIGNAL);
++#else
++        r = recv(socket, &c, 1, 0);
++#endif
+         switch (r) {
+         case 0:
+             close();
+@@ -140,8 +199,13 @@
+             response += c;
+             break;
+         default:
++#ifndef _WIN32_WCE
+             if (errno != EAGAIN) {
+                 printf("error %i: %s\n", errno, strerror(errno));
++#else
++            if (r ==SOCKET_ERROR) {
++                printf("error receiving\n");
++#endif
+                 status = Error;
+                 error = strerror(EAGAIN);
+                 close();
+Index: strigidaemon/lib/socketclient.cpp
+===================================================================
+--- strigidaemon/lib/socketclient.cpp
++++ strigidaemon/lib/socketclient.cpp
+@@ -19,12 +19,16 @@
+  */
+ #include <strigi/socketclient.h>
+ #include <sys/types.h>
++#ifndef _WIN32_WCE
+ #include <sys/socket.h>
+ #include <sys/un.h>
++#include <unistd.h>
++#else
++#include <winsock2.h>
++#endif
+ #include <errno.h>
+ #include <assert.h>
+ #include <sstream>
+-#include <unistd.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ /* GCC 4.3.2 Fix */
+@@ -41,12 +45,30 @@
+ #define SOCKET_NOSIGNAL 0
+ #endif
+ 
++SocketClient::SocketClient() :ClientInterface(0) {
++#ifdef _WIN32
++    INT iRet = 0;
++    WSADATA wsaData;
++    iRet = WSAStartup(MAKEWORD(2,2), &wsaData);
++    if (iRet != 0){
++        perror("WSAStartup failed ");
++    }
++#endif
++}
++
++SocketClient::~SocketClient() {
++#ifdef _WIN32
++    WSACleanup();
++#endif
++}
++
+ void
+ SocketClient::setSocketName(const string& n) {
+     socketpath = n;
+ }
+ int
+ SocketClient::open() {
++#ifndef _WIN32
+     struct sockaddr_un  serv_addr;
+ 
+     // create a socket
+@@ -74,6 +96,32 @@
+         return -1;
+     }
+     return sd;
++#else
++    sockaddr_in serv_addr;
++
++    // create a socket
++    SOCKET sd = ::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP);
++    if (sd == INVALID_SOCKET) {
++        error = "Could not create socket: ";
++        error += strerror(errno);
++        return -1;
++    }
++
++    // set the address
++    serv_addr.sin_family = AF_INET;
++    serv_addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++    serv_addr.sin_port = htons( 5555 );
++
++    // connect to the server
++    int r = connect(sd, (SOCKADDR*) &serv_addr, sizeof(serv_addr));
++    if (r != 0) {
++        error = "Could not connect to server: ";
++        error += strerror(errno);
++        ::closesocket(sd);
++        return -1;
++    }
++    return (int)sd;
++#endif
+ }
+ bool
+ SocketClient::readResponse(int sd) {
+@@ -82,8 +130,13 @@
+     char c;
+     while (true) {
+         // read characters one by one
++#ifndef _WIN32_WCE
+         ssize_t r = recv(sd, &c, 1, 0);
+         if (r < 0) {
++#else
++        int r = recv((SOCKET)sd, &c, 1, 0);
++        if (r == SOCKET_ERROR) {
++#endif
+             error = "Error reading from socket: ";
+             error += strerror(errno);
+             printf("%s\n", error.c_str());
+@@ -107,7 +160,11 @@
+ }
+ bool
+ SocketClient::sendRequest(int sd) {
++#ifndef _WIN32_WCE
+     ssize_t r;
++#else
++    int r;
++#endif
+     for (uint i=0; i<request.size(); ++i) {
+         string line = request[i];
+         assert(line.find('\n') == string::npos);
+@@ -115,8 +172,13 @@
+         size_t p = 0;
+         size_t len = line.length();
+         do {
++#ifndef _WIN32_WCE
+             r = send(sd, line.c_str()+p, len-p, SOCKET_NOSIGNAL);
+             if (r < 0) {
++#else
++            r = send((SOCKET)sd, line.c_str()+p, len-p, SOCKET_NOSIGNAL);
++            if (r == SOCKET_ERROR) {
++#endif
+                 printf("error writing request\n");
+                 return false;
+             }
+@@ -140,7 +202,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     if (response.size() == 0) return -1;
+     int count = atoi(response[0].c_str());
+     return count;
+@@ -167,7 +233,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     uint i = 0;
+     while (i+6 < response.size()) {
+         Strigi::IndexedDocument h;
+@@ -209,7 +279,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     for (uint i=0; i<response.size(); ++i) {
+         string s = response[i];
+         string::size_type p = s.find(":");
+@@ -238,7 +312,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     return "";
+ }
+ string
+@@ -251,7 +329,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     return "";
+ }
+ string
+@@ -264,7 +346,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     return "";
+ }
+ set<string>
+@@ -279,7 +365,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     vector<string>::const_iterator i;
+     for (i = response.begin(); i != response.end(); ++i) {
+         r.insert(*i);
+@@ -300,7 +390,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     return "";
+ }
+ void
+@@ -323,7 +417,11 @@
+     }
+     sendRequest(sd);
+     readResponse(sd);
++#ifndef _WIN32_WCE
+     close(sd);
++#else
++    closesocket((SOCKET)sd);
++#endif
+     vector<string>::const_iterator i;
+     for (i = response.begin(); i != response.end(); ++i) {
+         r.insert(*i);
+Index: strigidaemon/lib/CMakeLists.txt
+===================================================================
+--- strigidaemon/lib/CMakeLists.txt
++++ strigidaemon/lib/CMakeLists.txt
+@@ -6,6 +6,9 @@
+ 	DEFINE_SYMBOL MAKE_SEARCHCLIENT_LIB
+ )
+ target_link_libraries(searchclient ${LIBSTREAMANALYZER_LIBRARIES})
++if(WINCE)
++target_link_libraries(searchclient ws2)
++endif(WINCE)
+ install(TARGETS searchclient
+ 	LIBRARY DESTINATION ${LIB_DESTINATION}
+ 	RUNTIME DESTINATION bin
+Index: strigidaemon/bin/daemon/interface.cpp
+===================================================================
+--- strigidaemon/bin/daemon/interface.cpp
++++ strigidaemon/bin/daemon/interface.cpp
+@@ -35,7 +35,9 @@
+ #include <vector>
+ #include <sys/types.h>
+ #include <signal.h>
++#ifndef _WIN32_WCE
+ #include <unistd.h>
++#endif
+ using namespace std;
+ using namespace Strigi;
+ 
+@@ -94,7 +96,11 @@
+ string
+ Interface::stopDaemon() {
+     // send a signal that will stop all threads
++#ifndef _WIN32_WCE
+     kill(getpid(), SIGQUIT);
++#else
++    printf("ERROR, not implemented under wince!\n");
++#endif
+     return "";
+ }
+ string
+Index: strigidaemon/bin/daemon/queue/jobqueue.cpp
+===================================================================
+--- strigidaemon/bin/daemon/queue/jobqueue.cpp
++++ strigidaemon/bin/daemon/queue/jobqueue.cpp
+@@ -26,6 +26,10 @@
+ #include <errno.h>
+ #include <string.h>
+ 
++#ifdef _WIN32_WCE
++#include "compat_pthread.h"
++#endif
++
+ using namespace std;
+ 
+ class JobThread {
+@@ -93,7 +97,11 @@
+         STRIGI_MUTEX_UNLOCK(&mutex);
+     }
+     cerr << "stopping" << endl;
++#ifndef _WIN32_WCE
+     STRIGI_THREAD_EXIT(&thread);
++#else
++    STRIGI_THREAD_EXIT((DWORD)&thread);
++#endif
+ }
+ void
+ JobThread::stop() {
+Index: strigidaemon/bin/daemon/queue/compat_pthread.h
+===================================================================
+--- strigidaemon/bin/daemon/queue/compat_pthread.h
++++ strigidaemon/bin/daemon/queue/compat_pthread.h
+@@ -0,0 +1,113 @@
++#define pthread_condattr_t void
++
++enum {
++  SIGNAL = 0,
++  BROADCAST = 1,
++  MAX_EVENTS = 2
++};
++
++typedef struct
++{
++  unsigned int waiters_count_;
++  // Count of the number of waiters.
++  
++  CRITICAL_SECTION waiters_count_lock_;
++  // Serialize access to <waiters_count_>.
++
++  HANDLE events_[MAX_EVENTS];
++  // Signal and broadcast event HANDLEs.
++} pthread_cond_t;
++
++int 
++pthread_cond_init (pthread_cond_t *cv, 
++                   const pthread_condattr_t *)
++{
++  // Initialize the count to 0.
++  cv->waiters_count_ = 0;
++
++  // Create an auto-reset event.
++  cv->events_[SIGNAL] = CreateEvent (NULL,  // no security
++                                     FALSE, // auto-reset event
++                                     FALSE, // non-signaled initially
++                                     NULL); // unnamed
++
++  // Create a manual-reset event.
++  cv->events_[BROADCAST] = CreateEvent (NULL,  // no security
++                                        TRUE,  // manual-reset
++                                        FALSE, // non-signaled initially
++                                        NULL); // unnamed
++                                        
++  return true;
++}
++
++
++int 
++pthread_cond_wait (pthread_cond_t *cv,
++                   CRITICAL_SECTION *external_mutex)
++{
++  // Avoid race conditions.
++  EnterCriticalSection (&cv->waiters_count_lock_);
++  cv->waiters_count_++;
++  LeaveCriticalSection (&cv->waiters_count_lock_);
++
++  // It's ok to release the <external_mutex> here since Win32
++  // manual-reset events maintain state when used with
++  // <SetEvent>.  This avoids the "lost wakeup" bug...
++  LeaveCriticalSection (external_mutex);
++
++  // Wait for either event to become signaled due to <pthread_cond_signal>
++  // being called or <pthread_cond_broadcast> being called.
++  int result = WaitForMultipleObjects (2, cv->events_, FALSE, INFINITE);
++
++  EnterCriticalSection (&cv->waiters_count_lock_);
++  cv->waiters_count_--;
++  int last_waiter =
++    result == WAIT_OBJECT_0 + BROADCAST 
++    && cv->waiters_count_ == 0;
++  LeaveCriticalSection (&cv->waiters_count_lock_);
++
++  // Some thread called <pthread_cond_broadcast>.
++  if (last_waiter)
++    // We're the last waiter to be notified or to stop waiting, so
++    // reset the manual event. 
++    ResetEvent (cv->events_[BROADCAST]); 
++
++  // Reacquire the <external_mutex>.
++  EnterCriticalSection (external_mutex);
++  return true;
++}
++
++int 
++pthread_cond_broadcast (pthread_cond_t *cv)
++{
++  // Avoid race conditions.
++  EnterCriticalSection (&cv->waiters_count_lock_);
++  int have_waiters = cv->waiters_count_ > 0;
++  LeaveCriticalSection (&cv->waiters_count_lock_);
++
++  if (have_waiters)
++    SetEvent (cv->events_[BROADCAST]);
++  return true;
++}
++
++
++int 
++pthread_cond_signal (pthread_cond_t *cv)
++{
++  // Avoid race conditions.
++  EnterCriticalSection (&cv->waiters_count_lock_);
++  int have_waiters = cv->waiters_count_ > 0;
++  LeaveCriticalSection (&cv->waiters_count_lock_);
++
++  if (have_waiters)
++    SetEvent (cv->events_[SIGNAL]);
++  return true;
++}
++
++int
++pthread_cond_destroy (pthread_cond_t *cv)
++{
++  CloseHandle (cv->events_[SIGNAL]);
++  CloseHandle (cv->events_[BROADCAST]);
++  return true;
++}
+Index: strigidaemon/bin/daemon/queue/CMakeLists.txt
+===================================================================
+--- strigidaemon/bin/daemon/queue/CMakeLists.txt
++++ strigidaemon/bin/daemon/queue/CMakeLists.txt
+@@ -8,4 +8,7 @@
+ 	${strigidaemon_LIBS}
+ )
+ target_link_libraries(newdaemon ${CMAKE_THREAD_LIBS_INIT})
++if(WINCE)
++target_link_libraries(newdaemon ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
+ 
+Index: strigidaemon/bin/daemon/daemon.cpp
+===================================================================
+--- strigidaemon/bin/daemon/daemon.cpp
++++ strigidaemon/bin/daemon/daemon.cpp
+@@ -48,7 +48,11 @@
+ #include <fstream>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifndef _WIN32_WCE
+ #include <unistd.h>
++#else
++#include <direct.h>
++#endif
+ #include <fcntl.h>
+ #include <signal.h>
+ #include <cstdio>
+@@ -114,6 +118,7 @@
+     }
+     confFile.close();
+ }
++#ifndef _WIN32_WCE
+ FILE*
+ aquireLock(const char* lockfile, struct flock& lock) {
+     FILE* f = fopen(lockfile, "w");
+@@ -139,6 +144,7 @@
+     fcntl(fileno(f), F_SETLK, &lock);
+     fclose(f);
+ }
++#endif
+ void
+ printVersion(int argc, char** argv) {
+     printf( "%s %s\n Copyright (C) 2006-2007 Jos van den Oever and others\n",
+@@ -254,6 +260,7 @@
+         exit(1);
+     }
+ 
++#ifndef _WIN32_WCE
+     // check that no other daemon is running
+     struct flock lock;
+     FILE* lockfile = aquireLock(lockfilename.c_str(), lock);
+@@ -263,6 +270,7 @@
+                            lockfilename + " is locked.")
+         exit(1);
+     }
++#endif
+ 
+     set<string> dirs = config.getIndexedDirectories();
+ 
+@@ -362,7 +370,9 @@
+     //delete listener event queue
+     delete listenerEventQueue;
+ 
++#ifndef _WIN32_WCE
+     // release lock
+     releaseLock(lockfile, lock);
++#endif
+ }
+ 
+Index: strigidaemon/bin/daemon/eventlistener/pollinglistener.cpp
+===================================================================
+--- strigidaemon/bin/daemon/eventlistener/pollinglistener.cpp
++++ strigidaemon/bin/daemon/eventlistener/pollinglistener.cpp
+@@ -20,7 +20,9 @@
+ #include "pollinglistener.h"
+ 
+ #include <errno.h>
++#ifndef _WIN32_WCE
+ #include <dirent.h>
++#endif
+ #include <sys/types.h>
+ #include <algorithm>
+ #include <cassert>
+@@ -33,7 +35,12 @@
+ #include <strigi/indexreader.h>
+ #include "../strigilogging.h"
+ #include "strigi/strigi_thread.h"
++#ifndef _WIN32_WCE
+ #include <unistd.h>
++#endif
++#ifdef _WIN32
++#define sleep(x) Sleep(x*1000)
++#endif
+ 
+ using namespace std;
+ using namespace Strigi;
+@@ -158,7 +165,7 @@
+ 
+ void
+ PollingListener::addWatches(const set<string>& watches) {
+-    for (set<string>::iterator iter = watches.begin();
++    for (set<string>::const_iterator iter = watches.begin();
+             iter != watches.end(); ++iter) {
+         string temp = fixPath(*iter);
+         bool match = false;
+Index: strigidaemon/bin/daemon/eventlistener/fslistener.cpp
+===================================================================
+--- strigidaemon/bin/daemon/eventlistener/fslistener.cpp
++++ strigidaemon/bin/daemon/eventlistener/fslistener.cpp
+@@ -28,8 +28,10 @@
+ #include "../strigilogging.h"
+ 
+ #include <cerrno>
++#ifndef _WIN32_WCE
+ #include <sys/resource.h>
+ #include <sys/select.h>
++#endif
+ #include <sys/types.h>
+ #include <sstream>
+ #include <vector>
+@@ -544,7 +546,7 @@
+ 
+ void FsListener::addWatches(const set<string> &watches)
+ {
+-	set<string>::iterator iter;
++	set<string>::const_iterator iter;
+     set<string> toPool;
+     set<string> watched;
+ 	
+@@ -602,7 +604,7 @@
+     set<string> fixedDirs;
+ 
+     // fix path, all dir must end with a '/'
+-    for (set<string>::iterator iter = dirs.begin(); iter != dirs.end(); ++iter)
++    for (set<string>::const_iterator iter = dirs.begin(); iter != dirs.end(); ++iter)
+         fixedDirs.insert (fixPath (*iter));
+ 
+     STRIGI_MUTEX_LOCK (&m_reindexLock);
+Index: strigidaemon/bin/daemon/eventlistener/fslistener.h
+===================================================================
+--- strigidaemon/bin/daemon/eventlistener/fslistener.h
++++ strigidaemon/bin/daemon/eventlistener/fslistener.h
+@@ -28,6 +28,12 @@
+ class Event;
+ class PollingListener;
+ 
++#ifdef _WIN32_WCE
++#undef TYPE
++#undef CREATE
++#undef UPDATE
++#undef DELETE
++#endif
+ 
+ class FsEvent
+ {
+Index: strigidaemon/bin/daemon/eventlistener/eventlistenerqueue.cpp
+===================================================================
+--- strigidaemon/bin/daemon/eventlistener/eventlistenerqueue.cpp
++++ strigidaemon/bin/daemon/eventlistener/eventlistenerqueue.cpp
+@@ -31,6 +31,11 @@
+ #include <unistd.h>
+ #endif
+ 
++#ifdef _WIN32
++#define sleep(x) Sleep(x*1000)
++#define snprintf _snprintf
++#endif
++
+ using namespace std;
+ 
+ EventListenerQueue::EventListenerQueue(const char* name)
+Index: strigidaemon/bin/daemon/indexscheduler.cpp
+===================================================================
+--- strigidaemon/bin/daemon/indexscheduler.cpp
++++ strigidaemon/bin/daemon/indexscheduler.cpp
+@@ -30,7 +30,9 @@
+ 
+ #include <strigi/streamanalyzer.h>
+ #include <cerrno>
++#ifndef _WIN32_WCE
+ #include <sys/resource.h>
++#endif
+ 
+ #include "strigilogging.h"
+ 
+Index: strigidaemon/bin/daemon/dbus/dbuscpp/dbushandler.cpp
+===================================================================
+--- strigidaemon/bin/daemon/dbus/dbuscpp/dbushandler.cpp
++++ strigidaemon/bin/daemon/dbus/dbuscpp/dbushandler.cpp
+@@ -23,10 +23,12 @@
+ 
+ #include <iostream>
+ #include <stdio.h>
++#ifndef _WIN32_WCE
+ #include <sys/select.h>
++#include <unistd.h>
++#endif
+ #include <sys/time.h>
+ #include <sys/types.h>
+-#include <unistd.h>
+ #include <cstring>
+ #include <cerrno>
+ 
+@@ -37,11 +39,13 @@
+ DBusHandler::DBusHandler() {
+     DBusError err;
+ 
++#ifndef _WIN32_WCE
+     if (pipe(quitpipe) == -1) {
+         fprintf(stderr, "Connection Error (%s)\n", strerror(errno));
+         conn = 0;
+         return;
+     }
++#endif
+ 
+     // initialise the error
+     dbus_error_init(&err);
+@@ -103,14 +107,17 @@
+     dbus_threads_init_default();
+ 
+     // loop, testing for new messages
++#ifndef _WIN32_WCE
+     fd_set rfds;
+     int retval;
+     struct timeval tv;
+     int max = ((fd>*quitpipe) ?fd :*quitpipe)+1;
++#endif
+     // handle messages that are initially in queue
+     while (dbus_connection_dispatch(conn) == DBUS_DISPATCH_DATA_REMAINS) {}
+     dbus_connection_flush(conn);
+     while (dbus_connection_get_is_connected(conn)) {
++#ifndef _WIN32_WCE
+         FD_ZERO(&rfds);
+         FD_SET(fd, &rfds);
+         FD_SET(*quitpipe, &rfds);
+@@ -121,15 +128,19 @@
+         if (retval == -1) {
+             break;
+         }
++#endif
++
+         // blocking read of the next available message
+         dbus_connection_read_write(conn, 0);
+         while (dbus_connection_dispatch(conn) == DBUS_DISPATCH_DATA_REMAINS) {
+             ;
+         }
+         dbus_connection_flush(conn);
++#ifndef _WIN32_WCE
+         if (FD_ISSET(*quitpipe, &rfds)) { // quit
+             break;
+         }
++#endif
+     }
+ 
+     for (vector<DBusObjectCallHandler*>::const_iterator i=callhandlers.begin();
+@@ -148,8 +159,10 @@
+ void
+ DBusHandler::stop() {
+     cerr << "DBusHandler::stop" << endl;
++#ifndef _WIN32_WCE
+     // close the pipe to wake up the dbus thread so it can stop
+     // alternatively we can write into it so we can reuse it
+     // since we only use it for quitting atm, closing the pipe is fine
+     close(quitpipe[1]);
++#endif
+ }
+Index: strigidaemon/bin/daemon/dbus/dbusserver.cpp
+===================================================================
+--- strigidaemon/bin/daemon/dbus/dbusserver.cpp
++++ strigidaemon/bin/daemon/dbus/dbusserver.cpp
+@@ -23,10 +23,13 @@
+ #include "dbusxesamlivesearchinterface.h"
+ #include "../xesam/xesamlivesearch.h"
+ #include <iostream>
++#ifndef _WIN32_WCE
+ #include <sys/select.h>
++#include <unistd.h>
++#endif
+ #include <sys/time.h>
+ #include <sys/types.h>
+-#include <unistd.h>
++
+ using namespace std;
+ 
+ DBusServer::DBusServer(ClientInterface* iface, XesamLiveSearch* x)
+Index: strigidaemon/bin/daemon/dbus/dbusserver.h
+===================================================================
+--- strigidaemon/bin/daemon/dbus/dbusserver.h
++++ strigidaemon/bin/daemon/dbus/dbusserver.h
+@@ -23,6 +23,8 @@
+ #include "../strigithread.h"
+ #include <vector>
+ 
++#undef interface
++
+ class DBusHandler;
+ class ClientInterface;
+ class DBusClientInterface;
+Index: strigidaemon/bin/daemon/dbus/CMakeLists.txt
+===================================================================
+--- strigidaemon/bin/daemon/dbus/CMakeLists.txt
++++ strigidaemon/bin/daemon/dbus/CMakeLists.txt
+@@ -72,8 +72,10 @@
+ add_executable(testserver testserver.cpp ../strigithread.cpp)
+ target_link_libraries(testserver dbusserver ${CMAKE_THREAD_LIBS_INIT} ${DBUS_LIBRARIES} ${LOG4CXX_LIBRARIES} streamanalyzer)
+ 
++if(NOT WINCE)
+ add_executable(dbustest dbustest.cpp)
+ target_link_libraries(dbustest  ${CMAKE_THREAD_LIBS_INIT} ${LOG4CXX_LIBRARIES} ${DBUS_LIBRARIES})
++endif(NOT WINCE)
+ 
+ configure_file(vandenoever.strigi.service.cmake
+   ${CMAKE_CURRENT_BINARY_DIR}/vandenoever.strigi.service)
+Index: strigidaemon/bin/daemon/socketserver.cpp
+===================================================================
+--- strigidaemon/bin/daemon/socketserver.cpp
++++ strigidaemon/bin/daemon/socketserver.cpp
+@@ -24,11 +24,13 @@
+ #include <iostream>
+ #include <stdio.h>
+ #include <sys/types.h>
++#ifndef _WIN32_WCE
+ #include <sys/socket.h>
+ #include <sys/un.h>
++#include <unistd.h>
++#endif
+ #include <errno.h>
+ #include <assert.h>
+-#include <unistd.h>
+ #include <stdlib.h>
+ #include <cstring>
+ 
+@@ -44,6 +46,7 @@
+ 
+ void*
+ SocketServer::run(void*) {
++#ifndef _WIN32
+     int sd, newSd;
+     size_t len;
+     socklen_t addlen;
+@@ -97,6 +100,57 @@
+         perror("close socket");
+     }
+     return &thread;
++#else
++    SOCKET sd, newSd;
++    int addlen;
++    sockaddr_in sock, work;
++
++    /* create new socket */
++    sd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
++    if(INVALID_SOCKET == sd) {
++        perror("cannot open socket ");
++        return false;
++    }
++
++    /* set the address */
++    sock.sin_family = AF_INET;
++    sock.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++    sock.sin_port = htons(5555);
++
++    /* bind server port */
++    if (bind(sd, reinterpret_cast<SOCKADDR*> (&sock), sizeof(sock))!=0) {
++        perror("cannot bind port ");
++        return false;
++    }
++
++    if (::listen(sd, 5) != 0) {
++        perror("cannot listen to port");
++        return false;
++    }
++
++    while (interface->isActive()) {
++        addlen = sizeof(work);
++        newSd = accept(sd, reinterpret_cast<SOCKADDR*> (&work), &addlen);
++        if (INVALID_SOCKET == newSd) {
++            break;
++        }
++
++        if (!readRequest((int)newSd)) {
++            closesocket(sd);
++            continue;
++        }
++        response.clear();
++        handleRequest();
++        sendResponse(newSd);
++        closesocket(newSd);
++
++        /* the server is now free to accept another socket request */
++    }
++    if (closesocket(sd) != 0) {
++        perror("close socket");
++    }
++    return &thread;
++#endif
+ }
+ bool
+ SocketServer::readRequest(int sd) {
+@@ -104,7 +158,11 @@
+     string line;
+     char c;
+     while (true) {
++#ifndef _WIN32
+         ssize_t r = recv(sd, &c, 1, 0);
++#else
++        int r = recv((SOCKET)sd, &c, 1, 0);
++#endif
+         if (r < 0) {
+             error = "Error reading from socket: ";
+             error += strerror(errno);
+@@ -129,7 +187,11 @@
+ }
+ bool
+ SocketServer::sendResponse(int sd) {
++#ifndef _WIN32
+     ssize_t r;
++#else
++    int r;
++#endif
+     for (uint i=0; i<response.size(); ++i) {
+         string line = response[i];
+         size_t p = line.find('\n');
+@@ -142,7 +204,11 @@
+         p = 0;
+         size_t len = line.length();
+         do {
+-            r = send(sd, line.c_str()+p, len-p, SOCKET_NOSIGNAL);
++#ifndef _WIN32
++            r = send((SOCKET)sd, line.c_str()+p, len-p, SOCKET_NOSIGNAL);
++#else
++            r = send((SOCKET)sd, line.c_str()+p, len-p, SOCKET_NOSIGNAL);
++#endif
+             if (r < 0) {
+                 printf("error writing response\n");
+                 return false;
+Index: strigidaemon/bin/daemon/socketserver.h
+===================================================================
+--- strigidaemon/bin/daemon/socketserver.h
++++ strigidaemon/bin/daemon/socketserver.h
+@@ -24,6 +24,12 @@
+ #include <vector>
+ #include "strigithread.h"
+ 
++#ifdef _WIN32
++#include <winsock2.h>
++#endif
++
++#undef interface
++
+ class Interface;
+ class SocketServer : public StrigiThread {
+ private:
+@@ -39,7 +45,21 @@
+ 
+     void* run(void*);
+ public:
+-    SocketServer(Interface* i) :StrigiThread("SocketServer"), interface(i) {}
++    SocketServer(Interface* i) :StrigiThread("SocketServer"), interface(i) {
++#ifdef _WIN32
++        INT iRet = 0;
++        WSADATA wsaData;
++        iRet = WSAStartup(MAKEWORD(2,2), &wsaData);
++        if (iRet != 0){
++            perror("WSAStartup failed ");
++        }
++#endif
++    }
++    ~SocketServer() {
++#ifdef _WIN32
++        WSACleanup();
++#endif
++    }
+     void setSocketName(const std::string& name) {
+         socketname = name;
+     }
+Index: strigidaemon/bin/daemon/strigithread.cpp
+===================================================================
+--- strigidaemon/bin/daemon/strigithread.cpp
++++ strigidaemon/bin/daemon/strigithread.cpp
+@@ -28,9 +28,11 @@
+ #include <signal.h>
+ #include <vector>
+ #include <stdlib.h>
++#ifndef _WIN32_WCE
+ #include <unistd.h>
+ #include <sys/resource.h>
+ #include <sys/syscall.h>
++#endif
+ 
+ // define two enums and a constant for use of ioprio
+ enum {
+@@ -85,6 +87,7 @@
+     }
+ }
+ 
++#ifndef _WIN32_WCE
+ struct sigaction quitaction;
+ void
+ set_quit_on_signal(int signum) {
+@@ -98,13 +101,16 @@
+     dummyaction.sa_handler = nothing;
+     sigaction(signum, &dummyaction, 0);
+ }
++#endif
+ 
+ extern "C" void*
+ threadstarter(void *d) {
++#ifndef _WIN32_WCE
+     // give this thread job batch job priority
+     struct sched_param param;
+     memset(&param, 0, sizeof(param));
+     param.sched_priority = 0;
++#endif
+     StrigiThread* thread = static_cast<StrigiThread*>(d);
+ 
+ #ifndef __APPLE__
+@@ -112,6 +118,7 @@
+ #ifndef SCHED_BATCH
+ #define SCHED_BATCH 3
+ #endif
++#ifndef _WIN32_WCE
+         // renice the thread
+         int r  = setpriority(PRIO_PROCESS, 0, thread->getPriority());
+         if (r != 0) {
+@@ -125,6 +132,7 @@
+                 + ".threadstarter",
+                 string("error setting to batch: ") + strerror(errno));
+         }
++#endif
+ #ifdef SYS_ioprio_set
+         if (syscall(SYS_ioprio_set, IOPRIO_WHO_PROCESS, 0,
+                 IOPRIO_CLASS_IDLE<<IOPRIO_CLASS_SHIFT ) < 0 ) {
+@@ -186,11 +194,13 @@
+ }
+ int
+ StrigiThread::start(int prio) {
++#ifndef _WIN32_WCE
+     // set up signal handling
+     set_quit_on_signal(SIGINT);
+     set_quit_on_signal(SIGQUIT);
+     set_quit_on_signal(SIGTERM);
+     set_wakeup_on_signal(SIGALRM);
++#endif
+     threads.push_back(this);
+ 
+     priority = prio;
+@@ -208,8 +218,10 @@
+     state = Stopping;
+     stopThread();
+     if (thread) {
++#ifndef _WIN32_WCE
+         // signal the thread to wake up
+         pthread_kill(thread, SIGALRM);
++#endif
+         // wait for the thread to finish
+         STRIGI_THREAD_JOIN(thread);
+     }
+Index: strigidaemon/bin/daemon/xesam/xesamsession.cpp
+===================================================================
+--- strigidaemon/bin/daemon/xesam/xesamsession.cpp
++++ strigidaemon/bin/daemon/xesam/xesamsession.cpp
+@@ -23,6 +23,11 @@
+ #include "xesamclass.h"
+ #include <sstream>
+ #include <stdexcept>
++#ifdef _WIN32
++#include <stdlib.h>
++#define random rand
++#endif
++
+ using namespace std;
+ using namespace Strigi;
+ 
+Index: strigidaemon/bin/daemon/xesam/xesamlivesearch.cpp
+===================================================================
+--- strigidaemon/bin/daemon/xesam/xesamlivesearch.cpp
++++ strigidaemon/bin/daemon/xesam/xesamlivesearch.cpp
+@@ -26,6 +26,9 @@
+ #include <iostream>
+ #include <stdexcept>
+ #include <cstdlib>
++#ifdef _WIN32
++#define random rand
++#endif
+ using namespace std;
+ using namespace Strigi;
+ 
+Index: strigidaemon/bin/daemon/CMakeLists.txt
+===================================================================
+--- strigidaemon/bin/daemon/CMakeLists.txt
++++ strigidaemon/bin/daemon/CMakeLists.txt
+@@ -29,3 +29,7 @@
+ 
+ add_library(libstrigidaemon STATIC ${strigidaemon_SRCS})
+ target_link_libraries(libstrigidaemon ${strigidaemon_LIBS})
++
++if(WINCE)
++target_link_libraries(libstrigidaemon ws2 ${DBUS_LIBRARIES})
++endif(WINCE)
+Index: strigidaemon/bin/strigicmd/strigicmd.cpp
+===================================================================
+--- strigidaemon/bin/strigicmd/strigicmd.cpp
++++ strigidaemon/bin/strigicmd/strigicmd.cpp
+@@ -38,7 +38,11 @@
+ #include <cstdarg>
+ #include <cstring>
+ #include <time.h>
++#ifndef _WIN32_WCE
+ #include <dirent.h>
++#else
++#include <../../libstreamanalyzer/lib/stgdirent.h>
++#endif
+ //#include "stgdirent.h" //dirent replacement (includes native if available)
+ 
+ using namespace std;
+@@ -137,6 +141,9 @@
+ }
+ void
+ printIndexedDocument(IndexedDocument indexedDoc) {
++//Windows ce does not have a console, so no matter of displaying something
++//and the lack of ctime implementation of the sdk
++#ifndef _WIN32_WCE
+     printf ("\t- mimetype: %s\n", indexedDoc.mimetype.c_str());
+     printf ("\t- sha1: %s\n", indexedDoc.sha1.c_str());
+     cout << "\t- size: " << indexedDoc.size << endl;
+@@ -167,6 +174,7 @@
+                 printf ("\t\t%s\n", it->second.c_str());
+         }
+     }
++#endif
+ }
+ 
+ /*!
+Index: libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexreader.h
+===================================================================
+--- libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexreader.h
++++ libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexreader.h
+@@ -27,6 +27,10 @@
+ #include <time.h>
+ #include <CLucene.h>
+ 
++#ifdef _WIN32_WCE
++#include <winsock.h>
++#endif
++
+ class CLuceneIndexManager;
+ class CLuceneIndexReader : public Strigi::IndexReader {
+ friend class CLuceneIndexManager;
+Index: libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h
+===================================================================
+--- libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h
++++ libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h
+@@ -26,6 +26,10 @@
+ #include <string>
+ #include <map>
+ 
++#ifdef _WIN32_WCE
++#include <winsock.h>
++#endif
++
+ /**
+  **/
+ 
+Index: libstreamanalyzer/plugins/indexers/cluceneindexer/indexdump/CMakeLists.txt
+===================================================================
+--- libstreamanalyzer/plugins/indexers/cluceneindexer/indexdump/CMakeLists.txt
++++ libstreamanalyzer/plugins/indexers/cluceneindexer/indexdump/CMakeLists.txt
+@@ -1,2 +1,5 @@
+ add_executable(indexdump indexdump.cpp ../tcharutils.cpp)
+ target_link_libraries(indexdump streamanalyzer ${CLUCENE_LIBRARY})
++if(WINCE)
++  target_link_libraries(indexdump ${QT_QTCORE_LIBRARY})
++endif(WINCE)
+Index: libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexreader.cpp
+===================================================================
+--- libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexreader.cpp
++++ libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexreader.cpp
+@@ -224,7 +224,11 @@
+ CLuceneIndexReader::Private::createWildCardTerm(const wchar_t* name,
+         const string& value) {
+     wstring v = utf8toucs2(value);
++#ifndef _WIN32_WCE
+     return _CLNEW Term(name, v.c_str());
++#else
++    return _CLNEW Term(name, (wchar_t const *)v.c_str());
++#endif
+ }
+ Term*
+ CLuceneIndexReader::Private::createTerm(const wchar_t* name,
+Index: libstreamanalyzer/plugins/indexers/cluceneindexer/CMakeLists.txt
+===================================================================
+--- libstreamanalyzer/plugins/indexers/cluceneindexer/CMakeLists.txt
++++ libstreamanalyzer/plugins/indexers/cluceneindexer/CMakeLists.txt
+@@ -6,6 +6,11 @@
+     ADD_DEFINITIONS(-DUNICODE)
+ ENDIF(WIN32)
+ 
++IF(WINCE)
++    find_package(Qt4 REQUIRED COMPONENTS QtCore )
++    include(${QT_USE_FILE})
++ENDIF(WINCE)
++
+ # We need to compile the clucene index plugin with default visibility, because
+ # CLucene does not export the symbol for CLuceneError. If this symbol is not
+ # exported, the exception cannot be caught and can cause programs that use
+@@ -20,9 +25,14 @@
+     cluceneindexmanager.cpp
+     cluceneindexreader.cpp
+     cluceneindexwriter.cpp
+-    jsgzipcompressstream.cpp
+     tcharutils.cpp
+ )
++if(NOT WINCE)
++set(cluceneindex_SRCS
++     ${cluceneindex_SRCS}
++    jsgzipcompressstream.cpp
++)
++endif(NOT WINCE)
+ include_directories(${CLUCENE_INCLUDE_DIR} ${CLUCENE_LIBRARY_DIR})
+ 
+ if(WIN32)
+@@ -40,6 +50,10 @@
+ add_library(clucene MODULE ${cluceneindex_SRCS})
+ set_target_properties(clucene PROPERTIES PREFIX ${prefix})
+ target_link_libraries(clucene ${CLUCENE_LIBRARY} streamanalyzer)
++if(WINCE)
++  target_link_libraries(clucene ${QT_QTCORE_LIBRARY})
++endif(WINCE)
++
+ install(TARGETS clucene LIBRARY DESTINATION ${LIB_DESTINATION}/strigi)
+ 
+ if(BUILD_UTILS)
+Index: libstreamanalyzer/lib/stgdirent.cpp
+===================================================================
+--- libstreamanalyzer/lib/stgdirent.cpp
++++ libstreamanalyzer/lib/stgdirent.cpp
+@@ -16,7 +16,7 @@
+ #include "errno.h"
+ 
+ DIR *
+-opendir (const char *szPath)
++strigi_opendir (const char *szPath)
+ {
+     DIR *nd;
+     char szFullPath[MAX_PATH];
+@@ -99,7 +99,7 @@
+ }
+ 
+ 
+-struct dirent * readdir (DIR * dirp)
++struct dirent * strigi_readdir (DIR * dirp)
+ {
+     errno = 0;
+ 
+@@ -187,7 +187,7 @@
+ 
+ 
+ int32_t
+-closedir (DIR * dirp)
++strigi_closedir (DIR * dirp)
+ {
+     int32_t rc;
+ 
+Index: libstreamanalyzer/lib/analyzerloader.cpp
+===================================================================
+--- libstreamanalyzer/lib/analyzerloader.cpp
++++ libstreamanalyzer/lib/analyzerloader.cpp
+@@ -44,6 +44,12 @@
+ typedef HMODULE StgModuleType;
+ #endif
+ 
++#if defined(UNICODE) || defined(_UNICODE)
++#define T(t) L##t
++#else
++#define T(t) t
++#endif
++
+ using namespace std;
+ using namespace Strigi;
+ 
+@@ -83,7 +89,7 @@
+ AnalyzerLoader::Private::Module::~Module() {
+     void(*f)(const AnalyzerFactoryFactory*)
+         = (void(*)(const AnalyzerFactoryFactory*))
+-        DLSYM(mod, "deleteStrigiAnalyzerFactory");
++        DLSYM(mod, T("deleteStrigiAnalyzerFactory"));
+     if (f) {
+         f(factory);
+     }
+@@ -151,8 +157,14 @@
+     // do not use RTLD_GLOBAL here
+     handle = dlopen(lib, RTLD_LAZY); //note: If neither RTLD_GLOBAL nor RTLD_LOCAL are specified, the default is RTLD_LOCAL.
+ #else
+-    handle = LoadLibrary(lib);
++#ifndef _WIN32_WCE
++     handle = LoadLibrary(lib);
++#else
++	wchar_t* wlib = wce_mbtowc(lib);
++	handle = LoadLibraryW(wlib);
++	free(wlib);
+ #endif
++#endif
+     if (!handle) {
+ #if defined(HAVE_DLFCN_H) && !defined(_WIN32)
+         cerr << "Could not load '" << lib << "':" << dlerror() << endl;
+@@ -162,7 +174,7 @@
+         return;
+     }
+     const AnalyzerFactoryFactory* (*f)() = (const AnalyzerFactoryFactory* (*)())
+-        DLSYM(handle, "strigiAnalyzerFactory");
++        DLSYM(handle, T("strigiAnalyzerFactory"));
+     if (!f) {
+ #ifndef WIN32
+         fprintf(stderr, "%s\n", dlerror());
+Index: libstreamanalyzer/lib/CMakeLists.txt
+===================================================================
+--- libstreamanalyzer/lib/CMakeLists.txt
++++ libstreamanalyzer/lib/CMakeLists.txt
+@@ -27,16 +27,13 @@
+         indexreader.cpp
+ 	endanalyzers/arendanalyzer.cpp
+ 	endanalyzers/bmpendanalyzer.cpp
+-	endanalyzers/bz2endanalyzer.cpp
+ 	endanalyzers/cpioendanalyzer.cpp
+ 	endanalyzers/flacendanalyzer.cpp
+-	endanalyzers/gzipendanalyzer.cpp
+ 	endanalyzers/helperendanalyzer.cpp
+ 	endanalyzers/id3endanalyzer.cpp
+ 	endanalyzers/lzmaendanalyzer.cpp
+ 	endanalyzers/mailendanalyzer.cpp
+ 	endanalyzers/mpegendanalyzer.cpp   
+-	endanalyzers/odfendanalyzer.cpp
+ 	endanalyzers/oleendanalyzer.cpp
+ 	endanalyzers/pdfendanalyzer.cpp
+ 	endanalyzers/pngendanalyzer.cpp
+@@ -44,8 +41,6 @@
+ 	endanalyzers/sdfendanalyzer.cpp
+ 	endanalyzers/tarendanalyzer.cpp
+ 	endanalyzers/textendanalyzer.cpp
+-	endanalyzers/zipendanalyzer.cpp
+-	endanalyzers/zipexeendanalyzer.cpp
+ 	eventanalyzers/digesteventanalyzer.cpp
+ 	eventanalyzers/mimeeventanalyzer.cpp
+ 	helperanalyzers/odfcontenthelperanalyzer.cpp
+@@ -58,6 +53,21 @@
+ 	xesamparser.cpp
+ )
+ 
++if (NOT WINCE)
++  set(streamanalyzer_SRCS ${streamanalyzer_SRCS}
++    endanalyzers/bz2endanalyzer.cpp
++    endanalyzers/gzipendanalyzer.cpp
++    endanalyzers/odfendanalyzer.cpp
++    endanalyzers/zipendanalyzer.cpp
++    endanalyzers/zipexeendanalyzer.cpp
++  )
++endif(NOT WINCE)
++
++if (WINCE)
++  set(streamanalyzer_SRCS ${streamanalyzer_SRCS}
++    stgdirent.cpp
++  )
++endif(WINCE)
+ add_library(streamanalyzerstatic STATIC ${streamanalyzer_SRCS})
+ 
+ set(streamanalyzer_libs ${LIBSTREAMS_LIBRARIES} ${LIBXML2_LIBRARIES} )
+Index: libstreamanalyzer/lib/streamanalyzer.cpp
+===================================================================
+--- libstreamanalyzer/lib/streamanalyzer.cpp
++++ libstreamanalyzer/lib/streamanalyzer.cpp
+@@ -24,7 +24,9 @@
+ #include <strigi/streamlineanalyzer.h>
+ #include <strigi/streameventanalyzer.h>
+ #include <strigi/streamsaxanalyzer.h>
++#ifndef _WIN32_WCE
+ #include "endanalyzers/bz2endanalyzer.h"
++#endif
+ #include "endanalyzers/lzmaendanalyzer.h"
+ #include "eventanalyzers/mimeeventanalyzer.h"
+ #include "endanalyzers/bmpendanalyzer.h"
+@@ -39,7 +41,9 @@
+ #include "endanalyzers/pdfendanalyzer.h"
+ #include "endanalyzers/sdfendanalyzer.h"
+ #include "endanalyzers/pngendanalyzer.h"
++#ifndef _WIN32_WCE
+ #include "endanalyzers/gzipendanalyzer.h"
++#endif
+ #include "lineanalyzers/m3ustreamanalyzer.h"
+ #include "endanalyzers/mailendanalyzer.h"
+ #include "endanalyzers/mpegendanalyzer.h"
+@@ -312,16 +316,18 @@
+     for (i = plugins.begin(); i != plugins.end(); ++i) {
+         addFactory(*i);
+     }
++#ifndef _WIN32_WCE
+     addFactory(new Bz2EndAnalyzerFactory());
+     addFactory(new GZipEndAnalyzerFactory());
++    addFactory(new OdfEndAnalyzerFactory());
++    addFactory(new ZipEndAnalyzerFactory());
++    addFactory(new ZipExeEndAnalyzerFactory());
++#endif
+     addFactory(new OleEndAnalyzerFactory());
+     addFactory(new TarEndAnalyzerFactory());
+     addFactory(new ArEndAnalyzerFactory());
+     addFactory(new MailEndAnalyzerFactory());
+ //    addFactory(new MpegEndAnalyzerFactory()); //Xine fallback works so much better now
+-    addFactory(new OdfEndAnalyzerFactory());
+-    addFactory(new ZipEndAnalyzerFactory());
+-    addFactory(new ZipExeEndAnalyzerFactory());
+     addFactory(new RpmEndAnalyzerFactory());
+     addFactory(new CpioEndAnalyzerFactory());
+     addFactory(new PngEndAnalyzerFactory());
+Index: libstreamanalyzer/lib/indexpluginloader.cpp
+===================================================================
+--- libstreamanalyzer/lib/indexpluginloader.cpp
++++ libstreamanalyzer/lib/indexpluginloader.cpp
+@@ -44,6 +44,12 @@
+ typedef HMODULE StgModuleType;
+ #endif
+ 
++#if defined(UNICODE) || defined(_UNICODE)
++#define T(t) L##t
++#else
++#define T(t) t
++#endif
++
+ vector<string> getdirs(const string& direnv) {
+     vector<string> dirs;
+     string::size_type lastp = 0;
+@@ -134,8 +140,14 @@
+         // the default is RTLD_LOCAL.
+         handle = dlopen(lib.c_str(), RTLD_LOCAL | RTLD_NOW);
+ #else
+-        handle = LoadLibrary(lib.c_str());
++#ifndef _WIN32_WCE
++		handle = LoadLibrary(lib.c_str());
++#else
++		wchar_t* wlib = wce_mbtowc(lib.c_str());
++		handle = LoadLibraryW(wlib);
++		free(wlib);
+ #endif
++#endif
+         if (!handle) {
+ #if defined(HAVE_DLFCN_H) && !defined(_WIN32)
+             cerr << "Could not load '" << lib << "':" << dlerror() << endl;
+@@ -146,7 +158,7 @@
+             return;
+         }
+         IndexManager*(*create)(const char*) = (IndexManager*(*)(const char*))
+-            DLSYM(handle, "createIndexManager");
++            DLSYM(handle, T("createIndexManager"));
+         if (!create) {
+ #ifndef WIN32
+             fprintf(stderr, "%s\n", dlerror());
+@@ -157,7 +169,7 @@
+             return;
+         }
+         void(*destroy)(IndexManager*) = (void(*)(IndexManager*))
+-            DLSYM(handle, "deleteIndexManager");
++            DLSYM(handle, T("deleteIndexManager"));
+         if (!destroy) {
+ #ifndef WIN32
+             fprintf(stderr, "%s\n", dlerror());
+Index: libstreamanalyzer/lib/endanalyzers/pngendanalyzer.cpp
+===================================================================
+--- libstreamanalyzer/lib/endanalyzers/pngendanalyzer.cpp
++++ libstreamanalyzer/lib/endanalyzers/pngendanalyzer.cpp
+@@ -27,7 +27,9 @@
+ #include "textendanalyzer.h"
+ #include <strigi/subinputstream.h>
+ #include <strigi/fieldtypes.h>
++#ifndef _WIN32_WCE
+ #include <strigi/gzipinputstream.h>
++#endif
+ #include <strigi/textutils.h>
+ using namespace std;
+ using namespace Strigi;
+@@ -210,11 +212,15 @@
+             SubInputStream sub(in, chunksize);
+             analyzeText(as, &sub);
+             sub.skip(chunksize);
+-        } else if (strncmp("zTXt", c+4, 4) == 0) {
++        }
++#ifndef _WIN32_WCE
++        else if (strncmp("zTXt", c+4, 4) == 0) {
+             SubInputStream sub(in, chunksize);
+             analyzeZText(as, &sub);
+             sub.skip(chunksize);
+-        } else if (strncmp("iTXt", c+4, 4) == 0) {
++        }
++#endif
++        else if (strncmp("iTXt", c+4, 4) == 0) {
+             SubInputStream sub(in, chunksize);
+             analyzeText(as, &sub);
+             sub.skip(chunksize);
+@@ -256,6 +262,7 @@
+     in->reset(nlen+1);
+     return addMetaData(name, as, in);
+ }
++#ifndef _WIN32_WCE
+ signed char
+ PngEndAnalyzer::analyzeZText(Strigi::AnalysisResult& as,
+         InputStream* in) {
+@@ -273,6 +280,7 @@
+     GZipInputStream z(in, GZipInputStream::ZLIBFORMAT);
+     return addMetaData(name, as, &z);
+ }
++#endif
+ signed char
+ PngEndAnalyzer::analyzeTime(Strigi::AnalysisResult& as,
+         Strigi::InputStream* in) {
+Index: libstreamanalyzer/lib/pdf/pdfparser.cpp
+===================================================================
+--- libstreamanalyzer/lib/pdf/pdfparser.cpp
++++ libstreamanalyzer/lib/pdf/pdfparser.cpp
+@@ -19,7 +19,9 @@
+  */
+ #include "pdfparser.h"
+ #include <strigi/stringterminatedsubstream.h>
++#ifndef _WIN32_WCE
+ #include <strigi/gzipinputstream.h>
++#endif
+ #include <strigi/subinputstream.h>
+ #include <ctype.h>
+ 
+@@ -644,13 +646,17 @@
+         int32_t offset, int32_t numberofobjects, bool hasfilter,
+         const string& filter) {
+     if (hasfilter) {
++#ifndef _WIN32_WCE
+         if (filter == "FlateDecode") {
+             GZipInputStream gzip(s, GZipInputStream::ZLIBFORMAT);
+             return handleSubStream(&gzip, type, offset, numberofobjects);
+         } else {
++#endif
+             // we cannot handle these filters, so we send the raw data
+             return handleSubStream(s, type, 0, 0);
++#ifndef _WIN32_WCE
+         }
++#endif
+     } else {
+         return handleSubStream(s, type, offset, numberofobjects);
+     }
+Index: strigiclient/lib/CMakeLists.txt
+===================================================================
+--- strigiclient/lib/CMakeLists.txt
++++ strigiclient/lib/CMakeLists.txt
+@@ -1,2 +1,4 @@
++if(NOT WINCE)
+ add_subdirectory(htmlgui)
++endif(NOT WINCE)
+ add_subdirectory(searchclient)
+Index: libstreams/ConfigureChecks.cmake
+===================================================================
+--- libstreams/ConfigureChecks.cmake
++++ libstreams/ConfigureChecks.cmake
+@@ -1,3 +1,8 @@
++if(WINCE)
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
+ #need to find a few default headers:
+ INCLUDE(CheckIncludeFileCXX)
+ CHECK_INCLUDE_FILE_CXX(direct.h HAVE_DIRECT_H)          # src/streamindexer/filelister.cpp
+@@ -23,13 +28,14 @@
+ 
+ #test for some functions that are missing on a particular system
+ INCLUDE(CheckFunctionExists)
++INCLUDE(CheckSymbolExists) 
+ CHECK_FUNCTION_EXISTS(fchdir HAVE_FCHDIR)               # unused !
+ CHECK_FUNCTION_EXISTS(gettimeofday HAVE_GETTIMEOFDAY)   # src/luceneindexer/cluceneindexmanager.cpp, src/luceneindexer/cluceneindexreader.cpp, src/streams/strigi/timeofday.h
+ CHECK_FUNCTION_EXISTS(isblank HAVE_ISBLANK)             # src/streams/mailinputstream.cpp, src/streams/strigi/compat.cpp
+ CHECK_FUNCTION_EXISTS(mkstemp HAVE_MKSTEMP)             # src/streamanalyzer/helperendanalyzer.cpp
+ CHECK_FUNCTION_EXISTS(nanosleep HAVE_NANOSLEEP)         # src/storage/sqlitestorage.cpp, src/daemon/indexscheduler.cpp, src/searchclient/cmdlinestrigi.cpp
+ CHECK_FUNCTION_EXISTS(setenv HAVE_SETENV)               # src/xmlindexer/peranalyzerxml.cpp
+-CHECK_FUNCTION_EXISTS(strcasecmp HAVE_STRCASECMP)       # src/streamindexer/expatsaxendanalyzer.cpp, src/streamindexer/saxendanalyzer.cpp
++CHECK_SYMBOL_EXISTS(strcasecmp "string.h" HAVE_STRCASECMP)       # src/streamindexer/expatsaxendanalyzer.cpp, src/streamindexer/saxendanalyzer.cpp
+ CHECK_FUNCTION_EXISTS(strcasestr HAVE_STRCASESTR)       # src/streams/mailinputstream.cpp
+ CHECK_FUNCTION_EXISTS(strlwr HAVE_STRLWR)               # src/streamindexer/ifilterendanalyzer.cpp
+ CHECK_FUNCTION_EXISTS(strncasecmp HAVE_STRNCASECMP)     # src/streams/mailinputstream.cpp
+Index: libstreams/include/strigi/cpioinputstream.h
+===================================================================
+--- libstreams/include/strigi/cpioinputstream.h
++++ libstreams/include/strigi/cpioinputstream.h
+@@ -21,7 +21,9 @@
+ #define STRIGI_CPIOINPUTSTREAM_H
+ 
+ #include <strigi/substreamprovider.h>
++#ifndef _WIN32_WCE
+ #include <strigi/gzipinputstream.h>
++#endif
+ 
+ namespace Strigi {
+ 
+Index: libstreams/lib/archivereader.cpp
+===================================================================
+--- libstreams/lib/archivereader.cpp
++++ libstreams/lib/archivereader.cpp
+@@ -23,7 +23,11 @@
+ #include <strigi/mailinputstream.h>
+ #include <strigi/rpminputstream.h>
+ #include <strigi/arinputstream.h>
++#ifndef _WIN32_WCE
+ #include <strigi/zipinputstream.h>
++#else
++#include <cassert>
++#endif
+ #include "archiveentrycache.h"
+ #include "listinginprogress.h"
+ #include <iostream>
+@@ -181,8 +185,10 @@
+         RpmInputStream::factory));
+     subs.insert(SubsPair(ArInputStream::checkHeader,
+         ArInputStream::factory));
++#ifndef _WIN32_WCE
+     subs.insert(SubsPair(ZipInputStream::checkHeader,
+         ZipInputStream::factory));
++#endif
+     subs.insert(SubsPair(TarInputStream::checkHeader,
+         TarInputStream::factory));
+     subs.insert(SubsPair(SdfInputStream::checkHeader,
+Index: libstreams/lib/CMakeLists.txt
+===================================================================
+--- libstreams/lib/CMakeLists.txt
++++ libstreams/lib/CMakeLists.txt
+@@ -7,15 +7,13 @@
+ 	listinginprogress.cpp
+ 	arinputstream.cpp
+ 	base64inputstream.cpp
+-	bz2inputstream.cpp
+ 	cpioinputstream.cpp
+         dataeventinputstream.cpp
+ 	dostime.cpp
+ 	encodinginputstream.cpp
+ 	fileinputstream.cpp
+ 	filestreamopener.cpp
+-	gzipcompressstream.cpp
+-	gzipinputstream.cpp
++
+ 	inputstreamreader.cpp
+ 	kmpsearcher.cpp
+         lzma/LzmaDec.c
+@@ -32,7 +30,6 @@
+ 	substreamproviderprovider.cpp
+ 	tarinputstream.cpp
+ 	textutils.cpp
+-	zipinputstream.cpp
+ )
+ 
+ if(NOT WIN32)
+@@ -42,6 +39,15 @@
+ )
+ endif(NOT WIN32)
+ 
++if(NOT WINCE)
++set(streams_SRCS ${streams_SRCS}
++  bz2inputstream.cpp
++	gzipcompressstream.cpp
++	gzipinputstream.cpp
++	zipinputstream.cpp
++)
++endif(NOT WINCE)
++
+ #add the compatibility files
+ set(streams_SRCS ${streams_SRCS} compat.cpp)
+ 
+@@ -54,7 +60,12 @@
+ 	SOVERSION ${STRIGI_VERSION_MAJOR}
+ 	DEFINE_SYMBOL MAKE_STREAMS_LIB
+ )
++if(NOT WIN32)
+ target_link_libraries(streams streamsstatic)
++endif(NOT WIN32)
++if(WINCE)
++    target_link_libraries(streams ${WCECOMPAT_LIBRARIES} ${ICONV_LIBRARIES})
++endif(WINCE)
+ install(TARGETS streams
+ 	LIBRARY DESTINATION ${LIB_DESTINATION}
+ 	RUNTIME DESTINATION bin
+@@ -62,7 +73,10 @@
+ )
+ 
+ 
+-target_link_libraries(streamsstatic ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} ${ICONV_LIBRARIES})
++if(NOT WINCE)
++  target_link_libraries(streamsstatic ${BZIP2_LIBRARIES})
++endif(NOT WINCE)
++target_link_libraries(streamsstatic ${ZLIB_LIBRARIES} ${ICONV_LIBRARIES})
+ if(NOT WIN32)
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libstreams.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libstreams.pc)
+ endif(NOT WIN32)
+Index: libstreams/lib/listinginprogress.cpp
+===================================================================
+--- libstreams/lib/listinginprogress.cpp
++++ libstreams/lib/listinginprogress.cpp
+@@ -18,8 +18,10 @@
+  * Boston, MA 02110-1301, USA.
+  */
+ #include "listinginprogress.h"
++#ifndef _WIN32_WCE
+ #include <strigi/gzipinputstream.h>
+ #include <strigi/bz2inputstream.h>
++#endif
+ #include <strigi/lzmainputstream.h>
+ #include <iostream>
+ 
+@@ -90,6 +92,7 @@
+         const char* c;
+         int32_t n = s->read(c, 16, 0);
+         s->reset(0);
++#ifndef _WIN32_WCE
+         if (BZ2InputStream::checkHeader(c, n)) {
+             InputStream* ns = new BZ2InputStream(s);
+             if (ns->status() == Ok) {
+@@ -116,6 +119,7 @@
+         }
+         n = s->read(c, 2, 0);
+         s->reset(0);
++#endif
+         if (LZMAInputStream::checkHeader(c, n)) {
+             InputStream* ns = new LZMAInputStream(s);
+             if (ns->status() == Ok) {
+Index: libstreams/lib/rpminputstream.cpp
+===================================================================
+--- libstreams/lib/rpminputstream.cpp
++++ libstreams/lib/rpminputstream.cpp
+@@ -19,9 +19,11 @@
+  */
+ #include <strigi/rpminputstream.h>
+ #include <strigi/cpioinputstream.h>
++#include <strigi/lzmainputstream.h>
++#ifndef _WIN32_WCE
+ #include <strigi/gzipinputstream.h>
+-#include <strigi/lzmainputstream.h>
+ #include <strigi/bz2inputstream.h>
++#endif
+ #include <strigi/subinputstream.h>
+ #include <strigi/textutils.h>
+ 
+@@ -122,13 +124,20 @@
+         return;
+     }
+     m_input->reset(pos);
++#ifndef _WIN32_WCE
+     if (BZ2InputStream::checkHeader(b, 16)) {
+         uncompressionStream = new BZ2InputStream(m_input);
+-    } else if (LZMAInputStream::checkHeader(b, 16)) {
++    } else
++#endif
++    if (LZMAInputStream::checkHeader(b, 16)) {
+         uncompressionStream = new LZMAInputStream(m_input);
+-    } else if (GZipInputStream::checkHeader(b, 16)) {
++    }
++#ifndef _WIN32_WCE
++    else if (GZipInputStream::checkHeader(b, 16)) {
+         uncompressionStream = new GZipInputStream(m_input);
+-    } else {
++    }
++#endif
++    else {
+         m_error = "Unknown compressed stream type";
+         return;
+     };
+Index: libstreams/lib/substreamproviderprovider.cpp
+===================================================================
+--- libstreams/lib/substreamproviderprovider.cpp
++++ libstreams/lib/substreamproviderprovider.cpp
+@@ -21,7 +21,9 @@
+ #include <strigi/strigiconfig.h>
+ #include <strigi/mailinputstream.h>
+ #include <strigi/tarinputstream.h>
++#ifndef _WIN32_WCE
+ #include <strigi/zipinputstream.h>
++#endif
+ #include <strigi/sdfinputstream.h>
+ 
+ using namespace Strigi;
+@@ -42,10 +44,12 @@
+     if (MailInputStream::checkHeader(header, headersize)) {
+         return new MailInputStream(input);
+     }
++#ifndef _WIN32_WCE
+     if (ZipInputStream::checkHeader(header, headersize)) {
+         fprintf(stderr, "zip!\n");
+         return new ZipInputStream(input);
+     }
++#endif
+     if (SdfInputStream::checkHeader(header, headersize)) {
+         fprintf(stderr, "sdf!\n");
+         return new SdfInputStream(input);
+Index: libstreams/CMakeLists.txt
+===================================================================
+--- libstreams/CMakeLists.txt
++++ libstreams/CMakeLists.txt
+@@ -47,7 +47,9 @@
+ 
+ # check for required packages
+ find_package(ZLIB REQUIRED)
++if(NOT WINCE)
+ find_package(BZip2 REQUIRED)
++endif(NOT WINCE)
+ find_package(Iconv REQUIRED)
+ find_package(Threads REQUIRED)
+ 
+@@ -71,7 +73,9 @@
+ 
+ 
+ add_subdirectory(lib)
+-add_subdirectory(tests)
++if(NOT WINCE)
++  add_subdirectory(tests)
++endif(NOT WINCE)
+ 
+ 
+ ##### installing #####
+Index: CMakeLists.txt
+===================================================================
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -8,15 +8,26 @@
+ # for testing to work in cmake, this command must be called in the root src dir
+ enable_testing()
+ 
++# include specific modules
++set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
++
+ if(MSVC)
+   add_definitions(-wd4251)
+   add_definitions(-wd4355)
+   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+   add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
++  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc -Zc:wchar_t-")
+ endif(MSVC)
+ 
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
+ add_subdirectory(libstreams)
+ add_subdirectory(libstreamanalyzer)
++if(NOT WINCE)
+ add_subdirectory(strigiutils)
++endif(NOT WINCE)
+ add_subdirectory(strigidaemon)
+ add_subdirectory(strigiclient)

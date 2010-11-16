@@ -31,8 +31,13 @@ class subinfo(info.infoclass):
         if not emergePlatform.isCrossCompilingEnabled():
           self.defaultTarget = '4.4'
         else:
+          self.patchToApply['svnHEAD'] = ( "strigi-20101116.patch", 0 )
           self.defaultTarget = 'svnHEAD'
 
+    def setBuildOptions( self ):
+        self.disableHostBuild = True
+        self.disableTargetBuild = False
+          
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
