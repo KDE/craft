@@ -7,6 +7,11 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/clucene-core'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/exiv2'] = 'default'
+        else:
+            #FIXME make strigi svnHEAD compile on Windows
+            # This hack is needed to get a different Version of
+            # strigi for the Host platform
+            self.buildDependencies['enterprise5/strigi-e5'] = 'default'
         self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
         self.hardDependencies['win32libs-bin/libbzip2'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
@@ -31,6 +36,7 @@ class subinfo(info.infoclass):
         if not emergePlatform.isCrossCompilingEnabled():
           self.defaultTarget = '4.4'
         else:
+          #FIXME make strigi svnHEAD compile on Windows
           self.patchToApply['svnHEAD'] = ( "strigi-20101116.patch", 0 )
           self.defaultTarget = 'svnHEAD'
 
