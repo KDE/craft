@@ -65,7 +65,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += \
                     "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
         if self.isHostBuild():
-            self.subinfo.options.configure.defines += "-DBUILD_doc=TRUE "
+            self.subinfo.options.configure.defines += "-DBUILD_kdoctools=TRUE "
         if self.isTargetBuild():
             self.subinfo.options.configure.defines += \
                     "-DKDE_PLATFORM_PROFILE=Mobile "\
