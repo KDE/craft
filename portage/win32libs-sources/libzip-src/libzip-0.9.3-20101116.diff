@@ -1,0 +1,540 @@
+diff -Nru libzip-0.9.3.orig/CMakeLists.txt libzip-0.9.3/CMakeLists.txt
+--- libzip-0.9.3.orig/CMakeLists.txt	2010-02-01 10:12:49.000000000 +0100
++++ libzip-0.9.3/CMakeLists.txt	2010-11-16 15:22:00.414549400 +0100
+@@ -9,6 +9,8 @@
+ 
+ PROJECT(libzip C)
+ 
++CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
++
+ INCLUDE(CheckFunctionExists)
+ INCLUDE(CheckIncludeFiles)
+ INCLUDE(CheckSymbolExists)
+@@ -22,6 +24,19 @@
+ SET(PACKAGE_VERSION ${VERSION})
+ SET(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
+ 
++FIND_PACKAGE(ZLIB REQUIRED)
++INCLUDE_DIRECTORIES(
++    ${CMAKE_CURRENT_SOURCE_DIR}
++    ${CMAKE_CURRENT_BINARY_DIR}
++    ${CMAKE_CURRENT_SOURCE_DIR}/lib
++    ${CMAKE_CURRENT_BINARY_DIR}/lib
++    ${ZLIB_INCLUDE_DIR}
++)
++
++IF(MSVC)
++    ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -wd4996)
++ENDIF(MSVC)
++
+ ADD_SUBDIRECTORY(lib)
+ ADD_SUBDIRECTORY(man)
+ ADD_SUBDIRECTORY(src)
+@@ -34,11 +49,7 @@
+ CHECK_FUNCTION_EXISTS(mkstemp HAVE_MKSTEMP)
+ CHECK_INCLUDE_FILES(unistd.h HAVE_UNISTD_H)
+ 
+-INCLUDE(FindZLIB)
+-CHECK_SYMBOL_EXISTS(ZEXPORT zlib.h HAVE_ZEXPORT)
+-IF(NOT HAVE_ZEXPORT)
+-  MESSAGE(FATAL_ERROR "-- ZLIB version too old, please install at least v1.1.2")
+-ENDIF(NOT HAVE_ZEXPORT)
++SET(HAVE_ZEXPORT TRUE)
+ 
+ # Targets
+ 
+diff -Nru libzip-0.9.3.orig/lib/CMakeLists.txt libzip-0.9.3/lib/CMakeLists.txt
+--- libzip-0.9.3.orig/lib/CMakeLists.txt	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/lib/CMakeLists.txt	2010-11-16 15:17:19.599487600 +0100
+@@ -62,7 +62,7 @@
+   zip_dirent.c
+   zip_entry_free.c
+   zip_entry_new.c
+-  ${CMAKE_CURRENT_BINARY_DIR}/zip_err_str.c
++  zip_err_str.c
+   zip_error.c
+   zip_error_clear.c
+   zip_error_get.c
+@@ -74,11 +74,13 @@
+   zip_file_error_get.c
+   zip_file_get_offset.c
+   zip_file_strerror.c
++  zip_filerange_crc.c
+   zip_fopen.c
+   zip_fopen_index.c
+   zip_fread.c
+   zip_free.c
+   zip_get_archive_comment.c
++  zip_get_archive_flag.c
+   zip_get_file_comment.c
+   zip_get_num_files.c
+   zip_get_name.c
+@@ -89,6 +91,7 @@
+   zip_rename.c
+   zip_replace.c
+   zip_set_archive_comment.c
++  zip_set_archive_flag.c
+   zip_set_file_comment.c
+   zip_source_buffer.c
+   zip_source_file.c
+@@ -111,13 +114,13 @@
+   ${CMAKE_CURRENT_BINARY_DIR}/..)
+ 
+ # XXX: distribute instead?
+-ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/zip_err_str.c
+-  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/make_zip_err_str.sh
+-    ${CMAKE_CURRENT_SOURCE_DIR}/zip.h
+-    ${CMAKE_CURRENT_BINARY_DIR}/zip_err_str.c
+-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/zip.h
+-    ${CMAKE_CURRENT_SOURCE_DIR}/make_zip_err_str.sh
+-)
++#ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/zip_err_str.c
++#  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/make_zip_err_str.sh
++#    ${CMAKE_CURRENT_SOURCE_DIR}/zip.h
++#    ${CMAKE_CURRENT_BINARY_DIR}/zip_err_str.c
++#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/zip.h
++#    ${CMAKE_CURRENT_SOURCE_DIR}/make_zip_err_str.sh
++#)
+ CHECK_FUNCTION_EXISTS(mkstemp HAVE_MKSTEMP)
+ IF(NOT HAVE_MKSTEMP)
+   SET(LIBZIP_EXTRA_FILES mkstemp.c)
+@@ -125,5 +128,6 @@
+ 
+ ADD_LIBRARY(zip SHARED ${LIBZIP_SOURCES} ${LIBZIP_EXTRA_FILES})
+ SET_TARGET_PROPERTIES(zip PROPERTIES VERSION 1.0 SOVERSION 1 )
+-TARGET_LINK_LIBRARIES(zip z)
++TARGET_LINK_LIBRARIES(zip ${ZLIB_LIBRARY})
++INSTALL(TARGETS zip RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+ #CREATE_LIBTOOL_FILE(zip lib)
+diff -Nru libzip-0.9.3.orig/lib/mkstemp.c libzip-0.9.3/lib/mkstemp.c
+--- libzip-0.9.3.orig/lib/mkstemp.c	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/lib/mkstemp.c	2010-11-16 15:17:19.602487800 +0100
+@@ -47,6 +47,20 @@
+ #define O_BINARY 0
+ #endif
+ 
++#ifdef _MSC_VER
++#ifndef pid_t
++typedef int	pid_t;
++#endif
++#define     _IFMT	0170000	// type of file 
++#define		_IFDIR	0040000	// directory 
++#define	S_ISDIR(m)	(((m)&_IFMT) == _IFDIR)
++#endif
++
++#ifdef _WIN32
++# define PATH_SEPARATOR '\\'
++#else
++# define PATH_SEPARATOR '/'
++#endif
+ 
+ 
+ int
+@@ -102,7 +116,7 @@
+ 	for (start = trv + 1;; --trv) {
+ 		if (trv <= path)
+ 			break;
+-		if (*trv == '/') {
++		if (*trv == PATH_SEPARATOR) {
+ 			*trv = '\0';
+ 			if (stat(path, &sbuf))
+ 				return (0);
+@@ -110,7 +124,7 @@
+ 				errno = ENOTDIR;
+ 				return (0);
+ 			}
+-			*trv = '/';
++			*trv = PATH_SEPARATOR;
+ 			break;
+ 		}
+ 	}
+diff -Nru libzip-0.9.3.orig/lib/zip.h libzip-0.9.3/lib/zip.h
+--- libzip-0.9.3.orig/lib/zip.h	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/lib/zip.h	2010-11-16 15:17:19.605488000 +0100
+@@ -37,13 +37,34 @@
+ 
+ 
+ #ifndef ZIP_EXTERN
+-#ifdef _MSC_VER
++#ifdef _WIN32
++#ifdef zip_EXPORTS
+ #define ZIP_EXTERN __declspec(dllexport)
+ #else
++#define ZIP_EXTERN __declspec(dllimport)
++#endif
++#else
+ #define ZIP_EXTERN
+ #endif
+ #endif
+ 
++#ifdef _MSC_VER
++#include <windows.h>
++# ifndef _SIZE_T_DEFINED
++# define _SIZE_T_DEFINED
++typedef SIZE_T size_t;
++# endif
++
++# ifndef _SSIZE_T_DEFINED
++# define _SSIZE_T_DEFINED
++typedef SSIZE_T ssize_t;
++# endif
++
++# ifndef _MODE_T_DEFINED
++# define _MODE_T_DEFINED
++typedef int mode_t;
++# endif
++#endif 
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -156,7 +177,6 @@
+     ZIP_SOURCE_ERROR,	/* get error information */
+     ZIP_SOURCE_FREE	/* cleanup and free resources */
+ };
+-
+ typedef ssize_t (*zip_source_callback)(void *state, void *data,
+ 				       size_t len, enum zip_source_cmd cmd);
+ 
+diff -Nru libzip-0.9.3.orig/lib/zip_add_dir.c libzip-0.9.3/lib/zip_add_dir.c
+--- libzip-0.9.3.orig/lib/zip_add_dir.c	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/lib/zip_add_dir.c	2010-11-16 15:17:19.607488100 +0100
+@@ -55,13 +55,13 @@
+     s = NULL;
+     len = strlen(name);
+ 
+-    if (name[len-1] != '/') {
++    if (name[len-1] != PATH_SEPARATOR) {
+ 	if ((s=(char *)malloc(len+2)) == NULL) {
+ 	    _zip_error_set(&za->error, ZIP_ER_MEMORY, 0);
+ 	    return -1;
+ 	}
+ 	strcpy(s, name);
+-	s[len] = '/';
++	s[len] = PATH_SEPARATOR;
+ 	s[len+1] = '\0';
+     }
+ 
+diff -Nru libzip-0.9.3.orig/lib/zip_name_locate.c libzip-0.9.3/lib/zip_name_locate.c
+--- libzip-0.9.3.orig/lib/zip_name_locate.c	2010-01-31 23:00:30.000000000 +0100
++++ libzip-0.9.3/lib/zip_name_locate.c	2010-11-16 15:17:19.610488300 +0100
+@@ -51,7 +51,6 @@
+ _zip_name_locate(struct zip *za, const char *fname, int flags,
+ 		 struct zip_error *error)
+ {
+-    int (*cmp)(const char *, const char *);
+     const char *fn, *p;
+     int i, n;
+ 
+@@ -60,8 +59,6 @@
+ 	return -1;
+     }
+     
+-    cmp = (flags & ZIP_FL_NOCASE) ? strcasecmp : strcmp;
+-
+     n = (flags & ZIP_FL_UNCHANGED) ? za->cdir->nentry : za->nentry;
+     for (i=0; i<n; i++) {
+ 	if (flags & ZIP_FL_UNCHANGED)
+@@ -74,13 +71,18 @@
+ 	    continue;
+ 	
+ 	if (flags & ZIP_FL_NODIR) {
+-	    p = strrchr(fn, '/');
++	    p = strrchr(fn, PATH_SEPARATOR);
+ 	    if (p)
+ 		fn = p+1;
+ 	}
+ 
+-	if (cmp(fname, fn) == 0)
+-	    return i;
++    if (flags & ZIP_FL_NOCASE) {
++        if (strcasecmp(fname, fn) == 0)
++            return i;
++    } else {
++        if (strcmp(fname, fn) == 0)
++            return i;
++    }
+     }
+ 
+     _zip_error_set(error, ZIP_ER_NOENT, 0);
+diff -Nru libzip-0.9.3.orig/lib/zipint.h libzip-0.9.3/lib/zipint.h
+--- libzip-0.9.3.orig/lib/zipint.h	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/lib/zipint.h	2010-11-16 15:17:19.616488600 +0100
+@@ -36,19 +36,23 @@
+ 
+ #include <zlib.h>
+ 
+-#ifdef _MSC_VER
+-#define ZIP_EXTERN __declspec(dllimport)
+-#endif
+-
+ #include "zip.h"
+ #include "config.h"
+ 
++#ifdef _MSC_VER
++# ifndef mode_t
++typedef int mode_t;
++# endif
++#define strcasecmp _strcmpi
++#define snprintf _snprintf
++#endif
++
+ #ifndef HAVE_MKSTEMP
+ int _zip_mkstemp(char *);
+ #define mkstemp _zip_mkstemp
+ #endif
+ 
+-#ifdef HAVE_MOVEFILEEXA
++#ifdef _WIN32
+ #include <windows.h>
+ #define _zip_rename(s, t)						\
+ 	(!MoveFileExA((s), (t),						\
+@@ -57,6 +61,12 @@
+ #define _zip_rename	rename
+ #endif
+ 
++#ifdef _WIN32
++# define PATH_SEPARATOR '\\'
++#else
++# define PATH_SEPARATOR '/'
++#endif
++
+ #ifndef HAVE_FSEEKO
+ #define fseeko(s, o, w)	(fseek((s), (long int)(o), (w)))
+ #endif
+diff -Nru libzip-0.9.3.orig/regress/set_comment_all.c libzip-0.9.3/regress/set_comment_all.c
+--- libzip-0.9.3.orig/regress/set_comment_all.c	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/regress/set_comment_all.c	2010-11-16 15:17:19.619488800 +0100
+@@ -42,6 +42,10 @@
+ 
+ #include "zip.h"
+ 
++#ifdef _MSC_VER
++#define snprintf _snprintf
++#endif
++
+ const char *prg;
+ const char *new_archive_comment="This is the new,\r\n"
+ "multiline archive comment.\r\n"
+diff -Nru libzip-0.9.3.orig/regress/set_comment_localonly.c libzip-0.9.3/regress/set_comment_localonly.c
+--- libzip-0.9.3.orig/regress/set_comment_localonly.c	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/regress/set_comment_localonly.c	2010-11-16 15:17:19.621488900 +0100
+@@ -42,6 +42,10 @@
+ 
+ #include "zip.h"
+ 
++#ifdef _MSC_VER
++#define snprintf _snprintf
++#endif
++
+ const char *prg;
+ 
+ int
+diff -Nru libzip-0.9.3.orig/regress/set_comment_revert.c libzip-0.9.3/regress/set_comment_revert.c
+--- libzip-0.9.3.orig/regress/set_comment_revert.c	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/regress/set_comment_revert.c	2010-11-16 15:17:19.623489000 +0100
+@@ -42,6 +42,10 @@
+ 
+ #include "zip.h"
+ 
++#ifdef _MSC_VER
++#define snprintf _snprintf
++#endif
++
+ const char *prg;
+ const char *new_archive_comment="This is the new,\r\n"
+ "multiline archive comment.\r\n"
+diff -Nru libzip-0.9.3.orig/src/CMakeLists.txt libzip-0.9.3/src/CMakeLists.txt
+--- libzip-0.9.3.orig/src/CMakeLists.txt	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/src/CMakeLists.txt	2010-11-16 15:17:19.625489100 +0100
+@@ -3,8 +3,23 @@
+ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../lib
+   ${CMAKE_CURRENT_BINARY_DIR}/..)
+ 
+-ADD_EXECUTABLE(zipcmp zipcmp.c)
++set(zipcmp_SRCS zipcmp.c)
++if(MSVC)
++  set(zipcmp_SRCS ${zipcmp_SRCS} unistd.c)
++endif(MSVC)
++ADD_EXECUTABLE(zipcmp ${zipcmp_SRCS})
+ TARGET_LINK_LIBRARIES(zipcmp zip)
+ 
+-ADD_EXECUTABLE(zipmerge zipmerge.c)
++set(zipmerge_SRCS zipmerge.c)
++if(MSVC)
++  set(zipmerge_SRCS ${zipmerge_SRCS} unistd.c)
++endif(MSVC)
++ADD_EXECUTABLE(zipmerge ${zipmerge_SRCS})
+ TARGET_LINK_LIBRARIES(zipmerge zip)
++
++set(ziptorrent_SRCS ziptorrent.c)
++if(MSVC)
++  set(ziptorrent_SRCS ${ziptorrent_SRCS} unistd.c)
++endif(MSVC)
++ADD_EXECUTABLE(ziptorrent ${ziptorrent_SRCS})
++TARGET_LINK_LIBRARIES(ziptorrent zip)
+diff -Nru libzip-0.9.3.orig/src/unistd.c libzip-0.9.3/src/unistd.c
+--- libzip-0.9.3.orig/src/unistd.c	1970-01-01 01:00:00.000000000 +0100
++++ libzip-0.9.3/src/unistd.c	2010-11-16 15:17:19.723494700 +0100
+@@ -0,0 +1,96 @@
++#ifdef _MSC_VER
++#include <windows.h>
++
++// XGetopt.cpp  Version 1.2
++//
++// Author:  Hans Dietrich
++//          hdietrich2@hotmail.com
++//
++// Description:
++//     XGetopt.cpp implements getopt(), a function to parse command lines.
++//
++// History
++//     Version 1.2 - 2003 May 17
++//     - Added Unicode support
++//
++//     Version 1.1 - 2002 March 10
++//     - Added example to XGetopt.cpp module header 
++//
++// This software is released into the public domain.
++// You are free to use it in any way you like.
++//
++// This software is provided "as is" with no expressed
++// or implied warranty.  I accept no liability for any
++// damage or loss of business that this software may cause.
++//
++// CE: from http://www.codeproject.com/cpp/xgetopt.asp
++//     removed unicode support to compile with mingw
++char *optarg = NULL;	// global argument pointer
++int   optind = 0; 	// global argv index
++int   opterr = 0; 	
++
++int getopt(int argc, char **argv, const char *optstring)
++{
++	static char *next = NULL;
++	char c = '?';
++	char *cp = NULL;
++	if (optind == 0)
++		next = NULL;
++
++	optarg = NULL;
++
++	if (next == NULL || *next == '\0')
++	{
++		if (optind == 0)
++			optind++;
++
++		if (optind >= argc || argv[optind][0] != '-' || argv[optind][1] == '\0')
++		{
++			optarg = NULL;
++			if (optind < argc)
++				optarg = argv[optind];
++			return -1;
++		}
++
++		if (strcmp(argv[optind], "--") == 0)
++		{
++			optind++;
++			optarg = NULL;
++			if (optind < argc)
++				optarg = argv[optind];
++			return -1;
++		}
++
++		next = argv[optind];
++		next++;		// skip past -
++		optind++;
++	}
++
++	c = *next++;
++	cp = strchr(optstring, c);
++
++	if (cp == NULL || c == ':')
++		return '?';
++
++	cp++;
++	if (*cp == ':')
++	{
++		if (*next != '\0')
++		{
++			optarg = next;
++			next = NULL;
++		}
++		else if (optind < argc)
++		{
++			optarg = argv[optind];
++			optind++;
++		}
++		else
++		{
++			return '?';
++		}
++	}
++
++	return c;
++}
++#endif  // _MSC_VER
+diff -Nru libzip-0.9.3.orig/src/zipcmp.c libzip-0.9.3/src/zipcmp.c
+--- libzip-0.9.3.orig/src/zipcmp.c	2010-01-31 23:00:30.000000000 +0100
++++ libzip-0.9.3/src/zipcmp.c	2010-11-16 15:17:19.724494800 +0100
+@@ -37,12 +37,20 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <unistd.h>
+ #include <zlib.h>
+ 
+ #include "config.h"
++#ifdef HAVE_UNISTD_H
++#include <unistd.h>
++#endif
++
+ #include "zip.h"
+ 
++#ifdef _MSC_VER
++extern int optind;
++#define strcasecmp _strcmpi
++#endif
++
+ struct entry {
+     char *name;
+     unsigned int size;
+diff -Nru libzip-0.9.3.orig/src/zipmerge.c libzip-0.9.3/src/zipmerge.c
+--- libzip-0.9.3.orig/src/zipmerge.c	2010-01-31 23:00:30.000000000 +0100
++++ libzip-0.9.3/src/zipmerge.c	2010-11-16 15:17:19.729495100 +0100
+@@ -47,6 +47,11 @@
+ 
+ #include "zip.h"
+ 
++#ifdef _MSC_VER
++extern int optind;
++#define strcasecmp _strcmpi
++#endif
++
+ 
+ 
+ char *prg;
+diff -Nru libzip-0.9.3.orig/src/ziptorrent.c libzip-0.9.3/src/ziptorrent.c
+--- libzip-0.9.3.orig/src/ziptorrent.c	2010-01-31 23:00:30.000000000 +0100
++++ libzip-0.9.3/src/ziptorrent.c	2010-11-16 15:17:19.732495300 +0100
+@@ -37,14 +37,21 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <unistd.h>
+ #include <zlib.h>
+ 
+ #include "config.h"
++#ifdef HAVE_UNISTD_H
++#include <unistd.h>
++#endif
+ #include "zip.h"
+ 
+ 
+ 
++#ifdef _MSC_VER
++extern int optind;
++#define strcasecmp _strcmpi
++#endif
++
+ #define FLAG_DRYRUN	1
+ #define FLAG_VERBOSE	2
+ 

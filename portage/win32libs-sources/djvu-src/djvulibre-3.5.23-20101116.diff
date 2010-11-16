@@ -1,0 +1,652 @@
+diff -Nru djvulibre-3.5.23.orig/CMakeLists.txt djvulibre-3.5.23/CMakeLists.txt
+--- djvulibre-3.5.23.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ djvulibre-3.5.23/CMakeLists.txt	2010-11-16 15:49:17.704197000 +0100
+@@ -0,0 +1,33 @@
++project(djvulibre)
++
++cmake_minimum_required(VERSION 2.6)
++
++# ******************************************************************************
++# add some predefined variables
++set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )  
++
++set(BIN_INSTALL_DIR     bin)
++set(INCLUDE_INSTALL_DIR include)
++set(LIB_INSTALL_DIR     lib${LIB_SUFFIX})
++set(MAN_INSTALL_DIR     man)
++set(DATA_INSTALL_DIR    share)
++set(PLUGIN_INSTALL_DIR  plugins)
++
++set(INSTALL_TARGETS_DEFAULT_ARGS RUNTIME DESTINATION ${BIN_INSTALL_DIR}
++                                 LIBRARY DESTINATION ${LIB_INSTALL_DIR}
++                                 ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
++
++if(MSVC)
++add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++if(MINGW)
++add_definitions(-Wno-deprecated)
++endif(MINGW)
++
++# ******************************************************************************
++# cmake handles the dependencies itself
++add_subdirectory(gui)
++add_subdirectory(libdjvu)
++add_subdirectory(tools)
++add_subdirectory(xmltools)
+diff -Nru djvulibre-3.5.23.orig/gui/CMakeLists.txt djvulibre-3.5.23/gui/CMakeLists.txt
+--- djvulibre-3.5.23.orig/gui/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ djvulibre-3.5.23/gui/CMakeLists.txt	2010-11-16 15:49:17.720197900 +0100
+@@ -0,0 +1,22 @@
++include_directories( ../libdjvu 
++                     ..)
++
++# ******************************************************************************
++# build tool for integrating pictures
++add_executable(bin2cpp bin2cpp/bin2cpp.cpp)
++target_link_libraries(bin2cpp djvulibre)
++
++install(TARGETS ${INSTALL_TARGETS_DEFAULT_ARGS})
++
++find_package(X11)
++if(X11_FOUND)
++# ******************************************************************************
++# build tool for integrating pictures
++include_directories(${X11_INCLUDE_DIR})
++
++add_library(nsdjvu SHARED nsdjvu.c)
++target_link_libraries(nsdjvu djvulibre ${X11_LIBRARIES})
++set_target_properties(nsdjvu PROPERTIES OUTPUT_NAME nsdjvu.x)
++
++install(TARGETS nsdjvu DESTINATION ${PLUGINS_INSTALL_DIR})
++endif(X11_FOUND)
+diff -Nru djvulibre-3.5.23.orig/libdjvu/Arrays.h djvulibre-3.5.23/libdjvu/Arrays.h
+--- djvulibre-3.5.23.orig/libdjvu/Arrays.h	2007-05-19 05:07:33.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/Arrays.h	2010-11-16 15:49:17.723198000 +0100
+@@ -129,7 +129,7 @@
+ //@{
+ 
+ // Auxiliary classes: Will be used in place of GPBase and GPEnabled objects
+-class _ArrayRep
++class DJVUAPI _ArrayRep
+ {
+    friend class	_ArrayBase;
+ public:
+@@ -147,7 +147,7 @@
+    void		unref(void) { if (--count==0) delete this; }
+ };
+ 
+-class _ArrayBase
++class DJVUAPI _ArrayBase
+ {
+ public:
+    _ArrayBase(void) : rep(0) {}
+diff -Nru djvulibre-3.5.23.orig/libdjvu/atomic.h djvulibre-3.5.23/libdjvu/atomic.h
+--- djvulibre-3.5.23.orig/libdjvu/atomic.h	2008-08-03 05:54:01.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/atomic.h	2010-11-16 15:49:17.733198600 +0100
+@@ -78,24 +78,35 @@
+ # ifdef __cplusplus
+ extern "C" {
+ #endif
+-  
++#ifdef WIN32
++#pragma warning( disable : 4251 )
++# ifdef DLL_EXPORT
++#  define DJVUAPI __declspec(dllexport)
++# else
++#  define DJVUAPI __declspec(dllimport)
++# endif
++#endif
++#ifndef DJVUAPI
++# define DJVUAPI
++#endif
++
+ /* { int tmp = *lock; *lock = 1; return !tmp; }. */
+-int atomicAcquire(int volatile *lock);
++int DJVUAPI atomicAcquire(int volatile *lock);
+   
+ /* { while (!atomicAcquire(lock)) { spin/yield/wait } } */
+-void atomicAcquireOrSpin(int volatile *lock);
++void DJVUAPI atomicAcquireOrSpin(int volatile *lock);
+ 
+ /* { *lock = 0; } */
+-void atomicRelease(int volatile *lock);
++void DJVUAPI atomicRelease(int volatile *lock);
+ 
+ /* { *var += 1; return *var; } */
+-int atomicIncrement(int volatile *var);
++int DJVUAPI atomicIncrement(int volatile *var);
+ 
+ /* { *var -= 1; return *var; } */
+-int atomicDecrement(int volatile *var);
++int DJVUAPI atomicDecrement(int volatile *var);
+ 
+ /* { if (*var == oldval) { *var = newval; return TRUE; } return FALSE; } */
+-int atomicCompareAndSwap(int volatile *var, int oldval, int newval);
++int DJVUAPI atomicCompareAndSwap(int volatile *var, int oldval, int newval);
+ 
+ 
+ # ifdef __cplusplus
+diff -Nru djvulibre-3.5.23.orig/libdjvu/CMakeLists.txt djvulibre-3.5.23/libdjvu/CMakeLists.txt
+--- djvulibre-3.5.23.orig/libdjvu/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ djvulibre-3.5.23/libdjvu/CMakeLists.txt	2010-11-16 15:49:17.736198800 +0100
+@@ -0,0 +1,81 @@
++# ******************************************************************************
++# building djvu library
++set(DJVU_SRC
++        DjVuGlobal.cpp 
++        DjVuGlobalMemory.cpp 
++        GOS.cpp 
++        GException.cpp 
++        GContainer.cpp
++        GString.cpp 
++        GThreads.cpp 
++        GRect.cpp 
++        atomic.cpp 
++        GSmartPointer.cpp 
++        MMX.cpp
++        Arrays.cpp 
++        GBitmap.cpp 
++        GPixmap.cpp 
++        GScaler.cpp 
++        DjVuPalette.cpp
++        ByteStream.cpp 
++        IFFByteStream.cpp 
++        BSByteStream.cpp 
++        BSEncodeByteStream.cpp
++        ZPCodec.cpp 
++        JB2Image.cpp 
++        JB2EncodeCodec.cpp 
++        IW44Image.cpp
++        IW44EncodeCodec.cpp 
++        MMRDecoder.cpp 
++        JPEGDecoder.cpp 
++        DataPool.cpp 
++        GURL.cpp
++        DjVuFileCache.cpp 
++        DjVuPort.cpp 
++        GMapAreas.cpp 
++        DjVuAnno.cpp 
++        GIFFManager.cpp
++        DjVuText.cpp 
++        DjVuInfo.cpp 
++        DjVuFile.cpp 
++        DjVuImage.cpp 
++        DjVuDocument.cpp
++        DjVmDir.cpp 
++        DjVmDoc.cpp 
++        DjVmDir0.cpp 
++        DjVmNav.cpp 
++        DjVuNavDir.cpp
++        DjVuErrorList.cpp 
++        DjVuDocEditor.cpp 
++        DjVuToPS.cpp 
++        DjVuDumpHelper.cpp
++        DjVuMessageLite.cpp 
++        DjVuMessage.cpp 
++        GUnicode.cpp 
++        UnicodeByteStream.cpp
++        XMLParser.cpp 
++        XMLTags.cpp 
++        miniexp.cpp 
++        ddjvuapi.cpp 
++        debug.cpp
++)
++
++add_library(djvulibre SHARED ${DJVU_SRC})
++
++set_target_properties(djvulibre PROPERTIES DEFINE_SYMBOL DLL_EXPORT)
++
++install(TARGETS djvulibre ${INSTALL_TARGETS_DEFAULT_ARGS})
++
++# ******************************************************************************
++# installing djvu headers
++install(FILES ddjvuapi.h miniexp.h DESTINATION ${INCLUDE_INSTALL_DIR}/libdjvu)
++
++# ******************************************************************************
++# install djvu data files
++file(GLOB_RECURSE datafiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../share/*.xml)
++
++foreach(filename ${datafiles})
++    get_filename_component(installname ${filename} PATH)
++    string(REPLACE "../share/djvu/" "" installname ${installname})
++    install(FILES ${filename} DESTINATION ${DATA_INSTALL_DIR}/${installname})
++endforeach(filename ${datafiles})
+diff -Nru djvulibre-3.5.23.orig/libdjvu/DjVuGlobal.h djvulibre-3.5.23/libdjvu/DjVuGlobal.h
+--- djvulibre-3.5.23.orig/libdjvu/DjVuGlobal.h	2007-05-19 05:07:33.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/DjVuGlobal.h	2010-11-16 15:49:17.738198900 +0100
+@@ -76,6 +76,7 @@
+ #endif
+ 
+ #ifdef WIN32
++#pragma warning( disable : 4251 )
+ # ifdef DLL_EXPORT
+ #  define DJVUAPI __declspec(dllexport)
+ # else
+diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.cpp djvulibre-3.5.23/libdjvu/GString.cpp
+--- djvulibre-3.5.23.orig/libdjvu/GString.cpp	2009-12-29 17:26:19.000000000 +0100
++++ djvulibre-3.5.23/libdjvu/GString.cpp	2010-11-16 15:49:17.746199400 +0100
+@@ -2599,6 +2599,8 @@
+   else 
+     init(fmt); 
+ }
++GUTF8String::GUTF8String(const GUTF8String &str)
++{ init(str); }
+ 
+ GUTF8String::GUTF8String(const char *str)
+ { init(GStringRep::UTF8::create(str)); }
+diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.h djvulibre-3.5.23/libdjvu/GString.h
+--- djvulibre-3.5.23.orig/libdjvu/GString.h	2009-07-30 03:49:02.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/GString.h	2010-11-16 15:49:17.750199600 +0100
+@@ -1429,9 +1429,6 @@
+ 
+ inline GUTF8String::GUTF8String(void) { }
+ 
+-inline GUTF8String::GUTF8String(const GUTF8String &str)
+-{ init(str); }
+-
+ inline GUTF8String& GUTF8String::operator= (const GP<GStringRep> &str)
+ { return init(str); }
+ 
+diff -Nru djvulibre-3.5.23.orig/libdjvu/GThreads.h djvulibre-3.5.23/libdjvu/GThreads.h
+--- djvulibre-3.5.23.orig/libdjvu/GThreads.h	2007-03-25 22:48:32.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/GThreads.h	2010-11-16 15:49:17.752199700 +0100
+@@ -361,7 +361,7 @@
+     as private members. It is therefore not possible to make multiple copies
+     of instances of this class, as implied by the class semantic. */
+ 
+-class GMonitor
++class DJVUAPI GMonitor
+ {
+ public:
+   GMonitor();
+@@ -504,7 +504,7 @@
+     (second). The flags remain locked between the moment of testing and
+     modification, which guarantees, that their state cannot be changed in
+     between of these operations. */
+-class GSafeFlags : public GMonitor
++class DJVUAPI GSafeFlags : public GMonitor
+ {
+ private:
+    volatile long flags;
+diff -Nru djvulibre-3.5.23.orig/tools/CMakeLists.txt djvulibre-3.5.23/tools/CMakeLists.txt
+--- djvulibre-3.5.23.orig/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ djvulibre-3.5.23/tools/CMakeLists.txt	2010-11-16 15:49:17.754199800 +0100
+@@ -0,0 +1,53 @@
++# libdjvu tools
++
++include_directories( ../libdjvu 
++                     ..)
++
++# ******************************************************************************
++# add a convenience library even though cmake doesn't really support this
++set(JB2_SRC jb2tune.cpp 
++            jb2cmp/classify.cpp 
++            jb2cmp/cuts.cpp 
++            jb2cmp/frames.cpp 
++            jb2cmp/patterns.cpp)
++
++add_library(jb2 STATIC ${JB2_SRC})
++
++# ******************************************************************************
++# add a macro for all tools
++macro(add_djvutool name)
++    add_executable(${name} ${ARGN})
++    target_link_libraries(${name} djvulibre)
++    install(TARGETS ${name} ${INSTALL_TARGETS_DEFAULT_ARGS})
++endmacro(add_djvutool name)
++
++add_djvutool(bzz bzz.cpp)
++add_djvutool(c44 c44.cpp)
++add_djvutool(cjb2 cjb2.cpp)
++add_djvutool(cpaldjvu cpaldjvu.cpp)
++add_djvutool(csepdjvu csepdjvu.cpp)
++add_djvutool(ddjvu ddjvu.cpp tiff2pdf.c)
++add_djvutool(djvm djvm.cpp)
++add_djvutool(djvmcvt djvmcvt.cpp)
++add_djvutool(djvudump djvudump.cpp)
++add_djvutool(djvups djvups.cpp)
++add_djvutool(djvuextract djvuextract.cpp)
++add_djvutool(djvumake djvumake.cpp)
++add_djvutool(djvused djvused.cpp)
++add_djvutool(djvutxt djvutxt.cpp)
++add_djvutool(djvuserve djvuserve.cpp)
++
++target_link_libraries(cjb2 jb2 djvulibre)
++target_link_libraries(cpaldjvu jb2 djvulibre)
++target_link_libraries(csepdjvu jb2 djvulibre)
++
++# ******************************************************************************
++# install man pages
++file(GLOB manpages *.1)
++install(FILES ${manpages} DESTINATION ${MAN_INSTALL_DIR}/man1)
++
++# ******************************************************************************
++# install shell scripts
++if(NOT WIN32)
++install(FILES djvudigital any2djvu DESTINATION ${BIN_INSTALL_DIR})
++endif(NOT WIN32)
+diff -Nru djvulibre-3.5.23.orig/xmltools/CMakeLists.txt djvulibre-3.5.23/xmltools/CMakeLists.txt
+--- djvulibre-3.5.23.orig/xmltools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ djvulibre-3.5.23/xmltools/CMakeLists.txt	2010-11-16 15:49:17.757200000 +0100
+@@ -0,0 +1,27 @@
++include_directories( ../libdjvu 
++                     ..)
++
++# ******************************************************************************
++# build xml tools
++add_executable(djvutoxml djvutoxml.cpp)
++target_link_libraries(djvutoxml djvulibre)
++
++add_executable(djvuxmlparser djvuxmlparser.cpp)
++target_link_libraries(djvuxmlparser djvulibre)
++
++install(TARGETS djvutoxml ${INSTALL_TARGETS_DEFAULT_ARGS})
++install(TARGETS djvuxmlparser ${INSTALL_TARGETS_DEFAULT_ARGS})
++
++# ******************************************************************************
++# configure manpage
++configure_file(djvuxml.1.cmake ${CMAKE_CURRENT_BINARY_DIR}/djvuxml.1)
++# install man pages
++file(GLOB manpages *.1)
++set(manpages ${manpages} ${CMAKE_CURRENT_BINARY_DIR}/djvuxml.1)
++
++install(FILES ${manpages} DESTINATION ${MAN_INSTALL_DIR}/man1)
++
++# ******************************************************************************
++# install dtd's
++file(GLOB docdefs ../share/pubtest/*.dtd)
++install(FILES ${docdefs} DESTINATION ${DATA_INSTALL_DIR}/djvu/pubtest)
+diff -Nru djvulibre-3.5.23.orig/xmltools/djvuxml.1.cmake djvulibre-3.5.23/xmltools/djvuxml.1.cmake
+--- djvulibre-3.5.23.orig/xmltools/djvuxml.1.cmake	1970-01-01 01:00:00.000000000 +0100
++++ djvulibre-3.5.23/xmltools/djvuxml.1.cmake	2010-11-16 15:49:17.759200100 +0100
+@@ -0,0 +1,288 @@
++.\" Copyright (c) 2002 Bill C. Riemers
++.\"
++.\" This is free documentation; you can redistribute it and/or
++.\" modify it under the terms of the GNU General Public License as
++.\" GNU General Public License, either Version 2 of the license,
++.\" or (at your option) any later version. The license should have
++.\" published by the Free Software Foundation; either version 2 of
++.\" the License, or (at your option) any later version.
++.\"
++.\" The GNU General Public License's references to "object code"
++.\" and "executables" are to be interpreted as the output of any
++.\" document formatting or typesetting system, including
++.\" intermediate and printed output.
++.\"
++.\" This manual is distributed in the hope that it will be useful,
++.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
++.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++.\" GNU General Public License for more details.
++.\"
++.\" You should have received a copy of the GNU General Public
++.\" License along with this manual. Otherwise check the web site
++.\" of the Free Software Foundation at http://www.fsf.org.
++.\"
++.\" I, Bill C. Riemers, hereby grant all rights to this code,
++.\" provided usage complies with the GPL or a written exception to 
++.\" the GPL granted by any of Bill C. Riemers, Leon Bottou, 
++.\" Yann Le Cun, or the Free Source Foundation.
++.\"
++.\" ------------------------------------------------------------------
++.\" DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
++.\" Lizardtech Software.  Lizardtech Software has authorized us to
++.\" replace the original DjVu(r) Reference Library notice by the following
++.\" text (see doc/lizard2002.djvu and doc/lizardtech2007.djvu):
++.\"
++.\"  ------------------------------------------------------------------
++.\" | DjVu (r) Reference Library (v. 3.5)
++.\" | Copyright (c) 1999-2001 LizardTech, Inc. All Rights Reserved.
++.\" | The DjVu Reference Library is protected by U.S. Pat. No.
++.\" | 6,058,214 and patents pending.
++.\" |
++.\" | This software is subject to, and may be distributed under, the
++.\" | GNU General Public License, either Version 2 of the license,
++.\" | or (at your option) any later version. The license should have
++.\" | accompanied the software or you may obtain a copy of the license
++.\" | from the Free Software Foundation at http://www.fsf.org .
++.\" |
++.\" | The computer code originally released by LizardTech under this
++.\" | license and unmodified by other parties is deemed "the LIZARDTECH
++.\" | ORIGINAL CODE."  Subject to any third party intellectual property
++.\" | claims, LizardTech grants recipient a worldwide, royalty-free, 
++.\" | non-exclusive license to make, use, sell, or otherwise dispose of 
++.\" | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
++.\" | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
++.\" | General Public License.   This grant only confers the right to 
++.\" | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
++.\" | the extent such infringement is reasonably necessary to enable 
++.\" | recipient to make, have made, practice, sell, or otherwise dispose 
++.\" | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
++.\" | any greater extent that may be necessary to utilize further 
++.\" | modifications or combinations.
++.\" |
++.\" | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
++.\" | OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
++.\" | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
++.\" | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
++.\" +------------------------------------------------------------------
++.TH DJVUXML 1 "11/15/2002" "DjVuLibre XML Tools" "DjVuLibre XML Tools"
++.de SS
++.SH \\0\\0\\0\\$*
++..
++.SH NAME
++djvutoxml, djvuxmlparser \- DjVuLibre XML Tools.
++
++.SH SYNOPSIS
++.BI "djvutoxml [" options "] " inputdjvufile " [" outputxmlfile "]"
++.br
++.BI "djvuxmlparser [" inputxmlfile "]"
++
++
++.SH DESCRIPTION
++The DjVuLibre XML Tools provide for editing the
++metadata, hyperlinks and hidden text 
++associated with DjVu files.  Unlike 
++.BR djvused (1)
++the DjVuLibre XML Tools rely on the XML technology
++and can take advantage of XML editors and verifiers.
++
++.SH DJVUTOXML
++Program
++.B djvutoxml
++creates a XML file
++.I outputxmlfile
++containing a reference to the original DjVu document
++.I inputdjvufile
++as well as tags describing the metadata,
++hyperlinks, and hidden text associated with the DjVu file.
++
++The following options are supported:
++.TP
++.BI "--page " "pagenum"
++Select a page in a multi-page document.
++Without this option, 
++.B djvutoxml
++outputs the XML 
++corresponding to all pages of the document.
++.TP 
++.BI "--with-text"
++Specifies the 
++.B HIDDENTEXT 
++element for each page should be included in the output.  
++If specified without the
++.B --with-anno
++flag then the
++.B --without-anno 
++is implied.  If none of the  
++.B --with-text, 
++.B --without-text, 
++.B --with-anno, 
++or
++.B --without-anno, 
++flags are specified, then the  
++.B --with-text 
++and 
++.B --with-anno 
++flags are implied.
++.TP
++.BI "--without-text"
++Specifies not to output the 
++.B HIDDENTEXT 
++element for each page.  If specified without the 
++.B --without-anno 
++flag then the 
++.B --with-anno 
++flag is implied.
++.TP
++.BI "--with-anno"
++Specifies the area 
++.B MAP 
++element for each page should be included in the output.  
++If specified without the
++.B --with-text 
++flag then the
++.B --without-text 
++flag is implied.
++.TP
++.BI "--without-anno"
++Specifies the area 
++.B MAP 
++element for each page should not be included in the output.  
++If specified without the
++.B --without-text 
++flag then the
++.B --with-text 
++flag is implied.
++
++
++.SH DJVUXMLPARSER
++
++Files produced by 
++.B djvutoxml
++can then be modified using 
++either a text editor or a XML editor.
++Program
++.B djvuxmlparser
++parses the XML file 
++.I inputxmlfile
++and modifies the metadata of the DjVu files referenced 
++by the 
++.I OBJECT 
++elements.
++
++.SH DJVUXML DOCUMENT TYPE DEFINITION
++The document type definition file (DTD)
++.IP "" 2
++.B @DATA_INSTALL_DIR@/djvu/pubtext/DjVuXML-s.dtd
++.PP
++defines the input and output of the DjVu XML tools.
++
++The DjVuXML-s DTD is a simplification of the HTML DTD:
++.IP "" 2
++.B \%http://www.w3c.org/\:TR/\:1998/\:REC\:-html40\:-19980424/\:sgml/\:dtd.html
++.PP
++with a few new attributes added specific to DjVu.  Each of the 
++specified pages of a DjVu document are represented as 
++.B OBJECT 
++elements within the 
++.B BODY 
++element of the XML file. 
++Each 
++.B OBJECT
++element may contain multiple 
++.B PARAM 
++elements to specify attributes like page name,
++resolution,
++and gamma factor.
++Each 
++.B OBJECT
++element may also contain one
++.B HIDDENTTEXT
++element to specify the hidden text (usually generated with an OCR engine) 
++within the DjVu page.  In addition each 
++.B OBJECT
++element may reference a single area 
++.B MAP
++element which contains multiple
++.B AREA
++elements to represent all the hyperlink and highlight areas within 
++the DjVu document.
++
++.SS PARAM Elements
++Legal 
++.B PARAM 
++elements of a DjVu 
++.B OBJECT 
++include but are not limited to
++.B PAGE
++for specifying the page-name,
++.B GAMMA
++for specifying the gamma correction factor (normally 2.2), and
++.B DPI
++for specifying the page resolution.
++
++.SS HIDDENTEXT Elements
++The 
++.B HIDDENTEXT
++elements consists of nested elements of 
++.B PAGECOLUMNS,
++.B REGION,
++.B PARAGRAPH,
++.B LINE,
++and
++.B WORD.
++The most deeply nested element specified, should specify the bounding 
++coordinates of the element in top-down orientation.  The body of the 
++most deeply nested element should contain the text.  Most DjVu 
++documents use either 
++.B LINE 
++or 
++.B WORD 
++as the lowest level element, but any element is legal as the lowest 
++level element.  A white space is always added between 
++.B WORD
++elements and a line feed is always added between
++.B LINE
++elements.  Since languages such as Japanese do not use spaces between 
++words, it is quite common for Asian OCR engines to use
++.B WORD
++as characters instead.
++
++.SS MAP Elements
++The body of the 
++.B MAP
++elements consist of 
++.B AREA
++elements.  In addition to the attributes listed in
++.IP "" 2
++.BR \%http://www.w3.org/\:TR/\:1998/\:REC\:-html40\:-19980424/\:struct/\:objects.html\%#edef\:-AREA ,
++.PP
++the attributes
++.BR bordertype ,
++.BR bordercolor ,
++.BR border ,
++and 
++.B highlight
++have been added to specify border type, border color, border width, and 
++highlight colors respectively.  Legal values for each of these attributes 
++are listed in the DjVuXML-s DTD.
++In addition, the shape
++.B oval
++has been added to the legal list of shapes.  An oval uses a rectangular 
++bounding box.
++
++.SH BUGS
++Perhaps it would have been better to use CC2 style sheets 
++with standard HTML elements instead of defining the 
++.B HIDDENTEXT 
++element.
++
++.SH CREDITS
++The DjVu XML tools and DTD were written
++by Bill C. Riemers <docbill@sourceforge.net> 
++and Fred Crary.
++
++.SH SEE ALSO
++.BR djvu (1),
++.BR djvused (1),
++and
++.BR utf8 (7).

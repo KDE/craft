@@ -1,44 +1,25 @@
-import base
-import utils
-import os
-import shutil
 import info
 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.5.21'] = 'http://downloads.sourceforge.net/djvu/djvulibre-3.5.21.tar.gz'
-        self.targetInstSrc['3.5.21'] = 'djvulibre-3.5.21'
-        self.defaultTarget = '3.5.21'
+        for ver in [ '3.5.21', '3.5.23' ]:
+            self.targets[ ver ] = 'http://downloads.sourceforge.net/djvu/djvulibre-' + ver + '.tar.gz'
+            self.targetInstSrc[ ver ] = 'djvulibre-' + ver
+        self.patchToApply[ '3.5.21' ] = ( "djvu-cmake.diff", 0 )
+        self.patchToApply[ '3.5.23' ] = ( "djvulibre-3.5.23-20101116.diff", 1 )
+        self.targetDigests['3.5.23'] = 'b19f6b461515a52eb1048aec81e04dfd836d681f'
+        self.defaultTarget = '3.5.23'
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__(self, **args):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        if not base.baseclass.unpack( self ):
-            return False
-
-        os.chdir( self.workdir )
-        print os.path.join( self.workdir, self.instsrcdir )
-        if self.buildTarget == '3.5.21':
-            self.system( "cd %s && patch -p0 < %s" % ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir, "djvu-cmake.diff" ) ) )
-        
-        return True
-        
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "djvulibre", self.buildTarget, True )
-
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
