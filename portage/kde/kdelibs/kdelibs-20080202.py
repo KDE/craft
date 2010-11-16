@@ -60,10 +60,13 @@ class Package(CMakePackageBase):
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
-            
-        if self.isTargetBuild():
+
+        if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += \
                     "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
+        if self.isHostBuild():
+            self.subinfo.options.configure.defines += "-DBUILD_doc=TRUE "
+        if self.isTargetBuild():
             self.subinfo.options.configure.defines += \
                     "-DKDE_PLATFORM_PROFILE=Mobile "\
                     "-DBUILD_kutils=TRUE "\
