@@ -106,7 +106,7 @@ class MainPackage(PackageBase):
     def __init__( self  ):
         self.subinfo = MainInfo()
         PackageBase.__init__( self )
-        self.kde4_l10n = portage.getPackageInstance('kde','kde4-l10n')
+        self.kde4_l10n = portage.getPackageInstance('enterprise5','l10n-wce-e5')
         # set to any language to start building from 
         ## \todo when emerge.py is able to provide command line options to us
         # it would be possible to set this from command line 
