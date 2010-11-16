@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.44.0'
 
     def setDependencies(self):
-        self.hardDependencies['dev-util/bjam'] = 'default'
+        self.buildDependencies['dev-util/bjam'] = 'default'
 
 from Package.CMakePackageBase import *
 
