@@ -4,6 +4,8 @@ import emergePlatform
 class subinfo (info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        if emergePlatform.isCrossCompilingEnabled():
+            self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
         self.targets['0.9.16a'] = "http://downloads.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.bz2"
