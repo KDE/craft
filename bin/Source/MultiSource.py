@@ -7,9 +7,10 @@ import utils
 
 from SourceFactory import *
 
-class MultiSource():
+class MultiSource(object):
     """ provides multi source type api """
     def __init__(self):
+        object.__init__(self)
         utils.debug( "MultiSource __init__", 2 )
 
         self.source = SourceFactory(self.subinfo)
