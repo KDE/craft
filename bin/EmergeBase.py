@@ -54,7 +54,7 @@ class EmergeBase():
         # if class name has been provided add implicit build time dependency 
         if className and os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             packageName = 'internal/%s' % className
-            if not packageName in self.subinfo.hardDependencies:
+            if not packageName in self.subinfo.buildDependencies:
                 self.subinfo.buildDependencies[packageName] = 'default'
 
         if hasattr(self,'alreadyCalled'):
