@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targets[ version ] = self.getUnifiedPackage( repoUrl, "ghostscript", version )
 
             
-        self.defaultTarget = '8.64'
+        self.defaultTarget = '9.00'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
