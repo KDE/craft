@@ -7,4 +7,16 @@
 +#include <iterator>
  
  using namespace poppler;
+--- poppler-0.14.3.orig/poppler/strtok_r.cpp	2010-06-08 22:06:31.000000000 +0200
++++ poppler-0.14.3/poppler/strtok_r.cpp	2010-11-18 00:17:02.672275200 +0100
+@@ -65,7 +65,7 @@
+   /* Handle the first few characters by reading one character at a time.
+      Do this until CHAR_PTR is aligned on a longword boundary.  */
+   for (char_ptr = (const unsigned char *) s;
+-       ((unsigned long int) char_ptr & (sizeof (longword) - 1)) != 0;
++       ((unsigned intptr_t) char_ptr & (sizeof (longword) - 1)) != 0;
+        ++char_ptr)
+     if (*char_ptr == c)
+       return (__ptr_t) char_ptr;
+
  
