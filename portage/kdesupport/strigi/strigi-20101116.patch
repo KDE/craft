@@ -487,7 +487,10 @@ Index: strigidaemon/bin/daemon/queue/compat_pthread.h
 ===================================================================
 --- strigidaemon/bin/daemon/queue/compat_pthread.h
 +++ strigidaemon/bin/daemon/queue/compat_pthread.h
-@@ -0,0 +1,113 @@
+@@ -0,0 +1,118 @@
++#ifndef __COMPAT_PTHREAD___
++#define __COMPAT_PTHREAD___
++
 +#define pthread_condattr_t void
 +
 +enum {
@@ -601,6 +604,8 @@ Index: strigidaemon/bin/daemon/queue/compat_pthread.h
 +  CloseHandle (cv->events_[BROADCAST]);
 +  return true;
 +}
++
++#endif
 Index: strigidaemon/bin/daemon/queue/CMakeLists.txt
 ===================================================================
 --- strigidaemon/bin/daemon/queue/CMakeLists.txt
