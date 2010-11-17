@@ -22,7 +22,10 @@ class subinfo(info.infoclass):
         self.targets['20101115'] = (
                 "http://files.kolab.org/local/windows-ce/gpg-snapshots/gpg_wince-dev-151110.zip "
                 "http://files.kolab.org/local/windows-ce/gpg-snapshots/gpg-msc-dev-151110.zip")
-        self.defaultTarget = '20101115'
+        self.targets['20101117'] = (
+                "http://files.kolab.org/local/windows-ce/gpg-snapshots/gpg_wince-dev-171110.zip "
+                "http://files.kolab.org/local/windows-ce/gpg-snapshots/gpg-msc-dev-171110.zip")
+        self.defaultTarget = '20101117'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
