@@ -1,0 +1,885 @@
+diff -Nru libspectre-0.2.6.orig/CMakeLists.txt libspectre-0.2.6/CMakeLists.txt
+--- libspectre-0.2.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libspectre-0.2.6/CMakeLists.txt	2010-11-17 03:10:16.220170400 +0100
+@@ -0,0 +1,94 @@
++project(spectre)
++
++cmake_minimum_required(VERSION 2.6)
++
++set(PACKAGE "libspectre")
++set(PACKAGE_BUGREPORT "")
++set(PACKAGE_NAME "libspectre")
++set(PACKAGE_VERSION "0.2.6")
++set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
++set(PACKAGE_TARNAME "libspectre")
++
++option(ENABLE_TESTS "enable building of test executables" ON)
++
++# configure checks:
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++
++CHECK_INCLUDE_FILE("dlfcn.h" HAVE_DLFCN_H)
++CHECK_INCLUDE_FILE("inttypes.h" HAVE_INTTYPES_H)
++CHECK_INCLUDE_FILE("memory.h" HAVE_MEMORY_H)
++CHECK_INCLUDE_FILE("stdint.h" HAVE_STDINT_H)
++CHECK_INCLUDE_FILE("stdlib.h" HAVE_STDLIB_H)
++CHECK_INCLUDE_FILE("strings.h" HAVE_STRINGS_H)
++CHECK_INCLUDE_FILE("string.h" HAVE_STRING_H)
++CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
++CHECK_INCLUDE_FILE("sys/types.h" HAVE_SYS_TYPES_H)
++CHECK_INCLUDE_FILE("unistd.h" HAVE_UNISTD_H)
++CHECK_FUNCTION_EXISTS("vasprintf" HAVE_VASPRINTF)
++
++configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
++
++set(spectre_HDRS
++libspectre/spectre.h
++libspectre/spectre-document.h
++libspectre/spectre-exporter.h
++libspectre/spectre-macros.h
++libspectre/spectre-page.h
++libspectre/spectre-render-context.h
++libspectre/spectre-status.h
++libspectre/spectre-version.h
++)
++set(spectre_SRCS
++libspectre/ps.c
++libspectre/spectre-device.c
++libspectre/spectre-document.c
++libspectre/spectre-exporter-pdf.c
++libspectre/spectre-exporter-ps.c
++libspectre/spectre-exporter.c
++libspectre/spectre-gs.c
++libspectre/spectre-page.c
++libspectre/spectre-render-context.c
++libspectre/spectre-status.c
++libspectre/spectre-utils.c
++)
++
++find_library(GS_LIBRARY NAMES gsdll32 libgs gs)
++message(STATUS "${GS_LIBRARY}")
++
++include_directories( ${CMAKE_PREFIX_PATH}/include
++                     ${CMAKE_INCLUDE_PATH}
++                     ${CMAKE_CURRENT_BINARY_DIR}
++                     ${CMAKE_CURRENT_SOURCE_DIR}
++                     ${CMAKE_CURRENT_SOURCE_DIR}/libspectre)
++
++add_definitions(-DHAVE_CONFIG_H)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++if(WIN32)
++    set(spectre_SRCS ${spectre_SRCS} libspectre.def
++    )
++endif(WIN32)
++add_library(spectre SHARED ${spectre_SRCS})
++target_link_libraries(spectre ${GS_LIBRARY})
++
++# installation
++install(TARGETS spectre RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++
++install(FILES ${spectre_HDRS} DESTINATION include/libspectre)
++
++if(ENABLE_TESTS)
++    find_package(Qt4)
++
++    add_executable(parser-test test/parser-test.c)
++    target_link_libraries(parser-test spectre)
++    if(QT4_FOUND)
++        include_directories(${QT_INCLUDES})
++        add_executable(spectre-test test/spectre-test.cpp)
++        target_link_libraries(spectre-test spectre ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
++    endif(QT4_FOUND)
++endif(ENABLE_TESTS)
+diff -Nru libspectre-0.2.6.orig/config.h.cmake libspectre-0.2.6/config.h.cmake
+--- libspectre-0.2.6.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libspectre-0.2.6/config.h.cmake	2010-11-17 03:10:16.223170600 +0100
+@@ -0,0 +1,77 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H 1
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H 1
++
++/* Define if the 'vasprintf' function is available. */
++#cmakedefine HAVE_VASPRINTF 1
++
++/* Name of package */
++#cmakedefine PACKAGE @PACKAGE@
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
++
++/* Disable assertion checking */
++#define SPECTRE_DISABLE_ASSERT 1
++
++/* Disable public API sanity checking */
++#cmakedefine SPECTRE_DISABLE_CHECKS
++
++/* A 'va_copy' style function */
++#define SPECTRE_VA_COPY va_copy
++#ifdef _MSC_VER
++# define va_copy(dest, src) ((void)((dest) = (src)))
++#endif
++
++/* 'va_lists' cannot be copies as values */
++#cmakedefine SPECTRE_VA_COPY_AS_ARRAY
++
++/* Define to 1 if you have the ANSI C header files. */
++#define STDC_HEADERS 1
++
++/* Version number of package */
++#cmakedefine VERSION @VERSION@
++
++/* Define to 1 if your processor stores words with the most significant byte
++   first (like Motorola and SPARC, unlike Intel and VAX). */
++#cmakedefine WORDS_BIGENDIAN
+diff -Nru libspectre-0.2.6.orig/libspectre/spectre-device.c libspectre-0.2.6/libspectre/spectre-device.c
+--- libspectre-0.2.6.orig/libspectre/spectre-device.c	2010-06-01 11:09:01.000000000 +0200
++++ libspectre-0.2.6/libspectre/spectre-device.c	2010-11-17 03:10:16.226170700 +0100
+@@ -40,25 +40,25 @@
+ 	int page_called;
+ };
+ 
+-static int
++static int __cdecl
+ spectre_open (void *handle, void *device)
+ {
+ 	return 0;
+ }
+ 
+-static int
++static int __cdecl
+ spectre_preclose (void *handle, void *device)
+ {
+ 	return 0;
+ }
+ 
+-static int
++static int __cdecl
+ spectre_close (void *handle, void *device)
+ {
+ 	return 0;
+ }
+ 
+-static int
++static int __cdecl
+ spectre_presize (void *handle, void *device, int width, int height,
+ 		 int raster, unsigned int format)
+ {
+@@ -77,7 +77,7 @@
+ 	return 0;
+ }
+ 
+-static int
++static int __cdecl
+ spectre_size (void *handle, void *device, int width, int height, int raster,
+ 	      unsigned int format, unsigned char *pimage)
+ {
+@@ -92,7 +92,7 @@
+ 	return 0;
+ }
+ 
+-static int
++static int __cdecl
+ spectre_sync (void *handle, void *device)
+ {
+ 	return 0;
+@@ -113,7 +113,7 @@
+ 	return 0;
+ }
+ 
+-static int
++static int __cdecl
+ spectre_update (void *handle, void *device, int x, int y, int w, int h)
+ {
+ 	SpectreDevice *sd;
+diff -Nru libspectre-0.2.6.orig/libspectre/spectre-document.c libspectre-0.2.6/libspectre/spectre-document.c
+--- libspectre-0.2.6.orig/libspectre/spectre-document.c	2009-04-19 15:37:16.000000000 +0200
++++ libspectre-0.2.6/libspectre/spectre-document.c	2010-11-17 03:10:16.228170900 +0100
+@@ -25,7 +25,9 @@
+ /* For stat */
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifndef _WIN32
+ #include <unistd.h>
++#endif
+ 
+ #include "spectre-document.h"
+ #include "spectre-private.h"
+diff -Nru libspectre-0.2.6.orig/libspectre/spectre-gs.c libspectre-0.2.6/libspectre/spectre-gs.c
+--- libspectre-0.2.6.orig/libspectre/spectre-gs.c	2010-04-18 18:01:05.000000000 +0200
++++ libspectre-0.2.6/libspectre/spectre-gs.c	2010-11-17 03:10:16.230171000 +0100
+@@ -68,7 +68,7 @@
+ 	}
+ }
+ 
+-static int
++static int __stdcall
+ spectre_gs_stdout (void *handler, const char *out, int len)
+ {
+ 	return len;
+diff -Nru libspectre-0.2.6.orig/libspectre/spectre-utils.c libspectre-0.2.6/libspectre/spectre-utils.c
+--- libspectre-0.2.6.orig/libspectre/spectre-utils.c	2010-02-03 12:47:57.000000000 +0100
++++ libspectre-0.2.6/libspectre/spectre-utils.c	2010-11-17 03:10:16.232171100 +0100
+@@ -163,13 +163,13 @@
+ #else /* !HAVE_VASPRINTF */
+ 	va_list args_copy;
+ 	int n;
+-	char c;
+ 
+ 	SPECTRE_VA_COPY (args_copy, args);
+ 
+-#if HAVE__VSCPRINTF
++#if HAVE__VSCPRINTF || defined(_MSC_VER)
+ 	n = _vscprintf (format, args);
+ #else
++	char c;
+ 	n = vsnprintf (&c, 1, format, args);
+ #endif
+ 	string = malloc ((n + 1) * sizeof (char));
+@@ -187,6 +187,11 @@
+ 	return string;
+ }
+ 
++void _spectre_free(char *str)
++{
++    free(str);
++}
++
+ char *
+ _spectre_strdup_printf (const char *format, ...)
+ {
+diff -Nru libspectre-0.2.6.orig/libspectre/spectre-utils.h libspectre-0.2.6/libspectre/spectre-utils.h
+--- libspectre-0.2.6.orig/libspectre/spectre-utils.h	2008-11-25 14:22:13.000000000 +0100
++++ libspectre-0.2.6/libspectre/spectre-utils.h	2010-11-17 03:10:16.236171300 +0100
+@@ -131,6 +131,7 @@
+ 			       const char *s2);
+ double _spectre_strtod        (const char *nptr,
+ 			       char      **endptr);
++void   _spectre_free          (char *str);
+ 
+ SPECTRE_END_DECLS
+ 
+diff -Nru libspectre-0.2.6.orig/libspectre.def libspectre-0.2.6/libspectre.def
+--- libspectre-0.2.6.orig/libspectre.def	1970-01-01 01:00:00.000000000 +0100
++++ libspectre-0.2.6/libspectre.def	2010-11-17 03:10:16.239171500 +0100
+@@ -0,0 +1,60 @@
++EXPORTS
++spectre_status_to_string
++spectre_document_new
++spectre_document_load
++spectre_document_status
++spectre_document_free
++spectre_document_get_n_pages
++spectre_document_get_orientation
++spectre_document_get_title
++spectre_document_get_creator
++spectre_document_get_for
++spectre_document_get_creation_date
++spectre_document_get_format
++spectre_document_is_eps
++spectre_document_get_language_level
++spectre_document_get_page
++spectre_document_get_page_by_label
++spectre_document_render_full
++spectre_document_render
++spectre_document_get_page_size
++spectre_document_save
++spectre_document_save_to_pdf
++spectre_render_context_new
++spectre_render_context_free
++spectre_render_context_set_scale
++spectre_render_context_get_scale
++spectre_render_context_set_rotation
++spectre_render_context_get_rotation
++spectre_render_context_set_resolution
++spectre_render_context_get_resolution
++spectre_render_context_set_page_size
++spectre_render_context_get_page_size
++spectre_render_context_set_use_platform_fonts
++spectre_render_context_get_use_platform_fonts
++spectre_render_context_set_antialias_bits
++spectre_render_context_get_antialias_bits
++spectre_page_status
++spectre_page_free
++spectre_page_get_index
++spectre_page_get_label
++spectre_page_get_orientation
++spectre_page_get_size
++spectre_page_render
++spectre_page_render_slice
++spectre_exporter_new
++spectre_exporter_free
++spectre_exporter_begin
++spectre_exporter_do_page
++spectre_exporter_end
++_spectre_strdup_printf
++_spectre_strdup
++_spectre_strncasecmp
++_spectre_strcasecmp
++_spectre_strtod
++_spectre_free
++psscan
++psdocdestroy
++psdocreference
++psgetpagebbox
++psgetpagebox
+diff -Nru libspectre-0.2.6.orig/spectre-apilist.txt libspectre-0.2.6/spectre-apilist.txt
+--- libspectre-0.2.6.orig/spectre-apilist.txt	1970-01-01 01:00:00.000000000 +0100
++++ libspectre-0.2.6/spectre-apilist.txt	2010-11-17 03:10:16.240171500 +0100
+@@ -0,0 +1,48 @@
++const char *spectre_status_to_string (SpectreStatus status);
++SpectreDocument   *spectre_document_new                (void);
++void               spectre_document_load               (SpectreDocument *document, const char *filename);
++SpectreStatus      spectre_document_status             (SpectreDocument *document);
++void               spectre_document_free               (SpectreDocument *document);
++unsigned int       spectre_document_get_n_pages        (SpectreDocument *document);
++SpectreOrientation spectre_document_get_orientation    (SpectreDocument *document);
++const char        *spectre_document_get_title          (SpectreDocument *document);
++const char        *spectre_document_get_creator        (SpectreDocument *document);
++const char        *spectre_document_get_for            (SpectreDocument *document);
++const char        *spectre_document_get_creation_date  (SpectreDocument *document);
++const char        *spectre_document_get_format         (SpectreDocument *document);
++int                spectre_document_is_eps             (SpectreDocument *document);
++unsigned int       spectre_document_get_language_level (SpectreDocument *document);
++SpectrePage       *spectre_document_get_page           (SpectreDocument *document, unsigned int page_index);
++SpectrePage       *spectre_document_get_page_by_label  (SpectreDocument *document, const char *label);
++void               spectre_document_render_full        (SpectreDocument *document, SpectreRenderContext *rc, unsigned char **page_data, int *row_length);
++void               spectre_document_render             (SpectreDocument *document, unsigned char **page_data, int *row_length);
++void               spectre_document_get_page_size      (SpectreDocument *document, int *width, int *height);
++void               spectre_document_save               (SpectreDocument *document, const char *filename);
++void               spectre_document_save_to_pdf        (SpectreDocument *document, const char *filename);
++SpectreRenderContext *spectre_render_context_new                    (void);
++void                  spectre_render_context_free                   (SpectreRenderContext *rc);
++void                  spectre_render_context_set_scale              (SpectreRenderContext *rc, double x_scale, double y_scale);
++void                  spectre_render_context_get_scale              (SpectreRenderContext *rc, double *x_scale, double *y_scale);
++void                  spectre_render_context_set_rotation           (SpectreRenderContext *rc, unsigned int rotation);
++unsigned int          spectre_render_context_get_rotation           (SpectreRenderContext *rc);
++void                  spectre_render_context_set_resolution         (SpectreRenderContext *rc, double x_dpi, double y_dpi);
++void                  spectre_render_context_get_resolution         (SpectreRenderContext *rc, double *x_dpi, double *y_dpi);
++void                  spectre_render_context_set_page_size          (SpectreRenderContext *rc, int width, int height);
++void                  spectre_render_context_get_page_size          (SpectreRenderContext *rc, int *width, int *height);
++void                  spectre_render_context_set_use_platform_fonts (SpectreRenderContext *rc, int use_platform_fonts);
++int                   spectre_render_context_get_use_platform_fonts (SpectreRenderContext *rc);
++void                  spectre_render_context_set_antialias_bits     (SpectreRenderContext *rc, int graphics_bits, int text_bits);
++void                  spectre_render_context_get_antialias_bits     (SpectreRenderContext *rc, int *graphics_bits, int *text_bits);
++SpectreStatus      spectre_page_status          (SpectrePage          *page);
++void               spectre_page_free            (SpectrePage          *page);
++unsigned int       spectre_page_get_index       (SpectrePage          *page);
++const char        *spectre_page_get_label       (SpectrePage          *page);
++SpectreOrientation spectre_page_get_orientation (SpectrePage          *page);
++void               spectre_page_get_size        (SpectrePage          *page, int *width, int *height);
++void               spectre_page_render          (SpectrePage          *page, SpectreRenderContext *rc, unsigned char **page_data, int *row_length);
++void               spectre_page_render_slice    (SpectrePage          *page, SpectreRenderContext *rc, int x, int y, int width, int height, unsigned char **page_data, int *row_length);
++SpectreExporter *spectre_exporter_new     (SpectreDocument      *document, SpectreExporterFormat format);
++void             spectre_exporter_free    (SpectreExporter      *exporter);
++SpectreStatus    spectre_exporter_begin   (SpectreExporter      *exporter, const char *filename);
++SpectreStatus    spectre_exporter_do_page (SpectreExporter      *exporter, unsigned int page_index);
++SpectreStatus    spectre_exporter_end     (SpectreExporter      *exporter);
+diff -Nru libspectre-0.2.6.orig/test/parser-test.c libspectre-0.2.6/test/parser-test.c
+--- libspectre-0.2.6.orig/test/parser-test.c	2008-10-17 19:34:43.000000000 +0200
++++ libspectre-0.2.6/test/parser-test.c	2010-11-17 03:46:12.667512100 +0100
+@@ -17,7 +17,7 @@
+ 	unsigned int read;
+ 	size_t left = end - begin;
+ 
+-	filename = _spectre_strdup_printf ("%s/%s.txt", outputdir, section);
++	filename = _spectre_strdup_printf ("%s\\%s.txt", outputdir, section);
+ 	dst = fopen (filename, "w");
+ 	if (!dst) {
+ 		printf ("Skipping section %s, could not open dest file %s\n",
+@@ -25,7 +25,7 @@
+ 		free (filename);
+ 		return;
+ 	}
+-	free (filename);
++	_spectre_free (filename);
+ 
+ 	fseek (fd, begin, SEEK_SET);
+ 
+@@ -50,6 +50,11 @@
+ 	struct document *doc;
+ 	unsigned int     i;
+ 
++    if(argc < 3) {
++        printf("usage: %s documentname.ps C:\\Path\\to\\Output\\Directory\n", argv[0]);
++        return 1;
++    };
++
+ 	outputdir = argv[2];
+ 	
+ 	fd = fopen (argv[1], "r");
+diff -Nru libspectre-0.2.6.orig/test/spectre-test.cpp libspectre-0.2.6/test/spectre-test.cpp
+--- libspectre-0.2.6.orig/test/spectre-test.cpp	1970-01-01 01:00:00.000000000 +0100
++++ libspectre-0.2.6/test/spectre-test.cpp	2010-11-17 03:46:18.979873200 +0100
+@@ -0,0 +1,426 @@
++#include <stdio.h>
++#include <stdlib.h>
++
++#include <QtCore/QString>
++#include <QtGui/QImage>
++
++#include <libspectre/spectre.h>
++
++#include "../libspectre/spectre-utils.h"
++
++static const char *
++orientation_to_string (SpectreOrientation orientation)
++{
++	switch (orientation) {
++	case SPECTRE_ORIENTATION_PORTRAIT:
++		return "Portrait";
++	case SPECTRE_ORIENTATION_LANDSCAPE:
++		return "Landscape";
++	case SPECTRE_ORIENTATION_REVERSE_LANDSCAPE:
++		return "Reverse Landscape";
++	case SPECTRE_ORIENTATION_REVERSE_PORTRAIT:
++		return "Reverse Portrait";
++	}
++
++	return "Unknown Orientation";
++}
++
++static void
++test_metadata (SpectreDocument *document)
++{
++	const char *format;
++
++	format = spectre_document_get_format (document);
++	printf ("Document format: %s\n",
++		format ? format : "Unknown");
++	printf ("Postscript language level: %d\n",
++		spectre_document_get_language_level (document));
++	printf ("Encapsulated PostScript: %s\n",
++		spectre_document_is_eps (document) ? "Yes" : "No");
++	printf ("Number of pages: %d\n",
++		spectre_document_get_n_pages (document));
++	printf ("Title: %s\n",
++		spectre_document_get_title (document));
++	printf ("Creator: %s\n",
++		spectre_document_get_creator (document));
++	printf ("For: %s\n",
++		spectre_document_get_for (document));
++	printf ("Creation date: %s\n",
++		spectre_document_get_creation_date (document));
++	printf ("Document Orientation: %s\n",
++		orientation_to_string (spectre_document_get_orientation (document)));
++}
++
++static void
++test_rotation (SpectreDocument *document,
++	       const char      *output)
++{
++	SpectrePage          *page;
++	SpectreRenderContext *rc;
++	int                   i;
++	int                   width_points;
++	int                   height_points;
++
++	page = spectre_document_get_page (document, 0);
++
++	spectre_page_get_size (page, &width_points, &height_points);
++
++	rc = spectre_render_context_new ();
++	
++	for (i = 0; i < 4; i++) {
++		char            *filename;
++		int              rotation;
++		int              width, height;
++		unsigned char   *data = NULL;
++		int              row_length;
++
++		rotation = 90 * i;
++
++		if (rotation == 90 || rotation == 270) {
++			width = height_points;
++			height = width_points;
++		} else {
++			width = width_points;
++			height = height_points;
++		}
++
++		spectre_render_context_set_rotation (rc, rotation);
++		spectre_page_render (page, rc, &data, &row_length);
++		if (spectre_page_status (page)) {
++			printf ("Error rendering page %d at rotation %d: %s\n", i, rotation, 
++				spectre_status_to_string (spectre_page_status (page)));
++			free (data);
++			continue;
++		}
++        
++        QImage image(data, width, height, row_length, QImage::Format_RGB32);
++
++		filename = _spectre_strdup_printf ("%s\\page-rotated-%d.png", output, rotation);
++        image.save(QString(filename), "PNG");
++		_spectre_free (filename);
++		free (data);
++	}
++
++	spectre_render_context_free (rc);
++	spectre_page_free (page);
++}
++
++static void
++test_render_slice (SpectreDocument *document,
++		   const char      *output)
++{
++	SpectrePage          *page;
++	SpectreRenderContext *rc;
++	int                   x, y;
++	int                   width, height;
++	int                   width_points;
++	int                   height_points;
++	unsigned char        *data = NULL;
++	int                   row_length;
++
++	page = spectre_document_get_page (document, 0);
++	
++	spectre_page_get_size (page, &width_points, &height_points);
++
++	/* Render the central slice */
++	width = width_points / 3;
++	height = height_points / 3;
++	x = width;
++	y = height;
++
++	printf ("Rendering page 0 slice %d, %d, %d, %d\n",
++		x, y, width, height);
++	
++	rc = spectre_render_context_new ();
++
++	spectre_page_render_slice (page, rc, x, y, width, height,
++				   &data, &row_length);
++	if (!spectre_page_status (page)) {
++		char            *filename;
++
++        QImage image(data, width, height, row_length, QImage::Format_RGB32);
++
++		filename = _spectre_strdup_printf ("%s\\page-slice.png", output);
++        image.save(QString(filename), "PNG");
++		_spectre_free (filename);
++	} else {
++		printf ("Error rendering page slice %d, %d, %d, %d: %s\n",
++			x, y, width, height,
++			spectre_status_to_string (spectre_page_status (page)));
++	}
++
++	free (data);
++	spectre_render_context_free (rc);
++	spectre_page_free (page);
++}
++
++static void
++test_page_size (SpectreDocument *document,
++		const char      *output)
++{
++	SpectrePage          *page;
++	SpectreRenderContext *rc;
++	unsigned char        *data = NULL;
++	int                   row_length;
++
++	page = spectre_document_get_page (document, 0);
++	
++	printf ("Rendering page 0 in a4 page\n");
++	
++	rc = spectre_render_context_new ();
++
++	spectre_render_context_set_page_size (rc, 595, 842);
++	spectre_page_render (page, rc, &data, &row_length);
++	if (!spectre_page_status (page)) {
++		char            *filename;
++
++        QImage image(data, 595, 842, row_length, QImage::Format_RGB32);
++
++		filename = _spectre_strdup_printf ("%s\\page-a4.png", output);
++        image.save(QString(filename), "PNG");
++		_spectre_free (filename);
++	} else {
++		printf ("Error rendering page in a4 page: %s\n",
++			spectre_status_to_string (spectre_page_status (page)));
++	}
++
++	free (data);
++	spectre_render_context_free (rc);
++	spectre_page_free (page);
++}
++
++static void
++test_document_render (SpectreDocument *document,
++		      const char      *output)
++{
++	unsigned char *data = NULL;
++	int            row_length;
++
++	printf ("Rendering document\n");
++
++	spectre_document_render (document, &data, &row_length);
++	printf ("Rendering document\n");
++	if (!spectre_document_status (document)) {
++		char            *filename;
++		int              width, height;
++
++		spectre_document_get_page_size (document, &width, &height);
++
++        QImage image(data, width, height, row_length, QImage::Format_RGB32);
++
++		filename = _spectre_strdup_printf ("%s\\document.png", output);
++        image.save(QString(filename), "PNG");
++		_spectre_free (filename);
++	} else {
++		printf ("Error rendering document: %s\n",
++			spectre_status_to_string (spectre_document_status (document)));
++	}
++
++	free (data);
++}
++
++static void
++test_document_render_full (SpectreDocument *document,
++			   const char      *output)
++{
++	unsigned char        *data = NULL;
++	int                   row_length;
++	SpectreRenderContext *rc;
++
++	printf ("Rendering document at 2x\n");
++
++	rc = spectre_render_context_new ();
++	
++	spectre_render_context_set_scale (rc, 2.0, 2.0);
++	spectre_document_render_full (document, rc, &data, &row_length);
++	if (!spectre_document_status (document)) {
++		char            *filename;
++		int              width, height;
++
++		spectre_document_get_page_size (document, &width, &height);
++
++		width = (int) ((width * 2.0) + 0.5);
++		height = (int) ((height * 2.0) + 0.5);
++
++        QImage image(data, width, height, row_length, QImage::Format_RGB32);
++
++		filename = _spectre_strdup_printf ("%s\\document-2x.png", output);
++        image.save(QString(filename), "PNG");
++		_spectre_free (filename);
++	} else {
++		printf ("Error rendering document at 2x: %s\n",
++			spectre_status_to_string (spectre_document_status (document)));
++	}
++
++	spectre_render_context_free (rc);
++	free (data);
++}
++
++static void
++test_export (SpectreDocument      *document,
++	     SpectreExporterFormat format,
++	     const char           *output_dir)
++{
++	SpectreExporter *exporter;
++	SpectreStatus status;
++	char *filename;
++	const char *format_str = format == SPECTRE_EXPORTER_FORMAT_PS ? "ps" : "pdf";
++	int i;
++
++	exporter = spectre_exporter_new (document, format);
++
++	filename = _spectre_strdup_printf ("%s\\output.%s", output_dir, format_str);
++	status = spectre_exporter_begin (exporter, filename);
++	_spectre_free (filename);
++
++	if (status) {
++		printf ("Error exporting document as %s: %s\n", format_str,
++			spectre_status_to_string (status));
++		spectre_exporter_free (exporter);
++		
++		return;
++	}
++
++	/* Export even pages in reverse order */
++	for (i = spectre_document_get_n_pages (document) - 1; i >= 0; i--) {
++		if (i % 2 != 0)
++			continue;
++		
++		status = spectre_exporter_do_page (exporter, i);
++		if (status) {
++			printf ("Error exporting page %d as %s: %s\n", i, format_str,
++				spectre_status_to_string (status));
++			break;
++		}
++	}
++			
++	spectre_exporter_end (exporter);
++	spectre_exporter_free (exporter);
++}
++
++static void
++test_save (SpectreDocument *document,
++	   const char      *output_dir)
++{
++	char *filename;
++
++	filename = _spectre_strdup_printf ("%s\\document-copy.ps", output_dir);
++	spectre_document_save (document, filename);
++	if (spectre_document_status (document)) {
++		printf ("Error saving document as %s: %s\n", filename,
++			spectre_status_to_string (spectre_document_status (document)));
++	}
++	_spectre_free (filename);
++}
++
++static void
++test_save_to_pdf (SpectreDocument *document,
++		  const char      *output_dir)
++{
++	char *filename;
++
++	filename = _spectre_strdup_printf ("%s\\document-copy.pdf", output_dir);
++	spectre_document_save_to_pdf (document, filename);
++	if (spectre_document_status (document)) {
++		printf ("Error saving document as %s: %s\n", filename,
++			spectre_status_to_string (spectre_document_status (document)));
++	}
++	_spectre_free (filename);
++}
++
++int main (int argc, char **argv)
++{
++	SpectreDocument      *document;
++	SpectreRenderContext *rc;
++	unsigned int          i;
++
++	/* TODO: check argv */
++    
++    if(argc < 3) {
++        printf("usage: %s documentname.ps C:\\Path\\to\\Output\\Directory\n", argv[0]);
++        return 1;
++    };
++
++	printf ("Testing libspectre version: %s\n", SPECTRE_VERSION_STRING);
++
++	spectre_document_load (NULL, argv[1]);
++
++	document = spectre_document_new ();
++	spectre_document_load (document, argv[1]);
++	if (spectre_document_status (document)) {
++		printf ("Error loading document %s: %s\n", argv[1],
++			spectre_status_to_string (spectre_document_status (document)));
++		spectre_document_free (document);
++
++		return 1;
++	}
++
++	test_document_render (document, argv[2]);
++	test_document_render_full (document, argv[2]);
++	test_export (document, SPECTRE_EXPORTER_FORMAT_PDF, argv[2]);
++	test_export (document, SPECTRE_EXPORTER_FORMAT_PS, argv[2]);
++	test_save (document, argv[2]);
++	test_save_to_pdf (document, argv[2]);
++	test_metadata (document);
++
++	rc = spectre_render_context_new ();
++
++	for (i = 0; i < spectre_document_get_n_pages (document); i++) {
++		SpectrePage     *page, *page2;
++		char            *filename;
++		int              width, height;
++		unsigned char   *data = NULL;
++		int              row_length;
++
++		page = spectre_document_get_page (document, i);
++		if (spectre_document_status (document)) {
++			printf ("Error getting page %d: %s\n", i, 
++				spectre_status_to_string (spectre_document_status (document)));
++			continue;
++		}
++
++		spectre_page_get_size (page, &width, &height);
++		printf ("Page %d\n", i);
++		printf ("\tPage label: %s\n", spectre_page_get_label (page));
++		printf ("\tPage size: %d x %d\n", width, height);
++		printf ("\tPage orientation: %s\n", 
++			orientation_to_string (spectre_page_get_orientation (page)));
++
++		page2 = spectre_document_get_page_by_label (document, spectre_page_get_label (page));
++		if (!page2 || spectre_document_status (document)) {
++			printf ("Error getting page %d by its label %s: %s\n", i,
++				spectre_page_get_label (page),
++				spectre_status_to_string (spectre_document_status (document)));
++		}
++		spectre_page_free (page2);
++		
++
++		spectre_render_context_set_page_size (rc, width, height);
++		spectre_page_render (page, rc, &data, &row_length);
++		if (spectre_page_status (page)) {
++			printf ("Error rendering page %d: %s\n", i,
++				spectre_status_to_string (spectre_page_status (page)));
++			free (data);
++			spectre_page_free (page);
++			continue;
++		}
++
++        QImage image(data, width, height, row_length, QImage::Format_RGB32);
++
++		filename = _spectre_strdup_printf ("%s\\page-%d.png", argv[2], i);
++        image.save(QString(filename), "PNG");
++		_spectre_free (filename);
++		free (data);
++		spectre_page_free (page);
++	}
++
++	spectre_render_context_free (rc);
++
++	test_render_slice (document, argv[2]);
++	test_page_size (document, argv[2]);
++	test_rotation (document, argv[2]);
++	
++	spectre_document_free (document);
++	
++	return 0;
++}
