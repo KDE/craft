@@ -45,10 +45,11 @@ def envAsBool(key):
     """ return value of environment variable as bool value """
     return os.getenv( key ) == "True" or os.getenv( key ) == "1"
 
-class EmergeBase():
+class EmergeBase(object):
     """base class for emerge system - holds attributes and methods required by base classes"""
     
     def __init__( self, className=None, **args):
+        object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
 
         # if class name has been provided add implicit build time dependency 
