@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
         
-        for version in ['8.64']:
+        for version in ['8.64', '9.00']:
             self.targets[ version ] = self.getUnifiedPackage( repoUrl, "ghostscript", version )
 
             
