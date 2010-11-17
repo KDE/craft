@@ -159,10 +159,12 @@ class MainPackage(CMakePackageBase):
         utils.copyFile(kolabicon, os.path.join(self.workDir(), "share",
                        "icons", "oxygen", "64x64", "apps", "kolab.png"))
 
-        # Drivers need to be installed in the root direcotry
+        # Drivers need to be installed in the Windows direcotry
         gpgcedev = os.path.join(wm_root, "bin", "gpgcedev.dll")
         os.mkdir(os.path.join(self.workDir(), "Windows"))
         utils.copyFile(gpgcedev, os.path.join(self.workDir(), "Windows"))
+        libgcc = os.path.join(wm_root, "bin", "libgcc_s_sjlj-1.dll")
+        utils.copyFile(libgcc, os.path.join(self.workDir(), "Windows"))
 
         # Create an empty file for DBus and his /etc/dbus-1/session.d
         dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",
