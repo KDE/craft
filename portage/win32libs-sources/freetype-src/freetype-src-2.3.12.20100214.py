@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.3.12-1'] = 'ebf0438429c0bedd310059326d91646c3c91016b'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
