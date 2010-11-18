@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ i ] = 'poppler-%s' % i
         self.patchToApply['0.14.3'] = ( 'poppler-src-0.14.3.patch', 1 )
         self.patchToApply['0.14.4'] = ( 'poppler-src-0.14.3.patch', 1 )
-        self.patchToApply['0.14.5'] = ( 'poppler-src-0.14.3.patch', 1 )
-        self.patchToApply['0.15.1'] = ( 'poppler-src-0.14.3.patch', 1 )
+        self.patchToApply['0.14.5'] = ( 'poppler-0.14.5-20101118.diff', 1 )
+        self.patchToApply['0.15.1'] = ( 'poppler-0.14.5-20101118.diff', 1 )
         self.targetDigests['0.14.3'] = 'b5e0db722625d92a025e62c3e2fe7a4fc6318b32'
         self.targetDigests['0.14.5'] = 'e23b115e4ebc06c937318688b06a7c6b3319a00a'
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
@@ -20,15 +20,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = "0.14.5"
     
     def setDependencies( self ):
-        #self.hardDependencies['win32libs-bin/fontconfig'] = 'default'
-        self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
-        # does not work with mingw
-        self.hardDependencies['win32libs-sources/openjpeg-src'] = 'default'
-        self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
-        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
-        self.hardDependencies['win32libs-sources/jpeg-src'] = 'default'
-        self.hardDependencies['win32libs-sources/libpng-src'] = 'default'
-        self.hardDependencies['win32libs-sources/libxml2-src'] = 'default'
+        self.hardDependencies['win32libs-bin/freetype'] = 'default'
+        self.hardDependencies['win32libs-bin/openjpeg'] = 'default'
+        self.hardDependencies['win32libs-bin/lcms'] = 'default'
+        self.hardDependencies['win32libs-bin/zlib'] = 'default'
+        self.hardDependencies['win32libs-bin/jpeg'] = 'default'
+        self.hardDependencies['win32libs-bin/libpng'] = 'default'
+        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['data/poppler-data'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
     
