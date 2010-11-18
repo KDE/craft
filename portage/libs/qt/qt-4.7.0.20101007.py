@@ -60,14 +60,14 @@ class subinfo(info.infoclass):
         self.options.package.specialMode = True
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/perl'] = 'default'
-        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
-        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/perl'] = 'default'
+        self.dependencies['win32libs-sources/openssl-src'] = 'default'
+        self.dependencies['win32libs-sources/dbus-src'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['testing/mysql-pkg'] = 'default'
+            self.dependencies['testing/mysql-pkg'] = 'default'
         else:
-            self.hardDependencies['win32libs-sources/wcecompat-src'] = 'default'
+            self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
 
 class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
