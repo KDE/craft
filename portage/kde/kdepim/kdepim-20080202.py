@@ -46,6 +46,8 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DKDEPIM_NO_NEPOMUK=ON "
             self.subinfo.options.configure.defines += " -DKDE4_BUILD_TESTS=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_kleopatra=ON "
+        else:
+            self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
