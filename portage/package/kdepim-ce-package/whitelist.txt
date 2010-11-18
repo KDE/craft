@@ -97,7 +97,6 @@ share\\icons\\oxygen\\64x64\\.*kleopatra\.png
 share\\apps\\kleopatra\\pics\\kleopatra_wizard\.png
 share\\apps\\kleopatra\\pics\\gpg4win\.png
 share\\apps\\kleopatra\\pics\\gpg4win-compact\.png
-lib\\kde4\\kcm_kleopatra\.dll
 share\\kde4\\services\\kleopatra_config_dirserv\.desktop
 share\\kde4\\services\\kleopatra_config_appear\.desktop
 share\\kde4\\services\\kleopatra_config_gnupgsystem\.desktop
