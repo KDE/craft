@@ -92,11 +92,7 @@ lib\\kde4\\emoticonstheme_kde\.dll
 lib\\kde4\\imports\\
 
 # Some additional plugins
-lib\\kde4\\kcm_akonadicontact_actions\.dll
 lib\\kde4\\kcm_ldap\.dll
-lib\\kde4\\kio_pop3\.dll
-lib\\kde4\\kio_sieve\.dll
-lib\\kde4\\kio_smtp\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_calendar\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_vcard\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_xdiff\.dll
