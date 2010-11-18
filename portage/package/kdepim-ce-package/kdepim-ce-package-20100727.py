@@ -171,6 +171,7 @@ class MainPackage(CMakePackageBase):
         gpgcedev = os.path.join(wm_root, "bin", "gpgcedev.dll")
         if not os.path.isdir(os.path.join(self.workDir(), "windows")):
             os.mkdir(os.path.join(self.workDir(), "windows"))
+        utils.copyFile(gpgcedev, os.path.join(self.workDir(), "windows"))
 
         # Create an empty file for DBus and his /etc/dbus-1/session.d
         dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",
