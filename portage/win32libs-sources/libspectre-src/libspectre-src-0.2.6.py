@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.6'
 
     def setDependencies( self ):
-        #self.hardDependencies['testing/libgs'] = 'default'
+        self.hardDependencies['win32libs-bin/ghostscript'] = 'default'
         pass
         
 from Package.CMakePackageBase import *
