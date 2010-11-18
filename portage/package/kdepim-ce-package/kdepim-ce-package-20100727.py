@@ -272,7 +272,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
 
         destinationdirs = [
-            (d.endswith("Windows") and "a%d = 0,\\%s"
+            (d.endswith("windows") and "a%d = 0,\\%s"
                     or "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
