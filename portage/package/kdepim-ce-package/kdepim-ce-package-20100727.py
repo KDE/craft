@@ -169,7 +169,8 @@ class MainPackage(CMakePackageBase):
 
         # Drivers need to be installed in the Windows direcotry
         gpgcedev = os.path.join(wm_root, "bin", "gpgcedev.dll")
-        os.mkdir(os.path.join(self.workDir(), "Windows"))
+        if not os.path.isdir(os.path.join(self.workDir(), "windows")):
+            os.mkdir(os.path.join(self.workDir(), "windows"))
 
         # Create an empty file for DBus and his /etc/dbus-1/session.d
         dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",
