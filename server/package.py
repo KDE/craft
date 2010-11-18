@@ -7,6 +7,7 @@ import subprocess;
 import time;     # for sleep
 from datetime import datetime;
 
+import socket;
 
 # extend sys.path so that we can use the emerge stuff
 sys.path = [ os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", "bin" ) ) ] + sys.path
@@ -292,6 +293,18 @@ for entry in packagelist:
         for i in entry.notifications:
             if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
 
+if "localBotNotificationPort" in general:
+    port = general["localBotNotificationPort"]
+    
+    try:
+        s = socket.socket()
+        s.connect( ( socket.gethostname(), port ) )
+        s.send( "BUILDFINISHED %s\r\n" % general[ "platform" ] );
+        s.send( "QUIT\r\n" )
+        s.close()
+    except:
+        print "failed to send BUILDFINISHED to Bot on localhost:%s" % port
+    
 for entry in packagelist:
     try:
         enabled = entry.enabled
