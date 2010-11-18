@@ -57,7 +57,7 @@ diff -Nru libspectre-0.2.6.orig/CMakeLists.txt libspectre-0.2.6/CMakeLists.txt
 +libspectre/spectre-utils.c
 +)
 +
-+find_library(GS_LIBRARY NAMES gsdll32 libgs gs)
++find_library(GS_LIBRARY NAMES gsdll32 gsdll64 libgs gs)
 +message(STATUS "${GS_LIBRARY}")
 +
 +include_directories( ${CMAKE_PREFIX_PATH}/include
@@ -274,7 +274,7 @@ diff -Nru libspectre-0.2.6.orig/libspectre/spectre-utils.c libspectre-0.2.6/libs
  	SPECTRE_VA_COPY (args_copy, args);
  
 -#if HAVE__VSCPRINTF
-+#if HAVE__VSCPRINTF || defined(_MSC_VER)
++#if HAVE__VSCPRINTF || defined(_MSC_VER) || defined(__MINGW64__)
  	n = _vscprintf (format, args);
  #else
 +	char c;
