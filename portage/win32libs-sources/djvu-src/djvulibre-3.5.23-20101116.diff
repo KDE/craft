@@ -235,6 +235,51 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/DjVuGlobal.h djvulibre-3.5.23/libdjvu/Dj
  # ifdef DLL_EXPORT
  #  define DJVUAPI __declspec(dllexport)
  # else
+diff -Nru djvulibre-3.5.23.orig/libdjvu/DjVuPort.cpp djvulibre-3.5.23/libdjvu/DjVuPort.cpp
+--- djvulibre-3.5.23.orig/libdjvu/DjVuPort.cpp	2008-08-03 16:16:53.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/DjVuPort.cpp	2010-11-18 02:46:35.353483200 +0100
+@@ -469,11 +469,11 @@
+        // Sort in depth order
+        int max_dist=0;
+        for(pos=set;pos;++pos)
+-         if (max_dist < (int)(long)set[pos])
+-           max_dist = (int)(long)set[pos];
++         if (max_dist < (int)(intptr_t)set[pos])
++           max_dist = (int)(intptr_t)set[pos];
+        GArray<GList<const void*> > lists(0,max_dist);
+        for(pos=set;pos;++pos)
+-         lists[(int)(long)set[pos]].append(set.key(pos));
++         lists[(int)(intptr_t)set[pos]].append(set.key(pos));
+        for(int dist=0;dist<=max_dist;dist++)
+          for(pos=lists[dist];pos;++pos)
+            {
+diff -Nru djvulibre-3.5.23.orig/libdjvu/GBitmap.cpp djvulibre-3.5.23/libdjvu/GBitmap.cpp
+--- djvulibre-3.5.23.orig/libdjvu/GBitmap.cpp	2007-07-14 03:21:56.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/GBitmap.cpp	2010-11-18 02:44:45.177181500 +0100
+@@ -467,7 +467,11 @@
+ {
+   if (!monitorptr)
+     {
++#ifdef _WIN64
++      unsigned __int64 x = (unsigned __int64)this;
++#else
+       unsigned long x = (unsigned long)this;
++#endif
+       monitorptr = &monitors[(x^(x>>5)) % NMONITORS];
+     }
+ }
+diff -Nru djvulibre-3.5.23.orig/libdjvu/GContainer.h djvulibre-3.5.23/libdjvu/GContainer.h
+--- djvulibre-3.5.23.orig/libdjvu/GContainer.h	2008-01-07 12:48:52.000000000 +0100
++++ djvulibre-3.5.23/libdjvu/GContainer.h	2010-11-18 02:42:26.769265000 +0100
+@@ -182,7 +182,7 @@
+ static inline unsigned int 
+ hash(const void * const & x) 
+ { 
+-  return (unsigned long) x; 
++  return (unsigned intptr_t) x; 
+ }
+ 
+ /** Hashing function (float). */
 diff -Nru djvulibre-3.5.23.orig/libdjvu/GString.cpp djvulibre-3.5.23/libdjvu/GString.cpp
 --- djvulibre-3.5.23.orig/libdjvu/GString.cpp	2009-12-29 17:26:19.000000000 +0100
 +++ djvulibre-3.5.23/libdjvu/GString.cpp	2010-11-16 23:27:15.900859900 +0100
@@ -281,6 +326,18 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/GThreads.h djvulibre-3.5.23/libdjvu/GThr
  {
  private:
     volatile long flags;
+diff -Nru djvulibre-3.5.23.orig/libdjvu/IW44Image.cpp djvulibre-3.5.23/libdjvu/IW44Image.cpp
+--- djvulibre-3.5.23.orig/libdjvu/IW44Image.cpp	2007-03-25 22:48:32.000000000 +0200
++++ djvulibre-3.5.23/libdjvu/IW44Image.cpp	2010-11-18 02:45:31.344822100 +0100
+@@ -651,7 +651,7 @@
+   // Allocate enough room for pointers plus alignment
+   short *p = alloc( (n+1) * sizeof(short*) / sizeof(short) );
+   // Align on pointer size
+-  while ( ((long)p) & (sizeof(short*)-1) )
++  while ( ((intptr_t)p) & (sizeof(short*)-1) )
+     p += 1;
+   // Cast and return
+   return (short**)p;
 diff -Nru djvulibre-3.5.23.orig/tools/CMakeLists.txt djvulibre-3.5.23/tools/CMakeLists.txt
 --- djvulibre-3.5.23.orig/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ djvulibre-3.5.23/tools/CMakeLists.txt	2010-11-16 23:27:15.910860500 +0100
