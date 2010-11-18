@@ -1,0 +1,37 @@
+From a5a64ee6e2e6f8629694df9625c67cfc7c15b5f2 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andy@kdab.com>
+Date: Thu, 18 Nov 2010 18:39:28 +0100
+Subject: [PATCH] fix that comboboxes are going into the wrong direction
+
+---
+ src/gui/widgets/qcombobox.cpp |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/src/gui/widgets/qcombobox.cpp b/src/gui/widgets/qcombobox.cpp
+index 96d2acd..2560a0d 100644
+--- a/src/gui/widgets/qcombobox.cpp
++++ b/src/gui/widgets/qcombobox.cpp
+@@ -2326,6 +2326,10 @@ void QComboBox::showPopup()
+     Q_D(QComboBox);
+     if (count() <= 0)
+         return;
++        
++#ifdef Q_OS_WINCE
++    setAttribute( Qt::WA_DontShowOnScreen, false );
++#endif
+ 
+ #ifdef QT_KEYPAD_NAVIGATION
+ #ifndef QT_NO_COMPLETER
+@@ -2562,6 +2566,9 @@ void QComboBox::showPopup()
+ void QComboBox::hidePopup()
+ {
+     Q_D(QComboBox);
++#ifdef Q_OS_WINCE
++    setAttribute( Qt::WA_DontShowOnScreen, true );
++#endif
+     if (d->container && d->container->isVisible()) {
+ #if !defined(QT_NO_EFFECTS)
+         d->model->blockSignals(true);
+-- 
+1.7.0.2.msysgit.0
+
