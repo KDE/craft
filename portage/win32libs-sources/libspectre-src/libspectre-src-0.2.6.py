@@ -12,8 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.6'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/ghostscript'] = 'default'
-        pass
+        self.dependencies['win32libs-bin/ghostscript'] = 'default'
         
 from Package.CMakePackageBase import *
         
