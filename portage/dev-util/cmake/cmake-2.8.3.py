@@ -31,8 +31,8 @@ class subinfo( info.infoclass ):
         self.disableTargetBuild = True
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base']       = 'default'
-        self.hardDependencies['gnuwin32/patch'] = 'default'
+        self.buildDependencies['virtual/bin-base']       = 'default'
+        self.buildDependencies['gnuwin32/patch'] = 'default'
 
 from Package.BinaryPackageBase import *
 

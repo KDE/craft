@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.1.5'
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

@@ -6,7 +6,7 @@ import os
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
 
     def setTargets( self ):
         self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'

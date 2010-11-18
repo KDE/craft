@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.7.0.2'
     
     def setDependencies(self):
-        self.hardDependencies['dev-util/7zip']   = 'default'
+        self.buildDependencies['dev-util/7zip']   = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False
