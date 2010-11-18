@@ -32,6 +32,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
         self.svnTargets['4.6.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.3-patched|"
         self.svnTargets['4.7.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|"
+        self.svnTargets['4.7.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|v4.7.1"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.svnTargets['wince'] = "git://gitorious.org/qt/qt.git|4.7|235d1d687dcc2d21860cd753c9d67964c5270be2"
         self.targetSrcSuffix['wince'] = "4.7"
