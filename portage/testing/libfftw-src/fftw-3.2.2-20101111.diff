@@ -64,7 +64,7 @@ diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 +
 +if(MSVC)
 +    add_definitions(-Dinline=__inline -D_CRT_SECURE_NO_WARNINGS /wd4700 /openmp)
-+endif
++endif(MSVC)
 +
 +set(PACKAGE "\"fftw\"")
 +set(VERSION "\"3.2.2\"")
