@@ -80,6 +80,30 @@ bin\\gpgme-tool\.exe
 bin\\gpg-connect-agent\.exe
 bin\\akonadi_rds\.exe
 
+# Kleopatra
+bin\\kleopatra\.exe
+share\\applications\\kde4\\kleopatra\.desktop
+share\\applications\\kde4\\kleopatra_import\.desktop
+share\\kde4\\services\\kleopatra_signencryptfiles\.desktop
+share\\kde4\\services\\kleopatra_signencryptfolders\.desktop
+share\\kde4\\services\\kleopatra_decryptverifyfiles\.desktop
+share\\kde4\\services\\kleopatra_decryptverifyfolders\.desktop
+share\\apps\\kleopatra\\kleopatra\.rc
+share\\apps\\kleopatra\\kleopatra-mobile\.qml
+share\\apps\\kleopatra\\KleopatraActions\.qml
+share\\icons\\oxygen\\32x32\\.*kleopatra\.png
+share\\icons\\oxygen\\48x48\\.*kleopatra\.png
+share\\icons\\oxygen\\64x64\\.*kleopatra\.png
+share\\apps\\kleopatra\\pics\\kleopatra_wizard\.png
+share\\apps\\kleopatra\\pics\\gpg4win\.png
+share\\apps\\kleopatra\\pics\\gpg4win-compact\.png
+lib\\kde4\\kcm_kleopatra\.dll
+share\\kde4\\services\\kleopatra_config_dirserv\.desktop
+share\\kde4\\services\\kleopatra_config_appear\.desktop
+share\\kde4\\services\\kleopatra_config_gnupgsystem\.desktop
+share\\kde4\\services\\kleopatra_config_smimevalidation\.desktop
+share\\kde4\\services\\kleopatra_config_cryptooperations\.desktop
+
 # DBus-Default configuration
 etc\\dbus-1\\session\.conf
 etc\\dbus-1\\system\.conf
