@@ -4,7 +4,7 @@ import os
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.targets['1.75.2'] = 'http://downloads.sourceforge.net/docbook/docbook-xsl-1.75.2.tar.bz2'

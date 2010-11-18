@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.targets['4.2'] = 'http://www.docbook.org/xml/4.2/docbook-xml-4.2.zip'
