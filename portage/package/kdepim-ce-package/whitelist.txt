@@ -58,7 +58,7 @@ bin\\sasl2\.dll
 
 # GNUPG
 bin\\libgpgme-.*\.dll
-bin\\libgcc_s_sjlj-1\.dll
+.*libgcc_s_sjlj-1\.dll
 bin\\libassuan-.*\.dll
 bin\\libgpg-error-.*\.dll
 bin\\dirmngr\.exe

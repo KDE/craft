@@ -121,6 +121,14 @@ class MainPackage(CMakePackageBase):
         unique_names = []
         duplicates = []
 
+        #FIXME do this in the gpg-wce-dev portage
+        windir = os.path.join(wm_root, "windows")
+        if not os.path.isdir(windir):
+            os.mkdir(windir)
+        libgcc_src = os.path.join(wm_root, "bin", "libgcc_s_sjlj-1.dll")
+        libgcc_tgt = os.path.join(wm_root, "windows", "libgcc_s_sjlj-1.dll")
+        utils.copyFile(libgcc_src, libgcc_tgt)
+
         for entry in self.traverse(wm_root, self.whitelisted):
             if os.path.basename(entry) in uniquebasenames:
                 utils.debug("Found duplicate filename: %s" % \
@@ -162,9 +170,6 @@ class MainPackage(CMakePackageBase):
         # Drivers need to be installed in the Windows direcotry
         gpgcedev = os.path.join(wm_root, "bin", "gpgcedev.dll")
         os.mkdir(os.path.join(self.workDir(), "Windows"))
-        utils.copyFile(gpgcedev, os.path.join(self.workDir(), "Windows"))
-        libgcc = os.path.join(wm_root, "bin", "libgcc_s_sjlj-1.dll")
-        utils.copyFile(libgcc, os.path.join(self.workDir(), "Windows"))
 
         # Create an empty file for DBus and his /etc/dbus-1/session.d
         dbus_session_d = os.path.join(self.workDir(), "etc", "dbus-1",
