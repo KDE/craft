@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '0.40' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'chm', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'chm', version , '.tar.bz2.sha1' )
+        for version in [ '3.5.21', '3.5.23' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'djvu', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'djvu', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '0.40'
+        self.defaultTarget = '3.5.23'
 
 
     def setDependencies( self ):
