@@ -107,7 +107,7 @@ class infoclass:
             arch="-x64"
         if compiler.isMinGW_W32():
             arch="-x86"
-        _compiler = "msvc"
+        compilerName = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compilerName = "mingw"
         elif os.getenv("KDECOMPILER") == "mingw4":
@@ -147,18 +147,18 @@ example:
             arch="-x64"
         if compiler.isMinGW_W32():
             arch="-x86"
-        compiler = "msvc"
+        compilerName = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
-            compiler = "mingw"
+            compilerName = "mingw"
         elif os.getenv("KDECOMPILER") == "mingw4":
-            compiler = "mingw4"
+            compilerName = "mingw4"
         elif os.getenv("KDECOMPILER") == "msvc2008":
-            compiler = "vc90"
+            compilerName = "vc90"
         elif os.getenv("KDECOMPILER") == "msvc2010":
-            compiler = "vc100"
+            compilerName = "vc100"
         ret=[]
         for type in packagetypes:
-            key = version + '-' + compiler + '-' + type + arch
+            key = version + '-' + compilerName + '-' + type + arch
             ret.append(self.targetDigests[key])
         return ret
 
