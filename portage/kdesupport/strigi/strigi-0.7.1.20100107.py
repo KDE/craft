@@ -2,20 +2,20 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['kdesupport/clucene-core'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['kdesupport/clucene-core'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/exiv2'] = 'default'
+            self.dependencies['win32libs-bin/exiv2'] = 'default'
         else:
             #FIXME make strigi svnHEAD compile on Windows
             # This hack is needed to get a different Version of
             # strigi for the Host platform
             self.buildDependencies['enterprise5/strigi-e5'] = 'default'
-        self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
-        self.hardDependencies['win32libs-bin/libbzip2'] = 'default'
-        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
-        self.hardDependencies['win32libs-bin/zlib'] = 'default'
+        self.dependencies['win32libs-bin/win_iconv'] = 'default'
+        self.dependencies['win32libs-bin/libbzip2'] = 'default'
+        self.dependencies['win32libs-bin/libxml2'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
