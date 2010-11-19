@@ -7,14 +7,14 @@
 from VersionSystemSourceBase import *
 import os
 import utils
-import re
 from shells import *
+import tempfile
 
 ## \todo requires installed git package -> add suport for installing packages 
 
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
-    def __init__(self,subinfo=None):
+    def __init__(self, subinfo=None):
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self,"GitSource")
@@ -28,57 +28,85 @@ class GitSource ( VersionSystemSourceBase ):
             self.shell.msysdir = gitInstallDir
             utils.debug( 'using shell from %s' % gitInstallDir, 1 )
 
-    def __fetchSingleBranch(self, repopath=None):
+    def __getCurrentBranch( self ):
+        branch = None
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            ret = self.shell.execute( self.checkoutDir(), "git", "branch -a", out=tmpFile )
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if line.startswith("*"):
+                    branch = line[2:-1]
+                    break
+        return branch
+
+    def __isLocalBranch( self, _branch ):
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            ret = self.shell.execute( self.checkoutDir(), "git", "branch", out=tmpFile )
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if line[2:-1] == _branch:
+                    return True
+        return False
+
+    def __isTag( self, _tag ):
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            ret = self.shell.execute( self.checkoutDir(), "git", "tag", out=tmpFile )
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if line[:-1] == _tag:
+                    return True
+        return False
+
+    def __fetchSingleBranch( self, repopath = None ):
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
         
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
-        repopath = repopath.replace("[git]", "")
+        repopath = repopath.replace( "[git]", "" )
         repoString = utils.replaceVCSUrl( repopath )
-        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+        [ repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+        if not repoBranch and not repoTag:
+            repoBranch = "master"
 
-        if utils.verbose() <= 2:
-            devNull = " > /dev/null"
-        else:
-            devNull = ""
         ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
         if ( not self.noFetch ):
             self.setProxy()
-            safePath = os.environ["PATH"]
+            safePath = os.environ[ "PATH" ]
             # add the git path to the PATH variable so that git can be called without path
-            os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
-            isCommit = re.search( '\\b[0-9a-fA-F]{40}\\b', repoTag )
+            os.environ[ "PATH" ] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
+            
             if os.path.exists( self.checkoutDir() ):
-                # if directory already exists, simply do a pull
-                if not isCommit :
-                    # our tag is a specific sha1sum we dont need to pull
-                    ret = self.shell.execute( self.checkoutDir(), "git", "pull" )
+                ret = self.shell.execute( self.checkoutDir(), "git", "fetch" )
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs( self.checkoutDir() )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
                 ret = self.shell.execute( self.checkoutDir(), "git", "clone %s ." % ( repoUrl ) )
                 
-            # if a branch is given, we should check first if the branch is already downloaded locally, or if we can track the remote branch
-            # the following code is for both ways the same
+            # if a branch is given, we should check first if the branch is already downloaded locally, otherwise we can track the remote branch
             track = ""
-            if ret and repoBranch:
-                # grep is available already from the git package
-                if not self.shell.execute( self.checkoutDir(), "git", "branch | grep -E \"%s$\"%s" % ( repoBranch, devNull ) ):
+            if ret and repoBranch and not repoTag:
+                if not self.__isLocalBranch( repoBranch ):
                     track = "--track origin/"
-            if ret and repoBranch:
                 ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s%s" % ( track, repoBranch ) )
-                
-            # pay attention that after checkout of a tag, the next git pull might not work because of merging problems
+
+            # we can have tags or revisions in repoTag
             if ret and repoTag:
-                if not isCommit:
-                    ret = self.shell.execute( self.checkoutDir(), "git",
-                            "checkout -b %s %s" % ( repoTag, repoTag ) )
+                if self.__isTag( repoTag ):
+                    if not self.__isLocalBranch( "_" + repoTag ):
+                        ret = self.shell.execute( self.checkoutDir(), "git", "checkout -b _%s %s" % ( repoTag, repoTag ) )
+                    else:
+                        ret = self.shell.execute( self.checkoutDir(), "git", "checkout _%s" % repoTag )
                 else:
-                    ret = self.shell.execute( self.checkoutDir(), "git",
-                            "checkout %s" % repoTag )
+                    ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s" % repoTag )
+
+            if ret and not repoTag:
+                ret = self.shell.execute( self.checkoutDir(), "git", "merge origin %s" % self.__getCurrentBranch() )
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
@@ -93,10 +121,6 @@ class GitSource ( VersionSystemSourceBase ):
         repoString = utils.replaceVCSUrl( repopath )
         [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
 
-        if utils.verbose() <= 2:
-            devNull = " > /dev/null"
-        else:
-            devNull = ""
         ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
         if ( not self.noFetch ):
