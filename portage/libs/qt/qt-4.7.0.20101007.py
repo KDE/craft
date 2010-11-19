@@ -51,7 +51,8 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-fix-endless-loop-in-qProcess-for-wince.patch', 1),
             ('qt-4.7.0-Replace-malloc-in-qimage.patch', 1),
             ('qt-4.7.0-Enable-Softkeyboard-wince.patch', 1),
-            ('qt-4.7.0-comboboxes-wrong-direction_wince.patch', 1) ]
+            ('qt-4.7.0-comboboxes-wrong-direction_wince.patch', 1),
+            ('qt-4.7.0-Add-gpgLogging.patch', 1)]
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
         else:
@@ -123,6 +124,10 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
             utils.copyFile( os.path.join( self.packageDir(), "new.cpp" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "new.cpp" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "gpglogger_wince.cpp" ),
+                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "gpglogger_wince.cpp" ) )
+            utils.copyFile( os.path.join( self.packageDir(), "gpglogger_wince.h" ),
+                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "gpglogger_wince.h" ) )
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
