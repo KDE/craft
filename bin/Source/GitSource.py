@@ -192,19 +192,22 @@ class GitSource ( VersionSystemSourceBase ):
     def sourceVersion( self ):
         """ return the revision returned by git show """
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergegitshow.tmp" ), "wb+" )
+        tmpFile = TemporaryFile()
         
         # run the command
-        self.shell.execute( self.checkoutDir(), "git", "show --abbrev-commit", out=tempfile )
-        tempfile.seek( os.SEEK_SET )
+        if not self.__isTag( self.__getCurrentBranch()[ 1: ] ):
+            self.shell.execute( self.checkoutDir(), "git", "show --abbrev-commit", out=tmpFile )
+            tmpFile.seek( os.SEEK_SET )
 
-        # read the temporary file and grab the first line
-        revision = tempfile.readline().replace("commit ", "").strip()
-        tempfile.close()
-        
-        # print the revision - everything else should be quiet now
-        print revision
-        os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergegitshow.tmp" ) )
+            # read the temporary file and grab the first line
+            revision = tmpFile.readline().replace("commit ", "").strip()
+            tmpFile.close()
+            
+            # print the revision - everything else should be quiet now
+            print revision
+        else:
+            # in case this is a tag, print out the tag version
+            print self.__getCurrentBranch()[ 1: ]
         return True
         
     def sourceDir(self, index=0 ): 
