@@ -79,13 +79,11 @@ class KDEWinPackager (PackagerBase):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
                 utils.copyFile( script, destscript )
         
-        sourcedir = self.sourceDir()
-        
-        # todo: this is probably code for dealing with svn repositories 
-        # need to be refactored
-        if ( self.subinfo.options.package.packSources ):
-            srcCmd = " -srcroot " + sourcedir
+        if ( self.subinfo.options.package.packSources ) and os.path.exists( self.sourceDir() ):
+            srcCmd = " -srcroot " + self.sourceDir()
         else:
+            if not os.path.exists( self.sourceDir() ):
+                utils.warning( "The source directory %s doesn't exist and can't be used for packaging." % self.sourceDir() )
             srcCmd = ""
         
         # copy pdb/sym files to a temporary directory, because they can be scattered all over the build directory
