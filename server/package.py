@@ -302,8 +302,11 @@ if "localBotNotificationPort" in general:
         s.send( "BUILDFINISHED %s\r\n" % general[ "platform" ] );
         s.send( "QUIT\r\n" )
         s.close()
+        print "send bot command BUILDFINISHED %s to %s:%s" % ( general[ "platform" ], socket.gethostname(), port )
     except:
         print "failed to send BUILDFINISHED to Bot on localhost:%s" % port
+else:
+    print "disabled bot communication"
     
 for entry in packagelist:
     try:
