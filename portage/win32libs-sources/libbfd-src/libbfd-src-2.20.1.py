@@ -12,8 +12,8 @@ class subinfo(info.infoclass):
         
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/msys'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/msys'] = 'default'
 
         
         

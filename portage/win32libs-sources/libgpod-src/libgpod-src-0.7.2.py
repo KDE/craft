@@ -5,12 +5,12 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['testing/glib'] = 'default'
-        self.hardDependencies['testing/pkg-config'] = 'default'
-        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        self.hardDependencies['testing/libplist-src'] = 'default'
-        self.hardDependencies['testing/intltool-src'] = 'default'
+        self.buildDependencies['dev-util/msys'] = 'default'
+        self.dependencies['testing/glib'] = 'default'
+        self.buildDependencies['testing/pkg-config'] = 'default'
+        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['testing/libplist-src'] = 'default'
+        self.dependencies['testing/intltool-src'] = 'default'
 
     def setTargets( self ):
         self.targets['0.7.2'] = 'http://kent.dl.sourceforge.net/project/gtkpod/libgpod/libgpod-0.7.2/libgpod-0.7.2.tar.gz'

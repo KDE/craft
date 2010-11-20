@@ -16,9 +16,9 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.60.6'] = 'aspell-0.60.6'
         self.defaultTarget = '0.60.6'
     def setDependencies( self ):
-        self.hardDependencies['dev-util/perl'] = 'default' # buildtime dependency
-        self.hardDependencies['dev-util/msys'] = 'default' # buildtime dependency
-        self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
+        self.buildDependencies['dev-util/perl'] = 'default' # buildtime dependency
+        self.buildDependencies['dev-util/msys'] = 'default' # buildtime dependency
+        self.dependencies['win32libs-bin/win_iconv'] = 'default'
 
 
 from Package.PackageBase import *

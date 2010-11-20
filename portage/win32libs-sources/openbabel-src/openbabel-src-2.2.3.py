@@ -1,11 +1,4 @@
-import base
-import os
-import utils
 import info
-
-#
-# this library is used by kdeedu/kalzium
-#
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -17,21 +10,14 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.2.3'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__(self, **args):
         self.subinfo = subinfo()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "openbabel", self.buildTarget )
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

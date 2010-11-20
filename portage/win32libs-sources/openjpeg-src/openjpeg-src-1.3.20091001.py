@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.3'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs-sources/tiff-src'] = 'default'
+        self.dependencies['win32libs-bin/tiff'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

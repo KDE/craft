@@ -22,10 +22,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.71'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-bin/gettext'] = 'default'
-        self.hardDependencies['win32libs-bin/libxml2'] = 'default'
-        self.hardDependencies['kdesupport/kdewin'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.dependencies['win32libs-bin/libxml2'] = 'default'
+        self.dependencies['kdesupport/kdewin'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

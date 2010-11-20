@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc[ver] = 'xz-' + ver
         self.defaultTarget = ver
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 
 class subclass(base.baseclass):

@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/perl'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/perl'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

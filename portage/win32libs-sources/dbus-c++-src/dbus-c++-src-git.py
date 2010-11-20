@@ -14,11 +14,11 @@ class subinfo(info.infoclass):
         #self.defaultTarget = 'gitFOLLOW'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['testing/pthreads-win32'] = 'default'
-        self.hardDependencies['win32libs-bin/dbus'] = 'default'
-        self.hardDependencies['win32libs-bin/expat'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/msys'] = 'default'
+        self.dependencies['testing/pthreads-win32'] = 'default'
+        self.dependencies['win32libs-bin/dbus'] = 'default'
+        self.dependencies['win32libs-bin/expat'] = 'default'
 
 
 from Package.CMakePackageBase import *

@@ -13,9 +13,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.3.0'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-sources/gpg-error-src'] = 'default'
-        self.hardDependencies['win32libs-sources/assuan2-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/gpg-error'] = 'default'
+        self.dependencies['win32libs-bin/assuan2'] = 'default'
 
 from Package.CMakePackageBase import *
 

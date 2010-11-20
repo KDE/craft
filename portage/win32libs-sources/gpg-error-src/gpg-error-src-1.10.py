@@ -16,9 +16,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.10'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['gnuwin32/grep'] = 'default'
-        self.hardDependencies['gnuwin32/gawk'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['gnuwin32/grep'] = 'default'
+        self.buildDependencies['gnuwin32/gawk'] = 'default'
 
 from Package.CMakePackageBase import *
 

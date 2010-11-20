@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.0.2'
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
-        self.hardDependencies['win32libs-sources/openssl-src'] = 'default'
-        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs-bin/openssl'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = True
