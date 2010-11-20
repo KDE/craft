@@ -1,6 +1,43 @@
+diff -Nru libical-0.44.orig/cmake/modules/FindWcecompat.cmake libical-0.44/cmake/modules/FindWcecompat.cmake
+--- libical-0.44.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libical-0.44/cmake/modules/FindWcecompat.cmake	2010-11-20 03:28:01.535489700 +0100
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru libical-0.44.orig/CMakeLists.txt libical-0.44/CMakeLists.txt
---- libical-0.44.orig/CMakeLists.txt	Sun Sep 27 02:38:55 2009
-+++ libical-0.44/CMakeLists.txt	Tue Sep  7 08:12:48 2010
+--- libical-0.44.orig/CMakeLists.txt	2009-09-27 04:38:55.000000000 +0200
++++ libical-0.44/CMakeLists.txt	2010-11-20 03:28:01.529489400 +0100
 @@ -27,6 +27,15 @@
  #cannot use the following line with cmake 2.4.x
  #cmake_policy(VERSION 2.6)
@@ -40,57 +77,9 @@ diff -Nru libical-0.44.orig/CMakeLists.txt libical-0.44/CMakeLists.txt
    endif(MSVC)
    add_definitions(-DBIG_ENDIAN=0 -DLITTLE_ENDIAN=1 -DBYTE_ORDER=BIG_ENDIAN)
  endif(WIN32)
-diff -Nru libical-0.44.orig/ConfigureChecks.cmake libical-0.44/ConfigureChecks.cmake
---- libical-0.44.orig/ConfigureChecks.cmake	Sun Sep 27 02:38:55 2009
-+++ libical-0.44/ConfigureChecks.cmake	Tue Sep  7 08:13:08 2010
-@@ -32,6 +32,7 @@
- check_type_size(mode_t SIZEOF_MODE_T)
- check_type_size(size_t SIZEOF_SIZE_T)
- check_type_size(intptr_t INTPTR_T) # please do not rename HAVE_INTPTR_T will automatically be defined
-+check_type_size(pid_t HAVE_PID_T)
- 
- include(FindThreads)
- check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
-diff -Nru libical-0.44.orig/cmake/modules/FindWcecompat.cmake libical-0.44/cmake/modules/FindWcecompat.cmake
---- libical-0.44.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ libical-0.44/cmake/modules/FindWcecompat.cmake	Tue Sep  7 08:00:24 2010
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru libical-0.44.orig/config.h.cmake libical-0.44/config.h.cmake
---- libical-0.44.orig/config.h.cmake	Sun Sep 27 02:38:55 2009
-+++ libical-0.44/config.h.cmake	Tue Sep  7 08:12:56 2010
+--- libical-0.44.orig/config.h.cmake	2009-09-27 04:38:55.000000000 +0200
++++ libical-0.44/config.h.cmake	2010-11-20 03:28:01.537489900 +0100
 @@ -158,3 +158,9 @@
  #define strcasecmp stricmp
  #define snprintf _snprintf
@@ -101,9 +90,20 @@ diff -Nru libical-0.44.orig/config.h.cmake libical-0.44/config.h.cmake
 +typedef int pid_t;
 +#endif
 +
+diff -Nru libical-0.44.orig/ConfigureChecks.cmake libical-0.44/ConfigureChecks.cmake
+--- libical-0.44.orig/ConfigureChecks.cmake	2009-09-27 04:38:55.000000000 +0200
++++ libical-0.44/ConfigureChecks.cmake	2010-11-20 03:28:01.532489600 +0100
+@@ -32,6 +32,7 @@
+ check_type_size(mode_t SIZEOF_MODE_T)
+ check_type_size(size_t SIZEOF_SIZE_T)
+ check_type_size(intptr_t INTPTR_T) # please do not rename HAVE_INTPTR_T will automatically be defined
++check_type_size(pid_t HAVE_PID_T)
+ 
+ include(FindThreads)
+ check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
 diff -Nru libical-0.44.orig/src/ical.def libical-0.44/src/ical.def
---- libical-0.44.orig/src/ical.def	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/ical.def	Tue Sep  7 08:19:57 2010
+--- libical-0.44.orig/src/ical.def	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/ical.def	2010-11-20 03:28:01.542490100 +0100
 @@ -1,4 +1,4 @@
 -LIBRARY ical.dll
 +LIBRARY libical.dll
@@ -111,8 +111,8 @@ diff -Nru libical-0.44.orig/src/ical.def libical-0.44/src/ical.def
  caldat
  compare_map DATA
 diff -Nru libical-0.44.orig/src/ical.h libical-0.44/src/ical.h
---- libical-0.44.orig/src/ical.h	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/ical.h	Tue Sep  7 08:19:49 2010
+--- libical-0.44.orig/src/ical.h	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/ical.h	2010-11-20 03:28:01.544490300 +0100
 @@ -18,6 +18,9 @@
      the License at http://www.mozilla.org/MPL/
  
@@ -125,8 +125,8 @@ diff -Nru libical-0.44.orig/src/ical.h libical-0.44/src/ical.h
 +#endif
  #include <libical/ical.h>
 diff -Nru libical-0.44.orig/src/icalss.def libical-0.44/src/icalss.def
---- libical-0.44.orig/src/icalss.def	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/icalss.def	Tue Sep  7 08:20:07 2010
+--- libical-0.44.orig/src/icalss.def	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/icalss.def	2010-11-20 03:28:01.546490400 +0100
 @@ -1,4 +1,4 @@
 -LIBRARY icalss.dll
 +LIBRARY libicalss.dll
@@ -170,8 +170,8 @@ diff -Nru libical-0.44.orig/src/icalss.def libical-0.44/src/icalss.def
  ss_scan_bytes
  ss_scan_string
 diff -Nru libical-0.44.orig/src/icalvcal.def libical-0.44/src/icalvcal.def
---- libical-0.44.orig/src/icalvcal.def	Sun Sep 27 02:38:53 2009
-+++ libical-0.44/src/icalvcal.def	Tue Sep  7 08:20:16 2010
+--- libical-0.44.orig/src/icalvcal.def	2009-09-27 04:38:53.000000000 +0200
++++ libical-0.44/src/icalvcal.def	2010-11-20 03:28:01.548490500 +0100
 @@ -1,4 +1,4 @@
 -LIBRARY icalvcal.dll
 +LIBRARY libicalvcal.dll
@@ -179,8 +179,8 @@ diff -Nru libical-0.44.orig/src/icalvcal.def libical-0.44/src/icalvcal.def
  Parse_MIME
  Parse_MIME_FromFile
 diff -Nru libical-0.44.orig/src/java/CMakeLists.txt libical-0.44/src/java/CMakeLists.txt
---- libical-0.44.orig/src/java/CMakeLists.txt	Sun Sep 27 02:38:49 2009
-+++ libical-0.44/src/java/CMakeLists.txt	Tue Sep  7 08:13:21 2010
+--- libical-0.44.orig/src/java/CMakeLists.txt	2009-09-27 04:38:49.000000000 +0200
++++ libical-0.44/src/java/CMakeLists.txt	2010-11-20 03:28:01.550490600 +0100
 @@ -25,7 +25,7 @@
     net_cp_jlibical_VComponent_cxx.h
  )
@@ -191,9 +191,9 @@ diff -Nru libical-0.44.orig/src/java/CMakeLists.txt libical-0.44/src/java/CMakeL
  target_link_libraries(ical_jni ical_cxx)
  
 diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/CMakeLists.txt
---- libical-0.44.orig/src/libical/CMakeLists.txt	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/CMakeLists.txt	Tue Sep  7 08:13:34 2010
-@@ -2,11 +2,20 @@
+--- libical-0.44.orig/src/libical/CMakeLists.txt	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/CMakeLists.txt	2010-11-20 03:42:27.548022800 +0100
+@@ -2,12 +2,21 @@
  
  include_directories(
    ${CMAKE_BINARY_DIR}
@@ -203,6 +203,7 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
    ${CMAKE_BINARY_DIR}/src/libical
  )
  
+-set(PACKAGE_DATA_DIR "\\\"${CMAKE_INSTALL_PREFIX}/share/libical\\\"")
 +if(WIN32)
 +  if(MSVC)
 +    add_definitions(-DBUILD_LIBICALDLL)
@@ -211,10 +212,19 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
 +
 +configure_file(icalerror.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/icalerror.h)
 +
- set(PACKAGE_DATA_DIR "\\\"${CMAKE_INSTALL_PREFIX}/share/libical\\\"")
++set(PACKAGE_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/libical)
  add_definitions(-DPACKAGE_DATA_DIR=${PACKAGE_DATA_DIR})
  
-@@ -178,7 +187,6 @@
+ 
+@@ -147,6 +156,7 @@
+ )
+ 
+ add_custom_target(ical-header DEPENDS
++  ${CMAKE_SOURCE_DIR}/design-data/restrictions.csv
+   ${CMAKE_BINARY_DIR}/src/libical/ical.h
+ )
+ 
+@@ -178,7 +188,6 @@
     icalenums.c
     icalenums.h
     icalerror.c
@@ -222,7 +232,7 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
     icalmemory.c
     icalmemory.h
     icalmime.c
-@@ -225,16 +233,25 @@
+@@ -225,16 +234,26 @@
    endif(MSVC)
  endif(NOT WIN32)
  
@@ -231,6 +241,7 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
  add_library(ical-static STATIC ${ical_LIB_SRCS})
  
  add_dependencies(ical ical-header)
++add_dependencies(ical-static ical-header)
  
  target_link_libraries(ical ${CMAKE_THREAD_LIBS_INIT})
  
@@ -250,7 +261,7 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
  set_target_properties(ical-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
  
  install(TARGETS ical ical-static ${INSTALL_TARGETS_DEFAULT_ARGS})
-@@ -253,7 +270,7 @@
+@@ -253,7 +272,7 @@
    ${CMAKE_BINARY_DIR}/src/libical/icalderivedvalue.h
    icalduration.h
    icalenums.h
@@ -261,7 +272,7 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
    icalmime.h
 diff -Nru libical-0.44.orig/src/libical/ical_file.cmake libical-0.44/src/libical/ical_file.cmake
 --- libical-0.44.orig/src/libical/ical_file.cmake	2009-09-27 04:38:51.000000000 +0200
-+++ libical-0.44/src/libical/ical_file.cmake	2010-09-07 14:28:59.700798000 +0200
++++ libical-0.44/src/libical/ical_file.cmake	2010-11-20 03:28:01.553490800 +0100
 @@ -21,7 +21,7 @@
     ${TOPS}/src/libical/icaltimezone.h
     ${TOPS}/src/libical/icalparser.h
@@ -272,8 +283,8 @@ diff -Nru libical-0.44.orig/src/libical/ical_file.cmake libical-0.44/src/libical
     ${TOPS}/src/libical/sspm.h
     ${TOPS}/src/libical/icalmime.h
 diff -Nru libical-0.44.orig/src/libical/icalerror.h libical-0.44/src/libical/icalerror.h
---- libical-0.44.orig/src/libical/icalerror.h	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalerror.h	Thu Jan  1 00:00:00 1970
+--- libical-0.44.orig/src/libical/icalerror.h	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalerror.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,163 +0,0 @@
 -/* -*- Mode: C -*- */
 -/*======================================================================
@@ -439,8 +450,8 @@ diff -Nru libical-0.44.orig/src/libical/icalerror.h libical-0.44/src/libical/ica
 -
 -
 diff -Nru libical-0.44.orig/src/libical/icalerror.h.cmake libical-0.44/src/libical/icalerror.h.cmake
---- libical-0.44.orig/src/libical/icalerror.h.cmake	Thu Jan  1 00:00:00 1970
-+++ libical-0.44/src/libical/icalerror.h.cmake	Tue Sep  7 08:13:48 2010
+--- libical-0.44.orig/src/libical/icalerror.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libical-0.44/src/libical/icalerror.h.cmake	2010-11-20 03:28:01.556490900 +0100
 @@ -0,0 +1,177 @@
 +/* -*- Mode: C -*- */
 +/*======================================================================
@@ -620,8 +631,8 @@ diff -Nru libical-0.44.orig/src/libical/icalerror.h.cmake libical-0.44/src/libic
 +
 +
 diff -Nru libical-0.44.orig/src/libical/icalperiod.c libical-0.44/src/libical/icalperiod.c
---- libical-0.44.orig/src/libical/icalperiod.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalperiod.c	Tue Sep  7 08:14:02 2010
+--- libical-0.44.orig/src/libical/icalperiod.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalperiod.c	2010-11-20 03:28:01.558491100 +0100
 @@ -117,8 +117,8 @@
  char* icalperiodtype_as_ical_string_r(struct icalperiodtype p)
  {
@@ -634,8 +645,8 @@ diff -Nru libical-0.44.orig/src/libical/icalperiod.c libical-0.44/src/libical/ic
      char *buf;
      size_t buf_size = 40;
 diff -Nru libical-0.44.orig/src/libical/icalrecur.c libical-0.44/src/libical/icalrecur.c
---- libical-0.44.orig/src/libical/icalrecur.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalrecur.c	Tue Sep  7 08:14:11 2010
+--- libical-0.44.orig/src/libical/icalrecur.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalrecur.c	2010-11-20 03:28:01.560491200 +0100
 @@ -1593,11 +1593,12 @@
        int day;
        int days_in_month = icaltime_days_in_month(impl->last.month,
@@ -671,8 +682,8 @@ diff -Nru libical-0.44.orig/src/libical/icalrecur.c libical-0.44/src/libical/ica
          t.is_date = 1;
  
 diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/icaltimezone.c
---- libical-0.44.orig/src/libical/icaltimezone.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icaltimezone.c	Tue Sep  7 08:14:19 2010
+--- libical-0.44.orig/src/libical/icaltimezone.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icaltimezone.c	2010-11-20 03:28:01.563491300 +0100
 @@ -45,7 +45,9 @@
  #include <sys/stat.h>
  
@@ -780,8 +791,8 @@ diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/
  #endif
  }
 diff -Nru libical-0.44.orig/src/libical/icaltz-util.c libical-0.44/src/libical/icaltz-util.c
---- libical-0.44.orig/src/libical/icaltz-util.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icaltz-util.c	Tue Sep  7 08:15:36 2010
+--- libical-0.44.orig/src/libical/icaltz-util.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icaltz-util.c	2010-11-20 03:28:01.564491400 +0100
 @@ -297,12 +297,16 @@
  	icalproperty *icalprop;
  	icaltimetype dtstart, icaltime;
@@ -804,8 +815,8 @@ diff -Nru libical-0.44.orig/src/libical/icaltz-util.c libical-0.44/src/libical/i
  	if ((f = fopen (full_path, "rb")) == 0) {
  		icalerror_set_errno (ICAL_FILE_ERROR);
 diff -Nru libical-0.44.orig/src/libical/icalvalue.c libical-0.44/src/libical/icalvalue.c
---- libical-0.44.orig/src/libical/icalvalue.c	Sun Sep 27 02:38:51 2009
-+++ libical-0.44/src/libical/icalvalue.c	Tue Sep  7 08:15:44 2010
+--- libical-0.44.orig/src/libical/icalvalue.c	2009-09-27 04:38:51.000000000 +0200
++++ libical-0.44/src/libical/icalvalue.c	2010-11-20 03:28:01.566491500 +0100
 @@ -307,7 +307,9 @@
  #define TMP_NUM_SIZE 100
      char *start=NULL, *end=NULL, *cur=(char*)from ;
@@ -835,9 +846,19 @@ diff -Nru libical-0.44.orig/src/libical/icalvalue.c libical-0.44/src/libical/ica
          *to = end ;
      *result = atof(tmp_buf) ;
 diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libicalss/CMakeLists.txt
---- libical-0.44.orig/src/libicalss/CMakeLists.txt	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalss/CMakeLists.txt	Tue Sep  7 08:16:00 2010
-@@ -69,16 +69,21 @@
+--- libical-0.44.orig/src/libicalss/CMakeLists.txt	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalss/CMakeLists.txt	2010-11-20 03:40:57.811890200 +0100
+@@ -30,7 +30,9 @@
+ 
+ add_custom_target(icalss-header DEPENDS
+   ${CMAKE_BINARY_DIR}/src/libical/icalss.h
++  ${CMAKE_BINARY_DIR}/src/libical/ical.h
+ )
++add_dependencies(icalss-header ical-header)
+ 
+ ########### next target ###############
+ 
+@@ -69,16 +71,22 @@
      list(APPEND icalss_LIB_SRCS ../icalss.def)
  endif(MSVC)
  
@@ -846,6 +867,7 @@ diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libica
  add_library(icalss-static STATIC ${icalss_LIB_SRCS})
  
  add_dependencies(icalss icalss-header)
++add_dependencies(icalss-static icalss-header)
  
  target_link_libraries(icalss ical)
  
@@ -862,8 +884,8 @@ diff -Nru libical-0.44.orig/src/libicalss/CMakeLists.txt libical-0.44/src/libica
  
  install(TARGETS icalss icalss-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libicalss/icalfileset.c libical-0.44/src/libicalss/icalfileset.c
---- libical-0.44.orig/src/libicalss/icalfileset.c	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalss/icalfileset.c	Tue Sep  7 08:16:09 2010
+--- libical-0.44.orig/src/libicalss/icalfileset.c	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalss/icalfileset.c	2010-11-20 03:28:01.569491700 +0100
 @@ -38,8 +38,10 @@
  #include <unistd.h> /* for stat, getpid */
  #else
@@ -947,8 +969,8 @@ diff -Nru libical-0.44.orig/src/libicalss/icalfileset.c libical-0.44/src/libical
      
      return ICAL_NO_ERROR;
 diff -Nru libical-0.44.orig/src/libicalss/icalsslexer.c libical-0.44/src/libicalss/icalsslexer.c
---- libical-0.44.orig/src/libicalss/icalsslexer.c	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalss/icalsslexer.c	Tue Sep  7 08:17:00 2010
+--- libical-0.44.orig/src/libicalss/icalsslexer.c	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalss/icalsslexer.c	2010-11-20 03:28:01.571491800 +0100
 @@ -39,6 +39,10 @@
  #include <errno.h>
  #include <stdlib.h>
@@ -961,9 +983,9 @@ diff -Nru libical-0.44.orig/src/libicalss/icalsslexer.c libical-0.44/src/libical
  
  /* flex integer type definitions */
 diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libicalvcal/CMakeLists.txt
---- libical-0.44.orig/src/libicalvcal/CMakeLists.txt	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalvcal/CMakeLists.txt	Tue Sep  7 08:17:34 2010
-@@ -27,14 +27,19 @@
+--- libical-0.44.orig/src/libicalvcal/CMakeLists.txt	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalvcal/CMakeLists.txt	2010-11-20 03:40:05.123876600 +0100
+@@ -27,14 +27,22 @@
      list(APPEND icalvcal_LIB_SRCS ../icalvcal.def)
  endif(MSVC)
  
@@ -971,6 +993,9 @@ diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libi
 +add_library(icalvcal ${LIBRARY_TYPE} ${icalvcal_LIB_SRCS})
  add_library(icalvcal-static STATIC ${icalvcal_LIB_SRCS})
  
++add_dependencies(icalvcal ical-header)
++add_dependencies(icalvcal-static ical-header)
++
  target_link_libraries(icalvcal ical)
  
 +if(MSVC)
@@ -986,8 +1011,8 @@ diff -Nru libical-0.44.orig/src/libicalvcal/CMakeLists.txt libical-0.44/src/libi
  
  install(TARGETS icalvcal icalvcal-static ${INSTALL_TARGETS_DEFAULT_ARGS})
 diff -Nru libical-0.44.orig/src/libicalvcal/icalvcal.c libical-0.44/src/libicalvcal/icalvcal.c
---- libical-0.44.orig/src/libicalvcal/icalvcal.c	Sun Sep 27 02:38:52 2009
-+++ libical-0.44/src/libicalvcal/icalvcal.c	Tue Sep  7 08:17:42 2010
+--- libical-0.44.orig/src/libicalvcal/icalvcal.c	2009-09-27 04:38:52.000000000 +0200
++++ libical-0.44/src/libicalvcal/icalvcal.c	2010-11-20 03:28:01.575492000 +0100
 @@ -51,6 +51,10 @@
  #define strcasecmp	stricmp
  #endif
@@ -1000,8 +1025,8 @@ diff -Nru libical-0.44.orig/src/libicalvcal/icalvcal.c libical-0.44/src/libicalv
      COMPONENT,
      PROPERTY,
 diff -Nru libical-0.44.orig/src/python/CMakeLists.txt libical-0.44/src/python/CMakeLists.txt
---- libical-0.44.orig/src/python/CMakeLists.txt	Sun Sep 27 02:38:49 2009
-+++ libical-0.44/src/python/CMakeLists.txt	Tue Sep  7 08:18:39 2010
+--- libical-0.44.orig/src/python/CMakeLists.txt	2009-09-27 04:38:49.000000000 +0200
++++ libical-0.44/src/python/CMakeLists.txt	2010-11-20 03:28:01.576492100 +0100
 @@ -7,7 +7,7 @@
     LibicalWrap.c
  )
@@ -1011,9 +1036,21 @@ diff -Nru libical-0.44.orig/src/python/CMakeLists.txt libical-0.44/src/python/CM
  
  target_link_libraries(LibicalWrap)
  
+diff -Nru libical-0.44.orig/src/test/CMakeLists.txt libical-0.44/src/test/CMakeLists.txt
+--- libical-0.44.orig/src/test/CMakeLists.txt	2009-09-27 04:38:49.000000000 +0200
++++ libical-0.44/src/test/CMakeLists.txt	2010-11-20 03:29:31.987663300 +0100
+@@ -5,7 +5,7 @@
+   ${CMAKE_SOURCE_DIR}/src/libicalss ${CMAKE_BINARY_DIR}/src/libicalss
+ )
+ 
+-set(TEST_DATADIR "\\\"${CMAKE_SOURCE_DIR}/test-data\\\"")
++set(TEST_DATADIR ${CMAKE_SOURCE_DIR}/test-data)
+ add_definitions(-DTEST_DATADIR=${TEST_DATADIR})
+ 
+ ########### next target ###############
 diff -Nru libical-0.44.orig/src/test/regression.c libical-0.44/src/test/regression.c
---- libical-0.44.orig/src/test/regression.c	Sun Sep 27 02:38:49 2009
-+++ libical-0.44/src/test/regression.c	Tue Sep  7 08:18:52 2010
+--- libical-0.44.orig/src/test/regression.c	2009-09-27 04:38:49.000000000 +0200
++++ libical-0.44/src/test/regression.c	2010-11-20 03:28:01.579492300 +0100
 @@ -54,10 +54,6 @@
  #endif
  #include <sys/types.h> /* For wait pid */
