@@ -19,7 +19,7 @@ class subinfo( info.infoclass ):
             self.targets[ '1.0.0' ] = self.targets[ '1.0.0a' ]
             self.targetInstSrc[ '1.0.0' ] = self.targetInstSrc[ '1.0.0a' ]
             self.targetDigestUrls[ '1.0.0' ] = self.targetDigestUrls[ '1.0.0a' ]
-            self.defaultTarget = '1.0.0'
+        self.defaultTarget = '1.0.0'
 
         if compiler.isMinGW() and emergePlatform.buildArchitecture() == "x64":
             self.patchToApply[ '1.0.0a' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
