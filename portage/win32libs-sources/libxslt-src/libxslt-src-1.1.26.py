@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs-bin/libxml2'] = 'default'
+        self.dependencies['win32libs-sources/libxml2-src'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
