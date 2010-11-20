@@ -106,7 +106,7 @@ class GitSource ( VersionSystemSourceBase ):
                     ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s" % repoTag )
 
             if ret and not repoTag:
-                ret = self.shell.execute( self.checkoutDir(), "git", "merge origin %s" % self.__getCurrentBranch() )
+                ret = self.shell.execute( self.checkoutDir(), "git", "merge FETCH_HEAD %s" % self.__getCurrentBranch() )
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
