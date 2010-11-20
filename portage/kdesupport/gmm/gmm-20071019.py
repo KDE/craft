@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.targets['3.0'] = 'http://download.gna.org/getfem/stable/gmm-3.0.tar.gz'

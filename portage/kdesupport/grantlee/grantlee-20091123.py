@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.1'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

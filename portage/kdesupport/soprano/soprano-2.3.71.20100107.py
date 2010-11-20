@@ -3,12 +3,12 @@ import emergePlatform
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base']            = 'default'
-        self.hardDependencies['libs/qt']                 = 'default'
-        self.hardDependencies['win32libs-sources/redland-src']   = 'default'
+        self.buildDependencies['virtual/base']            = 'default'
+        self.dependencies['libs/qt']                 = 'default'
+        self.dependencies['win32libs-bin/redland']   = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['kdesupport/clucene-core'] = 'default'
-            self.hardDependencies['testing/virtuoso']   = 'default'
+            self.dependencies['kdesupport/clucene-core'] = 'default'
+            self.dependencies['testing/virtuoso']   = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'

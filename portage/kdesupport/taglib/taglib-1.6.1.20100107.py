@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         for v in ['1.4', '1.5', '1.6', '1.6.1' , '1.6.3' ]:

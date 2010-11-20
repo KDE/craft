@@ -5,12 +5,12 @@ import compiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 		# will be moved to kdewin-qt 
-        self.hardDependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
 		# will be moved to kdewin-tools
-        self.hardDependencies['win32libs-bin/zlib'] = 'default'
-        self.hardDependencies['win32libs-bin/libpng'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
+        self.dependencies['win32libs-bin/libpng'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'tags/kdewin32/0.3.9'

@@ -5,17 +5,15 @@ import os
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/automoc'] = 'default'
-        self.hardDependencies['kdesupport/soprano'] = 'default'
-        self.hardDependencies['win32libs-bin/boost']   = 'default'
-        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/automoc'] = 'default'
+        self.dependencies['kdesupport/soprano'] = 'default'
+        self.dependencies['win32libs-bin/boost']   = 'default'
+        self.dependencies['win32libs-bin/libxslt'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['win32libs-bin/shared-mime-info'] = 'default'
         
-        self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-        
-        if emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-sources/sqlite-src'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['0.80'] = 'tags/akonadi/0.80'

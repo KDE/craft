@@ -5,9 +5,9 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['kdesupport/taglib'] = 'default'
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['kdesupport/taglib'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib-extras'

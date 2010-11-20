@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
         
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

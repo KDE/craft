@@ -8,9 +8,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt-static'] = 'default'
-        self.hardDependencies['dev-util/upx'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['libs/qt-static'] = 'default'
+        self.buildDependencies['dev-util/upx'] = 'default'
 
 from Package.CMakePackageBase import *
 
@@ -23,7 +23,7 @@ class Package(CMakePackageBase):
         self.qtstatic.setBuildTarget('4.5.2-patched')
         qmake = os.path.join(self.qtstatic.installDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
-            utils.die("could not found qmake")
+            utils.warning("could not find qmake in <%s>" % qmake)
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
         self.subinfo.options.configure.defines = "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s" \
             % qmake.replace('\\', '/')

@@ -8,7 +8,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.targets['2.0.10'] = "http://bitbucket.org/eigen/eigen/get/2.0.10.tar.bz2"

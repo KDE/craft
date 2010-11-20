@@ -3,9 +3,9 @@ import emergePlatform
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['dev-util/automoc'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/automoc'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
