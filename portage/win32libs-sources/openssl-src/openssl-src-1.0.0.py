@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b' ]:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
-            if compiler.isMSVC() and ver != '1.0.0a':
+            if ver != '1.0.0b' and compiler.isMSVC() and ver != '1.0.0a':
               self.patchToApply[ ver ] = ('openssl-'+ver+'.diff', 1)
             self.targetDigestUrls[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz.sha1'
         self.targets[ '1.0.1-snapshot' ] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
