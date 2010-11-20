@@ -199,8 +199,9 @@ diff -Nru libical-0.44.orig/src/libical/CMakeLists.txt libical-0.44/src/libical/
    ${CMAKE_BINARY_DIR}
 +  ${CMAKE_BINARY_DIR}/src
    ${CMAKE_SOURCE_DIR}/src
-   ${CMAKE_SOURCE_DIR}/src/libical
+-  ${CMAKE_SOURCE_DIR}/src/libical
    ${CMAKE_BINARY_DIR}/src/libical
++  ${CMAKE_SOURCE_DIR}/src/libical
  )
  
 +if(WIN32)
@@ -692,7 +693,7 @@ diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/
  #include <windows.h>
  /* Undef the similar macro from pthread.h, it doesn't check if
   * gmtime() returns NULL.
-@@ -54,10 +56,16 @@
+@@ -54,6 +56,12 @@
  
  /* The gmtime() in Microsoft's C library is MT-safe */
  #define gmtime_r(tp,tmp) (gmtime(tp)?(*(tmp)=*gmtime(tp),(tmp)):0)
@@ -705,11 +706,6 @@ diff -Nru libical-0.44.orig/src/libical/icaltimezone.c libical-0.44/src/libical/
  #endif
  
  /** This is the toplevel directory where the timezone data is installed in. */
--#define ZONEINFO_DIRECTORY	PACKAGE_DATA_DIR "/zoneinfo"
-+#define ZONEINFO_DIRECTORY PACKAGE_DATA_DIR ## "/zoneinfo"
- 
- /** The prefix we use to uniquely identify TZIDs.
-     It must begin and end with forward slashes.
 @@ -1947,10 +1955,18 @@
  	return zone_files_directory == NULL ? ZONEINFO_DIRECTORY : zone_files_directory;
  #else
