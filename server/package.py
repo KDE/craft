@@ -293,8 +293,8 @@ for entry in packagelist:
         for i in entry.notifications:
             if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
 
-if "localBotNotificationPort" in general:
-    port = general["localBotNotificationPort"]
+if "localbotnotificationport" in general:
+    port = general["localbotnotificationport"]
     
     try:
         s = socket.socket()
