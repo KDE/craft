@@ -33,12 +33,10 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/strigi'
-        if not emergePlatform.isCrossCompilingEnabled():
-          self.defaultTarget = '4.4'
-        else:
+        if emergePlatform.isCrossCompilingEnabled():
           #FIXME make strigi svnHEAD compile on Windows
           self.patchToApply['svnHEAD'] = ( "strigi-20101116.patch", 0 )
-          self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'svnHEAD'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
@@ -57,9 +55,6 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_CLUECENE=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_CPPUNIT=OFF "
-            if self.isTargetBuild():
-                self.subinfo.options.configure.defines += \
-                        "-DICONV_SECOND_ARGUMENT_IS_CONST=ON "
 
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
