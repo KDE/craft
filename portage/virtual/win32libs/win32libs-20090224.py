@@ -10,7 +10,7 @@ expat
 gettext
 giflib
 gpgme
-iconv
+win_iconv
 jasper
 jpeg
 libpng
