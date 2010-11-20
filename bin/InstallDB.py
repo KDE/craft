@@ -137,7 +137,7 @@ class InstallDB:
             and prefixes will be checked. """
         cmd = '''SELECT * FROM packageList'''
         
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
