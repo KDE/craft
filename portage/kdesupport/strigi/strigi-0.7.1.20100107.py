@@ -29,14 +29,16 @@ class subinfo(info.infoclass):
         self.svnTargets['0.7.0']  = 'tags/strigi/strigi/0.7.0'
         self.svnTargets['0.7.1']  = 'tags/strigi/strigi/0.7.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
+        self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/strigi'
         if emergePlatform.isCrossCompilingEnabled():
           #FIXME make strigi svnHEAD compile on Windows
-          self.patchToApply['svnHEAD'] = ( "strigi-20101116.patch", 0 )
-        self.defaultTarget = 'svnHEAD'
+          self.defaultTarget = 'komobranch'
+        else:
+          self.defaultTarget = 'svnHEAD'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
