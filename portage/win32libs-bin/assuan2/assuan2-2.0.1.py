@@ -11,16 +11,17 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '2.1.22-1', '2.1.22' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'cyrus-sasl', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'cyrus-sasl', version , '.tar.bz2.sha1' )
+        for version in [ '2.0.1' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'assuan2', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'assuan2', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '2.1.22'
+        self.defaultTarget = '2.0.1'
 
 
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-sources/gpg-error-src' ] = 'default'
         self.runtimeDependencies[ 'virtual/base' ] = 'default'
 
 
