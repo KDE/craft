@@ -81,7 +81,9 @@ class GitSource ( VersionSystemSourceBase ):
             os.environ[ "PATH" ] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
             
             if os.path.exists( self.checkoutDir() ):
-                ret = self.shell.execute( self.checkoutDir(), "git", "fetch" )
+                if not repoTag:
+                    ret = self.shell.execute( self.checkoutDir(), "git",
+                            "pull origin %s" % repoBranch or "master" )
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs( self.checkoutDir() )
@@ -105,8 +107,6 @@ class GitSource ( VersionSystemSourceBase ):
                 else:
                     ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s" % repoTag )
 
-            if ret and not repoTag:
-                ret = self.shell.execute( self.checkoutDir(), "git", "merge origin %s" % self.__getCurrentBranch() )
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
