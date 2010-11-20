@@ -1,0 +1,51 @@
+diff -Nru libassuan-2.0.1.orig/src/assuan.h.in libassuan-2.0.1/src/assuan.h.in
+--- libassuan-2.0.1.orig/src/assuan.h.in	2010-11-02 10:27:34.793565000 +0100
++++ libassuan-2.0.1/src/assuan.h.in	2010-11-02 01:01:50.826082100 +0100
+@@ -27,6 +27,9 @@
+ @include:sys/types.h@
+ @include:unistd.h@
+ #include <stdarg.h>
++#if defined(_WIN32) && !defined(_WIN32_WCE)
++# include <io.h>
++#endif
+ 
+ #ifndef _ASSUAN_NO_SOCKET_WRAPPER
+ @include:includes@
+diff -Nru libassuan-2.0.1.orig/src/mkheader.c libassuan-2.0.1/src/mkheader.c
+--- libassuan-2.0.1.orig/src/mkheader.c	2010-11-02 10:27:34.829568000 +0100
++++ libassuan-2.0.1/src/mkheader.c	2010-11-02 01:01:50.827082200 +0100
+@@ -89,7 +89,9 @@
+                "# include <sys/types.h>\n"
+                "#endif\n", stdout);
+       else
+-        fputs ("#include <sys/types.h>\n", stdout);
++        fputs ("#ifdef HAVE_SYS_TYPES_H\n"
++               "# include <sys/types.h>\n"
++               "#endif\n", stdout);
+     }
+   else if (!strcmp (tag, "include:unistd.h"))
+     {
+@@ -98,7 +100,9 @@
+                "# include <unistd.h>\n"
+                "#endif\n", stdout);
+       else
+-        fputs ("#include <unistd.h>\n", stdout);
++        fputs ("#ifdef HAVE_UNISTD_H\n"
++               "# include <unistd.h>\n"
++               "#endif\n", stdout);
+     }
+   else if (!strcmp (tag, "include:types"))
+     {
+diff -Nru libassuan-2.0.1.orig/src/system-w32.c libassuan-2.0.1/src/system-w32.c
+--- libassuan-2.0.1.orig/src/system-w32.c	2010-04-19 09:11:16.000000000 +0200
++++ libassuan-2.0.1/src/system-w32.c	2010-11-02 10:27:18.447631100 +0100
+@@ -26,6 +26,9 @@
+ #include <errno.h>
+ #include <time.h>
+ #include <fcntl.h>
++#ifdef HAVE_WINSOCK2_H
++#include <winsock2.h>
++#endif
+ #include <windows.h>
+ 
+ #include "assuan-defs.h"

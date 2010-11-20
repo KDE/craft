@@ -1,0 +1,5853 @@
+Index: src/vfs-mount.c
+===================================================================
+--- src/vfs-mount.c	(Revision 1447)
++++ src/vfs-mount.c	(Revision 1495)
+@@ -116,6 +116,7 @@
+ 
+ 
+ 
++#if 0
+ /* XXXX.  This is the asynchronous variant. */
+ static gpgme_error_t
+ gpgme_op_vfs_transact_start (gpgme_ctx_t ctx, 
+@@ -130,6 +131,7 @@
+   return vfs_start (ctx, 0, command, data_cb, data_cb_value,
+ 		    inq_cb, inq_cb_value, status_cb, status_cb_value);
+ }
++#endif
+ 
+ 
+ /* XXXX.  This is the synchronous variant. */
+Index: src/sign.c
+===================================================================
+--- src/sign.c	(Revision 1447)
++++ src/sign.c	(Revision 1495)
+@@ -149,7 +149,7 @@
+ 
+   sig = malloc (sizeof (*sig));
+   if (!sig)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   sig->next = NULL;
+   switch (*args)
+@@ -179,7 +179,7 @@
+       return gpg_error (GPG_ERR_INV_ENGINE);
+     }
+ 
+-  errno = 0;
++  gpg_err_set_errno (0);
+   sig->pubkey_algo = strtol (args, &tail, 0);
+   if (errno || args == tail || *tail != ' ')
+     {
+Index: src/w32-qt-io.cpp
+===================================================================
+--- src/w32-qt-io.cpp	(Revision 1447)
++++ src/w32-qt-io.cpp	(Revision 1495)
+@@ -27,7 +27,6 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include <signal.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <sys/time.h>
+Index: src/setenv.c
+===================================================================
+--- src/setenv.c	(Revision 1447)
++++ src/setenv.c	(Revision 1495)
+@@ -20,6 +20,9 @@
+ # include <config.h>
+ #endif
+ 
++#include <gpg-error.h>
++#define __set_errno(ev) (gpg_err_set_errno (ev))
++
+ #if HAVE_ASSUAN_H
+ /* Fixme: Why do we need to include the assuan header and why the
+    internal ones? */
+@@ -29,12 +32,6 @@
+ #define __builtin_expect(cond,val) (cond)
+ 
+ #include <errno.h>
+-#if !_LIBC
+-# if !defined errno && !defined HAVE_ERRNO_DECL
+-extern int errno;
+-# endif
+-# define __set_errno(ev) ((errno) = (ev))
+-#endif
+ 
+ #if _LIBC || HAVE_STDLIB_H
+ # include <stdlib.h>
+Index: src/engine.c
+===================================================================
+--- src/engine.c	(Revision 1447)
++++ src/engine.c	(Revision 1495)
+@@ -66,7 +66,7 @@
+     NULL,
+ #endif
+ #ifdef ENABLE_UISERVER
+-    &_gpgme_engine_ops_uiserver		/* Crypto VFS.  */
++    &_gpgme_engine_ops_uiserver		/* UI-Server.  */
+ #else
+     NULL
+ #endif
+Index: src/posix-io.c
+===================================================================
+--- src/posix-io.c	(Revision 1447)
++++ src/posix-io.c	(Revision 1495)
+@@ -1,6 +1,6 @@
+ /* posix-io.c - Posix I/O functions
+    Copyright (C) 2000 Werner Koch (dd9jn)
+-   Copyright (C) 2001, 2002, 2004, 2005, 2007 g10 Code GmbH
++   Copyright (C) 2001, 2002, 2004, 2005, 2007, 2010 g10 Code GmbH
+ 
+    This file is part of GPGME.
+  
+@@ -15,9 +15,8 @@
+    Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public
+-   License along with this program; if not, write to the Free Software
+-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+-   02111-1307, USA.  */
++   License along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
+ 
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+@@ -73,13 +72,22 @@
+ }
+ 
+ 
+-static struct
++/* The table to hold notification handlers.  We use a linear search
++   and extend the table as needed.  */
++struct notify_table_item_s
+ {
++  int fd;  /* -1 indicates an unused entry.  */
+   _gpgme_close_notify_handler_t handler;
+   void *value;
+-} notify_table[256];
++};
++typedef struct notify_table_item_s *notify_table_item_t;
+ 
++static notify_table_item_t notify_table;
++static size_t notify_table_size;
++DEFINE_STATIC_LOCK (notify_table_lock);
+ 
++
++
+ int
+ _gpgme_io_read (int fd, void *buffer, size_t count)
+ {
+@@ -149,6 +157,9 @@
+ _gpgme_io_close (int fd)
+ {
+   int res;
++  _gpgme_close_notify_handler_t handler = NULL;
++  void *handler_value;
++  int idx;
+ 
+   TRACE_BEG (DEBUG_SYSIO, "_gpgme_io_close", fd);
+ 
+@@ -159,17 +170,26 @@
+     }
+ 
+   /* First call the notify handler.  */
+-  if (fd >= 0 && fd < (int) DIM (notify_table))
++  LOCK (notify_table_lock);
++  for (idx=0; idx < notify_table_size; idx++)
+     {
+-      if (notify_table[fd].handler)
+-	{
+-	  TRACE_LOG2 ("invoking close handler %p/%p",
+-		      notify_table[fd].handler, notify_table[fd].value);
+-	  notify_table[fd].handler (fd, notify_table[fd].value);
+-	  notify_table[fd].handler = NULL;
+-	  notify_table[fd].value = NULL;
++      if (notify_table[idx].fd == fd)
++        {
++	  handler       = notify_table[idx].handler;
++	  handler_value = notify_table[idx].value;
++	  notify_table[idx].handler = NULL;
++	  notify_table[idx].value = NULL;
++	  notify_table[idx].fd = -1; /* Mark slot as free.  */
++          break;
+         }
+     }
++  UNLOCK (notify_table_lock);
++  if (handler)
++    {
++      TRACE_LOG2 ("invoking close handler %p/%p", handler, handler_value);
++      handler (fd, handler_value);
++    }
++
+   /* Then do the close.  */    
+   res = close (fd);
+   return TRACE_SYSRES (res);
+@@ -180,19 +200,52 @@
+ _gpgme_io_set_close_notify (int fd, _gpgme_close_notify_handler_t handler,
+ 			    void *value)
+ {
++  int res = 0;
++  int idx;
++
+   TRACE_BEG2 (DEBUG_SYSIO, "_gpgme_io_set_close_notify", fd,
+ 	      "close_handler=%p/%p", handler, value);
+ 
+   assert (fd != -1);
++  
++  LOCK (notify_table_lock);
++  for (idx=0; idx < notify_table_size; idx++)
++    if (notify_table[idx].fd == -1)
++      break;
++  if (idx == notify_table_size)
++    {
++      /* We need to increase the size of the table.  The approach we
++         take is straightforward to minimize the risk of bugs.  */
++      notify_table_item_t newtbl;
++      size_t newsize = notify_table_size + 64;
+ 
+-  if (fd < 0 || fd >= (int) DIM (notify_table))
+-    {
+-      errno = EINVAL;
+-      return TRACE_SYSRES (-1);
++      newtbl = calloc (newsize, sizeof *newtbl);
++      if (!newtbl)
++        {
++          res = -1;
++          goto leave;
++        }
++      for (idx=0; idx < notify_table_size; idx++)
++        newtbl[idx] = notify_table[idx];
++      for (; idx < newsize; idx++)
++        {
++          newtbl[idx].fd = -1;
++          newtbl[idx].handler = NULL;
++          newtbl[idx].value = NULL;
++        }
++      free (notify_table);
++      notify_table = newtbl;
++      idx = notify_table_size;
++      notify_table_size = newsize;
+     }
+-  notify_table[fd].handler = handler;
+-  notify_table[fd].value = value;
+-  return TRACE_SYSRES (0);
++  notify_table[idx].fd = fd;
++  notify_table[idx].handler = handler;
++  notify_table[idx].value = value;
++  
++ leave:
++  UNLOCK (notify_table_lock);
++
++  return TRACE_SYSRES (res);
+ }
+ 
+ 
+Index: src/gpgme-tool.c
+===================================================================
+--- src/gpgme-tool.c	(Revision 1447)
++++ src/gpgme-tool.c	(Revision 1495)
+@@ -28,7 +28,9 @@
+ #include <getopt.h>
+ #include <ctype.h>
+ #include <stdarg.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ #ifdef HAVE_ARGP_H
+ #include <argp.h>
+ #endif
+@@ -107,7 +109,11 @@
+   void *pstate;
+ };
+ 
+-#define ARGP_ERR_UNKNOWN E2BIG
++#ifdef EDEADLK
++# define ARGP_ERR_UNKNOWN EDEADLK /* POSIX */
++#else
++# define ARGP_ERR_UNKNOWN EDEADLOCK /* *GNU/kFreebsd does not define this) */
++#endif
+ #define ARGP_KEY_ARG 0
+ #define ARGP_KEY_ARGS 0x1000006
+ #define ARGP_KEY_END 0x1000001
+@@ -468,6 +474,9 @@
+ FILE *log_stream;
+ char *program_name = "gpgme-tool";
+ 
++#define spacep(p)   (*(p) == ' ' || *(p) == '\t')
++
++
+ void log_error (int status, gpg_error_t errnum, 
+                 const char *fmt, ...) GT_GCC_A_PRINTF(3,4);
+ 
+@@ -497,6 +506,35 @@
+ }
+ 
+ 
++/* Check whether the option NAME appears in LINE.  */
++static int
++has_option (const char *line, const char *name)
++{
++  const char *s;
++  int n = strlen (name);
++
++  s = strstr (line, name);
++  return (s && (s == line || spacep (s-1)) && (!s[n] || spacep (s+n)));
++}
++
++/* Skip over options.  It is assumed that leading spaces have been
++   removed (this is the case for lines passed to a handler from
++   assuan).  Blanks after the options are also removed.  */
++static char *
++skip_options (char *line)
++{
++  while ( *line == '-' && line[1] == '-' )
++    {
++      while (*line && !spacep (line))
++        line++;
++      while (spacep (line))
++        line++;
++    }
++  return line;
++}
++
++
++
+ 
+ typedef gpg_error_t (*result_xml_write_cb_t) (void *hook, const void *buf,
+ 					      size_t len);
+@@ -708,11 +746,11 @@
+ gpg_error_t
+ result_add_timestamp (struct result_xml_state *state, char *name,
+ 		      unsigned int timestamp)
+-{		  
++{
+   char code[20];
+ 
+   snprintf (code, sizeof (code) - 1, "%ui", timestamp);
+-  result_xml_tag_start (state, name, "unix", code);
++  result_xml_tag_start (state, name, "unix", code, NULL);
+   result_xml_tag_end (state);
+   return 0;
+ }
+@@ -794,7 +832,8 @@
+       while (inv_recp)
+ 	{
+ 	  result_xml_tag_start (&state, "invalid-key", NULL);
+-	  result_add_fpr (&state, "fpr", inv_recp->fpr);
++	  if (inv_recp->fpr)
++	    result_add_fpr (&state, "fpr", inv_recp->fpr);
+ 	  result_add_error (&state, "reason", inv_recp->reason);
+ 	  result_xml_tag_end (&state);
+ 	  inv_recp = inv_recp->next;
+@@ -883,7 +922,8 @@
+       while (inv_key)
+ 	{
+ 	  result_xml_tag_start (&state, "invalid-key", NULL);
+-	  result_add_fpr (&state, "fpr", inv_key->fpr);
++	  if (inv_key->fpr)
++	    result_add_fpr (&state, "fpr", inv_key->fpr);
+ 	  result_add_error (&state, "reason", inv_key->reason);
+ 	  result_xml_tag_end (&state);
+ 	  inv_key = inv_key->next;
+@@ -903,7 +943,8 @@
+ 	  result_add_pubkey_algo (&state, "pubkey-algo", new_sig->pubkey_algo);
+ 	  result_add_hash_algo (&state, "hash-algo", new_sig->hash_algo);
+ 	  result_add_timestamp (&state, "timestamp", new_sig->timestamp);
+-	  result_add_fpr (&state, "fpr", new_sig->fpr);
++	  if (new_sig->fpr)
++	    result_add_fpr (&state, "fpr", new_sig->fpr);
+ 	  result_add_value (&state, "sig-class", new_sig->sig_class);
+ 
+ 	  result_xml_tag_end (&state);
+@@ -948,11 +989,12 @@
+ 	{
+ 	  result_xml_tag_start (&state, "signature", NULL);
+ 	  
+-	  // FIXME: Could be done better.
++	  /* FIXME: Could be done better. */
+ 	  result_add_value (&state, "summary", sig->summary);
+-	  result_add_fpr (&state, "fpr", sig->fpr);
++	  if (sig->fpr)
++	    result_add_fpr (&state, "fpr", sig->fpr);
+ 	  result_add_error (&state, "status", sig->status);
+-	  // FIXME: notations
++	  /* FIXME: notations */
+ 	  result_add_timestamp (&state, "timestamp", sig->timestamp);
+ 	  result_add_timestamp (&state, "exp-timestamp", sig->exp_timestamp);
+ 	  result_add_value (&state, "wrong-key-usage", sig->wrong_key_usage);
+@@ -1015,9 +1057,10 @@
+ 	{
+ 	  result_xml_tag_start (&state, "import-status", NULL);
+ 
+-	  result_add_fpr (&state, "fpr", stat->fpr);
++	  if (stat->fpr)
++	    result_add_fpr (&state, "fpr", stat->fpr);
+ 	  result_add_error (&state, "result", stat->result);
+-	  // FIXME: Could be done better.
++	  /* FIXME: Could be done better. */
+ 	  result_add_value (&state, "status", stat->status);
+ 
+ 	  result_xml_tag_end (&state);
+@@ -1047,7 +1090,8 @@
+ 
+   result_add_value (&state, "primary", res->primary);
+   result_add_value (&state, "sub", res->sub);
+-  result_add_fpr (&state, "fpr", res->fpr);
++  if (res->fpr)
++    result_add_fpr (&state, "fpr", res->fpr);
+ 
+   result_xml_tag_end (&state);
+   
+@@ -1619,7 +1663,7 @@
+ gpg_error_t
+ gt_import_keys (gpgme_tool_t gt, char *fpr[])
+ {
+-  gpg_error_t err;
++  gpg_error_t err = 0;
+   int cnt;
+   int idx;
+   gpgme_key_t *keys;
+@@ -1801,7 +1845,15 @@
+ 
+   gpgme_data_encoding_t input_enc;
+   gpgme_data_encoding_t output_enc;
++  assuan_fd_t input_fd;
++  char *input_filename;
++  FILE *input_stream;
++  assuan_fd_t output_fd;
++  char *output_filename;
++  FILE *output_stream;
+   assuan_fd_t message_fd;
++  char *message_filename;
++  FILE *message_stream;
+   gpgme_data_encoding_t message_enc;
+ };
+ 
+@@ -1822,6 +1874,30 @@
+ }
+ 
+ 
++
++static gpg_error_t
++server_parse_fd (assuan_context_t ctx, char *line, assuan_fd_t *rfd,
++		 char **filename)
++{
++  *rfd = ASSUAN_INVALID_FD;
++  *filename = NULL;
++
++  if (! strncasecmp (line, "file=", 5))
++    {
++      char *term;
++      *filename = strdup (line + 5);
++      if (!*filename)
++	return gpg_error_from_syserror();
++      term = strchr (*filename, ' ');
++      if (term)
++	*term = '\0';
++      return 0;
++    }
++  else
++    return assuan_command_parse_fd (ctx, line, rfd);
++}
++    
++
+ static gpgme_data_encoding_t
+ server_data_encoding (const char *line)
+ {
+@@ -1842,12 +1918,24 @@
+ 
+ 
+ static gpgme_error_t
+-server_data_obj (assuan_fd_t fd, gpgme_data_encoding_t encoding,
+-		 gpgme_data_t *data)
++server_data_obj (assuan_fd_t fd, char *fn, int out,
++		 gpgme_data_encoding_t encoding,
++		 gpgme_data_t *data, FILE **fs)
+ {
+   gpgme_error_t err;
+ 
+-  err = gpgme_data_new_from_fd (data, fd);
++  *fs = NULL;
++  if (fn)
++    {
++      *fs = fopen (fn, out ? "wb" : "rb");
++      if (!*fs)
++	return gpg_error_from_syserror ();
++
++      err = gpgme_data_new_from_stream (data, *fs);
++    }
++  else
++    err = gpgme_data_new_from_fd (data, (int) fd);
++
+   if (err)
+     return err;
+   return gpgme_data_set_encoding (*data, encoding);
+@@ -1862,12 +1950,47 @@
+      here.  */
+   assuan_close_input_fd (server->assuan_ctx);
+   assuan_close_output_fd (server->assuan_ctx);
+-  if (server->message_fd != -1)
++  if (server->message_fd != ASSUAN_INVALID_FD)
+     {
+       /* FIXME: Assuan should provide a close function.  */
++#if HAVE_W32_SYSTEM
++      CloseHandle (server->message_fd);
++#else
+       close (server->message_fd);
+-      server->message_fd = -1;
++#endif
++      server->message_fd = ASSUAN_INVALID_FD;
+     }
++  if (server->input_filename)
++    {
++      free (server->input_filename);
++      server->input_filename = NULL;
++    }
++  if (server->output_filename)
++    {
++      free (server->output_filename);
++      server->output_filename = NULL;
++    }
++  if (server->message_filename)
++    {
++      free (server->message_filename);
++      server->message_filename = NULL;
++    }
++  if (server->input_stream)
++    {
++      fclose (server->input_stream);
++      server->input_stream = NULL;
++    }
++  if (server->output_stream)
++    {
++      fclose (server->output_stream);
++      server->output_stream = NULL;
++    }
++  if (server->message_stream)
++    {
++      fclose (server->message_stream);
++      server->message_stream = NULL;
++    }
++
+   server->input_enc = GPGME_DATA_ENCODING_NONE;
+   server->output_enc = GPGME_DATA_ENCODING_NONE;
+   server->message_enc = GPGME_DATA_ENCODING_NONE;
+@@ -1883,6 +2006,7 @@
+   return 0;
+ }
+ 
++
+ static const char hlp_version[] = 
+   "VERSION [<string>]\n"
+   "\n"
+@@ -2026,18 +2150,36 @@
+ 
+ 
+ static gpg_error_t
+-input_notify (assuan_context_t ctx, char *line)
++cmd_input (assuan_context_t ctx, char *line)
+ {
+   struct server *server = assuan_get_pointer (ctx);
++  gpg_error_t err;
++  assuan_fd_t sysfd;
++  char *filename;
++
++  err = server_parse_fd (ctx, line, &sysfd, &filename);
++  if (err)
++    return err;
++  server->input_fd = sysfd;
++  server->input_filename = filename;
+   server->input_enc = server_data_encoding (line);
+   return 0;
+ }
+ 
+ 
+ static gpg_error_t
+-output_notify (assuan_context_t ctx, char *line)
++cmd_output (assuan_context_t ctx, char *line)
+ {
+   struct server *server = assuan_get_pointer (ctx);
++  gpg_error_t err;
++  assuan_fd_t sysfd;
++  char *filename;
++
++  err = server_parse_fd (ctx, line, &sysfd, &filename);
++  if (err)
++    return err;
++  server->output_fd = sysfd;
++  server->output_filename = filename;
+   server->output_enc = server_data_encoding (line);
+   return 0;
+ }
+@@ -2049,11 +2191,13 @@
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t sysfd;
++  char *filename;
+ 
+-  err = assuan_command_parse_fd (ctx, line, &sysfd);
++  err = server_parse_fd (ctx, line, &sysfd, &filename);
+   if (err)
+     return err;
+   server->message_fd = sysfd;
++  server->message_filename = filename;
+   server->message_enc = server_data_encoding (line);
+   return 0;
+ }
+@@ -2092,21 +2236,27 @@
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t inp_fd;
++  char *inp_fn;
+   assuan_fd_t out_fd;
++  char *out_fn;
+   gpgme_data_t inp_data;
+   gpgme_data_t out_data;
+ 
+   inp_fd = assuan_get_input_fd (ctx);
+-  if (inp_fd == ASSUAN_INVALID_FD)
++  inp_fn = server->input_filename;
++  if (inp_fd == ASSUAN_INVALID_FD && !inp_fn)
+     return GPG_ERR_ASS_NO_INPUT;
+   out_fd = assuan_get_output_fd (ctx);
+-  if (out_fd == ASSUAN_INVALID_FD)
++  out_fn = server->output_filename;
++  if (out_fd == ASSUAN_INVALID_FD && !out_fn)
+     return GPG_ERR_ASS_NO_OUTPUT;
+   
+-  err = server_data_obj (inp_fd, server->input_enc, &inp_data);
++  err = server_data_obj (inp_fd, inp_fn, 0, server->input_enc, &inp_data,
++			 &server->input_stream);
+   if (err)
+     return err;
+-  err = server_data_obj (out_fd, server->output_enc, &out_data);
++  err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			 &server->output_stream);
+   if (err)
+     {
+       gpgme_data_release (inp_data);
+@@ -2144,7 +2294,9 @@
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t inp_fd;
++  char *inp_fn;
+   assuan_fd_t out_fd;
++  char *out_fn;
+   gpgme_data_t inp_data = NULL;
+   gpgme_data_t out_data = NULL;
+   gpgme_encrypt_flags_t flags = 0;
+@@ -2159,16 +2311,20 @@
+     flags |= GPGME_ENCRYPT_EXPECT_SIGN;
+   
+   inp_fd = assuan_get_input_fd (ctx);
++  inp_fn = server->input_filename;
+   out_fd = assuan_get_output_fd (ctx);
+-  if (inp_fd != ASSUAN_INVALID_FD)
++  out_fn = server->output_filename;
++  if (inp_fd != ASSUAN_INVALID_FD || inp_fn)
+     {
+-      err = server_data_obj (inp_fd, server->input_enc, &inp_data);
++      err = server_data_obj (inp_fd, inp_fn, 0, server->input_enc, &inp_data,
++			     &server->input_stream);
+       if (err)
+ 	return err;
+     }
+-  if (out_fd != ASSUAN_INVALID_FD)
++  if (out_fd != ASSUAN_INVALID_FD || out_fn)
+     {
+-      err = server_data_obj (out_fd, server->output_enc, &out_data);
++      err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			     &server->output_stream);
+       if (err)
+ 	{
+ 	  gpgme_data_release (inp_data);
+@@ -2207,7 +2363,9 @@
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t inp_fd;
++  char *inp_fn;
+   assuan_fd_t out_fd;
++  char *out_fn;
+   gpgme_data_t inp_data;
+   gpgme_data_t out_data;
+   gpgme_sig_mode_t mode = GPGME_SIG_MODE_NORMAL;
+@@ -2218,16 +2376,20 @@
+     mode = GPGME_SIG_MODE_DETACH;
+ 
+   inp_fd = assuan_get_input_fd (ctx);
+-  if (inp_fd == ASSUAN_INVALID_FD)
++  inp_fn = server->input_filename;
++  if (inp_fd == ASSUAN_INVALID_FD && !inp_fn)
+     return GPG_ERR_ASS_NO_INPUT;
+   out_fd = assuan_get_output_fd (ctx);
+-  if (out_fd == ASSUAN_INVALID_FD)
++  out_fn = server->output_filename;
++  if (out_fd == ASSUAN_INVALID_FD && !out_fn)
+     return GPG_ERR_ASS_NO_OUTPUT;
+   
+-  err = server_data_obj (inp_fd, server->input_enc, &inp_data);
++  err = server_data_obj (inp_fd, inp_fn, 0, server->input_enc, &inp_data,
++			 &server->input_stream);
+   if (err)
+     return err;
+-  err = server_data_obj (out_fd, server->output_enc, &out_data);
++  err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			 &server->output_stream);
+   if (err)
+     {
+       gpgme_data_release (inp_data);
+@@ -2252,31 +2414,40 @@
+   assuan_fd_t inp_fd;
+   assuan_fd_t msg_fd;
+   assuan_fd_t out_fd;
++  char *inp_fn;
++  char *msg_fn;
++  char *out_fn;
+   gpgme_data_t inp_data;
+   gpgme_data_t msg_data = NULL;
+   gpgme_data_t out_data = NULL;
+ 
+   inp_fd = assuan_get_input_fd (ctx);
+-  if (inp_fd == ASSUAN_INVALID_FD)
++  inp_fn = server->input_filename;
++  if (inp_fd == ASSUAN_INVALID_FD && !inp_fn)
+     return GPG_ERR_ASS_NO_INPUT;
+   msg_fd = server->message_fd;
++  msg_fn = server->message_filename;
+   out_fd = assuan_get_output_fd (ctx);
+-  
+-  err = server_data_obj (inp_fd, server->input_enc, &inp_data);
++  out_fn = server->output_filename;
++
++  err = server_data_obj (inp_fd, inp_fn, 0, server->input_enc, &inp_data,
++			 &server->input_stream);
+   if (err)
+     return err;
+-  if (msg_fd != ASSUAN_INVALID_FD)
++  if (msg_fd != ASSUAN_INVALID_FD || msg_fn)
+     {
+-      err = server_data_obj (msg_fd, server->message_enc, &msg_data);
++      err = server_data_obj (msg_fd, msg_fn, 0, server->message_enc, &msg_data,
++			     &server->message_stream);
+       if (err)
+ 	{
+ 	  gpgme_data_release (inp_data);
+ 	  return err;
+ 	}
+     }
+-  if (out_fd != ASSUAN_INVALID_FD)
++  if (out_fd != ASSUAN_INVALID_FD || out_fn)
+     {
+-      err = server_data_obj (out_fd, server->output_enc, &out_data);
++      err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			     &server->output_stream);
+       if (err)
+ 	{
+ 	  gpgme_data_release (inp_data);
+@@ -2314,13 +2485,16 @@
+     {
+       gpg_error_t err;
+       assuan_fd_t inp_fd;
++      char *inp_fn;
+       gpgme_data_t inp_data;
+       
+       inp_fd = assuan_get_input_fd (ctx);
+-      if (inp_fd == ASSUAN_INVALID_FD)
++      inp_fn = server->input_filename;
++      if (inp_fd == ASSUAN_INVALID_FD && !inp_fn)
+ 	return GPG_ERR_ASS_NO_INPUT;
+ 
+-      err = server_data_obj (inp_fd, server->input_enc, &inp_data);
++      err = server_data_obj (inp_fd, inp_fn, 0, server->input_enc, &inp_data,
++			     &server->input_stream);
+       if (err)
+ 	return err;
+       
+@@ -2334,29 +2508,38 @@
+ }
+ 
+ 
++static const char hlp_export[] = 
++  "EXPORT [--extern] [--minimal] [<pattern>]\n"
++  "\n"
++  "Export the keys described by PATTERN.  Write the\n"
++  "the output to the object set by the last OUTPUT command.";
+ static gpg_error_t
+ cmd_export (assuan_context_t ctx, char *line)
+ {
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t out_fd;
++  char *out_fn;
+   gpgme_data_t out_data;
+   gpgme_export_mode_t mode = 0;
+   const char *pattern[2];
+-  const char optstr[] = "--extern ";
+ 
+   out_fd = assuan_get_output_fd (ctx);
+-  if (out_fd == ASSUAN_INVALID_FD)
++  out_fn = server->output_filename;
++  if (out_fd == ASSUAN_INVALID_FD && !out_fn)
+     return GPG_ERR_ASS_NO_OUTPUT;
+-  err = server_data_obj (out_fd, server->output_enc, &out_data);
++  err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			 &server->output_stream);
+   if (err)
+     return err;
+ 
+-  if (strncasecmp (line, optstr, strlen (optstr)))
+-    {
+-      mode |= GPGME_EXPORT_MODE_EXTERN;
+-      line += strlen (optstr);
+-    }
++  if (has_option (line, "--extern"))
++    mode |= GPGME_EXPORT_MODE_EXTERN;
++  if (has_option (line, "--minimal"))
++    mode |= GPGME_EXPORT_MODE_MINIMAL;
++
++  line = skip_options (line);
++
+   pattern[0] = line;
+   pattern[1] = NULL;
+ 
+@@ -2393,23 +2576,29 @@
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t inp_fd;
++  char *inp_fn;
+   assuan_fd_t out_fd;
++  char *out_fn;
+   gpgme_data_t inp_data;
+   gpgme_data_t out_data = NULL;
+   gpgme_data_t parms_data = NULL;
+   const char *parms;
+ 
+   inp_fd = assuan_get_input_fd (ctx);
+-  if (inp_fd == ASSUAN_INVALID_FD)
++  inp_fn = server->input_filename;
++  if (inp_fd == ASSUAN_INVALID_FD && !inp_fn)
+     return GPG_ERR_ASS_NO_INPUT;
+   out_fd = assuan_get_output_fd (ctx);
++  out_fn = server->output_filename;
+   
+-  err = server_data_obj (inp_fd, server->input_enc, &inp_data);
++  err = server_data_obj (inp_fd, inp_fn, 0, server->input_enc, &inp_data,
++			 &server->input_stream);
+   if (err)
+     return err;
+-  if (out_fd != ASSUAN_INVALID_FD)
++  if (out_fd != ASSUAN_INVALID_FD || out_fn)
+     {
+-      err = server_data_obj (out_fd, server->output_enc, &out_data);
++      err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			     &server->output_stream);
+       if (err)
+ 	{
+ 	  gpgme_data_release (inp_data);
+@@ -2469,12 +2658,14 @@
+ {
+   struct server *server = assuan_get_pointer (ctx);
+   int allow_secret = 0;
+-  const char optstr[] = "--allow-secret ";
++  const char optstr[] = "--allow-secret";
+ 
+-  if (strncasecmp (line, optstr, strlen (optstr)))
++  if (!strncasecmp (line, optstr, strlen (optstr)))
+     {
+       allow_secret = 1;
+       line += strlen (optstr);
++      while (*line && !spacep (line))
++	line++;
+     }
+   return gt_delete (server->gt, line, allow_secret);
+ }
+@@ -2487,12 +2678,14 @@
+   gpg_error_t err;
+   int secret_only = 0;
+   const char *pattern[2];
+-  const char optstr[] = "--secret-only ";
++  const char optstr[] = "--secret-only";
+ 
+-  if (strncasecmp (line, optstr, strlen (optstr)))
++  if (!strncasecmp (line, optstr, strlen (optstr)))
+     {
+       secret_only = 1;
+       line += strlen (optstr);
++      while (*line && !spacep (line))
++	line++;
+     }
+   pattern[0] = line;
+   pattern[1] = NULL;
+@@ -2535,13 +2728,16 @@
+   struct server *server = assuan_get_pointer (ctx);
+   gpg_error_t err;
+   assuan_fd_t out_fd;
++  char *out_fn;
+   gpgme_data_t out_data;
+   unsigned int flags = 0;
+ 
+   out_fd = assuan_get_output_fd (ctx);
+-  if (out_fd == ASSUAN_INVALID_FD)
++  out_fn = server->output_filename;
++  if (out_fd == ASSUAN_INVALID_FD && !out_fn)
+     return GPG_ERR_ASS_NO_OUTPUT;
+-  err = server_data_obj (out_fd, server->output_enc, &out_data);
++  err = server_data_obj (out_fd, out_fn, 1, server->output_enc, &out_data,
++			 &server->output_stream);
+   if (err)
+     return err;
+ 
+@@ -2667,9 +2863,9 @@
+     assuan_handler_t handler;
+     const char * const help;
+   } table[] = {
+-    // RESET, BYE are implicit.
++    /* RESET, BYE are implicit.  */
+     { "VERSION", cmd_version, hlp_version },
+-    // TODO: Set engine info.
++    /* TODO: Set engine info.  */
+     { "ENGINE", cmd_engine },
+     { "PROTOCOL", cmd_protocol, hlp_protocol },
+     { "SUB_PROTOCOL", cmd_sub_protocol },
+@@ -2677,16 +2873,16 @@
+     { "TEXTMODE", cmd_textmode },
+     { "INCLUDE_CERTS", cmd_include_certs },
+     { "KEYLIST_MODE", cmd_keylist_mode },
+-    { "INPUT", NULL }, 
+-    { "OUTPUT", NULL }, 
++    { "INPUT", cmd_input }, 
++    { "OUTPUT", cmd_output }, 
+     { "MESSAGE", cmd_message },
+     { "RECIPIENT", cmd_recipient },
+     { "SIGNER", cmd_signer },
+     { "SIGNERS_CLEAR", cmd_signers_clear },
+-    // TODO: SIGNOTATION missing.
+-    // TODO: Could add wait interface if we allow more than one context
+-    // and add _START variants.
+-    // TODO: Could add data interfaces if we allow multiple data objects.
++     /* TODO: SIGNOTATION missing. */
++     /* TODO: Could add wait interface if we allow more than one context */
++     /* and add _START variants. */
++     /* TODO: Could add data interfaces if we allow multiple data objects. */
+     { "DECRYPT", cmd_decrypt },
+     { "DECRYPT_VERIFY", cmd_decrypt_verify },
+     { "ENCRYPT", cmd_encrypt },
+@@ -2695,20 +2891,20 @@
+     { "SIGN", cmd_sign },
+     { "VERIFY", cmd_verify },
+     { "IMPORT", cmd_import },
+-    { "EXPORT", cmd_export },
++    { "EXPORT", cmd_export, hlp_export },
+     { "GENKEY", cmd_genkey },
+     { "DELETE", cmd_delete },
+-    // TODO: EDIT, CARD_EDIT (with INQUIRE)
++    /* TODO: EDIT, CARD_EDIT (with INQUIRE) */
+     { "KEYLIST", cmd_keylist },
+     { "LISTKEYS", cmd_keylist },
+-    // TODO: TRUSTLIST, TRUSTLIST_EXT
++    /* TODO: TRUSTLIST, TRUSTLIST_EXT */
+     { "GETAUDITLOG", cmd_getauditlog, hlp_getauditlog },
+-    // TODO: ASSUAN
++    /* TODO: ASSUAN */
+     { "VFS_MOUNT", cmd_vfs_mount },
+     { "MOUNT", cmd_vfs_mount },
+     { "VFS_CREATE", cmd_vfs_create },
+     { "CREATE", cmd_vfs_create },
+-    // TODO: GPGCONF
++    /* TODO: GPGCONF  */
+     { "RESULT", cmd_result },
+     { "STRERROR", cmd_strerror },
+     { "PUBKEY_ALGO_NAME", cmd_pubkey_algo_name },
+@@ -2739,7 +2935,7 @@
+   static const char hello[] = ("GPGME-Tool " VERSION " ready");
+ 
+   memset (&server, 0, sizeof (server));
+-  server.message_fd = -1;
++  server.message_fd = ASSUAN_INVALID_FD;
+   server.input_enc = GPGME_DATA_ENCODING_NONE;
+   server.output_enc = GPGME_DATA_ENCODING_NONE;
+   server.message_enc = GPGME_DATA_ENCODING_NONE;
+@@ -2753,8 +2949,13 @@
+   /* We use a pipe based server so that we can work from scripts.
+      assuan_init_pipe_server will automagically detect when we are
+      called with a socketpair and ignore FIELDES in this case. */
++#ifdef HAVE_W32CE_SYSTEM
++  filedes[0] = ASSUAN_STDIN;
++  filedes[1] = ASSUAN_STDOUT;
++#else
+   filedes[0] = assuan_fdopen (0);
+   filedes[1] = assuan_fdopen (1);
++#endif
+   err = assuan_new (&server.assuan_ctx);
+   if (err)
+     log_error (1, err, "can't create assuan context");
+@@ -2770,8 +2971,6 @@
+   assuan_set_hello_line (server.assuan_ctx, hello);
+ 
+   assuan_register_reset_notify (server.assuan_ctx, reset_notify);
+-  assuan_register_input_notify (server.assuan_ctx, input_notify);
+-  assuan_register_output_notify (server.assuan_ctx, output_notify);
+ 
+ #define DBG_ASSUAN 0
+   if (DBG_ASSUAN)
+@@ -2863,12 +3062,17 @@
+   struct args args;
+   struct gpgme_tool gt;
+ 
++#ifdef HAVE_SETLOCALE
+   setlocale (LC_ALL, "");
++#endif
+   gpgme_check_version (NULL);
++#ifdef LC_CTYPE
+   gpgme_set_locale (NULL, LC_CTYPE, setlocale (LC_CTYPE, NULL));
++#endif
+ #ifdef LC_MESSAGES
+   gpgme_set_locale (NULL, LC_MESSAGES, setlocale (LC_MESSAGES, NULL));
+ #endif
++
+   args_init (&args);
+ 
+   argp_parse (&argp, argc, argv, 0, 0, &args);
+@@ -2886,6 +3090,11 @@
+ 
+   gpgme_release (gt.ctx);
+ 
++#ifdef HAVE_W32CE_SYSTEM
++  /* Give the buggy ssh server time to flush the output buffers.  */
++  Sleep (300);
++#endif
++
+   return 0;
+ }
+ 
+Index: src/export.c
+===================================================================
+--- src/export.c	(Revision 1447)
++++ src/export.c	(Revision 1495)
+@@ -1,6 +1,6 @@
+ /* export.c - Export a key.
+    Copyright (C) 2000 Werner Koch (dd9jn)
+-   Copyright (C) 2001, 2002, 2003, 2004 g10 Code GmbH
++   Copyright (C) 2001, 2002, 2003, 2004, 2010 g10 Code GmbH
+ 
+    This file is part of GPGME.
+  
+@@ -15,9 +15,8 @@
+    Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public
+-   License along with this program; if not, write to the Free Software
+-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+-   02111-1307, USA.  */
++   License along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
+ 
+ #if HAVE_CONFIG_H
+ #include <config.h>
+@@ -44,7 +43,8 @@
+ {
+   gpgme_error_t err;
+ 
+-  if ((mode & ~(GPGME_EXPORT_MODE_EXTERN)))
++  if ((mode & ~(GPGME_EXPORT_MODE_EXTERN
++                |GPGME_EXPORT_MODE_MINIMAL)))
+     return gpg_error (GPG_ERR_INV_VALUE); /* Invalid flags in MODE.  */
+ 
+   
+@@ -107,7 +107,8 @@
+ {
+   gpgme_error_t err;
+ 
+-  if ((mode & ~(GPGME_EXPORT_MODE_EXTERN)))
++  if ((mode & ~(GPGME_EXPORT_MODE_EXTERN
++                |GPGME_EXPORT_MODE_MINIMAL)))
+     return gpg_error (GPG_ERR_INV_VALUE); /* Invalid flags in MODE.  */
+ 
+   if ((mode & GPGME_EXPORT_MODE_EXTERN))
+Index: src/genkey.c
+===================================================================
+--- src/genkey.c	(Revision 1447)
++++ src/genkey.c	(Revision 1495)
+@@ -223,5 +223,5 @@
+   err = genkey_start (ctx, 1, parms, pubkey, seckey);
+   if (!err)
+     err = _gpgme_wait_one (ctx);
+-  return err;
++  return TRACE_ERR (err);
+ }
+Index: src/util.h
+===================================================================
+--- src/util.h	(Revision 1447)
++++ src/util.h	(Revision 1495)
+@@ -22,6 +22,13 @@
+ #ifndef UTIL_H
+ #define UTIL_H
+ 
++#ifdef HAVE_W32CE_SYSTEM
++#include "w32-ce.h"
++#endif
++
++/* For pid_t.  */
++#include <sys/types.h>
++
+ #include "gpgme.h"
+ 
+ 
+@@ -120,7 +127,10 @@
+ #ifdef HAVE_W32_SYSTEM
+ int _gpgme_mkstemp (int *fd, char **name);
+ const char *_gpgme_get_w32spawn_path (void);
+-#endif
++#endif /*HAVE_W32_SYSTEM*/
++#ifdef HAVE_W32CE_SYSTEM
++char *_gpgme_w32ce_get_debug_envvar (void);
++#endif /*HAVE_W32CE_SYSTEM*/
+ 
+ /*--  Error codes not yet available in current gpg-error.h.   --*/
+ #ifndef GPG_ERR_UNFINISHED
+@@ -129,6 +139,9 @@
+ #ifndef GPG_ERR_NOT_OPERATIONAL 
+ #define GPG_ERR_NOT_OPERATIONAL 176
+ #endif
++#ifndef GPG_ERR_MISSING_ISSUER_CERT
++#define GPG_ERR_MISSING_ISSUER_CERT 185
++#endif
+ 
+ 
+ #ifdef ENABLE_ASSUAN
+Index: src/data-user.c
+===================================================================
+--- src/data-user.c	(Revision 1447)
++++ src/data-user.c	(Revision 1495)
+@@ -34,7 +34,7 @@
+ {
+   if (!dh->data.user.cbs->read)
+     {
+-      errno = EBADF;
++      gpg_err_set_errno (EBADF);
+       return -1;
+     }
+ 
+@@ -47,7 +47,7 @@
+ {
+   if (!dh->data.user.cbs->write)
+     {
+-      errno = EBADF;
++      gpg_err_set_errno (EBADF);
+       return -1;
+     }
+ 
+@@ -60,7 +60,7 @@
+ {
+   if (!dh->data.user.cbs->seek)
+     {
+-      errno = EBADF;
++      gpg_err_set_errno (EBADF);
+       return -1;
+     }
+ 
+Index: src/conversion.c
+===================================================================
+--- src/conversion.c	(Revision 1447)
++++ src/conversion.c	(Revision 1495)
+@@ -93,7 +93,7 @@
+ 	 string.  */
+       dest = malloc (strlen (src) + 1);
+       if (!dest)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+ 
+       *destp = dest;
+     }
+@@ -198,7 +198,7 @@
+ 	 string.  */
+       dest = malloc (strlen (src) + 1);
+       if (!dest)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+ 
+       *destp = dest;
+     }
+@@ -291,7 +291,7 @@
+ 	 string.  */
+       dest = malloc (destlen);
+       if (!dest)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+ 
+       *destp = dest;
+     }
+@@ -315,6 +315,39 @@
+ }
+ 
+ 
++#ifdef HAVE_W32_SYSTEM
++static time_t
++_gpgme_timegm (struct tm *tm)
++{
++  /* This one is thread safe.  */
++  SYSTEMTIME st;
++  FILETIME ft;
++  unsigned long long cnsecs;
++  
++  st.wYear   = tm->tm_year + 1900;
++  st.wMonth  = tm->tm_mon  + 1;
++  st.wDay    = tm->tm_mday;
++  st.wHour   = tm->tm_hour;
++  st.wMinute = tm->tm_min;
++  st.wSecond = tm->tm_sec;
++  st.wMilliseconds = 0; /* Not available.  */
++  st.wDayOfWeek = 0;    /* Ignored.  */
++
++  /* System time is UTC thus the conversion is pretty easy.  */
++  if (!SystemTimeToFileTime (&st, &ft))
++    {
++      gpg_err_set_errno (EINVAL);
++      return (time_t)(-1);
++    }
++  
++  cnsecs = (((unsigned long long)ft.dwHighDateTime << 32)
++	    | ft.dwLowDateTime);
++  cnsecs -= 116444736000000000ULL; /* The filetime epoch is 1601-01-01.  */
++  return (time_t)(cnsecs / 10000000ULL);
++}
++#endif
++
++
+ /* Parse the string TIMESTAMP into a time_t.  The string may either be
+    seconds since Epoch or in the ISO 8601 format like
+    "20390815T143012".  Returns 0 for an empty string or seconds since
+@@ -354,6 +387,9 @@
+ 
+       if (endp)
+         *endp = (char*)(timestamp + 15);
++#ifdef HAVE_W32_SYSTEM
++      return _gpgme_timegm (&buf);
++#else
+ #ifdef HAVE_TIMEGM
+       return timegm (&buf);
+ #else
+@@ -368,6 +404,7 @@
+         return tim;
+       }
+ #endif /* !HAVE_TIMEGM */
++#endif /* !HAVE_W32_SYSTEM */
+     }
+   else
+     return (time_t)strtoul (timestamp, endp, 10);
+Index: src/debug.c
+===================================================================
+--- src/debug.c	(Revision 1447)
++++ src/debug.c	(Revision 1495)
+@@ -115,12 +115,16 @@
+       char *e;
+       const char *s1, *s2;;
+ 
++#ifdef HAVE_W32CE_SYSTEM
++      e = _gpgme_w32ce_get_debug_envvar ();
++#else /*!HAVE_W32CE_SYSTEM*/
+       err = _gpgme_getenv ("GPGME_DEBUG", &e);
+       if (err)
+ 	{
+ 	  UNLOCK (debug_lock);
+ 	  return;
+ 	}
++#endif /*!HAVE_W32CE_SYSTEM*/
+ 
+       initialized = 1;
+       errfp = stderr;
+@@ -231,7 +235,7 @@
+   UNLOCK (debug_lock);
+   fflush (errfp);
+ 
+-  errno = saved_errno;
++  gpg_err_set_errno (saved_errno);
+ }
+ 
+ 
+Index: src/engine-gpgconf.c
+===================================================================
+--- src/engine-gpgconf.c	(Revision 1447)
++++ src/engine-gpgconf.c	(Revision 1495)
+@@ -27,7 +27,6 @@
+ #include <sys/types.h>
+ #include <assert.h>
+ #include <unistd.h>
+-#include <locale.h>
+ #include <fcntl.h> /* FIXME */
+ #include <errno.h>
+ 
+Index: src/error.c
+===================================================================
+--- src/error.c	(Revision 1447)
++++ src/error.c	(Revision 1495)
+@@ -71,9 +71,28 @@
+ int
+ gpgme_err_code_to_errno (gpgme_err_code_t code)
+ {
+-  return gpg_err_code_from_errno (code);
++  return gpg_err_code_to_errno (code);
+ }
+ 
++
++/* Retrieve the error code directly from the ERRNO variable.  This
++   returns GPG_ERR_UNKNOWN_ERRNO if the system error is not mapped
++   (report this) and GPG_ERR_MISSING_ERRNO if ERRNO has the value 0. */
++gpgme_err_code_t
++gpgme_err_code_from_syserror (void)
++{
++  return gpg_err_code_from_syserror ();
++}
++
++
++/* Set the ERRNO variable.  This function is the preferred way to set
++   ERRNO due to peculiarities on WindowsCE.  */
++void
++gpgme_err_set_errno (int err)
++{
++  gpg_err_set_errno (err);
++}
++
+   
+ /* Return an error value with the error source SOURCE and the system
+    error ERR.  */
+@@ -85,7 +104,7 @@
+ 
+ 
+ /* Return an error value with the system error ERR.  */
+-gpgme_err_code_t
++gpgme_error_t
+ gpgme_error_from_errno (int err)
+ {
+   return gpgme_error (gpg_err_code_from_errno (err));
+Index: src/debug.h
+===================================================================
+--- src/debug.h	(Revision 1447)
++++ src/debug.h	(Revision 1495)
+@@ -204,6 +204,10 @@
+   _gpgme_debug (_gpgme_trace_level, "%s: leave: " fmt "\n",	\
+ 		_gpgme_trace_func, arg1, arg2, arg3, arg4, arg5), \
+     _gpgme_debug_frame_end (), 0
++#define TRACE_SUC6(fmt, arg1, arg2, arg3, arg4, arg5, arg6)	\
++  _gpgme_debug (_gpgme_trace_level, "%s: leave: " fmt "\n",	\
++		_gpgme_trace_func, arg1, arg2, arg3, arg4, arg5, arg6),	\
++    _gpgme_debug_frame_end (), 0
+ 
+ #define TRACE_LOG(fmt)							\
+   _gpgme_debug (_gpgme_trace_level, "%s: check: %s=%p, " fmt "\n",	\
+Index: src/w32-ce.c
+===================================================================
+--- src/w32-ce.c	(Revision 0)
++++ src/w32-ce.c	(Revision 1495)
+@@ -0,0 +1,405 @@
++/* w32-ce.h 
++   Copyright (C) 2010 g10 Code GmbH
++
++   This file is part of GPGME.
++ 
++   GPGME is free software; you can redistribute it and/or modify it
++   under the terms of the GNU Lesser General Public License as
++   published by the Free Software Foundation; either version 2.1 of
++   the License, or (at your option) any later version.
++   
++   GPGME is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++   
++   You should have received a copy of the GNU Lesser General Public
++   License along with this program; if not, write to the Free Software
++   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++   02111-1307, USA.  */
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#include <errno.h>
++#include <assert.h>
++
++#include <gpg-error.h>
++
++#include "w32-ce.h"
++
++
++/* Return a malloced string encoded in UTF-8 from the wide char input
++   string STRING.  Caller must free this value.  Returns NULL and sets
++   ERRNO on failure.  Calling this function with STRING set to NULL is
++   not defined.  */
++char *
++wchar_to_utf8 (const wchar_t *string)
++{
++  int n;
++  char *result;
++
++  n = WideCharToMultiByte (CP_UTF8, 0, string, -1, NULL, 0, NULL, NULL);
++  if (n < 0)
++    {
++      gpg_err_set_errno (EINVAL);
++      return NULL;
++    }
++
++  result = malloc (n+1);
++  if (!result)
++    return NULL;
++
++  n = WideCharToMultiByte (CP_UTF8, 0, string, -1, result, n, NULL, NULL);
++  if (n < 0)
++    {
++      free (result);
++      gpg_err_set_errno (EINVAL);
++      result = NULL;
++    }
++  return result;
++}
++
++
++/* Return a malloced wide char string from an UTF-8 encoded input
++   string STRING.  Caller must free this value.  Returns NULL and sets
++   ERRNO on failure.  Calling this function with STRING set to NULL is
++   not defined.  */
++wchar_t *
++utf8_to_wchar (const char *string)
++{
++  int n;
++  size_t nbytes;
++  wchar_t *result;
++
++  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, NULL, 0);
++  if (n < 0)
++    {
++      gpg_err_set_errno (EINVAL);
++      return NULL;
++    }
++
++  nbytes = (size_t)(n+1) * sizeof(*result);
++  if (nbytes / sizeof(*result) != (n+1)) 
++    {
++      gpg_err_set_errno (ENOMEM);
++      return NULL;
++    }
++  result = malloc (nbytes);
++  if (!result)
++    return NULL;
++
++  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, result, n);
++  if (n < 0)
++    {
++      free (result);
++      gpg_err_set_errno (EINVAL);
++      result = NULL;
++    }
++  return result;
++}
++
++
++#define MAX_ENV 30
++
++char *environ[MAX_ENV + 1];
++
++char *
++getenv (const char *name)
++{
++  static char *past_result;
++  char **envp;
++
++  if (past_result)
++    {
++      free (past_result);
++      past_result = NULL;
++    }
++
++#if 0
++  if (! strcmp (name, "DBUS_VERBOSE"))
++    return past_result = get_verbose_setting ();
++  else if (! strcmp (name, "HOMEPATH"))
++    return past_result = find_my_documents_folder ();
++  else if (! strcmp (name, "DBUS_DATADIR"))
++    return past_result = find_inst_subdir ("share");
++#endif
++
++  for (envp = environ; *envp != 0; envp++)
++    {
++      const char *varp = name;
++      char *ep = *envp;
++
++      while (*varp == *ep && *varp != '\0')
++	{
++	  ++ep;
++	  ++varp;
++	};
++
++      if (*varp == '\0' && *ep == '=')
++	return ep + 1;
++    }
++
++  return NULL;
++}
++
++
++void
++GetSystemTimeAsFileTime (LPFILETIME ftp)
++{
++  SYSTEMTIME st;
++  GetSystemTime (&st);
++  SystemTimeToFileTime (&st, ftp);
++}
++
++
++BOOL
++DeleteFileA (LPCSTR lpFileName)
++{
++  wchar_t *filename;
++  BOOL result;
++  int err;
++
++  filename = utf8_to_wchar (lpFileName);
++  if (!filename)
++    return FALSE;
++
++  result = DeleteFileW (filename);
++
++  err = GetLastError ();
++  free (filename);
++  SetLastError (err);
++  return result;
++}
++
++
++BOOL
++CreateProcessA (LPCSTR pszImageName, LPSTR pszCmdLine,
++                LPSECURITY_ATTRIBUTES psaProcess,
++                LPSECURITY_ATTRIBUTES psaThread, BOOL fInheritHandles,
++                DWORD fdwCreate, PVOID pvEnvironment, LPCSTR pszCurDir,
++                LPSTARTUPINFOA psiStartInfo,
++                LPPROCESS_INFORMATION pProcInfo)
++{
++  wchar_t *image_name = NULL;
++  wchar_t *cmd_line = NULL;
++  BOOL result;
++  int err;
++
++  assert (psaProcess == NULL);
++  assert (psaThread == NULL);
++  assert (fInheritHandles == FALSE);
++  assert (pvEnvironment == NULL);
++  assert (pszCurDir == NULL);
++  /* psiStartInfo is generally not NULL.  */
++
++  if (pszImageName)
++    {
++      image_name = utf8_to_wchar (pszImageName);
++      if (!image_name)
++	return 0;
++    }
++  if (pszCmdLine)
++    {
++      cmd_line = utf8_to_wchar (pszCmdLine);
++      if (!cmd_line)
++        {
++          if (image_name)
++            free (image_name);
++          return 0;
++        }
++    }
++
++  result = CreateProcessW (image_name, cmd_line, NULL, NULL, FALSE,
++                           fdwCreate, NULL, NULL, NULL, pProcInfo);
++
++  err = GetLastError ();
++  free (image_name);
++  free (cmd_line);
++  SetLastError (err);
++  return result;
++}
++
++
++LONG
++RegOpenKeyExA (HKEY hKey, LPCSTR lpSubKey, DWORD ulOptions,
++               REGSAM samDesired, PHKEY phkResult)
++{
++  wchar_t *subkey;
++  LONG result;
++  int err;
++
++  if (lpSubKey)
++    {
++      subkey = utf8_to_wchar (lpSubKey);
++      if (!subkey)
++	return 0;
++    }
++  else
++    subkey = NULL;
++
++  result = RegOpenKeyEx (hKey, subkey, ulOptions, samDesired, phkResult);
++
++  err = GetLastError ();
++  free (subkey);
++  SetLastError (err);
++  return result;
++}
++
++
++LONG
++RegQueryValueExA (HKEY hKey, LPCSTR lpValueName, LPDWORD lpReserved,
++                  LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
++{
++  wchar_t *name;
++  LONG err;
++  BYTE *data;
++  DWORD data_len;
++  DWORD type;
++
++  if (lpValueName)
++    {
++      name = utf8_to_wchar (lpValueName);
++      if (!name)
++	return GetLastError ();
++    }
++  else
++    name = NULL;
++
++  data_len = 0;
++  err = RegQueryValueExW (hKey, name, lpReserved, lpType, NULL, &data_len);
++  if (err || !lpcbData)
++    {
++      free (name);
++      return err;
++    }
++
++  data = malloc (data_len + sizeof (wchar_t));
++  if (!data)
++    {
++      free (name);
++      return ERROR_NOT_ENOUGH_MEMORY;
++    }
++  
++  err = RegQueryValueExW (hKey, name, lpReserved, &type, data, &data_len);
++  if (lpType)
++    *lpType = type;
++  free (name);
++  /* If err is ERROR_MORE_DATA, there probably was a race condition.
++     We can punt this to the caller just as well.  */
++  if (err)
++    return err;
++
++  /* NOTE: REG_MULTI_SZ and REG_EXPAND_SZ not supported, because they
++     are not needed in this module.  */
++  if (type == REG_SZ)
++    {
++      char *data_c;
++      int data_c_len;
++
++      /* This is valid since we allocated one more above.  */
++      data[data_len] = '\0';
++      data[data_len + 1] = '\0';
++      
++      data_c = wchar_to_utf8 ((wchar_t*) data);
++      if (!data_c)
++        return GetLastError();
++
++      data_c_len = strlen (data_c) + 1;
++      assert (data_c_len <= data_len + sizeof (wchar_t));
++      memcpy (data, data_c, data_c_len);
++      data_len = data_c_len;
++      free (data_c);
++    }
++
++  /* DATA and DATA_LEN now contain the result.  */
++  if (lpData)
++    {
++      if (data_len > *lpcbData)
++        err = ERROR_MORE_DATA;
++      else
++        memcpy (lpData, data, data_len);
++    }
++  *lpcbData = data_len;
++  return err;
++}
++
++
++DWORD
++GetTempPathA (DWORD nBufferLength, LPSTR lpBuffer)
++{
++  wchar_t dummy[1];
++  DWORD len;
++
++  len = GetTempPathW (0, dummy);
++  if (len == 0)
++    return 0;
++
++  assert (len <= MAX_PATH);
++
++  /* Better be safe than sorry.  MSDN doesn't say if len is with or
++     without terminating 0.  */
++  len++;
++
++  {
++    wchar_t *buffer_w;
++    DWORD len_w;
++    char *buffer_c;
++    DWORD len_c;
++
++    buffer_w = malloc (sizeof (wchar_t) * len);
++    if (! buffer_w)
++      return 0;
++
++    len_w = GetTempPathW (len, buffer_w);
++    /* Give up if we still can't get at it.  */
++    if (len_w == 0 || len_w >= len)
++      {
++        free (buffer_w);
++        return 0;
++      }
++
++    /* Better be really safe.  */
++    buffer_w[len_w] = '\0';
++
++    buffer_c = wchar_to_utf8 (buffer_w);
++    free (buffer_w);
++    if (! buffer_c)
++      return 0;
++
++    /* strlen is correct (not _mbstrlen), because we want storage and
++       not string length.  */
++    len_c = strlen (buffer_c) + 1;
++    if (len_c > nBufferLength)
++      return len_c;
++
++    strcpy (lpBuffer, buffer_c);
++    free (buffer_c);
++    return len_c - 1;
++  }
++}
++
++
++BOOL
++SHGetSpecialFolderPathA (HWND hwndOwner, LPSTR lpszPath, int nFolder,
++                         BOOL fCreate)
++{
++  wchar_t path[MAX_PATH];
++  char *path_c;
++  BOOL result;
++
++  path[0] = (wchar_t) 0;
++  result = SHGetSpecialFolderPathW (hwndOwner, path, nFolder, fCreate);
++  /* Note: May return false even if succeeds.  */
++
++  path[MAX_PATH - 1] = (wchar_t) 0;
++  path_c = wchar_to_utf8 (path);
++  if (! path_c)
++    return 0;
++  
++  strncpy (lpszPath, path_c, MAX_PATH);
++  free (path_c);
++  lpszPath[MAX_PATH - 1] = '\0';
++  return result;
++}
+Index: src/passwd.c
+===================================================================
+--- src/passwd.c	(Revision 1447)
++++ src/passwd.c	(Revision 1495)
+@@ -27,6 +27,14 @@
+ #include "context.h"
+ #include "ops.h"
+ 
++
++typedef struct
++{
++  int success_seen;
++  int error_seen;
++} *op_data_t;
++
++
+ 
+ /* Parse an error status line and return the error code.  */
+ static gpgme_error_t
+@@ -63,16 +71,39 @@
+ passwd_status_handler (void *priv, gpgme_status_code_t code, char *args)
+ {
+   gpgme_ctx_t ctx = (gpgme_ctx_t) priv;
+-  gpgme_error_t err = 0;
++  gpgme_error_t err;
++  void *hook;
++  op_data_t opd;
+ 
+-  (void)ctx;
++  err = _gpgme_op_data_lookup (ctx, OPDATA_PASSWD, &hook, -1, NULL);
++  opd = hook;
++  if (err)
++    return err;
+ 
+   switch (code)
+     {
+     case GPGME_STATUS_ERROR:
+       err = parse_error (args);
++      if (err)
++        opd->error_seen = 1;
+       break;
+-                         
++
++    case GPGME_STATUS_SUCCESS:
++      opd->success_seen = 1;
++      break;
++      
++    case GPGME_STATUS_EOF:
++      /* In case the OpenPGP engine does not properly implement the
++         passwd command we won't get a success status back and thus we
++         conclude that this operation is not supported.  This is for
++         example the case for GnuPG < 2.0.16.  Note that this test is
++         obsolete for assuan based engines because they will properly
++         return an error for an unknown command.  */
++      if (ctx->protocol == GPGME_PROTOCOL_OpenPGP
++          && !opd->error_seen && !opd->success_seen)
++        err = gpg_error (GPG_ERR_NOT_SUPPORTED);
++      break;
++
+     default:
+       break;
+     }
+@@ -86,6 +117,8 @@
+               unsigned int flags)
+ {
+   gpgme_error_t err;
++  void *hook;
++  op_data_t opd;
+ 
+   if (!key)
+     return gpg_error (GPG_ERR_INV_VALUE);
+@@ -96,6 +129,14 @@
+   if (err)
+     return err;
+ 
++  err = _gpgme_op_data_lookup (ctx, OPDATA_PASSWD, &hook, sizeof (*opd), NULL);
++  opd = hook;
++  if (err)
++    return err;
++
++  opd->success_seen = 0;
++  opd->error_seen = 0;
++
+   _gpgme_engine_set_status_handler (ctx->engine, passwd_status_handler, ctx);
+ 
+   return _gpgme_engine_op_passwd (ctx->engine, key, flags);
+Index: src/verify.c
+===================================================================
+--- src/verify.c	(Revision 1447)
++++ src/verify.c	(Revision 1495)
+@@ -227,7 +227,7 @@
+     {
+       sig = calloc (1, sizeof (*sig));
+       if (!sig)
+-        return gpg_error_from_errno (errno);
++        return gpg_error_from_syserror ();
+       if (!opd->result.signatures)
+         opd->result.signatures = sig;
+       if (opd->current_sig)
+@@ -293,7 +293,7 @@
+       /* Parse the pubkey algo.  */
+       if (!end)
+ 	goto parse_err_sig_fail;
+-      errno = 0;
++      gpg_err_set_errno (0);
+       sig->pubkey_algo = strtol (end, &tail, 0);
+       if (errno || end == tail || *tail != ' ')
+ 	goto parse_err_sig_fail;
+@@ -304,7 +304,7 @@
+       /* Parse the hash algo.  */
+       if (!*end)
+ 	goto parse_err_sig_fail;
+-      errno = 0;
++      gpg_err_set_errno (0);
+       sig->hash_algo = strtol (end, &tail, 0);
+       if (errno || end == tail || *tail != ' ')
+ 	goto parse_err_sig_fail;
+@@ -362,7 +362,7 @@
+     {
+       sig->fpr = strdup (args);
+       if (!sig->fpr)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+     }
+   return 0;
+ }
+@@ -386,7 +386,7 @@
+     free (sig->fpr);
+   sig->fpr = strdup (args);
+   if (!sig->fpr)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   /* Skip the creation date.  */
+   end = strchr (end, ' ');
+@@ -418,7 +418,7 @@
+ 	  if (end)
+ 	    {
+ 	      /* Parse the pubkey algo.  */
+-	      errno = 0;
++	      gpg_err_set_errno (0);
+ 	      sig->pubkey_algo = strtol (end, &tail, 0);
+ 	      if (errno || end == tail || *tail != ' ')
+ 		return gpg_error (GPG_ERR_INV_ENGINE);
+@@ -431,7 +431,7 @@
+ 		{
+ 		  /* Parse the hash algo.  */
+ 
+-		  errno = 0;
++		  gpg_err_set_errno (0);
+ 		  sig->hash_algo = strtol (end, &tail, 0);
+ 		  if (errno || end == tail || *tail != ' ')
+ 		    return gpg_error (GPG_ERR_INV_ENGINE);
+@@ -526,14 +526,14 @@
+ 	{
+ 	  dest = notation->value = malloc (len);
+ 	  if (!dest)
+-	    return gpg_error_from_errno (errno);
++	    return gpg_error_from_syserror ();
+ 	}
+       else
+ 	{
+ 	  int cur_len = strlen (notation->value);
+ 	  dest = realloc (notation->value, len + strlen (notation->value));
+ 	  if (!dest)
+-	    return gpg_error_from_errno (errno);
++	    return gpg_error_from_syserror ();
+ 	  notation->value = dest;
+ 	  dest += cur_len;
+ 	}
+Index: src/w32-ce.h
+===================================================================
+--- src/w32-ce.h	(Revision 0)
++++ src/w32-ce.h	(Revision 1495)
+@@ -0,0 +1,70 @@
++/* w32-ce.h 
++   Copyright (C) 2010 g10 Code GmbH
++
++   This file is part of GPGME.
++ 
++   GPGME is free software; you can redistribute it and/or modify it
++   under the terms of the GNU Lesser General Public License as
++   published by the Free Software Foundation; either version 2.1 of
++   the License, or (at your option) any later version.
++   
++   GPGME is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++   
++   You should have received a copy of the GNU Lesser General Public
++   License along with this program; if not, write to the Free Software
++   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++   02111-1307, USA.  */
++
++#ifndef GPGME_W32_CE_H
++#define GPGME_W32_CE_H
++
++#include <time.h>
++#include <stdarg.h>
++
++/* For getaddrinfo.  */
++#define _MSV_VER 0x401
++#include <windows.h>
++
++
++/* shlobj.h declares these only for _WIN32_IE that we don't want to define.
++   In any case, with mingw32ce we only get a SHGetSpecialFolderPath.  */
++#define SHGetSpecialFolderPathW SHGetSpecialFolderPath
++BOOL WINAPI SHGetSpecialFolderPathA(HWND,LPSTR,int,BOOL);
++BOOL WINAPI SHGetSpecialFolderPathW(HWND,LPWSTR,int,BOOL);
++
++
++#define getenv _gpgme_wince_getenv
++char *getenv (const char *name);
++
++#include <io.h>
++#define isatty(fd) 0
++
++
++/* Windows CE is missing some Windows functions that we want.  */
++
++#define GetSystemTimeAsFileTime _gpgme_wince_GetSystemTimeAsFileTime
++void GetSystemTimeAsFileTime (LPFILETIME ftp);
++
++#define DeleteFileA _gpgme_wince_DeleteFileA
++BOOL DeleteFileA(LPCSTR);
++
++#define CreateProcessA _gpgme_wince_CreateProcessA
++BOOL CreateProcessA(LPCSTR,LPSTR,LPSECURITY_ATTRIBUTES,LPSECURITY_ATTRIBUTES,BOOL,DWORD,PVOID,LPCSTR,LPSTARTUPINFOA,LPPROCESS_INFORMATION);
++
++#define RegOpenKeyExA _gpgme_wince_RegOpenKeyExA
++LONG RegOpenKeyExA(HKEY,LPCSTR,DWORD,REGSAM,PHKEY);
++
++#define RegQueryValueExA _gpgme_wince_RegQueryValueExA
++LONG WINAPI RegQueryValueExA(HKEY,LPCSTR,LPDWORD,LPDWORD,LPBYTE,LPDWORD);
++
++#define GetTempPathA _gpgme_wince_GetTempPathA
++DWORD GetTempPathA(DWORD,LPSTR);
++
++#define SHGetSpecialFolderPathA _gpgme_wince_SHGetSpecialFolderPathA
++BOOL SHGetSpecialFolderPathA(HWND,LPSTR,int,BOOL);
++
++
++#endif /* GPGME_W32_CE_H */
+Index: src/ChangeLog
+===================================================================
+--- src/ChangeLog	(Revision 1447)
++++ src/ChangeLog	(Revision 1495)
+@@ -1,3 +1,275 @@
++2010-10-28  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
++
++	* opassuan.c (gpgme_op_assuan_transact_ext): Fix uninitialized
++	value use.  Reported by Marc Mutz.
++
++2010-10-07  Werner Koch  <wk@g10code.com>
++
++	* gpgme-tool.c (ARGP_ERR_UNKNOWN): Use EDEADLK if available.
++
++	* w32-util.c (_gpgme_w32ce_get_debug_envvar) [W32CE]: New.
++	* debug.c (debug_init) [W32CE]: Use new function.
++
++2010-09-16  Werner Koch  <wk@g10code.com>
++
++	* import.c: Include "util.h".
++	(parse_import): Return GPG_ERR_MISSING_ISSUER_CERT.
++
++	* util.h: Add fallback define for GPG_ERR_MISSING_ISSUER_CERT.
++	* op-support.c: Include "util.h".
++	(_gpgme_parse_inv_recp): Handle new code 12.
++
++2010-09-02  Marcus Brinkmann  <marcus@g10code.de>
++
++	* error.c (gpgme_err_code_to_errno): Fix cut and paste bug (thanks
++	to Marc Mutz).
++
++2010-09-01  Marcus Brinkmann  <marcus@g10code.de>
++
++	* w32-io.c: Revert change from 2009-06-18, as it created a race
++	condition.
++
++2010-08-18  Marcus Brinkmann  <marcus@g10code.de>
++
++	* gpgme.def: Add gpgme_err_code_from_syserror and gpgme_err_set_errno.
++	* libgpgme.vers: Likewise.
++	* gpgme.h.in (gpgme_error_from_errno): Fix return type to
++	gpgme_error_t.
++	(gpgme_err_code_from_syserror, gpgme_err_set_errno): New prototype.
++	(gpgme_error_from_syserror): New inline function (why are
++	gpgme_err_make_from_errno and gpgme_error_from_errno not inline
++	functions?).
++	* error.c (gpgme_error_from_errno): Fix return type to gpgme_error_t.
++	(gpgme_err_set_errno, gpgme_err_code_from_syserror): New functions.
++
++2010-08-03  Marcus Brinkmann  <marcus@g10code.de>
++
++	* gpgme-tool.c (result_encrypt_to_xml, result_sign_to_xml)
++	(result_verify_to_xml, result_import_to_xml)
++	(result_genkey_to_xml): Check vigorously for null pointers.
++
++	* w32-io.c (GPGCEDEV_IOCTL_ASSIGN_RVID): New macro.
++	(_gpgme_io_spawn): Use ASSIGN_RVID.
++
++2010-06-11  Marcus Brinkmann  <marcus@g10code.de>
++
++	* w32-io.c (_gpgme_io_spawn): Remove debug printf.
++
++2010-06-10  Marcus Brinkmann  <marcus@g10code.de>
++
++	* gpgme-tool.c (gpgme_server): Use special hack for Windows CE to
++	get at stdin and stdout.
++
++	* engine-gpgsm.c (gpgsm_new): Translate returned achild_fds back
++	to child_fds.
++
++	* debug.h (TRACE_SUC6): New macro.
++	* w32-io.c (MAX_SLAFD): New macro.
++	(fd_table): New static variable.
++	(new_fd, release_fd): New functions.
++	(fd_to_handle, handle_to_fd, handle_to_socket): Remove macros.
++	(MAX_READERS, MAX_WRITERS): Increase to 64.
++	(notify_table): Increase to MAX_SLAFD.
++	(struct reader_context_s, struct writer_context_s): Add member
++	file_sock.
++	(reader, writer): Use file_hd vs file_sock to decide if socket
++	operations to use.  Remove auto-detect mode.
++	(create_reader, create_writer): Set file_sock.  Unblock pending
++	thread only if this is a pipe fd.
++	(_gpgme_io_pipe): Allocate fds from table and return slot indices
++	instead of windows handles.  This allows to properly handle RVIDs.
++	(_gpgme_io_close): Handle dup'ed file descriptors.
++	(build_commandline) [HAVE_W32_SYSTEM]: Use RVID from fd table now.
++	(_gpgme_io_spawn): Use fd table now.
++	(_gpgme_io_fd2str): Use RVID from fd table now.
++	(_gpgme_io_dup): Implement using fd table.
++	(_gpgme_io_socket): Allocate fds from table.
++	(_gpgme_io_connect): Use fd from table.
++
++	* w32-glib-io.c (find_channel): Check that the slot is used.
++
++2010-06-09  Marcus Brinkmann  <marcus@g10code.de>
++
++	* w32-io.c [HAVE_W32CE_SYSTEM]: Include assuan.h and winioctl.h.
++	(GPGCEDEV_IOCTL_UNBLOCK) [HAVE_W32CE_SYSTEM]: Define.
++	(set_synchronize) [HAVE_W32CE_SYSTEM]: Stub it out.
++	(is_socket): Allow to return -1 for auto-detect (old behaviour).
++	(is_socket) [HAVE_W32CE_SYSTEM]: Return -1.
++	(reader): Handle auto-detect case.  Handle ctx->stop_me before
++	checking for EOF.
++	(destroy_reader) [HAVE_W32CE_SYSTEM]: Unblock a pending reader.
++	(writer): Handle auto-detect case.  Handle ctx->stop_me with
++	ERROR_BUSY.
++	(destroy_writer) [HAVE_W32CE_SYSTEM]: Unblock a pending writer.
++	(_gpgme_io_pipe) [HAVE_W32CE_SYSTEM]: Implement in terms of a
++	half-pipe.
++	(build_commandline) [HAVE_W32CE_SYSTEM]: New function.
++	(_gpgme_io_spawn) [HAVE_W32CE_SYSTEM]: Implement it differently
++	for this platform.
++	(_gpgme_io_fd2str) [HAVE_W32CE_SYSTEM]: Implement it for RVIDs.
++	(_gpgme_io_dup) [HAVE_W32CE_SYSTEM]: Stub it out.
++
++	* gpgme-tool.c (result_add_timestamp): Add missing NULL argument.
++	(result_sign_to_xml): Protect against NULL fingerprint.
++	(struct server): New members input_fd, input_filename,
++	input_stream output_fd, output_filename, output_stream,
++	message_filename, message_stream.
++	(server_reset_fds): Deallocate those.
++	(server_parse_fd): New function.
++	(server_data_obj): Take optional filename argument and direction
++	argument.  Also take new argument to return a filestream that
++	needs to be closed after destroying the data object.
++	Change all callers, too.
++	(input_notify, output_notify): Removed.
++	(cmd_input, cmd_output): New functions.
++	(gpgme_server): Do not register input and output notifier.
++	(register_commands): Use cmd_input and cmd_output.
++	(cmd_message): Rewritten to use server_parse_fd.
++	(cmd_delete, cmd_keylist): Fix inverted option check.
++	(main) [HAVE_W32CE_SYSTEM]: Sleep a bit to work around bug in ssh.
++
++	* genkey.c (gpgme_op_genkey): Return err with TRACE_ERR.
++
++2010-05-12  Marcus Brinkmann  <marcus@g10code.de>
++
++	* conversion.c (_gpgme_timegm) [HAVE_W32_SYSTEM]: New static
++	function.
++	(_gpgme_parse_timestamp) [HAVE_W32_SYSTEM]: Use it.
++
++	* gpgme-tool.c (main): Protect call to setlocale with
++	HAVE_SETLOCALE.
++
++	* Makefile.am (system_components): Remove custom cppflags from
++	RCCOMPILE (because gpg-error adds -idirafter that makes RC bail.
++	[HAVE_W32CE_SYSTEM]: Add w32-ce.h and w32-ce.c, clear
++	libexec_PROGRAMS.
++	* w32-ce.h, w32-ce.c: New files.
++
++	* priv-io.h: Include <sys/types.h>
++	* util.h: Likewise.
++
++2010-05-11  Marcus Brinkmann  <marcus@g10code.de>
++
++	* w32-util.c: Include ath.h
++	(HAVE_ALLOW_SET_FOREGROUND_WINDOW) [!HAVE_W32CE_SYSTEM]: Define
++	it.
++	(RTLD_LAZY, dlopen, dlsym,
++	dlclose) [!HAVE_ALLOW_SET_FORGROUND_WINDOW]: Don't define anymore.
++	(_gpgme_allow_set_foreground_window) [!HAVE_ALLOW_SET_FOREGROUND_WINDOW]:
++	Make it a stub.
++	(read_w32_registry_string): Use FooA variants of Windows functions
++	instead of Foo (which dispatches depending on UNICODE).
++	[!HAVE_W32CE_SYSTEM]: Don't check environment.
++	(w32_shgetfolderpath): Remove.
++	(find_program_at_standard_place): Call
++	SHGetSpecialFolderPath (which is available on all Windows systems
++	and also Windows CE).
++	(mkstemp): Use ath_self instead of getpid.
++	(_gpgme_mkstemp): Use GetTempPathA instead of GetTempPath.
++
++	* gpgme.h.in: Use _WIN32 instead of _MSC_VER.  Include time.h for
++	time_t.
++
++2010-05-07  Marcus Brinkmann  <marcus@g10code.de>
++
++	* engine-g13.c, gpgme.c, engine-gpgsm.c, engine-gpg.c,
++	op-support.c, engine-assuan.c, gpgme-tool.c: Include <locale.h>
++	only if available with HAVE_LOCALE_H and conditionalize use of
++	LC_CTYPE on its definition.
++	* engine-gpgconf.c: Do not include <locale.h>.
++
++	* engine-gpgsm.c (gpgsm_new, start): Cast between int and
++	assuan_fd_t.
++	* assuan-support.c (my_pipe, my_close, my_read, my_write): Likewise.
++	* gpgme-tool.c (server_data_obj, server_reset_fds, gpgme_server),
++	(my_recvmsg, my_sendmsg, my_spawn): Likewise.
++	* engine-assuan.c (start): Likewise.
++	* engine-g13.c (start): Likewise.
++
++2010-05-06  Marcus Brinkmann  <marcus@g10code.de>
++
++	* w32-glib-io.c, w32-io.c, w32-qt-io.cpp, w32-sema.c, w32-util.c:
++	Do not include <signal.h>.
++
++	* sign.c, data-user.c, conversion.c, debug.c, verify.c, data.c,
++	decrypt.c, delete.c, assuan-support.c, import.c, engine-gpgsm.c,
++	data-mem.c, op-support.c, w32-io.c, w32-util.c, data-compat.c: Use
++	gpg_error_from_syserror instead gpg_error_from_errno, and use
++	gpg_err_set_errno to set error number.
++	* setenv.c: Include <gpg-error.h> and define __set_errno to use
++	gpg_err_set_errno.
++	* gpgme-tool.c (ARGP_ERR_UNKNOWN): Define to EDEADLOCK (which is
++	mapped in Windows CE) instead of E2BIG (which is not).
++	(gt_import_keys): Initialize err.
++
++2010-04-19  Marcus Brinkmann  <marcus@g10code.de>
++
++	* assuan-support.c (my_spawn): Cast to avoid warning.
++	* engine-g13.c (g13_new): Make ARGV array of pointer to const
++	char.
++	(g13_assuan_simple_command) [!USE_DESCRIPTOR_FUNCTION]: Don't define.
++	* ops.h (_gpgme_key_append_name): Same in prototype.
++	* key.c (_gpgme_key_append_name): Make SRC argument pointer to
++	const char.
++	* posix-util.c (_gpgme_get_uiserver_socket_path): Make HOMEDIR
++	const.
++	* vfs-mount.c (gpgme_op_vfs_transact_start): Never define this
++	potentially useful but currently unused function.
++	* vfs-create.c (gpgme_op_vfs_transact_start): Likewise.
++
++2010-04-16  Werner Koch  <wk@g10code.com>
++
++	* w32-io.c (is_socket): New.
++	(reader, writer): Use it to figure out the API to use.
++
++2010-03-15  Werner Koch  <wk@g10code.com>
++
++	* gpgme.h.in: Add autoconf template to set generated file to
++	read-only in an emacs buffer.
++
++2010-03-12  Werner Koch  <wk@g10code.com>
++
++	* gpgme.h.in (GPGME_STATUS_SUCCESS): Use the right file for the
++	change; see below.
++
++	* passwd.c (op_data_t): New.
++	(passwd_start): Setup OPD.
++	(passwd_status_handler): Return GPG_ERR_NOT_SUPPORTED if needed.
++	* context.h (OPDATA_PASSWD): New.
++	* gpgme.h (GPGME_STATUS_SUCCESS): New.
++
++2010-03-09  Werner Koch  <wk@g10code.com>
++
++	* engine-gpgsm.c (gpgsm_keylist): Try to start the agent.
++
++2010-02-17  Werner Koch  <wk@g10code.com>
++
++	* posix-io.c (notify_table): Change implementation.
++	(notify_table_item_t, notify_table_size, notify_table_lock): New.
++	(_gpgme_io_close, _gpgme_io_set_close_notify): Adjust for new
++	implementation.
++
++2010-02-16  Werner Koch  <wk@g10code.com>
++
++	* gpgme-tool.c (spacep, has_option, skip_options): New.
++	(cmd_export): Implement option --minimal.
++
++	* gpgme.h.in (GPGME_EXPORT_MODE_MINIMAL): New.
++	* export.c (export_start, export_ext_start): Implement it.
++	* engine-gpg.c (export_common): Ditto.
++
++2010-01-25  Werner Koch  <wk@g10code.com>
++
++	* w32-io.c (_gpgme_io_connect): Fix return code check to make it work.
++
++	* version.c (do_subsystem_inits): Remove superfluous second
++	WSAStartup.
++
++2010-01-22  Werner Koch  <wk@g10code.com>
++
++	* w32-io.c (writer): Try to use send first.
++	(reader): Try to use recv first.
++
+ 2010-01-08  Werner Koch  <wk@g10code.com>
+ 
+ 	* engine-gpg.c (gpg_passwd): New.
+@@ -727,7 +999,7 @@
+ 
+ 	* opassuan.c, dirinfo.c, engine-assuan.c: New.
+ 	* Makefile.am:  Add them.
+-	* engine-backend.h: Add _gpgme_engine_ops_assuan. 
++	* engine-backend.h: Add _gpgme_engine_ops_assuan.
+ 	(struct engine_ops): Add field OPASSUAN_TRANSACT.  Update all
+ 	engine intializers.
+ 	* Makefile.am (gpgsm_components): Add engine-assuan.c.
+Index: src/data.c
+===================================================================
+--- src/data.c	(Revision 1447)
++++ src/data.c	(Revision 1495)
+@@ -46,7 +46,7 @@
+   *r_dh = NULL;
+   dh = calloc (1, sizeof (*dh));
+   if (!dh)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   dh->cbs = cbs;
+ 
+@@ -79,12 +79,12 @@
+ 
+   if (!dh)
+     {
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return TRACE_SYSRES (-1);
+     }
+   if (!dh->cbs->read)
+     {
+-      errno = ENOSYS;
++      gpg_err_set_errno (ENOSYS);
+       return TRACE_SYSRES (-1);
+     }
+   do
+@@ -107,12 +107,12 @@
+ 
+   if (!dh)
+     {
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return TRACE_SYSRES (-1);
+     }
+   if (!dh->cbs->write)
+     {
+-      errno = ENOSYS;
++      gpg_err_set_errno (ENOSYS);
+       return TRACE_SYSRES (-1);
+     }
+   do
+@@ -134,12 +134,12 @@
+ 
+   if (!dh)
+     {
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return TRACE_SYSRES (-1);
+     }
+   if (!dh->cbs->seek)
+     {
+-      errno = ENOSYS;
++      gpg_err_set_errno (ENOSYS);
+       return TRACE_SYSRES (-1);
+     }
+ 
+@@ -216,7 +216,7 @@
+     {
+       dh->file_name = strdup (file_name);
+       if (!dh->file_name)
+-	return TRACE_ERR (gpg_error_from_errno (errno));
++	return TRACE_ERR (gpg_error_from_syserror ());
+     }
+   else
+     dh->file_name = 0;
+@@ -257,7 +257,7 @@
+ 
+   buflen = _gpgme_io_read (fd, buffer, BUFFER_SIZE);
+   if (buflen < 0)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   if (buflen == 0)
+     {
+       _gpgme_io_close (fd);
+@@ -268,7 +268,7 @@
+     {
+       ssize_t amt = gpgme_data_write (dh, bufp, buflen);
+       if (amt == 0 || (amt < 0 && errno != EINTR))
+-	return TRACE_ERR (gpg_error_from_errno (errno));
++	return TRACE_ERR (gpg_error_from_syserror ());
+       bufp += amt;
+       buflen -= amt;
+     }
+@@ -290,7 +290,7 @@
+     {
+       ssize_t amt = gpgme_data_read (dh, dh->pending, BUFFER_SIZE);
+       if (amt < 0)
+-	return TRACE_ERR (gpg_error_from_errno (errno));
++	return TRACE_ERR (gpg_error_from_syserror ());
+       if (amt == 0)
+ 	{
+ 	  _gpgme_io_close (fd);
+@@ -314,7 +314,7 @@
+     }
+ 
+   if (nwritten <= 0)
+-    return TRACE_ERR (gpg_error_from_errno (errno));
++    return TRACE_ERR (gpg_error_from_syserror ());
+ 
+   if (nwritten < dh->pending_len)
+     memmove (dh->pending, dh->pending + nwritten, dh->pending_len - nwritten);
+Index: src/gpgme.h.in
+===================================================================
+--- src/gpgme.h.in	(Revision 1447)
++++ src/gpgme.h.in	(Revision 1495)
+@@ -34,13 +34,15 @@
+ /* Include stdio.h for the FILE type definition.  */
+ #include <stdio.h>
+ 
+-#ifdef _MSC_VER
++#ifdef _WIN32
+   typedef long off_t;
+   typedef long ssize_t;
+ #else
+ # include <sys/types.h>
+ #endif
+ 
++#include <time.h>
++
+ #include <gpg-error.h>
+ 
+ #ifdef __cplusplus
+@@ -162,31 +164,42 @@
+    beginning of the error string as fits into the buffer.  */
+ int gpgme_strerror_r (gpg_error_t err, char *buf, size_t buflen);
+ 
+-
+ /* Return a pointer to a string containing a description of the error
+    source in the error value ERR.  */
+ const char *gpgme_strsource (gpgme_error_t err);
+ 
+-
+ /* Retrieve the error code for the system error ERR.  This returns
+    GPG_ERR_UNKNOWN_ERRNO if the system error is not mapped (report
+    this).  */
+ gpgme_err_code_t gpgme_err_code_from_errno (int err);
+ 
+-
+ /* Retrieve the system error for the error code CODE.  This returns 0
+    if CODE is not a system error code.  */
+ int gpgme_err_code_to_errno (gpgme_err_code_t code);
+ 
+-  
++/* Retrieve the error code directly from the ERRNO variable.  This
++   returns GPG_ERR_UNKNOWN_ERRNO if the system error is not mapped
++   (report this) and GPG_ERR_MISSING_ERRNO if ERRNO has the value 0. */
++gpgme_err_code_t gpgme_err_code_from_syserror (void);
++
++/* Set the ERRNO variable.  This function is the preferred way to set
++   ERRNO due to peculiarities on WindowsCE.  */
++void gpgme_err_set_errno (int err);
++
+ /* Return an error value with the error source SOURCE and the system
+-   error ERR.  */
++   error ERR.  FIXME: Should be inline.  */
+ gpgme_error_t gpgme_err_make_from_errno (gpgme_err_source_t source, int err);
+ 
++/* Return an error value with the system error ERR.  FIXME: Should be inline.  */
++gpgme_error_t gpgme_error_from_errno (int err);
+ 
+-/* Return an error value with the system error ERR.  */
+-gpgme_err_code_t gpgme_error_from_errno (int err);
+ 
++static _GPGME_INLINE gpgme_error_t
++gpgme_error_from_syserror (void)
++{
++  return gpgme_error (gpgme_err_code_from_syserror ());
++}
++
+ 
+ /* The possible encoding mode of gpgme_data_t objects.  */
+ typedef enum
+@@ -348,6 +361,7 @@
+ 
+ /* The available export mode flags.  */
+ #define GPGME_EXPORT_MODE_EXTERN                2
++#define GPGME_EXPORT_MODE_MINIMAL               4
+ 
+ typedef unsigned int gpgme_export_mode_t;
+ 
+@@ -493,7 +507,8 @@
+ 
+     GPGME_STATUS_PLAINTEXT = 81,
+     GPGME_STATUS_INV_SGNR = 82,
+-    GPGME_STATUS_NO_SGNR = 83
++    GPGME_STATUS_NO_SGNR = 83,
++    GPGME_STATUS_SUCCESS = 84
+   }
+ gpgme_status_code_t;
+ 
+@@ -2099,3 +2114,8 @@
+ }
+ #endif
+ #endif /* GPGME_H */
++/*
++@emacs_local_vars_begin@
++@emacs_local_vars_read_only@
++@emacs_local_vars_end@
++*/
+Index: src/decrypt.c
+===================================================================
+--- src/decrypt.c	(Revision 1447)
++++ src/decrypt.c	(Revision 1495)
+@@ -126,7 +126,7 @@
+ 
+   rec = malloc (sizeof (*rec));
+   if (!rec)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   rec->next = NULL;
+   rec->keyid = rec->_keyid;
+@@ -153,7 +153,7 @@
+ 
+   if (*args)
+     {
+-      errno = 0;
++      gpg_err_set_errno (0);
+       rec->pubkey_algo = strtol (args, &tail, 0);
+       if (errno || args == tail || *tail != ' ')
+ 	{
+@@ -239,7 +239,7 @@
+ 		  {
+ 		    opd->result.unsupported_algorithm = strdup (args);
+ 		    if (!opd->result.unsupported_algorithm)
+-		      return gpg_error_from_errno (errno);
++		      return gpg_error_from_syserror ();
+ 		  }
+ 	      }
+ 	  }
+Index: src/gpgme.def
+===================================================================
+--- src/gpgme.def	(Revision 1447)
++++ src/gpgme.def	(Revision 1495)
+@@ -199,5 +199,8 @@
+     gpgme_op_passwd_start                 @152
+     gpgme_op_passwd                       @153
+ 
++    gpgme_err_code_from_syserror          @154
++    gpgme_err_set_errno                   @155
++
+ ; END
+ 
+Index: src/libgpgme.vers
+===================================================================
+--- src/libgpgme.vers	(Revision 1447)
++++ src/libgpgme.vers	(Revision 1495)
+@@ -204,6 +204,9 @@
+     gpgme_trust_item_get_string_attr;
+     gpgme_trust_item_release;
+ 
++    gpgme_err_code_from_syserror;
++    gpgme_err_set_errno;
++
+   local:
+     *;
+ 
+Index: src/version.c
+===================================================================
+--- src/version.c	(Revision 1447)
++++ src/version.c	(Revision 1495)
+@@ -65,25 +65,18 @@
+     return;
+ 
+ #ifdef HAVE_W32_SYSTEM
+-      {
+-        WSADATA wsadat;
+-        
+-        WSAStartup (0x202, &wsadat);
+-      }
+-#endif
+-
+-  _gpgme_sema_subsystem_init ();
+-  _gpgme_debug_subsystem_init ();
+-  _gpgme_io_subsystem_init ();
+-#if defined(HAVE_W32_SYSTEM) && defined(HAVE_ASSUAN_H)
+   /* We need to make sure that the sockets are initialized.  */
+   {
+     WSADATA wsadat;
+     
+     WSAStartup (0x202, &wsadat);
+   }
+-#endif /*HAVE_W32_SYSTEM && HAVE_ASSUAN_H*/
++#endif
+ 
++  _gpgme_sema_subsystem_init ();
++  _gpgme_debug_subsystem_init ();
++  _gpgme_io_subsystem_init ();
++
+   done = 1;
+ }
+ 
+Index: src/key.c
+===================================================================
+--- src/key.c	(Revision 1447)
++++ src/key.c	(Revision 1495)
+@@ -202,7 +202,7 @@
+ /* Take a name from the --with-colon listing, remove certain escape
+    sequences sequences and put it into the list of UIDs.  */
+ gpgme_error_t
+-_gpgme_key_append_name (gpgme_key_t key, char *src, int convert)
++_gpgme_key_append_name (gpgme_key_t key, const char *src, int convert)
+ {
+   gpgme_user_id_t uid;
+   char *dst;
+Index: src/engine-g13.c
+===================================================================
+--- src/engine-g13.c	(Revision 1447)
++++ src/engine-g13.c	(Revision 1495)
+@@ -28,7 +28,9 @@
+ #include <sys/types.h>
+ #include <assert.h>
+ #include <unistd.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ #include <fcntl.h> /* FIXME */
+ #include <errno.h>
+ 
+@@ -211,7 +213,7 @@
+   gpgme_error_t err = 0;
+   engine_g13_t g13;
+   int argc;
+-  char *argv[5];
++  const char *argv[5];
+   char *dft_display = NULL;
+   char dft_ttyname[64];
+   char *dft_ttytype = NULL;
+@@ -354,7 +356,10 @@
+   /* FIXME: If value is NULL, we need to reset the option to default.
+      But we can't do this.  So we error out here.  G13 needs support
+      for this.  */
+-  if (category == LC_CTYPE)
++  if (0)
++    ;
++#ifdef LC_CTYPE
++  else if (category == LC_CTYPE)
+     {
+       catstr = "lc-ctype";
+       if (!value && g13->lc_ctype_set)
+@@ -362,6 +367,7 @@
+       if (value)
+ 	g13->lc_ctype_set = 1;
+     }
++#endif
+ #ifdef LC_MESSAGES
+   else if (category == LC_MESSAGES)
+     {
+@@ -392,6 +398,7 @@
+ }
+ 
+ 
++#if USE_DESCRIPTOR_PASSING
+ static gpgme_error_t
+ g13_assuan_simple_command (assuan_context_t ctx, char *cmd,
+ 			   engine_status_handler_t status_fnc,
+@@ -442,6 +449,7 @@
+ 
+   return err;
+ }
++#endif
+ 
+ 
+ static gpgme_error_t
+@@ -630,16 +638,21 @@
+ start (engine_g13_t g13, const char *command)
+ {
+   gpgme_error_t err;
++  assuan_fd_t afdlist[5];
+   int fdlist[5];
+   int nfds;
++  int i;
+ 
+   /* We need to know the fd used by assuan for reads.  We do this by
+      using the assumption that the first returned fd from
+      assuan_get_active_fds() is always this one.  */
+   nfds = assuan_get_active_fds (g13->assuan_ctx, 0 /* read fds */,
+-                                fdlist, DIM (fdlist));
++                                afdlist, DIM (afdlist));
+   if (nfds < 1)
+     return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
++  /* For now... */
++  for (i = 0; i < nfds; i++)
++    fdlist[i] = (int) afdlist[i];
+ 
+   /* We "duplicate" the file descriptor, so we can close it here (we
+      can't close fdlist[0], as that is closed by libassuan, and
+Index: src/gpgme.c
+===================================================================
+--- src/gpgme.c	(Revision 1447)
++++ src/gpgme.c	(Revision 1495)
+@@ -27,7 +27,9 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ 
+ #include "util.h"
+ #include "context.h"
+@@ -600,7 +602,9 @@
+         failed = 1;						\
+     }
+ 
++#ifdef LC_CTYPE
+   PREPARE_ONE_LOCALE (ctype, CTYPE);
++#endif
+ #ifdef LC_MESSAGES
+   PREPARE_ONE_LOCALE (messages, MESSAGES);
+ #endif
+@@ -636,7 +640,9 @@
+ 
+   if (!ctx)
+     LOCK (def_lc_lock);
++#ifdef LC_CTYPE
+   SET_ONE_LOCALE (ctype, CTYPE);
++#endif
+ #ifdef LC_MESSAGES
+   SET_ONE_LOCALE (messages, MESSAGES);
+ #endif
+Index: src/delete.c
+===================================================================
+--- src/delete.c	(Revision 1447)
++++ src/delete.c	(Revision 1495)
+@@ -45,7 +45,7 @@
+       long problem;
+       char *tail;
+ 
+-      errno = 0;
++      gpg_err_set_errno (0);
+       problem = strtol (args, &tail, 0);
+       if (errno || (*tail && *tail != ' '))
+ 	return gpg_error (GPG_ERR_INV_ENGINE);
+Index: src/assuan-support.c
+===================================================================
+--- src/assuan-support.c	(Revision 1447)
++++ src/assuan-support.c	(Revision 1495)
+@@ -41,11 +41,21 @@
+   __assuan_usleep (ctx, usec);
+ }
+ 
++
+ /* Create a pipe with an inheritable end.  */
+ static int
+ my_pipe (assuan_context_t ctx, assuan_fd_t fds[2], int inherit_idx)
+ {
+-  return _gpgme_io_pipe (fds, inherit_idx);
++  int res;
++  int gfds[2];
++
++  res = _gpgme_io_pipe (gfds, inherit_idx);
++
++  /* For now... */
++  fds[0] = (assuan_fd_t) gfds[0];
++  fds[1] = (assuan_fd_t) gfds[1];
++
++  return res;
+ }
+ 
+ 
+@@ -54,21 +64,21 @@
+ static int
+ my_close (assuan_context_t ctx, assuan_fd_t fd)
+ {
+-  return _gpgme_io_close (fd);
++  return _gpgme_io_close ((int) fd);
+ }
+ 
+ 
+ static ssize_t
+ my_read (assuan_context_t ctx, assuan_fd_t fd, void *buffer, size_t size)
+ {
+-  return _gpgme_io_read (fd, buffer, size);
++  return _gpgme_io_read ((int) fd, buffer, size);
+ }
+ 
+ 
+ static ssize_t
+ my_write (assuan_context_t ctx, assuan_fd_t fd, const void *buffer, size_t size)
+ {
+-  return _gpgme_io_write (fd, buffer, size);
++  return _gpgme_io_write ((int) fd, buffer, size);
+ }
+ 
+ 
+@@ -77,10 +87,10 @@
+ 	    int flags)
+ {
+ #ifdef HAVE_W32_SYSTEM
+-  errno = ENOSYS;
++  gpg_err_set_errno (ENOSYS);
+   return -1;
+ #else
+-  return _gpgme_io_recvmsg (fd, msg, flags);
++  return _gpgme_io_recvmsg ((int) fd, msg, flags);
+ #endif
+ }
+ 
+@@ -91,10 +101,10 @@
+ 	    int flags)
+ {
+ #ifdef HAVE_W32_SYSTEM
+-  errno = ENOSYS;
++  gpg_err_set_errno (ENOSYS);
+   return -1;
+ #else
+-  return _gpgme_io_sendmsg (fd, msg, flags);
++  return _gpgme_io_sendmsg ((int) fd, msg, flags);
+ #endif
+ }
+ 
+@@ -118,7 +128,7 @@
+ 
+   if (! name)
+     {
+-      errno = ENOSYS;
++      gpg_err_set_errno (ENOSYS);
+       return -1;
+     }
+ 
+@@ -138,28 +148,28 @@
+     {
+       while (fd_child_list[i] != ASSUAN_INVALID_FD)
+ 	{
+-	  fd_items[i].fd = fd_child_list[i];
++	  fd_items[i].fd = (int) fd_child_list[i];
+ 	  fd_items[i].dup_to = -1;
+ 	  i++;
+ 	}
+     }
+   if (fd_in != ASSUAN_INVALID_FD)
+     {
+-      fd_items[i].fd = fd_in;
++      fd_items[i].fd = (int) fd_in;
+       fd_items[i].dup_to = 0;
+       i++;
+     }
+   if (fd_out != ASSUAN_INVALID_FD)
+     {
+-      fd_items[i].fd = fd_out;
++      fd_items[i].fd = (int) fd_out;
+       fd_items[i].dup_to = 1;
+       i++;
+     }
+   fd_items[i].fd = -1;
+   fd_items[i].dup_to = -1;
+ 
+-  err = _gpgme_io_spawn (name, argv, IOSPAWN_FLAG_NOCLOSE, fd_items,
+-			 atfork, atforkvalue, r_pid);
++  err = _gpgme_io_spawn (name, (char*const*)argv, IOSPAWN_FLAG_NOCLOSE,
++			 fd_items, atfork, atforkvalue, r_pid);
+   if (! err)
+     {
+       i = 0;
+@@ -168,7 +178,7 @@
+ 	{
+ 	  while (fd_child_list[i] != ASSUAN_INVALID_FD)
+ 	    {
+-	      fd_child_list[i] = fd_items[i].peer_name;
++	      fd_child_list[i] = (assuan_fd_t) fd_items[i].peer_name;
+ 	      i++;
+ 	    }
+ 	}
+@@ -203,7 +213,7 @@
+ 	       int protocol, assuan_fd_t filedes[2])
+ {
+ #ifdef HAVE_W32_SYSTEM
+-  errno = ENOSYS;
++  gpg_err_set_errno (ENOSYS);
+   return -1;
+ #else
+   /* FIXME: Debug output missing.  */
+Index: src/import.c
+===================================================================
+--- src/import.c	(Revision 1447)
++++ src/import.c	(Revision 1495)
+@@ -30,6 +30,7 @@
+ #include "debug.h"
+ #include "context.h"
+ #include "ops.h"
++#include "util.h"
+ 
+ 
+ typedef struct
+@@ -121,10 +122,10 @@
+ 
+   import = malloc (sizeof (*import));
+   if (!import)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   import->next = NULL;
+ 
+-  errno = 0;
++  gpg_err_set_errno (0);
+   nr = strtol (args, &tail, 0);
+   if (errno || args == tail || *tail != ' ')
+     {
+@@ -149,7 +150,7 @@
+ 	  break;
+ 
+ 	case 2:
+-	  import->result = gpg_error (GPG_ERR_MISSING_CERT);
++	  import->result = gpg_error (GPG_ERR_MISSING_ISSUER_CERT);
+ 	  break;
+ 
+ 	case 3:
+@@ -189,7 +190,7 @@
+ {
+   char *tail;
+ 
+-  errno = 0;
++  gpg_err_set_errno (0);
+ 
+ #define PARSE_NEXT(x)					\
+   (x) = strtol (args, &tail, 0);			\
+Index: src/posix-util.c
+===================================================================
+--- src/posix-util.c	(Revision 1447)
++++ src/posix-util.c	(Revision 1495)
+@@ -74,7 +74,7 @@
+ _gpgme_get_uiserver_socket_path (void)
+ {
+   static char *socket_path;
+-  char *homedir;
++  const char *homedir;
+   const char name[] = "S.uiserver";
+ 
+   if (socket_path)
+Index: src/engine-gpg.c
+===================================================================
+--- src/engine-gpg.c	(Revision 1447)
++++ src/engine-gpg.c	(Revision 1495)
+@@ -28,7 +28,9 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <unistd.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ 
+ #include "gpgme.h"
+ #include "util.h"
+@@ -563,7 +565,10 @@
+ {
+   engine_gpg_t gpg = engine;
+ 
+-  if (category == LC_CTYPE)
++  if (0)
++    ;
++#ifdef LC_CTYPE
++  else if (category == LC_CTYPE)
+     {
+       if (gpg->lc_ctype)
+         {
+@@ -577,6 +582,7 @@
+ 	    return gpg_error_from_syserror ();
+ 	}
+     }
++#endif
+ #ifdef LC_MESSAGES
+   else if (category == LC_MESSAGES)
+     {
+@@ -1727,12 +1733,18 @@
+ export_common (engine_gpg_t gpg, gpgme_export_mode_t mode,
+                gpgme_data_t keydata, int use_armor)
+ {
+-  gpgme_error_t err;
++  gpgme_error_t err = 0;
+ 
+-  if ((mode & ~GPGME_EXPORT_MODE_EXTERN))
++  if ((mode & ~(GPGME_EXPORT_MODE_EXTERN
++                |GPGME_EXPORT_MODE_MINIMAL)))
+     return gpg_error (GPG_ERR_NOT_SUPPORTED);
+ 
+-  if ((mode & GPGME_EXPORT_MODE_EXTERN))
++  if ((mode & GPGME_EXPORT_MODE_MINIMAL))
++    err = add_arg (gpg, "--export-options=export-minimal");
++
++  if (err)
++    ;
++  else if ((mode & GPGME_EXPORT_MODE_EXTERN))
+     {
+       err = add_arg (gpg, "--send-keys");
+     }
+Index: src/engine-gpgsm.c
+===================================================================
+--- src/engine-gpgsm.c	(Revision 1447)
++++ src/engine-gpgsm.c	(Revision 1495)
+@@ -29,7 +29,9 @@
+ #include <sys/types.h>
+ #include <assert.h>
+ #include <unistd.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ #include <fcntl.h> /* FIXME */
+ #include <errno.h>
+ 
+@@ -247,7 +249,7 @@
+ 
+   gpgsm = calloc (1, sizeof *gpgsm);
+   if (!gpgsm)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   gpgsm->status_cb.fd = -1;
+   gpgsm->status_cb.dir = 1;
+@@ -288,7 +290,7 @@
+ #if !USE_DESCRIPTOR_PASSING
+   if (_gpgme_io_pipe (fds, 0) < 0)
+     {
+-      err = gpg_error_from_errno (errno);
++      err = gpg_error_from_syserror ();
+       goto leave;
+     }
+   gpgsm->input_cb.fd = fds[1];
+@@ -296,7 +298,7 @@
+ 
+   if (_gpgme_io_pipe (fds, 1) < 0)
+     {
+-      err = gpg_error_from_errno (errno);
++      err = gpg_error_from_syserror ();
+       goto leave;
+     }
+   gpgsm->output_cb.fd = fds[0];
+@@ -304,7 +306,7 @@
+ 
+   if (_gpgme_io_pipe (fds, 0) < 0)
+     {
+-      err = gpg_error_from_errno (errno);
++      err = gpg_error_from_syserror ();
+       goto leave;
+     }
+   gpgsm->message_cb.fd = fds[1];
+@@ -338,10 +340,23 @@
+     (gpgsm->assuan_ctx, file_name ? file_name : _gpgme_get_gpgsm_path (),
+      argv, NULL, NULL, NULL, ASSUAN_PIPE_CONNECT_FDPASSING);
+ #else
+-  err = assuan_pipe_connect
+-    (gpgsm->assuan_ctx, file_name ? file_name : _gpgme_get_gpgsm_path (),
+-     argv, child_fds, NULL, NULL, 0);
++  {
++    assuan_fd_t achild_fds[4];
++    int i;
+ 
++    /* For now... */
++    for (i = 0; i < 4; i++)
++      achild_fds[i] = (assuan_fd_t) child_fds[i];
++
++    err = assuan_pipe_connect
++      (gpgsm->assuan_ctx, file_name ? file_name : _gpgme_get_gpgsm_path (),
++       argv, achild_fds, NULL, NULL, 0);
++
++    /* For now... */
++    for (i = 0; i < 4; i++)
++      child_fds[i] = (int) achild_fds[i];
++  }
++
+   /* On Windows, handles are inserted in the spawned process with
+      DuplicateHandle, and child_fds contains the server-local names
+      for the inserted handles when assuan_pipe_connect returns.  */
+@@ -372,7 +387,7 @@
+       if (asprintf (&optstr, "OPTION display=%s", dft_display) < 0)
+         {
+ 	  free (dft_display);
+-	  err = gpg_error_from_errno (errno);
++	  err = gpg_error_from_syserror ();
+ 	  goto leave;
+ 	}
+       free (dft_display);
+@@ -398,7 +413,7 @@
+ 	{
+ 	  if (asprintf (&optstr, "OPTION ttyname=%s", dft_ttyname) < 0)
+ 	    {
+-	      err = gpg_error_from_errno (errno);
++	      err = gpg_error_from_syserror ();
+ 	      goto leave;
+ 	    }
+ 	  err = assuan_transact (gpgsm->assuan_ctx, optstr, NULL, NULL, NULL,
+@@ -415,7 +430,7 @@
+ 	      if (asprintf (&optstr, "OPTION ttytype=%s", dft_ttytype) < 0)
+ 		{
+ 		  free (dft_ttytype);
+-		  err = gpg_error_from_errno (errno);
++		  err = gpg_error_from_syserror ();
+ 		  goto leave;
+ 		}
+ 	      free (dft_ttytype);
+@@ -498,7 +513,10 @@
+   /* FIXME: If value is NULL, we need to reset the option to default.
+      But we can't do this.  So we error out here.  GPGSM needs support
+      for this.  */
+-  if (category == LC_CTYPE)
++  if (0)
++    ;
++#ifdef LC_CTYPE
++  else if (category == LC_CTYPE)
+     {
+       catstr = "lc-ctype";
+       if (!value && gpgsm->lc_ctype_set)
+@@ -506,6 +524,7 @@
+       if (value)
+ 	gpgsm->lc_ctype_set = 1;
+     }
++#endif
+ #ifdef LC_MESSAGES
+   else if (category == LC_MESSAGES)
+     {
+@@ -524,7 +543,7 @@
+     return 0;
+ 
+   if (asprintf (&optstr, "OPTION %s=%s", catstr, value) < 0)
+-    err = gpg_error_from_errno (errno);
++    err = gpg_error_from_syserror ();
+   else
+     {
+       err = assuan_transact (gpgsm->assuan_ctx, optstr, NULL, NULL,
+@@ -660,7 +679,7 @@
+       int fds[2];
+ 
+       if (_gpgme_io_pipe (fds, dir) < 0)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+ 
+       iocb_data->fd = dir ? fds[0] : fds[1];
+       iocb_data->server_fd = dir ? fds[1] : fds[0];
+@@ -832,7 +851,7 @@
+ 	    {
+ 	      char *newline = realloc (*aline, *alinelen + linelen + 1);
+ 	      if (!newline)
+-		err = gpg_error_from_errno (errno);
++		err = gpg_error_from_syserror ();
+ 	      else
+ 		{
+ 		  *aline = newline;
+@@ -917,7 +936,7 @@
+               if (!nwritten || (nwritten < 0 && errno != EINTR)
+                   || nwritten > linelen)
+                 {
+-                  err = gpg_error_from_errno (errno);
++                  err = gpg_error_from_syserror ();
+                   break;
+                 }
+               src += nwritten;
+@@ -997,16 +1016,21 @@
+ start (engine_gpgsm_t gpgsm, const char *command)
+ {
+   gpgme_error_t err;
++  assuan_fd_t afdlist[5];
+   int fdlist[5];
+   int nfds;
++  int i;
+ 
+   /* We need to know the fd used by assuan for reads.  We do this by
+      using the assumption that the first returned fd from
+      assuan_get_active_fds() is always this one.  */
+   nfds = assuan_get_active_fds (gpgsm->assuan_ctx, 0 /* read fds */,
+-                                fdlist, DIM (fdlist));
++                                afdlist, DIM (afdlist));
+   if (nfds < 1)
+     return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
++  /* For now... */
++  for (i = 0; i < nfds; i++)
++    fdlist[i] = (int) afdlist[i];
+ 
+   /* We "duplicate" the file descriptor, so we can close it here (we
+      can't close fdlist[0], as that is closed by libassuan, and
+@@ -1115,7 +1139,7 @@
+ 
+   line = malloc (length);
+   if (!line)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   strcpy (line, "DELKEYS ");
+   linep = &line[8];
+@@ -1172,7 +1196,7 @@
+   linelen = 10 + 40 + 1;	/* "RECIPIENT " + guess + '\0'.  */
+   line = malloc (10 + 40 + 1);
+   if (!line)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   strcpy (line, "RECIPIENT ");
+   for (i =0; !err && recp[i]; i++)
+     {
+@@ -1278,7 +1302,7 @@
+ 
+   cmd = malloc (7 + strlen (pattern) + 1);
+   if (!cmd)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   strcpy (cmd, "EXPORT ");
+   strcpy (&cmd[7], pattern);
+ 
+@@ -1335,7 +1359,7 @@
+     }
+   line = malloc (length);
+   if (!line)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+ 
+   strcpy (line, "EXPORT ");
+   linep = &line[7];
+@@ -1538,9 +1562,21 @@
+   if (!pattern)
+     pattern = "";
+ 
++  /* Hack to make sure that the agent is started.  Only if the agent
++     has been started an application may connect to the agent via
++     GPGME_PROTOCOL_ASSUAN - for example to look for smartcards.  We
++     do this only if a secret key listing has been requested.  In
++     general this is not needed because a secret key listing starts
++     the agent.  However on a fresh installation no public keys are
++     available and thus there is no need for gpgsm to ask the agent
++     whether a secret key exists for the public key.  */
++  if (secret_only)
++    gpgsm_assuan_simple_command (gpgsm->assuan_ctx, "GETINFO agent-check",
++                                 NULL, NULL);
++
+   /* Always send list-mode option because RESET does not reset it.  */
+   if (asprintf (&line, "OPTION list-mode=%d", (list_mode & 3)) < 0)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, line, NULL, NULL);
+   free (line);
+   if (err)
+@@ -1568,7 +1604,7 @@
+   /* Length is "LISTSECRETKEYS " + p + '\0'.  */
+   line = malloc (15 + strlen (pattern) + 1);
+   if (!line)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   if (secret_only)
+     {
+       strcpy (line, "LISTSECRETKEYS ");
+@@ -1614,7 +1650,7 @@
+ 
+   /* Always send list-mode option because RESET does not reset it.  */
+   if (asprintf (&line, "OPTION list-mode=%d", (list_mode & 3)) < 0)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, line, NULL, NULL);
+   free (line);
+   if (err)
+@@ -1651,7 +1687,7 @@
+     }
+   line = malloc (length);
+   if (!line)
+-    return gpg_error_from_errno (errno);
++    return gpg_error_from_syserror ();
+   if (secret_only)
+     {
+       strcpy (line, "LISTSECRETKEYS ");
+@@ -1737,7 +1773,7 @@
+ 	 requested.  */
+ 
+       if (asprintf (&assuan_cmd, "OPTION include-certs %i", include_certs) < 0)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+       err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, assuan_cmd,
+                                          NULL, NULL);
+       free (assuan_cmd);
+Index: src/data-mem.c
+===================================================================
+--- src/data-mem.c	(Revision 1447)
++++ src/data-mem.c	(Revision 1495)
+@@ -115,7 +115,7 @@
+     case SEEK_SET:
+       if (offset < 0 || offset > dh->data.mem.length)
+ 	{
+-	  errno = EINVAL;
++	  gpg_err_set_errno (EINVAL);
+ 	  return -1;
+ 	}
+       dh->data.mem.offset = offset;
+@@ -124,7 +124,7 @@
+       if ((offset > 0 && dh->data.mem.length - dh->data.mem.offset < offset)
+ 	  || (offset < 0 && dh->data.mem.offset < -offset)) 
+ 	{
+-	  errno = EINVAL;
++	  gpg_err_set_errno (EINVAL);
+ 	  return -1;
+ 	}
+       dh->data.mem.offset += offset;
+@@ -132,13 +132,13 @@
+     case SEEK_END:
+       if (offset > 0 || -offset > dh->data.mem.length)
+ 	{
+-	  errno = EINVAL;
++	  gpg_err_set_errno (EINVAL);
+ 	  return -1;
+ 	}
+       dh->data.mem.offset = dh->data.mem.length - offset;
+       break;
+     default:
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return -1;
+     }
+   return dh->data.mem.offset;
+Index: src/op-support.c
+===================================================================
+--- src/op-support.c	(Revision 1447)
++++ src/op-support.c	(Revision 1495)
+@@ -23,11 +23,14 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ 
+ #include "gpgme.h"
+ #include "context.h"
+ #include "ops.h"
++#include "util.h"
+ 
+ 
+ gpgme_error_t
+@@ -114,7 +117,10 @@
+ 
+   if (!reuse_engine)
+     {
++      err = 0;
++#ifdef LC_CTYPE
+       err = _gpgme_engine_set_locale (ctx->engine, LC_CTYPE, ctx->lc_ctype);
++#endif
+ #ifdef LC_MESSAGES
+       if (!err)
+         err = _gpgme_engine_set_locale (ctx->engine,
+@@ -182,7 +188,7 @@
+   if (!inv_key)
+     return gpg_error_from_errno (errno);
+   inv_key->next = NULL;
+-  errno = 0;
++  gpg_err_set_errno (0);
+   reason = strtol (args, &tail, 0);
+   if (errno || args == tail || (*tail && *tail != ' '))
+     {
+@@ -241,6 +247,10 @@
+     case 11:
+       inv_key->reason = gpg_error (GPG_ERR_MISSING_CERT);
+       break;
++
++    case 12:
++      inv_key->reason = gpg_error (GPG_ERR_MISSING_ISSUER_CERT);
++      break;
+     }
+ 
+   while (*tail && *tail == ' ')
+@@ -299,7 +309,7 @@
+     {
+       char *filename = strdup (args);
+       if (!filename)
+-	return gpg_error_from_errno (errno);
++	return gpg_error_from_syserror ();
+ 
+       *filenamep = filename;
+     }
+Index: src/w32-glib-io.c
+===================================================================
+--- src/w32-glib-io.c	(Revision 1447)
++++ src/w32-glib-io.c	(Revision 1495)
+@@ -27,7 +27,6 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include <signal.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <sys/time.h>
+@@ -111,7 +110,7 @@
+ static GIOChannel *
+ find_channel (int fd)
+ {
+-  if (fd < 0 || fd >= MAX_SLAFD)
++  if (fd < 0 || fd >= MAX_SLAFD || !giochannel_table[fd].used)
+     return NULL;
+ 
+   return giochannel_table[fd].chan;
+Index: src/engine-assuan.c
+===================================================================
+--- src/engine-assuan.c	(Revision 1447)
++++ src/engine-assuan.c	(Revision 1495)
+@@ -33,7 +33,9 @@
+ #include <sys/types.h>
+ #include <assert.h>
+ #include <unistd.h>
++#ifdef HAVE_LOCALE_H
+ #include <locale.h>
++#endif
+ #include <errno.h>
+ 
+ #include "gpgme.h"
+@@ -358,7 +360,10 @@
+   /* FIXME: If value is NULL, we need to reset the option to default.
+      But we can't do this.  So we error out here.  gpg-agent needs
+      support for this.  */
+-  if (category == LC_CTYPE)
++  if (0)
++    ;
++#ifdef LC_CTYPE
++  else if (category == LC_CTYPE)
+     {
+       catstr = "lc-ctype";
+       if (!value && llass->lc_ctype_set)
+@@ -366,6 +371,7 @@
+       if (value)
+ 	llass->lc_ctype_set = 1;
+     }
++#endif
+ #ifdef LC_MESSAGES
+   else if (category == LC_MESSAGES)
+     {
+@@ -630,16 +636,21 @@
+ start (engine_llass_t llass, const char *command)
+ {
+   gpgme_error_t err;
++  assuan_fd_t afdlist[5];
+   int fdlist[5];
+   int nfds;
++  int i;
+ 
+   /* We need to know the fd used by assuan for reads.  We do this by
+      using the assumption that the first returned fd from
+      assuan_get_active_fds() is always this one.  */
+   nfds = assuan_get_active_fds (llass->assuan_ctx, 0 /* read fds */,
+-                                fdlist, DIM (fdlist));
++                                afdlist, DIM (afdlist));
+   if (nfds < 1)
+     return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
++  /* For now... */
++  for (i = 0; i < nfds; i++)
++    fdlist[i] = (int) afdlist[i];
+ 
+   /* We "duplicate" the file descriptor, so we can close it here (we
+      can't close fdlist[0], as that is closed by libassuan, and
+Index: src/w32-sema.c
+===================================================================
+--- src/w32-sema.c	(Revision 1447)
++++ src/w32-sema.c	(Revision 1495)
+@@ -27,7 +27,6 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include <signal.h>
+ #include <fcntl.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+Index: src/vfs-create.c
+===================================================================
+--- src/vfs-create.c	(Revision 1447)
++++ src/vfs-create.c	(Revision 1495)
+@@ -58,7 +58,7 @@
+ }
+ 
+ 
+-
++#if 0
+ /* XXXX.  This is the asynchronous variant. */
+ static gpgme_error_t
+ gpgme_op_vfs_transact_start (gpgme_ctx_t ctx, 
+@@ -73,6 +73,7 @@
+   return vfs_start (ctx, 0, command, data_cb, data_cb_value,
+ 		    inq_cb, inq_cb_value, status_cb, status_cb_value);
+ }
++#endif
+ 
+ 
+ /* XXXX.  This is the synchronous variant. */
+Index: src/ops.h
+===================================================================
+--- src/ops.h	(Revision 1447)
++++ src/ops.h	(Revision 1495)
+@@ -128,7 +128,7 @@
+ gpgme_error_t _gpgme_key_new (gpgme_key_t *r_key);
+ gpgme_error_t _gpgme_key_add_subkey (gpgme_key_t key,
+ 				     gpgme_subkey_t *r_subkey);
+-gpgme_error_t _gpgme_key_append_name (gpgme_key_t key, char *src, int convert);
++gpgme_error_t _gpgme_key_append_name (gpgme_key_t key, const char *src, int convert);
+ gpgme_key_sig_t _gpgme_key_add_sig (gpgme_key_t key, char *src);
+ 
+ 
+Index: src/w32-io.c
+===================================================================
+--- src/w32-io.c	(Revision 1447)
++++ src/w32-io.c	(Revision 1495)
+@@ -1,6 +1,6 @@
+ /* w32-io.c - W32 API I/O functions.
+    Copyright (C) 2000 Werner Koch (dd9jn)
+-   Copyright (C) 2001, 2002, 2003, 2004, 2007 g10 Code GmbH
++   Copyright (C) 2001, 2002, 2003, 2004, 2007, 2010 g10 Code GmbH
+ 
+    This file is part of GPGME.
+  
+@@ -27,34 +27,108 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include <signal.h>
+ #include <fcntl.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <windows.h>
+ #include <io.h>
+ 
++#ifdef HAVE_W32CE_SYSTEM
++#include <assuan.h>
++#include <winioctl.h>
++#define GPGCEDEV_IOCTL_UNBLOCK                                        \
++  CTL_CODE (FILE_DEVICE_STREAMS, 2050, METHOD_BUFFERED, FILE_ANY_ACCESS)
++#define GPGCEDEV_IOCTL_ASSIGN_RVID                                    \
++  CTL_CODE (FILE_DEVICE_STREAMS, 2051, METHOD_BUFFERED, FILE_ANY_ACCESS)
++#endif
++
+ #include "util.h"
+ #include "sema.h"
+ #include "priv-io.h"
+ #include "debug.h"
+ 
+ 
+-/* We assume that a HANDLE can be represented by an int which should
+-   be true for all i386 systems (HANDLE is defined as void *) and
+-   these are the only systems for which Windows is available.  Further
+-   we assume that -1 denotes an invalid handle.  */
++/* FIXME: Optimize.  */
++#define MAX_SLAFD 512
+ 
+-#define fd_to_handle(a)  ((HANDLE)(a))
+-#define handle_to_fd(a)  ((int)(a))
++static struct
++{
++  int used;
++
++  /* If this is not INVALID_HANDLE_VALUE, then it's a handle.  */
++  HANDLE handle;
++
++  /* If this is not INVALID_SOCKET, then it's a Windows socket.  */
++  int socket;
++
++  /* If this is not 0, then it's a rendezvous ID for the pipe server.  */
++  int rvid;
++
++  /* DUP_FROM is -1 if this file descriptor was allocated by pipe or
++     socket functions.  Only then should the handle or socket be
++     destroyed when this FD is closed.  This, together with the fact
++     that dup'ed file descriptors are closed before the file
++     descriptors from which they are dup'ed are closed, ensures that
++     the handle or socket is always valid, and shared among all file
++     descriptors refering to the same underlying object.
++
++     The logic behind this is that there is only one reason for us to
++     dup file descriptors anyway: to allow simpler book-keeping of
++     file descriptors shared between GPGME and libassuan, which both
++     want to close something.  Using the same handle for these
++     duplicates works just fine.  */
++  int dup_from;
++} fd_table[MAX_SLAFD];  
++
++
++/* Returns the FD or -1 on resource limit.  */
++int
++new_fd (void)
++{
++  int idx;
++
++  for (idx = 0; idx < MAX_SLAFD; idx++)
++    if (! fd_table[idx].used)
++      break;
++
++  if (idx == MAX_SLAFD)
++    {
++      gpg_err_set_errno (EIO);
++      return -1;
++    }
++
++  fd_table[idx].used = 1;
++  fd_table[idx].handle = INVALID_HANDLE_VALUE;
++  fd_table[idx].socket = INVALID_SOCKET;
++  fd_table[idx].rvid = 0;
++  fd_table[idx].dup_from = -1;
++
++  return idx;
++}
++
++
++void
++release_fd (int fd)
++{
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
++    return;
++
++  fd_table[fd].used = 0;
++  fd_table[fd].handle = INVALID_HANDLE_VALUE;
++  fd_table[fd].socket = INVALID_SOCKET;
++  fd_table[fd].rvid = 0;
++  fd_table[fd].dup_from = -1;
++}
++
++
+ #define pid_to_handle(a) ((HANDLE)(a))
+ #define handle_to_pid(a) ((int)(a))
+ 
+ #define READBUF_SIZE 4096
+ #define WRITEBUF_SIZE 4096
+ #define PIPEBUF_SIZE  4096
+-#define MAX_READERS 40
+-#define MAX_WRITERS 40
++#define MAX_READERS 64
++#define MAX_WRITERS 64
+ 
+ static struct
+ {
+@@ -62,13 +136,14 @@
+   int fd;
+   _gpgme_close_notify_handler_t handler;
+   void *value;
+-} notify_table[256];
++} notify_table[MAX_SLAFD];
+ DEFINE_STATIC_LOCK (notify_table_lock);
+ 
+ 
+ struct reader_context_s
+ {
+   HANDLE file_hd;
++  int file_sock;
+   HANDLE thread_hd;	
+   int refcount;
+ 
+@@ -103,6 +178,7 @@
+ struct writer_context_s
+ {
+   HANDLE file_hd;
++  int file_sock;
+   HANDLE thread_hd;	
+   int refcount;
+ 
+@@ -154,6 +230,9 @@
+ static HANDLE
+ set_synchronize (HANDLE hd)
+ {
++#ifdef HAVE_W32CE_SYSTEM
++  return hd;
++#else
+   HANDLE new_hd;
+ 
+   /* For NT we have to set the sync flag.  It seems that the only way
+@@ -165,24 +244,65 @@
+       TRACE1 (DEBUG_SYSIO, "gpgme:set_synchronize", hd,
+ 	      "DuplicateHandle failed: ec=%d", (int) GetLastError ());
+       /* FIXME: Should translate the error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+       return INVALID_HANDLE_VALUE;
+     }
+ 
+   CloseHandle (hd);
+   return new_hd;
++#endif
+ }
+ 
+ 
++/* Return 1 if HD refers to a socket, 0 if it does not refer to a
++   socket, and -1 for unknown (autodetect).  */
++static int
++is_socket (HANDLE hd)
++{
++#ifdef HAVE_W32CE_SYSTEM
++  return -1;
++#else
++  /* We need to figure out whether we are working on a socket or on a
++     handle.  A trivial way would be to check for the return code of
++     recv and see if it is WSAENOTSOCK.  However the recv may block
++     after the server process died and thus the destroy_reader will
++     hang.  Another option is to use getsockopt to test whether it is
++     a socket.  The bug here is that once a socket with a certain
++     values has been opened, closed and later a CreatePipe returned
++     the same value (i.e. handle), getsockopt still believes it is a
++     socket.  What we do now is to use a combination of GetFileType
++     and GetNamedPipeInfo.  The specs say that the latter may be used
++     on anonymous pipes as well.  Note that there are claims that
++     since winsocket version 2 ReadFile may be used on a socket but
++     only if it is supported by the service provider.  Tests on a
++     stock XP using a local TCP socket show that it does not work.  */
++  DWORD dummyflags, dummyoutsize, dummyinsize, dummyinst;
++
++  if (GetFileType (hd) == FILE_TYPE_PIPE
++      && !GetNamedPipeInfo (hd, &dummyflags, &dummyoutsize,
++                            &dummyinsize, &dummyinst))
++    return 1; /* Function failed; thus we assume it is a socket.  */
++  else
++    return 0; /* Success; this is not a socket.  */
++#endif
++}
++
++
+ static DWORD CALLBACK 
+ reader (void *arg)
+ {
+   struct reader_context_s *ctx = arg;
+   int nbytes;
+   DWORD nread;
++  int sock;
+   TRACE_BEG1 (DEBUG_SYSIO, "gpgme:reader", ctx->file_hd,
+ 	      "thread=%p", ctx->thread_hd);
+ 
++  if (ctx->file_hd != INVALID_HANDLE_VALUE)
++    sock = 0;
++  else
++    sock = 1;
++
+   for (;;)
+     {
+       LOCK (ctx->mutex);
+@@ -210,37 +330,66 @@
+ 	nbytes = READBUF_SIZE - ctx->writepos;
+       UNLOCK (ctx->mutex);
+       
+-      TRACE_LOG1 ("reading %d bytes", nbytes);
+-      if (!ReadFile (ctx->file_hd,
+-		     ctx->buffer + ctx->writepos, nbytes, &nread, NULL))
+-	{
+-	  ctx->error_code = (int) GetLastError ();
+-	  if (ctx->error_code == ERROR_BROKEN_PIPE)
+-	    {
+-	      ctx->eof = 1;
+-	      TRACE_LOG ("got EOF (broken pipe)");
++      TRACE_LOG2 ("%s %d bytes", sock? "receiving":"reading", nbytes);
++
++      if (sock)
++        {
++          int n;
++
++          n = recv (ctx->file_sock, ctx->buffer + ctx->writepos, nbytes, 0);
++          if (n < 0)
++            {
++              ctx->error_code = (int) WSAGetLastError ();
++              if (ctx->error_code == ERROR_BROKEN_PIPE)
++                {
++                  ctx->eof = 1;
++                  TRACE_LOG ("got EOF (broken connection)");
++                }
++              else
++                {
++                  ctx->error = 1;
++                  TRACE_LOG1 ("recv error: ec=%d", ctx->error_code);
++                }
++              break;
+             }
+-	  else
+-	    {
+-	      ctx->error = 1;
+-	      TRACE_LOG1 ("read error: ec=%d", ctx->error_code);
++          nread = n;
++        }
++      else
++        {
++          if (!ReadFile (ctx->file_hd,
++                         ctx->buffer + ctx->writepos, nbytes, &nread, NULL))
++            {
++              ctx->error_code = (int) GetLastError ();
++	      /* NOTE (W32CE): Do not ignore ERROR_BUSY!  Check at
++		 least stop_me if that happens.  */
++              if (ctx->error_code == ERROR_BROKEN_PIPE)
++                {
++                  ctx->eof = 1;
++                  TRACE_LOG ("got EOF (broken pipe)");
++                }
++              else
++                {
++                  ctx->error = 1;
++                  TRACE_LOG1 ("read error: ec=%d", ctx->error_code);
++                }
++              break;
+             }
++        }
++      LOCK (ctx->mutex);
++      if (ctx->stop_me)
++	{
++	  UNLOCK (ctx->mutex);
+ 	  break;
+         }
+       if (!nread)
+ 	{
+ 	  ctx->eof = 1;
+ 	  TRACE_LOG ("got eof");
++	  UNLOCK (ctx->mutex);
+ 	  break;
+         }
+       TRACE_LOG1 ("got %u bytes", nread);
+       
+-      LOCK (ctx->mutex);
+-      if (ctx->stop_me)
+-	{
+-	  UNLOCK (ctx->mutex);
+-	  break;
+-        }
+       ctx->writepos = (ctx->writepos + nread) % READBUF_SIZE;
+       if (!SetEvent (ctx->have_data_ev))
+ 	TRACE_LOG2 ("SetEvent (0x%x) failed: ec=%d", ctx->have_data_ev,
+@@ -258,7 +407,7 @@
+ 
+ 
+ static struct reader_context_s *
+-create_reader (HANDLE fd)
++create_reader (int fd)
+ {
+   struct reader_context_s *ctx;
+   SECURITY_ATTRIBUTES sec_attr;
+@@ -277,7 +426,14 @@
+       return NULL;
+     }
+ 
+-  ctx->file_hd = fd;
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
++    {
++      TRACE_SYSERR (EIO);
++      return NULL;
++    }
++  ctx->file_hd = fd_table[fd].handle;
++  ctx->file_sock = fd_table[fd].socket;
++
+   ctx->refcount = 1;
+   ctx->have_data_ev = CreateEvent (&sec_attr, TRUE, FALSE, NULL);
+   if (ctx->have_data_ev)
+@@ -345,6 +501,22 @@
+     SetEvent (ctx->have_space_ev);
+   UNLOCK (ctx->mutex);
+ 
++#ifdef HAVE_W32CE_SYSTEM
++  /* Scenario: We never create a full pipe, but already started
++     reading.  Then we need to unblock the reader in the pipe driver
++     to make our reader thread notice that we want it to go away.  */
++
++  if (ctx->file_hd != INVALID_HANDLE_VALUE)
++    {
++      if (!DeviceIoControl (ctx->file_hd, GPGCEDEV_IOCTL_UNBLOCK,
++			NULL, 0, NULL, 0, NULL, NULL))
++	{
++	  TRACE1 (DEBUG_SYSIO, "gpgme:destroy_reader", ctx->file_hd,
++		  "unblock control call failed for thread %p", ctx->thread_hd);
++	}
++    }
++#endif
++
+   TRACE1 (DEBUG_SYSIO, "gpgme:destroy_reader", ctx->file_hd,
+ 	  "waiting for termination of thread %p", ctx->thread_hd);
+   WaitForSingleObject (ctx->stopped, INFINITE);
+@@ -388,13 +560,10 @@
+ 
+   if (i != reader_table_size)
+     {
+-      rd = create_reader (fd_to_handle (fd));
+-      if (rd)
+-	{
+-	  reader_table[i].fd = fd;
+-	  reader_table[i].context = rd;
+-	  reader_table[i].used = 1;
+-	}
++      rd = create_reader (fd);
++      reader_table[i].fd = fd;
++      reader_table[i].context = rd;
++      reader_table[i].used = 1;
+     }
+ 
+   UNLOCK (reader_table_lock);
+@@ -433,7 +602,7 @@
+   ctx = find_reader (fd, 1);
+   if (!ctx)
+     {
+-      errno = EBADF;
++      gpg_err_set_errno (EBADF);
+       return TRACE_SYSRES (-1);
+     }
+   if (ctx->eof_shortcut)
+@@ -461,7 +630,7 @@
+ 	  TRACE_LOG ("EOF but ctx->eof flag not set");
+ 	  return 0;
+ 	}
+-      errno = ctx->error_code;
++      gpg_err_set_errno (ctx->error_code);
+       return TRACE_SYSRES (-1);
+     }
+   
+@@ -479,7 +648,7 @@
+ 	  TRACE_LOG1 ("ResetEvent failed: ec=%d", (int) GetLastError ());
+ 	  UNLOCK (ctx->mutex);
+ 	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
++	  gpg_err_set_errno (EIO);
+ 	  return TRACE_SYSRES (-1);
+ 	}
+     }
+@@ -489,7 +658,7 @@
+ 		  ctx->have_space_ev, (int) GetLastError ());
+       UNLOCK (ctx->mutex);
+       /* FIXME: Should translate the error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+       return TRACE_SYSRES (-1);
+     }
+   UNLOCK (ctx->mutex);
+@@ -507,9 +676,15 @@
+ {
+   struct writer_context_s *ctx = arg;
+   DWORD nwritten;
++  int sock;
+   TRACE_BEG1 (DEBUG_SYSIO, "gpgme:writer", ctx->file_hd,
+ 	      "thread=%p", ctx->thread_hd);
+ 
++  if (ctx->file_hd != INVALID_HANDLE_VALUE)
++    sock = 0;
++  else
++    sock = 1;
++
+   for (;;)
+     {
+       LOCK (ctx->mutex);
+@@ -537,18 +712,45 @@
+         }
+       UNLOCK (ctx->mutex);
+       
+-      TRACE_LOG1 ("writing %d bytes", ctx->nbytes);
++      TRACE_LOG2 ("%s %d bytes", sock?"sending":"writing", ctx->nbytes);
++
+       /* Note that CTX->nbytes is not zero at this point, because
+ 	 _gpgme_io_write always writes at least 1 byte before waking
+ 	 us up, unless CTX->stop_me is true, which we catch above.  */
+-      if (!WriteFile (ctx->file_hd, ctx->buffer,
+-		      ctx->nbytes, &nwritten, NULL))
+-	{
+-	  ctx->error_code = (int) GetLastError ();
+-	  ctx->error = 1;
+-	  TRACE_LOG1 ("write error: ec=%d", ctx->error_code);
+-	  break;
+-	}
++      if (sock)
++        {
++          /* We need to try send first because a socket handle can't
++             be used with WriteFile.  */
++          int n;
++
++          n = send (ctx->file_sock, ctx->buffer, ctx->nbytes, 0);
++          if (n < 0)
++            {
++              ctx->error_code = (int) WSAGetLastError ();
++              ctx->error = 1;
++              TRACE_LOG1 ("send error: ec=%d", ctx->error_code);
++              break;
++            }
++          nwritten = n;
++        }
++      else
++        {
++          if (!WriteFile (ctx->file_hd, ctx->buffer,
++                          ctx->nbytes, &nwritten, NULL))
++            {
++	      if (GetLastError () == ERROR_BUSY)
++		{
++		  /* Probably stop_me is set now.  */
++                  TRACE_LOG ("pipe busy (unblocked?)");
++		  continue;
++                }
++
++              ctx->error_code = (int) GetLastError ();
++              ctx->error = 1;
++              TRACE_LOG1 ("write error: ec=%d", ctx->error_code);
++              break;
++            }
++        }
+       TRACE_LOG1 ("wrote %d bytes", (int) nwritten);
+       
+       LOCK (ctx->mutex);
+@@ -565,7 +767,7 @@
+ 
+ 
+ static struct writer_context_s *
+-create_writer (HANDLE fd)
++create_writer (int fd)
+ {
+   struct writer_context_s *ctx;
+   SECURITY_ATTRIBUTES sec_attr;
+@@ -584,7 +786,14 @@
+       return NULL;
+     }
+   
+-  ctx->file_hd = fd;
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
++    {
++      TRACE_SYSERR (EIO);
++      return NULL;
++    }
++  ctx->file_hd = fd_table[fd].handle;
++  ctx->file_sock = fd_table[fd].socket;
++
+   ctx->refcount = 1;
+   ctx->have_data = CreateEvent (&sec_attr, TRUE, FALSE, NULL);
+   if (ctx->have_data)
+@@ -650,6 +859,20 @@
+   if (ctx->have_data) 
+     SetEvent (ctx->have_data);
+   UNLOCK (ctx->mutex);
++
++#ifdef HAVE_W32CE_SYSTEM
++  /* Scenario: We never create a full pipe, but already started
++     writing more than the pipe buffer.  Then we need to unblock the
++     writer in the pipe driver to make our writer thread notice that
++     we want it to go away.  */
++
++  if (!DeviceIoControl (ctx->file_hd, GPGCEDEV_IOCTL_UNBLOCK,
++			NULL, 0, NULL, 0, NULL, NULL))
++    {
++      TRACE1 (DEBUG_SYSIO, "gpgme:destroy_writer", ctx->file_hd,
++	      "unblock control call failed for thread %p", ctx->thread_hd);
++    }
++#endif
+   
+   TRACE1 (DEBUG_SYSIO, "gpgme:destroy_writer", ctx->file_hd,
+ 	  "waiting for termination of thread %p", ctx->thread_hd);
+@@ -694,13 +917,10 @@
+ 
+   if (i != writer_table_size)
+     {
+-      wt = create_writer (fd_to_handle (fd));
+-      if (wt)
+-	{
+-	  writer_table[i].fd = fd;
+-	  writer_table[i].context = wt; 
+-	  writer_table[i].used = 1;
+-	}
++      wt = create_writer (fd);
++      writer_table[i].fd = fd;
++      writer_table[i].context = wt; 
++      writer_table[i].used = 1;
+     }
+ 
+   UNLOCK (writer_table_lock);
+@@ -739,7 +959,7 @@
+   if (count == 0)
+     return TRACE_SYSRES (0);
+ 
+-  ctx = find_writer (fd, 0);
++  ctx = find_writer (fd, 1);
+   if (!ctx)
+     return TRACE_SYSRES (-1);
+ 
+@@ -754,7 +974,7 @@
+ 	  TRACE_LOG1 ("ResetEvent failed: ec=%d", (int) GetLastError ());
+ 	  UNLOCK (ctx->mutex);
+ 	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
++	  gpg_err_set_errno (EIO);
+ 	  return TRACE_SYSRES (-1);
+ 	}
+       UNLOCK (ctx->mutex);
+@@ -768,9 +988,9 @@
+     {
+       UNLOCK (ctx->mutex);
+       if (ctx->error_code == ERROR_NO_DATA)
+-        errno = EPIPE;
++        gpg_err_set_errno (EPIPE);
+       else
+-        errno = EIO;
++        gpg_err_set_errno (EIO);
+       return TRACE_SYSRES (-1);
+     }
+ 
+@@ -790,7 +1010,7 @@
+       TRACE_LOG1 ("ResetEvent failed: ec=%d", (int) GetLastError ());
+       UNLOCK (ctx->mutex);
+       /* FIXME: Should translate the error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+       return TRACE_SYSRES (-1);
+     }
+   if (!SetEvent (ctx->have_data))
+@@ -798,7 +1018,7 @@
+       TRACE_LOG1 ("SetEvent failed: ec=%d", (int) GetLastError ());
+       UNLOCK (ctx->mutex);
+       /* FIXME: Should translate the error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+       return TRACE_SYSRES (-1);
+     }
+   UNLOCK (ctx->mutex);
+@@ -810,13 +1030,57 @@
+ int
+ _gpgme_io_pipe (int filedes[2], int inherit_idx)
+ {
++  int rfd;
++  int wfd;
++#ifdef HAVE_W32CE_SYSTEM
++  HANDLE hd;
++  int rvid;
++#else
+   HANDLE rh;
+   HANDLE wh;
+   SECURITY_ATTRIBUTES sec_attr;
++#endif
++
+   TRACE_BEG2 (DEBUG_SYSIO, "_gpgme_io_pipe", filedes,
+ 	      "inherit_idx=%i (GPGME uses it for %s)",
+ 	      inherit_idx, inherit_idx ? "reading" : "writing");
+ 
++  rfd = new_fd ();
++  if (rfd == -1)
++    return TRACE_SYSRES (-1);
++  wfd = new_fd ();
++  if (wfd == -1)
++    {
++      release_fd (rfd);
++      return TRACE_SYSRES (-1);
++    }
++
++#ifdef HAVE_W32CE_SYSTEM
++  hd = _assuan_w32ce_prepare_pipe (&rvid, !inherit_idx);
++  if (hd == INVALID_HANDLE_VALUE)
++    {
++      TRACE_LOG1 ("_assuan_w32ce_prepare_pipe failed: ec=%d",
++		  (int) GetLastError ());
++      release_fd (rfd);
++      release_fd (wfd);
++      /* FIXME: Should translate the error code.  */
++      gpg_err_set_errno (EIO);
++      return TRACE_SYSRES (-1);
++    }
++
++  if (inherit_idx == 0)
++    {
++      fd_table[rfd].rvid = rvid;
++      fd_table[wfd].handle = hd;
++    }
++  else
++    {
++      fd_table[rfd].handle = hd;
++      fd_table[wfd].rvid = rvid;
++    }  
++
++#else
++
+   memset (&sec_attr, 0, sizeof (sec_attr));
+   sec_attr.nLength = sizeof (sec_attr);
+   sec_attr.bInheritHandle = FALSE;
+@@ -824,15 +1088,16 @@
+   if (!CreatePipe (&rh, &wh, &sec_attr, PIPEBUF_SIZE))
+     {
+       TRACE_LOG1 ("CreatePipe failed: ec=%d", (int) GetLastError ());
++      release_fd (rfd);
++      release_fd (wfd);
+       /* FIXME: Should translate the error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+       return TRACE_SYSRES (-1);
+     }
+ 
+   /* Make one end inheritable.  */
+   if (inherit_idx == 0)
+     {
+-      struct writer_context_s *ctx;
+       HANDLE hd;
+       if (!DuplicateHandle (GetCurrentProcess(), rh,
+ 			    GetCurrentProcess(), &hd, 0,
+@@ -840,30 +1105,19 @@
+ 	{
+ 	  TRACE_LOG1 ("DuplicateHandle failed: ec=%d",
+ 		      (int) GetLastError ());
++	  release_fd (rfd);
++	  release_fd (wfd);
+ 	  CloseHandle (rh);
+ 	  CloseHandle (wh);
+ 	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
++	  gpg_err_set_errno (EIO);
+ 	  return TRACE_SYSRES (-1);
+         }
+       CloseHandle (rh);
+       rh = hd;
+-
+-      ctx = find_writer (handle_to_fd (wh), 0);
+-      assert (ctx == NULL);
+-      ctx = find_writer (handle_to_fd (wh), 1);
+-      if (!ctx)
+-	{
+-	  CloseHandle (rh);
+-	  CloseHandle (wh);
+-	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
+-	  return TRACE_SYSRES (-1);
+-	}
+     }
+   else if (inherit_idx == 1)
+     {
+-      struct reader_context_s *ctx;
+       HANDLE hd;
+       if (!DuplicateHandle( GetCurrentProcess(), wh,
+ 			    GetCurrentProcess(), &hd, 0,
+@@ -871,31 +1125,26 @@
+ 	{
+ 	  TRACE_LOG1 ("DuplicateHandle failed: ec=%d",
+ 		      (int) GetLastError ());
++	  release_fd (rfd);
++	  release_fd (wfd);
+ 	  CloseHandle (rh);
+ 	  CloseHandle (wh);
+ 	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
++	  gpg_err_set_errno (EIO);
+ 	  return TRACE_SYSRES (-1);
+         }
+       CloseHandle (wh);
+       wh = hd;
++    }
++  fd_table[rfd].handle = rh;
++  fd_table[wfd].handle = wh;
++#endif
+ 
+-      ctx = find_reader (handle_to_fd (rh), 0);
+-      assert (ctx == NULL);
+-      ctx = find_reader (handle_to_fd (rh), 1);
+-      if (!ctx)
+-	{
+-	  CloseHandle (rh);
+-	  CloseHandle (wh);
+-	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
+-	  return TRACE_SYSRES (-1);
+-	}
+-    }
+-  
+-  filedes[0] = handle_to_fd (rh);
+-  filedes[1] = handle_to_fd (wh);
+-  return TRACE_SUC2 ("read=%p, write=%p", rh, wh);
++  filedes[0] = rfd;
++  filedes[1] = wfd;
++  return TRACE_SUC6 ("read=0x%x (%p/0x%x), write=0x%x (%p/0x%x)",
++		     rfd, fd_table[rfd].handle, fd_table[rfd].rvid,
++		     wfd, fd_table[wfd].handle, fd_table[wfd].rvid);
+ }
+ 
+ 
+@@ -905,13 +1154,19 @@
+   int i;
+   _gpgme_close_notify_handler_t handler = NULL;
+   void *value = NULL;
++
+   TRACE_BEG (DEBUG_SYSIO, "_gpgme_io_close", fd);
+ 
+   if (fd == -1)
+     {
+-      errno = EBADF;
++      gpg_err_set_errno (EBADF);
+       return TRACE_SYSRES (-1);
+     }
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
++    {
++      gpg_err_set_errno (EBADF);
++      return TRACE_SYSRES (-1);
++    }
+ 
+   kill_reader (fd);
+   kill_writer (fd);
+@@ -932,14 +1187,33 @@
+   if (handler)
+     handler (fd, value);
+ 
+-  if (!CloseHandle (fd_to_handle (fd)))
+-    { 
+-      TRACE_LOG1 ("CloseHandle failed: ec=%d", (int) GetLastError ());
+-      /* FIXME: Should translate the error code.  */
+-      errno = EIO;
+-      return TRACE_SYSRES (-1);
++  if (fd_table[fd].dup_from == -1)
++    {
++      if (fd_table[fd].handle != INVALID_HANDLE_VALUE)
++	{
++	  if (!CloseHandle (fd_table[fd].handle))
++	    { 
++	      TRACE_LOG1 ("CloseHandle failed: ec=%d", (int) GetLastError ());
++	      /* FIXME: Should translate the error code.  */
++	      gpg_err_set_errno (EIO);
++	      return TRACE_SYSRES (-1);
++	    }
++	}
++      else if (fd_table[fd].socket != INVALID_SOCKET)
++	{
++	  if (closesocket (fd_table[fd].socket))
++	    { 
++	      TRACE_LOG1 ("closesocket failed: ec=%d", (int) WSAGetLastError ());
++	      /* FIXME: Should translate the error code.  */
++	      gpg_err_set_errno (EIO);
++	      return TRACE_SYSRES (-1);
++	    }
++	}
++      /* Nothing to do for RVIDs.  */
+     }
+ 
++  release_fd (fd);
++      
+   return TRACE_SYSRES (0);
+ }
+ 
+@@ -965,7 +1239,7 @@
+   if (i == DIM (notify_table))
+     {
+       UNLOCK (notify_table_lock);
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return TRACE_SYSRES (-1);
+     }
+   notify_table[i].fd = fd;
+@@ -985,7 +1259,92 @@
+ }
+ 
+ 
++#ifdef HAVE_W32CE_SYSTEM
+ static char *
++build_commandline (char **argv, int fd0, int fd0_isnull,
++		   int fd1, int fd1_isnull,
++		   int fd2, int fd2_isnull)
++{
++  int i, n;
++  const char *s;
++  char *buf, *p;
++  char fdbuf[3*30];
++
++  p = fdbuf;
++  *p = 0;
++  
++  if (fd0 != -1)
++    {
++      if (fd0_isnull)
++        strcpy (p, "-&S0=null ");
++      else
++	snprintf (p, 25, "-&S0=%d ", fd_table[fd0].rvid);
++      p += strlen (p);
++    }
++  if (fd1 != -1)
++    {
++      if (fd1_isnull)
++        strcpy (p, "-&S1=null ");
++      else
++	snprintf (p, 25, "-&S1=%d ", fd_table[fd1].rvid);
++      p += strlen (p);
++    }
++  if (fd2 != -1)
++    {
++      if (fd2_isnull)
++        strcpy (p, "-&S2=null ");
++      else
++        snprintf (p, 25, "-&S2=%d ", fd_table[fd2].rvid);
++      p += strlen (p);
++    }
++  strcpy (p, "-&S2=null ");
++  p += strlen (p);
++  
++  n = strlen (fdbuf);
++  for (i=0; (s = argv[i]); i++)
++    {
++      if (!i)
++        continue; /* Ignore argv[0].  */
++      n += strlen (s) + 1 + 2;  /* (1 space, 2 quoting) */
++      for (; *s; s++)
++        if (*s == '\"')
++          n++;  /* Need to double inner quotes.  */
++    }
++  n++;
++  buf = p = malloc (n);
++  if (! buf)
++    return NULL;
++
++  p = stpcpy (p, fdbuf);
++  for (i = 0; argv[i]; i++) 
++    {
++      if (!i)
++        continue; /* Ignore argv[0].  */
++      if (i > 1)
++        p = stpcpy (p, " ");
++
++      if (! *argv[i]) /* Empty string. */
++        p = stpcpy (p, "\"\"");
++      else if (strpbrk (argv[i], " \t\n\v\f\""))
++        {
++          p = stpcpy (p, "\"");
++          for (s = argv[i]; *s; s++)
++            {
++              *p++ = *s;
++              if (*s == '\"')
++                *p++ = *s;
++            }
++          *p++ = '\"';
++          *p = 0;
++        }
++      else
++        p = stpcpy (p, argv[i]);
++    }
++
++  return buf;  
++}
++#else
++static char *
+ build_commandline (char **argv)
+ {
+   int i;
+@@ -1038,6 +1397,7 @@
+ 
+   return buf;
+ }
++#endif
+ 
+ 
+ int
+@@ -1046,7 +1406,6 @@
+ 		 void (*atfork) (void *opaque, int reserved),
+ 		 void *atforkvalue, pid_t *r_pid)
+ {
+-  SECURITY_ATTRIBUTES sec_attr;
+   PROCESS_INFORMATION pi =
+     {
+       NULL,      /* returns process handle */
+@@ -1054,10 +1413,125 @@
+       0,         /* returns pid */
+       0          /* returns tid */
+     };
+-  STARTUPINFO si;
+-  int cr_flags = (CREATE_DEFAULT_ERROR_MODE
+-                  | GetPriorityClass (GetCurrentProcess ()));
+   int i;
++
++#ifdef HAVE_W32CE_SYSTEM
++  int fd_in = -1;
++  int fd_out = -1;
++  int fd_err = -1;
++  int fd_in_isnull = 1;
++  int fd_out_isnull = 1;
++  int fd_err_isnull = 1;
++  char *cmdline;
++  HANDLE hd = INVALID_HANDLE_VALUE;
++
++  TRACE_BEG1 (DEBUG_SYSIO, "_gpgme_io_spawn", path,
++	      "path=%s", path);
++  i = 0;
++  while (argv[i])
++    {
++      TRACE_LOG2 ("argv[%2i] = %s", i, argv[i]);
++      i++;
++    }
++
++  for (i = 0; fd_list[i].fd != -1; i++)
++    {
++      int fd = fd_list[i].fd;
++
++      TRACE_LOG3 ("fd_list[%2i] = fd %i, dup_to %i", i, fd, fd_list[i].dup_to);
++      if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
++	{
++	  TRACE_LOG1 ("invalid fd 0x%x", fd);
++	  gpg_err_set_errno (EBADF);
++	  return TRACE_SYSRES (-1);
++	}
++      if (fd_table[fd].rvid == 0)
++	{
++	  TRACE_LOG1 ("fd 0x%x not inheritable (not an RVID)", fd);
++	  gpg_err_set_errno (EBADF);
++	  return TRACE_SYSRES (-1);
++	}
++      
++      if (fd_list[i].dup_to == 0)
++	{
++	  fd_in = fd_list[i].fd;
++	  fd_in_isnull = 0;
++	}
++      else if (fd_list[i].dup_to == 1)
++	{
++	  fd_out = fd_list[i].fd;
++	  fd_out_isnull = 0;
++	}
++      else if (fd_list[i].dup_to == 2)
++	{
++	  fd_err = fd_list[i].fd;
++	  fd_err_isnull = 0;
++	}
++    }
++
++  cmdline = build_commandline (argv, fd_in, fd_in_isnull,
++			       fd_out, fd_out_isnull, fd_err, fd_err_isnull);
++  if (!cmdline)
++    {
++      TRACE_LOG1 ("build_commandline failed: %s", strerror (errno));
++      return TRACE_SYSRES (-1);
++    }
++
++  if (!CreateProcessA (path,                /* Program to start.  */
++		       cmdline,             /* Command line arguments.  */
++		       NULL,                 /* (not supported)  */
++		       NULL,                 /* (not supported)  */
++		       FALSE,                /* (not supported)  */
++		       (CREATE_SUSPENDED),   /* Creation flags.  */
++		       NULL,                 /* (not supported)  */
++		       NULL,                 /* (not supported)  */
++		       NULL,                 /* (not supported) */
++		       &pi                   /* Returns process information.*/
++		       ))
++    {
++      TRACE_LOG1 ("CreateProcess failed: ec=%d", (int) GetLastError ());
++      free (cmdline);
++      gpg_err_set_errno (EIO);
++      return TRACE_SYSRES (-1);
++    }
++
++  /* Create arbitrary pipe descriptor to send in ASSIGN_RVID
++     commands.  Errors are ignored.  We don't need read or write access,
++     as ASSIGN_RVID works without any permissions, yay!  */
++  hd = CreateFile (L"GPG1:", 0, 0,
++		   NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
++  if (hd == INVALID_HANDLE_VALUE)
++    {
++      TRACE_LOG1 ("CreateFile failed (ignored): ec=%d",
++		  (int) GetLastError ());
++    }
++
++  /* Insert the inherited handles.  */
++  for (i = 0; fd_list[i].fd != -1; i++)
++    {
++      /* Return the child name of this handle.  */
++      fd_list[i].peer_name = fd_table[fd_list[i].fd].rvid;
++
++      if (hd != INVALID_HANDLE_VALUE)
++	{
++	  DWORD data[2];
++	  data[0] = (DWORD) fd_table[fd_list[i].fd].rvid;
++	  data[1] = pi.dwProcessId;
++	  if (!DeviceIoControl (hd, GPGCEDEV_IOCTL_ASSIGN_RVID,
++				data, sizeof (data), NULL, 0, NULL, NULL))
++	    {
++	      TRACE_LOG3 ("ASSIGN_RVID(%i, %i) failed (ignored): %i",
++			  data[0], data[1], (int) GetLastError ());
++	    }
++	}
++    }
++  if (hd != INVALID_HANDLE_VALUE)
++    CloseHandle (hd);
++
++#else
++  SECURITY_ATTRIBUTES sec_attr;
++  STARTUPINFOA si;
++  int cr_flags = CREATE_DEFAULT_ERROR_MODE;
+   char **args;
+   char *arg_string;
+   /* FIXME.  */
+@@ -1101,7 +1575,7 @@
+   if (!arg_string)
+     {
+       close (tmp_fd);
+-      DeleteFile (tmp_name);
++      DeleteFileA (tmp_name);
+       return TRACE_SYSRES (-1);
+     }
+ 
+@@ -1114,7 +1588,10 @@
+   si.hStdError = INVALID_HANDLE_VALUE;
+ 
+   cr_flags |= CREATE_SUSPENDED; 
++#ifndef HAVE_W32CE_SYSTEM
+   cr_flags |= DETACHED_PROCESS;
++  cr_flags |= GetPriorityClass (GetCurrentProcess ());
++#endif
+   if (!CreateProcessA (_gpgme_get_w32spawn_path (),
+ 		       arg_string,
+ 		       &sec_attr,     /* process security attributes */
+@@ -1129,10 +1606,10 @@
+       TRACE_LOG1 ("CreateProcess failed: ec=%d", (int) GetLastError ());
+       free (arg_string);
+       close (tmp_fd);
+-      DeleteFile (tmp_name);
++      DeleteFileA (tmp_name);
+ 
+       /* FIXME: Should translate the error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+       return TRACE_SYSRES (-1);
+     }
+ 
+@@ -1159,10 +1636,10 @@
+ 	  CloseHandle (pi.hProcess);
+ 
+ 	  close (tmp_fd);
+-	  DeleteFile (tmp_name);
++	  DeleteFileA (tmp_name);
+ 
+ 	  /* FIXME: Should translate the error code.  */
+-	  errno = EIO;
++	  gpg_err_set_errno (EIO);
+ 	  return TRACE_SYSRES (-1);
+         }
+       /* Return the child name of this handle.  */
+@@ -1212,7 +1689,9 @@
+   close (tmp_fd);
+   /* The temporary file is deleted by the gpgme-w32spawn process
+      (hopefully).  */
++#endif
+ 
++
+   TRACE_LOG4 ("CreateProcess ready: hProcess=%p, hThread=%p, "
+ 	      "dwProcessID=%d, dwThreadId=%d",
+ 	      pi.hProcess, pi.hThread, 
+@@ -1285,7 +1764,7 @@
+ 	{
+ 	  if (fds[i].for_read)
+ 	    {
+-	      struct reader_context_s *ctx = find_reader (fds[i].fd,0);
++	      struct reader_context_s *ctx = find_reader (fds[i].fd,1);
+ 	      
+ 	      if (!ctx)
+ 		TRACE_LOG1 ("error: no reader for FD 0x%x (ignored)",
+@@ -1297,7 +1776,7 @@
+ 		      TRACE_END (dbg_help, "oops ]");
+ 		      TRACE_LOG ("Too many objects for WFMO!");
+ 		      /* FIXME: Should translate the error code.  */
+-		      errno = EIO;
++		      gpg_err_set_errno (EIO);
+ 		      return TRACE_SYSRES (-1);
+                     }
+ 		  waitidx[nwait] = i;
+@@ -1308,7 +1787,7 @@
+             }
+ 	  else if (fds[i].for_write)
+ 	    {
+-	      struct writer_context_s *ctx = find_writer (fds[i].fd,0);
++	      struct writer_context_s *ctx = find_writer (fds[i].fd,1);
+               
+ 	      if (!ctx)
+ 		TRACE_LOG1 ("error: no writer for FD 0x%x (ignored)",
+@@ -1320,7 +1799,7 @@
+ 		      TRACE_END (dbg_help, "oops ]");
+ 		      TRACE_LOG ("Too many objects for WFMO!");
+ 		      /* FIXME: Should translate the error code.  */
+-		      errno = EIO;
++		      gpg_err_set_errno (EIO);
+ 		      return TRACE_SYSRES (-1);
+                     }
+ 		  waitidx[nwait] = i;
+@@ -1367,6 +1846,7 @@
+   else if (code == WAIT_FAILED)
+     {
+       int le = (int) GetLastError ();
++#if 0
+       if (le == ERROR_INVALID_HANDLE)
+ 	{
+ 	  int k;
+@@ -1383,6 +1863,7 @@
+             }
+ 	  TRACE_LOG (" oops, or not???");
+         }
++#endif
+       TRACE_LOG1 ("WFMO failed: %d", le);
+       count = -1;
+     }
+@@ -1409,7 +1890,7 @@
+   if (count < 0)
+     {
+       /* FIXME: Should determine a proper error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EIO);
+     }
+   
+   return TRACE_SYSRES (count);
+@@ -1429,6 +1910,15 @@
+ int
+ _gpgme_io_fd2str (char *buf, int buflen, int fd)
+ {
++#ifdef HAVE_W32CE_SYSTEM
++  /* FIXME: For now. See above.  */
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used
++      || fd_table[fd].rvid == 0)
++    fd = -1;
++  else
++    fd = fd_table[fd].rvid;
++#endif
++
+   return snprintf (buf, buflen, "%d", fd);
+ }
+ 
+@@ -1436,25 +1926,29 @@
+ int
+ _gpgme_io_dup (int fd)
+ {
+-  HANDLE handle = fd_to_handle (fd);
+-  HANDLE new_handle = fd_to_handle (fd);
+-  int i;
++  int newfd;
+   struct reader_context_s *rd_ctx;
+   struct writer_context_s *wt_ctx;
++  int i;
+ 
+   TRACE_BEG (DEBUG_SYSIO, "_gpgme_io_dup", fd);
+ 
+-  if (!DuplicateHandle (GetCurrentProcess(), handle,
+-			GetCurrentProcess(), &new_handle,
+-			0, FALSE, DUPLICATE_SAME_ACCESS))
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
+     {
+-      TRACE_LOG1 ("DuplicateHandle failed: ec=%d\n", (int) GetLastError ());
+-      /* FIXME: Translate error code.  */
+-      errno = EIO;
++      gpg_err_set_errno (EINVAL);
+       return TRACE_SYSRES (-1);
+     }
+ 
+-  rd_ctx = find_reader (fd, 0);
++  newfd = new_fd();
++  if (newfd == -1)
++    return TRACE_SYSRES (-1);
++  
++  fd_table[newfd].handle = fd_table[fd].handle;
++  fd_table[newfd].socket = fd_table[fd].socket;
++  fd_table[newfd].rvid = fd_table[fd].rvid;
++  fd_table[newfd].dup_from = fd;
++
++  rd_ctx = find_reader (fd, 1);
+   if (rd_ctx)
+     {
+       /* No need for locking, as the only races are against the reader
+@@ -1467,13 +1961,13 @@
+ 	  break;
+       /* FIXME.  */
+       assert (i != reader_table_size);
+-      reader_table[i].fd = handle_to_fd (new_handle);
++      reader_table[i].fd = newfd;
+       reader_table[i].context = rd_ctx;
+       reader_table[i].used = 1;
+       UNLOCK (reader_table_lock);
+     }
+ 
+-  wt_ctx = find_writer (fd, 0);
++  wt_ctx = find_writer (fd, 1);
+   if (wt_ctx)
+     {
+       /* No need for locking, as the only races are against the writer
+@@ -1486,13 +1980,13 @@
+ 	  break;
+       /* FIXME.  */
+       assert (i != writer_table_size);
+-      writer_table[i].fd = handle_to_fd (new_handle);
++      writer_table[i].fd = newfd;
+       writer_table[i].context = wt_ctx;
+       writer_table[i].used = 1;
+       UNLOCK (writer_table_lock);
+     }
+ 
+-  return TRACE_SYSRES (handle_to_fd (new_handle));
++  return TRACE_SYSRES (newfd);
+ }
+ 
+ 
+@@ -1537,18 +2031,25 @@
+ _gpgme_io_socket (int domain, int type, int proto)
+ {
+   int res;
++  int fd;
+ 
+   TRACE_BEG2 (DEBUG_SYSIO, "_gpgme_io_socket", domain,
+ 	      "type=%i, protp=%i", type, proto);
+ 
++  fd = new_fd();
++  if (fd == -1)
++    return TRACE_SYSRES (-1);
++      
+   res = socket (domain, type, proto);
+   if (res == INVALID_SOCKET)
+     {
+-      errno = wsa2errno (WSAGetLastError ());
++      release_fd (fd);
++      gpg_err_set_errno (wsa2errno (WSAGetLastError ()));
+       return TRACE_SYSRES (-1);
+     }
++  fd_table[fd].socket = res;
+ 
+-  TRACE_SUC1 ("socket=0x%x", res);
++  TRACE_SUC2 ("socket=0x%x (0x%x)", fd, fd_table[fd].socket);
+   
+   return res;
+ }
+@@ -1562,12 +2063,18 @@
+   TRACE_BEG2 (DEBUG_SYSIO, "_gpgme_io_connect", fd,
+ 	      "addr=%p, addrlen=%i", addr, addrlen);
+ 
+-  res = connect (fd, addr, addrlen);
+-  if (!res)
++  if (fd < 0 || fd >= MAX_SLAFD || !fd_table[fd].used)
+     {
+-      errno = wsa2errno (WSAGetLastError ());
++      gpg_err_set_errno (EBADF);
+       return TRACE_SYSRES (-1);
+     }
++    
++  res = connect (fd_table[fd].socket, addr, addrlen);
++  if (res)
++    {
++      gpg_err_set_errno (wsa2errno (WSAGetLastError ()));
++      return TRACE_SYSRES (-1);
++    }
+ 
+   return TRACE_SUC ();
+ }
+Index: src/w32-util.c
+===================================================================
+--- src/w32-util.c	(Revision 1447)
++++ src/w32-util.c	(Revision 1495)
+@@ -33,19 +33,27 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+-#include <signal.h>
+ #include <fcntl.h>
+ #include <windows.h>
+ #include <shlobj.h>
+ #include <io.h>
+ 
++#include "ath.h"
+ #include "util.h"
+ #include "sema.h"
+ #include "debug.h"
+ 
++
++#ifndef HAVE_W32CE_SYSTEM
++#define HAVE_ALLOW_SET_FOREGROUND_WINDOW 1
++#endif
++
++
+ DEFINE_STATIC_LOCK (get_path_lock);
+ 
+ 
++#ifdef HAVE_ALLOW_SET_FOREGROUND_WINDOW
++
+ #define RTLD_LAZY 0
+ 
+ static __inline__ void *
+@@ -78,8 +86,54 @@
+     }
+   return -1;
+ }  
++#endif /* HAVE_ALLOW_SET_FOREGROUND_WINDOW */
+ 
+ 
++void 
++_gpgme_allow_set_foreground_window (pid_t pid)
++{
++#ifdef HAVE_ALLOW_SET_FOREGROUND_WINDOW
++  static int initialized;
++  static BOOL (WINAPI * func)(DWORD);
++  void *handle;
++
++  if (!initialized)
++    {
++      /* Available since W2000; thus we dynload it.  */
++      initialized = 1;
++      handle = dlopen ("user32.dll", RTLD_LAZY);
++      if (handle)
++        {
++          func = dlsym (handle, "AllowSetForegroundWindow");
++          if (!func)
++            {
++              dlclose (handle);
++              handle = NULL;
++            }
++        }
++    }
++
++  if (!pid || pid == (pid_t)(-1))
++    {
++      TRACE1 (DEBUG_ENGINE, "gpgme:AllowSetForegroundWindow", 0,
++	      "no action for pid %d", (int)pid);
++    }
++  else if (func)
++    {
++      int rc = func (pid);
++      TRACE2 (DEBUG_ENGINE, "gpgme:AllowSetForegroundWindow", 0,
++	      "called for pid %d; result=%d", (int)pid, rc);
++
++    }
++  else
++    {
++      TRACE0 (DEBUG_ENGINE, "gpgme:AllowSetForegroundWindow", 0,
++	      "function not available");
++    }
++#endif /* HAVE_ALLOW_SET_FOREGROUND_WINDOW */
++}
++
++
+ /* Return a string from the W32 Registry or NULL in case of error.
+    Caller must release the return value.  A NULL for root is an alias
+    for HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE in turn. */
+@@ -90,59 +144,64 @@
+   DWORD n1, nbytes, type;
+   char *result = NULL;
+ 	
+-  if ( !root )
++  if (!root)
+     root_key = HKEY_CURRENT_USER;
+-  else if ( !strcmp( root, "HKEY_CLASSES_ROOT" ) )
++  else if (!strcmp( root, "HKEY_CLASSES_ROOT"))
+     root_key = HKEY_CLASSES_ROOT;
+-  else if ( !strcmp( root, "HKEY_CURRENT_USER" ) )
++  else if (!strcmp( root, "HKEY_CURRENT_USER"))
+     root_key = HKEY_CURRENT_USER;
+-  else if ( !strcmp( root, "HKEY_LOCAL_MACHINE" ) )
++  else if (!strcmp( root, "HKEY_LOCAL_MACHINE"))
+     root_key = HKEY_LOCAL_MACHINE;
+-  else if ( !strcmp( root, "HKEY_USERS" ) )
++  else if (!strcmp( root, "HKEY_USERS"))
+     root_key = HKEY_USERS;
+-  else if ( !strcmp( root, "HKEY_PERFORMANCE_DATA" ) )
++  else if (!strcmp( root, "HKEY_PERFORMANCE_DATA"))
+     root_key = HKEY_PERFORMANCE_DATA;
+-  else if ( !strcmp( root, "HKEY_CURRENT_CONFIG" ) )
++  else if (!strcmp( root, "HKEY_CURRENT_CONFIG"))
+     root_key = HKEY_CURRENT_CONFIG;
+   else
+     return NULL;
+ 	
+-  if ( RegOpenKeyEx ( root_key, dir, 0, KEY_READ, &key_handle ) )
++  if (RegOpenKeyExA (root_key, dir, 0, KEY_READ, &key_handle))
+     {
+       if (root)
+         return NULL; /* no need for a RegClose, so return direct */
+       /* It seems to be common practise to fall back to HKLM. */
+-      if (RegOpenKeyEx (HKEY_LOCAL_MACHINE, dir, 0, KEY_READ, &key_handle) )
++      if (RegOpenKeyExA (HKEY_LOCAL_MACHINE, dir, 0, KEY_READ, &key_handle))
+         return NULL; /* still no need for a RegClose, so return direct */
+     }
+ 
+   nbytes = 1;
+-  if ( RegQueryValueEx( key_handle, name, 0, NULL, NULL, &nbytes ) )
++  if (RegQueryValueExA (key_handle, name, 0, NULL, NULL, &nbytes))
+     {
+       if (root)
+         goto leave;
+       /* Try to fallback to HKLM also vor a missing value.  */
+       RegCloseKey (key_handle);
+-      if (RegOpenKeyEx (HKEY_LOCAL_MACHINE, dir, 0, KEY_READ, &key_handle) )
++      if (RegOpenKeyExA (HKEY_LOCAL_MACHINE, dir, 0, KEY_READ, &key_handle))
+         return NULL; /* Nope.  */
+-      if (RegQueryValueEx ( key_handle, name, 0, NULL, NULL, &nbytes))
++      if (RegQueryValueExA (key_handle, name, 0, NULL, NULL, &nbytes))
+         goto leave;
+     }
+-  result = malloc ( (n1=nbytes+1) );
+-  if ( !result )
++  n1 = nbytes + 1;
++  result = malloc (n1);
++  if (!result)
+     goto leave;
+-  if ( RegQueryValueEx ( key_handle, name, 0, &type, result, &n1 ) )
++  if (RegQueryValueExA (key_handle, name, 0, &type, (LPBYTE) result, &n1))
+     {
+-      free(result); result = NULL;
++      free (result);
++      result = NULL;
+       goto leave;
+     }
+   result[nbytes] = 0; /* Make sure it is really a string.  */
++
++#ifndef HAVE_W32CE_SYSTEM
++  /* Windows CE does not have an environment.  */
+   if (type == REG_EXPAND_SZ && strchr (result, '%')) 
+     {
+       char *tmp;
+         
+       n1 += 1000;
+-      tmp = malloc (n1+1);
++      tmp = malloc (n1 + 1);
+       if (!tmp)
+         goto leave;
+       nbytes = ExpandEnvironmentStrings (result, tmp, n1);
+@@ -180,51 +239,14 @@
+           free (tmp);
+         }
+     }
++#endif
+ 
+  leave:
+-  RegCloseKey( key_handle );
++  RegCloseKey (key_handle);
+   return result;
+ }
+ 
+ 
+-/* This is a helper function to load and run a Windows function from
+-   either of one DLLs. */
+-static HRESULT
+-w32_shgetfolderpath (HWND a, int b, HANDLE c, DWORD d, LPSTR e)
+-{
+-  static int initialized;
+-  static HRESULT (WINAPI * func)(HWND,int,HANDLE,DWORD,LPSTR);
+-
+-  if (!initialized)
+-    {
+-      static char *dllnames[] = { "shell32.dll", "shfolder.dll", NULL };
+-      void *handle;
+-      int i;
+-
+-      initialized = 1;
+-
+-      for (i=0, handle = NULL; !handle && dllnames[i]; i++)
+-        {
+-          handle = dlopen (dllnames[i], RTLD_LAZY);
+-          if (handle)
+-            {
+-              func = dlsym (handle, "SHGetFolderPathA");
+-              if (!func)
+-                {
+-                  dlclose (handle);
+-                  handle = NULL;
+-                }
+-            }
+-        }
+-    }
+-
+-  if (func)
+-    return func (a,b,c,d,e);
+-  else
+-    return -1;
+-}
+-
+-
+ #if 0
+ static char *
+ find_program_in_registry (const char *name)
+@@ -286,7 +308,8 @@
+   char path[MAX_PATH];
+   char *result = NULL;
+       
+-  if (w32_shgetfolderpath (NULL, CSIDL_PROGRAM_FILES, NULL, 0, path) >= 0) 
++  /* See http://wiki.tcl.tk/17492 for details on compatibility.  */
++  if (SHGetSpecialFolderPathA (NULL, path, CSIDL_PROGRAM_FILES, 0))
+     {
+       result = malloc (strlen (path) + 1 + strlen (name) + 1);
+       if (result)
+@@ -384,7 +407,7 @@
+ _gpgme_get_uiserver_socket_path (void)
+ {
+   static char *socket_path;
+-  char *homedir;
++  const char *homedir;
+   const char name[] = "S.uiserver";
+ 
+   if (socket_path)
+@@ -433,51 +456,6 @@
+   return 1;
+ }
+ 
+-
+-void 
+-_gpgme_allow_set_foreground_window (pid_t pid)
+-{
+-  static int initialized;
+-  static BOOL (WINAPI * func)(DWORD);
+-  void *handle;
+-
+-  if (!initialized)
+-    {
+-      /* Available since W2000; thus we dynload it.  */
+-      initialized = 1;
+-      handle = dlopen ("user32.dll", RTLD_LAZY);
+-      if (handle)
+-        {
+-          func = dlsym (handle, "AllowSetForegroundWindow");
+-          if (!func)
+-            {
+-              dlclose (handle);
+-              handle = NULL;
+-            }
+-        }
+-    }
+-
+-  if (!pid || pid == (pid_t)(-1))
+-    {
+-      TRACE1 (DEBUG_ENGINE, "gpgme:AllowSetForegroundWindow", 0,
+-	      "no action for pid %d", (int)pid);
+-    }
+-  else if (func)
+-    {
+-      int rc = func (pid);
+-      TRACE2 (DEBUG_ENGINE, "gpgme:AllowSetForegroundWindow", 0,
+-	      "called for pid %d; result=%d", (int)pid, rc);
+-
+-    }
+-  else
+-    {
+-      TRACE0 (DEBUG_ENGINE, "gpgme:AllowSetForegroundWindow", 0,
+-	      "function not available");
+-    }
+-
+-}
+-
+-
+ 
+ /* mkstemp extracted from libc/sysdeps/posix/tempname.c.  Copyright
+    (C) 1991-1999, 2000, 2001, 2006 Free Software Foundation, Inc.
+@@ -524,7 +502,7 @@
+   len = strlen (tmpl);
+   if (len < 6 || strcmp (&tmpl[len - 6], "XXXXXX"))
+     {
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return -1;
+     }
+ 
+@@ -539,7 +517,7 @@
+     random_time_bits = (((uint64_t)ft.dwHighDateTime << 32)
+                         | (uint64_t)ft.dwLowDateTime);
+   }
+-  value += random_time_bits ^ getpid ();
++  value += random_time_bits ^ ath_self ();
+ 
+   for (count = 0; count < attempts; value += 7777, ++count)
+     {
+@@ -561,7 +539,7 @@
+       fd = open (tmpl, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+       if (fd >= 0)
+ 	{
+-	  errno = save_errno;
++	  gpg_err_set_errno (save_errno);
+ 	  return fd;
+ 	}
+       else if (errno != EEXIST)
+@@ -569,7 +547,7 @@
+     }
+ 
+   /* We got out of the loop because we ran out of combinations to try.  */
+-  errno = EEXIST;
++  gpg_err_set_errno (EEXIST);
+   return -1;
+ }
+ 
+@@ -584,7 +562,7 @@
+   *fd = -1;
+   *name = NULL;
+ 
+-  err = GetTempPath (MAX_PATH + 1, tmp);
++  err = GetTempPathA (MAX_PATH + 1, tmp);
+   if (err == 0 || err > MAX_PATH + 1)
+     strcpy (tmp,"c:\\windows\\temp");
+   else
+@@ -610,3 +588,24 @@
+   *name = tmpname;
+   return 0;
+ }
++
++
++
++#ifdef HAVE_W32CE_SYSTEM
++/* Return a malloced string with the replacement value for the
++   GPGME_DEBUG envvar.  Caller must release.  Returns NULL if not
++   set.  */
++char *
++_gpgme_w32ce_get_debug_envvar (void)
++{
++  char *tmp;
++
++  tmp = read_w32_registry_string (NULL, L"\\Software\\GNU\\gpgme", L"debug");
++  if (tmp && !*tmp)
++    {
++      free (tmp);
++      tmp = NULL;
++    }
++  return NULL;
++}
++#endif /*HAVE_W32CE_SYSTEM*/
+Index: src/Makefile.am
+===================================================================
+--- src/Makefile.am	(Revision 1447)
++++ src/Makefile.am	(Revision 1495)
+@@ -68,6 +68,10 @@
+ system_components_not_extra =
+ endif
+ 
++if HAVE_W32CE_SYSTEM
++system_components += w32-ce.h w32-ce.c
++endif
++
+ if HAVE_GPGSM
+ gpgsm_components = engine-gpgsm.c
+ else
+@@ -155,14 +159,17 @@
+ AM_CFLAGS = @LIBASSUAN_CFLAGS@ @PTH_CFLAGS@ @GLIB_CFLAGS@ @QT4_CORE_CFLAGS@
+ 
+ if HAVE_W32_SYSTEM
+-
+ # Windows provides us with an endless stream of Tough Love.  To spawn
+ # processes with a controlled set of inherited handles, we need a
+ # wrapper process.
++# Except on Windows CE.  There nothing is inheritable anyway.
++if HAVE_W32CE_SYSTEM
++libexec_PROGRAMS =
++else
+ libexec_PROGRAMS = gpgme-w32spawn
++endif
+ 
+-RCCOMPILE = $(RC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+-	$(AM_CPPFLAGS) $(CPPFLAGS)
++RCCOMPILE = $(RC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES)
+ LTRCCOMPILE = $(LIBTOOL) --mode=compile --tag=RC $(RCCOMPILE)
+ 
+ SUFFIXES = .rc .lo
+Index: src/opassuan.c
+===================================================================
+--- src/opassuan.c	(Revision 1447)
++++ src/opassuan.c	(Revision 1495)
+@@ -126,9 +126,10 @@
+                         data_cb, data_cb_value,
+                         inq_cb, inq_cb_value,
+                         status_cb, status_cb_value);
+-  if (!err)
+-    err = _gpgme_wait_one_ext (ctx, &op_err);
++  if (err)
++    goto out;
+ 
++  err = _gpgme_wait_one_ext (ctx, &op_err);
+   if (op_err)
+     {
+       TRACE_LOG2 ("op_err = %s <%s>", gpgme_strerror (op_err),
+@@ -140,7 +141,8 @@
+     }
+   if (op_err_p)
+     *op_err_p = op_err;
+-
++  
++ out:
+   return TRACE_ERR (err);
+ }
+ 
+Index: src/context.h
+===================================================================
+--- src/context.h	(Revision 1447)
++++ src/context.h	(Revision 1495)
+@@ -37,7 +37,8 @@
+   {
+     OPDATA_DECRYPT, OPDATA_SIGN, OPDATA_ENCRYPT, OPDATA_PASSPHRASE,
+     OPDATA_IMPORT, OPDATA_GENKEY, OPDATA_KEYLIST, OPDATA_EDIT,
+-    OPDATA_VERIFY, OPDATA_TRUSTLIST, OPDATA_ASSUAN, OPDATA_VFS_MOUNT
++    OPDATA_VERIFY, OPDATA_TRUSTLIST, OPDATA_ASSUAN, OPDATA_VFS_MOUNT,
++    OPDATA_PASSWD
+   } ctx_op_data_id_t;
+ 
+ 
+Index: src/data-compat.c
+===================================================================
+--- src/data-compat.c	(Revision 1447)
++++ src/data-compat.c	(Revision 1495)
+@@ -158,7 +158,7 @@
+   TRACE3 (DEBUG_DATA, "gpgme:gpgme_error_to_errno", 0,
+ 	  "mapping %s <%s> to: %s", gpgme_strerror (err),
+ 	  gpgme_strsource (err), strerror (res));
+-  errno = res;
++  gpg_err_set_errno (res);
+   return res ? -1 : 0;
+ }
+ 
+@@ -188,7 +188,7 @@
+ 
+   if (whence != SEEK_SET || offset)
+     {
+-      errno = EINVAL;
++      gpg_err_set_errno (EINVAL);
+       return TRACE_SYSRES (-1);
+     }
+   err = (*dh->data.old_user.cb) (dh->data.old_user.handle, NULL, 0, NULL);
+Index: src/priv-io.h
+===================================================================
+--- src/priv-io.h	(Revision 1447)
++++ src/priv-io.h	(Revision 1495)
+@@ -28,6 +28,10 @@
+ # include <sys/socket.h>
+ #endif
+ 
++/* For pid_t.  */
++#include <sys/types.h>
++
++
+ /* A single file descriptor passed to spawn.  For child fds, dup_to
+    specifies the fd it should become in the child, but only 0, 1 and 2
+    are valid values (due to a limitation in the W32 code).  As return
+Index: ChangeLog
+===================================================================
+--- ChangeLog	(Revision 1447)
++++ ChangeLog	(Revision 1495)
+@@ -1,3 +1,38 @@
++2010-08-19  Werner Koch  <wk@g10code.com>
++
++	* configure.ac (AH_BOTTOM): Define GPG_ERR_ENABLE_ERRNO_MACROS.
++
++2010-05-12  Marcus Brinkmann  <marcus@g10code.de>
++
++	* configure.ac: Check for setlocale.
++
++2010-05-07  Werner Koch  <wk@g10code.com>
++
++	* configure.ac: Change checks to always require libassuan.
++
++2010-05-07  Marcus Brinkmann  <marcus@g10code.de>
++
++	* autogen.sh: Update the thing.
++
++	* configure.ac: Check for locale.h.
++
++2010-05-06  Marcus Brinkmann  <marcus@g10code.de>
++
++	* configure.ac: Detect Windows CE.
++	(HAVE_W32CE_SYSTEM): New symbol and automake conditional.
++	* ltmain.sh, m4/libtool.m4: Patch so that it works for Windows CE.
++
++	* configure.ac: Require libgpg-error 1.8.
++
++2010-03-15  Werner Koch  <wk@g10code.com>
++
++	* configure.ac (emacs_local_vars_begin)
++	(emacs_local_vars_read_only, emacs_local_vars_end): New.
++
++2010-01-22  Werner Koch  <wk@g10code.com>
++
++	* autogen.sh (--build-w32): Add --with-libassuan-prefix.
++
+ 2010-01-11  Marcus Brinkmann  <marcus@g10code.de>
+ 
+ 	Release 1.3.0.
+Index: ltmain.sh
+===================================================================
+--- ltmain.sh	(Revision 1447)
++++ ltmain.sh	(Revision 1495)
+@@ -65,7 +65,7 @@
+ #       compiler:		$LTCC
+ #       compiler flags:		$LTCFLAGS
+ #       linker:		$LD (gnu? $with_gnu_ld)
+-#       $progname:		(GNU libtool) 2.2.6 Debian-2.2.6a-4
++#       $progname:		(GNU libtool) 2.2.6 Debian-2.2.6a-1ubuntu1
+ #       automake:		$automake_version
+ #       autoconf:		$autoconf_version
+ #
+@@ -73,7 +73,7 @@
+ 
+ PROGRAM=ltmain.sh
+ PACKAGE=libtool
+-VERSION="2.2.6 Debian-2.2.6a-4"
++VERSION="2.2.6 Debian-2.2.6a-1ubuntu1"
+ TIMESTAMP=""
+ package_revision=1.3012
+ 
+@@ -5347,19 +5347,19 @@
+ 	    # It is a libtool convenience library, so add in its objects.
+ 	    convenience="$convenience $ladir/$objdir/$old_library"
+ 	    old_convenience="$old_convenience $ladir/$objdir/$old_library"
+-	    tmp_libs=
+-	    for deplib in $dependency_libs; do
+-	      deplibs="$deplib $deplibs"
+-	      if $opt_duplicate_deps ; then
+-		case "$tmp_libs " in
+-		*" $deplib "*) specialdeplibs="$specialdeplibs $deplib" ;;
+-		esac
+-	      fi
+-	      tmp_libs="$tmp_libs $deplib"
+-	    done
+ 	  elif test "$linkmode" != prog && test "$linkmode" != lib; then
+ 	    func_fatal_error "\`$lib' is not a convenience library"
+ 	  fi
++	  tmp_libs=
++	  for deplib in $dependency_libs; do
++	    deplibs="$deplib $deplibs"
++	    if $opt_duplicate_deps ; then
++	      case "$tmp_libs " in
++	      *" $deplib "*) specialdeplibs="$specialdeplibs $deplib" ;;
++	      esac
++	    fi
++	    tmp_libs="$tmp_libs $deplib"
++	  done
+ 	  continue
+ 	fi # $pass = conv
+ 
+@@ -5896,7 +5896,6 @@
+ 	  if test "$link_all_deplibs" != no; then
+ 	    # Add the search paths of all dependency libraries
+ 	    for deplib in $dependency_libs; do
+-	      path=
+ 	      case $deplib in
+ 	      -L*) path="$deplib" ;;
+ 	      *.la)
+@@ -7681,15 +7680,15 @@
+ 
+       wrappers_required=yes
+       case $host in
++      *cegcc | *mingw32ce*)
++        # Disable wrappers for cegcc/mingw32ce, we are cross compiling anyway.
++        wrappers_required=no
++        ;;
+       *cygwin* | *mingw* )
+         if test "$build_libtool_libs" != yes; then
+           wrappers_required=no
+         fi
+         ;;
+-      *cegcc)
+-        # Disable wrappers for cegcc, we are cross compiling anyway.
+-        wrappers_required=no
+-        ;;
+       *)
+         if test "$need_relink" = no || test "$build_libtool_libs" != yes; then
+           wrappers_required=no
+Index: README
+===================================================================
+--- README	(Revision 1447)
++++ README	(Revision 1495)
+@@ -41,7 +41,7 @@
+ Don't skip it - this is an important step!
+ 
+ To build GPGME, you need to install libgpg-error.  You need at least
+-libgpg-error 0.5.
++libgpg-error 1.8.
+ 
+ For support of the OpenPGP protocol (default), you should use the
+ latest version of GnuPG 1.2 or 1.4, available at:
+Index: configure.ac
+===================================================================
+--- configure.ac	(Revision 1447)
++++ configure.ac	(Revision 1495)
+@@ -32,8 +32,8 @@
+ # specific feature can already be done under the assumption that the
+ # SVN version is the most recent one in a branch.  To disable the SVN
+ # version for the real release, set the my_issvn macro to no.
+-m4_define(my_version, [1.3.0])
+-m4_define(my_issvn, [no])
++m4_define(my_version, [1.3.1])
++m4_define(my_issvn, [yes])
+ 
+ m4_define([svn_revision], m4_esyscmd([printf "%d" $( (svn info 2>/dev/null \
+             || echo 'Revision: 0')|sed -n '/^Revision:/ {s/[^0-9]//gp;q;}')]))
+@@ -58,7 +58,10 @@
+ GPGME_CONFIG_API_VERSION=1
+ ##############################################
+ 
++NEED_LIBASSUAN_API=2
++NEED_LIBASSUAN_VERSION=2.0.0
+ 
++
+ BUILD_REVISION=svn_revision
+ PACKAGE=$PACKAGE_NAME
+ VERSION=$PACKAGE_VERSION
+@@ -128,7 +131,12 @@
+ build_w32_glib=no
+ build_w32_qt=no
+ case "${host}" in
+-    *-mingw32*)
++    *-mingw32ce*)
++        have_w32ce_system=yes
++	;;
++esac
++case "${host}" in
++    *-mingw32ce*|*-mingw32*)
+         # special stuff for Windoze NT
+ 	have_dosish_system=yes
+         have_w32_system=yes
+@@ -185,6 +193,10 @@
+    AC_DEFINE(HAVE_W32_SYSTEM,1, [Defined if we run on a W32 API based system])
+ fi
+ AM_CONDITIONAL(HAVE_W32_SYSTEM, test "$have_w32_system" = yes)
++if test "$have_w32ce_system" = yes; then
++   AC_DEFINE(HAVE_W32CE_SYSTEM,1, [Defined if we run on a W32 CE API based system])
++fi
++AM_CONDITIONAL(HAVE_W32CE_SYSTEM, test "$have_w32ce_system" = yes)
+ AM_CONDITIONAL(BUILD_W32_GLIB, test "$build_w32_glib" = yes)
+ AM_CONDITIONAL(BUILD_W32_QT, test "$build_w32_qt" = yes)
+ 
+@@ -194,6 +206,7 @@
+ 
+ 
+ # Checks for header files.
++AC_CHECK_HEADERS([locale.h])
+ AC_CHECK_HEADERS(sys/select.h)
+ AC_CHECK_HEADERS([sys/uio.h])
+ 
+@@ -282,16 +295,21 @@
+ ***])
+ fi
+ 
++AC_CHECK_FUNCS(setlocale)
++
+ # Checking for libgpg-error.
+-AM_PATH_GPG_ERROR(1.4,, AC_MSG_ERROR([libgpg-error was not found]))
++AM_PATH_GPG_ERROR(1.8,, AC_MSG_ERROR([libgpg-error was not found]))
+ AC_DEFINE(GPG_ERR_SOURCE_DEFAULT, GPG_ERR_SOURCE_GPGME,
+           [The default error source for GPGME.])
+ 
+ # And for libassuan.
+-NEED_LIBASSUAN_VERSION=1.1.0
+ have_libassuan=no
+-AM_PATH_LIBASSUAN("$NEED_LIBASSUAN_VERSION",
++AM_PATH_LIBASSUAN("$NEED_LIBASSUAN_API:$NEED_LIBASSUAN_VERSION",
+                   have_libassuan=yes, have_libassuan=no)
++if test "$have_libassuan" = "yes"; then
++  AC_DEFINE_UNQUOTED(GPGME_LIBASSUAN_VERSION, "$libassuan_version",
++                     [version of the libassuan library])
++fi
+ AM_CONDITIONAL(HAVE_ASSUAN, test "$have_libassuan" = "yes")
+ if test "$have_libassuan" = "yes"; then
+   AC_DEFINE(ENABLE_ASSUAN,1,[Whether Assuan support is enabled])
+@@ -541,16 +559,7 @@
+          run_gpgsm_test=$enableval)
+ AM_CONDITIONAL(RUN_GPGSM_TESTS, test "$run_gpgsm_test" = "yes")
+ 
+-# Require libassuan if GPGSM is here.
+-require_libassuan=no
+-if test "$GPGSM" != "no"; then
+-  require_libassuan=yes
+-fi
+-if test "$G13" != "no"; then
+-  require_libassuan=yes
+-fi
+ 
+-
+ NO_OVERRIDE=no
+ AC_ARG_WITH(gpgconf,
+ 	    AC_HELP_STRING([--with-gpgconf=PATH],
+@@ -789,6 +798,7 @@
+ #include <unistd.h>
+        ])
+ 
++use_descriptor_passing=no
+ AC_ARG_ENABLE(fd-passing,
+   AC_HELP_STRING([--enable-fd-passing], [use FD passing if supported]),
+   use_descriptor_passing=$enableval)
+@@ -848,6 +858,9 @@
+ #else
+ # define GPGME_GCC_A_PURE
+ #endif
++
++/* Under WindowsCE we need gpg-error's strerror macro.  */
++#define GPG_ERR_ENABLE_ERRNO_MACROS 1
+ ])
+ 
+ 
+@@ -871,16 +884,22 @@
+    [#include <errno.h>])
+ 
+ 
++# A substitution to set generated files in a Emacs buffer to read-only.
++AC_SUBST(emacs_local_vars_begin, ['Local Variables:'])
++AC_SUBST(emacs_local_vars_read_only, ['buffer-read-only: t'])
++AC_SUBST(emacs_local_vars_end, ['End:'])
++
++
+ # Last check.
+ die=no
+-if test "$require_libassuan" = "no"; then
++if test "$have_libassuan" = "no"; then
+    die=yes
+    AC_MSG_NOTICE([[
+ ***
+ *** You need libassuan to build this program with GPGSM support.
+ *** This library is for example available at
+-***   ftp://ftp.gnupg.org/pub/gcrypt/alpha/libassuan/
+-*** (at least version $NEED_LIBASSUAN_VERSION is required).
++***   ftp://ftp.gnupg.org/gcrypt/libassuan/
++*** (at least version $NEED_LIBASSUAN_VERSION (API $NEED_LIBASSUAN_API) is required).
+ ***]])
+ fi
+ 
+@@ -909,25 +928,25 @@
+ AC_OUTPUT
+ 
+ echo "
+-	GPGME v${VERSION} has been configured as follows:
++        GPGME v${VERSION} has been configured as follows:
+ 
+-	GnuPG path:      $GPG
++        GnuPG path:      $GPG
+         GnuPG version:   $GPG_VERSION, min. $NEED_GPG_VERSION
+ 
+-	GpgSM path:      $GPGSM
++        GpgSM path:      $GPGSM
+         GpgSM version:   $GPGSM_VERSION, min. $NEED_GPGSM_VERSION
+ 
+-	GpgConf path:    $GPGCONF
++        GpgConf path:    $GPGCONF
+         GpgConf version: $GPGCONF_VERSION, min. $NEED_GPGCONF_VERSION
+ 
+-	G13 path:        $G13
++        G13 path:        $G13
+         G13 version:     $G13_VERSION, min. $NEED_G13_VERSION
+ 
+-        Assuan version:  $LIBASSUAN_VERSION
++        Assuan version:  $libassuan_version, min. $NEED_LIBASSUAN_VERSION
+ 
+-	UI Server:       $uiserver
++        UI Server:       $uiserver
+         FD Passing:      $use_descriptor_passing
+ 
+-	GPGME Pthread:   $have_pthread
+-	GPGME Pth:       $have_pth
++        GPGME Pthread:   $have_pthread
++        GPGME Pth:       $have_pth
+ "
+Index: doc/gpgme.texi
+===================================================================
+--- doc/gpgme.texi	(Revision 1447)
++++ doc/gpgme.texi	(Revision 1495)
+@@ -3402,6 +3402,12 @@
+ time.  Using this flag requires that the @var{keydata} argument of the
+ export function is set to @code{NULL}.
+ 
++@item GPGME_EXPORT_MODE_MINIMAL
++If this bit is set, the smallest possible key is exported.  For OpenPGP
++keys it removes all signatures except for the latest self-signatures.
++For X.509 keys it has no effect.
++
++
+ @end table
+ 
+ 
+@@ -3746,7 +3752,7 @@
+ anyway).
+ 
+ Note that old @code{gpg} engines (before version 2.0.15) do not support
+-this comamnd and will silently ignore it.
++this command and will silently ignore it.
+ @end deftypefun
+ 
+ @deftypefun gpgme_error_t gpgme_op_passwd_start      @
+Index: autogen.sh
+===================================================================
+--- autogen.sh	(Revision 1447)
++++ autogen.sh	(Revision 1495)
+@@ -31,13 +31,55 @@
+ 
+ DIE=no
+ FORCE=
+-if test "$1" = "--force"; then
++if test x"$1" = x"--force"; then
+   FORCE=" --force"
+   shift
+ fi
+ 
++# Begin list of optional variables sourced from ~/.gnupg-autogen.rc
++w32_toolprefixes=
++w32_extraoptions=
++w32ce_toolprefixes=
++w32ce_extraoptions=
++amd64_toolprefixes=
++# End list of optional variables sourced from ~/.gnupg-autogen.rc
++# What follows are variables which are sourced but default to 
++# environment variables or lacking them hardcoded values.
++#w32root=
++#w32ce_root=
++#amd64root=
++
++if [ -f "$HOME/.gnupg-autogen.rc" ]; then
++    echo "sourcing extra definitions from $HOME/.gnupg-autogen.rc"
++    . "$HOME/.gnupg-autogen.rc"
++fi
++
++# Convenience option to use certain configure options for some hosts.
++myhost="" 
++myhostsub=""
++case "$1" in
++    --build-w32)
++        myhost="w32"
++        ;;
++    --build-w32ce)
++        myhost="w32"
++        myhostsub="ce"
++        ;;
++    --build-amd64)
++        myhost="amd64"
++        ;;
++    --build*)
++        echo "**Error**: invalid build option $1" >&2
++        exit 1
++        ;;
++    *)
++        ;;
++esac
++
++
++# ***** W32 build script *******
+ # Used to cross-compile for Windows.
+-if test "$1" = "--build-w32"; then
++if [ "$myhost" = "w32" ]; then
+     tmp=`dirname $0`
+     tsdir=`cd "$tmp"; pwd`
+     shift
+@@ -47,28 +89,35 @@
+     fi
+     build=`$tsdir/config.guess`
+ 
+-    [ -z "$w32root" ] && w32root="$HOME/w32root"
++    case $myhostsub in
++        ce)
++          w32root="$w32ce_root"
++          [ -z "$w32root" ] && w32root="$HOME/w32ce_root"
++          toolprefixes="arm-mingw32ce"
++          ;;
++        *)
++          [ -z "$w32root" ] && w32root="$HOME/w32root"
++          toolprefixes="i586-mingw32msvc i386-mingw32msvc"
++          ;;
++    esac
+     echo "Using $w32root as standard install directory" >&2
+     
+-    # See whether we have the Debian cross compiler package or the
+-    # old mingw32/cpd system
+-    if i586-mingw32msvc-gcc --version >/dev/null 2>&1 ; then
+-        host=i586-mingw32msvc
+-        crossbindir=/usr/$host/bin
+-    else
+-       host=i386--mingw32
+-       if ! mingw32 --version >/dev/null; then
+-          echo "We need at least version 0.3 of MingW32/CPD" >&2
+-          exit 1
+-       fi
+-       crossbindir=`mingw32 --install-dir`/bin
+-       # Old autoconf version required us to setup the environment
+-       # with the proper tool names.
+-       CC=`mingw32 --get-path gcc`
+-       CPP=`mingw32 --get-path cpp`
+-       AR=`mingw32 --get-path ar`
+-       RANLIB=`mingw32 --get-path ranlib`
+-       export CC CPP AR RANLIB 
++    crossbindir=
++    for host in $toolprefixes; do
++        if ${host}-gcc --version >/dev/null 2>&1 ; then
++            crossbindir=/usr/${host}/bin
++            conf_CC="CC=${host}-gcc"
++            break;
++        fi
++    done
++    if [ -z "$crossbindir" ]; then
++        echo "Cross compiler kit not installed" >&2
++        if [ -z "$sub" ]; then 
++          echo "Under Debian GNU/Linux, you may install it using" >&2
++          echo "  apt-get install mingw32 mingw32-runtime mingw32-binutils" >&2 
++        fi
++        echo "Stop." >&2
++        exit 1
+     fi
+    
+     if [ -f "$tsdir/config.log" ]; then
+@@ -79,18 +128,61 @@
+     fi
+ 
+     ./configure --enable-maintainer-mode  --prefix=${w32root}  \
+-            --host=i586-mingw32msvc --build=${build} \
++            --host=${host} --build=${build} \
+             --with-gpg-error-prefix=${w32root} \
+-            --enable-shared --enable-static --enable-w32-glib \
+-            PKG_CONFIG_LIBDIR="$w32root/lib/pkgconfig"
++            --with-libassuan-prefix=${w32root} "$@"
+ 
+     exit $?
+ fi
++# ***** end W32 build script *******
+ 
+ 
++# ***** AMD64 cross build script *******
++# Used to cross-compile for AMD64 (for testing)
++if [ "$myhost" = "amd64" ]; then
++    tmp=`dirname $0`
++    tsdir=`cd "$tmp"; pwd`
++    shift
++    if [ ! -f $tsdir/config.guess ]; then
++        echo "$tsdir/config.guess not found" >&2
++        exit 1
++    fi
++    build=`$tsdir/config.guess`
+ 
++    [ -z "$amd64root" ] && amd64root="$HOME/amd64root"
++    echo "Using $amd64root as standard install directory" >&2
++    
++    # Locate the cross compiler
++    crossbindir=
++    for host in x86_64-linux-gnu amd64-linux-gnu; do
++        if ${host}-gcc --version >/dev/null 2>&1 ; then
++            crossbindir=/usr/${host}/bin
++            conf_CC="CC=${host}-gcc"
++            break;
++        fi
++    done
++    if [ -z "$crossbindir" ]; then
++        echo "Cross compiler kit not installed" >&2
++        echo "Stop." >&2
++        exit 1
++    fi
++   
++    if [ -f "$tsdir/config.log" ]; then
++        if ! head $tsdir/config.log | grep "$host" >/dev/null; then
++            echo "Please run a 'make distclean' first" >&2
++            exit 1
++        fi
++    fi
+ 
++    $tsdir/configure --enable-maintainer-mode --prefix=${amd64root}  \
++             --host=${host} --build=${build} 
++    rc=$?
++    exit $rc
++fi
++# ***** end AMD64 cross build script *******
+ 
++
++
+ # Grep the required versions from configure.ac
+ autoconf_vers=`sed -n '/^AC_PREREQ(/ { 
+ s/^.*(\(.*\))/\1/p
+@@ -127,14 +219,12 @@
+ #GETTEXT=${GETTEXT_PREFIX}${GETTEXT:-gettext}${GETTEXT_SUFFIX}
+ #MSGMERGE=${GETTEXT_PREFIX}${MSGMERGE:-msgmerge}${GETTEXT_SUFFIX}
+ 
+-DIE=no
+ 
+-
+ if check_version $AUTOCONF $autoconf_vers_num $autoconf_vers ; then
+     check_version $AUTOHEADER $autoconf_vers_num $autoconf_vers autoconf
+ fi
+ if check_version $AUTOMAKE $automake_vers_num $automake_vers; then
+-    check_version $ACLOCAL $automake_vers_num $automake_vers automake
++  check_version $ACLOCAL $automake_vers_num $autoconf_vers automake
+ fi
+ #if check_version $GETTEXT $gettext_vers_num $gettext_vers; then
+ #  check_version $MSGMERGE $gettext_vers_num $gettext_vers gettext
+@@ -159,6 +249,6 @@
+ echo "Running autoconf${FORCE} ..."
+ $AUTOCONF${FORCE}
+ 
+-echo "You may now run:
++echo "You may now run 
+   ./configure --enable-maintainer-mode && make
+ "
+Index: NEWS
+===================================================================
+--- NEWS	(Revision 1447)
++++ NEWS	(Revision 1495)
+@@ -1,3 +1,20 @@
++Noteworthy changes in version 1.3.1 (unreleased)
++------------------------------------------------
++
++ * Under development.
++
++ * Detect GPG versions not supporting ---passwd.
++
++ * Interface changes relative to the 1.3.0 release:
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ GPGME_EXPORT_MODE_MINIMAL      NEW
++ gpgme_err_code_from_syserror   NEW
++ gpgme_err_set_errno            NEW
++ gpgme_error_from_errno		CHANGED: Return gpgme_error_t (compatible type).
++ gpgme_error_from_syserror      NEW
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++
+ Noteworthy changes in version 1.3.0 (2010-01-11)
+ ------------------------------------------------
+ 
+@@ -10,7 +27,7 @@
+ 
+  * New engine GPGME_PROTOCOL_UISERVER to support UI Servers.
+ 
+- * New API to change the passpgrase of a key.
++ * New API to change the passphrase of a key.
+ 
+  * Interface changes relative to the 1.2.0 release:
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

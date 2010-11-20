@@ -1,0 +1,861 @@
+diff -Nru gpgme-1.3.0.orig/src/ath.c gpgme-1.3.0/src/ath.c
+--- gpgme-1.3.0.orig/src/ath.c	2009-12-08 04:26:47.000000000 +0100
++++ gpgme-1.3.0/src/ath.c	2010-11-02 02:29:08.974687100 +0100
+@@ -23,13 +23,19 @@
+ #endif
+ 
+ #include <assert.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_SYS_SELECT_H
+ # include <sys/select.h>
+ #else
+-# include <sys/time.h>
++# ifdef HAVE_SYS_TIME_H
++#  include <sys/time.h>
++# endif
+ #endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #ifndef HAVE_W32_SYSTEM
+ #include <sys/wait.h>
+ #endif
+diff -Nru gpgme-1.3.0.orig/src/ath.h gpgme-1.3.0/src/ath.h
+--- gpgme-1.3.0.orig/src/ath.h	2009-11-06 15:55:09.000000000 +0100
++++ gpgme-1.3.0/src/ath.h	2010-11-02 02:29:08.976687200 +0100
+@@ -23,13 +23,31 @@
+ 
+ #ifdef HAVE_STDINT_H
+ #include <stdint.h>
++#else
++#ifdef _MSC_VER
++# include <BaseTsd.h>  // do this for SSIZE_T
++# ifndef _SSIZE_T_DEFINED
++# define _SSIZE_T_DEFINED
++  typedef SSIZE_T ssize_t;
++# endif
++# ifndef _SIZE_T_DEFINED
++# define _SIZE_T_DEFINED
++  typedef unsigned size_t;
++# endif
++# ifndef _PID_T_DEFINED
++# define _PID_T_DEFINED
++  typedef int pid_t;
++# endif
++#endif
+ #endif
+ #ifdef HAVE_W32_SYSTEM
+   /* fixme: Check how we did it in libgcrypt.  */
+   struct msghdr { int dummy; };
+   typedef int socklen_t;
+ # include <windows.h>
+-# include <io.h>
++# ifndef HAVE_W32CE_SYSTEM
++#  include <io.h>
++# endif
+ 
+ #else /*!HAVE_W32_SYSTEM*/
+ 
+@@ -38,10 +56,12 @@
+ # else
+ #  include <sys/time.h>
+ # endif
+-# include <sys/types.h>
+ # include <sys/socket.h>
+ 
+ #endif  /*!HAVE_W32_SYSTEM*/
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ 
+ 
+ 
+diff -Nru gpgme-1.3.0.orig/src/conversion.c gpgme-1.3.0/src/conversion.c
+--- gpgme-1.3.0.orig/src/conversion.c	2010-11-02 02:52:59.913532100 +0100
++++ gpgme-1.3.0/src/conversion.c	2010-11-02 02:29:08.977687300 +0100
+@@ -26,7 +26,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ /* Solaris 8 needs sys/types.h before time.h.  */
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <time.h>
+ #include <errno.h>
+ 
+diff -Nru gpgme-1.3.0.orig/src/data-compat.c gpgme-1.3.0/src/data-compat.c
+--- gpgme-1.3.0.orig/src/data-compat.c	2010-11-02 02:52:59.986536300 +0100
++++ gpgme-1.3.0/src/data-compat.c	2010-11-02 02:29:08.979687400 +0100
+@@ -23,8 +23,12 @@
+ #endif
+ 
+ #include <errno.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
++#endif
+ #include <stdlib.h>
+ 
+ #include "data.h"
+@@ -115,10 +119,11 @@
+ gpgme_error_t
+ gpgme_data_new_from_file (gpgme_data_t *r_dh, const char *fname, int copy)
+ {
+-  gpgme_error_t err;
+-  struct stat statbuf;
++  gpgme_error_t err = -1;
+   TRACE_BEG3 (DEBUG_DATA, "gpgme_data_new_from_filepart", r_dh,
+ 	      "file_name=%s, copy=%i (%s)", fname, copy, copy ? "yes" : "no");
++#ifndef HAVE_W32CE_SYSTEM
++  struct stat statbuf;
+ 
+   if (!fname || !copy)
+     return TRACE_ERR (gpg_error (GPG_ERR_INV_VALUE));
+@@ -127,6 +132,7 @@
+     return TRACE_ERR (gpg_error_from_errno (errno));
+ 
+   err = gpgme_data_new_from_filepart (r_dh, fname, NULL, 0, statbuf.st_size);
++#endif
+   return TRACE_ERR (err);
+ }
+ 
+diff -Nru gpgme-1.3.0.orig/src/data-fd.c gpgme-1.3.0/src/data-fd.c
+--- gpgme-1.3.0.orig/src/data-fd.c	2009-10-28 15:43:53.000000000 +0100
++++ gpgme-1.3.0/src/data-fd.c	2010-11-02 02:29:08.980687400 +0100
+@@ -22,8 +22,12 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ 
+ #include "debug.h"
+ #include "data.h"
+diff -Nru gpgme-1.3.0.orig/src/data-mem.c gpgme-1.3.0/src/data-mem.c
+--- gpgme-1.3.0.orig/src/data-mem.c	2010-11-02 02:52:59.962534900 +0100
++++ gpgme-1.3.0/src/data-mem.c	2010-11-02 02:29:08.982687500 +0100
+@@ -24,7 +24,9 @@
+ 
+ #include <errno.h>
+ #include <stdlib.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <assert.h>
+ #include <string.h>
+ 
+diff -Nru gpgme-1.3.0.orig/src/data-stream.c gpgme-1.3.0/src/data-stream.c
+--- gpgme-1.3.0.orig/src/data-stream.c	2009-10-28 15:43:53.000000000 +0100
++++ gpgme-1.3.0/src/data-stream.c	2010-11-02 02:29:08.984687700 +0100
+@@ -23,7 +23,9 @@
+ #endif
+ 
+ #include <stdio.h>
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ 
+ #include "debug.h"
+ #include "data.h"
+diff -Nru gpgme-1.3.0.orig/src/data-user.c gpgme-1.3.0/src/data-user.c
+--- gpgme-1.3.0.orig/src/data-user.c	2010-11-02 02:52:59.911532000 +0100
++++ gpgme-1.3.0/src/data-user.c	2010-11-02 02:29:08.985687700 +0100
+@@ -22,7 +22,9 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <errno.h>
+ 
+ #include "debug.h"
+diff -Nru gpgme-1.3.0.orig/src/data.c gpgme-1.3.0/src/data.c
+--- gpgme-1.3.0.orig/src/data.c	2010-11-02 02:52:59.934533300 +0100
++++ gpgme-1.3.0/src/data.c	2010-11-02 02:29:08.987687800 +0100
+@@ -23,7 +23,9 @@
+ #endif
+ 
+ #include <stdlib.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ #include <string.h>
+ 
+diff -Nru gpgme-1.3.0.orig/src/data.h gpgme-1.3.0/src/data.h
+--- gpgme-1.3.0.orig/src/data.h	2008-11-03 17:50:12.000000000 +0100
++++ gpgme-1.3.0/src/data.h	2010-11-02 02:29:08.988687900 +0100
+@@ -25,7 +25,9 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <limits.h>
+ 
+ #include "gpgme.h"
+diff -Nru gpgme-1.3.0.orig/src/debug.c gpgme-1.3.0/src/debug.c
+--- gpgme-1.3.0.orig/src/debug.c	2010-11-02 02:52:59.915532200 +0100
++++ gpgme-1.3.0/src/debug.c	2010-11-02 02:29:08.990688000 +0100
+@@ -26,7 +26,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <ctype.h>
+ #include <errno.h>
+ #include <time.h>
+@@ -42,6 +44,10 @@
+ #include "sema.h"
+ #include "debug.h"
+ 
++#if defined(HAVE_W32CE_SYSTEM) && !defined(_IOLBF)
++#define _IOLBF 1
++#endif
++
+ 
+ /* Lock to serialize initialization of the debug output subsystem and
+    output of actual debug messages.  */
+diff -Nru gpgme-1.3.0.orig/src/engine-assuan.c gpgme-1.3.0/src/engine-assuan.c
+--- gpgme-1.3.0.orig/src/engine-assuan.c	2010-11-02 02:52:59.968535200 +0100
++++ gpgme-1.3.0/src/engine-assuan.c	2010-11-02 02:29:08.992688100 +0100
+@@ -30,9 +30,13 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <assert.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
+@@ -239,12 +243,12 @@
+ 			&_gpgme_assuan_malloc_hooks, _gpgme_assuan_log_cb,
+ 			NULL);
+   if (err)
+-    goto leave;
++    goto out;
+   assuan_ctx_set_system_hooks (llass->assuan_ctx, &_gpgme_assuan_system_hooks);
+ 
+   err = assuan_socket_connect (llass->assuan_ctx, file_name, 0, 0);
+   if (err)
+-    goto leave;
++    goto out;
+ 
+   if (llass->opt.gpg_agent)
+     {
+@@ -252,14 +256,14 @@
+ 
+       err = _gpgme_getenv ("DISPLAY", &dft_display);
+       if (err)
+-        goto leave;
++        goto out;
+       if (dft_display)
+         {
+           if (asprintf (&optstr, "OPTION display=%s", dft_display) < 0)
+             {
+               err = gpg_error_from_syserror ();
+               free (dft_display);
+-              goto leave;
++              goto out;
+             }
+           free (dft_display);
+ 
+@@ -267,7 +271,7 @@
+                                  NULL, NULL, NULL);
+           free (optstr);
+           if (err)
+-            goto leave;
++            goto out;
+         }
+     }
+ 
+@@ -281,31 +285,31 @@
+       if (rc)
+ 	{
+ 	  err = gpg_error_from_errno (rc);
+-	  goto leave;
++	  goto out;
+ 	}
+       else
+ 	{
+ 	  if (asprintf (&optstr, "OPTION ttyname=%s", dft_ttyname) < 0)
+ 	    {
+ 	      err = gpg_error_from_syserror ();
+-	      goto leave;
++	      goto out;
+ 	    }
+ 	  err = assuan_transact (llass->assuan_ctx, optstr, NULL, NULL, NULL,
+ 				 NULL, NULL, NULL);
+ 	  free (optstr);
+ 	  if (err)
+-            goto leave;
++            goto out;
+ 
+ 	  err = _gpgme_getenv ("TERM", &dft_ttytype);
+ 	  if (err)
+-	    goto leave;
++	    goto out;
+ 	  if (dft_ttytype)
+ 	    {
+ 	      if (asprintf (&optstr, "OPTION ttytype=%s", dft_ttytype) < 0)
+ 		{
+ 		  err = gpg_error_from_syserror ();
+ 		  free (dft_ttytype);
+-		  goto leave;
++		  goto out;
+ 		}
+ 	      free (dft_ttytype);
+               
+@@ -313,7 +317,7 @@
+ 				     NULL, NULL, NULL, NULL);
+ 	      free (optstr);
+ 	      if (err)
+-                goto leave;
++                goto out;
+ 	    }
+ 	}
+     }
+@@ -332,7 +336,7 @@
+ #endif /*HAVE_W32_SYSTEM*/
+ 
+ 
+- leave:
++ out:
+   /* Close the server ends of the pipes (because of this, we must use
+      the stored server_fd_str in the function start).  Our ends are
+      closed in llass_release().  */
+@@ -645,7 +649,7 @@
+      using the assumption that the first returned fd from
+      assuan_get_active_fds() is always this one.  */
+   nfds = assuan_get_active_fds (llass->assuan_ctx, 0 /* read fds */,
+-                                afdlist, DIM (afdlist));
++                                (assuan_fd_t*)afdlist, DIM (afdlist));
+   if (nfds < 1)
+     return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
+   /* For now... */
+diff -Nru gpgme-1.3.0.orig/src/engine-gpg.c gpgme-1.3.0/src/engine-gpg.c
+--- gpgme-1.3.0.orig/src/engine-gpg.c	2010-11-02 02:52:59.957534600 +0100
++++ gpgme-1.3.0/src/engine-gpg.c	2010-11-02 02:29:08.994688200 +0100
+@@ -27,7 +27,9 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
+@@ -431,7 +433,7 @@
+       if (!gpg->file_name)
+ 	{
+ 	  rc = gpg_error_from_errno (errno);
+-	  goto leave;
++	  goto out;
+ 	}
+     }
+ 
+@@ -452,14 +454,14 @@
+   if (!gpg->status.buffer)
+     {
+       rc = gpg_error_from_errno (errno);
+-      goto leave;
++      goto out;
+     }
+   /* In any case we need a status pipe - create it right here and
+      don't handle it with our generic gpgme_data_t mechanism.  */
+   if (_gpgme_io_pipe (gpg->status.fd, 1) == -1)
+     {
+       rc = gpg_error_from_errno (errno);
+-      goto leave;
++      goto out;
+     }
+   if (_gpgme_io_set_close_notify (gpg->status.fd[0],
+ 				  close_notify_handler, gpg)
+@@ -467,7 +469,7 @@
+ 				     close_notify_handler, gpg))
+     {
+       rc = gpg_error (GPG_ERR_GENERAL);
+-      goto leave;
++      goto out;
+     }
+   gpg->status.eof = 0;
+ 
+@@ -477,19 +479,19 @@
+       if (!rc)
+ 	rc = add_arg (gpg, home_dir);
+       if (rc)
+-	goto leave;
++	goto out;
+     }
+ 
+   rc = add_arg (gpg, "--status-fd");
+   if (rc)
+-    goto leave;
++    goto out;
+ 
+   {
+     char buf[25];
+     _gpgme_io_fd2str (buf, sizeof (buf), gpg->status.fd[1]);
+     rc = add_arg_with_locp (gpg, buf, &gpg->status.arg_loc);
+     if (rc)
+-      goto leave;
++      goto out;
+   }
+ 
+   rc = add_arg (gpg, "--no-tty");
+@@ -500,11 +502,11 @@
+   if (!rc)
+     rc = add_arg (gpg, "--enable-progress-filter");
+   if (rc)
+-    goto leave;
++    goto out;
+ 
+   rc = _gpgme_getenv ("DISPLAY", &dft_display);
+   if (rc)
+-    goto leave;
++    goto out;
+   if (dft_display)
+     {
+       rc = add_arg (gpg, "--display");
+@@ -535,7 +537,7 @@
+ 	    {
+ 	      rc = _gpgme_getenv ("TERM", &dft_ttytype);
+ 	      if (rc)
+-		goto leave;
++		goto out;
+               
+               if (dft_ttytype)
+                 {
+@@ -548,10 +550,10 @@
+ 	    }
+ 	}
+       if (rc)
+-	goto leave;
++	goto out;
+     }
+ 
+- leave:
++ out:
+   if (rc)
+     gpg_release (gpg);
+   else
+diff -Nru gpgme-1.3.0.orig/src/export.c gpgme-1.3.0/src/export.c
+--- gpgme-1.3.0.orig/src/export.c	2010-11-02 02:52:59.907531800 +0100
++++ gpgme-1.3.0/src/export.c	2010-11-02 02:29:08.996688300 +0100
+@@ -222,7 +222,7 @@
+         if (!pattern[nkeys])
+           {
+             err = gpg_error_from_syserror ();
+-            goto leave;
++            goto out;
+           }
+         nkeys++;
+       }
+@@ -232,7 +232,7 @@
+   err = export_ext_start (ctx, synchronous, (const char**)pattern,
+                           mode, keydata);
+ 
+- leave:
++ out:
+   for (idx=0; pattern[idx]; idx++)
+     free (pattern[idx]);
+   free (pattern);
+diff -Nru gpgme-1.3.0.orig/src/gpgme.c gpgme-1.3.0/src/gpgme.c
+--- gpgme-1.3.0.orig/src/gpgme.c	2010-11-02 02:52:59.948534100 +0100
++++ gpgme-1.3.0/src/gpgme.c	2010-11-02 02:29:08.999688500 +0100
+@@ -211,7 +211,7 @@
+   if (! result)
+     return;
+ 
+-  data = result - sizeof (struct ctx_op_data);
++  data = (struct ctx_op_data *)((uintptr_t)result - sizeof (struct ctx_op_data));
+ 
+   assert (data->magic == CTX_OP_DATA_MAGIC);
+ 
+@@ -229,7 +229,7 @@
+   if (! result)
+     return;
+ 
+-  data = result - sizeof (struct ctx_op_data);
++  data = (struct ctx_op_data *)((uintptr_t)result - sizeof (struct ctx_op_data));
+ 
+   assert (data->magic == CTX_OP_DATA_MAGIC);
+ 
+diff -Nru gpgme-1.3.0.orig/src/gpgme.h.in gpgme-1.3.0/src/gpgme.h.in
+--- gpgme-1.3.0.orig/src/gpgme.h.in	2010-11-02 02:52:59.937533500 +0100
++++ gpgme-1.3.0/src/gpgme.h.in	2010-11-02 02:29:09.002688700 +0100
+@@ -37,6 +37,7 @@
+ #ifdef _WIN32
+   typedef long off_t;
+   typedef long ssize_t;
++  typedef int pid_t;
+ #else
+ # include <sys/types.h>
+ #endif
+diff -Nru gpgme-1.3.0.orig/src/key.c gpgme-1.3.0/src/key.c
+--- gpgme-1.3.0.orig/src/key.c	2010-11-02 02:52:59.944533900 +0100
++++ gpgme-1.3.0/src/key.c	2010-11-02 02:29:09.003688700 +0100
+@@ -389,7 +389,7 @@
+     return err;
+ 
+   /* Note: protocol doesn't matter if only email is provided.  */
+-  err = _gpgme_key_append_name (key, name, 0);
++  err = _gpgme_key_append_name (key, (char*)name, 0);
+   if (err)
+     gpgme_key_unref (key);
+   else
+diff -Nru gpgme-1.3.0.orig/src/keylist.c gpgme-1.3.0/src/keylist.c
+--- gpgme-1.3.0.orig/src/keylist.c	2009-11-19 18:14:02.000000000 +0100
++++ gpgme-1.3.0/src/keylist.c	2010-11-02 02:29:09.005688900 +0100
+@@ -26,7 +26,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ /* Solaris 8 needs sys/types.h before time.h.  */
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <time.h>
+ #include <assert.h>
+ #include <ctype.h>
+diff -Nru gpgme-1.3.0.orig/src/priv-io.h gpgme-1.3.0/src/priv-io.h
+--- gpgme-1.3.0.orig/src/priv-io.h	2010-11-02 02:52:59.988536400 +0100
++++ gpgme-1.3.0/src/priv-io.h	2010-11-02 02:29:09.007689000 +0100
+@@ -29,7 +29,9 @@
+ #endif
+ 
+ /* For pid_t.  */
++#ifndef HAVE_W32CE_SYSTEM
+ #include <sys/types.h>
++#endif
+ 
+ 
+ /* A single file descriptor passed to spawn.  For child fds, dup_to
+diff -Nru gpgme-1.3.0.orig/src/signers.c gpgme-1.3.0/src/signers.c
+--- gpgme-1.3.0.orig/src/signers.c	2009-11-03 15:35:19.000000000 +0100
++++ gpgme-1.3.0/src/signers.c	2010-11-02 02:29:09.008689000 +0100
+@@ -57,7 +57,7 @@
+ gpgme_signers_clear (gpgme_ctx_t ctx)
+ {
+   TRACE (DEBUG_CTX, "gpgme_signers_clear", ctx);
+-  return _gpgme_signers_clear (ctx);
++  _gpgme_signers_clear (ctx);
+ }
+ 
+ 
+diff -Nru gpgme-1.3.0.orig/src/ttyname_r.c gpgme-1.3.0/src/ttyname_r.c
+--- gpgme-1.3.0.orig/src/ttyname_r.c	2008-11-03 17:50:12.000000000 +0100
++++ gpgme-1.3.0/src/ttyname_r.c	2010-11-02 02:29:09.009689100 +0100
+@@ -24,10 +24,14 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ 
+ 
++#ifdef __GNUC__
+ #warning ttyname is not thread-safe, and ttyname_r is missing
++#endif
+ 
+ int
+ ttyname_r (int fd, char *buf, size_t buflen)
+diff -Nru gpgme-1.3.0.orig/src/util.h gpgme-1.3.0/src/util.h
+--- gpgme-1.3.0.orig/src/util.h	2010-11-02 02:52:59.910531900 +0100
++++ gpgme-1.3.0/src/util.h	2010-11-02 02:29:09.011689200 +0100
+@@ -27,7 +27,9 @@
+ #endif
+ 
+ /* For pid_t.  */
++#ifndef HAVE_W32CE_SYSTEM
+ #include <sys/types.h>
++#endif
+ 
+ #include "gpgme.h"
+ 
+diff -Nru gpgme-1.3.0.orig/src/w32-ce.h gpgme-1.3.0/src/w32-ce.h
+--- gpgme-1.3.0.orig/src/w32-ce.h	2010-11-02 02:52:59.927532900 +0100
++++ gpgme-1.3.0/src/w32-ce.h	2010-11-02 02:29:09.012689300 +0100
+@@ -39,7 +39,9 @@
+ #define getenv _gpgme_wince_getenv
+ char *getenv (const char *name);
+ 
++#ifndef _WIN32_WCE
+ #include <io.h>
++#endif
+ #define isatty(fd) 0
+ 
+ 
+diff -Nru gpgme-1.3.0.orig/src/w32-io.c gpgme-1.3.0/src/w32-io.c
+--- gpgme-1.3.0.orig/src/w32-io.c	2010-11-02 02:52:59.978535800 +0100
++++ gpgme-1.3.0/src/w32-io.c	2010-11-02 02:29:09.015689400 +0100
+@@ -27,11 +27,19 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifndef HAVE_W32CE_SYSTEM
+ #include <fcntl.h>
++#endif
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <windows.h>
++#ifdef HAVE_IO_H
+ #include <io.h>
++#endif
+ 
+ #ifdef HAVE_W32CE_SYSTEM
+ #include <assuan.h>
+@@ -1563,7 +1571,7 @@
+   args = calloc (2 + i + 1, sizeof (*args));
+   args[0] = (char *) _gpgme_get_w32spawn_path ();
+   args[1] = tmp_name;
+-  args[2] = path;
++  args[2] = (char *) path;
+   memcpy (&args[3], &argv[1], i * sizeof (*args));
+ 
+   memset (&sec_attr, 0, sizeof sec_attr);
+@@ -1624,7 +1632,7 @@
+       HANDLE hd;
+ 
+       /* Make it inheritable for the wrapper process.  */
+-      if (!DuplicateHandle (GetCurrentProcess(), fd_to_handle (fd_list[i].fd),
++      if (!DuplicateHandle (GetCurrentProcess(), (HANDLE) (fd_list[i].fd),
+ 			    pi.hProcess, &hd, 0, TRUE, DUPLICATE_SAME_ACCESS))
+ 	{
+ 	  TRACE_LOG1 ("DuplicateHandle failed: ec=%d", (int) GetLastError ());
+@@ -1643,7 +1651,7 @@
+ 	  return TRACE_SYSRES (-1);
+         }
+       /* Return the child name of this handle.  */
+-      fd_list[i].peer_name = handle_to_fd (hd);
++      fd_list[i].peer_name = (int) (hd);
+     }
+   
+   /* Write the handle translation information to the temporary
+@@ -1850,7 +1858,7 @@
+       if (le == ERROR_INVALID_HANDLE)
+ 	{
+ 	  int k;
+-	  int j = handle_to_fd (waitbuf[i]);
++	  int j = (int) (waitbuf[i]);
+           
+ 	  TRACE_LOG1 ("WFMO invalid handle %d removed", j);
+ 	  for (k = 0 ; k < nfds; k++)
+diff -Nru gpgme-1.3.0.orig/src/w32-sema.c gpgme-1.3.0/src/w32-sema.c
+--- gpgme-1.3.0.orig/src/w32-sema.c	2010-11-02 02:52:59.969535300 +0100
++++ gpgme-1.3.0/src/w32-sema.c	2010-11-02 02:29:09.016689500 +0100
+@@ -27,11 +27,19 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifndef HAVE_W32CE_SYSTEM
+ #include <fcntl.h>
++#endif
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ #include <windows.h>
++#ifdef HAVE_IO_H
+ #include <io.h>
++#endif
+ 
+ #include "util.h"
+ #include "sema.h"
+diff -Nru gpgme-1.3.0.orig/src/w32-util.c gpgme-1.3.0/src/w32-util.c
+--- gpgme-1.3.0.orig/src/w32-util.c	2010-11-02 02:52:59.980535900 +0100
++++ gpgme-1.3.0/src/w32-util.c	2010-11-02 02:29:09.018689600 +0100
+@@ -28,21 +28,48 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifdef HAVE_STDINT_H
+ #include <stdint.h>
++#endif
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
++#ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
++#endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
++#ifndef HAVE_W32CE_SYSTEM
+ #include <fcntl.h>
++#endif
+ #include <windows.h>
+ #include <shlobj.h>
++#ifndef HAVE_W32CE_SYSTEM
+ #include <io.h>
++#endif
+ 
+ #include "ath.h"
+ #include "util.h"
+ #include "sema.h"
+ #include "debug.h"
+ 
++#ifdef _MSC_VER
++typedef unsigned __int64 uint64_t;
++# define F_OK    0
++# define S_IRUSR 0000400 /* read permission, owner */
++# define S_IWUSR 0000200 /* write permission, owner */
++# ifdef HAVE_W32CE_SYSTEM
++#  define O_RDONLY 0x0000
++#  define O_WRONLY 0x0001
++#  define O_RDWR 0x0002
++#  define O_EXCL 0x0400
++#  define O_CREAT 0x0100
++# endif
++#endif
+ 
+ #ifndef HAVE_W32CE_SYSTEM
+ #define HAVE_ALLOW_SET_FOREGROUND_WINDOW 1
+@@ -56,14 +83,14 @@
+ 
+ #define RTLD_LAZY 0
+ 
+-static __inline__ void *
++static GPG_ERR_INLINE void *
+ dlopen (const char * name, int flag)
+ {
+   void * hd = LoadLibrary (name);
+   return hd;
+ }
+ 
+-static __inline__ void *
++static GPG_ERR_INLINE void *
+ dlsym (void * hd, const char * sym)
+ {
+   if (hd && sym)
+@@ -76,7 +103,7 @@
+   return NULL;
+ }
+ 
+-static __inline__ int
++static inline int
+ dlclose (void * hd)
+ {
+   if (hd)
+@@ -88,7 +115,6 @@
+ }  
+ #endif /* HAVE_ALLOW_SET_FOREGROUND_WINDOW */
+ 
+-
+ void 
+ _gpgme_allow_set_foreground_window (pid_t pid)
+ {
+@@ -154,10 +180,12 @@
+     root_key = HKEY_LOCAL_MACHINE;
+   else if (!strcmp( root, "HKEY_USERS"))
+     root_key = HKEY_USERS;
+-  else if (!strcmp( root, "HKEY_PERFORMANCE_DATA"))
++#ifndef HAVE_W32CE_SYSTEM
++    else if (!strcmp( root, "HKEY_PERFORMANCE_DATA"))
+     root_key = HKEY_PERFORMANCE_DATA;
+   else if (!strcmp( root, "HKEY_CURRENT_CONFIG"))
+     root_key = HKEY_CURRENT_CONFIG;
++#endif
+   else
+     return NULL;
+ 	
+@@ -174,23 +202,23 @@
+   if (RegQueryValueExA (key_handle, name, 0, NULL, NULL, &nbytes))
+     {
+       if (root)
+-        goto leave;
++        goto out;
+       /* Try to fallback to HKLM also vor a missing value.  */
+       RegCloseKey (key_handle);
+       if (RegOpenKeyExA (HKEY_LOCAL_MACHINE, dir, 0, KEY_READ, &key_handle))
+         return NULL; /* Nope.  */
+       if (RegQueryValueExA (key_handle, name, 0, NULL, NULL, &nbytes))
+-        goto leave;
++        goto out;
+     }
+   n1 = nbytes + 1;
+   result = malloc (n1);
+   if (!result)
+-    goto leave;
++    goto out;
+   if (RegQueryValueExA (key_handle, name, 0, &type, (LPBYTE) result, &n1))
+     {
+       free (result);
+       result = NULL;
+-      goto leave;
++      goto out;
+     }
+   result[nbytes] = 0; /* Make sure it is really a string.  */
+ 
+@@ -203,7 +231,7 @@
+       n1 += 1000;
+       tmp = malloc (n1 + 1);
+       if (!tmp)
+-        goto leave;
++        goto out;
+       nbytes = ExpandEnvironmentStrings (result, tmp, n1);
+       if (nbytes && nbytes > n1)
+         {
+@@ -211,11 +239,11 @@
+           n1 = nbytes;
+           tmp = malloc (n1 + 1);
+           if (!tmp)
+-            goto leave;
++            goto out;
+           nbytes = ExpandEnvironmentStrings (result, tmp, n1);
+           if (nbytes && nbytes > n1) {
+             free (tmp); /* Oops - truncated, better don't expand at all. */
+-            goto leave;
++            goto out;
+           }
+           tmp[nbytes] = 0;
+           free (result);
+@@ -241,7 +269,7 @@
+     }
+ #endif
+ 
+- leave:
++ out:
+   RegCloseKey (key_handle);
+   return result;
+ }
+diff -Nru gpgme-1.3.0.orig/src/wait.c gpgme-1.3.0/src/wait.c
+--- gpgme-1.3.0.orig/src/wait.c	2009-10-28 15:43:53.000000000 +0100
++++ gpgme-1.3.0/src/wait.c	2010-11-02 02:29:09.019689700 +0100
+@@ -26,7 +26,9 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
+ 
+ #include "util.h"
+ #include "context.h"

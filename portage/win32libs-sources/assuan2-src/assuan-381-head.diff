@@ -1,0 +1,1656 @@
+Index: src/assuan-io.c
+===================================================================
+--- src/assuan-io.c	(Revision 381)
++++ src/assuan-io.c	(Revision 394)
+@@ -22,14 +22,23 @@
+ #endif
+ 
+ #include <time.h>
+-#include <sys/time.h>
+-#include <sys/types.h>
++#ifdef HAVE_SYS_TIME_H
++# include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ #ifdef HAVE_SYS_SOCKET_H
+ # include <sys/socket.h>
+ #endif
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ #include <errno.h>
+ #ifdef HAVE_W32_SYSTEM
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
+ # include <windows.h>
+ #else
+ # include <sys/wait.h>
+Index: src/assuan.h.in
+===================================================================
+--- src/assuan.h.in	(Revision 381)
++++ src/assuan.h.in	(Revision 394)
+@@ -24,8 +24,8 @@
+ #define ASSUAN_H
+ 
+ #include <stdio.h>
+-#include <sys/types.h>
+-#include <unistd.h>
++@include:sys/types.h@
++@include:unistd.h@
+ #include <stdarg.h>
+ 
+ #ifndef _ASSUAN_NO_SOCKET_WRAPPER
+@@ -161,6 +161,11 @@
+ #define ASSUAN_CONFIDENTIAL 2
+ /* This flag suppresses fix up of signal handlers for pipes.  */
+ #define ASSUAN_NO_FIXSIGNALS 3
++/* This flag changes assuan_transact to return comment lines via the
++   status callback.  The default is to skip comment lines.  */
++#define ASSUAN_CONVEY_COMMENTS 4
++/* This flags disables logging for one context.  */
++#define ASSUAN_NO_LOGGING 5
+ 
+ /* For context CTX, set the flag FLAG to VALUE.  Values for flags
+    are usually 1 or 0 but certain flags might allow for other values;
+@@ -349,7 +354,7 @@
+ gpg_error_t assuan_socket_connect (assuan_context_t ctx, const char *name,
+ 				   pid_t server_pid, unsigned int flags);
+ 
+-/*-- assuan-connect.c --*/
++/*-- context.c --*/
+ pid_t assuan_get_pid (assuan_context_t ctx);
+ struct _assuan_peercred
+ {
+Index: src/system-w32ce.c
+===================================================================
+--- src/system-w32ce.c	(Revision 381)
++++ src/system-w32ce.c	(Revision 394)
+@@ -25,7 +25,9 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <time.h>
+-#include <fcntl.h>
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
+ #include <windows.h>
+ #include <winioctl.h>
+ #include <devload.h>
+Index: src/posix-fd-t.inc.h
+===================================================================
+--- src/posix-fd-t.inc.h	(Revision 381)
++++ src/posix-fd-t.inc.h	(Revision 394)
+@@ -23,7 +23,7 @@
+ typedef int assuan_fd_t;
+ #define ASSUAN_INVALID_FD  (-1)
+ #define ASSUAN_INVALID_PID ((pid_t) -1)
+-static inline assuan_fd_t
++static GPG_ERR_INLINE assuan_fd_t
+ assuan_fd_from_posix_fd (int fd)
+ {
+   return fd;
+Index: src/client.c
+===================================================================
+--- src/client.c	(Revision 381)
++++ src/client.c	(Revision 394)
+@@ -195,7 +195,7 @@
+ 
+ gpg_error_t
+ _assuan_read_from_server (assuan_context_t ctx, assuan_response_t *response,
+-			  int *off)
++			  int *off, int convey_comments)
+ {
+   gpg_error_t rc;
+   char *line;
+@@ -209,7 +209,7 @@
+       if (!rc)
+         rc = assuan_client_parse_response (ctx, line, linelen, response, off);
+     }
+-  while (!rc && *response == ASSUAN_RESPONSE_COMMENT);
++  while (!rc && *response == ASSUAN_RESPONSE_COMMENT && !convey_comments);
+ 
+   return rc;
+ }
+@@ -228,11 +228,10 @@
+  * 
+  * FIXME: Write documentation
+  * 
+- * Return value: 0 on success or error code.  The error code may be
+- * the one one returned by the server in error lines or from the
+- * callback functions.  Take care: When a callback returns an error
+- * this function returns immediately with an error and thus the caller
+- * will altter return an Assuan error (write erro in most cases).
++ * Return value: 0 on success or an error code.  The error code may be
++ * the one one returned by the server via error lines or from the
++ * callback functions.  Take care:  If a callback returns an error
++ * this function returns immediately with this error.
+  **/
+ gpg_error_t
+ assuan_transact (assuan_context_t ctx,
+@@ -258,7 +257,8 @@
+     return 0; /* Don't expect a response for a comment line.  */
+ 
+  again:
+-  rc = _assuan_read_from_server (ctx, &response, &off);
++  rc = _assuan_read_from_server (ctx, &response, &off,
++                                 ctx->flags.convey_comments);
+   if (rc)
+     return rc; /* error reading from server */
+ 
+@@ -283,7 +283,7 @@
+       if (!inquire_cb)
+         {
+           assuan_write_line (ctx, "END"); /* get out of inquire mode */
+-          _assuan_read_from_server (ctx, &response, &off); /* dummy read */
++          _assuan_read_from_server (ctx, &response, &off, 0); /* dummy read */
+           rc = _assuan_error (ctx, GPG_ERR_ASS_NO_INQUIRE_CB);
+         }
+       else
+@@ -302,6 +302,14 @@
+       if (!rc)
+         goto again;
+     }
++  else if (response == ASSUAN_RESPONSE_COMMENT && ctx->flags.convey_comments)
++    {
++      line -= off; /* Send line with the comment marker.  */
++      if (status_cb)
++        rc = status_cb (status_cb_arg, line);
++      if (!rc)
++        goto again;
++    }
+   else if (response == ASSUAN_RESPONSE_END)
+     {
+       if (!data_cb)
+Index: src/assuan-uds.c
+===================================================================
+--- src/assuan-uds.c	(Revision 381)
++++ src/assuan-uds.c	(Revision 394)
+@@ -25,18 +25,27 @@
+ #include <stddef.h>
+ #include <stdio.h>
+ #include <errno.h>
+-#include <sys/types.h>
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ #ifndef HAVE_W32_SYSTEM
+-#include <sys/socket.h>
+-#include <sys/un.h>
++# include <sys/socket.h>
++# include <sys/un.h>
+ #else
+-#include <windows.h>
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
++# include <windows.h>
+ #endif
+ #if HAVE_SYS_UIO_H
+ #include <sys/uio.h>
+ #endif
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
++#ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
++#endif
+ #include <string.h>
+ #include <assert.h>
+ 
+Index: src/system.c
+===================================================================
+--- src/system.c	(Revision 381)
++++ src/system.c	(Revision 394)
+@@ -24,10 +24,14 @@
+ 
+ #include <stdlib.h>
+ #include <errno.h>
+-/* Solaris 8 needs sys/types.h before time.h.  */
+-#include <sys/types.h>
++#ifdef HAVE_SYS_TYPES_H
++  /* Solaris 8 needs sys/types.h before time.h.  */
++# include <sys/types.h>
++#endif
+ #include <time.h>
++#ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
++#endif
+ 
+ #include "assuan-defs.h"
+ #include "debug.h"
+Index: src/assuan-socket-server.c
+===================================================================
+--- src/assuan-socket-server.c	(Revision 381)
++++ src/assuan-socket-server.c	(Revision 394)
+@@ -24,9 +24,16 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <errno.h>
+-#include <unistd.h>
+-#include <sys/types.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ #ifdef HAVE_W32_SYSTEM
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
+ # include <windows.h>
+ # if HAVE_SYS_SOCKET_H
+ #  include <sys/socket.h>
+Index: src/assuan-listen.c
+===================================================================
+--- src/assuan-listen.c	(Revision 381)
++++ src/assuan-listen.c	(Revision 394)
+@@ -24,7 +24,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ #include <errno.h>
+ 
+ #include "assuan-defs.h"
+Index: src/debug.c
+===================================================================
+--- src/debug.c	(Revision 381)
++++ src/debug.c	(Revision 394)
+@@ -26,13 +26,15 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ #include <ctype.h>
+ #include <errno.h>
+ #ifndef HAVE_DOSISH_SYSTEM
+-#  include <sys/types.h>
+-#  include <sys/stat.h>
+-#  include <fcntl.h>
++# include <sys/types.h>
++# include <sys/stat.h>
++# include <fcntl.h>
+ #endif
+ #include <assert.h>
+ 
+Index: src/w32ce-fd-t.inc.h
+===================================================================
+--- src/w32ce-fd-t.inc.h	(Revision 381)
++++ src/w32ce-fd-t.inc.h	(Revision 394)
+@@ -23,7 +23,7 @@
+ typedef void *assuan_fd_t;
+ #define ASSUAN_INVALID_FD ((void*)(-1))
+ #define ASSUAN_INVALID_PID ((pid_t) -1)
+-static inline assuan_fd_t
++static GPG_ERR_INLINE assuan_fd_t
+ assuan_fd_from_posix_fd (int fd)
+ {
+   return (assuan_fd_t)(fd);
+Index: src/debug.h
+===================================================================
+--- src/debug.h	(Revision 381)
++++ src/debug.h	(Revision 394)
+@@ -39,10 +39,10 @@
+ 
+ /* Remove path components from filenames (i.e. __FILE__) for cleaner
+    logs. */
+-static inline const char *_assuan_debug_srcname (const char *file)
++static GPG_ERR_INLINE const char *_assuan_debug_srcname (const char *file)
+   ASSUAN_GCC_A_PURE;
+ 
+-static inline const char *
++static GPG_ERR_INLINE const char *
+ _assuan_debug_srcname (const char *file)
+ {
+   const char *s = strrchr (file, '/');
+Index: src/sysutils.c
+===================================================================
+--- src/sysutils.c	(Revision 381)
++++ src/sysutils.c	(Revision 394)
+@@ -25,10 +25,12 @@
+ #include <string.h>
+ #include <stdarg.h>
+ #ifdef HAVE_W32_SYSTEM
+-#include <windows.h>
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
++# include <windows.h>
+ # ifdef HAVE_W32CE_SYSTEM
+ # include <winioctl.h>
+-# include <devload.h>
+ # endif /*HAVE_W32CE_SYSTEM*/
+ #endif /*HAVE_W32_SYSTEM*/
+ 
+@@ -68,33 +70,33 @@
+ 
+   nbytes = 1;
+   if (RegQueryValueEx (handle, name, 0, NULL, NULL, &nbytes))
+-    goto leave;
++    goto out;
+   buffer = malloc ((n=nbytes+2));
+   if (!buffer)
+-    goto leave;
++    goto out;
+   if (RegQueryValueEx (handle, name, 0, NULL, (PBYTE)buffer, &n))
+     {
+       free (buffer);
+       buffer = NULL;
+-      goto leave;
++      goto out;
+     }
+   
+   n = WideCharToMultiByte (CP_UTF8, 0, buffer, nbytes, NULL, 0, NULL, NULL);
+   if (n < 0 || (n+1) <= 0)
+-    goto leave;
++    goto out;
+   result = malloc (n+1);
+   if (!result)
+-    goto leave;
++    goto out;
+   n = WideCharToMultiByte (CP_UTF8, 0, buffer, nbytes, result, n, NULL, NULL);
+   if (n < 0)
+     {
+       free (result);
+       result = NULL;
+-      goto leave;
++      goto out;
+     }
+   result[n] = 0;
+ 
+- leave:
++ out:
+   free (buffer);
+   RegCloseKey (handle);
+   return result;
+Index: src/assuan-buffer.c
+===================================================================
+--- src/assuan-buffer.c	(Revision 381)
++++ src/assuan-buffer.c	(Revision 394)
+@@ -22,11 +22,15 @@
+ #include <string.h>
+ #include <stdio.h>
+ #include <errno.h>
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ #include <assert.h>
+ #ifdef HAVE_W32_SYSTEM
+-#include <process.h>
++#ifndef HAVE_W32CE_SYSTEM
++# include <process.h>
+ #endif
++#endif
+ #include "assuan-defs.h"
+ 
+ 
+Index: src/assuan-inquire.c
+===================================================================
+--- src/assuan-inquire.c	(Revision 381)
++++ src/assuan-inquire.c	(Revision 394)
+@@ -168,7 +168,7 @@
+   strcpy (stpcpy (cmdbuf, "INQUIRE "), keyword);
+   rc = assuan_write_line (ctx, cmdbuf);
+   if (rc)
+-    goto leave;
++    goto out;
+ 
+   for (;;)
+     {
+@@ -178,7 +178,7 @@
+ 	    rc = _assuan_read_line (ctx);
+ 	  while (_assuan_error_is_eagain (ctx, rc));
+           if (rc)
+-            goto leave;
++            goto out;
+           line = (unsigned char *) ctx->inbound.line;
+           linelen = ctx->inbound.linelen;
+         }    
+@@ -196,13 +196,13 @@
+           && (line[2] == 'N' || line[2] == 'n'))
+         {
+           rc = _assuan_error (ctx, GPG_ERR_ASS_CANCELED);
+-          goto leave;
++          goto out;
+         }
+       if ((line[0] != 'D' && line[0] != 'd') 
+           || line[1] != ' ' || nodataexpected)
+         {
+           rc = _assuan_error (ctx, GPG_ERR_ASS_UNEXPECTED_CMD);
+-          goto leave;
++          goto out;
+         }
+       if (linelen < 3)
+         continue;
+@@ -229,7 +229,7 @@
+       if (mb.too_large)
+         {
+           rc = _assuan_error (ctx, GPG_ERR_ASS_TOO_MUCH_DATA);
+-          goto leave;
++          goto out;
+         }
+     }
+ 
+@@ -240,7 +240,7 @@
+ 	rc = _assuan_error (ctx, gpg_err_code_from_syserror ());
+     }
+ 
+- leave:
++ out:
+   if (!nodataexpected)
+     free_membuf (ctx, &mb);
+   ctx->in_inquire = 0;
+@@ -281,7 +281,7 @@
+       && (line[2] == 'N' || line[2] == 'n'))
+     {
+       rc = _assuan_error (ctx, GPG_ERR_ASS_CANCELED);
+-      goto leave;
++      goto out;
+     }
+   if ((line[0] == 'E'||line[0] == 'e')
+       && (line[1] == 'N' || line[1] == 'n')
+@@ -289,13 +289,13 @@
+       && (!line[3] || line[3] == ' '))
+     {
+       rc = 0;
+-      goto leave;
++      goto out;
+     }
+ 
+   if ((line[0] != 'D' && line[0] != 'd') || line[1] != ' ' || mb == NULL)
+     {
+       rc = _assuan_error (ctx, GPG_ERR_ASS_UNEXPECTED_CMD);
+-      goto leave;
++      goto out;
+     }
+   
+   if (linelen < 3)
+@@ -323,12 +323,12 @@
+   if (mb->too_large)
+     {
+       rc = _assuan_error (ctx, GPG_ERR_ASS_TOO_MUCH_DATA);
+-      goto leave;
++      goto out;
+     }
+ 
+   return 0;
+ 
+- leave:
++ out:
+   {
+     size_t buf_len = 0;
+     unsigned char *buf = NULL;
+Index: src/ChangeLog
+===================================================================
+--- src/ChangeLog	(Revision 381)
++++ src/ChangeLog	(Revision 394)
+@@ -1,3 +1,74 @@
++2010-11-01  Werner Koch  <wk@g10code.com>
++
++	* assuan-socket.c (_assuan_sock_bind): Replace open/fdopen by
++	CreateFile for building with MSC for W32CE.
++	(utf8_to_wchar, MyCreateFile, MyDeleteFile) [W32CE]: New.
++
++2010-11-01  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
++
++	* assuan-socket.c, assuan-uds.c, system.c, assuan-pipe-server.c,
++	assuan-pipe-connect.c [!HAVE_FCNTL_H]: Don't include fcntl.h.
++	* assuan-buffer.c [!HAVE_W32CE_SYSTEM]: Do not include process.h.
++	* assuan-socket.c [!HAVE_W32CE_SYSTEM]: Do not include io.h.
++	* w32-includes.inc.h: Include winsock2.h before ws2tcpip.h.
++	* sysutils.c (w32_read_registry): Replace goto label "leave" by
++	"out" (as leave is defined by some Windows header file).
++	* assuan-inquire.c: Likewise.
++
++2010-11-01  Werner Koch  <wk@g10code.com>
++
++	* assuan-socket.c (S_IRUSR) [W32]: Define if not defined.
++
++	* sysutils.c: Remove include of devload.h.
++
++	* assuan-defs.h [HAVE_WINSOCK2_H]: Include winsock2.h prior to
++	windows.h.
++	* assuan-pipe-server.c: Ditto.
++	* sysutils.c: Ditto.
++	* assuan-socket-server.c: Ditto.
++	* assuan-pipe-connect.c: Ditto.
++	* assuan-socket-connect.c: Ditto.
++	* assuan-uds.c: Ditto.
++	* assuan-logging.c: Ditto.
++	* system-w32ce.c: Ditto.
++	* assuan-io.c: Ditto.
++
++	* w32-types.inc.h [_MSC_VER]: Define ssize_t and pid_t.
++
++	* w32ce-fd-t.inc.h, w32-fd-t.inc.h, posix-fd-t.inc.h, debug.h:
++	s/inline/GPG_ERR_INLINE/.
++	* assuan.h.in: Let mkheader write the sys/types.h and unistd.h
++	include lines.
++	* mkheader.c: Change accordingly.
++
++	Guard include of sys/types.h, sys/stat.h, sys/time.h and unistd.h.
++
++2010-09-17  Werner Koch  <wk@g10code.com>
++
++	* assuan-socket-connect.c (INADDR_NONE): New replacement.  Fixes
++	bug#1282.
++
++2010-09-01  Werner Koch  <wk@g10code.com>
++
++	* assuan.h.in (ASSUAN_NO_LOGGING): New.
++	* assuan-defs.h (struct assuan_context_s): Add FLAGS.NO_LOGGING.
++	* context.c (assuan_set_flag, assuan_get_flag): Support new flag.
++	* assuan-logging.c (_assuan_log_control_channel): Implement new flag.
++
++2010-08-11  Werner Koch  <wk@g10code.com>
++
++	* assuan.h.in (ASSUAN_CONVEY_COMMENTS): New.
++	* assuan-defs.h (struct assuan_context_s): Add flags.CONVEY_COMMENTS.
++	* context.c (assuan_set_flag, assuan_get_flag): Support this flag.
++	(_assuan_read_from_server): Add arg CONVEY_COMMENTS.  Change all
++	callers.
++	* client.c (assuan_transact): Implement new flags.
++
++2010-08-09  Werner Koch  <wk@g10code.com>
++
++	* assuan-socket-connect.c (assuan_socket_connect): Fix ipv6
++	literal IP case.
++
+ 2010-08-03  Marcus Brinkmann  <marcus@g10code.de>
+ 
+ 	* gpgcedev.c (GPGCEDEV_IOCTL_ASSIGN_RVID): New call ASSIGN_RVID.
+Index: src/assuan-socket-connect.c
+===================================================================
+--- src/assuan-socket-connect.c	(Revision 381)
++++ src/assuan-socket-connect.c	(Revision 394)
+@@ -26,9 +26,16 @@
+ #ifdef HAVE_STDINT_H
+ # include <stdint.h>
+ #endif
+-#include <unistd.h>
+-#include <sys/types.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ #ifdef HAVE_W32_SYSTEM
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
+ # include <windows.h>
+ #else
+ # include <sys/socket.h>
+@@ -51,6 +58,9 @@
+ #ifndef AF_LOCAL
+ # define AF_LOCAL AF_UNIX
+ #endif
++#ifndef INADDR_NONE
++#define INADDR_NONE  ((unsigned long)(-1))
++#endif /*INADDR_NONE*/
+ 
+ #ifndef SUN_LEN
+ # define SUN_LEN(ptr) ((size_t) (((struct sockaddr_un *) 0)->sun_path) \
+@@ -100,7 +110,7 @@
+ 
+       file://<fname>
+ 
+-        This is the same as the defualt just with an explicit schemata.
++        This is the same as the default just with an explicit schemata.
+ 
+       assuan://<ipaddr>:<port>
+       assuan://[<ip6addr>]:<port>
+@@ -175,7 +185,7 @@
+       if (!addrstr)
+         return _assuan_error (ctx, gpg_err_code_from_syserror ());
+ 
+-      if (*addrstr == '[')
++      if (*name == '[')
+         {
+           strcpy (addrstr, name+1);
+           p = strchr (addrstr, ']');
+@@ -276,7 +286,7 @@
+     assuan_response_t response;
+     int off;
+ 
+-    err = _assuan_read_from_server (ctx, &response, &off);
++    err = _assuan_read_from_server (ctx, &response, &off, 0);
+     if (err)
+       TRACE1 (ctx, ASSUAN_LOG_SYSIO, "assuan_socket_connect", ctx,
+ 	      "can't connect to server: %s\n", gpg_strerror (err));
+Index: src/assuan-pipe-connect.c
+===================================================================
+--- src/assuan-pipe-connect.c	(Revision 381)
++++ src/assuan-pipe-connect.c	(Revision 394)
+@@ -29,14 +29,23 @@
+ #ifndef HAVE_DOSISH_SYSTEM 
+ # include <signal.h>
+ #endif
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ #include <errno.h>
++#ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+-#include <sys/types.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ #ifndef HAVE_W32_SYSTEM
+-#include <sys/wait.h>
++# include <sys/wait.h>
+ #else
+-#include <windows.h>
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
++# include <windows.h>
+ #endif
+ 
+ #include "assuan-defs.h"
+@@ -96,7 +105,7 @@
+   int off;
+   gpg_error_t err;
+   
+-  err = _assuan_read_from_server (ctx, &response, &off);
++  err = _assuan_read_from_server (ctx, &response, &off, 0);
+   if (err)
+     TRACE1 (ctx, ASSUAN_LOG_SYSIO, "initial_handshake", ctx,
+ 	    "can't connect server: %s", gpg_strerror (err));
+Index: src/assuan-defs.h
+===================================================================
+--- src/assuan-defs.h	(Revision 381)
++++ src/assuan-defs.h	(Revision 394)
+@@ -21,14 +21,22 @@
+ #ifndef ASSUAN_DEFS_H
+ #define ASSUAN_DEFS_H
+ 
+-#include <sys/types.h>
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ #ifndef HAVE_W32_SYSTEM
+-#include <sys/socket.h>
+-#include <sys/un.h>
++# include <sys/socket.h>
++# include <sys/un.h>
+ #else
+-#include <windows.h>
++# ifdef HAVE_WINSOCK2_H
++#  /* Avoid inclusion of winsock.h via windows.h. */
++#  include <winsock2.h>
++# endif
++# include <windows.h>
+ #endif
+-#include <unistd.h>
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ 
+ #include "assuan.h"
+ 
+@@ -87,6 +95,8 @@
+     unsigned int no_waitpid : 1;
+     unsigned int confidential : 1;
+     unsigned int no_fixsignals : 1;
++    unsigned int convey_comments : 1;
++    unsigned int no_logging : 1;
+   } flags;
+ 
+   /* If set, this is called right before logging an I/O line.  */
+@@ -281,7 +291,8 @@
+ 
+ /*-- client.c --*/
+ gpg_error_t _assuan_read_from_server (assuan_context_t ctx,
+-				      assuan_response_t *okay, int *off);
++				      assuan_response_t *okay, int *off,
++                                      int convey_comments);
+ 
+ /*-- assuan-error.c --*/
+ 
+Index: src/assuan-logging.c
+===================================================================
+--- src/assuan-logging.c	(Revision 381)
++++ src/assuan-logging.c	(Revision 394)
+@@ -26,7 +26,10 @@
+ #include <string.h>
+ #include <stdarg.h>
+ #ifdef HAVE_W32_SYSTEM
+-#include <windows.h>
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
++# include <windows.h>
+ #endif /*HAVE_W32_SYSTEM*/
+ #include <errno.h>
+ #include <ctype.h>
+@@ -170,7 +173,9 @@
+ 
+   /* Check whether logging is enabled and do a quick check to see
+      whether the callback supports our category.  */
+-  if (!ctx || !ctx->log_cb 
++  if (!ctx
++      || !ctx->log_cb 
++      || ctx->flags.no_logging
+       || !(*ctx->log_cb) (ctx, ctx->log_cb_data, ASSUAN_LOG_CONTROL, NULL))
+     return;
+ 
+Index: src/assuan-socket.c
+===================================================================
+--- src/assuan-socket.c	(Revision 381)
++++ src/assuan-socket.c	(Revision 394)
+@@ -24,17 +24,23 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #ifdef HAVE_W32_SYSTEM
+-#define WIN32_LEAN_AND_MEAN
+-#include <windows.h>
+-#include <wincrypt.h>
+-#include <io.h>
++# define WIN32_LEAN_AND_MEAN
++# include <windows.h>
++# include <wincrypt.h>
++#ifndef HAVE_W32CE_SYSTEM
++# include <io.h>
++#endif
+ #else
+-#include <sys/types.h>
+-#include <sys/socket.h>
++# include <sys/types.h>
++# include <sys/socket.h>
+ #endif
+ #include <errno.h>
+-#include <sys/stat.h>
++#ifdef HAVE_SYS_STAT_H
++# include <sys/stat.h>
++#endif
++#ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
++#endif
+ #include <assert.h>
+ 
+ #include "assuan-defs.h"
+@@ -53,6 +59,10 @@
+ #endif
+ 
+ #ifdef HAVE_W32_SYSTEM
++#ifndef S_IRUSR
++# define S_IRUSR 0
++# define S_IWUSR 0
++#endif
+ #ifndef S_IRGRP
+ # define S_IRGRP 0
+ # define S_IWGRP 0
+@@ -61,6 +71,86 @@
+ 
+ 
+ #ifdef HAVE_W32_SYSTEM
++
++#ifdef HAVE_W32CE_SYSTEM
++static wchar_t *
++utf8_to_wchar (const char *string)
++{
++  int n;
++  size_t nbytes;
++  wchar_t *result;
++
++  if (!string)
++    return NULL;
++
++  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, NULL, 0);
++  if (n < 0)
++    return NULL;
++
++  nbytes = (size_t)(n+1) * sizeof(*result);
++  if (nbytes / sizeof(*result) != (n+1)) 
++    {
++      SetLastError (ERROR_INVALID_PARAMETER);
++      return NULL;
++    }
++  result = malloc (nbytes);
++  if (!result)
++    return NULL;
++
++  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, result, n);
++  if (n < 0)
++    {
++      n = GetLastError ();
++      free (result);
++      result = NULL;
++      SetLastError (n);
++    }
++  return result;
++}
++
++static HANDLE
++MyCreateFile (LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwSharedMode,
++              LPSECURITY_ATTRIBUTES lpSecurityAttributes,
++              DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes,
++              HANDLE hTemplateFile)
++{
++  wchar_t *filename;
++  HANDLE result;
++  int err;
++
++  filename = utf8_to_wchar (lpFileName);
++  if (!filename)
++    return INVALID_HANDLE_VALUE;
++
++  result = CreateFileW (filename, dwDesiredAccess, dwSharedMode,
++			lpSecurityAttributes, dwCreationDisposition,
++			dwFlagsAndAttributes, hTemplateFile);
++  err = GetLastError ();
++  free (filename);
++  SetLastError (err);
++  return result;
++}
++static int
++MyDeleteFile (LPCSTR lpFileName)
++{
++  wchar_t *filename;
++  int result, err;
++
++  filename = utf8_to_wchar (lpFileName);
++  if (!filename)
++    return 0;
++
++  result = DeleteFileW (filename);
++  err = GetLastError ();
++  free (filename);
++  SetLastError (err);
++  return result;
++}
++#else /*!HAVE_W32CE_SYSTEM*/
++#define MyCreateFile CreateFileA
++#define MyDeleteFile DeleteFileA
++#endif /*!HAVE_W32CE_SYSTEM*/
++
+ int
+ _assuan_sock_wsa2errno (int err)
+ {
+@@ -228,11 +318,12 @@
+     {
+       struct sockaddr_in myaddr;
+       struct sockaddr_un *unaddr;
+-      int filefd;
+-      FILE *fp;
++      HANDLE filehd;
+       int len = sizeof myaddr;
+       int rc;
+       char nonce[16];
++      char tmpbuf[33+16];
++      DWORD nwritten;
+ 
+       if (get_nonce (nonce, 16))
+         return -1;
+@@ -243,23 +334,19 @@
+       myaddr.sin_family = AF_INET;
+       myaddr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+ 
+-      filefd = open (unaddr->sun_path, 
+-                     (O_WRONLY|O_CREAT|O_EXCL|O_BINARY), 
+-                     (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP));
+-      if (filefd == -1)
++      filehd = MyCreateFile (unaddr->sun_path, 
++                             GENERIC_WRITE,
++                             FILE_SHARE_READ,
++                             NULL,
++                             CREATE_NEW,
++                             FILE_ATTRIBUTE_NORMAL,
++                             NULL);
++      if (filehd == INVALID_HANDLE_VALUE)
+         {
+-          if (errno == EEXIST)
++          if (GetLastError () == ERROR_FILE_EXISTS)
+             gpg_err_set_errno (WSAEADDRINUSE);
+           return -1;
+         }
+-      fp = fdopen (filefd, "wb");
+-      if (!fp)
+-        { 
+-          int save_e = errno;
+-          close (filefd);
+-          gpg_err_set_errno (save_e);
+-          return -1;
+-        }
+ 
+       rc = bind (HANDLE2SOCKET (sockfd), (struct sockaddr *)&myaddr, len);
+       if (!rc)
+@@ -268,15 +355,24 @@
+       if (rc)
+         {
+           int save_e = errno;
+-          fclose (fp);
+-          DeleteFile (unaddr->sun_path);
++          CloseHandle (filehd);
++          MyDeleteFile (unaddr->sun_path);
+           gpg_err_set_errno (save_e);
+           return rc;
+         }
+-      fprintf (fp, "%d\n", ntohs (myaddr.sin_port));
+-      fwrite (nonce, 16, 1, fp);
+-      fclose (fp);
+-
++      snprintf (tmpbuf, sizeof tmpbuf, "%d\n", ntohs (myaddr.sin_port));
++      len = strlen (tmpbuf);
++      memcpy (tmpbuf+len, nonce,16);
++      len += 16;
++      
++      if (!WriteFile (filehd, tmpbuf, len, &nwritten, NULL))
++        {
++          CloseHandle (filehd);
++          MyDeleteFile (unaddr->sun_path);
++          gpg_err_set_errno (EIO);
++          return -1;
++        }
++      CloseHandle (filehd);
+       return 0;
+     }
+   else
+Index: src/mkheader.c
+===================================================================
+--- src/mkheader.c	(Revision 381)
++++ src/mkheader.c	(Revision 394)
+@@ -82,6 +82,24 @@
+       else
+         include_file (fname, lnr, "posix-includes.inc.h");
+     }
++  else if (!strcmp (tag, "include:sys/types.h"))
++    {
++      if (!strcmp (host_os, "mingw32ce"))
++        fputs ("#ifdef __MINGW32CE__\n"
++               "# include <sys/types.h>\n"
++               "#endif\n", stdout);
++      else
++        fputs ("#include <sys/types.h>\n", stdout);
++    }
++  else if (!strcmp (tag, "include:unistd.h"))
++    {
++      if (!strcmp (host_os, "mingw32ce"))
++        fputs ("#ifdef __MINGW32CE__\n"
++               "# include <unistd.h>\n"
++               "#endif\n", stdout);
++      else
++        fputs ("#include <unistd.h>\n", stdout);
++    }
+   else if (!strcmp (tag, "include:types"))
+     {
+       if (strstr (host_os, "mingw32"))
+Index: src/w32-fd-t.inc.h
+===================================================================
+--- src/w32-fd-t.inc.h	(Revision 381)
++++ src/w32-fd-t.inc.h	(Revision 394)
+@@ -27,7 +27,7 @@
+ typedef void *assuan_fd_t;
+ #define ASSUAN_INVALID_FD ((void*)(-1))
+ #define ASSUAN_INVALID_PID ((pid_t) -1)
+-static inline assuan_fd_t
++static GPG_ERR_INLINE assuan_fd_t
+ assuan_fd_from_posix_fd (int fd)
+ {
+   if (fd < 0)
+Index: src/context.c
+===================================================================
+--- src/context.c	(Revision 381)
++++ src/context.c	(Revision 394)
+@@ -80,6 +80,14 @@
+     case ASSUAN_NO_FIXSIGNALS:
+       ctx->flags.no_fixsignals = value;
+       break;
++
++    case ASSUAN_CONVEY_COMMENTS:
++      ctx->flags.convey_comments = value;
++      break;
++
++    case ASSUAN_NO_LOGGING:
++      ctx->flags.no_logging = value;
++      break;
+     }
+ }
+ 
+@@ -108,13 +116,21 @@
+     case ASSUAN_NO_FIXSIGNALS:
+       res = ctx->flags.no_fixsignals;
+       break;
++
++    case ASSUAN_CONVEY_COMMENTS:
++      res = ctx->flags.convey_comments;
++      break;
++      
++    case ASSUAN_NO_LOGGING:
++      res = ctx->flags.no_logging;
++      break;
+     }
+ 
+   return TRACE_SUC1 ("flag_value=%i", res);
+ }
+ 
+ 
+-/* Same as assuan_set_flag (ctx, ASSUAN_NO_WAITPID, 1).  */
++/* Same as assuan_set_flag (ctx, ASSUAN_CONFIDENTIAL, 1).  */
+ void
+ assuan_begin_confidential (assuan_context_t ctx)
+ {
+@@ -122,7 +138,7 @@
+ }
+ 
+ 
+-/* Same as assuan_set_flag (ctx, ASSUAN_NO_WAITPID, 0).  */
++/* Same as assuan_set_flag (ctx, ASSUAN_CONFIDENTIAL, 0).  */
+ void
+ assuan_end_confidential (assuan_context_t ctx)
+ {
+Index: src/assuan-pipe-server.c
+===================================================================
+--- src/assuan-pipe-server.c	(Revision 381)
++++ src/assuan-pipe-server.c	(Revision 394)
+@@ -23,13 +23,24 @@
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <unistd.h>
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
++#ifdef HAVE_SYS_STAT_H
++# include <sys/stat.h>
++#endif
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
+ #ifdef HAVE_W32_SYSTEM
+-#include <windows.h>
+-#include <fcntl.h>
++# ifdef HAVE_WINSOCK2_H
++#  include <winsock2.h>
++# endif 
++# include <windows.h>
++#ifdef HAVE_FCNTL_H
++# include <fcntl.h>
+ #endif
++#endif
+ 
+ #include "assuan-defs.h"
+ #include "debug.h"
+Index: src/w32-types.inc.h
+===================================================================
+--- src/w32-types.inc.h	(Revision 381)
++++ src/w32-types.inc.h	(Revision 394)
+@@ -20,4 +20,10 @@
+ ## This file is included by the mkheader tool.  Lines starting with
+ ## a double hash mark are not copied to the destination file.
+ typedef void *assuan_msghdr_t;
++
++#ifdef _MSC_VER
++  typedef long ssize_t;
++  typedef int  pid_t;
++#endif
++
+ ##EOF##
+Index: src/w32-includes.inc.h
+===================================================================
+--- src/w32-includes.inc.h	(Revision 381)
++++ src/w32-includes.inc.h	(Revision 394)
+@@ -19,5 +19,6 @@
+ ##
+ ## This file is included by the mkheader tool.  Lines starting with
+ ## a double hash mark are not copied to the destination file.
++#include <winsock2.h>
+ #include <ws2tcpip.h> 
+ ##EOF##
+Index: ChangeLog
+===================================================================
+--- ChangeLog	(Revision 381)
++++ ChangeLog	(Revision 394)
+@@ -1,3 +1,17 @@
++2010-11-01  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
++
++	* configure.ac: Check for fcntl.h.
++
++2010-11-01  Werner Koch  <wk@g10code.com>
++
++	* configure.ac: Check for sys/types.h, sys/stat.h, sys/time and
++	unistd.h
++
++2010-08-19  Werner Koch  <wk@g10code.com>
++
++	* configure.ac (AH_TOP, AH_BOTTOM): New.  Define
++	GPG_ERR_ENABLE_ERRNO_MACROS.
++
+ 2010-08-09  Werner Koch  <wk@g10code.com>
+ 
+ 	Release 2.0.1
+Index: contrib/conf-w32ce-msc/build.mk
+===================================================================
+--- contrib/conf-w32ce-msc/build.mk	(Revision 0)
++++ contrib/conf-w32ce-msc/build.mk	(Revision 394)
+@@ -0,0 +1,158 @@
++# build.mk - Makefile to build libgpg-error using Visual-C
++# Copyright 2010 g10 Code GmbH
++#
++# This file is free software; as a special exception the author gives
++# unlimited permission to copy and/or distribute it, with or without
++# modifications, as long as this notice is preserved.
++#
++# This file is distributed in the hope that it will be useful, but
++# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
++# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++
++# This is a helper make script to build libgpg-error for WindowsCE
++# using the Microsoft Visual C compiler.  
++
++# The target build directry where we run the Visual C compiler/
++# This needs to be an absolute directory name.
++targetdir = /home/smb/xppro-gnu/src/libassuan
++
++
++help:
++	@echo "Run "
++	@echo "  make -f ../contrib/conf-w32ce-msc/build.mk copy-source"
++	@echo "on the POSIX system and then"
++	@echo "  nmake -f build.mk all"
++	@echo "on the Windows system"
++
++ce_defines = -DWINCE -D_WIN32_WCE=0x502 -DUNDER_CE \
++             -DWIN32_PLATFORM_PSPC -D_UNICODE -DUNICODE \
++             -D_CONSOLE -DARM -D_ARM_
++#-D_DEBUG -DDEBUG 
++
++# Some options of Visual-C:
++# -W3   Set warning level 3
++# -Zi   Generate debug info
++# -Od   Disable optimization
++# -Gm   Enable minimal rebuild (for C++)
++# -EHsc Exception handling model sc 
++# -MTd  Create a debug multithreaded executable
++# -fp:  Floating point behaviour
++# -GR-  Disable runtime type information
++# -Os   Favor small code
++# -LD   Create a DLL
++# -Fe   Set executable output name (may be only a directory)
++CFLAGS = -nologo -W3 -fp:fast -Os $(ce_defines) \
++         -DHAVE_CONFIG_H -DDLL_EXPORT -D_CRT_SECURE_NO_WARNINGS \
++	 -I. -I../../libgpg-error/src -I../../libgpg-error/src/gpg-extra
++
++LDFLAGS =
++
++# Standard source files
++sources = \
++	assuan.c                 \
++	context.c  		 \
++	system.c  		 \
++	debug.c  		 \
++	conversion.c  		 \
++	sysutils.c  		 \
++	client.c  		 \
++	server.c  		 \
++	assuan-error.c  	 \
++	assuan-buffer.c  	 \
++	assuan-handler.c  	 \
++	assuan-inquire.c  	 \
++	assuan-listen.c  	 \
++	assuan-pipe-server.c  	 \
++	assuan-socket-server.c   \
++	assuan-pipe-connect.c  	 \
++	assuan-socket-connect.c  \
++	assuan-uds.c  		 \
++	assuan-logging.c  	 \
++	assuan-socket.c  	 \
++	system-w32ce.c  	 \
++	assuan-io.c  		 \
++	putc_unlocked.c  	 \
++	memrchr.c  		 \
++	stpcpy.c  		 \
++	setenv.c                 \
++	vasprintf.c              \
++        assuan-defs.h            \
++        debug.h                  \
++	libassuan.def
++
++# The object files we need to create from sources.
++objs = \
++	assuan.obj               \
++	context.obj  		 \
++	system.obj  		 \
++	debug.obj  		 \
++	conversion.obj  	 \
++	sysutils.obj  		 \
++	client.obj  		 \
++	server.obj  		 \
++	assuan-error.obj  	 \
++	assuan-buffer.obj  	 \
++	assuan-handler.obj  	 \
++	assuan-inquire.obj  	 \
++	assuan-listen.obj  	 \
++	assuan-pipe-server.obj   \
++	assuan-socket-server.obj \
++	assuan-pipe-connect.obj  \
++	assuan-socket-connect.obj \
++	assuan-uds.obj  	 \
++	assuan-logging.obj  	 \
++	assuan-socket.obj  	 \
++	system-w32ce.obj  	 \
++	assuan-io.obj  		 \
++	putc_unlocked.obj  	 \
++	memrchr.obj  		 \
++	stpcpy.obj  		 \
++	setenv.obj               \
++	vasprintf.obj
++
++
++# Sources files in this directory inclduing this Makefile
++conf_sources = \
++	build.mk \
++	config.h
++
++# Source files built by running the standard build system.
++built_sources = \
++	assuan.h
++
++copy-static-source:
++	@if [ ! -f ./assuan-defs.h ]; then \
++           echo "Please cd to the src/ directory first"; \
++	   exit 1; \
++        fi
++	cp -t $(targetdir) $(sources);
++	cd ../contrib/conf-w32ce-msc ; cp -t $(targetdir) $(conf_sources)
++
++
++copy-built-source:
++	@if [ ! -f ./assuan.h ]; then \
++           echo "Please build using ./autogen.sh --build-w32ce first"; \
++	   exit 1; \
++        fi
++	cp -t $(targetdir) $(built_sources)
++
++copy-source: copy-static-source copy-built-source
++
++
++.c.obj:
++	$(CC) $(CFLAGS) -c $<
++
++all:  $(sources) $(conf_sources) $(built_sources) $(objs)
++	link    /DLL /IMPLIB:libassuan-0-msc.lib \
++                /OUT:libassuan-0-msc.dll \
++		/DEF:libassuan.def /NOLOGO /MANIFEST:NO \
++		/NODEFAULTLIB:"oldnames.lib" /DYNAMICBASE:NO \
++	        $(objs) \
++		coredll.lib corelibc.lib ole32.lib oleaut32.lib uuid.lib \
++		commctrl.lib /subsystem:windowsce,5.02
++
++# Note that install needs to be run on the POSIX platform and the all
++# is only to make sure we build everything; it won't compile anything
++# because Visual-C is probably not installed on that platform.
++install: all
++	@echo fixme Install the files
+
+Eigenschafts„nderungen: contrib\conf-w32ce-msc\build.mk
+___________________________________________________________________
+Hinzugefgt: svn:executable
+   + *
+
+Index: contrib/conf-w32ce-msc/config.h
+===================================================================
+--- contrib/conf-w32ce-msc/config.h	(Revision 0)
++++ contrib/conf-w32ce-msc/config.h	(Revision 394)
+@@ -0,0 +1,184 @@
++/* config.h for building with Visual-C for WindowsCE. 
++ * Copyright 2010 g10 Code GmbH
++ * 
++ * This file is free software; as a special exception the author gives
++ * unlimited permission to copy and/or distribute it, with or without
++ * modifications, as long as this notice is preserved.
++ * 
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
++ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ */
++
++/* This file was originally created by running 
++ *   ./autogen.sh --build-w32ce
++ * on svn revision 389 (libassuan 2.0.2-svn389) and then adjusted to work
++ * with Visual-C.
++ */
++
++#ifndef _ASSUAN_CONFIG_H_INCLUDED
++#define _ASSUAN_CONFIG_H_INCLUDED
++
++/* Define to the version of this package. */
++#define PACKAGE_VERSION "2.0.2-svn389-msc1"
++
++/* Define to the full name and version of this package. */
++#define PACKAGE_STRING "libassuan " PACKAGE_VERSION
++
++/* Name of this package */
++#define PACKAGE "libassuan"
++
++/* Bug report address */
++#define PACKAGE_BUGREPORT "bug-libassuan@gnupg.org"
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "libassuan"
++
++
++/* Define to the one symbol short name of this package. */
++#define PACKAGE_TARNAME "libassuan"
++
++/* Define to the home page for this package. */
++#define PACKAGE_URL ""
++
++/* Version of this package */
++#define VERSION PACKAGE_VERSION
++
++
++/* Enable gpg-error's strerror macro under W32CE.  */
++#define GPG_ERR_ENABLE_ERRNO_MACROS 1
++
++
++/* Define to 1 if you have the declaration of `sys_siglist', and to 0 if you
++   don't. */
++#define HAVE_DECL_SYS_SIGLIST 0
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++/* #undef HAVE_DLFCN_H */
++
++/* Defined if we run on some of the PCDOS like systems (DOS, Windoze. OS/2)
++   with special properties like no file modes */
++#define HAVE_DOSISH_SYSTEM 1
++
++/* Define to 1 if you have the `flockfile' function. */
++/* #undef HAVE_FLOCKFILE */
++
++/* Define to 1 if you have the `fopencookie' function. */
++/* #undef HAVE_FOPENCOOKIE */
++
++/* Define to 1 if you have the `funlockfile' function. */
++/* #undef HAVE_FUNLOCKFILE */
++
++/* Define to 1 if you have the `funopen' function. */
++/* #undef HAVE_FUNOPEN */
++
++/* Define to 1 if you have the `inet_pton' function. */
++/* #undef HAVE_INET_PTON */
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++/* #undef HAVE_INTTYPES_H */
++
++/* Define to 1 if you have the `isascii' function. */
++#define HAVE_ISASCII 1
++
++/* Define to 1 if you have the <locale.h> header file. */
++/* #undef HAVE_LOCALE_H */
++
++/* Define to 1 if you have the <memory.h> header file. */
++#define HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the `memrchr' function. */
++/* #undef HAVE_MEMRCHR */
++
++/* Define to 1 if you have the `nanosleep' function in libc. */
++/* #undef HAVE_NANOSLEEP */
++
++/* Define to 1 if you have the `putc_unlocked' function. */
++/* #undef HAVE_PUTC_UNLOCKED */
++
++/* Define to 1 if you have the `setenv' function. */
++/* #undef HAVE_SETENV */
++
++/* Defined if SO_PEERCRED is supported (Linux specific) */
++/* #undef HAVE_SO_PEERCRED */
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#define HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the `stpcpy' function. */
++/* #undef HAVE_STPCPY */
++
++/* Define to 1 if you have the <strings.h> header file. */
++/* #undef HAVE_STRINGS_H */
++
++/* Define to 1 if you have the <string.h> header file. */
++#define HAVE_STRING_H 1
++
++/* Define to 1 if you have the <sys/socket.h> header file. */
++/* #undef HAVE_SYS_SOCKET_H */
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++/* #undef HAVE_SYS_STAT_H */
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++/* #undef HAVE_SYS_TYPES_H */
++
++/* Define to 1 if you have the <sys/uio.h> header file. */
++/* #undef HAVE_SYS_UIO_H */
++
++/* Define to 1 if the system has the type `uintptr_t'. */
++#define HAVE_UINTPTR_T 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++/* #undef HAVE_UNISTD_H */
++
++/* Define to 1 if you have the `vasprintf' function. */
++/* #undef HAVE_VASPRINTF */
++
++/* Defined if we run on WindowsCE */
++#define HAVE_W32CE_SYSTEM 1
++
++/* Defined if we run on a W32 API based system */
++#define HAVE_W32_SYSTEM 1
++
++/* Define to 1 if you have the <winsock2.h> header file. */
++#define HAVE_WINSOCK2_H 1
++
++/* Define to 1 if you have the <ws2tcpip.h> header file. */
++#define HAVE_WS2TCPIP_H 1
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++/* #undef NO_MINUS_C_MINUS_O */
++
++/* Define as the return type of signal handlers (`int' or `void'). */
++#define RETSIGTYPE void
++
++/* Define to 1 if you have the ANSI C header files. */
++#define STDC_HEADERS 1
++
++/* Defined if descriptor passing is supported */
++/* #undef USE_DESCRIPTOR_PASSING */
++
++/* Enable extensions on AIX 3, Interix.  */
++#ifndef _ALL_SOURCE
++# define _ALL_SOURCE 1
++#endif
++/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# define _GNU_SOURCE 1
++#endif
++/* Enable threading extensions on Solaris.  */
++#ifndef _POSIX_PTHREAD_SEMANTICS
++# define _POSIX_PTHREAD_SEMANTICS 1
++#endif
++
++
++/* snprintf is not part of oldnames.lib thus we redefine it here. */
++#define snprintf _snprintf
++
++
++#endif /*_ASSUAN_CONFIG_H_INCLUDED*/
++
+Index: contrib/ChangeLog
+===================================================================
+--- contrib/ChangeLog	(Revision 0)
++++ contrib/ChangeLog	(Revision 394)
+@@ -0,0 +1,4 @@
++2010-11-01  Werner Koch  <wk@g10code.com>
++
++	* conf-w32ce-msc/build.mk: New.
++	* conf-w32ce-msc/config.h: New.
+Index: tests/ChangeLog
+===================================================================
+--- tests/ChangeLog	(Revision 381)
++++ tests/ChangeLog	(Revision 394)
+@@ -1,3 +1,7 @@
++2010-10-11  Werner Koch  <wk@g10code.com>
++
++	* Makefile.am (w32cetools): Move ce-server to here.
++
+ 2010-03-17  Werner Koch  <wk@g10code.com>
+ 
+ 	* pipeconnect.c: New.  Based on fdpassing.c
+Index: tests/Makefile.am
+===================================================================
+--- tests/Makefile.am	(Revision 381)
++++ tests/Makefile.am	(Revision 394)
+@@ -28,7 +28,7 @@
+ TESTS = pipeconnect
+ 
+ if HAVE_W32CE_SYSTEM
+-w32cetools = ce-createpipe
++w32cetools = ce-createpipe ce-server 
+ endif
+ 
+ if USE_DESCRIPTOR_PASSING
+@@ -39,6 +39,6 @@
+ AM_CFLAGS = $(GPG_ERROR_CFLAGS)
+ 
+ noinst_HEADERS = common.h
+-noinst_PROGRAMS = $(TESTS) ce-server $(w32cetools)
++noinst_PROGRAMS = $(TESTS) $(w32cetools)
+ LDADD = ../src/libassuan.la  $(NETLIBS) $(GPG_ERROR_LIBS)
+ 
+Index: configure.ac
+===================================================================
+--- configure.ac	(Revision 381)
++++ configure.ac	(Revision 394)
+@@ -24,8 +24,8 @@
+ # Remember to change the version number immediately *after* a release.
+ # Set my_issvn to "yes" for non-released code.  Remember to run an
+ # "svn up" and "autogen.sh" right before creating a distribution.
+-m4_define([my_version], [2.0.1])
+-m4_define([my_issvn], [no])
++m4_define([my_version], [2.0.2])
++m4_define([my_issvn], [yes])
+ 
+ m4_define([svn_revision], m4_esyscmd([printf "%d" $( (svn info 2>/dev/null \
+             || echo 'Revision: 0')|sed -n '/^Revision:/ {s/[^0-9]//gp;q;}')]))
+@@ -96,7 +96,20 @@
+ 
+ AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
+ 
++AH_TOP([
++#ifndef _ASSUAN_CONFIG_H_INCLUDED
++#define _ASSUAN_CONFIG_H_INCLUDED
+ 
++/* Enable gpg-error's strerror macro under W32CE.  */
++#define GPG_ERR_ENABLE_ERRNO_MACROS 1
++])
++
++AH_BOTTOM([
++
++#endif /*_ASSUAN_CONFIG_H_INCLUDED*/
++])
++
++
+ # Checks for programs.
+ missing_dir=`cd $ac_aux_dir && pwd`
+ AM_MISSING_PROG(ACLOCAL, aclocal, $missing_dir)
+@@ -236,7 +249,8 @@
+ 
+ # Checks for header files.
+ AC_HEADER_STDC
+-AC_CHECK_HEADERS([string.h locale.h sys/uio.h stdint.h inttypes.h])
++AC_CHECK_HEADERS([string.h locale.h sys/uio.h stdint.h inttypes.h \
++                  sys/types.h sys/stat.h unistd.h sys/time.h fcntl.h])
+ AC_TYPE_UINTPTR_T
+ AC_TYPE_UINT16_T
+ 
+Index: doc/assuan.texi
+===================================================================
+--- doc/assuan.texi	(Revision 381)
++++ doc/assuan.texi	(Revision 394)
+@@ -251,7 +251,7 @@
+ @item S @var{keyword} <status information depending on keyword>
+ Informational output by the server, still processing the request.  A
+ client may not send such lines to the server while processing an Inquiry
+-command.
++command.  @var{keyword} shall start with a letter or an underscore.
+ 
+ @item # <string>
+ Comment line issued only for debugging purposes.  Totally ignored.
+@@ -822,9 +822,12 @@
+ not desirable.  By setting this flag, a call to @code{waitpid} will be
+ suppressed and the caller is responsible to cleanup the child process.
+ @item ASSUAN_CONFIDENTIAL
+-Uses to return the state of the confidential logging mode.
++Use to return the state of the confidential logging mode.
+ @item ASSUAN_NO_FIXSIGNALS
+ Do not modify signal handler for @code{SIGPIPE}.
++@item ASSUAN_CONVEY_COMMENTS
++If enabled comment lines are passed to the status callback of the
++@code{assuan_transact}.
+ @end table
+ @end deftp
+ @end deftypefun
+Index: autogen.sh
+===================================================================
+--- autogen.sh	(Revision 381)
++++ autogen.sh	(Revision 394)
+@@ -127,7 +127,7 @@
+         fi
+     fi
+ 
+-    ./configure --enable-maintainer-mode  --prefix=${w32root}  \
++    $tsdir/configure --enable-maintainer-mode  --prefix=${w32root}  \
+             --host=${host} --build=${build} \
+             --with-gpg-error-prefix=${w32root} "$@"
+ 
+Index: NEWS
+===================================================================
+--- NEWS	(Revision 381)
++++ NEWS	(Revision 394)
+@@ -1,3 +1,17 @@
++Noteworthy changes in version 2.0.2
++------------------------------------------------
++
++ * A new flag may now be used to convey comments via assuan_transact.
++
++ * A new flag value may now be used to disable logging.
++
++ * Interface changes relative to the 2.0.1 release:
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ ASSUAN_CONVEY_COMMENTS   NEW.
++ ASSUAN_NO_LOGGING        NEW.
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++
+ Noteworthy changes in version 2.0.1 (2010-08-09)
+ ------------------------------------------------
+ 
+@@ -13,6 +27,7 @@
+  assuan_free               NEW.
+  _assuan_w32ce_create_pipe NEW.
+  ASSUAN_LOG_CONTROL        NEW.
++ ASSUAN_NO_LOGGING         NEW.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
