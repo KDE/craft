@@ -1,13 +1,27 @@
-From 8a2990ff0bbacf358d2417ff6ff11dab026065f2 Mon Sep 17 00:00:00 2001
+From 2be491b089458369b1d8153280065cafb8628fd3 Mon Sep 17 00:00:00 2001
 From: Andreas Holzammer <andreas.holzammer@kdab.com>
-Date: Sat, 13 Nov 2010 19:56:30 +0100
+Date: Sun, 21 Nov 2010 12:39:44 +0100
 Subject: [PATCH] - show only softkeyboard hint and make it standard for wince
 
 ---
- src/gui/kernel/qapplication.cpp        |    4 +---
- src/gui/kernel/qguifunctions_wince.cpp |   27 ++++++++++++++++-----------
- 2 files changed, 17 insertions(+), 14 deletions(-)
+ src/gui/inputmethod/qwininputcontext_win.cpp |    2 +-
+ src/gui/kernel/qapplication.cpp              |    4 +--
+ src/gui/kernel/qguifunctions_wince.cpp       |   27 +++++++++++++++----------
+ 3 files changed, 18 insertions(+), 15 deletions(-)
 
+diff --git a/src/gui/inputmethod/qwininputcontext_win.cpp b/src/gui/inputmethod/qwininputcontext_win.cpp
+index ef3e6f6..7014342 100644
+--- a/src/gui/inputmethod/qwininputcontext_win.cpp
++++ b/src/gui/inputmethod/qwininputcontext_win.cpp
+@@ -686,7 +686,7 @@ void QWinInputContext::updateImeStatus(QWidget *w, bool hasFocus)
+     if (!focusProxyWidget)
+         focusProxyWidget = w;
+     bool e = w->testAttribute(Qt::WA_InputMethodEnabled) && w->isEnabled()
+-            && !(focusProxyWidget->inputMethodHints() & (Qt::ImhExclusiveInputMask | Qt::ImhHiddenText));
++            && !(focusProxyWidget->inputMethodHints() & (Qt::ImhExclusiveInputMask ));
+     bool hasIme = e && hasFocus;
+ #ifdef Q_IME_DEBUG
+     qDebug("%s HasFocus = %d hasIme = %d e = %d ", w->className(), hasFocus, hasIme, e);
 diff --git a/src/gui/kernel/qapplication.cpp b/src/gui/kernel/qapplication.cpp
 index 3323fbc..62d8def 100644
 --- a/src/gui/kernel/qapplication.cpp
