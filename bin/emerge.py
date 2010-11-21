@@ -51,48 +51,52 @@ Commands (no packagename needed - will be ignored when given):
 
 Commands (must have a packagename):
 
---print-targets         This will print all the different targets 
-                        one package can contain: different releases might have
-                        different tags that are build as targets of a package. As
-                        an example: You could build the latest amarok sources with
-                        the target 'svnHEAD' the previous '1.80' release would be
-                        contained as target '1.80'.
---print-revision        This will print the revision that the source repository of this
-                        package currently has or nothing if there is no repository.
-
---fetch                 retrieve package sources (also checkout sources from svn or git).
+--print-targets         This will print all the different targets one package
+                        can contain: different releases might have different
+                        tags that are build as targets of a package. As an
+                        example: You could build the latest amarok sources with
+                        the target 'svnHEAD' the previous '1.80' release would
+                        be contained as target '1.80'.
+--print-revision        This will print the revision that the source repository
+                        of this package currently has or nothing if there is no
+                        repository.
+--fetch                 retrieve package sources (also checkout sources from
+                        svn or git).
 --unpack                unpack package sources and make up the build directory.
---compile               compile the sources: this includes configure'ing/cmake'ing
-                        and running [mingw32-|n|]make.
+--compile               compile the sources: this includes
+                        configure'ing/cmake'ing and running [mingw32-|n|]make.
 --configure             configure the sources (support is package specific)
 --make                  run [mingw32-|n|]make (support is package specific)
 --install               This will run [mingw32-|n|]make install into the image 
                         directory of each package.
---manifest              This step creates the files contained in the manifest dir.
+--manifest              This step creates the files contained in the manifest
+                        dir.
 --qmerge                This will merge the image directory into the KDEROOT
 --test                  This will run the unittests if they are present
---package               This step will create a package out of the image directory
-                        instead of merge'ing the image directory into the KDEROOT
-                        (Requires the packager to be installed already.)
---full-package          This will create packages instead of installing stuff to
-                        KDEROOT
---install-deps          This will fetch and install all required dependencies for 
-                        the specified package
+--package               This step will create a package out of the image
+                        directory instead of merge'ing the image directory into
+                        the KDEROOT (Requires the packager to be installed
+                        already.)
+--full-package          This will create packages instead of installing stuff
+                        to KDEROOT
+--install-deps          This will fetch and install all required dependencies
+                        for the specified package
 --unmerge               this uninstalls a package from KDEROOT - it requires a
-                        working manifest directory. unmerge only delete unmodified 
-                        files by default. You may use the -f or --force option to 
-                        let unmerge delete all files unconditional.
+                        working manifest directory. unmerge only delete
+                        unmodified files by default. You may use the -f or
+                        --force option to let unmerge delete all files
+                        unconditional.
 --cleanallbuilds        Clean complete build directory. 
---cleanbuild            Clean build directory for the specified package. This cleans also 
-                        all the image directories of all targets of the specified package.
-                        available calculate and print digests. 
+--cleanbuild            Clean build directory for the specified package. This
+                        cleans also all the image directories of all targets of
+                        the specified package.
 --checkdigest           Check digest for the specified package. If no digest is 
                         available calculate and print digests. 
---cleanimage            Clean image directory for the specified package and target.
-                        available calculate and print digests. 
---createpatch           Create source patch file for the specific package based on the 
-                        original archive file or checkout revision of the used software 
-                        revision control system.
+--cleanimage            Clean image directory for the specified package and
+                        target.
+--createpatch           Create source patch file for the specific package based
+                        on the original archive file or checkout revision of
+                        the used software revision control system.
 --disable-buildhost     This disables the building for the host.
 --disable-buildtarget   This disables the building for the target.
 
@@ -138,8 +142,8 @@ Flags:
             EMERGE_NOCOPY to "True" might slow down the build process,
             irritate you and increase the disk space roughly by the size of
             SVN source tree.
---noremove  This option will suppress the removal of a package before installing it.
-            Using this option is probably insecure.
+--noremove  This option will suppress the removal of a package before
+            installing it. Using this option is probably insecure.
 --offline   do not try to connect to the internet: KDE packages will try to
             use an existing source tree and other packages would try to use
             existing packages in the download directory. If that doesn't
