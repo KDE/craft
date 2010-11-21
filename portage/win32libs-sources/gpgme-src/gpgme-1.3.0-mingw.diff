@@ -11,6 +11,18 @@ diff -Nru gpgme-1.3.0.orig/ConfigureChecks.cmake gpgme-1.3.0/ConfigureChecks.cma
  endif(WIN32)
  
  check_function_exists("fopencookie" HAVE_FOPENCOOKIE)
+diff -Nru gpgme-1.3.0.orig/src/ath.h gpgme-1.3.0/src/ath.h
+--- gpgme-1.3.0.orig/src/ath.h	2010-11-21 21:48:11.192309900 +0100
++++ gpgme-1.3.0/src/ath.h	2010-11-21 21:47:40.983582100 +0100
+@@ -21,7 +21,7 @@
+ #ifndef ATH_H
+ #define ATH_H
+ 
+-#ifdef HAVE_STDINT_H
++#if defined(HAVE_STDINT_H) && !defined(_MSC_VER)
+ #include <stdint.h>
+ #else
+ #ifdef _MSC_VER
 diff -Nru gpgme-1.3.0.orig/src/data-compat.c gpgme-1.3.0/src/data-compat.c
 --- gpgme-1.3.0.orig/src/data-compat.c	2010-11-21 03:03:55.210048400 +0100
 +++ gpgme-1.3.0/src/data-compat.c	2010-11-21 02:56:56.723112300 +0100
