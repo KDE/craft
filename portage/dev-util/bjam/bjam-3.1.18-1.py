@@ -5,20 +5,15 @@ import os
 import shutil
 import utils
 
-PACKAGE_NAME         = "boost-jam"
-PACKAGE_VER          = "3.1.18"
-PACKAGE_FULL_VER     = "3.1.18-1"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_FULL_VER)
-
-SRC_URI= """
-http://downloads.sourceforge.net/boost/""" + PACKAGE_FULL_NAME + """-ntx86.zip
-"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets[PACKAGE_FULL_VER ] = SRC_URI
-        self.targetInstSrc[PACKAGE_FULL_VER ] = PACKAGE_FULL_NAME + "-ntx86"
-        self.defaultTarget = PACKAGE_FULL_VER 
+        for ver in ['3.1.18-1']:
+          name = "boost-jam-%s-ntx86" % ver
+          self.targets[ ver ] = "http://downloads.sourceforge.net/boost/%s.zip" % name
+          self.targetInstSrc[ ver ] = name
+        self.targetDigests['3.1.18-1'] = 'c26094ec2f93978076e475f50c5c9f828e8d6463'
+
+        self.defaultTarget = '3.1.18-1'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
@@ -39,7 +34,7 @@ class Package(BinaryPackageBase):
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False
-        return utils.renameDir(os.path.join(self.imageDir(),PACKAGE_FULL_NAME + "-ntx86"),os.path.join(self.imageDir(),'bin')) 
+        return utils.renameDir(self.sourceDir(),os.path.join(self.imageDir(),'bin')) 
         return True
 
 if __name__ == '__main__':
