@@ -271,12 +271,18 @@ diff -Nru djvulibre-3.5.23.orig/libdjvu/GBitmap.cpp djvulibre-3.5.23/libdjvu/GBi
 diff -Nru djvulibre-3.5.23.orig/libdjvu/GContainer.h djvulibre-3.5.23/libdjvu/GContainer.h
 --- djvulibre-3.5.23.orig/libdjvu/GContainer.h	2008-01-07 12:48:52.000000000 +0100
 +++ djvulibre-3.5.23/libdjvu/GContainer.h	2010-11-18 02:42:26.769265000 +0100
-@@ -182,7 +182,7 @@
+@@ -181,8 +181,12 @@
+ /** Hashing function (const void *). */
  static inline unsigned int 
  hash(const void * const & x) 
- { 
+-{ 
 -  return (unsigned long) x; 
-+  return (unsigned intptr_t) x; 
++{
++#ifdef __MINGW64__
++  return (unsigned __int64) x;
++#else
++  return (unsigned long) x;
++#endif
  }
  
  /** Hashing function (float). */
