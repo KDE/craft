@@ -9,7 +9,10 @@ class subinfo(info.infoclass):
         self.targets['1.3.0'] = 'ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.3.0.tar.bz2'
         self.targetInstSrc['1.3.0'] = 'gpgme-1.3.0'
         self.targetDigests['1.3.0'] = '0db69082abfbbbaf86c3ab0906f5137de900da73'
-        self.patchToApply['1.3.0'] = [('gpgme-1447-HEAD.diff', 0), ('gpgme-1.3.0-cmake.diff', 1), ('gpgme-1.3.0-20101102.diff', 1)]
+        self.patchToApply['1.3.0'] = [('gpgme-1447-HEAD.diff', 0), 
+                                      ('gpgme-1.3.0-cmake.diff', 1), 
+                                      ('gpgme-1.3.0-20101102.diff', 1), 
+                                      ('gpgme-1.3.0-mingw.diff', 1)]
         self.defaultTarget = '1.3.0'
 
     def setDependencies( self ):
