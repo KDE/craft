@@ -379,7 +379,7 @@ diff -Nru libgpg-error-1.10.orig/config.h.cmake libgpg-error-1.10/config.h.cmake
 +#define GPG_ERR_ENABLE_GETTEXT_MACROS 1
 +#define GPG_ERR_ENABLE_ERRNO_MACROS 1
 +
-+#if defined(HAVE_W32_SYSTEM) && !defined(__MINGW32__)
++#if defined(HAVE_W32_SYSTEM) && !defined(HAVE_STDINT_H)
 +#define uint32_t unsigned __int32
 +#define uint16_t unsigned __int16
 +#endif
