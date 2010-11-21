@@ -90,7 +90,6 @@ def getMinGWVersion():
 def getVersion():
   if isMinGW():
     return getMinGWVersion()
-
   return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
   
   
