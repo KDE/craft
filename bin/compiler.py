@@ -88,13 +88,13 @@ def getMinGWVersion():
         return "0"
   
 def getVersion():
-  if isMinGW():
-    return getMinGWVersion()
-  return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
+    if isMinGW():
+      return getMinGWVersion()
+    return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
   
   
 if __name__ == '__main__': 
-  print "Testing Compiler.py"
-  print "Version: %s" % getVersion()
-  print "Compiler Name: %s" % getCompilerName()
+    print "Testing Compiler.py"
+    print "Version: %s" % getVersion()
+    print "Compiler Name: %s" % getCompilerName()
     
