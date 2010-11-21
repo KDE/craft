@@ -154,7 +154,7 @@ diff -Nru libassuan-2.0.1.orig/CMakeLists.txt libassuan-2.0.1/CMakeLists.txt
 diff -Nru libassuan-2.0.1.orig/config.h.cmake libassuan-2.0.1/config.h.cmake
 --- libassuan-2.0.1.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ libassuan-2.0.1/config.h.cmake	2010-11-02 01:01:50.822081900 +0100
-@@ -0,0 +1,228 @@
+@@ -0,0 +1,229 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define to 1 if you have the declaration of `sys_siglist', and to 0 if you
@@ -360,6 +360,7 @@ diff -Nru libassuan-2.0.1.orig/config.h.cmake libassuan-2.0.1/config.h.cmake
 +/* type to use in place of socklen_t if not defined */
 +#cmakedefine socklen_t @socklen_t@
 +
++#ifndef HAVE_STDINT_H
 +/* Define to the type of an unsigned integer type of width exactly 16 bits if
 +   such a type exists and the standard includes do not define it. */
 +#cmakedefine uint16_t @uint16_t@
@@ -367,7 +368,7 @@ diff -Nru libassuan-2.0.1.orig/config.h.cmake libassuan-2.0.1/config.h.cmake
 +/* Define to the type of an unsigned integer type wide enough to hold a
 +   pointer, if such a type exists, and if the system does not define it. */
 +#cmakedefine uintptr_t @uintptr_t@
-+
++#endif
 +
 +#cmakedefine HAVE_ENVIRON_DECL
 +#ifdef _WIN32
@@ -509,3 +510,16 @@ diff -Nru libassuan-2.0.1.orig/src/system-w32.c libassuan-2.0.1/src/system-w32.c
  #include <windows.h>
  
  #include "assuan-defs.h"
+diff -Nru libassuan-2.0.1.orig/src/w32-sock-nonce.inc.h libassuan-2.0.1/src/w32-sock-nonce.inc.h
+--- libassuan-2.0.1.orig/src/w32-sock-nonce.inc.h	2010-04-06 17:01:42.000000000 +0200
++++ libassuan-2.0.1/src/w32-sock-nonce.inc.h	2010-11-21 21:35:39.717328000 +0100
+@@ -37,7 +37,9 @@
+ # ifndef AF_LOCAL
+ #  define AF_LOCAL AF_UNIX
+ # endif
++#ifndef HAVE_STDINT_H
+ # define EADDRINUSE WSAEADDRINUSE
++#endif
+ struct sockaddr_un
+ {
+   short          sun_family;
