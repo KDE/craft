@@ -192,7 +192,7 @@ class GitSource ( VersionSystemSourceBase ):
     def sourceVersion( self ):
         """ return the revision returned by git show """
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tmpFile = TemporaryFile()
+        tmpFile = tempfile.TemporaryFile()
         
         # run the command
         if not self.__isTag( self.__getCurrentBranch()[ 1: ] ):
