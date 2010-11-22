@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['data/docbook-xsl'] = 'default'
         self.hardDependencies['kdesupport/soprano'] = 'default'
         self.hardDependencies['kdesupport/strigi'] = 'default'
-        self.hardDependencies['win32libs-sources/shared-desktop-ontologies-src'] = 'default'
+        self.hardDependencies['win32libs-bin/shared-desktop-ontologies'] = 'default'
 
 from Package.CMakePackageBase import *
         
