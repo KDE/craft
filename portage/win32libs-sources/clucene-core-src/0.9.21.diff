@@ -1,0 +1,27 @@
+diff -Nru clucene-core-0.9.21b.orig/src/CLucene/store/FSDirectory.cpp clucene-core-0.9.21b/src/CLucene/store/FSDirectory.cpp
+--- clucene-core-0.9.21b.orig/src/CLucene/store/FSDirectory.cpp	2008-10-23 20:01:52.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/store/FSDirectory.cpp	2010-03-30 20:41:34.531849900 +0200
+@@ -10,7 +10,9 @@
+ #include "CLucene/util/Misc.h"
+ #include "CLucene/util/MD5Digester.h"
+ #include "CLucene/debug/condition.h"
+-
++#ifdef _WIN32
++#include <direct.h>
++#endif
+ #include "CLucene/util/dirent.h" //if we have dirent, then the native one will be used
+ 
+ CL_NS_DEF(store)
+diff -Nru clucene-core-0.9.21b.orig/src/CLucene/config/compiler.h clucene-core-0.9.21b/src/CLucene/config/compiler.h
+--- clucene-core-0.9.21b.orig/src/CLucene/config/compiler.h	2008-10-23 19:44:36.000000000 +0200
++++ clucene-core-0.9.21b/src/CLucene/config/compiler.h	2010-04-30 01:24:02.409000000 +0200
+@@ -202,7 +202,8 @@
+ 		 // long double's are not working (reported by Mark Ashworth on Solaris 64)
+ 		 //   typedef long double float_t;    /* `float' expressions are evaluated as `long double'.  */
+ 		 //#else
+-		    typedef double float_t;
++            // on windows, we will just use it
++		    typedef long double float_t;
+ 		 //#endif
+ 		#endif
+ 
