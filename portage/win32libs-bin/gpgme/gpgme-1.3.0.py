@@ -21,9 +21,8 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-sources/assuan2-src' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-sources/gpg-error-src' ] = 'default'
-        self.runtimeDependencies[ 'virtual/base' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/assuan2' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/gpg-error' ] = 'default'
 
 
     def setBuildOptions( self ):
