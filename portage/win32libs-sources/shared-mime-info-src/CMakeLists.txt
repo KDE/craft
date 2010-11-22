@@ -39,8 +39,13 @@ include_directories(
    ${LIBINTL_INCLUDE_DIR}
    ${LIBXML2_INCLUDE_DIR}
    ${CMAKE_BINARY_DIR}
-   ${CMAKE_SOURCE_DIR}/headers
 )
+
+if(MSVC)
+    include_directories(
+        ${CMAKE_SOURCE_DIR}/headers
+    )
+endif(MSVC)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
