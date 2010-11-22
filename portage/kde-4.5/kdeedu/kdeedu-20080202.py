@@ -5,21 +5,18 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdeedu'
-        self.svnTargets['4.5'] = 'branches/KDE/4.5/kdeedu'
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu'
-        for ver in ['80', '83', '85']:
-          self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdeedu-4.0.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.0.' + ver] = 'kdeedu-4.0.' + ver
-        self.defaultTarget = '4.5'
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.5/kdeedu'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdeedu-4.5.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.5.' + ver] = 'kdeedu-4.5.' + ver
+        self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde-4.5/kdebase-runtime'] = 'default'
-
+        self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.softDependencies['kdesupport/eigen2'] = 'default'
-        self.hardDependencies['win32libs-bin/cfitsio'] = 'default'
-        self.hardDependencies['win32libs-bin/libnova'] = 'default'
-        self.hardDependencies['win32libs-bin/openbabel'] = 'default'
+        self.dependencies['win32libs-bin/cfitsio'] = 'default'
+        self.dependencies['win32libs-bin/libnova'] = 'default'
+        self.dependencies['win32libs-bin/openbabel'] = 'default'
     
 
 from Package.CMakePackageBase import *

@@ -2,14 +2,16 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.5'] = 'branches/KDE/4.5/kdebase/runtime'
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdebase/runtime'
-        self.defaultTarget = '4.5'
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.5/kdebase/runtime'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdebase-runtime-4.5.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.5.' + ver] = 'kdebase-runtime-4.5.' + ver
+        self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde-4.5/kdelibs'] = 'default'
-        self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
-        self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
+        self.dependencies['kde-4.5/kdelibs'] = 'default'
+        self.dependencies['kdesupport/oxygen-icons'] = 'default'
+        self.dependencies['win32libs-bin/libssh'] = 'default'
 
 from Package.CMakePackageBase import *
         
