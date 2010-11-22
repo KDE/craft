@@ -50,7 +50,6 @@ class subinfo(info.infoclass):
 										  ]
         
         self.defaultTarget = '1.4.0'
-        self.options.package.version = '1.4.0-1'
         
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
