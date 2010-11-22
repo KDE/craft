@@ -76,6 +76,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
+        self.hardDependencies['dev-util/7zip'] = 'default'
        
 from Package.BinaryPackageBase import *
 
