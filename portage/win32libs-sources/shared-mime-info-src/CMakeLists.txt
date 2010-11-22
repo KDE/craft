@@ -33,10 +33,14 @@ find_package(LIBXML2 REQUIRED)
 # libintl
 find_package(Libintl REQUIRED)
 
-if (MINGW32 OR MSVC)
-    find_package(Kdewin REQUIRED)
-    include_directories(${KDEWIN_INCLUDES})
-endif(MINGW32 OR MSVC)
+include_directories(
+   ${GLIB_DIR}
+   ${GLIB_DIR}/glib
+   ${LIBINTL_INCLUDE_DIR}
+   ${LIBXML2_INCLUDE_DIR}
+   ${CMAKE_BINARY_DIR}
+   ${CMAKE_SOURCE_DIR}/headers
+)
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
@@ -98,14 +102,6 @@ set(GLIB_SOURCES
     ${GLIB_DIR}/glib/gnulib/printf-parse.c
     ${GLIB_DIR}/glib/gnulib/vasnprintf.c
     ${GLIB_DIR}/glib/libcharset/localcharset.c
-)
-
-include_directories(
-   ${GLIB_DIR}
-   ${GLIB_DIR}/glib
-   ${LIBINTL_INCLUDE_DIR}
-   ${LIBXML2_INCLUDE_DIR}
-   ${CMAKE_BINARY_DIR}
 )
 
 if(MSVC)

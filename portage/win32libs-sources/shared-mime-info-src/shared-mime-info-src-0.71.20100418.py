@@ -25,8 +25,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.dependencies['win32libs-bin/libxml2'] = 'default'
-        self.dependencies['kdesupport/kdewin'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -82,7 +81,18 @@ class Package(CMakePackageBase):
       src = os.path.join( self.packageDir() , "unistd.c" )
       dst = os.path.join( self.sourceDir(), "unistd.c" )
       shutil.copy( src, dst )
-      
+
+      if not os.path.exists( os.path.join( self.sourceDir(), "headers" ) ):
+        os.makedirs( os.path.join( self.sourceDir(), "headers" ) )
+
+      src = os.path.join( self.packageDir(), "dirent.h" )
+      dst = os.path.join( self.sourceDir(), "headers", "dirent.h" )
+      shutil.copy( src, dst )
+
+      src = os.path.join( self.packageDir() , "unistd.h" )
+      dst = os.path.join( self.sourceDir(), "headers", "unistd.h" )
+      shutil.copy( src, dst )
+
       utils.applyPatch( self.glibDir , os.path.join( self.packageDir(), "glib-x64.diff" ), 0 )
 
       return True

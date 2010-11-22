@@ -56,7 +56,6 @@
  * University of Illinois, Urbana-Champaign.
  */
 
-#include <kdewin_export.h>
 #include <windows.h>
 
 #include <malloc.h>
