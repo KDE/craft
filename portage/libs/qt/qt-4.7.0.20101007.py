@@ -65,8 +65,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-        self.dependencies['win32libs-sources/openssl-src'] = 'default'
-        self.dependencies['win32libs-sources/dbus-src'] = 'default'
+        self.dependencies['win32libs-bin/openssl'] = 'default'
+        self.dependencies['win32libs-bin/dbus'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['testing/mysql-pkg'] = 'default'
         else:
@@ -80,12 +80,12 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        self.openssl = portage.getPackageInstance('win32libs-sources','openssl-src')
-        self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
+        self.openssl = portage.getPackageInstance('win32libs-bin', 'openssl')
+        self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
         if not emergePlatform.isCrossCompilingEnabled():
-            self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
+            self.mysql_server = portage.getPackageInstance('testing', 'mysql-pkg')
         else:
-            self.wcecompat = portage.getPackageInstance('win32libs-sources','wcecompat-src')
+            self.wcecompat = portage.getPackageInstance('win32libs-sources', 'wcecompat-src')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
