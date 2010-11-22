@@ -45,6 +45,9 @@ extern int optind;
 #define STDERR_FILENO 2
 #endif
 
+#if _MSC_VER < 1600
+#define ENOTSUP       ENOSYS
+#endif
 // from sys/types.h:
 #ifndef __MINGW32__
 typedef int mode_t;

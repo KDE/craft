@@ -1,10 +1,11 @@
-import base
 import os
 import utils
 import info
 import re
 import shutil
 import info
+import compiler
+
 from Package.CMakePackageBase import *
 # do not forget to update CMakeLists.txt!
 SRC_URI= """
@@ -100,11 +101,11 @@ class Package(CMakePackageBase):
     def install( self ):
         if not CMakePackageBase.install( self ): 
             return False
-        manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
-        patch = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
-        cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
-        utils.system( cmd )
-
+        if compiler.isMinGW():
+            manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
+            patch = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
+            cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
+            utils.system( cmd )
         return True
 
     def qmerge( self ):
