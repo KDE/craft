@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ '0.60', '0.70', '0.51-1', '0.51-2', '0.71' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'shared-mime-info', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'shared-mime-info', version , '.tar.bz2.sha1' )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'shared-mime-info', version, packagetypes=['bin'] )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'shared-mime-info', version, ext='.tar.bz2.sha1', packagetypes=['bin'] )
 
         self.defaultTarget = '0.71'
 
