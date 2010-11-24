@@ -8,6 +8,11 @@ class subinfo(info.infoclass):
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdepimlibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdepimlibs-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
+
+        if emergePlatform.isCrossCompilingEnabled():
+            #TODO: Fix it so that it works on Windows NT and upstream it into
+            # kdepimlibs.
+            self.patchToApply['svnHEAD'] = ('winldap-patch.diff', 1)
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
