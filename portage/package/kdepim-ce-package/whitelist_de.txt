@@ -51,6 +51,7 @@ share\\locale\\de\\LC_MESSAGES\\kjotsmigrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kleopatra\.mo
 share\\locale\\de\\LC_MESSAGES\\kmail-migrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kmail-mobile\.mo
+share\\locale\\de\\LC_MESSAGES\\kmail\.mo
 share\\locale\\de\\LC_MESSAGES\\korganizer-mobile\.mo
 share\\locale\\de\\LC_MESSAGES\\kres-migrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kresources_shared_akonadi\.mo
