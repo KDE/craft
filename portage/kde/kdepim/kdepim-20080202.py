@@ -46,6 +46,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DKDEPIM_NO_NEPOMUK=ON "
             self.subinfo.options.configure.defines += " -DKDE4_BUILD_TESTS=OFF "
             self.subinfo.options.configure.defines += " -DBUILD_kleopatra=ON "
+            self.subinfo.options.configure.defines += " -DBUILD_korganizer=ON "
             self.subinfo.options.configure.defines += " -DKDEPIM_ENTERPRISE_BUILD=ON "
         else:
             self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
