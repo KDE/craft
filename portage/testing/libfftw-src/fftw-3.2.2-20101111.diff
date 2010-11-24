@@ -46,7 +46,7 @@ diff -Nru fftw-3.2.2.orig/api/CMakeLists.txt fftw-3.2.2/api/CMakeLists.txt
 diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 --- fftw-3.2.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ fftw-3.2.2/CMakeLists.txt	2010-11-11 01:10:58.372055800 +0100
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,101 @@
 +project(libfftw)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -58,6 +58,7 @@ diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 +option(BUILD_ALL_STATIC "build each and every library as a small static library" OFF)
 +option(BUILD_STATIC "build one static library" OFF)
 +
++add_definitions(-DHAVE_CONFIG_H)
 +if(NOT BUILD_STATIC AND NOT BUILD_ALL_STATIC)
 +    add_definitions(-DFFTW_DLL)
 +endif(NOT BUILD_STATIC AND NOT BUILD_ALL_STATIC)
@@ -65,6 +66,10 @@ diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 +if(MSVC)
 +    add_definitions(-Dinline=__inline -D_CRT_SECURE_NO_WARNINGS /wd4700 /openmp)
 +endif(MSVC)
++
++if(MINGW)
++    add_definitions(-march=pentium3 -openmp)
++endif(MINGW)
 +
 +set(PACKAGE "\"fftw\"")
 +set(VERSION "\"3.2.2\"")
@@ -208,151 +213,151 @@ diff -Nru fftw-3.2.2.orig/config.h.cmake fftw-3.2.2/config.h.cmake
 +#cmakedefine FFTW_SINGLE
 +
 +/* Define to 1 if you have the `abort' function. */
-+#cmakedefine HAVE_ABORT
++#cmakedefine HAVE_ABORT @HAVE_ABORT@
 +
 +/* Define to 1 if you have `alloca', as a function or macro. */
-+#cmakedefine HAVE_ALLOCA
++#cmakedefine HAVE_ALLOCA @HAVE_ALLOCA@
 +
 +/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
 +   */
-+#cmakedefine HAVE_ALLOCA_H
++#cmakedefine HAVE_ALLOCA_H @HAVE_ALLOCA_H@
 +
 +/* Define to enable Altivec optimizations. */
-+#cmakedefine HAVE_ALTIVEC
++#cmakedefine HAVE_ALTIVEC @HAVE_ALTIVEC@
 +
 +/* Define to 1 if you have the <altivec.h> header file. */
-+#cmakedefine HAVE_ALTIVEC_H
++#cmakedefine HAVE_ALTIVEC_H @HAVE_ALTIVEC_H@
 +
 +/* Define to 1 if you have the `BSDgettimeofday' function. */
-+#cmakedefine HAVE_BSDGETTIMEOFDAY
++#cmakedefine HAVE_BSDGETTIMEOFDAY @HAVE_BSDGETTIMEOFDAY@
 +
 +/* Define to enable optimizations for the Cell Broadband Engine */
-+#cmakedefine HAVE_CELL
++#cmakedefine HAVE_CELL @HAVE_CELL@
 +
 +/* Define to 1 if you have the `clock_gettime' function. */
-+#cmakedefine HAVE_CLOCK_GETTIME
++#cmakedefine HAVE_CLOCK_GETTIME @HAVE_CLOCK_GETTIME@
 +
 +/* Define to 1 if you have the `cosl' function. */
-+#cmakedefine HAVE_COSL
++#cmakedefine HAVE_COSL @HAVE_COSL@
 +
 +/* Define to 1 if you have the <c_asm.h> header file. */
-+#cmakedefine HAVE_C_ASM_H
++#cmakedefine HAVE_C_ASM_H @HAVE_C_ASM_H@
 +
 +/* Define to 1 if you have the declaration of `cosl', and to 0 if you don't.
 +   */
-+#cmakedefine HAVE_DECL_COSL
++#cmakedefine HAVE_DECL_COSL @HAVE_DECL_COSL@
 +
 +/* Define to 1 if you have the declaration of `drand48', and to 0 if you
 +   don't. */
-+#cmakedefine HAVE_DECL_DRAND48
++#cmakedefine HAVE_DECL_DRAND48 @HAVE_DECL_DRAND48@
 +
 +/* Define to 1 if you have the declaration of `memalign', and to 0 if you
 +   don't. */
-+#cmakedefine HAVE_DECL_MEMALIGN
++#cmakedefine HAVE_DECL_MEMALIGN @HAVE_DECL_MEMALIGN@
 +
 +/* Define to 1 if you have the declaration of `posix_memalign', and to 0 if
 +   you don't. */
-+#cmakedefine HAVE_DECL_POSIX_MEMALIGN
++#cmakedefine HAVE_DECL_POSIX_MEMALIGN @HAVE_DECL_POSIX_MEMALIGN@
 +
 +/* Define to 1 if you have the declaration of `sinl', and to 0 if you don't.
 +   */
-+#cmakedefine HAVE_DECL_SINL
++#cmakedefine HAVE_DECL_SINL @HAVE_DECL_SINL@
 +
 +/* Define to 1 if you have the <dlfcn.h> header file. */
-+#cmakedefine HAVE_DLFCN_H
++#cmakedefine HAVE_DLFCN_H @HAVE_DLFCN_H@
 +
 +/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-+#cmakedefine HAVE_DOPRNT
++#cmakedefine HAVE_DOPRNT @HAVE_DOPRNT@
 +
 +/* Define to 1 if you have the `drand48' function. */
-+#cmakedefine HAVE_DRAND48
++#cmakedefine HAVE_DRAND48 @HAVE_DRAND48@
 +
 +/* Define if you have a machine with fused multiply-add */
-+#cmakedefine HAVE_FMA
++#cmakedefine HAVE_FMA @HAVE_FMA@
 +
 +/* Define to 1 if you have the `gethrtime' function. */
-+#cmakedefine HAVE_GETHRTIME
++#cmakedefine HAVE_GETHRTIME @HAVE_GETHRTIME@
 +
 +/* Define to 1 if you have the `gettimeofday' function. */
-+#cmakedefine HAVE_GETTIMEOFDAY
++#cmakedefine HAVE_GETTIMEOFDAY @HAVE_GETTIMEOFDAY@
 +
 +/* Define to 1 if hrtime_t is defined in <sys/time.h> */
-+#cmakedefine HAVE_HRTIME_T
++#cmakedefine HAVE_HRTIME_T @HAVE_HRTIME_T@
 +
 +/* Define to 1 if you have the <intrinsics.h> header file. */
-+#cmakedefine HAVE_INTRINSICS_H
++#cmakedefine HAVE_INTRINSICS_H @HAVE_INTRINSICS_H@
 +
 +/* Define to 1 if you have the <inttypes.h> header file. */
-+#cmakedefine HAVE_INTTYPES_H
++#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
 +
 +/* Define if the isnan() function/macro is available. */
-+#cmakedefine HAVE_ISNAN
++#cmakedefine HAVE_ISNAN @HAVE_ISNAN@
 +
 +/* Define to 1 if you have the <libintl.h> header file. */
-+#cmakedefine HAVE_LIBINTL_H
++#cmakedefine HAVE_LIBINTL_H @HAVE_LIBINTL_H@
 +
 +/* Define to 1 if you have the `m' library (-lm). */
-+#cmakedefine HAVE_LIBM
++#cmakedefine HAVE_LIBM @HAVE_LIBM@
 +
 +/* Define to 1 if you have the `spe' library (-lspe). */
-+#cmakedefine HAVE_LIBSPE
++#cmakedefine HAVE_LIBSPE @HAVE_LIBSPE@
 +
 +/* Define to 1 if you have the `spe2' library (-lspe2). */
-+#cmakedefine HAVE_LIBSPE2
++#cmakedefine HAVE_LIBSPE2 @HAVE_LIBSPE2@
 +
 +/* Define to 1 if you have the <limits.h> header file. */
-+#cmakedefine HAVE_LIMITS_H
++#cmakedefine HAVE_LIMITS_H @HAVE_LIMITS_H@
 +
 +/* Define to 1 if the compiler supports `long double' */
-+#cmakedefine HAVE_LONG_DOUBLE
++#cmakedefine HAVE_LONG_DOUBLE @HAVE_LONG_DOUBLE@
 +
 +/* Define to 1 if you have the `mach_absolute_time' function. */
-+#cmakedefine HAVE_MACH_ABSOLUTE_TIME
++#cmakedefine HAVE_MACH_ABSOLUTE_TIME @HAVE_MACH_ABSOLUTE_TIME@
 +
 +/* Define to 1 if you have the <mach/mach_time.h> header file. */
-+#cmakedefine HAVE_MACH_MACH_TIME_H
++#cmakedefine HAVE_MACH_MACH_TIME_H @HAVE_MACH_MACH_TIME_H@
 +
 +/* Define to 1 if you have the <malloc.h> header file. */
-+#cmakedefine HAVE_MALLOC_H
++#cmakedefine HAVE_MALLOC_H @HAVE_MALLOC_H@
 +
 +/* Define to 1 if you have the `memalign' function. */
-+#cmakedefine HAVE_MEMALIGN
++#cmakedefine HAVE_MEMALIGN @HAVE_MEMALIGN@
 +
 +/* Define to 1 if you have the <memory.h> header file. */
-+#cmakedefine HAVE_MEMORY_H
++#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
 +
 +/* Define to 1 if you have the `memset' function. */
-+#cmakedefine HAVE_MEMSET
++#cmakedefine HAVE_MEMSET @HAVE_MEMSET@
 +
 +/* Define to enable MIPS paired-single optimizations. */
-+#cmakedefine HAVE_MIPS_PS
++#cmakedefine HAVE_MIPS_PS @HAVE_MIPS_PS@
 +
 +/* Define to enable use of MIPS ZBus cycle-counter. */
-+#cmakedefine HAVE_MIPS_ZBUS_TIMER
++#cmakedefine HAVE_MIPS_ZBUS_TIMER @HAVE_MIPS_ZBUS_TIMER@
 +
 +/* Define if you have the MPI library. */
-+#cmakedefine HAVE_MPI
++#cmakedefine HAVE_MPI @HAVE_MPI@
 +
 +/* Define to enable OpenMP */
-+#cmakedefine HAVE_OPENMP
++#cmakedefine HAVE_OPENMP @HAVE_OPENMP@
 +
 +/* Define to 1 if you have the `posix_memalign' function. */
-+#cmakedefine HAVE_POSIX_MEMALIGN
++#cmakedefine HAVE_POSIX_MEMALIGN @HAVE_POSIX_MEMALIGN@
 +
 +/* Define if you have POSIX threads libraries and header files. */
-+#cmakedefine HAVE_PTHREAD
++#cmakedefine HAVE_PTHREAD @HAVE_PTHREAD@
 +
 +/* Define to 1 if you have the `read_real_time' function. */
-+#cmakedefine HAVE_READ_REAL_TIME
++#cmakedefine HAVE_READ_REAL_TIME @HAVE_READ_REAL_TIME@
 +
 +/* Define to 1 if you have the `sinl' function. */
-+#cmakedefine HAVE_SINL
++#cmakedefine HAVE_SINL @HAVE_SINL@
 +
 +/* Define to 1 if you have the `snprintf' function. */
-+#cmakedefine HAVE_SNPRINTF
++#cmakedefine HAVE_SNPRINTF @HAVE_SNPRINTF@
 +
 +/* Define to 1 if you have the `sqrt' function. */
-+#cmakedefine HAVE_SQRT
++#cmakedefine HAVE_SQRT @HAVE_SQRT@
 +
 +/* Define to enable SSE optimizations. */
 +#cmakedefine HAVE_SSE @HAVE_SSE@
@@ -364,61 +369,61 @@ diff -Nru fftw-3.2.2.orig/config.h.cmake fftw-3.2.2/config.h.cmake
 +#cmakedefine HAVE_STDDEF_H @HAVE_STDDEF_H@
 +
 +/* Define to 1 if you have the <stdint.h> header file. */
-+#cmakedefine HAVE_STDINT_H
++#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
 +
 +/* Define to 1 if you have the <stdlib.h> header file. */
 +#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
 +
 +/* Define to 1 if you have the <strings.h> header file. */
-+#cmakedefine HAVE_STRINGS_H
++#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
 +
 +/* Define to 1 if you have the <string.h> header file. */
-+#cmakedefine HAVE_STRING_H
++#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
 +
 +/* Define to 1 if you have the `sysctl' function. */
-+#cmakedefine HAVE_SYSCTL
++#cmakedefine HAVE_SYSCTL @HAVE_SYSCTL@
 +
 +/* Define to 1 if you have the <sys/stat.h> header file. */
-+#cmakedefine HAVE_SYS_STAT_H
++#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
 +
 +/* Define to 1 if you have the <sys/sysctl.h> header file. */
-+#cmakedefine HAVE_SYS_SYSCTL_H
++#cmakedefine HAVE_SYS_SYSCTL_H @HAVE_SYS_SYSCTL_H@
 +
 +/* Define to 1 if you have the <sys/time.h> header file. */
-+#cmakedefine HAVE_SYS_TIME_H
++#cmakedefine HAVE_SYS_TIME_H @HAVE_SYS_TIME_H@
 +
 +/* Define to 1 if you have the <sys/types.h> header file. */
-+#cmakedefine HAVE_SYS_TYPES_H
++#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
 +
 +/* Define to 1 if you have the `tanl' function. */
-+#cmakedefine HAVE_TANL
++#cmakedefine HAVE_TANL @HAVE_TANL@
 +
 +/* Define if we have a threads library. */
-+#cmakedefine HAVE_THREADS
++#cmakedefine HAVE_THREADS @HAVE_THREADS@
 +
 +/* Define to 1 if you have the `time_base_to_time' function. */
-+#cmakedefine HAVE_TIME_BASE_TO_TIME
++#cmakedefine HAVE_TIME_BASE_TO_TIME @HAVE_TIME_BASE_TO_TIME@
 +
 +/* Define to 1 if the system has the type `uintptr_t'. */
-+#cmakedefine HAVE_UINTPTR_T
++#cmakedefine HAVE_UINTPTR_T @HAVE_UINTPTR_T@
 +
 +/* Define to 1 if you have the <unistd.h> header file. */
-+#cmakedefine HAVE_UNISTD_H
++#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
 +
 +/* Define to 1 if you have the `vprintf' function. */
-+#cmakedefine HAVE_VPRINTF
++#cmakedefine HAVE_VPRINTF @HAVE_VPRINTF@
 +
 +/* Define to 1 if you have the <xmmintrin.h> header file. */
-+#cmakedefine HAVE_XMMINTRIN_H
++#cmakedefine HAVE_XMMINTRIN_H @HAVE_XMMINTRIN_H@
 +
 +/* Define to 1 if you have the `_mm_free' function. */
-+#cmakedefine HAVE__MM_FREE
++#cmakedefine HAVE__MM_FREE @HAVE__MM_FREE@
 +
 +/* Define to 1 if you have the `_mm_malloc' function. */
-+#cmakedefine HAVE__MM_MALLOC
++#cmakedefine HAVE__MM_MALLOC @HAVE__MM_MALLOC@
 +
 +/* Define if you have the UNICOS _rtc() intrinsic. */
-+#cmakedefine HAVE__RTC
++#cmakedefine HAVE__RTC @HAVE__RTC@
 +
 +/* Define to the sub-directory in which libtool stores uninstalled libraries.
 +   */
@@ -530,7 +535,7 @@ diff -Nru fftw-3.2.2.orig/config.h.cmake fftw-3.2.2/config.h.cmake
 diff -Nru fftw-3.2.2.orig/ConfigureChecks.cmake fftw-3.2.2/ConfigureChecks.cmake
 --- fftw-3.2.2.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ fftw-3.2.2/ConfigureChecks.cmake	2010-10-13 15:49:40.595467200 +0200
-@@ -0,0 +1,383 @@
+@@ -0,0 +1,385 @@
 +
 +set(HAVE_LONG_DOUBLE 1)
 +set(HAVE_OPENMP 1)
@@ -539,13 +544,15 @@ diff -Nru fftw-3.2.2.orig/ConfigureChecks.cmake fftw-3.2.2/ConfigureChecks.cmake
 +set(HAVE_SSE 1)
 +#set(HAVE_SSE2 1) # only works in double precision
 +set(HAVE_STDLIB_H 1)
++set(HAVE_STDINT_H 1)
 +set(HAVE_STDDEF_H 1)
++set(HAVE_UINTPTR_T 1)
 +set(HAVE_SIMD 1)
 +set(BENCHFFT_SINGLE 1)
 +
 +#/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
 +#   */
-+#cmakedefine HAVE_ALLOCA_H
++set(HAVE_ALLOCA_H 1)
 +
 +#/* Define to 1 if you have the <altivec.h> header file. */
 +#cmakedefine HAVE_ALTIVEC_H
