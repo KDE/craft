@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         if emergePlatform.isCrossCompilingEnabled():
             #TODO: Fix it so that it works on Windows NT and upstream it into
             # kdepimlibs.
-            self.patchToApply['svnHEAD'] = ('winldap-patch.diff', 1)
+            self.patchToApply['svnHEAD'] = ('winldap-patch.diff', 0)
     
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
