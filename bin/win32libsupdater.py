@@ -10,6 +10,14 @@ import info;
 import subprocess;
 from string import Template;
 
+
+#################################################
+
+KDEROOT=os.getenv("KDEROOT")
+KDEROOT.replace("\\", "/")
+
+#################################################
+
 doPretend = False
 if "-p" in sys.argv:
     doPretend = True
@@ -119,4 +127,56 @@ for packageKey in addInfo:
 #        utils.info( "working on package %s" % package )
 #        utils.new_line()
     else:
-        utils.warning( "no corresponding binary Package is available!" )
+        utils.warning( "no corresponding binary Package is available for %s!" % package )
+        buildTarget = addInfo[ packageKey ] [ 0 ]
+        if buildTarget == '':
+            buildTarget = portage.PortageInstance.getDefaultTarget( category, package, version )
+        regenerateFile = True
+        
+        if category == "win32libs-sources" and package.endswith("-src"):
+            binCategory = "win32libs-bin"
+            binPackage = package[:-4]
+            binVersion = buildTarget
+        else:
+            continue
+        
+        dependencies = baseDependencies
+        # get buildDependencies from the source package
+        runtimeDependencies, buildDependencies = portage.readChildren( category, package, version )
+
+        for key in runtimeDependencies:
+            if key in runtimeDependencies and key in buildDependencies:
+                dependencies += "        self.runtimeDependencies[ '%s' ] = '%s'\n" % ( key, buildDependencies[ key ] )
+
+
+        if regenerateFile:
+            template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
+            targetkeys = [ buildTarget ]
+            targetsString = "'" + "', '".join( targetkeys ) + "'"
+            result = template.safe_substitute( { 'revision': '1', 
+                                                 'package': binPackage, 
+                                                 'versionTargets': targetsString,
+                                                 'defaultTarget': buildTarget,
+                                                 'dependencies': dependencies
+                                               } )
+
+            newName = portage.getFilename( binCategory, binPackage, buildTarget )
+            newDir = os.path.dirname( newName )
+
+            if not os.path.exists( newDir ):
+                os.makedirs( newDir )
+
+            f = file( newName, 'w+b' )
+            f.write( result )
+            f.close()
+
+            cmd = "svn --non-interactive add %s" % ( newDir )
+            ret = 0
+            utils.debug( "running command: %s" % cmd )
+            p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
+            ret = p.wait()
+            
+            if not ret == 0:
+                utils.warning( 'failed to add file %s' % os.path.basename( newName ) )
+                continue
+        
