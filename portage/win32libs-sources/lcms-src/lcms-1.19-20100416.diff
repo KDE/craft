@@ -75,7 +75,7 @@ diff -Nru lcms-1.19.orig/jpegicc/CMakeLists.txt lcms-1.19/jpegicc/CMakeLists.txt
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
 +                        
-+install(FILES jpegicc.1 DESTINATION man/man1)
++install(FILES jpegicc.1 DESTINATION share/man/man1)
 +install(FILES iccjpeg.h DESTINATION include)
 diff -Nru lcms-1.19.orig/samples/CMakeLists.txt lcms-1.19/samples/CMakeLists.txt
 --- lcms-1.19.orig/samples/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
@@ -115,7 +115,7 @@ diff -Nru lcms-1.19.orig/samples/CMakeLists.txt lcms-1.19/samples/CMakeLists.txt
 +                                             LIBRARY DESTINATION lib
 +                                             ARCHIVE DESTINATION lib)
 +                                             
-+install(FILES icctrans.1 wtpt.1 icc2ps.1 icclink.1 DESTINATION man/man1)
++install(FILES icctrans.1 wtpt.1 icc2ps.1 icclink.1 DESTINATION share/man/man1)
 diff -Nru lcms-1.19.orig/src/CMakeLists.txt lcms-1.19/src/CMakeLists.txt
 --- lcms-1.19.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ lcms-1.19/src/CMakeLists.txt	2010-04-16 09:14:34.417200000 +0200
@@ -241,4 +241,4 @@ diff -Nru lcms-1.19.orig/tifficc/CMakeLists.txt lcms-1.19/tifficc/CMakeLists.txt
 +                                 LIBRARY DESTINATION lib
 +                                 ARCHIVE DESTINATION lib)
 +                                 
-+install(FILES tifficc.1 DESTINATION man/man1)
++install(FILES tifficc.1 DESTINATION share/man/man1)
