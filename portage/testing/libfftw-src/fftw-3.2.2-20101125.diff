@@ -1,6 +1,6 @@
 diff -Nru fftw-3.2.2.orig/api/CMakeLists.txt fftw-3.2.2/api/CMakeLists.txt
 --- fftw-3.2.2.orig/api/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/api/CMakeLists.txt	2010-11-25 02:45:37.886474400 +0100
++++ fftw-3.2.2/api/CMakeLists.txt	2010-11-25 09:07:03.190637500 +0100
 @@ -0,0 +1,41 @@
 +set(api_SRCS apiplan.c configure.c execute-dft-c2r.c
 +execute-dft-r2c.c execute-dft.c execute-r2r.c execute-split-dft-c2r.c
@@ -45,7 +45,7 @@ diff -Nru fftw-3.2.2.orig/api/CMakeLists.txt fftw-3.2.2/api/CMakeLists.txt
 +#endif # MAINTAINER_MODE
 diff -Nru fftw-3.2.2.orig/CheckMingwVersion.cmake fftw-3.2.2/CheckMingwVersion.cmake
 --- fftw-3.2.2.orig/CheckMingwVersion.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/CheckMingwVersion.cmake	2010-11-25 02:45:37.888474500 +0100
++++ fftw-3.2.2/CheckMingwVersion.cmake	2010-11-25 09:07:03.204638300 +0100
 @@ -0,0 +1,26 @@
 +#
 +# check mingw compiler version
@@ -75,7 +75,7 @@ diff -Nru fftw-3.2.2.orig/CheckMingwVersion.cmake fftw-3.2.2/CheckMingwVersion.c
 +endif (NOT MINGW32 AND NOT MINGW64)
 diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 --- fftw-3.2.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/CMakeLists.txt	2010-11-25 02:51:08.870405600 +0100
++++ fftw-3.2.2/CMakeLists.txt	2010-11-25 09:17:45.247856800 +0100
 @@ -0,0 +1,127 @@
 +project(libfftw)
 +
@@ -206,7 +206,7 @@ diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 +#add_subdirectory(tools)
 diff -Nru fftw-3.2.2.orig/config.h.cmake fftw-3.2.2/config.h.cmake
 --- fftw-3.2.2.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/config.h.cmake	2010-11-25 02:45:37.892474800 +0100
++++ fftw-3.2.2/config.h.cmake	2010-11-25 09:07:03.234640000 +0100
 @@ -0,0 +1,380 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -590,8 +590,8 @@ diff -Nru fftw-3.2.2.orig/config.h.cmake fftw-3.2.2/config.h.cmake
 +#cmakedefine size_t
 diff -Nru fftw-3.2.2.orig/ConfigureChecks.cmake fftw-3.2.2/ConfigureChecks.cmake
 --- fftw-3.2.2.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/ConfigureChecks.cmake	2010-11-25 02:52:54.246432800 +0100
-@@ -0,0 +1,273 @@
++++ fftw-3.2.2/ConfigureChecks.cmake	2010-11-25 09:22:16.949138800 +0100
+@@ -0,0 +1,274 @@
 +if(MSVC)
 +    set(inline __inline)
 +endif(MSVC)
@@ -866,10 +866,9 @@ diff -Nru fftw-3.2.2.orig/ConfigureChecks.cmake fftw-3.2.2/ConfigureChecks.cmake
 +
 +configure_file(config.h.cmake config.h)
 +configure_file(fftw.def.cmake fftw.def)
-\ Kein Zeilenumbruch am Dateiende.
 diff -Nru fftw-3.2.2.orig/dft/CMakeLists.txt fftw-3.2.2/dft/CMakeLists.txt
 --- fftw-3.2.2.orig/dft/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/dft/CMakeLists.txt	2010-11-25 02:45:37.979479700 +0100
++++ fftw-3.2.2/dft/CMakeLists.txt	2010-11-25 09:07:03.255641200 +0100
 @@ -0,0 +1,19 @@
 +#SUBDIRS = scalar simd
 +add_subdirectory(scalar)
@@ -892,7 +891,7 @@ diff -Nru fftw-3.2.2.orig/dft/CMakeLists.txt fftw-3.2.2/dft/CMakeLists.txt
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/dft/scalar/CMakeLists.txt fftw-3.2.2/dft/scalar/CMakeLists.txt
 --- fftw-3.2.2.orig/dft/scalar/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/dft/scalar/CMakeLists.txt	2010-11-25 02:45:38.086485900 +0100
++++ fftw-3.2.2/dft/scalar/CMakeLists.txt	2010-11-25 09:07:03.266641800 +0100
 @@ -0,0 +1,10 @@
 +add_subdirectory(codelets)
 +
@@ -906,7 +905,7 @@ diff -Nru fftw-3.2.2.orig/dft/scalar/CMakeLists.txt fftw-3.2.2/dft/scalar/CMakeL
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/dft/scalar/codelets/CMakeLists.txt fftw-3.2.2/dft/scalar/codelets/CMakeLists.txt
 --- fftw-3.2.2.orig/dft/scalar/codelets/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/dft/scalar/codelets/CMakeLists.txt	2010-11-25 02:45:38.122487900 +0100
++++ fftw-3.2.2/dft/scalar/codelets/CMakeLists.txt	2010-11-25 09:07:03.957681300 +0100
 @@ -0,0 +1,113 @@
 +# This Makefile.am specifies a set of codelets, efficient transforms
 +# of small sizes, that are used as building blocks (kernels) by FFTW
@@ -1023,7 +1022,7 @@ diff -Nru fftw-3.2.2.orig/dft/scalar/codelets/CMakeLists.txt fftw-3.2.2/dft/scal
 +
 diff -Nru fftw-3.2.2.orig/dft/simd/CMakeLists.txt fftw-3.2.2/dft/simd/CMakeLists.txt
 --- fftw-3.2.2.orig/dft/simd/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/dft/simd/CMakeLists.txt	2010-11-25 02:45:38.124488000 +0100
++++ fftw-3.2.2/dft/simd/CMakeLists.txt	2010-11-25 09:07:03.969682000 +0100
 @@ -0,0 +1,10 @@
 +add_subdirectory(codelets)
 +
@@ -1037,7 +1036,7 @@ diff -Nru fftw-3.2.2.orig/dft/simd/CMakeLists.txt fftw-3.2.2/dft/simd/CMakeLists
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/dft/simd/codelets/CMakeLists.txt fftw-3.2.2/dft/simd/codelets/CMakeLists.txt
 --- fftw-3.2.2.orig/dft/simd/codelets/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/dft/simd/codelets/CMakeLists.txt	2010-11-25 02:45:38.127488200 +0100
++++ fftw-3.2.2/dft/simd/codelets/CMakeLists.txt	2010-11-25 09:07:03.984682900 +0100
 @@ -0,0 +1,189 @@
 +# This Makefile.am specifies a set of codelets, efficient transforms
 +# of small sizes, that are used as building blocks (kernels) by FFTW
@@ -1230,7 +1229,7 @@ diff -Nru fftw-3.2.2.orig/dft/simd/codelets/CMakeLists.txt fftw-3.2.2/dft/simd/c
 +#
 diff -Nru fftw-3.2.2.orig/fftw.def.cmake fftw-3.2.2/fftw.def.cmake
 --- fftw-3.2.2.orig/fftw.def.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/fftw.def.cmake	2010-11-25 02:45:38.130488400 +0100
++++ fftw-3.2.2/fftw.def.cmake	2010-11-25 09:07:04.003684000 +0100
 @@ -0,0 +1,808 @@
 +EXPORTS
 +@FFTW_SYMBOL_PREFIX@alignment_of
@@ -2042,7 +2041,7 @@ diff -Nru fftw-3.2.2.orig/fftw.def.cmake fftw-3.2.2/fftw.def.cmake
 +;sfftw_print_plan__
 diff -Nru fftw-3.2.2.orig/kernel/CMakeLists.txt fftw-3.2.2/kernel/CMakeLists.txt
 --- fftw-3.2.2.orig/kernel/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/kernel/CMakeLists.txt	2010-11-25 02:45:38.133488500 +0100
++++ fftw-3.2.2/kernel/CMakeLists.txt	2010-11-25 09:07:04.085688700 +0100
 @@ -0,0 +1,17 @@
 +# pkgincludedir = $(includedir)/fftw3@PREC_SUFFIX@
 +# pkginclude_HEADERS = ifftw.h cycle.h
@@ -2063,7 +2062,7 @@ diff -Nru fftw-3.2.2.orig/kernel/CMakeLists.txt fftw-3.2.2/kernel/CMakeLists.txt
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/libbench2/CMakeLists.txt fftw-3.2.2/libbench2/CMakeLists.txt
 --- fftw-3.2.2.orig/libbench2/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/libbench2/CMakeLists.txt	2010-11-25 02:45:38.170490700 +0100
++++ fftw-3.2.2/libbench2/CMakeLists.txt	2010-11-25 09:07:04.100689500 +0100
 @@ -0,0 +1,11 @@
 +set(bench2_SRCS after-ccopy-from.c after-ccopy-to.c
 +after-hccopy-from.c after-hccopy-to.c after-rcopy-from.c
@@ -2078,7 +2077,7 @@ diff -Nru fftw-3.2.2.orig/libbench2/CMakeLists.txt fftw-3.2.2/libbench2/CMakeLis
 +add_library(bench2 STATIC ${bench2_SRCS})
 diff -Nru fftw-3.2.2.orig/rdft/CMakeLists.txt fftw-3.2.2/rdft/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/CMakeLists.txt	2010-11-25 02:45:38.173490800 +0100
++++ fftw-3.2.2/rdft/CMakeLists.txt	2010-11-25 09:07:04.113690300 +0100
 @@ -0,0 +1,23 @@
 +add_subdirectory(scalar)
 +add_subdirectory(simd)
@@ -2105,7 +2104,7 @@ diff -Nru fftw-3.2.2.orig/rdft/CMakeLists.txt fftw-3.2.2/rdft/CMakeLists.txt
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/rdft/scalar/CMakeLists.txt fftw-3.2.2/rdft/scalar/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/scalar/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/scalar/CMakeLists.txt	2010-11-25 02:45:38.175490900 +0100
++++ fftw-3.2.2/rdft/scalar/CMakeLists.txt	2010-11-25 09:07:04.122690800 +0100
 @@ -0,0 +1,12 @@
 +add_subdirectory(r2cb)
 +add_subdirectory(r2cf)
@@ -2121,7 +2120,7 @@ diff -Nru fftw-3.2.2.orig/rdft/scalar/CMakeLists.txt fftw-3.2.2/rdft/scalar/CMak
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/rdft/scalar/r2cb/CMakeLists.txt fftw-3.2.2/rdft/scalar/r2cb/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/scalar/r2cb/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/scalar/r2cb/CMakeLists.txt	2010-11-25 02:45:38.178491100 +0100
++++ fftw-3.2.2/rdft/scalar/r2cb/CMakeLists.txt	2010-11-25 09:07:04.133691400 +0100
 @@ -0,0 +1,126 @@
 +# This Makefile.am specifies a set of codelets, efficient transforms
 +# of small sizes, that are used as building blocks (kernels) by FFTW
@@ -2251,7 +2250,7 @@ diff -Nru fftw-3.2.2.orig/rdft/scalar/r2cb/CMakeLists.txt fftw-3.2.2/rdft/scalar
 +#endif # MAINTAINER_MODE
 diff -Nru fftw-3.2.2.orig/rdft/scalar/r2cf/CMakeLists.txt fftw-3.2.2/rdft/scalar/r2cf/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/scalar/r2cf/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/scalar/r2cf/CMakeLists.txt	2010-11-25 02:45:38.180491200 +0100
++++ fftw-3.2.2/rdft/scalar/r2cf/CMakeLists.txt	2010-11-25 09:07:04.348703700 +0100
 @@ -0,0 +1,128 @@
 +# This Makefile.am specifies a set of codelets, efficient transforms
 +# of small sizes, that are used as building blocks (kernels) by FFTW
@@ -2383,7 +2382,7 @@ diff -Nru fftw-3.2.2.orig/rdft/scalar/r2cf/CMakeLists.txt fftw-3.2.2/rdft/scalar
 +#endif # MAINTAINER_MODE
 diff -Nru fftw-3.2.2.orig/rdft/scalar/r2r/CMakeLists.txt fftw-3.2.2/rdft/scalar/r2r/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/scalar/r2r/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/scalar/r2r/CMakeLists.txt	2010-11-25 02:45:38.183491400 +0100
++++ fftw-3.2.2/rdft/scalar/r2r/CMakeLists.txt	2010-11-25 09:07:04.365704700 +0100
 @@ -0,0 +1,100 @@
 +# This Makefile.am specifies a set of codelets, efficient transforms
 +# of small sizes, that are used as building blocks (kernels) by FFTW
@@ -2487,7 +2486,7 @@ diff -Nru fftw-3.2.2.orig/rdft/scalar/r2r/CMakeLists.txt fftw-3.2.2/rdft/scalar/
 +#endif # MAINTAINER_MODE
 diff -Nru fftw-3.2.2.orig/rdft/simd/CMakeLists.txt fftw-3.2.2/rdft/simd/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/simd/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/simd/CMakeLists.txt	2010-11-25 02:45:38.221493600 +0100
++++ fftw-3.2.2/rdft/simd/CMakeLists.txt	2010-11-25 09:07:04.413707400 +0100
 @@ -0,0 +1,10 @@
 +add_subdirectory(codelets)
 +
@@ -2501,7 +2500,7 @@ diff -Nru fftw-3.2.2.orig/rdft/simd/CMakeLists.txt fftw-3.2.2/rdft/simd/CMakeLis
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/rdft/simd/codelets/CMakeLists.txt fftw-3.2.2/rdft/simd/codelets/CMakeLists.txt
 --- fftw-3.2.2.orig/rdft/simd/codelets/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/rdft/simd/codelets/CMakeLists.txt	2010-11-25 02:45:38.223493700 +0100
++++ fftw-3.2.2/rdft/simd/codelets/CMakeLists.txt	2010-11-25 09:07:04.423708000 +0100
 @@ -0,0 +1,61 @@
 +# This Makefile.am specifies a set of codelets, efficient transforms
 +# of small sizes, that are used as building blocks (kernels) by FFTW
@@ -2566,7 +2565,7 @@ diff -Nru fftw-3.2.2.orig/rdft/simd/codelets/CMakeLists.txt fftw-3.2.2/rdft/simd
 +#endif # MAINTAINER_MODE
 diff -Nru fftw-3.2.2.orig/reodft/CMakeLists.txt fftw-3.2.2/reodft/CMakeLists.txt
 --- fftw-3.2.2.orig/reodft/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/reodft/CMakeLists.txt	2010-11-25 02:45:38.226493900 +0100
++++ fftw-3.2.2/reodft/CMakeLists.txt	2010-11-25 09:07:04.433708600 +0100
 @@ -0,0 +1,12 @@
 +set(reodft_SRCS conf.c reodft010e-r2hc.c
 +reodft11e-radix2.c reodft11e-r2hc-odd.c redft00e-r2hc-pad.c
@@ -2582,7 +2581,7 @@ diff -Nru fftw-3.2.2.orig/reodft/CMakeLists.txt fftw-3.2.2/reodft/CMakeLists.txt
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/simd/CMakeLists.txt fftw-3.2.2/simd/CMakeLists.txt
 --- fftw-3.2.2.orig/simd/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/simd/CMakeLists.txt	2010-11-25 02:45:38.228494000 +0100
++++ fftw-3.2.2/simd/CMakeLists.txt	2010-11-25 09:07:04.492711900 +0100
 @@ -0,0 +1,10 @@
 +set(simd_SRCS altivec.c sse.c sse2.c taint.c mips_ps.c)
 +
@@ -2596,7 +2595,7 @@ diff -Nru fftw-3.2.2.orig/simd/CMakeLists.txt fftw-3.2.2/simd/CMakeLists.txt
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/simd/nonportable/CMakeLists.txt fftw-3.2.2/simd/nonportable/CMakeLists.txt
 --- fftw-3.2.2.orig/simd/nonportable/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/simd/nonportable/CMakeLists.txt	2010-11-25 02:45:38.230494100 +0100
++++ fftw-3.2.2/simd/nonportable/CMakeLists.txt	2010-11-25 09:07:04.500712400 +0100
 @@ -0,0 +1,8 @@
 +set(simd_nonportable_SRCS  sse.c sse2.c)
 +
@@ -2608,7 +2607,7 @@ diff -Nru fftw-3.2.2.orig/simd/nonportable/CMakeLists.txt fftw-3.2.2/simd/nonpor
 +endif(BUILD_ALL_STATIC)
 diff -Nru fftw-3.2.2.orig/support/codelets.cmake fftw-3.2.2/support/codelets.cmake
 --- fftw-3.2.2.orig/support/codelets.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/support/codelets.cmake	2010-11-25 02:45:38.305498400 +0100
++++ fftw-3.2.2/support/codelets.cmake	2010-11-25 09:07:04.544714900 +0100
 @@ -0,0 +1,18 @@
 +# generate file codlist.c
 +
@@ -2631,7 +2630,7 @@ diff -Nru fftw-3.2.2.orig/support/codelets.cmake fftw-3.2.2/support/codelets.cma
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru fftw-3.2.2.orig/tests/CMakeLists.txt fftw-3.2.2/tests/CMakeLists.txt
 --- fftw-3.2.2.orig/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/tests/CMakeLists.txt	2010-11-25 02:45:38.307498500 +0100
++++ fftw-3.2.2/tests/CMakeLists.txt	2010-11-25 09:07:04.554715500 +0100
 @@ -0,0 +1,71 @@
 +#noinst_PROGRAMS = bench
 +#EXTRA_DIST = check.pl README
@@ -2706,7 +2705,7 @@ diff -Nru fftw-3.2.2.orig/tests/CMakeLists.txt fftw-3.2.2/tests/CMakeLists.txt
 +#	perl -w $(srcdir)/check.pl -a --exhaustive --paranoid `pwd`/bench
 diff -Nru fftw-3.2.2.orig/threads/api.c fftw-3.2.2/threads/api.c
 --- fftw-3.2.2.orig/threads/api.c	2009-07-12 12:35:49.000000000 +0200
-+++ fftw-3.2.2/threads/api.c	2010-11-25 02:45:38.309498600 +0100
++++ fftw-3.2.2/threads/api.c	2010-11-25 09:07:04.564716100 +0100
 @@ -56,7 +56,6 @@
       return 1;
  }
@@ -2717,7 +2716,7 @@ diff -Nru fftw-3.2.2.orig/threads/api.c fftw-3.2.2/threads/api.c
       X(cleanup)();
 diff -Nru fftw-3.2.2.orig/threads/CMakeLists.txt fftw-3.2.2/threads/CMakeLists.txt
 --- fftw-3.2.2.orig/threads/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ fftw-3.2.2/threads/CMakeLists.txt	2010-11-25 02:45:38.312498800 +0100
++++ fftw-3.2.2/threads/CMakeLists.txt	2010-11-25 09:07:04.572716500 +0100
 @@ -0,0 +1,9 @@
 +set(threads_SRCS api.c conf.c threads.c openmp.c dft-vrank-geq1.c ct.c rdft-vrank-geq1.c hc2hc.c vrank-geq1-rdft2.c f77api.c
 +)
