@@ -301,6 +301,18 @@ diff -Nru libzip-0.9.3.orig/lib/zipint.h libzip-0.9.3/lib/zipint.h
  #ifndef HAVE_FSEEKO
  #define fseeko(s, o, w)	(fseek((s), (long int)(o), (w)))
  #endif
+diff -Nru libzip-0.9.3.orig/man/CMakeLists.txt libzip-0.9.3/man/CMakeLists.txt
+--- libzip-0.9.3.orig/man/CMakeLists.txt	2010-02-01 10:10:29.000000000 +0100
++++ libzip-0.9.3/man/CMakeLists.txt	2010-11-26 00:02:17.331712100 +0100
+@@ -51,7 +51,7 @@
+ 
+ # installation
+ 
+-SET(MAN_PATH man)
++SET(MAN_PATH share/man)
+ 
+ FOREACH(MAN_PAGE ${MAN1_PAGES})
+   INSTALL(FILES ${MAN_PAGE}.${MANFMT} DESTINATION ${MAN_PATH}/man1
 diff -Nru libzip-0.9.3.orig/regress/set_comment_all.c libzip-0.9.3/regress/set_comment_all.c
 --- libzip-0.9.3.orig/regress/set_comment_all.c	2010-02-01 10:10:29.000000000 +0100
 +++ libzip-0.9.3/regress/set_comment_all.c	2010-11-16 15:17:19.619488800 +0100
