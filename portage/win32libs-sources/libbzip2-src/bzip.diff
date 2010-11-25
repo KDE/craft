@@ -75,7 +75,7 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +if(NOT WIN32)
 +  install(PROGRAMS ${bzip2_scripts} DESTINATION bin)
 +endif(NOT WIN32)
-+install(FILES ${man1}          DESTINATION man/man1)
++install(FILES ${man1}          DESTINATION share/man/man1)
 +install(FILES ${bzip2_docs}    DESTINATION doc)
 +install(FILES ${bzip2_html}    DESTINATION doc/html)
 +install(FILES bzlib.h          DESTINATION include)
