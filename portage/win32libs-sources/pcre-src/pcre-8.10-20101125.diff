@@ -1,0 +1,14 @@
+diff -Nru pcre-8.10.orig/CMakeLists.txt pcre-8.10/CMakeLists.txt
+--- pcre-8.10.orig/CMakeLists.txt	2010-05-21 17:01:14.000000000 +0200
++++ pcre-8.10/CMakeLists.txt	2010-11-25 23:55:03.089874900 +0100
+@@ -512,8 +512,8 @@
+ ENDIF(PCRE_BUILD_PCRECPP)
+ 
+ 
+-INSTALL(FILES ${man1} DESTINATION man/man1)
+-INSTALL(FILES ${man3} DESTINATION man/man3)
++INSTALL(FILES ${man1} DESTINATION share/man/man1)
++INSTALL(FILES ${man3} DESTINATION share/man/man3)
+ INSTALL(FILES ${html} DESTINATION share/doc/pcre/html)
+ 
+ # help, only for nice output
