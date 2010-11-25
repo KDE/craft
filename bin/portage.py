@@ -391,14 +391,14 @@ class Portage:
 
     def getCorrespondingBinaryPackage( self, package ):
         if not package.endswith( "-src" ):
-            return False
+            return [ None, None ]
         category = self.getCategory( package[ :-4 ] )
         if category:
             # we found a corresponding package
             utils.debug( "replacing package %s with its binary package" % ( package ), 1 )
             return [ category, package[ :-4 ] ]
         else:
-            return False
+            return [ None, None ]
 
 # when importing this, this static Object should get added
 PortageInstance = Portage()
@@ -517,9 +517,12 @@ def readChildren( category, package, version ):
         subinfo = mod.subinfo()
     else:
         subinfo = None
+        return ( dict(), dict() )
     
     runtimeDependencies = subinfo.runtimeDependencies
     buildDependencies = subinfo.buildDependencies
+    if runtimeDependencies == None: runtimeDependencies = dict()
+    if buildDependencies == None: buildDependencies = dict()
 
     # hardDependencies
     commonDependencies = subinfo.hardDependencies
