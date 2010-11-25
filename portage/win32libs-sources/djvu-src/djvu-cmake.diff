@@ -13,7 +13,7 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +set(BIN_INSTALL_DIR     bin)
 +set(INCLUDE_INSTALL_DIR include)
 +set(LIB_INSTALL_DIR     lib${LIB_SUFFIX})
-+set(MAN_INSTALL_DIR     man)
++set(MAN_INSTALL_DIR     share/man)
 +set(DATA_INSTALL_DIR    share)
 +set(PLUGIN_INSTALL_DIR  plugins)
 +
