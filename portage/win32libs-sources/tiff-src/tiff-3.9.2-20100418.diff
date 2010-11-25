@@ -802,9 +802,9 @@ diff -Nru tiff-3.9.2.orig/man/CMakeLists.txt tiff-3.9.2/man/CMakeLists.txt
 +)
 +
 +if(BUILD_TOOLS)
-+    install(FILES ${tiff1_FILES} DESTINATION man/man1)
++    install(FILES ${tiff1_FILES} DESTINATION share/man/man1)
 +endif(BUILD_TOOLS)
-+install(FILES ${tiff3_FILES} DESTINATION man/man3)
++install(FILES ${tiff3_FILES} DESTINATION share/man/man3)
 \ No newline at end of file
 diff -Nru tiff-3.9.2.orig/port/CMakeLists.txt tiff-3.9.2/port/CMakeLists.txt
 --- tiff-3.9.2.orig/port/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
