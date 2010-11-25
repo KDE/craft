@@ -83,7 +83,7 @@ for packageKey in addInfo:
 
 
         if regenerateFile:
-            template = Template( file( 'C:/kde/kde-msvc/emerge/bin/binaryPackage.py.template' ).read() )
+            template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = binTargets.keys()
             if 'svnHEAD' in binTargets and binTargets[ 'svnHEAD' ] == False:
                 targetkeys.remove( 'svnHEAD' )
