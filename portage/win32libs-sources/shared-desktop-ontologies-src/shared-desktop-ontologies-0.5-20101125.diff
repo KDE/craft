@@ -1,0 +1,28 @@
+diff -Nru shared-desktop-ontologies-0.5.orig/CMakeLists.txt shared-desktop-ontologies-0.5/CMakeLists.txt
+--- shared-desktop-ontologies-0.5.orig/CMakeLists.txt	2010-05-09 14:16:07.000000000 +0200
++++ shared-desktop-ontologies-0.5/CMakeLists.txt	2010-11-25 00:57:28.423298400 +0100
+@@ -14,7 +14,7 @@
+ 
+ # set the root dir to be used by SharedDesktopOntologiesConfig.cmake
+ # ===============================================================================================
+-set(SHAREDDESKTOPONTOLOGIES_ROOT_DIR "${CMAKE_INSTALL_PREFIX}/share/ontology")
++set(SHAREDDESKTOPONTOLOGIES_ROOT_DIR "/share/ontology")
+ 
+ 
+ # generate SharedDesktopOntologiesConfig.cmake for easy utilisation of the package by other cmake build systems
+diff -Nru shared-desktop-ontologies-0.5.orig/SharedDesktopOntologiesConfig.cmake.in shared-desktop-ontologies-0.5/SharedDesktopOntologiesConfig.cmake.in
+--- shared-desktop-ontologies-0.5.orig/SharedDesktopOntologiesConfig.cmake.in	2009-11-27 15:48:15.000000000 +0100
++++ shared-desktop-ontologies-0.5/SharedDesktopOntologiesConfig.cmake.in	2010-11-25 00:57:04.850950100 +0100
+@@ -2,4 +2,11 @@
+ set(SHAREDDESKTOPONTOLOGIES_VERSION_MINOR @SHAREDDESKTOPONTOLOGIES_VERSION_MINOR@)
+ set(SHAREDDESKTOPONTOLOGIES_VERSION @SHAREDDESKTOPONTOLOGIES_VERSION@)
+ 
+-set(SHAREDDESKTOPONTOLOGIES_ROOT_DIR @SHAREDDESKTOPONTOLOGIES_ROOT_DIR@)
++GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
++GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
++GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
++if(WIN32)
++    GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${_IMPORT_PREFIX}" REALPATH)
++endif(WIN32)
++
++set(SHAREDDESKTOPONTOLOGIES_ROOT_DIR "${_IMPORT_PREFIX}@SHAREDDESKTOPONTOLOGIES_ROOT_DIR@")
