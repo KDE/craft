@@ -59,7 +59,7 @@ diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 +    add_executable(xmlwf ${xmlwf_SRCS})
 +    target_link_libraries(xmlwf expat)
 +    install(TARGETS xmlwf DESTINATION bin)
-+    install(FILES doc/xmlwf.1 DESTINATION man/man1)
++    install(FILES doc/xmlwf.1 DESTINATION share/man/man1)
 +endif(NOT WINCE)
 +
 +if(BUILD_examples)
