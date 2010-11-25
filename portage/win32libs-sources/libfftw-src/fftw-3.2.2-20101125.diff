@@ -57,7 +57,7 @@ diff -Nru fftw-3.2.2.orig/CheckMingwVersion.cmake fftw-3.2.2/CheckMingwVersion.c
 +if (NOT MINGW32 AND NOT MINGW64)
 +    exec_program(
 +        ${CMAKE_C_COMPILER}
-+        ARGS -dumpmachine
++        ARGS ${CMAKE_C_COMPILER_ARG1} -dumpmachine
 +        OUTPUT_VARIABLE _machine
 +    )
 +    if (_machine STREQUAL mingw32)
