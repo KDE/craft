@@ -13,6 +13,7 @@ import emergePlatform
 import copy
 
 internalCategory = 'internal'
+ROOTDIR=os.getenv( "KDEROOT" )
 
 modDict = dict()
 packageDict = dict()
@@ -404,6 +405,29 @@ class Portage:
 PortageInstance = Portage()
 for _dir in rootDirectories():
     PortageInstance.addPortageDir( _dir )
+
+def findPossibleTargets( category, package, version, buildType='' ):
+    """ this function tries to guess which target got used by looking at the different image directories """
+    target = PortageInstance.getDefaultTarget( category, package, version )
+    buildroot = os.path.join( ROOTDIR, "build", category, "%s-%s" % ( package, version ) )
+
+    if not os.path.exists( buildroot ):
+        return target
+
+    for dir in os.listdir( buildroot ):
+        if os.path.isdir( os.path.join( buildroot, dir ) ):
+            if dir.startswith( "image" ) and dir <> "image":
+                particles = dir.split( '-' )[ 1: ] # the first part should be image- anyway
+                if len(particles) == 3:
+                    _platform, _buildType, _target = particles
+                elif len(particles) == 4:
+                    _platform, _buildType, _buildArch, _target = particles
+                else:
+                    return target
+                if _platform == os.getenv( "KDECOMPILER" ) and \
+                   _buildType == os.getenv( "EMERGE_BUILDTYPE" ):
+                    return _target
+    return target
 
 def getPackageInstance(category, package, buildtarget=None):
     """return instance of class Package from package file"""
