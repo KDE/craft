@@ -1,0 +1,8 @@
+# this is the package list for test builds
+# syntax:
+# category,package,target,patchlevel
+# e.g.:
+# win32libs-sources,dbus-src,1.4.0,1
+# is equivalent to emerge --target=1.4.0 --patchlevel=1 win32libs-sources/dbus-src
+#
+win32libs-sources,win_iconv-src,,
