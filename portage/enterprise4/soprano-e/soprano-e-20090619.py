@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base']            = 'default'
         self.hardDependencies['enterprise4/qt-e']                 = 'default'
-        self.hardDependencies['kdesupport/clucene-core'] = 'default'
+        self.hardDependencies['win32libs-sources/clucene-core-src'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'

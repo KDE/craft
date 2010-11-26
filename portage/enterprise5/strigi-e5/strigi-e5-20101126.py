@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['kdesupport/clucene-core'] = 'default'
+        self.hardDependencies['win32libs-sources/clucene-core-src'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled:
             self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
         self.hardDependencies['win32libs-sources/libbzip2-src'] = 'default'

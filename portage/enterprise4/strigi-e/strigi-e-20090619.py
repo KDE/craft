@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['enterprise4/qt-e'] = 'default'
-        self.hardDependencies['kdesupport/clucene-core'] = 'default'
+        self.hardDependencies['win32libs-sources/clucene-core-src'] = 'default'
         self.hardDependencies['win32libs-sources/exiv2-src'] = 'default'
         self.hardDependencies['win32libs-bin/win_iconv'] = 'default'
         self.hardDependencies['win32libs-sources/libbzip2-src'] = 'default'
