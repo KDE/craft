@@ -1,0 +1,30 @@
+# blacklist
+# manifest files may be there because of lousy system
+manifest\\.*
+
+# multiple docs
+doc\\.*
+share\\man\\.*
+
+# doubled qt dlls
+lib\\[^\\]*\.dll
+
+# qt translations
+translations\\.*
+
+# unneeded binaries:
+bin\\assistant\.exe
+bin\\designer\.exe
+bin\\icc2ps\.exe
+bin\\icclink\.exe
+bin\\icctrans\.exe
+bin\\jp3d_to_volume\.exe
+bin\\libpng14-config
+bin\\libpng-config
+bin\\linguist\.exe
+bin\\volume_to_jp3d\.exe
+bin\\win_iconv\.exe
+bin\\wtpt\.exe
+bin\\xmlcatalog\.exe
+bin\\xmllint\.exe
+bin\\xmlwf\.exe
