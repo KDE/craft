@@ -76,7 +76,7 @@ diff -Nru fftw-3.2.2.orig/CheckMingwVersion.cmake fftw-3.2.2/CheckMingwVersion.c
 diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 --- fftw-3.2.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ fftw-3.2.2/CMakeLists.txt	2010-11-25 09:17:45.247856800 +0100
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,123 @@
 +project(libfftw)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -87,11 +87,7 @@ diff -Nru fftw-3.2.2.orig/CMakeLists.txt fftw-3.2.2/CMakeLists.txt
 +option(FFTW_SINGLE "compile in single precision" OFF)
 +option(FFTW_DOUBLE "compile in double precision" ON)
 +option(FFTW_LDOUBLE "compile in long double precision" OFF)
-+if(MSVC)
-+    option(ENABLE_OPENMP "compile in openmp extensions" ON)
-+else(MSVC)
-+    option(ENABLE_OPENMP "compile in openmp extensions" OFF)
-+endif(MSVC)
++option(ENABLE_OPENMP "compile in openmp extensions" OFF)
 +option(BUILD_ALL_STATIC "build each and every library as a small static library" OFF)
 +option(BUILD_STATIC "build one static library" OFF)
 +option(BUILD_BENCHMARKS "build benchmarks" ON)
