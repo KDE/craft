@@ -834,6 +834,9 @@ share\\soprano\\plugins\\redlandbackend\.desktop
 share\\soprano\\rules\\nrl\.rules
 share\\soprano\\rules\\rdfs\.rules
 
+# Handbooks
+.*de\\kontact-touch\\.*
+
 # Qxygen Icon theme
 share\\icons\\oxygen\\index\.theme
 
