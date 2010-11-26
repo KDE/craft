@@ -72,6 +72,7 @@ class MainPackage(CMakePackageBase):
                 self.read_whitelist(whitelist)
             utils.info("Copying files")
             self.copy_files()
+            self.translateFirstrun()
             return True
         if command == "install":
             self.createCab(self.generateCabIni())
@@ -221,6 +222,29 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                 f.write('[Locale]\n')
                 f.write('Country=de\n')
                 f.write('Language=de\n')
+
+    def translateFirstrun(self):
+        '''
+           Add localized versions of the akonadi firstrunrc's
+           ideally this would be handled by kdepimlibs akonadi.
+        '''
+        if not self.buildTarget == 'de':
+            return
+        translations = {
+                "Name=Personal Contacts": "Name=Lokale Kontakte",
+                "Name=Personal Calendar": "Name=Lokaler Kalender",
+                "Name=Notes" : "Name=Lokale Notizen" }
+        firstrundir = os.path.join(self.workDir(), "share", "apps",
+                "akonadi", "firstrun")
+        firstrunrcs = [ os.path.join( firstrundir, d ) for d in \
+                os.listdir( firstrundir ) ]
+        for f in firstrunrcs:
+            with open(f, "rb") as f1:
+                old = f1.read()
+                for k, v in translations.iteritems():
+                    old = old.replace(k, v)
+            with open(f, "wb") as f2:
+                f2.write(old)
 
     def traverse(self, directory, whitelist = lambda f: True):
         '''

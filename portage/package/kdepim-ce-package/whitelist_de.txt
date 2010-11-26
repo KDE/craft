@@ -40,9 +40,11 @@ share\\locale\\de\\LC_MESSAGES\\kabc_akonadi\.mo
 share\\locale\\de\\LC_MESSAGES\\kabc\.mo
 share\\locale\\de\\LC_MESSAGES\\kaddressbookmigrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kaddressbook-mobile\.mo
+share\\locale\\de\\LC_MESSAGES\\kaddressbook\.mo
 share\\locale\\de\\LC_MESSAGES\\kalarm\.mo
 share\\locale\\de\\LC_MESSAGES\\kcal_akonadi\.mo
 share\\locale\\de\\LC_MESSAGES\\kcm_akonadi\.mo
+share\\locale\\de\\LC_MESSAGES\\kdelibs4\.mo
 share\\locale\\de\\LC_MESSAGES\\kdepimwizards\.mo
 share\\locale\\de\\LC_MESSAGES\\kdgantt2\.mo
 share\\locale\\de\\LC_MESSAGES\\kio_akonadi\.mo
@@ -53,6 +55,7 @@ share\\locale\\de\\LC_MESSAGES\\kmail-migrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kmail-mobile\.mo
 share\\locale\\de\\LC_MESSAGES\\kmail\.mo
 share\\locale\\de\\LC_MESSAGES\\korganizer-mobile\.mo
+share\\locale\\de\\LC_MESSAGES\\korganizer\.mo
 share\\locale\\de\\LC_MESSAGES\\kres-migrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kresources_shared_akonadi\.mo
 share\\locale\\de\\LC_MESSAGES\\kres_remote\.mo
@@ -79,4 +82,4 @@ share\\locale\\de\\LC_MESSAGES\\messageviewer_text_calendar_plugin\.mo
 share\\locale\\de\\LC_MESSAGES\\messageviewer_text_vcard_plugin\.mo
 share\\locale\\de\\LC_MESSAGES\\messageviewer_text_xdiff_plugin\.mo
 share\\locale\\de\\LC_MESSAGES\\notes-mobile\.mo
-share\\locale\\de\\LC_MESSAGES\\tasks-mobile\.mo
+share\\locale\\de\\LC_MESSAGES\\kjots\.mo
