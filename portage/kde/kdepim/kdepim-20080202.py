@@ -3,22 +3,18 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepim'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepim'
-        for ver in ['80', '83', '85']:
-          self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdepim-4.0.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.0.' + ver] = 'kdepim-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['kde/kdebase-runtime'] = 'default'
+            self.dependencies['kde/kdebase-runtime'] = 'default'
         else:
-            self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
+            self.dependencies['kdesupport/oxygen-icons'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['kdesupport/grantlee'] = 'default'
-        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
+            self.dependencies['kdesupport/grantlee'] = 'default'
+        self.dependencies['win32libs-bin/sqlite'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = True

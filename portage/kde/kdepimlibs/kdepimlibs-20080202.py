@@ -15,15 +15,15 @@ class subinfo(info.infoclass):
             self.patchToApply['svnHEAD'] = ('winldap-patch.diff', 0)
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kdesupport/akonadi'] = 'default'
-        self.hardDependencies['win32libs-bin/cyrus-sasl'] = 'default'
-        self.hardDependencies['win32libs-bin/libical'] = 'default'
-        self.hardDependencies['win32libs-bin/boost'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kdesupport/akonadi'] = 'default'
+        self.dependencies['win32libs-bin/cyrus-sasl'] = 'default'
+        self.dependencies['win32libs-bin/libical'] = 'default'
+        self.dependencies['win32libs-bin/boost'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/gpgme'] = 'default'
+            self.dependencies['win32libs-bin/gpgme'] = 'default'
         else:
-            self.hardDependencies['contributed/gpg4win-dev'] = 'default'
+            self.dependencies['contributed/gpg4win-dev'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

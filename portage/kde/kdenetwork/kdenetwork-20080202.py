@@ -7,14 +7,14 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['win32libs-bin/libidn'] = 'default'
-        self.hardDependencies['win32libs-bin/libmsn'] = 'default'
+        self.dependencies['kde/kdebase-runtime'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['win32libs-bin/libidn'] = 'default'
+        self.dependencies['win32libs-bin/libmsn'] = 'default'
         #mingw already contains libgmp
         if not compiler.isMinGW():
-            self.hardDependencies['win32libs-bin/libgmp'] = 'default'
+            self.dependencies['win32libs-bin/libgmp'] = 'default'
         
 from Package.CMakePackageBase import *
         

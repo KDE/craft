@@ -3,14 +3,11 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeplasma-addons'
-        for ver in ['80', '83', '85']:
-          self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdeplasma-addons-4.0.' + ver + '.tar.bz2'
-          self.targetInstSrc['4.0.' + ver] = 'kdeplasma-addons-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['kde/kdebase-workspace'] = 'default'
+        self.dependencies['kde/kdebase-runtime'] = 'default'
+        self.dependencies['kde/kdebase-workspace'] = 'default'
 
 from Package.CMakePackageBase import *
         

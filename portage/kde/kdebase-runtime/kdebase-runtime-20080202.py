@@ -10,13 +10,13 @@ class subinfo(info.infoclass):
             self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kdesupport/oxygen-icons'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/libssh'] = 'default'
+            self.dependencies['win32libs-bin/libssh'] = 'default'
         if compiler.isMinGW_WXX():
-#            self.hardDependencies['win32libs-bin/libbfd'] = 'default'
-            self.hardDependencies['win32libs-sources/libbfd-src'] = 'default'
+#            self.dependencies['win32libs-bin/libbfd'] = 'default'
+            self.dependencies['win32libs-sources/libbfd-src'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

@@ -6,10 +6,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/expat'] = 'default'
-        self.hardDependencies['win32libs-bin/jpeg'] = 'default'
-        self.hardDependencies['win32libs-bin/exiv2'] = 'default'
-        self.hardDependencies['win32libs-bin/lcms'] = 'default'
+        self.dependencies['win32libs-bin/expat'] = 'default'
+        self.dependencies['win32libs-bin/jpeg'] = 'default'
+        self.dependencies['win32libs-bin/exiv2'] = 'default'
+        self.dependencies['win32libs-bin/lcms'] = 'default'
 
 from Package.CMakePackageBase import *
         
