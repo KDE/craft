@@ -256,7 +256,7 @@ class InstallDB:
             utils.debug( "importing package %s/%s-%s ..." % ( category, package, version ) )
             if self._isInstalled( category, package, version ):
                 utils.debug( 'adding installed package %s/%s-%s' % ( category, package, version ), 1 )
-                packageObject = self.addInstalled( category, package, version )
+                packageObject = self.addInstalled( category, package, version, "" )
                 packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
                 packageObject.install()
                 if emergePlatform.isCrossCompilingEnabled():
