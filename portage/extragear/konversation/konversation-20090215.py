@@ -12,9 +12,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['virtual/kdepimlibs'] = 'default'
     
 class Package(CMakePackageBase):
     def __init__( self):

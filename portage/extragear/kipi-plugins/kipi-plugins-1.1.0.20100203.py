@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/kipi-plugins'
-        for ver in ['0.2.0', '0.3.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '1.0.0', '1.1.0']:
+        for ver in ['0.2.0', '0.3.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '1.0.0', '1.1.0', '1.6.0']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/project/kipi/kipi-plugins/" + ver + "/kipi-plugins-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = 'kipi-plugins-' + ver
         self.patchToApply[ '0.7.0' ] = ( 'kipi-twain-stable.diff', 0 )
@@ -15,11 +15,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['kde/kdegraphics'] = 'default'
-        self.hardDependencies['win32libs-bin/gettext'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
-        self.hardDependencies['win32libs-bin/expat'] = 'default'
+        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kdegraphics'] = 'default'
+        self.dependencies['win32libs-bin/expat'] = 'default'
+        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):

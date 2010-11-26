@@ -12,20 +12,16 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kdesupport/taglib'] = 'default'
-        self.hardDependencies['kdesupport/taglib-extras'] = 'default'
-        self.hardDependencies['kdesupport/phonon'] = 'default'
-        self.hardDependencies['kdesupport/qca'] = 'default'		
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['testing/mysql-pkg'] = 'default'
-       # the following is only a runtime dependency: keep that in mind for later!!!!
-        self.hardDependencies['testing/qtscriptgenerator'] = 'default'
-        self.compiler=os.getenv('KDECOMPILER')
-        if self.compiler != "mingw" and self.compiler != "mingw4":
-          self.hardDependencies['testing/liblastfm'] = 'default'
-        self.hardDependencies['win32libs-bin/gettext'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
+        self.dependencies['kdesupport/taglib'] = 'default'
+        self.dependencies['kdesupport/taglib-extras'] = 'default'
+        self.dependencies['kdesupport/phonon'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'		
+        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['testing/mysql-pkg'] = 'default'
+        self.dependencies['testing/liblastfm'] = 'default'
+        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.buildDependencies['testing/qtscriptgenerator'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

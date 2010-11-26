@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdegraphics'] = 'default'
+        self.dependencies['virtual/kdegraphics'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):
