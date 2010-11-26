@@ -25,7 +25,7 @@ class Notification:
         logtext = log.readlines()[-20:]
         log.close()
         if self.error:
-            self.shortLog = "".join( logtext )
+            self.shortLog = "".join( unicode( logtext ) )
         else:
             self.shortLog = ""
     
