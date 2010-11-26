@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.targetInstallPath['4.1.36'] = "bin"
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
         
 from Package.BinaryPackageBase import *
 

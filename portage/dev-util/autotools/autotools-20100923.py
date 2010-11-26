@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
         
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
-        self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['dev-util/7zip'] = 'default'
-        self.hardDependencies['testing/libtool-src'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['dev-util/7zip'] = 'default'
+        self.dependencies['dev-util/msys'] = 'default'
+        self.dependencies['testing/libtool-src'] = 'default'
         
     def setBuildOptions( self ):
         self.disableHostBuild = False

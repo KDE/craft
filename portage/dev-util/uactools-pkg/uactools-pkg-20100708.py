@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
     # This Package provides the binaries for uactools-bin but virtual/base can
     # not depend on it because it needs a compiler itself.
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin/tools/mt'

@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.disableTargetBuild = True
     
     def setDependencies( self ):
-        self.hardDependencies[ 'gnuwin32/wget' ]       = 'default'
+        self.buildDependencies[ 'gnuwin32/wget' ]       = 'default'
 
 from Source.SourceBase import *
 from Package.PackageBase import *
