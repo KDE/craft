@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs-bin/libsndfile'] = 'default'
 
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
+    def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.configure.defines = " -DBUILD_SHARED_LIB=ON -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON"
         CMakePackageBase.__init__(self)
