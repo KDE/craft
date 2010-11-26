@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt']                 = 'default'
         self.dependencies['win32libs-bin/redland']   = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs-bin/clucene-core'] = 'default'
+            self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
             self.dependencies['testing/virtuoso']   = 'default'
 
     def setTargets( self ):

@@ -3,8 +3,8 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
         self.dependencies['libs/qt'] = 'default'
-        self.dependencies['win32libs-bin/clucene-core'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-bin/exiv2'] = 'default'
         else:
