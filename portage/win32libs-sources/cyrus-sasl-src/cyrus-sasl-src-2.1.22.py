@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.1.22'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         if emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
 
