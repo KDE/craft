@@ -587,13 +587,11 @@ diff -Nru fftw-3.2.2.orig/config.h.cmake fftw-3.2.2/config.h.cmake
 diff -Nru fftw-3.2.2.orig/ConfigureChecks.cmake fftw-3.2.2/ConfigureChecks.cmake
 --- fftw-3.2.2.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ fftw-3.2.2/ConfigureChecks.cmake	2010-11-25 09:22:16.949138800 +0100
-@@ -0,0 +1,274 @@
+@@ -0,0 +1,272 @@
 +if(MSVC)
 +    set(inline __inline)
 +endif(MSVC)
-+if(MINGW)
-+    set(HAVE_THREADS 1)
-+endif(MINGW)
++set(HAVE_THREADS 1)
 +set(WITH_OUR_MALLOC16 1)
 +set(STDC_HEADERS 1)
 +set(HAVE_UINTPTR_T 1)
