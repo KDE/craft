@@ -1,0 +1,134 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index f675f08..be0561d 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -101,4 +101,5 @@ endif(APPLE)
+ install(TARGETS lastfm
+   RUNTIME DESTINATION bin
+   LIBRARY DESTINATION lib
++  ARCHIVE DESTINATION lib
+ )
+diff --git a/src/ws/InternetConnectionMonitor.cpp b/src/ws/InternetConnectionMonitor.cpp
+index 703184f..9f2a27c 100644
+--- a/src/ws/InternetConnectionMonitor.cpp
++++ b/src/ws/InternetConnectionMonitor.cpp
+@@ -26,7 +26,7 @@
+ QList<QPointer<lastfm::InternetConnectionMonitor> > monitors;
+ #endif
+ 
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+ 
+ // WsAccessManager needs special init (on Windows), and it needs to be done
+ // early, so be careful about moving this
+@@ -83,7 +83,7 @@ lastfm::InternetConnectionMonitor::InternetConnectionMonitor( QObject *parent )
+     QPointer<InternetConnectionMonitor> p = this;
+     monitors += p;
+ #endif
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+     m_ndisEventsProxy = new NdisEventsProxy(this);
+     m_ndisEventsProxy->registerForNdisEvents();
+ #endif
+diff --git a/src/ws/InternetConnectionMonitor.h b/src/ws/InternetConnectionMonitor.h
+index e408d1b..63b4288 100644
+--- a/src/ws/InternetConnectionMonitor.h
++++ b/src/ws/InternetConnectionMonitor.h
+@@ -37,7 +37,7 @@ class LASTFM_DLLEXPORT InternetConnectionMonitor : public QObject
+ #ifdef Q_WS_MAC
+     static void callback( SCNetworkReachabilityRef, SCNetworkConnectionFlags, void* );
+ #endif
+-#ifdef Q_WS_WIN
++#ifdef USE_NATIVE_PROXY
+     class NdisEventsProxy* m_ndisEventsProxy;
+     friend class NdisEventsProxy;
+ #endif
+diff --git a/src/ws/NetworkAccessManager.cpp b/src/ws/NetworkAccessManager.cpp
+index f964de6..e323edd 100644
+--- a/src/ws/NetworkAccessManager.cpp
++++ b/src/ws/NetworkAccessManager.cpp
+@@ -24,7 +24,7 @@
+ #include <QCoreApplication>
+ #include <QNetworkRequest>
+ 
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+ #include "win/IeSettings.h"
+ #include "win/Pac.h"
+ #endif
+@@ -44,14 +44,14 @@ static struct NetworkAccessManagerInit
+ 
+     NetworkAccessManagerInit()
+     {
+-    #ifdef Q_CC_MSVC
++    #ifdef USE_NATIVE_PROXY
+         IeSettings s;
+         // if it's autodetect, we determine the proxy everytime in proxy()
+         // we don't really want to do a PAC lookup here, as it times out
+         // at two seconds, so that hangs startup
+         if (!s.fAutoDetect && s.lpszProxy)
+         {
+-            QUrl url( QString::fromUtf16(s.lpszProxy) );
++            QUrl url( QString::fromUtf16( reinterpret_cast<const ushort*>( s.lpszProxy ) ) );
+             QNetworkProxy proxy( QNetworkProxy::HttpProxy );
+             proxy.setHostName( url.host() );
+             proxy.setPort( url.port() );
+@@ -81,7 +81,7 @@ namespace lastfm
+ 
+ lastfm::NetworkAccessManager::NetworkAccessManager( QObject* parent )
+                : QNetworkAccessManager( parent )
+-            #ifdef Q_CC_MSVC
++            #ifdef USE_NATIVE_PROXY
+                , m_pac( 0 )
+                , m_monitor( 0 )
+             #endif
+@@ -99,7 +99,7 @@ lastfm::NetworkAccessManager::NetworkAccessManager( QObject* parent )
+ 
+ lastfm::NetworkAccessManager::~NetworkAccessManager()
+ {
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+     delete m_pac;
+ #endif
+ }
+@@ -110,7 +110,7 @@ lastfm::NetworkAccessManager::proxy( const QNetworkRequest& request )
+ {   
+     Q_UNUSED( request );
+     
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+     IeSettings s;
+     if (s.fAutoDetect) 
+     {
+@@ -134,7 +134,7 @@ lastfm::NetworkAccessManager::createRequest( Operation op, const QNetworkRequest
+ 
+     request.setRawHeader( "User-Agent", lastfm::UserAgent );
+     
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+     // PAC proxies can vary by domain, so we have to check everytime :(
+     QNetworkProxy proxy = this->proxy( request );
+     if (proxy.type() != QNetworkProxy::NoProxy)
+@@ -150,7 +150,7 @@ lastfm::NetworkAccessManager::onConnectivityChanged( bool up )
+ {
+     Q_UNUSED( up );
+     
+-#ifdef Q_CC_MSVC
++#ifdef USE_NATIVE_PROXY
+     if (up && m_pac) m_pac->resetFailedState();
+ #endif
+ }
+diff --git a/src/ws/NetworkAccessManager.h b/src/ws/NetworkAccessManager.h
+index a3022ce..c2d41c8 100644
+--- a/src/ws/NetworkAccessManager.h
++++ b/src/ws/NetworkAccessManager.h
+@@ -33,7 +33,7 @@ class LASTFM_DLLEXPORT NetworkAccessManager : public QNetworkAccessManager
+ {
+     Q_OBJECT
+ 
+-#ifdef Q_WS_WIN
++#ifdef USE_NATIVE_PROXY
+     class Pac *m_pac;
+     class InternetConnectionMonitor* m_monitor;
+ #endif
+diff --git a/src/ws/win/ComSetup.h b/src/ws/win/ComSetup.h

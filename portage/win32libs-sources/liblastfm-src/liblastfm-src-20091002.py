@@ -6,17 +6,18 @@ import shutil
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://github.com/davidsansome/liblastfm.git"
+        self.svnTargets[ 'gitHEAD' ] = "git://github.com/davidsansome/liblastfm.git"
+        self.patchToApply[ 'gitHEAD' ] = ( "liblastfm-src-20101128.diff", 1 )
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['libs/qt'] = 'default'
-        self.dependencies['win32libs-bin/libfftw'] = 'default'
-        self.dependencies['win32libs-bin/libsamplerate'] = 'default'
+        self.dependencies[ 'libs/qt' ] = 'default'
+        self.dependencies[ 'win32libs-bin/libfftw' ] = 'default'
+        self.dependencies[ 'win32libs-bin/libsamplerate' ] = 'default'
 
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
+class Package( CMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
