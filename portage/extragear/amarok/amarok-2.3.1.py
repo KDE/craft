@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'		
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['testing/mysql-pkg'] = 'default'
-        self.dependencies['testing/liblastfm'] = 'default'
+        self.dependencies['kdesupport/liblastfm'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.buildDependencies['testing/qtscriptgenerator'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
