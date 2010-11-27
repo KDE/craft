@@ -1,0 +1,819 @@
+diff -Nru libsndfile-1.0.21.orig/cmake/modules/FindOggVorbis.cmake libsndfile-1.0.21/cmake/modules/FindOggVorbis.cmake
+--- libsndfile-1.0.21.orig/cmake/modules/FindOggVorbis.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/cmake/modules/FindOggVorbis.cmake	2010-11-27 01:58:48.092358000 +0100
+@@ -0,0 +1,89 @@
++# - Try to find the OggVorbis libraries
++# Once done this will define
++#
++#  OGGVORBIS_FOUND - system has OggVorbis
++#  OGGVORBIS_VERSION - set either to 1 or 2
++#  OGGVORBIS_INCLUDE_DIR - the OggVorbis include directory
++#  OGGVORBIS_LIBRARIES - The libraries needed to use OggVorbis
++#  OGG_LIBRARY         - The Ogg library
++#  VORBIS_LIBRARY      - The Vorbis library
++#  VORBISFILE_LIBRARY  - The VorbisFile library
++#  VORBISENC_LIBRARY   - The VorbisEnc library
++
++# Copyright (c) 2006, Richard Laerkaeng, <richard@goteborg.utfors.se>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++
++include (CheckLibraryExists)
++
++find_path(VORBIS_INCLUDE_DIR vorbis/vorbisfile.h)
++find_path(OGG_INCLUDE_DIR ogg/ogg.h)
++
++find_library(OGG_LIBRARY NAMES ogg)
++find_library(VORBIS_LIBRARY NAMES vorbis)
++find_library(VORBISFILE_LIBRARY NAMES vorbisfile)
++find_library(VORBISENC_LIBRARY NAMES vorbisenc)
++
++mark_as_advanced(VORBIS_INCLUDE_DIR OGG_INCLUDE_DIR
++                 OGG_LIBRARY VORBIS_LIBRARY VORBISFILE_LIBRARY VORBISENC_LIBRARY)
++
++
++if (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY AND VORBISENC_LIBRARY)
++   set(OGGVORBIS_FOUND TRUE)
++
++   set(OGGVORBIS_LIBRARIES ${OGG_LIBRARY} ${VORBIS_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBISENC_LIBRARY})
++
++   set(_CMAKE_REQUIRED_LIBRARIES_TMP ${CMAKE_REQUIRED_LIBRARIES})
++   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${OGGVORBIS_LIBRARIES})
++   check_library_exists(vorbis vorbis_bitrate_addblock "" HAVE_LIBVORBISENC2)
++   set(CMAKE_REQUIRED_LIBRARIES ${_CMAKE_REQUIRED_LIBRARIES_TMP})
++
++   if (HAVE_LIBVORBISENC2)
++      set (OGGVORBIS_VERSION 2)
++   else (HAVE_LIBVORBISENC2)
++      set (OGGVORBIS_VERSION 1)
++   endif (HAVE_LIBVORBISENC2)
++
++else (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY AND VORBISENC_LIBRARY)
++   set (OGGVORBIS_VERSION)
++   set(OGGVORBIS_FOUND FALSE)
++endif (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY AND VORBISENC_LIBRARY)
++
++
++if (OGGVORBIS_FOUND)
++   if (NOT OggVorbis_FIND_QUIETLY)
++      message(STATUS "Found OggVorbis: ${OGGVORBIS_LIBRARIES}")
++   endif (NOT OggVorbis_FIND_QUIETLY)
++else (OGGVORBIS_FOUND)
++   if (OggVorbis_FIND_REQUIRED)
++      message(FATAL_ERROR "Could NOT find OggVorbis libraries")
++   endif (OggVorbis_FIND_REQUIRED)
++   if (NOT OggVorbis_FIND_QUITELY)
++      message(STATUS "Could NOT find OggVorbis libraries")
++   endif (NOT OggVorbis_FIND_QUITELY)
++endif (OGGVORBIS_FOUND)
++
++#check_include_files(vorbis/vorbisfile.h HAVE_VORBISFILE_H)
++#check_library_exists(ogg ogg_page_version "" HAVE_LIBOGG)
++#check_library_exists(vorbis vorbis_info_init "" HAVE_LIBVORBIS)
++#check_library_exists(vorbisfile ov_open "" HAVE_LIBVORBISFILE)
++#check_library_exists(vorbisenc vorbis_info_clear "" HAVE_LIBVORBISENC)
++#check_library_exists(vorbis vorbis_bitrate_addblock "" HAVE_LIBVORBISENC2)
++
++#if (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
++#    message(STATUS "Ogg/Vorbis found")
++#    set (VORBIS_LIBS "-lvorbis -logg")
++#    set (VORBISFILE_LIBS "-lvorbisfile")
++#    set (VORBISENC_LIBS "-lvorbisenc")
++#    set (OGGVORBIS_FOUND TRUE)
++#    if (HAVE_LIBVORBISENC2)
++#        set (HAVE_VORBIS 2)
++#    else (HAVE_LIBVORBISENC2)
++#        set (HAVE_VORBIS 1)
++#    endif (HAVE_LIBVORBISENC2)
++#else (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
++#    message(STATUS "Ogg/Vorbis not found")
++#endif (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
+diff -Nru libsndfile-1.0.21.orig/CMakeLists.txt libsndfile-1.0.21/CMakeLists.txt
+--- libsndfile-1.0.21.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/CMakeLists.txt	2010-11-27 02:56:09.277182600 +0100
+@@ -0,0 +1,25 @@
++project (libsndfile)
++
++cmake_minimum_required (VERSION 2.6)
++
++set(PACKAGE             "\"libsndfile\"")
++set(PACKAGE_BUGREPORT   "\"kde-windows@kde.org\"")
++set(PACKAGE_NAME        "\"libsndfile\"")
++set(PACKAGE_VERSION     "\"1.0.21\"")
++set(VERSION             "\"1.0.21\"")
++
++include(ConfigureChecks.cmake)
++
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++find_package(OggVorbis REQUIRED)
++
++if(MSVC)
++    add_definitions(/wd 4244 /D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++add_definitions(-DHAVE_EXTERNAL_LIBS)
++
++include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/src ${VORBIS_INCLUDE_DIR})
++
++add_subdirectory(src)
+diff -Nru libsndfile-1.0.21.orig/ConfigureChecks.cmake libsndfile-1.0.21/ConfigureChecks.cmake
+--- libsndfile-1.0.21.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/ConfigureChecks.cmake	2010-11-27 02:55:03.218404200 +0100
+@@ -0,0 +1,72 @@
++if(MINGW)
++    set(__USE_MINGW_ANSI_STDIO 1)
++    set(STDC_HEADERS 1)
++endif(MINGW)
++if(WIN32)
++    set(WIN32_TARGET_DLL 1)
++    set(USE_WINDOWS_API 1)
++    set(TYPEOF_SF_COUNT_T long)
++    # on windows, long is always the same
++    set(SF_COUNT_MAX "2147483647")
++    set(CPU_IS_BIG_ENDIAN 0)
++    set(CPU_IS_LITTLE_ENDIAN 1)
++    set(ENABLE_EXPERIMENTAL_CODE 1)
++    set(SIZEOF_SF_COUNT_T 4)
++    set(CPU_CLIPS_POSITIVE 1)
++    set(CPU_CLIPS_NEGATIVE 1)
++endif(WIN32)
++
++# Set to 1 if you have libsqlite3. */
++#cmakedefine HAVE_SQLITE3
++# Will be set to 1 if flac, ogg and vorbis are available. */
++#cmakedefine HAVE_EXTERNAL_LIBS
++#cmakedefine HAVE_FLAC_LIBS
++# Define to 1 if you have the `gmtime_r' function. */
++#cmakedefine HAVE_GMTIME_R
++# Define to 1 if you have the `gettimeofday' function. */
++#cmakedefine HAVE_GETTIMEOFDAY
++# Define to 1 if you have the `gmtime' function. */
++#cmakedefine HAVE_GMTIME
++# Set to 1 if the compile supports the struct hack. */
++#cmakedefine HAVE_FLEXIBLE_ARRAY
++# Set to 1 if S_IRGRP is defined. */
++#cmakedefine HAVE_DECL_S_IRGRP
++# Define to 1 if you have the `fsync' function. */
++#cmakedefine HAVE_FSYNC
++
++include(CheckTypeSize)
++include(CheckIncludeFile)
++check_include_file("alsa/asoundlib.h" HAVE_ALSA_ASOUNDLIB_H)
++check_include_file("byteswap.h" HAVE_BYTESWAP_H)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("endian.h" HAVE_ENDIAN_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("locale.h" HAVE_LOCALE_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("sys/wait.h" HAVE_SYS_WAIT_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++
++check_type_size("double" SIZEOF_DOUBLE)
++check_type_size("float" SIZEOF_FLOAT)
++check_type_size("int" SIZEOF_INT)
++check_type_size("int64_t" SIZEOF_INT64_T)
++check_type_size("loff_t" SIZEOF_LOFF_T)
++check_type_size("long" SIZEOF_LONG)
++check_type_size("long long" SIZEOF_LONG_LONG)
++check_type_size("off64_t" SIZEOF_OFF64_T)
++check_type_size("off_t" SIZEOF_OFF_T)
++check_type_size("short" SIZEOF_SHORT)
++check_type_size("size_t" SIZEOF_SIZE_T)
++check_type_size("ssize_t" SIZEOF_SSIZE_T)
++check_type_size("void*" SIZEOF_VOIDP)
++check_type_size("wchar_t" SIZEOF_WCHAR_T)
++
++configure_file(src/config.h.cmake config.h)
++configure_file(src/sndfile.h.in   sndfile.h)
+diff -Nru libsndfile-1.0.21.orig/src/aiff.c libsndfile-1.0.21/src/aiff.c
+--- libsndfile-1.0.21.orig/src/aiff.c	2009-12-10 19:49:30.000000000 +0100
++++ libsndfile-1.0.21/src/aiff.c	2010-11-27 01:58:48.082357500 +0100
+@@ -24,7 +24,9 @@
+ #include <string.h>
+ #include <time.h>
+ #include <ctype.h>
++#ifdef HAVE_INTTYPES_H
+ #include <inttypes.h>
++#endif
+ 
+ #include "sndfile.h"
+ #include "sfendian.h"
+@@ -492,7 +494,7 @@
+ 						psf->peak_info->peaks [dword].value = value ;
+ 						psf->peak_info->peaks [dword].position = position ;
+ 
+-						snprintf (cptr, sizeof (psf->u.scbuf), "    %2d   %-12" PRId64 "   %g\n",
++						snprintf (cptr, sizeof (psf->u.scbuf), "    %2d   %-12" "%lld" "   %g\n",
+ 								dword, psf->peak_info->peaks [dword].position, psf->peak_info->peaks [dword].value) ;
+ 						cptr [sizeof (psf->u.scbuf) - 1] = 0 ;
+ 						psf_log_printf (psf, "%s", cptr) ;
+diff -Nru libsndfile-1.0.21.orig/src/caf.c libsndfile-1.0.21/src/caf.c
+--- libsndfile-1.0.21.orig/src/caf.c	2009-12-10 19:49:30.000000000 +0100
++++ libsndfile-1.0.21/src/caf.c	2010-11-27 01:58:48.088357800 +0100
+@@ -23,7 +23,9 @@
+ #include	<string.h>
+ #include	<ctype.h>
+ #include	<math.h>
++#ifdef HAVE_INTTYPES_H
+ #include	<inttypes.h>
++#endif
+ 
+ #include	"sndfile.h"
+ #include	"sfendian.h"
+@@ -350,7 +352,7 @@
+ 					psf->peak_info->peaks [k].value = value ;
+ 					psf->peak_info->peaks [k].position = position ;
+ 
+-					snprintf (psf->u.cbuf, sizeof (psf->u.cbuf), "    %2d   %-12" PRId64 "   %g\n", k, position, value) ;
++					snprintf (psf->u.cbuf, sizeof (psf->u.cbuf), "    %2d   %-12" "%lld" "   %g\n", k, position, value) ;
+ 					psf_log_printf (psf, psf->u.cbuf) ;
+ 					} ;
+ 
+diff -Nru libsndfile-1.0.21.orig/src/CMakeLists.txt libsndfile-1.0.21/src/CMakeLists.txt
+--- libsndfile-1.0.21.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/src/CMakeLists.txt	2010-11-27 02:55:50.005080300 +0100
+@@ -0,0 +1,84 @@
++set(sndfile_SRCS
++audio_detect.c
++sndfile.c
++common.c
++chanmap.c
++chunk.c
++file_io.c
++command.c
++pcm.c
++ulaw.c
++alaw.c
++float32.c
++double64.c
++ima_adpcm.c
++ima_oki_adpcm.c
++ms_adpcm.c
++gsm610.c
++dwvw.c
++vox_adpcm.c
++interleave.c
++strings.c
++dither.c
++broadcast.c
++aiff.c
++au.c
++g72x.c
++avr.c
++caf.c
++ircam.c
++macbinary3.c
++macos.c
++mat4.c
++mat5.c
++mpc2k.c
++nist.c
++paf.c
++pvf.c
++raw.c
++rf64.c
++svx.c
++voc.c
++htk.c
++dwd.c
++ogg.c
++rx2.c
++sd2.c
++sds.c
++txw.c
++wve.c
++w64.c
++wav_w64.c
++wav.c
++xi.c
++flac.c
++G72x/g72x.c
++G72x/g721.c
++G72x/g723_16.c
++G72x/g723_24.c
++G72x/g723_40.c
++GSM610/add.c
++GSM610/decode.c
++GSM610/gsm_decode.c
++GSM610/gsm_encode.c
++GSM610/long_term.c
++GSM610/preprocess.c
++GSM610/short_term.c
++GSM610/code.c
++GSM610/gsm_create.c
++GSM610/gsm_destroy.c
++GSM610/gsm_option.c
++GSM610/lpc.c
++GSM610/rpe.c
++GSM610/table.c
++sndfile.def
++libsndfile.rc)
++
++add_library (sndfile SHARED ${sndfile_SRCS})
++target_link_libraries(sndfile ${VORBIS_LIBRARY} ${OGG_LIBRARY})
++
++install(TARGETS sndfile RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++                           
++install(FILES ${CMAKE_BINARY_DIR}/sndfile.h DESTINATION include)
+diff -Nru libsndfile-1.0.21.orig/src/common.c libsndfile-1.0.21/src/common.c
+--- libsndfile-1.0.21.orig/src/common.c	2009-12-10 19:49:31.000000000 +0100
++++ libsndfile-1.0.21/src/common.c	2010-11-27 01:58:48.096358300 +0100
+@@ -23,12 +23,26 @@
+ #include	<ctype.h>
+ #include	<math.h>
+ #include	<time.h>
++#ifdef HAVE_SYS_TIME_H
+ #include	<sys/time.h>
++#endif
+ 
+ #include	"sndfile.h"
+ #include	"sfendian.h"
+ #include	"common.h"
+ 
++#ifdef _MSC_VER
++long lrint(double x)
++{
++    return (long)(x + 0.5);
++}
++
++long lrintf(float x)
++{ 
++    return (long)(x + 0.5);
++}
++#endif
++
+ /*-----------------------------------------------------------------------------------------------
+ ** psf_log_printf allows libsndfile internal functions to print to an internal logbuffer which
+ ** can later be displayed.
+diff -Nru libsndfile-1.0.21.orig/src/common.h libsndfile-1.0.21/src/common.h
+--- libsndfile-1.0.21.orig/src/common.h	2009-12-10 19:49:31.000000000 +0100
++++ libsndfile-1.0.21/src/common.h	2010-11-27 01:58:48.100358500 +0100
+@@ -21,6 +21,7 @@
+ 
+ #include "sfconfig.h"
+ 
++#include <stdio.h>
+ #include <stdlib.h>
+ 
+ #if HAVE_STDINT_H
+@@ -37,6 +38,20 @@
+ #error "This code is not designed to be compiled with a C++ compiler."
+ #endif
+ 
++#ifdef _MSC_VER
++#define snprintf _snprintf
++#define inline __inline
++long lrint(double x);
++long lrintf(float x);
++#define __func__ __FUNCTION__
++#ifndef HAVE_STDINT_H
++typedef __int16 int16_t;
++typedef __int32 int32_t;
++typedef unsigned __int16 uint16_t;
++typedef unsigned __int32 uint32_t;
++#endif
++#endif
++
+ #if (SIZEOF_LONG == 8)
+ #	define	SF_PLATFORM_S64(x)		x##l
+ #elif (SIZEOF_LONG_LONG == 8)
+diff -Nru libsndfile-1.0.21.orig/src/config.h.cmake libsndfile-1.0.21/src/config.h.cmake
+--- libsndfile-1.0.21.orig/src/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/src/config.h.cmake	2010-11-27 02:43:00.492066600 +0100
+@@ -0,0 +1,282 @@
++/* src/config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Set to 1 if the compile is GNU GCC. */
++#ifdef __GNUC__
++# define COMPILER_IS_GCC 1
++#endif
++
++/* Target processor clips on negative float to int conversion. */
++#cmakedefine CPU_CLIPS_NEGATIVE @CPU_CLIPS_NEGATIVE@
++
++/* Target processor clips on positive float to int conversion. */
++#cmakedefine CPU_CLIPS_POSITIVE @CPU_CLIPS_POSITIVE@
++
++/* Target processor is big endian. */
++#define CPU_IS_BIG_ENDIAN @CPU_IS_BIG_ENDIAN@
++
++/* Target processor is little endian. */
++#define CPU_IS_LITTLE_ENDIAN @CPU_IS_LITTLE_ENDIAN@
++
++/* Set to 1 to enable experimental code. */
++#cmakedefine ENABLE_EXPERIMENTAL_CODE @ENABLE_EXPERIMENTAL_CODE@
++
++/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
++#cmakedefine HAVE_ALSA_ASOUNDLIB_H @HAVE_ALSA_ASOUNDLIB_H@
++
++/* Define to 1 if you have the <byteswap.h> header file. */
++#cmakedefine HAVE_BYTESWAP_H @HAVE_BYTESWAP_H@
++
++/* Define to 1 if you have the `calloc' function. */
++#cmakedefine HAVE_CALLOC @HAVE_CALLOC@
++
++/* Define to 1 if you have the `ceil' function. */
++#cmakedefine HAVE_CEIL @HAVE_CEIL@
++
++/* Set to 1 if S_IRGRP is defined. */
++#cmakedefine HAVE_DECL_S_IRGRP @HAVE_DECL_S_IRGRP@
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H @HAVE_DLFCN_H@
++
++/* Define to 1 if you have the <endian.h> header file. */
++#cmakedefine HAVE_ENDIAN_H @HAVE_ENDIAN_H@
++
++/* Will be set to 1 if flac, ogg and vorbis are available. */
++#cmakedefine HAVE_EXTERNAL_LIBS @HAVE_EXTERNAL_LIBS@
++
++/* Set to 1 if the compile supports the struct hack. */
++#cmakedefine HAVE_FLEXIBLE_ARRAY @HAVE_FLEXIBLE_ARRAY@
++
++/* Define to 1 if you have the `floor' function. */
++#cmakedefine HAVE_FLOOR @HAVE_FLOOR@
++
++/* Define to 1 if you have the `fmod' function. */
++#cmakedefine HAVE_FMOD @HAVE_FMOD@
++
++/* Define to 1 if you have the `free' function. */
++#cmakedefine HAVE_FREE @HAVE_FREE@
++
++/* Define to 1 if you have the `fstat' function. */
++#cmakedefine HAVE_FSTAT @HAVE_FSTAT@
++
++/* Define to 1 if you have the `fsync' function. */
++#cmakedefine HAVE_FSYNC @HAVE_FSYNC@
++
++/* Define to 1 if you have the `ftruncate' function. */
++#cmakedefine HAVE_FTRUNCATE @HAVE_FTRUNCATE@
++
++/* Define to 1 if you have the `getpagesize' function. */
++#cmakedefine HAVE_GETPAGESIZE @HAVE_GETPAGESIZE@
++
++/* Define to 1 if you have the `gettimeofday' function. */
++#cmakedefine HAVE_GETTIMEOFDAY @HAVE_GETTIMEOFDAY@
++
++/* Define to 1 if you have the `gmtime' function. */
++#cmakedefine HAVE_GMTIME @HAVE_GMTIME@
++
++/* Define to 1 if you have the `gmtime_r' function. */
++#cmakedefine HAVE_GMTIME_R @HAVE_GMTIME_R@
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
++
++/* Define to 1 if you have the `m' library (-lm). */
++#cmakedefine HAVE_LIBM @HAVE_LIBM@
++
++/* Define to 1 if you have the <locale.h> header file. */
++#cmakedefine HAVE_LOCALE_H @HAVE_LOCALE_H@
++
++/* Define to 1 if you have the `localtime' function. */
++#cmakedefine HAVE_LOCALTIME @HAVE_LOCALTIME@
++
++/* Define to 1 if you have the `localtime_r' function. */
++#cmakedefine HAVE_LOCALTIME_R @HAVE_LOCALTIME_R@
++
++/* Define if you have C99's lrint function. */
++#cmakedefine HAVE_LRINT @HAVE_LRINT@
++
++/* Define if you have C99's lrintf function. */
++#cmakedefine HAVE_LRINTF @HAVE_LRINTF@
++
++/* Define to 1 if you have the `lseek' function. */
++#cmakedefine HAVE_LSEEK @HAVE_LSEEK@
++
++/* Define to 1 if you have the `malloc' function. */
++#cmakedefine HAVE_MALLOC @HAVE_MALLOC@
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
++
++/* Define to 1 if you have the `mmap' function. */
++#cmakedefine HAVE_MMAP @HAVE_MMAP@
++
++/* Define to 1 if you have the `open' function. */
++#cmakedefine HAVE_OPEN @HAVE_OPEN@
++
++/* Define to 1 if you have the `pread' function. */
++#cmakedefine HAVE_PREAD @HAVE_PREAD@
++
++/* Define to 1 if you have the `pwrite' function. */
++#cmakedefine HAVE_PWRITE @HAVE_PWRITE@
++
++/* Define to 1 if you have the `read' function. */
++#cmakedefine HAVE_READ @HAVE_READ@
++
++/* Define to 1 if you have the `realloc' function. */
++#cmakedefine HAVE_REALLOC @HAVE_REALLOC@
++
++/* Define to 1 if you have the `setlocale' function. */
++#cmakedefine HAVE_SETLOCALE @HAVE_SETLOCALE@
++
++/* Define to 1 if you have the `snprintf' function. */
++#cmakedefine HAVE_SNPRINTF @HAVE_SNPRINTF@
++
++/* Set to 1 if you have libsqlite3. */
++#cmakedefine HAVE_SQLITE3 @HAVE_SQLITE3@
++
++/* Define to 1 if the system has the type `ssize_t'. */
++#cmakedefine HAVE_SSIZE_T @HAVE_SSIZE_T@
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H @HAVE_SYS_TIME_H@
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
++
++/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
++#cmakedefine HAVE_SYS_WAIT_H @HAVE_SYS_WAIT_H@
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
++
++/* Define to 1 if you have the `vsnprintf' function. */
++#cmakedefine HAVE_VSNPRINTF @HAVE_VSNPRINTF@
++
++/* Define to 1 if you have the `write' function. */
++#cmakedefine HAVE_WRITE @HAVE_WRITE@
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#cmakedefine LT_OBJDIR @LT_OBJDIR@
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++#cmakedefine NO_MINUS_C_MINUS_O @NO_MINUS_C_MINUS_O@
++
++/* Set to 1 if compiling for Win32 */
++#ifdef _WIN32
++# define OS_IS_WIN32 1
++#endif
++
++/* Name of package */
++#cmakedefine PACKAGE @PACKAGE@
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
++
++/* Define to the home page for this package. */
++#cmakedefine PACKAGE_URL @PACKAGE_URL@
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
++
++/* Set to maximum allowed value of sf_count_t type. */
++#cmakedefine SF_COUNT_MAX @SF_COUNT_MAX@
++
++/* The size of `double', as computed by sizeof. */
++#cmakedefine SIZEOF_DOUBLE @SIZEOF_DOUBLE@
++
++/* The size of `float', as computed by sizeof. */
++#cmakedefine SIZEOF_FLOAT @SIZEOF_FLOAT@
++
++/* The size of `int', as computed by sizeof. */
++#cmakedefine SIZEOF_INT @SIZEOF_INT@
++
++/* The size of `int64_t', as computed by sizeof. */
++#cmakedefine SIZEOF_INT64_T @SIZEOF_INT64_T@
++
++/* The size of `loff_t', as computed by sizeof. */
++#cmakedefine SIZEOF_LOFF_T @SIZEOF_LOFF_T@
++
++/* The size of `long', as computed by sizeof. */
++#cmakedefine SIZEOF_LONG @SIZEOF_LONG@
++
++/* The size of `long long', as computed by sizeof. */
++#cmakedefine SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@
++
++/* The size of `off64_t', as computed by sizeof. */
++#cmakedefine SIZEOF_OFF64_T @SIZEOF_OFF64_T@
++
++/* The size of `off_t', as computed by sizeof. */
++#cmakedefine SIZEOF_OFF_T @SIZEOF_OFF_T@
++
++/* Set to sizeof (long) if unknown. */
++#cmakedefine SIZEOF_SF_COUNT_T @SIZEOF_SF_COUNT_T@
++
++/* The size of `short', as computed by sizeof. */
++#cmakedefine SIZEOF_SHORT @SIZEOF_SHORT@
++
++/* The size of `size_t', as computed by sizeof. */
++#cmakedefine SIZEOF_SIZE_T @SIZEOF_SIZE_T@
++
++/* The size of `ssize_t', as computed by sizeof. */
++#cmakedefine SIZEOF_SSIZE_T @SIZEOF_SSIZE_T@
++
++/* The size of `void*', as computed by sizeof. */
++#cmakedefine SIZEOF_VOIDP @SIZEOF_VOIDP@
++
++/* The size of `wchar_t', as computed by sizeof. */
++#cmakedefine SIZEOF_WCHAR_T @SIZEOF_WCHAR_T@
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS @STDC_HEADERS@
++
++/* Set to long if unknown. */
++#cmakedefine TYPEOF_SF_COUNT_T @TYPEOF_SF_COUNT_T@
++
++/* Set to 1 to use the native windows API */
++#cmakedefine USE_WINDOWS_API @USE_WINDOWS_API@
++
++/* Version number of package */
++#cmakedefine VERSION @VERSION@
++
++/* Set to 1 if windows DLL is being built. */
++#cmakedefine WIN32_TARGET_DLL @WIN32_TARGET_DLL@
++
++/* Target processor is big endian. */
++#cmakedefine WORDS_BIGENDIAN @WORDS_BIGENDIAN@
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
++
++/* Define to make fseeko etc. visible, on some hosts. */
++#cmakedefine _LARGEFILE_SOURCE @_LARGEFILE_SOURCE@
++
++/* Define for large files, on AIX-style hosts. */
++#cmakedefine _LARGE_FILES @_LARGE_FILES@
++
++/* Set to 1 to use C99 printf/snprintf in MinGW. */
++#cmakedefine __USE_MINGW_ANSI_STDIO @__USE_MINGW_ANSI_STDIO@
+diff -Nru libsndfile-1.0.21.orig/src/file_io.c libsndfile-1.0.21/src/file_io.c
+--- libsndfile-1.0.21.orig/src/file_io.c	2009-09-26 14:05:03.000000000 +0200
++++ libsndfile-1.0.21/src/file_io.c	2010-11-27 01:58:48.109359000 +0100
+@@ -55,6 +55,10 @@
+ 
+ #define	SENSIBLE_SIZE	(0x40000000)
+ 
++#if _WIN32
++#define ssize_t SSIZE_T
++#endif
++
+ /*
+ **	Neat solution to the Win32/OS2 binary file flage requirement.
+ **	If O_BINARY isn't already defined by the inclusion of the system
+diff -Nru libsndfile-1.0.21.orig/src/flac.c libsndfile-1.0.21/src/flac.c
+--- libsndfile-1.0.21.orig/src/flac.c	2009-10-13 22:36:23.000000000 +0200
++++ libsndfile-1.0.21/src/flac.c	2010-11-27 01:58:48.113359200 +0100
+@@ -29,7 +29,7 @@
+ #include	"sndfile.h"
+ #include	"common.h"
+ 
+-#if HAVE_EXTERNAL_LIBS
++#if HAVE_FLAC_LIBS
+ 
+ #include	<FLAC/stream_decoder.h>
+ #include	<FLAC/stream_encoder.h>
+diff -Nru libsndfile-1.0.21.orig/src/GSM610/gsm610_priv.h libsndfile-1.0.21/src/GSM610/gsm610_priv.h
+--- libsndfile-1.0.21.orig/src/GSM610/gsm610_priv.h	2009-03-22 20:17:14.000000000 +0100
++++ libsndfile-1.0.21/src/GSM610/gsm610_priv.h	2010-11-27 01:58:48.078357200 +0100
+@@ -18,6 +18,10 @@
+ /* Added by Erik de Castro Lopo */
+ 
+ 
++#ifdef _MSC_VER
++#define inline __inline
++#endif
++
+ 
+ typedef short				word;		/* 16 bit signed int	*/
+ typedef int					longword;	/* 32 bit signed int	*/
+diff -Nru libsndfile-1.0.21.orig/src/libsndfile.rc libsndfile-1.0.21/src/libsndfile.rc
+--- libsndfile-1.0.21.orig/src/libsndfile.rc	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/src/libsndfile.rc	2010-11-27 01:58:48.119359600 +0100
+@@ -0,0 +1,32 @@
++#include <winver.h>
++
++VS_VERSION_INFO	VERSIONINFO
++FILEVERSION 	1,0,17
++PRODUCTVERSION	1,0,17
++#ifdef DEBUG
++FILEFLAGS	(VS_FF_DEBUG | VS_FF_PRERELEASE)
++#else
++FILEFLAGS	VS_FF_PRERELEASE
++#endif
++FILEOS		VOS__WINDOWS32
++FILETYPE	VFT_DLL
++FILESUBTYPE	VFT2_UNKNOWN
++BEGIN
++	BLOCK "StringFileInfo"
++	BEGIN 
++		BLOCK "040904E4"
++		BEGIN
++		VALUE "FileDescription",  "sndfile"
++		VALUE "LegalCopyright", "Erik de Castro Lopo <erikd@mega-nerd.com>"
++		VALUE "FileVersion", "1.0.21"
++		VALUE "OriginalFilename", "sndfile.dll"
++		VALUE "Comments", "Bug reports to KDE Windows <kde-windows@kde.org>"
++		END
++	END
++
++	BLOCK "VarFileInfo"
++	BEGIN
++		VALUE "Translation", 0x0409, 0x04E4
++	END
++END
++
+diff -Nru libsndfile-1.0.21.orig/src/sndfile.def libsndfile-1.0.21/src/sndfile.def
+--- libsndfile-1.0.21.orig/src/sndfile.def	1970-01-01 01:00:00.000000000 +0100
++++ libsndfile-1.0.21/src/sndfile.def	2010-11-27 01:58:48.145361100 +0100
+@@ -0,0 +1,39 @@
++; Auto-generated by create_symbols_file.py
++
++LIBRARY sndfile.dll
++EXPORTS
++
++sf_command           @1
++sf_open              @2
++sf_close             @3
++sf_seek              @4
++sf_error             @7
++sf_perror            @8
++sf_error_str         @9
++sf_error_number      @10
++sf_format_check      @11
++sf_read_raw          @16
++sf_readf_short       @17
++sf_readf_int         @18
++sf_readf_float       @19
++sf_readf_double      @20
++sf_read_short        @21
++sf_read_int          @22
++sf_read_float        @23
++sf_read_double       @24
++sf_write_raw         @32
++sf_writef_short      @33
++sf_writef_int        @34
++sf_writef_float      @35
++sf_writef_double     @36
++sf_write_short       @37
++sf_write_int         @38
++sf_write_float       @39
++sf_write_double      @40
++sf_strerror          @50
++sf_get_string        @60
++sf_set_string        @61
++sf_open_fd           @70
++sf_open_virtual      @80
++sf_write_sync        @90
++
+diff -Nru libsndfile-1.0.21.orig/src/wav.c libsndfile-1.0.21/src/wav.c
+--- libsndfile-1.0.21.orig/src/wav.c	2009-12-10 19:49:31.000000000 +0100
++++ libsndfile-1.0.21/src/wav.c	2010-11-27 01:58:48.204364400 +0100
+@@ -24,7 +24,9 @@
+ #include	<string.h>
+ #include	<ctype.h>
+ #include	<time.h>
++#ifdef HAVE_INTTYPES_H
+ #include	<inttypes.h>
++#endif
+ 
+ #include	"sndfile.h"
+ #include	"sfendian.h"
+@@ -492,7 +494,7 @@
+ 						psf->peak_info->peaks [dword].value = value ;
+ 						psf->peak_info->peaks [dword].position = position ;
+ 
+-						snprintf (cptr, sizeof (psf->u.cbuf), "    %2d   %-12" PRId64 "   %g\n",
++						snprintf (cptr, sizeof (psf->u.cbuf), "    %2d   %-12" "%lld" "   %g\n",
+ 								dword, psf->peak_info->peaks [dword].position, psf->peak_info->peaks [dword].value) ;
+ 						cptr [sizeof (psf->u.cbuf) - 1] = 0 ;
+ 						psf_log_printf (psf, "%s", cptr) ;
