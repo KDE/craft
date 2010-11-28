@@ -5,7 +5,6 @@ CESignature = "$$Windows CE$$"
 
 [CEStrings]
 AppName = "Kontact-Mobile"
-InstallDir = %CE1%\%AppName%
  
 [DefaultInstall]
 CopyFiles = $SECTIONNAMES
