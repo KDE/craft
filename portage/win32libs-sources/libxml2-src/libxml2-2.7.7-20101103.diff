@@ -1,6 +1,6 @@
 diff -Nru libxml2-2.7.7.orig/cmake/modules/FindLibiconv.cmake libxml2-2.7.7/cmake/modules/FindLibiconv.cmake
 --- libxml2-2.7.7.orig/cmake/modules/FindLibiconv.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.7/cmake/modules/FindLibiconv.cmake	2010-11-03 10:23:00.671875000 +0100
++++ libxml2-2.7.7/cmake/modules/FindLibiconv.cmake	2010-11-29 11:16:43.338590700 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Libiconv functionality
 +# Once done this will define
@@ -37,7 +37,7 @@ diff -Nru libxml2-2.7.7.orig/cmake/modules/FindLibiconv.cmake libxml2-2.7.7/cmak
 +mark_as_advanced(LIBICONV_INCLUDE_DIR  LIBICONV_LIBRARIES  LIBICONV_CONST  LIBICONV_LIB_FOUND)
 diff -Nru libxml2-2.7.7.orig/cmake/modules/FindWcecompat.cmake libxml2-2.7.7/cmake/modules/FindWcecompat.cmake
 --- libxml2-2.7.7.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.7/cmake/modules/FindWcecompat.cmake	2010-11-03 10:23:00.671875000 +0100
++++ libxml2-2.7.7/cmake/modules/FindWcecompat.cmake	2010-11-29 11:16:43.341590900 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -74,8 +74,8 @@ diff -Nru libxml2-2.7.7.orig/cmake/modules/FindWcecompat.cmake libxml2-2.7.7/cma
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 --- libxml2-2.7.7.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.7/CMakeLists.txt	2010-11-03 10:30:01.203125000 +0100
-@@ -0,0 +1,305 @@
++++ libxml2-2.7.7/CMakeLists.txt	2010-11-29 13:00:35.742063800 +0100
+@@ -0,0 +1,304 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -206,11 +206,6 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +    xmlmodule.c
 +    schematron.c
 +)
-+if(WINCE)
-+set(libxml2_SRCS
-+    ${libxml2_SRCS}
-+    win32/wince/wincecompat.c)
-+endif(WINCE)
 +
 +# the trio code is yet untested, you need to change the xmlversion.h for that too
 +# this is currently not supported as you'd need to configure the xmlversion.h.in
@@ -222,7 +217,11 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +    )
 +endif(ENABLE_TRIO)
 +
++if(WINCE)
++add_library(xml2 STATIC ${libxml2_SRCS})
++else(WINCE)
 +add_library(xml2 SHARED ${libxml2_SRCS})
++endif(WINCE)
 +target_link_libraries(xml2 ${LIBICONV_LIBRARIES})
 +install(TARGETS xml2    RUNTIME DESTINATION bin
 +                        LIBRARY DESTINATION lib
@@ -233,7 +232,7 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +        set_target_properties(xml2 PROPERTIES OUTPUT_NAME libxml2)
 +    endif(MSVC)
 +    if(WINCE)
-+        target_link_libraries(xml2 ws2 ${WCECOMPAT_LIBRARIES})
++        target_link_libraries(xml2 ws2)
 +    else(WINCE)
 +        target_link_libraries(xml2 ws2_32)
 +    endif(WINCE)
@@ -383,7 +382,7 @@ diff -Nru libxml2-2.7.7.orig/CMakeLists.txt libxml2-2.7.7/CMakeLists.txt
 +endif(BUILD_tests)
 diff -Nru libxml2-2.7.7.orig/config.h.cmake libxml2-2.7.7/config.h.cmake
 --- libxml2-2.7.7.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.7/config.h.cmake	2010-11-03 10:23:00.687500000 +0100
++++ libxml2-2.7.7/config.h.cmake	2010-11-29 11:16:43.347591200 +0100
 @@ -0,0 +1,312 @@
 +/* config.h.in.  Generated from configure.in by autoheader.  */
 +#cmakedefine PACKAGE
@@ -699,7 +698,7 @@ diff -Nru libxml2-2.7.7.orig/config.h.cmake libxml2-2.7.7/config.h.cmake
 +#endif
 diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks.cmake
 --- libxml2-2.7.7.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libxml2-2.7.7/ConfigureChecks.cmake	2010-11-03 10:23:00.687500000 +0100
++++ libxml2-2.7.7/ConfigureChecks.cmake	2010-11-29 11:16:43.350591400 +0100
 @@ -0,0 +1,141 @@
 +#some configure checks
 +
@@ -844,7 +843,7 @@ diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks
 +
 diff -Nru libxml2-2.7.7.orig/debugXML.c libxml2-2.7.7/debugXML.c
 --- libxml2-2.7.7.orig/debugXML.c	2009-09-24 17:31:59.000000000 +0200
-+++ libxml2-2.7.7/debugXML.c	2010-11-03 10:23:00.703125000 +0100
++++ libxml2-2.7.7/debugXML.c	2010-11-29 11:16:43.354591600 +0100
 @@ -116,6 +116,8 @@
  	    while (cur != NULL) {
  	        if (cur == ns)
@@ -1316,9 +1315,23 @@ diff -Nru libxml2-2.7.7.orig/include/libxml/xmlversion.h libxml2-2.7.7/include/l
 -#endif
 -
 -
+diff -Nru libxml2-2.7.7.orig/include/win32config.h libxml2-2.7.7/include/win32config.h
+--- libxml2-2.7.7.orig/include/win32config.h	2009-09-24 17:31:59.000000000 +0200
++++ libxml2-2.7.7/include/win32config.h	2010-11-29 13:20:43.590148700 +0100
+@@ -9,7 +9,9 @@
+ #if defined(_WIN32_WCE)
+ #undef HAVE_ERRNO_H
+ #include <windows.h>
+-#include "wincecompat.h"
++#include <io.h>
++#include <errno.h>
++#include <fcntl.h>
+ #else
+ #define HAVE_SYS_STAT_H
+ #define HAVE__STAT
 diff -Nru libxml2-2.7.7.orig/include/wsockcompat.h libxml2-2.7.7/include/wsockcompat.h
 --- libxml2-2.7.7.orig/include/wsockcompat.h	2009-09-24 17:31:59.000000000 +0200
-+++ libxml2-2.7.7/include/wsockcompat.h	2010-11-03 10:23:00.718750000 +0100
++++ libxml2-2.7.7/include/wsockcompat.h	2010-11-29 11:16:43.358591800 +0100
 @@ -6,7 +6,7 @@
  #define __XML_WSOCKCOMPAT_H__
  
@@ -1330,7 +1343,7 @@ diff -Nru libxml2-2.7.7.orig/include/wsockcompat.h libxml2-2.7.7/include/wsockco
  #include <winsock2.h>
 diff -Nru libxml2-2.7.7.orig/nanoftp.c libxml2-2.7.7/nanoftp.c
 --- libxml2-2.7.7.orig/nanoftp.c	2009-09-24 17:31:59.000000000 +0200
-+++ libxml2-2.7.7/nanoftp.c	2010-11-03 10:23:00.718750000 +0100
++++ libxml2-2.7.7/nanoftp.c	2010-11-29 11:16:43.361592000 +0100
 @@ -77,7 +77,7 @@
  #endif
  
@@ -1342,7 +1355,7 @@ diff -Nru libxml2-2.7.7.orig/nanoftp.c libxml2-2.7.7/nanoftp.c
  #include <winsock2.h>
 diff -Nru libxml2-2.7.7.orig/nanohttp.c libxml2-2.7.7/nanohttp.c
 --- libxml2-2.7.7.orig/nanohttp.c	2009-10-19 13:55:48.000000000 +0200
-+++ libxml2-2.7.7/nanohttp.c	2010-11-03 10:23:00.734375000 +0100
++++ libxml2-2.7.7/nanohttp.c	2010-11-29 11:16:43.365592200 +0100
 @@ -78,7 +78,7 @@
  #define SOCKET int
  #endif
@@ -1354,7 +1367,7 @@ diff -Nru libxml2-2.7.7.orig/nanohttp.c libxml2-2.7.7/nanohttp.c
  #include <winsock2.h>
 diff -Nru libxml2-2.7.7.orig/threads.c libxml2-2.7.7/threads.c
 --- libxml2-2.7.7.orig/threads.c	2009-10-02 17:28:18.000000000 +0200
-+++ libxml2-2.7.7/threads.c	2010-11-03 10:23:00.750000000 +0100
++++ libxml2-2.7.7/threads.c	2010-11-29 11:16:43.989627900 +0100
 @@ -28,6 +28,9 @@
  #include <pthread.h>
  #elif defined HAVE_WIN32_THREADS
@@ -1382,7 +1395,7 @@ diff -Nru libxml2-2.7.7.orig/threads.c libxml2-2.7.7/threads.c
  static pthread_key_t globalkey;
 diff -Nru libxml2-2.7.7.orig/tree.c libxml2-2.7.7/tree.c
 --- libxml2-2.7.7.orig/tree.c	2010-03-08 16:42:54.000000000 +0100
-+++ libxml2-2.7.7/tree.c	2010-11-03 10:23:00.765625000 +0100
++++ libxml2-2.7.7/tree.c	2010-11-29 11:16:43.997628400 +0100
 @@ -3291,6 +3291,29 @@
  	    xmlFreeNode(cur);
  	    return(parent->last);
@@ -1413,3 +1426,31 @@ diff -Nru libxml2-2.7.7.orig/tree.c libxml2-2.7.7/tree.c
      }
  
      /*
+diff -Nru libxml2-2.7.7.orig/trio.c libxml2-2.7.7/trio.c
+--- libxml2-2.7.7.orig/trio.c	2009-09-24 17:32:00.000000000 +0200
++++ libxml2-2.7.7/trio.c	2010-11-29 13:18:11.079425600 +0100
+@@ -76,7 +76,7 @@
+ #endif
+ 
+ #if defined(_WIN32_WCE)
+-#include <wincecompat.h>
++#include <io.h>
+ #endif
+ 
+ /*************************************************************************
+diff -Nru libxml2-2.7.7.orig/xmlIO.c libxml2-2.7.7/xmlIO.c
+--- libxml2-2.7.7.orig/xmlIO.c	2010-01-19 16:00:40.000000000 +0100
++++ libxml2-2.7.7/xmlIO.c	2010-11-29 13:23:38.799170100 +0100
+@@ -3649,10 +3649,12 @@
+ 	else *cur = 0;
+ 	ret = xmlMemStrdup(dir);
+     } else {
++#ifndef _WIN32_WCE
+         if (getcwd(dir, 1024) != NULL) {
+ 	    dir[1023] = 0;
+ 	    ret = xmlMemStrdup(dir);
+ 	}
++#endif
+     }
+     return(ret);
+ #undef IS_XMLPGD_SEP
