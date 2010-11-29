@@ -13,7 +13,7 @@ class subinfo( info.infoclass ):
 
         for version in [ '0.9.21b' ]:
             self.targets[ version ]          = self.getPackage( repoUrl, 'clucene-core', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'clucene-core', version , '.tar.bz2.sha1' )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'clucene-core', version , '.tar.bz2.sha1', ['lib'] )
 
         self.defaultTarget = '0.9.21b'
 
