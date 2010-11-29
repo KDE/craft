@@ -53,6 +53,7 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-Enable-Softkeyboard-wince.patch', 1),
             ('qt-4.7.0-comboboxes-wrong-direction_wince.patch', 1),
             ('qt-4.7.0-Add-gpgLogging.patch', 1)]
+        self.patchToApply['4.7.1'] = [('qt-4.7.1-buildfix-for-mingw64.patch', 1)]
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
         else:

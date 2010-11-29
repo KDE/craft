@@ -1,0 +1,32 @@
+diff --git a/src/corelib/tools/qsimd.cpp b/src/corelib/tools/qsimd.cpp
+index e727bfc..e20c805 100644
+--- a/src/corelib/tools/qsimd.cpp
++++ b/src/corelib/tools/qsimd.cpp
+@@ -285,7 +285,13 @@ static inline uint detectProcessorFeatures()
+     uint features = MMX|SSE|SSE2|CMOV;
+     uint feature_result = 0;
+ 
+-#if defined(Q_CC_GNU)
++#if defined (Q_OS_WIN64)
++    {
++       int info[4];
++       __cpuid(info, 1);
++       feature_result = info[2];
++    }
++#elif defined(Q_CC_GNU)
+     long tmp;
+     asm ("xchg %%rbx, %1\n"
+          "cpuid\n"
+@@ -294,12 +300,6 @@ static inline uint detectProcessorFeatures()
+         : "a" (1)
+         : "%edx"
+         );
+-#elif defined (Q_OS_WIN64)
+-    {
+-       int info[4];
+-       __cpuid(info, 1);
+-       feature_result = info[2];
+-    }
+ #endif
+ 
+     if (feature_result & (1u))
