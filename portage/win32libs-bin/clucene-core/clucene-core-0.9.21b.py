@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ '0.9.21b' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'clucene-core', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'clucene-core', version , '.tar.bz2.sha1', ['lib'] )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'clucene-core', version, packagetypes=['lib'] )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'clucene-core', version , '.tar.bz2.sha1', packagetypes=['lib'] )
 
         self.defaultTarget = '0.9.21b'
 
