@@ -8,7 +8,9 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ 'gitHEAD' ] = "git://github.com/davidsansome/liblastfm.git"
         self.patchToApply[ 'gitHEAD' ] = ( "liblastfm-src-20101128.diff", 1 )
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets[ 'TheOneRing' ] = "git://github.com/TheOneRing/liblastfm.git"
+        self.targetSrcSuffix['TheOneRing'] = "theo"
+        self.defaultTarget = 'TheOneRing'
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'
