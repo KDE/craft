@@ -44,6 +44,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DBUILD_kleopatra=ON "
             self.subinfo.options.configure.defines += " -DBUILD_korganizer=ON "
             self.subinfo.options.configure.defines += " -DKDEPIM_ENTERPRISE_BUILD=ON "
+            self.subinfo.options.configure.defines += " -DKORGAC_AKONADI_AGENT=ON "
         else:
             self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
 
