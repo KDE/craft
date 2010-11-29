@@ -40,7 +40,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines  = " -DCMAKE_PROGRAM_PATH=%s " % os.path.join( os.getenv("KDEROOT") , "dev-utils" , "svn" , "bin" )
+        self.subinfo.options.configure.defines  = " -DDATABASE_BACKEND=SQLITE -DCMAKE_PROGRAM_PATH=%s " % os.path.join( os.getenv("KDEROOT") , "dev-utils" , "svn" , "bin" )
         if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE "
             self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
@@ -50,7 +50,7 @@ class Package(CMakePackageBase):
             automoc = os.path.join(self.rootdir, "lib", "automoc4", "Automoc4Config.cmake")
             if not os.path.exists(automoc):
                 utils.warning("could not find automoc in <%s>" % automoc)
-            self.subinfo.options.configure.defines += "-DDATABASE_BACKEND=SQLITE -DAKONADI_STATIC_SQLITE=TRUE -DAKONADI_USE_STRIGI_SEARCH=TRUE "
+            self.subinfo.options.configure.defines += " -DAKONADI_STATIC_SQLITE=TRUE -DAKONADI_USE_STRIGI_SEARCH=TRUE "
             ## \todo a standardized way to check if a package is installed in the image dir would be good.
             self.subinfo.options.configure.defines += "-DAUTOMOC4_CONFIG_FILE:FILEPATH=%s " \
                 % automoc.replace('\\', '/')
