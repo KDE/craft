@@ -45,6 +45,7 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DBUILD_korganizer=ON "
             self.subinfo.options.configure.defines += " -DKDEPIM_ENTERPRISE_BUILD=ON "
             self.subinfo.options.configure.defines += " -DKORGAC_AKONADI_AGENT=ON "
+            self.subinfo.options.configure.defines += " -DBUILD_NEW_MAIL_NOTIFIER_AGENT=ON=ON "
         else:
             self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
 
