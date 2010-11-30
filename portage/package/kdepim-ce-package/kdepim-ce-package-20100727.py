@@ -29,12 +29,12 @@ class subinfo(info.infoclass):
         self.disableTargetBuild = False
 
     def setDependencies( self ):
-        self.hardDependencies['testing/wincetools'] = 'kdepimcetools'
-        self.hardDependencies['testing/setupdll-wince'] = 'default'
-        self.hardDependencies['kde/kdepim'] = 'default'
-        self.hardDependencies['testing/pinentry-qt'] = 'default'
+        self.dependencies['testing/wincetools'] = 'kdepimcetools'
+        self.dependencies['testing/setupdll-wince'] = 'default'
+        self.dependencies['kde/kdepim'] = 'default'
+        self.dependencies['testing/pinentry-qt'] = 'default'
         if not self.buildTarget == 'en':
-            self.hardDependencies['enterprise5/l10n-wce-e5'] = 'default'
+            self.dependencies['enterprise5/l10n-wce-e5'] = 'default'
 
 class MainPackage(CMakePackageBase):
     def __init__(self):
