@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.2.1-2', '1.2.1' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'openslp', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'openslp', version , '.tar.bz2.sha1' )
+        for version in [ '2.2.0', '2.2.3' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'openbabel', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'openbabel', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.2.1'
+        self.defaultTarget = '2.2.3'
 
 
     def setDependencies( self ):
