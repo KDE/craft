@@ -80,19 +80,37 @@ Index: kldap/ldapoperation.cpp
      }
    }
    return ret;
-@@ -431,7 +441,12 @@
+@@ -430,16 +440,25 @@
+   }
    case RES_BIND:
    {
-     struct berval *servercred;
+-    struct berval *servercred;
++    struct berval *servercred = 0;
 +#ifndef HAVE_WINLDAP_H
-+    // Winldap does not have ldap_parse_sasl_bind_result
++    // FIXME: Error handling Winldap does not have ldap_parse_sasl_bind_result
      retval = ldap_parse_sasl_bind_result( ld, msg, &servercred, 0 );
 +#else
 +    retval = KLDAP_SUCCESS;
 +#endif
      if ( retval != KLDAP_SUCCESS && retval != KLDAP_SASL_BIND_IN_PROGRESS ) {
-       kDebug() << "RES_BIND error: " << retval;
+-      kDebug() << "RES_BIND error: " << retval;
++      qDebug() << "RES_BIND error: " << retval;
        ldap_msgfree( msg );
+       return -1;
+     }
+-    kDebug() << "RES_BIND rescode" << rescode << "retval:" << retval;
+-    mServerCred = servercred ? QByteArray( servercred->bv_val, servercred->bv_len ) : QByteArray();
+-    ber_bvfree( servercred );
++    qDebug() << "RES_BIND rescode" << rescode << "retval:" << retval;
++    if ( servercred ) {
++      mServerCred = QByteArray( servercred->bv_val, servercred->bv_len );
++      ber_bvfree( servercred );
++    } else {
++      mServerCred = QByteArray();
++    }
+     break;
+   }
+   default:
 Index: kldap/kldap_config.h.cmake
 ===================================================================
 --- kldap/kldap_config.h.cmake	(revision 1200316)
