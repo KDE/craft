@@ -24,6 +24,7 @@ class Settings:
         
         self.enabled = False
         if os.path.exists( self.configpath ):
+            self.enabled = True
             self.parser.read( self.configpath )
             if not self.parser.has_section( 'General' ):
                 # enable all other sections
@@ -32,7 +33,6 @@ class Settings:
             else:
                 for sec in self.parser.sections():
                     self.sections[ sec ] = self.getSectionEnabled( sec )
-            self.enabled = True
             
     def getSection( self, section, additionalvars=None ):
         if self.enabled and self.sections[ section ]:
