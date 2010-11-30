@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
           self.targets[ver] = 'http://curl.haxx.se/download/curl-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'curl-' + ver
        self.patchToApply['7.20.0'] = ("7.20.0.diff", 1)
+       self.shortDescription = "a free and easy-to-use client-side URL transfer library"
        self.defaultTarget = '7.20.0'
 
     def setDependencies( self ):

@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         self.patchToApply['2.2.0'] = ('openbabel-2.2.0-cmake.diff', 0)
         self.targetInstSrc['2.2.0'] = 'openbabel-2.2.0'
         self.targetInstSrc['2.2.3'] = 'openbabel-2.2.3'
+        self.shortDescription = "library to convert the various file formats used in chemical software"
         self.defaultTarget = '2.2.3'
 
     def setDependencies( self ):

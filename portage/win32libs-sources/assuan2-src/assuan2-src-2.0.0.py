@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.0.1'] = 'libassuan-2.0.1'
         self.targetDigests['2.0.1'] = 'b7e9dbd41769cc20b1fb7db9f2ecdf276ffc352c'
         self.patchToApply['2.0.1'] = [ ('assuan-381-head.diff', 0), ('libassuan-2.0.1-20101029.diff', 1) ]
+        self.shortDescription = "an IPC library used by some of the other GnuPG related packages"
         self.defaultTarget = '2.0.1'
 
     def setDependencies( self ):

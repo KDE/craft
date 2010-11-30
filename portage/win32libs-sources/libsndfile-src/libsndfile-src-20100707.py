@@ -8,6 +8,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc[ '1.0.21' ] = 'libsndfile-1.0.21'
         self.patchToApply[ '1.0.21' ] = ( 'libsndfile-1.0.21-20101127.diff', 1 )
         self.targetDigests[ '1.0.21' ] = '136845a8bb5679e033f8f53fb98ddeb5ee8f1d97'
+        self.shortDescription = "a C library for reading and writing files containing sampled sound"
         self.defaultTarget = '1.0.21'
 
     def setDependencies( self ):

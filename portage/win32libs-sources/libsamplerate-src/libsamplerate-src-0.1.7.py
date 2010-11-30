@@ -8,6 +8,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc['0.1.7'] = 'libsamplerate-0.1.7'
         self.targetDigests['0.1.7'] = '98a52392eb97f9ba724ca024b3af29a8a0cc0206'
         self.patchToApply['0.1.7'] = ('libsamplerate-0.1.7-20091002.diff', 1)
+        self.shortDescription = "an audio sample rate converter library"
         self.defaultTarget = '0.1.7'
 
     def setDependencies( self ):

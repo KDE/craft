@@ -11,8 +11,7 @@ class subinfo(info.infoclass):
        self.patchToApply['1.2.5'] = ("zlib-1.2.5-20100422.diff", 1)
        self.targetDigests['1.2.5'] = '8e8b93fa5eb80df1afe5422309dca42964562d7e'
        
-       self.description = 'The zlib compression and decompression library'
-       self.categoryName = 'win32libs'
+       self.shortDescription = 'The zlib compression and decompression library'
        self.defaultTarget = '1.2.5'
 
     def setDependencies( self ):

@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply['3.7.2']    = ("sqlite_cmake_and_wince_20100923.diff", 1)
         self.patchToApply['3.6.23.1'] = ("sqlite_cmake_and_wince_20100923.diff", 1)
         self.targetInstSrc['3.6.23.1'] = "sqlite-3.6.23.1"
+        self.shortDescription = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
         self.defaultTarget = '3.7.2'
 
     def setDependencies( self ):

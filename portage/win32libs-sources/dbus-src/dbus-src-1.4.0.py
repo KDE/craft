@@ -48,7 +48,7 @@ class subinfo(info.infoclass):
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
 										  ('msvc2010-has-errnoh.diff', 1)
 										  ]
-        
+        self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         self.defaultTarget = '1.4.0'
         
     def setDependencies( self ):

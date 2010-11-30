@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.3.1'] = "http://ftp.gnu.org/pub/gnu/gmp/gmp-4.3.1.tar.bz2"
         self.targetInstSrc['4.3.1'] = "gmp-4.3.1"
+        self.shortDescription = "GNU MP library for arbitrary precision arithmetic"
         self.defaultTarget = '4.3.1'
 
     def setDependencies( self ):

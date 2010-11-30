@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
         self.targetDigests['0.0.1'] = 'faf4f1f311f92f2a80afe275f43fabb047f23308'
         self.targetDigests['0.0.2'] = 'd61714a4708d76537600782eb72ccb3cbc89b4b5'
-
+        self.shortDescription = "a character set conversion library binary compatible with GNU iconv"
         self.defaultTarget = '0.0.2'
     
     def setDependencies( self ):

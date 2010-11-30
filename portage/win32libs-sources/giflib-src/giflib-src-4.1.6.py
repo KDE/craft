@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://downloads.sourceforge.net/sourceforge/giflib/giflib-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'giflib-' + ver
         self.patchToApply['4.1.6'] = ("giflib-4.1.6-20100327.diff", 1)
-        
+        self.shortDescription = "GIF file manipulation library (utilities and docs)"
         self.defaultTarget = '4.1.6'
 
     def setDependencies( self ):

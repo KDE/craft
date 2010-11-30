@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.19'] = "lcms-1.19"
         self.patchToApply['1.19'] = ( 'lcms-1.19-20100416.diff', 1 )
         self.targetDigests['1.19'] = 'd5b075ccffc0068015f74f78e4bc39138bcfe2d4'
+        self.shortDescription = "A small-footprint, speed optimized color management engine"
         self.defaultTarget = '1.19'
 
     def setDependencies( self ):

@@ -11,6 +11,7 @@ class subinfo( info.infoclass ):
             self.patchToApply[ '8.10' ].append( ( "pcre-8.02-20100518.diff", 1 ) )
 
         self.targetDigests[ '8.10' ] = '8b345da0f835b2caabff071b0b5bab40564652be'
+        self.shortDescription = "Perl-Compatible Regular Expressions"
         self.defaultTarget = '8.10'
 
     def setDependencies( self ):

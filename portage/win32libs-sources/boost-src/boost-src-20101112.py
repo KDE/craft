@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.44.0'] = '0dfeaad7a316ddfdcdb8a7e42443ef048ad18c01'
         self.targetInstSrc['1.44.0'] = 'boost_1_44_0'
         self.defaultTarget = '1.44.0'
+        self.shortDescription = "portable C++ libraries"
 
     def setDependencies(self):
         self.buildDependencies['dev-util/bjam'] = 'default'

@@ -8,6 +8,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc['1.2.0'] = 'libogg-1.2.0'
         self.patchToApply['1.2.0'] = ( 'libogg-1.2.0-20100707.diff', 1 )
         self.targetDigests['1.2.0'] = '135fb812282e08833295c91e005bd0258fff9098'
+        self.shortDescription = "reference implementation for the ogg audio file format"
         self.defaultTarget = '1.2.0'
 
     def setDependencies( self ):

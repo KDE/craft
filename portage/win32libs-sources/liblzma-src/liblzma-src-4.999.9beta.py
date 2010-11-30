@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         ver = '4.999.9beta'
         self.targets[ver] = 'http://tukaani.org/xz/xz-4.999.9beta.tar.gz'
         self.targetInstSrc[ver] = 'xz-' + ver
+        self.shortDescription = "free general-purpose data compression software with high compression ratio"
         self.defaultTarget = ver
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

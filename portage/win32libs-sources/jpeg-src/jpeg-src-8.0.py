@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.patchToApply['7.0'] = ( 'jpeg7.diff', 1 )
         self.patchToApply['8.0'] = ( 'jpeg8.diff', 1 )
         
-        self.description = 'A library for manipulating JPEG image format files'
+        self.shortDescription = 'A library for manipulating JPEG image format files'
         self.categoryName = 'win32libs'
 
         self.defaultTarget = '7.0'

@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.7.90'] = "libgpod-0.7.90GIT"
         
         self.options.package.withCompiler = False
-
+        self.shortDescription = "a library to access the contents of an iPod"
         self.defaultTarget = '0.7.2'
 
 from Package.PackageBase import *

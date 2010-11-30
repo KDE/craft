@@ -19,6 +19,7 @@ class subinfo (info.infoclass):
         else:
             self.patchToApply['0.9.21b'] = ( "0.9.21.diff", 2 )
         self.targetDigests['0.9.21b'] = '8bc505b64f82723c2dc901036cb0607500870973'
+        self.shortDescription = "high-performance, full-featured text search engine (required for compiling strigi)"
         self.defaultTarget = '0.9.21b'
  
     def setBuildOptions( self ):

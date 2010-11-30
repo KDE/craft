@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.targets['0.12.3'] = 'http://downloads.sourceforge.net/libnova/libnova-0.12.3.tar.gz'
         self.targetInstSrc['0.12.1'] = 'libnova-0.12.1'
         self.targetInstSrc['0.12.3'] = 'libnova-0.12.3'
+        self.shortDescription = "a Celestial Mechanics, Astrometry and Astrodynamics library"
         self.defaultTarget = '0.12.3'
 
     def setDependencies( self ):

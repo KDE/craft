@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
           self.patchToApply[ver]  = ( 'exiv2-%s-cmake.diff' % ver, 0 )
 
         self.svnTargets['svnHEAD'] = 'svn://dev.robotbattle.com/exiv2/branches/'
+        self.shortDescription = "an image metadata library"
         self.defaultTarget = '0.19'
     
     def setDependencies( self ):

@@ -19,6 +19,7 @@ class subinfo( info.infoclass ):
             self.targets[ '1.0.0' ] = self.targets[ '1.0.0a' ]
             self.targetInstSrc[ '1.0.0' ] = self.targetInstSrc[ '1.0.0a' ]
             self.targetDigestUrls[ '1.0.0' ] = self.targetDigestUrls[ '1.0.0a' ]
+        self.shortDescription = "The OpenSSL runtime environment"
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.0.0'
         else:

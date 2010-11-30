@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
                                       ('gpgme-1.3.0-cmake.diff', 1), 
                                       ('gpgme-1.3.0-20101102.diff', 1), 
                                       ('gpgme-1.3.0-mingw.diff', 1)]
+        self.shortDescription = "GnuPG cryptography support library (runtime)"
         self.defaultTarget = '1.3.0'
 
     def setDependencies( self ):

@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.0.6-1'] = "bzip2-1.0.6"
         self.patchToApply['1.0.6-1'] = ("bzip.diff", 1)
         self.targetDigests['1.0.6-1'] = '3f89f861209ce81a6bab1fd1998c0ef311712002'
+        self.shortDescription = "shared libraries for handling bzip2 archives (runtime)"
         self.defaultTarget = '1.0.6-1'
 
     def setDependencies( self ):

@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
         self.targetDigests[ '3.2.2' ] = 'd43b799eedfb9408f62f9f056f5e8a645618467b'
         self.targetInstSrc[ '3.2.2' ] = "fftw-3.2.2"
         self.patchToApply[ '3.2.2' ] = [ ( 'fftw-3.2.2-20101125.diff', 1 ) ]
+        self.shortDescription = "a C subroutine library for computing the discrete Fourier transform (DFT)"
 
         self.defaultTarget = '3.2.2'
 

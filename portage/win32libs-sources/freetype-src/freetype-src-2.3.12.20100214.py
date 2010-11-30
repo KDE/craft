@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.3.12-1'] = "freetype-2.3.12"
         self.defaultTarget = '2.3.12-1'
         self.targetDigests['2.3.12-1'] = 'ebf0438429c0bedd310059326d91646c3c91016b'
+        self.shortDescription = "A Free, High-Quality, and Portable Font Engine"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.44'
         self.targetDigests['0.44'] = 'f781150e2d98806e91b7e0bee02abdc6baf9ac7d'
         self.patchToApply['0.44'] = ( 'libical-0.44-20100728.diff', 1 )
+        self.shortDescription = "reference implementation of the icalendar data type and serialization format"
     
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         if compiler.isMSVC():
             self.patchToApply['0.1.1'].append(('msvc-toC89.diff', 1))
         self.targetDigests['0.2.1'] = '1340eb7141b453088d39e62bba771413053a6d18'
+        self.shortDescription = "Tools for accessing and converting various ebook file formats"
         self.defaultTarget = '0.2.1'
 
     def setDependencies( self ):

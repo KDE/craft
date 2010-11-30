@@ -1,12 +1,12 @@
-import base
 import info
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
-        for v in [ '2.7.0' ]:
+        for v in [ '2.7.0', '2.8.4' ]:
             self.targets[ v ] = 'http://libarchive.googlecode.com/files/libarchive-' + v + '.tar.gz'
             self.targetInstSrc[ v ] = 'libarchive-' + v
-        self.defaultTarget = '2.7.0'
+        self.shortDescription = "C library and command-line tools for reading and writing tar, cpio, zip, ISO, and other archive formats"
+        self.defaultTarget = '2.8.4'
     
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -17,8 +17,8 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
         
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
+class Package( CMakePackageBase ):
+    def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 

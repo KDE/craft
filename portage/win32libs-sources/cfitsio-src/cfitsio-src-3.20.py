@@ -22,6 +22,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['3.10'] = "cfitsio"
         self.targetInstSrc['3.14'] = "cfitsio"
         self.targetInstSrc['3.20'] = "cfitsio"
+        self.shortDescription = "library for the FITS (Flexible Image Transport System) file format"
         self.defaultTarget = '3.20'
 
     def setDependencies( self ):

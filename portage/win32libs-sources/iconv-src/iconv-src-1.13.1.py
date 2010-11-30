@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.patchToApply[ver]  = ( 'iconv-src-%s.patch' % ver, 0 )
 
       self.targetDigests['1.13.1'] = '5b0524131cf0d7abd50734077f13aaa5508f6bbe'
+      self.shortDescription = "ATTENTION: library replaced by win_iconv! GNU character set conversion library and utilities"
       self.defaultTarget = '1.13.1'
 
     def setDependencies( self ):

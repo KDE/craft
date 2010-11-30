@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.targetDigests[ ver ] = '2b6dcb500e8135a9444a250d7df76f545915f25f'
         self.targetInstSrc[ ver ] = 'libidn-%s' % ver
         self.patchToApply[ ver ] = ("libidn-1.19-20101022.diff", 1)
+        self.shortDescription = "libidn internationalized domain names library"
         self.defaultTarget = ver
 
     def setDependencies( self ):

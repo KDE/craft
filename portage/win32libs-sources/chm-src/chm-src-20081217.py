@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.40'] = ('chm-cmake.diff', 0)
         self.targetInstSrc['0.40'] = 'chmlib-0.40'
         self.targetDigests['0.40'] = '5231d7531e8808420d7f89fd1e4fdbac1ed7a167'
+        self.shortDescription = "a library for dealing with Microsoft ITSS/CHM format files"
         self.defaultTarget = '0.40'
     
     def setDependencies( self ):

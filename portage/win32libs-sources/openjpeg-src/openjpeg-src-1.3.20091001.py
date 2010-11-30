@@ -10,13 +10,14 @@ class subinfo(info.infoclass):
         self.targetDigests['1.3'] = '8d6870d9500ea09e0b1d30b981bea1c8de534de4'
         self.svnTargets['svnHEAD'] = 'http://openjpeg.googlecode.com/svn/trunk/'
         self.options.configure.defines = " -DBUILD_SHARED_LIBS=ON "
+        self.shortDescription = "a library for handling JPEG2000 image formats"
         self.defaultTarget = '1.3'
 
     def setDependencies( self ):
         self.dependencies['win32libs-bin/tiff'] = 'default'
 
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
+    def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         

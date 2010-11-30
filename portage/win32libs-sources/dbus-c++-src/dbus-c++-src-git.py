@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitFOLLOW'] = 'git://gitorious.org/~matlinuxer2/dbus-cplusplus/matlinuxer2s-mainline.git'
         self.targetConfigurePath['gitFOLLOW'] = 'cmake'
 
+        self.shortDescription = "a C++ binding for dbus"
         self.defaultTarget = 'gitHEAD'
         #self.defaultTarget = 'gitFOLLOW'
 

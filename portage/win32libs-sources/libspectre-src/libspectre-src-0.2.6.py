@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.patchToApply["0.2.1"] = ("spectre-0.2.1-cmake.diff", 1)
         self.patchToApply["0.2.6"] = ("libspectre-0.2.6-20101117.diff", 1)
         self.targetDigests['0.2.6'] = '819475c7e34a1e9bc2e876110fee530b42aecabd'
+        self.shortDescription = "a wrapper library for libgs"
         self.defaultTarget = '0.2.6'
 
     def setDependencies( self ):

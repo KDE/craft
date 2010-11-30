@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.patchToApply[ '3.5.21' ] = ( "djvu-cmake.diff", 0 )
         self.patchToApply[ '3.5.23' ] = ( "djvulibre-3.5.23-20101116.diff", 1 )
         self.targetDigests['3.5.23'] = 'b19f6b461515a52eb1048aec81e04dfd836d681f'
+        self.shortDescription = "DjVuLibre is an implementation of DjVu image file format"
         self.defaultTarget = '3.5.23'
     
     def setDependencies( self ):

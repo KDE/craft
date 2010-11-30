@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'libxml2-' + ver
         self.patchToApply['2.7.7'] = ("libxml2-2.7.7-20101103.diff", 1)
         self.targetDigests['2.7.7'] = '8592824a2788574a172cbddcdc72f734ff87abe3'
+        self.shortDescription = "XML C parser and toolkit (runtime and applications)"
         
         self.defaultTarget = '2.7.7'
 
