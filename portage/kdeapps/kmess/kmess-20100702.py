@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 import info
-import os
 from Package.CMakePackageBase import *
 
 class subinfo( info.infoclass ):
@@ -9,8 +7,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['testing/libgcrypt-src'] = 'default'
+        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['testing/libgcrypt-src'] = 'default'
         
 class Package(CMakePackageBase):
     def __init__( self, **args ):

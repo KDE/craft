@@ -1,26 +1,23 @@
-# -*- coding: utf-8 -*-
-import base
-import os
-import utils
 import info
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/lcms'] = 'default'
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        self.hardDependencies['kdesupport/eigen2'] = 'default'
-        self.softDependencies['kdesupport/qca'] = 'default'
-        self.softDependencies['testing/gsl'] = 'default'
+        self.dependencies['win32libs-bin/lcms'] = 'default'
+        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
+#        self.dependencies['testing/gsl'] = 'default'
+        self.buildDependencies['kdesupport/eigen2'] = 'default'
     
 from Package.CMakePackageBase import *
         
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
+class Package( CMakePackageBase ):
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
 		defines = ""
         defines += "-DBUILD_karbon=OFF "
         defines += "-DBUILD_kpresenter=OFF "
@@ -36,7 +33,6 @@ class Package(CMakePackageBase):
         defines += "-DBUILD_doc=OFF "
 
 		self.subinfo.options.configure.defines = defines
-        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
     Package().execute()

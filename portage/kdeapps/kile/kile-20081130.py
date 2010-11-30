@@ -1,8 +1,5 @@
-import base
-import os
-import sys
 import info
-import utils
+from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -10,29 +7,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kdebase-runtime'] = 'default'
     
-class subclass(base.baseclass):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kile"
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "kile", self.buildTarget, True )
-        else:
-            return self.doPackaging( "kile", os.path.basename(sys.argv[0]).replace("kile-", "").replace(".py", ""), True )
-
-
-if __name__ == '__main__':		
-    subclass().execute()
+        CMakePackageBase.__init__(self)
+        
+if __name__ == '__main__':
+    Package().execute()
