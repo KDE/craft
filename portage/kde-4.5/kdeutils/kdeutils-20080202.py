@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde-4.5/kdepimlibs'] = 'default'
 #        self.dependencies['win32libs-bin/libgmp'] = 'default'
         self.dependencies['win32libs-bin/libzip'] = 'default'
-#        self.dependencies['gnuwin32/libarchive'] = 'default'
+        self.dependencies['win32libs-bin/libarchive'] = 'default'
 
 from Package.CMakePackageBase import *
         
