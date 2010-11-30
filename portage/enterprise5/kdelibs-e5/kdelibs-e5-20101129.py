@@ -67,7 +67,6 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
         self.hardDependencies['win32libs-sources/openssl-src']  = 'default'
         self.hardDependencies['win32libs-sources/pcre-src']  = 'default'
-        self.hardDependencies['win32libs-sources/shared-desktop-ontologies-src'] = 'default'
 # binary packages only
         self.hardDependencies['win32libs-bin/giflib']  = 'default'
         self.hardDependencies['win32libs-bin/jpeg']  = 'default'
@@ -83,6 +82,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
+        self.hardDependencies['data/shared-desktop-ontologies'] = 'default'
         self.hardDependencies['data/aspell-data'] = 'default'
         self.hardDependencies['data/docbook-xsl'] = 'default'
         self.hardDependencies['data/docbook-dtd'] = 'default'

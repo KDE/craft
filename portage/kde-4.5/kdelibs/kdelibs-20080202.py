@@ -13,8 +13,6 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/automoc'] = 'default'
-        self.dependencies['data/docbook-dtd'] = 'default'
-        self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'
         self.dependencies['kdesupport/kdewin'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
@@ -24,7 +22,9 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/soprano'] = 'default'
         self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
-        self.dependencies['win32libs-bin/shared-desktop-ontologies'] = 'default'
+        self.dependencies['data/docbook-dtd'] = 'default'
+        self.dependencies['data/docbook-xsl'] = 'default'
+        self.dependencies['data/shared-desktop-ontologies'] = 'default'
 
 from Package.CMakePackageBase import *
         
