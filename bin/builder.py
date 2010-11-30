@@ -57,8 +57,9 @@ DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
 
 class Builder(object):
 
-    def __init__(self, command):
+    def __init__(self, command, tries = 1):
         self.command       = command
+        self.tries         = tries
         self.build_status  = {}
 
     def recursiveBuild(self, node):
@@ -78,11 +79,13 @@ class Builder(object):
 
         # only build node if all of its children are built correctly
         if all_okay:
-            exit_status = os.system(self.command % {
-                'category': node.category,
-                'package' : node.package,
-                'version' : node.version,
-                'tag'     : node.tag })
+            for t in range(self.tries):
+                exit_status = os.system(self.command % {
+                    'category': node.category,
+                    'package' : node.package,
+                    'version' : node.version,
+                    'tag'     : node.tag })
+                if exit_status == 0: break
             all_okay = exit_status == 0
 
         self.build_status[name] = all_okay
@@ -94,7 +97,8 @@ class Builder(object):
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "c:", ["command="])
+        opts, args = getopt.getopt(
+            sys.argv[1:], "c:t:", ["command=", "tries="])
     except getopt.GetoptError, err:
         print >> sys.stderr, str(err)
         sys.exit(1)
@@ -105,9 +109,13 @@ def main():
 
     command = DEFAULT_COMMAND
 
+    tries = 1
+
     for o, a in opts:
         if o in ("-c", "--command"):
             command = a
+        elif o in ("-t", "--tries"):
+            tries = max(1, abs(int(a)))
 
     packageList, categoryList = portage.getPackagesCategories(args[0])
 
@@ -116,7 +124,7 @@ def main():
     for category, package in zip(categoryList, packageList):
         dep_tree.addDependencies(category, package)
 
-    builder = Builder(command)
+    builder = Builder(command, tries)
 
     builder.build(dep_tree)
 

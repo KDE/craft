@@ -182,11 +182,12 @@ class Worker(Process):
        and puts the results to a 'done' queue.
     """
 
-    def __init__(self, todo, done):
+    def __init__(self, todo, done, tries = 1):
         """Creates a worker with a 'todo' and a 'done' job queue.""" 
         Process.__init__(self)
         self.todo   = todo
         self.done   = done
+        self.tries  = tries
         self.daemon = True
         self.start()
 
@@ -203,10 +204,13 @@ class Worker(Process):
                 log("start", execute[0])
                 sys.stdout.flush()
                 exit_code = 1
-                try:
-                    exit_code = os.system(execute[1])
-                except:
-                    traceback.print_exc()
+                for t in range(self.tries):
+                    try:
+                        exit_code = os.system(execute[1])
+                    except:
+                        traceback.print_exc()
+                    if exit_code == 0: 
+                        break
                 log("stop", execute[0])
                 sys.stdout.flush()
                 self.done.put((execute[0], exit_code))
@@ -217,9 +221,10 @@ class ParallelBuilder(object):
        in parallel with a given number of workers.
     """
 
-    def __init__(self, command):
+    def __init__(self, command, tries = 1):
         """Creates a builder with a given command template."""
         self.command = command
+        self.tries   = tries
 
     def buildBlocked(self, node, blocked, jobs, ready):
         """Recursive working method to create the jobs lists from the
@@ -265,7 +270,7 @@ class ParallelBuilder(object):
 
         todo, done = Queue(), Queue()
 
-        for _ in range(num_worker): Worker(todo, done)
+        for _ in range(num_worker): Worker(todo, done, self.tries)
 
         for job in ready:
             todo.put(job.triggerExec(self.command))
@@ -297,7 +302,7 @@ class ParallelBuilder(object):
 def main():
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:], "c:j:", ["command=", "jobs="])
+            sys.argv[1:], "c:j:t:", ["command=", "jobs=", "tries="])
     except getopt.GetoptError, err:
         print >> sys.stderr, str(err)
         sys.exit(1)
@@ -309,12 +314,15 @@ def main():
     command = DEFAULT_COMMAND
 
     num_worker = None
+    tries      = 1
 
     for o, a in opts:
         if o in ("-c", "--command"):
             command = a
         elif o in ("-j", "--jobs"):
             num_worker = max(1, int(a))
+        elif o in ("-t", "--tries"):
+            tries = max(1, abs(int(a)))
 
     packageList, categoryList = portage.getPackagesCategories(args[0])
 
@@ -323,7 +331,7 @@ def main():
     for category, package in zip(categoryList, packageList):
         dep_tree.addDependencies(category, package)
 
-    builder = ParallelBuilder(command)
+    builder = ParallelBuilder(command, tries)
 
     with ExecutionContext():
         exit_code = builder.build(dep_tree, num_worker)
