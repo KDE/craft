@@ -1,0 +1,35 @@
+# this is the package list for the automatic release builds
+# syntax:
+# category,package,target,patchlevel
+# e.g.:
+# win32libs-sources,dbus-src,1.4.0,1
+# is equivalent to emerge --target=1.4.0 --patchlevel=1 win32libs-sources/dbus-src
+#
+
+# kdesupport stuff
+kdesupport,attica,,
+kdesupport,qjson,,
+kdesupport,dbusmenu-qt,,
+kdesupport,kdewin,,
+kdesupport,phonon,,
+kdesupport,strigi,,
+kdesupport,soprano,,
+kdesupport,qca,,
+kdesupport,qimageblitz,,
+kdesupport,oxygen-icons,,
+
+# the KDE packages themselves
+kde-4.5,kdelibs,4.5.4,
+kde-4.5,kdepimlibs,4.5.4,
+kde-4.5,kdebase-runtime,4.5.4,
+kde-4.5,kdebase-workspace,4.5.4,
+kde-4.5,kdebase-apps,4.5.4,
+kde-4.5,kdeedu,4.5.4,
+kde-4.5,kdegames,4.5.4,
+kde-4.5,kdegraphics,4.5.4,
+kde-4.5,kdemultimedia,4.5.4,
+kde-4.5,kdenetwork,4.5.4,
+kde-4.5,kdepim,4.5.4,
+kde-4.5,kdesdk,4.5.4,
+kde-4.5,kdetoys,4.5.4,
+kde-4.5,kdeutils,4.5.4,
