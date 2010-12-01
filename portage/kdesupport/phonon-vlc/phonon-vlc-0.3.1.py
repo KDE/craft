@@ -12,6 +12,8 @@ class subinfo(info.infoclass):
         
     def setTargets( self ):
       self.targets['0.3.1'] = "http://download.kde.org/download.php?url=stable/phonon-backend-vlc/0.3.1/src/phonon-backend-vlc-0.3.1.tar.bz2"
+      self.targetInstSrc['0.3.1'] = "phonon-backend-vlc-0.3.1"
+      self.targetDigests['0.3.1'] = 'b94dddc6f37924c101a8bab7b7a184b7d6b42d96'
       self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon-vlc.git'
       self.defaultTarget = '0.3.1'
          
