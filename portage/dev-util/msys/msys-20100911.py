@@ -24,5 +24,10 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
 
+    def unpack(self):
+        if not BinaryPackageBase.unpack(self):
+            return False
+        utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
+        return True
 if __name__ == '__main__':
     Package().execute()
