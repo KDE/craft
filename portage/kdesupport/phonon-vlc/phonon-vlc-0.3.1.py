@@ -11,8 +11,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         
     def setTargets( self ):
+      self.targets['0.3.1'] = "http://download.kde.org/download.php?url=stable/phonon-backend-vlc/0.3.1/phonon-backend-vlc-0.3.1.tar.bz2"
       self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon-vlc.git'
-      self.defaultTarget = 'gitHEAD'
+      self.defaultTarget = '0.3.1'
          
 
 class Package( CMakePackageBase ):
