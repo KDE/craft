@@ -9,8 +9,9 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['0.0.1'] = 'http://www.kdab.com/~andy/setupdll.zip'
+        self.svnTargets['gitHEAD'] = "git://git.kde.org/scratch/aholzammer/setupdll.git"
         self.targetConfigurePath['0.0.1'] = 'setupdll'
-        self.defaultTarget = '0.0.1'
+        self.defaultTarget = 'gitHEAD'
         
     def setBuildOptions( self ):
         self.disableHostBuild = True
