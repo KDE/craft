@@ -9,11 +9,6 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.0.' + ver] = 'kdepimlibs-4.0.' + ver
         self.defaultTarget = 'svnHEAD'
 
-        if emergePlatform.isCrossCompilingEnabled():
-            #TODO: Fix it so that it works on Windows NT and upstream it into
-            # kdepimlibs.
-            self.patchToApply['svnHEAD'] = ('winldap-patch.diff', 0)
-    
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
