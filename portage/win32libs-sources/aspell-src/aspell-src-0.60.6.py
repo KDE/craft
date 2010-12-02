@@ -27,5 +27,8 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
+        if emergePlatform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines = ("-DASPELL_STATIC=ON ")
+
 if __name__ == '__main__':
     Package().execute()

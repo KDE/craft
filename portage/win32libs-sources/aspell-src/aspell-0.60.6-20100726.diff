@@ -38,7 +38,7 @@ diff -Nru aspell-0.60.6.orig/cmake/modules/FindWcecompat.cmake aspell-0.60.6/cma
 diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 --- aspell-0.60.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ aspell-0.60.6/CMakeLists.txt	2010-11-12 09:08:46.286432600 +0100
-@@ -0,0 +1,171 @@
+@@ -0,0 +1,176 @@
 +project(aspell)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -186,7 +186,12 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +    )
 +endif(MSVC)
 +
++if(ASPELL_STATIC)
++add_library(aspell STATIC ${aspell_SRCS})
++add_definitions(-DASPELL_STATIC)
++else(ASPELL_STATIC)
 +add_library(aspell SHARED ${aspell_SRCS})
++endif(ASPELL_STATIC)
 +set_target_properties(aspell PROPERTIES DEFINE_SYMBOL MAKE_ASPELL_LIB)
 +
 +if(WINCE)
@@ -213,7 +218,7 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_export.h
 --- aspell-0.60.6.orig/common/aspell_export.h	1970-01-01 01:00:00.000000000 +0100
 +++ aspell-0.60.6/common/aspell_export.h	2010-11-12 09:05:18.256534000 +0100
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,27 @@
 +// This file is added to The New Aspell
 +// Copyright (C) 2010 by Patrick Spendrin under the GNU LGPL license
 +// version 2.0 or 2.1.  You should have received a copy of the LGPL
@@ -223,18 +228,23 @@ diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_
 +#ifndef ASPELL_EXPORT_HPP
 +# define ASPELL_EXPORT_HPP
 +
-+# ifndef ASPELL_EXPORT // check that it isn't defined (e.g. )
-+#  if defined(_WIN32) || defined(_WIN64)
-+#   pragma warning( disable: 4251 )
-+#   ifdef MAKE_ASPELL_LIB
-+#    define ASPELL_EXPORT __declspec(dllexport)
-+#   else
-+#    define ASPELL_EXPORT __declspec(dllimport)
++# ifndef ASPELL_STATIC // no export import for static libs
++#error "i should not be here"
++#  ifndef ASPELL_EXPORT // check that it isn't defined (e.g. )
++#   if defined(_WIN32) || defined(_WIN64)
++#    pragma warning( disable: 4251 )
++#    ifdef MAKE_ASPELL_LIB
++#     define ASPELL_EXPORT __declspec(dllexport)
++#    else
++#     define ASPELL_EXPORT __declspec(dllimport)
++#    endif
 +#   endif
++#  else
++#   define ASPELL_EXPORT
 +#  endif
-+# else
++# else // ASPELL_STATIC
 +#  define ASPELL_EXPORT
-+# endif
++# endif // ASPELL_STATIC
 +#endif // ASPELL_EXPORT_HPP
 \ No newline at end of file
 diff -Nru aspell-0.60.6.orig/common/cache-t.hpp aspell-0.60.6/common/cache-t.hpp
