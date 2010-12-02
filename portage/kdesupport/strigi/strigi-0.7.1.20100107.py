@@ -52,11 +52,16 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
         if emergePlatform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines = "-DBUILD_DAEMON=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_CLUECENE=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_CPPUNIT=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_XINE=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_FFMPEG=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_EXIV2=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_INOTIFY=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_POLLING=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_FAM=OFF "
+            self.subinfo.options.configure.defines += "-DENABLE_LOG4CXX=OFF "
 
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
