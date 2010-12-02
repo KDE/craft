@@ -1,0 +1,32 @@
+From 8c48c7b9bca8074c48b78f6d089a3882b2d73a9d Mon Sep 17 00:00:00 2001
+From: Alan Alpert <alan.alpert@nokia.com>
+Date: Fri, 15 Oct 2010 11:32:07 +1000
+Subject: [PATCH] Recalculate Text Element's alignment when width changes
+
+Task-number: QTBUG-14463
+Reviewed-by: Aaron Kennedy
+---
+ src/declarative/graphicsitems/qdeclarativetext.cpp |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/declarative/graphicsitems/qdeclarativetext.cpp b/src/declarative/graphicsitems/qdeclarativetext.cpp
+index 308aefa..22282d2 100644
+--- a/src/declarative/graphicsitems/qdeclarativetext.cpp
++++ b/src/declarative/graphicsitems/qdeclarativetext.cpp
+@@ -1143,9 +1143,10 @@ QRectF QDeclarativeText::boundingRect() const
+ void QDeclarativeText::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+ {
+     Q_D(QDeclarativeText);
+-    if (!d->internalWidthUpdate && newGeometry.width() != oldGeometry.width() &&
+-        (d->wrapMode != QDeclarativeText::NoWrap || d->elideMode != QDeclarativeText::ElideNone)) {
+-
++    if ((!d->internalWidthUpdate && newGeometry.width() != oldGeometry.width())
++            && (d->wrapMode != QDeclarativeText::NoWrap
++                || d->elideMode != QDeclarativeText::ElideNone
++                || d->hAlign != Qt::AlignLeft)) {
+         if (d->singleline && d->elideMode != QDeclarativeText::ElideNone && widthValid()) {
+             // We need to re-elide
+             d->updateLayout();
+-- 
+1.7.0.2.msysgit.0
+
