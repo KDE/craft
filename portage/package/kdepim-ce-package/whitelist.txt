@@ -137,6 +137,8 @@ share\\akonadi\\agents\\maildispatcheragent\.desktop
 share\\akonadi\\agents\\akonotesresource\.desktop
 share\\akonadi\\agents\\imapresource\.desktop
 share\\akonadi\\agents\\kolabproxyresource\.desktop
+share\\akonadi\\agents\\newmailnotifieragent\.desktop
+share\\akonadi\\agents\\korgacagent\.desktop
 share\\applications\\kde4\\
 share\\apps\\akonadi\\
 share\\apps\\akonadi-kde\\kcfg2dbus\.xsl
