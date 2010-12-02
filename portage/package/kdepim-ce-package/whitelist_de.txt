@@ -1,5 +1,7 @@
 # This file contains additional expressions to
 # for the german localization of Kontact Mobile
+aspell.*\\de.*
+
 share\\locale\\de\\entry\.desktop
 share\\locale\\de\\LC_MESSAGES\\gnupg2\.mo
 share\\locale\\de\\LC_MESSAGES\\libgpg-error\.mo
