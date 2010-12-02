@@ -395,6 +395,9 @@ share\\locale\\all_languages
 # Handbooks
 .*de\\kontact-touch\\.*
 
+# Licenses
+share\\apps\\kontact-touch\\licenses\.pdf
+
 # Qxygen Icon theme
 share\\icons\\oxygen\\index\.theme
 
