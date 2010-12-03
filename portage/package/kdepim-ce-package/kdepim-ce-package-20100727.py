@@ -223,6 +223,16 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                 f.write('[Locale]\n')
                 f.write('Country=de\n')
                 f.write('Language=de\n')
+        # Configure GNUPG
+        # FIXME disable when gpg is fixed
+        confdir = os.path.join(self.workDir(), "gnupg")
+        if not os.path.isdir(confdir):
+            os.mkedirs(confdir)
+            with open(os.path.join(confdir, "gpgsm.conf"),"w") as f:
+                f.write("disable-dirmngr\n")
+                f.write("disable-crl-checks\n")
+                f.write("verbose\n")
+                f.write("debug 1024\n")
 
     def translateFirstrun(self):
         '''
@@ -298,8 +308,8 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
 
         destinationdirs = [
-            (d.endswith("windows") and "a%d = 0,\\%s"
-                    or "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
+            ("a%d = 0,\\%s" if d.endswith("windows") or d.endswith("gnupg")
+            else "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
 
