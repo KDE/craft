@@ -234,6 +234,13 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                 f.write("verbose\n")
                 f.write("debug 1024\n")
 
+        # Configure Strigi
+        confdir = os.path.join(self.workDir(), "My Documents", ".strigi")
+        if not os.path.isdir(confdir):
+            os.makedirs(confdir)
+        utils.copyFile(os.path.join(self.packageDir(), "daemon.conf"),
+                       os.path.join(confdir, "daemon.conf"))
+
     def translateFirstrun(self):
         '''
            Add localized versions of the akonadi firstrunrc's
@@ -308,7 +315,8 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
 
         destinationdirs = [
-            ("a%d = 0,\\%s" if d.endswith("windows") or d.endswith("gnupg")
+            ("a%d = 0,\\%s" if d.endswith("windows") or d.endswith("gnupg") \
+                    or d.endswith(".strigi")
             else "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
