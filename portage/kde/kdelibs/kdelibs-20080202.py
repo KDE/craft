@@ -68,7 +68,8 @@ class Package(CMakePackageBase):
                     "-DBUILD_kutils=TRUE "\
                     "-DBUILD_kross=TRUE "\
                     "-DBUILD_interfaces=TRUE " \
-                    "-DBUILD_sonnet=TRUE "
+                    "-DBUILD_sonnet=TRUE " \
+                    "-DKDECORE_INPROCESS_SSLD=ON "
 
 if __name__ == '__main__':
     Package().execute()
