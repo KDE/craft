@@ -227,7 +227,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
         # FIXME disable when gpg is fixed
         confdir = os.path.join(self.workDir(), "gnupg")
         if not os.path.isdir(confdir):
-            os.mkedirs(confdir)
+            os.makedirs(confdir)
             with open(os.path.join(confdir, "gpgsm.conf"),"w") as f:
                 f.write("disable-dirmngr\n")
                 f.write("disable-crl-checks\n")
