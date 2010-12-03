@@ -69,7 +69,8 @@ class Package(CMakePackageBase):
                     "-DBUILD_kross=TRUE "\
                     "-DBUILD_interfaces=TRUE " \
                     "-DBUILD_sonnet=TRUE " \
-                    "-DKDECORE_INPROCESS_SSLD=ON "
+                    "-DKDECORE_INPROCESS_SSLD=ON " \
+                    "-DKDELIBS_USE_FAKE_WALLET=ON "
 
 if __name__ == '__main__':
     Package().execute()
