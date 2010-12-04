@@ -16,16 +16,11 @@ class subinfo(info.infoclass):
         
 
     def setTargets( self ):
-        self.svnTargets['0.80'] = 'tags/akonadi/0.80'
-        self.svnTargets['0.81'] = 'tags/akonadi/0.81'
-        self.svnTargets['0.82'] = 'tags/akonadi/0.82'
-        self.svnTargets['1.0.0'] = 'tags/akonadi/1.0.0'
-        self.svnTargets['1.0.80'] = 'tags/akonadi/1.0.80'
-        self.svnTargets['1.1.0']  = 'tags/akonadi/1.1.0'
-        self.svnTargets['1.1.1']  = 'tags/akonadi/1.1.1'
-        self.svnTargets['1.1.2']  = 'tags/akonadi/1.1.2'
-        self.svnTargets['1.1.3']  = 'tags/akonadi/1.1.3'
-        self.svnTargets['1.3.1']  = 'tags/akonadi/1.3.1'
+        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1','1.4.80']:
+          self.targets[ver] = 'http://download.akonadi-project.org/akonadi-' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'akonadi-' + ver
+          
+
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/akonadi'
         for i in ['4.5.0', '4.5']:

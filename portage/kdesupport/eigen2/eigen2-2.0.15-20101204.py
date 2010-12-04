@@ -11,9 +11,10 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.0.10'] = "http://bitbucket.org/eigen/eigen/get/2.0.10.tar.bz2"
-        self.targetInstSrc['2.0.10'] = "eigen"
-        self.defaultTarget = '2.0.10'
+        for ver in ['2.0.10','2.0.15']:
+          self.targets[ver] = 'http://bitbucket.org/eigen/eigen/get/' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'eigen'
+        self.defaultTarget = '2.0.15'
         
 from Package.CMakePackageBase import *
 

@@ -8,6 +8,12 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/dbusmenu/dbusmenu-qt.git'
+        
+        for ver in ['0.6.4']:
+          self.targets[ver] ='http://launchpad.net/libdbusmenu-qt/trunk/' + ver + '/+download/libdbusmenu-qt-' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver 
+        
+        
         self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *

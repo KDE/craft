@@ -7,8 +7,11 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/attica'
-        self.targets['0.1.3'] = 'ftp://ftp.kde.org/pub/kde/stable/attica/attica-0.1.3.tar.bz2'
-        self.targetInstSrc['0.1.3'] = 'attica-0.1.3'
+        
+        for ver in ['0.1.3','0.2.0']:
+          self.targets[ver] ='http://download.kde.org/download.php?url=stable/attica/attica-' + ver +'.tar.bz2'
+          self.targetInstSrc[ver] = 'attica-' + ver
+          
         self.defaultTarget = 'gitHEAD'
         
     def setBuildOptions( self ):
