@@ -710,7 +710,7 @@ diff -Nru gpgme-r1510.orig/CMakeLists.txt gpgme-r1510/CMakeLists.txt
 +    endif(WINCE)
 +    
 +    if(MSVC)
-+        add_definitions(-Dsnprintf=_snprintf -Dstrcasecmp=stricmp -Dstrncasecmp=stricmp -wd4996 -wd4244 -wd4018)
++        add_definitions(-Dsnprintf=_snprintf -Dstrcasecmp=_stricmp -Dstrncasecmp=_strnicmp -wd4996 -wd4244 -wd4018)
 +    endif(MSVC)
 +else(WIN32)
 +    set(gpgme_SRCS

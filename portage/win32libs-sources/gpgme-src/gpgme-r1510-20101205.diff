@@ -145,16 +145,19 @@ diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
  
    err = _gt_gpgme_new (gt, &gt->ctx);
    if (err)
-@@ -3001,7 +3003,7 @@
+@@ -3000,8 +3002,9 @@
+ /* MAIN PROGRAM STARTS HERE.  */
  
  const char *argp_program_version = VERSION;
- const char *argp_program_bug_address = "bug-gpgme@gnupg.org";
+-const char *argp_program_bug_address = "bug-gpgme@gnupg.org";
 -error_t argp_err_exit_status = 1;
++//const char *argp_program_bug_address = "bug-gpgme@gnupg.org";
++const char *argp_program_bug_address = "kde-windows@kde.org";
 +gpg_error_t argp_err_exit_status = 1;
  
  static char doc[] = "GPGME Tool -- invoke GPGME operations";
  static char args_doc[] = "COMMAND [OPTIONS...]";
-@@ -3011,7 +3013,7 @@
+@@ -3011,7 +3014,7 @@
    { 0 }
  };
  
@@ -163,7 +166,7 @@ diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
  static struct argp argp = { options, parse_options, args_doc, doc };
  
  struct args
-@@ -3027,7 +3029,7 @@
+@@ -3027,7 +3030,7 @@
  }
  
  
