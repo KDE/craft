@@ -5,6 +5,8 @@ import shutil
 import utils
 import info
 
+import compiler
+
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = '5.0.0'
@@ -21,15 +23,27 @@ class subinfo(info.infoclass):
 
 
 from Package.CMakePackageBase import *
-        
-class Package( CMakePackageBase ):
+from Package.VirtualPackageBase import *
+ 
+class PackageMinGW( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.package.withCompiler = False
 
-    def make_package( self ):
-        self.createImportLibs( "liblzma" )
-        return True
+    def createPackage( self ):        
+        shutil.copy( os.path.join( self.imageDir() , "lib" ,"liblzma.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"liblzma.lib" ))
+        return KDEWinPackager.createPackage( self )
 
+if compiler.isMinGW():
+    class Package(PackageMinGW):
+        def __init__( self ):
+            PackageMinGW.__init__( self )
+else:
+    class Package(VirtualPackageBase):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+            
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()
