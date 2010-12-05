@@ -170,7 +170,7 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +    )
 +    
 +    if(MSVC)
-+        add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -D__inline__=__inline -wd4996 -Dsnprintf=_snprintf -Dstrncasecmp=strnicmp -Dstrcasecmp=stricmp)
++        add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -D__inline__=__inline -wd4996 -Dsnprintf=_snprintf -Dstrncasecmp=_strnicmp -Dstrcasecmp=_stricmp)
 +    endif(MSVC)
 +	if(WINCE)
 +		set(gpg_error_SRCS
