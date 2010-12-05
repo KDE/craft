@@ -1,7 +1,7 @@
 diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 --- xz-5.0.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xz-5.0.0/CMakeLists.txt	2010-12-05 15:29:14.066582100 +0100
-@@ -0,0 +1,220 @@
++++ xz-5.0.0/CMakeLists.txt	2010-12-05 15:41:43.146868900 +0100
+@@ -0,0 +1,227 @@
 +cmake_minimum_required(VERSION 2.8)
 +project(liblzma)
 +include(CheckIncludeFiles)
@@ -118,6 +118,7 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +    src/liblzma/common/filter_encoder.c
 +    src/liblzma/common/filter_flags_decoder.c
 +    src/liblzma/common/filter_flags_encoder.c
++    src/liblzma/common/hardware_physmem.c
 +    src/liblzma/common/index.c
 +    src/liblzma/common/index_decoder.c
 +    src/liblzma/common/index_encoder.c
@@ -166,6 +167,8 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +    src/liblzma/check/crc64_fast.c
 +#     src/liblzma/check/crc32_x86.S
 +#     src/liblzma/check/crc64_x86.S
++
++    src/common/tuklib_physmem.c
 +    )
 +
 +set(CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS} "-DHAVE_CONFIG_H -std=gnu99 -mms-bitfields")
@@ -191,6 +194,7 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +    src/xz/coder.c
 +    src/xz/coder.h
 +    src/xz/file_io.c
++    src/xz/list.c
 +    src/xz/main.c
 +    src/xz/message.c
 +    src/xz/options.c
@@ -218,7 +222,10 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +install(DIRECTORY src/liblzma/api/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 +
 +
-+set(LZMAINFO_SRC src/lzmainfo/lzmainfo.c)
++set(LZMAINFO_SRC src/lzmainfo/lzmainfo.c
++    src/common/tuklib_progname.c
++    src/common/tuklib_exit.c
++    )
 +add_executable(lzmainfo ${LZMAINFO_SRC})
 +target_link_libraries(lzmainfo lzma)
 +install(TARGETS lzmainfo RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
