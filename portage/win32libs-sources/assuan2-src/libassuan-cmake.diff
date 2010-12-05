@@ -1,0 +1,474 @@
+diff -Nru libassuan-r400.orig/cmake/modules/FindGpg-Error.cmake libassuan-r400/cmake/modules/FindGpg-Error.cmake
+--- libassuan-r400.orig/cmake/modules/FindGpg-Error.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libassuan-r400/cmake/modules/FindGpg-Error.cmake	2010-12-05 02:23:03.970413400 +0100
+@@ -0,0 +1,35 @@
++# - Try to find GPG_ERROR
++# Once done this will define
++#
++#  GPG_ERROR_FOUND - system has GPG_ERROR
++#  GPG_ERROR_INCLUDE_DIR - the GPG_ERROR include directory
++#  GPG_ERROR_LIBRARIES - the libraries needed to use GPG_ERROR
++
++if (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    # in cache already
++    SET(GPG_ERROR_FOUND TRUE)
++
++else (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    FIND_PATH(GPG_ERROR_INCLUDE_DIR gpg-error.h)
++
++    FIND_LIBRARY(GPG_ERROR_LIBRARIES NAMES gpg-error libgpg-error gpg-error-0 libgpg-error-0)
++
++    if (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++       set(GPG_ERROR_FOUND TRUE)
++    endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    if (GPG_ERROR_FOUND)
++      if (NOT GPG_ERROR_FIND_QUIETLY)
++        message(STATUS "Found gpg-error: ${GPG_ERROR_LIBRARIES}")
++      endif (NOT GPG_ERROR_FIND_QUIETLY)
++    else (GPG_ERROR_FOUND)
++      if (GPG-ERROR_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find gpg-error")
++      endif (GPG-ERROR_FIND_REQUIRED)
++    endif (GPG_ERROR_FOUND)
++
++    MARK_AS_ADVANCED(GPG_ERROR_INCLUDE_DIR GPG_ERROR_LIBRARIES)
++
++endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
+diff -Nru libassuan-r400.orig/CMakeLists.txt libassuan-r400/CMakeLists.txt
+--- libassuan-r400.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libassuan-r400/CMakeLists.txt	2010-12-05 02:30:23.310542200 +0100
+@@ -0,0 +1,124 @@
++project(assuan)
++
++cmake_minimum_required(VERSION 2.6)
++
++option(BUILD_STATIC "build a static library instead of a dll" OFF)
++
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
++find_package(Gpg-Error REQUIRED)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GPG_ERROR_INCLUDE_DIR})
++
++include(ConfigureChecks.cmake)
++
++if(WIN32)
++	set(HostOS mingw32)
++	if(WINCE)
++		set(HostOS mingw32ce)
++        include_directories(${GPG_ERROR_INCLUDE_DIR}/gpg-extra)
++        find_program(MKHEADER_EXE mkheader)
++        set(MKHEADER_TARGET)
++	else(WINCE)
++        add_executable(mkheader src/mkheader.c)
++        get_target_property(MKHEADER_EXE mkheader LOCATION)
++        install(TARGETS mkheader RUNTIME DESTINATION bin
++                                 LIBRARY DESTINATION lib
++                                 ARCHIVE DESTINATION lib)
++        set(MKHEADER_TARGET mkheader)
++	endif(WINCE)
++endif(WIN32)
++
++add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/assuan.h COMMAND ${MKHEADER_EXE} ${HostOS} ${CMAKE_CURRENT_SOURCE_DIR}/src/assuan.h.in > ${CMAKE_CURRENT_BINARY_DIR}/assuan.h DEPENDS ${MKHEADER_TARGET})
++
++set(assuan_SRCS
++    src/assuan.c
++    src/context.c
++    src/system.c
++	src/debug.c
++    src/conversion.c
++	src/client.c
++    src/server.c
++	src/assuan-error.c
++	src/assuan-buffer.c
++	src/assuan-handler.c
++	src/assuan-inquire.c
++	src/assuan-listen.c
++	src/assuan-pipe-server.c
++	src/assuan-socket-server.c
++	src/assuan-pipe-connect.c
++	src/assuan-socket-connect.c
++	src/assuan-uds.c
++	src/assuan-logging.c
++	src/assuan-socket.c
++    src/sysutils.c
++    src/assuan-io.c
++	${CMAKE_CURRENT_BINARY_DIR}/assuan.h
++)
++
++if(NOT HAVE_PUTC_UNLOCKED)
++	set(assuan_SRCS ${assuan_SRCS} src/putc_unlocked.c)
++endif(NOT HAVE_PUTC_UNLOCKED)
++if(NOT HAVE_STPCPY)
++	set(assuan_SRCS ${assuan_SRCS} src/stpcpy.c)
++endif(NOT HAVE_STPCPY)
++if(NOT HAVE_MEMRCHR)
++	set(assuan_SRCS ${assuan_SRCS} src/memrchr.c)
++endif(NOT HAVE_MEMRCHR)
++if(NOT HAVE_VASPRINTF)
++	set(assuan_SRCS ${assuan_SRCS} src/vasprintf.c)
++endif(NOT HAVE_VASPRINTF)
++if(NOT HAVE_SETENV)
++	set(assuan_SRCS ${assuan_SRCS} src/setenv.c)
++endif(NOT HAVE_SETENV)
++
++if(WIN32)
++    set(assuan_SRCS ${assuan_SRCS} src/libassuan.def)
++
++    if(WINCE)
++        set(assuan_SRCS ${assuan_SRCS} src/system-w32ce.c)
++    else(WINCE)
++        set(assuan_SRCS ${assuan_SRCS} src/system-w32.c)
++    endif(WINCE)
++
++	if(MSVC)
++		add_definitions(-D_CRT_SECURE_NO_DEPRECATE -wd4996)
++	endif(MSVC)
++endif(WIN32)
++
++if(BUILD_STATIC)
++    set(_shared STATIC)
++else(BUILD_STATIC)
++    set(_shared SHARED)
++endif(BUILD_STATIC)
++
++add_library(assuan2 ${_shared} ${assuan_SRCS})
++target_link_libraries(assuan2 ${GPG_ERROR_LIBRARIES})
++if(WIN32)
++    if(WINCE)
++        target_link_libraries(assuan2 ws2)
++    else(WINCE)
++        target_link_libraries(assuan2 ws2_32)
++    endif(WINCE)
++endif(WIN32)
++
++install(TARGETS assuan2 RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++
++if(WINCE)
++    set(gpgcedev_SRCS
++        src/gpgcedev.c
++        src/gpgcedev.def
++    )
++    add_library(gpgcedev ${gpgcedev_SRCS})
++
++    set(gpgcemgr_SRCS
++         src/gpgcemgr.c
++    )
++    add_executable(gpgcemgr ${gpgcemgr_SRCS})
++
++    install(TARGETS gpgcedev gpgcemgr   RUNTIME DESTINATION bin
++                                        LIBRARY DESTINATION lib
++                                        ARCHIVE DESTINATION lib)
++endif(WINCE)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/assuan.h DESTINATION include)
+diff -Nru libassuan-r400.orig/config.h.cmake libassuan-r400/config.h.cmake
+--- libassuan-r400.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libassuan-r400/config.h.cmake	2010-12-05 02:23:03.974413700 +0100
+@@ -0,0 +1,229 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Define to 1 if you have the declaration of `sys_siglist', and to 0 if you
++   don't. */
++#cmakedefine HAVE_DECL_SYS_SIGLIST 1
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H 1
++
++/* Defined if we run on some of the PCDOS like systems (DOS, Windoze. OS/2)
++   with special properties like no file modes */
++#cmakedefine HAVE_DOSISH_SYSTEM 1
++
++/* Define to 1 if you have the `flockfile' function. */
++#cmakedefine HAVE_FLOCKFILE 1
++
++/* Define to 1 if you have the `fopencookie' function. */
++#cmakedefine HAVE_FOPENCOOKIE 1
++
++/* Define to 1 if you have the `funlockfile' function. */
++#cmakedefine HAVE_FUNLOCKFILE 1
++
++/* Define to 1 if you have the `funopen' function. */
++#cmakedefine HAVE_FUNOPEN 1
++
++/* Define to 1 if you have the `inet_pton' function. */
++#cmakedefine HAVE_INET_PTON 1
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the `isascii' function. */
++#cmakedefine HAVE_ISASCII 1
++
++/* Define to 1 if you have the <locale.h> header file. */
++#cmakedefine HAVE_LOCALE_H 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the `memrchr' function. */
++#cmakedefine HAVE_MEMRCHR 1
++
++/* Define to 1 if you have the `nanosleep' function in libc. */
++#cmakedefine HAVE_NANOSLEEP 1
++
++/* Define to 1 if you have the `putc_unlocked' function. */
++#cmakedefine HAVE_PUTC_UNLOCKED 1
++
++/* Define to 1 if you have the `setenv' function. */
++#cmakedefine HAVE_SETENV 1
++
++/* Defined if SO_PEERCRED is supported (Linux specific) */
++#cmakedefine HAVE_SO_PEERCRED 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the `stpcpy' function. */
++#cmakedefine HAVE_STPCPY 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H 1
++
++/* Define to 1 if you have the <sys/socket.h> header file. */
++#cmakedefine HAVE_SYS_SOCKET_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H 1
++
++/* Define to 1 if you have the <sys/uio.h> header file. */
++#cmakedefine HAVE_SYS_UIO_H 1
++
++/* Define to 1 if the system has the type `uintptr_t'. */
++#cmakedefine HAVE_UINTPTR_T 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H 1
++
++/* Define to 1 if you have the `vasprintf' function. */
++#cmakedefine HAVE_VASPRINTF 1
++
++/* Defined if we run on WindowsCE */
++#cmakedefine HAVE_W32CE_SYSTEM 1
++
++/* Defined if we run on a W32 API based system */
++#cmakedefine HAVE_W32_SYSTEM 1
++
++/* Define to 1 if you have the <winsock2.h> header file. */
++#cmakedefine HAVE_WINSOCK2_H 1
++
++/* Define to 1 if you have the <ws2tcpip.h> header file. */
++#cmakedefine HAVE_WS2TCPIP_H 1
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#cmakedefine LT_OBJDIR @LT_OBJDIR@
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++#cmakedefine NO_MINUS_C_MINUS_O 1
++
++/* Name of this package */
++#cmakedefine PACKAGE @PACKAGE@
++
++/* Bug report address */
++#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
++
++/* Define to the home page for this package. */
++#cmakedefine PACKAGE_URL @PACKAGE_URL@
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
++
++/* Define as the return type of signal handlers (`int' or `void'). */
++#cmakedefine RETSIGTYPE @RETSIGTYPE@
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS 1
++
++/* Defined if descriptor passing is supported */
++#cmakedefine USE_DESCRIPTOR_PASSING 1
++
++/* Enable extensions on AIX 3, Interix.  */
++#ifndef _ALL_SOURCE
++# undef _ALL_SOURCE
++#endif
++/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif
++/* Enable threading extensions on Solaris.  */
++#ifndef _POSIX_PTHREAD_SEMANTICS
++# undef _POSIX_PTHREAD_SEMANTICS
++#endif
++/* Enable extensions on HP NonStop.  */
++#ifndef _TANDEM_SOURCE
++# undef _TANDEM_SOURCE
++#endif
++/* Enable general extensions on Solaris.  */
++#ifndef __EXTENSIONS__
++# undef __EXTENSIONS__
++#endif
++
++
++/* Version of this package */
++#cmakedefine VERSION @VERSION@
++
++/* Activate CMSG_LEN/CMSG_SPACE on MacOS X */
++#cmakedefine _DARWIN_C_SOURCE 1
++
++/* Define to 1 if on MINIX. */
++#cmakedefine _MINIX 1
++
++/* Define to 2 if the system does not provide POSIX.1 features except with
++   this defined. */
++#cmakedefine _POSIX_1_SOURCE 2
++
++/* Define to 1 if you need to in order for `stat' and other things to work. */
++#cmakedefine _POSIX_SOURCE 1
++
++/* Activate extensions on Solaris */
++#cmakedefine _XOPEN_SOURCE 1
++
++/* Activate extensions on Solaris */
++#cmakedefine _XOPEN_SOURCE_EXTENDED 1
++
++/* Activate extensions on Solaris */
++#cmakedefine __EXTENSIONS__ 1
++
++/* Define to empty if `const' does not conform to ANSI C. */
++#cmakedefine const 1
++
++/* Define to `__inline__' or `__inline' if that's what the C compiler
++   calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef __cplusplus
++#cmakedefine inline @inline@
++#endif
++
++/* Define to `unsigned int' if <sys/types.h> does not define. */
++#cmakedefine size_t @size_t@
++
++/* type to use in place of socklen_t if not defined */
++#cmakedefine socklen_t @socklen_t@
++
++#ifndef HAVE_STDINT_H
++/* Define to the type of an unsigned integer type of width exactly 16 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine uint16_t @uint16_t@
++
++/* Define to the type of an unsigned integer type wide enough to hold a
++   pointer, if such a type exists, and if the system does not define it. */
++#cmakedefine uintptr_t @uintptr_t@
++#endif
++
++#cmakedefine HAVE_ENVIRON_DECL
++#ifdef _WIN32
++#ifdef _MSC_VER
++# define S_IRUSR 0000400 /* read permission, owner */
++# define S_IWUSR 0000200 /* write permission, owner */
++# ifndef ENOFILE
++#  define ENOFILE ENOENT
++# endif
++# define snprintf _snprintf
++# define ssize_t SSIZE_T
++typedef int pid_t;
++#define GPG_ERR_ENABLE_ERRNO_MACROS 1
++#endif
++#endif
+diff -Nru libassuan-r400.orig/ConfigureChecks.cmake libassuan-r400/ConfigureChecks.cmake
+--- libassuan-r400.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libassuan-r400/ConfigureChecks.cmake	2010-12-05 02:23:03.975413700 +0100
+@@ -0,0 +1,70 @@
++#/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++set(PACKAGE "assuan2")
++set(VERSION "2.0.1")
++
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++include(CheckSymbolExists)
++
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("locale.h" HAVE_LOCALE_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/socket.h" HAVE_SYS_SOCKET_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/uio.h" HAVE_SYS_UIO_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("winsock2.h" HAVE_WINSOCK2_H)
++check_include_file("ws2tcpip.h" HAVE_WS2TCPIP_H)
++
++if(WIN32)
++    set(HAVE_DOSISH_SYSTEM 1)
++    set(HAVE_W32_SYSTEM 1)
++    if(WINCE)
++        set(HAVE_W32CE_SYSTEM 1)
++    endif(WINCE)
++endif(WIN32)
++
++if(MSVC)
++    set(inline "__inline")
++    set(uint16_t "unsigned __int16")
++    if(WINCE)
++        set(uintptr_t "unsigned __int32")
++    endif(WINCE)
++endif(MSVC)
++
++check_function_exists("flockfile" HAVE_FLOCKFILE)
++check_function_exists("fopencookie" HAVE_FOPENCOOKIE)
++check_function_exists("funlockfile" HAVE_FUNLOCKFILE)
++check_function_exists("funopen" HAVE_FUNOPEN)
++check_function_exists("isascii" HAVE_ISASCII)
++check_function_exists("memrchr" HAVE_MEMRCHR)
++check_function_exists("nanosleep" HAVE_NANOSLEEP)
++check_function_exists("putc_unlocked" HAVE_PUTC_UNLOCKED)
++check_function_exists("stpcpy" HAVE_STPCPY)
++check_function_exists("vasprintf" HAVE_VASPRINTF)
++check_function_exists("setenv" HAVE_SETENV)
++
++if(WIN32)
++    check_symbol_exists(environ "stdlib.h" HAVE_ENVIRON_DECL)
++endif(WIN32)
++
++#/* Defined if SO_PEERCRED is supported (Linux specific) */
++#cmakedefine HAVE_SO_PEERCRED 1
++
++#/* Defined if descriptor passing is supported */
++#cmakedefine USE_DESCRIPTOR_PASSING 1
++
++#/* Activate CMSG_LEN/CMSG_SPACE on MacOS X */
++#cmakedefine _DARWIN_C_SOURCE 1
++
++add_definitions(-DHAVE_CONFIG_H)
++
++configure_file(config.h.cmake config.h)
