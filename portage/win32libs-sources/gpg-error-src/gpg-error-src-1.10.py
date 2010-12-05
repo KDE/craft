@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.targetDigests['267'] = '001d8ec3b2b922664a0730e9dddac87f03c23f5f'
         self.patchToApply['267'] = [('libgpg-error-r267-20101205.diff', 1), ('libgpg-error-cmake.diff', 1)]
         self.shortDescription = "a small library with error codes and descriptions shared by most GnuPG related software"
-        self.defaultTarget = '1.10'
+        self.defaultTarget = '267'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

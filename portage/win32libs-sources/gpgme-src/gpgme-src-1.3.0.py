@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1510'] = [('gpgme-r1510-cmake.diff', 1), ('gpgme-r1510-20101205.diff', 1)]
         
         self.shortDescription = "GnuPG cryptography support library (runtime)"
-        self.defaultTarget = '1.3.0'
+        self.defaultTarget = '1510'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
