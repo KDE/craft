@@ -1,0 +1,13 @@
+diff -Nru libgpg-error-r267.orig/src/w32-gettext.c libgpg-error-r267/src/w32-gettext.c
+--- libgpg-error-r267.orig/src/w32-gettext.c	2010-11-01 16:48:52.000000000 +0100
++++ libgpg-error-r267/src/w32-gettext.c	2010-12-05 02:02:58.084440700 +0100
+@@ -33,7 +33,9 @@
+ #ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
+ #endif
++#ifdef HAVE_STDINT_H
+ #include <stdint.h>
++#endif
+ #ifndef HAVE_W32CE_SYSTEM
+ # include <locale.h>
+ #endif /*HAVE_W32CE_SYSTEM*/
