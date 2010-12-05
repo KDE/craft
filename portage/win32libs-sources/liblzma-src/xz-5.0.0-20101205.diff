@@ -1,7 +1,8 @@
 diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 --- xz-5.0.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xz-5.0.0/CMakeLists.txt	2010-12-05 13:20:58.005100200 +0100
-@@ -0,0 +1,208 @@
++++ xz-5.0.0/CMakeLists.txt	2010-12-05 15:29:14.066582100 +0100
+@@ -0,0 +1,220 @@
++cmake_minimum_required(VERSION 2.8)
 +project(liblzma)
 +include(CheckIncludeFiles)
 +include(CheckFunctionExists)
@@ -172,7 +173,10 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +add_library(lzma SHARED ${LZMA_SRC})
 +install(TARGETS lzma RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 +
-+set(XDEC_SRC src/xzdec/xzdec.c)
++set(XDEC_SRC src/xzdec/xzdec.c
++    src/common/tuklib_progname.c
++    src/common/tuklib_exit.c
++    )
 +add_executable(xzdec ${XDEC_SRC})
 +target_link_libraries(xzdec lzma)
 +install(TARGETS xzdec RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
@@ -192,7 +196,15 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +    src/xz/options.c
 +    src/xz/signals.c
 +    src/xz/suffix.c
-+    src/xz/util.c)
++    src/xz/util.c
++    
++    src/common/tuklib_progname.c
++    src/common/tuklib_exit.c
++    src/common/tuklib_cpucores.c
++    src/common/tuklib_mbstr_fw.c
++    src/common/tuklib_mbstr_width.c
++    src/common/tuklib_open_stdxxx.c
++    )
 +
 +add_executable(xz ${XZ_SRC})
 +target_link_libraries(xz lzma)
@@ -212,8 +224,8 @@ diff -Nru xz-5.0.0.orig/CMakeLists.txt xz-5.0.0/CMakeLists.txt
 +install(TARGETS lzmainfo RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 diff -Nru xz-5.0.0.orig/config.h.cmake xz-5.0.0/config.h.cmake
 --- xz-5.0.0.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ xz-5.0.0/config.h.cmake	2010-12-05 13:33:59.337421200 +0100
-@@ -0,0 +1,382 @@
++++ xz-5.0.0/config.h.cmake	2010-12-05 15:17:50.314049500 +0100
+@@ -0,0 +1,392 @@
 +/* Define to 1 if using x86 assembler optimizations. */
 +#cmakedefine HAVE_ASM_X86 1
 +
@@ -591,15 +603,25 @@ diff -Nru xz-5.0.0.orig/config.h.cmake xz-5.0.0/config.h.cmake
 +   pointer, if such a type exists, and if the system does not define it. */
 +#cmakedefine uintptr_t
 +
-+#define PACKAGE_URL "http://tukaani.org/xz/"
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT "lasse.collin@tukaani.org"
 +
++/* Define to the full name of this package. */
 +#define PACKAGE_NAME "XZ Utils"
 +
-+#define PACKAGE_BUGREPORT "lasse.collin@tukaani.org"
++/* Define to the home page for this package. */
++#define PACKAGE_URL "http://tukaani.org/xz/"
++
++/* How many MiB of RAM to assume if the real amount cannot be determined. */
++#define ASSUME_RAM 32
++
++#ifdef __MINGW32__
++#define _POSIX_
++#endif
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru xz-5.0.0.orig/src/xz/message.h xz-5.0.0/src/xz/message.h
 --- xz-5.0.0.orig/src/xz/message.h	2010-10-23 16:47:33.000000000 +0200
-+++ xz-5.0.0/src/xz/message.h	2010-12-05 13:23:59.897429900 +0100
++++ xz-5.0.0/src/xz/message.h	2010-12-05 15:17:50.321049900 +0100
 @@ -45,7 +45,7 @@
  ///
  /// This doesn't touch the exit status.
@@ -635,9 +657,21 @@ diff -Nru xz-5.0.0.orig/src/xz/message.h xz-5.0.0/src/xz/message.h
  		lzma_attribute((noreturn));
  
  
+diff -Nru xz-5.0.0.orig/src/xz/util.h xz-5.0.0/src/xz/util.h
+--- xz-5.0.0.orig/src/xz/util.h	2010-10-23 16:47:33.000000000 +0200
++++ xz-5.0.0/src/xz/util.h	2010-12-05 15:17:50.331050500 +0100
+@@ -101,7 +101,7 @@
+ /// A maximum of *left bytes is written starting from *pos. *pos and *left
+ /// are updated accordingly.
+ extern void my_snprintf(char **pos, size_t *left, const char *fmt, ...)
+-		lzma_attribute((format(printf, 3, 4)));
++		lzma_attribute((format(__printf__, 3, 4)));
+ 
+ 
+ /// \brief      Check if filename is empty and print an error message
 diff -Nru xz-5.0.0.orig/src/xzdec/xzdec.c xz-5.0.0/src/xzdec/xzdec.c
 --- xz-5.0.0.orig/src/xzdec/xzdec.c	2010-10-23 16:47:33.000000000 +0200
-+++ xz-5.0.0/src/xzdec/xzdec.c	2010-12-05 13:32:26.432165300 +0100
++++ xz-5.0.0/src/xzdec/xzdec.c	2010-12-05 15:17:50.341051000 +0100
 @@ -40,7 +40,7 @@
  static unsigned int display_errors = 2;
  
