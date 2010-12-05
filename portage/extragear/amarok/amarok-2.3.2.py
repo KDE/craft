@@ -6,8 +6,10 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets[ '2.3.1' ] =  'http://download.kde.org/download.php?url=stable/amarok/2.3.1/src/amarok-2.3.1.tar.bz2'
-        self.targetInstSrc[ '2.3.1' ] = "amarok-2.3.1"
+        for ver in [ '2.3.1', '2.3.2' ]:
+          self.targets[ver] = 'http://download.kde.org/download.php?url=stable/amarok/' + ver + '/src/amarok-' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'amarok-' + ver
+
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/amarok.git'
         self.defaultTarget = 'gitHEAD'
     
@@ -15,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/taglib'] = 'default'
         self.dependencies['kdesupport/taglib-extras'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'		
+        self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['testing/mysql-pkg'] = 'default'
         self.dependencies['kdesupport/liblastfm'] = 'default'
