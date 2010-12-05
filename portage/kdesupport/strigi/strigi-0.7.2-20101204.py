@@ -18,27 +18,23 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
-        self.svnTargets['0.5.8'] = 'tags/strigi/strigi/0.5.8'
-        self.svnTargets['0.5.9'] = 'tags/strigi/strigi/0.5.9'
-        self.svnTargets['0.5.10'] = 'tags/strigi/strigi/0.5.10'
-        self.svnTargets['0.5.11'] = 'tags/strigi/strigi/0.5.11'
-        self.svnTargets['0.6.3']  = 'tags/strigi/strigi/0.6.3'
-        self.svnTargets['0.6.4']  = 'tags/strigi/strigi/strigi-0.6.4'
-        self.svnTargets['0.6.5']  = 'tags/strigi/strigi/0.6.5'
-        self.svnTargets['0.7.0']  = 'tags/strigi/strigi/0.7.0'
-        self.svnTargets['0.7.1']  = 'tags/strigi/strigi/0.7.1'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
         self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/strigi'
+            
+        for ver in ['0.7.2']:
+          self.targets[ver] ='http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'strigi-' + ver
+        self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101204.diff", 1)
+          
         if emergePlatform.isCrossCompilingEnabled():
           #FIXME make strigi svnHEAD compile on Windows
           self.defaultTarget = 'komobranch'
         else:
-          self.defaultTarget = 'svnHEAD'
+          self.defaultTarget = '0.7.2'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

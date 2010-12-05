@@ -13,19 +13,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/soprano.git'
-        self.svnTargets['2.0.0']  = 'tags/soprano/2.0.0'
-        self.svnTargets['2.0.1']  = 'tags/soprano/2.0.1'
-        self.svnTargets['2.0.2']  = 'tags/soprano/2.0.2'
-        self.svnTargets['2.0.3']  = 'tags/soprano/2.0.3'
-        self.svnTargets['2.0.99'] = 'tags/soprano/2.0.99'
-        self.svnTargets['2.1']    = 'tags/soprano/2.1'
-        self.svnTargets['2.1.1']  = 'tags/soprano/2.1.1'
-        self.svnTargets['2.1.67'] = 'tags/soprano/2.1.67'
-        self.svnTargets['2.2']    = 'tags/soprano/2.2'
-        self.svnTargets['2.2.1']  = 'tags/soprano/2.2.1'
-        self.svnTargets['2.2.2']  = 'tags/soprano/2.2.2'
-        self.svnTargets['2.2.4']  = 'tags/soprano/2.2.4'
-        self.svnTargets['2.3.0']  = 'tags/soprano/2.3.0'
+        
+        for ver in ['2.5.63']:
+          self.targets[ver] ='http://downloads.sourceforge.net/sourceforge/Soprano/soprano-' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'soprano-' + ver
+          
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/soprano'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:

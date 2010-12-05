@@ -4,8 +4,9 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/oxygen-icons'
-        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/oxygen-icons'
+        for ver in ['4.5.4']:
+          self.targets[ver] = 'http://download.kde.org/download.php?url=stable/' + ver + '/src/oxygen-icons-' + ver + '.tar.bz2'
+          self.targetInstSrc[ver] = 'oxygen-icons-' + ver 
         self.defaultTarget = 'svnHEAD'
         
     def setDependencies( self ):
