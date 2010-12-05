@@ -18,11 +18,22 @@ class subinfo(info.infoclass):
         
         
 from Package.AutoToolsPackageBase import *
-
-class Package(AutoToolsPackageBase):
+from Package.VirtualPackageBase import *
+ 
+class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
 
+if compiler.isMinGW():
+    class Package(PackageMinGW):
+        def __init__( self ):
+            PackageMinGW.__init__( self )
+else:
+    class Package(VirtualPackageBase):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+            
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()
