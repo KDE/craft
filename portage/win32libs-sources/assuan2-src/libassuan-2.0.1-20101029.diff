@@ -11,6 +11,19 @@ diff -Nru libassuan-2.0.1.orig/src/assuan.h.in libassuan-2.0.1/src/assuan.h.in
  
  #ifndef _ASSUAN_NO_SOCKET_WRAPPER
  @include:includes@
+diff -Nru libassuan-2.0.1.orig/src/gpgcedev.c libassuan-2.0.1/src/gpgcedev.c
+--- libassuan-2.0.1.orig/src/gpgcedev.c	2010-11-17 03:08:13.000000000 +0100
++++ libassuan-2.0.1/src/gpgcedev.c	2010-12-05 02:42:24.963615400 +0100
+@@ -25,6 +25,9 @@
+ #include <devload.h>
+ #include <winioctl.h>
+ 
++#ifdef _MSC_VER
++#undef leave
++#endif
+ /* FIXME Cancel not handled. */
+ 
+ #define DBGFILENAME "\\gpgcedev.dbg"
 diff -Nru libassuan-2.0.1.orig/src/mkheader.c libassuan-2.0.1/src/mkheader.c
 --- libassuan-2.0.1.orig/src/mkheader.c	2010-11-02 10:27:34.829568000 +0100
 +++ libassuan-2.0.1/src/mkheader.c	2010-11-02 01:01:50.827082200 +0100
@@ -36,9 +49,9 @@ diff -Nru libassuan-2.0.1.orig/src/mkheader.c libassuan-2.0.1/src/mkheader.c
      }
    else if (!strcmp (tag, "include:types"))
      {
-diff -Nru libassuan-2.0.1.orig/src/system-w32.c libassuan-2.0.1/src/system-w32.c
---- libassuan-2.0.1.orig/src/system-w32.c	2010-04-19 09:11:16.000000000 +0200
-+++ libassuan-2.0.1/src/system-w32.c	2010-11-02 10:27:18.447631100 +0100
+diff -Nru libassuan-r400.orig/src/system-w32.c libassuan-r400/src/system-w32.c
+--- libassuan-r400.orig/src/system-w32.c	2010-04-19 10:55:19.000000000 +0200
++++ libassuan-r400/src/system-w32.c	2010-12-05 02:42:13.486959000 +0100
 @@ -26,6 +26,7 @@
  #include <errno.h>
  #include <time.h>
@@ -47,9 +60,9 @@ diff -Nru libassuan-2.0.1.orig/src/system-w32.c libassuan-2.0.1/src/system-w32.c
  #include <windows.h>
  
  #include "assuan-defs.h"
-diff -Nru libassuan-2.0.1.orig/src/w32-sock-nonce.inc.h libassuan-2.0.1/src/w32-sock-nonce.inc.h
---- libassuan-2.0.1.orig/src/w32-sock-nonce.inc.h	2010-04-06 17:01:42.000000000 +0200
-+++ libassuan-2.0.1/src/w32-sock-nonce.inc.h	2010-11-21 21:35:39.717328000 +0100
+diff -Nru libassuan-r400.orig/src/w32-sock-nonce.inc.h libassuan-r400/src/w32-sock-nonce.inc.h
+--- libassuan-r400.orig/src/w32-sock-nonce.inc.h	2010-04-06 18:46:31.000000000 +0200
++++ libassuan-r400/src/w32-sock-nonce.inc.h	2010-12-05 02:42:13.487959100 +0100
 @@ -37,7 +37,9 @@
  # ifndef AF_LOCAL
  #  define AF_LOCAL AF_UNIX
