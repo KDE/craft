@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qimageblitz'
         for ver in ['0.0.5','0.0.6']:
           self.targets[ver] ='http://download.kde.org/download.php?url=stable/qimageblitz/qimageblitz-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'qimageblitz-' + ver 
