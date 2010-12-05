@@ -1,0 +1,1211 @@
+diff -Nru gpgme-r1510.orig/cmake/modules/FindAssuan2.cmake gpgme-r1510/cmake/modules/FindAssuan2.cmake
+--- gpgme-r1510.orig/cmake/modules/FindAssuan2.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/cmake/modules/FindAssuan2.cmake	2010-12-05 01:17:30.654440600 +0100
+@@ -0,0 +1,256 @@
++# - Try to find the assuan v2 library
++
++# Variables set:
++#  ASSUAN2_{INCLUDES,FOUND,LIBRARIES} will be set for each of the above
++
++# do away with crappy condition repetition on else/endfoo
++set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS_assuan2_saved ${CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS} )
++set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
++
++#if this is built-in, please replace, if it isn't, export into a MacroToBool.cmake of it's own
++macro( macro_bool_to_bool FOUND_VAR )
++  foreach( _current_VAR ${ARGN} )
++    if ( ${FOUND_VAR} )
++      set( ${_current_VAR} TRUE )
++    else()
++      set( ${_current_VAR} FALSE )
++    endif()
++  endforeach()
++endmacro()
++
++include (MacroEnsureVersion)
++include (MacroBoolTo01)
++include (MacroLogFeature)
++
++if ( WIN32 )
++
++  # On Windows, we don't have a libassuan-config script, so we need to
++  # look for the stuff ourselves:
++
++  # in cmake, AND and OR have the same precedence, there's no
++  # subexpressions, and expressions are evaluated short-circuit'ed
++  # IOW: CMake if() suxx.
++  set( _seem_to_have_cached_assuan2 false )
++  if ( ASSUAN2_INCLUDES )
++    if ( ASSUAN2_VANILLA_LIBRARIES )#OR ASSUAN2_QT_LIBRARIES OR ASSUAN2_GLIB_LIBRARIES )
++      set( _seem_to_have_cached_assuan2 true )
++    endif()
++  endif()
++
++  if ( _seem_to_have_cached_assuan2 )
++
++    macro_bool_to_bool( ASSUAN2_VANILLA_LIBRARIES  ASSUAN2_VANILLA_FOUND )
++    # this would have been preferred:
++    #set( ASSUAN2_*_FOUND macro_bool_to_bool(ASSUAN2_*_LIBRARIES) )
++
++    if ( ASSUAN2_VANILLA_FOUND ) #OR ASSUAN2_GLIB_FOUND OR ASSUAN2_QT_FOUND )
++      set( ASSUAN2_FOUND true )
++    else()
++      set( ASSUAN2_FOUND false )
++    endif()
++
++  else()
++
++    set( ASSUAN2_FOUND         false )
++    set( ASSUAN2_VANILLA_FOUND false )
++    #set( ASSUAN2_GLIB_FOUND    false )
++    #set( ASSUAN2_QT_FOUND      false )
++
++    find_path( ASSUAN2_INCLUDES assuan.h
++      ${CMAKE_INCLUDE_PATH}
++      ${CMAKE_INSTALL_PREFIX}/include
++    )
++
++    find_library( _assuan2_library NAMES assuan2 libassuan2 assuan-0 libassuan-0 #sic!
++      PATHS 
++        ${CMAKE_LIBRARY_PATH}
++        ${CMAKE_INSTALL_PREFIX}/lib
++    )
++
++    find_library( _gpg_error_library     NAMES gpg-error libgpg-error gpg-error-0 libgpg-error-0
++      PATHS 
++        ${CMAKE_LIBRARY_PATH}
++        ${CMAKE_INSTALL_PREFIX}/lib
++    )
++
++    set( ASSUAN2_INCLUDES ${ASSUAN2_INCLUDES} )
++
++    if ( _assuan2_library AND _gpg_error_library )
++      set( ASSUAN2_LIBRARIES ${_assuan2_library} ${_gpg_error_library} )
++      if(WINCE)
++        set( ASSUAN2_LIBRARIES ${ASSUAN2_LIBRARIES} ws2 )
++      else(WINCE)
++        set( ASSUAN2_LIBRARIES ${ASSUAN2_LIBRARIES} ws2_32 )
++      endif(WINCE)
++      set( ASSUAN2_FOUND             true )
++    endif()
++
++  endif()
++
++  macro_bool_to_01( ASSUAN2_FOUND HAVE_ASSUAN2 )
++
++else() # not WIN32
++
++  # On *nix, we have the libassuan-config script which can tell us all we
++  # need to know:
++
++  # see WIN32 case for an explanation of what this does:
++  set( _seem_to_have_cached_assuan2 false )
++  if ( ASSUAN2_INCLUDES AND ASSUAN2_LIBRARIES )
++    set( _seem_to_have_cached_assuan2 true )
++  endif()
++
++  if ( _seem_to_have_cached_assuan2 )
++
++    set( ASSUAN2_FOUND true )
++
++  else()
++
++    set( ASSUAN2_FOUND         false )
++
++    find_program( _ASSUAN2CONFIG_EXECUTABLE NAMES libassuan-config )
++
++    # if libassuan-config has been found
++    if ( _ASSUAN2CONFIG_EXECUTABLE )
++      
++      message( STATUS "Found libassuan-config at ${_ASSUAN2CONFIG_EXECUTABLE}" )
++
++      exec_program( ${_ASSUAN2CONFIG_EXECUTABLE} ARGS --version OUTPUT_VARIABLE ASSUAN2_VERSION )
++
++      set( _ASSUAN2_MIN_VERSION "2.0.0" )
++      macro_ensure_version( ${_ASSUAN2_MIN_VERSION} ${ASSUAN2_VERSION} _ASSUAN2_INSTALLED_VERSION_OK )
++
++      if ( NOT _ASSUAN2_INSTALLED_VERSION_OK )
++
++        message( STATUS "The installed version of assuan is too old: ${ASSUAN2_VERSION} (required: >= ${_ASSUAN2_MIN_VERSION})" )
++
++      else()
++
++        message( STATUS "Found assuan v${ASSUAN2_VERSION}" )
++
++        exec_program( ${_ASSUAN2CONFIG_EXECUTABLE} ARGS --libs OUTPUT_VARIABLE _assuan2_config_libs RETURN_VALUE _ret )
++	if ( _ret )
++	  set( _assuan2_config_libs )
++	endif()
++
++        # append -lgpg-error to the list of libraries, if necessary
++        if ( _assuan2_config_libs AND NOT _assuan2_config_libs MATCHES "lgpg-error" )
++          set( _assuan2_config_libs "${_assuan2_config_libs} -lgpg-error" )
++        endif()
++
++        if ( _assuan2_config_libs )
++
++          exec_program( ${_ASSUAN2CONFIG_EXECUTABLE} ARGS --cflags OUTPUT_VARIABLE _ASSUAN2_CFLAGS )
++
++          if ( _ASSUAN2_CFLAGS )
++            string( REGEX REPLACE "(\r?\n)+$" " " _ASSUAN2_CFLAGS  "${_ASSUAN2_CFLAGS}" )
++            string( REGEX REPLACE " *-I"      ";" ASSUAN2_INCLUDES "${_ASSUAN2_CFLAGS}" )
++          endif()
++
++          if ( _assuan2_config_libs )
++
++            set( _assuan2_library_dirs )
++            set( _assuan2_library_names )
++
++            string( REGEX REPLACE " +" ";" _assuan2_config_libs "${_assuan2_config_libs}" )
++
++            foreach( _flag ${_assuan2_config_libs} )
++              if ( "${_flag}" MATCHES "^-L" )
++                string( REGEX REPLACE "^-L" "" _dir "${_flag}" )
++                file( TO_CMAKE_PATH "${_dir}" _dir )
++                set( _assuan2_library_dirs ${_assuan2_library_dirs} "${_dir}" )
++              elseif( "${_flag}" MATCHES "^-l" )
++                string( REGEX REPLACE "^-l" "" _name "${_flag}" )
++                set( _assuan2_library_names ${_assuan2_library_names} "${_name}" )
++              endif()
++            endforeach()
++
++            set( ASSUAN2_FOUND true )
++
++            foreach( _name ${_assuan2_library_names} )
++              set( _assuan2_${_name}_lib )
++
++              # if -L options were given, look only there
++              if ( _assuan2_library_dirs )
++                find_library( _assuan2_${_name}_lib NAMES ${_name} PATHS ${_assuan2_library_dirs} NO_DEFAULT_PATH )
++              endif()
++
++              # if not found there, look in system directories
++              if ( NOT _assuan2_${_name}_lib )
++                find_library( _assuan2_${_name}_lib NAMES ${_name} )
++              endif()
++
++              # if still not found, then the whole flavour isn't found
++              if ( NOT _assuan2_${_name}_lib )
++                if ( ASSUAN2_FOUND )
++                  set( ASSUAN2_FOUND false )
++                  set( _not_found_reason "dependant library ${_name} wasn't found" )
++                endif()
++              endif()
++
++              set( ASSUAN2_LIBRARIES ${ASSUAN2_LIBRARIES} "${_assuan2_${_name}_lib}" )
++            endforeach()
++
++            #check_c_library_exists_explicit( assuan         assuan_check_version "${_ASSUAN2_CFLAGS}" "${ASSUAN2_LIBRARIES}"         ASSUAN2_FOUND         )
++            if ( ASSUAN2_FOUND )
++              message( STATUS " Checking whether assuan is usable...yes" )
++            else()
++              message( STATUS " Checking whether assuan is usable...no" )
++              message( STATUS "  (${_not_found_reason})" )
++            endif()
++          endif()
++
++          # ensure that they are cached
++          set( ASSUAN2_INCLUDES  ${ASSUAN2_INCLUDES}  )
++          set( ASSUAN2_LIBRARIES ${ASSUAN2_LIBRARIES} )
++
++        endif()
++
++      endif()
++
++    endif()
++
++  endif()
++
++  macro_bool_to_01( ASSUAN2_FOUND         HAVE_ASSUAN2         )
++
++endif() # WIN32 | Unix
++
++
++if ( NOT Assuan2_FIND_QUIETLY )
++
++  if ( ASSUAN2_FOUND )
++    message( STATUS "Usable assuan found." )
++    message( STATUS " Includes:  ${ASSUAN2_INCLUDES}" )
++    message( STATUS " Libraries: ${ASSUAN2_LIBRARIES}" )
++  else()
++    message( STATUS "No usable assuan found." )
++  endif()
++
++  macro_bool_to_bool( Assuan2_FIND_REQUIRED _req )
++
++  if ( WIN32 )
++    set( _assuan2_homepage "http://www.gpg4win.org" )
++  else()
++    set( _assuan2_homepage "http://www.gnupg.org/related_software/libassuan" )
++  endif()
++
++  macro_log_feature(
++    ASSUAN2_FOUND
++    "assuan2"
++    "Assuan v2 IPC library"
++    ${_assuan2_homepage}
++    ${_req}
++    "${_ASSUAN2_MIN_VERSION} or greater"
++    "Needed for Kleopatra to act as the GnuPG UI Server"
++  )
++
++else()
++
++  if ( Assuan2_FIND_REQUIRED AND NOT ASSUAN2_FOUND )
++    message( FATAL_ERROR "" )
++  endif()
++
++endif()
++
++set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS_assuan2_saved )
+diff -Nru gpgme-r1510.orig/cmake/modules/FindGpg-Error.cmake gpgme-r1510/cmake/modules/FindGpg-Error.cmake
+--- gpgme-r1510.orig/cmake/modules/FindGpg-Error.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/cmake/modules/FindGpg-Error.cmake	2010-12-05 01:17:30.950457500 +0100
+@@ -0,0 +1,35 @@
++# - Try to find GPG_ERROR
++# Once done this will define
++#
++#  GPG_ERROR_FOUND - system has GPG_ERROR
++#  GPG_ERROR_INCLUDE_DIR - the GPG_ERROR include directory
++#  GPG_ERROR_LIBRARIES - the libraries needed to use GPG_ERROR
++
++if (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    # in cache already
++    SET(GPG_ERROR_FOUND TRUE)
++
++else (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    FIND_PATH(GPG_ERROR_INCLUDE_DIR gpg-error.h)
++
++    FIND_LIBRARY(GPG_ERROR_LIBRARIES NAMES gpg-error libgpg-error gpg-error-0 libgpg-error-0)
++
++    if (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++       set(GPG_ERROR_FOUND TRUE)
++    endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    if (GPG_ERROR_FOUND)
++      if (NOT GPG_ERROR_FIND_QUIETLY)
++        message(STATUS "Found gpg-error: ${GPG_ERROR_LIBRARIES}")
++      endif (NOT GPG_ERROR_FIND_QUIETLY)
++    else (GPG_ERROR_FOUND)
++      if (GPG-ERROR_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find gpg-error")
++      endif (GPG-ERROR_FIND_REQUIRED)
++    endif (GPG_ERROR_FOUND)
++
++    MARK_AS_ADVANCED(GPG_ERROR_INCLUDE_DIR GPG_ERROR_LIBRARIES)
++
++endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
+diff -Nru gpgme-r1510.orig/cmake/modules/MacroBoolTo01.cmake gpgme-r1510/cmake/modules/MacroBoolTo01.cmake
+--- gpgme-r1510.orig/cmake/modules/MacroBoolTo01.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/cmake/modules/MacroBoolTo01.cmake	2010-12-05 01:17:30.952457700 +0100
+@@ -0,0 +1,20 @@
++# MACRO_BOOL_TO_01( VAR RESULT0 ... RESULTN )
++# This macro evaluates its first argument
++# and sets all the given vaiables either to 0 or 1
++# depending on the value of the first one
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++MACRO(MACRO_BOOL_TO_01 FOUND_VAR )
++   FOREACH (_current_VAR ${ARGN})
++      IF(${FOUND_VAR})
++         SET(${_current_VAR} 1)
++      ELSE(${FOUND_VAR})
++         SET(${_current_VAR} 0)
++      ENDIF(${FOUND_VAR})
++   ENDFOREACH(_current_VAR)
++ENDMACRO(MACRO_BOOL_TO_01)
+diff -Nru gpgme-r1510.orig/cmake/modules/MacroEnsureVersion.cmake gpgme-r1510/cmake/modules/MacroEnsureVersion.cmake
+--- gpgme-r1510.orig/cmake/modules/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/cmake/modules/MacroEnsureVersion.cmake	2010-12-05 01:17:30.967458500 +0100
+@@ -0,0 +1,117 @@
++# This file defines the following macros for developers to use in ensuring
++# that installed software is of the right version:
++#
++# MACRO_ENSURE_VERSION        - test that a version number is greater than
++#                               or equal to some minimum
++# MACRO_ENSURE_VERSION_RANGE - test that a version number is greater than
++#                               or equal to some minimum and less than some
++#                               maximum
++# MACRO_ENSURE_VERSION2       - deprecated, do not use in new code
++#
++
++# MACRO_ENSURE_VERSION
++# This macro compares version numbers of the form "x.y.z" or "x.y"
++# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
++# will set FOO_VERSION_OK to true if FOO_VERSION_FOUND >= FOO_MIN_VERSION
++# Leading and trailing text is ok, e.g.
++# MACRO_ENSURE_VERSION( "2.5.31" "flex 2.5.4a" VERSION_OK)
++# which means 2.5.31 is required and "flex 2.5.4a" is what was found on the system
++
++# Copyright (c) 2006, David Faure, <faure@kde.org>
++# Copyright (c) 2007, Will Stephenson <wstephenson@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++# MACRO_ENSURE_VERSION_RANGE
++# This macro ensures that a version number of the form
++# "x.y.z" or "x.y" falls within a range defined by
++# min_version <= found_version < max_version.
++# If this expression holds, FOO_VERSION_OK will be set TRUE
++#
++# Example: MACRO_ENSURE_VERSION_RANGE3( "0.1.0" ${FOOCODE_VERSION} "0.7.0" FOO_VERSION_OK )
++#
++# This macro will break silently if any of x,y,z are greater than 100.
++#
++# Copyright (c) 2007, Will Stephenson <wstephenson@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++# NORMALIZE_VERSION
++# Helper macro to convert version numbers of the form "x.y.z"
++# to an integer equal to 10^4 * x + 10^2 * y + z
++#
++# This macro will break silently if any of x,y,z are greater than 100.
++#
++# Copyright (c) 2006, David Faure, <faure@kde.org>
++# Copyright (c) 2007, Will Stephenson <wstephenson@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++# CHECK_RANGE_INCLUSIVE_LOWER
++# Helper macro to check whether x <= y < z
++#
++# Copyright (c) 2007, Will Stephenson <wstephenson@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++MACRO(NORMALIZE_VERSION _requested_version _normalized_version)
++    STRING(REGEX MATCH "[^0-9]*[0-9]+\\.[0-9]+\\.[0-9]+.*" _threePartMatch "${_requested_version}")
++    if (_threePartMatch)
++    # parse the parts of the version string
++        STRING(REGEX REPLACE "[^0-9]*([0-9]+)\\.[0-9]+\\.[0-9]+.*" "\\1" _major_vers "${_requested_version}")
++        STRING(REGEX REPLACE "[^0-9]*[0-9]+\\.([0-9]+)\\.[0-9]+.*" "\\1" _minor_vers "${_requested_version}")
++        STRING(REGEX REPLACE "[^0-9]*[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" _patch_vers "${_requested_version}")
++    else (_threePartMatch)
++        STRING(REGEX REPLACE "([0-9]+)\\.[0-9]+" "\\1" _major_vers "${_requested_version}")
++        STRING(REGEX REPLACE "[0-9]+\\.([0-9]+)" "\\1" _minor_vers "${_requested_version}")
++        set(_patch_vers "0")
++    endif (_threePartMatch)
++
++    # compute an overall version number which can be compared at once
++    MATH(EXPR ${_normalized_version} "${_major_vers}*10000 + ${_minor_vers}*100 + ${_patch_vers}")
++ENDMACRO(NORMALIZE_VERSION)
++
++MACRO(MACRO_CHECK_RANGE_INCLUSIVE_LOWER _lower_limit _value _upper_limit _ok)
++   if (${_value} LESS ${_lower_limit})
++      set( ${_ok} FALSE )
++  elseif (${_value} EQUAL ${_lower_limit})
++      set( ${_ok} TRUE )
++  elseif (${_value} EQUAL ${_upper_limit})
++      set( ${_ok} FALSE )
++  elseif (${_value} GREATER ${_upper_limit})
++      set( ${_ok} FALSE )
++  else (${_value} LESS ${_lower_limit})
++      set( ${_ok} TRUE )
++  endif (${_value} LESS ${_lower_limit})
++ENDMACRO(MACRO_CHECK_RANGE_INCLUSIVE_LOWER)
++
++MACRO(MACRO_ENSURE_VERSION requested_version found_version var_too_old)
++    NORMALIZE_VERSION( ${requested_version} req_vers_num )
++    NORMALIZE_VERSION( ${found_version} found_vers_num )
++
++    if (found_vers_num LESS req_vers_num)
++        set( ${var_too_old} FALSE )
++    else (found_vers_num LESS req_vers_num)
++        set( ${var_too_old} TRUE )
++    endif (found_vers_num LESS req_vers_num)
++
++ENDMACRO(MACRO_ENSURE_VERSION)
++
++MACRO(MACRO_ENSURE_VERSION2 requested_version2 found_version2 var_too_old2)
++    MACRO_ENSURE_VERSION( ${requested_version2} ${found_version2} ${var_too_old2})
++ENDMACRO(MACRO_ENSURE_VERSION2)
++
++MACRO(MACRO_ENSURE_VERSION_RANGE min_version found_version max_version var_ok)
++    NORMALIZE_VERSION( ${min_version} req_vers_num )
++    NORMALIZE_VERSION( ${found_version} found_vers_num )
++    NORMALIZE_VERSION( ${max_version} max_vers_num )
++
++    MACRO_CHECK_RANGE_INCLUSIVE_LOWER( ${req_vers_num} ${found_vers_num} ${max_vers_num} ${var_ok})
++ENDMACRO(MACRO_ENSURE_VERSION_RANGE)
++
++
+diff -Nru gpgme-r1510.orig/cmake/modules/MacroLogFeature.cmake gpgme-r1510/cmake/modules/MacroLogFeature.cmake
+--- gpgme-r1510.orig/cmake/modules/MacroLogFeature.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/cmake/modules/MacroLogFeature.cmake	2010-12-05 01:17:30.969458600 +0100
+@@ -0,0 +1,157 @@
++# This file defines the Feature Logging macros.
++#
++# MACRO_LOG_FEATURE(VAR FEATURE DESCRIPTION URL [REQUIRED [MIN_VERSION [COMMENTS]]])
++#   Logs the information so that it can be displayed at the end
++#   of the configure run
++#   VAR : TRUE or FALSE, indicating whether the feature is supported
++#   FEATURE: name of the feature, e.g. "libjpeg"
++#   DESCRIPTION: description what this feature provides
++#   URL: home page
++#   REQUIRED: TRUE or FALSE, indicating whether the featue is required
++#   MIN_VERSION: minimum version number. empty string if unneeded
++#   COMMENTS: More info you may want to provide.  empty string if unnecessary
++#
++# MACRO_DISPLAY_FEATURE_LOG()
++#   Call this to display the collected results.
++#   Exits CMake with a FATAL error message if a required feature is missing
++#
++# Example:
++#
++# INCLUDE(MacroLogFeature)
++#
++# FIND_PACKAGE(JPEG)
++# MACRO_LOG_FEATURE(JPEG_FOUND "libjpeg" "Support JPEG images" "http://www.ijg.org" TRUE "3.2a" "")
++# ...
++# MACRO_DISPLAY_FEATURE_LOG()
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++# Copyright (c) 2006, Allen Winter, <winter@kde.org>
++# Copyright (c) 2009, Sebastian Trueg, <trueg@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++IF (NOT _macroLogFeatureAlreadyIncluded)
++   SET(_file ${CMAKE_BINARY_DIR}/MissingRequirements.txt)
++   IF (EXISTS ${_file})
++      FILE(REMOVE ${_file})
++   ENDIF (EXISTS ${_file})
++
++   SET(_file ${CMAKE_BINARY_DIR}/EnabledFeatures.txt)
++   IF (EXISTS ${_file})
++      FILE(REMOVE ${_file})
++   ENDIF (EXISTS ${_file})
++
++   SET(_file ${CMAKE_BINARY_DIR}/DisabledFeatures.txt)
++   IF (EXISTS ${_file})
++      FILE(REMOVE ${_file})
++  ENDIF (EXISTS ${_file})
++
++  SET(_macroLogFeatureAlreadyIncluded TRUE)
++
++  INCLUDE(FeatureSummary)
++
++ENDIF (NOT _macroLogFeatureAlreadyIncluded)
++
++
++MACRO(MACRO_LOG_FEATURE _var _package _description _url ) # _required _minvers _comments)
++
++   STRING(TOUPPER "${ARGV4}" _required)
++   SET(_minvers "${ARGV5}")
++   SET(_comments "${ARGV6}")
++
++   IF (${_var})
++     SET(_LOGFILENAME ${CMAKE_BINARY_DIR}/EnabledFeatures.txt)
++   ELSE (${_var})
++     IF ("${_required}" STREQUAL "TRUE")
++       SET(_LOGFILENAME ${CMAKE_BINARY_DIR}/MissingRequirements.txt)
++     ELSE ("${_required}" STREQUAL "TRUE")
++       SET(_LOGFILENAME ${CMAKE_BINARY_DIR}/DisabledFeatures.txt)
++     ENDIF ("${_required}" STREQUAL "TRUE")
++   ENDIF (${_var})
++
++   SET(_logtext "   * ${_package}")
++
++   IF (NOT ${_var})
++      IF (${_minvers} MATCHES ".*")
++        SET(_logtext "${_logtext} (${_minvers} or higher)")
++      ENDIF (${_minvers} MATCHES ".*")
++      SET(_logtext "${_logtext}  <${_url}>\n     ")
++   ELSE (NOT ${_var})
++     SET(_logtext "${_logtext} - ")
++   ENDIF (NOT ${_var})
++
++   SET(_logtext "${_logtext}${_description}")
++
++   IF (NOT ${_var})
++      IF (${_comments} MATCHES ".*")
++        SET(_logtext "${_logtext}\n     ${_comments}")
++      ENDIF (${_comments} MATCHES ".*")
++#      SET(_logtext "${_logtext}\n") #double-space missing features?
++   ENDIF (NOT ${_var})
++
++   FILE(APPEND "${_LOGFILENAME}" "${_logtext}\n")
++
++   IF(COMMAND SET_PACKAGE_INFO)  # in FeatureSummary.cmake since CMake 2.8.3
++     SET_PACKAGE_INFO("${_package}" "\"${_description}\"" "${_url}" "\"${_comments}\"")
++   ENDIF(COMMAND SET_PACKAGE_INFO)
++
++ENDMACRO(MACRO_LOG_FEATURE)
++
++
++MACRO(MACRO_DISPLAY_FEATURE_LOG)
++   IF(COMMAND FEATURE_SUMMARY) # in FeatureSummary.cmake since CMake 2.8.3
++      FEATURE_SUMMARY(FILENAME ${CMAKE_CURRENT_BINARY_DIR}/FindPackageLog.txt
++                      WHAT ALL)
++   ENDIF(COMMAND FEATURE_SUMMARY)
++
++   SET(_missingFile ${CMAKE_BINARY_DIR}/MissingRequirements.txt)
++   SET(_enabledFile ${CMAKE_BINARY_DIR}/EnabledFeatures.txt)
++   SET(_disabledFile ${CMAKE_BINARY_DIR}/DisabledFeatures.txt)
++
++   IF (EXISTS ${_missingFile} OR EXISTS ${_enabledFile} OR EXISTS ${_disabledFile})
++     SET(_printSummary TRUE)
++   ENDIF (EXISTS ${_missingFile} OR EXISTS ${_enabledFile} OR EXISTS ${_disabledFile})
++
++   IF(_printSummary)
++     SET(_missingDeps 0)
++     IF (EXISTS ${_enabledFile})
++       FILE(READ ${_enabledFile} _enabled)
++       FILE(REMOVE ${_enabledFile})
++       SET(_summary "${_summary}\n-----------------------------------------------------------------------------\n-- The following external packages were located on your system.\n-- This installation will have the extra features provided by these packages.\n-----------------------------------------------------------------------------\n${_enabled}")
++     ENDIF (EXISTS ${_enabledFile})
++
++
++     IF (EXISTS ${_disabledFile})
++       SET(_missingDeps 1)
++       FILE(READ ${_disabledFile} _disabled)
++       FILE(REMOVE ${_disabledFile})
++       SET(_summary "${_summary}\n-----------------------------------------------------------------------------\n-- The following OPTIONAL packages could NOT be located on your system.\n-- Consider installing them to enable more features from this software.\n-----------------------------------------------------------------------------\n${_disabled}")
++     ENDIF (EXISTS ${_disabledFile})
++
++
++     IF (EXISTS ${_missingFile})
++       SET(_missingDeps 1)
++       FILE(READ ${_missingFile} _requirements)
++       SET(_summary "${_summary}\n-----------------------------------------------------------------------------\n-- The following REQUIRED packages could NOT be located on your system.\n-- You must install these packages before continuing.\n-----------------------------------------------------------------------------\n${_requirements}")
++       FILE(REMOVE ${_missingFile})
++       SET(_haveMissingReq 1)
++     ENDIF (EXISTS ${_missingFile})
++
++
++     IF (NOT ${_missingDeps})
++       SET(_summary "${_summary}\n-----------------------------------------------------------------------------\n-- Congratulations! All external packages have been found.")
++     ENDIF (NOT ${_missingDeps})
++
++
++     MESSAGE(${_summary})
++     MESSAGE("-----------------------------------------------------------------------------\n")
++
++
++     IF(_haveMissingReq)
++       MESSAGE(FATAL_ERROR "Exiting: Missing Requirements")
++     ENDIF(_haveMissingReq)
++
++   ENDIF(_printSummary)
++
++ENDMACRO(MACRO_DISPLAY_FEATURE_LOG)
+diff -Nru gpgme-r1510.orig/CMakeLists.txt gpgme-r1510/CMakeLists.txt
+--- gpgme-r1510.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/CMakeLists.txt	2010-12-05 01:17:30.978459200 +0100
+@@ -0,0 +1,163 @@
++project(gpgme)
++
++cmake_minimum_required(VERSION 2.6)
++
++option(BUILD_STATIC   "build a static version of gpgme" OFF)
++option(ENABLE_ASSUAN2 "build in assuan ipc support" ON)
++
++set(NEED__FILE_OFFSET_BITS 0)
++set(VERSION "\"1.3.0\"")
++set(NEED_GPG_VERSION "\"1.3.0\"")
++set(NEED_G13_VERSION "\"\"")
++set(NEED_GPGCONF_VERSION "\"\"")
++set(NEED_GPGSM_VERSION "\"\"")
++set(PACKAGE "\"gpgme\"")
++set(PACKAGE_BUGREPORT "\"kde-windows@kde.org\"")
++set(PACKAGE_NAME "\"GnuPG made easy\"")
++set(PACKAGE_STRING "\"${PACKAGE}-${VERSION}\"")
++set(PACKAGE_VERSION "\"${VERSION}\"")
++
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
++find_package(Gpg-Error REQUIRED)
++if(ENABLE_ASSUAN2)
++    find_package(Assuan2)
++endif(ENABLE_ASSUAN2)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GPG_ERROR_INCLUDE_DIR})
++
++if(WINCE)
++    include_directories(${GPG_ERROR_INCLUDE_DIR}/gpg-extra)
++    add_definitions(-DHAVE_W32CE_SYSTEM)
++endif(WINCE)
++
++if(ASSUAN2_FOUND)
++    include_directories(${ASSUAN2_INCLUDES})
++    set(ENABLE_ASSUAN 1)
++endif(ASSUAN2_FOUND)
++
++include(ConfigureChecks.cmake)
++include(mkstatus.cmake)
++
++set(gpgme_SRCS
++	src/conversion.c
++    src/get-env.c
++	src/data.c
++    src/data-fd.c
++    src/data-stream.c
++    src/data-mem.c
++    src/data-user.c
++	src/data-compat.c
++	src/signers.c
++    src/sig-notation.c
++	src/wait.c
++    src/wait-global.c
++    src/wait-private.c
++    src/wait-user.c
++	src/op-support.c
++	src/encrypt.c
++    src/encrypt-sign.c
++    src/decrypt.c
++    src/decrypt-verify.c
++    src/verify.c
++	src/sign.c
++    src/passphrase.c
++    src/progress.c
++	src/key.c
++    src/keylist.c
++    src/trust-item.c
++    src/trustlist.c
++	src/import.c
++    src/export.c
++    src/genkey.c
++    src/delete.c
++    src/edit.c
++    src/getauditlog.c
++    src/passwd.c
++	src/engine.c
++    src/engine-gpg.c
++	src/vfs-mount.c
++    src/vfs-create.c
++	src/gpgconf.c
++	src/dirinfo.c
++	src/debug.c
++    src/gpgme.c
++    src/version.c
++    src/error.c
++)
++
++if(WIN32)
++    set(gpgme_SRCS
++        ${gpgme_SRCS}
++        src/ath.c
++        src/w32-util.c
++        src/w32-sema.c
++        src/w32-io.c
++    )
++    if(WINCE)
++        set(gpgme_SRCS
++            ${gpgme_SRCS}
++            src/w32-ce.c
++        )
++    endif(WINCE)
++    
++    if(MSVC)
++        add_definitions(-Dsnprintf=_snprintf -Dstrcasecmp=stricmp -Dstrncasecmp=stricmp -wd4996 -wd4244 -wd4018)
++    endif(MSVC)
++else(WIN32)
++    set(gpgme_SRCS
++        ${gpgme_SRCS}
++        src/posix-util.c
++        src/posix-sema.c
++        src/posix-io.c
++    )
++endif(WIN32)
++
++if(NOT HAVE_VASPRINTF)
++    set(gpgme_SRCS ${gpgme_SRCS} src/vasprintf.c)
++endif(NOT HAVE_VASPRINTF)
++if(NOT HAVE_STPCPY)
++    set(gpgme_SRCS ${gpgme_SRCS} src/stpcpy.c)
++endif(NOT HAVE_STPCPY)
++if(NOT HAVE_TTYNAME_R)
++    set(gpgme_SRCS ${gpgme_SRCS} src/ttyname_r.c)
++endif(NOT HAVE_TTYNAME_R)
++
++if(ASSUAN2_FOUND)
++    set(gpgme_SRCS
++        ${gpgme_SRCS}
++        src/opassuan.c
++        src/engine-assuan.c
++        src/assuan-support.c
++        )
++endif(ASSUAN2_FOUND)
++
++if(BUILD_STATIC)
++    set(_shared STATIC)
++else(BUILD_STATIC)
++    set(_shared SHARED)
++    set(gpgme_SRCS ${gpgme_SRCS} src/gpgme.def)
++endif(BUILD_STATIC)
++
++add_library(gpgme ${_shared} ${gpgme_SRCS})
++target_link_libraries(gpgme ${GPG_ERROR_LIBRARIES})
++if(WIN32)
++    if(WINCE)
++        target_link_libraries(gpgme ws2)
++    else(WINCE)
++        target_link_libraries(gpgme ws2_32)
++    endif(WINCE)
++endif(WIN32)
++
++if(ASSUAN2_FOUND)
++    target_link_libraries(gpgme ${ASSUAN2_LIBRARIES})
++endif(ASSUAN2_FOUND)
++
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/gpgme.h DESTINATION include)
++
++add_executable(gpgme-tool src/gpgme-tool.c)
++target_link_libraries(gpgme-tool gpgme ${GPG_ERROR_LIBRARIES} ${ASSUAN2_LIBRARIES})
++
++install(TARGETS gpgme gpgme-tool RUNTIME DESTINATION bin
++                                 LIBRARY DESTINATION lib
++                                 ARCHIVE DESTINATION lib)
++macro_display_feature_log()
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru gpgme-r1510.orig/config.h.cmake gpgme-r1510/config.h.cmake
+--- gpgme-r1510.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/config.h.cmake	2010-12-05 01:17:30.974458900 +0100
+@@ -0,0 +1,277 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Whether Assuan support is enabled */
++#cmakedefine ENABLE_ASSUAN
++
++/* Whether G13 support is enabled */
++#cmakedefine ENABLE_G13
++
++/* Whether GPGCONF support is enabled */
++#cmakedefine ENABLE_GPGCONF
++
++/* Whether GPGSM support is enabled */
++#cmakedefine ENABLE_GPGSM
++
++/* Defined if we are building with uiserver support. */
++#cmakedefine ENABLE_UISERVER
++
++/* Path to the G13 binary. */
++#cmakedefine G13_PATH
++
++/* Path to the GPGCONF binary. */
++#cmakedefine GPGCONF_PATH
++
++/* Path to the GPGSM binary. */
++#cmakedefine GPGSM_PATH
++
++/* The default error source for GPGME. */
++#cmakedefine GPG_ERR_SOURCE_DEFAULT
++
++/* Path to the GnuPG binary. */
++#cmakedefine GPG_PATH
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H
++
++/* Defined if we run on some of the PCDOS like systems (DOS, Windoze. OS/2)
++   with special properties like no file modes */
++#cmakedefine HAVE_DOSISH_SYSTEM
++
++/* Define to 1 if the system has the type `error_t'. */
++#cmakedefine HAVE_ERROR_T
++
++/* Define to 1 if you have the `fopencookie' function. */
++#cmakedefine HAVE_FOPENCOOKIE
++
++/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
++#cmakedefine HAVE_FSEEKO
++
++/* Define to 1 if you have the `funopen' function. */
++#cmakedefine HAVE_FUNOPEN
++
++/* Define to 1 if you have the `getegid' function. */
++#cmakedefine HAVE_GETEGID
++
++/* Define to 1 if you have the `getenv_r' function. */
++#cmakedefine HAVE_GETENV_R
++
++/* Define to 1 if you have the `getgid' function. */
++#cmakedefine HAVE_GETGID
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H
++
++/* Define to 1 if you have the <io.h> header file. */
++#cmakedefine HAVE_IO_H
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H
++
++/* Define if we have Pth. */
++#cmakedefine HAVE_PTH
++
++/* Define if we have pthread. */
++#cmakedefine HAVE_PTHREAD
++
++/* Define to 1 if you have the `setenv' function. */
++#cmakedefine HAVE_SETENV
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H
++
++/* Define to 1 if you have the `stpcpy' function. */
++#cmakedefine HAVE_STPCPY
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H
++
++/* Define to 1 if you have the <sys/select.h> header file. */
++#cmakedefine HAVE_SYS_SELECT_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H
++
++/* Define to 1 if you have the <sys/uio.h> header file. */
++#cmakedefine HAVE_SYS_UIO_H
++
++/* Define if getenv() is thread-safe */
++#cmakedefine HAVE_THREAD_SAFE_GETENV
++
++/* Define to 1 if you have the `timegm' function. */
++#cmakedefine HAVE_TIMEGM
++
++/* Define if __thread is supported */
++#cmakedefine HAVE_TLS
++
++/* Define to 1 if you have the `ttyname_r' function. */
++#cmakedefine HAVE_TTYNAME_R
++
++/* Define to 1 if the system has the type `uintptr_t'. */
++#cmakedefine HAVE_UINTPTR_T
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H
++
++/* Define to 1 if you have the `vasprintf' function. */
++#cmakedefine HAVE_VASPRINTF
++
++/* Defined if we run on a W32 API based system */
++#cmakedefine HAVE_W32_SYSTEM 1
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#cmakedefine LT_OBJDIR
++
++/* used to implement the va_copy macro */
++#cmakedefine MUST_COPY_VA_BYVAL
++
++/* Min. needed G13 version. */
++#cmakedefine NEED_G13_VERSION @NEED_G13_VERSION@
++
++/* Min. needed GPGCONF version. */
++#cmakedefine NEED_GPGCONF_VERSION @NEED_GPGCONF_VERSION@
++
++/* Min. needed GPGSM version. */
++#cmakedefine NEED_GPGSM_VERSION @NEED_GPGSM_VERSION@
++
++/* Min. needed GnuPG version. */
++#cmakedefine NEED_GPG_VERSION @NEED_GPG_VERSION@
++
++/* Name of this package */
++#cmakedefine PACKAGE @PACKAGE@
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
++
++/* Define to the home page for this package. */
++#cmakedefine PACKAGE_URL @PACKAGE_URL@
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
++
++
++/* Separators as used in $PATH.  */
++#ifdef HAVE_DOSISH_SYSTEM
++#define PATHSEP_C ';'
++#else
++#define PATHSEP_C ':'
++#endif
++
++
++/* The size of `unsigned int', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_INT
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS
++
++/* Defined if descriptor passing is enabled and supported */
++#cmakedefine USE_DESCRIPTOR_PASSING
++
++/* Enable extensions on AIX 3, Interix.  */
++#ifndef _ALL_SOURCE
++# undef _ALL_SOURCE
++#endif
++/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif
++/* Enable threading extensions on Solaris.  */
++#ifndef _POSIX_PTHREAD_SEMANTICS
++# undef _POSIX_PTHREAD_SEMANTICS
++#endif
++/* Enable extensions on HP NonStop.  */
++#ifndef _TANDEM_SOURCE
++# undef _TANDEM_SOURCE
++#endif
++/* Enable general extensions on Solaris.  */
++#ifndef __EXTENSIONS__
++# undef __EXTENSIONS__
++#endif
++
++
++/* Version of this package */
++#cmakedefine VERSION @VERSION@
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#cmakedefine _FILE_OFFSET_BITS
++
++/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
++#cmakedefine _LARGEFILE_SOURCE
++
++/* Define for large files, on AIX-style hosts. */
++#cmakedefine _LARGE_FILES
++
++/* Define to 1 if on MINIX. */
++#cmakedefine _MINIX
++
++/* Define to 2 if the system does not provide POSIX.1 features except with
++   this defined. */
++#cmakedefine _POSIX_1_SOURCE
++
++/* Define to 1 if you need to in order for `stat' and other things to work. */
++#cmakedefine _POSIX_SOURCE
++
++/* To allow the use of GPGME in multithreaded programs we have to use
++  special features from the library.
++  IMPORTANT: gpgme is not yet fully reentrant and you should use it
++  only from one thread.  */
++#ifndef _REENTRANT
++# define _REENTRANT 1
++#endif
++
++/* Activate POSIX interface on MacOS X */
++#cmakedefine _XOPEN_SOURCE
++
++/* Define to a type to use for `error_t' if it is not otherwise available. */
++#cmakedefine error_t @error_t@
++
++/* Define to `__inline__' or `__inline' if that's what the C compiler
++   calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef __cplusplus
++#cmakedefine inline @inline@
++#endif
++
++/* Define to `long int' if <sys/types.h> does not define. */
++#cmakedefine off_t @off_t@
++
++/* Define to the type of an unsigned integer type wide enough to hold a
++   pointer, if such a type exists, and if the system does not define it. */
++#cmakedefine uintptr_t @uintptr_t@
++
++
++#ifdef _MSC_VER
++# include <winsock2.h>
++# define stricmp _stricmp
++# define strdup _strdup
++# define strerror gpg_strerror
++# define abort() exit(3)
++#endif
++
++/* Definition of GCC specific attributes.  */
++#if __GNUC__ > 2 
++# define GPGME_GCC_A_PURE  __attribute__ ((__pure__))
++#else
++# define GPGME_GCC_A_PURE
++#endif
++
+diff -Nru gpgme-r1510.orig/ConfigureChecks.cmake gpgme-r1510/ConfigureChecks.cmake
+--- gpgme-r1510.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/ConfigureChecks.cmake	2010-12-05 01:17:30.976459000 +0100
+@@ -0,0 +1,96 @@
++# Configure checks for the config.h
++
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++include(CheckSymbolExists)
++
++
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/uio.h" HAVE_SYS_UIO_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++
++if(WIN32)
++    set(HAVE_DOSISH_SYSTEM 1)
++    set(HAVE_W32_SYSTEM 1)
++    if(WINCE)
++        set(uintptr_t "unsigned __int32")
++    endif(WINCE)
++endif(WIN32)
++
++check_function_exists("fopencookie" HAVE_FOPENCOOKIE)
++check_function_exists("funopen" HAVE_FUNOPEN)
++check_function_exists("getegid" HAVE_GETEGID)
++check_function_exists("getenv_r" HAVE_GETENV_R)
++check_function_exists("getgid" HAVE_GETGID)
++check_function_exists("setenv" HAVE_SETENV)
++check_function_exists("stpcpy" HAVE_STPCPY)
++check_function_exists("timegm" HAVE_TIMEGM)
++check_function_exists("ttyname_r" HAVE_TTYNAME_R)
++check_function_exists("vasprintf" HAVE_VASPRINTF)
++#/* Define to 1 if the system has the type `error_t'. */
++#cmakedefine HAVE_ERROR_T
++
++#/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
++#cmakedefine HAVE_FSEEKO
++
++#/* Define if we have Pth. */
++#cmakedefine HAVE_PTH
++
++#/* Define if we have pthread. */
++#cmakedefine HAVE_PTHREAD
++
++#/* Define if getenv() is thread-safe */
++#cmakedefine HAVE_THREAD_SAFE_GETENV
++
++#/* Define if __thread is supported */
++#cmakedefine HAVE_TLS
++
++#/* Define to 1 if the system has the type `uintptr_t'. */
++#cmakedefine HAVE_UINTPTR_T
++
++#/* used to implement the va_copy macro */
++#cmakedefine MUST_COPY_VA_BYVAL
++
++#/* The size of `unsigned int', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_INT
++
++#/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS
++
++#/* Defined if descriptor passing is enabled and supported */
++#cmakedefine USE_DESCRIPTOR_PASSING
++
++#/* Number of bits in a file offset, on hosts where this is settable. */
++#cmakedefine _FILE_OFFSET_BITS
++
++#/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
++#cmakedefine _LARGEFILE_SOURCE
++
++#/* Define to a type to use for `error_t' if it is not otherwise available. */
++#cmakedefine error_t
++
++if(MSVC)
++    set(inline __inline)
++else(MSVC)
++    set(inline __inline__)
++endif(MSVC)
++
++#check_symbol_exists("off_t" "sys/types.h" off_t)
++#if(NOT off_t)
++#    set(off_t "long int")
++#endif(NOT off_t)
++
++add_definitions(-DHAVE_CONFIG_H)
++
++configure_file(config.h.cmake config.h)
++configure_file(src/gpgme.h.in gpgme.h)
+diff -Nru gpgme-r1510.orig/mkstatus.awk gpgme-r1510/mkstatus.awk
+--- gpgme-r1510.orig/mkstatus.awk	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/mkstatus.awk	2010-12-05 01:17:30.981459300 +0100
+@@ -0,0 +1,4 @@
++/GPGME_STATUS_ENTER/      { okay = 1 }
++!okay                     { next }
++/}/                       { exit 0 }
++/GPGME_STATUS_[A-Za-z_]*/ { sub (/,/, "", $1); printf "  { \"%s\", %s },\n", substr($1,14), $1 }
+diff -Nru gpgme-r1510.orig/mkstatus.cmake gpgme-r1510/mkstatus.cmake
+--- gpgme-r1510.orig/mkstatus.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gpgme-r1510/mkstatus.cmake	2010-12-05 01:17:30.982459400 +0100
+@@ -0,0 +1,45 @@
++############## search for external tools that are needed for header generation ###################
++find_program(AWK_EXECUTABLE NAMES awk gawk)
++
++if(NOT AWK_EXECUTABLE)
++    message(FATAL_ERROR "awk wasn't found. Please install it.")
++else(NOT AWK_EXECUTABLE)
++    message(STATUS "Found awk: ${AWK_EXECUTABLE}")
++endif(NOT AWK_EXECUTABLE)
++
++file(WRITE ${CMAKE_BINARY_DIR}/status-table.h "/* Generated automatically by mkstatus */\n"
++"/* Do not edit! */\n"
++"\n"
++"struct status_table_s {\n"
++"    const char *name;\n"
++"    gpgme_status_code_t code;\n"
++"};\n"
++"\n"
++"static struct status_table_s status_table[] = \n"
++"{\n")
++
++execute_process(COMMAND ${AWK_EXECUTABLE} -f mkstatus.awk
++                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
++                  OUTPUT_VARIABLE _awk_output
++                  ERROR_VARIABLE _awk_error
++                  INPUT_FILE ${CMAKE_BINARY_DIR}/gpgme.h
++)
++
++string(REGEX REPLACE ";" "\\\\;" contents "${_awk_output}")
++string(REGEX REPLACE "\n" ";" contents "${contents}")
++list(SORT contents)
++foreach(line ${contents})
++    file(APPEND ${CMAKE_BINARY_DIR}/status-table.h "${line}\n")
++endforeach(line ${contents})
++
++#message(STATUS "<${_awk_error}><${contents}>")
++#awk '
++#/GPGME_STATUS_ENTER/      { okay = 1 }
++#!okay                     { next }
++#/}/                       { exit 0 }
++#/GPGME_STATUS_[A-Za-z_]*/ { sub (/,/, "", $1); printf "  { \"%s\", %s },\n", substr($1,14), $1 }
++#' | sort  
++
++file(APPEND ${CMAKE_BINARY_DIR}/status-table.h "  {NULL, 0}\n"
++"};\n"
++"\n")

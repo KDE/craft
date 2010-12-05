@@ -1,0 +1,322 @@
+diff -Nru gpgme-r1510.orig/src/ath.h gpgme-r1510/src/ath.h
+--- gpgme-r1510.orig/src/ath.h	2010-11-15 09:40:30.000000000 +0100
++++ gpgme-r1510/src/ath.h	2010-12-05 01:20:50.394865100 +0100
+@@ -23,6 +23,22 @@
+ 
+ #ifdef HAVE_STDINT_H
+ #include <stdint.h>
++#else
++#ifdef _MSC_VER
++# include <BaseTsd.h>  // do this for SSIZE_T
++# ifndef _SSIZE_T_DEFINED
++# define _SSIZE_T_DEFINED
++  typedef SSIZE_T ssize_t;
++# endif
++# ifndef _SIZE_T_DEFINED
++# define _SIZE_T_DEFINED
++  typedef unsigned size_t;
++# endif
++# ifndef _PID_T_DEFINED
++# define _PID_T_DEFINED
++  typedef int pid_t;
++# endif
++#endif
+ #endif
+ #ifdef HAVE_W32_SYSTEM
+   /* fixme: Check how we did it in libgcrypt.  */
+@@ -32,7 +48,9 @@
+ #  include <winsock2.h>
+ # endif
+ # include <windows.h>
+-# include <io.h>
++# ifndef HAVE_W32CE_SYSTEM
++#  include <io.h>
++# endif
+ 
+ #else /*!HAVE_W32_SYSTEM*/
+ 
+@@ -43,12 +61,11 @@
+ #   include <sys/time.h>
+ #  endif
+ # endif
+-# ifdef HAVE_SYS_TYPES_H
+-#  include <sys/types.h>
+-# endif
+ # include <sys/socket.h>
+-
+ #endif  /*!HAVE_W32_SYSTEM*/
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ 
+ 
+ 
+diff -Nru gpgme-r1510.orig/src/debug.c gpgme-r1510/src/debug.c
+--- gpgme-r1510.orig/src/debug.c	2010-11-03 11:33:10.000000000 +0100
++++ gpgme-r1510/src/debug.c	2010-12-05 01:20:50.396865200 +0100
+@@ -48,6 +48,10 @@
+ #include "sema.h"
+ #include "debug.h"
+ 
++#if defined(HAVE_W32CE_SYSTEM) && !defined(_IOLBF)
++#define _IOLBF 1
++#endif
++
+ 
+ /* Lock to serialize initialization of the debug output subsystem and
+    output of actual debug messages.  */
+diff -Nru gpgme-r1510.orig/src/engine-assuan.c gpgme-r1510/src/engine-assuan.c
+--- gpgme-r1510.orig/src/engine-assuan.c	2010-11-03 10:56:27.000000000 +0100
++++ gpgme-r1510/src/engine-assuan.c	2010-12-05 01:20:50.398865300 +0100
+@@ -649,7 +649,7 @@
+      using the assumption that the first returned fd from
+      assuan_get_active_fds() is always this one.  */
+   nfds = assuan_get_active_fds (llass->assuan_ctx, 0 /* read fds */,
+-                                afdlist, DIM (afdlist));
++                                (assuan_fd_t*)afdlist, DIM (afdlist));
+   if (nfds < 1)
+     return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
+   /* For now... */
+diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
+--- gpgme-r1510.orig/src/gpgme-tool.c	2010-10-07 12:58:51.000000000 +0200
++++ gpgme-r1510/src/gpgme-tool.c	2010-12-05 01:20:50.419866500 +0100
+@@ -25,7 +25,6 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <errno.h>
+-#include <getopt.h>
+ #include <ctype.h>
+ #include <stdarg.h>
+ #ifdef HAVE_LOCALE_H
+@@ -37,6 +36,8 @@
+ 
+ #include <assuan.h>
+ 
++#include <gpg-error.h>
++
+ #include "gpgme.h"
+ 
+ /* GCC attributes.  */
+@@ -76,7 +77,7 @@
+ 
+ extern const char *argp_program_version;
+ extern const char *argp_program_bug_address;
+-extern error_t argp_err_exit_status;
++extern gpg_error_t argp_err_exit_status;
+ 
+ struct argp_option
+ {
+@@ -122,7 +123,7 @@
+ #define ARGP_KEY_FINI 0x1000007
+ #define ARGP_KEY_SUCCESS 0x1000004
+ #define ARGP_KEY_ERROR 0x1000005
+-typedef error_t (*argp_parser_t) (int key, char *arg, struct argp_state *state);
++typedef gpg_error_t (*argp_parser_t) (int key, char *arg, struct argp_state *state);
+ 
+ struct argp
+ {
+@@ -303,7 +304,7 @@
+ }
+ 
+ 
+-error_t
++gpg_error_t
+ argp_parse (const struct argp *argp, int argc,
+ 	    char **argv, unsigned flags, int *arg_index, void *input)
+ {
+@@ -566,8 +567,9 @@
+ gpg_error_t
+ result_xml_indent (struct result_xml_state *state)
+ {
+-  char spaces[state->indent + 1];
++  char *spaces;
+   int i;
++  spaces = (char*)malloc(state->indent + 1);
+   for (i = 0; i < state->indent; i++)
+     spaces[i] = ' ';
+   spaces[i] = '\0';
+@@ -1214,8 +1216,8 @@
+ void
+ gt_init (gpgme_tool_t gt)
+ {
+-  memset (gt, '\0', sizeof (*gt));
+   gpg_error_t err;
++  memset (gt, '\0', sizeof (*gt));
+ 
+   err = _gt_gpgme_new (gt, &gt->ctx);
+   if (err)
+@@ -3001,7 +3003,7 @@
+ 
+ const char *argp_program_version = VERSION;
+ const char *argp_program_bug_address = "bug-gpgme@gnupg.org";
+-error_t argp_err_exit_status = 1;
++gpg_error_t argp_err_exit_status = 1;
+ 
+ static char doc[] = "GPGME Tool -- invoke GPGME operations";
+ static char args_doc[] = "COMMAND [OPTIONS...]";
+@@ -3011,7 +3013,7 @@
+   { 0 }
+ };
+ 
+-static error_t parse_options (int key, char *arg, struct argp_state *state);
++static gpg_error_t parse_options (int key, char *arg, struct argp_state *state);
+ static struct argp argp = { options, parse_options, args_doc, doc };
+ 
+ struct args
+@@ -3027,7 +3029,7 @@
+ }
+ 
+ 
+-static error_t
++static gpg_error_t
+ parse_options (int key, char *arg, struct argp_state *state)
+ {
+   struct args *args = state->input;
+diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
+--- gpgme-r1510.orig/src/gpgme.h.in	2010-11-23 10:46:52.000000000 +0100
++++ gpgme-r1510/src/gpgme.h.in	2010-12-05 01:20:50.401865500 +0100
+@@ -37,6 +37,7 @@
+ #ifdef _WIN32
+   typedef long off_t;
+   typedef long ssize_t;
++  typedef int pid_t;
+ #else
+ # include <sys/types.h>
+ #endif
+diff -Nru gpgme-r1510.orig/src/key.c gpgme-r1510/src/key.c
+--- gpgme-r1510.orig/src/key.c	2010-04-19 18:59:23.000000000 +0200
++++ gpgme-r1510/src/key.c	2010-12-05 01:20:50.404865700 +0100
+@@ -389,7 +389,7 @@
+     return err;
+ 
+   /* Note: protocol doesn't matter if only email is provided.  */
+-  err = _gpgme_key_append_name (key, name, 0);
++  err = _gpgme_key_append_name (key, (char*)name, 0);
+   if (err)
+     gpgme_key_unref (key);
+   else
+diff -Nru gpgme-r1510.orig/src/w32-ce.h gpgme-r1510/src/w32-ce.h
+--- gpgme-r1510.orig/src/w32-ce.h	2010-11-15 16:30:04.000000000 +0100
++++ gpgme-r1510/src/w32-ce.h	2010-12-05 01:20:50.405865700 +0100
+@@ -37,7 +37,9 @@
+ #define getenv _gpgme_wince_getenv
+ char *getenv (const char *name);
+ 
++#ifndef _WIN32_WCE
+ #include <io.h>
++#endif
+ #define isatty(fd) 0
+ 
+ 
+diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
+--- gpgme-r1510.orig/src/w32-io.c	2010-11-23 11:47:59.000000000 +0100
++++ gpgme-r1510/src/w32-io.c	2010-12-05 01:20:50.410866000 +0100
+@@ -27,14 +27,18 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
++#ifndef HAVE_W32CE_SYSTEM
+ #include <fcntl.h>
++#endif
+ #ifdef HAVE_SYS_TIME_H
+ # include <sys/time.h>
+ #endif
+ #ifdef HAVE_SYS_TYPES_H
+ # include <sys/types.h>
+ #endif
++#ifdef HAVE_IO_H
+ #include <io.h>
++#endif
+ 
+ #include "util.h"
+ 
+@@ -1581,7 +1585,7 @@
+   args = calloc (2 + i + 1, sizeof (*args));
+   args[0] = (char *) _gpgme_get_w32spawn_path ();
+   args[1] = tmp_name;
+-  args[2] = path;
++  args[2] = (char *) path;
+   memcpy (&args[3], &argv[1], i * sizeof (*args));
+ 
+   memset (&sec_attr, 0, sizeof sec_attr);
+@@ -1642,7 +1646,7 @@
+       HANDLE hd;
+ 
+       /* Make it inheritable for the wrapper process.  */
+-      if (!DuplicateHandle (GetCurrentProcess(), fd_to_handle (fd_list[i].fd),
++      if (!DuplicateHandle (GetCurrentProcess(), (HANDLE) (fd_list[i].fd),
+ 			    pi.hProcess, &hd, 0, TRUE, DUPLICATE_SAME_ACCESS))
+ 	{
+ 	  TRACE_LOG1 ("DuplicateHandle failed: ec=%d", (int) GetLastError ());
+@@ -1661,7 +1665,7 @@
+ 	  return TRACE_SYSRES (-1);
+         }
+       /* Return the child name of this handle.  */
+-      fd_list[i].peer_name = handle_to_fd (hd);
++      fd_list[i].peer_name = (int) (hd);
+     }
+   
+   /* Write the handle translation information to the temporary
+@@ -1868,7 +1872,7 @@
+       if (le == ERROR_INVALID_HANDLE)
+ 	{
+ 	  int k;
+-	  int j = handle_to_fd (waitbuf[i]);
++	  int j = (int) (waitbuf[i]);
+           
+ 	  TRACE_LOG1 ("WFMO invalid handle %d removed", j);
+ 	  for (k = 0 ; k < nfds; k++)
+diff -Nru gpgme-r1510.orig/src/w32-sema.c gpgme-r1510/src/w32-sema.c
+--- gpgme-r1510.orig/src/w32-sema.c	2010-11-03 10:56:27.000000000 +0100
++++ gpgme-r1510/src/w32-sema.c	2010-12-05 01:20:50.412866100 +0100
+@@ -27,14 +27,18 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include <fcntl.h>
++#ifdef HAVE_FCNTL_H
++# include <fcntl.h>
++#endif
+ #ifdef HAVE_SYS_TIME_H
+ # include <sys/time.h>
+ #endif
+ #ifdef HAVE_SYS_TYPES_H
+ # include <sys/types.h>
+ #endif
++#ifdef HAVE_IO_H
+ #include <io.h>
++#endif
+ 
+ #include "util.h"
+ #include "sema.h"
+diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
+--- gpgme-r1510.orig/src/w32-util.c	2010-11-15 16:11:59.000000000 +0100
++++ gpgme-r1510/src/w32-util.c	2010-12-05 01:23:40.617601300 +0100
+@@ -28,7 +28,11 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include <stdint.h>
++#ifdef HAVE_STDINT_H
++# include <stdint.h>
++#else
++# define uint64_t unsigned __int64
++#endif
+ #ifdef HAVE_SYS_TIME_H
+ # include <sys/time.h>
+ #endif
+@@ -41,8 +45,12 @@
+ #ifdef HAVE_UNISTD_H
+ # include <unistd.h>
+ #endif
+-#include <fcntl.h>
+-#include <io.h>
++#ifdef HAVE_FCNTL_H
++# include <fcntl.h>
++#endif
++#ifdef HAVE_IO_H
++# include <io.h>
++#endif
+ 
+ #define _WIN32_IE 0x0400 /* Required for SHGetSpecialFolderPathA.  */
+ 
