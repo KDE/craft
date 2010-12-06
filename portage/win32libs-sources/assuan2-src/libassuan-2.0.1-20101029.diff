@@ -60,6 +60,18 @@ diff -Nru libassuan-r400.orig/src/system-w32.c libassuan-r400/src/system-w32.c
  #include <windows.h>
  
  #include "assuan-defs.h"
+diff -Nru libassuan-r400.orig/src/vasprintf.c libassuan-r400/src/vasprintf.c
+--- libassuan-r400.orig/src/vasprintf.c	2010-11-17 17:49:53.000000000 +0100
++++ libassuan-r400/src/vasprintf.c	2010-12-07 00:24:53.959089400 +0100
+@@ -51,7 +51,7 @@
+      const char *format;
+      va_list *args;
+ {
+-#if defined(HAVE_W32CE_SYSTEM) && defined(_MSC_VER)
++#if defined(_MSC_VER)
+   /* No va_copy and the replacement above doesn't work.  */
+ #define MAX_STRLEN 256
+   *result = malloc (MAX_STRLEN);
 diff -Nru libassuan-r400.orig/src/w32-sock-nonce.inc.h libassuan-r400/src/w32-sock-nonce.inc.h
 --- libassuan-r400.orig/src/w32-sock-nonce.inc.h	2010-04-06 18:46:31.000000000 +0200
 +++ libassuan-r400/src/w32-sock-nonce.inc.h	2010-12-05 02:42:13.487959100 +0100
