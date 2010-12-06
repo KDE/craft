@@ -30,6 +30,7 @@ HKLM, Security\Shell\StartInfo\Start\Tasks.lnk, Icon, 0, %CE1%/Kontact-Mobile/sh
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
+akonadictl.exe,0,akonadictl.exe
 
 [Shortcuts]
 Mail,0,kmail-mobile.exe
