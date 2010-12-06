@@ -1,6 +1,6 @@
 # This file contains additional expressions to
 # for the german localization of Kontact Mobile
-aspell.*\\de.*
+lib\\aspell.*\\de.*
 
 share\\locale\\de\\entry\.desktop
 share\\locale\\de\\LC_MESSAGES\\gnupg2\.mo

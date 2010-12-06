@@ -116,10 +116,9 @@ lib\\kde4\\imports\\
 
 
 #Aspell
-aspell.*\\en.*
+lib\\aspell.*\\en.*
 
 # Some additional plugins
-.*\\kspell_aspell.*
 lib\\kde4\\kcm_ldap\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_calendar\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_vcard\.dll
