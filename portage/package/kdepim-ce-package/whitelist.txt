@@ -117,6 +117,7 @@ lib\\kde4\\imports\\
 
 #Aspell
 lib\\aspell.*\\en.*
+lib\\aspell.*\\standard\.kbd
 lib\\aspell.*\\iso-8859-1\.*
 
 # Some additional plugins
