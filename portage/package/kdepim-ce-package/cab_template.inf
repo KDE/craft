@@ -38,6 +38,7 @@ Notes,0,notes-mobile.exe
 Contacts,0,kaddressbook-mobile.exe
 Calendar,0,korganizer-mobile.exe
 Tasks,0,tasks-mobile.exe
+Kleopatra,0,kleopatra.exe
 
 [SourceDisksNames]
 $SOURCEDISKNAMES
