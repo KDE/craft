@@ -1,7 +1,7 @@
 diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 --- libgpg-error-1.10.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libgpg-error-1.10/CMakeLists.txt	2010-11-01 23:23:05.213156400 +0100
-@@ -0,0 +1,220 @@
+@@ -0,0 +1,219 @@
 +project(gpg-error)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -187,22 +187,21 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +    set(gpg_error_SRCS ${gpg_error_SRCS} ${BIN_DIR}/gpg-error.def)
 +#endif(BUILD_STATIC)
 +
-+add_library(gpg-error ${_shared} ${gpg_error_SRCS} ${gpg_error_GENERATED_SRCS})
-+set_target_properties(gpg-error PROPERTIES DEFINE_SYMBOL DLL_EXPORT)
++add_library(libgpg-error ${_shared} ${gpg_error_SRCS} ${gpg_error_GENERATED_SRCS})
++set_target_properties(libgpg-error PROPERTIES DEFINE_SYMBOL DLL_EXPORT)
 +
 +if(BUILD_TOOL)
-+    set(gpg_error_bin_SRCS
++    set(gpg_error_SRCS
 +        src/strsource-sym.c
 +        src/strerror-sym.c
 +        src/gpg-error.c 
 +    )
-+    add_executable(gpg_error_bin ${gpg_error_bin_SRCS})
-+    set_target_properties(gpg_error_bin PROPERTIES OUTPUT_NAME "gpg-error")
++    add_executable(gpg-error ${gpg_error_SRCS})
 +
-+    target_link_libraries(gpg_error_bin gpg-error)
-+    set(gpg_error_bin_target gpg_error_bin)
++    target_link_libraries(gpg-error libgpg-error)
++    set(gpg_error_target gpg-error)
 +else(BUILD_TOOL)
-+    set(gpg_error_bin_target)
++    set(gpg_error_target)
 +endif(BUILD_TOOL)
 +
 +if(BUILD_TESTS)
@@ -214,18 +213,17 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +    add_test(t-syserror t-syserror)
 +endif(BUILD_TESTS)
 +
-+install(TARGETS gpg-error ${gpg_error_bin_target}   RUNTIME DESTINATION bin
-+                                                    LIBRARY DESTINATION lib
-+                                                    ARCHIVE DESTINATION lib)
++install(TARGETS gpg-error ${gpg_error_target}   RUNTIME DESTINATION bin
++                                                LIBRARY DESTINATION lib
++                                                ARCHIVE DESTINATION lib)
 +
 +install(FILES ${BIN_DIR}/gpg-error.h DESTINATION include)
 +if(WIN32 AND NOT BUILD_STATIC)
 +    install(FILES ${BIN_DIR}/gpg-error.def DESTINATION lib)
 +endif(WIN32 AND NOT BUILD_STATIC)
-\ No newline at end of file
-diff -Nru libgpg-error-1.10.orig/config.h.cmake libgpg-error-1.10/config.h.cmake
---- libgpg-error-1.10.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.10/config.h.cmake	2010-11-01 23:25:20.957920600 +0100
+diff -Nru libgpg-error-r267.orig/config.h.cmake libgpg-error-r267/config.h.cmake
+--- libgpg-error-r267.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgpg-error-r267/config.h.cmake	2010-12-05 02:54:55.807764300 +0100
 @@ -0,0 +1,156 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -483,4 +481,3 @@ diff -Nru libgpg-error-1.10.orig/ConfigureChecks.cmake libgpg-error-1.10/Configu
 +add_definitions(-DHAVE_CONFIG_H)
 +
 +configure_file(config.h.cmake config.h)
-\ No newline at end of file
