@@ -45,7 +45,8 @@ file collection process is skipped, and only the installer is generated.
 
     def __init__( self, whitelists = [], blacklists = [] ):
         PackagerBase.__init__( self, "NullsoftInstallerPackager" )
-        if not self.isInstalled():
+        self.isInstalled = self.__isInstalled()
+        if not self.isInstalled:
             utils.warning( "could not find installed nsis package, you may download and install it from http://sourceforge.net/projects/nsis/" )
         self.defines = dict()
         self.whitelist = []
@@ -63,7 +64,7 @@ file collection process is skipped, and only the installer is generated.
         
         self.scriptname = None
 
-    def isInstalled( self ):
+    def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS', 0, KEY_READ )
@@ -257,7 +258,8 @@ file collection process is skipped, and only the installer is generated.
 
         utils.new_line()
         utils.debug( "generating installer %s" % self.setupname )
-        utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join( self.nsisInstallPath, 'makensis.exe' ), definestring, self.scriptname ) )
+        if self.isInstalled:
+            utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join( self.nsisInstallPath, 'makensis.exe' ), definestring, self.scriptname ) )
 
     def createPackage( self ):
         """ create a package """
