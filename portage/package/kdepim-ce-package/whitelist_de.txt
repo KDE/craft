@@ -50,6 +50,7 @@ share\\locale\\de\\LC_MESSAGES\\kdelibs4\.mo
 share\\locale\\de\\LC_MESSAGES\\kdepimwizards\.mo
 share\\locale\\de\\LC_MESSAGES\\kdgantt2\.mo
 share\\locale\\de\\LC_MESSAGES\\kio_akonadi\.mo
+share\\locale\\de\\LC_MESSAGES\\kio4\.mo
 share\\locale\\de\\LC_MESSAGES\\kio_groupwise\.mo
 share\\locale\\de\\LC_MESSAGES\\kjotsmigrator\.mo
 share\\locale\\de\\LC_MESSAGES\\kleopatra\.mo
