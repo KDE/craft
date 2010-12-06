@@ -16,7 +16,7 @@ index 4800716..12391f4 100644
          global/qnumeric_p.h \
          global/qnumeric.h
  
-+wince*:HEADERS += global/dlmalloc.h global/gpglogger_wince.h
++wince*:HEADERS += global/dlmalloc.h
 +
  SOURCES += \
  	global/qglobal.cpp \
@@ -24,7 +24,7 @@ index 4800716..12391f4 100644
  	global/qmalloc.cpp \
          global/qnumeric.cpp
  
-+wince*:SOURCES += global/dlmalloc.c global/gpglogger_wince.cpp
++wince*:SOURCES += global/dlmalloc.c
 +
  # qlibraryinfo.cpp includes qconfig.cpp
  INCLUDEPATH += $$QT_BUILD_TREE/src/corelib/global
