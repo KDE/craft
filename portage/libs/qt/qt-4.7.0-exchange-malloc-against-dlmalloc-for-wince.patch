@@ -1,22 +1,22 @@
-From a3294cce332d4d1c209b6d4c6fc2456803db2715 Mon Sep 17 00:00:00 2001
+From 40a6cce5fc97ab9a70e9a325b981042deb3564c7 Mon Sep 17 00:00:00 2001
 From: Andreas Holzammer <andy@kdab.com>
-Date: Mon, 8 Nov 2010 16:05:09 +0100
+Date: Mon, 6 Dec 2010 15:21:37 +0100
 Subject: [PATCH] exchange malloc against dlmalloc for wince
 
 ---
  src/corelib/global/global.pri  |    4 +++
- src/corelib/global/qmalloc.cpp |   56 +++++++++++++++++++++++++++++++++++++---
- 2 files changed, 56 insertions(+), 4 deletions(-)
+ src/corelib/global/qmalloc.cpp |   59 +++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 59 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/global/global.pri b/src/corelib/global/global.pri
-index 4800716..9730818 100644
+index 4800716..12391f4 100644
 --- a/src/corelib/global/global.pri
 +++ b/src/corelib/global/global.pri
 @@ -7,12 +7,16 @@ HEADERS +=  \
          global/qnumeric_p.h \
          global/qnumeric.h
  
-+wince*:HEADERS += global/dlmalloc.h
++wince*:HEADERS += global/dlmalloc.h global/gpglogger_wince.h
 +
  SOURCES += \
  	global/qglobal.cpp \
@@ -24,13 +24,13 @@ index 4800716..9730818 100644
  	global/qmalloc.cpp \
          global/qnumeric.cpp
  
-+wince*:SOURCES += global/dlmalloc.c
++wince*:SOURCES += global/dlmalloc.c global/gpglogger_wince.cpp
 +
  # qlibraryinfo.cpp includes qconfig.cpp
  INCLUDEPATH += $$QT_BUILD_TREE/src/corelib/global
  
 diff --git a/src/corelib/global/qmalloc.cpp b/src/corelib/global/qmalloc.cpp
-index 090998c..9b8fc6f 100644
+index 090998c..60e395e 100644
 --- a/src/corelib/global/qmalloc.cpp
 +++ b/src/corelib/global/qmalloc.cpp
 @@ -41,6 +41,8 @@
@@ -42,7 +42,7 @@ index 090998c..9b8fc6f 100644
  #include <stdlib.h>
  
  /*
-@@ -50,19 +52,65 @@
+@@ -50,19 +52,68 @@
  
  QT_BEGIN_NAMESPACE
  
@@ -57,7 +57,10 @@ index 090998c..9b8fc6f 100644
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kaddressbook-mobile.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\korganizer-mobile.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\notes-mobile.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile.exe") == 0);
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_agent_server.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_imap_resource.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadiserver.exe") == 0);
 +  initialized = true;
 +}
 +
@@ -111,7 +114,7 @@ index 090998c..9b8fc6f 100644
  }
  
  void *qMallocAligned(size_t size, size_t alignment)
-@@ -120,7 +168,7 @@ void qFreeAligned(void *ptr)
+@@ -120,7 +171,7 @@ void qFreeAligned(void *ptr)
      if (!ptr)
          return;
      void **ptr2 = static_cast<void **>(ptr);
