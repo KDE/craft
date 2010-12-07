@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['0.1.7'] = "http://www.mega-nerd.com/SRC/libsamplerate-0.1.7.tar.gz"
         self.targetInstSrc['0.1.7'] = 'libsamplerate-0.1.7'
-        self.targetDigests['0.1.7'] = '98a52392eb97f9ba724ca024b3af29a8a0cc0206'
+        self.targetDigests['0.1.7'] = 'f3f803ec5feae5a3fdb0fa3937277669e854386e'
         self.patchToApply['0.1.7'] = ('libsamplerate-0.1.7-20091002.diff', 1)
         self.shortDescription = "an audio sample rate converter library"
         self.defaultTarget = '0.1.7'

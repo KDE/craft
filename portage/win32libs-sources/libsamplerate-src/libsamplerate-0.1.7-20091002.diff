@@ -135,25 +135,3 @@ diff -Nru libsamplerate-0.1.7.orig/src/float_cast.h libsamplerate-0.1.7/src/floa
  #elif (defined (__MWERKS__) && defined (macintosh))
  
  	/* This MacOS 9 solution was provided by Stephane Letz */
-diff -Nru libsamplerate-0.1.7.orig/Win32/config.h libsamplerate-0.1.7/Win32/config.h
---- libsamplerate-0.1.7.orig/Win32/config.h	2009-02-14 12:42:49.000000000 +0100
-+++ libsamplerate-0.1.7/Win32/config.h	2010-11-27 01:23:49.144305100 +0100
-@@ -190,10 +190,7 @@
- #define STDC_HEADERS 1
- 
- /* Version number of package */
--<<<<<<< diff from left file
--#define VERSION "0.1.4"
--
--
-+#define VERSION "0.1.7"
- 
- /* Extra Win32 hacks. */
- 
-@@ -203,6 +200,3 @@
- */
- 
- #define inline __inline
--========
--#define VERSION "0.1.7"
-->>>>>>> diff from right file
