@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="koffice">
+    <package name="libkoffice">
+        <shortDescription>the KOffice support libraries</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(chartshapelib|flake|kchartcommon|kdchart|form|msooxml).*"/>
+			<files include="bin/.*(koaction|kobase|kochart|kocolorwidgets|koconverter|kokross|komain|koodf|kopageapp|koplugin|koresources|kostore|kotext|kowidgets|kowmf|kwmf|kthesaurus|pigment|koproperty|koreport).*"/>
+            <files include="lib/kde4/(artistic|autocorrect|changecase|clipartthumbnail|defaulttools|divineproportion|generickofilter|ko|musicshape|paragraphtool|pathshapes|pictureshape|spellcheck|spreadsheetshape|text|thesaurus).*"/>
+            <files include="lib/kde4/(chartshape|kchartgenericimage|kchartsvg|kformula|kformdesigner|vectorshape|videoshape).*"/>
+			<files include="share/applications/kde4/(KThesaurus|koffice|kformula).*"/>
+			<files include="share/apps/(kchart|koffice|musicshape|koproperty).*"/>
+			<files include="share/apps/.*formula.*"/>
+			<files include="share/icons/.*"/>
+			<files include="share/kde4/services/(kchart|artistic|autocorrect|changecase|chartshape|clipartthumbnail|defaulttools|divineproportion|generic_filter|ko|musicshape||paragraphtool|pathshape|pictureshape|spellcheck|spreadsheetshape|text|thesaurus).*"/>
+            <files include="share/kde4/servicetypes/(filtereffect|flake|inline|ko|pigment|.*eventaction|text).*"/>
+		</part>
+		<part name="development">
+			<files include="include/[Kk]o.*"/>
+			<files include="include/styles/[Kk]o.*"/>
+			<files include="include/ActionJob_p.*"/>
+			<files include="include/changetracker/.*"/>
+			<files include="include/kis_.*"/>
+            <files include="include/.*(config-openexr|DebugPigment|krita_export|pigment_export).*"/>
+            <files include="include/[Ff]lake.*"/>
+            <files include="lib/.*(chartshapelib|flake|karbon|kdchart|kchartcommon|kplato|krita|pigment|kpresenter|kspread|kword|kwmf|kformula|kivio|kthesaurus|msooxml|kform).*lib"/>
+            <files include="lib/ko.*lib"/>
+			<files include="share/apps/cmake/modules/.*"/>
+			<files include="share/kde4/services/ServiceMenus/(kivio|kchart|kformula).*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/(kchart|koffice|kformula|thesaurus)/.*"/>
+        </part>
+        <dependency>kdebase-runtime</dependency> 
+        <dependency>poppler</dependency> 
+        <dependency>exiv2</dependency>
+    </package>
+    <package name="karbon">
+        <shortDescription>a vector drawing application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*karbon.*"/>
+			<files include="lib/kde4/karbon.*"/>
+			<files include="lib/kde4/(wmfimport|wmfexport).*"/>
+			<files include="share/applications/kde4/.*karbon.*"/>
+			<files include="share/apps/karbon/.*"/>
+			<files include="share/kde4/services/.*karbon.*"/>
+			<files include="share/templates/.*Illustration.*"/>
+			<files include="share/config.*karbon.*"/>
+			<files include="share/kde4/servicetypes/karbon.*"/>
+			<files include="share/kde4/services/ServiceMenus/karbon.*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/karbon/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="kplato">
+        <shortDescription>a project management application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*kplato.*"/>
+			<files include="lib/kde4/.*kplato.*"/>
+			<files include="share/applications/kde4/.*kplato.*"/>
+			<files include="share/apps/(kplato|kplatowork)/.*"/>
+			<files include="share/kde4/services/.*kplato.*"/>
+			<files include="share/config.*kplato.*"/>
+			<files include="share/kde4/servicetypes/kplato.*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/kplato/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+   <package name="kivio">
+        <shortDescription>a diagramming and flowcharting application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*kivio.*"/>
+			<files include="lib/kde4/.*kivio.*"/>
+			<files include="share/applications/kde4/.*kivio.*"/>
+			<files include="share/apps/(kivio)/.*"/>
+			<files include="share/kde4/services/.*kivio.*"/>
+			<files include="share/config.*kivio.*"/>
+			<files include="share/kde4/servicetypes/kivio.*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/kivio/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="kpresenter">
+        <shortDescription>a presentation application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*kpresenter.*"/>
+            <files include="lib/kde4/.*(Filterkpr2odf|kpr|powerpointimport|pptximport).*"/>
+			<files include="share/applications/kde4/.*kpresenter.*"/>
+			<files include="share/apps/kpresenter/.*"/>
+			<files include="share/templates/.*Presentation.*"/>
+			<files include="share/config.*kpresenter.*"/>
+			<files include="share/kde4/servicetypes/kpr_.*"/>
+			<files include="sshare/kde4/services/(kpr|Filterkpr2odf).*"/>
+			<files include="share/kde4/services/ServiceMenus/kpresenter.*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/kpresenter/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="krita">
+        <shortDescription>a creative application for raster images</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*krita.*"/>
+			<files include="lib/kde4/krita.*"/>
+			<files include="share/applications/kde4/.*krita.*"/>
+			<files include="share/apps/(krita|kritaplugins)/.*"/>
+			<files include="share/color/.*"/>
+			<files include="share/kde4/services/.*krita.*"/>
+			<files include="share/config.*krita.*"/>
+			<files include="share/mime/packages/.*krita.*"/>
+			<files include="share/kde4/servicetypes/krita_.*"/>
+			<files include="share/kde4/services/ServiceMenus/krita.*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/krita/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="kspread">
+        <shortDescription>a calculation and spreadsheet application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*kspread.*"/>
+			<files include="lib/kde4/.*kspread.*"/>
+			<files include="lib/kde4/.*(applixspread|csvimport|csvexport|dbaseimport|excelimport|gnumericimport|gnumericexport|opencalcimport|opencalcexport|palmdocimport|palmdocexport|qproimport|xlsximport).*"/>
+			<files include="share/applications/kde4/.*kspread.*"/>
+			<files include="share/apps/kspread/.*"/>
+			<files include="share/kde4/services/.*kspread.*"/>
+			<files include="share/templates/.*SpreadSheet.*"/>
+			<files include="share/config.*kspread.*"/>
+			<files include="share/kde4/servicetypes/kspread_.*"/>
+			<files include="share/kde4/services/ServiceMenus/kspread.*"/>
+		</part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/kspread/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="kword">
+        <shortDescription>a word processor and desktop publisher application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*kword.*"/>
+			<files include="lib/kde4/.*kword.*"/>
+			<files include="lib/kde4/.*(asciiexport|asciiimport|abiword|amipro|applixword|docbookexport|oowriterimport|oowriterexport|rtfimport|rtfexport|wmlimport|wmlexport).*"/>
+			<files include="lib/kde4/.*(docximport).*"/>
+			<files include="share/applications/kde4/.*kword.*"/>
+			<files include="share/apps/kword/.*"/>
+			<files include="share/kde4/services/.*kword.*"/>
+			<files include="share/templates/.*TextDocument.*"/>
+			<files include="share/config.*kword.*"/>
+			<files include="share/kde4/services/ServiceMenus/kword.*"/>
+		</part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="kexi">
+        <shortDescription>an integrated data management application</shortDescription>
+		<part name="runtime">
+			<files include="bin/.*(kexi|ksqlite).*"/>
+			<files include="lib/kde4/.*kexi.*"/>
+			<files include="share/apps/kexi.*"/>
+			<files include="share/applications/kde4/kexi.*"/>
+			<files include="share/config.*kexi.*"/>
+			<files include="share/kde4/service.*(kexi|widgetfactory).*"/>
+		</part>
+		<part name="development">
+			<files include="include/kexi.*"/>
+			<files include="lib/(lib)*kexi.*"/>
+        </part>
+        <part name="documentation">
+			<files include="share/doc/HTML/en/kexi/.*"/>
+        </part>
+        <dependency>libkoffice</dependency>
+    </package>
+    <package name="koffice" comment="koffice meta package">
+        <shortDescription>the KDE Office application suite</shortDescription>
+		<part name="runtime" >
+		</part>
+        <part name="source">
+            <files directory="." include="*.*" exclude=".git .svn CVS *.bak *.orig"/>
+        </part>
+        <dependency>libkoffice</dependency> 
+        <dependency>karbon</dependency> 
+        <dependency>kplato</dependency> 
+        <dependency>kpresenter</dependency> 
+        <dependency>kivio</dependency> 
+        <dependency>krita</dependency> 
+        <dependency>kspread</dependency> 
+        <dependency>kword</dependency> 
+        <dependency>kexi</dependency> 
+    </package>
+    <files exclude=".*manifest/.*"/>
+</module>
