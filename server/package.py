@@ -72,7 +72,9 @@ class package:
 
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
-        self.buildTimeOnly = False
+        self.ignore = False
+        if self.category == "win32libs-bin":
+            self.ignore = True
 
     def __str__( self ):
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
@@ -142,7 +144,7 @@ class package:
         """ packages into subdirectories of the normal directory - this helps to keep the directory clean """
         if not self.enabled:
             return
-        if self.buildTimeOnly:
+        if self.ignore:
             return
 
         self.timestamp()
@@ -160,7 +162,7 @@ class package:
         """ uploads packages to winkde server """
         if not self.enabled:
             return
-        if self.buildTimeOnly:
+        if self.ignore:
             return
 
         self.timestamp()
@@ -261,7 +263,7 @@ for [cat, pac, ver, tar] in depList:
     p = package( cat, pac, target, patchlvl )
     if not [cat, pac, ver, tar] in runtimeDepList:
         print "could not find package %s in runtime dependencies" % pac
-        p.buildTimeOnly = True
+        p.ignore = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
     else:
@@ -291,7 +293,7 @@ for entry in packagelist:
             entry.notifications[i].error = True
     finally:
         for i in entry.notifications:
-            if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
+            if enabled and not entry.ignore: entry.notifications[i].run( entry.getRevision() )
 
 if "localbotnotificationport" in general:
     port = int( general["localbotnotificationport"] )
@@ -317,7 +319,7 @@ for entry in packagelist:
         for i in entry.notifications:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
-            if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
+            if enabled and not entry.ignore: entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
     try:
@@ -328,5 +330,5 @@ for entry in packagelist:
         for i in entry.notifications:
             if i == 'dashboard': continue
             entry.notifications[i].error = True
-            if enabled and not entry.buildTimeOnly: entry.notifications[i].run( entry.getRevision() )
+            if enabled and not entry.ignore: entry.notifications[i].run( entry.getRevision() )
 common.Uploader().executeScript("finish")
