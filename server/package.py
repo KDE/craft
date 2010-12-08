@@ -332,3 +332,11 @@ for entry in packagelist:
             entry.notifications[i].error = True
             if enabled and not entry.ignoreNotifications: entry.notifications[i].run( entry.getRevision() )
 common.Uploader().executeScript("finish")
+
+depscript = os.path.join( general["kderoot"], "emerge", "bin", "dependencies.py" )
+platform = general[ "platform" ]
+stage = general[ "stage" ]
+cmdstring = depscript + " -d runtime -o dependencies-%s-%s -f %s" % ( stage, platform, packagefile )
+p = subprocess.Popen( cmdstring, shell=True )
+p.wait()
+
