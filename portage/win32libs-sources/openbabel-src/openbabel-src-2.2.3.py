@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
         self.targets['2.2.0'] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-2.2.0.tar.gz'
         self.targets['2.2.3'] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-2.2.3.tar.gz'
         self.patchToApply['2.2.0'] = ('openbabel-2.2.0-cmake.diff', 0)
+        self.patchToApply['2.2.3'] = ('openbabel-2.2.3-20101208.diff', 1)
         self.targetInstSrc['2.2.0'] = 'openbabel-2.2.0'
         self.targetInstSrc['2.2.3'] = 'openbabel-2.2.3'
         self.shortDescription = "library to convert the various file formats used in chemical software"
