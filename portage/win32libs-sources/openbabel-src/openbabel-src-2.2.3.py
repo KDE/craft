@@ -12,6 +12,9 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['win32libs-bin/boost'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
+        self.dependencies['win32libs-bin/libxml2'] = 'default'
 
 from Package.CMakePackageBase import *
 
