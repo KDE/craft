@@ -17,7 +17,7 @@ index 96d2acd..2560a0d 100644
          return;
 +        
 +#ifdef Q_OS_WINCE
-+    setAttribute( Qt::WA_DontShowOnScreen, false );
++    window()->setAttribute( Qt::WA_DontShowOnScreen, false );
 +#endif
  
  #ifdef QT_KEYPAD_NAVIGATION
@@ -27,7 +27,7 @@ index 96d2acd..2560a0d 100644
  {
      Q_D(QComboBox);
 +#ifdef Q_OS_WINCE
-+    setAttribute( Qt::WA_DontShowOnScreen, true );
++    window()->setAttribute( Qt::WA_DontShowOnScreen, true );
 +#endif
      if (d->container && d->container->isVisible()) {
  #if !defined(QT_NO_EFFECTS)

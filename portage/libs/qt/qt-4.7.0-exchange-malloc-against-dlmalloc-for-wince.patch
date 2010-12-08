@@ -5,7 +5,7 @@ Subject: [PATCH] exchange malloc against dlmalloc for wince
 
 ---
  src/corelib/global/global.pri  |    4 +++
- src/corelib/global/qmalloc.cpp |   59 +++++++++++++++++++++++++++++++++++++---
+ src/corelib/global/qmalloc.cpp |   60 ++++++++++++++++++++++++++++++++++++++---
  2 files changed, 59 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/global/global.pri b/src/corelib/global/global.pri
@@ -42,7 +42,7 @@ index 090998c..60e395e 100644
  #include <stdlib.h>
  
  /*
-@@ -50,19 +52,68 @@
+@@ -50,19 +52,69 @@
  
  QT_BEGIN_NAMESPACE
  
@@ -60,7 +60,8 @@ index 090998c..60e395e 100644
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_agent_server.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_imap_resource.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadiserver.exe") == 0);
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadiserver.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kleopatra.exe") ==0);
 +  initialized = true;
 +}
 +
