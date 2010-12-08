@@ -116,9 +116,10 @@ lib\\kde4\\imports\\
 
 
 #Aspell
-lib\\aspell.*\\en.*
 lib\\aspell.*\\standard\.kbd
-lib\\aspell.*\\iso-8859-1\.*
+lib\\aspell.*\\iso-8859-1\.cset
+lib\\aspell.*\\iso-8859-1\.cmap
+lib\\aspell.*\\cp1252\.*
 
 # Some additional plugins
 lib\\kde4\\kcm_ldap\.dll
