@@ -16,6 +16,8 @@ class subinfo( info.infoclass ):
 #        self.dependencies['win32libs-bin/lzma'] = 'default'
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/zlib'] = 'default'
+        self.dependencies['win32libs-bin/expat'] = 'default'
+        self.dependencies['win32libs-bin/libxml2'] = 'default'
 
 from Package.CMakePackageBase import *
         

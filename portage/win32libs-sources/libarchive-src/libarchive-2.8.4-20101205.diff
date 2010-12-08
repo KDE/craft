@@ -1,7 +1,31 @@
 diff -Nru libarchive-2.8.4.orig/CMakeLists.txt libarchive-2.8.4/CMakeLists.txt
 --- libarchive-2.8.4.orig/CMakeLists.txt	2010-06-27 20:48:32.000000000 +0200
-+++ libarchive-2.8.4/CMakeLists.txt	2010-12-05 01:40:03.538263900 +0100
-@@ -468,7 +468,9 @@
++++ libarchive-2.8.4/CMakeLists.txt	2010-12-08 16:24:37.237461800 +0100
+@@ -265,6 +265,9 @@
+   FIND_PACKAGE(OpenSSL)
+ ENDIF()
+ 
++# this saves the implementations we already link against
++set(INCLUDED_IMPLEMENTATIONS)
++
+ #
+ # How to prove that HASH functions, which have several names on various
+ # platforms, can be mapped to archive_{hash name}_init,
+@@ -332,8 +335,11 @@
+ 	        INCLUDE_DIRECTORIES(${HASH_REQUIRED_INCLUDES})
+ 	    ENDIF (HASH_REQUIRED_INCLUDES)
+ 	    IF (HASH_REQUIRED_LIBS)
+-	        LIST(APPEND ADDITIONAL_LIBS ${HASH_REQUIRED_LIBS})
+-	        LIST(REMOVE_DUPLICATES ADDITIONAL_LIBS)
++            LIST(FIND INCLUDED_IMPLEMENTATIONS ${IMPLEMENTATION} IMPLEMENTATION_FOUND)
++            IF(IMPLEMENTATION_FOUND EQUAL -1)
++                LIST(APPEND INCLUDED_IMPLEMENTATIONS ${IMPLEMENTATION})
++                LIST(APPEND ADDITIONAL_LIBS ${HASH_REQUIRED_LIBS})
++            ENDIF(IMPLEMENTATION_FOUND EQUAL -1)
+ 	    ENDIF (HASH_REQUIRED_LIBS)
+ 	    BREAK()
+ 	ENDIF (ARCHIVE_HASH_${HASH}_${IMPLEMENTATION})
+@@ -468,7 +474,9 @@
  #
  CHECK_SYMBOL_EXISTS(CreateHardLinkA "windows.h" HAVE_CREATEHARDLINKA)
  CHECK_SYMBOL_EXISTS(CreateHardLinkW "windows.h" HAVE_CREATEHARDLINKW)
@@ -12,7 +36,7 @@ diff -Nru libarchive-2.8.4.orig/CMakeLists.txt libarchive-2.8.4/CMakeLists.txt
  CHECK_FUNCTION_EXISTS_GLIBC(chflags HAVE_CHFLAGS)
  CHECK_FUNCTION_EXISTS_GLIBC(chown HAVE_CHOWN)
  CHECK_FUNCTION_EXISTS_GLIBC(chroot HAVE_CHROOT)
-@@ -843,7 +845,7 @@
+@@ -843,7 +851,7 @@
  # aggressive about diagnosing build problems; this can get
  # relaxed somewhat in final shipping versions.
  IF ("CMAKE_C_COMPILER_ID" MATCHES "^GNU$")
