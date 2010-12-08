@@ -74,6 +74,7 @@ share\\locale\\de\\LC_MESSAGES\\libkdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\libkleopatra\.mo
 share\\locale\\de\\LC_MESSAGES\\libkpgp\.mo
 share\\locale\\de\\LC_MESSAGES\\libksieve\.mo
+share\\locale\\de\\LC_MESSAGES\\libmailcommon\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagecomposer\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagecore\.mo
 share\\locale\\de\\LC_MESSAGES\\libmessagelist\.mo
