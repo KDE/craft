@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.10' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'gpg-error', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'gpg-error', version , '.tar.bz2.sha1' )
+        for version in [ '5.0.0' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'liblzma', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'liblzma', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.10'
+        self.defaultTarget = '5.0.0'
 
 
     def setDependencies( self ):

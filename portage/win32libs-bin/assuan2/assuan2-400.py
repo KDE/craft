@@ -11,18 +11,17 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '2.2.0', '2.2.3' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'openbabel', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'openbabel', version , '.tar.bz2.sha1' )
+        for version in [ '2.0.1', '400' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'assuan2', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'assuan2', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '2.2.3'
+        self.defaultTarget = '400'
 
 
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/zlib' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/libxml2' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/gpg-error' ] = 'default'
 
 
     def setBuildOptions( self ):

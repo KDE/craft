@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision 1
+# based on revision svn1204666
 
 from Package.BinaryPackageBase import *
 import os
@@ -22,8 +22,10 @@ class subinfo( info.infoclass ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/zlib' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/expat' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/openssl' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libbzip2' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/libxml2' ] = 'default'
 
 
     def setBuildOptions( self ):

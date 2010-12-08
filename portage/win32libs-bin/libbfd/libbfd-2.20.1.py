@@ -11,17 +11,16 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '2.0.1' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'assuan2', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'assuan2', version , '.tar.bz2.sha1' )
+        for version in [ '2.20.1' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'libbfd', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'libbfd', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '2.0.1'
+        self.defaultTarget = '2.20.1'
 
 
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/gpg-error' ] = 'default'
 
 
     def setBuildOptions( self ):
