@@ -103,7 +103,7 @@ file collection process is skipped, and only the installer is generated.
         imageDirs = []
         runtimeDependencies = self.subinfo.runtimeDependencies
 
-        commonDependencies = self.subinfo.hardDependencies
+        commonDependencies = self.subinfo.dependencies
         commonDependencies.update( self.subinfo.dependencies )
         for key in commonDependencies:
             runtimeDependencies[ key ] = commonDependencies[ key ]
@@ -119,7 +119,7 @@ file collection process is skipped, and only the installer is generated.
             ( category, package, version, defaultTarget ) = x.ident()
             defaultTarget = portage.findPossibleTargets( category, package, version )
             _package = portage.getPackageInstance( category, package, defaultTarget )
-            imageDirs.append( os.path.join( self.__buildRoot( category, package, version ), self.__imageDirPattern( _package, defaultTarget ) ) )
+            imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ), self.__imageDirPattern( _package, defaultTarget ) ), _package.subinfo.options.merge.destinationPath ) )
             # this loop collects the files from all image directories
         return imageDirs
 
@@ -232,15 +232,15 @@ file collection process is skipped, and only the installer is generated.
         """ runs makensis to generate the installer itself """
         if self.package.endswith( "-package" ):
             self.package = self.package[ : -8 ]
-        if not self.defines[ "setupname" ]:
+        if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( self.package, self.buildTarget )
-        if not self.defines[ "srcdir" ]:
+        if not "srcdir" in self.defines or not not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
-        if not self.defines[ "company" ]:
+        if not "company" in self.defines or not not self.defines[ "company" ]:
             self.defines[ "company" ] = "KDE"
-        if not self.defines[ "productname" ]:
+        if not "productname" in self.defines or not not self.defines[ "productname" ]:
             self.defines[ "productname" ] = "%s %s" % ( self.package.capitalize(), self.buildTarget )
-        if not self.defines[ "executable" ]:
+        if not "executable" in self.defines or not not self.defines[ "executable" ]:
             self.defines[ "executable" ] = ""
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
@@ -257,7 +257,7 @@ file collection process is skipped, and only the installer is generated.
             definestring += " /D" + key + "=\"" + self.defines[ key ] + "\""
 
         utils.new_line()
-        utils.debug( "generating installer %s" % self.setupname )
+        utils.debug( "generating installer %s" % self.defines[ "setupname" ] )
         if self.isInstalled:
             utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join( self.nsisInstallPath, 'makensis.exe' ), definestring, self.scriptname ) )
 
@@ -267,7 +267,10 @@ file collection process is skipped, and only the installer is generated.
         if not os.getenv( "EMERGE_NOCLEAN" ) == "True":
             utils.debug( "cleaning imagedir: %s" % self.imageDir() )
             utils.cleanDirectory( self.imageDir() )
-            for dir in self.__getImageDirectories():
+            for dir, mergeDir in self.__getImageDirectories():
+                imageDir = self.imageDir()
+                if mergeDir:
+                    imageDir = os.path.join( self.imageDir, mergeDir )
                 if os.path.exists( dir ):
                     self.copyFiles( dir, self.imageDir() )
 
