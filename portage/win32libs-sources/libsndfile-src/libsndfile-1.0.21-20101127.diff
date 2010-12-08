@@ -93,7 +93,7 @@ diff -Nru libsndfile-1.0.21.orig/cmake/modules/FindOggVorbis.cmake libsndfile-1.
 +#endif (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
 diff -Nru libsndfile-1.0.21.orig/CMakeLists.txt libsndfile-1.0.21/CMakeLists.txt
 --- libsndfile-1.0.21.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.21/CMakeLists.txt	2010-11-27 02:56:09.277182600 +0100
++++ libsndfile-1.0.21/CMakeLists.txt	2010-11-30 17:56:25.086915700 +0100
 @@ -0,0 +1,25 @@
 +project (libsndfile)
 +
@@ -379,7 +379,7 @@ diff -Nru libsndfile-1.0.21.orig/src/common.h libsndfile-1.0.21/src/common.h
 +long lrint(double x);
 +long lrintf(float x);
 +#define __func__ __FUNCTION__
-+#if !HAVE_STDINT_H
++#ifndef HAVE_STDINT_H
 +typedef __int16 int16_t;
 +typedef __int32 int32_t;
 +typedef unsigned __int16 uint16_t;
@@ -393,7 +393,7 @@ diff -Nru libsndfile-1.0.21.orig/src/common.h libsndfile-1.0.21/src/common.h
 diff -Nru libsndfile-1.0.21.orig/src/config.h.cmake libsndfile-1.0.21/src/config.h.cmake
 --- libsndfile-1.0.21.orig/src/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ libsndfile-1.0.21/src/config.h.cmake	2010-11-27 02:43:00.492066600 +0100
-@@ -0,0 +1,282 @@
+@@ -0,0 +1,288 @@
 +/* src/config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Set to 1 if the compile is GNU GCC. */
@@ -676,6 +676,12 @@ diff -Nru libsndfile-1.0.21.orig/src/config.h.cmake libsndfile-1.0.21/src/config
 +
 +/* Set to 1 to use C99 printf/snprintf in MinGW. */
 +#cmakedefine __USE_MINGW_ANSI_STDIO @__USE_MINGW_ANSI_STDIO@
++
++#ifdef _MSC_VER
++#define inline __inline
++#else
++#define inline __inline__
++#endif
 diff -Nru libsndfile-1.0.21.orig/src/file_io.c libsndfile-1.0.21/src/file_io.c
 --- libsndfile-1.0.21.orig/src/file_io.c	2009-09-26 14:05:03.000000000 +0200
 +++ libsndfile-1.0.21/src/file_io.c	2010-11-27 01:58:48.109359000 +0100
