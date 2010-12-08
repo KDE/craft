@@ -340,7 +340,8 @@ def main():
         if not _graphviz.runDot( opts.outputname, opts.outputname + '.pdf', 'pdf' ):
             exit( 1 )
 
-        _graphviz.openOutput()
+# we don't want to open the output automatically, at least not always
+#        _graphviz.openOutput()
     else:
         print output
 
