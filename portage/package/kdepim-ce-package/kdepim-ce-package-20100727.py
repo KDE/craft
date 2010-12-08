@@ -241,6 +241,17 @@ found in: %s \n Please ensure that package wincetools is installed" %\
         utils.copyFile(os.path.join(self.packageDir(), "daemon.conf"),
                        os.path.join(confdir, "daemon.conf"))
 
+        # Configure Kleopatra
+        confdir = os.path.join(self.workDir(), "My Documents", ".kde",
+                               "share", "config")
+        if not os.path.isdir(confdir):
+            os.makedirs(confdir)
+            with open(os.path.join(confdir, "kleopatrarc"),"w") as f:
+                f.write("[Self-Test]\n")
+                f.write("run-at-startup=false\n\n")
+                f.write("[CertificateCreationWizard]\n")
+                f.write("DNAttributeOrder=CN!,EMAIL!\n")
+
     def translateFirstrun(self):
         '''
            Add localized versions of the akonadi firstrunrc's
@@ -316,7 +327,8 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
         destinationdirs = [
             ("a%d = 0,\\%s" if d.endswith("windows") or d.endswith("gnupg") \
-                    or d.endswith(".strigi")
+                    or d.endswith(".strigi") or \
+                    d.endswith(".kde\share\config")
             else "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
