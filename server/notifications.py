@@ -124,6 +124,7 @@ class StatusNotification(Notification):
             values[ 'category' ] = self.category
             values[ 'name' ] = self.packageName
             values[ 'platform' ] = common.settings.getOption( "General", "platform" )
+            values[ 'stage' ] = common.settings.getOption( "General", "stage" )
             values[ 'date' ] = common.isodatetime
             values[ 'failed' ] = "0"
             if self.error:
