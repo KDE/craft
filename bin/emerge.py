@@ -340,7 +340,7 @@ else:
     verbose = int( environ[ "EMERGE_VERBOSE" ] )
 
 if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
-    trace = 1
+    trace = 0
     os.environ["EMERGE_TRACE"] = str( trace )
 else:
     trace = int( environ[ "EMERGE_TRACE" ] )
