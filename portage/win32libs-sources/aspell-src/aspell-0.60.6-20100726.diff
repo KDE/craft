@@ -239,7 +239,6 @@ diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_
 +# define ASPELL_EXPORT_HPP
 +
 +# ifndef ASPELL_STATIC // no export import for static libs
-+#error "i should not be here"
 +#  ifndef ASPELL_EXPORT // check that it isn't defined (e.g. )
 +#   if defined(_WIN32) || defined(_WIN64)
 +#    pragma warning( disable: 4251 )
@@ -256,7 +255,6 @@ diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_
 +#  define ASPELL_EXPORT
 +# endif // ASPELL_STATIC
 +#endif // ASPELL_EXPORT_HPP
-\ No newline at end of file
 diff -Nru aspell-0.60.6.orig/common/cache-t.hpp aspell-0.60.6/common/cache-t.hpp
 --- aspell-0.60.6.orig/common/cache-t.hpp	2004-06-19 06:37:06.000000000 +0000
 +++ aspell-0.60.6/common/cache-t.hpp	2010-12-08 13:08:24.632624855 +0000
