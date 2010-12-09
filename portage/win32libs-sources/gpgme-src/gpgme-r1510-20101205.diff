@@ -178,11 +178,14 @@ diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
 diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
 --- gpgme-r1510.orig/src/gpgme.h.in	2010-11-23 10:46:52.000000000 +0100
 +++ gpgme-r1510/src/gpgme.h.in	2010-12-05 01:20:50.401865500 +0100
-@@ -37,6 +37,7 @@
+@@ -36,7 +36,10 @@
+ 
  #ifdef _WIN32
    typedef long off_t;
++#ifndef _WIN64
    typedef long ssize_t;
 +  typedef int pid_t;
++#endif
  #else
  # include <sys/types.h>
  #endif
@@ -198,6 +201,19 @@ diff -Nru gpgme-r1510.orig/src/key.c gpgme-r1510/src/key.c
    if (err)
      gpgme_key_unref (key);
    else
+diff -Nru gpgme-r1510.orig/src/util.h gpgme-r1510/src/util.h
+--- gpgme-r1510.orig/src/util.h	2010-11-03 10:56:27.000000000 +0100
++++ gpgme-r1510/src/util.h	2010-12-09 20:08:04.472299400 +0100
+@@ -26,7 +26,8 @@
+ # ifdef HAVE_W32CE_SYSTEM
+ #  include "w32-ce.h"
+ # else
+-#  include "windows.h"
++#  include <winsock2.h>
++#  include <windows.h>
+ # endif
+ #endif
+ 
 diff -Nru gpgme-r1510.orig/src/w32-ce.h gpgme-r1510/src/w32-ce.h
 --- gpgme-r1510.orig/src/w32-ce.h	2010-11-15 16:30:04.000000000 +0100
 +++ gpgme-r1510/src/w32-ce.h	2010-12-05 01:20:50.405865700 +0100
@@ -308,7 +324,7 @@ diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
  #ifdef HAVE_SYS_TIME_H
  # include <sys/time.h>
  #endif
-@@ -41,8 +45,12 @@
+@@ -41,10 +45,16 @@
  #ifdef HAVE_UNISTD_H
  # include <unistd.h>
  #endif
@@ -321,5 +337,9 @@ diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
 +# include <io.h>
 +#endif
  
++#ifndef _WIN64
  #define _WIN32_IE 0x0400 /* Required for SHGetSpecialFolderPathA.  */
++#endif
  
+ /* We need to include the windows stuff here prior to shlobj.h so that
+    we get the right winsock version.  This is usually done in util.h
