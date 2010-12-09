@@ -484,7 +484,7 @@ def info( message ):
     return True
 
 def debug( message, level=0 ):
-    if verbose() > level:
+    if verbose() > level and verbose() > 0:
         print "emerge debug:", message
     sys.stdout.flush()
     return True
@@ -495,11 +495,11 @@ def warning( message ):
     return True
 
 def new_line( level=0 ):
-    if verbose() > level:
+    if verbose() > level and verbose() > 0:
         print
 
 def debug_line( level=0 ):
-    if verbose() > level:
+    if verbose() > level and verbose() > 0:
         print "_" * 80
 
 def error( message ):
@@ -514,7 +514,7 @@ def die( message ):
 def traceMode():
     """return the value if the verbose level""" 
     trace = os.getenv( "EMERGE_TRACE" )
-    if ( not trace == None and trace.isdigit() and int(trace) > 0 ):
+    if ( not trace == None and trace.isdigit() and int(trace) > 0 and verbose() > 0 ):
         return int( trace )
     else:
         return 0
