@@ -7,7 +7,7 @@ from EmergeBase import *
 class SourceBase(EmergeBase):
     """ implements basic stuff required for all sources"""
     def __init__(self,className=None):
-        utils.debug( "SourceBase.__init__ called", 2 )
+        utils.trace( "SourceBase.__init__ called", 2 )
         EmergeBase.__init__(self,className)
         self.url = ""
         
@@ -40,6 +40,7 @@ class SourceBase(EmergeBase):
 
     def sourceDir(self, index=0):
         """ return absolute path of the directory where sources are fetched into.
+        utils.trace( "SourceBase.sourceDir called", 0 )
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc 
         controls parts of the name of the generated path. """
         
@@ -60,8 +61,7 @@ class SourceBase(EmergeBase):
 
     def applyPatches(self):
         """apply patches is available"""
-        utils.debug( "SourceBase.applyPatches called", 1 )
-
+        utils.trace( "SourceBase.applyPatches called", 0 )
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if type(patches) == list:
@@ -80,7 +80,7 @@ class SourceBase(EmergeBase):
             
     def applyPatch(self, file, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
-        utils.debug( "SourceBase.applyPatch called", 2 )
+        utils.trace( "SourceBase.applyPatch called", 2 )
         if not srcdir:
             srcdir=self.sourceDir()
         if file:

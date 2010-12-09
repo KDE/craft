@@ -15,6 +15,7 @@ import tempfile
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
     def __init__(self, subinfo=None):
+        utils.trace( 'GitSource __init__', 2 )
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self,"GitSource")
@@ -61,6 +62,7 @@ class GitSource ( VersionSystemSourceBase ):
         return False
 
     def __fetchSingleBranch( self, repopath = None ):
+        utils.trace( 'GitSource __fetchSingleBranch', 2 )
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
@@ -112,6 +114,7 @@ class GitSource ( VersionSystemSourceBase ):
         return ret
     
     def __fetchMultipleBranch(self, repopath=None):
+        utils.trace( 'GitSource __fetchMultipleBranch', 2 )
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
@@ -154,12 +157,14 @@ class GitSource ( VersionSystemSourceBase ):
         
     
     def fetch(self, repopath=None):
+        utils.trace( 'GitSource fetch', 2 )
         if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
             return self.__fetchMultipleBranch(repopath)
         else:
             return self.__fetchSingleBranch(repopath)
 
     def applyPatch(self, file, patchdepth):
+        utils.trace( 'GitSource ', 2 )
         """apply single patch o git repository"""
         if file:
             patchfile = os.path.join ( self.packageDir(), file )
@@ -183,6 +188,7 @@ class GitSource ( VersionSystemSourceBase ):
         return True
 
     def createPatch( self ):
+        utils.trace( 'GitSource createPatch', 2 )
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
         ret = self.shell.execute( self.sourceDir(), "git", "diff --ignore-all-space > %s" % \
                 self.shell.toNativePath( os.path.join( self.packageDir(), "%s-%s.patch" % \
@@ -190,6 +196,7 @@ class GitSource ( VersionSystemSourceBase ):
         return ret
 
     def sourceVersion( self ):
+        utils.trace( 'GitSource sourceVersion', 2 )
         """ return the revision returned by git show """
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
         tmpFile = tempfile.TemporaryFile()
@@ -211,6 +218,7 @@ class GitSource ( VersionSystemSourceBase ):
         return True
         
     def sourceDir(self, index=0 ): 
+        utils.trace( 'GitSource sourceDir', 2 )
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
