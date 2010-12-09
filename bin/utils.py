@@ -511,6 +511,20 @@ def die( message ):
     print >> sys.stderr, "emerge fatal error: %s" % message
     exit( 1 )
 
+def traceMode():
+    """return the value if the verbose level""" 
+    trace = os.getenv( "EMERGE_TRACE" )
+    if ( not trace == None and trace.isdigit() and int(trace) > 0 ):
+        return int( trace )
+    else:
+        return 0
+
+def trace( message, level=0 ):
+    if traceMode(): #> level:
+        print "emerge trace:", message
+    sys.stdout.flush()
+    return True
+
 def system( cmd, outstream=None, errstream=None, *args, **kw ):
 
     if outstream is None: outstream = sys.stdout
