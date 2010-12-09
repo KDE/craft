@@ -31,8 +31,8 @@ class subinfo(info.infoclass):
                     os.getenv( "GIT_SSH" ) == "plink":
                 self.buildDependencies['dev-util/putty']      = 'default'
 
-            if os.getenv( "KDECOMPILER" ) == "mingw4":
-                if emergePlatform.buildArchitecture() == 'x64':
+            if compiler.isMinGW():
+                if compiler.isMinGW_W64():
                     self.buildDependencies['dev-util/mingw-w64']    = 'default'
                 elif emergePlatform.buildArchitecture() == 'arm-wince':
                     self.buildDependencies['dev-util/cegcc-arm-wince'] = 'default'
@@ -41,7 +41,7 @@ class subinfo(info.infoclass):
                         self.buildDependencies['dev-util/mingw4']    = 'default'
                     else:
                         self.buildDependencies['dev-util/mingw-w32']    = 'default'
-            if (os.getenv( "KDECOMPILER" ) == "msvc2008" or os.getenv( "KDECOMPILER" ) == "msvc2005" or os.getenv( "KDECOMPILER" ) == "msvc2010") and os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
+            if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
                 self.buildDependencies['dev-util/jom']        = 'default'
 
     def setBuildOptions( self ):
