@@ -21,7 +21,7 @@ class VersionSystemSourceBase (SourceBase):
         
     def __init__(self,className=None):
         utils.trace( "VersionSystemSourceBase __init__", 2 )
-        SourceBase.__init__(self,className=None)
+        SourceBase.__init__(self,className)
         
     def getUrl( self, index ):
         utils.trace( "VersionSystemSourceBase getUrl", 2 )
