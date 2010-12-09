@@ -13,6 +13,7 @@ import utils
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self,subinfo=None):
+        utils.trace( "SvnSource.__init__", 2 )
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self,"SvnSource")
@@ -21,6 +22,7 @@ class SvnSource (VersionSystemSourceBase):
         self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
 
     def checkoutDir( self, index=0 ):
+        utils.trace( "SvnSource.checkoutDir", 2 )
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (url,dummy) = self.splitUrl(u)
@@ -45,6 +47,7 @@ class SvnSource (VersionSystemSourceBase):
         return sourcedir
             
     def applyPatch(self, file, patchdepth):
+        utils.trace( "SvnSource.applyPatch", 2 )
         """apply a patch to a svn repository checkout"""
         if file:
             patchfile = os.path.join (self.packageDir(), file)
@@ -72,6 +75,7 @@ class SvnSource (VersionSystemSourceBase):
             
     def fetch( self ):
         """ checkout or update an existing repository path """
+        utils.trace( "SvnSource.fetch", 2 )
         if self.noFetch:
             utils.debug( "skipping svn fetch (--offline)" )
             return True
