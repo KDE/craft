@@ -228,7 +228,7 @@ Binary files aspell-0.60.6.orig/common/.new.cpp.swp and aspell-0.60.6/common/.ne
 diff -Nru aspell-0.60.6.orig/common/aspell_export.h aspell-0.60.6/common/aspell_export.h
 --- aspell-0.60.6.orig/common/aspell_export.h	1970-01-01 00:00:00.000000000 +0000
 +++ aspell-0.60.6/common/aspell_export.h	2010-12-08 13:08:24.632624855 +0000
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,26 @@
 +// This file is added to The New Aspell
 +// Copyright (C) 2010 by Patrick Spendrin under the GNU LGPL license
 +// version 2.0 or 2.1.  You should have received a copy of the LGPL
