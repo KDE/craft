@@ -308,6 +308,7 @@ environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
 environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
 environ["EMERGE_NOREMOVE"]      = os.getenv( "EMERGE_NOREMOVE" )
 environ["EMERGE_VERBOSE"]       = os.getenv( "EMERGE_VERBOSE" )
+environ["EMERGE_TRACE"]         = os.getenv( "EMERGE_TRACE" )
 environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
 environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
 environ["EMERGE_FORCED"]        = os.getenv( "EMERGE_FORCED" )
@@ -337,7 +338,13 @@ if environ['EMERGE_VERBOSE'] == None or not environ['EMERGE_VERBOSE'].isdigit():
     os.environ["EMERGE_VERBOSE"] = str( verbose )
 else:
     verbose = int( environ[ "EMERGE_VERBOSE" ] )
-    
+
+if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
+    trace = 1
+    os.environ["EMERGE_TRACE"] = str( trace )
+else:
+    trace = int( environ[ "EMERGE_TRACE" ] )
+        
 opts = list()
 
 executableName = sys.argv.pop( 0 )
@@ -366,6 +373,9 @@ for i in sys.argv:
     elif ( i == "-v" ):
         verbose = verbose + 1
         os.environ["EMERGE_VERBOSE"] = str( verbose )
+    elif ( i == "--trace" ):
+        trace = trace + 1
+        os.environ["EMERGE_TRACE"] = str( trace )
     elif ( i == "--nocopy" ):
         os.environ["EMERGE_NOCOPY"] = str( True )
     elif ( i == "--noremove" ):
@@ -430,6 +440,7 @@ utils.debug( "packageName: %s" % packageName )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
 utils.debug( "buildTests: %s" % os.getenv( "EMERGE_BUILDTESTS" ) )
 utils.debug( "verbose: %s" % os.getenv( "EMERGE_VERBOSE" ), 1 )
+utils.debug( "trace: %s" % os.getenv( "EMERGE_TRACE" ), 1 )
 utils.debug( "KDEROOT: %s\n" % KDEROOT, 1 )
 utils.debug_line()
 
