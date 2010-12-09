@@ -1,37 +1,26 @@
-From a5a64ee6e2e6f8629694df9625c67cfc7c15b5f2 Mon Sep 17 00:00:00 2001
-From: Andreas Holzammer <andy@kdab.com>
-Date: Thu, 18 Nov 2010 18:39:28 +0100
-Subject: [PATCH] fix that comboboxes are going into the wrong direction
+From 6f8af1ae0651ccdd3166906fd4d001095b04fb4e Mon Sep 17 00:00:00 2001
+From: Volker Krause <vkrause@kde.org>
+Date: Thu, 9 Dec 2010 08:32:32 +0100
+Subject: [PATCH 5/5] Fix comboboxes opening outside of the screen.
 
+Second try, this time hopefully without side-effects.
 ---
- src/gui/widgets/qcombobox.cpp |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ src/gui/widgets/qcombobox.cpp |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
 diff --git a/src/gui/widgets/qcombobox.cpp b/src/gui/widgets/qcombobox.cpp
-index 96d2acd..2560a0d 100644
+index 96d2acd..23103d9 100644
 --- a/src/gui/widgets/qcombobox.cpp
 +++ b/src/gui/widgets/qcombobox.cpp
-@@ -2326,6 +2326,10 @@ void QComboBox::showPopup()
-     Q_D(QComboBox);
-     if (count() <= 0)
-         return;
-+        
-+#ifdef Q_OS_WINCE
-+    window()->setAttribute( Qt::WA_DontShowOnScreen, false );
-+#endif
+@@ -2353,7 +2353,7 @@ void QComboBox::showPopup()
+     int belowHeight = screen.bottom() - below.y();
+     QPoint above = mapToGlobal(listRect.topLeft());
+     int aboveHeight = above.y() - screen.y();
+-    bool boundToScreen = !window()->testAttribute(Qt::WA_DontShowOnScreen);
++    bool boundToScreen = true; //!window()->testAttribute(Qt::WA_DontShowOnScreen);
  
- #ifdef QT_KEYPAD_NAVIGATION
- #ifndef QT_NO_COMPLETER
-@@ -2562,6 +2566,9 @@ void QComboBox::showPopup()
- void QComboBox::hidePopup()
- {
-     Q_D(QComboBox);
-+#ifdef Q_OS_WINCE
-+    window()->setAttribute( Qt::WA_DontShowOnScreen, true );
-+#endif
-     if (d->container && d->container->isVisible()) {
- #if !defined(QT_NO_EFFECTS)
-         d->model->blockSignals(true);
+     const bool usePopup = style->styleHint(QStyle::SH_ComboBox_Popup, &opt, this);
+     {
 -- 
-1.7.0.2.msysgit.0
+1.7.1
 
