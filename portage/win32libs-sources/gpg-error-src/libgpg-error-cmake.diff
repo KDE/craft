@@ -110,7 +110,7 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +
 +add_custom_command(OUTPUT ${BIN_DIR}/mkerrcodes.h  COMMAND ${AWK_EXECUTABLE} -f ${SRC_DIR}/mkerrcodes1.awk ${SRC_DIR}/errnos.in > ${BIN_DIR}/_mkerrcodes.h
 +                                                   #COMMAND set INCLUDE="\"${INCLUDE_STRING}\""
-+                                                   COMMAND ${CMAKE_C_COMPILER} -E ${BIN_DIR}/_mkerrcodes.h ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
++                                                   COMMAND ${ERR_COMPILER} -E ${BIN_DIR}/_mkerrcodes.h ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
 +                                                       "\"${AWK_EXECUTABLE}\"" -f ${SRC_DIR}/mkerrcodes.awk > ${BIN_DIR}/mkerrcodes.h)
 +add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.tab.h COMMAND ${ERR_COMPILER} -E -DRESOLVE_MACROS ${SRC_DIR}/mkw32errmap.c ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" \"{&mkw32errmap_marker\" > ${BIN_DIR}/mkw32errmap.tab.h)
 +
