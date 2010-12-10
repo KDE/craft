@@ -136,7 +136,7 @@ class Uploader:
         return ret == 0
 
 class SourceForgeUploader ( Uploader ):
-    def __init__( self, packageName, packageVersion, category='SFUpload', logfile=None ):
+    def __init__( self, packageName, packageVersion, packagePatchLevel=None, category='SFUpload', logfile=None ):
         Uploader.__init__( self, category, logfile )
         self.category = category
         self.logfile = logfile
@@ -144,6 +144,7 @@ class SourceForgeUploader ( Uploader ):
             packageName = packageName[ : -4 ]
         self.packageName = packageName
         self.packageVersion = packageVersion
+        self.packagePatchLevel = packagePatchLevel
         
         self.fileList = []
         
@@ -170,13 +171,18 @@ class SourceForgeUploader ( Uploader ):
         self.pstdin = self.p.stdin
 
         self.ftpExecute( "cd " + self.settings[ "directory" ] )
+        
+        if self.packagePatchLevel:
+            version = self.packageVersion + "-" + self.packagePatchLevel
+        else:
+            version = self.packageVersion
 
         self.ftpExecute( "mkdir " + self.packageName )
         self.ftpExecute( "chmod 775 " + self.packageName )
         self.ftpExecute( "cd " + self.packageName )
-        self.ftpExecute( "mkdir " + self.packageVersion )
-        self.ftpExecute( "chmod 775 " + self.packageVersion )
-        self.ftpExecute( "cd " + self.packageVersion )
+        self.ftpExecute( "mkdir " + version )
+        self.ftpExecute( "chmod 775 " + version )
+        self.ftpExecute( "cd " + version )
 
 
     def finalize( self ):
