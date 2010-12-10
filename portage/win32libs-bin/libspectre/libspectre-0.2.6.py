@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision 1
+# based on revision svn1204862
 
 from Package.BinaryPackageBase import *
 import os
@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ '0.2.6' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'gettext', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'gettext', version , '.tar.bz2.sha1' )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'libspectre', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'libspectre', version , '.tar.bz2.sha1' )
 
         self.defaultTarget = '0.2.6'
 
