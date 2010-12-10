@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
-        self.dependencies['win32libs-bin/poppler'] = 'default'
+        self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['win32libs-bin/libspectre'] = 'default'
         self.dependencies['win32libs-bin/expat'] = 'default'
         self.dependencies['win32libs-bin/tiff'] = 'default'

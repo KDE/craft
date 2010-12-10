@@ -8,6 +8,10 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['kde/kdebase-runtime'] = 'default'
         self.dependencies['kde/kdegraphicslibs'] = 'default'
+        self.dependencies['kdesupport/poppler'] = 'default'
+        self.dependencies['win32libs-bin/tiff'] = 'default'
+        self.dependencies['win32libs-bin/chm'] = 'default'
+        self.dependencies['win32libs-bin/djvu'] = 'default'
 
 from Package.CMakePackageBase import *
         
