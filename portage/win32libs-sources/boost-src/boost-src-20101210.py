@@ -42,7 +42,12 @@ class Package(CMakePackageBase):
         if compiler.isMinGW():
             self.subinfo.options.configure.defines += "gcc"
         else:
-            self.subinfo.options.configure.defines += "msvc"
+            if compiler.isMSVC2005():
+                self.subinfo.options.configure.defines += "msvc-8.0"
+            elif compiler.isMSVC2008():
+                self.subinfo.options.configure.defines += "msvc-9.0"
+            elif compiler.isMSVC2010():
+                self.subinfo.options.configure.defines += "msvc-10.0"
         if self.isHostBuild():
             self.subinfo.options.configure.defines += " --with-program_options"
         if not emergePlatform.isCrossCompilingEnabled():
