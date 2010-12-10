@@ -100,7 +100,7 @@ class Uploader:
             """ return True because we're probably simply disabled and we do not want to result in an error """
             return True
             
-        if not ( "server" in self.settings and "directory" in self.settings ):
+        if not ( ( "server" in self.settings ) and ( "directory" in self.settings ) ):
             print "server or directory not set"
             return False
 
