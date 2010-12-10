@@ -29,7 +29,7 @@ win32libs-sources,openssl-src,,
 win32libs-sources,redland-src,,
 win32libs-sources,libssh-src,,
 win32libs-sources,exiv2-src,,
-win32libs-sources,boost-src,,
+win32libs-sources,boost-src,,1
 win32libs-sources,chm-src,,
 win32libs-sources,djvu-src,,
 win32libs-sources,libzip-src,,
