@@ -30,7 +30,7 @@ kde-4.5,kdegames,4.5.4,
 kde-4.5,kdegraphics,4.5.4,
 kde-4.5,kdemultimedia,4.5.4,
 kde-4.5,kdenetwork,4.5.4,
-kde-4.5,kdepim,4.5.4,
+# kde-4.5,kdepim,4.5.4, <--- that package doesn't exist, not sure what we can use as a replacement?
 kde-4.5,kdesdk,4.5.4,
 kde-4.5,kdetoys,4.5.4,
 kde-4.5,kdeutils,4.5.4,
