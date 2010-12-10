@@ -110,7 +110,7 @@ class LogUploadNotification( Notification ):
         if settings:
             self.setShortLog()
             upload = common.Uploader( category="LogUpload" )
-            print "uploading logfile:", self.logfile, self.dryRun
+            print "uploading logfile:", self.logfile, self.dryRun, upload.settings[ "server" ] + "/" + upload.settings[ "directory" ]
             if not self.dryRun:
                 upload.upload( self.logfile )
 
