@@ -168,7 +168,7 @@ class package:
         self.timestamp()
         print "running: upload", self.packageName
         upload = common.Uploader( logfile=self.logfile )
-        sfupload = common.SourceForgeUploader( self.packageName, self.target, logfile=self.logfile )
+        sfupload = common.SourceForgeUploader( self.packageName, self.target, self.patchlevel, logfile=self.logfile )
         
         pkgdir = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
         if os.path.exists( pkgdir ):
