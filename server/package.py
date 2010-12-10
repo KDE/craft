@@ -243,7 +243,7 @@ addInfo = dict()
 _depList = []
 _runtimeDepList = []
 for line in packagefile:
-    if not line.startswith( '#' ):
+    if not line.startswith( '#' ) and len( line.strip().split( ',' ) )  == 4:
         cat, pac, target, patchlvl = line.strip().split( ',' )
         addInfo[ cat + "/" + pac ] = ( target, patchlvl )
         portage.solveDependencies( cat, pac, "", _depList, type='both' )
