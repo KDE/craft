@@ -8,6 +8,7 @@ import utils;
 import portage;
 import info;
 import subprocess;
+import xml.dom.minidom;
 from string import Template;
 
 
@@ -17,6 +18,15 @@ KDEROOT=os.getenv("KDEROOT")
 KDEROOT.replace("\\", "/")
 
 #################################################
+
+def getSvnVersion( path ):
+    svninfo = subprocess.Popen( ['svn', 'info', '--xml', path ], shell=True, stdout=subprocess.PIPE ).communicate()[0]
+    doc = xml.dom.minidom.parseString( svninfo )
+    latestcommit = doc.getElementsByTagName( "commit" )[0]
+    rev = latestcommit.getAttribute( "revision" )
+    if rev == "":
+        rev = "-unknown"
+    return "svn" + rev
 
 doPretend = False
 if "-p" in sys.argv:
@@ -90,7 +100,7 @@ for packageKey in addInfo:
             if not buildTarget in targetkeys:
                 targetkeys.append( buildTarget )
             targetsString = "'" + "', '".join( targetkeys ) + "'"
-            result = template.safe_substitute( { 'revision': '1', 
+            result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
                                                  'package': binPackage, 
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
@@ -163,20 +173,31 @@ for packageKey in addInfo:
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
             newDir = os.path.dirname( newName )
 
-            if not os.path.exists( newDir ):
-                os.makedirs( newDir )
+            if not doPretend:
+                if not os.path.exists( newDir ):
+                    os.makedirs( newDir )
+                    
 
-            f = file( newName, 'w+b' )
-            f.write( result )
-            f.close()
+                f = file( newName, 'w+b' )
+                f.write( result )
+                f.close()
 
-            cmd = "svn --non-interactive add %s" % ( newDir )
-            ret = 0
-            utils.debug( "running command: %s" % cmd )
-            p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
-            ret = p.wait()
-            
-            if not ret == 0:
-                utils.warning( 'failed to add file %s' % os.path.basename( newName ) )
-                continue
-        
+                cmd = "svn --non-interactive add %s" % ( newDir )
+                ret = 0
+                utils.debug( "running command: %s" % cmd )
+                p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
+                ret = p.wait()
+
+                if not ret == 0:
+                    utils.warning( 'failed to add file %s' % os.path.basename( newName ) )
+                    continue
+            else:
+                if not os.path.exists( newDir ):
+                    print "mkdir", newDir
+
+                print "write", newName
+    
+                cmd = "svn --non-interactive add %s" % ( newDir )
+                ret = 0
+                utils.debug( "running command: %s" % cmd, 0 )
+
