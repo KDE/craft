@@ -301,10 +301,10 @@ if "localbotnotificationport" in general:
     try:
         s = socket.socket()
         s.connect( ( socket.gethostname(), port ) )
-        s.send( "BUILDFINISHED %s\r\n" % general[ "platform" ] );
+        s.send( "BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] ) );
         s.send( "QUIT\r\n" )
         s.close()
-        print "send bot command BUILDFINISHED %s to %s:%s" % ( general[ "platform" ], socket.gethostname(), port )
+        print "send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port )
     except:
         print "failed to send BUILDFINISHED to Bot on localhost:%s" % port
 else:
