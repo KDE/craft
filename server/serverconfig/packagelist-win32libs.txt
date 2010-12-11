@@ -52,4 +52,5 @@ win32libs-sources,openbabel-src,,
 win32libs-sources,openslp-src,,
 win32libs-sources,libbfd-src,,
 win32libs-sources,freetype-src,,2
+win32libs-sources,libmsn-src,,2
 libs,qt,4.7.1,
