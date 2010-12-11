@@ -178,13 +178,17 @@ diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
 diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
 --- gpgme-r1510.orig/src/gpgme.h.in	2010-11-23 10:46:52.000000000 +0100
 +++ gpgme-r1510/src/gpgme.h.in	2010-12-05 01:20:50.401865500 +0100
-@@ -36,7 +36,10 @@
+@@ -36,7 +36,14 @@
  
  #ifdef _WIN32
    typedef long off_t;
-+#ifndef _WIN64
++#ifndef _SSIZE_T_DEFINED
    typedef long ssize_t;
++#define _SSIZE_T_DEFINED
++#endif
++#ifndef _PID_T_DEFINED
 +  typedef int pid_t;
++#define _PID_T_DEFINED
 +#endif
  #else
  # include <sys/types.h>
@@ -337,7 +341,7 @@ diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
 +# include <io.h>
 +#endif
  
-+#ifndef _WIN64
++#ifndef __MINGW32__
  #define _WIN32_IE 0x0400 /* Required for SHGetSpecialFolderPathA.  */
 +#endif
  
