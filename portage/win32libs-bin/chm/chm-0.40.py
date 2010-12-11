@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ '0.40' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'chm', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'chm', version , '.tar.bz2.sha1' )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'chm', version, packagetypes=['lib'] )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'chm', version, '.tar.bz2.sha1', packagetypes=['lib'] )
 
         self.defaultTarget = '0.40'
 
