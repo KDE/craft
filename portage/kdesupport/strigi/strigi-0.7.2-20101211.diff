@@ -19,6 +19,90 @@ diff -Nru strigi-0.7.2.orig/cmake/MacroCheckGccVisibility.cmake strigi-0.7.2/cma
        string(REGEX MATCH "(--enable-libstdcxx-allocator=mt)" _GCC_COMPILED_WITH_BAD_ALLOCATOR "${_gcc_alloc_info}")
     endif (GCC_IS_NEWER_THAN_4_1)
  
+diff -Nru strigi-0.7.2.orig/src/combinedindexer/combinedindexmanager.cpp strigi-0.7.2/src/combinedindexer/combinedindexmanager.cpp
+--- strigi-0.7.2.orig/src/combinedindexer/combinedindexmanager.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/combinedindexer/combinedindexmanager.cpp	2010-12-11 01:37:40.623261300 +0100
+@@ -45,6 +45,8 @@
+ #include <string>
+ #include <set>
+ #include <map>
++#include <iterator>
++
+ using namespace std;
+ using namespace Strigi;
+ 
+diff -Nru strigi-0.7.2.orig/src/dummyindexer/grepindexreader.cpp strigi-0.7.2/src/dummyindexer/grepindexreader.cpp
+--- strigi-0.7.2.orig/src/dummyindexer/grepindexreader.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/dummyindexer/grepindexreader.cpp	2010-12-11 01:27:36.812725300 +0100
+@@ -24,6 +24,7 @@
+ #include "indexwriter.h"
+ #include "filelister.h"
+ #include <set>
++#include <iterator>
+ using namespace std;
+ using namespace Strigi;
+ 
+diff -Nru strigi-0.7.2.orig/src/streamanalyzer/analyzerloader.cpp strigi-0.7.2/src/streamanalyzer/analyzerloader.cpp
+--- strigi-0.7.2.orig/src/streamanalyzer/analyzerloader.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/streamanalyzer/analyzerloader.cpp	2010-12-11 01:34:51.368580500 +0100
+@@ -21,6 +21,7 @@
+ #include "analyzerplugin.h"
+ #include <string>
+ #include <iostream>
++#include <iterator>
+ #include <cstdio>
+ #include <cstring>
+ #include <assert.h>
+diff -Nru strigi-0.7.2.orig/src/streamanalyzer/endplugins/jpegendanalyzer.cpp strigi-0.7.2/src/streamanalyzer/endplugins/jpegendanalyzer.cpp
+--- strigi-0.7.2.orig/src/streamanalyzer/endplugins/jpegendanalyzer.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/streamanalyzer/endplugins/jpegendanalyzer.cpp	2010-12-11 01:55:17.863732000 +0100
+@@ -29,12 +29,11 @@
+ #include <exiv2/exif.hpp>
+ #include <exiv2/image.hpp>
+ #include <exiv2/error.hpp>
+-#include <math.h>
+ #ifdef _MSC_VER
+ // at least MSVC2008 needs this define for defines like M_LN2
+ #define _USE_MATH_DEFINES
+-#include <cmath>
+ #endif
++#include <math.h>
+ 
+ #if defined(__SUNPRO_CC) || defined(_MSC_VER)
+ #define HUGE_VALF HUGE_VAL
+diff -Nru strigi-0.7.2.orig/src/streamanalyzer/fieldpropertiesdb.cpp strigi-0.7.2/src/streamanalyzer/fieldpropertiesdb.cpp
+--- strigi-0.7.2.orig/src/streamanalyzer/fieldpropertiesdb.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/streamanalyzer/fieldpropertiesdb.cpp	2010-12-11 01:35:33.637998100 +0100
+@@ -23,6 +23,7 @@
+ #include "fieldtypes.h"
+ #include <vector>
+ #include <map>
++#include <iterator>
+ #include <iostream>
+ #include <set>
+ #include <cstdlib>
+diff -Nru strigi-0.7.2.orig/src/xmlindexer/peranalyzerxml.cpp strigi-0.7.2/src/xmlindexer/peranalyzerxml.cpp
+--- strigi-0.7.2.orig/src/xmlindexer/peranalyzerxml.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/xmlindexer/peranalyzerxml.cpp	2010-12-11 01:40:09.726789500 +0100
+@@ -38,6 +38,7 @@
+ #include <cstring>
+ #include <cerrno>
+ #include <algorithm>
++#include <iterator>
+ #ifdef HAVE_UNISTD_H
+  #include <unistd.h>
+ #endif
+diff -Nru strigi-0.7.2.orig/src/xmlindexer/perfieldxml.cpp strigi-0.7.2/src/xmlindexer/perfieldxml.cpp
+--- strigi-0.7.2.orig/src/xmlindexer/perfieldxml.cpp	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/xmlindexer/perfieldxml.cpp	2010-12-11 01:41:20.908860900 +0100
+@@ -37,6 +37,7 @@
+ #include <cstring>
+ #include <cerrno>
+ #include <algorithm>
++#include <iterator>
+ #ifdef HAVE_UNISTD_H
+  #include <unistd.h>
+ #endif
 diff -Nru strigi-0.7.2.orig/StrigiConfig.cmake.in strigi-0.7.2/StrigiConfig.cmake.in
 --- strigi-0.7.2.orig/StrigiConfig.cmake.in	2010-02-03 20:03:07.000000000 +0100
 +++ strigi-0.7.2/StrigiConfig.cmake.in	2010-12-11 00:50:35.989701500 +0100
