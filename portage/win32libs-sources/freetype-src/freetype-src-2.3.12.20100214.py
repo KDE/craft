@@ -2,11 +2,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.3.12-1'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.12.tar.bz2"
-        self.patchToApply['2.3.12-1'] = ('freetype-2.3.12.diff', 1)
-        self.targetInstSrc['2.3.12-1'] = "freetype-2.3.12"
-        self.defaultTarget = '2.3.12-1'
-        self.targetDigests['2.3.12-1'] = 'ebf0438429c0bedd310059326d91646c3c91016b'
+        self.targets['2.3.12'] = "http://downloads.sourceforge.net/freetype/freetype-2.3.12.tar.bz2"
+        self.patchToApply['2.3.12'] = ('freetype-2.3.12.diff', 1)
+        self.targetInstSrc['2.3.12'] = "freetype-2.3.12"
+        self.defaultTarget = '2.3.12'
+        self.targetDigests['2.3.12'] = 'ebf0438429c0bedd310059326d91646c3c91016b'
         self.shortDescription = "A Free, High-Quality, and Portable Font Engine"
 
     def setDependencies( self ):
