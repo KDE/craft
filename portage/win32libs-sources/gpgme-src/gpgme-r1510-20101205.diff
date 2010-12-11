@@ -341,8 +341,9 @@ diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
 +# include <io.h>
 +#endif
  
-+#ifndef __MINGW32__
- #define _WIN32_IE 0x0400 /* Required for SHGetSpecialFolderPathA.  */
++#if _WIN32_IE <= 0x0500
+-#define _WIN32_IE 0x0400 /* Required for SHGetSpecialFolderPathA.  */
++#define _WIN32_IE 0x0500 /* Required for SHGetSpecialFolderPathA.  */
 +#endif
  
  /* We need to include the windows stuff here prior to shlobj.h so that
