@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
         for ver in ['0.7.2']:
           self.targets[ver] ='http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'strigi-' + ver
-        self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101204.diff", 1)
+        self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101211.diff", 1)
           
         if emergePlatform.isCrossCompilingEnabled():
           #FIXME make strigi svnHEAD compile on Windows
