@@ -110,10 +110,13 @@ class MainInfo(info.infoclass):
         self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds' 
         self.languages['svnHEAD'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
 
-        self.languages['4.5.3'] = 'ar bg ca ca@valencia cs da de el en_GB eo es et eu fi fr fy ga'
-        self.languages['4.5.3'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv ml nb nds' 
-        self.languages['4.5.3'] += ' nl nn pa pl pt pt_BR ro ru sk sl sr sv tr uk wa zh_CN zh_TW'
-        #for testing
+        self.languages['4.5.0'] = 'ar bg ca ca@valencia cs da de el en_GB eo es et eu fi fr fy ga'
+        self.languages['4.5.0'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv ml nb nds' 
+        self.languages['4.5.0'] += ' nl nn pa pl pt pt_BR ro ru sk sl sr sv tr uk wa zh_CN zh_TW'
+        for ver in ['5.1', '5.2', '5.3', '5.4']:
+            self.languages['4.' + ver] = self.languages['4.5.0']
+
+     #for testing
         #self.languages['svnHEAD']  = 'de'
     
     def setDependencies( self ):
