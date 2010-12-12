@@ -1,0 +1,34 @@
+--- kdebase-workspace-4.5.4/plasma/desktop/applets/windowlist/WindowList.cpp	2010/07/26 21:10:38	1155073
++++ kdebase-workspace-4.5.4/plasma/desktop/applets/windowlist/WindowList.cpp	2010/08/05 00:36:02	1159304
+@@ -128,7 +128,7 @@
+         if (menu && menu->activeAction() && menu->activeAction()->data().type() == QVariant::ULongLong) {
+             QContextMenuEvent *cmEvent = static_cast<QContextMenuEvent *>(event);
+             QList<QAction*> actionList;
+-            TaskManager::TaskItem item(this, TaskManager::TaskManager::self()->findTask(menu->activeAction()->data().toULongLong()));
++            TaskManager::TaskItem item(this, TaskManager::TaskManager::self()->findTask((WId)menu->activeAction()->data().toULongLong()));
+             TaskManager::GroupManager groupManager(this);
+             TaskManager::BasicMenu taskMenu(NULL, &item, &groupManager, actionList);
+             if (taskMenu.exec(cmEvent->globalPos())) {
+@@ -161,7 +161,7 @@
+             QDrag *drag = new QDrag(menu);
+             QMimeData *mimeData = new QMimeData;
+             QByteArray data;
+-            WId window = menu->activeAction()->data().toULongLong();
++            WId window = (WId)menu->activeAction()->data().toULongLong();
+ 
+             data.resize(sizeof(WId));
+ 
+@@ -299,10 +299,10 @@
+ void WindowList::triggered(QAction *action)
+ {
+     if (action->data().type() == QVariant::ULongLong) {
+-        if (KWindowSystem::activeWindow() == action->data().toULongLong()) {
+-            KWindowSystem::minimizeWindow(action->data().toULongLong());
++        if (KWindowSystem::activeWindow() == (WId)action->data().toULongLong()) {
++            KWindowSystem::minimizeWindow((WId)action->data().toULongLong());
+         } else {
+-            KWindowSystem::activateWindow(action->data().toULongLong());
++            KWindowSystem::activateWindow((WId)action->data().toULongLong());
+         }
+     }
+ }
