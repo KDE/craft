@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
           self.targets[ v ] = 'http://developer.kde.org/~wheeler/files/src/taglib-%s.tar.gz' % v
           self.targetInstSrc[ v ] = 'taglib-%s' % v
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
+        self.patchToApply[ '1.6.3' ] = [("taglib-1.6.3-20101213.diff", 1)]
         self.defaultTarget = '1.6.3'
 
 from Package.CMakePackageBase import *
