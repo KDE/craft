@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
-        self.dependencies['kdesupport/taglib'] = 'default'
+        self.dependencies['win32libs-bin/taglib'] = 'default'
         
 from Package.CMakePackageBase import *
         

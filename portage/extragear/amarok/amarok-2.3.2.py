@@ -14,8 +14,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.dependencies['kdesupport/taglib'] = 'default'
-        self.dependencies['kdesupport/taglib-extras'] = 'default'
+        self.dependencies['win32libs-bin/taglib'] = 'default'
+        self.dependencies['win32libs-bin/taglib-extras'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['virtual/kdebase-runtime'] = 'default'
