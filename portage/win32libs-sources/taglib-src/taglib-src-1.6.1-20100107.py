@@ -9,11 +9,7 @@ class subinfo(info.infoclass):
           self.targets[ v ] = 'http://developer.kde.org/~wheeler/files/src/taglib-%s.tar.gz' % v
           self.targetInstSrc[ v ] = 'taglib-%s' % v
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
-        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/taglib'
-        for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/taglib'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '1.6.3'
 
 from Package.CMakePackageBase import *
 
