@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.shortDescription = 'A library for manipulating JPEG image format files'
         self.categoryName = 'win32libs'
 
-        self.defaultTarget = '7.0'
+        self.defaultTarget = '8.0'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
