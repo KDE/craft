@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision 1
+# based on revision svn1205653
 
 from Package.BinaryPackageBase import *
 import os
@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '0.60', '0.70', '0.51-1', '0.51-2', '0.71' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'shared-mime-info', version, packagetypes=['bin'] )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'shared-mime-info', version, ext='.tar.bz2.sha1', packagetypes=['bin'] )
+        for version in [ '0.60', '0.71', '0.70', '0.51-1', '0.51-2', '0.71-1' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'shared-mime-info', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'shared-mime-info', version , '.tar.bz2.sha1' )
 
-        self.defaultTarget = '0.71'
+        self.defaultTarget = '0.71-1'
 
 
     def setDependencies( self ):
