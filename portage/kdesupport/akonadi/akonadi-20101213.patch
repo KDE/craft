@@ -1,14 +1,14 @@
-Index: C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/src/sqlite_blocking.cpp
+Index: akonadi/qsqlite/src/sqlite_blocking.cpp
 ===================================================================
---- C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/src/sqlite_blocking.cpp	(revisi¢n: 1205909)
-+++ C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/src/sqlite_blocking.cpp	(copia de trabajo)
+--- akonadi/qsqlite/src/sqlite_blocking.cpp
++++ akonadi/qsqlite/src/sqlite_blocking.cpp
 @@ -1,8 +1,13 @@
  #include "sqlite_blocking.h"
  
  #include <sqlite3.h>
 -#include <unistd.h>
  
-+#ifdef _MSC_VER
++#ifdef _WIN32
 +#  include <windows.h>
 +#else
 +#  include <unistd.h>
@@ -21,7 +21,7 @@ Index: C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/src/sqlite_blockin
      qDebug() << debugString() + "sqlite3_blocking_step: Entering while loop";
  
    while( rc == SQLITE_BUSY ) {
-+  #ifdef _MSC_VER
++  #ifdef _WIN32
 +    Sleep(5);
 +  #else
      usleep(5000);
@@ -34,18 +34,18 @@ Index: C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/src/sqlite_blockin
  
    while( rc == SQLITE_BUSY ) {
 -    usleep(500000);
-+    #ifdef _MSC_VER
-+    Sleep(50);
++    #ifdef _WIN32
++    Sleep(500);
 +  #else
-+    usleep(50000);
++    usleep(500000);
 +  #endif
      rc = sqlite3_prepare16_v2( db, zSql, nSql, ppStmt, pzTail );
  
      if ( rc != SQLITE_BUSY ) {
-Index: C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/CMakeLists.txt
+Index: akonadi/qsqlite/CMakeLists.txt
 ===================================================================
---- C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/CMakeLists.txt	(revisi¢n: 1205909)
-+++ C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/CMakeLists.txt	(copia de trabajo)
+--- akonadi/qsqlite/CMakeLists.txt
++++ akonadi/qsqlite/CMakeLists.txt
 @@ -37,5 +37,6 @@
  target_link_libraries(qsqlite3 ${QT_QTCORE_LIBRARY} ${QT_QTSQL_LIBRARY} ${SQLITE_LIBRARIES})
  
@@ -53,10 +53,10 @@ Index: C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/qsqlite/CMakeLists.txt
 +  RUNTIME DESTINATION ${QSQLITE_INSTALL_PREFIX}
    LIBRARY DESTINATION ${QSQLITE_INSTALL_PREFIX}
  )
-Index: C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/CMakeLists.txt
+Index: akonadi/CMakeLists.txt
 ===================================================================
---- C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/CMakeLists.txt	(revisi¢n: 1205909)
-+++ C:/dev/kde/svn/tags/kdesupport-for-4.5/akonadi/CMakeLists.txt	(copia de trabajo)
+--- akonadi/CMakeLists.txt
++++ akonadi/CMakeLists.txt
 @@ -114,9 +114,6 @@
  
  #### Boost ####
