@@ -15,10 +15,6 @@ class subinfo( info.infoclass ):
               self.patchToApply[ ver ] = ('openssl-'+ver+'.diff', 1)
             self.targetDigestUrls[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz.sha1'
         self.targets[ '1.0.1-snapshot' ] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
-        if compiler.isMinGW() or emergePlatform.buildArchitecture() == "x64":
-            self.targets[ '1.0.0' ] = self.targets[ '1.0.0a' ]
-            self.targetInstSrc[ '1.0.0' ] = self.targetInstSrc[ '1.0.0a' ]
-            self.targetDigestUrls[ '1.0.0' ] = self.targetDigestUrls[ '1.0.0a' ]
         self.shortDescription = "The OpenSSL runtime environment"
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.0.0'
