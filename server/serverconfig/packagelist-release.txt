@@ -17,7 +17,7 @@ kdesupport,phonon-vlc,,
 kdesupport,strigi,,
 kdesupport,soprano,,
 kdesupport,qca,,
-kdesupport,qimageblitz,,
+kdesupport,qimageblitz,0.0.6,
 kdesupport,oxygen-icons,,
 kdesupport,akonadi,1.4.1,
 #
