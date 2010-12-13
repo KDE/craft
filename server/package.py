@@ -232,12 +232,13 @@ if not os.path.exists( packageroot ):
 outfile = os.path.join( logroot, "log-%s-%s.txt" )
 
 packagelist = []
-if len(sys.argv) <= 1:
+if len( sys.argv ) <= 1:
     print "please add the path to the packagelist file as only argument"
-    time.sleep(6)
+    time.sleep( 6 )
     exit( 0 )
-    
-packagefile = file( sys.argv[1] )
+
+listfilename = sys.argv[ 1 ]
+packagefile = file( listfilename )
 
 addInfo = dict()
 _depList = []
@@ -336,7 +337,7 @@ common.Uploader().executeScript("finish")
 depscript = os.path.join( general["kderoot"], "emerge", "bin", "dependencies.py" )
 platform = general[ "platform" ]
 stage = general[ "stage" ]
-cmdstring = "python " + depscript + " -d runtime -o dependencies-%s-%s -f %s" % ( stage, platform, packagefile )
+cmdstring = "python " + depscript + " -d runtime -o dependencies-%s-%s -f %s" % ( stage, platform, listfilename )
 p = subprocess.Popen( cmdstring, shell=True )
 p.wait()
 
