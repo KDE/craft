@@ -372,7 +372,7 @@ def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type
     dep_tree = DependenciesTree()
 
     for category, package, target, patchlevel in packageList:
-        dep_tree.addDependencies(category, package)
+        dep_tree.addDependencies(category, package, type=dep_type)
 
     if old_emerge_verbose is not None:
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
