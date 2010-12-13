@@ -19,6 +19,7 @@ kdesupport,soprano,,
 kdesupport,qca,,
 kdesupport,qimageblitz,,
 kdesupport,oxygen-icons,,
+kdesupport,akonadi,1.4.1,
 
 # the KDE packages themselves
 kde-4.5,kdelibs,4.5.4,
