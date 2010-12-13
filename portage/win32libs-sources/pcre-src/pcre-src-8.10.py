@@ -19,6 +19,9 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'win32libs-bin/libbzip2' ] = 'default'
         self.dependencies[ 'win32libs-bin/zlib' ] = 'default'
 
+        if emergePlatform.isCrossCompilingEnabled():
+            self.buildDependencies['win32libs-sources/wcecompat-src'] = 'default'
+
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
