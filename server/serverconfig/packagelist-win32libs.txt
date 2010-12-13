@@ -16,7 +16,7 @@ win32libs-sources,dbus-src,,
 win32libs-sources,jpeg-src,,
 win32libs-sources,lcms-src,,1
 win32libs-sources,libbzip2-src,,
-win32libs-sources,libidn-src,,
+win32libs-sources,libidn-src,,1
 win32libs-sources,libpng-src,,
 win32libs-sources,tiff-src,,
 win32libs-sources,jasper-src,,
