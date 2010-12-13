@@ -1,7 +1,7 @@
 diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 --- libidn-1.19.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libidn-1.19/CMakeLists.txt	2010-10-22 16:03:31.556916200 +0200
-@@ -0,0 +1,86 @@
+@@ -0,0 +1,90 @@
 +project(libidn)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
@@ -9,7 +9,7 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +set(PACKAGE "libidn")
 +set(PACKAGE_NAME "GNU Libidn")
 +set(PACKAGE_VERSION "1.19")
-+set(PACKAGE_BUGREPORT "bug-libidn@gnu.org")
++set(PACKAGE_BUGREPORT "kde-windows@kde.org")
 +set(LOCALEDIR .)
 +
 +set(libIDN_srcs
@@ -59,6 +59,10 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +  src/idn_cmd.c
 +)
 +if(MSVC)
++    set(libIDN_hdrs 
++        ${libIDN_hdrs} 
++        win32/include/ac-stdint.h
++    )
 +    set(IDN_srcs
 +        ${IDN_srcs}
 +        win32/getopt.c
@@ -119,7 +123,6 @@ diff -Nru libidn-1.19.orig/config.h.cmake libidn-1.19/config.h.cmake
 +#endif
 +
 +#endif
-\ No newline at end of file
 diff -Nru libidn-1.19.orig/idn-int.h.cmake libidn-1.19/idn-int.h.cmake
 --- libidn-1.19.orig/idn-int.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ libidn-1.19/idn-int.h.cmake	2010-10-22 16:03:31.560916400 +0200
@@ -1438,4 +1441,3 @@ diff -Nru libidn-1.19.orig/win32/include/getopt.h libidn-1.19/win32/include/geto
 +int getopt_long(int argc, char *const *argv, const char *shortopts, const struct option *longopts, int *indexptr);
 +
 +#endif
-\ No newline at end of file
