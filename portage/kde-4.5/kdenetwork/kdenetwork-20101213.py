@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdenetwork-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdenetwork-4.5.' + ver
         self.defaultTarget = 'svnHEAD'
+        self.patchToApply['4.5.4'] = ( 'kdenetwork-4.5.4-20101213.diff', 1 )
     
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
