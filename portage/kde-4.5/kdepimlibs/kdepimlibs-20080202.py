@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
-        self.dependencies['kdesupport/akonadi'] = 'default'
+        self.dependencies['kdesupport/akonadi'] = '4.5'
         self.dependencies['win32libs-bin/cyrus-sasl'] = 'default'
         self.dependencies['win32libs-bin/libical'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'

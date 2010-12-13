@@ -22,9 +22,10 @@ class subinfo(info.infoclass):
           
 
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/akonadi'
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/akonadi'
         for i in ['4.5.0', '4.5']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.5/kdesupport/akonadi'
+            self.svnTargets[ i ] = 'tags/kdesupport-for-4.5/akonadi'
+            self.patchToApply[ i ] = ( 'akonadi-20101213.patch', 1 )
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/akonadi.git'
         self.defaultTarget = 'gitHEAD'
