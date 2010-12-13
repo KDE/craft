@@ -127,7 +127,7 @@ diff -Nru libidn-1.19.orig/idn-int.h.cmake libidn-1.19/idn-int.h.cmake
 --- libidn-1.19.orig/idn-int.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ libidn-1.19/idn-int.h.cmake	2010-10-22 16:03:31.560916400 +0200
 @@ -0,0 +1,5 @@
-+#if _MSC_VER < 1600
++#if defined(_MSC_VER) && _MSC_VER < 1600
 +# include "ac-stdint.h"
 +#else
 +# include <stdint.h>
