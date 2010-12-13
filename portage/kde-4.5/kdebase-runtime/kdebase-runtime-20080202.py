@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
         self.dependencies['win32libs-bin/libssh'] = 'default'
+        self.shortDescription = "KDE runtime libraries"
 
 from Package.CMakePackageBase import *
         

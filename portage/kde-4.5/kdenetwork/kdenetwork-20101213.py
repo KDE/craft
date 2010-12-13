@@ -16,7 +16,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libidn'] = 'default'
         self.dependencies['win32libs-bin/libmsn'] = 'default'
 #        self.dependencies['win32libs-bin/libgmp'] = 'default'
-        
+        self.shortDescription = "KDE Networking applications (Kopete, KGet)"
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

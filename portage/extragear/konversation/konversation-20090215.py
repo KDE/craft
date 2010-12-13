@@ -15,7 +15,8 @@ class subinfo(info.infoclass):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['virtual/kdepimlibs'] = 'default'
-    
+        self.shortDescription = "a KDE based irc client"
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

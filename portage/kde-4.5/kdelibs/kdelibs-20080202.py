@@ -25,6 +25,7 @@ class subinfo(info.infoclass):
         self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
+        self.shortDescription = "basic KDE libraries"
 
 from Package.CMakePackageBase import *
         

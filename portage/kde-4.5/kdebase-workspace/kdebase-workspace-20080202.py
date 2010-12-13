@@ -15,7 +15,8 @@ class subinfo(info.infoclass):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
-    
+        self.shortDescription = "parts of the KDE desktop"
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

@@ -20,7 +20,8 @@ class subinfo(info.infoclass):
 #        self.softDependencies['testing/libofx'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
-    
+        self.shortDescription = "a personal finance manager for KDE"
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

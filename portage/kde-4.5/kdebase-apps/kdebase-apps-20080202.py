@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
+        self.shortDescription = "KDE base applications (Konqueror, Dolphin)"
 
 from Package.CMakePackageBase import *
         

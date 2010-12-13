@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        
+        self.shortDescription = "KDE games applications"
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

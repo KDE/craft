@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
-        
+        self.shortDescription = "collection of several toy programs in KDE"
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

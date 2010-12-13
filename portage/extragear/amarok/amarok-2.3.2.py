@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.buildDependencies['testing/qtscriptgenerator'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        self.shortDescription = "a powerful music player"
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

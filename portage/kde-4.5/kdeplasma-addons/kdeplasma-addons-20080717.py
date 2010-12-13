@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['kde-4.5/kdebase-workspace'] = 'default'
+        self.shortDescription = "several plasma specific addons"
 
 from Package.CMakePackageBase import *
         

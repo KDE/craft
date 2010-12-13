@@ -17,7 +17,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/cfitsio'] = 'default'
         self.dependencies['win32libs-bin/libnova'] = 'default'
         self.dependencies['win32libs-bin/openbabel'] = 'default'
-    
+        self.shortDescription = "KDE education applications"
+
 
 from Package.CMakePackageBase import *
         

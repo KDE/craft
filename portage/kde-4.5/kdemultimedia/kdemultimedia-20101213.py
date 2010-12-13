@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/taglib'] = 'default'
         self.dependencies['win32libs-bin/libogg'] = 'default'
         self.dependencies['win32libs-bin/libvorbis'] = 'default'
-        
+        self.shortDescription = "KDE multimedia applications (jux, kmix, kmixctrl, kscd)"
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

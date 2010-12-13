@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'
         self.dependencies['dev-util/zip'] = 'default'
-        
+        self.shortDescription = "KDE software development package (umbrello, kate)"
+
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):

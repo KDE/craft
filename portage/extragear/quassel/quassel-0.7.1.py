@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
     
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.shortDescription = "a distributed IRC client"
      
 
 class Package( CMakePackageBase ):

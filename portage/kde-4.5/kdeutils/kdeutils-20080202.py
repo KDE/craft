@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
 #        self.dependencies['win32libs-bin/libgmp'] = 'default'
         self.dependencies['win32libs-bin/libzip'] = 'default'
         self.dependencies['win32libs-bin/libarchive'] = 'default'
+        self.shortDescription = "various desktop utilities (KGpg, Okteta)"
 
 from Package.CMakePackageBase import *
         
