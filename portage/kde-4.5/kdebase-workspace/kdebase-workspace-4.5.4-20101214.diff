@@ -1,5 +1,6 @@
---- kdebase-workspace-4.5.4/plasma/desktop/applets/windowlist/WindowList.cpp	2010/07/26 21:10:38	1155073
-+++ kdebase-workspace-4.5.4/plasma/desktop/applets/windowlist/WindowList.cpp	2010/08/05 00:36:02	1159304
+diff -Nru kdebase-workspace-4.5.4.orig/plasma/desktop/applets/windowlist/WindowList.cpp kdebase-workspace-4.5.4/plasma/desktop/applets/windowlist/WindowList.cpp
+--- kdebase-workspace-4.5.4.orig/plasma/desktop/applets/windowlist/WindowList.cpp	2010-09-30 23:20:34.000000000 +0200
++++ kdebase-workspace-4.5.4/plasma/desktop/applets/windowlist/WindowList.cpp	2010-12-14 17:05:23.802773100 +0100
 @@ -128,7 +128,7 @@
          if (menu && menu->activeAction() && menu->activeAction()->data().type() == QVariant::ULongLong) {
              QContextMenuEvent *cmEvent = static_cast<QContextMenuEvent *>(event);
@@ -32,3 +33,17 @@
          }
      }
  }
+diff -Nru kdebase-workspace-4.5.4.orig/plasma/generic/shells/plasmoidviewer/fullview.h kdebase-workspace-4.5.4/plasma/generic/shells/plasmoidviewer/fullview.h
+--- kdebase-workspace-4.5.4.orig/plasma/generic/shells/plasmoidviewer/fullview.h	2010-07-07 19:10:17.000000000 +0200
++++ kdebase-workspace-4.5.4/plasma/generic/shells/plasmoidviewer/fullview.h	2010-12-14 17:57:44.147390500 +0100
+@@ -26,10 +26,7 @@
+ #ifndef FULLVIEW_H
+ #define FULLVIEW_H
+ 
+-#define private public
+ #include <Plasma/Applet>
+-#undef private
+-
+ #include <Plasma/Corona>
+ 
+ #include <QGraphicsView>
