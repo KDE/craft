@@ -2,12 +2,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for f in ( '16', '17', '18', '18.1', '18.2', '19' ):
+        for f in ( '16', '17', '18', '18.1', '18.2', '19', '21' ):
           ver = '0.' + f
           self.targets[ver]       = 'http://www.exiv2.org/exiv2-%s.tar.gz' % ver
           self.targetInstSrc[ver] = 'exiv2-%s' % ver
           self.patchToApply[ver]  = ( 'exiv2-%s-cmake.diff' % ver, 0 )
-
         self.svnTargets['svnHEAD'] = 'svn://dev.robotbattle.com/exiv2/branches/'
         self.shortDescription = "an image metadata library"
         self.defaultTarget = '0.19'
