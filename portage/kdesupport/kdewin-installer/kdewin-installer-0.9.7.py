@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin-installer'
+        self.svnTargets['migrationTest'] = 'git://git.kde.org/scratch/cgiboudeaux/kdewin-installer'
         self.svnTargets['amarokHEAD'] = 'trunk/kdesupport/kdewin-installer'
         self.defaultTarget = 'svnHEAD'
 
