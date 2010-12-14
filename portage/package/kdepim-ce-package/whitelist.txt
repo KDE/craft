@@ -24,6 +24,7 @@ bin\\akonadictl\.exe
 bin\\akonadiserver\.exe
 bin\\akonadi_agent_server\.exe
 bin\\akonadi_agent_launcher\.exe
+bin\\akonadi_strigi_feeder\.exe
 bin\\dbus-1\.dll
 bin\\dbus-daemon\.exe
 bin\\dbus-launch\.exe
@@ -51,6 +52,7 @@ bin\\setupdll\.dll
 bin\\splashscreen\.dll
 bin\\sqlite3\.dll
 bin\\ssleay32\.dll
+bin\\strigidaemon\.exe
 bin\\tasks-mobile\.exe
 bin\\tasks-mobile-real\.exe
 bin\\zlib1\.dll
@@ -121,6 +123,18 @@ lib\\aspell.*\\iso-8859-1\.cset
 lib\\aspell.*\\iso-8859-1\.cmap
 lib\\aspell.*\\cp1252\.*
 
+#Strigi
+share\\strigi\\fieldproperties\\homeless\.rdfs
+share\\strigi\\fieldproperties\\nao_data\.rdfs
+share\\strigi\\fieldproperties\\ncal_data\.rdfs
+share\\strigi\\fieldproperties\\nco_data\.rdfs
+share\\strigi\\fieldproperties\\nexif_data\.rdfs
+share\\strigi\\fieldproperties\\nfo_data\.rdfs
+share\\strigi\\fieldproperties\\nid3_data\.rdfs
+share\\strigi\\fieldproperties\\nie_data\.rdfs
+share\\strigi\\fieldproperties\\nmo_data\.rdfs
+share\\strigi\\fieldproperties\\strigi\.rdfs
+
 # Some additional plugins
 lib\\kde4\\kcm_ldap\.dll
 lib\\kde4\\messageviewer_bodypartformatter_text_calendar\.dll
@@ -141,6 +155,7 @@ share\\akonadi\\agents\\imapresource\.desktop
 share\\akonadi\\agents\\kolabproxyresource\.desktop
 share\\akonadi\\agents\\newmailnotifieragent\.desktop
 share\\akonadi\\agents\\korgacagent\.desktop
+share\\akonadi\\agents\\strigifeeder\.desktop
 share\\applications\\kde4\\
 share\\apps\\akonadi\\
 share\\apps\\akonadi-kde\\kcfg2dbus\.xsl
@@ -338,6 +353,8 @@ share\\dbus-1\\interfaces\\org\.kde\.pim\.IdentityManager\.xml
 share\\dbus-1\\interfaces\\org\.kde\.StatusNotifierItem\.xml
 share\\dbus-1\\interfaces\\org\.kde\.StatusNotifierWatcher\.xml
 share\\dbus-1\\services\\org\.freedesktop\.Akonadi\.Control\.service
+share\\dbus-1\\services\\org\.freedesktop\.xesam\.searcher\.service
+share\\dbus-1\\services\\vandenoever\.strigi\.service
 share\\gnupg\\com-certs\.pem
 share\\gnupg\\gpg-conf\.skel
 share\\icons\\oxygen\\16x16\\mimetypes\\x-mail-distribution-list\.png
