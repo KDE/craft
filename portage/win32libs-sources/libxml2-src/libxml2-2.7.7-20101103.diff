@@ -1578,12 +1578,16 @@ diff -Nru libxml2-2.7.7.orig/xmlmodule.c libxml2-2.7.7/xmlmodule.c
  }
  
  /*
-@@ -326,7 +353,7 @@
+@@ -326,7 +353,11 @@
  static int
  xmlModulePlatformSymbol(void *handle, const char *name, void **symbol)
  {
 -    *symbol = GetProcAddress(handle, name);
++#ifdef _WIN32_WCE
 +    *symbol = GetProcAddressA(handle, name);
++#else
++    *symbol = GetProcAddress(handle, name);
++#endif
      return (NULL == *symbol) ? -1 : 0;
  }
  
