@@ -824,7 +824,7 @@ diff -Nru samples/CMakeLists.txt samples/CMakeLists.txt
 diff -Nru src/CMakeLists.txt src/CMakeLists.txt
 --- src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ src/CMakeLists.txt	2010-12-14 13:54:09.186485800 +0100
-@@ -0,0 +1,224 @@
+@@ -0,0 +1,225 @@
 +# CMake build system for exiv2 library and executables
 +# Copyright 2008 by Patrick Spendrin <ps_ml@gmx.de>
 +#
@@ -905,6 +905,7 @@ diff -Nru src/CMakeLists.txt src/CMakeLists.txt
 +                    psdimage.hpp
 +                    rafimage.hpp
 +                    rw2image.hpp
++                    tags.hpp
 +                    tgaimage.hpp
 +                    tiffimage.hpp
 +                    types.hpp
