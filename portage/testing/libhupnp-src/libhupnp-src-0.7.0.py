@@ -35,12 +35,12 @@ class Package( QMakePackageBase ):
             return False
         shutil.copytree(os.path.join(self.buildDir(),"hupnp","bin"),os.path.join(self.imageDir(),"bin"),ignore=shutil.ignore_patterns('*.a','*.exe'))
         shutil.copytree(os.path.join(self.buildDir(),"hupnp","bin"),os.path.join(self.imageDir(),"lib"),ignore=shutil.ignore_patterns('*.dll','*.exe'))
-        shutil.copytree(os.path.join(self.sourceDir(),"hupnp","deploy","include"),os.path.join(self.imageDir(),"include","HUpnp"))
+        shutil.copytree(os.path.join(self.sourceDir(),"hupnp","deploy","include"),os.path.join(self.imageDir(),"include"))
         fl = os.listdir(os.path.join(self.sourceDir(),"hupnp","include","HUpnpCore"))
         for fi in fl:
           src = os.path.join(self.sourceDir(),"hupnp","include","HUpnpCore",fi)
           if not os.path.isdir(src):
-            shutil.copy(src,os.path.join(self.imageDir(),"include","HUpnp","HUpnpCore",fi))
+            shutil.copy(src,os.path.join(self.imageDir(),"include","HUpnpCore",fi))
         shutil.copy(os.path.join(self.sourceDir(),"hupnp","lib","qtsoap-2.7-opensource","src","qtsoap.h"),os.path.join(self.imageDir(),"include","qtsoap.h"))
         return True
         
