@@ -224,15 +224,15 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                 f.write('Country=de\n')
                 f.write('Language=de\n')
         # Configure GNUPG
-        # FIXME disable when gpg is fixed
         confdir = os.path.join(self.workDir(), "gnupg")
         if not os.path.isdir(confdir):
             os.makedirs(confdir)
-            with open(os.path.join(confdir, "gpgsm.conf"),"w") as f:
-                f.write("disable-dirmngr\n")
-                f.write("disable-crl-checks\n")
-                f.write("verbose\n")
-                f.write("debug 1024\n")
+        if os.getenv("EMERGE_PACKAGE_CUSTOM_LDAPSERVERS_CONF"):
+            utils.copyFile(os.getenv("EMERGE_PACKAGE_CUSTOM_LDAPSERVERS_CONF"),
+                    os.path.join(confdir, "ldapservers.conf"))
+        else:
+            utils.copyFile(os.path.join(self.packageDir(), "ldapservers-example.conf"),
+                os.path.join(confdir, "ldapservers.conf"))
 
         # Configure Strigi
         confdir = os.path.join(self.workDir(), "My Documents", ".strigi")
