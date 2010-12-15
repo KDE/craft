@@ -222,7 +222,10 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             with open(os.path.join(confdir, "kdeglobals"),"w") as f:
                 f.write('[Locale]\n')
                 f.write('Country=de\n')
-                f.write('Language=de\n')
+                f.write('Language=de\n\n')
+                f.write('[Spelling]\n')
+                f.write('defaultLanguage=de_DE\n')
+
         # Configure GNUPG
         confdir = os.path.join(self.workDir(), "gnupg")
         if not os.path.isdir(confdir):
