@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['testing/mysql-pkg'] = 'default'
         self.dependencies['kdesupport/liblastfm'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
-        self.runtimeDependencies['testing/qtscriptgenerator'] = 'default'
+        self.runtimeDependencies['kdesupport/qtscriptgenerator'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.shortDescription = "a powerful music player"
 

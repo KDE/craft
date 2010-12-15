@@ -3,6 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics'
+        self.patchToApply['svnHEAD'] = ( 'kdegraphics-4.5.4-20101215.diff', 1 )
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
