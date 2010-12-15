@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdeedu-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdeedu-4.5.' + ver
+        self.patchToApply['4.5.4'] = [('kdeedu-4.5.4-20101215.diff', 1)]
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
@@ -17,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/cfitsio'] = 'default'
         self.dependencies['win32libs-bin/libnova'] = 'default'
         self.dependencies['win32libs-bin/openbabel'] = 'default'
-        self.shortDescription = "KDE education applications"
+        self.shortDescription = "KDE education applications (KAlgebra, Marble, KStars)"
 
 
 from Package.CMakePackageBase import *
