@@ -1,0 +1,197 @@
+diff -Nru libnova.orig/CMakeLists.txt libnova/CMakeLists.txt
+--- libnova.orig/CMakeLists.txt	2009-01-14 01:22:16.000000000 +0100
++++ libnova/CMakeLists.txt	2010-12-15 03:10:49.085107000 +0100
+@@ -17,9 +17,11 @@
+ # add some definitions
+ if(WIN32)
+     add_definitions(-D_USE_MATH_DEFINES)
+-    add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+-    add_definitions(-D__WIN32__)
++    if(MSVC)
++        add_definitions(-D__WIN32__)
++        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++        add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
++    endif(MSVC)
+ endif(WIN32)
+ 
+ # add more optimization flags to the visual studio release compilation
+@@ -45,22 +47,23 @@
+ 
+ 
+ # set and create the EXECUTABLE_OUTPUT_PATH
+-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+-file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
++#set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
++#file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+ 
+ # set and create the LIBRARY_OUTPUT_PATH
+-set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+-file(MAKE_DIRECTORY ${LIBRARY_OUTPUT_PATH})
+-
++#set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
++#file(MAKE_DIRECTORY ${LIBRARY_OUTPUT_PATH})
++set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+ 
+ # define a macro to setup executable program which are linked with libnova
+ macro(SETUP_EXECUTABLE EXECUTABLE_NAME)
+     add_executable(${EXECUTABLE_NAME} ${EXECUTABLE_NAME}.c)
+     target_link_libraries(${EXECUTABLE_NAME} libnova)
+     set_target_properties(${EXECUTABLE_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+-    if(MSVC)
++    if(MSVC_IDE)
+         set_target_properties(${EXECUTABLE_NAME} PROPERTIES PREFIX "../")
+-    endif(MSVC)
++    endif(MSVC_IDE)
+     INSTALL(TARGETS ${EXECUTABLE_NAME} RUNTIME DESTINATION bin)
+ endmacro(SETUP_EXECUTABLE EXECUTABLE_NAME)
+ 
+diff -Nru libnova.orig/src/CMakeLists.txt libnova/src/CMakeLists.txt
+--- libnova.orig/src/CMakeLists.txt	2009-01-14 01:22:16.000000000 +0100
++++ libnova/src/CMakeLists.txt	2010-12-15 03:10:49.087107100 +0100
+@@ -35,6 +35,7 @@
+ 	${HEADER_PATH}/hyperbolic_motion.h
+ 	${HEADER_PATH}/parallax.h
+ 	${HEADER_PATH}/airmass.h
++	${HEADER_PATH}/heliocentric_time.h
+ )
+ 
+ add_library(${LIBRARY_NAME} 
+@@ -71,16 +72,20 @@
+ 	hyperbolic_motion.c
+ 	parallax.c
+ 	airmass.c
++	heliocentric_time.c
+ )
+ 
+-if(MSVC)
++if(MSVC_IDE)
+     if(BUILD_SHARED_LIBRARY)
+-        set_target_properties(${LIBRARY_NAME} PROPERTIES PREFIX "../../bin/" IMPORT_PREFIX "../")
++        set_target_properties(${LIBRARY_NAME} PROPERTIES PREFIX "../" IMPORT_PREFIX "../")
+     else(BUILD_SHARED_LIBRARY)
+         set_target_properties(${LIBRARY_NAME} PROPERTIES PREFIX "../")
+     endif(BUILD_SHARED_LIBRARY)
+-endif(MSVC)
++endif(MSVC_IDE)
+ 
++if(CMAKE_COMPILER_IS_GNUCC)
++    target_link_libraries(${LIBRARY_NAME} m)
++endif(CMAKE_COMPILER_IS_GNUCC)
+ 
+ 
+ 
+diff -Nru libnova.orig/src/heliocentric_time.c libnova/src/heliocentric_time.c
+--- libnova.orig/src/heliocentric_time.c	2009-05-14 05:05:30.000000000 +0200
++++ libnova/src/heliocentric_time.c	2010-12-15 03:10:49.089107200 +0100
+@@ -16,13 +16,13 @@
+  *  Copyright (C) 2009 Petr Kubanek
+  */
+ 
++#include <math.h>
++
+ #include <libnova/heliocentric_time.h>
+ #include <libnova/nutation.h>
+ #include <libnova/earth.h>
+ #include <libnova/utility.h>
+ 
+-#include <math.h>
+-
+ /*! \fn double ln_get_heliocentric_time_diff (double JD, struct ln_equ_posn * object)
+ * \param JD Julian day
+ * \param object Pointer to object (RA, DEC) for which heliocentric correction will be caculated
+@@ -34,17 +34,19 @@
+ */
+ double ln_get_heliocentric_time_diff (double JD, struct ln_equ_posn *object)
+ {
++	double theta, ra, dec, c_dec, obliq;
++	
+ 	struct ln_nutation nutation;
+ 	struct ln_helio_posn earth;
+ 
+ 	ln_get_nutation (JD, &nutation);
+ 	ln_get_earth_helio_coords (JD, &earth);
+ 
+-	double theta = ln_deg_to_rad (ln_range_degrees (earth.L + 180));
+-	double ra = ln_deg_to_rad (object->ra);
+-	double dec = ln_deg_to_rad (object->dec);
+-	double c_dec = cos (dec);
+-	double obliq = ln_deg_to_rad (nutation.ecliptic);
++	theta = ln_deg_to_rad (ln_range_degrees (earth.L + 180));
++	ra = ln_deg_to_rad (object->ra);
++	dec = ln_deg_to_rad (object->dec);
++	c_dec = cos (dec);
++	obliq = ln_deg_to_rad (nutation.ecliptic);
+ 
+ 	/* L.Binnendijk Properties of Double Stars, Philadelphia, University of Pennselvania Press, pp. 228-232, 1960 */
+ 	return -0.0057755 * earth.R * (
+diff -Nru libnova.orig/src/libnova/julian_day.h libnova/src/libnova/julian_day.h
+--- libnova.orig/src/libnova/julian_day.h	2009-04-20 09:17:00.000000000 +0200
++++ libnova/src/libnova/julian_day.h	2010-12-15 03:10:49.091107300 +0100
+@@ -19,7 +19,7 @@
+ #ifndef _LN_JULIAN_DAY_H
+ #define _LN_JULIAN_DAY_H
+ 
+-#ifdef __WIN32
++#if defined(__WIN32) && !defined(__WIN32__)
+ #define __WIN32__
+ #endif
+ 
+diff -Nru libnova.orig/src/libnova/ln_types.h libnova/src/libnova/ln_types.h
+--- libnova.orig/src/libnova/ln_types.h	2009-04-20 09:17:00.000000000 +0200
++++ libnova/src/libnova/ln_types.h	2010-12-15 03:10:49.092107400 +0100
+@@ -337,7 +337,7 @@
+ };
+ 
+ /* Definitions of POSIX structures for Win32. */
+-#ifdef __WIN32__
++#ifdef _MSC_VER
+ 
+ #include <time.h>
+ 
+diff -Nru libnova.orig/src/utility.c libnova/src/utility.c
+--- libnova.orig/src/utility.c	2009-04-20 09:17:00.000000000 +0200
++++ libnova/src/utility.c	2010-12-15 03:11:22.862038900 +0100
+@@ -675,7 +675,7 @@
+ }
+ 
+ /* This section is for Win32 substitutions. */
+-#ifdef __WIN32__
++#ifdef _MSC_VER
+ 
+ /* Catches calls to the POSIX gettimeofday and converts them to a related WIN32 version. */
+ int gettimeofday(struct timeval *tv, struct timezone *tz)
+@@ -692,19 +692,28 @@
+ 
+ 	return 0;
+ }
++#endif
+ 
++#ifdef __WIN32__
+ /* Catches calls to the POSIX gmtime_r and converts them to a related WIN32 version. */
+ struct tm *gmtime_r (time_t *t, struct tm *gmt)
+ {
+-	gmtime_s (gmt, t);
+-
+-	return gmt;
++  struct tm *p = gmtime(t);
++  if (!p)
++    return NULL;
++  if (gmt)
++    {
++      memcpy (gmt, p, sizeof (struct tm));
++      return gmt;
++    }
++  else
++    return p;
+ }
+ 
+ /* Catches calls to the POSIX strtok_r and converts them to a related WIN32 version. */
+ char *strtok_r(char *str, const char *sep, char **last)
+ {
+-	return strtok_s(str, sep, last);
++	return (char*) strtok_s(str, sep, last);
+ }
+ 
+ #endif /* __WIN32__ */
