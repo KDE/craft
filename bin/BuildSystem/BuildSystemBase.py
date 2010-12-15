@@ -6,8 +6,8 @@
 
 from EmergeBase import *
 import utils;
+import compiler;
 
-EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
 
 class BuildSystemBase(EmergeBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
@@ -24,19 +24,24 @@ class BuildSystemBase(EmergeBase):
         if self.compiler() == "mingw4":
             self.envPath = "mingw4/bin"
 
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
-            self.makeProgramm = "nmake /NOLOGO"
-        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
-            if self.buildArchitecture() == "x64":
-                self.makeProgramm = "gmake"
-            else:
-                self.makeProgramm = "mingw32-make"
+
+    def _getmakeProgram(self):
+        EMERGE_MAKE_PROGRAM = os.getenv( "EMERGE_MAKE_PROGRAM" )
+        if EMERGE_MAKE_PROGRAM and self.subinfo.options.make.supportsMultijob:
+            utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
+            return EMERGE_MAKE_PROGRAM
+        elif not self.subinfo.options.make.supportsMultijob:
+            os.unsetenv("MAKE")
+        if compiler.isMSVC():
+            return "nmake /NOLOGO"
+        elif compiler.isMinGW_WXX():
+            return "gmake"
+        elif compiler.isMinGW32():
+            return "mingw32-make"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
-        if EMERGE_MAKE_PROGRAM:
-            self.makeProgramm = EMERGE_MAKE_PROGRAM
-            utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
-                
+    makeProgramm = property(_getmakeProgram)
+    
     def configure(self): 
         """configure the target"""
         abstract()

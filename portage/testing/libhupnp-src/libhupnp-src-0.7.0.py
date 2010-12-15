@@ -27,8 +27,7 @@ class Package( QMakePackageBase ):
             self.subinfo.options.make.makeOptions = "debug"
         else:
             self.subinfo.options.make.makeOptions = "release"
-        os.unsetenv("MAKE")
-        os.unsetenv("EMERGE_MAKE_PROGRAM")
+        self.subinfo.options.make.supportsMultijob = False
         
     def install(self):
         if not QMakeBuildSystem.install(self):

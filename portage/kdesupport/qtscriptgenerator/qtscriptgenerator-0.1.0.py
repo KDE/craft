@@ -1,9 +1,5 @@
 import info
-import os
 
-
-os.unsetenv("MAKE")
-os.unsetenv("EMERGE_MAKE_PROGRAM")
 class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
@@ -22,6 +18,7 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.make.supportsMultijob = False
 
 
 if __name__ == '__main__':

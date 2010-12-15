@@ -23,6 +23,7 @@ import datetime
 
 # portage tree related
 import portage
+import compiler
 
 ROOTDIR=os.getenv( "KDEROOT" )
 COMPILER=os.getenv( "KDECOMPILER" )
@@ -354,19 +355,19 @@ class baseclass:
         self.cmakeInstallPrefix = ROOTDIR.replace( "\\", "/" )
         utils.debug( "cmakeInstallPrefix: " + self.cmakeInstallPrefix )
 
-        if COMPILER == "msvc2005" or COMPILER == "msvc2008" or COMPILER == "msvc2010":
+        if compiler.isMSVC():
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
-        elif COMPILER == "mingw" or COMPILER == "mingw4":
+        elif compiler.isMinGW():
              self.cmakeMakefileGenerator = "MinGW Makefiles"
-             if os.getenv("EMERGE_ARCHITECTURE") == 'x64':
+             if compiler.isMinGW_WXX():
                 self.cmakeMakeProgramm = "gmake"
              else:
                 self.cmakeMakeProgramm = "mingw32-make"
         else:
             utils.die( "KDECOMPILER: %s not understood" % COMPILER )
-
-        if EMERGE_MAKE_PROGRAM:
+        
+        if EMERGE_MAKE_PROGRAM and self.subinfo.options.make.supportsMultijob:
             self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
 

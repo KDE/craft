@@ -49,6 +49,7 @@ class OptionsMake:
         self.makeOptions = None
         ## define the basename of the .sln file in case cmake.useIDE = True
         self.slnBaseName = None
+        self.supportsMultijob = True
 
 ## options for the install action 
 class OptionsInstall:
