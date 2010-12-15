@@ -35,7 +35,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF"
+        self.subinfo.options.configure.defines = ""
         if self.compiler() == "mingw":
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
         elif self.compiler() == "mingw4":
