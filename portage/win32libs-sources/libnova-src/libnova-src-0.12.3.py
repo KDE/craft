@@ -1,9 +1,13 @@
+
+
 import base
 import os
 import shutil
 import utils
 from utils import die
 import info
+import emergePlatform
+import compiler
 
 #
 # this library is used by kdeedu/kstars
@@ -11,58 +15,24 @@ import info
 #
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.12.1'] = 'http://downloads.sourceforge.net/libnova/libnova-0.12.1.tar.gz'
-        self.targets['0.12.3'] = 'http://downloads.sourceforge.net/libnova/libnova-0.12.3.tar.gz'
-        self.targetInstSrc['0.12.1'] = 'libnova-0.12.1'
-        self.targetInstSrc['0.12.3'] = 'libnova-0.12.3'
+        self.targets['0.13.0+svn270'] = 'download.sourceforge.net/kde-windows/libnova-0.13.0+svn270.tar.bz2'
+        self.targetDigests['0.13.0+svn270'] = '1d618a5a1f4282e531b2a3d434407bac941cd700'
+        self.patchToApply['0.13.0+svn270'] = ('libnova-svn.diff', 0)
         self.shortDescription = "a Celestial Mechanics, Astrometry and Astrodynamics library"
-        self.defaultTarget = '0.12.3'
+        self.defaultTarget = '0.13.0+svn270'
+        self.targetConfigurePath['0.13.0+svn270'] = 'libnova'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/msys'] = 'default'
 
-class subclass(base.baseclass):
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.createCombinedPackage = True
         self.subinfo = subinfo()
-
-    def execute( self ):
-        base.baseclass.execute( self )
-        if self.compiler <> "mingw":
-            print "error: can only be build with MinGW right now."
-            exit( 1 )
-
-    def unpack( self ):
-        if( not base.baseclass.unpack( self ) ):
-            return False
-
-        cmd = "cd %s && patch -p1 < %s" % \
-              ( os.path.join( self.workdir, self.instsrcdir ),
-                os.path.join( self.packagedir , "libnova.diff" ) )
-        if utils.verbose() >= 1:
-            print cmd
-        os.system( cmd ) or die
-        return True
-
-    def compile( self ):
-        return self.msysCompile()
-
-    def install( self ):
-        return self.msysInstall()
-
-    def make_package( self ):
-        dst = os.path.join( self.imagedir, self.instdestdir, "lib" )
-        utils.cleanDirectory( dst )
-
-        libname = "libnova-" + self.buildTarget.replace('.', '-')
-        self.stripLibs( libname )
-        self.createImportLibs( libname )
-        # now do packaging with kdewin-packager
-        self.doPackaging( "libnova", self.buildTarget, True )
-
-        return True
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.package.packageName = 'libnova-src'
+        self.subinfo.options.make.slnBaseName = 'libnova-src'
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

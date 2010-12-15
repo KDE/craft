@@ -1,38 +1,6 @@
---- libnova-0.12.3/configure.orig	Fri Jan 16 21:38:31 2009
-+++ libnova-0.12.3/configure	Fri Jan 16 21:34:44 2009
-@@ -7315,7 +7315,7 @@
-       # built for inclusion in a dll (and should export symbols for example).
-       # Although the cygwin gcc ignores -fPIC, still need this for old-style
-       # (--disable-auto-import) libraries
--      lt_prog_compiler_pic='-DDLL_EXPORT'
-+      lt_prog_compiler_pic='-DLIBNOVA_SHARED'
-       ;;
- 
-     darwin* | rhapsody*)
-@@ -7381,7 +7381,7 @@
-     mingw* | cygwin* | pw32* | os2*)
-       # This hack is so that the source file can tell whether it is being
-       # built for inclusion in a dll (and should export symbols for example).
--      lt_prog_compiler_pic='-DDLL_EXPORT'
-+      lt_prog_compiler_pic='-DLIBNOVA_SHARED'
-       ;;
- 
-     hpux9* | hpux10* | hpux11*)
-diff -N -r -u libnova-0.12.1/Makefile.in libnova-0.12.1w/Makefile.in
---- libnova-0.12.1/Makefile.in	2007-11-27 12:47:16.656250000 +0100
-+++ libnova-0.12.1w/Makefile.in	2007-11-27 12:29:00.859375000 +0100
-@@ -93,7 +93,7 @@
- STRIP = @STRIP@
- VERSION = @VERSION@
- 
--SUBDIRS = src lntest doc examples
-+SUBDIRS = src doc examples
- ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
- mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
- CONFIG_HEADER = config.h
-diff -N -r -u libnova-0.12.1/src/julian_day.c libnova-0.12.1w/src/julian_day.c
---- libnova-0.12.1/src/julian_day.c	2007-11-27 12:47:16.718750000 +0100
-+++ libnova-0.12.1w/src/julian_day.c	2007-11-27 12:46:44.937500000 +0100
+diff -N -r -u libnova/src/julian_day.c libnova/src/julian_day.c
+--- libnova/src/julian_day.c	2007-11-27 12:47:16.718750000 +0100
++++ libnova/src/julian_day.c	2007-11-27 12:46:44.937500000 +0100
 @@ -23,9 +23,9 @@
  #include <libnova/julian_day.h>
  
@@ -45,19 +13,9 @@ diff -N -r -u libnova-0.12.1/src/julian_day.c libnova-0.12.1w/src/julian_day.c
  
  /* should be in math.h, but isn't on FC3 even with _GNU_SOURCE */
  double round (double __x); 
-@@ -286,8 +286,8 @@
- #ifndef __WIN32__
- 	time_t curtime;
- 	struct tm *loctime;
--	long gmtoff;
- #endif
-+	long gmtoff;
- 	
- 	ln_get_date (JD, &date);
- 
-diff -N -r -u libnova-0.12.1/src/libnova/ln_types.h libnova-0.12.1w/src/libnova/ln_types.h
---- libnova-0.12.1/src/libnova/ln_types.h	2007-11-27 12:47:16.781250000 +0100
-+++ libnova-0.12.1w/src/libnova/ln_types.h	2007-11-27 12:32:16.515625000 +0100
+diff -N -r -u libnova/src/libnova/ln_types.h libnova/src/libnova/ln_types.h
+--- libnova/src/libnova/ln_types.h	2007-11-27 12:47:16.781250000 +0100
++++ libnova/src/libnova/ln_types.h	2007-11-27 12:32:16.515625000 +0100
 @@ -325,7 +325,7 @@
  };
  
@@ -67,9 +25,9 @@ diff -N -r -u libnova-0.12.1/src/libnova/ln_types.h libnova-0.12.1w/src/libnova/
  
  struct timeval
  {
-diff -N -r -u libnova-0.12.1/src/libnova/utility.h libnova-0.12.1w/src/libnova/utility.h
---- libnova-0.12.1/src/libnova/utility.h	2007-11-27 12:47:16.781250000 +0100
-+++ libnova-0.12.1w/src/libnova/utility.h	2007-11-27 12:31:43.281250000 +0100
+diff -N -r -u libnova/src/libnova/utility.h libnova/src/libnova/utility.h
+--- libnova/src/libnova/utility.h	2007-11-27 12:47:16.781250000 +0100
++++ libnova/src/libnova/utility.h	2007-11-27 12:31:43.281250000 +0100
 @@ -217,11 +217,11 @@
  #ifdef __WIN32__
  
@@ -86,9 +44,9 @@ diff -N -r -u libnova-0.12.1/src/libnova/utility.h libnova-0.12.1w/src/libnova/u
  /* Catches calls to the POSIX strtok_r and converts them to a related WIN32 version. */
  char *strtok_r(char *str, const char *sep, char **last);
  
-diff -N -r -u libnova-0.12.1/src/utility.c libnova-0.12.1w/src/utility.c
---- libnova-0.12.1/src/utility.c	2007-11-27 12:47:16.828125000 +0100
-+++ libnova-0.12.1w/src/utility.c	2007-11-27 12:29:01.046875000 +0100
+diff -N -r -u libnova/src/utility.c libnova/src/utility.c
+--- libnova/src/utility.c	2007-11-27 12:47:16.828125000 +0100
++++ libnova/src/utility.c	2007-11-27 12:29:01.046875000 +0100
 @@ -728,6 +728,7 @@
  #ifdef __WIN32__
  
