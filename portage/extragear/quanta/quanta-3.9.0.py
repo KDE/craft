@@ -6,10 +6,9 @@ class subinfo(info.infoclass):
 		self.defaultTarget = 'gitHEAD'
 
 	def setDependencies( self ):
-		self.hardDependencies['kde/kdelibs'] = 'default'
-		self.hardDependencies['kde/kdebase-runtime'] = 'default'
-		self.hardDependencies['testing/kdevplatform'] = 'default'
-		self.hardDependencies['testing/kdevelop'] = 'default'
+		self.hardDependencies['virtual/kdebase-runtime'] = 'default'
+		self.hardDependencies['extragear/kdevplatform'] = 'default'
+		self.hardDependencies['extragear/kdevelop'] = 'default'
 
 from Package.CMakePackageBase import *
 
