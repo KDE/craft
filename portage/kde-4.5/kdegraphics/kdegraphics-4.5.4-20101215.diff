@@ -1,6 +1,17 @@
-diff -Nru kdegraphics.orig/gwenview/lib/libjpeg-80/transupp.c kdegraphics/gwenview/lib/libjpeg-80/transupp.c
---- kdegraphics.orig/gwenview/lib/libjpeg-80/transupp.c	2009-09-03 16:45:06.000000000 +0200
-+++ kdegraphics/gwenview/lib/libjpeg-80/transupp.c	2010-05-03 00:19:43.448000000 +0200
+diff -Nru kdegraphics-4.5.4.orig/gwenview/lib/CMakeLists.txt kdegraphics-4.5.4/gwenview/lib/CMakeLists.txt
+--- kdegraphics-4.5.4.orig/gwenview/lib/CMakeLists.txt	2010-07-07 19:12:18.000000000 +0200
++++ kdegraphics-4.5.4/gwenview/lib/CMakeLists.txt	2010-12-15 01:52:56.157830800 +0100
+@@ -12,6 +12,7 @@
+ 	set(GV_JPEG_DIR libjpeg-80)
+ endif ("${jpeglib_version}" LESS 80)
+ 
++add_definitions(-Dlibjpeg_EXPORTS)
+ include_directories(
+ 	${CMAKE_CURRENT_SOURCE_DIR}/${GV_JPEG_DIR}
+ 	${CMAKE_CURRENT_SOURCE_DIR}/..
+diff -Nru kdegraphics-4.5.4.orig/gwenview/lib/libjpeg-80/transupp.c kdegraphics-4.5.4/gwenview/lib/libjpeg-80/transupp.c
+--- kdegraphics-4.5.4.orig/gwenview/lib/libjpeg-80/transupp.c	2010-03-10 11:42:16.000000000 +0100
++++ kdegraphics-4.5.4/gwenview/lib/libjpeg-80/transupp.c	2010-12-15 01:37:17.994170900 +0100
 @@ -22,6 +22,8 @@
  #include "transupp.h"		/* My own external interface */
  #include <ctype.h>		/* to declare isdigit() */

@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdegraphics-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdegraphics-4.5.' + ver
-            self.patchToApply['4.5.' + ver] = ( 'jpeg8.diff', 1 )
+            self.patchToApply['4.5.' + ver] = [( 'kdegraphics-4.5.4-20101215.diff', 1 )]
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
