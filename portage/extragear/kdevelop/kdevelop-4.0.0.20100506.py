@@ -1,21 +1,26 @@
 import info
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/kdevelop/kdevelop.git'
+        self.svnTargets[ 'gitHEAD' ] = 'git://git.kde.org/kdevelop'
+        for ver in [ '4.1.1' ]:
+            self.targets[ ver ] = 'http://download.kde.org/download.php?url=stable/kdevelop/' + ver + '/src/kdevelop-' + ver + '.tar.bz2'
+            self.targetInstSrc[ ver ] = 'kdevelop-' + ver
+        self.patchToApply[ '4.1.1' ] = ( "kdevelop-4.1.1-20101216.diff", 1 )
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
-        self.hardDependencies['virtual/kdebase-runtime'] = 'default'
-        self.hardDependencies['extragear/kdevplatform'] = 'default'
-        self.hardDependencies['dev-util/zip'] = 'default'
+        self.dependencies[ 'virtual/kdebase-runtime' ] = 'default'
+        self.dependencies[ 'virtual/kdeutils' ] = 'default'
+        self.dependencies[ 'extragear/kdevplatform' ] = 'default'
+        self.buildDependencies[ 'dev-util/zip' ] = 'default'
     
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
+class Package( CMakePackageBase ):
     def __init__( self):
         self.subinfo = subinfo()
-        CMakePackageBase.__init__(self)
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()
