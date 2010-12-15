@@ -144,7 +144,7 @@ plugins\\imageformats\\qjpeg4\.dll
 plugins\\sqldrivers\\qsqlite3\.dll
 
 # Shared mime info
-share\\mime\\
+share\\mime\\(?!packages\\)
 
 share\\akonadi\\agents\\contactsresource\.desktop
 share\\akonadi\\agents\\icalresource\.desktop
@@ -308,8 +308,6 @@ share\\apps\\messageviewer\\plugins\\
 share\\apps\\mobileui\\
 share\\apps\\notes-mobile\\
 share\\apps\\tasks-mobile\\
-share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfig\.cmake
-share\\cmake\\SharedDesktopOntologies\\SharedDesktopOntologiesConfigVersion\.cmake
 share\\config\\accept-languages\.codes
 share\\config\\colors\\40\.colors
 share\\config\\colors\\Oxygen\.colors
@@ -374,10 +372,6 @@ share\\kde4\\services\\akonadi\\contact\\skypeprotocol\.desktop
 share\\kde4\\services\\akonadi\\contact\\smsprotocol\.desktop
 share\\kde4\\services\\akonadi\\contact\\yahooprotocol\.desktop
 share\\kde4\\services\\data\.protocol
-share\\kde4\\services\\emoticonstheme_adium\.desktop
-share\\kde4\\services\\emoticonstheme_kde\.desktop
-share\\kde4\\services\\emoticonstheme_pidgin\.desktop
-share\\kde4\\services\\emoticonstheme_xmpp\.desktop
 share\\kde4\\services\\imap4\.protocol
 share\\kde4\\services\\imaps\.protocol
 share\\kde4\\services\\kcmldap\.desktop
