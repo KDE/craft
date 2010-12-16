@@ -1,7 +1,7 @@
 diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 --- libidn-1.19.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libidn-1.19/CMakeLists.txt	2010-12-13 22:34:06.900320200 +0100
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,96 @@
 +project(libidn)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
@@ -11,6 +11,12 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +set(PACKAGE_VERSION "1.19")
 +set(PACKAGE_BUGREPORT "kde-windows@kde.org")
 +set(LOCALEDIR .)
++
++if(MSVC)
++    option(ENABLE_STATIC "build a static library instead of a dll" ON)
++else(MSVC)
++    option(ENABLE_STATIC "build a static library instead of a dll" OFF)
++endif(MSVC)
 +
 +set(libIDN_srcs
 +  lib/idn-free.c
