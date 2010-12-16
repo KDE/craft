@@ -163,24 +163,48 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def cleanup(root,files):
-        isValid = False
-        for f in files:
-          if(f.startswith(".svn") or f.startswith(".git") ):
+def cleanup( root, files ):
+    isValid = False
+    validFiles = []
+    validDirs = []
+    useValidFiles = False
+    if ".svn" in files:
+        useValidFiles = True
+        try:
+            entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
+        except:
+            try:
+                entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
+            except:
+                useValidFiles = False
+                entriesfile = []
+        oldline = ""
+        for line in entriesfile:
+            if line.startswith( "file" ):
+                validFiles.append( oldline.strip() )
+            if line.startswith( "dir" ):
+                validDirs.append( oldline.strip() )
+            oldline = line
+
+    for f in files:
+        if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
             isValid = True
             continue
-          if(os.path.isdir(os.path.join( root , f ))):
+        if( os.path.isdir( os.path.join( root , f ) ) ):
             isValid = True
-            cleanup( os.path.join( root , f ) , os.listdir(os.path.join( root , f )) ) 
-          else:
+            cleanup( os.path.join( root , f ) , os.listdir( os.path.join( root , f ) ) ) 
+        else:
             if( f.endswith( ".py" ) ):
-              isValid = True
+                if useValidFiles and not f in validFiles:
+                    os.remove( os.path.join( root , f ) )
+                else:
+                    isValid = True
             if( f.endswith( ".pyc" ) ):
-              os.remove(os.path.join( root , f ))
-        if( not isValid ):
-           utils.debug( "Removing unclean directory %s\n" % root , 2 )
-           shutil.rmtree(  root  )
-        return isValid
+                os.remove(os.path.join( root , f ))
+    if( not isValid ):
+        utils.debug( "Removing unclean directory %s\n" % root , 2 )
+        shutil.rmtree(  root  )
+    return isValid
         
 @utils.log
 def doExec( category, package, version, action, opts ):
