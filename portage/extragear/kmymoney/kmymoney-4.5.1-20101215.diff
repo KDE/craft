@@ -5,7 +5,7 @@ diff -Nru kmymoney-4.5.1.orig/kmymoney/reports/CMakeLists.txt kmymoney-4.5.1/kmy
  )
  
  KDE4_ADD_LIBRARY(reports STATIC ${libreports_a_SOURCES})
-+ADD_DEPENDENCIES(reports kmm_config)
++ADD_DEPENDENCIES(reports kmm_config widgets)
  
  ############## tests ####################
  IF( KDE4_BUILD_TESTS )
