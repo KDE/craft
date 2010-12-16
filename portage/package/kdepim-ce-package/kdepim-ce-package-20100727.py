@@ -237,6 +237,13 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             utils.copyFile(os.path.join(self.packageDir(), "ldapservers-example.conf"),
                 os.path.join(confdir, "ldapservers.conf"))
 
+        if os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"):
+            utils.copyFile(os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"),
+                    os.path.join(confdir, "trustlist.txt"))
+        else:
+            utils.copyFile(os.path.join(self.packageDir(), "trustlist-example.txt"),
+                os.path.join(confdir, "trustlist.txt"))
+
         # Configure Strigi
         confdir = os.path.join(self.workDir(), "My Documents", ".strigi")
         if not os.path.isdir(confdir):
