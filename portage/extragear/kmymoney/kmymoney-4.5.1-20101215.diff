@@ -9,3 +9,11 @@ diff -Nru kmymoney-4.5.1.orig/kmymoney/reports/CMakeLists.txt kmymoney-4.5.1/kmy
  
  ############## tests ####################
  IF( KDE4_BUILD_TESTS )
+diff -Nru kmymoney-4.5.1.orig/kmymoney/dialogs/settings/CMakeLists.txt kmymoney-4.5.1/kmymoney/dialogs/settings/CMakeLists.txt
+--- kmymoney-4.5.1.orig/kmymoney/dialogs/settings/CMakeLists.txt	2010-11-14 16:28:43.000000000 +0200
++++ kmymoney-4.5.1/kmymoney/dialogs/settings/CMakeLists.txt	2010-12-16 09:02:49.181375500 +0200
+@@ -31,3 +31,4 @@
+ kde4_add_ui_files(libsettings_a_SOURCES ${libsettings_a_UI} )
+ 
+ KDE4_ADD_LIBRARY(settings STATIC ${libsettings_a_SOURCES})
++ADD_DEPENDENCIES(settings kmm_config)
