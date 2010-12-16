@@ -22,6 +22,11 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
+        if self.compiler() == "msvc2010":
+            if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+                return "Visual Studio 10"
+            else:
+                return "NMake Makefiles"
         if self.compiler() == "msvc2008":
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
                 if self.isTargetBuild():
