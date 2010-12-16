@@ -27,7 +27,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 return "Visual Studio 10"
             else:
                 return "NMake Makefiles"
-        if self.compiler() == "msvc2008":
+        elif self.compiler() == "msvc2008":
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
                 if self.isTargetBuild():
                     return "Visual Studio 9.0 Windows Mobile 6 Professional SDK (ARMV4I)"  
