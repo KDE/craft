@@ -1,0 +1,31 @@
+diff -Nru win-iconv-0.0.2.orig/CMakeLists.txt win-iconv-0.0.2/CMakeLists.txt
+--- win-iconv-0.0.2.orig/CMakeLists.txt	2010-07-27 00:57:00.000000000 +0200
++++ win-iconv-0.0.2/CMakeLists.txt	2010-12-17 09:21:43.232029200 +0100
+@@ -25,20 +25,24 @@
+     include_directories(${WCECOMPAT_INCLUDE_DIR})
+ endif(NOT WINCE)
+ 
++if(NOT BUILD_STATIC)
+ add_library(iconv SHARED win_iconv.c iconv.def)
+ set_target_properties(iconv PROPERTIES COMPILE_FLAGS "-DMAKE_DLL")
+ 
+ add_executable(win_iconv win_iconv.c)
+ set_target_properties(win_iconv PROPERTIES COMPILE_FLAGS "-DMAKE_EXE")
++endif(NOT BUILD_STATIC)
+ 
+-if(WINCE)
+-    target_link_libraries(iconv ${WCECOMPAT_LIBRARIES})
++if(WINCE AND NOT BUILD_STATIC)
++        target_link_libraries(iconv ${WCECOMPAT_LIBRARIES})
+     target_link_libraries(win_iconv ${WCECOMPAT_LIBRARIES})
+-endif(WINCE)
++endif(WINCE AND NOT BUILD_STATIC)
+ 
++if(NOT BUILD_STATIC)
+ install(TARGETS iconv win_iconv RUNTIME DESTINATION bin
+                                 LIBRARY DESTINATION lib
+                                 ARCHIVE DESTINATION lib)
++endif(NOT BUILD_STATIC)
+                                                   
+ if(BUILD_STATIC)
+     add_library(iconv-static STATIC win_iconv.c)
