@@ -328,6 +328,7 @@ share\\locale\\all_languages
 
 # Handbooks
 .*de\\kontact-touch\\.*
+.*en\\kontact-touch\\.*
 
 # Licenses
 share\\apps\\kontact-touch\\licenses\.pdf
