@@ -126,6 +126,20 @@ diff -Nru libnova.orig/src/heliocentric_time.c libnova/src/heliocentric_time.c
  
  	/* L.Binnendijk Properties of Double Stars, Philadelphia, University of Pennselvania Press, pp. 228-232, 1960 */
  	return -0.0057755 * earth.R * (
+diff -Nru libnova.orig/src/julian_day.c libnova/src/julian_day.c
+--- libnova.orig/src/julian_day.c	2009-04-20 09:17:00.000000000 +0200
++++ libnova/src/julian_day.c	2010-12-17 01:26:32.130221300 +0100
+@@ -20,6 +20,10 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <math.h>
++
++#ifdef __WIN32__
++#include <windows.h>
++#endif
+ #include <libnova/julian_day.h>
+ #include <libnova/utility.h>
+ 
 diff -Nru libnova.orig/src/libnova/julian_day.h libnova/src/libnova/julian_day.h
 --- libnova.orig/src/libnova/julian_day.h	2009-04-20 09:17:00.000000000 +0200
 +++ libnova/src/libnova/julian_day.h	2010-12-15 03:10:49.091107300 +0100
@@ -141,19 +155,48 @@ diff -Nru libnova.orig/src/libnova/julian_day.h libnova/src/libnova/julian_day.h
 diff -Nru libnova.orig/src/libnova/ln_types.h libnova/src/libnova/ln_types.h
 --- libnova.orig/src/libnova/ln_types.h	2009-04-20 09:17:00.000000000 +0200
 +++ libnova/src/libnova/ln_types.h	2010-12-15 03:10:49.092107400 +0100
-@@ -337,7 +337,7 @@
+@@ -337,15 +337,17 @@
  };
  
  /* Definitions of POSIX structures for Win32. */
 -#ifdef __WIN32__
-+#ifdef _MSC_VER
++#if defined(_MSC_VER) || _WIN32_IE <= 0x400 // this is a hacky check for mingw.org compiler
  
  #include <time.h>
  
++#ifdef _MSC_VER
+ struct timeval
+ {
+ 	time_t  tv_sec;         /* count of seconds since Jan. 1, 1970 */
+ 	long    tv_usec;        /* and microseconds */
+ };
++#endif
+ 
+ struct timezone
+ {
+diff -Nru libnova.orig/src/libnova/utility.h libnova/src/libnova/utility.h
+--- libnova.orig/src/libnova/utility.h	2009-03-23 17:17:09.000000000 +0100
++++ libnova/src/libnova/utility.h	2010-12-17 01:25:15.760853200 +0100
+@@ -23,6 +23,7 @@
+ 
+ #ifdef __WIN32__
+ #include <time.h>
++struct timeval;
+ // cbrt replacement
+ #define cbrt(x)   pow (x,1.0/3.0)
+ #endif
 diff -Nru libnova.orig/src/utility.c libnova/src/utility.c
 --- libnova.orig/src/utility.c	2009-04-20 09:17:00.000000000 +0200
 +++ libnova/src/utility.c	2010-12-15 03:11:22.862038900 +0100
-@@ -675,7 +675,7 @@
+@@ -53,6 +53,7 @@
+ #ifndef __WIN32__
+ #include <unistd.h>
+ #else
++#include <windows.h>
+ #include <sys/types.h>
+ #include <sys/timeb.h>
+ #endif
+@@ -675,7 +676,7 @@
  }
  
  /* This section is for Win32 substitutions. */
@@ -162,7 +205,7 @@ diff -Nru libnova.orig/src/utility.c libnova/src/utility.c
  
  /* Catches calls to the POSIX gettimeofday and converts them to a related WIN32 version. */
  int gettimeofday(struct timeval *tv, struct timezone *tz)
-@@ -692,19 +692,28 @@
+@@ -692,21 +693,61 @@
  
  	return 0;
  }
@@ -187,11 +230,45 @@ diff -Nru libnova.orig/src/utility.c libnova/src/utility.c
 +    return p;
  }
  
++#if _WIN32_IE <= 0x400 // hacky check for mingw.org
++char *strtok_r(char *s, const char *delim, char **save_ptr)
++{ 
++    char *token;
++
++    if (s == NULL)
++        s = *save_ptr;
++
++    /* Scan leading delimiters. */
++    s += strspn (s, delim);
++    if (*s == '\0')
++    {
++        *save_ptr = s;
++        return NULL;
++    }
++
++    /* Find the end of the token. */
++    token = s;
++    s = strpbrk (token, delim);
++    if (s == NULL)
++        /* This token finishes the string. */
++        *save_ptr = strchr (token, '\0');
++    else
++    {
++        /* Terminate the token and make *SAVE_PTR point past it. */
++        *s = '\0';
++        *save_ptr = s + 1;
++    }
++    return token;
++}
++#else
  /* Catches calls to the POSIX strtok_r and converts them to a related WIN32 version. */
  char *strtok_r(char *str, const char *sep, char **last)
  {
 -	return strtok_s(str, sep, last);
 +	return (char*) strtok_s(str, sep, last);
  }
- 
+-
++#endif
  #endif /* __WIN32__ */
+ 
+ /* C89 substitutions for C99 functions. */
