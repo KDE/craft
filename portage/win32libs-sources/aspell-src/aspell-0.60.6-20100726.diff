@@ -3246,8 +3246,8 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +#endif // #ifndef __MINGW32__
 diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 --- aspell-0.60.6.orig/win32/dirent.h	1970-01-01 00:00:00.000000000 +0000
-+++ aspell-0.60.6/win32/dirent.h	2010-12-17 14:21:20.108407963 +0000
-@@ -0,0 +1,146 @@
++++ aspell-0.60.6/win32/dirent.h	2010-12-17 14:34:24.448083773 +0000
+@@ -0,0 +1,151 @@
 +/* This file is part of the KDE project
 +   Copyright (C) 2000 Werner Almesberger
 +
@@ -3317,13 +3317,18 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 +#define strWtoA _aspell_wince_strWtoA
 +static LPSTR strWtoA( LPCWSTR str );
 +
-+#define closedir _aspell_wince_closedir
-+#define readdir _aspell_wince_readdir
-+#define DIR _aspell_wince_DIR
-+#define dirent _aspell_wince_dirent
-+#define scandir _aspell_wince_scandir
-+#define opendir _aspell_wince_opendir
-+#endif
++#endif // _WIN32_WCE
++
++#ifdef ASPELL_STATIC
++
++# define closedir _aspell_wince_closedir
++# define readdir _aspell_wince_readdir
++# define DIR _aspell_wince_DIR
++# define dirent _aspell_wince_dirent
++# define scandir _aspell_wince_scandir
++# define opendir _aspell_wince_opendir
++
++#endif //ASPELL_STATIC
 +
 +enum
 +  {
