@@ -1,7 +1,7 @@
 diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 --- libidn-1.19.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libidn-1.19/CMakeLists.txt	2010-12-13 22:34:06.900320200 +0100
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,101 @@
 +project(libidn)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
@@ -82,13 +82,18 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gl)
 +include_directories(${CMAKE_CURRENT_BINARY_DIR})
 +if(MSVC)
-+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/win32/include)
++    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/win32/include)
 +ENDIF(MSVC)
 +
 +configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 +configure_file(${CMAKE_CURRENT_SOURCE_DIR}/idn-int.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/idn-int.h)
 +
-+add_library(idn-11 SHARED ${libIDN_srcs})
++if(ENABLE_STATIC)
++    set(_SHARED STATIC)
++else(ENABLE_STATIC)
++    set(_SHARED SHARED)
++endif(ENABLE_STATIC)
++add_library(idn-11 ${_SHARED} ${libIDN_srcs})
 +add_executable(idn ${IDN_srcs})
 +target_link_libraries(idn idn-11)
 +
