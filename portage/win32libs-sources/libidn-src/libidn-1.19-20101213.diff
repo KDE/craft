@@ -13,9 +13,9 @@ diff -Nru libidn-1.19.orig/CMakeLists.txt libidn-1.19/CMakeLists.txt
 +set(LOCALEDIR .)
 +
 +if(MSVC)
-+    option(ENABLE_STATIC "build a static library instead of a dll" ON)
-+else(MSVC)
 +    option(ENABLE_STATIC "build a static library instead of a dll" OFF)
++else(MSVC)
++    option(ENABLE_STATIC "build a static library instead of a dll" ON)
 +endif(MSVC)
 +
 +set(libIDN_srcs
