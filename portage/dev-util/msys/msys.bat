@@ -1,2 +1,2 @@
 @echo off
-python %KDEROOT%\bin\shells.py
+python %KDEROOT%\emerge\bin\shells.py
