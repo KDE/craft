@@ -17,16 +17,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.buildInSource = False
         BuildSystemBase.__init__(self, "autotools", "AutoToolsBuildSystem")
         self.shell = MSysShell()
-        self.makeProgram = "make"    
-        #unset make to remove things like jom
-        os.unsetenv("MAKE")
-        
+        self.makeProgram = "make -e"
 
-        os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" )))
-        #seting perl to prevent msys from using msys-perl
-        perl=self.shell.toNativePath(os.path.join( os.environ.get( "KDEROOT" ) , "dev-utils" , "bin" , "perl.exe" ))
-        os.putenv("PERL",perl)
-        os.putenv("INTLTOOL_PERL",perl)
 
     def configureDefaultDefines( self ):
         
@@ -46,30 +38,22 @@ class AutoToolsBuildSystem(BuildSystemBase):
         else: 
             sourcedir = self.buildDir()
         
-        if compiler.isMinGW():
-            if self.buildType() == "RelWithDebInfo": 
-                cflags += " -O2 -g "
-            elif self.buildType() == "Debug":
-                cflags += " -O0 -g3 "
+
         
         configure = os.path.join(sourcedir,"configure")
         if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
             mergeroot = self.shell.toNativePath( self.mergeDestinationDir() )
             _cflags = "-I%s/include %s" % (mergeroot, cflags)
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
-            utils.putenv("CFLAGS",_cflags)
-            utils.putenv("LDFLAGS",_ldflags)
-            if compiler.isMSVC():
-                utils.putenv("LD", "link.exe")
+            self.shell.initEnvironment(_cflags,_ldflags)
             if self.subinfo.options.configure.bootstrap == True:
               autogen = os.path.join(sourcedir,"autogen.sh")
               if os.path.exists(autogen):
-                os.putenv("PATH" , "%s;%s" %  ( os.environ.get( "PATH" ) , os.path.join( os.environ.get( "MSYSDIR" ) , "opt" , "autotools" , "bin" )))
                 self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
             if self.subinfo.options.install.useDestDir == False:
               _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
             else:
-              _prefix = "--prefix=" + mergeroot + compilercache.getMsysMakeArguments()
+              _prefix = "--prefix=" + mergeroot #+ compilercache.getMsysMakeArguments()
             _options = BuildSystemBase.configureOptions(self)
             if _options:
                 _prefix += " %s" % _options
@@ -83,14 +67,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def make( self, buildType=None ):
         """Using the *make program"""
-
         if self.buildInSource:
             self.enterSourceDir()
         else:
             self.enterBuildDir()
         
         command = self.makeProgram
-        args = compilercache.getMsysMakeArguments()
+        args = ""
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
             
@@ -144,4 +127,5 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
             self.shell.openShell(self.buildDir())
         return True
+        
         
