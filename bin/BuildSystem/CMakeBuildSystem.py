@@ -88,7 +88,7 @@ class CMakeBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
         
         ## \todo why is it required to replace \\ by / ? 
-        options += compilercache.getCMakeArguments()
+        compilercache.getCMakeArguments()
         options += " -DCMAKE_INSTALL_PREFIX=\"%s\"" % self.mergeDestinationDir().replace( "\\", "/" )
 
         options += " -DCMAKE_INCLUDE_PATH=\"%s\"" % \
