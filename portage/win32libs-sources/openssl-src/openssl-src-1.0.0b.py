@@ -122,21 +122,20 @@ class PackageMSys(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False
-        self.subinfo.options.install.useDestDir = False
         self.shell = MSysShell()
         
         self.buildInSource=True
 
         # target install needs perl with native path on configure time
         self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s %s" % (
-            MSysShell().toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler.getSimpleCompilerName() )
-        if compiler.isMinGW32() and not compiler.isMinGW_W32():
+            self.shell.toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler.getSimpleCompilerName() )
+        if compiler.isMinGW32():
             self.subinfo.options.configure.defines += " -DOPENSSL_NO_CAPIENG"
            
       
     def install (self):
       self.enterSourceDir()       
-      self.shell.execute(self.sourceDir(), self.makeProgram, "install_sw" )
+      self.shell.execute(self.sourceDir(), self.makeProgram, "INSTALLTOP=%s install_sw"  % (self.shell.toNativePath(self.imageDir())))
       self.shell.execute(os.path.join( self.imageDir() , "lib"), "chmod" ,"664 *")
       self.shell.execute(os.path.join( self.imageDir() , "lib" , "engines" ), "chmod" , "755 *")
       shutil.move( os.path.join( self.imageDir(),  "lib" , "libcrypto.dll.a" ) , os.path.join( self.imageDir() , "lib" , "libeay32.dll.a" ) )
