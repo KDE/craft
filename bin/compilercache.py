@@ -16,25 +16,21 @@ if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
 
 def getCMakeArguments():
   if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
-    return " -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1=g++ -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1=gcc "
-    
-  return ""
+    utils.putenv("CXX","ccache g++")
+    utils.putenv("CC","ccache gcc")
 
 
 
 def getMsysMakeArguments():
   if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
-    return " CXX=\'ccache g++\' CC=\'ccache gcc\' "
-    
-  return ""
+    utils.putenv("CXX","ccache g++")
+    utils.putenv("CC","ccache gcc")
 
 def getQmakeMakeArguments():
   if os.getenv("EMERGE_USE_CCACHE") == "True" and compiler.isMinGW():
     os.putenv("CXX" , "ccache g++" )
     os.putenv("CC" , "ccache gcc" )
-    return " -e "
-   
-  return ""
+
 
 
  
