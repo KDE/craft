@@ -64,7 +64,7 @@ class QMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         command = self.makeProgramm 
-        command += compilercache.getQmakeMakeArguments()
+        compilercache.getQmakeMakeArguments()
         
         command += " %s" % self.makeOptions(options)
             
