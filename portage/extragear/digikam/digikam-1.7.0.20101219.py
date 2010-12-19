@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'digikam-' + ver
             
         self.patchToApply['1.1.0'] = ('digikam-1.1.0.diff', 1)
+        self.patchToApply['1.7.0'] = ('digikam-1.7.0-20101219.diff', 1)
         
         self.options.configure.defines = "-DENABLE_GPHOTO2=OFF"
         self.defaultTarget = 'svnHEAD'

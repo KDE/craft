@@ -1,0 +1,11 @@
+diff -Nru digikam-1.7.0.orig/libs/3rdparty/clapack/f2c.h digikam-1.7.0/libs/3rdparty/clapack/f2c.h
+--- digikam-1.7.0.orig/libs/3rdparty/clapack/f2c.h	2010-12-19 11:29:13.000000000 +0100
++++ digikam-1.7.0/libs/3rdparty/clapack/f2c.h	2010-12-19 12:56:45.580085300 +0100
+@@ -156,6 +156,7 @@
+ 
+ #ifndef _MSC_VER
+ #define abs(x) ((x) >= 0 ? (x) : -(x))
++#define _CRT_ABS_DEFINED
+ #endif
+ #define dabs(x) (doublereal)abs(x)
+ #define min(a,b) ((a) <= (b) ? (a) : (b))
