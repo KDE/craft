@@ -8,7 +8,6 @@ import utils
 
 import base
 import info
-import compilercache
 from BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
@@ -63,8 +62,7 @@ class QMakeBuildSystem(BuildSystemBase):
         """implements the make step for Qt projects"""
         self.enterBuildDir()
 
-        command = self.makeProgramm 
-        compilercache.getQmakeMakeArguments()
+        command = self.makeProgramm
         
         command += " %s" % self.makeOptions(options)
             

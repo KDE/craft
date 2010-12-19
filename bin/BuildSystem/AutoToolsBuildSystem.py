@@ -6,7 +6,6 @@ import utils
 
 import base
 import info
-import compilercache
 import compiler
 from shells import *
 
@@ -53,7 +52,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if self.subinfo.options.install.useDestDir == False:
               _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
             else:
-              _prefix = "--prefix=" + mergeroot #+ compilercache.getMsysMakeArguments()
+              _prefix = "--prefix=" + mergeroot
             _options = BuildSystemBase.configureOptions(self)
             if _options:
                 _prefix += " %s" % _options

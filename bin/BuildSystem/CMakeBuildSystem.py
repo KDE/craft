@@ -9,7 +9,6 @@ import utils
 import base
 import info
 import compiler
-import compilercache
 from CMakeDependencies import *
 from BuildSystemBase import *
 from graphviz import *
@@ -88,7 +87,6 @@ class CMakeBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
         
         ## \todo why is it required to replace \\ by / ? 
-        compilercache.getCMakeArguments()
         options += " -DCMAKE_INSTALL_PREFIX=\"%s\"" % self.mergeDestinationDir().replace( "\\", "/" )
 
         options += " -DCMAKE_INCLUDE_PATH=\"%s\"" % \

@@ -80,6 +80,13 @@ set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
 
+if %EMERGE_USE_CCACHE% == True (
+    echo EMERGE_USE_CCACH is active to use it "set EMERGE_MAKE_PROGRAM=jom /E" or "set EMERGE_MAKE_PROGRAM=mingw32-make -e"
+    set CCACHE_DIR=%KDEROOT%\build\CCACHE
+    set CXX=ccache g++
+    set CC=ccache gcc
+)
+
 if %KDECOMPILER% == mingw ( 
     call :path-mingw
 ) else (
