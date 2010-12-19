@@ -23,6 +23,8 @@ import getpass
 import subprocess
 import re
 import tempfile
+import compiler
+import platform
 
 if os.name == 'nt': import msvcrt
 else:               import fcntl
@@ -1181,6 +1183,59 @@ def log(fn):
             f.close()
 
     return inner
+
+def regQuery(key, value):
+    '''
+    Query the registry key <key> for value <value> and return
+    the result.
+    '''
+    query = 'reg query "%s" /v "%s"' % (key, value)
+    debug("Executing registry query %s " % query, 2)
+    result = subprocess.Popen(query,
+                stdout=subprocess.PIPE).communicate()[0]
+    # Output of this command is either an error to stderr
+    # or the key with the value in the next line
+    reValue = re.compile(r"(\s*%s\s*REG_\w+\s*)(.*)" % value)
+    match = reValue.search(result)
+    if match and match.group(2):
+        return match.group(2).rstrip()
+    return False
+
+def embedManifest(executable, manifest):
+    '''
+       Embed a manifest to an executable using either the free
+       kdewin manifest if it exists in dev-utils/bin
+       or the one provided by the Microsoft Platform SDK if it
+       is installed'
+    '''
+    if not os.path.isfile(executable) or not os.path.isfile(manifest):
+        # We die here because this is a problem with the portage files
+        die("embedManifest %s or %s do not exist" % (executable, manifest))
+    debug("embedding ressource manifest %s into %s" % \
+            (manifest, executable), 2)
+    mtExe = None
+    mtExe = os.path.join(os.getenv("KDEROOT"), "dev-utils", "bin", "mt.exe")
+
+    if(not os.path.isfile(mtExe)):
+        # If there is no free manifest tool installed on the system
+        # try to fallback on the manifest tool provided by visual studio
+        sdkdir = regQuery("HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows",
+            "CurrentInstallFolder")
+        if not sdkdir:
+            debug("embedManifest could not find the Registry Key"
+                  " for the Windows SDK", 2)
+        else:
+            mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
+            if not os.path.isfile(os.path.normpath(mtExe)):
+                debug("embedManifest could not find a mt.exe in\n\t %s" % \
+                    os.path.dirname(mtExe), 2)
+    if os.path.isfile(mtExe):
+        system([mtExe, "-nologo", "-manifest", manifest,
+            "-outputresource:%s;1" % executable])
+    else:
+        debug("No manifest tool found. \n Ressource manifest for %s not embedded"\
+                % executable, 1)
+
 
 def getscriptname():
     if __name__ == '__main__':
