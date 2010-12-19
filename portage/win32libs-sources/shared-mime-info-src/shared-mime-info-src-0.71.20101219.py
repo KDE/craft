@@ -104,9 +104,8 @@ class Package(CMakePackageBase):
             return False
         if compiler.isMinGW():
             manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
-            patch = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
-            cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
-#            utils.system( cmd )
+            executable = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
+            utils.embedManifest( executable, manifest )
         return True
 
     def qmerge( self ):

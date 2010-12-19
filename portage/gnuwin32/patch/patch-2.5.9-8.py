@@ -50,9 +50,7 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
             return False
         manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
         patch = os.path.join( self.installDir(), "patch.exe" )
-        cmd = "mt.exe -nologo -manifest %s -outputresource:%s;1" % ( manifest, patch )
-        utils.system( cmd )
-
+        utils.embedManifest(manifest, patch)
         return True
         
 if __name__ == '__main__':
