@@ -42,5 +42,14 @@ class Package(CMakePackageBase):
         elif self.compiler() == "msvc2010":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2010\" "
 
+    def install( self ):
+        if not CMakePackageBase.install( self ):
+            return False
+        if compiler.isMinGW():
+            manifest = os.path.join( self.packageDir(), "kconf_update.exe.manifest" )
+            executable = os.path.join( self.installDir(), "bin", "kconf_update.exe" )
+            utils.embedManifest( executable, manifest )
+        return True
+
 if __name__ == '__main__':
     Package().execute()

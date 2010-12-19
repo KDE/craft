@@ -72,5 +72,16 @@ class Package(CMakePackageBase):
                     "-DKDECORE_INPROCESS_SSLD=ON " \
                     "-DKDELIBS_USE_FAKE_WALLET=ON "
 
+    def install( self ):
+        if not CMakePackageBase.install( self ):
+            return False
+        if compiler.isMinGW():
+            manifest = os.path.join( self.packageDir(), "kconf_update.exe.manifest" )
+            executable = os.path.join( self.installDir(), "bin", "kconf_update.exe" )
+            utils.embedManifest( executable, manifest )
+        return True
+
+
+
 if __name__ == '__main__':
     Package().execute()
