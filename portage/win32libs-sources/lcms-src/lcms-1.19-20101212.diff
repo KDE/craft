@@ -562,7 +562,7 @@ diff -Nru lcms-1.19.orig/src/CMakeLists.txt lcms-1.19/src/CMakeLists.txt
 +
 +if(WIN32)
 +#    set(lcms_SRCS ${lcms_SRCS} lcms.def)
-+    add_definitions(-DLCMS_DLL -DUSE_FLOAT)
++    add_definitions(-DLCMS_DLL)
 +    include_directories(${CMAKE_BINARY_DIR})
 +endif(WIN32)
 +
