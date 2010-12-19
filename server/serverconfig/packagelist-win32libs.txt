@@ -14,7 +14,7 @@ win32libs-sources,libxslt-src,,
 win32libs-sources,expat-src,,
 win32libs-sources,dbus-src,,
 win32libs-sources,jpeg-src,,
-win32libs-sources,lcms-src,,1
+win32libs-sources,lcms-src,,2
 win32libs-sources,libbzip2-src,,
 win32libs-sources,libidn-src,,5
 win32libs-sources,libpng-src,,
