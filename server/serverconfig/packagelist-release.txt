@@ -18,6 +18,7 @@ kdesupport,strigi,,
 kdesupport,soprano,,
 kdesupport,qca,,
 kdesupport,qimageblitz,0.0.6,
+kdesupport,qtscriptgenerator,,
 kdesupport,oxygen-icons,,
 kdesupport,akonadi,1.4.1,
 #
