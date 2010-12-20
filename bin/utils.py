@@ -1184,6 +1184,22 @@ def log(fn):
 
     return inner
 
+def getWinVer():
+    '''
+        Returns the Windows Version of the system returns "0" if the Version
+        can not be determined
+    '''
+    try:
+        result = subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0]
+    except:
+        utils.debug("Windows Version can not be determined",1)
+        return "0"
+    version = re.search(r"\d+\.\d+\.\d+", result)
+    if(version):
+        return version.group(0)
+    utils.debug("Windows Version can not be determined",1)
+    return "0"
+
 def regQuery(key, value):
     '''
     Query the registry key <key> for value <value> and return
