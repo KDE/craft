@@ -164,6 +164,10 @@ Send feedback to <kde-windows@kde.org>.
 """
 
 def cleanup( root, hard = False ):
+    if not os.path.isdir(root):
+        os.remove(root)
+        utils.debug( "Removing file %s" % root )
+        return False
     isValid = False
     validFiles = []
     validDirs = []
@@ -187,7 +191,6 @@ def cleanup( root, hard = False ):
                 if line.startswith( "dir" ):
                     validDirs.append( oldline.strip() )
                 oldline = line
-
     for f in files:
         if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
             isValid = True
@@ -198,13 +201,20 @@ def cleanup( root, hard = False ):
         else:
             if( f.endswith( ".py" ) ):
                 if useValidFiles and not f in validFiles:
-                    os.remove( os.path.join( root , f ) )
+                    cleanup( os.path.join( root , f ))
                 else:
                     isValid = True
+            if( f.endswith( ".diff" ) ):#remove untracked patches
+                if useValidFiles and not f in validFiles:
+                    cleanup( os.path.join( root , f ))
             if( f.endswith( ".pyc" ) ):
-                os.remove(os.path.join( root , f ))
+                cleanup( os.path.join( root , f ))
+            if( f.endswith( "~" ) ):#kate backup files
+                cleanup( os.path.join( root , f ))
+            if( f.endswith( ".back" ) ):#other backup files
+                cleanup( os.path.join( root , f ))
     if( not isValid ):
-        utils.debug( "Removing unclean directory %s\n" % root , 2 )
+        utils.debug( "Removing unclean directory %s" % root )
         shutil.rmtree(  root  )
     return isValid
         
@@ -441,10 +451,10 @@ for i in sys.argv:
     elif ( i == "--disable-buildtarget" ):
         disableTargetBuild = True
     elif( i == "--cleanup" ):
-        utils.debug("Starting to clean your portage directory" , 1 )
+        utils.debug("Starting to clean your portage directory" )
         for _dir in portage.rootDirectories():
-            cleanup( _dir , os.listdir( _dir ),True )
-        cleanup( os.path.dirname(executableName), os.listdir( os.path.dirname(executableName) ),False )
+            cleanup( _dir, True )
+        cleanup( os.path.dirname(executableName),False )
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
