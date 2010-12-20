@@ -8,7 +8,6 @@ import os
 import utils
 import sys
 import compiler
-import compilercache
 
 ## \todo requires installed msys package -> add suport for installing packages 
 
@@ -34,7 +33,6 @@ class MSysShell(Shell):
     def initEnvironment(self,cflags="", ldflags=""):
         self.buildType = os.getenv("EMERGE_BUILDTYPE")
         if compiler.isMinGW():
-            compilercache.getMsysMakeArguments()
             if self.buildType == "RelWithDebInfo": 
                 cflags += " -O2 -g "
             elif self.buildType == "Debug":
