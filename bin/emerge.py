@@ -163,11 +163,15 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
+def _delete(f):
+    if os.path.isdir( f ):
+        utils.debug( "Removing unclean directory %s" % f ,1)
+        shutil.rmtree( f )
+    else:
+        utils.debug( "Removing file %s" % f ,1 )
+        os.remove(f)
+
 def cleanup( root, hard = False ):
-    if not os.path.isdir(root):
-        os.remove(root)
-        utils.debug( "Removing file %s" % root )
-        return False
     isValid = False
     validFiles = []
     validDirs = []
@@ -191,6 +195,7 @@ def cleanup( root, hard = False ):
                 if line.startswith( "dir" ):
                     validDirs.append( oldline.strip() )
                 oldline = line
+                
     for f in files:
         if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
             isValid = True
@@ -199,23 +204,15 @@ def cleanup( root, hard = False ):
             isValid = True
             cleanup( os.path.join( root , f ) , hard ) 
         else:
-            if( f.endswith( ".py" ) ):
+            if( f.endswith( ".py" ) or f.endswith( ".diff" ) ):
                 if useValidFiles and not f in validFiles:
-                    cleanup( os.path.join( root , f ))
+                     _delete( os.path.join( root , f ))
                 else:
                     isValid = True
-            if( f.endswith( ".diff" ) ):#remove untracked patches
-                if useValidFiles and not f in validFiles:
-                    cleanup( os.path.join( root , f ))
-            if( f.endswith( ".pyc" ) ):
-                cleanup( os.path.join( root , f ))
-            if( f.endswith( "~" ) ):#kate backup files
-                cleanup( os.path.join( root , f ))
-            if( f.endswith( ".back" ) ):#other backup files
-                cleanup( os.path.join( root , f ))
+            if( f.endswith( ".pyc" ) or f.endswith( "~" ) or f.endswith( ".back" ) ):
+                 _delete( os.path.join( root , f ))
     if( not isValid ):
-        utils.debug( "Removing unclean directory %s" % root )
-        shutil.rmtree(  root  )
+        _delete( root )
     return isValid
         
 @utils.log
