@@ -163,11 +163,12 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def cleanup( root, files, hard = False ):
+def cleanup( root, hard = False ):
     isValid = False
     validFiles = []
     validDirs = []
     useValidFiles = False
+    files = os.listdir( root )
     if hard == True:
         if ".svn" in files:
             useValidFiles = True
@@ -193,7 +194,7 @@ def cleanup( root, files, hard = False ):
             continue
         if( os.path.isdir( os.path.join( root , f ) ) ):
             isValid = True
-            cleanup( os.path.join( root , f ) , os.listdir( os.path.join( root , f ) ), hard ) 
+            cleanup( os.path.join( root , f ) , hard ) 
         else:
             if( f.endswith( ".py" ) ):
                 if useValidFiles and not f in validFiles:
