@@ -443,7 +443,7 @@ for i in sys.argv:
         utils.debug("Starting to clean your portage directory" , 1 )
         for _dir in portage.rootDirectories():
             cleanup( _dir , os.listdir( _dir ),True )
-        cleanup( os.path.dirname(executableName), os.listdir( os.path.dirname(executableName) ),True )
+        cleanup( os.path.dirname(executableName), os.listdir( os.path.dirname(executableName) ),False )
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
