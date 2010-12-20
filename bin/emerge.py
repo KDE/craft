@@ -163,28 +163,29 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def cleanup( root, files ):
+def cleanup( root, files, hard = False ):
     isValid = False
     validFiles = []
     validDirs = []
     useValidFiles = False
-    if ".svn" in files:
-        useValidFiles = True
-        try:
-            entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
-        except:
+    if hard == True:
+        if ".svn" in files:
+            useValidFiles = True
             try:
                 entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
             except:
-                useValidFiles = False
-                entriesfile = []
-        oldline = ""
-        for line in entriesfile:
-            if line.startswith( "file" ):
-                validFiles.append( oldline.strip() )
-            if line.startswith( "dir" ):
-                validDirs.append( oldline.strip() )
-            oldline = line
+                try:
+                    entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
+                except:
+                    useValidFiles = False
+                    entriesfile = []
+            oldline = ""
+            for line in entriesfile:
+                if line.startswith( "file" ):
+                    validFiles.append( oldline.strip() )
+                if line.startswith( "dir" ):
+                    validDirs.append( oldline.strip() )
+                oldline = line
 
     for f in files:
         if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
@@ -192,7 +193,7 @@ def cleanup( root, files ):
             continue
         if( os.path.isdir( os.path.join( root , f ) ) ):
             isValid = True
-            cleanup( os.path.join( root , f ) , os.listdir( os.path.join( root , f ) ) ) 
+            cleanup( os.path.join( root , f ) , os.listdir( os.path.join( root , f ) ), hard ) 
         else:
             if( f.endswith( ".py" ) ):
                 if useValidFiles and not f in validFiles:
@@ -441,7 +442,8 @@ for i in sys.argv:
     elif( i == "--cleanup" ):
         utils.debug("Starting to clean your portage directory" , 1 )
         for _dir in portage.rootDirectories():
-            cleanup( _dir , os.listdir( _dir ) )
+            cleanup( _dir , os.listdir( _dir ),True )
+        cleanup( os.path.dirname(executableName), os.listdir( os.path.dirname(executableName) ),True )
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
