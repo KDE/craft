@@ -5,7 +5,6 @@
 
 import base
 import info
-import emergePlatform
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -48,8 +47,9 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         # Systems, causing the way mt.exe form uactools calls it to produce
         # invalid executables.
         # FIXME: Add more versions where it works (apart from windows 7 here)
-        if (emergePlatform.version() < "6.1.7600"):
-           return True
+
+        if ( utils.getWinVer() < "6.1.7600"):
+            return True
         else:
             return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
 
