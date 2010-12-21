@@ -20,7 +20,7 @@ kdesupport,qca,,
 kdesupport,qimageblitz,0.0.6,
 kdesupport,qtscriptgenerator,,
 kdesupport,oxygen-icons,,
-kdesupport,akonadi,1.4.2,
+kdesupport,akonadi,1.4.3,
 #
 # the KDE packages themselves
 kde-4.5,kdelibs,4.5.4,1
