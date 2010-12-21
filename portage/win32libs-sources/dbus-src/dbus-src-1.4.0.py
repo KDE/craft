@@ -28,6 +28,10 @@ class subinfo(info.infoclass):
         self.targetDigests['1.4.0'] = '3983d9a1456e5772fa4cb5e2818ed015b2f6131b'
         self.targetInstSrc['1.4.0'] = 'dbus-1.4.0'
         self.targetConfigurePath['1.4.0'] = 'cmake'
+        self.targets['1.4.1'] = 'http://dbus.freedesktop.org/releases/dbus/dbus-1.4.1.tar.gz'
+        self.targetDigests['1.4.1'] = '112279ff58305027294fe0eb5bee600f68cf0b50'
+        self.targetInstSrc['1.4.1'] = 'dbus-1.4.1'
+        self.targetConfigurePath['1.4.1'] = 'cmake'
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
@@ -39,13 +43,18 @@ class subinfo(info.infoclass):
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
                                           ('no-auth.diff', 1),
-										  ('msvc2010-has-errnoh.diff', 1)
-										  ]
+                                          ('msvc2010-has-errnoh.diff', 1)
+                                          ]
+            self.patchToApply['1.4.1'] = [('no-auth.diff', 1),
+                                          ('msvc2010-has-errnoh.diff', 1)
+                                          ]
         else:
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-										  ('msvc2010-has-errnoh.diff', 1)
-										  ]
+                                          ('msvc2010-has-errnoh.diff', 1)
+                                          ]
+            self.patchToApply['1.4.1'] = [('msvc2010-has-errnoh.diff', 1)
+                                          ]
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         self.defaultTarget = '1.4.0'
         
@@ -76,6 +85,8 @@ class Package(CMakePackageBase):
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=tcp:host=localhost,port=12434 ")
         else:
+            # for 1.4.1 and greater switch to official 
+            # supported scopes -> autolaunch:scope=*install-path 
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=autolaunch:scope=install-path ")
