@@ -32,9 +32,7 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
 
-        self.patchToApply['gitHEAD'] = [('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                        ('dbus-gitHEAD-restore-the-close_on_exec-flag-on-windows.patch', 1),
-										('msvc2010-has-errnoh.diff', 1)
+        self.patchToApply['gitHEAD'] = [('msvc2010-has-errnoh.diff', 1)
                                         ]
                                         
         if emergePlatform.isCrossCompilingEnabled():
