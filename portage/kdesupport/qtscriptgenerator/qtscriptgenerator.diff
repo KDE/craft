@@ -1,3 +1,21 @@
+--- b/generator/parser/rpp/pp-iterator.h	2009-02-20 12:42:24.000000000 +0100
++++ a/generator/parser/rpp/pp-iterator.h	2010-12-22 11:31:28.817234900 +0100
+@@ -53,6 +53,15 @@
+     return *this;
+   }
+ 
++  inline pp_output_iterator &operator=(pp_output_iterator& __v) 
++  { 
++    if (_M_result.capacity () == _M_result.size ())
++      _M_result.reserve (_M_result.capacity () << 2);
++
++    _M_result = __v._M_result;
++    return *this;
++  }
++
+   inline pp_output_iterator &operator * () { return *this; }
+   inline pp_output_iterator &operator ++ () { return *this; }
+   inline pp_output_iterator operator ++ (int) { return *this; }
 --- b/generator/qtscript_masterinclude.h	2009-03-21 20:37:30.719523909 -0400
 +++ a/generator/qtscript_masterinclude.h	2009-03-21 21:00:25.108149339 -0400
 @@ -31,17 +31,41 @@

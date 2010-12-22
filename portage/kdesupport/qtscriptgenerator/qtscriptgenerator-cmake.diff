@@ -1,12 +1,14 @@
 diff -Nru qtscriptgenerator-src-0.1.0.orig/CMakeLists.txt qtscriptgenerator-src-0.1.0/CMakeLists.txt
 --- qtscriptgenerator-src-0.1.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/CMakeLists.txt	2009-03-25 23:09:22.619867200 +0100
-@@ -0,0 +1,4 @@
+@@ -0,0 +1,7 @@
 +project(qtscriptgenerator)
 +cmake_minimum_required(VERSION 2.6)
 +find_package(Qt4 REQUIRED)
++if(MSVC)
++    add_definitions(-wd4996 -D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
 +add_subdirectory(generator)
-\ No newline at end of file
 diff -Nru qtscriptgenerator-src-0.1.0.orig/generator/CMakeLists.txt qtscriptgenerator-src-0.1.0/generator/CMakeLists.txt
 --- qtscriptgenerator-src-0.1.0.orig/generator/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ qtscriptgenerator-src-0.1.0/generator/CMakeLists.txt	2009-03-25 23:11:59.094867200 +0100
