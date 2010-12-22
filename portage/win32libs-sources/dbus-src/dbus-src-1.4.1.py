@@ -44,7 +44,8 @@ class subinfo(info.infoclass):
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
                                           ('no-auth.diff', 1),
-                                          ('msvc2010-has-errnoh.diff', 1)
+                                          ('msvc2010-has-errnoh.diff', 1),
+                                          ('live-lock-fix.diff', 1)
                                           ]
             self.patchToApply['1.4.1'] = [('no-auth.diff', 1),
                                           ('msvc2010-has-errnoh.diff', 1)
@@ -52,7 +53,8 @@ class subinfo(info.infoclass):
         else:
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
-                                          ('msvc2010-has-errnoh.diff', 1)
+                                          ('msvc2010-has-errnoh.diff', 1),
+                                          ('live-lock-fix.diff', 1)
                                           ]
             self.patchToApply['1.4.1'] = [('msvc2010-has-errnoh.diff', 1)
                                           ]
