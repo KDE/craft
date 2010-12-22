@@ -4,41 +4,20 @@ Date: Mon, 6 Dec 2010 15:21:37 +0100
 Subject: [PATCH] exchange malloc against dlmalloc for wince
 
 ---
- src/corelib/global/global.pri  |    4 +++
- src/corelib/global/qmalloc.cpp |   60 ++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 59 insertions(+), 4 deletions(-)
+ src/corelib/global/qmalloc.cpp |   61 +++++++++++++++++++++++++++++++++++++++---
+ 1 files changed, 56 insertions(+), 4 deletions(-)
 
-diff --git a/src/corelib/global/global.pri b/src/corelib/global/global.pri
-index 4800716..12391f4 100644
---- a/src/corelib/global/global.pri
-+++ b/src/corelib/global/global.pri
-@@ -7,12 +7,16 @@ HEADERS +=  \
-         global/qnumeric_p.h \
-         global/qnumeric.h
- 
-+wince*:HEADERS += global/dlmalloc.h
-+
- SOURCES += \
- 	global/qglobal.cpp \
-         global/qlibraryinfo.cpp \
- 	global/qmalloc.cpp \
-         global/qnumeric.cpp
- 
-+wince*:SOURCES += global/dlmalloc.c
-+
- # qlibraryinfo.cpp includes qconfig.cpp
- INCLUDEPATH += $$QT_BUILD_TREE/src/corelib/global
- 
 diff --git a/src/corelib/global/qmalloc.cpp b/src/corelib/global/qmalloc.cpp
 index 090998c..60e395e 100644
 --- a/src/corelib/global/qmalloc.cpp
 +++ b/src/corelib/global/qmalloc.cpp
-@@ -41,6 +41,8 @@
+@@ -41,6 +41,9 @@
  
  #include "qplatformdefs.h"
  
-+#include "dlmalloc.h"
-+
++#ifdef _WIN32_WCE
++#include "wcecompat/dlmalloc.h"
++#endif
  #include <stdlib.h>
  
  /*

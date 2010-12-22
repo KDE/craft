@@ -118,12 +118,11 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
         else:
+            incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
+            libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
+
             utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.c" ),
-                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.c" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "dlmalloc.h" ),
-                    os.path.join( self.sourceDir(), "src", "corelib" , "global", "dlmalloc.h" ) )
             utils.copyFile( os.path.join( self.packageDir(), "new.cpp" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "new.cpp" ) )
             utils.copyFile( os.path.join( self.packageDir(), "gpglogger_wince.cpp" ),

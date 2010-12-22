@@ -4,35 +4,27 @@ Date: Fri, 19 Nov 2010 12:31:53 +0100
 Subject: [PATCH] Add GPGLogging
 
 ---
- src/corelib/global/global.pri  |    4 ++--
- src/corelib/global/qglobal.cpp |    5 +++++
+ src/corelib/global/global.pri  |    3 ++++
+ src/corelib/global/qglobal.cpp |   11 +++++++++--
  src/corelib/io/qdebug.h |    6 ++++++
- 3 files changed, 13 insertions(+), 2 deletions(-)
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/src/corelib/global/global.pri b/src/corelib/global/global.pri
-index 9730818..12391f4 100644
+index 4800716..24d13b0 100644
 --- a/src/corelib/global/global.pri
 +++ b/src/corelib/global/global.pri
-@@ -7,7 +7,7 @@ HEADERS +=  \
-         global/qnumeric_p.h \
-         global/qnumeric.h
- 
--wince*:HEADERS += global/dlmalloc.h
-+wince*:HEADERS += global/dlmalloc.h global/gpglogger_wince.h
- 
- SOURCES += \
- 	global/qglobal.cpp \
-@@ -15,7 +15,7 @@ SOURCES += \
+@@ -13,6 +13,9 @@ SOURCES += \
  	global/qmalloc.cpp \
          global/qnumeric.cpp
  
--wince*:SOURCES += global/dlmalloc.c
-+wince*:SOURCES += global/dlmalloc.c global/gpglogger_wince.cpp
- 
++wince*:HEADERS += global/gpglogger_wince.h
++wince*:SOURCES += global/gpglogger_wince.cpp
++
  # qlibraryinfo.cpp includes qconfig.cpp
  INCLUDEPATH += $$QT_BUILD_TREE/src/corelib/global
+
 diff --git a/src/corelib/global/qglobal.cpp b/src/corelib/global/qglobal.cpp
-index 3291fe7..52ad458 100644
+index 3291fe7..b108135 100644
 --- a/src/corelib/global/qglobal.cpp
 +++ b/src/corelib/global/qglobal.cpp
 @@ -68,8 +68,12 @@
@@ -48,14 +40,26 @@ index 3291fe7..52ad458 100644
  #if defined(Q_OS_VXWORKS)
  #  include <envLib.h>
  #endif
-@@ -2233,6 +2237,7 @@ void qt_message_output(QtMsgType msgType, const char *buf)
-         QString fstr = QString::fromLatin1(buf);
-         fstr += QLatin1Char('\n');
+@@ -2224,14 +2228,17 @@ QtMsgHandler qInstallMsgHandler(QtMsgHandler h)
+ */
+ void qt_message_output(QtMsgType msgType, const char *buf)
+ {
++#if defined(Q_OS_WINCE)
++    QString fstr = QString::fromLatin1(buf);
++    fstr += QLatin1Char('\n');
++    gpgLogger.log(reinterpret_cast<const wchar_t *> (fstr.utf16()));
++#endif
+     if (handler) {
+         (*handler)(msgType, buf);
+     } else {
+ #if defined(Q_CC_MWERKS) && defined(Q_OS_MACX)
+         mac_default_handler(buf);
+ #elif defined(Q_OS_WINCE)
+-        QString fstr = QString::fromLatin1(buf);
+-        fstr += QLatin1Char('\n');
          OutputDebugString(reinterpret_cast<const wchar_t *> (fstr.utf16()));
-+        gpgLogger.log(reinterpret_cast<const wchar_t *> (fstr.utf16()));
  #elif defined(Q_OS_SYMBIAN)
          // RDebug::Print has a cap of 256 characters so break it up
-         _LIT(format, "[Qt Message] %S");
 diff --git a/src/corelib/io/qdebug.h b/src/corelib/io/qdebug.h
 index 093312f..766727a 100644
 --- a/src/corelib/io/qdebug.h
