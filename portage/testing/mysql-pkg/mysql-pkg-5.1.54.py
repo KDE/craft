@@ -13,15 +13,15 @@ class subinfo(info.infoclass):
     def setTargets( self ):   
         self.baseURL = "http://artfiles.org/mysql/Downloads/MySQL-5.1/"
         if( emergePlatform.buildArchitecture() == 'x64' ):
-          self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-winx64.zip"
-          self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-winx64"
-          self.targetDigests[ '5.1.48' ] = '092e7534f96f17a84f705ab7a520f1bf76d0fb04'
+          self.targets[ '5.1.54'] = self.baseURL+"mysql-noinstall-5.1.54-winx64.zip"
+          self.targetInstSrc[ '5.1.54' ] = "mysql-5.1.54-winx64"
+          self.targetDigests[ '5.1.54' ] = 'e9376cfb93f4b0b735f1949395fe1e1463c3050d'
         else:
-          self.targets[ '5.1.48'] = self.baseURL+"mysql-noinstall-5.1.48-win32.zip"
-          self.targetInstSrc[ '5.1.48' ] = "mysql-5.1.48-win32"
-          self.targetDigests['5.1.48'] = '57178fd287d92127fd943079d1e4cdf7709d2cca'          
+          self.targets[ '5.1.54'] = self.baseURL+"mysql-noinstall-5.1.54-win32.zip"
+          self.targetInstSrc[ '5.1.54' ] = "mysql-5.1.54-win32"
+          self.targetDigests['5.1.54'] = '2c4ae53b1f7e97572482edac8bd82c5443771302'          
           
-        self.defaultTarget = '5.1.48'
+        self.defaultTarget = '5.1.54'
        
 
     def setDependencies( self ):
