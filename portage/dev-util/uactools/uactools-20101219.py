@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         latest = "20100711"
         self.targets[ latest ] = \
-            "http://downloads.sourceforge.net/project/kde-windows/uactools/uactools-mingw4-" + \
+            "http://downloads.sourceforge.net/kde-windows/uactools-mingw4-" + \
             latest + "-bin.tar.bz2"
         self.targetDigests[ latest ] = 'b59ab7ac9190cbfe5b00acae05f909ea8f22bd3a'
         self.defaultTarget = latest
