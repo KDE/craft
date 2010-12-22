@@ -112,15 +112,13 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         if self.isTargetBuild():
+            incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
         if not emergePlatform.isCrossCompilingEnabled():
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
         else:
-            incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
-            libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
-
             utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
             utils.copyFile( os.path.join( self.packageDir(), "new.cpp" ),
