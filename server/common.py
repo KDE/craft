@@ -156,7 +156,7 @@ class SourceForgeUploader ( Uploader ):
         else:
             self.disabled = False
 
-        if not ( "server" in self.settings and "directory" in self.settings ):
+        if not ( self.settings and "server" in self.settings and "directory" in self.settings ):
             print "server or directory not set"
             self.disabled = True
             return
