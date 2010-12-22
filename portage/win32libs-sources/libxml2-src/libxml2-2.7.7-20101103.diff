@@ -1539,7 +1539,7 @@ diff -Nru libxml2-2.7.7.orig/xmlIO.c libxml2-2.7.7/xmlIO.c
 diff -Nru libxml2-2.7.7.orig/xmlmodule.c libxml2-2.7.7/xmlmodule.c
 --- libxml2-2.7.7.orig/xmlmodule.c	2009-09-24 17:32:00.000000000 +0200
 +++ libxml2-2.7.7/xmlmodule.c	2010-12-14 14:48:50.637843000 +0100
-@@ -297,10 +297,37 @@
+@@ -297,10 +297,35 @@
   * returns a handle on success, and zero on error.
   */
  
@@ -1566,8 +1566,6 @@ diff -Nru libxml2-2.7.7.orig/xmlmodule.c libxml2-2.7.7/xmlmodule.c
 +}
 +#undef GetModuleFileNameA
 +#define GetModuleFileNameA my_GetModuleFileNameA
-+#else
-+unsigned long __stdcall GetModuleFileNameA(void*, char*, unsigned long);
 +#endif
 +
  static void *
