@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import info
 import os
+import compiler
 from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
       self.hardDependencies['testing/vlc'] = 'default'
-      if COMPILER == "msvc2008":
+      if compiler.isMSVC():
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         
     def setTargets( self ):
