@@ -6,7 +6,8 @@ class subinfo( info.infoclass ):
           ver = '0.' + f
           self.targets[ver]       = 'http://www.exiv2.org/exiv2-%s.tar.gz' % ver
           self.targetInstSrc[ver] = 'exiv2-%s' % ver
-          self.patchToApply[ver]  = ( 'exiv2-%s-cmake.diff' % ver, 0 )
+          self.patchToApply[ver]  = [( 'exiv2-%s-cmake.diff' % ver, 0 )]
+        self.patchToApply['0.21'].append(('exiv2-0.21-20101223.diff', 1))
         self.svnTargets['svnHEAD'] = 'svn://dev.robotbattle.com/exiv2/branches/'
         self.shortDescription = "an image metadata library"
         self.defaultTarget = '0.21'

@@ -1050,18 +1050,6 @@ diff -Nru src/CMakeLists.txt src/CMakeLists.txt
 +# ******************************************************************************
 +# Man page
 +install( FILES exiv2.1 DESTINATION man/man1 )
-diff -Nru src/types.hpp src/types.hpp
---- src/types.hpp	2010-09-04 11:20:04.000000000 +0200
-+++ src/types.hpp	2010-12-14 13:09:33.534073400 +0100
-@@ -58,7 +58,7 @@
- #endif
- 
- // MSVC doesn't provide C99 types, but it has MS specific variants
--#ifdef _MSC_VER
-+#if defined(_MSC_VER) && _MSC_VER < 1600
- typedef unsigned __int8  uint8_t;
- typedef unsigned __int16 uint16_t;
- typedef unsigned __int32 uint32_t;
 diff -Nru Todo-cmake.txt Todo-cmake.txt
 --- Todo-cmake.txt	1970-01-01 01:00:00.000000000 +0100
 +++ Todo-cmake.txt	2010-12-14 12:20:17.542420500 +0100
