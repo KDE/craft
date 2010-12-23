@@ -3,8 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepim'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdepim'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         if not emergePlatform.isCrossCompilingEnabled():
