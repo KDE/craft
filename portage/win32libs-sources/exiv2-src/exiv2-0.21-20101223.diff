@@ -1,27 +1,45 @@
 diff -Nru exiv2-0.21.orig/src/types.hpp exiv2-0.21/src/types.hpp
 --- exiv2-0.21.orig/src/types.hpp	2010-09-04 11:20:04.000000000 +0200
-+++ exiv2-0.21/src/types.hpp	2010-12-23 12:59:40.893513400 +0100
-@@ -58,7 +58,7 @@
++++ exiv2-0.21/src/types.hpp	2010-12-23 14:33:01.816867900 +0100
+@@ -58,16 +58,40 @@
  #endif
  
  // MSVC doesn't provide C99 types, but it has MS specific variants
 -#ifdef _MSC_VER
 +#if defined(_MSC_VER) && _MSC_VER < 1600
- typedef unsigned __int8  uint8_t;
- typedef unsigned __int16 uint16_t;
- typedef unsigned __int32 uint32_t;
-@@ -67,6 +67,14 @@
- typedef __int16          int16_t;
- typedef __int32          int32_t;
- typedef __int64          int64_t;
++#if !defined(HAVE_UINT8_T)
 +#define HAVE_UINT8_T
+ typedef unsigned __int8  uint8_t;
++#endif
++#if !defined(HAVE_UINT16_T)
 +#define HAVE_UINT16_T
+ typedef unsigned __int16 uint16_t;
++#endif
++#if !defined(HAVE_UINT32_T)
 +#define HAVE_UINT32_T
+ typedef unsigned __int32 uint32_t;
++#endif
++#if !defined(HAVE_UINT64_T)
 +#define HAVE_UINT64_T
+ typedef unsigned __int64 uint64_t;
++#endif
++#if !defined(HAVE_INT8_T)
 +#define HAVE_INT8_T
+ typedef __int8           int8_t;
++#endif
++#if !defined(HAVE_INT16_T)
 +#define HAVE_INT16_T
+ typedef __int16          int16_t;
++#endif
++#if !defined(HAVE_INT32_T)
 +#define HAVE_INT32_T
+ typedef __int32          int32_t;
++#endif
++#if !defined(HAVE_INT64_T)
 +#define HAVE_INT64_T
+ typedef __int64          int64_t;
  #endif
++#endif
  
  /*!
+   @brief Macro to make calls to member functions through a pointer more readable.
