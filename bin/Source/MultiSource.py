@@ -23,9 +23,9 @@ class MultiSource(object):
         utils.trace( "MultiSource localFileNames", 2 )
         return self.source.localFileNamesBase()
 
-    def fetch(self):
+    def fetch( self, repopath = None ):
         utils.trace( "MultiSource fetch", 2 )
-        return self.source.fetch()
+        return self.source.fetch( repopath )
         
     def checkDigest(self):
         utils.trace( "MultiSource checkDigest", 2 )
@@ -35,6 +35,10 @@ class MultiSource(object):
         utils.trace( "MultiSource unpack", 2 )
         self.source.buildSystemType = self.buildSystemType
         return self.source.unpack()
+
+    def checkoutDir(self):
+        utils.trace( "MultiSource checkoutDir", 2 )
+        return self.source.checkoutDir()
 
     def sourceDir(self):
         utils.trace( "MultiSource sourceDir", 2 )

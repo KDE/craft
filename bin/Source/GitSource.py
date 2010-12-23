@@ -217,6 +217,10 @@ class GitSource ( VersionSystemSourceBase ):
             print self.__getCurrentBranch()[ 1: ]
         return True
         
+    def checkoutDir(self, index=0 ): 
+        utils.trace( 'GitSource checkoutDir', 2 )
+        return VersionSystemSourceBase.checkoutDir( self, index )
+
     def sourceDir(self, index=0 ): 
         utils.trace( 'GitSource sourceDir', 2 )
         repopath = self.repositoryUrl()
