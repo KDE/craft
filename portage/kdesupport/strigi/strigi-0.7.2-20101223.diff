@@ -89,7 +89,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  
  // our needed types
 -#if !@HAVE_INT8_T@
-+#if !defined(HAVE_INT8_T) && !@HAVE_INT8_T@
++#if !defined(HAVE_INT8_T) || !@HAVE_INT8_T@
   #define HAVE_INT8_T 1
   #if ${SIZEOF_CHAR}==1 //is char one byte?
    typedef signed char int8_t;
@@ -98,7 +98,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_UINT8_T@
-+#if !defined(HAVE_UINT8_T) && !@HAVE_UINT8_T@
++#if !defined(HAVE_UINT8_T) || !@HAVE_UINT8_T@
   #define HAVE_UINT8_T 1
   #if ${SIZEOF_CHAR}==1 //is char one byte?
    typedef unsigned char uint8_t;
@@ -107,7 +107,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_INT16_T@
-+#if !defined(HAVE_INT16_T) && !@HAVE_INT16_T@
++#if !defined(HAVE_INT16_T) || !@HAVE_INT16_T@
   #define HAVE_INT16_T 1
   #if ${SIZEOF_SHORT}==2 //is short two bytes?
    typedef short int16_t;
@@ -116,7 +116,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_UINT16_T@
-+#if !defined(HAVE_UINT16_T) && !@HAVE_UINT16_T@
++#if !defined(HAVE_UINT16_T) || !@HAVE_UINT16_T@
   #define HAVE_UINT16_T 1
   #if ${SIZEOF_SHORT}==2 //is short two bytes?
    typedef unsigned short uint16_t;
@@ -125,7 +125,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_INT32_T@
-+#if !defined(HAVE_INT32_T) && !@HAVE_INT32_T@
++#if !defined(HAVE_INT32_T) || !@HAVE_INT32_T@
   #define HAVE_INT32_T 1
   #if ${SIZEOF_INT}==4 //is int four bytes?
    typedef int int32_t;
@@ -134,7 +134,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_UINT32_T@
-+#if !defined(HAVE_UINT32_T) && !@HAVE_UINT32_T@
++#if !defined(HAVE_UINT32_T) || !@HAVE_UINT32_T@
   #define HAVE_UINT32_T 1
   #if ${SIZEOF_INT}==4 //is int four bytes?
    typedef unsigned int uint32_t;
@@ -143,7 +143,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_INT64_T@
-+#if !defined(HAVE_INT64_T) && !@HAVE_INT64_T@
++#if !defined(HAVE_INT64_T) || !@HAVE_INT64_T@
   #define HAVE_INT64_T 1
   #if ${SIZEOF_LONG}==8
    typedef long int64_t;
@@ -152,7 +152,7 @@ diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2
  #endif
  
 -#if !@HAVE_UINT64_T@
-+#if !defined(HAVE_UINT64_T) && !@HAVE_UINT64_T@
++#if !defined(HAVE_UINT64_T) || !@HAVE_UINT64_T@
   #define HAVE_UINT64_T 1
   #if ${SIZEOF_LONG}==8
    typedef unsigned long uint64_t;
