@@ -1,6 +1,6 @@
 diff -Nru strigi-0.7.2.orig/cmake/MacroCheckGccVisibility.cmake strigi-0.7.2/cmake/MacroCheckGccVisibility.cmake
 --- strigi-0.7.2.orig/cmake/MacroCheckGccVisibility.cmake	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/cmake/MacroCheckGccVisibility.cmake	2010-12-04 17:40:18.469634000 +0100
++++ strigi-0.7.2/cmake/MacroCheckGccVisibility.cmake	2010-12-23 12:47:17.831012700 +0100
 @@ -13,7 +13,7 @@
     check_cxx_compiler_flag(-fvisibility=hidden ${GccVisibility})
  
@@ -21,7 +21,7 @@ diff -Nru strigi-0.7.2.orig/cmake/MacroCheckGccVisibility.cmake strigi-0.7.2/cma
  
 diff -Nru strigi-0.7.2.orig/src/combinedindexer/combinedindexmanager.cpp strigi-0.7.2/src/combinedindexer/combinedindexmanager.cpp
 --- strigi-0.7.2.orig/src/combinedindexer/combinedindexmanager.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/combinedindexer/combinedindexmanager.cpp	2010-12-11 01:37:40.623261300 +0100
++++ strigi-0.7.2/src/combinedindexer/combinedindexmanager.cpp	2010-12-23 12:47:17.833012800 +0100
 @@ -45,6 +45,8 @@
  #include <string>
  #include <set>
@@ -33,7 +33,7 @@ diff -Nru strigi-0.7.2.orig/src/combinedindexer/combinedindexmanager.cpp strigi-
  
 diff -Nru strigi-0.7.2.orig/src/dummyindexer/grepindexreader.cpp strigi-0.7.2/src/dummyindexer/grepindexreader.cpp
 --- strigi-0.7.2.orig/src/dummyindexer/grepindexreader.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/dummyindexer/grepindexreader.cpp	2010-12-11 01:27:36.812725300 +0100
++++ strigi-0.7.2/src/dummyindexer/grepindexreader.cpp	2010-12-23 12:47:17.835012900 +0100
 @@ -24,6 +24,7 @@
  #include "indexwriter.h"
  #include "filelister.h"
@@ -44,7 +44,7 @@ diff -Nru strigi-0.7.2.orig/src/dummyindexer/grepindexreader.cpp strigi-0.7.2/sr
  
 diff -Nru strigi-0.7.2.orig/src/streamanalyzer/analyzerloader.cpp strigi-0.7.2/src/streamanalyzer/analyzerloader.cpp
 --- strigi-0.7.2.orig/src/streamanalyzer/analyzerloader.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/streamanalyzer/analyzerloader.cpp	2010-12-11 01:34:51.368580500 +0100
++++ strigi-0.7.2/src/streamanalyzer/analyzerloader.cpp	2010-12-23 12:47:17.837013000 +0100
 @@ -21,6 +21,7 @@
  #include "analyzerplugin.h"
  #include <string>
@@ -55,7 +55,7 @@ diff -Nru strigi-0.7.2.orig/src/streamanalyzer/analyzerloader.cpp strigi-0.7.2/s
  #include <assert.h>
 diff -Nru strigi-0.7.2.orig/src/streamanalyzer/endplugins/jpegendanalyzer.cpp strigi-0.7.2/src/streamanalyzer/endplugins/jpegendanalyzer.cpp
 --- strigi-0.7.2.orig/src/streamanalyzer/endplugins/jpegendanalyzer.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/streamanalyzer/endplugins/jpegendanalyzer.cpp	2010-12-11 01:55:17.863732000 +0100
++++ strigi-0.7.2/src/streamanalyzer/endplugins/jpegendanalyzer.cpp	2010-12-23 12:47:17.839013100 +0100
 @@ -29,12 +29,11 @@
  #include <exiv2/exif.hpp>
  #include <exiv2/image.hpp>
@@ -72,7 +72,7 @@ diff -Nru strigi-0.7.2.orig/src/streamanalyzer/endplugins/jpegendanalyzer.cpp st
  #define HUGE_VALF HUGE_VAL
 diff -Nru strigi-0.7.2.orig/src/streamanalyzer/fieldpropertiesdb.cpp strigi-0.7.2/src/streamanalyzer/fieldpropertiesdb.cpp
 --- strigi-0.7.2.orig/src/streamanalyzer/fieldpropertiesdb.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/streamanalyzer/fieldpropertiesdb.cpp	2010-12-11 01:35:33.637998100 +0100
++++ strigi-0.7.2/src/streamanalyzer/fieldpropertiesdb.cpp	2010-12-23 12:47:17.841013200 +0100
 @@ -23,6 +23,7 @@
  #include "fieldtypes.h"
  #include <vector>
@@ -81,9 +81,93 @@ diff -Nru strigi-0.7.2.orig/src/streamanalyzer/fieldpropertiesdb.cpp strigi-0.7.
  #include <iostream>
  #include <set>
  #include <cstdlib>
+diff -Nru strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake strigi-0.7.2/src/streams/strigi/strigiconfig.h.cmake
+--- strigi-0.7.2.orig/src/streams/strigi/strigiconfig.h.cmake	2010-02-03 20:03:07.000000000 +0100
++++ strigi-0.7.2/src/streams/strigi/strigiconfig.h.cmake	2010-12-23 13:11:44.506901700 +0100
+@@ -84,7 +84,7 @@
+ #endif
+ 
+ // our needed types
+-#if !@HAVE_INT8_T@
++#if !defined(HAVE_INT8_T) && !@HAVE_INT8_T@
+  #define HAVE_INT8_T 1
+  #if ${SIZEOF_CHAR}==1 //is char one byte?
+   typedef signed char int8_t;
+@@ -93,7 +93,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_UINT8_T@
++#if !defined(HAVE_UINT8_T) && !@HAVE_UINT8_T@
+  #define HAVE_UINT8_T 1
+  #if ${SIZEOF_CHAR}==1 //is char one byte?
+   typedef unsigned char uint8_t;
+@@ -102,7 +102,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_INT16_T@
++#if !defined(HAVE_INT16_T) && !@HAVE_INT16_T@
+  #define HAVE_INT16_T 1
+  #if ${SIZEOF_SHORT}==2 //is short two bytes?
+   typedef short int16_t;
+@@ -111,7 +111,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_UINT16_T@
++#if !defined(HAVE_UINT16_T) && !@HAVE_UINT16_T@
+  #define HAVE_UINT16_T 1
+  #if ${SIZEOF_SHORT}==2 //is short two bytes?
+   typedef unsigned short uint16_t;
+@@ -120,7 +120,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_INT32_T@
++#if !defined(HAVE_INT32_T) && !@HAVE_INT32_T@
+  #define HAVE_INT32_T 1
+  #if ${SIZEOF_INT}==4 //is int four bytes?
+   typedef int int32_t;
+@@ -131,7 +131,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_UINT32_T@
++#if !defined(HAVE_UINT32_T) && !@HAVE_UINT32_T@
+  #define HAVE_UINT32_T 1
+  #if ${SIZEOF_INT}==4 //is int four bytes?
+   typedef unsigned int uint32_t;
+@@ -142,7 +142,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_INT64_T@
++#if !defined(HAVE_INT64_T) && !@HAVE_INT64_T@
+  #define HAVE_INT64_T 1
+  #if ${SIZEOF_LONG}==8
+   typedef long int64_t;
+@@ -153,7 +153,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_UINT64_T@
++#if !defined(HAVE_UINT64_T) && !@HAVE_UINT64_T@
+  #define HAVE_UINT64_T 1
+  #if ${SIZEOF_LONG}==8
+   typedef unsigned long uint64_t;
+@@ -166,7 +166,7 @@
+  #endif
+ #endif
+ 
+-#if !@HAVE_UINT@
++#if !defined(HAVE_UINT) && !@HAVE_UINT@
+  typedef unsigned int uint;
+  #define HAVE_UINT 1
+ #endif
 diff -Nru strigi-0.7.2.orig/src/xmlindexer/peranalyzerxml.cpp strigi-0.7.2/src/xmlindexer/peranalyzerxml.cpp
 --- strigi-0.7.2.orig/src/xmlindexer/peranalyzerxml.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/xmlindexer/peranalyzerxml.cpp	2010-12-11 01:40:09.726789500 +0100
++++ strigi-0.7.2/src/xmlindexer/peranalyzerxml.cpp	2010-12-23 12:47:17.843013300 +0100
 @@ -38,6 +38,7 @@
  #include <cstring>
  #include <cerrno>
@@ -94,7 +178,7 @@ diff -Nru strigi-0.7.2.orig/src/xmlindexer/peranalyzerxml.cpp strigi-0.7.2/src/x
  #endif
 diff -Nru strigi-0.7.2.orig/src/xmlindexer/perfieldxml.cpp strigi-0.7.2/src/xmlindexer/perfieldxml.cpp
 --- strigi-0.7.2.orig/src/xmlindexer/perfieldxml.cpp	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/src/xmlindexer/perfieldxml.cpp	2010-12-11 01:41:20.908860900 +0100
++++ strigi-0.7.2/src/xmlindexer/perfieldxml.cpp	2010-12-23 12:47:17.844013400 +0100
 @@ -37,6 +37,7 @@
  #include <cstring>
  #include <cerrno>
@@ -105,7 +189,7 @@ diff -Nru strigi-0.7.2.orig/src/xmlindexer/perfieldxml.cpp strigi-0.7.2/src/xmli
  #endif
 diff -Nru strigi-0.7.2.orig/StrigiConfig.cmake.in strigi-0.7.2/StrigiConfig.cmake.in
 --- strigi-0.7.2.orig/StrigiConfig.cmake.in	2010-02-03 20:03:07.000000000 +0100
-+++ strigi-0.7.2/StrigiConfig.cmake.in	2010-12-11 00:50:35.989701500 +0100
++++ strigi-0.7.2/StrigiConfig.cmake.in	2010-12-23 12:47:17.846013500 +0100
 @@ -27,6 +27,7 @@
  GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
  GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
