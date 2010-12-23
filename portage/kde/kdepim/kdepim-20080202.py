@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
 import info
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdepim'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         if not emergePlatform.isCrossCompilingEnabled():
-            self.runtimedependencies['kde/kdebase-runtime'] = 'default'
+            self.runtimeDependencies['kde/kdebase-runtime'] = 'default'
             self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
         else:
-            self.dependencies['kde/kdepim-runtime'] = 'default'
             self.dependencies['kdesupport/oxygen-icons'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
@@ -24,10 +22,17 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
         
-class Package(CMakePackageBase):
+class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+
+        # save and then overwrite our checkoutDir function
+        self.baseCheckoutDir = self.source.checkoutDir
+        self.source.checkoutDir = self.checkoutDir
+        
+        self.subDir = False
+
         self.subinfo.options.configure.defines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
 
         if emergePlatform.isCrossCompilingEnabled():
@@ -57,7 +62,20 @@ class Package(CMakePackageBase):
             % os.path.join(ROOTDIR, "bin")
 
 
-    def qmerge(self):
+    def checkoutDir( self, index=0 ):
+        if self.subDir:
+            # checkout into subdirectory "runtime"
+            return os.path.join( self.baseCheckoutDir( index ), "runtime" )
+        return self.baseCheckoutDir( index )
+
+    def fetch( self ):
+        ret = CMakePackageBase.fetch( self )
+        if ret and emergePlatform.isCrossCompilingEnabled():
+            self.subDir = True
+            ret = CMakePackageBase.fetch( self, "git://git.kde.org/kdepim-runtime" )
+        return ret
+        
+    def qmerge( self ):
         ret = CMakePackageBase.qmerge(self)
         if self.isTargetBuild():
             mime_update = os.path.join(ROOTDIR, "bin",
