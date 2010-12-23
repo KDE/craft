@@ -56,7 +56,7 @@ class Package(BinaryPackageBase):
     self.subinfo.options.merge.ignoreBuildType = True
     self.subinfo.options.package.packSources = False
     self.subinfo.options.package.withCompiler = None
-    self.subinfo.options.package.packageName = 'ccache'
+    self.subinfo.options.package.packageName = 'vlc'
     BinaryPackageBase.__init__( self )
     
     
