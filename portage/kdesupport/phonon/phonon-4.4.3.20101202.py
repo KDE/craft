@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/phonon/phonon.git'
-        self.svnTargets['4.4'] = 'git://gitorious.org/phonon/phonon.git|4.4'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/phonon'
+        self.svnTargets['4.4'] = 'git://git.kde.org/phonon|4.4'
         self.patchToApply['gitHEAD'] = ("phonon-20100915.diff", 1)
         self.targets['4.4.3'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.3/phonon-4.4.3.tar.bz2'
         self.targetInstSrc['4.4.3'] = 'phonon-4.4.3'
