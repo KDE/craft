@@ -15,10 +15,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'tags/kdewin32/0.3.9'
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdewin'
-        self.svnTargets['migrationTest'] = 'git://git.kde.org/scratch/cgiboudeaux/kdewin'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/kdewin'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
 
