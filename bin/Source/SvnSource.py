@@ -73,7 +73,7 @@ class SvnSource (VersionSystemSourceBase):
         
         self.options = proxyOptions
             
-    def fetch( self ):
+    def fetch( self, repopath = None ):
         """ checkout or update an existing repository path """
         utils.trace( "SvnSource.fetch", 2 )
         if self.noFetch:
@@ -84,7 +84,10 @@ class SvnSource (VersionSystemSourceBase):
             utils.die("required subversion package not installed in %s" % self.svnInstallDir)
             
         for i in range(0, self.repositoryUrlCount()):
-            url = self.repositoryUrl(i)
+            if repopath:
+                url = repopath
+            else:
+                url = self.repositoryUrl(i)
             sourcedir = self.checkoutDir(i)
             if self.repositoryUrlOptions(i) == 'norecursive':
                 self.__tryCheckoutFromRoot(url,sourcedir,False)
