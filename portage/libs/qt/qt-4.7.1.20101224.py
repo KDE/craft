@@ -58,7 +58,7 @@ class subinfo(info.infoclass):
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
         else:
-            self.defaultTarget = '4.7'
+            self.defaultTarget = '4.7.1'
 
         ## \todo this is prelimary  and may be changed 
         self.options.package.packageName = 'qt'
