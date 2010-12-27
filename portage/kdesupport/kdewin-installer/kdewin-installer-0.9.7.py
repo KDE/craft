@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libbzip2'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/scratch/cgiboudeaux/kdewin-installer'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdewin-installer'
         self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
