@@ -4,14 +4,14 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/network/libktorrent'
-        self.svnTargets['1.0.0'] = 'tags/libktorrent/1.0.0'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/libktorrent'
+        self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs-bin/libgmp'] = 'default'
+        self.dependencies['contributed/gpg4win-dev'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
     
 class Package(CMakePackageBase):
