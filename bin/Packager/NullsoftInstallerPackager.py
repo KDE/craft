@@ -7,9 +7,39 @@ import portage
 import utils
 import os
 import shutil
+import sys
 import re
+import types
 import fileinput
 from _winreg import *
+
+class NSIPackagerLists:
+    """ This class provides some classmethods that can be used as pre defined black or whitelists """
+    @classmethod
+    def runtimeBlacklist( self ):
+        blacklisted = [ "include\\.*", 
+                        "lib\\\\.*\.lib", 
+                        "lib\\\\.*\.dll\.a", 
+                        "lib\\\\cmake\\.*", 
+                        "lib\\\\pkgconfig\\.*" ]
+        ret = []
+        for line in blacklisted:
+            try:
+                exp = re.compile( line )
+                ret.append( exp )
+                utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
+            except:
+                utils.debug( "%s is not a valid regexp" % line, 1 )
+        return ret
+
+    @classmethod
+    def defaultWhitelist( self ):
+        return [ re.compile( ".*" ) ]
+        
+    @classmethod
+    def defaultBlacklist( self ):
+        return []
+
 
 class NullsoftInstallerPackager( PackagerBase ):
     """ 
@@ -42,8 +72,7 @@ The output directory is determined by the environment variable EMERGE_PKGDSTDIR.
 if EMERGE_NOCLEAN is given (e.g. because you call emerge --update --package Packagename), the
 file collection process is skipped, and only the installer is generated.
 """
-
-    def __init__( self, whitelists = [], blacklists = [] ):
+    def __init__( self, whitelists = [ NSIPackagerLists.defaultWhitelist ], blacklists = [ NSIPackagerLists.defaultBlacklist ] ):
         PackagerBase.__init__( self, "NullsoftInstallerPackager" )
         self.isInstalled = self.__isInstalled()
         if not self.isInstalled:
@@ -53,15 +82,24 @@ file collection process is skipped, and only the installer is generated.
         self.blacklist = []
         self.whitelists = whitelists
         self.blacklists = blacklists
-        for filename in self.whitelists:
-            utils.debug( "reading whitelist: %s" % filename, 2 )
-            self.read_whitelist( filename )
-        for filename in self.blacklists:
-            utils.debug( "reading blacklist: %s" % filename, 2 )
-            self.read_blacklist( filename )
-        utils.debug( "length of blacklist: %s" % len( self.blacklist ), 1 )
-        utils.debug( "length of whitelist: %s" % len( self.whitelist ), 1 )
-        
+
+        for entry in self.whitelists:
+            utils.debug( "reading whitelist: %s" % entry, 2 )
+            if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
+                for line in entry():
+                    self.whitelist.append( line )
+            else:
+                self.read_whitelist( entry )
+        for entry in self.blacklists:
+            utils.debug( "reading blacklist: %s" % entry, 2 )
+            if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
+                for line in entry():
+                    self.blacklist.append( line )
+            else:
+                self.read_blacklist( entry )
+        utils.debug( "length of blacklist: %s" % len( self.blacklist ), 0 )
+        utils.debug( "length of whitelist: %s" % len( self.whitelist ), 0 )
+
         self.scriptname = None
 
     def __isInstalled( self ):
@@ -185,8 +223,7 @@ file collection process is skipped, and only the installer is generated.
             path = dirs.pop()
             for f in os.listdir( path ):
                 f = os.path.join( path, f )
-                z = f
-                z.replace( directory + os.sep, "" )
+                z = f.replace( directory + os.sep, "" )
                 if blacklist( z ):
                     continue
                 if os.path.isdir( f ):
@@ -234,13 +271,13 @@ file collection process is skipped, and only the installer is generated.
             self.package = self.package[ : -8 ]
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( self.package, self.buildTarget )
-        if not "srcdir" in self.defines or not not self.defines[ "srcdir" ]:
+        if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
-        if not "company" in self.defines or not not self.defines[ "company" ]:
+        if not "company" in self.defines or not self.defines[ "company" ]:
             self.defines[ "company" ] = "KDE"
-        if not "productname" in self.defines or not not self.defines[ "productname" ]:
+        if not "productname" in self.defines or not self.defines[ "productname" ]:
             self.defines[ "productname" ] = "%s %s" % ( self.package.capitalize(), self.buildTarget )
-        if not "executable" in self.defines or not not self.defines[ "executable" ]:
+        if not "executable" in self.defines or not self.defines[ "executable" ]:
             self.defines[ "executable" ] = ""
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
@@ -273,6 +310,8 @@ file collection process is skipped, and only the installer is generated.
                     imageDir = os.path.join( self.imageDir, mergeDir )
                 if os.path.exists( dir ):
                     self.copyFiles( dir, self.imageDir() )
+                else:
+                    utils.die( "image directory %s does not exist!" % dir )
 
         if not os.path.exists( self.imageDir() ):
             os.makedirs( self.imageDir() )

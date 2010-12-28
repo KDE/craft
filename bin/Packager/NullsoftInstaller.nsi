@@ -15,6 +15,8 @@
 XPStyle on
 ShowInstDetails hide
 ShowUninstDetails hide
+
+SetCompressor /SOLID lzma
  
 Name "${productname}"
 Caption "${productname}"
@@ -29,6 +31,11 @@ SilentInstall normal
 InstallDir "$PROGRAMFILES\${productname}"
 InstallDirRegKey HKLM "${regkey}" ""
  
+Function .onInstSuccess
+  SetOutPath "$INSTDIR"
+  Exec '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
+FunctionEnd
+
 ; pages
 ; we keep it simple - leave out selectable installation types
 ; Page components
