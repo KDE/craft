@@ -368,7 +368,7 @@ else:
 
 if environ['EMERGE_VERBOSE'] == None or not environ['EMERGE_VERBOSE'].isdigit():
     verbose = 1
-    os.environ["EMERGE_VERBOSE"] = str( verbose )
+    utils.setVerbose( verbose )
 else:
     verbose = int( environ[ "EMERGE_VERBOSE" ] )
 
@@ -405,7 +405,7 @@ for i in sys.argv:
         os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
     elif ( i == "-v" ):
         verbose = verbose + 1
-        os.environ["EMERGE_VERBOSE"] = str( verbose )
+        utils.setVerbose( verbose )
     elif ( i == "--trace" ):
         trace = trace + 1
         os.environ["EMERGE_TRACE"] = str( trace )
@@ -464,7 +464,7 @@ nextArguments = sys.argv[ (sys.argv.index( i ) + 1): ]
 
 if stayQuiet == True:
     verbose = 0
-    os.environ["EMERGE_VERBOSE"] = str( verbose )
+    utils.setVerbose( verbose )
 
 # get KDEROOT from env
 KDEROOT = os.getenv( "KDEROOT" )

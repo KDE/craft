@@ -128,6 +128,9 @@ def verbose():
         return int( verb )
     else:
         return 0
+        
+def setVerbose( _verbose ):
+    os.environ["EMERGE_VERBOSE"] = str( _verbose )
 
 def getFiles( urls, destdir, suffix=''):
     """download files from 'url' into 'destdir'"""
