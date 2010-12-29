@@ -5,7 +5,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in ['0.4.4', '0.4.6']:
-            self.targets[ ver ] = "http://www.libssh.org/files/libssh-" + ver + ".tar.gz"
+            self.targets[ ver ] = "http://www.libssh.org/files/0.4/libssh-" + ver + ".tar.gz"
             self.targetInstSrc[ ver ] = "libssh-" + ver
         self.targetDigests['0.4.4'] = 'bde1d4713a86b6256ce2d14e6de6326e52c4da44'
         self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh/libssh.git"
