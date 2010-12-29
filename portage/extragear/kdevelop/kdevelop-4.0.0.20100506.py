@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         for ver in [ '4.1.1' ]:
             self.targets[ ver ] = 'http://download.kde.org/download.php?url=stable/kdevelop/' + ver + '/src/kdevelop-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kdevelop-' + ver
-        self.patchToApply[ '4.1.1' ] = ( "kdevelop-4.1.1-20101216.diff", 1 )
+        self.patchToApply[ '4.1.1' ] = ( "kdevelop-4.1.1-20101228.diff", 1 )
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
