@@ -39,6 +39,13 @@ class OptionsConfigure:
         
         ## run autogen in autotools
         self.bootstrap=False
+        
+        # do not use default include path
+        self.noDefaultInclude = False
+        
+        # do not use default lib path
+        self.noDefaultLib = False
+        
 
 ## options for the make action 
 class OptionsMake:
