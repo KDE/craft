@@ -19,6 +19,8 @@ class Package(CMakePackageBase):
     def __init__(self):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.noDefaultInclude = True
+        self.subinfo.options.configure.noDefaultLib = True
 
         self.qtstatic = portage.getPackageInstance('libs','qt-static')
         self.qtstatic.setBuildTarget('4.5.2-patched')
