@@ -82,14 +82,14 @@ def getMinGWVersion():
         result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
         result = result.split()[2]
         utils.debug("GCC Version:%s" % result, 1 )
-        return "%s %s" %( getCompilerName(), result.strip())
+        return result.strip()
     except:
         #if no mingw is installed return 0
         return "0"
   
 def getVersion():
     if isMinGW():
-      return getMinGWVersion()
+      return "%s %s" %( getCompilerName(), getMinGWVersion() )
     return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
   
   

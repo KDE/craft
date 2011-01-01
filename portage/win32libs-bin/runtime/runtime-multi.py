@@ -19,10 +19,9 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__( self )
         if compiler.isMSVC2008():
             self.subinfo.options.package.version = '9.0.30729.1'
-        elif compiler.isMinGW32():
-            self.subinfo.options.package.version = '4.4.0'
-        elif compiler.isMinGW_WXX():
-            self.subinfo.options.package.version = '4.4.5'
+        elif compiler.isMinGW():
+            self.subinfo.options.package.version = compiler.getMinGWVersion()
+
         
 
     def fetch(self):
