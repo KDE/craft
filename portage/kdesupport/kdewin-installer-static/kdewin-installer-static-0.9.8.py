@@ -3,9 +3,10 @@ import os
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin-installer'
-        self.svnTargets['amarokHEAD'] = 'trunk/kdesupport/kdewin-installer'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdewin-installer'
+        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['amarokHEAD'] = 'git://git.kde.org/kdewin-installer'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
