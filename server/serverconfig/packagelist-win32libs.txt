@@ -58,3 +58,4 @@ win32libs-sources,taglib-extras-src,,
 win32libs-sources,openjpeg-src,,2
 win32libs-sources,libnova-src,,
 libs,qt,4.7.1,
+win32libs-bin,runtime,,
