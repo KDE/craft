@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
     
 
   def setDependencies( self ):
-    self.hardDependencies['virtual/bin-base'] = 'default'
+    self.buildDependencies['virtual/bin-base'] = 'default'
     
   def getVer( self ):
     if( hasattr( self , "ver" ) ) :
