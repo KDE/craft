@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         for ver in ['2.3.0', '2.3.1', '2.4.0']:
           self.targets[ver] = 'http://downloads.sourceforge.net/kmid2/kmid-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'kmid-' + ver
+        self.shortDescription = "a MIDI/Karaoke player for KDE4"
         self.defaultTarget = '2.4.0'
     
     def setDependencies( self ):
