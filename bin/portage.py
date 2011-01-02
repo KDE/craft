@@ -199,7 +199,6 @@ class Portage:
         """ """
         self.categories = {}
         self.portages = {}
-        self.metaData = {}
 
     def addPortageDir( self, dir ):
         """ adds the categories and packages of a portage directory """
@@ -294,6 +293,26 @@ class Portage:
         else:
             return None
 
+    def getMetaData( self, category, package, version ):
+        """ returns all targets of a specified package """
+        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        if not ( category and package and version ):
+            return dict()
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            tmpdict = dict()
+            if not info.categoryName == "":
+                tmpdict['categoryName'] = info.categoryName
+            if not info.shortDescription == "":
+                tmpdict['shortDescription'] = info.shortDescription
+            if not info.description == "":
+                tmpdict['description'] = info.description
+            utils.debug( tmpdict, 2 )
+            return tmpdict
+        else:
+            return dict()
+    
     def getAllTargets( self, category, package, version ):
         """ returns all targets of a specified package """
         utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
@@ -322,9 +341,6 @@ class Portage:
             return tagDict
         else:
             return dict()
-
-    def getMetaData( self, category, package, version ):
-        return self.metaData
 
     def getUpdatableVCSTargets( self, category, package, version ):
         """ check if the targets are tags or not """
