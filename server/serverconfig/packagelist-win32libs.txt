@@ -57,4 +57,4 @@ win32libs-sources,taglib-src,1.6.3,
 win32libs-sources,taglib-extras-src,,
 win32libs-sources,openjpeg-src,,2
 win32libs-sources,libnova-src,,
-win32libs-bin,runtime,,
+libs,runtime,,
