@@ -47,9 +47,11 @@ class infoclass:
         self.buildDependencies = dict()
         
         # a long and a short description for the package
-        self.longDescription = ''
+        self.shortDescription = ''
         self.description = ''
         # the category that will be used in the installer for this package
+        # you must only set this property if you want to override the default category
+        # of the package
         self.categoryName = ''
 
         self.patchToApply = dict()  # list ( 'patchname', patchdepth for patch )
