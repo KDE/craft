@@ -199,6 +199,7 @@ class Portage:
         """ """
         self.categories = {}
         self.portages = {}
+        self.metaData = {}
 
     def addPortageDir( self, dir ):
         """ adds the categories and packages of a portage directory """
@@ -321,6 +322,9 @@ class Portage:
             return tagDict
         else:
             return dict()
+
+    def getMetaData( self, category, package, version ):
+        return self.metaData
 
     def getUpdatableVCSTargets( self, category, package, version ):
         """ check if the targets are tags or not """
