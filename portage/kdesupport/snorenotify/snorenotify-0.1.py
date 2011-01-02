@@ -11,7 +11,10 @@ class subinfo(info.infoclass):
         
     def setTargets( self ):
       self.svnTargets['gitHEAD'] = 'git://gitorious.org/snorenotify/snorenotify.git'
-      self.defaultTarget = 'gitHEAD'
+      self.targets['0.1'] = 'http://winkde.org/~pvonreth/downloads/snorenotify-0.1.tar.xz'
+      self.targetInstSrc['0.1'] = 'snorenotify-0.1'
+      self.targetDigests['0.1'] = '39dea268b29c852a8eb740f440c4dcc51670d6f4'
+      self.defaultTarget = '0.1'
          
 
 class Package( CMakePackageBase ):
