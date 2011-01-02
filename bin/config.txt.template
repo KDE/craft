@@ -1,0 +1,26 @@
+;kdewin installer configuration file 
+@format 1.3
+; this format is *prelimary* and may be changed without prior notice
+@minversion 0.9.7
+@timestamp 201012311200
+
+; category notes 
+@categorynotes data data packages 
+@categorynotes KDE KDE packages
+@categorynotes kdesupport KDE support packages 
+@categorynotes win32libs external library packages
+@categorynotes kde-l10n KDE localization packages
+
+${categorypackages}
+@endusercategories KDE kde-l10n
+
+;------------------------------------------------------
+; all packages on the mirror
+;------------------------------------------------------
+@site all
+@type apachemodindex
+@url .
+;
+@exclude config.txt
+${dependencies}
+${pkgnotes}

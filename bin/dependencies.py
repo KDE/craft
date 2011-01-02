@@ -37,7 +37,7 @@
    $ python bin/dependencies.py -t <type of output> <emerge package> > deps.dot
 
    with <type of output> being the kind of output send to stdout.
-   Possible values: 'dot' and 'xml'. Defaults to 'dot'
+   Possible values: 'dot', 'kwi' and 'xml'. Defaults to 'dot'
 
    The output is send to stdout. Piped into a file you may use
    dot to generate a graphical version.
@@ -54,9 +54,11 @@ import os
 import utils
 import graphviz
 from optparse import OptionParser
+from string import Template
 
 OUTPUT_DOT = 0
 OUTPUT_XML = 1
+OUTPUT_KWI = 2
 
 class Visitor(object):
     """Visitor applied to a node in the 
@@ -154,6 +156,139 @@ class XMLCreator(Visitor):
         out.append("</deps>")
         return ''.join(out)
 
+class KDEWinCreator( Visitor ):
+    """ A visitor to generate a kdewin-installer config file """
+    compiler = "vc90"
+    mode = "deps"
+    cats = dict()
+    cats["data"] = []
+    cats["KDE"] = []
+    cats["kdesupport"] = []
+    cats["win32libs"] = []
+
+    def collectMetaData( self, node, context ):
+        visited, out, ranks = context
+        if str( node ) not in visited:
+            visited.add( str( node ) )
+            metaData = node.metaData
+            packageName = node.package
+            if node.category == "virtual":
+                return None
+            if packageName.endswith( "-src" ) or packageName.endswith( "-pkg" ):
+                packageName = packageName[ : -4 ]
+            if "shortDescription" in metaData:
+                return "@pkgnotes " + packageName + "-* " + metaData[ "shortDescription" ]
+        return None
+
+    def collectPackagesForCategory( self, node, context ):
+        visited, out, ranks = context
+        if str( node ) not in visited:
+            visited.add( str( node ) )
+            if node.category in [ "kdesupport", "libs" ] and node not in self.cats[ "kdesupport" ]:
+                self.cats[ "kdesupport" ].append( node )
+                return None
+            elif node.category.startswith( "kde" ) and node.category <> "kdesupport" or node.category == "extragear" and node not in self.cats[ "KDE" ]:
+                self.cats[ "KDE" ].append( node )
+                return None
+            elif node.category == "data" and node not in self.cats[ "data" ]:
+                self.cats[ "data" ].append( node )
+                return None
+            elif node.category in [ "testing", "win32libs-sources", "win32libs-bin" ] and node not in self.cats[ "win32libs" ]:
+                self.cats[ "win32libs" ].append( node )
+                return None
+        return None
+
+    def __getNodeDependencies( self, node ):
+        depString = ""
+        for child in node.children:
+            childName = child.package
+            if child.category == "virtual":
+                depString += self.__getNodeDependencies( child )
+            else:
+                if childName.endswith( "-src" ) or childName.endswith( "-pkg" ):
+                    childName = childName[ :-4 ]
+                depString += " " + childName + "-" + self.compiler
+        return depString
+
+    def writeDependencyLine( self, node, context ):
+        visited, out, ranks = context
+        packageName = node.package
+        packageCategory = node.category
+        if packageCategory == "virtual":
+            return None
+        if packageName.endswith( "-src" ) or packageName.endswith( "-pkg" ):
+            packageName = packageName[ : -4 ]
+        if "win32libs" in packageCategory:
+            packageCategory = "win32libs"
+
+        depString = "@deps " + packageName + "-" + self.compiler
+        depString += self.__getNodeDependencies( node )
+        if str( node ) not in visited and len( node.children ) > 0:
+            visited.add( str( node ) )
+            return depString
+        return None
+
+    def afterChildren( self, node, context ):
+        visited, out, ranks = context
+
+        if self.mode == "deps":
+            result = self.writeDependencyLine( node, context )
+        elif self.mode == "cats":
+            result = self.collectPackagesForCategory( node, context )
+        elif self.mode == "meta":
+            result = self.collectMetaData( node, context )
+        if result:
+            out.append( result )
+        return Visitor.CONTINUE_CHILDREN
+
+    def __dumpCategories( self, out ):
+        out.append( "; to which category packages belong to" )
+        for _cat in self.cats:
+            _str = "@categorypackages " + _cat
+            num = 0
+            for _node in self.cats[ _cat ]:
+                _packageName = _node.package
+                if _packageName.endswith( "-src" ) or _packageName.endswith( "-pkg" ): _packageName = _packageName[:-4]
+                _str += " " + _packageName + "-" + self.compiler
+                num += 1
+                if num > 10:
+                    num = 0
+                    out.append( _str )
+                    _str = "@categorypackages " + _cat
+            if num > 0:
+                out.append( _str )
+        out.append( ";" )
+    
+    def createOutput( self, tree ):
+        out = []
+        
+        template = Template( file( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "config.txt.template" ) ).read() )
+
+        visited = set()
+        ranks = {}
+        self.mode = "cats"
+        for self.compiler in [ "x86-mingw4", "mingw4", "vc90", "vc100" ]:
+            visited = set()
+            tree.visit( self, ( visited, out, ranks ) )
+            self.__dumpCategories( out )
+        _cat = "\n".join( out )
+        out = []
+        self.mode = "deps"
+        for self.compiler in [ "x86-mingw4", "mingw4", "vc90", "vc100" ]:
+            visited = set()
+            out.append( "; package dependencies for compiler " + self.compiler )
+            tree.visit( self, ( visited, out, ranks ) )
+            out.append( ";" )
+
+        _dep = "\n".join( out )
+        out = []
+        visited = set()
+        ranks = {}
+        self.mode = "meta"
+        tree.visit( self, ( visited, out, ranks ) )
+        _meta = "\n".join( out )
+        return template.safe_substitute( { 'categorypackages': _cat, 'dependencies': _dep, 'pkgnotes': _meta } )
+
 class DependenciesNode(object):
     """A node in the dependency graph."""
 
@@ -165,6 +300,7 @@ class DependenciesNode(object):
         self.tag      = tag
         self.children = children
         self.parents  = []
+        self.metaData = dict()
 
     def __str__(self):
         return "%s:%s:%s:%s" % (
@@ -219,7 +355,7 @@ class DependenciesTree(object):
         except:
             tag = "1"
 
-        node = self.buildDepNode(category, package, version, tag, type)
+        node = self.buildDepNode( category, package, version, tag, type )
 
         if not node in self.roots:
             self.roots.append(node)
@@ -256,6 +392,8 @@ class DependenciesTree(object):
             sub_node = self.buildDepNode(t[0], t[1], t[2], tag, type)
             children.append(sub_node)
         node = DependenciesNode(category, package, version, tag, children)
+        node.metaData = pi.getMetaData(category, package, version)
+
         for child in children:
             child.parents.append(node)
 
@@ -276,7 +414,7 @@ def parseOptions():
 
     parser.add_option("-t", "--type", action = "store", default = OUTPUT_DOT,
             help=("Change the output format type "
-                  "possible values: xml"))
+                  "possible values: xml, kwi, dot"))
     parser.add_option("-f", "--file", dest = "filename", metavar = "FILENAME",
             help="add a filename for a packageList ")
     parser.add_option("-o", "--output", dest = "outputname", metavar = "FILENAME",
@@ -314,6 +452,8 @@ def main():
     opts, args = parseOptions()
     if opts.type == "xml": 
         output_type = OUTPUT_XML
+    elif opts.type == "kwi":
+        output_type = OUTPUT_KWI
     else:
         output_type = OUTPUT_DOT
 
@@ -335,10 +475,11 @@ def main():
         f.write( output );
         f.close()
 
-        _graphviz = graphviz.GraphViz()
+        if output_type == OUTPUT_DOT:
+            _graphviz = graphviz.GraphViz()
 
-        if not _graphviz.runDot( opts.outputname, opts.outputname + '.pdf', 'pdf' ):
-            exit( 1 )
+            if not _graphviz.runDot( opts.outputname, opts.outputname + '.pdf', 'pdf' ):
+                exit( 1 )
 
 # we don't want to open the output automatically, at least not always
 #        _graphviz.openOutput()
@@ -348,7 +489,7 @@ def main():
 def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     # little workaround to not display debug infos in generated output
     old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
-    os.environ['EMERGE_VERBOSE'] = '0'
+    utils.setVerbose( 0 )
 
     packageList, categoryList = portage.getPackagesCategories(category)
     dep_tree = DependenciesTree()
@@ -361,13 +502,14 @@ def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
 
     if   output_type == OUTPUT_XML: creator = XMLCreator()
     elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
+    elif output_type == OUTPUT_KWI: creator = KDEWinCreator()
 
     return creator.createOutput(dep_tree)
 
 def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type="both"):
     # little workaround to not display debug infos in generated output
     old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
-    os.environ['EMERGE_VERBOSE'] = '0'
+    utils.setVerbose( 0 )
 
     dep_tree = DependenciesTree()
 
@@ -378,6 +520,7 @@ def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
 
     if   output_type == OUTPUT_XML: creator = XMLCreator()
+    elif output_type == OUTPUT_KWI: creator = KDEWinCreator()
     elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
 
     return creator.createOutput(dep_tree)
