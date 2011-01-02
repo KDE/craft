@@ -3,8 +3,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/office/kile'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kile'
+        self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
