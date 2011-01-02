@@ -6,9 +6,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['4.3.3'] = 'http://www.riverbankcomputing.com/Downloads/PyQt4/GPL/PyQt-win-gpl-4.3.3.zip'
-        self.targetInstSrc['4.3.3'] = 'PyQt-win-gpl-4.3.3'        
-        self.defaultTarget = '4.3.3'
+        self.targets['4.8.1'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-win-gpl-4.8.1.zip'
+        self.targetInstSrc['4.8.1'] = 'PyQt-win-gpl-4.8.1'        
+        self.defaultTarget = '4.8.1'
     
     def setDependencies( self ):
         self.hardDependencies['testing/sip'] = 'default'
