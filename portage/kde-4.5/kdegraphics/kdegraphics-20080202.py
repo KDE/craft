@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdegraphics-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdegraphics-4.5.' + ver
             self.patchToApply['4.5.' + ver] = [( 'kdegraphics-4.5.4-20101215.diff', 1 )]
+        self.shortDescription = "Graphics applications (Okular, Gwenview)"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
