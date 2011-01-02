@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies[ 'virtual/bin-base' ] = 'default'
+        self.buildDependencies[ 'virtual/bin-base' ] = 'default'
 
 from Package.BinaryPackageBase import *
 import compiler  
