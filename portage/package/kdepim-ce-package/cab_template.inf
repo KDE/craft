@@ -15,7 +15,7 @@ CESetupDLL="setupdll.dll"
 $SECTIONS
  
 [RegSettings]
-HKLM, Software\kde, KDEDIRS, 0, %CE1%/Kontact-Mobile
+HKLM, Software\kde, KDEDIRS, 0, %CE1%/Kontact-Mobile/
 HKLM, Software\Akonadi\Akonadi\AgentProviders, InstallDir, 0, %CE1%/Kontact-Mobile
 HKLM, Software\freedesktop\DBus, Install Directory, 0, %CE1%/Kontact-Mobile/bin
 HKLM, Drivers\GnuPG_Device, dll, 0, gpgcedev.dll
