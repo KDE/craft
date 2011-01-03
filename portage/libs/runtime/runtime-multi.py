@@ -3,9 +3,9 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         # not used  yet only for reference
-        self.targets[ 'svnHEAD' ] = "http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
+        self.targets[ '0.0.1' ] = "http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
         self.shortDescription = "the compiler runtime package"
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '0.0.1'
 
     def setDependencies( self ):
         self.buildDependencies[ 'virtual/bin-base' ] = 'default'
