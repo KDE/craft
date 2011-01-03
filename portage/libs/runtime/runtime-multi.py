@@ -38,7 +38,7 @@ class Package( BinaryPackageBase ):
             elif compiler.isMinGW_W32():
                 srcdir = os.path.join( self.rootdir, "mingw", "bin" )
                 files = [ 'libgcc_s_sjlj-1.dll' ]
-            elif compler.isMinGW_W64():
+            elif compiler.isMinGW_W64():
                 srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
                 files = [ 'libgcc_s_sjlj-1.dll' ]
 #        elif compiler.isMSVC2008():
