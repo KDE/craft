@@ -16,7 +16,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '0.9.1'
         
     def setDependencies( self ):
-        self.dependencies['testing/libopensp'] = 'default'
+        self.dependencies['testing/libopensp-src'] = 'default'
         self.dependencies['win32libs-bin/win_iconv'] = 'default'
 
 from Package.CMakePackageBase import *
