@@ -187,7 +187,7 @@ class KDEWinCreator( Visitor ):
             if node.category in [ "kdesupport", "libs" ] and node not in self.cats[ "kdesupport" ]:
                 self.cats[ "kdesupport" ].append( node )
                 return None
-            elif node.category.startswith( "kde" ) and node.category <> "kdesupport" or node.category == "extragear" and node not in self.cats[ "KDE" ]:
+            elif node.category.startswith( "kde" ) and node.category <> "kdesupport" or node.category in [ "extragear", "kdeapps" ] and node not in self.cats[ "KDE" ]:
                 self.cats[ "KDE" ].append( node )
                 return None
             elif node.category == "data" and node not in self.cats[ "data" ]:
@@ -199,7 +199,7 @@ class KDEWinCreator( Visitor ):
         return None
 
     def __getNodeDependencies( self, node ):
-        depString = ""
+        depString = " runtime-" + self.compiler
         for child in node.children:
             childName = child.package
             if child.category == "virtual":
@@ -223,7 +223,7 @@ class KDEWinCreator( Visitor ):
 
         depString = "@deps " + packageName + "-" + self.compiler
         depString += self.__getNodeDependencies( node )
-        if str( node ) not in visited and len( node.children ) > 0:
+        if str( node ) not in visited: # and len( node.children ) > 0: # since runtime packages are not included, use a hack here
             visited.add( str( node ) )
             return depString
         return None
