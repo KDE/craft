@@ -55,6 +55,9 @@ class subinfo(info.infoclass):
             ('qt-4.7.0-Add-gpgLogging.patch', 1),
             ('qt-4.7.0-fix-qml-alignment.patch', 1)]
         self.patchToApply['4.7.1'] = [('qt-4.7.1-buildfix-for-mingw64.patch', 1)]
+        
+        self.shortDescription = "a cross-platform application framework"
+        
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
         else:
