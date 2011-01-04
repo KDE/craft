@@ -23,7 +23,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         # this package could be used for all build types (only images) 
         ## \todo find a way to reuse this build output for different build types
-        self.subinfo.options.package.withCompiler = False
         self.subinfo.options.useBuildType = False
         self.subinfo.options.useCompilerType = False
         CMakePackageBase.__init__( self )
