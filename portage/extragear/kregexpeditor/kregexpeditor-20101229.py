@@ -6,6 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/playground/utils/kregexpeditor'
+        self.shortDescription = "a regular expression editor for KDE"
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
