@@ -103,3 +103,15 @@ diff -Nru phonon-backend-vlc-0.3.1.orig/vlc/CMakeLists.txt phonon-backend-vlc-0.
          if (KDEWIN_FOUND)
              include_directories(${KDEWIN_INCLUDES}/msvc)
              link_libraries(${KDEWIN_LIBRARIES})
+diff -Nru phonon-backend-vlc-0.3.1.orig/vlc/vlc.desktop phonon-backend-vlc-0.3.1/vlc/vlc.desktop
+--- phonon-backend-vlc-0.3.1.orig/vlc/vlc.desktop	2010-12-01 15:28:08.000000000 +0100
++++ phonon-backend-vlc-0.3.1/vlc/vlc.desktop	2011-01-04 17:33:12.089960200 +0100
+@@ -7,7 +7,7 @@
+ X-KDE-PhononBackendInfo-Version=0.3.1
+ X-KDE-PhononBackendInfo-Website=http://www.videolan.org/
+ Icon=vlc
+-InitialPreference=10
++InitialPreference=16
+ 
+ Name=VLC
+ Name[x-test]=xxVLCxx
