@@ -71,6 +71,8 @@ for packageKey in addInfo:
         buildTarget = addInfo[ packageKey ] [ 0 ]
         if buildTarget == '':
             buildTarget = portage.PortageInstance.getDefaultTarget( category, package, version )
+        if addInfo[ packageKey ] [ 1 ]:
+            buildTarget += "-" + addInfo[ packageKey ] [ 1 ]
         regenerateFile = False
         if not buildTarget in binTargets:
             utils.warning( "key %s not contained in binary package %s" % ( buildTarget, binPackage ) )
@@ -163,7 +165,7 @@ for packageKey in addInfo:
             template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = [ buildTarget ]
             targetsString = "'" + "', '".join( targetkeys ) + "'"
-            result = template.safe_substitute( { 'revision': '1', 
+            result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ), 
                                                  'package': binPackage, 
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
