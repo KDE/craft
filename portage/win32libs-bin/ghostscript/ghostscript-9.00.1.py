@@ -24,6 +24,7 @@ class Package(BinaryPackageBase):
     self.subinfo = subinfo()
     BinaryPackageBase.__init__( self )
     self.subinfo.options.package.withCompiler = False
+    self.subinfo.options.package.withSources = False
 
 if __name__ == '__main__':
     Package().execute()
