@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
 
         self.targetDigests['0.7.1'] = '19bbef24132b238e99744bb35194c6dadece98f9'            
         self.patchToApply['0.7.1'] = ("qjson-20100517.diff", 1)
+        self.shortDescription = "a qt-based library that maps JSON data to Qt objects"
         self.defaultTarget = '0.7.1'
         self.options.configure.defines = ""
 

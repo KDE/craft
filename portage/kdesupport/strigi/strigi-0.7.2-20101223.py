@@ -30,6 +30,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ver] = 'strigi-' + ver
         self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101223.diff", 1)
           
+        self.shortDescription = "a desktop search engine and indexer"
         if emergePlatform.isCrossCompilingEnabled():
           #FIXME make strigi svnHEAD compile on Windows
           self.defaultTarget = 'komobranch'

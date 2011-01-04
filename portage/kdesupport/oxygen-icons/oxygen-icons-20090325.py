@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['4.5.4']:
           self.targets[ver] = 'http://download.kde.org/download.php?url=stable/' + ver + '/src/oxygen-icons-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'oxygen-icons-' + ver 
+        self.shortDescription = "icons and bitmaps for the oxygen style"
         self.defaultTarget = 'svnHEAD'
         
     def setDependencies( self ):

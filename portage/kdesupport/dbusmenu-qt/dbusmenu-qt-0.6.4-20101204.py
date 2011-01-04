@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         for ver in ['0.6.4']:
           self.targets[ver] ='http://launchpad.net/libdbusmenu-qt/trunk/' + ver + '/+download/libdbusmenu-qt-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver 
-        
+        self.shortDescription = "a Qt implementation of the DBusMenu spec"
         
         self.defaultTarget = 'gitHEAD'
 

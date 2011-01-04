@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdewin'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/kdewin'
+        self.shortDescription = "kde supplementary package for win32"
         self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *

@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['4.4.3'] = 'phonon-4.4.3'
         self.targetDigests['4.4.3'] = '50262d590beb648be9dcad6b913b920db19a84f8'
         self.patchToApply['4.4.3'] = ("phonon-20100915.diff", 1)
+        self.shortDescription = "a Qt based multimedia framework"
         self.defaultTarget = '4.4.3'
         
           

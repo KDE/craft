@@ -10,6 +10,7 @@ class subinfo( info.infoclass ):
         self.patchToApply[ 'gitHEAD' ] = ( "liblastfm-src-20101128.diff", 1 )
         self.svnTargets[ 'TheOneRing' ] = "git://github.com/TheOneRing/liblastfm.git"
         self.targetSrcSuffix['TheOneRing'] = "theo"
+        self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
         self.defaultTarget = 'TheOneRing'
 
     def setDependencies( self ):

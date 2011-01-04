@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qimageblitz'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/qimageblitz'
+        self.shortDescription = "Graphical effects library for KDE4"
         self.defaultTarget = 'svnHEAD'
 
 from Package.CMakePackageBase import *
