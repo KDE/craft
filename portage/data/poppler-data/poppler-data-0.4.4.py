@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.4.3'] = 'aa28288563d2542e14414666a8b35d01f42ad164'
 
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler-data"
+        self.shortDescription = "the poppler encoding data"
         self.defaultTarget = '0.4.4'
 
     def setDependencies( self ):
