@@ -13,7 +13,7 @@ kdesupport,qjson,,
 kdesupport,dbusmenu-qt,,
 kdesupport,kdewin,,
 kdesupport,phonon,,
-kdesupport,phonon-vlc,,
+kdesupport,phonon-vlc,,1
 kdesupport,strigi,,
 kdesupport,soprano,,
 kdesupport,qca,,
@@ -23,7 +23,7 @@ kdesupport,oxygen-icons,,
 kdesupport,akonadi,1.4.3,
 #
 # the KDE packages themselves
-kde-4.5,kdelibs,4.5.4,1
+kde-4.5,kdelibs,4.5.4,2
 kde-4.5,kdepimlibs,4.5.4,
 kde-4.5,kdebase-runtime,4.5.4,
 kde-4.5,kdebase-workspace,4.5.4,
