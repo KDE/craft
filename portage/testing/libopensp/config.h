@@ -307,13 +307,6 @@
 #define PATH_SEPARATOR ':'
 #endif
 
-
-/* new stuff */
-
-#ifndef HAVE_MUTABLE
-#define mutable
-#endif
-
 // NOTE: This is processed as a Makefile, not as a header by autoconf.
 #define SP_PACKAGE "@PACKAGE@"
 #define SP_VERSION "@VERSION@"

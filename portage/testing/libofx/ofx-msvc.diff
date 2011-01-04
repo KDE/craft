@@ -1,15 +1,3 @@
-diff lib/ofx_preproc.cpp lib/ofx_preproc.cpp
---- lib/ofx_preproc.cpp
-+++ lib/ofx_preproc.cpp
-@@ -186,7 +186,7 @@ CFCT int ofx_proc_file(LibofxContextPtr ctx, const char * p_filename)
- 	    size_t inbytesleft = strlen(s_buffer.c_str());
- 	    size_t outbytesleft = READ_BUFFER_SIZE * 2 - 1;
- #ifdef OS_WIN32
--	    const char * inchar = (const char *)s_buffer.c_str();
-+        char * inchar = (char *)s_buffer.c_str();
- #else
- 	    char * inchar = (char *)s_buffer.c_str();
- #endif
 diff lib/ofx_utilities.cpp lib/ofx_utilities.cpp
 --- lib/ofx_utilities.cpp
 +++ lib/ofx_utilities.cpp

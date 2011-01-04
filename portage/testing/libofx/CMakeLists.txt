@@ -66,8 +66,9 @@ set (SRC_SOURCES
 #add_library(ofx SHARED ${SRC_SOURCES})
 add_library(ofx ${SRC_SOURCES})
 
+FIND_LIBRARY( ICONV_LIBRARIES iconv )
 set_target_properties(ofx PROPERTIES OUTPUT_NAME "libofx")
-target_link_libraries(ofx ${OPENSP_LIBRARIES} $ENV{KDEROOT}/lib/libiconv-2.lib)
+target_link_libraries(ofx ${OPENSP_LIBRARIES} ${ICONV_LIBRARIES})
 
 install(TARGETS ofx RUNTIME DESTINATION bin ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 install(FILES inc/libofx.h DESTINATION include/libofx)
