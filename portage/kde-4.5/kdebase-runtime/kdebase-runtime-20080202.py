@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
+        self.dependencies['kdesupport/phonon-vlc'] = 'default'
         self.dependencies['win32libs-bin/libssh'] = 'default'
         self.shortDescription = "KDE runtime libraries"
 
