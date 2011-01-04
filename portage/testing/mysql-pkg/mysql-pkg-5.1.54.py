@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
           self.targets[ '5.1.54'] = self.baseURL+"mysql-noinstall-5.1.54-win32.zip"
           self.targetInstSrc[ '5.1.54' ] = "mysql-5.1.54-win32"
           self.targetDigests['5.1.54'] = '2c4ae53b1f7e97572482edac8bd82c5443771302'          
-          
+        self.shortDescription = "MySql database server and embedded library"
         self.defaultTarget = '5.1.54'
        
 
