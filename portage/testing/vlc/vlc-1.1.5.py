@@ -23,10 +23,10 @@ class subinfo(info.infoclass):
     self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = 'vlc-' + self.vlcTagName +  self.getVer()      
     
     releaseTag = '1.1.5'
-    self.targets[ releaseTag] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
+    self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
     self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
     self.targetDigests['1.1.5'] = 'c2da2e2a530d9558fcf9da46fa34920c66d9f2ef'
-    
+    self.shortDescription = "an open-source multimedia framework"
     if( emergePlatform.buildArchitecture() == 'x64' ):
         self.defaultTarget = self.vlcTagName + self.getVer()
     else:
