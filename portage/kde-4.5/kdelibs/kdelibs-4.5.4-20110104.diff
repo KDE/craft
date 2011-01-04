@@ -30,4 +30,3 @@ diff -Nru kdelibs-4.5.4.orig/kdecore/kdeglobals kdelibs-4.5.4/kdecore/kdeglobals
 @@ -0,0 +1,2 @@
 +[General]
 +widgetStyle=oxygen
-\ No newline at end of file
