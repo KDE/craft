@@ -1,6 +1,6 @@
 diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
 --- libofx-0.9.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libofx-0.9.1/CMakeLists.txt	2011-01-04 14:41:08.373477400 +0100
++++ libofx-0.9.1/CMakeLists.txt	2011-01-04 19:41:29.992255100 +0100
 @@ -0,0 +1,74 @@
 +project(ofx)
 +
@@ -78,7 +78,7 @@ diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
 +install(FILES inc/libofx.h DESTINATION include/libofx)
 diff -Nru libofx-0.9.1.orig/config.h libofx-0.9.1/config.h
 --- libofx-0.9.1.orig/config.h	1970-01-01 01:00:00.000000000 +0100
-+++ libofx-0.9.1/config.h	2010-07-03 12:50:17.228610300 +0200
++++ libofx-0.9.1/config.h	2011-01-04 19:41:29.994255200 +0100
 @@ -0,0 +1,71 @@
 +// Have these
 +#define HAVE_EVENTGENERATOR_H 1
@@ -153,7 +153,7 @@ diff -Nru libofx-0.9.1.orig/config.h libofx-0.9.1/config.h
 +#endif
 diff -Nru libofx-0.9.1.orig/FindOpenSP.cmake libofx-0.9.1/FindOpenSP.cmake
 --- libofx-0.9.1.orig/FindOpenSP.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libofx-0.9.1/FindOpenSP.cmake	2010-07-03 12:50:17.225610100 +0200
++++ libofx-0.9.1/FindOpenSP.cmake	2011-01-04 19:44:02.167959000 +0100
 @@ -0,0 +1,36 @@
 +# - Try to find the OpenSP library
 +# 
@@ -167,13 +167,13 @@ diff -Nru libofx-0.9.1.orig/FindOpenSP.cmake libofx-0.9.1/FindOpenSP.cmake
 +
 +    set(OPENSP_FOUND FALSE)
 +    find_path(OPENSP_INCLUDES ParserEventGeneratorKit.h
-+        $ENV{KDEROOT}/include/opensp
++        ${CMAKE_PREFIX_PATH}/include/opensp
 +    )
 +
 +    find_library(OPENSP_LIBRARIES
-+        NAMES sp133.lib
++        NAMES sp133
 +        PATHS
-+            $ENV{KDEROOT}/lib
++            ${CMAKE_PREFIX_PATH}/lib
 +    )
 +
 +    if (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
@@ -191,3 +191,67 @@ diff -Nru libofx-0.9.1.orig/FindOpenSP.cmake libofx-0.9.1/FindOpenSP.cmake
 +    endif (OPENSP_FIND_REQUIRED)
 +  endif (OPENSP_FOUND)
 +endif (WIN32)
+diff -Nru libofx-0.9.1.orig/lib/ofx_container_transaction.cpp libofx-0.9.1/lib/ofx_container_transaction.cpp
+--- libofx-0.9.1.orig/lib/ofx_container_transaction.cpp	2007-11-10 00:13:21.000000000 +0100
++++ libofx-0.9.1/lib/ofx_container_transaction.cpp	2011-01-04 19:48:10.345153900 +0100
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <string>
++#include <cstdlib>
+ #include "messages.hh"
+ #include "libofx.h"
+ #include "ofx_containers.hh"
+diff -Nru libofx-0.9.1.orig/lib/ofx_request.cpp libofx-0.9.1/lib/ofx_request.cpp
+--- libofx-0.9.1.orig/lib/ofx_request.cpp	2007-10-28 04:01:38.000000000 +0100
++++ libofx-0.9.1/lib/ofx_request.cpp	2011-01-04 19:48:40.426874500 +0100
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <string>
++#include <cstring>
+ #include "messages.hh"
+ #include "libofx.h"
+ #include "ofx_request.hh"
+diff -Nru libofx-0.9.1.orig/lib/ofx_request_accountinfo.cpp libofx-0.9.1/lib/ofx_request_accountinfo.cpp
+--- libofx-0.9.1.orig/lib/ofx_request_accountinfo.cpp	2007-10-28 04:01:38.000000000 +0100
++++ libofx-0.9.1/lib/ofx_request_accountinfo.cpp	2011-01-04 19:49:51.953965600 +0100
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <string>
++#include <cstdlib>
+ #include "libofx.h"
+ #include "ofx_request_accountinfo.hh"
+ 
+diff -Nru libofx-0.9.1.orig/lib/ofx_request_statement.cpp libofx-0.9.1/lib/ofx_request_statement.cpp
+--- libofx-0.9.1.orig/lib/ofx_request_statement.cpp	2007-10-28 04:01:38.000000000 +0100
++++ libofx-0.9.1/lib/ofx_request_statement.cpp	2011-01-04 19:50:13.824216500 +0100
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <string>
++#include <cstdlib>
+ #include "libofx.h"
+ #include "ofx_utilities.hh"
+ #include "ofx_request_statement.hh"
+diff -Nru libofx-0.9.1.orig/lib/ofx_utilities.cpp libofx-0.9.1/lib/ofx_utilities.cpp
+--- libofx-0.9.1.orig/lib/ofx_utilities.cpp	2007-10-27 14:15:58.000000000 +0200
++++ libofx-0.9.1/lib/ofx_utilities.cpp	2011-01-04 19:47:36.302206800 +0100
+@@ -17,6 +17,7 @@
+  ***************************************************************************/
+ #include <config.h>
+ #include <iostream>
++#include <cstdlib>
+ #include <assert.h>
+ 
+ #include "ParserEventGeneratorKit.h"
+@@ -113,7 +114,7 @@
+   char time_zone_specified = false;
+ 
+   time_t temptime;
+-  std::time(&temptime);
++  ::time(&temptime);
+   local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime)));
+   
+   if(ofxdate.size()!=0){
