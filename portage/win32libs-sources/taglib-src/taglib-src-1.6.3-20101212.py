@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ v ] = 'taglib-%s' % v
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
         self.patchToApply[ '1.6.3' ] = [("taglib-1.6.3-20101213.diff", 1)]
+        self.shortDescription = "audio metadata library"
         self.defaultTarget = '1.6.3'
 
 from Package.CMakePackageBase import *
