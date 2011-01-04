@@ -1,6 +1,6 @@
-diff lib/ofx_utilities.cpp lib/ofx_utilities.cpp
---- lib/ofx_utilities.cpp
-+++ lib/ofx_utilities.cpp
+diff libofx-0.9.1.orig/lib/ofx_utilities.cpp libofx-0.9.1/lib/ofx_utilities.cpp
+--- libofx-0.9.1.orig/lib/ofx_utilities.cpp
++++ libofx-0.9.1/lib/ofx_utilities.cpp
 @@ -113,7 +113,11 @@ time_t ofxdate_to_time_t(const string ofxdate)
    char time_zone_specified = false;
  
@@ -13,9 +13,9 @@ diff lib/ofx_utilities.cpp lib/ofx_utilities.cpp
    local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime)));
    
    if(ofxdate.size()!=0){
-diff lib/win32.cpp lib/win32.cpp
---- lib/win32.cpp
-+++ lib/win32.cpp
+diff libofx-0.9.1.orig/lib/win32.cpp libofx-0.9.1/lib/win32.cpp
+--- libofx-0.9.1.orig/lib/win32.cpp
++++ libofx-0.9.1/lib/win32.cpp
 @@ -18,7 +18,9 @@
  #include <stdlib.h>
  #include <stdio.h>

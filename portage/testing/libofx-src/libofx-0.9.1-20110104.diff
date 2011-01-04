@@ -1,0 +1,193 @@
+diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
+--- libofx-0.9.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libofx-0.9.1/CMakeLists.txt	2011-01-04 14:41:08.373477400 +0100
+@@ -0,0 +1,74 @@
++project(ofx)
++
++set (VERSION_MAJOR 0)
++set (VERSION_MINOR 9)
++set (VERSION_PATH 1)
++
++cmake_minimum_required(VERSION 2.6)
++
++list(APPEND CMAKE_MODULE_PATH  ${CMAKE_SOURCE_DIR})
++find_package(OpenSP REQUIRED)
++
++include_directories(
++    inc
++    ${OPENSP_INCLUDES}
++#   ${KDE4_INCLUDES}
++    $ENV{KDEROOT}/include
++)
++
++add_definitions(
++    -DOS_WIN32
++)
++
++set (COEFF_HDRS 
++        inc/libofx.h
++        lib/messages.hh
++        lib/ofx_preproc.hh
++        lib/file_preproc.hh
++        lib/context.hh
++        lib/ofx_sgml.hh
++        lib/ofc_sgml.hh
++        lib/ofx_aggregate.hh
++        lib/ofx_error_msg.hh
++        lib/ofx_containers.hh
++        lib/ofx_request.hh
++        lib/ofx_request_accountinfo.hh
++        lib/ofx_request_statement.hh
++        lib/ofx_utilities.hh
++        lib/tree.hh
++        lib/win32.hh
++        )
++
++set (SRC_SOURCES
++         lib/messages.cpp
++         lib/ofx_utilities.cpp
++         lib/file_preproc.cpp
++         lib/context.cpp
++         lib/ofx_preproc.cpp
++         lib/ofx_container_generic.cpp
++         lib/ofx_container_main.cpp
++         lib/ofx_container_security.cpp
++         lib/ofx_container_statement.cpp
++         lib/ofx_container_account.cpp
++         lib/ofx_container_transaction.cpp
++         lib/ofx_containers_misc.cpp
++         lib/ofx_request.cpp
++         lib/ofx_request_accountinfo.cpp
++         lib/ofx_request_statement.cpp
++         lib/ofx_sgml.cpp
++         lib/ofc_sgml.cpp
++         lib/win32.cpp
++         ${COEFF_HDRS}
++)
++
++# We would like it to be shared, but libofx does not export symbols manually
++# thus it causes troubles on MSVC
++#add_library(ofx SHARED ${SRC_SOURCES})
++add_library(ofx ${SRC_SOURCES})
++
++FIND_LIBRARY( ICONV_LIBRARIES iconv )
++set_target_properties(ofx PROPERTIES OUTPUT_NAME "libofx")
++target_link_libraries(ofx ${OPENSP_LIBRARIES} ${ICONV_LIBRARIES})
++
++install(TARGETS ofx RUNTIME DESTINATION bin ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
++install(FILES inc/libofx.h DESTINATION include/libofx)
+diff -Nru libofx-0.9.1.orig/config.h libofx-0.9.1/config.h
+--- libofx-0.9.1.orig/config.h	1970-01-01 01:00:00.000000000 +0100
++++ libofx-0.9.1/config.h	2010-07-03 12:50:17.228610300 +0200
+@@ -0,0 +1,71 @@
++// Have these
++#define HAVE_EVENTGENERATOR_H 1
++#define HAVE_LIBCURL 1
++#define HAVE_MEMORY_H 1
++#define HAVE_PARSEREVENTGENERATORKIT_H 1
++#define HAVE_SGMLAPPLICATION_H 1
++#define HAVE_STDLIB_H 1
++#define HAVE_STRING_H 1
++#define HAVE_SYS_STAT_H 1
++#define HAVE_SYS_TYPES_H 1
++
++// Do not exist
++#undef HAVE_DLFCN_H
++#undef HAVE_GETOPT_H
++#undef HAVE_GETOPT_LONG
++#undef HAVE_INTTYPES_H
++#undef HAVE_STDINT_H
++#undef HAVE_STRINGS_H
++#undef HAVE_UNISTD_H
++
++
++// Unsure
++#define HAVE_ICONV 1
++#define HAVE_LIBXMLPP 1
++
++#undef LIBCURL_FEATURE_ASYNCHDNS
++
++/* Defined if libcurl supports IPv6 */
++#undef LIBCURL_FEATURE_IPV6
++
++/* Defined if libcurl supports KRB4 */
++#undef LIBCURL_FEATURE_KRB4
++
++/* Defined if libcurl supports libz */
++#undef LIBCURL_FEATURE_LIBZ
++
++/* Defined if libcurl supports SSL */
++#undef LIBCURL_FEATURE_SSL
++
++/* Defined if libcurl supports DICT */
++#undef LIBCURL_PROTOCOL_DICT
++
++/* Defined if libcurl supports FILE */
++#undef LIBCURL_PROTOCOL_FILE
++
++/* Defined if libcurl supports FTP */
++#undef LIBCURL_PROTOCOL_FTP
++
++/* Defined if libcurl supports FTPS */
++#undef LIBCURL_PROTOCOL_FTPS
++
++/* Defined if libcurl supports GOPHER */
++#undef LIBCURL_PROTOCOL_GOPHER
++
++/* Defined if libcurl supports HTTP */
++#undef LIBCURL_PROTOCOL_HTTP
++
++/* Defined if libcurl supports HTTPS */
++#undef LIBCURL_PROTOCOL_HTTPS
++
++/* Defined if libcurl supports LDAP */
++#undef LIBCURL_PROTOCOL_LDAP
++
++/* Defined if libcurl supports TELNET */
++#undef LIBCURL_PROTOCOL_TELNET
++
++
++// MSVC Defines we seem to need
++#ifdef _MSC_VER
++typedef int ssize_t;
++#endif
+diff -Nru libofx-0.9.1.orig/FindOpenSP.cmake libofx-0.9.1/FindOpenSP.cmake
+--- libofx-0.9.1.orig/FindOpenSP.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libofx-0.9.1/FindOpenSP.cmake	2010-07-03 12:50:17.225610100 +0200
+@@ -0,0 +1,36 @@
++# - Try to find the OpenSP library
++# 
++# Once done this will define
++#
++#  OPENSP_FOUND - system has OPENSP
++#  OPENSP_INCLUDES - the OPENSP include directories
++#  OPENSP_LIBRARIES - The libraries needed to use OPENSP
++
++if (WIN32)
++
++    set(OPENSP_FOUND FALSE)
++    find_path(OPENSP_INCLUDES ParserEventGeneratorKit.h
++        $ENV{KDEROOT}/include/opensp
++    )
++
++    find_library(OPENSP_LIBRARIES
++        NAMES sp133.lib
++        PATHS
++            $ENV{KDEROOT}/lib
++    )
++
++    if (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
++        set(OPENSP_FOUND TRUE)
++    endif (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
++
++  if (OPENSP_FOUND)
++    if (NOT OPENSP_FIND_QUIETLY)
++      message(STATUS "Found OPENSP library: ${OPENSP_LIBRARIES}")
++    endif (NOT OPENSP_FIND_QUIETLY)
++
++  else (OPENSP_FOUND)
++    if (OPENSP_FIND_REQUIRED)
++      message(FATAL_ERROR "Could NOT find OPENSP library\nPlease install it first")
++    endif (OPENSP_FIND_REQUIRED)
++  endif (OPENSP_FOUND)
++endif (WIN32)
