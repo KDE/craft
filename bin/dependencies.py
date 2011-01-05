@@ -180,7 +180,11 @@ class KDEWinCreator( Visitor ):
             if packageName.endswith( "-src" ) or packageName.endswith( "-pkg" ):
                 packageName = packageName[ : -4 ]
             if "shortDescription" in metaData:
-                return "@pkgnotes " + packageName + "-* " + metaData[ "shortDescription" ]
+                if metaData["withCompiler"]:
+                    asterisk = "-*"
+                else:
+                    asterisk = ""
+                return "@pkgnotes " + packageName + asterisk + " " + metaData[ "shortDescription" ]
         return None
 
     def collectPackagesForCategory( self, node, context ):
@@ -202,7 +206,10 @@ class KDEWinCreator( Visitor ):
         return None
 
     def __getNodeDependencies( self, node ):
-        depString = " runtime-" + self.compiler
+        if node.metaData["withCompiler"]:
+            depString = " runtime-" + self.compiler
+        else:
+            depString = ""
         for child in node.children:
             childName = child.package
             if child.category == "virtual":
@@ -210,7 +217,9 @@ class KDEWinCreator( Visitor ):
             else:
                 if childName.endswith( "-src" ) or childName.endswith( "-pkg" ):
                     childName = childName[ :-4 ]
-                depString += " " + childName + "-" + self.compiler
+                depString += " " + childName
+                if child.metaData["withCompiler"]:
+                    depString += "-" + self.compiler
         return depString
 
     def writeDependencyLine( self, node, context ):
@@ -224,10 +233,20 @@ class KDEWinCreator( Visitor ):
         if "win32libs" in packageCategory:
             packageCategory = "win32libs"
 
-        depString = "@deps " + packageName + "-" + self.compiler
-        depString += self.__getNodeDependencies( node )
+        depString = "@deps " + packageName
+        if node.metaData["withCompiler"]:
+            depString += "-" + self.compiler
+        deps = self.__getNodeDependencies( node )
+        depString += deps
         if str( node ) not in visited: # and len( node.children ) > 0: # since runtime packages are not included, use a hack here
             visited.add( str( node ) )
+            if len(deps) == 0:
+                return None
+            if not node.metaData["withCompiler"] and not node.dependencyVisited:
+                node.dependencyVisited = True
+                return depString
+            elif not node.metaData["withCompiler"]:
+                return None
             return depString
         return None
 
@@ -252,8 +271,14 @@ class KDEWinCreator( Visitor ):
             for _node in self.cats[ _cat ]:
                 _packageName = _node.package
                 if _packageName.endswith( "-src" ) or _packageName.endswith( "-pkg" ): _packageName = _packageName[:-4]
-                _str += " " + _packageName + "-" + self.compiler
-                num += 1
+                if _node.metaData["withCompiler"]:
+                    _str += " " + _packageName + "-" + self.compiler
+                    num += 1
+                else:
+                    if not _node.categoryVisited:
+                        _node.categoryVisited = True
+                        _str += " " + _packageName
+                        num += 1
                 if num > 10:
                     num = 0
                     out.append( _str )
@@ -304,6 +329,8 @@ class DependenciesNode(object):
         self.children = children
         self.parents  = []
         self.metaData = dict()
+        self.categoryVisited = False
+        self.dependencyVisited = False
 
     def __str__(self):
         return "%s:%s:%s:%s" % (
