@@ -187,12 +187,12 @@ diff -Nru aspell-0.60.6.orig/CMakeLists.txt aspell-0.60.6/CMakeLists.txt
 +
 +set_source_files_properties(common/config.cpp PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/dirs.h)
 +set_source_files_properties(lib/new_filter.cpp PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/gen/static_filters.src.cpp)
-+if(MSVC)
++if(WIN32)
 +    set(aspell_SRCS 
 +        win32/dirent.c
 +        ${aspell_SRCS}
 +    )
-+endif(MSVC)
++endif(WIN32)
 +
 +if(ASPELL_STATIC)
 +add_library(aspell STATIC ${aspell_SRCS})
@@ -832,8 +832,12 @@ diff -Nru aspell-0.60.6.orig/common/file_data_util.hpp aspell-0.60.6/common/file
 diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util.cpp
 --- aspell-0.60.6.orig/common/file_util.cpp	2004-11-15 13:29:53.000000000 +0100
 +++ aspell-0.60.6/common/file_util.cpp	2011-01-04 00:59:56.478328400 +0100
-@@ -25,14 +25,13 @@
- #include <dirent.h>
+@@ -22,17 +22,16 @@
+ 
+ #include <stdio.h>
+ #include <sys/stat.h>
+-#include <dirent.h>
++#include "../win32/dirent.h"
  
  #ifdef WIN32
 -
@@ -849,6 +853,38 @@ diff -Nru aspell-0.60.6.orig/common/file_util.cpp aspell-0.60.6/common/file_util
  #  include <unistd.h>
  #  define ACCESS access
  
+@@ -202,14 +201,14 @@
+   PathBrowser::~PathBrowser() 
+   {
+     delete els;
+-    if (dir_handle) closedir((DIR *)dir_handle);
++    if (dir_handle) aspell_closedir((DIR *)dir_handle);
+   }
+ 
+   const char * PathBrowser::next()
+   {
+     if (dir_handle == 0) goto get_next_dir;
+   begin: {
+-      struct dirent * entry = readdir((DIR *)dir_handle);
++      struct dirent * entry = aspell_readdir((DIR *)dir_handle);
+       if (entry == 0) goto try_again;
+       const char * name = entry->d_name;
+       unsigned name_len = strlen(name);
+@@ -223,12 +222,12 @@
+     }
+     return path.str();
+   try_again:
+-    if (dir_handle) closedir((DIR *)dir_handle);
++    if (dir_handle) aspell_closedir((DIR *)dir_handle);
+     dir_handle = 0;
+   get_next_dir:
+     dir = els->next();
+     if (!dir) return 0;
+-    dir_handle = opendir(dir);
++    dir_handle = aspell_opendir(dir);
+     if (dir_handle == 0) goto try_again;
+     goto begin;
+   }
 diff -Nru aspell-0.60.6.orig/common/file_util.hpp aspell-0.60.6/common/file_util.hpp
 --- aspell-0.60.6.orig/common/file_util.hpp	2004-06-17 14:41:33.000000000 +0200
 +++ aspell-0.60.6/common/file_util.hpp	2011-01-04 00:59:56.480328500 +0100
@@ -3129,7 +3165,7 @@ diff -Nru aspell-0.60.6.orig/symbols.def aspell-0.60.6/symbols.def
 diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 --- aspell-0.60.6.orig/win32/dirent.c	1970-01-01 01:00:00.000000000 +0100
 +++ aspell-0.60.6/win32/dirent.c	2011-01-04 00:59:56.636337400 +0100
-@@ -0,0 +1,254 @@
+@@ -0,0 +1,250 @@
 +/* ====================================================================
 + * The Apache Software License, Version 1.1
 + *
@@ -3207,8 +3243,6 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 + *
 + * The DIR typedef is not compatible with Unix.
 + **********************************************************************/
-+
-+#ifndef __MINGW32__
 +
 +#ifdef _WIN32_WCE
 +// Wrap ASCII functions to UNICODE
@@ -3307,7 +3341,7 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +}
 +#endif
 +
-+DIR * opendir(const char *dir)
++DIR * aspell_opendir(const char *dir)
 +{
 +  DIR *dp;
 +  char *filespec;
@@ -3341,7 +3375,7 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +  return dp;
 +}
 +
-+struct dirent * readdir(DIR *dp)
++struct dirent * aspell_readdir(DIR *dp)
 +{
 +  int saved_err = GetLastError();
 +
@@ -3370,7 +3404,7 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +  return &(dp->dent);
 +}
 +
-+int closedir(DIR *dp)
++int aspell_closedir(DIR *dp)
 +{
 +  if (!dp)
 +    return 0;
@@ -3382,8 +3416,6 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.c aspell-0.60.6/win32/dirent.c
 +
 +  return 0;
 +}
-+
-+#endif // #ifndef __MINGW32__
 diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 --- aspell-0.60.6.orig/win32/dirent.h	1970-01-01 01:00:00.000000000 +0100
 +++ aspell-0.60.6/win32/dirent.h	2011-01-04 00:59:56.638337500 +0100
@@ -3461,12 +3493,12 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 +
 +#ifdef ASPELL_STATIC
 +
-+# define closedir _aspell_wince_closedir
-+# define readdir _aspell_wince_readdir
++# define aspell_closedir _aspell_wince_closedir
++# define aspell_readdir _aspell_wince_readdir
 +# define DIR _aspell_wince_DIR
 +# define dirent _aspell_wince_dirent
-+# define scandir _aspell_wince_scandir
-+# define opendir _aspell_wince_opendir
++# define aspell_scandir _aspell_wince_scandir
++# define aspell_opendir _aspell_wince_opendir
 +
 +#endif //ASPELL_STATIC
 +
@@ -3519,13 +3551,13 @@ diff -Nru aspell-0.60.6.orig/win32/dirent.h aspell-0.60.6/win32/dirent.h
 +//long telldir (DIR *);
 +//void seekdir (DIR *, off_t loc);
 +
-+int scandir (const char *__dir,
++int aspell_scandir (const char *__dir,
 +             struct dirent ***__namelist,
 +             int (*select) (const struct dirent *),
 +             int (*compar) (const struct dirent **, const struct dirent **));
-+DIR * opendir(const char *);
-+int closedir(DIR *);
-+struct dirent* readdir(DIR *);
++DIR * aspell_opendir(const char *);
++int aspell_closedir(DIR *);
++struct dirent* aspell_readdir(DIR *);
 +
 +// Implement readdir_r(). For now do not provide dummy function to avoid setting HAVE_READDIR_R.
 +// Code like DirectoryListThread::run() in kio/kio/kurlcompletion.cpp uses readdir() when !HAVE_READDIR_R.
@@ -3548,3 +3580,61 @@ diff -Nru aspell-0.60.6.orig/win32/settings.h aspell-0.60.6/win32/settings.h
  #define VERSION "0.50.3"
 +
 +#define C_EXPORT extern "C" __declspec(dllexport)
+diff -Nru aspell-0.60.6.orig/common/info.cpp aspell-0.60.6/common/info.cpp
+--- aspell-0.60.6.orig/common/info.cpp	2004-11-10 07:18:45.000000000 +0100
++++ aspell-0.60.6/common/info.cpp	2011-01-05 18:17:48.611642900 +0100
+@@ -8,7 +8,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include <ctype.h>
+-#include <dirent.h>
++#include "../win32/dirent.h"
+ 
+ // POSIX includes
+ #ifdef __bsdi__
+@@ -48,7 +48,7 @@
+   public:
+     operator DIR * () {return d_;}
+     Dir(DIR * d) : d_(d) {}
+-    ~Dir() {if (d_) closedir(d_);}
++    ~Dir() {if (d_) aspell_closedir(d_);}
+   };
+ 
+   /////////////////////////////////////////////////////////////////
+@@ -178,11 +178,11 @@
+     StringListEnumeration els = list_all.for_dirs.elements_obj();
+     const char * dir;
+     while ( (dir = els.next()) != 0) {
+-      Dir d(opendir(dir));
++      Dir d(aspell_opendir(dir));
+       if (d==0) continue;
+     
+       struct dirent * entry;
+-      while ( (entry = readdir(d)) != 0) {
++      while ( (entry = aspell_readdir(d)) != 0) {
+ 	const char * name = entry->d_name;
+ 	const char * dot_loc = strrchr(name, '.');
+ 	unsigned int name_size = dot_loc == 0 ? strlen(name) :  dot_loc - name;
+@@ -339,11 +339,11 @@
+     els = list_all.dict_dirs.elements_obj();
+     const char * dir;
+     while ( (dir = els.next()) != 0) {
+-      Dir d(opendir(dir));
++      Dir d(aspell_opendir(dir));
+       if (d==0) continue;
+     
+       struct dirent * entry;
+-      while ( (entry = readdir(d)) != 0) {
++      while ( (entry = aspell_readdir(d)) != 0) {
+ 	const char * name = entry->d_name;
+ 	unsigned int name_size = strlen(name);
+ 
+@@ -623,7 +623,7 @@
+     if (!valid_pos(pos)) {
+       MDInfoListAll * new_data = new MDInfoListAll[size + 1];
+       for (int i = 0; i != size; ++i) {
+-	new_data[i] = data[i];
++        new_data[i] = data[i];
+       }
+       ++size;
+       delete[] data;
