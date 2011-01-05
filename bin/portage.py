@@ -308,6 +308,7 @@ class Portage:
                 tmpdict['shortDescription'] = info.shortDescription
             if not info.description == "":
                 tmpdict['description'] = info.description
+            tmpdict['withCompiler'] = info.options.package.withCompiler
             utils.debug( tmpdict, 2 )
             return tmpdict
         else:
