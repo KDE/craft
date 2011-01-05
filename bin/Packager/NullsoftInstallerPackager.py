@@ -141,7 +141,7 @@ file collection process is skipped, and only the installer is generated.
         imageDirs = []
         runtimeDependencies = self.subinfo.runtimeDependencies
 
-        commonDependencies = self.subinfo.dependencies
+        commonDependencies = self.subinfo.hardDependencies
         commonDependencies.update( self.subinfo.dependencies )
         for key in commonDependencies:
             runtimeDependencies[ key ] = commonDependencies[ key ]
