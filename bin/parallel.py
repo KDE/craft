@@ -66,7 +66,7 @@ __author__  = "Sascha L. Teichmann <sascha.teichmann@intevation.de>"
 __license__ = "New-style BSD"
 
 import getopt
-import os.path
+import os
 import sys
 import traceback
 import tempfile
@@ -202,7 +202,6 @@ class Worker(Process):
                 self.done.put((execute[0], execute[2]))
             else:
                 log("start", execute[0])
-                sys.stdout.flush()
                 exit_code = 1
                 for t in range(self.tries):
                     try:
@@ -212,7 +211,6 @@ class Worker(Process):
                     if exit_code == 0: 
                         break
                 log("stop", execute[0])
-                sys.stdout.flush()
                 self.done.put((execute[0], exit_code))
 
 class ParallelBuilder(object):
