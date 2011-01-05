@@ -129,13 +129,13 @@ class KDEWinPackager (PackagerBase):
             utils.debug ( symCmd, 2 )
         
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
-                  ( pkgName, self.installDir(), pkgVersion, dstpath, srcCmd, symCmd )
+                  ( pkgName, self.imageDir(), pkgVersion, dstpath, srcCmd, symCmd )
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating",1) 
         else:
-            cmd = self.packager + " " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -verbose -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
         
         if( self.subinfo.options.package.withCompiler ):
