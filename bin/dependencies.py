@@ -53,7 +53,10 @@ import sys
 import os
 import utils
 import graphviz
-from argparse import ArgumentParser
+if sys.hexversion < 0x02070000:
+    from optparse import OptionParser
+else:
+    from argparse import ArgumentParser
 from string import Template
 
 OUTPUT_DOT = 0
@@ -407,37 +410,63 @@ class DependenciesTree(object):
             root.visit(visitor, context)
 
 def parseOptions():
-    usage = "%(prog)s [options] CATEGORY/PACKAGE\n" \
-            "   or: %(prog)s -f packagelist.txt [packagelist2.txt ...]\n" \
-            "   or: %(prog)s --file=packagelist.txt \n"
-    parser = ArgumentParser(prog=sys.argv[0], usage=usage)
+    if sys.hexversion < 0x02070000:
+        usage = "usage: %prog [options] CATEGORY/PACKAGE\n" \
+                "   or: %prog -f packagelist.txt\n" \
+                "   or: %prog --file=packagelist.txt\n"
+        parser = OptionParser(usage=usage)
 
-    parser.add_argument("-t", "--type", action = "store", default = OUTPUT_DOT,
-            help=("Change the output format type "
-                  "possible values: xml kwi, dot"))
-    parser.add_argument("-f", "--file", dest = "filenames", metavar = "FILENAME",
-            help="add a filename for a packageList ", nargs='+', required=True)
-    parser.add_argument("-o", "--output", dest = "outputname", metavar = "FILENAME",
-            help=" ")
-    parser.add_argument("-d", "--depstyle", action = "store", default = "both",
-            help="possible values: both, runtime")
+        parser.add_option("-t", "--type", action = "store", default = OUTPUT_DOT,
+                help=("Change the output format type "
+                      "possible values: xml, kwi, dot"))
+        parser.add_option("-f", "--file", dest = "filename", metavar = "FILENAME",
+                help="add a filename for a packageList ")
+        parser.add_option("-o", "--output", dest = "outputname", metavar = "FILENAME",
+                help=" ")
+        parser.add_option("-d", "--depstyle", action = "store", default = "both",
+                help="possible values: both, runtime")
 
-    args = parser.parse_args()
-    if not (hasattr(args, "filenames") and not args.filenames == None):
-        if len(args) < 1:
-            parser.error("Incorrect number of arguments")
-            sys.exit(1)
-        if len(args[0].split("/")) != 2:
-            parser.error("Not a valid Category/Package name")
-            sys.exit(1)
-    return args
+        (options, args) = parser.parse_args()
+        if not (hasattr(options, "filename") and not options.filename == None):
+            if len(args) < 1:
+                parser.error("Incorrect number of arguments")
+                sys.exit(1)
+            if len(args[0].split("/")) != 2:
+                parser.error("Not a valid Category/Package name")
+                sys.exit(1)
+        return (options, args)
+    else:
+        usage = "%(prog)s [options] CATEGORY/PACKAGE\n" \
+                "   or: %(prog)s -f packagelist.txt [packagelist2.txt ...]\n" \
+                "   or: %(prog)s --file=packagelist.txt \n"
+        parser = ArgumentParser(prog=sys.argv[0], usage=usage)
+
+        parser.add_argument("-t", "--type", action = "store", default = OUTPUT_DOT,
+                help=("Change the output format type "
+                      "possible values: xml kwi, dot"))
+        parser.add_argument("-f", "--file", dest = "filenames", metavar = "FILENAME",
+                help="add a filename for a packageList ", nargs='+', required=True)
+        parser.add_argument("-o", "--output", dest = "outputname", metavar = "FILENAME",
+                help=" ")
+        parser.add_argument("-d", "--depstyle", action = "store", default = "both",
+                help="possible values: both, runtime")
+
+        args = parser.parse_args()
+        if not (hasattr(args, "filenames") and not args.filenames == None):
+            if len(args) < 1:
+                parser.error("Incorrect number of arguments")
+                sys.exit(1)
+            if len(args[0].split("/")) != 2:
+                parser.error("Not a valid Category/Package name")
+                sys.exit(1)
+        return args
 
 def parsePackageListFiles( filenames ):
-    packagelist = []
-
-    depList = []
-    for filename in filenames:
+    if sys.hexversion < 0x02070000:
+        packagelist = []
         packagefile = file( filename )
+
+        depList = []
         for line in packagefile:
             if not line.startswith( '#' ):
                 cat, pac, target, patchlvl = line.strip().split( ',' )
@@ -445,47 +474,98 @@ def parsePackageListFiles( filenames ):
                     cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(pac)
                 depList.append( ( cat, pac, target, patchlvl ) )
         packagefile.close()
-    return depList
+        return depList
+    else:
+        packagelist = []
 
+        depList = []
+        for filename in filenames:
+            packagefile = file( filename )
+            for line in packagefile:
+                if not line.startswith( '#' ):
+                    cat, pac, target, patchlvl = line.strip().split( ',' )
+                    if pac.endswith( "-src" ):
+                        cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(pac)
+                    depList.append( ( cat, pac, target, patchlvl ) )
+            packagefile.close()
+        return depList
 
 def main():
 
-    args = parseOptions()
-    if args.type == "xml": 
-        output_type = OUTPUT_XML
-    elif args.type == "kwi":
-        output_type = OUTPUT_KWI
+    if sys.hexversion < 0x02070000:
+        opts, args = parseOptions()
+        if opts.type == "xml": 
+            output_type = OUTPUT_XML
+        elif opts.type == "kwi":
+            output_type = OUTPUT_KWI
+        else:
+            output_type = OUTPUT_DOT
+
+        depstyle = opts.depstyle
+        if not opts.depstyle in ['both', 'runtime']:
+            depstyle = "both"
+        output = ""
+        if hasattr(opts, "filename") and opts.filename <> None:
+            packageList = parsePackageListFile( opts.filename )
+            output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
+        else:
+            output = dumpDependencies(args[0], output_type, depstyle)
+
+        if hasattr(opts, "outputname") and opts.outputname:
+            print "writing file ", opts.outputname, os.path.dirname( opts.outputname )
+            if os.path.dirname( opts.outputname ) and not os.path.exists( os.path.dirname( opts.outputname ) ):
+                os.makedirs( os.path.dirname( opts.outputname ) )
+            f = open( opts.outputname, "w" )
+            f.write( output );
+            f.close()
+
+            if output_type == OUTPUT_DOT:
+                _graphviz = graphviz.GraphViz()
+
+                if not _graphviz.runDot( opts.outputname, opts.outputname + '.pdf', 'pdf' ):
+                    exit( 1 )
+
+    # we don't want to open the output automatically, at least not always
+    #        _graphviz.openOutput()
+        else:
+            print output
     else:
-        output_type = OUTPUT_DOT
+        args = parseOptions()
+        if args.type == "xml": 
+            output_type = OUTPUT_XML
+        elif args.type == "kwi":
+            output_type = OUTPUT_KWI
+        else:
+            output_type = OUTPUT_DOT
 
-    depstyle = args.depstyle
-    if not args.depstyle in ['both', 'runtime']:
-        depstyle = "both"
-    output = ""
-    if hasattr(args, "filenames") and args.filenames <> None:
-        packageList = parsePackageListFiles( args.filenames )
-        output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
-    else:
-        output = dumpDependencies(args[0], output_type, depstyle)
+        depstyle = args.depstyle
+        if not args.depstyle in ['both', 'runtime']:
+            depstyle = "both"
+        output = ""
+        if hasattr(args, "filenames") and args.filenames <> None:
+            packageList = parsePackageListFiles( args.filenames )
+            output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
+        else:
+            output = dumpDependencies(args[0], output_type, depstyle)
 
-    if hasattr(args, "outputname") and args.outputname:
-        print "writing file ", args.outputname, os.path.dirname( args.outputname )
-        if os.path.dirname( args.outputname ) and not os.path.exists( os.path.dirname( args.outputname ) ):
-            os.makedirs( os.path.dirname( args.outputname ) )
-        f = open( args.outputname, "w" )
-        f.write( output );
-        f.close()
+        if hasattr(args, "outputname") and args.outputname:
+            print "writing file ", args.outputname, os.path.dirname( args.outputname )
+            if os.path.dirname( args.outputname ) and not os.path.exists( os.path.dirname( args.outputname ) ):
+                os.makedirs( os.path.dirname( args.outputname ) )
+            f = open( args.outputname, "w" )
+            f.write( output );
+            f.close()
 
-        if output_type == OUTPUT_DOT:
-            _graphviz = graphviz.GraphViz()
+            if output_type == OUTPUT_DOT:
+                _graphviz = graphviz.GraphViz()
 
-            if not _graphviz.runDot( args.outputname, args.outputname + '.pdf', 'pdf' ):
-                exit( 1 )
+                if not _graphviz.runDot( args.outputname, args.outputname + '.pdf', 'pdf' ):
+                    exit( 1 )
 
-# we don't want to open the output automatically, at least not always
-#        _graphviz.openOutput()
-    else:
-        print output
+    # we don't want to open the output automatically, at least not always
+    #        _graphviz.openOutput()
+        else:
+            print output
 
 def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     # little workaround to not display debug infos in generated output
