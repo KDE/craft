@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.2'] = '5e3a35663cd028c5c5fbb959c3858fec2d7f8b9e'
         self.targets['4.5'] = 'http://www.docbook.org/xml/4.5/docbook-xml-4.5.zip'
         self.shortDescription = "document type definition for docbook format"
+        self.options.package.withCompiler = False
         self.defaultTarget = '4.2'
 
 from Package.BinaryPackageBase import *

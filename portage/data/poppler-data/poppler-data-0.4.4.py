@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler-data"
         self.shortDescription = "the poppler CJK encoding data"
+        self.options.package.withCompiler = False
         self.defaultTarget = '0.4.4'
 
     def setDependencies( self ):
@@ -21,7 +22,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        self.subinfo.options.package.withCompiler = False
         CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':

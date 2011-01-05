@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.5-1'] = '672e10ba113314083b43702d9456a9c92e4f501f'
         self.patchToApply['0.5-1'] = ('shared-desktop-ontologies-0.5-20101125.diff', 1)
         self.shortDescription = "the core ontologies such as RDF or RDFS and all Nepomuk ontologies"
+        self.options.package.withCompiler = False
         self.defaultTarget = '0.5'
 
     def setDependencies( self ):
