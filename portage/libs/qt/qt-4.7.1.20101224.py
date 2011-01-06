@@ -37,24 +37,24 @@ class subinfo(info.infoclass):
         self.svnTargets['wince'] = "git://gitorious.org/qt/qt.git|4.7|235d1d687dcc2d21860cd753c9d67964c5270be2"
         self.targetSrcSuffix['wince'] = "4.7"
         self.targetSrcSuffix['4.7'] = "4.7"
-        self.patchToApply['4.6.3'] = ('qt-4.6.3.patch', 1)
+        self.patchToApply['4.6.3'] = ('patches/4.6.3/fixed_export_macro_for_QtDbus.patch', 1)
         self.patchToApply['4.7'] = [
-            ('qt-4.7.0-out-of-source-build.patch', 1),
-            ('qt-4.7.0-webkit-fixes.patch', 1),
-            ('qt-4.7.0-fix-build-with-QT_NO_SVG.patch', 1) ]
+            ('patches/4.7/out-of-source-build.patch', 1),
+            ('patches/4.7/webkit-fixes.patch', 1),
+            ('patches/4.7/fix-build-with-QT_NO_SVG.patch', 1) ]
         self.patchToApply['wince'] = self.patchToApply['4.7'] + [
-            ('qt-4.7.0-Replace-qeventdispatcher.patch', 1),
-            ('qt-4.7.0-custom-flags-for-wince.patch', 1),
-            ('qt-4.7.0-fix-build-uitools-for-wince.patch', 1),
-            ('qt-4.7.0-exchange-malloc-against-dlmalloc-for-wince.patch', 1),
-            ('qt-4.7.0-Override-new-in-qt-dlls-to-use-dlmalloc.patch', 1),
-            ('qt-4.7.0-fix-endless-loop-in-qProcess-for-wince.patch', 1),
-            ('qt-4.7.0-Replace-malloc-in-qimage.patch', 1),
-            ('qt-4.7.0-Enable-Softkeyboard-wince.patch', 1),
-            ('qt-4.7.0-comboboxes-wrong-direction_wince.patch', 1),
-            ('qt-4.7.0-Add-gpgLogging.patch', 1),
-            ('qt-4.7.0-fix-qml-alignment.patch', 1)]
-        self.patchToApply['4.7.1'] = [('qt-4.7.1-buildfix-for-mingw64.patch', 1)]
+            ('patches/4.7/Replace-qeventdispatcher.patch', 1),
+            ('patches/4.7/custom-flags-for-wince.patch', 1),
+            ('patches/4.7/fix-build-uitools-for-wince.patch', 1),
+            ('patches/4.7/exchange-malloc-against-dlmalloc-for-wince.patch', 1),
+            ('patches/4.7/Override-new-in-qt-dlls-to-use-dlmalloc.patch', 1),
+            ('patches/4.7/fix-endless-loop-in-qProcess-for-wince.patch', 1),
+            ('patches/4.7/Replace-malloc-in-qimage.patch', 1),
+            ('patches/4.7/Enable-Softkeyboard-wince.patch', 1),
+            ('patches/4.7/comboboxes-wrong-direction_wince.patch', 1),
+            ('patches/4.7/Add-gpgLogging.patch', 1),
+            ('patches/4.7/fix-qml-alignment.patch', 1)]
+        self.patchToApply['4.7.1'] = [('patches/4.7.1/buildfix-for-mingw64.patch', 1)]
         
         self.shortDescription = "a cross-platform application framework"
         
@@ -122,13 +122,13 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
         else:
-            utils.copyFile( os.path.join( self.packageDir(), "qconfig-kde-wince.h" ),
+            utils.copyFile( os.path.join( self.packageDir(), "sources", "qconfig-kde-wince.h" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "new.cpp" ),
+            utils.copyFile( os.path.join( self.packageDir(), "sources", "new.cpp" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "new.cpp" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "gpglogger_wince.cpp" ),
+            utils.copyFile( os.path.join( self.packageDir(), "sources", "gpglogger_wince.cpp" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "gpglogger_wince.cpp" ) )
-            utils.copyFile( os.path.join( self.packageDir(), "gpglogger_wince.h" ),
+            utils.copyFile( os.path.join( self.packageDir(), "sources", "gpglogger_wince.h" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "gpglogger_wince.h" ) )
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
