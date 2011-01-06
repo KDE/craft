@@ -32,7 +32,7 @@ share\\locale\\de\\LC_MESSAGES\\akonadi_nemomuk_email_feeder\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_nemomukfeeder\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_nemomuktag_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_next\.mo
-share\\locale\\de\\LC_MESSAGES\\akonadi_mop3_resource\.mo
+share\\locale\\de\\LC_MESSAGES\\akonadi_pop3_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_serializer_plugins\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_singlefile_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_vcarddir_resource\.mo
