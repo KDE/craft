@@ -19,11 +19,6 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/perl'] = 'default'
         self.dependencies['win32libs-bin/win_iconv'] = 'default'
 
-        if emergePlatform.isCrossCompilingEnabled():
-            # Take the golden hammer and swing it
-            self.dependencies['libs/qt'] = 'default'
-
-
 from Package.CMakePackageBase import *
         
 class Package(CMakePackageBase):
