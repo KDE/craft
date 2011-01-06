@@ -1,0 +1,109 @@
+diff --git a/src/gui/dialogs/qwizard.cpp b/src/gui/dialogs/qwizard.cpp
+index 8607529..c0c1889 100644
+--- a/src/gui/dialogs/qwizard.cpp
++++ b/src/gui/dialogs/qwizard.cpp
+@@ -81,6 +81,12 @@ extern bool qt_wince_is_mobile();     //defined in qguifunctions_wce.cpp
+ 
+ QT_BEGIN_NAMESPACE
+ 
++#if defined (Q_WS_MAEMO_5) || defined (Q_OS_WINCE)
++static const bool qwizardScrollAreaEnabled = true;
++#else
++static const bool qwizardScrollAreaEnabled = false;
++#endif
++
+ // These fudge terms were needed a few places to obtain pixel-perfect results
+ const int GapBetweenLogoAndRightEdge = 5;
+ const int ModernHeaderTopMargin = 2;
+@@ -513,8 +519,8 @@ class QWizardAntiFlickerWidget : public QWidget
+     QWizard *wizard;
+     QWizardPrivate *wizardPrivate;
+ public:
+-    QWizardAntiFlickerWidget(QWizard *wizard, QWizardPrivate *wizardPrivate)
+-        : QWidget(wizard)
++    QWizardAntiFlickerWidget(QWidget *parent, QWizard *wizard, QWizardPrivate *wizardPrivate)
++        : QWidget(parent)
+         , wizard(wizard)
+         , wizardPrivate(wizardPrivate) {}
+ #if !defined(QT_NO_STYLE_WINDOWSVISTA)
+@@ -647,6 +653,7 @@ public:
+         } btn;
+         mutable QAbstractButton *btns[QWizard::NButtons];
+     };
++    QWidget *topWidget;
+     QWizardAntiFlickerWidget *antiFlickerWidget;
+     QWidget *placeholderWidget1;
+     QWidget *placeholderWidget2;
+@@ -710,7 +717,18 @@ void QWizardPrivate::init()
+ {
+     Q_Q(QWizard);
+ 
+-    antiFlickerWidget = new QWizardAntiFlickerWidget(q, this);
++    if (qwizardScrollAreaEnabled) {
++        QScrollArea *scrollArea = new QScrollArea(q);
++        antiFlickerWidget = new QWizardAntiFlickerWidget(scrollArea, q, this);
++        scrollArea->setWidget(antiFlickerWidget);
++        scrollArea->setWidgetResizable(true);
++        scrollArea->setFrameStyle(QFrame::NoFrame);
++        topWidget = scrollArea;
++    } else {
++        antiFlickerWidget = new QWizardAntiFlickerWidget(q, q, this);
++        topWidget = antiFlickerWidget;
++    }
++
+     wizStyle = QWizard::WizardStyle(q->style()->styleHint(QStyle::SH_WizardStyle, 0, q));
+     if (wizStyle == QWizard::MacStyle) {
+         opts = (QWizard::NoDefaultButton | QWizard::NoCancelButton);
+@@ -1569,14 +1587,14 @@ void QWizardPrivate::handleAeroStyleChange()
+             vistaHelper->setDWMTitleBar(QVistaHelper::ExtendedTitleBar);
+             q->installEventFilter(vistaHelper);
+             q->setMouseTracking(true);
+-            antiFlickerWidget->move(0, vistaHelper->titleBarSize() + vistaHelper->topOffset());
++            topWidget->move(0, vistaHelper->titleBarSize() + vistaHelper->topOffset());
+             vistaHelper->backButton()->move(
+                 0, vistaHelper->topOffset() // ### should ideally work without the '+ 1'
+                 - qMin(vistaHelper->topOffset(), vistaHelper->topPadding() + 1));
+         } else {
+             vistaHelper->setDWMTitleBar(QVistaHelper::NormalTitleBar);
+             q->setMouseTracking(true);
+-            antiFlickerWidget->move(0, vistaHelper->topOffset());
++            topWidget->move(0, vistaHelper->topOffset());
+             vistaHelper->backButton()->move(0, -1); // ### should ideally work with (0, 0)
+         }
+         vistaHelper->setTitleBarIconAndCaptionVisible(false);
+@@ -1588,7 +1606,7 @@ void QWizardPrivate::handleAeroStyleChange()
+ #ifndef QT_NO_CURSOR
+         q->unsetCursor(); // ### ditto
+ #endif
+-        antiFlickerWidget->move(0, 0);
++        topWidget->move(0, 0);
+         vistaHelper->hideBackButton();
+         vistaHelper->setTitleBarIconAndCaptionVisible(true);
+     }
+@@ -1617,7 +1635,7 @@ void QWizardPrivate::disableUpdates()
+     Q_Q(QWizard);
+     if (disableUpdatesCount++ == 0) {
+         q->setUpdatesEnabled(false);
+-        antiFlickerWidget->hide();
++        topWidget->hide();
+     }
+ }
+ 
+@@ -1625,7 +1643,7 @@ void QWizardPrivate::enableUpdates()
+ {
+     Q_Q(QWizard);
+     if (--disableUpdatesCount == 0) {
+-        antiFlickerWidget->show();
++        topWidget->show();
+         q->setUpdatesEnabled(true);
+     }
+ }
+@@ -3167,7 +3185,7 @@ void QWizard::resizeEvent(QResizeEvent *event)
+             heightOffset += d->vistaHelper->titleBarSize();
+     }
+ #endif
+-    d->antiFlickerWidget->resize(event->size().width(), event->size().height() - heightOffset);
++    d->topWidget->resize(event->size().width(), event->size().height() - heightOffset);
+ #if !defined(QT_NO_STYLE_WINDOWSVISTA)
+     if (d->isVistaThemeEnabled())
+         d->vistaHelper->resizeEvent(event);
