@@ -71,7 +71,8 @@ class subinfo(info.infoclass):
         self.patchToApply['wince-4.7'] =  winceVersionIndependentPatches + [
             ('patches/4.7/Override-new-in-qt-dlls-to-use-dlmalloc.patch-for-4-7-branch', 1),
             ('patches/4.7/Replace-qeventdispatcher-and-add-wcecompat-dep-for-4-7-branch.patch', 1),
-            ('patches/4.7/fix-build-with-QT_NO_SVG-for-4-7-branch.patch', 1) ]
+            ('patches/4.7/fix-build-with-QT_NO_SVG-for-4-7-branch.patch', 1),
+            ('patches/4.7/fix-build-with-QT_NO_BEARERMANAGEMENT.patch', 1)]
 
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'wince'
