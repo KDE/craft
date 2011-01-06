@@ -250,7 +250,16 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             os.makedirs(confdir)
         utils.copyFile(os.path.join(self.packageDir(), "daemon.conf"),
                        os.path.join(confdir, "daemon.conf"))
-
+                       
+        # Locale information
+        confdir = os.path.join(self.workDir(), "share", "locale", "l10n", "de")
+        if not os.path.isdir(confdir):
+            os.makedirs(confdir)
+        # hack for duplicate file, there cannot be over 21000 files in the cab
+        # so should be save
+        utils.copyFile(os.path.join(self.packageDir(), "entry.desktop"),
+                       os.path.join(confdir, "entry.desktop_dup99999999"))
+                       
         # Configure Kleopatra
         confdir = os.path.join(self.workDir(), "My Documents", ".kde",
                                "share", "config")
