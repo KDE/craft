@@ -237,6 +237,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             utils.copyFile(os.path.join(self.packageDir(), "ldapservers-example.conf"),
                 os.path.join(confdir, "ldapservers.conf"))
 
+        # Add trustlist
         if os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"):
             utils.copyFile(os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"),
                     os.path.join(confdir, "trustlist.txt"))
@@ -244,13 +245,24 @@ found in: %s \n Please ensure that package wincetools is installed" %\
             utils.copyFile(os.path.join(self.packageDir(), "trustlist-example.txt"),
                 os.path.join(confdir, "trustlist.txt"))
 
+        # Add certificates
+        if os.getenv("EMERGE_PACKAGE_CUSTOM_ROOTCERTS"):
+            confdir = os.path.join(self.workDir(), "gnupg", "trusted-certs")
+            cpath = os.getenv("EMERGE_PACKAGE_CUSTOM_ROOTCERTS")
+            if not os.path.isdir(confdir):
+                os.mkdir(confdir)
+            if not os.path.isdir(cpath):
+                utils.die("EMERGE_PACKAGE_CUSTOM_ROOTCERTS set up invalid")
+            for f in os.listdir(cpath):
+                utils.copyFile(os.path.join(cpath, f), confdir)
+
         # Configure Strigi
         confdir = os.path.join(self.workDir(), "My Documents", ".strigi")
         if not os.path.isdir(confdir):
             os.makedirs(confdir)
         utils.copyFile(os.path.join(self.packageDir(), "daemon.conf"),
                        os.path.join(confdir, "daemon.conf"))
-                       
+
         # Locale information
         confdir = os.path.join(self.workDir(), "share", "locale", "l10n", "de")
         if not os.path.isdir(confdir):
@@ -259,7 +271,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
         # so should be save
         utils.copyFile(os.path.join(self.packageDir(), "entry.desktop"),
                        os.path.join(confdir, "entry.desktop_dup99999999"))
-                       
+
         # Configure Kleopatra
         confdir = os.path.join(self.workDir(), "My Documents", ".kde",
                                "share", "config")
@@ -346,8 +358,8 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
         destinationdirs = [
             ("a%d = 0,\\%s" if d.endswith("windows") or d.endswith("gnupg") \
-                    or d.endswith(".strigi") or \
-                    d.endswith(".kde\share\config")
+                    or d.endswith(".strigi") or d.endswith("trusted-certs") \
+                    or d.endswith(".kde\share\config")
             else "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
