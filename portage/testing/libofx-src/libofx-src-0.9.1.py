@@ -13,7 +13,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['0.9.1'] = []
         if compiler.isMSVC():
             self.patchToApply['0.9.1'].append(("ofx-msvc.diff", 1))
-        self.patchToApply['0.9.1'].append(("libofx-0.9.1-20110104.diff", 1))
+        self.patchToApply['0.9.1'].append(("libofx-0.9.1-20110107.diff", 1))
         self.defaultTarget = '0.9.1'
         
     def setDependencies( self ):
