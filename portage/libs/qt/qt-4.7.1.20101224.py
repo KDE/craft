@@ -71,7 +71,7 @@ class subinfo(info.infoclass):
             ('patches/4.7/fix-QSortFilterProxyModel.patch', 1),
             ('patches/4.7/Repaint-when-text-color-changes.patch', 1) ]
         self.patchToApply['wince-4.7'] =  winceVersionIndependentPatches + [
-            ('patches/4.7/Override-new-in-qt-dlls-to-use-dlmalloc.patch-for-4-7-branch', 1),
+            ('patches/4.7/Override-new-in-qt-dlls-for-4-7-branch.patch', 1),
             ('patches/4.7/Replace-qeventdispatcher-and-add-wcecompat-dep-for-4-7-branch.patch', 1),
             ('patches/4.7/fix-build-with-QT_NO_SVG-for-4-7-branch.patch', 1),
             ('patches/4.7/fix-build-with-QT_NO_BEARERMANAGEMENT.patch', 1)]
