@@ -6,6 +6,7 @@ import os
 import info
 import portage
 import emergePlatform
+import compiler
 
 from Package.QMakePackageBase import *
 
@@ -158,10 +159,17 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-plugin-sql-odbc -plugin-sql-mysql "
             command += "-qt-style-windowsxp -qt-style-windowsvista "
             command += "-qt-libpng -qt-libjpeg -qt-libtiff "
+
+	# WebKit won't link properly with LTCG in a 32-bit MSVC environment
+	if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008(): 
+	  command += "-no-ltcg "
+	else:
+	  command += "-ltcg "
+
         # all builds
         command += "-no-phonon "
         command += "-qdbus -dbus-linked -openssl-linked "
-        command += "-fast -ltcg -no-vcproj -no-dsp "
+        command += "-fast -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
 
