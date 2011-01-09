@@ -136,7 +136,11 @@ class GitSource ( VersionSystemSourceBase ):
                 # it doesn't exist so clone the repo
                 os.makedirs( rootCheckoutDir )
                 ret = self.shell.execute( self.shell.toNativePath(rootCheckoutDir), "git", "clone --mirror %s ." % ( repoUrl ) )
-                
+            else:
+                ret = self.shell.execute( self.shell.toNativePath(rootCheckoutDir), "git", "fetch")
+                if not ret:
+                    utils.die( "could not fetch remote data" )
+                            
             if repoBranch == "":
                 repoBranch = "master"
             if ret:
@@ -145,6 +149,11 @@ class GitSource ( VersionSystemSourceBase ):
                     os.makedirs(branchDir)
                     ret = self.shell.execute(branchDir, "git", "clone --local --shared -b %s %s %s" % \
                         (repoBranch, self.shell.toNativePath(rootCheckoutDir), self.shell.toNativePath(branchDir)))
+                else:
+                    ret = self.shell.execute(branchDir, "git", "pull")
+                    if not ret:
+                        utils.die( "could not pull into branch %s" % repoBranch )
+                
             if ret: 
                 #ret = self.shell.execute(branchDir, "git", "checkout -f")
                 if repoTag:
