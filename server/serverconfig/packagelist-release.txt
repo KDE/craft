@@ -26,7 +26,7 @@ kdesupport,akonadi,1.4.3,
 kde-4.5,kdelibs,4.5.4,2
 kde-4.5,kdepimlibs,4.5.4,
 kde-4.5,kdebase-runtime,4.5.4,
-kde-4.5,kdebase-workspace,4.5.4,
+kde-4.5,kdebase-workspace,4.5.4,1
 kde-4.5,kdebase-apps,4.5.4,
 kde-4.5,kdeedu,4.5.4,
 kde-4.5,kdegames,4.5.4,
