@@ -49,13 +49,13 @@ class msys_interface:
         config = os.path.join( self.workdir, self.instsrcdir, "configure" )
         build  = os.path.join( self.workdir )
         if( bOutOfSource ):
-           # otherwise $srcdir is very long and a conftest may fail (like it's the
-           # case in libgmp-4.2.4)
-           config = os.path.join( "..", self.instsrcdir, "configure" )
-           build  = os.path.join( build, self.instsrcdir + "-build" )
-           utils.cleanDirectory( build )
+            # otherwise $srcdir is very long and a conftest may fail (like it's the
+            # case in libgmp-4.2.4)
+            config = os.path.join( "..", self.instsrcdir, "configure" )
+            build  = os.path.join( build, self.instsrcdir + "-build" )
+            utils.cleanDirectory( build )
         else:
-           build  = os.path.join( build, self.instsrcdir )
+            build  = os.path.join( build, self.instsrcdir )
 
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
@@ -76,9 +76,9 @@ class msys_interface:
         install = os.path.join( self.imagedir, self.instdestdir )
         build  = os.path.join( self.workdir )
         if( bOutOfSource ):
-           build  = os.path.join( build, self.instsrcdir + "-build" )
+            build  = os.path.join( build, self.instsrcdir + "-build" )
         else:
-           build  = os.path.join( build, self.instsrcdir )
+            build  = os.path.join( build, self.instsrcdir )
 
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 

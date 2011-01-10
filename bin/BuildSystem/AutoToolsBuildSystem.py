@@ -46,13 +46,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
             self.shell.initEnvironment(_cflags,_ldflags)
             if self.subinfo.options.configure.bootstrap == True:
-              autogen = os.path.join(sourcedir,"autogen.sh")
-              if os.path.exists(autogen):
-                self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
+                autogen = os.path.join(sourcedir,"autogen.sh")
+                if os.path.exists(autogen):
+                    self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
             if self.subinfo.options.install.useDestDir == False:
-              _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
+                _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
             else:
-              _prefix = "--prefix=" + mergeroot
+                _prefix = "--prefix=" + mergeroot
             _options = BuildSystemBase.configureOptions(self)
             if _options:
                 _prefix += " %s" % _options

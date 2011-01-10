@@ -48,7 +48,7 @@ def isMSVC2008():
     return COMPILER == "msvc2008"
 
 def isMSVC2010():
-   return COMPILER == "msvc2010"
+    return COMPILER == "msvc2010"
    
 
 def getCompilerName():
@@ -89,7 +89,7 @@ def getMinGWVersion():
   
 def getVersion():
     if isMinGW():
-      return "%s %s" %( getCompilerName(), getMinGWVersion() )
+        return "%s %s" %( getCompilerName(), getMinGWVersion() )
     return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
   
   

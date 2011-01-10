@@ -206,11 +206,11 @@ def cleanup( root, hard = False ):
         else:
             if( f.endswith( ".py" ) or f.endswith( ".diff" ) ):
                 if useValidFiles and not f in validFiles:
-                     _delete( os.path.join( root , f ))
+                    _delete( os.path.join( root , f ))
                 else:
                     isValid = True
             if( f.endswith( ".pyc" ) or f.endswith( "~" ) or f.endswith( ".back" ) ):
-                 _delete( os.path.join( root , f ))
+                _delete( os.path.join( root , f ))
     if( not isValid ):
         _delete( root )
     return isValid
@@ -625,7 +625,7 @@ else:
             else:
                 action = buildAction
                 if buildAction == "install-deps":
-                  action = "all"
+                    action = "all"
                 
                 if not handlePackage( category, package, version, action, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \

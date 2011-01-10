@@ -65,17 +65,17 @@ class SevenZipPackager (PackagerBase):
 
         if self.subinfo.options.package.withCompiler:
             if( self.compiler() == "mingw"):
-              pkgCompiler = "-mingw"
+                pkgCompiler = "-mingw"
             elif self.compiler() == "mingw4":
-              pkgCompiler = "-mingw4 "
+                pkgCompiler = "-mingw4 "
             elif self.compiler() == "msvc2005":
-              pkgCompiler = "-msvc"
+                pkgCompiler = "-msvc"
             elif self.compiler() == "msvc2008":
-              pkgCompiler = "-vc90"
+                pkgCompiler = "-vc90"
             elif self.compiler() == "msvc2010":
-              pkgCompiler = "-vc100"
+                pkgCompiler = "-vc100"
             else:
-              pkgCompiler = "-unknown"
+                pkgCompiler = "-unknown"
         else:
             pkgCompiler=""
 

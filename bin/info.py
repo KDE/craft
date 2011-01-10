@@ -176,10 +176,10 @@ example:
                
     #returns a package url for multiple files from the same base url
     def getPackageList( self , baseUrl , files ):
-       retFiles=""
-       for file in files :
-          retFiles += baseUrl+'/'+file+'\n'
-       return retFiles               
+        retFiles=""
+        for file in files :
+            retFiles += baseUrl+'/'+file+'\n'
+        return retFiles               
 
     # return true if archive targets for the currently selected build target is available
     def hasTarget( self ):

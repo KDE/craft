@@ -74,6 +74,6 @@ class MSysShell(Shell):
         return utils.system( command, outstream=out, errstream=err )
         
 if __name__ == '__main__':
-      shell = MSysShell()
-      shell.initEnvironment()
-      utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ),"--login"))
+    shell = MSysShell()
+    shell.initEnvironment()
+    utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ),"--login"))

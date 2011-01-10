@@ -178,9 +178,9 @@ def wgetFile( url, destdir , filename=''):
     if os.environ.get("EMERGE_NO_PASSIVE_FTP"):
         command += " --no-passive-ftp "
     if(filename ==''):
-       command += "  -P %s" % destdir
+        command += "  -P %s" % destdir
     else:
-       command += " -O %s" % os.path.join( destdir , filename )
+        command += " -O %s" % os.path.join( destdir , filename )
     command += " %s" % url
     debug( "wgetfile called", 1 )
     ret = system( command )
@@ -809,9 +809,9 @@ def moveEntries( srcdir, destdir ):
         dest = os.path.join( destdir, entry )
         debug( "src: %s dest: %s" %( src, dest ), 1 )
         if( os.path.isfile( dest ) ):
-          os.remove( dest )
+            os.remove( dest )
         if( os.path.isdir( dest ) ):
-          continue
+            continue
         os.rename( src, dest )
 
 def moveImageDirContents( imagedir, relSrcDir, relDestDir ):
@@ -847,7 +847,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     # --> all fine in this case
     #print "rp:", rootpath
     if len(rootpath) == 0:
-      return
+        return
     tmp = os.path.join( imagedir, rootpath )
     debug( "tmp: %s" % tmp, 1 )
     tmpdir = os.path.join( imagedir, "tMpDiR" )
@@ -877,7 +877,7 @@ def cleanDirectory( dir ):
                 except:
                     die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
     else:
-      os.makedirs( dir )
+        os.makedirs( dir )
 
 def sedFile( directory, file, sedcommand ):
     """ runs the given sed command on the given file """
@@ -1044,7 +1044,7 @@ def createImportLibs( dll_name, basepath ):
 def toMSysPath( path ):
     path = path.replace( '\\', '/' )
     if ( path[1] == ':' ):
-      path = '/' + path[0].lower() + '/' + path[3:]
+        path = '/' + path[0].lower() + '/' + path[3:]
     return path
 
 def cleanPackageName( basename, packagename ):

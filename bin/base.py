@@ -359,10 +359,10 @@ class baseclass:
             self.cmakeMakefileGenerator = "NMake Makefiles"
             self.cmakeMakeProgramm = "nmake"
         elif compiler.isMinGW():
-             self.cmakeMakefileGenerator = "MinGW Makefiles"
-             if compiler.isMinGW_WXX():
+            self.cmakeMakefileGenerator = "MinGW Makefiles"
+            if compiler.isMinGW_WXX():
                 self.cmakeMakeProgramm = "gmake"
-             else:
+            else:
                 self.cmakeMakeProgramm = "mingw32-make"
         else:
             utils.die( "KDECOMPILER: %s not understood" % COMPILER )
@@ -498,17 +498,17 @@ class baseclass:
         
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
-              cmd += " -type mingw "
+                cmd += " -type mingw "
             elif self.compiler == "mingw4":
-              cmd += " -type mingw4 "
+                cmd += " -type mingw4 "
             elif self.compiler == "msvc2005":
-              cmd += " -type msvc "
+                cmd += " -type msvc "
             elif self.compiler == "msvc2008":
-              cmd += " -type vc90 "
+                cmd += " -type vc90 "
             elif self.compiler == "msvc2010":
-              cmd += " -type vc100 "
+                cmd += " -type vc100 "
             else:
-              cmd += " -type unknown "
+                cmd += " -type unknown "
 
         if special:
             cmd += " -special"

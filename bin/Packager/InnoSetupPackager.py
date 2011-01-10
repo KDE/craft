@@ -93,17 +93,17 @@ class InnoSetupPackager (PackagerBase):
 
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):
-              pkgName += "-mingw"
+                pkgName += "-mingw"
             elif self.compiler() == "mingw4":
-              pkgName += "-mingw4"
+                pkgName += "-mingw4"
             elif self.compiler() == "msvc2005":
-              pkgName += "-msvc"
+                pkgName += "-msvc"
             elif self.compiler() == "msvc2008":
-              pkgName += "-vc90"
+                pkgName += "-vc90"
             elif self.compiler() == "msvc2010":
-              pkgName += "-vc100"
+                pkgName += "-vc100"
             else:
-              pkgName += "-unknown "
+                pkgName += "-unknown "
 
         if self.subinfo.options.package.withDigests:
             if self.subinfo.options.package.packageFromSubDir:

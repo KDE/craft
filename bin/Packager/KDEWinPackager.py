@@ -140,17 +140,17 @@ class KDEWinPackager (PackagerBase):
         
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):
-              cmd += " -type mingw "
+                cmd += " -type mingw "
             elif self.compiler() == "mingw4":
-              cmd += " -type mingw4 "
+                cmd += " -type mingw4 "
             elif self.compiler() == "msvc2005":
-              cmd += " -type msvc "
+                cmd += " -type msvc "
             elif self.compiler() == "msvc2008":
-              cmd += " -type vc90 "
+                cmd += " -type vc90 "
             elif self.compiler() == "msvc2010":
-              cmd += " -type vc100 "
+                cmd += " -type vc100 "
             else:
-              cmd += " -type unknown "
+                cmd += " -type unknown "
 
             
         if self.subinfo.options.package.specialMode:

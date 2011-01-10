@@ -109,9 +109,9 @@ class kde_interface:
             return
 
         if ( doRecursive ):
-                recFlag = ""
+            recFlag = ""
         else:
-                recFlag = "--depth=files"
+            recFlag = "--depth=files"
 
         svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
         if not os.path.exists(svnInstallDir):
@@ -146,13 +146,13 @@ class kde_interface:
 
         svndir = self.kdesvndir
         if ( not os.path.exists( svndir ) ):
-                os.mkdir( svndir )
+            os.mkdir( svndir )
 
         repourl = self.kdesvnserver + "/home/kde/"
 
         for tmpdir in svnpath.split( "/" ):
             if ( tmpdir == "" ):
-                    continue
+                continue
             if utils.verbose() > 1:
                 print "  svndir: %s" % svndir
                 print "  dir to checkout: %s" % tmpdir
