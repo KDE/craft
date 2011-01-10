@@ -136,7 +136,7 @@ class EmergeBase(object):
         buffer = create_string_buffer('\000' * (len + 1))
         len1 = windll.kernel32.GetShortPathNameA(path, byref(buffer), len+1)
         if utils.verbose() > 0:
-	        print "converting " + dir + " to " + buffer.value
+            print "converting " + dir + " to " + buffer.value
         return buffer.value
     
     def abstract():

@@ -241,9 +241,9 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
         if type(digests) == list:
             digestList = digests
         elif digests.find("\n") != -1:
-            	digestList = digests.splitLines()
+            digestList = digests.splitLines()
         else:
-            	digestList = [digests]
+            digestList = [digests]
 
     i = 0
     for filename in filenames:
@@ -365,12 +365,12 @@ def un7zip( file, destdir ):
     else:
         tmp = tempfile.TemporaryFile()
         return system( command, tmp )
-	
+
 def unTar( file, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( file, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( file )
-	
+
     mode = "r"
     if ( ext == ".gz" ):
         mode = "r:gz"
@@ -565,12 +565,12 @@ def systemWithoutShell(cmdstring, outstream=sys.stdout, errstream=sys.stderr):
     return ( ret == 0 )
 
 def copySrcDirToDestDir( srcdir, destdir ):
-	""" deprecated """
-	return copyDir( srcdir, destdir )
+    """ deprecated """
+    return copyDir( srcdir, destdir )
 
 def moveSrcDirToDestDir( srcdir, destdir ):
-	""" deprecated """
-	return moveDir( srcdir, destdir )
+    """ deprecated """
+    return moveDir( srcdir, destdir )
 
 def getFileListFromDirectory( imagedir ):
     """ create a file list containing hashes """

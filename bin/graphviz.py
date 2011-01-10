@@ -17,7 +17,7 @@ class GraphViz:
         if not self.isInstalled():
             utils.system("emerge.bat graphviz");
             if not self.isInstalled():
-				utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
+                utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
 
     def isInstalled(self):
         try:
