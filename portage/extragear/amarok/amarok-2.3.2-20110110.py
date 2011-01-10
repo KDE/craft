@@ -7,8 +7,9 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in [ '2.3.1', '2.3.2' ]:
-          self.targets[ver] = 'http://download.kde.org/download.php?url=stable/amarok/' + ver + '/src/amarok-' + ver + '.tar.bz2'
-          self.targetInstSrc[ver] = 'amarok-' + ver
+            self.targets[ver] = 'http://download.kde.org/download.php?url=stable/amarok/' + ver + '/src/amarok-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = 'amarok-' + ver
+        self.patchToApply[ '2.3.2' ] = [ ( 'amarok-2.3.2-20110110.diff', 1 ) ]
 
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/amarok.git'
         self.defaultTarget = 'gitHEAD'
