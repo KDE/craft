@@ -46,7 +46,7 @@ class KDEWinPackager (PackagerBase):
         if not self.packager:
             utils.die("could not find kdewin-packager in your path!")
 
-        if self.subinfo.options.package.packageName <> None:
+        if self.subinfo.options.package.packageName != None:
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package

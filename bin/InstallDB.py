@@ -282,7 +282,7 @@ class InstallDB:
         for line in f.read().splitlines():
             ( _category, _packageVersion ) = line.split( "/" )
             ( _package, _version ) = portage.packageSplit(_packageVersion)
-            if category <> '' and version <> '' and category == _category and package == _package \
+            if category != '' and version != '' and category == _category and package == _package \
                               and version == _version:
                 found = True
                 break
@@ -292,14 +292,14 @@ class InstallDB:
         f.close()
 
         # find in release mode database
-        if not found and buildType <> '': 
+        if not found and buildType != '':
             fileName = os.path.join( path,'installed-' + buildType )
             if os.path.isfile( fileName ):
                 f = open( fileName, "rb" )
                 for line in f.read().splitlines():
                     ( _category, _packageVersion ) = line.split( "/" )
                     ( _package, _version ) = portage.packageSplit( _packageVersion )
-                    if category <> '' and version <> '' and category == _category and package == _package and version == _version:
+                    if category != '' and version != '' and category == _category and package == _package and version == _version:
                         found = True
                         break
                     elif category == '' and version == '' and package == _package:

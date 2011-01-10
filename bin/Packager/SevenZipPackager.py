@@ -34,7 +34,7 @@ class SevenZipPackager (PackagerBase):
         if not self.packager:
             utils.die("could not find 7za in your path!")
 
-        if self.subinfo.options.package.packageName <> None:
+        if self.subinfo.options.package.packageName != None:
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package

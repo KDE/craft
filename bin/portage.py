@@ -63,7 +63,7 @@ class DependencyPackage:
         return self.category == other.category and self.name == other.name and self.version == other.version
 
     def __ne__( self, other ):
-        return self.category <> other.category or self.name <> other.name or self.version <> other.version
+        return self.category != other.category or self.name != other.name or self.version != other.version
 
     def ident( self ):
         return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name, self.version ) ]
@@ -111,7 +111,7 @@ class DependencyPackage:
             if not p in depList:
                 p.getDependencies( depList, type )
 
-        #if self.category <> internalCategory:
+        #if self.category != internalCategory:
         if not self in depList:
             depList.append( self )
 
@@ -437,7 +437,7 @@ def findPossibleTargets( category, package, version, buildType='' ):
 
     for dir in os.listdir( buildroot ):
         if os.path.isdir( os.path.join( buildroot, dir ) ):
-            if dir.startswith( "image" ) and dir <> "image":
+            if dir.startswith( "image" ) and dir != "image":
                 particles = dir.split( '-' )[ 1: ] # the first part should be image- anyway
                 if len(particles) == 3:
                     _platform, _buildType, _target = particles
@@ -670,7 +670,7 @@ def isInstalled( category, package, version, buildType='' ):
     for line in f.read().splitlines():
         (_category, _packageVersion) = line.split( "/" )
         (_package, _version) = packageSplit(_packageVersion)
-        if category <> '' and version <> '' and category == _category and package == _package and version == _version:
+        if category != '' and version != '' and category == _category and package == _package and version == _version:
             found = True
             break
         elif category == '' and version == '' and package == _package:
@@ -679,14 +679,14 @@ def isInstalled( category, package, version, buildType='' ):
     f.close()
 
     # find in release mode database
-    if not found and buildType <> '': 
+    if not found and buildType != '':
         fileName = os.path.join(path,'installed-' + buildType )
         if os.path.isfile( fileName ):
             f = open( fileName, "rb" )
             for line in f.read().splitlines():
                 (_category, _packageVersion) = line.split( "/" )
                 (_package, _version) = packageSplit(_packageVersion)
-                if category <> '' and version <> '' and category == _category and package == _package and version == _version:
+                if category != '' and version != '' and category == _category and package == _package and version == _version:
                     found = True
                     break
                 elif category == '' and version == '' and package == _package:
@@ -738,7 +738,7 @@ def addInstalled( category, package, version, buildType='' ):
     path = os.path.join( etcDir() )
     if ( not os.path.isdir( path ) ):
         os.makedirs( path )
-    if buildType <> '': 
+    if buildType != '':
         fileName = 'installed-' + buildType
     else:
         fileName = 'installed'
@@ -758,7 +758,7 @@ def addInstalled( category, package, version, buildType='' ):
 def remInstalled( category, package, version, buildType='' ):
     """ deprecated, use InstallDB.installdb.remInstalled() instead """
     utils.debug( "remInstalled called", 2 )
-    if buildType <> '': 
+    if buildType != '':
         fileName = 'installed-' + buildType
     else:
         fileName = 'installed'

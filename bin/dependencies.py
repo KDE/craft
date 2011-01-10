@@ -194,7 +194,7 @@ class KDEWinCreator( Visitor ):
             if node.category in [ "kdesupport", "libs" ] and node not in self.cats[ "kdesupport" ]:
                 self.cats[ "kdesupport" ].append( node )
                 return None
-            elif node.category.startswith( "kde" ) and node.category <> "kdesupport" or node.category in [ "extragear", "kdeapps" ] and node not in self.cats[ "KDE" ]:
+            elif node.category.startswith( "kde" ) and node.category != "kdesupport" or node.category in [ "extragear", "kdeapps" ] and node not in self.cats[ "KDE" ]:
                 self.cats[ "KDE" ].append( node )
                 return None
             elif node.category == "data" and node not in self.cats[ "data" ]:
@@ -532,7 +532,7 @@ def main():
         if not opts.depstyle in ['both', 'runtime']:
             depstyle = "both"
         output = ""
-        if hasattr(opts, "filename") and opts.filename <> None:
+        if hasattr(opts, "filename") and opts.filename != None:
             packageList = parsePackageListFile( opts.filename )
             output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
         else:
@@ -569,7 +569,7 @@ def main():
         if not args.depstyle in ['both', 'runtime']:
             depstyle = "both"
         output = ""
-        if hasattr(args, "filenames") and args.filenames <> None:
+        if hasattr(args, "filenames") and args.filenames != None:
             packageList = parsePackageListFiles( args.filenames )
             output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
         else:

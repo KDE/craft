@@ -43,7 +43,7 @@ class VersionSystemSourceBase (SourceBase):
     def splitUrl( self, url ):
         utils.trace( "VersionSystemSourceBase splitUrl", 2 )
         """ split url into real url and url option. the delimiter is '#'"""
-        if url.find('#') <> -1:
+        if url.find('#') != -1:
             return url.split('#')
         return [url,""]
            
@@ -148,4 +148,3 @@ class VersionSystemSourceBase (SourceBase):
 
         utils.debug("using sourcedir: %s" % sourcedir,2)
         return os.path.abspath(sourcedir)
-

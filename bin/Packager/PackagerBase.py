@@ -12,7 +12,7 @@ class PackagerBase(EmergeBase):
     
     def getPackageVersion(self):
         """ return version information for the currently used package"""
-        if self.subinfo.options.package.version <> None:
+        if self.subinfo.options.package.version != None:
             pkgVersion = self.subinfo.options.package.version
             pkgNotesVersion = pkgVersion
         else:

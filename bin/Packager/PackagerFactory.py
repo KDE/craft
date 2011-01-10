@@ -26,7 +26,7 @@ def PackagerFactory(parent,packagerType):
     packager = None
     packagers = []
     
-    if packagerType <> None:
+    if packagerType != None:
         if 'KDEWin' in packagerType or 'kdewin' in packagerType:
             packager = KDEWinPackager()
             init(packager,parent)
@@ -55,7 +55,7 @@ def PackagerFactory(parent,packagerType):
         packager = InnoSetupPackager()
         init(packager,parent)
         
-        if packager.configFile() <> None:
+        if packager.configFile() != None:
             packagers.append(packager)
 
         # default packager

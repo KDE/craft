@@ -27,7 +27,7 @@ class MakeFileBuildSystem(BuildSystemBase):
         """implements the make step for Makefile projects"""
 
         self.enterBuildDir()
-        if self.envPath <> '':
+        if self.envPath != '':
             utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
 

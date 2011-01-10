@@ -132,7 +132,7 @@ class SvnSource (VersionSystemSourceBase):
         srcParts = srcPath.split(pathSep)
         
         # url and source parts not match 
-        if len(urlParts) <> len(srcParts):
+        if len(urlParts) != len(srcParts):
             return self.__checkout(url, sourcedir, recursive)
         
         for i in range(0,len(urlParts)-1):
