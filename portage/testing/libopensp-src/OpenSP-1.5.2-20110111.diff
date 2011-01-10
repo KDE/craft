@@ -1,6 +1,6 @@
 diff -Nru OpenSP-1.5.2.orig/CMakeLists.txt OpenSP-1.5.2/CMakeLists.txt
---- OpenSP-1.5.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ OpenSP-1.5.2/CMakeLists.txt	2010-07-03 12:50:17.333616300 +0200
+--- OpenSP-1.5.2.orig/CMakeLists.txt	1970-01-01 02:00:00.000000000 +0200
++++ OpenSP-1.5.2/CMakeLists.txt	2011-01-10 23:54:57.526164100 +0200
 @@ -0,0 +1,260 @@
 +project(opensp)
 +
@@ -263,8 +263,8 @@ diff -Nru OpenSP-1.5.2.orig/CMakeLists.txt OpenSP-1.5.2/CMakeLists.txt
 +install(FILES ${libopensp_HEADERS} DESTINATION include/opensp)
 +
 diff -Nru OpenSP-1.5.2.orig/config.h OpenSP-1.5.2/config.h
---- OpenSP-1.5.2.orig/config.h	2005-12-23 15:16:30.000000000 +0100
-+++ OpenSP-1.5.2/config.h	2011-01-04 14:41:08.679494900 +0100
+--- OpenSP-1.5.2.orig/config.h	2005-12-23 16:16:30.000000000 +0200
++++ OpenSP-1.5.2/config.h	2011-01-10 23:54:57.526164100 +0200
 @@ -26,6 +26,12 @@
  #endif
  #endif /* __GNUG__ */
@@ -296,9 +296,20 @@ diff -Nru OpenSP-1.5.2.orig/config.h OpenSP-1.5.2/config.h
 +#define SP_VERSION "@VERSION@"
  
  #endif /* not config_INCLUDED */
+diff -Nru OpenSP-1.5.2.orig/generic/SGMLApplication.h OpenSP-1.5.2/generic/SGMLApplication.h
+--- OpenSP-1.5.2.orig/generic/SGMLApplication.h	2005-05-14 12:17:41.000000000 +0300
++++ OpenSP-1.5.2/generic/SGMLApplication.h	2011-01-11 00:10:03.865031300 +0200
+@@ -269,6 +269,7 @@
+     unsigned count_;
+     friend class OpenEntityPtr;
+   };
++  SGMLApplication();
+   virtual ~SGMLApplication();
+   virtual void appinfo(const AppinfoEvent &);
+   virtual void startDtd(const StartDtdEvent &);
 diff -Nru OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
---- OpenSP-1.5.2.orig/include/config.h	1970-01-01 01:00:00.000000000 +0100
-+++ OpenSP-1.5.2/include/config.h	2011-01-04 14:41:08.679494900 +0100
+--- OpenSP-1.5.2.orig/include/config.h	1970-01-01 02:00:00.000000000 +0200
++++ OpenSP-1.5.2/include/config.h	2011-01-10 23:54:57.526164100 +0200
 @@ -0,0 +1,314 @@
 +// Copyright (c) 1994, 1995, 1996 James Clark
 +// See the file COPYING for copying permission.
@@ -614,3 +625,17 @@ diff -Nru OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
 +#define SP_VERSION "@VERSION@"
 +
 +#endif /* not config_INCLUDED */
+diff -Nru OpenSP-1.5.2.orig/lib/SGMLApplication.cxx OpenSP-1.5.2/lib/SGMLApplication.cxx
+--- OpenSP-1.5.2.orig/lib/SGMLApplication.cxx	2005-07-21 17:05:18.000000000 +0300
++++ OpenSP-1.5.2/lib/SGMLApplication.cxx	2011-01-11 00:10:12.724406300 +0200
+@@ -9,6 +9,10 @@
+ #include "Boolean.h"
+ #include "SGMLApplication.h"
+ 
++SGMLApplication::SGMLApplication()
++{
++}
++
+ SGMLApplication::~SGMLApplication()
+ {
+ }

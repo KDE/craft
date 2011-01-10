@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.5.2'] = SRC_URI
         self.targetInstSrc['1.5.2'] = "OpenSP-1.5.2"
-        self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110104.diff", 1 )
+        self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110111.diff", 1 )
         self.defaultTarget = '1.5.2'
         
 from Package.CMakePackageBase import *
