@@ -39,7 +39,7 @@ kde-4.5,kdetoys,4.5.4,
 kde-4.5,kdeutils,4.5.4,
 #
 # the KDE extragear packages
-extragear,amarok,2.3.2,
+extragear,amarok,2.3.2,1
 #extragear,kipi-plugins,,
 extragear,kipi-plugins,1.7.0,
 #extragear,digikam,,
