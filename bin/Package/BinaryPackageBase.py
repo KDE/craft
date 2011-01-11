@@ -2,10 +2,10 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from PackageBase import *;
-from Source.MultiSource import *;
-from BuildSystem.BinaryBuildSystem import *;
-from Packager.KDEWinPackager import *;
+from PackageBase import *
+from Source.MultiSource import *
+from BuildSystem.BinaryBuildSystem import *
+from Packager.KDEWinPackager import *
 
 class BinaryPackageBase (PackageBase, MultiSource, BinaryBuildSystem, KDEWinPackager):
     """provides a base class for binary packages"""

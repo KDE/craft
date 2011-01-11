@@ -1,13 +1,13 @@
 # 
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import info;
-import utils;
-import portage;
-import os;
-import sys;
-import datetime;
-import emergePlatform;
+import info
+import utils
+import portage
+import os
+import sys
+import datetime
+import emergePlatform
 from ctypes import *
 
 ## @todo complete a release and binary merge dir below rootdir 

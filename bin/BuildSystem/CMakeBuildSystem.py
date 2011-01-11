@@ -133,7 +133,7 @@ class CMakeBuildSystem(BuildSystemBase):
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
 
         fc = open(os.path.join(self.buildDir(), "cmake-command.bat"), "w")
-        fc.write(command);
+        fc.write(command)
         fc.close()
 
         if self.isTargetBuild():

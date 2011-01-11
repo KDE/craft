@@ -2,13 +2,13 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from EmergeBase import *;
-import os;
-import utils;
-import emergePlatform;
-from graphviz import *;
-import dependencies;
-from InstallDB import *;
+from EmergeBase import *
+import os
+import utils
+import emergePlatform
+from graphviz import *
+import dependencies
+from InstallDB import *
 
 class PackageBase (EmergeBase):
     """
@@ -296,7 +296,7 @@ class PackageBase (EmergeBase):
         if not os.path.exists( os.path.dirname( outFile ) ):
             os.makedirs( os.path.dirname( outFile ) )
         f = open( outFile, "w" )
-        f.write( output );
+        f.write( output )
         f.close()
 
         graphviz = GraphViz( self )

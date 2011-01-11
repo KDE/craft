@@ -2,10 +2,10 @@
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from PackageBase import *;
-from Source.MultiSource import *;
-from BuildSystem.MakeFileBuildSystem import *;
-from Packager.KDEWinPackager import *;
+from PackageBase import *
+from Source.MultiSource import *
+from BuildSystem.MakeFileBuildSystem import *
+from Packager.KDEWinPackager import *
 
 class MakeFilePackageBase (PackageBase, MultiSource, MakeFileBuildSystem, KDEWinPackager):
     """provides a base class for simple makefile based packages from any source"""

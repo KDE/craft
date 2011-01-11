@@ -1,7 +1,7 @@
 # 
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from PackageBase import *;
+from PackageBase import *
 
 class InternalPackageBase(PackageBase):
     """

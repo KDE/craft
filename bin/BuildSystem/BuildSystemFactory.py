@@ -2,11 +2,11 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from KDE4BuildSystem import *;
-from CMakeBuildSystem import *;
-from QMakeBuildSystem import *;
-from AutoToolsBuildSystem import *;
-from BinaryBuildSystem import *;
+from KDE4BuildSystem import *
+from CMakeBuildSystem import *
+from QMakeBuildSystem import *
+from AutoToolsBuildSystem import *
+from BinaryBuildSystem import *
 
 import info
 import utils

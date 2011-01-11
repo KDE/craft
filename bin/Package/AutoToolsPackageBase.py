@@ -2,10 +2,10 @@
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from PackageBase import *;
-from Source.MultiSource import *;
-from BuildSystem.AutoToolsBuildSystem import *;
-from Packager.KDEWinPackager import *;
+from PackageBase import *
+from Source.MultiSource import *
+from BuildSystem.AutoToolsBuildSystem import *
+from Packager.KDEWinPackager import *
 
 class AutoToolsPackageBase (PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
     """provides a base class for autotools based packages from any source"""

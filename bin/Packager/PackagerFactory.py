@@ -3,11 +3,11 @@
 #
 
 import info
-from KDEWinPackager import *;
-from CPackPackager import *;
-from SevenZipPackager import *;
-from MSInstallerPackager import *;
-from InnoSetupPackager import *;
+from KDEWinPackager import *
+from CPackPackager import *
+from SevenZipPackager import *
+from MSInstallerPackager import *
+from InnoSetupPackager import *
 
 def init(packager, parent):
     packager.subinfo = parent.subinfo

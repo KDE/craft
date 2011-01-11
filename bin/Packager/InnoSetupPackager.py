@@ -139,7 +139,7 @@ class InnoSetupPackager (PackagerBase):
                 if a.find(search) > -1:
                     a = line.replace(search,pattern[1])
             out.write(a + "\n")
-        out.close();
+        out.close()
 
         cmd += " \"%s\"" % (outfile)
         utils.systemWithoutShell( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )

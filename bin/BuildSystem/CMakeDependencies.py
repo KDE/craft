@@ -2,10 +2,10 @@
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-import os;
-import utils;
-import re;
-import sys;
+import os
+import utils
+import re
+import sys
 
 def toNodeName(file):
     """convert filename to dot node name"""
@@ -27,7 +27,7 @@ def toNodeLabel(file,baseDir=None):
 
     if len(s) < 1:
         return "toplevel"
-    return s;
+    return s
 
 class CMakeDependencies:
     def __init__(self):

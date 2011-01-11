@@ -5,13 +5,13 @@
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 
-import sys;
-import os;
-import utils;
-import portage;
-import emergePlatform;
-import shutil;
-from InstallDB import *;
+import sys
+import os
+import utils
+import portage
+import emergePlatform
+import shutil
+from InstallDB import *
 
 
 

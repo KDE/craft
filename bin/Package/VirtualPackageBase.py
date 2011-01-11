@@ -1,7 +1,7 @@
-from PackageBase import *;
-from Source.SourceBase import *;
-from BuildSystem.BuildSystemBase import *;
-from Packager.PackagerBase import *;
+from PackageBase import *
+from Source.SourceBase import *
+from BuildSystem.BuildSystemBase import *
+from Packager.PackagerBase import *
 
 class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase ):
     """provides a base class for virtual packages"""

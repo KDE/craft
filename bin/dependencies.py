@@ -543,7 +543,7 @@ def main():
             if os.path.dirname( opts.outputname ) and not os.path.exists( os.path.dirname( opts.outputname ) ):
                 os.makedirs( os.path.dirname( opts.outputname ) )
             f = open( opts.outputname, "w" )
-            f.write( output );
+            f.write( output )
             f.close()
 
             if output_type == OUTPUT_DOT:
@@ -580,7 +580,7 @@ def main():
             if os.path.dirname( args.outputname ) and not os.path.exists( os.path.dirname( args.outputname ) ):
                 os.makedirs( os.path.dirname( args.outputname ) )
             f = open( args.outputname, "w" )
-            f.write( output );
+            f.write( output )
             f.close()
 
             if output_type == OUTPUT_DOT:

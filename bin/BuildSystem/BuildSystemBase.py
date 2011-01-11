@@ -5,8 +5,8 @@
 """ \package BuildSystemBase"""
 
 from EmergeBase import *
-import utils;
-import compiler;
+import utils
+import compiler
 
 
 class BuildSystemBase(EmergeBase):

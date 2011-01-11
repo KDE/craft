@@ -2,10 +2,10 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from PackageBase import *;
-from Source.MultiSource import *;
-from BuildSystem.CMakeBuildSystem import *;
-from Packager.KDEWinPackager import *;
+from PackageBase import *
+from Source.MultiSource import *
+from BuildSystem.CMakeBuildSystem import *
+from Packager.KDEWinPackager import *
 
 class CMakePackageBase (PackageBase, MultiSource, CMakeBuildSystem, KDEWinPackager):
     """provides a base class for cmake packages from any source"""

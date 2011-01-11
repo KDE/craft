@@ -1,15 +1,15 @@
 # win32libsupdater.py
 
-import os;
-import sys;
-import imp;
-import __builtin__;
-import utils;
-import portage;
-import info;
-import subprocess;
-import xml.dom.minidom;
-from string import Template;
+import os
+import sys
+import imp
+import __builtin__
+import utils
+import portage
+import info
+import subprocess
+import xml.dom.minidom
+from string import Template
 
 
 #################################################

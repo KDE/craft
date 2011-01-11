@@ -107,10 +107,10 @@ class KDEWinPackager (PackagerBase):
                 found = 0
                 for dir in range( 0, len( dirsToIgnore ) ):
                     if path.find( dirsToIgnore[dir] ) > 0:
-                        found = 1;
-                        break;
+                        found = 1
+                        break
                 if found == 1:
-                    continue;
+                    continue
                 utils.debug( "Checking: %s" % path, 3 )
                 for file in files:
                     if ( file.endswith( ".exe" ) or file.endswith( ".dll" ) ):

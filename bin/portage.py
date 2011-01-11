@@ -728,7 +728,7 @@ def findInstalled( category, package, buildType='' ):
             utils.debug( "found: " + match.group(1), 2 )
             ret = match.group(1)
     f.close()
-    return ret;
+    return ret
 
 def addInstalled( category, package, version, buildType='' ):
     """ deprecated, use InstallDB.installdb.addInstalled() instead """

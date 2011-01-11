@@ -1,9 +1,9 @@
-import os;
-import utils;
-import portage;
-import emergePlatform;
-import portage_versions;
-import sqlite3;
+import os
+import utils
+import portage
+import emergePlatform
+import portage_versions
+import sqlite3
 
 def isDBEnabled():
     """ this function returns whether sqlite database should be used """
