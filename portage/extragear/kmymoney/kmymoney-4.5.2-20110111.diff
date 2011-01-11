@@ -1,0 +1,30 @@
+diff -Nru kmymoney-4.5.2.orig/cmake/modules/FindLibOfx.cmake kmymoney-4.5.2/cmake/modules/FindLibOfx.cmake
+--- kmymoney-4.5.2.orig/cmake/modules/FindLibOfx.cmake	2010-12-23 10:21:31.000000000 +0100
++++ kmymoney-4.5.2/cmake/modules/FindLibOfx.cmake	2011-01-11 05:00:08.959174900 +0100
+@@ -68,9 +68,15 @@
+             $ENV{KDEROOT}/lib
+     )
+ 
+-    IF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
++    FIND_LIBRARY(ICONV_LIBRARY
++        NAMES iconv iconv-2 libiconv libiconv-2
++        PATHS
++            $ENV{KDEROOT}/lib
++    )
++
++    IF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES AND ICONV_LIBRARY)
+         set(OPENSP_FOUND TRUE)
+-    ENDIF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
++    ENDIF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES AND ICONV_LIBRARY)
+ 
+   IF (OPENSP_FOUND)
+     IF (NOT OPENSP_FIND_QUIETLY)
+@@ -82,7 +88,7 @@
+       MESSAGE(FATAL_ERROR "Could NOT find OPENSP library\nPlease install it first")
+     ENDIF (OPENSP_FIND_REQUIRED)
+   ENDIF (OPENSP_FOUND)
+-  SET(LIBOFX_LIBRARIES ${LIBOFX_LIBRARIES} ${OPENSP_LIBRARIES} $ENV{KDEROOT}/lib/libiconv-2.lib )
++  SET(LIBOFX_LIBRARIES ${LIBOFX_LIBRARIES} ${OPENSP_LIBRARIES} ${ICONV_LIBRARY} )
+ ENDIF (WIN32)
+ 
+ MARK_AS_ADVANCED(LIBOFX_INCLUDE_DIR  LIBOFX_LIBRARIES )
