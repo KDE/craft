@@ -21,6 +21,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ '5.1.54' ] = "mysql-5.1.54-win32"
           self.targetDigests['5.1.54'] = '2c4ae53b1f7e97572482edac8bd82c5443771302'          
         self.shortDescription = "MySql database server and embedded library"
+        self.options.package.withCompiler = False
         self.defaultTarget = '5.1.54'
        
 
@@ -33,7 +34,6 @@ class Package(CMakePackageBase):
     self.subinfo = subinfo()    
     self.subinfo.options.merge.ignoreBuildType = True
     self.subinfo.options.package.packSources = False
-    self.subinfo.options.package.withCompiler = None
     CMakePackageBase.__init__( self )
     
     
