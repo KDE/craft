@@ -603,8 +603,24 @@ def main():
         else:
             print output
 
+def createOutput(output_type, dep_tree):
+    """return output for output_type"""
+    if  output_type == OUTPUT_XML:
+        creator = XMLCreator()
+    elif output_type == OUTPUT_DOT:
+        creator = GraphvizCreator()
+    elif output_type == OUTPUT_KWI:
+        creator = KDEWinCreator()
+    else:
+        assert False, 'unknown output_type %d' % output_type
+
+    return creator.createOutput(dep_tree)
+
 def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     # little workaround to not display debug infos in generated output
+    # TODO: define a context function and use this here and in the next function
+    # with Verbosity(0):
+    #     generate dep_tree
     old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
     utils.setVerbose( 0 )
 
@@ -617,11 +633,7 @@ def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     if old_emerge_verbose is not None:
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
 
-    if   output_type == OUTPUT_XML: creator = XMLCreator()
-    elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
-    elif output_type == OUTPUT_KWI: creator = KDEWinCreator()
-
-    return creator.createOutput(dep_tree)
+    return createOutput(output_type, dep_tree)
 
 def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type="both"):
     # little workaround to not display debug infos in generated output
@@ -636,11 +648,7 @@ def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type
     if old_emerge_verbose is not None:
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
 
-    if   output_type == OUTPUT_XML: creator = XMLCreator()
-    elif output_type == OUTPUT_KWI: creator = KDEWinCreator()
-    elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
-
-    return creator.createOutput(dep_tree)
+    return createOutput(output_type, dep_tree)
 
 if __name__ == '__main__':
     main()

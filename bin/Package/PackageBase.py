@@ -262,25 +262,26 @@ class PackageBase (EmergeBase):
         return True
 
     def runAction( self, command ):
-        ok = True
-        if command   == "fetch":       ok = self.fetch()
-        elif command == "cleanimage":  ok = self.cleanImage()
-        elif command == "cleanbuild":  ok = self.cleanBuild()
-        elif command == "cleanallbuilds":  ok = self.cleanAllBuilds()
-        elif command == "unpack":      ok = self.unpack()
-        elif command == "compile":     ok = self.compile()
-        elif command == "configure":   ok = self.configure()
-        elif command == "make":        ok = self.make()
-        elif command == "install":     ok = self.install()
-        elif command == "test":        ok = self.unittest()
-        elif command == "qmerge":      ok = self.qmerge()
-        elif command == "unmerge":     ok = self.unmerge()
-        elif command == "manifest":    ok = self.manifest()
-        elif command == "package":     ok = self.createPackage()
-        elif command == "createpatch": ok = self.createPatch()
-        elif command == "printrev":    ok = self.sourceVersion()
-        elif command == "checkdigest": ok = self.checkDigest()
-        elif command == "dumpdeps":    ok = self.dumpDependencies()
+        functions = {"fetch":          self.fetch,
+                     "cleanimage":     self.cleanImage,
+                     "cleanbuild":     self.cleanBuild,
+                     "cleanallbuilds": self.cleanAllBuilds,
+                     "unpack":         self.unpack,
+                     "compile":        self.compile,
+                     "configure":      self.configure,
+                     "make":           self.make,
+                     "install":        self.install,
+                     "test":           self.unittest,
+                     "qmerge":         self.qmerge,
+                     "unmerge":        self.unmerge,
+                     "manifest":       self.manifest,
+                     "package":        self.createPackage,
+                     "createpatch":    self.createPatch,
+                     "printrev":       self.sourceVersion,
+                     "checkdigest":    self.checkDigest,
+                     "dumpdeps":       self.dumpDependencies}
+        if command in functions:
+            ok = functions[command]()
         else:
             ok = utils.error( "command %s not understood" % command )
 

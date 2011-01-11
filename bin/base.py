@@ -183,20 +183,20 @@ class baseclass:
             for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
                 filenames.append( os.path.basename( uri ) )
             self.filenames = filenames
-
-        ok = True
-        if command   == "fetch":       ok = self.fetch()
-        elif command == "cleanimage":       self.cleanup()
-        elif command == "unpack":      ok = self.unpack()
-        elif command == "compile":     ok = self.compile()
-        elif command == "configure":   ok = self.configure()
-        elif command == "make":        ok = self.make()
-        elif command == "install":     ok = self.install()
-        elif command == "test":      ok = self.unittest()
-        elif command == "qmerge":      ok = self.qmerge()
-        elif command == "unmerge":     ok = self.unmerge()
-        elif command == "manifest":    ok = self.manifest()
-        elif command == "package":     ok = self.make_package()
+        functions = {"fetch":      self.fetch,
+                     "cleanimage": self.cleanup,
+                     "unpack":     self.unpack,
+                     "compile":    self.compile,
+                     "configure":  self.configure,
+                     "make":       self.make,
+                     "install":    self.install,
+                     "test":       self.unittest,
+                     "qmerge":     self.qmerge,
+                     "unmerge":    self.unmerge,
+                     "manifest":   self.manifest,
+                     "package":    self.make_package}
+        if command in functions:
+            ok = functions[commnand]()
         else:
             ok = utils.error( "command %s not understood" % command )
 
@@ -208,6 +208,7 @@ class baseclass:
         if ( os.path.exists( self.imagedir ) ):
             utils.debug( "cleaning image dir: %s" % self.imagedir, 1 )
             utils.cleanDirectory( self.imagedir )
+        return True
     
     def fetch( self ):
         """getting normal tarballs from SRC_URI"""
