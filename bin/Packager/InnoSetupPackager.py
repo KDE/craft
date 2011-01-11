@@ -8,25 +8,25 @@ from Packager.PackagerBase import *
 class InnoSetupPackager (PackagerBase):
     """Packager for Inno Setup installations"""
     def __init__(self):
-        PackagerBase.__init__(self,"InnoSetupPackager")
-        self.packagerExe = os.path.join(os.environ["ProgramFiles"],"Inno Setup 5","ISCC.exe")
+        PackagerBase.__init__(self, "InnoSetupPackager")
+        self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
         if self.packagerExe != None:
-            utils.debug("using inno setup packager from %s" % self.packagerExe,2)
+            utils.debug("using inno setup packager from %s" % self.packagerExe, 2)
             
     def configFile(self):
         """ return path of installer config file"""
-        utils.debug("searching package dir for setup config",2)
+        utils.debug("searching package dir for setup config", 2)
 
-        file = os.path.join(self.buildDir(),"setup.iss")
-        utils.debug("searching build dir for setup config %s" % file ,2)
+        file = os.path.join(self.buildDir(), "setup.iss")
+        utils.debug("searching build dir for setup config %s" % file, 2)
         if os.path.exists(file):
             return file
 
-            file = os.path.join(self.packageDir(),"setup.iss")
+            file = os.path.join(self.packageDir(), "setup.iss")
         if os.path.exists(file):
             return file
 
-        file = os.path.join(self.packageDir(),"installer-config.iss")
+        file = os.path.join(self.packageDir(), "installer-config.iss")
         if os.path.exists(file):
             return file
         return None
@@ -53,9 +53,9 @@ class InnoSetupPackager (PackagerBase):
 		# variablenames are wrapped with '#..#' to not get 
 		# in conflict with cmake or other config file patching tools
         self.replacementPatterns = []
-        self.replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#",pkgVersion])
-        self.replacementPatterns.append(["#EMERGE_INSTALL_DIR#",self.installDir()])
-        self.replacementPatterns.append(["#EMERGE_MERGE_DESTINATION_DIR#",self.mergeDestinationDir()])
+        self.replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#", pkgVersion])
+        self.replacementPatterns.append(["#EMERGE_INSTALL_DIR#", self.installDir()])
+        self.replacementPatterns.append(["#EMERGE_MERGE_DESTINATION_DIR#", self.mergeDestinationDir()])
             
         if self.buildArchitecture() == "x64": 
             pkgName += "-x64"
@@ -107,17 +107,17 @@ class InnoSetupPackager (PackagerBase):
 
         if self.subinfo.options.package.withDigests:
             if self.subinfo.options.package.packageFromSubDir:
-                filesDir = os.path.join(self.imageDir(),self.subinfo.options.package.packageFromSubDir)
+                filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
             else:
                 filesDir = self.imageDir()
-            utils.createManifestFiles(filesDir, filesDir,"",self.package,pkgVersion)
+            utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
               
         ## \todo do we have a wrapper for this ?
         destPath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not destPath:
             destPath = os.path.join( self.rootdir, "tmp" )
               
-        cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe,destPath,pkgName,pkgVersion)
+        cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe, destPath, pkgName, pkgVersion)
 
         #
         # create config file from config File
@@ -129,7 +129,7 @@ class InnoSetupPackager (PackagerBase):
         lines = _in.read().splitlines()
         _in.close()
 
-        outfile = os.path.join(self.buildDir(),"temp.iss")
+        outfile = os.path.join(self.buildDir(), "temp.iss")
         out = open(outfile,'w')
 
         for line in lines:
@@ -137,7 +137,7 @@ class InnoSetupPackager (PackagerBase):
             for pattern in self.replacementPatterns:
                 search = pattern[0]
                 if a.find(search) > -1:
-                    a = line.replace(search,pattern[1])
+                    a = line.replace(search, pattern[1])
             out.write(a + "\n")
         out.close()
 

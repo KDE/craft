@@ -19,9 +19,9 @@ class VersionSystemSourceBase (SourceBase):
     # complete local path for currently used source
     svndir = ""
         
-    def __init__(self,className=None):
+    def __init__(self, className=None):
         utils.trace( "VersionSystemSourceBase __init__", 2 )
-        SourceBase.__init__(self,className)
+        SourceBase.__init__(self, className)
         
     def getUrl( self, index ):
         utils.trace( "VersionSystemSourceBase getUrl", 2 )
@@ -45,7 +45,7 @@ class VersionSystemSourceBase (SourceBase):
         """ split url into real url and url option. the delimiter is '#'"""
         if url.find('#') != -1:
             return url.split('#')
-        return [url,""]
+        return [url, ""]
            
     def __repositoryBaseUrl( self ):
         utils.trace( "VersionSystemSourceBase __repositoryBaseUrl", 2 )
@@ -93,7 +93,7 @@ class VersionSystemSourceBase (SourceBase):
         See @ref repositoryUrlCount how to define multiple repository urls."""
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
-            (u,dummy) = self.splitUrl(u1)
+            (u, dummy) = self.splitUrl(u1)
             # check relative kde url
 			# @todo this is svn specific - move to SvnSource
             if u.find("://") == -1: 
@@ -111,7 +111,7 @@ class VersionSystemSourceBase (SourceBase):
         utils.trace( "VersionSystemSourceBase repositoryUrlOptions", 2 )
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
-            (dummy,option) = self.splitUrl(u)
+            (dummy, option) = self.splitUrl(u)
             return option
         return None
 
@@ -126,7 +126,7 @@ class VersionSystemSourceBase (SourceBase):
             utils.die("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+            sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
 
         return os.path.abspath(sourcedir)
         
@@ -137,7 +137,7 @@ class VersionSystemSourceBase (SourceBase):
             sourcedir = self.workDir()
         
             if self.subinfo.targetSourceSuffix() != None:
-                sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+                sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
            
             return sourcedir
         else:
@@ -146,5 +146,5 @@ class VersionSystemSourceBase (SourceBase):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
-        utils.debug("using sourcedir: %s" % sourcedir,2)
+        utils.debug("using sourcedir: %s" % sourcedir, 2)
         return os.path.abspath(sourcedir)

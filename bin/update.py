@@ -15,7 +15,7 @@ rootdir = os.getenv( "KDEROOT" )
 
 newVersion = '20090809'
 
-versionFile = os.path.join(rootdir,'etc','version')
+versionFile = os.path.join(rootdir, 'etc', 'version')
 if os.path.exists(versionFile):
     f = open( versionFile, "r" )
     currentVersion = f.read()

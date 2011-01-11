@@ -184,7 +184,7 @@ def getFilename( category, package, version ):
     return file
 
 def getCategoryPackageVersion( path ):
-    utils.debug( "getCategoryPackageVersion: %s" % path ,2 )
+    utils.debug( "getCategoryPackageVersion: %s" % path, 2 )
     ( head, file ) = os.path.split( path )
     ( head, package ) = os.path.split( head )
     ( head, category ) = os.path.split( head )

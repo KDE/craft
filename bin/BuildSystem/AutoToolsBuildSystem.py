@@ -39,14 +39,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
         
 
         
-        configure = os.path.join(sourcedir,"configure")
+        configure = os.path.join(sourcedir, "configure")
         if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
             mergeroot = self.shell.toNativePath( self.mergeDestinationDir() )
             _cflags = "-I%s/include %s" % (mergeroot, cflags)
             _ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
-            self.shell.initEnvironment(_cflags,_ldflags)
+            self.shell.initEnvironment(_cflags, _ldflags)
             if self.subinfo.options.configure.bootstrap == True:
-                autogen = os.path.join(sourcedir,"autogen.sh")
+                autogen = os.path.join(sourcedir, "autogen.sh")
                 if os.path.exists(autogen):
                     self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
             if self.subinfo.options.install.useDestDir == False:

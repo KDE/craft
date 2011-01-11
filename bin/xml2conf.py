@@ -56,7 +56,7 @@ for filename in sys.argv[1:]:
         for i in packageDepsList[moduleMetaName]:
             print i,
         print
-        packageDepsList.pop(moduleMetaName,"") 
+        packageDepsList.pop(moduleMetaName, "") 
     print ';'
 
     # print the categorypackages

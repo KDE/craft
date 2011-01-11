@@ -113,7 +113,7 @@ class kde_interface:
         else:
             recFlag = "--depth=files"
 
-        svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
+        svnInstallDir = os.path.join(self.rootdir, 'dev-utils', 'svn', 'bin')
         if not os.path.exists(svnInstallDir):
             utils.die("required subversion package not installed")
 
@@ -292,7 +292,7 @@ class kde_interface:
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm , self.imagedir ) )
+        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm, self.imagedir ) )
         return True
 
     def kdeCompile( self, kdeCustomDefines ):

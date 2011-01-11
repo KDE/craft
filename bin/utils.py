@@ -171,7 +171,7 @@ def getFile( url, destdir ):
         error( "getFile: protocol not understood" )
         return False
 
-def wgetFile( url, destdir , filename=''):
+def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     compath = WGetExecutable
     command = "%s --no-check-certificate -c -t 10" % compath
@@ -180,7 +180,7 @@ def wgetFile( url, destdir , filename=''):
     if(filename ==''):
         command += "  -P %s" % destdir
     else:
-        command += " -O %s" % os.path.join( destdir , filename )
+        command += " -O %s" % os.path.join( destdir, filename )
     command += " %s" % url
     debug( "wgetfile called", 1 )
     ret = system( command )
@@ -203,7 +203,7 @@ def getFtpFile( host, path, destdir, filename ):
 def getHttpFile( host, path, destdir, filename ):
     """download file from a http host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
-    debug( "getHttpFile called. %s %s" % ( host, path ) , 1 )
+    debug( "getHttpFile called. %s %s" % ( host, path ), 1 )
 
     conn = httplib.HTTPConnection( host )
     conn.request( "GET", path )
@@ -248,7 +248,7 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
     i = 0
     for filename in filenames:
         debug( "checking digest of: %s" % filename, 1 )
-        file = os.path.join( downloaddir,filename )
+        file = os.path.join( downloaddir, filename )
         if digests == None:
             digestFile = file + '.sha1'
             if not os.path.exists( digestFile ):
@@ -259,7 +259,7 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
                             file )
                     return False
             hash = digestFileSha1( file )
-            f = open( digestFile , "r" )
+            f = open( digestFile, "r" )
             line = f.readline()
             f.close()
             digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
@@ -286,7 +286,7 @@ def createFilesDigests( downloaddir, filenames ):
     """create digests of (multiple) files specified by 'filenames' from 'downloaddir'"""
     digestList = list()
     for filename in filenames:
-        file = os.path.join( downloaddir,filename )
+        file = os.path.join( downloaddir, filename )
         digest = digestFileSha1( file )
         entry = filename, digest
         digestList.append(entry)
@@ -295,13 +295,13 @@ def createFilesDigests( downloaddir, filenames ):
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
     i = 0
-    for (file,digest) in digestFiles:
+    for (file, digest) in digestFiles:
         print "%40s %s" % ( file, digest ),
         if size == 1:
             if buildTarget==None:
                 print "      '%s'" % ( digest )
             else:
-                print "self.targetDigests['%s'] = '%s'" % ( buildTarget,digest )
+                print "self.targetDigests['%s'] = '%s'" % ( buildTarget, digest )
         else:
             if buildTarget==None:
                 if i == 0: 
@@ -313,7 +313,7 @@ def printFilesDigests( digestFiles, buildTarget=None):
                 i = i + 1
             else:
                 if i == 0: 
-                    print "self.targetDigests['%s'] = ['%s'," % ( buildTarget,digest )
+                    print "self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest )
                 elif i == size-1: 
                     print "                             '%s']" % ( digest )
                 else:
@@ -377,9 +377,9 @@ def unTar( file, destdir ):
     elif ( ext == ".bz2" ):
         mode = "r:bz2"
     elif( ext == ".lzma" or ext == ".xz" ):
-        un7zip( file , os.getenv("TMP") )
-        (srcpath , tarname ) = os.path.split( shortname )
-        file=os.path.join( os.getenv("TMP") , tarname )
+        un7zip( file, os.getenv("TMP") )
+        (srcpath, tarname ) = os.path.split( shortname )
+        file=os.path.join( os.getenv("TMP"), tarname )
 
     if not os.path.exists( file ):
         error( "couldn't find file %s" % file )
@@ -668,7 +668,7 @@ def unmerge( rootdir, package, forced = False ):
                             else:
                                 a, b = line, ""
                         except:
-                            utils.die("could not parse line %s" % line,1)
+                            utils.die("could not parse line %s" % line, 1)
                             
                         if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
@@ -688,9 +688,9 @@ def unmerge( rootdir, package, forced = False ):
                     removed = True
                     
         else:
-            debug("could not find any manifest files",2)
+            debug("could not find any manifest files", 2)
     else:
-        debug("could not find manifest directory",2)
+        debug("could not find manifest directory", 2)
         
     return removed
 
@@ -863,7 +863,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     os.rmdir( tmpdir )
 
 def cleanDirectory( dir ):
-    debug("clean directory %s" % dir,1)
+    debug("clean directory %s" % dir, 1)
     if ( os.path.exists( dir ) ):
         for root, dirs, files in os.walk( dir, topdown=False):
             for name in files:
@@ -1050,7 +1050,7 @@ def toMSysPath( path ):
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
     
-def renameDir(src,dest):
+def renameDir(src, dest):
     """ rename a directory """
     debug("rename directory from %s to %s" % ( src, dest ), 2)
     if os.rename( src, dest ) == 0:
@@ -1067,7 +1067,7 @@ def createDir(path):
     
 def copyDir( srcdir, destdir ):
     """ copy directory from srcdir to destdir """
-    debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ) , 2)
+    debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
 
     if ( not srcdir.endswith( "\\" ) ):
         srcdir += "\\"
@@ -1083,7 +1083,7 @@ def copyDir( srcdir, destdir ):
                 os.makedirs( tmpdir )
             for file in files:
                 shutil.copy( os.path.join( root, file ), tmpdir )
-                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ) , 2) 
+                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ), 2) 
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
@@ -1095,13 +1095,13 @@ def rmtree( dir ):
     debug( "rmtree called. dir: %s" % ( dir ), 2 )
     shutil.rmtree ( dir, True ) # ignore errors
 
-def copyFile(src,dest):
+def copyFile(src, dest):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
     shutil.copy( src, dest )
     return True
 
-def moveFile(src,dest):
+def moveFile(src, dest):
     """move file from src to dest"""
     debug("move file from %s to %s" % ( src, dest ), 2)
     os.rename( src, dest )
@@ -1125,7 +1125,7 @@ def findFiles( dir, pattern=None, list=None):
             continue
         file = os.path.join(dir, entry)
         if os.path.isdir(file):
-            findFiles(file,pattern,list)
+            findFiles(file, pattern, list)
         elif os.path.isfile(file) and pattern == None or entry.lower().find(pattern) > -1:
             list.append(file)
     return list
@@ -1195,12 +1195,12 @@ def getWinVer():
     try:
         result = subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0]
     except:
-        utils.debug("Windows Version can not be determined",1)
+        utils.debug("Windows Version can not be determined", 1)
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)
     if(version):
         return version.group(0)
-    utils.debug("Windows Version can not be determined",1)
+    utils.debug("Windows Version can not be determined", 1)
     return "0"
 
 def regQuery(key, value):

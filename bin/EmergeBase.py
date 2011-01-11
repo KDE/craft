@@ -245,10 +245,10 @@ class EmergeBase(object):
         return self.__adjustPath(_workDir)
 
     def buildDir(self):        
-        utils.debug("EmergeBase.buildDir() called" ,2)
+        utils.debug("EmergeBase.buildDir() called", 2)
         self.setBuildTarget()
         builddir = os.path.join(self.workDir(), self.workDirPattern())
-        utils.debug("package builddir is: %s" % builddir,2)
+        utils.debug("package builddir is: %s" % builddir, 2)
         return self.__adjustPath(builddir)
 
     def imageDir(self):
@@ -365,9 +365,9 @@ class EmergeBase(object):
         if utils.system( command, *args, **kw):
             return True
         if self.subinfo.options.exitOnErrors:
-            utils.die( "while running %s cmd: %s" % (errorMessage , str(command)) )
+            utils.die( "while running %s cmd: %s" % (errorMessage, str(command)) )
         else:
-            utils.error( "while running %s cmd: %s" % (errorMessage , str(command)) )
+            utils.error( "while running %s cmd: %s" % (errorMessage, str(command)) )
         return False
 
     def proxySettings(self):

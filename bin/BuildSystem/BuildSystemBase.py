@@ -14,9 +14,9 @@ class BuildSystemBase(EmergeBase):
     noClean = False
     debug = True
 
-    def __init__(self,type,className=None):
+    def __init__(self, type, className=None):
         """constructor"""
-        EmergeBase.__init__(self,className)
+        EmergeBase.__init__(self, className)
         self.buildSystemType = type
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -74,7 +74,7 @@ class BuildSystemBase(EmergeBase):
             sourcedir = self.sourceDir()
        
         if self.subinfo.hasConfigurePath():
-            sourcedir = os.path.join(sourcedir,self.subinfo.configurePath())
+            sourcedir = os.path.join(sourcedir, self.subinfo.configurePath())
         return sourcedir
         
     def configureOptions(self, defines=""):

@@ -12,20 +12,20 @@ import utils
 
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
-    def __init__(self,subinfo=None):
+    def __init__(self, subinfo=None):
         utils.trace( "SvnSource.__init__", 2 )
         if subinfo:
             self.subinfo = subinfo
-        VersionSystemSourceBase.__init__(self,"SvnSource")
+        VersionSystemSourceBase.__init__(self, "SvnSource")
         self.options = None
         ## \todo add internal dependency for subversion package
-        self.svnInstallDir = os.path.join(self.rootdir,'dev-utils','svn','bin')
+        self.svnInstallDir = os.path.join(self.rootdir, 'dev-utils', 'svn', 'bin')
 
     def checkoutDir( self, index=0 ):
         utils.trace( "SvnSource.checkoutDir", 2 )
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
-            (url,dummy) = self.splitUrl(u)
+            (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1: 
                 if os.getenv("KDESVNDIR") == None:
@@ -35,14 +35,14 @@ class SvnSource (VersionSystemSourceBase):
             else:
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
-                (basePath,path) = self.__splitPath(url)
+                (basePath, path) = self.__splitPath(url)
                 if path and os.getenv("EMERGE_SVN_STDLAYOUT") == '1':
                     sourcedir = os.path.join( sourcedir, path )
         else:
             utils.die("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+            sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
 
         return sourcedir
             
@@ -90,9 +90,9 @@ class SvnSource (VersionSystemSourceBase):
                 url = self.repositoryUrl(i)
             sourcedir = self.checkoutDir(i)
             if self.repositoryUrlOptions(i) == 'norecursive':
-                self.__tryCheckoutFromRoot(url,sourcedir,False)
+                self.__tryCheckoutFromRoot(url, sourcedir, False)
             else:
-                self.__tryCheckoutFromRoot(url,sourcedir,True)
+                self.__tryCheckoutFromRoot(url, sourcedir, True)
             i += 1
         return True
 
@@ -106,7 +106,7 @@ class SvnSource (VersionSystemSourceBase):
             if pos == -1:
                 pos=path.find('tags')
         if pos == -1:
-            ret = [path,None]
+            ret = [path, None]
         else:
             ret = [path[:pos-1], path[pos:]]
         return ret
@@ -117,11 +117,11 @@ class SvnSource (VersionSystemSourceBase):
         by searching the predefined root subdirectories 'trunk', 'branches' 
         and 'tags' which will probably fit for most servers
         """
-        (urlBase,urlPath) = self.__splitPath(url)
+        (urlBase, urlPath) = self.__splitPath(url)
         if urlPath == None:
             return self.__checkout(url, sourcedir, recursive)
         
-        (srcBase,srcPath)  = self.__splitPath(sourcedir)
+        (srcBase, srcPath)  = self.__splitPath(sourcedir)
         if srcPath == None: 
             return self.__checkout(url, sourcedir, recursive)
         
@@ -135,7 +135,7 @@ class SvnSource (VersionSystemSourceBase):
         if len(urlParts) != len(srcParts):
             return self.__checkout(url, sourcedir, recursive)
         
-        for i in range(0,len(urlParts)-1):
+        for i in range(0, len(urlParts)-1):
             urlPart = urlParts[i]
             srcPart = srcParts[i]
             if ( urlPart == "" ):

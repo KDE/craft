@@ -248,7 +248,7 @@ class baseclass:
         return ret
 
     def unpack( self ):
-        """unpacking all zipped(gz,zip,bz2) tarballs"""
+        """unpacking all zipped(gz, zip, bz2) tarballs"""
         
         utils.debug( "base unpack called", 1 )
 
@@ -490,7 +490,7 @@ class baseclass:
         else:
             cmd = "-name %s -root %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath )
-        xmltemplate=os.path.join(self.packagedir,pkg_name+"-package.xml")
+        xmltemplate=os.path.join(self.packagedir, pkg_name+"-package.xml")
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
         else:

@@ -12,7 +12,7 @@ from BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self):
-        BuildSystemBase.__init__(self,"qmake","QMakeBuildSystem")
+        BuildSystemBase.__init__(self, "qmake", "QMakeBuildSystem")
         self.platform = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
             self.platform = "win32-%s" % self.compiler()
@@ -28,7 +28,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
         # to be sure 
-        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(),'mkspecs',self.platform ))
+        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
 
     def configure( self, configureTool=None, configureDefines="" ):
         """inplements configure step for Qt projects"""
@@ -42,8 +42,8 @@ class QMakeBuildSystem(BuildSystemBase):
         # 2. if qmake is available search for a pro-file named as the package 
         # 3. if a pro-file is available through configureOptions, run it with qmake
         # 4. otherwise run qmake without any pro file given 
-        configTool = os.path.join(self.sourceDir(),"configure.exe")
-        qmakeTool = os.path.join(self.mergeDestinationDir(),"bin","qmake.exe")
+        configTool = os.path.join(self.sourceDir(), "configure.exe")
+        qmakeTool = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         topLevelProFile = self.sourceDir()
         if configureTool != None:
             command = "%s %s" % (configureTool, self.configureOptions(configureDefines))

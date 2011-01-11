@@ -124,11 +124,11 @@ def vercmp(ver1, ver2, silent=1):
     
     for i in range(0, max(len(list1), len(list2))):
         if len(list1) <= i:
-            s1 = ("p","0")
+            s1 = ("p", "0")
         else:
             s1 = suffix_regexp.match(list1[i]).groups()
         if len(list2) <= i:
-            s2 = ("p","0")
+            s2 = ("p", "0")
         else:
             s2 = suffix_regexp.match(list2[i]).groups()
         if s1[0] != s2[0]:
@@ -160,9 +160,9 @@ def pkgcmp(pkg1, pkg2):
 
     Example usage:
         >>> from portage_versions import *
-        >>> pkgcmp(pkgsplit('test-1.0-r1'),pkgsplit('test-1.2-r3'))
+        >>> pkgcmp(pkgsplit('test-1.0-r1'), pkgsplit('test-1.2-r3'))
         -1
-        >>> pkgcmp(pkgsplit('test-1.3'),pkgsplit('test-1.2-r3'))
+        >>> pkgcmp(pkgsplit('test-1.3'), pkgsplit('test-1.2-r3'))
         1
 
     @param pkg1: package to compare with
@@ -178,7 +178,7 @@ def pkgcmp(pkg1, pkg2):
     """
     if pkg1[0] != pkg2[0]:
         return None
-    mycmp=vercmp(pkg1[1],pkg2[1])
+    mycmp=vercmp(pkg1[1], pkg2[1])
     if mycmp>0:
         return 1
     if mycmp<0:
@@ -194,7 +194,7 @@ def pkgcmp(pkg1, pkg2):
 
 pkgcache={}
 
-def pkgsplit(mypkg,silent=1):
+def pkgsplit(mypkg, silent=1):
     try:
         if not pkgcache[mypkg]:
             return None
@@ -205,13 +205,13 @@ def pkgsplit(mypkg,silent=1):
     
     if len(myparts)<2:
         if not silent:
-            print "!!! Name error in",mypkg+": missing a version or name part."
+            print "!!! Name error in", mypkg+": missing a version or name part."
         pkgcache[mypkg]=None
         return None
     for x in myparts:
         if len(x)==0:
             if not silent:
-                print "!!! Name error in",mypkg+": empty \"-\" part."
+                print "!!! Name error in", mypkg+": empty \"-\" part."
             pkgcache[mypkg]=None
             return None
     
@@ -241,7 +241,7 @@ def pkgsplit(mypkg,silent=1):
                     pkgcache[mypkg]=None
                     return None
                     #names can't have versiony looking parts
-            myval=["-".join(myparts[:verPos]),myparts[verPos],revision]
+            myval=["-".join(myparts[:verPos]), myparts[verPos], revision]
             pkgcache[mypkg]=myval
             return myval
     else:
@@ -251,7 +251,7 @@ def pkgsplit(mypkg,silent=1):
 _valid_category = re.compile("^\w[\w-]*")
 
 catcache={}
-def catpkgsplit(mydata,silent=1):
+def catpkgsplit(mydata, silent=1):
     """
     Takes a Category/Package-Version-Rev and returns a list of each.
     
@@ -281,13 +281,13 @@ def catpkgsplit(mydata,silent=1):
     p_split=None
     if len(mysplit)==1:
         retval=["null"]
-        p_split=pkgsplit(mydata,silent=silent)
+        p_split=pkgsplit(mydata, silent=silent)
     elif len(mysplit)==2:
         ###if portage_dep._dep_check_strict and \
         ###    not _valid_category.match(mysplit[0]):
         ###    raise InvalidData("Invalid category in %s" %mydata )
         retval=[mysplit[0]]
-        p_split=pkgsplit(mysplit[1],silent=silent)
+        p_split=pkgsplit(mysplit[1], silent=silent)
     if not p_split:
         catcache[mydata]=None
         return None

@@ -11,17 +11,17 @@ import tempfile
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
     def __init__(self):
-        PackagerBase.__init__(self,"KDEWinPackager")
+        PackagerBase.__init__(self, "KDEWinPackager")
         fileName = "bin\\kdewin-packager.exe"
         self.packager = None
         self.useDebugPackages = False
-        for dir in [".","dev-utils", "release", "debug"]:
+        for dir in [".", "dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, dir, fileName )
             if os.path.exists(path):
                 self.packager = path
                 break
         if not self.packager == None:
-            utils.debug("using kdewin packager from %s" % self.packager,2)
+            utils.debug("using kdewin packager from %s" % self.packager, 2)
         if self.packager:
             tmp = tempfile.TemporaryFile()
             subprocess.Popen(self.packager, shell=True, stdout=tmp, stderr=tmp)
@@ -33,9 +33,9 @@ class KDEWinPackager (PackagerBase):
 
             
     def xmlTemplate(self):
-        template = os.path.join(self.packageDir(),self.package+"-package.xml")
+        template = os.path.join(self.packageDir(), self.package+"-package.xml")
         if not os.path.exists(template):
-            template = os.path.join(self.packageDir(),self.package+".xml")
+            template = os.path.join(self.packageDir(), self.package+".xml")
         return template
 
     ## \todo rename to package()
@@ -63,7 +63,7 @@ class KDEWinPackager (PackagerBase):
             
         # kdewin packager creates his own manifest files, so there is no need to add 
         # if self.subinfo.options.package.withDigests:
-        #    utils.createManifestFiles(filesDir, filesDir,"",self.package,pkgVersion)
+        #    utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
@@ -118,7 +118,7 @@ class KDEWinPackager (PackagerBase):
                             symFilename = file[:-4] + ".sym"
                             utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, file ) )
                             # utils.system( "strip --strip-all " + os.path.join( path, file ) )
-                            utils.copyFile( os.path.join(path, symFilename) , os.path.join( symPath, symFilename ) )
+                            utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
                     elif ( file.endswith( ".pdb" ) ):
                         utils.copyFile( os.path.join( path, file ), os.path.join( symPath, file ) )
             
@@ -133,10 +133,10 @@ class KDEWinPackager (PackagerBase):
         xmltemplate=self.xmlTemplate()
         if os.path.exists(xmltemplate):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug("using xml template for package generating",1) 
+            utils.debug("using xml template for package generating", 1) 
         else:
             cmd = self.packager + " " + cmd + " -verbose -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug(" xml template %s for package generating not found" % xmltemplate,1) 
+            utils.debug(" xml template %s for package generating not found" % xmltemplate, 1) 
         
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):

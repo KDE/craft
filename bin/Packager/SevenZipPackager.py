@@ -17,16 +17,16 @@ from Packager.PackagerBase import *
 class SevenZipPackager (PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
     def __init__(self):
-        PackagerBase.__init__(self,"SevenZipPackager")
+        PackagerBase.__init__(self, "SevenZipPackager")
         fileName = "bin\\7za.exe"
         self.packager = None
-        for dir in [".","dev-utils", "release", "debug"]:
+        for dir in [".", "dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, dir, fileName )
             if os.path.exists(path):
                 self.packager = path
                 break
         if not self.packager == None:
-            utils.debug("using 7za from %s" % self.packager,2)
+            utils.debug("using 7za from %s" % self.packager, 2)
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
@@ -51,12 +51,12 @@ class SevenZipPackager (PackagerBase):
                 pkgName += "-x86"
 
         if self.subinfo.options.package.packageFromSubDir:
-            filesDir = os.path.join(self.imageDir(),self.subinfo.options.package.packageFromSubDir)
+            filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
         else:
             filesDir = self.imageDir()
            
         if self.subinfo.options.package.withDigests:
-            utils.createManifestFiles(filesDir, filesDir,"",self.package,pkgVersion)
+            utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
         ## \todo do we have a wrapper for this ?
         destPath = os.getenv( "EMERGE_PKGDSTDIR" )
@@ -85,7 +85,7 @@ class SevenZipPackager (PackagerBase):
             pkgSuffix = ''
 
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        fileName = os.path.join(destPath,archiveName)
+        fileName = os.path.join(destPath, archiveName)
         utils.deleteFile(fileName)
         cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, fileName, '*.*')
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
@@ -95,7 +95,7 @@ class SevenZipPackager (PackagerBase):
 
         pkgSuffix = '-src'
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        fileName = os.path.join(destPath,archiveName)
+        fileName = os.path.join(destPath, archiveName)
         utils.deleteFile(fileName)
         cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, fileName, '*.*')
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )

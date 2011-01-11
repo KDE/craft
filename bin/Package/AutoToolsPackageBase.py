@@ -10,7 +10,7 @@ from Packager.KDEWinPackager import *
 class AutoToolsPackageBase (PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
     """provides a base class for autotools based packages from any source"""
     def __init__(self):
-        utils.debug("AutoToolsPackageBase.__init__ called",2)
+        utils.debug("AutoToolsPackageBase.__init__ called", 2)
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)

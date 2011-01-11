@@ -6,9 +6,9 @@ from EmergeBase import *
 
 class SourceBase(EmergeBase):
     """ implements basic stuff required for all sources"""
-    def __init__(self,className=None):
+    def __init__(self, className=None):
         utils.trace( "SourceBase.__init__ called", 2 )
-        EmergeBase.__init__(self,className)
+        EmergeBase.__init__(self, className)
         self.url = ""
         
     def setProxy(self):
@@ -20,9 +20,9 @@ class SourceBase(EmergeBase):
 
         name = ""
         if username != None and password != None:
-            name = "%s:%s@" % (username,password)
+            name = "%s:%s@" % (username, password)
         
-        proxy = "http://%s%s:%s" % (name,host,port)
+        proxy = "http://%s%s:%s" % (name, host, port)
         utils.putenv("http_proxy", proxy)
         utils.putenv("ftp_proxy", proxy)
        
@@ -52,7 +52,7 @@ class SourceBase(EmergeBase):
             sourcedir = self.imageDir()
 
         if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir,self.subinfo.targetSourceSuffix())
+            sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
            
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
@@ -92,7 +92,7 @@ class SourceBase(EmergeBase):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
         abstract()
 
-    def repositoryUrl(self,index=0):
+    def repositoryUrl(self, index=0):
         """use this to get one of multiple repository paths; these can be download urls as well"""
         abstract()
 

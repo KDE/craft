@@ -165,10 +165,10 @@ Send feedback to <kde-windows@kde.org>.
 
 def _delete(f):
     if os.path.isdir( f ):
-        utils.debug( "Removing unclean directory %s" % f ,1)
+        utils.debug( "Removing unclean directory %s" % f, 1)
         shutil.rmtree( f )
     else:
-        utils.debug( "Removing file %s" % f ,1 )
+        utils.debug( "Removing file %s" % f, 1 )
         os.remove(f)
 
 def cleanup( root, hard = False ):
@@ -200,17 +200,17 @@ def cleanup( root, hard = False ):
         if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
             isValid = True
             continue
-        if( os.path.isdir( os.path.join( root , f ) ) ):
+        if( os.path.isdir( os.path.join( root, f ) ) ):
             isValid = True
-            cleanup( os.path.join( root , f ) , hard ) 
+            cleanup( os.path.join( root, f ), hard ) 
         else:
             if( f.endswith( ".py" ) or f.endswith( ".diff" ) ):
                 if useValidFiles and not f in validFiles:
-                    _delete( os.path.join( root , f ))
+                    _delete( os.path.join( root, f ))
                 else:
                     isValid = True
             if( f.endswith( ".pyc" ) or f.endswith( "~" ) or f.endswith( ".back" ) ):
-                _delete( os.path.join( root , f ))
+                _delete( os.path.join( root, f ))
     if( not isValid ):
         _delete( root )
     return isValid
@@ -267,7 +267,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             success = success and doExec( category, package, version, "package", opts )
 
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest", "dumpdeps", 
-                            "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
+                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
@@ -451,7 +451,7 @@ for i in sys.argv:
         utils.debug("Starting to clean your portage directory" )
         for _dir in portage.rootDirectories():
             cleanup( _dir, True )
-        cleanup( os.path.dirname(executableName),False )
+        cleanup( os.path.dirname(executableName), False )
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()

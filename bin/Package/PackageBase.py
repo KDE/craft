@@ -28,7 +28,7 @@ class PackageBase (EmergeBase):
     #imagedir   -> PackageBase
     
     def __init__(self):
-        utils.debug("PackageBase.__init__ called",2)
+        utils.debug("PackageBase.__init__ called", 2)
         EmergeBase.__init__(self)
         self.subinfo.options.readFromEnv()
         self.setBuildTarget()
@@ -79,7 +79,7 @@ class PackageBase (EmergeBase):
 
         self.manifest()
 
-        utils.debug("qmerge package to %s" % self.mergeDestinationDir(),2)
+        utils.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
 
         # run post-install scripts
@@ -169,7 +169,7 @@ class PackageBase (EmergeBase):
     def cleanImage( self ):
         """cleanup before install to imagedir"""
         if hasattr(self,'buildSystemType') and self.buildSystemType == 'binary' or hasattr(self,'buildsystem') and self.buildsystem.buildSystemType == 'binary':
-            utils.debug("skipped cleaning image dir because we use binary build system",1)
+            utils.debug("skipped cleaning image dir because we use binary build system", 1)
             return True
         if ( os.path.exists( self.imageDir() ) ):
             utils.debug( "cleaning image dir: %s" % self.imageDir(), 1 )
@@ -197,7 +197,7 @@ class PackageBase (EmergeBase):
         """installer compatibility: make the manifest files that make up the installers"""
         """install database"""
     
-        utils.debug("base manifest called",2)
+        utils.debug("base manifest called", 2)
         if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
             utils.debug("creating of manifest files triggered", 1)
             utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )

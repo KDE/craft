@@ -8,11 +8,11 @@ import utils
 class FileSource(SourceBase):
     """ file download source"""
     filenames = []    
-    def __init__(self,subinfo=None):
+    def __init__(self, subinfo=None):
         utils.debug( "FileSource.__init__ called", 2 )
         if subinfo:
             self.subinfo = subinfo
-        SourceBase.__init__(self,"FileSource")
+        SourceBase.__init__(self, "FileSource")
 
     def localFileNamesBase(self):
         """ collect local filenames """
@@ -57,13 +57,13 @@ class FileSource(SourceBase):
             destdir = self.installDir()
             if not os.path.exists(destdir):
                 os.makedirs(destdir)
-            utils.debug("unpacking files into image root %s" % destdir,1)
+            utils.debug("unpacking files into image root %s" % destdir, 1)
         else:
             destdir = self.workDir()
             self.enterBuildDir()
-            utils.debug("unpacking files into work root %s" % destdir,1)
+            utils.debug("unpacking files into work root %s" % destdir, 1)
 
         for filename in filenames:
-            if not utils.copyFile( os.path.join(self.downloadDir(), filename),  os.path.join(destdir,filename) ):
+            if not utils.copyFile( os.path.join(self.downloadDir(), filename),  os.path.join(destdir, filename) ):
                 return False
         return True

@@ -17,7 +17,7 @@ class CMakeBuildSystem(BuildSystemBase):
     """ cmake build support """
     def __init__( self ):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self,"cmake","CMakeBuildSystem")
+        BuildSystemBase.__init__(self, "cmake", "CMakeBuildSystem")
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
@@ -45,7 +45,7 @@ class CMakeBuildSystem(BuildSystemBase):
         """This method returns a list of cmake defines to exclude targets from build""" 
         defines = ""
         sourceDir = self.sourceDir()
-        topLevelCMakeList = os.path.join(self.sourceDir(),"CMakeLists.txt")
+        topLevelCMakeList = os.path.join(self.sourceDir(), "CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
             f = open(topLevelCMakeList,'r')
             lines = f.read().splitlines()
@@ -63,9 +63,9 @@ class CMakeBuildSystem(BuildSystemBase):
     def __slnFileName(self):
         """ return solution file name """
         slnname = "%s.sln" % self.package
-        if os.path.exists(os.path.join(self.buildDir(),slnname)):
+        if os.path.exists(os.path.join(self.buildDir(), slnname)):
             return slnname
-        topLevelCMakeList = os.path.join(self.configureSourceDir(),"CMakeLists.txt")
+        topLevelCMakeList = os.path.join(self.configureSourceDir(), "CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
             f = open(topLevelCMakeList,'r')
             lines = f.read().splitlines()
@@ -75,10 +75,10 @@ class CMakeBuildSystem(BuildSystemBase):
                     a = line.split("(")
                     a = a[1].split(")")
                     slnname = "%s.sln" % a[0].strip()                    
-        if os.path.exists(os.path.join(self.buildDir(),slnname)):
+        if os.path.exists(os.path.join(self.buildDir(), slnname)):
             return slnname
         slnname = "%s.sln" % self.subinfo.options.make.slnBaseName
-        if os.path.exists(os.path.join(self.buildDir(),slnname)):
+        if os.path.exists(os.path.join(self.buildDir(), slnname)):
             return slnname
         return "NO_NAME_FOUND"
  
@@ -127,7 +127,7 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
             
         if self.envPath != '':
-            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
+            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ), 2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
         
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
@@ -146,16 +146,16 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         if self.envPath != '':
-            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
+            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ), 2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
 
         if self.compiler() == "msvc2008" and self.subinfo.options.cmake.openIDE:
             command = "start %s" % self.__slnFileName()             
         elif self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
             if self.isTargetBuild():
-                command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(),self.buildType())
+                command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(), self.buildType())
             else:
-                command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(),self.buildType())
+                command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system( self.makeProgramm + " clean", "make clean" ) 
@@ -222,14 +222,14 @@ class CMakeBuildSystem(BuildSystemBase):
         srcDir = self.sourceDir()
         outDir = self.buildDir()
         self.enterBuildDir()
-        outFile = os.path.join(outDir,self.package+'-cmake.dot')
+        outFile = os.path.join(outDir, self.package+'-cmake.dot')
         a = CMakeDependencies()
         if not a.parse(srcDir): 
-            utils.debug("could not find source files",0)
+            utils.debug("could not find source files", 0)
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
-        if not a.toDot(title,srcDir,outFile):
-            utils.debug("could not create dot file",0)
+        if not a.toDot(title, srcDir, outFile):
+            utils.debug("could not create dot file", 0)
             return False
         
         graphviz = GraphViz(self)

@@ -175,7 +175,7 @@ class Options:
             if entry.find('=') == -1:
                 utils.debug('incomplete option %s' % entry)
                 continue
-            (option,value) = entry.split('=')
+            (option, value) = entry.split('=')
             print option + " " + value
             if option == "cmake.useIDE":
                 # @todo using value from above does not work in case of value=0
@@ -184,8 +184,8 @@ class Options:
                 self.cmake.openIDE = True
             elif option == "package.version":
                 self.package.version = value
-            elif hasattr(self,option):
+            elif hasattr(self, option):
                 # @todo convert "property string" into  cmake.useIDE
-                setattr(self,option,value)
+                setattr(self, option, value)
             else:
                 utils.die("unknown property %s" % option)

@@ -175,7 +175,7 @@ example:
         return ret
                
     #returns a package url for multiple files from the same base url
-    def getPackageList( self , baseUrl , files ):
+    def getPackageList( self, baseUrl, files ):
         retFiles=""
         for file in files :
             retFiles += baseUrl+'/'+file+'\n'
@@ -260,7 +260,7 @@ example:
         """return patch informations for the recent build target"""
         if self.hasPatches():
             return self.patchToApply[ self.buildTarget ]
-        return ("","")
+        return ("", "")
 
     def hasTargetDigests(self):
         """return state if target has digest(s) for the recent build target"""

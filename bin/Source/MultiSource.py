@@ -44,7 +44,7 @@ class MultiSource(object):
         utils.trace( "MultiSource sourceDir", 2 )
         return self.source.sourceDir()
 
-    def repositoryUrl(self,index=0):
+    def repositoryUrl(self, index=0):
         utils.trace( "MultiSource repositoryUrl", 2 )
         return self.source.repositoryUrl(index)
 

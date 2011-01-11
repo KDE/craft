@@ -16,7 +16,7 @@ class MakeFileBuildSystem(BuildSystemBase):
     """ make file build support """
     def __init__( self ):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self,"makefile","MakeFileBuildSystem")
+        BuildSystemBase.__init__(self, "makefile", "MakeFileBuildSystem")
 
     def configure( self, defines=""):
         """implements configure step for cmake projects"""
@@ -28,7 +28,7 @@ class MakeFileBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         if self.envPath != '':
-            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ),2)
+            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ), 2)
             os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
 
         command = self.makeProgramm

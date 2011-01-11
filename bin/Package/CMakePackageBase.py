@@ -10,7 +10,7 @@ from Packager.KDEWinPackager import *
 class CMakePackageBase (PackageBase, MultiSource, CMakeBuildSystem, KDEWinPackager):
     """provides a base class for cmake packages from any source"""
     def __init__(self):
-        utils.debug("CMakePackageBase.__init__ called",2)
+        utils.debug("CMakePackageBase.__init__ called", 2)
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         CMakeBuildSystem.__init__(self)

@@ -18,7 +18,7 @@ class GitSource ( VersionSystemSourceBase ):
         utils.trace( 'GitSource __init__', 2 )
         if subinfo:
             self.subinfo = subinfo
-        VersionSystemSourceBase.__init__(self,"GitSource")
+        VersionSystemSourceBase.__init__(self, "GitSource")
         
         # get a shell since git doesn't run natively at the moment
         self.shell = MSysShell()
@@ -144,7 +144,7 @@ class GitSource ( VersionSystemSourceBase ):
             if repoBranch == "":
                 repoBranch = "master"
             if ret:
-                branchDir = os.path.join(self.checkoutDir(),repoBranch)
+                branchDir = os.path.join(self.checkoutDir(), repoBranch)
                 if not os.path.exists(branchDir):
                     os.makedirs(branchDir)
                     ret = self.shell.execute(branchDir, "git", "clone --local --shared -b %s %s %s" % \
@@ -185,7 +185,7 @@ class GitSource ( VersionSystemSourceBase ):
                 [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
                 if repoBranch == "":
                     repoBranch = "master"
-                sourceDir = os.path.join(self.checkoutDir(),repoBranch)
+                sourceDir = os.path.join(self.checkoutDir(), repoBranch)
                 return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
                         (patchdepth, self.shell.toNativePath(patchfile)))
             else:
@@ -240,13 +240,13 @@ class GitSource ( VersionSystemSourceBase ):
         if repoBranch == "":
             repoBranch = "master"
         if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
-            sourcedir = os.path.join(self.checkoutDir(index),repoBranch)
+            sourcedir = os.path.join(self.checkoutDir(index), repoBranch)
         else:
             sourcedir = self.checkoutDir(index)
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
-        utils.debug("using sourcedir: %s" % sourcedir,2)
+        utils.debug("using sourcedir: %s" % sourcedir, 2)
         return sourcedir
 
