@@ -41,7 +41,7 @@ class ArchiveSource(SourceBase):
         """check if all files for the current target are available"""
         available = True
         for filename in filenames:
-            path =os.path.join(self.downloadDir(), filename)
+            path = os.path.join(self.downloadDir(), filename)
             if self.subinfo.hasTargetDigests():
                 if not os.path.exists(path):
                     available = False    

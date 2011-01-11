@@ -136,7 +136,7 @@ if __name__ == '__main__':
     if sys.argc >= 3:
         title = sys.argv[2]
     baseDir = None
-    if sys.argc >=4:
+    if sys.argc >= 4:
         baseDir = sys.argv[3]
     outFile = None
     if sys.argc >= 5:

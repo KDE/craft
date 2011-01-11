@@ -29,7 +29,7 @@ class msys_interface:
         cmd = "%s --login -c \"cd %s && %s %s" % \
               ( sh, self.__toMSysPath( path ), self.__toMSysPath( cmd ), args )
 
-        cmd +="\""
+        cmd += "\""
         if utils.verbose() > 0:
             print "msys execute: %s" % cmd
         utils.system( cmd ) or utils.die( "msys execute failed. cmd: %s" % cmd )
@@ -65,7 +65,7 @@ class msys_interface:
                 self.msysConfigureFlags() )
         if utils.verbose() > 1:
             cmd += " VERBOSE=1"
-        cmd +="\""
+        cmd += "\""
         if utils.verbose() > 0:
             print "msys compile: %s" % cmd
         utils.system( cmd ) or utils.die( "msys compile failed. cmd: %s" % cmd )

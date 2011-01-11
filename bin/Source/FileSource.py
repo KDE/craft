@@ -18,7 +18,7 @@ class FileSource(SourceBase):
         """ collect local filenames """
         utils.debug( "FileSource.localFileNamesBase called", 2 )
 
-        filenames =[]
+        filenames = []
 
         if self.subinfo.hasTarget():
             for uri in self.subinfo.target().split():

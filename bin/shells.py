@@ -66,9 +66,9 @@ class MSysShell(Shell):
         command = "%s --login -c \"cd %s && %s %s" % \
               ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
 
-        command +="\""
+        command += "\""
         if debugLvl == 0:
-            print "%s %s" %(cmd, args)
+            print "%s %s" % (cmd, args)
         else:
             utils.debug( "msys execute: %s" % command, debugLvl )
         return utils.system( command, outstream=out, errstream=err )
