@@ -491,7 +491,7 @@ def parseOptions():
 def parsePackageListFiles( filenames ):
     if sys.hexversion < 0x02070000:
         packagelist = []
-        packagefile = file( filename )
+        packagefile = file( filenames )
 
         depList = []
         for line in packagefile:
