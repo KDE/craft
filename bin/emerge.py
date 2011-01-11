@@ -483,7 +483,7 @@ def unset_var( varname ):
         print
         utils.warning( "%s found as environment variable. you cannot override emerge"\
                        " with this - unsetting %s locally" % ( varname, varname ) )
-        os.environ[ varname ]=""
+        os.environ[ varname ] = ""
 
 unset_var( "CMAKE_INCLUDE_PATH" )
 unset_var( "CMAKE_LIBRARY_PATH" )

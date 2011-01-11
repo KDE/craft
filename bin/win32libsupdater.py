@@ -14,7 +14,7 @@ from string import Template
 
 #################################################
 
-KDEROOT=os.getenv("KDEROOT")
+KDEROOT = os.getenv("KDEROOT")
 KDEROOT.replace("\\", "/")
 
 #################################################

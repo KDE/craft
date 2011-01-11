@@ -68,7 +68,7 @@ class PackageBase (EmergeBase):
                     ignoreInstalled = True
                     self.unmerge()
             else:
-                prefixPath=self.__installedDBPrefix( self.buildType() )
+                prefixPath = self.__installedDBPrefix( self.buildType() )
                 if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
                     ignoreInstalled = True
                     self.unmerge()

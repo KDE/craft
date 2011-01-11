@@ -13,7 +13,7 @@ import emergePlatform
 import copy
 
 internalCategory = 'internal'
-ROOTDIR=os.getenv( "KDEROOT" )
+ROOTDIR = os.getenv( "KDEROOT" )
 
 modDict = dict()
 packageDict = dict()
@@ -119,7 +119,7 @@ class DependencyPackage:
 
 def buildType():
     """return currently selected build type"""
-    Type=os.getenv( "EMERGE_BUILDTYPE" )
+    Type = os.getenv( "EMERGE_BUILDTYPE" )
     if ( not Type == None ):
         buildType = Type
     else:
@@ -765,7 +765,7 @@ def remInstalled( category, package, version, buildType='' ):
     utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)
     dbfile = os.path.join( etcDir(), fileName )
     tmpdbfile = os.path.join( etcDir(), "TMPinstalled" )
-    found=False
+    found = False
     if os.path.exists( dbfile ):
         file = open( dbfile, "rb" )
         tfile = open( tmpdbfile, "wb" )
@@ -776,7 +776,7 @@ def remInstalled( category, package, version, buildType='' ):
             if not line.startswith("%s/%s" % ( category, package ) ):
                 tfile.write( line )
             else:
-                found=True
+                found = True
         file.close()
         tfile.close()
         os.remove( dbfile )

@@ -23,7 +23,7 @@ class kde_interface:
             self.KDESVNSERVER    = "svn://anonsvn.kde.org"
         self.BUILDTYPE           = env[ "EMERGE_BUILDTYPE" ]
         if ( self.BUILDTYPE not in ["Debug", "Release", "RelWithDebInfo", "MinSizeRel"] ):
-            self.BUILDTYPE=None
+            self.BUILDTYPE = None
         self.OFFLINE = env[ "EMERGE_OFFLINE" ]
         self.NOCOPY = env[ "EMERGE_NOCOPY" ]
         self.NOCLEAN = env[ "EMERGE_NOCLEAN" ]

@@ -97,7 +97,7 @@ class VersionSystemSourceBase (SourceBase):
             # check relative kde url
 			# @todo this is svn specific - move to SvnSource
             if u.find("://") == -1: 
-                url= self.__repositoryBaseUrl() + u
+                url = self.__repositoryBaseUrl() + u
             else:
                 url = u
             return url            

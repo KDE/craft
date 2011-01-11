@@ -298,12 +298,12 @@ def printFilesDigests( digestFiles, buildTarget=None):
     for (file, digest) in digestFiles:
         print "%40s %s" % ( file, digest ),
         if size == 1:
-            if buildTarget==None:
+            if buildTarget == None:
                 print "      '%s'" % ( digest )
             else:
                 print "self.targetDigests['%s'] = '%s'" % ( buildTarget, digest )
         else:
-            if buildTarget==None:
+            if buildTarget == None:
                 if i == 0: 
                     print "      ['%s'," % ( digest )
                 elif i == size-1: 
@@ -379,7 +379,7 @@ def unTar( file, destdir ):
     elif( ext == ".lzma" or ext == ".xz" ):
         un7zip( file, os.getenv("TMP") )
         (srcpath, tarname ) = os.path.split( shortname )
-        file=os.path.join( os.getenv("TMP"), tarname )
+        file = os.path.join( os.getenv("TMP"), tarname )
 
     if not os.path.exists( file ):
         error( "couldn't find file %s" % file )
@@ -544,7 +544,7 @@ def system( cmd, outstream=None, errstream=None, *args, **kw ):
             sys.stdout = sys.stderr
 
         p = subprocess.Popen( cmd, shell=True, stdout=outstream,
-                stderr=errstream, *args, **kw )
+                stderr = errstream, *args, **kw )
         ret = p.wait()
     finally:
         if redirected:
@@ -716,28 +716,28 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
     binList = list()
     libList = list()
     docList = list()
-    dirType=0
+    dirType = 0
 
     for root, dirs, files in os.walk( imagedir ):
         relativeRoot = root.replace( imagedir, "" )
         if relativeRoot.startswith( "\\bin" ):
-            dirType=1
+            dirType = 1
         elif relativeRoot.startswith( "\\lib" ):
-            dirType=2
+            dirType = 2
         elif relativeRoot.startswith( "\\share" ):
-            dirType=3
+            dirType = 3
         elif relativeRoot.startswith( "\\data" ):
-            dirType=4
+            dirType = 4
         elif relativeRoot.startswith( "\\etc" ):
-            dirType=5
+            dirType = 5
         elif relativeRoot.startswith( "\\include" ):
-            dirType=6
+            dirType = 6
         elif relativeRoot.startswith( "\\doc" ):
-            dirType=7
+            dirType = 7
         elif relativeRoot.startswith( "\\man" ) and not relativeRoot.startswith("\\manifest"):
-            dirType=8
+            dirType = 8
         else:
-            dirType=1
+            dirType = 1
 
         for file in files:
             if dirType == 1 or dirType == 2:
@@ -1147,7 +1147,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
     if not isCrEol(f):
         p = subprocess.Popen([
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
-            stdin=subprocess.PIPE)
+            stdin = subprocess.PIPE)
         p.communicate(unixToDos(f))
         return p.wait() == 0
     else:
@@ -1211,7 +1211,7 @@ def regQuery(key, value):
     query = 'reg query "%s" /v "%s"' % (key, value)
     debug("Executing registry query %s " % query, 2)
     result = subprocess.Popen(query,
-                stdout=subprocess.PIPE).communicate()[0]
+                stdout = subprocess.PIPE).communicate()[0]
     # Output of this command is either an error to stderr
     # or the key with the value in the next line
     reValue = re.compile(r"(\s*%s\s*REG_\w+\s*)(.*)" % value)

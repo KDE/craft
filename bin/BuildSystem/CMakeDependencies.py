@@ -124,7 +124,7 @@ class CMakeDependencies:
         print "}"
 
         if outFile != None:
-            sys.stdout=sys.__stdout__   
+            sys.stdout = sys.__stdout__   
         return True
     
 

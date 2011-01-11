@@ -82,7 +82,7 @@ class SourceBase(EmergeBase):
         """base implementation for applying a single patch to the source"""
         utils.trace( "SourceBase.applyPatch called", 2 )
         if not srcdir:
-            srcdir=self.sourceDir()
+            srcdir = self.sourceDir()
         if file:
             patchfile = os.path.join ( self.packageDir(), file )
             return utils.applyPatch( srcdir, patchfile, patchdepth )

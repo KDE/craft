@@ -37,7 +37,7 @@ class GraphViz:
             utils.die( "while running %s cmd: %s" % ( errorMessage, str( command ) ) )
 
     def runDot(self, inFile, outFile, dotFormat="pdf"):
-        dotExecutable= os.path.join(self.graphVizInstallPath,'bin','dot.exe')
+        dotExecutable = os.path.join(self.graphVizInstallPath,'bin','dot.exe')
         self.outFile = outFile
         if not self.parent.system("\"%s\" -T%s -o%s %s" % (dotExecutable, dotFormat, outFile, inFile), "create %s" % outFile):
             self.output = False

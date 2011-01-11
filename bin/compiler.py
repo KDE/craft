@@ -8,7 +8,7 @@ import utils
 import subprocess
 import emergePlatform
 
-COMPILER=os.getenv("KDECOMPILER")
+COMPILER = os.getenv("KDECOMPILER")
 
 def getGCCTarget():
     try:

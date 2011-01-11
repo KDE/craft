@@ -100,11 +100,11 @@ class SvnSource (VersionSystemSourceBase):
         """ split a path into a base part and a relative repository url. 
         The delimiters are currently 'trunk', 'branches' and 'tags'. 
         """
-        pos=path.find('trunk')
+        pos = path.find('trunk')
         if pos == -1:
-            pos=path.find('branches')
+            pos = path.find('branches')
             if pos == -1:
-                pos=path.find('tags')
+                pos = path.find('tags')
         if pos == -1:
             ret = [path, None]
         else:

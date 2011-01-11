@@ -130,7 +130,7 @@ class KDEWinPackager (PackagerBase):
         
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
                   ( pkgName, self.imageDir(), pkgVersion, dstpath, srcCmd, symCmd )
-        xmltemplate=self.xmlTemplate()
+        xmltemplate = self.xmlTemplate()
         if os.path.exists(xmltemplate):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating", 1) 

@@ -18,20 +18,20 @@ from ctypes import *
 # question: How to detect reliable this case ? 
 
 
-ROOTDIR=os.getenv( "KDEROOT" )
-COMPILER=os.getenv( "KDECOMPILER" )
-DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
+ROOTDIR = os.getenv( "KDEROOT" )
+COMPILER = os.getenv( "KDECOMPILER" )
+DOWNLOADDIR = os.getenv( "DOWNLOADDIR" )
 if ( DOWNLOADDIR == None ):
-    DOWNLOADDIR=os.path.join( ROOTDIR, "distfiles" )
+    DOWNLOADDIR = os.path.join( ROOTDIR, "distfiles" )
 
-KDESVNDIR=os.getenv( "KDESVNDIR" )
+KDESVNDIR = os.getenv( "KDESVNDIR" )
 if ( KDESVNDIR == None ):
-    KDESVNDIR=os.path.join( DOWNLOADDIR, "svn-src", "kde" )
-KDESVNSERVER=os.getenv( "KDESVNSERVER" )
+    KDESVNDIR = os.path.join( DOWNLOADDIR, "svn-src", "kde" )
+KDESVNSERVER = os.getenv( "KDESVNSERVER" )
 if ( KDESVNSERVER == None ):
-    KDESVNSERVER="svn://anonsvn.kde.org"
-KDESVNUSERNAME=os.getenv( "KDESVNUSERNAME" )
-KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
+    KDESVNSERVER = "svn://anonsvn.kde.org"
+KDESVNUSERNAME = os.getenv( "KDESVNUSERNAME" )
+KDESVNPASSWORD = os.getenv( "KDESVNPASSWORD" )
 
 # ok, we have the following dirs:
 # ROOTDIR: the root where all this is below
@@ -146,7 +146,7 @@ class EmergeBase(object):
 
     def buildType(self):
         """return currently selected build type"""
-        Type=os.getenv( "EMERGE_BUILDTYPE" )
+        Type = os.getenv( "EMERGE_BUILDTYPE" )
         if ( not Type == None ):
             buildType = Type
         else:

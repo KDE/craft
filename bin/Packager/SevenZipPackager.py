@@ -77,7 +77,7 @@ class SevenZipPackager (PackagerBase):
             else:
                 pkgCompiler = "-unknown"
         else:
-            pkgCompiler=""
+            pkgCompiler = ""
 
         if self.subinfo.options.package.packageSuffix:
             pkgSuffix = self.subinfo.options.package.packageSuffix

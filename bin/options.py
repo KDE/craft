@@ -38,7 +38,7 @@ class OptionsConfigure:
         self.testDefine = None
         
         ## run autogen in autotools
-        self.bootstrap=False
+        self.bootstrap = False
         
         # do not use default include path
         self.noDefaultInclude = False

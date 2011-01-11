@@ -25,22 +25,22 @@ import datetime
 import portage
 import compiler
 
-ROOTDIR=os.getenv( "KDEROOT" )
-COMPILER=os.getenv( "KDECOMPILER" )
-DOWNLOADDIR=os.getenv( "DOWNLOADDIR" )
+ROOTDIR = os.getenv( "KDEROOT" )
+COMPILER = os.getenv( "KDECOMPILER" )
+DOWNLOADDIR = os.getenv( "DOWNLOADDIR" )
 if ( DOWNLOADDIR == None ):
-    DOWNLOADDIR=os.path.join( ROOTDIR, "distfiles" )
+    DOWNLOADDIR = os.path.join( ROOTDIR, "distfiles" )
 
-KDESVNDIR=os.getenv( "KDESVNDIR" )
+KDESVNDIR = os.getenv( "KDESVNDIR" )
 if ( KDESVNDIR == None ):
-    KDESVNDIR=os.path.join( DOWNLOADDIR, "svn-src", "kde" )
-KDESVNSERVER=os.getenv( "KDESVNSERVER" )
+    KDESVNDIR = os.path.join( DOWNLOADDIR, "svn-src", "kde" )
+KDESVNSERVER = os.getenv( "KDESVNSERVER" )
 if ( KDESVNSERVER == None ):
-    KDESVNSERVER="svn://anonsvn.kde.org"
-KDESVNUSERNAME=os.getenv( "KDESVNUSERNAME" )
-KDESVNPASSWORD=os.getenv( "KDESVNPASSWORD" )
+    KDESVNSERVER = "svn://anonsvn.kde.org"
+KDESVNUSERNAME = os.getenv( "KDESVNUSERNAME" )
+KDESVNPASSWORD = os.getenv( "KDESVNPASSWORD" )
 
-EMERGE_MAKE_PROGRAM=os.getenv( "EMERGE_MAKE_PROGRAM" )
+EMERGE_MAKE_PROGRAM = os.getenv( "EMERGE_MAKE_PROGRAM" )
 
 # ok, we have the following dirs:
 # ROOTDIR: the root where all this is below
@@ -122,7 +122,7 @@ class baseclass:
 
         # Build type for kdeCompile() / kdeInstall() - packages
         # "" -> debug and release
-        Type=os.getenv( "EMERGE_BUILDTYPE" )
+        Type = os.getenv( "EMERGE_BUILDTYPE" )
         if ( not Type == None ):
             utils.debug( "BuildType: %s" % Type, 1 )
             self.buildType = Type
@@ -490,7 +490,7 @@ class baseclass:
         else:
             cmd = "-name %s -root %s -version %s -destdir %s" % \
                   ( pkg_name, binpath, pkg_version, dstpath )
-        xmltemplate=os.path.join(self.packagedir, pkg_name+"-package.xml")
+        xmltemplate = os.path.join(self.packagedir, pkg_name+"-package.xml")
         if os.path.exists(xmltemplate):
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
         else:

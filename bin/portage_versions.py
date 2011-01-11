@@ -47,7 +47,7 @@ def vercmp(ver1, ver2, silent=1):
 
     if ver1 == ver2:
         return 0
-    mykey=ver1+":"+ver2
+    mykey = ver1+":"+ver2
     try:
         return vercmp_cache[mykey]
     except KeyError:
@@ -178,21 +178,21 @@ def pkgcmp(pkg1, pkg2):
     """
     if pkg1[0] != pkg2[0]:
         return None
-    mycmp=vercmp(pkg1[1], pkg2[1])
-    if mycmp>0:
+    mycmp = vercmp(pkg1[1], pkg2[1])
+    if mycmp > 0:
         return 1
-    if mycmp<0:
+    if mycmp < 0:
         return -1
-    r1=float(pkg1[2][1:])
-    r2=float(pkg2[2][1:])
-    if r1>r2:
+    r1 = float(pkg1[2][1:])
+    r2 = float(pkg2[2][1:])
+    if r1 > r2:
         return 1
-    if r2>r1:
+    if r2 > r1:
         return -1
     return 0
 
 
-pkgcache={}
+pkgcache = {}
 
 def pkgsplit(mypkg, silent=1):
     try:
@@ -201,27 +201,27 @@ def pkgsplit(mypkg, silent=1):
         return pkgcache[mypkg][:]
     except KeyError:
         pass
-    myparts=mypkg.split("-")
+    myparts = mypkg.split("-")
     
     if len(myparts)<2:
         if not silent:
             print "!!! Name error in", mypkg+": missing a version or name part."
-        pkgcache[mypkg]=None
+        pkgcache[mypkg] = None
         return None
     for x in myparts:
         if len(x)==0:
             if not silent:
                 print "!!! Name error in", mypkg+": empty \"-\" part."
-            pkgcache[mypkg]=None
+            pkgcache[mypkg] = None
             return None
     
     #verify rev
-    revok=0
-    myrev=myparts[-1]
+    revok = 0
+    myrev = myparts[-1]
     if len(myrev) and myrev[0]=="r":
         try:
             int(myrev[1:])
-            revok=1
+            revok = 1
         except ValueError: # from int()
             pass
     if revok:
@@ -233,24 +233,24 @@ def pkgsplit(mypkg, silent=1):
 
     if ververify(myparts[verPos]):
         if len(myparts)== (-1*verPos):
-            pkgcache[mypkg]=None
+            pkgcache[mypkg] = None
             return None
         else:
             for x in myparts[:verPos]:
                 if ververify(x):
-                    pkgcache[mypkg]=None
+                    pkgcache[mypkg] = None
                     return None
                     #names can't have versiony looking parts
-            myval=["-".join(myparts[:verPos]), myparts[verPos], revision]
-            pkgcache[mypkg]=myval
+            myval = ["-".join(myparts[:verPos]), myparts[verPos], revision]
+            pkgcache[mypkg] = myval
             return myval
     else:
-        pkgcache[mypkg]=None
+        pkgcache[mypkg] = None
         return None
 
 _valid_category = re.compile("^\w[\w-]*")
 
-catcache={}
+catcache = {}
 def catpkgsplit(mydata, silent=1):
     """
     Takes a Category/Package-Version-Rev and returns a list of each.
@@ -277,22 +277,22 @@ def catpkgsplit(mydata, silent=1):
         return catcache[mydata][:]
     except KeyError:
         pass
-    mysplit=mydata.split("/")
-    p_split=None
+    mysplit = mydata.split("/")
+    p_split = None
     if len(mysplit)==1:
-        retval=["null"]
-        p_split=pkgsplit(mydata, silent=silent)
+        retval = ["null"]
+        p_split = pkgsplit(mydata, silent=silent)
     elif len(mysplit)==2:
         ###if portage_dep._dep_check_strict and \
         ###    not _valid_category.match(mysplit[0]):
         ###    raise InvalidData("Invalid category in %s" %mydata )
-        retval=[mysplit[0]]
-        p_split=pkgsplit(mysplit[1], silent=silent)
+        retval = [mysplit[0]]
+        p_split = pkgsplit(mysplit[1], silent=silent)
     if not p_split:
-        catcache[mydata]=None
+        catcache[mydata] = None
         return None
     retval.extend(p_split)
-    catcache[mydata]=retval
+    catcache[mydata] = retval
     return retval
 
 def catsplit(mydep):

@@ -104,11 +104,11 @@ class infoclass:
 
     # return archive file based package url 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
-        arch=""
+        arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-            arch="-x64"
+            arch = "-x64"
         if compiler.isMinGW_W32():
-            arch="-x86"
+            arch = "-x86"
         compilerName = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compilerName = "mingw"
@@ -118,7 +118,7 @@ class infoclass:
             compilerName = "vc90"
         elif os.getenv("KDECOMPILER") == "msvc2010":
             compilerName = "vc100"
-        ret=''
+        ret = ''
         for type in packagetypes:
             ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + type + ext + '\n'
         return ret
@@ -144,11 +144,11 @@ example:
     self.targetDigests['2.4.2-3'] = self.packageDigests("fontconfig", "2.4.2-3")
 
         """
-        arch=""
+        arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-            arch="-x64"
+            arch = "-x64"
         if compiler.isMinGW_W32():
-            arch="-x86"
+            arch = "-x86"
         compilerName = "msvc"
         if os.getenv("KDECOMPILER") == "mingw":
             compilerName = "mingw"
@@ -158,7 +158,7 @@ example:
             compilerName = "vc90"
         elif os.getenv("KDECOMPILER") == "msvc2010":
             compilerName = "vc100"
-        ret=[]
+        ret = []
         for type in packagetypes:
             key = version + '-' + compilerName + '-' + type + arch
             ret.append(self.targetDigests[key])
@@ -166,17 +166,17 @@ example:
 
     #return archive file based package url for unified packages
     def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
-        arch=""
+        arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-            arch="-x64"
-        ret=''
+            arch = "-x64"
+        ret = ''
         for type in packagetypes:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + type + ext + '\n'
         return ret
                
     #returns a package url for multiple files from the same base url
     def getPackageList( self, baseUrl, files ):
-        retFiles=""
+        retFiles = ""
         for file in files :
             retFiles += baseUrl+'/'+file+'\n'
         return retFiles               
