@@ -1,7 +1,7 @@
 diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
 --- libofx-0.9.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libofx-0.9.1/CMakeLists.txt	2011-01-11 00:46:49.577820100 +0100
-@@ -0,0 +1,90 @@
++++ libofx-0.9.1/CMakeLists.txt	2011-01-11 02:45:34.279329700 +0100
+@@ -0,0 +1,98 @@
 +project(ofx)
 +
 +set (VERSION_MAJOR 0)
@@ -12,6 +12,10 @@ diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
 +
 +list(APPEND CMAKE_MODULE_PATH  ${CMAKE_SOURCE_DIR})
 +find_package(OpenSP REQUIRED)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
 +
 +include_directories(
 +    inc
@@ -82,6 +86,10 @@ diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
 +    ofxdump/ofxdump.cpp 
 +)
 +
++if(MSVC)
++    set(ofxdump_SRCS ${ofxdump_SRCS} lib/messages.cpp lib/getopt.c lib/getopt1.c)
++endif(MSVC)
++
 +add_definitions(-DCMDLINE_PARSER_PACKAGE=\"ofxdump\" -DCMDLINE_PARSER_VERSION=\"0.9.1\")
 +add_executable(ofxdump ${ofxdump_SRCS})
 +target_link_libraries(ofxdump ofx)
@@ -94,7 +102,7 @@ diff -Nru libofx-0.9.1.orig/CMakeLists.txt libofx-0.9.1/CMakeLists.txt
 +install(FILES dtd/ofc.dtd DESTINATION ${CMAKE_PREFIX_PATH}/share/libofx/dtd)
 diff -Nru libofx-0.9.1.orig/config.h libofx-0.9.1/config.h
 --- libofx-0.9.1.orig/config.h	1970-01-01 01:00:00.000000000 +0100
-+++ libofx-0.9.1/config.h	2011-01-04 19:41:29.994255200 +0100
++++ libofx-0.9.1/config.h	2011-01-11 02:05:14.349917600 +0100
 @@ -0,0 +1,71 @@
 +// Have these
 +#define HAVE_EVENTGENERATOR_H 1
@@ -169,7 +177,7 @@ diff -Nru libofx-0.9.1.orig/config.h libofx-0.9.1/config.h
 +#endif
 diff -Nru libofx-0.9.1.orig/FindOpenSP.cmake libofx-0.9.1/FindOpenSP.cmake
 --- libofx-0.9.1.orig/FindOpenSP.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libofx-0.9.1/FindOpenSP.cmake	2011-01-11 00:46:49.581820300 +0100
++++ libofx-0.9.1/FindOpenSP.cmake	2011-01-11 02:05:14.351917700 +0100
 @@ -0,0 +1,36 @@
 +# - Try to find the OpenSP library
 +# 
@@ -207,9 +215,67 @@ diff -Nru libofx-0.9.1.orig/FindOpenSP.cmake libofx-0.9.1/FindOpenSP.cmake
 +    endif (OPENSP_FIND_REQUIRED)
 +  endif (OPENSP_FOUND)
 +endif (WIN32)
+diff -Nru libofx-0.9.1.orig/lib/getopt.c libofx-0.9.1/lib/getopt.c
+--- libofx-0.9.1.orig/lib/getopt.c	2004-04-24 01:30:34.000000000 +0200
++++ libofx-0.9.1/lib/getopt.c	2011-01-11 02:37:30.156639400 +0100
+@@ -40,6 +40,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include "getopt.h"
+ 
+ /* Comment out all this code if we are using the GNU C Library, and are not
+    actually compiling the library itself.  This code is part of the GNU C
+@@ -199,7 +200,7 @@
+ # define my_index	strchr
+ #else
+ 
+-# if HAVE_STRING_H
++# if HAVE_STRING_H || defined(_MSC_VER)
+ #  include <string.h>
+ # else
+ #  include <strings.h>
+diff -Nru libofx-0.9.1.orig/lib/getopt.h libofx-0.9.1/lib/getopt.h
+--- libofx-0.9.1.orig/lib/getopt.h	1970-01-01 01:00:00.000000000 +0100
++++ libofx-0.9.1/lib/getopt.h	2011-01-11 02:38:41.202703000 +0100
+@@ -0,0 +1,20 @@
++#ifndef _getopt_h
++#define _getopt_h
++
++#ifndef _MSC_VER
++#include <getopt.h>
++#else
++struct option {
++    const char *name;
++    int has_arg;
++    int *flag;
++    int val;
++};
++
++extern char *optarg;
++extern int optind;
++
++
++int getopt_long(int argc, char *const *argv, const char *shortopts, const struct option *longopts, int *indexptr);
++#endif
++#endif
+diff -Nru libofx-0.9.1.orig/lib/messages.cpp libofx-0.9.1/lib/messages.cpp
+--- libofx-0.9.1.orig/lib/messages.cpp	2004-03-08 16:42:17.000000000 +0100
++++ libofx-0.9.1/lib/messages.cpp	2011-01-11 02:49:03.625303600 +0100
+@@ -25,6 +25,10 @@
+ SGMLApplication::OpenEntityPtr entity_ptr; /**< Global for determining the line number in OpenSP */
+ SGMLApplication::Position position; /**< Global for determining the line number in OpenSP */
+ 
++#ifdef _MSC_VER
++#define volatile
++#endif
++
+ volatile int ofx_PARSER_msg = false; /**< If set to true, parser events will be printed to the console */
+ volatile int ofx_DEBUG_msg = false;/**< If set to true, general debug messages will be printed to the console */
+ volatile int ofx_DEBUG1_msg = false;/**< If set to true, debug level 1 messages will be printed to the console */
 diff -Nru libofx-0.9.1.orig/lib/ofx_container_transaction.cpp libofx-0.9.1/lib/ofx_container_transaction.cpp
 --- libofx-0.9.1.orig/lib/ofx_container_transaction.cpp	2007-11-10 00:13:21.000000000 +0100
-+++ libofx-0.9.1/lib/ofx_container_transaction.cpp	2011-01-04 19:48:10.345153900 +0100
++++ libofx-0.9.1/lib/ofx_container_transaction.cpp	2011-01-11 02:05:14.414921300 +0100
 @@ -22,6 +22,7 @@
  #endif
  
@@ -220,7 +286,7 @@ diff -Nru libofx-0.9.1.orig/lib/ofx_container_transaction.cpp libofx-0.9.1/lib/o
  #include "ofx_containers.hh"
 diff -Nru libofx-0.9.1.orig/lib/ofx_preproc.cpp libofx-0.9.1/lib/ofx_preproc.cpp
 --- libofx-0.9.1.orig/lib/ofx_preproc.cpp	2008-12-06 23:22:57.000000000 +0100
-+++ libofx-0.9.1/lib/ofx_preproc.cpp	2011-01-11 01:35:18.655209800 +0100
++++ libofx-0.9.1/lib/ofx_preproc.cpp	2011-01-11 02:05:14.418921600 +0100
 @@ -23,6 +23,11 @@
  #include <stdlib.h>
  #include <stdio.h>
@@ -265,7 +331,7 @@ diff -Nru libofx-0.9.1.orig/lib/ofx_preproc.cpp libofx-0.9.1/lib/ofx_preproc.cpp
        dtd_path_filename=DTD_SEARCH_PATH[i];
 diff -Nru libofx-0.9.1.orig/lib/ofx_request.cpp libofx-0.9.1/lib/ofx_request.cpp
 --- libofx-0.9.1.orig/lib/ofx_request.cpp	2007-10-28 04:01:38.000000000 +0100
-+++ libofx-0.9.1/lib/ofx_request.cpp	2011-01-04 19:48:40.426874500 +0100
++++ libofx-0.9.1/lib/ofx_request.cpp	2011-01-11 02:05:14.421921700 +0100
 @@ -22,6 +22,7 @@
  #endif
  
@@ -276,7 +342,7 @@ diff -Nru libofx-0.9.1.orig/lib/ofx_request.cpp libofx-0.9.1/lib/ofx_request.cpp
  #include "ofx_request.hh"
 diff -Nru libofx-0.9.1.orig/lib/ofx_request_accountinfo.cpp libofx-0.9.1/lib/ofx_request_accountinfo.cpp
 --- libofx-0.9.1.orig/lib/ofx_request_accountinfo.cpp	2007-10-28 04:01:38.000000000 +0100
-+++ libofx-0.9.1/lib/ofx_request_accountinfo.cpp	2011-01-04 19:49:51.953965600 +0100
++++ libofx-0.9.1/lib/ofx_request_accountinfo.cpp	2011-01-11 02:05:14.424921900 +0100
 @@ -22,6 +22,7 @@
  #endif
  
@@ -287,7 +353,7 @@ diff -Nru libofx-0.9.1.orig/lib/ofx_request_accountinfo.cpp libofx-0.9.1/lib/ofx
  
 diff -Nru libofx-0.9.1.orig/lib/ofx_request_statement.cpp libofx-0.9.1/lib/ofx_request_statement.cpp
 --- libofx-0.9.1.orig/lib/ofx_request_statement.cpp	2007-10-28 04:01:38.000000000 +0100
-+++ libofx-0.9.1/lib/ofx_request_statement.cpp	2011-01-04 19:50:13.824216500 +0100
++++ libofx-0.9.1/lib/ofx_request_statement.cpp	2011-01-11 02:05:14.426922000 +0100
 @@ -22,6 +22,7 @@
  #endif
  
@@ -296,29 +362,26 @@ diff -Nru libofx-0.9.1.orig/lib/ofx_request_statement.cpp libofx-0.9.1/lib/ofx_r
  #include "libofx.h"
  #include "ofx_utilities.hh"
  #include "ofx_request_statement.hh"
-diff -Nru libofx-0.9.1.orig/lib/ofx_utilities.cpp libofx-0.9.1/lib/ofx_utilities.cpp
---- libofx-0.9.1.orig/lib/ofx_utilities.cpp	2007-10-27 14:15:58.000000000 +0200
-+++ libofx-0.9.1/lib/ofx_utilities.cpp	2011-01-04 19:47:36.302206800 +0100
-@@ -17,6 +17,7 @@
-  ***************************************************************************/
- #include <config.h>
- #include <iostream>
-+#include <cstdlib>
- #include <assert.h>
+diff -Nru libofx-0.9.1.orig/ofxdump/cmdline.c libofx-0.9.1/ofxdump/cmdline.c
+--- libofx-0.9.1.orig/ofxdump/cmdline.c	2009-02-09 21:20:24.000000000 +0100
++++ libofx-0.9.1/ofxdump/cmdline.c	2011-01-11 02:29:58.989834200 +0100
+@@ -330,8 +330,6 @@
  
- #include "ParserEventGeneratorKit.h"
-@@ -113,7 +114,7 @@
-   char time_zone_specified = false;
+   optarg = 0;
+   optind = 0;
+-  opterr = 1;
+-  optopt = '?';
  
-   time_t temptime;
--  std::time(&temptime);
-+  ::time(&temptime);
-   local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime)));
-   
-   if(ofxdate.size()!=0){
+   while (1)
+     {
+diff -Nru libofx-0.9.1.orig/ofxdump/getopt.h libofx-0.9.1/ofxdump/getopt.h
+--- libofx-0.9.1.orig/ofxdump/getopt.h	1970-01-01 01:00:00.000000000 +0100
++++ libofx-0.9.1/ofxdump/getopt.h	2011-01-11 02:39:08.072239900 +0100
+@@ -0,0 +1 @@
++#include "../lib/getopt.h"
 diff -Nru libofx-0.9.1.orig/ofxdump/ofxdump.cpp libofx-0.9.1/ofxdump/ofxdump.cpp
 --- libofx-0.9.1.orig/ofxdump/ofxdump.cpp	2006-08-02 06:19:22.000000000 +0200
-+++ libofx-0.9.1/ofxdump/ofxdump.cpp	2011-01-11 00:46:49.618822400 +0100
++++ libofx-0.9.1/ofxdump/ofxdump.cpp	2011-01-11 02:05:14.428922100 +0100
 @@ -29,7 +29,8 @@
   ***************************************************************************/
  #include <iostream>
