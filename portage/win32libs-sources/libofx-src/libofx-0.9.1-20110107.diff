@@ -362,6 +362,18 @@ diff -Nru libofx-0.9.1.orig/lib/ofx_request_statement.cpp libofx-0.9.1/lib/ofx_r
  #include "libofx.h"
  #include "ofx_utilities.hh"
  #include "ofx_request_statement.hh"
+diff -Nru libofx-0.9.1.orig/lib/ofx_utilities.cpp libofx-0.9.1/lib/ofx_utilities.cpp
+--- libofx-0.9.1.orig/lib/ofx_utilities.cpp	2007-10-27 14:15:58.000000000 +0200
++++ libofx-0.9.1/lib/ofx_utilities.cpp	2011-01-11 03:58:42.348312900 +0100
+@@ -113,7 +113,7 @@
+   char time_zone_specified = false;
+ 
+   time_t temptime;
+-  std::time(&temptime);
++  time(&temptime);
+   local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime)));
+   
+   if(ofxdate.size()!=0){
 diff -Nru libofx-0.9.1.orig/ofxdump/cmdline.c libofx-0.9.1/ofxdump/cmdline.c
 --- libofx-0.9.1.orig/ofxdump/cmdline.c	2009-02-09 21:20:24.000000000 +0100
 +++ libofx-0.9.1/ofxdump/cmdline.c	2011-01-11 02:29:58.989834200 +0100
