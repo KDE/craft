@@ -533,7 +533,7 @@ def main():
             depstyle = "both"
         output = ""
         if hasattr(opts, "filename") and opts.filename != None:
-            packageList = parsePackageListFile( opts.filename )
+            packageList = parsePackageListFiles( opts.filename )
             output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
         else:
             output = dumpDependencies(args[0], output_type, depstyle)
