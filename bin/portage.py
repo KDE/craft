@@ -468,6 +468,8 @@ def isVersion( part ):
 def packageSplit( fullname ):
     """ instead of using portage_versions.catpkgsplit use this function now """
     splitname = fullname.split('-')
+    x = 0 # fixes pylint warning about using possibly undefined loop variable.
+          # maybe this could be simplified by using only one for loop.
     for x in range( len( splitname ) ):
         if isVersion( splitname[ x ] ):
             break

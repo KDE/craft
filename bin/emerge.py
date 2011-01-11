@@ -381,7 +381,10 @@ else:
 opts = list()
 
 executableName = sys.argv.pop( 0 )
+nextArguments = sys.argv[:]
+
 for i in sys.argv:
+    nextArguments.pop(0)
     if ( i == "-p" ):
         doPretend = True
     elif ( i == "-z" ):
@@ -459,8 +462,6 @@ for i in sys.argv:
     else:
         packageName = i
         break
-
-nextArguments = sys.argv[ (sys.argv.index( i ) + 1): ]
 
 if stayQuiet == True:
     verbose = 0
