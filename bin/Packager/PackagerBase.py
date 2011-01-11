@@ -34,7 +34,8 @@ class PackagerBase(EmergeBase):
         return [pkgVersion, pkgNotesVersion]
     
     #""" create a package """
-    def createPackage(self): abstract()
+    def createPackage(self):
+        abstract()
 
     # for compatibility 
     def make_package(self):

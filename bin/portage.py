@@ -202,7 +202,8 @@ class Portage:
 
     def addPortageDir( self, dir ):
         """ adds the categories and packages of a portage directory """
-        if not os.path.exists( dir ): return
+        if not os.path.exists( dir ):
+            return
 
         categoryList = os.listdir( dir )
 
@@ -213,7 +214,8 @@ class Portage:
 
         self.portages[ dir ] = []
         for category in categoryList:
-            if not os.path.isdir( os.path.join( dir, category ) ): continue
+            if not os.path.isdir( os.path.join( dir, category ) ):
+                continue
 
             self.portages[ dir ].append( category )
 
@@ -224,9 +226,11 @@ class Portage:
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
 
-            if not category in self.categories.keys(): self.categories[ category ] = []
+            if not category in self.categories.keys():
+                self.categories[ category ] = []
             for package in packageList:
-                if not os.path.isdir( os.path.join( dir, category, package ) ): continue
+                if not os.path.isdir( os.path.join( dir, category, package ) ):
+                    continue
                 if not package in self.categories[ category ]:
                     self.categories[ category ].append( package )
             
@@ -566,8 +570,10 @@ def readChildren( category, package, version ):
     
     runtimeDependencies = subinfo.runtimeDependencies
     buildDependencies = subinfo.buildDependencies
-    if runtimeDependencies == None: runtimeDependencies = dict()
-    if buildDependencies == None: buildDependencies = dict()
+    if runtimeDependencies == None:
+        runtimeDependencies = dict()
+    if buildDependencies == None:
+        buildDependencies = dict()
 
     # hardDependencies
     commonDependencies = subinfo.hardDependencies
@@ -624,11 +630,16 @@ def alwaysTrue( category, package, version ):
 
 def getHostAndTarget( hostEnabled, targetEnabled ):
     str = ""
-    if hostEnabled or targetEnabled: str += "("
-    if hostEnabled: str += "H"
-    if hostEnabled and targetEnabled: str += "/"
-    if targetEnabled: str += "T"
-    if hostEnabled or targetEnabled: str += ")"
+    if hostEnabled or targetEnabled:
+        str += "("
+    if hostEnabled:
+        str += "H"
+    if hostEnabled and targetEnabled:
+        str += "/"
+    if targetEnabled:
+        str += "T"
+    if hostEnabled or targetEnabled:
+        str += ")"
     return str
 
 def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue, targetEnabled=alwaysTrue ):

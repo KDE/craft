@@ -16,10 +16,12 @@ class Shell(object):
         dummy = 0
 
     #""" convert internal used paths to native path which are understandable by the shell
-    def toNativePath( self, path ): abstract
+    def toNativePath( self, path ):
+        abstract
 
     #""" execute shell command
-    def execute(self, path, cmd, args): abstract
+    def execute(self, path, cmd, args):
+        abstract
     
 
 class MSysShell(Shell):

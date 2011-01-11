@@ -126,9 +126,11 @@ if _pywin32:
 
             # there might be some stuff left in the streams
             if self._bypass_stdout:
-                for line in self.stdout: self._stdout_file.write( line )
+                for line in self.stdout:
+                    self._stdout_file.write( line )
             if self._bypass_stderr:
-                for line in self.stderr: self._stderr_file.write( line )
+                for line in self.stderr:
+                    self._stderr_file.write( line )
 
             return self.returncode
 

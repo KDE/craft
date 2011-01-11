@@ -88,8 +88,10 @@ class GraphvizCreator(Visitor):
 
     def afterChildren(self, node, context):
         visited, out, ranks = context
-        if not node.children: max_depth = 666
-        else:                 max_depth = node.maxDepth()
+        if not node.children:
+            max_depth = 666
+        else:
+            max_depth = node.maxDepth()
         ranks.setdefault(max_depth, set()).add(node)
         for child in node.children:
             link = '"%s" -> "%s"' % (
@@ -110,7 +112,8 @@ class GraphvizCreator(Visitor):
 
         for k, v in ranks.iteritems():
             out.append("{ rank=same; ")
-            for n in v: out.append('"%s";' % nlSeparated(n))
+            for n in v:
+                out.append('"%s";' % nlSeparated(n))
             out.append("}")
 
         out.append("}")
@@ -148,8 +151,10 @@ class XMLCreator(Visitor):
         return Visitor.CONTINUE_CHILDREN
 
     def afterChildren(self, node, out):
-        if self.ignored: self.ignored = False
-        else:            out.append("</dep>")
+        if self.ignored:
+            self.ignored = False
+        else:
+            out.append("</dep>")
         return Visitor.CONTINUE_CHILDREN
 
     def createOutput(self, tree):
@@ -270,7 +275,8 @@ class KDEWinCreator( Visitor ):
             num = 0
             for _node in self.cats[ _cat ]:
                 _packageName = _node.package
-                if _packageName.endswith( "-src" ) or _packageName.endswith( "-pkg" ): _packageName = _packageName[:-4]
+                if _packageName.endswith( "-src" ) or _packageName.endswith( "-pkg" ):
+                    _packageName = _packageName[:-4]
                 if _node.metaData["withCompiler"]:
                     _str += " " + _packageName + "-" + self.compiler
                     num += 1
@@ -321,7 +327,8 @@ class DependenciesNode(object):
     """A node in the dependency graph."""
 
     def __init__(self, category, package, version, tag = "1", children = None):
-        if children is None: children = []
+        if children is None:
+            children = []
         self.category = category
         self.package  = package
         self.version  = version
@@ -350,7 +357,9 @@ class DependenciesNode(object):
         pdepth = -1
         for p in self.parents:
             d = p.maxDepth()
-            if d > pdepth: pdepth = d
+            if d > pdepth:
+                pdepth = d
+        # TODO: use something like max(x.maxDepth() for x in self.parents)
         return pdepth + 1
 
 class DependenciesTree(object):

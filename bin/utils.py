@@ -26,8 +26,10 @@ import tempfile
 import compiler
 import platform
 
-if os.name == 'nt': import msvcrt
-else:               import fcntl
+if os.name == 'nt':
+    import msvcrt
+else:
+    import fcntl
 
 import info
 import portage
@@ -67,7 +69,8 @@ class LockFile(object):
         self.file_handle = None
 
     def __enter__(self):
-        if not self.file_name: return
+        if not self.file_name:
+            return
 
         self.file_handle = open(self.file_name, 'a')
         fh = self.file_handle
@@ -91,7 +94,8 @@ class LockFile(object):
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         fh = self.file_handle
-        if fh is None: return
+        if fh is None:
+            return
         self.file_handle = None
         if os.name == 'nt':
             fh.seek(0)
@@ -532,8 +536,10 @@ def trace( message, level=0 ):
 
 def system( cmd, outstream=None, errstream=None, *args, **kw ):
 
-    if outstream is None: outstream = sys.stdout
-    if errstream is None: errstream = sys.stderr
+    if outstream is None: 
+        outstream = sys.stdout
+    if errstream is None:
+        errstream = sys.stderr
 
     debug( "executing command: %s" % str(cmd), 1 )
     redirected = False
@@ -952,7 +958,8 @@ def splitGitUrl( Url ):
     splitUrl = Url.split('|')
     if len(splitUrl) < 3:
         c = [x for x in splitUrl]
-        for y in range(3 - len(splitUrl)): c.append('')
+        for y in range(3 - len(splitUrl)):
+            c.append('')
     else:
         c = splitUrl[0:3]
     return c

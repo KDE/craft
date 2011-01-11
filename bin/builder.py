@@ -75,7 +75,8 @@ class Builder(object):
         # build the children
         for child in node.children:
             okay = self.recursiveBuild(child)
-            if not okay: all_okay = False
+            if not okay:
+                all_okay = False
 
         # only build node if all of its children are built correctly
         if all_okay:
@@ -85,7 +86,8 @@ class Builder(object):
                     'package' : node.package,
                     'version' : node.version,
                     'tag'     : node.tag })
-                if exit_status == 0: break
+                if exit_status == 0:
+                    break
             all_okay = exit_status == 0
 
         self.build_status[name] = all_okay

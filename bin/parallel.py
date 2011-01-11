@@ -127,8 +127,10 @@ class ExecutionContext(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if os.path.exists(self.svnlock):
-            try: os.remove(self.svnlock)
-            except: pass
+            try:
+                os.remove(self.svnlock)
+            except:
+                pass
         log("stop", "all")
 
 class Job(object):
@@ -164,7 +166,8 @@ class Job(object):
            graph waiting for this job.
            Returns true if this job is ready for execution.
         """
-        if dep_exit != 0: self.dep_exit = dep_exit
+        if dep_exit != 0:
+            self.dep_exit = dep_exit
         self.dep_count -= 1
         return self.dep_count < 1
 
@@ -253,7 +256,8 @@ class ParallelBuilder(object):
            number of processor cores is used.
         """
 
-        if num_worker is None: num_worker = cpu_count()
+        if num_worker is None:
+            num_worker = cpu_count()
 
         utils.debug("worker: %d" % num_worker)
 
@@ -268,7 +272,8 @@ class ParallelBuilder(object):
 
         todo, done = Queue(), Queue()
 
-        for _ in range(num_worker): Worker(todo, done, self.tries)
+        for _ in range(num_worker):
+            Worker(todo, done, self.tries)
 
         for job in ready:
             todo.put(job.triggerExec(self.command))
@@ -282,7 +287,8 @@ class ParallelBuilder(object):
         while jobs_left:
             key, exit_code = done.get()
 
-            if exit_code != 0: final_exit_code = exit_code
+            if exit_code != 0:
+                final_exit_code = exit_code
 
             try:
                 blocked_list = blocked.pop(key)
