@@ -57,7 +57,8 @@ class subinfo(info.infoclass):
                                           ('live-lock-fix.diff', 1)
                                           ]
             self.patchToApply['1.4.1'] = [('msvc2010-has-errnoh.diff', 1),
-                                          ('live-lock-fix.diff', 1)
+                                          ('live-lock-fix.diff', 1),
+                                          ('replace_path_with_current_installdir.diff', 1)
                                           ]
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         if emergePlatform.isCrossCompilingEnabled():
@@ -80,7 +81,8 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = (
                 "-DDBUS_BUILD_TESTS=OFF "
                 "-DDBUS_ENABLE_XML_DOCS=OFF "
-                "-DDBUS_USE_EXPAT=ON ")
+                "-DDBUS_USE_EXPAT=ON "
+                "-DDBUS_REPLACE_LOCAL_DIR=ON ")
 
         if (self.buildType == "Release"):
             self.subinfo.options.configure.defines += (
