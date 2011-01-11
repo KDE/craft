@@ -22,7 +22,7 @@ class InnoSetupPackager (PackagerBase):
         if os.path.exists(file):
             return file
 
-            file = os.path.join(self.packageDir(), "setup.iss")
+        file = os.path.join(self.packageDir(), "setup.iss")
         if os.path.exists(file):
             return file
 
