@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
         if compiler.isMSVC():
             self.patchToApply['0.9.1'].append(("ofx-msvc.diff", 1))
         self.patchToApply['0.9.1'].append(("libofx-0.9.1-20110107.diff", 1))
+        self.shortDescription = "a parser and an API for the OFX (Open Financial eXchange) specification"
         self.defaultTarget = '0.9.1'
         
     def setDependencies( self ):

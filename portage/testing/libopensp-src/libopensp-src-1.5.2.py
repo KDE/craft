@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
         self.targets['1.5.2'] = SRC_URI
         self.targetInstSrc['1.5.2'] = "OpenSP-1.5.2"
         self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110111.diff", 1 )
+        self.shortDescription = "a library for a SGML parser algorithm"
         self.defaultTarget = '1.5.2'
         
 from Package.CMakePackageBase import *
