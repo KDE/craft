@@ -328,8 +328,8 @@ share\\libical\\zoneinfo\\zones\.tab
 share\\locale\\all_languages
 
 # Handbooks
-.*de\\kontact-touch\\.*
-.*en\\kontact-touch\\.*
+.*\\kontact-touch\\de\\manual.*
+.*\\kontact-touch\\en\\manual.*
 
 # Licenses
 share\\apps\\kontact-touch\\licenses\.pdf
