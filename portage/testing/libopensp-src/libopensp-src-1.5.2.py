@@ -11,6 +11,9 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110111.diff", 1 )
         self.shortDescription = "a library for a SGML parser algorithm"
         self.defaultTarget = '1.5.2'
+
+    def setDependencies( self ):
+        self.dependencies['virtual/base'] = 'default'
         
 from Package.CMakePackageBase import *
 
