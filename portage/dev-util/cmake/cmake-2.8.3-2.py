@@ -26,7 +26,7 @@ class subinfo( info.infoclass ):
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0-ce'
         else:
-            self.defaultTarget = '2.8.3-1'
+            self.defaultTarget = '2.8.3-2'
             
     def setBuildOptions( self ):
         self.disableHostBuild = False
