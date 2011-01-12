@@ -11,6 +11,7 @@ class subinfo( info.infoclass ):
         self.targets['2.8.0-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.0-6-bin.tar.bz2'
         self.targets['2.8.1-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.1-bin.tar.bz2'
         self.targets['2.8.3-1'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.3-1-bin.tar.bz2'
+        self.targets['2.8.3-2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.3-2-bin.tar.bz2'
         self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.2'] = 'cmake-2.8.2-win32-x86'
