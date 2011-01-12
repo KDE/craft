@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -16,17 +16,17 @@ class PackageBase (EmergeBase):
      packages
     """
 
-    # uses the following instance variables 
+    # uses the following instance variables
     # todo: place in related ...Base
-    
-    #rootdir    -> EmergeBase  
+
+    #rootdir    -> EmergeBase
     #package    -> PackageBase
     #force      -> PackageBase
     #category   -> PackageBase
     #version    -> PackageBase
     #packagedir -> PackageBase
     #imagedir   -> PackageBase
-    
+
     def __init__(self):
         utils.debug("PackageBase.__init__ called", 2)
         EmergeBase.__init__(self)
@@ -49,13 +49,13 @@ class PackageBase (EmergeBase):
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
- 
-        ## \todo is this the optimal place for creating the post install scripts ? 
-        # create post install scripts 
+
+        ## \todo is this the optimal place for creating the post install scripts ?
+        # create post install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
-            # are there any cases there installDir should be honored ? 
+            # are there any cases there installDir should be honored ?
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
                 utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
@@ -93,9 +93,9 @@ class PackageBase (EmergeBase):
         else:
             utils.debug("running of post-install scripts disabled!", 0)
 
-        # add package to installed database -> is this not the task of the manifest files ? 
-       
-        # only packages using a specific merge destination path are shared between build types 
+        # add package to installed database -> is this not the task of the manifest files ?
+
+        # only packages using a specific merge destination path are shared between build types
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
@@ -127,9 +127,9 @@ class PackageBase (EmergeBase):
         """unmergeing the files from the filesystem"""
         utils.debug( "Packagebase unmerge called", 2 )
 
-        ## \todo mergeDestinationDir() reads the real used merge dir from the 
-        ## package definition, which fails if this is changed 
-        ## a better solution will be to save the merge sub dir into 
+        ## \todo mergeDestinationDir() reads the real used merge dir from the
+        ## package definition, which fails if this is changed
+        ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
         utils.debug( "unmerge package from %s" % self.mergeDestinationDir(), 2 )
         if isDBEnabled():
@@ -154,9 +154,9 @@ class PackageBase (EmergeBase):
             if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not emergePlatform.isCrossCompilingEnabled():
                 # compatibility code: uninstall subclass based package
                 utils.unmerge( self.rootdir, self.package, self.forced )
-                portage.remInstalled( self.category, self.package, self.version, '')               
+                portage.remInstalled( self.category, self.package, self.version, '')
 
-        # only packages using a specific merge destination path are shared between build types 
+        # only packages using a specific merge destination path are shared between build types
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "Release" ) )
@@ -192,11 +192,11 @@ class PackageBase (EmergeBase):
             utils.debug( "cleaning all build dirs: %s" % self.buildRoot(), 1 )
 
         return True
-        
+
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers"""
         """install database"""
-    
+
         utils.debug("base manifest called", 2)
         if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
             utils.debug("creating of manifest files triggered", 1)
@@ -221,7 +221,7 @@ class PackageBase (EmergeBase):
         if not cmd:
             command = sys.argv[ 1 ]
             options = None
-#            print sys.argv 
+#            print sys.argv
             if ( len( sys.argv )  > 2 ):
                 options = sys.argv[ 2: ]
         else:
@@ -237,9 +237,9 @@ class PackageBase (EmergeBase):
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
         (command, option) = self.getAction(cmd)
-                
+
         #if self.createCombinedPackage:
-        #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]                        
+        #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]
         #    os.environ["EMERGE_BUILDTYPE"] = "Release"
         #    self.runAction(command)
         #    os.environ["EMERGE_BUILDTYPE"] = "Debug"
@@ -249,15 +249,15 @@ class PackageBase (EmergeBase):
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
             print "target ignored for this build type"
             return False
-        
+
         if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild and not command == "fetch" and not command == "unpack":
             utils.debug( "host build disabled, skipping host build", 1 )
             return True
-            
+
         if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild() and self.subinfo.disableTargetBuild and not command == "fetch" and not command == "unpack":
             utils.debug( "target build disabled, skipping target build", 1 )
             return True
-        
+
         self.runAction(command)
         return True
 
@@ -287,7 +287,7 @@ class PackageBase (EmergeBase):
         if ( not ok ):
             utils.die( "command %s failed" % command )
         return True
-        
+
     def dumpDependencies( self ):
         """dump emerge package dependencies"""
         output = dependencies.dumpDependencies( self.package )
@@ -305,6 +305,6 @@ class PackageBase (EmergeBase):
             return False
 
         return graphviz.openOutput()
-        
+
         return True
-                
+

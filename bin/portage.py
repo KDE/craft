@@ -1,4 +1,4 @@
-## @package portage 
+## @package portage
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
 import utils
@@ -41,7 +41,7 @@ def __import__( module ):
             utils.die("no .py suffix found")
 
         try:
-            return imp.load_module( modulename.replace('.', '_'), 
+            return imp.load_module( modulename.replace('.', '_'),
             fileHdl, module, suff_index )
         except:
             utils.warning( "Import failed for file %s" % module )
@@ -99,7 +99,7 @@ class DependencyPackage:
 
     def getDependencies( self, depList = [], type="both" ):
         """ returns all dependencies """
-        
+
         if type == "runtime":
             children = self.runtimeChildren
         elif type == "buildtime":
@@ -144,11 +144,11 @@ def rootDirectories():
     return rootDirs
 
 def rootDir():
-    # this function should return the portage directory, either the first set 
+    # this function should return the portage directory, either the first set
     # via the environment, or the default one
     # keep this function for compat reasons
     return rootDirectories()[0]
-    
+
 def rootDirForCategory( category ):
     # this function should return the portage directory where it finds the
     # first occurance of a category or the default value
@@ -177,7 +177,7 @@ def getDirname( category, package ):
     else:
         file = ""
     return file
-    
+
 def getFilename( category, package, version ):
     """ return absolute filename for a given category, package and version """
     file = os.path.join( getDirname( category, package ), "%s-%s.py" % ( package, version ) )
@@ -233,7 +233,7 @@ class Portage:
                     continue
                 if not package in self.categories[ category ]:
                     self.categories[ category ].append( package )
-            
+
 
     def getCategory( self, package ):
         """ returns the category of this package """
@@ -277,14 +277,14 @@ class Portage:
             if sp:
                 category = sp[0]
                 package = sp[1]
-                
+
         version = self.getNewestVersion( category, package )
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
         p = module.Package()
         p.setup(fileName, category, package, version, buildtarget)
         return p
-    
+
     def getDefaultTarget( self, category, package, version ):
         """ returns the default package of a specified package """
         utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
@@ -317,7 +317,7 @@ class Portage:
             return tmpdict
         else:
             return dict()
-    
+
     def getAllTargets( self, category, package, version ):
         """ returns all targets of a specified package """
         utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
@@ -332,7 +332,7 @@ class Portage:
             return tagDict
         else:
             return dict()
-    
+
     def getAllVCSTargets( self, category, package, version ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
@@ -405,7 +405,7 @@ class Portage:
                         version = script.replace('.py', '').replace(package + '-', '')
                         instList.append([category, package, version])
         return instList
-        
+
     def getCorrespondingSourcePackage( self, package ):
         category = self.getCategory( package + "-src" )
         if category:
@@ -549,9 +549,9 @@ def readChildren( category, package, version ):
     identFileName = getFilename( category, package, version )
     if not os.path.isfile( identFileName ):
         utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
-    
-    # if we are an emerge internal package and already in the dictionary, ignore childrens 
-    # To avoid possible endless recursion this may be also make sense for all packages  
+
+    # if we are an emerge internal package and already in the dictionary, ignore childrens
+    # To avoid possible endless recursion this may be also make sense for all packages
     if category == internalCategory and identFileName in modDict.keys():
         return ( dict(), dict() )
     utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, identFileName ), 2 )
@@ -569,7 +569,7 @@ def readChildren( category, package, version ):
     else:
         subinfo = None
         return ( dict(), dict() )
-    
+
     runtimeDependencies = subinfo.runtimeDependencies
     buildDependencies = subinfo.buildDependencies
     if runtimeDependencies == None:
@@ -583,13 +583,13 @@ def readChildren( category, package, version ):
     for key in commonDependencies:
         runtimeDependencies[ key ] = commonDependencies[ key ]
         buildDependencies[ key ] = commonDependencies[ key ]
-    
+
     return ( runtimeDependencies, buildDependencies )
 
 def isHostBuildEnabled( category, package, version ):
-    """ returns whether this package's host build is enabled. This will only work if 
+    """ returns whether this package's host build is enabled. This will only work if
         isCrossCompilingEnabled() == True """
-    
+
     if emergePlatform.isCrossCompilingEnabled():
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
@@ -602,9 +602,9 @@ def isHostBuildEnabled( category, package, version ):
         utils.die( "This function must not be used outside of cross-compiling environments!" )
 
 def isTargetBuildEnabled( category, package, version ):
-    """ returns whether this package's target build is enabled. This will only work if 
+    """ returns whether this package's target build is enabled. This will only work if
         isCrossCompilingEnabled() == True """
-    
+
     if emergePlatform.isCrossCompilingEnabled():
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
@@ -668,8 +668,8 @@ def printInstallables():
 def printInstalled():
     """get all the packages that are already installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
-    
-    
+
+
 def isInstalled( category, package, version, buildType='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
     # find in old style database
@@ -783,8 +783,8 @@ def remInstalled( category, package, version, buildType='' ):
         file = open( dbfile, "rb" )
         tfile = open( tmpdbfile, "wb" )
         for line in file:
-            ## \todo the category should not be part of the search string 
-            ## because otherwise it is not possible to unmerge package using 
+            ## \todo the category should not be part of the search string
+            ## because otherwise it is not possible to unmerge package using
             ## the same name but living in different categories
             if not line.startswith("%s/%s" % ( category, package ) ):
                 tfile.write( line )
@@ -812,7 +812,7 @@ def getPackagesCategories(packageName, defaultCategory = None):
             packageList = PortageInstance.getAllPackages( packageName )
             categoryList = [ packageName ] * len(packageList)
         else:
-        
+
             if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
                 # prefer the default category
                 packageList = [ packageName ]

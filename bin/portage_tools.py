@@ -17,7 +17,7 @@ class Portage( tools.Environment ):
                 # the setting via the environment variable has to be outdated then
                 # this guesses you use your KDE account for the emerge checkout
                 self.portage_repos.append( subversion.Repository() )
-                
+
     def sync( self ):
         for repository in self.portage_repos:
             """"""
@@ -25,7 +25,7 @@ class Portage( tools.Environment ):
                 """"""
                 print "svnpath:", repository.info.svnpath
             #repository.update()
-        
+
     def list_packages( self ):
         """ return a list of all packages including the category, name, version and path of the script """
         instList = []

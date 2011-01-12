@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -10,19 +10,19 @@ class VersionSystemSourceBase (SourceBase):
 
     noFetch = False
 
-    # host part of svn server 
+    # host part of svn server
     kdesvnserver = ""
 
     # local checkout root path
     kdesvndir = ""
-        
+
     # complete local path for currently used source
     svndir = ""
-        
+
     def __init__(self, className=None):
         utils.trace( "VersionSystemSourceBase __init__", 2 )
         SourceBase.__init__(self, className)
-        
+
     def getUrl( self, index ):
         utils.trace( "VersionSystemSourceBase getUrl", 2 )
         """get the url at position 'index' from a ';' separated list of urls"""
@@ -36,7 +36,7 @@ class VersionSystemSourceBase (SourceBase):
         urls = u.split(';')
         if index >= len(urls):
             return None
-        
+
         u = urls[index]
         return u
 
@@ -46,7 +46,7 @@ class VersionSystemSourceBase (SourceBase):
         if url.find('#') != -1:
             return url.split('#')
         return [url, ""]
-           
+
     def __repositoryBaseUrl( self ):
         utils.trace( "VersionSystemSourceBase __repositoryBaseUrl", 2 )
         """ this function return the base url to the KDE repository """
@@ -55,7 +55,7 @@ class VersionSystemSourceBase (SourceBase):
             server = "svn://anonsvn.kde.org"
         else:
             server = os.getenv("KDESVNSERVER")
-        
+
         return server + '/home/kde/'
 
     def unpack(self):
@@ -75,7 +75,7 @@ class VersionSystemSourceBase (SourceBase):
         if os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "True" or os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "1":
             return ret
         return True
-        
+
     def repositoryUrlCount( self ):
         utils.trace( "VersionSystemSourceBase repositoryUrlCount", 2 )
         """return the number of provided repository url's. Multiple repository urls' are delimited by ';'"""
@@ -86,7 +86,7 @@ class VersionSystemSourceBase (SourceBase):
             return 1
         urls = u.split(';')
         return len(urls)
-    
+
     def repositoryUrl( self, index=0 ):
         utils.trace( "VersionSystemSourceBase repositoryUrl", 2 )
         """this function returns the full url into a version system based repository at position 'index'.
@@ -100,13 +100,13 @@ class VersionSystemSourceBase (SourceBase):
                 url = self.__repositoryBaseUrl() + u
             else:
                 url = u
-            return url            
+            return url
         else:
             return False
 
     def repositoryUrlOptions( self, index=0 ):
-        """this function return options for the repository url at position 'index'. 
-        Options for a repository url are defined by adding '#' followed by the specific option. 
+        """this function return options for the repository url at position 'index'.
+        Options for a repository url are defined by adding '#' followed by the specific option.
         """
         utils.trace( "VersionSystemSourceBase repositoryUrlOptions", 2 )
         if self.subinfo.hasSvnTarget():
@@ -129,16 +129,16 @@ class VersionSystemSourceBase (SourceBase):
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
 
         return os.path.abspath(sourcedir)
-        
-    def sourceDir(self, index=0 ): 
+
+    def sourceDir(self, index=0 ):
         utils.trace( "VersionSystemSourceBase sourceDir", 2 )
         if not self.noCopy:
             # need to check index ?
             sourcedir = self.workDir()
-        
+
             if self.subinfo.targetSourceSuffix() != None:
                 sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
-           
+
             return sourcedir
         else:
             sourcedir = self.checkoutDir( index )

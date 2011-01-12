@@ -43,13 +43,13 @@ def isMSVC():
 
 def isMSVC2005():
     return COMPILER == "msvc2005"
-    
+
 def isMSVC2008():
     return COMPILER == "msvc2008"
 
 def isMSVC2010():
     return COMPILER == "msvc2010"
-   
+
 
 def getCompilerName():
     if isMinGW():
@@ -76,8 +76,8 @@ def getSimpleCompilerName():
         return "msvc"
     else:
         return "Unknown Compiler"
-        
-def getMinGWVersion():    
+
+def getMinGWVersion():
     try:
         result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
         result = result.split()[2]
@@ -86,15 +86,15 @@ def getMinGWVersion():
     except:
         #if no mingw is installed return 0
         return "0"
-  
+
 def getVersion():
     if isMinGW():
         return "%s %s" % ( getCompilerName(), getMinGWVersion() )
     return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
-  
-  
-if __name__ == '__main__': 
+
+
+if __name__ == '__main__':
     print "Testing Compiler.py"
     print "Version: %s" % getVersion()
     print "Compiler Name: %s" % getCompilerName()
-    
+

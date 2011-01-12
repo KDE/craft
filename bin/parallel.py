@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2010, Intevation GmbH
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #     * Redistributions of source code must retain the above copyright
@@ -14,7 +14,7 @@
 #     * Neither the name of Intevation GmbH nor the
 #       names of its contributors may be used to endorse or promote products
 #       derived from this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,7 +30,7 @@
 """Tool to use emerge in 'make -k' and 'make -j' way.
 
    When emerging a more complex package depending on several
-   sub packages it is likely that emerge dies for some reasons 
+   sub packages it is likely that emerge dies for some reasons
    at different parts of process. Without this tool you are
    forced to fix the detected problem one after the other
    and start the emerging again and again.
@@ -113,14 +113,14 @@ def uniqueSvnLockFilename():
 class ExecutionContext(object):
     """Context manager which injects an SVN lock name
        into the called emerges and ensures that
-       the corresponding file will be removed at 
+       the corresponding file will be removed at
        the end of the program.
     """
 
     def __init__(self):
         self.svnlock = uniqueSvnLockFilename()
 
-    def __enter__(self): 
+    def __enter__(self):
         log("start", "all")
         os.environ["EMERGE_SVN_LOCK"     ] = "True"
         os.environ["EMERGE_SVN_LOCK_FILE"] = self.svnlock
@@ -186,7 +186,7 @@ class Worker(Process):
     """
 
     def __init__(self, todo, done, tries = 1):
-        """Creates a worker with a 'todo' and a 'done' job queue.""" 
+        """Creates a worker with a 'todo' and a 'done' job queue."""
         Process.__init__(self)
         self.todo   = todo
         self.done   = done
@@ -211,7 +211,7 @@ class Worker(Process):
                         exit_code = os.system(execute[1])
                     except:
                         traceback.print_exc()
-                    if exit_code == 0: 
+                    if exit_code == 0:
                         break
                 log("stop", execute[0])
                 self.done.put((execute[0], exit_code))

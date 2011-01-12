@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -8,7 +8,7 @@ import shutil
 
 class ArchiveSource(SourceBase):
     """ file download source"""
-    filenames = []    
+    filenames = []
     def __init__(self, subinfo=None):
         utils.debug( "ArchiveSource.__init__ called", 2 )
         if subinfo:
@@ -21,7 +21,7 @@ class ArchiveSource(SourceBase):
             return os.path.basename( self.subinfo.target().split()[index] )
         else:
             return False
-        
+
     def repositoryUrlCount(self):
         return len( self.subinfo.target().split() )
 
@@ -44,18 +44,18 @@ class ArchiveSource(SourceBase):
             path = os.path.join(self.downloadDir(), filename)
             if self.subinfo.hasTargetDigests():
                 if not os.path.exists(path):
-                    available = False    
-            elif self.subinfo.hasTargetDigestUrls(): 
+                    available = False
+            elif self.subinfo.hasTargetDigestUrls():
                 if not os.path.exists("%s.sha1" % path):
-                    available = False    
+                    available = False
             elif not os.path.exists(path):
-                available = False    
+                available = False
         return available
 
     def fetch( self, repopath = None ):
         """fetch normal tarballs"""
         utils.debug( "ArchiveSource.fetch called", 2 )
-            
+
         filenames = self.localFileNames()
 
         if ( self.noFetch ):
@@ -69,7 +69,7 @@ class ArchiveSource(SourceBase):
                 return True
 
             result = utils.getFiles( self.subinfo.target(), self.downloadDir() )
-            if not result: 
+            if not result:
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if self.subinfo.targetDigestUrl() == "auto":
@@ -94,21 +94,21 @@ class ArchiveSource(SourceBase):
             if not utils.checkFilesDigests( self.downloadDir(), filenames, self.subinfo.targetDigest()):
                 utils.error("invalid digest file")
                 return False
-        else: 
+        else:
             utils.debug("print source file digests", 1)
             digests = utils.createFilesDigests( self.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
         return True
 
     def unpack(self):
-        """unpacking all zipped(gz, zip, bz2) tarballs"""        
+        """unpacking all zipped(gz, zip, bz2) tarballs"""
         utils.debug( "ArchiveSource.unpack called", 2 )
 
         filenames = self.localFileNames()
         ## @todo: unpack destination is probably sourceDir()
         # unfortunally subinfo.targetInstSrc attribute is only for accessing a source subdir
         # for unpacking into a subdir we need an additional property
-        
+
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.installDir()
@@ -134,7 +134,7 @@ class ArchiveSource(SourceBase):
             if not utils.checkFilesDigests( self.downloadDir(), filenames, self.subinfo.targetDigest()):
                 utils.error("invalid digest file")
                 return False
-        else: 
+        else:
             utils.debug("print source file digests", 1)
             digests = utils.createFilesDigests( self.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
@@ -173,7 +173,7 @@ class ArchiveSource(SourceBase):
 
         if ( not os.path.exists( unpackDir ) ):
             os.mkdir( unpackDir )
-        
+
         if hasattr( self.subinfo.options.unpack, 'unpackDir' ):
             unpackDir = os.path.join( unpackDir, self.subinfo.options.unpack.unpackDir )
 
@@ -213,17 +213,17 @@ class ArchiveSource(SourceBase):
             "%s-%s.diff" % ( dir, str( datetime.date.today() ).replace('-', '') ) ) )
             if not self.system( cmd ):
                 return False
-            
+
         # remove all directories that are not needed any more after making the patch
         # disabled for now
         #for dir in packagelist:
         #    shutil.rmtree( dir + ".orig" )
-            
+
         # remove the temporary directory, it should be empty after all directories have been moved up
         os.rmdir( tmpdir )
 
         return True
-        
+
     def sourceVersion( self ):
         """ return a version based on the file name of the current target """
         # we hope that the build target is equal to the version that is build

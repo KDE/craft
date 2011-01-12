@@ -13,10 +13,10 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
         PackagerBase.__init__( self )
 
 # from SourceBase:
-    def fetch( self ): 
+    def fetch( self ):
         return True
 
-    def unpack( self ): 
+    def unpack( self ):
         return True
 
     def createPatch( self ):
@@ -32,24 +32,24 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
         return []
 
 # from BuildSystemBase:
-    def configure( self ): 
+    def configure( self ):
         return True
 
-    def install( self ): 
+    def install( self ):
         return True
 
-    def uninstall( self ): 
+    def uninstall( self ):
         return True
 
-    def runTests( self ): 
+    def runTests( self ):
         return True
 
-    def make( self ): 
+    def make( self ):
         return True
-            
+
     def dumpDependencies( self ):
         return True
-        
+
 # from PackagerBase:
     def createPackage( self ):
         return True

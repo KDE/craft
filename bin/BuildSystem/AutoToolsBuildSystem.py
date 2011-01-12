@@ -12,7 +12,7 @@ from shells import *
 from BuildSystemBase import *
 
 class AutoToolsBuildSystem(BuildSystemBase):
-    def __init__( self ):        
+    def __init__( self ):
         self.buildInSource = False
         BuildSystemBase.__init__(self, "autotools", "AutoToolsBuildSystem")
         self.shell = MSysShell()
@@ -20,13 +20,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
 
     def configureDefaultDefines( self ):
-        
+
         """defining the default cmake cmd line"""
         return ""
 
     def configure( self, cflags="", ldflags=""):
         """configure the target"""
-            
+
         if self.buildInSource:
             self.enterSourceDir()
         else:
@@ -34,11 +34,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         if self.noCopy:
             sourcedir = self.sourceDir()
-        else: 
+        else:
             sourcedir = self.buildDir()
-        
 
-        
+
+
         configure = os.path.join(sourcedir, "configure")
         if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
             mergeroot = self.shell.toNativePath( self.mergeDestinationDir() )
@@ -70,15 +70,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterSourceDir()
         else:
             self.enterBuildDir()
-        
+
         command = self.makeProgram
         args = ""
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
-            
+
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
-        
+
         # adding Targets later
         if utils.verbose() > 1:
             args += " VERBOSE=1"
@@ -94,17 +94,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.buildInSource:
             self.enterSourceDir()
         else:
-            self.enterBuildDir()           
+            self.enterBuildDir()
 
         command = self.makeProgram
         args = "install"
-        
+
         if self.subinfo.options.install.useDestDir == True:
-            args += " DESTDIR=%s prefix=." % self.shell.toNativePath( self.installDir() ) 
-            
+            args += " DESTDIR=%s prefix=." % self.shell.toNativePath( self.installDir() )
+
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
-            
+
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
         if self.buildInSource:
@@ -115,7 +115,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def runTest( self ):
         """running unittests"""
         return true
-        
+
     def createShell( self ):
         """create shell in package build dir with prepared environment"""
 
@@ -126,5 +126,5 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
             self.shell.openShell(self.buildDir())
         return True
-        
-        
+
+

@@ -20,7 +20,7 @@ if len (sys.argv) > 1:
         for element in dirlist:
             if os.path.isdir( os.path.join( wallpapers_sourcedir, element ) ):
                 print 'copying ' + element.replace('_', ' ') + '.jpg'
-                shutil.copy( os.path.join( wallpapers_sourcedir, element, "contents", "images", res + '.jpg' ), 
+                shutil.copy( os.path.join( wallpapers_sourcedir, element, "contents", "images", res + '.jpg' ),
                              os.path.join( os.getenv( "SYSTEMROOT" ), "Web", "Wallpaper", element.replace('_', ' ') + '.jpg' ) )
                 #shutil.move( os.path.join( os.getenv( "SYSTEMROOT" ), "web", "Wallpapers", res + '.jpg' ),
                 #             os.path.join( os.getenv( "SYSTEMROOT" ), "web", "Wallpapers",  ))

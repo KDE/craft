@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -26,7 +26,7 @@ class MultiSource(object):
     def fetch( self, repopath = None ):
         utils.trace( "MultiSource fetch", 2 )
         return self.source.fetch( repopath )
-        
+
     def checkDigest(self):
         utils.trace( "MultiSource checkDigest", 2 )
         return self.source.checkDigest()
@@ -63,7 +63,7 @@ class MultiSource(object):
     def createPatch(self):
         utils.trace( "MultiSource createPatch", 2 )
         return self.source.createPatch()
-        
+
     def sourceVersion(self):
         utils.trace( "MultiSource sourceVersion", 2 )
         return self.source.sourceVersion()

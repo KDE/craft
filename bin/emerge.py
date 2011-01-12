@@ -44,8 +44,8 @@ Commands (no packagename needed - will be ignored when given):
                                 be installed. Currently you don't need to
                                 enter the category and package: only the
                                 package will be enough.
---update-all                    this option tries to update all installed 
-                                packages that contain one or multiple svn 
+--update-all                    this option tries to update all installed
+                                packages that contain one or multiple svn
                                 targets. This is equivalent to running all
                                 those packages with the flag --update.
 
@@ -67,7 +67,7 @@ Commands (must have a packagename):
                         configure'ing/cmake'ing and running [mingw32-|n|]make.
 --configure             configure the sources (support is package specific)
 --make                  run [mingw32-|n|]make (support is package specific)
---install               This will run [mingw32-|n|]make install into the image 
+--install               This will run [mingw32-|n|]make install into the image
                         directory of each package.
 --manifest              This step creates the files contained in the manifest
                         dir.
@@ -86,12 +86,12 @@ Commands (must have a packagename):
                         unmodified files by default. You may use the -f or
                         --force option to let unmerge delete all files
                         unconditional.
---cleanallbuilds        Clean complete build directory. 
+--cleanallbuilds        Clean complete build directory.
 --cleanbuild            Clean build directory for the specified package. This
                         cleans also all the image directories of all targets of
                         the specified package.
---checkdigest           Check digest for the specified package. If no digest is 
-                        available calculate and print digests. 
+--checkdigest           Check digest for the specified package. If no digest is
+                        available calculate and print digests.
 --cleanimage            Clean image directory for the specified package and
                         target.
 --createpatch           Create source patch file for the specific package based
@@ -109,8 +109,8 @@ Flags:
 --target=[TARGET]               This will override the build of the default
                                 target. The default Target is marked with a
                                 star in the printout of --print-targets
---patchlevel=[PATCHLEVEL]       This will add a patch level when used together 
-                                with --package                               
+--patchlevel=[PATCHLEVEL]       This will add a patch level when used together
+                                with --package
 --log-dir=[LOG_DIR]             This will log the build output to a logfile in
                                 LOG_DIR for each package. Logging information
                                 is appended to existing logs.
@@ -129,8 +129,8 @@ Flags:
             cmake, make and other programs that are used. verbose level 2
             adds an option VERBOSE=1 to make and emerge is more verbose
             highest level is verbose level 3.
--z          if packages from version control system sources are installed, 
-            it marks them as out of date and rebuilds them (tags are not 
+-z          if packages from version control system sources are installed,
+            it marks them as out of date and rebuilds them (tags are not
             marked as out of date).
 --noclean   this option will try to use an existing build directory. Please
             handle this option with care - it will possibly break if the
@@ -195,14 +195,14 @@ def cleanup( root, hard = False ):
                 if line.startswith( "dir" ):
                     validDirs.append( oldline.strip() )
                 oldline = line
-                
+
     for f in files:
         if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
             isValid = True
             continue
         if( os.path.isdir( os.path.join( root, f ) ) ):
             isValid = True
-            cleanup( os.path.join( root, f ), hard ) 
+            cleanup( os.path.join( root, f ), hard )
         else:
             if( f.endswith( ".py" ) or f.endswith( ".diff" ) ):
                 if useValidFiles and not f in validFiles:
@@ -214,7 +214,7 @@ def cleanup( root, hard = False ):
     if( not isValid ):
         _delete( root )
     return isValid
-        
+
 @utils.log
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
@@ -235,7 +235,7 @@ def doExec( category, package, version, action, opts ):
 
 def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
-    
+
     if ( buildAction == "all" or buildAction == "full-package" ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = doExec( category, package, version, "fetch", opts )
@@ -255,7 +255,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             if disableTargetBuild:
                 return success
             os.putenv( "EMERGE_BUILD_STEP", "target" )
-        
+
         success = success and doExec( category, package, version, "compile", opts )
         success = success and doExec( category, package, version, "cleanimage", opts )
         success = success and doExec( category, package, version, "install", opts )
@@ -266,8 +266,8 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest", "dumpdeps", 
-                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest", "dumpdeps",
+                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch",
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
@@ -377,7 +377,7 @@ if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
     os.environ["EMERGE_TRACE"] = str( trace )
 else:
     trace = int( environ[ "EMERGE_TRACE" ] )
-        
+
 opts = list()
 
 executableName = sys.argv.pop( 0 )
@@ -502,7 +502,7 @@ packageList = []
 categoryList = []
 
 
-buildType = os.environ["EMERGE_BUILDTYPE"] 
+buildType = os.environ["EMERGE_BUILDTYPE"]
 if "EMERGE_DEFAULTCATEGORY" in os.environ:
     defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
 else:
@@ -511,7 +511,7 @@ else:
 if updateAll:
     installedPackages = portage.PortageInstance.getInstallables()
     if portage.PortageInstance.isCategory( packageName ):
-        utils.debug( "Updating installed packages from category " + packageName, 1 ) 
+        utils.debug( "Updating installed packages from category " + packageName, 1 )
     else:
         utils.debug( "Updating all installed packages", 1 )
     packageList = []
@@ -524,7 +524,7 @@ if updateAll:
     utils.debug( "Will update packages: " + str (packageList), 1 )
 elif packageName:
     packageList, categoryList = portage.getPackagesCategories(packageName)
-    
+
 for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
@@ -567,7 +567,7 @@ if ( buildAction != "all" and buildAction != "install-deps" ):
         and do the action although the package might already be installed.
         This is still a bit problematic since packageName might not be a valid
         package"""
-        
+
     if packageName and len( deplist ) >= 1:
         category, package, version, tag, ignoreInstalled = deplist[ -1 ]
     else:
@@ -608,7 +608,7 @@ else:
                 instver = installdb.findInstalled( category, package )
             else:
                 instver = portage.findInstalled( category, package )
-            
+
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
@@ -627,7 +627,7 @@ else:
                 action = buildAction
                 if buildAction == "install-deps":
                     action = "all"
-                
+
                 if not handlePackage( category, package, version, action, opts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         ( category, package, version, buildAction ) )
@@ -645,4 +645,4 @@ if len( nextArguments ) > 0:
     #    else:
     #        os.environ[ element ] = ""
     utils.system( command ) or utils.die( "cannot execute next commands cmd: %s" % command )
-    
+

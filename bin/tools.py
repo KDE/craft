@@ -2,13 +2,13 @@
 
 """
     several useful tool classes
-    
+
     This module contains some important classes to be used in the future.
     The Tee class should be used for duplicating output on the commandline and
     into a stream.
     The Popen class fixes two important problems with executing commands.
     It requires the installation of the pywin32 packages from
-    http://sourceforge.net/projects/pywin32/ to work though ( thanks to the 
+    http://sourceforge.net/projects/pywin32/ to work though ( thanks to the
     author! )
 """
 
@@ -30,7 +30,7 @@ try:
     _pywin32 = True
 except:
     _pywin32 = False
-    
+
 class Tee( __builtin__.file ):
     """
         This class behaves like the unix command tee:
@@ -116,11 +116,11 @@ if _pywin32:
             while self.poll() is None:
                 if self._bypass_stdout:
                     cont, avail, pos = win32pipe.PeekNamedPipe( self._stdout_hdl, 1024 )
-                    if avail > 0: 
+                    if avail > 0:
                         self._stdout_file.write( win32file.ReadFile( self._stdout_hdl, avail, None )[1] )
                 if self._bypass_stderr:
                     cont, avail, pos = win32pipe.PeekNamedPipe( self._stderr_hdl, 1024 )
-                    if avail > 0: 
+                    if avail > 0:
                         self._stderr_file.write( win32file.ReadFile( self._stderr_hdl, avail, None )[1] )
                 time.sleep( self.sleeptime )
 
@@ -138,10 +138,10 @@ if _pywin32:
 globalVerboseLevel = int( os.getenv( "EMERGE_VERBOSE" ) )
 
 class Verbose:
-    """ 
-        This class will work on the overall output verbosity 
-        It defines the interface for the option parser but before the default 
-        value is taken from the environment variable 
+    """
+        This class will work on the overall output verbosity
+        It defines the interface for the option parser but before the default
+        value is taken from the environment variable
     """
 
     def increase( self, option, opt, value, parser ):
@@ -262,7 +262,7 @@ if __name__ == "__main__":
         For some further insight:
             We first create a normal file object log and a Tee object which uses
             the log object as its output file. The outstream of the Tee object
-            stays sys.stdout even though we redirect sys.stdout to the log 
+            stays sys.stdout even though we redirect sys.stdout to the log
             object next. That will result in stderr going to stdout and log via
             the Tee object and stdout going directly into log (as we changed
             the sys.stdout for that!!!!).
@@ -272,7 +272,7 @@ if __name__ == "__main__":
 
     import os
     import sys
-    
+
     if not os.path.exists( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ) ) or not '--no-write' in sys.argv:
         testfile = file( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ), 'w+' )
         content = """from time import sleep
@@ -283,16 +283,16 @@ for i in range( 100 ):
         if i%5 == 0:
             print >> sys.stderr, "stderr: " + str(i)
         """
-        
+
         testfile.write( content )
         testfile.close()
-    
+
     command = sys.executable + " -u " + os.path.join( os.path.dirname( sys.argv[0] ), "test.py" )
     log = open( os.path.join( os.getenv( "KDEROOT" ), "tools.log" ), mode='w+b' )
     T_err = Tee( outfile=log )
     sys.stdout = log
     process = Popen( command, stderr=T_err, shell=True )
     process.wait()
-    
+
     if not '--no-remove' in sys.argv:
         os.remove( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ) )

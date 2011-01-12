@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -27,9 +27,9 @@ class GraphViz:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
             except:
                 return False
-        [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")        
+        [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")
         return True
-    
+
     def system( self, command, errorMessage ):
         if utils.system( command ):
             return True
@@ -45,7 +45,7 @@ class GraphViz:
         else:
             self.output = True
             return True
-    
+
     def openOutput(self):
         if self.output:
             return self.parent.system("start %s " % self.outFile, "start %s" % self.outFile)

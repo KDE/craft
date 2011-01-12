@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""@brief utilities 
+"""@brief utilities
 this file contains some helper functions for emerge
 """
 
@@ -126,13 +126,13 @@ def test4application( appname, args=None ):
         return False
 
 def verbose():
-    """return the value if the verbose level""" 
+    """return the value if the verbose level"""
     verb = os.getenv( "EMERGE_VERBOSE" )
     if ( not verb == None and verb.isdigit() and int(verb) > 0 ):
         return int( verb )
     else:
         return 0
-        
+
 def setVerbose( _verbose ):
     os.environ["EMERGE_VERBOSE"] = str( _verbose )
 
@@ -213,7 +213,7 @@ def getHttpFile( host, path, destdir, filename ):
     conn.request( "GET", path )
     r1 = conn.getresponse()
     debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
-        
+
     count = 0
     while r1.status == 302:
         if count > 10:
@@ -226,8 +226,8 @@ def getHttpFile( host, path, destdir, filename ):
         conn.request( "GET", path )
         r1 = conn.getresponse()
         debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
-    
-        
+
+
     data = r1.read()
 
     f = open( os.path.join( destdir, filename ), "wb" )
@@ -285,7 +285,7 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
         i = i + 1
     return True
 
-    
+
 def createFilesDigests( downloaddir, filenames ):
     """create digests of (multiple) files specified by 'filenames' from 'downloaddir'"""
     digestList = list()
@@ -295,7 +295,7 @@ def createFilesDigests( downloaddir, filenames ):
         entry = filename, digest
         digestList.append(entry)
     return digestList
-    
+
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
     i = 0
@@ -308,22 +308,22 @@ def printFilesDigests( digestFiles, buildTarget=None):
                 print "self.targetDigests['%s'] = '%s'" % ( buildTarget, digest )
         else:
             if buildTarget == None:
-                if i == 0: 
+                if i == 0:
                     print "      ['%s'," % ( digest )
-                elif i == size-1: 
+                elif i == size-1:
                     print "       '%s']" % ( digest )
                 else:
                     print "       '%s'," % ( digest )
                 i = i + 1
             else:
-                if i == 0: 
+                if i == 0:
                     print "self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest )
-                elif i == size-1: 
+                elif i == size-1:
                     print "                             '%s']" % ( digest )
                 else:
                     print "                             '%s'," % ( digest )
                 i = i + 1
-    
+
 ### unpack functions
 
 def unpackFiles( downloaddir, filenames, workdir ):
@@ -445,7 +445,7 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
     dir = os.path.basename( repo.replace( "/", "\\" ) )
     path = os.path.join( destdir, dir )
-    debug( "path: %s" % path, 1 ) 
+    debug( "path: %s" % path, 1 )
     if ( not os.path.exists( path ) ):
         # not checked out yet
         command = "svn checkout %s" % repo
@@ -521,7 +521,7 @@ def die( message ):
     exit( 1 )
 
 def traceMode():
-    """return the value if the verbose level""" 
+    """return the value if the verbose level"""
     trace = os.getenv( "EMERGE_TRACE" )
     if ( not trace == None and trace.isdigit() and int(trace) > 0 and verbose() > 0 ):
         return int( trace )
@@ -536,7 +536,7 @@ def trace( message, level=0 ):
 
 def system( cmd, outstream=None, errstream=None, *args, **kw ):
 
-    if outstream is None: 
+    if outstream is None:
         outstream = sys.stdout
     if errstream is None:
         errstream = sys.stderr
@@ -581,7 +581,7 @@ def moveSrcDirToDestDir( srcdir, destdir ):
 def getFileListFromDirectory( imagedir ):
     """ create a file list containing hashes """
     ret = []
-    
+
     myimagedir = imagedir
     if ( not imagedir.endswith( "\\" ) ):
         myimagedir = myimagedir + "\\"
@@ -590,7 +590,7 @@ def getFileListFromDirectory( imagedir ):
         for file in files:
             ret.append( ( os.path.join( root, file ).replace( myimagedir, "" ), digestFile( os.path.join( root, file ) ) ) )
     return ret
-    
+
 def getFileListFromManifest( rootdir, package ):
     """ return file list according to the manifest files for deletion/import """
     fileList = []
@@ -619,7 +619,7 @@ def getFileListFromManifest( rootdir, package ):
                                 a, b = line, ""
                         except:
                             utils.die( "could not parse line %s" % line, 1 )
-                            
+
                         if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
                         fileList.append( ( a, b ) )
@@ -645,12 +645,12 @@ def unmergeFileList( rootdir, fileList, forced = False ):
                     os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
             warning( "file %s does not exist" % ( os.path.join( rootdir, os.path.normcase( filename ) ) ) )
-        
+
 def unmerge( rootdir, package, forced = False ):
     """ delete files according to the manifest files """
     debug( "unmerge called: %s" % ( package ), 2 )
     removed = False
-    manifestDir = os.path.join( rootdir, "manifest"  ) 
+    manifestDir = os.path.join( rootdir, "manifest"  )
     if os.path.exists( manifestDir ):
         for file in os.listdir( manifestDir ):
             if file.endswith(".mft"):
@@ -675,7 +675,7 @@ def unmerge( rootdir, package, forced = False ):
                                 a, b = line, ""
                         except:
                             utils.die("could not parse line %s" % line, 1)
-                            
+
                         if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
                         if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
@@ -692,12 +692,12 @@ def unmerge( rootdir, package, forced = False ):
                     fptr.close()
                     os.remove( os.path.join( rootdir, "manifest", file ) )
                     removed = True
-                    
+
         else:
             debug("could not find any manifest files", 2)
     else:
         debug("could not find manifest directory", 2)
-        
+
     return removed
 
 def manifestDir( srcdir, imagedir, category, package, version ):
@@ -710,7 +710,7 @@ def hasManifestFile( imagedir, category, package ):
             if file.startswith( package ) and file.endswith( "-bin.mft" ):
                 return True
     return False
-    
+
 def createManifestFiles( imagedir, destdir, category, package, version ):
     """create the manifest files for an imagedir like the kdewin-packager does"""
     debug( "createManifestFiles called: %s %s %s %s %s" % ( imagedir, destdir, category, package, version ), 1 )
@@ -822,13 +822,13 @@ def moveEntries( srcdir, destdir ):
 
 def moveImageDirContents( imagedir, relSrcDir, relDestDir ):
     srcdir = os.path.join( imagedir, relSrcDir )
-    destdir = os.path.join( imagedir, relDestDir )    
+    destdir = os.path.join( imagedir, relDestDir )
 
     if ( not os.path.isdir( destdir ) ):
         os.mkdir( destdir )
 
     moveEntries( srcdir, destdir )
-    os.chdir( imagedir )    
+    os.chdir( imagedir )
     os.removedirs( relSrcDir )
 
 def fixCmakeImageDir( imagedir, rootdir ):
@@ -862,7 +862,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
         os.mkdir( tmpdir )
 
     moveEntries( tmp, tmpdir )
-    os.chdir( imagedir )    
+    os.chdir( imagedir )
     os.removedirs( rootpath )
     moveEntries( tmpdir, imagedir )
     cleanDirectory( tmpdir )
@@ -930,8 +930,8 @@ def getVCSType( url ):
         return "git"
     elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
         return "svn"
-    ## \todo complete more cvs access schemes 
-    elif url.find("pserver:") >= 0: 
+    ## \todo complete more cvs access schemes
+    elif url.find("pserver:") >= 0:
         return "cvs"
     else:
         return ""
@@ -951,7 +951,7 @@ def isGitUrl( Url ):
     return False
 
 def splitGitUrl( Url ):
-    """ this function splits up an url provided by Url into the server name, the path, a branch or tag; 
+    """ this function splits up an url provided by Url into the server name, the path, a branch or tag;
         it will return a list with 3 strings according to the following scheme:
         git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
         This also works for all other dvcs"""
@@ -982,7 +982,7 @@ def replaceVCSUrl( Url ):
             host = config.get( section, "host" )
             replace = config.get( section, "replace" )
             replacedict[ host ] = replace
-            
+
     for host in replacedict.keys():
         if not Url.find( host ) == -1:
             Url = Url.replace( host, replacedict[ host ] )
@@ -995,7 +995,7 @@ def createImportLibs( dll_name, basepath ):
     dst = os.path.join( basepath, "lib" )
     if( not os.path.exists( dst ) ):
         os.mkdir( dst )
-        
+
     # check whether the required binary tools exist
     HAVE_PEXPORTS = test4application( "pexports" )
     USE_PEXPORTS = HAVE_PEXPORTS
@@ -1006,7 +1006,7 @@ def createImportLibs( dll_name, basepath ):
         print "pexports used:", USE_PEXPORTS
         print "lib found:", HAVE_LIB
         print "dlltool found:", HAVE_DLLTOOL
-    
+
     dllpath = os.path.join( basepath, "bin", "%s.dll" % dll_name )
     defpath = os.path.join( basepath, "lib", "%s.def" % dll_name )
     exppath = os.path.join( basepath, "lib", "%s.exp" % dll_name )
@@ -1041,7 +1041,7 @@ def createImportLibs( dll_name, basepath ):
         # create .dll.a
         cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
         system( cmd )
-        
+
     if os.path.exists( defpath ):
         os.remove( defpath )
     if os.path.exists( exppath ):
@@ -1056,7 +1056,7 @@ def toMSysPath( path ):
 
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
-    
+
 def renameDir(src, dest):
     """ rename a directory """
     debug("rename directory from %s to %s" % ( src, dest ), 2)
@@ -1064,14 +1064,14 @@ def renameDir(src, dest):
         return False
     else:
         return True
-        
+
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
         debug("creating directory %s " % ( path ), 2)
         os.makedirs( path )
     return True
-    
+
 def copyDir( srcdir, destdir ):
     """ copy directory from srcdir to destdir """
     debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
@@ -1090,13 +1090,13 @@ def copyDir( srcdir, destdir ):
                 os.makedirs( tmpdir )
             for file in files:
                 shutil.copy( os.path.join( root, file ), tmpdir )
-                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ), 2) 
+                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ), 2)
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
     debug( "moveDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
     shutil.move( srcdir, destdir )
-    
+
 def rmtree( dir ):
     """ recursively delete dir """
     debug( "rmtree called. dir: %s" % ( dir ), 2 )
@@ -1113,7 +1113,7 @@ def moveFile(src, dest):
     debug("move file from %s to %s" % ( src, dest ), 2)
     os.rename( src, dest )
     return True
-    
+
 def deleteFile(file):
     """delete file """
     if not os.path.exists( file ):
@@ -1123,8 +1123,8 @@ def deleteFile(file):
     return True
 
 def findFiles( dir, pattern=None, list=None):
-    """find files recursivly""" 
-    if list == None: 
+    """find files recursivly"""
+    if list == None:
         list = []
         pattern = pattern.lower()
     for entry in os.listdir(dir):
@@ -1136,7 +1136,7 @@ def findFiles( dir, pattern=None, list=None):
         elif os.path.isfile(file) and pattern == None or entry.lower().find(pattern) > -1:
             list.append(file)
     return list
-    
+
 def putenv(name, value):
     """set environment variable"""
     debug("set environment variable -- set %s=%s" % ( name, value ), 2)
@@ -1176,7 +1176,7 @@ def log(fn):
                 os.mkdir(logdir)
             except:
                 die("EMERGE_LOG_DIR %s can not be created" % logdir)
-        
+
         logfile = "%s-%s-%s.log" % (args[0], args[1], args[2])
 
         logfile = os.path.join(logdir, logfile)

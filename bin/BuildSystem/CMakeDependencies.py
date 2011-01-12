@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -19,9 +19,9 @@ def toNodeLabel(file, baseDir=None):
         s = file
     if s.find('\\CMakeLists.txt') > -1:
         s = s.replace('\\CMakeLists.txt','')
-    
+
     s = s.replace('.\\','').replace('\\','\\\\')
-  
+
     if s.startswith('\\'):
         return s[2:]
 
@@ -33,9 +33,9 @@ class CMakeDependencies:
     def __init__(self):
         self.files1 = []
         self.files2 = []
-        self.packageIncludes = dict() # where a package is included 
+        self.packageIncludes = dict() # where a package is included
         self.packageUsage = dict()    # where package related variables are used (search string=xxx_INCLUDE or xxx_LIBRAR)
-        
+
     def parse(self, dir):
         """find CMakeLists.txt and parse it"""
         if not os.path.exists(dir):
@@ -57,7 +57,7 @@ class CMakeDependencies:
                                 self.packageIncludes[key].append(file)
                         else:
                             self.packageIncludes[key] = [file]
-                            
+
         # find package usage
         for file in list:
             f = open(file, "r")
@@ -65,7 +65,7 @@ class CMakeDependencies:
                 line = _line.upper()
                 if line.startswith("#"):
                     continue
-                for key in self.packageIncludes: 
+                for key in self.packageIncludes:
                     keyInclude = "%s_INCLUDE" % key
                     keyLib = "%s_LIBRAR" % key
                     keyExec = "%s_EXEC" % key
@@ -84,11 +84,11 @@ class CMakeDependencies:
         if outFile != None:
             sys.stdout = open(outFile, "w")
             # check if valid
-            
+
         print "digraph G {"
         print "rankdir=LR;"
         print "title [label=\"%s\" color=lightgrey shape=record];" % title
-        
+
         print "subgraph legend {"
         print "A [Label=\"\"];"
         print "B [Label=\"\" shape=record];"
@@ -96,37 +96,37 @@ class CMakeDependencies:
         print "A -> B [color=green, label=\"directory A includes cmake package B\"];"
         print "B -> C [label=\"directory C uses variables provided by cmake package B\"];"
         print "}"
-        
+
 
         print "{ rank=same; "
-        for file in self.files1: 
+        for file in self.files1:
             print "%s_include [label=\"%s\"];" % (toNodeName(file), toNodeLabel(file, baseDir))
         print "}"
 
         print "{ rank=same; "
-        for file in self.files2: 
+        for file in self.files2:
             print "%s_uses [label=\"%s\"];" % (toNodeName(file), toNodeLabel(file, baseDir))
         print "}"
 
         print "{ rank=same; "
-        for node in self.packageIncludes: 
+        for node in self.packageIncludes:
             print "%s [shape=record];" % (node[0])
         print "}"
 
-        for node in self.packageIncludes: 
+        for node in self.packageIncludes:
             #print "%s;" % (node[0])
-            for file in self.packageIncludes[node]: 
+            for file in self.packageIncludes[node]:
                 print "%s_include -> %s [color=green];" % (toNodeName(file), node[0])
 
-        for key in self.packageUsage: 
-            for value in self.packageUsage[key]: 
+        for key in self.packageUsage:
+            for value in self.packageUsage[key]:
                 print "%s -> %s_uses ;" % (key[0], toNodeName(value))
         print "}"
 
         if outFile != None:
-            sys.stdout = sys.__stdout__   
+            sys.stdout = sys.__stdout__
         return True
-    
+
 
 if __name__ == '__main__':
     dir = sys.argv[1]
@@ -141,5 +141,5 @@ if __name__ == '__main__':
     outFile = None
     if sys.argc >= 5:
         outFile = sys.argv[4]
-        
+
     a.toDot(title, baseDir, outFile)

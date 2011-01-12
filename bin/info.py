@@ -1,10 +1,10 @@
-## 
+##
 #
 # @package  this module contains the information class
 
-# the current work here is to access members only 
-# by methods to be able to separate the access from 
-# the definition 
+# the current work here is to access members only
+# by methods to be able to separate the access from
+# the definition
 
 import datetime
 import os
@@ -18,20 +18,20 @@ class infoclass:
         ### package options
         self.options = Options()
         self.targets = dict()
-        """Specifiy that the fetched source should be placed into a 
+        """Specifiy that the fetched source should be placed into a
         subdirectory of the default source directory"""
         self.targetInstSrc = dict()
-        """Specifiy that the default source directory should have a suffix after 
+        """Specifiy that the default source directory should have a suffix after
         the package name. This is usefull for package which needs different sources."""
         self.targetSrcSuffix = dict()
         self.targetConfigurePath = dict()
         self.targetInstallPath = dict()
         self.targetMergeSourcePath = dict()
         self.targetMergePath = dict()
-        
+
         self.targetDigests = dict()
         self.targetDigestUrls = dict()
-        ## \todo prelimary 
+        ## \todo prelimary
         self.svnTargets = dict()
 
         self.hardDependencies = dict()
@@ -45,7 +45,7 @@ class infoclass:
         self.dependencies = dict()
         self.runtimeDependencies = dict()
         self.buildDependencies = dict()
-        
+
         # a long and a short description for the package
         self.shortDescription = ''
         self.description = ''
@@ -60,15 +60,15 @@ class infoclass:
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
-        
+
         for x in RAW.splitlines():
             if not x == '':
                 """ if version is not available then set it as -1 """
                 self.hardDependencies[ x ] = [ -1 ]
-        
+
 
         self.setDependencies()
-        
+
         self.setTargets()
         self.setSVNTargets()
         self.setBuildTarget()
@@ -102,7 +102,7 @@ class infoclass:
         self.disableHostBuild = False
         self.disableTargetBuild = False
 
-    # return archive file based package url 
+    # return archive file based package url
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
         arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
@@ -126,18 +126,18 @@ class infoclass:
     def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
         """ return archive file based package digests relating to info.infoclass.packageUrls()
 
-The expected digest keys are build in the form <version>[<architecture>]-<compiler>-<packagetype> where 
+The expected digest keys are build in the form <version>[<architecture>]-<compiler>-<packagetype> where
 version=<value from version parameter>
 compiler='vc90'|'mingw4'
 packagetype=<keys from packagestypes parameter>
 architecture=<empty for x86>|'-x64'
 exception: the mingw-w32 compiler uses x86-mingw4 to not collide with the mingw.org compiler
 
-example: 
-    # for x86 
+example:
+    # for x86
     self.targetDigests['2.4.2-3-vc90-bin'] = '1b7c2171fb60669924c9d7174fc2e39161f7ef7b'
     self.targetDigests['2.4.2-3-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
-    # for x64 
+    # for x64
     self.targetDigests['2.4.2-3-x64-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
 
     self.targets['2.4.2-3'] = self.packageUrls(repoUrl, "fontconfig", "2.4.2-3")
@@ -173,18 +173,18 @@ example:
         for type in packagetypes:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + type + ext + '\n'
         return ret
-               
+
     #returns a package url for multiple files from the same base url
     def getPackageList( self, baseUrl, files ):
         retFiles = ""
         for file in files :
             retFiles += baseUrl+'/'+file+'\n'
-        return retFiles               
+        return retFiles
 
     # return true if archive targets for the currently selected build target is available
     def hasTarget( self ):
         return self.buildTarget in self.targets.keys()
-        
+
     # return archive target
     def target( self ):
         if self.buildTarget in self.targets.keys():
@@ -194,7 +194,7 @@ example:
     # return true if version system based target for the currently selected build target is available
     def hasSvnTarget( self ):
         return self.buildTarget in self.svnTargets.keys()
-        
+
     # return version system based target for the currently selected build target
     def svnTarget( self ):
         if self.buildTarget in self.svnTargets.keys():
@@ -209,16 +209,16 @@ example:
     def hasTargetSourcePath(self):
         """return true if relative path appendable to local source path is given for the recent target"""
         return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstSrc.keys()
-            
+
     def targetSourcePath(self):
         """return relative path appendable to local source path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstSrc.keys():
             return self.targetInstSrc[ self.buildTarget ]
-        
+
     def hasConfigurePath(self):
         """return true if relative path appendable to local source path is given for the recent target"""
         return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetConfigurePath.keys()
-            
+
     def configurePath(self):
         """return relative path appendable to local source path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetConfigurePath.keys():
@@ -227,17 +227,17 @@ example:
     def hasInstallPath(self):
         """return true if relative path appendable to local install path is given for the recent target"""
         return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstallPath.keys()
-                
+
     def installPath(self):
         """return relative path appendable to local install path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetInstallPath.keys():
             return self.targetInstallPath[ self.buildTarget ]
         utils.die("no install path for this build target defined")
-            
+
     def hasMergePath(self):
         """return true if relative path appendable to local merge path is given for the recent target"""
         return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergePath.keys()
-                
+
     def mergePath(self):
         """return relative path appendable to local merge path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergePath.keys():
@@ -246,7 +246,7 @@ example:
     def hasMergeSourcePath(self):
         """return true if relative path appendable to local merge source path is given for the recent target"""
         return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergeSourcePath.keys()
-                
+
     def mergeSourcePath(self):
         """return relative path appendable to local merge source path for the recent target"""
         if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and self.buildTarget in self.targetMergeSourcePath.keys():
@@ -255,7 +255,7 @@ example:
     def hasPatches(self):
         """return state for having patches for the recent target"""
         return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in self.patchToApply.keys()
-        
+
     def patchesToApply(self):
         """return patch informations for the recent build target"""
         if self.hasPatches():

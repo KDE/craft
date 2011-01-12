@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 

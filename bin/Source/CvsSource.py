@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # cvs support
@@ -8,13 +8,13 @@ import os
 import utils
 from shells import *
 
-## \todo requires installed git package -> add suport for installing packages 
+## \todo requires installed git package -> add suport for installing packages
 
 class CvsSource (VersionSystemSourceBase):
-    """cvs support"""   
+    """cvs support"""
     def __init__(self):
-        VersionSystemSourceBase.__init__(self)        
+        VersionSystemSourceBase.__init__(self)
 
     def fetch( self, repopath=None ):
         utils.die("not implemented yet")
-            
+

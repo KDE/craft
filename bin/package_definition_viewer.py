@@ -9,7 +9,7 @@ The tags for kdewin-packager's xml files are the following:
 """
 
 TAGDOKU['module']   = """
-the root element.  It can have an attribute 'name' which contains the 
+the root element.  It can have an attribute 'name' which contains the
 name of the package and thus defines the name of the 'default' package.
 There has to be one xml file per KDE-module.
 """
@@ -22,23 +22,23 @@ attribute 'name'. There can be multiple 'package' tags per 'module'.
 
 TAGDOKU['part']  =  """
 defines a package component (called parts). The known package components
-are "runtime", "development", "documentation", "source" and "debug" 
+are "runtime", "development", "documentation", "source" and "debug"
 The generated archive files contains related terms (bin, lib, doc, src, debug)
 in the filename. There can be multiple 'part' tags per 'package'.
 """
 TAGDOKU['files'] = """
 Is a child tag of 'part' which describes a set of files for this package
-component. There are attributes available for this tag: 
+component. There are attributes available for this tag:
 
-	include="<regexp>" 
-		contains a specification of a perl compatible 
-		regular expression for the files that should be 
-		contained in the package. The tag content should 
-		be empty in this case, which means the tag could 
+	include="<regexp>"
+		contains a specification of a perl compatible
+		regular expression for the files that should be
+		contained in the package. The tag content should
+		be empty in this case, which means the tag could
 		also be defined as <files include=".*"/>
 		
-When not using any attribute one can add relative file pathes 
-separated by ';' or '\n' into the content of this tag. 
+When not using any attribute one can add relative file pathes
+separated by ';' or '\n' into the content of this tag.
 It is possible to have multiple 'files' tags per 'part' tag. They
 will be executed subsequently.
 """
@@ -56,8 +56,8 @@ in the Installer. NOTE: there is no other description yet.
 """
 
 TAGDOKU['dependency'] = """
-Is a child tag of 'package' and contains a package dependency of this 
-package. It is possible to have multiple 'dependency' tags per 'package' 
+Is a child tag of 'package' and contains a package dependency of this
+package. It is possible to have multiple 'dependency' tags per 'package'
 tag.
 """
 class Part:
@@ -96,7 +96,7 @@ class SinglePackage:
     def __repr__( self ):
         return self.name + ' - ' + self.shortDescription
 
-        
+
 class XmlPackager:
     packageList = list()
     fileList = []
@@ -129,7 +129,7 @@ class XmlPackager:
                 package.addIgnore( self._checkTag( element.getElementsByTagName( 'ignore' )[i] ) )
             for part in element.getElementsByTagName( 'part' ):
                 package.partList.append(self._checkTag(part))
-            self.packageList.append( package )            
+            self.packageList.append( package )
 
     def handle_partTag( self, element ):
         if element.hasAttribute( 'name' ):
@@ -200,7 +200,7 @@ class XmlPackager:
         if len(self.fileList) > 0:
             print "unused files"
             for name in self.fileList:
-                print name 
+                print name
 
     def printOverview( self ):
         for package in self.packageList:
@@ -247,7 +247,7 @@ def usage():
         print '- ' + tag
         print TAGDOKU[tag]
         print
-        
+
 if len( sys.argv ) > 2:
     i = 1
     _printUnused = False
@@ -278,11 +278,11 @@ if len( sys.argv ) > 2:
     if _printUnused:
         packager.printUnusedFiles()
         exit(0)
-        
+
     if _printList == 1:
         packager.printList()
         exit(0)
-    
+
     if len( sys.argv ) == 3:
         packager.printOverview()
 

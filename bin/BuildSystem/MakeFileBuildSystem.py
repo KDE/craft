@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -35,20 +35,20 @@ class MakeFileBuildSystem(BuildSystemBase):
 
         if utils.verbose() > 1:
             command += " VERBOSE=1"
-        
+
         if self.subinfo.options.make.ignoreErrors:
             command += " -i"
-            
+
         if self.subinfo.options.make.makeOptions:
             command += " %s" % self.subinfo.options.make.makeOptions
 
-        return self.system( command, "make" ) 
-        
+        return self.system( command, "make" )
+
     def install( self):
         """install the target"""
         self.enterBuildDir()
-        command = "%s install DESTDIR=%s" % (self.makeProgramm, self.installDir())        
-        self.system( command, "install" ) 
+        command = "%s install DESTDIR=%s" % (self.makeProgramm, self.installDir())
+        self.system( command, "install" )
         return True
 
     def unittest( self ):

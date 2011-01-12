@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -7,7 +7,7 @@ import utils
 
 class FileSource(SourceBase):
     """ file download source"""
-    filenames = []    
+    filenames = []
     def __init__(self, subinfo=None):
         utils.debug( "FileSource.__init__ called", 2 )
         if subinfo:
@@ -24,7 +24,7 @@ class FileSource(SourceBase):
             for uri in self.subinfo.target().split():
                 filenames.append( os.path.basename( uri ) )
         return filenames
-        
+
     def localFileNames(self):
         return self.localFileNamesBase()
 
@@ -34,9 +34,9 @@ class FileSource(SourceBase):
     def fetch( self, repopath = None ):
         """fetching binary files"""
         utils.debug( "FileSource.fetch called", 2 )
-            
+
         filenames = self.localFileNames()
-        
+
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
             return True
@@ -48,10 +48,10 @@ class FileSource(SourceBase):
             return utils.getFiles( "", self.downloadDir() )
 
     def unpack(self):
-        """copying files into local dir"""        
+        """copying files into local dir"""
         utils.debug( "FileSource.unpack called", 2 )
 
-        filenames = self.localFileNames()        
+        filenames = self.localFileNames()
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             destdir = self.installDir()

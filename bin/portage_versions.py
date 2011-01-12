@@ -32,7 +32,7 @@ def vercmp(ver1, ver2, silent=1):
         positive number
         >>> vercmp('1.0_p3','1.0_p3')
         0
-    
+
     @param pkg1: version to compare with (see ver_regexp in portage_versions.py)
     @type pkg1: string (example: "2.1.2-r3")
     @param pkg2: version to compare againts (see ver_regexp in portage_versions.py)
@@ -40,7 +40,7 @@ def vercmp(ver1, ver2, silent=1):
     @rtype: None or float
     @return:
     1. positive if ver1 is greater than ver2
-    2. negative if ver1 is less than ver2 
+    2. negative if ver1 is less than ver2
     3. 0 if ver1 equals ver2
     4. None if ver1 or ver2 are invalid (see ver_regexp in portage_versions.py)
     """
@@ -54,7 +54,7 @@ def vercmp(ver1, ver2, silent=1):
         pass
     match1 = ver_regexp.match(ver1)
     match2 = ver_regexp.match(ver2)
-    
+
     # checking that the versions are valid
     if not match1 or not match1.groups():
         if not silent:
@@ -72,7 +72,7 @@ def vercmp(ver1, ver2, silent=1):
     elif match2.group(1) and not match1.group(1):
         vercmp_cache[mykey] = -1
         return -1
-    
+
     # building lists of the version parts before the suffix
     # first part is simple
     list1 = [int(match1.group(2))]
@@ -117,11 +117,11 @@ def vercmp(ver1, ver2, silent=1):
         elif list1[i] != list2[i]:
             vercmp_cache[mykey] = list1[i] - list2[i]
             return list1[i] - list2[i]
-    
+
     # main version is equal, so now compare the _suffix part
     list1 = match1.group(6).split("_")[1:]
     list2 = match2.group(6).split("_")[1:]
-    
+
     for i in range(0, max(len(list1), len(list2))):
         if len(list1) <= i:
             s1 = ("p", "0")
@@ -145,7 +145,7 @@ def vercmp(ver1, ver2, silent=1):
             except ValueError:
                r2 = 0
             return r1 - r2
-    
+
     # the suffix part is equal to, so finally check the revision
     if match1.group(10):
         r1 = int(match1.group(10))
@@ -157,7 +157,7 @@ def vercmp(ver1, ver2, silent=1):
         r2 = 0
     vercmp_cache[mykey] = r1 - r2
     return r1 - r2
-    
+
 def pkgcmp(pkg1, pkg2):
     """
     Compare 2 package versions created in pkgsplit format.
@@ -174,10 +174,10 @@ def pkgcmp(pkg1, pkg2):
     @param pkg2: package to compare againts
     @type pkg2: list (example: ['test', '1.0', 'r1'])
     @rtype: None or integer
-    @return: 
+    @return:
         1. None if package names are not the same
         2. 1 if pkg1 is greater than pkg2
-        3. -1 if pkg1 is less than pkg2 
+        3. -1 if pkg1 is less than pkg2
         4. 0 if pkg1 equals pkg2
     """
     if pkg1[0] != pkg2[0]:
@@ -206,7 +206,7 @@ def pkgsplit(mypkg, silent=1):
     except KeyError:
         pass
     myparts = mypkg.split("-")
-    
+
     if len(myparts)<2:
         if not silent:
             print "!!! Name error in", mypkg+": missing a version or name part."
@@ -218,7 +218,7 @@ def pkgsplit(mypkg, silent=1):
                 print "!!! Name error in", mypkg+": empty \"-\" part."
             pkgcache[mypkg] = None
             return None
-    
+
     #verify rev
     revok = 0
     myrev = myparts[-1]
@@ -258,9 +258,9 @@ catcache = {}
 def catpkgsplit(mydata, silent=1):
     """
     Takes a Category/Package-Version-Rev and returns a list of each.
-    
+
     @param mydata: Data to split
-    @type mydata: string 
+    @type mydata: string
     @param silent: suppress error messages
     @type silent: Boolean (integer)
     @rype: list
@@ -271,7 +271,7 @@ def catpkgsplit(mydata, silent=1):
     4.  If cat is invalid (specified but has incorrect syntax)
         an InvalidData Exception will be thrown
     """
-    
+
     # Categories may contain a-zA-z0-9+_- but cannot start with -
     global _valid_category
     #import portage_dep

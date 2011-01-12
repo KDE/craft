@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -16,7 +16,7 @@ def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
     utils.trace( "SourceFactory called", 1 )
     source = None
-    
+
     if settings.hasTarget():
         url = settings.target()
         if url.startswith("[archive]"):
@@ -26,7 +26,7 @@ def SourceFactory(settings):
         else:
             source = ArchiveSource(settings)
 
-    ## \todo move settings access into info class 
+    ## \todo move settings access into info class
     if settings.hasSvnTarget():
         url = settings.svnTarget()
         type = utils.getVCSType( url )
@@ -36,13 +36,13 @@ def SourceFactory(settings):
             source = HgSource(settings)
         elif "git":
             source = GitSource(settings)
-        ## \todo complete more cvs access schemes 
-        elif "cvs": 
+        ## \todo complete more cvs access schemes
+        elif "cvs":
             source = CvsSource(settings)
 
     if source == None:
         utils.die("none or unsupported source system set")
-    if not source.subinfo:    
+    if not source.subinfo:
         source.subinfo = settings
     source.url = url
     return source

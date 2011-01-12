@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # definitions for the qmake build system
@@ -24,24 +24,24 @@ class QMakeBuildSystem(BuildSystemBase):
     def setPathes( self ):
             # for building qt with qmake
         utils.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
-        
+
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
-        # to be sure 
+        # to be sure
         utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
 
     def configure( self, configureTool=None, configureDefines="" ):
         """inplements configure step for Qt projects"""
-            
+
         self.enterBuildDir()
 
         # here follows some automatic configure tool detection
-        # 1. search for configure.exe in the order 
-        #      a. provided by method call 
-        #      b. in source dir 
-        # 2. if qmake is available search for a pro-file named as the package 
+        # 1. search for configure.exe in the order
+        #      a. provided by method call
+        #      b. in source dir
+        # 2. if qmake is available search for a pro-file named as the package
         # 3. if a pro-file is available through configureOptions, run it with qmake
-        # 4. otherwise run qmake without any pro file given 
+        # 4. otherwise run qmake without any pro file given
         configTool = os.path.join(self.sourceDir(), "configure.exe")
         qmakeTool = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         topLevelProFile = self.sourceDir()
@@ -63,9 +63,9 @@ class QMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         command = self.makeProgramm
-        
+
         command += " %s" % self.makeOptions(options)
-            
+
         return self.system( command, "make" )
 
     def install( self, options=None ):
@@ -76,8 +76,8 @@ class QMakeBuildSystem(BuildSystemBase):
             command = "%s %s" % ( self.makeProgramm, options )
         else:
             command = "%s install" % ( self.makeProgramm )
-        
-        return self.system( command ) 
+
+        return self.system( command )
 
     def runTest( self ):
         """running qmake based unittests"""

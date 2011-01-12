@@ -65,7 +65,7 @@ for packageKey in addInfo:
         utils.debug( "found a binary package for %s" % package, 1 )
         binVersion = portage.PortageInstance.getNewestVersion( binCategory, binPackage )
         binTargets = portage.PortageInstance.getAllTargets( binCategory, binPackage, binVersion )
-        
+
         # check that the target from the source package which has been build is contained in the
         # binary package
         buildTarget = addInfo[ packageKey ] [ 0 ]
@@ -77,7 +77,7 @@ for packageKey in addInfo:
         if not buildTarget in binTargets:
             utils.warning( "key %s not contained in binary package %s" % ( buildTarget, binPackage ) )
             regenerateFile = True
-        
+
         dependencies = baseDependencies
         # get buildDependencies from the source package
         runtimeDependencies, buildDependencies = portage.readChildren( category, package, version )
@@ -103,7 +103,7 @@ for packageKey in addInfo:
                 targetkeys.append( buildTarget )
             targetsString = "'" + "', '".join( targetkeys ) + "'"
             result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
-                                                 'package': binPackage, 
+                                                 'package': binPackage,
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
                                                  'dependencies': dependencies
@@ -111,7 +111,7 @@ for packageKey in addInfo:
 
             currentName = portage.getFilename( binCategory, binPackage, binVersion )
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
-        
+
             if not doPretend:
                 if not currentName == newName:
                     cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
@@ -119,15 +119,15 @@ for packageKey in addInfo:
                     utils.debug( "running command: %s" % cmd )
                     p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
                     ret = p.wait()
-                    
+
                     if not ret == 0:
                         utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
                         continue
-                
+
                 f = file( newName, 'w+b' )
                 f.write( result )
                 f.close()
-            
+
 
         # check that all targets from the source package are contained in the binTargets
         # do we really need binaries for each and every target?
@@ -144,14 +144,14 @@ for packageKey in addInfo:
         if buildTarget == '':
             buildTarget = portage.PortageInstance.getDefaultTarget( category, package, version )
         regenerateFile = True
-        
+
         if category == "win32libs-sources" and package.endswith("-src"):
             binCategory = "win32libs-bin"
             binPackage = package[:-4]
             binVersion = buildTarget
         else:
             continue
-        
+
         dependencies = baseDependencies
         # get buildDependencies from the source package
         runtimeDependencies, buildDependencies = portage.readChildren( category, package, version )
@@ -165,8 +165,8 @@ for packageKey in addInfo:
             template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = [ buildTarget ]
             targetsString = "'" + "', '".join( targetkeys ) + "'"
-            result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ), 
-                                                 'package': binPackage, 
+            result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
+                                                 'package': binPackage,
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
                                                  'dependencies': dependencies
@@ -178,7 +178,7 @@ for packageKey in addInfo:
             if not doPretend:
                 if not os.path.exists( newDir ):
                     os.makedirs( newDir )
-                    
+
 
                 f = file( newName, 'w+b' )
                 f.write( result )
@@ -198,7 +198,7 @@ for packageKey in addInfo:
                     print "mkdir", newDir
 
                 print "write", newName
-    
+
                 cmd = "svn --non-interactive add %s" % ( newDir )
                 ret = 0
                 utils.debug( "running command: %s" % cmd, 0 )

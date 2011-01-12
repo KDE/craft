@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -18,6 +18,6 @@ class MultiPackager():
             if not packager.createPackage():
                 result = False
         return result
-        
+
     def make_package(self):
         return self.createPackages()

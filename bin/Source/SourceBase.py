@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -10,40 +10,40 @@ class SourceBase(EmergeBase):
         utils.trace( "SourceBase.__init__ called", 2 )
         EmergeBase.__init__(self, className)
         self.url = ""
-        
+
     def setProxy(self):
-        """set proxy for fetching sources - the default implementation is to set the 
+        """set proxy for fetching sources - the default implementation is to set the
         environment variables http_proxy and ftp_proxy"""
         (host, port, username, password) = self.proxySettings()
         if host == None:
-            return 
+            return
 
         name = ""
         if username != None and password != None:
             name = "%s:%s@" % (username, password)
-        
+
         proxy = "http://%s%s:%s" % (name, host, port)
         utils.putenv("http_proxy", proxy)
         utils.putenv("ftp_proxy", proxy)
-       
-    def fetch(self): 
+
+    def fetch(self):
         """fetch the source from a remote host and save it into a local destination"""
         abstract()
 
-    def checkDigest(self): 
+    def checkDigest(self):
         """check source digest of the package."""
         return True
 
-    def unpack(self): 
+    def unpack(self):
         """unpack the source into a local destination."""
         abstract()
 
     def sourceDir(self, index=0):
         """ return absolute path of the directory where sources are fetched into.
         utils.trace( "SourceBase.sourceDir called", 0 )
-        The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc 
+        The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
         controls parts of the name of the generated path. """
-        
+
         if self.subinfo.options.unpack.unpackIntoBuildDir:
             sourcedir = self.buildDir()
         else:
@@ -53,7 +53,7 @@ class SourceBase(EmergeBase):
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
-           
+
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
         utils.debug( "using sourcedir: " + sourcedir, 1 )
@@ -77,7 +77,7 @@ class SourceBase(EmergeBase):
                 return self.applyPatch( file, patchdepth )
 
         return True
-            
+
     def applyPatch(self, file, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
         utils.trace( "SourceBase.applyPatch called", 2 )
@@ -104,6 +104,6 @@ class SourceBase(EmergeBase):
         abstract()
 
     def sourceVersion(self):
-        """ return the current revision or version of the source directory, 
+        """ return the current revision or version of the source directory,
             return True in case it is not applicable and give out nothing """
         return True

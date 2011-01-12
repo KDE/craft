@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
@@ -31,7 +31,7 @@ class KDEWinPackager (PackagerBase):
                     self.useDebugPackages = True
                     break
 
-            
+
     def xmlTemplate(self):
         template = os.path.join(self.packageDir(), self.package+"-package.xml")
         if not os.path.exists(template):
@@ -50,18 +50,18 @@ class KDEWinPackager (PackagerBase):
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package
-            
+
         if pkgName.endswith('-src') or pkgName.endswith('-pkg'):
             pkgName = pkgName[:-4]
 
         pkgVersion, pkgNotesVersion = self.getPackageVersion()
 
-        if self.buildArchitecture() == "x64": 
+        if self.buildArchitecture() == "x64":
             pkgName += "-x64"
         elif compiler.isMinGW_W32():
             pkgName += "-x86"
-            
-        # kdewin packager creates his own manifest files, so there is no need to add 
+
+        # kdewin packager creates his own manifest files, so there is no need to add
         # if self.subinfo.options.package.withDigests:
         #    utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
@@ -69,7 +69,7 @@ class KDEWinPackager (PackagerBase):
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
-         
+
         for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
@@ -78,18 +78,18 @@ class KDEWinPackager (PackagerBase):
                 if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
                 utils.copyFile( script, destscript )
-        
+
         if ( self.subinfo.options.package.packSources ) and os.path.exists( self.sourceDir() ):
             srcCmd = " -srcroot " + self.sourceDir()
         else:
             if not os.path.exists( self.sourceDir() ):
                 utils.warning( "The source directory %s doesn't exist and can't be used for packaging." % self.sourceDir() )
             srcCmd = ""
-        
+
         # copy pdb/sym files to a temporary directory, because they can be scattered all over the build directory
         # plus, different build types copy files to different directories (could be buildDir(), buildDir()/bin, buildDir()/bin/Debug...),
         # so let's copy them to one precise location, package them, then delete that dir
-        
+
         symCmd = ""
         if self.useDebugPackages:
             # directories to ignore: cmake temporary files, and dbg so it won't try to copy a file to itself
@@ -101,7 +101,7 @@ class KDEWinPackager (PackagerBase):
                 utils.createDir( symPath )
             # shouldn't be needed, usually; but if files are present, that could lead to errors
             utils.cleanDirectory ( symPath )
-            
+
             utils.debug( "Copying debugging files to 'dbg'..." )
             for ( path, dirs, files ) in os.walk( path ):
                 found = 0
@@ -121,23 +121,23 @@ class KDEWinPackager (PackagerBase):
                             utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
                     elif ( file.endswith( ".pdb" ) ):
                         utils.copyFile( os.path.join( path, file ), os.path.join( symPath, file ) )
-            
+
             if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
                 symCmd += "-strip "
             symCmd += "-debug-package "
             symCmd += "-symroot " + symPath
             utils.debug ( symCmd, 2 )
-        
+
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
                   ( pkgName, self.imageDir(), pkgVersion, dstpath, srcCmd, symCmd )
         xmltemplate = self.xmlTemplate()
         if os.path.exists(xmltemplate):
             cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug("using xml template for package generating", 1) 
+            utils.debug("using xml template for package generating", 1)
         else:
             cmd = self.packager + " " + cmd + " -verbose -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug(" xml template %s for package generating not found" % xmltemplate, 1) 
-        
+            utils.debug(" xml template %s for package generating not found" % xmltemplate, 1)
+
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):
                 cmd += " -type mingw "
@@ -152,12 +152,12 @@ class KDEWinPackager (PackagerBase):
             else:
                 cmd += " -type unknown "
 
-            
+
         if self.subinfo.options.package.specialMode:
             cmd += " -special"
 
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
-        
+
         if self.useDebugPackages:
             utils.rmtree( symPath )
         return True

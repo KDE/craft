@@ -16,7 +16,7 @@ class Repo_info:
         self.repodir = None
         self.user = None
         self.password = None
-        
+
     def set_repo( self, server, svnbase, repodir, svnpath=None, user=None, password=None ):
         self.server = server
         self.svnbase = svnbase
@@ -25,7 +25,7 @@ class Repo_info:
         self.user = user
         self.password = password
         return self
-        
+
     def readFromURL( self, URL ):
         """ read from any url into the """
         print "readFromURL:", URL
@@ -33,7 +33,7 @@ class Repo_info:
         print "substring: ", re.split( pattern, URL )
         regex = re.compile( pattern )
         print "substring:", regex.sub("", URL )
-        
+
     def __lshift__( self, other ):
         """ self << other """
         self.server = other.server
@@ -42,8 +42,8 @@ class Repo_info:
         self.repodir = other.repodir
         self.user = other.user
         self.password = other.password
-        
-kde_repo_info = Repo_info().set_repo( user=os.getenv( "KDESVNUSERNAME" ), 
+
+kde_repo_info = Repo_info().set_repo( user=os.getenv( "KDESVNUSERNAME" ),
                                       password=os.getenv( "KDESVNPASSWORD" ),
                                       server=os.getenv( "KDESVNSERVER" ),
                                       svnbase="/home/kde/",
@@ -55,9 +55,9 @@ class ServerConfig ( tools.Object ):
         """ check if the config file is already in the location """
         # set the path for the config file
         self.configFilePath = os.path.join( os.getenv( "KDEROOT" ), "etc", "svnservers.conf" )
-        
+
         self.config = ConfigParser.ConfigParser()
-        
+
         if not os.path.exists( self.configFilePath ):
             self.inform( "couldn't find subversion server config file:" )
             self.inform( self.configFilePath )
@@ -101,7 +101,7 @@ class Repository ( tools.Object ):
         tools.Object.__init__( self )
         self.rinfo = repo_info
         self.rinfo.svnpath = svnpath
-        
+
     def __atomicCheckout( self, recursive=False ):
         """ checkout for one directory """
         repoURL = self.rinfo.server + self.rinfo.svnbase + self.currentsvnpath
@@ -126,15 +126,15 @@ class Repository ( tools.Object ):
             return True
         else:
             return False
-            
+
     def __atomicUpdate( self, target, recursive=False ):
         """ update for one directory """
         repoURL = self.rinfo.server + self.rinfo.svnbase + self.currentsvnpath
         if recursive:
             recursiveOption = ""
         else:
-            recursiveOption = "-N "        
-        
+            recursiveOption = "-N "
+
         command = "svn %s update %s" % ( recursiveOption, target )
         if ( self.rinfo.user != None ):
             command = command + " --username " + self.rinfo.user
@@ -158,11 +158,11 @@ class Repository ( tools.Object ):
             os.makedirs( self.rinfo.repodir )
         else:
             self.warning( "svn checkout destination already exists" )
-        
+
         currentdir = self.rinfo.repodir
         self.currentsvnpath = ""
         os.chdir( self.rinfo.repodir )
-        
+
         for tmpdir in self.rinfo.svnpath.split( '/' )[:-1]:
             currentdir = os.path.join( currentdir, tmpdir )
             self.currentsvnpath += tmpdir
@@ -174,18 +174,18 @@ class Repository ( tools.Object ):
         if not self.__atomicCheckout( True ):
             return False
         return True
-    
+
     def update( self ):
         """ update local copy """
         if ( not self.localCopyExists() ):
             self.error( "svn update destination directory not existing." )
             return False
         os.chdir( self.rinfo.repodir )
-        
+
         currentdir = self.rinfo.repodir
         self.currentsvnpath = ""
         os.chdir( self.rinfo.repodir )
-        
+
         for target in self.rinfo.svnpath.split( '/' )[ :-1 ]:
             if self.verbose() > 2:
                 print "target: ", target
@@ -202,11 +202,11 @@ class Repository ( tools.Object ):
         if not self.__atomicUpdate( self.rinfo.svnpath.split( '/' )[ -1 ], recursive=True ):
             return False
         return True
-        
+
     def status( self ):
         """ check for status """
         """ it will return False if the repository is somehow locked """
-        
+
         target = self.rinfo.svnpath.split( '/' )[ -1 ]
         if ( self.localCopyExists() ):
             # this rather strange line removes the target (the last part of the svnpath) from the svnpath, translates it to a normal path and appends it to the repodir
@@ -214,13 +214,13 @@ class Repository ( tools.Object ):
             if not self.isSvnRepo():
                 self.warning( "svn destination directory %s is no valid svn directory" % ( self.rinfo.repodir ) )
                 return False
-                
+
             command = "svn status %s" % target
             statuslog = os.tmpfile()
             with utils.LockFile(utils.svnLockFileName()):
                 self.system( command, capture_output=statuslog )
             statuslog.seek( 0 )
-            
+
             for line in statuslog:
                 if re.match( "^..L.+", line ) or re.match( "^...K.+", line ):
                     self.warning("working copy is locked, needs to be cleaned with cleanup")
@@ -231,29 +231,29 @@ class Repository ( tools.Object ):
         else:
             self.warning( "svn destination directory not existing." )
             return False
-    
+
     def isSvnRepo( self ):
         if ".svn" not in os.listdir( os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace('/', os.path.sep ) ) ):
             return False
         else:
             return True
-            
+
     def localCopyExists( self ):
         if ( not os.path.exists( os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace('/', os.path.sep ) ) ) ):
             return False
         else:
             return True
-    
+
     def cleanup( self ):
         """ eventually cleanup the local copy """
         target = self.rinfo.svnpath.split( '/' )[ -1 ]
         if ( self.localCopyExists() ):
             os.chdir( os.path.join( self.rinfo.repodir, self.rinfo.svnpath.replace('/' + target, '').replace('/', os.path.sep ) ) )
-            
+
             if not self.isSvnRepo():
                 self.warning( "svn destination directory is no valid svn directory" )
                 return False
-                
+
             command = "svn cleanup %s" % target
             log = os.tmpfile()
             with utils.LockFile(utils.svnLockFileName()):
@@ -291,16 +291,16 @@ class Repository ( tools.Object ):
                 infos[ key ] = value
         self.debug( infos )
         return infos
-    
+
     def runSelfTests( self ):
         """ define some tests to make sure this class works """
-        
+
         self.rinfo.repodir = "D:\\sources\\subversiontest\\trunk\\kdesupport\\emerge"
 #        self.rinfo.repodir = "D:\\sources\\subversiontest"
 #        self.rinfo.svnpath = "trunk/kdesupport/emerge"
         self.increase( 0, 0, 0, 0 )
 #        self.increase( 0, 0, 0, 0 )
-        
+
         self.debug("checkout: ...")
         #self.checkout()
         self.inform("checkout done")
@@ -317,7 +317,7 @@ class Repository ( tools.Object ):
 #        infodict = self.info()
 #        print Repo_info().readFromURL( infodict['URL'] )
         self.inform("info done")
-        
-        
+
+
 if __name__ == '__main__':
     Repository().runSelfTests()

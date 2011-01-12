@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2010, Intevation GmbH
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #     * Redistributions of source code must retain the above copyright
@@ -14,7 +14,7 @@
 #     * Neither the name of Intevation GmbH nor the
 #       names of its contributors may be used to endorse or promote products
 #       derived from this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -61,7 +61,7 @@ OUTPUT_XML = 1
 OUTPUT_KWI = 2
 
 class Visitor(object):
-    """Visitor applied to a node in the 
+    """Visitor applied to a node in the
        dependency graph during traversal
     """
 
@@ -77,7 +77,7 @@ class Visitor(object):
         return Visitor.CONTINUE_CHILDREN
 
 def nlSeparated(node):
-    """Replace ':' by newlines to make target look better in dot output.""" 
+    """Replace ':' by newlines to make target look better in dot output."""
     return str(node).replace(":", r"\n")
 
 class GraphvizCreator(Visitor):
@@ -101,7 +101,7 @@ class GraphvizCreator(Visitor):
     def createOutput(self, tree):
         visited = set()
         out = [
-            'digraph "dependencies" {', 
+            'digraph "dependencies" {',
             'ranksep=2;',
             'size="6,6";' ]
         ranks = {}
@@ -289,10 +289,10 @@ class KDEWinCreator( Visitor ):
             if num > 0:
                 out.append( _str )
         out.append( ";" )
-    
+
     def createOutput( self, tree ):
         out = []
-        
+
         template = Template( file( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "config.txt.template" ) ).read() )
 
         visited = set()
@@ -486,7 +486,7 @@ def parsePackageListFiles( filenames ):
 def main():
 
     args = parseOptions()
-    if args.type == "xml": 
+    if args.type == "xml":
         output_type = OUTPUT_XML
     elif args.type == "kwi":
         output_type = OUTPUT_KWI

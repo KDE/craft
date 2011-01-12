@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
 #
@@ -10,7 +10,7 @@ import utils
 from shells import *
 import tempfile
 
-## \todo requires installed git package -> add suport for installing packages 
+## \todo requires installed git package -> add suport for installing packages
 
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
@@ -19,10 +19,10 @@ class GitSource ( VersionSystemSourceBase ):
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self, "GitSource")
-        
+
         # get a shell since git doesn't run natively at the moment
         self.shell = MSysShell()
-        
+
         # detect git installation
         gitInstallDir = os.path.join( self.rootdir, 'dev-utils', 'git' )
         if os.path.exists( gitInstallDir ):
@@ -66,7 +66,7 @@ class GitSource ( VersionSystemSourceBase ):
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        
+
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace( "[git]", "" )
         repoString = utils.replaceVCSUrl( repopath )
@@ -81,7 +81,7 @@ class GitSource ( VersionSystemSourceBase ):
             safePath = os.environ[ "PATH" ]
             # add the git path to the PATH variable so that git can be called without path
             os.environ[ "PATH" ] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
-            
+
             if os.path.exists( self.checkoutDir() ):
                 if not repoTag:
                     ret = self.shell.execute( self.checkoutDir(), "git",
@@ -91,7 +91,7 @@ class GitSource ( VersionSystemSourceBase ):
                 os.makedirs( self.checkoutDir() )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
                 ret = self.shell.execute( self.checkoutDir(), "git", "clone %s ." % ( repoUrl ) )
-                
+
             # if a branch is given, we should check first if the branch is already downloaded locally, otherwise we can track the remote branch
             track = ""
             if ret and repoBranch and not repoTag:
@@ -112,13 +112,13 @@ class GitSource ( VersionSystemSourceBase ):
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
-    
+
     def __fetchMultipleBranch(self, repopath=None):
         utils.trace( 'GitSource __fetchMultipleBranch', 2 )
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        
+
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
         repoString = utils.replaceVCSUrl( repopath )
@@ -140,7 +140,7 @@ class GitSource ( VersionSystemSourceBase ):
                 ret = self.shell.execute( self.shell.toNativePath(rootCheckoutDir), "git", "fetch")
                 if not ret:
                     utils.die( "could not fetch remote data" )
-                            
+
             if repoBranch == "":
                 repoBranch = "master"
             if ret:
@@ -153,8 +153,8 @@ class GitSource ( VersionSystemSourceBase ):
                     ret = self.shell.execute(branchDir, "git", "pull")
                     if not ret:
                         utils.die( "could not pull into branch %s" % repoBranch )
-                
-            if ret: 
+
+            if ret:
                 #ret = self.shell.execute(branchDir, "git", "checkout -f")
                 if repoTag:
                     ret = self.shell.execute(branchDir, "git", "checkout -f %s" % (repoTag))
@@ -163,8 +163,8 @@ class GitSource ( VersionSystemSourceBase ):
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
-        
-    
+
+
     def fetch(self, repopath=None):
         utils.trace( 'GitSource fetch', 2 )
         if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
@@ -189,7 +189,7 @@ class GitSource ( VersionSystemSourceBase ):
                 return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
                         (patchdepth, self.shell.toNativePath(patchfile)))
             else:
-                sourceDir = self.sourceDir()            
+                sourceDir = self.sourceDir()
                 #FIXME this reverts previously applied patches !
                 #self.shell.execute(sourceDir, "git", "checkout -f")
                 return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
@@ -209,7 +209,7 @@ class GitSource ( VersionSystemSourceBase ):
         """ return the revision returned by git show """
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
         tmpFile = tempfile.TemporaryFile()
-        
+
         # run the command
         if not self.__isTag( self.__getCurrentBranch()[ 1: ] ):
             self.shell.execute( self.checkoutDir(), "git", "show --abbrev-commit", out=tmpFile )
@@ -218,19 +218,19 @@ class GitSource ( VersionSystemSourceBase ):
             # read the temporary file and grab the first line
             revision = tmpFile.readline().replace("commit ", "").strip()
             tmpFile.close()
-            
+
             # print the revision - everything else should be quiet now
             print revision
         else:
             # in case this is a tag, print out the tag version
             print self.__getCurrentBranch()[ 1: ]
         return True
-        
-    def checkoutDir(self, index=0 ): 
+
+    def checkoutDir(self, index=0 ):
         utils.trace( 'GitSource checkoutDir', 2 )
         return VersionSystemSourceBase.checkoutDir( self, index )
 
-    def sourceDir(self, index=0 ): 
+    def sourceDir(self, index=0 ):
         utils.trace( 'GitSource sourceDir', 2 )
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced

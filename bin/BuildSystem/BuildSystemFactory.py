@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
@@ -26,9 +26,9 @@ def BuildSystemFactory(buildSystemType, source):
         buildSystem = AutoToolsBuildSystem()
     elif buildSystemType == 'binary':
         buildSystem = BinaryBuildSystem()
-    else:   
+    else:
         utils.die("none or unsupported buildsystem set, use self.buildSystemType='type', where type could be 'binary', 'cmake', 'qmake', 'autotools' or 'KDE4'")
-        
+
     buildSystem.source = source
     buildSystem.subinfo = source.subinfo
     # for cleanimage

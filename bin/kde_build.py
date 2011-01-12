@@ -8,7 +8,7 @@ import info
 
 class kde_interface:
     def __init__( self, env = dict( os.environ ) ):
-        for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER", 
+        for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER",
                     "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN", "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
             if not key in env.keys():
                 env[ key ] = None
@@ -31,7 +31,7 @@ class kde_interface:
         self.BUILDTESTS = env[ "EMERGE_BUILDTESTS" ]
         self.DIRECTORY_LAYOUT = env[ "DIRECTORY_LAYOUT" ]
         self.MAKE_PROGRAM = env[ "EMERGE_MAKE_PROGRAM" ]
-        
+
     def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
         """ """
         self.subinfo = infoobject
@@ -80,13 +80,13 @@ class kde_interface:
 
         self.kdesvndir       = self.KDESVNDIR
         self.kdesvnserver    = self.KDESVNSERVER
-        self.kdesvnuser      = self.KDESVNUSERNAME 
+        self.kdesvnuser      = self.KDESVNUSERNAME
         self.kdesvnpass      = self.KDESVNPASSWORD
-        
+
         if utils.verbose() > 1 and self.kdeSvnPath():
             print "noCopy       : %s" % self.noCopy
             print "kdeSvnPath() : %s" % self.kdeSvnPath().replace("/", "\\")
-            
+
         if not ( self.noCopy and self.kdeSvnPath() ) :
             if self.kdeSvnPath():
                 self.sourcePath = "..\\%s" % self.kdeSvnPath().split('/')[-1]

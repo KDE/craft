@@ -88,7 +88,7 @@ class InstallPackage:
 
 
 class InstallDB:
-    """ a database object which provides the methods for adding and removing a package and 
+    """ a database object which provides the methods for adding and removing a package and
         checking its installation status.
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
@@ -103,16 +103,16 @@ class InstallDB:
         else:
             utils.debug( "found database", 1 )
             self.connection = sqlite3.connect( self.dbfilename )
-    
+
     def getLastId( self ):
         """ returns the last id from a table, which is essentially the  """
         cmd = '''SELECT max(packageId) FROM packageList;'''
-        
+
         cursor = self.connection.cursor()
         cursor.execute( cmd )
         lastId = cursor.fetchall()[0]
         return lastId[0]
-        
+
     def __constructWhereStmt( self, _dict ):
         params = []
         parametersUsed = False
@@ -133,27 +133,27 @@ class InstallDB:
         return stmt, params
 
     def isInstalled( self, category, package, version=None, prefix=None ):
-        """ returns whether a package is installed. If version and prefix are empty, all versions 
+        """ returns whether a package is installed. If version and prefix are empty, all versions
             and prefixes will be checked. """
         cmd = '''SELECT * FROM packageList'''
-        
+
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-        
+
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         isPackageInstalled = len( cursor.fetchall() ) > 0
         if isPackageInstalled:
-            utils.debug( """The package %s/%s has been installed in prefix '%s' with 
+            utils.debug( """The package %s/%s has been installed in prefix '%s' with
                             version '%s'.""" % ( category, package, prefix, version ), 1 )
         else:
-            utils.debug( """Couldn't find a trace that the package %s/%s has been installed in 
+            utils.debug( """Couldn't find a trace that the package %s/%s has been installed in
                             prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1 )
         cursor.close()
         return isPackageInstalled
-        
+
     def findInstalled( self, category, package, prefix=None ):
         """ get the version of a package that is installed """
         f = self.getInstalled( category, package, prefix )
@@ -171,7 +171,7 @@ class InstallDB:
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-        
+
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         values = cursor.fetchall()
@@ -187,7 +187,7 @@ class InstallDB:
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-        
+
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         values = cursor.fetchall()
@@ -203,7 +203,7 @@ class InstallDB:
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-        
+
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         values = []
@@ -222,7 +222,7 @@ class InstallDB:
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
-        
+
     def remInstalled( self, category, package, version, prefix=None ):
         """ removes an installed package """
         cmd = '''DELETE FROM packageList'''
@@ -230,11 +230,11 @@ class InstallDB:
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-        
+
         packageId = self.getLastId()
         cursor = self.connection.cursor()
         return [ InstallPackage( cursor, id ) for id in self.getPackageIds( category, package, version, prefix ) ]
-        
+
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """
         self.connection = sqlite3.connect( self.dbfilename )
@@ -246,7 +246,7 @@ class InstallDB:
         cursor.execute( '''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
                            packageId INTEGER, filename TEXT, fileHash TEXT)''' )
         self.connection.commit()
-        
+
         self._importExistingDatabase()
 
     def _importExistingDatabase( self ):
@@ -264,7 +264,7 @@ class InstallDB:
                     targetObject.addFiles( utils.getFileListFromManifest( os.path.join( os.getenv( "KDEROOT" ), os.getenv( "EMERGE_TARGET_PLATFORM" ) ), package ) )
                     targetObject.install()
                 # check PackageBase.mergeDestinationDir() for further things regarding the import from other prefixes
-                
+
 
 
 
@@ -340,8 +340,8 @@ if __name__ == '__main__':
     db = InstallDB( tempdbpath2 )
 
     utils.debug( 'testing installation database' )
-    
-    utils.debug( 'testing if package win32libs-sources/dbus-src with version 1.4.0 is installed: %s' % 
+
+    utils.debug( 'testing if package win32libs-sources/dbus-src with version 1.4.0 is installed: %s' %
                  db._isInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' ) )
 
     # in case the package is still installed, remove it first silently
@@ -359,7 +359,7 @@ if __name__ == '__main__':
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
-    
+
     # add another package in a different prefix
     utils.debug( 'installing package win32libs-sources/dbus-src-1.4.0 (debug)' )
     package = db.addInstalled( 'win32libs-sources', 'dbus-src', '1.4.0', 'debug' )
@@ -367,7 +367,7 @@ if __name__ == '__main__':
     # now really commit the package
     package.install()
     utils.debug_line()
-    
+
     utils.new_line()
     utils.debug( 'checking installed packages' )
     utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
@@ -389,7 +389,7 @@ if __name__ == '__main__':
     utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
     utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
     utils.debug_line()
-    
+
     utils.new_line()
     utils.debug( 'reverting removal' )
     # now instead of completing the removal, revert it
@@ -404,7 +404,7 @@ if __name__ == '__main__':
     db.getInstalled()
     db.getInstalled( category='win32libs-sources', prefix='debug' )
     db.getInstalled( package='dbus-src' )
-    
+
     utils.new_line()
     utils.debug( 'now really remove the package' )
     packageList = db.remInstalled( 'win32libs-sources', 'dbus-src', '1.4.0')

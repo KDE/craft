@@ -79,12 +79,12 @@ class baseclass:
             env = args["args"]["env"]
         else:
             env = dict( os.environ )
-            
+
         if "args" in args.keys() and "argv0" in args["args"].keys():
             self.argv0 = args["args"]["argv0"]
         else:
             self.argv0 = sys.argv[ 0 ]
-            
+
         self.SRC_URI                = SRC_URI
         self.instsrcdir             = ""
         self.instdestdir            = ""
@@ -106,7 +106,7 @@ class baseclass:
 
         self.msys = msys_build.msys_interface()
         self.kde  = kde_build.kde_interface()
-        
+
         if os.getenv( "EMERGE_OFFLINE" ) == "True":
             self.noFetch = True
         if os.getenv( "EMERGE_NOCOPY" ) == "True":
@@ -130,7 +130,7 @@ class baseclass:
             self.buildType = None
 
         self.setDirectories()
-        
+
         if COMPILER == "msvc2005":
             self.compiler = "msvc2005"
         elif COMPILER == "msvc2008":
@@ -171,13 +171,13 @@ class baseclass:
         if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
             self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
-            
+
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
             self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
 
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
-        
+
         if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
             filenames = []
             for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
@@ -209,7 +209,7 @@ class baseclass:
             utils.debug( "cleaning image dir: %s" % self.imagedir, 1 )
             utils.cleanDirectory( self.imagedir )
         return True
-    
+
     def fetch( self ):
         """getting normal tarballs from SRC_URI"""
         utils.debug( "base fetch called", 1 )
@@ -223,7 +223,7 @@ class baseclass:
 
     def git_unpack( self, repoString ):
         svndir = os.path.join( self.downloaddir, "svn-src" )
-        
+
         ret = True
         if ( not self.noFetch ):
             safePath = os.environ["PATH"]
@@ -235,7 +235,7 @@ class baseclass:
                 """it doesn't exist so clone the repo"""
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
                 repoString = utils.replaceGitUrl( repoString )
-                
+
                 repoUrl = utils.splitGitUrl( repoString )[0]
                 ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
             [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
@@ -250,7 +250,7 @@ class baseclass:
 
     def unpack( self ):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
-        
+
         utils.debug( "base unpack called", 1 )
 
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
@@ -307,7 +307,7 @@ class baseclass:
                 os.mkdir( os.path.join( self.imagedir, "manifest" ) )
             if os.path.exists( script ):
                 shutil.copyfile( script, destscript )
-                             
+
         utils.mergeImageDirToRootDir( self.imagedir, self.rootdir )
         # run post-install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -326,7 +326,7 @@ class baseclass:
         utils.unmerge( self.rootdir, self.package, self.forced )
         portage.remInstalled( self.category, self.package, self.version )
         return True
-        
+
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers"""
         """install database"""
@@ -334,7 +334,7 @@ class baseclass:
             print "base manifest called"
         utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.category, self.package, self.version )
         return True
-        
+
     def make_package( self ):
         """overload this function with the package specific packaging instructions"""
         if utils.verbose() > 1:
@@ -367,7 +367,7 @@ class baseclass:
                 self.cmakeMakeProgramm = "mingw32-make"
         else:
             utils.die( "KDECOMPILER: %s not understood" % COMPILER )
-        
+
         if EMERGE_MAKE_PROGRAM and self.subinfo.options.make.supportsMultijob:
             self.cmakeMakeProgramm = EMERGE_MAKE_PROGRAM
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
@@ -384,7 +384,7 @@ class baseclass:
         self.kdesvnuser = KDESVNUSERNAME
         self.kdesvnpass = KDESVNPASSWORD
         self.svndir = os.path.join( self.downloaddir, "svn-src", self.package )
-       
+
         self.strigidir = os.getenv( "STRIGI_HOME" )
         self.dbusdir = os.getenv( "DBUSDIR" )
 
@@ -397,7 +397,7 @@ class baseclass:
             if utils.verbose() > 0:
                 print "skipping svn fetch/update (--offline)"
             return True
-        
+
         utils.svnFetch( repo, self.svndir )
 
     def kdeGet( self ):
@@ -405,13 +405,13 @@ class baseclass:
 
     def __kdesinglecheckout( self, repourl, ownpath, codir, doRecursive = False ):
         self.kde.kdesinglecheckout( repourl, ownpath, codir, doRecursive )
-                
+
     def kdeSvnFetch( self, svnpath, packagedir ):
         return self.kde.kdeSvnFetch( svnpath, packagedir )
 
     def kdeSvnPath( self ):
         return self.kde.kdeSvnPath()
-        
+
     def kdeSvnUnpack( self, svnpath=None, packagedir=None ):
         if self.kde.kdeSvnPath():
             return self.kde.kdeSvnUnpack( svnpath, packagedir )
@@ -426,7 +426,7 @@ class baseclass:
                 return utils.applyPatch( srcdir, patchfile, patchdepth )
             return True
 
-        
+
     def kdeDefaultDefines( self ):
         return self.kde.kdeDefaultDefines()
 
@@ -435,7 +435,7 @@ class baseclass:
 
     def kdeMakeInternal( self, buildType ):
         return self.kde.kdeMakeInternal( buildType )
-    
+
     def kdeInstallInternal( self, buildType ):
         return self.kde.kdeInstallInternal( buildType )
 
@@ -451,7 +451,7 @@ class baseclass:
     def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True, special = False ):
         """packaging according to the gnuwin32 packaging rules"""
         """this requires the kdewin-packager"""
-        
+
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
@@ -465,7 +465,7 @@ class baseclass:
 
         if( os.path.exists( tmp ) ):
             binpath = tmp
-        
+
         if not utils.test4application( "kdewin-packager" ):
             utils.die( "kdewin-packager not found - please make sure it is in your path" )
 
@@ -496,7 +496,7 @@ class baseclass:
             cmd = "kdewin-packager.exe " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
         else:
             cmd = "kdewin-packager.exe " + cmd + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, self.version ) + "-compression 2 "
-        
+
         if( not self.createCombinedPackage ):
             if( self.compiler == "mingw"):
                 cmd += " -type mingw "
@@ -547,7 +547,7 @@ class baseclass:
             an entry point to modifiy system calls globally.
             The return value of the called command is checked and on failure
             emerge exits accordingly.
-            For available keyword options please refer to the python 
+            For available keyword options please refer to the python
             documentation of system.popen
         """
         utils.system( command, *args, **kw ) or \
@@ -558,13 +558,13 @@ class baseclass:
 # for testing purpose only:
 # ############################################################################################
 if __name__ == '__main__':
-    if utils.verbose() > 0:    
+    if utils.verbose() > 0:
         print "KDEROOT:     ", ROOTDIR
         print "KDECOMPILER: ", COMPILER
         print "DOWNLOADDIR: ", DOWNLOADDIR
         print "KDESVNDIR:   ", KDESVNDIR
         print "KDESVNSERVER:", KDESVNSERVER
         print "MSYSDIR:", MSYSDIR
-    
+
     test = baseclass()
     test.system( "dir" )

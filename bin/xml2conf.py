@@ -1,4 +1,4 @@
-# translate xml file to the 
+# translate xml file to the
 import sys
 import re
 import os
@@ -56,7 +56,7 @@ for filename in sys.argv[1:]:
         for i in packageDepsList[moduleMetaName]:
             print i,
         print
-        packageDepsList.pop(moduleMetaName, "") 
+        packageDepsList.pop(moduleMetaName, "")
     print ';'
 
     # print the categorypackages
@@ -70,12 +70,12 @@ for filename in sys.argv[1:]:
     # print all dependencies
     for package in packageDepsList:
         for compiler in compilerList:
-            print "@deps", package + "-" + compiler, 
+            print "@deps", package + "-" + compiler,
             for i in packageDepsList[package]:
                 print i + "-" + compiler,
             print
     print ';'
-    
+
     moduleList[moduleName] = packageDescriptionList
 
 print

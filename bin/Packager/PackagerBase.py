@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
@@ -9,7 +9,7 @@ class PackagerBase(EmergeBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
     def __init__(self, className=None):
         EmergeBase.__init__(self, className)
-    
+
     def getPackageVersion(self):
         """ return version information for the currently used package"""
         if self.subinfo.options.package.version != None:
@@ -32,12 +32,12 @@ class PackagerBase(EmergeBase):
         if "EMERGE_PKGPATCHLVL" in os.environ:
             pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
         return [pkgVersion, pkgNotesVersion]
-    
+
     #""" create a package """
     def createPackage(self):
         abstract()
 
-    # for compatibility 
+    # for compatibility
     def make_package(self):
         return self.createPackage()
 

@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import info
@@ -10,12 +10,12 @@ import datetime
 import emergePlatform
 from ctypes import *
 
-## @todo complete a release and binary merge dir below rootdir 
+## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
 # 2a. use different install databases for debug and release
-# 3. binary packages which are build type independent should be 
+# 3. binary packages which are build type independent should be
 # marked in both databases or should have a separate install database
-# question: How to detect reliable this case ? 
+# question: How to detect reliable this case ?
 
 
 ROOTDIR = os.getenv( "KDEROOT" )
@@ -47,12 +47,12 @@ def envAsBool(key):
 
 class EmergeBase(object):
     """base class for emerge system - holds attributes and methods required by base classes"""
-    
+
     def __init__( self, className=None, **args):
         object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
 
-        # if class name has been provided add implicit build time dependency 
+        # if class name has been provided add implicit build time dependency
         if className and os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             packageName = 'internal/%s' % className
             if not packageName in self.subinfo.buildDependencies:
@@ -76,18 +76,18 @@ class EmergeBase(object):
         self.versioned              = False
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
-     
+
         ## specifies if a build type related root directory should be used
         self.useBuildTypeRelatedMergeRoot = False
         if envAsBool("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE"):
             self.useBuildTypeRelatedMergeRoot = True
-        
+
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
-        
+
         self.noFetch = False
         if envAsBool( "EMERGE_OFFLINE" ):
             self.noFetch = True
-        
+
         self.noCopy = False
         if envAsBool( "EMERGE_NOCOPY" ):
             self.noCopy = True
@@ -103,7 +103,7 @@ class EmergeBase(object):
         self.forced = False
         if envAsBool( "EMERGE_FORCED" ):
             self.forced = True
-            
+
         self.buildTests = False
         if envAsBool( "EMERGE_BUILDTESTS" ):
             self.buildTests = True
@@ -127,7 +127,7 @@ class EmergeBase(object):
 
     def __adjustPath(self, dir):
         """return adjusted path"""
-        if not self.subinfo.options.useShortPathes: 
+        if not self.subinfo.options.useShortPathes:
             return dir
         path = c_char_p(dir)
         len = windll.kernel32.GetShortPathNameA(path, 0, 0)
@@ -138,7 +138,7 @@ class EmergeBase(object):
         if utils.verbose() > 0:
             print "converting " + dir + " to " + buffer.value
         return buffer.value
-    
+
     def abstract():
         import inspect
         caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -159,10 +159,10 @@ class EmergeBase(object):
 
     def isTargetBuild(self):
         if not emergePlatform.isCrossCompilingEnabled():
-            return False 
+            return False
         else:
             return os.getenv( "EMERGE_BUILD_STEP" ) == "target"
-        
+
     def isHostBuild(self):
         if not emergePlatform.isCrossCompilingEnabled():
             return True
@@ -208,7 +208,7 @@ class EmergeBase(object):
         ## \todo add image dir support for using binary packages for a specific compiler and build type
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
             return dir
-        
+
         if self.subinfo.options.useCompilerType == True:
             dir += '-' + COMPILER
         if self.isTargetBuild():
@@ -218,22 +218,22 @@ class EmergeBase(object):
         dir += '-' + self.buildTarget
         return dir
 
-    def devUtilsRoot(self): 
+    def devUtilsRoot(self):
         """ location of directory where development utils package are merged to"""
         return os.path.join(ROOTDIR, 'dev-utils')
 
-    def downloadDir(self): 
+    def downloadDir(self):
         """ location of directory where fetched files are  stored """
         return self.__adjustPath(DOWNLOADDIR)
-        
-    def packageDir(self): 
+
+    def packageDir(self):
         """ add documentation """
         return self.__adjustPath(os.path.join( portage.rootDirForPackage( self.category, self.package ), self.category, self.package ))
-    
+
     def filesDir(self):
         """ add documentation """
         return self.__adjustPath(os.path.join( self.packageDir(), "files" ))
-        
+
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
         buildroot    = os.path.join( ROOTDIR, "build", self.category, self.PV )
@@ -244,7 +244,7 @@ class EmergeBase(object):
         _workDir = os.path.join( self.buildRoot(), "work" )
         return self.__adjustPath(_workDir)
 
-    def buildDir(self):        
+    def buildDir(self):
         utils.debug("EmergeBase.buildDir() called", 2)
         self.setBuildTarget()
         builddir = os.path.join(self.workDir(), self.workDirPattern())
@@ -258,8 +258,8 @@ class EmergeBase(object):
         return self.__adjustPath(imageDir)
 
     def installDir(self):
-        """return absolute path to the install directory of the currently active package. 
-        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used 
+        """return absolute path to the install directory of the currently active package.
+        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used
         """
         if self.subinfo.hasInstallPath():
             installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
@@ -270,8 +270,8 @@ class EmergeBase(object):
         return self.__adjustPath(installDir)
 
     def mergeSourceDir(self):
-        """return absolute path to the merge source directory of the currently active package. 
-        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath for a 
+        """return absolute path to the merge source directory of the currently active package.
+        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath for a
         specific target or @ref self.subinfo.options.merge.sourcePath is used
         """
         if self.subinfo.hasMergeSourcePath():
@@ -281,12 +281,12 @@ class EmergeBase(object):
         else:
             dir = self.imageDir()
         return self.__adjustPath(dir)
-                        
+
     def mergeDestinationDir(self):
-        """return absolute path to the merge destination directory of the currently active package. 
-        This path may point to a subdir of rootdir in case @ref info.targetMergePath for a specific 
-        build target or @ref self.subinfo.options.merge.destinationPath is used 
-        """            
+        """return absolute path to the merge destination directory of the currently active package.
+        This path may point to a subdir of rootdir in case @ref info.targetMergePath for a specific
+        build target or @ref self.subinfo.options.merge.destinationPath is used
+        """
 
         if self.subinfo.hasMergePath():
             dir = os.path.join( ROOTDIR, self.subinfo.mergePath() )
@@ -308,13 +308,13 @@ class EmergeBase(object):
 
     def setBuildTarget( self, target = None):
         utils.debug( "EmergeBase.setBuildTarget called", 2 )
-    
+
         self.subinfo.setBuildTarget(target)
         ## \todo replace self.buildTarget by self.buildTarget()
         self.buildTarget = self.subinfo.buildTarget
         if hasattr(self,'source'):
             self.source.buildTarget = self.subinfo.buildTarget
-        
+
     def setup( self, fileName=None, category=None, package=None, version=None, buildTarget=None):
         if fileName == None:
             ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
@@ -328,7 +328,7 @@ class EmergeBase(object):
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )
-       
+
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
             if utils.verbose() > 0:
@@ -345,7 +345,7 @@ class EmergeBase(object):
         os.chdir( self.sourceDir() )
         if utils.verbose() > 0:
             print "entering: %s" % self.sourceDir()
-            
+
     def enterImageDir(self):
         if ( not os.path.exists( self.imageDir() ) ):
             return False
@@ -353,14 +353,14 @@ class EmergeBase(object):
         os.chdir( self.imageDir() )
         if utils.verbose() > 0:
             print "entering: %s" % self.imageDir()
-        
-        
+
+
     def system( self, command, errorMessage="", debuglevel=1, *args, **kw):
-        """convencience function for running system commands. 
-        This method prints a debug message and then runs a system command. 
-        If the system command returns with errors the methos prints an error 
+        """convencience function for running system commands.
+        This method prints a debug message and then runs a system command.
+        If the system command returns with errors the methos prints an error
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
-        
+
         utils.debug( str(command), debuglevel )
         if utils.system( command, *args, **kw):
             return True
@@ -376,5 +376,5 @@ class EmergeBase(object):
         username = os.getenv('EMERGE_PROXY_USERNAME')
         password = os.getenv('EMERGE_PROXY_PASSWORD')
         return [host, port, username, password]
-    
-        
+
+

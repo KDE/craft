@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
@@ -12,7 +12,7 @@ class InnoSetupPackager (PackagerBase):
         self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
         if self.packagerExe != None:
             utils.debug("using inno setup packager from %s" % self.packagerExe, 2)
-            
+
     def configFile(self):
         """ return path of installer config file"""
         utils.debug("searching package dir for setup config", 2)
@@ -30,7 +30,7 @@ class InnoSetupPackager (PackagerBase):
         if os.path.exists(file):
             return file
         return None
-        
+
     ## \todo rename to package()
     def createPackage(self):
         """packaging """
@@ -43,30 +43,30 @@ class InnoSetupPackager (PackagerBase):
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package
-            
+
         if pkgName.endswith('-src'):
             pkgName = pkgName[:-4]
 
         pkgVersion, pkgNotesVersion = self.getPackageVersion()
 
-        # perform variable substitution 
-		# variablenames are wrapped with '#..#' to not get 
+        # perform variable substitution
+		# variablenames are wrapped with '#..#' to not get
 		# in conflict with cmake or other config file patching tools
         self.replacementPatterns = []
         self.replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#", pkgVersion])
         self.replacementPatterns.append(["#EMERGE_INSTALL_DIR#", self.installDir()])
         self.replacementPatterns.append(["#EMERGE_MERGE_DESTINATION_DIR#", self.mergeDestinationDir()])
-            
-        if self.buildArchitecture() == "x64": 
+
+        if self.buildArchitecture() == "x64":
             pkgName += "-x64"
         #else:
         #    pkgName += "-x86"
-            
+
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
-         
+
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
@@ -75,16 +75,16 @@ class InnoSetupPackager (PackagerBase):
                 if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
                 utils.copyFile( script, destscript )
-        
+
         # determine source in case MultiSource is used
-        if hasattr(self,'source'): 
+        if hasattr(self,'source'):
             sourcedir = self.source.sourceDir()
-        elif hasattr(self.parent,'source'): 
+        elif hasattr(self.parent,'source'):
             sourcedir = self.parent.source.sourceDir()
         else:
             sourcedir = self.sourceDir()
-        
-        # todo: this is probably code for dealing with svn repositories 
+
+        # todo: this is probably code for dealing with svn repositories
         # need to be refactored
         if ( self.subinfo.options.package.packSources ):
             srcCmd = " -srcroot " + sourcedir
@@ -111,17 +111,17 @@ class InnoSetupPackager (PackagerBase):
             else:
                 filesDir = self.imageDir()
             utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
-              
+
         ## \todo do we have a wrapper for this ?
         destPath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not destPath:
             destPath = os.path.join( self.rootdir, "tmp" )
-              
+
         cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe, destPath, pkgName, pkgVersion)
 
         #
         # create config file from config File
-        # 
+        #
         infile = self.configFile()
         if infile == None:
             utils.die("could not find config file %s" % infile)

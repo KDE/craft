@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
 #
 # mercurial support based on the git support
@@ -27,12 +27,12 @@ class HgSource ( VersionSystemSourceBase ):
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        
+
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
 #        repoString = utils.replaceVCSUrl( repopath )
         repopath = repopath.replace("[hg]", "")
         [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repopath )
-        
+
 
         if utils.verbose() <= 2:
             devNull = " > NUL"
@@ -49,7 +49,7 @@ class HgSource ( VersionSystemSourceBase ):
                 # if directory already exists, simply do an update but obey to offline
                 os.chdir( self.checkoutDir() )
                 ret = self.system( "hg update" )
-                
+
             else:
                 # it doesn't exist so clone the repo
                 svnsrcdir = self.checkoutDir().replace( self.package, "" )
@@ -61,7 +61,7 @@ class HgSource ( VersionSystemSourceBase ):
         else:
             utils.debug( "skipping hg fetch (--offline)" )
         return ret
-    
+
     def applyPatch(self, file, patchdepth):
         """apply a patch to a mercurial repository checkout"""
         utils.trace( "HgSource.applyPatches called", 2 )
@@ -85,10 +85,10 @@ class HgSource ( VersionSystemSourceBase ):
         utils.trace( "HgSource.sourceVersion called", 2 )
 
         if self.enableHg:
-        
+
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
             tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" )
-            
+
             # run the command
             ret = utils.system( "hg tip", tempfile )
             tempfile.seek( os.SEEK_SET )
@@ -96,7 +96,7 @@ class HgSource ( VersionSystemSourceBase ):
             # read the temporary file and grab the first line
             revision = tempfile.readline().replace("changeset:", "").strip()
             tempfile.close()
-            
+
             # print the revision - everything else should be quiet now
             print revision
             os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ) )

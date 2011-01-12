@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-    provides shells     
+    provides shells
 """
 
 import os
@@ -9,7 +9,7 @@ import utils
 import sys
 import compiler
 
-## \todo requires installed msys package -> add suport for installing packages 
+## \todo requires installed msys package -> add suport for installing packages
 
 class Shell(object):
     def __init__(self):
@@ -22,7 +22,7 @@ class Shell(object):
     #""" execute shell command
     def execute(self, path, cmd, args):
         abstract
-    
+
 
 class MSysShell(Shell):
     def __init__(self):
@@ -30,18 +30,18 @@ class MSysShell(Shell):
         env = dict( os.environ )
         self.msysdir = env[ "MSYSDIR" ]
         self.initEnvironment()
-        
-    
+
+
     def initEnvironment(self, cflags="", ldflags=""):
         self.buildType = os.getenv("EMERGE_BUILDTYPE")
         if compiler.isMinGW():
-            if self.buildType == "RelWithDebInfo": 
+            if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
             utils.putenv("LD", "link.exe")
-        
+
         utils.putenv("CFLAGS", cflags)
         utils.putenv("LDFLAGS", ldflags)
         #unset make to remove things like jom
@@ -51,10 +51,10 @@ class MSysShell(Shell):
         perl = self.toNativePath(os.path.join( os.environ.get( "KDEROOT" ), "dev-utils", "bin", "perl.exe" ))
         utils.putenv("PERL", perl)
         utils.putenv("INTLTOOL_PERL", perl)
-        
+
         #prepare path to sue autotools
         utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( os.environ.get( "MSYSDIR" ), "opt", "autotools", "bin" )))
-        
+
 
     def toNativePath( self, path ):
         path = path.replace( '\\', '/' )
@@ -74,7 +74,7 @@ class MSysShell(Shell):
         else:
             utils.debug( "msys execute: %s" % command, debugLvl )
         return utils.system( command, outstream=out, errstream=err )
-        
+
 if __name__ == '__main__':
     shell = MSysShell()
     shell.initEnvironment()

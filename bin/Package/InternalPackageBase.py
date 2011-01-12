@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 from PackageBase import *
@@ -44,7 +44,7 @@ class InternalPackageBase(PackageBase):
         portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
         portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
         return True
-        
+
     def __installedDBPrefix(self, buildType=None):
         postfix = ''
         if buildType == None:
@@ -57,4 +57,4 @@ class InternalPackageBase(PackageBase):
             elif buildType == 'RelWithDebInfo':
                 postfix =  'relwithdebinfo'
         return postfix
-        
+

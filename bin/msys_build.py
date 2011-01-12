@@ -7,7 +7,7 @@ import shells
 class msys_interface:
     def __init__( self, env = dict( os.environ ) ):
         self.MSYSDIR = env[ "MSYSDIR" ]
-        
+
     def setDirectories(self, rootdir, imagedir, workdir, instsrcdir, instdestdir):
         self.rootdir = rootdir
         self.imagedir = imagedir

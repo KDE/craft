@@ -1,4 +1,4 @@
-# 
+#
 # copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
@@ -17,10 +17,10 @@ class NSIPackagerLists:
     """ This class provides some classmethods that can be used as pre defined black or whitelists """
     @classmethod
     def runtimeBlacklist( self ):
-        blacklisted = [ "include\\.*", 
-                        "lib\\\\.*\.lib", 
-                        "lib\\\\.*\.dll\.a", 
-                        "lib\\\\cmake\\.*", 
+        blacklisted = [ "include\\.*",
+                        "lib\\\\.*\.lib",
+                        "lib\\\\.*\.dll\.a",
+                        "lib\\\\cmake\\.*",
                         "lib\\\\pkgconfig\\.*" ]
         ret = []
         for line in blacklisted:
@@ -35,15 +35,15 @@ class NSIPackagerLists:
     @classmethod
     def defaultWhitelist( self ):
         return [ re.compile( ".*" ) ]
-        
+
     @classmethod
     def defaultBlacklist( self ):
         return []
 
 
 class NullsoftInstallerPackager( PackagerBase ):
-    """ 
-Packager for Nullsoft scriptable install system 
+    """
+Packager for Nullsoft scriptable install system
 
 This Packager generates a nsis installer (an executable which contains all files)
 from the image directories of emerge. This way you can be sure to have a clean
@@ -113,7 +113,7 @@ file collection process is skipped, and only the installer is generated.
                 return False
         [ self.nsisInstallPath, type ] = QueryValueEx( key, "" )
         return True
-    
+
     def __imageDirPattern( self, package, buildTarget ):
         """ return base directory name for package related image dir """
         dir = "image"
@@ -122,7 +122,7 @@ file collection process is skipped, and only the installer is generated.
         ## \todo add image dir support for using binary packages for a specific compiler and build type
         if hasattr( package, 'buildSystemType' ) and package.buildSystemType == 'binary':
             return dir
-        
+
         if package.subinfo.options.useCompilerType == True:
             dir += '-' + COMPILER
         if package.isTargetBuild():
@@ -264,7 +264,7 @@ file collection process is skipped, and only the installer is generated.
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-            
+
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
         if self.package.endswith( "-package" ):

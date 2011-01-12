@@ -1,14 +1,14 @@
-# 
+#
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
-# creates a 7z archive from the whole content of the package image 
+# creates a 7z archive from the whole content of the package image
 # directory or optional from a sub directory of the image directory
 
-# This packager is in an experimental state - the implementation 
+# This packager is in an experimental state - the implementation
 # and features may change in further versions
 
-# TODO: 
-# - password support 
+# TODO:
+# - password support
 # - self extraction archives
 #
 #
@@ -38,14 +38,14 @@ class SevenZipPackager (PackagerBase):
             pkgName = self.subinfo.options.package.packageName
         else:
             pkgName = self.package
-            
+
         if pkgName.endswith('-src') or pkgName.endswith('-pkg'):
             pkgName = pkgName[:-4]
 
         pkgVersion, pkgNotesVersion = self.getPackageVersion()
 
         if self.subinfo.options.package.withArchitecture:
-            if self.buildArchitecture() == "x64": 
+            if self.buildArchitecture() == "x64":
                 pkgName += "-x64"
             else:
                 pkgName += "-x86"
@@ -54,7 +54,7 @@ class SevenZipPackager (PackagerBase):
             filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
         else:
             filesDir = self.imageDir()
-           
+
         if self.subinfo.options.package.withDigests:
             utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 

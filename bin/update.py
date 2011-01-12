@@ -1,10 +1,10 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
 #
-# emerge update script 
-# 
+# emerge update script
+#
 
 import sys
 import os
@@ -25,9 +25,9 @@ else:
 
 done = False
 if currentVersion == '20090731':
-    # because the merge destination of some package in the dev-utils category has been changed, 
+    # because the merge destination of some package in the dev-utils category has been changed,
     # we reinstall all those packages
-    
+
     packages = """
 astyle
 base
@@ -49,11 +49,11 @@ subversion
 wget
 upx"""
     for package in packages.split():
-        print "removing package %s" % package 
+        print "removing package %s" % package
         utils.system("emerge --unmerge %s" % package)
         # remove all temporary files
-        utils.system("emerge --cleanbuild %s" % package) 
-        #clean directory 
+        utils.system("emerge --cleanbuild %s" % package)
+        #clean directory
     utils.cleanDirectory(os.path.join(rootdir,'dev-utils'))
 
     # reinstall packages
@@ -64,9 +64,9 @@ elif currentVersion == '20090808':
     utils.system("emerge --unmerge subversion")
     utils.system("emerge --qmerge subversion")
     done = True
-    
+
 if done:
     f = open( versionFile, "w" )
     f.write(newVersion)
     f.close()
-    
+

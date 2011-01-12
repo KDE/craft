@@ -1,8 +1,8 @@
-# 
+#
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # subversion support
-## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes 
+## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
 
 from VersionSystemSourceBase import *
 
@@ -27,7 +27,7 @@ class SvnSource (VersionSystemSourceBase):
             u = self.getUrl(index)
             (url, dummy) = self.splitUrl(u)
 
-            if url.find("://") == -1: 
+            if url.find("://") == -1:
                 if os.getenv("KDESVNDIR") == None:
                     sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
                 else:
@@ -45,7 +45,7 @@ class SvnSource (VersionSystemSourceBase):
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
 
         return sourcedir
-            
+
     def applyPatch(self, file, patchdepth):
         utils.trace( "SvnSource.applyPatch", 2 )
         """apply a patch to a svn repository checkout"""
@@ -63,16 +63,16 @@ class SvnSource (VersionSystemSourceBase):
         """set proxy for fetching sources from subversion repository"""
         (host, port, username, password) = self.proxySettings()
         if host == None:
-            return 
+            return
 
         proxyOptions = " --config-option servers:global:http-proxy-host=%s" % host
         proxyOptions += " --config-option servers:global:http-proxy-port=%s" % port
         if username != None:
             proxyOptions += " --config-option servers:global:http-proxy-username=%s" % username
             proxyOptions += " --config-option servers:global:http-proxy-password=%s" % password
-        
+
         self.options = proxyOptions
-            
+
     def fetch( self, repopath = None ):
         """ checkout or update an existing repository path """
         utils.trace( "SvnSource.fetch", 2 )
@@ -82,7 +82,7 @@ class SvnSource (VersionSystemSourceBase):
 
         if not os.path.exists(self.svnInstallDir):
             utils.die("required subversion package not installed in %s" % self.svnInstallDir)
-            
+
         for i in range(0, self.repositoryUrlCount()):
             if repopath:
                 url = repopath
@@ -97,8 +97,8 @@ class SvnSource (VersionSystemSourceBase):
         return True
 
     def __splitPath(self, path):
-        """ split a path into a base part and a relative repository url. 
-        The delimiters are currently 'trunk', 'branches' and 'tags'. 
+        """ split a path into a base part and a relative repository url.
+        The delimiters are currently 'trunk', 'branches' and 'tags'.
         """
         pos = path.find('trunk')
         if pos == -1:
@@ -112,58 +112,58 @@ class SvnSource (VersionSystemSourceBase):
         return ret
 
     def __tryCheckoutFromRoot ( self, url, sourcedir, recursive=True ):
-        """This method checkout source with svn informations from 
-        the svn root repository directory. It detects the svn root 
-        by searching the predefined root subdirectories 'trunk', 'branches' 
+        """This method checkout source with svn informations from
+        the svn root repository directory. It detects the svn root
+        by searching the predefined root subdirectories 'trunk', 'branches'
         and 'tags' which will probably fit for most servers
         """
         (urlBase, urlPath) = self.__splitPath(url)
         if urlPath == None:
             return self.__checkout(url, sourcedir, recursive)
-        
+
         (srcBase, srcPath)  = self.__splitPath(sourcedir)
-        if srcPath == None: 
+        if srcPath == None:
             return self.__checkout(url, sourcedir, recursive)
-        
+
         urlRepo = urlBase
         srcDir = srcBase
         urlParts = urlPath.split('/')
         pathSep = '/'
         srcParts = srcPath.split(pathSep)
-        
-        # url and source parts not match 
+
+        # url and source parts not match
         if len(urlParts) != len(srcParts):
             return self.__checkout(url, sourcedir, recursive)
-        
+
         for i in range(0, len(urlParts)-1):
             urlPart = urlParts[i]
             srcPart = srcParts[i]
             if ( urlPart == "" ):
                 continue
-            
+
             urlRepo +=  '/' + urlPart
             srcDir +=  pathSep + srcPart
-            
-            if os.path.exists(srcDir): 
+
+            if os.path.exists(srcDir):
                 continue
             self.__checkout( urlRepo, srcDir, False )
-            
+
         self.__checkout( url, sourcedir, recursive )
-    
+
     def __checkout( self, url, sourcedir, recursive=True ):
         """internal method for subversion checkout and update"""
         option = ""
         if not recursive:
-            option = "--depth=files" 
+            option = "--depth=files"
 
         if utils.verbose() < 2 and not os.getenv("KDESVNVERBOSE") == "True":
             option += " --quiet"
-          
+
         self.setProxy()
-        
+
         if self.options != None:
             option += self.options
-            
+
         if self.subinfo.options.fetch.ignoreExternals:
             option += " --ignore-externals "
 
@@ -191,13 +191,13 @@ class SvnSource (VersionSystemSourceBase):
         else:
             oldLanguage = ""
         os.environ["LANG"] = "C"
-        
+
         # set up the command
         cmd = "%s/svn info %s" % ( self.svnInstallDir, self.checkoutDir() )
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
         tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
-        
+
         # run the command
         with utils.LockFile(utils.svnLockFileName()):
             utils.system( cmd, outstream=tempfile )
@@ -209,7 +209,7 @@ class SvnSource (VersionSystemSourceBase):
                 revision = line.replace("Revision: ", "").strip()
                 break
         tempfile.close()
-        
+
         # print the revision - everything else should be quiet now
         print revision
         os.environ["LANG"] = oldLanguage
