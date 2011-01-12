@@ -1,3 +1,15 @@
+diff -Nru cmake-2.8.3.orig/Modules/FindBZip2.cmake cmake-2.8.3/Modules/FindBZip2.cmake
+--- cmake-2.8.3.orig/Modules/FindBZip2.cmake	2010-11-03 20:58:27.000000000 +0100
++++ cmake-2.8.3/Modules/FindBZip2.cmake	2011-01-12 16:13:01.690875000 +0100
+@@ -22,7 +22,7 @@
+ 
+ FIND_PATH(BZIP2_INCLUDE_DIR bzlib.h )
+ 
+-FIND_LIBRARY(BZIP2_LIBRARIES NAMES bz2 bzip2 )
++FIND_LIBRARY(BZIP2_LIBRARIES NAMES bz2 bzip2 bzip2d)
+ 
+ # handle the QUIETLY and REQUIRED arguments and set BZip2_FOUND to TRUE if 
+ # all listed variables are TRUE
 diff --git a/Source/kwsys/SystemTools.cxx b/Source/kwsys/SystemTools.cxx
 --- a/Source/kwsys/SystemTools.cxx
 +++ b/Source/kwsys/SystemTools.cxx
