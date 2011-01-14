@@ -21,7 +21,7 @@ class Settings:
         defaults[ "sshclient" ] = "plink"
         self.parser = ConfigParser( defaults )
         self.sections = dict()
-        
+
         self.enabled = False
         if os.path.exists( self.configpath ):
             self.enabled = True
@@ -33,19 +33,19 @@ class Settings:
             else:
                 for sec in self.parser.sections():
                     self.sections[ sec ] = self.getSectionEnabled( sec )
-            
+
     def getSection( self, section, additionalvars=None ):
         if self.enabled and self.sections[ section ]:
             return dict( self.parser.items( section, False, additionalvars ) )
         else:
             return False
-            
+
     def getOption( self, section, option, additionalvars=None ):
         if self.enabled and self.sections[ section ]:
             return self.parser.get( section, option, False, additionalvars )
         else:
             return False
-            
+
     def getSectionEnabled( self, section ):
         keyname = "enable-" + section.lower()
         if self.enabled and self.parser.has_option( 'General', keyname ):
@@ -63,18 +63,18 @@ class Uploader:
     def __init__( self, category='Upload', logfile=None ):
         self.category = category
         self.logfile = logfile
-        
+
         self.fstderr = sys.stderr
         self.pstdin = None
         self.settings = settings.getSection( self.category )
         if not self.settings:
             print "upload disabled!"
             return
-        
+
     def ftpExecute( self, cmd ):
         self.fstderr.write( cmd + "\r\n" )
         self.fstderr.flush()
-        self.pstdin.write( cmd + "\r\n" )        
+        self.pstdin.write( cmd + "\r\n" )
 
     def executeScript( self, state="common" ):
         if not self.settings:
@@ -99,7 +99,7 @@ class Uploader:
         if not self.settings:
             """ return True because we're probably simply disabled and we do not want to result in an error """
             return True
-            
+
         if not ( ( "server" in self.settings ) and ( "directory" in self.settings ) ):
             print "server or directory not set"
             return False
@@ -117,7 +117,7 @@ class Uploader:
         p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
         self.fstderr = fstderr
         self.pstdin = p.stdin
-        
+
         self.ftpExecute( "cd " + self.settings[ "directory" ] )
 
         self.ftpExecute( "put " + sourcefilename )
@@ -145,9 +145,9 @@ class SourceForgeUploader ( Uploader ):
         self.packageName = packageName
         self.packageVersion = packageVersion
         self.packagePatchLevel = packagePatchLevel
-        
+
         self.fileList = []
-        
+
         self.settings = settings.getSection( self.category )
 
         if not self.settings:
@@ -171,7 +171,7 @@ class SourceForgeUploader ( Uploader ):
         self.pstdin = self.p.stdin
 
         self.ftpExecute( "cd " + self.settings[ "directory" ] )
-        
+
         if self.packagePatchLevel:
             version = self.packageVersion + "-" + self.packagePatchLevel
         else:
@@ -200,12 +200,12 @@ class SourceForgeUploader ( Uploader ):
                 log.write( line )
             self.fstderr.close()
             log.close()
-            
+
     def upload( self, sourcefilename ):
         if self.disabled:
             """ return True because we're probably simply disabled and we do not want to result in an error """
             return True
-            
+
         if os.path.isdir( sourcefilename ):
             print "sourcefile is a directory"
             return False

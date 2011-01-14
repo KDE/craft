@@ -26,7 +26,7 @@ def die( message ):
 
 class BuildError( Exception ):
     """ this exception handles the error reporting """
-    
+
     def __init__( self, packageName, message, logfile ):
         self.packageName = packageName
         self.messageText = message
@@ -34,7 +34,7 @@ class BuildError( Exception ):
         self.revision = False
         self.enabled = True
         print "Error:", self.messageText
-        
+
     def __str__( self ):
         log = file( self.logfile, 'rb' )
         logtext = log.readlines()[-20:]
@@ -42,9 +42,9 @@ class BuildError( Exception ):
         return "Error:" + "".join( logtext )
 
 class package:
-    """ one object for each package to be build 
+    """ one object for each package to be build
         it contains all the information needed to build """
-        
+
     def __init__( self, category, packagename, target, patchlevel ):
         self.category = category
         self.packageName = packagename
@@ -61,7 +61,7 @@ class package:
         self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
                                                                         'pkgdstdir': packageroot,
                                                                         'logdstdir': logroot } )
-                                                    
+
         self.logfile = outfile % (self.generalSettings["platform"], self.cleanPackageName)
         log = file( self.logfile, 'wb+' )
         log.close()
@@ -78,7 +78,7 @@ class package:
 
     def __str__( self ):
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
-    
+
     def timestamp( self ):
         datetime.now().strftime("%m/%d/%Y %H:%M")
         log = file( self.logfile, 'ab+' )
@@ -98,7 +98,7 @@ class package:
             tempfile.close()
             os.remove( os.path.join( logroot, "rev.tmp" ) )
         return self.revision
-        
+
     def system( self, cmdstring, logfile ):
         """ runs an emerge command """
         cmdstring = emerge + " " + cmdstring
@@ -119,13 +119,13 @@ class package:
         if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s/%s" % ( self.targetString, self.category, self.packageName ), self.logfile ):
             self.enabled = False
             raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + cmd + " FAILED", self.logfile )
-        
+
     def fetch( self ):
-        """ fetches and unpacks; make sure that all packages are fetched & unpacked 
+        """ fetches and unpacks; make sure that all packages are fetched & unpacked
             correctly before they are used """
         self.timestamp()
         self.emerge( "fetch" )
-        
+
     def build( self ):
         """ builds and installs packages locally """
         self.timestamp()
@@ -134,7 +134,7 @@ class package:
         self.emerge( "install" )
         self.emerge( "manifest" )
         self.emerge( "qmerge" )
-        
+
     def test( self ):
         """ runs unittests and submits them to cdash server """
         self.timestamp()
@@ -149,15 +149,15 @@ class package:
 
         self.timestamp()
         os.environ["EMERGE_PKGDSTDIR"] = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
-        
+
         if not os.path.exists( os.environ["EMERGE_PKGDSTDIR"] ):
             os.mkdir( os.environ["EMERGE_PKGDSTDIR"] )
-        
+
         self.emerge( "package", " --patchlevel=%s" % self.patchlevel )
-        
+
         # cleanup behind us
         del os.environ["EMERGE_PKGDSTDIR"]
-        
+
     def upload( self ):
         """ uploads packages to winkde server """
         if not self.enabled:
@@ -169,19 +169,19 @@ class package:
         print "running: upload", self.packageName
         upload = common.Uploader( logfile=self.logfile )
         sfupload = common.SourceForgeUploader( self.packageName, self.target, self.patchlevel, logfile=self.logfile )
-        
+
         pkgdir = os.path.join( self.generalSettings["pkgdstdir"], self.cleanPackageName )
         if os.path.exists( pkgdir ):
             """ if there is a directory at the specified location, upload files that can be found there """
             os.chdir( pkgdir )
             filelist = os.listdir( pkgdir )
-            
+
             ret = 0
             for entry in filelist:
                 upload.upload( os.path.join( pkgdir, entry ) )
                 sfupload.upload( os.path.join( pkgdir, entry ) )
             sfupload.finalize()
-            
+
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )
         else:
@@ -298,7 +298,7 @@ for entry in packagelist:
 
 if "localbotnotificationport" in general:
     port = int( general["localbotnotificationport"] )
-    
+
     try:
         s = socket.socket()
         s.connect( ( socket.gethostname(), port ) )
@@ -310,7 +310,7 @@ if "localbotnotificationport" in general:
         print "failed to send BUILDFINISHED to Bot on localhost:%s" % port
 else:
     print "disabled bot communication"
-    
+
 for entry in packagelist:
     try:
         enabled = entry.enabled

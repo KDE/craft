@@ -28,7 +28,7 @@ class Notification:
             self.shortLog = "".join( logtext )
         else:
             self.shortLog = ""
-    
+
     def run( self, revision = None ):
         pass
 
@@ -71,7 +71,7 @@ class EmailNotification(Notification):
             else:
                 print subject
 #                print msg.as_string()
-            
+
 
 class DashboardNotification(Notification):
     """ announce a build on a dashboard """
@@ -136,7 +136,7 @@ class StatusNotification(Notification):
             else:
                 logurltext = ""
             values[ 'logUrl' ] = logurltext
-            
+
             filename = os.path.join( settings[ 'directory' ], self.category + "_" + self.packageName + ".json" )
             if not self.dryRun:
                 if not os.path.exists( settings[ 'directory' ] ):
