@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.3.' + ver] = 'kdeutils-4.3.' + ver
         self.patchToApply['4.3.4'] = ('kdeutils-4.3.4.diff', 1)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdelibs-experimental'] = 'default'
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'

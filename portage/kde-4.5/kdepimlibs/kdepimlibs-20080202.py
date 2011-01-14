@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdepimlibs-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdepimlibs-4.5.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
         self.dependencies['kdesupport/akonadi'] = '4.5'
@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "the base libraries for PIM related services"
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

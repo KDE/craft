@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.targetInstallPath['HEAD'] = 'bin'
 
 from Package.BinaryPackageBase import *
-        
+
 class Package(BinaryPackageBase):
     def __init__(self ):
         self.subinfo = subinfo()

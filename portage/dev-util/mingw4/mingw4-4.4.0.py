@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
                                                    'w32api-3.11.tar.gz',
                                                    'gdb-6.8-mingw-3.tar.bz2',
                                                    'mingw-utils-0.3.tar.gz'])
-		  
+		
         self.targets['4.4.0-tdm-r2'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
                                                         ['gcc-4.4.0-tdm-1-core-2.tar.gz',
                                                         'gcc-4.4.0-tdm-1-g++-2.tar.gz',
@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
                                                  ['binutils-2.20.1-2-mingw32-bin.tar.gz',
                                                  'make-3.81-20090914-mingw32-bin.tar.gz',
                                                  'mingwrt-3.18-mingw32-dll.tar.gz',
-                                                 'mingwrt-3.18-mingw32-dev.tar.gz',             
+                                                 'mingwrt-3.18-mingw32-dev.tar.gz',
                                                  'w32api-3.14-mingw32-dev.tar.gz',
                                                  'gdb-7.0.50.20100202-mingw32-bin.tar.gz',
                                                  'mingw-utils-0.3.tar.gz',
@@ -58,7 +58,7 @@ class subinfo(info.infoclass):
                                                  ['binutils-2.20.1-2-mingw32-bin.tar.gz',
                                                  'make-3.81-20090914-mingw32-bin.tar.gz',
                                                  'mingwrt-3.18-mingw32-dll.tar.gz',
-                                                 'mingwrt-3.18-mingw32-dev.tar.gz',             
+                                                 'mingwrt-3.18-mingw32-dev.tar.gz',
                                                  'w32api-3.14-mingw32-dev.tar.gz',
                                                  'gdb-7.0.50.20100202-mingw32-bin.tar.gz',
                                                  'mingw-utils-0.3.tar.gz',
@@ -73,11 +73,11 @@ class subinfo(info.infoclass):
 
 		
         self.defaultTarget = '4.4.0'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
         self.buildDependencies['dev-util/7zip'] = 'default'
-       
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
@@ -85,8 +85,8 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-        
-    def install( self ):    
+
+    def install( self ):
         dirs=os.listdir(self.imageDir())
         for dir in dirs:
            shutil.move(os.path.join( self.installDir() , dir) , os.path.join( self.installDir(), "mingw" ,dir) )

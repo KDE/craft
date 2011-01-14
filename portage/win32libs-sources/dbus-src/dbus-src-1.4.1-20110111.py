@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
         self.svnTargets['1.2.4'] = svnurl + 'tags/1.2.4'
         self.targetInstSrc['1.2.4'] = 'tags/1.2.4'
         self.targetConfigurePath['1.2.4'] = 'cmake'
-        
+
         self.svnTargets['svnHEAD'] = svnurl + 'trunk'
         self.targetConfigurePath['svnHEAD'] = 'cmake'
-        
-        # dbus-1.3.1.tar.gz is missing the cmake sub dir and because 
-        # emerge is not able yet to apply more than one patch we the 
+
+        # dbus-1.3.1.tar.gz is missing the cmake sub dir and because
+        # emerge is not able yet to apply more than one patch we the
         # 1.3.1 snapshot took for now
         #self.targets['1.3.1'] = 'http://dbus.freedesktop.org/releases/dbus/dbus-1.3.1.tar.gz'
         #self.targetDigests['1.3.1'] = '83c27e15ba79d4a84a10b123ff382233cc77773b'
@@ -65,7 +65,7 @@ class subinfo(info.infoclass):
             self.defaultTarget = '1.4.0'
         else:
             self.defaultTarget = '1.4.1'
-        
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs-bin/expat'] = 'default'
@@ -94,19 +94,19 @@ class Package(CMakePackageBase):
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=tcp:host=localhost,port=12434 ")
         else:
-            # for 1.4.1 and greater switch to official 
-            # supported scopes -> autolaunch:scope=*install-path 
+            # for 1.4.1 and greater switch to official
+            # supported scopes -> autolaunch:scope=*install-path
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=autolaunch:scope=install-path ")
-            # kde uses debugger output, so dbus should do too 
+            # kde uses debugger output, so dbus should do too
             # not sure if this works for wince too, so limited to win32
             self.subinfo.options.configure.defines += (
                     "-DDBUS_USE_OUTPUT_DEBUG_STRING=ON ")
 
     def unpack(self):
         if not CMakePackageBase.unpack(self):
-            return False      
+            return False
         if compiler.isMinGW32():
           if self.buildTarget in ['1.2.1', '1.2.3', '1.2.4', 'svnHEAD']:
               utils.copyFile( os.path.join(self.packageDir(), "wspiapi.h"),

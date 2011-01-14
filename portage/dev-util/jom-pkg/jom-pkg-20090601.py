@@ -13,14 +13,14 @@ class subinfo(info.infoclass):
         self.svnTargets['static-cmake'] = "git://gitorious.org/~saroengels/qt-labs/jom-cmake.git"
         self.targetSrcSuffix['cmake'] = "cmake"
         self.targetSrcSuffix['mingw'] = "mingw"
-        
+
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/msys'] = 'default'  # for flex
         self.buildDependencies['dev-util/qlalr'] = 'default'
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

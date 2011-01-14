@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.0'] = ('kdelibs-ktimezone.diff', 0)
         self.patchToApply['4.3.4'] = ('kdelibs-4.3.4.diff', 1)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kdesupport/kdewin'] = 'default'
         self.hardDependencies['kdesupport/qimageblitz'] = 'default'
@@ -23,9 +23,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['virtual/kdelibs-base'] = 'default'
-    
+
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

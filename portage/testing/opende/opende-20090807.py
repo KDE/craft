@@ -7,18 +7,18 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.11.1'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        
+
     def unpack(self):
         CMakePackageBase.unpack(self)
         src = os.path.join(self.packageDir(),'CMakeLists.txt')
         dst = os.path.join(self.sourceDir(),'CMakeLists.txt')
         utils.copyFile(src,dst)
         return True
-        
+
 if __name__ == '__main__':
     Package().execute()

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -27,7 +27,7 @@ class Package(CMakePackageBase):
 
     def unpack(self):
         if not CMakePackageBase.unpack( self ):
-            return False  
+            return False
         if(self.subinfo.buildTarget in ['7.20.0']):
           return True
         # we have an own cmake script - copy it to the right place

@@ -10,7 +10,7 @@ import emergePlatform
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):   
+    def setTargets( self ):
         arch = 'win32'
         if emergePlatform.buildArchitecture() == 'x64':
           arch = 'win64'
@@ -18,31 +18,31 @@ class subinfo(info.infoclass):
         self.targetInstSrc[ '20100330' ] = "virtuoso-opensource"
         self.shortDescription = "a middleware and database engine hybrid for RDBMS, ORDBMS, virtual database, RDF, XML, free-text, web application server and file server functionality"
         self.defaultTarget = '20100330'
-       
+
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        
-        
+
+
 class Package(CMakePackageBase):
-  def __init__(self):  
-    self.subinfo = subinfo()    
+  def __init__(self):
+    self.subinfo = subinfo()
     self.subinfo.options.merge.ignoreBuildType = True
     self.subinfo.options.package.packSources = False
     self.subinfo.options.package.withCompiler = None
     CMakePackageBase.__init__( self )
-    
-    
+
+
   def compile( self ):
     return True
-    
-  def install( self ):    
+
+  def install( self ):
     if( not self.cleanImage()):
       return False
-    
+
     shutil.copytree( self.sourceDir() , self.installDir(),ignore=shutil.ignore_patterns('libexpat.dll' ))
-    
-    return True 
-    
+
+    return True
+
 if __name__ == '__main__':
     Package().execute()

@@ -4,16 +4,16 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['win32libs-bin/lcms'] = 'default'
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
 #        self.dependencies['testing/gsl'] = 'default'
         self.buildDependencies['kdesupport/eigen2'] = 'default'
-    
+
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

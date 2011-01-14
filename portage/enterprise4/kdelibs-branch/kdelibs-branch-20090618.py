@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdelibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdelibs-enterprise4-4.0.' + ver
         self.defaultTarget = '4.2'
-    
+
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl']       = 'default'
@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
 #        self.hardDependencies['win32libs-sources/gssapi-src']  = 'default'
 #        self.hardDependencies['win32libs-sources/hspell-src']  = 'default'
         self.hardDependencies['win32libs-bin/jpeg']  = 'default'
-# jasper-src doesn't build with msvc (it uses unsupported C99 stdbool.h and stdint.h) 
+# jasper-src doesn't build with msvc (it uses unsupported C99 stdbool.h and stdint.h)
 #        self.hardDependencies['win32libs-sources/jasper-src']  = 'default'
         self.hardDependencies['win32libs-sources/libbzip2-src']  = 'default'
         self.hardDependencies['win32libs-sources/libpng-src']  = 'default'
@@ -48,7 +48,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['enterprise4/soprano-e'] = 'default'
         self.hardDependencies['enterprise4/strigi-e'] = 'default'
         self.hardDependencies['data/aspell-data'] = 'default'
-    
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         self.buildType = "Debug"

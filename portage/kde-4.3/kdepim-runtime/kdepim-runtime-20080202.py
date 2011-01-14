@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

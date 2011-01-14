@@ -17,8 +17,8 @@ class subinfo(info.infoclass):
         self.patchToApply['4.4.3'] = ("phonon-20100915.diff", 1)
         self.shortDescription = "a Qt based multimedia framework"
         self.defaultTarget = '4.4.3'
-        
-          
+
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -30,7 +30,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF "
-            
+
         if self.isTargetBuild():
             automoc = os.path.join(self.rootdir, "lib", "automoc4", "Automoc4Config.cmake")
             if not os.path.exists(automoc):

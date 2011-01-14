@@ -11,13 +11,13 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.3.' + ver] = 'kdebase-runtime-4.3.' + ver
         self.patchToApply['4.3.0'] = ( 'kdebase-ktimezoned.diff', 0 )
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
 
-from Package.CMakePackageBase import *        
-        
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

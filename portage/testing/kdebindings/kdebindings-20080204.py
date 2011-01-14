@@ -11,11 +11,11 @@ class subinfo(info.infoclass):
         self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdebindings-4.0.60.tar.bz2'
         self.targetInstSrc['4.0.60'] = 'kdebindings-4.0.60'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['testing/pyqt'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -28,8 +28,8 @@ class subclass(base.baseclass):
         self.kdeCustomDefines += "-DBUILD_csharp=OFF "
         self.kdeCustomDefines += "-DBUILD_smoke=OFF "
         self.kdeCustomDefines += "-DBUILD_xparts=OFF "
-        
-        
+
+
     def unpack( self ):
         return self.kdeSvnUnpack()
 

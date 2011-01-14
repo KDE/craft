@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.9.8g'] = 'openssl-0.9.8g'
         self.svnTargets['svnHEAD'] = False
         self.defaultTarget = '0.9.8g'
-    
+
     def setDependencies( self ):
         self.hardDependencies['dev-util/perl'] = 'default'
 
 # if you update openssl please make sure that the install section contains an error - please make double sure that you get all stuff
-    
+
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -48,12 +48,12 @@ class subclass(base.baseclass):
             shutil.copy( os.path.join( workdir, "out", "libcrypto.a" ), os.path.join( self.imagedir, "lib" ) )
             shutil.copy( os.path.join( workdir, "out", "libssl.a" ), os.path.join( self.imagedir, "lib" ) )
         else:
-            # this is not tested yet - I have no msvc build currently 
+            # this is not tested yet - I have no msvc build currently
             shutil.copy( os.path.join( workdir, "out", "libeay32.lib" ), os.path.join( self.imagedir, "lib" ) )
             shutil.copy( os.path.join( workdir, "out", "libssl32.lib" ), os.path.join( self.imagedir, "lib" ) )
             shutil.copy( os.path.join( workdir, "out", "libcrypto.lib" ), os.path.join( self.imagedir, "lib" ) )
             shutil.copy( os.path.join( workdir, "out", "libssl.lib" ), os.path.join( self.imagedir, "lib" ) )
-        
+
         shutil.copytree( os.path.join( workdir, "outinc", "openssl" ), os.path.join( self.imagedir, "include", "openssl" ) )
         return True
 

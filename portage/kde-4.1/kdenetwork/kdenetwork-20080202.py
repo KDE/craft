@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
           self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.1.' + ver + '/src/kdenetwork-4.1.' + ver + '.tar.bz2'
           self.targetInstSrc['4.1.' + ver] = 'kdenetwork-4.1.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.1/kdebase-runtime'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['win32libs-bin/libidn'] = 'default'
-       
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )

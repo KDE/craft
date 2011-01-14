@@ -21,6 +21,6 @@ class Package(CMakePackageBase):
         if self.buildTarget == 'gitHEAD':
             self.subinfo.options.package.withCompiler = True
 
-        
+
 if __name__ == '__main__':
     Package().execute()

@@ -7,10 +7,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/playground/edu/keduca"
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdeedu'] = 'default'
-    
+
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

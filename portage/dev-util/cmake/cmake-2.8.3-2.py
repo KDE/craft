@@ -27,7 +27,7 @@ class subinfo( info.infoclass ):
             self.defaultTarget = '2.8.0-ce'
         else:
             self.defaultTarget = '2.8.3-2'
-            
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True

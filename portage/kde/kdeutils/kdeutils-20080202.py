@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeutils'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde/kdebase-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libarchive'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

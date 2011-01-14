@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/emerge'
         self.defaultTarget = 'svnHEAD'
-        
+
     def setDependencies( self ):
         self.dependencies['dev-util/doxygen'] = 'default'
         self.dependencies['dev-util/emerge'] = 'default'
@@ -22,7 +22,7 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
         SvnSource.__init__(self)
         BuildSystemBase.__init__(self,"")
 
-    def checkoutDir(self, index=0 ): 
+    def checkoutDir(self, index=0 ):
         return os.path.join(ROOTDIR,"emerge")
 
     def configure(self):
@@ -35,7 +35,7 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
 
         if not os.path.exists(destPath):
             utils.createDir(destPath)
-        
+
         fin = open (sourceDoxyFile, "r")
         fout = open (destDoxyFile, "w")
         for line in fin:
@@ -43,7 +43,7 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
                 line = line.replace("@INPUT@",doxygenSourcePathes)
             elif line.find("@PROJECT_NUMBER@") <> -1:
                 line = line.replace("@PROJECT_NUMBER@",date.today().isoformat())
-            fout.write(line) 
+            fout.write(line)
         fin.close()
         fout.close()
         return True
@@ -54,9 +54,9 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
         os.chdir(buildPath)
         utils.system("doxygen %s" % doxyFile)
         return True
-        
+
     def install(self):
-        srcdir = os.path.join(self.buildDir(),'html')    
+        srcdir = os.path.join(self.buildDir(),'html')
         destdir = os.path.join(self.imageDir(),'share','doc','emerge','html')
         utils.copyDir(srcdir,destdir)
         return True

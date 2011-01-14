@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.svnTargets['4.5.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.defaultTarget = '4.5.2-patched'
-        ## \todo this is prelimary  and may be changed 
+        ## \todo this is prelimary  and may be changed
         self.options.package.packageName = 'qt'
 
     def setDependencies( self ):
@@ -42,7 +42,7 @@ class subinfo(info.infoclass):
 
 # the dbus and openssl dependencies are not important to be installed, but
 # rather that the packages have been downloaded for use in this build
-# check that 
+# check that
 
 class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -52,7 +52,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         PackageBase.__init__(self)
         KDEWinPackager.__init__(self)
         self.subinfo.options.package.specialMode = True
-        
+
         self.openssl = "http://downloads.sourceforge.net/kde-windows/openssl-0.9.8k-3-lib.tar.bz2"
         if self.compiler() == "msvc2005":
             self.dbuslib = "http://downloads.sourceforge.net/kde-windows/dbus-msvc-1.2.4-1-lib.tar.bz2"
@@ -65,18 +65,18 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def fetch(self):
         if not GitSource.fetch(self):
             return False
-            
+
         if not utils.getFile(self.openssl,self.downloadDir()):
             return False
 
         if not utils.getFile(self.dbuslib,self.downloadDir()):
             return False
-            
+
         if not utils.getFile(self.mysql,self.downloadDir()):
             return False
 
         return True
-        
+
     def unpack( self ):
         utils.cleanDirectory( self.buildDir() )
 
@@ -96,11 +96,11 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         return True
 
-    # def compile(self): is no more defined in packages. It is defined in BuildSystemBase.py 
-    # and is a wrapper for configure and make. Having only one task in a method makes it possible 
-    # to continue make after a make error  without the need to reconfigùre the whole package, 
+    # def compile(self): is no more defined in packages. It is defined in BuildSystemBase.py
+    # and is a wrapper for configure and make. Having only one task in a method makes it possible
+    # to continue make after a make error  without the need to reconfigùre the whole package,
     # which needs much time for big packages
-    
+
     def configure( self, buildType=None, defines=""):
         thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
         os.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
@@ -144,40 +144,40 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
           command = command + " -release "
         print "command: ", command
         utils.system( command )
-        
+
         if( not libtmp == None ):
             os.environ[ "LIB" ] = libtmp
         if( not inctmp == None ):
             os.environ[ "INCLUDE" ] = inctmp
 
-        return True        
-        
+        return True
+
     def make(self):
         # so that the mkspecs can be found, when -prefix is set
         os.putenv( "QMAKEPATH", self.sourceDir() )
         QMakeBuildSystem.make(self)
-       
+
 
     def install( self ):
         QMakeBuildSystem.install(self)
 
-        # create qt.conf 
+        # create qt.conf
         src = os.path.join( self.packageDir(), "qt.conf" )
         dst = os.path.join( self.installDir(), "bin", "qt.conf" )
         shutil.copy( src, dst )
-        
+
         # install msvc debug files if available
         if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008"):
             srcdir = os.path.join( self.buildDir(), "lib" )
             destdir = os.path.join( self.installDir(), "lib" )
 
             filelist = os.listdir( srcdir )
-            
+
             for file in filelist:
                 if file.endswith( ".pdb" ):
                     shutil.copy( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
-                
+
         return True
-        
+
 if __name__ == '__main__':
     Package().execute()

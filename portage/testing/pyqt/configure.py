@@ -1,9 +1,9 @@
 # This script generates the PyQt configuration and generates the Makefiles.
 #
 # Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
-# 
+#
 # This file is part of PyQt.
-# 
+#
 # This file may be used under the terms of the GNU General Public
 # License versions 2.0 or 3.0 as published by the Free Software
 # Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
@@ -15,7 +15,7 @@
 # certain additional rights. These rights are described in the Riverbank
 # GPL Exception version 1.1, which can be found in the file
 # GPL_EXCEPTION.txt in this package.
-# 
+#
 # Please review the following information to ensure GNU General
 # Public Licensing requirements will be met:
 # http://trolltech.com/products/qt/licenses/licensing/opensource/. If
@@ -23,12 +23,12 @@
 # review the following information:
 # http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 # or contact the sales department at sales@riverbankcomputing.com.
-# 
+#
 # This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
 # INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
 # A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
 # granted herein.
-# 
+#
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -37,7 +37,7 @@ import sys
 import os
 import string
 import glob
-import optparse
+import optparse # TODO: use argparse
 import shutil
 
 import sipconfig
@@ -99,7 +99,7 @@ def find_default_qmake():
 
     for d in path.split(os.pathsep):
         qmake = os.path.join(d, base_qmake)
-  
+
         if os.access(qmake, os.X_OK):
             return qmake
 
@@ -118,7 +118,7 @@ def create_optparser():
         if not os.path.isdir(value):
             raise optparse.OptionValueError("'%s' is not a directory" % value)
         setattr(parser.values, option.dest, os.path.abspath(value))
-        
+
     def store_abspath_file(option, opt_str, value, parser):
         if not os.path.isfile(value):
             raise optparse.OptionValueError("'%s' is not a file" % value)
@@ -128,8 +128,8 @@ def create_optparser():
             "[macro+=value]", version=pyqt_version_str)
 
     p.add_option("-I", "--include", action="callback", default=False,
-            dest="include", metavar="DIR", type="string", 
-			callback=store_abspath_dir, help="additional include directories")
+            dest="include", metavar="DIR", type="string",
+            callback=store_abspath_dir, help="additional include directories")
     # Note: we don't use %default to be compatible with Python 2.3.
     p.add_option("-k", "--static", action="store_true", default=False,
             dest="static", help="build modules as static libraries")
@@ -1260,11 +1260,11 @@ def generate_code(mname, extra_include_dirs=None, extra_lib_dirs=None, extra_lib
     # supposed to handle the consolidated module and its components.
     cons_args = []
 
-    if opts.include:    		
+    if opts.include:
         tmp = []
         tmp.append(opts.include)
         tmp.append(extra_include_dirs)
-        extra_include_dirs = tmp    	
+        extra_include_dirs = tmp
 
     if opts.bigqt:
         if mname == "_qt":
@@ -1592,7 +1592,7 @@ int main(int, char **)
     out << QLibraryInfo::location(QLibraryInfo::DataPath) << '\\n';
     out << QLibraryInfo::location(QLibraryInfo::PluginsPath) << '\\n';
 #else
-    QString qtRoot = qgetenv("KDEROOT"); 
+    QString qtRoot = qgetenv("KDEROOT");
     out << qtRoot << '\\n';
     out << qtRoot << "\\include" << '\\n';
     out << qtRoot << "\\lib" << '\\n';

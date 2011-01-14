@@ -9,13 +9,13 @@ class subinfo( info.infoclass ):
             self.targetInstSrc[ ver ] = 'kdevplatform-' + platformver
         self.patchToApply[ '4.1.1' ] = ( "kdevplatform-1.1.1-20101215.diff", 1 )
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies[ 'virtual/kdebase-runtime' ] = 'default'
         self.dependencies[ 'win32libs-bin/boost' ] = 'default'
         self.dependencies[ 'kdesupport/qjson' ] = 'default'
         self.buildDependencies[ 'dev-util/gettext-tools' ] = 'default'
-    
+
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):

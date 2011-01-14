@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.targets['3.0.7'] = "http://upx.sourceforge.net/download/upx307w.zip"
         self.targetDigests['3.0.7'] = 'fbc3ea009cf90d32a49a619aa7fc46aab0f1a4e4'
         self.defaultTarget = '3.0.7'
-    
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
@@ -16,7 +16,7 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
         BinaryPackageBase.__init__(self)
-        
+
     def install(self):
         if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
             os.makedirs( os.path.join( self.installDir() , "bin" ) )

@@ -7,7 +7,7 @@ import emergePlatform
 import compiler
 
 class subinfo( info.infoclass ):
-    def setTargets( self ):   
+    def setTargets( self ):
         for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b' ]:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
@@ -47,14 +47,14 @@ class PackageCMake(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
-    def compile( self ):       
+    def compile( self ):
         os.chdir( self.sourceDir() )
         cmd = ""
         if self.isTargetBuild():
             """WinCE cross-building environment setup"""
             config = "VC-CE"
             os.environ["WCECOMPAT"] = self.mergeDestinationDir()
-            os.environ["TARGETCPU"] = self.buildArchitecture() 
+            os.environ["TARGETCPU"] = self.buildArchitecture()
             os.environ["PLATFORM"] = self.buildPlatform()
             if self.buildPlatform() == "WM50":
                 os.environ["OSVERSION"] = "WCE501"
@@ -74,7 +74,7 @@ class PackageCMake(CMakePackageBase):
         else:
             if not self.system( "ms\do_ms.bat", "configure" ):
                 return False
-            
+
         if self.isTargetBuild():
             self.setupTargetToolchain()
             # Set the include path for the wcecompat files (e.g. errno.h). Setting it through
@@ -87,7 +87,7 @@ class PackageCMake(CMakePackageBase):
 
         return self.system( cmd )
 
-    def install( self ):        
+    def install( self ):
         src = self.sourceDir()
         dst = self.imageDir()
 
@@ -110,10 +110,10 @@ class PackageCMake(CMakePackageBase):
         shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )
         shutil.copy( os.path.join( src, outdir, "ssleay32.lib" ) , os.path.join( dst, "lib" ) )
         utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
-        
+
         return True
-        
-        
+
+
 from Package.AutoToolsPackageBase import *
 
 class PackageMSys(AutoToolsPackageBase):
@@ -123,7 +123,7 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False
         self.shell = MSysShell()
-        
+
         self.buildInSource=True
 
         # target install needs perl with native path on configure time
@@ -131,18 +131,18 @@ class PackageMSys(AutoToolsPackageBase):
             self.shell.toNativePath(os.path.join( self.mergeDestinationDir() ,"include" )) ,compiler.getSimpleCompilerName() )
         if compiler.isMinGW32():
             self.subinfo.options.configure.defines += " -DOPENSSL_NO_CAPIENG"
-           
-      
+
+
     def install (self):
-      self.enterSourceDir()       
+      self.enterSourceDir()
       self.shell.execute(self.sourceDir(), self.makeProgram, "INSTALLTOP=%s install_sw"  % (self.shell.toNativePath(self.imageDir())))
       self.shell.execute(os.path.join( self.imageDir() , "lib"), "chmod" ,"664 *")
       self.shell.execute(os.path.join( self.imageDir() , "lib" , "engines" ), "chmod" , "755 *")
       shutil.move( os.path.join( self.imageDir(),  "lib" , "libcrypto.dll.a" ) , os.path.join( self.imageDir() , "lib" , "libeay32.dll.a" ) )
       shutil.move( os.path.join( self.imageDir(), "lib" , "libssl.dll.a" ) , os.path.join( self.imageDir() , "lib" , "ssleay32.dll.a" ) )
       return True
-      
-      
+
+
 
 if compiler.isMinGW():
     class Package(PackageMSys):
@@ -152,7 +152,7 @@ else:
     class Package(PackageCMake):
         def __init__( self ):
             PackageCMake.__init__( self )
-            
+
 if __name__ == '__main__':
       Package().execute()
 

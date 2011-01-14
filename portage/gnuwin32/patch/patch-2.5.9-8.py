@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
-    
+
 from Source.SourceBase import *
 from Package.PackageBase import *
 from BuildSystem.BinaryBuildSystem import *
@@ -31,7 +31,7 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         SourceBase.__init__( self )
         PackageBase.__init__( self )
         BinaryBuildSystem.__init__( self )
-        
+
     def fetch( self ):
         filenames = [ os.path.basename( self.subinfo.target() ) ]
 
@@ -52,6 +52,6 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         patch = os.path.join( self.installDir(), "patch.exe" )
         utils.embedManifest(patch, manifest)
         return True
-        
+
 if __name__ == '__main__':
     Package().execute()

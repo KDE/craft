@@ -4,11 +4,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'git://git.tuxfamily.org/gitroot/kad/kad.git|kde4|'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-    
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

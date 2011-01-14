@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         if emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -33,6 +33,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.package.packageName = 'redland'
         CMakePackageBase.__init__( self )
-        
+
 if __name__ == '__main__':
     Package().execute()

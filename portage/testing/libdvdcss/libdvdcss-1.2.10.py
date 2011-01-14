@@ -18,7 +18,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.2.10'] = SRC_URI
         self.defaultTarget = '1.2.10'
-        
+
 class subclass( base.baseclass ):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )

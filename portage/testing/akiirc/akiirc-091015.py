@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/playground/network/akiirc'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
@@ -17,7 +17,7 @@ class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
-        
+
     def unpack( self ):
         return self.kdeSvnUnpack()
 

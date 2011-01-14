@@ -23,17 +23,17 @@ class subinfo(info.infoclass):
 
 
 from Package.CMakePackageBase import *
-                
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'dbus-c++'
         self.subinfo.options.make.slnBaseName = 'dbus-c++'
-        
+
     def unpack(self):
         if not CMakePackageBase.unpack(self):
-            return False      
+            return False
         # Check whether compiler is mingw or not...
         if self.compiler() != "mingw" and self.compiler() != "mingw4":
             utils.die("This package is currently only compiled with mingw.")

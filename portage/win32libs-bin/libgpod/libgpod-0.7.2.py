@@ -6,7 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
-        
+
         for version in ['0.7.2']:
             self.targets[ version ] = repoUrl + """/libgpod-""" + version + """-bin.tar.bz2
                                 """ + repoUrl + """/libgpod-""" + version + """-lib.tar.bz2"""
@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/glib'] = 'default'
         self.hardDependencies['win32libs-bin/libxml2'] = 'default'
         self.hardDependencies['win32libs-bin/gettext'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True

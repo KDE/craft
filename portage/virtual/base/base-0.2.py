@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.2'] = ""
         self.defaultTarget = '0.2'
-        
+
     def setDependencies( self ):
         if not os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             self.buildDependencies['gnuwin32/wget']       = 'default'
@@ -18,10 +18,10 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/cmake']      = 'default'
             self.buildDependencies['dev-util/subversion'] = 'default'
             self.buildDependencies['dev-util/git']        = 'default'
-            
+
         # for creating combined packages
         self.buildDependencies['dev-util/pexports']   = 'default'
-        
+
         #add c++ runtime if we xcompile
         if emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-bin/runtime-ce']   = 'default'

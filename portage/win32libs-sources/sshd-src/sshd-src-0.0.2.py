@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/zlib'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = True
         self.disableTargetBuild = False

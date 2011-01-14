@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc['4.5.' + ver] = 'kdeedu-4.5.' + ver
         self.patchToApply['4.5.4'] = [('kdeedu-4.5.4-20101215.diff', 1)]
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.softDependencies['kdesupport/eigen2'] = 'default'
@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
 
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

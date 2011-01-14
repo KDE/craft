@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdebase-runtime-4.2.' + ver + '.tar.bz2'
           self.targetInstSrc['4.2.' + ver] = 'kdebase-runtime-4.2.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.2/kdelibs'] = 'default'
         self.hardDependencies['kde-4.2/kdepimlibs'] = 'default'

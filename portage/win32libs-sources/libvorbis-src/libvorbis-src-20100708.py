@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs-bin/libogg'] = 'default'
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

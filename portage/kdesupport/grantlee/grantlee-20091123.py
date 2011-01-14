@@ -24,6 +24,6 @@ class Package(CMakePackageBase):
         if not emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = '-DBUILD_TESTS=OFF'
         CMakePackageBase.__init__(self)
-        
+
 if __name__ == '__main__':
     Package().execute()

@@ -4,7 +4,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/office/skrooge'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
@@ -13,7 +13,7 @@ class subinfo( info.infoclass ):
         # missing: kdelibs
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

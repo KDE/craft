@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.0'] = ('1011613.diff', 0)
         self.patchToApply['4.3.0'] = ('kdeedu-kmplot.diff', 0)
         self.patchToApply['4.3.3'] = ('khangman.diff', 1)
-          
+
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
 

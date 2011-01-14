@@ -11,10 +11,10 @@ class subinfo(info.infoclass):
         self.targetDigests['3.5.23'] = 'b19f6b461515a52eb1048aec81e04dfd836d681f'
         self.shortDescription = "DjVuLibre is an implementation of DjVu image file format"
         self.defaultTarget = '3.5.23'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

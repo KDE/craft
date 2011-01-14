@@ -10,12 +10,12 @@ class subinfo( info.infoclass ):
         self.svnTargets['0.9.2'] = 'branches/KDE/4.4/kdeedu/marble'
         self.svnTargets['0.10.0'] = 'branches/KDE/4.5/kdeedu/marble'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
-        
+
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

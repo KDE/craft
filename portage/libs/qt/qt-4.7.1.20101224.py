@@ -154,7 +154,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             if self.isHostBuild():
                 command += "-no-xmlpatterns -no-declarative -no-opengl "
             command += "-no-qt3support -no-multimedia -no-scripttools -no-accessibility -no-libmng -no-libtiff -no-gif -no-webkit "
-            
+
         if not emergePlatform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc -plugin-sql-mysql "
@@ -162,7 +162,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-qt-libpng -qt-libjpeg -qt-libtiff "
 
 	# WebKit won't link properly with LTCG in a 32-bit MSVC environment
-	if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008(): 
+	if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008():
 	  command += "-no-ltcg "
 	else:
 	  command += "-ltcg "
@@ -180,24 +180,24 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
           command += " -release "
         print "command: ", command
         utils.system( command )
-        return True        
-        
-    def make(self, unused=''):        
+        return True
+
+    def make(self, unused=''):
         if self.isTargetBuild():
             self.setupTargetToolchain()
 
         self.setPathes()
 
         QMakeBuildSystem.make(self)
-        
+
         return True
-      
+
 
     def install( self ):
         if self.isTargetBuild():
             # Configuring Qt for WinCE ignores the -prefix option,
             # so we have to do the job manually...
-            
+
             # delete this because it is not working for windows
             utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearerd4.dll" ))
             utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearer4.dll" ))
@@ -220,27 +220,27 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
                     utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
-            # create qt.conf 
+            # create qt.conf
             utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
             return True
 
         if not QMakeBuildSystem.install(self):
             return False
 
-        # create qt.conf 
+        # create qt.conf
         utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
-        
+
         # install msvc debug files if available
         if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010"):
             srcdir = os.path.join( self.buildDir(), "lib" )
             destdir = os.path.join( self.installDir(), "lib" )
 
             filelist = os.listdir( srcdir )
-            
+
             for file in filelist:
                 if file.endswith( ".pdb" ):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
-                
+
         return True
 
 if __name__ == '__main__':

@@ -12,21 +12,21 @@ class subinfo(info.infoclass):
         self.patchToApply['0.0.2'] = ("win-iconv-0.0.2-20101217.diff", 1)
         self.shortDescription = "a character set conversion library binary compatible with GNU iconv"
         self.defaultTarget = '0.0.2'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         if emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
 
-from Package.CMakePackageBase import *        
-        
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        
+
         if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild():
             self.subinfo.options.configure.defines = "-DBUILD_STATIC=ON "
-        
+
 if __name__ == '__main__':
     Package().execute()

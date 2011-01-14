@@ -18,8 +18,8 @@ class subinfo(info.infoclass):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-from Package.BinaryPackageBase import *        
-        
+from Package.BinaryPackageBase import *
+
 class Package(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

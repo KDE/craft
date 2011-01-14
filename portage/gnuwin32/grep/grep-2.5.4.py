@@ -1,7 +1,7 @@
 import info
 import os
 
-## \todo the dep files will let into have dll's installed multiple times 
+## \todo the dep files will let into have dll's installed multiple times
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-%s-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-%s-dep.zip
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         for t in ( '2.5.1a', '2.5.4' ):
           self.targets[ t ] = SRC_URI % ( t, t )
         self.defaultTarget = '2.5.4'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
@@ -25,12 +25,12 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
         BinaryPackageBase.__init__( self )
-        
+
     def install( self ):
         if not BinaryPackageBase.install( self ):
             return False
-        
-        manifestDir = os.path.join( self.imageDir(), "manifest"  ) 
+
+        manifestDir = os.path.join( self.imageDir(), "manifest"  )
         if os.path.exists( manifestDir ):
             for file in os.listdir( manifestDir ):
                 if file.endswith( '.mft' ):

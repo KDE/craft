@@ -28,11 +28,11 @@ class subclass(base.baseclass):
 
 
     def unpack(self):
-        base.baseclass.unpack( self ) or utils.die( "unpack failed" )       
+        base.baseclass.unpack( self ) or utils.die( "unpack failed" )
         self.system( "copy " + os.path.join(self.workdir,self.instsrcdir,"configure.py") + " " + os.path.join(self.workdir,self.instsrcdir,"configure.py.orig") )
         self.system( "copy " + os.path.join( self.packagedir,"configure.py") + " " + os.path.join(self.workdir,self.instsrcdir,"configure.py") )
         # patch does not work for unknown reasons
-        #cmd = "cd %s && patch -p0 -i %s" % ( self.instsrcdir, os.path.join( self.packagedir, "pyqt-4.4.3.patch" ) ) 
+        #cmd = "cd %s && patch -p0 -i %s" % ( self.instsrcdir, os.path.join( self.packagedir, "pyqt-4.4.3.patch" ) )
         #self.system( cmd )
 
         if self.buildType == 'Debug':

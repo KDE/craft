@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'konversation-' + ver
         self.svnTargets['gitHEAD'] = 'git://anongit.kde.org/konversation'
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'

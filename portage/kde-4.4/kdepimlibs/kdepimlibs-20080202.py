@@ -10,14 +10,14 @@ class subinfo(info.infoclass):
           self.targets['4.4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.4.' + ver + '/src/kdepimlibs-4.4.' + ver + '.tar.bz2'
           self.targetInstSrc['4.4.' + ver] = 'kdepimlibs-4.4.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.4/kdelibs'] = 'default'
         self.hardDependencies['win32libs-bin/libical'] = 'default'
         self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         self.hardDependencies['win32libs-bin/cyrus-sasl'] = 'default'
         self.hardDependencies['kdesupport/akonadi'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

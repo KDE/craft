@@ -21,7 +21,7 @@ class subinfo (info.infoclass):
         self.targetDigests['0.9.21b'] = '8bc505b64f82723c2dc901036cb0607500870973'
         self.shortDescription = "high-performance, full-featured text search engine (required for compiling strigi)"
         self.defaultTarget = '0.9.21b'
- 
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = False
@@ -53,6 +53,6 @@ class Package(CMakePackageBase):
             utils.copyFile( cmake_script, cmake_dest )
 
         return True
-    
+
 if __name__ == '__main__':
     Package().execute()

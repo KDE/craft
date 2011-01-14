@@ -8,13 +8,13 @@ class subinfo( info.infoclass ):
             self.targetInstSrc[ ver ] = 'kdevelop-' + ver
         self.patchToApply[ '4.1.1' ] = ( "kdevelop-4.1.1-20101228.diff", 1 )
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies[ 'virtual/kdebase-runtime' ] = 'default'
         self.dependencies[ 'virtual/kdeutils' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
         self.buildDependencies[ 'dev-util/zip' ] = 'default'
-    
+
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):

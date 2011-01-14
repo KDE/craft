@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.4.0'] = ('kdegraphics-4.4.0.diff', 1)
         self.patchToApply['4.4.1'] = ('kdegraphics-4.4.1.diff', 1)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
         self.hardDependencies['kde-4.4/kdebase-runtime'] = 'default'
@@ -24,8 +24,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/djvu'] = 'default'
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
 
-from Package.CMakePackageBase import *        
-        
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

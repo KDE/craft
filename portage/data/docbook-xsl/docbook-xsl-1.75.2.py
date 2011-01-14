@@ -21,12 +21,12 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         self.subinfo.options.install.installPath = 'share/xml/docbook'
-        
+
     def unpack( self ):
         """rename the directory here"""
         if not BinaryPackageBase.unpack(self):
             return False
-        os.rename(os.path.join(self.installDir(), os.path.basename(self.repositoryUrl()).replace(".tar.bz2", "")), 
+        os.rename(os.path.join(self.installDir(), os.path.basename(self.repositoryUrl()).replace(".tar.bz2", "")),
                   os.path.join(self.installDir(), "xsl-stylesheets-" + self.subinfo.buildTarget))
         return True
 

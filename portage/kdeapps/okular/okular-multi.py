@@ -4,7 +4,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics#norecursive;trunk/KDE/kdegraphics/okular;;trunk/KDE/kdegraphics/cmake'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde/kdebase-runtime'] = 'default'
         self.dependencies['kde/kdegraphicslibs'] = 'default'
@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs-bin/djvu'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

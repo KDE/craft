@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
         self.hardDependencies['kde-4.1/kdelibs'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -46,7 +46,7 @@ class subclass(base.baseclass):
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
             for pkg in self.subinfo.languages.split():
                 tgt = self.subinfo.buildTarget
-                filename = self.subinfo.targets[ tgt ] + 'kde-l10n-' + pkg + '-' + tgt + '.tar.bz2' 
+                filename = self.subinfo.targets[ tgt ] + 'kde-l10n-' + pkg + '-' + tgt + '.tar.bz2'
                 return utils.getFiles( filename, self.downloaddir )
         else:
             return False
@@ -60,14 +60,14 @@ class subclass(base.baseclass):
         if svnpath:
             if not self.kdeSvnUnpack( svnpath, "scripts" ):
                 return False
-                
+
             for pkg in self.subinfo.languages.split():
                 if not self.kdeSvnUnpack( svnpath, pkg ):
                     return False
             autogen = os.path.join( self.packagedir , "autogen.py" )
             svnpath = os.path.join( self.kdesvndir, svnpath )
-    
-    
+
+
             # execute autogen.py and generate the CMakeLists.txt files
             cmd = "cd %s && python %s %s" % \
                   (svnpath , autogen, self.subinfo.languages )

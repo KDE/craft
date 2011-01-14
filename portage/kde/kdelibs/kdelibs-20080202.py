@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         else:
             self.defaultTarget = 'svnHEAD'
 
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
@@ -46,7 +46,7 @@ class Package(CMakePackageBase):
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
         elif self.compiler() == "msvc2010":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2010\" "
-          
+
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             utils.warning("could not find qmake in <%s>" % qmake)

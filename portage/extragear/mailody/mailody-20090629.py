@@ -7,12 +7,12 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/pim/mailody'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kde/kdeedu'] = 'default'
-    
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

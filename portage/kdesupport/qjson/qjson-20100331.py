@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targets[ ver ] = "http://downloads.sourceforge.net/qjson/qjson-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = "qjson"
 
-        self.targetDigests['0.7.1'] = '19bbef24132b238e99744bb35194c6dadece98f9'            
+        self.targetDigests['0.7.1'] = '19bbef24132b238e99744bb35194c6dadece98f9'
         self.patchToApply['0.7.1'] = ("qjson-20100517.diff", 1)
         self.shortDescription = "a qt-based library that maps JSON data to Qt objects"
         self.defaultTarget = '0.7.1'
@@ -23,7 +23,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        
+
         self.subinfo.options.configure.defines = ""
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):

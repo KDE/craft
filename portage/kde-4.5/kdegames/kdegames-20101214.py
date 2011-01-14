@@ -9,14 +9,14 @@ class subinfo(info.infoclass):
         self.targetDigests['4.5.4'] = '6a0a33d5761c678f37f87a25268e53952134e081'
         self.patchToApply['4.5.4'] = [('kdegames-4.5.4-20101214.diff', 1)]
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.shortDescription = "KDE games applications"
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

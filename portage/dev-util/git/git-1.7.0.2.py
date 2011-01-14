@@ -8,16 +8,16 @@ class subinfo(info.infoclass):
         self.targets['1.6.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.6.4-preview20090729.7z"
         self.targets['1.7.0.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.0.2-preview20100309.7z"
         self.targetDigests['1.7.0.2'] = '96c3720dec940c4b8da8a09bfdcfa7ed56c2f016'
-        
+
         self.defaultTarget = '1.7.0.2'
-    
+
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
-        
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
@@ -26,7 +26,7 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils/git";
         BinaryPackageBase.__init__(self)
-        
+
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False

@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.1'] = ""
         self.defaultTarget = '0.1'
-    
+
     def setDependencies( self ):
         self.dependencies['win32libs-bin/aspell']  = 'default'
 #        self.dependencies['win32libs-bin/enchant']  = 'default'
@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/pcre']  = 'default'
         self.dependencies['win32libs-bin/shared-mime-info']  = 'default'
         self.dependencies['win32libs-bin/zlib']  = 'default'
-    
+
 class Package( VirtualPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

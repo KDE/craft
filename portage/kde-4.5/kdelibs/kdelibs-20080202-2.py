@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc['4.5.' + ver] = 'kdelibs-4.5.' + ver
         self.patchToApply['4.5.4'] = ( "kdelibs-4.5.4-20110104.diff", 1 )
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "basic KDE libraries"
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

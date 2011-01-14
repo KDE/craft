@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.patchToApply['2.7.8'] = ("libxml2-2.7.8-20110105.diff", 1)
         self.targetDigests['2.7.8'] = '859dd535edbb851cc15b64740ee06551a7a17d40'
         self.shortDescription = "XML C parser and toolkit (runtime and applications)"
-        
+
         self.defaultTarget = '2.7.7'
 
     def setDependencies( self ):
@@ -30,15 +30,15 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'libxml2'
         self.subinfo.options.configure.defines = "-DBUILD_tests=OFF"
-            
-            
-    def createPackage( self ): 
-        libName="libxml2" 
+
+
+    def createPackage( self ):
+        libName="libxml2"
         self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports	 
+        # auto-create both import libs with the help of pexports	
         self.createImportLibs( libName )
         return CMakePackageBase.createPackage( self )
 
 if __name__ == '__main__':
     Package().execute()
-    
+

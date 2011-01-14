@@ -1,5 +1,5 @@
 import info
-       
+
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/KDE/kdesdk#norecursive;trunk/KDE/kdesdk/umbrello;trunk/KDE/kdesdk/cmake"
@@ -14,9 +14,9 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.onlyBuildTargets = 'umbrello' 
-            
+        self.subinfo.options.configure.onlyBuildTargets = 'umbrello'
+
 if __name__ == '__main__':
     Package().execute()
 
-    
+

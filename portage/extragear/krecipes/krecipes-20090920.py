@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
         self.targets['2.0-alpha3'] = 'http://sourceforge.net/projects/krecipes/files/krecipes/2.0-alpha3/krecipes-2.0-alpha3.tar.gz'
         self.targetInstSrc['2.0-alpha3'] = 'krecipes-2.0-alpha3'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-    
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

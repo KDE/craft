@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.90'] = ('kdesdk-4.3.90.diff', 1)
         self.patchToApply['4.3.95'] = ('kdesdk-4.3.95.diff', 1)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.4/kdebase-runtime'] = 'default'
         self.hardDependencies['dev-util/zip'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

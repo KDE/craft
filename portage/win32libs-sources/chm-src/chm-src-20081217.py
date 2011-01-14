@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         self.targetDigests['0.40'] = '5231d7531e8808420d7f89fd1e4fdbac1ed7a167'
         self.shortDescription = "a library for dealing with Microsoft ITSS/CHM format files"
         self.defaultTarget = '0.40'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

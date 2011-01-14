@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 # create cmake build system files by iterating all available languages [1]
-# 
+#
 
 import os
 import re
@@ -50,7 +50,7 @@ def walk_subdir_messages(path):
     fc = open(os.path.join(path, cmake_filename), "w")
     for subdir in os.listdir(path):
         if (subdir != "others" and subdir != "www.kde.org" and subdir != ".svn"):
-            p = os.path.join(path, subdir)         
+            p = os.path.join(path, subdir)
             if (os.path.isdir(p)):
                 fc.write("add_subdirectory( %s )\n" % subdir)
                 add_cmake_files_messages_po(p)
@@ -107,7 +107,7 @@ def walk_subdir_docs(path):
     fc = open(os.path.join(path, cmake_filename), "w")
     for subdir in os.listdir(path):
         if (subdir != ".svn"):
-            p = os.path.join(path, subdir)         
+            p = os.path.join(path, subdir)
             if (os.path.isdir(p)):
                 fc.write("add_subdirectory( %s )\n" % subdir)
                 add_cmake_files_docs_subdir(path, subdir)
@@ -128,7 +128,7 @@ def walk_subdir_data(path):
     fc = open(os.path.join(path, cmake_filename), "w")
     for subdir in os.listdir(path):
         if (subdir != ".svn"):
-            p = os.path.join(path, subdir)         
+            p = os.path.join(path, subdir)
             if (os.path.isdir(p)):
                 fc.write("add_subdirectory( %s )\n" % subdir)
     fc.close()
@@ -149,7 +149,7 @@ def add_cmake_files_scripts_subdir(path):
     fc = open(os.path.join(path, cmake_filename), "w")
     for subdir in os.listdir(path):
         if (subdir != "internal" and subdir != ".svn"):
-            p = os.path.join(path, subdir)         
+            p = os.path.join(path, subdir)
             if (os.path.isdir(p)):
                 fc.write("kde4_install_ts_files(\${CURRENT_LANG} %s)\n" % subdir)
     fc.close()
@@ -158,7 +158,7 @@ def walk_subdir_scripts(path):
     fc = open(os.path.join(path, cmake_filename), "w")
     for subdir in os.listdir(path):
         if (subdir != "internal" and subdir != ".svn"):
-            p = os.path.join(path, subdir)         
+            p = os.path.join(path, subdir)
             if (os.path.isdir(p)):
                 fc.write("add_subdirectory( %s )\n" % subdir)
                 add_cmake_files_scripts_subdir(os.path.join(path, subdir))
@@ -194,7 +194,7 @@ def handle_subdir(langdir, language):
         if search.match(subdir):
             handle_subdir(os.path.join(langdir, subdir), subdir)
             f.write("macro_optional_add_subdirectory( %s )\n" % subdir)
-            
+
     f.close()
 
 

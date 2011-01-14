@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.5.4'] = 'e362bceff622f39bf6949657d1e629ef541c6ae2'
         self.patchToApply['4.5.4'] = [('kdebase-workspace-4.5.4-20101214.diff', 1)]
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "parts of the KDE desktop"
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

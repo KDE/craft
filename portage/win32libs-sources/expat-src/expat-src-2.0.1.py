@@ -21,11 +21,11 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         # both examples and tests can be run here
         self.subinfo.options.configure.defines = "-DBUILD_tests=OFF -DBUILD_examples=OFF"
-        
+
     def createPackage( self ):
-        libName="libexpat" 
+        libName="libexpat"
         self.stripLibs( libName )
         return KDEWinPackager.createPackage( self )
-           
+
 if __name__ == '__main__':
      Package().execute()

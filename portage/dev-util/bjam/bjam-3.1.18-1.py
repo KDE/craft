@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -27,14 +27,14 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
-        self.subinfo.options.merge.ignoreBuildType = True        
+        self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils";
         BinaryPackageBase.__init__(self)
-    
+
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False
-        return utils.renameDir(self.sourceDir(),os.path.join(self.imageDir(),'bin')) 
+        return utils.renameDir(self.sourceDir(),os.path.join(self.imageDir(),'bin'))
         return True
 
 if __name__ == '__main__':

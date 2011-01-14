@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.svnTargets['refactoring-2010'] = 'branches/work/emerge/refactoring-2010'
         self.svnTargets['1.0'] = 'tags/emerge/1.0'
         self.defaultTarget = 'svnHEAD'
-        
+
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
 
@@ -22,7 +22,7 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
         SvnSource.__init__(self)
         BuildSystemBase.__init__(self,"")
 
-    def checkoutDir(self, index=0 ): 
+    def checkoutDir(self, index=0 ):
         return os.path.join(ROOTDIR,"emerge")
 
     def configure(self):
@@ -30,8 +30,8 @@ class Package(PackageBase,SvnSource,BuildSystemBase):
 
     def make(self):
         return True
-        
-    def install(self): 
+
+    def install(self):
         return True
 
     def qmerge(self):

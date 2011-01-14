@@ -15,11 +15,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.7.2'] = 'http://kent.dl.sourceforge.net/project/gtkpod/libgpod/libgpod-0.7.2/libgpod-0.7.2.tar.gz'
         self.targetInstSrc['0.7.2'] = "libgpod-0.7.2"
-        self.patchToApply['0.7.2'] = ("libgpod-0.7.2.diff", 1)        
-        
+        self.patchToApply['0.7.2'] = ("libgpod-0.7.2.diff", 1)
+
         self.targets['0.7.90'] = 'http://www.gnome.org/~teuf/libgpod-0.7.90GIT.tar.gz'
         self.targetInstSrc['0.7.90'] = "libgpod-0.7.90GIT"
-        
+
         self.options.package.withCompiler = False
         self.shortDescription = "a library to access the contents of an iPod"
         self.defaultTarget = '0.7.2'
@@ -38,6 +38,6 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         self.subinfo.options.configure.defines = """--with-python=no --disable-static LIBXML_CFLAGS=-I""" + \
         MSysShell().toNativePath( os.path.join( self.rootdir, "include", "libxml" ) ) + """ LIBXML_LIBS=-lxml2"""
-           
+
 if __name__ == '__main__':
      Package().execute()

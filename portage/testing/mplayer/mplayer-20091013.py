@@ -6,9 +6,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         repoUrl = """http://kovensky.project357.com/builds/mplayer/git/"""
-        
+
         for version in ['20091013-314c6fc-2e061e0','20100211']:
-            self.targets[ version ] = repoUrl+version+"/mplayer.exe"            
+            self.targets[ version ] = repoUrl+version+"/mplayer.exe"
         self.defaultTarget = '20100211'
 
     def setDependencies( self ):
@@ -21,7 +21,7 @@ class Package(BinaryPackageBase):
     self.subinfo.options.package.packSources = False
     self.subinfo.options.package.withCompiler = None
     BinaryPackageBase.__init__( self )
-    
+
   def install( self ):
     if(not os.path.exists(os.path.join( self.imageDir(), "bin" , "mplayer" ))):
       os.makedirs( os.path.join( self.imageDir(), "bin" , "mplayer" ))

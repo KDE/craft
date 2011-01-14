@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-from Package.CMakePackageBase import *        
+from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.1'] = ( 'kdebase-workspace-tasks.diff', 0 )
         self.patchToApply['4.3.4'] = ( 'kdebase-workspace-4.3.4.diff', 1 )
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdelibs'] = 'default'
         self.hardDependencies['kde-4.3/kdepimlibs'] = 'default'

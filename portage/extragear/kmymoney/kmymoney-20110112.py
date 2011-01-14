@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.5.1'] = ('kmymoney-4.5.1-20101215.diff', 1)
         self.patchToApply['4.5.2'] = ('kmymoney-4.5.2-20110112.diff', 1)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdepimlibs'] = 'default'
         self.dependencies['virtual/kdebase-runtime'] = 'default'

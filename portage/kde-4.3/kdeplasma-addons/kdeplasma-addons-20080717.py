@@ -10,11 +10,11 @@ class subinfo(info.infoclass):
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdeplasma-addons-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdeplasma-addons-4.3.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['kde-4.3/kdebase-workspace'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.1.26'] = ("libxslt-1.1.26-20101102.diff", 1)
         self.targetDigests['1.1.26'] = '69f74df8228b504a87e2b257c2d5238281c65154'
         self.shortDescription = "The GNOME XSLT C library and tools"
-        
+
         self.defaultTarget = '1.1.26'
 
     def setDependencies( self ):
@@ -26,15 +26,15 @@ class Package( CMakePackageBase ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'libxslt'
-            
-            
-    def createPackage( self ): 
-        libName="libxslt" 
+
+
+    def createPackage( self ):
+        libName="libxslt"
         self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports	 
+        # auto-create both import libs with the help of pexports	
         self.createImportLibs( libName )
         return CMakePackageBase.createPackage( self )
 
 if __name__ == '__main__':
     Package().execute()
-    
+

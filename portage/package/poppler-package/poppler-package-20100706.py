@@ -4,13 +4,13 @@ import compiler
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
 
-# This is an example package for building 
+# This is an example package for building
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ '0.14.5' ] = ""
         self.defaultTarget = '0.14.5'
-    
+
     def setDependencies( self ):
         self.dependencies[ 'win32libs-sources/poppler-src' ] = 'default'
         if compiler.isMinGW32():
@@ -19,7 +19,7 @@ class subinfo( info.infoclass ):
             self.dependencies[ 'dev-util/mingw-w32' ] = 'default'
         elif compiler.isMinGW_W64():
             self.dependencies[ 'dev-util/mingw-w64' ] = 'default'
-    
+
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()

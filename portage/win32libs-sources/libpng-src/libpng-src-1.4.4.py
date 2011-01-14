@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'libpng-' + ver
         self.patchToApply['1.4.4'] = ("libpng-1.4.4-20100517.diff", 1)
         self.targetDigests['1.4.4'] = '245490b22086a6aff8964b7d32383a17814d8ebf'
-        
+
         self.shortDescription = 'A library to display png images'
         self.defaultTarget = '1.4.4'
-        
+
 
     def setDependencies( self ):
         self.dependencies['win32libs-bin/zlib'] = 'default'
@@ -25,16 +25,16 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
 
-    def createPackage( self ): 
+    def createPackage( self ):
         if(self.subinfo.buildTarget.startswith('1.2')):
-           libName="libpng12" 
+           libName="libpng12"
         else:
-           libName="libpng14" 
+           libName="libpng14"
         self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports	 
+        # auto-create both import libs with the help of pexports	
         self.createImportLibs( libName )
         return CMakePackageBase.createPackage( self )
 
 if __name__ == '__main__':
     Package().execute()
-    
+

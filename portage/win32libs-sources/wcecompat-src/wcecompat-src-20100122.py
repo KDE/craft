@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/kromain/wcecompat.git'
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
-                
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

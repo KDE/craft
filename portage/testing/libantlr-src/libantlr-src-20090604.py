@@ -12,10 +12,10 @@ class subinfo(info.infoclass):
         self.targets['3.1.3'] = 'http://www.antlr.org/download/C/libantlr3c-3.1.3.tar.gz'
         self.targetInstSrc['3.1.3'] = 'libantlr3c-3.1.3'
         self.defaultTarget = '3.1.3'
-    
+
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -28,9 +28,9 @@ class subclass(base.baseclass):
         cmake_script = os.path.join( self.packagedir , "CMakeLists.txt" )
         cmake_dest = os.path.join( self.workdir, self.instsrcdir, "CMakeLists.txt" )
         shutil.copy( cmake_script, cmake_dest )
-        
+
         return True
-        
+
     def compile( self ):
         return self.kdeCompile()
 

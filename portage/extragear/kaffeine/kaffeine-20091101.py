@@ -6,10 +6,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/kaffeine'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-        
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

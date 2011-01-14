@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
            self.targetInstSrc[ ver ] = "zlib-" + ver
        self.patchToApply['1.2.5'] = ("zlib-1.2.5-20100422.diff", 1)
        self.targetDigests['1.2.5'] = '8e8b93fa5eb80df1afe5422309dca42964562d7e'
-       
+
        self.shortDescription = 'The zlib compression and decompression library'
        self.defaultTarget = '1.2.5'
 
@@ -26,7 +26,7 @@ class Package(CMakePackageBase):
 
     def unpack(self):
         if not CMakePackageBase.unpack( self ):
-            return False       
+            return False
         if os.path.exists(os.path.join( self.sourceDir() , "zconf.h" )):
             os.remove(os.path.join( self.sourceDir() , "zconf.h" ))
         return True

@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['0.1.0'] = [("qtscriptgenerator-cmake.diff", 1), ("qtscriptgenerator.diff", 1), ("qtscriptgenerator.gcc-4.4.diff", 1)]
         self.shortDescription = "a tool that generates Qt bindings for Qt Script"
         self.defaultTarget = '0.1.0'
-   
+
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):

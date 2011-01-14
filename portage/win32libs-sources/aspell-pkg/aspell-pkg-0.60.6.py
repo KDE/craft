@@ -33,9 +33,9 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
-        
+
         self.buildInSource=True
-        
+
         compiler = self.compiler()
         if self.buildArchitecture()=="x64" and compiler == "mingw4":
             compiler="mingw64"
@@ -43,15 +43,15 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
             compiler="mingw"
         else:
             utils.die("msvc is not supported");
-            
+
     def unpack( self ):
         if( not MultiSource.unpack( self ) ):
           return False
         utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "aspell-0.60.6.diff" ), 0 )
         utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "aspell-kde-dirs.diff"),0 )
         return True
-        
-    def createPackage( self ): 
+
+    def createPackage( self ):
        for libs in PACKAGE_DLL_NAMES.split():
          self.stripLibs( libs )
        for libs in PACKAGE_DLL_NAMES.split():

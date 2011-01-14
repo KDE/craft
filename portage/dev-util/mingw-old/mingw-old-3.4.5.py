@@ -30,10 +30,10 @@ class subinfo(info.infoclass):
         self.targets['3.4.5'] = SRC_URI
         self.targetMergePath['3.4.5'] = "mingw";
         self.defaultTarget = '3.4.5'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

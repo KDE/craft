@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc['4.5.' + ver] = 'kdenetwork-4.5.' + ver
         self.defaultTarget = 'svnHEAD'
         self.patchToApply['4.5.4'] = ( 'kdenetwork-4.5.4-20101213.diff', 1 )
-    
+
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['kde-4.5/kdepimlibs'] = 'default'
@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "KDE Networking applications (Kopete, KGet)"
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

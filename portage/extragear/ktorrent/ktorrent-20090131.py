@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targets[version] = 'http://ktorrent.org/downloads/' + version + '/ktorrent-' + version + '.tar.bz2'
             self.targetInstSrc[version] = 'ktorrent-' + version
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['virtual/kdepimlibs'] = 'default'
@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libgmp'] = 'default'
         self.dependencies['extragear/libktorrent'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
-    
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

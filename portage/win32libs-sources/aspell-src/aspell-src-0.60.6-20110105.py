@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.60.6'] = ('aspell-0.60.6-20100726.diff', 1)
         self.shortDescription = "A powerful spell checker, designed to replace ispell"
         self.defaultTarget = '0.60.6'
-        
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
 
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

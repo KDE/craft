@@ -52,14 +52,14 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/runtime'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/runtime'
         self.defaultTarget = '20110110'
-    
+
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'
         self.hardDependencies['kdesupport/oxygen-icons'] = 'default'
         self.hardDependencies['win32libs-sources/libssh-src'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

@@ -53,7 +53,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdelibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdelibs'
         self.defaultTarget = '20110110'
-    
+
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdewin-e5'] = 'default'
         self.hardDependencies['enterprise5/qimageblitz-e5'] = 'default'
@@ -80,7 +80,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/aspell']  = 'default'
 # gettext-src uses a weird shell script for building
         self.hardDependencies['win32libs-bin/gettext']  = 'default'
-        
+
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
@@ -91,7 +91,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['data/docbook-dtd'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

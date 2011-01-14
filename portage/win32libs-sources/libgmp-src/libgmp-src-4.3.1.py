@@ -29,14 +29,14 @@ class subclass(base.baseclass):
         if self.compiler <> "mingw":
             print "error: can only be build with MinGW right now."
             exit( 1 )
-       
+
     def compile( self ):
         self.msys.msysCustomDefines = "--disable-cxx "
         return self.msysCompile()
 
     def install( self ):
         return self.msysInstall()
-    
+
     def make_package( self ):
         in_lib  = os.path.join( self.imagedir, "bin", "libgmp-3.dll" )
         out_lib = os.path.join( self.imagedir, "bin", "libgmp.dll" )
@@ -52,6 +52,6 @@ class subclass(base.baseclass):
         self.createImportLibs( "libgmp" )
 
         return self.doPackaging( "libgmp", self.buildTarget, True )
-        
+
 if __name__ == '__main__':
     subclass().execute()

@@ -6,10 +6,10 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/oxygen-icons'
         for ver in ['4.5.4']:
           self.targets[ver] = 'http://download.kde.org/download.php?url=stable/' + ver + '/src/oxygen-icons-' + ver + '.tar.bz2'
-          self.targetInstSrc[ver] = 'oxygen-icons-' + ver 
+          self.targetInstSrc[ver] = 'oxygen-icons-' + ver
         self.shortDescription = "icons and bitmaps for the oxygen style"
         self.defaultTarget = 'svnHEAD'
-        
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
 
@@ -22,7 +22,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        # this package could be used for all build types (only images) 
+        # this package could be used for all build types (only images)
         ## \todo find a way to reuse this build output for different build types
         self.subinfo.options.useBuildType = False
         self.subinfo.options.useCompilerType = False
@@ -34,7 +34,7 @@ class Package(CMakePackageBase):
         ret = CMakePackageBase.qmerge(self)
         if emergePlatform.isCrossCompilingEnabled():
             utils.copyDir(self.imageDir(),
-                    os.path.join(self.rootdir, 
+                    os.path.join(self.rootdir,
                     os.environ["EMERGE_TARGET_PLATFORM"]))
         return ret
 

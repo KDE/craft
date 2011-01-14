@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
           self.targets['4.3.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.3.' + ver + '/src/kdelibs-experimental-4.3.' + ver + '.tar.bz2'
           self.targetInstSrc['4.3.' + ver] = 'kdelibs-experimental-4.3.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdelibs'] = 'default'
-        
-from Package.CMakePackageBase import *        
-        
+
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

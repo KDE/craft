@@ -7,10 +7,10 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://repo.or.cz/kdbg.git'
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-     
+
 
 class Package( CMakePackageBase ):
     def __init__( self ):

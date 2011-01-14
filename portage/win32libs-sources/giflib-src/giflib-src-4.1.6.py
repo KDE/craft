@@ -21,15 +21,14 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'giflib'
         self.subinfo.options.configure.defines = "-DBUILD_utils=OFF"
-            
-            
-    def createPackage( self ): 
-        libName="libgiflib4" 
+
+
+    def createPackage( self ):
+        libName="libgiflib4"
         self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports	 
+        # auto-create both import libs with the help of pexports	
         self.createImportLibs( libName )
         return CMakePackageBase.createPackage( self )
 
 if __name__ == '__main__':
     Package().execute()
-    

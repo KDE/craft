@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/koffice"
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.softDependencies['kdesupport/eigen2'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
         self.softDependencies['testing/gsl'] = 'default'
-    
+
 
 class subclass(base.baseclass):
     def __init__( self, **args ):
@@ -34,7 +34,7 @@ class subclass(base.baseclass):
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kword=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_kspread=OFF "
         self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
-        
+
 
     def unpack( self ):
         unp = self.kdeSvnUnpack( "trunk", "koffice" )
@@ -50,7 +50,7 @@ class subclass(base.baseclass):
 
     def kdeSvnPath( self ):
         return False
-        
+
     def compile( self ):
         return self.kdeCompile()
 

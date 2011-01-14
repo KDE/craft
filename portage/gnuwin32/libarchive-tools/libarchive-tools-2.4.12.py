@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-    
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
@@ -23,12 +23,12 @@ class Package(BinaryPackageBase):
         #self.subinfo.options.merge.destinationPath = "dev-utils"
         BinaryPackageBase.__init__(self)
 
-        
+
     def unpack( self ):
         if not BinaryPackageBase.unpack(self):
             return False
         utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "libarchive-comp.diff" ) , "0" )
         return True
- 
+
 if __name__ == '__main__':
     Package().execute()

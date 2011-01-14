@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['win32libs-bin/ghostscript'] = 'default'
-        
+
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

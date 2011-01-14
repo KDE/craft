@@ -12,13 +12,13 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.3.' + ver] = 'kdegames-4.3.' + ver
         self.patchToApply['4.2.95'] = ('kdegames-kshisen-icon.diff', 0)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
 
-from Package.CMakePackageBase import *        
-        
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

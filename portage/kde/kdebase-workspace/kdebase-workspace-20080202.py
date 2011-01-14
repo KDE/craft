@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             self.defaultTarget = 'komobranch'
         else:
             self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde/kdebase-runtime'] = 'default'
 #        if not emergePlatform.isCrossCompilingEnabled():
@@ -16,13 +16,13 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
-    
+
     def setBuildOptions( self ):
         self.disableHostBuild = True
         self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

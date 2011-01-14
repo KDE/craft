@@ -11,9 +11,9 @@ class subinfo( info.infoclass ):
         self.buildDependencies[ 'virtual/bin-base' ] = 'default'
 
 from Package.BinaryPackageBase import *
-import compiler  
-    
-    
+import compiler
+
+
 class Package( BinaryPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

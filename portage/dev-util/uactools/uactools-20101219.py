@@ -31,7 +31,7 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         SourceBase.__init__( self )
         PackageBase.__init__( self )
         BinaryBuildSystem.__init__( self )
-        
+
     def fetch( self ):
         filenames = [ os.path.basename( self.subinfo.target() ) ]
 
@@ -54,4 +54,4 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
             return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
 
 if __name__ == '__main__':
-    Package().execute() 
+    Package().execute()

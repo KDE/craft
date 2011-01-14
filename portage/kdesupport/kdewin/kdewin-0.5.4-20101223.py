@@ -6,7 +6,7 @@ import compiler
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-		# will be moved to kdewin-qt 
+		# will be moved to kdewin-qt
         self.dependencies['libs/qt'] = 'default'
 		# will be moved to kdewin-tools
         self.dependencies['win32libs-bin/zlib'] = 'default'
@@ -33,7 +33,7 @@ class Package(CMakePackageBase):
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
         CMakePackageBase.__init__( self )
-        
+
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             utils.warning("could not find qmake in <%s>" % qmake)

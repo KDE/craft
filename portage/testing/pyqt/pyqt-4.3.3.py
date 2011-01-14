@@ -7,17 +7,17 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.3.3'] = 'http://www.riverbankcomputing.com/Downloads/PyQt4/GPL/PyQt-win-gpl-4.3.3.zip'
-        self.targetInstSrc['4.3.3'] = 'PyQt-win-gpl-4.3.3'        
+        self.targetInstSrc['4.3.3'] = 'PyQt-win-gpl-4.3.3'
         self.defaultTarget = '4.3.3'
-    
+
     def setDependencies( self ):
         self.hardDependencies['testing/sip'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
-        
+
     def unpack( self ):
         ok = base.baseclass.unpack( self )
         # remove query for acceptance of GPL

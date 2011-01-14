@@ -9,10 +9,10 @@ class subinfo( info.infoclass ):
         self.targetInstSrc['2.0.0-beta2'] = 'krusader-2.0.0-beta2'
         self.patchToApply['2.0.0-beta2'] = ['krusader.patch',1]
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-        
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

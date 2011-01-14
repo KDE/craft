@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ 'svnHEAD' ] = 'git://git.kde.org/automoc'
         self.defaultTarget = 'svnHEAD'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True

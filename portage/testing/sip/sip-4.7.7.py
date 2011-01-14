@@ -45,8 +45,8 @@ class subclass(base.baseclass):
 		builddir = os.path.join( self.workdir, self.instsrcdir )
 		os.chdir( builddir )
 		self.system( "nmake install" )
-		# fix problem with not copying manifest file 
-		self.system( "copy " + os.path.join(builddir,"sipgen","sip.exe.manifest") + " c:\python25") 
+		# fix problem with not copying manifest file
+		self.system( "copy " + os.path.join(builddir,"sipgen","sip.exe.manifest") + " c:\python25")
 		# install manifest file too
 		return True
 

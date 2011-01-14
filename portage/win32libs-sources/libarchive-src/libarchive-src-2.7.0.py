@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['2.8.4'] = ("libarchive-2.8.4-20101205.diff", 1)
         self.shortDescription = "C library and command-line tools for reading and writing tar, cpio, zip, ISO, and other archive formats"
         self.defaultTarget = '2.8.4'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs-bin/libbzip2'] = 'default'
@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs-bin/libxml2'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

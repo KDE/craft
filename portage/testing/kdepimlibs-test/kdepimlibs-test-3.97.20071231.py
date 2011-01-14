@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
         self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepimlibs'
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepimlibs'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -30,7 +30,7 @@ class subclass(base.baseclass):
 
         self.svnFetch( repo )
         self.kdeSvnUnpack()
-        
+
         srcdir = os.path.join( self.svndir )
         destdir = os.path.join( self.workdir, "kdepimlibs", "gpgme-qt" )
         utils.copySrcDirToDestDir( srcdir, destdir )

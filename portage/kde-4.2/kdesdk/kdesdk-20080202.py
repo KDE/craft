@@ -10,11 +10,11 @@ class subinfo(info.infoclass):
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdesdk-4.2.' + ver + '.tar.bz2'
           self.targetInstSrc['4.2.' + ver] = 'kdesdk-4.2.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/zip'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -35,7 +35,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_scripts=OFF "
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_umbrello=OFF "
 #        self.kdeCustomDefines = self.kdeCustomDefines + "-DBUILD_doc=OFF "
-        
+
 
     def unpack( self ):
         return self.kdeSvnUnpack()

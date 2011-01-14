@@ -8,16 +8,16 @@ class subinfo(info.infoclass):
         self.targetInstSrc['dbus4win-noncetcp'] = os.path.join( "dbus4win-noncetcp-20090612", "cmake" )
         self.svnTargets['svnhead'] = 'git://repo.or.cz/dbus4win.git'
         self.targetConfigurePath['svnHEAD'] = 'cmake'
-       
+
         self.defaultTarget = 'svnHEAD'
         #self.defaultTarget = 'dbus4win-frank'
-    
+
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/expat'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
 
-from Package.CMakePackageBase import *        
-        
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

@@ -33,6 +33,6 @@ class subclass(base.baseclass):
     # now do packaging with kdewin-packager
     self.doPackaging( "pcre", self.buildTarget, True )
     return True
-  
+
 if __name__ == '__main__':
     subclass().execute()

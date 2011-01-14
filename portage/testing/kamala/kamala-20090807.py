@@ -2,7 +2,7 @@
 import info
 
 from Package.CMakePackageBase import *
-        
+
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "trunk/playground/games#norecursive;trunk/playground/games/kamala;trunk/playground/games/cmake"
@@ -20,8 +20,8 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.onlyBuildTargets = 'kamala'
-            
+
 if __name__ == '__main__':
     Package().execute()
 
-    
+

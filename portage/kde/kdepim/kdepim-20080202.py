@@ -15,13 +15,13 @@ class subinfo( info.infoclass ):
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = True
         self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
@@ -30,7 +30,7 @@ class Package( CMakePackageBase ):
         # save and then overwrite our checkoutDir function
         self.baseCheckoutDir = self.source.checkoutDir
         self.source.checkoutDir = self.checkoutDir
-        
+
         self.subDir = False
 
         self.subinfo.options.configure.defines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
@@ -72,7 +72,7 @@ class Package( CMakePackageBase ):
             self.subDir = True
             ret = CMakePackageBase.fetch( self, "git://git.kde.org/kdepim-runtime" )
         return ret
-        
+
     def qmerge( self ):
         ret = CMakePackageBase.qmerge(self)
         if self.isTargetBuild():

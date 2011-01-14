@@ -8,11 +8,11 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
       self.hardDependencies[ 'libs/qt' ] = 'default'
       self.hardDependencies[ 'kdesupport/qjson' ] = 'default'
-        
+
     def setTargets( self ):
       self.svnTargets[ 'gitHEAD' ] = 'git://git.kde.org/libechonest'
       self.defaultTarget = 'gitHEAD'
-         
+
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):

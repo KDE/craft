@@ -28,12 +28,12 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['HEAD'] = ""
         self.defaultTarget = 'HEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/bin-base'] = 'default'
         for package in PACKAGES.split():
             self.dependencies['win32libs-bin/' + package] = 'default'
-    
+
 class Package( VirtualPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

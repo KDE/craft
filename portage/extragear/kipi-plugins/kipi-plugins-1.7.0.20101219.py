@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.patchToApply[ '1.1.0' ] = ( 'kipi-plugins-1.1.0.diff', 1 )
         self.defaultTarget = 'svnHEAD'
         self.shortDescription = "common KDE graphics application plugins"
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['virtual/kdegraphics'] = 'default'

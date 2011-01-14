@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
           self.targets['4.2.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.2.' + ver + '/src/kdegraphics-4.2.' + ver + '.tar.bz2'
           self.targetInstSrc['4.2.' + ver] = 'kdegraphics-4.2.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
         self.hardDependencies['kde-4.2/kdebase-runtime'] = 'default'

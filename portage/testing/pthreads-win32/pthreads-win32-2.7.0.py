@@ -3,7 +3,7 @@ import os
 import info
 
 class subinfo(info.infoclass):
-    def setTargets( self ):     
+    def setTargets( self ):
         arch='32'
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
            arch='64'
@@ -25,4 +25,3 @@ class Package(BinaryPackageBase):
 
 if __name__ == '__main__':
     Package().execute()
-    

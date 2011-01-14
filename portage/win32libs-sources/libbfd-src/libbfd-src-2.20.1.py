@@ -9,17 +9,17 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.20.1'] = 'binutils-2.20.1/bfd'
         self.targetDigests['2.20.1'] = 'd4428deccc9d1d170929a820d04f5d90a1b524ac'
         self.defaultTarget = '2.20.1'
-        
+
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/msys'] = 'default'
 
-        
-        
+
+
 from Package.AutoToolsPackageBase import *
 from Package.VirtualPackageBase import *
- 
+
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
@@ -34,6 +34,6 @@ else:
         def __init__( self ):
             self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
-            
+
 if __name__ == '__main__':
       Package().execute()

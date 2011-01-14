@@ -5,12 +5,12 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/%s'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
         self.hardDependencies['kde/kdelibs'] = 'default'
-    
+
 
 from Package.CMakePackageBase import *
 
@@ -23,8 +23,8 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__( self )
         self.language = 'de'
         # because of the large amount of packages
-        # it is very annoying to restart the build, 
-        # wasting several hours, so ignore any errors 
+        # it is very annoying to restart the build,
+        # wasting several hours, so ignore any errors
         # for now
         self.subinfo.options.make.ignoreErrors = True
         self.subinfo.options.exitOnErrors = False
@@ -32,15 +32,15 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         #self.subinfo.options.package.version = '4.3.63'
 
     def repositoryUrl(self,index=0):
-        # \todo we cannot use CMakePackageBase here because repositoryPath 
-        # then is not be overrideable for unknown reasons 
+        # \todo we cannot use CMakePackageBase here because repositoryPath
+        # then is not be overrideable for unknown reasons
         url = SvnSource.repositoryUrl(self,index) % self.language
         return url
 
     def checkoutDir(self,index=0):
         dir = SvnSource.checkoutDir(self,index) % self.language
         return dir
-        
+
     def buildRoot(self):
         dir = os.path.join(PackageBase.buildRoot(self), self.language)
         return dir
@@ -71,13 +71,13 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         if not os.path.exists(os.path.join(self.buildDir(),"CMakeCache.txt")):
             return CMakeBuildSystem.configure(self)
         return True
-        
+
     def createPackage(self):
         self.subinfo.options.package.packageName = 'l10n-kde4-%s' % self.language
         self.subinfo.options.package.withCompiler = False
         return KDEWinPackager.createPackage(self)
-        
-        
+
+
 class MainInfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/scripts'
@@ -92,7 +92,7 @@ class MainInfo(info.infoclass):
 
         #for testing
         self.languages  = 'de'
-    
+
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
@@ -107,11 +107,11 @@ class MainPackage(PackageBase):
         self.subinfo = MainInfo()
         PackageBase.__init__( self )
         self.kde4_l10n = portage.getPackageInstance('enterprise5','l10n-wce-e5')
-        # set to any language to start building from 
+        # set to any language to start building from
         ## \todo when emerge.py is able to provide command line options to us
-        # it would be possible to set this from command line 
-        self.startLanguage = None 
-        
+        # it would be possible to set this from command line
+        self.startLanguage = None
+
     def execute(self):
         (command, option) = self.getAction()
         if self.isTargetBuild(): return True
@@ -122,21 +122,21 @@ class MainPackage(PackageBase):
         else:
             languages = self.subinfo.languages.split()
         found=None
-            
+
         for language in languages:
             if not found and self.startLanguage:
                 if self.startLanguage <> language:
                     continue
                 else:
                     found = True
-            
+
             self.kde4_l10n.language = language
             if not self.kde4_l10n.runAction(command):
                 self.errors["%s-%s" % (language, command)] = 1
 
         print self.errors
-        return True    
-        
+        return True
+
 if __name__ == '__main__':
     MainPackage().execute()
 

@@ -1,7 +1,7 @@
 # GnuPG - Windows development package
 #
 # This Package contains the headers and libraries for the gnupg software:
-# 
+#
 # libgpg-error-1.8
 # libgcrypt-1.4.5
 # libassuan-2.0.0

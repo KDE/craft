@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.targetDigests['0.7.1'] = '791086da977033a1bbee3effa317668b3726bd7f'
         self.targetInstSrc['0.7.1'] = 'quassel-0.7.1'
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.shortDescription = "a distributed IRC client"
-     
+
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
@@ -24,7 +24,7 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = ""
         self.subinfo.options.configure.defines += " -DWITH_KDE=ON"
-      
+
 
 
 if __name__ == '__main__':

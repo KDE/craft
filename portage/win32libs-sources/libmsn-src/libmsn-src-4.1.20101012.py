@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/openssl'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

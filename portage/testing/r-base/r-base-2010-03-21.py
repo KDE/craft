@@ -22,7 +22,7 @@ from Package.BinaryPackageBase import *
 # Installation goes to dstdir/lib/R, since R comes with *a lot* of files in several subdirectories.
 # This approach is also taken in the Debian packages, and probably other *n*x distributions.
 # A convenience R.bat is added to dstdir/bin to have "R" in the path.
-# Compiling R from source is possible, but terribly complex on Windows. See 
+# Compiling R from source is possible, but terribly complex on Windows. See
 # http://cran.r-project.org/doc/manuals/R-admin.html#Installing-R-under-Windows for details.
 #
 # TODO:

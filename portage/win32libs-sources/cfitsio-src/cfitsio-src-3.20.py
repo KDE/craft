@@ -14,13 +14,13 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies['virtual/base']  = 'default'
 
-from Package.CMakePackageBase import *        
-        
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = "-DENABLE_STATIC=ON"
-        
+
 if __name__ == '__main__':
     Package().execute()

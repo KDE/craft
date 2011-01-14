@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdeutils-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdeutils-4.5.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdebase-runtime'] = 'default'
         self.dependencies['kde-4.5/kdepimlibs'] = 'default'
@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "various desktop utilities (KGpg, Okteta)"
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

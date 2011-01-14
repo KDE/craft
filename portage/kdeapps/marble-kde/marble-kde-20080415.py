@@ -6,10 +6,10 @@ class subinfo( info.infoclass ):
         self.svnTargets['4.2'] = 'branches/KDE/4.2/kdeedu/marble'
         self.svnTargets['4.3'] = 'branches/KDE/4.3/kdeedu/marble'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-    
+
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):

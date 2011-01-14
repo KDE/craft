@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ver] = 'kmid-' + ver
         self.shortDescription = "a MIDI/Karaoke player for KDE4"
         self.defaultTarget = '2.4.0'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-    
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

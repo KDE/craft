@@ -14,13 +14,13 @@ class subinfo( info.infoclass ):
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = True
         self.disableTargetBuild = True
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

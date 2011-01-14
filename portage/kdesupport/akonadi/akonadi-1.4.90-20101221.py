@@ -13,13 +13,13 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
         self.dependencies['win32libs-bin/shared-mime-info'] = 'default'
-        
+
 
     def setTargets( self ):
         for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1', '1.4.1', '1.4.2', '1.4.3', '1.4.80', '1.4.90']:
           self.targets[ver] = 'http://download.akonadi-project.org/akonadi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'akonadi-' + ver
-          
+
 
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/akonadi'

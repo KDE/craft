@@ -66,7 +66,7 @@ class subclass(base.baseclass):
     utils.cleanDirectory( dst )
     # no need to recreate msvc import lib
     shutil.copy( os.path.join( src, PACKAGE_DLL_NAME + ".lib" ), os.path.join( dst, PACKAGE_DLL_NAME + ".lib" ) )
-    
+
     return True
   def make_package( self ):
     self.instsrcdir = PACKAGE_INSTSRCDIR

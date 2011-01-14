@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies[ 'virtual/base' ] = 'default'
         self.dependencies[ 'win32libs-bin/libogg' ] = 'default'
         self.dependencies[ 'win32libs-bin/libvorbis' ] = 'default'
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

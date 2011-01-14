@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.patchToApply['2.0.91'] = ('koffice-2.0.91.diff', 1)
         self.patchToApply['2.1.0'] = ('koffice-2.1.0.diff', 1)
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
@@ -28,9 +28,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/eigen2'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
         self.softDependencies['testing/gsl'] = 'default'
-    
+
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

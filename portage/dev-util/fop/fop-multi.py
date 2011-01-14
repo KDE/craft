@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['1.0'] = 'afef3bbfed5543c92bc9ed2d7651422580f98bd9'
         self.targetMergeSourcePath['1.0'] = 'fop-1.0'
         self.defaultTarget = '1.0'
-            
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -18,7 +18,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
-        ## @todo manifest files are also written in dev-utils/bin - fix this 
+        ## @todo manifest files are also written in dev-utils/bin - fix this
         self.subinfo.options.merge.destinationPath = "dev-utils/bin"
         BinaryPackageBase.__init__(self)
 

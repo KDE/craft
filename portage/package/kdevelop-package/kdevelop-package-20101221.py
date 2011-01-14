@@ -3,16 +3,16 @@ import info
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
 
-# This is an example package for building 
+# This is an example package for building
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ '4.1.1' ] = ""
         self.defaultTarget = '4.1.1'
-    
+
     def setDependencies( self ):
         self.dependencies[ 'extragear/kdevelop' ] = 'default'
-    
+
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()

@@ -11,11 +11,11 @@ class subinfo(info.infoclass):
         self.svnTargets['0.6'] = 'git://gitorious.org/quassel/quassel.git|0.6|'
         self.targetMergePath['0.6'] = "bin";
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['kdesupport/kdewin'] = 'default'
-     
+
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
@@ -24,7 +24,7 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines = ""
         self.subinfo.options.configure.defines += " -DWITH_DBUS=OFF "
 
-      
+
 
 
 if __name__ == '__main__':

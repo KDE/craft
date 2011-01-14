@@ -17,10 +17,10 @@ class subinfo(info.infoclass):
         self.svnTargets['0.12-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.12"
         self.svnTargets['0.14-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.14"
         self.svnTargets['0.16-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.16"
-        
+
         self.shortDescription = "PDF rendering library based on xpdf-3.0"
         self.defaultTarget = "0.16.0"
-    
+
     def setDependencies( self ):
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['win32libs-bin/openjpeg'] = 'default'
@@ -31,14 +31,14 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libxml2'] = 'default'
         self.runtimeDependencies['data/poppler-data'] = 'default'
         self.dependencies['libs/qt'] = 'default'
-    
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        
+
         self.subinfo.options.package.packageName = 'poppler'
         self.subinfo.options.configure.defines = "-DBUILD_QT4_TESTS=ON -DENABLE_XPDF_HEADERS=ON"
-        
+
 if __name__ == '__main__':
     Package().execute()

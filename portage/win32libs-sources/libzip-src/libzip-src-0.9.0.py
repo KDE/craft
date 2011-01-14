@@ -17,7 +17,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs-bin/zlib'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()

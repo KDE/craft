@@ -40,11 +40,11 @@ class Package(CMakePackageBase):
         self.glibDir=os.path.join( self.buildDir() , ".."  , "glib-" + GLIB_VER );
         self.subinfo.options.configure.defines = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
 
-           
+
     def unpack( self ):
       if(not CMakePackageBase.unpack( self ) ):
          return False;
-      # rename config.h and glibconfig.h.win32 in glib to 
+      # rename config.h and glibconfig.h.win32 in glib to
       # avoid config.h confusion
       p = re.compile('.*\.[ch]$')
       sedcmd = r"""-e "s/config.h/config.h.win32/" """
@@ -63,7 +63,7 @@ class Package(CMakePackageBase):
       src = os.path.join( self.packageDir() , "FindLibintl.cmake" )
       dst = os.path.join( self.sourceDir(), "FindLibintl.cmake" )
       shutil.copy( src, dst )
-      
+
       src = os.path.join( self.packageDir() , "FindKDEWin.cmake" )
       dst = os.path.join( self.sourceDir(), "FindKDEWin.cmake" )
       shutil.copy( src, dst )
@@ -100,7 +100,7 @@ class Package(CMakePackageBase):
       return True
 
     def install( self ):
-        if not CMakePackageBase.install( self ): 
+        if not CMakePackageBase.install( self ):
             return False
         if compiler.isMinGW():
             manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )

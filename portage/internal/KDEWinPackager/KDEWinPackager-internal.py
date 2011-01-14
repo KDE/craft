@@ -2,9 +2,9 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.buildDependencies['dev-util/kdewin-packager'] = 'default'     
+        self.buildDependencies['dev-util/kdewin-packager'] = 'default'
 
-from Package.InternalPackageBase import * 
+from Package.InternalPackageBase import *
 
 class Package(InternalPackageBase):
     def __init__( self ):

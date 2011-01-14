@@ -7,11 +7,11 @@ class subinfo(info.infoclass):
         self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/MSYS-"+ver+".zip"
         self.targetDigests[ ver ] = '5418e36841c0ef11e4f455a31d0580fbc2599917'
         self.defaultTarget = ver
-        
-    
+
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True

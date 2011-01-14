@@ -27,8 +27,8 @@ class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         self.subinfo.options.package.packageName = 'iconv'
-        AutoToolsPackageBase.__init__(self)        
-        
+        AutoToolsPackageBase.__init__(self)
+
     def install( self ):
         if not AutoToolsPackageBase.install( self ):
             return False
@@ -38,7 +38,7 @@ class Package(AutoToolsPackageBase):
         # do not create msvc import libs in x64 mode
         if self.buildArchitecture() == "x64":
             return True
-            
+
         for libs in "libiconv-2 libcharset-1".split():
             if not self.createImportLibs( libs ):
                 return False;

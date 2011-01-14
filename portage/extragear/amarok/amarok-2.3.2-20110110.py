@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/amarok.git'
         self.defaultTarget = 'gitHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['win32libs-bin/taglib'] = 'default'
         self.dependencies['win32libs-bin/taglib-extras'] = 'default'

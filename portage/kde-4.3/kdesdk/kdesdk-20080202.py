@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
           self.targetInstSrc['4.3.' + ver] = 'kdesdk-4.3.' + ver
         self.patchToApply['4.2.95'] = ( 'kdesdk-4.2.95.diff', 0 )
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.3/kdebase-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/zip'] = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

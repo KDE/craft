@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
         self.targets['0.44'] =  self.getUnifiedPackage( 'http://downloads.sourceforge.net/kde-windows' , "pexports" , '0.44' ,packagetypes=['bin'] )
         #self.targetDigests['0.44'] = 'dd9497260e89c25e51f120de41949a09f08ee54f'
         self.defaultTarget = '0.44'
- 
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base']       = 'default'
 
-from Package.BinaryPackageBase import *        
-        
+from Package.BinaryPackageBase import *
+
 class Package(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

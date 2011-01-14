@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['8.0'] = "jpeg-8"
         self.patchToApply['7.0'] = ( 'jpeg7.diff', 1 )
         self.patchToApply['8.0'] = ( 'jpeg8.diff', 1 )
-        
+
         self.shortDescription = 'A library for manipulating JPEG image format files'
         self.categoryName = 'win32libs'
 
@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

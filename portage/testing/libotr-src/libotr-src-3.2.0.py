@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['testing/libgcrypt-src'] = 'default'
         self.hardDependencies['virtual/bin-base'] = 'default'
-        
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

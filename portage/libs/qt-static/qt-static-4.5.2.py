@@ -3,10 +3,10 @@ import utils
 import info
 
 #
-# static qt package for kdewin installer. The installer expects a static qt library 
-# with static runtime (-MT linker flag). This requires a patch in 
-# mkspecs\win32-msvc2008\qmake.conf for msvc-2008. 
-# 
+# static qt package for kdewin installer. The installer expects a static qt library
+# with static runtime (-MT linker flag). This requires a patch in
+# mkspecs\win32-msvc2008\qmake.conf for msvc-2008.
+#
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -37,10 +37,10 @@ class Package(QMakePackageBase):
             return False
         utils.applyPatch( self.sourceDir(), os.path.join(self.packageDir(),"qconf.patch"), 1)
         default_mkspec = os.path.join( self.installDir(), "mkspecs" )
-        if not os.path.exists( default_mkspec ): 
+        if not os.path.exists( default_mkspec ):
             utils.copySrcDirToDestDir( os.path.join( self.sourceDir(), "mkspecs" ), default_mkspec )
         return True
-        
+
     def configure( self ):
         platform = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
@@ -54,10 +54,10 @@ class Package(QMakePackageBase):
         libdirs=""
         os.environ[ "USERIN" ] = "y"
         userin = "y"
-        
+
         configureTool = r"echo %s | %s " %  \
             (userin, os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" ) )
-            
+
         configureOptions = ""
         if self.buildType() == "Debug":
             configureOptions += " -debug "
@@ -72,36 +72,36 @@ class Package(QMakePackageBase):
           " -no-style-cde -no-style-cleanlooks -no-style-motif -no-style-plastique" \
           " -nomake demos -nomake examples -nomake docs" \
           "%s %s" % (  platform, self.installDir(), incdirs, libdirs)
-          
+
         return QMakePackageBase.configure(self, configureTool, configureOptions)
 
     def install( self ):
         targets = 'install_qmake install_mkspecs'
         for target in ['winmain', 'uic', 'moc', 'rcc', 'corelib', 'gui', 'xml', 'network']:
             targets += ' sub-%s-install_subtargets' % target
-         
+
         if not QMakePackageBase.install(self, targets):
             return False
 
-        # create qt.conf 
+        # create qt.conf
         utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
-        
+
         # at least in qt 4.5.2 the default mkspecs is not installed which let qmake fail with "QMAKESPEC has not been set, so configuration cannot be deduced."
         default_mkspec = os.path.join(self.installDir(), "mkspecs", "default")
-        if not os.path.exists(default_mkspec): 
+        if not os.path.exists(default_mkspec):
             utils.copySrcDirToDestDir( os.path.join(self.buildDir(), "mkspecs", "default"), default_mkspec )
-        
+
         # install msvc debug files if available
         if self.buildType() == "Debug" and (self.compiler() == "msvc2005" or self.compiler() == "msvc2008"):
             srcdir = os.path.join( self.buildDir(), "lib" )
             destdir = os.path.join( self.installDir(), "lib" )
 
             filelist = os.listdir( srcdir )
-            
+
             for file in filelist:
                 if file.endswith( ".pdb" ):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
-                
+
         return True
 
 if __name__ == '__main__':

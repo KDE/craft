@@ -1,6 +1,6 @@
 import info
 
-## \todo the dep files will let into have dll's installed multiple times 
+## \todo the dep files will let into have dll's installed multiple times
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/coreutils-5.3.0-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/coreutils-5.3.0-dep.zip

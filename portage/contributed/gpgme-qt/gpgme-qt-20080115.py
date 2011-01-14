@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.targets['r1322'] = "http://saroengels.net/kde-windows/gnuwin32/gpgme-qt.tar.bz2"
         self.targetInstSrc['r1322'] = "gpgme-qt"
         self.defaultTarget = 'r1322'
-     
+
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['dev-util/automoc'] = 'default'
@@ -59,6 +59,6 @@ class subclass(base.baseclass):
         self.doPackaging( "gpgme-qt", "20080115", True )
 
         return True
-    
+
 if __name__ == '__main__':
     subclass().execute()

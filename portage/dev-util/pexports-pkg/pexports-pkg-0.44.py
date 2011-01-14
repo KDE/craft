@@ -11,10 +11,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['gnuwin32/bison'] = 'default'
         self.buildDependencies['gnuwin32/flex'] = 'default'
-        
-        
-from Package.CMakePackageBase import *        
-        
+
+
+from Package.CMakePackageBase import *
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/playground/utils/kregexpeditor'
         self.shortDescription = "a regular expression editor for KDE"
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-    
+
 class Package(CMakePackageBase):
     def __init__( self):
         self.subinfo = subinfo()

@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
 
         self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/%s'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
         self.buildDependencies['kde-4.5/kdelibs'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
-   
+
 
 from Package.CMakePackageBase import *
 
@@ -24,8 +24,8 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.language = None
         # because of the large amount of packages
-        # it is very annoying to restart the build, 
-        # wasting several hours, so ignore any errors 
+        # it is very annoying to restart the build,
+        # wasting several hours, so ignore any errors
         # for now
         self.subinfo.options.make.ignoreErrors = True
         self.subinfo.options.exitOnErrors = False
@@ -41,16 +41,16 @@ class Package(CMakePackageBase):
 
     def configureSourceDir(self):
         return CMakePackageBase.configureSourceDir( self ) % self.language
-        
+
     def sourceDir(self):
         return CMakePackageBase.sourceDir( self ) % self.language
-        
+
     def imageDir(self):
         return os.path.join(CMakePackageBase.imageDir(self),self.language)
 
     def repositoryUrl(self,index=0):
-        # \todo we cannot use CMakePackageBase here because repositoryPath 
-        # then is not be overrideable for unknown reasons 
+        # \todo we cannot use CMakePackageBase here because repositoryPath
+        # then is not be overrideable for unknown reasons
         url = CMakePackageBase.repositoryUrl(self,index) % self.language
         return url
 
@@ -99,42 +99,42 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.packageName = 'kde4-l10n-%s' % self.language
         self.subinfo.options.package.withCompiler = False
         return CMakePackageBase.createPackage(self)
-        
-        
+
+
 class MainInfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/scripts'
         self.defaultTarget = 'svnHEAD'
         self.languages = dict()
-        
+
         self.languages['svnHEAD'] = 'ar bg ca ca@valencia cs csb da de el en_GB eo es et eu fi fr fy ga'
-        self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds' 
+        self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds'
         self.languages['svnHEAD'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
 
         self.languages['4.5.0'] = 'ar bg ca ca@valencia cs da de el en_GB eo es et eu fi fr fy ga'
-        self.languages['4.5.0'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv ml nb nds' 
+        self.languages['4.5.0'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv ml nb nds'
         self.languages['4.5.0'] += ' nl nn pa pl pt pt_BR ro ru sk sl sr sv tr uk wa zh_CN zh_TW'
         for ver in ['5.1', '5.2', '5.3', '5.4']:
             self.languages['4.' + ver] = self.languages['4.5.0']
 
      #for testing
         #self.languages['svnHEAD']  = 'de'
-    
+
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
-    
+
 class MainPackage(CMakePackageBase):
     def __init__( self  ):
         self.subinfo = MainInfo()
         CMakePackageBase.__init__( self )
         self.kde4_l10n = Package()
 
-        # set to any language to start building from 
+        # set to any language to start building from
         ## \todo when emerge.py is able to provide command line options to us
-        # it would be possible to set this from command line 
+        # it would be possible to set this from command line
         self.startLanguage = None
-        
+
     def execute(self):
         (command, option) = self.getAction()
         self.errors = dict()
@@ -145,11 +145,11 @@ class MainPackage(CMakePackageBase):
 
         # build target is not set here for unknown reasons, set manually for now
         self.buildTarget='4.5.3'
-        if self.subinfo.languages[self.buildTarget]: 
+        if self.subinfo.languages[self.buildTarget]:
             languages = self.subinfo.languages[self.buildTarget].split()
         else:
             languages = self.subinfo.languages['svnHEAD'].split()
-        
+
         found=None
         for language in languages:
             if not found and self.startLanguage:
@@ -157,7 +157,7 @@ class MainPackage(CMakePackageBase):
                     continue
                 else:
                     found = True
-            
+
             self.kde4_l10n.language = language
             utils.debug("current language: %s current command: %s" % (self.kde4_l10n.language,command), 1)
             self.kde4_l10n.runAction(command)
@@ -165,8 +165,8 @@ class MainPackage(CMakePackageBase):
 
         if self.errors:
             utils.debug("Errors that happened while executing last command: %s" % self.errors, 2)
-        return True    
-        
+        return True
+
 if __name__ == '__main__':
     MainPackage().execute()
 

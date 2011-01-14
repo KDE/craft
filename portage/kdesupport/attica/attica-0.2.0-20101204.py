@@ -7,13 +7,13 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/attica'
-        
+
         for ver in ['0.1.3','0.2.0']:
           self.targets[ver] ='http://download.kde.org/download.php?url=stable/attica/attica-' + ver +'.tar.bz2'
           self.targetInstSrc[ver] = 'attica-' + ver
         self.shortDescription = "implements the Open Collaboration Services API"
         self.defaultTarget = 'gitHEAD'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
@@ -24,7 +24,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        
+
         self.subinfo.options.configure.defines = ""
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):

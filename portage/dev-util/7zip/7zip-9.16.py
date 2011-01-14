@@ -6,11 +6,11 @@ class subinfo( info.infoclass ):
         self.targetDigests[ '9.16' ] = 'b389a6e2f93c18daae20393532af0e4e85ebe6f4'
         self.targetInstallPath[ '9.16' ] = "bin"
         self.defaultTarget = '9.16'
-    
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
-    
+
     def setDependencies( self ):
         self.buildDependencies[ 'gnuwin32/wget' ]       = 'default'
 
@@ -26,7 +26,7 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         SourceBase.__init__( self )
         PackageBase.__init__( self )
         BinaryBuildSystem.__init__( self )
-        
+
     def fetch( self ):
         filenames = [ os.path.basename( self.subinfo.target() ) ]
 

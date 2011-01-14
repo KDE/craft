@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
           self.targets['4.1.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.1.' + ver + '/src/kdegames-4.1.' + ver + '.tar.bz2'
           self.targetInstSrc['4.1.' + ver] = 'kdegames-4.1.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde-4.1/kdebase-runtime'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
@@ -57,7 +57,7 @@ class subclass(base.baseclass):
 #        self.kdeCustomDefines += " -DBUILD_ksudoku=OFF"
 #        self.kdeCustomDefines += " -DBUILD_kubrick=OFF"
         return self.kdeCompile()
-    
+
     def install( self ):
         return self.kdeInstall()
 

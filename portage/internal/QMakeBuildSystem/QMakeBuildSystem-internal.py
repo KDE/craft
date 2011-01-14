@@ -5,8 +5,8 @@ import compiler
 class subinfo(info.infoclass):
     def setDependencies( self ):
         utils.debug("emergebuildsystem:subinfo.setDependencies not implemented yet",1)
-        # we need at least qmake 
-        #self.dependencies['libs/qt'] = 'default'     
+        # we need at least qmake
+        #self.dependencies['libs/qt'] = 'default'
         if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
             self.buildDependencies['dev-util/jom'] = 'default'
 
@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
                 else:
                     self.buildDependencies['dev-util/mingw-w32']    = 'default'
 
-from Package.InternalPackageBase import * 
+from Package.InternalPackageBase import *
 
 class Package(InternalPackageBase):
     def __init__( self ):

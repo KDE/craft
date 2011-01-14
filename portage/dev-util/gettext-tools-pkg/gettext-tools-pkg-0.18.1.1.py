@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['0.18.1.1'] = '5009deb02f67fc3c59c8ce6b82408d1d35d4e38f'
         self.targetInstSrc['0.18.1.1'] = 'gettext-0.18.1.1'
         self.defaultTarget = '0.18.1.1'
-        
+
     def setDependencies( self ):
         self.dependencies['dev-util/perl'] = 'default' # buildtime dependency
         self.dependencies['dev-util/msys'] = 'default' # buildtime dependency

@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
         self.targets['3.1.6-1'] = SRC_URI
         self.targetDigests['3.1.6-1'] = 'bda507655eb3d15059d8a55a0daf6d697a15f632'
         self.defaultTarget = '3.1.6-1'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-    
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

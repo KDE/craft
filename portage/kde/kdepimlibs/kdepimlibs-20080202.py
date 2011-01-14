@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
@@ -33,10 +33,10 @@ class Package(CMakePackageBase):
         self.boost = portage.getPackageInstance('win32libs-bin','boost')
         path = self.boost.installDir()
         os.putenv( "BOOST_ROOT", path )
-        
+
         self.subinfo.options.configure.defines = "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
-            
+
         if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
             if self.isTargetBuild():

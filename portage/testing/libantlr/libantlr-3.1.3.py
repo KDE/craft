@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             compiler = "mingw"
 
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
-        
+
         for version in ['3.1.3']:
             self.targets[ version ] = repoUrl + """/libantlr-""" + compiler + """-""" + version + """-lib.tar.bz2"""
 
@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
-        
+
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True

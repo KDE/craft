@@ -3,18 +3,18 @@ import shutil
 import os
 import info
 
-#  experimental wince compiler package  
-#  todo: 
-# - compiler requires -L %KDEROOT%/cegcc-arm-wince/arm-mingw32ce/lib 
-#      with forward slashes for linking  (missing crt3.o) 
-# - no working cmake generator available yet: 
-#    'MinGW Makefiles' could not be used because compiler has problems 
-#      with '\' path delimiter. 
-#    'MSYS Makefiles' does not work too because cmd run from mingw32-make 
-#      has problems with '/' path delimiters. 
-#    'Unix Makefiles' generator does not work because cmd has problems 
+#  experimental wince compiler package
+#  todo:
+# - compiler requires -L %KDEROOT%/cegcc-arm-wince/arm-mingw32ce/lib
+#      with forward slashes for linking  (missing crt3.o)
+# - no working cmake generator available yet:
+#    'MinGW Makefiles' could not be used because compiler has problems
+#      with '\' path delimiter.
+#    'MSYS Makefiles' does not work too because cmd run from mingw32-make
+#      has problems with '/' path delimiters.
+#    'Unix Makefiles' generator does not work because cmd has problems
 #      with '/' path delimiters too
-# - generated executable works on a wince 5.0 device 
+# - generated executable works on a wince 5.0 device
 #     tested with Microsoft Device Emulator 3.0 -- Standalone Release
 #     http://www.microsoft.com/downloads/details.aspx?familyid=A6F6ADAF-12E3-4B2F-A394-356E2C2FB114
 
@@ -26,11 +26,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.59.1'] = SRC_URI
         self.targetMergePath['0.59.1'] = "cegcc-arm-wince"
-        # fixme: archive contains subdirs opt/mingw32ce, which is 
+        # fixme: archive contains subdirs opt/mingw32ce, which is
         # also created in the image dir
         self.targetMergeSourcePath['0.59.1'] = "opt\\mingw32ce"
         self.defaultTarget = '0.59.1'
-            
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
@@ -38,7 +38,7 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-    
+
     def unpack( self ):
         if not BinaryPackageBase.unpack(self):
             return False

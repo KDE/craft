@@ -10,7 +10,7 @@ import emergePlatform
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):   
+    def setTargets( self ):
         self.baseURL = "http://artfiles.org/mysql/Downloads/MySQL-5.1/"
         if( emergePlatform.buildArchitecture() == 'x64' ):
           self.targets[ '5.1.54'] = self.baseURL+"mysql-noinstall-5.1.54-winx64.zip"
@@ -19,28 +19,28 @@ class subinfo(info.infoclass):
         else:
           self.targets[ '5.1.54'] = self.baseURL+"mysql-noinstall-5.1.54-win32.zip"
           self.targetInstSrc[ '5.1.54' ] = "mysql-5.1.54-win32"
-          self.targetDigests['5.1.54'] = '2c4ae53b1f7e97572482edac8bd82c5443771302'          
+          self.targetDigests['5.1.54'] = '2c4ae53b1f7e97572482edac8bd82c5443771302'
         self.shortDescription = "MySql database server and embedded library"
         self.options.package.withCompiler = False
         self.defaultTarget = '5.1.54'
-       
+
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        
-        
+
+
 class Package(CMakePackageBase):
-  def __init__(self):  
-    self.subinfo = subinfo()    
+  def __init__(self):
+    self.subinfo = subinfo()
     self.subinfo.options.merge.ignoreBuildType = True
     self.subinfo.options.package.packSources = False
     CMakePackageBase.__init__( self )
-    
-    
+
+
   def compile( self ):
     return True
-    
-  def install( self ):    
+
+  def install( self ):
     if( not self.cleanImage()):
       return False
     shutil.copytree( os.path.join( self.sourceDir() , "bin" ) , os.path.join( self.installDir(), "bin") , ignore=shutil.ignore_patterns('*.pdb','*.map','*test.exe','mysqld-debug.exe') )
@@ -55,8 +55,8 @@ class Package(CMakePackageBase):
     shutil.copytree( os.path.join( self.sourceDir() , "scripts" ) , os.path.join( self.installDir(), "scripts" ) )
     shutil.copytree( os.path.join( self.sourceDir() , "share" ) , os.path.join( self.installDir(), "share" ) , ignore=shutil.ignore_patterns('Makefile*') )
     shutil.copytree( os.path.join( self.sourceDir() , "data" ) , os.path.join( self.installDir(), "data" ) )
-    
-    return True 
-    
+
+    return True
+
 if __name__ == '__main__':
     Package().execute()

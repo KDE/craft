@@ -11,7 +11,7 @@ import compiler
 
 #
 # this library is used by kdeedu/kstars
-# the library is c-only 
+# the library is c-only
 #
 class subinfo(info.infoclass):
     def setTargets( self ):

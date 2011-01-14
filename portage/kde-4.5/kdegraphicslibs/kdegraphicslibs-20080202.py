@@ -2,9 +2,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.5/kdegraphics#norecursive;branches/KDE/4.5/kdegraphics/libs'                
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.5/kdegraphics#norecursive;branches/KDE/4.5/kdegraphics/libs'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['win32libs-bin/expat'] = 'default'
         self.dependencies['win32libs-bin/jpeg'] = 'default'
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/lcms'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

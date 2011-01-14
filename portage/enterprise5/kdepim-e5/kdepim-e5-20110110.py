@@ -60,9 +60,9 @@ class subinfo(info.infoclass):
         self.hardDependencies['contributed/gpg4win-dev'] = 'default'
         self.hardDependencies['enterprise5/grantlee-e5'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
-        
+
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

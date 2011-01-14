@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         self.targets['4.1.36'] = "http://www.siegward-jaekel.de/mc.zip"
         self.defaultTarget = '4.1.36'
         self.targetInstallPath['4.1.36'] = "bin"
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
@@ -27,7 +27,7 @@ class Package(BinaryPackageBase):
         f.close()
         # mc is also a program in visual studio,
         # so make the real mc reachable from mcc too...
-        utils.copyFile(os.path.join(self.installDir(), "mc.exe"), 
+        utils.copyFile(os.path.join(self.installDir(), "mc.exe"),
             os.path.join( self.installDir(), "mcc.exe"))
         return True
 

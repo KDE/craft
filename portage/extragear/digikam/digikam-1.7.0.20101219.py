@@ -9,13 +9,13 @@ class subinfo(info.infoclass):
         for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0']:
             self.targets[ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/' + ver + '/digikam-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'digikam-' + ver
-            
+
         self.patchToApply['1.1.0'] = ('digikam-1.1.0.diff', 1)
         self.patchToApply['1.7.0'] = ('digikam-1.7.0-20101219.diff', 1)
-        
+
         self.options.configure.defines = "-DENABLE_GPHOTO2=OFF"
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
         self.dependencies['virtual/kdegraphics'] = 'default'

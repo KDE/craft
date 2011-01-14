@@ -11,14 +11,14 @@ class subinfo( info.infoclass ):
         self.svnTargets['svnHEAD'] = 'svn://dev.robotbattle.com/exiv2/branches/'
         self.shortDescription = "an image metadata library"
         self.defaultTarget = '0.21'
-    
+
     def setDependencies( self ):
         self.dependencies['win32libs-bin/win_iconv']    = 'default'
         self.dependencies['win32libs-bin/gettext']      = 'default'
         self.dependencies['win32libs-bin/expat']        = 'default'
         self.dependencies['win32libs-bin/zlib']         = 'default'
         self.buildDependencies['virtual/base']          = 'default'
-        
+
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):

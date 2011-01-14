@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/KDE/kdegraphics'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.dependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
         self.dependencies['kde/kdebase-runtime'] = 'default'
@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/lcms'] = 'default'
 
 from Package.CMakePackageBase import *
-        
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()

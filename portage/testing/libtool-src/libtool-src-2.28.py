@@ -21,6 +21,6 @@ class Package( AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = 'msys'
         self.subinfo.options.package.withCompiler = False
-        
+
 if __name__ == '__main__':
      Package().execute()

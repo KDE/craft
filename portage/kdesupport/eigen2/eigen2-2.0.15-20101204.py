@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
           self.targets[ver] = 'http://bitbucket.org/eigen/eigen/get/' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'eigen'
         self.defaultTarget = '2.0.15'
-        
+
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
@@ -23,7 +23,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF"
-        # header-only package        
+        # header-only package
         self.subinfo.options.package.withCompiler = False
 
 if __name__ == '__main__':

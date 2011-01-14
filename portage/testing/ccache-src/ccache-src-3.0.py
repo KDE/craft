@@ -7,14 +7,14 @@ os.putenv("EMERGE_USE_CCACHE","False")
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"   
+        self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.defaultTarget = 'gitHEAD'
-        
+
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        
+
 
 from Package.AutoToolsPackageBase import *
 

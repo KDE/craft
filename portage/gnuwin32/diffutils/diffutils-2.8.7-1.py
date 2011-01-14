@@ -1,6 +1,6 @@
 import info
 
-## \todo the dep files will let into have dll's installed multiple times 
+## \todo the dep files will let into have dll's installed multiple times
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/diffutils-2.8.7-1-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/diffutils-2.8.7-1-dep.zip
@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.8.7-1'] = SRC_URI
         self.defaultTarget = '2.8.7-1'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 

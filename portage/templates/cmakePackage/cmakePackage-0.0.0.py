@@ -10,19 +10,19 @@ class subinfo(info.infoclass):
         self.targets['archiveHEAD'] = 'http://www.winkde.org/pub/kde/ports/win32/repository-4.3/kdesupport/kdewin-vc90-svnHEAD-src.tar.bz2'
         self.targetInstSrc['archiveHEAD'] = 'src/kdewin-vc90-svnHEAD'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
-        
+
 from Package.CMakePackageBase import *
-                
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        CMakePackageBase.__init__(self)        
-        
+        CMakePackageBase.__init__(self)
+
     ## for nonstandard fetch operation
-    # the files will be fetched info self.sourceDir() 
+    # the files will be fetched info self.sourceDir()
 	#
     #def fetch(self):
     #    #do something before fetching
@@ -30,9 +30,9 @@ class Package(CMakePackageBase):
     #        return False
     #    #do something after fetching
 	#    return True
-    
+
     ## for nonstandard unpack operation
-    # the files will be read from self.downloadDir() 
+    # the files will be read from self.downloadDir()
     # and unpacked into self.sourceDir()
 	#
     #def unpack(self):
@@ -43,9 +43,9 @@ class Package(CMakePackageBase):
 	#    return True
 
     ## for nonstandard configure operation
-	# self.sourceDir() will be used for accessing source files 
-	# and self.buildDir() for storing build files 
-	# 
+	# self.sourceDir() will be used for accessing source files
+	# and self.buildDir() for storing build files
+	#
     #def configure(self):
     #    #do something before configure
     #    if not CMakePackageBase.configure(self):
@@ -55,7 +55,7 @@ class Package(CMakePackageBase):
 
     ## for nonstandard make operation
 	#  uses self.buildDir() to access build files
-	# 
+	#
     #def make(self):
     #    #do something before make
     #    if not CMakePackageBase.make(self):
@@ -64,7 +64,7 @@ class Package(CMakePackageBase):
 	#    return True
 	
     ## for nonstandard install operation
-    # the installed files will be installed 
+    # the installed files will be installed
 	# into self.installDir()
 	#
     #def install(self):
@@ -77,18 +77,18 @@ class Package(CMakePackageBase):
 	## for  nonstandard merge operation
 	# the files are taken from self.installDir()
 	# and merged into self.mergeDestinationDir()
-	# 
+	#
     #def qmerge(self):
     #    #do something before merging
     #    if not CMakePackageBase.qmerge(self):
     #        return False
     #    #do something after merging
 	#    return True
-    
+
 	## for  nonstandard unmerge operation
-	# the related files are removed from 
+	# the related files are removed from
 	# self.mergeDestinationDir()
-	# 
+	#
     #def unmerge(self):
     #    #do something before unmerging
     #    if not CMakePackageBase.unmerge(self):
@@ -96,21 +96,21 @@ class Package(CMakePackageBase):
     #    #do something after unmerging
 	#    return True
 
-	## for nonstandard directions operations 
-	# 
+	## for nonstandard directions operations
+	#
 	#def sourceDir(self):
-	#    # get standard source path  
+	#    # get standard source path
     #    dir = CMakePackageBase.sourceDir(self):
-	# 	 #do something with path 
+	# 	 #do something with path
 	# 	 return dir
 
-	# the same belongs to the following methods 
-    #def downloadDir(self): 
-    #def packageDir(self): 
+	# the same belongs to the following methods
+    #def downloadDir(self):
+    #def packageDir(self):
     #def filesDir(self):
     #def buildRoot(self):
     #def workDir(self):
-    #def buildDir(self):        
+    #def buildDir(self):
     #def imageDir(self):
     #def installDir(self):
     #def mergeSourceDir(self):

@@ -7,16 +7,16 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kde/kdeedu'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "kdeedu"
         self.subinfo = subinfo()
-        
+
     def unpack( self ):
         return self.kdeSvnUnpack()
 

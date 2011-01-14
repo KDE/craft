@@ -19,13 +19,13 @@ class subinfo(info.infoclass):
         self.hardDependencies['testing/libgpg-error-src'] = 'default'
         self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
-        
+
 class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         PackageBase.__init__(self)
         MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)        
+        AutoToolsBuildSystem.__init__(self)
         MultiPackager.__init__(self)
         self.buildInSource = True
 

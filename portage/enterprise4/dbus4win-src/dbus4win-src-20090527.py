@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['dbus4win-frank'] = os.path.join( "dbus4win-20090527-3", "cmake" )
         self.targetInstSrc['dbus4win-noncetcp'] = os.path.join( "dbus4win-noncetcp-20090612", "cmake" )
         self.defaultTarget = 'dbus4win-frank'
-    
+
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/expat'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'

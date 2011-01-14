@@ -10,17 +10,17 @@ class subinfo(info.infoclass):
         self.targets['4.0.60'] = 'ftp://ftp.rz.uni-wuerzburg.de/pub/unix/kde/unstable/4.0.60/src/kdebindings-4.0.60.tar.bz2'
         self.targetInstSrc['4.0.60'] = 'kdebindings-4.0.60'
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        
+
 class subclass(base.baseclass):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
         self.kdeCustomDefines = ""
-        
-        
+
+
     def unpack( self ):
         return self.kdeSvnUnpack()
 

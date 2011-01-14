@@ -338,7 +338,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
     def generateCabIni(self):
         '''
-            Package specific configuration data that is used as input for 
+            Package specific configuration data that is used as input for
             MS Cab Wizard
         '''
         with open(
@@ -364,7 +364,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                 dir_id, d.replace(self.workDir(), ""))
                 for d, dir_id in sourcedisknames.iteritems()]
 
-        sourcedisknames = ["%d=,,,%s" % (dir_id, d) 
+        sourcedisknames = ["%d=,,,%s" % (dir_id, d)
             for d, dir_id in sourcedisknames.iteritems()]
 
         rn = "\r\n".join
