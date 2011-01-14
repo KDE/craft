@@ -324,6 +324,8 @@ def printInstalled():
 
 # Testing the class
 if __name__ == '__main__':
+    # TODO: put this into def testingTheClass(). Right now all those variables are global
+    # and exported to other modules - they should be local variables
     # add two databases
     tempdbpath1 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp1.db" )
     tempdbpath2 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp2.db" )

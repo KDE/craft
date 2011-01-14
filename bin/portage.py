@@ -629,18 +629,18 @@ def alwaysTrue( category, package, version ):
     return True
 
 def getHostAndTarget( hostEnabled, targetEnabled ):
-    str = ""
+    msg = ""
     if hostEnabled or targetEnabled:
-        str += "("
+        msg += "("
     if hostEnabled:
-        str += "H"
+        msg += "H"
     if hostEnabled and targetEnabled:
-        str += "/"
+        msg += "/"
     if targetEnabled:
-        str += "T"
+        msg += "T"
     if hostEnabled or targetEnabled:
-        str += ")"
-    return str
+        msg += ")"
+    return msg
 
 def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue, targetEnabled=alwaysTrue ):
     """prints a number of 'lines', each consisting of category, package and version field"""
@@ -653,11 +653,11 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     printLine( '--------', '-------', '-------' )
     for category, package, version in lines:
         if emergePlatform.isCrossCompilingEnabled():
-            str = getHostAndTarget( hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
+            msg = getHostAndTarget( hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
         else:
-            str = ""
+            msg = ""
         if condition( category, package, version ):
-            printLine( category, package, version, str )
+            printLine( category, package, version, msg )
 
 def printInstallables():
     """get all the packages that can be installed"""
@@ -731,8 +731,8 @@ def findInstalled( category, package, buildType='' ):
 
     ret = None
     f = open( fileName, "rb" )
-    str = "^%s/%s-(.*)$" % ( category, re.escape(package) )
-    regex = re.compile( str )
+    regexStr = "^%s/%s-(.*)$" % ( category, re.escape(package) )
+    regex = re.compile( regexStr )
     for line in f.read().splitlines():
         match = regex.match( line )
         if match:
