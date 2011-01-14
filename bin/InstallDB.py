@@ -233,7 +233,7 @@ class InstallDB:
 
         packageId = self.getLastId()
         cursor = self.connection.cursor()
-        return [ InstallPackage( cursor, id ) for id in self.getPackageIds( category, package, version, prefix ) ]
+        return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, version, prefix ) ]
 
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """

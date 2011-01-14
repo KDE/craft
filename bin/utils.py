@@ -413,12 +413,12 @@ def unZip( fileName, destdir ):
         os.makedirs( destdir )
 
     try:
-        zip = zipfile.ZipFile( fileName )
+        zipObj = zipfile.ZipFile( fileName )
     except:
         error( "couldn't extract file %s" % fileName )
         return False
 
-    for i, name in enumerate( zip.namelist() ):
+    for i, name in enumerate( zipObj.namelist() ):
         if not name.endswith( '/' ):
             dirname = os.path.join( destdir, os.path.dirname( name ) )
 
@@ -426,7 +426,7 @@ def unZip( fileName, destdir ):
                 os.makedirs( dirname )
 
             outfile = open( os.path.join( destdir, name ), 'wb' )
-            outfile.write( zip.read( name ) )
+            outfile.write( zipObj.read( name ) )
             outfile.flush()
             outfile.close()
 
