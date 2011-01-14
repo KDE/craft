@@ -309,7 +309,7 @@ file collection process is skipped, and only the installer is generated.
                 if mergeDir:
                     imageDir = os.path.join( self.imageDir, mergeDir )
                 if os.path.exists( directory ):
-                    self.copyFiles( directory, self.imageDir() )
+                    self.copyFiles(directory, imageDir)
                 else:
                     utils.die( "image directory %s does not exist!" % directory )
 
