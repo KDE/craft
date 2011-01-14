@@ -97,19 +97,19 @@ class DependencyPackage:
                 children.append( p )
         return children
 
-    def getDependencies( self, depList = [], type="both" ):
+    def getDependencies( self, depList = [], dep_type="both" ):
         """ returns all dependencies """
 
-        if type == "runtime":
+        if dep_type == "runtime":
             children = self.runtimeChildren
-        elif type == "buildtime":
+        elif dep_type == "buildtime":
             children = self.buildChildren
         else:
             children = self.runtimeChildren + self.buildChildren
 
         for p in children:
             if not p in depList:
-                p.getDependencies( depList, type )
+                p.getDependencies( depList, dep_type )
 
         #if self.category != internalCategory:
         if not self in depList:
@@ -352,12 +352,12 @@ class Portage:
         for key in targetDict:
             url = targetDict[ key ]
             if url:
-                type = utils.getVCSType( url )
-                if type == "svn":
+                sourceType = utils.getVCSType( url )
+                if sourceType == "svn":
                     # for svn, ignore tags
                     if not url.startswith( "tags/" ) and not "/tags/" in url:
                         retList.append( key )
-                elif not type == "":
+                elif not sourceType == "":
                     # for all other vcs types, simply rebuild everything for now
                     retList.append( key )
         return retList
@@ -506,7 +506,7 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
     return deps
 
-def solveDependencies( category, package, version, depList, type='both' ):
+def solveDependencies( category, package, version, depList, dep_type='both' ):
     depList.reverse()
     if emergePlatform.isCrossCompilingEnabled() or utils.isSourceOnly():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
@@ -523,7 +523,7 @@ def solveDependencies( category, package, version, depList, type='both' ):
         version = PortageInstance.getNewestVersion( category, package )
 
     pac = DependencyPackage( category, package, version )
-    depList = pac.getDependencies( depList, type=type )
+    depList = pac.getDependencies( depList, dep_type=dep_type )
 
     depList.reverse()
     return depList

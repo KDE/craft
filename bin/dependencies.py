@@ -366,7 +366,7 @@ class DependenciesTree(object):
         self.roots    = []
         self.key2node = {}
 
-    def addDependencies(self, category, package, version = "", type="both"):
+    def addDependencies(self, category, package, version = "", dep_type="both"):
         """Add a new root dependency tree to this graph."""
 
         pi = portage.PortageInstance
@@ -391,12 +391,12 @@ class DependenciesTree(object):
         except:
             tag = "1"
 
-        node = self.buildDepNode( category, package, version, tag, type )
+        node = self.buildDepNode( category, package, version, tag, dep_type )
 
         if not node in self.roots:
             self.roots.append(node)
 
-    def buildDepNode(self, category, package, version, tag, type="both"):
+    def buildDepNode(self, category, package, version, tag, dep_type="both"):
         """Recursive method to construct the nodes of the dependency tree."""
 
         pi = portage.PortageInstance
@@ -424,8 +424,8 @@ class DependenciesTree(object):
 
         children = []
 
-        for t in portage.getDependencies(category, package, version, (type=="runtime")):
-            sub_node = self.buildDepNode(t[0], t[1], t[2], tag, type)
+        for t in portage.getDependencies(category, package, version, (dep_type=="runtime")):
+            sub_node = self.buildDepNode(t[0], t[1], t[2], tag, dep_type)
             children.append(sub_node)
         node = DependenciesNode(category, package, version, tag, children)
         node.metaData = pi.getMetaData(category, package, version)
@@ -547,7 +547,7 @@ def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     dep_tree = DependenciesTree()
 
     for _category, _package in zip(categoryList, packageList):
-        dep_tree.addDependencies(_category, _package, type=dep_type)
+        dep_tree.addDependencies(_category, _package, dep_type=dep_type)
 
     if old_emerge_verbose is not None:
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
@@ -562,7 +562,7 @@ def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type
     dep_tree = DependenciesTree()
 
     for category, package, target, patchlevel in packageList:
-        dep_tree.addDependencies(category, package, type=dep_type)
+        dep_tree.addDependencies(category, package, dep_type=dep_type)
 
     if old_emerge_verbose is not None:
         os.environ['EMERGE_VERBOSE'] = old_emerge_verbose

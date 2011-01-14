@@ -27,7 +27,7 @@ class GraphViz:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
             except:
                 return False
-        [self.graphVizInstallPath, type] = QueryValueEx(key, "InstallPath")
+        [self.graphVizInstallPath, dummyType] = QueryValueEx(key, "InstallPath")
         return True
 
     def system( self, command, errorMessage ):

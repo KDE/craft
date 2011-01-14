@@ -119,8 +119,9 @@ class infoclass:
         elif os.getenv("KDECOMPILER") == "msvc2010":
             compilerName = "vc100"
         ret = ''
-        for type in packagetypes:
-            ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + type + ext + '\n'
+        # TODO: return '\n'.join(repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + p + ext for p in packagetypes)
+        for packageType in packagetypes:
+            ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
     def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
@@ -158,9 +159,10 @@ example:
             compilerName = "vc90"
         elif os.getenv("KDECOMPILER") == "msvc2010":
             compilerName = "vc100"
+        # TODO: use list comprehension
         ret = []
-        for type in packagetypes:
-            key = version + '-' + compilerName + '-' + type + arch
+        for packageType in packagetypes:
+            key = version + '-' + compilerName + '-' + packageType + arch
             ret.append(self.targetDigests[key])
         return ret
 
@@ -170,8 +172,8 @@ example:
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch = "-x64"
         ret = ''
-        for type in packagetypes:
-            ret += repoUrl + '/' + name + arch + '-' + version + '-' + type + ext + '\n'
+        for packageType in packagetypes:
+            ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
     #returns a package url for multiple files from the same base url

@@ -111,7 +111,7 @@ file collection process is skipped, and only the installer is generated.
                 key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS', 0, KEY_READ )
             except:
                 return False
-        [ self.nsisInstallPath, type ] = QueryValueEx( key, "" )
+        [ self.nsisInstallPath, dummyType ] = QueryValueEx( key, "" )
         return True
 
     def __imageDirPattern( self, package, buildTarget ):

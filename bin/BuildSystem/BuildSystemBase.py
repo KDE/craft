@@ -14,10 +14,10 @@ class BuildSystemBase(EmergeBase):
     noClean = False
     debug = True
 
-    def __init__(self, type, className=None):
+    def __init__(self, typeName, className=None):
         """constructor"""
         EmergeBase.__init__(self, className)
-        self.buildSystemType = type
+        self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
             self.envPath = "mingw/bin"

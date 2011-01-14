@@ -29,15 +29,15 @@ def SourceFactory(settings):
     ## \todo move settings access into info class
     if settings.hasSvnTarget():
         url = settings.svnTarget()
-        type = utils.getVCSType( url )
-        if type == "svn":
+        sourceType = utils.getVCSType( url )
+        if sourceType == "svn":
             source = SvnSource(settings)
-        elif type == "hg":
+        elif sourceType == "hg":
             source = HgSource(settings)
-        elif type == "git":
+        elif sourceType == "git":
             source = GitSource(settings)
         ## \todo complete more cvs access schemes
-        elif type == "cvs":
+        elif sourceType == "cvs":
             source = CvsSource(settings)
 
     if source == None:
