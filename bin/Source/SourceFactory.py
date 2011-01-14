@@ -34,10 +34,10 @@ def SourceFactory(settings):
             source = SvnSource(settings)
         elif type == "hg":
             source = HgSource(settings)
-        elif "git":
+        elif type == "git":
             source = GitSource(settings)
         ## \todo complete more cvs access schemes
-        elif "cvs":
+        elif type == "cvs":
             source = CvsSource(settings)
 
     if source == None:
