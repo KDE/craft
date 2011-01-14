@@ -3,7 +3,6 @@
 import os
 import tools
 import re
-import sys
 import ConfigParser
 import utils
 

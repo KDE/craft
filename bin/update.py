@@ -6,10 +6,8 @@
 # emerge update script
 #
 
-import sys
 import os
 import utils
-import portage
 
 rootdir = os.getenv( "KDEROOT" )
 

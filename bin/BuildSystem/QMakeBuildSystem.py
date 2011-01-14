@@ -6,8 +6,6 @@
 import os
 import utils
 
-import base
-import info
 from BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):

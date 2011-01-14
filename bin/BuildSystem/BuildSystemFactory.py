@@ -8,7 +8,6 @@ from QMakeBuildSystem import *
 from AutoToolsBuildSystem import *
 from BinaryBuildSystem import *
 
-import info
 import utils
 
 def BuildSystemFactory(buildSystemType, source):

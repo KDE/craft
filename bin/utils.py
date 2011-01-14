@@ -23,20 +23,15 @@ import getpass
 import subprocess
 import re
 import tempfile
-import compiler
-import platform
 
 if os.name == 'nt':
     import msvcrt
 else:
     import fcntl
 
-import info
 import portage
 
 import ConfigParser
-
-import portage_versions
 
 
 def isSourceOnly():

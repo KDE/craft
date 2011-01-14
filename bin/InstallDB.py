@@ -2,7 +2,6 @@ import os
 import utils
 import portage
 import emergePlatform
-import portage_versions
 import sqlite3
 
 def isDBEnabled():

@@ -6,9 +6,6 @@
 
 import os
 import utils
-import base
-import info
-import compiler
 from CMakeDependencies import *
 from BuildSystemBase import *
 from graphviz import *

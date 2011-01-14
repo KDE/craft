@@ -3,12 +3,6 @@
 #
 # installing binary packages
 
-import os
-import utils
-
-import base
-import info
-
 from BuildSystemBase import *
 
 class BinaryBuildSystem(BuildSystemBase):

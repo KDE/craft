@@ -2,7 +2,6 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-import info
 from KDEWinPackager import *
 from CPackPackager import *
 from SevenZipPackager import *

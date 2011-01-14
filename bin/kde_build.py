@@ -3,9 +3,6 @@
 import os
 import utils
 
-import base
-import info
-
 class kde_interface:
     def __init__( self, env = dict( os.environ ) ):
         # TODO: env as argument is never used, eliminate

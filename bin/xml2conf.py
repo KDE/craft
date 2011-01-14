@@ -1,7 +1,6 @@
 # translate xml file to the
 import sys
 import re
-import os
 
 if len(sys.argv) < 2:
     print "not enough arguments"

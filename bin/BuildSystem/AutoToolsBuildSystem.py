@@ -4,9 +4,6 @@
 import os
 import utils
 
-import base
-import info
-import compiler
 from shells import *
 
 from BuildSystemBase import *

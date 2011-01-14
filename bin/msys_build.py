@@ -2,7 +2,6 @@
 # definitions for the msys build system
 import os
 import utils
-import shells
 
 class msys_interface:
     def __init__( self, env = dict( os.environ ) ):

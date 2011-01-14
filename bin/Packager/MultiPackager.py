@@ -4,7 +4,6 @@
 
 from PackagerFactory import *
 
-import info
 import utils
 
 class MultiPackager():
