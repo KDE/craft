@@ -30,13 +30,13 @@ TAGDOKU['files'] = """
 Is a child tag of 'part' which describes a set of files for this package
 component. There are attributes available for this tag:
 
-	include="<regexp>"
-		contains a specification of a perl compatible
-		regular expression for the files that should be
-		contained in the package. The tag content should
-		be empty in this case, which means the tag could
-		also be defined as <files include=".*"/>
-		
+    include="<regexp>"
+        contains a specification of a perl compatible
+        regular expression for the files that should be
+        contained in the package. The tag content should
+        be empty in this case, which means the tag could
+        also be defined as <files include=".*"/>
+
 When not using any attribute one can add relative file pathes
 separated by ';' or '\n' into the content of this tag.
 It is possible to have multiple 'files' tags per 'part' tag. They
