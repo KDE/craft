@@ -130,14 +130,14 @@ class EmergeBase(object):
         if not self.subinfo.options.useShortPathes:
             return dir
         path = c_char_p(dir)
-        len = windll.kernel32.GetShortPathNameA(path, 0, 0)
-        if len == 0:
+        length = windll.kernel32.GetShortPathNameA(path, 0, 0)
+        if length == 0:
             return dir
-        buffer = create_string_buffer('\000' * (len + 1))
-        len1 = windll.kernel32.GetShortPathNameA(path, byref(buffer), len+1)
+        buf = create_string_buffer('\000' * (length + 1))
+        len1 = windll.kernel32.GetShortPathNameA(path, byref(buf), length+1)
         if utils.verbose() > 0:
-            print "converting " + dir + " to " + buffer.value
-        return buffer.value
+            print "converting " + dir + " to " + buf.value
+        return buf.value
 
     def abstract():
         import inspect
