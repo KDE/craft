@@ -79,7 +79,7 @@ class LockFile(object):
             while True:
                 try:
                     msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647L)
-                except IOError, msg:
+                except IOError:
                     # after 15 secs (every 1 sec, 1 attempt -> 15 secs)
                     # a exception is raised but we want to continue trying.
                     continue
@@ -103,7 +103,8 @@ class LockFile(object):
             fcntl.flock(fh, fcntl.LOCK_UN)
         try:
             fh.close()
-        except:
+        except: # pylint: disable=W0702
+            # TODO: never catch ALL exceptions
             traceback.print_exc()
 
 ### fetch functions
@@ -113,14 +114,15 @@ WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "bin", "wget.exe" )
 if not os.path.exists( WGetExecutable ):
     WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "dev-utils", "bin", "wget.exe" )
 
-def test4application( appname, args=None ):
+def test4application( appname):
     """check if the application specified by 'appname' is available"""
     try:
         f = file('NUL:')
         p = subprocess.Popen( appname, stdout=f, stderr=f )
         p.wait()
         return True
-    except:
+    except: # pylint: disable=W0702
+        # TODO: never catch ALL exceptions
         debug( "could not find application %s" % appname, 1 )
         return False
 
@@ -160,7 +162,7 @@ def getFile( url, destdir ):
     if ( os.path.exists( wgetpath ) ):
         return wgetFile( url, destdir )
 
-    scheme, host, path, params, qu, fr = urlparse.urlparse( url )
+    scheme, host, path, _, _, _ = urlparse.urlparse( url )
 
 
     filename = os.path.basename( path )
@@ -219,7 +221,7 @@ def getHttpFile( host, path, destdir, filename ):
             print "Redirect loop"
             return False
         count += 1
-        scheme, host, path, params, qu, fr = urlparse.urlparse( r1.getheader( "Location" ) )
+        _, host, path, _, _, _ = urlparse.urlparse( r1.getheader( "Location" ) )
         debug( "Redirection: %s %s" % ( host, path ), 1 )
         conn = httplib.HTTPConnection( host )
         conn.request( "GET", path )
@@ -346,7 +348,7 @@ def unpackFile( downloaddir, filename, workdir ):
     elif ( ext == ".tgz" ):
         return unTar( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma" or ext == ".xz" ):
-        ( myshortname, myext ) = os.path.splitext( shortname )
+        _, myext = os.path.splitext( shortname )
         if ( myext == ".tar" ):
             return unTar( os.path.join( downloaddir, filename ), workdir )
         else:
@@ -381,7 +383,7 @@ def unTar( fileName, destdir ):
         mode = "r:bz2"
     elif( ext == ".lzma" or ext == ".xz" ):
         un7zip( fileName, os.getenv("TMP") )
-        (srcpath, tarname ) = os.path.split( shortname )
+        _, tarname = os.path.split( shortname )
         fileName = os.path.join( os.getenv("TMP"), tarname )
 
     if not os.path.exists( fileName ):
@@ -417,7 +419,7 @@ def unZip( fileName, destdir ):
         error( "couldn't extract file %s" % fileName )
         return False
 
-    for i, name in enumerate( zipObj.namelist() ):
+    for name in zipObj.namelist():
         if not name.endswith( '/' ):
             dirname = os.path.join( destdir, os.path.dirname( name ) )
 
@@ -456,7 +458,6 @@ def svnFetch( repo, destdir, username = None, password = None ):
             ret = system( command )
     else:
         # already checked out, so only update
-        mode = "update"
         os.chdir( path )
         debug( "svn up cwd: %s" % os.getcwd(), 1 )
         with LockFile(svnLockFileName()):
@@ -527,7 +528,7 @@ def traceMode():
     else:
         return 0
 
-def trace( message, level=0 ):
+def trace( message, dummyLevel=0 ):
     if traceMode(): #> level:
         print "emerge trace:", message
     sys.stdout.flush()
@@ -585,7 +586,7 @@ def getFileListFromDirectory( imagedir ):
     if ( not imagedir.endswith( "\\" ) ):
         myimagedir = myimagedir + "\\"
 
-    for root, dirs, files in os.walk( imagedir ):
+    for root, _, files in os.walk( imagedir ):
         for fileName in files:
             ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), digestFile( os.path.join( root, fileName ) ) ) )
     return ret
@@ -597,7 +598,7 @@ def getFileListFromManifest( rootdir, package ):
     if os.path.exists( manifestDir ):
         for fileName in os.listdir( manifestDir ):
             if fileName.endswith( ".mft" ):
-                [ pkg, version ] = portage.packageSplit( fileName.replace( ".mft", "" ) )
+                pkg, _ = portage.packageSplit( fileName.replace( ".mft", "" ) )
                 if fileName.endswith( ".mft" ) and package==pkg:
                     fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
                     for line in fptr:
@@ -653,7 +654,7 @@ def unmerge( rootdir, package, forced = False ):
     if os.path.exists( manifestDir ):
         for fileName in os.listdir( manifestDir ):
             if fileName.endswith(".mft"):
-                [ pkg, version ] = portage.packageSplit( fileName.replace( ".mft", "" ) )
+                pkg, _ = portage.packageSplit( fileName.replace( ".mft", "" ) )
                 if fileName.endswith( ".mft" ) and package==pkg:
                     fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
                     for line in fptr:
@@ -699,12 +700,12 @@ def unmerge( rootdir, package, forced = False ):
 
     return removed
 
-def createManifestDir( srcdir, imagedir, category, package, version ):
+def createManifestDir(imagedir, category, package, version ):
     """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
-    if not hasManifestFile( imagedir, category, package ):
+    if not hasManifestFile( imagedir, package ):
         createManifestFiles( imagedir, imagedir, category, package, version )
 
-def hasManifestFile( imagedir, category, package ):
+def hasManifestFile( imagedir, package ):
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
         for fileName in os.listdir( os.path.join( imagedir, "manifest"  ) ):
             if fileName.startswith( package ) and fileName.endswith( "-bin.mft" ):
@@ -724,7 +725,7 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
     docList = list()
     dirType = 0
 
-    for root, dirs, files in os.walk( imagedir ):
+    for root, _, files in os.walk( imagedir ):
         relativeRoot = root.replace( imagedir, "" )
         if relativeRoot.startswith( "\\bin" ):
             dirType = 1
@@ -843,7 +844,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     # rootdir  = e:\foo\thirdroot
     # files are installed to
     # e:\foo\thirdroot\tmp\dbus-0\image\foo\thirdroot
-    ( rootdrive, rootpath ) = os.path.splitdrive( rootdir )
+    _, rootpath = os.path.splitdrive( rootdir )
     #print "rp:", rootpath
     if ( rootpath.startswith( "\\" ) ):
         rootpath = rootpath[1:]
@@ -958,7 +959,7 @@ def splitGitUrl( Url ):
     splitUrl = Url.split('|')
     if len(splitUrl) < 3:
         c = [x for x in splitUrl]
-        for y in range(3 - len(splitUrl)):
+        for dummy in range(3 - len(splitUrl)):
             c.append('')
     else:
         c = splitUrl[0:3]
@@ -1081,7 +1082,7 @@ def copyDir( srcdir, destdir ):
     if ( not destdir.endswith( "\\" ) ):
         destdir += "\\"
 
-    for root, dirs, files in os.walk( srcdir ):
+    for root, _, files in os.walk( srcdir ):
         # do not copy files under .svn directories, because they are write-protected
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):

@@ -619,7 +619,8 @@ def isPackageUpdateable( category, package, version ):
     else:
         return False
 
-def alwaysTrue( category, package, version ):
+def alwaysTrue( *dummyArgs):
+    """we sometimes need a function that always returns True"""
     return True
 
 def getHostAndTarget( hostEnabled, targetEnabled ):
@@ -817,7 +818,6 @@ def getPackagesCategories(packageName, defaultCategory = None):
                     utils.warning( "unknown category or package: %s" % packageName )
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
-        validPackage = False
         if PortageInstance.isCategory( cat ):
             categoryList = [ cat ]
         else:

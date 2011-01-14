@@ -68,11 +68,11 @@ class Visitor(object):
     CONTINUE_CHILDREN = 1
     IGNORE_CHILDREN   = 2
 
-    def beforeChildren(self, node, context):
+    def beforeChildren(self, dummyNode, dummyContext):
         """Called before the children of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
 
-    def afterChildren(self, node, context):
+    def afterChildren(self, dummyNode, dummyContext):
         """Called after the children  of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
 
@@ -147,7 +147,7 @@ class XMLCreator(Visitor):
         out.append(">")
         return Visitor.CONTINUE_CHILDREN
 
-    def afterChildren(self, node, out):
+    def afterChildren(self, dummyNode, out):
         if self.ignored:
             self.ignored = False
         else:

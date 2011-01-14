@@ -31,11 +31,9 @@ class FileSource(SourceBase):
     def localFileNames(self):
         return self.localFileNamesBase()
 
-    def fetch( self, repopath = None ):
+    def fetch( self, dummyRepopath = None ):
         """fetching binary files"""
         utils.debug( "FileSource.fetch called", 2 )
-
-        filenames = self.localFileNames()
 
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )

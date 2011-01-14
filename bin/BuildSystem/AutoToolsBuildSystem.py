@@ -61,7 +61,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             ret = self.shell.execute(self.sourceDir(), "ruby", "configure", debugLvl=0 )
         return ret
 
-    def make( self, buildType=None ):
+    def make( self, dummyBuildType=None ):
         """Using the *make program"""
         if self.buildInSource:
             self.enterSourceDir()

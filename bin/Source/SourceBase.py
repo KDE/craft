@@ -38,7 +38,7 @@ class SourceBase(EmergeBase):
         """unpack the source into a local destination."""
         utils.abstract()
 
-    def sourceDir(self, index=0):
+    def sourceDir(self, dummyIndex=0):
         """ return absolute path of the directory where sources are fetched into.
         utils.trace( "SourceBase.sourceDir called", 0 )
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
@@ -92,7 +92,7 @@ class SourceBase(EmergeBase):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
         utils.abstract()
 
-    def repositoryUrl(self, index=0):
+    def repositoryUrl(self, dummyIndex=0):
         """use this to get one of multiple repository paths; these can be download urls as well"""
         utils.abstract()
 

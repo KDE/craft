@@ -52,7 +52,7 @@ class ArchiveSource(SourceBase):
                 available = False
         return available
 
-    def fetch( self, repopath = None ):
+    def fetch( self, dummyRepopath = None ):
         """fetch normal tarballs"""
         utils.debug( "ArchiveSource.fetch called", 2 )
 

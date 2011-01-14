@@ -16,11 +16,11 @@ class Shell(object):
         dummy = 0
 
     #""" convert internal used paths to native path which are understandable by the shell
-    def toNativePath( self, path ):
+    def toNativePath( self, path ): # pylint: disable=W0613
         utils.abstract()
 
     #""" execute shell command
-    def execute(self, path, cmd, args):
+    def execute(self, path, cmd, args):  # pylint: disable=W0613
         utils.abstract()
 
 

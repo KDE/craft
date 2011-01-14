@@ -15,6 +15,6 @@ class CvsSource (VersionSystemSourceBase):
     def __init__(self):
         VersionSystemSourceBase.__init__(self)
 
-    def fetch( self, repopath=None ):
+    def fetch( self, dummyRepopath=None ):
         utils.die("not implemented yet")
 

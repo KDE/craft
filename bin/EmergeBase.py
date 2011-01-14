@@ -221,6 +221,9 @@ class EmergeBase(object):
         """ location of directory where fetched files are  stored """
         return self.__adjustPath(DOWNLOADDIR)
 
+    def sourceDir(self):
+        utils.abstract()
+
     def packageDir(self):
         """ add documentation """
         return self.__adjustPath(os.path.join( portage.rootDirForPackage( self.category, self.package ), self.category, self.package ))
@@ -312,13 +315,13 @@ class EmergeBase(object):
 
     def setup( self, fileName=None, category=None, package=None, version=None, buildTarget=None):
         if fileName == None:
-            ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
-            ( self.category, self.package, self.version ) = portage.getCategoryPackageVersion( self.argv0 )
+            self.PV, _ = os.path.splitext( os.path.basename( self.argv0 ) )
+            self.category, self.package, self.version = portage.getCategoryPackageVersion( self.argv0 )
         else:
             self.category = category
             self.package = package
             self.version = version
-            ( self.PV, ext ) = os.path.splitext( os.path.basename( fileName) )
+            self.PV, _ = os.path.splitext( os.path.basename( fileName) )
         self.setBuildTarget(buildTarget)
 
     def enterBuildDir(self):

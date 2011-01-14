@@ -22,7 +22,7 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
     def createPatch( self ):
         return True
 
-    def repositoryUrl( self, index=0 ):
+    def repositoryUrl( self, dummyIndex=0 ):
         return ""
 
     def repositoryUrlCount( self ):

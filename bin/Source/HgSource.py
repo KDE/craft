@@ -31,13 +31,8 @@ class HgSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
 #        repoString = utils.replaceVCSUrl( repopath )
         repopath = repopath.replace("[hg]", "")
-        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repopath )
+        repoUrl, _, _ = utils.splitGitUrl( repopath )
 
-
-        if utils.verbose() <= 2:
-            devNull = " > NUL"
-        else:
-            devNull = ""
         ret = True
 
         # only run if wanted (e.g. no --offline is given on the commandline) or no hg support is given by the python installation
@@ -48,7 +43,7 @@ class HgSource ( VersionSystemSourceBase ):
             if os.path.exists( self.checkoutDir() ):
                 # if directory already exists, simply do an update but obey to offline
                 os.chdir( self.checkoutDir() )
-                ret = self.system( "hg update" )
+                self.system( "hg update" ) # TODO: check return code for success
 
             else:
                 # it doesn't exist so clone the repo
@@ -90,7 +85,8 @@ class HgSource ( VersionSystemSourceBase ):
             tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" )
 
             # run the command
-            ret = utils.system( "hg tip", tempfile )
+            utils.system( "hg tip", tempfile )
+            # TODO: check return value for success
             tempfile.seek( os.SEEK_SET )
 
             # read the temporary file and grab the first line

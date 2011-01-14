@@ -256,10 +256,8 @@ file collection process is skipped, and only the installer is generated.
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-        dups = 0
         for entry in duplicates:
             entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
-            dups += 1
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )

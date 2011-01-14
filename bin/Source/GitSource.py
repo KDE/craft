@@ -33,7 +33,8 @@ class GitSource ( VersionSystemSourceBase ):
         branch = None
         if os.path.exists( self.checkoutDir() ):
             tmpFile = tempfile.TemporaryFile()
-            ret = self.shell.execute( self.checkoutDir(), "git", "branch -a", out=tmpFile )
+            self.shell.execute( self.checkoutDir(), "git", "branch -a", out=tmpFile )
+            # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
                 if line.startswith("*"):
@@ -44,7 +45,8 @@ class GitSource ( VersionSystemSourceBase ):
     def __isLocalBranch( self, _branch ):
         if os.path.exists( self.checkoutDir() ):
             tmpFile = tempfile.TemporaryFile()
-            ret = self.shell.execute( self.checkoutDir(), "git", "branch", out=tmpFile )
+            self.shell.execute( self.checkoutDir(), "git", "branch", out=tmpFile )
+            # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
                 if line[2:-1] == _branch:
@@ -54,7 +56,8 @@ class GitSource ( VersionSystemSourceBase ):
     def __isTag( self, _tag ):
         if os.path.exists( self.checkoutDir() ):
             tmpFile = tempfile.TemporaryFile()
-            ret = self.shell.execute( self.checkoutDir(), "git", "tag", out=tmpFile )
+            self.shell.execute( self.checkoutDir(), "git", "tag", out=tmpFile )
+            # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
                 if line[:-1] == _tag:
@@ -182,7 +185,7 @@ class GitSource ( VersionSystemSourceBase ):
                 # in case you need to move from a read only Url to a writeable one, here it gets replaced
                 repopath = repopath.replace("[git]", "")
                 repoString = utils.replaceVCSUrl( repopath )
-                [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+                _, repoBranch, _ = utils.splitGitUrl( repoString )
                 if repoBranch == "":
                     repoBranch = "master"
                 sourceDir = os.path.join(self.checkoutDir(), repoBranch)
@@ -236,7 +239,7 @@ class GitSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
         repoString = utils.replaceVCSUrl( repopath )
-        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+        _, repoBranch, _ = utils.splitGitUrl( repoString )
         if repoBranch == "":
             repoBranch = "master"
         if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":

@@ -378,7 +378,7 @@ def main():
     # remove the package again
     packageList = db.remInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' )
     for pac in packageList:
-        for line in pac.getFiles():
+        for line in pac.getFiles(): # pylint: disable=W0612
             # we could remove the file here
             # print line
             pass

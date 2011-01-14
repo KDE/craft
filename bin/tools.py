@@ -115,11 +115,11 @@ if _pywin32:
 
             while self.poll() is None:
                 if self._bypass_stdout:
-                    cont, avail, pos = win32pipe.PeekNamedPipe( self._stdout_hdl, 1024 )
+                    _, avail, _ = win32pipe.PeekNamedPipe( self._stdout_hdl, 1024 )
                     if avail > 0:
                         self._stdout_file.write( win32file.ReadFile( self._stdout_hdl, avail, None )[1] )
                 if self._bypass_stderr:
-                    cont, avail, pos = win32pipe.PeekNamedPipe( self._stderr_hdl, 1024 )
+                    _, avail, _ = win32pipe.PeekNamedPipe( self._stderr_hdl, 1024 )
                     if avail > 0:
                         self._stderr_file.write( win32file.ReadFile( self._stderr_hdl, avail, None )[1] )
                 time.sleep( self.sleeptime )
@@ -144,13 +144,13 @@ class Verbose:
         value is taken from the environment variable
     """
 
-    def increase( self, option, opt, value, parser ):
+    def increase( self, option, opt, value, parser ): # pylint: disable=W0613
         """ callback function as requested by the optparse parser """
         global globalVerboseLevel
         print "increase"
         globalVerboseLevel += 1
 
-    def decrease( self, option, opt, value, parser ):
+    def decrease( self, option, opt, value, parser ): # pylint: disable=W0613
         """ callback function as requested by the optparse parser """
         global globalVerboseLevel
         print "decrease"

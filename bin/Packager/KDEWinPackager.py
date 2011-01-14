@@ -103,7 +103,7 @@ class KDEWinPackager (PackagerBase):
             utils.cleanDirectory ( symPath )
 
             utils.debug( "Copying debugging files to 'dbg'..." )
-            for ( path, dirs, files ) in os.walk( path ):
+            for path, _, files in os.walk( path ):
                 found = 0
                 for directory in range( 0, len( dirsToIgnore ) ):
                     if path.find( dirsToIgnore[directory] ) > 0:

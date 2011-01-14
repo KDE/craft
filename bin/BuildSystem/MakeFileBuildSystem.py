@@ -15,7 +15,7 @@ class MakeFileBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "makefile", "MakeFileBuildSystem")
 
-    def configure( self, defines=""):
+    def configure( self, dummyDefines=""):
         """implements configure step for cmake projects"""
 
         return True

@@ -35,7 +35,7 @@ class SvnSource (VersionSystemSourceBase):
             else:
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
-                (basePath, path) = self.__splitPath(url)
+                _, path = self.__splitPath(url)
                 if path and os.getenv("EMERGE_SVN_STDLAYOUT") == '1':
                     sourcedir = os.path.join( sourcedir, path )
         else:

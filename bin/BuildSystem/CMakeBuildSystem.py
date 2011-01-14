@@ -41,7 +41,6 @@ class CMakeBuildSystem(BuildSystemBase):
     def __onlyBuildDefines( self, buildOnlyTargets ):
         """This method returns a list of cmake defines to exclude targets from build"""
         defines = ""
-        sourceDir = self.sourceDir()
         topLevelCMakeList = os.path.join(self.sourceDir(), "CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
             f = open(topLevelCMakeList,'r')

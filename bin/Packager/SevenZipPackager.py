@@ -42,7 +42,7 @@ class SevenZipPackager (PackagerBase):
         if pkgName.endswith('-src') or pkgName.endswith('-pkg'):
             pkgName = pkgName[:-4]
 
-        pkgVersion, pkgNotesVersion = self.getPackageVersion()
+        pkgVersion, _ = self.getPackageVersion()
 
         if self.subinfo.options.package.withArchitecture:
             if self.buildArchitecture() == "x64":

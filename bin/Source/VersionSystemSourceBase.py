@@ -95,7 +95,7 @@ class VersionSystemSourceBase (SourceBase):
             u1 = self.getUrl(index)
             (u, dummy) = self.splitUrl(u1)
             # check relative kde url
-			# @todo this is svn specific - move to SvnSource
+            # @todo this is svn specific - move to SvnSource
             if u.find("://") == -1 and utils.getVCSType( u ) == "svn":
                 url = self.__repositoryBaseUrl() + u
             else:
@@ -115,7 +115,7 @@ class VersionSystemSourceBase (SourceBase):
             return option
         return None
 
-    def checkoutDir( self, index=0 ):
+    def checkoutDir( self, dummyIndex=0 ):
         utils.trace( "VersionSystemSourceBase checkoutDir", 2 )
         if self.subinfo.hasSvnTarget():
             sourcedir = os.path.join( self.downloadDir(), "svn-src" )

@@ -198,7 +198,7 @@ class PackageBase (EmergeBase):
         """install database"""
 
         utils.debug("base manifest called", 2)
-        if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
+        if not utils.hasManifestFile( self.mergeDestinationDir(), self.package ) or self.forceCreateManifestFiles:
             utils.debug("creating of manifest files triggered", 1)
             utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
         return True
@@ -236,7 +236,7 @@ class PackageBase (EmergeBase):
         """it shouldn't be called if the package is imported as a python module"""
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
-        (command, option) = self.getAction(cmd)
+        command, _ = self.getAction(cmd)
 
         #if self.createCombinedPackage:
         #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]

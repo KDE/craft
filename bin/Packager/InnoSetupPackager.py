@@ -47,7 +47,7 @@ class InnoSetupPackager (PackagerBase):
         if pkgName.endswith('-src'):
             pkgName = pkgName[:-4]
 
-        pkgVersion, pkgNotesVersion = self.getPackageVersion()
+        pkgVersion, _ = self.getPackageVersion()
 
         # perform variable substitution
         # variablenames are wrapped with '#..#' to not get
@@ -76,20 +76,20 @@ class InnoSetupPackager (PackagerBase):
                     os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
                 utils.copyFile( script, destscript )
 
-        # determine source in case MultiSource is used
-        if hasattr(self,'source'):
-            sourcedir = self.source.sourceDir()
-        elif hasattr(self.parent,'source'):
-            sourcedir = self.parent.source.sourceDir()
-        else:
-            sourcedir = self.sourceDir()
-
         # todo: this is probably code for dealing with svn repositories
-        # need to be refactored
-        if ( self.subinfo.options.package.packSources ):
-            srcCmd = " -srcroot " + sourcedir
-        else:
-            srcCmd = ""
+        # needs to be refactored
+        # determine source in case MultiSource is used
+        #if hasattr(self,'source'):
+        #    sourcedir = self.source.sourceDir()
+        #elif hasattr(self.parent,'source'):
+        #    sourcedir = self.parent.source.sourceDir()
+        #else:
+        #    sourcedir = self.sourceDir()
+
+        #if ( self.subinfo.options.package.packSources ):
+        #    srcCmd = " -srcroot " + sourcedir
+        #else:
+        #    srcCmd = ""
 
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):

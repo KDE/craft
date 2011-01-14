@@ -129,7 +129,6 @@ class Repository ( tools.Object ):
 
     def __atomicUpdate( self, target, recursive=False ):
         """ update for one directory """
-        repoURL = self.rinfo.server + self.rinfo.svnbase + self.currentsvnpath
         if recursive:
             recursiveOption = ""
         else:
