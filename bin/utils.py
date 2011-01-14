@@ -262,7 +262,7 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
                     error( "digest validation request for file %s, but no digest  file present" %
                             pathName )
                     return False
-            hash = digestFileSha1( pathName )
+            currentHash = digestFileSha1( pathName )
             f = open( digestFile, "r" )
             line = f.readline()
             f.close()
@@ -272,15 +272,15 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
                         pathName,) )
                 return False
             digest = digest.group(0)
-            if len(digest) != len(hash) or digest.find(hash) == -1:
-                error( "digest value for file %s (%s) do not match (%s)" % (pathName, hash, digest) )
+            if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
+                error( "digest value for file %s (%s) do not match (%s)" % (pathName, currentHash, digest) )
                 return False
         # digest provided in digests parameter
         else:
-            hash = digestFileSha1( pathName )
+            currentHash = digestFileSha1( pathName )
             digest = digestList[i].strip()
-            if len(digest) != len(hash) or digest.find(hash) == -1:
-                error( "digest value for file %s (%s) do not match (%s)" % (pathName, hash, digest) )
+            if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
+                error( "digest value for file %s (%s) do not match (%s)" % (pathName, currentHash, digest) )
                 return False
         i = i + 1
     return True
@@ -635,12 +635,12 @@ def unmergeFileList( rootdir, fileList, forced = False ):
     debug( "unmergeFileList called for %s files" % str( len( fileList ) ), 2 )
     for (filename, filehash) in fileList:
         if os.path.isfile( os.path.join( rootdir, os.path.normcase( filename ) ) ):
-            hash = digestFile( os.path.join( rootdir, os.path.normcase( filename ) ) )
-            if hash == filehash or filehash == "":
+            currentHash = digestFile( os.path.join( rootdir, os.path.normcase( filename ) ) )
+            if currentHash == filehash or filehash == "":
                 debug( "deleting file %s" % os.path.join( rootdir, os.path.normcase( filename ) ) )
                 os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
             else:
-                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.join( rootdir, os.path.normcase( filename ) ), hash, filehash ) )
+                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.join( rootdir, os.path.normcase( filename ) ), currentHash, filehash ) )
                 if forced:
                     os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
@@ -679,12 +679,12 @@ def unmerge( rootdir, package, forced = False ):
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
                         if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                            hash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
-                            if b == "" or hash == b:
+                            currentHash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
+                            if b == "" or currentHash == b:
                                 debug( "deleting file %s" % a )
                                 os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                             else:
-                                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( a ), hash, b ) )
+                                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( a ), currentHash, b ) )
                                 if forced:
                                     os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
@@ -902,21 +902,21 @@ def sedFile( directory, fileName, sedcommand ):
 
 def digestFile( filepath ):
     """ md5-digests a file """
-    hash = hashlib.md5()
+    fileHash = hashlib.md5()
     digFile = open( filepath, "rb" )
     for line in digFile:
-        hash.update( line )
+        fileHash.update( line )
     digFile.close()
-    return hash.hexdigest()
+    return fileHash.hexdigest()
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
-    hash = hashlib.sha1()
+    fileHash = hashlib.sha1()
     hashFile = open( filepath, "rb" )
     for line in hashFile:
-        hash.update( line )
+        fileHash.update( line )
     hashFile.close()
-    return hash.hexdigest()
+    return fileHash.hexdigest()
 
 def getVCSType( url ):
     """ return the type of the vcs url """
