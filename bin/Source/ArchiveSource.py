@@ -194,6 +194,8 @@ class ArchiveSource(SourceBase):
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if type(patches) == list:
+                # TODO: I seem to remember this is not good, prefer isinstance(patches, list)
+                # have to check back. Maybe because this does not work with derived classes
                 for file, patchdepth in patches[:-1]:
                     utils.debug( "applying patch %s with patchlevel: %s" % ( file, patchdepth ) )
                     if not self.applyPatch( file, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):

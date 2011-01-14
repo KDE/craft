@@ -40,8 +40,8 @@ class CMakeDependencies:
         """find CMakeLists.txt and parse it"""
         if not os.path.exists(dir):
             return False
-        list = utils.findFiles(dir, "CMakelists.txt")
-        for file in list:
+        fileNames = utils.findFiles(dir, "CMakelists.txt")
+        for file in fileNames:
             f = open(file, "r")
             for line in f.readlines():
                 if line.startswith("#"):
@@ -59,7 +59,7 @@ class CMakeDependencies:
                             self.packageIncludes[key] = [file]
 
         # find package usage
-        for file in list:
+        for file in fileNames:
             f = open(file, "r")
             for _line in f.readlines():
                 line = _line.upper()
