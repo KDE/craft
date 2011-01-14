@@ -139,11 +139,6 @@ class EmergeBase(object):
             print "converting " + directory + " to " + buf.value
         return buf.value
 
-    def abstract():
-        import inspect
-        caller = inspect.getouterframes(inspect.currentframe())[1][3]
-        raise NotImplementedError(caller + ' must be implemented in subclass')
-
     def buildType(self):
         """return currently selected build type"""
         Type = os.getenv( "EMERGE_BUILDTYPE" )
