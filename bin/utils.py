@@ -700,7 +700,7 @@ def unmerge( rootdir, package, forced = False ):
 
     return removed
 
-def manifestDir( srcdir, imagedir, category, package, version ):
+def createManifestDir( srcdir, imagedir, category, package, version ):
     if not hasManifestFile( imagedir, category, package ):
         createManifestFiles( imagedir, imagedir, category, package, version )
 

@@ -325,7 +325,7 @@ class baseclass:
         """install database"""
         if utils.verbose() > 1:
             print "base manifest called"
-        utils.manifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.category, self.package, self.version )
+        utils.createManifestDir( os.path.join( self.workdir, self.instsrcdir, self.package ), self.imagedir, self.category, self.package, self.version )
         return True
 
     def make_package( self ):
