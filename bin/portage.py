@@ -119,12 +119,7 @@ class DependencyPackage:
 
 def buildType():
     """return currently selected build type"""
-    Type = os.getenv( "EMERGE_BUILDTYPE" )
-    if ( not Type == None ):
-        buildType = Type
-    else:
-        buildType = None
-    return buildType
+    return os.getenv( "EMERGE_BUILDTYPE" )
 
 def prefixForBuildType( self, _buildType=None ):
     postfix = ''
@@ -428,7 +423,7 @@ PortageInstance = Portage()
 for _dir in rootDirectories():
     PortageInstance.addPortageDir( _dir )
 
-def findPossibleTargets( category, package, version, buildType='' ):
+def findPossibleTargets( category, package, version):
     """ this function tries to guess which target got used by looking at the different image directories """
     target = PortageInstance.getDefaultTarget( category, package, version )
     buildroot = os.path.join( ROOTDIR, "build", category, "%s-%s" % ( package, version ) )
@@ -722,7 +717,7 @@ def isInstalled( category, package, version, buildType='' ):
                 break
     return found
 
-def findInstalled( category, package, buildType='' ):
+def findInstalled( category, package):
     """ deprecated, use InstallDB.installdb.findInstalled() instead """
     fileName = os.path.join( etcDir(), "installed" )
     if ( not os.path.isfile( fileName ) ):
