@@ -80,7 +80,7 @@ class Builder(object):
 
         # only build node if all of its children are built correctly
         if all_okay:
-            for t in range(self.tries):
+            for dummy in range(self.tries):
                 exit_status = os.system(self.command % {
                     'category': node.category,
                     'package' : node.package,

@@ -130,7 +130,7 @@ class EmergeBase(object):
         if length == 0:
             return directory
         buf = create_string_buffer('\000' * (length + 1))
-        len1 = windll.kernel32.GetShortPathNameA(path, byref(buf), length+1)
+        windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
         if utils.verbose() > 0:
             print "converting " + directory + " to " + buf.value
         return buf.value

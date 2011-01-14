@@ -161,7 +161,7 @@ class XmlPackager:
             return None
 
     def split( self ):
-        for root, dirs, files in os.walk( self.imagepath ):
+        for root, dummyDirs, files in os.walk( self.imagepath ):
             shortRoot = root.replace( self.imagepath + os.sep, '' )
             for fileName in files:
                 name = os.path.join( shortRoot, fileName )

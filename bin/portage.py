@@ -183,14 +183,14 @@ def getFilename( category, package, version ):
 
 def getCategoryPackageVersion( path ):
     utils.debug( "getCategoryPackageVersion: %s" % path, 2 )
-    ( head, fullFileName ) = os.path.split( path )
-    ( head, package ) = os.path.split( head )
-    ( head, category ) = os.path.split( head )
+    head, fullFileName = os.path.split( path )
+    head, package = os.path.split( head )
+    head, category = os.path.split( head )
 
-    (filename, ext) = os.path.splitext( fullFileName )
-    ( package, version ) = packageSplit( filename )
+    filename = os.path.splitext( fullFileName )[0]
+    package, version = packageSplit( filename )
     utils.debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
-    return [ category, package, version ]
+    return [ category, package, version ] # TODO: why a list and not a tuple?
 
 class Portage:
     def __init__( self ):
@@ -290,7 +290,6 @@ class Portage:
             return dict()
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
             return mod.subinfo().defaultTarget
         else:
             return None

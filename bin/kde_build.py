@@ -265,7 +265,6 @@ class kde_interface:
         builddir = "%s" % ( self.COMPILER )
 
         if( not buildType == None ):
-            buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
         if( not self.buildNameExt == None ):
             builddir = "%s-%s" % ( builddir, self.buildNameExt )
@@ -341,8 +340,5 @@ class kde_interface:
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
         utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
         return True

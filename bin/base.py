@@ -150,12 +150,8 @@ class baseclass:
 
         if not cmd:
             command = sys.argv[ 1 ]
-            options = ""
-            if ( len( sys.argv )  > 2 ):
-                options = sys.argv[ 2: ]
         else:
             command = cmd
-            options = ""
 
         utils.debug( "command: %s" % command )
 
@@ -235,7 +231,7 @@ class baseclass:
 
                 repoUrl = utils.splitGitUrl( repoString )[0]
                 ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
-            [repoUrl2, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+            dummyUrl2, repoBranch, repoTag = utils.splitGitUrl( repoString )
             if ret and repoBranch:
                 ret = self.msys.msysExecute( self.svndir, "git", "checkout --track -b %s origin/%s" % ( repoBranch, repoBranch ) )
             if ret and repoTag:
@@ -343,7 +339,7 @@ class baseclass:
         """parts will probably go to infoclass"""
         utils.debug( "setdirectories called", 1 )
 
-        ( self.PV, ext ) = os.path.splitext( os.path.basename( self.argv0 ) )
+        self.PV, dummyExt = os.path.splitext( os.path.basename( self.argv0 ) )
 
         ( self.category, self.package, self.version ) = \
                        portage.getCategoryPackageVersion( self.argv0 )

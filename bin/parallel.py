@@ -206,7 +206,7 @@ class Worker(Process):
             else:
                 log("start", execute[0])
                 exit_code = 1
-                for t in range(self.tries):
+                for dummy in range(self.tries):
                     try:
                         exit_code = os.system(execute[1])
                     except:

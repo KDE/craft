@@ -107,7 +107,7 @@ class GraphvizCreator(Visitor):
         ranks = {}
         tree.visit(self, (visited, out, ranks))
 
-        for k, v in ranks.iteritems():
+        for v in ranks.itervalues():
             out.append("{ rank=same; ")
             for n in v:
                 out.append('"%s";' % nlSeparated(n))
@@ -172,7 +172,7 @@ class KDEWinCreator( Visitor ):
     cats["win32libs"] = []
 
     def collectMetaData( self, node, context ):
-        visited, out, ranks = context
+        visited = context[0]
         if str( node ) not in visited:
             visited.add( str( node ) )
             metaData = node.metaData
@@ -190,7 +190,7 @@ class KDEWinCreator( Visitor ):
         return None
 
     def collectPackagesForCategory( self, node, context ):
-        visited, out, ranks = context
+        visited = context[0]
         if str( node ) not in visited:
             visited.add( str( node ) )
             if node.category in [ "kdesupport", "libs" ] and node not in self.cats[ "kdesupport" ]:
@@ -225,7 +225,7 @@ class KDEWinCreator( Visitor ):
         return depString
 
     def writeDependencyLine( self, node, context ):
-        visited, out, ranks = context
+        visited = context[0]
         packageName = node.package
         packageCategory = node.category
         if packageCategory == "virtual":
@@ -253,7 +253,7 @@ class KDEWinCreator( Visitor ):
         return None
 
     def afterChildren( self, node, context ):
-        visited, out, ranks = context
+        out = context[1]
 
         if self.mode == "deps":
             result = self.writeDependencyLine( node, context )
@@ -469,8 +469,6 @@ def parseOptions():
     return args
 
 def parsePackageListFiles( filenames ):
-    packagelist = []
-
     depList = []
     for filename in filenames:
         packagefile = file( filename )
@@ -561,7 +559,7 @@ def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type
 
     dep_tree = DependenciesTree()
 
-    for category, package, target, patchlevel in packageList:
+    for category, package, dummyTarget, dummyPatchlevel in packageList:
         dep_tree.addDependencies(category, package, dep_type=dep_type)
 
     if old_emerge_verbose is not None:
