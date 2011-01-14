@@ -231,7 +231,6 @@ class InstallDB:
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
-        packageId = self.getLastId()
         cursor = self.connection.cursor()
         return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, version, prefix ) ]
 
