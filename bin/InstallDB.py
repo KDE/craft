@@ -253,7 +253,7 @@ class InstallDB:
         for category, package, version in portage.PortageInstance.getInstallables():
             # FIXME: we need to adapt this to use prefixes as well
             utils.debug( "importing package %s/%s-%s ..." % ( category, package, version ) )
-            if self._isInstalled( category, package, version ):
+            if self.isPkgInstalled( category, package, version ):
                 utils.debug( 'adding installed package %s/%s-%s' % ( category, package, version ), 1 )
                 packageObject = self.addInstalled( category, package, version, "" )
                 packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
@@ -267,7 +267,8 @@ class InstallDB:
 
 
 
-    def _isInstalled( self, category, package, version, buildType='' ):
+    def isPkgInstalled( self, category, package, version, buildType='' ):
+        # TODO: we have self.isPkgInstalled (formerly self._isInstalled) and self.isInstalled. Clarify names.
         """ check if a package with a certain category, package and version is installed (used for import) """
 
         # find in old style database
@@ -342,7 +343,7 @@ def main():
     utils.debug( 'testing installation database' )
 
     utils.debug( 'testing if package win32libs-sources/dbus-src with version 1.4.0 is installed: %s' %
-                 db._isInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' ) )
+                 db.isPkgInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' ) )
 
     # in case the package is still installed, remove it first silently
     if db.isInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' ):
