@@ -196,7 +196,7 @@ class baseclass:
                      "manifest":   self.manifest,
                      "package":    self.make_package}
         if command in functions:
-            ok = functions[commnand]()
+            ok = functions[command]()
         else:
             ok = utils.error( "command %s not understood" % command )
 
