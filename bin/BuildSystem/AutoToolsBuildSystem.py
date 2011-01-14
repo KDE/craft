@@ -114,7 +114,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def runTest( self ):
         """running unittests"""
-        return true
+        return True
 
     def createShell( self ):
         """create shell in package build dir with prepared environment"""

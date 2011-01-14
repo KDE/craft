@@ -35,7 +35,7 @@ class PackagerBase(EmergeBase):
 
     #""" create a package """
     def createPackage(self):
-        abstract()
+        utils.abstract()
 
     # for compatibility
     def make_package(self):

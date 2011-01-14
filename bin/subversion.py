@@ -5,7 +5,7 @@ import tools
 import re
 import sys
 import ConfigParser
-import util
+import utils
 
 class Repo_info:
     def __init__( self ):

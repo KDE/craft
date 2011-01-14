@@ -8,6 +8,7 @@ import info
 
 class kde_interface:
     def __init__( self, env = dict( os.environ ) ):
+        # TODO: env as argument is never used, eliminate
         for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER",
                     "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN", "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
             if not key in env.keys():
@@ -18,6 +19,9 @@ class kde_interface:
         self.KDESVNDIR           = env[ "KDESVNDIR" ]
         self.KDESVNSERVER        = env[ "KDESVNSERVER" ]
         if ( self.KDESVNDIR    == None ):
+            DOWNLOADDIR = os.getenv( "DOWNLOADDIR" )
+            if ( DOWNLOADDIR == None ):
+                DOWNLOADDIR = os.path.join( env['KDEROOT'], "distfiles" )
             self.KDESVNDIR       = os.path.join( DOWNLOADDIR, "svn-src", "kde" )
         if ( self.KDESVNSERVER == None ):
             self.KDESVNSERVER    = "svn://anonsvn.kde.org"

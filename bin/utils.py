@@ -618,7 +618,7 @@ def getFileListFromManifest( rootdir, package ):
                             else:
                                 a, b = line, ""
                         except:
-                            utils.die( "could not parse line %s" % line, 1 )
+                            die( "could not parse line %s" % line, 1 )
 
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
@@ -674,7 +674,7 @@ def unmerge( rootdir, package, forced = False ):
                             else:
                                 a, b = line, ""
                         except:
-                            utils.die("could not parse line %s" % line, 1)
+                            die("could not parse line %s" % line, 1)
 
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
@@ -1202,12 +1202,12 @@ def getWinVer():
     try:
         result = subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0]
     except:
-        utils.debug("Windows Version can not be determined", 1)
+        debug("Windows Version can not be determined", 1)
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)
     if(version):
         return version.group(0)
-    utils.debug("Windows Version can not be determined", 1)
+    debug("Windows Version can not be determined", 1)
     return "0"
 
 def regQuery(key, value):

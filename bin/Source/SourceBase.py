@@ -28,7 +28,7 @@ class SourceBase(EmergeBase):
 
     def fetch(self):
         """fetch the source from a remote host and save it into a local destination"""
-        abstract()
+        utils.abstract()
 
     def checkDigest(self):
         """check source digest of the package."""
@@ -36,7 +36,7 @@ class SourceBase(EmergeBase):
 
     def unpack(self):
         """unpack the source into a local destination."""
-        abstract()
+        utils.abstract()
 
     def sourceDir(self, index=0):
         """ return absolute path of the directory where sources are fetched into.
@@ -90,18 +90,18 @@ class SourceBase(EmergeBase):
 
     def createPatch(self):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
-        abstract()
+        utils.abstract()
 
     def repositoryUrl(self, index=0):
         """use this to get one of multiple repository paths; these can be download urls as well"""
-        abstract()
+        utils.abstract()
 
     def repositoryUrlCount(self):
         """use this to get number of repository paths"""
-        abstract()
+        utils.abstract()
 
     def localFileNamesBase(self):
-        abstract()
+        utils.abstract()
 
     def sourceVersion(self):
         """ return the current revision or version of the source directory,

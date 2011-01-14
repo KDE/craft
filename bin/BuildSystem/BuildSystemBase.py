@@ -44,23 +44,23 @@ class BuildSystemBase(EmergeBase):
 
     def configure(self):
         """configure the target"""
-        abstract()
+        utils.abstract()
 
     def install(self):
         """install the target into local install directory"""
-        abstract()
+        utils.abstract()
 
     def uninstall(self):
         """uninstall the target from the local install directory"""
-        abstract()
+        utils.abstract()
 
     def runTests(self):
         """run the test - if available - for the target"""
-        abstract()
+        utils.abstract()
 
     def make(self):
         """make the target by runnning the related make tool"""
-        abstract()
+        utils.abstract()
 
     def compile(self):
         """convencience method - runs configure() and make()"""
@@ -84,9 +84,9 @@ class BuildSystemBase(EmergeBase):
         return defines
 
     def makeOptions(self, defines=""):
-        """return options for configure command line"""
+        """return options for make command line"""
         if self.subinfo.options.make.ignoreErrors:
-            command += " -i"
+            defines += " -i"
         if self.subinfo.options.make.makeOptions != None:
             defines += " %s" % self.subinfo.options.make.makeOptions
         return defines
@@ -98,4 +98,4 @@ class BuildSystemBase(EmergeBase):
 
     def dumpDependencies(self):
         """dump package dependencies """
-        abstract()
+        utils.abstract()

@@ -17,11 +17,11 @@ class Shell(object):
 
     #""" convert internal used paths to native path which are understandable by the shell
     def toNativePath( self, path ):
-        abstract
+        utils.abstract()
 
     #""" execute shell command
     def execute(self, path, cmd, args):
-        abstract
+        utils.abstract()
 
 
 class MSysShell(Shell):

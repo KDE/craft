@@ -41,7 +41,7 @@ class GraphViz:
         self.outFile = outFile
         if not self.parent.system("\"%s\" -T%s -o%s %s" % (dotExecutable, dotFormat, outFile, inFile), "create %s" % outFile):
             self.output = False
-            return false
+            return False
         else:
             self.output = True
             return True
