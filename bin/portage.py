@@ -155,9 +155,6 @@ def rootDirForPackage( category, package ):
     # as a fall back return the default even if it might be wrong
     return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
 
-def etcDir():
-    return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
-
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
     if category and package:
@@ -176,7 +173,7 @@ def getCategoryPackageVersion( path ):
     head, category = os.path.split( head )
 
     filename = os.path.splitext( fullFileName )[0]
-    package, version = packageSplit( filename )
+    package, version = utils.packageSplit( filename )
     utils.debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
     return [ category, package, version ] # TODO: why a list and not a tuple?
 
@@ -376,7 +373,7 @@ class Portage:
                 if ( ret == 1 ):
                     tmpver = ver
 
-        ret = packageSplit( tmpver )
+        ret = utils.packageSplit( tmpver )
         #print "ret:", ret
         return ret[ 1 ]
 
@@ -442,29 +439,6 @@ def findPossibleTargets( category, package, version):
 def getPackageInstance(category, package, buildtarget=None):
     """return instance of class Package from package file"""
     return PortageInstance.getPackageInstance(category, package, buildtarget)
-
-def isVersion( part ):
-    ver_regexp = re.compile("^(cvs\\.)?(\\d+)((\\.\\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\\d*)*)(-r(\\d+))?$")
-    if ver_regexp.match( part ):
-        return True
-    else:
-        return False
-
-def packageSplit( fullname ):
-    """ instead of using portage_versions.catpkgsplit use this function now """
-    splitname = fullname.split('-')
-    x = 0 # fixes pylint warning about using possibly undefined loop variable.
-          # maybe this could be simplified by using only one for loop.
-    for x in range( len( splitname ) ):
-        if isVersion( splitname[ x ] ):
-            break
-    package = splitname[ 0 ]
-    version = splitname[ x ]
-    for part in splitname[ 1 : x ]:
-        package += '-' + part
-    for part in splitname[ x  + 1: ]:
-        version += '-' + part
-    return [ package, version ]
 
 def getDependencies( category, package, version, runtimeOnly=False ):
     """
@@ -659,7 +633,7 @@ def printInstalled():
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
     # find in old style database
-    path = etcDir()
+    path = utils.etcDir()
     fileName = os.path.join(path,'installed')
     if not os.path.isfile( fileName ):
         return False
@@ -668,7 +642,7 @@ def isInstalled( category, package, version, buildtype='' ):
     f = open( fileName, "rb" )
     for line in f.read().splitlines():
         (_category, _packageVersion) = line.split( "/" )
-        (_package, _version) = packageSplit(_packageVersion)
+        (_package, _version) = utils.packageSplit(_packageVersion)
         if category != '' and version != '' and category == _category and package == _package and version == _version:
             found = True
             break
@@ -684,7 +658,7 @@ def isInstalled( category, package, version, buildtype='' ):
             f = open( fileName, "rb" )
             for line in f.read().splitlines():
                 (_category, _packageVersion) = line.split( "/" )
-                (_package, _version) = packageSplit(_packageVersion)
+                (_package, _version) = utils.packageSplit(_packageVersion)
                 if category != '' and version != '' and category == _category and package == _package and version == _version:
                     found = True
                     break
@@ -713,7 +687,7 @@ def isInstalled( category, package, version, buildtype='' ):
 
 def findInstalled( category, package):
     """ deprecated, use InstallDB.installdb.findInstalled() instead """
-    fileName = os.path.join( etcDir(), "installed" )
+    fileName = os.path.join(utils.etcDir(), "installed" )
     if ( not os.path.isfile( fileName ) ):
         return None
 
@@ -734,7 +708,7 @@ def addInstalled( category, package, version, buildtype='' ):
     utils.debug( "addInstalled called", 2 )
     # write a line to etc/portage/installed,
     # that contains category/package-version
-    path = os.path.join( etcDir() )
+    path = os.path.join(utils.etcDir() )
     if ( not os.path.isdir( path ) ):
         os.makedirs( path )
     if buildtype != '':
@@ -762,8 +736,8 @@ def remInstalled( category, package, version, buildtype='' ):
     else:
         fileName = 'installed'
     utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)
-    dbFileName = os.path.join( etcDir(), fileName )
-    tmpdbfile = os.path.join( etcDir(), "TMPinstalled" )
+    dbFileName = os.path.join(utils.etcDir(), fileName )
+    tmpdbfile = os.path.join(utils.etcDir(), "TMPinstalled" )
     found = False
     if os.path.exists( dbFileName ):
         dbFile = open( dbFileName, "rb" )

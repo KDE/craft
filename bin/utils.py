@@ -29,8 +29,6 @@ if os.name == 'nt':
 else:
     import fcntl
 
-import portage
-
 import ConfigParser
 
 def abstract():
@@ -591,6 +589,33 @@ def getFileListFromDirectory( imagedir ):
             ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), digestFile( os.path.join( root, fileName ) ) ) )
     return ret
 
+def isVersion( part ):
+    ver_regexp = re.compile("^(cvs\\.)?(\\d+)((\\.\\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\\d*)*)(-r(\\d+))?$")
+    if ver_regexp.match( part ):
+        return True
+    else:
+        return False
+
+def etcDir():
+    """the etc directory for portage"""
+    return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
+
+def packageSplit( fullname ):
+    """ instead of using portage_versions.catpkgsplit use this function now """
+    splitname = fullname.split('-')
+    x = 0 # fixes pylint warning about using possibly undefined loop variable.
+          # maybe this could be simplified by using only one for loop.
+    for x in range( len( splitname ) ):
+        if isVersion( splitname[ x ] ):
+            break
+    package = splitname[ 0 ]
+    version = splitname[ x ]
+    for part in splitname[ 1 : x ]:
+        package += '-' + part
+    for part in splitname[ x  + 1: ]:
+        version += '-' + part
+    return [ package, version ]
+
 def getFileListFromManifest( rootdir, package ):
     """ return file list according to the manifest files for deletion/import """
     fileList = []
@@ -598,7 +623,7 @@ def getFileListFromManifest( rootdir, package ):
     if os.path.exists( manifestDir ):
         for fileName in os.listdir( manifestDir ):
             if fileName.endswith( ".mft" ):
-                pkg, _ = portage.packageSplit( fileName.replace( ".mft", "" ) )
+                pkg, _ = packageSplit( fileName.replace( ".mft", "" ) )
                 if fileName.endswith( ".mft" ) and package==pkg:
                     fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
                     for line in fptr:
@@ -654,7 +679,7 @@ def unmerge( rootdir, package, forced = False ):
     if os.path.exists( manifestDir ):
         for fileName in os.listdir( manifestDir ):
             if fileName.endswith(".mft"):
-                pkg, _ = portage.packageSplit( fileName.replace( ".mft", "" ) )
+                pkg, _ = packageSplit( fileName.replace( ".mft", "" ) )
                 if fileName.endswith( ".mft" ) and package==pkg:
                     fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
                     for line in fptr:
@@ -968,7 +993,7 @@ def splitGitUrl( Url ):
 def replaceVCSUrl( Url ):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join( portage.etcDir(), "..", "emergehosts.conf" )
+    configfile = os.path.join(etcDir(), "..", "emergehosts.conf" )
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming

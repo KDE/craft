@@ -92,11 +92,11 @@ class InstallDB:
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
 
-    def __init__( self, filename = os.path.join( portage.etcDir(), 'install.db' ) ):
+    def __init__( self, filename = os.path.join( utils.etcDir(), 'install.db' ) ):
         self.dbfilename = filename
         if not os.path.exists( filename ):
-            if not os.path.exists( portage.etcDir() ):
-                os.makedirs( portage.etcDir() )
+            if not os.path.exists( utils.etcDir() ):
+                os.makedirs( utils.etcDir() )
             utils.debug( "database does not exist yet: creating database & importing old data" )
             self._prepareDatabase()
         else:
@@ -271,7 +271,7 @@ class InstallDB:
         """ check if a package with a certain category, package and version is installed (used for import) """
 
         # find in old style database
-        path = portage.etcDir()
+        path = utils.etcDir()
         fileName = os.path.join( path, 'installed' )
         if not os.path.isfile( fileName ):
             return False
@@ -280,7 +280,7 @@ class InstallDB:
         f = open( fileName, "rb" )
         for line in f.read().splitlines():
             ( _category, _packageVersion ) = line.split( "/" )
-            ( _package, _version ) = portage.packageSplit(_packageVersion)
+            ( _package, _version ) = utils.packageSplit(_packageVersion)
             if category != '' and version != '' and category == _category and package == _package \
                               and version == _version:
                 found = True
@@ -297,7 +297,7 @@ class InstallDB:
                 f = open( fileName, "rb" )
                 for line in f.read().splitlines():
                     ( _category, _packageVersion ) = line.split( "/" )
-                    ( _package, _version ) = portage.packageSplit( _packageVersion )
+                    ( _package, _version ) = utils.packageSplit( _packageVersion )
                     if category != '' and version != '' and category == _category and package == _package and version == _version:
                         found = True
                         break
