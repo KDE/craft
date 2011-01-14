@@ -53,6 +53,11 @@ class EmergeBase(object):
         object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
 
+        if not hasattr(self, 'subinfo'):
+            # can this ever happen? We need this assignment so
+            # pylint is quiet about this.
+            self.subinfo = None
+
         # if class name has been provided add implicit build time dependency
         if className and os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             packageName = 'internal/%s' % className
@@ -118,7 +123,7 @@ class EmergeBase(object):
             print >> sys.stderr, "emerge error: KDECOMPILER: '%s' not understood" % COMPILER
             exit( 1 )
         self.rootdir = ROOTDIR
-        if hasattr(self, "subinfo"):
+        if self.subinfo:
             self.setup()
 
     def __adjustPath(self, directory):
