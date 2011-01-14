@@ -149,7 +149,6 @@ class Verbose:
         global globalVerboseLevel
         print "increase"
         globalVerboseLevel += 1
-        self.VERBOSE = str( globalVerboseLevel )
 
     def decrease( self, option, opt, value, parser ):
         """ callback function as requested by the optparse parser """
@@ -157,7 +156,6 @@ class Verbose:
         print "decrease"
         if globalVerboseLevel > 0:
             globalVerboseLevel -= 1
-            self.VERBOSE = str( globalVerboseLevel )
 
     def setVerboseLevel( self, newLevel ):
         """ set the level by hand for quick and dirty changes """
