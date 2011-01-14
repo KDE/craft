@@ -38,7 +38,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # here follows some automatic configure tool detection
         # 1. search for configure.exe in the order
         #      a. provided by method call
-        #      b. in source dir
+        #      b. in source directory
         # 2. if qmake is available search for a pro-file named as the package
         # 3. if a pro-file is available through configureOptions, run it with qmake
         # 4. otherwise run qmake without any pro file given

@@ -40,12 +40,10 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         return url
 
     def sourceDir(self,index=0):
-        dir = SvnSource.sourceDir(self,index) % self.language
-        return dir
+        return SvnSource.sourceDir(self,index) % self.language
 
     def buildRoot(self):
-        dir = os.path.join(PackageBase.buildRoot(self), self.language)
-        return dir
+        return os.path.join(PackageBase.buildRoot(self), self.language)
 
     def unpack(self):
         autogen = os.path.join( self.packageDir() , "autogen.py" )

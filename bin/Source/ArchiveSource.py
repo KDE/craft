@@ -202,24 +202,24 @@ class ArchiveSource(SourceBase):
                         return False
 
         # move the packages up and rename them to be different from the original source directory
-        for dir in packagelist:
+        for directory in packagelist:
             # if the source or dest directory already exists, remove the occurance instead
-            if os.path.exists( os.path.join( destdir, dir + ".orig" ) ):
-                shutil.rmtree( os.path.join( destdir, dir + ".orig" ) )
-            shutil.move( os.path.join( tmpdir, dir ), os.path.join( destdir, dir + ".orig" ) )
+            if os.path.exists( os.path.join( destdir, directory + ".orig" ) ):
+                shutil.rmtree( os.path.join( destdir, directory + ".orig" ) )
+            shutil.move( os.path.join( tmpdir, directory ), os.path.join( destdir, directory + ".orig" ) )
 
         # make one diff per file, even though we aren't able to apply multiple patches per package atm
         os.chdir( destdir )
-        for dir in packagelist:
-            cmd = "diff -Nru %s.orig %s > %s || echo 0" % ( dir, dir, os.path.join( self.buildRoot(), \
-            "%s-%s.diff" % ( dir, str( datetime.date.today() ).replace('-', '') ) ) )
+        for directory in packagelist:
+            cmd = "diff -Nru %s.orig %s > %s || echo 0" % ( directory, directory, os.path.join( self.buildRoot(), \
+            "%s-%s.diff" % ( directory, str( datetime.date.today() ).replace('-', '') ) ) )
             if not self.system( cmd ):
                 return False
 
         # remove all directories that are not needed any more after making the patch
         # disabled for now
-        #for dir in packagelist:
-        #    shutil.rmtree( dir + ".orig" )
+        #for directory in packagelist:
+        #    shutil.rmtree( directory + ".orig" )
 
         # remove the temporary directory, it should be empty after all directories have been moved up
         os.rmdir( tmpdir )

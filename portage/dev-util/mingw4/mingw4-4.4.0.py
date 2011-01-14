@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
                                                    'w32api-3.11.tar.gz',
                                                    'gdb-6.8-mingw-3.tar.bz2',
                                                    'mingw-utils-0.3.tar.gz'])
-		
+
         self.targets['4.4.0-tdm-r2'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
                                                         ['gcc-4.4.0-tdm-1-core-2.tar.gz',
                                                         'gcc-4.4.0-tdm-1-g++-2.tar.gz',
@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
                                                         'w32api-3.11.tar.gz',
                                                         'gdb-6.8-mingw-3.tar.bz2',
                                                         'mingw-utils-0.3.tar.gz'])
-		
+
         self.targets['4.4.0'] = self.getPackageList('http://downloads.sourceforge.net/sourceforge/mingw',
                                                  ['binutils-2.20.1-2-mingw32-bin.tar.gz',
                                                  'make-3.81-20090914-mingw32-bin.tar.gz',
@@ -71,7 +71,7 @@ class subinfo(info.infoclass):
                                                   'libmpc-0.8.1-1-mingw32-dll-2.tar.lzma'])
 
 
-		
+
         self.defaultTarget = '4.4.0'
 
     def setDependencies( self ):
@@ -88,8 +88,8 @@ class Package(BinaryPackageBase):
 
     def install( self ):
         dirs=os.listdir(self.imageDir())
-        for dir in dirs:
-           shutil.move(os.path.join( self.installDir() , dir) , os.path.join( self.installDir(), "mingw" ,dir) )
+        for directory in dirs:
+           shutil.move(os.path.join( self.installDir() , directory) , os.path.join( self.installDir(), "mingw" ,directory) )
         os.mkdir(os.path.join( self.imageDir() , "bin" ))
         shutil.copy( os.path.join( self.imageDir() , "mingw","bin", "mingwm10.dll" ), os.path.join( self.imageDir() , "bin" , "mingwm10.dll" ) )
         if( self.subinfo.buildTarget == '4.5.0' ):

@@ -20,8 +20,8 @@ class SevenZipPackager (PackagerBase):
         PackagerBase.__init__(self, "SevenZipPackager")
         fileName = "bin\\7za.exe"
         self.packager = None
-        for dir in [".", "dev-utils", "release", "debug"]:
-            path = os.path.join(self.rootdir, dir, fileName )
+        for directory in [".", "dev-utils", "release", "debug"]:
+            path = os.path.join(self.rootdir, directory, fileName )
             if os.path.exists(path):
                 self.packager = path
                 break

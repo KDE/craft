@@ -115,22 +115,22 @@ file collection process is skipped, and only the installer is generated.
         return True
 
     def __imageDirPattern( self, package, buildTarget ):
-        """ return base directory name for package related image dir """
-        dir = "image"
+        """ return base directory name for package related image directory """
+        directory = "image"
 
         # we assume that binary packages are for all compiler and targets
-        ## \todo add image dir support for using binary packages for a specific compiler and build type
+        ## \todo add image directory support for using binary packages for a specific compiler and build type
         if hasattr( package, 'buildSystemType' ) and package.buildSystemType == 'binary':
-            return dir
+            return directory
 
         if package.subinfo.options.useCompilerType == True:
-            dir += '-' + COMPILER
+            directory += '-' + COMPILER
         if package.isTargetBuild():
-            dir += "-%s" % package.buildPlatform()
+            directory += "-%s" % package.buildPlatform()
         if package.subinfo.options.useBuildType == True:
-            dir += '-' + package.buildType()
-        dir += '-' + buildTarget
-        return dir
+            directory += '-' + package.buildType()
+        directory += '-' + buildTarget
+        return directory
 
     def __buildRoot( self, category, package, version ):
         """ return absolute path to the root directory of the currently active package - taken from EmergeBase """
@@ -304,14 +304,14 @@ file collection process is skipped, and only the installer is generated.
         if not os.getenv( "EMERGE_NOCLEAN" ) == "True":
             utils.debug( "cleaning imagedir: %s" % self.imageDir() )
             utils.cleanDirectory( self.imageDir() )
-            for dir, mergeDir in self.__getImageDirectories():
+            for directory, mergeDir in self.__getImageDirectories():
                 imageDir = self.imageDir()
                 if mergeDir:
                     imageDir = os.path.join( self.imageDir, mergeDir )
-                if os.path.exists( dir ):
-                    self.copyFiles( dir, self.imageDir() )
+                if os.path.exists( directory ):
+                    self.copyFiles( directory, self.imageDir() )
                 else:
-                    utils.die( "image directory %s does not exist!" % dir )
+                    utils.die( "image directory %s does not exist!" % directory )
 
         if not os.path.exists( self.imageDir() ):
             os.makedirs( self.imageDir() )

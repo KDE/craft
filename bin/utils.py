@@ -443,8 +443,8 @@ def svnFetch( repo, destdir, username = None, password = None ):
     ret = 0
     #if ( len( os.listdir( destdir ) ) == 0 ):
 
-    dir = os.path.basename( repo.replace( "/", "\\" ) )
-    path = os.path.join( destdir, dir )
+    directory = os.path.basename( repo.replace( "/", "\\" ) )
+    path = os.path.join( destdir, directory )
     debug( "path: %s" % path, 1 )
     if ( not os.path.exists( path ) ):
         # not checked out yet
@@ -868,10 +868,10 @@ def fixCmakeImageDir( imagedir, rootdir ):
     cleanDirectory( tmpdir )
     os.rmdir( tmpdir )
 
-def cleanDirectory( dir ):
-    debug("clean directory %s" % dir, 1)
-    if ( os.path.exists( dir ) ):
-        for root, dirs, files in os.walk( dir, topdown=False):
+def cleanDirectory( directory ):
+    debug("clean directory %s" % directory, 1)
+    if ( os.path.exists( directory ) ):
+        for root, dirs, files in os.walk( directory, topdown=False):
             for name in files:
                 try:
                     os.remove( os.path.join(root, name) )
@@ -883,7 +883,7 @@ def cleanDirectory( dir ):
                 except:
                     die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
     else:
-        os.makedirs( dir )
+        os.makedirs( directory )
 
 def sedFile( directory, fileName, sedcommand ):
     """ runs the given sed command on the given file """
@@ -1097,10 +1097,10 @@ def moveDir( srcdir, destdir ):
     debug( "moveDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
     shutil.move( srcdir, destdir )
 
-def rmtree( dir ):
-    """ recursively delete dir """
-    debug( "rmtree called. dir: %s" % ( dir ), 2 )
-    shutil.rmtree ( dir, True ) # ignore errors
+def rmtree( directory ):
+    """ recursively delete directory """
+    debug( "rmtree called. directory: %s" % ( directory ), 2 )
+    shutil.rmtree ( directory, True ) # ignore errors
 
 def copyFile(src, dest):
     """ copy file from src to dest"""
@@ -1122,15 +1122,15 @@ def deleteFile(fileName):
     os.remove( fileName )
     return True
 
-def findFiles( dir, pattern=None, fileNames=None):
+def findFiles( directory, pattern=None, fileNames=None):
     """find files recursivly"""
     if fileNames == None:
         fileNames = []
         pattern = pattern.lower()
-    for entry in os.listdir(dir):
+    for entry in os.listdir(directory):
         if entry.find(".svn") > -1 or entry.find(".bak") > -1:
             continue
-        fileName = os.path.join(dir, entry)
+        fileName = os.path.join(directory, entry)
         if os.path.isdir(fileName):
             findFiles(fileName, pattern, fileNames)
         elif os.path.isfile(fileName) and pattern == None or entry.lower().find(pattern) > -1:

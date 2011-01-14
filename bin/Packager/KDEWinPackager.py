@@ -15,8 +15,8 @@ class KDEWinPackager (PackagerBase):
         fileName = "bin\\kdewin-packager.exe"
         self.packager = None
         self.useDebugPackages = False
-        for dir in [".", "dev-utils", "release", "debug"]:
-            path = os.path.join(self.rootdir, dir, fileName )
+        for directory in [".", "dev-utils", "release", "debug"]:
+            path = os.path.join(self.rootdir, directory, fileName )
             if os.path.exists(path):
                 self.packager = path
                 break
@@ -88,7 +88,7 @@ class KDEWinPackager (PackagerBase):
 
         # copy pdb/sym files to a temporary directory, because they can be scattered all over the build directory
         # plus, different build types copy files to different directories (could be buildDir(), buildDir()/bin, buildDir()/bin/Debug...),
-        # so let's copy them to one precise location, package them, then delete that dir
+        # so let's copy them to one precise location, package them, then delete that directory
 
         symCmd = ""
         if self.useDebugPackages:
@@ -105,8 +105,8 @@ class KDEWinPackager (PackagerBase):
             utils.debug( "Copying debugging files to 'dbg'..." )
             for ( path, dirs, files ) in os.walk( path ):
                 found = 0
-                for dir in range( 0, len( dirsToIgnore ) ):
-                    if path.find( dirsToIgnore[dir] ) > 0:
+                for directory in range( 0, len( dirsToIgnore ) ):
+                    if path.find( dirsToIgnore[directory] ) > 0:
                         found = 1
                         break
                 if found == 1:

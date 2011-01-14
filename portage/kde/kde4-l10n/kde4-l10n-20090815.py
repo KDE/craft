@@ -56,8 +56,7 @@ class Package(CMakePackageBase):
         return url
 
     def workDir(self):
-        dir = os.path.join(CMakePackageBase.workDir(self), self.language)
-        return dir
+        return os.path.join(CMakePackageBase.workDir(self), self.language)
 
     def fetch(self):
         filenames = self.localFileNames()

@@ -198,26 +198,26 @@ class Portage:
         self.categories = {}
         self.portages = {}
 
-    def addPortageDir( self, dir ):
+    def addPortageDir( self, directory ):
         """ adds the categories and packages of a portage directory """
-        if not os.path.exists( dir ):
+        if not os.path.exists( directory ):
             return
 
-        categoryList = os.listdir( dir )
+        categoryList = os.listdir( directory )
 
         # remove vcs directories
         for vcsdir in [ '.svn', 'CVS', '.hg', '.git' ]:
             if vcsdir in categoryList:
                 categoryList.remove( vcsdir )
 
-        self.portages[ dir ] = []
+        self.portages[ directory ] = []
         for category in categoryList:
-            if not os.path.isdir( os.path.join( dir, category ) ):
+            if not os.path.isdir( os.path.join( directory, category ) ):
                 continue
 
-            self.portages[ dir ].append( category )
+            self.portages[ directory ].append( category )
 
-            packageList = os.listdir( os.path.join( dir, category ) )
+            packageList = os.listdir( os.path.join( directory, category ) )
 
             # remove vcs directories
             for vcsdir in [ '.svn', 'CVS', '.hg', '.git' ]:
@@ -227,7 +227,7 @@ class Portage:
             if not category in self.categories.keys():
                 self.categories[ category ] = []
             for package in packageList:
-                if not os.path.isdir( os.path.join( dir, category, package ) ):
+                if not os.path.isdir( os.path.join( directory, category, package ) ):
                     continue
                 if not package in self.categories[ category ]:
                     self.categories[ category ].append( package )
@@ -437,10 +437,10 @@ def findPossibleTargets( category, package, version, buildType='' ):
     if not os.path.exists( buildroot ):
         return target
 
-    for dir in os.listdir( buildroot ):
-        if os.path.isdir( os.path.join( buildroot, dir ) ):
-            if dir.startswith( "image" ) and dir != "image":
-                particles = dir.split( '-' )[ 1: ] # the first part should be image- anyway
+    for directory in os.listdir( buildroot ):
+        if os.path.isdir( os.path.join( buildroot, directory ) ):
+            if directory.startswith( "image" ) and directory != "image":
+                particles = directory.split( '-' )[ 1: ] # the first part should be image- anyway
                 if len(particles) == 3:
                     _platform, _buildType, _target = particles
                 elif len(particles) == 4:

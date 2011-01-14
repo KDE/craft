@@ -37,11 +37,11 @@ class CMakeDependencies:
         self.packageIncludes = dict() # where a package is included
         self.packageUsage = dict()    # where package related variables are used (search string=xxx_INCLUDE or xxx_LIBRAR)
 
-    def parse(self, dir):
+    def parse(self, directory):
         """find CMakeLists.txt and parse it"""
-        if not os.path.exists(dir):
+        if not os.path.exists(directory):
             return False
-        fileNames = utils.findFiles(dir, "CMakelists.txt")
+        fileNames = utils.findFiles(directory, "CMakelists.txt")
         for fileName in fileNames:
             f = open(fileName, "r")
             for line in f.readlines():
@@ -130,9 +130,10 @@ class CMakeDependencies:
 
 
 if __name__ == '__main__':
-    dir = sys.argv[1]
+    # TODO: take this out of global namespace
+    directory = sys.argv[1]
     a = CMakeDependencies()
-    a.parse(dir)
+    a.parse(directory)
     title = ''
     if sys.argc >= 3:
         title = sys.argv[2]

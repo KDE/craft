@@ -48,9 +48,9 @@ class Package(CMakePackageBase):
       # avoid config.h confusion
       p = re.compile('.*\.[ch]$')
       sedcmd = r"""-e "s/config.h/config.h.win32/" """
-      dir = os.path.join( self.glibDir, "glib" )
-      if ( os.path.exists( dir ) ):
-          for root, dirs, files in os.walk( dir, topdown=False ):
+      directory = os.path.join( self.glibDir, "glib" )
+      if ( os.path.exists( directory ) ):
+          for root, dirs, files in os.walk( directory, topdown=False ):
               print root
               for name in files:
                   if( p.match( name ) ):

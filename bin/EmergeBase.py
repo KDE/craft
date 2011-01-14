@@ -125,18 +125,18 @@ class EmergeBase(object):
         if hasattr(self, "subinfo"):
             self.setup()
 
-    def __adjustPath(self, dir):
+    def __adjustPath(self, directory):
         """return adjusted path"""
         if not self.subinfo.options.useShortPathes:
-            return dir
-        path = c_char_p(dir)
+            return directory
+        path = c_char_p(directory)
         length = windll.kernel32.GetShortPathNameA(path, 0, 0)
         if length == 0:
-            return dir
+            return directory
         buf = create_string_buffer('\000' * (length + 1))
         len1 = windll.kernel32.GetShortPathNameA(path, byref(buf), length+1)
         if utils.verbose() > 0:
-            print "converting " + dir + " to " + buf.value
+            print "converting " + directory + " to " + buf.value
         return buf.value
 
     def abstract():
@@ -184,39 +184,39 @@ class EmergeBase(object):
             return os.getenv( "EMERGE_ARCHITECTURE" )
 
     def workDirPattern(self):
-        """return base directory name for package related work dir"""
-        dir = ""
+        """return base directory name for package related work directory"""
+        directory = ""
         if self.subinfo.options.useCompilerType == True:
-            dir += "%s-" % COMPILER
+            directory += "%s-" % COMPILER
         if self.isTargetBuild():
-            dir += "%s-" % self.buildPlatform()
+            directory += "%s-" % self.buildPlatform()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-            dir += "ide-"
+            directory += "ide-"
         if self.subinfo.options.useBuildType == False:
-            dir += "%s" % (self.buildTarget)
+            directory += "%s" % (self.buildTarget)
         elif( self.buildType() == None ):
-            dir += "%s-%s" % ("default", self.buildTarget)
+            directory += "%s-%s" % ("default", self.buildTarget)
         else:
-            dir += "%s-%s" % (self.buildType(), self.buildTarget)
-        return dir
+            directory += "%s-%s" % (self.buildType(), self.buildTarget)
+        return directory
 
     def imageDirPattern(self):
-        """return base directory name for package related image dir"""
-        dir = "image"
+        """return base directory name for package related image directory"""
+        directory = "image"
 
         # we assume that binary packages are for all compiler and targets
-        ## \todo add image dir support for using binary packages for a specific compiler and build type
+        ## \todo add image directory support for using binary packages for a specific compiler and build type
         if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
-            return dir
+            return directory
 
         if self.subinfo.options.useCompilerType == True:
-            dir += '-' + COMPILER
+            directory += '-' + COMPILER
         if self.isTargetBuild():
-            dir += "-%s" % self.buildPlatform()
+            directory += "-%s" % self.buildPlatform()
         if self.subinfo.options.useBuildType == True:
-            dir += '-' + self.buildType()
-        dir += '-' + self.buildTarget
-        return dir
+            directory += '-' + self.buildType()
+        directory += '-' + self.buildTarget
+        return directory
 
     def devUtilsRoot(self):
         """ location of directory where development utils package are merged to"""
@@ -275,12 +275,12 @@ class EmergeBase(object):
         specific target or @ref self.subinfo.options.merge.sourcePath is used
         """
         if self.subinfo.hasMergeSourcePath():
-            dir = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath() )
+            directory = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath() )
         elif not self.subinfo.options.merge.sourcePath == None:
-            dir = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
+            directory = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
-            dir = self.imageDir()
-        return self.__adjustPath(dir)
+            directory = self.imageDir()
+        return self.__adjustPath(directory)
 
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package.
@@ -289,22 +289,22 @@ class EmergeBase(object):
         """
 
         if self.subinfo.hasMergePath():
-            dir = os.path.join( ROOTDIR, self.subinfo.mergePath() )
+            directory = os.path.join( ROOTDIR, self.subinfo.mergePath() )
         elif self.isTargetBuild():
-            dir = os.path.join(ROOTDIR, self.buildPlatform())
+            directory = os.path.join(ROOTDIR, self.buildPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
-            dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
+            directory = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
-            dir = ROOTDIR
+            directory = ROOTDIR
         elif self.buildType() == 'Debug':
-            dir = os.path.join(ROOTDIR,'debug')
+            directory = os.path.join(ROOTDIR,'debug')
         elif self.buildType() == 'Release':
-            dir = os.path.join(ROOTDIR,'release')
+            directory = os.path.join(ROOTDIR,'release')
         elif self.buildType() == 'RelWithDebInfo':
-            dir = os.path.join(ROOTDIR,'relwithdebinfo')
+            directory = os.path.join(ROOTDIR,'relwithdebinfo')
         else:
-            dir = ROOTDIR
-        return self.__adjustPath(dir)
+            directory = ROOTDIR
+        return self.__adjustPath(directory)
 
     def setBuildTarget( self, target = None):
         utils.debug( "EmergeBase.setBuildTarget called", 2 )
