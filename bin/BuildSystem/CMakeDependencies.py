@@ -128,9 +128,7 @@ class CMakeDependencies:
             sys.stdout = sys.__stdout__
         return True
 
-
-if __name__ == '__main__':
-    # TODO: take this out of global namespace
+def main():
     directory = sys.argv[1]
     a = CMakeDependencies()
     a.parse(directory)
@@ -145,3 +143,6 @@ if __name__ == '__main__':
         outFile = sys.argv[4]
 
     a.toDot(title, baseDir, outFile)
+
+if __name__ == '__main__':
+    main()

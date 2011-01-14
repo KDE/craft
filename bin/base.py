@@ -550,7 +550,8 @@ class baseclass:
 # ############################################################################################
 # for testing purpose only:
 # ############################################################################################
-if __name__ == '__main__':
+
+def main():
     if utils.verbose() > 0:
         print "KDEROOT:     ", ROOTDIR
         print "KDECOMPILER: ", COMPILER
@@ -561,3 +562,6 @@ if __name__ == '__main__':
 
     test = baseclass()
     test.system( "dir" )
+
+if __name__ == '__main__':
+    main()

@@ -321,10 +321,9 @@ def printInstalled():
     portage.printCategoriesPackagesAndVersions( installdb.getDistinctInstalled(), portage.alwaysTrue, host, target )
 
 
-# Testing the class
-if __name__ == '__main__':
-    # TODO: put this into def testingTheClass(). Right now all those variables are global
-    # and exported to other modules - they should be local variables
+def main():
+    """ Testing the class"""
+
     # add two databases
     tempdbpath1 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp1.db" )
     tempdbpath2 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp2.db" )
@@ -423,3 +422,6 @@ if __name__ == '__main__':
     print "getInstalled:", db_temp.getInstalled()
     print "findInstalled:", portage.findInstalled( 'win32libs-sources', 'dbus-src' )
     print "getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) )
+
+if __name__ == '__main__':
+    main()

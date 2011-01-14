@@ -252,7 +252,7 @@ class Object ( Environment ):
             modulename = os.path.basename( module ).replace('.py', '')
             return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
-if __name__ == "__main__":
+def main():
     """
         Give a short introduction on how to use Tee and Popen;
         A script will be written that can be executed afterwards and which
@@ -295,3 +295,6 @@ for i in range( 100 ):
 
     if not '--no-remove' in sys.argv:
         os.remove( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ) )
+
+if __name__ == "__main__":
+    main()

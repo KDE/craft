@@ -321,6 +321,10 @@ def handlePackage( category, package, version, buildAction, opts ):
 # "main" action starts here
 #
 
+# TODO: all the rest should go into main(). But here I am not
+# sure - maybe some of those variables are actually MEANT to
+# be used in other modules. Put this back for now
+
 buildAction = "all"
 packageName = None
 doPretend = False
