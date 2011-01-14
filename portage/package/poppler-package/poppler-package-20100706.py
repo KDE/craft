@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '0.14.5'
 
     def setDependencies( self ):
-        self.dependencies[ 'win32libs-sources/poppler-src' ] = 'default'
+        self.dependencies[ 'kdesupport/poppler' ] = 'default'
         if compiler.isMinGW32():
             self.dependencies[ 'dev-util/mingw4' ] = 'default'
         elif compiler.isMinGW_W32():
