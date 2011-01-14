@@ -74,12 +74,8 @@ class baseclass:
 
 
     def __init__( self, SRC_URI="", **args ):
-        """ the baseclass constructor """
-        if "args" in args.keys() and "env" in args["args"].keys():
-            env = args["args"]["env"]
-        else:
-            env = dict( os.environ )
-
+        """ the baseclass constructor
+        args really should be documented"""
         if "args" in args.keys() and "argv0" in args["args"].keys():
             self.argv0 = args["args"]["argv0"]
         else:

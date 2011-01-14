@@ -49,6 +49,7 @@ class EmergeBase(object):
     """base class for emerge system - holds attributes and methods required by base classes"""
 
     def __init__( self, className=None, **args):
+        """args really should be documented, see self.argv0 below"""
         object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
 
@@ -62,11 +63,6 @@ class EmergeBase(object):
             return
         self.alreadyCalled = True
         self.buildTarget = None
-
-        if "args" in args.keys() and "env" in args["args"].keys():
-            env = args["args"]["env"]
-        else:
-            env = dict( os.environ )
 
         if "args" in args.keys() and "argv0" in args["args"].keys():
             self.argv0 = args["args"]["argv0"]
