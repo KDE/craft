@@ -7,17 +7,23 @@ import os
 import utils
 import subprocess
 import emergePlatform
+import threading    
 
 COMPILER = os.getenv("KDECOMPILER")
 
 def getGCCTarget():
+    tl = threading.local()
+    if hasattr(tl, "gcc_target"):
+        return tl.gcc_target
     try:
         result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
         utils.debug("GCC Target Processor:%s" % result, 1 )
-        return result.strip()
+        gcc_target = result.strip()
     except:
         #if no mingw is installed return mingw-w32 it is part of base
-        return "i686-w64-mingw32"
+        gcc_target = "i686-w64-mingw32"
+    tl.gcc_target = gcc_target
+    return gcc_target
 
 def isMinGW():
     return COMPILER.startswith("mingw")
