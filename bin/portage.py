@@ -413,7 +413,7 @@ PortageInstance = Portage()
 for _dir in rootDirectories():
     PortageInstance.addPortageDir( _dir )
 
-def findPossibleTargets( category, package, version):
+def findPossibleTargets( category, package, version, buildtype=''): # pylint: disable=W0613
     """ this function tries to guess which target got used by looking at the different image directories """
     target = PortageInstance.getDefaultTarget( category, package, version )
     buildroot = os.path.join( ROOTDIR, "build", category, "%s-%s" % ( package, version ) )

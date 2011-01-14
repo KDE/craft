@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
         for version in ['2.4.2-3']:
             self.targets[ version ] = self.getPackage( repoUrl, "fontconfig", version )
-            self.targetDigests[version] = self.packageDigests(version)
+            self.targetDigests[version] = self.packageDigests("fontconfig", version)
 
         self.defaultTarget = '2.4.2-3'
 

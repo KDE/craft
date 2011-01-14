@@ -126,7 +126,7 @@ class infoclass:
             ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
-    def packageDigests( self, version, packagetypes=['bin', 'lib'] ):
+    def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ): # pylint: disable=W0613
         """ return archive file based package digests relating to info.infoclass.packageUrls()
 
 The expected digest keys are build in the form <version>[<architecture>]-<compiler>-<packagetype> where
@@ -144,7 +144,7 @@ example:
     self.targetDigests['2.4.2-3-x64-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
 
     self.targets['2.4.2-3'] = self.packageUrls(repoUrl, "fontconfig", "2.4.2-3")
-    self.targetDigests['2.4.2-3'] = self.packageDigests( "2.4.2-3")
+    self.targetDigests['2.4.2-3'] = self.packageDigests("fontconfig", "2.4.2-3")
 
         """
         arch = ""
