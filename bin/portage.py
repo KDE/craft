@@ -121,13 +121,6 @@ def buildType():
     """return currently selected build type"""
     return os.getenv( "EMERGE_BUILDTYPE" )
 
-def prefixForBuildType( self, _buildType=None ):
-    postfix = ''
-    if _buildType == None:
-        _buildType = buildType()
-    return postfix
-
-
 def rootDirectories():
     # this function should return all currently set portage directories
     if os.getenv( "EMERGE_PORTAGE_ROOT" ):

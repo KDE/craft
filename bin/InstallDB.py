@@ -135,7 +135,7 @@ class InstallDB:
         """ returns whether a package is installed. If version and prefix are empty, all versions
             and prefixes will be checked. """
         cmd = '''SELECT * FROM packageList'''
-
+        # TODO: what is the difference between prefix=None and prefix=''? Both happens. Document.
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''

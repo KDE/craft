@@ -601,7 +601,7 @@ else:
                 targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
                 isInstalled = ( not hostEnabled or hostInstalled ) and ( not targetEnabled or targetInstalled )
             else:
-                isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, portage.prefixForBuildType( buildType ) )
+                isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
         else:
             isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
         if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and outDateVCS and target in targetList ):
