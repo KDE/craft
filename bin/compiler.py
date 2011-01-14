@@ -84,14 +84,19 @@ def getSimpleCompilerName():
         return "Unknown Compiler"
 
 def getMinGWVersion():
+    tl = threading.local()
+    if hasattr(tl, "mingw_version"):
+        return tl.mingw_version
     try:
         result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
         result = result.split()[2]
         utils.debug("GCC Version:%s" % result, 1 )
-        return result.strip()
+        mingw_version = result.strip()
     except:
         #if no mingw is installed return 0
-        return "0"
+        mingw_version = "0"
+    tl.mingw_version = mingw_version
+    return mingw_version
 
 def getVersion():
     if isMinGW():
