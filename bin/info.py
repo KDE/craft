@@ -176,9 +176,11 @@ example:
 
     #returns a package url for multiple files from the same base url
     def getPackageList( self, baseUrl, files ):
+        # TODO: replace the entire function by
+        # return '\n'.join(baseUrl + '/' + fileName)
         retFiles = ""
-        for file in files :
-            retFiles += baseUrl+'/'+file+'\n'
+        for fileName in files :
+            retFiles += baseUrl+'/'+fileName+'\n'
         return retFiles
 
     # return true if archive targets for the currently selected build target is available

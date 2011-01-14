@@ -112,15 +112,15 @@ class KDEWinPackager (PackagerBase):
                 if found == 1:
                     continue
                 utils.debug( "Checking: %s" % path, 3 )
-                for file in files:
-                    if ( file.endswith( ".exe" ) or file.endswith( ".dll" ) ):
+                for fileName in files:
+                    if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) ):
                         if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
-                            symFilename = file[:-4] + ".sym"
-                            utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, file ) )
-                            # utils.system( "strip --strip-all " + os.path.join( path, file ) )
+                            symFilename = fileName[:-4] + ".sym"
+                            utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, fileName ) )
+                            # utils.system( "strip --strip-all " + os.path.join( path, fileName ) )
                             utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
-                    elif ( file.endswith( ".pdb" ) ):
-                        utils.copyFile( os.path.join( path, file ), os.path.join( symPath, file ) )
+                    elif ( fileName.endswith( ".pdb" ) ):
+                        utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
 
             if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
                 symCmd += "-strip "

@@ -173,23 +173,21 @@ def etcDir():
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
     if category and package:
-        file = os.path.join( rootDirForPackage( category, package ), category, package )
+        return os.path.join( rootDirForPackage( category, package ), category, package )
     else:
-        file = ""
-    return file
+        return ""
 
 def getFilename( category, package, version ):
     """ return absolute filename for a given category, package and version """
-    file = os.path.join( getDirname( category, package ), "%s-%s.py" % ( package, version ) )
-    return file
+    return os.path.join( getDirname( category, package ), "%s-%s.py" % ( package, version ) )
 
 def getCategoryPackageVersion( path ):
     utils.debug( "getCategoryPackageVersion: %s" % path, 2 )
-    ( head, file ) = os.path.split( path )
+    ( head, fullFileName ) = os.path.split( path )
     ( head, package ) = os.path.split( head )
     ( head, category ) = os.path.split( head )
 
-    (filename, ext) = os.path.splitext( file )
+    (filename, ext) = os.path.splitext( fullFileName )
     ( package, version ) = packageSplit( filename )
     utils.debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
     return [ category, package, version ]
@@ -374,8 +372,8 @@ class Portage:
             utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
 
         versions = []
-        for file in os.listdir( getDirname( category, package ) ):
-            (shortname, ext) = os.path.splitext( file )
+        for fileName in os.listdir( getDirname( category, package ) ):
+            (shortname, ext) = os.path.splitext( fileName )
             if ( ext != ".py" ):
                 continue
             if ( shortname.startswith( package ) ):
@@ -776,13 +774,13 @@ def remInstalled( category, package, version, buildType='' ):
     else:
         fileName = 'installed'
     utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)
-    dbfile = os.path.join( etcDir(), fileName )
+    dbFileName = os.path.join( etcDir(), fileName )
     tmpdbfile = os.path.join( etcDir(), "TMPinstalled" )
     found = False
-    if os.path.exists( dbfile ):
-        file = open( dbfile, "rb" )
+    if os.path.exists( dbFileName ):
+        dbFile = open( dbFileName, "rb" )
         tfile = open( tmpdbfile, "wb" )
-        for line in file:
+        for line in dbFile:
             ## \todo the category should not be part of the search string
             ## because otherwise it is not possible to unmerge package using
             ## the same name but living in different categories
@@ -790,10 +788,10 @@ def remInstalled( category, package, version, buildType='' ):
                 tfile.write( line )
             else:
                 found = True
-        file.close()
+        dbFile.close()
         tfile.close()
-        os.remove( dbfile )
-        os.rename( tmpdbfile, dbfile )
+        os.remove( dbFileName )
+        os.rename( tmpdbfile, dbFileName )
     return found
 
 def getPackagesCategories(packageName, defaultCategory = None):

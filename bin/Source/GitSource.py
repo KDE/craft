@@ -172,11 +172,11 @@ class GitSource ( VersionSystemSourceBase ):
         else:
             return self.__fetchSingleBranch(repopath)
 
-    def applyPatch(self, file, patchdepth):
+    def applyPatch(self, fileName, patchdepth):
         utils.trace( 'GitSource ', 2 )
         """apply single patch o git repository"""
-        if file:
-            patchfile = os.path.join ( self.packageDir(), file )
+        if fileName:
+            patchfile = os.path.join ( self.packageDir(), fileName )
             if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
                 repopath = self.repositoryUrl()
                 # in case you need to move from a read only Url to a writeable one, here it gets replaced

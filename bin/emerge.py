@@ -163,13 +163,13 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def _delete(f):
-    if os.path.isdir( f ):
-        utils.debug( "Removing unclean directory %s" % f, 1)
-        shutil.rmtree( f )
+def _delete(fileName):
+    if os.path.isdir( fileName ):
+        utils.debug( "Removing unclean directory %s" % fileName, 1)
+        shutil.rmtree( fileName )
     else:
-        utils.debug( "Removing file %s" % f, 1 )
-        os.remove(f)
+        utils.debug( "Removing file %s" % fileName, 1 )
+        os.remove(fileName)
 
 def cleanup( root, hard = False ):
     isValid = False

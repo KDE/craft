@@ -7,17 +7,18 @@ import utils
 import re
 import sys
 
-def toNodeName(file):
+def toNodeName(fileName):
     """convert filename to dot node name"""
-    return file.replace('\\','').replace('-','').replace('.','').replace(':','').replace('/','').replace('+','')
+    return fileName.replace('\\','').replace('-','').replace('.','').replace(':','').replace('/','').replace('+','')
 
-def toNodeLabel(file, baseDir=None):
+def toNodeLabel(fileName, baseDir=None):
     """convert filename to dot node label"""
     if baseDir:
-        s = file.replace(baseDir,'')
+        s = fileName.replace(baseDir,'')
+    # TODO: we can simply say fileName = fileName.replace() and remove the else clause
     else:
-        s = file
-    if s.find('\\CMakeLists.txt') > -1:
+        s = fileName
+    if s.find('\\CMakeLists.txt') > -1: # TODO: this find is superfluous
         s = s.replace('\\CMakeLists.txt','')
 
     s = s.replace('.\\','').replace('\\','\\\\')
@@ -41,26 +42,26 @@ class CMakeDependencies:
         if not os.path.exists(dir):
             return False
         fileNames = utils.findFiles(dir, "CMakelists.txt")
-        for file in fileNames:
-            f = open(file, "r")
+        for fileName in fileNames:
+            f = open(fileName, "r")
             for line in f.readlines():
                 if line.startswith("#"):
                     continue
                 if line.lower().find("find_package") > -1:
                     m = re.search(r"\(([a-zA-Z0-9]+)[ \)]", line.upper())
                     if m:
-                        if not file in self.files1:
-                            self.files1.append(file)
+                        if not fileName in self.files1:
+                            self.files1.append(fileName)
                         key = m.groups()
                         if key in self.packageIncludes:
-                            if not file in self.packageIncludes[key]:
-                                self.packageIncludes[key].append(file)
+                            if not fileName in self.packageIncludes[key]:
+                                self.packageIncludes[key].append(fileName)
                         else:
-                            self.packageIncludes[key] = [file]
+                            self.packageIncludes[key] = [fileName]
 
         # find package usage
-        for file in fileNames:
-            f = open(file, "r")
+        for fileName in fileNames:
+            f = open(fileName, "r")
             for _line in f.readlines():
                 line = _line.upper()
                 if line.startswith("#"):
@@ -70,13 +71,13 @@ class CMakeDependencies:
                     keyLib = "%s_LIBRAR" % key
                     keyExec = "%s_EXEC" % key
                     if line.find(keyInclude) > -1 or line.find(keyLib) > -1 or line.find(keyExec) > -1:
-                        if not file in self.files2:
-                            self.files2.append(file)
+                        if not fileName in self.files2:
+                            self.files2.append(fileName)
                         if key in self.packageUsage:
-                            if not file in self.packageUsage[key]:
-                                self.packageUsage[key].append(file)
+                            if not fileName in self.packageUsage[key]:
+                                self.packageUsage[key].append(fileName)
                         else:
-                            self.packageUsage[key] = [file]
+                            self.packageUsage[key] = [fileName]
         return True
 
     def toDot(self, title="", baseDir=None, outFile=None):
@@ -99,13 +100,13 @@ class CMakeDependencies:
 
 
         print "{ rank=same; "
-        for file in self.files1:
-            print "%s_include [label=\"%s\"];" % (toNodeName(file), toNodeLabel(file, baseDir))
+        for fileName in self.files1:
+            print "%s_include [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir))
         print "}"
 
         print "{ rank=same; "
-        for file in self.files2:
-            print "%s_uses [label=\"%s\"];" % (toNodeName(file), toNodeLabel(file, baseDir))
+        for fileName in self.files2:
+            print "%s_uses [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir))
         print "}"
 
         print "{ rank=same; "
@@ -115,8 +116,8 @@ class CMakeDependencies:
 
         for node in self.packageIncludes:
             #print "%s;" % (node[0])
-            for file in self.packageIncludes[node]:
-                print "%s_include -> %s [color=green];" % (toNodeName(file), node[0])
+            for fileName in self.packageIncludes[node]:
+                print "%s_include -> %s [color=green];" % (toNodeName(fileName), node[0])
 
         for key in self.packageUsage:
             for value in self.packageUsage[key]:

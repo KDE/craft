@@ -196,9 +196,9 @@ class ArchiveSource(SourceBase):
             if type(patches) == list:
                 # TODO: I seem to remember this is not good, prefer isinstance(patches, list)
                 # have to check back. Maybe because this does not work with derived classes
-                for file, patchdepth in patches[:-1]:
-                    utils.debug( "applying patch %s with patchlevel: %s" % ( file, patchdepth ) )
-                    if not self.applyPatch( file, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
+                for fileName, patchdepth in patches[:-1]:
+                    utils.debug( "applying patch %s with patchlevel: %s" % ( fileName, patchdepth ) )
+                    if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
                         return False
 
         # move the packages up and rename them to be different from the original source directory

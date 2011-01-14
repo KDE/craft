@@ -252,35 +252,35 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
     i = 0
     for filename in filenames:
         debug( "checking digest of: %s" % filename, 1 )
-        file = os.path.join( downloaddir, filename )
+        pathName = os.path.join( downloaddir, filename )
         if digests == None:
-            digestFile = file + '.sha1'
+            digestFile = pathName + '.sha1'
             if not os.path.exists( digestFile ):
-                digestFile, _ = os.path.splitext( file )
+                digestFile, _ = os.path.splitext( pathName )
                 digestFile += '.sha1'
                 if not os.path.exists( digestFile ):
                     error( "digest validation request for file %s, but no digest  file present" %
-                            file )
+                            pathName )
                     return False
-            hash = digestFileSha1( file )
+            hash = digestFileSha1( pathName )
             f = open( digestFile, "r" )
             line = f.readline()
             f.close()
             digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
             if not digest:
                 error( " digestFile %s for file %s does not contain a valid checksum" % (digestFile,
-                        file,) )
+                        pathName,) )
                 return False
             digest = digest.group(0)
             if len(digest) != len(hash) or digest.find(hash) == -1:
-                error( "digest value for file %s (%s) do not match (%s)" % (file, hash, digest) )
+                error( "digest value for file %s (%s) do not match (%s)" % (pathName, hash, digest) )
                 return False
         # digest provided in digests parameter
         else:
-            hash = digestFileSha1( file )
+            hash = digestFileSha1( pathName )
             digest = digestList[i].strip()
             if len(digest) != len(hash) or digest.find(hash) == -1:
-                error( "digest value for file %s (%s) do not match (%s)" % (file, hash, digest) )
+                error( "digest value for file %s (%s) do not match (%s)" % (pathName, hash, digest) )
                 return False
         i = i + 1
     return True
@@ -290,8 +290,8 @@ def createFilesDigests( downloaddir, filenames ):
     """create digests of (multiple) files specified by 'filenames' from 'downloaddir'"""
     digestList = list()
     for filename in filenames:
-        file = os.path.join( downloaddir, filename )
-        digest = digestFileSha1( file )
+        pathName = os.path.join( downloaddir, filename )
+        digest = digestFileSha1( pathName )
         entry = filename, digest
         digestList.append(entry)
     return digestList
@@ -299,8 +299,8 @@ def createFilesDigests( downloaddir, filenames ):
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
     i = 0
-    for (file, digest) in digestFiles:
-        print "%40s %s" % ( file, digest ),
+    for (fileName, digest) in digestFiles:
+        print "%40s %s" % ( fileName, digest ),
         if size == 1:
             if buildTarget == None:
                 print "      '%s'" % ( digest )
@@ -362,18 +362,18 @@ def unpackFile( downloaddir, filename, workdir ):
         error( "dont know how to unpack this file: %s" % filename )
     return False
 
-def un7zip( file, destdir ):
-    command = "7za x -r -y -o%s %s" % ( destdir, file )
+def un7zip( fileName, destdir ):
+    command = "7za x -r -y -o%s %s" % ( destdir, fileName )
     if verbose() > 1:
         return system( command )
     else:
         tmp = tempfile.TemporaryFile()
         return system( command, tmp )
 
-def unTar( file, destdir ):
+def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
-    debug( "unTar called. file: %s, destdir: %s" % ( file, destdir ), 1 )
-    ( shortname, ext ) = os.path.splitext( file )
+    debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
+    ( shortname, ext ) = os.path.splitext( fileName )
 
     mode = "r"
     if ( ext == ".gz" ):
@@ -381,18 +381,18 @@ def unTar( file, destdir ):
     elif ( ext == ".bz2" ):
         mode = "r:bz2"
     elif( ext == ".lzma" or ext == ".xz" ):
-        un7zip( file, os.getenv("TMP") )
+        un7zip( fileName, os.getenv("TMP") )
         (srcpath, tarname ) = os.path.split( shortname )
-        file = os.path.join( os.getenv("TMP"), tarname )
+        fileName = os.path.join( os.getenv("TMP"), tarname )
 
-    if not os.path.exists( file ):
-        error( "couldn't find file %s" % file )
+    if not os.path.exists( fileName ):
+        error( "couldn't find file %s" % fileName )
         return False
 
     try:
-        tar = tarfile.open( file, mode )
+        tar = tarfile.open( fileName, mode )
     except:
-        error( "could not open existing tar archive: %s" % file )
+        error( "could not open existing tar archive: %s" % fileName )
         return False
 
     # FIXME how to handle errors here ?
@@ -405,17 +405,17 @@ def unTar( file, destdir ):
 
     return True
 
-def unZip( file, destdir ):
+def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""
-    debug( "unZip called: file %s to destination %s" % ( file, destdir ), 1 )
+    debug( "unZip called: file %s to destination %s" % ( fileName, destdir ), 1 )
 
     if not os.path.exists( destdir ):
         os.makedirs( destdir )
 
     try:
-        zip = zipfile.ZipFile( file )
+        zip = zipfile.ZipFile( fileName )
     except:
-        error( "couldn't extract file %s" % file )
+        error( "couldn't extract file %s" % fileName )
         return False
 
     for i, name in enumerate( zip.namelist() ):
@@ -587,8 +587,8 @@ def getFileListFromDirectory( imagedir ):
         myimagedir = myimagedir + "\\"
 
     for root, dirs, files in os.walk( imagedir ):
-        for file in files:
-            ret.append( ( os.path.join( root, file ).replace( myimagedir, "" ), digestFile( os.path.join( root, file ) ) ) )
+        for fileName in files:
+            ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), digestFile( os.path.join( root, fileName ) ) ) )
     return ret
 
 def getFileListFromManifest( rootdir, package ):
@@ -596,11 +596,11 @@ def getFileListFromManifest( rootdir, package ):
     fileList = []
     manifestDir = os.path.join( rootdir, "manifest" )
     if os.path.exists( manifestDir ):
-        for file in os.listdir( manifestDir ):
-            if file.endswith( ".mft" ):
-                [ pkg, version ] = portage.packageSplit( file.replace( ".mft", "" ) )
-                if file.endswith( ".mft" ) and package==pkg:
-                    fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
+        for fileName in os.listdir( manifestDir ):
+            if fileName.endswith( ".mft" ):
+                [ pkg, version ] = portage.packageSplit( fileName.replace( ".mft", "" ) )
+                if fileName.endswith( ".mft" ) and package==pkg:
+                    fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
                     for line in fptr:
                         try:
                             line = line.replace( "\n", "" ).replace( "\r", "" )
@@ -620,7 +620,7 @@ def getFileListFromManifest( rootdir, package ):
                         except:
                             utils.die( "could not parse line %s" % line, 1 )
 
-                        if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
+                        if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
                         fileList.append( ( a, b ) )
                     fptr.close()
@@ -652,11 +652,11 @@ def unmerge( rootdir, package, forced = False ):
     removed = False
     manifestDir = os.path.join( rootdir, "manifest"  )
     if os.path.exists( manifestDir ):
-        for file in os.listdir( manifestDir ):
-            if file.endswith(".mft"):
-                [ pkg, version ] = portage.packageSplit( file.replace( ".mft", "" ) )
-                if file.endswith( ".mft" ) and package==pkg:
-                    fptr = open( os.path.join( rootdir, "manifest", file ), 'rb' )
+        for fileName in os.listdir( manifestDir ):
+            if fileName.endswith(".mft"):
+                [ pkg, version ] = portage.packageSplit( fileName.replace( ".mft", "" ) )
+                if fileName.endswith( ".mft" ) and package==pkg:
+                    fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
                     for line in fptr:
                         try:
                             line = line.replace( "\n", "" ).replace( "\r", "" )
@@ -676,7 +676,7 @@ def unmerge( rootdir, package, forced = False ):
                         except:
                             utils.die("could not parse line %s" % line, 1)
 
-                        if os.path.join( rootdir, "manifest", file ) == os.path.join( rootdir, os.path.normcase( a ) ):
+                        if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
                         if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
                             hash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
@@ -690,7 +690,7 @@ def unmerge( rootdir, package, forced = False ):
                         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
                             warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
                     fptr.close()
-                    os.remove( os.path.join( rootdir, "manifest", file ) )
+                    os.remove( os.path.join( rootdir, "manifest", fileName ) )
                     removed = True
 
         else:
@@ -706,8 +706,8 @@ def manifestDir( srcdir, imagedir, category, package, version ):
 
 def hasManifestFile( imagedir, category, package ):
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
-        for file in os.listdir( os.path.join( imagedir, "manifest"  ) ):
-            if file.startswith( package ) and file.endswith( "-bin.mft" ):
+        for fileName in os.listdir( os.path.join( imagedir, "manifest"  ) ):
+            if fileName.startswith( package ) and fileName.endswith( "-bin.mft" ):
                 return True
     return False
 
@@ -745,20 +745,20 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
         else:
             dirType = 1
 
-        for file in files:
+        for fileName in files:
             if dirType == 1 or dirType == 2:
-                binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                binList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
             if dirType == 2:
-                if file.endswith( ".a" ) or file.endswith( ".lib" ):
-                    libList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                if fileName.endswith( ".a" ) or fileName.endswith( ".lib" ):
+                    libList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
                 else:
-                    binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                    binList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
             if dirType == 3 or dirType == 4 or dirType == 5:
-                binList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                binList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
             if dirType == 6:
-                libList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                libList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
             if dirType == 7 or dirType == 8:
-                docList.append( os.path.join( root, file ).replace( myimagedir, "" ) )
+                docList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
 
     if not os.path.exists( os.path.join( destdir, "manifest" ) ):
         os.makedirs( os.path.join( destdir, "manifest" ) )
@@ -773,13 +773,13 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
 #        print "bin: ", binList
 #        print "lib: ", libList
 #        print "doc: ", docList
-    for file in binList:
-        binmanifest.write( "%s %s\n" % ( file, digestFile( os.path.join( myimagedir, file ) ) ) )
-    for file in libList:
-        libmanifest.write( "%s %s\n" % ( file, digestFile( os.path.join( myimagedir, file )) ) )
-    for file in docList:
-        docmanifest.write( "%s %s\n" % ( file, digestFile( os.path.join( myimagedir, file ) ) ) )
-            #print os.path.join( root, file ).replace( myimagedir, "" ), dig.hexdigest()
+    for fileName in binList:
+        binmanifest.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
+    for fileName in libList:
+        libmanifest.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName )) ) )
+    for fileName in docList:
+        docmanifest.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
+            #print os.path.join( root, fileName ).replace( myimagedir, "" ), dig.hexdigest()
     if len(binList) > 0:
         binmanifest.write( os.path.join( "manifest", "%s-%s-bin.mft\n" % ( package, version ) ) )
         binmanifest.write( os.path.join( "manifest", "%s-%s-bin.ver\n" % ( package, version ) ) )
@@ -885,16 +885,16 @@ def cleanDirectory( dir ):
     else:
         os.makedirs( dir )
 
-def sedFile( directory, file, sedcommand ):
+def sedFile( directory, fileName, sedcommand ):
     """ runs the given sed command on the given file """
     olddir = os.getcwd()
     try:
         os.chdir( directory )
-        backup = "%s.orig" % file
+        backup = "%s.orig" % fileName
         if( os.path.isfile( backup ) ):
             os.remove( backup )
 
-        command = "sed -i.orig %s %s" % ( sedcommand, file )
+        command = "sed -i.orig %s %s" % ( sedcommand, fileName )
 
         system( command )
     finally:
@@ -903,19 +903,19 @@ def sedFile( directory, file, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     hash = hashlib.md5()
-    file = open( filepath, "rb" )
-    for line in file:
+    digFile = open( filepath, "rb" )
+    for line in digFile:
         hash.update( line )
-    file.close()
+    digFile.close()
     return hash.hexdigest()
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
     hash = hashlib.sha1()
-    file = open( filepath, "rb" )
-    for line in file:
+    hashFile = open( filepath, "rb" )
+    for line in hashFile:
         hash.update( line )
-    file.close()
+    hashFile.close()
     return hash.hexdigest()
 
 def getVCSType( url ):
@@ -1088,9 +1088,9 @@ def copyDir( srcdir, destdir ):
             tmpdir = root.replace( srcdir, destdir )
             if ( not os.path.exists( tmpdir ) ):
                 os.makedirs( tmpdir )
-            for file in files:
-                shutil.copy( os.path.join( root, file ), tmpdir )
-                debug( "copy %s to %s" % ( os.path.join( root, file ), os.path.join( tmpdir, file ) ), 2)
+            for fileName in files:
+                shutil.copy( os.path.join( root, fileName ), tmpdir )
+                debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
@@ -1114,12 +1114,12 @@ def moveFile(src, dest):
     os.rename( src, dest )
     return True
 
-def deleteFile(file):
+def deleteFile(fileName):
     """delete file """
-    if not os.path.exists( file ):
+    if not os.path.exists( fileName ):
         return False
-    debug("delete file %s " % ( file ), 2)
-    os.remove( file )
+    debug("delete file %s " % ( fileName ), 2)
+    os.remove( fileName )
     return True
 
 def findFiles( dir, pattern=None, fileNames=None):
@@ -1130,11 +1130,11 @@ def findFiles( dir, pattern=None, fileNames=None):
     for entry in os.listdir(dir):
         if entry.find(".svn") > -1 or entry.find(".bak") > -1:
             continue
-        file = os.path.join(dir, entry)
-        if os.path.isdir(file):
-            findFiles(file, pattern, fileNames)
-        elif os.path.isfile(file) and pattern == None or entry.lower().find(pattern) > -1:
-            fileNames.append(file)
+        fileName = os.path.join(dir, entry)
+        if os.path.isdir(fileName):
+            findFiles(fileName, pattern, fileNames)
+        elif os.path.isfile(fileName) and pattern == None or entry.lower().find(pattern) > -1:
+            fileNames.append(fileName)
     return fileNames
 
 def putenv(name, value):

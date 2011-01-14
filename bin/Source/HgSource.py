@@ -62,11 +62,11 @@ class HgSource ( VersionSystemSourceBase ):
             utils.debug( "skipping hg fetch (--offline)" )
         return ret
 
-    def applyPatch(self, file, patchdepth):
+    def applyPatch(self, fileName, patchdepth):
         """apply a patch to a mercurial repository checkout"""
         utils.trace( "HgSource.applyPatches called", 2 )
-        if file and self.enableHg:
-            patchfile = os.path.join ( self.packageDir(), file )
+        if fileName and self.enableHg:
+            patchfile = os.path.join ( self.packageDir(), fileName )
             os.chdir( self.sourceDir() )
             return self.system( "hg import -p %s %s" % (patchdepth, patchfile) )
         return True

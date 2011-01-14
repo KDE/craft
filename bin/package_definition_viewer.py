@@ -76,8 +76,8 @@ class Part:
     def addFiles( self, include ):
         if include is None:
             return
-        for file in include.split('\n'):
-            self.filesList.append(file)
+        for fileName in include.split('\n'):
+            self.filesList.append(fileName)
 
     def addInclude( self, include ):
         self.reList.append( re.compile( include ) )
@@ -188,9 +188,9 @@ class XmlPackager:
                         if z in self.fileList:
                             self.fileList.remove( z )
 
-                for file in part.filesList:
+                for fileName in part.filesList:
                     for line in self.fileList:
-                        if line == file:
+                        if line == fileName:
                             part.fileList.append( line )
                     for z in part.fileList:
                         if z in self.fileList:

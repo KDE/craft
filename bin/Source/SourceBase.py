@@ -66,25 +66,25 @@ class SourceBase(EmergeBase):
             patches = self.subinfo.patchesToApply()
             if type(patches) == list:
                 ret = True
-                for file, patchdepth in patches:
-                    utils.debug( "applying %s with patchlevel: %s" % ( file, patchdepth ) )
-                    if not self.applyPatch( file, patchdepth ):
-                        utils.warning( "applying %s failed!" % ( file ) )
+                for fileName, patchdepth in patches:
+                    utils.debug( "applying %s with patchlevel: %s" % ( fileName, patchdepth ) )
+                    if not self.applyPatch( fileName, patchdepth ):
+                        utils.warning( "applying %s failed!" % ( fileName ) )
                         ret = False
                 return ret
             else:
-                ( file, patchdepth ) = patches
-                return self.applyPatch( file, patchdepth )
+                ( fileName, patchdepth ) = patches
+                return self.applyPatch( fileName, patchdepth )
 
         return True
 
-    def applyPatch(self, file, patchdepth, srcdir=None ):
+    def applyPatch(self, fileName, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
         utils.trace( "SourceBase.applyPatch called", 2 )
         if not srcdir:
             srcdir = self.sourceDir()
-        if file:
-            patchfile = os.path.join ( self.packageDir(), file )
+        if fileName:
+            patchfile = os.path.join ( self.packageDir(), fileName )
             return utils.applyPatch( srcdir, patchfile, patchdepth )
         return True
 

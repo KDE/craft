@@ -17,18 +17,18 @@ class InnoSetupPackager (PackagerBase):
         """ return path of installer config file"""
         utils.debug("searching package dir for setup config", 2)
 
-        file = os.path.join(self.buildDir(), "setup.iss")
-        utils.debug("searching build dir for setup config %s" % file, 2)
-        if os.path.exists(file):
-            return file
+        fileName = os.path.join(self.buildDir(), "setup.iss")
+        utils.debug("searching build dir for setup config %s" % fileName, 2)
+        if os.path.exists(fileName):
+            return fileName
 
-        file = os.path.join(self.packageDir(), "setup.iss")
-        if os.path.exists(file):
-            return file
+        fileName = os.path.join(self.packageDir(), "setup.iss")
+        if os.path.exists(fileName):
+            return fileName
 
-        file = os.path.join(self.packageDir(), "installer-config.iss")
-        if os.path.exists(file):
-            return file
+        fileName = os.path.join(self.packageDir(), "installer-config.iss")
+        if os.path.exists(fileName):
+            return fileName
         return None
 
     ## \todo rename to package()
@@ -50,8 +50,8 @@ class InnoSetupPackager (PackagerBase):
         pkgVersion, pkgNotesVersion = self.getPackageVersion()
 
         # perform variable substitution
-		# variablenames are wrapped with '#..#' to not get
-		# in conflict with cmake or other config file patching tools
+        # variablenames are wrapped with '#..#' to not get
+        # in conflict with cmake or other config file patching tools
         self.replacementPatterns = []
         self.replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#", pkgVersion])
         self.replacementPatterns.append(["#EMERGE_INSTALL_DIR#", self.installDir()])
