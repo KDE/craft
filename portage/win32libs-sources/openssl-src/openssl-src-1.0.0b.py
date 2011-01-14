@@ -8,7 +8,7 @@ import compiler
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b' ]:
+        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c' ]:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
             if ver != '1.0.0a':
