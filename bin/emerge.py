@@ -325,7 +325,10 @@ def handlePackage( category, package, version, buildAction, opts ):
 # sure - maybe some of those variables are actually MEANT to
 # be used in other modules. Put this back for now
 
-buildAction = "all"
+# but as a temporary solution rename variables to mainXXX
+# where it is safe so there are less redefinitions in inner scopes
+
+mainBuildAction = "all"
 packageName = None
 doPretend = False
 outDateVCS = False
@@ -334,7 +337,7 @@ disableHostBuild = False
 disableTargetBuild = False
 ignoreInstalled = False
 updateAll = False
-opts = ""
+
 if len( sys.argv ) < 2:
     usage()
     utils.die("")
@@ -382,7 +385,7 @@ if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
 else:
     trace = int( environ[ "EMERGE_TRACE" ] )
 
-opts = list()
+mainOpts = list()
 
 executableName = sys.argv.pop( 0 )
 nextArguments = sys.argv[:]
@@ -398,7 +401,7 @@ for i in sys.argv:
     elif ( i == "-t" ):
         os.environ["EMERGE_BUILDTESTS"] = "True"
     elif ( i == "--offline" ):
-        opts.append( "--offline" )
+        mainOpts.append( "--offline" )
         os.environ["EMERGE_OFFLINE"] = "True"
     elif ( i == "-f" or i == "--force" ):
         os.environ["EMERGE_FORCED"] = "True"
@@ -427,7 +430,7 @@ for i in sys.argv:
         os.environ["EMERGE_NOCLEAN"] = str( False )
     elif ( i in [ "--version-dir", "--version-package", "--print-installable",
                   "--print-installed", "--print-targets" ] ):
-        buildAction = i[2:]
+        mainBuildAction = i[2:]
         stayQuiet = True
         if i in [ "--print-installable", "--print-installed" ]:
             break
@@ -442,13 +445,13 @@ for i in sys.argv:
         updateAll = True
     elif ( i == "--install-deps" ):
         ignoreInstalled = True
-        buildAction = "install-deps"
+        mainBuildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest", "--dumpdeps",
                   "--full-package", "--cleanimage", "--cleanbuild", "--cleanallbuilds", "--createpatch"] ):
-        buildAction = i[2:]
+        mainBuildAction = i[2:]
     elif ( i == "--print-revision" ):
-        buildAction = "printrev"
+        mainBuildAction = "printrev"
         stayQuiet = True
     elif ( i == "--disable-buildhost" ):
         disableHostBuild = True
@@ -473,7 +476,7 @@ if stayQuiet == True:
 
 # get KDEROOT from env
 KDEROOT = os.getenv( "KDEROOT" )
-utils.debug( "buildAction: %s" % buildAction )
+utils.debug( "buildAction: %s" % mainBuildAction )
 utils.debug( "doPretend: %s" % doPretend, 1 )
 utils.debug( "packageName: %s" % packageName )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
@@ -519,12 +522,12 @@ if updateAll:
     else:
         utils.debug( "Updating all installed packages", 1 )
     packageList = []
-    for category, package, version in installedPackages:
-        if portage.PortageInstance.isCategory( packageName ) and ( category != packageName ):
+    for mainCategory, mainPackage, mainVersion in installedPackages:
+        if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
             continue
-        if portage.isInstalled( category, package, version, buildType ) and portage.isPackageUpdateable( category, package, version ):
-            categoryList.append( category )
-            packageList.append( package )
+        if portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType ) and portage.isPackageUpdateable( mainCategory, mainPackage, mainVersion ):
+            categoryList.append( mainCategory )
+            packageList.append( mainPackage )
     utils.debug( "Will update packages: " + str (packageList), 1 )
 elif packageName:
     packageList, categoryList = portage.getPackagesCategories(packageName)
@@ -533,8 +536,8 @@ for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
 
-for category, entry in zip (categoryList, packageList):
-    _deplist = portage.solveDependencies( category, entry, "", _deplist )
+for mainCategory, entry in zip (categoryList, packageList):
+    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist )
 
 deplist = [p.ident() for p in _deplist]
 
@@ -555,63 +558,63 @@ for item in range( len( deplist ) ):
 #        print "remove:", cat, pac, ver
 #        deplist.remove( item )
 
-if buildAction == "install-deps":
+if mainBuildAction == "install-deps":
     # the first dependency is the package itself - ignore it
     # TODO: why are we our own dependency?
     del deplist[ 0 ]
 
 deplist.reverse()
-success = True
+
 # package[0] -> category
 # package[1] -> package
 # package[2] -> version
 
-if ( buildAction != "all" and buildAction != "install-deps" ):
+if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
     """ if a buildAction is given, then do not try to build dependencies
         and do the action although the package might already be installed.
         This is still a bit problematic since packageName might not be a valid
         package"""
 
     if packageName and len( deplist ) >= 1:
-        category, package, version, tag, ignoreInstalled = deplist[ -1 ]
+        mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
     else:
-        category, package, version = None, None, None
+        mainCategory, mainPackage, mainVersion = None, None, None
 
-    if not handlePackage( category, package, version, buildAction, opts ):
+    if not handlePackage( mainCategory, mainPackage, mainVersion, mainBuildAction, mainOpts ):
         exit(1)
 
 else:
-    for category, package, version, defaultTarget, ignoreInstalled in deplist:
+    for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
         target = ""
         targetList = []
         if outDateVCS:
             target = os.getenv( "EMERGE_TARGET" )
-            if not target or target not in portage.PortageInstance.getAllTargets( category, package, version ).keys():
+            if not target or target not in portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys():
                 # if no target or a wrong one is defined, simply set the default target here
                 target = defaultTarget
-            targetList = portage.PortageInstance.getUpdatableVCSTargets( category, package, version )
+            targetList = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion )
         if isDBEnabled():
             if emergePlatform.isCrossCompilingEnabled():
-                hostEnabled = portage.isHostBuildEnabled( category, package, version )
-                targetEnabled = portage.isTargetBuildEnabled( category, package, version )
-                hostInstalled = installdb.isInstalled( category, package, version, "" )
-                targetInstalled = installdb.isInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
+                targetEnabled = portage.isTargetBuildEnabled( mainCategory, mainPackage, mainVersion )
+                hostInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
+                targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
                 isInstalled = ( not hostEnabled or hostInstalled ) and ( not targetEnabled or targetInstalled )
             else:
-                isInstalled = installdb.isInstalled( category, package, version, portage.prefixForBuildType( buildType ) )
+                isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, portage.prefixForBuildType( buildType ) )
         else:
-            isInstalled = portage.isInstalled( category, package, version, buildType )
+            isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
         if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and outDateVCS and target in targetList ):
-            if utils.verbose() > 1 and package == packageName:
-                utils.warning( "already installed %s/%s-%s" % ( category, package, version ) )
-            elif utils.verbose() > 2 and not package == packageName:
-                utils.warning( "already installed %s/%s-%s" % ( category, package, version ) )
+            if utils.verbose() > 1 and mainPackage == packageName:
+                utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
+            elif utils.verbose() > 2 and not mainPackage == packageName:
+                utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
         else:
             # find the installed version of the package
             if isDBEnabled():
-                instver = installdb.findInstalled( category, package )
+                instver = installdb.findInstalled( mainCategory, mainPackage )
             else:
-                instver = portage.findInstalled( category, package )
+                instver = portage.findInstalled( mainCategory, mainPackage )
 
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
@@ -619,22 +622,22 @@ else:
                     msg = " "
                     if emergePlatform.isCrossCompilingEnabled():
                         if isDBEnabled():
-                            hostEnabled = portage.isHostBuildEnabled( category, package, version )
-                            targetEnabled = portage.isTargetBuildEnabled( category, package, version )
-                            hostInstalled = installdb.isInstalled( category, package, version, "" )
-                            targetInstalled = installdb.isInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                            hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
+                            targetEnabled = portage.isTargetBuildEnabled( mainCategory, mainPackage, mainVersion )
+                            hostInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
+                            targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
                             msg += portage.getHostAndTarget( hostEnabled and not hostInstalled, targetEnabled and not targetInstalled )
                         else:
                             msg = ""
-                    utils.warning( "pretending %s/%s-%s%s" % ( category, package, version, msg ) )
+                    utils.warning( "pretending %s/%s-%s%s" % ( mainCategory, mainPackage, mainVersion, msg ) )
             else:
-                action = buildAction
-                if buildAction == "install-deps":
-                    action = "all"
+                mainAction = mainBuildAction
+                if mainBuildAction == "install-deps":
+                    mainAction = "all"
 
-                if not handlePackage( category, package, version, action, opts ):
+                if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
-                        ( category, package, version, buildAction ) )
+                        ( mainCategory, mainPackage, mainVersion, mainBuildAction ) )
                     exit( 1 )
 
 utils.new_line()

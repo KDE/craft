@@ -662,7 +662,7 @@ def printInstalled():
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
 
 
-def isInstalled( category, package, version, buildType='' ):
+def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
     # find in old style database
     path = etcDir()
@@ -684,8 +684,8 @@ def isInstalled( category, package, version, buildType='' ):
     f.close()
 
     # find in release mode database
-    if not found and buildType != '':
-        fileName = os.path.join(path,'installed-' + buildType )
+    if not found and buildtype != '':
+        fileName = os.path.join(path,'installed-' + buildtype )
         if os.path.isfile( fileName ):
             f = open( fileName, "rb" )
             for line in f.read().splitlines():
@@ -735,7 +735,7 @@ def findInstalled( category, package):
     f.close()
     return ret
 
-def addInstalled( category, package, version, buildType='' ):
+def addInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.addInstalled() instead """
     utils.debug( "addInstalled called", 2 )
     # write a line to etc/portage/installed,
@@ -743,8 +743,8 @@ def addInstalled( category, package, version, buildType='' ):
     path = os.path.join( etcDir() )
     if ( not os.path.isdir( path ) ):
         os.makedirs( path )
-    if buildType != '':
-        fileName = 'installed-' + buildType
+    if buildtype != '':
+        fileName = 'installed-' + buildtype
     else:
         fileName = 'installed'
     utils.debug("installing package %s - %s into %s" % (package, version, fileName), 2)
@@ -760,11 +760,11 @@ def addInstalled( category, package, version, buildType='' ):
     f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
     f.close()
 
-def remInstalled( category, package, version, buildType='' ):
+def remInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.remInstalled() instead """
     utils.debug( "remInstalled called", 2 )
-    if buildType != '':
-        fileName = 'installed-' + buildType
+    if buildtype != '':
+        fileName = 'installed-' + buildtype
     else:
         fileName = 'installed'
     utils.debug("removing package %s - %s from %s" % (package, version, fileName), 2)

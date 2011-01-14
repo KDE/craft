@@ -248,45 +248,48 @@ def usage():
         print TAGDOKU[tag]
         print
 
-if len( sys.argv ) > 2:
-    i = 1
-    _printUnused = False
-    _printList = False
-    if sys.argv[i] == "--unused":
-        _printUnused = True
+def main():
+    if len( sys.argv ) > 2:
+        i = 1
+        _printUnused = False
+        _printList = False
+        if sys.argv[i] == "--unused":
+            _printUnused = True
+            i = i+1
+        elif sys.argv[i] == "--list":
+            _printList = True
+            i = i+1
+        image = os.path.abspath( sys.argv[i] )
         i = i+1
-    elif sys.argv[i] == "--list":
-        _printList = True
+        filename = sys.argv[i]
         i = i+1
-    image = os.path.abspath( sys.argv[i] )
-    i = i+1
-    filename = sys.argv[i]
-    i = i+1
-    #image = 'C:\\daten\\kde\msvc-root\\tmp\\kdegraphics-20080202\\image-msvc2008'
-    #filename = 'C:\\daten\\kde\msvc-root\\emerge\\portage\\kde\\kdegraphics\\kdegraphics-package.xml'
+        #image = 'C:\\daten\\kde\msvc-root\\tmp\\kdegraphics-20080202\\image-msvc2008'
+        #filename = 'C:\\daten\\kde\msvc-root\\emerge\\portage\\kde\\kdegraphics\\kdegraphics-package.xml'
 
-    fileobj = open( filename )
+        fileobj = open( filename )
 
-    try:
-        doc = parse( fileobj )
-    except xml.parsers.expat.ExpatError:
-        print 'FATAL ERROR: The xml file might not be wellformed. Please check!'
-        exit(1)
+        try:
+            doc = parse( fileobj )
+        except xml.parsers.expat.ExpatError:
+            print 'FATAL ERROR: The xml file might not be wellformed. Please check!'
+            exit(1)
 
-    packager = XmlPackager( doc, image )
-    packager.split()
-    if _printUnused:
-        packager.printUnusedFiles()
-        exit(0)
+        packager = XmlPackager( doc, image )
+        packager.split()
+        if _printUnused:
+            packager.printUnusedFiles()
+            exit(0)
 
-    if _printList == 1:
-        packager.printList()
-        exit(0)
+        if _printList == 1:
+            packager.printList()
+            exit(0)
 
-    if len( sys.argv ) == 3:
-        packager.printOverview()
+        if len( sys.argv ) == 3:
+            packager.printOverview()
 
-    if len( sys.argv ) > 4 and sys.argv[3] == 'print':
-        packager.printList( sys.argv[4] )
-else:
-    usage()
+        if len( sys.argv ) > 4 and sys.argv[3] == 'print':
+            packager.printList( sys.argv[4] )
+    else:
+        usage()
+
+main()

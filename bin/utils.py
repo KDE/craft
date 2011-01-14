@@ -254,21 +254,21 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
         debug( "checking digest of: %s" % filename, 1 )
         pathName = os.path.join( downloaddir, filename )
         if digests == None:
-            digestFile = pathName + '.sha1'
-            if not os.path.exists( digestFile ):
-                digestFile, _ = os.path.splitext( pathName )
-                digestFile += '.sha1'
-                if not os.path.exists( digestFile ):
+            digestFileName = pathName + '.sha1'
+            if not os.path.exists( digestFileName ):
+                digestFileName, _ = os.path.splitext( pathName )
+                digestFileName += '.sha1'
+                if not os.path.exists( digestFileName ):
                     error( "digest validation request for file %s, but no digest  file present" %
                             pathName )
                     return False
             currentHash = digestFileSha1( pathName )
-            f = open( digestFile, "r" )
+            f = open( digestFileName, "r" )
             line = f.readline()
             f.close()
             digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
             if not digest:
-                error( " digestFile %s for file %s does not contain a valid checksum" % (digestFile,
+                error( " digestFile %s for file %s does not contain a valid checksum" % (digestFileName,
                         pathName,) )
                 return False
             digest = digest.group(0)
@@ -522,9 +522,9 @@ def die( message ):
 
 def traceMode():
     """return the value if the verbose level"""
-    trace = os.getenv( "EMERGE_TRACE" )
-    if ( not trace == None and trace.isdigit() and int(trace) > 0 and verbose() > 0 ):
-        return int( trace )
+    traceVal = os.getenv( "EMERGE_TRACE" )
+    if ( not traceVal == None and traceVal.isdigit() and int(traceVal) > 0 and verbose() > 0 ):
+        return int( traceVal )
     else:
         return 0
 
@@ -701,6 +701,7 @@ def unmerge( rootdir, package, forced = False ):
     return removed
 
 def createManifestDir( srcdir, imagedir, category, package, version ):
+    """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
     if not hasManifestFile( imagedir, category, package ):
         createManifestFiles( imagedir, imagedir, category, package, version )
 

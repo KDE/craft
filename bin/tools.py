@@ -269,9 +269,6 @@ def main():
             need to add outstream=sys.stderr in the creation of the Tee object.
     """
 
-    import os
-    import sys
-
     if not os.path.exists( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ) ) or not '--no-write' in sys.argv:
         testfile = file( os.path.join( os.path.dirname( sys.argv[0] ), "test.py" ), 'w+' )
         content = """from time import sleep
