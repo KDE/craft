@@ -101,6 +101,7 @@ class Repository ( tools.Object ):
         tools.Object.__init__( self )
         self.rinfo = repo_info
         self.rinfo.svnpath = svnpath
+        self.currentsvnpath = None
 
     def __atomicCheckout( self, recursive=False ):
         """ checkout for one directory """

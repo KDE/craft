@@ -225,6 +225,7 @@ class Object ( Environment ):
         exit( 1 )
 
     def system( self, cmdstring, die=False, capture_output=None ):
+        # TODO: why do stderr and stdout need to be class attributes? I cannot find any reference outside this function
         if self.verbose() == 0:
             self.stderr = file( self.LOGFILE, 'wb' )
             self.stdout = sys.stderr

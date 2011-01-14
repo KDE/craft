@@ -14,6 +14,8 @@ class GraphViz:
         if parent:
             self.parent = parent
         self.output = False
+        self.outFile = None
+        self.graphVizInstallPath = None
         if not self.isInstalled():
             utils.system("emerge.bat graphviz")
             if not self.isInstalled():
@@ -27,7 +29,7 @@ class GraphViz:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
             except:
                 return False
-        [self.graphVizInstallPath, dummyType] = QueryValueEx(key, "InstallPath")
+        self.graphVizInstallPath = QueryValueEx(key, "InstallPath")[0]
         return True
 
     def system( self, command, errorMessage ):

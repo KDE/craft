@@ -86,6 +86,7 @@ class kde_interface:
         self.kdesvnserver    = self.KDESVNSERVER
         self.kdesvnuser      = self.KDESVNUSERNAME
         self.kdesvnpass      = self.KDESVNPASSWORD
+        self.svndir = None # set in self.kdeSvnFetch
 
         if utils.verbose() > 1 and self.kdeSvnPath():
             print "noCopy       : %s" % self.noCopy

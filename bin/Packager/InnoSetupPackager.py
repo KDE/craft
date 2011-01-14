@@ -52,10 +52,10 @@ class InnoSetupPackager (PackagerBase):
         # perform variable substitution
         # variablenames are wrapped with '#..#' to not get
         # in conflict with cmake or other config file patching tools
-        self.replacementPatterns = []
-        self.replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#", pkgVersion])
-        self.replacementPatterns.append(["#EMERGE_INSTALL_DIR#", self.installDir()])
-        self.replacementPatterns.append(["#EMERGE_MERGE_DESTINATION_DIR#", self.mergeDestinationDir()])
+        replacementPatterns = []
+        replacementPatterns.append(["#EMERGE_PACKAGE_VERSION#", pkgVersion])
+        replacementPatterns.append(["#EMERGE_INSTALL_DIR#", self.installDir()])
+        replacementPatterns.append(["#EMERGE_MERGE_DESTINATION_DIR#", self.mergeDestinationDir()])
 
         if self.buildArchitecture() == "x64":
             pkgName += "-x64"
@@ -134,7 +134,7 @@ class InnoSetupPackager (PackagerBase):
 
         for line in lines:
             a = line
-            for pattern in self.replacementPatterns:
+            for pattern in replacementPatterns:
                 search = pattern[0]
                 if a.find(search) > -1:
                     a = line.replace(search, pattern[1])

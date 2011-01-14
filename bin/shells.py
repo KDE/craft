@@ -29,11 +29,11 @@ class MSysShell(Shell):
         Shell.__init__(self)
         env = dict( os.environ )
         self.msysdir = env[ "MSYSDIR" ]
+        self.buildType = os.getenv("EMERGE_BUILDTYPE")
         self.initEnvironment()
 
 
     def initEnvironment(self, cflags="", ldflags=""):
-        self.buildType = os.getenv("EMERGE_BUILDTYPE")
         if compiler.isMinGW():
             if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "

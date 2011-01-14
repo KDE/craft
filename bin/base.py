@@ -93,6 +93,7 @@ class baseclass:
         self.noFetch                = False
         self.kdeCustomDefines       = ""
         self.createCombinedPackage  = False
+        self._filenames = [] # will be set by self.execute()
 
         self.subinfo                = info.infoclass()
         self.buildTarget            = self.subinfo.defaultTarget
@@ -178,7 +179,7 @@ class baseclass:
             filenames = []
             for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
                 filenames.append( os.path.basename( uri ) )
-            self.filenames = filenames
+            self._filenames = filenames
         functions = {"fetch":      self.fetch,
                      "cleanimage": self.cleanup,
                      "unpack":     self.unpack,
@@ -255,7 +256,7 @@ class baseclass:
                     os.makedirs( self.workdir )
                 return self.git_unpack( self.subinfo.svnTargets[ self.subinfo.buildTarget ] )
 
-        if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
+        if not utils.unpackFiles( self.downloaddir, self._filenames, self.workdir ):
             return False
         if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
             srcdir = os.path.join ( self.workdir, self.instsrcdir )
@@ -412,7 +413,7 @@ class baseclass:
         if self.kde.kdeSvnPath():
             return self.kde.kdeSvnUnpack( svnpath, packagedir )
         else:
-            if not utils.unpackFiles( self.downloaddir, self.filenames, self.workdir ):
+            if not utils.unpackFiles( self.downloaddir, self._filenames, self.workdir ):
                 return False
             if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
                 ( fileName, patchdepth ) = self.subinfo.patchToApply[ self.subinfo.buildTarget ]
