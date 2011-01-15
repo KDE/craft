@@ -87,7 +87,8 @@ class PackageBase (EmergeBase):
                 script = os.path.join( self.rootdir, "manifest", scriptName )
                 if os.path.exists( script ):
                     cmd = "cd %s && %s" % ( self.rootdir, script )
-                    utils.system( cmd ) or utils.warning("%s failed!" % cmd )
+                    if not utils.system(cmd):
+                        utils.warning("%s failed!" % cmd )
         else:
             utils.debug("running of post-install scripts disabled!", 0)
 

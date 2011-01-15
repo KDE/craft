@@ -88,7 +88,8 @@ class SevenZipPackager (PackagerBase):
         fileName = os.path.join(destPath, archiveName)
         utils.deleteFile(fileName)
         cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, fileName, '*.*')
-        utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "while packaging. cmd: %s" % cmd )
 
         if not self.subinfo.options.package.packSources:
             return True
@@ -98,5 +99,6 @@ class SevenZipPackager (PackagerBase):
         fileName = os.path.join(destPath, archiveName)
         utils.deleteFile(fileName)
         cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, fileName, '*.*')
-        utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "while packaging. cmd: %s" % cmd )
         return True

@@ -31,7 +31,8 @@ class msys_interface:
         cmd += "\""
         if utils.verbose() > 0:
             print "msys execute: %s" % cmd
-        utils.system( cmd ) or utils.die( "msys execute failed. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "msys execute failed. cmd: %s" % cmd )
         return True
 
     def msysConfigureFlags ( self ):
@@ -67,7 +68,8 @@ class msys_interface:
         cmd += "\""
         if utils.verbose() > 0:
             print "msys compile: %s" % cmd
-        utils.system( cmd ) or utils.die( "msys compile failed. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "msys compile failed. cmd: %s" % cmd )
         return True
 
     def msysInstall( self, bOutOfSource = True ):
@@ -86,5 +88,6 @@ class msys_interface:
               ( sh, self.__toMSysPath( build ), self.__toMSysPath( install ) )
         if utils.verbose() > 0:
             print "msys install: %s" % cmd
-        utils.system( cmd ) or utils.die( "msys install failed. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "msys install failed. cmd: %s" % cmd )
         return True

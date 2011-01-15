@@ -131,7 +131,8 @@ class kde_interface:
             print "kdesinglecheckout:   ", svncmd
         os.chdir( ownpath )
         with utils.LockFile(utils.svnLockFileName()):
-            utils.system( svncmd ) or utils.die( "while checking out. cmd: %s" % svncmd )
+            if not utils.system(svncmd):
+                utils.die( "while checking out. cmd: %s" % svncmd )
 
     def kdeSvnFetch( self, svnpath, packagedir ):
         """svnpath is the part of the repo url after /home/kde, for example
@@ -252,7 +253,8 @@ class kde_interface:
 
         if utils.verbose() > 0:
             print "configuration command: %s" % command
-        utils.system( command ) or utils.die( "while CMake'ing. cmd: %s" % command )
+        if not utils.system(command):
+            utils.die( "while CMake'ing. cmd: %s" % command )
         return True
 
     def kdeMakeInternal( self, buildType ):
@@ -269,7 +271,8 @@ class kde_interface:
         # adding Targets later
         if utils.verbose() > 1:
             command += " VERBOSE=1"
-        utils.system( command ) or utils.die( "while Make'ing. cmd: %s" % command )
+        if not utils.system(command):
+            utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
     def kdeInstallInternal( self, buildType ):
@@ -291,7 +294,8 @@ class kde_interface:
         fastString = ""
         if not self.noFast:
             fastString = "/fast"
-        utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ) or utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm, self.imagedir ) )
+        if not utils.system( "%s DESTDIR=%s install%s" % ( self.cmakeMakeProgramm, self.imagedir, fastString ) ):
+            utils.die( "while installing. cmd: %s" % "%s DESTDIR=%s install" % ( self.cmakeMakeProgramm, self.imagedir ) )
         return True
 
     def kdeCompile( self, kdeCustomDefines ):
@@ -335,5 +339,6 @@ class kde_interface:
         if utils.verbose() > 0:
             print "builddir: " + builddir
 
-        utils.system( "%s test" % ( self.cmakeMakeProgramm ) ) or utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
+        if not utils.system( "%s test" % ( self.cmakeMakeProgramm ) ):
+            utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )
         return True

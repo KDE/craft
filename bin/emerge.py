@@ -226,7 +226,8 @@ def doExec( category, package, version, action, opts ):
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
         #makes touble for xcompile -> changed back
-        utils.system( commandstring ) or utils.die( "running %s" % commandstring )
+        if not utils.system( commandstring ):
+            utils.die( "running %s" % commandstring )
         #mod = portage.__import__( fileName )
         #mod.Package().execute(action)
     except OSError:
@@ -651,5 +652,6 @@ if len( nextArguments ) > 0:
     #        os.environ[ element ] = "1"
     #    else:
     #        os.environ[ element ] = ""
-    utils.system( command ) or utils.die( "cannot execute next commands cmd: %s" % command )
+    if not utils.system(command):
+        utils.die( "cannot execute next commands cmd: %s" % command )
 

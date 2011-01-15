@@ -308,7 +308,8 @@ class baseclass:
             script = os.path.join( self.rootdir, "manifest", scriptName )
             if os.path.exists( script ):
                 cmd = "cd %s && %s" % ( self.rootdir, script )
-                utils.system( cmd ) or utils.warning("%s failed!" % cmd )
+                if not utils.system(cmd):
+                    utils.warning("%s failed!" % cmd )
         portage.addInstalled( self.category, self.package, self.version )
         return True
 
@@ -509,7 +510,8 @@ class baseclass:
             cmd += " -special"
         if utils.verbose():
             print "running %s" % cmd
-        utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "while packaging. cmd: %s" % cmd )
         return True
 
     def createImportLibs( self, pkg_name ):
@@ -544,8 +546,8 @@ class baseclass:
             For available keyword options please refer to the python
             documentation of system.popen
         """
-        utils.system( command, *args, **kw ) or \
-                utils.die( "os.system ( %s ) failed" % ( command ) )
+        if not utils.system( command, *args, **kw ):
+            utils.die( "os.system ( %s ) failed" % ( command ) )
         return True
 
 # ############################################################################################

@@ -80,9 +80,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if utils.verbose() > 1:
             args += " VERBOSE=1"
         if self.buildInSource:
-            self.shell.execute(self.sourceDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
+            if not self.shell.execute(self.sourceDir(), command, args ):
+                utils.die( "while Make'ing. cmd: %s" % command )
         else:
-            self.shell.execute(self.buildDir(), command, args ) or utils.die( "while Make'ing. cmd: %s" % command )
+            if not self.shell.execute(self.buildDir(), command, args ):
+                utils.die( "while Make'ing. cmd: %s" % command )
         return True
 
     def install( self ):

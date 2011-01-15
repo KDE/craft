@@ -142,7 +142,8 @@ class InnoSetupPackager (PackagerBase):
         out.close()
 
         cmd += " \"%s\"" % (outfile)
-        utils.systemWithoutShell( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+        if not utils.systemWithoutShell(cmd):
+            utils.die( "while packaging. cmd: %s" % cmd )
         return True
 
 

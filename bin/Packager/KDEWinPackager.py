@@ -156,7 +156,8 @@ class KDEWinPackager (PackagerBase):
         if self.subinfo.options.package.specialMode:
             cmd += " -special"
 
-        utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
+        if not utils.system(cmd):
+            utils.die( "while packaging. cmd: %s" % cmd )
 
         if self.useDebugPackages:
             utils.rmtree( symPath )
