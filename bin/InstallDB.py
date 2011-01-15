@@ -245,9 +245,9 @@ class InstallDB:
                            packageId INTEGER, filename TEXT, fileHash TEXT)''' )
         self.connection.commit()
 
-        self._importExistingDatabase()
+        self.importExistingDatabase()
 
-    def _importExistingDatabase( self ):
+    def importExistingDatabase( self ):
         """ imports from the previous installation database system """
         for category, package, version in portage.PortageInstance.getInstallables():
             # FIXME: we need to adapt this to use prefixes as well
@@ -418,7 +418,7 @@ def main():
 
     # test the import from the old style (manifest based) databases
     utils.new_line()
-    db_temp._importExistingDatabase()
+    db_temp.importExistingDatabase()
     print "getInstalled:", db_temp.getInstalled()
     print "findInstalled:", portage.findInstalled( 'win32libs-sources', 'dbus-src' )
     print "getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) )
