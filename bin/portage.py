@@ -23,8 +23,8 @@ def __import__( module ):
     if not os.path.isfile( module ):
         try:
             return __builtin__.__import__( module )
-        except ImportError:
-            utils.warning( 'import failed for module %s' % module )
+        except ImportError as e:
+            utils.warning( 'import failed for module %s: %s' % (module, e.message) )
             return None
     else:
         sys.path.append( os.path.dirname( module ) )
@@ -43,8 +43,8 @@ def __import__( module ):
         try:
             return imp.load_module( modulename.replace('.', '_'),
             fileHdl, module, suff_index )
-        except ImportError:
-            utils.warning( "Import failed for file %s" % module )
+        except ImportError as e:
+            utils.warning( 'import failed for file %s: %s' % (module, e.message) )
             return None
 
 class DependencyPackage:
