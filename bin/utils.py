@@ -410,7 +410,7 @@ def unZip( fileName, destdir ):
 
     try:
         zipObj = zipfile.ZipFile( fileName )
-    except (zipfile.BadZipFile, IOError):
+    except (zipfile.BadZipfile, IOError):
         error( "couldn't extract file %s" % fileName )
         return False
 
