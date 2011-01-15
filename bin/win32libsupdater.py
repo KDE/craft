@@ -6,7 +6,7 @@ import utils
 import portage
 import subprocess
 import xml.dom.minidom
-from string import Template
+from string import Template  # pylint: disable=W0402
 
 
 #################################################

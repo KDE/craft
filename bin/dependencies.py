@@ -54,7 +54,7 @@ import os
 import utils
 import graphviz
 from argparse import ArgumentParser
-from string import Template
+from string import Template  # pylint: disable=W0402
 
 OUTPUT_DOT = 0
 OUTPUT_XML = 1
