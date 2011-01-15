@@ -106,7 +106,7 @@ class MainPackage(CMakePackageBase):
                 self.whitelist.append(exp)
                 utils.debug("%s added to whitelist as %s" % (line,
                     exp.pattern), 2)
-            except re.error:
+            except:
                 utils.debug("%s is not a valid regexp" % line, 1)
 
     def copy_files(self):

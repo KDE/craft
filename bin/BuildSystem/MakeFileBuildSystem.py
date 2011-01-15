@@ -7,7 +7,7 @@
 import os
 import utils
 
-from BuildSystemBase import *
+from BuildSystem.BuildSystemBase import *
 
 class MakeFileBuildSystem(BuildSystemBase):
     """ make file build support """

@@ -184,8 +184,6 @@ class kde_interface:
         this function should return the full path seen from /home/KDE/"""
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
             return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
-        else:
-            return False
 
     def kdeSvnUnpack( self, svnpath=None, packagedir=None ):
         """fetching and copying the sources from svn"""

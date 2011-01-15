@@ -129,7 +129,7 @@ class ExecutionContext(object):
         if os.path.exists(self.svnlock):
             try:
                 os.remove(self.svnlock)
-            except:
+            except IOError:
                 pass
         log("stop", "all")
 
@@ -209,7 +209,7 @@ class Worker(Process):
                 for dummy in range(self.tries):
                     try:
                         exit_code = os.system(execute[1])
-                    except:
+                    except OSError:
                         traceback.print_exc()
                     if exit_code == 0:
                         break

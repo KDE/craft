@@ -4,7 +4,7 @@
 #
 # git support
 
-from VersionSystemSourceBase import *
+from Source.VersionSystemSourceBase import *
 import os
 import utils
 from shells import *
@@ -150,7 +150,6 @@ class GitSource ( VersionSystemSourceBase ):
                 branchDir = os.path.join(self.checkoutDir(), repoBranch)
                 if not os.path.exists(branchDir):
                     os.makedirs(branchDir)
-                    ret = self.shell.execute(branchDir, "git", "config --global core.autocrlf input")
                     ret = self.shell.execute(branchDir, "git", "clone --local --shared -b %s %s %s" % \
                         (repoBranch, self.shell.toNativePath(rootCheckoutDir), self.shell.toNativePath(branchDir)))
                 else:

@@ -98,28 +98,6 @@ class BuildSystemBase(EmergeBase):
         os.environ["INCLUDE"] = os.environ["TARGET_INCLUDE"]
         os.environ["LIB"] = os.environ["TARGET_LIB"]
 
-    def dumpEmergeDependencies(self):
-        """dump emerge package dependencies"""
-        utils.debug( "BuildSystemBase dumpEmergeDependencies called", 2 )
-        output = dependencies.dumpDependencies( self.package )
-        outDir = self.buildDir()
-        outFile = os.path.join( outDir, self.package + '-emerge.dot' )
-        if not os.path.exists( os.path.dirname( outFile ) ):
-            os.makedirs( os.path.dirname( outFile ) )
-        f = open( outFile, "w" )
-        f.write( output )
-        f.close()
-
-        graphviz = GraphViz( self )
-
-        if not graphviz.runDot( outFile, outFile + '.pdf', 'pdf' ):
-            return False
-
-        return graphviz.openOutput()
-
-        return True
-
-    def dumpDependencies( self ):
-        """entry point for dependency dumping, may be overriden in derived classes"""
-        utils.debug( "BuildSystemBase dumpDependencies called", 2 )
-        return self.dumpEmergeDependencies()
+    def dumpDependencies(self):
+        """dump package dependencies """
+        utils.abstract()

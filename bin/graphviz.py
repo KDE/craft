@@ -24,10 +24,10 @@ class GraphViz:
     def isInstalled(self):
         try:
             key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_READ)
-        except:
+        except WindowsError:
             try:
                 key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
-            except:
+            except WindowsError:
                 return False
         self.graphVizInstallPath = QueryValueEx(key, "InstallPath")[0]
         return True

@@ -196,7 +196,7 @@ class PackageBase (EmergeBase):
         install database"""
 
         utils.debug("base manifest called", 2)
-        if not utils.hasManifestFile( self.mergeDestinationDir(), self.category, self.package ) or self.forceCreateManifestFiles:
+        if not utils.hasManifestFile( self.mergeDestinationDir(), self.package ) or self.forceCreateManifestFiles:
             utils.debug("creating of manifest files triggered", 1)
             utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
         return True
@@ -234,7 +234,7 @@ class PackageBase (EmergeBase):
         it shouldn't be called if the package is imported as a python module"""
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
-        (command, option) = self.getAction(cmd)
+        command, _ = self.getAction(cmd)
 
         #if self.createCombinedPackage:
         #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]
@@ -285,3 +285,24 @@ class PackageBase (EmergeBase):
         if ( not ok ):
             utils.die( "command %s failed" % command )
         return True
+
+    def dumpDependencies( self ):
+        """dump emerge package dependencies"""
+        output = dependencies.dumpDependencies( self.package )
+        outDir = self.buildDir()
+        outFile = os.path.join( outDir, self.package + '-emerge.dot' )
+        if not os.path.exists( os.path.dirname( outFile ) ):
+            os.makedirs( os.path.dirname( outFile ) )
+        f = open( outFile, "w" )
+        f.write( output )
+        f.close()
+
+        graphviz = GraphViz( self )
+
+        if not graphviz.runDot( outFile, outFile + '.pdf', 'pdf' ):
+            return False
+
+        return graphviz.openOutput()
+
+        return True
+

@@ -4,7 +4,7 @@
 # subversion support
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
 
-from VersionSystemSourceBase import *
+from Source.VersionSystemSourceBase import *
 
 import os.path
 

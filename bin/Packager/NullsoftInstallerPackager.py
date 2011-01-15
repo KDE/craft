@@ -28,7 +28,7 @@ class NSIPackagerLists:
                 exp = re.compile( line )
                 ret.append( exp )
                 utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
-            except:
+            except re.error:
                 utils.debug( "%s is not a valid regexp" % line, 1 )
         return ret
 
@@ -106,10 +106,10 @@ file collection process is skipped, and only the installer is generated.
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS', 0, KEY_READ )
-        except:
+        except WindowsError:
             try:
                 key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS', 0, KEY_READ )
-            except:
+            except WindowsError:
                 return False
         [ self.nsisInstallPath, dummyType ] = QueryValueEx( key, "" )
         return True
@@ -177,7 +177,7 @@ file collection process is skipped, and only the installer is generated.
                 exp = re.compile( line )
                 self.whitelist.append( exp )
                 utils.debug( "%s added to whitelist as %s" % ( line, exp.pattern ), 2 )
-            except:
+            except re.error:
                 utils.debug( "%s is not a valid regexp" % line, 1 )
 
     def read_blacklist( self, fname ):
@@ -196,7 +196,7 @@ file collection process is skipped, and only the installer is generated.
                 exp = re.compile( line )
                 self.blacklist.append( exp )
                 utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
-            except:
+            except re.error:
                 utils.debug( "%s is not a valid regexp" % line, 1 )
 
     def whitelisted( self, pathname ):
