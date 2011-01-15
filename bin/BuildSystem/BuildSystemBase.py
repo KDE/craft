@@ -116,8 +116,6 @@ class BuildSystemBase(EmergeBase):
 
         return graphviz.openOutput()
 
-        return True
-
     def dumpDependencies(self):
         """dump package dependencies """
         return self.dumpEmergeDependencies()
