@@ -3,7 +3,7 @@
 #
 # mercurial support based on the git support
 
-from VersionSystemSourceBase import *
+from Source.VersionSystemSourceBase import *
 import os
 import utils
 class HgSource ( VersionSystemSourceBase ):

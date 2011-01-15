@@ -2,9 +2,9 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from PackageBase import *
+from Package.PackageBase import *
 from Source.MultiSource import *
-from BuildSystem.QMakeBuildSystem import *
+from BuildSystem.BuildSystem.QMakeBuildSystem import *
 from Packager.KDEWinPackager import *
 
 class QMakePackageBase (PackageBase, MultiSource, QMakeBuildSystem, KDEWinPackager):

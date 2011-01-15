@@ -1,4 +1,4 @@
-from PackageBase import *
+from Package.PackageBase import *
 from Source.SourceBase import *
 from BuildSystem.BuildSystemBase import *
 from Packager.PackagerBase import *

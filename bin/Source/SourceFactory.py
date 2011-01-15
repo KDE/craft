@@ -4,12 +4,12 @@
 
 import utils
 
-from FileSource import *
-from ArchiveSource import *
-from SvnSource import *
-from GitSource import *
-from CvsSource import *
-from HgSource import *
+from Source.FileSource import *
+from Source.ArchiveSource import *
+from Source.SvnSource import *
+from Source.GitSource import *
+from Source.CvsSource import *
+from Source.HgSource import *
 
 def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
