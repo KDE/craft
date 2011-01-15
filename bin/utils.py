@@ -640,7 +640,7 @@ def getFileListFromManifest( rootdir, package ):
                             else:
                                 a, b = line, ""
                         except Exception: # pylint: disable=W0703
-                            die( "could not parse line %s" % line, 1 )
+                            die( "could not parse line %s" % line)
 
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
@@ -696,7 +696,7 @@ def unmerge( rootdir, package, forced = False ):
                             else:
                                 a, b = line, ""
                         except Exception: # pylint: disable=W0703
-                            die("could not parse line %s" % line, 1)
+                            die("could not parse line %s" % line)
 
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
                             continue
