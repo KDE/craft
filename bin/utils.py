@@ -724,10 +724,10 @@ def unmerge( rootdir, package, forced = False ):
 
 def createManifestDir(imagedir, category, package, version ):
     """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
-    if not hasManifestFile( imagedir, category, package ):
+    if not hasManifestFile( imagedir, package ):
         createManifestFiles( imagedir, imagedir, category, package, version )
 
-def hasManifestFile( imagedir, category, package ): # pylint: disable=W0613
+def hasManifestFile( imagedir, package ):
     if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
         for fileName in os.listdir( os.path.join( imagedir, "manifest"  ) ):
             if fileName.startswith( package ) and fileName.endswith( "-bin.mft" ):
