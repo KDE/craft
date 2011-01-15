@@ -3,7 +3,6 @@
 #
 
 from Source.SourceBase import *
-import utils
 import shutil
 
 class ArchiveSource(SourceBase):

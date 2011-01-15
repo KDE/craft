@@ -4,8 +4,7 @@
 # mercurial support based on the git support
 
 from Source.VersionSystemSourceBase import *
-import os
-import utils
+
 class HgSource ( VersionSystemSourceBase ):
     """mercurial support"""
     def __init__( self ):

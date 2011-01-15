@@ -3,9 +3,6 @@
 #
 
 from EmergeBase import *
-import os
-import utils
-import emergePlatform
 from InstallDB import *
 
 class PackageBase (EmergeBase):

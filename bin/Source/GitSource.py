@@ -5,8 +5,6 @@
 # git support
 
 from Source.VersionSystemSourceBase import *
-import os
-import utils
 from shells import *
 import tempfile
 

@@ -4,8 +4,6 @@
 
 from Packager.PackagerFactory import *
 
-import utils
-
 class MultiPackager():
     def __init__(self, packagerType=None):
         utils.debug( "MultiPackager __init__ %s" %packagerType, 2 )

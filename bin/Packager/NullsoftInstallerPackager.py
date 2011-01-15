@@ -3,11 +3,7 @@
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
 from Packager.PackagerBase import *
-import portage
-import utils
-import os
 import shutil
-import sys
 import re
 import types
 import fileinput

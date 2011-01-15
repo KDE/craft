@@ -6,10 +6,6 @@
 
 from Source.VersionSystemSourceBase import *
 
-import os.path
-
-import utils
-
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self, subinfo=None):

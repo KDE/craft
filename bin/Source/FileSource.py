@@ -3,7 +3,6 @@
 #
 
 from Source.SourceBase import *
-import utils
 
 class FileSource(SourceBase):
     """ file download source"""

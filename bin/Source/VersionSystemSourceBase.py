@@ -3,7 +3,6 @@
 #
 
 from Source.SourceBase import *
-import os
 
 class VersionSystemSourceBase (SourceBase):
     """abstract base class for version system support"""

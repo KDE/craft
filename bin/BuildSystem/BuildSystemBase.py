@@ -5,7 +5,6 @@
 """ \package BuildSystemBase"""
 
 from EmergeBase import *
-import utils
 import compiler
 from graphviz import *
 import dependencies

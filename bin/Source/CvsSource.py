@@ -4,8 +4,6 @@
 # cvs support
 
 from Source.VersionSystemSourceBase import *
-import os
-import utils
 from shells import *
 
 ## \todo requires installed git package -> add suport for installing packages

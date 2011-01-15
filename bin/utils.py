@@ -22,6 +22,7 @@ import tempfile
 import getpass
 import subprocess
 import re
+import inspect
 
 if os.name == 'nt':
     import msvcrt
@@ -31,7 +32,6 @@ else:
 import ConfigParser
 
 def abstract():
-    import inspect
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
