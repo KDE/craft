@@ -22,7 +22,6 @@ import tempfile
 import getpass
 import subprocess
 import re
-import tempfile
 
 if os.name == 'nt':
     import msvcrt
