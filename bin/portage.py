@@ -23,7 +23,7 @@ def __import__( module ):
     if not os.path.isfile( module ):
         try:
             return __builtin__.__import__( module )
-        except:
+        except ImportError:
             utils.warning( 'import failed for module %s' % module )
             return None
     else:
@@ -43,7 +43,7 @@ def __import__( module ):
         try:
             return imp.load_module( modulename.replace('.', '_'),
             fileHdl, module, suff_index )
-        except:
+        except ImportError:
             utils.warning( "Import failed for file %s" % module )
             return None
 
@@ -246,7 +246,7 @@ class Portage:
                 for line in f:
                     try:
                         plist.remove( line.strip() )
-                    except:
+                    except ValueError:
                         utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
             return plist
         else:

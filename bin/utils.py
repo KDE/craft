@@ -101,8 +101,7 @@ class LockFile(object):
             fcntl.flock(fh, fcntl.LOCK_UN)
         try:
             fh.close()
-        except: # pylint: disable=W0702
-            # TODO: never catch ALL exceptions
+        except IOError:
             traceback.print_exc()
 
 ### fetch functions
@@ -119,8 +118,7 @@ def test4application( appname):
         p = subprocess.Popen( appname, stdout=f, stderr=f )
         p.wait()
         return True
-    except: # pylint: disable=W0702
-        # TODO: never catch ALL exceptions
+    except OSError:
         debug( "could not find application %s" % appname, 1 )
         return False
 
@@ -390,7 +388,7 @@ def unTar( fileName, destdir ):
 
     try:
         tar = tarfile.open( fileName, mode )
-    except:
+    except tarfile.TarError:
         error( "could not open existing tar archive: %s" % fileName )
         return False
 
@@ -398,7 +396,7 @@ def unTar( fileName, destdir ):
     for fileName in tar:
         try:
             tar.extract(fileName, destdir )
-        except:
+        except tarfile.TarError:
             error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
             return False
 
@@ -413,7 +411,7 @@ def unZip( fileName, destdir ):
 
     try:
         zipObj = zipfile.ZipFile( fileName )
-    except:
+    except (zipfile.BadZipFile, IOError):
         error( "couldn't extract file %s" % fileName )
         return False
 
@@ -642,7 +640,7 @@ def getFileListFromManifest( rootdir, package ):
                                 [ a, b ] = line.rsplit( " ", 2 )
                             else:
                                 a, b = line, ""
-                        except:
+                        except Exception: # pylint: disable=W0703
                             die( "could not parse line %s" % line, 1 )
 
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
@@ -698,7 +696,7 @@ def unmerge( rootdir, package, forced = False ):
                                 [ a, b ] = line.rsplit( " ", 2 )
                             else:
                                 a, b = line, ""
-                        except:
+                        except Exception: # pylint: disable=W0703
                             die("could not parse line %s" % line, 1)
 
                         if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
@@ -901,12 +899,12 @@ def cleanDirectory( directory ):
             for name in files:
                 try:
                     os.remove( os.path.join(root, name) )
-                except:
+                except OSError:
                     die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join( root, name ) ) )
             for name in dirs:
                 try:
                     os.rmdir( os.path.join(root, name) )
-                except:
+                except OSError:
                     die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
     else:
         os.makedirs( directory )
@@ -1200,7 +1198,7 @@ def log(fn):
         if not os.path.exists(logdir):
             try:
                 os.mkdir(logdir)
-            except:
+            except OSError:
                 die("EMERGE_LOG_DIR %s can not be created" % logdir)
 
         logfile = "%s-%s-%s.log" % (args[0], args[1], args[2])
@@ -1227,7 +1225,7 @@ def getWinVer():
     '''
     try:
         result = subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0]
-    except:
+    except OSError:
         debug("Windows Version can not be determined", 1)
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)

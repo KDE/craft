@@ -14,7 +14,7 @@ class HgSource ( VersionSystemSourceBase ):
         self.enableHg = True
         try:
             self.enableHg = self.system("hg help > NUL")
-        except:
+        except OSError:
             self.enableHg = False
 
         # initialize the repository

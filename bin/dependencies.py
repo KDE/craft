@@ -388,7 +388,7 @@ class DependenciesTree(object):
 
         try:
             tag = pi.getDefaultTarget( category, package, version )
-        except:
+        except ImportError:
             tag = "1"
 
         node = self.buildDepNode( category, package, version, tag, dep_type )
@@ -412,7 +412,7 @@ class DependenciesTree(object):
 
         try:
             tag = pi.getDefaultTarget( category, package, version )
-        except:
+        except ImportError:
             tag = "1"
 
         key = "%s-%s-%s-%s" % (category, package, version, tag)

@@ -182,10 +182,10 @@ def cleanup( root, hard = False ):
             useValidFiles = True
             try:
                 entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
-            except:
+            except IOError:
                 try:
                     entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
-                except:
+                except IOError:
                     useValidFiles = False
                     entriesfile = []
             oldline = ""
@@ -229,7 +229,7 @@ def doExec( category, package, version, action, opts ):
         utils.system( commandstring ) or utils.die( "running %s" % commandstring )
         #mod = portage.__import__( fileName )
         #mod.Package().execute(action)
-    except:
+    except OSError:
         return False
     return True
 
