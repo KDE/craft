@@ -507,7 +507,7 @@ class baseclass:
 
         if special:
             cmd += " -special"
-        if utils.verbose:
+        if utils.verbose():
             print "running %s" % cmd
         utils.system( cmd ) or utils.die( "while packaging. cmd: %s" % cmd )
         return True

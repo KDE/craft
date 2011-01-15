@@ -63,12 +63,12 @@ class VersionSystemSourceBase (SourceBase):
         self.enterBuildDir()
 
         if not self.noClean:
-            if utils.verbose > 0:
+            if utils.verbose() > 0:
                 print "cleaning %s" % self.buildDir()
             utils.cleanDirectory( self.buildDir() )
         if not self.noCopy:
             sourceDir = self.checkoutDir()
-            if utils.verbose > 0:
+            if utils.verbose() > 0:
                 print "copying %s to %s" % (sourceDir, self.buildDir())
             utils.copySrcDirToDestDir(sourceDir, self.buildDir())
         ret = self.applyPatches()
