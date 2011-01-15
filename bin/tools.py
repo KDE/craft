@@ -215,7 +215,7 @@ class Object ( Environment ):
 
     def error( self, message=None ):
         if not message:
-            message = self.errormessage
+            message = "NO MESSAGE"
         if self.verbose() > 0:
             print >> sys.stderr, "emerge error: %s" % message
         return False
