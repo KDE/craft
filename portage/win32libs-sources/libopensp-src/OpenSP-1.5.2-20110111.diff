@@ -625,6 +625,49 @@ diff -Nru OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
 +#define SP_VERSION "@VERSION@"
 +
 +#endif /* not config_INCLUDED */
+diff -Nru OpenSP-1.5.2.orig/include/OutputCharStream.h OpenSP-1.5.2/include/OutputCharStream.h
+--- OpenSP-1.5.2.orig/include/OutputCharStream.h	2005-07-21 16:04:39.000000000 +0200
++++ OpenSP-1.5.2/include/OutputCharStream.h	2011-01-15 02:35:26.188865600 +0100
+@@ -31,6 +31,7 @@
+   OutputCharStream &operator<<(const char *);
+   OutputCharStream &operator<<(const StringC &);
+   OutputCharStream &operator<<(unsigned long);
++  OutputCharStream &operator<<(unsigned long long);
+   OutputCharStream &operator<<(int);
+   OutputCharStream &operator<<(Newline);
+ private:
+diff -Nru OpenSP-1.5.2.orig/lib/MessageReporter.cxx OpenSP-1.5.2/lib/MessageReporter.cxx
+--- OpenSP-1.5.2.orig/lib/MessageReporter.cxx	2005-07-21 16:05:17.000000000 +0200
++++ OpenSP-1.5.2/lib/MessageReporter.cxx	2011-01-15 02:34:20.893130900 +0100
+@@ -123,7 +123,11 @@
+     os() << ':';
+   }
+   if (options_ & messageNumbers)
++#ifdef _WIN64
++    os() << (unsigned long long)message.type->module() << "." 
++#else
+     os() << (unsigned long)message.type->module() << "." 
++#endif
+       << (unsigned long)message.type->number() << ":";
+   switch (message.type->severity()) {
+   case MessageType::info:
+diff -Nru OpenSP-1.5.2.orig/lib/OutputCharStream.cxx OpenSP-1.5.2/lib/OutputCharStream.cxx
+--- OpenSP-1.5.2.orig/lib/OutputCharStream.cxx	2005-07-21 16:05:17.000000000 +0200
++++ OpenSP-1.5.2/lib/OutputCharStream.cxx	2011-01-15 02:37:56.844482600 +0100
+@@ -61,6 +61,13 @@
+   return *this << buf;
+ }
+ 
++OutputCharStream &OutputCharStream::operator<<(unsigned long long n)
++{
++  char buf[sizeof(unsigned long long)*3 + 1];
++  sprintf(buf, "%I64u", n);
++  return *this << buf;
++}
++
+ OutputCharStream &OutputCharStream::operator<<(int n)
+ {
+   char buf[sizeof(int)*3 + 2];
 diff -Nru OpenSP-1.5.2.orig/lib/SGMLApplication.cxx OpenSP-1.5.2/lib/SGMLApplication.cxx
 --- OpenSP-1.5.2.orig/lib/SGMLApplication.cxx	2005-07-21 17:05:18.000000000 +0300
 +++ OpenSP-1.5.2/lib/SGMLApplication.cxx	2011-01-11 00:10:12.724406300 +0200
