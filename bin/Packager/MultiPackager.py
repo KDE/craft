@@ -19,4 +19,4 @@ class MultiPackager():
         return result
 
     def make_package(self):
-        return self.createPackages()
+        return self.createPackage()
