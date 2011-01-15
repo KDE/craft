@@ -28,9 +28,6 @@ class FileSource(SourceBase):
     def localFileNames(self):
         return self.localFileNamesBase()
 
-    def localFileNames(self):
-        return self.localFileNamesBase()
-
     def fetch( self, dummyRepopath = None ):
         """fetching binary files"""
         utils.debug( "FileSource.fetch called", 2 )
