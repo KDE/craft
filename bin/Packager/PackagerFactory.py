@@ -2,11 +2,11 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from KDEWinPackager import *
-from CPackPackager import *
-from SevenZipPackager import *
-from MSInstallerPackager import *
-from InnoSetupPackager import *
+from Packager.KDEWinPackager import *
+from Packager.CPackPackager import *
+from Packager.SevenZipPackager import *
+from Packager.MSInstallerPackager import *
+from Packager.InnoSetupPackager import *
 
 def init(packager, parent):
     packager.subinfo = parent.subinfo

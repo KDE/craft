@@ -6,7 +6,7 @@ import utils
 
 from shells import *
 
-from BuildSystemBase import *
+from BuildSystem.BuildSystemBase import *
 
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):

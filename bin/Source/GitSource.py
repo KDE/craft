@@ -4,7 +4,7 @@
 #
 # git support
 
-from VersionSystemSourceBase import *
+from Source.VersionSystemSourceBase import *
 import os
 import utils
 from shells import *
