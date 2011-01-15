@@ -47,9 +47,6 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
     def make( self ):
         return True
 
-    def dumpDependencies( self ):
-        return True
-
 # from PackagerBase:
     def createPackage( self ):
         return True

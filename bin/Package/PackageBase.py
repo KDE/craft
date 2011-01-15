@@ -285,24 +285,3 @@ class PackageBase (EmergeBase):
         if ( not ok ):
             utils.die( "command %s failed" % command )
         return True
-
-    def dumpDependencies( self ):
-        """dump emerge package dependencies"""
-        output = dependencies.dumpDependencies( self.package )
-        outDir = self.buildDir()
-        outFile = os.path.join( outDir, self.package + '-emerge.dot' )
-        if not os.path.exists( os.path.dirname( outFile ) ):
-            os.makedirs( os.path.dirname( outFile ) )
-        f = open( outFile, "w" )
-        f.write( output )
-        f.close()
-
-        graphviz = GraphViz( self )
-
-        if not graphviz.runDot( outFile, outFile + '.pdf', 'pdf' ):
-            return False
-
-        return graphviz.openOutput()
-
-        return True
-

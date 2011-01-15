@@ -98,6 +98,26 @@ class BuildSystemBase(EmergeBase):
         os.environ["INCLUDE"] = os.environ["TARGET_INCLUDE"]
         os.environ["LIB"] = os.environ["TARGET_LIB"]
 
+    def dumpEmergeDependencies( self ):
+        """dump emerge package dependencies"""
+        output = dependencies.dumpDependencies( self.package )
+        outDir = self.buildDir()
+        outFile = os.path.join( outDir, self.package + '-emerge.dot' )
+        if not os.path.exists( os.path.dirname( outFile ) ):
+            os.makedirs( os.path.dirname( outFile ) )
+        f = open( outFile, "w" )
+        f.write( output )
+        f.close()
+
+        graphviz = GraphViz( self )
+
+        if not graphviz.runDot( outFile, outFile + '.pdf', 'pdf' ):
+            return False
+
+        return graphviz.openOutput()
+
+        return True
+
     def dumpDependencies(self):
         """dump package dependencies """
-        utils.abstract()
+        return self.dumpEmergeDependencies()
