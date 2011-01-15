@@ -19,7 +19,7 @@ def getGCCTarget():
         result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
         utils.debug("GCC Target Processor:%s" % result, 1 )
         gcc_target = result.strip()
-    except OSError:
+    except:
         #if no mingw is installed return mingw-w32 it is part of base
         gcc_target = "i686-w64-mingw32"
     tl.gcc_target = gcc_target
@@ -92,7 +92,7 @@ def getMinGWVersion():
         result = result.split()[2]
         utils.debug("GCC Version:%s" % result, 1 )
         mingw_version = result.strip()
-    except OSError:
+    except:
         #if no mingw is installed return 0
         mingw_version = "0"
     tl.mingw_version = mingw_version

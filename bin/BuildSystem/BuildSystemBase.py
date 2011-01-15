@@ -96,6 +96,7 @@ class BuildSystemBase(EmergeBase):
         os.environ["INCLUDE"] = os.environ["TARGET_INCLUDE"]
         os.environ["LIB"] = os.environ["TARGET_LIB"]
 
-    def dumpDependencies(self):
-        """dump package dependencies """
-        utils.abstract()
+    def dumpDependencies( self ):
+        """entry point for dependency dumping, may be overriden in derived classes"""
+        utils.debug( "BuildSystemBase dumpDependencies called", 2 )
+        return self.dumpEmergeDependencies()

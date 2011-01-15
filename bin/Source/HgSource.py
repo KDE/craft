@@ -3,7 +3,7 @@
 #
 # mercurial support based on the git support
 
-from Source.VersionSystemSourceBase import *
+from VersionSystemSourceBase import *
 import os
 import utils
 class HgSource ( VersionSystemSourceBase ):
@@ -14,7 +14,7 @@ class HgSource ( VersionSystemSourceBase ):
         self.enableHg = True
         try:
             self.enableHg = self.system("hg help > NUL")
-        except OSError:
+        except:
             self.enableHg = False
 
         # initialize the repository

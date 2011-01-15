@@ -28,7 +28,7 @@ try:
     import win32pipe
     import win32file
     _pywin32 = True
-except ImportError:
+except:
     _pywin32 = False
 
 class Tee( __builtin__.file ):

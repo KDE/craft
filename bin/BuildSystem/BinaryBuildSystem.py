@@ -3,7 +3,7 @@
 #
 # installing binary packages
 
-from BuildSystem.BuildSystemBase import *
+from BuildSystemBase import *
 
 class BinaryBuildSystem(BuildSystemBase):
     def __init__( self):

@@ -1,4 +1,4 @@
-from Package.PackageBase import *
+from PackageBase import *
 from Source.SourceBase import *
 from BuildSystem.BuildSystemBase import *
 from Packager.PackagerBase import *
@@ -45,9 +45,6 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
         return True
 
     def make( self ):
-        return True
-
-    def dumpDependencies( self ):
         return True
 
 # from PackagerBase:

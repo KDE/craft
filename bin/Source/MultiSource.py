@@ -4,7 +4,7 @@
 
 import utils
 
-from Source.SourceFactory import *
+from SourceFactory import *
 
 class MultiSource(object):
     """ provides multi source type api """

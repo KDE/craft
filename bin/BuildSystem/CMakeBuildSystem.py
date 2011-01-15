@@ -6,8 +6,8 @@
 
 import os
 import utils
-from BuildSystem.CMakeDependencies import *
-from BuildSystem.BuildSystemBase import *
+from CMakeDependencies import *
+from BuildSystemBase import *
 from graphviz import *
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -209,12 +209,14 @@ class CMakeBuildSystem(BuildSystemBase):
         return self.system( "%s test" % ( self.makeProgramm ), "test" )
 
     def dumpDependencies( self ):
+        utils.debug( "CMakeBuildSystem dumpDependencies called", 2 )
         self.dumpCMakeDependencies()
         return self.dumpEmergeDependencies()
 
     def dumpCMakeDependencies(self):
         """dump package dependencies as pdf (requires installed dot)"""
 
+        utils.debug( "CMakeBuildSystem dumpEmergeDependencies called", 2 )
         srcDir = self.sourceDir()
         outDir = self.buildDir()
         self.enterBuildDir()
