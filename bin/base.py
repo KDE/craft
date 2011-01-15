@@ -394,6 +394,7 @@ class baseclass:
         utils.svnFetch( repo, self.svndir )
 
     def kdeGet( self ):
+        """TODO: unused"""
         return self.kdeSvnPath()
 
     def __kdesinglecheckout( self, repourl, ownpath, codir, doRecursive = False ):
