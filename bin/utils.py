@@ -395,11 +395,11 @@ def unTar( fileName, destdir ):
         return False
 
     # FIXME how to handle errors here ?
-    for foo in tar:
+    for fileName in tar:
         try:
-            tar.extract( foo, destdir )
+            tar.extract(fileName, destdir )
         except:
-            error( "couldn't extract file %s to directory %s" % ( foo, destdir ) )
+            error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
             return False
 
     return True
