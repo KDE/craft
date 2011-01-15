@@ -98,12 +98,12 @@ class kde_interface:
             self.sourcePath = "%s" % os.path.join(self.kdesvndir, self.kdeSvnPath() ).replace("/", "\\")
 
     def kdesinglecheckout( self, repourl, ownpath, codir, doRecursive = False ):
-        """in ownpath try to checkout codir from repourl """
-        """if codir exists and doRecursive is false, simply return,"""
-        """if codir does not exist, but ownpath/.svn exists,"""
-        """   do a svn update codir"""
-        """else do svn co repourl/codir"""
-        """if doRecursive is false, add -N to the svn command """
+        """in ownpath try to checkout codir from repourl
+        if codir exists and doRecursive is false, simply return,
+        if codir does not exist, but ownpath/.svn exists,
+        do a svn update codir
+        else do svn co repourl/codir
+        if doRecursive is false, add -N to the svn command """
 
         if ( os.path.exists( os.path.join( ownpath, codir ) ) and not doRecursive ):
             if utils.verbose() > 0:
@@ -134,9 +134,9 @@ class kde_interface:
             utils.system( svncmd ) or utils.die( "while checking out. cmd: %s" % svncmd )
 
     def kdeSvnFetch( self, svnpath, packagedir ):
-        """svnpath is the part of the repo url after /home/kde, for example"""
-        """"trunk/kdesupport/", which leads to the package itself,"""
-        """without the package"""
+        """svnpath is the part of the repo url after /home/kde, for example
+        ""trunk/kdesupport/", which leads to the package itself
+        without the package"""
 
         if utils.verbose() > 1:
             print "kdeSvnFetch called. svnpath: %s dir: %s" % ( svnpath, packagedir )
@@ -180,8 +180,8 @@ class kde_interface:
         return True
 
     def kdeSvnPath( self ):
-        """overload this function in kde packages to use the nocopy option"""
-        """this function should return the full path seen from /home/KDE/"""
+        """overload this function in kde packages to use the nocopy option
+        this function should return the full path seen from /home/KDE/"""
         if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
             return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
 

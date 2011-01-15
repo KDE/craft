@@ -473,7 +473,7 @@ def checkManifestFile( name, category, package, version ):
         line = f.readline()
         f.close()
         if not '/' in line:
-            """ update the file """
+            # update the file
             line = "%s/%s:%s:%s" % ( package, category, package, version )
             f = open( name, "wb" )
             f.write( header )

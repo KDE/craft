@@ -143,9 +143,9 @@ class baseclass:
             exit( 1 )
 
     def execute( self, cmd=None ):
-        """called to run the derived class"""
-        """this will be executed from the package if the package is started on its own"""
-        """it shouldn't be called if the package is imported as a python module"""
+        """called to run the derived class
+        this will be executed from the package if the package is started on its own
+        it shouldn't be called if the package is imported as a python module"""
         utils.debug( "base exec called. args: %s" % sys.argv )
 
         if not cmd:
@@ -222,10 +222,10 @@ class baseclass:
             safePath = os.environ["PATH"]
             os.environ["PATH"] = os.path.join(self.rootdir, "dev-utils", "git", "bin") + ";" + safePath
             if os.path.exists( self.svndir ):
-                """if directory already exists, simply do a pull but obey to offline"""
+                # if directory already exists, simply do a pull but obey to offline
                 ret = self.msys.msysExecute( self.svndir, "git", "pull" )
             else:
-                """it doesn't exist so clone the repo"""
+                # it doesn't exist so clone the repo
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
                 repoString = utils.replaceGitUrl( repoString )
 
@@ -321,8 +321,8 @@ class baseclass:
         return True
 
     def manifest( self ):
-        """installer compatibility: make the manifest files that make up the installers"""
-        """install database"""
+        """installer compatibility: make the manifest files that make up the installers
+        install database"""
         if utils.verbose() > 1:
             print "base manifest called"
         utils.createManifestDir(self.imagedir, self.category, self.package, self.version )
@@ -335,8 +335,8 @@ class baseclass:
         return True
 
     def setDirectories( self ):
-        """setting all important stuff that isn't coped with in the c'tor"""
-        """parts will probably go to infoclass"""
+        """setting all important stuff that isn't coped with in the c'tor
+        parts will probably go to infoclass"""
         utils.debug( "setdirectories called", 1 )
 
         self.PV, dummyExt = os.path.splitext( os.path.basename( self.argv0 ) )
@@ -443,8 +443,8 @@ class baseclass:
         return self.kde.kdeTest()
 
     def doPackaging( self, pkg_name, pkg_version = str( datetime.date.today() ).replace('-', ''), packSources = True, special = False ):
-        """packaging according to the gnuwin32 packaging rules"""
-        """this requires the kdewin-packager"""
+        """packaging according to the gnuwin32 packaging rules
+        this requires the kdewin-packager"""
 
         # FIXME: add a test for the installer later
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )

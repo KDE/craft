@@ -24,8 +24,8 @@ class VersionSystemSourceBase (SourceBase):
         SourceBase.__init__(self, className)
 
     def getUrl( self, index ):
-        utils.trace( "VersionSystemSourceBase getUrl", 2 )
         """get the url at position 'index' from a ';' separated list of urls"""
+        utils.trace( "VersionSystemSourceBase getUrl", 2 )
         u = self.subinfo.svnTarget()
         if u.find(';') == -1:
             if index == 0:
@@ -41,15 +41,15 @@ class VersionSystemSourceBase (SourceBase):
         return u
 
     def splitUrl( self, url ):
-        utils.trace( "VersionSystemSourceBase splitUrl", 2 )
         """ split url into real url and url option. the delimiter is '#'"""
+        utils.trace( "VersionSystemSourceBase splitUrl", 2 )
         if url.find('#') != -1:
             return url.split('#')
         return [url, ""]
 
     def __repositoryBaseUrl( self ):
-        utils.trace( "VersionSystemSourceBase __repositoryBaseUrl", 2 )
         """ this function return the base url to the KDE repository """
+        utils.trace( "VersionSystemSourceBase __repositoryBaseUrl", 2 )
         # @todo move to SvnSource
         if ( os.getenv("KDESVNSERVER") == None ):
             server = "svn://anonsvn.kde.org"
@@ -77,8 +77,8 @@ class VersionSystemSourceBase (SourceBase):
         return True
 
     def repositoryUrlCount( self ):
-        utils.trace( "VersionSystemSourceBase repositoryUrlCount", 2 )
         """return the number of provided repository url's. Multiple repository urls' are delimited by ';'"""
+        utils.trace( "VersionSystemSourceBase repositoryUrlCount", 2 )
         if not self.subinfo.hasSvnTarget():
             return 0
         u = self.subinfo.svnTarget()
@@ -88,9 +88,9 @@ class VersionSystemSourceBase (SourceBase):
         return len(urls)
 
     def repositoryUrl( self, index=0 ):
-        utils.trace( "VersionSystemSourceBase repositoryUrl", 2 )
         """this function returns the full url into a version system based repository at position 'index'.
         See @ref repositoryUrlCount how to define multiple repository urls."""
+        utils.trace( "VersionSystemSourceBase repositoryUrl", 2 )
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
             (u, dummy) = self.splitUrl(u1)

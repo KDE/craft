@@ -13,16 +13,16 @@ import compiler
 from options import *
 
 class infoclass:
+    """this module contains the information class"""
     def __init__( self, RAW="" ):
-        """ """
         ### package options
         self.options = Options()
         self.targets = dict()
-        """Specifiy that the fetched source should be placed into a
-        subdirectory of the default source directory"""
+        # Specifiy that the fetched source should be placed into a
+        # subdirectory of the default source directory
         self.targetInstSrc = dict()
-        """Specifiy that the default source directory should have a suffix after
-        the package name. This is usefull for package which needs different sources."""
+        # Specifiy that the default source directory should have a suffix after
+        # the package name. This is usefull for package which needs different sources.
         self.targetSrcSuffix = dict()
         self.targetConfigurePath = dict()
         self.targetInstallPath = dict()
@@ -65,7 +65,7 @@ class infoclass:
 
         for x in RAW.splitlines():
             if not x == '':
-                """ if version is not available then set it as -1 """
+                # if version is not available then set it as -1
                 self.hardDependencies[ x ] = [ -1 ]
 
 

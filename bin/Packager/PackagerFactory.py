@@ -19,13 +19,14 @@ def init(packager, parent):
     return
 
 def PackagerFactory(parent, packagerType):
-    """ provides multi packager type api """
-    """ return PackagerBase derived instance for recent settings"""
+    """provides multi packager type api
+    return PackagerBase derived instance for recent settings"""
     utils.debug( "PackagerFactory called", 2 )
     packager = None
     packagers = []
 
     if packagerType != None:
+        # TODO: simplify
         if 'KDEWin' in packagerType or 'kdewin' in packagerType:
             packager = KDEWinPackager()
             init(packager, parent)

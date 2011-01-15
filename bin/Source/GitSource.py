@@ -176,8 +176,8 @@ class GitSource ( VersionSystemSourceBase ):
             return self.__fetchSingleBranch(repopath)
 
     def applyPatch(self, fileName, patchdepth):
-        utils.trace( 'GitSource ', 2 )
         """apply single patch o git repository"""
+        utils.trace( 'GitSource ', 2 )
         if fileName:
             patchfile = os.path.join ( self.packageDir(), fileName )
             if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
@@ -200,16 +200,17 @@ class GitSource ( VersionSystemSourceBase ):
         return True
 
     def createPatch( self ):
+        """create patch file from git source into the related package dir.
+        The patch file is named autocreated.patch"""
         utils.trace( 'GitSource createPatch', 2 )
-        """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
         ret = self.shell.execute( self.sourceDir(), "git", "diff --ignore-all-space > %s" % \
                 self.shell.toNativePath( os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) ) ) )
         return ret
 
     def sourceVersion( self ):
+        """return the revision returned by git show"""
         utils.trace( 'GitSource sourceVersion', 2 )
-        """ return the revision returned by git show """
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
         tmpFile = tempfile.TemporaryFile()
 

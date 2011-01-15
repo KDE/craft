@@ -40,8 +40,8 @@ class KDEWinPackager (PackagerBase):
 
     ## \todo rename to package()
     def createPackage(self):
-        """packaging according to the gnuwin32 packaging rules"""
-        """this requires the kdewin-packager"""
+        """packaging according to the gnuwin32 packaging rules.
+        This requires the kdewin-packager"""
 
         if not self.packager:
             utils.die("could not find kdewin-packager in your path!")

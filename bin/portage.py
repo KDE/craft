@@ -237,8 +237,8 @@ class Portage:
         return package in self.categories[ category ]
 
     def getAllPackages( self, category ):
-        """ returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory """
-        """ in case the category doesn't exist, nothing is returned """
+        """returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory
+        in case the category doesn't exist, nothing is returned"""
         if self.isCategory( category ):
             plist = copy.copy(self.categories[ category ])
             if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
@@ -668,13 +668,13 @@ def isInstalled( category, package, version, buildtype='' ):
             f.close()
 
     if ( not found ):
-        """ try to detect packages from the installer """
+        # try to detect packages from the installer
         binary = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-bin.ver"), category, package, version )
         lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.ver"), category, package, version )
         found = found or binary or lib
 
     if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or utils.isSourceOnly() ):
-        """ check for any installation """
+        # check for any installation
         if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             return False
         if package.endswith( "-src" ):

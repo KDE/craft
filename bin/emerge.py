@@ -570,10 +570,10 @@ deplist.reverse()
 # package[2] -> version
 
 if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
-    """ if a buildAction is given, then do not try to build dependencies
-        and do the action although the package might already be installed.
-        This is still a bit problematic since packageName might not be a valid
-        package"""
+    # if a buildAction is given, then do not try to build dependencies
+    # and do the action although the package might already be installed.
+    # This is still a bit problematic since packageName might not be a valid
+    # package
 
     if packageName and len( deplist ) >= 1:
         mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]

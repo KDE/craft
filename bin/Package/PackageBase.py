@@ -194,8 +194,8 @@ class PackageBase (EmergeBase):
         return True
 
     def manifest( self ):
-        """installer compatibility: make the manifest files that make up the installers"""
-        """install database"""
+        """installer compatibility: make the manifest files that make up the installers
+        install database"""
 
         utils.debug("base manifest called", 2)
         if not utils.hasManifestFile( self.mergeDestinationDir(), self.package ) or self.forceCreateManifestFiles:
@@ -231,9 +231,9 @@ class PackageBase (EmergeBase):
         return [command, options]
 
     def execute( self, cmd=None ):
-        """called to run the derived class"""
-        """this will be executed from the package if the package is started on its own"""
-        """it shouldn't be called if the package is imported as a python module"""
+        """called to run the derived class
+        this will be executed from the package if the package is started on its own
+        it shouldn't be called if the package is imported as a python module"""
 
         utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
         command, _ = self.getAction(cmd)
