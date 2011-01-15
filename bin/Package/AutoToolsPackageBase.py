@@ -2,7 +2,7 @@
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from Package.PackageBase import *
+from PackageBase import *
 from Source.MultiSource import *
 from BuildSystem.AutoToolsBuildSystem import *
 from Packager.KDEWinPackager import *

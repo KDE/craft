@@ -6,8 +6,8 @@
 
 import os
 import utils
-from BuildSystem.CMakeDependencies import *
-from BuildSystem.BuildSystemBase import *
+from CMakeDependencies import *
+from BuildSystemBase import *
 from graphviz import *
 
 class CMakeBuildSystem(BuildSystemBase):

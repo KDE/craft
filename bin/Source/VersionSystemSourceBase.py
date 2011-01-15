@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from Source.SourceBase import *
+from SourceBase import *
 import os
 
 class VersionSystemSourceBase (SourceBase):

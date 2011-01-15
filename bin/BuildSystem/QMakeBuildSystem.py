@@ -6,7 +6,7 @@
 import os
 import utils
 
-from BuildSystem.BuildSystemBase import *
+from BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self):
