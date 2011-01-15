@@ -273,7 +273,6 @@ def catpkgsplit(mydata, silent=1):
     """
 
     # Categories may contain a-zA-z0-9+_- but cannot start with -
-    global _valid_category
     #import portage_dep
     try:
         if not catcache[mydata]:
