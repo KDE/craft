@@ -9,7 +9,7 @@ import types
 import fileinput
 from _winreg import *
 
-class NSIPackagerLists:
+class NSIPackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
     @staticmethod
     def runtimeBlacklist():

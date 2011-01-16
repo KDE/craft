@@ -121,6 +121,7 @@ class XMLCreator(Visitor):
     """Visitor to create an XML representation of the dependency graph."""
 
     def __init__(self):
+        Visitor.__init__(self)
         self.nodes_so_far = {}
         self.ignored      = False
 

@@ -137,7 +137,7 @@ if _pywin32:
 
 globalVerboseLevel = int( os.getenv( "EMERGE_VERBOSE" ) )
 
-class Verbose:
+class Verbose(object):
     """
         This class will work on the overall output verbosity
         It defines the interface for the option parser but before the default
@@ -170,7 +170,7 @@ class Verbose:
 class Environment ( Verbose ):
     def __init__( self ):
         """ """
-#        Verbose.__init__( self )
+        Verbose.__init__( self )
         self.KDEROOT = os.getenv( "KDEROOT" )
         self.LOGFILE = os.getenv( "EMERGE_LOGFILE" )
         self.BUILDTYPE = os.getenv( "EMERGE_BUILDTYPE" )
