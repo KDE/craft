@@ -442,10 +442,8 @@ def getPackageInstance(category, package, buildtarget=None):
     return PortageInstance.getPackageInstance(category, package, buildtarget)
 
 def getDependencies( category, package, version, runtimeOnly=False ):
-    """
-    returns the dependencies of this package as list of strings:
-    category/package
-    """
+    """returns the dependencies of this package as list of strings:
+    category/package"""
     if not os.path.isfile( getFilename( category, package, version ) ):
         utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
 
@@ -491,7 +489,6 @@ def solveDependencies( category, package, version, depList, dep_type='both' ):
     return depList
 
 def printTargets( category, package, version ):
-    """ """
     targetsDict = PortageInstance.getAllTargets( category, package, version )
     defaultTarget = PortageInstance.getDefaultTarget( category, package, version )
     if 'svnHEAD' in targetsDict and not targetsDict['svnHEAD']:

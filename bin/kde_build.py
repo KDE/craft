@@ -34,7 +34,6 @@ class kde_interface:
         self.MAKE_PROGRAM = env[ "EMERGE_MAKE_PROGRAM" ]
 
     def setDirectories( self, rootdir, imagedir, workdir, instsrcdir, instdestdir, infoobject ):
-        """ """
         self.subinfo = infoobject
 
         if self.COMPILER   == "msvc2005" or self.COMPILER == "msvc2008" or self.COMPILER == "msvc2010":

@@ -76,20 +76,17 @@ class infoclass:
         self.setBuildTarget()
         self.setBuildOptions()
 
-    # abstract method for setting dependencies, override to set individual targets
     def setDependencies( self ):
-        """ """
+        """default method for setting dependencies, override to set individual targets"""
 
-    # abstract method for setting targets, override to set individual targets
     def setTargets( self ):
-        """ """
+        """default method for setting targets, override to set individual targets"""
 
-    # abstract method for setting svn targets, override to set individual targets
     def setSVNTargets( self ):
-        """ """
+        """default method for setting svn targets, override to set individual targets"""
 
-    # setup current build target
     def setBuildTarget( self, buildTarget = None):
+        """setup current build target"""
         self.buildTarget = self.defaultTarget
         if not buildTarget == None:
             self.buildTarget = buildTarget
@@ -99,13 +96,13 @@ class infoclass:
             self.buildTarget = self.defaultTarget
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()), 1)
 
-    # abstract method for setting build options, override to set individual targets
     def setBuildOptions( self ):
+        """abstract method for setting build options, override to set individual targets"""
         self.disableHostBuild = False
         self.disableTargetBuild = False
 
-    # return archive file based package url
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None ):
+        """return archive file based package url"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
         arch = ""
@@ -172,8 +169,8 @@ example:
             ret.append(self.targetDigests[key])
         return ret
 
-    #return archive file based package url for unified packages
     def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None):
+        """return archive file based package url for unified packages"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
         arch = ""
@@ -184,8 +181,8 @@ example:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
-    #returns a package url for multiple files from the same base url
     def getPackageList( self, baseUrl, files ):
+        """returns a package url for multiple files from the same base url"""
         # TODO: replace the entire function by
         # return '\n'.join(baseUrl + '/' + fileName)
         retFiles = ""
@@ -193,22 +190,22 @@ example:
             retFiles += baseUrl+'/'+fileName+'\n'
         return retFiles
 
-    # return true if archive targets for the currently selected build target is available
     def hasTarget( self ):
+        """return true if archive targets for the currently selected build target is available"""
         return self.buildTarget in self.targets.keys()
 
-    # return archive target
     def target( self ):
+        """return archive target"""
         if self.buildTarget in self.targets.keys():
             return self.targets[self.buildTarget]
         return ""
 
-    # return true if version system based target for the currently selected build target is available
     def hasSvnTarget( self ):
+        """return true if version system based target for the currently selected build target is available"""
         return self.buildTarget in self.svnTargets.keys()
 
-    # return version system based target for the currently selected build target
     def svnTarget( self ):
+        """return version system based target for the currently selected build target"""
         if self.buildTarget in self.svnTargets.keys():
             return self.svnTargets[self.buildTarget]
         return ""
