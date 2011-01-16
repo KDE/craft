@@ -10,9 +10,9 @@ import fileinput
 from _winreg import *
 
 class NSIPackagerLists:
-    """ This class provides some classmethods that can be used as pre defined black or whitelists """
-    @classmethod
-    def runtimeBlacklist( self ):
+    """ This class provides some staticmethods that can be used as pre defined black or whitelists """
+    @staticmethod
+    def runtimeBlacklist():
         blacklisted = [ "include\\.*",
                         "lib\\\\.*\.lib",
                         "lib\\\\.*\.dll\.a",
@@ -28,12 +28,12 @@ class NSIPackagerLists:
                 utils.debug( "%s is not a valid regexp" % line, 1 )
         return ret
 
-    @classmethod
-    def defaultWhitelist( self ):
+    @staticmethod
+    def defaultWhitelist():
         return [ re.compile( ".*" ) ]
 
-    @classmethod
-    def defaultBlacklist( self ):
+    @staticmethod
+    def defaultBlacklist():
         return []
 
 
