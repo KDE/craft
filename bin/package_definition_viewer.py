@@ -125,8 +125,9 @@ class XmlPackager:
                 package.description = self._checkTag( element.getElementsByTagName( 'description' )[0] )
             if len( element.getElementsByTagName( 'shortDescription' ) ) > 0:
                 package.shortDescription = self._checkTag( element.getElementsByTagName( 'shortDescription' )[0] )
-            for i in range( len( element.getElementsByTagName( 'ignore' ) ) ):
-                package.addIgnore( self._checkTag( element.getElementsByTagName( 'ignore' )[i] ) )
+# TODO: This code can not execute because package of type SinglePackage has no attribute addIgnore
+#            for i in range( len( element.getElementsByTagName( 'ignore' ) ) ):
+#                package.addIgnore( self._checkTag( element.getElementsByTagName( 'ignore' )[i] ) )
             for part in element.getElementsByTagName( 'part' ):
                 package.partList.append(self._checkTag(part))
             self.packageList.append( package )
