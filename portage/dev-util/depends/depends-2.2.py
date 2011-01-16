@@ -5,7 +5,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         arch = "x86"
         if emergePlatform.buildArchitecture() == "x64":
-		  arch = "x64"
+            arch = "x64"
         self.targets['2.2'] = 'http://www.dependencywalker.com/depends22_'+arch+'.zip'
         self.defaultTarget = '2.2'
         # the zip file does not have a bin dir, so we have to create it

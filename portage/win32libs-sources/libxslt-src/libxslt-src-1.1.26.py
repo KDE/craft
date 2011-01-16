@@ -31,7 +31,7 @@ class Package( CMakePackageBase ):
     def createPackage( self ):
         libName="libxslt"
         self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports	
+        # auto-create both import libs with the help of pexports
         self.createImportLibs( libName )
         return CMakePackageBase.createPackage( self )
 

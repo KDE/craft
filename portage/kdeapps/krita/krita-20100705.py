@@ -18,7 +18,7 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-		defines = ""
+        defines = ""
         defines += "-DBUILD_karbon=OFF "
         defines += "-DBUILD_kpresenter=OFF "
         defines += "-DBUILD_kchart=OFF "
@@ -32,7 +32,7 @@ class Package( CMakePackageBase ):
         defines += "-DBUILD_kspread=OFF "
         defines += "-DBUILD_doc=OFF "
 
-		self.subinfo.options.configure.defines = defines
+        self.subinfo.options.configure.defines = defines
 
 if __name__ == '__main__':
     Package().execute()

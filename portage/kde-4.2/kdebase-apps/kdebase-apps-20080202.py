@@ -33,6 +33,6 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         return self.doPackaging( "kdebase-apps", self.buildTarget, True )
-		
+
 if __name__ == '__main__':
     subclass().execute()

@@ -59,6 +59,6 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         return self.doPackaging( "kspread", "1.95-1", True )
-		
+
 if __name__ == '__main__':
     subclass().execute()

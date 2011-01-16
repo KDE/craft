@@ -6,9 +6,9 @@ import compiler
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-		# will be moved to kdewin-qt
+        # will be moved to kdewin-qt
         self.dependencies['libs/qt'] = 'default'
-		# will be moved to kdewin-tools
+        # will be moved to kdewin-tools
         self.dependencies['win32libs-bin/zlib'] = 'default'
         self.dependencies['win32libs-bin/libpng'] = 'default'
 
@@ -40,7 +40,7 @@ class Package(CMakePackageBase):
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
         self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
-			
+
     def make(self ):
         if self.isTargetBuild():
             os.environ["TARGET_INCLUDE"] = "%s;%s" % (os.path.join(self.mergeDestinationDir(), "include", "wcecompat"), os.getenv("TARGET_INCLUDE"))

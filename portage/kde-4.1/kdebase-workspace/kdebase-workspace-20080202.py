@@ -60,6 +60,6 @@ class subclass(base.baseclass):
         else:
             return self.doPackaging( "kdebase-workspace", os.path.basename(sys.argv[0]).replace("kdebase-workspace-", "").replace(".py", ""), True )
 
-		
+
 if __name__ == '__main__':
     subclass().execute()

@@ -161,11 +161,11 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-qt-style-windowsxp -qt-style-windowsvista "
             command += "-qt-libpng -qt-libjpeg -qt-libtiff "
 
-	# WebKit won't link properly with LTCG in a 32-bit MSVC environment
-	if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008():
-	  command += "-no-ltcg "
-	else:
-	  command += "-ltcg "
+        # WebKit won't link properly with LTCG in a 32-bit MSVC environment
+        if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008():
+            command += "-no-ltcg "
+        else:
+            command += "-ltcg "
 
         # all builds
         command += "-no-phonon "

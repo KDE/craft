@@ -37,6 +37,6 @@ class subclass(base.baseclass):
         else:
             return self.doPackaging( "kdebase-apps", os.path.basename(sys.argv[0]).replace("kdebase-apps-", "").replace(".py", ""), True )
 
-		
+
 if __name__ == '__main__':
     subclass().execute()

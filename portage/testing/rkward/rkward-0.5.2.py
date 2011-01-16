@@ -32,7 +32,7 @@ class subclass(base.baseclass):
         return os.path.join (self.svndir, "rkward")
 
     def unpack( self ):
-        utils.cleanDirectory( self.workdir )	# side-effect of creating the dir, if needed
+        utils.cleanDirectory( self.workdir ) # side-effect of creating the dir, if needed
         return True
 
     def compile( self ):

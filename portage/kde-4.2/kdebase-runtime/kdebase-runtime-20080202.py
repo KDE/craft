@@ -34,6 +34,6 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         return self.doPackaging( "kdebase-runtime", self.buildTarget, True )
-		
+
 if __name__ == '__main__':
     subclass().execute()

@@ -30,7 +30,7 @@ class Package( CMakePackageBase ):
         defines += "-DBUILD_kword=OFF "
 #        defines += "-DBUILD_kspread=OFF "
         defines += "-DBUILD_doc=OFF "
-		self.subinfo.options.configure.defines = defines
+        self.subinfo.options.configure.defines = defines
 
 if __name__ == '__main__':
     Package().execute()

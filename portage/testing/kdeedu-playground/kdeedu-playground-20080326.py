@@ -30,6 +30,6 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         return self.doPackaging( "kdeedu-playground", "20080326", True )
-		
+
 if __name__ == '__main__':
     subclass().execute()

@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-	self.hardDependencies['win32libs-bin/sqlite'] = 'default'
+        self.hardDependencies['win32libs-bin/sqlite'] = 'default'
         self.hardDependencies['enterprise4/kdebase-runtime-branch'] = 'default'
         self.hardDependencies['contributed/libassuan-src'] = 'default'
 
@@ -37,6 +37,6 @@ class subclass(base.baseclass):
             return self.doPackaging( "kdepim-enterprise4", self.buildTarget, True )
         else:
             return self.doPackaging( "kdepim-enterprise4", os.path.basename(sys.argv[0]).replace("kdepim-", "").replace(".py", ""), True )
-		
+
 if __name__ == '__main__':
     subclass().execute()
