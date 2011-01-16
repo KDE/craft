@@ -5,6 +5,9 @@
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 
+# pylint: disable=R0201,W0511
+# we want no warnings here, this is deprecated anyway
+
 import sys
 import os
 
@@ -52,26 +55,32 @@ EMERGE_MAKE_PROGRAM = os.getenv( "EMERGE_MAKE_PROGRAM" )
 
 
 class baseclass:
-# methods of baseclass:
-# __init__                   the baseclass constructor
-# execute                    called to run the derived class
-# fetch                      getting the package
-# unpack                     unpacking the source package
-# configure                  configure the package
-# make                       make the package
-# compile                    compiling (configure + make) the package
-# install                    installing the files into the normal
-# qmerge                     mergeing the local directory to the kderoot
-# unmerge                    unmergeing the local directory again
-# manifest                   getting the headers
-# make_package               overload this function to make the packages themselves
-# setDirectories
-# svnFetch                   getting sources from a custom repo url
-# doPackaging
-# createImportLibs           creating import libs for mingw and msvc
-# stripLibs                  stripping libs
-# system                     instead of using the os.system command, please use this one - it makes later changes easier
+    """
+    According to Patrick Spendrin:
+    this is deprecated code, it should be updated as soon as anyone
+    touches it (baseclass should become one of BinaryPackageBase,
+    CMakePackageBase etc.)
 
+    methods of baseclass:
+     __init__                   the baseclass constructor
+     execute                    called to run the derived class
+     fetch                      getting the package
+     unpack                     unpacking the source package
+     configure                  configure the package
+     make                       make the package
+     compile                    compiling (configure + make) the package
+     install                    installing the files into the normal
+     qmerge                     mergeing the local directory to the kderoot
+     unmerge                    unmergeing the local directory again
+     manifest                   getting the headers
+     make_package               overload this function to make the packages themselves
+     setDirectories
+     svnFetch                   getting sources from a custom repo url
+     doPackaging
+     createImportLibs           creating import libs for mingw and msvc
+     stripLibs                  stripping libs
+     system                     instead of using the os.system command, please use this one - it makes later changes easier
+    """
 
     def __init__( self, SRC_URI="", **args ):
         """ the baseclass constructor
@@ -215,6 +224,9 @@ class baseclass:
             return utils.getFiles( "", self.downloaddir )
 
     def git_unpack( self, repoString ):
+        raise Exception('This function is deprecated. It calls undefined utils.replaceGitUrl.')
+        # pylint: disable=W0101
+        # pylint should not warn about unreachable code here
         svndir = os.path.join( self.downloaddir, "svn-src" )
 
         ret = True
@@ -227,7 +239,7 @@ class baseclass:
             else:
                 # it doesn't exist so clone the repo
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                repoString = utils.replaceGitUrl( repoString )
+                # TODO: This fails: repoString = utils.replaceGitUrl( repoString )
 
                 repoUrl = utils.splitGitUrl( repoString )[0]
                 ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
@@ -243,6 +255,9 @@ class baseclass:
 
     def unpack( self ):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
+        raise Exception('This function is deprecated. It calls undefined utils.applyPatches.')
+        # pylint: disable=W0101
+        # pylint should not warn about unreachable code here
 
         utils.debug( "base unpack called", 1 )
 
@@ -254,9 +269,9 @@ class baseclass:
 
         if not utils.unpackFiles( self.downloaddir, self._filenames, self.workdir ):
             return False
-        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
-            srcdir = os.path.join ( self.workdir, self.instsrcdir )
-            return utils.applyPatches(srcdir, self.subinfo.patchToApply[self.subinfo.buildTarget])
+        # if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
+        #     srcdir = os.path.join ( self.workdir, self.instsrcdir )
+        #     TODO: this would fail return utils.applyPatches(srcdir, self.subinfo.patchToApply[self.subinfo.buildTarget])
         return True
 
     def compile( self ):
@@ -561,7 +576,8 @@ def main():
         print "DOWNLOADDIR: ", DOWNLOADDIR
         print "KDESVNDIR:   ", KDESVNDIR
         print "KDESVNSERVER:", KDESVNSERVER
-        print "MSYSDIR:", MSYSDIR
+# this would fail, MSYSDIR undefined. But this module is deprecated anyway.
+#       print "MSYSDIR:", MSYSDIR
 
     test = baseclass()
     test.system( "dir" )
