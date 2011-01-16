@@ -181,7 +181,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if not self.noFast:
             fastString = "/fast"
 
-        if self.subinfo.options.install.useMakeToolForInstall == True:
+        if self.subinfo.options.install.useMakeToolForInstall:
             if self.compiler() == "msvc2008" and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 if self.isTargetBuild():
                     command = "vcbuild INSTALL.vcproj \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % self.buildType()
@@ -197,7 +197,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.system( command, "install" )
 
-        if self.subinfo.options.install.useMakeToolForInstall == True and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+        if self.subinfo.options.install.useMakeToolForInstall and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
             utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
         return True
 

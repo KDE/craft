@@ -7,7 +7,8 @@ class kde_interface:
     def __init__( self, env = dict( os.environ ) ):
         # TODO: env as argument is never used, eliminate
         for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER",
-                    "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN", "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
+                    "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN",
+                    "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
             if not key in env.keys():
                 env[ key ] = None
         self.COMPILER            = env[ "KDECOMPILER" ]

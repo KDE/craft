@@ -662,7 +662,8 @@ def unmergeFileList( rootdir, fileList, forced = False ):
                 debug( "deleting file %s" % os.path.join( rootdir, os.path.normcase( filename ) ) )
                 os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
             else:
-                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.join( rootdir, os.path.normcase( filename ) ), currentHash, filehash ) )
+                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                        ( os.path.join( rootdir, os.path.normcase( filename ) ), currentHash, filehash ) )
                 if forced:
                     os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
@@ -706,7 +707,8 @@ def unmerge( rootdir, package, forced = False ):
                                 debug( "deleting file %s" % a )
                                 os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                             else:
-                                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % ( os.path.normcase( a ), currentHash, b ) )
+                                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                                        ( os.path.normcase( a ), currentHash, b ) )
                                 if forced:
                                     os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
                         elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):

@@ -158,7 +158,8 @@ file collection process is skipped, and only the installer is generated.
             ( category, package, version, defaultTarget ) = x.ident()
             defaultTarget = portage.findPossibleTargets( category, package, version )
             _package = portage.getPackageInstance( category, package, defaultTarget )
-            imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ), self.__imageDirPattern( _package, defaultTarget ) ), _package.subinfo.options.merge.destinationPath ) )
+            imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ),
+                    self.__imageDirPattern( _package, defaultTarget ) ), _package.subinfo.options.merge.destinationPath ) )
             # this loop collects the files from all image directories
         return imageDirs
 

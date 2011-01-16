@@ -197,7 +197,8 @@ class KDEWinCreator( Visitor ):
             if node.category in [ "kdesupport", "libs" ] and node not in self.cats[ "kdesupport" ]:
                 self.cats[ "kdesupport" ].append( node )
                 return None
-            elif node.category.startswith( "kde" ) and node.category != "kdesupport" or node.category in [ "extragear", "kdeapps" ] and node not in self.cats[ "KDE" ]:
+            elif node.category.startswith( "kde" ) and node.category != "kdesupport" \
+                    or node.category in [ "extragear", "kdeapps" ] and node not in self.cats[ "KDE" ]:
                 self.cats[ "KDE" ].append( node )
                 return None
             elif node.category == "data" and node not in self.cats[ "data" ]:

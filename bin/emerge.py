@@ -526,7 +526,8 @@ if updateAll:
     for mainCategory, mainPackage, mainVersion in installedPackages:
         if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
             continue
-        if portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType ) and portage.isPackageUpdateable( mainCategory, mainPackage, mainVersion ):
+        if portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType ) \
+                and portage.isPackageUpdateable( mainCategory, mainPackage, mainVersion ):
             categoryList.append( mainCategory )
             packageList.append( mainPackage )
     utils.debug( "Will update packages: " + str (packageList), 1 )

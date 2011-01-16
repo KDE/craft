@@ -209,7 +209,8 @@ class XmlPackager:
                 if len( part.ignoreFileList ) == 0:
                     print package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), 'files'
                 else:
-                    print package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), 'files, ignoring', len( package.ignoreFileList ), 'files'
+                    print package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), \
+                            'files, ignoring', len( package.ignoreFileList ), 'files'
 
     def printList( self, name="" ):
         for package in self.packageList:

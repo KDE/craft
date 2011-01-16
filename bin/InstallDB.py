@@ -259,7 +259,8 @@ class InstallDB:
                 packageObject.install()
                 if emergePlatform.isCrossCompilingEnabled():
                     targetObject = self.addInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
-                    targetObject.addFiles( utils.getFileListFromManifest( os.path.join( os.getenv( "KDEROOT" ), os.getenv( "EMERGE_TARGET_PLATFORM" ) ), package ) )
+                    targetObject.addFiles( utils.getFileListFromManifest( os.path.join( os.getenv( "KDEROOT" ),
+                            os.getenv( "EMERGE_TARGET_PLATFORM" ) ), package ) )
                     targetObject.install()
                 # check PackageBase.mergeDestinationDir() for further things regarding the import from other prefixes
 

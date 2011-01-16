@@ -116,7 +116,8 @@ class KDEWinPackager (PackagerBase):
                     if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) ):
                         if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
                             symFilename = fileName[:-4] + ".sym"
-                            utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) + " " + os.path.join( path, fileName ) )
+                            utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) \
+                                    + " " + os.path.join( path, fileName ) )
                             # utils.system( "strip --strip-all " + os.path.join( path, fileName ) )
                             utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
                     elif ( fileName.endswith( ".pdb" ) ):
@@ -132,10 +133,12 @@ class KDEWinPackager (PackagerBase):
                   ( pkgName, self.imageDir(), pkgVersion, dstpath, srcCmd, symCmd )
         xmltemplate = self.xmlTemplate()
         if os.path.exists(xmltemplate):
-            cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + \
+                    "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating", 1)
         else:
-            cmd = self.packager + " " + cmd + " -verbose -notes " + "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
+            cmd = self.packager + " " + cmd + " -verbose -notes " + \
+                    "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate, 1)
 
         if( self.subinfo.options.package.withCompiler ):

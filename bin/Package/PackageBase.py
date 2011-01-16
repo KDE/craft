@@ -105,7 +105,8 @@ class PackageBase (EmergeBase):
             if isDBEnabled():
                 if emergePlatform.isCrossCompilingEnabled():
                     if self.isTargetBuild():
-                        package = installdb.addInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ), ignoreInstalled )
+                        package = installdb.addInstalled( self.category, self.package, self.version,
+                                os.getenv( "EMERGE_TARGET_PLATFORM" ), ignoreInstalled )
                     else:
                         package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
                     package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
@@ -242,15 +243,18 @@ class PackageBase (EmergeBase):
         #    self.runAction(command)
         #    os.environ["EMERGE_BUILDTYPE"] = oldBuildType
         #else:
-        if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
+        if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
+                or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
             print "target ignored for this build type"
             return False
 
-        if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild and not command == "fetch" and not command == "unpack":
+        if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild \
+                and not command == "fetch" and not command == "unpack":
             utils.debug( "host build disabled, skipping host build", 1 )
             return True
 
-        if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild() and self.subinfo.disableTargetBuild and not command == "fetch" and not command == "unpack":
+        if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild() and self.subinfo.disableTargetBuild \
+                and not command == "fetch" and not command == "unpack":
             utils.debug( "target build disabled, skipping target build", 1 )
             return True
 

@@ -667,8 +667,10 @@ def isInstalled( category, package, version, buildtype='' ):
 
     if ( not found ):
         # try to detect packages from the installer
-        binary = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-bin.ver"), category, package, version )
-        lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest", package + "-" + version + "-lib.ver"), category, package, version )
+        binary = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest",
+                package + "-" + version + "-bin.ver"), category, package, version )
+        lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest",
+                package + "-" + version + "-lib.ver"), category, package, version )
         found = found or binary or lib
 
     if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or utils.isSourceOnly() ):

@@ -71,7 +71,8 @@ class HgSource ( VersionSystemSourceBase ):
         ret = False
         if self.enableHg:
             os.chdir( self.sourceDir() )
-            ret = self.system( self.sourceDir(), "hg diff > %s" % os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
+            ret = self.system( self.sourceDir(), "hg diff > %s" % os.path.join( self.packageDir(), "%s-%s.patch" % \
+                    ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
         return ret
 
     def sourceVersion( self ):
