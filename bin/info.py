@@ -97,7 +97,7 @@ class infoclass:
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()), 1)
 
     def setBuildOptions( self ):
-        """abstract method for setting build options, override to set individual targets"""
+        """default method for setting build options, override to set individual targets"""
         self.disableHostBuild = False
         self.disableTargetBuild = False
 
