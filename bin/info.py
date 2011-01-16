@@ -105,7 +105,9 @@ class infoclass:
         self.disableTargetBuild = False
 
     # return archive file based package url
-    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
+    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None ):
+        if packagetypes is None:
+            packagetypes = ['bin', 'lib']
         arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch = "-x64"
@@ -126,7 +128,7 @@ class infoclass:
             ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
-    def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ): # pylint: disable=W0613
+    def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=None ): # pylint: disable=W0613
         """ return archive file based package digests relating to info.infoclass.packageUrls()
 
 The expected digest keys are build in the form <version>[<architecture>]-<compiler>-<packagetype> where
@@ -147,6 +149,8 @@ example:
     self.targetDigests['2.4.2-3'] = self.packageDigests("fontconfig", "2.4.2-3")
 
         """
+        if packagetypes is None:
+            packagetypes = ['bin', 'lib']
         arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch = "-x64"
@@ -169,7 +173,9 @@ example:
         return ret
 
     #return archive file based package url for unified packages
-    def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=['bin', 'lib'] ):
+    def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None):
+        if packagetypes is None:
+            packagetypes = ['bin', 'lib']
         arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch = "-x64"

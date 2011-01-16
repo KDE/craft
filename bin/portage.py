@@ -97,9 +97,10 @@ class DependencyPackage:
                 children.append( p )
         return children
 
-    def getDependencies( self, depList = [], dep_type="both" ):
+    def getDependencies( self, depList=None, dep_type="both" ):
         """ returns all dependencies """
-
+        if depList is None:
+            depList = []
         if dep_type == "runtime":
             children = self.runtimeChildren
         elif dep_type == "buildtime":
