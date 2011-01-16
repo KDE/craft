@@ -115,15 +115,3 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """running unittests"""
         return True
 
-    def createShell( self ):
-        """create shell in package build dir with prepared environment"""
-
-        if self.buildInSource:
-            self.enterSourceDir()
-            self.shell.openShell(self.sourceDir())
-        else:
-            self.enterBuildDir()
-            self.shell.openShell(self.buildDir())
-        return True
-
-
