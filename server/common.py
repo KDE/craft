@@ -51,7 +51,7 @@ class Settings:
         if self.enabled and self.parser.has_option( 'General', keyname ):
             try:
                 result = self.parser.getboolean( 'General', keyname )
-            except:
+            except ConfigParser.error:
                 result = False
             return result
         else:
