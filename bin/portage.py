@@ -18,7 +18,7 @@ ROOTDIR = os.getenv( "KDEROOT" )
 modDict = dict()
 packageDict = dict()
 
-def __import__( module ):
+def __import__( module ): # pylint: disable=W0622
     utils.debug( "module to import: %s" % module, 2 )
     if not os.path.isfile( module ):
         try:
