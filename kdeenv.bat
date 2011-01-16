@@ -46,8 +46,9 @@ rem     the variable being interpreted as the closing block parenthesis...
 if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
 if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
-if exist %~dp0\..\etc\kdesettings.bat (
-call %~dp0\..\etc\kdesettings.bat %BUILDTYPE%
+rem use local python installation if present
+if exist %~dp0emerge\python (
+    set PYTHONPATH=%~dp0emerge\python
 )
 
 if exist %~dp0\etc\kdesettings.bat (
@@ -79,6 +80,11 @@ set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 
 rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
+
+rem for python
+if NOT %PYTHONPATH% == "" ( 
+   set PATH=%PYTHONPATH%;!PATH!
+)
 
 if "%EMERGE_USE_CCACHE%" == "True" (
     echo EMERGE_USE_CCACH is active to use it "set EMERGE_MAKE_PROGRAM=jom /E" or "set EMERGE_MAKE_PROGRAM=mingw32-make -e"

@@ -49,8 +49,9 @@ rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
 rem settings of Windows. In case python is distributed with emerge the 
 rem following setting is not used. 
-set PYTHONPATH="%PROGRAM_FILES%\python27"
-
+if %PYTHONPATH% == "" ( 
+    set PYTHONPATH="%PROGRAM_FILES%\python27"
+)
 rem Here you set the path to msys if you want to compile
 rem automake-based projects (only needed for some internal packages).
 set MSYSDIR=%KDEROOT%\msys
@@ -267,19 +268,6 @@ if %EMERGE_USE_SHORT_PATH% == 1 (
     set KDESVNDIR=%EMERGE_SVN_DRIVE%\
     set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
     %EMERGE_ROOT_DRIVE%
-)
-
-rem use local python installation if present
-if exist %KDEROOT%\emerge\python (
-    set PYTHONPATH=%KDEROOT%\emerge\python
-) else (
-    if %PYTHONPATH% == "" ( 
-       echo Couldn't find local python installation - please set PYTHONPATH in %KDEROOT%\etc\kdesettings.bat ! 
-    )
-)
-
-if NOT %PYTHONPATH% == "" ( 
-    set PATH=%PYTHONPATH%;!PATH!
 )
 
 echo kdesettings.bat executed
