@@ -133,13 +133,14 @@ def main():
     a = CMakeDependencies()
     a.parse(directory)
     title = ''
-    if sys.argc >= 3:
+    argc = len(sys.argv)
+    if argc >= 3:
         title = sys.argv[2]
     baseDir = None
-    if sys.argc >= 4:
+    if argc >= 4:
         baseDir = sys.argv[3]
     outFile = None
-    if sys.argc >= 5:
+    if argc >= 5:
         outFile = sys.argv[4]
 
     a.toDot(title, baseDir, outFile)
