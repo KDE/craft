@@ -10,16 +10,16 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
+        self.buildDependencies['win32libs-bin/chm'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
-        self.runtimeDependencies['kde-4.6/kdebase-runtime'] = 'default'
         self.dependencies['kde-4.6/kdelibs'] = 'default'
+        self.runtimeDependencies['kde-4.6/kdebase-runtime'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['win32libs-bin/ebook-tools'] = 'default'
         self.dependencies['win32libs-bin/libspectre'] = 'default'
         self.dependencies['win32libs-bin/expat'] = 'default'
         self.dependencies['win32libs-bin/tiff'] = 'default'
         self.dependencies['win32libs-bin/exiv2'] = 'default'
-        self.dependencies['win32libs-bin/chm'] = 'default'
         self.dependencies['win32libs-bin/djvu'] = 'default'
         self.dependencies['win32libs-bin/lcms'] = 'default'
 
