@@ -11,6 +11,10 @@ class MultiSource(object):
     def __init__(self):
         object.__init__(self)
         utils.trace( "MultiSource __init__", 2 )
+        # pylint: disable=E1101
+        # multiple inheritance: MultiSource is never the only
+        # superclass, others define self.source, self.subinfo etc.
+        # TODO: This code should mostly be in the class defining self.source etc.
         self.source = SourceFactory(self.subinfo)
         self.source.localFileNames = self.localFileNames.__get__(self, MultiSource)
         self.source.category = self.category
@@ -32,6 +36,9 @@ class MultiSource(object):
 
     def unpack(self):
         utils.trace( "MultiSource unpack", 2 )
+        # pylint: disable=E1101
+        # multiple inheritance: MultiSource is never the only
+        # superclass, others define self.buildSystemType.
         self.source.buildSystemType = self.buildSystemType
         return self.source.unpack()
 

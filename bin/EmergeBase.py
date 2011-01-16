@@ -311,6 +311,9 @@ class EmergeBase(object):
         ## \todo replace self.buildTarget by self.buildTarget()
         self.buildTarget = self.subinfo.buildTarget
         if hasattr(self,'source'):
+            # pylint: disable=E1101
+            # this class never defines self.source, that happens only
+            # in MultiSource.
             self.source.buildTarget = self.subinfo.buildTarget
 
     def setup( self, fileName=None, category=None, package=None, version=None, buildTarget=None):

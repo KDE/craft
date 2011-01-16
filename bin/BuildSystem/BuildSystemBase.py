@@ -69,6 +69,9 @@ class BuildSystemBase(EmergeBase):
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""
+        # pylint: disable=E1101
+        # this class never defines self.source, that happens only
+        # in MultiSource.
         if hasattr(self,'source'):
             sourcedir = self.source.sourceDir()
         else:
