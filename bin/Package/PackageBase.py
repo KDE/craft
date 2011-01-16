@@ -262,25 +262,30 @@ class PackageBase (EmergeBase):
         return True
 
     def runAction( self, command ):
-        ok = True
-        if command   == "fetch":       ok = self.fetch()
-        elif command == "cleanimage":  ok = self.cleanImage()
-        elif command == "cleanbuild":  ok = self.cleanBuild()
-        elif command == "cleanallbuilds":  ok = self.cleanAllBuilds()
-        elif command == "unpack":      ok = self.unpack()
-        elif command == "compile":     ok = self.compile()
-        elif command == "configure":   ok = self.configure()
-        elif command == "make":        ok = self.make()
-        elif command == "install":     ok = self.install()
-        elif command == "test":        ok = self.unittest()
-        elif command == "qmerge":      ok = self.qmerge()
-        elif command == "unmerge":     ok = self.unmerge()
-        elif command == "manifest":    ok = self.manifest()
-        elif command == "package":     ok = self.createPackage()
-        elif command == "createpatch": ok = self.createPatch()
-        elif command == "printrev":    ok = self.sourceVersion()
-        elif command == "checkdigest": ok = self.checkDigest()
-        elif command == "dumpdeps":    ok = self.dumpDependencies()
+        """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
+        then we get by without this dict: 
+            ok = getattr(self, 'cmd' + command.capitalize()()
+        next we could """
+        functions = {"fetch":          "fetch",
+                     "cleanimage":     "cleanImage",
+                     "cleanbuild":     "cleanBuild",
+                     "cleanallbuilds": "cleanAllBuilds",
+                     "unpack":         "unpack",
+                     "compile":        "compile",
+                     "configure":      "configure",
+                     "make":           "make",
+                     "install":        "install",
+                     "test":           "unittest",
+                     "qmerge":         "qmerge",
+                     "unmerge":        "unmerge",
+                     "manifest":       "manifest",
+                     "package":        "createPackage",
+                     "createpatch":    "createPatch",
+                     "printrev":       "sourceVersion",
+                     "checkdigest":    "checkDigest",
+                     "dumpdeps":       "dumpDependencies"}
+        if command in functions:
+            ok = getattr(self, functions[command])()
         else:
             ok = utils.error( "command %s not understood" % command )
 
