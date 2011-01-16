@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.4.4'] = 'bde1d4713a86b6256ce2d14e6de6326e52c4da44'
         self.targetDigests['0.4.6'] = '52e7e68590fbcd835bc4a2eceb51e672641efb69'
         self.targetDigests['0.4.7'] = '5e31736ff906e745e6da508828685d8389e37954'
+        self.patchToApply['0.4.7'] = [("libssh-0.4.7-20110116.diff", 1)]
 
         self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh/libssh.git"
         self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh/libssh.git|v0-4"
