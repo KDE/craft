@@ -70,6 +70,7 @@ file collection process is skipped, and only the installer is generated.
 """
     def __init__( self, whitelists = [ NSIPackagerLists.defaultWhitelist ], blacklists = [ NSIPackagerLists.defaultBlacklist ] ):
         PackagerBase.__init__( self, "NullsoftInstallerPackager" )
+        self.nsisInstallPath = None
         self.isInstalled = self.__isInstalled()
         if not self.isInstalled:
             utils.warning( "could not find installed nsis package, you may download and install it from http://sourceforge.net/projects/nsis/" )
