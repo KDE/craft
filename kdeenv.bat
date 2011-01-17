@@ -97,10 +97,10 @@ if "%EMERGE_USE_CCACHE%" == "True" (
     set CC=ccache gcc
 )
 
-if "%KDECOMPILER%" == mingw ( 
+if "%KDECOMPILER%" == "mingw" ( 
     call :path-mingw
 ) else (
-    if "%KDECOMPILER%" == mingw4 ( 
+    if "%KDECOMPILER%" == "mingw4" ( 
         call :path-mingw
     ) else ( 
         call :path-msvc 
