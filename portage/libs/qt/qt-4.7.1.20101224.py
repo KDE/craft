@@ -72,7 +72,8 @@ class subinfo(info.infoclass):
             ('patches/4.7/fix-QSortFilterProxyModel.patch', 1),
             ('patches/4.7/Repaint-when-text-color-changes.patch', 1),
             ('patches/4.7/fix-map-to-global-calculations.patch', 1),
-            ('patches/4.7/fix-widget-creation.patch', 1) ]
+            ('patches/4.7/fix-widget-creation.patch', 1),
+            ('patches/4.7/qml_allow_overloaded_methods.patch', 1) ]
         self.patchToApply['wince-4.7'] =  winceVersionIndependentPatches + [
             ('patches/4.7/Override-new-in-qt-dlls-for-4-7-branch.patch', 1),
             ('patches/4.7/Replace-qeventdispatcher-and-add-wcecompat-dep-for-4-7-branch.patch', 1),
