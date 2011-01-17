@@ -51,6 +51,10 @@ if exist %~dp0emerge\python (
     set PYTHONPATH=%~dp0emerge\python
 )
 
+if exist %~dp0\..\etc\kdesettings.bat (
+call %~dp0\..\etc\kdesettings.bat %BUILDTYPE%
+)
+
 if exist %~dp0\etc\kdesettings.bat (
 call %~dp0\etc\kdesettings.bat %BUILDTYPE%
 )
