@@ -79,7 +79,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20101203'] = 'tags/kdepim/enterprise5.0.20101203.1203322/kdesupport/strigi'
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdesupport/strigi'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/strigi'
-        self.defaultTarget = '20110110'
+        self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/strigi'
+        self.defaultTarget = '20110117'
 
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '4.4'
