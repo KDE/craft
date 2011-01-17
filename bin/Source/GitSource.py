@@ -82,33 +82,38 @@ class GitSource ( VersionSystemSourceBase ):
             safePath = os.environ[ "PATH" ]
             # add the git path to the PATH variable so that git can be called without path
             os.environ[ "PATH" ] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
-
-            if os.path.exists( self.checkoutDir() ):
+            checkoutDir = self.checkoutDir()
+            # if we only have the checkoutdir but no .git within,
+            # clean this up first
+            if os.path.exists(checkoutDir) \
+                    and not os.path.exists(checkoutDir + "\.git"):
+                os.rmdir(checkoutDir)
+            if os.path.exists(checkoutDir):
                 if not repoTag:
-                    ret = self.shell.execute( self.checkoutDir(), "git",
+                    ret = self.shell.execute(checkoutDir, "git",
                             "pull origin %s" % repoBranch or "master" )
             else:
                 # it doesn't exist so clone the repo
-                os.makedirs( self.checkoutDir() )
+                os.makedirs( checkoutDir )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                ret = self.shell.execute( self.checkoutDir(), "git", "clone %s ." % ( repoUrl ) )
+                ret = self.shell.execute( checkoutDir, "git", "clone %s ." % ( repoUrl ) )
 
             # if a branch is given, we should check first if the branch is already downloaded locally, otherwise we can track the remote branch
             track = ""
             if ret and repoBranch and not repoTag:
                 if not self.__isLocalBranch( repoBranch ):
                     track = "--track origin/"
-                ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s%s" % ( track, repoBranch ) )
+                ret = self.shell.execute( checkoutDir, "git", "checkout %s%s" % ( track, repoBranch ) )
 
             # we can have tags or revisions in repoTag
             if ret and repoTag:
                 if self.__isTag( repoTag ):
                     if not self.__isLocalBranch( "_" + repoTag ):
-                        ret = self.shell.execute( self.checkoutDir(), "git", "checkout -b _%s %s" % ( repoTag, repoTag ) )
+                        ret = self.shell.execute( checkoutDir, "git", "checkout -b _%s %s" % ( repoTag, repoTag ) )
                     else:
-                        ret = self.shell.execute( self.checkoutDir(), "git", "checkout _%s" % repoTag )
+                        ret = self.shell.execute( checkoutDir, "git", "checkout _%s" % repoTag )
                 else:
-                    ret = self.shell.execute( self.checkoutDir(), "git", "checkout %s" % repoTag )
+                    ret = self.shell.execute( checkoutDir, "git", "checkout %s" % repoTag )
 
         else:
             utils.debug( "skipping git fetch (--offline)" )
