@@ -24,6 +24,17 @@ diff -Nru kdelibs-4.5.4.orig/kdecore/io/kurl.cpp kdelibs-4.5.4/kdecore/io/kurl.c
    return trailingSlash( trailing, isLocalFile() ? QUrl::toLocalFile() : QUrl::path() );
  #else
    return trailingSlash( trailing, QUrl::path() );
+@@ -1081,6 +1083,10 @@
+   }
+ 
+   tmp = path();
++#ifdef Q_WS_WIN
++  if (isLocalFile())
++    tmp.prepend(QLatin1Char('/')); // KUrl::path() returns toLocalFile() on windows so we need to add the / back to create a proper url
++#endif
+   result += toPrettyPercentEncoding(tmp, false);
+ 
+   // adjust the trailing slash, if necessary
 diff -Nru kdelibs-4.5.4.orig/kdecore/kdeglobals kdelibs-4.5.4/kdecore/kdeglobals
 --- kdelibs-4.5.4.orig/kdecore/kdeglobals	1970-01-01 01:00:00.000000000 +0100
 +++ kdelibs-4.5.4/kdecore/kdeglobals	2011-01-04 16:53:22.336274200 +0100
