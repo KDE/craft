@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
         self.buildDependencies['dev-util/7zip'] = 'default'
+        self.dependencies['dev-util/msys'] = 'default'
         self.dependencies['testing/libtool-src'] = 'default'
 
     def setBuildOptions( self ):
