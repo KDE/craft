@@ -5,6 +5,7 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/msys'] = 'default'
+        self.buildDependencies['dev-util/7zip'] = 'default'
 
     def setTargets( self ):
         self.targets['2.2.8'] = 'http://ftp.gnu.org/gnu/libtool/libtool-2.2.8.tar.lzma'
