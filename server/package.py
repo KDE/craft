@@ -269,6 +269,9 @@ for [cat, pac, ver, tar] in depList:
         isInstalled = installdb.isInstalled( cat, pac, ver )
     else:
         isInstalled = portage.isInstalled( cat, pac, ver )
+        
+    if common.settings.getSectionEnabled("vcsrebuild"):
+        isInstalled = isInstalled and not tar in portage.PortageInstance.getUpdatableVCSTargets( cat, pac, ver )
     if not isInstalled:
         packagelist.append( p )
 
