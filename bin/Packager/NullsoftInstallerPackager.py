@@ -81,17 +81,15 @@ file collection process is skipped, and only the installer is generated.
         self.defines = dict()
         self.whitelist = []
         self.blacklist = []
-        self.whitelists = whitelists
-        self.blacklists = blacklists
 
-        for entry in self.whitelists:
+        for entry in whitelists:
             utils.debug( "reading whitelist: %s" % entry, 2 )
             if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
                 for line in entry():
                     self.whitelist.append( line )
             else:
                 self.read_whitelist( entry )
-        for entry in self.blacklists:
+        for entry in blacklists:
             utils.debug( "reading blacklist: %s" % entry, 2 )
             if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
                 for line in entry():
