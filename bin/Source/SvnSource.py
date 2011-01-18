@@ -42,7 +42,7 @@ class SvnSource (VersionSystemSourceBase):
 
         return sourcedir
 
-    def applyPatch(self, fileName, patchdepth):
+    def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a svn repository checkout"""
         utils.trace( "SvnSource.applyPatch", 2 )
         if fileName:

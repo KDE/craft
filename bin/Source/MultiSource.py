@@ -63,8 +63,10 @@ class MultiSource(object):
         return self.source.applyPatches()
 
     def applyPatch(self):
-        utils.trace( "MultiSource applyPatch", 2 )
-        return self.source.applyPatch()
+        raise Exception('MultiSource.applyPatch is deprecated. '
+                'it calls self.source.applyPatch without arguments which must fail')
+        # utils.trace( "MultiSource applyPatch", 2 )
+        # return self.source.applyPatch()
 
     def createPatch(self):
         utils.trace( "MultiSource createPatch", 2 )

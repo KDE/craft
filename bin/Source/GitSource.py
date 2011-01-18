@@ -178,7 +178,7 @@ class GitSource ( VersionSystemSourceBase ):
         else:
             return self.__fetchSingleBranch(repopath)
 
-    def applyPatch(self, fileName, patchdepth):
+    def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
         utils.trace( 'GitSource ', 2 )
         if fileName:

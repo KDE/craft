@@ -60,7 +60,7 @@ class SourceBase(EmergeBase):
         return sourcedir
 
     def applyPatches(self):
-        """apply patches is available"""
+        """apply patches if available"""
         utils.trace( "SourceBase.applyPatches called", 0 )
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
