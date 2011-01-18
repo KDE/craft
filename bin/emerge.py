@@ -132,6 +132,8 @@ Flags:
 -z          if packages from version control system sources are installed,
             it marks them as out of date and rebuilds them (tags are not
             marked as out of date).
+-sz         similar to -z, only that it acts only on the last package, and
+            works as normal on the rest.
 --noclean   this option will try to use an existing build directory. Please
             handle this option with care - it will possibly break if the
             directory isn't existing.
@@ -333,6 +335,7 @@ mainBuildAction = "all"
 packageName = None
 doPretend = False
 outDateVCS = False
+outDatePackage = False
 stayQuiet = False
 disableHostBuild = False
 disableTargetBuild = False
@@ -397,6 +400,8 @@ for i in sys.argv:
         doPretend = True
     elif ( i == "-z" ):
         outDateVCS = True
+    elif ( i == "-sz" ):
+        outDatePackage = True
     elif ( i == "-q" ):
         stayQuiet = True
     elif ( i == "-t" ):
@@ -589,7 +594,8 @@ else:
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
         target = ""
         targetList = []
-        if outDateVCS:
+        isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
+        if outDateVCS or (outDatePackage and isLastPackage):
             target = os.getenv( "EMERGE_TARGET" )
             if not target or target not in portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys():
                 # if no target or a wrong one is defined, simply set the default target here
@@ -606,7 +612,7 @@ else:
                 isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
         else:
             isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
-        if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and outDateVCS and target in targetList ):
+        if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and target in targetList ):
             if utils.verbose() > 1 and mainPackage == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
             elif utils.verbose() > 2 and not mainPackage == packageName:
