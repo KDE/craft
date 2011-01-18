@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         #self.targetDigests['2.8.3'] = '2f3b6f14502f0d5c3b1a8e13633789b9995b4629'
         self.targetDigests['v2.8.2'] = 'de516a570808c7a022139b55e758d5f7b378ec7d'
         self.targetDigests['2.8.3'] = 'db4fb732bf0f5666888f6b2a38a7be2a0993cd2e'
-		self.targetDigests['2.8.3-2'] = 'cba746303abb825c8549e6621da35757c039fa9e'
+        self.targetDigests['2.8.3-2'] = 'cba746303abb825c8549e6621da35757c039fa9e'
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
         self.patchToApply['v2.8.3'] = ( 'findtiff.diff', 0 )
 
