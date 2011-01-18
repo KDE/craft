@@ -47,8 +47,8 @@ if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
 if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
 rem use local python installation if present
-if exist %~dp0emerge\python (
-    set PYTHONPATH=%~dp0emerge\python
+if exist %~dp0\python (
+    set PYTHONPATH=%~dp0\python
 )
 
 if exist %~dp0\..\etc\kdesettings.bat (
