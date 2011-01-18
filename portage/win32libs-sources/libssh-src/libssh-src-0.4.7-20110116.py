@@ -12,8 +12,8 @@ class subinfo(info.infoclass):
         self.targetDigests['0.4.7'] = '5e31736ff906e745e6da508828685d8389e37954'
         self.patchToApply['0.4.7'] = [("libssh-0.4.7-20110116.diff", 1)]
 
-        self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh/libssh.git"
-        self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh/libssh.git|v0-4"
+        self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh.git"
+        self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh.git|v0-4"
         self.shortDescription = "a working SSH implementation by the mean of a library"
         self.defaultTarget = '0.4.7'
         self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
