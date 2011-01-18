@@ -109,7 +109,7 @@ class ArchiveSource(SourceBase):
         # for unpacking into a subdir we need an additional property
 
         # if using BinaryBuildSystem the files should be unpacked into imagedir
-        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+        if self.buildSystemType == 'binary':
             destdir = self.installDir()
             utils.debug("unpacking files into image root %s" % destdir, 1)
         # tempory solution
@@ -152,7 +152,7 @@ class ArchiveSource(SourceBase):
         filenames = self.localFileNames()
 
         # if using BinaryBuildSystem the files should be unpacked into imagedir
-        if hasattr( self, 'buildSystemType' ) and self.buildSystemType == 'binary':
+        if self.buildSystemType == 'binary':
             destdir = self.installDir()
             utils.debug( "unpacking files into image root %s" % destdir, 1 )
         else:

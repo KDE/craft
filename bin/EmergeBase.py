@@ -49,13 +49,17 @@ class EmergeBase(object):
 
     def __init__( self, className=None, **args):
         """args really should be documented, see self.argv0 below"""
+        # TODO: some __init__  of subclasses need to already have been
+        # called here. That is really the wrong way round.
         object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
 
         if not hasattr(self, 'subinfo'):
-            # can this ever happen? We need this assignment so
-            # pylint is quiet about this.
+            # see the TODO above. This helps pylint understand the code, otherwise
+            # it generates tons of error messages.
             self.subinfo = None
+        if not hasattr(self, 'buildSystemType'):
+            self.buildSystemType = None
 
         # if class name has been provided add implicit build time dependency
         if className and os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
@@ -201,7 +205,7 @@ class EmergeBase(object):
 
         # we assume that binary packages are for all compiler and targets
         ## \todo add image directory support for using binary packages for a specific compiler and build type
-        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+        if self.buildSystemType == 'binary':
             return directory
 
         if self.subinfo.options.useCompilerType == True:

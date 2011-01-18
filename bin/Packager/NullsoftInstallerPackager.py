@@ -119,7 +119,7 @@ file collection process is skipped, and only the installer is generated.
 
         # we assume that binary packages are for all compiler and targets
         ## \todo add image directory support for using binary packages for a specific compiler and build type
-        if hasattr( package, 'buildSystemType' ) and package.buildSystemType == 'binary':
+        if package.buildSystemType == 'binary':
             return directory
 
         if package.subinfo.options.useCompilerType == True:

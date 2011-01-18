@@ -48,7 +48,7 @@ class SourceBase(EmergeBase):
             sourcedir = self.buildDir()
         else:
             sourcedir = self.workDir()
-        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+        if self.buildSystemType == 'binary':
             sourcedir = self.imageDir()
 
         if self.subinfo.targetSourceSuffix() != None:

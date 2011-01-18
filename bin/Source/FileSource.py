@@ -47,7 +47,7 @@ class FileSource(SourceBase):
 
         filenames = self.localFileNames()
         # if using BinaryBuildSystem the files should be unpacked into imagedir
-        if hasattr(self, 'buildSystemType') and self.buildSystemType == 'binary':
+        if self.buildSystemType == 'binary':
             destdir = self.installDir()
             if not os.path.exists(destdir):
                 os.makedirs(destdir)
