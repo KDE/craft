@@ -86,8 +86,8 @@ rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
 
 rem for python
-if NOT "%PYTHONPATH%" == "" ( 
-   set PATH=%PYTHONPATH%;!PATH!
+if NOT "!PYTHONPATH!" == "" ( 
+   set PATH=!PYTHONPATH!;!PATH!
 )
 
 if "%EMERGE_USE_CCACHE%" == "True" (
