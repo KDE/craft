@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-runtime'] = 'default'
-        self.dependencies['testing/kdevplatform'] = 'default'
-        self.dependencies['testing/kdevelop'] = 'default'
+        self.dependencies['extragear/kdevplatform'] = 'default'
+        self.dependencies['extragear/kdevelop'] = 'default'
 
 from Package.CMakePackageBase import *
 
