@@ -121,16 +121,63 @@ def test4application( appname):
         debug( "could not find application %s" % appname, 1 )
         return False
 
-def verbose():
-    """return the value if the verbose level"""
-    verb = os.getenv( "EMERGE_VERBOSE" )
-    if ( not verb == None and verb.isdigit() and int(verb) > 0 ):
-        return int( verb )
+class Verbose(object):
+    """
+        This class will work on the overall output verbosity
+        It defines the interface for the option parser but before the default
+        value is taken from the environment variable.
+        There is only one verbosity value for all parts of emerge.
+        Always updates the shell variable EMERGE_VERBOSE.
+    """
+    __level = os.getenv("EMERGE_VERBOSE")
+    if not __level or not __level.isdigit() or int(__level) < 0:
+        __level = 1
     else:
-        return 0
+        __level = int(__level)
+
+    @staticmethod
+    def increase():
+        """increase verbosity"""
+        Verbose.setLevel(Verbose.__level + 1)
+
+    @staticmethod
+    def decrease():
+        """decrease verbosity"""
+        Verbose.setLevel(Verbose.__level - 1)
+
+    @staticmethod
+    def level():
+        return Verbose.__level
+
+    @staticmethod
+    def setLevel(newLevel):
+        """ set the level by hand for quick and dirty changes """
+        Verbose.__level = max(0, newLevel)
+        os.putenv("EMERGE_VERBOSE", newLevel)
+
+    def verbose( self ):
+        """ returns the verbosity level for the application """
+        return Verbose.__level
+
+class TemporaryVerbosity(object):
+    """Context handler for temporarily different verbosity"""
+    def __init__(self, tempLevel):
+        self.prevLevel = verbose()
+        setVerbose(tempLevel)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        setVerbose(self.prevLevel)
+
+
+def verbose():
+    """return the value of the verbose level"""
+    return Verbose.level()
 
 def setVerbose( _verbose ):
-    os.environ["EMERGE_VERBOSE"] = str( _verbose )
+    Verbose.setLevel(_verbose)
 
 def getFiles( urls, destdir, suffix=''):
     """download files from 'url' into 'destdir'"""

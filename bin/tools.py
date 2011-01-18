@@ -22,6 +22,7 @@ import subprocess
 import __builtin__
 import msvcrt
 import time
+import utils
 
 
 try:
@@ -135,42 +136,9 @@ if _pywin32:
             return self.returncode
 
 
-globalVerboseLevel = int( os.getenv( "EMERGE_VERBOSE" ) )
-
-class Verbose(object):
-    """
-        This class will work on the overall output verbosity
-        It defines the interface for the option parser but before the default
-        value is taken from the environment variable
-    """
-
-    def increase( self, option, opt, value, parser ): # pylint: disable=W0613
-        """ callback function as requested by the optparse parser """
-        global globalVerboseLevel
-        print "increase"
-        globalVerboseLevel += 1
-
-    def decrease( self, option, opt, value, parser ): # pylint: disable=W0613
-        """ callback function as requested by the optparse parser """
-        global globalVerboseLevel
-        print "decrease"
-        if globalVerboseLevel > 0:
-            globalVerboseLevel -= 1
-
-    def setVerboseLevel( self, newLevel ):
-        """ set the level by hand for quick and dirty changes """
-        global globalVerboseLevel
-        globalVerboseLevel = newLevel
-
-    def verbose( self ):
-        """ returns the verbosity level for the application """
-        global globalVerboseLevel
-        return globalVerboseLevel
-
-class Environment ( Verbose ):
+class Environment(object):
     def __init__( self ):
         """ """
-        Verbose.__init__( self )
         self.KDEROOT = os.getenv( "KDEROOT" )
         self.LOGFILE = os.getenv( "EMERGE_LOGFILE" )
         self.BUILDTYPE = os.getenv( "EMERGE_BUILDTYPE" )
@@ -199,24 +167,24 @@ class Object ( Environment ):
         Environment.__init__( self )
 
     def inform( self, message ):
-        if self.verbose() > 0:
+        if utils.verbose() > 0:
             print "emerge info: %s" % message
         return True
 
     def debug( self, message, level=1 ):
-        if self.verbose() > level:
+        if utils.verbose() > level:
             print "emerge debug: %s" % message
         return True
 
     def warning( self, message ):
-        if self.verbose() > 0:
+        if utils.verbose() > 0:
             print "emerge warning: %s" % message
         return True
 
     def error( self, message=None ):
         if not message:
             message = "NO MESSAGE"
-        if self.verbose() > 0:
+        if utils.verbose() > 0:
             print >> sys.stderr, "emerge error: %s" % message
         return False
 
@@ -226,7 +194,7 @@ class Object ( Environment ):
 
     def system( self, cmdstring, die=False, capture_output=None ):
         # TODO: why do stderr and stdout need to be class attributes? I cannot find any reference outside this function
-        if self.verbose() == 0:
+        if utils.verbose() == 0:
             self.stderr = file( self.LOGFILE, 'wb' )
             self.stdout = sys.stderr
         else:
@@ -235,7 +203,7 @@ class Object ( Environment ):
         if capture_output:
             self.stderr = capture_output
             self.stdout = capture_output
-        if self.verbose() > 1:
+        if utils.verbose() > 1:
             print "system() executing this: <" + cmdstring + ">"
         p = subprocess.Popen( cmdstring, shell=True, stdout=self.stdout, stderr=self.stderr )
         ret = p.wait()

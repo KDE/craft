@@ -536,36 +536,21 @@ def createOutput(output_type, dep_tree):
     return creator.createOutput(dep_tree)
 
 def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
-    # little workaround to not display debug infos in generated output
-    # TODO: define a context function and use this here and in the next function
-    # with Verbosity(0):
-    #     generate dep_tree
-    old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
-    utils.setVerbose( 0 )
-
-    packageList, categoryList = portage.getPackagesCategories(category)
-    dep_tree = DependenciesTree()
-
-    for _category, _package in zip(categoryList, packageList):
-        dep_tree.addDependencies(_category, _package, dep_type=dep_type)
-
-    if old_emerge_verbose is not None:
-        os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
+    """without displaying debuginfo in generated output"""
+    with utils.TemporaryVerbosity(0):
+        packageList, categoryList = portage.getPackagesCategories(category)
+        dep_tree = DependenciesTree()
+        for _category, _package in zip(categoryList, packageList):
+            dep_tree.addDependencies(_category, _package, dep_type=dep_type)
 
     return createOutput(output_type, dep_tree)
 
 def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type="both"):
-    # little workaround to not display debug infos in generated output
-    old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
-    utils.setVerbose( 0 )
-
-    dep_tree = DependenciesTree()
-
-    for category, package, dummyTarget, dummyPatchlevel in packageList:
-        dep_tree.addDependencies(category, package, dep_type=dep_type)
-
-    if old_emerge_verbose is not None:
-        os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
+    """without displaying debuginfo in generated output"""
+    with utils.TemporaryVerbosity(0):
+        dep_tree = DependenciesTree()
+        for category, package, dummyTarget, dummyPatchlevel in packageList:
+            dep_tree.addDependencies(category, package, dep_type=dep_type)
 
     return createOutput(output_type, dep_tree)
 

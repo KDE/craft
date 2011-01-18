@@ -124,7 +124,7 @@ Flags:
 -q          quiet: there should be no output - The verbose level should be 0
 -t          test: if used on an KDE target it will override the environment
             variable and build the target with -DKDE_BUILD_TESTS=ON
--v          verbose: increases the verbose level of emerge.
+-v          verbose: increases the verbose level of emerge. Default is 1.
             verbose level 1 contains some notes from emerge, all output of
             cmake, make and other programs that are used. verbose level 2
             adds an option VERBOSE=1 to make and emerge is more verbose
@@ -346,12 +346,11 @@ if len( sys.argv ) < 2:
     usage()
     utils.die("")
 
-environ = dict()
+environ = dict() # TODO: why do we need this at all?
 environ["EMERGE_NOCOPY"]        = os.getenv( "EMERGE_NOCOPY" )
 environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
 environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
 environ["EMERGE_NOREMOVE"]      = os.getenv( "EMERGE_NOREMOVE" )
-environ["EMERGE_VERBOSE"]       = os.getenv( "EMERGE_VERBOSE" )
 environ["EMERGE_TRACE"]         = os.getenv( "EMERGE_TRACE" )
 environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
 environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
@@ -376,12 +375,6 @@ if ( environ['EMERGE_NOUPDATE'] == "True" ):
     noupdate = True
 else:
     noupdate = False
-
-if environ['EMERGE_VERBOSE'] == None or not environ['EMERGE_VERBOSE'].isdigit():
-    verbose = 1
-    utils.setVerbose( verbose )
-else:
-    verbose = int( environ[ "EMERGE_VERBOSE" ] )
 
 if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
     trace = 0
@@ -420,8 +413,7 @@ for i in sys.argv:
     elif ( i.startswith( "--log-dir=" ) ):
         os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
     elif ( i == "-v" ):
-        verbose = verbose + 1
-        utils.setVerbose( verbose )
+        utils.Verbose.increase()
     elif ( i == "--trace" ):
         trace = trace + 1
         os.environ["EMERGE_TRACE"] = str( trace )
@@ -477,8 +469,7 @@ for i in sys.argv:
         break
 
 if stayQuiet == True:
-    verbose = 0
-    utils.setVerbose( verbose )
+    utils.setVerbose(0)
 
 # get KDEROOT from env
 KDEROOT = os.getenv( "KDEROOT" )
@@ -487,7 +478,7 @@ utils.debug( "doPretend: %s" % doPretend, 1 )
 utils.debug( "packageName: %s" % packageName )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
 utils.debug( "buildTests: %s" % os.getenv( "EMERGE_BUILDTESTS" ) )
-utils.debug( "verbose: %s" % os.getenv( "EMERGE_VERBOSE" ), 1 )
+utils.debug( "verbose: %d" % utils.verbose(), 1 )
 utils.debug( "trace: %s" % os.getenv( "EMERGE_TRACE" ), 1 )
 utils.debug( "KDEROOT: %s\n" % KDEROOT, 1 )
 utils.debug_line()
