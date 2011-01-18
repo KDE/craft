@@ -153,7 +153,7 @@ class Verbose(object):
     def setLevel(newLevel):
         """ set the level by hand for quick and dirty changes """
         Verbose.__level = max(0, newLevel)
-        os.putenv("EMERGE_VERBOSE", newLevel)
+        os.putenv("EMERGE_VERBOSE", str(newLevel))
 
     def verbose( self ):
         """ returns the verbosity level for the application """
