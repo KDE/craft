@@ -47,14 +47,23 @@ if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
 if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
 rem use local python installation if present
+rem when in kderoot/emerge
 if exist %~dp0\python (
     set PYTHONPATH=%~dp0\python
 )
 
+rem in case we are in kderoot 
+if exist %~dp0emerge\python (
+    set PYTHONPATH=%~dp0emerge\python
+)
+
+rem call kdesettings.bat 
+rem in case we are in kderoot/emerge 
 if exist %~dp0\..\etc\kdesettings.bat (
 call %~dp0\..\etc\kdesettings.bat %BUILDTYPE%
 )
 
+rem in case we are in kderoot 
 if exist %~dp0\etc\kdesettings.bat (
 call %~dp0\etc\kdesettings.bat %BUILDTYPE%
 )
