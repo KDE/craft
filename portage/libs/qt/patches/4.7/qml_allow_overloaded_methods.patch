@@ -1,16 +1,28 @@
+From 7ba8c58b702a8d355bd63fd9d56939985209e06d Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Tue, 18 Jan 2011 13:48:04 +0000
+Subject: [PATCH] Allow overloaded methods in qml
+
 commit 4c4734cae65b7c5907dc786e02b13b020eb22aaf
 Author: Aaron Kennedy <aaron.kennedy@nokia.com>
 Date:   Fri Oct 15 16:25:58 2010 +1000
 
     Allow overloaded methods, and methods with default params, to be called in QML
-    
+
     Task-number: QTBUG-11604
+---
+ .../qml/qdeclarativeobjectscriptclass.cpp          |  298 +++++++++++++++++++-
+ .../qml/qdeclarativeobjectscriptclass_p.h          |    9 +
+ src/declarative/qml/qdeclarativepropertycache.cpp  |   29 ++-
+ .../declarative/qdeclarativeecmascript/testtypes.h |   32 ++-
+ .../tst_qdeclarativeecmascript.cpp                 |   40 +++-
+ 5 files changed, 381 insertions(+), 27 deletions(-)
 
 diff --git a/src/declarative/qml/qdeclarativeobjectscriptclass.cpp b/src/declarative/qml/qdeclarativeobjectscriptclass.cpp
-index 61a1f55..ea92111 100644
+index ab6ff74..25287df 100644
 --- a/src/declarative/qml/qdeclarativeobjectscriptclass.cpp
 +++ b/src/declarative/qml/qdeclarativeobjectscriptclass.cpp
-@@ -838,9 +838,19 @@ QDeclarativeObjectMethodScriptClass::Value QDeclarativeObjectMethodScriptClass::
+@@ -833,9 +833,19 @@ QDeclarativeObjectMethodScriptClass::Value QDeclarativeObjectMethodScriptClass::
  {
      MethodData *method = static_cast<MethodData *>(o);
  
@@ -32,7 +44,7 @@ index 61a1f55..ea92111 100644
          QList<QByteArray> argTypeNames = m.parameterTypes();
          QVarLengthArray<int, 9> argTypes(argTypeNames.count());
  
-@@ -848,7 +858,7 @@ QDeclarativeObjectMethodScriptClass::Value QDeclarativeObjectMethodScriptClass::
+@@ -843,7 +853,7 @@ QDeclarativeObjectMethodScriptClass::Value QDeclarativeObjectMethodScriptClass::
          for (int ii = 0; ii < argTypeNames.count(); ++ii) {
              argTypes[ii] = QMetaType::type(argTypeNames.at(ii));
              if (argTypes[ii] == QVariant::Invalid) 
@@ -41,7 +53,7 @@ index 61a1f55..ea92111 100644
              if (argTypes[ii] == QVariant::Invalid) 
                  return Value(ctxt, ctxt->throwError(QString::fromLatin1("Unknown method parameter type: %1").arg(QLatin1String(argTypeNames.at(ii)))));
          }
-@@ -856,39 +866,301 @@ QDeclarativeObjectMethodScriptClass::Value QDeclarativeObjectMethodScriptClass::
+@@ -851,39 +861,301 @@ QDeclarativeObjectMethodScriptClass::Value QDeclarativeObjectMethodScriptClass::
          if (argTypes.count() > ctxt->argumentCount())
              return Value(ctxt, ctxt->throwError(QLatin1String("Insufficient arguments")));
  
@@ -381,7 +393,7 @@ index 75e384c..7956c40 100644
      PersistentIdentifier m_disconnectId;
      QScriptValue m_connect;
 diff --git a/src/declarative/qml/qdeclarativepropertycache.cpp b/src/declarative/qml/qdeclarativepropertycache.cpp
-index 259e492..91aaaa4 100644
+index 82fa98f..22be6fd 100644
 --- a/src/declarative/qml/qdeclarativepropertycache.cpp
 +++ b/src/declarative/qml/qdeclarativepropertycache.cpp
 @@ -93,6 +93,7 @@ void QDeclarativePropertyCache::Data::load(const QMetaProperty &p, QDeclarativeE
@@ -392,13 +404,13 @@ index 259e492..91aaaa4 100644
      flags |= Data::IsFunction;
      if (m.methodType() == QMetaMethod::Signal)
          flags |= Data::IsSignal;
-@@ -141,18 +142,24 @@ void QDeclarativePropertyCache::clear()
-     }
- 
-     for (int ii = 0; ii < methodIndexCache.count(); ++ii) {
--        if (methodIndexCache.at(ii)) methodIndexCache.at(ii)->release();
+@@ -137,18 +138,24 @@ QDeclarativePropertyCache::~QDeclarativePropertyCache()
+ void QDeclarativePropertyCache::clear()
+ {
+     for (int ii = 0; ii < indexCache.count(); ++ii) {
+-        if (indexCache.at(ii)) indexCache.at(ii)->release();
 +        RData *data = methodIndexCache.at(ii);
-+        if (data) data->release(); 
++        if (data) data->release();
      }
  
      for (StringCache::ConstIterator iter = stringCache.begin(); 
@@ -406,7 +418,7 @@ index 259e492..91aaaa4 100644
 -        (*iter)->release();
 +            iter != stringCache.end(); ++iter) {
 +        RData *data = (*iter);
-+        data->release(); 
++        data->release();
 +    }
  
      for (IdentifierCache::ConstIterator iter = identifierCache.begin(); 
@@ -422,7 +434,7 @@ index 259e492..91aaaa4 100644
      stringCache.clear();
      identifierCache.clear();
  }
-@@ -206,12 +213,16 @@ QDeclarativePropertyCache *QDeclarativePropertyCache::copy() const
+@@ -202,12 +209,16 @@ QDeclarativePropertyCache *QDeclarativePropertyCache::copy() const
  {
      QDeclarativePropertyCache *cache = new QDeclarativePropertyCache(engine);
      cache->indexCache = indexCache;
@@ -439,7 +451,7 @@ index 259e492..91aaaa4 100644
      for (StringCache::ConstIterator iter = stringCache.begin(); iter != stringCache.end(); ++iter)
          (*iter)->addref();
      for (IdentifierCache::ConstIterator iter = identifierCache.begin(); iter != identifierCache.end(); ++iter)
-@@ -231,7 +242,7 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
+@@ -227,7 +238,7 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
      indexCache.resize(propCount);
      for (int ii = propOffset; ii < propCount; ++ii) {
          QMetaProperty p = metaObject->property(ii);
@@ -448,7 +460,7 @@ index 259e492..91aaaa4 100644
              continue;
          
          QString propName = QString::fromUtf8(p.name());
-@@ -261,7 +272,7 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
+@@ -258,7 +269,7 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
      methodIndexCache.resize(methodCount);
      for (int ii = methodOffset; ii < methodCount; ++ii) {
          QMetaMethod m = metaObject->method(ii);
@@ -457,16 +469,7 @@ index 259e492..91aaaa4 100644
              continue;
          QString methodName = QString::fromUtf8(m.signature());
  
-@@ -271,7 +282,7 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
- 
-         RData *data = new RData;
-         data->identifier = enginePriv->objectClass->createPersistentIdentifier(methodName);
--        methodIndexCache[ii] = data;
-+        methodIndexCache[ii] = data;  
- 
-         data->load(m);
-         if (m.methodType() == QMetaMethod::Slot || m.methodType() == QMetaMethod::Method) 
-@@ -280,6 +291,10 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
+@@ -276,6 +287,10 @@ void QDeclarativePropertyCache::append(QDeclarativeEngine *engine, const QMetaOb
              data->flags |= signalFlags;
  
          if (stringCache.contains(methodName)) {
@@ -537,10 +540,10 @@ index 182c4fa..40451c3 100644
  {
      Q_OBJECT
 diff --git a/tests/auto/declarative/qdeclarativeecmascript/tst_qdeclarativeecmascript.cpp b/tests/auto/declarative/qdeclarativeecmascript/tst_qdeclarativeecmascript.cpp
-index 66dc160..e4e5a54 100644
+index edd38e0..cfd8f60 100644
 --- a/tests/auto/declarative/qdeclarativeecmascript/tst_qdeclarativeecmascript.cpp
 +++ b/tests/auto/declarative/qdeclarativeecmascript/tst_qdeclarativeecmascript.cpp
-@@ -1710,7 +1710,6 @@ void tst_qdeclarativeecmascript::callQtInvokables()
+@@ -1709,7 +1709,6 @@ void tst_qdeclarativeecmascript::callQtInvokables()
      QCOMPARE(o.actuals().at(0), QVariant(44));
      QVERIFY(qvariant_cast<QScriptValue>(o.actuals().at(1)).isArray());
  
@@ -548,7 +551,7 @@ index 66dc160..e4e5a54 100644
      o.reset();
      QCOMPARE(engine->evaluate("object.method_overload()").isError(), true);
      QCOMPARE(o.error(), false);
-@@ -1718,10 +1717,11 @@ void tst_qdeclarativeecmascript::callQtInvokables()
+@@ -1717,10 +1716,11 @@ void tst_qdeclarativeecmascript::callQtInvokables()
      QCOMPARE(o.actuals().count(), 0);
  
      o.reset();
@@ -563,7 +566,7 @@ index 66dc160..e4e5a54 100644
  
      o.reset();
      QCOMPARE(engine->evaluate("object.method_overload(10, 11)").isUndefined(), true);
-@@ -1732,10 +1732,40 @@ void tst_qdeclarativeecmascript::callQtInvokables()
+@@ -1731,10 +1731,40 @@ void tst_qdeclarativeecmascript::callQtInvokables()
      QCOMPARE(o.actuals().at(1), QVariant(11));
  
      o.reset();
@@ -605,3 +608,6 @@ index 66dc160..e4e5a54 100644
      QCOMPARE(o.actuals().at(0), QVariant(9));
  }
  
+-- 
+1.7.0.4
+
