@@ -2,8 +2,8 @@
 import info
 import os
 
-os.putenv("EMERGE_USE_CCACHE","False")
-
+os.putenv("CXX","g++")
+os.putenv("CC","gcc")
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *

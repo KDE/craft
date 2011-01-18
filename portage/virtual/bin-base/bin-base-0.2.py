@@ -1,4 +1,5 @@
 import info
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -9,6 +10,10 @@ class subinfo(info.infoclass):
         if not os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             self.buildDependencies['gnuwin32/wget'] = 'default'
             self.buildDependencies['gnuwin32/patch'] = 'default'
+            if compiler.isMinGW():
+                self.buildDependencies['dev-util/msys'] = 'default'
+                self.buildDependencies['dev-util/perl'] = 'default'
+                self.buildDependencies['dev-util/autotools'] = 'default'
 
 from Package.VirtualPackageBase import *
 from Source.SourceBase import *
