@@ -6,6 +6,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
+      self.shortDescription = "An application to show kde notifications with Snarl/Growl"
       self.hardDependencies['libs/qt'] = 'default'
 
 
