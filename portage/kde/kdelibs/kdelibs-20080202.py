@@ -59,16 +59,18 @@ class Package(CMakePackageBase):
 
         if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += \
-                    "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
+                    "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=ON "
+        else:
+            self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
         if self.isHostBuild():
-            self.subinfo.options.configure.defines += "-DBUILD_kdoctools=TRUE "
+            self.subinfo.options.configure.defines += "-DBUILD_kdoctools=ON "
         if self.isTargetBuild():
             self.subinfo.options.configure.defines += \
                     "-DKDE_PLATFORM_PROFILE=Mobile "\
-                    "-DBUILD_kutils=TRUE "\
-                    "-DBUILD_kross=TRUE "\
-                    "-DBUILD_interfaces=TRUE " \
-                    "-DBUILD_sonnet=TRUE " \
+                    "-DBUILD_kutils=ON "\
+                    "-DBUILD_kross=ON "\
+                    "-DBUILD_interfaces=ON " \
+                    "-DBUILD_sonnet=ON " \
                     "-DKDECORE_INPROCESS_SSLD=ON " \
                     "-DKDELIBS_USE_FAKE_WALLET=ON "
 
