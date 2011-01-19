@@ -53,6 +53,7 @@ class Package( CMakePackageBase ):
             self.subinfo.options.configure.defines += " -DKORGAC_AKONADI_AGENT=ON "
             self.subinfo.options.configure.defines += " -DBUILD_NEW_MAIL_NOTIFIER_AGENT=ON "
             self.subinfo.options.configure.defines += " -DKDEPIM_INPROCESS_LDAP=ON "
+            self.subinfo.options.configure.defines += " -DKLEO_STATIC_KCMODULES=ON "
         else:
             self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
 
