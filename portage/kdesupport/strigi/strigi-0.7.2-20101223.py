@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/strigi'
+        self.svnTargets['gitHEAD'] = 'git://anongit.kde.org/strigi'
         self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
