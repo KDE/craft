@@ -357,8 +357,10 @@ found in: %s \n Please ensure that package wincetools is installed" %\
 
 
         destinationdirs = [
-            ("a%d = 0,\\%s" if d.endswith("windows") or d.endswith("gnupg") \
-                    or d.endswith(".strigi") or d.endswith("trusted-certs") \
+            ("a%d = 0,\\%s" if d.endswith("windows") \
+                    or ( d.endswith("gnupg") and not d.endswith("share\gnupg") ) \
+                    or d.endswith(".strigi") \
+                    or d.endswith("trusted-certs") \
                     or d.endswith(".kde\share\config")
             else "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
