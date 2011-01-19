@@ -80,7 +80,7 @@ class package:
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
 
     def timestamp( self ):
-        datetime.now().strftime("%m/%d/%Y %H:%M")
+        print datetime.now().strftime("%m/%d/%Y %H:%M")
         log = file( self.logfile, 'ab+' )
         log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
         log.close()
