@@ -7,9 +7,10 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-      self.hardDependencies['testing/vlc'] = 'default'
-      if compiler.isMSVC():
-        self.hardDependencies['kdesupport/kdewin'] = 'default'
+        self.dependencies['kdesupport/phonon'] = 'default'
+        self.runtimeDependencies['testing/vlc'] = 'default'
+        if compiler.isMSVC():
+            self.dependencies['kdesupport/kdewin'] = 'default'
 
     def setTargets( self ):
       self.targets['0.3.1'] = "http://download.kde.org/download.php?url=stable/phonon-backend-vlc/0.3.1/src/phonon-backend-vlc-0.3.1.tar.bz2"
