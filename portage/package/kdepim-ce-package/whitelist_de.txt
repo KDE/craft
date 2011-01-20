@@ -91,6 +91,7 @@ share\\locale\\de\\LC_MESSAGES\\mailreader\.mo
 share\\locale\\de\\LC_MESSAGES\\messageviewer_text_calendar_plugin\.mo
 share\\locale\\de\\LC_MESSAGES\\messageviewer_text_vcard_plugin\.mo
 share\\locale\\de\\LC_MESSAGES\\messageviewer_text_xdiff_plugin\.mo
+share\\locale\\de\\LC_MESSAGES\\newmailnotifieragent\.mo
 share\\locale\\de\\LC_MESSAGES\\notes-mobile\.mo
 share\\locale\\de\\LC_MESSAGES\\kjots\.mo
 share\\locale\\de\\LC_MESSAGES\\tasks-mobile\.mo
