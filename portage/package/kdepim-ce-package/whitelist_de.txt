@@ -38,7 +38,7 @@ share\\locale\\de\\LC_MESSAGES\\akonadi_singlefile_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_vcarddir_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadi_vcard_resource\.mo
 share\\locale\\de\\LC_MESSAGES\\akonadicontact\.mo
-share\\locale\\de\\LC_MESSAGES\\calendarsupmort\.mo
+share\\locale\\de\\LC_MESSAGES\\calendarsupport\.mo
 share\\locale\\de\\LC_MESSAGES\\cryptopageplugin\.mo
 share\\locale\\de\\LC_MESSAGES\\desktop_kdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\kabc_akonadi\.mo
