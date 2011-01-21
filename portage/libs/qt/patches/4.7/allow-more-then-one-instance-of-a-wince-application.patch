@@ -1,27 +1,17 @@
-From cee8d78015d279918e9ffbb36e1cd5f844fceb01 Mon Sep 17 00:00:00 2001
+From ecaa62043954baca2cb5df60cf06a18f766cf5f6 Mon Sep 17 00:00:00 2001
 From: Andreas Holzammer <andreas.holzammer@kdab.com>
-Date: Thu, 20 Jan 2011 16:02:47 +0100
+Date: Fri, 21 Jan 2011 09:32:06 +0100
 Subject: [PATCH] allow more then one instance of a wince application
 
 ---
- src/winmain/qtmain_win.cpp |   36 +-----------------------------------
- 1 files changed, 1 insertions(+), 35 deletions(-)
+ src/winmain/qtmain_win.cpp |   29 -----------------------------
+ 1 files changed, 0 insertions(+), 29 deletions(-)
 
 diff --git a/src/winmain/qtmain_win.cpp b/src/winmain/qtmain_win.cpp
-index 0a572f2..aaf21b8 100644
+index 0a572f2..1b49f2b 100644
 --- a/src/winmain/qtmain_win.cpp
 +++ b/src/winmain/qtmain_win.cpp
-@@ -92,45 +92,11 @@ int APIENTRY WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR /*cmdPara
- {
-     QByteArray cmdParam = QString::fromWCharArray(GetCommandLine()).toLocal8Bit();
- 
--#if defined(Q_OS_WINCE)
--    wchar_t appName[MAX_PATH];
--    GetModuleFileName(0, appName, MAX_PATH);
--    cmdParam.prepend(QString(QLatin1String("\"%1\" ")).arg(QString::fromWCharArray(appName)).toLocal8Bit());
--#endif
--
-     int argc = 0;
+@@ -102,35 +102,6 @@ int APIENTRY WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR /*cmdPara
      QVector<char *> argv(8);
      qWinMain(instance, prevInstance, cmdParam.data(), cmdShow, argc, argv);
  
@@ -55,7 +45,6 @@ index 0a572f2..aaf21b8 100644
 -#if defined(Q_OS_WINCE)
 -    CloseHandle(mutex);
 -#endif
-+
      return result;
  }
 -- 
