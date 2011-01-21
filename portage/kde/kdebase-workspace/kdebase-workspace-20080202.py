@@ -32,6 +32,7 @@ class Package(CMakePackageBase):
             % os.path.join(ROOTDIR, "bin")
         if self.isTargetBuild():
             self.subinfo.options.configure.defines += "-DDISABLE_ALL_OPTIONAL_SUBDIRECTORIES=TRUE "
+        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()

@@ -37,6 +37,7 @@ class Package(CMakePackageBase):
 
         if self.isTargetBuild():
             self.subinfo.options.configure.defines += "-DKDEBASE_DISABLE_MULTIMEDIA=ON "
+        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()

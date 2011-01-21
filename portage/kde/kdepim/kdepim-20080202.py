@@ -56,6 +56,7 @@ class Package( CMakePackageBase ):
             self.subinfo.options.configure.defines += " -DKLEO_STATIC_KCMODULES=ON "
         else:
             self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
+        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
