@@ -92,6 +92,9 @@ class GitSource ( VersionSystemSourceBase ):
                 if not repoTag:
                     ret = self.shell.execute(checkoutDir, "git",
                             "pull origin %s" % repoBranch or "master" )
+                    if self.subinfo.options.fetch.checkoutSubmodules:
+                        self.shell.execute(checkoutDir, "git",
+                            "submodule update --init --recursive")
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs( checkoutDir )
