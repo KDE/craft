@@ -12,6 +12,7 @@ class OptionsFetch:
         ## option comment
         self.option = None
         self.ignoreExternals = False
+        self.checkoutSubmodules = False
 
 ## options for the unpack action
 class OptionsUnpack:

@@ -96,7 +96,10 @@ class GitSource ( VersionSystemSourceBase ):
                 # it doesn't exist so clone the repo
                 os.makedirs( checkoutDir )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                ret = self.shell.execute( checkoutDir, "git", "clone %s ." % ( repoUrl ) )
+                if self.subinfo.options.fetch.checkoutSubmodules:
+                    ret = self.shell.execute( checkoutDir, "git", "clone --recursive %s ." % ( repoUrl ) )
+                else:
+                    ret = self.shell.execute( checkoutDir, "git", "clone %s ." % ( repoUrl ) )
 
             # if a branch is given, we should check first if the branch is already downloaded locally, otherwise we can track the remote branch
             track = ""
