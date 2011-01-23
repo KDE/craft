@@ -1,0 +1,22 @@
+diff -Nru gnutls-2.8.6.orig/libextra/gnutls_openssl.c gnutls-2.8.6/libextra/gnutls_openssl.c
+--- gnutls-2.8.6.orig/libextra/gnutls_openssl.c	2009-11-06 10:39:42.000000000 +0200
++++ gnutls-2.8.6/libextra/gnutls_openssl.c	2011-01-17 22:25:38.101028400 +0200
+@@ -33,6 +33,7 @@
+ /* Gnulib re-defines shutdown on mingw.  We only use it as a variable
+    name, so restore the original name. */
+ #undef shutdown
++#undef X509_NAME
+ 
+ /* XXX: See lib/gnutls_int.h. */
+ #define GNUTLS_POINTER_TO_INT(_) ((int) GNUTLS_POINTER_TO_INT_CAST (_))
+diff -Nru gnutls-2.8.6.orig/libextra/openssl_compat.c gnutls-2.8.6/libextra/openssl_compat.c
+--- gnutls-2.8.6.orig/libextra/openssl_compat.c	2009-06-02 21:59:32.000000000 +0300
++++ gnutls-2.8.6/libextra/openssl_compat.c	2011-01-18 19:55:00.191130100 +0200
+@@ -32,6 +32,7 @@
+ #include <x509/x509_int.h>
+ #include <libtasn1.h>
+ #include <gnutls/x509.h>
++#undef X509_NAME
+ #include <openssl_compat.h>
+ 
+ /*-

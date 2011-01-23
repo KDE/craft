@@ -1,0 +1,46 @@
+diff -Nru gwenhywfar-4.0.3.orig/configure gwenhywfar-4.0.3/configure
+--- gwenhywfar-4.0.3.orig/configure	2010-11-13 14:54:43.000000000 +0200
++++ gwenhywfar-4.0.3/configure	2011-01-22 20:27:43.386871400 +0200
+@@ -20024,6 +20024,9 @@
+ # This is the name of the qt library to search for.
+ if test "x$OSYSTEM" = "xdarwin"; then
+    qt_searchname="lib${qt_libname}.4.dylib"
++elif test "x$OSYSTEM" = "xwindows"; then
++   qt_suffix="d4"
++   qt_searchname="lib${qt_libname}${qt_suffix}.a"
+ else
+    qt_searchname="lib${qt_libname}${std_shrext}.4"
+ fi
+@@ -20047,7 +20050,7 @@
+ done
+ 
+    if test -n "$found_dir" ; then
+-     qt4_libs="-L$found_dir -l${qt_libname} -lQtCore"
++     qt4_libs="-L$found_dir -l${qt_libname}${qt_suffix} -lQtCore${qt_suffix}"
+    fi
+ fi
+ 
+diff -Nru gwenhywfar-4.0.3.orig/gui/qt4/libtest.cpp gwenhywfar-4.0.3/gui/qt4/libtest.cpp
+--- gwenhywfar-4.0.3.orig/gui/qt4/libtest.cpp	2010-07-14 13:58:21.000000000 +0300
++++ gwenhywfar-4.0.3/gui/qt4/libtest.cpp	2011-01-22 20:27:43.386871400 +0200
+@@ -11,6 +11,8 @@
+ 
+ #include <qapplication.h>
+ 
++#include <windows.h>
++#define sleep(n) Sleep(1000 * n)
+ 
+ int test1(int argc, char **argv) {
+   QApplication a(argc, argv);
+diff -Nru gwenhywfar-4.0.3.orig/src/os/windows/inetsocket.c gwenhywfar-4.0.3/src/os/windows/inetsocket.c
+--- gwenhywfar-4.0.3.orig/src/os/windows/inetsocket.c	2008-07-31 20:56:06.000000000 +0300
++++ gwenhywfar-4.0.3/src/os/windows/inetsocket.c	2011-01-22 20:27:43.386871400 +0200
+@@ -42,6 +42,8 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <sys/time.h>
++#include <Winsock2.h>
++#include <Winerror.h>
+ 
+ 
+ 
