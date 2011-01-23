@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['testing/openal-soft-src'] = 'default'
-        self.hardDependencies['testing/libsndfile-src'] = 'default'
+        self.hardDependencies['win32libs-sources/libsndfile-src'] = 'default'
         self.hardDependencies['testing/glew-src'] = 'default'
 
 class Package(CMakePackageBase):
