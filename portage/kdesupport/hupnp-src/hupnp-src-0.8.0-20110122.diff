@@ -1,0 +1,64 @@
+diff -Nru hupnp-src-0.8.0.orig/herqq.pro hupnp-src-0.8.0/herqq.pro
+===================================================================
+--- hupnp-src-0.8.0.orig/herqq.pro	(revision 93)
++++ hupnp-src-0.8.0/herqq.pro	(working copy)
+@@ -1,19 +1,8 @@
+ TEMPLATE = subdirs
+ CONFIG  += ordered
+ 
+-CONFIG += \
+-    build_qtsoap \
+-    build_core \
+-    build_test_app
++CONFIG += build_core
+ 
+-build_qtsoap {
+-    SUBDIRS += hupnp/lib/qtsoap-2.7-opensource/buildlib
+-}
+-
+ build_core {
+     SUBDIRS += hupnp/src/hupnp_core
+-}
+-
+-build_test_app {
+-    SUBDIRS += apps/simple_test-app
+-}
++}
+\ No newline at end of file
+diff -Nru hupnp-src-0.8.0.orig/hupnp/src/hupnp_core/hupnp_core.pro hupnp-src-0.8.0/hupnp/src/hupnp_core/hupnp_core.pro
+===================================================================
+--- hupnp-src-0.8.0.orig/hupnp/src/hupnp_core/hupnp_core.pro	(revision 93)
++++ hupnp-src-0.8.0/hupnp/src/hupnp_core/hupnp_core.pro	(working copy)
+@@ -13,17 +13,11 @@
+     ../../lib/qtsoap-2.7-opensource/src
+ 
+ LIBS += -L"../../bin/"
+-LIBS += -L"../../lib/qtsoap-2.7-opensource/lib"
+ 
+ debug:DEFINES += DEBUG
+ 
+ win32 {
+-    debug {
+-        LIBS += -lQtSolutions_SOAP-2.7d
+-    }
+-    else {
+-        LIBS += -lQtSolutions_SOAP-2.7
+-    }
++    LIBS += -lQtSolutions_SOAP-2.7
+ 
+     LIBS += -lws2_32
+     TARGET_EXT = .dll
+@@ -50,13 +44,6 @@
+ include (dataelements/dataelements.pri)
+ include (devicehosting/devicehosting.pri)
+ 
+-win32 {
+-    QMAKE_POST_LINK += copy ..\\..\\lib\\qtsoap-2.7-opensource\\lib\\* ..\\..\\bin /Y
+-}
+-else {
+-    QMAKE_POST_LINK += cp -fR ../../lib/qtsoap-2.7-opensource/lib/* ../../bin/
+-}
+-
+ isEmpty(PREFIX) {
+     PREFIX = ../../deploy
+ }
