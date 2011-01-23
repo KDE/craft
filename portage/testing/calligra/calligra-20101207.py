@@ -2,8 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "git://git.kde.org/calligra"
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = "git://git.kde.org/calligra"
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/lcms'] = 'default'
@@ -19,6 +19,7 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()
