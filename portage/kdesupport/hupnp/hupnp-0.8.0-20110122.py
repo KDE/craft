@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
-        self.dependencies['win32libs-sources/libqtsoap-src'] = 'default'
+        self.dependencies['kdesupport/libqtsoap'] = 'default'
 
 from Package.QMakePackageBase import *
 
