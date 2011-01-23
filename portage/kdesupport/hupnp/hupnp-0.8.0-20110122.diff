@@ -1,7 +1,7 @@
-diff -Nru hupnp-src-0.8.0.orig/herqq.pro hupnp-src-0.8.0/herqq.pro
+diff -Nru hupnp-0.8.0.orig/herqq.pro hupnp-0.8.0/herqq.pro
 ===================================================================
---- hupnp-src-0.8.0.orig/herqq.pro	(revision 93)
-+++ hupnp-src-0.8.0/herqq.pro	(working copy)
+--- hupnp-0.8.0.orig/herqq.pro	(revision 93)
++++ hupnp-0.8.0/herqq.pro	(working copy)
 @@ -1,19 +1,8 @@
  TEMPLATE = subdirs
  CONFIG  += ordered
@@ -25,10 +25,10 @@ diff -Nru hupnp-src-0.8.0.orig/herqq.pro hupnp-src-0.8.0/herqq.pro
 -}
 +}
 \ No newline at end of file
-diff -Nru hupnp-src-0.8.0.orig/hupnp/src/hupnp_core/hupnp_core.pro hupnp-src-0.8.0/hupnp/src/hupnp_core/hupnp_core.pro
+diff -Nru hupnp-0.8.0.orig/hupnp/src/hupnp_core/hupnp_core.pro hupnp-0.8.0/hupnp/src/hupnp_core/hupnp_core.pro
 ===================================================================
---- hupnp-src-0.8.0.orig/hupnp/src/hupnp_core/hupnp_core.pro	(revision 93)
-+++ hupnp-src-0.8.0/hupnp/src/hupnp_core/hupnp_core.pro	(working copy)
+--- hupnp-0.8.0.orig/hupnp/src/hupnp_core/hupnp_core.pro	(revision 93)
++++ hupnp-0.8.0/hupnp/src/hupnp_core/hupnp_core.pro	(working copy)
 @@ -13,17 +13,11 @@
      ../../lib/qtsoap-2.7-opensource/src
  
