@@ -1,13 +1,13 @@
-From 95ddc6b86840b1b878ab877dcc8fcb606e8fb85d Mon Sep 17 00:00:00 2001
+From c1f20aa121fe188aea4954833d31f11dce6f1aef Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <aheinecke@intevation.de>
-Date: Tue, 25 Jan 2011 12:05:28 +0100
-Subject: [PATCH] Replace qeventdisplatcher and expose hwnd
+Date: Tue, 25 Jan 2011 12:56:37 +0000
+Subject: [PATCH] Replace qeventdispatcher and expose hwnd
 
 ---
  mkspecs/wincewm50pocket-msvc2005/qmake.conf |    4 +-
- src/corelib/kernel/qeventdispatcher_win.cpp | 1432 ++++++++++++---------------
+ src/corelib/kernel/qeventdispatcher_win.cpp | 1434 ++++++++++++---------------
  src/corelib/kernel/qeventdispatcher_win_p.h |   50 +-
- 3 files changed, 697 insertions(+), 789 deletions(-)
+ 3 files changed, 699 insertions(+), 789 deletions(-)
 
 diff --git a/mkspecs/wincewm50pocket-msvc2005/qmake.conf b/mkspecs/wincewm50pocket-msvc2005/qmake.conf
 index 676be5a..0f23bed 100644
@@ -23,7 +23,7 @@ index 676be5a..0f23bed 100644
 -QMAKE_LIBS_NETWORK      = ws2.lib
 +QMAKE_LIBS_NETWORK      = ws2.lib wcecompat.lib
 diff --git a/src/corelib/kernel/qeventdispatcher_win.cpp b/src/corelib/kernel/qeventdispatcher_win.cpp
-index 153ccdf..1480c3e 100644
+index 153ccdf..dd9de33 100644
 --- a/src/corelib/kernel/qeventdispatcher_win.cpp
 +++ b/src/corelib/kernel/qeventdispatcher_win.cpp
 @@ -39,6 +39,8 @@
@@ -599,7 +599,7 @@ index 153ccdf..1480c3e 100644
      }
  
  #ifdef GWLP_USERDATA
-@@ -586,79 +260,431 @@ static HWND qt_create_internal_window(const QEventDispatcherWin32 *eventDispatch
+@@ -586,79 +260,433 @@ static HWND qt_create_internal_window(const QEventDispatcherWin32 *eventDispatch
      return wnd;
  }
  
@@ -1080,12 +1080,14 @@ index 153ccdf..1480c3e 100644
 -    // BoundsChecker may emit a warning for WSAAsyncSelect when sn_event == 0
 -    // This is a BoundsChecker bug and not a Qt bug
 -    WSAAsyncSelect(socket, internalHwnd, sn_event ? WM_QT_SOCKETNOTIFIER : 0, sn_event);
++    Q_D(QEventDispatcherWin32);
++
 +    createInternalHwnd();
 +    return d->internalHwnd;
  }
  
  void QEventDispatcherWin32::createInternalHwnd()
-@@ -669,28 +695,6 @@ void QEventDispatcherWin32::createInternalHwnd()
+@@ -669,28 +697,6 @@ void QEventDispatcherWin32::createInternalHwnd()
      if (d->internalHwnd)
          return;
      d->internalHwnd = qt_create_internal_window(this);
@@ -1114,7 +1116,7 @@ index 153ccdf..1480c3e 100644
  }
  
  QEventDispatcherWin32::QEventDispatcherWin32(QObject *parent)
-@@ -700,155 +704,70 @@ QEventDispatcherWin32::QEventDispatcherWin32(QObject *parent)
+@@ -700,155 +706,70 @@ QEventDispatcherWin32::QEventDispatcherWin32(QObject *parent)
  
  QEventDispatcherWin32::~QEventDispatcherWin32()
  {
@@ -1233,7 +1235,7 @@ index 153ccdf..1480c3e 100644
 -            }
 -            retVal = true;
 -        }
--
+ 
 -        // still nothing - wait for message or signalled objects
 -        canWait = (!retVal
 -                   && !d->interrupt
@@ -1253,7 +1255,7 @@ index 153ccdf..1480c3e 100644
 -            }
 -        }
 -    } while (canWait);
- 
+-
 -    if (!seenWM_QT_SENDPOSTEDEVENTS && (flags & QEventLoop::EventLoopExec) == 0) {
 -        // when called "manually", always send posted events
 -        QCoreApplicationPrivate::sendPostedEvents(0, 0, d->threadData);
@@ -1321,7 +1323,7 @@ index 153ccdf..1480c3e 100644
  }
  
  void QEventDispatcherWin32::registerSocketNotifier(QSocketNotifier *notifier)
-@@ -856,70 +775,122 @@ void QEventDispatcherWin32::registerSocketNotifier(QSocketNotifier *notifier)
+@@ -856,70 +777,122 @@ void QEventDispatcherWin32::registerSocketNotifier(QSocketNotifier *notifier)
      Q_ASSERT(notifier);
      int sockfd = notifier->socket();
      int type = notifier->type();
@@ -1481,7 +1483,7 @@ index 153ccdf..1480c3e 100644
      if (timerId < 1 || interval < 0 || !object) {
          qWarning("QEventDispatcherWin32::registerTimer: invalid arguments");
          return;
-@@ -927,76 +898,44 @@ void QEventDispatcherWin32::registerTimer(int timerId, int interval, QObject *ob
+@@ -927,76 +900,44 @@ void QEventDispatcherWin32::registerTimer(int timerId, int interval, QObject *ob
          qWarning("QObject::startTimer: timers cannot be started from another thread");
          return;
      }
@@ -1568,7 +1570,7 @@ index 153ccdf..1480c3e 100644
  }
  
  QList<QEventDispatcherWin32::TimerInfo>
-@@ -1008,17 +947,12 @@ QEventDispatcherWin32::registeredTimers(QObject *object) const
+@@ -1008,17 +949,12 @@ QEventDispatcherWin32::registeredTimers(QObject *object) const
      }
  
      Q_D(const QEventDispatcherWin32);
@@ -1588,7 +1590,7 @@ index 153ccdf..1480c3e 100644
      if (!notifier) {
          qWarning("QWinEventNotifier: Internal error");
          return false;
-@@ -1026,10 +960,15 @@ bool QEventDispatcherWin32::registerEventNotifier(QWinEventNotifier *notifier)
+@@ -1026,10 +962,15 @@ bool QEventDispatcherWin32::registerEventNotifier(QWinEventNotifier *notifier)
          qWarning("QWinEventNotifier: event notifiers cannot be enabled from another thread");
          return false;
      }
@@ -1605,7 +1607,7 @@ index 153ccdf..1480c3e 100644
          return true;
  
      if (d->winEventNotifierList.count() >= MAXIMUM_WAIT_OBJECTS - 2) {
-@@ -1042,6 +981,7 @@ bool QEventDispatcherWin32::registerEventNotifier(QWinEventNotifier *notifier)
+@@ -1042,6 +983,7 @@ bool QEventDispatcherWin32::registerEventNotifier(QWinEventNotifier *notifier)
  
  void QEventDispatcherWin32::unregisterEventNotifier(QWinEventNotifier *notifier)
  {
@@ -1613,7 +1615,7 @@ index 153ccdf..1480c3e 100644
      if (!notifier) {
          qWarning("QWinEventNotifier: Internal error");
          return;
-@@ -1049,36 +989,26 @@ void QEventDispatcherWin32::unregisterEventNotifier(QWinEventNotifier *notifier)
+@@ -1049,36 +991,26 @@ void QEventDispatcherWin32::unregisterEventNotifier(QWinEventNotifier *notifier)
          qWarning("QWinEventNotifier: event notifiers cannot be disabled from another thread");
          return;
      }
@@ -1661,7 +1663,7 @@ index 153ccdf..1480c3e 100644
      }
  }
  
-@@ -1092,62 +1022,4 @@ void QEventDispatcherWin32::interrupt()
+@@ -1092,62 +1024,4 @@ void QEventDispatcherWin32::interrupt()
  void QEventDispatcherWin32::flush()
  { }
  
@@ -1725,7 +1727,7 @@ index 153ccdf..1480c3e 100644
 -
  QT_END_NAMESPACE
 diff --git a/src/corelib/kernel/qeventdispatcher_win_p.h b/src/corelib/kernel/qeventdispatcher_win_p.h
-index b219841..e275554 100644
+index b219841..298c509 100644
 --- a/src/corelib/kernel/qeventdispatcher_win_p.h
 +++ b/src/corelib/kernel/qeventdispatcher_win_p.h
 @@ -54,10 +54,51 @@
