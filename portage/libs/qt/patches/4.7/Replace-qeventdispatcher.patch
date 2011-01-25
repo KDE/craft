@@ -1795,7 +1795,7 @@ index b219841..e275554 100644
 -
 -    bool event(QEvent *e);
 -
-+    void * getInteralHwnd();
++    void * getInternalHwnd();
  private:
      friend LRESULT QT_WIN_CALLBACK qt_internal_proc(HWND hwnd, UINT message, WPARAM wp, LPARAM lp);
 -    friend LRESULT QT_WIN_CALLBACK qt_GetMessageHook(int, WPARAM, LPARAM);
