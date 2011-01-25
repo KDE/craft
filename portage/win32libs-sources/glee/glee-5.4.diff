@@ -1,0 +1,24 @@
+diff -Nru glee.orig/CMakeLists.txt glee/CMakeLists.txt
+--- glee.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glee/CMakeLists.txt	2010-04-30 16:08:23.293200000 +0200
+@@ -0,0 +1,20 @@
++cmake_minimum_required(VERSION 2.8)
++project(glee)
++
++set(glee_SRCS
++    ${CMAKE_SOURCE_DIR}/glee.c
++)
++
++set(glee_HDRS
++    ${CMAKE_SOURCE_DIR}/glee.h
++)
++
++add_library(glee ${glee_SRCS})
++
++install(TARGETS glee
++                RUNTIME DESTINATION bin
++                LIBRARY DESTINATION lib
++                ARCHIVE DESTINATION lib
++)
++
++install(FILES ${glee_HDRS} DESTINATION include/GL)
