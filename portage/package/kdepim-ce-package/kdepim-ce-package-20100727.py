@@ -238,12 +238,12 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                 os.path.join(confdir, "ldapservers.conf"))
 
         # Add trustlist
-        if os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"):
-            utils.copyFile(os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"),
-                    os.path.join(confdir, "trustlist.txt"))
-        else:
-            utils.copyFile(os.path.join(self.packageDir(), "trustlist-example.txt"),
-                os.path.join(confdir, "trustlist.txt"))
+#        if os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"):
+#            utils.copyFile(os.getenv("EMERGE_PACKAGE_CUSTOM_TRUSTLIST_TXT"),
+#                    os.path.join(confdir, "trustlist.txt"))
+#        else:
+#            utils.copyFile(os.path.join(self.packageDir(), "trustlist-example.txt"),
+#                os.path.join(confdir, "trustlist.txt"))
 
         # Add certificates
         if os.getenv("EMERGE_PACKAGE_CUSTOM_ROOTCERTS"):
