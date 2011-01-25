@@ -78,6 +78,7 @@ share\\locale\\de\\LC_MESSAGES\\libkdepim\.mo
 share\\locale\\de\\LC_MESSAGES\\libkldap\.mo
 share\\locale\\de\\LC_MESSAGES\\libkleopatra\.mo
 share\\locale\\de\\LC_MESSAGES\\libkpgp\.mo
+share\\locale\\de\\LC_MESSAGES\\libkpimidentities\.mo
 share\\locale\\de\\LC_MESSAGES\\libksieve\.mo
 share\\locale\\de\\LC_MESSAGES\\libmailcommon\.mo
 share\\locale\\de\\LC_MESSAGES\\libmailtransport\.mo
