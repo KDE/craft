@@ -300,14 +300,14 @@ class KDEWinCreator( Visitor ):
         visited = set()
         ranks = {}
         self.mode = "cats"
-        for self.compiler in [ "x86-mingw4", "mingw4", "vc90", "vc100" ]:
+        for self.compiler in [ "x64-mingw4", "x86-mingw4", "mingw4", "vc90", "vc100" ]:
             visited = set()
             tree.visit( self, ( visited, out, ranks ) )
             self.__dumpCategories( out )
         _cat = "\n".join( out )
         out = []
         self.mode = "deps"
-        for self.compiler in [ "x86-mingw4", "mingw4", "vc90", "vc100" ]:
+        for self.compiler in [ "x64-mingw4", "x86-mingw4", "mingw4", "vc90", "vc100" ]:
             visited = set()
             out.append( "; package dependencies for compiler " + self.compiler )
             tree.visit( self, ( visited, out, ranks ) )
