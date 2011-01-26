@@ -271,6 +271,8 @@ for [cat, pac, ver, tar] in depList:
         isInstalled = portage.isInstalled( cat, pac, ver )
         
     if common.settings.getSectionEnabled("vcsrebuild"):
+        if target == '':
+            target = portage.PortageInstance.getDefaultTarget( cat, pac, ver )
         isInstalled = isInstalled and not target in portage.PortageInstance.getUpdatableVCSTargets( cat, pac, ver )
     if not isInstalled:
         packagelist.append( p )
