@@ -1,6 +1,6 @@
 diff -Nru glew-1.5.4.orig/CMakeLists.txt glew-1.5.4/CMakeLists.txt
---- glew-1.5.4.orig/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ glew-1.5.4/CMakeLists.txt	Thu Jul  8 21:02:57 2010
+--- glew-1.5.4.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glew-1.5.4/CMakeLists.txt	2011-01-26 17:04:29.024471200 +0100
 @@ -0,0 +1,6 @@
 +project (glew)
 +
@@ -9,15 +9,31 @@ diff -Nru glew-1.5.4.orig/CMakeLists.txt glew-1.5.4/CMakeLists.txt
 +add_subdirectory(include)
 +add_subdirectory(src)
 diff -Nru glew-1.5.4.orig/include/CMakeLists.txt glew-1.5.4/include/CMakeLists.txt
---- glew-1.5.4.orig/include/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ glew-1.5.4/include/CMakeLists.txt	Thu Jul  8 21:04:33 2010
+--- glew-1.5.4.orig/include/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glew-1.5.4/include/CMakeLists.txt	2011-01-26 17:04:29.027471300 +0100
 @@ -0,0 +1 @@
 +install(FILES GL/glew.h GL/glxew.h GL/wglew.h DESTINATION include/GL)
 \ No newline at end of file
+diff -Nru glew-1.5.4.orig/include/GL/glew.h glew-1.5.4/include/GL/glew.h
+--- glew-1.5.4.orig/include/GL/glew.h	2011-01-26 17:13:24.052073000 +0100
++++ glew-1.5.4/include/GL/glew.h	2011-01-26 17:12:06.525638700 +0100
+@@ -151,7 +151,11 @@
+ #endif
+ #if !defined(_PTRDIFF_T_DEFINED) && !defined(_PTRDIFF_T_)
+ #  ifdef _WIN64
+-typedef __int64 ptrdiff_t;
++#   ifdef __MINGW64__
++#   include <stdlib.h>
++#  else
++    typedef __int64 ptrdiff_t;
++#  endif
+ #  else
+ typedef _W64 int ptrdiff_t;
+ #  endif
 diff -Nru glew-1.5.4.orig/src/CMakeLists.txt glew-1.5.4/src/CMakeLists.txt
---- glew-1.5.4.orig/src/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ glew-1.5.4/src/CMakeLists.txt	Thu Jul  8 21:22:00 2010
-@@ -0,0 +1,25 @@
+--- glew-1.5.4.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glew-1.5.4/src/CMakeLists.txt	2011-01-26 17:07:25.074540600 +0100
+@@ -0,0 +1,26 @@
 +set(glew_SRCS
 +glew.c
 +../build/vc6/glew.rc
@@ -34,11 +50,12 @@ diff -Nru glew-1.5.4.orig/src/CMakeLists.txt glew-1.5.4/src/CMakeLists.txt
 +include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ../include)
 +
 +add_library(glew SHARED ${glew_SRCS})
-+target_link_libraries(glew opengl32.lib)
++set_target_properties(glew PROPERTIES DEFINE_SYMBOL "GLEW_BUILD")
++target_link_libraries(glew opengl32)
 +add_executable(glewinfo ${glewinfo_SRCS})
 +target_link_libraries(glewinfo glew)
 +add_executable(visualinfo ${visualinfo_SRCS})
-+target_link_libraries(visualinfo glew opengl32.lib glu32.lib)
++target_link_libraries(visualinfo glew opengl32 glu32)
 +
 +install(TARGETS glew glewinfo visualinfo RUNTIME DESTINATION bin
 +                           LIBRARY DESTINATION lib
