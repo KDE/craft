@@ -13,8 +13,8 @@ diff -Nru glee.orig/CMakeLists.txt glee/CMakeLists.txt
 +    ${CMAKE_SOURCE_DIR}/glee.h
 +)
 +
-+add_library(glee ${glee_SRCS})
-+
++add_library(glee STATIC ${glee_SRCS})
++target_link_libraries(glee opengl32)
 +install(TARGETS glee
 +                RUNTIME DESTINATION bin
 +                LIBRARY DESTINATION lib
