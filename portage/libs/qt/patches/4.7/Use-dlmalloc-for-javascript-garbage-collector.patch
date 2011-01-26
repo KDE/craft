@@ -1,0 +1,52 @@
+From 8d88d19bcc1f4f5b45dcba4485891cab72db4e48 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Wed, 26 Jan 2011 15:57:57 +0000
+Subject: [PATCH 1/2] Use dlmalloc for javascript garbage collector
+
+---
+ .../JavaScriptCore/runtime/Collector.cpp           |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
+
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
+index 24873c8..64f8d16 100644
+--- a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
++++ b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
+@@ -61,7 +61,11 @@
+ #elif OS(WINDOWS)
+ 
+ #include <windows.h>
++#if OS(WINCE)
++#include <qglobal.h>
++#else
+ #include <malloc.h>
++#endif
+ 
+ #elif OS(HAIKU)
+ 
+@@ -227,7 +231,11 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
+         CRASH();
+     uintptr_t address = reinterpret_cast<uintptr_t>(mask);
+ #elif OS(WINCE)
++#if 0
+     void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
++#else
++    void* address = qMalloc(BLOCK_SIZE);
++#endif
+ #elif OS(WINDOWS)
+ #if COMPILER(MINGW) && !COMPILER(MINGW64)
+     void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
+@@ -318,7 +326,11 @@ NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
+ #elif OS(SYMBIAN)
+     userChunk->Free(reinterpret_cast<TAny*>(block));
+ #elif OS(WINCE)
++#if 0
+     VirtualFree(block, 0, MEM_RELEASE);
++#else
++    qFree(block);
++#endif
+ #elif OS(WINDOWS)
+ #if COMPILER(MINGW) && !COMPILER(MINGW64)
+     __mingw_aligned_free(block);
+-- 
+1.7.0.4
+

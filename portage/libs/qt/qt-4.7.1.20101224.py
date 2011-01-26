@@ -66,7 +66,9 @@ class subinfo(info.infoclass):
             ('patches/4.7/Add-gpgLogging.patch', 1),
             ('patches/4.7/allow-more-then-one-instance-of-a-wince-application.patch', 1),
             ('patches/4.7/Add-qCalloc-to-qmalloc.patch', 1),
-            ('patches/4.7/Use-dlmalloc-in-QScript4.dll.patch', 1)]
+            ('patches/4.7/Use-dlmalloc-in-QScript4.dll.patch', 1),
+            ('patches/4.7/Use-dlmalloc-for-javascript-garbage-collector.patch', 1),
+            ('patches/4.7/Use-qRealloc-instead-of-realloc-in-qimage.patch', 1)]
         self.patchToApply['wince']     =  winceVersionIndependentPatches + [
             ('patches/4.7/fix-qml-alignment.patch', 1), # Upstream in 4.7
             ('patches/4.7/Override-new-in-qt-dlls-to-use-dlmalloc.patch', 1),
