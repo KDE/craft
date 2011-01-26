@@ -1,0 +1,55 @@
+From a9663f250f45b02e15d2fda2f44ba8d77b53a422 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Wed, 26 Jan 2011 14:47:40 +0000
+Subject: [PATCH 2/2] Use dlmalloc in QScript4.dll
+
+---
+ .../JavaScriptCore/JavaScriptCore.pri              |    4 ++++
+ .../JavaScriptCore/wtf/FastMalloc.cpp              |    9 +++++++++
+ 2 files changed, 13 insertions(+), 0 deletions(-)
+
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri b/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri
+index d75bd31..1888d74 100644
+--- a/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri
++++ b/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri
+@@ -45,6 +45,10 @@ DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
+ win32-* {
+     LIBS += -lwinmm
+ }
++wince* {
++    DEFINES += USE_SYSTEM_MALLOC=1
++}
++
+ contains(JAVASCRIPTCORE_JIT,yes) {
+     DEFINES+=ENABLE_JIT=1
+     DEFINES+=ENABLE_YARR_JIT=1
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/FastMalloc.cpp b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/FastMalloc.cpp
+index d95f078..478cec0 100644
+--- a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/FastMalloc.cpp
++++ b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/FastMalloc.cpp
+@@ -178,6 +178,7 @@ void fastMallocMatchFailed(void*)
+ 
+ #endif
+ 
++
+ void* fastZeroedMalloc(size_t n) 
+ {
+     void* result = fastMalloc(n);
+@@ -209,6 +210,14 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
+ 
+ #if FORCE_SYSTEM_MALLOC
+ 
++#ifdef _WIN32_WCE
++#include "qglobal.h"
++#define malloc qMalloc
++#define free qFree
++#define calloc qCalloc
++#define realloc qRealloc
++#endif
++
+ namespace WTF {
+ 
+ TryMallocReturnValue tryFastMalloc(size_t n) 
+-- 
+1.7.0.4
+
