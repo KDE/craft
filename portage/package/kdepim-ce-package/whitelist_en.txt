@@ -1,0 +1,6 @@
+lib\\aspell.*\\en_US.*
+lib\\aspell.*\\english.*
+lib\\aspell.*\\enNovellwords
+lib\\aspell.*\\en-w.*
+lib\\aspell.*\\en_phonet.*
+lib\\aspell.*\\american.*

@@ -71,6 +71,13 @@ class MainPackage(CMakePackageBase):
                 utils.info("Reading additonal locale whitelist from %s" %\
                         whitelist)
                 self.read_whitelist(whitelist)
+            if self.buildTarget == 'en':
+                whitelist = "whitelist_en.txt"
+                whitelist = os.path.join(self.packageDir(), whitelist)
+                utils.info("Reading additonal locale whitelist from %s" %\
+                        whitelist)
+                self.read_whitelist(whitelist)
+
             utils.info("Copying files")
             self.copy_files()
             self.translateFirstrun()
