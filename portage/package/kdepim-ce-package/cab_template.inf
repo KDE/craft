@@ -34,10 +34,10 @@ akonadictl.exe,0,akonadictl.exe
 
 [Shortcuts]
 Mail,0,kmail-mobile.exe
-Notes,0,notes-mobile.exe
-Contacts,0,kaddressbook-mobile.exe
-Calendar,0,korganizer-mobile.exe
-Tasks,0,tasks-mobile.exe
+Notizen,0,notes-mobile.exe
+Kontakte,0,kaddressbook-mobile.exe
+Kalender,0,korganizer-mobile.exe
+Aufgaben,0,tasks-mobile.exe
 Kleopatra,0,kleopatra.exe
 
 [SourceDisksNames]
