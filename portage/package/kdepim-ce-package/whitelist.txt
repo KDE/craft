@@ -355,6 +355,7 @@ share\\icons\\oxygen\\(16x16|22x22|32x32|64x64)\\.*\\network-disconnect\.png
 share\\icons\\oxygen\\(16x16|22x22|32x32|64x64)\\.*\\view-pim-contacts\.png
 ##############################################################################
 # Icons referenced in c++ sources:
+share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|GGxGG)\\.*\\document-open-remote\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\address-book-new\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\akonadi\.png
 share\\icons\\oxygen\\(16x16|YYxYY|ZZxZZ|64x64)\\.*\\application-exit\.png
