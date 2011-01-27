@@ -21,9 +21,6 @@ class subinfo(info.infoclass):
 
     self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + self.getVer() + "-win32-debug.7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() +"-debug" ] = 'vlc-' + self.vlcTagName +  self.getVer()
-    
-    self.targets[ "latest" ] = self.targets[ self.vlcTagName + self.getVer() ] 
-    self.targets[ "latest-debug" ] = self.targets[ self.vlcTagName + self.getVer() +"-debug" ] 
 
     releaseTag = '1.1.5'
     self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
