@@ -67,7 +67,7 @@ class subinfo(info.infoclass):
             ('patches/4.7/allow-more-then-one-instance-of-a-wince-application.patch', 1),
             ('patches/4.7/Add-qCalloc-to-qmalloc.patch', 1),
             ('patches/4.7/Use-dlmalloc-in-QScript4.dll.patch', 1),
-#            ('patches/4.7/Use-dlmalloc-for-javascript-garbage-collector.patch', 1),
+            ('patches/4.7/Use-dlmalloc-for-javascript-garbage-collector.patch', 1),
             ('patches/4.7/Use-dlmalloc-in-qpaintengine.patch', 1),
             ('patches/4.7/Use-qCalloc-instead-of-qt_wince_calloc-impl.patch', 1),
             ('patches/4.7/Use-qRealloc-instead-of-realloc-in-qimage.patch', 1)]

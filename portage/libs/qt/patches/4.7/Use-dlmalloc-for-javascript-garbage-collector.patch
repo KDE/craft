@@ -1,16 +1,16 @@
-From d6236299307a745722f79260bf780c8c432ca6d3 Mon Sep 17 00:00:00 2001
+From e771d6d9ed3469a5933862ded5c89b601e41c3f4 Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <aheinecke@intevation.de>
-Date: Thu, 27 Jan 2011 11:07:21 +0000
+Date: Thu, 27 Jan 2011 18:19:52 +0000
 Subject: [PATCH] Use dlmalloc for javascript garbage collector
 
 ---
- .../JavaScriptCore/runtime/Collector.cpp           |   12 ++++++++++++
- .../JavaScriptCore/runtime/MarkStackWin.cpp        |   11 +++++++++++
+ .../JavaScriptCore/runtime/Collector.cpp           |   13 +++++++++++++
+ .../JavaScriptCore/runtime/MarkStackWin.cpp        |   13 +++++++++++++
  .../javascriptcore/JavaScriptCore/wtf/Platform.h   |    3 ++-
- 3 files changed, 25 insertions(+), 1 deletions(-)
+ 3 files changed, 28 insertions(+), 1 deletions(-)
 
 diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
-index 24873c8..64f8d16 100644
+index 24873c8..d3df4d8 100644
 --- a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
 +++ b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
 @@ -61,7 +61,11 @@
@@ -25,32 +25,33 @@ index 24873c8..64f8d16 100644
  
  #elif OS(HAIKU)
  
-@@ -227,7 +231,11 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
+@@ -227,7 +231,12 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
          CRASH();
      uintptr_t address = reinterpret_cast<uintptr_t>(mask);
  #elif OS(WINCE)
 +#if 0
      void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 +#else
-+    void* address = qMalloc(BLOCK_SIZE);
++    void* address = qMallocAligned(BLOCK_SIZE);
++    memset(address, 0, BLOCK_SIZE);
 +#endif
  #elif OS(WINDOWS)
  #if COMPILER(MINGW) && !COMPILER(MINGW64)
      void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
-@@ -318,7 +326,11 @@ NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
+@@ -318,7 +327,11 @@ NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
  #elif OS(SYMBIAN)
      userChunk->Free(reinterpret_cast<TAny*>(block));
  #elif OS(WINCE)
 +#if 0
      VirtualFree(block, 0, MEM_RELEASE);
 +#else
-+    qFree(block);
++    qFreeAligned(block);
 +#endif
  #elif OS(WINDOWS)
  #if COMPILER(MINGW) && !COMPILER(MINGW64)
      __mingw_aligned_free(block);
 diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp
-index a171c78..57e77a0 100644
+index a171c78..56a1d96 100644
 --- a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp
 +++ b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp
 @@ -26,6 +26,9 @@
@@ -63,12 +64,14 @@ index a171c78..57e77a0 100644
  #if OS(WINDOWS)
  
  #include "windows.h"
-@@ -41,13 +44,21 @@ void MarkStack::initializePagesize()
+@@ -41,13 +44,23 @@ void MarkStack::initializePagesize()
  
  void* MarkStack::allocateStack(size_t size)
  {
 +#if OS(WINCE)
-+    return qMalloc(size);
++    void * address = qMallocAligned(size);
++    memset(address, 0, BLOCK_SIZE);
++    return address;
 +#else
      return VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 +#endif
@@ -76,7 +79,7 @@ index a171c78..57e77a0 100644
  void MarkStack::releaseStack(void* addr, size_t)
  {
 +#if OS(WINCE)
-+    qFree(addr);
++    qFreeAligned(addr);
 +#else
      // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
      // dwSize must be 0 if dwFreeType is MEM_RELEASE.
