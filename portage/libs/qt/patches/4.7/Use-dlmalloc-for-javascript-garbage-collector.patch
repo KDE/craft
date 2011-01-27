@@ -1,11 +1,13 @@
-From 8d88d19bcc1f4f5b45dcba4485891cab72db4e48 Mon Sep 17 00:00:00 2001
+From d6236299307a745722f79260bf780c8c432ca6d3 Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <aheinecke@intevation.de>
-Date: Wed, 26 Jan 2011 15:57:57 +0000
-Subject: [PATCH 1/2] Use dlmalloc for javascript garbage collector
+Date: Thu, 27 Jan 2011 11:07:21 +0000
+Subject: [PATCH] Use dlmalloc for javascript garbage collector
 
 ---
  .../JavaScriptCore/runtime/Collector.cpp           |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+ .../JavaScriptCore/runtime/MarkStackWin.cpp        |   11 +++++++++++
+ .../javascriptcore/JavaScriptCore/wtf/Platform.h   |    3 ++-
+ 3 files changed, 25 insertions(+), 1 deletions(-)
 
 diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/Collector.cpp
 index 24873c8..64f8d16 100644
@@ -47,6 +49,59 @@ index 24873c8..64f8d16 100644
  #elif OS(WINDOWS)
  #if COMPILER(MINGW) && !COMPILER(MINGW64)
      __mingw_aligned_free(block);
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp
+index a171c78..57e77a0 100644
+--- a/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp
++++ b/src/3rdparty/javascriptcore/JavaScriptCore/runtime/MarkStackWin.cpp
+@@ -26,6 +26,9 @@
+ #include "config.h"
+ #include "MarkStack.h"
+ 
++#if OS(WINCE)
++#include "qglobal.h"
++#endif
+ #if OS(WINDOWS)
+ 
+ #include "windows.h"
+@@ -41,13 +44,21 @@ void MarkStack::initializePagesize()
+ 
+ void* MarkStack::allocateStack(size_t size)
+ {
++#if OS(WINCE)
++    return qMalloc(size);
++#else
+     return VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
++#endif
+ }
+ void MarkStack::releaseStack(void* addr, size_t)
+ {
++#if OS(WINCE)
++    qFree(addr);
++#else
+     // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
+     // dwSize must be 0 if dwFreeType is MEM_RELEASE.
+     VirtualFree(addr, 0, MEM_RELEASE);
++#endif
+ }
+ 
+ }
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h
+index 5abe9a1..6540b06 100644
+--- a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h
++++ b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h
+@@ -728,10 +728,11 @@
+ 
+ #if OS(WINCE)
+ #define HAVE_ERRNO_H 0
++#define HAVE_VIRTUALALLOC 0
+ #else
++#define HAVE_VIRTUALALLOC 1
+ #define HAVE_SYS_TIMEB_H 1
+ #endif
+-#define HAVE_VIRTUALALLOC 1
+ 
+ #elif OS(SYMBIAN)
+ 
 -- 
 1.7.0.4
 
