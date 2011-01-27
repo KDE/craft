@@ -1,0 +1,24 @@
+From b6d5e19da6bbdbf435f415f9de1c2aeb1c548bc3 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Thu, 27 Jan 2011 19:19:04 +0100
+Subject: [PATCH 3/4] fix install path to support autoloading of _dbus_bindings.pyd
+
+---
+ _dbus_bindings/CMakeLists.txt |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/_dbus_bindings/CMakeLists.txt b/_dbus_bindings/CMakeLists.txt
+index a0867f1..40c0454 100644
+--- a/_dbus_bindings/CMakeLists.txt
++++ b/_dbus_bindings/CMakeLists.txt
+@@ -44,6 +44,6 @@ set (CMAKE_SHARED_MODULE_SUFFIX .pyd)
+ add_library(_dbus_bindings MODULE ${_dbus_bindings_SOURCES})
+ target_link_libraries(_dbus_bindings ${DBUS_LIBRARIES} ${PYTHON_LIBRARY})
+ message(STATUS ${PYTHON_LIBRARY})
+-install(TARGETS _dbus_bindings LIBRARY DESTINATION bin ARCHIVE DESTINATION lib)
++install(TARGETS _dbus_bindings LIBRARY DESTINATION lib/python/dbus ARCHIVE DESTINATION lib)
+ 
+ #check_c_sources = $(_dbus_bindings_la_SOURCES)
+-- 
+1.7.0.2.msysgit.0
+

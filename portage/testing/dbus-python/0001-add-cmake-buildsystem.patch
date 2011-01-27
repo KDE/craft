@@ -1,0 +1,315 @@
+From a76868eedf85c357b5b2fbf508bbdbb8e3a2d63c Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Thu, 27 Jan 2011 13:48:08 +0100
+Subject: [PATCH 1/4] add cmake buildsystem
+
+---
+ CMakeLists.txt                |   68 +++++++++++++++++++++++++++++++++++++++
+ _dbus_bindings/CMakeLists.txt |   48 ++++++++++++++++++++++++++++
+ cmake/modules/FindDBus.cmake  |   70 +++++++++++++++++++++++++++++++++++++++++
+ config.h.cmake                |   23 +++++++++++++
+ dbus/CMakeLists.txt           |   15 +++++++++
+ examples/CMakeLists.txt       |   15 +++++++++
+ include/CMakeLists.txt        |    7 ++++
+ 7 files changed, 246 insertions(+), 0 deletions(-)
+ create mode 100644 CMakeLists.txt
+ create mode 100644 _dbus_bindings/CMakeLists.txt
+ create mode 100644 cmake/modules/FindDBus.cmake
+ create mode 100644 config.h.cmake
+ create mode 100644 dbus/CMakeLists.txt
+ create mode 100644 examples/CMakeLists.txt
+ create mode 100644 include/CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..ff85253
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,68 @@
++project(dbus-python)
++
++cmake_minimum_required(VERSION 2.6)
++
++# @todo fetch from configure.ac
++set (DBUS_PYTHON_MAJOR_VERSION 0)
++set (DBUS_PYTHON_MINOR_VERSION 83)
++set (DBUS_PYTHON_MICRO_VERSION 2)
++set (DBUS_PYTHON_VERSION "${DBUS_PYTHON_MAJOR_VERSION}.${DBUS_PYTHON_MINOR_VERSION}.${DBUS_PYTHON_MICRO_VERSION}")
++
++# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
++set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
++
++SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
++
++find_package(PythonLibs REQUIRED)
++find_package(dbus REQUIRED)
++
++#
++#  create config.h
++#
++configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
++
++
++#
++#
++
++add_subdirectory(_dbus_bindings)
++#add_subdirectory(_dbus_glib_bindings)
++add_subdirectory(dbus)
++add_subdirectory(include)
++add_subdirectory(examples)
++#add_subdirectory(test)
++#add_subdirectory(tools)
++
++set (EXTRA_DIST
++    dbus-python.pc.in
++    AUTHORS
++    COPYING
++    ChangeLog
++)
++# miss out the gconf examples for now - they don't work
++
++# === dbus package ===
++
++set (nobase_python_PYTHON
++    dbus_bindings.py
++    dbus/bus.py
++    dbus/connection.py
++    dbus/dbus_bindings.py
++    dbus/_dbus.py
++    dbus/_version.py
++    dbus/decorators.py
++    dbus/exceptions.py
++    dbus/_expat_introspect_parser.py
++    dbus/glib.py
++    dbus/gobject_service.py
++    dbus/__init__.py
++    dbus/lowlevel.py
++    dbus/mainloop/__init__.py
++    dbus/mainloop/glib.py
++    dbus/proxies.py
++    dbus/server.py
++    dbus/service.py
++    dbus/types.py
++)
++
+diff --git a/_dbus_bindings/CMakeLists.txt b/_dbus_bindings/CMakeLists.txt
+new file mode 100644
+index 0000000..6caec9c
+--- /dev/null
++++ b/_dbus_bindings/CMakeLists.txt
+@@ -0,0 +1,48 @@
++include_directories(
++    ../include
++    ${PYTHON_INCLUDE_DIRS}
++    ${DBUS_INCLUDE_DIR}
++)
++
++add_definitions(${DBUS_DEFINITIONS})
++
++if (UNIX OR MINGW)
++add_definitions(-module -avoid-version -export-symbols-regex init_dbus_bindings)
++endif()
++
++
++set (_dbus_bindings_SOURCES
++        abstract.c
++        bus.c
++        bytes.c
++        conn.c
++        conn-internal.h
++        conn-methods.c
++        containers.c
++        dbus_bindings-internal.h
++        debug.c
++        exceptions.c
++        float.c
++        generic.c
++        int.c
++        libdbusconn.c
++        mainloop.c
++        message-append.c
++        message.c
++        message-get-args.c
++        message-internal.h
++        module.c
++        pending-call.c
++        server.c
++        signature.c
++        string.c
++        types-internal.h
++        validation.c
++)
++
++add_library(_dbus_bindings SHARED ${_dbus_bindings_SOURCES})
++target_link_libraries(_dbus_bindings ${DBUS_LIBRARIES} ${PYTHON_LIBRARY})
++message(STATUS ${PYTHON_LIBRARY})
++install(TARGETS _dbus_bindings RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++
++#check_c_sources = $(_dbus_bindings_la_SOURCES)
+diff --git a/cmake/modules/FindDBus.cmake b/cmake/modules/FindDBus.cmake
+new file mode 100644
+index 0000000..2cac4f0
+--- /dev/null
++++ b/cmake/modules/FindDBus.cmake
+@@ -0,0 +1,70 @@
++# Try to find DBUS functionality
++# Once done this will define
++#
++#  DBUS_FOUND - system has DBUS
++#  DBUS_INCLUDE_DIR - the DBUS include directory
++#  DBUS_LIBRARIES - the libraries needed to use DBUS
++#  DBUS_DEFINITIONS - Compiler switches required for using DBUS
++#
++# Copyright (c) 2010, Ralf Habacker, <ralf.habacker@freenet.de>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if (DBUS_INCLUDE_DIR AND DBUS_LIBRARIES)
++
++    # in cache already
++    SET(DBUS_FOUND TRUE)
++
++else (DBUS_INCLUDE_DIR AND DBUS_LIBRARIES)
++
++    IF (WIN32)
++        file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
++        find_FILE(DBUS_DIR dbus include/dbus/dbus.h
++       PATHS
++       ${CMAKE_INSTALL_PREFIX}
++       "${_progFiles}"
++        )
++        set (DBUS_DIR ${CMAKE_INSTALL_PREFIX})
++        if (DBUS_DIR)
++            set (_DBUSIncDir  ${DBUS_DIR}/include)
++            set (_DBUSLinkDir ${DBUS_DIR}/libs)
++            set (DBUS_DEFINITIONS "")
++        endif (DBUS_DIR)
++    ELSE (WIN32)
++        # use pkg-config to get the directories and then use these values
++        # in the FIND_PATH() and FIND_LIBRARY() calls
++        INCLUDE(UsePkgConfig)
++        PKGCONFIG(DBUS-2.0 _DBUSIncDir _DBUSLinkDir _DBUSLinkFlags _LiIconvCflags)
++        SET(DBUS_DEFINITIONS ${_DBUSCflags})
++    ENDIF (WIN32)
++
++    FIND_PATH(DBUS_INCLUDE_DIR dbus/dbus.h
++      PATHS
++     ${_DBUSIncDir}
++    )
++
++    FIND_LIBRARY(DBUS_LIBRARIES NAMES dbus-1 dbus
++      PATHS
++      ${_DBUSLinkDir}
++    )
++
++    if (DBUS_INCLUDE_DIR AND DBUS_LIBRARIES)
++       set(DBUS_FOUND TRUE)
++    endif (DBUS_INCLUDE_DIR AND DBUS_LIBRARIES)
++
++    if (DBUS_FOUND)
++      if (NOT DBUS_FIND_QUIETLY)
++        message(STATUS "Found DBUS: ${DBUS_LIBRARIES}")
++      endif (NOT DBUS_FIND_QUIETLY)
++    else (DBUS_FOUND)
++      if (DBUS_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find DBUS")
++      endif (DBUS_FIND_REQUIRED)
++    endif (DBUS_FOUND)
++
++    MARK_AS_ADVANCED(DBUS_INCLUDE_DIR DBUS_LIBRARIES)
++
++endif (DBUS_INCLUDE_DIR AND DBUS_LIBRARIES)
++
++message(STATUS ${DBUS_INCLUDE_DIR})
+\ No newline at end of file
+diff --git a/config.h.cmake b/config.h.cmake
+new file mode 100644
+index 0000000..f3f4ab2
+--- /dev/null
++++ b/config.h.cmake
+@@ -0,0 +1,23 @@
++#ifndef CONFIG_H
++#define CONFIG_H
++
++#ifdef _WIN32
++#define INT32_MIN (-INT32_MAX - 1L)
++#define INT32_MAX 0x7fffffffL
++#define UINT32_MIN 0
++#define UINT32_MAX 0xffffffffL
++#define INT64_MIN (-INT64_MAX - 1LL)
++#define INT64_MAX 0x7fffffffffffffffLL
++#define UINT64_MIN 0
++#define UINT64_MAX 0xffffffffffffffffLL
++#else
++#define HAVE_STDINT_H
++#endif
++
++#ifdef _WIN32
++#define inline __inline
++#endif
++
++#define PACKAGE_VERSION "@DBUS_PYTHON_VERSION@"
++
++#endif
+diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
+new file mode 100644
+index 0000000..bca1b29
+--- /dev/null
++++ b/dbus/CMakeLists.txt
+@@ -0,0 +1,15 @@
++configure_file(_version.py.in ${CMAKE_CURRENT_BINARY_DIR}/_version.py)
++
++install(
++    DIRECTORY .
++    DESTINATION lib/python/dbus
++    PATTERN "*.py"
++    PATTERN "*.txt" EXCLUDE
++    PATTERN "*.in" EXCLUDE
++    # glib isn't ported yet
++    PATTERN "mainloop" EXCLUDE
++ )
++install(
++    FILES ${CMAKE_CURRENT_BINARY_DIR}/_version.py
++    DESTINATION lib/python/dbus
++)
+diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
+new file mode 100644
+index 0000000..2d9db4a
+--- /dev/null
++++ b/examples/CMakeLists.txt
+@@ -0,0 +1,15 @@
++# most files depends on glib mainloop
++if (0)
++install(
++    FILES
++        example-async-client.py
++        example-client.py
++        example-service.py
++        example-signal-emitter.py
++        example-signal-recipient.py
++        list-system-services.py
++# miss out the gconf examples for now - they don't work
++    DESTINATION
++        lib/python/dbus/examples
++)
++endif()
+\ No newline at end of file
+diff --git a/include/CMakeLists.txt b/include/CMakeLists.txt
+new file mode 100644
+index 0000000..a153418
+--- /dev/null
++++ b/include/CMakeLists.txt
+@@ -0,0 +1,7 @@
++install(
++    FILES
++        dbus-python.h
++# miss out the gconf examples for now - they don't work
++    DESTINATION
++        include/dbus
++)
+-- 
+1.7.0.2.msysgit.0
+
