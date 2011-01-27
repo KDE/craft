@@ -606,7 +606,7 @@ diff -Nru gpgme-r1510.orig/cmake/modules/MacroLogFeature.cmake gpgme-r1510/cmake
 diff -Nru gpgme-r1510.orig/CMakeLists.txt gpgme-r1510/CMakeLists.txt
 --- gpgme-r1510.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ gpgme-r1510/CMakeLists.txt	2010-12-05 01:17:30.978459200 +0100
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,165 @@
 +project(gpgme)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -764,9 +764,11 @@ diff -Nru gpgme-r1510.orig/CMakeLists.txt gpgme-r1510/CMakeLists.txt
 +install(FILES ${CMAKE_CURRENT_BINARY_DIR}/gpgme.h DESTINATION include)
 +
 +add_executable(gpgme-tool src/gpgme-tool.c)
++add_executable(gpgme-w32spawn src/gpgme-w32spawn.c)
 +target_link_libraries(gpgme-tool gpgme ${GPG_ERROR_LIBRARIES} ${ASSUAN2_LIBRARIES})
++target_link_libraries(gpgme-w32spawn gpgme ${GPG_ERROR_LIBRARIES})
 +
-+install(TARGETS gpgme gpgme-tool RUNTIME DESTINATION bin
++install(TARGETS gpgme gpgme-tool gpgme-w32spawn RUNTIME DESTINATION bin
 +                                 LIBRARY DESTINATION lib
 +                                 ARCHIVE DESTINATION lib)
 +macro_display_feature_log()
