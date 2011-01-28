@@ -45,7 +45,8 @@ class subinfo(info.infoclass):
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
                                           ('no-auth.diff', 1),
                                           ('msvc2010-has-errnoh.diff', 1),
-                                          ('live-lock-fix.diff', 1)
+                                          ('live-lock-fix.diff', 1),
+                                          ('wince-splashscreen.diff', 1)
                                           ]
             self.patchToApply['1.4.1'] = [('no-auth.diff', 1),
                                           ('msvc2010-has-errnoh.diff', 1),
