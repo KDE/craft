@@ -23,10 +23,10 @@ HKLM, Drivers\GnuPG_Device, prefix, 0,  GPG
 HKLM, Drivers\GnuPG_Device, Index, 0x00010001, 1
 HKLM, Software\GNU\GnuPG, Install Directory, 0, %CE1%/Kontact-Mobile/bin
 HKLM, Security\Shell\StartInfo\Start\Mail.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/mail-90.png
-HKLM, Security\Shell\StartInfo\Start\Notes.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/notes-90.png
-HKLM, Security\Shell\StartInfo\Start\Calendar.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/organizer-90.png
-HKLM, Security\Shell\StartInfo\Start\Contacts.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/contacts-90.png
-HKLM, Security\Shell\StartInfo\Start\Tasks.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/tasks-90.png
+HKLM, Security\Shell\StartInfo\Start\Notizen.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/notes-90.png
+HKLM, Security\Shell\StartInfo\Start\Kalender.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/organizer-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontakte.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/contacts-90.png
+HKLM, Security\Shell\StartInfo\Start\Aufgaben.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/tasks-90.png
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
