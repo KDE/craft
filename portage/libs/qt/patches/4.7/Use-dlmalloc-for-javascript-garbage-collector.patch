@@ -32,7 +32,7 @@ index 24873c8..d3df4d8 100644
 +#if 0
      void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 +#else
-+    void* address = qMallocAligned(BLOCK_SIZE);
++    void* address = qMallocAligned(BLOCK_SIZE,BLOCK_SIZE);
 +    memset(address, 0, BLOCK_SIZE);
 +#endif
  #elif OS(WINDOWS)
@@ -69,8 +69,8 @@ index a171c78..56a1d96 100644
  void* MarkStack::allocateStack(size_t size)
  {
 +#if OS(WINCE)
-+    void * address = qMallocAligned(size);
-+    memset(address, 0, BLOCK_SIZE);
++    void * address = qMallocAligned(size,size);
++    memset(address, 0, size);
 +    return address;
 +#else
      return VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
