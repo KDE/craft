@@ -25,6 +25,11 @@ class Package(BinaryPackageBase):
         shutil.move( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw" ) )
         shutil.copy( os.path.join( self.installDir() , "mingw" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw" , "bin" , "mingw32-make.exe") )
         utils.applyPatch( self.imageDir(), os.path.join( self.packageDir(), "gcc_Exit.diff"), 0 )
+        # FIXME: this is a hack for tzSpecificTimeToSystemLocalTime
+        # Remove this when you update the mingw version
+        if self.buildTarget == "20101003":
+            shutil.copy( os.path.join( self.packageDir(), "libkernel32.a" ),
+                    os.path.join( self.installDir(), "mingw", "i686-w64-mingw32", "lib" ) )
         return True
 
 if __name__ == '__main__':
