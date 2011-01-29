@@ -251,24 +251,8 @@ rem set EMERGE_HOLD_ON_PATCH_FAIL=True
 
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
-
-rem handle drive substitution
-if %EMERGE_USE_SHORT_PATH% == 1 (
-    subst %EMERGE_ROOT_DRIVE% /D
-    subst %EMERGE_SVN_DRIVE% /D
-    subst %EMERGE_DOWNLOAD_DRIVE% /D
-
-    mkdir %DOWNLOADDIR% 2>NUL
-    mkdir %KDESVNDIR% 2>NUL
-    
-    subst %EMERGE_ROOT_DRIVE% %KDEROOT%
-    subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
-    subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
-    set KDEROOT=%EMERGE_ROOT_DRIVE%\
-    set KDESVNDIR=%EMERGE_SVN_DRIVE%\
-    set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
-    %EMERGE_ROOT_DRIVE%
-)
+rem Developer note: Please think twice if anything you add here can not
+rem be placed into kdeenv.bat
 
 echo kdesettings.bat executed
 echo KDEROOT     : %KDEROOT%
