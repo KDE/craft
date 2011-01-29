@@ -68,52 +68,6 @@ if exist %~dp0etc\kdesettings.bat (
 call %~dp0etc\kdesettings.bat %BUILDTYPE%
 )
 
-rem handle drive substitution
-if !EMERGE_USE_SHORT_PATH! == 1 (
-    set ROOT_SET=FALSE
-    set SVN_SET=FALSE
-    set DOWNLOAD_SET=FALSE
-    FOR /F "tokens=1,2,3* delims= " %%i in ('subst') DO (
-        if /I "%%i" == "!EMERGE_ROOT_DRIVE!\:" (
-            if /I "%%k" == "!KDEROOT!" (
-                set ROOT_SET=TRUE
-            )
-        )
-        if /I "%%i" == "!EMERGE_SVN_DRIVE!\:" (
-            if /I "%%k" == "!KDESVNDIR!" (
-                set SVN_SET=TRUE
-            )
-        )
-        if /I "%%i" == "!EMERGE_DOWNLOAD_DRIVE!\:" (
-            if /I "%%k" == "!DOWNLOADDIR!" (
-                set DOWNLOAD_SET=TRUE
-            )
-        )
-    )
-    if NOT "!ROOT_SET!"=="TRUE" (
-        echo Mapping !KDEROOT! to !EMERGE_ROOT_DRIVE!
-        if exist !EMERGE_ROOT_DRIVE! subst !EMERGE_ROOT_DRIVE! /D
-        subst !EMERGE_ROOT_DRIVE! !KDEROOT!
-    )
-    if NOT "!DOWNLOAD_SET!"=="TRUE" (
-        echo Mapping !DOWNLOADDIR! to !EMERGE_DOWNLOAD_DRIVE!
-        if not exist !DOWNLOADDIR! mkdir !DOWNLOADDIR!
-        if exist !EMERGE_DOWNLOAD_DRIVE! subst !EMERGE_DOWNLOAD_DRIVE! /D
-        subst !EMERGE_DOWNLOAD_DRIVE! !DOWNLOADDIR!
-    )
-    if NOT "!SVN_SET!"=="TRUE" (
-        echo Mapping !KDESVNDIR! to !EMERGE_SVN_DRIVE!
-        if not exist !KDESVNDIR! mkdir !KDESVNDIR!
-        if exist !EMERGE_SVN_DRIVE! subst !EMERGE_SVN_DRIVE! /D
-        subst !EMERGE_SVN_DRIVE! !KDESVNDIR!
-    )
-
-    set KDEROOT=!EMERGE_ROOT_DRIVE!\
-    set KDESVNDIR=!EMERGE_SVN_DRIVE!\
-    set DOWNLOADDIR=!EMERGE_DOWNLOAD_DRIVE!\
-    !EMERGE_ROOT_DRIVE!
-)
-
 set SUBDIR=
 if "%BUILDTYPE%" == "" (
     if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
