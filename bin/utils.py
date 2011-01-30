@@ -835,45 +835,19 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
     if not os.path.exists( os.path.join( destdir, "manifest" ) ):
         os.makedirs( os.path.join( destdir, "manifest" ) )
 
-    if len(binList) > 0:
-        binmanifest = open( os.path.join( destdir, "manifest", "%s-%s-bin.mft" % ( package, version )), 'wb' )
-    if len(libList) > 0:
-        libmanifest = open( os.path.join( destdir, "manifest", "%s-%s-lib.mft" % ( package, version )), 'wb' )
-    if len(docList) > 0:
-        docmanifest = open( os.path.join( destdir, "manifest", "%s-%s-doc.mft" % ( package, version )), 'wb' )
-#    if verbose() >= 1:
-#        print "bin: ", binList
-#        print "lib: ", libList
-#        print "doc: ", docList
-    for fileName in binList:
-        binmanifest.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
-    for fileName in libList:
-        libmanifest.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName )) ) )
-    for fileName in docList:
-        docmanifest.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
-            #print os.path.join( root, fileName ).replace( myimagedir, "" ), dig.hexdigest()
-    if len(binList) > 0:
-        binmanifest.write( os.path.join( "manifest", "%s-%s-bin.mft\n" % ( package, version ) ) )
-        binmanifest.write( os.path.join( "manifest", "%s-%s-bin.ver\n" % ( package, version ) ) )
-    if len(libList) > 0:
-        libmanifest.write( os.path.join( "manifest", "%s-%s-lib.mft\n" % ( package, version ) ) )
-        libmanifest.write( os.path.join( "manifest", "%s-%s-lib.ver\n" % ( package, version ) ) )
-    if len(docList) > 0:
-        docmanifest.write( os.path.join( "manifest", "%s-%s-doc.mft\n" % ( package, version ) ) )
-        docmanifest.write( os.path.join( "manifest", "%s-%s-doc.ver\n" % ( package, version ) ) )
+    for mList, ext, description in [
+            (binList, 'bin', 'Binaries'),
+            (libList, 'lib', 'developer files'),
+            (docList, 'doc', 'Documentation')]:
+        if mList:
+            with open( os.path.join( destdir, "manifest", "%s-%s-%s.mft" % ( package, version, ext )), 'wb' ) as f:
+                for fileName in mList:
+                    f.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
+                f.write( os.path.join( "manifest", "%s-%s-%s.mft\n" % ( package, version, ext ) ) )
+                f.write( os.path.join( "manifest", "%s-%s-%s.ver\n" % ( package, version, ext ) ) )
+            with open( os.path.join( destdir, "manifest", "%s-%s-%s.ver" % ( package, version, ext )), 'wb' ) as f:
+                f.write( "%s %s %s\n%s/%s:%s:unknown" % ( package, version, description, category, package, version ) )
 
-    if len(binList) > 0:
-        binversion = open( os.path.join( destdir, "manifest", "%s-%s-bin.ver" % ( package, version )), 'wb' )
-    if len(libList) > 0:
-        libversion = open( os.path.join( destdir, "manifest", "%s-%s-lib.ver" % ( package, version )), 'wb' )
-    if len(docList) > 0:
-        docversion = open( os.path.join( destdir, "manifest", "%s-%s-doc.ver" % ( package, version )), 'wb' )
-    if len(binList) > 0:
-        binversion.write( "%s %s Binaries\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
-    if len(libList) > 0:
-        libversion.write( "%s %s developer files\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
-    if len(docList) > 0:
-        docversion.write( "%s %s Documentation\n%s/%s:%s:unknown" % ( package, version, category, package, version ) )
     return True
 
 def mergeImageDirToRootDir( imagedir, rootdir ):
