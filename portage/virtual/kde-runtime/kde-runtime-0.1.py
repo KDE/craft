@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         if os.getenv( "EMERGE_DEFAULTCATEGORY" ) in [ 'kde-4.4', 'kde-4.5', 'kde-4.6' ]:
             self.dependencies[ os.getenv( "EMERGE_DEFAULTCATEGORY" ) + '/kdebase-runtime' ]  = 'default'
         else:
-            self.dependencies[ 'kde/kdebase-runtime' ]  = 'default'
+            self.dependencies[ 'kde/kde-runtime' ]  = 'default'
 
 class Package( VirtualPackageBase ):
     def __init__( self ):
