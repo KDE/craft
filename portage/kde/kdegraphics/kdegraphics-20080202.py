@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['win32libs-bin/chm'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default' # okular/generators/ooo
         self.dependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['kde/kdebase-runtime'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['win32libs-bin/ebook-tools'] = 'default'
         self.dependencies['win32libs-bin/libspectre'] = 'default'

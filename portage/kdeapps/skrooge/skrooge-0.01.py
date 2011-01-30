@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['testing/libopensp'] = 'default'
         # missing: kdelibs
 

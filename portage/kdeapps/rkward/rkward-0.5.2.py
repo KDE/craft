@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'testing/r-base' ] = 'default'
-        self.dependencies[ 'virtual/kdebase-runtime' ] = 'default'
+        self.dependencies[ 'virtual/kde-runtime' ] = 'default'
 
 from Package.CMakePackageBase import *
 

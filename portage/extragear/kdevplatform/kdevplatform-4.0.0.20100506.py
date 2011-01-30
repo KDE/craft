@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'virtual/kdebase-runtime' ] = 'default'
+        self.dependencies[ 'virtual/kde-runtime' ] = 'default'
         self.dependencies[ 'win32libs-bin/boost' ] = 'default'
         self.dependencies[ 'kdesupport/qjson' ] = 'default'
         self.buildDependencies[ 'dev-util/gettext-tools' ] = 'default'

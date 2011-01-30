@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['win32libs-bin/lcms'] = 'default'
-        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.buildDependencies['kdesupport/eigen2'] = 'default'
 #        self.dependencies['testing/gsl'] = 'default'

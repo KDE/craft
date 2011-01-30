@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['virtual/kdemultimedia'] = 'default'
         self.dependencies['win32libs-bin/libsamplerate'] = 'default'
         self.dependencies['testing/libdvdcss'] = 'default'

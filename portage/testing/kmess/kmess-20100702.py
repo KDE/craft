@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde/kde-runtime'] = 'default'
         self.hardDependencies['testing/libgcrypt-src'] = 'default'
 
 class Package(CMakePackageBase):

@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/taglib-extras'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['testing/mysql-pkg'] = 'default'
         self.dependencies['kdesupport/liblastfm'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'

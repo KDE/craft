@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdebase-runtime'] = 'default'
+        self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['virtual/kdegraphics'] = 'default'
         self.dependencies['virtual/kdeedu'] = 'default'
         self.dependencies['win32libs-bin/lcms'] = 'default'

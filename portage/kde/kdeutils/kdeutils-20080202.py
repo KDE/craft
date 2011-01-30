@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdebase-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['win32libs-bin/libgmp'] = 'default'
         self.dependencies['win32libs-bin/libzip'] = 'default'

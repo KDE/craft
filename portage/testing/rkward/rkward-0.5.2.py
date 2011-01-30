@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['testing/r-base'] = 'default'
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde/kde-runtime'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

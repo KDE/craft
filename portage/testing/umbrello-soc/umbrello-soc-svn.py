@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHead'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde/kde-runtime'] = 'default'
         self.hardDependencies['win32libs-bin/boost'] = 'default'
         self.hardDependencies['win32libs-bin/zip'] = 'default'
 

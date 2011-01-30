@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['kde/kdebase-runtime'] = 'default'
+        self.hardDependencies['kde/kde-runtime'] = 'default'
         self.hardDependencies['kde/kdeedu'] = 'default'
 
 class subclass(base.baseclass):

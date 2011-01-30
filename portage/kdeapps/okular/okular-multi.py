@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdebase-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdegraphicslibs'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['win32libs-bin/tiff'] = 'default'

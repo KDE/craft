@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         if not emergePlatform.isCrossCompilingEnabled():
-            self.runtimeDependencies['kde/kdebase-runtime'] = 'default'
+            self.runtimeDependencies['kde/kde-runtime'] = 'default'
             self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
         else:
             self.dependencies['kdesupport/oxygen-icons'] = 'default'

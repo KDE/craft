@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['virtual/kdebase-runtime']    = 'default'
+        self.dependencies['virtual/kde-runtime']    = 'default'
         self.dependencies['win32libs-bin/libopensp'] = 'default'
 
 from Package.CMakePackageBase import *
