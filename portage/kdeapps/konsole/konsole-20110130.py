@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['testing/kcwsh'] = 'default'
 
 from Package.CMakePackageBase import *
 
