@@ -9,13 +9,17 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/phonon'
-        self.svnTargets['4.4'] = 'git://git.kde.org/phonon|4.4'
         self.targets['4.4.3'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.3/phonon-4.4.3.tar.bz2'
         self.targetInstSrc['4.4.3'] = 'phonon-4.4.3'
         self.targetDigests['4.4.3'] = '50262d590beb648be9dcad6b913b920db19a84f8'
         self.patchToApply['4.4.3'] = ("phonon-20100915.diff", 1)
+        self.targets['4.4.4'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.4/src/phonon-4.4.4.tar.bz2'
+        self.targetInstSrc['4.4.4'] = 'phonon-4.4.4'
+        self.patchToApply['4.4.4'] = ("phonon-20100915.diff", 1)
+        self.targetDigests['4.4.4'] = '7f31752c20efecbe63c7b312ceb28819fa337943'
+        
         self.shortDescription = "a Qt based multimedia framework"
-        self.defaultTarget = '4.4.3'
+        self.defaultTarget = '4.4.4'
 
 
     def setBuildOptions( self ):
