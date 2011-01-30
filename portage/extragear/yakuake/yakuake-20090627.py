@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/kdebase-apps'] = 'default'
+        self.dependencies['kdeapps\konsole'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):
