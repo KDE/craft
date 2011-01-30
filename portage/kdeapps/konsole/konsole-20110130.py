@@ -3,7 +3,8 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://git.kde.org/konsole'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['winport'] = 'git://git.kde.org/konsole|winport|'
+        self.defaultTarget = 'winport'
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
