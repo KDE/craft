@@ -27,12 +27,13 @@ class GitSource ( VersionSystemSourceBase ):
             self.shell.msysdir = gitInstallDir
             utils.debug( 'using shell from %s' % gitInstallDir, 1 )
             tmpFile = tempfile.TemporaryFile()
-            self.shell.execute( self.workDir(), "git", "config --global --get url.git://anongit.kde.org/.insteadof", out=tmpFile )
+            self.shell.execute( self.rootdir, "git", "config --global --get url.git://anongit.kde.org/.insteadof", out=tmpFile )
+            tmpFile.seek( 0 )
             for line in tmpFile:
-                if line.contains("kde:"):
+                if line.find("kde:") != -1:
                     return
-            self.shell.execute( self.workDir(), "git", "config --global --add url.git://anongit.kde.org/.insteadof kde:" )
-            self.shell.execute( self.workDir(), "git", "config --global --add url.ssh://git@git.kde.org/.pushinsteadof kde:" )
+            self.shell.execute( self.rootdir, "git", "config --global --add url.git://anongit.kde.org/.insteadof kde:" )
+            self.shell.execute( self.rootdir, "git", "config --global --add url.ssh://git@git.kde.org/.pushinsteadof kde:" )
             utils.debug( "adding kde related settings to global git config file",1 )
 
     def __getCurrentBranch( self ):
