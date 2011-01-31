@@ -1,5 +1,5 @@
 diff -Nru dbus-1.4.0.orig/bus/main.c dbus-1.4.0/bus/main.c
---- dbus-1.4.0.orig/bus/main.c	2011-01-28 16:23:21.697886400 +0100
+--- dbus-1.4.0.orig/bus/main.c	2011-01-31 09:24:31.124089200 +0100
 +++ dbus-1.4.0/bus/main.c	2011-01-28 16:11:30.201191100 +0100
 @@ -37,6 +37,11 @@
  #endif
@@ -26,8 +26,8 @@ diff -Nru dbus-1.4.0.orig/bus/main.c dbus-1.4.0/bus/main.c
      return 1;
 diff -Nru dbus-1.4.0.orig/bus/splashscreen.cpp dbus-1.4.0/bus/splashscreen.cpp
 --- dbus-1.4.0.orig/bus/splashscreen.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ dbus-1.4.0/bus/splashscreen.cpp	2011-01-28 16:16:53.777698600 +0100
-@@ -0,0 +1,150 @@
++++ dbus-1.4.0/bus/splashscreen.cpp	2011-01-31 09:07:09.226609300 +0100
+@@ -0,0 +1,154 @@
 +/*
 +    Copyright (c) 2010 Klarälvdalens Datakonsult AB, a KDAB Group company, info@kdab.com
 +    Copyright (c) 2010 Andreas Holzammer <andreas.holzammer@kdab.com>
@@ -164,7 +164,11 @@ diff -Nru dbus-1.4.0.orig/bus/splashscreen.cpp dbus-1.4.0/bus/splashscreen.cpp
 +
 +    RECT rc;
 +    // Next resize the main window to the size of the screen.
-+    SetRect(&rc, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
++    if (GetSystemMetrics(SM_CXSCREEN) > GetSystemMetrics(SM_CYSCREEN)) {
++        SetRect(&rc, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
++    } else {
++        SetRect(&rc, 0, 0, GetSystemMetrics(SM_CYSCREEN), GetSystemMetrics(SM_CXSCREEN));
++    }
 +    MoveWindow(hwnd, rc.left, rc.top, rc.right-rc.left, rc.bottom-rc.top, TRUE);
 +
 +
