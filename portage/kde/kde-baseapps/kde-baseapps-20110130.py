@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = '[git]kde:kde-baseapps'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:kde-baseapps'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
