@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
+import tempfile
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -33,6 +34,22 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(),"git.bat"),os.path.join(self.rootdir,"dev-utils","bin","git.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gb.bat"),os.path.join(self.rootdir,"dev-utils","bin","gb.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))
+        return True
+        
+    def qmerge(self):
+        if not BinaryPackageBase.qmerge(self):
+            return False
+        self.shell = MSysShell()
+        tmpFile = tempfile.TemporaryFile()
+        gitDir = os.path.join(self.rootdir,"dev-utils","git","bin")
+        self.shell.execute(  gitDir, "git", "config --global --get url.git://anongit.kde.org/.insteadof", out=tmpFile )
+        tmpFile.seek( 0 )
+        for line in tmpFile:
+            if line.find("kde:")>-1:
+                return True
+        utils.debug( "adding kde related settings to global git config file",1 )
+        self.shell.execute( gitDir, "git","config --global url.git://anongit.kde.org/.insteadOf kde:")
+        self.shell.execute( gitDir, "git","config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
         return True
 
 if __name__ == '__main__':
