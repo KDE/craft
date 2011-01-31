@@ -6,7 +6,35 @@
 
 import os
 import utils
-from _winreg import *
+try:
+    from _winreg import *
+    HAS_REGISTRY = True
+except ImportError:
+    import subprocess
+    HAS_REGISTRY = False
+
+
+def getUnixInstalledDot():
+    """Figures out the path to dot on a unixoid system"""
+    try:
+        p = subprocess.Popen(["which", "dot"], stdout=subprocess.PIPE)
+        path = p.communicate()
+        return None if p.returncode != 0 else path[0].strip()
+    except OSError:
+        return None
+
+
+def getWindowsInstalledDot():
+    """Uses the Windows registry to find the path to dot.exe"""
+    try:
+        key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_READ)
+    except WindowsError:
+        try:
+            key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
+        except WindowsError:
+            return False
+    return os.path.join(QueryValueEx(key, "InstallPath")[0], 'bin', 'dot.exe')
+
 
 class GraphViz:
     def __init__( self, parent=None ):
@@ -22,15 +50,12 @@ class GraphViz:
                 utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
 
     def isInstalled(self):
-        try:
-            key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_READ)
-        except WindowsError:
-            try:
-                key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
-            except WindowsError:
-                return False
-        self.graphVizInstallPath = QueryValueEx(key, "InstallPath")[0]
-        return True
+        if HAS_REGISTRY:
+            self.graphVizInstallPath = getWindowsInstalledDot()
+        else:
+            self.graphVizInstallPath = getUnixInstalledDot()
+        return self.graphVizInstallPath is not None
+
 
     def system( self, command, errorMessage ):
         if utils.system( command ):
@@ -39,7 +64,7 @@ class GraphViz:
             utils.die( "while running %s cmd: %s" % ( errorMessage, str( command ) ) )
 
     def runDot(self, inFile, outFile, dotFormat="pdf"):
-        dotExecutable = os.path.join(self.graphVizInstallPath, 'bin', 'dot.exe')
+        dotExecutable = self.graphVizInstallPath
         self.outFile = outFile
         if not self.parent.system("\"%s\" -T%s -o%s %s" % (dotExecutable, dotFormat, outFile, inFile), "create %s" % outFile):
             self.output = False
