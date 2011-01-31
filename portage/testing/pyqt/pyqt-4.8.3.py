@@ -21,23 +21,32 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
+        # jom reports missing moc_translator.xxx
+        self.subinfo.options.make.supportsMultijob = False
+        # add support for other location based on pythonpath
+        self.subinfo.options.merge.destinationPath = "emerge/python"
         
         self.subinfo.options.configure.defines = " --confirm-license --verbose"
         if self.buildType == "Debug":
             self.subinfo.options.configure.defines = " -u"
             
         if compiler.isMSVC2008():
-            os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-msvc2008") )
+            os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs","win32-msvc2008") )
         elif compiler.isMSVC2010():
-            os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-msvc2010") )
+            os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs","win32-msvc2010") )
         elif compiler.isMinGW():
-            os.putenv( "QMAKESPEC", os.path.join(self.rootdir,"mkspecs","win32-g++") )
+            os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs","win32-g++") )
 
     def configure( self ):
         self.enterSourceDir()
         
         cmd = "python configure.py"
         cmd += self.subinfo.options.configure.defines
+        cmd += " --bindir %s/bin " % self.installDir() 
+        cmd += " --destdir %s/Lib/site-packages/PyQt4 " % self.installDir() 
+        cmd += " --plugin-destdir %s/plugins " % self.installDir() 
+        cmd += " --sipdir %s/sip/PyQt4 " % self.installDir() 
+        
         os.system(cmd) and utils.die("command: %s failed" % (cmd))
 
         return True
