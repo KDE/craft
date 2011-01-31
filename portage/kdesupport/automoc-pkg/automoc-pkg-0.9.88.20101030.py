@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies[ 'dev-util/upx' ] = 'default'
 
     def setTargets( self ):
-        self.svnTargets[ 'svnHEAD' ] = 'git://git.kde.org/automoc'
+        self.svnTargets[ 'svnHEAD' ] = '[git]kde:automoc'
         self.defaultTarget = 'svnHEAD'
 
     def setBuildOptions( self ):

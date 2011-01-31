@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         self.dependencies['kdesupport/phonon'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/phonon-directshow'
+        self.svnTargets['gitHEAD'] = '[git]kde:phonon-directshow'
         self.shortDescription = "the DirectShow based phonon multimedia backend"
         self.defaultTarget = 'gitHEAD'
 

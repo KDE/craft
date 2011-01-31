@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/attica'
+        self.svnTargets['gitHEAD'] = '[git]kde:attica'
 
         for ver in ['0.1.3','0.2.0']:
           self.targets[ver] ='http://download.kde.org/download.php?url=stable/attica/attica-' + ver +'.tar.bz2'

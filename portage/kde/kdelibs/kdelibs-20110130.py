@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdelibs'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdelibs'
         self.svnTargets['komobranch'] = 'branches/work/komo/kdelibs'
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'komobranch'

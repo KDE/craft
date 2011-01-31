@@ -3,7 +3,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kile'
+        self.svnTargets['gitHEAD'] = '[git]kde:kile'
         self.shortDescription = "a user friendly TeX/LaTeX editor for KDE"
         self.defaultTarget = 'gitHEAD'
 

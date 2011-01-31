@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = 'git://git.kde.org/kdevelop'
+        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop'
         for ver in [ '4.1.1' ]:
             self.targets[ ver ] = 'http://download.kde.org/download.php?url=stable/kdevelop/' + ver + '/src/kdevelop-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kdevelop-' + ver

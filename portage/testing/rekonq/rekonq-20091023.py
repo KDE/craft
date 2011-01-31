@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/rekonq'
+        self.svnTargets['gitHEAD'] = '[git]kde:rekonq'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

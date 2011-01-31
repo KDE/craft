@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['0.0.1'] = 'http://www.kdab.com/~andy/setupdll.zip'
-        self.svnTargets['gitHEAD'] = "git://git.kde.org/scratch/aholzammer/setupdll.git"
+        self.svnTargets['gitHEAD'] = "[git]kde:scratch/aholzammer/setupdll.git"
         self.targetConfigurePath['0.0.1'] = 'setupdll'
         self.defaultTarget = 'gitHEAD'
 

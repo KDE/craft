@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/scratch/sengels/kcwsh'
+        self.svnTargets['gitHEAD'] = '[git]kde:scratch/sengels/kcwsh'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

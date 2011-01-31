@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
       self.hardDependencies['testing/mplayer'] = 'default'
 
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git://git.kde.org/phonon-mplayer'
+      self.svnTargets['gitHEAD'] = '[git]kde:phonon-mplayer'
       self.defaultTarget = 'gitHEAD'
 
 

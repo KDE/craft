@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'http://gitweb.kde.org/kdewin.git/snapshot/fc116df1dc204d8a06dc5c874a4cdecc335115ec.tar.gz'
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdewin'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdewin'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/kdewin'
         self.shortDescription = "kde supplementary package for win32"

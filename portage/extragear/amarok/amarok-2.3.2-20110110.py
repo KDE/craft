@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'amarok-' + ver
         self.patchToApply[ '2.3.2' ] = [ ( 'amarok-2.3.2-20110110.diff', 1 ) ]
 
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/amarok.git'
+        self.svnTargets['gitHEAD'] = '[git]kde:amarok.git'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

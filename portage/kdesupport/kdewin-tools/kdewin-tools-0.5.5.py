@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libpng'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdewin'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdewin'
         self.shortDescription = "kde supplementary tools package for win32"
         self.defaultTarget = 'gitHEAD'
 

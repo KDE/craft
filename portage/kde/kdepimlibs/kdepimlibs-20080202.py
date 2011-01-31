@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdepimlibs'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdepimlibs'
         for ver in ['80', '83', '85']:
           self.targets['4.0.' + ver] = 'ftp://ftp.kde.org/pub/kde/unstable/4.0.' + ver + '/src/kdepimlibs-4.0.' + ver + '.tar.bz2'
           self.targetInstSrc['4.0.' + ver] = 'kdepimlibs-4.0.' + ver

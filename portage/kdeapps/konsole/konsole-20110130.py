@@ -2,8 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/konsole'
-        self.svnTargets['winport'] = 'git://git.kde.org/konsole|winport|'
+        self.svnTargets['gitHEAD'] = '[git]kde:konsole'
+        self.svnTargets['winport'] = '[git]kde:konsole|winport|'
         self.defaultTarget = 'winport'
 
     def setDependencies( self ):

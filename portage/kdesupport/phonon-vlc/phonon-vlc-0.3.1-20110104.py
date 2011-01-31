@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
       self.targetInstSrc['0.3.1'] = "phonon-backend-vlc-0.3.1"
       self.targetDigests['0.3.1'] = 'b94dddc6f37924c101a8bab7b7a184b7d6b42d96'
       self.patchToApply['0.3.1'] = ("phonon-backend-vlc-0.3.1-20101223.diff", 1)
-      self.svnTargets['gitHEAD'] = 'git://git.kde.org/phonon-vlc'
+      self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
       self.defaultTarget = '0.3.1'
 

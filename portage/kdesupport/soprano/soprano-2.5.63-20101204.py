@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/soprano.git'
+        self.svnTargets['gitHEAD'] = '[git]kde:soprano.git'
 
         for ver in ['2.5.63']:
           self.targets[ver] ='http://downloads.sourceforge.net/sourceforge/Soprano/soprano-' + ver + '.tar.bz2'

@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
             self.patchToApply[ i ] = ( 'akonadi-20101213.patch', 1 )
         self.patchToApply[ '1.4.1' ] = ( 'akonadi-20101213.patch', 1 )
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/akonadi.git'
+        self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
         self.defaultTarget = 'gitHEAD'
 

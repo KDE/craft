@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
       self.hardDependencies[ 'kdesupport/qjson' ] = 'default'
 
     def setTargets( self ):
-      self.svnTargets[ 'gitHEAD' ] = 'git://git.kde.org/libechonest'
+      self.svnTargets[ 'gitHEAD' ] = '[git]kde:libechonest'
       self.defaultTarget = 'gitHEAD'
 
 

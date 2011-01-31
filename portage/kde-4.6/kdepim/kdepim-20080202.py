@@ -2,8 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdepim'
-#        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdepim|4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
+#        self.svnTargets['gitHEAD'] = '[git]kde:kdepim|4.6|'
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdepim-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdepim-4.6.' + ver

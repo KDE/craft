@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/kdepim'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
@@ -72,7 +72,7 @@ class Package( CMakePackageBase ):
         ret = CMakePackageBase.fetch( self )
         if ret and emergePlatform.isCrossCompilingEnabled():
             self.subDir = True
-            ret = CMakePackageBase.fetch( self, "git://git.kde.org/kdepim-runtime" )
+            ret = CMakePackageBase.fetch( self, "[git]kde:kdepim-runtime" )
         return ret
 
     def qmerge( self ):

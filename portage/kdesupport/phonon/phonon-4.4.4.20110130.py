@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.kde.org/phonon'
+        self.svnTargets['gitHEAD'] = '[git]kde:phonon'
         self.targets['4.4.3'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.3/phonon-4.4.3.tar.bz2'
         self.targetInstSrc['4.4.3'] = 'phonon-4.4.3'
         self.targetDigests['4.4.3'] = '50262d590beb648be9dcad6b913b920db19a84f8'
