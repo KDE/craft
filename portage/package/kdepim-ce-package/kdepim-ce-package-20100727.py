@@ -50,7 +50,8 @@ class MainPackage(CMakePackageBase):
                                     "bin\\kaddressbook-mobile.exe",
                                     "bin\\korganizer-mobile.exe",
                                     "bin\\notes-mobile.exe",
-                                    "bin\\tasks-mobile.exe" ]
+                                    "bin\\tasks-mobile.exe",
+                                    "bin\\kleopatra.exe" ]
         # Icons for the Start Menu
         self.menu_icons = [ "contacts-90.png",
                             "mail-90.png",
