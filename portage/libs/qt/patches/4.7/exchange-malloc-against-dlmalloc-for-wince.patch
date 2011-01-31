@@ -32,15 +32,15 @@ index 090998c..60e395e 100644
 +{
 +  TCHAR filename[MAX_PATH];
 +  GetModuleFileName(GetModuleHandle(NULL), filename, MAX_PATH );
-+  use_dlmalloc = (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kmail-mobile.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kaddressbook-mobile.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\korganizer-mobile.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\notes-mobile.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile.exe") == 0) ||
++  use_dlmalloc = (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kmail-mobile-real.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kaddressbook-mobile-real.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\korganizer-mobile-real.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\notes-mobile-real.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile-real.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_agent_server.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_imap_resource.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadiserver.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kleopatra.exe") ==0);
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kleopatra-real.exe") ==0);
 +  initialized = true;
 +}
 +
