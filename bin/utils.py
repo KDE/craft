@@ -986,7 +986,7 @@ def isGitUrl( Url ):
     """ this function returns true, if the Url given as parameter is a git url:
         it either starts with git:// or the first part before the first '|' ends with .git
         or if the url starts with the token [git] """
-    if Url.startswith('git://') or Url.startswith('kde://'):
+    if Url.startswith('git://'):
         return True
     # split away branch and tags
     splitUrl = Url.split('|')
