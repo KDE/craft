@@ -1,14 +1,14 @@
-From 40a6cce5fc97ab9a70e9a325b981042deb3564c7 Mon Sep 17 00:00:00 2001
-From: Andreas Holzammer <andy@kdab.com>
-Date: Mon, 6 Dec 2010 15:21:37 +0100
+From e022a2af7741a91cfb9c9fa587dfb334e64bdccc Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andreas.holzammer@kdab.com>
+Date: Mon, 31 Jan 2011 10:24:31 +0100
 Subject: [PATCH] exchange malloc against dlmalloc for wince
 
 ---
- src/corelib/global/qmalloc.cpp |   61 +++++++++++++++++++++++++++++++++++++++---
- 1 files changed, 56 insertions(+), 4 deletions(-)
+ src/corelib/global/qmalloc.cpp |   67 +++++++++++++++++++++++++++++++++++++--
+ 1 files changed, 63 insertions(+), 4 deletions(-)
 
 diff --git a/src/corelib/global/qmalloc.cpp b/src/corelib/global/qmalloc.cpp
-index 090998c..60e395e 100644
+index 090998c..6bec7bf 100644
 --- a/src/corelib/global/qmalloc.cpp
 +++ b/src/corelib/global/qmalloc.cpp
 @@ -41,6 +41,9 @@
@@ -21,7 +21,7 @@ index 090998c..60e395e 100644
  #include <stdlib.h>
  
  /*
-@@ -50,19 +52,69 @@
+@@ -50,19 +53,75 @@
  
  QT_BEGIN_NAMESPACE
  
@@ -32,15 +32,21 @@ index 090998c..60e395e 100644
 +{
 +  TCHAR filename[MAX_PATH];
 +  GetModuleFileName(GetModuleHandle(NULL), filename, MAX_PATH );
-+  use_dlmalloc = (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kmail-mobile-real.exe") == 0) ||
++  use_dlmalloc = (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kmail-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kaddressbook-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\korganizer-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\notes-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kleopatra.exe") ==0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kmail-mobile-real.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kaddressbook-mobile-real.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\korganizer-mobile-real.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\notes-mobile-real.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\tasks-mobile-real.exe") == 0) ||
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kleopatra-real.exe") ==0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_agent_server.exe") == 0) ||
 +    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadi_imap_resource.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadiserver.exe") == 0) ||
-+    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\kleopatra-real.exe") ==0);
++    (wcscmp(filename,L"\\Programme\\Kontact-Mobile\\bin\\akonadiserver.exe") == 0);
 +  initialized = true;
 +}
 +
@@ -94,7 +100,7 @@ index 090998c..60e395e 100644
  }
  
  void *qMallocAligned(size_t size, size_t alignment)
-@@ -120,7 +171,7 @@ void qFreeAligned(void *ptr)
+@@ -120,7 +179,7 @@ void qFreeAligned(void *ptr)
      if (!ptr)
          return;
      void **ptr2 = static_cast<void **>(ptr);
