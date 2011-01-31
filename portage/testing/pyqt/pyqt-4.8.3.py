@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.8.3'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-win-gpl-4.8.3.zip'
         self.targetInstSrc['4.8.3'] = 'PyQt-win-gpl-4.8.3'
+        self.targetDigests['4.8.3'] = '737e6ff98a4c0e5149035733928203b12d09a247'
         self.defaultTarget = '4.8.3'
 
 class Package(CMakePackageBase):
