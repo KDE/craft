@@ -968,12 +968,12 @@ def getVCSType( url ):
     """ return the type of the vcs url """
     if not url:
         return ""
-    if url.find("://") == -1:
+    if isGitUrl( url ):
+        return "git"
+    elif url.find("://") == -1:
         return "svn"
     elif url.startswith("[hg]"):
         return "hg"
-    elif isGitUrl( url ):
-        return "git"
     elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
         return "svn"
     ## \todo complete more cvs access schemes
