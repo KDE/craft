@@ -295,7 +295,11 @@ class KDEWinCreator( Visitor ):
     def createOutput( self, tree ):
         out = []
 
-        template = Template( file( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "config.txt.template" ) ).read() )
+        tmpl_conf_path = os.path.join(
+            os.path.dirname(__file__, "config.txt.template")) 
+
+        with open(tmpl_conf_path) as f:
+            template = Template(f.read())
 
         visited = set()
         ranks = {}
@@ -473,14 +477,13 @@ def parseOptions():
 def parsePackageListFiles( filenames ):
     depList = []
     for filename in filenames:
-        packagefile = file( filename )
-        for line in packagefile:
-            if not line.startswith( '#' ):
-                cat, pac, target, patchlvl = line.strip().split( ',' )
-                if pac.endswith( "-src" ):
-                    cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(pac)
-                depList.append( ( cat, pac, target, patchlvl ) )
-        packagefile.close()
+        with open(filename) as packagefile:
+            for line in packagefile:
+                if not line.startswith( '#' ):
+                    cat, pac, target, patchlvl = line.strip().split( ',' )
+                    if pac.endswith( "-src" ):
+                        cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(pac)
+                    depList.append( ( cat, pac, target, patchlvl ) )
     return depList
 
 def main():
@@ -507,9 +510,8 @@ def main():
         print "writing file ", args.outputname, os.path.dirname( args.outputname )
         if os.path.dirname( args.outputname ) and not os.path.exists( os.path.dirname( args.outputname ) ):
             os.makedirs( os.path.dirname( args.outputname ) )
-        f = open( args.outputname, "w" )
-        f.write( output )
-        f.close()
+        with open(args.outputname, "w") as f:
+            f.write( output )
 
         if output_type == OUTPUT_DOT:
             _graphviz = graphviz.GraphViz()
