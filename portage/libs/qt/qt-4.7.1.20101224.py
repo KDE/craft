@@ -20,20 +20,20 @@ from Package.QMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         # the static version uses one of the stable versions
-        self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|"
+        self.svnTargets['static'] = "[git]kde:qt-kde|4.5.2-patched|"
         # this is the upcoming 4.7 version with the KDE patches.
-        self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
+        self.svnTargets['master'] = "[git]kde:qt-kde"
         # this version contains the patches against the 4.5.3 release and is recommended for KDE 4.3.X
-        self.svnTargets['4.5.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.3-patched|"
+        self.svnTargets['4.5.3'] = "[git]kde:qt-kde|4.5.3-patched|"
         # this branch contains all the patches and follows the 4.6-stable branch on qt.git - it updates daily
-        self.svnTargets['4.6'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6-stable-patched|"
+        self.svnTargets['4.6'] = "[git]kde:qt-kde|4.6-stable-patched|"
         # those are the stable releases with the KDE patches applied on top
-        self.svnTargets['4.6.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.0-patched|"
-        self.svnTargets['4.6.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.1-patched|"
-        self.svnTargets['4.6.2'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.2-patched|"
-        self.svnTargets['4.6.3'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.6.3-patched|"
-        self.svnTargets['4.7.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|"
-        self.svnTargets['4.7.1'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.1-patched|"
+        self.svnTargets['4.6.0'] = "[git]kde:qt-kde|4.6.0-patched|"
+        self.svnTargets['4.6.1'] = "[git]kde:qt-kde|4.6.1-patched|"
+        self.svnTargets['4.6.2'] = "[git]kde:qt-kde|4.6.2-patched|"
+        self.svnTargets['4.6.3'] = "[git]kde:qt-kde|4.6.3-patched|"
+        self.svnTargets['4.7.0'] = "[git]kde:qt-kde|4.7.0-patched|"
+        self.svnTargets['4.7.1'] = "[git]kde:qt-kde|4.7.1-patched|"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.svnTargets['wince'] = "git://gitorious.org/qt/qt.git|4.7|235d1d687dcc2d21860cd753c9d67964c5270be2"
         self.svnTargets['wince-4.7'] = self.svnTargets["4.7"]
