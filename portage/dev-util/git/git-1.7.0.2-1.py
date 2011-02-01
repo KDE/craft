@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
 import tempfile
+import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -14,7 +15,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
-        self.buildDependencies['dev-util/msys']   = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
@@ -40,17 +40,16 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
-        self.shell = MSysShell()
         tmpFile = tempfile.TemporaryFile()
-        gitDir = os.path.join(self.rootdir,"dev-utils","git","bin")
-        self.shell.execute(  gitDir, "git", "config --global --get url.git://anongit.kde.org/.insteadof", out=tmpFile )
+        git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
+        utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git, tmpFile,tmpFile  )
         tmpFile.seek( 0 )
         for line in tmpFile:
             if line.find("kde:")>-1:
                 return True
         utils.debug( "adding kde related settings to global git config file",1 )
-        self.shell.execute( gitDir, "git","config --global url.git://anongit.kde.org/.insteadOf kde:")
-        self.shell.execute( gitDir, "git","config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
+        utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
+        utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
         return True
 
 if __name__ == '__main__':
