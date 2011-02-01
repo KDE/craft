@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
+        self.buildDependencies['dev-util/msys']   = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
