@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdebase-apps'] = 'default'
+        self.dependencies['virtual/kde-baseapps'] = 'default'
         self.dependencies['kdeapps/konsole'] = 'default'
 
 class Package(CMakePackageBase):

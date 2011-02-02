@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['kde/kde-runtime'] = 'default'
-        self.hardDependencies['kde/kdebase-workspace'] = 'default'
+        self.hardDependencies['kde/kde-workspace'] = 'default'
 
 class subclass(base.baseclass):
     def __init__( self, **args ):

@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kdebase-workspace'] = 'default'
+        self.dependencies['kde/kde-workspace'] = 'default'
 
 from Package.CMakePackageBase import *
 
