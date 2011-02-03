@@ -1,3 +1,15 @@
+diff -Nru ebook-tools-0.2.1.orig/src/libepub/epub.c ebook-tools-0.2.1/src/libepub/epub.c
+--- ebook-tools-0.2.1.orig/src/libepub/epub.c	2010-08-30 22:54:51.000000000 +0200
++++ ebook-tools-0.2.1/src/libepub/epub.c	2011-02-03 16:38:29.852299100 +0100
+@@ -35,7 +35,7 @@
+   }
+ 
+   epub->ocf->datapath = malloc(sizeof(char) *(strlen(opfName) +1));
+-  pathsep_index = strrchr(opfName, PATH_SEPARATOR);
++  pathsep_index = strrchr(opfName, '/');
+   if (pathsep_index) {
+     strncpy(epub->ocf->datapath, opfName, pathsep_index + 1 - opfName); 
+     epub->ocf->datapath[pathsep_index - opfName + 1] = 0;
 diff -Nru ebook-tools-0.2.1.orig/src/libepub/ocf.c ebook-tools-0.2.1/src/libepub/ocf.c
 --- ebook-tools-0.2.1.orig/src/libepub/ocf.c	2010-08-30 22:54:51.000000000 +0200
 +++ ebook-tools-0.2.1/src/libepub/ocf.c	2010-11-16 15:35:51.175066100 +0100
