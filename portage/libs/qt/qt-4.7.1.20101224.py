@@ -70,7 +70,8 @@ class subinfo(info.infoclass):
             ('patches/4.7/Use-dlmalloc-for-javascript-garbage-collector.patch', 1),
             ('patches/4.7/Use-dlmalloc-in-qpaintengine.patch', 1),
             ('patches/4.7/Use-qCalloc-instead-of-qt_wince_calloc-impl.patch', 1),
-            ('patches/4.7/Use-qRealloc-instead-of-realloc-in-qimage.patch', 1)]
+            ('patches/4.7/Use-qRealloc-instead-of-realloc-in-qimage.patch', 1),
+            ('patches/4.7/fix-calloc.patch', 1)]
         self.patchToApply['wince']     =  winceVersionIndependentPatches + [
             ('patches/4.7/fix-qml-alignment.patch', 1), # Upstream in 4.7
             ('patches/4.7/Override-new-in-qt-dlls-to-use-dlmalloc.patch', 1),

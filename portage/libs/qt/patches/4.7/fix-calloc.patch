@@ -1,0 +1,25 @@
+From 2d91a120f54516ba7f81de174868ffa4e3434683 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andreas.holzammer@kdab.com>
+Date: Thu, 3 Feb 2011 11:56:10 +0100
+Subject: [PATCH 2/2] fix calloc
+
+---
+ src/corelib/global/qmalloc.cpp |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/src/corelib/global/qmalloc.cpp b/src/corelib/global/qmalloc.cpp
+index e2fbb8d..efef4e0 100644
+--- a/src/corelib/global/qmalloc.cpp
++++ b/src/corelib/global/qmalloc.cpp
+@@ -41,6 +41,8 @@
+ 
+ #include "qplatformdefs.h"
+ 
++#undef calloc
++
+ #ifdef _WIN32_WCE
+ #include "wcecompat/dlmalloc.h"
+ #endif
+-- 
+1.7.0.2.msysgit.0
+
