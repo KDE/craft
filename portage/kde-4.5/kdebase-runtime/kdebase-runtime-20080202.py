@@ -2,11 +2,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.5/kdebase/runtime'
+        self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.5|'
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdebase-runtime-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdebase-runtime-4.5.' + ver
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde-4.5/kdelibs'] = 'default'
