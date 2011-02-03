@@ -1,0 +1,38 @@
+From a5b0d58bbba508d708b2711124c61a74e3b4f310 Mon Sep 17 00:00:00 2001
+From: Martin Jones <martin.jones@nokia.com>
+Date: Fri, 8 Oct 2010 11:26:57 +1000
+Subject: [PATCH] Ensure Flickable.contentX and Flickable.contentY return correct values.
+ The animation value was used previously, but this isn't the actual
+ position of the contentItem.
+
+Task-number: QTBUG-13603
+Reviewed-by: Michael Brasser
+---
+ .../graphicsitems/qdeclarativeflickable.cpp        |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/declarative/graphicsitems/qdeclarativeflickable.cpp b/src/declarative/graphicsitems/qdeclarativeflickable.cpp
+index 33c21b1..001abca 100644
+--- a/src/declarative/graphicsitems/qdeclarativeflickable.cpp
++++ b/src/declarative/graphicsitems/qdeclarativeflickable.cpp
+@@ -466,7 +466,7 @@ QDeclarativeFlickable::~QDeclarativeFlickable()
+ qreal QDeclarativeFlickable::contentX() const
+ {
+     Q_D(const QDeclarativeFlickable);
+-    return -d->hData.move.value();
++    return -d->contentItem->x();
+ }
+ 
+ void QDeclarativeFlickable::setContentX(qreal pos)
+@@ -484,7 +484,7 @@ void QDeclarativeFlickable::setContentX(qreal pos)
+ qreal QDeclarativeFlickable::contentY() const
+ {
+     Q_D(const QDeclarativeFlickable);
+-    return -d->vData.move.value();
++    return -d->contentItem->y();
+ }
+ 
+ void QDeclarativeFlickable::setContentY(qreal pos)
+-- 
+1.7.0.2.msysgit.0
+
