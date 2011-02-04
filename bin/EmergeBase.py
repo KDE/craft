@@ -250,6 +250,8 @@ class EmergeBase(object):
         utils.debug("EmergeBase.buildDir() called", 2)
         self.setBuildTarget()
         builddir = os.path.join(self.workDir(), self.workDirPattern())
+        if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath(): 
+            builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         utils.debug("package builddir is: %s" % builddir, 2)
         return self.__adjustPath(builddir)
 
