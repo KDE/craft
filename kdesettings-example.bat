@@ -107,10 +107,6 @@ rem If you do not mind getting the output of the svn commands, then enable this
 rem option
 rem set KDESVNVERBOSE=True
 
-rem This option moves the git checkouts (and 3rdparty svn checkouts) to the 
-rem specified location instead of having them below the download directory.
-rem set KDEGITDIR=%KDEROOT%\git
-
 rem Non kde svn repository checkouts will be placed below %DOWNLOADDIR%/svn-src/<package>
 rem By default the emerge svn module supports only single branch svn checkouts.
 rem With this option emerge assumes that the svn repository have the svn standard layout 
@@ -133,6 +129,10 @@ rem http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
 rem and make sure that plink is in your PATH and Pageant is configured
 rem (you need to import your key)
 set SVN_SSH=plink 
+
+rem This option moves the git checkouts (and 3rdparty svn checkouts) to the 
+rem specified location instead of having them below the download directory.
+rem set KDEGITDIR=%KDEROOT%\git
 
 rem With this option set to 1 emerge checks out each git repository branch into a 
 rem separate subdirectory (see git clone --mirror at git clone  --shared --local).
