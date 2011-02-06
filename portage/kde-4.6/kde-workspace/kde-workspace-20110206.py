@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.dependencies['kde-4.6/kdebase-runtime'] = 'default'
+        self.dependencies['kde-4.6/kde-runtime'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
         self.shortDescription = "parts of the KDE desktop"

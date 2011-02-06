@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.runtimeDependencies['kde-4.6/kdebase-runtime'] = 'default'
+        self.runtimeDependencies['kde-4.6/kde-runtime'] = 'default'
         self.dependencies['kde-4.6/kdelibs'] = 'default'
         self.shortDescription = "collection of several toy programs in KDE"
 
