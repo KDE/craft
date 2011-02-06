@@ -2,10 +2,11 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'http://github.com/segfault87/Konstruktor.git'
+        self.svnTargets['gitHEAD'] = 'git@github.com:rhabacker/Konstruktor.git'
         self.defaultTarget = 'gitHEAD'
-        self.patchToApply['gitHEAD'] = [('0001-win32-fixes.patch', 1)]
-        self.shortDescription = "a full-featured LEGO(r) CAD"
+        #self.svnTargets['gitHEAD'] = 'http://github.com/segfault87/Konstruktor.git'
+        #self.patchToApply['gitHEAD'] = [('0001-win32-fixes.patch', 1)]
+        self.shortDescription = "a full-featured LEGO(r) CAD editor"
         #self.homepage = "http://konstruktor.influx.kr/"
 
     def setDependencies( self ):

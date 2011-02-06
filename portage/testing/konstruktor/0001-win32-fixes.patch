@@ -182,7 +182,7 @@ index 0dc6411..ed0d119 100644
  #ifdef WIN32
 +#ifdef MAKE_LIBLDR_LIB
  #define LIBLDR_EXPORT __declspec(dllexport)
-+#else 
++#else
 +#define LIBLDR_EXPORT __declspec(dllimport)
 +#endif
  #define DIRECTORY_SEPARATOR "\\"
@@ -194,7 +194,7 @@ index 0dc6411..ed0d119 100644
 +#ifdef WIN32
 +#ifdef MAKE_LIBLDRAWRENDERER_LIB
 +#define LIBLDRAWRENDERER_EXPORT __declspec(dllexport)
-+#else 
++#else
 +#define LIBLDRAWRENDERER_EXPORT __declspec(dllimport)
 +#endif
 +#else
