@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.5.1-1'] = 'trunk/qt-copy/'
         self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
-        self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
+        self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched"
         self.svnTargets['4.7.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|"
         self.defaultTarget = '4.5.2-patched'
         self.options.package.packageName = 'qt'
@@ -45,6 +45,8 @@ class Package(QMakePackageBase):
         platform = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008":
             platform = "win32-%s" % self.compiler()
+        elif self.compiler() == "msvc2010":
+            platform = "win32-msvc2008"
         elif self.compiler() == "mingw":
             platform = "win32-g++"
         else:
