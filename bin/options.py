@@ -12,6 +12,7 @@ class OptionsFetch:
         ## option comment
         self.option = None
         self.ignoreExternals = False
+        ## enable submodule support in git single branch mode
         self.checkoutSubmodules = False
 
 ## options for the unpack action
