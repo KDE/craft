@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'http://gitweb.kde.org/kdewin.git/snapshot/fc116df1dc204d8a06dc5c874a4cdecc335115ec.tar.gz'
         self.svnTargets['gitHEAD'] = '[git]kde:kdewin'
-        self.shortDescription = "kde supplementary package for win32"
+        self.shortDescription = "kde supplementary library for win32"
         self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
