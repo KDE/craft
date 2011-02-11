@@ -630,27 +630,29 @@ def printInstalled():
 
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
+    utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype),2 ) 
     # find in old style database
     path = utils.etcDir()
     fileName = os.path.join(path,'installed')
-    if not os.path.isfile( fileName ):
-        return False
-
     found = False
-    f = open( fileName, "rb" )
-    for line in f.read().splitlines():
-        (_category, _packageVersion) = line.split( "/" )
-        (_package, _version) = utils.packageSplit(_packageVersion)
-        if category != '' and version != '' and category == _category and package == _package and version == _version:
-            found = True
-            break
-        elif category == '' and version == '' and package == _package:
-            found = True
-            break
-    f.close()
+    if os.path.isfile( fileName ):
+        f = open( fileName, "rb" )
+        for line in f.read().splitlines():
+            (_category, _packageVersion) = line.split( "/" )
+            (_package, _version) = utils.packageSplit(_packageVersion)
+            if category != '' and version != '' and category == _category and package == _package and version == _version:
+                found = True
+                break
+            elif category == '' and version == '' and package == _package:
+                found = True
+                break
+        f.close()
+        utils.debug("... found in main database %s" % found,2 )
+        if found: 
+            return True
 
     # find in release mode database
-    if not found and buildtype != '':
+    if buildtype != '':
         fileName = os.path.join(path,'installed-' + buildtype )
         if os.path.isfile( fileName ):
             f = open( fileName, "rb" )
@@ -664,16 +666,18 @@ def isInstalled( category, package, version, buildtype='' ):
                     found = True
                     break
             f.close()
+            utils.debug( "... found in %s database %s" % ( buildtype, found ),2 )
+            if found: 
+                return True
 
-    if ( not found ):
-        # try to detect packages from the installer
-        binary = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest",
-                package + "-" + version + "-bin.ver"), category, package, version )
-        lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest",
-                package + "-" + version + "-lib.ver"), category, package, version )
-        found = found or binary or lib
+    # try to detect packages from the installer
+    binary = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest",
+            package + "-" + version + "-bin.ver"), category, package, version )
+    lib = utils.checkManifestFile( os.path.join( os.getenv( "KDEROOT" ), "manifest",
+            package + "-" + version + "-lib.ver"), category, package, version )
+    found = found or binary or lib
 
-    if ( not found and os.getenv( "EMERGE_VERSIONING" ) == "False" or utils.isSourceOnly() ):
+    if ( os.getenv( "EMERGE_VERSIONING" ) == "False" or utils.isSourceOnly() ):
         # check for any installation
         if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             return False
