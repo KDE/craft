@@ -118,7 +118,8 @@ Flags:
 -i          ignore install: using this option will install a package over an
             existing install. This can be useful if you want to check some
             new code and your last build isn't that old.
--p          probing: emerge will only look which files it has to build
+-p
+--probe     probing: emerge will only look which files it has to build
             according to the list of installed files and according to the
             dependencies of the package.
 -q          quiet: there should be no output - The verbose level should be 0
@@ -389,7 +390,7 @@ nextArguments = sys.argv[:]
 
 for i in sys.argv:
     nextArguments.pop(0)
-    if ( i == "-p" ):
+    if ( i == "-p" or i == "--probe" ):
         doPretend = True
     elif ( i == "-z" ):
         outDateVCS = True
