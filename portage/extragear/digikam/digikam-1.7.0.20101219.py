@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/graphics/digikam'
+        self.svnTargets['gitHEAD'] = '[git]kde:digikam'
         for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0']:
             self.targets[ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/' + ver + '/digikam-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'digikam-' + ver
@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.7.0'] = ('digikam-1.7.0-20101219.diff', 1)
 
         self.options.configure.defines = "-DENABLE_GPHOTO2=OFF"
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
