@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.svnTargets['static'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched|v4.5.2"
         self.svnTargets['master'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git"
         self.svnTargets['4.5.2-patched'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.5.2-patched"
+        self.svnTargets['4.5.2-patched-kde'] = "[git]kde:qt-kde|4.5.2-patched|"
         self.svnTargets['4.7.0'] = "git://gitorious.org/+kde-developers/qt/kde-qt.git|4.7.0-patched|"
         self.defaultTarget = '4.5.2-patched'
         self.options.package.packageName = 'qt'
