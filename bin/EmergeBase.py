@@ -318,6 +318,9 @@ class EmergeBase(object):
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
             
+        if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
+            dstpath = os.path.join( dstpath, self.buildType())
+            
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)
         return dstpath
