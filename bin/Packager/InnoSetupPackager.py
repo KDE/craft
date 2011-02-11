@@ -63,9 +63,7 @@ class InnoSetupPackager (PackagerBase):
         #    pkgName += "-x86"
 
         # FIXME: add a test for the installer later
-        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
-        if not dstpath:
-            dstpath = os.path.join( self.rootdir, "tmp" )
+        dstpath = self.packageDestinationDir()
 
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype

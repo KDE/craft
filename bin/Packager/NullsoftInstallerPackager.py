@@ -282,9 +282,7 @@ file collection process is skipped, and only the installer is generated.
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
-            dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
-            if not dstpath:
-                dstpath = os.path.join( self.rootdir, "tmp" )
+            dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
         definestring = ""

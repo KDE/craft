@@ -309,6 +309,18 @@ class EmergeBase(object):
         else:
             directory = ROOTDIR
         return self.__adjustPath(directory)
+        
+    def packageDestinationDir( self ):
+        """return absolute path to the directory where binary packages are placed into"""
+        
+        utils.debug( "EmergeBase.packageDestinationDir called", 2 )
+        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
+        if not dstpath:
+            dstpath = os.path.join( self.rootdir, "tmp" )
+            
+        if not os.path.exists(dstpath):
+            utils.createDir(dstpath)
+        return dstpath
 
     def setBuildTarget( self, target = None):
         utils.debug( "EmergeBase.setBuildTarget called", 2 )

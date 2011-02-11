@@ -58,10 +58,7 @@ class SevenZipPackager (PackagerBase):
         if self.subinfo.options.package.withDigests:
             utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
-        ## \todo do we have a wrapper for this ?
-        destPath = os.getenv( "EMERGE_PKGDSTDIR" )
-        if not destPath:
-            destPath = os.path.join( self.rootdir, "tmp" )
+        destPath = self.packageDestinationDir()
 
         if self.subinfo.options.package.withCompiler:
             if( self.compiler() == "mingw"):
