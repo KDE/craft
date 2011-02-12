@@ -2,16 +2,6 @@ this is a list of things that could be done to improve emerge:
 
 - migrate old script implementions to refactored api (see portage/template/ for hints) 
 
-- implement "emerge --digest package":
-this would create a digest file for the files needed for this package.
-the advantage would be that it would not be necessary to have internet
-connection to build a package any more. right now every time a package 
-is built emerge tries to fetch the package, because it does not know,
-if the downloaded files are complete. with a digest file it would be possible
-to check if the files are already complete without an internet connection.
-for ideas and code how to do so, look at the gentoo portage system.
-(pretty much unclear to me)
-
 - think of a fail proof versioning system - a script from today should stay executable at least for the next
   two minor KDE versions.
   
@@ -23,10 +13,6 @@ for ideas and code how to do so, look at the gentoo portage system.
   this is needed so that e.g. 'emerge.py --target=4.0 kdebase' will build only the 4.0 target and will
   not depend on the svnHEAD.
 
-- make the internal system target aware
-  the 4.0 branch definitely needs this since it should neither depend on trunk of kdesupport nor should
-  we introduce new static packages for that purpose.
-  
 - introduce the special target svnREV[XXXXXX] where XXXXXX is a revision number (why not use svn[XXXXXXX] ?).
   this needs some work on the internal implementation for interacting with subversion client.
 
@@ -34,18 +20,11 @@ for ideas and code how to do so, look at the gentoo portage system.
 ## note: started; the import of the file makes complete transmission possible
 
 - implement a function for making the settings readable by the app without the use environment vars
-
-- make up a package for the installer so that emerge itself can be distributed with the installer.
-  This requires a real release handling for the 'product' emerge.
   
 - implement a test/status page. gentoo emerge uses --info option to give that out.
   maybe some self tests could be included into a small test package. (could this test package be released independently?)
 
 - support additional portage directories - those have to be compatible to the original one...
-
-- as well with the installer:
-    can there be a custom app to translate .desktop files to .lnk files?
-## kdewin-menubuilder takes over this task for now, might be released soon in a better version
 
 ## - implement an option --update which updates installed svn packages (e.g. with target svnHEAD)
 ##   this will replace 'emerge.py --unmerge package --noclean package'
@@ -67,7 +46,6 @@ for ideas and code how to do so, look at the gentoo portage system.
 ## implemented as option --copy and --nocopy; --nocopy is standard now for all svn packages
 ## even packaging works from svn now
 
-- fix combined package creating 
 - complete options classes
 
 done 
@@ -78,5 +56,10 @@ done
 + implement build type related merge root 
 + add buildtarget to install root 
 
-- include the *_build.py as modules directly into the build scripts - this gives back the possibility to
-  overload functions and thus reimplement them.
+BUGS
+
+- emerge -p qt do not print the list of dependencies 
+- there is no way to detect the state of a given package except the 'qmerged' state
+  Missing states are 'fetched', 'unpacked', 'configured', 'maked', 'installed' - 
+  one question is how to detect monotone state changes
+  
