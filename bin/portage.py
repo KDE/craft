@@ -647,7 +647,7 @@ def isInstalled( category, package, version, buildtype='' ):
                 found = True
                 break
         f.close()
-        utils.debug("... found in main database %s" % found,2 )
+        utils.debug("... found in main database %s" % found, 2 )
         if found: 
             return True
 
@@ -666,7 +666,7 @@ def isInstalled( category, package, version, buildtype='' ):
                     found = True
                     break
             f.close()
-            utils.debug( "... found in %s database %s" % ( buildtype, found ),2 )
+            utils.debug( "... found in %s database %s" % ( buildtype, found ), 2 )
             if found: 
                 return True
 
