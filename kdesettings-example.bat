@@ -274,7 +274,7 @@ if %EMERGE_USE_SHORT_PATH% == 1 (
         subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
         set KDEGITDIR=%EMERGE_GIT_DRIVE%\
     )
-    if NOT "%EMERGE_GIT_DRIVE%" == "" (
+    if NOT "%EMERGE_DOWNLOAD_DRIVE%" == "" (
         subst %EMERGE_DOWNLOAD_DRIVE% /D
         mkdir %DOWNLOADDIR% 2>NUL
         subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
