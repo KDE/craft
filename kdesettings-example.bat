@@ -31,6 +31,7 @@ rem substitute pathes by drives (set to 1 to activate)
 set EMERGE_USE_SHORT_PATH=0
 set EMERGE_ROOT_DRIVE=r:
 set EMERGE_SVN_DRIVE=s:
+set EMERGE_GIT_DRIVE=q:
 set EMERGE_DOWNLOAD_DRIVE=t:
 
 rem The following variables are used for cross-compiling to Windows Mobile / WinCE
@@ -130,8 +131,8 @@ rem and make sure that plink is in your PATH and Pageant is configured
 rem (you need to import your key)
 set SVN_SSH=plink 
 
-rem This option moves the git checkouts (and 3rdparty svn checkouts) to the 
-rem specified location instead of having them below the download directory.
+rem This option defines the location for git and 3rdparty svn checkouts.
+set KDEGITDIR=%DOWNLOADDIR%\svn-src
 rem set KDEGITDIR=%KDEROOT%\git
 
 rem With this option set to 1 emerge checks out each git repository branch into a 
@@ -256,16 +257,20 @@ rem handle drive substitution
 if %EMERGE_USE_SHORT_PATH% == 1 (
     subst %EMERGE_ROOT_DRIVE% /D
     subst %EMERGE_SVN_DRIVE% /D
+    subst %EMERGE_GIT_DRIVE% /D
     subst %EMERGE_DOWNLOAD_DRIVE% /D
 
     mkdir %DOWNLOADDIR% 2>NUL
     mkdir %KDESVNDIR% 2>NUL
+    mkdir %KDEGITDIR% 2>NUL
     
     subst %EMERGE_ROOT_DRIVE% %KDEROOT%
     subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
+    subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
     subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
     set KDEROOT=%EMERGE_ROOT_DRIVE%\
     set KDESVNDIR=%EMERGE_SVN_DRIVE%\
+    set KDEGITDIR=%EMERGE_GIT_DRIVE%\
     set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
     %EMERGE_ROOT_DRIVE%
 )
@@ -274,6 +279,7 @@ echo kdesettings.bat executed
 echo KDEROOT     : %KDEROOT%
 echo KDECOMPILER : %KDECOMPILER%
 echo KDESVNDIR   : %KDESVNDIR%
+echo KDEGITDIR   : %KDEGITDIR%
 echo PYTHONPATH  : %PYTHONPATH%
 echo DOWNLOADDIR : %DOWNLOADDIR%
 
