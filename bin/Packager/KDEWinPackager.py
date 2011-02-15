@@ -6,7 +6,6 @@
 from Packager.PackagerBase import *
 import compiler
 import subprocess
-import tempfile
 
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
