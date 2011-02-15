@@ -1,7 +1,7 @@
 @echo off
 
-rem Here you set the base directory under which the whole KDE
-rem subsystem will live.
+rem Here you set the base directory under which the whole KDE subsystem will live.
+rem Note: use really short pathes here or activate EMERGE_USE_SHORT_PATH
 set KDEROOT=c:\kderoot
 
 rem Here you set the compiler to be used.
@@ -28,6 +28,8 @@ set EMERGE_ARCHITECTURE=x86
 rem set EMERGE_ARCHITECTURE=x64
 
 rem substitute pathes by drives (set to 1 to activate)
+rem This option may help to avoid path limit problems in case of long base pathes
+rem and compiling big packages like qt
 set EMERGE_USE_SHORT_PATH=0
 
 rem each drive could be commented out to skip substution
@@ -102,6 +104,8 @@ rem your changes from the emerge's SVN checkout. In case you use svn+ssh,
 rem also run 'plink username@svn.kde.org' after executing kdeenv.bat once
 rem to accept the fingerprint of the server or svn will hang forever when
 rem trying to download from the server.
+rem Note: use really short pathes here or activate EMERGE_USE_SHORT_PATH
+
 set KDESVNDIR=%KDEROOT%\svn
 set KDESVNSERVER=svn://anonsvn.kde.org
 set KDESVNUSERNAME=username
@@ -134,8 +138,10 @@ rem (you need to import your key)
 set SVN_SSH=plink 
 
 rem This option defines the location for git and 3rdparty svn checkouts.
-set KDEGITDIR=%DOWNLOADDIR%\svn-src
-rem set KDEGITDIR=%KDEROOT%\git
+rem Note: use really short pathes here or activate EMERGE_USE_SHORT_PATH
+set KDEGITDIR=%KDEROOT%\git
+rem old setting
+rem set KDEGITDIR=%DOWNLOADDIR%\svn-src
 
 rem With this option set to 1 emerge checks out each git repository branch into a 
 rem separate subdirectory (see git clone --mirror at git clone  --shared --local).
