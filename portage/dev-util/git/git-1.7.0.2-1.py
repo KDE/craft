@@ -36,7 +36,7 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(),"gb.bat"),os.path.join(self.rootdir,"dev-utils","bin","gb.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))
         return True
-        
+
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
