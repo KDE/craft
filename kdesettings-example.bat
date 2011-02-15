@@ -261,39 +261,10 @@ rem set EMERGE_HOLD_ON_PATCH_FAIL=True
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
-rem handle drive substitution
-if %EMERGE_USE_SHORT_PATH% == 1 (
-    if NOT "%EMERGE_ROOT_DRIVE%" == "" (
-        subst %EMERGE_ROOT_DRIVE% /D
-        subst %EMERGE_ROOT_DRIVE% %KDEROOT%
-        set KDEROOT=%EMERGE_ROOT_DRIVE%\
-    )
-    if NOT "%EMERGE_SVN_DRIVE%" == "" (
-        subst %EMERGE_SVN_DRIVE% /D
-        mkdir %KDESVNDIR% 2>NUL
-        subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
-        set KDESVNDIR=%EMERGE_SVN_DRIVE%\
-    )
-    if NOT "%EMERGE_GIT_DRIVE%" == "" (
-        subst %EMERGE_GIT_DRIVE% /D
-        mkdir %KDEGITDIR% 2>NUL
-        subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
-        set KDEGITDIR=%EMERGE_GIT_DRIVE%\
-    )
-    if NOT "%EMERGE_DOWNLOAD_DRIVE%" == "" (
-        subst %EMERGE_DOWNLOAD_DRIVE% /D
-        mkdir %DOWNLOADDIR% 2>NUL
-        subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
-        set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
-    )
-    %EMERGE_ROOT_DRIVE%
-)
+rem internal used settings version only for emerge maintainers 
+rem increment for each definition change in this file and fix version 
+rem issues in kdeenv.bat 
+rem Note: unset EMERGE_SETTINGS_VERSION means version 0
+SET EMERGE_SETTINGS_VERSION=1
 
 echo kdesettings.bat executed
-echo KDEROOT     : %KDEROOT%
-echo KDECOMPILER : %KDECOMPILER%
-echo KDESVNDIR   : %KDESVNDIR%
-echo KDEGITDIR   : %KDEGITDIR%
-echo PYTHONPATH  : %PYTHONPATH%
-echo DOWNLOADDIR : %DOWNLOADDIR%
-

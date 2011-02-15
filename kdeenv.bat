@@ -68,6 +68,49 @@ if exist %~dp0etc\kdesettings.bat (
 call %~dp0etc\kdesettings.bat %BUILDTYPE%
 )
 
+rem handle drive substitution
+rem 
+rem check for unversioned kdesettings.bat,
+rem in that case drive substition already took place
+if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
+    if %EMERGE_USE_SHORT_PATH% == 1 (
+        if NOT "%EMERGE_ROOT_DRIVE%" == "" (
+            subst %EMERGE_ROOT_DRIVE% /D 2>NUL
+            subst %EMERGE_ROOT_DRIVE% %KDEROOT%
+            set KDEROOT=%EMERGE_ROOT_DRIVE%\
+        )
+        if NOT "%EMERGE_SVN_DRIVE%" == "" (
+            subst %EMERGE_SVN_DRIVE% /D 2>NUL
+            mkdir %KDESVNDIR% 2>NUL
+            subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
+            set KDESVNDIR=%EMERGE_SVN_DRIVE%\
+        )
+        if NOT "%EMERGE_GIT_DRIVE%" == "" (
+            subst %EMERGE_GIT_DRIVE% /D 2>NUL
+            mkdir %KDEGITDIR% 2>NUL
+            subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
+            set KDEGITDIR=%EMERGE_GIT_DRIVE%\
+        )
+        if NOT "%EMERGE_DOWNLOAD_DRIVE%" == "" (
+            subst %EMERGE_DOWNLOAD_DRIVE% /D 2>NUL
+            mkdir %DOWNLOADDIR% 2>NUL
+            subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
+            set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
+        )
+        %EMERGE_ROOT_DRIVE%
+    )
+)
+rem print pathes 
+if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
+    echo KDEROOT     : %KDEROOT%
+    echo KDECOMPILER : %KDECOMPILER%
+    echo KDESVNDIR   : %KDESVNDIR%
+    echo KDEGITDIR   : %KDEGITDIR%
+    echo PYTHONPATH  : %PYTHONPATH%
+    echo DOWNLOADDIR : %DOWNLOADDIR%
+)
+
+rem handle multiple merge roots
 set SUBDIR=
 if "%BUILDTYPE%" == "" (
     if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
