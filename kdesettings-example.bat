@@ -29,6 +29,8 @@ rem set EMERGE_ARCHITECTURE=x64
 
 rem substitute pathes by drives (set to 1 to activate)
 set EMERGE_USE_SHORT_PATH=0
+
+rem each drive could be commented out to skip substution
 set EMERGE_ROOT_DRIVE=r:
 set EMERGE_SVN_DRIVE=s:
 set EMERGE_GIT_DRIVE=q:
@@ -255,23 +257,29 @@ rem ##################################################################
 
 rem handle drive substitution
 if %EMERGE_USE_SHORT_PATH% == 1 (
-    subst %EMERGE_ROOT_DRIVE% /D
-    subst %EMERGE_SVN_DRIVE% /D
-    subst %EMERGE_GIT_DRIVE% /D
-    subst %EMERGE_DOWNLOAD_DRIVE% /D
-
-    mkdir %DOWNLOADDIR% 2>NUL
-    mkdir %KDESVNDIR% 2>NUL
-    mkdir %KDEGITDIR% 2>NUL
-    
-    subst %EMERGE_ROOT_DRIVE% %KDEROOT%
-    subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
-    subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
-    subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
-    set KDEROOT=%EMERGE_ROOT_DRIVE%\
-    set KDESVNDIR=%EMERGE_SVN_DRIVE%\
-    set KDEGITDIR=%EMERGE_GIT_DRIVE%\
-    set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
+    if NOT "%EMERGE_ROOT_DRIVE%" == "" (
+        subst %EMERGE_ROOT_DRIVE% /D
+        subst %EMERGE_ROOT_DRIVE% %KDEROOT%
+        set KDEROOT=%EMERGE_ROOT_DRIVE%\
+    )
+    if NOT "%EMERGE_SVN_DRIVE%" == "" (
+        subst %EMERGE_SVN_DRIVE% /D
+        mkdir %KDESVNDIR% 2>NUL
+        subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
+        set KDESVNDIR=%EMERGE_SVN_DRIVE%\
+    )
+    if NOT "%EMERGE_GIT_DRIVE%" == "" (
+        subst %EMERGE_GIT_DRIVE% /D
+        mkdir %KDEGITDIR% 2>NUL
+        subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
+        set KDEGITDIR=%EMERGE_GIT_DRIVE%\
+    )
+    if NOT "%EMERGE_GIT_DRIVE%" == "" (
+        subst %EMERGE_DOWNLOAD_DRIVE% /D
+        mkdir %DOWNLOADDIR% 2>NUL
+        subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
+        set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
+    )
     %EMERGE_ROOT_DRIVE%
 )
 
