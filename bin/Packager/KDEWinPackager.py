@@ -23,7 +23,7 @@ class KDEWinPackager (PackagerBase):
         if not self.packager == None:
             utils.debug("using kdewin packager from %s" % self.packager, 2)
         if self.packager:
-            tmp = subprocess.Popen(self.packager, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
+            tmp = subprocess.Popen(self.packager, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             for line in tmp:
                 if "symroot" in line:
                     self.useDebugPackages = True

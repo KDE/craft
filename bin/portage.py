@@ -630,7 +630,7 @@ def printInstalled():
 
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
-    utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype),2 )
+    utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype), 2 )
     # find in old style database
     path = utils.etcDir()
     fileName = os.path.join(path,'installed')
