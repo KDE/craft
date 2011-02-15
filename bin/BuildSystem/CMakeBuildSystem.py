@@ -43,9 +43,8 @@ class CMakeBuildSystem(BuildSystemBase):
         defines = ""
         topLevelCMakeList = os.path.join(self.sourceDir(), "CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
-            f = open(topLevelCMakeList,'r')
-            lines = f.read().splitlines()
-            f.close()
+            with open(topLevelCMakeList,'r') as f:
+                lines = f.read().splitlines()
             for line in lines:
                 if line.find("macro_optional_add_subdirectory") > -1:
                     a = line.split("(")
@@ -63,9 +62,8 @@ class CMakeBuildSystem(BuildSystemBase):
             return slnname
         topLevelCMakeList = os.path.join(self.configureSourceDir(), "CMakeLists.txt")
         if os.path.exists(topLevelCMakeList):
-            f = open(topLevelCMakeList,'r')
-            lines = f.read().splitlines()
-            f.close()
+            with open(topLevelCMakeList,'r') as f:
+                lines = f.read().splitlines()
             for line in lines:
                 if line.find("project(") > -1:
                     a = line.split("(")
@@ -128,9 +126,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
 
-        fc = open(os.path.join(self.buildDir(), "cmake-command.bat"), "w")
-        fc.write(command)
-        fc.close()
+        with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
+            fc.write(command)
 
         if self.isTargetBuild():
             self.setupTargetToolchain()

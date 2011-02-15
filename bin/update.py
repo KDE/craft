@@ -15,9 +15,8 @@ newVersion = '20090809'
 
 versionFile = os.path.join(rootdir, 'etc', 'version')
 if os.path.exists(versionFile):
-    f = open( versionFile, "r" )
-    currentVersion = f.read()
-    f.close()
+    with open( versionFile, "r" ) as f:
+        currentVersion = f.read()
 else:
     currentVersion = '20090731'
 
@@ -64,7 +63,6 @@ elif currentVersion == '20090808':
     done = True
 
 if done:
-    f = open( versionFile, "w" )
-    f.write(newVersion)
-    f.close()
+    with open( versionFile, "w" ) as f:
+        f.write(newVersion)
 

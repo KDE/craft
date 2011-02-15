@@ -21,28 +21,27 @@ for filename in sys.argv[1:]:
     moduleMetaName = ""
     moduleName = ""
 
-    infile = open(filename)
-    for line in infile:
-        result = moduleStart.search(line)
-        if result:
-            moduleName = result.group(1)
-            for sline in infile:
-                result = packageStart.search(sline)
-                if result:
-                    packageName = result.group(1)
-                    if result.group(2) == "meta":
-                        moduleMetaName = packageName
-                    packageDepsList[packageName] = []
-                    for subline in infile:
-                        result = dependencyTerm.search(subline)
-                        if result:
-                            packageDepsList[packageName].append(result.group(1))
-                        result = descriptionTerm.search(subline)
-                        if result and not packageName == moduleMetaName:
-                            packageDescriptionList[packageName] = result.group(1)
-                        if packageEnd.search(subline):
-                            break
-    infile.close()
+    with open(filename) as infile:
+        for line in infile:
+            result = moduleStart.search(line)
+            if result:
+                moduleName = result.group(1)
+                for sline in infile:
+                    result = packageStart.search(sline)
+                    if result:
+                        packageName = result.group(1)
+                        if result.group(2) == "meta":
+                            moduleMetaName = packageName
+                        packageDepsList[packageName] = []
+                        for subline in infile:
+                            result = dependencyTerm.search(subline)
+                            if result:
+                                packageDepsList[packageName].append(result.group(1))
+                            result = descriptionTerm.search(subline)
+                            if result and not packageName == moduleMetaName:
+                                packageDescriptionList[packageName] = result.group(1)
+                            if packageEnd.search(subline):
+                                break
 
     # print the header
     print ';'+"-"*55

@@ -43,41 +43,41 @@ class CMakeDependencies:
             return False
         fileNames = utils.findFiles(directory, "CMakelists.txt")
         for fileName in fileNames:
-            f = open(fileName, "r")
-            for line in f.readlines():
-                if line.startswith("#"):
-                    continue
-                if line.lower().find("find_package") > -1:
-                    m = re.search(r"\(([a-zA-Z0-9]+)[ \)]", line.upper())
-                    if m:
-                        if not fileName in self.files1:
-                            self.files1.append(fileName)
-                        key = m.groups()
-                        if key in self.packageIncludes:
-                            if not fileName in self.packageIncludes[key]:
-                                self.packageIncludes[key].append(fileName)
-                        else:
-                            self.packageIncludes[key] = [fileName]
+            with open(fileName, "r") as f:
+                for line in f.readlines():
+                    if line.startswith("#"):
+                        continue
+                    if line.lower().find("find_package") > -1:
+                        m = re.search(r"\(([a-zA-Z0-9]+)[ \)]", line.upper())
+                        if m:
+                            if not fileName in self.files1:
+                                self.files1.append(fileName)
+                            key = m.groups()
+                            if key in self.packageIncludes:
+                                if not fileName in self.packageIncludes[key]:
+                                    self.packageIncludes[key].append(fileName)
+                            else:
+                                self.packageIncludes[key] = [fileName]
 
         # find package usage
         for fileName in fileNames:
-            f = open(fileName, "r")
-            for _line in f.readlines():
-                line = _line.upper()
-                if line.startswith("#"):
-                    continue
-                for key in self.packageIncludes:
-                    keyInclude = "%s_INCLUDE" % key
-                    keyLib = "%s_LIBRAR" % key
-                    keyExec = "%s_EXEC" % key
-                    if line.find(keyInclude) > -1 or line.find(keyLib) > -1 or line.find(keyExec) > -1:
-                        if not fileName in self.files2:
-                            self.files2.append(fileName)
-                        if key in self.packageUsage:
-                            if not fileName in self.packageUsage[key]:
-                                self.packageUsage[key].append(fileName)
-                        else:
-                            self.packageUsage[key] = [fileName]
+            with open(fileName, "r") as f:
+                for _line in f.readlines():
+                    line = _line.upper()
+                    if line.startswith("#"):
+                        continue
+                    for key in self.packageIncludes:
+                        keyInclude = "%s_INCLUDE" % key
+                        keyLib = "%s_LIBRAR" % key
+                        keyExec = "%s_EXEC" % key
+                        if line.find(keyInclude) > -1 or line.find(keyLib) > -1 or line.find(keyExec) > -1:
+                            if not fileName in self.files2:
+                                self.files2.append(fileName)
+                            if key in self.packageUsage:
+                                if not fileName in self.packageUsage[key]:
+                                    self.packageUsage[key].append(fileName)
+                            else:
+                                self.packageUsage[key] = [fileName]
         return True
 
     def toDot(self, title="", baseDir=None, outFile=None):

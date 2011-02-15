@@ -277,36 +277,29 @@ class InstallDB:
         if not os.path.isfile( fileName ):
             return False
 
-        found = False
-        f = open( fileName, "rb" )
-        for line in f.read().splitlines():
-            ( _category, _packageVersion ) = line.split( "/" )
-            ( _package, _version ) = utils.packageSplit(_packageVersion)
-            if category != '' and version != '' and category == _category and package == _package \
-                              and version == _version:
-                found = True
-                break
-            elif category == '' and version == '' and package == _package:
-                found = True
-                break
-        f.close()
+        with open( fileName, "rb" ) as f:
+            for line in f.read().splitlines():
+                ( _category, _packageVersion ) = line.split( "/" )
+                ( _package, _version ) = utils.packageSplit(_packageVersion)
+                if category != '' and version != '' and category == _category and package == _package \
+                                  and version == _version:
+                    return True
+                elif category == '' and version == '' and package == _package:
+                    return True
 
         # find in release mode database
-        if not found and buildType != '':
+        if buildType != '':
             fileName = os.path.join( path,'installed-' + buildType )
             if os.path.isfile( fileName ):
-                f = open( fileName, "rb" )
-                for line in f.read().splitlines():
-                    ( _category, _packageVersion ) = line.split( "/" )
-                    ( _package, _version ) = utils.packageSplit( _packageVersion )
-                    if category != '' and version != '' and category == _category and package == _package and version == _version:
-                        found = True
-                        break
-                    elif category == '' and version == '' and package == _package:
-                        found = True
-                        break
-                f.close()
-        return found
+                with open( fileName, "rb" ) as f:
+                    for line in f.read().splitlines():
+                        ( _category, _packageVersion ) = line.split( "/" )
+                        ( _package, _version ) = utils.packageSplit( _packageVersion )
+                        if category != '' and version != '' and category == _category and package == _package and version == _version:
+                            return True
+                        elif category == '' and version == '' and package == _package:
+                            return True
+        return False
 
 # get a global object
 if isDBEnabled():

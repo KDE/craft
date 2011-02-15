@@ -268,13 +268,12 @@ def main():
         #image = 'C:\\daten\\kde\msvc-root\\tmp\\kdegraphics-20080202\\image-msvc2008'
         #filename = 'C:\\daten\\kde\msvc-root\\emerge\\portage\\kde\\kdegraphics\\kdegraphics-package.xml'
 
-        fileobj = open( filename )
-
-        try:
-            doc = parse( fileobj )
-        except xml.parsers.expat.ExpatError:
-            print 'FATAL ERROR: The xml file might not be wellformed. Please check!'
-            exit(1)
+        with open( filename ) as fileobj:
+            try:
+                doc = parse( fileobj )
+            except xml.parsers.expat.ExpatError:
+                print 'FATAL ERROR: The xml file might not be wellformed. Please check!'
+                exit(1)
 
         packager = XmlPackager( doc, image )
         packager.split()

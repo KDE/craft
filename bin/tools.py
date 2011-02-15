@@ -216,9 +216,9 @@ class Object ( Environment ):
             return __builtin__.__import__( module )
         else:
             sys.path.append( os.path.dirname( module ) )
-            fileHdl = open( module )
-            modulename = os.path.basename( module ).replace('.py', '')
-            return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
+            with open( module ) as fileHdl:
+                modulename = os.path.basename( module ).replace('.py', '')
+                return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
 
 def main():
     """

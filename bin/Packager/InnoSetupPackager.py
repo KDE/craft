@@ -123,21 +123,18 @@ class InnoSetupPackager (PackagerBase):
         infile = self.configFile()
         if infile == None:
             utils.die("could not find config file %s" % infile)
-        _in = open(infile,'r')
-        lines = _in.read().splitlines()
-        _in.close()
+        with open(infile,'r') as _in:
+            lines = _in.read().splitlines()
 
         outfile = os.path.join(self.buildDir(), "temp.iss")
-        out = open(outfile,'w')
-
-        for line in lines:
-            a = line
-            for pattern in replacementPatterns:
-                search = pattern[0]
-                if a.find(search) > -1:
-                    a = line.replace(search, pattern[1])
-            out.write(a + "\n")
-        out.close()
+        with open(outfile,'w') as out:
+            for line in lines:
+                a = line
+                for pattern in replacementPatterns:
+                    search = pattern[0]
+                    if a.find(search) > -1:
+                        a = line.replace(search, pattern[1])
+                out.write(a + "\n")
 
         cmd += " \"%s\"" % (outfile)
         if not utils.systemWithoutShell(cmd):

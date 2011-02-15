@@ -164,7 +164,7 @@ class Options:
         ## exit if system command returns errors
         self.exitOnErrors = True
         ## use short pathes (usefull for mingw to
-	#  avoid exceeding the maximum path length)
+        #  avoid exceeding the maximum path length)
         self.useShortPathes = False
 
 

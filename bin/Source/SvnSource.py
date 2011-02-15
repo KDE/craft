@@ -193,19 +193,18 @@ class SvnSource (VersionSystemSourceBase):
         cmd = "%s/svn info %s" % ( self.svnInstallDir, self.checkoutDir() )
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
+        with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" ) as tempfile:
 
-        # run the command
-        with utils.LockFile(utils.svnLockFileName()):
-            utils.system( cmd, outstream=tempfile )
+            # run the command
+            with utils.LockFile(utils.svnLockFileName()):
+                utils.system( cmd, outstream=tempfile )
 
-        tempfile.seek(os.SEEK_SET)
-        # read the temporary file and find the line with the revision
-        for line in tempfile:
-            if line.startswith("Revision: "):
-                revision = line.replace("Revision: ", "").strip()
-                break
-        tempfile.close()
+            tempfile.seek(os.SEEK_SET)
+            # read the temporary file and find the line with the revision
+            for line in tempfile:
+                if line.startswith("Revision: "):
+                    revision = line.replace("Revision: ", "").strip()
+                    break
 
         # print the revision - everything else should be quiet now
         print revision

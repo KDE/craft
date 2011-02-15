@@ -18,9 +18,8 @@ class PackagerBase(EmergeBase):
         else:
             versionFile = os.path.join(self.buildDir(),'emerge-package-version')
             if os.path.exists(versionFile):
-                f = open( versionFile, "r" )
-                pkgVersion = f.read()
-                f.close()
+                with open( versionFile, "r" ) as f:
+                    pkgVersion = f.read()
                 pkgNotesVersion = pkgVersion
             elif self.subinfo.buildTarget == "gitHEAD" or self.subinfo.buildTarget == "svnHEAD":
                 pkgVersion = str( datetime.date.today() ).replace('-', '')

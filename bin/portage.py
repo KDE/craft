@@ -28,7 +28,6 @@ def __import__( module ): # pylint: disable=W0622
             return None
     else:
         sys.path.append( os.path.dirname( module ) )
-        fileHdl = open( module )
         modulename = os.path.basename( module ).replace('.py', '')
 
         suff_index = None
@@ -40,12 +39,13 @@ def __import__( module ): # pylint: disable=W0622
         if suff_index is None:
             utils.die("no .py suffix found")
 
-        try:
-            return imp.load_module( modulename.replace('.', '_'),
-            fileHdl, module, suff_index )
-        except ImportError as e:
-            utils.warning( 'import failed for file %s: %s' % (module, e.message) )
-            return None
+        with open( module ) as fileHdl:
+            try:
+                return imp.load_module( modulename.replace('.', '_'),
+                fileHdl, module, suff_index )
+            except ImportError as e:
+                utils.warning( 'import failed for file %s: %s' % (module, e.message) )
+                return None
 
 class DependencyPackage:
     """ This class wraps each package and constructs the dependency tree
@@ -243,12 +243,12 @@ class Portage:
         if self.isCategory( category ):
             plist = copy.copy(self.categories[ category ])
             if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
-                f = open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" )
-                for line in f:
-                    try:
-                        plist.remove( line.strip() )
-                    except ValueError:
-                        utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
+                with open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" ) as f:
+                    for line in f:
+                        try:
+                            plist.remove( line.strip() )
+                        except ValueError:
+                            utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
             return plist
         else:
             return
@@ -630,32 +630,13 @@ def printInstalled():
 
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
-    utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype),2 ) 
+    utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype),2 )
     # find in old style database
     path = utils.etcDir()
     fileName = os.path.join(path,'installed')
     found = False
     if os.path.isfile( fileName ):
-        f = open( fileName, "rb" )
-        for line in f.read().splitlines():
-            (_category, _packageVersion) = line.split( "/" )
-            (_package, _version) = utils.packageSplit(_packageVersion)
-            if category != '' and version != '' and category == _category and package == _package and version == _version:
-                found = True
-                break
-            elif category == '' and version == '' and package == _package:
-                found = True
-                break
-        f.close()
-        utils.debug("... found in main database %s" % found, 2 )
-        if found: 
-            return True
-
-    # find in release mode database
-    if buildtype != '':
-        fileName = os.path.join(path,'installed-' + buildtype )
-        if os.path.isfile( fileName ):
-            f = open( fileName, "rb" )
+        with open( fileName, "rb" ) as f:
             for line in f.read().splitlines():
                 (_category, _packageVersion) = line.split( "/" )
                 (_package, _version) = utils.packageSplit(_packageVersion)
@@ -665,9 +646,26 @@ def isInstalled( category, package, version, buildtype='' ):
                 elif category == '' and version == '' and package == _package:
                     found = True
                     break
-            f.close()
+        utils.debug("... found in main database %s" % found, 2 )
+        if found:
+            return True
+
+    # find in release mode database
+    if buildtype != '':
+        fileName = os.path.join(path,'installed-' + buildtype )
+        if os.path.isfile( fileName ):
+            with open( fileName, "rb" ) as f:
+                for line in f.read().splitlines():
+                    (_category, _packageVersion) = line.split( "/" )
+                    (_package, _version) = utils.packageSplit(_packageVersion)
+                    if category != '' and version != '' and category == _category and package == _package and version == _version:
+                        found = True
+                        break
+                    elif category == '' and version == '' and package == _package:
+                        found = True
+                        break
             utils.debug( "... found in %s database %s" % ( buildtype, found ), 2 )
-            if found: 
+            if found:
                 return True
 
     # try to detect packages from the installer
@@ -685,9 +683,8 @@ def isInstalled( category, package, version, buildtype='' ):
             package = package[:-4]
         for filename in os.listdir( os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             if filename.startswith( package ):
-                found = True
-                break
-    return found
+                return True
+    return False
 
 def findInstalled( category, package):
     """ deprecated, use InstallDB.installdb.findInstalled() instead """
@@ -696,15 +693,14 @@ def findInstalled( category, package):
         return None
 
     ret = None
-    f = open( fileName, "rb" )
     regexStr = "^%s/%s-(.*)$" % ( category, re.escape(package) )
     regex = re.compile( regexStr )
-    for line in f.read().splitlines():
-        match = regex.match( line )
-        if match:
-            utils.debug( "found: " + match.group(1), 2 )
-            ret = match.group(1)
-    f.close()
+    with open( fileName, "rb" ) as f:
+        for line in f.read().splitlines():
+            match = regex.match( line )
+            if match:
+                utils.debug( "found: " + match.group(1), 2 )
+                ret = match.group(1)
     return ret
 
 def addInstalled( category, package, version, buildtype='' ):
@@ -721,16 +717,15 @@ def addInstalled( category, package, version, buildtype='' ):
         fileName = 'installed'
     utils.debug("installing package %s - %s into %s" % (package, version, fileName), 2)
     if( os.path.isfile( os.path.join( path, fileName ) ) ):
-        f = open( os.path.join( path, fileName ), "rb" )
-        for line in f:
-            if line.startswith( "%s/%s-%s" % ( category, package, version) ):
-                utils.warning( "version already installed" )
-                return
-            elif line.startswith( "%s/%s-" % ( category, package ) ):
-                utils.die( "already installed, this should no happen" )
-    f = open( os.path.join( path, fileName ), "ab" )
-    f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
-    f.close()
+        with open( os.path.join( path, fileName ), "rb" ) as f:
+            for line in f:
+                if line.startswith( "%s/%s-%s" % ( category, package, version) ):
+                    utils.warning( "version already installed" )
+                    return
+                elif line.startswith( "%s/%s-" % ( category, package ) ):
+                    utils.die( "already installed, this should no happen" )
+    with open( os.path.join( path, fileName ), "ab" ) as f:
+        f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
 
 def remInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.remInstalled() instead """
@@ -744,18 +739,16 @@ def remInstalled( category, package, version, buildtype='' ):
     tmpdbfile = os.path.join(utils.etcDir(), "TMPinstalled" )
     found = False
     if os.path.exists( dbFileName ):
-        dbFile = open( dbFileName, "rb" )
-        tfile = open( tmpdbfile, "wb" )
-        for line in dbFile:
-            ## \todo the category should not be part of the search string
-            ## because otherwise it is not possible to unmerge package using
-            ## the same name but living in different categories
-            if not line.startswith("%s/%s" % ( category, package ) ):
-                tfile.write( line )
-            else:
-                found = True
-        dbFile.close()
-        tfile.close()
+        with open( dbFileName, "rb" ) as dbFile:
+            with open( tmpdbfile, "wb" ) as tfile:
+                for line in dbFile:
+                    ## \todo the category should not be part of the search string
+                    ## because otherwise it is not possible to unmerge package using
+                    ## the same name but living in different categories
+                    if not line.startswith("%s/%s" % ( category, package ) ):
+                        tfile.write( line )
+                    else:
+                        found = True
         os.remove( dbFileName )
         os.rename( tmpdbfile, dbFileName )
     return found

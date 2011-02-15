@@ -239,12 +239,11 @@ def getFtpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
     debug( "FIXME getFtpFile called. %s %s" % ( host, path ), 1 )
 
-    outfile = open( os.path.join( destdir, filename ), "wb" )
     ftp = ftplib.FTP( host )
     ftp.login( "anonymous", "johndoe" )
-    ftp.retrbinary( "RETR " + path, outfile.write )
+    with open( os.path.join( destdir, filename ), "wb" ) as outfile:
+        ftp.retrbinary( "RETR " + path, outfile.write )
 
-    outfile.close()
     return True
 
 def getHttpFile( host, path, destdir, filename ):
@@ -273,9 +272,8 @@ def getHttpFile( host, path, destdir, filename ):
 
     data = r1.read()
 
-    f = open( os.path.join( destdir, filename ), "wb" )
-    f.write( data )
-    f.close()
+    with open( os.path.join( destdir, filename ), "wb" ) as f:
+        f.write( data )
     return True
 
 def isCrEol(filename):
@@ -306,9 +304,8 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
                             pathName )
                     return False
             currentHash = digestFileSha1( pathName )
-            f = open( digestFileName, "r" )
-            line = f.readline()
-            f.close()
+            with open( digestFileName, "r" ) as f:
+                line = f.readline()
             digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
             if not digest:
                 error( " digestFile %s for file %s does not contain a valid checksum" % (digestFileName,
@@ -433,20 +430,19 @@ def unTar( fileName, destdir ):
         return False
 
     try:
-        tar = tarfile.open( fileName, mode )
+        with tarfile.open( fileName, mode ) as tar:
+        # FIXME how to handle errors here ?
+            for fileName in tar:
+                try:
+                    tar.extract(fileName, destdir )
+                except tarfile.TarError:
+                    error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
+                    return False
+        return True
     except tarfile.TarError:
         error( "could not open existing tar archive: %s" % fileName )
         return False
 
-    # FIXME how to handle errors here ?
-    for fileName in tar:
-        try:
-            tar.extract(fileName, destdir )
-        except tarfile.TarError:
-            error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
-            return False
-
-    return True
 
 def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""
@@ -468,10 +464,8 @@ def unZip( fileName, destdir ):
             if not os.path.exists( dirname ):
                 os.makedirs( dirname )
 
-            outfile = open( os.path.join( destdir, name ), 'wb' )
-            outfile.write( zipObj.read( name ) )
-            outfile.flush()
-            outfile.close()
+            with open( os.path.join( destdir, name ), 'wb' ) as outfile:
+                outfile.write( zipObj.read( name ) )
 
     return True
 
@@ -514,16 +508,15 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
 def checkManifestFile( name, category, package, version ):
     if os.path.isfile( name ):
-        f = open( name, "rb" )
-        header = f.readline()
-        line = f.readline()
-        f.close()
+        with open( name, "rb" ) as f:
+            header = f.readline()
+            line = f.readline()
         if not '/' in line:
             # update the file
             line = "%s/%s:%s:%s" % ( package, category, package, version )
-            f = open( name, "wb" )
-            f.write( header )
-            f.write( line )
+            with open( name, "wb" ) as f:
+                f.write( header )
+                f.write( line )
         if ( line.startswith( "%s/%s:%s:" % ( category, package, version ) ) ):
             return True
     return False
@@ -669,30 +662,29 @@ def getFileListFromManifest( rootdir, package ):
             if fileName.endswith( ".mft" ):
                 pkg, _ = packageSplit( fileName.replace( ".mft", "" ) )
                 if fileName.endswith( ".mft" ) and package==pkg:
-                    fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
-                    for line in fptr:
-                        try:
-                            line = line.replace( "\n", "" ).replace( "\r", "" )
-                            # check for digest having two spaces between filename and hash
-                            if not line.find( "  " ) == -1:
-                                [ b, a ] = line.rsplit( "  ", 2 )
-                            # check for filname have spaces
-                            elif line.count( " " ) > 1:
-                                ri = line.rindex( " " )
-                                b = line[ ri: ]
-                                a = line[ : ri - 1 ]
-                            # check for digest having one spaces
-                            elif not line.find( " " ) == -1:
-                                [ a, b ] = line.rsplit( " ", 2 )
-                            else:
-                                a, b = line, ""
-                        except Exception: # pylint: disable=W0703
-                            die( "could not parse line %s" % line)
+                    with open( os.path.join( rootdir, "manifest", fileName ), 'rb' ) as fptr:
+                        for line in fptr:
+                            try:
+                                line = line.replace( "\n", "" ).replace( "\r", "" )
+                                # check for digest having two spaces between filename and hash
+                                if not line.find( "  " ) == -1:
+                                    [ b, a ] = line.rsplit( "  ", 2 )
+                                # check for filname have spaces
+                                elif line.count( " " ) > 1:
+                                    ri = line.rindex( " " )
+                                    b = line[ ri: ]
+                                    a = line[ : ri - 1 ]
+                                # check for digest having one spaces
+                                elif not line.find( " " ) == -1:
+                                    [ a, b ] = line.rsplit( " ", 2 )
+                                else:
+                                    a, b = line, ""
+                            except Exception: # pylint: disable=W0703
+                                die( "could not parse line %s" % line)
 
-                        if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
-                            continue
-                        fileList.append( ( a, b ) )
-                    fptr.close()
+                            if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
+                                continue
+                            fileList.append( ( a, b ) )
         else:
             debug( "could not find any manifest files", 2 )
     else:
@@ -726,41 +718,40 @@ def unmerge( rootdir, package, forced = False ):
             if fileName.endswith(".mft"):
                 pkg, _ = packageSplit( fileName.replace( ".mft", "" ) )
                 if fileName.endswith( ".mft" ) and package==pkg:
-                    fptr = open( os.path.join( rootdir, "manifest", fileName ), 'rb' )
-                    for line in fptr:
-                        try:
-                            line = line.replace( "\n", "" ).replace( "\r", "" )
-                            # check for digest having two spaces between filename and hash
-                            if not line.find( "  " ) == -1:
-                                [ b, a ] = line.rsplit( "  ", 2 )
-                            # check for filname have spaces
-                            elif line.count(" ") > 1:
-                                ri = line.rindex(" ")
-                                b = line[ri:]
-                                a = line[:ri-1]
-                            # check for digest having one spaces
-                            elif not line.find( " " ) == -1:
-                                [ a, b ] = line.rsplit( " ", 2 )
-                            else:
-                                a, b = line, ""
-                        except Exception: # pylint: disable=W0703
-                            die("could not parse line %s" % line)
+                    with open( os.path.join( rootdir, "manifest", fileName ), 'rb' ) as fptr:
+                        for line in fptr:
+                            try:
+                                line = line.replace( "\n", "" ).replace( "\r", "" )
+                                # check for digest having two spaces between filename and hash
+                                if not line.find( "  " ) == -1:
+                                    [ b, a ] = line.rsplit( "  ", 2 )
+                                # check for filname have spaces
+                                elif line.count(" ") > 1:
+                                    ri = line.rindex(" ")
+                                    b = line[ri:]
+                                    a = line[:ri-1]
+                                # check for digest having one spaces
+                                elif not line.find( " " ) == -1:
+                                    [ a, b ] = line.rsplit( " ", 2 )
+                                else:
+                                    a, b = line, ""
+                            except Exception: # pylint: disable=W0703
+                                die("could not parse line %s" % line)
 
-                        if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
-                            continue
-                        if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                            currentHash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
-                            if b == "" or currentHash == b:
-                                debug( "deleting file %s" % a )
-                                os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
-                            else:
-                                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                                        ( os.path.normcase( a ), currentHash, b ) )
-                                if forced:
+                            if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
+                                continue
+                            if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
+                                currentHash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
+                                if b == "" or currentHash == b:
+                                    debug( "deleting file %s" % a )
                                     os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
-                        elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                            warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
-                    fptr.close()
+                                else:
+                                    warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                                            ( os.path.normcase( a ), currentHash, b ) )
+                                    if forced:
+                                        os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
+                            elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
+                                warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
                     os.remove( os.path.join( rootdir, "manifest", fileName ) )
                     removed = True
 
@@ -949,19 +940,17 @@ def sedFile( directory, fileName, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
-    digFile = open( filepath, "rb" )
-    for line in digFile:
-        fileHash.update( line )
-    digFile.close()
+    with open( filepath, "rb" ) as digFile:
+        for line in digFile:
+            fileHash.update( line )
     return fileHash.hexdigest()
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
     fileHash = hashlib.sha1()
-    hashFile = open( filepath, "rb" )
-    for line in hashFile:
-        fileHash.update( line )
-    hashFile.close()
+    with open( filepath, "rb" ) as hashFile:
+        for line in hashFile:
+            fileHash.update( line )
     return fileHash.hexdigest()
 
 def getVCSType( url ):

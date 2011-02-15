@@ -82,16 +82,15 @@ class HgSource ( VersionSystemSourceBase ):
         if self.enableHg:
 
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-            tempfile = open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" )
+            with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" ) as tempfile:
 
-            # run the command
-            utils.system( "hg tip", tempfile )
-            # TODO: check return value for success
-            tempfile.seek( os.SEEK_SET )
+                # run the command
+                utils.system( "hg tip", tempfile )
+                # TODO: check return value for success
+                tempfile.seek( os.SEEK_SET )
 
-            # read the temporary file and grab the first line
-            revision = tempfile.readline().replace("changeset:", "").strip()
-            tempfile.close()
+                # read the temporary file and grab the first line
+                revision = tempfile.readline().replace("changeset:", "").strip()
 
             # print the revision - everything else should be quiet now
             print revision

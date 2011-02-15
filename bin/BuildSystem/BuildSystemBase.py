@@ -107,9 +107,8 @@ class BuildSystemBase(EmergeBase):
         outFile = os.path.join( outDir, self.package + '-emerge.dot' )
         if not os.path.exists( os.path.dirname( outFile ) ):
             os.makedirs( os.path.dirname( outFile ) )
-        f = open( outFile, "w" )
-        f.write( output )
-        f.close()
+        with open( outFile, "w" ) as f:
+            f.write( output )
 
         graphviz = GraphViz( self )
 
