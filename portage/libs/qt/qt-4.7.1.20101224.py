@@ -102,10 +102,17 @@ class subinfo(info.infoclass):
         else:
             self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
 
-class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
+class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         PackageBase.__init__(self)
+        if not self.subinfo.options.useShortPathes \
+                and self.compiler() == "mingw4" and len(self.rootdir) > 10:
+            # mingw4 cannot compile qt if the command line arguments
+            # exceed 8192 chars
+            utils.warning('for mingw4, rootdir %s is too long for full path names.'
+                ' Using short path names.' % self.rootdir,  1)
+            self.subinfo.options.useShortPathes = True
         GitSource.__init__(self)
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
