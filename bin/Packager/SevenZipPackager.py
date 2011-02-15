@@ -58,7 +58,7 @@ class SevenZipPackager (PackagerBase):
         if self.subinfo.options.package.withDigests:
             utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
-        destPath = self.packageDestinationDir()
+        dstpath = self.packageDestinationDir()
 
         if self.subinfo.options.package.withCompiler:
             if( self.compiler() == "mingw"):
@@ -82,7 +82,7 @@ class SevenZipPackager (PackagerBase):
             pkgSuffix = ''
 
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        fileName = os.path.join(destPath, archiveName)
+        fileName = os.path.join(dstpath, archiveName)
         utils.deleteFile(fileName)
         cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, fileName, '*.*')
         if not utils.system(cmd):
@@ -93,7 +93,7 @@ class SevenZipPackager (PackagerBase):
 
         pkgSuffix = '-src'
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        fileName = os.path.join(destPath, archiveName)
+        fileName = os.path.join(dstpath, archiveName)
         utils.deleteFile(fileName)
         cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, fileName, '*.*')
         if not utils.system(cmd):
