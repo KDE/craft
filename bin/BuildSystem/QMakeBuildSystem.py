@@ -66,7 +66,7 @@ class QMakeBuildSystem(BuildSystemBase):
         """implements the make step for Qt projects"""
         self.enterBuildDir()
 
-        command = ' '.join(self.makeProgramm, self.makeOptions(options))
+        command = ' '.join([self.makeProgramm, self.makeOptions(options)])
 
         return self.system( command, "make" )
 

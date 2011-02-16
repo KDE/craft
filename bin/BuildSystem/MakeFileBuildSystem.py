@@ -25,7 +25,7 @@ class MakeFileBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         utils.prependPath(self.rootdir, self.envPath)
 
-        command = ' '.join(self.makeProgramm, self.makeOptions())
+        command = ' '.join([self.makeProgramm, self.makeOptions()])
 
         return self.system( command, "make" )
 

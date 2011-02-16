@@ -149,7 +149,7 @@ class CMakeBuildSystem(BuildSystemBase):
             self.system( self.makeProgramm + " clean", "make clean" )
             command = "ctest -M " + "Nightly" + " -T Start -T Update -T Configure -T Build -T Submit"
         else:
-            command = ' '.join(self.makeProgramm, self.makeOptions())
+            command = ' '.join([self.makeProgramm, self.makeOptions()])
 
         if self.isTargetBuild():
             self.setupTargetToolchain()
