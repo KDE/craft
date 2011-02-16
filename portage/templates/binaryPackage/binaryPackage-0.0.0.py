@@ -120,7 +120,6 @@ class Package(BinaryPackageBase):
     # the same belongs to the following methods
     #def downloadDir(self):
     #def packageDir(self):
-    #def filesDir(self):
     #def buildRoot(self):
     #def workDir(self):
     #def buildDir(self):

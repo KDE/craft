@@ -217,10 +217,6 @@ class EmergeBase(object):
         directory += '-' + self.buildTarget
         return directory
 
-    def devUtilsRoot(self):
-        """ location of directory where development utils package are merged to"""
-        return os.path.join(ROOTDIR, 'dev-utils')
-
     def downloadDir(self):
         """ location of directory where fetched files are  stored """
         return self.__adjustPath(DOWNLOADDIR)
@@ -231,10 +227,6 @@ class EmergeBase(object):
     def packageDir(self):
         """ add documentation """
         return self.__adjustPath(os.path.join( portage.rootDirForPackage( self.category, self.package ), self.category, self.package ))
-
-    def filesDir(self):
-        """ add documentation """
-        return self.__adjustPath(os.path.join( self.packageDir(), "files" ))
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
@@ -250,7 +242,7 @@ class EmergeBase(object):
         utils.debug("EmergeBase.buildDir() called", 2)
         self.setBuildTarget()
         builddir = os.path.join(self.workDir(), self.workDirPattern())
-        if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath(): 
+        if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         utils.debug("package builddir is: %s" % builddir, 2)
         return self.__adjustPath(builddir)
@@ -309,18 +301,18 @@ class EmergeBase(object):
         else:
             directory = ROOTDIR
         return self.__adjustPath(directory)
-        
+
     def packageDestinationDir( self ):
         """return absolute path to the directory where binary packages are placed into"""
-        
+
         utils.debug( "EmergeBase.packageDestinationDir called", 2 )
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
-            
+
         if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
             dstpath = os.path.join( dstpath, self.buildType())
-            
+
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)
         return dstpath
@@ -367,15 +359,6 @@ class EmergeBase(object):
         os.chdir( self.sourceDir() )
         if utils.verbose() > 0:
             print "entering: %s" % self.sourceDir()
-
-    def enterImageDir(self):
-        if ( not os.path.exists( self.imageDir() ) ):
-            return False
-        utils.warning("entering the image directory!")
-        os.chdir( self.imageDir() )
-        if utils.verbose() > 0:
-            print "entering: %s" % self.imageDir()
-
 
     def system( self, command, errorMessage="", debuglevel=1, *args, **kw):
         """convencience function for running system commands.
