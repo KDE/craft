@@ -103,7 +103,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
     def configure( self, buildType=None, defines=""):
         thirdparty_dir = os.path.join( self.buildDir(), "3rdparty" )
-        os.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
+        utils.prependPath(self.buildDir(), "bin")
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
 
         self.enterBuildDir()

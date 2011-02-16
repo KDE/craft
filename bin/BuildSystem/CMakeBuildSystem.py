@@ -120,10 +120,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        if self.envPath != '':
-            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ), 2)
-            os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
-
+        utils.prependPath(self.rootdir, self.envPath)
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
 
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
@@ -138,9 +135,7 @@ class CMakeBuildSystem(BuildSystemBase):
         """implements the make step for cmake projects"""
 
         self.enterBuildDir()
-        if self.envPath != '':
-            utils.debug("adding %s to system path" % os.path.join( self.rootdir, self.envPath ), 2)
-            os.putenv( "PATH", os.path.join( self.rootdir, self.envPath ) + ";" + os.getenv("PATH") )
+        utils.prependPath(self.rootdir, self.envPath)
 
         if self.compiler() == "msvc2008" and self.subinfo.options.cmake.openIDE:
             command = "start %s" % self.__slnFileName()

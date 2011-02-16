@@ -226,7 +226,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             utils.createDir( os.path.join( self.installDir(), "src", "corelib", "global") )
             utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "src", "corelib" , "global", "qconfig.h" ) )
             # headers need to be copied using syncqt because of the relative paths
-            os.putenv( "PATH", os.path.join( self.sourceDir(), "bin" ) + ";" + os.getenv("PATH") )
+            utils.prependPath(self.sourceDir(), "bin")
             command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
             command += " -base-dir \"" + self.sourceDir() + "\""
             command += " -outdir \"" + self.installDir() + "\""

@@ -1303,3 +1303,14 @@ def getscriptname():
         return sys.argv[ 0 ]
     else:
         return __name__
+
+def prependPath(*parts):
+    """put path in front of the PATH environment variable, if it is not there yet.
+    The last part must be a non empty string, otherwise we do nothing"""
+    if parts[-1]:
+        fullPath = os.path.join(*parts)
+        old = os.getenv("PATH").split(';')
+        if old[0] != fullPath:
+            debug("adding %s to system path" % fullPath, 2)
+            old.insert(0, fullPath)
+            os.putenv( "PATH", ";".join(old))

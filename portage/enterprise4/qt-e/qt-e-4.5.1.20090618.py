@@ -105,8 +105,7 @@ class subclass(base.baseclass):
         qtsrcdir = os.path.join( self.kdesvndir, self.kdeSvnPath() )
         qtbindir = os.path.join( self.workdir, self.instsrcdir )
         thirdparty_dir = os.path.join( self.workdir, "3rdparty" )
-
-        os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
+        utils.prependPath(qtbindir, "bin")
 
         configure = os.path.join( qtsrcdir, "configure.exe" ).replace( "/", "\\" )
 
@@ -173,9 +172,9 @@ class subclass(base.baseclass):
 
     def install( self ):
         qtbindir = os.path.join( self.workdir, self.instsrcdir )
-        os.putenv( "PATH", os.path.join( qtbindir, "bin" ) + ";" + os.getenv("PATH") )
+        utils.prependPath(qtbindir, "bin")
 
-        os.chdir( os.path.join( self.workdir, self.instsrcdir ) )
+        os.chdir(qtbindir)
         self.system( "%s install" % self.cmakeMakeProgramm )
 
         src = os.path.join( self.packagedir, "qt.conf" )
@@ -183,7 +182,7 @@ class subclass(base.baseclass):
         shutil.copy( src, dst )
 
         if self.buildType == "Debug" and (self.compiler == "msvc2005" or self.compiler == "msvc2008"):
-            srcdir = os.path.join( self.workdir, self.instsrcdir, "lib" )
+            srcdir = os.path.join( qtbindir, "lib" )
             destdir = os.path.join( self.imagedir, self.instdestdir, "lib" )
 
             filelist = os.listdir( srcdir )
