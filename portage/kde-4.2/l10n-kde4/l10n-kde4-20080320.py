@@ -114,9 +114,7 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         self.svnpath = os.path.join( self.kdesvndir, self.subinfo.svnTargets['svnHEAD'] )
-        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
-        if not dstpath:
-            dstpath = os.path.join( self.rootdir, "tmp" )
+        dstpath = self.packageDestinationDir(withBuildType=False)
 
         if not utils.test4application( "kdewin-packager" ):
             utils.die( "kdewin-packager not found - please make sure it is in your path" )

@@ -302,16 +302,18 @@ class EmergeBase(object):
             directory = ROOTDIR
         return self.__adjustPath(directory)
 
-    def packageDestinationDir( self ):
-        """return absolute path to the directory where binary packages are placed into"""
+    def packageDestinationDir( self, withBuildType=True ):
+        """return absolute path to the directory where binary packages are placed into.
+        Default is to optionally append build type subdirectory"""
 
         utils.debug( "EmergeBase.packageDestinationDir called", 2 )
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
 
-        if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
-            dstpath = os.path.join( dstpath, self.buildType())
+        if withBuildType:
+            if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
+                dstpath = os.path.join( dstpath, self.buildType())
 
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)

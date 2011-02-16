@@ -462,9 +462,7 @@ class baseclass:
         this requires the kdewin-packager"""
 
         # FIXME: add a test for the installer later
-        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
-        if not dstpath:
-            dstpath = os.path.join( self.rootdir, "tmp" )
+        dstpath = self.packageDestinationDir(withBuildType=False)
         binpath = os.path.join( self.imagedir, self.instdestdir )
         tmp = os.path.join( binpath, "kde" )
 
@@ -565,6 +563,24 @@ class baseclass:
         if not utils.system( command, *args, **kw ):
             utils.die( "os.system ( %s ) failed" % ( command ) )
         return True
+
+    def packageDestinationDir( self, withBuildType=True ):
+        """return absolute path to the directory where binary packages are placed into.
+        Default is to optionally append build type subdirectory"""
+
+        utils.debug( "base.packageDestinationDir called", 2 )
+        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
+        if not dstpath:
+            dstpath = os.path.join( self.rootdir, "tmp" )
+
+        if withBuildType:
+            if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
+                dstpath = os.path.join( dstpath, self.buildType())
+
+        if not os.path.exists(dstpath):
+            utils.createDir(dstpath)
+        return dstpath
+
 
 # ############################################################################################
 # for testing purpose only:

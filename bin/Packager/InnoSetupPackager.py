@@ -109,10 +109,7 @@ class InnoSetupPackager (PackagerBase):
                 filesDir = self.imageDir()
             utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
-        ## \todo do we have a wrapper for this ?
-        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
-        if not dstpath:
-            dstpath = os.path.join( self.rootdir, "tmp" )
+        dstpath = self.packageDestinationDir(withBuildType=False)
 
         cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe, dstpath, pkgName, pkgVersion)
 
