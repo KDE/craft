@@ -199,11 +199,6 @@ rem disk usage. It will then avoid copying source code files of the KDE
 rem svn repository. To disable, set EMERGE_NOCOPY=False.
 set EMERGE_NOCOPY=True
 
-rem Enable the following option to not remove a package before installing it.
-rem This is insecure because the package might miss important files which will persist
-rem in an older version.
-rem set EMERGE_NOREMOVE=True
-
 rem By default emerge will merge all package into KDEROOT. By setting the following 
 rem option to true, the package will be installed into a subdir of KDEROOT. 
 rem The directory is named like the lower cased build type 

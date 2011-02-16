@@ -142,11 +142,9 @@ Flags:
             copied everything from the SVN source tree to a source directory
             under %KDEROOT%\\tmp - currently nocopy is applied by default if
             EMERGE_NOCOPY is not set to "False". Be aware that setting
-            EMERGE_NOCOPY to "True" might slow down the build process,
+            EMERGE_NOCOPY to "False" might slow down the build process,
             irritate you and increase the disk space roughly by the size of
             SVN source tree.
---noremove  This option will suppress the removal of a package before
-            installing it. Using this option is probably insecure.
 --offline   do not try to connect to the internet: KDE packages will try to
             use an existing source tree and other packages would try to use
             existing packages in the download directory. If that doesn't
@@ -351,7 +349,6 @@ environ = dict() # TODO: why do we need this at all?
 environ["EMERGE_NOCOPY"]        = os.getenv( "EMERGE_NOCOPY" )
 environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
 environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
-environ["EMERGE_NOREMOVE"]      = os.getenv( "EMERGE_NOREMOVE" )
 environ["EMERGE_TRACE"]         = os.getenv( "EMERGE_TRACE" )
 environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
 environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
@@ -366,11 +363,6 @@ if ( environ['EMERGE_NOCOPY'] == "False" ):
     nocopy = False
 else:
     nocopy = True
-
-if ( environ['EMERGE_NOREMOVE'] == "True" ):
-    noremove = True
-else:
-    noremove = False
 
 if ( environ['EMERGE_NOUPDATE'] == "True" ):
     noupdate = True
@@ -420,9 +412,6 @@ for i in sys.argv:
         os.environ["EMERGE_TRACE"] = str( trace )
     elif ( i == "--nocopy" ):
         os.environ["EMERGE_NOCOPY"] = str( True )
-    elif ( i == "--noremove" ):
-        os.environ["EMERGE_NOREMOVE"] = str( True )
-        noremove = True
     elif ( i == "--noclean" ):
         os.environ["EMERGE_NOCLEAN"] = str( True )
     elif ( i == "--clean" ):
