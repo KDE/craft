@@ -69,16 +69,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
 
         command = self.makeProgram
-        args = ""
-        if self.subinfo.options.make.ignoreErrors:
-            args += " -i"
-
-        if self.subinfo.options.make.makeOptions:
-            args += " %s" % self.subinfo.options.make.makeOptions
+        args = self.makeOptions()
 
         # adding Targets later
-        if utils.verbose() > 1:
-            args += " VERBOSE=1"
         if self.buildInSource:
             if not self.shell.execute(self.sourceDir(), command, args ):
                 utils.die( "while Make'ing. cmd: %s" % command )

@@ -91,8 +91,10 @@ class BuildSystemBase(EmergeBase):
         """return options for make command line"""
         if self.subinfo.options.make.ignoreErrors:
             defines += " -i"
-        if self.subinfo.options.make.makeOptions != None:
+        if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
+        if utils.verbose() > 1:
+            defines += " VERBOSE=1"
         return defines
 
     def setupTargetToolchain(self):

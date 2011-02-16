@@ -25,16 +25,7 @@ class MakeFileBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         utils.prependPath(self.rootdir, self.envPath)
 
-        command = self.makeProgramm
-
-        if utils.verbose() > 1:
-            command += " VERBOSE=1"
-
-        if self.subinfo.options.make.ignoreErrors:
-            command += " -i"
-
-        if self.subinfo.options.make.makeOptions:
-            command += " %s" % self.subinfo.options.make.makeOptions
+        command = ' '.join(self.makeProgramm, self.makeOptions())
 
         return self.system( command, "make" )
 
