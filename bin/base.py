@@ -53,6 +53,11 @@ EMERGE_MAKE_PROGRAM = os.getenv( "EMERGE_MAKE_PROGRAM" )
 # IMAGEDIR: the directory, under which the compiled files are installed.
 #            here rootdir/tmp/packagename/image
 
+def envAsBool(key):
+    """ return value of environment variable as bool value """
+    return os.getenv( key ) == "True" or os.getenv( key ) == "1"
+
+
 
 class baseclass:
     """
