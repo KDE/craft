@@ -124,7 +124,6 @@ class subclass(base.baseclass):
 
     def make_package( self ):
         self.svnpath = os.path.join( self.kdesvndir, self.subinfo.svnTargets['svnHEAD'] )
-        self.filesdir = os.path.join( self.packagedir, "files" )
         dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
