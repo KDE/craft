@@ -165,7 +165,7 @@ class PackageBase (EmergeBase):
 
     def cleanImage( self ):
         """cleanup before install to imagedir"""
-        if self.buildSystemType == 'binary' or hasattr(self,'buildsystem') and self.buildsystem.buildSystemType == 'binary':
+        if self.buildSystemType == 'binary':
             utils.debug("skipped cleaning image dir because we use binary build system", 1)
             return True
         if ( os.path.exists( self.imageDir() ) ):
@@ -263,7 +263,7 @@ class PackageBase (EmergeBase):
 
     def runAction( self, command ):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
-        then we get by without this dict: 
+        then we get by without this dict:
             ok = getattr(self, 'cmd' + command.capitalize()()
         next we could """
         functions = {"fetch":          "fetch",
