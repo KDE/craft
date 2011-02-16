@@ -604,7 +604,8 @@ else:
                 isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
         else:
             isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
-        if ( isInstalled and not ignoreInstalled ) and not ( isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and target in targetList ):
+        if ( isInstalled and not ignoreInstalled ) and not (
+                        isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and target in targetList ):
             if utils.verbose() > 1 and mainPackage == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
             elif utils.verbose() > 2 and not mainPackage == packageName:
