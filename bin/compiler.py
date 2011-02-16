@@ -10,9 +10,10 @@ import emergePlatform
 
 COMPILER = os.getenv("KDECOMPILER")
 GCCTARGET = None
+MINGW_VERSION = None
 
 def getGCCTarget():
-    global GCCTARGET	  
+    global GCCTARGET # pylint: disable=W0603
     if not GCCTARGET:
         try:
             result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
@@ -82,19 +83,17 @@ def getSimpleCompilerName():
         return "Unknown Compiler"
 
 def getMinGWVersion():
-    tl = threading.local()
-    if hasattr(tl, "mingw_version"):
-        return tl.mingw_version
-    try:
-        result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
-        result = result.split()[2]
-        utils.debug("GCC Version:%s" % result, 1 )
-        mingw_version = result.strip()
-    except OSError:
-        #if no mingw is installed return 0
-        mingw_version = "0"
-    tl.mingw_version = mingw_version
-    return mingw_version
+    global MINGW_VERSION # pylint: disable=W0603
+    if not MINGW_VERSION:
+        try:
+            result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
+            result = result.split()[2]
+            utils.debug("GCC Version:%s" % result, 1 )
+            MINGW_VERSION = result.strip()
+        except OSError:
+            #if no mingw is installed return 0
+            MINGW_VERSION = "0"
+    return MINGW_VERSION
 
 def getVersion():
     if isMinGW():
