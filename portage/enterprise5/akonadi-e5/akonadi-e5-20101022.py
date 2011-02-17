@@ -7,15 +7,17 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-bin/libxslt'] = 'default'
-        self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
-        self.hardDependencies['win32libs-sources/boost-src']   = 'default'
-        self.hardDependencies['enterprise5/automoc-e5'] = 'default'
-        self.hardDependencies['enterprise5/soprano-e5'] = 'default'
-        self.hardDependencies['libs/qt'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['enterprise5/automoc-e5'] = 'default'
+        self.dependencies['enterprise5/soprano-e5'] = 'default'
+        self.dependencies['win32libs-bin/boost'] = 'default'
+        self.dependencies['win32libs-bin/libxslt'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['win32libs-bin/shared-mime-info'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.svnTargets['0.80'] = 'tags/akonadi/0.80'
         self.svnTargets['0.81'] = 'tags/akonadi/0.81'
         self.svnTargets['0.82'] = 'tags/akonadi/0.82'
@@ -64,29 +66,19 @@ class subinfo(info.infoclass):
         self.svnTargets['20101008'] = 'tags/kdepim/enterprise5.0.20101008.1183806/kdesupport/akonadi'
         self.svnTargets['20101015'] = 'tags/kdepim/enterprise5.0.20101015.1186246/kdesupport/akonadi'
         self.svnTargets['20101022'] = 'tags/kdepim/enterprise5.0.20101022.1188481/kdesupport/akonadi'
-        self.defaultTarget = '20101022'
+        self.defaultTarget = 'gitHEAD'
 
-class subclass(base.baseclass):
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
     def __init__( self, **args ):
         base.baseclass.__init__( self, args=args )
         self.instsrcdir = "akonadi"
         self.subinfo = subinfo()
-        self.subinfo.options.configure.defines = " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "akonadi" )
-        else:
-            return self.doPackaging( "akonadi", self.buildTarget, True )
+        self.subinfo.options.configure.defines = (
+                " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
+                " -DDATABASE_BACKEND=SQLITE "
+                " -DAKONADI_USE_STRIGI_SEARCH=TRUE ")
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
