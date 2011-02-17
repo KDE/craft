@@ -2,7 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git@github.com:rhabacker/Konstruktor.git'
+#        self.svnTargets['gitHEAD'] = 'git@github.com:rhabacker/Konstruktor.git'
+        self.svnTargets['gitHEAD'] = 'https://github.com/rhabacker/Konstruktor.git'
         self.defaultTarget = 'gitHEAD'
         #self.svnTargets['gitHEAD'] = 'http://github.com/segfault87/Konstruktor.git'
         self.shortDescription = "a full-featured LEGO(r) CAD editor"
