@@ -87,13 +87,13 @@ class BuildSystemBase(EmergeBase):
             defines += " %s" % self.subinfo.options.configure.defines
         return defines
 
-    def makeOptions(self, defines=""):
+    def makeOptions(self, defines="", maybeVerbose=True):
         """return options for make command line"""
         if self.subinfo.options.make.ignoreErrors:
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
-        if utils.verbose() > 1:
+        if maybeVerbose and utils.verbose() > 1:
             defines += " VERBOSE=1"
         return defines
 
