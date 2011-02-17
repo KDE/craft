@@ -342,6 +342,10 @@ class Portage:
                     # for svn, ignore tags
                     if not url.startswith( "tags/" ) and not "/tags/" in url:
                         retList.append( key )
+                elif sourceType == "git":
+                    [server, branch, tag] = utils.splitGitUrl( url )
+                    if tag == "" and not branch.endswith("-patched"):
+                        retList.append( key )
                 elif not sourceType == "":
                     # for all other vcs types, simply rebuild everything for now
                     retList.append( key )
