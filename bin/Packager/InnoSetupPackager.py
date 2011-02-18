@@ -10,7 +10,7 @@ class InnoSetupPackager (PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self, "InnoSetupPackager")
         self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
-        if self.packagerExe != None:
+        if self.packagerExe:
             utils.debug("using inno setup packager from %s" % self.packagerExe, 2)
 
     def configFile(self):

@@ -32,29 +32,15 @@ class InternalPackageBase(PackageBase):
 
     def qmerge(self):
         print "%s %s " % (self.category, self.package)
-        portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
-        portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
-        portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
-        portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
+        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
+        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
+        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
         return True
 
     def unmerge(self):
-        portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Release") )
-        portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("RelWithDebInfo") )
-        portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix("Debug") )
-        portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
+        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
+        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
+        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
         return True
-
-    def __installedDBPrefix(self, buildType=None):
-        postfix = ''
-        if buildType == None:
-            buildType = self.buildType()
-        if self.useBuildTypeRelatedMergeRoot:
-            if buildType == 'Debug':
-                postfix = 'debug'
-            elif buildType == 'Release':
-                postfix =  'release'
-            elif buildType == 'RelWithDebInfo':
-                postfix =  'relwithdebinfo'
-        return postfix
-

@@ -29,7 +29,7 @@ class PackageBase (EmergeBase):
         self.setBuildTarget()
         self.forceCreateManifestFiles = False
 
-    def __installedDBPrefix(self, buildType=None):
+    def _installedDBPrefix(self, buildType=None):
         postfix = ''
         if buildType == None:
             buildType = self.buildType()
@@ -63,7 +63,7 @@ class PackageBase (EmergeBase):
                     ignoreInstalled = True
                     self.unmerge()
             else:
-                prefixPath = self.__installedDBPrefix( self.buildType() )
+                prefixPath = self._installedDBPrefix( self.buildType() )
                 if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
                     ignoreInstalled = True
                     self.unmerge()
@@ -96,11 +96,11 @@ class PackageBase (EmergeBase):
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
                 if isDBEnabled():
-                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ), ignoreInstalled )
-                    package.addFiles( utils.getFileListFromManifest(  self.__installedDBPrefix( prefix ), self.package ) )
+                    package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled )
+                    package.addFiles( utils.getFileListFromManifest(  self._installedDBPrefix( prefix ), self.package ) )
                     package.install()
                 else:
-                    portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
+                    portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ) )
         else:
             if isDBEnabled():
                 if emergePlatform.isCrossCompilingEnabled():
@@ -108,15 +108,15 @@ class PackageBase (EmergeBase):
                         package = installdb.addInstalled( self.category, self.package, self.version,
                                 os.getenv( "EMERGE_TARGET_PLATFORM" ), ignoreInstalled )
                     else:
-                        package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                        package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
                     package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
                     package.install()
                 else:
-                    package = installdb.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix(), ignoreInstalled )
+                    package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )
                     package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
                     package.install()
             else:
-                portage.addInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
 
         return True
 
@@ -133,7 +133,7 @@ class PackageBase (EmergeBase):
             if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                     and self.subinfo.options.merge.destinationPath != None:
                 for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                    packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( prefix ) )
+                    packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ) )
                     for package in packageList:
                         fileList = package.getFiles()
                         utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
@@ -142,7 +142,7 @@ class PackageBase (EmergeBase):
                 if self.isTargetBuild():
                     packageList = installdb.remInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
                 else:
-                    packageList = installdb.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+                    packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
                 for package in packageList:
                     fileList = package.getFiles()
                     utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
@@ -156,11 +156,11 @@ class PackageBase (EmergeBase):
         # only packages using a specific merge destination path are shared between build types
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "Release" ) )
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "RelWithDebInfo" ) )
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix( "Debug" ) )
+            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Release" ) )
+            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "RelWithDebInfo" ) )
+            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Debug" ) )
         else:
-            portage.remInstalled( self.category, self.package, self.version, self.__installedDBPrefix() )
+            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
         return True
 
     def cleanImage( self ):

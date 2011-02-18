@@ -12,22 +12,17 @@ class KDEWinPackager (PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self, "KDEWinPackager")
         fileName = "bin\\kdewin-packager.exe"
-        self.packager = None
+        self.packagerExe = None
         self.useDebugPackages = False
         for directory in [".", "dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, directory, fileName )
             if os.path.exists(path):
-                self.packager = path
+                self.packagerExe = path
                 break
-        if not self.packager == None:
-            utils.debug("using kdewin packager from %s" % self.packager, 2)
-        if self.packager:
-            tmp = subprocess.Popen(self.packager, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-            for line in tmp:
-                if "symroot" in line:
-                    self.useDebugPackages = True
-                    break
-
+        if self.packagerExe:
+            utils.debug("using kdewin packager from %s" % self.packagerExe, 2)
+            tmp = subprocess.Popen(self.packagerExe, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            self.useDebugPackages = any("symroot" in line for line in tmp)
 
     def xmlTemplate(self):
         template = os.path.join(self.packageDir(), self.package+"-package.xml")
@@ -40,7 +35,7 @@ class KDEWinPackager (PackagerBase):
         """packaging according to the gnuwin32 packaging rules.
         This requires the kdewin-packager"""
 
-        if not self.packager:
+        if not self.packagerExe:
             utils.die("could not find kdewin-packager in your path!")
 
         if self.subinfo.options.package.packageName != None:
@@ -128,11 +123,11 @@ class KDEWinPackager (PackagerBase):
                   ( pkgName, self.imageDir(), pkgVersion, dstpath, srcCmd, symCmd )
         xmltemplate = self.xmlTemplate()
         if os.path.exists(xmltemplate):
-            cmd = self.packager + " " + cmd + " -template " + xmltemplate + " -notes " + \
+            cmd = self.packagerExe + " " + cmd + " -template " + xmltemplate + " -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating", 1)
         else:
-            cmd = self.packager + " " + cmd + " -verbose -notes " + \
+            cmd = self.packagerExe + " " + cmd + " -verbose -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug(" xml template %s for package generating not found" % xmltemplate, 1)
 

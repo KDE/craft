@@ -19,19 +19,19 @@ class SevenZipPackager (PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self, "SevenZipPackager")
         fileName = "bin\\7za.exe"
-        self.packager = None
+        self.packagerExe = None
         for directory in [".", "dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, directory, fileName )
             if os.path.exists(path):
-                self.packager = path
+                self.packagerExe = path
                 break
-        if not self.packager == None:
-            utils.debug("using 7za from %s" % self.packager, 2)
+        if self.packagerExe:
+            utils.debug("using 7za from %s" % self.packagerExe, 2)
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
 
-        if not self.packager:
+        if not self.packagerExe:
             utils.die("could not find 7za in your path!")
 
         if self.subinfo.options.package.packageName != None:
@@ -84,7 +84,7 @@ class SevenZipPackager (PackagerBase):
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
         fileName = os.path.join(dstpath, archiveName)
         utils.deleteFile(fileName)
-        cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packager, fileName, '*.*')
+        cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packagerExe, fileName, '*.*')
         if not utils.system(cmd):
             utils.die( "while packaging. cmd: %s" % cmd )
 
@@ -95,7 +95,7 @@ class SevenZipPackager (PackagerBase):
         archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
         fileName = os.path.join(dstpath, archiveName)
         utils.deleteFile(fileName)
-        cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packager, fileName, '*.*')
+        cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packagerExe, fileName, '*.*')
         if not utils.system(cmd):
             utils.die( "while packaging. cmd: %s" % cmd )
         return True
