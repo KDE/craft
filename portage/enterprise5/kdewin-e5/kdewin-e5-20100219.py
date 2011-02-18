@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['gitHEAD'] = '[git]kde:kdewin'
         self.svnTargets['0.3.9'] = 'tags/kdewin32/0.3.9'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/kdewin'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdesupport/kdewin'
@@ -21,25 +22,20 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin'
         self.svnTargets['20100205'] = 'tags/kdepim/enterprise5.0.20100205.1085631/kdesupport/kdewin'
         self.svnTargets['20100212'] = 'tags/kdepim/enterprise5.0.20100212.1089060/kdesupport/kdewin'
-        self.defaultTarget = '20100205'
+        self.defaultTarget = 'gitHEAD'
 
-class subclass(base.baseclass):
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "kdewin"
+        CMakePackageBase.__init__( self, args=args )
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        return self.doPackaging( "kdewin", self.buildTarget, True )
+        self.subinfo.options.configure.defines = (
+                " -DBUILD_BASE_LIB_WITH_QT=ON "
+                " -DBUILD_QT_LIB=ON "
+                " -DBUILD_TOOLS=ON " )
+        if compiler.isMinGW_W32():
+            self.subinfo.options.configure.defines += " -DMINGW_W32=ON "
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
