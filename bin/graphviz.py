@@ -7,7 +7,7 @@
 import os
 import utils
 try:
-    from _winreg import *
+    from _winreg import *  # pylint: disable=F0401
     HAS_REGISTRY = True
 except ImportError:
     import subprocess
@@ -26,6 +26,8 @@ def getUnixInstalledDot():
 
 def getWindowsInstalledDot():
     """Uses the Windows registry to find the path to dot.exe"""
+    # pylint: disable=E0602
+    # if pylint is done on linux, we don't have all those toys
     try:
         key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\AT&T Research Labs\Graphviz', 0, KEY_READ)
     except WindowsError:

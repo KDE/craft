@@ -20,12 +20,13 @@ import sys
 import imp
 import subprocess
 import __builtin__
-import msvcrt
+import msvcrt  # pylint: disable=F0401
 import time
 import utils
 
 
 try:
+    # pylint: disable=F0401
     import win32pipe
     import win32file
     _pywin32 = True

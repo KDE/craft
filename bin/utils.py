@@ -25,7 +25,7 @@ import re
 import inspect
 
 if os.name == 'nt':
-    import msvcrt
+    import msvcrt # pylint: disable=F0401
 else:
     import fcntl
 

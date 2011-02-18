@@ -7,7 +7,7 @@ import shutil
 import re
 import types
 import fileinput
-from _winreg import *
+from _winreg import * # pylint: disable=F0401
 
 class NSIPackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
@@ -103,6 +103,8 @@ file collection process is skipped, and only the installer is generated.
 
     def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
+        # pylint: disable=E0602
+        # if pylint is done on linux, we don't have those toys
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS', 0, KEY_READ )
         except WindowsError:
