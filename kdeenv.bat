@@ -69,37 +69,65 @@ call %~dp0etc\kdesettings.bat %BUILDTYPE%
 )
 
 rem handle drive substitution
-rem 
+rem
 rem check for unversioned kdesettings.bat,
 rem in that case drive substition already took place
 if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
-    if %EMERGE_USE_SHORT_PATH% == 1 (
-        if NOT "%EMERGE_ROOT_DRIVE%" == "" (
-            subst %EMERGE_ROOT_DRIVE% /D 2>NUL
-            subst %EMERGE_ROOT_DRIVE% %KDEROOT%
-            set KDEROOT=%EMERGE_ROOT_DRIVE%\
+    if !EMERGE_USE_SHORT_PATH! == 1 (
+        set ROOT_SET=FALSE
+        set SVN_SET=FALSE
+        set DOWNLOAD_SET=FALSE
+        set GIT_SET=FALSE
+        rem Check if drives are already set up correctly
+        FOR /F "tokens=1,2,3* delims= " %%i in ('subst') DO (
+            if /I "%%i" == "!EMERGE_ROOT_DRIVE!\:" (
+                if /I "%%k" == "!KDEROOT!" (
+                    set ROOT_SET=TRUE
+                )
+            )
+            if /I "%%i" == "!EMERGE_SVN_DRIVE!\:" (
+                if /I "%%k" == "!KDESVNDIR!" (
+                    set SVN_SET=TRUE
+                )
+            )
+            if /I "%%i" == "!EMERGE_DOWNLOAD_DRIVE!\:" (
+                if /I "%%k" == "!DOWNLOADDIR!" (
+                    set DOWNLOAD_SET=TRUE
+                )
+            )
+            if /I "%%i" == "!EMERGE_GIT_DRIVE!\:" (
+                if /I "%%k" == "!KDEGITDIR!" (
+                    set GIT_SET=TRUE
+                )
+            )
         )
-        if NOT "%EMERGE_SVN_DRIVE%" == "" (
-            subst %EMERGE_SVN_DRIVE% /D 2>NUL
-            mkdir %KDESVNDIR% 2>NUL
-            subst %EMERGE_SVN_DRIVE% %KDESVNDIR%
-            set KDESVNDIR=%EMERGE_SVN_DRIVE%\
+        if NOT "!ROOT_SET!"=="TRUE" (
+            if exist !EMERGE_ROOT_DRIVE!\NUL subst !EMERGE_ROOT_DRIVE! /D
+            subst !EMERGE_ROOT_DRIVE! !KDEROOT!
         )
-        if NOT "%EMERGE_GIT_DRIVE%" == "" (
-            subst %EMERGE_GIT_DRIVE% /D 2>NUL
-            mkdir %KDEGITDIR% 2>NUL
-            subst %EMERGE_GIT_DRIVE% %KDEGITDIR%
-            set KDEGITDIR=%EMERGE_GIT_DRIVE%\
+        if NOT "!DOWNLOAD_SET!"=="TRUE" (
+            if not exist !DOWNLOADDIR!\NUL mkdir !DOWNLOADDIR!
+            if exist !EMERGE_DOWNLOAD_DRIVE!\NUL subst !EMERGE_DOWNLOAD_DRIVE! /D
+            subst !EMERGE_DOWNLOAD_DRIVE! !DOWNLOADDIR!
         )
-        if NOT "%EMERGE_DOWNLOAD_DRIVE%" == "" (
-            subst %EMERGE_DOWNLOAD_DRIVE% /D 2>NUL
-            mkdir %DOWNLOADDIR% 2>NUL
-            subst %EMERGE_DOWNLOAD_DRIVE% %DOWNLOADDIR%
-            set DOWNLOADDIR=%EMERGE_DOWNLOAD_DRIVE%\
+        if NOT "!SVN_SET!"=="TRUE" (
+            if not exist !KDESVNDIR!\NUL mkdir !KDESVNDIR!
+            if exist !EMERGE_SVN_DRIVE!\NUL subst !EMERGE_SVN_DRIVE! /D
+            subst !EMERGE_SVN_DRIVE! !KDESVNDIR!
         )
-        %EMERGE_ROOT_DRIVE%
+        if NOT "!GIT_SET!" == "TRUE" (
+            if not exist !KDEGITDIR!\NUL mkdir !KDEGITDIR!
+            if exist !EMERGE_GIT_DRIVE!\NUL subst !EMERGE_GIT_DRIVE! /D
+            subst !EMERGE_GIT_DRIVE! !KDEGITDIR!
+         )
+        set KDEROOT=!EMERGE_ROOT_DRIVE!\
+        set KDESVNDIR=!EMERGE_SVN_DRIVE!\
+        set DOWNLOADDIR=!EMERGE_DOWNLOAD_DRIVE!\
+        set KDEGITDIR=!EMERGE_GIT_DRIVE!\
+        !EMERGE_ROOT_DRIVE!
     )
 )
+
 rem print pathes 
 if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
     echo KDEROOT     : %KDEROOT%
