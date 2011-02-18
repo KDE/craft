@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['v0.2.80'] = '[git]kde:attica||v0.2.80'
         self.svnTargets['20100101'] = 'tags/kdepim/enterprise5.0.20100101.1068602/kdesupport/attica'
         self.svnTargets['20100115'] = 'tags/kdepim/enterprise5.0.20100115.1075215/kdesupport/attica'
         self.svnTargets['20100122'] = 'tags/kdepim/enterprise5.0.20100122.1078631/kdesupport/attica'
@@ -54,7 +55,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdesupport/attica'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/attica'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/attica'
-        self.defaultTarget = '20110117'
+        self.defaultTarget = 'v0.2.80'
 
 from Package.CMakePackageBase import *
 
