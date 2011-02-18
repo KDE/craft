@@ -72,8 +72,7 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "akonadi"
+        CMakePackageBase.__init__( self, args=args )
         self.subinfo = subinfo()
         self.subinfo.options.configure.defines = (
                 " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
