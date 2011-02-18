@@ -182,14 +182,6 @@ class PackageBase (EmergeBase):
 
         return True
 
-    def cleanAllBuilds( self ):
-        """cleanup all build directories"""
-        if os.path.exists( self.buildRoot() ):
-            utils.cleanDirectory( self.buildRoot() )
-            utils.debug( "cleaning all build dirs: %s" % self.buildRoot(), 1 )
-
-        return True
-
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers
         install database"""
@@ -269,7 +261,6 @@ class PackageBase (EmergeBase):
         functions = {"fetch":          "fetch",
                      "cleanimage":     "cleanImage",
                      "cleanbuild":     "cleanBuild",
-                     "cleanallbuilds": "cleanAllBuilds",
                      "unpack":         "unpack",
                      "compile":        "compile",
                      "configure":      "configure",

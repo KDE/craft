@@ -269,7 +269,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             success = success and doExec( category, package, version, "package", opts )
 
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest", "dumpdeps",
-                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch",
+                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch",
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
@@ -436,7 +436,7 @@ for i in sys.argv:
         mainBuildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest", "--dumpdeps",
-                  "--full-package", "--cleanimage", "--cleanbuild", "--cleanallbuilds", "--createpatch"] ):
+                  "--full-package", "--cleanimage", "--cleanbuild", "--createpatch"] ):
         mainBuildAction = i[2:]
     elif ( i == "--print-revision" ):
         mainBuildAction = "printrev"
@@ -450,6 +450,10 @@ for i in sys.argv:
         for _dir in portage.rootDirectories():
             cleanup( _dir, True )
         cleanup( os.path.dirname(executableName), False )
+        exit(0)
+    elif i == "--cleanallbuilds":
+        # clean complete build directory
+        utils.cleanDirectory(os.path.join( os.getenv("KDEROOT"), "build"))
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
