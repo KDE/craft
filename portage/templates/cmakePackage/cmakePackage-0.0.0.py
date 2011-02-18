@@ -1,6 +1,6 @@
 import os
 import sys
-
+import info
 
 # deprecated class
 class subinfo(info.infoclass):

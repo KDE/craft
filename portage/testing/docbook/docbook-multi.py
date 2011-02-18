@@ -1,4 +1,8 @@
 import info
+
+# pylint: disable=E0602,F0401,E0611,E1101
+# AntPackageBase currently does not exist...
+
 from Package.AntPackageBase import *
 
 class subinfo(info.infoclass):

@@ -1,4 +1,5 @@
 import info
+from Package.CMakePackageBase import CMakePackageBase
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
