@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['v0.9.84'] = '[git]kde:automoc|v0.9.84'
+        self.svnTargets['v0.9.84'] = '[git]kde:automoc||v0.9.84'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdesupport/automoc'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdesupport/automoc'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdesupport/automoc'
@@ -37,26 +37,12 @@ class subinfo(info.infoclass):
         self.svnTargets['20100701'] = 'tags/kdepim/enterprise5.0.20100701.1144979/kdesupport/automoc'
         self.defaultTarget = 'v0.9.84'
 
-class subclass(base.baseclass):
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "automoc"
+        CMakePackageBase.__init__( self, args=args )
         self.subinfo = subinfo()
 
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "automoc" )
-        else:
-            return self.doPackaging( "automoc", self.buildTarget, True )
-
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
