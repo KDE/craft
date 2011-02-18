@@ -1,37 +1,21 @@
-import base
-import utils
-import os
-import sys
-import info
+from info import infoclass
+from Package.CMakePackageBase import CMakePackageBase
 
-class subinfo( info.infoclass ):
+class subinfo(infoclass ):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/playground/network/akiirc'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:aki'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        self.hardDependencies['win32libs-bin/boost'] = 'default'
+        # also needs icu from http://site.icu-project.org
 
-class subclass(base.baseclass):
+class Package(CMakePackageBase):
     def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "akiirc", self.buildTarget, True )
-        else:
-            return self.doPackaging( "akiirc", os.path.basename(sys.argv[0]).replace("akiirc-", "").replace(".py", ""), True )
+        CMakePackageBase.__init__(self)
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
