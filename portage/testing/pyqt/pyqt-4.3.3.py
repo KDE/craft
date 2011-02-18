@@ -43,16 +43,16 @@ class subclass(base.baseclass):
                                                                    os.path.join( self.imagedir, "bin" ) )
         if self.compiler == "mingw":
             cmd += " -p win32-g++"
-        utils.system( cmd ) or utils.die( "failed to execute %1" % cmd )
+        utils.system( cmd ) or utils.die( "failed to execute %s" % cmd )
         sedcommand = r""" -e "s/""" + os.path.join( self.rootdir, "tmp", "qt" ).replace('\\', '\\/') + "*\\/image-mingw\\/" + """/""" + self.rootdir.replace('\\', '\\/') + """/g" """
         utils.sedFile( os.path.join( self.workdir, self.instsrcdir ), "pyqtconfig.py", sedcommand )
         cmd = 'cd %s && %s' % ( os.path.join( self.workdir, self.instsrcdir ), self.cmakeMakeProgramm )
-        utils.system( cmd ) or utils.die( "failed to execute %1" % cmd )
+        utils.system( cmd ) or utils.die( "failed to execute %s" % cmd )
         return True
 
     def install( self ):
         cmd = 'cd %s && %s install' % ( os.path.join( self.workdir, self.instsrcdir ), self.cmakeMakeProgramm )
-        utils.system( cmd ) or utils.die( "failed to execute %1" % cmd )
+        utils.system( cmd ) or utils.die( "failed to execute %s" % cmd )
         return True
 
 
