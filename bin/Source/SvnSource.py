@@ -32,7 +32,7 @@ class SvnSource (VersionSystemSourceBase):
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
                 _, path = self.__splitPath(url)
-                if path and os.getenv("EMERGE_SVN_STDLAYOUT") == '1':
+                if path and utils.envAsBool("EMERGE_SVN_STDLAYOUT"):
                     sourcedir = os.path.join( sourcedir, path )
         else:
             utils.die("svnTarget property not set for this target")
@@ -152,7 +152,7 @@ class SvnSource (VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if utils.verbose() < 2 and not os.getenv("KDESVNVERBOSE") == "True":
+        if utils.verbose() < 2 and not utils.envAsBool("KDESVNVERBOSE"):
             option += " --quiet"
 
         self.setProxy()

@@ -346,9 +346,6 @@ if len( sys.argv ) < 2:
     utils.die("")
 
 environ = dict() # TODO: why do we need this at all?
-environ["EMERGE_NOCOPY"]        = os.getenv( "EMERGE_NOCOPY" )
-environ["EMERGE_NOUPDATE"]      = os.getenv( "EMERGE_NOUPDATE" )
-environ["EMERGE_NOCLEAN"]       = os.getenv( "EMERGE_NOCLEAN" )
 environ["EMERGE_TRACE"]         = os.getenv( "EMERGE_TRACE" )
 environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
 environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
@@ -358,16 +355,6 @@ environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
 environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
 environ["EMERGE_PKGPATCHLVL"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
 environ["EMERGE_LOG_DIR"]       = os.getenv( "EMERGE_LOG_DIR" )
-
-if ( environ['EMERGE_NOCOPY'] == "False" ):
-    nocopy = False
-else:
-    nocopy = True
-
-if ( environ['EMERGE_NOUPDATE'] == "True" ):
-    noupdate = True
-else:
-    noupdate = False
 
 if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
     trace = 0
@@ -471,7 +458,7 @@ utils.debug( "buildAction: %s" % mainBuildAction )
 utils.debug( "doPretend: %s" % doPretend, 1 )
 utils.debug( "packageName: %s" % packageName )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
-utils.debug( "buildTests: %s" % os.getenv( "EMERGE_BUILDTESTS" ) )
+utils.debug( "buildTests: %s" % utils.envAsBool( "EMERGE_BUILDTESTS" ) )
 utils.debug( "verbose: %d" % utils.verbose(), 1 )
 utils.debug( "trace: %s" % os.getenv( "EMERGE_TRACE" ), 1 )
 utils.debug( "KDEROOT: %s\n" % KDEROOT, 1 )

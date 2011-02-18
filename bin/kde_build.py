@@ -7,8 +7,7 @@ class kde_interface:
     def __init__( self, env = dict( os.environ ) ):
         # TODO: env as argument is never used, eliminate
         for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER",
-                    "EMERGE_BUILDTYPE", "EMERGE_OFFLINE", "EMERGE_NOCOPY", "EMERGE_NOCLEAN",
-                    "EMERGE_NOFAST", "EMERGE_BUILDTESTS", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
+                    "EMERGE_BUILDTYPE", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
             if not key in env.keys():
                 env[ key ] = None
         self.COMPILER            = env[ "KDECOMPILER" ]
@@ -26,11 +25,6 @@ class kde_interface:
         self.BUILDTYPE           = env[ "EMERGE_BUILDTYPE" ]
         if ( self.BUILDTYPE not in ["Debug", "Release", "RelWithDebInfo", "MinSizeRel"] ):
             self.BUILDTYPE = None
-        self.OFFLINE = env[ "EMERGE_OFFLINE" ]
-        self.NOCOPY = env[ "EMERGE_NOCOPY" ]
-        self.NOCLEAN = env[ "EMERGE_NOCLEAN" ]
-        self.NOFAST = env[ "EMERGE_NOFAST" ]
-        self.BUILDTESTS = env[ "EMERGE_BUILDTESTS" ]
         self.DIRECTORY_LAYOUT = env[ "DIRECTORY_LAYOUT" ]
         self.MAKE_PROGRAM = env[ "EMERGE_MAKE_PROGRAM" ]
 
@@ -54,12 +48,13 @@ class kde_interface:
             print "BuildType: %s" % self.BUILDTYPE
         self.buildType = self.BUILDTYPE
 
+        self.noFetch = utils.envAsBool( "EMERGE_OFFLINE" )
+        self.noCopy = utils.envAsBool( "EMERGE_NOCOPY")
+        self.noFast = utils.envAsBool( "EMERGE_NOFAST", default=True )
+        self.noClean = utils.envAsBool( "EMERGE_NOCLEAN" )
+        self.forced = utils.envAsBool( "EMERGE_FORCED" )
+        self.buildTests = utils.envAsBool( "EMERGE_BUILDTESTS" )
 
-        self.buildTests      = False
-        self.noCopy          = False
-        self.noFetch         = False
-        self.noClean         = False
-        self.noFast          = True
         self.buildNameExt    = None
 
         self.rootdir         = rootdir
@@ -67,17 +62,6 @@ class kde_interface:
         self.imagedir        = imagedir
         self.instsrcdir      = instsrcdir
         self.instdestdir     = instdestdir
-
-        if self.OFFLINE    == "True":
-            self.noFetch     = True
-        if self.NOCOPY     == "True":
-            self.noCopy      = True
-        if self.NOCLEAN    == "True":
-            self.noClean     = True
-        if self.NOFAST    == "False":
-            self.noFast      = False
-        if self.BUILDTESTS == "True":
-            self.buildTests  = True
 
         self.kdesvndir       = self.KDESVNDIR
         self.kdesvnserver    = self.KDESVNSERVER

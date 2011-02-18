@@ -297,7 +297,7 @@ file collection process is skipped, and only the installer is generated.
     def createPackage( self ):
         """ create a package """
         print "packaging using the NullsoftInstallerPackager"
-        if not os.getenv( "EMERGE_NOCLEAN" ) == "True":
+        if not utils.envAsBool("EMERGE_NOCLEAN"):
             utils.debug( "cleaning imagedir: %s" % self.imageDir() )
             utils.cleanDirectory( self.imageDir() )
             for directory, mergeDir in self.__getImageDirectories():

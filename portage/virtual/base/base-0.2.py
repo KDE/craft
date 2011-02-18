@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies( self ):
-        if not os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+        if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             self.buildDependencies['gnuwin32/wget']       = 'default'
             self.buildDependencies['dev-util/7zip']       = 'default'
             self.buildDependencies['gnuwin32/patch']      = 'default'
@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         if emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-bin/runtime-ce']   = 'default'
 
-        if not os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+        if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             if os.getenv( "SVN_SSH" ) == "plink" or \
                     os.getenv( "GIT_SSH" ) == "plink":
                 self.buildDependencies['dev-util/putty']      = 'default'

@@ -40,9 +40,6 @@ KDESVNPASSWORD = os.getenv( "KDESVNPASSWORD" )
 # IMAGEDIR: the directory, under which the compiled files are installed.
 #            here rootdir/tmp/packagename/image
 
-def envAsBool(key):
-    """ return value of environment variable as bool value """
-    return os.getenv( key ) == "True" or os.getenv( key ) == "1"
 
 class EmergeBase(object):
     """base class for emerge system - holds attributes and methods required by base classes"""
@@ -62,7 +59,7 @@ class EmergeBase(object):
             self.buildSystemType = None
 
         # if class name has been provided add implicit build time dependency
-        if className and os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+        if className and utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             packageName = 'internal/%s' % className
             if not packageName in self.subinfo.buildDependencies:
                 self.subinfo.buildDependencies[packageName] = 'default'
@@ -83,34 +80,17 @@ class EmergeBase(object):
 
         ## specifies if a build type related root directory should be used
         self.useBuildTypeRelatedMergeRoot = False
-        if envAsBool("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE"):
+        if utils.envAsBool("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE"):
             self.useBuildTypeRelatedMergeRoot = True
 
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
-        self.noFetch = False
-        if envAsBool( "EMERGE_OFFLINE" ):
-            self.noFetch = True
-
-        self.noCopy = False
-        if envAsBool( "EMERGE_NOCOPY" ):
-            self.noCopy = True
-
-        self.noFast = True
-        if envAsBool( "EMERGE_NOFAST" ):
-            self.noFast = False
-
-        self.noClean = False
-        if envAsBool( "EMERGE_NOCLEAN" ) :
-            self.noClean = True
-
-        self.forced = False
-        if envAsBool( "EMERGE_FORCED" ):
-            self.forced = True
-
-        self.buildTests = False
-        if envAsBool( "EMERGE_BUILDTESTS" ):
-            self.buildTests = True
+        self.noFetch = utils.envAsBool( "EMERGE_OFFLINE" )
+        self.noCopy = utils.envAsBool( "EMERGE_NOCOPY")
+        self.noFast = utils.envAsBool( "EMERGE_NOFAST", default=True )
+        self.noClean = utils.envAsBool( "EMERGE_NOCLEAN" )
+        self.forced = utils.envAsBool( "EMERGE_FORCED" )
+        self.buildTests = utils.envAsBool( "EMERGE_BUILDTESTS" )
 
         if COMPILER == "msvc2005":
             self.__compiler = "msvc2005"
@@ -312,7 +292,7 @@ class EmergeBase(object):
             dstpath = os.path.join( self.rootdir, "tmp" )
 
         if withBuildType:
-            if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
+            if utils.envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
                 dstpath = os.path.join( dstpath, self.buildType())
 
         if not os.path.exists(dstpath):
@@ -383,5 +363,4 @@ class EmergeBase(object):
         username = os.getenv('EMERGE_PROXY_USERNAME')
         password = os.getenv('EMERGE_PROXY_PASSWORD')
         return [host, port, username, password]
-
 

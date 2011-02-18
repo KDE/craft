@@ -71,7 +71,7 @@ class VersionSystemSourceBase (SourceBase):
                 print "copying %s to %s" % (sourceDir, self.buildDir())
             utils.copySrcDirToDestDir(sourceDir, self.buildDir())
         ret = self.applyPatches()
-        if os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "True" or os.getenv( "EMERGE_HOLD_ON_PATCH_FAIL" ) == "1":
+        if utils.envAsBool("EMERGE_HOLD_ON_PATCH_FAIL"):
             return ret
         return True
 

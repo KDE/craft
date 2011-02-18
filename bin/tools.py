@@ -142,7 +142,7 @@ class Environment(object):
         self.KDEROOT = os.getenv( "KDEROOT" )
         self.LOGFILE = os.getenv( "EMERGE_LOGFILE" )
         self.BUILDTYPE = os.getenv( "EMERGE_BUILDTYPE" )
-        self.BUILDTESTS = os.getenv( "EMERGE_BUILDTESTS" )
+        self.BUILDTESTS = utils.envAsBool( "EMERGE_BUILDTESTS" )
         self.PKG_DEST_DIR = os.getenv( "EMERGE_PKGDSTDIR" )
         self.COMPILER = os.getenv( "KDECOMPILER" )
         self.IGNORE_SUBVERSION = ".svn"

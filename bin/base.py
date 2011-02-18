@@ -53,10 +53,6 @@ EMERGE_MAKE_PROGRAM = os.getenv( "EMERGE_MAKE_PROGRAM" )
 # IMAGEDIR: the directory, under which the compiled files are installed.
 #            here rootdir/tmp/packagename/image
 
-def envAsBool(key):
-    """ return value of environment variable as bool value """
-    return os.getenv( key ) == "True" or os.getenv( key ) == "1"
-
 
 
 class baseclass:
@@ -98,13 +94,7 @@ class baseclass:
         self.SRC_URI                = SRC_URI
         self.instsrcdir             = ""
         self.instdestdir            = ""
-        self.noCopy                 = False
-        self.noClean                = False
-        self.noFast                 = True
-        self.buildTests             = False
-        self.forced                 = False
         self.versioned              = False
-        self.noFetch                = False
         self.kdeCustomDefines       = ""
         self.createCombinedPackage  = False
         self._filenames = [] # will be set by self.execute()
@@ -118,18 +108,12 @@ class baseclass:
         self.msys = msys_build.msys_interface()
         self.kde  = kde_build.kde_interface()
 
-        if os.getenv( "EMERGE_OFFLINE" ) == "True":
-            self.noFetch = True
-        if os.getenv( "EMERGE_NOCOPY" ) == "True":
-            self.noCopy = True
-        if os.getenv( "EMERGE_NOFAST" ) == "False":
-            self.noFast = False
-        if os.getenv( "EMERGE_NOCLEAN" )    == "True":
-            self.noClean     = True
-        if os.getenv( "EMERGE_FORCED" ) == "True":
-            self.forced = True
-        if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
-            self.buildTests = True
+        self.noFetch = utils.envAsBool( "EMERGE_OFFLINE" )
+        self.noCopy = utils.envAsBool( "EMERGE_NOCOPY")
+        self.noFast = utils.envAsBool( "EMERGE_NOFAST", default=True )
+        self.noClean = utils.envAsBool( "EMERGE_NOCLEAN" )
+        self.forced = utils.envAsBool( "EMERGE_FORCED" )
+        self.buildTests = utils.envAsBool( "EMERGE_BUILDTESTS" )
 
         # Build type for kdeCompile() / kdeInstall() - packages
         # "" -> debug and release
@@ -579,7 +563,7 @@ class baseclass:
             dstpath = os.path.join( self.rootdir, "tmp" )
 
         if withBuildType:
-            if envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
+            if utils.envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
                 dstpath = os.path.join( dstpath, self.buildType())
 
         if not os.path.exists(dstpath):

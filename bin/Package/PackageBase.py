@@ -78,7 +78,7 @@ class PackageBase (EmergeBase):
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
 
         # run post-install scripts
-        if not os.getenv("EMERGE_NO_POST_INSTALL") == "True":
+        if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
                 script = os.path.join( self.rootdir, "manifest", scriptName )

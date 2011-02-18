@@ -179,7 +179,7 @@ class GitSource ( VersionSystemSourceBase ):
 
     def fetch(self, repopath=None):
         utils.trace( 'GitSource fetch', 2 )
-        if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
+        if utils.envAsBool("EMERGE_GIT_MULTIBRANCH"):
             return self.__fetchMultipleBranch(repopath)
         else:
             return self.__fetchSingleBranch(repopath)
@@ -189,7 +189,7 @@ class GitSource ( VersionSystemSourceBase ):
         utils.trace( 'GitSource ', 2 )
         if fileName:
             patchfile = os.path.join ( self.packageDir(), fileName )
-            if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
+            if utils.envAsBool("EMERGE_GIT_MULTIBRANCH"):
                 repopath = self.repositoryUrl()
                 # in case you need to move from a read only Url to a writeable one, here it gets replaced
                 repopath = repopath.replace("[git]", "")
@@ -252,7 +252,7 @@ class GitSource ( VersionSystemSourceBase ):
         _, repoBranch, _ = utils.splitGitUrl( repoString )
         if repoBranch == "":
             repoBranch = "master"
-        if os.getenv("EMERGE_GIT_MULTIBRANCH") == "1":
+        if utils.envAsBool("EMERGE_GIT_MULTIBRANCH"):
             sourcedir = os.path.join(self.checkoutDir(index), repoBranch)
         else:
             sourcedir = self.checkoutDir(index)

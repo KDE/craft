@@ -522,7 +522,7 @@ def readChildren( category, package, version ):
     else:
         mod = modDict[ identFileName ]
 
-    if os.getenv('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
+    if utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
         _package = mod.Package()
         subinfo = _package.subinfo
     elif hasattr( mod, 'subinfo' ):
@@ -679,7 +679,7 @@ def isInstalled( category, package, version, buildtype='' ):
             package + "-" + version + "-lib.ver"), category, package, version )
     found = found or binary or lib
 
-    if ( os.getenv( "EMERGE_VERSIONING" ) == "False" or utils.isSourceOnly() ):
+    if not utils.envAsBool("EMERGE_VERSIONING", default=True) or utils.isSourceOnly():
         # check for any installation
         if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             return False

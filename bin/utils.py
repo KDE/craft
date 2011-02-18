@@ -36,7 +36,7 @@ def abstract():
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
 def isSourceOnly():
-    return os.getenv("EMERGE_SOURCEONLY") == "True" or os.getenv("EMERGE_SOURCEONLY") == "1"
+    return envAsBool("EMERGE_SOURCEONLY")
 
 SVN_LOCK_FILE = "emergesvn-%s.lck"
 
@@ -1314,3 +1314,12 @@ def prependPath(*parts):
             debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
             os.putenv( "PATH", ";".join(old))
+
+def envAsBool(key, default=False):
+    """ return value of environment variable as bool value """
+    value = os.getenv(key)
+    if value:
+        return value.lower() in ['true', '1']
+    else:
+        return default
+
