@@ -11,6 +11,10 @@ class subinfo(info.infoclass):
         self.hardDependencies['dev-util/automoc'] = 'default'
 
     def setTargets( self ):
+        self.targets['4.4.4'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.4/src/phonon-4.4.4.tar.bz2'
+        self.targetInstSrc['4.4.4'] = 'phonon-4.4.4'
+        self.patchToApply['4.4.4'] = ("phonon-20100915.diff", 1)
+        self.targetDigests['4.4.4'] = '7f31752c20efecbe63c7b312ceb28819fa337943'
         self.svnTargets['4.1.0'] = 'tags/phonon/4.1.0'    # tagged version, also in qt4.4.0
         self.svnTargets['4.2.0'] = 'tags/phonon/4.2.0'    # tagged version
         self.svnTargets['4.3.0'] = 'tags/phonon/4.3.0'
@@ -35,35 +39,16 @@ class subinfo(info.infoclass):
         self.svnTargets['20100401'] = 'tags/kdepim/enterprise5.0.20100401.1110042/kdesupport/phonon'
         self.svnTargets['20100409'] = 'tags/kdepim/enterprise5.0.20100409.1112952/kdesupport/phonon'
         self.svnTargets['20100507'] = 'tags/kdepim/enterprise5.0.20100507.1123982/kdesupport/phonon'
-        self.defaultTarget = '20100507'
+        self.defaultTarget = '4.4.4'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "phonon"
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        if self.compiler == "mingw":
-            """
-            For microsoft compilers the DirectX SDK is needed if you want to
-            compile the DirectShow 9 backend.
-            """
-            os.environ["DXSDK_DIR"] = os.path.join( self.rootdir, "include", "mingw" )
-        self.kdeCustomDefines="-DPHONON_BUILD_EXAMPLES=OFF -DPHONON_BUILD_TESTS=OFF"
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if self.buildTarget == "svnHEAD":
-            return self.doPackaging( "phonon" )
-        else:
-            return self.doPackaging( "phonon", self.buildTarget, True )
-
+        CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = (
+                " -DPHONON_BUILD_EXAMPLES=OFF "
+                " -DPHONON_BUILD_TESTS=OFF ")
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
