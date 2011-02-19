@@ -8,7 +8,7 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['enterprise5/automoc-e5'] = 'default'
+        self.buildDependencies['dev-util/automoc'] = 'default'
         self.dependencies['enterprise5/soprano-e5'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'
         self.dependencies['win32libs-bin/libxslt'] = 'default'
@@ -71,9 +71,9 @@ class subinfo(info.infoclass):
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self, args=args )
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = (
                 " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
                 " -DDATABASE_BACKEND=SQLITE "

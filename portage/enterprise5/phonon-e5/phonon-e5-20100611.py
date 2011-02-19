@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['enterprise5/automoc-e5'] = 'default'
+        self.hardDependencies['dev-util/automoc'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['4.1.0'] = 'tags/phonon/4.1.0'    # tagged version, also in qt4.4.0

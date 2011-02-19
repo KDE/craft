@@ -61,7 +61,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['enterprise5/soprano-e5'] = 'default'
         self.hardDependencies['enterprise5/strigi-e5'] = 'default'
         self.hardDependencies['enterprise5/phonon-e5'] = 'default'
-        self.hardDependencies['enterprise5/automoc-e5'] = 'default'
+        self.hardDependencies['dev-util/automoc'] = 'default'
         self.hardDependencies['enterprise5/attica-e5'] = 'default'
 
         # Take dbusmenu-qt from kdesupport as long as there are no differences
