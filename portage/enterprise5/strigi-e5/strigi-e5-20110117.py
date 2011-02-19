@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/zlib'] = 'default'
 
     def setTargets( self ):
+        self.svnTargets['gitHEAD'] = 'git://anongit.kde.org/strigi'
         self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
         self.svnTargets['0.5.8'] = 'tags/strigi/strigi/0.5.8'
         self.svnTargets['0.5.9'] = 'tags/strigi/strigi/0.5.9'
@@ -80,7 +81,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdesupport/strigi'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/strigi'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/strigi'
-        self.defaultTarget = '20110117'
+        self.defaultTarget = 'gitHEAD'
 
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '4.4'
@@ -91,7 +92,6 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = ""
         if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines = "-DBUILD_DAEMON=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
@@ -101,7 +101,12 @@ class Package(CMakePackageBase):
             if self.isTargetBuild():
                 self.subinfo.options.configure.defines += \
                         "-DICONV_SECOND_ARGUMENT_IS_CONST=ON "
-
+        else:
+            self.subinfo.options.configure.defines = (
+                    " -DSTRIGI_SYNC_SUBMODULES=ON "
+                    " -DGIT_EXECUTABLE=%s "
+                    % os.path.join(self.rootdir, "dev-utils", "git", "bin",
+                            "git.exe"))
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             utils.warning("could not find qmake in <%s>" % qmake)
