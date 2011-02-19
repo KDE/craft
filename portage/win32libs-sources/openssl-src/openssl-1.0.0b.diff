@@ -64,16 +64,6 @@ diff -Nru openssl-1.0.0.orig/crypto/rand/randfile.c openssl-1.0.0/crypto/rand/ra
 diff -Nru openssl-1.0.0.orig/e_os.h openssl-1.0.0/e_os.h
 --- openssl-1.0.0.orig/e_os.h	2009-08-26 17:13:43.000000000 +0200
 +++ openssl-1.0.0/e_os.h	2010-07-18 16:16:22.093517500 +0200
-@@ -150,7 +150,9 @@
- #define clear_socket_error()	WSASetLastError(0)
- #define readsocket(s,b,n)	recv((s),(b),(n),0)
- #define writesocket(s,b,n)	send((s),(b),(n),0)
-+#if defined(_MSC_VER) && _MSC_VER < 1600
- #define EADDRINUSE		WSAEADDRINUSE
-+#endif
- #elif defined(__DJGPP__)
- #define WATT32
- #define get_last_socket_error()	errno
 @@ -272,7 +274,7 @@
  	*/
  #      define _WIN32_WINNT 0x0400
@@ -188,60 +178,3 @@ diff -Nru openssl-1.0.0.orig/ssl/ssltest.c openssl-1.0.0/ssl/ssltest.c
  #else
  #include OPENSSL_UNISTD
  #endif
-diff -Nru openssl-1.0.0.orig/util/pl/VC-32.pl openssl-1.0.0/util/pl/VC-32.pl
---- openssl-1.0.0.orig/util/pl/VC-32.pl	2010-01-20 15:04:55.000000000 +0100
-+++ openssl-1.0.0/util/pl/VC-32.pl	2010-05-02 16:36:22.909472300 +0200
-@@ -103,12 +103,13 @@
-     }
- 
-     $cc='$(CC)';
--    $base_cflags=' /W3 /WX /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -DOPENSSL_SMALL_FOOTPRINT';
-+    $base_cflags=' /W3 /WX /wd4748 /wd4101 /GF /Gy /nologo -DUNICODE -D_UNICODE -DOPENSSL_SYSNAME_WINCE -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DDSO_WIN32 -DNO_CHMOD -DOPENSSL_SMALL_FOOTPRINT -DOPENSSL_NO_CAPIENG';
-     $base_cflags.=" $wcecdefs";
-+    $base_cflags.=' -DWCECOMPAT'    if (defined($ENV{'WCECOMPAT'}));
-     $base_cflags.=' -I$(WCECOMPAT)/include'		if (defined($ENV{'WCECOMPAT'}));
-     $base_cflags.=' -I$(PORTSDK_LIBPATH)/../../include'	if (defined($ENV{'PORTSDK_LIBPATH'}));
--    $opt_cflags=' /MC /O1i';	# optimize for space, but with intrinsics...
--    $dbg_clfags=' /MC /Od -DDEBUG -D_DEBUG';
-+    $opt_cflags=' /O1i';	# optimize for space, but with intrinsics...
-+    $dbg_clfags=' /Od -DDEBUG -D_DEBUG';
-     $lflags="/nologo /opt:ref $wcelflag";
-     }
- else	# Win32
-@@ -147,14 +147,14 @@
- $efile="/out:";
- $exep='.exe';
- if ($no_sock)		{ $ex_libs=''; }
--elsif ($FLAVOR =~ /CE/)	{ $ex_libs='winsock.lib'; }
-+elsif ($FLAVOR =~ /CE/)	{ $ex_libs='ws2.lib'; }
- else			{ $ex_libs='ws2_32.lib'; }
- 
- if ($FLAVOR =~ /CE/)
- 	{
--	$ex_libs.=' $(WCECOMPAT)/lib/wcecompatex.lib'	if (defined($ENV{'WCECOMPAT'}));
-+	$ex_libs.=' $(WCECOMPAT)/lib/wcecompat.lib'	if (defined($ENV{'WCECOMPAT'}));
- 	$ex_libs.=' $(PORTSDK_LIBPATH)/portlib.lib'	if (defined($ENV{'PORTSDK_LIBPATH'}));
--	$ex_libs.=' /nodefaultlib:oldnames.lib coredll.lib corelibc.lib' if ($ENV{'TARGETCPU'} eq "X86");
-+	$ex_libs.=' /nodefaultlib:oldnames.lib coredll.lib corelibc.lib';
- 	}
- else
- 	{
-@@ -261,12 +261,17 @@
- elsif ($shlib && $FLAVOR =~ /CE/)
- 	{
- 	$mlflags.=" $lflags /dll";
--	$lflags.=' /entry:mainCRTstartup' if(defined($ENV{'PORTSDK_LIBPATH'}));
- 	$lib_cflag=" -D_WINDLL -D_DLL";
- 	$out_def='out32dll_$(TARGETCPU)';
- 	$tmp_def='tmp32dll_$(TARGETCPU)';
- 	}
- 
-+if ($FLAVOR =~ /CE/)
-+	{
-+	$lflags.=' /entry:mainCRTstartup' if(defined($ENV{'PORTSDK_LIBPATH'}));
-+	$lflags.=' /entry:mainACRTStartup' if(defined($ENV{'WCECOMPAT'}));
-+	}
-+
- $cflags.=" /Fd$out_def";
- 
- sub do_lib_rule
