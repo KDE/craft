@@ -62,6 +62,13 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += "-DENABLE_FAM=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_LOG4CXX=OFF "
 
+        if self.buildTarget == "gitHEAD":
+            self.subinfo.options.configure.defines = (
+                " -DSTRIGI_SYNC_SUBMODULES=ON "
+                " -DGIT_EXECUTABLE=%s "
+                % os.path.join(self.rootdir, "dev-utils", "git", "bin",
+                               "git.exe"))
+
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             utils.warning("could not find qmake in <%s>" % qmake)
