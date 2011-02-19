@@ -27,9 +27,9 @@ class subinfo(info.infoclass):
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self, args=args )
+    def __init__( self ):
         self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = (
                 " -DBUILD_BASE_LIB_WITH_QT=ON "
                 " -DBUILD_QT_LIB=ON "
