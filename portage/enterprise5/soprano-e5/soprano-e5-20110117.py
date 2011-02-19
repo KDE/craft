@@ -9,10 +9,11 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt']               = 'default'
         self.hardDependencies['win32libs-sources/clucene-core-src'] = 'default'
         self.hardDependencies['win32libs-sources/redland-src']   = 'default'
-        self.hardDependencies['testing/virtuoso'] = 'default'
+ #       self.hardDependencies['testing/virtuoso'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
+        self.svnTargets['2.6.0']  = '[git]kde:soprano||2.6.0'
         self.svnTargets['2.0.0']  = 'tags/soprano/2.0.0'
         self.svnTargets['2.0.1']  = 'tags/soprano/2.0.1'
         self.svnTargets['2.0.2']  = 'tags/soprano/2.0.2'
@@ -76,28 +77,14 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdesupport/soprano'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/soprano'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/soprano'
-        self.defaultTarget = '20110117'
+        self.defaultTarget = '2.6.0'
 
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        self.instsrcdir = "soprano"
+from Package.CMakePackageBase import *
+
+class Package(CMakePackageBase):
+    def __init__( self ):
         self.subinfo = subinfo()
-
-    def unpack( self ):
-        return self.kdeSvnUnpack()
-
-    def compile( self ):
-        return self.kdeCompile()
-
-    def install( self ):
-        return self.kdeInstall()
-
-    def make_package( self ):
-        if not self.buildTarget == 'svnHEAD':
-            return self.doPackaging( "soprano", self.buildTarget, True )
-        else:
-            return self.doPackaging( "soprano", utils.cleanPackageName( sys.argv[0], "soprano" ), True )
+        CMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()
