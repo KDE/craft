@@ -26,7 +26,7 @@ class SourceBase(EmergeBase):
         utils.putenv("http_proxy", proxy)
         utils.putenv("ftp_proxy", proxy)
 
-    def fetch(self):
+    def fetch(self, dummyRepoSource=None):
         """fetch the source from a remote host and save it into a local destination"""
         utils.abstract()
 

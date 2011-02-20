@@ -201,7 +201,7 @@ class EmergeBase(object):
         """ location of directory where fetched files are  stored """
         return self.__adjustPath(DOWNLOADDIR)
 
-    def sourceDir(self):
+    def sourceDir(self, dummyIndex=0):
         utils.abstract()
 
     def packageDir(self):
