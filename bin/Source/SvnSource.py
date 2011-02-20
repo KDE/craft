@@ -197,7 +197,7 @@ class SvnSource (VersionSystemSourceBase):
 
             # run the command
             with utils.LockFile(utils.svnLockFileName()):
-                utils.system( cmd, outstream=tempfile )
+                utils.system( cmd, stdout=tempfile )
 
             tempfile.seek(os.SEEK_SET)
             # read the temporary file and find the line with the revision

@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
             self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdelibs-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdelibs-4.6.' + ver
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -27,7 +27,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "basic KDE libraries"
 
 from Package.CMakePackageBase import *
-        
+
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
@@ -40,6 +40,7 @@ class Package( CMakePackageBase ):
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
         elif self.compiler() == "msvc2010":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2010\" "
+        self.subinfo.options.configure.defines += " -DBUILD_off=doc "
 
     def install( self ):
         if not CMakePackageBase.install( self ):

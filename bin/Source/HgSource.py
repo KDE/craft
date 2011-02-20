@@ -66,7 +66,7 @@ class HgSource ( VersionSystemSourceBase ):
         return True
 
     def createPatch( self ):
-        """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
+        """create patch file from hg source into the related package dir. The patch file is named autocreated.patch"""
         utils.trace( "HgSource.createPatch called", 2 )
         ret = False
         if self.enableHg:
@@ -85,7 +85,7 @@ class HgSource ( VersionSystemSourceBase ):
             with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" ) as tempfile:
 
                 # run the command
-                utils.system( "hg tip", tempfile )
+                utils.system( "hg tip", stdout=tempfile )
                 # TODO: check return value for success
                 tempfile.seek( os.SEEK_SET )
 
