@@ -540,7 +540,7 @@ class baseclass:
     def msysInstall( self, bOutOfSource = True ):
         return self.msys.msysInstall( bOutOfSource )
 
-    def system( self, command, **kw ):
+    def system( self, command, *args, **kw ):
         """
             This function should be called instead of os.system it provides
             an entry point to modifiy system calls globally.
@@ -549,7 +549,7 @@ class baseclass:
             For available keyword options please refer to the python
             documentation of system.popen
         """
-        if not utils.system( command, *kw ):
+        if not utils.system( command, *args, **kw ):
             utils.die( "os.system ( %s ) failed" % ( command ) )
         return True
 

@@ -42,8 +42,7 @@ class Package(BinaryPackageBase):
             return False
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
-        utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
-            stdout=tmpFile, stderr=tmpFile  )
+        utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git, tmpFile,tmpFile  )
         tmpFile.seek( 0 )
         for line in tmpFile:
             if line.find("kde:")>-1:

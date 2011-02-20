@@ -64,28 +64,29 @@ class SourceBase(EmergeBase):
         utils.trace( "SourceBase.applyPatches called", 0 )
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
-            if not isinstance(patches, list):
-                patches = list([patches])
-            ret = True
-            for fileName, patchdepth in patches:
-                if not self.applyPatch( fileName, patchdepth ):
-                    ret = False
-            return ret
+            if type(patches) == list:
+                ret = True
+                for fileName, patchdepth in patches:
+                    utils.debug( "applying %s with patchlevel: %s" % ( fileName, patchdepth ) )
+                    if not self.applyPatch( fileName, patchdepth ):
+                        utils.warning( "applying %s failed!" % ( fileName ) )
+                        ret = False
+                return ret
+            else:
+                ( fileName, patchdepth ) = patches
+                return self.applyPatch( fileName, patchdepth )
+
         return True
 
     def applyPatch(self, fileName, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
         utils.trace( "SourceBase.applyPatch called", 2 )
-        if not fileName:
-            return True
         if not srcdir:
             srcdir = self.sourceDir()
-        patchfile = os.path.join ( self.packageDir(), fileName )
-        utils.debug( "applying %s with patchlevel: %s" % ( fileName, patchdepth ) )
-        result = utils.applyPatch( srcdir, patchfile, patchdepth )
-        if not result:
-            utils.warning( "applying %s failed!" % ( fileName ) )
-        return result
+        if fileName:
+            patchfile = os.path.join ( self.packageDir(), fileName )
+            return utils.applyPatch( srcdir, patchfile, patchdepth )
+        return True
 
     def createPatch(self):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""

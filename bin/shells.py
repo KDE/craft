@@ -73,7 +73,7 @@ class MSysShell(Shell):
             print "%s %s" % (cmd, args)
         else:
             utils.debug( "msys execute: %s" % command, debugLvl )
-        return utils.system( command, stdout=out, stderr=err )
+        return utils.system( command, outstream=out, errstream=err )
 
 def main():
     shell = MSysShell()
