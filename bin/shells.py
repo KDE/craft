@@ -11,24 +11,9 @@ import compiler
 
 ## \todo requires installed msys package -> add suport for installing packages
 
-class Shell(object):
+class MSysShell(object):
     def __init__(self):
-        dummy = 0
-
-    #""" convert internal used paths to native path which are understandable by the shell
-    def toNativePath( self, path ): # pylint: disable=W0613
-        utils.abstract()
-
-    #""" execute shell command
-    def execute(self, path, cmd, args):  # pylint: disable=W0613
-        utils.abstract()
-
-
-class MSysShell(Shell):
-    def __init__(self):
-        Shell.__init__(self)
-        env = dict( os.environ )
-        self.msysdir = env[ "MSYSDIR" ]
+        self.msysdir = os.getenv("MSYSDIR")
         self.buildType = os.getenv("EMERGE_BUILDTYPE")
         self.initEnvironment()
 
