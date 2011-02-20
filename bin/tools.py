@@ -17,13 +17,10 @@ __license__ = "the emerge license (BSD)"
 
 import os
 import sys
-import imp
 import subprocess
 import __builtin__
 import msvcrt  # pylint: disable=F0401
 import time
-import utils
-
 
 try:
     # pylint: disable=F0401
