@@ -3,6 +3,12 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['4.6.x'] = 'branches/KDE/4.6/kdelibs'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.6.' + ver] = \
+                    'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + \
+                    '/src/kdelibs-4.6.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.6.' + ver] = 'kdelibs-4.6.' + ver
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdelibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdelibs'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdelibs'
@@ -53,7 +59,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdelibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdelibs'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdelibs'
-        self.defaultTarget = '20110117'
+        self.defaultTarget = '4.6.0'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdewin-e5'] = 'default'
@@ -105,6 +111,16 @@ class Package(CMakePackageBase):
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
         elif self.compiler() == "msvc2008":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
+
+        self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
+    def install( self ):
+        if not CMakePackageBase.install( self ):
+            return False
+        if compiler.isMinGW():
+            manifest = os.path.join( self.packageDir(), "kconf_update.exe.manifest" )
+            executable = os.path.join( self.installDir(), "bin", "kconf_update.exe" )
+            utils.embedManifest( executable, manifest )
+        return True
 
 if __name__ == '__main__':
     Package().execute()
