@@ -1185,15 +1185,18 @@ def unixToDos(filename):
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     cmd = "patch -d %s -p%s < %s" % (sourceDir, patchLevel, f)
-    debug("applying patch %s" % cmd, 2)
+    debug("applying %s" % cmd, 2)
     if not isCrEol(f):
         p = subprocess.Popen([
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
             stdin = subprocess.PIPE)
         p.communicate(unixToDos(f))
-        return p.wait() == 0
+        result = p.wait() == 0
     else:
-        return system( cmd )
+        result = system( cmd )
+    if not result:
+        warning( "applying %s failed!" % f)
+    return result
 
 def log(fn):
     def inner(*args, **argv):
