@@ -25,6 +25,9 @@ class FileSource(SourceBase):
         return filenames
 
     def localFileNames(self):
+        # pylint: disable=E0202
+        # but I have no idea why pylint thinks this overrides
+        # MultiSource.localFileNames
         return self.localFileNamesBase()
 
     def fetch( self, dummyRepopath = None ):
