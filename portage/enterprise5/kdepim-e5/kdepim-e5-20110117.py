@@ -74,7 +74,7 @@ class Package(CMakePackageBase):
                 " -DBUILD_doc=OFF "
                 " -DKDEPIM_BUILD_MOBILE=FALSE "
                 " -DKDEPIM_ENTERPRISE_BUILD=ON "
-                " -DKDEPIM_NO_NEPOMUK " )
+                " -DKDEPIM_NO_NEPOMUK=ON " )
 
 if __name__ == '__main__':
     Package().execute()
