@@ -53,7 +53,10 @@ import sys
 import os
 import utils
 import graphviz
-from argparse import ArgumentParser
+from argparse import ArgumentParser # pylint: disable=F0401
+# this is for using pylint on Ubuntu which has still python2.6
+# and no module argparse yet
+
 from string import Template  # pylint: disable=W0402
 
 OUTPUT_DOT = 0
