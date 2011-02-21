@@ -13,7 +13,7 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
         PackagerBase.__init__( self )
 
 # from SourceBase:
-    def fetch( self ):
+    def fetch( self, dummyRepoSource=None):
         return True
 
     def unpack( self ):
