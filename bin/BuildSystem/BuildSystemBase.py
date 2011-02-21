@@ -43,29 +43,11 @@ class BuildSystemBase(EmergeBase):
             utils.die( "unknown %s compiler" % self.compiler() )
     makeProgramm = property(_getmakeProgram)
 
-    def configure(self):
-        """configure the target"""
-        utils.abstract()
-
-    def install(self):
-        """install the target into local install directory"""
-        utils.abstract()
-
-    def uninstall(self):
-        """uninstall the target from the local install directory"""
-        utils.abstract()
-
-    def runTests(self):
-        """run the test - if available - for the target"""
-        utils.abstract()
-
-    def make(self):
-        """make the target by runnning the related make tool"""
-        utils.abstract()
-
     def compile(self):
         """convencience method - runs configure() and make()"""
-        return self.configure() and self.make()
+        configure = getattr(self, 'configure')
+        make = getattr(self, 'make')
+        return configure() and make()
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""
