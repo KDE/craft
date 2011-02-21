@@ -2,6 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['gitHEAD'] = '[git]kde:kdepimlibs'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdepimlibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdepimlibs'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdepimlibs'
@@ -52,7 +53,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdepimlibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepimlibs'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepimlibs'
-        self.defaultTarget = '20110117'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'
@@ -71,5 +72,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 
+        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
 if __name__ == '__main__':
     Package().execute()
