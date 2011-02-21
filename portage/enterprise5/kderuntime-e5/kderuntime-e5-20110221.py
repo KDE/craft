@@ -13,6 +13,7 @@ class subinfo( info.infoclass ):
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
         self.dependencies['enterprise5/phonon-vlc-e5'] = 'default'
         self.dependencies['win32libs-sources/libssh-src'] = 'default'
+        self.dependencies['win32libs-sources/libbfd-src'] = 'default'
         self.shortDescription = "KDE runtime libraries"
 
 from Package.CMakePackageBase import *
@@ -21,6 +22,8 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = (
+                " -DBUILD_doc=OFF " )
 
 if __name__ == '__main__':
     Package().execute()
