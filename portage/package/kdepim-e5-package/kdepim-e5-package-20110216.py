@@ -20,6 +20,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'en_de'
 
     def setDependencies( self ):
+        self.dependencies[ 'enterprise5/kdepim-runtime-e5' ] = 'default'
         self.dependencies[ 'enterprise5/kdepim-e5' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
