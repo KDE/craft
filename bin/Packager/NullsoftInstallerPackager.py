@@ -305,7 +305,7 @@ file collection process is skipped, and only the installer is generated.
             for directory, mergeDir in self.__getImageDirectories():
                 imageDir = self.imageDir()
                 if mergeDir:
-                    imageDir = os.path.join( self.imageDir, mergeDir )
+                    imageDir = os.path.join( imageDir, mergeDir )
                 if os.path.exists( directory ):
                     self.copyFiles(directory, imageDir)
                 else:

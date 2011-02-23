@@ -435,7 +435,7 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
                 elif len(particles) == 4 and emergePlatform.isCrossCompilingEnabled():
                     _platform, _buildType, _buildArch, _target = particles
                 elif len(particles) >= 4 and not emergePlatform.isCrossCompilingEnabled():
-                    _platform, _buildType = particles[0:1]
+                    _platform, _buildType = particles[0:2]
                     _target = '-'.join(particles[2:])
                 else:
                     return target
