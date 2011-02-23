@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.5/kdelibs'
+        self.svnTargets['svnHEAD'] = '[git]kde:kdelibs|KDE/4.5|'
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.5.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.5.' + ver + '/src/kdelibs-4.5.' + ver + '.tar.bz2'
             self.targetInstSrc['4.5.' + ver] = 'kdelibs-4.5.' + ver
