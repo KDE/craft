@@ -36,7 +36,7 @@ class GitSource ( VersionSystemSourceBase ):
             tmpFile.seek( 0 )
             for line in tmpFile:
                 if line.startswith("*"):
-                    branch = line[2:-1]
+                    branch = line[2:].rstrip()
                     break
         return branch
 
@@ -47,7 +47,7 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if line[2:-1] == _branch:
+                if line[2:].rstrip() == _branch:
                     return True
         return False
 
@@ -58,7 +58,7 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if line[:-1] == _tag:
+                if line.rstrip() == _tag:
                     return True
         return False
 
