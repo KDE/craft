@@ -77,7 +77,9 @@ file collection process is skipped, and only the installer is generated.
         self.nsisInstallPath = None
         self.isInstalled = self.__isInstalled()
         if not self.isInstalled:
-            utils.warning( "could not find installed nsis package, you may download and install it from http://sourceforge.net/projects/nsis/" )
+            utils.die( "could not find installed nsis package, "
+                       "you may download and install it from "
+                       "http://sourceforge.net/projects/nsis/" )
         self.defines = dict()
         self.whitelist = []
         self.blacklist = []
