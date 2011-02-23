@@ -432,8 +432,11 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
                 particles = directory.split( '-' )[ 1: ] # the first part should be image- anyway
                 if len(particles) == 3:
                     _platform, _buildType, _target = particles
-                elif len(particles) == 4:
+                elif len(particles) == 4 and emergePlatform.isCrossCompilingEnabled():
                     _platform, _buildType, _buildArch, _target = particles
+                elif len(particles) >= 4 and not emergePlatform.isCrossCompilingEnabled():
+                    _platform, _buildType = particles[0:1]
+                    _target = '-'.join(particles[2:])
                 else:
                     return target
                 if _platform == os.getenv( "KDECOMPILER" ) and \
