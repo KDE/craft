@@ -319,6 +319,7 @@ Section ""
   FileOpen $1 "$TEMP\kde-post-install.bat" "w"
   FileWrite $1 'cd "$INSTDIR" $\r$\n'
   FileWrite $1 'set PATH="$INSTDIR\bin";%PATH% $\r$\n'
+  FileWrite $1 'update-mime-database "$INSTDIR\share\mime" $\r$\n'
   ; This is no longer needed workaround
   ; Create the db-directory 
   ; FileWrite $1 'mkdir "$PROFILE\.local\share\akonadi\db_data"$\r$\n'
