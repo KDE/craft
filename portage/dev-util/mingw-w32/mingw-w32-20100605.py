@@ -25,6 +25,11 @@ class Package(BinaryPackageBase):
     def install(self):
         shutil.move( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw" ) )
         shutil.copy( os.path.join( self.installDir() , "mingw" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw" , "bin" , "mingw32-make.exe") )
+        # Install runtime dependencies into bin
+        os.mkdir(os.path.join( self.imageDir() , "bin" ))
+        shutil.copy( os.path.join( self.imageDir() , "mingw","bin", "libgcc_s_sjlj-1.dll" ),
+                     os.path.join( self.imageDir() , "bin" , "libgcc_s_sjlj-1.dll" ) )
+
         utils.applyPatch( self.imageDir(), os.path.join( self.packageDir(), "gcc_Exit.diff"), 0 )
         # FIXME: this is a hack for tzSpecificTimeToSystemLocalTime
         # Remove this when you update the mingw version
