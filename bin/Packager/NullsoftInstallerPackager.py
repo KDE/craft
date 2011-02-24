@@ -270,15 +270,15 @@ file collection process is skipped, and only the installer is generated.
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
         if self.package.endswith( "-package" ):
-            self.package = self.package[ : -8 ]
+            self.shortPackage = self.package[ : -8 ]
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( self.package, self.buildTarget )
+            self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( self.shortPackage, self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         if not "company" in self.defines or not self.defines[ "company" ]:
             self.defines[ "company" ] = "KDE"
         if not "productname" in self.defines or not self.defines[ "productname" ]:
-            self.defines[ "productname" ] = "%s %s" % ( self.package.capitalize(), self.buildTarget )
+            self.defines[ "productname" ] = "%s %s" % ( self.shortPackage.capitalize(), self.buildTarget )
         if not "executable" in self.defines or not self.defines[ "executable" ]:
             self.defines[ "executable" ] = ""
         if not self.scriptname:
@@ -296,7 +296,9 @@ file collection process is skipped, and only the installer is generated.
         utils.new_line()
         utils.debug( "generating installer %s" % self.defines[ "setupname" ] )
         if self.isInstalled:
-            utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join( self.nsisInstallPath, 'makensis.exe' ), definestring, self.scriptname ) )
+            utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join(
+                self.nsisInstallPath, 'makensis.exe' ), definestring,
+                self.scriptname ), cwd = os.path.abspath( self.packageDir() ) )
 
     def createPackage( self ):
         """ create a package """
