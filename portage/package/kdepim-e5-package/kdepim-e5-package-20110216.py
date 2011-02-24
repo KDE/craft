@@ -35,13 +35,13 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "company" ] = os.getenv("EMERGE_COMPANY_NAME") or "KDE"
         self.defines[ "productname" ] = "Kontact Enterprise 5"
         self.defines[ "setupname" ] = "Kontact-E5-%s.exe" % \
-                                      time.strftime("%Y%m%d%H%M")
+                                      time.strftime("%Y-%m-%d-%H-%M")
         self.scriptname = os.path.join( self.packageDir(),
                                         "kontact-e5-installer.nsi" )
         # Custom definitions
         self.defines[ "copyright" ] = os.getenv("EMERGE_COPYRIGHT") or \
-                                      "Copyright (C) %s KDE e.V." % \
-                                      time.strftime("%Y")
+             "Copyright (c) 2001-%s Kontact Authors" % \
+                time.strftime("%Y")
         self.defines[ "productname_short" ] = "Kontact E5"
         self.defines[ "description" ] = "Kontact Enterprise 5 (testing)"
         # Version Number needs to be in the format x.x.x.x
