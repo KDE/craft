@@ -25,13 +25,13 @@
   !include "MUI.nsh"
 
   ; Environment Variables
-  !include "includes/EnvVarUpdate.nsh"
+  !include "includes\EnvVarUpdate.nsh"
 
   ; Add (custom) plugin dir
   !addplugindir plugins
 
   ; String Replace function
-  !include "includes/StrReplace.nsh"
+  !include "includes\StrReplace.nsh"
 
 ;--------------------------------
 ;Version Information (for installer file properties)
@@ -55,7 +55,7 @@
   InstallDir "$PROGRAMFILES\${productname_short}"
 
   ; Define kderoot dir
-  !define DIST_DIR "../e5-${version_date}"
+ ; !define DIST_DIR "../e5-${version_date}"
 
 ;--------------------------------
 ;Interface Settings
@@ -140,7 +140,7 @@ Section ""
   ; package all files, recursively, preserving attributes
   ; assume files are in the correct places
 
-  File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*.*"  
+  File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*"
    #!include "includes/inputfiles.nsh"
 
   ; Create uninstaller
