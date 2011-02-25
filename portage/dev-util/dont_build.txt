@@ -1,2 +1,14 @@
+cmake-pkg
+
 mc
 gettext-tools
+gettext-tools-pkg
+jom-pkg
+mingw4
+mingw-old
+mingw-w32
+mingw-w64
+mingw-wince
+pexports-pkg
+uactools-pkg
+
