@@ -54,9 +54,6 @@
   OutFile "${setupname}"
   InstallDir "$PROGRAMFILES\${productname_short}"
 
-  ; Define kderoot dir
- ; !define DIST_DIR "../e5-${version_date}"
-
 ;--------------------------------
 ;Interface Settings
 
@@ -82,11 +79,11 @@
   !define MUI_WELCOMEPAGE_TEXT "${ABOUT_STR}"
 
   ; Show Readme on Finish page
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README-${version_date}.txt"
-  !define MUI_FINISHPAGE_SHOWREADME_TEXT "README anzeigen"
+;  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README-${version_date}.txt"
+;  !define MUI_FINISHPAGE_SHOWREADME_TEXT "README anzeigen"
 
-  ; Icons and Bitmaps
-#  !define MUI_ICON "logos/kontact.ico"
+   ; Icons and Bitmaps
+   !define MUI_ICON "logos\kontact.ico"
 #  !define MUI_UNICON ""
   
 #  !define MUI_HEADERIMAGE ""
@@ -245,6 +242,9 @@ Section ""
   FileWrite $1 '[Locale] $\r$\n'
   FileWrite $1 'Country=$(T_kdeglobalsCountryCode) $\r$\n'
   FileWrite $1 'Language=$(T_kdeglobalsLanguageCode) $\r$\n'
+  FileWrite $1 '[General] $\r$\n'
+  FileWrite $1 'font=Tahoma  $\r$\n'
+  FileWrite $1 'menuFont=Tahoma $\r$\n'
   FileClose $1
 
   ; Create kwinstartmenurc (disabled kde start menu) 
@@ -255,6 +255,12 @@ Section ""
 
   ; Disable kmail migration (currently not working on windows)
   FileOpen $1 "$INSTDIR\share\config\kmail-migratorrc" "w"
+  FileWrite $1 "[Migration]$\r$\n"
+  FileWrite $1 "Enabled=false$\r$\n"
+  FileClose $1
+
+  ; Disable kmail migration (currently not working on windows)
+  FileOpen $1 "$INSTDIR\share\config\kres-migratorrc" "w"
   FileWrite $1 "[Migration]$\r$\n"
   FileWrite $1 "Enabled=false$\r$\n"
   FileClose $1
