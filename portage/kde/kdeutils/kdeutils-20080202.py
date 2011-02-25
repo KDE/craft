@@ -1,4 +1,5 @@
 import info
+import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -8,7 +9,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
-        self.dependencies['win32libs-bin/libgmp'] = 'default'
+        if compiler.isMinGW():
+            self.dependencies['win32libs-bin/libgmp'] = 'default'
         self.dependencies['win32libs-bin/libzip'] = 'default'
         self.dependencies['win32libs-bin/libarchive'] = 'default'
 
