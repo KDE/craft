@@ -17,7 +17,8 @@ Docs$
 share\\boost-.*$
 share\\aclocal$
 share\\common-lisp$
-dev-utils$
+dev-utils
+libexec
 emerge$
 man$
 mkspecs$
@@ -40,8 +41,8 @@ cmake$
 \.la$
 \.prl$
 \.def$
-.*\\lib\\Qt.*
-.*\/lib\/Qt.*
+.*lib\\Qt.*
+.*lib\/Qt.*
 # Debug Symbols 
 \.pdb$
 # Individual executables
@@ -67,6 +68,10 @@ blitztest\.exe
 virtuoso-clr-t\.exe
 virtuoso-sample-t\.exe
 qt3to4\.exe
+.*_unittest\.exe
+hmac256\.exe
+kwinstartmenu\.exe
+knetattach\.exe
 ##############################################################################
 # Some Qt helper tools
 q3porting\.xml$
@@ -282,3 +287,7 @@ umbrello$
 webdav$
 xsldbg$
 xz$
+
+# Nepumuk stuff
+nepomuk.*\.desktop
+akonadi_nepomuk.*\.exe
