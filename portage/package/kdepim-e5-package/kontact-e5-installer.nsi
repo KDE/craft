@@ -266,22 +266,22 @@ Section ""
   FileClose $1
 
   ; Set bin dir to PATH
-  ${ENVVARUPDATE} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
+  ; ${ENVVARUPDATE} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
 
   ; Set lib dir to PATH
-  ${ENVVARUPDATE} $0 "PATH" "A" "HKLM" "$INSTDIR\lib"
+  ; ${ENVVARUPDATE} $0 "PATH" "A" "HKLM" "$INSTDIR\lib"
 
   ; Set $INSTDIR to new environment variable KDEDIRS
-  ${ENVVARUPDATE} $0 "KDEDIRS" "A" "HKLM" "$INSTDIR"
+  ; ${ENVVARUPDATE} $0 "KDEDIRS" "A" "HKLM" "$INSTDIR"
 
   ; Set $INSTDIR\share to new environment variable XDG_DATA_DIRS
-  ${ENVVARUPDATE} $0 "XDG_DATA_DIRS" "A" "HKLM" "$INSTDIR\share;$INSTDIR"
+  ; ${ENVVARUPDATE} $0 "XDG_DATA_DIRS" "A" "HKLM" "$INSTDIR\share;$INSTDIR"
 
   ; Set $INSTDIR\share\config to new environment variable XDG_CONFIG_DIRS
-  ${ENVVARUPDATE} $0 "XDG_CONFIG_DIRS" "A" "HKLM" "$INSTDIR\share\config;$INSTDIR\xdg"
+  ; ${ENVVARUPDATE} $0 "XDG_CONFIG_DIRS" "A" "HKLM" "$INSTDIR\share\config;$INSTDIR\xdg"
 
   ; Set $INSTDIR to new envrionment variable VIRTUOSO_HOME
-  ${ENVVARUPDATE} $0 "VIRTUOSO_HOME" "A" "HKLM" "$INSTDIR"
+  ; ${ENVVARUPDATE} $0 "VIRTUOSO_HOME" "A" "HKLM" "$INSTDIR"
 
   ;Register Virtuoso ODBC Driver
   ExecWait 'regsvr32.exe /s "$INSTDIR\lib\virtodbc.dll"'

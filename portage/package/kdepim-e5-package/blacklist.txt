@@ -287,7 +287,3 @@ umbrello$
 webdav$
 xsldbg$
 xz$
-
-# Nepumuk stuff
-nepomuk.*\.desktop
-akonadi_nepomuk.*\.exe
