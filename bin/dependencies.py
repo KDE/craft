@@ -461,21 +461,15 @@ def parseOptions():
             help=("Change the output format type "
                   "possible values: xml kwi, dot"))
     parser.add_argument("-f", "--file", dest = "filenames", metavar = "FILENAME",
-            help="add a filename for a packageList ", nargs='+', required=True)
+            nargs="+", help="add a filename for a packageList ")
     parser.add_argument("-o", "--output", dest = "outputname", metavar = "FILENAME",
             help=" ")
     parser.add_argument("-d", "--depstyle", action = "store", default = "both",
             help="possible values: both, runtime")
 
-    args = parser.parse_args()
-    if not (hasattr(args, "filenames") and not args.filenames == None):
-        if len(args) < 1:
-            parser.error("Incorrect number of arguments")
-            sys.exit(1)
-        if len(args[0].split("/")) != 2:
-            parser.error("Not a valid Category/Package name")
-            sys.exit(1)
-    return args
+    args, rest = parser.parse_known_args()
+
+    return rest, args
 
 def parsePackageListFiles( filenames ):
     depList = []
@@ -491,7 +485,7 @@ def parsePackageListFiles( filenames ):
 
 def main():
 
-    args = parseOptions()
+    rest, args = parseOptions()
     if args.type == "xml":
         output_type = OUTPUT_XML
     elif args.type == "kwi":
@@ -506,8 +500,11 @@ def main():
     if hasattr(args, "filenames") and args.filenames != None:
         packageList = parsePackageListFiles( args.filenames )
         output = dumpDependenciesForPackageList(packageList, output_type, depstyle)
+    elif rest:
+        output = dumpDependencies(rest[0], output_type, depstyle)
     else:
-        output = dumpDependencies(args[0], output_type, depstyle)
+        utils.error("missing package list file or package/category")
+        sys.exit(1)
 
     if hasattr(args, "outputname") and args.outputname:
         print "writing file ", args.outputname, os.path.dirname( args.outputname )
