@@ -477,7 +477,7 @@ unset_var( "CMAKE_FIND_PREFIX" )
 unset_var( "CMAKE_INSTALL_PREFIX" )
 
 # adding emerge/bin to find base.py and gnuwin32.py etc.
-os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH" ) + ";" +\
+os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH", "" ) + os.pathsep + \
                            os.path.join( os.getcwd(), os.path.dirname( executableName ) )
 sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) )
 
@@ -487,7 +487,7 @@ packageList = []
 categoryList = []
 
 
-buildType = os.environ["EMERGE_BUILDTYPE"]
+buildType = os.getenv("EMERGE_BUILDTYPE")
 if "EMERGE_DEFAULTCATEGORY" in os.environ:
     defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
 else:
