@@ -216,36 +216,15 @@ Section ""
   CreateShortCut "$SENDTO\${productname_short}.lnk" "$INSTDIR\bin\ksendemail.exe" "--attach %1" "$INSTDIR\bin\kontact.exe"
   no_default_apps:
 
-  # NOTE: Akonaditray option disabled at this time ** Autostart Akonadi Tray **
-  # Add akonaditray to autostart if requested.
-;  !insertmacro MUI_INSTALLEROPTIONS_READ $R0 "installer-options.ini" \
-;    "Field 6" "State"
-;  IntCmp $R0 0 no_autostart
-  # Create registry entries to autostart akonaditray
-;  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Run" \
-;  "Akonaditray" "$INSTDIR\bin\akonaditray.exe"
-;  no_autostart:
 
-  ; Note: Only for Testing without inputfiles.nsh
-  ;SetOutPath "$INSTDIR\bin"
-  ;SetOutPath "$INSTDIR\share\config"
-
-  ;File "README-${version_date}.txt"
   ; Create killkde.bat 
   FileOpen $1 "$INSTDIR\bin\killkde.bat" "w"
   FileWrite $1 '@echo off $\r$\n'
   FileWrite $1 'kdeinit4 --terminate'
   FileClose $1
 
-  ; Create kdeglobals (set country and language code) 
-  FileOpen $1 "$INSTDIR\share\config\kdeglobals" "w"
-  FileWrite $1 '[Locale] $\r$\n'
-  FileWrite $1 'Country=$(T_kdeglobalsCountryCode) $\r$\n'
-  FileWrite $1 'Language=$(T_kdeglobalsLanguageCode) $\r$\n'
-  FileWrite $1 '[General] $\r$\n'
-  FileWrite $1 'font=Tahoma  $\r$\n'
-  FileWrite $1 'menuFont=Tahoma $\r$\n'
-  FileClose $1
+  ; Create kdeglobals
+  !include "include\kdeglobals.nsi"
 
   ; Create kwinstartmenurc (disabled kde start menu) 
   FileOpen $1 "$INSTDIR\share\config\kwinstartmenurc" "w"
@@ -286,53 +265,12 @@ Section ""
   ;Register Virtuoso ODBC Driver
   ExecWait 'regsvr32.exe /s "$INSTDIR\lib\virtodbc.dll"'
 
-  ; Add akonadiserverrc and mysql-global.conf
-  ; No longer needed
-
-  ; SetOutPath "$INSTDIR\share\config\akonadi"
-  ; File "mysql-global.conf"
-
-  ; Write the akonadiserverrc
-;  FileOpen $1 "$PROFILE\.config\akonadi\akonadiserverrc" w
-;  FileWrite $1 "[QMYSQL]$\r$\n"
-;  FileWrite $1 "Name=akonadi$\r$\n"
-;  FileWrite $1 "Host=$\r$\n"
-;  FileWrite $1 "Options=$\r$\n"
-;  FileWrite $1 "ServerPath="
-  ; akonadi expects / paths
-;  ${StrReplace} '$2' '\' '/' '$INSTDIR\bin\mysqld.exe'
-;  FileWrite $1 "$2"
-;  FileWrite $1 "$\r$\n"
-;  FileWrite $1 "StartServer=true$\r$\n"
-;  FileWrite $1 "$\r$\n"
-;  FileWrite $1 "[Debug]$\r$\n"
-;  FileWrite $1 "Tracer=null$\r$\n"
-;  FileWrite $1 "$\r$\n"
-;  FileWrite $1 "[%General]$\r$\n"
-;  FileWrite $1 "ExternalPayload=false$\r$\n"
-;  FileClose $1
-
-  ; Write the mysql-local.conf
-;  FileOpen $1 "$PROFILE\.config\akonadi\mysql-local.conf" w
-;  FileWrite $1 "[mysqld]$\r$\n"
-;  ${StrReplace} '$2' '\' '/' '$INSTDIR'
-; FileWrite $1 'basedir="$2"$\r$\n'
-; ${StrReplace} '$2' '\' '/' '$PROFILE\.local\share\akonadi\db_data'
-; FileWrite $1 'datadir="$2"$\r$\n'
-; FileClose $1
-
   ; Createpost-install script
   FileOpen $1 "$TEMP\kde-post-install.bat" "w"
   FileWrite $1 'cd "$INSTDIR" $\r$\n'
   FileWrite $1 'set PATH="$INSTDIR\bin";%PATH% $\r$\n'
   FileWrite $1 'update-mime-database "$INSTDIR\share\mime" $\r$\n'
-  ; This is no longer needed workaround
-  ; Create the db-directory 
-  ; FileWrite $1 'mkdir "$PROFILE\.local\share\akonadi\db_data"$\r$\n'
-  ; Copy and rename the data folder there
-  ;FileWrite $1 'xcopy /Y /S "$INSTDIR\data" "$PROFILE\.local\share\akonadi\db_data"$\r$\n'
-  ;FileWrite $1 'move /Y "$PROFILE\.local\share\akonadi\data" "$PROFILE\.local\share\akonadi\db_data"$\r$\n'
-  ;FileWrite $1 'echo ${POST_INSTALL_SCRIPT_PATH} $\r$\n'
+  FileWrite $1 'kbuildsycoca4 "--noincremental" $\r$\n'
   FileClose $1
 
   ;DetailPrint "Starte Post-Install-Skript"
