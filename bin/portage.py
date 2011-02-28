@@ -683,13 +683,14 @@ def isInstalled( category, package, version, buildtype='' ):
     found = found or binary or lib
 
     if not utils.envAsBool("EMERGE_VERSIONING", default=True) or utils.isSourceOnly():
-        # check for any installation
+        # check for any installation except data packages
         if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             return False
         if package.endswith( "-src" ):
             package = package[:-4]
         for filename in os.listdir( os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
-            if filename.startswith( package ):
+            if filename.startswith( package ) and not \
+                    filename.startswith( package + "-data" ):
                 return True
     return False
 
