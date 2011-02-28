@@ -6,6 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/l10n-kde4/'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/l10n-kde4/'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/l10n-kde4/'
@@ -56,7 +57,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/l10n-kde4'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/l10n-kde4'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/l10n-kde4'
-        self.defaultTarget = '20110117'
+        self.defaultTarget = 'svnHEAD'
 
         # all targets
         self.languages  = 'de'
@@ -104,8 +105,9 @@ class subclass(base.baseclass):
 
 
             # execute autogen.py and generate the CMakeLists.txt files
-            cmd = "cd %s && python %s %s" % \
-                  (svnpath , autogen, self.subinfo.languages )
+            cmd = [ "python", autogen, self.subinfo.languages ]
+            # FIXME comment out once libxslt works again
+            cmd.append( "--disable-docs" )
             utils.system( cmd )
 
         else:

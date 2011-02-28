@@ -178,16 +178,20 @@ def handle_subdir(langdir, language):
     f = createTopLevelCMakeListFile(langdir, language)
 
     # UI message catalogs
-    add_cmake_files_messages(langdir, f)
+    if "--disable-messages" not in sys.argv:
+        add_cmake_files_messages(langdir, f)
 
     # Documentation
-    add_cmake_files_docs(langdir, f)
+    if "--disable-docs" not in sys.argv:
+        add_cmake_files_docs(langdir, f)
 
     # Custom localized application data.
-    add_cmake_files_data(langdir, f)
+    if "--disable-data" not in sys.argv:
+        add_cmake_files_data(langdir, f)
 
     # Transcript files.
-    add_cmake_files_scripts(langdir, f)
+    if "--disable-scripts" not in sys.argv:
+        add_cmake_files_scripts(langdir, f)
 
     search = re.compile(langdir + '@.*')
     for subdir in os.listdir(langdir):
@@ -214,4 +218,5 @@ if not subdirs:
 
 # Go through all subdirs
 for langdir in subdirs:
-    handle_subdir(langdir, langdir)
+    if not langdir.startswith("--"):
+        handle_subdir(langdir, langdir)
