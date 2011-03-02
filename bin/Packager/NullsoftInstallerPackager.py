@@ -270,15 +270,17 @@ file collection process is skipped, and only the installer is generated.
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
         if self.package.endswith( "-package" ):
-            self.shortPackage = self.package[ : -8 ]
+            shortPackage = self.package[ : -8 ]
+        else:
+            shortPackage = self.package
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( self.shortPackage, self.buildTarget )
+            self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( shortPackage, self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         if not "company" in self.defines or not self.defines[ "company" ]:
             self.defines[ "company" ] = "KDE"
         if not "productname" in self.defines or not self.defines[ "productname" ]:
-            self.defines[ "productname" ] = "%s %s" % ( self.shortPackage.capitalize(), self.buildTarget )
+            self.defines[ "productname" ] = "%s %s" % ( shortPackage.capitalize(), self.buildTarget )
         if not "executable" in self.defines or not self.defines[ "executable" ]:
             self.defines[ "executable" ] = ""
         if not self.scriptname:
