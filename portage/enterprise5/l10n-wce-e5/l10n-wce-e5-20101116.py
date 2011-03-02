@@ -41,7 +41,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         return SvnSource.checkoutDir(self,index) % self.language
 
     def buildRoot(self):
-        return os.path.join(PackageBase.buildRoot(self), self.language)
+        return os.path.join(PackageBase.buildRoot(self))
 
     def qmerge(self):
         ''' When crosscompiling install l10n files
