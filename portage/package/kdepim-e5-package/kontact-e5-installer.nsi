@@ -62,8 +62,7 @@
   ; MUI Settings / Header
   !define MUI_HEADERIMAGE
 
-  ;no "Nullsoft Install System vX.XX" string 
-  BrandingText " "
+  !include "${branding}"
 
   ; Language Selection Dialog Settings to remember the installer language
   !define MUI_LANGDLL_REGISTRY_ROOT "HKLM"
@@ -71,25 +70,6 @@
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   ; Custom Welcome Page
-  !define ABOUT_STR "$(T_About) \
-        \r\n\r\n$_CLICK \r\n\r\n\r\n\r\n\r\n \
-        $(T_Aboutversion_number) \r\n\r\n \
-        $(T_Aboutversion_date)"
-  !define MUI_WELCOMEPAGE_TITLE "$(T_WelcomeTitle)"
-  !define MUI_WELCOMEPAGE_TEXT "${ABOUT_STR}"
-
-  ; Show Readme on Finish page
-;  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README-${version_date}.txt"
-;  !define MUI_FINISHPAGE_SHOWREADME_TEXT "README anzeigen"
-
-   ; Icons and Bitmaps
-   !define MUI_ICON "logos\kontact.ico"
-#  !define MUI_UNICON ""
-  
-#  !define MUI_HEADERIMAGE ""
-#  !define MUI_HEADERIMAGE_BITMAP ""
-#  !define MUI_WELCOMEFINISHPAGE_BITMAP ""
-#  !define MUI_UNWELCOMEFINISHPAGE_BITMAP ""
 
 ;--------------------------------
 ;Pages
@@ -224,7 +204,7 @@ Section ""
   FileClose $1
 
   ; Create kdeglobals
-  !include "include\kdeglobals.nsi"
+  !include "includes\kdeglobals.nsi"
 
   ; Create kwinstartmenurc (disabled kde start menu) 
   FileOpen $1 "$INSTDIR\share\config\kwinstartmenurc" "w"

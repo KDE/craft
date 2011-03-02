@@ -24,12 +24,14 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'enterprise5/kdepim-runtime-e5' ] = 'default'
         self.dependencies[ 'enterprise5/kdepim-e5' ] = 'default'
         self.dependencies[ 'testing/virtuoso' ] = 'default'
+        self.dependencies[ 'enterprise5/l10n-wce-e5' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         # TODO: Split up the blacklist into smaller packages
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt' ]
+
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
         # Basic nsis defines
@@ -45,10 +47,12 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
              "Copyright (c) 2001-%s Kontact Authors" % \
                 time.strftime("%Y")
         self.defines[ "productname_short" ] = "Kontact E5"
-        self.defines[ "description" ] = "Kontact Enterprise 5 (testing)"
+        self.defines[ "description" ] = "Kontact Enterprise 5 (beta)"
         # Version Number needs to be in the format x.x.x.x
         self.defines[ "version_number" ] = "4.6.0.0"
         self.defines[ "version_date" ] = time.strftime("%Y%m%d%H%M")
+        self.defines[ "branding" ] = os.getenv("EMERGE_KDEPIME5_BRANDING") or \
+                                     "includes\\branding.nsi"
 
 
 if __name__ == '__main__':
