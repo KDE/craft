@@ -408,7 +408,7 @@ def un7zip( fileName, destdir ):
         return system( command )
     else:
         tmp = tempfile.TemporaryFile()
-        return system( command, tmp )
+        return system( command, stdout=tmp )
 
 def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
@@ -569,40 +569,36 @@ def trace( message, dummyLevel=0 ):
     sys.stdout.flush()
     return True
 
-def system( cmd, outstream=None, errstream=None, *args, **kw ):
+def system(cmd, **kw ):
+    """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
+    might be changed depending on the chosen logging options."""
+    kw['shell'] = True
+    return systemWithoutShell(cmd, **kw)
 
-    if outstream is None:
-        outstream = sys.stdout
-    if errstream is None:
-        errstream = sys.stderr
+def systemWithoutShell(cmd, **kw):
+    """execute cmd. All keywords are passed to Popen. stdout and stderr
+    might be changed depending on the chosen logging options."""
 
-    debug( "executing command: %s" % str(cmd), 1 )
+    debug( "executing command: %s" % cmd, 1 )
+
+    if kw.get('stdout') is None:
+        kw['stdout'] = sys.stdout
+    if kw.get('stderr') is None:
+        kw['stderr'] = sys.stderr
+
     redirected = False
+    prevStreams = sys.stdout,  sys.stderr
     try:
-        if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
+        if verbose() == 0 and kw['stdout']== sys.stdout and kw['stderr'] == sys.stderr:
             redirected = True
-            sys.stderr = file('test.outlog', 'wb')
-            sys.stdout = sys.stderr
-
-        p = subprocess.Popen( cmd, shell=True, stdout=outstream,
-                stderr = errstream, *args, **kw )
+            sys.stderr = sys.stdout = file('test.outlog', 'wb')
+        p = subprocess.Popen( cmd, **kw )
         ret = p.wait()
     finally:
         if redirected:
-            sys.stderr = sys.__stderr__
-            sys.stdout = sys.__stdout__
+            sys.stderr.close()
+            sys.stdout,  sys.stderr = prevStreams
 
-    return ( ret == 0 )
-
-def systemWithoutShell(cmdstring, outstream=sys.stdout, errstream=sys.stderr):
-    debug( "executing command: %s" % cmdstring, 1 )
-    if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
-        sys.stderr = file('test.outlog', 'wb')
-        sys.stdout = sys.stderr
-    p = subprocess.Popen( cmdstring, stdout=outstream, stderr=errstream )
-    ret = p.wait()
-    sys.stderr = sys.__stderr__
-    sys.stdout = sys.__stdout__
     return ( ret == 0 )
 
 def copySrcDirToDestDir( srcdir, destdir ):

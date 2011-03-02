@@ -342,14 +342,14 @@ class EmergeBase(object):
         if utils.verbose() > 0:
             print "entering: %s" % self.sourceDir()
 
-    def system( self, command, errorMessage="", debuglevel=1, *args, **kw):
+    def system( self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
         This method prints a debug message and then runs a system command.
-        If the system command returns with errors the methos prints an error
+        If the system command returns with errors the method prints an error
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
 
         utils.debug( str(command), debuglevel )
-        if utils.system( command, *args, **kw):
+        if utils.system( command, **kw):
             return True
         if self.subinfo.options.exitOnErrors:
             utils.die( "while running %s cmd: %s" % (errorMessage, str(command)) )

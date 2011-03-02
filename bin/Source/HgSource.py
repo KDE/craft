@@ -85,7 +85,7 @@ class HgSource ( VersionSystemSourceBase ):
             with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" ) as tempfile:
 
                 # run the command
-                utils.system( "hg tip", tempfile )
+                utils.system( "hg tip", stdout=tempfile )
                 # TODO: check return value for success
                 tempfile.seek( os.SEEK_SET )
 
