@@ -64,29 +64,23 @@ class SourceBase(EmergeBase):
         utils.trace( "SourceBase.applyPatches called", 0 )
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
-            if type(patches) == list:
-                ret = True
-                for fileName, patchdepth in patches:
-                    utils.debug( "applying %s with patchlevel: %s" % ( fileName, patchdepth ) )
-                    if not self.applyPatch( fileName, patchdepth ):
-                        utils.warning( "applying %s failed!" % ( fileName ) )
-                        ret = False
-                return ret
-            else:
-                ( fileName, patchdepth ) = patches
-                return self.applyPatch( fileName, patchdepth )
-
+            if not isinstance(patches, list):
+                patches = list([patches])
+            return set(self.applyPatch(*x) for x in patches) == set([True])
         return True
 
     def applyPatch(self, fileName, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
         utils.trace( "SourceBase.applyPatch called", 2 )
+        if not fileName:
+            utils.warning('applyPatch got no fileName')
+            return True
         if not srcdir:
             srcdir = self.sourceDir()
-        if fileName:
-            patchfile = os.path.join ( self.packageDir(), fileName )
-            return utils.applyPatch( srcdir, patchfile, patchdepth )
-        return True
+        patchfile = os.path.join ( self.packageDir(), fileName )
+        # TODO: integrate utils.applyPatch() here and remove it from utils().
+        # and change packages in portage accordingly
+        return utils.applyPatch( srcdir, patchfile, patchdepth )
 
     def createPatch(self):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""

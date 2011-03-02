@@ -1163,7 +1163,7 @@ def unixToDos(filename):
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     cmd = "patch -d %s -p%s < %s" % (sourceDir, patchLevel, f)
-    debug("applying %s" % cmd, 2)
+    debug("applying %s" % cmd)
     if not isCrEol(f):
         p = subprocess.Popen([
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
