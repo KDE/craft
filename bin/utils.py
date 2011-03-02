@@ -594,12 +594,12 @@ def system( cmd, outstream=None, errstream=None, *args, **kw ):
 
     return ( ret == 0 )
 
-def systemWithoutShell(cmdstring, outstream=sys.stdout, errstream=sys.stderr, *args, **kw ):
+def systemWithoutShell(cmdstring, outstream=sys.stdout, errstream=sys.stderr):
     debug( "executing command: %s" % cmdstring, 1 )
     if verbose() == 0 and outstream == sys.stdout and errstream == sys.stderr:
         sys.stderr = file('test.outlog', 'wb')
         sys.stdout = sys.stderr
-    p = subprocess.Popen( cmdstring, stdout=outstream, stderr=errstream, *args, **kw )
+    p = subprocess.Popen( cmdstring, stdout=outstream, stderr=errstream )
     ret = p.wait()
     sys.stderr = sys.__stderr__
     sys.stdout = sys.__stdout__
