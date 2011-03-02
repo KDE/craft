@@ -517,7 +517,7 @@ def readChildren( category, package, version ):
     # if we are an emerge internal package and already in the dictionary, ignore childrens
     # To avoid possible endless recursion this may be also make sense for all packages
     if category == internalCategory and identFileName in modDict.keys():
-        return ( dict(), dict() )
+        return dict(), dict()
     utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, identFileName ), 2 )
     if not identFileName in modDict.keys():
         mod = __import__( identFileName )
@@ -531,24 +531,18 @@ def readChildren( category, package, version ):
     elif hasattr( mod, 'subinfo' ):
         subinfo = mod.subinfo()
     else:
-        subinfo = None
-        return ( dict(), dict() )
+        return dict(), dict()
 
-    runtimeDependencies = subinfo.runtimeDependencies
-    buildDependencies = subinfo.buildDependencies
-    if runtimeDependencies == None:
-        runtimeDependencies = dict()
-    if buildDependencies == None:
-        buildDependencies = dict()
+    runtimeDependencies = subinfo.runtimeDependencies or dict()
+    buildDependencies = subinfo.buildDependencies or dict()
 
     # hardDependencies
     commonDependencies = subinfo.hardDependencies
     commonDependencies.update( subinfo.dependencies )
-    for key in commonDependencies:
-        runtimeDependencies[ key ] = commonDependencies[ key ]
-        buildDependencies[ key ] = commonDependencies[ key ]
+    runtimeDependencies.update(commonDependencies)
+    buildDependencies.update(commonDependencies)
 
-    return ( runtimeDependencies, buildDependencies )
+    return runtimeDependencies, buildDependencies
 
 def isHostBuildEnabled( category, package, version ):
     """ returns whether this package's host build is enabled. This will only work if
@@ -561,7 +555,6 @@ def isHostBuildEnabled( category, package, version ):
             return not info.disableHostBuild
         else:
             return False
-        return True
     else:
         utils.die( "This function must not be used outside of cross-compiling environments!" )
 
@@ -576,7 +569,6 @@ def isTargetBuildEnabled( category, package, version ):
             return not info.disableTargetBuild
         else:
             return False
-        return True
     else:
         utils.die( "This function must not be used outside of cross-compiling environments!" )
 
@@ -585,7 +577,7 @@ def isPackageUpdateable( category, package, version ):
     mod = __import__( getFilename( category, package, version ) )
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()
-        if len( info.svnTargets ) is 1 and not info.svnTargets[ info.svnTargets.keys()[0] ]:
+        if len( info.svnTargets ) == 1 and not info.svnTargets[ info.svnTargets.keys()[0] ]:
             return False
         return len( info.svnTargets ) > 0
     else:
@@ -596,16 +588,16 @@ def alwaysTrue( *dummyArgs):
     return True
 
 def getHostAndTarget( hostEnabled, targetEnabled ):
+    """used for messages"""
     msg = ""
     if hostEnabled or targetEnabled:
         msg += "("
-    if hostEnabled:
-        msg += "H"
-    if hostEnabled and targetEnabled:
-        msg += "/"
-    if targetEnabled:
-        msg += "T"
-    if hostEnabled or targetEnabled:
+        if hostEnabled:
+            msg += "H"
+        if hostEnabled and targetEnabled:
+            msg += "/"
+        if targetEnabled:
+            msg += "T"
         msg += ")"
     return msg
 
