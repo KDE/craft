@@ -649,114 +649,96 @@ def packageSplit( fullname ):
         version += '-' + part
     return [ package, version ]
 
-def getFileListFromManifest( rootdir, package ):
-    """ return file list according to the manifest files for deletion/import """
-    fileList = []
+def getManifestFiles(rootdir, package):
+    """return a list of manifest files for package.
+    The file names are relative to rootdir
+    and normalized (lowercase on windows).
+    Only return existing files - it sometimes
+    happens that the manifest file exists in the
+    manifest directory but not in the package
+    directory"""
+    result = []
     manifestDir = os.path.join( rootdir, "manifest" )
-    if os.path.exists( manifestDir ):
-        for fileName in os.listdir( manifestDir ):
-            if fileName.endswith( ".mft" ):
-                pkg, _ = packageSplit( fileName.replace( ".mft", "" ) )
-                if fileName.endswith( ".mft" ) and package==pkg:
-                    with open( os.path.join( rootdir, "manifest", fileName ), 'rb' ) as fptr:
-                        for line in fptr:
-                            try:
-                                line = line.replace( "\n", "" ).replace( "\r", "" )
-                                # check for digest having two spaces between filename and hash
-                                if not line.find( "  " ) == -1:
-                                    [ b, a ] = line.rsplit( "  ", 2 )
-                                # check for filname have spaces
-                                elif line.count( " " ) > 1:
-                                    ri = line.rindex( " " )
-                                    b = line[ ri: ]
-                                    a = line[ : ri - 1 ]
-                                # check for digest having one spaces
-                                elif not line.find( " " ) == -1:
-                                    [ a, b ] = line.rsplit( " ", 2 )
-                                else:
-                                    a, b = line, ""
-                            except Exception: # pylint: disable=W0703
-                                die( "could not parse line %s" % line)
-
-                            if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
-                                continue
-                            fileList.append( ( a, b ) )
-        else:
-            debug( "could not find any manifest files", 2 )
+    if not os.path.exists( manifestDir ):
+        debug("could not find manifest directory %s" % manifestDir, 2)
     else:
-        debug( "could not find manifest directory", 2 )
-    return fileList
+        fileNames = (os.path.normcase(x) for x in os.listdir(manifestDir) if x.endswith(".mft"))
+        for fileName in fileNames:
+            if package == packageSplit( fileName.replace( ".mft", ""))[0]:
+                fullName = os.path.join(rootdir, "manifest", fileName)
+                if os.path.exists(fullName):
+                    result.append(fileName)
+                else:
+                    warning("did not find manifest file %s" % fullName)
+        if not result:
+            debug( "could not find any manifest files in %s for rootdir=%s, package=%s" % \
+                  (manifestDir, rootdir, package), 2 )
+    return result
 
-def unmergeFileList( rootdir, fileList, forced = False ):
-    """ delete files in the fileList """
-    debug( "unmergeFileList called for %s files" % str( len( fileList ) ), 2 )
-    for (filename, filehash) in fileList:
-        if os.path.isfile( os.path.join( rootdir, os.path.normcase( filename ) ) ):
-            currentHash = digestFile( os.path.join( rootdir, os.path.normcase( filename ) ) )
+def getFileListFromManifest(rootdir, package, withManifests=False):
+    """ return sorted list according to the manifest files for deletion/import.
+   Each item holds a file name and a digest.
+   If a file name appears once with and once without digest (which often
+   is the case for *.mft), it is only returned once with digest.
+   The file names are normalized: on Windows, all lowercase.
+   Do not return the names of manifest files unless explicitly requested.
+   """
+    fileList = dict()
+    manifestFiles = [os.path.join(rootdir, "manifest", x) for x in getManifestFiles(rootdir, package)]
+    for manifestFile in manifestFiles:
+        with open(manifestFile, 'rb' ) as fptr:
+            for line in fptr:
+                try:
+                    line = line.replace( "\n", "" ).replace( "\r", "" )
+                    # check for digest having two spaces between filename and hash
+                    if not line.find( "  " ) == -1:
+                        [ b, a ] = line.rsplit( "  ", 2 )
+                    # check for filname have spaces
+                    elif line.count( " " ) > 1:
+                        ri = line.rindex( " " )
+                        b = line[ ri: ]
+                        a = line[ : ri - 1 ]
+                    # check for digest having one spaces
+                    elif not line.find( " " ) == -1:
+                        [ a, b ] = line.rsplit( " ", 2 )
+                    else:
+                        a, b = line, ""
+                except Exception: # pylint: disable=W0703
+                    die( "could not parse line %s" % line)
+                a = os.path.normcase(a)
+                if withManifests or os.path.join( rootdir, a) not in manifestFiles:
+                    if a not in fileList or not fileList[a]:
+                        # if it is not yet in the fileList or without digest:
+                        fileList[a] = b
+    return sorted(fileList.items(), key = lambda x: x[0])
+
+def unmergeFileList(rootdir, fileList, forced=False):
+    """ delete files in the fileList if has matches or forced is True """
+    for filename, filehash in fileList:
+        fullPath = os.path.join(rootdir, os.path.normcase( filename))
+        if os.path.isfile(fullPath):
+            currentHash = digestFile(fullPath)
             if currentHash == filehash or filehash == "":
-                debug( "deleting file %s" % os.path.join( rootdir, os.path.normcase( filename ) ) )
-                os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
+                debug( "deleting file %s" % fullPath)
+                os.remove(fullPath)
             else:
-                warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                        ( os.path.join( rootdir, os.path.normcase( filename ) ), currentHash, filehash ) )
                 if forced:
-                    os.remove( os.path.join( rootdir, os.path.normcase( filename ) ) )
-        elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( filename ) ) ):
-            warning( "file %s does not exist" % ( os.path.join( rootdir, os.path.normcase( filename ) ) ) )
+                    warning( "file %s has different hash: %s %s, deleting anyway" % \
+                            (fullPath, currentHash, filehash ) )
+                    os.remove(fullPath)
+                else:
+                    warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                            (fullPath, currentHash, filehash ) )
+        elif not os.path.isdir(fullPath):
+            warning( "file %s does not exist" % fullPath)
 
-def unmerge( rootdir, package, forced = False ):
-    """ delete files according to the manifest files """
+def unmerge(rootdir, package, forced=False):
+    """ delete files according to the manifest files.
+    returns False if it found no manifest files."""
     debug( "unmerge called: %s" % ( package ), 2 )
-    removed = False
-    manifestDir = os.path.join( rootdir, "manifest"  )
-    if os.path.exists( manifestDir ):
-        for fileName in os.listdir( manifestDir ):
-            if fileName.endswith(".mft"):
-                pkg, _ = packageSplit( fileName.replace( ".mft", "" ) )
-                if fileName.endswith( ".mft" ) and package==pkg:
-                    with open( os.path.join( rootdir, "manifest", fileName ), 'rb' ) as fptr:
-                        for line in fptr:
-                            try:
-                                line = line.replace( "\n", "" ).replace( "\r", "" )
-                                # check for digest having two spaces between filename and hash
-                                if not line.find( "  " ) == -1:
-                                    [ b, a ] = line.rsplit( "  ", 2 )
-                                # check for filname have spaces
-                                elif line.count(" ") > 1:
-                                    ri = line.rindex(" ")
-                                    b = line[ri:]
-                                    a = line[:ri-1]
-                                # check for digest having one spaces
-                                elif not line.find( " " ) == -1:
-                                    [ a, b ] = line.rsplit( " ", 2 )
-                                else:
-                                    a, b = line, ""
-                            except Exception: # pylint: disable=W0703
-                                die("could not parse line %s" % line)
-
-                            if os.path.join( rootdir, "manifest", fileName ) == os.path.join( rootdir, os.path.normcase( a ) ):
-                                continue
-                            if os.path.isfile( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                                currentHash = digestFile( os.path.join( rootdir, os.path.normcase( a ) ) )
-                                if b == "" or currentHash == b:
-                                    debug( "deleting file %s" % a )
-                                    os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
-                                else:
-                                    warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                                            ( os.path.normcase( a ), currentHash, b ) )
-                                    if forced:
-                                        os.remove( os.path.join( rootdir, os.path.normcase( a ) ) )
-                            elif not os.path.isdir( os.path.join( rootdir, os.path.normcase( a ) ) ):
-                                warning( "file %s does not exist" % ( os.path.normcase( a ) ) )
-                    os.remove( os.path.join( rootdir, "manifest", fileName ) )
-                    removed = True
-
-        else:
-            debug("could not find any manifest files", 2)
-    else:
-        debug("could not find manifest directory", 2)
-
-    return removed
+    fileList = getFileListFromManifest(rootdir, package, withManifests=True)
+    unmergeFileList(rootdir, fileList, forced)
+    return bool(fileList)
 
 def createManifestDir(imagedir, category, package, version ):
     """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
