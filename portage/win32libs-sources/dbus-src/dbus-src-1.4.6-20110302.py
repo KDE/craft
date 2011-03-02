@@ -35,11 +35,15 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.4.1'] = 'dbus-1.4.1'
         self.targetConfigurePath['1.4.1'] = 'cmake'
 
+        self.svnTargets['1.4.6'] = 'git://anongit.freedesktop.org/git/dbus/dbus||dbus-1.4.6'
+        self.targetSrcSuffix['1.4.6'] = 'git'
+        self.targetConfigurePath['1.4.6'] = 'cmake'
+
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
 
-        self.patchToApply['gitHEAD'] = [('msvc2010-has-errnoh.diff', 1)]
+
         if emergePlatform.isCrossCompilingEnabled():
             self.patchToApply['1.4.0'] = [('dbus-1.4.0.diff', 1),
                                           ('0001-tentative-workaround-for-the-random-hangs-on-windows.patch', 1),
@@ -60,12 +64,16 @@ class subinfo(info.infoclass):
             self.patchToApply['1.4.1'] = [('msvc2010-has-errnoh.diff', 1),
                                           ('live-lock-fix.diff', 1),
                                           ('replace_path_with_current_installdir.diff', 1)
-                                          ]
+                                         ]
+            self.patchToApply['1.4.6'] = [('live-lock-fix.diff', 1),
+                                          ('0001-Do-not-use-ELEMENT_TYPE-which-is-reserved.patch', 1)
+                                         ]
+
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.4.0'
         else:
-            self.defaultTarget = '1.4.1'
+            self.defaultTarget = '1.4.6'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
