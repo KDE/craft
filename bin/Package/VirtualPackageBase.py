@@ -9,7 +9,7 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
         utils.debug( "VirtualPackageBase.__init__ called", 2 )
         PackageBase.__init__( self )
         SourceBase.__init__( self )
-        BuildSystemBase.__init__( self )
+        BuildSystemBase.__init__( self, "" )
         PackagerBase.__init__( self )
 
 # from SourceBase:
