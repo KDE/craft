@@ -6,9 +6,9 @@ from EmergeBase import *
 
 class SourceBase(EmergeBase):
     """ implements basic stuff required for all sources"""
-    def __init__(self, className=None):
+    def __init__(self):
         utils.trace( "SourceBase.__init__ called", 2 )
-        EmergeBase.__init__(self, className)
+        EmergeBase.__init__(self)
         self.url = ""
 
     def setProxy(self):

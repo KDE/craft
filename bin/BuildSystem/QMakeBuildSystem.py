@@ -10,7 +10,7 @@ from BuildSystem.BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self):
-        BuildSystemBase.__init__(self, "qmake", "QMakeBuildSystem")
+        BuildSystemBase.__init__(self, "qmake")
         self.platform = ""
         if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
             self.platform = "win32-%s" % self.compiler()

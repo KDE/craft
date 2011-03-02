@@ -7,8 +7,8 @@ from EmergeBase import *
 
 class PackagerBase(EmergeBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
-    def __init__(self, className=None):
-        EmergeBase.__init__(self, className)
+    def __init__(self):
+        EmergeBase.__init__(self)
 
     def getPackageVersion(self):
         """ return version information for the currently used package"""

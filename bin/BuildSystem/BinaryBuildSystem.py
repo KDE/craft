@@ -7,7 +7,7 @@ from BuildSystem.BuildSystemBase import *
 
 class BinaryBuildSystem(BuildSystemBase):
     def __init__( self):
-        BuildSystemBase.__init__(self, "binary", "BinaryBuildSystem")
+        BuildSystemBase.__init__(self, "binary")
 
     def configure( self ):
         return True

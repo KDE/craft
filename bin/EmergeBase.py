@@ -44,7 +44,7 @@ KDESVNPASSWORD = os.getenv( "KDESVNPASSWORD" )
 class EmergeBase(object):
     """base class for emerge system - holds attributes and methods required by base classes"""
 
-    def __init__( self, className=None, **args):
+    def __init__( self, **args):
         """args really should be documented, see self.argv0 below"""
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
@@ -58,11 +58,16 @@ class EmergeBase(object):
         if not hasattr(self, 'buildSystemType'):
             self.buildSystemType = None
 
-        # if class name has been provided add implicit build time dependency
-        if className and utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
-            packageName = 'internal/%s' % className
-            if not packageName in self.subinfo.buildDependencies:
-                self.subinfo.buildDependencies[packageName] = 'default'
+        # if implicit build time dependency is wanted, depend on internal packages
+        # for this class and all of its ancestor classes
+        if utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+            for cls in type(self).mro():
+                className = cls.__name__
+                packageName = 'internal/%s' % className
+                if os.path.exists(os.path.join(ROOTDIR, 'emerge', 'portage',
+                        'internal', className, '%s-internal.py' % className)):
+                    if not packageName in self.subinfo.buildDependencies:
+                        self.subinfo.buildDependencies[packageName] = 'default'
 
         if hasattr(self,'alreadyCalled'):
             return

@@ -11,7 +11,7 @@ from BuildSystem.BuildSystemBase import *
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):
         self.buildInSource = False
-        BuildSystemBase.__init__(self, "autotools", "AutoToolsBuildSystem")
+        BuildSystemBase.__init__(self, "autotools")
         self.shell = MSysShell()
         self.makeProgram = "make -e"
 
