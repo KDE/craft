@@ -11,7 +11,7 @@ class FileSource(SourceBase):
         utils.debug( "FileSource.__init__ called", 2 )
         if subinfo:
             self.subinfo = subinfo
-        SourceBase.__init__(self, "FileSource")
+        SourceBase.__init__( self )
 
     def localFileNamesBase(self):
         """ collect local filenames """

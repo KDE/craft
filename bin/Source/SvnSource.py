@@ -12,7 +12,7 @@ class SvnSource (VersionSystemSourceBase):
         utils.trace( "SvnSource.__init__", 2 )
         if subinfo:
             self.subinfo = subinfo
-        VersionSystemSourceBase.__init__(self, "SvnSource")
+        VersionSystemSourceBase.__init__( self )
         self.options = None
         ## \todo add internal dependency for subversion package
         self.svnInstallDir = os.path.join(self.rootdir, 'dev-utils', 'svn', 'bin')

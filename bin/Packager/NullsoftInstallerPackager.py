@@ -69,7 +69,7 @@ if EMERGE_NOCLEAN is given (e.g. because you call emerge --update --package Pack
 file collection process is skipped, and only the installer is generated.
 """
     def __init__( self, whitelists=None, blacklists=None):
-        PackagerBase.__init__( self, "NullsoftInstallerPackager" )
+        PackagerBase.__init__( self )
         if whitelists is None:
             whitelists = [ NSIPackagerLists.defaultWhitelist ]
         if blacklists is None:

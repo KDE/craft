@@ -12,7 +12,7 @@ class ArchiveSource(SourceBase):
         utils.debug( "ArchiveSource.__init__ called", 2 )
         if subinfo:
             self.subinfo = subinfo
-        SourceBase.__init__(self, "ArchiveSource")
+        SourceBase.__init__( self )
 
     def repositoryUrl(self, index=0):
         """all repository pathes"""

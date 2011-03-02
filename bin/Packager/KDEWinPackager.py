@@ -10,7 +10,7 @@ import subprocess
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
     def __init__(self):
-        PackagerBase.__init__(self, "KDEWinPackager")
+        PackagerBase.__init__( self )
         fileName = "bin\\kdewin-packager.exe"
         self.packagerExe = None
         self.useDebugPackages = False

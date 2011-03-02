@@ -16,7 +16,7 @@ class GitSource ( VersionSystemSourceBase ):
         utils.trace( 'GitSource __init__', 2 )
         if subinfo:
             self.subinfo = subinfo
-        VersionSystemSourceBase.__init__(self, "GitSource")
+        VersionSystemSourceBase.__init__( self )
 
         # get a shell since git doesn't run natively at the moment
         self.shell = MSysShell()
