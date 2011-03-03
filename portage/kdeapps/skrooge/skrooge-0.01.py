@@ -2,8 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/office/skrooge'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:skrooge'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
