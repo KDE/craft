@@ -15,7 +15,7 @@ class BuildSystemBase(EmergeBase):
     noClean = False
     debug = True
 
-    def __init__(self, typeName):
+    def __init__(self, typeName=""):
         """constructor"""
         EmergeBase.__init__(self)
         self.buildSystemType = typeName
@@ -104,3 +104,12 @@ class BuildSystemBase(EmergeBase):
     def dumpDependencies(self):
         """dump package dependencies """
         return self.dumpEmergeDependencies()
+
+    def configure(self):
+        return True
+        
+    def make(self):
+        return True
+        
+    def install(self):
+        return True
