@@ -61,6 +61,13 @@ class FileSource(SourceBase):
             utils.debug("unpacking files into work root %s" % destdir, 1)
 
         for filename in filenames:
-            if not utils.copyFile( os.path.join(self.downloadDir(), filename),  os.path.join(destdir, filename) ):
+            file = os.path.abspath( os.path.join(self.downloadDir(), filename) )
+            if self.subinfo.options.unpack.runInstaller: 
+                ( shortname, ext ) = os.path.splitext( filename )
+                if ext == ".exe":
+                    return utils.system("%s" % file )
+                elif ( ext == ".msi" ):
+                    return utils.system("msiexec /package %s" % file )
+            if not utils.copyFile( file, os.path.join(destdir, filename) ):
                 return False
         return True

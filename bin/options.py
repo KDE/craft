@@ -21,6 +21,8 @@ class OptionsUnpack:
         ## By default archives are unpackaged into the workdir.
         #  Use this option to unpack archives into recent build directory
         self.unpackIntoBuildDir = False
+        #  Use this option to run 3rd party installers
+        self.runInstaller = False
 
 ## options for the configure action
 class OptionsConfigure:
