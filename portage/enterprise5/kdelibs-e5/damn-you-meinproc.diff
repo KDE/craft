@@ -1,0 +1,13 @@
+Files kdelibs-4.6.0.orig/kdoctools/.xslt.cpp.swp and kdelibs-4.6.0/kdoctools/.xslt.cpp.swp differ
+diff -Nru kdelibs-4.6.0.orig/kdoctools/xslt.cpp kdelibs-4.6.0/kdoctools/xslt.cpp
+--- kdelibs-4.6.0.orig/kdoctools/xslt.cpp	2011-01-19 23:11:17.000000000 +0100
++++ kdelibs-4.6.0/kdoctools/xslt.cpp	2011-03-06 01:41:58.582200700 +0100
+@@ -175,7 +175,7 @@
+         xmlOutputBufferFlush(outp);
+         xmlFreeDoc(res);
+     }
+-    xsltFreeStylesheet(style_sheet);
++//    xsltFreeStylesheet(style_sheet);
+ 
+     if (parsed.isEmpty())
+ 	parsed = ' '; // avoid error message

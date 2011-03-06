@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
                     'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + \
                     '/src/kdelibs-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdelibs-4.6.' + ver
+        self.patchToApply['4.6.0'] = ( 'damn-you-meinproc.diff', 1 )
+
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdelibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdelibs'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdelibs'
@@ -33,7 +35,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20100618'] = 'tags/kdepim/enterprise5.0.20100618.1139547/kdelibs'
         self.svnTargets['20100625'] = 'tags/kdepim/enterprise5.0.20100625.1142603/kdelibs'
         self.svnTargets['20100701'] = 'tags/kdepim/enterprise5.0.20100701.1144979/kdelibs'
-        self.svnTargets['20100709'] = 'tags/kdepim/enterprise5.0.20100709.1148001/kdelibs'
+        self.svnTargets['2010u709'] = 'tags/kdepim/enterprise5.0.20100709.1148001/kdelibs'
         self.svnTargets['20100716'] = 'tags/kdepim/enterprise5.0.20100716.1150616/kdelibs'
         self.svnTargets['20100723'] = 'tags/kdepim/enterprise5.0.20100723.1153624/kdelibs'
         self.svnTargets['20100730'] = 'tags/kdepim/enterprise5.0.20100730.1157241/kdelibs'
@@ -111,7 +113,6 @@ class Package(CMakePackageBase):
         elif self.compiler() == "msvc2008":
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
 
-        self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
     def install( self ):
         if not CMakePackageBase.install( self ):
             return False
