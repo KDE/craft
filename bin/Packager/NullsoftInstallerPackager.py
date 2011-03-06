@@ -220,8 +220,11 @@ file collection process is skipped, and only the installer is generated.
     def traverse( self, directory, whitelist = lambda f: True, blacklist = lambda g: False ):
         """
             Traverse through a directory tree and return every
-            filename that the function whitelist returns as true
+            filename that the function whitelist returns as true and
+            which do not match blacklist entries
         """
+        if blacklist( directory ):
+            return
         dirs = [ directory ]
         while dirs:
             path = dirs.pop()
