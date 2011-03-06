@@ -158,6 +158,9 @@ file collection process is skipped, and only the installer is generated.
         depList.reverse()
         for x in depList:
             ( category, package, version, defaultTarget ) = x.ident()
+            # Ignore dev-utils that are wrongly set as hard dependencies
+            if category == "dev-util":
+                continue
             defaultTarget = portage.findPossibleTargets( category, package, version )
             _package = portage.getPackageInstance( category, package, defaultTarget )
             imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ),
