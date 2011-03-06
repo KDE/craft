@@ -27,6 +27,14 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
     #    self.subinfo.options.configure.defines += " -DKDEPIM_NO_NEPOMUK=ON "
 
+    def install( self ):
+        if not CMakePackageBase.install( self ):
+            return False
+        if compiler.isMinGW():
+            manifest = os.path.join( self.packageDir(), "akonadi_maildispatcher_agent.exe.manifest" )
+            executable = os.path.join( self.installDir(), "bin", "akonadi_maildispatcher_agent.exe" )
+            utils.embedManifest( executable, manifest )
+        return True
 
 if __name__ == '__main__':
     Package().execute()
