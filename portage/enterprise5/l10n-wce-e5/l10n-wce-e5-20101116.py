@@ -7,9 +7,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.buildDependencies['dev-util/cmake'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        if emergePlatform.isCrossCompilingEnabled():
+            self.hardDependencies['kde/kdelibs'] = 'default'
+        else:
+            self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'
 
 
 from Package.CMakePackageBase import *
