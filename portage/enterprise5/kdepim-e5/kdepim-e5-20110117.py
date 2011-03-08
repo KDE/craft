@@ -1,7 +1,23 @@
 # -*- coding: utf-8 -*-
 import info
+import os
 
 class subinfo(info.infoclass):
+    def apply_branding( self, envVar ):
+        """ Apply all Patches from the directory set as envVar """
+        brandingDir = os.getenv( envVar )
+        if not brandingDir:
+            return
+        else:
+            brandingPatches = []
+            for fname in os.listdir( brandingDir ):
+                if fname.endswith(".patch") or fname.endswith( ".diff" ):
+                    brandingPatches.append( (
+                        os.path.join(brandingDir, fname), '1' ) )
+            print "Patches: %s " % brandingPatches
+            for target in self.svnTargets.iterkeys():
+                self.patchToApply[target] = brandingPatches
+
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdepim'
@@ -55,6 +71,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepim'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
         self.defaultTarget = 'gitHEAD'
+        self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdepimlibs-e5'] = 'default'
