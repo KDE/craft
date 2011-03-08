@@ -74,6 +74,10 @@ class Package(CMakePackageBase):
         if self.isTargetBuild():
             shutil.rmtree(os.path.join(self.imageDir(), "lib"))
             shutil.rmtree(os.path.join(self.imageDir(), "bin"))
+        #disable autolinking
+        f = open(os.path.join(self.imageDir(),"include", "boost", "config", "user.hpp"), 'a')
+        f.write('#define BOOST_ALL_NO_LIB\n')
+        f.close()
         return True
 
     def runTest(self):
