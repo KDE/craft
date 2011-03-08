@@ -37,20 +37,27 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         # Basic nsis defines
         self.defines[ "executable" ] = "bin\\kontact.exe"
         self.defines[ "company" ] = os.getenv("EMERGE_COMPANY_NAME") or "KDE"
-        self.defines[ "productname" ] = "Kontact Enterprise 5"
-        self.defines[ "setupname" ] = "Kontact-E5-%s.exe" % \
-                                      time.strftime("%Y-%m-%d-%H-%M")
+        self.defines[ "productname" ] = os.getenv("EMERGE_PRODUCT_NAME") or \
+                                        "Kontact Enterprise 5"
+        self.defines[ "setupname" ] = os.getenv("EMERGE_SETUP_NAME") or \
+                                       "Kontact-E5"
+        self.defines[ "setupname" ] = self.defines[ "setupname" ]+ "-%s.exe" % \
+                                       time.strftime("%Y-%m-%d-%H-%M")
+        self.defines[ "licensetxt" ] = os.getenv("EMERGE_LICENSE_FILE") or \
+                self.imageDir() + "\\share\\apps\\LICENSES\\GPL_V2"
         self.scriptname = os.path.join( self.packageDir(),
                                         "kontact-e5-installer.nsi" )
         # Custom definitions
         self.defines[ "copyright" ] = os.getenv("EMERGE_COPYRIGHT") or \
              "Copyright (c) 2001-%s Kontact Authors" % \
                 time.strftime("%Y")
-        self.defines[ "productname_short" ] = "Kontact E5"
-        self.defines[ "description" ] = "Kontact Enterprise 5 (beta)"
+        self.defines[ "productname_short" ] = os.getenv("EMERGE_PRODUCT_SHORTNAME") or \
+                                              "Kontact E5"
+        self.defines[ "description" ] = os.getenv("EMERGE_DESCRIPTION") or \
+                                        "Kontact Enterprise 5 (beta)"
         # Version Number needs to be in the format x.x.x.x
         self.defines[ "version_number" ] = "4.6.0.0"
-        self.defines[ "version_date" ] = time.strftime("%Y%m%d%H%M")
+        self.defines[ "version_date" ] = time.strftime("%Y-%m-%d-%H-%M")
         self.defines[ "branding" ] = os.getenv("EMERGE_KDEPIME5_BRANDING") or \
                                      "includes\\branding.nsi"
 
