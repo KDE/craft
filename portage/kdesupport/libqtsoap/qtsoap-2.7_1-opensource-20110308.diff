@@ -1,7 +1,7 @@
 diff -Nru qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CMakeLists.txt
 --- qtsoap-2.7_1-opensource.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ qtsoap-2.7_1-opensource/CMakeLists.txt	2010-11-08 23:41:11.354981800 +0100
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,64 @@
 +project( qtsoap )
 +cmake_minimum_required( VERSION 2.8 )
 +add_definitions( -Wall )
@@ -52,3 +52,17 @@ diff -Nru qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CM
 +)
 +
 +install(FILES src/qtsoap.h DESTINATION include)
++install(FILES src/QtSoapArray
++              src/QtSoapArrayIterator
++              src/QtSoapHttpTransport
++              src/QtSoapMessage
++              src/QtSoapNamespaces
++              src/QtSoapQName
++              src/QtSoapSimpleType
++              src/QtSoapStruct
++              src/QtSoapStructIterator
++              src/QtSoapType
++              src/QtSoapTypeConstructor
++              src/QtSoapTypeConstructorBase
++              src/QtSoapTypeFactory
++        DESTINATION include/QtSoap)
