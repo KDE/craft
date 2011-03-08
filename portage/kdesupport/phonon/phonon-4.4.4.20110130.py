@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.4.4'] = '7f31752c20efecbe63c7b312ceb28819fa337943'
         
         self.shortDescription = "a Qt based multimedia framework"
-        self.defaultTarget = '4.4.4'
+        self.defaultTarget = 'gitHEAD'
 
 
     def setBuildOptions( self ):

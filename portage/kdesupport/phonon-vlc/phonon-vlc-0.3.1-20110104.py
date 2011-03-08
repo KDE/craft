@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
       self.patchToApply['0.3.1'] = ("phonon-backend-vlc-0.3.1-20101223.diff", 1)
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.3.1'
+      self.defaultTarget = 'gitHEAD'
 
 
 class Package( CMakePackageBase ):
