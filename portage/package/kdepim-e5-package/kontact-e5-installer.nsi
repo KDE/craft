@@ -75,6 +75,7 @@
 ;Pages
   !define MUI_PAGE_CUSTOMFUNCTION_SHOW PrintNonAdminWarning
   !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE ${license}
   !insertmacro MUI_PAGE_DIRECTORY
   Page custom CustomPageOptions
   !insertmacro MUI_PAGE_INSTFILES
@@ -472,10 +473,10 @@ FunctionEnd
 # From Function CheckExistingVersion
 LangString T_AlreadyInstalled ${LANG_ENGLISH} \
     "has already been installed.$\r$\nDo you want to\
-    continue the installation of ${productname_short} ${version_number}?"
+    continue the installation of ${productname_short} ${version_date}?"
 LangString T_AlreadyInstalled ${LANG_GERMAN} \
     "ist bereits auf ihrem System installiert.$\r$\nWollen Sie die \
-    Installation von ${productname_short} ${version_number} fortsetzen?$\r$\n$\r$\nIhre \
+    Installation von ${productname_short} ${version_date} fortsetzen?$\r$\n$\r$\nIhre \
     alte Installation wird dadurch überschrieben."
 
 # From Custom Welcome Page
@@ -487,14 +488,14 @@ LangString T_WelcomeTitle ${LANG_GERMAN} \
   "Willkommen bei der Installation von  ${productname}"
 # description
 LangString T_About ${LANG_ENGLISH} \
-    "${description}"
+    "${description}, based upon KDE Kontact."
 LangString T_About ${LANG_GERMAN} \
-    "${description}"
+    "${description}, basierend auf KDE Kontact."
 # version number
-LangString T_Aboutversion_number ${LANG_ENGLISH} \
-    "${productname_short} version: ${version_number}"
-LangString T_Aboutversion_number ${LANG_GERMAN} \
-    "${productname_short} Version: ${version_number}"
+#LangString T_Aboutversion_number ${LANG_ENGLISH} \
+#    "${productname_short} version: ${version_number}"
+#LangString T_Aboutversion_number ${LANG_GERMAN} \
+#    "${productname_short} Version: ${version_number}"
 # version number
 LangString T_Aboutversion_date ${LANG_ENGLISH} \
     "Release date: ${version_date}"
