@@ -43,7 +43,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
                                        "Kontact-E5"
         self.defines[ "setupname" ] = self.defines[ "setupname" ]+ "-%s.exe" % \
                                        time.strftime("%Y-%m-%d-%H-%M")
-        self.defines[ "licensetxt" ] = os.getenv("EMERGE_LICENSE_FILE") or \
+        self.defines[ "license" ] = os.getenv("EMERGE_LICENSE_FILE") or \
                 self.imageDir() + "\\share\\apps\\LICENSES\\GPL_V2"
         self.scriptname = os.path.join( self.packageDir(),
                                         "kontact-e5-installer.nsi" )
