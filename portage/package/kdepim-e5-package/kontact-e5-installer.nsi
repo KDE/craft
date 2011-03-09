@@ -87,7 +87,6 @@
   !insertmacro MUI_UNPAGE_INSTFILES
   !insertmacro MUI_UNPAGE_FINISH
 
-
 ;--------------------------------
 ;Supported Languages
 
@@ -546,3 +545,5 @@ LangString T_kdeglobalsLanguageCode ${LANG_GERMAN} "de"
 # post install script failed
 LangString T_postInstallScriptfailed ${LANG_ENGLISH} "Post install script failed."
 LangString T_postInstallScriptfailed ${LANG_GERMAN} "Post-Install-Skript fehlgeschlagen."
+
+!include ${branding_locale}

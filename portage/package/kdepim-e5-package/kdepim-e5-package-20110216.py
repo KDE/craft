@@ -60,6 +60,9 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "version_date" ] = time.strftime("%Y-%m-%d-%H-%M")
         self.defines[ "branding" ] = os.getenv("EMERGE_KDEPIME5_BRANDING") or \
                                      "includes\\branding.nsi"
+        self.defines[ "branding_locale" ] = os.getenv("EMERGE_BRANDING_LOCALE") or \
+                                     "includes\\branding-locale.nsi"
+
 
 
 if __name__ == '__main__':
