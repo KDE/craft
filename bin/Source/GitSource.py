@@ -1,11 +1,11 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
+# copyright (c) 2011 Wolfgang Rohdewald <wolfgang@rohdewald.de>
 #
 # git support
 
 from Source.VersionSystemSourceBase import *
-from shells import *
 import tempfile
 
 ## \todo requires installed git package -> add suport for installing packages
@@ -17,21 +17,21 @@ class GitSource ( VersionSystemSourceBase ):
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
-
-        # get a shell since git doesn't run natively at the moment
-        self.shell = MSysShell()
+        self.__cachedCheckoutDir = None
 
         # detect git installation
         gitInstallDir = os.path.join( self.rootdir, 'dev-utils', 'git' )
         if os.path.exists( gitInstallDir ):
-            self.shell.msysdir = gitInstallDir
-            utils.debug( 'using shell from %s' % gitInstallDir, 1 )
+            self.gitPath = os.path.join(gitInstallDir, 'bin', 'git')
+            utils.debug( 'using git from %s' % gitInstallDir, 1 )
+        else:
+            self.gitPath = 'git'
 
     def __getCurrentBranch( self ):
         branch = None
-        if os.path.exists( self.checkoutDir() ):
+        if os.path.exists(self.__cachedCheckoutDir):
             tmpFile = tempfile.TemporaryFile()
-            self.shell.execute( self.checkoutDir(), "git", "branch -a", out=tmpFile )
+            self.__git("branch", "-a", stdout=tmpFile)
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
@@ -40,21 +40,21 @@ class GitSource ( VersionSystemSourceBase ):
                     break
         return branch
 
-    def __isLocalBranch( self, _branch ):
-        if os.path.exists( self.checkoutDir() ):
+    def __isLocalBranch( self, branch ):
+        if os.path.exists(self.__cachedCheckoutDir):
             tmpFile = tempfile.TemporaryFile()
-            self.shell.execute( self.checkoutDir(), "git", "branch", out=tmpFile )
+            self.__git("git", "branch", stdout=tmpFile )
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if line[2:].rstrip() == _branch:
+                if line[2:].rstrip() == branch:
                     return True
         return False
 
     def __isTag( self, _tag ):
-        if os.path.exists( self.checkoutDir() ):
+        if os.path.exists(self.__cachedCheckoutDir):
             tmpFile = tempfile.TemporaryFile()
-            self.shell.execute( self.checkoutDir(), "git", "tag", out=tmpFile )
+            self.__git("tag", stdout=tmpFile )
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
@@ -90,40 +90,50 @@ class GitSource ( VersionSystemSourceBase ):
                 os.rmdir(checkoutDir)
             if os.path.exists(checkoutDir):
                 if not repoTag:
-                    ret = self.shell.execute(checkoutDir, "git",
-                            "pull origin %s" % repoBranch or "master" )
+                    ret = self.__git("pull", "origin", repoBranch or "master")
                     if self.subinfo.options.fetch.checkoutSubmodules:
-                        self.shell.execute(checkoutDir, "git",
-                            "submodule update --init --recursive")
+                        self.__git("submodule", "update --init --recursive")
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs( checkoutDir )
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
-                if self.subinfo.options.fetch.checkoutSubmodules:
-                    ret = self.shell.execute( checkoutDir, "git", "clone --recursive %s ." % ( repoUrl ) )
-                else:
-                    ret = self.shell.execute( checkoutDir, "git", "clone %s ." % ( repoUrl ) )
+                recursive = '--recursive ' if self.subinfo.options.fetch.checkoutSubmodules else ''
+                ret = self.__git('clone', recursive, repoUrl, '.')
 
-            # if a branch is given, we should check first if the branch is already downloaded locally, otherwise we can track the remote branch
-            track = ""
+            # if a branch is given, we should check first if the branch is already downloaded
+            # locally, otherwise we can track the remote branch
             if ret and repoBranch and not repoTag:
+                track = ""
                 if not self.__isLocalBranch( repoBranch ):
                     track = "--track origin/"
-                ret = self.shell.execute( checkoutDir, "git", "checkout %s%s" % ( track, repoBranch ) )
+                ret = self.__git('checkout', "%s%s" % (track, repoBranch))
 
             # we can have tags or revisions in repoTag
             if ret and repoTag:
                 if self.__isTag( repoTag ):
                     if not self.__isLocalBranch( "_" + repoTag ):
-                        ret = self.shell.execute( checkoutDir, "git", "checkout -b _%s %s" % ( repoTag, repoTag ) )
+                        ret = self.__git('checkout', '-b', '_%s' % repoTag, repoTag)
                     else:
-                        ret = self.shell.execute( checkoutDir, "git", "checkout _%s" % repoTag )
+                        ret = self.__git('checkout', '_%s' % repoTag)
                 else:
-                    ret = self.shell.execute( checkoutDir, "git", "checkout %s" % repoTag )
+                    ret = self.__git('checkout', repoTag)
 
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
+
+    def __git(self, command, *args, **kwargs):
+        """executes a git command in a shell.
+        Default for cwd is self.self.checkoutDir()"""
+        if command == 'clone' and os.getenv("EMERGE_LOG_DIR"):
+            # if stdout/stderr is redirected, git clone hangs forever.
+            # It does not with option -q (quiet)
+            command += ' -q'
+        parts = [self.gitPath, command]
+        parts.extend(args)
+        if not kwargs.get('cwd'):
+            kwargs['cwd'] = self.__cachedCheckoutDir or self.checkoutDir()
+        return utils.system(' '.join(parts), **kwargs)
 
     def __fetchMultipleBranch(self, repopath=None):
         utils.trace( 'GitSource __fetchMultipleBranch', 2 )
@@ -143,35 +153,31 @@ class GitSource ( VersionSystemSourceBase ):
             safePath = os.environ["PATH"]
             # add the git path to the PATH variable so that git can be called without path
             os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
-            rootCheckoutDir = os.path.join(self.checkoutDir(),'.git')
+            rootCheckoutDir = os.path.join(self.__cachedCheckoutDir,'.git')
             if not os.path.exists( rootCheckoutDir ):
                 # it doesn't exist so clone the repo
                 os.makedirs( rootCheckoutDir )
-                ret = self.shell.execute( self.shell.toNativePath(rootCheckoutDir), "git", "clone --mirror %s ." % ( repoUrl ) )
+                ret = self.__git('clone', '--mirror', repoUrl, '.', cwd=rootCheckoutDir)
             else:
-                ret = self.shell.execute( self.shell.toNativePath(rootCheckoutDir), "git", "fetch")
+                ret = self.__git('fetch', cwd=rootCheckoutDir)
                 if not ret:
                     utils.die( "could not fetch remote data" )
 
             if repoBranch == "":
                 repoBranch = "master"
             if ret:
-                branchDir = os.path.join(self.checkoutDir(), repoBranch)
+                branchDir = os.path.join(self.__cachedCheckoutDir, repoBranch)
                 if not os.path.exists(branchDir):
                     os.makedirs(branchDir)
-                    ret = self.shell.execute(branchDir, "git", "clone --local --shared -b %s %s %s" % \
-                        (repoBranch, self.shell.toNativePath(rootCheckoutDir), self.shell.toNativePath(branchDir)))
+                    ret = self.__git('clone', '--local --shared -b', repoBranch, rootCheckoutDir, branchDir, cwd=branchDir)
                 else:
-                    ret = self.shell.execute(branchDir, "git", "pull")
+                    ret = self.__git('pull')
                     if not ret:
                         utils.die( "could not pull into branch %s" % repoBranch )
 
             if ret:
-                #ret = self.shell.execute(branchDir, "git", "checkout -f")
-                if repoTag:
-                    ret = self.shell.execute(branchDir, "git", "checkout -f %s" % (repoTag))
-                else:
-                    ret = self.shell.execute(branchDir, "git", "checkout -f %s" % (repoBranch))
+                #self.__git('checkout', '-f')
+                ret = self.__git("checkout", "-f", repoTag or repoBranch, cwd=branchDir)
         else:
             utils.debug( "skipping git fetch (--offline)" )
         return ret
@@ -179,10 +185,14 @@ class GitSource ( VersionSystemSourceBase ):
 
     def fetch(self, repopath=None):
         utils.trace( 'GitSource fetch', 2 )
-        if utils.envAsBool("EMERGE_GIT_MULTIBRANCH"):
-            return self.__fetchMultipleBranch(repopath)
-        else:
-            return self.__fetchSingleBranch(repopath)
+        self.__cachedCheckoutDir = self.checkoutDir()
+        try:
+            if utils.envAsBool("EMERGE_GIT_MULTIBRANCH"):
+                return self.__fetchMultipleBranch(repopath)
+            else:
+                return self.__fetchSingleBranch(repopath)
+        finally:
+            self.__cachedCheckoutDir = None
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
@@ -194,50 +204,51 @@ class GitSource ( VersionSystemSourceBase ):
                 # in case you need to move from a read only Url to a writeable one, here it gets replaced
                 repopath = repopath.replace("[git]", "")
                 repoString = utils.replaceVCSUrl( repopath )
-                _, repoBranch, _ = utils.splitGitUrl( repoString )
-                if repoBranch == "":
-                    repoBranch = "master"
+                repoBranch = utils.splitGitUrl( repoString )[1] or "master"
                 sourceDir = os.path.join(self.checkoutDir(), repoBranch)
-                return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
-                        (patchdepth, self.shell.toNativePath(patchfile)))
             else:
-                sourceDir = self.sourceDir()
                 #FIXME this reverts previously applied patches !
-                #self.shell.execute(sourceDir, "git", "checkout -f")
-                return self.shell.execute(sourceDir, "git", "apply --whitespace=fix -p %s %s" % \
-                        (patchdepth, self.shell.toNativePath(patchfile)))
+                #self.__git('checkout', '-f')
+                sourceDir = self.checkoutDir()
+            return self.__git('apply', '--whitespace=fix',
+                    '-p%d' % patchdepth, patchfile, cwd=sourceDir)
         return True
 
     def createPatch( self ):
         """create patch file from git source into the related package dir.
         The patch file is named autocreated.patch"""
         utils.trace( 'GitSource createPatch', 2 )
-        ret = self.shell.execute( self.sourceDir(), "git", "diff --ignore-all-space > %s" % \
-                self.shell.toNativePath( os.path.join( self.packageDir(), "%s-%s.patch" % \
-                ( self.package, str( datetime.date.today() ).replace('-', '') ) ) ) )
-        return ret
+        patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
+                ( self.package, str( datetime.date.today() ).replace('-', '') ))
+        with open(patchFileName,'w') as patchFile:
+            return self.__git('diff', '--ignore-all-space', stdout=patchFile)
 
     def sourceVersion( self ):
-        """return the revision returned by git show"""
+        """print the revision returned by git show"""
         utils.trace( 'GitSource sourceVersion', 2 )
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tmpFile = tempfile.TemporaryFile()
 
         # run the command
-        if not self.__isTag( self.__getCurrentBranch()[ 1: ] ):
-            self.shell.execute( self.checkoutDir(), "git", "show --abbrev-commit", out=tmpFile )
-            tmpFile.seek( os.SEEK_SET )
+        self.__cachedCheckoutDir = self.checkoutDir()
+        try:
+            if not os.path.exists(self.__cachedCheckoutDir):
+                print 'checkout directory %s does not exist' % self.__cachedCheckoutDir
+            if not self.__isTag( self.__getCurrentBranch()[ 1: ] ):
+                with tempfile.TemporaryFile() as tmpFile:
+                    self.__git("show", "--abbrev-commit", stdout=tmpFile)
+                    tmpFile.seek( os.SEEK_SET )
 
-            # read the temporary file and grab the first line
-            revision = tmpFile.readline().replace("commit ", "").strip()
-            tmpFile.close()
+                    # read the temporary file and grab the first line
+                    revision = tmpFile.readline().replace("commit ", "").strip()
 
-            # print the revision - everything else should be quiet now
-            print revision
-        else:
-            # in case this is a tag, print out the tag version
-            print self.__getCurrentBranch()[ 1: ]
-        return True
+                # print the revision - everything else should be quiet now
+                print revision
+            else:
+                # in case this is a tag, print out the tag version
+                print self.__getCurrentBranch()[ 1: ]
+            return True
+        finally:
+            self.__cachedCheckoutDir = None
 
     def checkoutDir(self, index=0 ):
         utils.trace( 'GitSource checkoutDir', 2 )

@@ -66,6 +66,8 @@ class SourceBase(EmergeBase):
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
                 patches = list([patches])
+            # pylint: disable=W0142
+            # do not warn about * magic
             return set(self.applyPatch(*x) for x in patches) == set([True])
         return True
 
