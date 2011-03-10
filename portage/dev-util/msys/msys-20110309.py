@@ -3,10 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20110112"
+        ver = "20110309"
         self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/MSYS-"+ver+".zip"
         self.defaultTarget = ver
-        self.targetDigests['20110112'] = '6217b5d38acb6a8c1efb25847be62d61c1f18083'
+        self.targetDigests['20110309'] = '3264814e1ef5062f70444ba17b7de147054413b6'
 
 
     def setDependencies( self ):
