@@ -46,21 +46,20 @@ class PackageMSVC(MakeFilePackageBase):
         return True
 
     def install( self ):
-        os.chdir( os.path.join( self.sourceDir(), 'build.vc10') )
-        self.system("to_gmp.bat")
         if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
                 os.makedirs( os.path.join( self.installDir() , "bin" ) )
-        shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'gmp.dll'), os.path.join( self.installDir() , "bin" , "gmp.dll") )
+        shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'mpir.dll'), os.path.join( self.installDir() , "bin" , "mpir.dll") )
         
         if not os.path.isdir( os.path.join( self.installDir() , "lib" ) ):
                 os.makedirs( os.path.join( self.installDir() , "lib" ) )
-        shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'gmp.lib'), os.path.join( self.installDir() , "lib" , "gmp.lib") )
+        shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'mpir.lib'), os.path.join( self.installDir() , "lib" , "mpir.lib") )
 
         if not os.path.isdir( os.path.join( self.installDir() , "include" ) ):
                 os.makedirs( os.path.join( self.installDir() , "include" ) )
         shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'gmp.h'), os.path.join( self.installDir() , "include" , "gmp.h") )
         shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'gmpxx.h'), os.path.join( self.installDir() , "include" , "gmpxx.h") )
         shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'mpir.h'), os.path.join( self.installDir() , "include" , "mpir.h") )
+        shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'mpirxx.h'), os.path.join( self.installDir() , "include" , "mpirxx.h") )
         shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'gmp-mparam.h'), os.path.join( self.installDir() , "include" , "gmp-mparam.h") )
         
         return True
