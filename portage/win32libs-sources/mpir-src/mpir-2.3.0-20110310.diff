@@ -67,3 +67,55 @@ diff -Nru mpir-2.3.0.orig/mpirxx.h mpir-2.3.0/mpirxx.h
  struct __gmp_alloc_cstring_c
  {
     void (*free_func) (void *, size_t);
+
+diff -Nru mpir-2.3.0.orig/configure mpir-2.3.0/configure
+--- mpir-2.3.0.orig/configure	2011-03-04 09:24:37.000000000 +0200
++++ mpir-2.3.0/configure	2011-03-10 23:25:10.016611300 +0200
+@@ -10062,7 +10062,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.3.0/gmp-h.in"
+ 
+ #if ! __GMP_HAVE_PROTOTYPES
+ die die die
+@@ -24722,7 +24722,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.3.0/gmp-h.in"
+ 
+ #ifndef __GMP_EXTERN_INLINE
+ die die die
+@@ -24933,9 +24933,9 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.3.0/gmp-h.in"
+ 
+-#include "$srcdir/gmp-impl.h"
++#include "../mpir-2.3.0/gmp-impl.h"
+ 
+ int
+ main ()
+@@ -25031,7 +25031,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.3.0/gmp-h.in"
+ 
+ #if ! _GMP_H_HAVE_FILE
+ die die die
+@@ -27934,7 +27934,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include \"$srcdir/gmp-h.in\"
++#include \"../mpir-2.3.0/gmp-h.in\"
+ 
+ "; then :
+ 

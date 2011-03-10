@@ -27,7 +27,7 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat"
+        self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx ABI=32"
 
 class PackageMSVC(MakeFilePackageBase):
     def __init__( self, **args ):
