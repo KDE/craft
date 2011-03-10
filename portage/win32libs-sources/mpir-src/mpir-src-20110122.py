@@ -53,6 +53,8 @@ class PackageMSVC(MakeFilePackageBase):
         if not os.path.isdir( os.path.join( self.installDir() , "lib" ) ):
                 os.makedirs( os.path.join( self.installDir() , "lib" ) )
         shutil.move(os.path.join( self.sourceDir(), 'build.vc10', 'dll', 'Win32', 'Release', 'mpir.lib'), os.path.join( self.installDir() , "lib" , "mpir.lib") )
+        # a dirty workaround the fact that FindGMP.cmake will only look for gmp.lib
+        shutil.copy(os.path.join( self.installDir() , "lib" , "mpir.lib"), os.path.join( self.installDir() , "lib" , "gmp.lib") )
 
         if not os.path.isdir( os.path.join( self.installDir() , "include" ) ):
                 os.makedirs( os.path.join( self.installDir() , "include" ) )
