@@ -6,7 +6,9 @@ class subinfo( info.infoclass ):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdelibs-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdelibs-4.6.' + ver
+            self.patchToApply['4.6.' + ver] = ( 'damn-you-meinproc.diff', 1 )
         self.defaultTarget = 'svnHEAD'
+        self.patchToApply['svnHEAD'] = ( 'damn-you-meinproc.diff', 1 )
     
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
