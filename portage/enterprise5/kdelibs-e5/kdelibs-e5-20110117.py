@@ -35,7 +35,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20100618'] = 'tags/kdepim/enterprise5.0.20100618.1139547/kdelibs'
         self.svnTargets['20100625'] = 'tags/kdepim/enterprise5.0.20100625.1142603/kdelibs'
         self.svnTargets['20100701'] = 'tags/kdepim/enterprise5.0.20100701.1144979/kdelibs'
-        self.svnTargets['2010u709'] = 'tags/kdepim/enterprise5.0.20100709.1148001/kdelibs'
+        self.svnTargets['20100709'] = 'tags/kdepim/enterprise5.0.20100709.1148001/kdelibs'
         self.svnTargets['20100716'] = 'tags/kdepim/enterprise5.0.20100716.1150616/kdelibs'
         self.svnTargets['20100723'] = 'tags/kdepim/enterprise5.0.20100723.1153624/kdelibs'
         self.svnTargets['20100730'] = 'tags/kdepim/enterprise5.0.20100730.1157241/kdelibs'
