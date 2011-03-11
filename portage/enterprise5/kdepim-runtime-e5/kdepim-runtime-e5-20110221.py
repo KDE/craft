@@ -24,7 +24,6 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines += " -DKDEPIM_ENTERPRISE_BUILD=ON "
         self.subinfo.options.configure.defines += " -DAKONADI_USE_STRIGI_SEARCH=ON "
         self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
-        self.subinfo.options.configure.defines += " -DBUILD_doc=OFF "
     #    self.subinfo.options.configure.defines += " -DKDEPIM_NO_NEPOMUK=ON "
 
     def install( self ):

@@ -88,7 +88,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = (
                 " -DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
-                " -DBUILD_doc=OFF "
                 " -DKDEPIM_BUILD_MOBILE=FALSE "
                 " -DKDEPIM_ENTERPRISE_BUILD=ON ")
 #                " -DKDEPIM_NO_NEPOMUK=ON " )
