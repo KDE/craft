@@ -37,7 +37,7 @@ class PackageMSVC(MakeFilePackageBase):
     def configure( self ):
         os.chdir( os.path.join( self.sourceDir(), 'build.vc10') )
         os.putenv('YASMPATH', os.path.join(self.rootdir, 'dev-utils', 'bin'))
-        self.system("configure.bat --enable-shared --cpu-none")
+        self.system("configure.bat --enable-shared --cpu-none --ABI32")
         return True
 
     def make( self ):
