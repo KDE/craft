@@ -19,14 +19,13 @@ diff -Nru mpir-2.3.0.orig/build.vc10/configure.bat mpir-2.3.0/build.vc10/configu
  if errorlevel 1 goto :nocc
 diff -Nru mpir-2.3.0.orig/build.vc10/make.bat mpir-2.3.0/build.vc10/make.bat
 --- mpir-2.3.0.orig/build.vc10/make.bat	2011-01-26 12:18:14.000000000 +0200
-+++ mpir-2.3.0/build.vc10/make.bat	2011-03-10 08:25:12.035515400 +0200
-@@ -40,6 +40,9 @@
++++ mpir-2.3.0/build.vc10/make.bat	2011-03-12 22:41:59.996160800 +0200
+@@ -39,7 +39,7 @@
+ 
  :make
  
- set MS_BUILD="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe"
-+if not exist %MS_BUILD% (
-+	set MS_BUILD="C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
-+)
+-set MS_BUILD="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe"
++set MS_BUILD="C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
  
  set LIBBUILD=%LIBTYPE%_mpir_%BCPU%
  
