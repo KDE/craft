@@ -27,7 +27,10 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx ABI=32"
+        abi = "ABI=32"
+        if self.buildArchitecture()=="x64":
+            abi = "ABI=64"
+        self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
 
 class PackageMSVC(MakeFilePackageBase):
     def __init__( self, **args ):
