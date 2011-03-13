@@ -16,7 +16,6 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.3.0'] = "mpir-2.3.0"
         self.patchToApply['2.3.0'] = ('mpir-2.3.0-20110310.diff', 1)
 
-        self.options.package.withCompiler = False
         self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
         self.defaultTarget = '2.3.0'
 
