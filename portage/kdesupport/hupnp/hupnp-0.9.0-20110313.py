@@ -5,7 +5,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = "https://hupnp.svn.sourceforge.net/svnroot/hupnp/trunk/herqq"
-        self.patchToApply['svnHEAD'] = ("hupnp-0.8.0-20110122.diff", 1)
         self.shortDescription = "Herqq UPnP (HUPnP) is a software library for building UPnP devices and control points conforming to the UPnP Device Architecture version 1.1"
         self.defaultTarget = 'svnHEAD'
 
@@ -13,35 +12,32 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/libqtsoap'] = 'default'
 
+    def setBuildOptions( self ):
+        self.options.configure.defines = '-r "CONFIG += DISABLE_TESTAPP"'
+        self.options.configure.defines += ' -r "CONFIG += DISABLE_QTSOAP"'
+
 from Package.QMakePackageBase import *
 
 class Package( QMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
-        self.source.noCopy = False
+        if self.buildType() == "Release":
+            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug"'
+            self.subinfo.options.configure.defines += ' -r "CONFIG += release"'
+            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug_and_release"'
+        if self.buildType() == "Debug":
+            self.subinfo.options.configure.defines += ' -r "CONFIG += debug"'
+            self.subinfo.options.configure.defines += ' -r "CONFIG -= release"'
+            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug_and_release"'
+        if self.buildType() == "RelWithDebInfo":
+            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug"'
+            self.subinfo.options.configure.defines += ' -r "CONFIG -= release"'
+            self.subinfo.options.configure.defines += ' -r "CONFIG += debug_and_release"'
         
     def unpack( self ):
         if not QMakePackageBase.unpack( self ):
             return False
-            
-        cache_content = ""
-        cache_content += "CONFIG -= debug_and_release\n"
-        # by now using release only
-        # if self.buildType() == "Debug":
-        #     cache_content += "CONFIG -= release\n"
-        #     cache_content += "CONFIG += debug\n"
-        # else:
-        #     cache_content += "CONFIG += release\n"
-        #     cache_content += "CONFIG -= debug\n"
-        cache_content += "CONFIG += release\n"
-        cache_content += "CONFIG -= debug\n"
-
-        # write the .qmake.cache as it is done by the configure.bat
-        cachefile = open( os.path.join( self.buildDir(), ".qmake.cache" ), "w+" )
-        cachefile.write(cache_content)
-        cachefile2 = open( os.path.join( self.buildDir(), "hupnp", "src", "hupnp_core", ".qmake.cache" ), "w+" )
-        cachefile.write(cache_content)
         return True
         
     def install( self ):
