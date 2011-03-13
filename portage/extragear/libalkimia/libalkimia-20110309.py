@@ -8,8 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        #add the dependency when a proper package for libgmp will be available
-        self.buildDependencies['win32libs-sources/mpir-src'] = 'default'
+        self.hardDependencies['win32libs-bin/mpir'] = 'default'
         self.shortDescription = "A library with common classes and functionality used by finance applications for the KDE SC."
 
 from Package.CMakePackageBase import *
