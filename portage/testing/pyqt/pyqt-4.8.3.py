@@ -47,19 +47,19 @@ class Package(CMakePackageBase):
         cmd += " --plugin-destdir %s/plugins " % self.installDir() 
         cmd += " --sipdir %s/sip/PyQt4 " % self.installDir() 
         
-        os.system(cmd) and utils.die("command: %s failed" % (cmd))
+        utils.system(cmd) or utils.die("command: %s failed" % (cmd))
 
         return True
 
     def make( self ):
         self.enterSourceDir()
-        os.system(self.makeProgramm) and utils.die("command: %s failed" % self.makeProgramm)
+        utils.system(self.makeProgramm) or utils.die("command: %s failed" % self.makeProgramm)
         return True
 
     def install( self ):
         self.enterSourceDir()
         cmd = self.makeProgramm + " install"
-        os.system(cmd) and utils.die("command: %s failed" % cmd)
+        utils.system(cmd) or utils.die("command: %s failed" % cmd)
         return True
 
     def runTest(self):
