@@ -24,8 +24,10 @@ class Package(CMakePackageBase):
         # jom reports missing moc_translator.xxx
         self.subinfo.options.make.supportsMultijob = False
         # add support for other location based on pythonpath
-        self.subinfo.options.merge.destinationPath = "emerge/python"
-        
+        localPythonPath = os.path.join(self.rootdir, 'emerge', 'python')
+        haveLocalPython = os.path.exists(localPythonPath)
+        if haveLocalPython:
+            self.subinfo.options.merge.destinationPath = "emerge/python"
         self.subinfo.options.configure.defines = " --confirm-license --verbose"
         if self.buildType == "Debug":
             self.subinfo.options.configure.defines = " -u"
@@ -38,7 +40,11 @@ class Package(CMakePackageBase):
             specName = "win32-g++"
         else:
             utils.die("compiler %s not supported for PyQt4" % compiler.COMPILER)
-        os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs", specName) )
+        if haveLocalPython:
+           specDir = self.mergeDestinationDir()
+        else:
+           specDir = self.rootdir
+        os.putenv("QMAKESPEC", os.path.join(specDir, "mkspecs", specName))
 
     def configure( self ):
         self.enterSourceDir()
