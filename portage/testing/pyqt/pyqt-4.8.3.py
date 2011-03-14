@@ -29,13 +29,16 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = " --confirm-license --verbose"
         if self.buildType == "Debug":
             self.subinfo.options.configure.defines = " -u"
-            
+
         if compiler.isMSVC2008():
-            os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs","win32-msvc2008") )
+            specName = "win32-msvc2008"
         elif compiler.isMSVC2010():
-            os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs","win32-msvc2010") )
+            specName = "win32-msvc2010"
         elif compiler.isMinGW():
-            os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs","win32-g++") )
+            specName = "win32-g++"
+        else:
+            utils.die("compiler %s not supported for PyQt4" % compiler.COMPILER)
+        os.putenv( "QMAKESPEC", os.path.join(self.mergeDestinationDir(),"mkspecs", specName) )
 
     def configure( self ):
         self.enterSourceDir()
