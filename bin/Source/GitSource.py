@@ -206,7 +206,7 @@ class GitSource ( VersionSystemSourceBase ):
         utils.trace( 'GitSource createPatch', 2 )
         patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) )
-        return self.shell.execute( self.sourceDir(), "git", "diff --ignore-all-space > %s" % \
+        return self.shell.execute( self.sourceDir(), "git", "diff > %s" % \
                 self.shell.toNativePath( patchFileName) )
 
     def sourceVersion( self ):
