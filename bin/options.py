@@ -47,8 +47,12 @@ class OptionsConfigure:
         # do not use default include path
         self.noDefaultInclude = False
 
-        # do not use default lib path
+        ## do not use default lib path
         self.noDefaultLib = False
+
+        ## set this attribute in case a non standard configuration 
+		# tool is required (supported currently by QMakeBuildSystem only)
+        self.tool = False
 
 
 ## options for the make action

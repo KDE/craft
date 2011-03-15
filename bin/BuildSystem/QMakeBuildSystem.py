@@ -28,7 +28,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # to be sure
         utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
 
-    def configure( self, configureTool=None, configureDefines="" ):
+    def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
 
         self.enterBuildDir()
@@ -49,8 +49,8 @@ class QMakeBuildSystem(BuildSystemBase):
                 if topLevelProFilesFound == 0:
                     topLevelProFile = os.path.join(self.sourceDir(), fileListed)
                 topLevelProFilesFound += 1
-        if configureTool != None:
-            command = "%s %s" % (configureTool, self.configureOptions(configureDefines))
+        if self.subinfo.options.configure.tool != None:
+            command = "%s %s" % (self.subinfo.options.configure.tool, self.configureOptions(configureDefines))
         elif os.path.exists(configTool):
             command = "%s %s" % (configTool, self.configureOptions(configureDefines))
         elif os.path.exists(qmakeTool) and os.path.exists(topLevelProFile) and topLevelProFilesFound == 1:
