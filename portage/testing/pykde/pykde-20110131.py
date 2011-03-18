@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kde-4.6/kdelibs'] = '4.6.0'
         self.hardDependencies['testing/sip'] = 'default'
         self.hardDependencies['testing/pyqt'] = 'default'
 
