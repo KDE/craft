@@ -19,9 +19,11 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        self.subinfo.options.merge.destinationPath = "emerge/python"
-        
         CMakePackageBase.__init__( self )
+        localPythonPath = os.path.join(self.rootdir, 'emerge', 'python')
+        haveLocalPython = os.path.exists(localPythonPath)
+        if haveLocalPython:
+            self.subinfo.options.merge.destinationPath = "emerge/python"
 
 if __name__ == '__main__':
     Package().execute()
