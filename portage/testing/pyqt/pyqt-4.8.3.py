@@ -30,7 +30,7 @@ class Package(CMakePackageBase):
         if haveLocalPython:
             self.subinfo.options.merge.destinationPath = "emerge/python"
         self.subinfo.options.configure.defines = " --confirm-license --verbose"
-        if self.buildType == "Debug":
+        if self.buildType() == "Debug":
             self.subinfo.options.configure.defines = " -u"
 
         if compiler.isMSVC2008():
