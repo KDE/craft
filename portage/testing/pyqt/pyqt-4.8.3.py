@@ -10,6 +10,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        self.buildDependencies['testing/sip'] = 'default'
 
     def setTargets( self ):
         self.targets['4.8.3'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-win-gpl-4.8.3.zip'
