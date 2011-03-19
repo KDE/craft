@@ -3,7 +3,6 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
         self.dependencies['libs/qt'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-bin/exiv2'] = 'default'
@@ -16,6 +15,15 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libbzip2'] = 'default'
         self.dependencies['win32libs-bin/libxml2'] = 'default'
         self.dependencies['win32libs-bin/zlib'] = 'default'
+        if os.getenv('KDECOMPILER') == "msvc2010" and os.getenv('EMERGE_BUILDTYPE') == "Debug":
+            # we cannot use Package methods here - we should have a pointer to
+            # the package having instantiated us
+            # the downloaded binary of clucene is compiled without Debug and msv2010 cannot
+            # link it against strigi
+            self.buildDependencies['win32libs-sources/clucene-core-src'] = 'default'
+        else:
+            self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
+
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://anongit.kde.org/strigi'
