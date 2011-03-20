@@ -11,7 +11,7 @@ import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.baseURL = "http://artfiles.org/mysql/Downloads/MySQL-5.1/"
+        self.baseURL = "http://downloads.mysql.com/archives/mysql-5.1/"
         if( emergePlatform.buildArchitecture() == 'x64' ):
           self.targets[ '5.1.56'] = self.baseURL+"mysql-noinstall-5.1.56-winx64.zip"
           self.targetInstSrc[ '5.1.56' ] = "mysql-5.1.56-winx64"
