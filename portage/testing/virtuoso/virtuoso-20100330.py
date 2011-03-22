@@ -28,7 +28,6 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
   def __init__(self):
     self.subinfo = subinfo()
-    self.subinfo.options.merge.ignoreBuildType = True
     self.subinfo.options.package.packSources = False
     self.subinfo.options.package.withCompiler = None
     CMakePackageBase.__init__( self )
