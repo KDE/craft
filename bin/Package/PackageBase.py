@@ -187,9 +187,16 @@ class PackageBase (EmergeBase):
         install database"""
 
         utils.debug("base manifest called", 2)
-        if not utils.hasManifestFile( self.mergeDestinationDir(), self.package ) or self.forceCreateManifestFiles:
-            utils.debug("creating of manifest files triggered", 1)
-            utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
+        # important - remove all old manifests to not pollute merge root manifest dir with old packaging info
+        utils.cleanManifestDir( self.mergeSourceDir() )
+        # For qmerging the manifests files could go into merge destination
+        # For packaging they have to stay in image dir
+        # ->  the common denominator is to create manifests in image dir
+        # qmerge needs creating of manifests and packaging too, there is not need why they are 
+        # created in the qmerge step *and* the package step
+        # -> merge them into the install step of the build system classes 
+        ## @todo move all createManifestFiles() calls into install() method of the Buildsystem classes
+        utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
         return True
 
     def stripLibs( self, pkgName ):

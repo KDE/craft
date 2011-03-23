@@ -738,6 +738,11 @@ def unmerge(rootdir, package, forced=False):
     unmergeFileList(rootdir, fileList, forced)
     return bool(fileList)
 
+def cleanManifestDir(imageDir):
+    manifestDir = os.path.join( imageDir, "manifest" )
+    if os.path.exists( manifestDir ):
+         rmtree(manifestDir)
+
 def createManifestDir(imagedir, category, package, version ):
     """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
     if not hasManifestFile( imagedir, package ):
@@ -765,6 +770,8 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
 
     for root, _, files in os.walk( imagedir ):
         relativeRoot = root.replace( imagedir, "" )
+        if relativeRoot.startswith("\\manifest"):
+            continue
         if relativeRoot.startswith( "\\bin" ):
             dirType = 1
         elif relativeRoot.startswith( "\\lib" ):
@@ -779,7 +786,7 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
             dirType = 6
         elif relativeRoot.startswith( "\\doc" ):
             dirType = 7
-        elif relativeRoot.startswith( "\\man" ) and not relativeRoot.startswith("\\manifest"):
+        elif relativeRoot.startswith( "\\man" ):
             dirType = 8
         else:
             dirType = 1
