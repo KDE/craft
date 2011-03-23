@@ -741,7 +741,7 @@ def unmerge(rootdir, package, forced=False):
 def cleanManifestDir(imageDir):
     manifestDir = os.path.join( imageDir, "manifest" )
     if os.path.exists( manifestDir ):
-         rmtree(manifestDir)
+        rmtree(manifestDir)
 
 def createManifestDir(imagedir, category, package, version ):
     """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
