@@ -27,13 +27,11 @@ class Package(CMakePackageBase):
         else:
             # PyQt4 does not install itself in C:\Python27\Lib\site-packages
             # so how is python supposed to be able to import it?
-            # TODO: this is a wild hack...
-            pyqtDir = os.path.join(self.rootdir,'build','testing','pyqt-4.8.3',
-                    'image-mingw4-Debug-4.8.3','Lib','site-packages')
+            pyqtDir = os.path.join(self.rootdir,'lib','site-packages')
             if pyqtDir not in os.getenv("PYTHONPATH").split(';'):
                 newPath = ";".join([os.getenv("PYTHONPATH"), pyqtDir])
                 os.environ["PYTHONPATH"] = newPath
-                utils.debug('special PYTHONPATH for pykde, so we can import PyQt4: %s' % newPath)
+                utils.debug('added %s to PYTHONPATH' % pyqtDir, 2)
 
 if __name__ == '__main__':
     Package().execute()
