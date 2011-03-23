@@ -53,7 +53,7 @@ class Package(CMakePackageBase):
         cmd = "python configure.py"
         cmd += self.subinfo.options.configure.defines
         cmd += " --bindir %s/bin " % self.installDir() 
-        cmd += " --destdir %s/Lib/site-packages/PyQt4 " % self.installDir() 
+        cmd += " --destdir %s/Lib/site-packages " % self.installDir() 
         cmd += " --plugin-destdir %s/plugins " % self.installDir() 
         cmd += " --sipdir %s/sip/PyQt4 " % self.installDir() 
         
