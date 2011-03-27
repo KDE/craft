@@ -4,12 +4,15 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.5.9'] = 'http://ftp.stack.nl/pub/users/dimitri/doxygen-1.5.9.windows.bin.zip'
         self.targets['1.7.1'] = 'http://ftp.stack.nl/pub/users/dimitri/doxygen-1.7.1.windows.bin.zip'
+        self.targets['1.7.3'] = 'http://ftp.stack.nl/pub/users/dimitri/doxygen-1.7.3.windows.bin.zip'
         self.targetDigests['1.7.1'] = '29d2a80444300e5de383fb79bf096d2af05c55ce'
-        self.defaultTarget = '1.7.1'
+        self.targetDigests['1.7.3'] = '9dfe3c48f674900fba7537a47706feb6a1bed528'
+        self.defaultTarget = '1.7.3'
         # the zip file does not have a bin dir, so we have to create it
         # This attribute is in prelimary state
         self.targetInstallPath['1.5.9'] = "bin"
         self.targetInstallPath['1.7.1'] = "bin"
+        self.targetInstallPath['1.7.3'] = "bin"
 
 from Package.BinaryPackageBase import *
 
