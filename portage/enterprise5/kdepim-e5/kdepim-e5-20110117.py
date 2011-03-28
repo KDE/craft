@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
             for fname in os.listdir( brandingDir ):
                 if fname.endswith(".patch") or fname.endswith( ".diff" ):
                     brandingPatches.append( (
-                        os.path.join(brandingDir, fname), '1' ) )
+                        os.path.join(brandingDir, fname), 1 ) )
             print "Patches: %s " % brandingPatches
             for target in self.svnTargets.iterkeys():
                 self.patchToApply[target] = brandingPatches
