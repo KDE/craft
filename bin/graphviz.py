@@ -34,7 +34,7 @@ def getWindowsInstalledDot():
         try:
             key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\AT&T Research Labs\Graphviz', 0, KEY_READ)
         except WindowsError:
-            return False
+            return None
     return os.path.join(QueryValueEx(key, "InstallPath")[0], 'bin', 'dot.exe')
 
 
