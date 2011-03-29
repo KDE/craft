@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:pykde4'
         self.defaultTarget = 'gitHEAD'
+        self.patchToApply['gitHEAD'] = ('pykde-20110318.patch', 1)
 
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
