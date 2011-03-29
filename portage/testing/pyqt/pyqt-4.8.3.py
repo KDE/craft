@@ -55,7 +55,11 @@ class Package(CMakePackageBase):
         cmd += " --bindir %s/bin " % self.installDir() 
         cmd += " --destdir %s/Lib/site-packages " % self.installDir() 
         cmd += " --plugin-destdir %s/plugins " % self.installDir() 
-        cmd += " --sipdir %s/sip/PyQt4 " % self.installDir() 
+
+        sipcfg = sipconfig.Configuration()
+        sipdir = os.path.splitdrive(sipcfg.default_sip_dir)[1]
+        sipdir = os.path.join(sipdir,'PyQt4')
+        cmd += " --sipdir %s%s " % (self.installDir(), sipdir)
         
         utils.system(cmd) or utils.die("command: %s failed" % (cmd))
 
