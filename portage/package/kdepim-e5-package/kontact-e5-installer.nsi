@@ -33,6 +33,9 @@
   ; String Replace function
   !include "includes\StrReplace.nsh"
 
+  ; Windows Version detection
+  !include "includes\getWinVer.nsi"
+
 ;--------------------------------
 ;Version Information (for installer file properties)
 
@@ -203,8 +206,7 @@ Section ""
   FileWrite $1 'kdeinit4 --terminate'
   FileClose $1
 
-  ; Create kdeglobals
-  !include "includes\kdeglobals.nsi"
+call CreateGlobals
 
   ; Create kwinstartmenurc (disabled kde start menu) 
   FileOpen $1 "$INSTDIR\share\config\kwinstartmenurc" "w"
@@ -279,7 +281,6 @@ SectionEnd
 
 ;--------------------------------
 ;Install Functions
-
 Function ".onInit"
   ; Language select dialog - not needed!
   !insertmacro MUI_LANGDLL_DISPLAY
@@ -299,6 +300,27 @@ Function CheckExistingVersion
   leave:
 FunctionEnd
 
+Function CreateGlobals
+; Create kdeglobals depending on the system
+  push $R0
+  call getWindowsVersion
+  StrCmp $R0 '95' unsupportedVersion 0
+  StrCmp $R0 '98' unsupportedVersion 0
+  StrCmp $R0 'ME' unsupportedVersion 0
+unsupportedVersion:
+# TODO what to do here? abort? delete everything?
+  StrCmp $R0 'Vista' modernGlobals 0
+  StrCmp $R0 '7' modernGlobals 0
+  !include "includes\xpglobals.nsi"
+  Goto versionCheckDone
+
+modernGlobals:
+  !include "includes\modernglobals.nsi"
+
+versionCheckDone:
+  pop $0
+FunctionEnd
+
 # PrintNonAdminWarning
 
 # Check whether the current user is in the Administrator group or an
@@ -314,7 +336,6 @@ Function PrintNonAdminWarning
   StrCmp $1 "Admin" leave +1
   MessageBox MB_OK|MB_ICONEXCLAMATION "$(T_AdminNeeded)"
   Quit
-
  leave:
 FunctionEnd
 

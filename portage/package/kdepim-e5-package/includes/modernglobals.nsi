@@ -1,4 +1,4 @@
-; kdeglobals.nsi
+; modernglobals.nsi
 ;(c)2009-2011, Intevation GmbH
 ;Authors:
 ; Andre Heinecke aheinecke@intevation.de
@@ -19,7 +19,7 @@
 ;
 ;--------------------------------
 ; This script writes a kdeglobalsrc as the default configuration for the
-; Package
+; Package with layout options that fit the default vista and windows 7 colors
 
     FileOpen $1 "$INSTDIR\share\config\kdeglobals" "w"
     FileWrite $1 '[Locale] $\r$\n'
@@ -143,3 +143,4 @@
     FileWrite $1 'inactiveForeground=75,71,67 $\r$\n'
 
     FileClose $1
+
