@@ -1,0 +1,95 @@
+From e2b4c0b616d251e50345dffed20bb81a3ad4c0eb Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Wed, 30 Mar 2011 17:10:30 +0000
+Subject: [PATCH] Do not use SOPRANO_PREFIX on Windows Systems
+
+    When packaging for Windows you do not have the opportunity to
+    build in a changeroot. So the CMAKE_INSTALL_PREFIX will have nothing
+    to do with the actual installation directory and be something like:
+    u:\mykdebuild-132\kderoot
+    Instead now the directory above the application dir is added as search
+    path. Since the CMAKE_INSTALL_PATH invariably installs into
+    CMAKE_INSTALL_PATH/bin the old behavior stays the same for users
+    which relied on CMAKE_INSTALL_PATH but for others that did not
+    built soprano themself it will also work.
+---
+ soprano/inference/inferenceruleset.cpp |    4 ++++
+ soprano/sopranodirs.cpp                |   21 +++++++++++++++++----
+ 2 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/soprano/inference/inferenceruleset.cpp b/soprano/inference/inferenceruleset.cpp
+index 0c994ee..2a0862a 100644
+--- a/soprano/inference/inferenceruleset.cpp
++++ b/soprano/inference/inferenceruleset.cpp
+@@ -124,7 +124,11 @@ QStringList Soprano::Inference::RuleSet::ruleNames() const
+ 
+ Soprano::Inference::RuleSet Soprano::Inference::RuleSet::standardRuleSet( StandardRuleSet set )
+ {
++#ifdef Q_OS_WIN
++    QString path = QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
++#else
+     QString path( SOPRANO_PREFIX );
++#endif
+     path += "/share/soprano/rules/";
+ 
+     switch( set ) {
+diff --git a/soprano/sopranodirs.cpp b/soprano/sopranodirs.cpp
+index 30136b8..f7b4a4e 100644
+--- a/soprano/sopranodirs.cpp
++++ b/soprano/sopranodirs.cpp
+@@ -28,8 +28,12 @@
+ #include <QtCore/QCoreApplication>
+ #include <QtCore/QDebug>
+ 
+-
+-#if defined _WIN32 || defined _WIN64
++#ifdef Q_OS_WIN
++static inline QString getWinPrefix()
++{
++    // returns the parent directory of the application
++    return QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
++}
+ #define PATH_SEPARATOR ';'
+ #else
+ #define PATH_SEPARATOR ':'
+@@ -120,10 +124,11 @@ QStringList Soprano::envDirList( const char* var )
+ QStringList Soprano::libDirs()
+ {
+     QStringList paths = QCoreApplication::libraryPaths();
+-    paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
+ #ifdef Q_OS_WIN
+-    paths << QLatin1String( SOPRANO_PREFIX"/bin" );
++    paths << getWinPrefix() + QLatin1String( "/bin" );
++    paths << getWinPrefix() + QLatin1String( "/lib"SOPRANO_LIB_SUFFIX );
+ #else
++    paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
+     paths << QLatin1String( "/usr/lib"SOPRANO_LIB_SUFFIX );
+     paths << QLatin1String( "/usr/local/lib"SOPRANO_LIB_SUFFIX );
+     paths += Soprano::envDirList( "LD_LIBRARY_PATH" );
+@@ -135,7 +140,11 @@ QStringList Soprano::libDirs()
+ QStringList Soprano::dataDirs()
+ {
+     QStringList paths;
++#ifdef Q_OS_WIN
++    paths << getWinPrefix() + QLatin1String( "share" )
++#else
+     paths << QLatin1String( SOPRANO_PREFIX"/share" )
++#endif
+           << Soprano::envDirList( "SOPRANO_DIRS" )
+           << Soprano::envDirList( "XDG_DATA_DIRS" );
+     return paths;
+@@ -145,7 +154,11 @@ QStringList Soprano::dataDirs()
+ QStringList Soprano::exeDirs()
+ {
+     QStringList paths;
++#ifdef Q_OS_WIN
++    paths << getWinPrefix() + QLatin1String( "/bin" )
++#else
+     paths << QLatin1String( SOPRANO_PREFIX"/bin" )
++#endif
+           << envDirList( "PATH" );
+     return paths;
+ }
+-- 
+1.7.0.4
+
