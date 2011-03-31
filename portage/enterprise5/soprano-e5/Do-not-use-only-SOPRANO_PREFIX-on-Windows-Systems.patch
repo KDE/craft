@@ -38,7 +38,7 @@ index 0c994ee..42f3487 100644
 +#ifdef Q_OS_WIN
 +    // Additionally try to look up the rules based on the runtime Path if
 +    // they can not be found at the install prefix
-+    if !parser.rules().count() {
++    if (!parser.rules().count()) {
 +        path = QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
 +        path += "/share/soprano/rules/";
 +
@@ -88,7 +88,7 @@ index 30136b8..d16ccd0 100644
      QStringList paths;
      paths << QLatin1String( SOPRANO_PREFIX"/share" )
 +#ifdef Q_OS_WIN
-+    paths << getWinPrefix() + QLatin1String( "share" )
++          << getWinPrefix() + QLatin1String( "share" )
 +#endif
            << Soprano::envDirList( "SOPRANO_DIRS" )
            << Soprano::envDirList( "XDG_DATA_DIRS" );
@@ -98,7 +98,7 @@ index 30136b8..d16ccd0 100644
      QStringList paths;
      paths << QLatin1String( SOPRANO_PREFIX"/bin" )
 +#ifdef Q_OS_WIN
-+    paths << getWinPrefix() + QLatin1String( "/bin" )
++          << getWinPrefix() + QLatin1String( "/bin" )
 +#endif
            << envDirList( "PATH" );
      return paths;
