@@ -1,6 +1,6 @@
-From e2b4c0b616d251e50345dffed20bb81a3ad4c0eb Mon Sep 17 00:00:00 2001
+From f8090cce4dd398a1ede036b20141edb49064bf8e Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <aheinecke@intevation.de>
-Date: Wed, 30 Mar 2011 17:10:30 +0000
+Date: Thu, 31 Mar 2011 08:58:41 +0000
 Subject: [PATCH] Do not use SOPRANO_PREFIX on Windows Systems
 
     When packaging for Windows you do not have the opportunity to
@@ -13,15 +13,27 @@ Subject: [PATCH] Do not use SOPRANO_PREFIX on Windows Systems
     which relied on CMAKE_INSTALL_PATH but for others that did not
     built soprano themself it will also work.
 ---
- soprano/inference/inferenceruleset.cpp |    4 ++++
+ soprano/inference/inferenceruleset.cpp |    9 ++++++++-
  soprano/sopranodirs.cpp                |   21 +++++++++++++++++----
- 2 files changed, 21 insertions(+), 4 deletions(-)
+ 2 files changed, 25 insertions(+), 5 deletions(-)
 
 diff --git a/soprano/inference/inferenceruleset.cpp b/soprano/inference/inferenceruleset.cpp
-index 0c994ee..2a0862a 100644
+index 0c994ee..6881423 100644
 --- a/soprano/inference/inferenceruleset.cpp
 +++ b/soprano/inference/inferenceruleset.cpp
-@@ -124,7 +124,11 @@ QStringList Soprano::Inference::RuleSet::ruleNames() const
+@@ -27,7 +27,10 @@
+ 
+ #include <QtCore/QHash>
+ #include <QtCore/QList>
+-
++#ifdef Q_OS_WIN
++#include <QtCore/QCoreApplication>
++#include <QtCore/QDir>
++#endif
+ 
+ class Soprano::Inference::RuleSet::Private : public QSharedData
+ {
+@@ -124,7 +127,11 @@ QStringList Soprano::Inference::RuleSet::ruleNames() const
  
  Soprano::Inference::RuleSet Soprano::Inference::RuleSet::standardRuleSet( StandardRuleSet set )
  {
