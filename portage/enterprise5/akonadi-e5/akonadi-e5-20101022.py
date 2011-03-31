@@ -76,8 +76,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = (
                 " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
-                " -DDATABASE_BACKEND=SQLITE "
-                " -DAKONADI_USE_STRIGI_SEARCH=TRUE ")
+                " -DDATABASE_BACKEND=SQLITE " )
 
 if __name__ == '__main__':
     Package().execute()
