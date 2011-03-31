@@ -80,7 +80,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/soprano'
         self.defaultTarget = 'gitHEAD'
 
-        self.patchToApply['gitHEAD'] = ( 'Do-not-use-SOPRANO_PREFIX-on-Windows-Systems.patch', 1 )
+        self.patchToApply['gitHEAD'] = ( 'Do-not-use-only-SOPRANO_PREFIX-on-Windows-Systems.patch', 1 )
 
 from Package.CMakePackageBase import *
 

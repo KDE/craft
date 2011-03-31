@@ -1,24 +1,22 @@
-From f8090cce4dd398a1ede036b20141edb49064bf8e Mon Sep 17 00:00:00 2001
+From d58acb9ad50f3c3586622cbc569878ee2d08300e Mon Sep 17 00:00:00 2001
 From: Andre Heinecke <aheinecke@intevation.de>
-Date: Thu, 31 Mar 2011 08:58:41 +0000
-Subject: [PATCH] Do not use SOPRANO_PREFIX on Windows Systems
+Date: Thu, 31 Mar 2011 14:20:22 +0000
+Subject: [PATCH] Do not use only SOPRANO_PREFIX on Windows Systems
 
     When packaging for Windows you do not have the opportunity to
     build in a changeroot. So the CMAKE_INSTALL_PREFIX will have nothing
     to do with the actual installation directory and be something like:
     u:\mykdebuild-132\kderoot
-    Instead now the directory above the application dir is added as search
-    path. Since the CMAKE_INSTALL_PATH invariably installs into
-    CMAKE_INSTALL_PATH/bin the old behavior stays the same for users
-    which relied on CMAKE_INSTALL_PATH but for others that did not
-    built soprano themself it will also work.
+    Since the soprano prefix is also used during buildtime the
+    SOPRANO_PREFIX is still part of the searchpaths so the old
+    behavior will not be changed.
 ---
- soprano/inference/inferenceruleset.cpp |    9 ++++++++-
- soprano/sopranodirs.cpp                |   21 +++++++++++++++++----
- 2 files changed, 25 insertions(+), 5 deletions(-)
+ soprano/inference/inferenceruleset.cpp |   22 +++++++++++++++++++++-
+ soprano/sopranodirs.cpp                |   17 ++++++++++++++---
+ 2 files changed, 35 insertions(+), 4 deletions(-)
 
 diff --git a/soprano/inference/inferenceruleset.cpp b/soprano/inference/inferenceruleset.cpp
-index 0c994ee..6881423 100644
+index 0c994ee..42f3487 100644
 --- a/soprano/inference/inferenceruleset.cpp
 +++ b/soprano/inference/inferenceruleset.cpp
 @@ -27,7 +27,10 @@
@@ -33,20 +31,31 @@ index 0c994ee..6881423 100644
  
  class Soprano::Inference::RuleSet::Private : public QSharedData
  {
-@@ -124,7 +127,11 @@ QStringList Soprano::Inference::RuleSet::ruleNames() const
+@@ -138,5 +141,22 @@ Soprano::Inference::RuleSet Soprano::Inference::RuleSet::standardRuleSet( Standa
  
- Soprano::Inference::RuleSet Soprano::Inference::RuleSet::standardRuleSet( StandardRuleSet set )
- {
+     RuleParser parser;
+     parser.parseFile( path );
 +#ifdef Q_OS_WIN
-+    QString path = QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
-+#else
-     QString path( SOPRANO_PREFIX );
++    // Additionally try to look up the rules based on the runtime Path if
++    // they can not be found at the install prefix
++    if !parser.rules().count() {
++        path = QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
++        path += "/share/soprano/rules/";
++
++        switch( set ) {
++        case RDFS:
++            path += "rdfs.rules";
++            break;
++        case NRL:
++            path += "nrl.rules";
++            break;
++        }
++    }
 +#endif
-     path += "/share/soprano/rules/";
- 
-     switch( set ) {
+     return parser.rules();
+ }
 diff --git a/soprano/sopranodirs.cpp b/soprano/sopranodirs.cpp
-index 30136b8..f7b4a4e 100644
+index 30136b8..d16ccd0 100644
 --- a/soprano/sopranodirs.cpp
 +++ b/soprano/sopranodirs.cpp
 @@ -28,8 +28,12 @@
@@ -64,40 +73,32 @@ index 30136b8..f7b4a4e 100644
  #define PATH_SEPARATOR ';'
  #else
  #define PATH_SEPARATOR ':'
-@@ -120,10 +124,11 @@ QStringList Soprano::envDirList( const char* var )
- QStringList Soprano::libDirs()
- {
+@@ -122,7 +126,8 @@ QStringList Soprano::libDirs()
      QStringList paths = QCoreApplication::libraryPaths();
--    paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
+     paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
  #ifdef Q_OS_WIN
 -    paths << QLatin1String( SOPRANO_PREFIX"/bin" );
 +    paths << getWinPrefix() + QLatin1String( "/bin" );
 +    paths << getWinPrefix() + QLatin1String( "/lib"SOPRANO_LIB_SUFFIX );
  #else
-+    paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
      paths << QLatin1String( "/usr/lib"SOPRANO_LIB_SUFFIX );
      paths << QLatin1String( "/usr/local/lib"SOPRANO_LIB_SUFFIX );
-     paths += Soprano::envDirList( "LD_LIBRARY_PATH" );
-@@ -135,7 +140,11 @@ QStringList Soprano::libDirs()
- QStringList Soprano::dataDirs()
+@@ -136,6 +141,9 @@ QStringList Soprano::dataDirs()
  {
      QStringList paths;
+     paths << QLatin1String( SOPRANO_PREFIX"/share" )
 +#ifdef Q_OS_WIN
 +    paths << getWinPrefix() + QLatin1String( "share" )
-+#else
-     paths << QLatin1String( SOPRANO_PREFIX"/share" )
 +#endif
            << Soprano::envDirList( "SOPRANO_DIRS" )
            << Soprano::envDirList( "XDG_DATA_DIRS" );
      return paths;
-@@ -145,7 +154,11 @@ QStringList Soprano::dataDirs()
- QStringList Soprano::exeDirs()
+@@ -146,6 +154,9 @@ QStringList Soprano::exeDirs()
  {
      QStringList paths;
+     paths << QLatin1String( SOPRANO_PREFIX"/bin" )
 +#ifdef Q_OS_WIN
 +    paths << getWinPrefix() + QLatin1String( "/bin" )
-+#else
-     paths << QLatin1String( SOPRANO_PREFIX"/bin" )
 +#endif
            << envDirList( "PATH" );
      return paths;
