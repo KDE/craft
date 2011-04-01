@@ -7,14 +7,19 @@ from Source.VersionSystemSourceBase import *
 
 class HgSource ( VersionSystemSourceBase ):
     """mercurial support"""
-    def __init__( self ):
+    def __init__( self, subinfo=None ):
+        utils.trace( 'HgSource __init__', 2 )
+        if subinfo:
+            self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
 
-        self.enableHg = True
-        try:
-            self.enableHg = self.system("hg help > NUL")
-        except OSError:
-            self.enableHg = False
+        self.hgExecutable = os.path.join( os.environ.get( 'ProgramFiles' ), 'mercurial', 'hg.exe' )
+        self.enableHg = os.path.exists( self.hgExecutable )
+        # add other locations
+        if not self.enableHg:
+            print "could not find hg.exe, you should run emerge mercurial"
+        # guard spaces in path
+        self.hgExecutable = "\"%s\"" % self.hgExecutable
 
         # initialize the repository
         self.repo = None
@@ -30,28 +35,27 @@ class HgSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
 #        repoString = utils.replaceVCSUrl( repopath )
         repopath = repopath.replace("[hg]", "")
-        repoUrl, _, _ = utils.splitVCSUrl( repopath )
-
+        repoUrl, repoBranch, _ = utils.splitVCSUrl( repopath )
         ret = True
 
         # only run if wanted (e.g. no --offline is given on the commandline) or no hg support is given by the python installation
         if ( not self.noFetch and self.enableHg ):
             # question whether mercurial stuff uses these proxies
             self.setProxy()
+            checkoutDir = self.checkoutDir()
 
-            if os.path.exists( self.checkoutDir() ):
-                # if directory already exists, simply do an update but obey to offline
-                os.chdir( self.checkoutDir() )
-                self.system( "hg update" ) # TODO: check return code for success
-
-            else:
-                # it doesn't exist so clone the repo
-                svnsrcdir = self.checkoutDir().replace( self.package, "" )
-                if not os.path.exists( svnsrcdir ):
-                    os.makedirs( svnsrcdir )
-
-                os.chdir( svnsrcdir )
-                ret = self.system( "hg clone %s %s" % ( repoUrl, self.package ) )
+            # check corrupted checkout dir
+            if os.path.exists( checkoutDir ) and not os.path.exists( checkoutDir + "\.hg" ):
+                os.rmdir( checkoutDir )
+            
+            if not os.path.exists( checkoutDir ):
+                os.makedirs( checkoutDir )
+                os.chdir( checkoutDir )
+                ret = self.system( "%s clone %s ." % ( self.hgExecutable, repoUrl ) ) # TODO: check return code for success
+            
+            if os.path.exists( checkoutDir ):
+                os.chdir( checkoutDir )
+                ret = self.system( "%s update %s" % ( self.hgExecutable, repoBranch ) ) # TODO: check return code for success
         else:
             utils.debug( "skipping hg fetch (--offline)" )
         return ret
@@ -62,7 +66,7 @@ class HgSource ( VersionSystemSourceBase ):
         if fileName and self.enableHg:
             patchfile = os.path.join ( self.packageDir(), fileName )
             os.chdir( self.sourceDir() )
-            return self.system( "hg import -p %s %s" % (patchdepth, patchfile) )
+            return self.system( "%s import -p %s %s" % (self.hgExecutable, patchdepth, patchfile) )
         return True
 
     def createPatch( self ):
@@ -71,8 +75,8 @@ class HgSource ( VersionSystemSourceBase ):
         ret = False
         if self.enableHg:
             os.chdir( self.sourceDir() )
-            ret = self.system( self.sourceDir(), "hg diff > %s" % os.path.join( self.packageDir(), "%s-%s.patch" % \
-                    ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
+            patchFile = os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) )
+            ret = self.system( self.sourceDir(), "%s diff > %s" % ( self.hgExecutable,  patchFile ) )
         return ret
 
     def sourceVersion( self ):
@@ -85,7 +89,7 @@ class HgSource ( VersionSystemSourceBase ):
             with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" ) as tempfile:
 
                 # run the command
-                utils.system( "hg tip", stdout=tempfile )
+                utils.system( "%s tip" % self.hgExecutable, stdout=tempfile )
                 # TODO: check return value for success
                 tempfile.seek( os.SEEK_SET )
 
