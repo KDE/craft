@@ -16,7 +16,7 @@ class PythonPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase)
         PackagerBase.__init__( self )
         
     def install( self ): 
-        ret = self.system("cd %s && python setup.py install" % self.sourceDir() );
+        ret = self.system("cd %s && python setup.py install" % self.sourceDir() )
         print ret
         return True
 
