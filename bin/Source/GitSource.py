@@ -69,7 +69,7 @@ class GitSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace( "[git]", "" )
         repoString = utils.replaceVCSUrl( repopath )
-        [ repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+        [ repoUrl, repoBranch, repoTag ] = utils.splitVCSUrl( repoString )
         if not repoBranch and not repoTag:
             repoBranch = "master"
 
@@ -142,7 +142,7 @@ class GitSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
         repoString = utils.replaceVCSUrl( repopath )
-        [repoUrl, repoBranch, repoTag ] = utils.splitGitUrl( repoString )
+        [repoUrl, repoBranch, repoTag ] = utils.splitVCSUrl( repoString )
 
         ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
@@ -198,7 +198,7 @@ class GitSource ( VersionSystemSourceBase ):
                 # in case you need to move from a read only Url to a writeable one, here it gets replaced
                 repopath = repopath.replace("[git]", "")
                 repoString = utils.replaceVCSUrl( repopath )
-                repoBranch = utils.splitGitUrl( repoString )[1] or "master"
+                repoBranch = utils.splitVCSUrl( repoString )[1] or "master"
                 sourceDir = os.path.join(self.checkoutDir(), repoBranch)
             else:
                 sourceDir = self.sourceDir()
@@ -246,7 +246,7 @@ class GitSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
         repoString = utils.replaceVCSUrl( repopath )
-        _, repoBranch, _ = utils.splitGitUrl( repoString )
+        _, repoBranch, _ = utils.splitVCSUrl( repoString )
         if repoBranch == "":
             repoBranch = "master"
         if utils.envAsBool("EMERGE_GIT_MULTIBRANCH"):

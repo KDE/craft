@@ -230,9 +230,9 @@ class baseclass:
                 # first try to replace with a repo url from etc/portage/emergehosts.conf
                 # TODO: This fails: repoString = utils.replaceGitUrl( repoString )
 
-                repoUrl = utils.splitGitUrl( repoString )[0]
+                repoUrl = utils.splitVCSUrl( repoString )[0]
                 ret = self.msys.msysExecute( svndir, "git", "clone %s %s" % ( repoUrl, self.package ) )
-            dummyUrl2, repoBranch, repoTag = utils.splitGitUrl( repoString )
+            dummyUrl2, repoBranch, repoTag = utils.splitVCSUrl( repoString )
             if ret and repoBranch:
                 ret = self.msys.msysExecute( self.svndir, "git", "checkout --track -b %s origin/%s" % ( repoBranch, repoBranch ) )
             if ret and repoTag:

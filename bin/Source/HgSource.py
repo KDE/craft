@@ -30,7 +30,7 @@ class HgSource ( VersionSystemSourceBase ):
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
 #        repoString = utils.replaceVCSUrl( repopath )
         repopath = repopath.replace("[hg]", "")
-        repoUrl, _, _ = utils.splitGitUrl( repopath )
+        repoUrl, _, _ = utils.splitVCSUrl( repopath )
 
         ret = True
 

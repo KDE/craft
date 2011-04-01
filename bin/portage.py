@@ -343,7 +343,7 @@ class Portage:
                     if not url.startswith( "tags/" ) and not "/tags/" in url:
                         retList.append( key )
                 elif sourceType == "git":
-                    _, branch, tag = utils.splitGitUrl( url )
+                    _, branch, tag = utils.splitVCSUrl( url )
                     if tag == "" and not branch.endswith("-patched"):
                         retList.append( key )
                 elif not sourceType == "":
