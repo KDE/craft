@@ -204,7 +204,7 @@ class CMakeBuildSystem(BuildSystemBase):
         outFile = os.path.join(outDir, self.package+'-cmake.dot')
         a = CMakeDependencies()
         if not a.parse(srcDir):
-            utils.debug("could not find source files", 0)
+            utils.debug("could not find source files for generating cmake dependencies", 0)
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         if not a.toDot(title, srcDir, outFile):
