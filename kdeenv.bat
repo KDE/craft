@@ -168,6 +168,9 @@ set PATH=%KDEROOT%\bin;!PATH!
 rem for python
 if NOT "!PYTHONPATH!" == "" ( 
    set PATH=!PYTHONPATH!;!PATH!
+   if exist "!PYTHONPATH!\Scripts" ( 
+        set PATH=!PYTHONPATH!\Scripts;!PATH!
+   )
 )
 
 if "%EMERGE_USE_CCACHE%" == "True" (
