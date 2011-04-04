@@ -31,7 +31,7 @@ class Package( CMakePackageBase ):
         # use for it in the enterprise5 package and it otherwise
         # indexes and monitors the whole Users/ directory.
         confdir = os.path.join(self.installDir(), "share", "config")
-        utils.makedirs(confdir)
+        utils.createDir(confdir)
         with open(os.path.join(confdir, "nepomukserverrc"),"w") as f:
             f.write('[Service-nepomukstrigiservice]\n')
             f.write('autostart=false\n')
