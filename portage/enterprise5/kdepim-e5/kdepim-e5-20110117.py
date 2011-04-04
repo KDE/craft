@@ -76,7 +76,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdepimlibs-e5'] = 'default'
         self.hardDependencies['enterprise5/kderuntime-e5'] = 'default'
-        self.hardDependencies['contributed/gpg4win-dev'] = 'default'
+#        self.hardDependencies['contributed/gpg4win-dev'] = 'default'
         self.hardDependencies['enterprise5/grantlee-e5'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
 
