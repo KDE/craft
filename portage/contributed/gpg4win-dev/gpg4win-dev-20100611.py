@@ -20,11 +20,11 @@ import compiler
 class subinfo(info.infoclass):
 
     def setTargets( self ):
-        version="20110404"
+        version="20110404-1"
         self.targets[version] = \
                 "http://files.kolab.org/local/gpg4win/gpg4win-dev-"+version+".zip"
         self.defaultTarget = version
-        self.targetDigests[version] = '3e4f7edc69004195e29cff5ae148eab5c4f0e155'
+        self.targetDigests[version] = '1ab7ba150b456ebc7c8a83b1ca3d8d570b2347b5'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
