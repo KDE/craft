@@ -30,7 +30,7 @@ class Package( CMakePackageBase ):
         # Disable nepomukstrigifeeder autostart since there is no
         # use for it in the enterprise5 package and it otherwise
         # indexes and monitors the whole Users/ directory.
-        confdir = os.path.join(self.installDir(), "share", "kde4", "config")
+        confdir = os.path.join(self.installDir(), "share", "config")
         utils.makedirs(confdir)
         with open(os.path.join(confdir, "nepomukserverrc"),"w") as f:
             f.write('[Service-nepomukstrigiservice]\n')
