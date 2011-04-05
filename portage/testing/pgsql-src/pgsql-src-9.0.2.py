@@ -6,12 +6,14 @@ class subinfo( info.infoclass ):
         for ver in [ '9.0.2' ]:
             self.targets[ ver ] = 'http://btr0x2.rz.uni-bayreuth.de/packages/databases/PostgreSQL/source/v' + ver + '/postgresql-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'postgresql-' + ver
+            self.patchToApply[ ver ] = ('postgresql-' + ver + '-20110405.diff', '1')
         self.shortDescription = "The Postgresql database server and libraries"
         self.defaultTarget = '9.0.2'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
+        self.buildDependencies['gnuwin32/bison'] = 'default'
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.dependencies['win32libs-bin/libxml2'] = 'default'
@@ -31,9 +33,23 @@ class PackageMSVC( CMakePackageBase ):
     def make( self ):
         return True
 
-    def compile( self ):       
+    def compile( self ):
         self.enterSourceDir()
         os.chdir( r"src\tools\msvc" )
+        
+        # write the local config file which includes all the paths to the libraries
+        f = open( "config.pl", "wb+" )
+        f.write( """# configuration written by emerge\n"""
+                 """use strict;\n"""
+                 """use warnings;\n\n"""
+                 """our $config;\n"""
+                 """$config->{"openssl"}=\"""" + self.mergeDestinationDir().replace("\\", "\\\\") + """\";\n"""
+#                 """$config->{"xml"}=\"""" + self.mergeDestinationDir().replace("\\", "\\\\") + """\";\n"""
+#                 """$config->{"xslt"}=\"""" + self.mergeDestinationDir().replace("\\", "\\\\") + """\";\n"""
+                 """$config->{"iconv"}=\"""" + self.mergeDestinationDir().replace("\\", "\\\\") + """\";\n"""
+                 """$config->{"zlib"}=\"""" + self.mergeDestinationDir().replace("\\", "\\\\") + """\";\n"""
+                 """\n1;\n""" )
+        f.close()
         return self.system( "build.bat" )
 
     def install( self ):

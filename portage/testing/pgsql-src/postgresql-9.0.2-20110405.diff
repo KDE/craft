@@ -1,0 +1,33 @@
+diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Project.pm postgresql-9.0.2/src/tools/msvc/Project.pm
+--- postgresql-9.0.2.orig/src/tools/msvc/Project.pm	2010-12-14 03:55:50.000000000 +0100
++++ postgresql-9.0.2/src/tools/msvc/Project.pm	2011-04-05 22:40:48.674743000 +0200
+@@ -484,7 +484,8 @@
+ {
+     my ($self, $f, $cfgname, $p) = @_;
+     my $cfgtype = ($self->{type} eq "exe")?1:($self->{type} eq "dll"?2:4);
+-    my $libcfg = (uc $cfgname eq "RELEASE")?"MD":"MDd";
++#    my $libcfg = (uc $cfgname eq "RELEASE")?"MD":"MDd";
++    my $libcfg = '';
+     my $libs = '';
+     foreach my $lib (@{$self->{libraries}})
+     {
+diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Solution.pm postgresql-9.0.2/src/tools/msvc/Solution.pm
+--- postgresql-9.0.2.orig/src/tools/msvc/Solution.pm	2010-12-14 03:55:50.000000000 +0100
++++ postgresql-9.0.2/src/tools/msvc/Solution.pm	2011-04-05 22:41:18.011420900 +0200
+@@ -408,13 +408,13 @@
+     if ($self->{options}->{zlib})
+     {
+         $proj->AddIncludeDir($self->{options}->{zlib} . '\include');
+-        $proj->AddLibrary($self->{options}->{zlib} . '\lib\zdll.lib');
++        $proj->AddLibrary($self->{options}->{zlib} . '\lib\zlib.lib');
+     }
+     if ($self->{options}->{openssl})
+     {
+         $proj->AddIncludeDir($self->{options}->{openssl} . '\include');
+-        $proj->AddLibrary($self->{options}->{openssl} . '\lib\VC\ssleay32.lib', 1);
+-        $proj->AddLibrary($self->{options}->{openssl} . '\lib\VC\libeay32.lib', 1);
++        $proj->AddLibrary($self->{options}->{openssl} . '\lib\ssleay32.lib', 1);
++        $proj->AddLibrary($self->{options}->{openssl} . '\lib\libeay32.lib', 1);
+     }
+     if ($self->{options}->{nls})
+     {
