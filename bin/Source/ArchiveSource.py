@@ -151,6 +151,11 @@ class ArchiveSource(SourceBase):
 
     def createPatch( self ):
         """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
+        
+        diffExe = os.path.join( self.rootdir, "dev-utils", "bin", "diff.exe" )
+        if not os.path.exists( diffExe ):
+            utils.die("could not find diff tool, please run 'emerge diffutils'")
+        
         # get the file paths of the tarballs
         filenames = self.localFileNames()
 
@@ -213,11 +218,13 @@ class ArchiveSource(SourceBase):
         # make one diff per file, even though we aren't able to apply multiple patches per package atm
         os.chdir( destdir )
         for directory in packagelist:
-            cmd = "diff -Nru %s.orig %s > %s || echo 0" % ( directory, directory, os.path.join( self.buildRoot(), \
-            "%s-%s.diff" % ( directory, str( datetime.date.today() ).replace('-', '') ) ) )
+            outFile = os.path.join( self.buildRoot(), "%s-%s.diff" % ( directory, \
+                str( datetime.date.today() ).replace('-', '') ) )
+            cmd = "diff -Nru %s.orig %s > %s || echo 0" % ( directory, directory, outFile )
             if not self.system( cmd ):
                 return False
 
+        utils.debug( "patch created at %s" % outFile )
         # remove all directories that are not needed any more after making the patch
         # disabled for now
         #for directory in packagelist:
