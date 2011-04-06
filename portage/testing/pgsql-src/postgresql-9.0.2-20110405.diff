@@ -1,3 +1,47 @@
+diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Install.pm postgresql-9.0.2/src/tools/msvc/Install.pm
+--- postgresql-9.0.2.orig/src/tools/msvc/Install.pm	2010-12-14 03:55:50.000000000 +0100
++++ postgresql-9.0.2/src/tools/msvc/Install.pm	2011-04-06 16:44:26.338768200 +0200
+@@ -76,7 +76,7 @@
+         'Import libraries',
+         $target .'/lib/',
+         "$conf\\", "postgres\\postgres.lib","libpq\\libpq.lib", "libecpg\\libecpg.lib",
+-        "libpgport\\libpgport.lib"
++        "libpgport\\libpgport.lib", "libpqstatic\\libpqstatic.lib"
+     );
+     CopySetOfFiles(
+         'timezone names',
+diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Mkvcbuild.pm postgresql-9.0.2/src/tools/msvc/Mkvcbuild.pm
+--- postgresql-9.0.2.orig/src/tools/msvc/Mkvcbuild.pm	2010-12-14 03:55:50.000000000 +0100
++++ postgresql-9.0.2/src/tools/msvc/Mkvcbuild.pm	2011-04-06 16:21:38.444529100 +0200
+@@ -23,6 +23,7 @@
+ my $libpgport;
+ my $postgres;
+ my $libpq;
++my $libpqstatic;
+ 
+ my $contrib_defines = {'refint' => 'REFINT_VERBOSE'};
+ my @contrib_uselibpq = ('dblink', 'oid2name', 'pgbench', 'pg_upgrade', 
+@@ -216,6 +217,20 @@
+     $libpq->ReplaceFile('src\interfaces\libpq\libpqrc.c','src\interfaces\libpq\libpq.rc');
+     $libpq->AddReference($libpgport);
+ 
++    our @libpqstaticfiles = qw(
++        crypt.c dirent.c dirmod.c getaddrinfo.c inet_aton.c noblock.c open.c
++        pgsleep.c pgstrcasecmp.c snprintf.c strlcpy.c thread.c win32error.c
++    );
++    our @backendfiles = qw( ip.c md5.c );
++    our @mbfiles = qw( encnames.c wchar.c );
++    $libpqstatic = $solution->AddProject('libpqstatic', 'lib', 'src\interfaces\libpq');
++    $libpqstatic->AddDefine('FRONTEND');
++    $libpqstatic->AddDefine('UNSAFE_STAT_OK');
++    $libpqstatic->AddIncludeDir('src\port');
++    $libpqstatic->AddFiles('src\port', @libpqstaticfiles);
++    $libpqstatic->AddFiles('src\backend\libpq', @backendfiles);
++    $libpqstatic->AddFiles('src\backend\utils\mb', @mbfiles);
++
+     my $libpqwalreceiver = $solution->AddProject('libpqwalreceiver', 'dll', '',
+         'src\backend\replication\libpqwalreceiver');
+     $libpqwalreceiver->AddIncludeDir('src\interfaces\libpq');
 diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Project.pm postgresql-9.0.2/src/tools/msvc/Project.pm
 --- postgresql-9.0.2.orig/src/tools/msvc/Project.pm	2010-12-14 03:55:50.000000000 +0100
 +++ postgresql-9.0.2/src/tools/msvc/Project.pm	2011-04-05 22:40:48.674743000 +0200
