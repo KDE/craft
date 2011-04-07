@@ -21,7 +21,7 @@ diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Mkvcbuild.pm postgresql-9.0.2/src
  
  my $contrib_defines = {'refint' => 'REFINT_VERBOSE'};
  my @contrib_uselibpq = ('dblink', 'oid2name', 'pgbench', 'pg_upgrade', 
-@@ -216,6 +217,20 @@
+@@ -216,6 +217,21 @@
      $libpq->ReplaceFile('src\interfaces\libpq\libpqrc.c','src\interfaces\libpq\libpq.rc');
      $libpq->AddReference($libpgport);
  
@@ -38,6 +38,7 @@ diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Mkvcbuild.pm postgresql-9.0.2/src
 +    $libpqstatic->AddFiles('src\port', @libpqstaticfiles);
 +    $libpqstatic->AddFiles('src\backend\libpq', @backendfiles);
 +    $libpqstatic->AddFiles('src\backend\utils\mb', @mbfiles);
++    $libpqstatic->ReplaceFile('src\interfaces\libpq\libpqrc.c','src\interfaces\libpq\libpq.rc');
 +
      my $libpqwalreceiver = $solution->AddProject('libpqwalreceiver', 'dll', '',
          'src\backend\replication\libpqwalreceiver');
