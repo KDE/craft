@@ -88,9 +88,6 @@ class MainInfo(info.infoclass):
         self.languages += 'pa pl pt pt_BR ro ru rw se sk sl sr sv '
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
-        #for testing
-        self.languages  = 'de'
-
     def setDependencies( self ):
         self.hardDependencies['dev-util/cmake'] = 'default'
         self.hardDependencies['dev-util/gettext-tools'] = 'default'
@@ -111,13 +108,13 @@ class MainPackage(PackageBase):
         self.startLanguage = None
 
     def execute(self):
-        (command, option) = self.getAction()
+        command, option = self.getAction()
         if self.isTargetBuild(): return True
-        ## \todo does not work yet see note in PackageBase::getAction()
-        if option <> None:
-            languages = option.split()
-        else:
-            languages = self.subinfo.languages.split()
+
+        ## \todo option does not work yet see note in PackageBase::getAction()
+        # if no languages are defined, generate them all
+        languages = (option or os.getenv('EMERGE_LANG') or self.subinfo.languages).split()
+        utils.debug('building languages:%s' % languages, 2)
 
         # if self.startLanguage is defined, skip languages before that one
         if self.startLanguage:
