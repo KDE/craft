@@ -46,9 +46,8 @@ class ActionBase:
                 names.append( '-%s' % s )
             else:
                 names.append( '--%s' % s )
-        # @todo do not know how to add more then one name
-        # using names as first parameter fails with ValueError: dest supplied twice for positional argument
-        parser.add_argument( names[0], default=False, action='store_true', help=m18n(self.helpString), dest=self.destString)
+
+        parser.add_argument( *names, default=False, action='store_true', help=m18n(self.helpString), dest=self.destString)
         return True
 
 class ActionFetch( ActionBase ):
