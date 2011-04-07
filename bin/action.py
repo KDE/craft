@@ -11,23 +11,35 @@
 #
 import argparse
 
-actionClasses = []
-
-
 def m18n(s):
     """prelimary function for internationalization support"""
     return s
 
+classNumber = 0        # to be used by AutoNumberingType
+
+class AutoNumberingType(type):
+    """all classes with this as metaclass get an attribute 'number'
+       which increases by order of class definition (order in this file)"""
+    def __init__(cls, name, bases, attrs):
+        global classNumber
+        classNumber = classNumber + 1
+        setattr(cls,'number', classNumber)
+ 
 def __init__():
     if not ActionBase.defined:
+        actionClasses = []
         for v in globals().values():
-            if type(v).__name__ == 'classobj' and v.__name__ != 'ActionBase':
-                action = v()
-                actionClasses.append( action )
+            if hasattr(v, "__mro__"):
+                if len(v.__mro__) > 2 and  v.__mro__[-2] == ActionBase:
+                    action = v()
+                    actionClasses.append(action)
+    ActionBase.defined = sorted(actionClasses, key=lambda x: x.number)
+    
 
-class ActionBase:
+class ActionBase(object):
     """this class defines available actions"""
-    defined = None
+    __metaclass__ = AutoNumberingType
+    defined = []
 
     def argName(self):
         return self.__class__.__name__[6:].lower().replace('_','-')
@@ -37,7 +49,6 @@ class ActionBase:
 
     def insertIntoParser( self, parser ):
         helpString = self.__class__.__doc__
-        print self.argName(), self.destString(), helpString
         parser.add_argument( '--'+self.argName(), default=False, action='store_true', help=m18n(helpString), dest=self.destString())
 
 class ActionFetch( ActionBase ):
@@ -131,7 +142,7 @@ __init__()
 # for debugging
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description='package build tool')
-    for a in actionClasses:
+    for a in ActionBase.defined:
         a.insertIntoParser( p )
     args = p.parse_args()
     print args
