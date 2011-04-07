@@ -113,7 +113,6 @@ class MainPackage(PackageBase):
     def execute(self):
         (command, option) = self.getAction()
         if self.isTargetBuild(): return True
-        errors = dict()
         ## \todo does not work yet see note in PackageBase::getAction()
         if option <> None:
             languages = option.split()
@@ -129,10 +128,8 @@ class MainPackage(PackageBase):
                     found = True
 
             self.kde4_l10n.language = language
-            if not self.kde4_l10n.runAction(command):
-                errors["%s-%s" % (language, command)] = 1
+            self.kde4_l10n.runAction(command) # either returns True or calls utils.die()
 
-        print errors
         return True
 
 if __name__ == '__main__':
