@@ -1,7 +1,9 @@
+#!/usr/bin/env python2.7
 #
 # prelimary implementation for standardized command line parameter parsing and action handling
 #
 # (c) copyright 2011 Ralf Habacker <ralf.habacker@freenet.de>
+# (c) copyright 2011 Wolfgang Rohdewald <wolfgang@rohdewald.de>
 #
 # @TODO review help texts 
 # @TODO fix parameter ordering (order of class list below)
@@ -25,165 +27,105 @@ def __init__():
 
 class ActionBase:
     """this class defines available actions"""
-    defined = False
-    def __init__( self, actionString, helpString ):
-        if type( actionString ) == list:
-            self.destString = actionString[0]
-            self.actionString = actionString
-        else:
-            self.destString = actionString
-            self.actionString = [actionString]
+    defined = None
 
-        self.helpString = helpString
+    def argName(self):
+        return self.__class__.__name__[6:].lower().replace('_','-')
 
-    def string( self ):
-        return self.actionString
+    def destString(self):
+        return self.argName()
 
     def insertIntoParser( self, parser ):
-        names = []
-        for s in self.actionString:
-            if len(s) == 1:
-                names.append( '-%s' % s )
-            else:
-                names.append( '--%s' % s )
-
-        parser.add_argument( *names, default=False, action='store_true', help=m18n(self.helpString), dest=self.destString)
-        return True
+        helpString = self.__class__.__doc__
+        print self.argName(), self.destString(), helpString
+        parser.add_argument( '--'+self.argName(), default=False, action='store_true', help=m18n(helpString), dest=self.destString())
 
 class ActionFetch( ActionBase ):
-    """defines the fetch action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'fetch',
-            'retrieve package sources either from files, archives or version control systems.' )
+    """retrieve package sources either from files, archives or version control systems."""
 
 class ActionUnpack( ActionBase ):
-    """defines the unpack action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'unpack',
-            'unpack package sources and make up the build directory' )
+    """unpack package sources and make up the build directory"""
 
 class ActionCompile( ActionBase ):
-    """defines the compile action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'compile', 'configure and make the package' )
+    """configure and make the package"""
 
 class ActionConfigure( ActionBase ):
-    """defines the configure action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'configure', 'configure the package' )
+    """configure the package"""
 
 class ActionMake( ActionBase ):
-    """defines the make action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'make', 'run compiler and buildsystem specific make tool' )
+    """run compiler and buildsystem specific make tool"""
 
 class ActionInstall( ActionBase ):
-    """defines the install action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'install', 'install the generated files into the image \
-            directory of the related package' )
+    """install the generated files into the image 
+       directory of the related package"""
 
 class ActionMerge( ActionBase ):
-    """defines the merge action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'qmerge', 'merge the image directory into the merge root' )
+    """merge the image directory into the merge root"""
 
-class ActionUnMerge( ActionBase ):
-    """defines the unmerge action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'unmerge', 'uninstalls a package from the merge root \
-            (requires a working manifest directory). Unmerge only delete unmodified files by default. \
-            You may use the -f or --force option to let unmerge delete all files unconditional.' )
+class ActionUnmerge( ActionBase ):
+    """uninstalls a package from the merge root
+(requires a working manifest directory). Unmerge only delete unmodified files by default.
+You may use the -f or --force option to let unmerge delete all files unconditional."""
 
 class ActionManifest( ActionBase ):
-    """defines the manifest action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'manifest', 'creates the files contained in the manifest dir' )
+    """creates the files contained in the manifest dir"""
 
 class ActionTest( ActionBase ):
-    """defines the test action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'test', 'run the unittests if they are present' )
+    """run the unittests if they are present"""
 
 class ActionPackage( ActionBase ):
-    """defines the package action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'package', 'create an installable package from the image directory' )
+    """create an installable package from the image directory"""
 
-class ActionPrintRevision( ActionBase ):
-    """defines the print revision action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'print-revision', 'print the revision that the source repository \
-            of this package currently has or nothing if there is no repository' )
+class ActionPrint_revision( ActionBase ):
+    """print the revision that the source repository
+of this package currently has or nothing if there is no repository"""
 
-class ActionPrintTargets( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'print-targets', 'print all the different targets one package \
-            can contain: different releases might have different tags that are build as targets of a \
-            package. As an example: You could build the latest amarok sources with the target \'svnHEAD\' \
-            the previous \'1.80\' release would be contained as target \'1.80\'.' )
+class ActionPrint_targets( ActionBase ):
+    """print all the different targets one package
+            can contain: different releases might have different tags that are build as targets of a
+            package. As an example: You could build the latest amarok sources with the target 'svnHEAD'
+            the previous '1.80' release would be contained as target '1.80'."""
 
-class ActionDumpDependencies( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, ['dumpdeps','dump-deps'], 'print all the different targets one \
-            package can contain: different releases might have different tags that are build as targets \
-            of a package. As an example: You could build the latest amarok sources with the target \
-            \'svnHEAD\' the previous \'1.80\' release would be contained as target \'1.80\'.' )
+class ActionDumpdeps( ActionBase ):
+    """alternative name for dump-deps"""
 
-class ActionCleanAllBuilds( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'cleanallbuilds', 'clean complete build directory' )
+class ActionDump_deps(ActionDumpdeps):
+    """print all the different targets one
+            package can contain: different releases might have different tags that are build as targets
+            of a package. As an example: You could build the latest amarok sources with the target
+            'svnHEAD' the previous '1.80' release would be contained as target '1.80'."""
+    def destString(self):
+        return 'dumpdeps'
 
-class ActionCleanBuild( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'cleanbuild', 'clean build directory and image directories \
-            for the specified package' )
+class ActionCleanallbuilds( ActionBase ):
+    """clean complete build directory"""
 
-class ActionCheckDigest( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'checkdigest', 'check digest for the specified package. \
-            If no digest is available calculate and print digests' )
+class ActionCleanbuild( ActionBase ):
+    """clean build directory and image directories for the specified package"""
 
-class ActionCleanImage( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'cleanimage', 'clean image directory for the specified \
-            package and target' )
+class ActionCheckdigest( ActionBase ):
+    """check digest for the specified package.
+            If no digest is available calculate and print digests"""
 
-class ActionCreatePatch( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'createpatch', 'create source patch file for the specific \
-            package based on the original archive file or checkout revision of \
-            the used software revision control system' )
+class ActionCleanimage( ActionBase ):
+    """clean image directory for the specified
+            package and target"""
 
-class ActionDisableBuildHost( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'disable-buildhost', 'disable the building for the host' )
+class ActionCreatepatch( ActionBase ):
+    """create source patch file for the specific
+            package based on the original archive file or checkout revision of
+            the used software revision control system"""
 
-class ActionDisableBuildTarget( ActionBase ):
-    """defines the print targets action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'disable-buildtarget', 'disable the building for the target' )
+class ActionDisableBuildhost( ActionBase ):
+    """disable the building for the host"""
 
-class ActionInstallDependencies( ActionBase ):
-    """defines the install dependencies action"""
-    def __init__( self ):
-        ActionBase.__init__( self, 'install-deps', 'fetch and install all required \
-            dependencies for the specified package' )
+class ActionDisableBuild_target( ActionBase ):
+    """disable the building for the target"""
+
+class ActionInstall_deps( ActionBase ):
+    """fetch and install all required 
+            dependencies for the specified package"""
             
-#template
-#class Action( ActionBase ):
-#    """defines the print targets action"""
-#    def __init__( self ):
-#        ActionBase.__init__( self, '', '' )
-
 __init__()
 
 # for debugging
