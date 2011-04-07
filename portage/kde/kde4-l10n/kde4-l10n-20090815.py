@@ -118,15 +118,12 @@ class MainPackage(PackageBase):
             languages = option.split()
         else:
             languages = self.subinfo.languages.split()
-        found=None
+
+        # if self.startLanguage is defined, skip languages before that one
+        if self.startLanguage:
+            languages = languages[languages.index(self.startLanguage):]
 
         for language in languages:
-            if not found and self.startLanguage:
-                if self.startLanguage <> language:
-                    continue
-                else:
-                    found = True
-
             self.kde4_l10n.language = language
             self.kde4_l10n.runAction(command) # either returns True or calls utils.die()
 
