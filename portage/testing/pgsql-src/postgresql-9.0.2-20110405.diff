@@ -31,7 +31,7 @@ diff -Nru postgresql-9.0.2.orig/src/tools/msvc/Mkvcbuild.pm postgresql-9.0.2/src
 +    );
 +    our @backendfiles = qw( ip.c md5.c );
 +    our @mbfiles = qw( encnames.c wchar.c );
-+    $libpqstatic = $solution->AddProject('libpqstatic', 'lib', 'src\interfaces\libpq');
++    $libpqstatic = $solution->AddProject('libpqstatic', 'lib', 'static', 'src\interfaces\libpq');
 +    $libpqstatic->AddDefine('FRONTEND');
 +    $libpqstatic->AddDefine('UNSAFE_STAT_OK');
 +    $libpqstatic->AddIncludeDir('src\port');
