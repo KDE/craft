@@ -21,7 +21,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
         SvnSource.__init__( self )
         CMakeBuildSystem.__init__( self )
         KDEWinPackager.__init__( self )
-        self.language = 'de'
+        self.language = None
         # because of the large amount of packages
         # it is very annoying to restart the build,
         # wasting several hours, so ignore any errors
