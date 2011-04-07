@@ -237,8 +237,18 @@ def doExec( category, package, version, action, opts ):
 
 def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
+    success = True
 
-    if ( buildAction == "all" or buildAction == "full-package" ):
+    if continueFlag:
+        actionList = ['fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'manifest', 'qmerge']
+        
+        found = None
+        for action in actionList: 
+            if not found and action != buildAction:
+                continue
+            found = True
+            success = success and doExec( category, package, version, action, opts )
+    elif ( buildAction == "all" or buildAction == "full-package" ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = doExec( category, package, version, "fetch", opts )
         success = success and doExec( category, package, version, "unpack", opts )
@@ -340,6 +350,7 @@ disableHostBuild = False
 disableTargetBuild = False
 ignoreInstalled = False
 updateAll = False
+continueFlag = False
 
 if len( sys.argv ) < 2:
     usage()
@@ -379,6 +390,8 @@ for i in sys.argv:
         stayQuiet = True
     elif ( i == "-t" ):
         os.environ["EMERGE_BUILDTESTS"] = "True"
+    elif i == "-c" or i == "--continue":
+        continueFlag = True
     elif ( i == "--offline" ):
         mainOpts.append( "--offline" )
         os.environ["EMERGE_OFFLINE"] = "True"
