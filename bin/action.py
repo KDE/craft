@@ -170,12 +170,12 @@ class Print_targetsArg( PackageCommandArgBase ):
        package. As an example: You could build the latest amarok sources with the target 'svnHEAD'
        the previous '1.80' release would be contained as target '1.80'."""
 
-class DumpdepsArg( PackageCommandArgBase ):
+class Dump_depsArg( PackageCommandArgBase ):
     """print all the different targets one
        package can contain: different releases might have different tags that are build as targets
        of a package. As an example: You could build the latest amarok sources with the target
        'svnHEAD' the previous '1.80' release would be contained as target '1.80'."""
-    alternativeNames = ['dump-deps']
+    alternativeNames = ['dumpdeps']
 
 class CleanbuildArg( PackageCommandArgBase ):
     """clean build directory and image directories for the specified package"""
