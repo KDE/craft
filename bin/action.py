@@ -108,11 +108,11 @@ class CommandArgBase(ArgBase):
 
 class GeneralCommandArgBase(CommandArgBase):
     """for non package related arguments without value"""
-    argGroupName = "Commands without packagename"
+    argGroupName = "Commands without target"
 
 class PackageCommandArgBase(CommandArgBase):
     """for package related arguments with package value"""
-    argGroupName = "Commands (must have a packagename). Only one such command is allowed"
+    argGroupName = "Commands (must have a target). Only one such command is allowed"
 
     def insertIntoParser( self ):
         self.argGroup.add_argument(*self.argStrings(), default=False,
