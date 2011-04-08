@@ -79,7 +79,7 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         result = ['--' + self.argName]
         for name in self.alternativeNames:
             if len(name) == 1:
-                result.insert(0, '-' + name)
+                result.append('-' + name)
             else:
                 result.append('--' + name)
         return result
