@@ -169,11 +169,11 @@ class PackageArg( PackageCommandArgBase ):
 
 
 class AllArg( PackageCommandArgBase ):
-    """perform all required actions to build a runable package, which are 
+    """perform all required actions to build a runable package, which are
        --fetch, --unpack, --compile, --install, --manifest and --qmerge"""
 
 class Full_packageArg( PackageCommandArgBase ):
-    """perform all required actions to build a binary package, which are 
+    """perform all required actions to build a binary package, which are
        --fetch, --unpack, --compile, --install and --package"""
 
 class Print_revisionArg( PackageCommandArgBase ):
@@ -243,7 +243,22 @@ if __name__ == "__main__":
             print name, args.__dict__[name]
     commands = list(x for x in ArgBase.classes.values()
             if isinstance(x, CommandArgBase) and x.argValue)
-    if len(commands) != 1:
-        print 'exactly one command must be given for a TARGET'
+    if len(commands) > 1:
+        print 'at most one command may be given for a TARGET'
         sys.exit(2)
-    commands[0].execArg()
+
+    # now augment command list for meta commands like --full-package
+    # or when no command is excplicitly given
+
+    # then process --continue
+
+    for command in commands:
+        exitCode = command.execArg()
+        # for success, commands do not need to return anything
+        # for failure, they may return False or a numeric exit code
+        if exitCode is None:
+            exitCode = 0
+        elif exitCode is False: # general case
+            exitCode = 1
+        if exitCode:
+            sys.exit(exitCode)
