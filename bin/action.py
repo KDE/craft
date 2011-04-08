@@ -54,11 +54,11 @@ class ArgBase(object):
             ArgBase.parser = argparse.ArgumentParser(
                 formatter_class=argparse.RawDescriptionHelpFormatter,
                 description="""
-emerge [[ command and flags ] [ singletarget ]
-        [ command and flags ] [ singletarget ]
+emerge [[ command and flags ] [ TARGET ]
+        [ command and flags ] [ TARGET ]
         ... ]
 
-where singletarget can be of the form:
+where TARGET can be of the form:
     category
     package
     category/package
@@ -103,7 +103,7 @@ class PackageCommandArgBase(CommandArgBase):
     def insertIntoParser( self ):
         self.argGroup.add_argument(*self.argStrings(), default=False,
                 help=m18n(self.helpString),
-                metavar='PACKAGE',
+                metavar='TARGET',
                 dest=self.argName)
 
 class FlagArgBase(ArgBase):

@@ -128,6 +128,19 @@ class CMakeDependencies:
             sys.stdout = sys.__stdout__
         return True
 
+    def toPackageList(self, title="", baseDir=None, outFile=None):
+        """dump out internal structure as dot file"""
+        if outFile != None:
+            sys.stdout = open(outFile, "w")
+            # check if valid
+
+        for node in self.packageIncludes:
+            print node[0]
+
+        if outFile != None:
+            sys.stdout = sys.__stdout__
+        return True
+
 def main():
     directory = sys.argv[1]
     a = CMakeDependencies()

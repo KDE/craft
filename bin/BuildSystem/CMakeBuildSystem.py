@@ -207,6 +207,7 @@ class CMakeBuildSystem(BuildSystemBase):
             utils.debug("could not find source files for generating cmake dependencies", 0)
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
+        a.toPackageList(title, srcDir)
         if not a.toDot(title, srcDir, outFile):
             utils.debug("could not create dot file", 0)
             return False
