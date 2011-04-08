@@ -12,7 +12,7 @@ Subject: [PATCH] Do not use only SOPRANO_PREFIX on Windows Systems
     behavior will not be changed.
 ---
  soprano/inference/inferenceruleset.cpp |   22 +++++++++++++++++++++-
- soprano/sopranodirs.cpp                |   17 ++++++++++++++---
+ soprano/sopranodirs.cpp                |   16 ++++++++++++++--
  2 files changed, 35 insertions(+), 4 deletions(-)
 
 diff --git a/soprano/inference/inferenceruleset.cpp b/soprano/inference/inferenceruleset.cpp
@@ -73,11 +73,10 @@ index 30136b8..d16ccd0 100644
  #define PATH_SEPARATOR ';'
  #else
  #define PATH_SEPARATOR ':'
-@@ -122,7 +126,8 @@ QStringList Soprano::libDirs()
-     QStringList paths = QCoreApplication::libraryPaths();
+@@ -123,6 +127,8 @@ QStringList Soprano::libDirs()
      paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
  #ifdef Q_OS_WIN
--    paths << QLatin1String( SOPRANO_PREFIX"/bin" );
+     paths << QLatin1String( SOPRANO_PREFIX"/bin" );
 +    paths << getWinPrefix() + QLatin1String( "/bin" );
 +    paths << getWinPrefix() + QLatin1String( "/lib"SOPRANO_LIB_SUFFIX );
  #else
@@ -88,7 +87,7 @@ index 30136b8..d16ccd0 100644
      QStringList paths;
      paths << QLatin1String( SOPRANO_PREFIX"/share" )
 +#ifdef Q_OS_WIN
-+          << getWinPrefix() + QLatin1String( "share" )
++          << getWinPrefix() + QLatin1String( "/share" )
 +#endif
            << Soprano::envDirList( "SOPRANO_DIRS" )
            << Soprano::envDirList( "XDG_DATA_DIRS" );
