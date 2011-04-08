@@ -46,7 +46,8 @@ class ArgBase(object):
     argGroups = {}
     parser = None
     alternativeNames = []
-    classes = {}
+    classByName = {}
+    classByType = {}
 
     def setup(self):
         """we do not want to do this in __init__ because invocation order matters
@@ -75,7 +76,8 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         self.argGroup = self.argGroups[argGroupName]
         self.helpString = self.__class__.__doc__
         self.argName = self.__class__.__name__[:-3].lower().replace('_','-')
-        self.classes[self.argName] = self
+        self.classByName[self.argName] = self
+        self.classByType[self.__class__] = self
 
     def argStrings(self):
         result = ['--' + self.argName]
@@ -91,8 +93,18 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         self.argGroup.add_argument(*self.argStrings(),
                 action='store_true', help=m18n(self.helpString), dest=self.argName)
 
+    def execArg(self):
+       """what the command should do"""
+
+    def __str__(self):
+       """used for print"""
+       return self.__class__.__name__ + ' argValue:%s' % self.argValue
+
 class CommandArgBase(ArgBase):
     """for command arguments"""
+    def expand(self):
+       """a meta command may expand itself into several commands"""
+       return [self.__class__]
 
 class GeneralCommandArgBase(CommandArgBase):
     """for non package related arguments without value"""
@@ -148,7 +160,7 @@ class InstallArg( PackageCommandArgBase ):
     """install the generated files into the image
        directory of the related package"""
 
-class MergeArg( PackageCommandArgBase ):
+class QmergeArg( PackageCommandArgBase ):
     """merge the image directory into the merge root"""
 
 class UnmergeArg( PackageCommandArgBase ):
@@ -171,6 +183,8 @@ class PackageArg( PackageCommandArgBase ):
 class AllArg( PackageCommandArgBase ):
     """perform all required actions to build a runable package, which are
        --fetch, --unpack, --compile, --install, --manifest and --qmerge"""
+    def expand(self):
+       return [FetchArg, UnpackArg, ConfigureArg, MakeArg, InstallArg, ManifestArg, QmergeArg]
 
 class Full_packageArg( PackageCommandArgBase ):
     """perform all required actions to build a binary package, which are
@@ -238,21 +252,35 @@ if __name__ == "__main__":
     # put the values into their respective classes:
     for name in args.__dict__:
         value = args.__dict__[name]
-        ArgBase.classes[name].argValue = value
+        ArgBase.classByName[name].argValue = value
         if not value == False:
             print name, args.__dict__[name]
-    commands = list(x for x in ArgBase.classes.values()
+    givenCommands = list(x for x in ArgBase.classByName.values()
             if isinstance(x, CommandArgBase) and x.argValue)
-    if len(commands) > 1:
-        print 'at most one command may be given for a TARGET'
-        sys.exit(2)
 
     # now augment command list for meta commands like --full-package
     # or when no command is excplicitly given
+    if not givenCommands:
+        givenCommands = ArgBase.classByType([AllArg])
+        # this cannot yet happen
 
-    # then process --continue
+    if args.__dict__['continue']: # continue is a reserved word
+        commands = list(ArgBase.classByType[x] for x in ArgBase.classByType[AllArg].expand())
+        if givenCommands[0] not in commands:
+            print '--continue cannot be used with %s' % givenCommands[0].argStrings()[0]
+            sys.exit(2)
+        commands = commands[commands.index(givenCommands[0]):]
+    else:
+        if len(givenCommands) == 1:
+            commands = (ArgBase.classByType[x] for x in givenCommands[0].expand())
+        else:
+            print 'at most one command may be given for a TARGET'
+            sys.exit(2)
 
+    # and execute all commands
     for command in commands:
+        command.argValue = givenCommands[0].argValue
+        print str(command)
         exitCode = command.execArg()
         # for success, commands do not need to return anything
         # for failure, they may return False or a numeric exit code
