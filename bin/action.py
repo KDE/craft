@@ -221,9 +221,12 @@ if __name__ == "__main__":
 
     # put the values into their respective classes:
     for name in args.__dict__:
-        ArgBase.classes[name].argValue = args.__dict__[name]
+        value = args.__dict__[name]
+        ArgBase.classes[name].argValue = value
+        if not value == False:
+            print name, args.__dict__[name]
     if len([x for x in ArgBase.classes.values()
             if isinstance(x, PackageCommandArgBase) and x.argValue]) > 1:
         print 'only one command with PACKAGE may be given'
         sys.exit(2)
-
+    # run action 
