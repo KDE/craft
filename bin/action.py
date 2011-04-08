@@ -7,8 +7,10 @@
 #
 # @TODO review help texts
 #
-#
+
 import sys, argparse
+
+import portage
 
 def m18n(s):
     """prelimary function for internationalization support"""
@@ -117,6 +119,11 @@ class InternalArgBase(object):
 class ObsoleteArgBase(object):
     """mixin for obsolete arguments. Use this as first parent class"""
     argGroupName = "Obsolete"
+
+class Print_installableArg(GeneralCommandArgBase):
+    """list packages that can be installed"""
+    def execArg(self):
+       portage.printInstallables()
 
 class CleanallbuildsArg( GeneralCommandArgBase ):
     """clean complete build directory"""
@@ -234,8 +241,9 @@ if __name__ == "__main__":
         ArgBase.classes[name].argValue = value
         if not value == False:
             print name, args.__dict__[name]
-    if len([x for x in ArgBase.classes.values()
-            if isinstance(x, PackageCommandArgBase) and x.argValue]) > 1:
-        print 'only one command with TARGET may be given'
+    commands = list(x for x in ArgBase.classes.values()
+            if isinstance(x, CommandArgBase) and x.argValue)
+    if len(commands) != 1:
+        print 'exactly one command must be given for a TARGET'
         sys.exit(2)
-    # run action 
+    commands[0].execArg()
