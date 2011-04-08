@@ -160,6 +160,15 @@ class TestArg( PackageCommandArgBase ):
 class PackageArg( PackageCommandArgBase ):
     """create an installable package from the image directory"""
 
+
+class AllArg( PackageCommandArgBase ):
+    """perform all required actions to build a runable package, which are 
+       --fetch, --unpack, --compile, --install, --manifest and --qmerge"""
+
+class Full_packageArg( PackageCommandArgBase ):
+    """perform all required actions to build a binary package, which are 
+       --fetch, --unpack, --compile, --install and --package"""
+
 class Print_revisionArg( PackageCommandArgBase ):
     """print the revision that the source repository
        of this package currently has or nothing if there is no repository"""
