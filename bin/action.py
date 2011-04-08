@@ -236,6 +236,6 @@ if __name__ == "__main__":
             print name, args.__dict__[name]
     if len([x for x in ArgBase.classes.values()
             if isinstance(x, PackageCommandArgBase) and x.argValue]) > 1:
-        print 'only one command with PACKAGE may be given'
+        print 'only one command with TARGET may be given'
         sys.exit(2)
     # run action 
