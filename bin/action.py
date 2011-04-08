@@ -236,7 +236,7 @@ class Install_depsArg( PackageCommandArgBase ):
 class Version_dirArg(ObsoleteArgBase, PackageCommandArgBase):
     """whatever this does"""
 
-class ContinueArg(InternalArgBase, FlagArgBase):
+class ContinueArg(FlagArgBase):
     """after having done the package command, continue with
        the next commands this package normally gets"""
     alternativeNames = ['c']
