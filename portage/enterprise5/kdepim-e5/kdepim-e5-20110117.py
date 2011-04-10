@@ -14,9 +14,11 @@ class subinfo(info.infoclass):
                 if fname.endswith(".patch") or fname.endswith( ".diff" ):
                     brandingPatches.append( (
                         os.path.join(brandingDir, fname), 1 ) )
-            print "Patches: %s " % brandingPatches
             for target in self.svnTargets.iterkeys():
-                self.patchToApply[target] = brandingPatches
+                if self.patchToApply[target]:
+                    self.patchToApply[target] += brandingPatches
+                else:
+                    self.patchToApply[target] = brandingPatches
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
@@ -71,12 +73,12 @@ class subinfo(info.infoclass):
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepim'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
         self.defaultTarget = 'gitHEAD'
+        self.patchToApply['gitHEAD'] = [('disable-crypto-backend.patch', 1)]
         self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdepimlibs-e5'] = 'default'
         self.hardDependencies['enterprise5/kderuntime-e5'] = 'default'
-#        self.hardDependencies['contributed/gpg4win-dev'] = 'default'
         self.hardDependencies['enterprise5/grantlee-e5'] = 'default'
         self.hardDependencies['win32libs-bin/sqlite'] = 'default'
 
