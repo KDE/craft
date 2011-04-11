@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
                     brandingPatches.append( (
                         os.path.join(brandingDir, fname), 1 ) )
             for target in self.svnTargets.iterkeys():
-                if self.patchToApply[target]:
+                if self.patchToApply.get(target):
                     self.patchToApply[target] += brandingPatches
                 else:
                     self.patchToApply[target] = brandingPatches
