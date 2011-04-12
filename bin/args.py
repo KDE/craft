@@ -332,7 +332,7 @@ def main():
     # now augment command list for meta commands like --full-package
     # or when no command is excplicitly given
     if not givenCommands:
-        givenCommands = ArgBase.classByType([AllArg])
+        givenCommands = [ArgBase.classByType[AllArg]]
         # this cannot yet happen
 
     if args.__dict__['continue']: # continue is a reserved word
