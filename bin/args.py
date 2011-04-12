@@ -315,8 +315,8 @@ class NoCopyArg(ObsoleteArgBase, FlagArgBase):
 
 __init__()
 
-# for debugging
-if __name__ == "__main__":
+def main():
+    """for debugging"""
     args = ArgBase.parser.parse_args()
 
     # put the values into their respective classes:
@@ -360,3 +360,6 @@ if __name__ == "__main__":
             exitCode = 1
         if exitCode:
             sys.exit(exitCode)
+
+if __name__ == "__main__":
+    main()
