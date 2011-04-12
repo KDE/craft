@@ -306,8 +306,8 @@ class CleanupArg(FlagArgBase):
     """Clean your portage directory, to prevent emerge errors, removes
        empty directories and *.pyc files"""
 
-class NoCopyArg(FlagArgBase):
-    """this option is deprecated. In older releases emerge would have
+class NoCopyArg(ObsoleteArgBase, FlagArgBase):
+    """In older releases emerge would have
        copied everything from the SVN source tree to a source directory
        under %%KDEROOT%%\\tmp - currently nocopy is applied by default if
        EMERGE_NOCOPY is not set to "False". Be aware that setting
