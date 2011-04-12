@@ -23,7 +23,7 @@ class AutoNumberingType(type):
        which increases by order of class definition (order in this file)"""
     def __init__(cls, name, bases, attrs):
         global classNumber
-        classNumber = classNumber + 1
+        classNumber += 1
         setattr(cls,'number', classNumber)
 
 def __init__():
@@ -37,6 +37,10 @@ def __init__():
     ArgBase.defined = sorted(argClasses, key=lambda x: x.number)
     for argClass in ArgBase.defined:
         argClass.setup()
+
+def addActions():
+    for a in ArgBase.defined:
+        a.insertIntoParser()
 
 class ArgBase(object):
     """this class defines available actions"""
@@ -80,9 +84,11 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         self.classByType[self.__class__] = self
 
     def argStrings(self):
-        result = ['--' + self.argName]
-        for name in self.alternativeNames:
-            if len(name) == 1:
+        args = [self.argName]
+        args += self.alternativeNames
+        result = []
+        for name in args:
+            if len(name) < 3:
                 result.append('-' + name)
             else:
                 result.append('--' + name)
@@ -200,12 +206,12 @@ class Print_targetsArg( PackageCommandArgBase ):
        package. As an example: You could build the latest amarok sources with the target 'svnHEAD'
        the previous '1.80' release would be contained as target '1.80'."""
 
-class Dump_depsArg( PackageCommandArgBase ):
+class DumpDepsArg( PackageCommandArgBase ):
     """print all the different targets one
        package can contain: different releases might have different tags that are build as targets
        of a package. As an example: You could build the latest amarok sources with the target
        'svnHEAD' the previous '1.80' release would be contained as target '1.80'."""
-    alternativeNames = ['dumpdeps']
+    #alternativeNames = ['dump-deps']
 
 class CleanbuildArg( PackageCommandArgBase ):
     """clean build directory and image directories for the specified package"""
@@ -240,6 +246,74 @@ class ContinueArg(FlagArgBase):
     """after having done the package command, continue with
        the next commands this package normally gets"""
     alternativeNames = ['c']
+
+class IArg(FlagArgBase):
+    """ignore install: using this option will install a package over an
+       existing install. This can be useful if you want to check some
+       new code and your last build isn't that old."""
+    #alternativeNames = ['ignore-install']
+
+class PArg(FlagArgBase):
+    """probing: emerge will only look which files it has to build
+       according to the list of installed files and according to the
+       dependencies of the package."""
+    alternativeNames = ['probe']
+
+class QArg(FlagArgBase):
+    """there should be no output - The verbose level should be 0"""
+    #alternativeNames = ['quiet']
+
+class TArg(FlagArgBase):
+    """if used on an KDE target it will override the environment
+        variable and build the target with -DKDE_BUILD_TESTS=ON"""
+    #alternativeNames = ['test']
+
+class VArg(FlagArgBase):
+    """increases the verbose level of emerge. Default is 1.
+       verbose level 1 contains some notes from emerge, all output of
+       cmake, make and other programs that are used. verbose level 2
+       adds an option VERBOSE=1 to make and emerge is more verbose
+       highest level is verbose level 3."""
+    #alternativeNames = ['verbose']
+
+class ZArg(FlagArgBase):
+    """if packages from version control system sources are installed,
+       it marks them as out of date and rebuilds them (tags are not
+       marked as out of date)."""
+    #alternativeNames = ['outdate']
+
+class SZArg(FlagArgBase):
+    """similar to -z, only that it acts only on the last package, and
+       works as normal on the rest."""
+    #alternativeNames = ['outdate-last']
+
+class NoCleanArg(FlagArgBase):
+    """this option will try to use an existing build directory. Please
+       handle this option with care - it will possibly break if the
+       directory isn't existing."""
+       
+class OfflineArg(FlagArgBase):
+    """do not try to connect to the internet: KDE packages will try to
+       use an existing source tree and other packages would try to use
+       existing packages in the download directory. If that doesn't
+       work, the build will fail."""
+
+class UpdateArg(FlagArgBase):
+    """this option is the same as '-i --noclean'. It will update a single
+        package that is already installed."""
+
+class CleanupArg(FlagArgBase):
+    """Clean your portage directory, to prevent emerge errors, removes
+       empty directories and *.pyc files"""
+
+class NoCopyArg(FlagArgBase):
+    """this option is deprecated. In older releases emerge would have
+       copied everything from the SVN source tree to a source directory
+       under %%KDEROOT%%\\tmp - currently nocopy is applied by default if
+       EMERGE_NOCOPY is not set to "False". Be aware that setting
+       EMERGE_NOCOPY to "False" might slow down the build process,
+       irritate you and increase the disk space roughly by the size of
+       SVN source tree."""
 
 __init__()
 
