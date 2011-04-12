@@ -24,7 +24,7 @@ class AutoNumberingType(type):
     def __init__(cls, name, bases, attrs):
         global classNumber
         classNumber += 1
-        setattr(cls,'number', classNumber)
+        setattr(cls, 'number', classNumber)
 
 def __init__():
     if not ArgBase.defined:
@@ -102,17 +102,17 @@ make your kde installation unusable in 999 out of 1000 cases.""")
             a.insertIntoParser()
 
     def execArg(self):
-       """what the command should do"""
+        """what the command should do"""
 
     def __str__(self):
-       """used for print"""
-       return self.__class__.__name__ + ' argValue:%s' % self.argValue
+        """used for print"""
+        return self.__class__.__name__ + ' argValue:%s' % self.argValue
 
 class CommandArgBase(ArgBase):
     """for command arguments"""
     def expand(self):
-       """a meta command may expand itself into several commands"""
-       return [self.__class__]
+        """a meta command may expand itself into several commands"""
+        return [self.__class__]
 
 class GeneralCommandArgBase(CommandArgBase):
     """for non package related arguments without value"""
@@ -143,7 +143,7 @@ class ObsoleteArgBase(object):
 class Print_installableArg(GeneralCommandArgBase):
     """list packages that can be installed"""
     def execArg(self):
-       portage.printInstallables()
+        portage.printInstallables()
 
 class CleanallbuildsArg( GeneralCommandArgBase ):
     """clean complete build directory"""
@@ -192,7 +192,7 @@ class AllArg( PackageCommandArgBase ):
     """perform all required actions to build a runable package, which are
        --fetch, --unpack, --compile, --install, --manifest and --qmerge"""
     def expand(self):
-       return [FetchArg, UnpackArg, ConfigureArg, MakeArg, InstallArg, ManifestArg, QmergeArg]
+        return [FetchArg, UnpackArg, ConfigureArg, MakeArg, InstallArg, ManifestArg, QmergeArg]
 
 class Full_packageArg( PackageCommandArgBase ):
     """perform all required actions to build a binary package, which are
