@@ -21,10 +21,11 @@ classNumber = 0        # to be used by AutoNumberingType
 class AutoNumberingType(type):
     """all classes with this as metaclass get an attribute 'number'
        which increases by order of class definition (order in this file)"""
-    def __init__(cls, name, bases, attrs):
-        global classNumber
+    def __init__(mcs, name, bases, attrs):
+        type.__init__(mcs, name, bases, attrs)
+        global classNumber                 # pylint: disable=W0603
         classNumber += 1
-        setattr(cls, 'number', classNumber)
+        setattr(mcs, 'number', classNumber)
 
 def __init__():
     if not ArgBase.defined:
