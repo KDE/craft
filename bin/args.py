@@ -351,7 +351,7 @@ def main():
     # and execute all commands
     for command in commands:
         command.argValue = givenCommands[0].argValue
-        print str(command)
+        print 'executing', str(command)
         exitCode = command.execArg()
         # for success, commands do not need to return anything
         # for failure, they may return False or a numeric exit code
