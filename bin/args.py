@@ -79,6 +79,7 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         self.argName = self.__class__.__name__[:-3].lower().replace('_','-')
         self.classByName[self.argName] = self
         self.classByType[self.__class__] = self
+        self.insertIntoParser()
 
     def argStrings(self):
         args = [self.argName]
@@ -95,11 +96,6 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         """default for parameters without value"""
         self.argGroup.add_argument(*self.argStrings(),
                 action='store_true', help=m18n(self.helpString), dest=self.argName)
-
-    @staticmethod
-    def addActions():
-        for a in ArgBase.defined:
-            a.insertIntoParser()
 
     def execArg(self):
         """what the command should do"""
@@ -321,7 +317,6 @@ __init__()
 
 # for debugging
 if __name__ == "__main__":
-    ArgBase.addActions()
     args = ArgBase.parser.parse_args()
 
     # put the values into their respective classes:
