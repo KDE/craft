@@ -38,9 +38,6 @@ def __init__():
     for argClass in ArgBase.defined:
         argClass.setup()
 
-def addActions():
-    for a in ArgBase.defined:
-        a.insertIntoParser()
 
 class ArgBase(object):
     """this class defines available actions"""
@@ -98,6 +95,11 @@ make your kde installation unusable in 999 out of 1000 cases.""")
         """default for parameters without value"""
         self.argGroup.add_argument(*self.argStrings(),
                 action='store_true', help=m18n(self.helpString), dest=self.argName)
+
+    @staticmethod
+    def addActions():
+        for a in ArgBase.defined:
+            a.insertIntoParser()
 
     def execArg(self):
        """what the command should do"""
@@ -319,8 +321,7 @@ __init__()
 
 # for debugging
 if __name__ == "__main__":
-    for a in ArgBase.defined:
-        a.insertIntoParser()
+    ArgBase.addActions()
     args = ArgBase.parser.parse_args()
 
     # put the values into their respective classes:
