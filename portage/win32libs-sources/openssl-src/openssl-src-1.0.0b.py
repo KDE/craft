@@ -46,6 +46,7 @@ class PackageCMake(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
+        self.staticBuild = False
 
     def compile( self ):
         os.chdir( self.sourceDir() )
@@ -83,7 +84,10 @@ class PackageCMake(CMakePackageBase):
             os.putenv( "INCLUDE", wcecompatincdir + ";" + os.getenv("INCLUDE") )
             cmd = r"nmake -f ms\ce.mak"
         else:
-            cmd = r"nmake -f ms\ntdll.mak"
+            if self.staticBuild:
+                cmd = r"nmake -f ms\nt.mak"
+            else:
+                cmd = r"nmake -f ms\ntdll.mak"
 
         return self.system( cmd )
 
@@ -100,11 +104,15 @@ class PackageCMake(CMakePackageBase):
         if not os.path.isdir( os.path.join( dst, "include" ) ):
             os.mkdir( os.path.join( dst, "include" ) )
 
-        outdir = "out32dll"
+        if self.staticBuild:
+            outdir = "out32"
+        else:
+            outdir = "out32dll"
+
         if self.isTargetBuild():
             outdir = "out32_" + self.buildArchitecture()
 
-        if not self.isTargetBuild():
+        if not self.isTargetBuild() and not self.staticBuild:
             shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
             shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
         shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )
