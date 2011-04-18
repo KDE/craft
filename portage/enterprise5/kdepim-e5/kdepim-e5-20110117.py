@@ -94,6 +94,20 @@ class Package(CMakePackageBase):
                 " -DKDEPIM_ENTERPRISE_BUILD=ON ")
 #                " -DKDEPIM_NO_NEPOMUK=ON " )
 
+    def qmerge( self ):
+        ret = CMakePackageBase.qmerge(self)
+        if self.isTargetBuild():
+            mime_update = os.path.join(ROOTDIR, "bin",
+                    "update-mime-database.exe")
+            if os.path.isfile(mime_update):
+                target_mimedb = os.path.join(ROOTDIR, self.buildPlatform(),
+                        "share", "mime")
+                utils.debug("calling update-mime-database: on %s " %\
+                        target_mimedb, 1)
+                cmd = "%s %s" % (mime_update, target_mimedb)
+                return utils.system(cmd)
+        return ret
+
 if __name__ == '__main__':
     Package().execute()
 
