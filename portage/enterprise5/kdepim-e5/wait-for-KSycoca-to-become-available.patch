@@ -1,0 +1,91 @@
+From ccb79c9df10ee55377d5894525503944398981c2 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Wed, 27 Apr 2011 12:46:38 +0000
+Subject: [PATCH 1/6] Wait for KSycoca to become available
+
+---
+ kontact/src/mainwindow.cpp |   32 ++++++++++++++++++++++++++++++++
+ kontact/src/mainwindow.h   |    1 +
+ 2 files changed, 33 insertions(+), 0 deletions(-)
+
+diff --git a/kontact/src/mainwindow.cpp b/kontact/src/mainwindow.cpp
+index 1f1775e..fb68ec1 100644
+--- a/kontact/src/mainwindow.cpp
++++ b/kontact/src/mainwindow.cpp
+@@ -28,6 +28,8 @@
+ #include "iconsidepane.h"
+ using namespace Kontact;
+ 
++#include <unistd.h>
++
+ #include <libkdepim/broadcaststatus.h>
+ #include <libkdepim/progressdialog.h>
+ #include <libkdepim/statusbarprogresswidget.h>
+@@ -63,6 +65,7 @@ using namespace Kontact;
+ #include <KParts/PartManager>
+ #include <KSettings/Dispatcher>
+ #include <KSettings/Dialog>
++#include <KSycoca>
+ 
+ #include <QDBusConnection>
+ #include <QSplitter>
+@@ -71,6 +74,9 @@ using namespace Kontact;
+ #include <QVBoxLayout>
+ #include <QWebSettings>
+ 
++//Define the maximum time Kontact waits for KSycoca to become available
++#define KSYCOCA_WAIT_TIMEOUT 10
++
+ // This class extends the normal KDBusServiceStarter.
+ //
+ // When a service start is requested, it asks all plugins
+@@ -181,8 +187,34 @@ void MainWindow::initGUI()
+   navigatorToolBar->setMinimumWidth( navigatorToolBar->sizeHint().width() );
+ }
+ 
++void MainWindow::waitForKSycoca()
++{
++  int i = 0;
++  while ( i < KSYCOCA_WAIT_TIMEOUT ) {
++    if ( KSycoca::isAvailable() )
++      return;
++    // When KSycoca is not availabe that usually means Kontact
++    // was started before kded is done with it's first run
++    // we want to block Kontact execution to
++    // give Kded time to initalize and create the
++    // System Configuration database neccessary for further
++    // Kontact startup
++    kDebug() << "Waiting for KSycoca";
++    sleep(1);
++    i++;
++  }
++  // This should only happen if the distribution is broken
++  KMessageBox::error(
++      this,
++      i18n( "Cannot open the System Configuration database." ),
++      i18n( "Fatal error" ) );
++}
++
+ void MainWindow::initObject()
+ {
++  if ( !KSycoca::isAvailable() ) {
++      waitForKSycoca();
++  }
+   KService::List offers = KServiceTypeTrader::self()->query(
+     QString::fromLatin1( "Kontact/Plugin" ),
+     QString( "[X-KDE-KontactPluginVersion] == %1" ).arg( KONTACT_PLUGIN_VERSION ) );
+diff --git a/kontact/src/mainwindow.h b/kontact/src/mainwindow.h
+index 24c6f29..d99b3e1 100644
+--- a/kontact/src/mainwindow.h
++++ b/kontact/src/mainwindow.h
+@@ -98,6 +98,7 @@ class KONTACT_EXPORT MainWindow : public KontactInterface::Core
+     void initAboutScreen();
+     void loadSettings();
+     void saveSettings();
++    void waitForKSycoca();
+ 
+     bool isPluginLoaded( const KPluginInfo & );
+     KontactInterface::Plugin *pluginFromInfo( const KPluginInfo & );
+-- 
+1.7.0.4
+

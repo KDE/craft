@@ -73,7 +73,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepim'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
         self.defaultTarget = 'gitHEAD'
-        self.patchToApply['gitHEAD'] = [('disable-crypto-backend.patch', 1)]
+        self.patchToApply['gitHEAD'] = [('disable-crypto-backend.patch', 1),
+                                        ('wait-for-KSycoca-to-become-available.patch', 1)]
         self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")
 
     def setDependencies( self ):
