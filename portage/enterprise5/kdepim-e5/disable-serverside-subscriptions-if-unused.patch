@@ -1,0 +1,38 @@
+From 4c7a1ab4666dc3a8143d0b9a35d344e315f940b9 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Thu, 28 Apr 2011 13:47:44 +0000
+Subject: [PATCH 2/2] Disable serverside subscriptions if unused
+
+    By default the accountwizard enables serverside subscriptions
+    for Kolab accounts. Which makes sense because you could otherwise
+    Sync to much. New accounts in Kolab always have no subscriptions
+    the combination of no subscriptions and enabled serverside
+    subscriptions was then causing the imap ressource not to sync
+    anything and the collectiontreeview was not even showing the account.
+
+    With this change serverside subscriptions can only be activated
+    if at least one folder is subscribed. Otherwise they are disabled.
+---
+ resources/imap/retrievecollectionstask.cpp |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/resources/imap/retrievecollectionstask.cpp b/resources/imap/retrievecollectionstask.cpp
+index 48f0e57..ab87f5a 100644
+--- a/resources/imap/retrievecollectionstask.cpp
++++ b/resources/imap/retrievecollectionstask.cpp
+@@ -100,6 +100,12 @@ void RetrieveCollectionsTask::doStart( KIMAP::Session *session )
+ void RetrieveCollectionsTask::onMailBoxesReceived( const QList< KIMAP::MailBoxDescriptor > &descriptors,
+                                                    const QList< QList<QByteArray> > &flags )
+ {
++  if ( isSubscriptionEnabled() && !descriptors.size() && m_fullReportedCollections.size() ) {
++    // Disable subscription in case no folders are subscribed
++    setSubscriptionEnabled( false );
++    descriptors = m_fullReportedCollections;
++  }
++
+   QStringList contentTypes;
+   contentTypes << KMime::Message::mimeType() << Akonadi::Collection::mimeType();
+ 
+-- 
+1.7.0.4
+
