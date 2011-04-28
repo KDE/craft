@@ -214,16 +214,25 @@ call CreateGlobals
   FileWrite $1 'Enabled=false $\r$\n'
   FileClose $1
 
-  ; Disable kmail migration (currently not working on windows)
+  ; Disable migrations
   FileOpen $1 "$INSTDIR\share\config\kmail-migratorrc" "w"
   FileWrite $1 "[Migration]$\r$\n"
   FileWrite $1 "Enabled=false$\r$\n"
   FileClose $1
 
-  ; Disable kmail migration (currently not working on windows)
   FileOpen $1 "$INSTDIR\share\config\kres-migratorrc" "w"
   FileWrite $1 "[Migration]$\r$\n"
   FileWrite $1 "Enabled=false$\r$\n"
+  FileClose $1
+
+  FileOpen $1 "$INSTDIR\share\config\kjotsmigratorrc" "w"
+  FileWrite $1 "[Migration]$\r$\n"
+  FileWrite $1 "Enabled=false$\r$\n"
+  FileClose $1
+
+  FileOpen $1 "$INSTDIR\share\config\kwalletrc" "w"
+  FileWrite $1 "[Auto Allow]$\r$\n"
+  FileWrite $1 "kdewallet=Akonadi Resource,Account Assistant,Kolab E5 RC,Kontact,Akonadi Agent$\r$\n"
   FileClose $1
 
   ; Set bin dir to PATH
