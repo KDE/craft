@@ -76,11 +76,7 @@ class subinfo(info.infoclass):
         self.patchToApply['gitHEAD'] = [
                 ('disable-crypto-backend.patch', 1),
         # Necessary until we know how to build a stable gpgme for windows
-                ('wait-for-KSycoca-to-become-available.patch', 1),
-        # Submited to reviewboard
-                ('add-full-shutdown-button.patch', 1),
-        # Testing and awaiting an answer about platform specific UI changes
-                ('disable-serverside-subscriptions-if-unused.patch', 1)]
+                ('add-full-shutdown-button.patch', 1)]
         # Testing
         self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")
 
