@@ -12,10 +12,6 @@ class subinfo( info.infoclass ):
         self.dependencies['enterprise5/grantlee-e5'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
 
-        self.patchToApply['gitHEAD'] = [
-        # Testing and awaiting an answer about platform specific UI changes
-                ('disable-serverside-subscriptions-if-unused.patch', 1)]
-
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):
