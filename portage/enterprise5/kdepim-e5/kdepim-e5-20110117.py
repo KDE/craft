@@ -94,9 +94,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = (
                 " -DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
-                " -DKDEPIM_BUILD_MOBILE=FALSE "
                 " -DKDEPIM_ENTERPRISE_BUILD=ON ")
-#                " -DKDEPIM_NO_NEPOMUK=ON " )
 
     def qmerge( self ):
         ret = CMakePackageBase.qmerge(self)
