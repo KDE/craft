@@ -51,7 +51,7 @@ class Package(BinaryPackageBase):
         utils.debug( "adding kde related settings to global git config file",1 )
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
         utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
-        utils.system( "%s config --global core.autocrlf false")
+        utils.system( "%s config --global core.autocrlf false" % git)
         return True
 
 if __name__ == '__main__':
