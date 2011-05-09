@@ -22,6 +22,7 @@ class Package( CMakePackageBase ):
 
         self.subinfo.options.configure.defines += " -DKDE4_BUILD_TESTS=OFF "
         self.subinfo.options.configure.defines += " -DKDEPIM_ENTERPRISE_BUILD=ON "
+        self.subinfo.options.configure.defines += " -DKDEPIM_BUILD_MOBILE=FALSE "
         self.subinfo.options.configure.defines += " -DACCOUNTWIZARD_NO_GHNS=TRUE "
 
     def install( self ):
