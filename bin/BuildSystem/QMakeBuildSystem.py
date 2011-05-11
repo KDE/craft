@@ -40,16 +40,16 @@ class QMakeBuildSystem(BuildSystemBase):
         # 2. if qmake is available search for a pro-file named as the package
         # 3. if a pro-file is available through configureOptions, run it with qmake
         # 4. otherwise run qmake without any pro file given
-        configTool = os.path.join(self.sourceDir(), "configure.exe")
+        configTool = os.path.join(self.configureSourceDir(), "configure.exe")
         qmakeTool = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         topLevelProFilesFound = 0
         topLevelProFile = ""
-        for fileListed in os.listdir(self.sourceDir()):
+        for fileListed in os.listdir(self.configureSourceDir()):
             if fileListed.endswith(".pro"):
                 if topLevelProFilesFound == 0:
-                    topLevelProFile = os.path.join(self.sourceDir(), fileListed)
+                    topLevelProFile = os.path.join(self.configureSourceDir(), fileListed)
                 topLevelProFilesFound += 1
-        if self.subinfo.options.configure.tool != None:
+        if self.subinfo.options.configure.tool != None and self.subinfo.options.configure.tool != False:
             command = "%s %s" % (self.subinfo.options.configure.tool, self.configureOptions(configureDefines))
         elif os.path.exists(configTool):
             command = "%s %s" % (configTool, self.configureOptions(configureDefines))
