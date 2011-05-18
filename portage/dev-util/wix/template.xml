@@ -1,0 +1,25 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+ <Product Id='*' Name='#EMERGE_PACKAGE_NAME#' Language='1033'
+            Version='#EMERGE_PACKAGE_VERSION#' Manufacturer='#EMERGE_MANUFACTOR#' UpgradeCode='9FFED355-1F82-4BF7-86F7-14A910669753'>
+  <Package Description='#EMERGE_PACKAGE_DESCRIPTION#'
+            Comments='#EMERGE_PACKAGE_COMMENT#'
+            Manufacturer='#EMERGE_MANUFACTOR#' InstallerVersion='200' Compressed='yes' />
+
+  <Media Id='1' Cabinet='product.cab' EmbedCab='yes' />
+
+  <Directory Id="TARGETDIR" Name="SourceDir">
+   <Directory Id="ProgramFilesFolder">
+    <Directory Id="APPLICATIONROOTDIRECTORY" Name="#EMERGE_INSTALL_ROOT_DIR#">
+#EMERGE_DIRECTORY_ENTRIES#
+    </Directory>
+   </Directory>
+  </Directory> 
+
+  <Feature Id='MyFeature' Title='My 1st Feature' Level='1'>
+#EMERGE_FEATURE_ENTRIES#
+  </Feature>
+<Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONROOTDIRECTORY" />
+  <UIRef Id="WixUI_InstallDir" />
+ </Product>
+</Wix>
