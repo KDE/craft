@@ -109,7 +109,7 @@ class InnoSetupPackager (PackagerBase):
                 filesDir = self.imageDir()
             utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
 
-        dstpath = self.packageDestinationDir(withBuildType=False)
+        dstpath = self.packageDestinationDir()
 
         cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe, dstpath, pkgName, pkgVersion)
 
