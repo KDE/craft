@@ -5,6 +5,7 @@ class subinfo( info.infoclass ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim-runtime'
         self.svnTargets['4.6'] = '[git]kde:kdepim-runtime|4.6'
         self.defaultTarget = '4.6'
+        self.patchToApply['4.6'] = ('Disable-ServerSide-subscriptions-by-default.patch', 1)
 
     def setDependencies( self ):
         self.dependencies['enterprise5/kderuntime-e5'] = 'default'
