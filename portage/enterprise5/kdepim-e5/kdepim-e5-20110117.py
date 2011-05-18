@@ -77,8 +77,10 @@ class subinfo(info.infoclass):
         self.patchToApply['4.6'] = [
                 ('disable-crypto-backend.patch', 1),
         # Necessary until we know how to build a stable gpgme for windows
+                ('Add-a-blocking-waitForKSycoca-function.patch', 1),
+        # Upstream in 4.7
                 ('add-full-shutdown-button.patch', 1)]
-        # Testing
+        # To platform/package specific for master
         self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")
 
     def setDependencies( self ):
