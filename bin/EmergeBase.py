@@ -66,7 +66,7 @@ class EmergeBase(object):
                 packageName = 'internal/%s' % className
                 if os.path.exists(os.path.join(ROOTDIR, 'emerge', 'portage',
                         'internal', className, '%s-internal.py' % className)):
-                    if not packageName in self.subinfo.buildDependencies:
+                    if self.subinfo and not packageName in self.subinfo.buildDependencies:
                         self.subinfo.buildDependencies[packageName] = 'default'
 
         if hasattr(self,'alreadyCalled'):
