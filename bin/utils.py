@@ -23,6 +23,7 @@ import getpass
 import subprocess
 import re
 import inspect
+import types
 
 if os.name == 'nt':
     import msvcrt # pylint: disable=F0401
@@ -186,7 +187,12 @@ def getFiles( urls, destdir, suffix=''):
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
 
-    for url in urls.split():
+    if types(urls) == types.ListType:
+        urlList = urls
+    else:
+        urlList = urls.split()
+
+    for url in urlList:
         if ( not getFile( url + suffix, destdir ) ):
             return False
 

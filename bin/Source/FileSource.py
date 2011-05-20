@@ -20,8 +20,8 @@ class FileSource(SourceBase):
         filenames = []
 
         if self.subinfo.hasTarget():
-            for uri in self.subinfo.target().split():
-                filenames.append( os.path.basename( uri ) )
+            for uriPos in range( self.subinfo.targetCount() ):
+                filenames.append( os.path.basename( self.subinfo.targetAt( uriPos ) ) )
         return filenames
 
     def localFileNames(self):

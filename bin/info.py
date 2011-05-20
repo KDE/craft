@@ -11,6 +11,7 @@ import os
 import utils
 import compiler
 from options import *
+import types
 
 class infoclass:
     """this module contains the information class"""
@@ -199,6 +200,27 @@ example:
         if self.buildTarget in self.targets.keys():
             return self.targets[self.buildTarget]
         return ""
+
+    def hasMultipleTargets( self ):
+        """return whether we used a list of targets"""
+        return type( self.targets[self.buildTarget] ) == types.ListType
+
+    def targetCount( self ):
+        """return the number of targets given either in a list, or split by a space character"""
+        if self.hasMultipleTargets():
+            return len( self.targets[self.buildTarget] )
+        else:
+            return len( self.targets[self.buildTarget].split() )
+
+    def targetAt( self, index ):
+        """return the specified target at a specific position, or an empty string if out of bounds"""
+        if self.targetCount() <= index:
+            return ""
+
+        if self.hasMultipleTargets():
+            return self.targets[self.buildTarget][index]
+        else:
+            return self.targets[self.buildTarget].split()[index]
 
     def hasSvnTarget( self ):
         """return true if version system based target for the currently selected build target is available"""

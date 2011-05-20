@@ -17,12 +17,12 @@ class ArchiveSource(SourceBase):
     def repositoryUrl(self, index=0):
         """all repository pathes"""
         if self.subinfo.hasTarget():
-            return os.path.basename( self.subinfo.target().split()[index] )
+            return os.path.basename( self.subinfo.targetAt(index) )
         else:
             return False
 
     def repositoryUrlCount(self):
-        return len( self.subinfo.target().split() )
+        return self.subinfo.targetCount()
 
     def localFileNames(self):
         # pylint: disable=E0202
@@ -30,7 +30,7 @@ class ArchiveSource(SourceBase):
         # MultiSource.localFileNames
         return self.localFileNamesBase()
 
-    def localFileNamesBase( self):
+    def localFileNamesBase(self):
         """ collect local filenames """
         utils.debug( "ArchiveSource.localFileNamesBase called", 2 )
 
