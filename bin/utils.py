@@ -187,7 +187,7 @@ def getFiles( urls, destdir, suffix=''):
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
 
-    if types(urls) == types.ListType:
+    if type(urls) == types.ListType:
         urlList = urls
     else:
         urlList = urls.split()
