@@ -31,6 +31,9 @@ class Package( CMakePackageBase ):
             src = os.path.join( self.sourceDir(), os.path.basename(self.subinfo.targetAt(i)).replace(".tar.bz2", "") )
             dst = os.path.join( self.sourceDir(), names[i] )
             shutil.move( src, dst )
+        src = os.path.join( self.sourceDir(), "apr", "include", "apr.hw" )
+        dst = os.path.join( self.sourceDir(), "apr", "include", "apr.h" )
+        shutil.copyfile( src, dst )
         return True
 
     def configure( self ):
