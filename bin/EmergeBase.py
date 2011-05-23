@@ -326,6 +326,11 @@ class EmergeBase(object):
             self.version = version
             self.PV, _ = os.path.splitext( os.path.basename( fileName) )
         self.setBuildTarget(buildTarget)
+        if hasattr(self,'source'):
+            # pylint: disable=E1101
+            # this class never defines self.source, that happens only
+            # in MultiSource.
+            self.source.setup( fileName, category, package, version, buildTarget)
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )
