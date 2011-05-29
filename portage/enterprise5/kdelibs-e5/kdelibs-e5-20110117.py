@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
                     '/src/kdelibs-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdelibs-4.6.' + ver
         self.patchToApply['4.6.2'] = [( 'damn-you-meinproc.diff', 1 ),
+                                      ( 'add_portable_lt_to_st.diff', 1 ),
                                       ( 'fix_debug_mingw_build.diff', 1 )]
 
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdelibs'
