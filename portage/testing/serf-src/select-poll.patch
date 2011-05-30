@@ -1,0 +1,29 @@
+Index: test/test_util.c
+===================================================================
+--- test/test_util.c	(revision 1472)
++++ test/test_util.c	(working copy)
+@@ -214,7 +214,7 @@
+     const apr_pollfd_t *desc;
+ 
+     /* create a new pollset */
+-    status = apr_pollset_create(&pollset, 32, pool, 0);
++    status = apr_pollset_create_ex(&pollset, 32, pool, 0, APR_POLLSET_SELECT);
+     if (status != APR_SUCCESS)
+         return status;
+ 
+Index: context.c
+===================================================================
+--- context.c	(revision 1472)
++++ context.c	(working copy)
+@@ -135,7 +135,11 @@
+     else {
+         /* build the pollset with a (default) number of connections */
+         serf_pollset_t *ps = apr_pcalloc(pool, sizeof(*ps));
++#ifdef WIN32
++        (void) apr_pollset_create_ex(&ps->pollset, MAX_CONN, pool, 0, APR_POLLSET_SELECT);
++#else
+         (void) apr_pollset_create(&ps->pollset, MAX_CONN, pool, 0);
++#endif
+         ctx->pollset_baton = ps;
+         ctx->pollset_add = pollset_add;
+         ctx->pollset_rm = pollset_rm;

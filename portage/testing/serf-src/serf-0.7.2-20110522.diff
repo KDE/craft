@@ -1,0 +1,177 @@
+diff -Nru serf-0.7.2.orig/cmake/FindAPR.cmake serf-0.7.2/cmake/FindAPR.cmake
+--- serf-0.7.2.orig/cmake/FindAPR.cmake	1970-01-01 01:00:00.000000000 +0100
++++ serf-0.7.2/cmake/FindAPR.cmake	2011-05-30 10:54:58.161760500 +0200
+@@ -0,0 +1,72 @@
++#  The variables set by this macro are:
++#  APR_FOUND - system has apache portable runtime libraries
++#  APR_INCLUDE_DIRS - the include directories to link to apache portable runtime
++#  APR_LIBRARIES - The libraries needed to link to apache portable runtime
++
++
++IF(APR_INCLUDE_DIRS AND APR_LIBRARIES)
++    # Already in cache, be silent
++    SET(APR_FIND_QUIETLY TRUE)
++ENDIF(APR_INCLUDE_DIRS AND APR_LIBRARIES)
++
++# Find includes
++
++find_path(APR_INCLUDE_DIR apr.h PATH_SUFFIXES apr )
++
++find_path(APR_ICONV_INCLUDE_DIR apr_iconv.h PATH_SUFFIXES apr-iconv )
++
++find_path(APR_UTIL_INCLUDE_DIR apu.h HINTS PATH_SUFFIXES apr-util )
++
++#Find libs
++
++find_library(APR_LIBRARY libapr-1)
++
++find_library(APR_ICONV_LIBRARY libapriconv-1)
++message(STATUS "${APR_ICONV_LIBRARY}")
++find_library(APR_UTIL_LIBRARY libaprutil-1)
++
++set(_TMP_INCLUDES
++    APR
++    APR_UTIL
++    APR_ICONV
++)
++
++set(_TMP_LIBRARIES
++    APR
++    APR_ICONV
++    APR_UTIL
++)
++
++FOREACH(_INCLUDE ${_TMP_INCLUDES})
++    STRING(TOLOWER ${_INCLUDE} _INCLUDENAME)
++    STRING(REPLACE "_" "-" _INCLUDENAME ${_INCLUDENAME})
++    IF(NOT ${_INCLUDE}_INCLUDE_DIR)
++      MESSAGE(STATUS "No ${_INCLUDENAME} includes found")
++      SET(APR_FOUND false)
++    ELSE(NOT ${_INCLUDE}_INCLUDE_DIR)
++      IF(NOT APR_FIND_QUIETLY)
++        MESSAGE(STATUS "Found ${_INCLUDENAME} include: ${${_INCLUDE}_INCLUDE_DIR}")
++      ENDIF(NOT APR_FIND_QUIETLY)
++      SET(APR_FOUND true)
++      SET(APR_INCLUDE_DIRS ${${_INCLUDE}_INCLUDE_DIR})
++    ENDIF(NOT ${_INCLUDE}_INCLUDE_DIR)
++    MARK_AS_ADVANCED(${_INCLUDE}_INCLUDE_DIR)
++ENDFOREACH(_INCLUDE ${_TMP_INCLUDES})
++
++FOREACH(_LIB ${_TMP_LIBRARIES})
++    STRING(TOLOWER "${_LIB}" _LIBNAME)
++    STRING(REPLACE "_" " " _LIBNAME ${_LIBNAME})
++    IF (NOT ${_LIB}_LIBRARY)
++      MESSAGE(STATUS "No ${_LIBNAME} libs found")
++      SET(APR_FOUND false)
++    ELSE (NOT ${_LIB}_LIBRARY)
++      IF(NOT APR_FIND_QUIETLY)
++        MESSAGE(STATUS "Found ${_LIBNAME} lib: ${${_LIB}_LIBRARY}")
++      ENDIF(NOT APR_FIND_QUIETLY)
++      SET(APR_LIBRARIES ${APR_LIBRARIES} ${${_LIB}_LIBRARY})
++    ENDIF(NOT ${_LIB}_LIBRARY)
++    MARK_AS_ADVANCED(${_LIB}_LIBRARY)
++ENDFOREACH(_LIB ${_TMP_LIBRARIES})
++
++SET(APR_LIBRARIES ${APR_LIBRARIES} CACHE STRING "List of all apache portable runtime libraries")
++SET(APR_INCLUDE_DIRS ${APR_INCLUDE_DIRS} CACHE STRING "List of all apache portable runtime libraries include directories")
+diff -Nru serf-0.7.2.orig/CMakeLists.txt serf-0.7.2/CMakeLists.txt
+--- serf-0.7.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ serf-0.7.2/CMakeLists.txt	2011-05-30 10:57:33.782661500 +0200
+@@ -0,0 +1,96 @@
++project(serf C)
++
++cmake_minimum_required(VERSION 2.8.4)
++
++enable_testing()
++
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
++find_package(ZLIB REQUIRED)
++find_package(OpenSSL REQUIRED)
++find_package(APR REQUIRED)
++
++include_directories(${ZLIB_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR} ${APR_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
++
++set(serf_SRCS
++    buckets/aggregate_buckets.c
++    buckets/request_buckets.c
++    buckets/buckets.c
++    buckets/simple_buckets.c
++    buckets/file_buckets.c
++    buckets/mmap_buckets.c
++    buckets/socket_buckets.c
++    buckets/response_buckets.c
++    buckets/headers_buckets.c
++    buckets/allocator.c
++    buckets/dechunk_buckets.c
++    buckets/deflate_buckets.c
++    buckets/limit_buckets.c
++    buckets/ssl_buckets.c
++    buckets/barrier_buckets.c
++    buckets/chunk_buckets.c
++    buckets/bwtp_buckets.c
++    context.c
++    incoming.c
++    outgoing.c
++    auth/auth.c
++    auth/auth_basic.c
++    auth/auth_digest.c
++    auth/auth_kerb.c
++    auth/auth_kerb_gss.c
++)
++
++set(serf_HDRS
++    serf.h
++    serf_bucket_types.h
++    serf_bucket_util.h
++)
++
++add_library(serf ${serf_SRCS})
++target_link_libraries(serf ${ZLIB_LIBRARY} ${OPENSSL_LIBRARIES} ${APR_LIBRARIES})
++
++install(TARGETS serf RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++install(FILES ${serf_HDRS} DESTINATION include)
++
++################### build test executables #####################
++set(SINGLE_TESTS
++    get
++    response
++    request
++    spider
++    server
++    bwtp
++)
++
++foreach(_testname ${SINGLE_TESTS})
++    add_executable(serf_${_testname} test/serf_${_testname}.c)
++    target_link_libraries(serf_${_testname} serf)
++endforeach(_testname ${SINGLE_TESTS})
++
++set(TEST_SUITE_SRCS
++    test/CuTest.c
++    test/test_all.c
++    test/test_util.c
++    test/test_buckets.c
++    test/test_context.c
++    test/test_ssl.c
++)
++add_executable(test_all ${TEST_SUITE_SRCS})
++target_link_libraries(test_all serf)
++
++################# define test cases ###############################
++
++set(TESTCASES
++    simple.response
++    chunked-empty.response
++    chunked.response
++    chunked-trailers.response
++    deflate.response
++)
++
++foreach(_testcase ${TESTCASES})
++    add_test(${_testcase} serf_response ${CMAKE_CURRENT_SOURCE_DIR}/test/testcases/${_testcase})
++endforeach(_testcase ${TESTCASES})
++
++add_test(NAME test_all WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMMAND test_all)
+\ No newline at end of file
