@@ -1,6 +1,6 @@
-diff -Nru win-iconv-0.0.2.orig/CMakeLists.txt win-iconv-0.0.2/CMakeLists.txt
---- win-iconv-0.0.2.orig/CMakeLists.txt	2010-07-27 00:57:00.000000000 +0200
-+++ win-iconv-0.0.2/CMakeLists.txt	2010-12-17 09:21:43.232029200 +0100
+diff -Nru CMakeLists.txt CMakeLists.txt
+--- CMakeLists.txt	2010-07-27 00:57:00.000000000 +0200
++++ CMakeLists.txt	2010-12-17 09:21:43.232029200 +0100
 @@ -5,8 +5,18 @@
  
  set(CPACK_GENERATOR "TBZ2")

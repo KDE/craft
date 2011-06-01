@@ -3,15 +3,16 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'http://win-iconv.googlecode.com/svn/trunk'
-        for ver in ['0.0.1', '0.0.2']:
+        for ver in ['0.0.1', '0.0.2', '0.0.3']:
             self.targets[ver] = 'http://win-iconv.googlecode.com/files/win-iconv-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'win-iconv-' + ver
 
         self.targetDigests['0.0.1'] = 'faf4f1f311f92f2a80afe275f43fabb047f23308'
         self.targetDigests['0.0.2'] = 'd61714a4708d76537600782eb72ccb3cbc89b4b5'
+        self.targetDigests['0.0.3'] = '4af3a4b8632dfa35baca8a8ed57bb874f8ac4eb4'
         self.patchToApply['0.0.2'] = ("win-iconv-0.0.2-20101217.diff", 1)
         self.shortDescription = "a character set conversion library binary compatible with GNU iconv"
-        self.defaultTarget = '0.0.2'
+        self.defaultTarget = '0.0.3'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
