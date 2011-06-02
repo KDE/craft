@@ -27,9 +27,10 @@ class Package(BinaryPackageBase):
     def unpack( self ):
         if not BinaryPackageBase.unpack(self):
             return False
-        for f in os.listdir(os.path.join(self.imageDir(), "nsis-2.46")):
-            shutil.move(os.path.join(self.imageDir(), "nsis-2.46", f), self.imageDir())
-        os.rmdir(os.path.join(self.imageDir(), "nsis-2.46"))
+        localFileDir = self.localFileNames()[0].replace(".zip", "")
+        for f in os.listdir(os.path.join(self.imageDir(), localFileDir)):
+            shutil.move(os.path.join(self.imageDir(), localFileDir, f), self.imageDir())
+        os.rmdir(os.path.join(self.imageDir(), localFileDir))
         for f in ['makensis', 'makensisw', 'nsis']:
             shutil.copy(os.path.join(self.packageDir(), "wrapper.bat"), os.path.join(self.imageDir(), "bin", f + ".bat"))
         return True
