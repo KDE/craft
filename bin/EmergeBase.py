@@ -364,7 +364,7 @@ class EmergeBase(object):
         if self.subinfo.options.exitOnErrors:
             utils.die( "while running %s cmd: %s" % (errorMessage, str(command)) )
         else:
-            utils.error( "while running %s cmd: %s" % (errorMessage, str(command)) )
+            utils.warning( "while running %s cmd: %s" % (errorMessage, str(command)) )
         return False
 
     def proxySettings(self):
