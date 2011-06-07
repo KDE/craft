@@ -8,10 +8,13 @@ class subinfo(info.infoclass):
         self.targets['1.6.3'] = "http://winkde.org/pub/kde/ports/win32/repository/other/Git-1.6.3-preview20090507-2.tar.bz2"
         self.targetInstSrc['1.6.3'] = ""
         self.targets['1.6.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.6.4-preview20090729.7z"
-        self.targets['1.7.0.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.0.2-preview20100309.7z"
+        self.targets['1.7.0.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.0.2-preview20100309.7z" 
         self.targetDigests['1.7.0.2'] = '96c3720dec940c4b8da8a09bfdcfa7ed56c2f016'
-
-        self.defaultTarget = '1.7.0.2'
+        self.targets['1.7.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.4-preview20110204.7z"
+        self.targetDigests['1.7.4'] = 'bc470ba225666a60eed3d4fac544ce2a5611546b'
+        
+        
+        self.defaultTarget = '1.7.4'
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
