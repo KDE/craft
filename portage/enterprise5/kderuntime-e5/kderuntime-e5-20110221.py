@@ -8,7 +8,8 @@ class subinfo( info.infoclass ):
             self.targetInstSrc['4.6.' + ver] = 'kdebase-runtime-4.6.' + ver
         self.defaultTarget = '4.6.2'
         self.patchToApply['4.6.2'] = [('Not-only-use-hardcoded-install-path-on-Windows.patch', 1),
-                                      ('Revert-disable-nepomuk-runtime-on-Windows.patch', 1)]
+#                                      ('Revert-disable-nepomuk-runtime-on-Windows.patch', 1)
+                                     ]
 
     def setDependencies( self ):
         self.dependencies['enterprise5/kdelibs-e5'] = 'default'
