@@ -11,10 +11,9 @@ class subinfo(info.infoclass):
                     'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + \
                     '/src/kdelibs-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdelibs-4.6.' + ver
-        self.patchToApply['4.6.2'] = [( 'damn-you-meinproc.diff', 1 ),
-                                      ( 'add_portable_lt_to_st.diff', 1 ),
-                                      ( 'fix_debug_mingw_build.diff', 1 )]
-        self.patchToApply['4.6'] = self.patchToApply['4.6.2']
+        self.patchToApply['4.6'] = [( 'damn-you-meinproc.diff', 1 ),
+                                    ( 'add_portable_lt_to_st.diff', 1 ),
+                                    ]
 
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdelibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdelibs'
