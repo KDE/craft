@@ -4,12 +4,12 @@ from Package.CMakePackageBase import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.targets[ '1.0.21' ] = 'http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.21.tar.gz'
-        self.targetInstSrc[ '1.0.21' ] = 'libsndfile-1.0.21'
-        self.patchToApply[ '1.0.21' ] = ( 'libsndfile-1.0.21-20101127.diff', 1 )
-        self.targetDigests[ '1.0.21' ] = '136845a8bb5679e033f8f53fb98ddeb5ee8f1d97'
+        self.targets[ '1.0.24' ] = 'http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.24.tar.gz'
+        self.targetInstSrc[ '1.0.24' ] = 'libsndfile-1.0.24'
+        self.patchToApply[ '1.0.24' ] = ( 'libsndfile-1.0.21-20101127.diff', 1 )
         self.shortDescription = "a C library for reading and writing files containing sampled sound"
-        self.defaultTarget = '1.0.21'
+        self.targetDigests['1.0.24'] = 'ade2dad272b52f61bb58aca3a4004b28549ee0f8'
+        self.defaultTarget = '1.0.24'
 
     def setDependencies( self ):
         self.buildDependencies[ 'virtual/base' ] = 'default'
@@ -23,3 +23,4 @@ class Package( CMakePackageBase ):
 
 if __name__ == '__main__':
     Package().execute()
+
