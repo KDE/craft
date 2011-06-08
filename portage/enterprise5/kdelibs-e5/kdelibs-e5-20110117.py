@@ -4,6 +4,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.6.x'] = 'branches/KDE/4.6/kdelibs'
+        self.svnTargets['4.6'] = '[git]kde:kdelibs|KDE/4.6|'
+
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.6.' + ver] = \
                     'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + \
@@ -12,6 +14,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.6.2'] = [( 'damn-you-meinproc.diff', 1 ),
                                       ( 'add_portable_lt_to_st.diff', 1 ),
                                       ( 'fix_debug_mingw_build.diff', 1 )]
+        self.patchToApply['4.6'] = self.patchToApply['4.6.2']
 
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdelibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdelibs'
@@ -63,7 +66,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdelibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdelibs'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdelibs'
-        self.defaultTarget = '4.6.2'
+        self.defaultTarget = '4.6'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdewin-e5'] = 'default'
