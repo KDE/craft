@@ -21,6 +21,7 @@ class Package( AutoToolsPackageBase):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = 'msys'
+        self.subinfo.options.configure.defines = "--enable-shared=no --enable-ltdl-install"
         self.subinfo.options.package.withCompiler = False
 
 if __name__ == '__main__':
