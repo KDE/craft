@@ -5,7 +5,7 @@
  alias clear=clsb
  
 -cd "$HOME"
-+if [ ! -d "${MSYS_LOGIN_DIR}" ]; then
++if [ ! -z "${MSYS_LOGIN_DIR}" ]; then
 +    cd "$MSYS_LOGIN_DIR"
 +else
 +    cd "$HOME"
