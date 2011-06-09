@@ -1,0 +1,14 @@
+--- msys\etc\profile	2011-06-09 16:50:19.428607300 +0200
++++ msys\etc\profile	2011-06-09 12:50:52.660953700 +0200
+@@ -56,10 +56,5 @@
+ 
+ alias clear=clsb
+ 
++if [ ! -d "${MSYS_LOGIN_DIR}" ]; then
++    cd "$MSYS_LOGIN_DIR"
++else
++    cd "$HOME"
++fi
++
++cd "$HOME"
+ 

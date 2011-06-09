@@ -19,6 +19,9 @@ class MSysShell(object):
 
 
     def initEnvironment(self, cflags="", ldflags=""):
+        mergeroot = self.toNativePath(os.getenv("KDEROOT"))
+        cflags = "-I%s/include %s" % (mergeroot, cflags)
+        ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
         if compiler.isMinGW():
             if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "
@@ -63,7 +66,8 @@ class MSysShell(object):
 def main():
     shell = MSysShell()
     shell.initEnvironment()
-    utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ), "--login"))
+    utils.putenv("MSYS_LOGIN_DIR",os.getcwd())
+    utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ), "--login -i"))
 
 if __name__ == '__main__':
     main()
