@@ -42,8 +42,8 @@ class Package( QMakePackageBase ):
         return True
         
     def install( self ):
-        #if not QMakePackageBase.install( self ):
-        #    return False
+        if not QMakePackageBase.install( self ):
+            return False
         #sic.: the .lib file is placed under bin dir in hupnp
         utils.copyDir( os.path.join( self.sourceDir(), "hupnp", "deploy" ) , self.installDir() )
         utils.copyDir( os.path.join( self.sourceDir(), "hupnp_av", "deploy" ) , self.installDir() )
