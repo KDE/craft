@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/bin-base'] = 'default'
         self.buildDependencies['dev-util/7zip'] = 'default'
         self.dependencies['dev-util/msys'] = 'default'
-        self.dependencies['testing/libtool-src'] = 'default'
+        self.dependencies['dev-util/libtool'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
