@@ -42,12 +42,11 @@ class Package( QMakePackageBase ):
         return True
         
     def install( self ):
-        if not QMakePackageBase.install( self ):
-            return False
+        #if not QMakePackageBase.install( self ):
+        #    return False
         #sic.: the .lib file is placed under bin dir in hupnp
-        utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "hupnp", "bin" ) , os.path.join( self.installDir(), "lib" ) )
-        utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "hupnp", "include" ) , os.path.join( self.installDir(), "include" ) )
-        utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "hupnp", "deploy" ) , self.installDir() )
+        utils.copyDir( os.path.join( self.sourceDir(), "hupnp", "deploy" ) , self.installDir() )
+        utils.copyDir( os.path.join( self.sourceDir(), "hupnp_av", "deploy" ) , self.installDir() )
         os.mkdir( os.path.join( self.installDir(), "bin" ) )
         # copy over dlls as required by KDE convention
         for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
