@@ -15,15 +15,14 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = '2.2.8'
 
-from Package.AutoToolsPackageBase import *
+from Package.BinaryPackageBase import *
 
-class Package( AutoToolsPackageBase):
+class Package( BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        AutoToolsPackageBase.__init__(self)
+        BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = 'msys'
-        self.subinfo.options.configure.defines = "--enable-shared=no --enable-ltdl-install"
-        self.subinfo.options.package.withCompiler = False
+
 
 if __name__ == '__main__':
      Package().execute()
