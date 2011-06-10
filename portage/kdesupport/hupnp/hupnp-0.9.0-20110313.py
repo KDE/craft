@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
 
     def setBuildOptions( self ):
         self.options.configure.defines = '-r "CONFIG += DISABLE_TESTAPP"'
+        self.options.configure.defines = '-r "CONFIG += DISABLE_AVTESTAPP"'
         self.options.configure.defines += ' -r "CONFIG += DISABLE_QTSOAP"'
 
 from Package.QMakePackageBase import *
