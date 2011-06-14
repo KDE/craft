@@ -82,6 +82,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/strigi'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/strigi'
         self.defaultTarget = 'gitHEAD'
+        self.patchToApply['gitHEAD'] = ('Revert-Strigiclient-depends-on-strigidaemon.patch', 1)
 
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '4.4'
