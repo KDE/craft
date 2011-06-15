@@ -21,6 +21,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://anongit.kde.org/strigi'
+        self.svnTargets['working'] = 'git://anongit.kde.org/strigi||1a7bb41e0623a71a49090a8255e62deacaa6431c'
         self.svnTargets['0.5.7'] = 'tags/strigi/strigi/0.5.7'
         self.svnTargets['0.5.8'] = 'tags/strigi/strigi/0.5.8'
         self.svnTargets['0.5.9'] = 'tags/strigi/strigi/0.5.9'
@@ -81,8 +82,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdesupport/strigi'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/strigi'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/strigi'
-        self.defaultTarget = 'gitHEAD'
-        self.patchToApply['gitHEAD'] = ('Revert-Strigiclient-depends-on-strigidaemon.patch', 1)
+        self.defaultTarget = 'working'
 
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '4.4'
