@@ -23,17 +23,19 @@ class subinfo(info.infoclass):
     self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + self.getVer() + "-win32-debug.7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() + "-debug" ] = 'vlc-' + self.vlcTagName +  self.getVer()
 
-    releaseTag = '1.1.5'
+    releaseTag = '1.1.10'
     self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
     self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
-    self.targetDigests['1.1.5'] = 'c2da2e2a530d9558fcf9da46fa34920c66d9f2ef'
+    self.targetDigests['1.1.10'] = '981ee49d3b3559606472370f6971cdf3b0e7163f'
     self.shortDescription = "an open-source multimedia framework"
+    
+    
     if emergePlatform.buildArchitecture() == 'x64':
         self.defaultTarget = self.vlcTagName + self.getVer()
     elif os.getenv("EMERGE_BUILDTYPE") == "Debug" and compiler.isMinGW():
         self.defaultTarget = self.vlcTagName + self.getVer() + "-debug"
     else:
-        self.defaultTarget = '1.1.5'
+        self.defaultTarget = releaseTag
 
 
   def setDependencies( self ):
