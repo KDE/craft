@@ -22,7 +22,9 @@ class subinfo( info.infoclass ):
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0-ce'
         else:
-            self.defaultTarget = '2.8.4'
+            # 2.8.4 is broken when using short paths and
+            # windres fails even in old projects like zlib
+            self.defaultTarget = '2.8.3-2'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
