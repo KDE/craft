@@ -1,31 +1,37 @@
+import base
 import os
 import sys
 import info
 
-class subinfo( info.infoclass ):
+class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.6/kdeedu'
-        for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdeedu-4.6.' + ver + '.tar.bz2'
-            self.targetInstSrc['4.6.' + ver] = 'kdeedu-4.6.' + ver
+        self.svnTargets['svnHEAD'] = ''
         self.defaultTarget = 'svnHEAD'
-    
+
     def setDependencies( self ):
-        self.runtimeDependencies['kde-4.6/kde-runtime'] = 'default'
-        self.dependencies['kde-4.6/kdelibs'] = 'default'
-        self.dependencies['win32libs-bin/cfitsio'] = 'default'
-        self.dependencies['win32libs-bin/libnova'] = 'default'
-        self.dependencies['win32libs-bin/openbabel'] = 'default'
-        self.shortDescription = "KDE education applications (KAlgebra, Marble, KStars)"
+        self.dependencies['kde-4.6/libkdeedu'] = 'default'
+        self.dependencies['kde-4.6/blinken'] = 'default'
+        self.dependencies['kde-4.6/cantor'] = 'default'
+        self.dependencies['kde-4.6/kalgebra'] = 'default'
+        self.dependencies['kde-4.6/kalzium'] = 'default'
+        self.dependencies['kde-4.6/kanagram'] = 'default'
+        self.dependencies['kde-4.6/kbruch'] = 'default'
+        self.dependencies['kde-4.6/kgeography'] = 'default'
+        self.dependencies['kde-4.6/khangman'] = 'default'
+        self.dependencies['kde-4.6/kig'] = 'default'
+        self.dependencies['kde-4.6/kiten'] = 'default'
+        self.dependencies['kde-4.6/klettres'] = 'default'
+        self.dependencies['kde-4.6/kmplot'] = 'default'
+        self.dependencies['kde-4.6/kstars'] = 'default'
+        self.dependencies['kde-4.6/ktouch'] = 'default'
+        self.dependencies['kde-4.6/kturtle'] = 'default'
+        self.dependencies['kde-4.6/kwordquiz'] = 'default'
+        self.dependencies['kde-4.6/marble'] = 'default'
+        self.dependencies['kde-4.6/parley'] = 'default'
+        self.dependencies['kde-4.6/rocs'] = 'default'
+        self.dependencies['kde-4.6/step'] = 'default'
 
-
-from Package.CMakePackageBase import *
-        
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        self.subinfo = subinfo()
-        CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF"
+from Package.VirtualPackageBase import *
 
 if __name__ == '__main__':
-    Package().execute()
+    Package(subinfo()).execute()
