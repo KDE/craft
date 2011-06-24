@@ -78,7 +78,8 @@ file collection process is skipped, and only the installer is generated.
         self.isInstalled = self.__isInstalled()
         if not self.isInstalled:
             utils.die( "could not find installed nsis package, "
-                       "you may download and install it from "
+                       "you can install it using emerge nsis or"
+                       "download and install it from "
                        "http://sourceforge.net/projects/nsis/" )
         self.defines = dict()
         self.whitelist = []
