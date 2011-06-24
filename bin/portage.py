@@ -150,16 +150,27 @@ def rootDirForCategory( category ):
 def rootDirForPackage( category, package ):
     # this function should return the portage directory where it finds the
     # first occurance of a package or the default value
-    for i in rootDirectories():
-        if category and package and os.path.exists( os.path.join( i, category, package ) ):
-            return i
+    package, subpackage = getSubPackage( category, package )
+    if category and package:
+        if subpackage:
+            for i in rootDirectories():
+                if os.path.exists( os.path.join( i, category, package, subpackage ) ):
+                    return i
+        else:
+            for i in rootDirectories():
+                if os.path.exists( os.path.join( i, category, package ) ):
+                    return i
     # as a fall back return the default even if it might be wrong
     return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
-    if category and package:
-        return os.path.join( rootDirForPackage( category, package ), category, package )
+    _package, _subpackage = getSubPackage( category, package )
+    if category and _package:
+        if _subpackage:
+            return os.path.join( rootDirForPackage( category, package ), category, _package, _subpackage )
+        else:
+            return os.path.join( rootDirForPackage( category, package ), category, package )
     else:
         return ""
 
@@ -178,10 +189,14 @@ def getCategoryPackageVersion( path ):
     utils.debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
     return [ category, package, version ] # TODO: why a list and not a tuple?
 
+def VCSDirs():
+    return [ '.svn', 'CVS', '.hg', '.git' ]
+
 class Portage:
     def __init__( self ):
         """ """
         self.categories = {}
+        self.subpackages = {}
         self.portages = {}
 
     def addPortageDir( self, directory ):
@@ -192,7 +207,7 @@ class Portage:
         categoryList = os.listdir( directory )
 
         # remove vcs directories
-        for vcsdir in [ '.svn', 'CVS', '.hg', '.git' ]:
+        for vcsdir in VCSDirs():
             if vcsdir in categoryList:
                 categoryList.remove( vcsdir )
 
@@ -206,7 +221,7 @@ class Portage:
             packageList = os.listdir( os.path.join( directory, category ) )
 
             # remove vcs directories
-            for vcsdir in [ '.svn', 'CVS', '.hg', '.git' ]:
+            for vcsdir in VCSDirs():
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
 
@@ -217,6 +232,16 @@ class Portage:
                     continue
                 if not package in self.categories[ category ]:
                     self.categories[ category ].append( package )
+
+                subPackageList = os.listdir( os.path.join( directory, category, package ) )
+                for subPackage in subPackageList:
+                    if not os.path.isdir( os.path.join( directory, category, package, subPackage ) ) or subPackage in VCSDirs():
+                        continue
+                    if not subPackage in self.subpackages.keys():
+                        self.subpackages[ subPackage ] = []
+                    if not subPackage in self.categories[ category ]:
+                        self.categories[ category ].append( subPackage )
+                    self.subpackages[ subPackage ].append( category + "/" + package )
 
 
     def getCategory( self, package ):
@@ -418,6 +443,15 @@ PortageInstance = Portage()
 for _dir in rootDirectories():
     PortageInstance.addPortageDir( _dir )
 
+def getSubPackage( category, package ):
+    """ returns package and subpackage names """
+    """ in case no subpackage could be found, None is returned """
+    if package in PortageInstance.subpackages:
+        for entry in PortageInstance.subpackages[ package ]:
+            cat, pac = entry.split("/")
+            if cat == category: return pac, package
+    return package, None
+
 def findPossibleTargets( category, package, version, buildtype=''): # pylint: disable=W0613
     """ this function tries to guess which target got used by looking at the different image directories """
     target = PortageInstance.getDefaultTarget( category, package, version )
@@ -454,7 +488,12 @@ def getDependencies( category, package, version, runtimeOnly=False ):
     if not os.path.isfile( getFilename( category, package, version ) ):
         utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
 
-    utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
+    package, subpackage = getSubPackage( category, package )
+    print "getDependencies:", package, subpackage
+    if subpackage:
+        utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
+    else:
+        utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
     mod = __import__( getFilename( category, package, version ) )
 
     deps = []
@@ -482,12 +521,14 @@ def solveDependencies( category, package, version, depList, dep_type='both' ):
             category = sp[ 0 ]
             package = sp[ 1 ]
             version = PortageInstance.getNewestVersion( category, package )
+            utils.debug( "found corresponding source package for %s" % package, 1 )
 
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
-
+        utils.debug( "found package in category %s" % category, 2 )
     if ( version == "" ):
         version = PortageInstance.getNewestVersion( category, package )
+        utils.debug( "found package with newest version %s" % version, 2 )
 
     pac = DependencyPackage( category, package, version )
     depList = pac.getDependencies( depList, dep_type=dep_type )
@@ -518,7 +559,11 @@ def readChildren( category, package, version ):
     # To avoid possible endless recursion this may be also make sense for all packages
     if category == internalCategory and identFileName in modDict.keys():
         return dict(), dict()
-    utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, identFileName ), 2 )
+    package, subpackage = getSubPackage( category, package )
+    if subpackage:
+        utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
+    else:
+        utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
     if not identFileName in modDict.keys():
         mod = __import__( identFileName )
         modDict[ identFileName ] = mod
@@ -754,7 +799,7 @@ def remInstalled( category, package, version, buildtype='' ):
     return found
 
 def getPackagesCategories(packageName, defaultCategory = None):
-
+    utils.debug( "getPackagesCategories for package name %s" % packageName, 1 )
     if defaultCategory is None:
         if "EMERGE_DEFAULTCATEGORY" in os.environ:
             defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
@@ -762,14 +807,13 @@ def getPackagesCategories(packageName, defaultCategory = None):
             defaultCategory = "kde"
 
     packageList, categoryList = [], []
-
     if len( packageName.split( "/" ) ) == 1:
         if PortageInstance.isCategory( packageName ):
             utils.debug( "isCategory=True", 2 )
             packageList = PortageInstance.getAllPackages( packageName )
             categoryList = [ packageName ] * len(packageList)
         else:
-
+            utils.debug( "isCategory=False", 2 )
             if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
                 # prefer the default category
                 packageList = [ packageName ]
