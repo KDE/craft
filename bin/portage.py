@@ -181,8 +181,16 @@ def getFilename( category, package, version ):
 def getCategoryPackageVersion( path ):
     utils.debug( "getCategoryPackageVersion: %s" % path, 2 )
     head, fullFileName = os.path.split( path )
-    head, package = os.path.split( head )
-    head, category = os.path.split( head )
+    for rd in rootDirectories():
+        if head.startswith(rd):
+            head = head.replace(rd + os.sep, "")
+            break
+
+    if len( head.split( os.sep ) )  == 3:
+        category, _dummy, package = head.split( os.sep )
+    else:
+        head, package = os.path.split( head )
+        head, category = os.path.split( head )
 
     filename = os.path.splitext( fullFileName )[0]
     package, version = utils.packageSplit( filename )
