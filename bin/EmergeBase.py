@@ -211,7 +211,7 @@ class EmergeBase(object):
 
     def packageDir(self):
         """ add documentation """
-        return self.__adjustPath(os.path.join( portage.rootDirForPackage( self.category, self.package ), self.category, self.package ))
+        return self.__adjustPath( portage.getDirname( self.category, self.package ) )
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
