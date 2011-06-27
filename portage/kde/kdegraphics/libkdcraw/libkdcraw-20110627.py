@@ -3,14 +3,14 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:ksaneplugin|%s|' % ver
+            self.svnTargets[ ver ] = '[git]kde:libkdcraw|%s|' % ver
             
-        self.svnTargets['gitHEAD'] = '[git]kde:ksaneplugin'
+        self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['kde/libksane'] = 'default'
+
 
 from Package.CMakePackageBase import *
 

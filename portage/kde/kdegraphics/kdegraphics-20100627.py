@@ -7,6 +7,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
+        self.dependencies['kde/libksane'] = 'default'
+        self.dependencies['kde/libkexiv2'] = 'default'
+        self.dependencies['kde/libkdcraw'] = 'default'
+        self.dependencies['kde/libkipi'] = 'default'      
         self.dependencies['kde/okular'] = 'default'
         self.dependencies['kde/gwenview'] = 'default'
         self.dependencies['kde/kolourpaint'] = 'default'
@@ -14,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/ksnapshot'] = 'default'
         self.dependencies['kde/svgpart'] = 'default'
         self.dependencies['kde/ksaneplugin'] = 'default'
-        self.dependencies['kde/kdegraphics-thumbnailers'] = 'default'
+        self.dependencies['kde/kdegraphics-thumbnailers'] = 'default'  
         
         #doesnt work because of missing dependency gphoto2
         #self.dependencies['kde/kamera'] = 'default'
