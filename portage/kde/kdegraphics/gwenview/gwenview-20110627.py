@@ -12,9 +12,16 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs-bin/exiv2'] = 'default'
+        self.dependencies['win32libs-bin/jpeg'] = 'default'
+        self.dependencies['win32libs-bin/exiv2'] = 'default'
+        self.dependencies['win32libs-bin/exiv2'] = 'default'
+        
+        
+        
+        
         self.dependencies['kde/kdelibs'] = 'default'
+        
 
 from Package.CMakePackageBase import *
 

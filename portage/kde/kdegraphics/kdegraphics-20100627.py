@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kdegraphics/okular'] = 'default'
         self.dependencies['kde/kdegraphics/gwenview'] = 'default'
+        self.dependencies['kde/kdegraphics/kolourpaint'] = 'default'
 
 from Package.CMakePackageBase import *
 
