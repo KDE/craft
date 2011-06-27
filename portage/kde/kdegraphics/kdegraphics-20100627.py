@@ -17,9 +17,12 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kruler'] = 'default'
         self.dependencies['kde/ksnapshot'] = 'default'
         self.dependencies['kde/svgpart'] = 'default'
-        self.dependencies['kde/ksaneplugin'] = 'default'
-        self.dependencies['kde/kdegraphics-thumbnailers'] = 'default'  
-        
+        self.dependencies['kde/ksaneplugin'] = 'default' 
+        self.dependencies['kde/kdegraphics-thumbnailers'] = 'default'         
+        self.dependencies['kde/mobipocket'] = 'default'         
+        self.dependencies['kde/kdegraphics-strigi-analyzer'] = 'default' 
+        self.dependencies['kde/kcolorchooser'] = 'default' 
+                       
         #doesnt work because of missing dependency gphoto2
         #self.dependencies['kde/kamera'] = 'default'
         
