@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kdegraphics/okular'] = 'default'
         self.dependencies['kde/kdegraphics/gwenview'] = 'default'
         self.dependencies['kde/kdegraphics/kolourpaint'] = 'default'
+        self.dependencies['kde/kdegraphics/kruler'] = 'default'
 
 from Package.CMakePackageBase import *
 
