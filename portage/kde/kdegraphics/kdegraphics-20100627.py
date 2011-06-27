@@ -6,17 +6,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdegraphics/okular'] = 'default'
-        self.dependencies['kde/kdegraphics/gwenview'] = 'default'
-        self.dependencies['kde/kdegraphics/kolourpaint'] = 'default'
-        self.dependencies['kde/kdegraphics/kruler'] = 'default'
+        self.dependencies['kde/okular'] = 'default'
+        self.dependencies['kde/gwenview'] = 'default'
+        self.dependencies['kde/kolourpaint'] = 'default'
+        self.dependencies['kde/kruler'] = 'default'
+        self.dependencies['kde/ksnapshot'] = 'default'
 
-from Package.CMakePackageBase import *
-
-class Package(CMakePackageBase):
-    def __init__( self ):
-        self.subinfo = subinfo()
-        CMakePackageBase.__init__( self )
+from Package.VirtualPackageBase import *
 
 if __name__ == '__main__':
-    Package().execute()
+    Package(subinfo()).execute()
