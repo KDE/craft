@@ -4,13 +4,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        arch='32'
-        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-           arch='64'
-        for version in ['0.23-3']:
-            self.targets[ version ] = "http://ftp.gnome.org/pub/gnome/binaries/win"+ arch+"/dependencies/pkg-config_"+version+"_win"+arch+".zip"
-        self.targetDigests['0.23-3'] = 'd063e705812e1ee7feb8f35d51b3cad04ca13b0d'
-        self.defaultTarget = '0.23-3'
+        #from http://kemovitra.blogspot.com/2009/07/mingw-building-static-pkg-config.html
+        self.targets[ '0.23' ]          = 'http://downloads.sourceforge.net/kde-windows/pkg-config.exe'
+        self.defaultTarget = '0.23'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
@@ -20,6 +16,7 @@ class Package(BinaryPackageBase):
   def __init__(self):
     self.subinfo = subinfo()
     BinaryPackageBase.__init__( self )
+    self.subinfo.options.merge.destinationPath = 'dev-utils'
 
 if __name__ == '__main__':
     Package().execute()
