@@ -283,7 +283,9 @@ class PackageBase (EmergeBase):
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}
         if command in functions:
+            utils.startTimer(command,1)
             ok = getattr(self, functions[command])()
+            utils.stopTimer(command,1)
         else:
             ok = utils.error( "command %s not understood" % command )
 
