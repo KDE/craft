@@ -6,8 +6,7 @@ import re
 import urllib2
 import compiler
 
-# currently only needed from kdenetwork
-
+_VLC_VER = None
 
 class subinfo(info.infoclass):
   def setTargets( self ):
@@ -42,8 +41,9 @@ class subinfo(info.infoclass):
     self.buildDependencies['virtual/bin-base'] = 'default'
 
   def getVer( self ):
-    if( hasattr( self , "ver" ) ) :
-      return self.ver
+    global _VLC_VER
+    if _VLC_VER != None :
+      return _VLC_VER
     else:
       try:
         fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
@@ -52,8 +52,8 @@ class subinfo(info.infoclass):
         return "Nightlys Unavailible:"+str(e)
       m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
       fh.close()
-      self.ver = m.group(0)
-      return self.ver
+      _VLC_VER = m.group(0)
+      return _VLC_VER 
 
 class Package(BinaryPackageBase):
   def __init__(self):
