@@ -1315,3 +1315,26 @@ def envAsBool(key, default=False):
     else:
         return default
 
+_TIMERS = dict()
+import datetime
+import time
+def startTimer(name):
+    global _TIMERS
+    if name in _TIMERS:
+      die("%s already in timers" % name)
+    _TIMERS[name] = datetime.datetime.now()
+    print "Task: %s started" % name
+    
+def stopTimer(name):
+    global _TIMERS
+    if not name in _TIMERS:
+      die("%s not in timers" % name)      
+    delta = datetime.datetime.now() - _TIMERS[name]
+    print "Task: %s stopped after: %s" % (name, delta)
+    del _TIMERS[name]
+    
+    
+def stopAllTimer():
+    global _TIMERS
+    for name in _TIMERS:
+      stopTimer(name)

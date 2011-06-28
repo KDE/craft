@@ -340,6 +340,7 @@ def handlePackage( category, package, version, buildAction, opts ):
 # but as a temporary solution rename variables to mainXXX
 # where it is safe so there are less redefinitions in inner scopes
 
+utils.startTimer("Emerge")
 mainBuildAction = "all"
 packageName = None
 doPretend = False
@@ -647,4 +648,6 @@ if len( nextArguments ) > 0:
     #        os.environ[ element ] = ""
     if not utils.system(command):
         utils.die( "cannot execute next commands cmd: %s" % command )
+        
+utils.stopTimer("Emerge")
 
