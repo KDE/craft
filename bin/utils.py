@@ -1321,8 +1321,6 @@ import datetime
 import time
 def startTimer(name, level = 0):
     global _TIMERS
-    if name in _TIMERS:
-        die("%s already in timers" % name)
     _TIMERS[name] = (datetime.datetime.now(),level)
     if level == 0 or verbose() > level and verbose() > 0:
         print "Task: %s started" % name
@@ -1337,7 +1335,6 @@ def stopTimer(name):
         delta = datetime.datetime.now() - startTime
         print "Task: %s stopped after: %s" % (name, delta)
         sys.stdout.flush()
-    del _TIMERS[name]
     
     
 def stopAllTimer():
