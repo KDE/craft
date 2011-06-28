@@ -5,7 +5,6 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['testing/glib'] = 'default'
         self.hardDependencies['testing/pkg-config'] = 'default'
 
     def setTargets( self ):
