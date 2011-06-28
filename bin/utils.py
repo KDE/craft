@@ -557,6 +557,7 @@ def error( message ):
 
 def die( message ):
     print >> sys.stderr, "emerge fatal error: %s" % message
+    stopAllTimer()
     exit( 1 )
 
 def traceMode():
@@ -1322,17 +1323,18 @@ def startTimer(name, level = 0):
     global _TIMERS
     if name in _TIMERS:
         die("%s already in timers" % name)
-    _TIMERS[name] = datetime.datetime.now()
+    _TIMERS[name] = (datetime.datetime.now(),level)
     if level == 0 or verbose() > level and verbose() > 0:
         print "Task: %s started" % name
         sys.stdout.flush()
     
-def stopTimer(name,level = 0):
+def stopTimer(name):
     global _TIMERS
     if not name in _TIMERS:
-        die("%s not in timers" % name)      
+        die("%s not in timers" % name)    
+    (startTime,level) = _TIMERS[name]
     if level == 0 or verbose() > level and verbose() > 0:
-        delta = datetime.datetime.now() - _TIMERS[name]
+        delta = datetime.datetime.now() - startTime
         print "Task: %s stopped after: %s" % (name, delta)
         sys.stdout.flush()
     del _TIMERS[name]
