@@ -1,69 +1,6 @@
-diff -Nru zlib-1.2.4.orig/CMakeLists.txt zlib-1.2.4/CMakeLists.txt
---- zlib-1.2.4.orig/CMakeLists.txt	Tue Feb 23 15:53:58 2010
-+++ zlib-1.2.4/CMakeLists.txt	Thu Apr 22 13:29:48 2010
-@@ -1,8 +1,15 @@
--cmake_minimum_required(VERSION 2.4.4)
-+cmake_minimum_required(VERSION 2.6)
- set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
- 
-+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-+
- project(zlib C)
- 
-+if(WINCE)
-+    find_package(Wcecompat REQUIRED)
-+    include_directories(${WCECOMPAT_INCLUDE_DIR})
-+endif(WINCE)
-+
- if(NOT DEFINED BUILD_SHARED_LIBS)
-     option(BUILD_SHARED_LIBS "Build a shared library form of zlib" ON)
- endif()
-@@ -17,6 +24,7 @@
- check_include_file(stdint.h    HAVE_STDINT_H)
- check_include_file(stddef.h    HAVE_STDDEF_H)
- 
-+set(CMAKE_DEBUG_POSTFIX)
- #
- # Check to see if we have large file support
- #
-@@ -60,7 +68,7 @@
- endif()
- 
- if(MSVC)
--    set(CMAKE_DEBUG_POSTFIX "d")
-+#    set(CMAKE_DEBUG_POSTFIX "d")
-     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
- endif()
-@@ -142,6 +150,10 @@
- 
- set_target_properties(zlib PROPERTIES SOVERSION 1)
- 
-+if(WINCE)
-+    target_link_libraries(zlib ${WCECOMPAT_LIBRARIES})
-+endif(WINCE)
-+
- if(NOT CYGWIN)
-     # This property causes shared libraries on Linux to have the full version
-     # encoded into their final filename.  We disable this on Cygwin because
-@@ -178,12 +190,14 @@
- # Example binaries
- #============================================================================
- 
-+if(NOT WINCE)
- add_executable(example example.c)
- target_link_libraries(example zlib)
- add_test(example example)
- 
- add_executable(minigzip minigzip.c)
- target_link_libraries(minigzip zlib)
-+endif(NOT WINCE)
- 
- if(HAVE_OFF64_T)
-     add_executable(example64 example.c)
-diff -Nru zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.4/cmake/modules/FindWcecompat.cmake
---- zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ zlib-1.2.4/cmake/modules/FindWcecompat.cmake	Thu Apr 22 12:48:01 2010
+diff -Nru zlib-1.2.5.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.5/cmake/modules/FindWcecompat.cmake
+--- zlib-1.2.5.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ zlib-1.2.5/cmake/modules/FindWcecompat.cmake	2011-06-29 16:53:36.565705000 +0200
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -98,9 +35,89 @@ diff -Nru zlib-1.2.4.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.4/cmake/mod
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
-diff -Nru zlib-1.2.4.orig/win32/zlib1.rc zlib-1.2.4/win32/zlib1.rc
---- zlib-1.2.4.orig/win32/zlib1.rc	2006-05-21 05:55:00.000000000 +0200
-+++ zlib-1.2.4/win32/zlib1.rc	2010-04-30 15:24:41.422451200 +0200
+diff -Nru zlib-1.2.5.orig/CMakeLists.txt zlib-1.2.5/CMakeLists.txt
+--- zlib-1.2.5.orig/CMakeLists.txt	2010-03-28 21:06:13.000000000 +0200
++++ zlib-1.2.5/CMakeLists.txt	2011-06-29 17:14:36.727548500 +0200
+@@ -1,8 +1,15 @@
+-cmake_minimum_required(VERSION 2.4.4)
++cmake_minimum_required(VERSION 2.6)
+ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
+ 
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
+ project(zlib C)
+ 
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
+ if(NOT DEFINED BUILD_SHARED_LIBS)
+     option(BUILD_SHARED_LIBS "Build a shared library form of zlib" ON)
+ endif()
+@@ -17,6 +24,7 @@
+ check_include_file(stdint.h    HAVE_STDINT_H)
+ check_include_file(stddef.h    HAVE_STDDEF_H)
+ 
++set(CMAKE_DEBUG_POSTFIX)
+ #
+ # Check to see if we have large file support
+ #
+@@ -53,7 +61,7 @@
+ check_include_file(unistd.h Z_HAVE_UNISTD_H)
+ 
+ if(MSVC)
+-    set(CMAKE_DEBUG_POSTFIX "d")
++#    set(CMAKE_DEBUG_POSTFIX "d")
+     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+ endif()
+@@ -135,6 +143,10 @@
+ 
+ set_target_properties(zlib PROPERTIES SOVERSION 1)
+ 
++if(WINCE)
++    target_link_libraries(zlib ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
+ if(NOT CYGWIN)
+     # This property causes shared libraries on Linux to have the full version
+     # encoded into their final filename.  We disable this on Cygwin because
+@@ -146,7 +158,7 @@
+     set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
+ endif()
+ 
+-if(UNIX)
++if(UNIX OR MINGW)
+     # On unix-like platforms the library is almost always called libz
+    set_target_properties(zlib PROPERTIES OUTPUT_NAME z)
+ elseif(BUILD_SHARED_LIBS AND WIN32)
+@@ -171,12 +183,14 @@
+ # Example binaries
+ #============================================================================
+ 
++if(NOT WINCE)
+ add_executable(example example.c)
+ target_link_libraries(example zlib)
+ add_test(example example)
+ 
+ add_executable(minigzip minigzip.c)
+ target_link_libraries(minigzip zlib)
++endif(NOT WINCE)
+ 
+ if(HAVE_OFF64_T)
+     add_executable(example64 example.c)
+@@ -188,3 +202,7 @@
+     target_link_libraries(minigzip64 zlib)
+     set_target_properties(minigzip64 PROPERTIES COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64")
+ endif()
++
++
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc DESTINATION lib/pkgconfig)
+diff -Nru zlib-1.2.5.orig/win32/zlib1.rc zlib-1.2.5/win32/zlib1.rc
+--- zlib-1.2.5.orig/win32/zlib1.rc	2006-05-21 05:55:00.000000000 +0200
++++ zlib-1.2.5/win32/zlib1.rc	2011-06-29 16:53:36.587706300 +0200
 @@ -10,9 +10,9 @@
    PRODUCTVERSION	ZLIB_VER_MAJOR,ZLIB_VER_MINOR,ZLIB_VER_REVISION,0
    FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
@@ -113,9 +130,9 @@ diff -Nru zlib-1.2.4.orig/win32/zlib1.rc zlib-1.2.4/win32/zlib1.rc
  #endif
    FILEOS		VOS__WINDOWS32
    FILETYPE		VFT_DLL
-diff -Nru zlib-1.2.4.orig/zconf.h zlib-1.2.4/zconf.h
---- zlib-1.2.4.orig/zconf.h	Sun Feb 21 22:38:24 2010
-+++ zlib-1.2.4/zconf.h	Thu Jan  1 00:00:00 1970
+diff -Nru zlib-1.2.5.orig/zconf.h zlib-1.2.5/zconf.h
+--- zlib-1.2.5.orig/zconf.h	2010-04-18 19:58:06.000000000 +0200
++++ zlib-1.2.5/zconf.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,428 +0,0 @@
 -/* zconf.h -- configuration of the zlib compression library
 - * Copyright (C) 1995-2010 Jean-loup Gailly.
@@ -545,3 +562,20 @@ diff -Nru zlib-1.2.4.orig/zconf.h zlib-1.2.4/zconf.h
 -#endif
 -
 -#endif /* ZCONF_H */
+diff -Nru zlib-1.2.5.orig/zlib.pc.cmake zlib-1.2.5/zlib.pc.cmake
+--- zlib-1.2.5.orig/zlib.pc.cmake	1970-01-01 01:00:00.000000000 +0100
++++ zlib-1.2.5/zlib.pc.cmake	2011-06-29 17:18:28.651740200 +0200
+@@ -0,0 +1,13 @@
++prefix=@CMAKE_INSTALL_PREFIX@
++exec_prefix=@CMAKE_INSTALL_PREFIX@
++libdir=@CMAKE_INSTALL_PREFIX@/lib
++sharedlibdir=@CMAKE_INSTALL_PREFIX@/lib
++includedir=@CMAKE_INSTALL_PREFIX@/include
++
++Name: zlib
++Description: zlib compression library
++Version: @ZLIB_FULL_VERSION@
++
++Requires:
++Libs: -L${libdir} -L${sharedlibdir} -lz
++Cflags: -I${includedir}
