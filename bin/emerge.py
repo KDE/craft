@@ -396,11 +396,11 @@ for i in sys.argv:
         disableTargetBuild = True
     elif( i == "--cleanup" ):
         utils.debug("Starting to clean emerge" )
-        utils.system("cd %s && git clean -d -f -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
+        utils.system("cd %s && git clean -d -f -x -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
         exit(0)
     elif( i == "--cleanup-dry" ):
         utils.debug("Starting to clean emerge" )
-        utils.system("cd %s && git clean --dry-run -d -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
+        utils.system("cd %s && git clean --dry-run -x -d -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
         exit(0)
     elif i == "--cleanallbuilds":
         # clean complete build directory
