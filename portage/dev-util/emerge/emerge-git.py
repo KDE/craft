@@ -2,24 +2,22 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/emerge'
-        self.svnTargets['refactoring-2010'] = 'branches/work/emerge/refactoring-2010'
-        self.svnTargets['1.0'] = 'tags/emerge/1.0'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:emerge'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
 
-from Package.PackageBase import *
+from Package.CMakePackageBase import *
 from Source.SvnSource import *
 from BuildSystem.BuildSystemBase import *
 from datetime import date
 
-class Package(PackageBase,SvnSource,BuildSystemBase):
+class Package(PackageBase,GitSource,BuildSystemBase):
     def __init__( self):
         self.subinfo = subinfo()
         PackageBase.__init__(self)
-        SvnSource.__init__(self)
+        GitSource.__init__(self)
         BuildSystemBase.__init__(self,"")
 
     def checkoutDir(self, index=0 ):
