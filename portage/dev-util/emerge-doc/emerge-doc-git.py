@@ -2,29 +2,28 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/emerge'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:emerge'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['dev-util/doxygen'] = 'default'
-        self.dependencies['dev-util/emerge'] = 'default'
 
-from Package.PackageBase import *
+from Package.CMakePackageBase import *
 from Source.SvnSource import *
 from BuildSystem.BuildSystemBase import *
 from datetime import date
 
-class Package(PackageBase,SvnSource,BuildSystemBase):
+class Package(PackageBase,GitSource,BuildSystemBase):
     def __init__( self):
         self.subinfo = subinfo()
-        self.subinfo.options.merge.destinationPath = "dev-utils"
         PackageBase.__init__(self)
-        SvnSource.__init__(self)
+        GitSource.__init__(self)
         BuildSystemBase.__init__(self,"")
+        self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def checkoutDir(self, index=0 ):
         return os.path.join(ROOTDIR,"emerge")
-
+        
     def configure(self):
         doxygenSourcePathes = "%s %s" % (os.path.join(self.checkoutDir(),'bin'),os.path.join(self.checkoutDir(),'doc'))
 
