@@ -1,0 +1,4 @@
+*.cmd eol=crlf
+*.bat eol=crlf
+*.diff eol=crlf
+*.patch eol=crlf
