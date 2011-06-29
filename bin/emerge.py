@@ -164,58 +164,6 @@ Send feedback to <kde-windows@kde.org>.
 
 """
 
-def _delete(fileName):
-    if os.path.isdir( fileName ):
-        utils.debug( "Removing unclean directory %s" % fileName, 1)
-        shutil.rmtree( fileName )
-    else:
-        utils.debug( "Removing file %s" % fileName, 1 )
-        os.remove(fileName)
-
-def cleanup( root, hard = False ):
-    isValid = False
-    validFiles = []
-    validDirs = []
-    useValidFiles = False
-    files = os.listdir( root )
-    if hard == True:
-        if ".svn" in files:
-            useValidFiles = True
-            try:
-                entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
-            except IOError:
-                try:
-                    entriesfile = file( os.path.join( root, ".svn", "entries" ), "r" )
-                except IOError:
-                    useValidFiles = False
-                    entriesfile = []
-            oldline = ""
-            for line in entriesfile:
-                if line.startswith( "file" ):
-                    validFiles.append( oldline.strip() )
-                if line.startswith( "dir" ):
-                    validDirs.append( oldline.strip() )
-                oldline = line
-
-    for f in files:
-        if( f.startswith( ".svn" ) or f.startswith( ".git" ) ):
-            isValid = True
-            continue
-        if( os.path.isdir( os.path.join( root, f ) ) ):
-            isValid = True
-            cleanup( os.path.join( root, f ), hard )
-        else:
-            if( f.endswith( ".py" ) or f.endswith( ".diff" ) ):
-                if useValidFiles and not f in validFiles:
-                    _delete( os.path.join( root, f ))
-                else:
-                    isValid = True
-            if( f.endswith( ".pyc" ) or f.endswith( "~" ) or f.endswith( ".back" ) ):
-                _delete( os.path.join( root, f ))
-    if( not isValid ):
-        _delete( root )
-    return isValid
-
 @utils.log
 def doExec( category, package, version, action, opts ):
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
@@ -447,10 +395,12 @@ for i in sys.argv:
     elif ( i == "--disable-buildtarget" ):
         disableTargetBuild = True
     elif( i == "--cleanup" ):
-        utils.debug("Starting to clean your portage directory" )
-        for _dir in portage.rootDirectories():
-            cleanup( _dir, True )
-        cleanup( os.path.dirname(executableName), False )
+        utils.debug("Starting to clean emerge" )
+        utils.system("cd %s && git clean -d -f -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
+        exit(0)
+    elif( i == "--cleanup-dry" ):
+        utils.debug("Starting to clean emerge" )
+        utils.system("cd %s && git clean --dry-run -d -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
         exit(0)
     elif i == "--cleanallbuilds":
         # clean complete build directory
