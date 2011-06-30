@@ -2,10 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:libkdcraw|%s|' % ver
-            
-        self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw'
+        self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw|KDE/4.6|'
+        self.shortDescription = "libksane is an image scanning library that provides a QWidget that contains all the logic needed to interface a scanner."
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

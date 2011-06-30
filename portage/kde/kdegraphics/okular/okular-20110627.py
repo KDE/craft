@@ -2,10 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:okular|%s|' % ver
-            
-        self.svnTargets['gitHEAD'] = '[git]kde:okular'
+        self.svnTargets['gitHEAD'] = '[git]kde:okular|KDE/4.6|'
+        self.shortDescription = "KDE document viewer"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
@@ -19,6 +17,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs-bin/zlib'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['win32libs-bin/libspectre'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -2,10 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:mobipocket|%s|' % ver
-            
-        self.svnTargets['gitHEAD'] = '[git]kde:mobipocket'
+        self.svnTargets['gitHEAD'] = '[git]kde:mobipocket|KDE/4.6|'
+        self.shortDescription = "A collection of plugins to handle mobipocket files"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

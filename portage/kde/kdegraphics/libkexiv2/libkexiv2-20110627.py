@@ -2,10 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:libkexiv2|%s|' % ver
-            
-        self.svnTargets['gitHEAD'] = '[git]kde:libkexiv2'
+        self.svnTargets['gitHEAD'] = '[git]kde:libkexiv2|KDE/4.6|'
+        self.shortDescription = "Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP."
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
