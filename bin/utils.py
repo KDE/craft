@@ -1326,7 +1326,7 @@ def startTimer(name, level = 0):
     if name in _TIMERS:
         die("%s already in timers" % name)
     _TIMERS[name] = (datetime.datetime.now(),level)
-    if os.getenv("EMERGE_MESSURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
+    if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         print "Task: %s started" % name
         sys.stdout.flush()
     
@@ -1335,7 +1335,7 @@ def stopTimer(name):
     if not name in _TIMERS:
         die("%s not in timers" % name)    
     (startTime,level) = _TIMERS[name]
-    if os.getenv("EMERGE_MESSURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
+    if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
         print "Task: %s stopped after: %s" % (name, delta)
         sys.stdout.flush()
