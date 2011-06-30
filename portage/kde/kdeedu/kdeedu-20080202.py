@@ -5,25 +5,33 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = ''
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/libkdeedu'] = 'default'
+        self.dependencies['kde/blinken'] = 'default'
+        self.dependencies['kde/cantor'] = 'default'
+        self.dependencies['kde/kalgebra'] = 'default'
+        self.dependencies['kde/kalzium'] = 'default'
+        self.dependencies['kde/kanagram'] = 'default'
+        self.dependencies['kde/kbruch'] = 'default'
+        self.dependencies['kde/kgeography'] = 'default'
+        self.dependencies['kde/khangman'] = 'default'
+        self.dependencies['kde/kig'] = 'default'
+        self.dependencies['kde/kiten'] = 'default'
+        self.dependencies['kde/klettres'] = 'default'
+        self.dependencies['kde/kmplot'] = 'default'
+        self.dependencies['kde/kstars'] = 'default'
+        self.dependencies['kde/ktouch'] = 'default'
+        self.dependencies['kde/kturtle'] = 'default'
+        self.dependencies['kde/kwordquiz'] = 'default'
+        self.dependencies['kde/marble'] = 'default'
+        self.dependencies['kde/parley'] = 'default'
+        self.dependencies['kde/rocs'] = 'default'
+        self.dependencies['kde/step'] = 'default'
 
-        self.buildDependencies['kdesupport/eigen2'] = 'default'
-        self.dependencies['win32libs-bin/cfitsio'] = 'default'
-        self.dependencies['win32libs-bin/libnova'] = 'default'
-        self.dependencies['win32libs-bin/openbabel'] = 'default'
-        self.dependencies['win32libs-bin/boost'] = 'default'
-
-from Package.CMakePackageBase import *
-
-class Package(CMakePackageBase):
-    def __init__( self ):
-        self.subinfo = subinfo()
-        CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF"
+from Package.VirtualPackageBase import *
 
 if __name__ == '__main__':
-    Package().execute()
+    Package(subinfo()).execute()
