@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['dev-util/pkg-config'] = 'default'
         self.shortDescription = "a distributed IRC client"
 
 

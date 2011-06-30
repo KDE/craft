@@ -5,7 +5,7 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/msys-package'] = 'default'
-        self.hardDependencies['testing/pkg-config'] = 'default'
+        self.hardDependencies['dev-util/pkg-config'] = 'default'
 
     def setTargets( self ):
         self.targets['0.40.6'] = 'http://ftp.acc.umu.se/pub/gnome/sources/intltool/0.40/intltool-0.40.6.tar.bz2'
