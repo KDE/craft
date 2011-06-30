@@ -3,13 +3,16 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/%s'
+        self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/%s'
+        for ver in ['6.0', '6.1', '6.2', '6.3', '6.4']:
+            self.targets['4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.' + ver + '/src/kde-l10n/kde-l10n-%s-4.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.' + ver] = 'kde-l10n-%s-4.' + ver
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.buildDependencies['kde/kdelibs'] = 'default'
 
 
 from Package.CMakePackageBase import *
@@ -89,9 +92,9 @@ class MainInfo(info.infoclass):
         self.languages += 'ta te tg th tr uk uz vi wa xh zh_CN zh_HK zh_TW '
 
     def setDependencies( self ):
-        self.hardDependencies['dev-util/cmake'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.buildDependencies['dev-util/cmake'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        self.buildDependencies['kde/kdelibs'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

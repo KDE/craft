@@ -1,9 +1,10 @@
 import info
 import base
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = ''
+        self.shortDescription = "Graphics applications (Okular, Gwenview)"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
