@@ -137,13 +137,19 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         utils.prependPath(self.rootdir, self.envPath)
 
-        if self.compiler() == "msvc2008" and self.subinfo.options.cmake.openIDE:
-            command = "start %s" % self.__slnFileName()
-        elif self.compiler() == "msvc2008" and self.subinfo.options.cmake.useIDE:
-            if self.isTargetBuild():
-                command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(), self.buildType())
-            else:
-                command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
+        if self.subinfo.options.cmake.openIDE:
+            if self.compiler() == "msvc2008":
+                command = "start %s" % self.__slnFileName()
+            elif self.compiler() == "msvc2010":
+                command = "start vcexpress %s" % self.__slnFileName()
+        elif self.subinfo.options.cmake.useIDE:
+            if self.compiler() == "msvc2008":
+                if self.isTargetBuild():
+                    command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(), self.buildType())
+                else:
+                    command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
+            elif self.compiler() == "msvc2010":
+                utils.die("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system( self.makeProgramm + " clean", "make clean" )
