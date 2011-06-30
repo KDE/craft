@@ -2,12 +2,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kdeplasma-addons'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdeplasma-addons|4.6|'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kde-workspace'] = 'default'
+        self.shortDescription = "All kind of addons to improve your Plasma experience"
 
 from Package.CMakePackageBase import *
 
