@@ -166,6 +166,7 @@ Send feedback to <kde-windows@kde.org>.
 
 @utils.log
 def doExec( category, package, version, action, opts ):
+    utils.startTimer("%s for %s" % ( action,package),1)
     utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
     fileName = portage.getFilename( category, package, version )
     opts_string = ( "%s " * len( opts ) ) % tuple( opts )
@@ -181,6 +182,8 @@ def doExec( category, package, version, action, opts ):
         #mod.Package().execute(action)
     except OSError:
         return False
+    finally:
+        utils.stopTimer("%s for %s" % ( action,package))
     return True
 
 def handlePackage( category, package, version, buildAction, opts ):
