@@ -1319,6 +1319,8 @@ def envAsBool(key, default=False):
 _TIMERS = dict()
 import datetime
 import time
+from operator import itemgetter
+
 def startTimer(name, level = 0):
     global _TIMERS
     if name in _TIMERS:
@@ -1328,7 +1330,7 @@ def startTimer(name, level = 0):
         print "Task: %s started" % name
         sys.stdout.flush()
     
-def stopTimer(name,clear = True):
+def stopTimer(name):
     global _TIMERS
     if not name in _TIMERS:
         die("%s not in timers" % name)    
@@ -1337,14 +1339,11 @@ def stopTimer(name,clear = True):
         delta = datetime.datetime.now() - startTime
         print "Task: %s stopped after: %s" % (name, delta)
         sys.stdout.flush()
-    if clear:
-      del _TIMERS[name]
+    del _TIMERS[name]
     
-    
+
 def stopAllTimer():
     global _TIMERS
-    keys = _TIMERS.keys()
-    keys.sort()
-    for key in keys:
-        stopTimer(key,False)
-    _TIMERS.clear()
+    keys = sorted(_TIMERS.items(),key=itemgetter(1),reverse=True)
+    for key,_ in keys:
+        stopTimer(key)
