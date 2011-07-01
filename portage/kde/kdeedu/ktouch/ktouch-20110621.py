@@ -5,11 +5,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = '[git]kde:ktouch|4.6|'
+        self.svnTargets['svnHEAD'] = '[git]kde:ktouch|4.7|'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde-4.6/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

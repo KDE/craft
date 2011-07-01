@@ -2,7 +2,7 @@ import info
 import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.7|'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

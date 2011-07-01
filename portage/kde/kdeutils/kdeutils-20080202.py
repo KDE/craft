@@ -3,10 +3,10 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.6/kdeutils'
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.7/kdeutils'
         for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdeutils-4.6.' + ver + '.tar.bz2'
-            self.targetInstSrc['4.6.' + ver] = 'kdeutils-4.6.' + ver
+            self.targets['4.7.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.7.' + ver + '/src/kdeutils-4.7.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.7.' + ver] = 'kdeutils-4.7.' + ver
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

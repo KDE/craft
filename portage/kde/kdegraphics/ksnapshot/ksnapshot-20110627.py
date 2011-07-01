@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:ksnapshot|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:ksnapshot|KDE/4.7|'
         self.shortDescription = "A handy utility primarily designed for taking screenshots"
         self.defaultTarget = 'gitHEAD'
 

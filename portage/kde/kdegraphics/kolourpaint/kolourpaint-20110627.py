@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kolourpaint|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:kolourpaint|KDE/4.7|'
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
         self.defaultTarget = 'gitHEAD'
 

@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:okular|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:okular|KDE/4.7|'
         self.shortDescription = "KDE document viewer"
         self.defaultTarget = 'gitHEAD'
 

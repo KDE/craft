@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:libkipi|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:libkipi|KDE/4.7|'
         self.shortDescription = "Libkipi is an interface to use kipi-plugins from a KDE image management program like digiKam."
         self.defaultTarget = 'gitHEAD'
 

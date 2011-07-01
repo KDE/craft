@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:gwenview|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:gwenview|KDE/4.7|'
         self.shortDescription = "Image viewer for KDE"
         self.defaultTarget = 'gitHEAD'
 

@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kcolorchooser|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:kcolorchooser|KDE/4.7|'
         self.shortDescription = "A small utility to select a color"
         self.defaultTarget = 'gitHEAD'
 

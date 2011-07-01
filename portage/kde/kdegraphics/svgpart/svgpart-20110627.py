@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
+        for ver in ['4.7']:
             self.svnTargets[ ver ] = '[git]kde:svgpart|%s|' % ver
             
         self.svnTargets['gitHEAD'] = '[git]kde:svgpart'

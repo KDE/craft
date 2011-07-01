@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kamera|KDE/4.6|'
+        self.svnTargets['gitHEAD'] = '[git]kde:kamera|KDE/4.7|'
         self.shortDescription = "KDE integration for gphoto2 cameras"
         self.defaultTarget = 'gitHEAD'
 
