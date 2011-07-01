@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         if compiler.isMinGW():
             self.dependencies['win32libs-bin/libgmp'] = 'default'

@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde-4.6/libkdeedu'] = 'default'
+        self.dependencies['kde/libkdeedu'] = 'default'
 
 from Package.CMakePackageBase import *
 

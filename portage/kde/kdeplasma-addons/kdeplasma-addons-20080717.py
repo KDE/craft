@@ -6,7 +6,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kde-workspace'] = 'default'
         self.shortDescription = "All kind of addons to improve your Plasma experience"
 

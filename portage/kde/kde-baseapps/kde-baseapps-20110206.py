@@ -9,7 +9,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
         self.shortDescription = "KDE base applications (Konqueror, Dolphin)"
 
 from Package.CMakePackageBase import *

@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
