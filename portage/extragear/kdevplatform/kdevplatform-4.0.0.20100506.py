@@ -3,11 +3,6 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevplatform'
-        for ver in [ '4.1.1' ]:
-            platformver = '1' + ver[ 1: ]
-            self.targets[ ver ] = 'http://download.kde.org/download.php?url=stable/kdevelop/' + ver + '/src/kdevplatform-' + platformver + '.tar.bz2'
-            self.targetInstSrc[ ver ] = 'kdevplatform-' + platformver
-        self.patchToApply[ '4.1.1' ] = ( "kdevplatform-1.1.1-20101215.diff", 1 )
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
