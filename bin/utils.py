@@ -386,7 +386,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
 def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     ( shortname, ext ) = os.path.splitext( filename )
-    if ( ext == ".zip" ):
+    if ( ext == ".zsip" ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir )
@@ -1130,6 +1130,9 @@ def rmtree( directory ):
 def copyFile(src, dest):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
+    destDir = os.path.dirname(dest)
+    if not os.path.exists(destDir):
+        os.makedirs(destDir)
     shutil.copy( src, dest )
     return True
 
