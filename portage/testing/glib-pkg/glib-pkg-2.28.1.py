@@ -6,8 +6,8 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-util/msys'] = 'default'
-        self.hardDependencies['dev-util/intltool-src'] = 'default'
-        self.hardDependencies['testing/pkg-config'] = 'default'
+        self.hardDependencies['dev-util/intltool'] = 'default'
+        self.hardDependencies['dev-util/pkg-config'] = 'default'
 
     def setTargets( self ):
         self.targets[ '2.28.1' ] = 'http://ftp.gnome.org/pub/gnome/sources/glib/2.28/glib-2.28.1.tar.bz2' 
