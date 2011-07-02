@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs-bin/cfitsio'] = 'default'
         self.dependencies['win32libs-bin/libnova'] = 'default'
+        self.dependencies['kdesupport/eigen2'] = 'default'
 
 from Package.CMakePackageBase import *
 
