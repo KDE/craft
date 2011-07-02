@@ -386,7 +386,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
 def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     ( shortname, ext ) = os.path.splitext( filename )
-    if ( ext == ".zsip" ):
+    if ( ext == ".zip" ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir )
