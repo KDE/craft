@@ -39,7 +39,7 @@ class Package( AutoToolsPackageBase):
         
     def unmerge(self):
         utils.system("regsvr32 -u -s -n -i:machine %s" % utils.deSubstPath(os.path.join(self.mergeDestinationDir() , "bin" , "git_shell_ext.dll" )))
-        return PackageBase.unmerge(self)
+        return AutoToolsPackageBase.unmerge(self)
         
 if __name__ == '__main__':
      Package().execute()
