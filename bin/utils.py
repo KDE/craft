@@ -24,6 +24,10 @@ import subprocess
 import re
 import inspect
 import types
+import datetime
+import time
+from operator import itemgetter
+import subprocess
 
 if os.name == 'nt':
     import msvcrt # pylint: disable=F0401
@@ -1320,11 +1324,8 @@ def envAsBool(key, default=False):
         return default
 
 _TIMERS = dict()
-import datetime
-import time
-from operator import itemgetter
-
 def startTimer(name, level = 0):
+    """starts a timer for meassurement"""
     global _TIMERS
     if name in _TIMERS:
         die("%s already in timers" % name)
@@ -1334,6 +1335,7 @@ def startTimer(name, level = 0):
         sys.stdout.flush()
     
 def stopTimer(name):
+    """stops a timer for meassurement"""
     global _TIMERS
     if not name in _TIMERS:
         die("%s not in timers" % name)    
@@ -1346,7 +1348,26 @@ def stopTimer(name):
     
 
 def stopAllTimer():
+    """stops all timer for meassurement"""
     global _TIMERS
     keys = sorted(_TIMERS.items(),key=itemgetter(1),reverse=True)
     for key,_ in keys:
         stopTimer(key)
+
+_SUBST = None
+def deSubstPath(path):
+    """desubstitude emerge short path"""
+    global _SUBST
+    drive,_ = os.path.splitdrive(path.upper())
+    if _SUBST == None:
+        tmp = subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0].split("\r\n")
+        _SUBST = dict()
+        for s in tmp:
+            if s != "":
+                key , val = s.split("\\: => ")
+                _SUBST[key] = val
+    if drive in _SUBST.keys():
+        return _SUBST[drive]
+    return path
+
+    
