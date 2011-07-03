@@ -1333,7 +1333,8 @@ def startTimer(name, level = 0):
 def stopTimer(name):
     global _TIMERS
     if not name in _TIMERS:
-        die("%s not in timers" % name)    
+        debug("%s not in timers" % name)
+        return
     (startTime,level) = _TIMERS[name]
     if os.getenv("EMERGE_MESSURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
