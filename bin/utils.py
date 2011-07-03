@@ -1358,7 +1358,8 @@ _SUBST = None
 def deSubstPath(path):
     """desubstitude emerge short path"""
     global _SUBST
-    drive,_ = os.path.splitdrive(path.upper())
+    drive,tail = os.path.splitdrive(path)
+    drive = drive.upper()
     if _SUBST == None:
         tmp = subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0].split("\r\n")
         _SUBST = dict()
@@ -1367,7 +1368,9 @@ def deSubstPath(path):
                 key , val = s.split("\\: => ")
                 _SUBST[key] = val
     if drive in _SUBST.keys():
-        return _SUBST[drive]
+        deSubst = _SUBST[drive] + tail
+        debug("desubstituded %s to %s" % (path , deSubst),1)
+        return deSubst
     return path
 
     
