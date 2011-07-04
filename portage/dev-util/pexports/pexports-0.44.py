@@ -3,7 +3,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['0.44'] =  self.getUnifiedPackage( 'http://downloads.sourceforge.net/kde-windows' , "pexports" , '0.44' ,packagetypes=['bin'] )
-        self.targetDigests['0.44'] = 'dd9497260e89c25e51f120de41949a09f08ee54f'
+		if emergePlatform.buildArchitecture() <> "x64":
+			self.targetDigests['0.44'] = 'dd9497260e89c25e51f120de41949a09f08ee54f'
         self.defaultTarget = '0.44'
 
     def setBuildOptions( self ):
