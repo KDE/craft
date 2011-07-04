@@ -6,8 +6,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'virtual/kde-runtime' ] = 'default'
-        self.dependencies[ 'virtual/kdeutils' ] = 'default'
+        self.dependencies[ 'kde/kde-runtime' ] = 'default'
+        self.dependencies[ 'kde/kdesdk' ] = 'default'
         self.dependencies[ 'extragear/kate' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
         self.buildDependencies[ 'dev-util/zip' ] = 'default'
