@@ -111,7 +111,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             # mingw4 cannot compile qt if the command line arguments
             # exceed 8192 chars
             utils.warning('for mingw4, rootdir %s is too long for full path names.'
-                ' Using short path names.' % self.rootdir,  1)
+                ' Using short path names.' % self.rootdir)
             self.subinfo.options.useShortPathes = True
         GitSource.__init__(self)
         QMakeBuildSystem.__init__(self)
