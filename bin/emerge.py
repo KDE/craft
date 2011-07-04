@@ -181,9 +181,9 @@ def doExec( category, package, version, action, opts ):
         #mod = portage.__import__( fileName )
         #mod.Package().execute(action)
     except OSError:
-        return False
-    finally:
         utils.stopTimer("%s for %s" % ( action,package))
+        return False
+    utils.stopTimer("%s for %s" % ( action,package))
     return True
 
 def handlePackage( category, package, version, buildAction, opts ):
