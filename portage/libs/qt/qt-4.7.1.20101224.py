@@ -97,9 +97,7 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs-sources/dbus-src'] = 'default'
         else:
             self.dependencies['win32libs-bin/dbus'] = 'default'
-        if not emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['testing/mysql-pkg'] = 'default'
-        else:
+        if emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
 
 class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
@@ -122,9 +120,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             self.dbus = portage.getPackageInstance('win32libs-sources', 'dbus-src')
         else:
             self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
-        if not emergePlatform.isCrossCompilingEnabled():
-            self.mysql_server = portage.getPackageInstance('testing', 'mysql-pkg')
-        else:
+        if emergePlatform.isCrossCompilingEnabled():
             self.wcecompat = portage.getPackageInstance('win32libs-sources', 'wcecompat-src')
 
     def configure( self, unused1=None, unused2=""):
@@ -152,11 +148,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         if self.isTargetBuild():
             incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
-        if not emergePlatform.isCrossCompilingEnabled():
-            incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
-            libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
-            libdirs += " -l libmysql "
-        else:
+        if emergePlatform.isCrossCompilingEnabled():
             utils.copyFile( os.path.join( self.packageDir(), "sources", "qconfig-kde-wince.h" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
             utils.copyFile( os.path.join( self.packageDir(), "sources", "new.cpp" ),
@@ -178,7 +170,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         if not emergePlatform.isCrossCompilingEnabled():
             # non-cc builds only
-            command += "-plugin-sql-odbc -plugin-sql-mysql "
             command += "-qt-style-windowsxp -qt-style-windowsvista "
             command += "-qt-libpng -qt-libjpeg -qt-libtiff "
 
