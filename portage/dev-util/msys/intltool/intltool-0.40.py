@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/msys-package'] = 'default'
+        self.hardDependencies['dev-util/minsys'] = 'default'
         self.hardDependencies['dev-util/pkg-config'] = 'default'
 
     def setTargets( self ):
