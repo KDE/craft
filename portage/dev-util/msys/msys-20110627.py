@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
         if compiler.isMinGW():
-          self.dependencies['dev-util/msys-package'] = 'default'
+          self.dependencies['dev-util/minsys'] = 'default'
           self.dependencies['dev-util/libtool'] = 'default'
           self.dependencies['dev-util/autotools'] = 'default'
 
