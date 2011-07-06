@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
         self.buildDependencies['dev-util/7zip'] = 'default'
-        self.dependencies['dev-util/msys-package'] = 'default'
+        self.dependencies['dev-util/minsys'] = 'default'
         self.dependencies['dev-util/libtool'] = 'default'
 
     def setBuildOptions( self ):
