@@ -502,21 +502,24 @@ def getDependencies( category, package, version, runtimeOnly=False ):
         utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
     else:
         utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
-    mod = __import__( getFilename( category, package, version ) )
+        subpackage = package
 
-    deps = []
-    if hasattr( mod, 'subinfo' ):
-        info = mod.subinfo()
-        depDict = info.hardDependencies
-        depDict.update( info.dependencies )
-        depDict.update( info.runtimeDependencies )
-        if not runtimeOnly:
-            depDict.update( info.buildDependencies )
+    for pkg in subpackage:
+        mod = __import__( getFilename( category, subpackage, version ) )
 
-        for line in depDict.keys():
-            (category, package) = line.split( "/" )
-            version = PortageInstance.getNewestVersion( category, package )
-            deps.append( [ category, package, version, depDict[ line ] ] )
+        deps = []
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            depDict = info.hardDependencies
+            depDict.update( info.dependencies )
+            depDict.update( info.runtimeDependencies )
+            if not runtimeOnly:
+                depDict.update( info.buildDependencies )
+
+            for line in depDict.keys():
+                (category, package) = line.split( "/" )
+                version = PortageInstance.getNewestVersion( category, package )
+                deps.append( [ category, package, version, depDict[ line ] ] )
 
     return deps
 
