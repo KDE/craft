@@ -14,16 +14,18 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
         self.svnTargets['gitHEAD'] = '[git]kde:soprano.git'
 
-        for ver in ['2.5.63']:
-          self.targets[ver] ='http://downloads.sourceforge.net/sourceforge/Soprano/soprano-' + ver + '.tar.bz2'
-          self.targetInstSrc[ver] = 'soprano-' + ver
-
+        for ver in ['2.5.63', '2.6.0', '2.6.0', '2.0.0', '2.0.1', '2.0.2',
+                    '2.0.3', '2.0.99', '2.1', '2.1.1', '2.1.64', '2.1.65',
+                    '2.1.67', '2.2', '2.2.1', '2.2.2']:
+            self.svnTargets[ver] ='[git]kde:soprano.git||' + ver
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/soprano'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/soprano'
         self.shortDescription = "a RDF storage solutions library"
-        self.defaultTarget = 'gitHEAD'
+        # 2.6.0 is the last version needing raptor 1 to update to a later version
+        # you need also to update librdf librasqual and libraptor2
+        self.defaultTarget = '2.6.0'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
