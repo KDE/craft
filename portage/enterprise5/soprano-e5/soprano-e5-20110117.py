@@ -78,7 +78,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdesupport/soprano'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdesupport/soprano'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdesupport/soprano'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '2.6.0'
 
 from Package.CMakePackageBase import *
 
