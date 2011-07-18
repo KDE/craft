@@ -25,14 +25,12 @@ import re
 import inspect
 import types
 import datetime
-import time
 from operator import itemgetter
-import subprocess
 
 if os.name == 'nt':
     import msvcrt # pylint: disable=F0401
 else:
-    import fcntl
+    import fcntl # pylint: disable=F0401
 
 import ConfigParser
 
@@ -1326,40 +1324,37 @@ def envAsBool(key, default=False):
 _TIMERS = dict()
 def startTimer(name, level = 0):
     """starts a timer for meassurement"""
-    global _TIMERS
     if name in _TIMERS:
         die("%s already in timers" % name)
-    _TIMERS[name] = (datetime.datetime.now(),level)
+    _TIMERS[name] = (datetime.datetime.now() , level)
     if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         print "Task: %s started" % name
         sys.stdout.flush()
     
 def stopTimer(name):
     """stops a timer for meassurement"""
-    global _TIMERS
     if not name in _TIMERS:
         debug("%s not in timers" % name)
         return
-    (startTime,level) = _TIMERS[name]
+    startTime , level = _TIMERS[name]
     if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
-        print "Task: %s stopped after: %s" % (name, delta)
+        print "Task: %s stopped after: %s" % (name , delta)
         sys.stdout.flush()
     del _TIMERS[name]
     
 
 def stopAllTimer():
     """stops all timer for meassurement"""
-    global _TIMERS
-    keys = sorted(_TIMERS.items(),key=itemgetter(1),reverse=True)
-    for key,_ in keys:
+    keys = sorted(_TIMERS.items() , key=itemgetter(1) , reverse=True)
+    for key , _ in keys:
         stopTimer(key)
 
 _SUBST = None
 def deSubstPath(path):
     """desubstitude emerge short path"""
-    global _SUBST
-    drive,tail = os.path.splitdrive(path)
+    global _SUBST # pylint: disable=W0603
+    drive , tail = os.path.splitdrive(path)
     drive = drive.upper()
     if _SUBST == None:
         tmp = subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0].split("\r\n")
@@ -1370,7 +1365,7 @@ def deSubstPath(path):
                 _SUBST[key] = val
     if drive in _SUBST.keys():
         deSubst = _SUBST[drive] + tail
-        debug("desubstituded %s to %s" % (path , deSubst),1)
+        debug("desubstituded %s to %s" % (path , deSubst) , 1)
         return deSubst
     return path
 
