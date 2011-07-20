@@ -50,6 +50,7 @@ class Package(CMakePackageBase):
                 self.subinfo.options.configure.defines += "msvc-10.0"
         if self.isHostBuild():
             self.subinfo.options.configure.defines += " --with-program_options"
+            self.subinfo.options.configure.defines += " --with-system"
         if not emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += " --with-python"
 
