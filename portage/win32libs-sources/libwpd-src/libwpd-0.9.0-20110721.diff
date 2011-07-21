@@ -1,0 +1,253 @@
+diff -Nru libwpd-0.9.0.orig/CMakeLists.txt libwpd-0.9.0/CMakeLists.txt
+--- libwpd-0.9.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libwpd-0.9.0/CMakeLists.txt	2011-07-21 21:21:46.450849100 +0200
+@@ -0,0 +1,248 @@
++project(libwpd)
++
++cmake_minimum_required(VERSION 2.8.0)
++
++# read current version
++file(READ configure.in _configure_data)
++foreach(_ver MAJOR MINOR MICRO)
++	string(REGEX MATCH "WPD_${_ver}_VERSION=([0-9])" WPD_${_ver}_VERSION ${_configure_data})
++	string(REGEX REPLACE "WPD_${_ver}_VERSION=([0-9])" "\\1" WPD_${_ver}_VERSION ${WPD_${_ver}_VERSION})
++endforeach(_ver MAJOR MINOR MICRO)
++
++if(MINGW)
++	option(BUILD_STATIC "build a static libwpd" ON)
++else(MINGW)
++	set(BUILD_STATIC ON)
++endif(MINGW)
++option(BUILD_wpd_stream "build with stream support" ON)
++
++include_directories(${CMAKE_BINARY_DIR} src/lib)
++set(wpd_SRCS
++    src/lib/libwpd_internal.cpp
++    src/lib/libwpd_math.cpp
++    src/lib/WP1BottomMarginGroup.cpp
++    src/lib/WP1CenterTextGroup.cpp
++    src/lib/WP1ContentListener.cpp
++    src/lib/WP1ExtendedCharacterGroup.cpp
++    src/lib/WP1FileStructure.cpp
++    src/lib/WP1FixedLengthGroup.cpp
++    src/lib/WP1FlushRightGroup.cpp
++    src/lib/WP1FontIdGroup.cpp
++    src/lib/WP1FootnoteEndnoteGroup.cpp
++    src/lib/WP1HeaderFooterGroup.cpp
++    src/lib/WP1Heuristics.cpp
++    src/lib/WP1JustificationGroup.cpp
++    src/lib/WP1LeftIndentGroup.cpp
++    src/lib/WP1LeftRightIndentGroup.cpp
++    src/lib/WP1Listener.cpp
++    src/lib/WP1MarginReleaseGroup.cpp
++    src/lib/WP1MarginResetGroup.cpp
++    src/lib/WP1Parser.cpp
++    src/lib/WP1Part.cpp
++    src/lib/WP1PictureGroup.cpp
++    src/lib/WP1PointSizeGroup.cpp
++    src/lib/WP1SetTabsGroup.cpp
++    src/lib/WP1SpacingResetGroup.cpp
++    src/lib/WP1StylesListener.cpp
++    src/lib/WP1SubDocument.cpp
++    src/lib/WP1SuppressPageCharacteristicsGroup.cpp
++    src/lib/WP1TopMarginGroup.cpp
++    src/lib/WP1UnsupportedFixedLengthGroup.cpp
++    src/lib/WP1UnsupportedVariableLengthGroup.cpp
++    src/lib/WP1VariableLengthGroup.cpp
++    src/lib/WP3AttributeGroup.cpp
++    src/lib/WP3ContentListener.cpp
++    src/lib/WP3DefinitionGroup.cpp
++    src/lib/WP3DisplayGroup.cpp
++    src/lib/WP3EndOfLinePageGroup.cpp
++    src/lib/WP3ExtendedCharacterGroup.cpp
++    src/lib/WP3FileStructure.cpp
++    src/lib/WP3FixedLengthGroup.cpp
++    src/lib/WP3FontGroup.cpp
++    src/lib/WP3FootnoteEndnoteGroup.cpp
++    src/lib/WP3Header.cpp
++    src/lib/WP3HeaderFooterGroup.cpp
++    src/lib/WP3IndentGroup.cpp
++    src/lib/WP3Listener.cpp
++    src/lib/WP3MiscellaneousGroup.cpp
++    src/lib/WP3PageFormatGroup.cpp
++    src/lib/WP3Parser.cpp
++    src/lib/WP3Part.cpp
++    src/lib/WP3ResourceFork.cpp
++    src/lib/WP3Resource.cpp
++    src/lib/WP3SingleByteFunction.cpp
++    src/lib/WP3StylesListener.cpp
++    src/lib/WP3SubDocument.cpp
++    src/lib/WP3TabGroup.cpp
++    src/lib/WP3TablesGroup.cpp
++    src/lib/WP3UndoGroup.cpp
++    src/lib/WP3UnsupportedFixedLengthGroup.cpp
++    src/lib/WP3UnsupportedVariableLengthGroup.cpp
++    src/lib/WP3VariableLengthGroup.cpp
++    src/lib/WP3WindowGroup.cpp
++    src/lib/WP42ContentListener.cpp
++    src/lib/WP42FileStructure.cpp
++    src/lib/WP42HeaderFooterGroup.cpp
++    src/lib/WP42Heuristics.cpp
++    src/lib/WP42Listener.cpp
++    src/lib/WP42MarginResetGroup.cpp
++    src/lib/WP42MultiByteFunctionGroup.cpp
++    src/lib/WP42Parser.cpp
++    src/lib/WP42Part.cpp
++    src/lib/WP42StylesListener.cpp
++    src/lib/WP42SubDocument.cpp
++    src/lib/WP42SuppressPageCharacteristicsGroup.cpp
++    src/lib/WP42UnsupportedMultiByteFunctionGroup.cpp
++    src/lib/WP5AttributeGroup.cpp
++    src/lib/WP5BoxGroup.cpp
++    src/lib/WP5ContentListener.cpp
++    src/lib/WP5DefinitionGroup.cpp
++    src/lib/WP5ExtendedCharacterGroup.cpp
++    src/lib/WP5FileStructure.cpp
++    src/lib/WP5FixedLengthGroup.cpp
++    src/lib/WP5FontGroup.cpp
++    src/lib/WP5FontNameStringPoolPacket.cpp
++    src/lib/WP5FootnoteEndnoteGroup.cpp
++    src/lib/WP5GeneralPacketData.cpp
++    src/lib/WP5GeneralPacketIndex.cpp
++    src/lib/WP5GraphicsInformationPacket.cpp
++    src/lib/WP5Header.cpp
++    src/lib/WP5HeaderFooterGroup.cpp
++    src/lib/WP5IndentGroup.cpp
++    src/lib/WP5Listener.cpp
++    src/lib/WP5ListFontsUsedPacket.cpp
++    src/lib/WP5PageFormatGroup.cpp
++    src/lib/WP5Parser.cpp
++    src/lib/WP5Part.cpp
++    src/lib/WP5PrefixData.cpp
++    src/lib/WP5SingleByteFunction.cpp
++    src/lib/WP5SpecialHeaderIndex.cpp
++    src/lib/WP5StylesListener.cpp
++    src/lib/WP5SubDocument.cpp
++    src/lib/WP5TabGroup.cpp
++    src/lib/WP5TableEOLGroup.cpp
++    src/lib/WP5TableEOPGroup.cpp
++    src/lib/WP5UnsupportedFixedLengthGroup.cpp
++    src/lib/WP5UnsupportedVariableLengthGroup.cpp
++    src/lib/WP5VariableLengthGroup.cpp
++    src/lib/WP6AttributeGroup.cpp
++    src/lib/WP6BoxGroup.cpp
++    src/lib/WP6CharacterGroup.cpp
++    src/lib/WP6ColumnGroup.cpp
++    src/lib/WP6CommentAnnotationPacket.cpp
++    src/lib/WP6ContentListener.cpp
++    src/lib/WP6DefaultInitialFontPacket.cpp
++    src/lib/WP6DisplayNumberReferenceGroup.cpp
++    src/lib/WP6EOLGroup.cpp
++    src/lib/WP6ExtendedCharacterGroup.cpp
++    src/lib/WP6ExtendedDocumentSummaryPacket.cpp
++    src/lib/WP6FileStructure.cpp
++    src/lib/WP6FillStylePacket.cpp
++    src/lib/WP6FixedLengthGroup.cpp
++    src/lib/WP6FontDescriptorPacket.cpp
++    src/lib/WP6FootnoteEndnoteGroup.cpp
++    src/lib/WP6GeneralTextPacket.cpp
++    src/lib/WP6GraphicsBoxStylePacket.cpp
++    src/lib/WP6GraphicsCachedFileDataPacket.cpp
++    src/lib/WP6GraphicsFilenamePacket.cpp
++    src/lib/WP6Header.cpp
++    src/lib/WP60Header.cpp
++    src/lib/WP61Header.cpp
++    src/lib/WP6HeaderFooterGroup.cpp
++    src/lib/WP6HighlightGroup.cpp
++    src/lib/WP6Listener.cpp
++    src/lib/WP6NumberingMethodGroup.cpp
++    src/lib/WP6Parser.cpp
++    src/lib/WP6OutlineStylePacket.cpp
++    src/lib/WP6PageGroup.cpp
++    src/lib/WP6ParagraphGroup.cpp
++    src/lib/WP6Part.cpp
++    src/lib/WP6PrefixData.cpp
++    src/lib/WP6PrefixIndice.cpp
++    src/lib/WP6PrefixDataPacket.cpp
++    src/lib/WP6SetNumberGroup.cpp
++    src/lib/WP6SingleByteFunction.cpp
++    src/lib/WP6StyleGroup.cpp
++    src/lib/WP6StylesListener.cpp
++    src/lib/WP6SubDocument.cpp
++    src/lib/WP6TabGroup.cpp
++    src/lib/WP6TableStylePacket.cpp
++    src/lib/WP6UndoGroup.cpp
++    src/lib/WP6UnsupportedFixedLengthGroup.cpp
++    src/lib/WP6UnsupportedVariableLengthGroup.cpp
++    src/lib/WP6VariableLengthGroup.cpp
++    src/lib/WPDocument.cpp
++    src/lib/WPXBinaryData.cpp
++    src/lib/WPXContentListener.cpp
++    src/lib/WPXEncryption.cpp
++    src/lib/WPXHeader.cpp
++    src/lib/WPXListener.cpp
++    src/lib/WPXMemoryStream.cpp
++    src/lib/WPXPageSpan.cpp
++    src/lib/WPXParser.cpp
++    src/lib/WPXProperty.cpp
++    src/lib/WPXPropertyList.cpp
++    src/lib/WPXPropertyListVector.cpp
++    src/lib/WPXString.cpp
++    src/lib/WPXStylesListener.cpp
++    src/lib/WPXSubDocument.cpp
++    src/lib/WPXTable.cpp
++)
++
++set(wpd_HDRS
++	${CMAKE_BINARY_DIR}/libwpd.h
++	src/lib/WPDocument.h
++	src/lib/WPXBinaryData.h
++	src/lib/WPXDocumentInterface.h
++	src/lib/WPXProperty.h
++	src/lib/WPXPropertyList.h
++	src/lib/WPXPropertyListVector.h
++	src/lib/WPXString.h
++)
++
++if(BUILD_wpd_stream)
++    set(wpd_stream_SRCS
++        src/lib/WPXStreamImplementation.cpp
++        src/lib/WPXOLEStream.cpp
++    )
++    set(wpd_stream_HDRS
++        ${CMAKE_BINARY_DIR}/libwpd-stream.h
++        src/lib/WPXStream.h
++        src/lib/WPXStreamImplementation.h
++    )
++
++    set(_wpd_stream wpd_stream)
++else(BUILD_wpd_stream)
++    set(_wpd_stream)
++endif(BUILD_wpd_stream)
++
++if(BUILD_STATIC)
++    set(_SHARED)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++    set(wpd_SRCS ${wpd_SRCS} src/lib/libwpd-0.9.def)
++    set(wpd_stream_SRCS ${wpd_stream_SRCS} src/lib/libwpd-stream-0.9.def)
++endif(BUILD_STATIC)
++
++configure_file(src/lib/libwpd.h.in ${CMAKE_BINARY_DIR}/libwpd.h)
++configure_file(src/lib/libwpd-stream.h.in ${CMAKE_BINARY_DIR}/libwpd-stream.h)
++if(WIN32)
++	configure_file(src/lib/libwpd.rc.in ${CMAKE_BINARY_DIR}/libwpd.rc)
++	configure_file(src/lib/libwpd-stream.rc.in ${CMAKE_BINARY_DIR}/libwpd-stream.rc)
++	if(NOT BUILD_STATIC)
++		set(wpd_SRCS ${wpd_SRCS} ${CMAKE_BINARY_DIR}/libwpd.rc)
++		set(wpd_stream_SRCS ${wpd_stream_SRCS} ${CMAKE_BINARY_DIR}/libwpd-stream.rc)
++	endif(NOT BUILD_STATIC)
++endif(WIN32)
++
++add_library(wpd ${_SHARED} ${wpd_SRCS})
++if(BUILD_wpd_stream)
++    add_library(wpd_stream ${_SHARED} ${wpd_stream_SRCS})
++endif(BUILD_wpd_stream)
++
++
++install(TARGETS wpd ${_wpd_stream} RUNTIME DESTINATION bin
++                                    LIBRARY DESTINATION lib
++                                    ARCHIVE DESTINATION lib)
++
++install(FILES ${wpd_HDRS} ${wpd_stream_HDRS} DESTINATION include/libwpd-0.9.0/libwpd)
+\ No newline at end of file
