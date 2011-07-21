@@ -3,7 +3,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepimlibs'
-        self.svnTargets['4.6'] = '[git]kde:kdepimlibs|4.6'
+        for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
+            self.svnTargets[version] = '[git]kde:kdepimlibs|%s' % version
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdepimlibs'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdepimlibs'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdepimlibs'
@@ -54,7 +55,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdepimlibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepimlibs'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepimlibs'
-        self.defaultTarget = '4.6'
+        self.defaultTarget = '4.7'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'

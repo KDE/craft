@@ -22,7 +22,8 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
-        self.svnTargets['4.6'] = '[git]kde:kdepim|4.6'
+        for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
+            self.svnTargets[version] = '[git]kde:kdepim|%s' % version
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdepim'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdepim'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdepim'
@@ -73,12 +74,10 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdepim'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepim'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
-        self.defaultTarget = '4.6'
-        self.patchToApply['4.6'] = [
+        self.defaultTarget = '4.7'
+        self.patchToApply['4.7'] = [
                 ('disable-crypto-backend.patch', 1),
         # Necessary until we know how to build a stable gpgme for windows
-                ('Add-a-blocking-waitForKSycoca-function.patch', 1),
-        # Upstream in 4.7
                 ('add-full-shutdown-button.patch', 1)]
         # To platform/package specific for master
         self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")

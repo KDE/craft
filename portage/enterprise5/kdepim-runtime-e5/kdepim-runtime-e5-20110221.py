@@ -3,9 +3,10 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim-runtime'
-        self.svnTargets['4.6'] = '[git]kde:kdepim-runtime|4.6'
-        self.defaultTarget = '4.6'
-        self.patchToApply['4.6'] = ('Disable-ServerSide-subscriptions-by-default.patch', 1)
+        for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
+            self.svnTargets[version] = '[git]kde:kdepim-runtime|%s' % version
+        self.defaultTarget = '4.7'
+        self.patchToApply['4.7'] = ('Disable-ServerSide-subscriptions-by-default.patch', 1)
 
     def setDependencies( self ):
         self.dependencies['enterprise5/kderuntime-e5'] = 'default'

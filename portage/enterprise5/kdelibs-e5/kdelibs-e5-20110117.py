@@ -4,7 +4,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['4.6.x'] = 'branches/KDE/4.6/kdelibs'
-        self.svnTargets['4.6'] = '[git]kde:kdelibs|KDE/4.6|'
+        for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
+            self.svnTargets[version] = '[git]kde:kdelibs|KDE/%s|' % version
 
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.6.' + ver] = \
@@ -65,7 +66,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdelibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdelibs'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdelibs'
-        self.defaultTarget = '4.6'
+        self.defaultTarget = '4.7'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdewin-e5'] = 'default'
