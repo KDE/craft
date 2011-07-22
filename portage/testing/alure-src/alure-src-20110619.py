@@ -8,6 +8,10 @@ class subinfo( info.infoclass ):
         self.svnTargets['gitHEAD'] = 'git://repo.or.cz/alure.git'
         self.defaultTarget = 'gitHEAD'
 
+    def setDependencies( self ):
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['testing/openal-soft-src'] = 'default'
+
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
