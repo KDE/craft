@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         
         self.shortDescription = "the core ontologies such as RDF or RDFS and all Nepomuk ontologies"
         self.options.package.withCompiler = False
-        self.defaultTarget = '0.5'
+        self.defaultTarget = '0.7.0'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
