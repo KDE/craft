@@ -4,7 +4,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime'
         for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
-            self.svnTargets[version] = '[git]kde:kde-runtime|%s' % version
+            self.svnTargets[version] = '[git]kde:kde-runtime|KDE/%s' % version
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdebase-runtime-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdebase-runtime-4.6.' + ver
