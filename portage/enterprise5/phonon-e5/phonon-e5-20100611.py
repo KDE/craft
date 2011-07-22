@@ -12,7 +12,9 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['4.4.4'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.4/src/phonon-4.4.4.tar.bz2'
+        self.targets['4.5.0'] = 'http://download.kde.org/download.php?url=stable/phonon/4.5.0/src/phonon-4.5.0.tar.bz2'
         self.targetInstSrc['4.4.4'] = 'phonon-4.4.4'
+        self.targetInstSrc['4.5.0'] = 'phonon-4.5.0'
         self.patchToApply['4.4.4'] = ("phonon-20100915.diff", 1)
         self.targetDigests['4.4.4'] = '7f31752c20efecbe63c7b312ceb28819fa337943'
         self.svnTargets['4.1.0'] = 'tags/phonon/4.1.0'    # tagged version, also in qt4.4.0
@@ -39,7 +41,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20100401'] = 'tags/kdepim/enterprise5.0.20100401.1110042/kdesupport/phonon'
         self.svnTargets['20100409'] = 'tags/kdepim/enterprise5.0.20100409.1112952/kdesupport/phonon'
         self.svnTargets['20100507'] = 'tags/kdepim/enterprise5.0.20100507.1123982/kdesupport/phonon'
-        self.defaultTarget = '4.4.4'
+        self.defaultTarget = '4.5.0'
 
 from Package.CMakePackageBase import *
 
