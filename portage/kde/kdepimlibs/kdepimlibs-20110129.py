@@ -32,7 +32,7 @@ class Package(CMakePackageBase):
         path = self.boost.installDir()
         os.putenv( "BOOST_ROOT", path )
 
-        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
+        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()
