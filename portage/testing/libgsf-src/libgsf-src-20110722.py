@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc[ '1.14.21' ] = "libgsf-1.14.21"
         self.targetDigests['1.14.21'] = '17981f238f1f8dddb7af01c161bd6a1c4d5e85d2'
         self.patchToApply['1.14.21'] = [("libgsf-1.14.21-20110725.diff", 1)]
+        self.shortDescription = "an I/O abstraction for reading/writing compound files"
         self.defaultTarget = '1.14.21'
 
     def setDependencies( self ):

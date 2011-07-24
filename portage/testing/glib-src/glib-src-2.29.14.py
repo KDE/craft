@@ -1,7 +1,3 @@
-# This package is in testing for a good reason it installs
-# several things into your emerge root directory which will
-# include openssl for example and can break your builds!
-
 from Package.CMakePackageBase import *
 import info
 
@@ -11,12 +7,13 @@ class subinfo(info.infoclass):
         self.targetInstSrc["2.29.14"] = "glib-2.29.14"
         self.patchToApply["2.29.14"] = ('glib-2.29.14-20110723.diff', '1')
         self.targetDigests['2.29.14'] = 'bd993994e9d6262c19d241f6a6f781f11b840831'
-        self.shortDescription = "some of the glib libraries"
+        self.shortDescription = "The Glib libraries: glib, gio, gthread, gmodule, gobject"
         self.defaultTarget = "2.29.14"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
         self.dependencies['testing/libffi-src'] = 'default'
+        self.dependencies['win32libs-bin/gettext'] = 'default'
 
 
 class Package(CMakePackageBase):

@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc[ '3.0.10rc8' ] = "libffi-3.0.10rc8"
         self.targetDigests['3.0.10rc8'] = '1dc449254c4c8bde1f422955e378016ba748d3f2'
         self.patchToApply['3.0.10rc8'] = [("libffi-3.0.10rc8-20110722.diff", 1)]
+        self.shortDescription = "a foreign function interface library"
         self.defaultTarget = '3.0.10rc8'
 
     def setDependencies( self ):
