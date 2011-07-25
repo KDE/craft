@@ -1,0 +1,71 @@
+diff -Nru lloyd-yajl-17b1790.orig/CMakeLists.txt lloyd-yajl-17b1790/CMakeLists.txt
+--- lloyd-yajl-17b1790.orig/CMakeLists.txt	2011-04-25 20:56:24.000000000 +0200
++++ lloyd-yajl-17b1790/CMakeLists.txt	2011-07-25 23:57:19.898786800 +0200
+@@ -46,21 +46,11 @@
+ 
+ IF (WIN32) 
+   ADD_DEFINITIONS(-DWIN32)
+-  SET(linkFlags "/PDB:NONE /INCREMENTAL:NO /OPT:NOREF /OPT:NOICF")
+-  SET(CMAKE_EXE_LINKER_FLAGS    "${linkFlags}"
+-      CACHE STRING "YAJL linker flags" FORCE)
+-  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG ""
+-      CACHE STRING "YAJL debug linker flags" FORCE)
+-  SET(CMAKE_EXE_LINKER_FLAGS_RELEASE
+-      CACHE STRING "YAJL release linker flags" FORCE)
+-  SET(CMAKE_SHARED_LINKER_FLAGS "${linkFlags}"
+-      CACHE STRING "YAJL shared linker flags" FORCE)
+-  SET(CMAKE_MODULE_LINKER_FLAGS "${linkFlags}"
+-      CACHE STRING "YAJL module linker flags" FORCE)
+-
++  IF(MSVC)
+   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4255 /wd4130 /wd4100 /wd4711")
+   SET(CMAKE_C_FLAGS_DEBUG "/D DEBUG /Od /Z7")
+   SET(CMAKE_C_FLAGS_RELEASE "/D NDEBUG /O2")
++  ENDIF(MSVC)
+ ELSE (WIN32)
+   IF(CMAKE_COMPILER_IS_GNUCC)
+     INCLUDE(CheckCCompilerFlag)
+diff -Nru lloyd-yajl-17b1790.orig/reformatter/CMakeLists.txt lloyd-yajl-17b1790/reformatter/CMakeLists.txt
+--- lloyd-yajl-17b1790.orig/reformatter/CMakeLists.txt	2011-04-25 20:56:24.000000000 +0200
++++ lloyd-yajl-17b1790/reformatter/CMakeLists.txt	2011-07-25 23:53:10.129500800 +0200
+@@ -50,6 +50,4 @@
+ ADD_CUSTOM_COMMAND(TARGET json_reformat POST_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
+ 
+-IF (NOT WIN32)
+-  INSTALL(TARGETS json_reformat RUNTIME DESTINATION bin)
+-ENDIF ()
++INSTALL(TARGETS json_reformat RUNTIME DESTINATION bin)
+diff -Nru lloyd-yajl-17b1790.orig/src/CMakeLists.txt lloyd-yajl-17b1790/src/CMakeLists.txt
+--- lloyd-yajl-17b1790.orig/src/CMakeLists.txt	2011-04-25 20:56:24.000000000 +0200
++++ lloyd-yajl-17b1790/src/CMakeLists.txt	2011-07-25 23:56:34.005161800 +0200
+@@ -88,11 +88,10 @@
+ 
+ INCLUDE_DIRECTORIES(${incDir}/..)
+ 
+-IF(NOT WIN32)
+-  # at build time you may specify the cmake variable LIB_SUFFIX to handle
+-  # 64-bit systems which use 'lib64'
+-  INSTALL(TARGETS yajl LIBRARY DESTINATION lib${LIB_SUFFIX})
+-  INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+-  INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+-  INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+-ENDIF()
++# at build time you may specify the cmake variable LIB_SUFFIX to handle
++# 64-bit systems which use 'lib64'
++INSTALL(TARGETS yajl RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib${LIB_SUFFIX})
++INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
++INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
++INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+diff -Nru lloyd-yajl-17b1790.orig/verify/CMakeLists.txt lloyd-yajl-17b1790/verify/CMakeLists.txt
+--- lloyd-yajl-17b1790.orig/verify/CMakeLists.txt	2011-04-25 20:56:24.000000000 +0200
++++ lloyd-yajl-17b1790/verify/CMakeLists.txt	2011-07-25 23:56:15.268090100 +0200
+@@ -50,6 +50,4 @@
+ ADD_CUSTOM_COMMAND(TARGET json_verify POST_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
+ 
+-IF (NOT WIN32)
+-  INSTALL(TARGETS json_verify RUNTIME DESTINATION bin)
+-ENDIF ()
++INSTALL(TARGETS json_verify RUNTIME DESTINATION bin)
