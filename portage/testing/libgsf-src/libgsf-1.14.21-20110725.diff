@@ -1,0 +1,848 @@
+diff -Nru libgsf-1.14.21.orig/cmake/modules/FindGIO.cmake libgsf-1.14.21/cmake/modules/FindGIO.cmake
+--- libgsf-1.14.21.orig/cmake/modules/FindGIO.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/cmake/modules/FindGIO.cmake	2011-07-24 23:01:05.995218200 +0200
+@@ -0,0 +1,66 @@
++# - Try to find GIO
++# Once done this will define
++#
++#  GIO_FOUND - system has Gio
++#  GIO_INCLUDE_DIR - the Gio include directory
++#  GIO_LIBRARIES - the libraries needed to use Gio
++#  GIO_DEFINITIONS - Compiler switches required for using Gio
++
++# Copyright (c) 2011, Patrick Spendrin <ps_ml@gmx.de>
++#
++# based on FindGLib2.cmake
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++#FIND_PACKAGE(PkgConfig)
++#PKG_CHECK_MODULES(PC_Gio Gio-2.0)
++#SET(GIO_DEFINITIONS ${PC_GIO_CFLAGS_OTHER})
++
++FIND_PATH(_GLIB_INCLUDE_DIR glib.h
++   HINTS
++   ${PC_GIO_INCLUDEDIR}
++   ${PC_GIO_INCLUDE_DIRS}
++   PATH_SUFFIXES glib-2.0/
++   )
++
++FIND_PATH(_GIO_INCLUDE_DIR gio.h
++   HINTS
++   ${PC_GIO_INCLUDEDIR}
++   ${PC_GIO_INCLUDE_DIRS}
++   PATH_SUFFIXES glib-2.0/gio/
++   )
++
++FIND_LIBRARY(_GioLibs NAMES gio-2.0
++   HINTS
++   ${PC_GIO_LIBDIR}
++   ${PC_GIO_LIBRARY_DIRS}
++   )
++FIND_LIBRARY(_GObjectLibs NAMES gobject-2.0
++   HINTS
++   ${PC_GIO_LIBDIR}
++   ${PC_GIO_LIBRARY_DIRS}
++   )
++FIND_LIBRARY(_GModuleLibs NAMES gmodule-2.0
++   HINTS
++   ${PC_GIO_LIBDIR}
++   ${PC_GIO_LIBRARY_DIRS}
++   )
++FIND_LIBRARY(_GThreadLibs NAMES gthread-2.0
++   HINTS
++   ${PC_GIO_LIBDIR}
++   ${PC_GIO_LIBRARY_DIRS}
++   )
++FIND_LIBRARY(_GLibs NAMES glib-2.0
++   HINTS
++   ${PC_GIO_LIBDIR}
++   ${PC_GIO_LIBRARY_DIRS}
++   )
++
++set( GIO_INCLUDE_DIR ${_GLIB_INCLUDE_DIR} ${_GLIB_INCLUDE_DIR}/glib ${_GIO_INCLUDE_DIR})
++SET( GIO_LIBRARIES ${_GioLibs} ${_GObjectLibs} ${_GModuleLibs} ${_GThreadLibs} ${_GLibs} )
++
++INCLUDE(FindPackageHandleStandardArgs)
++FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gio DEFAULT_MSG GIO_LIBRARIES GIO_INCLUDE_DIR)
++
++MARK_AS_ADVANCED(GIO_INCLUDE_DIR _GioLibs _GObjectLibs _GModuleLibs _GThreadLibs _GLibs)
+diff -Nru libgsf-1.14.21.orig/cmake/modules/FindLibintl.cmake libgsf-1.14.21/cmake/modules/FindLibintl.cmake
+--- libgsf-1.14.21.orig/cmake/modules/FindLibintl.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/cmake/modules/FindLibintl.cmake	2011-07-19 15:39:49.233811700 +0200
+@@ -0,0 +1,46 @@
++# Try to find Libintl functionality
++# Once done this will define
++#
++#  LIBINTL_FOUND - system has Libintl
++#  LIBINTL_INCLUDE_DIR - Libintl include directory
++#  LIBINTL_LIBRARIES - Libraries needed to use Libintl
++#
++# TODO: This will enable translations only if Gettext functionality is
++# present in libc. Must have more robust system for release, where Gettext
++# functionality can also reside in standalone Gettext library, or the one
++# embedded within kdelibs (cf. gettext.m4 from Gettext source).
++
++# Copyright (c) 2006, Chusslove Illich, <caslav.ilic@gmx.net>
++# Copyright (c) 2007, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if(LIBINTL_INCLUDE_DIR AND LIBINTL_LIB_FOUND)
++  set(Libintl_FIND_QUIETLY TRUE)
++endif(LIBINTL_INCLUDE_DIR AND LIBINTL_LIB_FOUND)
++
++find_path(LIBINTL_INCLUDE_DIR libintl.h)
++
++set(LIBINTL_LIB_FOUND FALSE)
++
++if(LIBINTL_INCLUDE_DIR)
++  include(CheckFunctionExists)
++  check_function_exists(dgettext LIBINTL_LIBC_HAS_DGETTEXT)
++
++  if (LIBINTL_LIBC_HAS_DGETTEXT)
++    set(LIBINTL_LIBRARIES)
++    set(LIBINTL_LIB_FOUND TRUE)
++  else (LIBINTL_LIBC_HAS_DGETTEXT)
++    find_library(LIBINTL_LIBRARIES NAMES intl libintl )
++    if(LIBINTL_LIBRARIES)
++      set(LIBINTL_LIB_FOUND TRUE)
++    endif(LIBINTL_LIBRARIES)
++  endif (LIBINTL_LIBC_HAS_DGETTEXT)
++
++endif(LIBINTL_INCLUDE_DIR)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Libintl  DEFAULT_MSG  LIBINTL_INCLUDE_DIR  LIBINTL_LIB_FOUND)
++
++mark_as_advanced(LIBINTL_INCLUDE_DIR  LIBINTL_LIBRARIES  LIBINTL_LIBC_HAS_DGETTEXT  LIBINTL_LIB_FOUND)
+diff -Nru libgsf-1.14.21.orig/CMakeLists.txt libgsf-1.14.21/CMakeLists.txt
+--- libgsf-1.14.21.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/CMakeLists.txt	2011-07-25 00:16:17.400255800 +0200
+@@ -0,0 +1,199 @@
++project(libgsf)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
++find_package(GIO REQUIRED)
++find_package(LibXml2 REQUIRED)
++find_package(ZLIB REQUIRED)
++find_package(Libintl REQUIRED)
++find_package(BZip2)
++
++option(BUILD_STATIC "build a static version of libgsf" OFF)
++option(BUILD_TOOLS "build gsf tools" ON)
++
++include_directories(
++    ${GIO_INCLUDE_DIR}
++    ${LIBXML2_INCLUDE_DIR}
++    ${ZLIB_INCLUDE_DIRS}
++    ${LIBINTL_INCLUDE_DIR}
++    ${CMAKE_BINARY_DIR}
++    ${CMAKE_SOURCE_DIR}
++    ${CMAKE_SOURCE_DIR}/gsf
++    ${CMAKE_SOURCE_DIR}/gsf-win32
++)
++
++if(BZIP2_FOUND)
++    include_directories(${BZIP2_INCLUDE_DIR})
++endif(BZIP2_FOUND)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++include(ConfigureChecks.cmake)
++
++###############################################################################
++set(gsf_SRCS
++    gsf/gsf-utils.c
++    gsf/gsf-libxml.c
++    gsf/gsf-doc-meta-data.c
++    gsf/gsf-docprop-vector.c
++    gsf/gsf-msole-utils.c
++    gsf/gsf-open-pkg-utils.c
++    gsf/gsf-opendoc-utils.c
++    gsf/gsf-timestamp.c
++    gsf/gsf-zip-utils.c
++    gsf/gsf-input.c
++    gsf/gsf-input-bzip.c
++    gsf/gsf-input-gzip.c
++    gsf/gsf-input-http.c
++    gsf/gsf-input-iochannel.c
++    gsf/gsf-input-memory.c
++    gsf/gsf-input-proxy.c
++    gsf/gsf-input-stdio.c
++    gsf/gsf-input-textline.c
++    gsf/gsf-infile.c
++    gsf/gsf-infile-msole.c
++    gsf/gsf-infile-msvba.c
++    gsf/gsf-infile-stdio.c
++    gsf/gsf-infile-tar.c
++    gsf/gsf-infile-zip.c
++    gsf/gsf-output.c
++    gsf/gsf-output-bzip.c
++    gsf/gsf-output-csv.c
++    gsf/gsf-output-gzip.c
++    gsf/gsf-output-iconv.c
++    gsf/gsf-output-iochannel.c
++    gsf/gsf-output-memory.c
++    gsf/gsf-output-stdio.c
++    gsf/gsf-outfile.c
++    gsf/gsf-outfile-msole.c
++    gsf/gsf-outfile-stdio.c
++    gsf/gsf-outfile-zip.c
++    gsf/gsf-shared-memory.c
++    gsf/gsf-structured-blob.c
++    gsf/gsf-blob.c
++    gsf/gsf-clip-data.c
++    gsf/version.c
++    gsf/gsf-input-gio.c
++    gsf/gsf-output-gio.c
++)
++
++
++set(gsf_win32_SRCS
++    gsf-win32/gsf-input-win32.c
++    gsf-win32/gsf-output-win32.c
++)
++
++
++set(gsf_HDRS
++    gsf/gsf.h
++    gsf/gsf-utils.h
++    gsf/gsf-libxml.h
++    gsf/gsf-impl-utils.h
++    gsf/gsf-doc-meta-data.h
++    gsf/gsf-docprop-vector.h
++    gsf/gsf-msole-utils.h
++    gsf/gsf-open-pkg-utils.h
++    gsf/gsf-opendoc-utils.h
++    gsf/gsf-timestamp.h
++    gsf/gsf-input.h
++    gsf/gsf-input-impl.h
++    gsf/gsf-input-bzip.h
++    gsf/gsf-input-gzip.h
++    gsf/gsf-input-http.h
++    gsf/gsf-input-iochannel.h
++    gsf/gsf-input-memory.h
++    gsf/gsf-input-proxy.h
++    gsf/gsf-input-stdio.h
++    gsf/gsf-input-textline.h
++    gsf/gsf-infile.h
++    gsf/gsf-infile-impl.h
++    gsf/gsf-infile-msole.h
++    gsf/gsf-infile-msvba.h
++    gsf/gsf-infile-stdio.h
++    gsf/gsf-infile-tar.h
++    gsf/gsf-infile-zip.h
++    gsf/gsf-output.h
++    gsf/gsf-output-impl.h
++    gsf/gsf-output-bzip.h
++    gsf/gsf-output-csv.h
++    gsf/gsf-output-gzip.h
++    gsf/gsf-output-iconv.h
++    gsf/gsf-output-iochannel.h
++    gsf/gsf-output-memory.h
++    gsf/gsf-output-stdio.h
++    gsf/gsf-outfile.h
++    gsf/gsf-outfile-impl.h
++    gsf/gsf-outfile-msole.h
++    gsf/gsf-outfile-stdio.h
++    gsf/gsf-outfile-zip.h
++    gsf/gsf-shared-memory.h
++    gsf/gsf-structured-blob.h
++    gsf/gsf-meta-names.h
++    gsf/gsf-blob.h
++    gsf/gsf-clip-data.h
++    gsf/gsf-input-gio.h
++    gsf/gsf-output-gio.h
++)
++
++set(gsf_win32_HDRS
++    gsf-win32/gsf-input-win32.h
++    gsf-win32/gsf-output-win32.h
++)
++
++###############################################################################
++
++if(BUILD_STATIC)
++    set(_SHARED STATIC)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++    set(gsf_SRCS ${gsf_SRCS} libgsf-1.14.20.def)
++    set(gsf_win32_SRCS ${gsf_win32_SRCS} libgsf-win32-1.14.20.def)
++endif(BUILD_STATIC)
++
++add_library(gsf ${_SHARED} ${gsf_SRCS})
++set_target_properties(gsf PROPERTIES OUTPUT_NAME gsf-1)
++target_link_libraries(gsf ${GIO_LIBRARIES} ${LIBXML2_LIBRARIES} ${ZLIB_LIBRARY} ${LIBINTL_LIBRARIES})
++set(_targets gsf)
++if(BZIP2_FOUND)
++    target_link_libraries(gsf ${BZIP2_LIBRARIES})
++endif(BZIP2_FOUND)
++
++if(WIN32)
++    add_library(gsf-win32 ${_SHARED} ${gsf_win32_SRCS})
++    target_link_libraries(gsf-win32 gsf)
++    set_target_properties(gsf-win32 PROPERTIES OUTPUT_NAME gsf-win32-1)
++    list(APPEND _targets gsf)
++endif(WIN32)
++
++###############################################################################
++
++if(BUILD_TOOLS)
++    set(gsf_exe_SRCS
++        tools/gsf.c
++    )
++    
++    set(gsf_vba_dump_SRCS
++        tools/gsf-vba-dump.c
++    )
++    
++    add_executable(gsf_exe ${gsf_exe_SRCS})
++    target_link_libraries(gsf_exe gsf)
++    set_target_properties(gsf_exe PROPERTIES OUTPUT_NAME gsf)
++    
++    add_executable(gsf-vba-dump ${gsf_vba_dump_SRCS})
++    target_link_libraries(gsf-vba-dump gsf)
++
++    list(APPEND _targets gsf_exe gsf-vba-dump)
++endif(BUILD_TOOLS)
++
++###############################################################################
++
++install(TARGETS ${_targets} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++
++install(FILES ${gsf_HDRS} DESTINATION include/libgsf-1/gsf)
++install(FILES ${gsf_win32_HDRS} DESTINATION include/libgsf-1/gsf-win32)
+diff -Nru libgsf-1.14.21.orig/ConfigureChecks.cmake libgsf-1.14.21/ConfigureChecks.cmake
+--- libgsf-1.14.21.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/ConfigureChecks.cmake	2011-07-24 23:17:45.381379800 +0200
+@@ -0,0 +1,63 @@
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++
++set(PACKAGE "libgsf")
++set(VERSION "1.14.21")
++set(PACKAGE_BUGREPORT "kde-windows@kde.org")
++set(PACKAGE_NAME ${PACKAGE})
++set(PACKAGE_STRING "${PACKAGE}-${VERSION}")
++set(PACKAGE_TARNAME ${PACKAGE})
++set(PACKAGE_URL "http://windows.kde.org")
++set(PACKAGE_VERSION "1.14.21")
++set(STDC_HEADERS 1)
++
++set(ENABLE_NLS 0)
++set(HAVE_2ARG_STATFS 0)
++set(HAVE_FSEEKO 0)
++set(HAVE_GDK_PIXBUF 0)
++
++set(GETTEXT_PACKAGE "\"gsf\"")
++set(HAVE_GETTEXT 0)
++set(HAVE_G_ACCESS 1)
++set(HAVE_G_CHMOD 1)
++
++#/* Define if your <locale.h> file defines LC_MESSAGES. */#undef HAVE_LC_MESSAGES
++#/* Define to 1 if you have a working `mmap' system call. */#undef HAVE_MMAP
++#/* Number of bits in a file offset, on hosts where this is settable. */#undef _FILE_OFFSET_BITS
++#/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */#undef _LARGEFILE_SOURCE
++#/* Define for large files, on AIX-style hosts. */#undef _LARGE_FILES
++set(mode_t int)
++
++if(BZIP2_FOUND)
++    set(HAVE_BZ2 1)
++else(BZIP2_FOUND)
++    set(HAVE_BZ2 0)
++endif(BZIP2_FOUND)
++
++check_function_exists("bind_textdomain_codeset" HAVE_BIND_TEXTDOMAIN_CODESET)
++check_function_exists("chown" HAVE_CHOWN)
++check_function_exists("dcgettext" HAVE_DCGETTEXT)
++check_function_exists("getpagesize" HAVE_GETPAGESIZE)
++check_function_exists("gmtime" HAVE_GMTIME)
++check_function_exists("gmtime_r" HAVE_GMTIME_R)
++check_function_exists("g_base64_encode" HAVE_G_BASE64_ENCODE)
++check_function_exists("setrlimit" HAVE_SETRLIMIT)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("io.h" HAVE_IO_H)
++check_include_file("locale.h" HAVE_LOCALE_H)
++check_include_file("malloc.h" HAVE_MALLOC_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/mount.h" HAVE_SYS_MOUNT_H)
++check_include_file("sys/param.h" HAVE_SYS_PARAM_H)
++check_include_file("sys/statfs.h" HAVE_SYS_STATFS_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++
++configure_file(gsf-config.h.cmake ${CMAKE_BINARY_DIR}/gsf-config.h)
+\ No newline at end of file
+diff -Nru libgsf-1.14.21.orig/gsf-config.h.cmake libgsf-1.14.21/gsf-config.h.cmake
+--- libgsf-1.14.21.orig/gsf-config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/gsf-config.h.cmake	2011-07-24 23:18:59.684629700 +0200
+@@ -0,0 +1,158 @@
++/* gsf-config.h.in.  Generated from configure.in by autoheader.  */
++
++/* always defined to indicate that i18n is enabled */
++#cmakedefine ENABLE_NLS @ENABLE_NLS@
++
++/* Gettext package. */
++#cmakedefine GETTEXT_PACKAGE @GETTEXT_PACKAGE@
++
++/* Define is you have two-argument statfs like linux */
++#cmakedefine HAVE_2ARG_STATFS @HAVE_2ARG_STATFS@
++
++/* Define to 1 if you have the `bind_textdomain_codeset' function. */
++#cmakedefine HAVE_BIND_TEXTDOMAIN_CODESET @HAVE_BIND_TEXTDOMAIN_CODESET@
++
++/* Is bzip2 available and enabled */
++#cmakedefine HAVE_BZ2 @HAVE_BZ2@
++
++/* Define to 1 if you have the `chown' function. */
++#cmakedefine HAVE_CHOWN @HAVE_CHOWN@
++
++/* Define to 1 if you have the `dcgettext' function. */
++#cmakedefine HAVE_DCGETTEXT @HAVE_DCGETTEXT@
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H @HAVE_DLFCN_H@
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H @HAVE_FCNTL_H@
++
++/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
++#cmakedefine HAVE_FSEEKO @HAVE_FSEEKO@
++
++/* Define if gdk-pixbuf is available */
++#cmakedefine HAVE_GDK_PIXBUF @HAVE_GDK_PIXBUF@
++
++/* Define to 1 if you have the `getpagesize' function. */
++#cmakedefine HAVE_GETPAGESIZE @HAVE_GETPAGESIZE@
++
++/* Define if the GNU gettext() function is already present or preinstalled. */
++#cmakedefine HAVE_GETTEXT @HAVE_GETTEXT@
++
++/* Define to 1 if you have the `gmtime' function. */
++#cmakedefine HAVE_GMTIME @HAVE_GMTIME@
++
++/* Define to 1 if you have the `gmtime_r' function. */
++#cmakedefine HAVE_GMTIME_R @HAVE_GMTIME_R@
++
++/* Define if g_access is available as macro or function */
++#cmakedefine HAVE_G_ACCESS @HAVE_G_ACCESS@
++
++/* Define to 1 if you have the `g_base64_encode' function. */
++#cmakedefine HAVE_G_BASE64_ENCODE @HAVE_G_BASE64_ENCODE@
++
++/* Define if g_chmod is available as macro or function */
++#cmakedefine HAVE_G_CHMOD @HAVE_G_CHMOD@
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
++
++/* Define to 1 if you have the <io.h> header file. */
++#cmakedefine HAVE_IO_H @HAVE_IO_H@
++
++/* Define if your <locale.h> file defines LC_MESSAGES. */
++#cmakedefine HAVE_LC_MESSAGES @HAVE_LC_MESSAGES@
++
++/* Define to 1 if you have the <locale.h> header file. */
++#cmakedefine HAVE_LOCALE_H @HAVE_LOCALE_H@
++
++/* Define to 1 if you have the <malloc.h> header file. */
++#cmakedefine HAVE_MALLOC_H @HAVE_MALLOC_H@
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
++
++/* Define to 1 if you have a working `mmap' system call. */
++#cmakedefine HAVE_MMAP @HAVE_MMAP@
++
++/* Define to 1 if you have the `setrlimit' function. */
++#cmakedefine HAVE_SETRLIMIT @HAVE_SETRLIMIT@
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
++
++/* Define to 1 if `tm_gmtoff' is a member of `struct tm'. */
++#cmakedefine HAVE_STRUCT_TM_TM_GMTOFF @HAVE_STRUCT_TM_TM_GMTOFF@
++
++/* Define to 1 if you have the <sys/mount.h> header file. */
++#cmakedefine HAVE_SYS_MOUNT_H @HAVE_SYS_MOUNT_H@
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#cmakedefine HAVE_SYS_PARAM_H @HAVE_SYS_PARAM_H@
++
++/* Define to 1 if you have the <sys/statfs.h> header file. */
++#cmakedefine HAVE_SYS_STATFS_H @HAVE_SYS_STATFS_H@
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#cmakedefine LT_OBJDIR @LT_OBJDIR@
++
++/* Name of package */
++#cmakedefine PACKAGE @PACKAGE@
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
++
++/* Define to the home page for this package. */
++#cmakedefine PACKAGE_URL @PACKAGE_URL@
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS @STDC_HEADERS@
++
++/* Define S_ISREG if stat.h doesn't */
++#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
++
++/* Version number of package */
++#cmakedefine VERSION @VERSION@
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
++
++/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
++#cmakedefine _LARGEFILE_SOURCE @_LARGEFILE_SOURCE@
++
++/* Define for large files, on AIX-style hosts. */
++#cmakedefine _LARGE_FILES @_LARGE_FILES@
++
++/* Define to `int' if <sys/types.h> does not define. */
++#cmakedefine mode_t @mode_t@
+diff -Nru libgsf-1.14.21.orig/libgsf-1.14.20.def libgsf-1.14.21/libgsf-1.14.20.def
+--- libgsf-1.14.21.orig/libgsf-1.14.20.def	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/libgsf-1.14.20.def	2011-07-25 00:02:25.547676600 +0200
+@@ -0,0 +1,281 @@
++LIBRARY
++EXPORTS
++get_gsf_odf_version
++get_gsf_odf_version_string
++get_gsf_ooo_ns
++gsf_base64_decode_simple
++gsf_base64_decode_step
++gsf_base64_encode_close
++gsf_base64_encode_simple
++gsf_base64_encode_step
++gsf_blob_get_size
++gsf_blob_get_type
++gsf_blob_new
++gsf_blob_peek_data
++gsf_clip_data_get_data_blob
++gsf_clip_data_get_format
++gsf_clip_data_get_type
++gsf_clip_data_get_windows_clipboard_format
++gsf_clip_data_new
++gsf_clip_data_peek_real_data
++gsf_debug_flag
++gsf_doc_meta_data_foreach
++gsf_doc_meta_data_get_type
++gsf_doc_meta_data_insert
++gsf_doc_meta_data_lookup
++gsf_doc_meta_data_new
++gsf_doc_meta_data_remove
++gsf_doc_meta_data_size
++gsf_doc_meta_data_steal
++gsf_doc_meta_data_store
++gsf_doc_meta_dump
++gsf_doc_prop_dump
++gsf_doc_prop_free
++gsf_doc_prop_get_link
++gsf_doc_prop_get_name
++gsf_doc_prop_get_val
++gsf_doc_prop_new
++gsf_doc_prop_set_link
++gsf_doc_prop_set_val
++gsf_doc_prop_swap_val
++gsf_docprop_vector_append
++gsf_docprop_vector_as_string
++gsf_docprop_vector_get_type
++gsf_docprop_vector_new
++gsf_error_quark
++gsf_extension_pointer
++gsf_filename_to_utf8
++gsf_iconv_close
++gsf_infile_child_by_aname
++gsf_infile_child_by_index
++gsf_infile_child_by_name
++gsf_infile_child_by_vaname
++gsf_infile_child_by_vname
++gsf_infile_get_type
++gsf_infile_msole_get_class_id
++gsf_infile_msole_get_type
++gsf_infile_msole_new
++gsf_infile_msvba_get_modules
++gsf_infile_msvba_get_type
++gsf_infile_msvba_new
++gsf_infile_msvba_steal_modules
++gsf_infile_name_by_index
++gsf_infile_num_children
++gsf_infile_stdio_get_type
++gsf_infile_stdio_new
++gsf_infile_tar_get_type
++gsf_infile_tar_new
++gsf_infile_zip_get_type
++gsf_infile_zip_new
++gsf_init
++gsf_init_dynamic
++gsf_input_container
++gsf_input_copy
++gsf_input_dump
++gsf_input_dup
++gsf_input_eof
++gsf_input_error
++gsf_input_error_id
++gsf_input_find_vba
++gsf_input_get_type
++gsf_input_gio_get_type
++gsf_input_gio_new
++gsf_input_gio_new_for_path
++gsf_input_gio_new_for_uri
++gsf_input_gzip_get_type
++gsf_input_gzip_new
++gsf_input_http_get_content_type
++gsf_input_http_get_type
++gsf_input_http_get_url
++gsf_input_http_new
++gsf_input_memory_get_type
++gsf_input_memory_new
++gsf_input_memory_new_clone
++gsf_input_memory_new_from_bzip
++gsf_input_memory_new_from_iochannel
++gsf_input_mmap_new
++gsf_input_name
++gsf_input_proxy_get_type
++gsf_input_proxy_new
++gsf_input_proxy_new_section
++gsf_input_read
++gsf_input_remaining
++gsf_input_seek
++gsf_input_seek_emulate
++gsf_input_set_container
++gsf_input_set_name
++gsf_input_set_name_from_filename
++gsf_input_set_size
++gsf_input_sibling
++gsf_input_size
++gsf_input_stdio_get_type
++gsf_input_stdio_new
++gsf_input_stdio_new_FILE
++gsf_input_tell
++gsf_input_textline_ascii_gets
++gsf_input_textline_get_type
++gsf_input_textline_new
++gsf_input_textline_utf8_gets
++gsf_input_uncompress
++gsf_le_get_double
++gsf_le_get_float
++gsf_le_get_guint64
++gsf_le_set_double
++gsf_le_set_float
++gsf_mem_dump
++gsf_msole_codepage_to_lid
++gsf_msole_iconv_open_codepage_for_export
++gsf_msole_iconv_open_codepage_for_import
++gsf_msole_iconv_open_codepages_for_export
++gsf_msole_iconv_open_for_export
++gsf_msole_iconv_open_for_import
++gsf_msole_iconv_win_codepage
++gsf_msole_inflate
++gsf_msole_language_for_lid
++gsf_msole_lid_for_language
++gsf_msole_lid_to_codepage
++gsf_msole_lid_to_codepage_str
++gsf_msole_metadata_read
++gsf_msole_metadata_write
++gsf_ooo_ns DATA
++gsf_open_pkg_error_id
++gsf_open_pkg_foreach_rel
++gsf_open_pkg_get_rel_by_id
++gsf_open_pkg_get_rel_by_type
++gsf_open_pkg_lookup_rel_by_id
++gsf_open_pkg_lookup_rel_by_type
++gsf_open_pkg_open_rel
++gsf_open_pkg_open_rel_by_id
++gsf_open_pkg_open_rel_by_type
++gsf_open_pkg_parse_rel_by_id
++gsf_open_pkg_rel_get_target
++gsf_open_pkg_rel_get_type
++gsf_open_pkg_rel_is_extern
++gsf_opendoc_metadata_read
++gsf_opendoc_metadata_subtree
++gsf_opendoc_metadata_write
++gsf_outfile_get_type
++gsf_outfile_msole_get_type
++gsf_outfile_msole_new
++gsf_outfile_msole_new_full
++gsf_outfile_msole_set_class_id
++gsf_outfile_new_child
++gsf_outfile_new_child_full
++gsf_outfile_new_child_varg
++gsf_outfile_open_pkg_add_extern_rel
++gsf_outfile_open_pkg_add_rel
++gsf_outfile_open_pkg_get_type
++gsf_outfile_open_pkg_new
++gsf_outfile_open_pkg_relate
++gsf_outfile_open_pkg_set_content_type
++gsf_outfile_open_pkg_set_sink
++gsf_outfile_stdio_get_type
++gsf_outfile_stdio_new
++gsf_outfile_stdio_new_full
++gsf_outfile_stdio_new_valist
++gsf_outfile_zip_get_type
++gsf_outfile_zip_new
++gsf_outfile_zip_set_compression_method
++gsf_output_bzip_get_type
++gsf_output_bzip_new
++gsf_output_close
++gsf_output_container
++gsf_output_csv_get_type
++gsf_output_csv_quoting_mode_get_type
++gsf_output_csv_write_eol
++gsf_output_csv_write_field
++gsf_output_error
++gsf_output_error_id
++gsf_output_get_type
++gsf_output_gio_get_type
++gsf_output_gio_new
++gsf_output_gio_new_for_path
++gsf_output_gio_new_for_uri
++gsf_output_gzip_get_type
++gsf_output_gzip_new
++gsf_output_iconv_get_type
++gsf_output_iconv_new
++gsf_output_iochannel_get_type
++gsf_output_iochannel_new
++gsf_output_is_closed
++gsf_output_memory_get_bytes
++gsf_output_memory_get_type
++gsf_output_memory_new
++gsf_output_name
++gsf_output_printf
++gsf_output_puts
++gsf_output_seek
++gsf_output_set_container
++gsf_output_set_error
++gsf_output_set_name
++gsf_output_set_name_from_filename
++gsf_output_size
++gsf_output_stdio_get_type
++gsf_output_stdio_new
++gsf_output_stdio_new_FILE
++gsf_output_stdio_new_full
++gsf_output_stdio_new_valist
++gsf_output_tell
++gsf_output_unwrap
++gsf_output_vprintf
++gsf_output_wrap
++gsf_output_write
++gsf_property_settings_collect
++gsf_property_settings_collect_valist
++gsf_property_settings_free
++gsf_shared_memory_get_type
++gsf_shared_memory_mmapped_new
++gsf_shared_memory_new
++gsf_shutdown
++gsf_shutdown_dynamic
++gsf_structured_blob_get_type
++gsf_structured_blob_read
++gsf_structured_blob_write
++gsf_timestamp_as_string
++gsf_timestamp_copy
++gsf_timestamp_equal
++gsf_timestamp_free
++gsf_timestamp_from_string
++gsf_timestamp_get_type
++gsf_timestamp_hash
++gsf_timestamp_new
++gsf_timestamp_parse
++gsf_timestamp_set_time
++gsf_value_get_docprop_varray
++gsf_value_get_docprop_vector
++gsf_value_set_timestamp
++gsf_xmlDocFormatDump
++gsf_xml_gvalue_from_str
++gsf_xml_in_check_ns
++gsf_xml_in_doc_add_nodes
++gsf_xml_in_doc_free
++gsf_xml_in_doc_new
++gsf_xml_in_doc_parse
++gsf_xml_in_doc_set_unknown_handler
++gsf_xml_in_get_input
++gsf_xml_in_namecmp
++gsf_xml_in_push_state
++gsf_xml_out_add_base64
++gsf_xml_out_add_bool
++gsf_xml_out_add_color
++gsf_xml_out_add_cstr
++gsf_xml_out_add_cstr_unchecked
++gsf_xml_out_add_enum
++gsf_xml_out_add_float
++gsf_xml_out_add_gvalue
++gsf_xml_out_add_int
++gsf_xml_out_add_uint
++gsf_xml_out_end_element
++gsf_xml_out_get_output
++gsf_xml_out_get_type
++gsf_xml_out_new
++gsf_xml_out_set_doc_type
++gsf_xml_out_simple_element
++gsf_xml_out_simple_float_element
++gsf_xml_out_simple_int_element
++gsf_xml_out_start_element
++gsf_xml_parser_context
++gsf_xml_probe
++libgsf_major_version
++libgsf_micro_version
++libgsf_minor_version
+diff -Nru libgsf-1.14.21.orig/libgsf-win32-1.14.20.def libgsf-1.14.21/libgsf-win32-1.14.20.def
+--- libgsf-1.14.21.orig/libgsf-win32-1.14.20.def	1970-01-01 01:00:00.000000000 +0100
++++ libgsf-1.14.21/libgsf-win32-1.14.20.def	2011-07-24 22:36:48.191836600 +0200
+@@ -0,0 +1,6 @@
++LIBRARY
++EXPORTS
++gsf_input_istream_get_type
++gsf_input_istream_new
++gsf_output_istream_get_type
++gsf_output_istream_new

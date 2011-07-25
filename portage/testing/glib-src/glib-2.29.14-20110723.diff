@@ -1,0 +1,110 @@
+diff -Nru glib-2.29.14.orig/build/win32/vs10/gio.vcxproj glib-2.29.14/build/win32/vs10/gio.vcxproj
+--- glib-2.29.14.orig/build/win32/vs10/gio.vcxproj	2011-07-22 09:13:19.000000000 +0200
++++ glib-2.29.14/build/win32/vs10/gio.vcxproj	2011-07-23 16:39:12.713856200 +0200
+@@ -82,7 +82,7 @@
+       <CompileAs>CompileAsC</CompileAs>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>zdll.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>zlib.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <OutputFile>$(OutDir)$(GlibDllPrefix)$(ProjectName)$(GlibDllSuffix).dll</OutputFile>
+       <ModuleDefinitionFile>$(IntDir)gio.def</ModuleDefinitionFile>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+diff -Nru glib-2.29.14.orig/build/win32/vs10/glib.props glib-2.29.14/build/win32/vs10/glib.props
+--- glib-2.29.14.orig/build/win32/vs10/glib.props	2011-07-13 11:34:24.000000000 +0200
++++ glib-2.29.14/build/win32/vs10/glib.props	2011-07-23 16:39:12.716856300 +0200
+@@ -1,7 +1,7 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <PropertyGroup Label="UserMacros">
+-    <CopyDir>..\..\..\..\..\vs10\$(Platform)</CopyDir>
++    <CopyDir>%INSTALLDIR%</CopyDir>
+     <DefDir>$(SolutionDir)$(Configuration)\$(PlatformName)\obj\$(ProjectName)\</DefDir>
+     <ApiVersion>2.0</ApiVersion>
+     <GlibDoInstall>
+@@ -467,7 +467,7 @@
+     <GlibSeparateVS10DllSuffix>-2-vs10</GlibSeparateVS10DllSuffix>
+     <GlibDllPrefix>$(GlibSeparateVS10DllPrefix)</GlibDllPrefix>
+     <GlibDllSuffix>$(GlibSeparateVS10DllSuffix)</GlibDllSuffix>
+-    <GlibEtcInstallRoot>..\..\..\..\..\vs10\$(Platform)</GlibEtcInstallRoot>
++    <GlibEtcInstallRoot>%KDEROOT%</GlibEtcInstallRoot>
+   </PropertyGroup>
+   <PropertyGroup>
+     <_PropertySheetDisplayName>glibprops</_PropertySheetDisplayName>
+@@ -481,7 +481,7 @@
+       <ForcedIncludeFiles>msvc_recommended_pragmas.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>intl.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>libintl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <AdditionalLibraryDirectories>$(GlibEtcInstallRoot)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PreBuildEvent>
+diff -Nru glib-2.29.14.orig/gio/gdbusconnection.c glib-2.29.14/gio/gdbusconnection.c
+--- glib-2.29.14.orig/gio/gdbusconnection.c	2011-07-22 08:29:32.000000000 +0200
++++ glib-2.29.14/gio/gdbusconnection.c	2011-07-23 16:41:00.377014100 +0200
+@@ -4970,9 +4970,7 @@
+   guint32 serial;
+ 
+   GVariant *value;
+-#ifdef G_OS_UNIX
+   GUnixFDList *fd_list;
+-#endif
+ } CallState;
+ 
+ static void
+@@ -5071,7 +5069,9 @@
+   g_return_if_fail (method_name != NULL && g_dbus_is_member_name (method_name));
+   g_return_if_fail (timeout_msec >= 0 || timeout_msec == -1);
+   g_return_if_fail ((parameters == NULL) || g_variant_is_of_type (parameters, G_VARIANT_TYPE_TUPLE));
++#ifdef G_OS_UNIX
+   g_return_if_fail (fd_list == NULL || G_IS_UNIX_FD_LIST (fd_list));
++#endif
+ 
+   state = g_slice_new0 (CallState);
+   state->simple = g_simple_async_result_new (G_OBJECT (connection),
+@@ -5182,7 +5182,9 @@
+   g_return_val_if_fail (method_name != NULL && g_dbus_is_member_name (method_name), NULL);
+   g_return_val_if_fail (timeout_msec >= 0 || timeout_msec == -1, NULL);
+   g_return_val_if_fail ((parameters == NULL) || g_variant_is_of_type (parameters, G_VARIANT_TYPE_TUPLE), NULL);
++#ifdef G_OS_UNIX
+   g_return_val_if_fail (fd_list == NULL || G_IS_UNIX_FD_LIST (fd_list), NULL);
++#endif
+   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+ 
+   if (reply_type == NULL)
+diff -Nru glib-2.29.14.orig/gio/gdbusproxy.c glib-2.29.14/gio/gdbusproxy.c
+--- glib-2.29.14.orig/gio/gdbusproxy.c	2011-07-22 08:29:32.000000000 +0200
++++ glib-2.29.14/gio/gdbusproxy.c	2011-07-23 16:39:12.734857400 +0200
+@@ -2461,7 +2461,9 @@
+   g_return_if_fail (g_dbus_is_member_name (method_name) || g_dbus_is_interface_name (method_name));
+   g_return_if_fail (parameters == NULL || g_variant_is_of_type (parameters, G_VARIANT_TYPE_TUPLE));
+   g_return_if_fail (timeout_msec == -1 || timeout_msec >= 0);
++#ifdef G_OS_UNIX
+   g_return_if_fail (fd_list == NULL || G_IS_UNIX_FD_LIST (fd_list));
++#endif
+ 
+   reply_type = NULL;
+   split_interface_name = NULL;
+@@ -2590,7 +2592,9 @@
+   g_return_val_if_fail (g_dbus_is_member_name (method_name) || g_dbus_is_interface_name (method_name), NULL);
+   g_return_val_if_fail (parameters == NULL || g_variant_is_of_type (parameters, G_VARIANT_TYPE_TUPLE), NULL);
+   g_return_val_if_fail (timeout_msec == -1 || timeout_msec >= 0, NULL);
++#ifdef G_OS_UNIX
+   g_return_val_if_fail (fd_list == NULL || G_IS_UNIX_FD_LIST (fd_list), NULL);
++#endif
+   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+ 
+   reply_type = NULL;
+diff -Nru glib-2.29.14.orig/gio/glocalfile.c glib-2.29.14/gio/glocalfile.c
+--- glib-2.29.14.orig/gio/glocalfile.c	2011-07-21 08:37:26.000000000 +0200
++++ glib-2.29.14/gio/glocalfile.c	2011-07-23 16:39:12.737857500 +0200
+@@ -1001,8 +1001,6 @@
+ 
+ #elif defined(USE_STATVFS) && defined(HAVE_STRUCT_STATVFS_F_BASETYPE)
+   fstype = g_strdup(statfs_buffer.f_basetype); 
+-#else
+-  fstype = NULL;
+ #endif
+ 
+ #ifndef G_OS_WIN32

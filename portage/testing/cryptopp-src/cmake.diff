@@ -223,10 +223,9 @@ diff -Nru cryp3/CMakeLists.txt cryp2/CMakeLists.txt
 +  ENABLE_TESTING ()
 +  ADD_TEST (v crypttest v)
 +ENDIF (CRYPTOPP_BUILD_TESTS)
-diff -Nru cryp3/FindCryptoPP.cmake cryp2/FindCryptoPP.cmake
---- cryp3/FindCryptoPP.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ cryp2/FindCryptoPP.cmake	2011-07-19 11:27:47.000000000 +0200
-@@ -0,0 +1,113 @@
+--- a   1970-01-01 01:00:00.000000000 +0100
++++ b/FindCryptoPP.cmake  2011-07-20 13:59:24.771144300 +0200
+@@ -0,0 +1,115 @@
 +# Module for locating the CryptoPP encryption library.
 +#
 +# Cutomizable variables:
@@ -287,7 +286,7 @@ diff -Nru cryp3/FindCryptoPP.cmake cryp2/FindCryptoPP.cmake
 +  DOC "CryptoPP include directory")
 +
 +FIND_LIBRARY (CRYPTOPP_LIBRARY_DEBUG
-+  NAMES cryptlibd cryptoppd
++  NAMES  cryptlibd cryptoppd
 +  PATHS ${CRYPTOPP_ROOT_DIR}
 +  PATH_SUFFIXES ${_CRYPTOPP_POSSIBLE_LIB_SUFFIXES}
 +  DOC "CryptoPP debug library")
@@ -307,6 +306,8 @@ diff -Nru cryp3/FindCryptoPP.cmake cryp2/FindCryptoPP.cmake
 +      debug ${CRYPTOPP_LIBRARY_DEBUG})
 +  ELSEIF (CRYPTOPP_LIBRARY_RELEASE)
 +    SET (CRYPTOPP_LIBRARIES ${CRYPTOPP_LIBRARY_RELEASE})
++  ELSEIF (CRYPTOPP_LIBRARY_DEBUG)
++    SET (CRYPTOPP_LIBRARIES ${CRYPTOPP_LIBRARY_DEBUG})
 +  ENDIF (CRYPTOPP_LIBRARY_DEBUG AND CRYPTOPP_LIBRARY_RELEASE)
 +ENDIF (NOT DEFINED CRYPTOPP_LIBRARIES)
 +

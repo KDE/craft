@@ -1,0 +1,170 @@
+diff -Nru libwpg-0.2.0.orig/cmake/modules/FindWPD.cmake libwpg-0.2.0/cmake/modules/FindWPD.cmake
+--- libwpg-0.2.0.orig/cmake/modules/FindWPD.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libwpg-0.2.0/cmake/modules/FindWPD.cmake	2011-07-22 00:25:57.370925600 +0200
+@@ -0,0 +1,56 @@
++# - Try to find the libwpd (WordPerfect library)
++# Once done this will define
++#
++#  WPD_FOUND - system has WPD
++#  WPD_INCLUDE_DIR - the WPD include directory
++#  WPD_LIBRARIES - Link these to use WPD
++#  WPD_DEFINITIONS - Compiler switches required for using WPD
++#
++
++
++# use pkg-config to get the directories and then use these values
++# in the FIND_PATH() and FIND_LIBRARY() calls
++
++if (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++
++   # Already in cache
++   set(WPD_FOUND TRUE)
++
++else (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++if(NOT WIN32)
++  INCLUDE(FindPkgConfig)
++  pkg_check_modules(WPD libwpd-0.8)
++  pkg_check_modules(WPD libwpd-0.9)
++endif(NOT WIN32)
++
++  FIND_PATH(WPD_INCLUDE_DIR libwpd/libwpd.h
++    PATHS
++      ${WPD_INCLUDE_DIR}
++      /usr/include/libwpd-0.8
++      /usr/include/libwpd-0.9
++    PATH_SUFFIXES
++      libwpd-0.8
++      libwpd-0.9
++  )
++
++  IF(NOT WPD_LIBRARIES)
++    FIND_LIBRARY(WPD_LIBRARY
++      NAMES
++        wpd
++        libwpd
++    )
++
++    FIND_LIBRARY(WPD_STREAM_LIBRARY
++      NAMES
++        wpd-stream
++        libwpd-stream
++    )
++    
++    set(WPD_LIBRARIES ${WPD_LIBRARY} ${WPD_STREAM_LIBRARY})
++  ENDIF(NOT WPD_LIBRARIES)
++  include(FindPackageHandleStandardArgs)
++  FIND_PACKAGE_HANDLE_STANDARD_ARGS(WPD DEFAULT_MSG WPD_INCLUDE_DIR WPD_LIBRARIES )
++
++  MARK_AS_ADVANCED(WPD_INCLUDE_DIR WPD_LIBRARIES)
++
++endif (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
+diff -Nru libwpg-0.2.0.orig/CMakeLists.txt libwpg-0.2.0/CMakeLists.txt
+--- libwpg-0.2.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libwpg-0.2.0/CMakeLists.txt	2011-07-22 00:32:54.636791800 +0200
+@@ -0,0 +1,64 @@
++project(libwpg)
++
++cmake_minimum_required(VERSION 2.8.0)
++
++# read current version
++file(READ configure.in _configure_data)
++foreach(_ver MAJOR MINOR MICRO)
++    string(REGEX MATCH "WPG_${_ver}_VERSION=([0-9])" WPG_${_ver}_VERSION ${_configure_data})
++    string(REGEX REPLACE "WPG_${_ver}_VERSION=([0-9])" "\\1" WPG_${_ver}_VERSION ${WPG_${_ver}_VERSION})
++endforeach(_ver MAJOR MINOR MICRO)
++set(BUILDNUMBER 0)
++
++option(BUILD_converters "build converters" ON)
++
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++find_package(WPD REQUIRED)
++
++include_directories(${CMAKE_BINARY_DIR} src/lib ${WPD_INCLUDE_DIR})
++
++set(wpg_SRCS
++    src/lib/WPGraphics.cpp
++    src/lib/WPGDashArray.cpp
++    src/lib/WPGColor.cpp
++    src/lib/WPGHeader.cpp
++    src/lib/WPGSVGGenerator.cpp
++    src/lib/WPGXParser.cpp
++    src/lib/WPG1Parser.cpp
++    src/lib/WPG2Parser.cpp
++    src/lib/WPGBitmap.cpp
++    src/lib/WPGInternalStream.cpp
++)
++
++set(wpg_HDRS
++    ${CMAKE_BINARY_DIR}/libwpg.h
++    src/lib/WPGraphics.h
++    src/lib/WPGPaintInterface.h
++)
++
++
++list(APPEND _targets wpg)
++
++configure_file(src/lib/libwpg.h.in ${CMAKE_BINARY_DIR}/libwpg.h)
++add_library(wpg STATIC ${wpg_SRCS})
++target_link_libraries(wpg ${WPD_LIBRARIES})
++######################################################################################
++# build the converters
++if(BUILD_converters)
++    foreach(_converter raw svg)
++        configure_file(src/conv/${_converter}/wpg2${_converter}.rc.in ${CMAKE_BINARY_DIR}/wpg2${_converter}.rc)
++        set(wpg2${_converter}_SRCS 
++            src/conv/${_converter}/wpg2${_converter}.cpp
++            ${CMAKE_BINARY_DIR}/wpg2${_converter}.rc)
++        add_executable(wpg2${_converter} ${wpg2${_converter}_SRCS})
++        target_link_libraries(wpg2${_converter} wpg ${WPD_LIBRARIES})
++        list(APPEND _targets wpg2${_converter})
++    endforeach(_converter raw svg)
++endif(BUILD_converters)
++
++######################################################################################
++install(TARGETS ${_targets} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++
++install(FILES ${wpg_HDRS} DESTINATION include/libwpg-${WPG_MAJOR_VERSION}.${WPG_MINOR_VERSION}/libwpg)
+diff -Nru libwpg-0.2.0.orig/src/conv/raw/wpg2raw.rc.in libwpg-0.2.0/src/conv/raw/wpg2raw.rc.in
+--- libwpg-0.2.0.orig/src/conv/raw/wpg2raw.rc.in	2010-08-26 13:36:43.000000000 +0200
++++ libwpg-0.2.0/src/conv/raw/wpg2raw.rc.in	2011-07-22 00:21:21.925171000 +0200
+@@ -1,7 +1,7 @@
+ #include <winver.h>
+ 
+ VS_VERSION_INFO VERSIONINFO
+-  FILEVERSION @WPG_MAJOR_VERSION@,@WPG_MINOR_VERSION@,@WPG_MICRO_VERSION@,BUILDNUMBER
++  FILEVERSION @WPG_MAJOR_VERSION@,@WPG_MINOR_VERSION@,@WPG_MICRO_VERSION@,@BUILDNUMBER@
+   PRODUCTVERSION @WPG_MAJOR_VERSION@,@WPG_MINOR_VERSION@,@WPG_MICRO_VERSION@,0
+   FILEFLAGSMASK 0
+   FILEFLAGS 0
+@@ -15,7 +15,7 @@
+       BEGIN
+ 	VALUE "CompanyName", "The libwpg developer community"
+ 	VALUE "FileDescription", "wpg2raw"
+-	VALUE "FileVersion", "@WPG_MAJOR_VERSION@.@WPG_MINOR_VERSION@.@WPG_MICRO_VERSION@.BUILDNUMBER"
++	VALUE "FileVersion", "@WPG_MAJOR_VERSION@.@WPG_MINOR_VERSION@.@WPG_MICRO_VERSION@.@BUILDNUMBER@"
+ 	VALUE "InternalName", "wpg2raw"
+ 	VALUE "LegalCopyright", "Copyright (C) 2004 Marc Oude Kotte, other contributers"
+ 	VALUE "OriginalFilename", "wpg2raw.exe"
+diff -Nru libwpg-0.2.0.orig/src/conv/svg/wpg2svg.rc.in libwpg-0.2.0/src/conv/svg/wpg2svg.rc.in
+--- libwpg-0.2.0.orig/src/conv/svg/wpg2svg.rc.in	2010-08-26 13:36:43.000000000 +0200
++++ libwpg-0.2.0/src/conv/svg/wpg2svg.rc.in	2011-07-22 00:21:42.648356300 +0200
+@@ -1,7 +1,7 @@
+ #include <winver.h>
+ 
+ VS_VERSION_INFO VERSIONINFO
+-  FILEVERSION @WPG_MAJOR_VERSION@,@WPG_MINOR_VERSION@,@WPG_MICRO_VERSION@,BUILDNUMBER
++  FILEVERSION @WPG_MAJOR_VERSION@,@WPG_MINOR_VERSION@,@WPG_MICRO_VERSION@,@BUILDNUMBER@
+   PRODUCTVERSION @WPG_MAJOR_VERSION@,@WPG_MINOR_VERSION@,@WPG_MICRO_VERSION@,0
+   FILEFLAGSMASK 0
+   FILEFLAGS 0
+@@ -15,7 +15,7 @@
+       BEGIN
+ 	VALUE "CompanyName", "The libwpg developer community"
+ 	VALUE "FileDescription", "wpg2svg"
+-	VALUE "FileVersion", "@WPG_MAJOR_VERSION@.@WPG_MINOR_VERSION@.@WPG_MICRO_VERSION@.BUILDNUMBER"
++	VALUE "FileVersion", "@WPG_MAJOR_VERSION@.@WPG_MINOR_VERSION@.@WPG_MICRO_VERSION@.@BUILDNUMBER@"
+ 	VALUE "InternalName", "wpg2svg"
+ 	VALUE "LegalCopyright", "Copyright (C) 2004 Marc Oude Kotte, other contributers"
+ 	VALUE "OriginalFilename", "wpg2svg.exe"
