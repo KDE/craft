@@ -39,7 +39,7 @@ diff -Nru lloyd-yajl-17b1790.orig/reformatter/CMakeLists.txt lloyd-yajl-17b1790/
 diff -Nru lloyd-yajl-17b1790.orig/src/CMakeLists.txt lloyd-yajl-17b1790/src/CMakeLists.txt
 --- lloyd-yajl-17b1790.orig/src/CMakeLists.txt	2011-04-25 20:56:24.000000000 +0200
 +++ lloyd-yajl-17b1790/src/CMakeLists.txt	2011-07-25 23:56:34.005161800 +0200
-@@ -88,11 +88,10 @@
+@@ -88,11 +88,11 @@
  
  INCLUDE_DIRECTORIES(${incDir}/..)
  
@@ -54,7 +54,8 @@ diff -Nru lloyd-yajl-17b1790.orig/src/CMakeLists.txt lloyd-yajl-17b1790/src/CMak
 +# at build time you may specify the cmake variable LIB_SUFFIX to handle
 +# 64-bit systems which use 'lib64'
 +INSTALL(TARGETS yajl RUNTIME DESTINATION bin
-+                     LIBRARY DESTINATION lib${LIB_SUFFIX})
++                     LIBRARY DESTINATION lib${LIB_SUFFIX}
++                     ARCHIVE DESTINATION lib${LIB_SUFFIX})
 +INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
 +INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
 +INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
