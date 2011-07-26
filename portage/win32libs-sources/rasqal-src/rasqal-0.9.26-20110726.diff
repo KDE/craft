@@ -209,7 +209,7 @@ diff -Nru rasqal-0.9.26.orig/ConfigureChecks.cmake rasqal-0.9.26/ConfigureChecks
 +#set(HAVE_TM_GMTOFF 0) # no idea how to test this
 +
 +# Decimal from GNU MP library 
-+set(RASQAL_DECIMAL_GMP 1)
++#set(RASQAL_DECIMAL_GMP 1)
 +
 +# Decimal from MPFR library 
 +#set(RASQAL_DECIMAL_MPFR 0)
