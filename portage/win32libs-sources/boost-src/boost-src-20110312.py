@@ -26,23 +26,9 @@ class Package(BoostPackageBase):
         
 
     def install(self):
-        self.enterSourceDir()
-        cmd  = "bjam install"
-        cmd += self.subinfo.options.configure.defines
-        if utils.verbose() >= 1:
-            print cmd
-        os.system(cmd) and utils.die(
-                "command: %s failed" % (cmd))
-        shutil.copytree(os.path.join(self.imageDir(), "lib"),
-                         os.path.join(self.imageDir(), "bin"),
+        shutil.copytree(os.path.join(self.sourceDir(), "boost"),
+                         os.path.join(self.imageDir(), "include" , "boost"),
                          ignore=shutil.ignore_patterns('*.a','*.lib'))
-        shutil.move(os.path.join(self.imageDir(), "include", "boost-1_44",
-                    "boost"),
-                    os.path.join(self.imageDir(),"include","boost"))
-        shutil.rmtree(os.path.join(self.imageDir(),"include","boost-1_44"))
-        if self.isTargetBuild():
-            shutil.rmtree(os.path.join(self.imageDir(), "lib"))
-            shutil.rmtree(os.path.join(self.imageDir(), "bin"))
         #disable autolinking
         f = open(os.path.join(self.imageDir(),"include", "boost", "config", "user.hpp"), 'a')
         f.write('#define BOOST_ALL_NO_LIB\n')
@@ -51,13 +37,6 @@ class Package(BoostPackageBase):
 
 
     def make(self):
-        self.enterSourceDir()
-        cmd  = "bjam stage"
-        cmd += self.configureOptions(self.subinfo.options.configure.defines)
-        if utils.verbose() >= 1:
-            print cmd
-        os.system(cmd) and utils.die(
-                "command: %s failed" % (cmd))
         return True
 
 if __name__ == '__main__':
