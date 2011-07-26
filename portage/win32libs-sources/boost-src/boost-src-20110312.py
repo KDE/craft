@@ -17,45 +17,18 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies['dev-util/bjam'] = 'default'
 
-from Package.CMakePackageBase import *
+from Package.BoostPackageBase import *
 
-class Package(CMakePackageBase):
+class Package(BoostPackageBase):
     def __init__(self, **args):
         self.subinfo = subinfo()
-        CMakePackageBase.__init__(self)
+        BoostPackageBase.__init__(self)
 
-        self.subinfo.options.configure.defines = (
-                " --build-type=minimal"
-                " --build-dir=" + self.buildDir() + \
-                " --prefix=" + self.imageDir() + \
-                " --stagedir=" + os.path.join(self.buildDir(),"stage") + \
-                " threading=multi"
-                " link=shared"
-                " runtime-link=shared")
-
-        self.subinfo.options.configure.defines += " variant="
-        if self.buildType() == "Debug":
-            self.subinfo.options.configure.defines += "debug"
-        else:
-            self.subinfo.options.configure.defines += "release"
-        self.subinfo.options.configure.defines += " toolset="
-        if compiler.isMinGW():
-            self.subinfo.options.configure.defines += "gcc"
-        else:
-            if compiler.isMSVC2005():
-                self.subinfo.options.configure.defines += "msvc-8.0"
-            elif compiler.isMSVC2008():
-                self.subinfo.options.configure.defines += "msvc-9.0"
-            elif compiler.isMSVC2010():
-                self.subinfo.options.configure.defines += "msvc-10.0"
         if self.isHostBuild():
-            self.subinfo.options.configure.defines += " --with-program_options"
-            self.subinfo.options.configure.defines += " --with-system"
+            self.subinfo.options.configure.defines = " --with-program_options"
         if not emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += " --with-python"
 
-    def configure(self):
-        return True
 
     def install(self):
         self.enterSourceDir()
@@ -81,8 +54,6 @@ class Package(CMakePackageBase):
         f.close()
         return True
 
-    def runTest(self):
-        return False
 
     def make(self):
         self.enterSourceDir()
