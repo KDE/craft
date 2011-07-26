@@ -53,7 +53,7 @@ win32libs-sources,openslp-src,,
 win32libs-sources,libbfd-src,,
 win32libs-sources,freetype-src,,2
 win32libs-sources,libmsn-src,,2
-win32libs-sources,taglib-src,1.6.3,
+win32libs-sources,taglib-src,1.7,
 win32libs-sources,taglib-extras-src,,
 win32libs-sources,openjpeg-src,,2
 win32libs-sources,libnova-src,,
@@ -61,4 +61,7 @@ win32libs-sources,libopensp-src,,
 win32libs-sources,libofx-src,,
 win32libs-sources,mpir-src,,
 win32libs-sources,automoc-src,,
+win32libs-sources,glee-src,,
+win32libs-sources,libwpd-src,,
+win32libs-sources,libwpg-src,,
 libs,runtime,,
