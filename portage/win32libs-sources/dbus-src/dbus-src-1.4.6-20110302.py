@@ -35,9 +35,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.4.1'] = 'dbus-1.4.1'
         self.targetConfigurePath['1.4.1'] = 'cmake'
 
-        self.svnTargets['1.4.6'] = 'git://anongit.freedesktop.org/git/dbus/dbus||dbus-1.4.6'
-        self.targetSrcSuffix['1.4.6'] = 'git'
-        self.targetConfigurePath['1.4.6'] = 'cmake'
+		for ver ['1.4.6', '1.4.10']:
+			self.svnTargets[ver] = 'git://anongit.freedesktop.org/git/dbus/dbus||dbus-' + ver
+			self.targetSrcSuffix[ver] = 'git'
+			self.targetConfigurePath[ver] = 'cmake'
 
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
