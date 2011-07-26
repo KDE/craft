@@ -3,16 +3,18 @@ from Package.CMakePackageBase import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in [ '7.9', '8.00', '8.02', '8.10' ]:
+        for ver in [ '7.9', '8.00', '8.02', '8.10' ,'8.12' ]:
             self.targets[ ver ] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'pcre-' + ver
         self.patchToApply[ '8.10' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
+        self.patchToApply[ '8.12' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
         if emergePlatform.isCrossCompilingEnabled():
             self.patchToApply[ '8.10' ].append( ( "pcre-8.02-20100518.diff", 1 ) )
 
         self.targetDigests[ '8.10' ] = '8b345da0f835b2caabff071b0b5bab40564652be'
+        self.targetDigests['8.12'] = '2219b372bff53ee29a7e44ecf5977ad15df01cea'
         self.shortDescription = "Perl-Compatible Regular Expressions"
-        self.defaultTarget = '8.10'
+        self.defaultTarget = '8.12'
 
     def setDependencies( self ):
         self.buildDependencies[ 'virtual/base' ] = 'default'
