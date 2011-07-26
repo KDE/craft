@@ -65,13 +65,13 @@ class BoostBuildSystem(BuildSystemBase):
           path = os.path.join(directory,f)
           if os.path.isdir(path):
               return self._walk(path)
-          if f.endswith("dll"):
+          elif f.endswith("dll"):
               return directory,f
+          else: 
+              utils.die("Build Failed")
               
     def install( self):
         """install the target"""
-        if self.buildDir() == None:
-            died("Build failed")
         path,dll = self._walk(self.buildDir())
         utils.copyFile(os.path.join(path,dll),os.path.join(self.imageDir(),"lib",dll))
         utils.copyFile(os.path.join(path,dll),os.path.join(self.imageDir(),"bin",dll))
