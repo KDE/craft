@@ -27,7 +27,7 @@ class Package(BoostPackageBase):
 
     def install(self):
         shutil.copytree(os.path.join(self.sourceDir(), "boost"),
-                         os.path.join(self.imageDir(), "include" , "boost")))
+                         os.path.join(self.imageDir(), "include" , "boost"))
         #disable autolinking
         f = open(os.path.join(self.imageDir(),"include", "boost", "config", "user.hpp"), 'a')
         f.write('#define BOOST_ALL_NO_LIB\n')
