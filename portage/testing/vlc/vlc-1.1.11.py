@@ -22,10 +22,10 @@ class subinfo(info.infoclass):
     self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + self.getVer() + "-win32-debug.7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() + "-debug" ] = 'vlc-' + self.vlcTagName +  self.getVer()
 
-    releaseTag = '1.1.10'
+    releaseTag = '1.1.11'
     self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
     self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
-    self.targetDigests['1.1.10'] = '981ee49d3b3559606472370f6971cdf3b0e7163f'
+    self.targetDigests['1.1.11'] = '5d95a0e55c1d30f21e6dd4aa2fb1744a3ab694ac'
     self.shortDescription = "an open-source multimedia framework"
     
     
