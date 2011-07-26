@@ -53,7 +53,7 @@ class Package(BoostPackageBase):
     def make(self):
         self.enterSourceDir()
         cmd  = "bjam stage"
-        cmd += self.subinfo.options.configure.defines
+        cmd += self.configureOptions(self.subinfo.options.configure.defines)
         if utils.verbose() >= 1:
             print cmd
         os.system(cmd) and utils.die(
