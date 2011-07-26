@@ -20,8 +20,6 @@ class BoostBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)              
         options += (" --build-type=minimal"
                 " --build-dir=" + self.buildDir() + \
-                " --prefix=" + self.imageDir() + \
-                " --stagedir=" + os.path.join(self.buildDir(),"stage") + \
                 " threading=multi"
                 " link=shared"
                 " runtime-link=shared")
