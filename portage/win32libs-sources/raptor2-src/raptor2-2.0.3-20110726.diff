@@ -31,7 +31,7 @@ diff -Nru raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake raptor2-2.0.3/cmake/mo
 diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 --- raptor2-2.0.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ raptor2-2.0.3/CMakeLists.txt	2011-07-26 01:06:36.250516500 +0200
-@@ -0,0 +1,153 @@
+@@ -0,0 +1,155 @@
 +project(raptor2)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -56,9 +56,9 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +configure_file(src/raptor2.h.in ${CMAKE_BINARY_DIR}/raptor2.h @ONLY)
 +
 +if(MSVC)
-+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dstrcasecmp=stricmp -Dstrtok_r=strtok_s)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dstrcasecmp=stricmp)
 +endif(MSVC)
-+
++    add_definitions(-Dstrtok_r=strtok_s)
 +set(raptor2_SRCS
 +    src/raptor_parse.c
 +    src/raptor_serialize.c
@@ -167,12 +167,14 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +if(BUILD_TOOLS)
 +    set(rapper_SRCS
 +        utils/rapper.c
-+        utils/getopt.c
 +    )
 +    set(rdfdiff_SRCS
 +        utils/rdfdiff.c
-+        utils/getopt.c
 +    )
++    if(MSVC)
++        set(rapper_SRCS utils/getopt.c ${rapper_SRCS})
++        set(rdfdiff_SRCS utils/getopt.c ${rdfdiff_SRCS})
++    endif(MSVC)
 +    add_executable(rapper ${rapper_SRCS})
 +    target_link_libraries(rapper raptor2)
 +    add_executable(rdfdiff ${rdfdiff_SRCS})
