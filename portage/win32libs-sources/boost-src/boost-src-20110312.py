@@ -23,12 +23,7 @@ class Package(BoostPackageBase):
     def __init__(self, **args):
         self.subinfo = subinfo()
         BoostPackageBase.__init__(self)
-
-        if self.isHostBuild():
-            self.subinfo.options.configure.defines = " --with-program_options"
-        if not emergePlatform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += " --with-python"
-
+        
 
     def install(self):
         self.enterSourceDir()
