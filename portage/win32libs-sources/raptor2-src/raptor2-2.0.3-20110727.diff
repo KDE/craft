@@ -1,6 +1,6 @@
 diff -Nru raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake raptor2-2.0.3/cmake/modules/FindYajl.cmake
 --- raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/cmake/modules/FindYajl.cmake	2011-07-26 01:05:29.192681000 +0200
++++ raptor2-2.0.3/cmake/modules/FindYajl.cmake	2011-07-27 22:45:22.846116500 +0200
 @@ -0,0 +1,26 @@
 +# Try to find Yajl functionality
 +# Once done this will define
@@ -30,7 +30,7 @@ diff -Nru raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake raptor2-2.0.3/cmake/mo
 +mark_as_advanced(YAJL_INCLUDE_DIR YAJL_LIBRARIES YAJL_FOUND)
 diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 --- raptor2-2.0.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/CMakeLists.txt	2011-07-26 01:06:36.250516500 +0200
++++ raptor2-2.0.3/CMakeLists.txt	2011-07-27 23:00:01.739386300 +0200
 @@ -0,0 +1,155 @@
 +project(raptor2)
 +
@@ -157,7 +157,7 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +)
 +
 +add_library(raptor2 SHARED ${raptor2_SRCS})
-+set_target_properties(raptor2 PROPERTIES DEFINE_SYMBOL RAPTOR_INTERNAL)
++set_target_properties(raptor2 PROPERTIES DEFINE_SYMBOL RAPTOR_EXPORTS)
 +target_link_libraries(raptor2 ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${EXPAT_LIBRARIES} ${YAJL_LIBRARIES})
 +
 +set(_targets
@@ -189,7 +189,7 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +install(FILES ${raptor2_HDRS} DESTINATION include/raptor2)
 diff -Nru raptor2-2.0.3.orig/ConfigureChecks.cmake raptor2-2.0.3/ConfigureChecks.cmake
 --- raptor2-2.0.3.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/ConfigureChecks.cmake	2011-07-26 01:05:29.198681300 +0200
++++ raptor2-2.0.3/ConfigureChecks.cmake	2011-07-27 22:45:22.850116700 +0200
 @@ -0,0 +1,100 @@
 +#/* Have curl/curl.h * HAVE_CURL_CURL_H
 +#/* INN parsedate function present * HAVE_INN_PARSEDATE
@@ -294,7 +294,7 @@ diff -Nru raptor2-2.0.3.orig/ConfigureChecks.cmake raptor2-2.0.3/ConfigureChecks
 \ No newline at end of file
 diff -Nru raptor2-2.0.3.orig/librdfa/rdfa.c raptor2-2.0.3/librdfa/rdfa.c
 --- raptor2-2.0.3.orig/librdfa/rdfa.c	2011-05-22 23:34:41.000000000 +0200
-+++ raptor2-2.0.3/librdfa/rdfa.c	2011-07-26 01:05:29.203681600 +0200
++++ raptor2-2.0.3/librdfa/rdfa.c	2011-07-27 22:45:22.853116900 +0200
 @@ -1245,7 +1245,7 @@
     {
        char* new_doctype_buffer = NULL;
@@ -306,7 +306,7 @@ diff -Nru raptor2-2.0.3.orig/librdfa/rdfa.c raptor2-2.0.3/librdfa/rdfa.c
        if(doctype_end != NULL)
 diff -Nru raptor2-2.0.3.orig/src/raptor_config.h.cmake raptor2-2.0.3/src/raptor_config.h.cmake
 --- raptor2-2.0.3.orig/src/raptor_config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/src/raptor_config.h.cmake	2011-07-26 01:05:29.207681900 +0200
++++ raptor2-2.0.3/src/raptor_config.h.cmake	2011-07-27 22:45:22.856117100 +0200
 @@ -0,0 +1,342 @@
 +/* src/raptor_config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -652,7 +652,7 @@ diff -Nru raptor2-2.0.3.orig/src/raptor_config.h.cmake raptor2-2.0.3/src/raptor_
 +#cmakedefine const @const@
 diff -Nru raptor2-2.0.3.orig/src/raptor2.h.in raptor2-2.0.3/src/raptor2.h.in
 --- raptor2-2.0.3.orig/src/raptor2.h.in	2011-03-14 16:20:56.000000000 +0100
-+++ raptor2-2.0.3/src/raptor2.h.in	2011-07-26 01:05:29.211682100 +0200
++++ raptor2-2.0.3/src/raptor2.h.in	2011-07-27 22:59:12.522571300 +0200
 @@ -60,7 +60,9 @@
   *
   * Raptor library version string
@@ -663,80 +663,18 @@ diff -Nru raptor2-2.0.3.orig/src/raptor2.h.in raptor2-2.0.3/src/raptor2.h.in
  
  /**
   * RAPTOR_VERSION_MAJOR:
-@@ -142,34 +144,34 @@
- 
- /* Public statics */
- RAPTOR_API
--extern const char * const raptor_short_copyright_string;
-+const char * const raptor_short_copyright_string;
- RAPTOR_API
--extern const char * const raptor_copyright_string;
-+const char * const raptor_copyright_string;
- RAPTOR_API
--extern const char * const raptor_version_string;
-+const char * const raptor_version_string;
- RAPTOR_API
--extern const unsigned int raptor_version_major;
-+const unsigned int raptor_version_major;
- RAPTOR_API
--extern const unsigned int raptor_version_minor;
-+const unsigned int raptor_version_minor;
- RAPTOR_API
--extern const unsigned int raptor_version_release;
-+const unsigned int raptor_version_release;
- RAPTOR_API
--extern const unsigned int raptor_version_decimal;
-+const unsigned int raptor_version_decimal;
- RAPTOR_API
--extern const char * const raptor_license_string;
-+const char * const raptor_license_string;
- RAPTOR_API
--extern const char * const raptor_home_url_string;
-+const char * const raptor_home_url_string;
- 
- RAPTOR_API
--extern const unsigned char * const raptor_xml_namespace_uri;
-+const unsigned char * const raptor_xml_namespace_uri;
- RAPTOR_API
--extern const unsigned char * const raptor_rdf_namespace_uri;
-+const unsigned char * const raptor_rdf_namespace_uri;
- RAPTOR_API
--extern const unsigned char * const raptor_rdf_schema_namespace_uri;
-+const unsigned char * const raptor_rdf_schema_namespace_uri;
- RAPTOR_API
--extern const unsigned char * const raptor_xmlschema_datatypes_namespace_uri;
-+const unsigned char * const raptor_xmlschema_datatypes_namespace_uri;
- RAPTOR_API
--extern const unsigned char * const raptor_owl_namespace_uri;
-+const unsigned char * const raptor_owl_namespace_uri;
- 
- /**
-  * raptor_rdf_namespace_uri_len:
-@@ -177,10 +179,10 @@
-  * Length of #raptor_rdf_namespace_uri string
-  */
- RAPTOR_API
--extern const unsigned int raptor_rdf_namespace_uri_len;
-+const unsigned int raptor_rdf_namespace_uri_len;
- 
- RAPTOR_API
--extern const unsigned char * const raptor_xml_literal_datatype_uri_string;
-+const unsigned char * const raptor_xml_literal_datatype_uri_string;
- 
- /**
-  * raptor_xml_literal_datatype_uri_string_len:
-@@ -188,7 +190,7 @@
-  * Length of #raptor_xml_literal_datatype_uri_string
-  */
- RAPTOR_API
--extern const unsigned int raptor_xml_literal_datatype_uri_string_len;
-+const unsigned int raptor_xml_literal_datatype_uri_string_len;
- 
- 
- /* Public structure */
+@@ -98,7 +100,7 @@
+ #    ifdef RAPTOR_STATIC
+ #      define RAPTOR_API
+ #    else
+-#      ifdef RAPTOR_INTERNAL
++#      ifdef RAPTOR_EXPORTS
+ #        define RAPTOR_API _declspec(dllexport)
+ #      else
+ #        define RAPTOR_API _declspec(dllimport)
 diff -Nru raptor2-2.0.3.orig/src/win32_raptor_config.h raptor2-2.0.3/src/win32_raptor_config.h
 --- raptor2-2.0.3.orig/src/win32_raptor_config.h	2011-06-02 06:03:03.000000000 +0200
-+++ raptor2-2.0.3/src/win32_raptor_config.h	2011-07-26 01:05:29.215682300 +0200
++++ raptor2-2.0.3/src/win32_raptor_config.h	2011-07-27 22:45:22.861117300 +0200
 @@ -114,7 +114,7 @@
  
  #define RAPTOR_PARSER_GUESS 1
