@@ -375,8 +375,8 @@ diff -Nru rasqal-0.9.26.orig/cmake/MacroEnsureVersion.cmake rasqal-0.9.26/cmake/
 +ENDMACRO(MACRO_ENSURE_VERSION2)
 diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 --- rasqal-0.9.26.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.26/CMakeLists.txt	2011-07-27 23:25:28.588717100 +0200
-@@ -0,0 +1,178 @@
++++ rasqal-0.9.26/CMakeLists.txt	2011-07-28 00:07:01.362295600 +0200
+@@ -0,0 +1,214 @@
 +project(rasqal)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -394,6 +394,11 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +
 +option(BUILD_EXAMPLES "build the examples" ON)
 +option(BUILD_TOOLS "build commandline utilities" ON)
++option(BUILD_TESTS "build test executables" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif(BUILD_TESTS)
 +
 +set(rasqal_SRCS
 +    src/rasqal_algebra.c
@@ -458,6 +463,7 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    src/rasqal_update.c
 +    src/rasqal_variable.c
 +    src/rasqal_xsd_datatypes.c
++    src/rasqal_query_test.c
 +    src/rdql_lexer.c
 +    src/rdql_parser.c
 +    src/sparql_lexer.c
@@ -466,21 +472,11 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    src/timegm.c
 +)
 +
-+set(rasqal_HDRS
-+    src/rasqal_internal.h
-+    src/rdql_common.h
-+    src/rdql_lexer.h
-+    src/rdql_parser.h
-+    src/sparql_common.h
-+    src/sparql_lexer.h
-+    src/sparql_parser.h
-+)
-+
 +include(ConfigureChecks.cmake)
 +configure_file(src/rasqal.h.in ${CMAKE_BINARY_DIR}/rasqal.h @ONLY)
 +configure_file(src/win32_rasqal_config.h.in ${CMAKE_BINARY_DIR}/win32_rasqal_config.h @ONLY)
 +
-+set(rasqal_HDRS_INST
++set(rasqal_HDRS
 +    ${CMAKE_BINARY_DIR}/rasqal.h
 +)
 +
@@ -491,6 +487,7 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +        list(APPEND rasqal_SRCS utils/gettimeofday.c)
 +    endif(MSVC)
 +endif(WIN32)
++
 +include_directories(
 +    ${CMAKE_BINARY_DIR}
 +    src
@@ -498,9 +495,15 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    ${PCRE_INCLUDE_DIR}
 +    ${RAPTOR_INCLUDE_DIR}
 +)
-+add_library(rasqal SHARED ${rasqal_SRCS} src/rasqal_query_test.c)
++add_library(rasqal SHARED ${rasqal_SRCS})
 +set_target_properties(rasqal PROPERTIES DEFINE_SYMBOL RASQAL_INTERNAL)
 +target_link_libraries(rasqal ${PCRE_LIBRARIES} ${RAPTOR_LIBRARIES})
++
++if(BUILD_TOOLS OR BUILD_TESTS)
++    add_library(rasqal_static STATIC ${rasqal_SRCS})
++    set_target_properties(rasqal_static PROPERTIES COMPILE_FLAGS "-DRASQAL_STATIC -DRASQAL_INTERNAL")
++endif(BUILD_TOOLS OR BUILD_TESTS)
++
 +if(NOT MSVC)
 +    target_link_libraries(rasqal gmp)
 +endif(NOT MSVC)
@@ -520,7 +523,6 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +
 +    set(roqet_SRCS
 +        utils/roqet.c
-+        ${rasqal_SRCS}
 +    )
 +    if(MSVC)
 +        set(roqet_SRCS
@@ -530,8 +532,10 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    endif(MSVC)
 +    add_executable(roqet ${roqet_SRCS})
 +    set_target_properties(roqet PROPERTIES COMPILE_FLAGS "-DRASQAL_STATIC -DRASQAL_INTERNAL")
-+    target_link_libraries(roqet rasqal)
++    target_link_libraries(roqet rasqal_static ${PCRE_LIBRARIES} ${RAPTOR_LIBRARIES})
 +    list(APPEND _targets rasqal-config roqet)
++
++    install(FILES utils/roqet.1 DESTINATION share/man/man1)
 +endif(BUILD_TOOLS)
 +
 +if(BUILD_EXAMPLES)
@@ -549,12 +553,44 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +endif(BUILD_EXAMPLES)
 +
 +###############################################################################
++if(BUILD_TESTS)
++    add_definitions(-Dstrcasecmp=stricmp -Dstrncasecmp=strnicmp)
++    set(test_SRCS
++        rasqal_algebra
++        rasqal_expr
++        strcasecmp
++        rasqal_xsd_datatypes
++        rasqal_decimal
++        rasqal_datetime
++        rasqal_variable
++        rasqal_rowsource_empty
++        rasqal_rowsource_union
++        rasqal_rowsource_rowsequence
++        rasqal_rowsource_project
++        rasqal_rowsource_join
++        rasqal_rowsource_triples
++        rasqal_row_compatible
++        rasqal_rowsource_groupby
++        rasqal_rowsource_aggregation
++        rasqal_literal
++        rasqal_query_test
++    )
++    foreach(_testname ${test_SRCS})
++        add_executable(${_testname}_test src/${_testname}.c)
++        target_link_libraries(${_testname}_test rasqal_static ${PCRE_LIBRARIES} ${RAPTOR_LIBRARIES})
++        set_target_properties(${_testname}_test PROPERTIES COMPILE_FLAGS "-DRASQAL_STATIC -DRASQAL_INTERNAL -DSTANDALONE")
++        add_test(${_testname} ${_testname}_test)
++    endforeach(_testname ${test_SRCS})
++endif(BUILD_TESTS)
++
++###############################################################################
 +install(TARGETS ${_targets} RUNTIME DESTINATION bin
 +                            LIBRARY DESTINATION lib
 +                            ARCHIVE DESTINATION lib)
 +
-+install(FILES ${raptor2_HDRS} DESTINATION include/rasqal)
++install(FILES ${rasqal_HDRS} DESTINATION include/rasqal)
 +
++install(FILES docs/librasqal.3 DESTINATION share/man/man3)
 diff -Nru rasqal-0.9.26.orig/ConfigureChecks.cmake rasqal-0.9.26/ConfigureChecks.cmake
 --- rasqal-0.9.26.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ rasqal-0.9.26/ConfigureChecks.cmake	2011-07-27 22:21:57.046709400 +0200
