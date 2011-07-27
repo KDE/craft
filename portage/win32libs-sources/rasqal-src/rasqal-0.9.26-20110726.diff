@@ -1,6 +1,7 @@
+Binary files rasqal-0.9.26.orig/.CMakeLists.txt.swp and rasqal-0.9.26/.CMakeLists.txt.swp differ
 diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 --- rasqal-0.9.26.orig/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/CMakeLists.txt	2011-07-26 16:49:40.739586319 +0000
++++ rasqal-0.9.26/CMakeLists.txt	2011-07-27 07:57:13.996494595 +0000
 @@ -0,0 +1,131 @@
 +project(rasqal)
 +
@@ -122,7 +123,7 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +set(PROGRAMM rasqal)
 +configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
 +add_executable(rasqal-config ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
-+target_link_libraries(rasqal-config rasqal)
++target_link_libraries(rasqal-config ${RAPTOR_LIBRARIES} rasqal)
 +
 +set(_targets
 +   rasqal
@@ -135,7 +136,7 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +install(FILES ${raptor2_HDRS} DESTINATION include/rasqal)
 diff -Nru rasqal-0.9.26.orig/ConfigureChecks.cmake rasqal-0.9.26/ConfigureChecks.cmake
 --- rasqal-0.9.26.orig/ConfigureChecks.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/ConfigureChecks.cmake	2011-07-26 16:38:47.896705135 +0000
++++ rasqal-0.9.26/ConfigureChecks.cmake	2011-07-26 17:35:14.499586527 +0000
 @@ -0,0 +1,120 @@
 +#/* Have curl/curl.h * HAVE_CURL_CURL_H
 +#/* INN parsedate function present * HAVE_INN_PARSEDATE
@@ -632,6 +633,8 @@ diff -Nru rasqal-0.9.26.orig/cmake/config.cpp.in rasqal-0.9.26/cmake/config.cpp.
 +    return 1;
 +}
 +
+Binary files rasqal-0.9.26.orig/src/.timegm.c.swo and rasqal-0.9.26/src/.timegm.c.swo differ
+Binary files rasqal-0.9.26.orig/src/.timegm.c.swp and rasqal-0.9.26/src/.timegm.c.swp differ
 diff -Nru rasqal-0.9.26.orig/src/rasqal-config.h.cmake rasqal-0.9.26/src/rasqal-config.h.cmake
 --- rasqal-0.9.26.orig/src/rasqal-config.h.cmake	1970-01-01 00:00:00.000000000 +0000
 +++ rasqal-0.9.26/src/rasqal-config.h.cmake	2011-07-26 15:35:04.746616141 +0000
@@ -855,3 +858,131 @@ diff -Nru rasqal-0.9.26.orig/src/rasqal-config.h.cmake rasqal-0.9.26/src/rasqal-
 +
 +/* Define to empty if `const' does not conform to ANSI C. */
 +#cmakedefine const @const@
+diff -Nru rasqal-0.9.26.orig/src/sparql_parser.h rasqal-0.9.26/src/sparql_parser.h
+--- rasqal-0.9.26.orig/src/sparql_parser.h	2011-07-26 14:47:19.198941891 +0000
++++ rasqal-0.9.26/src/sparql_parser.h	2011-07-26 17:36:02.956513369 +0000
+@@ -31,7 +31,13 @@
+    
+    This special exception was added by the Free Software Foundation in
+    version 2.2 of Bison.  */
++#ifdef DELETE
++#undef DELETE
++#endif
+ 
++#ifdef IN
++#undef IN
++#endif
+ 
+ /* Tokens.  */
+ #ifndef YYTOKENTYPE
+diff -Nru rasqal-0.9.26.orig/src/timegm.c rasqal-0.9.26/src/timegm.c
+--- rasqal-0.9.26.orig/src/timegm.c	2011-07-26 14:47:19.198941891 +0000
++++ rasqal-0.9.26/src/timegm.c	2011-07-27 07:57:14.026579812 +0000
+@@ -23,10 +23,107 @@
+ #include <time.h>
+ #endif
+ 
++#include <errno.h>
+ 
+ #include "rasqal.h"
+ #include "rasqal_internal.h"
+ 
++/* Taken the following three functions from the kdewin library to avoid
++ * a dependency against it */
++
++#if defined(_MSC_VER) && _MSC_VER >= 1400
++// use secure functions declared in msvc >= 2005
++#define KDEWIN_USE_ENV_S
++#endif
++
++static void putenvMsvcrt(const char *name, const char *value)
++{
++    typedef int (*msvc6putenv)(const char *envstring);
++    static msvc6putenv s_msvcrtputenv = 0;
++    static int alreadyResolved = 0;
++    int i;
++    char * a;
++
++    if( !alreadyResolved ) {
++#ifdef _MSC_VER
++        HANDLE hModule = LoadLibraryA("msvcrt");
++#else
++        // it doesn't work when msvcr80 isn't loaded - we end up in an error
++        // message due to crappy manifest things :(
++        // maybe someone has an idea how to fix this.
++        //HANDLE hModule = LoadLibraryA("msvcr80");
++        HANDLE hModule = NULL;
++#endif
++        if( hModule )
++            s_msvcrtputenv = (msvc6putenv)GetProcAddress(hModule, "_putenv");
++        alreadyResolved = 1;
++    }
++    if( !s_msvcrtputenv )
++        return;
++
++    i = strlen(name) + (value ? strlen(value) : 0) + 2;
++    a = (char*)malloc(i);
++    if (!a) return;
++
++    strcpy(a, name);
++    strcat(a, "=");
++    if (value)
++      strcat(a, value);
++
++    s_msvcrtputenv(a);
++    free(a);
++}
++
++int setenv(const char *name, const char *value, int overwrite)
++{
++//FIXME: There is no env in wince, so disable it
++#ifndef _WIN32_WCE
++#ifndef KDEWIN_USE_ENV_S
++    int i, iRet;
++    char * a;
++#endif
++
++    if (!overwrite && getenv(name)) return 0;
++
++    // make sure to set the env var in all our possible runtime environments
++    putenvMsvcrt(name, value);
++    //SetEnvironmentVariableA(name, value);     // unsure if we need it...
++
++#ifdef KDEWIN_USE_ENV_S
++    return _putenv_s(name, value ? value : "");
++#else 
++    if (!name) return -1;
++
++    i = strlen(name) + (value ? strlen(value) : 0) + 2;
++    a = (char*)malloc(i);
++    if (!a) return 1;
++
++    strcpy(a, name);
++    strcat(a, "=");
++    if (value)
++      strcat(a, value);
++
++    iRet = putenv(a);
++    free(a);
++    return iRet;
++#endif
++#else
++	return -1;
++#endif
++}
++
++// from kdecore/fakes.c
++int unsetenv (const char *name)
++{
++    if (name == NULL || *name == '\0' || strchr (name, '=') != NULL)
++    {
++      errno = EINVAL;
++      return -1;
++    }
++
++    setenv(name, "", 1);
++    return 0;
++}
+ 
+ time_t
+ rasqal_timegm(struct tm *tm)
