@@ -1,266 +1,37 @@
-Binary files rasqal-0.9.26.orig/.CMakeLists.txt.swp and rasqal-0.9.26/.CMakeLists.txt.swp differ
-diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
---- rasqal-0.9.26.orig/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/CMakeLists.txt	2011-07-27 07:57:13.996494595 +0000
-@@ -0,0 +1,131 @@
-+project(rasqal)
+diff -Nru rasqal-0.9.26.orig/cmake/config.cpp.in rasqal-0.9.26/cmake/config.cpp.in
+--- rasqal-0.9.26.orig/cmake/config.cpp.in	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/cmake/config.cpp.in	2011-07-27 22:17:13.700502900 +0200
+@@ -0,0 +1,27 @@
++#include <stdio.h>
++#include <string.h>
++#include <@PROGRAMM@.h>
 +
-+cmake_minimum_required(VERSION 2.8)
++int main(int argc, char **argv)
++{
++    if(argc != 2)
++        return 1;
++    if(strcmp(argv[1], "--version") == 0) {
++        fprintf(stdout, "%s", @PROGRAMM@_version_string);
++        return 0;
++    }
++    if(strcmp(argv[1], "--version-decimal") == 0) {
++        fprintf(stdout, "%d", @PROGRAMM@_version_decimal);
++        return 0;
++    }
++    if(strcmp(argv[1], "--cflags") == 0) {
++        fprintf(stdout, "\n");
++        return 0;
++    }
++    if(strcmp(argv[1], "--libs") == 0) {
++        fprintf(stdout, "\n");
++        return 0;
++    }
++    return 1;
++}
 +
-+set(RASQAL_VERSION_MAJOR 0)
-+set(RASQAL_VERSION_MINOR 9)
-+set(RASQAL_VERSION_RELEASE 26)
-+set(VERSION ${RASQAL_VERSION_MAJOR}.${RASQAL_VERSION_MINOR}.${RASQAL_VERSION_RELEASE})
-+math(EXPR RASQAL_VERSION_DECIMAL "${RASQAL_VERSION_MAJOR} * 10000 + ${RASQAL_VERSION_MINOR} * 100 + ${RASQAL_VERSION_RELEASE}")
-+
-+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-+
-+find_package(PCRE REQUIRED)
-+find_package(Raptor 2.0 REQUIRED)
-+
-+set(rasqal_SRCS
-+    src/rasqal_algebra.c
-+    src/rasqal_bindings.c
-+    src/rasqal_data_graph.c
-+    src/rasqal_dataset.c
-+    src/rasqal_datetime.c
-+    src/rasqal_decimal.c
-+    src/rasqal_digest.c
-+    src/rasqal_digest_md5.c
-+    src/rasqal_digest_sha1.c
-+    src/rasqal_engine_algebra.c
-+    src/rasqal_engine.c
-+    src/rasqal_engine_sort.c
-+    src/rasqal_expr.c
-+    src/rasqal_expr_datetimes.c
-+    src/rasqal_expr_evaluate.c
-+    src/rasqal_expr_numerics.c
-+    src/rasqal_expr_strings.c
-+    src/rasqal_feature.c
-+    src/rasqal_format_html.c
-+    src/rasqal_format_json.c
-+    src/rasqal_format_rdf.c
-+    src/rasqal_format_sparql_xml.c
-+    src/rasqal_format_sv.c
-+    src/rasqal_format_table.c
-+    src/rasqal_formula.c
-+    src/rasqal_general.c
-+    src/rasqal_graph_pattern.c
-+    src/rasqal_literal.c
-+    src/rasqal_map.c
-+    src/rasqal_prefix.c
-+    src/rasqal_projection.c
-+    src/rasqal_query.c
-+    src/rasqal_query_results.c
-+    src/rasqal_query_test.c
-+    src/rasqal_query_transform.c
-+    src/rasqal_query_write.c
-+    src/rasqal_random.c
-+    src/rasqal_raptor.c
-+    src/rasqal_result_formats.c
-+    src/rasqal_row.c
-+    src/rasqal_row_compatible.c
-+    src/rasqal_rowsource_aggregation.c
-+    src/rasqal_rowsource_assignment.c
-+    src/rasqal_rowsource.c
-+    src/rasqal_rowsource_distinct.c
-+    src/rasqal_rowsource_empty.c
-+    src/rasqal_rowsource_filter.c
-+    src/rasqal_rowsource_graph.c
-+    src/rasqal_rowsource_groupby.c
-+    src/rasqal_rowsource_having.c
-+    src/rasqal_rowsource_join.c
-+    src/rasqal_rowsource_project.c
-+    src/rasqal_rowsource_rowsequence.c
-+    src/rasqal_rowsource_sort.c
-+    src/rasqal_rowsource_triples.c
-+    src/rasqal_rowsource_union.c
-+    src/rasqal_service.c
-+    src/rasqal_solution_modifier.c
-+    src/rasqal_triple.c
-+    src/rasqal_triples_source.c
-+    src/rasqal_update.c
-+    src/rasqal_variable.c
-+    src/rasqal_xsd_datatypes.c
-+    src/rdql_lexer.c
-+    src/rdql_parser.c
-+    src/sparql_lexer.c
-+    src/sparql_parser.c
-+    src/strcasecmp.c
-+    src/timegm.c
-+)
-+
-+set(rasqal_HDRS
-+    src/rasqal_internal.h
-+    src/rdql_common.h
-+    src/rdql_lexer.h
-+    src/rdql_parser.h
-+    src/sparql_common.h
-+    src/sparql_lexer.h
-+    src/sparql_parser.h
-+)
-+include(ConfigureChecks.cmake)
-+configure_file(src/rasqal.h.in ${CMAKE_BINARY_DIR}/rasqal.h @ONLY)
-+configure_file(src/win32_rasqal_config.h.in ${CMAKE_BINARY_DIR}/win32_rasqal_config.h @ONLY)
-+
-+set(rasqal_HDRS_INST
-+    ${CMAKE_BINARY_DIR}/rasqal.h
-+)
-+
-+if(WIN32)
-+    add_definitions(-DRASQAL_DECIMAL_NONE)
-+endif()
-+include_directories(
-+    ${CMAKE_BINARY_DIR}
-+    src
-+    ${PCRE_INCLUDE_DIR}
-+    ${RAPTOR_INCLUDE_DIR}
-+)
-+add_library(rasqal SHARED ${rasqal_SRCS})
-+set_target_properties(rasqal PROPERTIES DEFINE_SYMBOL RASQAL_INTERNAL)
-+target_link_libraries(rasqal ${PCRE_LIBRARIES} ${RAPTOR_LIBRARIES} gmp)
-+
-+set(PROGRAMM rasqal)
-+configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
-+add_executable(rasqal-config ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
-+target_link_libraries(rasqal-config ${RAPTOR_LIBRARIES} rasqal)
-+
-+set(_targets
-+   rasqal
-+   rasqal-config
-+)
-+install(TARGETS ${_targets} RUNTIME DESTINATION bin
-+                            LIBRARY DESTINATION lib
-+                            ARCHIVE DESTINATION lib)
-+
-+install(FILES ${raptor2_HDRS} DESTINATION include/rasqal)
-diff -Nru rasqal-0.9.26.orig/ConfigureChecks.cmake rasqal-0.9.26/ConfigureChecks.cmake
---- rasqal-0.9.26.orig/ConfigureChecks.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/ConfigureChecks.cmake	2011-07-26 17:35:14.499586527 +0000
-@@ -0,0 +1,120 @@
-+#/* Have curl/curl.h * HAVE_CURL_CURL_H
-+#/* INN parsedate function present * HAVE_INN_PARSEDATE
-+
-+include(CheckIncludeFile)
-+include(CheckFunctionExists)
-+
-+
-+check_function_exists("getopt" HAVE_GETOPT)
-+check_function_exists("getopt_long" HAVE_GETOPT_LONG)
-+check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
-+check_function_exists("gmp_version" HAVE_GMP_VERSION)
-+check_function_exists("gmtime_r" HAVE_GMTIME_R)
-+check_function_exists("isascii" HAVE_ISASCII)
-+check_function_exists("setjmp" HAVE_SETJMP)
-+check_function_exists("srandomdev" HAVE_SRANDOMDEV)
-+check_function_exists("strcasecmp" HAVE_STRCASECMP)
-+check_function_exists("stricmp" HAVE_STRICMP)
-+check_function_exists("timegm" HAVE_TIMEGM)
-+check_function_exists("vsnprintf" HAVE_VSNPRINTF)
-+check_function_exists("xmlCtxtUseOptions" HAVE_XMLCTXTUSEOPTIONS)
-+check_function_exists("xmlSAX2InternalSubset" HAVE_XMLSAX2INTERNALSUBSET)
-+
-+
-+check_include_file("dlfcn.h" HAVE_DLFCN_H)
-+check_include_file("errno.h" HAVE_ERRNO_H)
-+check_include_file("expat.h" HAVE_EXPAT_H)
-+check_include_file("fcntl.h" HAVE_FCNTL_H)
-+check_include_file("fetch.h" HAVE_FETCH_H)
-+check_include_file("getopt.h" HAVE_GETOPT_H)
-+check_include_file("gmp.h" HAVE_GMP_H)
-+check_include_file("inttypes.h" HAVE_INTTYPES_H)
-+check_include_file("libxml/HTMLparser.h" HAVE_LIBXML_HTMLPARSER_H)
-+check_include_file("libxml/SAX2.h" HAVE_LIBXML_SAX2_H)
-+check_include_file("libxml/hash.h" HAVE_LIBXML_HASH_H)
-+check_include_file("libxml/nanohttp.h" HAVE_LIBXML_NANOHTTP_H)
-+check_include_file("libxml/parser.h" HAVE_LIBXML_PARSER_H)
-+check_include_file("libxml/schemasinternals.h" HAVE_LIBXML_SCHEMASINTERNALS_H)
-+check_include_file("libxml/schemastypes.h" HAVE_LIBXML_XMLSCHEMASTYPES_H)
-+check_include_file("libxml/xmlschemas.h" HAVE_LIBXML_XMLSCHEMAS_H)
-+check_include_file("limits.h" HAVE_LIMITS_H)
-+check_include_file("math.h" HAVE_MATH_H)
-+check_include_file("memory.h" HAVE_MEMORY_H)
-+check_include_file("mhash.h" HAVE_MHASH_H)
-+check_include_file("mpfr.h" HAVE_MPFR_H)
-+check_include_file("regex.h" HAVE_REGEX_H)
-+check_include_file("setjmp.h" HAVE_SETJMP_H)
-+check_include_file("stdint.h" HAVE_STDINT_H)
-+check_include_file("stdlib.h" HAVE_STDLIB_H)
-+check_include_file("string.h" HAVE_STRING_H)
-+check_include_file("strings.h" HAVE_STRINGS_H)
-+check_include_file("sys/param.h" HAVE_SYS_PARAM_H)
-+check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
-+check_include_file("sys/time.h" HAVE_SYS_TIME_H)
-+check_include_file("time.h" HAVE_TIME_H)
-+check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
-+check_include_file("unistd.h" HAVE_UNISTD_H)
-+check_include_file("xmlparse.h" HAVE_XMLPARSE_H)
-+
-+# need 'extern int optind' declaration? * NEED_OPTIND_DECLARATION
-+
-+set(PACKAGE "rasqal")
-+set(PACKAGE_BUGREPORT "kde-windows@kde.org")
-+set(PACKAGE_NAME "rasqal")
-+set(PACKAGE_STRING "\"${PACKAGE} ${VERSION}\"")
-+set(PACKAGE_TARNAME "$PACKAGE_STRING{}")
-+set(PACKAGE_URL "http://windows.kde.org")
-+set(PACKAGE_VERSION ${VERSION})
-+
-+set(HAVE_REGEX_PCRE 1) # ensured by findpcre
-+#set(HAVE_TM_GMTOFF 0) # no idea how to test this
-+
-+# Decimal from GNU MP library 
-+#set(RASQAL_DECIMAL_GMP 1)
-+
-+# Decimal from MPFR library 
-+#set(RASQAL_DECIMAL_MPFR 0)
-+
-+# Decimal without a library 
-+#set(RASQAL_DECIMAL_NONE 0)
-+
-+# Use gcrypt library for message digests 
-+#set(RASQAL_DIGEST_GCRYPT 0)
-+
-+# Use internal routines for message digests 
-+set(RASQAL_DIGEST_INTERNAL 1)
-+
-+# Use mhash library for message digests 
-+#set(RASQAL_DIGEST_MHASH 0)
-+
-+# Use no message digest library 
-+#set(RASQAL_DIGEST_NONE 0)
-+
-+# Building LAQRS query 
-+set(RASQAL_QUERY_LAQRS 1)
-+
-+# Building RDQL query 
-+set(RASQAL_QUERY_RDQL 1)
-+
-+# Building SPARQL query 
-+set(RASQAL_QUERY_SPARQL 1)
-+
-+# Use no regex library 
-+#set(RASQAL_REGEX_NONE 0)
-+
-+# Use PCRE regex library 
-+set(RASQAL_REGEX_PCRE 1)
-+
-+# Use posix regex library 
-+#set(RASQAL_REGEX_POSIX 0)
-+
-+# defined in win32_raptor_config.h
-+#set(RAPTOR_XML_LIBXML 1)
-+# The size of `unsigned char', as computed by sizeof. * SIZEOF_UNSIGNED_CHAR
-+# The size of `unsigned int', as computed by sizeof. * SIZEOF_UNSIGNED_INT
-+# The size of `unsigned long', as computed by sizeof. * SIZEOF_UNSIGNED_LONG
-+# The size of `unsigned short', as computed by sizeof. * SIZEOF_UNSIGNED_SHORT
-+set(STDC_HEADERS 1)
-+
-+configure_file(src/rasqal-config.h.cmake ${CMAKE_BINARY_DIR}/rasqal_config.h)
-+add_definitions(-DHAVE_CONFIG_H)
 diff -Nru rasqal-0.9.26.orig/cmake/FindLibraryWithDebug.cmake rasqal-0.9.26/cmake/FindLibraryWithDebug.cmake
---- rasqal-0.9.26.orig/cmake/FindLibraryWithDebug.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/cmake/FindLibraryWithDebug.cmake	2011-07-26 15:09:52.217103263 +0000
+--- rasqal-0.9.26.orig/cmake/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/cmake/FindLibraryWithDebug.cmake	2011-07-27 22:17:13.688502200 +0200
 @@ -0,0 +1,112 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -375,8 +146,8 @@ diff -Nru rasqal-0.9.26.orig/cmake/FindLibraryWithDebug.cmake rasqal-0.9.26/cmak
 +
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
 diff -Nru rasqal-0.9.26.orig/cmake/FindPCRE.cmake rasqal-0.9.26/cmake/FindPCRE.cmake
---- rasqal-0.9.26.orig/cmake/FindPCRE.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/cmake/FindPCRE.cmake	2011-07-26 15:01:24.716474413 +0000
+--- rasqal-0.9.26.orig/cmake/FindPCRE.cmake	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/cmake/FindPCRE.cmake	2011-07-27 22:17:13.690502300 +0200
 @@ -0,0 +1,45 @@
 +# - Try to find the PCRE regular expression library
 +# Once done this will define
@@ -424,8 +195,8 @@ diff -Nru rasqal-0.9.26.orig/cmake/FindPCRE.cmake rasqal-0.9.26/cmake/FindPCRE.c
 +mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY)
 +
 diff -Nru rasqal-0.9.26.orig/cmake/FindRaptor.cmake rasqal-0.9.26/cmake/FindRaptor.cmake
---- rasqal-0.9.26.orig/cmake/FindRaptor.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/cmake/FindRaptor.cmake	2011-07-26 16:35:30.149439976 +0000
+--- rasqal-0.9.26.orig/cmake/FindRaptor.cmake	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/cmake/FindRaptor.cmake	2011-07-27 22:17:13.691502400 +0200
 @@ -0,0 +1,100 @@
 +# - Try to find the Raptor RDF parsing library (http://librdf.org/raptor/)
 +# Once done this will define
@@ -528,8 +299,8 @@ diff -Nru rasqal-0.9.26.orig/cmake/FindRaptor.cmake rasqal-0.9.26/cmake/FindRapt
 +endif ()
 +
 diff -Nru rasqal-0.9.26.orig/cmake/MacroEnsureVersion.cmake rasqal-0.9.26/cmake/MacroEnsureVersion.cmake
---- rasqal-0.9.26.orig/cmake/MacroEnsureVersion.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/cmake/MacroEnsureVersion.cmake	2011-07-26 15:09:45.429553130 +0000
+--- rasqal-0.9.26.orig/cmake/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/cmake/MacroEnsureVersion.cmake	2011-07-27 22:17:13.699502800 +0200
 @@ -0,0 +1,71 @@
 +# This macro compares version numbers of the form "x.y.z"
 +# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
@@ -602,42 +373,323 @@ diff -Nru rasqal-0.9.26.orig/cmake/MacroEnsureVersion.cmake rasqal-0.9.26/cmake/
 +    endif (found_vers_num LESS req_vers_num)
 +
 +ENDMACRO(MACRO_ENSURE_VERSION2)
-diff -Nru rasqal-0.9.26.orig/cmake/config.cpp.in rasqal-0.9.26/cmake/config.cpp.in
---- rasqal-0.9.26.orig/cmake/config.cpp.in	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/cmake/config.cpp.in	2011-07-26 15:15:27.099562185 +0000
-@@ -0,0 +1,27 @@
-+#include <stdio.h>
-+#include <string.h>
-+#include <@PROGRAMM@.h>
+diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
+--- rasqal-0.9.26.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/CMakeLists.txt	2011-07-27 23:25:28.588717100 +0200
+@@ -0,0 +1,178 @@
++project(rasqal)
 +
-+int main(int argc, char **argv)
-+{
-+    if(argc != 2)
-+        return 1;
-+    if(strcmp(argv[1], "--version") == 0) {
-+        fprintf(stdout, "%s", @PROGRAMM@_version_string);
-+        return 0;
-+    }
-+    if(strcmp(argv[1], "--version-decimal") == 0) {
-+        fprintf(stdout, "%d", @PROGRAMM@_version_decimal);
-+        return 0;
-+    }
-+    if(strcmp(argv[1], "--cflags") == 0) {
-+        fprintf(stdout, "\n");
-+        return 0;
-+    }
-+    if(strcmp(argv[1], "--libs") == 0) {
-+        fprintf(stdout, "\n");
-+        return 0;
-+    }
-+    return 1;
-+}
++cmake_minimum_required(VERSION 2.8)
 +
-Binary files rasqal-0.9.26.orig/src/.timegm.c.swo and rasqal-0.9.26/src/.timegm.c.swo differ
-Binary files rasqal-0.9.26.orig/src/.timegm.c.swp and rasqal-0.9.26/src/.timegm.c.swp differ
++set(RASQAL_VERSION_MAJOR 0)
++set(RASQAL_VERSION_MINOR 9)
++set(RASQAL_VERSION_RELEASE 26)
++set(VERSION ${RASQAL_VERSION_MAJOR}.${RASQAL_VERSION_MINOR}.${RASQAL_VERSION_RELEASE})
++math(EXPR RASQAL_VERSION_DECIMAL "${RASQAL_VERSION_MAJOR} * 10000 + ${RASQAL_VERSION_MINOR} * 100 + ${RASQAL_VERSION_RELEASE}")
++
++set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
++
++find_package(PCRE REQUIRED)
++find_package(Raptor 2.0 REQUIRED)
++
++option(BUILD_EXAMPLES "build the examples" ON)
++option(BUILD_TOOLS "build commandline utilities" ON)
++
++set(rasqal_SRCS
++    src/rasqal_algebra.c
++    src/rasqal_bindings.c
++    src/rasqal_data_graph.c
++    src/rasqal_dataset.c
++    src/rasqal_datetime.c
++    src/rasqal_decimal.c
++    src/rasqal_digest.c
++    src/rasqal_digest_md5.c
++    src/rasqal_digest_sha1.c
++    src/rasqal_engine_algebra.c
++    src/rasqal_engine.c
++    src/rasqal_engine_sort.c
++    src/rasqal_expr.c
++    src/rasqal_expr_datetimes.c
++    src/rasqal_expr_evaluate.c
++    src/rasqal_expr_numerics.c
++    src/rasqal_expr_strings.c
++    src/rasqal_feature.c
++    src/rasqal_format_html.c
++    src/rasqal_format_json.c
++    src/rasqal_format_rdf.c
++    src/rasqal_format_sparql_xml.c
++    src/rasqal_format_sv.c
++    src/rasqal_format_table.c
++    src/rasqal_formula.c
++    src/rasqal_general.c
++    src/rasqal_graph_pattern.c
++    src/rasqal_literal.c
++    src/rasqal_map.c
++    src/rasqal_prefix.c
++    src/rasqal_projection.c
++    src/rasqal_query.c
++    src/rasqal_query_results.c
++    src/rasqal_query_transform.c
++    src/rasqal_query_write.c
++    src/rasqal_random.c
++    src/rasqal_raptor.c
++    src/rasqal_result_formats.c
++    src/rasqal_row.c
++    src/rasqal_row_compatible.c
++    src/rasqal_rowsource_aggregation.c
++    src/rasqal_rowsource_assignment.c
++    src/rasqal_rowsource.c
++    src/rasqal_rowsource_distinct.c
++    src/rasqal_rowsource_empty.c
++    src/rasqal_rowsource_filter.c
++    src/rasqal_rowsource_graph.c
++    src/rasqal_rowsource_groupby.c
++    src/rasqal_rowsource_having.c
++    src/rasqal_rowsource_join.c
++    src/rasqal_rowsource_project.c
++    src/rasqal_rowsource_rowsequence.c
++    src/rasqal_rowsource_sort.c
++    src/rasqal_rowsource_triples.c
++    src/rasqal_rowsource_union.c
++    src/rasqal_service.c
++    src/rasqal_solution_modifier.c
++    src/rasqal_triple.c
++    src/rasqal_triples_source.c
++    src/rasqal_update.c
++    src/rasqal_variable.c
++    src/rasqal_xsd_datatypes.c
++    src/rdql_lexer.c
++    src/rdql_parser.c
++    src/sparql_lexer.c
++    src/sparql_parser.c
++    src/strcasecmp.c
++    src/timegm.c
++)
++
++set(rasqal_HDRS
++    src/rasqal_internal.h
++    src/rdql_common.h
++    src/rdql_lexer.h
++    src/rdql_parser.h
++    src/sparql_common.h
++    src/sparql_lexer.h
++    src/sparql_parser.h
++)
++
++include(ConfigureChecks.cmake)
++configure_file(src/rasqal.h.in ${CMAKE_BINARY_DIR}/rasqal.h @ONLY)
++configure_file(src/win32_rasqal_config.h.in ${CMAKE_BINARY_DIR}/win32_rasqal_config.h @ONLY)
++
++set(rasqal_HDRS_INST
++    ${CMAKE_BINARY_DIR}/rasqal.h
++)
++
++if(WIN32)
++    add_definitions(-DRASQAL_DECIMAL_NONE)
++    if(MSVC)
++        add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
++        list(APPEND rasqal_SRCS utils/gettimeofday.c)
++    endif(MSVC)
++endif(WIN32)
++include_directories(
++    ${CMAKE_BINARY_DIR}
++    src
++    utils
++    ${PCRE_INCLUDE_DIR}
++    ${RAPTOR_INCLUDE_DIR}
++)
++add_library(rasqal SHARED ${rasqal_SRCS} src/rasqal_query_test.c)
++set_target_properties(rasqal PROPERTIES DEFINE_SYMBOL RASQAL_INTERNAL)
++target_link_libraries(rasqal ${PCRE_LIBRARIES} ${RAPTOR_LIBRARIES})
++if(NOT MSVC)
++    target_link_libraries(rasqal gmp)
++endif(NOT MSVC)
++
++set(PROGRAMM rasqal)
++
++set(_targets
++   rasqal
++)
++###############################################################################
++# examples and commandline utility
++
++if(BUILD_TOOLS)
++    configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
++    add_executable(rasqal-config ${CMAKE_CURRENT_BINARY_DIR}/rasqal-config.cpp)
++    target_link_libraries(rasqal-config ${RAPTOR_LIBRARIES} rasqal)
++
++    set(roqet_SRCS
++        utils/roqet.c
++        ${rasqal_SRCS}
++    )
++    if(MSVC)
++        set(roqet_SRCS
++            ${roqet_SRCS} 
++            utils/getopt.c
++        )
++    endif(MSVC)
++    add_executable(roqet ${roqet_SRCS})
++    set_target_properties(roqet PROPERTIES COMPILE_FLAGS "-DRASQAL_STATIC -DRASQAL_INTERNAL")
++    target_link_libraries(roqet rasqal)
++    list(APPEND _targets rasqal-config roqet)
++endif(BUILD_TOOLS)
++
++if(BUILD_EXAMPLES)
++    set(srxread_SRCS
++        utils/srxread.c
++    )
++    add_executable(srxread ${srxread_SRCS})
++    target_link_libraries(srxread rasqal)
++
++    set(srxwrite_SRCS
++        utils/srxwrite.c
++    )
++    add_executable(srxwrite ${srxwrite_SRCS})
++    target_link_libraries(srxwrite rasqal)
++endif(BUILD_EXAMPLES)
++
++###############################################################################
++install(TARGETS ${_targets} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++
++install(FILES ${raptor2_HDRS} DESTINATION include/rasqal)
++
+diff -Nru rasqal-0.9.26.orig/ConfigureChecks.cmake rasqal-0.9.26/ConfigureChecks.cmake
+--- rasqal-0.9.26.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/ConfigureChecks.cmake	2011-07-27 22:21:57.046709400 +0200
+@@ -0,0 +1,128 @@
++#/* Have curl/curl.h * HAVE_CURL_CURL_H
++#/* INN parsedate function present * HAVE_INN_PARSEDATE
++
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++
++
++check_function_exists("getopt" HAVE_GETOPT)
++check_function_exists("getopt_long" HAVE_GETOPT_LONG)
++check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
++check_function_exists("gmp_version" HAVE_GMP_VERSION)
++check_function_exists("gmtime_r" HAVE_GMTIME_R)
++check_function_exists("isascii" HAVE_ISASCII)
++check_function_exists("setjmp" HAVE_SETJMP)
++check_function_exists("srandomdev" HAVE_SRANDOMDEV)
++check_function_exists("strcasecmp" HAVE_STRCASECMP)
++check_function_exists("stricmp" HAVE_STRICMP)
++check_function_exists("timegm" HAVE_TIMEGM)
++check_function_exists("vsnprintf" HAVE_VSNPRINTF)
++check_function_exists("xmlCtxtUseOptions" HAVE_XMLCTXTUSEOPTIONS)
++check_function_exists("xmlSAX2InternalSubset" HAVE_XMLSAX2INTERNALSUBSET)
++
++
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("errno.h" HAVE_ERRNO_H)
++check_include_file("expat.h" HAVE_EXPAT_H)
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("fetch.h" HAVE_FETCH_H)
++check_include_file("getopt.h" HAVE_GETOPT_H)
++check_include_file("gmp.h" HAVE_GMP_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("libxml/HTMLparser.h" HAVE_LIBXML_HTMLPARSER_H)
++check_include_file("libxml/SAX2.h" HAVE_LIBXML_SAX2_H)
++check_include_file("libxml/hash.h" HAVE_LIBXML_HASH_H)
++check_include_file("libxml/nanohttp.h" HAVE_LIBXML_NANOHTTP_H)
++check_include_file("libxml/parser.h" HAVE_LIBXML_PARSER_H)
++check_include_file("libxml/schemasinternals.h" HAVE_LIBXML_SCHEMASINTERNALS_H)
++check_include_file("libxml/schemastypes.h" HAVE_LIBXML_XMLSCHEMASTYPES_H)
++check_include_file("libxml/xmlschemas.h" HAVE_LIBXML_XMLSCHEMAS_H)
++check_include_file("limits.h" HAVE_LIMITS_H)
++check_include_file("math.h" HAVE_MATH_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("mhash.h" HAVE_MHASH_H)
++check_include_file("mpfr.h" HAVE_MPFR_H)
++check_include_file("regex.h" HAVE_REGEX_H)
++check_include_file("setjmp.h" HAVE_SETJMP_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("sys/param.h" HAVE_SYS_PARAM_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("time.h" HAVE_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("xmlparse.h" HAVE_XMLPARSE_H)
++
++if(NOT HAVE_TIME_H)
++set(HAVE_TIME_H 0)
++endif(NOT HAVE_TIME_H)
++if(NOT HAVE_SYS_TIME_H)
++set(HAVE_SYS_TIME_H 0)
++endif(NOT HAVE_SYS_TIME_H)
++
++
++# need 'extern int optind' declaration? * NEED_OPTIND_DECLARATION
++
++set(PACKAGE "rasqal")
++set(PACKAGE_BUGREPORT "kde-windows@kde.org")
++set(PACKAGE_NAME "rasqal")
++set(PACKAGE_STRING "\"${PACKAGE} ${VERSION}\"")
++set(PACKAGE_TARNAME "$PACKAGE_STRING{}")
++set(PACKAGE_URL "http://windows.kde.org")
++set(PACKAGE_VERSION ${VERSION})
++
++set(HAVE_REGEX_PCRE 1) # ensured by findpcre
++#set(HAVE_TM_GMTOFF 0) # no idea how to test this
++
++# Decimal from GNU MP library 
++#set(RASQAL_DECIMAL_GMP 1)
++
++# Decimal from MPFR library 
++#set(RASQAL_DECIMAL_MPFR 0)
++
++# Decimal without a library 
++#set(RASQAL_DECIMAL_NONE 0)
++
++# Use gcrypt library for message digests 
++#set(RASQAL_DIGEST_GCRYPT 0)
++
++# Use internal routines for message digests 
++set(RASQAL_DIGEST_INTERNAL 1)
++
++# Use mhash library for message digests 
++#set(RASQAL_DIGEST_MHASH 0)
++
++# Use no message digest library 
++#set(RASQAL_DIGEST_NONE 0)
++
++# Building LAQRS query 
++set(RASQAL_QUERY_LAQRS 1)
++
++# Building RDQL query 
++set(RASQAL_QUERY_RDQL 1)
++
++# Building SPARQL query 
++set(RASQAL_QUERY_SPARQL 1)
++
++# Use no regex library 
++#set(RASQAL_REGEX_NONE 0)
++
++# Use PCRE regex library 
++set(RASQAL_REGEX_PCRE 1)
++
++# Use posix regex library 
++#set(RASQAL_REGEX_POSIX 0)
++
++# defined in win32_raptor_config.h
++#set(RAPTOR_XML_LIBXML 1)
++# The size of `unsigned char', as computed by sizeof. * SIZEOF_UNSIGNED_CHAR
++# The size of `unsigned int', as computed by sizeof. * SIZEOF_UNSIGNED_INT
++# The size of `unsigned long', as computed by sizeof. * SIZEOF_UNSIGNED_LONG
++# The size of `unsigned short', as computed by sizeof. * SIZEOF_UNSIGNED_SHORT
++set(STDC_HEADERS 1)
++
++configure_file(src/rasqal-config.h.cmake ${CMAKE_BINARY_DIR}/rasqal_config.h)
++add_definitions(-DHAVE_CONFIG_H)
 diff -Nru rasqal-0.9.26.orig/src/rasqal-config.h.cmake rasqal-0.9.26/src/rasqal-config.h.cmake
---- rasqal-0.9.26.orig/src/rasqal-config.h.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ rasqal-0.9.26/src/rasqal-config.h.cmake	2011-07-26 15:35:04.746616141 +0000
+--- rasqal-0.9.26.orig/src/rasqal-config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/src/rasqal-config.h.cmake	2011-07-27 22:17:13.727504400 +0200
 @@ -0,0 +1,219 @@
 +/* src/rasqal_config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -858,26 +910,77 @@ diff -Nru rasqal-0.9.26.orig/src/rasqal-config.h.cmake rasqal-0.9.26/src/rasqal-
 +
 +/* Define to empty if `const' does not conform to ANSI C. */
 +#cmakedefine const @const@
+diff -Nru rasqal-0.9.26.orig/src/rasqal.h.in rasqal-0.9.26/src/rasqal.h.in
+--- rasqal-0.9.26.orig/src/rasqal.h.in	2011-06-12 00:03:14.000000000 +0200
++++ rasqal-0.9.26/src/rasqal.h.in	2011-07-27 23:27:40.075237700 +0200
+@@ -1554,8 +1554,11 @@
+ 
+ 
+ /* Row class */
++RASQAL_API
+ rasqal_row* rasqal_new_row_for_size(rasqal_world* world, int size);
++RASQAL_API
+ void rasqal_free_row(rasqal_row* row);
++RASQAL_API
+ int rasqal_row_set_value_at(rasqal_row* row, int offset, rasqal_literal* value);
+ 
+ 
+diff -Nru rasqal-0.9.26.orig/src/rasqal_internal.h rasqal-0.9.26/src/rasqal_internal.h
+--- rasqal-0.9.26.orig/src/rasqal_internal.h	2011-06-27 06:36:22.000000000 +0200
++++ rasqal-0.9.26/src/rasqal_internal.h	2011-07-27 23:19:29.566182200 +0200
+@@ -35,6 +35,17 @@
+ 
+ #ifdef RASQAL_INTERNAL
+ 
++#ifdef _MSC_VER
++// steal from winsock2.h, so we don't have to include that header
++typedef struct timeval {
++    long tv_sec;
++    long tv_usec;
++} timeval;
++
++// no round function available:
++#define round(x) floor(x+0.5)
++#endif
++
+ #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+ #define RASQAL_PRINTF_FORMAT(string_index, first_to_check_index) \
+   __attribute__((__format__(__printf__, string_index, first_to_check_index)))
+diff -Nru rasqal-0.9.26.orig/src/rdql_parser.h rasqal-0.9.26/src/rdql_parser.h
+--- rasqal-0.9.26.orig/src/rdql_parser.h	2011-06-12 01:59:04.000000000 +0200
++++ rasqal-0.9.26/src/rdql_parser.h	2011-07-27 22:28:22.544758600 +0200
+@@ -32,7 +32,6 @@
+    This special exception was added by the Free Software Foundation in
+    version 2.2 of Bison.  */
+ 
+-
+ /* Tokens.  */
+ #ifndef YYTOKENTYPE
+ # define YYTOKENTYPE
 diff -Nru rasqal-0.9.26.orig/src/sparql_parser.h rasqal-0.9.26/src/sparql_parser.h
---- rasqal-0.9.26.orig/src/sparql_parser.h	2011-07-26 14:47:19.198941891 +0000
-+++ rasqal-0.9.26/src/sparql_parser.h	2011-07-26 17:36:02.956513369 +0000
-@@ -31,7 +31,13 @@
+--- rasqal-0.9.26.orig/src/sparql_parser.h	2011-06-12 01:59:06.000000000 +0200
++++ rasqal-0.9.26/src/sparql_parser.h	2011-07-27 22:28:42.836919200 +0200
+@@ -31,7 +31,17 @@
     
     This special exception was added by the Free Software Foundation in
     version 2.2 of Bison.  */
 +#ifdef DELETE
 +#undef DELETE
 +#endif
- 
++
 +#ifdef IN
 +#undef IN
++#endif
+ 
++#ifdef GROUP
++#undef GROUP
 +#endif
  
  /* Tokens.  */
  #ifndef YYTOKENTYPE
 diff -Nru rasqal-0.9.26.orig/src/timegm.c rasqal-0.9.26/src/timegm.c
---- rasqal-0.9.26.orig/src/timegm.c	2011-07-26 14:47:19.198941891 +0000
-+++ rasqal-0.9.26/src/timegm.c	2011-07-27 07:57:14.026579812 +0000
+--- rasqal-0.9.26.orig/src/timegm.c	2011-06-06 22:10:31.000000000 +0200
++++ rasqal-0.9.26/src/timegm.c	2011-07-27 22:17:13.733504800 +0200
 @@ -23,10 +23,107 @@
  #include <time.h>
  #endif
@@ -986,3 +1089,56 @@ diff -Nru rasqal-0.9.26.orig/src/timegm.c rasqal-0.9.26/src/timegm.c
  
  time_t
  rasqal_timegm(struct tm *tm)
+diff -Nru rasqal-0.9.26.orig/utils/gettimeofday.c rasqal-0.9.26/utils/gettimeofday.c
+--- rasqal-0.9.26.orig/utils/gettimeofday.c	1970-01-01 01:00:00.000000000 +0100
++++ rasqal-0.9.26/utils/gettimeofday.c	2011-07-27 22:42:53.041548200 +0200
+@@ -0,0 +1,48 @@
++#include < time.h >
++#include <windows.h> //I've ommited this line.
++#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
++  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
++#else
++  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
++#endif
++ 
++struct timezone 
++{
++  int  tz_minuteswest; /* minutes W of Greenwich */
++  int  tz_dsttime;     /* type of dst correction */
++};
++ 
++int gettimeofday(struct timeval *tv, struct timezone *tz)
++{
++  FILETIME ft;
++  unsigned __int64 tmpres = 0;
++  static int tzflag;
++ 
++  if (NULL != tv)
++  {
++    GetSystemTimeAsFileTime(&ft);
++ 
++    tmpres |= ft.dwHighDateTime;
++    tmpres <<= 32;
++    tmpres |= ft.dwLowDateTime;
++ 
++    /*converting file time to unix epoch*/
++    tmpres -= DELTA_EPOCH_IN_MICROSECS; 
++    tmpres /= 10;  /*convert into microseconds*/
++    tv->tv_sec = (long)(tmpres / 1000000UL);
++    tv->tv_usec = (long)(tmpres % 1000000UL);
++  }
++ 
++  if (NULL != tz)
++  {
++    if (!tzflag)
++    {
++      _tzset();
++      tzflag++;
++    }
++    tz->tz_minuteswest = _timezone / 60;
++    tz->tz_dsttime = _daylight;
++  }
++ 
++  return 0;
++}
+\ No newline at end of file
