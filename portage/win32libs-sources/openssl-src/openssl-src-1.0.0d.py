@@ -21,10 +21,12 @@ class subinfo( info.infoclass ):
         else:
             self.defaultTarget = '1.0.0d'
 
-        if compiler.isMinGW() and emergePlatform.buildArchitecture() == "x64":
+        if compiler.isMinGW_W64():
             self.patchToApply[ '1.0.0' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
             self.patchToApply[ '1.0.0a' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
             self.patchToApply[ '1.0.0b' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
+            self.patchToApply[ '1.0.0c' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
+            self.patchToApply[ '1.0.0d' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
 
     def setDependencies( self ):
             self.buildDependencies['virtual/base'] = 'default'
