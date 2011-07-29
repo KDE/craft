@@ -21,10 +21,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libxslt'] = 'default'
         self.buildDependencies['virtual/base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
-
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()

@@ -1,6 +1,6 @@
 diff -Nru raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake raptor2-2.0.3/cmake/modules/FindYajl.cmake
 --- raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/cmake/modules/FindYajl.cmake	2011-07-27 22:45:22.846116500 +0200
++++ raptor2-2.0.3/cmake/modules/FindYajl.cmake	2011-07-27 23:03:59.397979600 +0200
 @@ -0,0 +1,26 @@
 +# Try to find Yajl functionality
 +# Once done this will define
@@ -30,8 +30,8 @@ diff -Nru raptor2-2.0.3.orig/cmake/modules/FindYajl.cmake raptor2-2.0.3/cmake/mo
 +mark_as_advanced(YAJL_INCLUDE_DIR YAJL_LIBRARIES YAJL_FOUND)
 diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 --- raptor2-2.0.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/CMakeLists.txt	2011-07-27 23:00:01.739386300 +0200
-@@ -0,0 +1,155 @@
++++ raptor2-2.0.3/CMakeLists.txt	2011-07-29 16:47:10.309905700 +0200
+@@ -0,0 +1,214 @@
 +project(raptor2)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -50,13 +50,19 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +find_package(Expat REQUIRED)
 +find_package(Yajl REQUIRED)
 +
++option(BUILD_STATIC "build static library" OFF)
 +option(BUILD_TOOLS "build the tools" ON)
++option(BUILD_TESTS "build the tests" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif(BUILD_TESTS)
 +
 +include(ConfigureChecks.cmake)
 +configure_file(src/raptor2.h.in ${CMAKE_BINARY_DIR}/raptor2.h @ONLY)
 +
 +if(MSVC)
-+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dstrcasecmp=stricmp)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996 -Dstrcasecmp=stricmp -Dstrncasecmp=strnicmp)
 +endif(MSVC)
 +    add_definitions(-Dstrtok_r=strtok_s)
 +set(raptor2_SRCS
@@ -156,14 +162,64 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +    ${EXPAT_INCLUDE_DIR}
 +)
 +
-+add_library(raptor2 SHARED ${raptor2_SRCS})
++if(BUILD_STATIC)
++    add_definitions(-DRAPTOR_STATIC)
++    set(_SHARED STATIC)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++endif(BUILD_STATIC)
++
++add_library(raptor2 ${_SHARED} ${raptor2_SRCS})
 +set_target_properties(raptor2 PROPERTIES DEFINE_SYMBOL RAPTOR_EXPORTS)
-+target_link_libraries(raptor2 ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${EXPAT_LIBRARIES} ${YAJL_LIBRARIES})
++set(raptor2_LIBS ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${EXPAT_LIBRARIES} ${YAJL_LIBRARIES})
++target_link_libraries(raptor2 ${raptor2_LIBS})
 +
 +set(_targets
 +    raptor2
 +)
 +
++###############################################################################
++if(BUILD_TESTS OR BUILD_TOOLS)
++    add_library(raptor2_static STATIC ${raptor2_SRCS})
++    set_target_properties(raptor2_static PROPERTIES COMPILE_FLAGS "-DRAPTOR_STATIC")
++endif(BUILD_TESTS OR BUILD_TOOLS)
++###############################################################################
++if(BUILD_TESTS)
++    set(raptor_TESTS
++        raptor_parse
++        raptor_rfc2396
++        raptor_uri
++        raptor_namespace
++        strcasecmp
++        raptor_www
++        raptor_sequence
++        raptor_stringbuffer
++        raptor_uri_win32
++        raptor_iostream
++        raptor_xml_writer
++        raptor_turtle_writer
++        raptor_avltree
++        raptor_term
++        raptor_set
++        raptor_xml
++    )
++
++    set(raptor_parse_SRCS src/raptor_general.c src/raptor_parse.c)
++    set(raptor_uri_win32_SRCS src/raptor_uri.c)
++    set(raptor_www_SRCS src/raptor_www_test.c)
++    set(raptor_nfc_SRCS src/raptor_nfc_test.c)
++    foreach(_test ${raptor_TESTS})
++        if(NOT DEFINED ${_test}_SRCS)
++            set(${_test}_SRCS src/${_test}.c)
++        endif(NOT DEFINED ${_test}_SRCS)
++        add_executable(${_test} ${${_test}_SRCS})
++        set_target_properties(${_test} PROPERTIES COMPILE_FLAGS "-DSTANDALONE -DRAPTOR_STATIC")
++        target_link_libraries(${_test} raptor2_static ${raptor2_LIBS})
++        add_test(${_test} ${_test})
++    endforeach(_test ${raptor_TESTS})
++    set_target_properties(raptor_uri_win32 PROPERTIES COMPILE_FLAGS "-DSTANDALONE -DRAPTOR_STATIC -DWIN32_URI_TEST")
++endif(BUILD_TESTS)
++###############################################################################
 +if(BUILD_TOOLS)
 +    set(rapper_SRCS
 +        utils/rapper.c
@@ -176,12 +232,15 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +        set(rdfdiff_SRCS utils/getopt.c ${rdfdiff_SRCS})
 +    endif(MSVC)
 +    add_executable(rapper ${rapper_SRCS})
-+    target_link_libraries(rapper raptor2)
++    set_target_properties(rapper PROPERTIES COMPILE_FLAGS "-DRAPTOR_STATIC")
++    target_link_libraries(rapper raptor2_static ${raptor2_LIBS})
 +    add_executable(rdfdiff ${rdfdiff_SRCS})
-+    target_link_libraries(rdfdiff raptor2)
++    set_target_properties(rdfdiff PROPERTIES COMPILE_FLAGS "-DRAPTOR_STATIC")
++    target_link_libraries(rdfdiff raptor2_static ${raptor2_LIBS})
 +    list(APPEND _targets rapper rdfdiff)
 +endif(BUILD_TOOLS)
 +
++###############################################################################
 +install(TARGETS ${_targets} RUNTIME DESTINATION bin
 +                            LIBRARY DESTINATION lib
 +                            ARCHIVE DESTINATION lib)
@@ -189,7 +248,7 @@ diff -Nru raptor2-2.0.3.orig/CMakeLists.txt raptor2-2.0.3/CMakeLists.txt
 +install(FILES ${raptor2_HDRS} DESTINATION include/raptor2)
 diff -Nru raptor2-2.0.3.orig/ConfigureChecks.cmake raptor2-2.0.3/ConfigureChecks.cmake
 --- raptor2-2.0.3.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/ConfigureChecks.cmake	2011-07-27 22:45:22.850116700 +0200
++++ raptor2-2.0.3/ConfigureChecks.cmake	2011-07-27 23:03:59.402979900 +0200
 @@ -0,0 +1,100 @@
 +#/* Have curl/curl.h * HAVE_CURL_CURL_H
 +#/* INN parsedate function present * HAVE_INN_PARSEDATE
@@ -291,10 +350,10 @@ diff -Nru raptor2-2.0.3.orig/ConfigureChecks.cmake raptor2-2.0.3/ConfigureChecks
 +
 +configure_file(src/raptor_config.h.cmake ${CMAKE_BINARY_DIR}/raptor_config.h)
 +add_definitions(-DHAVE_CONFIG_H)
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -Nru raptor2-2.0.3.orig/librdfa/rdfa.c raptor2-2.0.3/librdfa/rdfa.c
 --- raptor2-2.0.3.orig/librdfa/rdfa.c	2011-05-22 23:34:41.000000000 +0200
-+++ raptor2-2.0.3/librdfa/rdfa.c	2011-07-27 22:45:22.853116900 +0200
++++ raptor2-2.0.3/librdfa/rdfa.c	2011-07-27 23:03:59.405980100 +0200
 @@ -1245,7 +1245,7 @@
     {
        char* new_doctype_buffer = NULL;
@@ -306,7 +365,7 @@ diff -Nru raptor2-2.0.3.orig/librdfa/rdfa.c raptor2-2.0.3/librdfa/rdfa.c
        if(doctype_end != NULL)
 diff -Nru raptor2-2.0.3.orig/src/raptor_config.h.cmake raptor2-2.0.3/src/raptor_config.h.cmake
 --- raptor2-2.0.3.orig/src/raptor_config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ raptor2-2.0.3/src/raptor_config.h.cmake	2011-07-27 22:45:22.856117100 +0200
++++ raptor2-2.0.3/src/raptor_config.h.cmake	2011-07-27 23:03:59.408980200 +0200
 @@ -0,0 +1,342 @@
 +/* src/raptor_config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -652,7 +711,7 @@ diff -Nru raptor2-2.0.3.orig/src/raptor_config.h.cmake raptor2-2.0.3/src/raptor_
 +#cmakedefine const @const@
 diff -Nru raptor2-2.0.3.orig/src/raptor2.h.in raptor2-2.0.3/src/raptor2.h.in
 --- raptor2-2.0.3.orig/src/raptor2.h.in	2011-03-14 16:20:56.000000000 +0100
-+++ raptor2-2.0.3/src/raptor2.h.in	2011-07-27 22:59:12.522571300 +0200
++++ raptor2-2.0.3/src/raptor2.h.in	2011-07-27 23:03:59.412980500 +0200
 @@ -60,7 +60,9 @@
   *
   * Raptor library version string
@@ -674,7 +733,7 @@ diff -Nru raptor2-2.0.3.orig/src/raptor2.h.in raptor2-2.0.3/src/raptor2.h.in
  #        define RAPTOR_API _declspec(dllimport)
 diff -Nru raptor2-2.0.3.orig/src/win32_raptor_config.h raptor2-2.0.3/src/win32_raptor_config.h
 --- raptor2-2.0.3.orig/src/win32_raptor_config.h	2011-06-02 06:03:03.000000000 +0200
-+++ raptor2-2.0.3/src/win32_raptor_config.h	2011-07-27 22:45:22.861117300 +0200
++++ raptor2-2.0.3/src/win32_raptor_config.h	2011-07-27 23:03:59.414980600 +0200
 @@ -114,7 +114,7 @@
  
  #define RAPTOR_PARSER_GUESS 1
