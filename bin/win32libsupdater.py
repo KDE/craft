@@ -25,6 +25,32 @@ def getSvnVersion( path ):
         rev = "-unknown"
     return "svn" + rev
 
+def getGitVersion( path ):
+    gitinfo = subprocess.Popen( ['git' 'log', '-n 1', '--format=format:%H'], shell=True, stdout=subprocess.PIPE ).communicate()[0]
+    return "git" + gitinfo
+
+def svnRename( currentName, newName ):
+    cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
+
+    utils.debug( "running command: %s" % cmd )
+    p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
+    return p.wait() == 0
+
+def gitRename( currentName, newName ):
+    p = subprocess.Popen( ['git', 'mv', currentName, newName], shell=True, stdin=subprocess.PIPE )
+    return p.wait() == 0
+
+def svnAdd( newDir ):
+    cmd = "svn --non-interactive add %s" % ( newDir )
+    ret = 0
+    utils.debug( "running command: %s" % cmd )
+    p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
+    return p.wait() == 0
+
+def gitAdd( newDir ):
+    p = subprocess.Popen( ['git', 'add', newDir], shell=True, stdin=subprocess.PIPE )
+    return p.wait() == 0
+
 doPretend = False
 if "-p" in sys.argv:
     doPretend = True
@@ -99,7 +125,7 @@ for packageKey in addInfo:
             if not buildTarget in targetkeys:
                 targetkeys.append( buildTarget )
             targetsString = "'" + "', '".join( targetkeys ) + "'"
-            result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
+            result = template.safe_substitute( { 'revision': getGitVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
                                                  'package': binPackage,
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
@@ -111,13 +137,7 @@ for packageKey in addInfo:
 
             if not doPretend:
                 if not currentName == newName:
-                    cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
-
-                    utils.debug( "running command: %s" % cmd )
-                    p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
-                    ret = p.wait()
-
-                    if not ret == 0:
+                    if not gitRename( currentName, newName ):
                         utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
                         continue
 
@@ -162,7 +182,7 @@ for packageKey in addInfo:
             template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = [ buildTarget ]
             targetsString = "'" + "', '".join( targetkeys ) + "'"
-            result = template.safe_substitute( { 'revision': getSvnVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
+            result = template.safe_substitute( { 'revision': getGitVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
                                                  'package': binPackage,
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
@@ -181,13 +201,8 @@ for packageKey in addInfo:
                 f.write( result )
                 f.close()
 
-                cmd = "svn --non-interactive add %s" % ( newDir )
-                ret = 0
-                utils.debug( "running command: %s" % cmd )
-                p = subprocess.Popen( cmd, shell=True, stdin=subprocess.PIPE )
-                ret = p.wait()
 
-                if not ret == 0:
+                if not gitAdd( newName ):
                     utils.warning( 'failed to add file %s' % os.path.basename( newName ) )
                     continue
             else:
@@ -196,7 +211,6 @@ for packageKey in addInfo:
 
                 print "write", newName
 
-                cmd = "svn --non-interactive add %s" % ( newDir )
-                ret = 0
-                utils.debug( "running command: %s" % cmd, 0 )
+                if not gitAdd( newDir ):
+                    utils.warning( 'failed to add directory %s' % os.path.basename( newDir ) )
 
