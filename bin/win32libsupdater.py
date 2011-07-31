@@ -26,7 +26,7 @@ def getSvnVersion( path ):
     return "svn" + rev
 
 def getGitVersion( path ):
-    gitinfo = subprocess.Popen( ['git' 'log', '-n 1', '--format=format:%H'], shell=True, stdout=subprocess.PIPE ).communicate()[0]
+    gitinfo = subprocess.Popen( ['git', 'log', '-n 1', '--format=format:%H'], shell=True, stdout=subprocess.PIPE ).communicate()[0]
     return "git" + gitinfo
 
 def svnRename( currentName, newName ):
@@ -210,7 +210,3 @@ for packageKey in addInfo:
                     print "mkdir", newDir
 
                 print "write", newName
-
-                if not gitAdd( newDir ):
-                    utils.warning( 'failed to add directory %s' % os.path.basename( newDir ) )
-
