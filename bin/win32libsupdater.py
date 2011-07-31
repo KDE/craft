@@ -191,10 +191,15 @@ for packageKey in addInfo:
 
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
             newDir = os.path.dirname( newName )
-
+            gitPath = newDir.replace("%semerge\\" % KDEROOT ,"")
+            gitName = newName.replace("%semerge\\" % KDEROOT ,"")
+            
             if not doPretend:
                 if not os.path.exists( newDir ):
                     os.makedirs( newDir )
+                    if not gitAdd( gitPath ):
+                        utils.warning( 'failed to add directory %s' % os.path.basename( gitPath ) )
+                        continue
 
 
                 f = file( newName, 'w+b' )
@@ -202,11 +207,13 @@ for packageKey in addInfo:
                 f.close()
 
 
-                if not gitAdd( newName ):
-                    utils.warning( 'failed to add file %s' % os.path.basename( newName ) )
+                if not gitAdd( gitName ):
+                    utils.warning( 'failed to add file %s' % os.path.basename( gitName ) )
                     continue
             else:
                 if not os.path.exists( newDir ):
                     print "mkdir", newDir
+                    print "git add", gitPath
 
                 print "write", newName
+                print "git add", gitName
