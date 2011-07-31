@@ -174,10 +174,14 @@ if NOT "!PYTHONPATH!" == "" (
 )
 
 if "%EMERGE_USE_CCACHE%" == "True" (
+  if "%KDECOMPILER%" == "mingw4" (
     echo EMERGE_USE_CCACHE is active to use it "set EMERGE_MAKE_PROGRAM=jom /E" or "set EMERGE_MAKE_PROGRAM=mingw32-make -e"
     set CCACHE_DIR=%KDEROOT%\build\CCACHE
     set CXX=ccache g++
     set CC=ccache gcc
+  ) else (
+    echo CCACHE only woorks with a gcc based compiler
+  )
 )
 
 if "%KDECOMPILER%" == "mingw" ( 
