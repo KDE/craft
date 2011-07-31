@@ -181,6 +181,8 @@ if "%EMERGE_USE_CCACHE%" == "True" (
     set CC=ccache gcc
   ) else (
     echo CCACHE only woorks with a gcc based compiler
+    set CXX=
+    set CC=
   )
 )
 
