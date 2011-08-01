@@ -13,7 +13,7 @@ kdesupport,qjson,,
 kdesupport,dbusmenu-qt,,
 kdesupport,kdewin,,
 kdesupport,phonon,,
-kdesupport,phonon-vlc,,1
+kdesupport,phonon-vlc,0.4.1,
 kdesupport,strigi,,
 kdesupport,soprano,,
 kdesupport,qca,,
