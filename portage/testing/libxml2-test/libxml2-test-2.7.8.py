@@ -32,9 +32,10 @@ class Package(CMakePackageBase):
         self.subinfo.options.make.supportsMultijob = False
         
         mergeDir = self.mergeDestinationDir()
-        self.subinfo.options.configure.defines = (" prefix=%s " % self.imageDir() + \
+        self.subinfo.options.configure.defines = ("prefix=%s " % self.imageDir() + \
+                                                  "sodir=$(PREFIX)\\bin " +
                                                   "include=%s " % os.path.join(mergeDir,"include") + \
-                                                  "lib=%s " % os.path.join(mergeDir,"lib") +\
+                                                  "lib=%s " % os.path.join(mergeDir,"lib") + \
                                                   "zlib=yes ")
         if os.getenv("EMERGE_BUILDTYPE") == "Debug":
             self.subinfo.options.configure.defines += " debug=yes"
@@ -46,7 +47,7 @@ class Package(CMakePackageBase):
             
     def configure(self):          
         self.enterSourceDir()
-        cmd  = "cscript configure.js"
+        cmd  = "cscript configure.js "
         cmd += self.subinfo.options.configure.defines
         if utils.verbose() >= 1:
             print cmd
@@ -66,7 +67,6 @@ class Package(CMakePackageBase):
         cmd += " install"
         os.system(cmd) and utils.die(
                 "command: %s failed" % (cmd))
-        utils.copyFile(os.path.join(self.imageDir(),"lib","libxml2.dll"),os.path.join(self.imageDir(),"bin","libxml2.dll"))
         return True
           
 
