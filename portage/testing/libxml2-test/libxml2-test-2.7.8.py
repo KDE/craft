@@ -66,6 +66,7 @@ class Package(CMakePackageBase):
         cmd += " install"
         os.system(cmd) and utils.die(
                 "command: %s failed" % (cmd))
+        utils.copyFile(os.path.join(self.imageDir(),"lib","libxml2.dll"),os.path.join(self.imageDir(),"bin","libxml2.dll"))
         return True
           
 
