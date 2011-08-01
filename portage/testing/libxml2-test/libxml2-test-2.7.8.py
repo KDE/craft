@@ -46,7 +46,7 @@ class Package(CMakePackageBase):
             
     def configure(self):          
         self.enterSourceDir()
-        cmd  = "cscript configure.js "
+        cmd  = "cscript /E:jscript configure.js "
         cmd += self.subinfo.options.configure.defines
         if utils.verbose() >= 1:
             print cmd
