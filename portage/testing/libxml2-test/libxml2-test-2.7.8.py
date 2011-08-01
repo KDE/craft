@@ -32,7 +32,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.make.supportsMultijob = False
         
         mergeDir = self.mergeDestinationDir()
-        prefix = mergeDir
+        prefix = self.imageDir()
         if mergeDir.endswith("\\"):
           prefix = mergeDir[0:-1]
         self.subinfo.options.configure.defines = (" prefix=%s " % prefix + \
@@ -66,7 +66,10 @@ class Package(CMakePackageBase):
     def install(self):
         self.enterSourceDir()
         cmd = self.makeProgramm
-        return self.system( cmd , "install" )
+        cmd += " install"
+        os.system(cmd) and utils.die(
+                "command: %s failed" % (cmd))
+        return True
           
 
 
