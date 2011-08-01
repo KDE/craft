@@ -27,14 +27,8 @@ class subinfo(info.infoclass):
     self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
     self.targetDigests['1.1.11'] = '5d95a0e55c1d30f21e6dd4aa2fb1744a3ab694ac'
     self.shortDescription = "an open-source multimedia framework"
-    
-    
-    if emergePlatform.buildArchitecture() == 'x64':
-        self.defaultTarget = self.vlcTagName + self.getVer()
-    elif os.getenv("EMERGE_BUILDTYPE") == "Debug" and compiler.isMinGW():
-        self.defaultTarget = self.vlcTagName + self.getVer() + "-debug"
-    else:
-        self.defaultTarget = releaseTag
+
+    self.defaultTarget = releaseTag
 
 
   def setDependencies( self ):
