@@ -33,7 +33,6 @@ class Package(CMakePackageBase):
         
         mergeDir = self.mergeDestinationDir()
         self.subinfo.options.configure.defines = ("prefix=%s " % self.imageDir() + \
-                                                  "sodir=$(PREFIX)\\bin " +
                                                   "include=%s " % os.path.join(mergeDir,"include") + \
                                                   "lib=%s " % os.path.join(mergeDir,"lib") + \
                                                   "zlib=yes ")
