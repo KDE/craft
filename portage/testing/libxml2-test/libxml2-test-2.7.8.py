@@ -32,10 +32,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.make.supportsMultijob = False
         
         mergeDir = self.mergeDestinationDir()
-        prefix = self.imageDir()
-        if mergeDir.endswith("\\"):
-          prefix = mergeDir[0:-1]
-        self.subinfo.options.configure.defines = (" prefix=%s " % prefix + \
+        self.subinfo.options.configure.defines = (" prefix=%s " % self.imageDir() + \
                                                   "include=%s " % os.path.join(mergeDir,"include") + \
                                                   "lib=%s " % os.path.join(mergeDir,"lib") +\
                                                   "zlib=yes ")
