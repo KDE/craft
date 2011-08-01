@@ -89,7 +89,7 @@ diff -Nru cryp3/CMakeLists.txt cryp2/CMakeLists.txt
 +IF (MINGW)
 +  SET (CMAKE_RC_COMPILER_INIT windres)
 +  ENABLE_LANGUAGE (RC)
-+  SET (CMAKE_RC_COMPILE_OBJECT "-O coff -o <OBJECT> <SOURCE>")
++    SET (CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
 +ENDIF (MINGW)
 +
 +IF (WIN32)
@@ -341,3 +341,18 @@ diff -Nru cryp3/CMakeLists.txt cryp2/CMakeLists.txt
 +
 +FIND_PACKAGE_HANDLE_STANDARD_ARGS (CryptoPP REQUIRED_VARS CRYPTOPP_INCLUDE_DIRS
 +  CRYPTOPP_LIBRARIES VERSION_VAR CRYPTOPP_VERSION)
+--- cryptopp.rc.orig    2011-08-01 21:32:54.236877500 +0200
++++ b/cryptopp.rc 2011-08-01 21:31:20.286503800 +0200
+@@ -7,8 +7,11 @@
+ //
+ // Generated from the TEXTINCLUDE 2 resource.
+ //
++#ifndef __GNUC__
+ #include "winres.h"
+-
++#else
++#include "windows.h"
++#endif
+ /////////////////////////////////////////////////////////////////////////////
+ #undef APSTUDIO_READONLY_SYMBOLS
+ 
