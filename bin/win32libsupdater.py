@@ -134,11 +134,13 @@ for packageKey in addInfo:
 
             currentName = portage.getFilename( binCategory, binPackage, binVersion )
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
+            gitCurrentName = currentName.replace("%semerge\\" % KDEROOT ,"")
+            gitNewName = newName.replace("%semerge\\" % KDEROOT ,"")
 
             if not doPretend:
                 if not currentName == newName:
-                    if not gitRename( currentName, newName ):
-                        utils.warning( 'failed to rename file %s' % os.path.basename( currentName ) )
+                    if not gitRename( gitCurrentName, gitNewName ):
+                        utils.warning( 'failed to rename file %s' % os.path.basename( gitCurrentName ) )
                         continue
 
                 f = file( newName, 'w+b' )
