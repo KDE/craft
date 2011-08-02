@@ -8,7 +8,7 @@
 win32libs-sources,win_iconv-src,,
 win32libs-sources,zlib-src,,
 win32libs-sources,gettext-src,,
-win32libs-sources,libxml2-src,,
+win32libs-sources,libxml2-src,,1
 win32libs-sources,shared-mime-info-src,,1
 win32libs-sources,libxslt-src,,
 win32libs-sources,expat-src,,
