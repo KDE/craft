@@ -68,5 +68,5 @@ win32libs-sources,automoc-src,,
 win32libs-sources,glee-src,,
 win32libs-sources,libwpd-src,,
 win32libs-sources,libwpg-src,,
-win32libs-sources,cryptopp-src,,
+win32libs-sources,cryptopp-src,,1
 libs,runtime,,

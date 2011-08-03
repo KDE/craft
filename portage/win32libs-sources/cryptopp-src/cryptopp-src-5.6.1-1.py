@@ -16,9 +16,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
             self.buildDependencies['virtual/base'] = 'default'
-            if compiler.isMinGW():
-                self.buildDependencies['dev-util/msys'] = 'default'
-
+            
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = False
@@ -30,7 +28,7 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DCRYPTOPP_BUILD_STATIC_LIBS=OFF -DCRYPTOPP_BUILD_SHARED_LIBS=ON -DCRYPTOPP_BUILD_TESTS=OFF"
+        self.subinfo.options.configure.defines = "-DCRYPTOPP_BUILD_STATIC_LIBS=ON -DCRYPTOPP_BUILD_SHARED_LIBS=OFF -DCRYPTOPP_BUILD_TESTS=OFF"
          
         
 
