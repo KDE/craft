@@ -199,7 +199,11 @@ if "%KDECOMPILER%" == "mingw" (
 if "%APPLICATION%" == "" (
     %comspec% /e:on /K "cd %KDEROOT%"
 ) else (
-    start %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
+    if "%EMERGE_WAIT_FOR_APPLICATION%" == "True" (
+        %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
+    ) else (
+        start %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
+    )
 )
 goto :eof
 
