@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['dev-util/automoc'] = 'default'
+        self.hardDependencies['win32libs-bin/automoc'] = 'default'
         self.hardDependencies['virtual/base'] = 'default'
         if not os.getenv("KDECOMPILER") == "mingw":
             self.hardDependencies['kdesupport/kdewin'] = 'default'
