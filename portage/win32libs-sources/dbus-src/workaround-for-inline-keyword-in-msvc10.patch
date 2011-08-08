@@ -1,5 +1,5 @@
 diff --git a/bus/bus.c b/bus/bus.c
-index 6b0dc08..c459b42 100644
+index 5b0dc08..c459b42 100644
 --- a/bus/bus.c
 +++ b/bus/bus.c
 @@ -40,6 +40,9 @@
