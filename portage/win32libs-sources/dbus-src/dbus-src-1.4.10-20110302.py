@@ -69,6 +69,8 @@ class subinfo(info.infoclass):
             self.patchToApply['1.4.6'] = [('live-lock-fix.diff', 1),
                                           ('0001-Do-not-use-ELEMENT_TYPE-which-is-reserved.patch', 1)
                                          ]
+            self.patchToApply['1.4.10'] = [('workaround-for-inline-keyword-in-msvc10.patch', 1)
+                                         ]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         if emergePlatform.isCrossCompilingEnabled():
