@@ -652,12 +652,16 @@ diff -Nru redland-1.0.14.orig/src/rdf_storage_sql.c redland-1.0.14/src/rdf_stora
 diff -Nru redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rdf_config.h
 --- redland-1.0.14.orig/src/win32_rdf_config.h	2011-07-24 00:15:31.000000000 +0200
 +++ redland-1.0.14/src/win32_rdf_config.h	2011-07-29 15:52:29.454251500 +0200
-@@ -75,40 +75,40 @@
+@@ -75,40 +75,44 @@
   */
  
  /* BDB has close method with 2 args */
 -#define HAVE_BDB_CLOSE_2_ARGS 1
 +/* #define HAVE_BDB_CLOSE_2_ARGS 1 */
++#ifdef __MINGW32__
++#define HAVE_STRUCT_TIMESPEC 1
++#endif
++
  
  /* BDB defines DBC */
 -#define HAVE_BDB_CURSOR 1
