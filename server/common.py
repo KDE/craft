@@ -75,6 +75,8 @@ class Uploader:
         self.fstderr.write( cmd + "\r\n" )
         self.fstderr.flush()
         self.pstdin.write( cmd + "\r\n" )
+        self.pstdin.write( "\r\n" )
+        self.pstdin.flush()
 
     def executeScript( self, state="common" ):
         if not self.settings:

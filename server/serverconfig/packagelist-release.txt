@@ -13,7 +13,7 @@ kdesupport,qjson,,
 kdesupport,dbusmenu-qt,,
 kdesupport,kdewin,,
 kdesupport,phonon,,
-kdesupport,phonon-vlc,,1
+kdesupport,phonon-vlc,0.4.1,
 kdesupport,strigi,,
 kdesupport,soprano,,
 kdesupport,qca,,
@@ -23,23 +23,23 @@ kdesupport,oxygen-icons,,
 kdesupport,akonadi,1.4.3,
 #
 # the KDE packages themselves
-kde-4.5,kdelibs,4.5.4,2
-kde-4.5,kdepimlibs,4.5.4,
-kde-4.5,kdebase-runtime,4.5.4,
-kde-4.5,kdebase-workspace,4.5.4,1
-kde-4.5,kdebase-apps,4.5.4,
-kde-4.5,kdeedu,4.5.4,
-kde-4.5,kdegames,4.5.4,
-kde-4.5,kdegraphics,4.5.4,
-kde-4.5,kdemultimedia,4.5.4,
-kde-4.5,kdenetwork,4.5.4,
-# kde-4.5,kdepim,4.5.4, <--- that package doesn't exist, not sure what we can use as a replacement?
-kde-4.5,kdesdk,4.5.4,
-kde-4.5,kdetoys,4.5.4,
-kde-4.5,kdeutils,4.5.4,
+kde,kdelibs,,2
+kde,kdepimlibs,,
+kde,kdebase-runtime,,
+kde,kdebase-workspace,,1
+kde,kdebase-apps,,
+kde,kdeedu,,
+kde,kdegames,,
+kde,kdegraphics,,
+kde,kdemultimedia,,
+kde,kdenetwork,,
+# kde,kdepim,, <--- that package doesn't exist, not sure what we can use as a replacement?
+kde,kdesdk,,
+kde,kdetoys,,
+kde,kdeutils,,
 #
 # the KDE extragear packages
-extragear,amarok,2.3.2,1
+extragear,amarok,2.4.3,
 #extragear,kipi-plugins,,
 extragear,kipi-plugins,1.7.0,
 #extragear,digikam,,

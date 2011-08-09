@@ -1,0 +1,758 @@
+diff -Nru redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake
+--- redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake	2011-07-29 15:52:29.405248700 +0200
+@@ -0,0 +1,112 @@
++#
++#  FIND_LIBRARY_WITH_DEBUG
++#  -> enhanced FIND_LIBRARY to allow the search for an
++#     optional debug library with a WIN32_DEBUG_POSTFIX similar
++#     to CMAKE_DEBUG_POSTFIX when creating a shared lib
++#     it has to be the second and third argument
++#
++# Copyright (c) 2007, Christian Ehrlicher, <ch.ehrlicher@gmx.de>
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++MACRO(FIND_LIBRARY_WITH_DEBUG var_name win32_dbg_postfix_name dgb_postfix libname)
++
++  IF(NOT ${win32_dbg_postfix_name} STREQUAL "WIN32_DEBUG_POSTFIX")
++
++    # no WIN32_DEBUG_POSTFIX -> simply pass all arguments to FIND_LIBRARY
++    FIND_LIBRARY(${var_name}
++                 ${win32_dbg_postfix_name}
++                 ${dgb_postfix}
++                 ${libname}
++                 ${ARGN}
++    )
++
++  ELSE(NOT ${win32_dbg_postfix_name} STREQUAL "WIN32_DEBUG_POSTFIX")
++
++   IF(NOT WIN32)
++     # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
++
++     FIND_LIBRARY(${var_name} ${libname} ${ARGN})
++
++   ELSE(NOT WIN32)
++
++     # 1. get all possible libnames
++     SET(args ${ARGN})
++     SET(libnames_release "")
++     SET(libnames_debug "")
++
++     LIST(LENGTH args listCount)
++
++     IF("${libname}" STREQUAL "NAMES")
++       SET(append_rest 0)
++       LIST(APPEND args " ")
++
++       FOREACH(i RANGE ${listCount})
++         LIST(GET args ${i} val)
++
++         IF(append_rest)
++           LIST(APPEND newargs ${val})
++         ELSE(append_rest)
++           IF("${val}" STREQUAL "PATHS")
++             LIST(APPEND newargs ${val})
++             SET(append_rest 1)
++           ELSE("${val}" STREQUAL "PATHS")
++             LIST(APPEND libnames_release "${val}")
++             LIST(APPEND libnames_debug   "${val}${dgb_postfix}")
++           ENDIF("${val}" STREQUAL "PATHS")
++         ENDIF(append_rest)
++
++       ENDFOREACH(i)
++
++     ELSE("${libname}" STREQUAL "NAMES")
++
++       # just one name
++       LIST(APPEND libnames_release "${libname}")
++       LIST(APPEND libnames_debug   "${libname}${dgb_postfix}")
++
++       SET(newargs ${args})
++
++     ENDIF("${libname}" STREQUAL "NAMES")
++
++     # search the release lib
++     FIND_LIBRARY(${var_name}_RELEASE
++                  NAMES ${libnames_release}
++                  ${newargs}
++     )
++
++     # search the debug lib
++     FIND_LIBRARY(${var_name}_DEBUG
++                  NAMES ${libnames_debug}
++                  ${newargs}
++     )
++
++     IF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++       # both libs found
++       SET(${var_name} optimized ${${var_name}_RELEASE}
++                       debug     ${${var_name}_DEBUG})
++
++     ELSE(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++       IF(${var_name}_RELEASE)
++
++         # only release found
++         SET(${var_name} ${${var_name}_RELEASE})
++
++       ELSE(${var_name}_RELEASE)
++
++         # only debug (or nothing) found
++         SET(${var_name} ${${var_name}_DEBUG})
++
++       ENDIF(${var_name}_RELEASE)
++       
++     ENDIF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++     MARK_AS_ADVANCED(${var_name}_RELEASE)
++     MARK_AS_ADVANCED(${var_name}_DEBUG)
++
++   ENDIF(NOT WIN32)
++
++  ENDIF(NOT ${win32_dbg_postfix_name} STREQUAL "WIN32_DEBUG_POSTFIX")
++
++ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
+diff -Nru redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake
+--- redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake	2011-07-29 15:52:29.408248800 +0200
+@@ -0,0 +1,18 @@
++# - Find the native PThreadsWin32 includes and library
++#
++# This module defines
++#  PTHREADS_WIN32_INCLUDE_DIR, where to find pthread.h, etc.
++#  PTHREADS_WIN32_LIBRARIES, the libraries to link against to use PThreadsWin32.
++#  PTHREADS_WIN32_FOUND, If false, do not try to use PThreadsWin32.
++
++#=============================================================================
++#
++find_path(PTHREADS_WIN32_INCLUDE_DIR pthread.h)
++find_library(PTHREADS_WIN32_LIBRARIES NAMES pthreads)
++
++# handle the QUIETLY and REQUIRED arguments and set PTHREADS_WIN32_FOUND to TRUE if
++# all listed variables are TRUE
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(PThreadsWin32  DEFAULT_MSG  PTHREADS_WIN32_LIBRARIES PTHREADS_WIN32_INCLUDE_DIR)
++
++mark_as_advanced(PTHREADS_WIN32_INCLUDE_DIR PTHREADS_WIN32_LIBRARIES)
+diff -Nru redland-1.0.14.orig/cmake/modules/FindRaptor.cmake redland-1.0.14/cmake/modules/FindRaptor.cmake
+--- redland-1.0.14.orig/cmake/modules/FindRaptor.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/cmake/modules/FindRaptor.cmake	2011-07-29 15:52:29.410248900 +0200
+@@ -0,0 +1,100 @@
++# - Try to find the Raptor RDF parsing library (http://librdf.org/raptor/)
++# Once done this will define
++#
++#  RAPTOR_FOUND       - system has Raptor
++#  RAPTOR_LIBRARIES   - Link these to use Raptor
++#  RAPTOR_INCLUDE_DIR - Include directory for using Raptor
++#  RAPTOR_DEFINITIONS - Compiler switches required for using Raptor
++#
++#  Capabilities
++#       RAPTOR_HAVE_TRIG   - Set if raptor has TRIG
++
++# (c) 2007-2011 Sebastian Trueg <trueg@kde.org>
++# (c) 2011 Artem Serebriyskiy <v.for.vandal@gmail.com>
++# (c) 2011 Michael Jansen <kde@michael-jansen.biz>
++#
++# Based on FindFontconfig Copyright (c) 2006,2007 Laurent Montel, <montel@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++MACRO ( FIND_RAPTOR libname libhints includehints )
++    find_library_with_debug(
++        RAPTOR_LIBRARIES
++        WIN32_DEBUG_POSTFIX d
++        NAMES ${libname}
++        HINTS ${libhints})
++    find_path(
++        RAPTOR_INCLUDE_DIR raptor.h
++        HINTS ${includehints}
++        PATH_SUFFIXES ${libname})
++ENDMACRO ()
++
++
++
++# Check if we have cached results in case the last round was successful.
++if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
++
++    include(FindLibraryWithDebug)
++    include(MacroEnsureVersion)
++    find_package(PkgConfig)
++
++    # Vy default look for version 2.0
++    if (NOT Raptor_FIND_VERSION )
++        set( Raptor_FIND_VERSION "2.0")
++        set( Raptor_FIND_VERSION_MAJOR "2" )
++        set( Raptor_FIND_VERSION_MINOR "0" )
++    endif ()
++
++    if ( Raptor_FIND_VERSION_MAJOR EQUAL "2" )
++
++        if ( NOT WIN32 )
++            pkg_check_modules(PC_RAPTOR2 raptor2)
++            if ( PC_RAPTOR2_FOUND )
++                set(RAPTOR_DEFINITIONS ${PC_RAPTOR2_CFLAGS_OTHER})
++                set(RAPTOR_VERSION ${PC_RAPTOR2_VERSION} CACHE STRING "Raptor Version found" )
++            endif ()
++        endif ()
++        find_raptor( raptor2 "${PC_RAPTOR2_LIBDIR};${PC_RAPTOR2_LIBRARY_DIRS}" "${PC_RAPTOR2_INCLUDEDIR};${PC_RAPTOR2_INCLUDE_DIRS}")
++
++    elseif ( Raptor_FIND_VERSION_MAJOR EQUAL "1" )
++
++        if ( NOT WIN32 )
++            pkg_check_modules(PC_RAPTOR raptor)
++            if ( PC_RAPTOR_FOUND )
++                set(RAPTOR_DEFINITIONS ${PC_RAPTOR_CFLAGS_OTHER})
++                set(RAPTOR_VERSION ${PC_RAPTOR_VERSION} CACHE STRING "Raptor Version found" )
++            endif ()
++        endif ()
++        find_raptor( raptor "${PC_RAPTOR_LIBDIR};${PC_RAPTOR_LIBRARY_DIRS}" "${PC_RAPTOR_INCLUDEDIR};${PC_RAPTOR_INCLUDE_DIRS}")
++
++    else ()
++
++        message( FATAL_ERROR "No idea how to check for version : ${Raptor_FIND_VERSION}")
++
++    endif()
++
++    if (RAPTOR_VERSION)
++        MACRO_ENSURE_VERSION("1.4.16" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG)
++    endif (RAPTOR_VERSION)
++
++    mark_as_advanced(RAPTOR_INCLUDE_DIR RAPTOR_LIBRARIES)
++
++endif () # Check for cached values
++
++include(FindPackageHandleStandardArgs)
++
++find_package_handle_standard_args(
++    Raptor
++    RAPTOR_LIBRARIES RAPTOR_INCLUDE_DIR)
++
++mark_as_advanced(RAPTOR_VERSION)
++
++if (NOT RAPTOR_FOUND AND Raptor_FIND_VERSION_MAJOR EQUAL "2" AND NOT Raptor_FIND_QUIET )
++    pkg_check_modules(PC_RAPTOR raptor)
++    if (PC_RAPTOR_FOUND)
++        message( STATUS "You have raptor1 version ${PC_RAPTOR_VERSION} installed. Please update." )
++    endif ()
++endif ()
++
+diff -Nru redland-1.0.14.orig/cmake/modules/FindRasqal.cmake redland-1.0.14/cmake/modules/FindRasqal.cmake
+--- redland-1.0.14.orig/cmake/modules/FindRasqal.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/cmake/modules/FindRasqal.cmake	2011-07-29 15:52:29.433250300 +0200
+@@ -0,0 +1,18 @@
++# - Find the native Rasqal includes and library
++#
++# This module defines
++#  RASQAL_INCLUDE_DIR, where to find rasqal.h, etc.
++#  RASQAL_LIBRARIES, the libraries to link against to use Rasqal.
++#  RASQAL_FOUND, If false, do not try to use Rasqal.
++
++#=============================================================================
++#
++find_path(RASQAL_INCLUDE_DIR rasqal.h PATH_SUFFIXES rasqal)
++find_library(RASQAL_LIBRARIES NAMES rasqal)
++
++# handle the QUIETLY and REQUIRED arguments and set RASQAL_FOUND to TRUE if
++# all listed variables are TRUE
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Rasqal  DEFAULT_MSG  RASQAL_LIBRARIES RASQAL_INCLUDE_DIR)
++
++mark_as_advanced(RASQAL_INCLUDE_DIR RASQAL_LIBRARIES)
+diff -Nru redland-1.0.14.orig/cmake/modules/FindSqlite.cmake redland-1.0.14/cmake/modules/FindSqlite.cmake
+--- redland-1.0.14.orig/cmake/modules/FindSqlite.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/cmake/modules/FindSqlite.cmake	2011-07-29 15:52:29.435250400 +0200
+@@ -0,0 +1,50 @@
++# - Try to find Sqlite
++# Once done this will define
++#
++#  SQLITE_FOUND - system has Sqlite
++#  SQLITE_INCLUDE_DIR - the Sqlite include directory
++#  SQLITE_LIBRARIES - Link these to use Sqlite
++#  SQLITE_DEFINITIONS - Compiler switches required for using Sqlite
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++#
++
++
++# Copyright (c) 2008, Gilles Caulier, <caulier.gilles@gmail.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if ( SQLITE_INCLUDE_DIR AND SQLITE_LIBRARIES )
++   # in cache already
++   SET(Sqlite_FIND_QUIETLY TRUE)
++endif ( SQLITE_INCLUDE_DIR AND SQLITE_LIBRARIES )
++
++# use pkg-config to get the directories and then use these values
++# in the FIND_PATH() and FIND_LIBRARY() calls
++if( NOT WIN32 )
++  find_package(PkgConfig)
++
++  pkg_check_modules(PC_SQLITE QUIET sqlite3)
++
++  set(SQLITE_DEFINITIONS ${PC_SQLITE_CFLAGS_OTHER})
++endif( NOT WIN32 )
++
++find_path(SQLITE_INCLUDE_DIR NAMES sqlite3.h
++  PATHS
++  ${PC_SQLITE_INCLUDEDIR}
++  ${PC_SQLITE_INCLUDE_DIRS}
++)
++
++find_library(SQLITE_LIBRARIES NAMES sqlite3
++  PATHS
++  ${PC_SQLITE_LIBDIR}
++  ${PC_SQLITE_LIBRARY_DIRS}
++)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Sqlite DEFAULT_MSG SQLITE_INCLUDE_DIR SQLITE_LIBRARIES )
++
++# show the SQLITE_INCLUDE_DIR and SQLITE_LIBRARIES variables only in the advanced view
++mark_as_advanced(SQLITE_INCLUDE_DIR SQLITE_LIBRARIES )
++
+diff -Nru redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake
+--- redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake	2011-07-29 15:52:29.436250400 +0200
+@@ -0,0 +1,71 @@
++# This macro compares version numbers of the form "x.y.z"
++# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
++# will set FOO_VERSIN_OK to true if FOO_VERSION_FOUND >= FOO_MIN_VERSION
++# where both have to be in a 3-part-version format, leading and trailing
++# text is ok, e.g.
++# MACRO_ENSURE_VERSION( "2.5.31" "flex 2.5.4a" VERSION_OK)
++# which means 2.5.31 is required and "flex 2.5.4a" is what was found on the system
++
++# Copyright (c) 2006, David Faure, <faure@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++MACRO(MACRO_ENSURE_VERSION requested_version found_version var_too_old)
++
++    # parse the parts of the version string
++    STRING(REGEX REPLACE "([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" req_major_vers "${requested_version}")
++    STRING(REGEX REPLACE "[0-9]+\\.([0-9]+)\\.[0-9]+" "\\1" req_minor_vers "${requested_version}")
++    STRING(REGEX REPLACE "[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1" req_patch_vers "${requested_version}")
++
++    STRING(REGEX REPLACE "[^0-9]*([0-9]+)\\.[0-9]+\\.[0-9]+.*" "\\1" found_major_vers "${found_version}")
++    STRING(REGEX REPLACE "[^0-9]*[0-9]+\\.([0-9]+)\\.[0-9]+.*" "\\1" found_minor_vers "${found_version}")
++    STRING(REGEX REPLACE "[^0-9]*[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" found_patch_vers "${found_version}")
++
++    # compute an overall version number which can be compared at once
++    MATH(EXPR req_vers_num "${req_major_vers}*10000 + ${req_minor_vers}*100 + ${req_patch_vers}")
++    MATH(EXPR found_vers_num "${found_major_vers}*10000 + ${found_minor_vers}*100 + ${found_patch_vers}")
++
++    if (found_vers_num LESS req_vers_num)
++        set( ${var_too_old} FALSE )
++    else (found_vers_num LESS req_vers_num)
++        set( ${var_too_old} TRUE )
++    endif (found_vers_num LESS req_vers_num)
++
++ENDMACRO(MACRO_ENSURE_VERSION)
++
++
++# This macro compares version numbers of the form "x.y"
++# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
++# will set FOO_VERSIN_OK to true if FOO_VERSION_FOUND >= FOO_MIN_VERSION
++# where both have to be in a 2-part-version format, leading and trailing
++# text is ok, e.g.
++# MACRO_ENSURE_VERSION( "0.5" "foo 0.6" VERSION_OK)
++# which means 0.5 is required and "foo 0.6" is what was found on the system
++
++# Copyright (c) 2006, David Faure, <faure@kde.org>
++# Copyright (c) 2007, Pino Toscano, <pino@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++MACRO(MACRO_ENSURE_VERSION2 requested_version found_version var_too_old)
++
++    # parse the parts of the version string
++    STRING(REGEX REPLACE "([0-9]+)\\.[0-9]+" "\\1" req_major_vers "${requested_version}")
++    STRING(REGEX REPLACE "[0-9]+\\.([0-9]+)" "\\1" req_minor_vers "${requested_version}")
++
++    STRING(REGEX REPLACE "[^0-9]*([0-9]+)\\.[0-9]+.*" "\\1" found_major_vers "${found_version}")
++    STRING(REGEX REPLACE "[^0-9]*[0-9]+\\.([0-9]+).*" "\\1" found_minor_vers "${found_version}")
++
++    # compute an overall version number which can be compared at once
++    MATH(EXPR req_vers_num "${req_major_vers}*100 + ${req_minor_vers}")
++    MATH(EXPR found_vers_num "${found_major_vers}*100 + ${found_minor_vers}")
++
++    if (found_vers_num LESS req_vers_num)
++        set( ${var_too_old} FALSE )
++    else (found_vers_num LESS req_vers_num)
++        set( ${var_too_old} TRUE )
++    endif (found_vers_num LESS req_vers_num)
++
++ENDMACRO(MACRO_ENSURE_VERSION2)
+diff -Nru redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.txt
+--- redland-1.0.14.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/CMakeLists.txt	2011-07-29 15:52:29.438250500 +0200
+@@ -0,0 +1,173 @@
++project(librdf)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
++find_package(PThreadsWin32 REQUIRED)
++find_package(Raptor 2.0 REQUIRED)
++find_package(Rasqal REQUIRED)
++find_package(Sqlite REQUIRED)
++
++option(BUILD_STATIC "build a static librdf" OFF)
++option(BUILD_TESTS "build test executables for rdf" ON)
++option(BUILD_TOOLS "build tools for librdf" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif(BUILD_TESTS)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
++endif(MSVC)
++include_directories(
++    src
++    utils
++    ${PTHREADS_WIN32_INCLUDE_DIR}
++    ${RAPTOR_INCLUDE_DIR}
++    ${RASQAL_INCLUDE_DIR}
++    ${SQLITE_INCLUDE_DIR}
++)
++
++set(librdf_SRCS
++    src/rdf_init.c
++    src/rdf_raptor.c
++    src/rdf_uri.c
++    src/rdf_digest.c
++    src/rdf_hash.c
++    src/rdf_hash_cursor.c
++    src/rdf_hash_memory.c
++    src/rdf_model.c
++    src/rdf_model_storage.c
++    src/rdf_iterator.c
++    src/rdf_concepts.c
++    src/rdf_list.c
++    src/rdf_storage.c
++    src/rdf_storage_sql.c
++    src/rdf_stream.c
++    src/rdf_parser.c
++    src/rdf_parser_raptor.c
++    src/rdf_heuristics.c
++    src/rdf_files.c
++    src/rdf_utf8.c
++    src/rdf_query.c
++    src/rdf_query_results.c
++    src/rdf_query_rasqal.c
++    src/rdf_serializer.c
++    src/rdf_serializer_raptor.c
++    src/rdf_log.c
++    src/rdf_node_common.c
++    src/rdf_statement_common.c
++    src/rdf_node.c
++    src/rdf_statement.c
++    src/rdf_digest_md5.c
++    src/rdf_digest_sha1.c
++    src/rdf_parser_raptor.c
++    src/rdf_storage_list.c
++    src/rdf_storage_hashes.c
++    src/rdf_storage_trees.c
++    src/rdf_storage_file.c
++# theoretically it should be possible to build all storages, but we don't care I think
++    src/rdf_storage_sqlite.c
++)
++#    src/rdf_hash_bdb.c
++
++set(rdf_HDRS 
++    src/redland.h
++    src/librdf.h
++    src/rdf_init.h
++    src/rdf_raptor.h
++    src/rdf_uri.h
++    src/rdf_node.h
++    src/rdf_statement.h
++    src/rdf_concepts.h
++    src/rdf_model.h
++    src/rdf_iterator.h
++    src/rdf_storage.h
++    src/rdf_storage_module.h
++    src/rdf_stream.h
++    src/rdf_parser.h
++    src/rdf_utf8.h
++    src/rdf_query.h
++    src/rdf_serializer.h
++    src/rdf_log.h
++    src/rdf_digest.h
++    src/rdf_hash.h
++    src/rdf_list.h
++)
++
++add_definitions(-DPKGDATADIR="\"\"" -DLIBRDF_INTERNAL)
++
++if(BUILD_STATIC)
++    set(_SHARED STATIC)
++    add_definitions(-DREDLAND_STATIC)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++endif(BUILD_STATIC)
++
++add_library(rdf ${_SHARED} ${librdf_SRCS})
++set(_TARGETS rdf)
++set_target_properties(rdf PROPERTIES DEFINE_SYMBOL LIBRDF_EXPORTS)
++target_link_libraries(rdf ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++
++###############################################################################
++if(BUILD_TESTS OR BUILD_TOOLS)
++    add_library(rdf_static STATIC ${librdf_SRCS})
++    set_target_properties(rdf_static PROPERTIES COMPILE_FLAGS -DREDLAND_STATIC)
++endif(BUILD_TESTS OR BUILD_TOOLS)
++
++if(BUILD_TOOLS)
++    set(rdfproc_SRCS
++        utils/rdfproc.c
++    )
++    if(MSVC)
++        list(APPEND rdfproc_SRCS utils/getopt.c)
++    endif(MSVC)
++    add_executable(rdfproc ${rdfproc_SRCS})
++    set_target_properties(rdfproc PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
++    target_link_libraries(rdfproc rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++
++    set(redland_db_upgrade_SRCS
++        utils/db_upgrade.c
++    )
++    if(MSVC)
++        list(APPEND redland_db_upgrade_SRCS utils/getopt.c)
++    endif(MSVC)
++    add_executable(redland-db-upgrade ${redland_db_upgrade_SRCS})
++    set_target_properties(redland-db-upgrade PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
++    target_link_libraries(redland-db-upgrade rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++    list(APPEND _TARGETS rdfproc redland-db-upgrade)
++endif(BUILD_TOOLS)
++
++if(BUILD_TESTS)
++    set(rdf_TESTS
++        rdf_node
++        rdf_digest
++        rdf_hash
++        rdf_uri
++        rdf_statement
++        rdf_model
++        rdf_storage
++        rdf_parser
++        rdf_files
++        rdf_heuristics
++        rdf_utf8
++        rdf_concepts
++        rdf_query
++        rdf_serializer
++        rdf_stream
++        rdf_iterator
++        rdf_init
++    )
++    
++    foreach(_test ${rdf_TESTS})
++        add_executable(${_test} src/${_test}.c)
++        set_target_properties(${_test} PROPERTIES COMPILE_FLAGS "-DSTANDALONE -DREDLAND_STATIC")
++        target_link_libraries(${_test} rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++        add_test(${_test} ${_test})
++    endforeach(_test ${rdf_TESTS})
++endif(BUILD_TESTS)
++###############################################################################
++install(TARGETS ${_TARGETS} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++install(FILES ${rdf_HDRS} DESTINATION include/redland)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru redland-1.0.14.orig/src/CMakeLists.txt redland-1.0.14/src/CMakeLists.txt
+--- redland-1.0.14.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ redland-1.0.14/src/CMakeLists.txt	2011-07-29 15:52:29.440250700 +0200
+@@ -0,0 +1,6 @@
++set(teststr "teststr")
++if(${teststr} STREQUAL "test" OR MSVC)
++message(STATUS "ok")
++else()
++message(STATUS "failed")
++endif()
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru redland-1.0.14.orig/src/librdf.h redland-1.0.14/src/librdf.h
+--- redland-1.0.14.orig/src/librdf.h	2011-07-24 00:15:31.000000000 +0200
++++ redland-1.0.14/src/librdf.h	2011-07-29 15:52:29.441250700 +0200
+@@ -52,7 +52,7 @@
+ #    ifdef REDLAND_STATIC
+ #      define REDLAND_API
+ #    else
+-#      ifdef LIBRDF_INTERNAL
++#      ifdef LIBRDF_EXPORTS
+ #        define REDLAND_API _declspec(dllexport)
+ #      else
+ #        define REDLAND_API _declspec(dllimport)
+diff -Nru redland-1.0.14.orig/src/rdf_model.c redland-1.0.14/src/rdf_model.c
+--- redland-1.0.14.orig/src/rdf_model.c	2011-07-23 09:18:52.000000000 +0200
++++ redland-1.0.14/src/rdf_model.c	2011-07-29 15:52:29.445250900 +0200
+@@ -2028,6 +2028,8 @@
+   int remove_count=0;
+   int status=0;
+   raptor_iostream* iostr;
++  librdf_node* literal_node;
++  char literal[6];
+ 
+   iostr = raptor_new_iostream_to_file_handle(world->raptor_world_ptr, stderr);
+ 
+@@ -2117,8 +2119,6 @@
+   librdf_statement_set_subject(statement, librdf_new_node_from_uri_string(world, (const unsigned char*)"http://example.org/"));
+   librdf_statement_set_predicate(statement, librdf_new_node_from_uri_string(world, (const unsigned char*)"http://purl.org/dc/elements/1.1/creator"));
+ 
+-  librdf_node* literal_node;
+-  char literal[6];
+   strncpy(literal, "DaveX", 6);
+ 
+   literal[4]='0';
+diff -Nru redland-1.0.14.orig/src/rdf_query.c redland-1.0.14/src/rdf_query.c
+--- redland-1.0.14.orig/src/rdf_query.c	2011-07-19 04:09:30.000000000 +0200
++++ redland-1.0.14/src/rdf_query.c	2011-07-29 15:52:29.447251100 +0200
+@@ -656,7 +656,7 @@
+ "
+ #define DATA_LANGUAGE "turtle"
+ #define DATA_BASE_URI "http://example.org/"
+-#define QUERY_STRING "select ?x where (?x rdf:type ?y)";
++#define QUERY_STRING "select ?x where (?x rdf:type ?y)"
+ #define QUERY_LANGUAGE "rdql"
+ #define VARIABLES_COUNT 1
+ 
+diff -Nru redland-1.0.14.orig/src/rdf_serializer.c redland-1.0.14/src/rdf_serializer.c
+--- redland-1.0.14.orig/src/rdf_serializer.c	2011-01-25 05:26:00.000000000 +0100
++++ redland-1.0.14/src/rdf_serializer.c	2011-07-29 15:52:29.449251200 +0200
+@@ -915,7 +915,7 @@
+ } LogData;
+ 
+ 
+-static int
++static int REDLAND_CALLBACK_STDCALL
+ log_handler(void *user_data, librdf_log_message *message) 
+ {
+   struct log_data* ld=(struct log_data*)user_data;
+diff -Nru redland-1.0.14.orig/src/rdf_storage_sql.c redland-1.0.14/src/rdf_storage_sql.c
+--- redland-1.0.14.orig/src/rdf_storage_sql.c	2011-01-21 16:56:38.000000000 +0100
++++ redland-1.0.14/src/rdf_storage_sql.c	2011-07-29 15:52:29.452251300 +0200
+@@ -200,7 +200,7 @@
+ {
+   if(!dir)
+     dir=PKGDATADIR;
+-  
++
+   return librdf_new_sql_config(storage->world, storage->factory->name,
+                                layout, dir,
+                                librdf_storage_sql_dbconfig_predicates);
+diff -Nru redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rdf_config.h
+--- redland-1.0.14.orig/src/win32_rdf_config.h	2011-07-24 00:15:31.000000000 +0200
++++ redland-1.0.14/src/win32_rdf_config.h	2011-07-29 15:52:29.454251500 +0200
+@@ -75,40 +75,40 @@
+  */
+ 
+ /* BDB has close method with 2 args */
+-#define HAVE_BDB_CLOSE_2_ARGS 1
++/* #define HAVE_BDB_CLOSE_2_ARGS 1 */
+ 
+ /* BDB defines DBC */
+-#define HAVE_BDB_CURSOR 1
++/* #define HAVE_BDB_CURSOR 1 */
+ 
+ /* BDB cursor method has 4 arguments */
+-#define HAVE_BDB_CURSOR_4_ARGS 1
++/* #define HAVE_BDB_CURSOR_4_ARGS 1 */
+ 
+ /* BDB defines DB_TXN */
+-#define HAVE_BDB_DB_TXN 1
++/* #define HAVE_BDB_DB_TXN 1 */
+ 
+ /* BDB has fd method with 2 args */
+-#define HAVE_BDB_FD_2_ARGS 1
++/* #define HAVE_BDB_FD_2_ARGS 1 *
+ 
+ /* Have BDB hash support */
+-#define HAVE_BDB_HASH 1
++/* #define HAVE_BDB_HASH 1 */
+ 
+ /* BDB has open method with 6 args */
+ /* #undef HAVE_BDB_OPEN_6_ARGS */
+ 
+ /* BDB has open method with 7 args */
+-#define HAVE_BDB_OPEN_7_ARGS 1
++/* #define HAVE_BDB_OPEN_7_ARGS 1 */
+ 
+ /* BDB has set_flags method */
+-#define HAVE_BDB_SET_FLAGS 1
++/* #define HAVE_BDB_SET_FLAGS 1 */
+ 
+ /* BDB has dbopen method */
+ /* #undef HAVE_DBOPEN */
+ 
+ /* BDB has db_create method */
+-#define HAVE_DB_CREATE 1
++/* #define HAVE_DB_CREATE 1 */
+ 
+ /* Define to 1 if you have the <db.h> header file. */
+-#define HAVE_DB_H 1
++/* #define HAVE_DB_H 1 */
+ 
+ /* Define to 1 if you have the <dlfcn.h> header file. */
+ /* undef HAVE_DLFCN_H */
+@@ -129,10 +129,10 @@
+ #define HAVE_GETOPT 1
+ 
+ /* Define to 1 if you have the <getopt.h> header file. */
+-#define HAVE_GETOPT_H 1
++/* #define HAVE_GETOPT_H 1 */
+ 
+ /* Define to 1 if you have the `getopt_long' function. */
+-#define HAVE_GETOPT_LONG 1
++/* #define HAVE_GETOPT_LONG 1 */
+ 
+ /* Define to 1 if you have the `gettimeofday' function. */
+ /* #undef HAVE_GETTIMEOFDAY */
+@@ -162,7 +162,7 @@
+ #define HAVE_MKTEMP 1
+ 
+ /* MySQL libraries are present */
+-#define HAVE_MYSQL 1
++/* #define HAVE_MYSQL 1 */
+ 
+ /* Define to 1 if you have the <openssl/crypto.h> header file. */
+ /* #undef HAVE_OPENSSL_CRYPTO_H */
+diff -Nru redland-1.0.14.orig/utils/rdfproc.c redland-1.0.14/utils/rdfproc.c
+--- redland-1.0.14.orig/utils/rdfproc.c	2011-07-19 04:09:30.000000000 +0200
++++ redland-1.0.14/utils/rdfproc.c	2011-07-29 15:52:29.457251600 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #ifdef WIN32
+-#include <win32_config.h>
++#include <win32_rdf_config.h>
+ #endif
+ 
+ #include <stdio.h>
+@@ -43,7 +43,9 @@
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+ #endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ 
+ #include <redland.h>
+ #include <raptor.h>
+@@ -164,7 +166,7 @@
+ static const char *default_storage_options="hash-type='bdb',dir='.'";
+ 
+ 
+-static int
++static int REDLAND_CALLBACK_STDCALL
+ log_handler(void *user_data, librdf_log_message *message) 
+ {
+   /* int code=message->code; */ /* The error code */
