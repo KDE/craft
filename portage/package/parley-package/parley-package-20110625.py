@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '4.6'
 
     def setDependencies( self ):
-        self.dependencies[ 'kde-4.6/parley' ] = 'default'
+        self.dependencies[ 'kde/parley' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
