@@ -6,9 +6,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20101003"
+        ver = "20110510"
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
-        self.targetDigests['20101003'] = '0658b78d36ab697da611dc184ede7d838270b7c6'
+        self.targetDigests['20110510'] = 'e0b11347ad731cfb0eb364d51750eb63480a17b4'
         self.defaultTarget = ver
 
     def setDependencies( self ):
