@@ -2,43 +2,18 @@
 # copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-from Packager.PackagerBase import *
 import shutil
 import re
 import types
 import fileinput
 from _winreg import * # pylint: disable=F0401
 import compiler
+from CollectionPackagerBase import *
 
-class NSIPackagerLists(object):
-    """ This class provides some staticmethods that can be used as pre defined black or whitelists """
-    @staticmethod
-    def runtimeBlacklist():
-        blacklisted = [ "include\\.*",
-                        "lib\\\\.*\.lib",
-                        "lib\\\\.*\.dll\.a",
-                        "lib\\\\cmake\\.*",
-                        "lib\\\\pkgconfig\\.*" ]
-        ret = []
-        for line in blacklisted:
-            try:
-                exp = re.compile( line )
-                ret.append( exp )
-                utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
-            except re.error:
-                utils.debug( "%s is not a valid regexp" % line, 1 )
-        return ret
+class NSIPackagerLists( PackagerLists ):
+    """ dummy name for PackagerLists """
 
-    @staticmethod
-    def defaultWhitelist():
-        return [ re.compile( ".*" ) ]
-
-    @staticmethod
-    def defaultBlacklist():
-        return []
-
-
-class NullsoftInstallerPackager( PackagerBase ):
+class NullsoftInstallerPackager( CollectionPackagerBase ):
     """
 Packager for Nullsoft scriptable install system
 
@@ -70,11 +45,7 @@ if EMERGE_NOCLEAN is given (e.g. because you call emerge --update --package Pack
 file collection process is skipped, and only the installer is generated.
 """
     def __init__( self, whitelists=None, blacklists=None):
-        PackagerBase.__init__( self )
-        if whitelists is None:
-            whitelists = [ NSIPackagerLists.defaultWhitelist ]
-        if blacklists is None:
-            blacklists = [ NSIPackagerLists.defaultBlacklist ]
+        CollectionPackagerBase.__init__( self, whitelists, blacklists )
         self.nsisInstallPath = None
         self.isInstalled = self.__isInstalled()
         if not self.isInstalled:
@@ -82,28 +53,6 @@ file collection process is skipped, and only the installer is generated.
                        "you can install it using emerge nsis or"
                        "download and install it from "
                        "http://sourceforge.net/projects/nsis/" )
-        self.defines = dict()
-        self.whitelist = []
-        self.blacklist = []
-
-        for entry in whitelists:
-            utils.debug( "reading whitelist: %s" % entry, 2 )
-            if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
-                for line in entry():
-                    self.whitelist.append( line )
-            else:
-                self.read_whitelist( entry )
-        for entry in blacklists:
-            utils.debug( "reading blacklist: %s" % entry, 2 )
-            if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
-                for line in entry():
-                    self.blacklist.append( line )
-            else:
-                self.read_blacklist( entry )
-        utils.debug( "length of blacklist: %s" % len( self.blacklist ), 0 )
-        utils.debug( "length of whitelist: %s" % len( self.whitelist ), 0 )
-
-        self.scriptname = None
 
     def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
@@ -122,6 +71,7 @@ file collection process is skipped, and only the installer is generated.
         [ self.nsisInstallPath, dummyType ] = QueryValueEx( key, "" )
         return True
 
+<<<<<<< HEAD
     def __imageDirPattern( self, package, buildTarget ):
         """ return base directory name for package related image directory """
         directory = "image"
@@ -284,6 +234,8 @@ file collection process is skipped, and only the installer is generated.
           
         
 
+=======
+>>>>>>> 3cce037... first try of implementing a WiX based MS InstallerPackager
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
         if self.package.endswith( "-package" ):
@@ -322,20 +274,8 @@ file collection process is skipped, and only the installer is generated.
     def createPackage( self ):
         """ create a package """
         print "packaging using the NullsoftInstallerPackager"
-        if not utils.envAsBool("EMERGE_NOCLEAN"):
-            utils.debug( "cleaning imagedir: %s" % self.imageDir() )
-            utils.cleanDirectory( self.imageDir() )
-            for directory, mergeDir in self.__getImageDirectories():
-                imageDir = self.imageDir()
-                if mergeDir:
-                    imageDir = os.path.join( imageDir, mergeDir )
-                if os.path.exists( directory ):
-                    self.copyFiles(directory, imageDir)
-                else:
-                    utils.die( "image directory %s does not exist!" % directory )
-
-        if not os.path.exists( self.imageDir() ):
-            os.makedirs( self.imageDir() )
+        
+        self.internalCreatePackage()
 
         self.generateNSISInstaller()
         return True
