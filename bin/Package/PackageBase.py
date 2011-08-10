@@ -4,6 +4,7 @@
 
 from EmergeBase import *
 from InstallDB import *
+from compiler import *
 
 class PackageBase (EmergeBase):
     """
@@ -200,7 +201,8 @@ class PackageBase (EmergeBase):
         return True
 
     def stripLibs( self, pkgName ):
-        """strip debugging informations from shared libraries"""
+        """strip debugging informations from shared libraries - mingw only!!! """
+        if not isMinGW(): return True
         basepath = os.path.join( self.installDir() )
         dllpath = os.path.join( basepath, "bin", "%s.dll" % pkgName )
 
