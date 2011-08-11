@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         for ver in ['1.0.14']:
             self.targets[ ver ] = 'http://download.librdf.org/source/redland-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'redland-' + ver
-        self.patchToApply[ '1.0.14' ] = ( 'redland-1.0.14-20110729.diff', 1 )
+        self.patchToApply[ '1.0.14' ] = ( 'redland-1.0.14-20110811.diff', 1 )
         self.targetDigests['1.0.14'] = '2561bf73f00f88e39f5c7b3a9b78f8d4ce7da955'
         self.shortDescription = "Resource Description Framework (RDF)"
         self.defaultTarget = '1.0.14'

@@ -1,6 +1,232 @@
+Binary files redland-1.0.14.orig/.CMakeLists.txt.swp and redland-1.0.14/.CMakeLists.txt.swp differ
+diff -Nru redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.txt
+--- redland-1.0.14.orig/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/CMakeLists.txt	2011-08-11 09:29:02.751661279 +0000
+@@ -0,0 +1,190 @@
++project(librdf)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(REDLAND_VERSION_MAJOR 1)
++set(REDLAND_VERSION_MINOR 0)
++set(REDLAND_VERSION_RELEASE 14)
++set(VERSION ${REDLAND_VERSION_MAJOR}.${REDLAND_VERSION_MINOR}.${REDLAND_VERSION_RELEASE})
++math(EXPR REDLAND_VERSION_DECIMAL "${REDLAND_VERSION_MAJOR} * 10000 + ${REDLAND_VERSION_MINOR} * 100 + ${REDLAND_VERSION_RELEASE}")
++
++
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
++find_package(PThreadsWin32 REQUIRED)
++find_package(Raptor 2.0 REQUIRED)
++find_package(Rasqal REQUIRED)
++find_package(Sqlite REQUIRED)
++
++option(BUILD_STATIC "build a static librdf" OFF)
++option(BUILD_TESTS "build test executables for rdf" ON)
++option(BUILD_TOOLS "build tools for librdf" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif(BUILD_TESTS)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
++endif(MSVC)
++include_directories(
++    src
++    utils
++    ${PTHREADS_WIN32_INCLUDE_DIR}
++    ${RAPTOR_INCLUDE_DIR}
++    ${RASQAL_INCLUDE_DIR}
++    ${SQLITE_INCLUDE_DIR}
++)
++
++set(librdf_SRCS
++    src/rdf_init.c
++    src/rdf_raptor.c
++    src/rdf_uri.c
++    src/rdf_digest.c
++    src/rdf_hash.c
++    src/rdf_hash_cursor.c
++    src/rdf_hash_memory.c
++    src/rdf_model.c
++    src/rdf_model_storage.c
++    src/rdf_iterator.c
++    src/rdf_concepts.c
++    src/rdf_list.c
++    src/rdf_storage.c
++    src/rdf_storage_sql.c
++    src/rdf_stream.c
++    src/rdf_parser.c
++    src/rdf_parser_raptor.c
++    src/rdf_heuristics.c
++    src/rdf_files.c
++    src/rdf_utf8.c
++    src/rdf_query.c
++    src/rdf_query_results.c
++    src/rdf_query_rasqal.c
++    src/rdf_serializer.c
++    src/rdf_serializer_raptor.c
++    src/rdf_log.c
++    src/rdf_node_common.c
++    src/rdf_statement_common.c
++    src/rdf_node.c
++    src/rdf_statement.c
++    src/rdf_digest_md5.c
++    src/rdf_digest_sha1.c
++    src/rdf_parser_raptor.c
++    src/rdf_storage_list.c
++    src/rdf_storage_hashes.c
++    src/rdf_storage_trees.c
++    src/rdf_storage_file.c
++# theoretically it should be possible to build all storages, but we don't care I think
++    src/rdf_storage_sqlite.c
++)
++#    src/rdf_hash_bdb.c
++
++set(rdf_HDRS 
++    src/redland.h
++    src/librdf.h
++    src/rdf_init.h
++    src/rdf_raptor.h
++    src/rdf_uri.h
++    src/rdf_node.h
++    src/rdf_statement.h
++    src/rdf_concepts.h
++    src/rdf_model.h
++    src/rdf_iterator.h
++    src/rdf_storage.h
++    src/rdf_storage_module.h
++    src/rdf_stream.h
++    src/rdf_parser.h
++    src/rdf_utf8.h
++    src/rdf_query.h
++    src/rdf_serializer.h
++    src/rdf_log.h
++    src/rdf_digest.h
++    src/rdf_hash.h
++    src/rdf_list.h
++)
++
++add_definitions(-DPKGDATADIR="\"\"" -DLIBRDF_INTERNAL)
++
++if(BUILD_STATIC)
++    set(_SHARED STATIC)
++    add_definitions(-DREDLAND_STATIC)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++endif(BUILD_STATIC)
++
++add_library(rdf ${_SHARED} ${librdf_SRCS})
++set_target_properties(rdf PROPERTIES DEFINE_SYMBOL LIBRDF_EXPORTS)
++target_link_libraries(rdf ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++
++# Dummy redland config is necessary for several find redland scripts
++set(PROGRAMM redland)
++add_definitions(-Dredland_version_string="${VERSION}" -Dredland_version_decimal=${REDLAND_VERSION_DECIMAL})
++configure_file(${CMAKE_SOURCE_DIR}/cmake/config.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/redland-config.cpp)
++add_executable(redland-config ${CMAKE_CURRENT_BINARY_DIR}/redland-config.cpp)
++target_link_libraries(redland-config rdf)
++
++set(_TARGETS
++   rdf
++   redland-config)
++
++###############################################################################
++if(BUILD_TESTS OR BUILD_TOOLS)
++    add_library(rdf_static STATIC ${librdf_SRCS})
++    set_target_properties(rdf_static PROPERTIES COMPILE_FLAGS -DREDLAND_STATIC)
++endif(BUILD_TESTS OR BUILD_TOOLS)
++
++if(BUILD_TOOLS)
++    set(rdfproc_SRCS
++        utils/rdfproc.c
++    )
++    if(MSVC)
++        list(APPEND rdfproc_SRCS utils/getopt.c)
++    endif(MSVC)
++    add_executable(rdfproc ${rdfproc_SRCS})
++    set_target_properties(rdfproc PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
++    target_link_libraries(rdfproc rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++
++    set(redland_db_upgrade_SRCS
++        utils/db_upgrade.c
++    )
++    if(MSVC)
++        list(APPEND redland_db_upgrade_SRCS utils/getopt.c)
++    endif(MSVC)
++    add_executable(redland-db-upgrade ${redland_db_upgrade_SRCS})
++    set_target_properties(redland-db-upgrade PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
++    target_link_libraries(redland-db-upgrade rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++    list(APPEND _TARGETS rdfproc redland-db-upgrade)
++endif(BUILD_TOOLS)
++
++if(BUILD_TESTS)
++    set(rdf_TESTS
++        rdf_node
++        rdf_digest
++        rdf_hash
++        rdf_uri
++        rdf_statement
++        rdf_model
++        rdf_storage
++        rdf_parser
++        rdf_files
++        rdf_heuristics
++        rdf_utf8
++        rdf_concepts
++        rdf_query
++        rdf_serializer
++        rdf_stream
++        rdf_iterator
++        rdf_init
++    )
++    
++    foreach(_test ${rdf_TESTS})
++        add_executable(${_test} src/${_test}.c)
++        set_target_properties(${_test} PROPERTIES COMPILE_FLAGS "-DSTANDALONE -DREDLAND_STATIC")
++        target_link_libraries(${_test} rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
++        add_test(${_test} ${_test})
++    endforeach(_test ${rdf_TESTS})
++endif(BUILD_TESTS)
++###############################################################################
++install(TARGETS ${_TARGETS} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++install(FILES ${rdf_HDRS} DESTINATION include/redland)
+diff -Nru redland-1.0.14.orig/cmake/config.cpp.in redland-1.0.14/cmake/config.cpp.in
+--- redland-1.0.14.orig/cmake/config.cpp.in	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/config.cpp.in	2011-08-11 09:07:24.451341506 +0000
+@@ -0,0 +1,27 @@
++#include <stdio.h>
++#include <string.h>
++#include <@PROGRAMM@.h>
++
++int main(int argc, char **argv)
++{
++    if(argc != 2)
++        return 1;
++    if(strcmp(argv[1], "--version") == 0) {
++        fprintf(stdout, "%s", @PROGRAMM@_version_string);
++        return 0;
++    }
++    if(strcmp(argv[1], "--version-decimal") == 0) {
++        fprintf(stdout, "%d", @PROGRAMM@_version_decimal);
++        return 0;
++    }
++    if(strcmp(argv[1], "--cflags") == 0) {
++        fprintf(stdout, "\n");
++        return 0;
++    }
++    if(strcmp(argv[1], "--libs") == 0) {
++        fprintf(stdout, "\n");
++        return 0;
++    }
++    return 1;
++}
++
 diff -Nru redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake
---- redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake	2011-07-29 15:52:29.405248700 +0200
+--- redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,112 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -115,8 +341,8 @@ diff -Nru redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake redland-1
 +
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
 diff -Nru redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake
---- redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake	2011-07-29 15:52:29.408248800 +0200
+--- redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,18 @@
 +# - Find the native PThreadsWin32 includes and library
 +#
@@ -137,8 +363,8 @@ diff -Nru redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake redland-1.0.
 +
 +mark_as_advanced(PTHREADS_WIN32_INCLUDE_DIR PTHREADS_WIN32_LIBRARIES)
 diff -Nru redland-1.0.14.orig/cmake/modules/FindRaptor.cmake redland-1.0.14/cmake/modules/FindRaptor.cmake
---- redland-1.0.14.orig/cmake/modules/FindRaptor.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindRaptor.cmake	2011-07-29 15:52:29.410248900 +0200
+--- redland-1.0.14.orig/cmake/modules/FindRaptor.cmake	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/modules/FindRaptor.cmake	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,100 @@
 +# - Try to find the Raptor RDF parsing library (http://librdf.org/raptor/)
 +# Once done this will define
@@ -241,8 +467,8 @@ diff -Nru redland-1.0.14.orig/cmake/modules/FindRaptor.cmake redland-1.0.14/cmak
 +endif ()
 +
 diff -Nru redland-1.0.14.orig/cmake/modules/FindRasqal.cmake redland-1.0.14/cmake/modules/FindRasqal.cmake
---- redland-1.0.14.orig/cmake/modules/FindRasqal.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindRasqal.cmake	2011-07-29 15:52:29.433250300 +0200
+--- redland-1.0.14.orig/cmake/modules/FindRasqal.cmake	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/modules/FindRasqal.cmake	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,18 @@
 +# - Find the native Rasqal includes and library
 +#
@@ -263,8 +489,8 @@ diff -Nru redland-1.0.14.orig/cmake/modules/FindRasqal.cmake redland-1.0.14/cmak
 +
 +mark_as_advanced(RASQAL_INCLUDE_DIR RASQAL_LIBRARIES)
 diff -Nru redland-1.0.14.orig/cmake/modules/FindSqlite.cmake redland-1.0.14/cmake/modules/FindSqlite.cmake
---- redland-1.0.14.orig/cmake/modules/FindSqlite.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindSqlite.cmake	2011-07-29 15:52:29.435250400 +0200
+--- redland-1.0.14.orig/cmake/modules/FindSqlite.cmake	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/modules/FindSqlite.cmake	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,50 @@
 +# - Try to find Sqlite
 +# Once done this will define
@@ -317,8 +543,8 @@ diff -Nru redland-1.0.14.orig/cmake/modules/FindSqlite.cmake redland-1.0.14/cmak
 +mark_as_advanced(SQLITE_INCLUDE_DIR SQLITE_LIBRARIES )
 +
 diff -Nru redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake
---- redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake	2011-07-29 15:52:29.436250400 +0200
+--- redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,71 @@
 +# This macro compares version numbers of the form "x.y.z"
 +# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
@@ -391,187 +617,9 @@ diff -Nru redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake redland-1.0
 +    endif (found_vers_num LESS req_vers_num)
 +
 +ENDMACRO(MACRO_ENSURE_VERSION2)
-diff -Nru redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.txt
---- redland-1.0.14.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/CMakeLists.txt	2011-07-29 15:52:29.438250500 +0200
-@@ -0,0 +1,173 @@
-+project(librdf)
-+
-+cmake_minimum_required(VERSION 2.8)
-+
-+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-+find_package(PThreadsWin32 REQUIRED)
-+find_package(Raptor 2.0 REQUIRED)
-+find_package(Rasqal REQUIRED)
-+find_package(Sqlite REQUIRED)
-+
-+option(BUILD_STATIC "build a static librdf" OFF)
-+option(BUILD_TESTS "build test executables for rdf" ON)
-+option(BUILD_TOOLS "build tools for librdf" ON)
-+
-+if(BUILD_TESTS)
-+    enable_testing()
-+endif(BUILD_TESTS)
-+
-+if(MSVC)
-+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
-+endif(MSVC)
-+include_directories(
-+    src
-+    utils
-+    ${PTHREADS_WIN32_INCLUDE_DIR}
-+    ${RAPTOR_INCLUDE_DIR}
-+    ${RASQAL_INCLUDE_DIR}
-+    ${SQLITE_INCLUDE_DIR}
-+)
-+
-+set(librdf_SRCS
-+    src/rdf_init.c
-+    src/rdf_raptor.c
-+    src/rdf_uri.c
-+    src/rdf_digest.c
-+    src/rdf_hash.c
-+    src/rdf_hash_cursor.c
-+    src/rdf_hash_memory.c
-+    src/rdf_model.c
-+    src/rdf_model_storage.c
-+    src/rdf_iterator.c
-+    src/rdf_concepts.c
-+    src/rdf_list.c
-+    src/rdf_storage.c
-+    src/rdf_storage_sql.c
-+    src/rdf_stream.c
-+    src/rdf_parser.c
-+    src/rdf_parser_raptor.c
-+    src/rdf_heuristics.c
-+    src/rdf_files.c
-+    src/rdf_utf8.c
-+    src/rdf_query.c
-+    src/rdf_query_results.c
-+    src/rdf_query_rasqal.c
-+    src/rdf_serializer.c
-+    src/rdf_serializer_raptor.c
-+    src/rdf_log.c
-+    src/rdf_node_common.c
-+    src/rdf_statement_common.c
-+    src/rdf_node.c
-+    src/rdf_statement.c
-+    src/rdf_digest_md5.c
-+    src/rdf_digest_sha1.c
-+    src/rdf_parser_raptor.c
-+    src/rdf_storage_list.c
-+    src/rdf_storage_hashes.c
-+    src/rdf_storage_trees.c
-+    src/rdf_storage_file.c
-+# theoretically it should be possible to build all storages, but we don't care I think
-+    src/rdf_storage_sqlite.c
-+)
-+#    src/rdf_hash_bdb.c
-+
-+set(rdf_HDRS 
-+    src/redland.h
-+    src/librdf.h
-+    src/rdf_init.h
-+    src/rdf_raptor.h
-+    src/rdf_uri.h
-+    src/rdf_node.h
-+    src/rdf_statement.h
-+    src/rdf_concepts.h
-+    src/rdf_model.h
-+    src/rdf_iterator.h
-+    src/rdf_storage.h
-+    src/rdf_storage_module.h
-+    src/rdf_stream.h
-+    src/rdf_parser.h
-+    src/rdf_utf8.h
-+    src/rdf_query.h
-+    src/rdf_serializer.h
-+    src/rdf_log.h
-+    src/rdf_digest.h
-+    src/rdf_hash.h
-+    src/rdf_list.h
-+)
-+
-+add_definitions(-DPKGDATADIR="\"\"" -DLIBRDF_INTERNAL)
-+
-+if(BUILD_STATIC)
-+    set(_SHARED STATIC)
-+    add_definitions(-DREDLAND_STATIC)
-+else(BUILD_STATIC)
-+    set(_SHARED SHARED)
-+endif(BUILD_STATIC)
-+
-+add_library(rdf ${_SHARED} ${librdf_SRCS})
-+set(_TARGETS rdf)
-+set_target_properties(rdf PROPERTIES DEFINE_SYMBOL LIBRDF_EXPORTS)
-+target_link_libraries(rdf ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
-+
-+###############################################################################
-+if(BUILD_TESTS OR BUILD_TOOLS)
-+    add_library(rdf_static STATIC ${librdf_SRCS})
-+    set_target_properties(rdf_static PROPERTIES COMPILE_FLAGS -DREDLAND_STATIC)
-+endif(BUILD_TESTS OR BUILD_TOOLS)
-+
-+if(BUILD_TOOLS)
-+    set(rdfproc_SRCS
-+        utils/rdfproc.c
-+    )
-+    if(MSVC)
-+        list(APPEND rdfproc_SRCS utils/getopt.c)
-+    endif(MSVC)
-+    add_executable(rdfproc ${rdfproc_SRCS})
-+    set_target_properties(rdfproc PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
-+    target_link_libraries(rdfproc rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
-+
-+    set(redland_db_upgrade_SRCS
-+        utils/db_upgrade.c
-+    )
-+    if(MSVC)
-+        list(APPEND redland_db_upgrade_SRCS utils/getopt.c)
-+    endif(MSVC)
-+    add_executable(redland-db-upgrade ${redland_db_upgrade_SRCS})
-+    set_target_properties(redland-db-upgrade PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
-+    target_link_libraries(redland-db-upgrade rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
-+    list(APPEND _TARGETS rdfproc redland-db-upgrade)
-+endif(BUILD_TOOLS)
-+
-+if(BUILD_TESTS)
-+    set(rdf_TESTS
-+        rdf_node
-+        rdf_digest
-+        rdf_hash
-+        rdf_uri
-+        rdf_statement
-+        rdf_model
-+        rdf_storage
-+        rdf_parser
-+        rdf_files
-+        rdf_heuristics
-+        rdf_utf8
-+        rdf_concepts
-+        rdf_query
-+        rdf_serializer
-+        rdf_stream
-+        rdf_iterator
-+        rdf_init
-+    )
-+    
-+    foreach(_test ${rdf_TESTS})
-+        add_executable(${_test} src/${_test}.c)
-+        set_target_properties(${_test} PROPERTIES COMPILE_FLAGS "-DSTANDALONE -DREDLAND_STATIC")
-+        target_link_libraries(${_test} rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
-+        add_test(${_test} ${_test})
-+    endforeach(_test ${rdf_TESTS})
-+endif(BUILD_TESTS)
-+###############################################################################
-+install(TARGETS ${_TARGETS} RUNTIME DESTINATION bin
-+                            LIBRARY DESTINATION lib
-+                            ARCHIVE DESTINATION lib)
-+install(FILES ${rdf_HDRS} DESTINATION include/redland)
-\ Kein Zeilenumbruch am Dateiende.
 diff -Nru redland-1.0.14.orig/src/CMakeLists.txt redland-1.0.14/src/CMakeLists.txt
---- redland-1.0.14.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/src/CMakeLists.txt	2011-07-29 15:52:29.440250700 +0200
+--- redland-1.0.14.orig/src/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
++++ redland-1.0.14/src/CMakeLists.txt	2011-08-11 09:03:05.551458941 +0000
 @@ -0,0 +1,6 @@
 +set(teststr "teststr")
 +if(${teststr} STREQUAL "test" OR MSVC)
@@ -579,10 +627,10 @@ diff -Nru redland-1.0.14.orig/src/CMakeLists.txt redland-1.0.14/src/CMakeLists.t
 +else()
 +message(STATUS "failed")
 +endif()
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru redland-1.0.14.orig/src/librdf.h redland-1.0.14/src/librdf.h
---- redland-1.0.14.orig/src/librdf.h	2011-07-24 00:15:31.000000000 +0200
-+++ redland-1.0.14/src/librdf.h	2011-07-29 15:52:29.441250700 +0200
+--- redland-1.0.14.orig/src/librdf.h	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/src/librdf.h	2011-08-11 09:03:05.551458941 +0000
 @@ -52,7 +52,7 @@
  #    ifdef REDLAND_STATIC
  #      define REDLAND_API
@@ -593,8 +641,8 @@ diff -Nru redland-1.0.14.orig/src/librdf.h redland-1.0.14/src/librdf.h
  #      else
  #        define REDLAND_API _declspec(dllimport)
 diff -Nru redland-1.0.14.orig/src/rdf_model.c redland-1.0.14/src/rdf_model.c
---- redland-1.0.14.orig/src/rdf_model.c	2011-07-23 09:18:52.000000000 +0200
-+++ redland-1.0.14/src/rdf_model.c	2011-07-29 15:52:29.445250900 +0200
+--- redland-1.0.14.orig/src/rdf_model.c	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/src/rdf_model.c	2011-08-11 09:03:05.551458941 +0000
 @@ -2028,6 +2028,8 @@
    int remove_count=0;
    int status=0;
@@ -614,8 +662,8 @@ diff -Nru redland-1.0.14.orig/src/rdf_model.c redland-1.0.14/src/rdf_model.c
  
    literal[4]='0';
 diff -Nru redland-1.0.14.orig/src/rdf_query.c redland-1.0.14/src/rdf_query.c
---- redland-1.0.14.orig/src/rdf_query.c	2011-07-19 04:09:30.000000000 +0200
-+++ redland-1.0.14/src/rdf_query.c	2011-07-29 15:52:29.447251100 +0200
+--- redland-1.0.14.orig/src/rdf_query.c	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/src/rdf_query.c	2011-08-11 09:03:05.551458941 +0000
 @@ -656,7 +656,7 @@
  "
  #define DATA_LANGUAGE "turtle"
@@ -626,8 +674,8 @@ diff -Nru redland-1.0.14.orig/src/rdf_query.c redland-1.0.14/src/rdf_query.c
  #define VARIABLES_COUNT 1
  
 diff -Nru redland-1.0.14.orig/src/rdf_serializer.c redland-1.0.14/src/rdf_serializer.c
---- redland-1.0.14.orig/src/rdf_serializer.c	2011-01-25 05:26:00.000000000 +0100
-+++ redland-1.0.14/src/rdf_serializer.c	2011-07-29 15:52:29.449251200 +0200
+--- redland-1.0.14.orig/src/rdf_serializer.c	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/src/rdf_serializer.c	2011-08-11 09:03:05.551458941 +0000
 @@ -915,7 +915,7 @@
  } LogData;
  
@@ -638,8 +686,8 @@ diff -Nru redland-1.0.14.orig/src/rdf_serializer.c redland-1.0.14/src/rdf_serial
  {
    struct log_data* ld=(struct log_data*)user_data;
 diff -Nru redland-1.0.14.orig/src/rdf_storage_sql.c redland-1.0.14/src/rdf_storage_sql.c
---- redland-1.0.14.orig/src/rdf_storage_sql.c	2011-01-21 16:56:38.000000000 +0100
-+++ redland-1.0.14/src/rdf_storage_sql.c	2011-07-29 15:52:29.452251300 +0200
+--- redland-1.0.14.orig/src/rdf_storage_sql.c	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/src/rdf_storage_sql.c	2011-08-11 09:03:05.551458941 +0000
 @@ -200,7 +200,7 @@
  {
    if(!dir)
@@ -650,8 +698,8 @@ diff -Nru redland-1.0.14.orig/src/rdf_storage_sql.c redland-1.0.14/src/rdf_stora
                                 layout, dir,
                                 librdf_storage_sql_dbconfig_predicates);
 diff -Nru redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rdf_config.h
---- redland-1.0.14.orig/src/win32_rdf_config.h	2011-07-24 00:15:31.000000000 +0200
-+++ redland-1.0.14/src/win32_rdf_config.h	2011-07-29 15:52:29.454251500 +0200
+--- redland-1.0.14.orig/src/win32_rdf_config.h	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/src/win32_rdf_config.h	2011-08-11 09:03:05.551458941 +0000
 @@ -75,40 +75,44 @@
   */
  
@@ -707,7 +755,7 @@ diff -Nru redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rd
  
  /* Define to 1 if you have the <dlfcn.h> header file. */
  /* undef HAVE_DLFCN_H */
-@@ -129,10 +129,10 @@
+@@ -129,10 +133,10 @@
  #define HAVE_GETOPT 1
  
  /* Define to 1 if you have the <getopt.h> header file. */
@@ -720,7 +768,7 @@ diff -Nru redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rd
  
  /* Define to 1 if you have the `gettimeofday' function. */
  /* #undef HAVE_GETTIMEOFDAY */
-@@ -162,7 +162,7 @@
+@@ -162,7 +166,7 @@
  #define HAVE_MKTEMP 1
  
  /* MySQL libraries are present */
@@ -730,8 +778,8 @@ diff -Nru redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rd
  /* Define to 1 if you have the <openssl/crypto.h> header file. */
  /* #undef HAVE_OPENSSL_CRYPTO_H */
 diff -Nru redland-1.0.14.orig/utils/rdfproc.c redland-1.0.14/utils/rdfproc.c
---- redland-1.0.14.orig/utils/rdfproc.c	2011-07-19 04:09:30.000000000 +0200
-+++ redland-1.0.14/utils/rdfproc.c	2011-07-29 15:52:29.457251600 +0200
+--- redland-1.0.14.orig/utils/rdfproc.c	2011-08-11 09:00:23.881216473 +0000
++++ redland-1.0.14/utils/rdfproc.c	2011-08-11 09:03:05.551458941 +0000
 @@ -28,7 +28,7 @@
  #endif
  
