@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/automoc'] = 'default'
         self.dependencies['enterprise5/soprano-e5'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'
+        self.dependencies['win32libs-bin/boost-program-options'] = 'default'
         self.dependencies['win32libs-bin/libxslt'] = 'default'
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
