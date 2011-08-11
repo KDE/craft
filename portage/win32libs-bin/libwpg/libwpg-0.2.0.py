@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision gitfa7e01c083f43b9c52ed139186fd8f19c54559db
+# based on revision git8d98549fa35d1051e68f25f7d709440a5ea796a7
 
 from Package.BinaryPackageBase import *
 import os
@@ -21,6 +21,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/libwpd' ] = 'default'
 
 
     def setBuildOptions( self ):

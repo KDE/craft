@@ -12,6 +12,7 @@ class subinfo( info.infoclass ):
     
     def setDependencies( self ):
         self.dependencies[ 'qt-apps/qewitter' ] = 'default'
+        self.dependencies[ 'kde/kde-workspace' ] = 'default'#oxygen
         self.dependencies[ 'libs/runtime' ] = 'default'
     
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):

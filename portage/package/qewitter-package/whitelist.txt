@@ -28,3 +28,5 @@ bin\\libqewitter.dll
 #boost
 bin\\.*boost_system*
 bin\\.*boost_thread*
+#
+.*oxygen.dll
