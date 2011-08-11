@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base']            = 'default'
         self.dependencies['libs/qt']                 = 'default'
-        self.dependencies['win32libs-bin/redland']   = 'default'
+        self.dependencies['win32libs-sources/librdf-src']   = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
             self.dependencies['testing/virtuoso']   = 'default'
@@ -23,9 +23,7 @@ class subinfo(info.infoclass):
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/soprano'
         self.shortDescription = "a RDF storage solutions library"
-        # 2.6.0 is the last version needing raptor 1 to update to a later version
-        # you need also to update librdf librasqual and libraptor2
-        self.defaultTarget = '2.6.0'
+        self.defaultTarget = 'gitHEAD'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
