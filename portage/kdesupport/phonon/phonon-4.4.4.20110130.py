@@ -4,7 +4,7 @@ import emergePlatform
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/automoc'] = 'default'
+        self.buildDependencies['win32libs-bin/automoc'] = 'default'
         self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):

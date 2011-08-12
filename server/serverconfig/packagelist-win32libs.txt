@@ -6,13 +6,13 @@
 # is equivalent to emerge --target=1.4.0 --patchlevel=1 win32libs-sources/dbus-src
 #
 win32libs-sources,win_iconv-src,,
-win32libs-sources,zlib-src,,
+win32libs-sources,zlib-src,,1
 win32libs-sources,gettext-src,,
-win32libs-sources,libxml2-src,,
+win32libs-sources,libxml2-src,,1
 win32libs-sources,shared-mime-info-src,,1
 win32libs-sources,libxslt-src,,
 win32libs-sources,expat-src,,
-win32libs-sources,dbus-src,1.4.1,2
+win32libs-sources,dbus-src,1.4.10,
 win32libs-sources,jpeg-src,,
 win32libs-sources,lcms-src,,2
 win32libs-sources,libbzip2-src,,
@@ -29,7 +29,11 @@ win32libs-sources,openssl-src,,
 win32libs-sources,redland-src,,
 win32libs-sources,libssh-src,,1
 win32libs-sources,exiv2-src,,2
-win32libs-sources,boost-src,,2
+win32libs-sources,boost-src,,3
+win32libs-sources,boost-python-src,,
+win32libs-sources,boost-program-options-src,,
+win32libs-sources,boost-thread-src,,
+win32libs-sources,boost-system-src,,
 win32libs-sources,chm-src,,
 win32libs-sources,djvu-src,,
 win32libs-sources,libzip-src,,
@@ -53,7 +57,7 @@ win32libs-sources,openslp-src,,
 win32libs-sources,libbfd-src,,
 win32libs-sources,freetype-src,,2
 win32libs-sources,libmsn-src,,2
-win32libs-sources,taglib-src,1.6.3,
+win32libs-sources,taglib-src,1.7,
 win32libs-sources,taglib-extras-src,,
 win32libs-sources,openjpeg-src,,2
 win32libs-sources,libnova-src,,
@@ -61,4 +65,13 @@ win32libs-sources,libopensp-src,,
 win32libs-sources,libofx-src,,
 win32libs-sources,mpir-src,,
 win32libs-sources,automoc-src,,
+win32libs-sources,glee-src,,
+win32libs-sources,libwpd-src,,
+win32libs-sources,libwpg-src,,
+win32libs-sources,cryptopp-src,,1
+win32libs-sources,librdf-src,,
+win32libs-sources,raptor2-src,,
+win32libs-sources,rasqal-src,,
+win32libs-sources,pthreads-src,,
+win32libs-sources,yajl-src,1.0.12,
 libs,runtime,,

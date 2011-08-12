@@ -24,11 +24,13 @@ import subprocess
 import re
 import inspect
 import types
+import datetime
+from operator import itemgetter
 
 if os.name == 'nt':
     import msvcrt # pylint: disable=F0401
 else:
-    import fcntl
+    import fcntl # pylint: disable=F0401
 
 import ConfigParser
 
@@ -1130,6 +1132,9 @@ def rmtree( directory ):
 def copyFile(src, dest):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
+    destDir = os.path.dirname(dest)
+    if not os.path.exists(destDir):
+        os.makedirs(destDir)
     shutil.copy( src, dest )
     return True
 
@@ -1317,34 +1322,51 @@ def envAsBool(key, default=False):
         return default
 
 _TIMERS = dict()
-import datetime
-import time
-from operator import itemgetter
-
 def startTimer(name, level = 0):
-    global _TIMERS
+    """starts a timer for meassurement"""
     if name in _TIMERS:
         die("%s already in timers" % name)
-    _TIMERS[name] = (datetime.datetime.now(),level)
+    _TIMERS[name] = (datetime.datetime.now() , level)
     if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         print "Task: %s started" % name
         sys.stdout.flush()
     
 def stopTimer(name):
-    global _TIMERS
+    """stops a timer for meassurement"""
     if not name in _TIMERS:
         debug("%s not in timers" % name)
         return
-    (startTime,level) = _TIMERS[name]
+    startTime , level = _TIMERS[name]
     if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
-        print "Task: %s stopped after: %s" % (name, delta)
+        print "Task: %s stopped after: %s" % (name , delta)
         sys.stdout.flush()
     del _TIMERS[name]
     
 
 def stopAllTimer():
-    global _TIMERS
-    keys = sorted(_TIMERS.items(),key=itemgetter(1),reverse=True)
-    for key,_ in keys:
+    """stops all timer for meassurement"""
+    keys = sorted(_TIMERS.items() , key=itemgetter(1) , reverse=True)
+    for key , _ in keys:
         stopTimer(key)
+
+_SUBST = None
+def deSubstPath(path):
+    """desubstitude emerge short path"""
+    global _SUBST # pylint: disable=W0603
+    drive , tail = os.path.splitdrive(path)
+    drive = drive.upper()
+    if _SUBST == None:
+        tmp = subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0].split("\r\n")
+        _SUBST = dict()
+        for s in tmp:
+            if s != "":
+                key , val = s.split("\\: => ")
+                _SUBST[key] = val
+    if drive in _SUBST.keys():
+        deSubst = _SUBST[drive] + tail
+        debug("desubstituded %s to %s" % (path , deSubst) , 1)
+        return deSubst
+    return path
+
+    

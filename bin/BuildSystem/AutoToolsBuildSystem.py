@@ -71,6 +71,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         # adding Targets later
         if self.buildInSource:
+            if not self.shell.execute(self.sourceDir(), self.makeProgram , "clean"):
+                utils.die( "while Make'ing. cmd: %s clean" % self.makeProgram)
             if not self.shell.execute(self.sourceDir(), command, args ):
                 utils.die( "while Make'ing. cmd: %s" % command )
         else:

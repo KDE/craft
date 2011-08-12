@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-        self.buildDependencies['dev-util/automoc'] = 'default'
+        self.buildDependencies['win32libs-bin/automoc'] = 'default'
         self.dependencies['kdesupport/kdewin'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'

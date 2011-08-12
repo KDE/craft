@@ -9,12 +9,13 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['testing/openal-soft-src'] = 'default'
-        self.hardDependencies['win32libs-sources/libsndfile-src'] = 'default'
-        self.hardDependencies['win32libs-sources/glee-src'] = 'default'
-        self.hardDependencies['testing/alure-src'] = 'default'
-        self.hardDependencies['testing/glew-src'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['testing/openal-soft-src'] = 'default'
+        self.dependencies['win32libs-bin/libsndfile'] = 'default'
+        self.dependencies['win32libs-bin/glee'] = 'default'
+        self.dependencies['testing/alure-src'] = 'default'
+        self.dependencies['testing/glew-src'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

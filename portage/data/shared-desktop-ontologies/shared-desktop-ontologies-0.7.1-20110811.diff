@@ -1,0 +1,39 @@
+diff -Nru shared-desktop-ontologies-0.7.1.orig/ndo/ndo.trig.in shared-desktop-ontologies-0.7.1/ndo/ndo.trig.in
+--- shared-desktop-ontologies-0.7.1.orig/ndo/ndo.trig.in	2011-06-14 19:18:03.000000000 +0000
++++ shared-desktop-ontologies-0.7.1/ndo/ndo.trig.in	2011-08-11 15:28:06.091662331 +0000
+@@ -86,8 +86,7 @@
+         rdfs:range nie:InformationElement .
+ }
+ 
+-<http://www.semanticdesktop.org/ontologies/2010/04/30/ndo/metadata>
+-{
++<http://www.semanticdesktop.org/ontologies/2010/04/30/ndo/metadata>{
+     ndo:
+           a       nrl:DocumentGraph , nrl:KnowledgeBase ;
+           nao:hasDefaultNamespace "http://www.semanticdesktop.org/ontologies/2010/04/30/ndo#" ;
+diff -Nru shared-desktop-ontologies-0.7.1.orig/nmm/nmm.trig.in shared-desktop-ontologies-0.7.1/nmm/nmm.trig.in
+--- shared-desktop-ontologies-0.7.1.orig/nmm/nmm.trig.in	2011-06-14 19:18:03.000000000 +0000
++++ shared-desktop-ontologies-0.7.1/nmm/nmm.trig.in	2011-08-11 15:27:05.000993125 +0000
+@@ -305,8 +305,7 @@
+     nrl:maxCardinality 1 .
+ }
+ 
+-<http://www.semanticdesktop.org/ontologies/2009/02/19/nmm/metadata>
+-{
++<http://www.semanticdesktop.org/ontologies/2009/02/19/nmm/metadata>{
+     nmm:
+           a       nrl:DocumentGraph , nrl:Ontology ;
+           nao:hasDefaultNamespace "http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#" ;
+diff -Nru shared-desktop-ontologies-0.7.1.orig/nuao/nuao.trig.in shared-desktop-ontologies-0.7.1/nuao/nuao.trig.in
+--- shared-desktop-ontologies-0.7.1.orig/nuao/nuao.trig.in	2011-06-14 19:18:03.000000000 +0000
++++ shared-desktop-ontologies-0.7.1/nuao/nuao.trig.in	2011-08-11 15:27:31.561000031 +0000
+@@ -206,8 +206,7 @@
+ 
+ }
+ 
+-<http://www.semanticdesktop.org/ontologies/2010/01/25/nuao/metadata>
+-{
++<http://www.semanticdesktop.org/ontologies/2010/01/25/nuao/metadata>{
+     nuao:
+           a       nrl:DocumentGraph , nrl:KnowledgeBase ;
+           nao:hasDefaultNamespace "http://www.semanticdesktop.org/ontologies/2010/01/25/nuao#" ;
