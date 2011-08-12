@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.0.4'
 
     def setDependencies( self ):
-        self.dependencies['testing/yajl-src'] = 'default'
+        self.dependencies['win32libs-bin/yajl'] = 'default'
         self.dependencies['win32libs-bin/expat'] = 'default'
         self.dependencies['win32libs-bin/libcurl'] = 'default'
         self.dependencies['win32libs-bin/libxml2'] = 'default'
