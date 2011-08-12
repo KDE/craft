@@ -22,7 +22,7 @@ class subinfo( info.infoclass ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/expat' ] = 'default'
-        self.runtimeDependencies[ 'testing/yajl-src' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/yajl' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libxslt' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/pcre' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/raptor2' ] = 'default'
