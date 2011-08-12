@@ -8,7 +8,9 @@ class subinfo(info.infoclass):
         for ver in ['2.0.4']:
             self.targets[ ver ] = 'http://download.librdf.org/source/raptor2-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'raptor2-' + ver
-        self.patchToApply[ '2.0.4' ] = ( 'raptor2-2.0.4-20110811.diff', 1 )
+        self.patchToApply[ '2.0.4' ] = [( 'raptor2-2.0.4-20110811.diff', 1 ),
+                                        ( 'raptor2_lround_and_isnan_patch.diff', 1)
+                                       ]
         self.targetDigests['2.0.4'] = '79e1289f480cb0fe75f49ec29d9f49189a8a58c2'
         self.shortDescription = "Resource Description Framework (RDF)"
         self.defaultTarget = '2.0.4'
