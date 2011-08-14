@@ -50,11 +50,11 @@ class Package(BoostPackageBase):
             cmd += "gcc"
         else:
             if compiler.isMSVC2005():
-                cmd += "vc-8.0"
+                cmd += "vc8"
             elif compiler.isMSVC2008():
-                cmd += "vc-9.0"
+                cmd += "vc9"
             elif compiler.isMSVC2010():
-                cmd += "vc-10.0"   
+                cmd += "vc10"   
         if utils.verbose() >= 1:
             print cmd
         os.system(cmd) and utils.die(
