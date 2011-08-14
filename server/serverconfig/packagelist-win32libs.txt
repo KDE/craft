@@ -29,7 +29,7 @@ win32libs-sources,openssl-src,,
 win32libs-sources,redland-src,,
 win32libs-sources,libssh-src,,1
 win32libs-sources,exiv2-src,,2
-win32libs-sources,boost-src,,3
+win32libs-sources,boost-src,,
 win32libs-sources,boost-python-src,,
 win32libs-sources,boost-program-options-src,,
 win32libs-sources,boost-thread-src,,
