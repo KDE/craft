@@ -1,0 +1,44 @@
+Dateien qwt-6.0.1.orig/lib/qwtd.dll und qwt-6.0.1/lib/qwtd.dll sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtd.exp und qwt-6.0.1/lib/qwtd.exp sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtd.ilk und qwt-6.0.1/lib/qwtd.ilk sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtd.lib und qwt-6.0.1/lib/qwtd.lib sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtd.pdb und qwt-6.0.1/lib/qwtd.pdb sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtmathmld.dll und qwt-6.0.1/lib/qwtmathmld.dll sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtmathmld.exp und qwt-6.0.1/lib/qwtmathmld.exp sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtmathmld.ilk und qwt-6.0.1/lib/qwtmathmld.ilk sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtmathmld.lib und qwt-6.0.1/lib/qwtmathmld.lib sind verschieden.
+Dateien qwt-6.0.1.orig/lib/qwtmathmld.pdb und qwt-6.0.1/lib/qwtmathmld.pdb sind verschieden.
+diff -Nru qwt-6.0.1.orig/qwtbuild.pri qwt-6.0.1/qwtbuild.pri
+--- qwt-6.0.1.orig/qwtbuild.pri	2011-08-07 16:54:02.829936300 +0200
++++ qwt-6.0.1/qwtbuild.pri	2011-08-07 16:43:02.460165300 +0200
+@@ -27,8 +27,8 @@
+     # might need a debug version. 
+     # Enable debug_and_release + build_all if you want to build both.
+ 
+-    CONFIG           += debug_and_release
+-    CONFIG           += build_all
++#   CONFIG           += debug_and_release
++#   CONFIG           += build_all
+ }
+ else {
+ 
+diff -Nru qwt-6.0.1.orig/qwtconfig.pri qwt-6.0.1/qwtconfig.pri
+--- qwt-6.0.1.orig/qwtconfig.pri	2011-08-07 16:54:03.100951800 +0200
++++ qwt-6.0.1/qwtconfig.pri	2011-08-07 16:45:17.997917600 +0200
+@@ -16,14 +16,14 @@
+ # Install paths
+ ######################################################################
+ 
+-QWT_INSTALL_PREFIX = $$[QT_INSTALL_PREFIX]
++#QWT_INSTALL_PREFIX = $$[QT_INSTALL_PREFIX]
+ 
+ unix {
+     QWT_INSTALL_PREFIX    = /usr/local/qwt-$$QWT_VERSION
+ }
+ 
+ win32 {
+-    QWT_INSTALL_PREFIX    = C:/Qwt-$$QWT_VERSION
++#    QWT_INSTALL_PREFIX    = C:/Qwt-$$QWT_VERSION
+ }
+ 
+ QWT_INSTALL_DOCS      = $${QWT_INSTALL_PREFIX}/doc

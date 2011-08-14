@@ -1,0 +1,27 @@
+--- raptor2-2.0.3-orig/src/snprintf.c	Fri Aug 12 22:42:50 2011
++++ raptor2-2.0.3/src/snprintf.c	Fri Aug 12 22:41:49 2011
+@@ -28,6 +28,24 @@
+ #define trunc(x) (((x) < 0) ? ceil((x)) : floor((x)))
+ #endif
+
++#ifdef _MSC_VER
++long lround ( double x )
++{
++  /* Add +/- 0.5 then then round towards zero.  */
++  double tmp = floor ( x );
++  if (isnan (tmp)
++      || tmp > (double)LONG_MAX
++      || tmp < (double)LONG_MIN)
++    {
++      errno = ERANGE;
++      /* Undefined behaviour, so we could return anything.  */
++      /* return tmp > 0.0 ? LONG_MAX : LONG_MIN;  */
++    }
++  return (long)tmp;
++}
++int isnan(double num) { return _isnan(num); }
++#endif
++
+ /* Convert a double to xsd:decimal representation.
+  * Returned is a pointer to the first character of the number
+  * in buffer (don't free it).

@@ -34,6 +34,7 @@ InstallDirRegKey HKLM "${regkey}" ""
 Function .onInstSuccess
   SetOutPath "$INSTDIR"
   Exec '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
+  Exec '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
 FunctionEnd
 
 ; pages
@@ -73,6 +74,7 @@ SectionEnd
  
 ; create shortcuts
 Section
+SetShellVarContext all
 CreateDirectory "${startmenu}"
 SetOutPath $INSTDIR ; for working directory
 CreateShortCut "${startmenu}\${productname}.lnk" "$INSTDIR\${executable}"
@@ -85,9 +87,13 @@ SectionEnd
 UninstallText "This will uninstall ${productname}."
  
 Section "Uninstall"
- 
+SetShellVarContext all
+
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
+
+Delete "${startmenu}\${productname}.lnk"
+Delete "${startmenu}\Uninstall.lnk"
 
 RMDir /r "${startmenu}"
 RMDir /r "$INSTDIR"
