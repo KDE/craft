@@ -30,6 +30,11 @@ class Package( BinaryPackageBase ):
         destdir = os.path.join( self.installDir(), "bin" )
         utils.createDir( self.workDir() )
         utils.createDir( destdir )
+
+        postfix = ""
+        if self.buildType() == "Debug":
+            postfix = "d"
+
         files = []
         if compiler.isMinGW():
             if compiler.isMinGW32():
@@ -48,6 +53,9 @@ class Package( BinaryPackageBase ):
 #            else:
 #                srcdir = os.path.join( self.packageDir(), "redist", "x86", "Microsoft.VC90.CRT" )
 #                files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll" ]
+        elif compiler.isMSVC2010():
+            srcdir = os.path.join( os.environ["windir"], "system32" ) 
+            files = [ "msvcr100%s.dll" % postfix, "msvcp100%s.dll" % postfix]
 
         for file in files:
             utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
