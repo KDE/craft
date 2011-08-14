@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ 'gitHEAD' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'automoc', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'automoc', version, '.tar.bz2.sha1' )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'automoc', version, packagetypes=['bin'] )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'automoc', version, '.tar.bz2.sha1', packagetypes=['bin'] )
 
         self.defaultTarget = 'gitHEAD'
 

@@ -298,8 +298,7 @@ class KDEWinCreator( Visitor ):
     def createOutput( self, tree ):
         out = []
 
-        tmpl_conf_path = os.path.join(
-            os.path.dirname(__file__, "config.txt.template")) 
+        tmpl_conf_path = os.path.join( os.path.dirname(__file__), "config.txt.template" )
 
         with open(tmpl_conf_path) as f:
             template = Template(f.read())

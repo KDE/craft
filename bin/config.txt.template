@@ -50,11 +50,4 @@ ${pkgnotes}
 @filename-bin vcredist_x86-vc90.exe
 @nomd5
 
-@package runtime-vc100
-@category devel-tools
-@version 10.0.30319.1
-@notes Microsoft Visual C++ 2010 Redistributable Package (x86)
-@url-bin http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe
-@filename-bin vcredist_x86-vc100.exe
-@nomd5
-
+; runtime-vc100 is now part of the release 
