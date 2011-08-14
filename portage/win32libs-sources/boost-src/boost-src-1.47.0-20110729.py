@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
               self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.tar.bz2' % verString
               self.targetInstSrc[ver] = 'boost_%s' % verString
         self.targetDigests['1.44.0'] = '0dfeaad7a316ddfdcdb8a7e42443ef048ad18c01'
+        self.patchToApply['1.47.0'] = ('boost_1_47_0-20110815.diff',1)
         self.targetDigests['1.47.0'] = '6e3eb548b9d955c0bc6f71c51042b713b678136a'
 
         self.defaultTarget = '1.47.0'
