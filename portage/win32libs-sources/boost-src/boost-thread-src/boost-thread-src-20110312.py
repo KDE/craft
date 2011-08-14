@@ -8,7 +8,6 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.boost = portage.getPackageInstance('win32libs-sources', 'boost-src')
         self.targets['1.44.0'] = ''
         self.targetInstSrc['1.44.0'] = "thread"
         
