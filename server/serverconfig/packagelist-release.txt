@@ -81,13 +81,20 @@ kde,kdeutils,4.7.0,
 #
 # the KDE extragear packages
 extragear,amarok,2.4.3,
-#extragear,kipi-plugins,,
-extragear,kipi-plugins,1.7.0,
-#extragear,digikam,,
-extragear,digikam,1.7.0,
-extragear,kmymoney,4.5.3,
+extragear,kate,4.7.0,
+extragear,kipi-plugins,2.0.0,
+extragear,digikam,2.0.0,
+extragear,kmymoney,4.6.0,
 extragear,kmid,2.4.0,
 extragear,konversation,1.3.1,
 extragear,quassel,0.7.1,
-extragear,kregexpeditor,,1
-kdeapps,kile,,
+extragear,kregexpeditor,,
+extragear,krecipes,2.0-beta2,
+extragear,skanlite,,
+extragear,zanshin,,
+extragear,kile,,
+
+# release pending:
+#extragear,skrooge,0.9.1,
+#extragear,kdevplatform,1.3.0,
+#extragear,kdevelop,4.3.0,
