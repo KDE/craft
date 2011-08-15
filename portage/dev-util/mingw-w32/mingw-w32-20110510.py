@@ -29,6 +29,7 @@ class Package(BinaryPackageBase):
         # FIXME: this is a hack for tzSpecificTimeToSystemLocalTime
         # Remove this when you update the mingw version
         # the lib is generated out of the def file from the 2.0 release 
+        #dlltool -d kernel32.def -l libkernel32.a -k
         shutil.copy( os.path.join( self.packageDir(), "libkernel32.a" ),
                     os.path.join( self.installDir(), "mingw", "i686-w64-mingw32", "lib" ) )
         return True
