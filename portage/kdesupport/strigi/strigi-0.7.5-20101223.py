@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/strigi'
 
-        for ver in ['0.7.2']:
+        for ver in ['0.7.2','0.7.5']:
           self.targets[ver] ='http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'strigi-' + ver
         self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101223.diff", 1)
@@ -44,7 +44,7 @@ class subinfo(info.infoclass):
           #FIXME make strigi svnHEAD compile on Windows
           self.defaultTarget = 'komobranch'
         else:
-          self.defaultTarget = '0.7.2'
+          self.defaultTarget = '0.7.5'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
