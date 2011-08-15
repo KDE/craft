@@ -26,9 +26,9 @@ kdesupport,snorenotify,,
 # the KDE packages themselves
 kde,kdelibs,4.7.0,
 kde,kdepimlibs,4.7.0,
-kde,kdebase-runtime,4.7.0,
-kde,kdebase-workspace,4.7.0,
-kde,kdebase-apps,4.7.0,
+kde,kde-runtime,4.7.0,
+kde,kde-workspace,4.7.0,
+kde,kde-baseapps,4.7.0,
 #kdeedu
 kde,kdeedu,4.7.0,
 kde,blinken,4.7.0,
