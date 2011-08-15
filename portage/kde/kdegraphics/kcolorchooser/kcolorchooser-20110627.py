@@ -3,6 +3,9 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kcolorchooser|KDE/4.7|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.7.' + ver] = "http://download.kde.org/stable/4.7." + ver + "/src/kcolorchooser-4.7." + ver + ".tar.bz2"
+            self.targetInstSrc['4.7.' + ver] = 'kcolorchooser-4.7.' + ver
         self.shortDescription = "A small utility to select a color"
         self.defaultTarget = 'gitHEAD'
 

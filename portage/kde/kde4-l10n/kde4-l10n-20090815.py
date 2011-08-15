@@ -4,9 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/%s'
-        for ver in ['6.0', '6.1', '6.2', '6.3', '6.4']:
-            self.targets['4.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.' + ver + '/src/kde-l10n/kde-l10n-%s-4.' + ver + '.tar.bz2'
-            self.targetInstSrc['4.' + ver] = 'kde-l10n-%s-4.' + ver
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.7.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.7.' + ver + '/src/kde-l10n/kde-l10n-%s-4.7.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.7.' + ver] = 'kde-l10n-%s-4.7.' + ver
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
