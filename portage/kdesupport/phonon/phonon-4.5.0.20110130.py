@@ -9,12 +9,13 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:phonon'
-        for ver in ['4.4.3','4.4.4','4.5.0']:
-          self.targets[ver] = 'http://download.kde.org/download.php?url=stable/phonon/%s/phonon-%s.tar.bz2' % (ver ,ver)
-          self.targetInstSrc[ver] = 'phonon-%s' % ver
-          self.patchToApply[ver] = ("phonon-20100915.diff", 1)
+        for ver in ['4.4.3', '4.4.4', '4.5.0']:
+            self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/phonon/%s/src/phonon-%s.tar.bz2' % (ver ,ver)
+            self.targetInstSrc[ver] = 'phonon-%s' % ver
+        if ver in ['4.4.3', '4.4.4']: self.patchToApply[ver] = ("phonon-20100915.diff", 1)
         self.targetDigests['4.4.3'] = '50262d590beb648be9dcad6b913b920db19a84f8'
         self.targetDigests['4.4.4'] = '7f31752c20efecbe63c7b312ceb28819fa337943'
+        self.targetDigests['4.5.0'] = '122f7c53939a2c40c3312c2f5e59f25ca2c9ee53'
 
 
         
