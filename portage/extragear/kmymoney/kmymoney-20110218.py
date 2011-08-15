@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/office/kmymoney'
-        for ver in ['4.5', '4.5.1', '4.5.2', '4.5.3']:
+        for ver in ['4.5', '4.5.1', '4.5.2', '4.5.3', '4.6.0']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kmymoney-' + ver
         self.targets['3.98.1'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-3.98.1.tar.bz2'
@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply['3.98.1'] = ('kmymoney-3.98.1.diff', 1)
         self.patchToApply['4.5.1'] = ('kmymoney-4.5.1-20101215.diff', 1)
         self.patchToApply['4.5.2'] = ('kmymoney-4.5.2-20110112.diff', 1)
-	self.patchToApply['4.5.3'] = ('kmymoney-4.5.2-20110112.diff', 1)
+        self.patchToApply['4.5.3'] = ('kmymoney-4.5.2-20110112.diff', 1)
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:digikam'
-        for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0']:
+        for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0', '2.0.0']:
             self.targets[ver] = 'http://downloads.sourceforge.net/project/digikam/digikam/' + ver + '/digikam-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'digikam-' + ver
 
