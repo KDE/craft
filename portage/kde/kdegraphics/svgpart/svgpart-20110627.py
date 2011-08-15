@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
             self.svnTargets[ ver ] = '[git]kde:svgpart|%s|' % ver
             
         for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.7.' + ver] = "http://download.kde.org/stable/4.7." + ver + "/src/svgpart-4.7." + ver + ".tar.bz2"
+            self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/svgpart-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'svgpart-4.7.' + ver
         self.svnTargets['gitHEAD'] = '[git]kde:svgpart'
         self.shortDescription = "A svg kpart"
