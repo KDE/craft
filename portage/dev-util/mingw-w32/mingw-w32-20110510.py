@@ -28,8 +28,8 @@ class Package(BinaryPackageBase):
         utils.applyPatch( self.imageDir(), os.path.join( self.packageDir(), "gcc_Exit.diff"), 0 )
         # FIXME: this is a hack for tzSpecificTimeToSystemLocalTime
         # Remove this when you update the mingw version
-        if self.buildTarget == "20101003":
-            shutil.copy( os.path.join( self.packageDir(), "libkernel32.a" ),
+		#the lib is generated out of the def file from the 2.0 release
+		shutil.copy( os.path.join( self.packageDir(), "libkernel32.a" ),
                     os.path.join( self.installDir(), "mingw", "i686-w64-mingw32", "lib" ) )
         return True
 
