@@ -25,7 +25,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies[ 'win32libs-bin/raptor2' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libcurl' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libxslt' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-sources/yajl-src' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/yajl' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/pcre' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libxml2' ] = 'default'
 
