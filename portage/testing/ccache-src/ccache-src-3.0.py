@@ -8,8 +8,8 @@ os.putenv("CC","gcc")
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
-        self.targetSrcSuffix['gitHEAD'] = 'git'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['working'] = "git://git.samba.org/ccache.git||206b0c182b8fbe1e115039507c4356ee1316a7fa"
+        self.defaultTarget = 'working'
 
 
     def setDependencies( self ):
