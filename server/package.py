@@ -95,6 +95,7 @@ class package:
                 return ""
             tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
             tempfile.readline()
+            tempfile.readline()
             self.revision = tempfile.readline().strip()
             tempfile.close()
             os.remove( os.path.join( logroot, "rev.tmp" ) )
