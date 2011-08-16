@@ -8,12 +8,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '0.1'
 
     def setDependencies( self ):
-        if os.getenv( "EMERGE_DEFAULTCATEGORY" ) in [ 'kde-4.4', 'kde-4.5']:
-            self.dependencies[ os.getenv( "EMERGE_DEFAULTCATEGORY" ) + '/kdebase-runtime' ]  = 'default'
-        elif os.getenv( "EMERGE_DEFAULTCATEGORY" ) in [ 'kde-4.6']:
-            self.dependencies[ os.getenv( "EMERGE_DEFAULTCATEGORY" ) + '/kde-runtime' ]  = 'default'
-        else:
-            self.dependencies[ 'kde/kde-runtime' ]  = 'default'
+        self.dependencies[ 'kde/kde-runtime' ]  = 'default'
 
 class Package( VirtualPackageBase ):
     def __init__( self ):
