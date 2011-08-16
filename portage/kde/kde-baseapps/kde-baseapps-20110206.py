@@ -5,7 +5,7 @@ class subinfo( info.infoclass ):
         self.svnTargets['svnHEAD'] = '[git]kde:kde-baseapps|KDE/4.7|'
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.7.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.7.' + ver + '/src/kde-baseapps-4.7.' + ver + '.tar.bz2'
-            self.targetInstSrc['4.7.' + ver] = 'kdebase-4.7.' + ver
+            self.targetInstSrc['4.7.' + ver] = 'kde-baseapps-4.7.' + ver
         self.defaultTarget = 'svnHEAD'
     
     def setDependencies( self ):
