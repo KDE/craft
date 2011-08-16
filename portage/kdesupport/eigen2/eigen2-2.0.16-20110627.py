@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://bitbucket.org/eigen/eigen/get/' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'eigen'
         self.targetInstSrc['2.0.16'] = 'eigen-eigen-9ca09dbd70ce'
-        self.targetDigests['2.0.16'] = 'ec0d6e6716b7e3ce916ca0ff378a346d710c8db2'
+        self.targetDigests['2.0.16'] = 'd0fad8b182280c378f413d1908ad611c921f40c2'
         self.defaultTarget = '2.0.16'
 
 from Package.CMakePackageBase import *
