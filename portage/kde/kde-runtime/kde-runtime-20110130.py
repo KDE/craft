@@ -13,8 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
         self.dependencies['win32libs-bin/libssh'] = 'default'
         if compiler.isMinGW_WXX():
-#            self.dependencies['win32libs-bin/libbfd'] = 'default'
-            self.dependencies['win32libs-sources/libbfd-src'] = 'default'
+            self.dependencies['win32libs-bin/libbfd'] = 'default'
         self.shortDescription = "Plugins and applications necessary for the running of KDE applications."
 
     def setBuildOptions( self ):
