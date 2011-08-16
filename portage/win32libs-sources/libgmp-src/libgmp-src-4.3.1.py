@@ -4,6 +4,7 @@ import base
 import info
 import utils
 import shutil
+import compiler
 
 class subinfo(info.infoclass):
 
@@ -26,7 +27,7 @@ class subclass(base.baseclass):
 
     def execute( self ):
         base.baseclass.execute( self )
-        if self.compiler <> "mingw":
+        if compiler.isMinGW():
             print "error: can only be build with MinGW right now."
             exit( 1 )
 
