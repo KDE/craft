@@ -15,8 +15,7 @@ class subinfo(info.infoclass):
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-bin/libssh'] = 'default'
         if compiler.isMinGW_WXX():
-#            self.dependencies['win32libs-bin/libbfd'] = 'default'
-            self.dependencies['win32libs-sources/libbfd-src'] = 'default'
+            self.dependencies['win32libs-bin/libbfd'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
