@@ -14,6 +14,9 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.0.12'] = 'lloyd-yajl-17b1790'
         self.defaultTarget = '1.0.12'
 
+    def setDependencies( self ):
+        self.buildDependencies['virtual/base'] = 'default'
+
 class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
