@@ -284,11 +284,14 @@ for entry in packagelist:
     try:
         entry.fetch()
         entry.getRevision()
+		entry.notifications['dashboard'].error = 2
+		entry.notifications['dashboard'].run()
+		entry.notifications['dashboard'].error = 0
     except BuildError:
         entry.enabled = False
         for i in entry.notifications:
             if i == 'dashboard': continue
-            entry.notifications[i].error = True
+            entry.notifications[i].error = 1
             entry.notifications[i].run()
 
 for entry in packagelist:
@@ -298,7 +301,7 @@ for entry in packagelist:
     except BuildError:
         entry.enabled = False
         for i in entry.notifications:
-            entry.notifications[i].error = True
+            entry.notifications[i].error = 1
     finally:
         for i in entry.notifications:
             if enabled and not entry.ignoreNotifications: entry.notifications[i].run( entry.getRevision() )
@@ -326,7 +329,7 @@ for entry in packagelist:
         entry.enabled = False
         for i in entry.notifications:
             if i == 'dashboard': continue
-            entry.notifications[i].error = True
+            entry.notifications[i].error = 1
             if enabled and not entry.ignoreNotifications: entry.notifications[i].run( entry.getRevision() )
 
 for entry in packagelist:
@@ -337,7 +340,7 @@ for entry in packagelist:
         entry.enabled = False
         for i in entry.notifications:
             if i == 'dashboard': continue
-            entry.notifications[i].error = True
+            entry.notifications[i].error = 1
             if enabled and not entry.ignoreNotifications: entry.notifications[i].run( entry.getRevision() )
 common.Uploader().executeScript("finish")
 
