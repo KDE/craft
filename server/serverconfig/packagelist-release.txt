@@ -84,7 +84,7 @@ kde,kdeutils,4.7.0,
 # the KDE extragear packages
 extragear,amarok,2.4.3,
 extragear,kate,4.7.0,
-extragear,kipi-plugins,2.0.0,
+# extragear,kipi-plugins,2.0.0,
 extragear,digikam,2.0.0,
 extragear,libalkimia,4.3.1,
 extragear,kmymoney,4.6.0,
