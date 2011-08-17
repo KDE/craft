@@ -283,9 +283,6 @@ for entry in packagelist:
     try:
         entry.fetch()
         entry.getRevision()
-        entry.notifications['dashboard'].error = 2
-        entry.notifications['dashboard'].run()
-        entry.notifications['dashboard'].error = 0
     except BuildError:
         entry.enabled = False
         for i in entry.notifications:
@@ -295,6 +292,9 @@ for entry in packagelist:
 
 for entry in packagelist:
     try:
+        entry.notifications['dashboard'].error = 2
+        entry.notifications['dashboard'].run( entry.getRevision() )
+        entry.notifications['dashboard'].error = 0
         enabled = entry.enabled
         entry.build()
     except BuildError:
