@@ -292,10 +292,10 @@ for entry in packagelist:
 
 for entry in packagelist:
     try:
+        enabled = entry.enabled
         entry.notifications['dashboard'].error = 2
         entry.notifications['dashboard'].run( entry.getRevision() )
         entry.notifications['dashboard'].error = 0
-        enabled = entry.enabled
         entry.build()
     except BuildError:
         entry.enabled = False
