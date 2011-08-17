@@ -8,7 +8,7 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        version = portage.getPackageInstance('win32libs-sources', 'boost-src').subinfo.defaultTarget
+        version = portage.getPackageInstance('win32libs-sources', 'boost-headers-src').subinfo.defaultTarget
         self.targets[version] = ''
         self.targetInstSrc[version] = "program_options"
         
@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
         self.shortDescription = "portable C++ libraries"
 
     def setDependencies(self):
-        self.buildDependencies['dev-util/bjam'] = 'default'
-        self.buildDependencies['win32libs-sources/boost-src'] = 'default'
+        self.buildDependencies['win32libs-sources/boost-headers-src'] = 'default'
+        self.buildDependencies['win32libs-sources/boost-bjam-src'] = 'default'
 
 from Package.BoostPackageBase import *
 
