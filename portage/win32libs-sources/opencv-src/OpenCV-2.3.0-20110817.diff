@@ -1,6 +1,6 @@
 diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
---- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-17 20:37:56.720349800 +0200
-+++ OpenCV-2.3.0/CMakeLists.txt	2011-08-17 20:36:27.094223500 +0200
+--- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-17 23:02:47.025452700 +0200
++++ OpenCV-2.3.0/CMakeLists.txt	2011-08-17 20:40:40.457715000 +0200
 @@ -1378,32 +1378,33 @@
          install(FILES ${root_files}
                  DESTINATION "."
@@ -47,3 +47,15 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          #install(DIRECTORY doc DESTINATION doc COMPONENT src FILES_MATCHING PATTERN "*.rst" "*.tex")
          #install(DIRECTORY doc/pics DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
          #install(DIRECTORY doc/latex2sphinx DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
+diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/highgui/CMakeLists.txt
+--- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-17 23:02:48.648545500 +0200
++++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-17 23:00:44.286432400 +0200
+@@ -69,7 +69,7 @@
+ endif()
+ 
+ if(MSVC)
+-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib")
++#    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib")
+ endif()
+ 
+ file(GLOB grfmt_hdrs src/grfmt*.hpp)
