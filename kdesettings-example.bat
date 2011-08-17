@@ -237,7 +237,7 @@ rem the current portage directory instead.
 rem set EMERGE_PORTAGE_ROOT=C:\test\portage;%KDEROOT%\emerge\portage
 
 rem This option can be used to build only source packages and don't use binary packages
-rem it is needed for mingw-w32, mingw-w64 and wince builds, but works everywhere
+rem it is needed for wince builds, but works everywhere
 rem set EMERGE_SOURCEONLY=True
 
 rem This option enables separating of package build dependencies from emerge internal 

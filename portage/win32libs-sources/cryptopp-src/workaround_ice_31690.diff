@@ -1,0 +1,12 @@
+diff -Nru cryptopp561.orig//vmac.cpp cryptopp561/vmac.cpp
+--- cryptopp561.orig//vmac.cpp	2010-08-06 18:44:24.000000000 +0200
++++ cryptopp561/vmac.cpp	2011-08-14 17:38:32.000000000 +0200
+@@ -25,7 +25,7 @@
+ #undef const
+ #endif
+ #if VMAC_BOOL_WORD128
+-#ifdef __powerpc__
++#ifdef __GNUC__
+ // workaround GCC Bug 31690: ICE with const __uint128_t and C++ front-end
+ #define m126				((word128(m62)<<64)|m64)
+ #else

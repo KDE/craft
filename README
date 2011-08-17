@@ -51,18 +51,17 @@ There are some special folders that have another meaning though:
             You can of course use this compiler outside of KDE as well.
 
 4. remarks to the step-by-step guide
-    - Get Python >= 2.6 ( e.g. from http://www.python.org ).
 
 Python should be within your path ( which is normally set automatically ).
 You don't have to register python with the file ending .py though the author
 of these lines finds it useful.
 
 
-    - If you can read this file you probably already got the svn-sources.
-      If not, get an svn client, preferrably TortoiseSVN ( from 
-      http://tortoisesvn.net/downloads ).
+    - If you can read this file you probably already got the git sources.
+      If not, get an git client, preferrably TortoiseGit ( from 
+        http://code.google.com/p/tortoisegit ).
 
-TortoiseSVN is an extension to the Windows Explorer and a full featured svn
+TortoiseGit is an extension to the Windows Explorer and a full featured git
 client. It makes development easy. The point in not using a commandline client
 is that emerge will not check for an installed commandline client yet.
 
@@ -76,10 +75,10 @@ will be installed under KDEROOT, but this might change in the future.
 
 
     - Put another directory emerge into %KDEROOT% enter that directory
-      and checkout from svn://anonsvn.kde.org/home/trunk/kdesupport/emerge .
+      and clone from git://anongit.kde.org/emerge .
       
-If you want to directly work on emerge itself, please checkout from the normal
-svn server instead.
+If you want to directly work on emerge itself, please clone from git@git.kde.org:emerge 
+instead.
 
       
     - Add another directory etc to %KDEROOT%. Copy the file 

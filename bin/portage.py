@@ -503,11 +503,10 @@ def getDependencies( category, package, version, runtimeOnly=False ):
     else:
         utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
         subpackage = package
-
+    
+    deps = []
     for pkg in subpackage:
         mod = __import__( getFilename( category, subpackage, version ) )
-
-        deps = []
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
             depDict = info.hardDependencies

@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision gitcfc5b700df8db112d62408e5402ba6ed7170a64d
+# based on revision gitc4a14690afafd13c48c2f3f2b68c4b3b1e34fdda
 
 from Package.BinaryPackageBase import *
 import os
@@ -22,11 +22,11 @@ class subinfo( info.infoclass ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/expat' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/yajl' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/libxslt' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/pcre' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/raptor2' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libcurl' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/libxslt' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/yajl' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/pcre' ] = 'default'
         self.runtimeDependencies[ 'win32libs-bin/libxml2' ] = 'default'
 
 

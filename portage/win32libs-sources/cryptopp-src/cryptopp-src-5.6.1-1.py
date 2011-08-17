@@ -8,7 +8,8 @@ import emergePlatform
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets[ '561' ] = 'http://www.cryptopp.com/cryptopp561.zip'  
-        self.patchToApply[ '561' ] = ('cmake.diff', 1)        
+        self.patchToApply[ '561' ] = [('cmake.diff', 1),
+                                      ('workaround_ice_31690.diff', 1)]
         self.targetDigests['561'] = '31dbb456c21f50865218c57b7eaf4c955a222ba1'       
         self.shortDescription = "Crypto++ Library is a free C++ class library of cryptographic schemes"
         self.defaultTarget = '561'
