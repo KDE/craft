@@ -10,7 +10,7 @@ import json
 
 class Notification:
     """ this class is the base class for notifications """
-    def __init__( self, category, packageName, logfile, error=False ):
+    def __init__( self, category, packageName, logfile, error=0 ):
         self.category = category
         self.logfile = logfile
         self.packageName = packageName
@@ -85,9 +85,7 @@ class DashboardNotification(Notification):
             values['name'] = self.packageName
             values['platform'] = common.settings.getOption( "General", "platform" )
             values['date'] = common.isodatetime
-            values['failed'] = "0"
-            if self.error:
-                values['failed'] = "1"
+            values['errorlevel'] = str(self.error)
             values['revision'] = revision
             values['log'] = self.shortLog
             if self.settings and self.settings["link-url"]:
