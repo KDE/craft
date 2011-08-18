@@ -1,0 +1,12 @@
+diff -Nru kmplot-4.7.0.orig/CMakeLists.txt kmplot-4.7.0/CMakeLists.txt
+--- kmplot-4.7.0.orig/CMakeLists.txt	2011-05-20 22:34:09.000000000 +0200
++++ kmplot-4.7.0/CMakeLists.txt	2011-08-19 01:00:12.796245100 +0200
+@@ -2,6 +2,8 @@
+ 
+ find_package(KDE4 REQUIRED)
+ include(KDE4Defaults)
++include(CheckIncludeFiles)
++
+ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+ 
+ check_include_files(ieeefp.h HAVE_IEEEFP_H)

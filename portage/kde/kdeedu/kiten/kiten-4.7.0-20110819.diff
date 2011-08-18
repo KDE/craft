@@ -1,0 +1,11 @@
+diff -Nru kiten-4.7.0.orig/CMakeLists.txt kiten-4.7.0/CMakeLists.txt
+--- kiten-4.7.0.orig/CMakeLists.txt	2011-05-20 22:34:05.000000000 +0200
++++ kiten-4.7.0/CMakeLists.txt	2011-08-19 00:56:14.148595200 +0200
+@@ -8,6 +8,7 @@
+ find_package( KDE4 REQUIRED )
+ include( KDE4Defaults )
+ include_directories( ${KDE4_INCLUDES} )
++include( CheckIncludeFiles )
+ 
+ ## Make it easy for radselect and kiten to find libkiten headers
+ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/lib)
