@@ -1,0 +1,25 @@
+commit 12a9e75c8de2df077fcdee05584ea4d7f17228a9
+Author: Michael Drueing <michael@drueing.de>
+Date:   Mon Aug 15 23:56:48 2011 +0200
+
+    Fix template instantiation for dll export on Win32
+    
+    Since MSVC can't export templated classes from a DLL, we need
+    to make sure that every user of the BaseBinder/Binder classes
+    instantiates the template by himself. As the class is completely
+    contained in the .h file, this is not a problem.
+    I hope this doesn't break anything for gcc (it shouldn't...)
+
+diff --git a/lib/binder.h b/lib/binder.h
+index d30df60..1d7d73e 100644
+--- a/lib/binder.h
++++ b/lib/binder.h
+@@ -76,7 +76,7 @@ protected Q_SLOTS:
+  * Note: the method does not need to be a slot.
+  */
+ template <class Receiver, class Arg, typename MethodArg>
+-class GWENVIEWLIB_EXPORT BaseBinder : public BinderInternal
++class BaseBinder : public BinderInternal
+ {
+ public:
+ 	typedef void (Receiver::*Method)(MethodArg);
