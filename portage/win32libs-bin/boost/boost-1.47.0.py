@@ -7,7 +7,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        version = portage.getPackageInstance('win32libs-sources', 'boost-headers-src').subinfo.defaultTarget
+        version = portage.getPackageInstance('win32libs-bin', 'boost-headers').subinfo.defaultTarget
         self.targets[version] = ''
         self.defaultTarget = version
         self.shortDescription = "portable C++ libraries"
