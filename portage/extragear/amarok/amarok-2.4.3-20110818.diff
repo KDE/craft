@@ -1,0 +1,14 @@
+diff -Nru amarok-2.4.3.orig/src/CMakeLists.txt amarok-2.4.3/src/CMakeLists.txt
+--- amarok-2.4.3.orig/src/CMakeLists.txt	2011-07-28 15:04:45.000000000 +0200
++++ amarok-2.4.3/src/CMakeLists.txt	2011-08-18 15:11:34.221430600 +0200
+@@ -1,7 +1,9 @@
+ # Improves speed of string concatenation
+ add_definitions(-DQT_USE_FAST_CONCATENATION)
+ add_definitions(-DQT_USE_FAST_OPERATOR_PLUS)
+-add_definitions(-DQT_STRICT_ITERATORS)
++if(NOT MSVC)
++    add_definitions(-DQT_STRICT_ITERATORS)
++endif(NOT MSVC)
+ 
+ if(APPLE)
+     set(mac_SRCS
