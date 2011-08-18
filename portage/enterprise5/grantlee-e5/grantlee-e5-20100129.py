@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['dev-util/automoc'] = 'default'
+        self.hardDependencies['win32libs-bin/automoc'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
 
 from Package.CMakePackageBase import *

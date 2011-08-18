@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['dev-util/automoc'] = 'default'
+        self.hardDependencies['win32libs-bin/automoc'] = 'default'
 
     def setTargets( self ):
         self.targets['4.4.4'] = 'http://download.kde.org/download.php?url=stable/phonon/4.4.4/src/phonon-4.4.4.tar.bz2'
