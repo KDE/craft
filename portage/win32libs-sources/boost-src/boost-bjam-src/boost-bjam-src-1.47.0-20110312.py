@@ -8,14 +8,14 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets(self):    
-        version = portage.getPackageInstance('win32libs-sources', 'boost-headers-src').subinfo.defaultTarget
+        version = portage.getPackageInstance('win32libs-bin', 'boost-headers').subinfo.defaultTarget
         self.targets[version] = ''
         
         self.defaultTarget = version
         self.shortDescription = "portable C++ libraries"
 
     def setDependencies(self):
-        self.buildDependencies['win32libs-sources/boost-headers-src'] = 'default'
+        self.dependencie['win32libs-bin/boost-headers'] = 'default'
         if self.defaultTarget == '1.44.0':
             self.buildDependencies['dev-util/bjam'] = 'default'
         
@@ -30,14 +30,14 @@ class Package(BoostPackageBase):
        
     def install(self):
         if not self.subinfo.defaultTarget == '1.44.0':
-            path, bjam = self._walk(os.path.join(portage.getPackageInstance('win32libs-sources', 'boost-headers-src').sourceDir(),"tools","build","v2","engine"),"bjam.exe")
+            path, bjam = self._walk(os.path.join(portage.getPackageInstance('win32libs-bin', 'boost-headers').sourceDir(),"tools","build","v2","engine"),"bjam.exe")
             utils.copyFile(os.path.join(path,"bjam.exe"), os.path.join(self.imageDir(), "bin" , "bjam.exe"))
         return True
         
     def make(self):
         if self.subinfo.defaultTarget == '1.44.0':
             return True
-        cmd  = "cd %s && build.bat " % os.path.join(portage.getPackageInstance('win32libs-sources', 'boost-headers-src').sourceDir(),"tools","build","v2","engine")
+        cmd  = "cd %s && build.bat " % os.path.join(portage.getPackageInstance('win32libs-bin', 'boost-headers').sourceDir(),"tools","build","v2","engine")
         if compiler.isMinGW():
             cmd += "gcc"
         else:
