@@ -11,11 +11,11 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        for ver in ['2.0.10','2.0.15', '2.0.16']:
-            self.targets[ver] = 'http://bitbucket.org/eigen/eigen/get/' + ver + '.tar.bz2'
-            self.targetInstSrc[ver] = 'eigen'
-        self.targetInstSrc['2.0.16'] = 'eigen-eigen-9ca09dbd70ce'
-        self.targetDigests['2.0.16'] = 'd0fad8b182280c378f413d1908ad611c921f40c2'
+        for ver in ['2.0.16']:
+            # this is a repackaged version of eigen2 because the original tarball is not working
+            self.targets[ ver ] = 'http://winkde.org/pub/kde/ports/win32/repository/other/eigen-2.0.16.tar.bz2'
+            self.targetInstSrc[ ver ] = 'eigen-2.0.16'
+        self.targetDigests['2.0.16'] = 'f36128efa6bde1ff72d7ea70f7e6ccc798d33641'
         self.defaultTarget = '2.0.16'
 
 from Package.CMakePackageBase import *

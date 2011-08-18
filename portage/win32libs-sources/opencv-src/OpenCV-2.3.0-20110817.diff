@@ -1,0 +1,99 @@
+diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
+--- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-18 01:23:35.936242500 +0200
++++ OpenCV-2.3.0/CMakeLists.txt	2011-08-18 01:23:20.168340700 +0200
+@@ -892,7 +892,7 @@
+         if(MINGW64)
+             set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 avifil32 avicap32 winmm)
+         else()
+-            set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} vfw32 winmm)
++            set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 winmm)
+         endif()  
+     endif()
+ endif()
+@@ -1357,7 +1357,14 @@
+ set(BUILD_PACKAGE ON CACHE BOOL "Enables 'make package_source' command")
+ 
+ if(BUILD_PACKAGE)
+-
++    if(MSVC)
++        string(TOLOWER ${CMAKE_BUILD_TYPE} bt)
++        if("${bt}" STREQUAL "debug")
++            set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
++        else("${bt}" STREQUAL "debug")
++            set(CMAKE_INSTALL_DEBUG_LIBRARIES 0)
++        endif("${bt}" STREQUAL "debug")
++    endif(MSVC)
+     configure_file(
+     Package.cmake.in
+     ${CMAKE_BINARY_DIR}/.cpack/Package.cmake
+@@ -1378,32 +1385,33 @@
+         install(FILES ${root_files}
+                 DESTINATION "."
+                 COMPONENT main)
+-        install(FILES ${root_src_files}
+-                DESTINATION "."
+-                COMPONENT src)
++#        install(FILES ${root_src_files}
++#                DESTINATION "."
++#                COMPONENT src)
+         # Add the "win-install/OpenCVConfig.cmake" file to the "main" install component
+         install(FILES
+             "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake"
+             DESTINATION "."
+             COMPONENT main
+             )
+-        install(FILES
+-            "include/CMakeLists.txt"
+-            DESTINATION "include/"
+-            COMPONENT src
+-            )
++#        install(FILES
++#            "include/CMakeLists.txt"
++#            DESTINATION "include/"
++#            COMPONENT src
++#            )
+ 
+         if(CMAKE_INSTALL_DEBUG_LIBRARIES)
+-            foreach(m calib3d core contrib features2d ffmpeg flann gpu highgui imgproc legacy ml objdetect video)
+-                install(FILES  ${EXECUTABLE_OUTPUT_PATH}/Debug/opencv_${m}${OPENCV_DLLVERSION}d.dll
++            # ffmpeg 
++            foreach(m calib3d core contrib features2d flann gpu highgui imgproc legacy ml objdetect video)
++                install(FILES  ${EXECUTABLE_OUTPUT_PATH}/opencv_${m}${OPENCV_DLLVERSION}d.dll
+             DESTINATION bin COMPONENT main)
+-                install(FILES  ${LIBRARY_OUTPUT_PATH}/Debug/opencv_${m}${OPENCV_DLLVERSION}d.lib
++                install(FILES  ${LIBRARY_OUTPUT_PATH}/opencv_${m}${OPENCV_DLLVERSION}d.lib
+             DESTINATION lib COMPONENT main)
+             endforeach()
+         endif()
+ 
+         install(DIRECTORY data samples DESTINATION "." COMPONENT main PATTERN ".svn" EXCLUDE)
+-        install(DIRECTORY 3rdparty android modules doc DESTINATION "." COMPONENT src PATTERN ".svn" EXCLUDE)
++#        install(DIRECTORY 3rdparty android modules doc DESTINATION "." COMPONENT src PATTERN ".svn" EXCLUDE)
+         #install(DIRECTORY doc DESTINATION doc COMPONENT src FILES_MATCHING PATTERN "*.rst" "*.tex")
+         #install(DIRECTORY doc/pics DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
+         #install(DIRECTORY doc/latex2sphinx DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
+diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/highgui/CMakeLists.txt
+--- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-18 01:23:36.992303000 +0200
++++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-18 00:55:30.381834400 +0200
+@@ -69,7 +69,7 @@
+ endif()
+ 
+ if(MSVC)
+-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib")
++#    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib")
+ endif()
+ 
+ file(GLOB grfmt_hdrs src/grfmt*.hpp)
+diff -Nru OpenCV-2.3.0.orig/Package.cmake.in OpenCV-2.3.0/Package.cmake.in
+--- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-18 01:23:37.707343900 +0200
++++ OpenCV-2.3.0/Package.cmake.in	2011-08-18 01:05:48.609194900 +0200
+@@ -4,9 +4,6 @@
+ # (c) Copyrights 2008 Hartmut Seichter, HIT Lab NZ
+ #
+ 
+-if(MSVC)
+-    set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
+-endif()
+ #if(ENABLE_OPENMP)
+ #    set(CMAKE_INSTALL_OPENMP_LIBRARIES 1)
+ #endif()

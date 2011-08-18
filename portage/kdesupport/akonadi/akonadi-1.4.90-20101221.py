@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['win32libs-bin/automoc'] = 'default'
         self.dependencies['kdesupport/soprano'] = 'default'
-        self.dependencies['win32libs-bin/boost']   = 'default'
+        self.dependencies['win32libs-bin/boost-program-options']   = 'default'
         self.dependencies['win32libs-bin/libxslt'] = 'default'
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['win32libs-bin/sqlite'] = 'default'
@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
 
 
     def setTargets( self ):
-        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1', '1.4.1', '1.4.2', '1.4.3', '1.4.80', '1.4.90']:
-          self.targets[ver] = 'http://download.akonadi-project.org/akonadi-' + ver + '.tar.bz2'
+        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1', '1.4.1', '1.4.2', '1.4.3', '1.4.80', '1.4.90', '1.6.0']:
+          self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/akonadi/src/akonadi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'akonadi-' + ver
 
 

@@ -1,36 +1,33 @@
-# This package-script is automatically updated by the script win32libsupdater.py
-# which can be found in your emerge/bin folder. To update this package, run
-# win32libsupdater.py (and commit the results)
-# based on revision gitc4a14690afafd13c48c2f3f2b68c4b3b1e34fdda
-
-from Package.BinaryPackageBase import *
 import os
+import shutil
+
+import utils
+import base
 import info
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        repoUrl = 'http://downloads.sourceforge.net/kde-windows'
+class subinfo(info.infoclass):
+    def setTargets(self):
+        version = portage.getPackageInstance('win32libs-bin', 'boost-headers').subinfo.defaultTarget
+        self.targets[version] = ''
+        self.defaultTarget = version
+        self.shortDescription = "portable C++ libraries"
 
-        for version in [ '1.44.0', '1.37.0-1', '1.44.0-1', '1.44.0-2', '1.44.0-3', '1.47.0' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'boost', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'boost', version, '.tar.bz2.sha1' )
+    def setDependencies(self):
+        self.dependencies['win32libs-bin/boost-headers'] = 'default'
+        self.dependencies['win32libs-bin/boost-thread'] = 'default'
+        self.dependencies['win32libs-bin/boost-system'] = 'default'
+        self.dependencies['win32libs-bin/boost-program-options'] = 'default'
+        self.dependencies['win32libs-bin/boost-python'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
-        self.defaultTarget = '1.47.0'
+from Package.VirtualPackageBase import *
 
+class Package( VirtualPackageBase ):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        VirtualPackageBase.__init__( self )
 
-    def setDependencies( self ):
-        if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
-            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
-
-class Package(BinaryPackageBase):
-  def __init__(self):
-    self.subinfo = subinfo()
-    BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()
+
