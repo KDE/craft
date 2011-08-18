@@ -41,24 +41,22 @@ def abstract():
 def isSourceOnly():
     return envAsBool("EMERGE_SOURCEONLY")
 
-SVN_LOCK_FILE = "emergesvn-%s.lck"
-
-def svnLockFileName():
-    '''Generate a user global svn lock file.
+def LockFileName(lock_id):
+    '''Generate a user global lock file. For id lock_id
        TODO: generate it smarter to prevent security issues
              and possible collisions.
     '''
-    do_lock = os.environ.get("EMERGE_SVN_LOCK")
-    if not do_lock or do_lock.strip().lower() not in ("true", "yes"):
+    if not envAsBool("EMERGE_%s_LOCK" % lock_id):
         return None
 
     try:
-        return os.environ["EMERGE_SVN_LOCK_FILE"]
+        return os.environ["EMERGE_%s_LOCK_FILE" % lock_id]
     except KeyError:
         pass
 
     return os.path.join(
-        tempfile.gettempdir(), SVN_LOCK_FILE % getpass.getuser())
+        tempfile.gettempdir(),
+        "emerge%s-%s.lck" % (lock_id, getpass.getuser()))
 
 class LockFile(object):
     """Context manager for a user global lock file"""
@@ -496,13 +494,13 @@ def svnFetch( repo, destdir, username = None, password = None ):
             command = command + " --username " + username
         if ( password != None ):
             command = command + " --password " + password
-        with LockFile(svnLockFileName()):
+        with LockFile(LockFileName("SVN")):
             ret = system( command )
     else:
         # already checked out, so only update
         os.chdir( path )
         debug( "svn up cwd: %s" % os.getcwd(), 1 )
-        with LockFile(svnLockFileName()):
+        with LockFile(LockFileName("SVN")):
             ret = system( "svn update" )
 
     if ( ret == 0 ):

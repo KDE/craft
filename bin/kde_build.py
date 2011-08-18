@@ -114,7 +114,7 @@ class kde_interface:
             print "kdesinglecheckout:pwd ", ownpath
             print "kdesinglecheckout:   ", svncmd
         os.chdir( ownpath )
-        with utils.LockFile(utils.svnLockFileName()):
+        with utils.LockFile(utils.LockFileName("SVN")):
             if not utils.system(svncmd):
                 utils.die( "while checking out. cmd: %s" % svncmd )
 
