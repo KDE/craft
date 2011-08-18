@@ -57,7 +57,6 @@ kde,kdegames,4.7.0,
 #kdegraphics
 kde,kdegraphics,4.7.0,
 kde,gwenview,4.7.0,
-kde,kamera,4.7.0,
 kde,kcolorchooser,4.7.0,
 kde,kdegraphics-strigi-analyzer,4.7.0,
 kde,kdegraphics-thumbnailers,4.7.0,
