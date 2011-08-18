@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "portable C++ libraries"
 
     def setDependencies(self):
-        self.dependencie['win32libs-bin/boost-headers'] = 'default'
+        self.dependencies['win32libs-bin/boost-headers'] = 'default'
         self.buildDependencies['win32libs-bin/boost-bjam'] = 'default'
 
 from Package.BoostPackageBase import *

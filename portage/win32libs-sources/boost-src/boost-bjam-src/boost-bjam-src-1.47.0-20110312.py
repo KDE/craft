@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "portable C++ libraries"
 
     def setDependencies(self):
-        self.dependencie['win32libs-bin/boost-headers'] = 'default'
+        self.dependencies['win32libs-bin/boost-headers'] = 'default'
         if self.defaultTarget == '1.44.0':
             self.buildDependencies['dev-util/bjam'] = 'default'
         
