@@ -19,6 +19,7 @@ class subinfo( info.infoclass ):
 
 
     def setDependencies( self ):
+        self.dependencies['win32libs-bin/boost-headers'] = 'default'
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
 
