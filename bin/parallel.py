@@ -86,7 +86,7 @@ from dependencies import DependenciesTree
 DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
     os.path.join(os.getenv("KDEROOT", os.curdir), "bin", "emerge.py")
 
-SVN_LOCK_FILE_TEMPLATE = "emergesvn-%s-%d.lck"
+LOCK_FILE_TEMPLATE = "emerge%s-%s-%d.lck"
 
 
 def now():
@@ -98,39 +98,43 @@ def log(kind, msg):
     print "builder: %s %s %s" % (now(), kind, msg)
     sys.stdout.flush()
 
-def uniqueSvnLockFilename():
-    """Generates a unique name for the SVN lock file."""
+def uniqueLockFilename(lock_id):
+    """Generates a unique name for the a lock file."""
     dirname = tempfile.gettempdir()
     user    = getpass.getuser()
     num     = 0
     while True:
         filename = os.path.join(
-            dirname, SVN_LOCK_FILE_TEMPLATE % (user, num))
+            dirname, LOCK_FILE_TEMPLATE % (lock_id, user, num))
         if not os.path.exists(filename):
             return filename
         num += 1
 
 class ExecutionContext(object):
-    """Context manager which injects an SVN lock name
-       into the called emerges and ensures that
+    """Context manager which injects an SVN lock and
+       MSYS lock name into the called emerges and ensures that
        the corresponding file will be removed at
        the end of the program.
     """
 
     def __init__(self):
-        self.svnlock = uniqueSvnLockFilename()
+        self.svnlock = uniqueLockFilename("SVN")
+        self.msyslock = uniqueLockFilename("MSYS")
 
     def __enter__(self):
         log("start", "all")
         os.environ["EMERGE_SVN_LOCK"     ] = "True"
         os.environ["EMERGE_SVN_LOCK_FILE"] = self.svnlock
+        os.environ["EMERGE_MSYS_LOCK"     ] = "True"
+        os.environ["EMERGE_MSYS_LOCK_FILE"] = self.msyslock
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if os.path.exists(self.svnlock):
-            try:
-                os.remove(self.svnlock)
-            except IOError:
-                pass
+        for lockfile in [self.svnlock, self.msyslock]:
+            if os.path.exists(lockfile):
+                try:
+                    os.remove(lockfile)
+                except IOError:
+                    pass
         log("stop", "all")
 
 class Job(object):
