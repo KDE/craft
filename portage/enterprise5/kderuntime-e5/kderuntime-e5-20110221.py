@@ -20,8 +20,7 @@ class subinfo( info.infoclass ):
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
 #        self.dependencies['enterprise5/phonon-vlc-e5'] = 'default'
         self.dependencies['win32libs-sources/libssh-src'] = 'default'
-#        self.dependencies['win32libs-sources/libbfd-src'] = 'default'
-        self.dependencies['enterprise5/libbfd-e5'] = 'default'
+        self.dependencies['win32libs-sources/libbfd-src'] = 'default'
         self.shortDescription = "KDE runtime libraries"
 
 from Package.CMakePackageBase import *
