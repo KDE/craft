@@ -34,7 +34,7 @@ InstallDirRegKey HKLM "${regkey}" ""
 Function .onInstSuccess
   SetOutPath "$INSTDIR"
   ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
-  Exec'"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
+  Exec '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
 FunctionEnd
 
 ; pages
