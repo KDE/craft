@@ -11,8 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
-        self.dependencies['win32libs-bin/boost'] = 'default'
-        self.dependencies['kdesupport/akonadi'] = 'default'
+        self.dependencies['kdesupport/akonadi'] = 'default'#boost is a implicit dependency by akonadi
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
