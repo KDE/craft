@@ -1,6 +1,11 @@
 import info
 import os
 from Package.CMakePackageBase import *
+import compiler
+
+if compiler.isMinGW() and os.getenv("EMERGE_USE_CCACHE") == "True":
+    os.putenv("CXX","g++")
+    os.putenv("CC","gcc")
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
