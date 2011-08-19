@@ -186,9 +186,9 @@ diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
    typedef long ssize_t;
 +#define _SSIZE_T_DEFINED
 +#endif
-+#ifndef _PID_T_DEFINED
++#ifndef _PID_T_
 +  typedef int pid_t;
-+#define _PID_T_DEFINED
++#define _PID_T_
 +#endif
  #else
  # include <sys/types.h>
