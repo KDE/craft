@@ -37,8 +37,7 @@ class Package(BoostPackageBase):
     def make(self):
         if self.subinfo.defaultTarget == '1.44.0':
             return True
-        cmd  = "cd %s && build.bat " % os.path.join(portage.getPackageInstance('win32libs-bin',
-                'boost-headers').sourceDir(),"tools","build","v2","engine")
+        cmd  = "build.bat "
         if compiler.isMinGW():
             cmd += "gcc"
         else:
@@ -50,7 +49,8 @@ class Package(BoostPackageBase):
                 cmd += "vc10"
         if utils.verbose() >= 1:
             print cmd
-        os.system(cmd) and utils.die(
+        utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs-bin',
+                'boost-headers').sourceDir(),"tools","build","v2","engine")) or utils.die(
                 "command: %s failed" % (cmd))
         return True
 
