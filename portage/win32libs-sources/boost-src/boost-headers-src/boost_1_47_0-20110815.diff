@@ -1,6 +1,6 @@
 diff -Nru boost_1_47_0.orig/tools/build/v2/engine/build.bat boost_1_47_0/tools/build/v2/engine/build.bat
 --- boost_1_47_0.orig/tools/build/v2/engine/build.bat	2011-06-06 22:36:21.000000000 +0200
-+++ boost_1_47_0/tools/build/v2/engine/build.bat	2011-08-14 23:52:49.942039600 +0200
++++ boost_1_47_0/tools/build/v2/engine/build.bat	2011-08-19 23:43:52.704387700 +0200
 @@ -1,4 +1,5 @@
  @ECHO OFF
 +SETLOCAL ENABLEDELAYEDEXPANSION
@@ -79,3 +79,15 @@ diff -Nru boost_1_47_0.orig/tools/build/v2/engine/build.bat boost_1_47_0/tools/b
      )
  set "BOOST_JAM_CC=gcc -DNT"
  set "BOOST_JAM_OPT_JAM=-o bootstrap\jam0.exe"
+diff -Nru boost_1_47_0.orig/tools/build/v2/tools/python.jam boost_1_47_0/tools/build/v2/tools/python.jam
+--- boost_1_47_0.orig/tools/build/v2/tools/python.jam	2009-11-04 17:19:58.000000000 +0100
++++ boost_1_47_0/tools/build/v2/tools/python.jam	2011-08-20 01:20:13.462028100 +0200
+@@ -483,7 +483,7 @@
+             # quoted commands correctly on Windows. This means that on that
+             # platform we do not support using a Python command interpreter
+             # executable whose path contains a space character.
+-            python-cmd = \"$(python-cmd)\" ;
++#            python-cmd = \"$(python-cmd)\" ;
+         }
+         local full-cmd =
+             $(python-cmd)" -c \"from sys import *; print('"$(format:J=\\n)"' % ("$(exprs:J=,)"))\"" ;
