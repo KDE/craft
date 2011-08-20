@@ -1,6 +1,6 @@
 diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
---- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-20 23:59:09.821926100 +0200
-+++ OpenCV-2.3.0/CMakeLists.txt	2011-08-20 23:58:51.720890800 +0200
+--- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-21 00:24:15.821064300 +0200
++++ OpenCV-2.3.0/CMakeLists.txt	2011-08-21 00:22:58.617648500 +0200
 @@ -246,7 +246,7 @@
          execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
                    OUTPUT_VARIABLE CMAKE_OPENCV_GCC_TARGET_MACHINE
@@ -15,7 +15,7 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
              set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 avifil32 avicap32 winmm)
          else()
 -            set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} vfw32 winmm)
-+            set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 winmm)
++            set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 avifil32 avicap32 winmm)
          endif()  
      endif()
  endif()
@@ -83,8 +83,8 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          #install(DIRECTORY doc/pics DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
          #install(DIRECTORY doc/latex2sphinx DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
 diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/highgui/CMakeLists.txt
---- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-20 23:59:10.759979700 +0200
-+++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-20 23:55:21.376859800 +0200
+--- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-21 00:24:16.837122400 +0200
++++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-21 00:18:46.787244700 +0200
 @@ -69,7 +69,7 @@
  endif()
  
@@ -95,8 +95,8 @@ diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/
  
  file(GLOB grfmt_hdrs src/grfmt*.hpp)
 diff -Nru OpenCV-2.3.0.orig/Package.cmake.in OpenCV-2.3.0/Package.cmake.in
---- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-20 23:59:11.293010200 +0200
-+++ OpenCV-2.3.0/Package.cmake.in	2011-08-20 23:55:21.378859900 +0200
+--- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-21 00:24:17.712172500 +0200
++++ OpenCV-2.3.0/Package.cmake.in	2011-08-21 00:18:46.788244700 +0200
 @@ -4,9 +4,6 @@
  # (c) Copyrights 2008 Hartmut Seichter, HIT Lab NZ
  #
