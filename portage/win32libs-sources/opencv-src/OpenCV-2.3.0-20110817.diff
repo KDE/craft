@@ -1,6 +1,26 @@
+diff -Nru OpenCV-2.3.0.orig/3rdparty/ffmpeg/CMakeLists.txt OpenCV-2.3.0/3rdparty/ffmpeg/CMakeLists.txt
+--- OpenCV-2.3.0.orig/3rdparty/ffmpeg/CMakeLists.txt	2011-08-20 23:59:09.039881400 +0200
++++ OpenCV-2.3.0/3rdparty/ffmpeg/CMakeLists.txt	2011-08-20 23:57:14.184312000 +0200
+@@ -1,6 +1,7 @@
+ project(opencv_ffmpeg)
+ 
+ if(MSVC64 OR MINGW64)
++   message(FATAL_ERROR "test")
+    set(FFMPEG_SUFFIX _64)
+ endif()
+ 
 diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
---- OpenCV-2.3.0.orig/CMakeLists.txt    2011-08-20 20:50:18.657214300 +0200
-+++ OpenCV-2.3.0/CMakeLists.txt 2011-08-20 20:44:54.451670800 +0200
+--- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-20 23:59:09.821926100 +0200
++++ OpenCV-2.3.0/CMakeLists.txt	2011-08-20 23:58:51.720890800 +0200
+@@ -246,7 +246,7 @@
+         execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
+                   OUTPUT_VARIABLE CMAKE_OPENCV_GCC_TARGET_MACHINE
+                   OUTPUT_STRIP_TRAILING_WHITESPACE)
+-        if(CMAKE_OPENCV_GCC_TARGET_MACHINE MATCHES "64")
++        if(CMAKE_OPENCV_GCC_TARGET_MACHINE MATCHES "x86_64")
+             set(MINGW64 1)
+         endif()
+     endif()
 @@ -892,7 +892,7 @@
          if(MINGW64)
              set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 avifil32 avicap32 winmm)
@@ -74,8 +94,8 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          #install(DIRECTORY doc/pics DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
          #install(DIRECTORY doc/latex2sphinx DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
 diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/highgui/CMakeLists.txt
---- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt    2011-08-20 20:50:44.965719100 +0200
-+++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt 2011-08-20 20:43:50.605019000 +0200
+--- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-20 23:59:10.759979700 +0200
++++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-20 23:55:21.376859800 +0200
 @@ -69,7 +69,7 @@
  endif()
  
@@ -86,8 +106,8 @@ diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/
  
  file(GLOB grfmt_hdrs src/grfmt*.hpp)
 diff -Nru OpenCV-2.3.0.orig/Package.cmake.in OpenCV-2.3.0/Package.cmake.in
---- OpenCV-2.3.0.orig/Package.cmake.in  2011-08-20 20:51:43.091043700 +0200
-+++ OpenCV-2.3.0/Package.cmake.in       2011-08-20 20:43:50.661022200 +0200
+--- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-20 23:59:11.293010200 +0200
++++ OpenCV-2.3.0/Package.cmake.in	2011-08-20 23:55:21.378859900 +0200
 @@ -4,9 +4,6 @@
  # (c) Copyrights 2008 Hartmut Seichter, HIT Lab NZ
  #
