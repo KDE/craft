@@ -15,10 +15,11 @@ class BoostBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "boost")
 
-    def configureOptions( self, defines=""):
+    def configureOptions( self, defines="" ):
         """returns default configure options"""
-        options = BuildSystemBase.configureOptions(self)              
+        options = BuildSystemBase.configureOptions(self)
         options += (" --build-type=minimal"
+#                " --debug-configuration"
                 " --build-dir=" + self.buildDir() + \
                 " threading=multi"
                 " link=shared"
@@ -38,7 +39,10 @@ class BoostBuildSystem(BuildSystemBase):
             elif compiler.isMSVC2008():
                 options += "msvc-9.0"
             elif compiler.isMSVC2010():
-                options += "msvc-10.0"    
+                options += "msvc-10.0"
+        emergeUserConfig = os.path.join( os.getenv( "KDEROOT" ), "etc", "emerge-boost-config.jam" )
+        if os.path.exists( emergeUserConfig ):
+            options += " --user-config=" + os.path.join( emergeUserConfig )
         return options
 
     def configure( self, defines=""):
@@ -58,29 +62,15 @@ class BoostBuildSystem(BuildSystemBase):
                 "command: %s failed" % (cmd))
         return True
 
-
-
-    def _walk(self, directory,ending):
-        for f in os.listdir(directory):
-          path = os.path.join(directory,f)
-          if os.path.isdir(path):
-              return self._walk(path,ending)
-          elif f.endswith(ending):
-              return directory,f
-              
-    def install( self):
+    def install( self ):
         """install the target"""
-        try:
-          path,dll = self._walk(self.buildDir(),"dll")
-        except Exception:
-          utils.die("Build Failed")
-        utils.copyFile(os.path.join(path,dll),os.path.join(self.imageDir(),"lib",dll))
-        utils.copyFile(os.path.join(path,dll),os.path.join(self.imageDir(),"bin",dll))
-        if compiler.isMinGW():
-            lib = dll + ".a"
-        elif compiler.isMSVC():
-          lib = dll[0:-3] + "lib"
-        utils.copyFile(os.path.join(path,lib),os.path.join(self.imageDir(),"lib",lib))
+        for root, dirs, files in os.walk( self.buildDir() ):
+            for f in files:
+                if f.endswith( ".dll" ):
+                    utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "lib", f ) )
+                    utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "bin", f ) )
+                elif f.endswith( ".a" ) or f.endswith( ".lib" ):
+                    utils.copyFile( os.path.join( root, f ), os.path.join( self.imageDir(), "lib", f ) )
         return True
 
     def unittest( self ):

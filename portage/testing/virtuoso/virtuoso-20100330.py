@@ -11,12 +11,12 @@ import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        arch = 'win32'
         if emergePlatform.buildArchitecture() == 'x64':
-          arch = 'win64'
-        self.targets[ '20100330' ] =  'http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.1/vos6-' + arch + '-20100330.zip'
+            self.targets[ '20100330' ] =  'http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.1/vos6-win64-20100330.zip'
+        else:
+            self.targets[ '20100330' ] =  'http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.1/vos6-win32-20100330.zip'            
+            self.targetDigests['20100330'] = 'f93f7606a636beefa4c669e8fc5d0100217d85c4'
         self.targetInstSrc[ '20100330' ] = "virtuoso-opensource"
-        self.targetDigests['20100330'] = 'f93f7606a636beefa4c669e8fc5d0100217d85c4'
         self.shortDescription = "a middleware and database engine hybrid for RDBMS, ORDBMS, virtual database, RDF, XML, free-text, web application server and file server functionality"
         self.defaultTarget = '20100330'
 
