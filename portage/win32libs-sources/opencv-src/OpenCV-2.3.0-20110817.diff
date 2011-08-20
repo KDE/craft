@@ -1,14 +1,3 @@
-diff -Nru OpenCV-2.3.0.orig/3rdparty/ffmpeg/CMakeLists.txt OpenCV-2.3.0/3rdparty/ffmpeg/CMakeLists.txt
---- OpenCV-2.3.0.orig/3rdparty/ffmpeg/CMakeLists.txt	2011-08-20 23:59:09.039881400 +0200
-+++ OpenCV-2.3.0/3rdparty/ffmpeg/CMakeLists.txt	2011-08-20 23:57:14.184312000 +0200
-@@ -1,6 +1,7 @@
- project(opencv_ffmpeg)
- 
- if(MSVC64 OR MINGW64)
-+   message(FATAL_ERROR "test")
-    set(FFMPEG_SUFFIX _64)
- endif()
- 
 diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
 --- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-20 23:59:09.821926100 +0200
 +++ OpenCV-2.3.0/CMakeLists.txt	2011-08-20 23:58:51.720890800 +0200
