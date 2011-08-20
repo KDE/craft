@@ -22,7 +22,8 @@ class subinfo(info.infoclass):
         self.dependencies['virtual/kdeedu'] = 'default'
         self.dependencies['win32libs-bin/lcms'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
-        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        self.dependencies['win32libs-bin/opencv'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'        
         self.shortDescription = "an advanced digital photo management application"
 
 class Package(CMakePackageBase):
