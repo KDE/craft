@@ -24,7 +24,7 @@ kdesupport,akonadi,1.6.0,
 kdesupport,snorenotify,,
 #
 # the KDE packages themselves
-kde,kdelibs,4.7.0,
+kde,kdelibs,4.7.0,1
 kde,kdepimlibs,4.7.0,
 kde,kde-runtime,4.7.0,
 kde,kde-workspace,4.7.0,

@@ -1,0 +1,28 @@
+commit ab7214ae25c638252701c487fc29a30dabe43860
+Author: Patrick von Reth <patrick.vonreth@gmail.com>
+Date:   Fri Jul 29 13:18:52 2011 +0200
+
+    silenced the solid wmi backend
+
+diff --git a/solid/solid/backends/wmi/wmiquery.cpp b/solid/solid/backends/wmi/wmiquery.cpp
+index 8f63173..bd2e74b 100644
+--- a/solid/solid/backends/wmi/wmiquery.cpp
++++ b/solid/solid/backends/wmi/wmiquery.cpp
+@@ -80,7 +80,7 @@ using namespace Solid::Backends::Wmi;
+ 
+ QString WmiQuery::Item::getProperty(const QString &property )
+ {
+-    qDebug() << "start property:" << property;
++//    qDebug() << "start property:" << property;
+     QString prop = property;
+     if (property == "voule.ignore")
+         return "false";
+@@ -100,7 +100,7 @@ QString WmiQuery::Item::getProperty(const QString &property )
+ 
+     VariantClear(&vtProp);
+     m_p->Release();
+-    qDebug() << "end result:" << result;
++//    qDebug() << "end result:" << result;
+     return result;
+ }
+ 

@@ -1,0 +1,28 @@
+commit ab7214ae25c638252701c487fc29a30dabe43860
+Author: Patrick von Reth <patrick.vonreth@gmail.com>
+Date:   Fri Jul 29 13:18:52 2011 +0200
+
+    silenced the solid wmi backend
+
+diff --git a/solid/solid/backends/wmi/wmidevice.cpp b/solid/solid/backends/wmi/wmidevice.cpp
+index fddc290..4b6cda2 100644
+--- a/solid/solid/backends/wmi/wmidevice.cpp
++++ b/solid/solid/backends/wmi/wmidevice.cpp
+@@ -172,7 +172,7 @@ public:
+     {
+         QStringList list = DeviceInterface::toStringList(type);
+         QString value = list.size() > 0 ? list[0] : QString();
+-        qDebug() << value;
++//         qDebug() << value;
+         return value;
+     }
+ 
+@@ -477,7 +477,7 @@ bool WmiDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) c
+         return true;
+     } else if (type==Solid::DeviceInterface::StorageAccess) {
+ #if 1
+-        qDebug() << " has to be implemented";
++//         qDebug() << " has to be implemented";
+         return true;
+ #else
+         return property("info.interfaces").toStringList().contains("org.freedesktop.Wmi.Device.Volume")
