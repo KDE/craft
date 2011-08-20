@@ -73,5 +73,5 @@ win32libs-sources,raptor2-src,,
 win32libs-sources,rasqal-src,,
 win32libs-sources,pthreads-src,,
 win32libs-sources,yajl-src,1.0.12,
-win32libs-sources,opencv-src,,
+win32libs-sources,opencv-src,,1
 libs,runtime,,
