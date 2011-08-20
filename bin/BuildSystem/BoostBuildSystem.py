@@ -58,29 +58,15 @@ class BoostBuildSystem(BuildSystemBase):
                 "command: %s failed" % (cmd))
         return True
 
-
-
-    def _walk(self, directory,ending):
-        for f in os.listdir(directory):
-          path = os.path.join(directory,f)
-          if os.path.isdir(path):
-              return self._walk(path,ending)
-          elif f.endswith(ending):
-              return directory,f
-              
-    def install( self):
+    def install( self ):
         """install the target"""
-        try:
-          path,dll = self._walk(self.buildDir(),"dll")
-        except Exception:
-          utils.die("Build Failed")
-        utils.copyFile(os.path.join(path,dll),os.path.join(self.imageDir(),"lib",dll))
-        utils.copyFile(os.path.join(path,dll),os.path.join(self.imageDir(),"bin",dll))
-        if compiler.isMinGW():
-            lib = dll + ".a"
-        elif compiler.isMSVC():
-          lib = dll[0:-3] + "lib"
-        utils.copyFile(os.path.join(path,lib),os.path.join(self.imageDir(),"lib",lib))
+        for root, dirs, files in os.walk( self.buildDir() ):
+            for f in files:
+                if f.endswith( ".dll" ):
+                    utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "lib", f ) )
+                    utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "bin", f ) )
+                elif f.endswith( ".a" ) or f.endswith( ".lib" ):
+                    utils.copyFile( os.path.join( root, f ), os.path.join( self.imageDir(), "lib", f ) )
         return True
 
     def unittest( self ):
