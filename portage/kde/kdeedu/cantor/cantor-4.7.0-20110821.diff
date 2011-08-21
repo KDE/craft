@@ -1,0 +1,44 @@
+diff -Nru cantor-4.7.0.orig/src/backends/maxima/CMakeLists.txt cantor-4.7.0/src/backends/maxima/CMakeLists.txt
+--- cantor-4.7.0.orig/src/backends/maxima/CMakeLists.txt	2011-05-20 22:33:49.000000000 +0200
++++ cantor-4.7.0/src/backends/maxima/CMakeLists.txt	2011-08-21 18:32:40.990430300 +0200
+@@ -23,6 +23,8 @@
+ target_link_libraries( testmaxima
+   cantorlibs
+   cantortest
++  ${QT_QTCORE_LIBRARY}
++  ${QT_QTTEST_LIBRARY}
+ )
+ 
+ install( FILES maximabackend.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/cantor)
+diff -Nru cantor-4.7.0.orig/src/lib/cantor_export.h cantor-4.7.0/src/lib/cantor_export.h
+--- cantor-4.7.0.orig/src/lib/cantor_export.h	2011-05-20 22:33:49.000000000 +0200
++++ cantor-4.7.0/src/lib/cantor_export.h	2011-08-21 17:19:46.393430300 +0200
+@@ -34,6 +34,16 @@
+ # endif
+ #endif
+ 
++#ifndef CANTORTEST_EXPORT
++# if defined(MAKE_CANTORTEST_LIB)
++// We are building this library
++#  define CANTORTEST_EXPORT KDE_EXPORT
++# else
++// We are using this library
++#  define CANTORTEST_EXPORT KDE_IMPORT
++# endif
++#endif
++
+ # ifndef CANTOR_EXPORT_DEPRECATED
+ #  define CANTOR_EXPORT_DEPRECATED KDE_DEPRECATED CANTOR_EXPORT
+ # endif
+diff -Nru cantor-4.7.0.orig/src/lib/test/backendtest.h cantor-4.7.0/src/lib/test/backendtest.h
+--- cantor-4.7.0.orig/src/lib/test/backendtest.h	2011-05-20 22:33:49.000000000 +0200
++++ cantor-4.7.0/src/lib/test/backendtest.h	2011-08-21 17:19:10.638830300 +0200
+@@ -33,7 +33,7 @@
+     class Expression;
+ }
+ 
+-class CANTOR_EXPORT BackendTest : public QObject
++class CANTORTEST_EXPORT BackendTest : public QObject
+ {
+     Q_OBJECT
+     private slots:

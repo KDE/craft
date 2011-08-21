@@ -1,0 +1,12 @@
+diff -Nru libkdeedu-4.7.0.orig/qtmmlwidget/qtmmlwidget.cpp libkdeedu-4.7.0/qtmmlwidget/qtmmlwidget.cpp
+--- libkdeedu-4.7.0.orig/qtmmlwidget/qtmmlwidget.cpp	2011-06-22 16:52:33.000000000 +0200
++++ libkdeedu-4.7.0/qtmmlwidget/qtmmlwidget.cpp	2011-08-21 18:46:59.293630300 +0200
+@@ -3625,7 +3625,7 @@
+ 
+     return QString("%1 %2 mr=%3 pr=%4 dr=%5 ro=(%7, %8) str=%9")
+ 		.arg(spec->type_str)
+-		.arg((unsigned long)this, 0, 16)
++		.arg((quintptr)this, 0, 16)
+ 		.arg(rectToStr(myRect()))
+ 		.arg(rectToStr(parentRect()))
+ 		.arg(rectToStr(deviceRect()))

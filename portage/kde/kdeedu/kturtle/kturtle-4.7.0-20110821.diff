@@ -1,0 +1,39 @@
+diff -Nru kturtle-4.7.0.orig/src/interpreter/executer.cpp kturtle-4.7.0/src/interpreter/executer.cpp
+--- kturtle-4.7.0.orig/src/interpreter/executer.cpp	2011-05-20 22:34:22.000000000 +0200
++++ kturtle-4.7.0/src/interpreter/executer.cpp	2011-08-21 18:46:10.512430300 +0200
+@@ -449,7 +449,7 @@
+ }
+ void Executer::executeIf(TreeNode* node) {
+ //	kDebug() << "called";  // method name is appended by kDebug
+-	QString id = QString("__%1_%2").arg(node->token()->look()).arg((long)node);
++	QString id = QString("__%1_%2").arg(node->token()->look()).arg((quintptr)node);
+ 	if (currentVariableTable()->contains(id)) {
+ 		currentVariableTable()->remove(id);
+ 		return;
+@@ -472,7 +472,7 @@
+ }
+ void Executer::executeRepeat(TreeNode* node) {
+ //	kDebug() << "called";  // method name is appended by kDebug
+-	QString id = QString("__%1_%2").arg(node->token()->look()).arg((long)node);
++	QString id = QString("__%1_%2").arg(node->token()->look()).arg((quintptr)node);
+ 
+ 	if(breaking) {
+ 		breaking = false;
+@@ -504,7 +504,7 @@
+ 	// so we do the following on every call to executeWhile:
+ 	//     exec scope, exec expression, exec scope, exec expression, ...
+ 
+-	QString id = QString("__%1_%2").arg(node->token()->look()).arg((long)node);
++	QString id = QString("__%1_%2").arg(node->token()->look()).arg((quintptr)node);
+ 
+ 	if (breaking) {
+ 		// We hit a break command while executing the scope
+@@ -553,7 +553,7 @@
+ 		firstIteration = true;
+ 	}
+ 
+-	QString id = QString("__%1_%2").arg(node->token()->look()).arg((long)node);
++	QString id = QString("__%1_%2").arg(node->token()->look()).arg((quintptr)node);
+ 
+ 	if(breaking) {
+ 		breaking = false;

@@ -1,0 +1,80 @@
+diff -Nru kstars-4.7.0.orig/kstars/kstarsactions.cpp kstars-4.7.0/kstars/kstarsactions.cpp
+--- kstars-4.7.0.orig/kstars/kstarsactions.cpp	2011-05-20 22:34:16.000000000 +0200
++++ kstars-4.7.0/kstars/kstarsactions.cpp	2011-08-21 19:33:12.458830300 +0200
+@@ -16,6 +16,10 @@
+  ***************************************************************************/
+ 
+ //needed in slotRunScript() for chmod() syscall (remote script downloaded to temp file)
++
++#ifdef _WIN32
++#include <windows.h>
++#endif
+ #include <sys/stat.h>
+ 
+ #include <QCheckBox>
+diff -Nru kstars-4.7.0.orig/kstars/skycomponents/deepstarcomponent.cpp kstars-4.7.0/kstars/skycomponents/deepstarcomponent.cpp
+--- kstars-4.7.0.orig/kstars/skycomponents/deepstarcomponent.cpp	2011-05-20 22:34:17.000000000 +0200
++++ kstars-4.7.0/kstars/skycomponents/deepstarcomponent.cpp	2011-08-21 19:24:16.365630300 +0200
+@@ -15,6 +15,9 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
++#ifdef _WIN32
++#include <windows.h>
++#endif
+ #include "deepstarcomponent.h"
+ 
+ #include <QPixmap>
+diff -Nru kstars-4.7.0.orig/kstars/skycomponents/starcomponent.cpp kstars-4.7.0/kstars/skycomponents/starcomponent.cpp
+--- kstars-4.7.0.orig/kstars/skycomponents/starcomponent.cpp	2011-05-20 22:34:17.000000000 +0200
++++ kstars-4.7.0/kstars/skycomponents/starcomponent.cpp	2011-08-21 19:24:18.783630300 +0200
+@@ -15,6 +15,9 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
++#ifdef _WIN32
++#include <windows.h>
++#endif
+ #include "starcomponent.h"
+ 
+ #include <kglobal.h>
+diff -Nru kstars-4.7.0.orig/kstars/skyglpainter.cpp kstars-4.7.0/kstars/skyglpainter.cpp
+--- kstars-4.7.0.orig/kstars/skyglpainter.cpp	2011-06-22 16:48:32.000000000 +0200
++++ kstars-4.7.0/kstars/skyglpainter.cpp	2011-08-21 19:30:48.611230300 +0200
+@@ -17,6 +17,9 @@
+ 
+ */
+ 
++#ifdef _WIN32
++#include <windows.h>
++#endif
+ #include "skyglpainter.h"
+ 
+ #include <cstddef>
+diff -Nru kstars-4.7.0.orig/kstars/skymap.cpp kstars-4.7.0/kstars/skymap.cpp
+--- kstars-4.7.0.orig/kstars/skymap.cpp	2011-05-20 22:34:17.000000000 +0200
++++ kstars-4.7.0/kstars/skymap.cpp	2011-08-21 19:33:40.570030300 +0200
+@@ -15,6 +15,9 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
++#ifdef _WIN32
++#include <windows.h>
++#endif
+ #include "skymap.h"
+ 
+ #include <QCursor>
+diff -Nru kstars-4.7.0.orig/kstars/skymapgldraw.cpp kstars-4.7.0/kstars/skymapgldraw.cpp
+--- kstars-4.7.0.orig/kstars/skymapgldraw.cpp	2011-05-20 22:34:17.000000000 +0200
++++ kstars-4.7.0/kstars/skymapgldraw.cpp	2011-08-21 19:20:25.829430300 +0200
+@@ -14,6 +14,10 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
++#ifdef _WIN32
++#include <windows.h>
++#endif
++
+ #include "texturemanager.h"
+ #include "skymapcomposite.h"
+ #include "skyglpainter.h"

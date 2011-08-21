@@ -1,0 +1,14 @@
+diff -Nru step-4.7.0.orig/step/worldscene.cc step-4.7.0/step/worldscene.cc
+--- step-4.7.0.orig/step/worldscene.cc	2011-05-20 22:34:32.000000000 +0200
++++ step-4.7.0/step/worldscene.cc	2011-08-21 19:17:51.565230300 +0200
+@@ -16,6 +16,10 @@
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+ 
++#ifdef Q_OS_WIN
++#include <windows.h>
++#endif
++
+ #include "worldscene.h"
+ #include "worldscene.moc"
+ 
