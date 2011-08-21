@@ -1,0 +1,16 @@
+diff -Nru kdepimlibs-4.7.0.orig/kimap/tests/kimaptest/CMakeLists.txt kdepimlibs-4.7.0/kimap/tests/kimaptest/CMakeLists.txt
+--- kdepimlibs-4.7.0.orig/kimap/tests/kimaptest/CMakeLists.txt	2011-05-20 22:31:22.000000000 +0200
++++ kdepimlibs-4.7.0/kimap/tests/kimaptest/CMakeLists.txt	2011-08-21 13:41:46.340965800 +0200
+@@ -7,11 +7,10 @@
+ set(kimaptest_LIB_SRCS
+    fakeserver.cpp
+    mockjob.cpp
+-   ../../imapstreamparser.cpp
+ )
+ 
+ kde4_add_library(kimaptest STATIC ${kimaptest_LIB_SRCS})
+-target_link_libraries(kimaptest ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QTTEST_LIBRARY})
++target_link_libraries(kimaptest ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QTTEST_LIBRARY} kimap)
+ install(TARGETS kimaptest ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+ ########### install files ###############

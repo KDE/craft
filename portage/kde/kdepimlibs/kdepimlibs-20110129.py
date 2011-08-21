@@ -6,6 +6,8 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.7.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.7.' + ver + '/src/kdepimlibs-4.7.' + ver + '.tar.bz2'
             self.targetInstSrc['4.7.' + ver] = 'kdepimlibs-4.7.' + ver
+        self.patchToApply['4.7.0'] = ("kdepimlibs-4.7.0-20110821.diff", 1)
+        self.targetDigests['4.7.0'] = 'b5296ef96b94cab5aeb39dabde466e28670c20bd'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
