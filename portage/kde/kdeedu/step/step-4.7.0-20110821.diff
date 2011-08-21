@@ -5,7 +5,7 @@ diff -Nru step-4.7.0.orig/step/worldscene.cc step-4.7.0/step/worldscene.cc
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
  
-+#ifdef Q_OS_WIN
++#ifdef _WIN32
 +#include <windows.h>
 +#endif
 +
