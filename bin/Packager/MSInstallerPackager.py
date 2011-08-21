@@ -1,3 +1,4 @@
+# copyright (c) 2011 Patrick Spendrin <ps_ml@gmx.de>
 
 import uuid
 import shutil
