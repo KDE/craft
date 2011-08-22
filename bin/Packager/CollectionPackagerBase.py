@@ -203,7 +203,7 @@ class CollectionPackagerBase( PackagerBase ):
         utils.createDir( destDir )
         utils.debug( "Copying from %s ..." % ( srcDir ) )
         uniquebasenames = []
-        unique_names = []
+        self.unique_names = []
         duplicates = []
 
         for entry in self.traverse( srcDir, self.whitelisted, self.blacklisted ):
@@ -211,10 +211,10 @@ class CollectionPackagerBase( PackagerBase ):
                 utils.debug( "Found duplicate filename: %s" % os.path.basename( entry ), 2 )
                 duplicates.append( entry )
             else:
-                unique_names.append( entry )
+                self.unique_names.append( entry )
                 uniquebasenames.append( os.path.basename( entry ) )
 
-        for entry in unique_names:
+        for entry in self.unique_names:
             entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
