@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.5.1'] = ('kmymoney-4.5.1-20101215.diff', 1)
         self.patchToApply['4.5.2'] = ('kmymoney-4.5.2-20110112.diff', 1)
         self.patchToApply['4.5.3'] = ('kmymoney-4.5.2-20110112.diff', 1)
+        self.patchToApply['4.6.0'] = ('kmymoney-4.6.0-20110822.diff', 1)
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
