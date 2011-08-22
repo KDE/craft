@@ -1,0 +1,12 @@
+diff -Nru kmid-2.4.0.orig/win/winmidioutput.cpp kmid-2.4.0/win/winmidioutput.cpp
+--- kmid-2.4.0.orig/win/winmidioutput.cpp	2010-08-02 16:26:20.000000000 +0200
++++ kmid-2.4.0/win/winmidioutput.cpp	2011-08-22 07:05:54.364774300 +0200
+@@ -269,7 +269,7 @@
+         if (d->m_outHandle != 0)
+             closeStream();
+         res = midiStreamOpen( &d->m_outHandle, &dev, 1,
+-                (DWORD) midiCallback, (DWORD) this, CALLBACK_FUNCTION);
++                (DWORD_PTR) midiCallback, (DWORD_PTR) this, CALLBACK_FUNCTION);
+         if (res != MMSYSERR_NOERROR) {
+             kDebug() << "midiStreamOpen() err:" << mmErrorString(res);
+             return false;

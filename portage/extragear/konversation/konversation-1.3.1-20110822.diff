@@ -1,0 +1,12 @@
+diff -Nru konversation-1.3.1.orig/src/config/configdialog.cpp konversation-1.3.1/src/config/configdialog.cpp
+--- konversation-1.3.1.orig/src/config/configdialog.cpp	2010-07-01 15:04:28.000000000 +0200
++++ konversation-1.3.1/src/config/configdialog.cpp	2011-08-22 06:55:35.762392300 +0200
+@@ -80,7 +80,7 @@
+     }
+     else
+     {
+-        QString genericName = QString("SettingsDialog-%1").arg((long)(this));
++        QString genericName = QString("SettingsDialog-%1").arg((quintptr)(this));
+         openDialogs.insert(genericName.toLatin1().data(), this);
+         setObjectName(genericName);
+     }
