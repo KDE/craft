@@ -3,7 +3,7 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:skrooge'
-        self.svnTargets['0.9.1'] = "[git]kde:skrooge|master|e00a80e33c563e0c01"
+        self.svnTargets['0.9.1'] = "[git]kde:skrooge|master|4c9e641"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
