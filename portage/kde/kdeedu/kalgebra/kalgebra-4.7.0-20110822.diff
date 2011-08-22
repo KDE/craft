@@ -1,0 +1,58 @@
+diff -Nru kalgebra-4.7.0.orig/analitza/abstractexpressiontransformer.cpp kalgebra-4.7.0/analitza/abstractexpressiontransformer.cpp
+--- kalgebra-4.7.0.orig/analitza/abstractexpressiontransformer.cpp	2011-05-20 22:33:50.000000000 +0200
++++ kalgebra-4.7.0/analitza/abstractexpressiontransformer.cpp	2011-08-22 23:49:31.236026400 +0200
+@@ -57,10 +57,10 @@
+ 	return 0;
+ }
+ 
+-#define ITERATION_WALKER(T, args...)\
++#define ITERATION_WALKER(T, ...)\
+ Object* AbstractExpressionTransformer::walk##T(const T* pattern)\
+ {\
+-	T* ret = new T(args);\
++	T* ret = new T(__VA_ARGS__);\
+ 	T ::const_iterator it=pattern->constBegin(), itEnd=pattern->constEnd();\
+ 	for(; it!=itEnd; ++it) {\
+ 		ret->appendBranch(walk(*it));\
+diff -Nru kalgebra-4.7.0.orig/analitza/container.cpp kalgebra-4.7.0/analitza/container.cpp
+--- kalgebra-4.7.0.orig/analitza/container.cpp	2011-05-20 22:33:50.000000000 +0200
++++ kalgebra-4.7.0/analitza/container.cpp	2011-08-22 23:52:52.876559600 +0200
+@@ -154,7 +154,9 @@
+ 		m_cont_type==piecewise || m_cont_type==piece || m_cont_type==otherwise;
+ }
+ 
++#ifdef __GNUC__
+ #warning this should go in favour of the typesystem, if possible
++#endif
+ bool isValue(Object* o)
+ {
+ 	bool ret=false;
+diff -Nru kalgebra-4.7.0.orig/analitza/providederivative.cpp kalgebra-4.7.0/analitza/providederivative.cpp
+--- kalgebra-4.7.0.orig/analitza/providederivative.cpp	2011-05-20 22:33:50.000000000 +0200
++++ kalgebra-4.7.0/analitza/providederivative.cpp	2011-08-22 23:51:54.852240800 +0200
+@@ -154,10 +154,10 @@
+ 		return AbstractExpressionTransformer::walkApply(a);
+ }
+ 
+-#define ITERATE(T, args...)\
++#define ITERATE(T, ...)\
+ Object* ProvideDerivative::derivateContent##T(const T * v)\
+ {\
+-	T* ret = new T(args);\
++	T* ret = new T(__VA_ARGS__);\
+ 	T::const_iterator it=v->constBegin(), itEnd=v->constEnd();\
+ 	for(; it!=itEnd; ++it) {\
+ 		Apply* a=makeDiff(*it);\
+diff -Nru kalgebra-4.7.0.orig/analitza/value.cpp kalgebra-4.7.0/analitza/value.cpp
+--- kalgebra-4.7.0.orig/analitza/value.cpp	2011-05-20 22:33:50.000000000 +0200
++++ kalgebra-4.7.0/analitza/value.cpp	2011-08-22 23:53:47.158664400 +0200
+@@ -113,7 +113,9 @@
+ 
+ bool Cn::matches(const Object* exp, QMap< QString, const Object* >*) const
+ {
++#ifdef __GNUC__
+ #warning fixme: second condition is just wrong
++#endif
+ 	return exp->type()==type() && Cn(exp)==*this;
+ }
+ 
