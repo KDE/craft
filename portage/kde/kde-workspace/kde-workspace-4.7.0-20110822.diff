@@ -1,0 +1,40 @@
+diff -Nru kde-workspace-4.7.0.orig/libs/kworkspace/kactivityconsumer.cpp kde-workspace-4.7.0/libs/kworkspace/kactivityconsumer.cpp
+--- kde-workspace-4.7.0.orig/libs/kworkspace/kactivityconsumer.cpp	2011-05-20 22:32:07.000000000 +0200
++++ kde-workspace-4.7.0/libs/kworkspace/kactivityconsumer.cpp	2011-08-22 23:20:13.826830300 +0200
+@@ -91,21 +91,21 @@
+         case Opened:
+             KActivityManager::self()->NotifyResourceOpened(
+                     QCoreApplication::instance()->applicationName(),
+-                    (uint)wid,
++                    (quintptr)wid,
+                     uri.url()
+                 );
+             break;
+ 
+         case Modified:
+             KActivityManager::self()->NotifyResourceModified(
+-                    (uint)wid,
++                    (quintptr)wid,
+                     uri.url()
+                 );
+             break;
+ 
+         case Closed:
+             KActivityManager::self()->NotifyResourceClosed(
+-                    (uint)wid,
++                    (quintptr)wid,
+                     uri.url()
+                 );
+             break;
+diff -Nru kde-workspace-4.7.0.orig/libs/kworkspace/kwindowlistmenu.cpp kde-workspace-4.7.0/libs/kworkspace/kwindowlistmenu.cpp
+--- kde-workspace-4.7.0.orig/libs/kworkspace/kwindowlistmenu.cpp	2011-05-20 22:32:07.000000000 +0200
++++ kde-workspace-4.7.0/libs/kworkspace/kwindowlistmenu.cpp	2011-08-22 23:21:00.205630300 +0200
+@@ -163,7 +163,7 @@
+         itemText.replace( '&', QLatin1String( "&&" ));
+ 
+         QAction* action = addAction( pm, itemText, this, SLOT( slotForceActiveWindow() ) );
+-        action->setData( (int)info->win() );
++        action->setData( (quintptr)info->win() );
+ 
+         if ( info->win() == activeWindow )
+           action->setChecked( true );
