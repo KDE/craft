@@ -1,29 +1,22 @@
-diff -Nru rocs-4.7.0.orig/src/Plugins/DataStructure/Graph/CMakeLists.txt rocs-4.7.0/src/Plugins/DataStructure/Graph/CMakeLists.txt
---- rocs-4.7.0.orig/src/Plugins/DataStructure/Graph/CMakeLists.txt      2011-05-20 22:34:30.000000000 +0200
-+++ rocs-4.7.0/src/Plugins/DataStructure/Graph/CMakeLists.txt   2011-08-21 01:49:48.968057300 +0200
-@@ -10,7 +10,6 @@
- 
- 
- kde4_add_plugin(rocs_GraphStructure ${GraphStructure_SRC} )
--kde4_add_library(rocs_GraphStructure  SHARED ${GraphStructure_SRC} )
- 
- target_link_libraries(rocs_GraphStructure
-                 ${KDE4_KDEUI_LIBS}
 diff -Nru rocs-4.7.0.orig/src/Plugins/DataStructure/Graph/GraphStructure.h rocs-4.7.0/src/Plugins/DataStructure/Graph/GraphStructure.h
 --- rocs-4.7.0.orig/src/Plugins/DataStructure/Graph/GraphStructure.h    2011-06-22 16:53:03.000000000 +0200
-+++ rocs-4.7.0/src/Plugins/DataStructure/Graph/GraphStructure.h 2011-08-21 01:49:49.059062500 +0200
-@@ -24,7 +24,7 @@
++++ rocs-4.7.0/src/Plugins/DataStructure/Graph/GraphStructure.h 2011-08-22 02:20:56.130746500 +0200
+@@ -24,8 +24,11 @@
  #include "DataStructure.h"
  
  namespace Rocs{
 -class ROCSLIB_EXPORT GraphStructure : public DataStructure {
 +class GraphStructure : public DataStructure {
    Q_OBJECT
++  Q_PROPERTY (GRAPH_TYPE graphType READ graphType WRITE setGraphType)
++  Q_PROPERTY (bool directed READ directed)
++  Q_ENUMS(GRAPH_TYPE)
    public:
      typedef enum {
+         UNDIRECTED,
 diff -Nru rocs-4.7.0.orig/src/Plugins/TransformEdges/CMakeLists.txt rocs-4.7.0/src/Plugins/TransformEdges/CMakeLists.txt
 --- rocs-4.7.0.orig/src/Plugins/TransformEdges/CMakeLists.txt   2011-05-20 22:34:30.000000000 +0200
-+++ rocs-4.7.0/src/Plugins/TransformEdges/CMakeLists.txt        2011-08-21 01:52:39.458808800 +0200
++++ rocs-4.7.0/src/Plugins/TransformEdges/CMakeLists.txt        2011-08-22 02:15:14.170187500 +0200
 @@ -12,7 +12,6 @@
  
  kde4_add_plugin(rocs_transformedgesplugin ${TransformEdgesToolsPlugin_SRC} )
@@ -32,3 +25,484 @@ diff -Nru rocs-4.7.0.orig/src/Plugins/TransformEdges/CMakeLists.txt rocs-4.7.0/s
                         ${KDE4_KDEUI_LIBS}
                         rocslib)
                              
+diff -Nru rocs-4.7.0.orig/src/Plugins/TransformEdges/transformedgeswidget.cpp rocs-4.7.0/src/Plugins/TransformEdges/transformedgeswidget.cpp
+--- rocs-4.7.0.orig/src/Plugins/TransformEdges/transformedgeswidget.cpp 2011-06-22 16:53:03.000000000 +0200
++++ rocs-4.7.0/src/Plugins/TransformEdges/transformedgeswidget.cpp      2011-08-22 02:15:14.196189000 +0200
+@@ -4,7 +4,7 @@
+ 
+     This program is free software; you can redistribute it and/or
+     modify it under the terms of the GNU General Public License as
+-    published by the Free Software Foundation; either version 2 of 
++    published by the Free Software Foundation; either version 2 of
+     the License, or (at your option) any later version.
+ 
+     This program is distributed in the hope that it will be useful,
+@@ -35,14 +35,13 @@
+ #include <Document.h>
+ #include <DataStructure.h>
+ #include <DocumentManager.h>
+-#include "../DataStructure/Graph/GraphStructure.h"
+ #include <Pointer.h>
+ #include <Data.h>
+ 
+ 
+ //TODO output usefull error message
+ namespace boost { void throw_exception( std::exception const & ) {} } // do noop on exception
+-using namespace Rocs;
++
+ 
+ class QPushButton;
+ 
+@@ -52,10 +51,10 @@
+     ui = new Ui::TransformEdgesWidget;
+        ui->setupUi(this);
+     graphDoc_ = graphDoc;
+-    
++
+     // put widget at center of screen
+     QDesktopWidget desktop;
+-    QRect rect = desktop.availableGeometry(desktop.screenNumber(parent)); 
++    QRect rect = desktop.availableGeometry(desktop.screenNumber(parent));
+     QPoint center = rect.center();
+     center.setX(center.x() - (this->width()/2));
+     center.setY(center.y() - (this->height()/2));
+@@ -101,16 +100,13 @@
+ 
+ void TransformEdgesWidget::makeComplete( DataStructure* graph )
+ {
+-    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
+-    if( !graphDS ) 
+-        return;
+-        
+-    bool directed = graphDS->directed();
++
++    bool directed = graph->property("directed").toBool();
+ 
+     foreach ( Pointer *e, graph->pointers() ) {
+         graph->remove ( e );
+     }
+-    
++
+     int size_i = graph->dataList().size() - 1;
+     for(int i = 0; i < size_i; ++i)
+     {
+@@ -138,19 +134,15 @@
+ 
+ void TransformEdgesWidget::reverseAllEdges( DataStructure* graph )
+ {
+-    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
+-    if( !graphDS ) 
++    if (! graph->property("directed").toBool())
+         return;
+ 
+-    if (graphDS->directed()==false)
+-        return;
+-        
+     QList< QPair<Data*, Data*> > newPointers;
+-    foreach ( Pointer *e, graphDS->pointers() ) {
++    foreach ( Pointer *e, graph->pointers() ) {
+         newPointers << QPair<Data*, Data*>(e->to(), e->from());
+         graph->remove ( e );
+     }
+-    
++
+     for(int i=0; i<newPointers.count(); i++) {
+         graph->addPointer(newPointers[i].first, newPointers[i].second);
+     }
+@@ -159,11 +151,8 @@
+ 
+ qreal TransformEdgesWidget::makeSpanningTree(DataStructure* graph)
+ {
+-    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
+-    if( !graphDS ) 
+-        return 0;
+ 
+-    QList<Data*> vertices = graphDS->dataList();
++    QList<Data*> vertices = graph->dataList();
+     int n = vertices.size();
+ 
+     /*
+@@ -185,7 +174,7 @@
+      * Indicator variable that is true if node is in tree, false otherwise.
+      * Initially all nodes are marked to be not in MST.
+      */
+-    QMap<int, bool> inTree; 
++    QMap<int, bool> inTree;
+     for (int i = 0; i < vertices.size(); i++) {
+         inTree[i] = false;
+     }
+@@ -201,36 +190,36 @@
+     for (int j=0; j<n; j++)
+     {
+         if (i==j)   weight[QPair<int,int>(i,j)] = 0;
+-        
++
+         PointerList out;
+-        if (graphDS->directed())  
++        if (graph->property("directed").toBool())
+             out = vertices[i]->out_pointers();
+-        else 
++        else
+             out = vertices[i]->adjacent_pointers();
+-                
++
+         for(int k=0; k<out.size(); k++) {
+             if (out[k]->to()==vertices[j]) {
+                 if (out[k]->value()!="")
+                     weight[QPair<int,int>(i,j)] = out[k]->value().toDouble();
+                 else
+                     weight[QPair<int,int>(i,j)] = 1;
+-                
++
+             }
+         }
+     }
+     }
+ 
+-    /* 
++    /*
+      * successor[i] denotes the index of the node, to which i must be
+      * linked to in order to get distance distance[i]
+      */
+-    QMap< int, int> successor; 
++    QMap< int, int> successor;
+ 
+     // start with first graph node
+     inTree[0] = true;
+-    
++
+     // update distances
+-    for (int i = 0; i < n; ++i) 
++    for (int i = 0; i < n; ++i)
+     {
+         if ((weight[QPair<int,int>(0,i)] != 0) && (distance[i] > weight[QPair<int,int>(0,i)] )) {
+             distance[i] = weight[QPair<int,int>(0,i)] ;
+@@ -239,7 +228,7 @@
+     }
+ 
+     qreal total = 0;
+-    for(int treeSize = 1; treeSize < n; treeSize++) 
++    for(int treeSize = 1; treeSize < n; treeSize++)
+     {
+         // Find node with the smallest distance to the tree
+         int min = -1;
+@@ -259,7 +248,7 @@
+         total += distance[min];
+ 
+         // update distances
+-        for (int i = 0; i < n; ++i) 
++        for (int i = 0; i < n; ++i)
+         {
+             if ((weight[QPair<int,int>(min,i)]  != 0) && (distance[i] > weight[QPair<int,int>(min,i)])) {
+                 distance[i] = weight[QPair<int,int>(min,i)];
+@@ -267,14 +256,14 @@
+             }
+         }
+     }
+-    
++
+     // erase all graph edges
+     removeAllEdges( graph );
+-    
++
+     // refill with MST edges
+     for (int i=0; i<MST.size(); i++) {
+         Pointer* ptr = graph->addPointer(vertices[MST[i].first],vertices[MST[i].second]);
+-        
++
+         if (weight[QPair<int,int>(MST[i].first,MST[i].second)]!=1) {
+             QString s;
+             s.setNum(weight[QPair<int,int>(MST[i].first,MST[i].second)]);
+diff -Nru rocs-4.7.0.orig/src/Plugins/TransformEdges/transformedgeswidget.cpp.orig rocs-4.7.0/src/Plugins/TransformEdges/transformedgeswidget.cpp.orig
+--- rocs-4.7.0.orig/src/Plugins/TransformEdges/transformedgeswidget.cpp.orig    1970-01-01 01:00:00.000000000 +0100
++++ rocs-4.7.0/src/Plugins/TransformEdges/transformedgeswidget.cpp.orig 2011-06-22 16:53:03.000000000 +0200
+@@ -0,0 +1,289 @@
++/*
++    This file is part of Rocs.
++    Copyright (C) 2011 Andreas Cord-Landwehr <cola@uni-paderborn.de>
++
++    This program is free software; you can redistribute it and/or
++    modify it under the terms of the GNU General Public License as
++    published by the Free Software Foundation; either version 2 of 
++    the License, or (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "transformedgeswidget.h"
++#include "ui_transformedgeswidget.h"
++
++#include <limits.h>
++#include <KLocale>
++
++#include <QtGui/QComboBox>
++#include <QtGui/QDesktopWidget>
++#include <QtGui/QGridLayout>
++#include <QtGui/QLabel>
++#include <QtGui/QLineEdit>
++#include <QtGui/QPushButton>
++#include <QtGui/QSpinBox>
++#include <QtCore/QMap>
++#include <QtCore/QPair>
++
++#include <Document.h>
++#include <DataStructure.h>
++#include <DocumentManager.h>
++#include "../DataStructure/Graph/GraphStructure.h"
++#include <Pointer.h>
++#include <Data.h>
++
++
++//TODO output usefull error message
++namespace boost { void throw_exception( std::exception const & ) {} } // do noop on exception
++using namespace Rocs;
++
++class QPushButton;
++
++TransformEdgesWidget::TransformEdgesWidget(Document* graphDoc, QWidget* parent)
++    :   QWidget(parent)
++{
++    ui = new Ui::TransformEdgesWidget;
++       ui->setupUi(this);
++    graphDoc_ = graphDoc;
++    
++    // put widget at center of screen
++    QDesktopWidget desktop;
++    QRect rect = desktop.availableGeometry(desktop.screenNumber(parent)); 
++    QPoint center = rect.center();
++    center.setX(center.x() - (this->width()/2));
++    center.setY(center.y() - (this->height()/2));
++    move(center);
++}
++
++
++TransformEdgesWidget::~TransformEdgesWidget()
++{
++    delete ui;
++}
++
++
++void TransformEdgesWidget::addDataStructures(QStringList dsNames)
++{
++    ui->dataStructuresCombo->insertItems(0, dsNames);
++}
++
++
++void TransformEdgesWidget::executeTransform()
++{
++    DataStructure* graph;
++    QList<DataStructure*> dsList = DocumentManager::self()->activeDocument()->dataStructures();
++
++    // no graph datastructures given at document
++    if (ui->dataStructuresCombo->count()==0)
++        return;
++
++    graph = dsList[ui->dataStructuresCombo->currentIndex()];
++    if (!graph)
++        return;
++
++    if( ui->radioButtonMakeComplete->isChecked() )
++        makeComplete( graph );
++    if( ui->radioButtonEraseEdges->isChecked() )
++        removeAllEdges( graph );
++    if( ui->radioButtonReverseEdges->isChecked() )
++        reverseAllEdges( graph );
++    if( ui->radioButtonMakeSpanningtree->isChecked() )
++        makeSpanningTree( graph );
++}
++
++
++void TransformEdgesWidget::makeComplete( DataStructure* graph )
++{
++    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
++    if( !graphDS ) 
++        return;
++        
++    bool directed = graphDS->directed();
++
++    foreach ( Pointer *e, graph->pointers() ) {
++        graph->remove ( e );
++    }
++    
++    int size_i = graph->dataList().size() - 1;
++    for(int i = 0; i < size_i; ++i)
++    {
++    for( int e = i+1; e < graph->dataList().size(); ++e)
++    {
++        graph->addPointer ( graph->dataList().at(i),graph->dataList().at(e) );
++        if (directed) {
++            graph->addPointer ( graph->dataList().at(e),graph->dataList().at(i) );
++        }
++    }
++    }
++}
++
++
++void TransformEdgesWidget::removeAllEdges( DataStructure* graph )
++{
++    if (graph)
++    {
++        foreach ( Pointer *e, graph->pointers() ) {
++            graph->remove ( e );
++        }
++    }
++}
++
++
++void TransformEdgesWidget::reverseAllEdges( DataStructure* graph )
++{
++    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
++    if( !graphDS ) 
++        return;
++
++    if (graphDS->directed()==false)
++        return;
++        
++    QList< QPair<Data*, Data*> > newPointers;
++    foreach ( Pointer *e, graphDS->pointers() ) {
++        newPointers << QPair<Data*, Data*>(e->to(), e->from());
++        graph->remove ( e );
++    }
++    
++    for(int i=0; i<newPointers.count(); i++) {
++        graph->addPointer(newPointers[i].first, newPointers[i].second);
++    }
++}
++
++
++qreal TransformEdgesWidget::makeSpanningTree(DataStructure* graph)
++{
++    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
++    if( !graphDS ) 
++        return 0;
++
++    QList<Data*> vertices = graphDS->dataList();
++    int n = vertices.size();
++
++    /*
++     * the resulting spanning tree (MST)
++     */
++    QList< QPair<int,int> > MST;
++
++    /*
++     * distance[i] denotes the distance between node i and the minimum spanning
++     * tree; initially this distance is infinity. Note that if i is already element
++     * in MST distance[i] is only a temporary variable and its value is undefined.
++     */
++    QMap<int, qreal> distance;
++    for( int i = 0; i < vertices.size(); i++) {
++        distance[i] = std::numeric_limits<unsigned int>::max();
++    }
++
++    /*
++     * Indicator variable that is true if node is in tree, false otherwise.
++     * Initially all nodes are marked to be not in MST.
++     */
++    QMap<int, bool> inTree; 
++    for (int i = 0; i < vertices.size(); i++) {
++        inTree[i] = false;
++    }
++
++    /* weight[i][j] denotes distance between nodes i and j. If no
++     * path is present between i and j in the previous tree the weight
++     * must be set to 0.
++     */
++    QMap< QPair<int,int>, qreal> weight;
++
++    for (int i=0; i<n; i++)
++    {
++    for (int j=0; j<n; j++)
++    {
++        if (i==j)   weight[QPair<int,int>(i,j)] = 0;
++        
++        PointerList out;
++        if (graphDS->directed())  
++            out = vertices[i]->out_pointers();
++        else 
++            out = vertices[i]->adjacent_pointers();
++                
++        for(int k=0; k<out.size(); k++) {
++            if (out[k]->to()==vertices[j]) {
++                if (out[k]->value()!="")
++                    weight[QPair<int,int>(i,j)] = out[k]->value().toDouble();
++                else
++                    weight[QPair<int,int>(i,j)] = 1;
++                
++            }
++        }
++    }
++    }
++
++    /* 
++     * successor[i] denotes the index of the node, to which i must be
++     * linked to in order to get distance distance[i]
++     */
++    QMap< int, int> successor; 
++
++    // start with first graph node
++    inTree[0] = true;
++    
++    // update distances
++    for (int i = 0; i < n; ++i) 
++    {
++        if ((weight[QPair<int,int>(0,i)] != 0) && (distance[i] > weight[QPair<int,int>(0,i)] )) {
++            distance[i] = weight[QPair<int,int>(0,i)] ;
++            successor[i] = 0;
++        }
++    }
++
++    qreal total = 0;
++    for(int treeSize = 1; treeSize < n; treeSize++) 
++    {
++        // Find node with the smallest distance to the tree
++        int min = -1;
++        for (int i = 0; i < n; ++i)
++        {
++            if (inTree[i]==false)
++            {
++                if ((min == -1) || (distance[min] > distance[i])) {
++                    min = i;
++                }
++            }
++        }
++
++        // add node to tree
++        MST << QPair<int,int>(successor[min], min);
++        inTree[min] = 1;
++        total += distance[min];
++
++        // update distances
++        for (int i = 0; i < n; ++i) 
++        {
++            if ((weight[QPair<int,int>(min,i)]  != 0) && (distance[i] > weight[QPair<int,int>(min,i)])) {
++                distance[i] = weight[QPair<int,int>(min,i)];
++                successor[i] = min;
++            }
++        }
++    }
++    
++    // erase all graph edges
++    removeAllEdges( graph );
++    
++    // refill with MST edges
++    for (int i=0; i<MST.size(); i++) {
++        Pointer* ptr = graph->addPointer(vertices[MST[i].first],vertices[MST[i].second]);
++        
++        if (weight[QPair<int,int>(MST[i].first,MST[i].second)]!=1) {
++            QString s;
++            s.setNum(weight[QPair<int,int>(MST[i].first,MST[i].second)]);
++            ptr->setValue(s);
++        }
++    }
++
++    return total;
++}
++
++
++#include "transformedgeswidget.moc"
