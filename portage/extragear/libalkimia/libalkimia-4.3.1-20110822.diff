@@ -1,0 +1,13 @@
+diff -Nru libalkimia-4.3.1.orig/CMakeLists.txt libalkimia-4.3.1/CMakeLists.txt
+--- libalkimia-4.3.1.orig/CMakeLists.txt	2011-08-01 12:14:46.000000000 +0200
++++ libalkimia-4.3.1/CMakeLists.txt	2011-08-22 07:12:45.003261500 +0200
+@@ -106,7 +106,7 @@
+ kde4_add_unit_test( alkvaluetest TESTNAME alkimia-alkvalue ${alkvaluetest_SRCS} )
+ kde4_add_unit_test( alkquoteitemtest TESTNAME alkimia-alkquoteitem ${alkquoteitemtest_SRCS} )
+ kde4_add_unit_test( alkcompanytest TESTNAME alkimia-alkcompany ${alkcompanytest_SRCS} )
+-target_link_libraries( alkvaluetest alkimia ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} )
+-target_link_libraries( alkquoteitemtest alkimia ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} )
++target_link_libraries( alkvaluetest alkimia ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTTEST_LIBRARY} )
++target_link_libraries( alkquoteitemtest alkimia ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTTEST_LIBRARY} )
+ target_link_libraries( alkcompanytest alkimia ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} )
+ 
