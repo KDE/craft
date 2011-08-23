@@ -12,3 +12,122 @@ diff -Nru amarok-2.4.3.orig/src/CMakeLists.txt amarok-2.4.3/src/CMakeLists.txt
  
  if(APPLE)
      set(mac_SRCS
+diff -Nru amarok-2.4.3.orig/src/context/widgets/ContainmentArrow.h amarok-2.4.3/src/context/widgets/ContainmentArrow.h
+--- amarok-2.4.3.orig/src/context/widgets/ContainmentArrow.h	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/context/widgets/ContainmentArrow.h	2011-08-23 15:51:11.928868100 +0200
+@@ -50,7 +50,7 @@
+ 
+ class SvgRenderJob;
+ 
+-class AMAROK_EXPORT ContainmentArrow : public QGraphicsWidget
++class ContainmentArrow : public QGraphicsWidget
+ {
+     Q_OBJECT
+     Q_INTERFACES( QGraphicsItem )
+diff -Nru amarok-2.4.3.orig/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt amarok-2.4.3/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt
+--- amarok-2.4.3.orig/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt	2011-08-23 16:44:04.056303400 +0200
+@@ -19,6 +19,7 @@
+     MySqlEmbeddedStorage.cpp
+  )
+ 
++remove_definitions(-DMAKE_AMAROK_DATABASECOLLECTION_LIB)
+ kde4_add_plugin(amarok_collection-mysqlecollection ${amarok_collection-mysqlecollection_PART_SRCS})
+ 
+ STRING(REPLACE "-Wl,--fatal-warnings" "" CMAKE_SHARED_LINKER_FLAGS_NOFATALWARN "${CMAKE_SHARED_LINKER_FLAGS}")
+diff -Nru amarok-2.4.3.orig/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h amarok-2.4.3/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h
+--- amarok-2.4.3.orig/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h	2011-08-23 16:30:13.353789900 +0200
+@@ -25,7 +25,8 @@
+ /**
+  * Implements a MySqlCollection using a MySQL Embedded Server
+  */
+-class AMAROK_SQLCOLLECTION_EXPORT_TESTS MySqlEmbeddedStorage : public MySqlStorage
++
++class MySqlEmbeddedStorage : public MySqlStorage
+ {
+     public:
+         /** Creates a new SqlStorage.
+diff -Nru amarok-2.4.3.orig/src/core-impl/collections/db/sql/mysqlservercollection/CMakeLists.txt amarok-2.4.3/src/core-impl/collections/db/sql/mysqlservercollection/CMakeLists.txt
+--- amarok-2.4.3.orig/src/core-impl/collections/db/sql/mysqlservercollection/CMakeLists.txt	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/core-impl/collections/db/sql/mysqlservercollection/CMakeLists.txt	2011-08-23 16:47:14.253182000 +0200
+@@ -1,5 +1,6 @@
+ #build-time only dependency in XesamDbus.h
+ #remove at some point
++remove_definitions(-DMAKE_AMAROK_DATABASECOLLECTION_LIB)
+ 
+ add_definitions(${MYSQL_CFLAGS})
+ 
+diff -Nru amarok-2.4.3.orig/src/core-impl/collections/upnpcollection/UpnpSearchCollection.cpp amarok-2.4.3/src/core-impl/collections/upnpcollection/UpnpSearchCollection.cpp
+--- amarok-2.4.3.orig/src/core-impl/collections/upnpcollection/UpnpSearchCollection.cpp	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/core-impl/collections/upnpcollection/UpnpSearchCollection.cpp	2011-08-23 16:51:17.945120400 +0200
+@@ -72,7 +72,9 @@
+ Meta::TrackPtr
+ UpnpSearchCollection::trackForUrl( const KUrl &url )
+ {
++#ifdef __GNUC__
+     #warning Implement track for url
++#endif
+     // TODO FIXME how to do this?
+     debug() << "Requested track " << url;
+     return Collection::trackForUrl( url );
+diff -Nru amarok-2.4.3.orig/src/dynamic/BiasFactory.cpp amarok-2.4.3/src/dynamic/BiasFactory.cpp
+--- amarok-2.4.3.orig/src/dynamic/BiasFactory.cpp	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/dynamic/BiasFactory.cpp	2011-08-23 14:55:56.646244700 +0200
+@@ -30,6 +30,7 @@
+ 
+ #include "App.h"
+ #include "core/support/Debug.h"
++#include "core/collections/QueryMaker.h"
+ 
+ #include <QList>
+ #include <QXmlStreamReader>
+diff -Nru amarok-2.4.3.orig/src/dynamic/DynamicPlaylist.h amarok-2.4.3/src/dynamic/DynamicPlaylist.h
+--- amarok-2.4.3.orig/src/dynamic/DynamicPlaylist.h	2011-07-28 15:04:46.000000000 +0200
++++ amarok-2.4.3/src/dynamic/DynamicPlaylist.h	2011-08-23 14:52:06.672091000 +0200
+@@ -20,6 +20,7 @@
+ #define AMAROK_DYNAMICPLAYLIST_H
+ 
+ #include "core/meta/Meta.h"
++#include "core/collections/QueryMaker.h"
+ 
+ #include "amarok_export.h" // we are exporting it for the tests
+ 
+diff -Nru amarok-2.4.3.orig/src/main.cpp amarok-2.4.3/src/main.cpp
+--- amarok-2.4.3.orig/src/main.cpp	2011-07-28 15:04:47.000000000 +0200
++++ amarok-2.4.3/src/main.cpp	2011-08-23 16:05:10.038805200 +0200
+@@ -32,6 +32,7 @@
+ #include <csignal>
+ 
+ //#define AMAROK_USE_DRKONQI
++AMAROK_EXPORT OcsData ocsData;
+ 
+ int main( int argc, char *argv[] )
+ {
+diff -Nru amarok-2.4.3.orig/src/playlist/PlaylistDock.cpp amarok-2.4.3/src/playlist/PlaylistDock.cpp
+--- amarok-2.4.3.orig/src/playlist/PlaylistDock.cpp	2011-07-28 15:04:47.000000000 +0200
++++ amarok-2.4.3/src/playlist/PlaylistDock.cpp	2011-08-23 15:21:19.816365100 +0200
+@@ -243,7 +243,7 @@
+ {
+     m_dynamicHintWidget->setStyleSheet(
+                 QString( "QLabel { background-color: %1; color: %2; ; border-radius: 3px; } " )
+-                                .arg( PaletteHandler::PaletteHandler::highlightColor().name() )
++                                .arg( PaletteHandler::highlightColor().name() )
+                                 .arg( palette.highlightedText().color().name() )
+                         );
+     if( m_barBox )
+diff -Nru amarok-2.4.3.orig/src/services/ampache/AmpacheAccountLogin.h amarok-2.4.3/src/services/ampache/AmpacheAccountLogin.h
+--- amarok-2.4.3.orig/src/services/ampache/AmpacheAccountLogin.h	2011-07-28 15:04:47.000000000 +0200
++++ amarok-2.4.3/src/services/ampache/AmpacheAccountLogin.h	2011-08-23 17:04:30.852472100 +0200
+@@ -28,7 +28,11 @@
+ 
+ #include <QObject>
+ 
++#ifdef MAKE_AMPACHE_ACCOUNT_LOGIN_LIB
+ #define AMPACHE_ACCOUNT_EXPORT KDE_EXPORT
++#else
++#define AMPACHE_ACCOUNT_EXPORT KDE_IMPORT
++#endif
+ 
+ class AMPACHE_ACCOUNT_EXPORT AmpacheAccountLogin : public QObject
+ {
