@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision svn1204666
+# based on revision git77ea989f8c4bc62028bf7c646dc5ddeca2e92406
 
 from Package.BinaryPackageBase import *
 import os
@@ -11,11 +11,11 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '2.2.0', '2.2.3' ]:
+        for version in [ '2.2.0', '2.2.3', '2.2.3-1' ]:
             self.targets[ version ]          = self.getPackage( repoUrl, 'openbabel', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'openbabel', version , '.tar.bz2.sha1' )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'openbabel', version, '.tar.bz2.sha1' )
 
-        self.defaultTarget = '2.2.3'
+        self.defaultTarget = '2.2.3-1'
 
 
     def setDependencies( self ):
