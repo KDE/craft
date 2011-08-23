@@ -1,0 +1,107 @@
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README kdepim-4.7.0/kresources/groupwise/soap/patches/README
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/patches/README	2011-08-23 20:49:15.277444200 +0200
+@@ -30,3 +30,9 @@
+   Adriaan de Groot <groot@kde.org>: The attached patch is needed for me to get
+   kresources/groupwise/soap/stdsoap2.cpp to build -- it's the pretty usual
+   socklen_t type mixups (that are only serious on 64-bitters).
++
++unknown_reserved.diff:
++
++  Patrick Spendrin <ps_ml@gmx.de>: This patch fixes a collision with the keyword
++  Unknown on mingw compilers. the types.xsd where the enum comes from has
++  been updated as well.
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.diff kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.diff	1970-01-01 01:00:00.000000000 +0100
++++ kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff	2011-08-23 19:49:13.052244200 +0200
+@@ -0,0 +1,45 @@
++diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp
++--- kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp	2011-05-21 01:10:46.000000000 +0200
+++++ kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp	2011-08-23 19:38:23.125044200 +0200
++@@ -11338,7 +11338,7 @@
++ 	{ (long)Reply, "Reply" },
++ 	{ (long)Send, "Send" },
++ 	{ (long)StopRules, "StopRules" },
++-	{ (long)Unknown, "Unknown" },
+++	{ (long)Unknown_, "Unknown" },
++ 	{ 0, NULL }
++ };
++ 
++diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.0/kresources/groupwise/soap/soapStub.h
++--- kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h	2011-05-21 01:10:46.000000000 +0200
+++++ kdepim-4.7.0/kresources/groupwise/soap/soapStub.h	2011-08-23 19:41:18.937044200 +0200
++@@ -229,7 +229,7 @@
++ #ifndef SOAP_TYPE_ngwt__RuleActionType
++ #define SOAP_TYPE_ngwt__RuleActionType (380)
++ /* ngwt:RuleActionType */
++-enum ngwt__RuleActionType {Accept = 0, Archive = 1, Category_ = 2, Delegate = 3, Delete = 4, Forward = 5, Link = 6, MarkPrivate = 7, MarkRead = 8, MarkUnread = 9, Move = 10, Purge = 11, Reply = 12, Send = 13, StopRules = 14, Unknown = 15};
+++enum ngwt__RuleActionType {Accept = 0, Archive = 1, Category_ = 2, Delegate = 3, Delete = 4, Forward = 5, Link = 6, MarkPrivate = 7, MarkRead = 8, MarkUnread = 9, Move = 10, Purge = 11, Reply = 12, Send = 13, StopRules = 14, Unknown_ = 15};
++ #endif
++ 
++ #ifndef SOAP_TYPE_ngwt__StatusTrackingOptions
++diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd kdepim-4.7.0/kresources/groupwise/soap/types.xsd
++--- kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd	2011-05-21 01:10:46.000000000 +0200
+++++ kdepim-4.7.0/kresources/groupwise/soap/types.xsd	2011-08-23 19:37:43.391844200 +0200
++@@ -1437,7 +1437,7 @@
++ 		<xs:restriction base="xs:string">
++ 			<xs:enumeration value="Accept"/>
++ 			<xs:enumeration value="Archive"/>
++-			<xs:enumeration value="Category"/>
+++			<xs:enumeration value="Category_"/>
++ 			<xs:enumeration value="Delegate"/>
++ 			<xs:enumeration value="Delete"/>
++ 			<xs:enumeration value="Forward"/>
++@@ -1450,7 +1450,7 @@
++ 			<xs:enumeration value="Reply"/>
++ 			<xs:enumeration value="Send"/>
++ 			<xs:enumeration value="StopRules"/>
++-			<xs:enumeration value="Unknown"/>
+++			<xs:enumeration value="Unknown_"/>
++ 		</xs:restriction>
++ 	</xs:simpleType>
++ 	<xs:complexType name="RuleList">
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp	2011-08-23 19:38:23.125044200 +0200
+@@ -11338,7 +11338,7 @@
+ 	{ (long)Reply, "Reply" },
+ 	{ (long)Send, "Send" },
+ 	{ (long)StopRules, "StopRules" },
+-	{ (long)Unknown, "Unknown" },
++	{ (long)Unknown_, "Unknown" },
+ 	{ 0, NULL }
+ };
+ 
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.0/kresources/groupwise/soap/soapStub.h
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/soapStub.h	2011-08-23 19:41:18.937044200 +0200
+@@ -229,7 +229,7 @@
+ #ifndef SOAP_TYPE_ngwt__RuleActionType
+ #define SOAP_TYPE_ngwt__RuleActionType (380)
+ /* ngwt:RuleActionType */
+-enum ngwt__RuleActionType {Accept = 0, Archive = 1, Category_ = 2, Delegate = 3, Delete = 4, Forward = 5, Link = 6, MarkPrivate = 7, MarkRead = 8, MarkUnread = 9, Move = 10, Purge = 11, Reply = 12, Send = 13, StopRules = 14, Unknown = 15};
++enum ngwt__RuleActionType {Accept = 0, Archive = 1, Category_ = 2, Delegate = 3, Delete = 4, Forward = 5, Link = 6, MarkPrivate = 7, MarkRead = 8, MarkUnread = 9, Move = 10, Purge = 11, Reply = 12, Send = 13, StopRules = 14, Unknown_ = 15};
+ #endif
+ 
+ #ifndef SOAP_TYPE_ngwt__StatusTrackingOptions
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd kdepim-4.7.0/kresources/groupwise/soap/types.xsd
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/types.xsd	2011-08-23 19:37:43.391844200 +0200
+@@ -1437,7 +1437,7 @@
+ 		<xs:restriction base="xs:string">
+ 			<xs:enumeration value="Accept"/>
+ 			<xs:enumeration value="Archive"/>
+-			<xs:enumeration value="Category"/>
++			<xs:enumeration value="Category_"/>
+ 			<xs:enumeration value="Delegate"/>
+ 			<xs:enumeration value="Delete"/>
+ 			<xs:enumeration value="Forward"/>
+@@ -1450,7 +1450,7 @@
+ 			<xs:enumeration value="Reply"/>
+ 			<xs:enumeration value="Send"/>
+ 			<xs:enumeration value="StopRules"/>
+-			<xs:enumeration value="Unknown"/>
++			<xs:enumeration value="Unknown_"/>
+ 		</xs:restriction>
+ 	</xs:simpleType>
+ 	<xs:complexType name="RuleList">
