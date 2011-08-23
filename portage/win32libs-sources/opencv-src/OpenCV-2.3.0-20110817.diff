@@ -19,6 +19,15 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          endif()  
      endif()
  endif()
+@@ -1265,7 +1265,7 @@
+     exec_program(mkdir ARGS "-p \"${CMAKE_BINARY_DIR}/win-install/\"" OUTPUT_VARIABLE RET_VAL)
+     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/OpenCVConfig.cmake.in" "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake" IMMEDIATE @ONLY)
+     # Install the OpenCVConfig.cmake file which has the right paths pointing to the install directory 
+-    install(FILES "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/") 
++    install(FILES "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/OpenCV") 
+ 
+     # Add the OpenCV configuration header to the install path
+     # Useful for instance if a client application checks against the features OpenCV has been compiled with
 @@ -1357,7 +1357,14 @@
  set(BUILD_PACKAGE ON CACHE BOOL "Enables 'make package_source' command")
  
@@ -94,6 +103,18 @@ diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/
  endif()
  
  file(GLOB grfmt_hdrs src/grfmt*.hpp)
+diff -Nru OpenCV-2.3.0.orig/OpenCVConfig.cmake.in OpenCV-2.3.0/OpenCVConfig.cmake.in
+--- OpenCV-2.3.0.orig/OpenCVConfig.cmake.in	2011-08-23 22:33:39.560126000 +0200
++++ OpenCV-2.3.0/OpenCVConfig.cmake.in	2011-08-23 22:33:22.800167400 +0200
+@@ -31,6 +31,8 @@
+ # Extract the directory where *this* file has been installed (determined at cmake run-time)
+ #  This variable may or may not be used below, depending on the parsing of OpenCVConfig.cmake
+ get_filename_component(THIS_OPENCV_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH)
++get_filename_component(THIS_OPENCV_CONFIG_PATH "${THIS_OPENCV_CONFIG_PATH}/../../.." REALPATH)
++get_filename_component(THIS_OPENCV_CONFIG_PATH "${THIS_OPENCV_CONFIG_PATH}/.." PATH)
+ 
+ # ======================================================
+ # Include directories to add to the user project:
 diff -Nru OpenCV-2.3.0.orig/Package.cmake.in OpenCV-2.3.0/Package.cmake.in
 --- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-21 00:24:17.712172500 +0200
 +++ OpenCV-2.3.0/Package.cmake.in	2011-08-21 00:18:46.788244700 +0200
