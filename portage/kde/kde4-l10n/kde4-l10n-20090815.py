@@ -7,9 +7,13 @@ class subinfo( info.infoclass ):
           self.targets['4.7.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.7.' + ver + '/src/kde-l10n/kde-l10n-%s-4.7.' + ver + '.tar.bz2'
           self.targetInstSrc['4.7.' + ver] = 'kde-l10n-%s-4.7.' + ver
 
-        self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/%s'
-        self.defaultTarget = 'svnHEAD'
-    
+        # Checking out from SVN is currently broken. The fetch
+        # Action is not made for it (see hasSVNTargets) and also
+        # The checkoutDir override will not work correctly
+        # Please see the master branch for svnHEAD
+        # self.svnTargets['svnHEAD'] = 'branches/stable/l10n-kde4/%s'
+        self.defaultTarget = '4.7.0'
+
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
         self.buildDependencies['kde/kdelibs'] = 'default'
