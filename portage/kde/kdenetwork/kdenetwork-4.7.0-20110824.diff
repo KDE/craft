@@ -1,0 +1,828 @@
+diff -Nru kdenetwork-4.7.0.orig/kget/tests/CMakeLists.txt kdenetwork-4.7.0/kget/tests/CMakeLists.txt
+--- kdenetwork-4.7.0.orig/kget/tests/CMakeLists.txt	2011-06-24 13:04:21.000000000 +0200
++++ kdenetwork-4.7.0/kget/tests/CMakeLists.txt	2011-08-24 01:01:44.391244200 +0200
+@@ -19,7 +19,7 @@
+     kde4_add_unit_test(kget_test_transfers
+         ${kget_test_transfers_SRCS})
+ 
+-    target_link_libraries(kget_test_transfers ${QT_QTTEST_LIBRARY} kgetcore)
++    target_link_libraries(kget_test_transfers kgetcore ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+ endif(CMAKE_BUILD_TYPE MATCHES debugfull)
+ 
+ 
+@@ -29,7 +29,7 @@
+   verifiertest.cpp
+ )
+ 
+-target_link_libraries(verifiertest ${QT_QTTEST_LIBRARY} kgetcore)
++target_link_libraries(verifiertest kgetcore ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} ${QCA2_LIBRARIES})
+ 
+ 
+ #===========Metalinker===========
+diff -Nru kdenetwork-4.7.0.orig/kopete/protocols/yahoo/libkyahoo/CMakeLists.txt kdenetwork-4.7.0/kopete/protocols/yahoo/libkyahoo/CMakeLists.txt
+--- kdenetwork-4.7.0.orig/kopete/protocols/yahoo/libkyahoo/CMakeLists.txt	2011-06-24 13:03:47.000000000 +0200
++++ kdenetwork-4.7.0/kopete/protocols/yahoo/libkyahoo/CMakeLists.txt	2011-08-23 23:08:39.114644200 +0200
+@@ -56,6 +56,9 @@
+ yahoochattask.cpp
+ )
+ 
++if(MINGW)
++    set_source_files_properties(yahoo_fn.c PROPERTIES COMPILE_FLAGS "--std=c99")
++endif(MINGW)
+ 
+ kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
+ 
+diff -Nru kdenetwork-4.7.0.orig/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c kdenetwork-4.7.0/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c
+--- kdenetwork-4.7.0.orig/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c	2011-06-24 13:03:47.000000000 +0200
++++ kdenetwork-4.7.0/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c	2011-08-23 23:53:50.032444200 +0200
+@@ -4188,344 +4188,344 @@
+      { IDENT, 0, 0 },
+      { IDENT, 0, 0 }},
+     {{ MULADD, 0x36056CD7, 0x4387 },
+-     { LOOKUP, (long)table_0, 0 },
+-     { LOOKUP, (long)table_1, 0 },
+-     { BITFLD, (long)table_2, 0 },
+-     { LOOKUP, (long)table_3, 0 },
+-     { BITFLD, (long)table_4, 0 },
++     { LOOKUP, (long)-0, 0 },
++     { LOOKUP, (long)-1, 0 },
++     { BITFLD, (long)-2, 0 },
++     { LOOKUP, (long)-3, 0 },
++     { BITFLD, (long)-4, 0 },
+      { MULADD, 0x4ABB534D, 0x3769 },
+      { XOR, 0x1D242DA5, 0 },
+      { MULADD, 0x3C23132D, 0x339B },
+      { XOR, 0x0191265C, 0 },
+      { XOR, 0x3DB979DB, 0 },
+-     { LOOKUP, (long)table_5, 0 },
++     { LOOKUP, (long)-5, 0 },
+      { XOR, 0x1A550E1E, 0 },
+      { XOR, 0x2F140A2D, 0 },
+      { MULADD, 0x7C466A4B, 0x29BF },
+      { XOR, 0x2D3F30D3, 0 },
+      { MULADD, 0x7E823B21, 0x6BB3 },
+-     { BITFLD, (long)table_6, 0 },
+-     { LOOKUP, (long)table_7, 0 },
+-     { BITFLD, (long)table_8, 0 },
+-     { LOOKUP, (long)table_9, 0 },
+-     { BITFLD, (long)table_10, 0 },
+-     { LOOKUP, (long)table_11, 0 },
+-     { BITFLD, (long)table_12, 0 },
+-     { LOOKUP, (long)table_13, 0 },
+-     { BITFLD, (long)table_14, 0 },
++     { BITFLD, (long)-6, 0 },
++     { LOOKUP, (long)-7, 0 },
++     { BITFLD, (long)-8, 0 },
++     { LOOKUP, (long)-9, 0 },
++     { BITFLD, (long)-10, 0 },
++     { LOOKUP, (long)-11, 0 },
++     { BITFLD, (long)-12, 0 },
++     { LOOKUP, (long)-13, 0 },
++     { BITFLD, (long)-14, 0 },
+      { MULADD, 0x5B756AB9, 0x7E9B },
+-     { LOOKUP, (long)table_15, 0 },
++     { LOOKUP, (long)-15, 0 },
+      { XOR, 0x1D1C4911, 0 },
+-     { LOOKUP, (long)table_16, 0 },
+-     { LOOKUP, (long)table_17, 0 },
++     { LOOKUP, (long)-16, 0 },
++     { LOOKUP, (long)-17, 0 },
+      { XOR, 0x46BD7771, 0 },
+      { XOR, 0x51AE2B42, 0 },
+      { MULADD, 0x2417591B, 0x177B },
+      { MULADD, 0x57F27C5F, 0x2433 },
+-     { LOOKUP, (long)table_18, 0 },
+-     { LOOKUP, (long)table_19, 0 },
++     { LOOKUP, (long)-18, 0 },
++     { LOOKUP, (long)-19, 0 },
+      { XOR, 0x71422261, 0 },
+-     { BITFLD, (long)table_20, 0 },
++     { BITFLD, (long)-20, 0 },
+      { MULADD, 0x58E937F9, 0x1075 },
+-     { LOOKUP, (long)table_21, 0 },
+-     { BITFLD, (long)table_22, 0 },
+-     { LOOKUP, (long)table_23, 0 },
+-     { LOOKUP, (long)table_24, 0 },
++     { LOOKUP, (long)-21, 0 },
++     { BITFLD, (long)-22, 0 },
++     { LOOKUP, (long)-23, 0 },
++     { LOOKUP, (long)-24, 0 },
+      { MULADD, 0x0B4C3D13, 0x1597 },
+-     { BITFLD, (long)table_25, 0 },
++     { BITFLD, (long)-25, 0 },
+      { XOR, 0x0FE07D38, 0 },
+      { MULADD, 0x689B4017, 0x3CFB },
+-     { BITFLD, (long)table_26, 0 },
+-     { LOOKUP, (long)table_27, 0 },
++     { BITFLD, (long)-26, 0 },
++     { LOOKUP, (long)-27, 0 },
+      { XOR, 0x35413DF3, 0 },
+      { MULADD, 0x05B611AB, 0x570B },
+      { MULADD, 0x0DA5334F, 0x3AC7 },
+      { XOR, 0x47706008, 0 },
+-     { BITFLD, (long)table_28, 0 },
+-     { LOOKUP, (long)table_29, 0 },
+-     { BITFLD, (long)table_30, 0 },
++     { BITFLD, (long)-28, 0 },
++     { LOOKUP, (long)-29, 0 },
++     { BITFLD, (long)-30, 0 },
+      { XOR, 0x57611B36, 0 },
+      { MULADD, 0x314C2CD1, 0x2B5B },
+      { XOR, 0x1EF33946, 0 },
+      { MULADD, 0x28EA041F, 0x638F },
+-     { LOOKUP, (long)table_31, 0 },
+-     { LOOKUP, (long)table_32, 0 },
+-     { LOOKUP, (long)table_33, 0 },
++     { LOOKUP, (long)-31, 0 },
++     { LOOKUP, (long)-32, 0 },
++     { LOOKUP, (long)-33, 0 },
+      { MULADD, 0x511537CB, 0x7135 },
+      { MULADD, 0x1CF71007, 0x5E17 },
+      { XOR, 0x583D4BCF, 0 },
+-     { LOOKUP, (long)table_34, 0 },
++     { LOOKUP, (long)-34, 0 },
+      { XOR, 0x373E6856, 0 },
+      { MULADD, 0x4D595519, 0x1A7D },
+-     { LOOKUP, (long)table_35, 0 },
+-     { LOOKUP, (long)table_36, 0 },
++     { LOOKUP, (long)-35, 0 },
++     { LOOKUP, (long)-36, 0 },
+      { XOR, 0x0E2A36A7, 0 },
+-     { LOOKUP, (long)table_37, 0 },
+-     { LOOKUP, (long)table_38, 0 },
+-     { BITFLD, (long)table_39, 0 },
+-     { BITFLD, (long)table_40, 0 },
++     { LOOKUP, (long)-37, 0 },
++     { LOOKUP, (long)-38, 0 },
++     { BITFLD, (long)-39, 0 },
++     { BITFLD, (long)-40, 0 },
+      { XOR, 0x53F3604F, 0 },
+-     { BITFLD, (long)table_41, 0 },
+-     { BITFLD, (long)table_42, 0 },
++     { BITFLD, (long)-41, 0 },
++     { BITFLD, (long)-42, 0 },
+      { MULADD, 0x1EDC0BA3, 0x7531 },
+-     { LOOKUP, (long)table_43, 0 },
++     { LOOKUP, (long)-43, 0 },
+      { XOR, 0x10DF1038, 0 },
+-     { BITFLD, (long)table_44, 0 },
+-     { LOOKUP, (long)table_45, 0 },
++     { BITFLD, (long)-44, 0 },
++     { LOOKUP, (long)-45, 0 },
+      { XOR, 0x4EDE0CAC, 0 },
+      { MULADD, 0x2F076EEB, 0x5BCF },
+      { XOR, 0x6D86030F, 0 },
+      { XOR, 0x3F331713, 0 },
+-     { LOOKUP, (long)table_46, 0 },
++     { LOOKUP, (long)-46, 0 },
+      { MULADD, 0x41CD726F, 0x3F79 },
+-     { BITFLD, (long)table_47, 0 },
++     { BITFLD, (long)-47, 0 },
+      { XOR, 0x0ECE0054, 0 },
+      { MULADD, 0x19B32B03, 0x4AD1 },
+-     { BITFLD, (long)table_48, 0 },
+-     { BITFLD, (long)table_49, 0 }},
++     { BITFLD, (long)-48, 0 },
++     { BITFLD, (long)-49, 0 }},
+     {{ MULADD, 0x39731111, 0x419B },
+      { XOR, 0x54F7757A, 0 },
+-     { BITFLD, (long)table_50, 0 },
+-     { BITFLD, (long)table_51, 0 },
+-     { LOOKUP, (long)table_52, 0 },
+-     { LOOKUP, (long)table_53, 0 },
++     { BITFLD, (long)-50, 0 },
++     { BITFLD, (long)-51, 0 },
++     { LOOKUP, (long)-52, 0 },
++     { LOOKUP, (long)-53, 0 },
+      { MULADD, 0x3CC0256B, 0x7CE7 },
+      { XOR, 0x79991847, 0 },
+      { MULADD, 0x228F7FB5, 0x472D },
+      { MULADD, 0x32DA290B, 0x7745 },
+      { XOR, 0x7A28180D, 0 },
+-     { BITFLD, (long)table_54, 0 },
+-     { BITFLD, (long)table_55, 0 },
++     { BITFLD, (long)-54, 0 },
++     { BITFLD, (long)-55, 0 },
+      { MULADD, 0x5C814F8B, 0x227F },
+-     { LOOKUP, (long)table_56, 0 },
++     { LOOKUP, (long)-56, 0 },
+      { MULADD, 0x0B496F6D, 0x412D },
+      { XOR, 0x6F4B62DA, 0 },
+-     { LOOKUP, (long)table_57, 0 },
++     { LOOKUP, (long)-57, 0 },
+      { XOR, 0x64973977, 0 },
+-     { LOOKUP, (long)table_58, 0 },
+-     { LOOKUP, (long)table_59, 0 },
+-     { BITFLD, (long)table_60, 0 },
+-     { LOOKUP, (long)table_61, 0 },
+-     { LOOKUP, (long)table_62, 0 },
++     { LOOKUP, (long)-58, 0 },
++     { LOOKUP, (long)-59, 0 },
++     { BITFLD, (long)-60, 0 },
++     { LOOKUP, (long)-61, 0 },
++     { LOOKUP, (long)-62, 0 },
+      { XOR, 0x6DD14C92, 0 },
+-     { LOOKUP, (long)table_63, 0 },
+-     { BITFLD, (long)table_64, 0 },
+-     { BITFLD, (long)table_65, 0 },
+-     { BITFLD, (long)table_66, 0 },
+-     { LOOKUP, (long)table_67, 0 },
++     { LOOKUP, (long)-63, 0 },
++     { BITFLD, (long)-64, 0 },
++     { BITFLD, (long)-65, 0 },
++     { BITFLD, (long)-66, 0 },
++     { LOOKUP, (long)-67, 0 },
+      { XOR, 0x5E6324D8, 0 },
+-     { LOOKUP, (long)table_68, 0 },
+-     { LOOKUP, (long)table_69, 0 },
+-     { LOOKUP, (long)table_70, 0 },
+-     { BITFLD, (long)table_71, 0 },
++     { LOOKUP, (long)-68, 0 },
++     { LOOKUP, (long)-69, 0 },
++     { LOOKUP, (long)-70, 0 },
++     { BITFLD, (long)-71, 0 },
+      { XOR, 0x62745ED0, 0 },
+      { MULADD, 0x102C215B, 0x0581 },
+-     { LOOKUP, (long)table_72, 0 },
+-     { LOOKUP, (long)table_73, 0 },
+-     { LOOKUP, (long)table_74, 0 },
++     { LOOKUP, (long)-72, 0 },
++     { LOOKUP, (long)-73, 0 },
++     { LOOKUP, (long)-74, 0 },
+      { MULADD, 0x19511111, 0x12C1 },
+-     { LOOKUP, (long)table_75, 0 },
++     { LOOKUP, (long)-75, 0 },
+      { MULADD, 0x2A6E2953, 0x6977 },
+-     { LOOKUP, (long)table_76, 0 },
++     { LOOKUP, (long)-76, 0 },
+      { XOR, 0x55CD5445, 0 },
+-     { BITFLD, (long)table_77, 0 },
+-     { BITFLD, (long)table_78, 0 },
++     { BITFLD, (long)-77, 0 },
++     { BITFLD, (long)-78, 0 },
+      { MULADD, 0x646C21EB, 0x43E5 },
+      { XOR, 0x71DC4898, 0 },
+      { XOR, 0x167519CB, 0 },
+      { XOR, 0x6D3158F8, 0 },
+      { XOR, 0x7EA95BEA, 0 },
+-     { BITFLD, (long)table_79, 0 },
++     { BITFLD, (long)-79, 0 },
+      { XOR, 0x47377587, 0 },
+      { XOR, 0x2D8B6E8F, 0 },
+      { MULADD, 0x5E6105DB, 0x1605 },
+      { XOR, 0x65B543C8, 0 },
+-     { LOOKUP, (long)table_80, 0 },
+-     { BITFLD, (long)table_81, 0 },
++     { LOOKUP, (long)-80, 0 },
++     { BITFLD, (long)-81, 0 },
+      { MULADD, 0x48AF73CB, 0x0A67 },
+      { XOR, 0x4FB96154, 0 },
+-     { LOOKUP, (long)table_82, 0 },
+-     { BITFLD, (long)table_83, 0 },
++     { LOOKUP, (long)-82, 0 },
++     { BITFLD, (long)-83, 0 },
+      { XOR, 0x622C4954, 0 },
+-     { BITFLD, (long)table_84, 0 },
++     { BITFLD, (long)-84, 0 },
+      { XOR, 0x20D220F3, 0 },
+      { XOR, 0x361D4F0D, 0 },
+      { XOR, 0x2B2000D1, 0 },
+      { XOR, 0x6FB8593E, 0 },
+-     { LOOKUP, (long)table_85, 0 },
+-     { BITFLD, (long)table_86, 0 },
++     { LOOKUP, (long)-85, 0 },
++     { BITFLD, (long)-86, 0 },
+      { XOR, 0x2B7F7DFC, 0 },
+      { MULADD, 0x5FC41A57, 0x0693 },
+      { MULADD, 0x17154387, 0x2489 },
+-     { BITFLD, (long)table_87, 0 },
+-     { BITFLD, (long)table_88, 0 },
+-     { BITFLD, (long)table_89, 0 },
+-     { LOOKUP, (long)table_90, 0 },
++     { BITFLD, (long)-87, 0 },
++     { BITFLD, (long)-88, 0 },
++     { BITFLD, (long)-89, 0 },
++     { LOOKUP, (long)-90, 0 },
+      { XOR, 0x7E221470, 0 },
+      { XOR, 0x7A600061, 0 },
+-     { BITFLD, (long)table_91, 0 },
+-     { BITFLD, (long)table_92, 0 },
+-     { LOOKUP, (long)table_93, 0 },
+-     { BITFLD, (long)table_94, 0 },
++     { BITFLD, (long)-91, 0 },
++     { BITFLD, (long)-92, 0 },
++     { LOOKUP, (long)-93, 0 },
++     { BITFLD, (long)-94, 0 },
+      { MULADD, 0x00E813A5, 0x2CE5 },
+      { MULADD, 0x3D707E25, 0x3827 },
+      { MULADD, 0x77A53E07, 0x6A5F },
+-     { BITFLD, (long)table_95, 0 },
+-     { LOOKUP, (long)table_96, 0 },
+-     { LOOKUP, (long)table_97, 0 },
++     { BITFLD, (long)-95, 0 },
++     { LOOKUP, (long)-96, 0 },
++     { LOOKUP, (long)-97, 0 },
+      { XOR, 0x43A73788, 0 },
+-     { LOOKUP, (long)table_98, 0 },
+-     { BITFLD, (long)table_99, 0 },
+-     { LOOKUP, (long)table_100, 0 },
++     { LOOKUP, (long)-98, 0 },
++     { BITFLD, (long)-99, 0 },
++     { LOOKUP, (long)-100, 0 },
+      { XOR, 0x55F4606B, 0 },
+-     { BITFLD, (long)table_101, 0 }},
+-    {{ BITFLD, (long)table_102, 0 },
++     { BITFLD, (long)-101, 0 }},
++    {{ BITFLD, (long)-102, 0 },
+      { MULADD, 0x32CA58E3, 0x04F9 },
+      { XOR, 0x11756B30, 0 },
+      { MULADD, 0x218B2569, 0x5DB1 },
+      { XOR, 0x77D64B90, 0 },
+-     { BITFLD, (long)table_103, 0 },
+-     { LOOKUP, (long)table_104, 0 },
++     { BITFLD, (long)-103, 0 },
++     { LOOKUP, (long)-104, 0 },
+      { MULADD, 0x7D1428CB, 0x3D },
+      { XOR, 0x6F872C49, 0 },
+      { XOR, 0x2E484655, 0 },
+      { MULADD, 0x1E3349F7, 0x41F5 },
+-     { LOOKUP, (long)table_105, 0 },
+-     { BITFLD, (long)table_106, 0 },
++     { LOOKUP, (long)-105, 0 },
++     { BITFLD, (long)-106, 0 },
+      { XOR, 0x61640311, 0 },
+-     { BITFLD, (long)table_107, 0 },
+-     { LOOKUP, (long)table_108, 0 },
+-     { LOOKUP, (long)table_109, 0 },
+-     { LOOKUP, (long)table_110, 0 },
++     { BITFLD, (long)-107, 0 },
++     { LOOKUP, (long)-108, 0 },
++     { LOOKUP, (long)-109, 0 },
++     { LOOKUP, (long)-110, 0 },
+      { XOR, 0x007044D3, 0 },
+-     { BITFLD, (long)table_111, 0 },
++     { BITFLD, (long)-111, 0 },
+      { MULADD, 0x5C221625, 0x576F },
+-     { LOOKUP, (long)table_112, 0 },
+-     { LOOKUP, (long)table_113, 0 },
++     { LOOKUP, (long)-112, 0 },
++     { LOOKUP, (long)-113, 0 },
+      { XOR, 0x2D406BB1, 0 },
+      { MULADD, 0x680B1F17, 0x12CD },
+-     { BITFLD, (long)table_114, 0 },
++     { BITFLD, (long)-114, 0 },
+      { MULADD, 0x12564D55, 0x32B9 },
+      { MULADD, 0x21A67897, 0x6BAB },
+-     { LOOKUP, (long)table_115, 0 },
++     { LOOKUP, (long)-115, 0 },
+      { MULADD, 0x06405119, 0x7143 },
+      { XOR, 0x351D01ED, 0 },
+      { MULADD, 0x46356F6B, 0x0A49 },
+      { MULADD, 0x32C77969, 0x72F3 },
+-     { BITFLD, (long)table_116, 0 },
+-     { LOOKUP, (long)table_117, 0 },
+-     { LOOKUP, (long)table_118, 0 },
+-     { BITFLD, (long)table_119, 0 },
+-     { LOOKUP, (long)table_120, 0 },
+-     { BITFLD, (long)table_121, 0 },
++     { BITFLD, (long)-116, 0 },
++     { LOOKUP, (long)-117, 0 },
++     { LOOKUP, (long)-118, 0 },
++     { BITFLD, (long)-119, 0 },
++     { LOOKUP, (long)-120, 0 },
++     { BITFLD, (long)-121, 0 },
+      { MULADD, 0x74D52C55, 0x5F43 },
+      { XOR, 0x26201CA8, 0 },
+      { XOR, 0x7AEB3255, 0 },
+-     { LOOKUP, (long)table_122, 0 },
++     { LOOKUP, (long)-122, 0 },
+      { MULADD, 0x578F1047, 0x640B },
+-     { LOOKUP, (long)table_123, 0 },
+-     { LOOKUP, (long)table_124, 0 },
+-     { BITFLD, (long)table_125, 0 },
+-     { BITFLD, (long)table_126, 0 },
++     { LOOKUP, (long)-123, 0 },
++     { LOOKUP, (long)-124, 0 },
++     { BITFLD, (long)-125, 0 },
++     { BITFLD, (long)-126, 0 },
+      { XOR, 0x4A1352CF, 0 },
+      { MULADD, 0x4BFB6EF3, 0x704F },
+      { MULADD, 0x1B4C7FE7, 0x5637 },
+      { MULADD, 0x04091A3B, 0x4917 },
+      { XOR, 0x270C2F52, 0 },
+-     { LOOKUP, (long)table_127, 0 },
+-     { BITFLD, (long)table_128, 0 },
+-     { LOOKUP, (long)table_129, 0 },
+-     { BITFLD, (long)table_130, 0 },
++     { LOOKUP, (long)-127, 0 },
++     { BITFLD, (long)-128, 0 },
++     { LOOKUP, (long)-129, 0 },
++     { BITFLD, (long)-130, 0 },
+      { MULADD, 0x127549D5, 0x579B },
+      { MULADD, 0x0AB54121, 0x7A47 },
+-     { BITFLD, (long)table_131, 0 },
++     { BITFLD, (long)-131, 0 },
+      { XOR, 0x751E6E49, 0 },
+-     { LOOKUP, (long)table_132, 0 },
+-     { LOOKUP, (long)table_133, 0 },
++     { LOOKUP, (long)-132, 0 },
++     { LOOKUP, (long)-133, 0 },
+      { XOR, 0x670C3F74, 0 },
+      { MULADD, 0x6B080851, 0x7E8B },
+      { XOR, 0x71CD789E, 0 },
+      { XOR, 0x3EB20B7B, 0 },
+-     { BITFLD, (long)table_134, 0 },
+-     { LOOKUP, (long)table_135, 0 },
++     { BITFLD, (long)-134, 0 },
++     { LOOKUP, (long)-135, 0 },
+      { MULADD, 0x58A67753, 0x272B },
+      { MULADD, 0x1AB54AD7, 0x4D33 },
+      { MULADD, 0x07D30A45, 0x0569 },
+      { MULADD, 0x737616BF, 0x70C7 },
+-     { LOOKUP, (long)table_136, 0 },
++     { LOOKUP, (long)-136, 0 },
+      { MULADD, 0x45C4485D, 0x2063 },
+-     { BITFLD, (long)table_137, 0 },
++     { BITFLD, (long)-137, 0 },
+      { XOR, 0x2598043D, 0 },
+      { MULADD, 0x223A4FE3, 0x49A7 },
+      { XOR, 0x1EED619F, 0 },
+-     { BITFLD, (long)table_138, 0 },
++     { BITFLD, (long)-138, 0 },
+      { XOR, 0x6F477561, 0 },
+-     { BITFLD, (long)table_139, 0 },
+-     { BITFLD, (long)table_140, 0 },
+-     { LOOKUP, (long)table_141, 0 },
++     { BITFLD, (long)-139, 0 },
++     { BITFLD, (long)-140, 0 },
++     { LOOKUP, (long)-141, 0 },
+      { MULADD, 0x4BC13C4F, 0x45C1 },
+      { XOR, 0x3B547BFB, 0 },
+-     { LOOKUP, (long)table_142, 0 },
++     { LOOKUP, (long)-142, 0 },
+      { MULADD, 0x71406AB3, 0x7A5F },
+      { XOR, 0x2F1467E9, 0 },
+      { MULADD, 0x009366D1, 0x22D1 },
+      { MULADD, 0x587D1B75, 0x2CA5 },
+      { MULADD, 0x213A4BE7, 0x4499 },
+      { MULADD, 0x62653E89, 0x2D5D },
+-     { BITFLD, (long)table_143, 0 },
++     { BITFLD, (long)-143, 0 },
+      { MULADD, 0x4F5F3257, 0x444F },
+      { MULADD, 0x4C0E2B2B, 0x19D3 }},
+     {{ MULADD, 0x3F867B35, 0x7B3B },
+      { MULADD, 0x32D25CB1, 0x3D6D },
+-     { BITFLD, (long)table_144, 0 },
++     { BITFLD, (long)-144, 0 },
+      { MULADD, 0x50FA1C51, 0x5F4F },
+-     { LOOKUP, (long)table_145, 0 },
++     { LOOKUP, (long)-145, 0 },
+      { XOR, 0x05FE7AF1, 0 },
+      { MULADD, 0x14067C29, 0x10C5 },
+-     { LOOKUP, (long)table_146, 0 },
++     { LOOKUP, (long)-146, 0 },
+      { MULADD, 0x4A5558C5, 0x271F },
+      { XOR, 0x3C0861B1, 0 },
+-     { BITFLD, (long)table_147, 0 },
+-     { LOOKUP, (long)table_148, 0 },
++     { BITFLD, (long)-147, 0 },
++     { LOOKUP, (long)-148, 0 },
+      { MULADD, 0x18837C9D, 0x6335 },
+-     { BITFLD, (long)table_149, 0 },
++     { BITFLD, (long)-149, 0 },
+      { XOR, 0x7DAB5033, 0 },
+-     { LOOKUP, (long)table_150, 0 },
++     { LOOKUP, (long)-150, 0 },
+      { MULADD, 0x03B87321, 0x7225 },
+      { XOR, 0x7F906745, 0 },
+-     { LOOKUP, (long)table_151, 0 },
+-     { BITFLD, (long)table_152, 0 },
++     { LOOKUP, (long)-151, 0 },
++     { BITFLD, (long)-152, 0 },
+      { XOR, 0x21C46C2C, 0 },
+      { MULADD, 0x2B36757D, 0x028D },
+-     { BITFLD, (long)table_153, 0 },
+-     { LOOKUP, (long)table_154, 0 },
++     { BITFLD, (long)-153, 0 },
++     { LOOKUP, (long)-154, 0 },
+      { XOR, 0x106B4A85, 0 },
+      { XOR, 0x17640F11, 0 },
+-     { LOOKUP, (long)table_155, 0 },
++     { LOOKUP, (long)-155, 0 },
+      { XOR, 0x69E60486, 0 },
+-     { LOOKUP, (long)table_156, 0 },
++     { LOOKUP, (long)-156, 0 },
+      { MULADD, 0x3782017D, 0x05BF },
+-     { BITFLD, (long)table_157, 0 },
+-     { LOOKUP, (long)table_158, 0 },
++     { BITFLD, (long)-157, 0 },
++     { LOOKUP, (long)-158, 0 },
+      { XOR, 0x6BCA53B0, 0 },
+-     { LOOKUP, (long)table_159, 0 },
+-     { LOOKUP, (long)table_160, 0 },
+-     { LOOKUP, (long)table_161, 0 },
+-     { LOOKUP, (long)table_162, 0 },
++     { LOOKUP, (long)-159, 0 },
++     { LOOKUP, (long)-160, 0 },
++     { LOOKUP, (long)-161, 0 },
++     { LOOKUP, (long)-162, 0 },
+      { XOR, 0x0B8236E3, 0 },
+-     { BITFLD, (long)table_163, 0 },
++     { BITFLD, (long)-163, 0 },
+      { MULADD, 0x5EE51C43, 0x4553 },
+-     { BITFLD, (long)table_164, 0 },
+-     { LOOKUP, (long)table_165, 0 },
+-     { LOOKUP, (long)table_166, 0 },
+-     { LOOKUP, (long)table_167, 0 },
++     { BITFLD, (long)-164, 0 },
++     { LOOKUP, (long)-165, 0 },
++     { LOOKUP, (long)-166, 0 },
++     { LOOKUP, (long)-167, 0 },
+      { MULADD, 0x42B14C6F, 0x5531 },
+      { XOR, 0x4A2548E8, 0 },
+      { MULADD, 0x5C071D85, 0x2437 },
+-     { LOOKUP, (long)table_168, 0 },
++     { LOOKUP, (long)-168, 0 },
+      { MULADD, 0x29195861, 0x108B },
+      { XOR, 0x24012258, 0 },
+-     { LOOKUP, (long)table_169, 0 },
++     { LOOKUP, (long)-169, 0 },
+      { XOR, 0x63CC2377, 0 },
+      { XOR, 0x08D04B59, 0 },
+      { MULADD, 0x3FD30CF5, 0x7027 },
+@@ -4533,50 +4533,52 @@
+      { MULADD, 0x457776B7, 0x24B3 },
+      { XOR, 0x086652BC, 0 },
+      { MULADD, 0x302F5B13, 0x371D },
+-     { LOOKUP, (long)table_170, 0 },
++     { LOOKUP, (long)-170, 0 },
+      { MULADD, 0x58692D47, 0x0671 },
+      { XOR, 0x6601178E, 0 },
+      { MULADD, 0x0F195B9B, 0x1369 },
+      { XOR, 0x07BA21D8, 0 },
+-     { BITFLD, (long)table_171, 0 },
+-     { BITFLD, (long)table_172, 0 },
++     { BITFLD, (long)-171, 0 },
++     { BITFLD, (long)-172, 0 },
+      { XOR, 0x13AC3D21, 0 },
+      { MULADD, 0x5BCF3275, 0x6E1B },
+      { MULADD, 0x62725C5B, 0x16B9 },
+      { MULADD, 0x5B950FDF, 0x2D35 },
+-     { BITFLD, (long)table_173, 0 },
+-     { BITFLD, (long)table_174, 0 },
++     { BITFLD, (long)-173, 0 },
++     { BITFLD, (long)-174, 0 },
+      { MULADD, 0x73BA5335, 0x1C13 },
+-     { BITFLD, (long)table_175, 0 },
+-     { BITFLD, (long)table_176, 0 },
++     { BITFLD, (long)-175, 0 },
++     { BITFLD, (long)-176, 0 },
+      { XOR, 0x3E144154, 0 },
+      { MULADD, 0x4EED7B27, 0x38AB },
+-     { LOOKUP, (long)table_177, 0 },
++     { LOOKUP, (long)-177, 0 },
+      { MULADD, 0x627C7E0F, 0x7F01 },
+      { MULADD, 0x5D7E1F73, 0x2C0F },
+-     { LOOKUP, (long)table_178, 0 },
++     { LOOKUP, (long)-178, 0 },
+      { MULADD, 0x55C9525F, 0x4659 },
+      { XOR, 0x3765334C, 0 },
+      { MULADD, 0x5DF66DDF, 0x7C25 },
+-     { LOOKUP, (long)table_179, 0 },
+-     { LOOKUP, (long)table_180, 0 },
++     { LOOKUP, (long)-179, 0 },
++     { LOOKUP, (long)-180, 0 },
+      { XOR, 0x16AE5776, 0 },
+-     { LOOKUP, (long)table_181, 0 },
+-     { LOOKUP, (long)table_182, 0 },
+-     { BITFLD, (long)table_183, 0 },
+-     { BITFLD, (long)table_184, 0 },
+-     { LOOKUP, (long)table_185, 0 },
++     { LOOKUP, (long)-181, 0 },
++     { LOOKUP, (long)-182, 0 },
++     { BITFLD, (long)-183, 0 },
++     { BITFLD, (long)-184, 0 },
++     { LOOKUP, (long)-185, 0 },
+      { MULADD, 0x4392327B, 0x7E0D },
+-     { LOOKUP, (long)table_186, 0 },
++     { LOOKUP, (long)-186, 0 },
+      { MULADD, 0x3D8B0CB5, 0x640D },
+      { MULADD, 0x32865601, 0x4D43 },
+-     { BITFLD, (long)table_187, 0 }}};
++     { BITFLD, (long)-187, 0 }}};
+ 
+ #define A( x ) (( x ) & 0xFF )
+ #define B( x ) (( x ) >> 8 & 0xFF )
+ #define C( x ) (( x ) >> 16 & 0xFF )
+ #define D( x ) (( x ) >> 24 & 0xFF )
+ 
++unsigned char* table_table[188];
++
+ int yahoo_xfrm( int table, int depth, int seed )
+ {
+    struct yahoo_fn *xfrm;
+@@ -4584,6 +4586,204 @@
+    unsigned int n = seed;
+    unsigned char *arg;
+ 
++table_table[0] = &table_0[0];
++table_table[1] = &table_1[0];
++table_table[2] = &table_2[0];
++table_table[3] = &table_3[0];
++table_table[4] = &table_4[0];
++table_table[5] = &table_5[0];
++table_table[6] = &table_6[0];
++table_table[7] = &table_7[0];
++table_table[8] = &table_8[0];
++table_table[9] = &table_9[0];
++table_table[10] = &table_10[0];
++table_table[11] = &table_11[0];
++table_table[12] = &table_12[0];
++table_table[13] = &table_13[0];
++table_table[14] = &table_14[0];
++table_table[15] = &table_15[0];
++table_table[16] = &table_16[0];
++table_table[17] = &table_17[0];
++table_table[18] = &table_18[0];
++table_table[19] = &table_19[0];
++table_table[20] = &table_20[0];
++table_table[21] = &table_21[0];
++table_table[22] = &table_22[0];
++table_table[23] = &table_23[0];
++table_table[24] = &table_24[0];
++table_table[25] = &table_25[0];
++table_table[26] = &table_26[0];
++table_table[27] = &table_27[0];
++table_table[28] = &table_28[0];
++table_table[29] = &table_29[0];
++table_table[30] = &table_30[0];
++table_table[31] = &table_31[0];
++table_table[32] = &table_32[0];
++table_table[33] = &table_33[0];
++table_table[34] = &table_34[0];
++table_table[35] = &table_35[0];
++table_table[36] = &table_36[0];
++table_table[37] = &table_37[0];
++table_table[38] = &table_38[0];
++table_table[39] = &table_39[0];
++table_table[40] = &table_40[0];
++table_table[41] = &table_41[0];
++table_table[42] = &table_42[0];
++table_table[43] = &table_43[0];
++table_table[44] = &table_44[0];
++table_table[45] = &table_45[0];
++table_table[46] = &table_46[0];
++table_table[47] = &table_47[0];
++table_table[48] = &table_48[0];
++table_table[49] = &table_49[0];
++table_table[50] = &table_50[0];
++table_table[51] = &table_51[0];
++table_table[52] = &table_52[0];
++table_table[53] = &table_53[0];
++table_table[54] = &table_54[0];
++table_table[55] = &table_55[0];
++table_table[56] = &table_56[0];
++table_table[57] = &table_57[0];
++table_table[58] = &table_58[0];
++table_table[59] = &table_59[0];
++table_table[60] = &table_60[0];
++table_table[61] = &table_61[0];
++table_table[62] = &table_62[0];
++table_table[63] = &table_63[0];
++table_table[64] = &table_64[0];
++table_table[65] = &table_65[0];
++table_table[66] = &table_66[0];
++table_table[67] = &table_67[0];
++table_table[68] = &table_68[0];
++table_table[69] = &table_69[0];
++table_table[70] = &table_70[0];
++table_table[71] = &table_71[0];
++table_table[72] = &table_72[0];
++table_table[73] = &table_73[0];
++table_table[74] = &table_74[0];
++table_table[75] = &table_75[0];
++table_table[76] = &table_76[0];
++table_table[77] = &table_77[0];
++table_table[78] = &table_78[0];
++table_table[79] = &table_79[0];
++table_table[80] = &table_80[0];
++table_table[81] = &table_81[0];
++table_table[82] = &table_82[0];
++table_table[83] = &table_83[0];
++table_table[84] = &table_84[0];
++table_table[85] = &table_85[0];
++table_table[86] = &table_86[0];
++table_table[87] = &table_87[0];
++table_table[88] = &table_88[0];
++table_table[89] = &table_89[0];
++table_table[90] = &table_90[0];
++table_table[91] = &table_91[0];
++table_table[92] = &table_92[0];
++table_table[93] = &table_93[0];
++table_table[94] = &table_94[0];
++table_table[95] = &table_95[0];
++table_table[96] = &table_96[0];
++table_table[97] = &table_97[0];
++table_table[98] = &table_98[0];
++table_table[99] = &table_99[0];
++table_table[100] = &table_100[0];
++table_table[101] = &table_101[0];
++table_table[102] = &table_102[0];
++table_table[103] = &table_103[0];
++table_table[104] = &table_104[0];
++table_table[105] = &table_105[0];
++table_table[106] = &table_106[0];
++table_table[107] = &table_107[0];
++table_table[108] = &table_108[0];
++table_table[109] = &table_109[0];
++table_table[110] = &table_110[0];
++table_table[111] = &table_111[0];
++table_table[112] = &table_112[0];
++table_table[113] = &table_113[0];
++table_table[114] = &table_114[0];
++table_table[115] = &table_115[0];
++table_table[116] = &table_116[0];
++table_table[117] = &table_117[0];
++table_table[118] = &table_118[0];
++table_table[119] = &table_119[0];
++table_table[120] = &table_120[0];
++table_table[121] = &table_121[0];
++table_table[122] = &table_122[0];
++table_table[123] = &table_123[0];
++table_table[124] = &table_124[0];
++table_table[125] = &table_125[0];
++table_table[126] = &table_126[0];
++table_table[127] = &table_127[0];
++table_table[128] = &table_128[0];
++table_table[129] = &table_129[0];
++table_table[130] = &table_130[0];
++table_table[131] = &table_131[0];
++table_table[132] = &table_132[0];
++table_table[133] = &table_133[0];
++table_table[134] = &table_134[0];
++table_table[135] = &table_135[0];
++table_table[136] = &table_136[0];
++table_table[137] = &table_137[0];
++table_table[138] = &table_138[0];
++table_table[139] = &table_139[0];
++table_table[140] = &table_140[0];
++table_table[141] = &table_141[0];
++table_table[142] = &table_142[0];
++table_table[143] = &table_143[0];
++table_table[144] = &table_144[0];
++table_table[145] = &table_145[0];
++table_table[146] = &table_146[0];
++table_table[147] = &table_147[0];
++table_table[148] = &table_148[0];
++table_table[149] = &table_149[0];
++table_table[150] = &table_150[0];
++table_table[151] = &table_151[0];
++table_table[152] = &table_152[0];
++table_table[153] = &table_153[0];
++table_table[154] = &table_154[0];
++table_table[155] = &table_155[0];
++table_table[156] = &table_156[0];
++table_table[157] = &table_157[0];
++table_table[158] = &table_158[0];
++table_table[159] = &table_159[0];
++table_table[160] = &table_160[0];
++table_table[161] = &table_161[0];
++table_table[162] = &table_162[0];
++table_table[163] = &table_163[0];
++table_table[164] = &table_164[0];
++table_table[165] = &table_165[0];
++table_table[166] = &table_166[0];
++table_table[167] = &table_167[0];
++table_table[168] = &table_168[0];
++table_table[169] = &table_169[0];
++table_table[170] = &table_170[0];
++table_table[171] = &table_171[0];
++table_table[172] = &table_172[0];
++table_table[173] = &table_173[0];
++table_table[174] = &table_174[0];
++table_table[175] = &table_175[0];
++table_table[176] = &table_176[0];
++table_table[177] = &table_177[0];
++table_table[178] = &table_178[0];
++table_table[179] = &table_179[0];
++table_table[180] = &table_180[0];
++table_table[181] = &table_181[0];
++table_table[182] = &table_182[0];
++table_table[183] = &table_183[0];
++table_table[184] = &table_184[0];
++table_table[185] = &table_185[0];
++table_table[186] = &table_186[0];
++table_table[187] = &table_187[0];
++
++   for( i = 0; i < 5; i++ )
++   {
++      for( j = 0; j < 96; j++ )
++      {
++         if(yahoo_fntable[i][j].arg1 <= 0 && yahoo_fntable[i][j].arg1 > -188)
++            yahoo_fntable[i][j].arg1 = table_table[-(yahoo_fntable[i][j].arg1)];
++      }
++   }
++
+    for( i = 0; i < depth; i++ )
+    {
+       xfrm = &yahoo_fntable[table][n % 96];
