@@ -17,7 +17,7 @@ diff -Nru openbabel-2.2.3.orig/CMakeLists.txt openbabel-2.2.3/CMakeLists.txt
    # Now check if we can use visibility to selectively export symbols
    # Get the GCC version - from KDE4 cmake files
 -  exec_program(${CMAKE_C_COMPILER} ARGS --version OUTPUT_VARIABLE _gcc_version_info)
-+  exec_program(${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} ARGS --version OUTPUT_VARIABLE _gcc_version_info)
++  exec_program(${CMAKE_C_COMPILER} ARGS ${CMAKE_C_COMPILER_ARG1} --version OUTPUT_VARIABLE _gcc_version_info)
    string (REGEX MATCH "[345]\\.[0-9]\\.[0-9]" _gcc_version "${_gcc_version_info}")
    # gcc on mac just reports: "gcc (GCC) 3.3 20030304 ..." without the
    # patch level, handle this here:
@@ -26,7 +26,7 @@ diff -Nru openbabel-2.2.3.orig/CMakeLists.txt openbabel-2.2.3/CMakeLists.txt
    set(_GCC_COMPILED_WITH_BAD_ALLOCATOR FALSE)
    if (GCC_IS_NEWER_THAN_4_1)
 -    exec_program(${CMAKE_C_COMPILER} ARGS -v OUTPUT_VARIABLE _gcc_alloc_info)
-+    exec_program(${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} ARGS -v OUTPUT_VARIABLE _gcc_alloc_info)
++    exec_program(${CMAKE_C_COMPILER} ARGS ${CMAKE_C_COMPILER_ARG1} -v OUTPUT_VARIABLE _gcc_alloc_info)
      string(REGEX MATCH "(--enable-libstdcxx-allocator=mt)" _GCC_COMPILED_WITH_BAD_ALLOCATOR "${_gcc_alloc_info}")
    endif (GCC_IS_NEWER_THAN_4_1)
    if (HAVE_GCC_VISIBILITY AND GCC_IS_NEWER_THAN_4_1 AND NOT _GCC_COMPILED_WITH_BAD_ALLOCATOR)
