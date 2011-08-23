@@ -1,0 +1,12 @@
+diff -Nru kalzium-4.7.0.orig/libscience/spectrum.h kalzium-4.7.0/libscience/spectrum.h
+--- kalzium-4.7.0.orig/libscience/spectrum.h	2011-05-20 22:33:53.000000000 +0200
++++ kalzium-4.7.0/libscience/spectrum.h	2011-08-23 13:28:05.301741100 +0200
+@@ -48,7 +48,7 @@
+     /**
+      * a peak is one line in the spectrum of an element
+      */
+-    class peak
++    class SCIENCE_EXPORT peak
+     {
+     public:
+         peak() {
