@@ -1,0 +1,14 @@
+diff -Nru kdepim-runtime-4.7.0.orig/resources/imap/tests/CMakeLists.txt kdepim-runtime-4.7.0/resources/imap/tests/CMakeLists.txt
+--- kdepim-runtime-4.7.0.orig/resources/imap/tests/CMakeLists.txt	2011-05-21 01:11:05.000000000 +0200
++++ kdepim-runtime-4.7.0/resources/imap/tests/CMakeLists.txt	2011-08-23 22:35:59.300444200 +0200
+@@ -14,8 +14,8 @@
+ 			imaptestbase.cpp
+ 			)
+       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
+-      target_link_libraries(${_testname} ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY}
+-			    ${KDEPIMLIBS_KIMAP_LIBS} ${KDEPIMLIBS_KIMAP_LIBS} ${KIMAPTEST_LIBRARY} imapresource)
++      target_link_libraries(${_testname} ${KDE4_KDECORE_LIBS}
++			    ${KDEPIMLIBS_KIMAP_LIBS} ${KDEPIMLIBS_KIMAP_LIBS} ${KIMAPTEST_LIBRARY} ${QT_QTTEST_LIBRARY} imapresource)
+       add_definitions(-DTEST_DATA="\\"${CMAKE_CURRENT_SOURCE_DIR}\\"")
+     ENDFOREACH(_testname)
+   ENDMACRO(IMAP_RESOURCE_UNIT_TESTS)
