@@ -1,6 +1,11 @@
 import info
 import os
 from Package.CMakePackageBase import *
+import compiler
+
+if compiler.isMinGW() and os.getenv("EMERGE_USE_CCACHE") == "True":
+    os.putenv("CXX","g++")
+    os.putenv("CC","gcc")
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -19,6 +24,7 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.make.supportsMultijob = False
 
 if __name__ == '__main__':
     Package().execute()
