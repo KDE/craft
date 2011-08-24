@@ -1,7 +1,91 @@
+diff -Nru kdepim-4.7.0.orig/incidenceeditor-ng/tests/CMakeLists.txt kdepim-4.7.0/incidenceeditor-ng/tests/CMakeLists.txt
+--- kdepim-4.7.0.orig/incidenceeditor-ng/tests/CMakeLists.txt	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.0/incidenceeditor-ng/tests/CMakeLists.txt	2011-08-24 15:45:02.175044200 +0200
+@@ -14,7 +14,7 @@
+ MACRO(IE_EXECUTABLE_TESTS)
+   FOREACH(_testname ${ARGN})
+     kde4_add_executable(${_testname} NOGUI TEST ${_testname}.cpp modeltest.cpp)
+-    target_link_libraries(${_testname} ${KDEPIMLIBS_KCALCORE_LIBS} ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} ${KDE4_KDECORE_LIBS})
++    target_link_libraries(${_testname} ${KDEPIMLIBS_KCALCORE_LIBS} ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} ${KDE4_KDECORE_LIBS} incidenceeditorsng)
+   ENDFOREACH(_testname)
+ ENDMACRO(IE_EXECUTABLE_TESTS)
+ 
+@@ -28,7 +28,7 @@
+ ########### KTimeZoneComboBox unit test #############
+ set(ktimezonecomboboxtest_SRCS
+     ktimezonecomboboxtest.cpp
+-    ../ktimezonecombobox.cpp
++#    ../ktimezonecombobox.cpp
+ )
+ kde4_add_unit_test(ktimezonecomboboxtest TESTNAME ktimezonecomboboxtest ${ktimezonecomboboxtest_SRCS})
+ 
+@@ -39,5 +39,6 @@
+   ${QT_QTCORE_LIBRARY}
+   ${KDE4_KDECORE_LIBS}
+   ${KDEPIMLIBS_KCALCORE_LIBS}
++  incidenceeditorsng
+ )
+ 
+diff -Nru kdepim-4.7.0.orig/incidenceeditor-ng/tests/modeltest.h kdepim-4.7.0/incidenceeditor-ng/tests/modeltest.h
+--- kdepim-4.7.0.orig/incidenceeditor-ng/tests/modeltest.h	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.0/incidenceeditor-ng/tests/modeltest.h	2011-08-24 15:40:55.429844200 +0200
+@@ -30,7 +30,7 @@
+ 
+ #include "incidenceeditors-ng_export.h"
+ 
+-class INCIDENCEEDITORS_NG_EXPORT ModelTest : public QObject
++class ModelTest : public QObject
+ {
+   Q_OBJECT
+ 
+diff -Nru kdepim-4.7.0.orig/kleopatra/libkleopatraclient/core/command.cpp kdepim-4.7.0/kleopatra/libkleopatraclient/core/command.cpp
+--- kdepim-4.7.0.orig/kleopatra/libkleopatraclient/core/command.cpp	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.0/kleopatra/libkleopatraclient/core/command.cpp	2011-08-24 22:30:21.268044200 +0200
+@@ -590,7 +590,7 @@
+ 
+     if ( in.parentWId ) {
+ #if defined(Q_OS_WIN32) || defined(_WIN32_WCE)
+-        err = send_option( ctx, "window-id", QString().sprintf( "%lx", reinterpret_cast<unsigned long>( in.parentWId ) ) );
++        err = send_option( ctx, "window-id", QString().sprintf( "%lx", reinterpret_cast<quintptr>( in.parentWId ) ) );
+ #else
+         err = send_option( ctx, "window-id", QString().sprintf( "%lx", static_cast<unsigned long>( in.parentWId ) ) );
+ #endif
+diff -Nru kdepim-4.7.0.orig/kleopatra/uiserver/assuanserverconnection.cpp kdepim-4.7.0/kleopatra/uiserver/assuanserverconnection.cpp
+--- kdepim-4.7.0.orig/kleopatra/uiserver/assuanserverconnection.cpp	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.0/kleopatra/uiserver/assuanserverconnection.cpp	2011-08-24 18:48:52.799244200 +0200
+@@ -860,14 +860,14 @@
+     assert( numFDs != -1 ); // == 1
+ 
+     if ( !numFDs || fds[0] != fd ) {
+-        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (int)fd, QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
++        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (intptr_t)fd, QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
+         connect( sn.get(), SIGNAL(activated(int)), this, SLOT(slotReadActivity(int)) );
+         notifiers.push_back( sn );
+     }
+ 
+     notifiers.reserve( notifiers.size() + numFDs );
+     for ( int i = 0 ; i < numFDs ; ++i ) {
+-        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (int)fds[i], QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
++        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (intptr_t)fds[i], QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
+         connect( sn.get(), SIGNAL(activated(int)), this, SLOT(slotReadActivity(int)) );
+         notifiers.push_back( sn );
+     }
+diff -Nru kdepim-4.7.0.orig/kleopatra/uiserver/uiserver_win.cpp kdepim-4.7.0/kleopatra/uiserver/uiserver_win.cpp
+--- kdepim-4.7.0.orig/kleopatra/uiserver/uiserver_win.cpp	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.0/kleopatra/uiserver/uiserver_win.cpp	2011-08-24 18:45:24.107844200 +0200
+@@ -87,7 +87,7 @@
+         if ( ::listen( (SOCKET)sock, SOMAXCONN ) )
+             throw_<std::runtime_error>( i18n( "Could not listen to socket: %1", systemErrorString() ) );
+ 
+-        if ( !setSocketDescriptor( (int)sock  ) )
++        if ( !setSocketDescriptor( (intptr_t)sock  ) )
+             throw_<std::runtime_error>( i18n( "Could not pass socket to Qt: %1. This should not happen, please report this bug.", errorString() ) );
+ 
+     } catch ( ... ) {
 diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README kdepim-4.7.0/kresources/groupwise/soap/patches/README
 --- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README	2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/patches/README	2011-08-24 01:29:20.100444200 +0200
-@@ -30,3 +30,9 @@
++++ kdepim-4.7.0/kresources/groupwise/soap/patches/README	2011-08-24 23:34:27.346644200 +0200
+@@ -30,3 +30,14 @@
    Adriaan de Groot <groot@kde.org>: The attached patch is needed for me to get
    kresources/groupwise/soap/stdsoap2.cpp to build -- it's the pretty usual
    socklen_t type mixups (that are only serious on 64-bitters).
@@ -11,9 +95,14 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README kdepim-4.7.
 +  Patrick Spendrin <ps_ml@gmx.de>: This patch fixes a collision with the keyword
 +  Unknown on mingw compilers. the types.xsd where the enum comes from has
 +  been updated as well.
++
++windows-x64.diff:
++
++  Patrick Spendrin: This patch fixes compile errors due to sizeof(void*) != sizeof(long)
++  on 64 bit windows systems.
 diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.diff kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff
 --- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.diff	1970-01-01 01:00:00.000000000 +0100
-+++ kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff	2011-08-24 01:29:20.100444200 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff	2011-08-24 13:20:11.703044200 +0200
 @@ -0,0 +1,45 @@
 +diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp
 +--- kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp	2011-05-21 01:10:46.000000000 +0200
@@ -60,9 +149,55 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.d
 + 		</xs:restriction>
 + 	</xs:simpleType>
 + 	<xs:complexType name="RuleList">
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/windows-x64.diff kdepim-4.7.0/kresources/groupwise/soap/patches/windows-x64.diff
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/windows-x64.diff	1970-01-01 01:00:00.000000000 +0100
++++ kdepim-4.7.0/kresources/groupwise/soap/patches/windows-x64.diff	2011-08-24 23:32:53.402444200 +0200
+@@ -0,0 +1,42 @@
++diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp
++--- kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp	2011-05-21 01:10:46.000000000 +0200
+++++ kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp	2011-08-24 22:49:13.342044200 +0200
++@@ -2055,7 +2055,7 @@
++       { n = soap_block_size(soap);
++ #ifndef WITH_NOIDREF
++         if (flag)
++-	  soap_update_ptrs(soap, q, q + n, (long)s - (long)q); /* pointers s and q may or may not be related */
+++	  soap_update_ptrs(soap, q, q + n, (ptrdiff_t)s - (ptrdiff_t)q); /* pointers s and q may or may not be related */
++ #endif
++         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copy %u bytes from %p to %p\n", (unsigned int)n, q, s));
++         memcpy(s, q, n);
++@@ -4061,7 +4061,7 @@
++ { register struct soap_plist *pp;
++   *ppp = NULL;
++   if (p)
++-    for (pp = soap->pht[soap_hash_ptr(p)]; pp; pp = pp->next)
+++    for (pp = soap->pht[soap_hash_ptr((intptr_t)p)]; pp; pp = pp->next)
++       if (pp->ptr == p && pp->type == type)
++       { *ppp = pp;
++         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Lookup location=%p type=%d id=%d\n", p, type, pp->id));
++@@ -4085,9 +4085,9 @@
++   if (!pp)
++     return 0;
++   if (a)
++-    h = soap_hash_ptr(a->__ptr);
+++    h = soap_hash_ptr((intptr_t)a->__ptr);
++   else
++-    h = soap_hash_ptr(p);
+++    h = soap_hash_ptr((intptr_t)p);
++   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Pointer enter location=%p array=%p size=%d dim=%d type=%d id=%lu\n", p, a?a->__ptr:NULL, a?a->__size:0, n, type, soap->idnum+1));
++   pp->next = soap->pht[h];
++   pp->type = type;
++@@ -4113,7 +4113,7 @@
++   *ppp = NULL;
++   if (!p || !a->__ptr)
++     return 0;
++-  for (pp = soap->pht[soap_hash_ptr(a->__ptr)]; pp; pp = pp->next)
+++  for (pp = soap->pht[soap_hash_ptr((intptr_t)a->__ptr)]; pp; pp = pp->next)
++   { if (pp->type == type && pp->array && pp->array->__ptr == a->__ptr)
++     { register int i;
++       for (i = 0; i < n; i++)
 diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp
 --- kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp	2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp	2011-08-24 01:29:20.162844200 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp	2011-08-24 13:20:11.781044200 +0200
 @@ -11338,7 +11338,7 @@
  	{ (long)Reply, "Reply" },
  	{ (long)Send, "Send" },
@@ -74,7 +209,7 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kre
  
 diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.0/kresources/groupwise/soap/soapStub.h
 --- kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h	2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/soapStub.h	2011-08-24 01:29:20.178444200 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/soapStub.h	2011-08-24 13:20:11.781044200 +0200
 @@ -229,7 +229,7 @@
  #ifndef SOAP_TYPE_ngwt__RuleActionType
  #define SOAP_TYPE_ngwt__RuleActionType (380)
@@ -84,9 +219,51 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.0/kr
  #endif
  
  #ifndef SOAP_TYPE_ngwt__StatusTrackingOptions
+diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp
+--- kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp	2011-08-24 22:49:13.342044200 +0200
+@@ -2055,7 +2055,7 @@
+       { n = soap_block_size(soap);
+ #ifndef WITH_NOIDREF
+         if (flag)
+-	  soap_update_ptrs(soap, q, q + n, (long)s - (long)q); /* pointers s and q may or may not be related */
++	  soap_update_ptrs(soap, q, q + n, (ptrdiff_t)s - (ptrdiff_t)q); /* pointers s and q may or may not be related */
+ #endif
+         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copy %u bytes from %p to %p\n", (unsigned int)n, q, s));
+         memcpy(s, q, n);
+@@ -4061,7 +4061,7 @@
+ { register struct soap_plist *pp;
+   *ppp = NULL;
+   if (p)
+-    for (pp = soap->pht[soap_hash_ptr(p)]; pp; pp = pp->next)
++    for (pp = soap->pht[soap_hash_ptr((intptr_t)p)]; pp; pp = pp->next)
+       if (pp->ptr == p && pp->type == type)
+       { *ppp = pp;
+         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Lookup location=%p type=%d id=%d\n", p, type, pp->id));
+@@ -4085,9 +4085,9 @@
+   if (!pp)
+     return 0;
+   if (a)
+-    h = soap_hash_ptr(a->__ptr);
++    h = soap_hash_ptr((intptr_t)a->__ptr);
+   else
+-    h = soap_hash_ptr(p);
++    h = soap_hash_ptr((intptr_t)p);
+   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Pointer enter location=%p array=%p size=%d dim=%d type=%d id=%lu\n", p, a?a->__ptr:NULL, a?a->__size:0, n, type, soap->idnum+1));
+   pp->next = soap->pht[h];
+   pp->type = type;
+@@ -4113,7 +4113,7 @@
+   *ppp = NULL;
+   if (!p || !a->__ptr)
+     return 0;
+-  for (pp = soap->pht[soap_hash_ptr(a->__ptr)]; pp; pp = pp->next)
++  for (pp = soap->pht[soap_hash_ptr((intptr_t)a->__ptr)]; pp; pp = pp->next)
+   { if (pp->type == type && pp->array && pp->array->__ptr == a->__ptr)
+     { register int i;
+       for (i = 0; i < n; i++)
 diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd kdepim-4.7.0/kresources/groupwise/soap/types.xsd
 --- kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd	2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/types.xsd	2011-08-24 01:29:20.178444200 +0200
++++ kdepim-4.7.0/kresources/groupwise/soap/types.xsd	2011-08-24 13:20:11.796644200 +0200
 @@ -1437,7 +1437,7 @@
  		<xs:restriction base="xs:string">
  			<xs:enumeration value="Accept"/>
@@ -107,7 +284,7 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd kdepim-4.7.0/kre
  	<xs:complexType name="RuleList">
 diff -Nru kdepim-4.7.0.orig/mobile/calendar/CMakeLists.txt kdepim-4.7.0/mobile/calendar/CMakeLists.txt
 --- kdepim-4.7.0.orig/mobile/calendar/CMakeLists.txt	2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/mobile/calendar/CMakeLists.txt	2011-08-24 09:33:20.804644200 +0200
++++ kdepim-4.7.0/mobile/calendar/CMakeLists.txt	2011-08-24 13:20:11.796644200 +0200
 @@ -50,8 +50,9 @@
    
  target_link_libraries(korganizer-mobile
@@ -122,7 +299,7 @@ diff -Nru kdepim-4.7.0.orig/mobile/calendar/CMakeLists.txt kdepim-4.7.0/mobile/c
    ${KDEPIMLIBS_KHOLIDAYS_LIBS}
 diff -Nru kdepim-4.7.0.orig/mobile/lib/calendar/CMakeLists.txt kdepim-4.7.0/mobile/lib/calendar/CMakeLists.txt
 --- kdepim-4.7.0.orig/mobile/lib/calendar/CMakeLists.txt	2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/mobile/lib/calendar/CMakeLists.txt	2011-08-24 09:56:30.920644200 +0200
++++ kdepim-4.7.0/mobile/lib/calendar/CMakeLists.txt	2011-08-24 13:20:11.796644200 +0200
 @@ -31,6 +31,8 @@
    akonadi_next
    incidenceeditorsngmobile
