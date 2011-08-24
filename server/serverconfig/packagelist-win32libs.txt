@@ -74,5 +74,5 @@ win32libs-sources,rasqal-src,,
 win32libs-sources,pthreads-src,,
 win32libs-sources,yajl-src,1.0.12,
 win32libs-sources,cfitsio-src,3.20,1
-win32libs-sources,opencv-src,,2
+win32libs-sources,opencv-src,,3
 libs,runtime,,
