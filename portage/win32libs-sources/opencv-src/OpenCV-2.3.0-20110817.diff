@@ -1,6 +1,6 @@
 diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
---- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-21 00:24:15.821064300 +0200
-+++ OpenCV-2.3.0/CMakeLists.txt	2011-08-21 00:22:58.617648500 +0200
+--- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-25 00:31:23.092044000 +0200
++++ OpenCV-2.3.0/CMakeLists.txt	2011-08-24 12:17:53.754844200 +0200
 @@ -246,7 +246,7 @@
          execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
                    OUTPUT_VARIABLE CMAKE_OPENCV_GCC_TARGET_MACHINE
@@ -19,6 +19,15 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          endif()  
      endif()
  endif()
+@@ -1265,7 +1265,7 @@
+     exec_program(mkdir ARGS "-p \"${CMAKE_BINARY_DIR}/win-install/\"" OUTPUT_VARIABLE RET_VAL)
+     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/OpenCVConfig.cmake.in" "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake" IMMEDIATE @ONLY)
+     # Install the OpenCVConfig.cmake file which has the right paths pointing to the install directory 
+-    install(FILES "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/") 
++    install(FILES "${CMAKE_BINARY_DIR}/win-install/OpenCVConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/OpenCV") 
+ 
+     # Add the OpenCV configuration header to the install path
+     # Useful for instance if a client application checks against the features OpenCV has been compiled with
 @@ -1357,7 +1357,14 @@
  set(BUILD_PACKAGE ON CACHE BOOL "Enables 'make package_source' command")
  
@@ -82,9 +91,31 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          #install(DIRECTORY doc DESTINATION doc COMPONENT src FILES_MATCHING PATTERN "*.rst" "*.tex")
          #install(DIRECTORY doc/pics DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
          #install(DIRECTORY doc/latex2sphinx DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
+diff -Nru OpenCV-2.3.0.orig/modules/core/include/opencv2/core/core.hpp OpenCV-2.3.0/modules/core/include/opencv2/core/core.hpp
+--- OpenCV-2.3.0.orig/modules/core/include/opencv2/core/core.hpp	2011-08-25 00:31:27.194844000 +0200
++++ OpenCV-2.3.0/modules/core/include/opencv2/core/core.hpp	2011-08-25 00:30:12.465244200 +0200
+@@ -2904,7 +2904,8 @@
+ {
+ public:
+     typedef _Tp value_type;
+-    enum { buffer_padding = (int)((16 + sizeof(_Tp) - 1)/sizeof(_Tp)) };
++    enum { buffer_padding = (int)((16 + sizeof(_Tp) - 1)/sizeof(_Tp)),
++           buffer_size = buffer_padding + fixed_size };
+ 
+     //! the default contructor
+     AutoBuffer();
+@@ -2928,7 +2929,7 @@
+     //! size of the real buffer
+     size_t size;
+     //! pre-allocated buffer
+-    _Tp buf[fixed_size+buffer_padding];
++    _Tp buf[buffer_size];
+ };
+ 
+ /////////////////////////// multi-dimensional dense matrix //////////////////////////
 diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/highgui/CMakeLists.txt
---- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-21 00:24:16.837122400 +0200
-+++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-21 00:18:46.787244700 +0200
+--- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-25 00:31:27.881244000 +0200
++++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-24 12:17:53.754844200 +0200
 @@ -69,7 +69,7 @@
  endif()
  
@@ -94,9 +125,21 @@ diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/
  endif()
  
  file(GLOB grfmt_hdrs src/grfmt*.hpp)
+diff -Nru OpenCV-2.3.0.orig/OpenCVConfig.cmake.in OpenCV-2.3.0/OpenCVConfig.cmake.in
+--- OpenCV-2.3.0.orig/OpenCVConfig.cmake.in	2011-08-25 00:31:29.441244000 +0200
++++ OpenCV-2.3.0/OpenCVConfig.cmake.in	2011-08-24 12:17:53.754844200 +0200
+@@ -31,6 +31,8 @@
+ # Extract the directory where *this* file has been installed (determined at cmake run-time)
+ #  This variable may or may not be used below, depending on the parsing of OpenCVConfig.cmake
+ get_filename_component(THIS_OPENCV_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH)
++get_filename_component(THIS_OPENCV_CONFIG_PATH "${THIS_OPENCV_CONFIG_PATH}/../../.." REALPATH)
++get_filename_component(THIS_OPENCV_CONFIG_PATH "${THIS_OPENCV_CONFIG_PATH}/.." PATH)
+ 
+ # ======================================================
+ # Include directories to add to the user project:
 diff -Nru OpenCV-2.3.0.orig/Package.cmake.in OpenCV-2.3.0/Package.cmake.in
---- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-21 00:24:17.712172500 +0200
-+++ OpenCV-2.3.0/Package.cmake.in	2011-08-21 00:18:46.788244700 +0200
+--- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-25 00:31:29.456844000 +0200
++++ OpenCV-2.3.0/Package.cmake.in	2011-08-24 12:17:53.770444200 +0200
 @@ -4,9 +4,6 @@
  # (c) Copyrights 2008 Hartmut Seichter, HIT Lab NZ
  #

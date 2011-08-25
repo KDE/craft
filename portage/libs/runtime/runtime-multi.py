@@ -3,9 +3,10 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         # not used  yet only for reference
-        self.targets[ '0.0.1' ] = "http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
+        self.targets['9'] = "http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
+        self.targets['10'] = "http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
         self.shortDescription = "the compiler runtime package"
-        self.defaultTarget = '0.0.1'
+        self.defaultTarget = '10'
 
     def setDependencies( self ):
         self.buildDependencies[ 'virtual/base' ] = 'default'

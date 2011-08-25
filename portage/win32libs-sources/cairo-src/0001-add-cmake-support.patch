@@ -1,0 +1,2083 @@
+From ece50f457ffc6a70d23943678f855618bcb2e406 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Tue, 23 Aug 2011 13:36:42 +0200
+Subject: [PATCH 1/2] add cmake support
+
+---
+ CMakeLists.txt      |   97 +++++
+ FindPixman.cmake    |   41 ++
+ src/CMakeLists.txt  | 1020 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ test/CMakeLists.txt |  881 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 2039 insertions(+), 0 deletions(-)
+ create mode 100644 CMakeLists.txt
+ create mode 100644 FindPixman.cmake
+ create mode 100644 src/CMakeLists.txt
+ create mode 100644 test/CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..26b479a
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,97 @@
++project(cairo)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(CAIRO_HAS_XLIB_SURFACE 0)
++set(CAIRO_HAS_XLIB_XRENDER_SURFACE 0)
++set(CAIRO_HAS_XCB_SURFACE 0)
++set(CAIRO_HAS_XLIB_XCB_FUNCTIONS 0)
++set(CAIRO_HAS_XCB_SHM_FUNCTIONS 0)
++set(CAIRO_HAS_QT_SURFACE 0)
++set(CAIRO_HAS_QUARTZ_SURFACE 0)
++set(CAIRO_HAS_QUARTZ_FONT 0)
++set(CAIRO_HAS_QUARTZ_IMAGE_SURFACE 0)
++set(CAIRO_HAS_WIN32_SURFACE 1)
++set(CAIRO_HAS_WIN32_FONT 1)
++set(CAIRO_HAS_SKIA_SURFACE 0)
++set(CAIRO_HAS_OS2_SURFACE 0)
++set(CAIRO_HAS_BEOS_SURFACE 0)
++set(CAIRO_HAS_DRM_SURFACE 0)
++set(CAIRO_HAS_GALLIUM_SURFACE 0)
++set(CAIRO_HAS_PNG_FUNCTIONS 1)
++set(CAIRO_HAS_GL_SURFACE 0)
++set(CAIRO_HAS_GLESV2_SURFACE 0)
++set(CAIRO_HAS_DIRECTFB_SURFACE 0)
++set(CAIRO_HAS_VG_SURFACE 0)
++set(CAIRO_HAS_EGL_FUNCTIONS 0)
++set(CAIRO_HAS_GLX_FUNCTIONS 0)
++set(CAIRO_HAS_WGL_FUNCTIONS 0)
++set(CAIRO_HAS_SCRIPT_SURFACE 1)
++set(CAIRO_HAS_FT_FONT 0)
++set(CAIRO_HAS_FC_FONT 0)
++set(CAIRO_HAS_PS_SURFACE 1)
++set(CAIRO_HAS_PDF_SURFACE 1)
++set(CAIRO_HAS_SVG_SURFACE 1)
++set(CAIRO_HAS_TEST_SURFACES 0)
++set(CAIRO_HAS_TEE_SURFACE 0)
++set(CAIRO_HAS_XML_SURFACE 0)
++set(CAIRO_HAS_PTHREAD 0)
++set(CAIRO_HAS_GOBJECT_FUNCTIONS 0)
++set(CAIRO_HAS_TRACE 0)
++set(CAIRO_HAS_INTERPRETER 1)
++set(CAIRO_HAS_SYMBOL_LOOKUP 0)
++
++configure_file(cairo-features.h.cmake ${CMAKE_BINARY_DIR}/cairo-features.h)
++include_directories(${CMAKE_BINARY_DIR})
++
++# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
++set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
++
++if (WIN32)
++    set(CAIRO_LIBS gdi32 msimg32 user32 winmm)
++endif()
++
++find_package(pixman)
++include_directories(${PIXMAN_INCLUDE_DIR})
++list(APPEND CAIRO_LIBS ${PIXMAN_LIBRARY})
++
++if (CAIRO_HAS_PNG_FUNCTIONS)
++    find_package(png)
++    include_directories(${PNG_INCLUDE_DIR})
++    list(APPEND CAIRO_LIBS ${PNG_LIBRARY})
++endif()
++
++if(CAIRO_HAS_PS_SURFACE OR CAIRO_HAS_PDF_SURFACE)
++    find_package(ZLIB)
++    include_directories(${ZLIB_INCLUDE_DIR})
++    list(APPEND CAIRO_LIBS ${ZLIB_LIBRARY})
++endif()
++include_directories(src)
++
++add_subdirectory(src)
++# not working yet
++# add_subdirectory(test)
++
++#DEFAULT_LDFLAGS = -nologo $(CFG_LDFLAGS)
++#DEFAULT_ARFLAGS = -nologo
++
++#nform:
++#	@echo
++#ifneq ($(CFG),release)
++#ifneq ($(CFG),debug)
++#	@echo "Invalid configuration "$(CFG)" specified."
++#	@echo -n "You must specify a configuration when "
++#	@echo "running make, e.g. make CFG=debug"
++#	@echo
++#	@echo -n "Possible choices for configuration are "
++#	@echo "'release' and 'debug'"
++#	@exit 1
++#endif
++#endif
++
++if (CIARO_BUILD_STATIC)
++     add_definition(-DCAIRO_WIN32_STATIC_BUILD=1)
++endif()
++
++#clean:
++#	@rm -f $(CFG)/*.obj $(CFG)/*.dll $(CFG)/*.lib $(CFG)/*.pdb $(CFG)/*.ilk || exit 0
+\ No newline at end of file
+diff --git a/FindPixman.cmake b/FindPixman.cmake
+new file mode 100644
+index 0000000..de144f6
+--- /dev/null
++++ b/FindPixman.cmake
+@@ -0,0 +1,41 @@
++# - Try to find the PIXMAN library
++# Once done this will define
++#
++#  PIXMAN_FOUND - system has the PIXMAN library
++#  PIXMAN_INCLUDE_DIR - the PIXMAN include directory
++#  PIXMAN_LIBRARY - Link this to use the PIXMAN library
++#
++# Copyright (c) 2011, Ralf Habacker, <ralf.habacker@freenet.de>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if (PIXMAN_INCLUDE_DIR AND PIXMAN_LIBRARY)
++
++  # in cache already
++  set(PIXMAN_FOUND TRUE)
++
++else (PIXMAN_INCLUDE_DIR AND PIXMAN_LIBRARY)
++  if (NOT WIN32)
++    find_package(PkgConfig)
++    pkg_check_modules(PC_PIXMAN PIXMAN)
++  endif(NOT WIN32)
++
++  find_path(PIXMAN_INCLUDE_DIR pixman.h
++    HINTS
++    ${PC_PIXMAN_INCLUDE_DIRS}
++    ${CMAKE_INSTALL_PREFIX}/include/pixman-1
++  )
++
++  find_library(PIXMAN_LIBRARY NAMES pixman-1
++    HINTS
++    ${PC_PIXMAN_LIBRARY_DIRS}
++    ${CMAKE_INSTALL_PREFIX}/lib
++  )
++
++  include(FindPackageHandleStandardArgs)
++  find_package_handle_standard_args(PIXMAN DEFAULT_MSG PIXMAN_LIBRARY PIXMAN_INCLUDE_DIR)
++
++  mark_as_advanced(PIXMAN_INCLUDE_DIR PIXMAN_LIBRARY)
++
++endif (PIXMAN_INCLUDE_DIR AND PIXMAN_LIBRARY)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+new file mode 100644
+index 0000000..b776e67
+--- /dev/null
++++ b/src/CMakeLists.txt
+@@ -0,0 +1,1020 @@
++
++set(cairo_headers cairo.h cairo-deprecated.h)
++set(cairo_private
++    cairoint.h
++    cairo-analysis-surface-private.h
++    cairo-arc-private.h
++    cairo-atomic-private.h
++    cairo-backend-private.h
++    cairo-box-private.h
++    cairo-boxes-private.h
++    cairo-cache-private.h
++    cairo-clip-private.h
++    cairo-combsort-private.h
++    cairo-compiler-private.h
++    cairo-contour-private.h
++    cairo-composite-rectangles-private.h
++    cairo-default-context-private.h
++    cairo-device-private.h
++    cairo-error-private.h
++    cairo-fixed-private.h
++    cairo-fixed-type-private.h
++    cairo-freelist-private.h
++    cairo-freelist-type-private.h
++    cairo-freed-pool-private.h
++    cairo-fontconfig-private.h
++    cairo-gstate-private.h
++    cairo-hash-private.h
++    cairo-image-info-private.h
++    cairo-image-surface-private.h
++    cairo-list-private.h
++    cairo-malloc-private.h
++    cairo-mutex-impl-private.h
++    cairo-mutex-list-private.h
++    cairo-mutex-private.h
++    cairo-mutex-type-private.h
++    cairo-output-stream-private.h
++    cairo-paginated-private.h
++    cairo-paginated-surface-private.h
++    cairo-path-fixed-private.h
++    cairo-path-private.h
++    cairo-pattern-private.h
++    cairo-private.h
++    cairo-recording-surface-private.h
++    cairo-reference-count-private.h
++    cairo-region-private.h
++    cairo-rtree-private.h
++    cairo-scaled-font-private.h
++    cairo-slope-private.h
++    cairo-spans-private.h
++    cairo-stroke-dash-private.h
++    cairo-surface-fallback-private.h
++    cairo-surface-private.h
++    cairo-surface-clipper-private.h
++    cairo-surface-observer-private.h
++    cairo-surface-offset-private.h
++    cairo-surface-subsurface-private.h
++    cairo-surface-snapshot-private.h
++    cairo-surface-wrapper-private.h
++    cairo-types-private.h
++    cairo-user-font-private.h
++    cairo-wideint-private.h
++    cairo-wideint-type-private.h
++)
++
++set(cairo_sources
++    cairo-analysis-surface.c
++    cairo-arc.c
++    cairo-array.c
++    cairo-atomic.c
++    cairo-base64-stream.c
++    cairo-base85-stream.c
++    cairo-bentley-ottmann.c
++    cairo-bentley-ottmann-rectangular.c
++    cairo-bentley-ottmann-rectilinear.c
++    cairo-botor-scan-converter.c
++    cairo-boxes.c
++    cairo-boxes-intersect.c
++    cairo.c
++    cairo-cache.c
++    cairo-clip.c
++    cairo-clip-boxes.c
++    cairo-clip-polygon.c
++    cairo-clip-region.c
++    cairo-clip-surface.c
++    cairo-color.c
++    cairo-composite-rectangles.c
++    cairo-contour.c
++    cairo-debug.c
++    cairo-default-context.c
++    cairo-device.c
++    cairo-error.c
++    cairo-fixed.c
++    cairo-font-face.c
++    cairo-font-face-twin.c
++    cairo-font-face-twin-data.c
++    cairo-font-options.c
++    cairo-freelist.c
++    cairo-freed-pool.c
++    cairo-gstate.c
++    cairo-hash.c
++    cairo-hull.c
++    cairo-image-info.c
++    cairo-image-surface.c
++    cairo-lzw.c
++    cairo-matrix.c
++    cairo-mesh-pattern-rasterizer.c
++    cairo-mime-surface.c
++    cairo-misc.c
++    cairo-mutex.c
++    cairo-observer.c
++    cairo-output-stream.c
++    cairo-paginated-surface.c
++    cairo-path-bounds.c
++    cairo-path.c
++    cairo-path-fill.c
++    cairo-path-fixed.c
++    cairo-path-in-fill.c
++    cairo-path-stroke.c
++    cairo-path-stroke-boxes.c
++    cairo-path-stroke-polygon.c
++    cairo-pattern.c
++    cairo-pen.c
++    cairo-polygon.c
++    cairo-polygon-intersect.c
++    cairo-polygon-reduce.c
++    cairo-recording-surface.c
++    cairo-rectangle.c
++    cairo-rectangular-scan-converter.c
++    cairo-region.c
++    cairo-rtree.c
++    cairo-scaled-font.c
++    cairo-slope.c
++    cairo-spans.c
++    cairo-spline.c
++    cairo-stroke-dash.c
++    cairo-stroke-style.c
++    cairo-surface.c
++    cairo-surface-fallback.c
++    cairo-surface-clipper.c
++    cairo-surface-observer.c
++    cairo-surface-offset.c
++    cairo-surface-snapshot.c
++    cairo-surface-subsurface.c
++    cairo-surface-wrapper.c
++    cairo-system.c
++    cairo-tor-scan-converter.c
++    cairo-toy-font-face.c
++    cairo-traps.c
++    cairo-unicode.c
++    cairo-user-font.c
++    cairo-version.c
++    cairo-wideint.c
++)
++
++set(_cairo_font_subset_private
++    cairo-scaled-font-subsets-private.h
++    cairo-truetype-subset-private.h
++    cairo-type1-private.h
++    cairo-type3-glyph-surface-private.h
++)
++set(_cairo_font_subset_sources
++    cairo-cff-subset.c
++    cairo-scaled-font-subsets.c
++    cairo-truetype-subset.c
++    cairo-type1-fallback.c
++    cairo-type1-glyph-names.c
++    cairo-type1-subset.c
++    cairo-type3-glyph-surface.c
++)
++
++list(APPEND cairo_private ${_cairo_font_subset_private})
++list(APPEND cairo_sources ${_cairo_font_subset_sources})
++
++set(cairo_egl_sources)
++set(cairo_glx_sources)
++set(cairo_wgl_sources)
++
++set(_cairo_pdf_operators_private cairo-pdf-operators-private.h cairo-pdf-shading-private.h)
++set(_cairo_pdf_operators_sources cairo-pdf-operators.c cairo-pdf-shading.c)
++list(APPEND cairo_private ${_cairo_pdf_operators_private})
++list(APPEND cairo_sources ${_cairo_pdf_operators_sources})
++
++set(cairo_png_sources cairo-png.c)
++
++set(cairo_ps_headers cairo-ps.h)
++set(cairo_ps_private cairo-ps-surface-private.h)
++set(cairo_ps_sources cairo-ps-surface.c)
++
++set(_cairo_deflate_stream_sources cairo-deflate-stream.c)
++list(APPEND cairo_sources ${_cairo_deflate_stream_sources})
++
++set(cairo_pdf_headers cairo-pdf.h)
++set(cairo_pdf_private cairo-pdf-surface-private.h)
++set(cairo_pdf_sources cairo-pdf-surface.c)
++
++set(cairo_svg_headers cairo-svg.h)
++set(cairo_svg_private cairo-svg-surface-private.h)
++set(cairo_svg_sources cairo-svg-surface.c)
++
++set(cairo_ft_headers cairo-ft.h)
++set(cairo_ft_private cairo-ft-private.h)
++set(cairo_ft_sources cairo-ft-font.c)
++
++# These are private, even though they look like public headers
++set(cairo_test_surfaces_private
++    test-fallback-surface.h
++    test-fallback16-surface.h
++    test-null-surface.h
++    test-paginated-surface.h
++    test-wrapping-surface.h
++)
++set(cairo_test_surfaces_sources
++    test-fallback-surface.c
++    test-fallback16-surface.c
++    test-null-surface.c
++    test-paginated-surface.c
++    test-wrapping-surface.c
++)
++
++set(cairo_xlib_headers cairo-xlib.h)
++set(cairo_xlib_private
++    cairo-xlib-private.h
++    cairo-xlib-surface-private.h
++    cairo-xlib-xrender-private.h
++)
++set(cairo_xlib_sources
++    cairo-xlib-display.c
++    cairo-xlib-screen.c
++    cairo-xlib-surface.c
++    cairo-xlib-visual.c
++    cairo-xlib-xcb-surface.c
++)
++
++set(cairo_xlib_xrender_headers cairo-xlib-xrender.h)
++
++set(cairo_xcb_headers cairo-xcb.h)
++set(cairo_xcb_private cairo-xcb-private.h)
++set(cairo_xcb_sources
++    cairo-xcb-connection.c
++    cairo-xcb-connection-core.c
++    cairo-xcb-connection-render.c
++    cairo-xcb-connection-shm.c
++    cairo-xcb-screen.c
++    cairo-xcb-shm.c
++    cairo-xcb-surface.c
++    cairo-xcb-surface-cairo.c
++    cairo-xcb-surface-core.c
++    cairo-xcb-surface-render.c
++)
++
++set(cairo_qt_headers cairo-qt.h)
++set(cairo_qt_cxx_sources cairo-qt-surface.cpp)
++
++set(cairo_quartz_headers cairo-quartz.h)
++set(cairo_quartz_private cairo-quartz-private.h)
++set(cairo_quartz_sources cairo-quartz-surface.c)
++
++set(cairo_quartz_image_headers cairo-quartz-image.h)
++set(cairo_quartz_image_sources cairo-quartz-image-surface.c)
++
++set(cairo_quartz_font_sources cairo-quartz-font.c)
++
++set(cairo_win32_headers cairo-win32.h)
++set(cairo_win32_private cairo-win32-private.h)
++set(cairo_win32_sources cairo-win32-surface.c cairo-win32-printing-surface.c)
++
++set(cairo_win32_font_sources cairo-win32-font.c)
++
++set(cairo_skia_headers cairo-skia.h)
++set(cairo_skia_cxx_sources
++    skia/cairo-skia-context.cpp
++    skia/cairo-skia-surface.cpp
++)
++
++set(cairo_os2_headers cairo-os2.h)
++set(cairo_os2_private cairo-os2-private.h)
++set(cairo_os2_sources cairo-os2-surface.c)
++
++# automake is stupid enough to always use c++ linker if we enable the
++# following lines, even if beos surface is not enabled.  Disable it for now.
++set(cairo_beos_headers cairo-beos.h)
++set(cairo_beos_cxx_sources cairo-beos-surface.cpp)
++
++set(cairo_gl_headers cairo-gl.h)
++set(cairo_gl_private cairo-gl-private.h
++           cairo-gl-dispatch-private.h
++           cairo-gl-ext-def-private.h
++           cairo-gl-gradient-private.h
++)
++set(cairo_gl_sources cairo-gl-composite.c
++           cairo-gl-device.c
++           cairo-gl-dispatch.c
++           cairo-gl-glyphs.c
++           cairo-gl-gradient.c
++           cairo-gl-info.c
++           cairo-gl-shaders.c
++           cairo-gl-surface.c
++)
++set(cairo_glesv2_headers ${cairo_gl_headers})
++set(cairo_glesv2_private ${cairo_gl_private})
++set(cairo_glesv2_sources ${cairo_gl_sources})
++
++list(APPEND cairo_egl_sources cairo-egl-context.c)
++list(APPEND cairo_glx_sources cairo-glx-context.c)
++list(APPEND cairo_wgl_sources cairo-wgl-context.c)
++
++set(cairo_directfb_headers cairo-directfb.h)
++set(cairo_directfb_sources cairo-directfb-surface.c)
++
++set(cairo_drm_headers cairo-drm.h)
++set(cairo_drm_private drm/cairo-drm-private.h
++            drm/cairo-drm-ioctl-private.h
++            drm/cairo-drm-intel-private.h
++            drm/cairo-drm-intel-brw-defines.h
++            drm/cairo-drm-intel-brw-structs.h
++            drm/cairo-drm-intel-brw-eu.h
++            drm/cairo-drm-intel-command-private.h
++            drm/cairo-drm-intel-ioctl-private.h
++            drm/cairo-drm-i915-private.h
++            drm/cairo-drm-i965-private.h
++            drm/cairo-drm-radeon-private.h
++)
++
++set(cairo_drm_sources drm/cairo-drm.c
++            drm/cairo-drm-bo.c
++            drm/cairo-drm-surface.c
++            drm/cairo-drm-intel.c
++            drm/cairo-drm-intel-debug.c
++            drm/cairo-drm-intel-surface.c
++            drm/cairo-drm-i915-surface.c
++            drm/cairo-drm-i915-glyphs.c
++            drm/cairo-drm-i915-shader.c
++            drm/cairo-drm-i915-spans.c
++            drm/cairo-drm-i965-surface.c
++            drm/cairo-drm-i965-glyphs.c
++            drm/cairo-drm-i965-shader.c
++            drm/cairo-drm-i965-spans.c
++            drm/cairo-drm-intel-brw-eu.c
++            drm/cairo-drm-intel-brw-eu-emit.c
++            drm/cairo-drm-intel-brw-eu-util.c
++            drm/cairo-drm-radeon.c
++            drm/cairo-drm-radeon-surface.c
++)
++set(cairo_gallium_sources drm/cairo-drm-gallium-surface.c)
++
++set(cairo_script_headers cairo-script.h)
++set(cairo_script_private cairo-script-private.h)
++set(cairo_script_sources cairo-script-surface.c)
++
++set(cairo_tee_headers cairo-tee.h)
++set(cairo_tee_private cairo-tee-surface-private.h)
++set(cairo_tee_sources cairo-tee-surface.c)
++
++set(cairo_xml_headers cairo-xml.h)
++set(cairo_xml_sources cairo-xml-surface.c)
++
++set(cairo_vg_headers cairo-vg.h)
++set(cairo_vg_sources cairo-vg-surface.c)
++
++set(supported_cairo_headers ${cairo_headers})
++set(unsupported_cairo_headers)
++set(all_cairo_headers ${cairo_headers})
++set(all_cairo_private ${cairo_private})
++set(all_cairo_cxx_sources ${cairo_cxx_sources})
++set(all_cairo_sources ${cairo_sources})
++
++set(enabled_cairo_headers ${cairo_headers})
++set(enabled_cairo_private ${cairo_private})
++set(enabled_cairo_cxx_sources ${cairo_cxx_sources})
++set(enabled_cairo_sources ${cairo_sources})
++
++set(all_cairo_pkgconf cairo.pc)
++set(enabled_cairo_pkgconf cairo.pc)
++
++set(supported_cairo_headers ${cairo_xlib_headers})
++list(APPEND all_cairo_headers ${cairo_xlib_headers})
++list(APPEND all_cairo_private ${cairo_xlib_private})
++list(APPEND all_cairo_cxx_sources ${cairo_xlib_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_xlib_sources})
++if(CAIRO_HAS_XLIB_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_xlib_headers})
++list(APPEND enabled_cairo_private ${cairo_xlib_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_xlib_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_xlib_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-xlib.pc)
++if(CAIRO_HAS_XLIB_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-xlib.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_xlib_xrender_headers})
++list(APPEND all_cairo_headers ${cairo_xlib_xrender_headers})
++list(APPEND all_cairo_private ${cairo_xlib_xrender_private})
++list(APPEND all_cairo_cxx_sources ${cairo_xlib_xrender_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_xlib_xrender_sources})
++if(CAIRO_HAS_XLIB_XRENDER_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_xlib_xrender_headers})
++list(APPEND enabled_cairo_private ${cairo_xlib_xrender_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_xlib_xrender_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_xlib_xrender_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-xlib-xrender.pc)
++if(CAIRO_HAS_XLIB_XRENDER_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-xlib-xrender.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_xcb_headers})
++list(APPEND all_cairo_headers ${cairo_xcb_headers})
++list(APPEND all_cairo_private ${cairo_xcb_private})
++list(APPEND all_cairo_cxx_sources ${cairo_xcb_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_xcb_sources})
++if(CAIRO_HAS_XCB_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_xcb_headers})
++list(APPEND enabled_cairo_private ${cairo_xcb_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_xcb_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_xcb_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-xcb.pc)
++if(CAIRO_HAS_XCB_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-xcb.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_xlib_xcb_headers})
++list(APPEND all_cairo_headers ${cairo_xlib_xcb_headers})
++list(APPEND all_cairo_private ${cairo_xlib_xcb_private})
++list(APPEND all_cairo_cxx_sources ${cairo_xlib_xcb_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_xlib_xcb_sources})
++if(CAIRO_HAS_XLIB_XCB_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_xlib_xcb_headers})
++list(APPEND enabled_cairo_private ${cairo_xlib_xcb_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_xlib_xcb_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_xlib_xcb_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-xlib-xcb.pc)
++if(CAIRO_HAS_XLIB_XCB_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-xlib-xcb.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_xcb_shm_headers})
++list(APPEND all_cairo_headers ${cairo_xcb_shm_headers})
++list(APPEND all_cairo_private ${cairo_xcb_shm_private})
++list(APPEND all_cairo_cxx_sources ${cairo_xcb_shm_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_xcb_shm_sources})
++if(CAIRO_HAS_XCB_SHM_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_xcb_shm_headers})
++list(APPEND enabled_cairo_private ${cairo_xcb_shm_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_xcb_shm_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_xcb_shm_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-xcb-shm.pc)
++if(CAIRO_HAS_XCB_SHM_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-xcb-shm.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_qt_headers})
++list(APPEND all_cairo_headers ${cairo_qt_headers})
++list(APPEND all_cairo_private ${cairo_qt_private})
++list(APPEND all_cairo_cxx_sources ${cairo_qt_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_qt_sources})
++if (CAIRO_HAS_QT_SURFACE})
++list(APPEND enabled_cairo_headers ${cairo_qt_headers})
++list(APPEND enabled_cairo_private ${cairo_qt_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_qt_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_qt_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-qt.pc)
++if(CAIRO_HAS_QT_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-qt.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_quartz_headers})
++list(APPEND all_cairo_headers ${cairo_quartz_headers})
++list(APPEND all_cairo_private ${cairo_quartz_private})
++list(APPEND all_cairo_cxx_sources ${cairo_quartz_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_quartz_sources})
++if(CAIRO_HAS_QUARTZ_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_quartz_headers})
++list(APPEND enabled_cairo_private ${cairo_quartz_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_quartz_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_quartz_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-quartz.pc)
++if(CAIRO_HAS_QUARTZ_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-quartz.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_quartz_font_headers})
++list(APPEND all_cairo_headers ${cairo_quartz_font_headers})
++list(APPEND all_cairo_private ${cairo_quartz_font_private})
++list(APPEND all_cairo_cxx_sources ${cairo_quartz_font_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_quartz_font_sources})
++if(CAIRO_HAS_QUARTZ_FONT)
++list(APPEND enabled_cairo_headers ${cairo_quartz_font_headers})
++list(APPEND enabled_cairo_private ${cairo_quartz_font_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_quartz_font_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_quartz_font_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-quartz-font.pc)
++if(CAIRO_HAS_QUARTZ_FONT)
++list(APPEND enabled_cairo_pkgconf cairo-quartz-font.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_quartz_image_headers})
++list(APPEND all_cairo_headers ${cairo_quartz_image_headers})
++list(APPEND all_cairo_private ${cairo_quartz_image_private})
++list(APPEND all_cairo_cxx_sources ${cairo_quartz_image_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_quartz_image_sources})
++if(CAIRO_HAS_QUARTZ_IMAGE_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_quartz_image_headers})
++list(APPEND enabled_cairo_private ${cairo_quartz_image_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_quartz_image_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_quartz_image_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-quartz-image.pc)
++if(CAIRO_HAS_QUARTZ_IMAGE_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-quartz-image.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_win32_headers})
++list(APPEND all_cairo_headers ${cairo_win32_headers})
++list(APPEND all_cairo_private ${cairo_win32_private})
++list(APPEND all_cairo_cxx_sources ${cairo_win32_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_win32_sources})
++if(CAIRO_HAS_WIN32_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_win32_headers})
++list(APPEND enabled_cairo_private ${cairo_win32_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_win32_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_win32_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-win32.pc)
++if(CAIRO_HAS_WIN32_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-win32.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_win32_font_headers})
++list(APPEND all_cairo_headers ${cairo_win32_font_headers})
++list(APPEND all_cairo_private ${cairo_win32_font_private})
++list(APPEND all_cairo_cxx_sources ${cairo_win32_font_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_win32_font_sources})
++if(CAIRO_HAS_WIN32_FONT)
++list(APPEND enabled_cairo_headers ${cairo_win32_font_headers})
++list(APPEND enabled_cairo_private ${cairo_win32_font_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_win32_font_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_win32_font_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-win32-font.pc)
++if(CAIRO_HAS_WIN32_FONT)
++list(APPEND enabled_cairo_pkgconf cairo-win32-font.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_skia_headers})
++list(APPEND all_cairo_headers ${cairo_skia_headers})
++list(APPEND all_cairo_private ${cairo_skia_private})
++list(APPEND all_cairo_cxx_sources ${cairo_skia_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_skia_sources})
++if(CAIRO_HAS_SKIA_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_skia_headers})
++list(APPEND enabled_cairo_private ${cairo_skia_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_skia_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_skia_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-skia.pc)
++if(CAIRO_HAS_SKIA_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-skia.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_os2_headers})
++list(APPEND all_cairo_headers ${cairo_os2_headers})
++list(APPEND all_cairo_private ${cairo_os2_private})
++list(APPEND all_cairo_cxx_sources ${cairo_os2_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_os2_sources})
++if(CAIRO_HAS_OS2_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_os2_headers})
++list(APPEND enabled_cairo_private ${cairo_os2_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_os2_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_os2_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-os2.pc)
++if(CAIRO_HAS_OS2_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-os2.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_beos_headers})
++list(APPEND all_cairo_headers ${cairo_beos_headers})
++list(APPEND all_cairo_private ${cairo_beos_private})
++list(APPEND all_cairo_cxx_sources ${cairo_beos_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_beos_sources})
++if(CAIRO_HAS_BEOS_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_beos_headers})
++list(APPEND enabled_cairo_private ${cairo_beos_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_beos_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_beos_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-beos.pc)
++if(CAIRO_HAS_BEOS_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-beos.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_drm_headers})
++list(APPEND all_cairo_headers ${cairo_drm_headers})
++list(APPEND all_cairo_private ${cairo_drm_private})
++list(APPEND all_cairo_cxx_sources ${cairo_drm_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_drm_sources})
++if(CAIRO_HAS_DRM_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_drm_headers})
++list(APPEND enabled_cairo_private ${cairo_drm_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_drm_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_drm_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-drm.pc)
++if(CAIRO_HAS_DRM_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-drm.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_gallium_headers})
++list(APPEND all_cairo_headers ${cairo_gallium_headers})
++list(APPEND all_cairo_private ${cairo_gallium_private})
++list(APPEND all_cairo_cxx_sources ${cairo_gallium_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_gallium_sources})
++if(CAIRO_HAS_GALLIUM_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_gallium_headers})
++list(APPEND enabled_cairo_private ${cairo_gallium_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_gallium_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_gallium_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-gallium.pc)
++if(CAIRO_HAS_GALLIUM_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-gallium.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_png_headers})
++list(APPEND all_cairo_headers ${cairo_png_headers})
++list(APPEND all_cairo_private ${cairo_png_private})
++list(APPEND all_cairo_cxx_sources ${cairo_png_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_png_sources})
++if(CAIRO_HAS_PNG_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_png_headers})
++list(APPEND enabled_cairo_private ${cairo_png_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_png_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_png_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-png.pc)
++if(CAIRO_HAS_PNG_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-png.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_gl_headers})
++list(APPEND all_cairo_headers ${cairo_gl_headers})
++list(APPEND all_cairo_private ${cairo_gl_private})
++list(APPEND all_cairo_cxx_sources ${cairo_gl_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_gl_sources})
++if(CAIRO_HAS_GL_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_gl_headers})
++list(APPEND enabled_cairo_private ${cairo_gl_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_gl_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_gl_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-gl.pc)
++if(CAIRO_HAS_GL_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-gl.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_glesv2_headers})
++list(APPEND all_cairo_headers ${cairo_glesv2_headers})
++list(APPEND all_cairo_private ${cairo_glesv2_private})
++list(APPEND all_cairo_cxx_sources ${cairo_glesv2_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_glesv2_sources})
++if(CAIRO_HAS_GLESV2_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_glesv2_headers})
++list(APPEND enabled_cairo_private ${cairo_glesv2_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_glesv2_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_glesv2_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-glesv2.pc)
++if(CAIRO_HAS_GLESV2_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-glesv2.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_directfb_headers})
++list(APPEND all_cairo_headers ${cairo_directfb_headers})
++list(APPEND all_cairo_private ${cairo_directfb_private})
++list(APPEND all_cairo_cxx_sources ${cairo_directfb_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_directfb_sources})
++if(CAIRO_HAS_DIRECTFB_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_directfb_headers})
++list(APPEND enabled_cairo_private ${cairo_directfb_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_directfb_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_directfb_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-directfb.pc)
++if(CAIRO_HAS_DIRECTFB_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-directfb.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_vg_headers})
++list(APPEND all_cairo_headers ${cairo_vg_headers})
++list(APPEND all_cairo_private ${cairo_vg_private})
++list(APPEND all_cairo_cxx_sources ${cairo_vg_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_vg_sources})
++if(CAIRO_HAS_VG_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_vg_headers})
++list(APPEND enabled_cairo_private ${cairo_vg_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_vg_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_vg_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-vg.pc)
++if(CAIRO_HAS_VG_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-vg.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_egl_headers})
++list(APPEND all_cairo_headers ${cairo_egl_headers})
++list(APPEND all_cairo_private ${cairo_egl_private})
++list(APPEND all_cairo_cxx_sources ${cairo_egl_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_egl_sources})
++if(CAIRO_HAS_EGL_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_egl_headers})
++list(APPEND enabled_cairo_private ${cairo_egl_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_egl_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_egl_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-egl.pc)
++if(CAIRO_HAS_EGL_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-egl.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_glx_headers})
++list(APPEND all_cairo_headers ${cairo_glx_headers})
++list(APPEND all_cairo_private ${cairo_glx_private})
++list(APPEND all_cairo_cxx_sources ${cairo_glx_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_glx_sources})
++if(CAIRO_HAS_GLX_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_glx_headers})
++list(APPEND enabled_cairo_private ${cairo_glx_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_glx_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_glx_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-glx.pc)
++if(CAIRO_HAS_GLX_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-glx.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_wgl_headers})
++list(APPEND all_cairo_headers ${cairo_wgl_headers})
++list(APPEND all_cairo_private ${cairo_wgl_private})
++list(APPEND all_cairo_cxx_sources ${cairo_wgl_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_wgl_sources})
++if(CAIRO_HAS_WGL_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_wgl_headers})
++list(APPEND enabled_cairo_private ${cairo_wgl_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_wgl_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_wgl_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-wgl.pc)
++if(CAIRO_HAS_WGL_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-wgl.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_script_headers})
++list(APPEND all_cairo_headers ${cairo_script_headers})
++list(APPEND all_cairo_private ${cairo_script_private})
++list(APPEND all_cairo_cxx_sources ${cairo_script_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_script_sources})
++if(CAIRO_HAS_SCRIPT_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_script_headers})
++list(APPEND enabled_cairo_private ${cairo_script_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_script_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_script_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-script.pc)
++if(CAIRO_HAS_SCRIPT_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-script.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_ft_headers})
++list(APPEND all_cairo_headers ${cairo_ft_headers})
++list(APPEND all_cairo_private ${cairo_ft_private})
++list(APPEND all_cairo_cxx_sources ${cairo_ft_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_ft_sources})
++if(CAIRO_HAS_FT_FONT)
++list(APPEND enabled_cairo_headers ${cairo_ft_headers})
++list(APPEND enabled_cairo_private ${cairo_ft_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_ft_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_ft_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-ft.pc)
++if(CAIRO_HAS_FT_FONT)
++list(APPEND enabled_cairo_pkgconf cairo-ft.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_fc_headers})
++list(APPEND all_cairo_headers ${cairo_fc_headers})
++list(APPEND all_cairo_private ${cairo_fc_private})
++list(APPEND all_cairo_cxx_sources ${cairo_fc_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_fc_sources})
++if(CAIRO_HAS_FC_FONT)
++list(APPEND enabled_cairo_headers ${cairo_fc_headers})
++list(APPEND enabled_cairo_private ${cairo_fc_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_fc_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_fc_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-fc.pc)
++if(CAIRO_HAS_FC_FONT)
++list(APPEND enabled_cairo_pkgconf cairo-fc.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_ps_headers})
++list(APPEND all_cairo_headers ${cairo_ps_headers})
++list(APPEND all_cairo_private ${cairo_ps_private})
++list(APPEND all_cairo_cxx_sources ${cairo_ps_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_ps_sources})
++if(CAIRO_HAS_PS_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_ps_headers})
++list(APPEND enabled_cairo_private ${cairo_ps_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_ps_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_ps_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-ps.pc)
++if(CAIRO_HAS_PS_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-ps.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_pdf_headers})
++list(APPEND all_cairo_headers ${cairo_pdf_headers})
++list(APPEND all_cairo_private ${cairo_pdf_private})
++list(APPEND all_cairo_cxx_sources ${cairo_pdf_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_pdf_sources})
++if(CAIRO_HAS_PDF_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_pdf_headers})
++list(APPEND enabled_cairo_private ${cairo_pdf_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_pdf_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_pdf_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-pdf.pc)
++if(CAIRO_HAS_PDF_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-pdf.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_svg_headers})
++list(APPEND all_cairo_headers ${cairo_svg_headers})
++list(APPEND all_cairo_private ${cairo_svg_private})
++list(APPEND all_cairo_cxx_sources ${cairo_svg_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_svg_sources})
++if(CAIRO_HAS_SVG_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_svg_headers})
++list(APPEND enabled_cairo_private ${cairo_svg_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_svg_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_svg_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-svg.pc)
++if(CAIRO_HAS_SVG_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-svg.pc)
++endif()
++
++list(APPEND all_cairo_private ${cairo_test_surfaces_private} ${cairo_test_surfaces_headers})
++list(APPEND all_cairo_cxx_sources ${cairo_test_surfaces_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_test_surfaces_sources})
++if(CAIRO_HAS_TEST_SURFACES)
++list(APPEND enabled_cairo_private ${cairo_test_surfaces_private} ${cairo_test_surfaces_headers})
++list(APPEND enabled_cairo_cxx_sources ${cairo_test_surfaces_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_test_surfaces_sources})
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_image_headers})
++list(APPEND all_cairo_headers ${cairo_image_headers})
++list(APPEND all_cairo_private ${cairo_image_private})
++list(APPEND all_cairo_cxx_sources ${cairo_image_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_image_sources})
++list(APPEND enabled_cairo_headers ${cairo_image_headers})
++list(APPEND enabled_cairo_private ${cairo_image_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_image_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_image_sources})
++
++list(APPEND supported_cairo_headers ${cairo_mime_headers})
++list(APPEND all_cairo_headers ${cairo_mime_headers})
++list(APPEND all_cairo_private ${cairo_mime_private})
++list(APPEND all_cairo_cxx_sources ${cairo_mime_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_mime_sources})
++list(APPEND enabled_cairo_headers ${cairo_mime_headers})
++list(APPEND enabled_cairo_private ${cairo_mime_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_mime_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_mime_sources})
++
++list(APPEND supported_cairo_headers ${cairo_recording_headers})
++list(APPEND all_cairo_headers ${cairo_recording_headers})
++list(APPEND all_cairo_private ${cairo_recording_private})
++list(APPEND all_cairo_cxx_sources ${cairo_recording_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_recording_sources})
++list(APPEND enabled_cairo_headers ${cairo_recording_headers})
++list(APPEND enabled_cairo_private ${cairo_recording_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_recording_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_recording_sources})
++
++list(APPEND supported_cairo_headers ${cairo_observer_headers})
++list(APPEND all_cairo_headers ${cairo_observer_headers})
++list(APPEND all_cairo_private ${cairo_observer_private})
++list(APPEND all_cairo_cxx_sources ${cairo_observer_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_observer_sources})
++list(APPEND enabled_cairo_headers ${cairo_observer_headers})
++list(APPEND enabled_cairo_private ${cairo_observer_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_observer_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_observer_sources})
++
++list(APPEND unsupported_cairo_headers ${cairo_tee_headers})
++list(APPEND all_cairo_headers ${cairo_tee_headers})
++list(APPEND all_cairo_private ${cairo_tee_private})
++list(APPEND all_cairo_cxx_sources ${cairo_tee_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_tee_sources})
++if(CAIRO_HAS_TEE_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_tee_headers})
++list(APPEND enabled_cairo_private ${cairo_tee_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_tee_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_tee_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-tee.pc)
++if(CAIRO_HAS_TEE_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-tee.pc)
++endif()
++
++list(APPEND unsupported_cairo_headers ${cairo_xml_headers})
++list(APPEND all_cairo_headers ${cairo_xml_headers})
++list(APPEND all_cairo_private ${cairo_xml_private})
++list(APPEND all_cairo_cxx_sources ${cairo_xml_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_xml_sources})
++if(CAIRO_HAS_XML_SURFACE)
++list(APPEND enabled_cairo_headers ${cairo_xml_headers})
++list(APPEND enabled_cairo_private ${cairo_xml_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_xml_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_xml_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-xml.pc)
++if(CAIRO_HAS_XML_SURFACE)
++list(APPEND enabled_cairo_pkgconf cairo-xml.pc)
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_user_headers})
++list(APPEND all_cairo_headers ${cairo_user_headers})
++list(APPEND all_cairo_private ${cairo_user_private})
++list(APPEND all_cairo_cxx_sources ${cairo_user_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_user_sources})
++list(APPEND enabled_cairo_headers ${cairo_user_headers})
++list(APPEND enabled_cairo_private ${cairo_user_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_user_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_user_sources})
++
++list(APPEND all_cairo_private ${cairo_pthread_private} ${cairo_pthread_headers})
++list(APPEND all_cairo_cxx_sources ${cairo_pthread_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_pthread_sources})
++if(CAIRO_HAS_PTHREAD)
++list(APPEND enabled_cairo_private ${cairo_pthread_private} ${cairo_pthread_headers})
++list(APPEND enabled_cairo_cxx_sources ${cairo_pthread_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_pthread_sources})
++endif()
++
++list(APPEND supported_cairo_headers ${cairo_gobject_headers})
++list(APPEND all_cairo_headers ${cairo_gobject_headers})
++list(APPEND all_cairo_private ${cairo_gobject_private})
++list(APPEND all_cairo_cxx_sources ${cairo_gobject_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_gobject_sources})
++if(CAIRO_HAS_GOBJECT_FUNCTIONS)
++list(APPEND enabled_cairo_headers ${cairo_gobject_headers})
++list(APPEND enabled_cairo_private ${cairo_gobject_private})
++list(APPEND enabled_cairo_cxx_sources ${cairo_gobject_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_gobject_sources})
++endif()
++list(APPEND all_cairo_pkgconf cairo-gobject.pc)
++if(CAIRO_HAS_GOBJECT_FUNCTIONS)
++list(APPEND enabled_cairo_pkgconf cairo-gobject.pc)
++endif()
++
++list(APPEND all_cairo_private ${cairo_trace_private} ${cairo_trace_headers})
++list(APPEND all_cairo_cxx_sources ${cairo_trace_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_trace_sources})
++if(CAIRO_HAS_TRACE)
++list(APPEND enabled_cairo_private ${cairo_trace_private} ${cairo_trace_headers})
++list(APPEND enabled_cairo_cxx_sources ${cairo_trace_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_trace_sources})
++endif()
++
++list(APPEND all_cairo_private ${cairo_interpreter_private} ${cairo_interpreter_headers})
++list(APPEND all_cairo_cxx_sources ${cairo_interpreter_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_interpreter_sources})
++if(CAIRO_HAS_INTERPRETER)
++list(APPEND enabled_cairo_private ${cairo_interpreter_private} ${cairo_interpreter_headers})
++list(APPEND enabled_cairo_cxx_sources ${cairo_interpreter_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_interpreter_sources})
++endif()
++
++list(APPEND all_cairo_private ${cairo_symbol_lookup_private} ${cairo_symbol_lookup_headers})
++list(APPEND all_cairo_cxx_sources ${cairo_symbol_lookup_cxx_sources})
++list(APPEND all_cairo_sources ${cairo_symbol_lookup_sources})
++if(CAIRO_HAS_SYMBOL_LOOKUP)
++list(APPEND enabled_cairo_private ${cairo_symbol_lookup_private} ${cairo_symbol_lookup_headers})
++list(APPEND enabled_cairo_cxx_sources ${cairo_symbol_lookup_cxx_sources})
++list(APPEND enabled_cairo_sources ${cairo_symbol_lookup_sources})
++endif()
++
++set(SOURCES ${enabled_cairo_sources})
++
++set(STATIC_SOURCES cairo-system.c)
++
++add_library(cairo SHARED ${SOURCES})
++target_link_libraries(cairo ${CAIRO_LIBS})
++add_library(cairo-static ${SOURCES} ${STATIC_SOURCES})
++target_link_libraries(cairo-static ${CAIRO_LIBS})
++
++install(TARGETS cairo RUNTIME DESTINATION bin ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
++install(TARGETS cairo-static RUNTIME DESTINATION bin ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
++install(FILES ${enabled_cairo_headers} DESTINATION include/cairo)
++
++
++#all: inform ${CFG}/cairo.dll ${CFG}/cairo-static.lib
++#    @echo "Built successfully!"
++#    @echo "You should copy the following files to a proper place now:"
++#    @echo ""
++#    @echo "    cairo-version.h(NOTE: toplevel, not the src/cairo-version.hone!)"
++#    @echo "    src/cairo-features.h"
++#    @for x in ${enabled_cairo_headers}; do echo "    src/$$x"; done
++#    @echo "    src/${CFG}/cairo.dll"
++#    @echo "    src/${CFG}/cairo-static.lib"
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+new file mode 100644
+index 0000000..13355a4
+--- /dev/null
++++ b/test/CMakeLists.txt
+@@ -0,0 +1,881 @@
++#include ${top_srcdir}/build/Makefile.am.common
++
++#include ${top_srcdir}/test/Makefile.sources
++set(test_sources
++	a1-bug.c
++	a1-clip.c
++	a1-image-sample.c
++	a1-mask.c
++	a1-mask-sample.c
++	a1-sample.c
++	a1-traps-sample.c
++	a1-rasterisation.c
++	a8-clear.c
++	a8-mask.c
++	aliasing.c
++	alpha-similar.c
++	arc-infinite-loop.c
++	arc-looping-dash.c
++	api-special-cases.c
++	big-line.c
++	big-little-box.c
++	big-trap.c
++	bilevel-image.c
++	bug-bo-rectangular.c
++	bug-extents.c
++	bug-seams.c
++	caps.c
++	checkerboard.c
++	caps-joins.c
++	caps-joins-alpha.c
++	caps-joins-curve.c
++	caps-tails-curve.c
++	caps-sub-paths.c
++	clear.c
++	clear-source.c
++	clip-all.c
++	clip-contexts.c
++	clip-complex-shape.c
++	clip-disjoint.c
++	clip-disjoint-hatching.c
++	clip-device-offset.c
++	clip-draw-unbounded.c
++	clip-empty.c
++	clip-empty-group.c
++	clip-empty-save.c
++	clip-fill.c
++	clip-fill-no-op.c
++	clip-fill-rule.c
++	clip-fill-rule-pixel-aligned.c
++	clip-group-shapes.c
++	clip-image.c
++	clip-intersect.c
++	clip-nesting.c
++	clip-operator.c
++	clip-push-group.c
++	clip-shape.c
++	clip-stroke.c
++	clip-stroke-no-op.c
++	clip-text.c
++	clip-twice.c
++	clip-twice-rectangle.c
++	clip-unbounded.c
++	clip-zero.c
++	clipped-group.c
++	clipped-surface.c
++	close-path.c
++	close-path-current-point.c
++	composite-integer-translate-source.c
++	composite-integer-translate-over.c
++	composite-integer-translate-over-repeat.c
++	copy-path.c
++	coverage.c
++	create-for-stream.c
++	create-from-png.c
++	create-from-png-stream.c
++	culled-glyphs.c
++	curve-to-as-line-to.c
++	dash-caps-joins.c
++	dash-curve.c
++	dash-infinite-loop.c
++	dash-no-dash.c
++	dash-offset.c
++	dash-offset-negative.c
++	dash-scale.c
++	dash-state.c
++	dash-zero-length.c
++	degenerate-arc.c
++	degenerate-arcs.c
++	degenerate-curve-to.c
++	degenerate-dash.c
++	degenerate-linear-gradient.c
++	degenerate-path.c
++	degenerate-pen.c
++	degenerate-radial-gradient.c
++	degenerate-rel-curve-to.c
++	drunkard-tails.c
++	device-offset.c
++	device-offset-fractional.c
++	device-offset-positive.c
++	device-offset-scale.c
++	error-setters.c
++	extend-pad.c
++	extend-pad-border.c
++	extend-pad-similar.c
++	extend-reflect.c
++	extend-reflect-similar.c
++	extend-repeat.c
++	extend-repeat-similar.c
++	extended-blend.c
++	fill-alpha.c
++	fill-alpha-pattern.c
++	fill-and-stroke.c
++	fill-and-stroke-alpha.c
++	fill-and-stroke-alpha-add.c
++	fill-degenerate-sort-order.c
++	fill-empty.c
++	fill-image.c
++	fill-missed-stop.c
++	fill-rule.c
++	filter-bilinear-extents.c
++	filter-nearest-offset.c
++	filter-nearest-transformed.c
++	finer-grained-fallbacks.c
++	font-face-get-type.c
++	font-matrix-translation.c
++	font-options.c
++	glyph-cache-pressure.c
++	get-and-set.c
++	get-clip.c
++	get-group-target.c
++	get-path-extents.c
++	gradient-alpha.c
++	gradient-constant-alpha.c
++	gradient-zero-stops.c
++	gradient-zero-stops-mask.c
++	group-clip.c
++	group-paint.c
++	group-state.c
++	group-unaligned.c
++	half-coverage.c
++	halo.c
++	hatchings.c
++	horizontal-clip.c
++	huge-linear.c
++	huge-radial.c
++	image-surface-source.c
++	image-bug-710072.c
++	implicit-close.c
++	infinite-join.c
++	in-fill-empty-trapezoid.c
++	in-fill-trapezoid.c
++	invalid-matrix.c
++	inverse-text.c
++	joins.c
++	joins-loop.c
++	joins-star.c
++	joins-retrace.c
++	large-clip.c
++	large-font.c
++	large-source.c
++	large-source-roi.c
++	large-twin-antialias-mixed.c
++	leaky-dash.c
++	leaky-dashed-rectangle.c
++	leaky-dashed-stroke.c
++	leaky-polygon.c
++	line-width.c
++	line-width-overlap.c
++	line-width-scale.c
++	line-width-tolerance.c
++	line-width-zero.c
++	linear-gradient.c
++	linear-gradient-extend.c
++	linear-gradient-large.c
++	linear-gradient-one-stop.c
++	linear-gradient-reflect.c
++	linear-gradient-subset.c
++	linear-step-function.c
++	linear-unif(rm.c)
++	long-dashed-lines.c
++	long-lines.c
++	map-to-image.c
++	mask.c
++	mask-alpha.c
++	mask-ctm.c
++	mask-glyphs.c
++	mask-surface-ctm.c
++	mask-transformed-image.c
++	mask-transformed-similar.c
++	mesh-pattern.c
++	mesh-pattern-accuracy.c
++	mesh-pattern-conical.c
++	mesh-pattern-control-points.c
++	mesh-pattern-fold.c
++	mesh-pattern-overlap.c
++	mesh-pattern-transformed.c
++	mime-data.c
++	mime-surface.c
++	miter-precision.c
++	move-to-show-surface.c
++	new-sub-path.c
++	nil-surface.c
++	operator.c
++	operator-alpha.c
++	operator-alpha-alpha.c
++	operator-clear.c
++	operator-source.c
++	over-above-source.c
++	over-around-source.c
++	over-below-source.c
++	over-between-source.c
++	overlapping-glyphs.c
++	overlapping-dash-caps.c
++	paint.c
++	paint-clip-fill.c
++	paint-repeat.c
++	paint-source-alpha.c
++	paint-with-alpha.c
++	partial-clip-text.c
++	partial-coverage.c
++	path-append.c
++	path-stroke-twice.c
++	path-precision.c
++	pattern-get-type.c
++	pattern-getters.c
++	pixman-rotate.c
++	png.c
++	push-group.c
++	push-group-color.c
++	push-group-path-offset.c
++	radial-gradient.c
++	radial-gradient-extend.c
++	random-clips.c
++	random-intersections-eo.c
++	random-intersections-nonzero.c
++	random-intersections-curves-eo.c
++	random-intersections-curves-nz.c
++	record.c
++	record-extend.c
++	record-mesh.c
++	recording-surface-pattern.c
++	recording-surface-extend.c
++	rectangle-rounding-error.c
++	rectilinear-fill.c
++	rectilinear-grid.c
++	rectilinear-miter-limit.c
++	rectilinear-dash.c
++	rectilinear-stroke.c
++	reflected-stroke.c
++	rel-path.c
++	rgb24-ignore-alpha.c
++	rotate-image-surface-paint.c
++	rotated-clip.c
++	rounded-rectangle-fill.c
++	rounded-rectangle-stroke.c
++	scale-down-source-surface-paint.c
++	scale-offset-image.c
++	scale-offset-similar.c
++	scale-source-surface-paint.c
++	scaled-font-zero-matrix.c
++	stroke-ctm-caps.c
++	stroke-image.c
++	stroke-open-box.c
++	select-font-face.c
++	select-font-no-show-text.c
++	self-copy.c
++	self-copy-overlap.c
++	self-intersecting.c
++	set-source.c
++	show-glyphs-advance.c
++	show-glyphs-many.c
++	show-text-current-point.c
++	shape-general-convex.c
++	skew-extreme.c
++	smask.c
++	smask-fill.c
++	smask-image-mask.c
++	smask-mask.c
++	smask-paint.c
++	smask-stroke.c
++	smask-text.c
++	solid-pattern-cache-stress.c
++	source-clip.c
++	source-clip-scale.c
++	source-surface-scale-paint.c
++	spline-decomposition.c
++	subsurface.c
++	subsurface-image-repeat.c
++	subsurface-repeat.c
++	subsurface-reflect.c
++	subsurface-pad.c
++	subsurface-modif(-child.c)
++	subsurface-modif(-parent.c)
++	subsurface-outside-target.c
++	subsurface-similar-repeat.c
++	surface-finish-twice.c
++	surface-pattern.c
++	surface-pattern-big-scale-down.c
++	surface-pattern-operator.c
++	surface-pattern-scale-down.c
++	surface-pattern-scale-down-extend.c
++	surface-pattern-scale-up.c
++	text-antialias.c
++	text-cache-crash.c
++	text-glyph-range.c
++	text-pattern.c
++	text-rotate.c
++	text-transform.c
++	text-zero-len.c
++	toy-font-face.c
++	transforms.c
++	translate-show-surface.c
++	trap-clip.c
++	twin.c
++	twin-antialias-gray.c
++	twin-antialias-mixed.c
++	twin-antialias-none.c
++	twin-antialias-subpixel.c
++	unaligned-box.c
++	unantialiased-shapes.c
++	unbounded-operator.c
++	unclosed-strokes.c
++	user-data.c
++	user-font.c
++	user-font-mask.c
++	user-font-proxy.c
++	user-font-rescale.c
++	world-map.c
++	white-in-noop.c
++	xcb-huge-image-shm.c
++	xcb-stress-cache.c
++	xcb-snapshot-assert.c
++	xcomposite-projection.c
++	xlib-expose-event.c
++	zero-alpha.c
++	zero-mask.c
++)
++set(pthread_test_sources
++	pthread-same-source.c
++	pthread-show-text.c
++	pthread-similar.c
++)
++
++set(ft_font_test_sources
++	bitmap-font.c
++	ft-font-create-for-ft-face.c
++	ft-show-glyphs-positioning.c
++	ft-show-glyphs-table.c
++	ft-text-vertical-layout-type1.c
++	ft-text-vertical-layout-type3.c
++	ft-text-antialias-none.c
++)
++set(gl_surface_test_sources
++	gl-surface-source.c
++)
++set(quartz_surface_test_sources quartz-surface-source.c)
++
++set(pdf_surface_test_sources
++	pdf-features.c
++	pdf-mime-data.c
++	pdf-surface-source.c
++)
++set(ps_surface_test_sources
++	ps-eps.c
++	ps-features.c
++	ps-surface-source.c
++)
++set(svg_surface_test_sources
++	svg-surface.c
++	svg-clip.c
++	svg-surface-source.c
++)
++set(test_fallback16_surface_test_sources
++	test-fallback16-surface-source.c
++)
++set(xcb_surface_test_sources
++	xcb-surface-source.c
++)
++set(xlib_surface_test_sources
++	xlib-surface.c
++	xlib-surface-source.c
++)
++set(xlib_xrender_surface_test_sources get-xrender-format.c)
++set(multi_page_surface_test_sources multi-page.c)
++set(fallback_resolution_test_sources fallback-resolution.c)
++set(cairo_test_suite_headers
++	buffer-dif(.h)
++	cairo-test.h
++	cairo-test-private.h
++	world-map.h
++)
++set(cairo_test_suite_sources
++	buffer-dif(.c)
++	cairo-test.c
++	cairo-test-runner.c
++)
++#include ${top_srcdir}/test/Makefile.refs
++
++#SUBDIRS=pdif( .)
++
++# Then we have a collection of tests that are only run if(certain)
++# features are compiled into cairo
++if(HAVE_REAL_PTHREAD)
++list(APPEND test_sources ${pthread_test_sources})
++endif()
++
++if(CAIRO_HAS_FT_FONT OR CAIRO_HAS_FC_FONT)
++list(APPEND test_sources ${ft_font_test_sources})
++endif()
++
++if(CAIRO_HAS_GL_SURFACE)
++list(APPEND test_sources ${gl_surface_test_sources})
++endif()
++
++# Need to add quartz-surface-source
++if(CAIRO_HAS_QUARTZ_SURFACE)
++list(APPEND test_sources ${quartz_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_PDF_SURFACE)
++list(APPEND test_sources ${pdf_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_PS_SURFACE)
++list(APPEND test_sources ${ps_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_SVG_SURFACE)
++list(APPEND test_sources ${svg_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_TEST_SURFACES)
++list(APPEND test_sources ${test_fallback16_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_XCB_SURFACE)
++list(APPEND test_sources ${xcb_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_XLIB_SURFACE)
++list(APPEND test_sources ${xlib_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_XLIB_XRENDER_SURFACE)
++list(APPEND test_sources ${xlib_xrender_surface_test_sources})
++endif()
++
++if(CAIRO_HAS_MULTI_PAGE_SURFACES)
++list(APPEND test_sources ${multi_page_surface_test_sources})
++endif()
++
++# Include fallback-resolution (once!) if(we have any of the vector surfaces)
++if(BUILD_ANY2PPM)
++if(CAIRO_HAS_SVG_SURFACE)
++set(test ${fallback_resolution_test_sources})
++endif()
++if(CAIRO_HAS_PDF_SURFACE)
++set(test ${fallback_resolution_test_sources})
++endif()
++if(CAIRO_HAS_PS_SURFACE)
++set(test ${fallback_resolution_test_sources})
++endif()
++endif()
++list(APPEND test_sources  ${test})
++
++list(APPEND TESTS cairo-test-suite)
++
++cairo-test-constructors.c: Makefile ${test_sources} make-cairo-test-constructors.sh
++	(cd ${srcdir) && sh ./make-cairo-test-constructors.sh $(test_sources)} > $@
++
++set(cairo_test_suite_SOURCES
++	${cairo_test_suite_sources}
++	${cairo_test_suite_headers}
++	${test_sources}
++	cairo-test-constructors.c
++)
++
++add_executable(cairo-test-suite ${cairo_test_suite_SOURCES})
++target_link_libraries(cairo-test-suite
++	#${real_pthread_LIBS}
++	#libpdiff
++	#libcairoboilerplate
++	cairo
++	${CAIRO_LDADD}
++)
++
++
++#if(BUILD_ANY2PPM)
++#cairo_test_suite_DEPENDENCIES += \
++#	any2ppm
++#endif()
++#
++#if(HAVE_SHM)
++#EXTRA_PROGRAMS += cairo-test-trace
++#cairo_test_trace_SOURCES =		\
++#	cairo-test-trace.c		\
++#	buffer-dif(.c			\)
++#	buffer-dif(.h)
++#cairo_test_trace_CFLAGS = ${AM_CFLAGS) $(real_pthread_CFLAGS}
++#cairo_test_trace_LDADD =		\
++#	${real_pthread_LIBS}					\
++#	${top_builddir}/test/pdif(/libpdiff.la 			\)
++#	${top_builddir}/util/cairo-script/libcairo-script-interpreter.la \
++#        ${top_builddir}/boilerplate/libcairoboilerplate.la	\
++#	${top_builddir}/src/libcairo.la 			\
++#	${CAIRO_LDADD} \
++#	${SHM_LIBS})
++#cairo_test_trace_DEPENDENCIES = \
++#	${top_builddir}/test/pdif(/libpdiff.la 			\)
++#	${top_builddir}/util/cairo-script/libcairo-script-interpreter.la \
++#        ${top_builddir}/boilerplate/libcairoboilerplate.la	\
++#	${top_builddir}/src/libcairo.la
++#endif()
++#
++#BUILT_SOURCES += cairo-test-constructors.c
++#EXTRA_DIST += ${BUILT_SOURCES) $(noinst_SCRIPTS} COPYING make-cairo-test-constructors.sh run-cairo-test-suite.sh generate_refs.sh
++#CLEANFILES += ${BUILT_SOURCES})
++#
++#EXTRA_DIST +=		\
++#6x13.pcf		\
++#index.html		\
++#jp2.jp2			\
++#jpeg.jpg		\
++#png.png			\
++#romedalen.jpg		\
++#romedalen.png		\
++#scarab.jpg		\
++#surface-source.c	\
++#testtable.js		\
++#${REFERENCE_IMAGES})
++#
++## Any test for which the code committed to CVS is expected to fail
++## should be listed here.
++##
++## This way, we can avoid being bothered by reports of bugs we are
++## aware of, but users can still report when tests start behaving in
++## unexpected ways on their system.
++##
++## Of course, before any "release" of cairo we should eliminate
++## everything from this list by fixing the bugs. (We don't necessarily
++## have to be that strict for "snapshots" though.)
++##
++## Analysis of XFAIL errors:
++## alpha-similar         - discrepancy between backends in applying color
++##                         components of a pure alpha surface
++## big-line              - range overflow of fixed-point
++## big-trap              - range overflow of fixed-point
++## degenerate-dash       - needs path editing in PS to convert degenerate
++##                         end-caps into the shapes as expected by cairo
++##                         (Or maybe PS is the correct behaviour?)
++## degenerate-path       - undefined behaviour in PS, needs path editing to
++##                         convert degenerate segments into circles/rectangles
++##                         as expected by cairo
++## device-offset-scale   - complication of pre-multiplying device_offset
++##                         into the pattern_matrix and then requiring futher
++##                         manipulation for SVG
++## extend-pad            - lacks implementation in pixman and consequently used
++##                         as an excuse for lack of support in other backends
++## fallback-resolution   - The essential problem here is that the recording-surface
++##                         has recorded a sequence of operations with one device
++##                         transformation, and we attempt to replay it with
++##                         another (basically a scale-factor for the falback
++##                         resolution). Carl begun to look at this with his
++##                         chain-of-bugs, but the can of worms is much bigger.
++##                         It appears to be a design flaw in the recording-surface
++##                         that may spread further...
++##                         My solution would be to lock Behad and Adrian in a
++##                         room, with Carl as a moderator and not let them out
++##                         until they have come up with an interface and
++##                         semantics that actually work. :-)
++## in-fill-empty-trapezoid The cairo_in_fill () function can sometimes
++##                         produce false positives when the tessellator
++##                         produces empty trapezoids and the query
++##                         point lands exactly on a trapezoid edge.
++## long-lines            - range overflow of fixed-point
++## scale-offset-image    - loss of precision converting a cairo matrix to
++## scale-offset-similar    pixman's fixed point format.
++## self-copy-overlap     - vector surfaces take snapshot of patterns in contrast
++##                         to the raster backends which don't. One solution
++##                         would be to clone overlapping areas of dst/source, so
++##                         patterns were effectively snapshotted across all
++##                         backends.
++## self-intersecting     - incremental trapezoidation of strokes can generate
++##                         overlapping traps. Needs self-intersection analysis
++##                         on cairo_traps_t after strokes.
++##                         Test case should also be expanded to hit special-case
++##                         tessellators as well.
++## surface-pattern-big...- Strange, unexplained results for SVG/PS.
++#XFAIL_TESTS =					\
++#alpha-similar${EXEEXT}				\
++#big-line${EXEEXT}				\
++#big-trap${EXEEXT}				\
++#degenerate-dash${EXEEXT}			\
++#degenerate-path${EXEEXT}			\
++#device-offset-scale${EXEEXT}			\
++#extend-pad${EXEEXT}				\
++#fallback-resolution${EXEEXT}			\
++#in-fill-empty-trapezoid${EXEEXT}		\
++#long-lines${EXEEXT}				\
++#self-copy-overlap${EXEEXT}			\
++#self-intersecting${EXEEXT}			\
++#surface-pattern-big-scale-down${EXEEXT}		\
++#${NULL})
++#
++## Any test that doesn't generate a log file goes here
++#NOLOG_TESTS =			\
++#fallback-resolution		\
++#font-options			\
++#multi-page			\
++#pdf-features			\
++#png				\
++#ps-eps                          \
++#ps-features			\
++#svg-clip			\
++#svg-surface			\
++#toy-font-face			\
++#user-data
++#
++## A target to summarise the failures
++#check-summary:
++#	@FAILED_TESTS=""; \
++#	for t in ${test_sources:.c=.log}; do \
++#	    if(grep -e '\<FAIL\>' $$t >/dev/null 2>&1; then \)
++#		FAILED_TESTS="$$FAILED_TESTS $${t%.log}"; \
++#	    fi; \
++#	done; \
++#	if(test -n "$$FAILED_TESTS"; then \)
++#	    echo "Failed tests:"; \
++#	    surfaces=""; \
++#	    for t in $$FAILED_TESTS; do \
++#		echo -n "     $$t: "; \
++#		grep -e '\<FAIL\>' $$t.log | sed -e 's/.*TARGET: \([^ ]*\).*/\1/' | sort | uniq | tr '\n' ' '; \
++#		echo; \
++#		for s in `grep -e '\<FAIL\>' $$t.log | sed -e 's/.*TARGET: \([^ ]*\).*/\1/' | sort | uniq`; do \
++#		    ss=`echo $$s | tr '-' '_'`; \
++#		    tt=`echo $$t | tr '-' '_'`; \
++#		    eval $$ss=\""$${!ss} $$tt"\"; \
++#		    echo $$surfaces | grep $$ss >/dev/null || surfaces="$$surfaces $$ss"; \
++#		done; \
++#	    done; \
++#	    echo -n "Failures per surface - "; \
++#	    first=""; \
++#	    for s in $$surfaces; do \
++#	        ss=`echo $$s | tr '_' '-'`; \
++#		test -n "$$first" && echo -n ", "; \
++#		cnt=`echo $${!s} | wc -w`; \
++#	        echo -n "$$ss: $$cnt"; \
++#		first="false"; \
++#	    done; \
++#	    echo "."; \
++#	    for s in $$surfaces; do \
++#	        ss=`echo $$s | tr '_' '-'`; \
++#		cnt=`echo $${!s} | wc -w`; \
++#	        echo -n "	$$ss [$$cnt]: "; \
++#		echo $${!s} | tr '_' '-'; \
++#	    done; \
++#	fi
++#
++#AM_CPPFLAGS =					\
++#	-I${srcdir}				\
++#	-I${srcdir}/pdif(			\)
++#	-I${top_srcdir}/boilerplate		\
++#	-I${top_srcdir}/util/cairo-script	\
++#	-I${top_srcdir}/src			\
++#	-I${top_builddir}/src			\
++#	${CAIRO_CFLAGS})
++#AM_LDFLAGS = ${CAIRO_LDFLAGS})
++#
++#${top_builddir)/boilerplate/libcairoboilerplate.la: $(top_builddir}/src/libcairo.la
++#	cd ${top_builddir)/boilerplate && $(MAKE) $(AM_MAKEFLAGS} libcairoboilerplate.la
++#
++#${top_builddir}/src/libcairo.la:
++#	cd ${top_builddir)/src && $(MAKE) $(AM_MAKEFLAGS} libcairo.la
++#
++#${top_builddir}/test/pdif(/libpdiff.la:)
++#	cd ${top_builddir)/test/pdif( && $(MAKE) $(AM_MAKEFLAGS} libpdiff.la)
++#
++#${top_builddir)/util/cairo-script/libcairo-script-interpreter.la: $(top_builddir}/src/libcairo.la
++#	cd ${top_builddir)/util/cairo-script && $(MAKE) $(AM_MAKEFLAGS} libcairo-script-interpreter.la
++#
++#EXTRA_PROGRAMS += imagedif( png-flatten)
++#
++#imagedif(_SOURCES = \)
++#	imagedif(.c	\)
++#	buffer-dif(.c	\)
++#	buffer-dif(.h)
++#imagedif(_LDADD = \)
++#	${top_builddir}/test/pdif(/libpdiff.la \)
++#	${top_builddir}/src/libcairo.la
++#
++#png_flatten_SOURCES = png-flatten.c
++#png_flatten_LDADD = ${top_builddir}/src/libcairo.la \
++#		    ${CAIRO_LDADD})
++#
++#if(BUILD_ANY2PPM)
++#check_PROGRAMS += any2ppm
++#any2ppm_CFLAGS = ${AM_CFLAGS) $(POPPLER_CFLAGS) $(LIBRSVG_CFLAGS) $(LIBSPECTRE_CFLAGS})
++## add LDADD, so poppler/librsvg uses "our" cairo
++#any2ppm_LDFLAGS = ${AM_LDFLAGS) $(CAIRO_TEST_UNDEFINED_LDFLAGS})
++#any2ppm_LDADD = \
++#		${top_builddir}/util/cairo-script/libcairo-script-interpreter.la \
++#		${top_builddir}/src/libcairo.la \
++#		${CAIRO_LDADD} \
++#		${CAIROBOILERPLATE_LIBS} \
++#		${POPPLER_LIBS} \
++#		${LIBRSVG_LIBS} \
++#		${LIBSPECTRE_LIBS})
++#endif()
++#
++#if(CAIRO_CAN_TEST_PDF_SURFACE)
++#check_PROGRAMS += pdf2png
++#pdf2png_CFLAGS = ${AM_CFLAGS) $(POPPLER_CFLAGS})
++## add LDADD, so poppler uses "our" cairo
++#pdf2png_LDFLAGS = ${AM_LDFLAGS) $(CAIRO_TEST_UNDEFINED_LDFLAGS})
++#pdf2png_LDADD  = ${top_builddir}/src/libcairo.la \
++#		 ${CAIRO_LDADD} \
++#		 ${POPPLER_LIBS})
++#endif()
++#
++#if(CAIRO_CAN_TEST_SVG_SURFACE)
++#check_PROGRAMS += svg2png
++#svg2png_CFLAGS = ${AM_CFLAGS) $(LIBRSVG_CFLAGS})
++## add LDADD, so librsvg uses "our" cairo
++#svg2png_LDFLAGS = ${AM_LDFLAGS) $(CAIRO_TEST_UNDEFINED_LDFLAGS})
++#svg2png_LDADD  = ${top_builddir}/src/libcairo.la \
++#		 ${CAIRO_LDADD} \
++#		 ${LIBRSVG_LIBS})
++#endif()
++#
++#if(CAIRO_HAS_SPECTRE)
++#check_PROGRAMS += ps2png
++#ps2png_CFLAGS = ${AM_CFLAGS) $(LIBSPECTRE_CFLAGS})
++## add LDADD, so ps2png uses "our" cairo
++#ps2png_LDFLAGS = ${AM_LDFLAGS) $(CAIRO_TEST_UNDEFINED_LDFLAGS})
++#ps2png_LDADD  = ${top_builddir}/src/libcairo.la \
++#		${CAIRO_LDADD} \
++#		${LIBSPECTRE_LIBS})
++#endif()
++#
++#EXTRA_PROGRAMS += ${TESTS})
++#
++## Do a funny transition of CAIRO_TEST_TARGET through TARGETS such that
++## one can limit tested targets both through CAIRO_TEST_TARGET env var
++## and TARGETS make var on the command line.  Same for the rest.
++#TARGETS = ${CAIRO_TEST_TARGET})
++#TARGETS_EXCLUDE = ${CAIRO_TEST_TARGET_EXCLUDE})
++#NUM_THREADS = ${CAIRO_TEST_NUM_THREADS})
++#MODE = ${CAIRO_TEST_MODE})
++#
++## Same about ENV vs CAIRO_TEST_ENV.  ENV is used with "make run" only
++#ENV = ${CAIRO_TEST_ENV})
++#
++#TESTS_ENVIRONMENT = CAIRO_TEST_MODE="${MODE)" CAIRO_TEST_TARGET="$(TARGETS)" CAIRO_TEST_TARGET_EXCLUDE="$(TARGETS_EXCLUDE)" CAIRO_TEST_NUM_THREADS="$(NUM_THREADS)" $(ENV})
++#
++#EXTRA_VALGRIND_FLAGS = ${CAIRO_EXTRA_VALGRIND_FLAGS})
++#VALGRIND_FLAGS = \
++#	--tool=memcheck --suppressions=${srcdir}/.valgrind-suppressions \
++#	--track-origins=yes \
++#	--leak-check=yes --show-reachable=yes \
++#	${EXTRA_VALGRIND_FLAGS})
++#
++#CLEANFILES +=					\
++#	valgrind-log				\
++#	ref.hash				\
++#	ref.list				\
++#	png-test.png				\
++#	png.out.png				\
++#	create-for-stream.pdf			\
++#	create-for-stream.ps			\
++#	create-for-stream.svg			\
++#	svg-surface-source.out.svg		\
++#	pdf-surface-source.out.pdf		\
++#	ps-surface-source.out.ps		\
++#	pdf-features.pdf			\
++#	pdf-mime-data.out*			\
++#	ps-features.ps				\
++#	svg-clip.svg				\
++#	svg-surface.svg				\
++#	multi-page.pdf				\
++#	multi-page.ps				\
++#	${NULL})
++#
++## This used to be a simple 'echo ${RM} *.ps *.pdf *.svg *.etc', but
++## most systems cannot handle all of our clean files together.
++## Then it became a fancy find using many GNU extensions, but then the ugly
++## reality of portability was raised and it became....
++#clean-local:
++#	rm -rf output
++#	-${FIND} . -name '*.log'      -print | ${XARGS} ${RM})
++#	-${FIND} . -name '*.[is]'     -print | ${XARGS} ${RM})
++#clean-caches:
++#	-${FIND} output -name '*.fail.*' -print | ${XARGS} ${RM})
++#	-${FIND} output -name '*.pass.*' -print | ${XARGS} ${RM})
++#
++## The following definitions both should work.
++##FAILED_TESTS = `grep -l '\<FAIL\>' ${test_sources:.c=.log} 2>/dev/null | sed -e 's/[.]log$$//' | xargs echo`
++#FAILED_TESTS = `grep -l '\<FAIL\>' ${test_sources:.c=.log} 2>/dev/null | tr '\n' ' ' | sed -e 's/[.]log  */ /g; s/^ //; s/ $$//'`
++#
++#recheck = check CAIRO_TESTS="${FAILED_TESTS}"
++#
++## Re-checks all failed tests, i.e. tests with a log file that has a failure
++#recheck:
++#	@echo Re-checking failed tests
++#	@${MAKE) $(AM_MAKEFLAGS) $(recheck})
++#
++## Checks tests.
++## Target doesn't fail if(tests fail.)
++#test:
++#	@${MAKE) $(AM_MAKEFLAGS} check
++#
++## Re-checks tests.
++## Target doesn't fail if(tests fail.)
++#retest:
++#	@CAIRO_TESTS="${FAILED_TESTS}"; \
++#	${MAKE) $(AM_MAKEFLAGS} check
++#
++## Run tests under a tool specif(ed by TOOL.  For example, make run TOOL=gdb)
++#run:
++#	${MAKE) $(AM_MAKEFLAGS) check TESTS_ENVIRONMENT='$(TESTS_ENVIRONMENT) $(top_builddir)/libtool --mode=execute env $(TOOL}'
++#
++## Check tests under valgrind.  Saves log to valgrind-log
++#check-valgrind:
++#	${MAKE) $(AM_MAKEFLAGS) check TESTS_ENVIRONMENT='$(TESTS_ENVIRONMENT) CAIRO_TEST_MODE="$(MODE),foreground CAIRO_TEST_TIMEOUT=0" $(top_builddir)/libtool --mode=execute valgrind $(VALGRIND_FLAGS}' 2>&1 | tee valgrind-log
++#
++##%.log: %.ccairo-test-suite
++##-./cairo-test-suite ${<:.c=})
++#
++#NOLOG_TESTS_LOG = ${NOLOG_TESTS:=.log})
++#
++#${NOLOG_TESTS_LOG}:
++#	@echo dummy > $@
++#
++## Identif( identical reference images)
++#check-ref-dups:
++#	@LANG=C; \
++#	( cd "${srcdir)" && sha1sum *.ref.png | sort } > ref.hash; \
++#	join ref.hash ref.hash | grep -v -E '( .*.ref.png).*\1' | cut -d' ' -f 1-2 | sort -u
++#
++## Not exactly the best script in the world...
++#check-ref-missing:
++#	@cd "${srcdir}"; \
++#	LANG=C; \
++#	ret=true; \
++#	grep '\.png \\$$' Makefile.refs | sed 's/ \\$$//' | tr -d '\t' > ref.list; \
++#	if(! (find . -name '*.ref.png' ; find . -name '*.xfail.png' ; find . -name '*.new.png' ) \)
++#		| cut -d/ -f2- | sort | dif( -u ref.list - ; then \)
++#		echo "*** Error: Sanity check failed"; \
++#		echo "The reference images marked with '-' are not included in the distribution."; \
++#		echo "You probably need to generate them and add them to git."; \
++#		echo "The reference images marked with '+' are not listed in Makefile.refs."; \
++#		echo "You probably need to add them there (and maybe to git)."; \
++#		echo "Please remember to preserve the lexicographical order."; \
++#		ret=false; \
++#	fi >&2; \
++#	if(! git ls-files "*.ref.png" "*.xfail.png" "*.new.png" | sort | diff -u ref.list - ; then \)
++#		echo "*** Error: Sanity check failed"; \
++#		echo "The reference images marked with '-' are not included in the distribution."; \
++#		echo "You probably need to add them to git."; \
++#		echo "The reference images marked with '+' are not listed in Makefile.refs."; \
++#		echo "You probably need to add them there."; \
++#		echo "Please remember to preserve the lexicographical order."; \
++#		ret=false; \
++#	fi >&2; \
++#	$$ret
++#
++#release-verif(-sane-tests: check-ref-missing)
++#
++#results.tar:
++#	@tar cf $@ index.html testtable.js *.log; \
++#	for i in output/*.fail.png ; do \
++#		testname=$${i#output/} ; \
++#		testname=$${testname%%.*} ; \
++#		tar uf $@ $${testname}*.ref.png $${i%fail.png}out.png $${i%fail.png}dif(.png ; \)
++#	done
++#
++#results.tar.gz: results.tar
++#	gzip -c $< > $@
++#
++#.PHONY: check-valgrind test recheck retest check-ref-dups check-ref-missing release-verif(-sane-tests)
++#
++#EXTRA_DIST += Makefile.win32
+--
+1.7.4.msysgit.0
+
