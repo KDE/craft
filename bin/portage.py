@@ -497,7 +497,6 @@ def getDependencies( category, package, version, runtimeOnly=False ):
         utils.die( "package name %s/%s-%s unknown" % ( category, package, version ) )
 
     package, subpackage = getSubPackage( category, package )
-    print "getDependencies:", package, subpackage
     if subpackage:
         utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
     else:
