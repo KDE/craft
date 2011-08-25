@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
 
         self.patchToApply['1.1.0'] = ('digikam-1.1.0.diff', 1)
         self.patchToApply['1.7.0'] = ('digikam-1.7.0-20101219.diff', 1)
+        self.patchToApply['2.0.0'] = ('digikam-2.0.0-20110825.diff', 1)
 
         self.options.configure.defines = "-DENABLE_GPHOTO2=OFF"
         self.defaultTarget = 'gitHEAD'
