@@ -96,7 +96,7 @@ extragear,krecipes,2.0-beta2,
 extragear,skanlite,,
 extragear,skrooge,0.9.1,
 extragear,zanshin,,
-
+#
 # release pending:
 #extragear,kdevplatform,1.3.0,
 #extragear,kdevelop,4.3.0,
