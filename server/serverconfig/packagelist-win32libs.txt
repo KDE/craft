@@ -75,10 +75,6 @@ win32libs-sources,raptor2-src,,
 win32libs-sources,rasqal-src,,
 win32libs-sources,pthreads-src,,
 win32libs-sources,yajl-src,1.0.12,
-<<<<<<< HEAD
-libs,runtime,,
-=======
 win32libs-sources,cfitsio-src,3.20,1
 win32libs-sources,opencv-src,,3
 libs,runtime,,
->>>>>>> e34e7c7... trigger rebuild & fix patchlevel of opencv
