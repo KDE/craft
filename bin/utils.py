@@ -265,7 +265,7 @@ def getHttpFile( host, path, destdir, filename ):
     count = 0
     while r1.status == 302:
         if count > 10:
-            print "Redirect loop"
+            debug( "Redirect loop" )
             return False
         count += 1
         _, host, path, _, _, _ = urlparse.urlparse( r1.getheader( "Location" ) )
@@ -1326,18 +1326,18 @@ def startTimer(name, level = 0):
         die("%s already in timers" % name)
     _TIMERS[name] = (datetime.datetime.now() , level)
     if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
-        print "Task: %s started" % name
+        #debug( "Task: %s started" % name )
         sys.stdout.flush()
     
 def stopTimer(name):
     """stops a timer for meassurement"""
     if not name in _TIMERS:
-        debug("%s not in timers" % name)
+        debug( "%s not in timers" % name )
         return
     startTime , level = _TIMERS[name]
     if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
-        print "Task: %s stopped after: %s" % (name , delta)
+        debug( "Task: %s stopped after: %s" % (name , delta) )
         sys.stdout.flush()
     del _TIMERS[name]
     
