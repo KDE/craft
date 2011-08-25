@@ -1,6 +1,6 @@
 diff -Nru digikam-2.0.0.orig/core/CMakeLists.txt digikam-2.0.0/core/CMakeLists.txt
 --- digikam-2.0.0.orig/core/CMakeLists.txt	2011-07-28 01:28:25.000000000 +0200
-+++ digikam-2.0.0/core/CMakeLists.txt	2011-08-25 01:28:07.409844200 +0200
++++ digikam-2.0.0/core/CMakeLists.txt	2011-08-25 10:02:10.004244200 +0200
 @@ -1462,127 +1462,127 @@
  
      INCLUDE_DIRECTORIES(
@@ -250,9 +250,53 @@ diff -Nru digikam-2.0.0.orig/core/CMakeLists.txt digikam-2.0.0/core/CMakeLists.t
  
          # version.h, gitversion.h config-digikam.h
          ${CMAKE_CURRENT_BINARY_DIR}/digikam/utils
+diff -Nru digikam-2.0.0.orig/core/digikam/album/albumselectiontreeview.cpp digikam-2.0.0/core/digikam/album/albumselectiontreeview.cpp
+--- digikam-2.0.0.orig/core/digikam/album/albumselectiontreeview.cpp	2011-07-28 01:28:24.000000000 +0200
++++ digikam-2.0.0/core/digikam/album/albumselectiontreeview.cpp	2011-08-25 11:21:58.630644200 +0200
+@@ -45,7 +45,7 @@
+ #include "contextmenuhelper.h"
+ #include "itemviewtooltip.h"
+ #include "tooltipfiller.h"
+-#include "batchthumbsgenerator.h"
++#include "../../utilities/batch/batchthumbsgenerator.h"
+ 
+ namespace Digikam
+ {
+diff -Nru digikam-2.0.0.orig/core/digikam/main/digikamapp.cpp digikam-2.0.0/core/digikam/main/digikamapp.cpp
+--- digikam-2.0.0.orig/core/digikam/main/digikamapp.cpp	2011-07-28 01:28:24.000000000 +0200
++++ digikam-2.0.0/core/digikam/main/digikamapp.cpp	2011-08-25 11:10:53.333044200 +0200
+@@ -106,8 +106,8 @@
+ #include "albumdb.h"
+ #include "albumselectdialog.h"
+ #include "albumthumbnailloader.h"
+-#include "batchalbumssyncmetadata.h"
+-#include "batchthumbsgenerator.h"
++#include "../../utilities/batch/batchalbumssyncmetadata.h"
++#include "../../utilities/batch/batchthumbsgenerator.h"
+ #include "cameratype.h"
+ #include "cameraui.h"
+ #include "cameranamehelper.h"
+@@ -118,7 +118,7 @@
+ #include "dlogoaction.h"
+ #include "facescandialog.h"
+ #include "filterstatusbar.h"
+-#include "fingerprintsgenerator.h"
++#include "../../utilities/batch/fingerprintsgenerator.h"
+ #include "iccsettings.h"
+ #include "imageattributeswatch.h"
+ #include "imageinfo.h"
+@@ -138,7 +138,7 @@
+ #include "thumbnailsize.h"
+ #include "dmetadata.h"
+ #include "uifilevalidator.h"
+-#include "batchfacedetector.h"
++#include "../../utilities/batch/batchfacedetector.h"
+ #include "tagscache.h"
+ #include "tagsactionmngr.h"
+ #include "databaseserverstarter.h"
 diff -Nru digikam-2.0.0.orig/core/digikam/utils/uifilevalidator.cpp digikam-2.0.0/core/digikam/utils/uifilevalidator.cpp
 --- digikam-2.0.0.orig/core/digikam/utils/uifilevalidator.cpp	2011-07-28 01:28:25.000000000 +0200
-+++ digikam-2.0.0/core/digikam/utils/uifilevalidator.cpp	2011-08-25 01:15:17.114644200 +0200
++++ digikam-2.0.0/core/digikam/utils/uifilevalidator.cpp	2011-08-25 10:02:10.004244200 +0200
 @@ -20,7 +20,6 @@
   * GNU General Public License for more details.
   *
@@ -270,9 +314,58 @@ diff -Nru digikam-2.0.0.orig/core/digikam/utils/uifilevalidator.cpp digikam-2.0.
                  {
                      if (it->qualifiedName() == TOOLBARATTRIBUTE && it->value() != TOOLBARVALUE)
                      {
+diff -Nru digikam-2.0.0.orig/core/digikam/views/digikamview.cpp digikam-2.0.0/core/digikam/views/digikamview.cpp
+--- digikam-2.0.0.orig/core/digikam/views/digikamview.cpp	2011-07-28 01:28:25.000000000 +0200
++++ digikam-2.0.0/core/digikam/views/digikamview.cpp	2011-08-25 11:27:17.334044200 +0200
+@@ -44,13 +44,13 @@
+ #include "albumhistory.h"
+ #include "albumsettings.h"
+ #include "stackedview.h"
+-#include "batchsyncmetadata.h"
++#include "../../utilities/batch/batchsyncmetadata.h"
+ #include "digikamapp.h"
+ #include "digikamimageview.h"
+ #include "dzoombar.h"
+ #include "imagealbummodel.h"
+ #include "imagedescedittab.h"
+-#include "imageinfoalbumsjob.h"
++#include "../../utilities/batch/imageinfoalbumsjob.h"
+ #include "imagepreviewview.h"
+ #include "imagepropertiessidebardb.h"
+ #include "imagethumbnailbar.h"
+diff -Nru digikam-2.0.0.orig/core/tests/CMakeLists.txt digikam-2.0.0/core/tests/CMakeLists.txt
+--- digikam-2.0.0.orig/core/tests/CMakeLists.txt	2011-07-28 01:28:08.000000000 +0200
++++ digikam-2.0.0/core/tests/CMakeLists.txt	2011-08-25 11:58:35.744444200 +0200
+@@ -184,6 +184,8 @@
+ KDE4_ADD_UNIT_TEST(dimagehistorytest ${dimagehistorytest_SRCS})
+ TARGET_LINK_LIBRARIES(dimagehistorytest
+                       ${KDE4_KDECORE_LIBS}
++                      ${KEXIV2_LIBRARIES}
++                      ${KDE4_KIO_LIBS}
+                       ${QT_QTGUI_LIBRARY}
+                       ${QT_QTTEST_LIBRARY}
+                       digikamcore
+@@ -200,6 +202,8 @@
+ KDE4_ADD_UNIT_TEST(dimagehistorygraphtest ${dimagehistorygraphtest_SRCS})
+ TARGET_LINK_LIBRARIES(dimagehistorygraphtest
+                       ${KDE4_KDECORE_LIBS}
++                      ${KEXIV2_LIBRARIES}
++                      ${KDE4_KIO_LIBS}
+                       ${QT_QTGUI_LIBRARY}
+                       ${QT_QTTEST_LIBRARY}
+                       digikamdatabase
+@@ -215,6 +219,8 @@
+ KDE4_ADD_UNIT_TEST(dimagefilteractiontest ${dimagefilteractiontest_SRCS})
+ TARGET_LINK_LIBRARIES(dimagefilteractiontest
+                       ${KDE4_KDECORE_LIBS}
++                      ${KDE4_KIO_LIBS}
++                      ${KEXIV2_LIBRARIES}
+                       ${QT_QTGUI_LIBRARY}
+                       ${QT_QTTEST_LIBRARY}
+                       digikamcore
 diff -Nru digikam-2.0.0.orig/core/utilities/advancedrename/parser/options/database/databaseoption.cpp digikam-2.0.0/core/utilities/advancedrename/parser/options/database/databaseoption.cpp
 --- digikam-2.0.0.orig/core/utilities/advancedrename/parser/options/database/databaseoption.cpp	2011-07-28 01:28:04.000000000 +0200
-+++ digikam-2.0.0/core/utilities/advancedrename/parser/options/database/databaseoption.cpp	2011-08-24 23:46:09.220244200 +0200
++++ digikam-2.0.0/core/utilities/advancedrename/parser/options/database/databaseoption.cpp	2011-08-25 10:02:10.004244200 +0200
 @@ -41,9 +41,9 @@
  #include "imagecomments.h"
  #include "dbkeyselector.h"
@@ -288,7 +381,7 @@ diff -Nru digikam-2.0.0.orig/core/utilities/advancedrename/parser/options/databa
  {
 diff -Nru digikam-2.0.0.orig/core/utilities/gpssearch/gpssearchview.cpp digikam-2.0.0/core/utilities/gpssearch/gpssearchview.cpp
 --- digikam-2.0.0.orig/core/utilities/gpssearch/gpssearchview.cpp	2011-07-28 01:28:02.000000000 +0200
-+++ digikam-2.0.0/core/utilities/gpssearch/gpssearchview.cpp	2011-08-25 01:23:11.790044200 +0200
++++ digikam-2.0.0/core/utilities/gpssearch/gpssearchview.cpp	2011-08-25 10:02:10.019844200 +0200
 @@ -49,7 +49,7 @@
  // Local includes
  
@@ -300,7 +393,7 @@ diff -Nru digikam-2.0.0.orig/core/utilities/gpssearch/gpssearchview.cpp digikam-
  #include "digikam2kgeomap.h"
 diff -Nru digikam-2.0.0.orig/core/utilities/setup/setup.cpp digikam-2.0.0/core/utilities/setup/setup.cpp
 --- digikam-2.0.0.orig/core/utilities/setup/setup.cpp	2011-07-28 01:28:03.000000000 +0200
-+++ digikam-2.0.0/core/utilities/setup/setup.cpp	2011-08-25 01:16:54.442244200 +0200
++++ digikam-2.0.0/core/utilities/setup/setup.cpp	2011-08-25 10:02:10.019844200 +0200
 @@ -41,7 +41,7 @@
  // Local includes
  
@@ -312,7 +405,7 @@ diff -Nru digikam-2.0.0.orig/core/utilities/setup/setup.cpp digikam-2.0.0/core/u
  #include "setupcategory.h"
 diff -Nru digikam-2.0.0.orig/extra/kipi-plugins/gpssync/tests/CMakeLists.txt digikam-2.0.0/extra/kipi-plugins/gpssync/tests/CMakeLists.txt
 --- digikam-2.0.0.orig/extra/kipi-plugins/gpssync/tests/CMakeLists.txt	2011-07-28 01:27:36.000000000 +0200
-+++ digikam-2.0.0/extra/kipi-plugins/gpssync/tests/CMakeLists.txt	2011-08-25 00:32:34.664844200 +0200
++++ digikam-2.0.0/extra/kipi-plugins/gpssync/tests/CMakeLists.txt	2011-08-25 10:02:10.019844200 +0200
 @@ -7,6 +7,7 @@
                          ${KDE4_KDECORE_LIBS}
                          ${QT_QTTEST_LIBRARY}
@@ -332,7 +425,7 @@ diff -Nru digikam-2.0.0.orig/extra/kipi-plugins/gpssync/tests/CMakeLists.txt dig
                        ${KEXIV2_LIBRARIES}
 diff -Nru digikam-2.0.0.orig/extra/libkgeomap/test/CMakeLists.txt digikam-2.0.0/extra/libkgeomap/test/CMakeLists.txt
 --- digikam-2.0.0.orig/extra/libkgeomap/test/CMakeLists.txt	2011-07-28 01:27:44.000000000 +0200
-+++ digikam-2.0.0/extra/libkgeomap/test/CMakeLists.txt	2011-08-24 23:27:24.610244200 +0200
++++ digikam-2.0.0/extra/libkgeomap/test/CMakeLists.txt	2011-08-25 10:02:10.019844200 +0200
 @@ -35,7 +35,7 @@
          test_itemmarkertiler.cpp
         )
@@ -380,7 +473,7 @@ diff -Nru digikam-2.0.0.orig/extra/libkgeomap/test/CMakeLists.txt digikam-2.0.0/
  ENDIF(KDE4_BUILD_TESTS)
 diff -Nru digikam-2.0.0.orig/extra/libmediawiki/libmediawiki/CMakeLists.txt digikam-2.0.0/extra/libmediawiki/libmediawiki/CMakeLists.txt
 --- digikam-2.0.0.orig/extra/libmediawiki/libmediawiki/CMakeLists.txt	2011-07-28 01:27:42.000000000 +0200
-+++ digikam-2.0.0/extra/libmediawiki/libmediawiki/CMakeLists.txt	2011-08-24 23:42:14.530644200 +0200
++++ digikam-2.0.0/extra/libmediawiki/libmediawiki/CMakeLists.txt	2011-08-25 10:02:10.019844200 +0200
 @@ -23,9 +23,9 @@
  # ============================================================
  
