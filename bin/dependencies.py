@@ -167,13 +167,20 @@ class XMLCreator(Visitor):
 
 class KDEWinCreator( Visitor ):
     """ A visitor to generate a kdewin-installer config file """
-    compiler = "vc90"
+    compiler = "vc100"
+    compilerlist = [ "x64-mingw4", "x86-mingw4", "vc100" ]
     mode = "deps"
     cats = dict()
     cats["data"] = []
     cats["KDE"] = []
     cats["kdesupport"] = []
     cats["win32libs"] = []
+
+    def cleanup( self ):
+        self.cats["data"] = []
+        self.cats["KDE"] = []
+        self.cats["kdesupport"] = []
+        self.cats["win32libs"] = []
 
     def collectMetaData( self, node, context ):
         visited = context[0]
@@ -259,7 +266,6 @@ class KDEWinCreator( Visitor ):
 
     def afterChildren( self, node, context ):
         out = context[1]
-
         if self.mode == "deps":
             result = self.writeDependencyLine( node, context )
         elif self.mode == "cats":
@@ -306,14 +312,15 @@ class KDEWinCreator( Visitor ):
         visited = set()
         ranks = {}
         self.mode = "cats"
-        for self.compiler in [ "x64-mingw4", "x86-mingw4", "mingw4", "vc90", "vc100" ]:
+        for self.compiler in self.compilerlist:
             visited = set()
             tree.visit( self, ( visited, out, ranks ) )
             self.__dumpCategories( out )
+            self.cleanup()
         _cat = "\n".join( out )
         out = []
         self.mode = "deps"
-        for self.compiler in [ "x64-mingw4", "x86-mingw4", "mingw4", "vc90", "vc100" ]:
+        for self.compiler in self.compilerlist:
             visited = set()
             out.append( "; package dependencies for compiler " + self.compiler )
             tree.visit( self, ( visited, out, ranks ) )
