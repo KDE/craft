@@ -230,7 +230,7 @@ def handlePackage( category, package, version, buildAction, opts ):
             success = success and doExec( category, package, version, "package", opts )
 
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest", "dumpdeps",
-                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch",
+                            "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch", "geturls",
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
@@ -388,7 +388,7 @@ for i in sys.argv:
         mainBuildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest", "--dumpdeps",
-                  "--full-package", "--cleanimage", "--cleanbuild", "--createpatch"] ):
+                  "--full-package", "--cleanimage", "--cleanbuild", "--createpatch", "--geturls"] ):
         mainBuildAction = i[2:]
     elif ( i == "--print-revision" ):
         mainBuildAction = "printrev"

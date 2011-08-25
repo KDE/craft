@@ -72,6 +72,10 @@ class MultiSource(object):
         utils.trace( "MultiSource createPatch", 2 )
         return self.source.createPatch()
 
+    def getUrls(self):
+        utils.trace( "MultiSource getUrls", 2 )
+        return self.source.getUrls()
+
     def sourceVersion(self):
         utils.trace( "MultiSource sourceVersion", 2 )
         return self.source.sourceVersion()
