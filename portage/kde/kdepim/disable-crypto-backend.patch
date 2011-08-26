@@ -1,0 +1,24 @@
+From 554c5de32df614d66c050b7f511c520995d8dd18 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Sun, 10 Apr 2011 18:03:33 +0200
+Subject: [PATCH] Disable crypto backend.
+
+---
+ libkleo/backends/qgpgme/qgpgmebackend.cpp |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/libkleo/backends/qgpgme/qgpgmebackend.cpp b/libkleo/backends/qgpgme/qgpgmebackend.cpp
+index 2204693..640ed99 100644
+--- a/libkleo/backends/qgpgme/qgpgmebackend.cpp
++++ b/libkleo/backends/qgpgme/qgpgmebackend.cpp
+@@ -344,6 +344,7 @@ Kleo::CryptoConfig * Kleo::QGpgMEBackend::config() const {
+ }
+ 
+ static bool check( GpgME::Protocol proto, QString * reason ) {
++  return false;
+   if ( !GpgME::checkEngine( proto ) )
+     return true;
+   if ( !reason )
+-- 
+1.7.0.2.msysgit.0
+
