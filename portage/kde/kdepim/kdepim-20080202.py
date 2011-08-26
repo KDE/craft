@@ -9,6 +9,8 @@ class subinfo( info.infoclass ):
         self.patchToApply['4.7.0'] = ("kdepim-4.7.0-20110823.diff", 1)
         self.defaultTarget = 'gitHEAD'
 
+        self.patchToApply['gitHEAD'] = [('disable-crypto-backend.patch', 1)]
+
     def setDependencies( self ):
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
