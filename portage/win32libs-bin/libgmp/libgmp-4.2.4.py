@@ -7,8 +7,7 @@ class subinfo(info.infoclass):
         repoUrl = """http://downloads.sourceforge.net/kde-windows"""
 
         for version in ['4.2.4']:
-            self.targets[ version ] = repoUrl + """/libgmp-""" + version + """-bin.tar.bz2
-                                """ + repoUrl + """/libgmp-""" + version + """-lib.tar.bz2"""
+            self.targets[ version ] = self.getUnifiedPackage( repoUrl, "libgmp", version )
 
         self.defaultTarget = '4.2.4'
 

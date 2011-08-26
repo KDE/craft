@@ -149,6 +149,11 @@ class ArchiveSource(SourceBase):
             return ret
         return True
 
+    def getUrls( self ):
+        print self.subinfo.target()
+        print self.subinfo.targetDigestUrl()
+        return True
+
     def createPatch( self ):
         """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
         
