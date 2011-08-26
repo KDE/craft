@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
+        self.buildDependencies['win32libs-bin/cfitsio'] = 'default'
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['win32libs-bin/cfitsio'] = 'default'
         self.dependencies['win32libs-bin/libnova'] = 'default'
         self.dependencies['kdesupport/eigen2'] = 'default'
 
