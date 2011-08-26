@@ -1,6 +1,6 @@
 diff -Nru kmymoney-4.6.0.orig/kmymoney/mymoney/CMakeLists.txt kmymoney-4.6.0/kmymoney/mymoney/CMakeLists.txt
 --- kmymoney-4.6.0.orig/kmymoney/mymoney/CMakeLists.txt	2011-08-09 07:48:21.000000000 +0200
-+++ kmymoney-4.6.0/kmymoney/mymoney/CMakeLists.txt	2011-08-22 22:50:40.407430300 +0200
++++ kmymoney-4.6.0/kmymoney/mymoney/CMakeLists.txt	2011-08-26 17:21:54.533608800 +0200
 @@ -64,7 +64,7 @@
    kde4_add_unit_test( mymoneyaccounttest TESTNAME kmymoney-mymoneyaccounttest ${mymoneyaccounttest_SRCS} )
    ADD_DEPENDENCIES( mymoneyaccounttest kmm_mymoney )
@@ -154,3 +154,33 @@ diff -Nru kmymoney-4.6.0.orig/kmymoney/mymoney/CMakeLists.txt kmymoney-4.6.0/kmy
 +  target_link_libraries( mymoneybalancecachetest kmm_mymoney ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${LIBALKIMIA_LIBRARY} )
  
  ENDIF( KDE4_BUILD_TESTS )
+diff -Nru kmymoney-4.6.0.orig/libkgpgfile/kgpgfile.cpp kmymoney-4.6.0/libkgpgfile/kgpgfile.cpp
+--- kmymoney-4.6.0.orig/libkgpgfile/kgpgfile.cpp	2011-08-09 07:47:49.000000000 +0200
++++ kmymoney-4.6.0/libkgpgfile/kgpgfile.cpp	2011-08-26 17:24:34.301747000 +0200
+@@ -54,10 +54,11 @@
+   Private() {
+     m_fileRead = 0;
+     m_fileWrite = 0;
+-    GpgME::initializeLibrary();
++
++/*    GpgME::initializeLibrary();
+     ctx = GpgME::Context::createForProtocol(GpgME::OpenPGP);
+     if (!ctx)
+-      qDebug("Failed to create the GpgME context for the OpenPGP protocol");
++      qDebug("Failed to create the GpgME context for the OpenPGP protocol");*/
+   }
+ 
+   ~Private() {
+@@ -288,9 +289,10 @@
+ 
+ bool KGPGFile::GPGAvailable(void)
+ {
+-  bool rc = (GpgME::checkEngine(GpgME::OpenPGP) == 0);
++//  bool rc = (GpgME::checkEngine(GpgME::OpenPGP) == 0);
+   // qDebug("KGPGFile::GPGAvailable returns %d", rc);
+-  return rc;
++//  return rc;
++  return false;
+ }
+ 
+ bool KGPGFile::keyAvailable(const QString& name)
