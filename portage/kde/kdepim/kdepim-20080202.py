@@ -5,6 +5,8 @@ class subinfo( info.infoclass ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
         self.defaultTarget = 'gitHEAD'
 
+        self.patchToApply['gitHEAD'] = [('disable-crypto-backend.patch', 1)]
+
     def setDependencies( self ):
         if not emergePlatform.isCrossCompilingEnabled():
             self.runtimeDependencies['kde/kde-runtime'] = 'default'

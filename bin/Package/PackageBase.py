@@ -281,6 +281,7 @@ class PackageBase (EmergeBase):
                      "manifest":       "manifest",
                      "package":        "createPackage",
                      "createpatch":    "createPatch",
+                     "geturls":        "getUrls",
                      "printrev":       "sourceVersion",
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}

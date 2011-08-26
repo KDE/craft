@@ -88,6 +88,10 @@ class SourceBase(EmergeBase):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
         utils.abstract()
 
+    def getUrls(self):
+        """return the urls that will be downloaded/checked out"""
+        return True
+
     def repositoryUrl(self, dummyIndex=0):
         """use this to get one of multiple repository paths; these can be download urls as well"""
         utils.abstract()
