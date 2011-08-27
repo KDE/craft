@@ -200,6 +200,15 @@ class KDEWinCreator( Visitor ):
                 return "@pkgnotes " + packageName + asterisk + " " + metaData[ "shortDescription" ]
         return None
 
+    def collectVirtualPackages( self, node, context ):
+        visited = context[0]
+        if str( node ) not in visited:
+            visited.add( str( node ) )
+            if portage.PortageInstance.isVirtualPackage( node.category, node.package ):
+                if node.category == "kde":
+                    return "@metapackage " + node.package + " " + " ".join( [ x.package for x in node.children ] )
+        return None
+
     def collectPackagesForCategory( self, node, context ):
         visited = context[0]
         if str( node ) not in visited:
@@ -272,6 +281,8 @@ class KDEWinCreator( Visitor ):
             result = self.collectPackagesForCategory( node, context )
         elif self.mode == "meta":
             result = self.collectMetaData( node, context )
+        elif self.mode == "virtual":
+            result = self.collectVirtualPackages( node, context )
         if result:
             out.append( result )
         return Visitor.CONTINUE_CHILDREN
@@ -319,21 +330,30 @@ class KDEWinCreator( Visitor ):
             self.cleanup()
         _cat = "\n".join( out )
         out = []
+
         self.mode = "deps"
         for self.compiler in self.compilerlist:
             visited = set()
             out.append( "; package dependencies for compiler " + self.compiler )
             tree.visit( self, ( visited, out, ranks ) )
             out.append( ";" )
-
         _dep = "\n".join( out )
+
         out = []
         visited = set()
         ranks = {}
         self.mode = "meta"
         tree.visit( self, ( visited, out, ranks ) )
         _meta = "\n".join( out )
-        return template.safe_substitute( { 'categorypackages': _cat, 'dependencies': _dep, 'pkgnotes': _meta } )
+
+        out = []
+        visited = set()
+        ranks = {}
+        self.mode = "virtual"
+        tree.visit( self, ( visited, out, ranks ) )
+        _metapackages = "\n".join( out )
+
+        return template.safe_substitute( { 'metapackages': _metapackages, 'categorypackages': _cat, 'dependencies': _dep, 'pkgnotes': _meta } )
 
 class DependenciesNode(object):
     """A node in the dependency graph."""
