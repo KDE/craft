@@ -6,6 +6,7 @@ class subinfo( info.infoclass ):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/okular-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'okular-4.7.' + ver
+        self.patchToApply['4.7.0'] = [("fix-printing-on-windows.diff", 1)]
         self.shortDescription = "KDE document viewer"
         self.defaultTarget = 'gitHEAD'
 
