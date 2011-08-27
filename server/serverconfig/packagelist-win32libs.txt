@@ -52,7 +52,7 @@ win32libs-sources,libsndfile-src,,
 win32libs-sources,libsamplerate-src,,
 win32libs-sources,liblzma-src,,
 win32libs-sources,libarchive-src,,
-win32libs-sources,openbabel-src,,
+win32libs-sources,openbabel-src,,1
 win32libs-sources,openslp-src,,
 win32libs-sources,libbfd-src,,
 win32libs-sources,freetype-src,,2
