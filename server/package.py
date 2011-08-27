@@ -94,8 +94,6 @@ class package:
             if not self.system( "--print-revision -q %s%s/%s" % ( self.targetString, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
                 return ""
             tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
-            tempfile.readline()
-            tempfile.readline()
             self.revision = tempfile.readline().strip()
             tempfile.close()
             os.remove( os.path.join( logroot, "rev.tmp" ) )
