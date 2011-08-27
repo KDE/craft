@@ -5,10 +5,10 @@ import os
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.20.1'] = "http://ftp.gnu.org/gnu/binutils/binutils-2.20.1.tar.gz"
-        self.targetInstSrc['2.20.1'] = 'binutils-2.20.1/bfd'
-        self.targetDigests['2.20.1'] = 'd4428deccc9d1d170929a820d04f5d90a1b524ac'
-        self.defaultTarget = '2.20.1'
+        self.targets['2.21.1a'] = "http://ftp.gnu.org/gnu/binutils/binutils-2.21.1a.tar.bz2"
+        self.targetInstSrc['2.21.1a'] = 'binutils-2.21.1/bfd'
+        self.targetDigests['2.21.1a'] = '525255ca6874b872540c9967a1d26acfbc7c8230'
+        self.defaultTarget = '2.21.1a'
 
 
     def setDependencies( self ):
