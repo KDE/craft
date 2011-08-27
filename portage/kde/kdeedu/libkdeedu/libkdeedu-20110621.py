@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/libkdeedu-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'libkdeedu-4.7.' + ver
         self.patchToApply['4.7.0'] = ("libkdeedu-4.7.0-20110821.diff", 1)
+        self.shortDescription = 'the educational support libraries'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

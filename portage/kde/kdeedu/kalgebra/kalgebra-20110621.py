@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/kalgebra-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'kalgebra-4.7.' + ver
         self.patchToApply['4.7.0'] = ("kalgebra-4.7.0-20110822.diff", 1)
+        self.shortDescription = 'a graph calculator'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
