@@ -6,6 +6,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.7.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.7.' + ver + '/src/kdetoys-4.7.' + ver + '.tar.bz2'
             self.targetInstSrc['4.7.' + ver] = 'kdetoys-4.7.' + ver
+        self.shortDescription = 'some toy apps & games'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
