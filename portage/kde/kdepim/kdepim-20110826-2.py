@@ -11,7 +11,8 @@ class subinfo( info.infoclass ):
         for target in self.targets:
             self.patchToApply[target] = [('disable-crypto-backend.patch', 1),
                         ('Add-kde4_app_icon-macro-for-mobile-targets.patch',1),
-                        ('remove-old-icon-way.diff', 1)]
+                        ('remove-old-icon-way.diff', 1),
+                        ('broken-app-icons-fix.diff', 1)]
 
         self.patchToApply['4.7.0'] += [("kdepim-4.7.0-20110823.diff", 1)]
 
