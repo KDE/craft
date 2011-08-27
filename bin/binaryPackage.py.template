@@ -15,6 +15,8 @@ class subinfo( info.infoclass ):
             self.targets[ version ]          = self.getPackage( repoUrl, '${package}', version )
             self.targetDigestUrls[ version ] = self.getPackage( repoUrl, '${package}', version, '.tar.bz2.sha1' )
 
+        self.shortDescription = '''${description}'''
+
         self.defaultTarget = '${defaultTarget}'
 
 ${dependencies}
