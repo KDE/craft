@@ -4,6 +4,9 @@
 @minversion 0.9.8
 @timestamp 201101040000
 
+; metapackages
+${metapackages}
+
 ; category notes 
 @categorynotes aspell-data Spelling packages 
 @categorynotes data data packages 
