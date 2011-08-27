@@ -1,0 +1,14 @@
+diff -Nru kdepim-4.7.0.orig/mobile/contacts/CMakeLists.txt kdepim-4.7.0/mobile/contacts/CMakeLists.txt
+--- kdepim-4.7.0.orig/mobile/contacts/CMakeLists.txt	2011-08-27 20:00:32.774942400 +0200
++++ kdepim-4.7.0/mobile/contacts/CMakeLists.txt	2011-08-27 20:00:05.501382400 +0200
+@@ -64,10 +64,6 @@
+ qt4_wrap_ui(kab_mobile_srcs configwidget.ui searchwidget.ui)
+ kde4_add_kcfg_files(kab_mobile_srcs settings.kcfgc)
+ 
+-if (WIN32)
+-   set(kab_mobile_srcs ${kab_mobile_srcs} kaddressbook-mobile.rc)
+-endif (WIN32)
+-
+ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
