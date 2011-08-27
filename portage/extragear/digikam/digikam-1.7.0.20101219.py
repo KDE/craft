@@ -19,8 +19,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
-        self.dependencies['virtual/kdegraphics'] = 'default'
-        self.dependencies['virtual/kdeedu'] = 'default'
+        self.dependencies['kde/libkdcraw'] = 'default'
+        self.dependencies['kde/libkexiv2'] = 'default'
+        self.dependencies['kde/libkipi'] = 'default'
+        self.dependencies['kde/marble'] = 'default'
         self.dependencies['win32libs-bin/lcms'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.dependencies['win32libs-bin/opencv'] = 'default'
