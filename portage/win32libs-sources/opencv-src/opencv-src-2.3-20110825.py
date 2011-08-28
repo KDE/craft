@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
             self.targetInstSrc[ ver ] = 'OpenCV-2.3.0'
         self.patchToApply['2.3'] = ('OpenCV-2.3.0-20110817.diff', 1)
         self.targetDigests['2.3'] = '126787da5a3d71e80eb6e8d3bed126391e0549c9'
+        self.shortDescription = 'a library for real time computer vision'
         self.defaultTarget = '2.3'
 
     def setDependencies( self ):

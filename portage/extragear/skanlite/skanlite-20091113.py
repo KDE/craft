@@ -6,6 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:skanlite.git'
+        self.shortDescription = 'a simple scanning application'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/kalzium-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'kalzium-4.7.' + ver
         self.patchToApply['4.7.0'] = ("kalzium-4.7.0-20110823.diff", 1)
+        self.shortDescription = 'periodic table of elements'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc['4.7.' + ver] = 'kiten-4.7.' + ver
         self.targetDigests['4.7.0'] = '7caa8c13f6431d54eabc3a88f874f279134181c3'
         self.patchToApply['4.7.0'] = ("kiten-4.7.0-20110819.diff", 1)
+        self.shortDescription = 'a Japanese reference/study tool'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

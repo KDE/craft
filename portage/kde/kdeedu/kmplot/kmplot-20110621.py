@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc['4.7.' + ver] = 'kmplot-4.7.' + ver
         self.targetDigests['4.7.0'] = '5123c7855497e6374dbd7211890cf9e69a4ee886'
         self.patchToApply['4.7.0'] = ("kmplot-4.7.0-20110819.diff", 1)
+        self.shortDescription = 'mathematical function plotter'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

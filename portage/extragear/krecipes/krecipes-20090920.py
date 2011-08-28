@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.0-beta2'] = 'fc232c9125e555d8c1cbbbf5020311ed6f278b39'
         self.targetInstSrc['2.0-alpha3'] = 'krecipes-2.0-alpha3'
         self.targetInstSrc['2.0-beta2'] = 'krecipes-2.0-beta2'
+        self.shortDescription = 'a recipes database'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

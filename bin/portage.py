@@ -270,6 +270,15 @@ class Portage:
         """ returns whether a certain package exists within a category """
         return package in self.categories[ category ]
 
+    def isVirtualPackage( self, category, package ):
+        """ check if that package is of VirtualPackageBase """
+        version = self.getNewestVersion( category, package )
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'Package' ):
+            for baseClassObject in mod.Package.__bases__:
+                if baseClassObject.__name__ == 'VirtualPackageBase': return True
+        return False
+
     def getAllPackages( self, category ):
         """returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory
         in case the category doesn't exist, nothing is returned"""

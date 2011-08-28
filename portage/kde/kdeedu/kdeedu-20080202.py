@@ -30,6 +30,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/parley'] = 'default'
         self.dependencies['kde/rocs'] = 'default'
         self.dependencies['kde/step'] = 'default'
+        self.shortDescription = 'the KDE educational packages'
 
 from Package.VirtualPackageBase import *
 
