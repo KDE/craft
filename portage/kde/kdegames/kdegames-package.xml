@@ -7,7 +7,7 @@
 			<files include="share/.*(carddecks|kdegames|kmahjongglib).*"/>
 		</part>
 		<part name="development">
-			<files include="lib/.*(kdegames|kggznet|kggzgames|kggzmod|kmahjongglib|pala).*"/>
+			<files include="lib/.*(kdegames|kggznet|kggzgames|kggzmod|kmahjongglib|pala|kcardgame).*"/>
 			<files include="include/*"/>
 			<files include="share/.*cmake.*"/>
 		</part>
@@ -310,6 +310,7 @@
         <shortDescription>a single-player jigsaw puzzle game</shortDescription>
 		<part name="runtime">
 			<files include="bin/.*pala.*"/>
+			<files include="lib/kde4/.*pala.*"/>
 			<files include="share/.*pala.*"/>
 		</part>
         <dependency>libkdegames</dependency>
