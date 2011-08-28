@@ -11,8 +11,8 @@
 			<files include="include/*"/>
 			<files include="share/.*cmake.*"/>
 		</part>
-        <dependency>kdebase-runtime</dependency> 
-        <dependency>kdelibs</dependency>
+        <dependency>kde/kde-runtime</dependency> 
+        <dependency>kde/kdelibs</dependency>
     </package>
     <package name="bomber">
         <shortDescription>arcade bombing game</shortDescription>
@@ -20,7 +20,7 @@
 			<files include="bin/.*bomber.*"/>
 			<files include="share/.*bomber.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="bovo">
         <shortDescription>a gomoku like game</shortDescription>
@@ -28,7 +28,7 @@
 			<files include="bin/.*bovo.*"/>
 			<files include="share/.*bovo.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kapman">
         <shortDescription>a pacman like game</shortDescription>
@@ -36,7 +36,7 @@
 			<files include="bin/.*kapman.*"/>
 			<files include="share/.*kapman.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="katomic">
         <shortDescription>Katomic is both fun and educational game built around molecular geometry</shortDescription>
@@ -44,7 +44,7 @@
 			<files include="bin/.*katomic.*"/>
 			<files include="share/.*katomic.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kbattleship">
         <shortDescription>a Battle Ship game for KDE</shortDescription>
@@ -52,7 +52,7 @@
 			<files include="bin/.*kbattleship.*"/>
 			<files include="share/.*kbattleship.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kblackbox">
         <shortDescription>KBlackbox is a game of hide and seek</shortDescription>
@@ -60,7 +60,7 @@
 			<files include="bin/.*kblackbox.*"/>
 			<files include="share/.*kblackbox.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kblocks">
         <shortDescription>a tetris like game</shortDescription>
@@ -68,7 +68,7 @@
 			<files include="bin/.*kblocks.*"/>
 			<files include="share/.*kblocks.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kbounce">
         <shortDescription>kde bounce ball game</shortDescription>
@@ -76,7 +76,7 @@
 			<files include="bin/.*kbounce.*"/>
 			<files include="share/.*kbounce.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kbreakout">
         <shortDescription>a breakout like game</shortDescription>
@@ -84,7 +84,7 @@
 			<files include="bin/.*kbreakout.*"/>
 			<files include="share/.*kbreakout.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kdiamond">
         <shortDescription>a bejeweled like game</shortDescription>
@@ -92,7 +92,7 @@
 			<files include="bin/.*kdiamond.*"/>
 			<files include="share/.*(kdiamond|KDiamond).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kfourinline">
         <shortDescription>a Connect-Four like game</shortDescription>
@@ -100,7 +100,7 @@
 			<files include="bin/.*kfourinline.*"/>
 			<files include="share/.*(kfourinline|kwin4).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kgoldrunner">
         <shortDescription>KGoldrunner is a maze-threading game with a puzzle flavor</shortDescription>
@@ -108,7 +108,7 @@
 			<files include="bin/.*kgoldrunner.*"/>
 			<files include="share/.*(kgoldrunner|KGoldrunner).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kigo">
         <shortDescription>an open-source implementation of the popular Go game</shortDescription>
@@ -116,7 +116,7 @@
 			<files include="bin/.*kigo.*"/>
 			<files include="share/.*kigo.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="killbots">
         <shortDescription>a game of killer robots and teleportation</shortDescription>
@@ -124,7 +124,7 @@
 			<files include="bin/.*killbots.*"/>
 			<files include="share/.*killbots.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kiriki">
         <shortDescription>a Yahtzee dice game</shortDescription>
@@ -132,7 +132,7 @@
 			<files include="bin/.*kiriki.*"/>
 			<files include="share/.*kiriki.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kjumpingcube">
         <shortDescription>a simple dice driven tactical game</shortDescription>
@@ -140,7 +140,7 @@
 			<files include="bin/.*kjumpingcube.*"/>
 			<files include="share/.*kjumpingcube.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="klickety">
         <shortDescription>a kind of solitary game that takes place on a Tetris-like board</shortDescription>
@@ -148,7 +148,7 @@
 			<files include="bin/.*klickety.*"/>
 			<files include="share/.*klickety.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="klines">
         <shortDescription>a little game about balls and how to get rid of them</shortDescription>
@@ -156,7 +156,7 @@
 			<files include="bin/.*klines.*"/>
 			<files include="share/.*klines.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kmahjongg">
         <shortDescription>a Mahjongg game</shortDescription>
@@ -164,7 +164,7 @@
 			<files include="bin/.*kmahjongg.*"/>
 			<files include="share/.*(kmahjongg|kajongg).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kmines">
         <shortDescription>a minesweeper game</shortDescription>
@@ -172,7 +172,7 @@
 			<files include="bin/.*kmines.*"/>
 			<files include="share/.*kmines.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="knetwalk">
         <shortDescription>a game for system administrators</shortDescription>
@@ -180,7 +180,7 @@
 			<files include="bin/.*knetwalk.*"/>
 			<files include="share/.*knetwalk.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kolf">
         <shortDescription>a miniature golf game</shortDescription>
@@ -189,7 +189,7 @@
             <files include="lib/.*kolf.*"/>
 			<files include="share/.*kolf.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kollision">
         <shortDescription>a simple ball dodging game</shortDescription>
@@ -197,7 +197,7 @@
 			<files include="bin/.*kollision.*"/>
 			<files include="share/.*kollision.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="konquest">
         <shortDescription>a galactic strategy game</shortDescription>
@@ -205,7 +205,7 @@
 			<files include="bin/.*konquest.*"/>
 			<files include="share/.*konquest.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kpat">
         <shortDescription>a solitaire game</shortDescription>
@@ -214,7 +214,7 @@
 			<files include="bin/.*kcardgame.*"/>
 			<files include="share/.*(kpat|kcard).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kreversi">
         <shortDescription>a reversi game</shortDescription>
@@ -222,7 +222,7 @@
 			<files include="bin/.*kreversi.*"/>
 			<files include="share/.*(kreversi|lastmoves|legalmoves).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="ksame">
         <shortDescription>a color matching game</shortDescription>
@@ -230,7 +230,7 @@
 			<files include="bin/.*ksame.*"/>
 			<files include="share/.*ksame.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kshisen">
         <shortDescription>a shisen sho game</shortDescription>
@@ -238,7 +238,7 @@
 			<files include="bin/.*kshisen.*"/>
 			<files include="share/.*kshisen.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="ksirk">
         <shortDescription>a Risk strategy game</shortDescription>
@@ -247,8 +247,8 @@
             <files include="lib/.*ksirk.*"/>
 			<files include="share/.*ksirk.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
-        <dependency>qca</dependency>
+        <dependency>kde/libkdegames</dependency>
+        <dependency>kdesupport/qca</dependency>
     </package>
     <package name="kspaceduel">
         <shortDescription>SpaceWar! arcade game</shortDescription>
@@ -256,7 +256,7 @@
 			<files include="bin/.*kspaceduel.*"/>
 			<files include="share/.*kspaceduel.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="ksquares">
         <shortDescription>dots and boxes game</shortDescription>
@@ -264,7 +264,7 @@
 			<files include="bin/.*ksquares.*"/>
 			<files include="share/.*ksquares.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="ksudoku">
         <shortDescription>a sudoku puzzle game</shortDescription>
@@ -272,7 +272,7 @@
 			<files include="bin/.*ksudoku.*"/>
 			<files include="share/.*ksudoku.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="ktron">
         <shortDescription>a Tron clone game</shortDescription>
@@ -280,7 +280,7 @@
 			<files include="bin/.*(ktron|kdesnake).*"/>
 			<files include="share/.*(ktron|kdesnake).*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="ktuberling">
         <shortDescription>a stamp drawing toy</shortDescription>
@@ -288,7 +288,7 @@
 			<files include="bin/.*ktuberling.*"/>
 			<files include="share/.*tuberling.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kubrick">
         <shortDescription>game based on Rubik's Cube</shortDescription>
@@ -296,7 +296,7 @@
 			<files include="bin/.*kubrick.*"/>
 			<files include="share/.*kubrick.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="lskat">
         <shortDescription>Lieutnant Skat card game</shortDescription>
@@ -304,7 +304,7 @@
 			<files include="bin/.*lskat.*"/>
 			<files include="share/.*lskat.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="palapeli">
         <shortDescription>a single-player jigsaw puzzle game</shortDescription>
@@ -313,48 +313,48 @@
 			<files include="lib/kde4/.*pala.*"/>
 			<files include="share/.*pala.*"/>
 		</part>
-        <dependency>libkdegames</dependency>
+        <dependency>kde/libkdegames</dependency>
     </package>
     <package name="kdegames" comment="kdegames meta package">
         <shortDescription>Games applications</shortDescription>
 		<part name="runtime" >
 		</part>
-        <dependency>bomber</dependency> 
-        <dependency>bovo</dependency>
-        <dependency>kapman</dependency> 
-        <dependency>katomic</dependency> 
-        <dependency>kbattleship</dependency>
-        <dependency>kblackbox</dependency>
-        <dependency>kblocks</dependency>
-        <dependency>kbounce</dependency>
-        <dependency>kbreakout</dependency>
-        <dependency>kdiamond</dependency>
-        <dependency>kfourinline</dependency>
-        <dependency>kgoldrunner</dependency>
-        <dependency>kigo</dependency>
-        <dependency>killbots</dependency>
-        <dependency>kiriki</dependency>
-        <dependency>kjumpingcube</dependency>
-        <dependency>klickety</dependency>
-        <dependency>klines</dependency>
-        <dependency>kmahjongg</dependency>
-        <dependency>kmines</dependency>
-        <dependency>knetwalk</dependency>
-        <dependency>kolf</dependency>
-        <dependency>kollision</dependency>
-        <dependency>konquest</dependency>
-        <dependency>kpat</dependency>
-        <dependency>kreversi</dependency>
-        <dependency>ksame</dependency>
-        <dependency>kshisen</dependency>
-        <dependency>ksirk</dependency>
-        <dependency>kspaceduel</dependency>
-        <dependency>ksquares</dependency>
-        <dependency>ksudoku</dependency>
-        <dependency>ktron</dependency>
-        <dependency>ktuberling</dependency>
-        <dependency>kubrick</dependency>
-        <dependency>lskat</dependency>
+        <dependency>kde/bomber</dependency> 
+        <dependency>kde/bovo</dependency>
+        <dependency>kde/kapman</dependency> 
+        <dependency>kde/katomic</dependency> 
+        <dependency>kde/kbattleship</dependency>
+        <dependency>kde/kblackbox</dependency>
+        <dependency>kde/kblocks</dependency>
+        <dependency>kde/kbounce</dependency>
+        <dependency>kde/kbreakout</dependency>
+        <dependency>kde/kdiamond</dependency>
+        <dependency>kde/kfourinline</dependency>
+        <dependency>kde/kgoldrunner</dependency>
+        <dependency>kde/kigo</dependency>
+        <dependency>kde/killbots</dependency>
+        <dependency>kde/kiriki</dependency>
+        <dependency>kde/kjumpingcube</dependency>
+        <dependency>kde/klickety</dependency>
+        <dependency>kde/klines</dependency>
+        <dependency>kde/kmahjongg</dependency>
+        <dependency>kde/kmines</dependency>
+        <dependency>kde/knetwalk</dependency>
+        <dependency>kde/kolf</dependency>
+        <dependency>kde/kollision</dependency>
+        <dependency>kde/konquest</dependency>
+        <dependency>kde/kpat</dependency>
+        <dependency>kde/kreversi</dependency>
+        <dependency>kde/ksame</dependency>
+        <dependency>kde/kshisen</dependency>
+        <dependency>kde/ksirk</dependency>
+        <dependency>kde/kspaceduel</dependency>
+        <dependency>kde/ksquares</dependency>
+        <dependency>kde/ksudoku</dependency>
+        <dependency>kde/ktron</dependency>
+        <dependency>kde/ktuberling</dependency>
+        <dependency>kde/kubrick</dependency>
+        <dependency>kde/lskat</dependency>
     </package>
     <files exclude=".*manifest/.*"/>
 </module>

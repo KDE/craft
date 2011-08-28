@@ -264,11 +264,11 @@ lib/antlr.lib
         <shortDescription>KDE software development package</shortDescription>
 		<part name="runtime" >
 		</part>
-        <dependency>libkdesdk</dependency> 
-        <dependency>umbrello</dependency> 
-        <dependency>lokalize</dependency> 
-        <dependency>kate</dependency> 
-        <dependency>kbugbuster</dependency> 
-        <dependency>kompare</dependency> 
+        <dependency>kde/libkdesdk</dependency> 
+        <dependency>kde/umbrello</dependency> 
+        <dependency>kde/lokalize</dependency> 
+        <dependency>kde/kate</dependency> 
+        <dependency>kde/kbugbuster</dependency> 
+        <dependency>kde/kompare</dependency> 
     </package>
 </module>
