@@ -1,0 +1,83 @@
+From 36403cee5dbced992d79956b0fd90f62618920c4 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Fri, 26 Aug 2011 15:37:24 +0000
+Subject: [PATCH 1/2] Add kde4_add_app_icon macro for mobile targets
+
+    This converts the png's to ico format and embeds them as
+    a ressource with rc or windres
+---
+ mobile/calendar/CMakeLists.txt |    2 ++
+ mobile/contacts/CMakeLists.txt |    2 ++
+ mobile/mail/CMakeLists.txt     |    2 ++
+ mobile/notes/CMakeLists.txt    |    2 ++
+ mobile/tasks/CMakeLists.txt    |    2 ++
+ 5 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/mobile/calendar/CMakeLists.txt b/mobile/calendar/CMakeLists.txt
+index 000ac88..2d13f39 100644
+--- a/mobile/calendar/CMakeLists.txt
++++ b/mobile/calendar/CMakeLists.txt
+@@ -43,6 +43,8 @@ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+ 
++kde4_add_app_icon(korganizer_mobile_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-korganizer-mobile.png")
++
+ kde4_add_executable(korganizer-mobile ${korganizer_mobile_SRCS} )
+ if (WINCE)
+   SET_TARGET_PROPERTIES(korganizer-mobile PROPERTIES LINK_FLAGS " /FIXED:NO")
+diff --git a/mobile/contacts/CMakeLists.txt b/mobile/contacts/CMakeLists.txt
+index f6a54a6..644b9b2 100644
+--- a/mobile/contacts/CMakeLists.txt
++++ b/mobile/contacts/CMakeLists.txt
+@@ -72,6 +72,8 @@ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+ 
++kde4_add_app_icon(kab_mobile_srcs "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-kaddressbook-mobile.png")
++
+ kde4_add_executable(kaddressbook-mobile ${kab_mobile_srcs} )
+ if (WINCE)
+   SET_TARGET_PROPERTIES(kaddressbook-mobile PROPERTIES LINK_FLAGS " /FIXED:NO")
+diff --git a/mobile/mail/CMakeLists.txt b/mobile/mail/CMakeLists.txt
+index 99affcd..7796f1b 100644
+--- a/mobile/mail/CMakeLists.txt
++++ b/mobile/mail/CMakeLists.txt
+@@ -70,6 +70,8 @@ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+ 
++kde4_add_app_icon(kmail_mobile_srcs "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-kmail-mobile.png")
++
+ kde4_add_executable(kmail-mobile ${kmail_mobile_srcs} )
+ if (WINCE)
+   SET_TARGET_PROPERTIES(kmail-mobile PROPERTIES LINK_FLAGS " /FIXED:NO")
+diff --git a/mobile/notes/CMakeLists.txt b/mobile/notes/CMakeLists.txt
+index 7221dd4..3933703 100644
+--- a/mobile/notes/CMakeLists.txt
++++ b/mobile/notes/CMakeLists.txt
+@@ -28,6 +28,8 @@ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+ 
++kde4_add_app_icon(notes_mobile_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-notes-mobile.png")
++
+ kde4_add_executable(notes-mobile ${notes_mobile_SRCS} )
+ if (WINCE)
+   SET_TARGET_PROPERTIES(notes-mobile PROPERTIES LINK_FLAGS " /FIXED:NO")
+diff --git a/mobile/tasks/CMakeLists.txt b/mobile/tasks/CMakeLists.txt
+index 34402bf..5426773 100644
+--- a/mobile/tasks/CMakeLists.txt
++++ b/mobile/tasks/CMakeLists.txt
+@@ -35,6 +35,8 @@ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DKCALCORE_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+ 
++kde4_add_app_icon(mobile_tasks_srcs "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-tasks-mobile.png")
++
+ kde4_add_executable(tasks-mobile ${mobile_tasks_SRCS} )
+ if (WINCE)
+   SET_TARGET_PROPERTIES(tasks-mobile PROPERTIES LINK_FLAGS " /FIXED:NO")
+-- 
+1.7.2.5
+

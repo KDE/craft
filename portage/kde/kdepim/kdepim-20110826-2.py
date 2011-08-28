@@ -10,8 +10,12 @@ class subinfo( info.infoclass ):
 
         for target in self.targets:
             self.patchToApply[target] = [('disable-crypto-backend.patch', 1)]
+]
 
-        self.patchToApply['4.7.0'] += [("kdepim-4.7.0-20110823.diff", 1)]
+        self.patchToApply['4.7.0'] += [("kdepim-4.7.0-20110823.diff", 1),
+                                       ('Add-kde4_app_icon-macro-for-mobile-targets.patch',1),
+                                       ('remove-old-icon-way.diff', 1),
+                                       ('broken-app-icons-fix.diff', 1)]
 
     def setDependencies( self ):
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
@@ -28,7 +32,6 @@ class Package( CMakePackageBase ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DKLEO_SYNCHRONOUS_API_HOTFIX=ON "
-        self.subinfo.options.configure.defines += " -DKDEPIM_MOBILE_UI=TRUE "
 
 if __name__ == '__main__':
     Package().execute()

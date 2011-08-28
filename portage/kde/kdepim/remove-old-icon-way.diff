@@ -1,0 +1,70 @@
+diff kdepim-4.7.0.orig/mobile/calendar/CMakeLists.txt kdepim-4.7.0/mobile/calendar/CMakeLists.txt
+--- kdepim-4.7.0.orig/mobile/calendar/CMakeLists.txt
++++ kdepim-4.7.0/mobile/calendar/CMakeLists.txt
+@@ -35,10 +35,6 @@ kde4_add_kcfg_files(korganizer_mobile_SRCS settings.kcfgc)
+ 
+ qt4_add_dbus_adaptor(korganizer_mobile_SRCS ${CMAKE_SOURCE_DIR}/korganizer/org.kde.Korganizer.Calendar.xml calendarinterface.h CalendarInterface )
+ 
+-if (WIN32)
+-   set(korganizer_mobile_SRCS ${korganizer_mobile_SRCS} korganizer-mobile.rc)
+-endif (WIN32)
+-
+ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+diff kdepim-4.7.0.orig/mobile/contacts/CMakeLists.txt kdepim-4.7.0/mobile/contacts/CMakeLists.txt
+--- kdepim-4.7.0.orig/mobile/contacts/CMakeLists.txt
++++ kdepim-4.7.0/mobile/contacts/CMakeLists.txt
+@@ -64,10 +64,6 @@ kde4_add_ui_files(kab_mobile_srcs
+ qt4_wrap_ui(kab_mobile_srcs configwidget.ui searchwidget.ui)
+ kde4_add_kcfg_files(kab_mobile_srcs settings.kcfgc)
+ 
+-if (WIN32)
+-   set(kab_mobile_srcs ${kab_mobile_srcs} kaddressbook-mobile.rc)
+-endif (WIN32)
+-
+ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+diff kdepim-4.7.0.orig/mobile/mail/CMakeLists.txt kdepim-4.7.0/mobile/mail/CMakeLists.txt
+--- kdepim-4.7.0.orig/mobile/mail/CMakeLists.txt
++++ kdepim-4.7.0/mobile/mail/CMakeLists.txt
+@@ -51,10 +51,6 @@ set(kmail_mobile_srcs
+   vacationmanager.cpp
+ )
+ 
+-if (WIN32)
+-   set(kmail_mobile_srcs ${kmail_mobile_srcs} kmail-mobile.rc)
+-endif (WIN32)
+-
+ qt4_wrap_ui(kmail_mobile_srcs configwidget.ui messagelistsettingseditor.ui searchwidget.ui)
+ 
+ if(KDEPIM_ENTERPRISE_BUILD)
+diff kdepim-4.7.0.orig/mobile/notes/CMakeLists.txt kdepim-4.7.0/mobile/notes/CMakeLists.txt
+--- kdepim-4.7.0.orig/mobile/notes/CMakeLists.txt
++++ kdepim-4.7.0/mobile/notes/CMakeLists.txt
+@@ -20,10 +20,6 @@ set(notes_mobile_SRCS
+ 
+ qt4_wrap_ui(notes_mobile_SRCS searchwidget.ui)
+ 
+-if (WIN32)
+-   set(notes_mobile_SRCS ${notes_mobile_SRCS} notes-mobile.rc)
+-endif (WIN32)
+-
+ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DMAIL_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+diff kdepim-4.7.0.orig/mobile/tasks/CMakeLists.txt kdepim-4.7.0/mobile/tasks/CMakeLists.txt
+--- kdepim-4.7.0.orig/mobile/tasks/CMakeLists.txt
++++ kdepim-4.7.0/mobile/tasks/CMakeLists.txt
+@@ -27,10 +27,6 @@ set(mobile_tasks_SRCS
+ qt4_wrap_ui(mobile_tasks_SRCS configwidget.ui searchwidget.ui)
+ kde4_add_kcfg_files(mobile_tasks_SRCS settings.kcfgc)
+ 
+-if (WIN32)
+-   set(mobile_tasks_SRCS ${mobile_tasks_SRCS} tasks-mobile.rc)
+-endif (WIN32)
+-
+ if (RUNTIME_PLUGINS_STATIC)
+   add_definitions(-DKCALCORE_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
