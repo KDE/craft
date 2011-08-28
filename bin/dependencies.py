@@ -53,6 +53,7 @@ import sys
 import os
 import utils
 import graphviz
+import xml2conf
 from argparse import ArgumentParser # pylint: disable=F0401
 # this is for using pylint on Ubuntu which has still python2.6
 # and no module argparse yet
@@ -204,9 +205,9 @@ class KDEWinCreator( Visitor ):
         visited = context[0]
         if str( node ) not in visited:
             visited.add( str( node ) )
-            if portage.PortageInstance.isVirtualPackage( node.category, node.package ):
+            if node.virtual or portage.PortageInstance.isVirtualPackage( node.category, node.package ):
                 if node.category == "kde":
-                    return "@metapackage " + node.package + " " + " ".join( [ x.package for x in node.children ] )
+                    return "@metapackage " + node.package + " " + " ".join( [ x.package for x in node.children if not x.package.startswith("lib") ] )
         return None
 
     def collectPackagesForCategory( self, node, context ):
@@ -367,7 +368,8 @@ class DependenciesNode(object):
         self.tag      = tag
         self.children = children
         self.parents  = []
-        self.metaData = dict()
+        self.metaData = {'withCompiler': True}
+        self.virtual  = False
         self.categoryVisited = False
         self.dependencyVisited = False
 
@@ -401,6 +403,55 @@ class DependenciesTree(object):
         self.roots    = []
         self.key2node = {}
 
+
+    def __buildSubNodes(self, rootnode, converter):
+        print rootnode.category, rootnode.package,
+        if rootnode.package not in converter.packageDepsList:
+            print
+            return
+        print converter.packageDepsList[ rootnode.package ]
+        for deps in converter.packageDepsList[ rootnode.package ]:
+            _cat, _pac = deps.split('/')
+            if rootnode.category + "/" + _pac in converter.packageDepsList.keys():
+                _ver = rootnode.version
+                _tag = rootnode.tag
+            else:
+                if portage.PortageInstance.isPackage(rootnode.category, rootnode.package):
+                    _ver = portage.PortageInstance.getNewestVersion(rootnode.category, rootnode.package)
+                else:
+                    _ver = rootnode.version
+                try:
+                    _tag = portage.PortageInstance.getDefaultTarget( _cat, _pac, _ver )
+                except ImportError:
+                    _tag = "1"
+            subkey = "%s-%s-%s-%s" % (_cat, _pac, _ver, _tag)
+            try:
+                subnode = self.key2node[subkey]
+                continue
+            except KeyError:
+                subnode = DependenciesNode(_cat, _pac, _ver, _tag)
+                if _pac == converter.moduleMetaName: subnode.virtual = True
+                self.__buildSubNodes(subnode, converter)
+            rootnode.children.append( subnode )
+            self.key2node[subkey] = subnode
+
+    def buildVirtualNodes(self, category, package, version, tag, dep_type="both"):
+        converter = xml2conf.Xml2Conf()
+        converter.parseFile(os.path.join(portage.getDirname(category, package), package + "-package.xml"))
+
+        key = "%s-%s-%s-%s" % (category, package, version, tag)
+        try:
+            node = self.key2node[key]
+            return node
+        except KeyError:
+            pass
+
+        rootnode = DependenciesNode(category, package, version, tag, [])
+        if package == converter.moduleMetaName: rootnode.virtual = True
+        self.__buildSubNodes(rootnode, converter)
+        return rootnode
+
+
     def addDependencies(self, category, package, version = "", dep_type="both"):
         """Add a new root dependency tree to this graph."""
 
@@ -426,7 +477,10 @@ class DependenciesTree(object):
         except ImportError:
             tag = "1"
 
-        node = self.buildDepNode( category, package, version, tag, dep_type )
+        if not os.path.exists( os.path.join( portage.getDirname( category, package ), package + "-package.xml" ) ):
+            node = self.buildDepNode( category, package, version, tag, dep_type )
+        else:
+            node = self.buildVirtualNodes( category, package, version, tag, dep_type )
 
         if not node in self.roots:
             self.roots.append(node)
