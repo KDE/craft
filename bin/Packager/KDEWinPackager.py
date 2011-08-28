@@ -48,11 +48,6 @@ class KDEWinPackager (PackagerBase):
 
         pkgVersion, pkgNotesVersion = self.getPackageVersion()
 
-        if self.buildArchitecture() == "x64":
-            pkgName += "-x64"
-        elif compiler.isMinGW_W32():
-            pkgName += "-x86"
-
         # kdewin packager creates his own manifest files, so there is no need to add
         # if self.subinfo.options.package.withDigests:
         #    utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
@@ -134,6 +129,10 @@ class KDEWinPackager (PackagerBase):
         if( self.subinfo.options.package.withCompiler ):
             if( self.compiler() == "mingw"):
                 cmd += " -type mingw "
+            elif self.compiler() == "mingw4" and self.buildArchitecture() == "x64":
+                cmd += " -type x64-mingw4 "
+            elif self.compiler() == "mingw4" and compiler.isMinGW_W32():
+                cmd += " -type x86-mingw4 "
             elif self.compiler() == "mingw4":
                 cmd += " -type mingw4 "
             elif self.compiler() == "msvc2005":
