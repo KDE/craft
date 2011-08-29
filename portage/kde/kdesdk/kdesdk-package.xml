@@ -5,7 +5,19 @@
         <description>Umbrello UML Modeller is a Unified Modelling Language diagram programme for KDE. UML allows you to create diagrams of software and other systems in a standard format.</description>
         <part name="runtime">
             <files include="bin/.*umbrello.*"/>
-            <files include="share/.*umbrello.*"/>
+            <files include="share/.*(umbrello|application-x-uml).*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
+    </package>
+    <package name="okteta">
+        <shortDescription>KDE's hex editor</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*(kasten|okteta).*"/>
+            <files include="share/.*(okteta|structviewpreferences).*"/>
+        </part>
+        <part name="development">
+            <files include="include/.*(kasten|Kasten|Okteta|okteta).*"/>
+            <files include="lib/.*(kasten|okteta).*"/>
         </part>
     </package>
     <package name="lokalize">
@@ -14,8 +26,19 @@
         <part name="runtime">
             <files include="bin/.*lokalize.*"/>
             <files include="lib/.*lokalize.*dll"/>
-            <files include="share/.*lokalize.*"/>
+            <files include="share/.*(lokalize).*"/>
+            <files include="share/.*next(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
+            <files include="share/.*prev(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
         </part>
+        <dependency>kde/libkdesdk</dependency> 
+    </package>
+    <package name="kcachegrind">
+        <shortDescription>a profiling data visualization tool</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*(kcachegrind|calltree).*"/>
+            <files include="share/.*kcachegrind.*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
     </package>
     <package name="kbugbuster">
         <shortDescription>a bug triaging application for KDE</shortDescription>
@@ -23,6 +46,7 @@
             <files include="bin/.*kbugbuster.*"/>
             <files include="share/.*kbugbuster.*"/>
         </part>
+        <dependency>kde/libkdesdk</dependency> 
     </package>
     <package name="kate">
         <shortDescription>a MDI text editor application for KDE</shortDescription>
@@ -48,6 +72,7 @@
             <files include="include/.*kompare.*"/>
             <files include="lib/.*kompare.*lib"/>
         </part>
+        <dependency>kde/libkdesdk</dependency> 
     </package>
     <package name="libkdesdk">
         <shortDescription>additional libraries and applications for the KDE software development package</shortDescription>
@@ -56,7 +81,9 @@
             <files include="manifest/post-install-.*"/>
             <files include="lib/kde4/.*dll"/>
             <files include="lib/strigi/.*_strigi.*dll"/>
+            <files include="share/.*(kdevappwizard|fileviewgit|fileviewsvn).*"/>
             <files>
+bin/kde-systemsettings-tree.py
 bin/colorsvn
 bin/create_makefile
 bin/cvs-clean
@@ -67,6 +94,7 @@ bin/cxxmetric
 bin/extend_dmalloc
 bin/extractattr
 bin/extractrc
+bin/extractqml
 bin/fixkdeincludes
 bin/fixuifiles
 bin/includemocs
@@ -96,27 +124,6 @@ share/applications/kde4/kdesvn-build.desktop
 share/applications/kde4/kuiviewer.desktop
 share/apps/kabc/formats/kdeaccountsplugin.desktop
 share/kde4/services/kresources/kcal/bugzilla.desktop
-share/apps/kdevappwizard/template_previews/akonadi-resources.png
-share/apps/kdevappwizard/template_previews/akonadi-serializer.png
-share/apps/kdevappwizard/template_previews/default.png
-share/apps/kdevappwizard/template_previews/kapp4.png
-share/apps/kdevappwizard/template_previews/kderubyapp.png
-share/apps/kdevappwizard/template_previews/kpartapp.png
-share/apps/kdevappwizard/template_previews/plasma-applet.png
-share/apps/kdevappwizard/template_previews/pykde4.png
-share/apps/kdevappwizard/template_previews/pyqt4app.png
-share/apps/kdevappwizard/template_previews/qmake4gui.png
-share/apps/kdevappwizard/template_previews/runner.png
-share/apps/kdevappwizard/templates/akonadiresource.zip
-share/apps/kdevappwizard/templates/akonadiserializer.zip
-share/apps/kdevappwizard/templates/kapp4.zip
-share/apps/kdevappwizard/templates/kderubyapp.zip
-share/apps/kdevappwizard/templates/kpartapp.zip
-share/apps/kdevappwizard/templates/plasmoid.zip
-share/apps/kdevappwizard/templates/pykde4app.zip
-share/apps/kdevappwizard/templates/pyqt4app.zip
-share/apps/kdevappwizard/templates/qmake_qt4guiapp.zip
-share/apps/kdevappwizard/templates/runner.zip
 share/apps/kio_perldoc/pod2html.pl
 share/apps/kpartloader/kpartloaderui.rc
 share/apps/kuiviewer/kuiviewerui.rc
@@ -134,8 +141,6 @@ share/doc/HTML/en/kapptemplate/pykde4.png
 share/doc/HTML/en/kapptemplate/pyqt4app.png
 share/doc/HTML/en/kapptemplate/second-page.png
 share/doc/HTML/en/kapptemplate/third-page.png
-share/doc/HTML/en/kcachegrind/index.cache.bz2
-share/doc/HTML/en/kcachegrind/index.docbook
 share/doc/HTML/en/kdesvn-build/index.cache.bz2
 share/doc/HTML/en/kdesvn-build/index.docbook
 share/icons/hicolor/128x128/apps/kapptemplate.png
@@ -143,14 +148,6 @@ share/icons/hicolor/16x16/actions/approved.png
 share/icons/hicolor/16x16/actions/insert_arg.png
 share/icons/hicolor/16x16/actions/insert_tag.png
 share/icons/hicolor/16x16/actions/msgid2msgstr.png
-share/icons/hicolor/16x16/actions/nexterror.png
-share/icons/hicolor/16x16/actions/nextfuzzy.png
-share/icons/hicolor/16x16/actions/nextfuzzyuntrans.png
-share/icons/hicolor/16x16/actions/nextuntranslated.png
-share/icons/hicolor/16x16/actions/preverror.png
-share/icons/hicolor/16x16/actions/prevfuzzy.png
-share/icons/hicolor/16x16/actions/prevfuzzyuntrans.png
-share/icons/hicolor/16x16/actions/prevuntranslated.png
 share/icons/hicolor/16x16/actions/search2msgstr.png
 share/icons/hicolor/16x16/actions/transsearch.png
 share/icons/hicolor/16x16/apps/kapptemplate.png
@@ -160,14 +157,6 @@ share/icons/hicolor/22x22/actions/catalogmanager.png
 share/icons/hicolor/22x22/actions/insert_arg.png
 share/icons/hicolor/22x22/actions/insert_tag.png
 share/icons/hicolor/22x22/actions/msgid2msgstr.png
-share/icons/hicolor/22x22/actions/nexterror.png
-share/icons/hicolor/22x22/actions/nextfuzzy.png
-share/icons/hicolor/22x22/actions/nextfuzzyuntrans.png
-share/icons/hicolor/22x22/actions/nextuntranslated.png
-share/icons/hicolor/22x22/actions/preverror.png
-share/icons/hicolor/22x22/actions/prevfuzzy.png
-share/icons/hicolor/22x22/actions/prevfuzzyuntrans.png
-share/icons/hicolor/22x22/actions/prevuntranslated.png
 share/icons/hicolor/22x22/actions/search2msgstr.png
 share/icons/hicolor/22x22/actions/transsearch.png
 share/icons/hicolor/22x22/apps/kapptemplate.png
@@ -177,14 +166,6 @@ share/icons/hicolor/32x32/actions/diff.png
 share/icons/hicolor/32x32/actions/insert_arg.png
 share/icons/hicolor/32x32/actions/insert_tag.png
 share/icons/hicolor/32x32/actions/msgid2msgstr.png
-share/icons/hicolor/32x32/actions/nexterror.png
-share/icons/hicolor/32x32/actions/nextfuzzy.png
-share/icons/hicolor/32x32/actions/nextfuzzyuntrans.png
-share/icons/hicolor/32x32/actions/nextuntranslated.png
-share/icons/hicolor/32x32/actions/preverror.png
-share/icons/hicolor/32x32/actions/prevfuzzy.png
-share/icons/hicolor/32x32/actions/prevfuzzyuntrans.png
-share/icons/hicolor/32x32/actions/prevuntranslated.png
 share/icons/hicolor/32x32/actions/search2msgstr.png
 share/icons/hicolor/32x32/actions/transsearch.png
 share/icons/hicolor/32x32/apps/kapptemplate.png
@@ -199,14 +180,6 @@ share/icons/locolor/16x16/actions/diff.png
 share/icons/locolor/16x16/actions/insert_arg.png
 share/icons/locolor/16x16/actions/insert_tag.png
 share/icons/locolor/16x16/actions/msgid2msgstr.png
-share/icons/locolor/16x16/actions/nexterror.png
-share/icons/locolor/16x16/actions/nextfuzzy.png
-share/icons/locolor/16x16/actions/nextfuzzyuntrans.png
-share/icons/locolor/16x16/actions/nextuntranslated.png
-share/icons/locolor/16x16/actions/preverror.png
-share/icons/locolor/16x16/actions/prevfuzzy.png
-share/icons/locolor/16x16/actions/prevfuzzyuntrans.png
-share/icons/locolor/16x16/actions/prevuntranslated.png
 share/icons/locolor/16x16/actions/search2msgstr.png
 share/icons/locolor/16x16/actions/transsearch.png
 share/icons/locolor/32x32/actions/catalogmanager.png
@@ -214,14 +187,6 @@ share/icons/locolor/32x32/actions/diff.png
 share/icons/locolor/32x32/actions/insert_arg.png
 share/icons/locolor/32x32/actions/insert_tag.png
 share/icons/locolor/32x32/actions/msgid2msgstr.png
-share/icons/locolor/32x32/actions/nexterror.png
-share/icons/locolor/32x32/actions/nextfuzzy.png
-share/icons/locolor/32x32/actions/nextfuzzyuntrans.png
-share/icons/locolor/32x32/actions/nextuntranslated.png
-share/icons/locolor/32x32/actions/preverror.png
-share/icons/locolor/32x32/actions/prevfuzzy.png
-share/icons/locolor/32x32/actions/prevfuzzyuntrans.png
-share/icons/locolor/32x32/actions/prevuntranslated.png
 share/icons/locolor/32x32/actions/search2msgstr.png
 share/icons/locolor/32x32/actions/transsearch.png
 share/kde4/services/designerthumbnail.desktop
