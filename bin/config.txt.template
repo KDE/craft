@@ -3,6 +3,7 @@
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.8
 @timestamp 201101040000
+@hash-typ sha1
 
 ; metapackages
 ${metapackages}
