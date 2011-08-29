@@ -233,6 +233,8 @@ lib/antlr.lib
         <dependency>kde/umbrello</dependency> 
         <dependency>kde/lokalize</dependency> 
         <dependency>kde/kate</dependency> 
+        <dependency>kde/kcachegrind</dependency> 
+        <dependency>kde/okteta</dependency> 
         <dependency>kde/kbugbuster</dependency> 
         <dependency>kde/kompare</dependency> 
     </package>
