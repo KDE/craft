@@ -7,7 +7,8 @@
 			<files include="share/.*(carddecks|kdegames|kmahjongglib).*"/>
 		</part>
 		<part name="development">
-			<files include="lib/.*(kdegames|kggznet|kggzgames|kggzmod|kmahjongglib|pala|kcardgame).*"/>
+			<files include="lib/.*(kdegames|kggznet|kggzgames|kggzmod|kmahjongglib|kcardgame).*"/>
+			<files include="lib/(?!kde4).*(pala).*(?!dll)"/>
 			<files include="include/*"/>
 			<files include="share/.*cmake.*"/>
 		</part>
@@ -161,8 +162,8 @@
     <package name="kmahjongg">
         <shortDescription>a Mahjongg game</shortDescription>
 		<part name="runtime">
-			<files include="bin/.*kmahjongg.*"/>
-			<files include="share/.*(kmahjongg|kajongg).*"/>
+			<files include="bin/.*kmahjongg(?!lib).*"/>
+			<files include="share/.*(kmahjongg|kajongg)(?!lib).*"/>
 		</part>
         <dependency>kde/libkdegames</dependency>
     </package>
@@ -228,7 +229,7 @@
         <shortDescription>a color matching game</shortDescription>
 		<part name="runtime">
 			<files include="bin/.*ksame.*"/>
-			<files include="share/.*ksame.*"/>
+			<files include="share/(?!klickety).*ksame.*"/>
 		</part>
         <dependency>kde/libkdegames</dependency>
     </package>
@@ -319,6 +320,12 @@
         <shortDescription>Games applications</shortDescription>
 		<part name="runtime" >
 		</part>
+        <part name="source">
+			<files include=".*"/>
+        </part>
+        <part name="symbols">
+			<files include=".*"/>
+        </part>
         <dependency>kde/bomber</dependency> 
         <dependency>kde/bovo</dependency>
         <dependency>kde/kapman</dependency> 
