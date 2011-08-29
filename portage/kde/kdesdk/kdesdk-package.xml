@@ -150,6 +150,7 @@ include/kprofilemethod.h
 lib/antlr.lib
             </files>
         </part>
+        <dependency>kde/kde-runtime</dependency>
     </package>
     <package name="umbrello">
         <shortDescription>An UML modeling tool for KDE</shortDescription>
@@ -158,7 +159,7 @@ lib/antlr.lib
             <files include="bin/.*umbrello.*"/>
             <files include="share/.*(umbrello|application-x-uml).*"/>
         </part>
-        <dependency>kde/libkdesdk</dependency> 
+        <dependency>kde/libkdesdk</dependency>
     </package>
     <package name="okteta">
         <shortDescription>KDE's hex editor</shortDescription>
@@ -181,7 +182,7 @@ lib/antlr.lib
             <files include="share/.*next(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
             <files include="share/.*prev(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
         </part>
-        <dependency>kde/libkdesdk</dependency> 
+        <dependency>kde/libkdesdk</dependency>
     </package>
     <package name="kcachegrind">
         <shortDescription>a profiling data visualization tool</shortDescription>
@@ -189,7 +190,7 @@ lib/antlr.lib
             <files include="bin/.*(kcachegrind|calltree).*"/>
             <files include="share/.*kcachegrind.*"/>
         </part>
-        <dependency>kde/libkdesdk</dependency> 
+        <dependency>kde/libkdesdk</dependency>
     </package>
     <package name="kbugbuster">
         <shortDescription>a bug triaging application for KDE</shortDescription>
@@ -197,7 +198,7 @@ lib/antlr.lib
             <files include="bin/.*kbugbuster.*"/>
             <files include="share/.*kbugbuster.*"/>
         </part>
-        <dependency>kde/libkdesdk</dependency> 
+        <dependency>kde/libkdesdk</dependency>
     </package>
     <package name="kate">
         <shortDescription>a MDI text editor application for KDE</shortDescription>
@@ -223,19 +224,23 @@ lib/antlr.lib
             <files include="include/.*kompare.*"/>
             <files include="lib/.*kompare.*lib"/>
         </part>
-        <dependency>kde/libkdesdk</dependency> 
+        <dependency>kde/libkdesdk</dependency>
     </package>
     <package name="kdesdk" comment="kdesdk meta package">
         <shortDescription>KDE software development package</shortDescription>
-		<part name="runtime" >
-		</part>
-        <dependency>kde/libkdesdk</dependency> 
-        <dependency>kde/umbrello</dependency> 
-        <dependency>kde/lokalize</dependency> 
-        <dependency>kde/kate</dependency> 
-        <dependency>kde/kcachegrind</dependency> 
-        <dependency>kde/okteta</dependency> 
-        <dependency>kde/kbugbuster</dependency> 
-        <dependency>kde/kompare</dependency> 
+        <part name="source">
+            <files include=".*"/>
+        </part>
+        <part name="symbols">
+            <files include=".*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency>
+        <dependency>kde/umbrello</dependency>
+        <dependency>kde/lokalize</dependency>
+        <dependency>kde/kate</dependency>
+        <dependency>kde/kcachegrind</dependency>
+        <dependency>kde/okteta</dependency>
+        <dependency>kde/kbugbuster</dependency>
+        <dependency>kde/kompare</dependency>
     </package>
 </module>
