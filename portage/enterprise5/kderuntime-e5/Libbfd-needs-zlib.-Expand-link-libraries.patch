@@ -23,7 +23,7 @@ index dcc6025..e3191b8 100644
 +    # scripts and configuration
      kde4_add_executable(kdbgwin ${kdbgwin_SRCS} mingw_generator.h mingw_generator.cpp)
 -    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl)
-+    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl zlib)
++    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl z)
  endif ( MINGW )
  if ( MSVC )
      kde4_add_executable(kdbgwin ${kdbgwin_SRCS} msvc_generator.h msvc_generator.cpp)
