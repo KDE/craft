@@ -92,7 +92,6 @@ for packageKey in addInfo:
         description = ""
         metadata = portage.PortageInstance.getMetaData( category, package, version )
         if "shortDescription" in metadata: description = metadata["shortDescription"]
-        #print metadata, package
 
         # check that the target from the source package which has been build is contained in the
         # binary package
