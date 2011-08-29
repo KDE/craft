@@ -13,7 +13,7 @@
         <shortDescription>KDE's hex editor</shortDescription>
         <part name="runtime">
             <files include="bin/.*(kasten|okteta).*"/>
-            <files include="share/.*(okteta|structviewpreferences).*"/>
+            <files include="share/.*(okteta|structviewpreferences|kbytearrayedit).*"/>
         </part>
         <part name="development">
             <files include="include/.*(kasten|Kasten|Okteta|okteta).*"/>
