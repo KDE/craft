@@ -405,19 +405,16 @@ class DependenciesTree(object):
 
 
     def __buildSubNodes(self, rootnode, converter):
-        print rootnode.category, rootnode.package,
         if rootnode.package not in converter.packageDepsList:
-            print
             return
-        print converter.packageDepsList[ rootnode.package ]
         for deps in converter.packageDepsList[ rootnode.package ]:
             _cat, _pac = deps.split('/')
             if rootnode.category + "/" + _pac in converter.packageDepsList.keys():
                 _ver = rootnode.version
                 _tag = rootnode.tag
             else:
-                if portage.PortageInstance.isPackage(rootnode.category, rootnode.package):
-                    _ver = portage.PortageInstance.getNewestVersion(rootnode.category, rootnode.package)
+                if portage.PortageInstance.isPackage(_cat, _pac):
+                    _ver = portage.PortageInstance.getNewestVersion(_cat, _pac)
                 else:
                     _ver = rootnode.version
                 try:
@@ -427,13 +424,14 @@ class DependenciesTree(object):
             subkey = "%s-%s-%s-%s" % (_cat, _pac, _ver, _tag)
             try:
                 subnode = self.key2node[subkey]
-                continue
             except KeyError:
                 subnode = DependenciesNode(_cat, _pac, _ver, _tag)
+                if _pac in converter.packageDescriptionList.keys():
+                    subnode.metaData['shortDescription'] = converter.packageDescriptionList[_pac]
                 if _pac == converter.moduleMetaName: subnode.virtual = True
                 self.__buildSubNodes(subnode, converter)
+                self.key2node[subkey] = subnode
             rootnode.children.append( subnode )
-            self.key2node[subkey] = subnode
 
     def buildVirtualNodes(self, category, package, version, tag, dep_type="both"):
         converter = xml2conf.Xml2Conf()
@@ -448,6 +446,8 @@ class DependenciesTree(object):
 
         rootnode = DependenciesNode(category, package, version, tag, [])
         if package == converter.moduleMetaName: rootnode.virtual = True
+        if package in converter.packageDescriptionList.keys():
+            rootnode.metaData['shortDescription'] = converter.packageDescriptionList[package]
         self.__buildSubNodes(rootnode, converter)
         return rootnode
 
