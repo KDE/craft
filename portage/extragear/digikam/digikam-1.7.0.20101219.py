@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/libkipi'] = 'default'
         self.dependencies['kde/marble'] = 'default'
         self.dependencies['win32libs-bin/lcms'] = 'default'
+        self.dependencies['win32libs-bin/tiff'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.dependencies['win32libs-bin/opencv'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'        
