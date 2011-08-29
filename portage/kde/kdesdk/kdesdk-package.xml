@@ -1,79 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="kdesdk">
-    <package name="umbrello">
-        <shortDescription>An UML modeling tool for KDE</shortDescription>
-        <description>Umbrello UML Modeller is a Unified Modelling Language diagram programme for KDE. UML allows you to create diagrams of software and other systems in a standard format.</description>
-        <part name="runtime">
-            <files include="bin/.*umbrello.*"/>
-            <files include="share/.*(umbrello|application-x-uml).*"/>
-        </part>
-        <dependency>kde/libkdesdk</dependency> 
-    </package>
-    <package name="okteta">
-        <shortDescription>KDE's hex editor</shortDescription>
-        <part name="runtime">
-            <files include="bin/.*(kasten|okteta).*"/>
-            <files include="share/.*(okteta|structviewpreferences|kbytearrayedit).*"/>
-        </part>
-        <part name="development">
-            <files include="include/.*(kasten|Kasten|Okteta|okteta).*"/>
-            <files include="lib/.*(kasten|okteta).*"/>
-        </part>
-    </package>
-    <package name="lokalize">
-        <shortDescription>A computer-aided translation system for KDE</shortDescription>
-        <description>Lokalize is a computer-aided translation system that focuses on productivity and performance. Lokalize applies a paragraph-by-paragraph translation approach when translating documentation, and takes a message-by-message approach when translating GUI components..</description>
-        <part name="runtime">
-            <files include="bin/.*lokalize.*"/>
-            <files include="lib/.*lokalize.*dll"/>
-            <files include="share/.*(lokalize).*"/>
-            <files include="share/.*next(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
-            <files include="share/.*prev(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
-        </part>
-        <dependency>kde/libkdesdk</dependency> 
-    </package>
-    <package name="kcachegrind">
-        <shortDescription>a profiling data visualization tool</shortDescription>
-        <part name="runtime">
-            <files include="bin/.*(kcachegrind|calltree).*"/>
-            <files include="share/.*kcachegrind.*"/>
-        </part>
-        <dependency>kde/libkdesdk</dependency> 
-    </package>
-    <package name="kbugbuster">
-        <shortDescription>a bug triaging application for KDE</shortDescription>
-        <part name="runtime">
-            <files include="bin/.*kbugbuster.*"/>
-            <files include="share/.*kbugbuster.*"/>
-        </part>
-        <dependency>kde/libkdesdk</dependency> 
-    </package>
-    <package name="kate">
-        <shortDescription>a MDI text editor application for KDE</shortDescription>
-        <part name="runtime">
-            <files include="bin/.*kate.*"/>
-            <files include="lib/.*kate.*dll"/>
-            <files include="share/.*kate.*"/>
-        </part>
-        <part name="development">
-            <files include="include/.*kate.*"/>
-            <files include="lib/.*kate.*\.lib"/>
-        </part>
-    </package>
-    <package name="kompare">
-        <shortDescription>KDE diff tool</shortDescription>
-        <description>Kompare is a free software graphical computer application which helps the user to compare two different text files or two directories.</description>
-        <part name="runtime">
-            <files include="bin/.*kompare.*"/>
-            <files include="lib/.*kompare.*dll"/>
-            <files include="share/.*kompare.*"/>
-        </part>
-        <part name="development">
-            <files include="include/.*kompare.*"/>
-            <files include="lib/.*kompare.*lib"/>
-        </part>
-        <dependency>kde/libkdesdk</dependency> 
-    </package>
     <package name="libkdesdk">
         <shortDescription>additional libraries and applications for the KDE software development package</shortDescription>
         <part name="runtime" >
@@ -224,6 +150,80 @@ include/kprofilemethod.h
 lib/antlr.lib
             </files>
         </part>
+    </package>
+    <package name="umbrello">
+        <shortDescription>An UML modeling tool for KDE</shortDescription>
+        <description>Umbrello UML Modeller is a Unified Modelling Language diagram programme for KDE. UML allows you to create diagrams of software and other systems in a standard format.</description>
+        <part name="runtime">
+            <files include="bin/.*umbrello.*"/>
+            <files include="share/.*(umbrello|application-x-uml).*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
+    </package>
+    <package name="okteta">
+        <shortDescription>KDE's hex editor</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*(kasten|okteta).*"/>
+            <files include="share/.*(okteta|structviewpreferences|kbytearrayedit).*"/>
+        </part>
+        <part name="development">
+            <files include="include/.*(kasten|Kasten|Okteta|okteta).*"/>
+            <files include="lib/.*(kasten|okteta).*"/>
+        </part>
+    </package>
+    <package name="lokalize">
+        <shortDescription>A computer-aided translation system for KDE</shortDescription>
+        <description>Lokalize is a computer-aided translation system that focuses on productivity and performance. Lokalize applies a paragraph-by-paragraph translation approach when translating documentation, and takes a message-by-message approach when translating GUI components..</description>
+        <part name="runtime">
+            <files include="bin/.*lokalize.*"/>
+            <files include="lib/.*lokalize.*dll"/>
+            <files include="share/.*(lokalize).*"/>
+            <files include="share/.*next(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
+            <files include="share/.*prev(error|fuzzy|fuzzyuntrans|po|template|untranslated).*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
+    </package>
+    <package name="kcachegrind">
+        <shortDescription>a profiling data visualization tool</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*(kcachegrind|calltree).*"/>
+            <files include="share/.*kcachegrind.*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
+    </package>
+    <package name="kbugbuster">
+        <shortDescription>a bug triaging application for KDE</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*kbugbuster.*"/>
+            <files include="share/.*kbugbuster.*"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
+    </package>
+    <package name="kate">
+        <shortDescription>a MDI text editor application for KDE</shortDescription>
+        <part name="runtime">
+            <files include="bin/.*kate.*"/>
+            <files include="lib/.*kate.*dll"/>
+            <files include="share/.*kate.*"/>
+        </part>
+        <part name="development">
+            <files include="include/.*kate.*"/>
+            <files include="lib/.*kate.*\.lib"/>
+        </part>
+    </package>
+    <package name="kompare">
+        <shortDescription>KDE diff tool</shortDescription>
+        <description>Kompare is a free software graphical computer application which helps the user to compare two different text files or two directories.</description>
+        <part name="runtime">
+            <files include="bin/.*kompare.*"/>
+            <files include="lib/.*kompare.*dll"/>
+            <files include="share/.*kompare.*"/>
+        </part>
+        <part name="development">
+            <files include="include/.*kompare.*"/>
+            <files include="lib/.*kompare.*lib"/>
+        </part>
+        <dependency>kde/libkdesdk</dependency> 
     </package>
     <package name="kdesdk" comment="kdesdk meta package">
         <shortDescription>KDE software development package</shortDescription>
