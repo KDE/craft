@@ -4,7 +4,6 @@ import sys
 import info
 import os
 import compiler
-import sipconfig
 from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
@@ -13,10 +12,10 @@ class subinfo(info.infoclass):
         self.buildDependencies['testing/sip'] = 'default'
 
     def setTargets( self ):
-        self.targets['4.8.3'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-win-gpl-4.8.3.zip'
-        self.targetInstSrc['4.8.3'] = 'PyQt-win-gpl-4.8.3'
-        self.targetDigests['4.8.3'] = '737e6ff98a4c0e5149035733928203b12d09a247'
-        self.defaultTarget = '4.8.3'
+        self.targets['4.8.5'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-win-gpl-4.8.5.zip'
+        self.targetDigests['4.8.5'] = '6a20f8394be4f8127788c6dc1e4857c92a9a7e15'
+        self.targetInstSrc['4.8.5'] = 'PyQt-win-gpl-4.8.5'
+        self.defaultTarget = '4.8.5'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
@@ -27,11 +26,6 @@ class Package(CMakePackageBase):
         # add support for other location based on pythonpath
         localPythonPath = os.path.join(self.rootdir, 'emerge', 'python')
         haveLocalPython = os.path.exists(localPythonPath)
-        if haveLocalPython:
-            self.subinfo.options.merge.destinationPath = "emerge/python"
-        self.subinfo.options.configure.defines = " --confirm-license --verbose"
-        if self.buildType() == "Debug":
-            self.subinfo.options.configure.defines += " -u"
 
         if compiler.isMSVC2008():
             specName = "win32-msvc2008"
@@ -45,9 +39,18 @@ class Package(CMakePackageBase):
            specDir = self.mergeDestinationDir()
         else:
            specDir = self.rootdir
+
         os.putenv("QMAKESPEC", os.path.join(specDir, "mkspecs", specName))
 
+        if haveLocalPython:
+            self.subinfo.options.merge.destinationPath = "emerge/python"
+        self.subinfo.options.configure.defines = " --confirm-license --verbose"
+
+        if self.buildType() == "Debug":
+            self.subinfo.options.configure.defines += " -u"
+
     def configure( self ):
+        import sipconfig
         self.enterSourceDir()
         
         cmd = "python configure.py"
