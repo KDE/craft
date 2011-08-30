@@ -12,9 +12,9 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.targets['4.7.7'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/external/sip-4.7.7.zip'
-        self.targets['4.12.1'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/sip4/sip-4.12.1.zip'
-        self.targetInstSrc['4.12.1'] = 'sip-4.12.1'
-        self.defaultTarget = '4.12.1'
+        self.targets['4.12.4'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/sip4/sip-4.12.4.zip'
+        self.targetInstSrc['4.12.4'] = 'sip-4.12.4'
+        self.defaultTarget = '4.12.4'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
