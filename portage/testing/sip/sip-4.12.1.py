@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['4.7.7'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/external/sip-4.7.7.zip'
         self.targets['4.12.4'] = 'http://www.riverbankcomputing.co.uk/static/Downloads/sip4/sip-4.12.4.zip'
+        self.targetDigests['4.12.4'] = '01dbf6b37b1daf0ebc31139d4fd7eec48fc2a789'
         self.targetInstSrc['4.12.4'] = 'sip-4.12.4'
         self.defaultTarget = '4.12.4'
 
