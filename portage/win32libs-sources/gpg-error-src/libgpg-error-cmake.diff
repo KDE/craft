@@ -9,7 +9,7 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +############## the options that can be set from outside ##########################################
 +#option(BUILD_STATIC         "build a static library and no shared library"  OFF)
 +option(BUILD_TOOL           "build with tool executable"                    ON)
-+option(BUILD_TESTS          "build with test executables"                   OFF)
++option(BUILD_TESTS          "build with test executables"                   ON)
 +option(BUILD_CROSS_TOOLS    "use external tools"                            ON)
 +
 +if(BUILD_TESTS)
@@ -206,10 +206,10 @@ diff -Nru libgpg-error-1.10.orig/CMakeLists.txt libgpg-error-1.10/CMakeLists.txt
 +
 +if(BUILD_TESTS)
 +    add_executable(t-strerror tests/t-strerror.c)
-+    target_link_libraries(t-strerror gpg-error)
++    target_link_libraries(t-strerror libgpg-error)
 +    add_test(t-strerror t-strerror)
 +    add_executable(t-syserror tests/t-syserror.c)
-+    target_link_libraries(t-syserror gpg-error)
++    target_link_libraries(t-syserror libgpg-error)
 +    add_test(t-syserror t-syserror)
 +endif(BUILD_TESTS)
 +
