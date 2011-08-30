@@ -31,7 +31,7 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_TOOL=ON -DBUILD_TESTS=OFF "
+        self.subinfo.options.configure.defines = "-DBUILD_TOOL=ON -DBUILD_TESTS=ON "
         if emergePlatform.isCrossCompilingEnabled():
             self.subinfo.options.configure.defines += "-DTARGET_CPP:STRING=\"" + os.getenv("VCINSTALLDIR").replace("\\", "/") + "/ce/bin/x86_arm/cl.exe\" "
             if self.isTargetBuild():
