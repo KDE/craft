@@ -215,7 +215,8 @@ class Options:
         """ read emerge related variables from environment and map them to public
         attributes in the option class and sub classes """
         self.__collectAttributes()
-        self.__readFromString(os.environ['EMERGE_OPTIONS'])
+        if 'EMERGE_OPTIONS' in os.environ:
+            self.__readFromString(os.environ['EMERGE_OPTIONS'])
 
     def __collectAttributes( self ):
         """ collect all public attributes this class and subclasses """
