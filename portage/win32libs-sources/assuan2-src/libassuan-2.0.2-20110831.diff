@@ -1,0 +1,87 @@
+diff -Nru libassuan-2.0.1.orig/src/assuan.h.in libassuan-2.0.1/src/assuan.h.in
+--- libassuan-2.0.1.orig/src/assuan.h.in	2010-11-02 10:27:34.793565000 +0100
++++ libassuan-2.0.1/src/assuan.h.in	2010-11-02 01:01:50.826082100 +0100
+@@ -27,6 +27,9 @@
+ @include:sys/types.h@
+ @include:unistd.h@
+ #include <stdarg.h>
++#if defined(_WIN32) && !defined(_WIN32_WCE)
++# include <io.h>
++#endif
+ 
+ #ifndef _ASSUAN_NO_SOCKET_WRAPPER
+ @include:includes@
+diff -Nru libassuan-2.0.1.orig/src/gpgcedev.c libassuan-2.0.1/src/gpgcedev.c
+--- libassuan-2.0.1.orig/src/gpgcedev.c	2010-11-17 03:08:13.000000000 +0100
++++ libassuan-2.0.1/src/gpgcedev.c	2010-12-05 02:42:24.963615400 +0100
+@@ -25,6 +25,9 @@
+ #include <devload.h>
+ #include <winioctl.h>
+ 
++#ifdef _MSC_VER
++#undef leave
++#endif
+ /* FIXME Cancel not handled. */
+ 
+ #define DBGFILENAME "\\gpgcedev.dbg"
+diff -Nru libassuan-2.0.1.orig/src/mkheader.c libassuan-2.0.1/src/mkheader.c
+--- libassuan-2.0.1.orig/src/mkheader.c	2010-11-02 10:27:34.829568000 +0100
++++ libassuan-2.0.1/src/mkheader.c	2010-11-02 01:01:50.827082200 +0100
+@@ -89,7 +89,9 @@
+                "# include <sys/types.h>\n"
+                "#endif\n", stdout);
+       else
+-        fputs ("#include <sys/types.h>\n", stdout);
++        fputs ("#ifdef HAVE_SYS_TYPES_H\n"
++               "# include <sys/types.h>\n"
++               "#endif\n", stdout);
+     }
+   else if (!strcmp (tag, "include:unistd.h"))
+     {
+@@ -98,7 +100,9 @@
+                "# include <unistd.h>\n"
+                "#endif\n", stdout);
+       else
+-        fputs ("#include <unistd.h>\n", stdout);
++        fputs ("#ifdef HAVE_UNISTD_H\n"
++               "# include <unistd.h>\n"
++               "#endif\n", stdout);
+     }
+   else if (!strcmp (tag, "include:types"))
+     {
+diff -Nru libassuan-r400.orig/src/system-w32.c libassuan-r400/src/system-w32.c
+--- libassuan-r400.orig/src/system-w32.c	2010-04-19 10:55:19.000000000 +0200
++++ libassuan-r400/src/system-w32.c	2010-12-05 02:42:13.486959000 +0100
+@@ -26,6 +26,7 @@
+ #include <errno.h>
+ #include <time.h>
+ #include <fcntl.h>
++#include <winsock2.h>
+ #include <windows.h>
+ 
+ #include "assuan-defs.h"
+diff -Nru libassuan-r400.orig/src/vasprintf.c libassuan-r400/src/vasprintf.c
+--- libassuan-r400.orig/src/vasprintf.c	2010-11-17 17:49:53.000000000 +0100
++++ libassuan-r400/src/vasprintf.c	2010-12-07 00:24:53.959089400 +0100
+@@ -51,7 +51,7 @@
+      const char *format;
+      va_list *args;
+ {
+-#if defined(HAVE_W32CE_SYSTEM) && defined(_MSC_VER)
++#if defined(_MSC_VER)
+   /* No va_copy and the replacement above doesn't work.  */
+ #define MAX_STRLEN 256
+   *result = malloc (MAX_STRLEN);
+diff -Nru libassuan-r400.orig/src/w32-sock-nonce.inc.h libassuan-r400/src/w32-sock-nonce.inc.h
+--- libassuan-r400.orig/src/w32-sock-nonce.inc.h	2010-04-06 18:46:31.000000000 +0200
++++ libassuan-r400/src/w32-sock-nonce.inc.h	2010-12-05 02:42:13.487959100 +0100
+@@ -37,7 +37,9 @@
+ # ifndef AF_LOCAL
+ #  define AF_LOCAL AF_UNIX
+ # endif
++#ifndef HAVE_STDINT_H
+ # define EADDRINUSE WSAEADDRINUSE
++#endif
+ struct sockaddr_un
+ {
+   short          sun_family;
