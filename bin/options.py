@@ -149,6 +149,12 @@ class OptionsCMake:
         ## use CTest instead of the make utility
         self.useCTest = utils.envAsBool("EMERGE_USECTEST")
 
+## options for the make action
+class OptionsGit:
+    def __init__(self):
+        ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
+        self.enableFormattedPatch = False
+
 ## main option class
 class Options:
     def __init__(self):
@@ -168,6 +174,8 @@ class Options:
         self.merge = OptionsMerge()
         ## options of the cmake buildSystem
         self.cmake = OptionsCMake()
+        ## options of the git module
+        self.git = OptionsGit()
 
         ## this option controls if the build type is used when creating build and install directories.
         # The following example shows the difference:
