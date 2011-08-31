@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/konversation/' + ver + '/src/konversation-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'konversation-' + ver
         self.patchToApply['1.3.1'] = ("konversation-1.3.1-20110822.diff", 1)
-        self.svnTargets['gitHEAD'] = 'git://anongit.kde.org/konversation'
+        self.svnTargets['gitHEAD'] = '[git]kde:konversation'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
