@@ -1,10 +1,38 @@
-##
+## @package property handling
 #
-# @package  this module contains the option class
+# (c) copyright 2009-2011 Ralf Habacker <ralf.habacker@freenet.de>
 #
-
+#
+# properties from classes in this package could be set
+#
+# - by package scripts,
+# - by setting the 'EMERGE_OPTIONS' environment variable or
+# - by command line
+#
+# for example:
+#
+# in portage/subdir/package/file.py
+#   ...
+#   self.subinfo.options.cmake.openIDE=1
+#
+# or
+#
+# emerge "--option=cmake.openIDE=1" --make kdewin-installer
+#
+# or
+#
+# set EMERGE_OPTIONS=cmake.openIDE=1
+# emerge --make kdewin-installer
+#
+# The parser in this package is able to set all attributes
+#
+# for example:
+#
+#  emerge "--option=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
+#
 import os
 import utils
+import inspect
 
 ## options for the fetch action
 class OptionsFetch:
@@ -50,7 +78,7 @@ class OptionsConfigure:
         ## do not use default lib path
         self.noDefaultLib = False
 
-        ## set this attribute in case a non standard configuration 
+        ## set this attribute in case a non standard configuration
 		# tool is required (supported currently by QMakeBuildSystem only)
         self.tool = False
 
@@ -170,27 +198,78 @@ class Options:
         #  avoid exceeding the maximum path length)
         self.useShortPathes = False
 
+        #### end of user configurable part
+        self.__instances = dict()
+        self.__verbose = False
+        self.__errors = False
 
-    def readFromEnv(self):
-        opts = os.getenv( "EMERGE_OPTIONS" )
+    def readFromEnv( self ):
+        """ read emerge related variables from environment and map them to public
+        attributes in the option class and sub classes """
+        self.__collectAttributes()
+        self.__readFromString(os.environ['EMERGE_OPTIONS'])
+
+    def __collectAttributes( self ):
+        """ collect all public attributes this class and subclasses """
+        temp = dict()
+
+        for key, value in inspect.getmembers(self):
+            if key.startswith('__'):
+                continue
+            atype = type(value).__name__
+            if atype == 'instancemethod':
+                continue
+            if atype == 'instance':
+                # collect attributes of instance one level below
+                sattributes = dict()
+                for skey, svalue in inspect.getmembers(value):
+                    if skey.startswith('__') or type(svalue).__name__.startswith('instance'):
+                        continue
+                    sattributes[skey.lower()] = [ skey, svalue ]
+                self.__instances[key.lower()] = [ key, value, sattributes ]
+            else:
+                temp[key.lower()] = [ key, value ]
+
+        self.__instances['.'] = [ '', self, temp ]
+        if self.__verbose:
+            for key in self.__instances:
+                print self.__instances[key]
+
+    def __setInstanceAttribute( self, origKey, instanceKey, key, value ):
+        """set attribute in an instance"""
+        a = instanceKey.lower()
+        if not a in self.__instances:
+            if self.__errors:
+                print "instance self.%s not found" % (a)
+            return False
+        i = self.__instances[a][1]
+
+        b = key.lower()
+        if not b in self.__instances[a][2]:
+            if self.__errors:
+                print "key %s not found" % (b)
+            return False
+        setattr( i, self.__instances[a][2][b][0], value )
+        p = ""
+        if self.__instances[a][0]:
+            p += self.__instances[a][0] + '.'
+        if self.__verbose:
+            print "mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value)
+        return True
+
+    def __readFromString( self, opts ):
+        """collect properties from a space delimited key=valule string"""
         if opts == None:
             return False
         opts = opts.split()
         for entry in opts:
             if entry.find('=') == -1:
-                utils.debug('incomplete option %s' % entry)
+                utils.debug('incomplete option %s' % entry, 3)
                 continue
-            (option, value) = entry.split('=')
-            print option + " " + value
-            if option == "cmake.useIDE":
-                # @todo using value from above does not work in case of value=0
-                self.cmake.useIDE = True
-            elif option == "cmake.openIDE":
-                self.cmake.openIDE = True
-            elif option == "package.version":
-                self.package.version = value
-            elif hasattr(self, option):
-                # @todo convert "property string" into  cmake.useIDE
-                setattr(self, option, value)
-            else:
-                utils.die("unknown property %s" % option)
+            (key, value) = entry.split( '=' )
+            a = key.split('.')
+            if self.__setInstanceAttribute(key, '.', ''.join(a[0:]), value ):
+                return True
+            if len(a) >= 2 and self.__setInstanceAttribute(key, a[0], ''.join(a[1:]), value ):
+                return True
+        return False
