@@ -203,7 +203,7 @@ Section ""
   ; Create killkde.bat 
   FileOpen $1 "$INSTDIR\bin\killkde.bat" "w"
   FileWrite $1 '@echo off $\r$\n'
-  FileWrite $1 'kdeinit4 --terminate'
+  FileWrite $1 '$INSTDIR\bin\kdeinit4 --terminate'
   FileClose $1
 
 call CreateGlobals
@@ -232,7 +232,7 @@ call CreateGlobals
 
   FileOpen $1 "$INSTDIR\share\config\kwalletrc" "w"
   FileWrite $1 "[Auto Allow]$\r$\n"
-  FileWrite $1 "kdewallet=Akonadi Resource,Account Assistant,Kolab E5 RC,Kontact,Akonadi Agent$\r$\n"
+  FileWrite $1 "kdewallet=Akonadi Resource,Akonadi-Ressource,Akonadi-Agent,Account Assistant,Kolab E5 RC,Kontact,Akonadi Agent$\r$\n"
   FileClose $1
 
   ; Set bin dir to PATH
@@ -301,12 +301,22 @@ FunctionEnd
 Function CheckExistingVersion
   ClearErrors
   Push $0
-  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname_short}" "Displayversion_number"
-  IfErrors leave 0
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname_short}" "UninstallString"
+  IfErrors checkkolabe5rc 0
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} $0 \
-    $(T_AlreadyInstalled)" IDYES leave
-    Abort
-  leave:
+    $(T_AlreadyInstalled)" IDYES uninstall
+  checkkolabe5rc:
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Kolab E5RC" "UninstallString"
+  IfErrors overwrite 0
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} $0 \
+    $(T_AlreadyInstalled)" IDYES uninstall
+
+  abort
+  uninstall:
+    ${StrRep} '$1' '$0' 'uninstall.exe' 'bin\kdeinit4.exe'
+    ExecWait '"$1" --terminate'
+    ExecWait '$0'
+  overwrite:
 FunctionEnd
 
 Function CreateGlobals
@@ -501,12 +511,13 @@ FunctionEnd
 ;---------------------------
 # From Function CheckExistingVersion
 LangString T_AlreadyInstalled ${LANG_ENGLISH} \
-    "has already been installed.$\r$\nDo you want to\
-    continue the installation of ${productname_short} ${version_date}?"
+    "${ProductName} has already been installed.$\r$\nYou need to \
+    uninstall the other Version before continuing.$\r$\n \
+    Start the Uninstall now?"
 LangString T_AlreadyInstalled ${LANG_GERMAN} \
-    "ist bereits auf ihrem System installiert.$\r$\nWollen Sie die \
-    Installation von ${productname_short} ${version_date} fortsetzen?$\r$\n$\r$\nIhre \
-    alte Installation wird dadurch überschrieben."
+    "${ProductName} ist bereits auf ihrem System installiert.$\r$\n \
+    Sie müssen es deinstallieren befor Sie mit der Installation fortfahren können. \
+    $\r$\nMöchten Sie die Deinstallation jetzt starten?"
 
 # From Custom Welcome Page
 #
