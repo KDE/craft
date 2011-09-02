@@ -445,9 +445,9 @@ class DependenciesTree(object):
             pass
 
         rootnode = DependenciesNode(category, package, version, tag, [])
+        rootnode.metaData = portage.PortageInstance.getMetaData(category, package, version)
+
         if package == converter.moduleMetaName: rootnode.virtual = True
-        if package in converter.packageDescriptionList.keys():
-            rootnode.metaData['shortDescription'] = converter.packageDescriptionList[package]
         self.__buildSubNodes(rootnode, converter)
         return rootnode
 
