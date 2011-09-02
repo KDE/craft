@@ -303,18 +303,19 @@ Function CheckExistingVersion
   Push $0
   ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname_short}" "UninstallString"
   IfErrors checkkolabe5rc 0
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} $0 \
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} \
     $(T_AlreadyInstalled)" IDYES uninstall
   checkkolabe5rc:
   ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Kolab E5RC" "UninstallString"
   IfErrors overwrite 0
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} $0 \
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} \
     $(T_AlreadyInstalled)" IDYES uninstall
 
   abort
   uninstall:
-    ${StrRep} '$1' '$0' 'uninstall.exe' 'bin\kdeinit4.exe'
-    ExecWait '"$1" --terminate'
+    ${StrRep} '$R1' '$0' 'uninstall.exe' 'bin\killkde.bat'
+    ExecDos::exec '"$SYSDIR\cmd.exe" /C "$0"' ""
+    ExecWait '$R1'
     ExecWait '$0'
   overwrite:
 FunctionEnd
@@ -511,21 +512,21 @@ FunctionEnd
 ;---------------------------
 # From Function CheckExistingVersion
 LangString T_AlreadyInstalled ${LANG_ENGLISH} \
-    "${ProductName} has already been installed.$\r$\nYou need to \
-    uninstall the other Version before continuing.$\r$\n \
+    " has already been installed.$\r$\nYou need to\
+    uninstall the other Version before continuing.$\r$\n\
     Start the Uninstall now?"
 LangString T_AlreadyInstalled ${LANG_GERMAN} \
-    "${ProductName} ist bereits auf ihrem System installiert.$\r$\n \
-    Sie müssen es deinstallieren befor Sie mit der Installation fortfahren können. \
+    " ist bereits auf ihrem System installiert.$\r$\n\
+    Sie müssen es deinstallieren befor Sie mit der Installation fortfahren können.\
     $\r$\nMöchten Sie die Deinstallation jetzt starten?"
 
 # From Custom Welcome Page
 #
 # Title
 LangString T_WelcomeTitle ${LANG_ENGLISH} \
-  "Welcome to the installation of  ${productname}"
+  "Welcome to the installation of ${productname_short}"
 LangString T_WelcomeTitle ${LANG_GERMAN} \
-  "Willkommen bei der Installation von  ${productname}"
+  "Willkommen bei der Installation von ${productname_short}"
 # description
 LangString T_About ${LANG_ENGLISH} \
     "${description}, based upon KDE Kontact."
