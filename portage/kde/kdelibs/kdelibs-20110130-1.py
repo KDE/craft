@@ -29,6 +29,7 @@ class subinfo(info.infoclass):
         self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
+        self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
 
 from Package.CMakePackageBase import *
 
