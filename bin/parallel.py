@@ -84,7 +84,7 @@ from dependencies import DependenciesTree
 
 
 DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
-    os.path.join(os.getenv("KDEROOT", os.curdir), "bin", "emerge.py")
+    os.path.join(os.getenv("KDEROOT", os.curdir), "emerge", "bin", "emerge.py")
 
 LOCK_FILE_TEMPLATE = "emerge%s-%s-%d.lck"
 
