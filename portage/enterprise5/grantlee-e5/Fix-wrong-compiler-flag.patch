@@ -1,0 +1,25 @@
+From cb23924ee97e8c844fa1ce5f6f9048f3bee20f5d Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Sat, 3 Sep 2011 22:50:33 +0200
+Subject: [PATCH] Fix wrong compiler flag.
+
+---
+ CMakeLists.txt |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 30c7662..bf049b4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -58,7 +58,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
+     # Needed on 64 bit
+     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --cs-libgen=-fPIC")
+   else()
+-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpedandic-errors")
++    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors")
+   endif()
+ 
+   if (NOT APPLE)
+-- 
+1.7.4.msysgit.0
+
