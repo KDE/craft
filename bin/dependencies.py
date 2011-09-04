@@ -244,6 +244,8 @@ class KDEWinCreator( Visitor ):
                 depString += " " + childName
                 if child.metaData["withCompiler"]:
                     depString += "-" + self.compiler
+                elif self.compiler.startswith("x64"):
+                    depString += "-x64"
         return depString
 
     def writeDependencyLine( self, node, context ):
@@ -260,6 +262,8 @@ class KDEWinCreator( Visitor ):
         depString = "@deps " + packageName
         if node.metaData["withCompiler"]:
             depString += "-" + self.compiler
+        elif self.compiler.startswith("x64"):
+            depString += "-x64"
         deps = self.__getNodeDependencies( node )
         depString += deps
         if str( node ) not in visited: # and len( node.children ) > 0: # since runtime packages are not included, use a hack here
@@ -300,6 +304,8 @@ class KDEWinCreator( Visitor ):
                 if _node.metaData["withCompiler"]:
                     _str += " " + _packageName + "-" + self.compiler
                     num += 1
+                elif self.compiler.startswith("x64"):
+                    _str += " " + _packageName + "-x64"
                 else:
                     if not _node.categoryVisited:
                         _node.categoryVisited = True
