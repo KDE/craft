@@ -87,7 +87,7 @@ extragear,kile,,
 # extragear,kipi-plugins,2.0.0,
 extragear,digikam,2.0.0,
 extragear,libalkimia,4.3.1,
-extragear,kmymoney,4.6.0,
+extragear,kmymoney,4.6.0,1
 extragear,kmid,2.4.0,
 extragear,konversation,1.3.1,
 extragear,quassel,0.7.2,
