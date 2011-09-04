@@ -64,12 +64,12 @@ class Package( BinaryPackageBase ):
         if compiler.isMinGW_WXX():
             tmpdir = os.getenv( "TEMP" )
 
-            if compiler.isMinGW_W32(): _ext = 32
-            elif compiler.isMinGW_W64(): _ext = 64
+            if compiler.isMinGW_W32(): _ext = ("mingw", 32)
+            elif compiler.isMinGW_W64(): _ext = ("mingw64", 64)
             else: utils.die( "unknown flavor of mingw-wXX" )
 
-            pthreadPackageName = os.path.join( self.rootdir, "mingw", "pthreads-w%s.zip" ) % _ext
-            pthreadDll = "pthreadGC2-w%s.dll" % _ext
+            pthreadPackageName = os.path.join( self.rootdir, "%s", "pthreads-w%s.zip" ) % _ext
+            pthreadDll = "pthreadGC2-w%s.dll" % _ext[1]
 
             utils.unZip( pthreadPackageName, tmpdir )
 
