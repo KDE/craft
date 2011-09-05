@@ -43,7 +43,7 @@ win32libs-sources,cyrus-sasl-src,,
 win32libs-sources,libical-src,,
 win32libs-sources,gpg-error-src,,
 win32libs-sources,assuan2-src,,
-win32libs-sources,gpgme-src,,1
+win32libs-sources,gpgme-src,,2
 win32libs-sources,clucene-core-src,,
 win32libs-sources,libfftw-src,,
 win32libs-sources,libogg-src,,
