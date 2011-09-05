@@ -270,6 +270,17 @@ class Portage:
         """ returns whether a certain package exists within a category """
         return package in self.categories[ category ]
 
+    def isVirtualPackage( self, category, package ):
+        """ check if that package is of VirtualPackageBase """
+        if not self.isPackage( category, package ):
+            return False
+        version = self.getNewestVersion( category, package )
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'Package' ):
+            for baseClassObject in mod.Package.__bases__:
+                if baseClassObject.__name__ == 'VirtualPackageBase': return True
+        return False
+
     def getAllPackages( self, category ):
         """returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory
         in case the category doesn't exist, nothing is returned"""
@@ -332,7 +343,7 @@ class Portage:
             utils.debug( tmpdict, 2 )
             return tmpdict
         else:
-            return dict()
+            return {'withCompiler': True}
 
     def getAllTargets( self, category, package, version ):
         """ returns all targets of a specified package """
@@ -391,6 +402,7 @@ class Portage:
         if not self.isCategory( category ):
             utils.die( "could not find category '%s'" % category )
         if not self.isPackage( category, package ):
+            raise BlaException
             utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
 
         versions = []

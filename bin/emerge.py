@@ -109,6 +109,9 @@ Flags:
 --target=[TARGET]               This will override the build of the default
                                 target. The default Target is marked with a
                                 star in the printout of --print-targets
+--option=<OPTIONS>              Set emerge property from string <OPTIONS>.
+                                An example for is "cmake.openIDE=1"; 
+                                see options.py for more informations.
 --patchlevel=[PATCHLEVEL]       This will add a patch level when used together
                                 with --package
 --log-dir=[LOG_DIR]             This will log the build output to a logfile in
@@ -334,6 +337,13 @@ for i in sys.argv:
     nextArguments.pop(0)
     if ( i == "-p" or i == "--probe" ):
         doPretend = True
+    elif ( i.startswith("--option=") ):
+        # @todo how to add -o <parameter> option
+        options = i.replace( "--option=", "" )
+        if "EMERGE_OPTIONS" in os.environ:
+            os.environ["EMERGE_OPTIONS"] += " %s" % options
+        else:
+            os.environ["EMERGE_OPTIONS"] = options
     elif ( i == "-z" ):
         outDateVCS = True
     elif ( i == "-sz" ):
@@ -601,6 +611,6 @@ if len( nextArguments ) > 0:
     #        os.environ[ element ] = ""
     if not utils.system(command):
         utils.die( "cannot execute next commands cmd: %s" % command )
-        
+
 utils.stopTimer("Emerge")
 

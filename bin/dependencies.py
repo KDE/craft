@@ -53,6 +53,7 @@ import sys
 import os
 import utils
 import graphviz
+import xml2conf
 from argparse import ArgumentParser # pylint: disable=F0401
 # this is for using pylint on Ubuntu which has still python2.6
 # and no module argparse yet
@@ -200,6 +201,15 @@ class KDEWinCreator( Visitor ):
                 return "@pkgnotes " + packageName + asterisk + " " + metaData[ "shortDescription" ]
         return None
 
+    def collectVirtualPackages( self, node, context ):
+        visited = context[0]
+        if str( node ) not in visited:
+            visited.add( str( node ) )
+            if node.virtual or portage.PortageInstance.isVirtualPackage( node.category, node.package ):
+                if node.category == "kde":
+                    return "@metapackage " + node.package + " " + " ".join( [ x.package for x in node.children if not x.package.startswith("lib") ] )
+        return None
+
     def collectPackagesForCategory( self, node, context ):
         visited = context[0]
         if str( node ) not in visited:
@@ -272,6 +282,8 @@ class KDEWinCreator( Visitor ):
             result = self.collectPackagesForCategory( node, context )
         elif self.mode == "meta":
             result = self.collectMetaData( node, context )
+        elif self.mode == "virtual":
+            result = self.collectVirtualPackages( node, context )
         if result:
             out.append( result )
         return Visitor.CONTINUE_CHILDREN
@@ -319,21 +331,30 @@ class KDEWinCreator( Visitor ):
             self.cleanup()
         _cat = "\n".join( out )
         out = []
+
         self.mode = "deps"
         for self.compiler in self.compilerlist:
             visited = set()
             out.append( "; package dependencies for compiler " + self.compiler )
             tree.visit( self, ( visited, out, ranks ) )
             out.append( ";" )
-
         _dep = "\n".join( out )
+
         out = []
         visited = set()
         ranks = {}
         self.mode = "meta"
         tree.visit( self, ( visited, out, ranks ) )
         _meta = "\n".join( out )
-        return template.safe_substitute( { 'categorypackages': _cat, 'dependencies': _dep, 'pkgnotes': _meta } )
+
+        out = []
+        visited = set()
+        ranks = {}
+        self.mode = "virtual"
+        tree.visit( self, ( visited, out, ranks ) )
+        _metapackages = "\n".join( out )
+
+        return template.safe_substitute( { 'metapackages': _metapackages, 'categorypackages': _cat, 'dependencies': _dep, 'pkgnotes': _meta } )
 
 class DependenciesNode(object):
     """A node in the dependency graph."""
@@ -347,7 +368,8 @@ class DependenciesNode(object):
         self.tag      = tag
         self.children = children
         self.parents  = []
-        self.metaData = dict()
+        self.metaData = {'withCompiler': True}
+        self.virtual  = False
         self.categoryVisited = False
         self.dependencyVisited = False
 
@@ -381,6 +403,55 @@ class DependenciesTree(object):
         self.roots    = []
         self.key2node = {}
 
+
+    def __buildSubNodes(self, rootnode, converter):
+        if rootnode.package not in converter.packageDepsList:
+            return
+        for deps in converter.packageDepsList[ rootnode.package ]:
+            _cat, _pac = deps.split('/')
+            if rootnode.category + "/" + _pac in converter.packageDepsList.keys():
+                _ver = rootnode.version
+                _tag = rootnode.tag
+            else:
+                if portage.PortageInstance.isPackage(_cat, _pac):
+                    _ver = portage.PortageInstance.getNewestVersion(_cat, _pac)
+                else:
+                    _ver = rootnode.version
+                try:
+                    _tag = portage.PortageInstance.getDefaultTarget( _cat, _pac, _ver )
+                except ImportError:
+                    _tag = "1"
+            subkey = "%s-%s-%s-%s" % (_cat, _pac, _ver, _tag)
+            try:
+                subnode = self.key2node[subkey]
+            except KeyError:
+                subnode = DependenciesNode(_cat, _pac, _ver, _tag)
+                if _pac in converter.packageDescriptionList.keys():
+                    subnode.metaData['shortDescription'] = converter.packageDescriptionList[_pac]
+                if _pac == converter.moduleMetaName: subnode.virtual = True
+                self.__buildSubNodes(subnode, converter)
+                self.key2node[subkey] = subnode
+            rootnode.children.append( subnode )
+
+    def buildVirtualNodes(self, category, package, version, tag, dep_type="both"):
+        converter = xml2conf.Xml2Conf()
+        converter.parseFile(os.path.join(portage.getDirname(category, package), package + "-package.xml"))
+
+        key = "%s-%s-%s-%s" % (category, package, version, tag)
+        try:
+            node = self.key2node[key]
+            return node
+        except KeyError:
+            pass
+
+        rootnode = DependenciesNode(category, package, version, tag, [])
+        rootnode.metaData = portage.PortageInstance.getMetaData(category, package, version)
+
+        if package == converter.moduleMetaName: rootnode.virtual = True
+        self.__buildSubNodes(rootnode, converter)
+        return rootnode
+
+
     def addDependencies(self, category, package, version = "", dep_type="both"):
         """Add a new root dependency tree to this graph."""
 
@@ -406,7 +477,10 @@ class DependenciesTree(object):
         except ImportError:
             tag = "1"
 
-        node = self.buildDepNode( category, package, version, tag, dep_type )
+        if not os.path.exists( os.path.join( portage.getDirname( category, package ), package + "-package.xml" ) ):
+            node = self.buildDepNode( category, package, version, tag, dep_type )
+        else:
+            node = self.buildVirtualNodes( category, package, version, tag, dep_type )
 
         if not node in self.roots:
             self.roots.append(node)

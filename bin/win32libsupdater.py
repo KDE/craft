@@ -89,6 +89,10 @@ for packageKey in addInfo:
         binVersion = portage.PortageInstance.getNewestVersion( binCategory, binPackage )
         binTargets = portage.PortageInstance.getAllTargets( binCategory, binPackage, binVersion )
 
+        description = ""
+        metadata = portage.PortageInstance.getMetaData( category, package, version )
+        if "shortDescription" in metadata: description = metadata["shortDescription"]
+
         # check that the target from the source package which has been build is contained in the
         # binary package
         buildTarget = addInfo[ packageKey ] [ 0 ]
@@ -100,6 +104,7 @@ for packageKey in addInfo:
         if not buildTarget in binTargets:
             utils.warning( "key %s not contained in binary package %s" % ( buildTarget, binPackage ) )
             regenerateFile = True
+        regenerateFile = True
 
         dependencies = baseDependencies
         # get buildDependencies from the source package
@@ -129,6 +134,7 @@ for packageKey in addInfo:
                                                  'package': binPackage,
                                                  'versionTargets': targetsString,
                                                  'defaultTarget': buildTarget,
+                                                 'description': description,
                                                  'dependencies': dependencies
                                                } )
 
@@ -146,6 +152,8 @@ for packageKey in addInfo:
                 f = file( newName, 'w+b' )
                 f.write( result )
                 f.close()
+            else:
+                utils.debug("renaming/updating file %s" % gitNewName )
 
 
         # check that all targets from the source package are contained in the binTargets

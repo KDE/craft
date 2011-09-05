@@ -6,8 +6,12 @@
 # (c) copyright 2011 Wolfgang Rohdewald <wolfgang@rohdewald.de>
 #
 # @TODO review help texts
-#
-
+# @TODO I tried to add an --option and -o <parameter> handling class, but did not find 
+# a way how to do, there should be an easy way to add
+# @TODO The help text set as class description is not usefull, because in the api doc 
+# we do not like to have the exact help text as class description, rather what this class 
+# do like 'handle the ... option' 
+#  
 import sys, argparse
 
 import portage
@@ -305,6 +309,10 @@ class CleanupArg(FlagArgBase):
     """Clean your portage directory, to prevent emerge errors, removes
        empty directories and *.pyc files"""
 
+class OptionArg(FlagArgBase):
+    """set properties """
+    #alternativeNames = ['o'] do not support work additional parameters
+
 class NoCopyArg(ObsoleteArgBase, FlagArgBase):
     """In older releases emerge would have
        copied everything from the SVN source tree to a source directory
@@ -361,6 +369,5 @@ def main():
             exitCode = 1
         if exitCode:
             sys.exit(exitCode)
-
 if __name__ == "__main__":
     main()
