@@ -76,7 +76,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
         self.defaultTarget = '4.7'
         self.patchToApply['4.7'] = [
-                #                ('disable-crypto-backend.patch', 1),
+                ('disable-crypto-backend.patch', 1),
         # Necessary until we know how to build a stable gpgme for windows
                 ('add-full-shutdown-button.patch', 1)]
         # To platform/package specific for master
