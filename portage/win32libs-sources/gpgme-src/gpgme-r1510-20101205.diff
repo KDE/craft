@@ -1,6 +1,6 @@
 diff -Nru gpgme-r1510.orig/src/ath.h gpgme-r1510/src/ath.h
 --- gpgme-r1510.orig/src/ath.h	2010-11-15 09:40:30.000000000 +0100
-+++ gpgme-r1510/src/ath.h	2010-12-05 01:20:50.394865100 +0100
++++ gpgme-r1510/src/ath.h	2011-09-06 07:10:40.383681700 +0200
 @@ -23,6 +23,22 @@
  
  #ifdef HAVE_STDINT_H
@@ -53,7 +53,7 @@ diff -Nru gpgme-r1510.orig/src/ath.h gpgme-r1510/src/ath.h
  
 diff -Nru gpgme-r1510.orig/src/debug.c gpgme-r1510/src/debug.c
 --- gpgme-r1510.orig/src/debug.c	2010-11-03 11:33:10.000000000 +0100
-+++ gpgme-r1510/src/debug.c	2010-12-05 01:20:50.396865200 +0100
++++ gpgme-r1510/src/debug.c	2011-09-06 07:10:40.383681700 +0200
 @@ -48,6 +48,10 @@
  #include "sema.h"
  #include "debug.h"
@@ -67,7 +67,7 @@ diff -Nru gpgme-r1510.orig/src/debug.c gpgme-r1510/src/debug.c
     output of actual debug messages.  */
 diff -Nru gpgme-r1510.orig/src/engine-assuan.c gpgme-r1510/src/engine-assuan.c
 --- gpgme-r1510.orig/src/engine-assuan.c	2010-11-03 10:56:27.000000000 +0100
-+++ gpgme-r1510/src/engine-assuan.c	2010-12-05 01:20:50.398865300 +0100
++++ gpgme-r1510/src/engine-assuan.c	2011-09-06 07:10:40.383681700 +0200
 @@ -649,7 +649,7 @@
       using the assumption that the first returned fd from
       assuan_get_active_fds() is always this one.  */
@@ -79,7 +79,7 @@ diff -Nru gpgme-r1510.orig/src/engine-assuan.c gpgme-r1510/src/engine-assuan.c
    /* For now... */
 diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
 --- gpgme-r1510.orig/src/gpgme-tool.c	2010-10-07 12:58:51.000000000 +0200
-+++ gpgme-r1510/src/gpgme-tool.c	2010-12-05 01:20:50.419866500 +0100
++++ gpgme-r1510/src/gpgme-tool.c	2011-09-06 07:10:40.399281800 +0200
 @@ -25,7 +25,6 @@
  #include <stdlib.h>
  #include <string.h>
@@ -177,7 +177,7 @@ diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
    struct args *args = state->input;
 diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
 --- gpgme-r1510.orig/src/gpgme.h.in	2010-11-23 10:46:52.000000000 +0100
-+++ gpgme-r1510/src/gpgme.h.in	2010-12-05 01:20:50.401865500 +0100
++++ gpgme-r1510/src/gpgme.h.in	2011-09-06 07:10:40.414881800 +0200
 @@ -36,7 +36,14 @@
  
  #ifdef _WIN32
@@ -195,7 +195,7 @@ diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
  #endif
 diff -Nru gpgme-r1510.orig/src/key.c gpgme-r1510/src/key.c
 --- gpgme-r1510.orig/src/key.c	2010-04-19 18:59:23.000000000 +0200
-+++ gpgme-r1510/src/key.c	2010-12-05 01:20:50.404865700 +0100
++++ gpgme-r1510/src/key.c	2011-09-06 07:10:40.414881800 +0200
 @@ -389,7 +389,7 @@
      return err;
  
@@ -207,7 +207,7 @@ diff -Nru gpgme-r1510.orig/src/key.c gpgme-r1510/src/key.c
    else
 diff -Nru gpgme-r1510.orig/src/util.h gpgme-r1510/src/util.h
 --- gpgme-r1510.orig/src/util.h	2010-11-03 10:56:27.000000000 +0100
-+++ gpgme-r1510/src/util.h	2010-12-09 20:08:04.472299400 +0100
++++ gpgme-r1510/src/util.h	2011-09-06 07:10:40.414881800 +0200
 @@ -26,7 +26,8 @@
  # ifdef HAVE_W32CE_SYSTEM
  #  include "w32-ce.h"
@@ -218,9 +218,21 @@ diff -Nru gpgme-r1510.orig/src/util.h gpgme-r1510/src/util.h
  # endif
  #endif
  
+diff -Nru gpgme-r1510.orig/src/version.c gpgme-r1510/src/version.c
+--- gpgme-r1510.orig/src/version.c	2010-01-25 17:04:27.000000000 +0100
++++ gpgme-r1510/src/version.c	2011-09-06 07:10:40.430481800 +0200
+@@ -290,7 +290,7 @@
+   int nread;
+   char *argv[] = {NULL /* file_name */, "--version", 0};
+   struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */, -1, 0},
+-				   {-1, -1} };
++				   {-1, -1, -1, -1} };
+   int status;
+ 
+   if (!file_name)
 diff -Nru gpgme-r1510.orig/src/w32-ce.h gpgme-r1510/src/w32-ce.h
 --- gpgme-r1510.orig/src/w32-ce.h	2010-11-15 16:30:04.000000000 +0100
-+++ gpgme-r1510/src/w32-ce.h	2010-12-05 01:20:50.405865700 +0100
++++ gpgme-r1510/src/w32-ce.h	2011-09-06 07:10:40.430481800 +0200
 @@ -37,7 +37,9 @@
  #define getenv _gpgme_wince_getenv
  char *getenv (const char *name);
@@ -233,7 +245,7 @@ diff -Nru gpgme-r1510.orig/src/w32-ce.h gpgme-r1510/src/w32-ce.h
  
 diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
 --- gpgme-r1510.orig/src/w32-io.c	2010-11-23 11:47:59.000000000 +0100
-+++ gpgme-r1510/src/w32-io.c	2010-12-05 01:20:50.410866000 +0100
++++ gpgme-r1510/src/w32-io.c	2011-09-06 07:51:52.036831200 +0200
 @@ -27,14 +27,18 @@
  #include <string.h>
  #include <assert.h>
@@ -262,15 +274,42 @@ diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
    memcpy (&args[3], &argv[1], i * sizeof (*args));
  
    memset (&sec_attr, 0, sizeof sec_attr);
+@@ -1592,7 +1596,7 @@
+   free (args);
+   if (!arg_string)
+     {
+-      close (tmp_fd);
++      CloseHandle (tmp_fd);
+       DeleteFileA (tmp_name);
+       return TRACE_SYSRES (-1);
+     }
+@@ -1623,7 +1627,7 @@
+     {
+       TRACE_LOG1 ("CreateProcess failed: ec=%d", (int) GetLastError ());
+       free (arg_string);
+-      close (tmp_fd);
++      CloseHandle (tmp_fd);
+       DeleteFileA (tmp_name);
+ 
+       /* FIXME: Should translate the error code.  */
 @@ -1642,7 +1646,7 @@
        HANDLE hd;
  
        /* Make it inheritable for the wrapper process.  */
 -      if (!DuplicateHandle (GetCurrentProcess(), fd_to_handle (fd_list[i].fd),
-+      if (!DuplicateHandle (GetCurrentProcess(), (HANDLE) (fd_list[i].fd),
++      if (!DuplicateHandle (GetCurrentProcess(), (HANDLE) (fd_table[fd_list[i].fd].handle),
  			    pi.hProcess, &hd, 0, TRUE, DUPLICATE_SAME_ACCESS))
  	{
  	  TRACE_LOG1 ("DuplicateHandle failed: ec=%d", (int) GetLastError ());
+@@ -1653,7 +1657,7 @@
+ 	  CloseHandle (pi.hThread);
+ 	  CloseHandle (pi.hProcess);
+ 
+-	  close (tmp_fd);
++	  CloseHandle (tmp_fd);
+ 	  DeleteFileA (tmp_name);
+ 
+ 	  /* FIXME: Should translate the error code.  */
 @@ -1661,7 +1665,7 @@
  	  return TRACE_SYSRES (-1);
          }
@@ -280,7 +319,26 @@ diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
      }
    
    /* Write the handle translation information to the temporary
-@@ -1868,7 +1872,7 @@
+@@ -1695,16 +1699,9 @@
+ 	line[BUFFER_MAX] = '\0';
+       }
+     len = strlen (line);
+-    written = 0;
+-    do
+-      {
+-	res = write (tmp_fd, &line[written], len - written);
+-	if (res > 0)
+-	  written += res;
+-      }
+-    while (res > 0 || (res < 0 && errno == EAGAIN));
++    WriteFile (tmp_fd, line, len, &written, NULL);
+   }
+-  close (tmp_fd);
++  CloseHandle (tmp_fd);
+   /* The temporary file is deleted by the gpgme-w32spawn process
+      (hopefully).  */
+ #endif
+@@ -1868,7 +1865,7 @@
        if (le == ERROR_INVALID_HANDLE)
  	{
  	  int k;
@@ -291,7 +349,7 @@ diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
  	  for (k = 0 ; k < nfds; k++)
 diff -Nru gpgme-r1510.orig/src/w32-sema.c gpgme-r1510/src/w32-sema.c
 --- gpgme-r1510.orig/src/w32-sema.c	2010-11-03 10:56:27.000000000 +0100
-+++ gpgme-r1510/src/w32-sema.c	2010-12-05 01:20:50.412866100 +0100
++++ gpgme-r1510/src/w32-sema.c	2011-09-06 07:10:40.446081800 +0200
 @@ -27,14 +27,18 @@
  #include <string.h>
  #include <assert.h>
@@ -314,7 +372,7 @@ diff -Nru gpgme-r1510.orig/src/w32-sema.c gpgme-r1510/src/w32-sema.c
  #include "sema.h"
 diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
 --- gpgme-r1510.orig/src/w32-util.c	2010-11-15 16:11:59.000000000 +0100
-+++ gpgme-r1510/src/w32-util.c	2010-12-05 01:23:40.617601300 +0100
++++ gpgme-r1510/src/w32-util.c	2011-09-06 07:10:40.461681900 +0200
 @@ -28,7 +28,11 @@
  #include <string.h>
  #include <assert.h>
@@ -341,10 +399,22 @@ diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
 +# include <io.h>
 +#endif
  
-+#if _WIN32_IE <= 0x0500
 -#define _WIN32_IE 0x0400 /* Required for SHGetSpecialFolderPathA.  */
++#if _WIN32_IE <= 0x0500
 +#define _WIN32_IE 0x0500 /* Required for SHGetSpecialFolderPathA.  */
 +#endif
  
  /* We need to include the windows stuff here prior to shlobj.h so that
     we get the right winsock version.  This is usually done in util.h
+@@ -356,9 +366,9 @@
+     gpg_program = find_program_in_registry ("gpgProgram");
+ #endif
+   if (!gpg_program)
+-    gpg_program = find_program_in_inst_dir ("gpg.exe");
++    gpg_program = find_program_in_inst_dir ("gpg2.exe");
+   if (!gpg_program)
+-    gpg_program = find_program_at_standard_place ("GNU\\GnuPG\\gpg.exe");
++    gpg_program = find_program_at_standard_place ("GNU\\GnuPG\\gpg2.exe");
+   UNLOCK (get_path_lock);
+   return gpg_program;
+ }
