@@ -30,9 +30,6 @@
   ; Add (custom) plugin dir
   !addplugindir plugins
 
-  ; String Replace function
-  !include "includes\StrReplace.nsh"
-
   ; Windows Version detection
   !include "includes\getWinVer.nsi"
 
