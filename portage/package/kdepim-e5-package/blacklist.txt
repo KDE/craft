@@ -4,6 +4,10 @@
 # Author: Andre Heinecke <aheinecke@intevation.de>
 #
 
+# Temporary while nepomuk is broken
+nepomuk.*\.desktop
+virtuoso-20100330
+
 # Complete Packages:
 mysql.*-\d+\.\d+\.\d+
 
@@ -26,6 +30,15 @@ cmake$
 \.pdb$
 
 # Individual executables
+ldapadd\.exe
+ldapcompare\.exe
+ldapdelete\.exe
+ldapexop\.exe
+ldapmodify\.exe
+ldapmodrdn\.exe
+ldappasswd\.exe
+ldapsearch\.exe
+ldapwhoami\.exe
 QtDesignerComponents4\.dll
 onto2vocabularyclass\.exe
 makekdewidgets\.exe
@@ -277,6 +290,8 @@ translations$
 \\xz$
 
 # Other
+phonon-buildsystem$
+^share\\autostart$
 ^vad$
 ^ssl$
 ^vsp$
