@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = 'libassuan-' + ver
 
         self.patchToApply['2.0.1'] = [ ('libassuan-cmake.diff', 1), ('assuan-381-head.diff', 0), ('libassuan-2.0.1-20101029.diff', 1) ]
-        self.patchToApply['2.0.2'] = [ ('libassuan-2.0.1-20110831.diff', 1), ('libassuan-2.0.2-cmake.diff', 1) ]
+        self.patchToApply['2.0.2'] = [ ('libassuan-2.0.2-20110831.diff', 1), ('libassuan-2.0.2-cmake.diff', 1) ]
 
         self.targets['400'] = "http://downloads.sourceforge.net/kde-windows/libassuan-r400.tar.bz2"
         self.targetInstSrc['400'] = "libassuan-r400"
