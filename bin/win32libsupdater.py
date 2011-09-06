@@ -104,7 +104,6 @@ for packageKey in addInfo:
         if not buildTarget in binTargets:
             utils.warning( "key %s not contained in binary package %s" % ( buildTarget, binPackage ) )
             regenerateFile = True
-        regenerateFile = True
 
         dependencies = baseDependencies
         # get buildDependencies from the source package
