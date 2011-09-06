@@ -314,9 +314,9 @@ Function CheckExistingVersion
   abort
   uninstall:
     ${StrRep} '$R1' '$0' 'uninstall.exe' 'bin\killkde.bat'
-    ExecDos::exec '"$SYSDIR\cmd.exe" /C "$0"' ""
-    ExecWait '$R1'
-    ExecWait '$0'
+    ExecDos::exec '"$SYSDIR\cmd.exe" /C "$R1"' ""
+    ${StrRep} '$R1' '$0' 'uninstall.exe' ''
+    ExecWait '"$0" _?=$R1'
   overwrite:
 FunctionEnd
 
@@ -499,11 +499,6 @@ Function un.PrintNonAdminWarning
 
  leave:
 FunctionEnd
-
-
-
-
-
 
 
 
