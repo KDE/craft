@@ -1,6 +1,6 @@
 diff -Nru gpgme-r1510.orig/src/ath.h gpgme-r1510/src/ath.h
 --- gpgme-r1510.orig/src/ath.h	2010-11-15 09:40:30.000000000 +0100
-+++ gpgme-r1510/src/ath.h	2011-09-05 21:38:32.931836100 +0200
++++ gpgme-r1510/src/ath.h	2011-09-06 07:10:40.383681700 +0200
 @@ -23,6 +23,22 @@
  
  #ifdef HAVE_STDINT_H
@@ -53,7 +53,7 @@ diff -Nru gpgme-r1510.orig/src/ath.h gpgme-r1510/src/ath.h
  
 diff -Nru gpgme-r1510.orig/src/debug.c gpgme-r1510/src/debug.c
 --- gpgme-r1510.orig/src/debug.c	2010-11-03 11:33:10.000000000 +0100
-+++ gpgme-r1510/src/debug.c	2011-09-05 21:38:32.935836300 +0200
++++ gpgme-r1510/src/debug.c	2011-09-06 07:10:40.383681700 +0200
 @@ -48,6 +48,10 @@
  #include "sema.h"
  #include "debug.h"
@@ -67,7 +67,7 @@ diff -Nru gpgme-r1510.orig/src/debug.c gpgme-r1510/src/debug.c
     output of actual debug messages.  */
 diff -Nru gpgme-r1510.orig/src/engine-assuan.c gpgme-r1510/src/engine-assuan.c
 --- gpgme-r1510.orig/src/engine-assuan.c	2010-11-03 10:56:27.000000000 +0100
-+++ gpgme-r1510/src/engine-assuan.c	2011-09-05 21:38:32.950837200 +0200
++++ gpgme-r1510/src/engine-assuan.c	2011-09-06 07:10:40.383681700 +0200
 @@ -649,7 +649,7 @@
       using the assumption that the first returned fd from
       assuan_get_active_fds() is always this one.  */
@@ -79,7 +79,7 @@ diff -Nru gpgme-r1510.orig/src/engine-assuan.c gpgme-r1510/src/engine-assuan.c
    /* For now... */
 diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
 --- gpgme-r1510.orig/src/gpgme-tool.c	2010-10-07 12:58:51.000000000 +0200
-+++ gpgme-r1510/src/gpgme-tool.c	2011-09-05 21:38:32.957837600 +0200
++++ gpgme-r1510/src/gpgme-tool.c	2011-09-06 07:10:40.399281800 +0200
 @@ -25,7 +25,6 @@
  #include <stdlib.h>
  #include <string.h>
@@ -177,7 +177,7 @@ diff -Nru gpgme-r1510.orig/src/gpgme-tool.c gpgme-r1510/src/gpgme-tool.c
    struct args *args = state->input;
 diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
 --- gpgme-r1510.orig/src/gpgme.h.in	2010-11-23 10:46:52.000000000 +0100
-+++ gpgme-r1510/src/gpgme.h.in	2011-09-05 21:38:32.962837900 +0200
++++ gpgme-r1510/src/gpgme.h.in	2011-09-06 07:10:40.414881800 +0200
 @@ -36,7 +36,14 @@
  
  #ifdef _WIN32
@@ -195,7 +195,7 @@ diff -Nru gpgme-r1510.orig/src/gpgme.h.in gpgme-r1510/src/gpgme.h.in
  #endif
 diff -Nru gpgme-r1510.orig/src/key.c gpgme-r1510/src/key.c
 --- gpgme-r1510.orig/src/key.c	2010-04-19 18:59:23.000000000 +0200
-+++ gpgme-r1510/src/key.c	2011-09-05 21:38:32.967838100 +0200
++++ gpgme-r1510/src/key.c	2011-09-06 07:10:40.414881800 +0200
 @@ -389,7 +389,7 @@
      return err;
  
@@ -207,7 +207,7 @@ diff -Nru gpgme-r1510.orig/src/key.c gpgme-r1510/src/key.c
    else
 diff -Nru gpgme-r1510.orig/src/util.h gpgme-r1510/src/util.h
 --- gpgme-r1510.orig/src/util.h	2010-11-03 10:56:27.000000000 +0100
-+++ gpgme-r1510/src/util.h	2011-09-05 21:38:32.971838400 +0200
++++ gpgme-r1510/src/util.h	2011-09-06 07:10:40.414881800 +0200
 @@ -26,7 +26,8 @@
  # ifdef HAVE_W32CE_SYSTEM
  #  include "w32-ce.h"
@@ -220,7 +220,7 @@ diff -Nru gpgme-r1510.orig/src/util.h gpgme-r1510/src/util.h
  
 diff -Nru gpgme-r1510.orig/src/version.c gpgme-r1510/src/version.c
 --- gpgme-r1510.orig/src/version.c	2010-01-25 17:04:27.000000000 +0100
-+++ gpgme-r1510/src/version.c	2011-09-05 21:40:06.542190300 +0200
++++ gpgme-r1510/src/version.c	2011-09-06 07:10:40.430481800 +0200
 @@ -290,7 +290,7 @@
    int nread;
    char *argv[] = {NULL /* file_name */, "--version", 0};
@@ -232,7 +232,7 @@ diff -Nru gpgme-r1510.orig/src/version.c gpgme-r1510/src/version.c
    if (!file_name)
 diff -Nru gpgme-r1510.orig/src/w32-ce.h gpgme-r1510/src/w32-ce.h
 --- gpgme-r1510.orig/src/w32-ce.h	2010-11-15 16:30:04.000000000 +0100
-+++ gpgme-r1510/src/w32-ce.h	2011-09-05 21:38:32.974838500 +0200
++++ gpgme-r1510/src/w32-ce.h	2011-09-06 07:10:40.430481800 +0200
 @@ -37,7 +37,9 @@
  #define getenv _gpgme_wince_getenv
  char *getenv (const char *name);
@@ -245,7 +245,7 @@ diff -Nru gpgme-r1510.orig/src/w32-ce.h gpgme-r1510/src/w32-ce.h
  
 diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
 --- gpgme-r1510.orig/src/w32-io.c	2010-11-23 11:47:59.000000000 +0100
-+++ gpgme-r1510/src/w32-io.c	2011-09-05 21:46:42.479836600 +0200
++++ gpgme-r1510/src/w32-io.c	2011-09-06 07:51:52.036831200 +0200
 @@ -27,14 +27,18 @@
  #include <string.h>
  #include <assert.h>
@@ -319,10 +319,11 @@ diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
      }
    
    /* Write the handle translation information to the temporary
-@@ -1696,15 +1700,13 @@
+@@ -1695,16 +1699,9 @@
+ 	line[BUFFER_MAX] = '\0';
        }
      len = strlen (line);
-     written = 0;
+-    written = 0;
 -    do
 -      {
 -	res = write (tmp_fd, &line[written], len - written);
@@ -330,18 +331,14 @@ diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
 -	  written += res;
 -      }
 -    while (res > 0 || (res < 0 && errno == EAGAIN));
-+	{
-+		char *ptr = &line[written];
-+		DWORD dw;
-+		WriteFile (tmp_fd, ptr, len - written, &dw, NULL);
-+	}
++    WriteFile (tmp_fd, line, len, &written, NULL);
    }
 -  close (tmp_fd);
 +  CloseHandle (tmp_fd);
    /* The temporary file is deleted by the gpgme-w32spawn process
       (hopefully).  */
  #endif
-@@ -1868,7 +1870,7 @@
+@@ -1868,7 +1865,7 @@
        if (le == ERROR_INVALID_HANDLE)
  	{
  	  int k;
@@ -352,7 +349,7 @@ diff -Nru gpgme-r1510.orig/src/w32-io.c gpgme-r1510/src/w32-io.c
  	  for (k = 0 ; k < nfds; k++)
 diff -Nru gpgme-r1510.orig/src/w32-sema.c gpgme-r1510/src/w32-sema.c
 --- gpgme-r1510.orig/src/w32-sema.c	2010-11-03 10:56:27.000000000 +0100
-+++ gpgme-r1510/src/w32-sema.c	2011-09-05 21:38:32.983839100 +0200
++++ gpgme-r1510/src/w32-sema.c	2011-09-06 07:10:40.446081800 +0200
 @@ -27,14 +27,18 @@
  #include <string.h>
  #include <assert.h>
@@ -375,7 +372,7 @@ diff -Nru gpgme-r1510.orig/src/w32-sema.c gpgme-r1510/src/w32-sema.c
  #include "sema.h"
 diff -Nru gpgme-r1510.orig/src/w32-util.c gpgme-r1510/src/w32-util.c
 --- gpgme-r1510.orig/src/w32-util.c	2010-11-15 16:11:59.000000000 +0100
-+++ gpgme-r1510/src/w32-util.c	2011-09-05 21:48:13.451039900 +0200
++++ gpgme-r1510/src/w32-util.c	2011-09-06 07:10:40.461681900 +0200
 @@ -28,7 +28,11 @@
  #include <string.h>
  #include <assert.h>
