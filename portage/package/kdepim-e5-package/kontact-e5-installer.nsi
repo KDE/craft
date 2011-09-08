@@ -301,19 +301,18 @@ Function CheckExistingVersion
   ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname_short}" "UninstallString"
   IfErrors checkkolabe5rc 0
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} \
-    $(T_AlreadyInstalled)" IDYES uninstall
+    $(T_AlreadyInstalled)" IDYES uninstall IDNO abort_install
   checkkolabe5rc:
   ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Kolab E5RC" "UninstallString"
   IfErrors overwrite 0
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} \
-    $(T_AlreadyInstalled)" IDYES uninstall
+    $(T_AlreadyInstalled)" IDYES uninstall IDNO abort_install
 
-  abort
+  abort_install:
+    Quit
   uninstall:
-    ${StrRep} '$R1' '$0' 'uninstall.exe' 'bin\killkde.bat'
-    ExecDos::exec '"$SYSDIR\cmd.exe" /C "$R1"' ""
-    ${StrRep} '$R1' '$0' 'uninstall.exe' ''
-    ExecWait '"$0" _?=$R1'
+    ${StrRep} '$R1' '$0' '\uninstall.exe' ''
+    ExecWait '$0 _?=$INSTDIR'
   overwrite:
 FunctionEnd
 
