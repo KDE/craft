@@ -50,7 +50,7 @@
 ;General
 
   ; Define Name, File and Installdir of Installer
-  Name "${productname}"
+  Name "${productname_short}"
   OutFile "${setupname}"
   InstallDir "$PROGRAMFILES\${productname_short}"
 
@@ -145,8 +145,8 @@ Section ""
     "Field 2" "State"
   IntCmp $R0 0 no_start_menu
   # Create new Start menu entries
-  CreateDirectory "$SMPROGRAMS\${productname}"
-  CreateShortCut "$SMPROGRAMS\${productname}\${productname_short}.lnk" "$INSTDIR\bin\kontact.exe"
+  CreateDirectory "$SMPROGRAMS\${productname_short}"
+  CreateShortCut "$SMPROGRAMS\${productname_short}\${productname_short}.lnk" "$INSTDIR\bin\kontact.exe"
 #  CreateShortCut "$SMPROGRAMS\${productname}\Akonadiconsole.lnk" "$INSTDIR\bin\akonadiconsole.exe"
   no_start_menu:
 
@@ -426,6 +426,7 @@ Section "un."
 
   ; Delete start menu entries
   RMDir /R  "$SMPROGRAMS\${productname}"
+  RMDir /R  "$SMPROGRAMS\${productname_short}"
   ; Delete Desktop Icon
   Delete "$DESKTOP\${productname_short}.lnk"
 #  Delete "$DESKTOP\Akonadiconsole.lnk"
