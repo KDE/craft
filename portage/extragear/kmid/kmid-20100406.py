@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
           self.targets[ver] = 'http://downloads.sourceforge.net/kmid2/kmid-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'kmid-' + ver
         self.shortDescription = "a MIDI/Karaoke player for KDE4"
-        self.defaultTarget = '2.4.0'
+        self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
