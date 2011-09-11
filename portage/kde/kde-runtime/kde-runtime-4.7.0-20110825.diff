@@ -1,3 +1,14 @@
+diff -Nru kde-runtime-4.7.0.orig/drkonqi/CMakeLists.txt kde-runtime-4.7.0/drkonqi/CMakeLists.txt
+--- kde-runtime-4.7.0.orig/drkonqi/CMakeLists.txt	2011-05-20 22:32:25.000000000 +0200
++++ kde-runtime-4.7.0/drkonqi/CMakeLists.txt	2011-09-12 00:45:34.692097900 +0200
+@@ -68,6 +68,7 @@
+ # Comment this out for release.
+ #add_definitions(-DBACKTRACE_PARSER_DEBUG)
+ 
++kde4_add_app_icon(drkonqi_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/kbugbuster.png")
+ kde4_add_executable(drkonqi ${drkonqi_SRCS})
+ 
+ target_link_libraries(drkonqi ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY} ${KDE4_KDEWEBKIT_LIBRARY} drkonqi_backtrace_parser)
 diff -Nru kde-runtime-4.7.0.orig/drkonqi/tests/backtraceparsertest/CMakeLists.txt kde-runtime-4.7.0/drkonqi/tests/backtraceparsertest/CMakeLists.txt
 --- kde-runtime-4.7.0.orig/drkonqi/tests/backtraceparsertest/CMakeLists.txt	2011-05-20 22:32:25.000000000 +0200
 +++ kde-runtime-4.7.0/drkonqi/tests/backtraceparsertest/CMakeLists.txt	2011-08-25 10:53:38.585941500 +0200
@@ -21,4 +32,4 @@ diff -Nru kde-runtime-4.7.0.orig/drkonqi/tests/backtraceparsertest/CMakeLists.tx
 +						  )
 +	endif ( NOT ${CMAKE_CURRENT_BINARY_DIR} EQUAL ${CMAKE_CURRENT_SOURCE_DIR} )
 +endif( NOT WIN32 )
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.

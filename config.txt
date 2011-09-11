@@ -1,0 +1,893 @@
+;kdewin installer configuration file 
+@format 1.3
+; this format is *prelimary* and may be changed without prior notice
+@minversion 0.9.9
+@timestamp 201109020000
+@hash-typ sha1
+
+; metapackages
+@metapackage kdeedu kgeography blinken kturtle marble cantor kanagram khangman kalgebra klettres kalzium kig kiten kmplot rocs ktouch kstars kbruch step parley kwordquiz
+@metapackage kdegames bomber bovo kapman katomic kbattleship kblackbox kblocks kbounce kbreakout kdiamond kfourinline kgoldrunner kigo killbots kiriki kjumpingcube klickety klines kmahjongg kmines knetwalk kolf kollision konquest kpat kreversi ksame kshisen ksirk kspaceduel ksquares ksudoku ktron ktuberling kubrick lskat
+@metapackage kdegraphics mobipocket kdegraphics-strigi-analyzer kcolorchooser svgpart okular gwenview kolourpaint kruler ksnapshot ksaneplugin kdegraphics-thumbnailers
+@metapackage kdesdk umbrello lokalize kate kcachegrind okteta kbugbuster kompare
+
+; category notes 
+@categorynotes aspell-data Spelling packages 
+@categorynotes data data packages 
+@categorynotes KDE KDE packages
+@categorynotes kdesupport KDE support packages 
+@categorynotes win32libs external library packages
+@categorynotes kde-l10n KDE localization packages
+
+; to which category packages belong to
+@categorypackages win32libs expat-x64-mingw4 dbus-x64-mingw4 mysql openssl-x64-mingw4 zlib-x64-mingw4 libpng-x64-mingw4 vlc-x64-mingw4 win_iconv-x64-mingw4 libxml2-x64-mingw4 libbzip2-x64-mingw4 gettext-x64-mingw4
+@categorypackages win32libs exiv2-x64-mingw4 virtuoso-x64-mingw4 yajl-x64-mingw4 pcre-x64-mingw4 libcurl-x64-mingw4 libxslt-x64-mingw4 raptor2-x64-mingw4 rasqal-x64-mingw4 sqlite-x64-mingw4 pthreads-x64-mingw4 librdf-x64-mingw4
+@categorypackages win32libs boost-program-options-x64-mingw4 shared-mime-info-x64-mingw4 jpeg-x64-mingw4 jasper-x64-mingw4 giflib-x64-mingw4 aspell-x64-mingw4 boost-thread-x64-mingw4 boost-system-x64-mingw4 boost-python-x64-mingw4 boost-x64-mingw4 cyrus-sasl-x64-mingw4
+@categorypackages win32libs libical-x64-mingw4 gpg-error-x64-mingw4 assuan2-x64-mingw4 gpgme-x64-mingw4 libssh-x64-mingw4 freetype-x64-mingw4 openbabel-x64-mingw4 libnova-x64-mingw4 ghostscript-x64-mingw4 libspectre-x64-mingw4 tiff-x64-mingw4
+@categorypackages win32libs openjpeg-x64-mingw4 lcms-x64-mingw4 djvu-x64-mingw4 libogg-x64-mingw4 libvorbis-x64-mingw4 taglib-x64-mingw4 libmsn-x64-mingw4 libidn-x64-mingw4 libgmp-x64-mingw4 libzip-x64-mingw4 libarchive-x64-mingw4
+@categorypackages win32libs libsndfile-x64-mingw4 libsamplerate-x64-mingw4 libfftw-x64-mingw4 taglib-extras-x64-mingw4 opencv-x64-mingw4 mpir-x64-mingw4 libopensp-x64-mingw4 libofx-x64-mingw4
+@categorypackages KDE kdelibs-x64-mingw4 kdepimlibs-x64-mingw4 kde-runtime-x64-mingw4 kde-workspace-x64-mingw4 kde-baseapps-x64-mingw4 kgeography-x64-mingw4 blinken-x64-mingw4 kturtle-x64-mingw4 marble-x64-mingw4 cantor-x64-mingw4 libkdeedu-x64-mingw4
+@categorypackages KDE kanagram-x64-mingw4 khangman-x64-mingw4 kalgebra-x64-mingw4 klettres-x64-mingw4 kalzium-x64-mingw4 kig-x64-mingw4 kiten-x64-mingw4 kmplot-x64-mingw4 rocs-x64-mingw4 ktouch-x64-mingw4 kstars-x64-mingw4
+@categorypackages KDE kbruch-x64-mingw4 step-x64-mingw4 parley-x64-mingw4 kwordquiz-x64-mingw4 kdeedu-x64-mingw4 libkdegames-x64-mingw4 bomber-x64-mingw4 bovo-x64-mingw4 kapman-x64-mingw4 katomic-x64-mingw4 kbattleship-x64-mingw4
+@categorypackages KDE kblackbox-x64-mingw4 kblocks-x64-mingw4 kbounce-x64-mingw4 kbreakout-x64-mingw4 kdiamond-x64-mingw4 kfourinline-x64-mingw4 kgoldrunner-x64-mingw4 kigo-x64-mingw4 killbots-x64-mingw4 kiriki-x64-mingw4 kjumpingcube-x64-mingw4
+@categorypackages KDE klickety-x64-mingw4 klines-x64-mingw4 kmahjongg-x64-mingw4 kmines-x64-mingw4 knetwalk-x64-mingw4 kolf-x64-mingw4 kollision-x64-mingw4 konquest-x64-mingw4 kpat-x64-mingw4 kreversi-x64-mingw4 ksame-x64-mingw4
+@categorypackages KDE kshisen-x64-mingw4 ksirk-x64-mingw4 kspaceduel-x64-mingw4 ksquares-x64-mingw4 ksudoku-x64-mingw4 ktron-x64-mingw4 ktuberling-x64-mingw4 kubrick-x64-mingw4 lskat-x64-mingw4 kdegames-x64-mingw4 okular-x64-mingw4
+@categorypackages KDE mobipocket-x64-mingw4 kdegraphics-strigi-analyzer-x64-mingw4 kcolorchooser-x64-mingw4 svgpart-x64-mingw4 libksane-x64-mingw4 libkipi-x64-mingw4 gwenview-x64-mingw4 kolourpaint-x64-mingw4 kruler-x64-mingw4 libkexiv2-x64-mingw4 ksnapshot-x64-mingw4
+@categorypackages KDE libkdcraw-x64-mingw4 ksaneplugin-x64-mingw4 kdegraphics-thumbnailers-x64-mingw4 kdegraphics-x64-mingw4 kdemultimedia-x64-mingw4 kdenetwork-x64-mingw4 kdepim-runtime-x64-mingw4 kdepim-x64-mingw4 libkdesdk-x64-mingw4 umbrello-x64-mingw4 lokalize-x64-mingw4
+@categorypackages KDE kate-x64-mingw4 kcachegrind-x64-mingw4 okteta-x64-mingw4 kbugbuster-x64-mingw4 kompare-x64-mingw4 kdesdk-x64-mingw4 kdetoys-x64-mingw4 kdeutils-x64-mingw4 amarok-x64-mingw4 kate-x64-mingw4 kile-x64-mingw4
+@categorypackages KDE digikam-x64-mingw4 libalkimia-x64-mingw4 kmymoney-x64-mingw4 kmid-x64-mingw4 konversation-x64-mingw4 quassel-x64-mingw4 kregexpeditor-x64-mingw4 krecipes-x64-mingw4 skanlite-x64-mingw4 skrooge-x64-mingw4 zanshin-x64-mingw4
+@categorypackages data docbook-xsl docbook-dtd shared-desktop-ontologies poppler-data
+@categorypackages kdesupport qt-x64-mingw4 attica-x64-mingw4 qjson-x64-mingw4 dbusmenu-qt-x64-mingw4 kdewin-x64-mingw4 phonon-x64-mingw4 phonon-vlc-x64-mingw4 strigi-x64-mingw4 soprano-x64-mingw4 qca-x64-mingw4 qimageblitz-x64-mingw4
+@categorypackages kdesupport qtscriptgenerator-x64-mingw4 oxygen-icons-x64-mingw4 akonadi-x64-mingw4 snorenotify-x64-mingw4 eigen2-x64-mingw4 poppler-x64-mingw4 grantlee-x64-mingw4 liblastfm-x64-mingw4
+;
+; to which category packages belong to
+@categorypackages win32libs expat-x86-mingw4 dbus-x86-mingw4 openssl-x86-mingw4 zlib-x86-mingw4 libpng-x86-mingw4 vlc-x86-mingw4 win_iconv-x86-mingw4 libxml2-x86-mingw4 libbzip2-x86-mingw4 gettext-x86-mingw4 exiv2-x86-mingw4
+@categorypackages win32libs virtuoso-x86-mingw4 yajl-x86-mingw4 pcre-x86-mingw4 libcurl-x86-mingw4 libxslt-x86-mingw4 raptor2-x86-mingw4 rasqal-x86-mingw4 sqlite-x86-mingw4 pthreads-x86-mingw4 librdf-x86-mingw4 boost-program-options-x86-mingw4
+@categorypackages win32libs shared-mime-info-x86-mingw4 jpeg-x86-mingw4 jasper-x86-mingw4 giflib-x86-mingw4 aspell-x86-mingw4 boost-thread-x86-mingw4 boost-system-x86-mingw4 boost-python-x86-mingw4 boost-x86-mingw4 cyrus-sasl-x86-mingw4 libical-x86-mingw4
+@categorypackages win32libs gpg-error-x86-mingw4 assuan2-x86-mingw4 gpgme-x86-mingw4 libssh-x86-mingw4 freetype-x86-mingw4 openbabel-x86-mingw4 libnova-x86-mingw4 ghostscript-x86-mingw4 libspectre-x86-mingw4 tiff-x86-mingw4 openjpeg-x86-mingw4
+@categorypackages win32libs lcms-x86-mingw4 djvu-x86-mingw4 libogg-x86-mingw4 libvorbis-x86-mingw4 taglib-x86-mingw4 libmsn-x86-mingw4 libidn-x86-mingw4 libgmp-x86-mingw4 libzip-x86-mingw4 libarchive-x86-mingw4 libsndfile-x86-mingw4
+@categorypackages win32libs libsamplerate-x86-mingw4 libfftw-x86-mingw4 taglib-extras-x86-mingw4 opencv-x86-mingw4 mpir-x86-mingw4 libopensp-x86-mingw4 libofx-x86-mingw4
+@categorypackages KDE kdelibs-x86-mingw4 kdepimlibs-x86-mingw4 kde-runtime-x86-mingw4 kde-workspace-x86-mingw4 kde-baseapps-x86-mingw4 kgeography-x86-mingw4 blinken-x86-mingw4 kturtle-x86-mingw4 marble-x86-mingw4 cantor-x86-mingw4 libkdeedu-x86-mingw4
+@categorypackages KDE kanagram-x86-mingw4 khangman-x86-mingw4 kalgebra-x86-mingw4 klettres-x86-mingw4 kalzium-x86-mingw4 kig-x86-mingw4 kiten-x86-mingw4 kmplot-x86-mingw4 rocs-x86-mingw4 ktouch-x86-mingw4 kstars-x86-mingw4
+@categorypackages KDE kbruch-x86-mingw4 step-x86-mingw4 parley-x86-mingw4 kwordquiz-x86-mingw4 kdeedu-x86-mingw4 libkdegames-x86-mingw4 bomber-x86-mingw4 bovo-x86-mingw4 kapman-x86-mingw4 katomic-x86-mingw4 kbattleship-x86-mingw4
+@categorypackages KDE kblackbox-x86-mingw4 kblocks-x86-mingw4 kbounce-x86-mingw4 kbreakout-x86-mingw4 kdiamond-x86-mingw4 kfourinline-x86-mingw4 kgoldrunner-x86-mingw4 kigo-x86-mingw4 killbots-x86-mingw4 kiriki-x86-mingw4 kjumpingcube-x86-mingw4
+@categorypackages KDE klickety-x86-mingw4 klines-x86-mingw4 kmahjongg-x86-mingw4 kmines-x86-mingw4 knetwalk-x86-mingw4 kolf-x86-mingw4 kollision-x86-mingw4 konquest-x86-mingw4 kpat-x86-mingw4 kreversi-x86-mingw4 ksame-x86-mingw4
+@categorypackages KDE kshisen-x86-mingw4 ksirk-x86-mingw4 kspaceduel-x86-mingw4 ksquares-x86-mingw4 ksudoku-x86-mingw4 ktron-x86-mingw4 ktuberling-x86-mingw4 kubrick-x86-mingw4 lskat-x86-mingw4 kdegames-x86-mingw4 okular-x86-mingw4
+@categorypackages KDE mobipocket-x86-mingw4 kdegraphics-strigi-analyzer-x86-mingw4 kcolorchooser-x86-mingw4 svgpart-x86-mingw4 libksane-x86-mingw4 libkipi-x86-mingw4 gwenview-x86-mingw4 kolourpaint-x86-mingw4 kruler-x86-mingw4 libkexiv2-x86-mingw4 ksnapshot-x86-mingw4
+@categorypackages KDE libkdcraw-x86-mingw4 ksaneplugin-x86-mingw4 kdegraphics-thumbnailers-x86-mingw4 kdegraphics-x86-mingw4 kdemultimedia-x86-mingw4 kdenetwork-x86-mingw4 kdepim-runtime-x86-mingw4 kdepim-x86-mingw4 libkdesdk-x86-mingw4 umbrello-x86-mingw4 lokalize-x86-mingw4
+@categorypackages KDE kate-x86-mingw4 kcachegrind-x86-mingw4 okteta-x86-mingw4 kbugbuster-x86-mingw4 kompare-x86-mingw4 kdesdk-x86-mingw4 kdetoys-x86-mingw4 kdeutils-x86-mingw4 amarok-x86-mingw4 kate-x86-mingw4 kile-x86-mingw4
+@categorypackages KDE digikam-x86-mingw4 libalkimia-x86-mingw4 kmymoney-x86-mingw4 kmid-x86-mingw4 konversation-x86-mingw4 quassel-x86-mingw4 kregexpeditor-x86-mingw4 krecipes-x86-mingw4 skanlite-x86-mingw4 skrooge-x86-mingw4 zanshin-x86-mingw4
+@categorypackages kdesupport qt-x86-mingw4 attica-x86-mingw4 qjson-x86-mingw4 dbusmenu-qt-x86-mingw4 kdewin-x86-mingw4 phonon-x86-mingw4 phonon-vlc-x86-mingw4 strigi-x86-mingw4 soprano-x86-mingw4 qca-x86-mingw4 qimageblitz-x86-mingw4
+@categorypackages kdesupport qtscriptgenerator-x86-mingw4 oxygen-icons-x86-mingw4 akonadi-x86-mingw4 snorenotify-x86-mingw4 eigen2-x86-mingw4 poppler-x86-mingw4 grantlee-x86-mingw4 liblastfm-x86-mingw4
+;
+; to which category packages belong to
+@categorypackages win32libs expat-vc100 dbus-vc100 openssl-vc100 zlib-vc100 libpng-vc100 vlc-vc100 win_iconv-vc100 libxml2-vc100 libbzip2-vc100 gettext-vc100 exiv2-vc100
+@categorypackages win32libs virtuoso-vc100 yajl-vc100 pcre-vc100 libcurl-vc100 libxslt-vc100 raptor2-vc100 rasqal-vc100 sqlite-vc100 pthreads-vc100 librdf-vc100 boost-program-options-vc100
+@categorypackages win32libs shared-mime-info-vc100 jpeg-vc100 jasper-vc100 giflib-vc100 aspell-vc100 boost-thread-vc100 boost-system-vc100 boost-python-vc100 boost-vc100 cyrus-sasl-vc100 libical-vc100
+@categorypackages win32libs gpg-error-vc100 assuan2-vc100 gpgme-vc100 libssh-vc100 freetype-vc100 openbabel-vc100 libnova-vc100 ghostscript-vc100 libspectre-vc100 tiff-vc100 openjpeg-vc100
+@categorypackages win32libs lcms-vc100 djvu-vc100 libogg-vc100 libvorbis-vc100 taglib-vc100 libmsn-vc100 libidn-vc100 libgmp-vc100 libzip-vc100 libarchive-vc100 libsndfile-vc100
+@categorypackages win32libs libsamplerate-vc100 libfftw-vc100 taglib-extras-vc100 opencv-vc100 mpir-vc100 libopensp-vc100 libofx-vc100
+@categorypackages KDE kdelibs-vc100 kdepimlibs-vc100 kde-runtime-vc100 kde-workspace-vc100 kde-baseapps-vc100 kgeography-vc100 blinken-vc100 kturtle-vc100 marble-vc100 cantor-vc100 libkdeedu-vc100
+@categorypackages KDE kanagram-vc100 khangman-vc100 kalgebra-vc100 klettres-vc100 kalzium-vc100 kig-vc100 kiten-vc100 kmplot-vc100 rocs-vc100 ktouch-vc100 kstars-vc100
+@categorypackages KDE kbruch-vc100 step-vc100 parley-vc100 kwordquiz-vc100 kdeedu-vc100 libkdegames-vc100 bomber-vc100 bovo-vc100 kapman-vc100 katomic-vc100 kbattleship-vc100
+@categorypackages KDE kblackbox-vc100 kblocks-vc100 kbounce-vc100 kbreakout-vc100 kdiamond-vc100 kfourinline-vc100 kgoldrunner-vc100 kigo-vc100 killbots-vc100 kiriki-vc100 kjumpingcube-vc100
+@categorypackages KDE klickety-vc100 klines-vc100 kmahjongg-vc100 kmines-vc100 knetwalk-vc100 kolf-vc100 kollision-vc100 konquest-vc100 kpat-vc100 kreversi-vc100 ksame-vc100
+@categorypackages KDE kshisen-vc100 ksirk-vc100 kspaceduel-vc100 ksquares-vc100 ksudoku-vc100 ktron-vc100 ktuberling-vc100 kubrick-vc100 lskat-vc100 kdegames-vc100 okular-vc100
+@categorypackages KDE mobipocket-vc100 kdegraphics-strigi-analyzer-vc100 kcolorchooser-vc100 svgpart-vc100 libksane-vc100 libkipi-vc100 gwenview-vc100 kolourpaint-vc100 kruler-vc100 libkexiv2-vc100 ksnapshot-vc100
+@categorypackages KDE libkdcraw-vc100 ksaneplugin-vc100 kdegraphics-thumbnailers-vc100 kdegraphics-vc100 kdemultimedia-vc100 kdenetwork-vc100 kdepim-runtime-vc100 kdepim-vc100 libkdesdk-vc100 umbrello-vc100 lokalize-vc100
+@categorypackages KDE kate-vc100 kcachegrind-vc100 okteta-vc100 kbugbuster-vc100 kompare-vc100 kdesdk-vc100 kdetoys-vc100 kdeutils-vc100 amarok-vc100 kate-vc100 kile-vc100
+@categorypackages KDE digikam-vc100 libalkimia-vc100 kmymoney-vc100 kmid-vc100 konversation-vc100 quassel-vc100 kregexpeditor-vc100 krecipes-vc100 skanlite-vc100 skrooge-vc100 zanshin-vc100
+@categorypackages kdesupport qt-vc100 attica-vc100 qjson-vc100 dbusmenu-qt-vc100 kdewin-vc100 phonon-vc100 phonon-vlc-vc100 strigi-vc100 soprano-vc100 qca-vc100 qimageblitz-vc100
+@categorypackages kdesupport qtscriptgenerator-vc100 oxygen-icons-vc100 akonadi-vc100 snorenotify-vc100 eigen2-vc100 poppler-vc100 grantlee-vc100 liblastfm-vc100
+;
+@categorypackages kde-l10n kde4-l10n-af kde4-l10n-ar kde4-l10n-be kde4-l10n-bg kde4-l10n-bn kde4-l10n-bn_IN kde4-l10n-br kde4-l10n-ca kde4-l10n-cs kde4-l10n-csb kde4-l10n-cy kde4-l10n-da kde4-l10n-de kde4-l10n-el kde4-l10n-en_GB 
+@categorypackages kde-l10n kde4-l10n-eo kde4-l10n-es kde4-l10n-et kde4-l10n-eu kde4-l10n-fa kde4-l10n-fi kde4-l10n-fr kde4-l10n-fy kde4-l10n-ga kde4-l10n-gl kde4-l10n-gu kde4-l10n-ha kde4-l10n-he kde4-l10n-hi kde4-l10n-hne kde4-l10n-hr kde4-l10n-hsb 
+@categorypackages kde-l10n kde4-l10n-hu kde4-l10n-hy kde4-l10n-is kde4-l10n-it kde4-l10n-ja kde4-l10n-ka kde4-l10n-kk kde4-l10n-km kde4-l10n-kn kde4-l10n-ko kde4-l10n-ku kde4-l10n-lb kde4-l10n-lt kde4-l10n-lv kde4-l10n-mai kde4-l10n-ml kde4-l10n-mk 
+@categorypackages kde-l10n kde4-l10n-mr kde4-l10n-ms kde4-l10n-mt kde4-l10n-nb kde4-l10n-nds kde4-l10n-ne kde4-l10n-nl kde4-l10n-nn kde4-l10n-nso kde4-l10n-oc kde4-l10n-pa kde4-l10n-pl kde4-l10n-pt kde4-l10n-pt_BR kde4-l10n-ro kde4-l10n-ru 
+@categorypackages kde-l10n kde4-l10n-rw kde4-l10n-se kde4-l10n-sk kde4-l10n-sl kde4-l10n-sr kde4-l10n-sr@latin kde4-l10n-sv kde4-l10n-ta kde4-l10n-te kde4-l10n-tg kde4-l10n-th kde4-l10n-tr kde4-l10n-uk kde4-l10n-uz kde4-l10n-vi 
+@categorypackages kde-l10n kde4-l10n-wa kde4-l10n-xh kde4-l10n-x-test kde4-l10n-zh_CN kde4-l10n-zh_HK kde4-l10n-zh_TW
+
+@categorypackages aspell-data aspell-af aspell-am aspell-ar aspell-az aspell-be aspell-bg aspell-bn aspell-br aspell-ca aspell-cs aspell-csb aspell-cy aspell-da aspell-de aspell-el aspell-en 
+@categorypackages aspell-data aspell-eo aspell-es aspell-et aspell-fa aspell-fi aspell-fo aspell-fr aspell-ga aspell-gd aspell-gl aspell-gv aspell-he aspell-hi aspell-hil aspell-hr aspell-hsb 
+@categorypackages aspell-data aspell-hu aspell-ia aspell-id aspell-is aspell-it aspell-ku aspell-la aspell-lt aspell-lv aspell-mg aspell-mi aspell-mk aspell-mn aspell-mr aspell-ms aspell-mt 
+@categorypackages aspell-data aspell-nb aspell-nn aspell-no aspell-ny aspell-or aspell-pa aspell-pl aspell-pt aspell-qu aspell-ro aspell-ru aspell-rw aspell-sc aspell-sk aspell-sl aspell-sr 
+@categorypackages aspell-data aspell-sv aspell-sw aspell-ta aspell-tet aspell-tl aspell-tn aspell-tr aspell-uk aspell-uz aspell-vi aspell-wa aspell-yi aspell-zu
+
+@endusercategories aspell-data KDE kde-l10n
+
+;------------------------------------------------------
+; all packages on the mirror
+;------------------------------------------------------
+@site all
+@type apachemodindex
+@url .
+;
+@exclude config.txt
+; package dependencies for compiler x64-mingw4
+@deps expat-x64-mingw4 runtime-x64-mingw4
+@deps dbus-x64-mingw4 runtime-x64-mingw4 expat-x64-mingw4
+@deps openssl-x64-mingw4 runtime-x64-mingw4
+@deps qt-x64-mingw4 runtime-x64-mingw4 dbus-x64-mingw4 mysql openssl-x64-mingw4
+@deps attica-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4
+@deps qjson-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4
+@deps dbusmenu-qt-x64-mingw4 runtime-x64-mingw4 qjson-x64-mingw4 qt-x64-mingw4
+@deps zlib-x64-mingw4 runtime-x64-mingw4
+@deps libpng-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4
+@deps kdewin-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4 qt-x64-mingw4 libpng-x64-mingw4
+@deps phonon-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4
+@deps vlc-x64-mingw4 runtime-x64-mingw4
+@deps phonon-vlc-x64-mingw4 runtime-x64-mingw4 phonon-x64-mingw4 vlc-x64-mingw4 kdewin-x64-mingw4
+@deps win_iconv-x64-mingw4 runtime-x64-mingw4
+@deps libxml2-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4 win_iconv-x64-mingw4
+@deps libbzip2-x64-mingw4 runtime-x64-mingw4
+@deps gettext-x64-mingw4 runtime-x64-mingw4 win_iconv-x64-mingw4
+@deps exiv2-x64-mingw4 runtime-x64-mingw4 gettext-x64-mingw4 expat-x64-mingw4 win_iconv-x64-mingw4 zlib-x64-mingw4
+@deps strigi-x64-mingw4 runtime-x64-mingw4 libxml2-x64-mingw4 zlib-x64-mingw4 qt-x64-mingw4 libbzip2-x64-mingw4 exiv2-x64-mingw4 win_iconv-x64-mingw4
+@deps virtuoso-x64-mingw4 runtime-x64-mingw4
+@deps yajl-x64-mingw4 runtime-x64-mingw4
+@deps pcre-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4 libbzip2-x64-mingw4
+@deps libcurl-x64-mingw4 runtime-x64-mingw4
+@deps libxslt-x64-mingw4 runtime-x64-mingw4 libxml2-x64-mingw4
+@deps raptor2-x64-mingw4 runtime-x64-mingw4 expat-x64-mingw4 libxml2-x64-mingw4 yajl-x64-mingw4 libcurl-x64-mingw4 libxslt-x64-mingw4
+@deps rasqal-x64-mingw4 runtime-x64-mingw4 libxml2-x64-mingw4 expat-x64-mingw4 yajl-x64-mingw4 pcre-x64-mingw4 raptor2-x64-mingw4 libcurl-x64-mingw4 libxslt-x64-mingw4
+@deps sqlite-x64-mingw4 runtime-x64-mingw4
+@deps pthreads-x64-mingw4 runtime-x64-mingw4
+@deps librdf-x64-mingw4 runtime-x64-mingw4 rasqal-x64-mingw4 raptor2-x64-mingw4 sqlite-x64-mingw4 pthreads-x64-mingw4
+@deps soprano-x64-mingw4 runtime-x64-mingw4 virtuoso-x64-mingw4 qt-x64-mingw4 librdf-x64-mingw4
+@deps qca-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4 openssl-x64-mingw4
+@deps qimageblitz-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4
+@deps qtscriptgenerator-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4 runtime-x64-mingw4
+@deps oxygen-icons-x64-mingw4 runtime-x64-mingw4
+@deps boost-program-options-x64-mingw4 runtime-x64-mingw4
+@deps shared-mime-info-x64-mingw4 runtime-x64-mingw4 gettext-x64-mingw4 libxml2-x64-mingw4
+@deps akonadi-x64-mingw4 runtime-x64-mingw4 boost-program-options-x64-mingw4 shared-mime-info-x64-mingw4 soprano-x64-mingw4 qt-x64-mingw4 sqlite-x64-mingw4 libxslt-x64-mingw4
+@deps jpeg-x64-mingw4 runtime-x64-mingw4
+@deps jasper-x64-mingw4 runtime-x64-mingw4 jpeg-x64-mingw4
+@deps giflib-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4
+@deps aspell-x64-mingw4 runtime-x64-mingw4 win_iconv-x64-mingw4
+@deps kdelibs-x64-mingw4 runtime-x64-mingw4 attica-x64-mingw4 dbusmenu-qt-x64-mingw4 qca-x64-mingw4 docbook-xsl strigi-x64-mingw4 runtime-x64-mingw4 jasper-x64-mingw4 libpng-x64-mingw4 gettext-x64-mingw4 giflib-x64-mingw4 zlib-x64-mingw4 shared-mime-info-x64-mingw4 jpeg-x64-mingw4 libbzip2-x64-mingw4 libxslt-x64-mingw4 pcre-x64-mingw4 openssl-x64-mingw4 aspell-x64-mingw4 libxml2-x64-mingw4 phonon-x64-mingw4 kdewin-x64-mingw4 docbook-dtd soprano-x64-mingw4 qimageblitz-x64-mingw4 shared-desktop-ontologies
+@deps boost-thread-x64-mingw4 runtime-x64-mingw4
+@deps boost-system-x64-mingw4 runtime-x64-mingw4
+@deps snorenotify-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 qt-x64-mingw4 boost-thread-x64-mingw4 boost-system-x64-mingw4
+@deps boost-python-x64-mingw4 runtime-x64-mingw4
+@deps boost-x64-mingw4 runtime-x64-mingw4 boost-program-options-x64-mingw4 boost-python-x64-mingw4 boost-thread-x64-mingw4 boost-system-x64-mingw4
+@deps cyrus-sasl-x64-mingw4 runtime-x64-mingw4
+@deps libical-x64-mingw4 runtime-x64-mingw4
+@deps gpg-error-x64-mingw4 runtime-x64-mingw4
+@deps assuan2-x64-mingw4 runtime-x64-mingw4 gpg-error-x64-mingw4
+@deps gpgme-x64-mingw4 runtime-x64-mingw4 assuan2-x64-mingw4 gpg-error-x64-mingw4
+@deps kdepimlibs-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 boost-x64-mingw4 cyrus-sasl-x64-mingw4 libical-x64-mingw4 gpgme-x64-mingw4 akonadi-x64-mingw4
+@deps libssh-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4 openssl-x64-mingw4
+@deps kde-runtime-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4
+@deps freetype-x64-mingw4 runtime-x64-mingw4
+@deps kde-workspace-x64-mingw4 runtime-x64-mingw4 freetype-x64-mingw4 kde-runtime-x64-mingw4 akonadi-x64-mingw4
+@deps kde-baseapps-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kgeography-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps blinken-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kturtle-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps marble-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps cantor-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps libkdeedu-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kanagram-x64-mingw4 runtime-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4
+@deps khangman-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kalgebra-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps klettres-x64-mingw4 runtime-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4
+@deps openbabel-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4 libxml2-x64-mingw4
+@deps kalzium-x64-mingw4 runtime-x64-mingw4 libkdeedu-x64-mingw4 openbabel-x64-mingw4
+@deps kig-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kiten-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kmplot-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps rocs-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps ktouch-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps libnova-x64-mingw4 runtime-x64-mingw4
+@deps eigen2-x64-mingw4 runtime-x64-mingw4
+@deps kstars-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 libnova-x64-mingw4 eigen2-x64-mingw4
+@deps kbruch-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps step-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 eigen2-x64-mingw4
+@deps parley-x64-mingw4 runtime-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4
+@deps kwordquiz-x64-mingw4 runtime-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4 libkdeedu-x64-mingw4
+@deps kdeedu-x64-mingw4 runtime-x64-mingw4 kgeography-x64-mingw4 blinken-x64-mingw4 kturtle-x64-mingw4 marble-x64-mingw4 cantor-x64-mingw4 kanagram-x64-mingw4 khangman-x64-mingw4 kalgebra-x64-mingw4 klettres-x64-mingw4 libkdeedu-x64-mingw4 kalzium-x64-mingw4 kig-x64-mingw4 kiten-x64-mingw4 kmplot-x64-mingw4 rocs-x64-mingw4 ktouch-x64-mingw4 kstars-x64-mingw4 kbruch-x64-mingw4 step-x64-mingw4 parley-x64-mingw4 kwordquiz-x64-mingw4
+@deps libkdegames-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps bomber-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps bovo-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kapman-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps katomic-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kbattleship-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kblackbox-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kblocks-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kbounce-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kbreakout-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kdiamond-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kfourinline-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kgoldrunner-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kigo-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps killbots-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kiriki-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kjumpingcube-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps klickety-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps klines-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kmahjongg-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kmines-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps knetwalk-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kolf-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kollision-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps konquest-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kpat-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kreversi-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps ksame-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kshisen-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps ksirk-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4 qca-x64-mingw4
+@deps kspaceduel-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps ksquares-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps ksudoku-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps ktron-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps ktuberling-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kubrick-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps lskat-x64-mingw4 runtime-x64-mingw4 libkdegames-x64-mingw4
+@deps kdegames-x64-mingw4 runtime-x64-mingw4 bomber-x64-mingw4 bovo-x64-mingw4 kapman-x64-mingw4 katomic-x64-mingw4 kbattleship-x64-mingw4 kblackbox-x64-mingw4 kblocks-x64-mingw4 kbounce-x64-mingw4 kbreakout-x64-mingw4 kdiamond-x64-mingw4 kfourinline-x64-mingw4 kgoldrunner-x64-mingw4 kigo-x64-mingw4 killbots-x64-mingw4 kiriki-x64-mingw4 kjumpingcube-x64-mingw4 klickety-x64-mingw4 klines-x64-mingw4 kmahjongg-x64-mingw4 kmines-x64-mingw4 knetwalk-x64-mingw4 kolf-x64-mingw4 kollision-x64-mingw4 konquest-x64-mingw4 kpat-x64-mingw4 kreversi-x64-mingw4 ksame-x64-mingw4 kshisen-x64-mingw4 ksirk-x64-mingw4 kspaceduel-x64-mingw4 ksquares-x64-mingw4 ksudoku-x64-mingw4 ktron-x64-mingw4 ktuberling-x64-mingw4 kubrick-x64-mingw4 lskat-x64-mingw4
+@deps ghostscript-x64-mingw4 runtime-x64-mingw4
+@deps libspectre-x64-mingw4 runtime-x64-mingw4 ghostscript-x64-mingw4
+@deps tiff-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4
+@deps openjpeg-x64-mingw4 runtime-x64-mingw4 tiff-x64-mingw4
+@deps lcms-x64-mingw4 runtime-x64-mingw4
+@deps poppler-x64-mingw4 runtime-x64-mingw4 libpng-x64-mingw4 openjpeg-x64-mingw4 zlib-x64-mingw4 qt-x64-mingw4 jpeg-x64-mingw4 lcms-x64-mingw4 freetype-x64-mingw4 poppler-data libxml2-x64-mingw4
+@deps djvu-x64-mingw4 runtime-x64-mingw4
+@deps okular-x64-mingw4 runtime-x64-mingw4 libspectre-x64-mingw4 qca-x64-mingw4 zlib-x64-mingw4 kdelibs-x64-mingw4 tiff-x64-mingw4 poppler-x64-mingw4 freetype-x64-mingw4 kde-runtime-x64-mingw4 qimageblitz-x64-mingw4 djvu-x64-mingw4
+@deps mobipocket-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 strigi-x64-mingw4 okular-x64-mingw4
+@deps kdegraphics-strigi-analyzer-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 tiff-x64-mingw4 strigi-x64-mingw4
+@deps kcolorchooser-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps svgpart-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps libksane-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps libkipi-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps gwenview-x64-mingw4 runtime-x64-mingw4 libkipi-x64-mingw4 kde-baseapps-x64-mingw4 exiv2-x64-mingw4 jpeg-x64-mingw4
+@deps kolourpaint-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 qimageblitz-x64-mingw4
+@deps kruler-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps libkexiv2-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 exiv2-x64-mingw4
+@deps ksnapshot-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps libkdcraw-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps ksaneplugin-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4 libksane-x64-mingw4
+@deps kdegraphics-thumbnailers-x64-mingw4 runtime-x64-mingw4 kdelibs-x64-mingw4
+@deps kdegraphics-x64-mingw4 runtime-x64-mingw4 mobipocket-x64-mingw4 kdegraphics-strigi-analyzer-x64-mingw4 kcolorchooser-x64-mingw4 svgpart-x64-mingw4 libksane-x64-mingw4 okular-x64-mingw4 gwenview-x64-mingw4 kolourpaint-x64-mingw4 kruler-x64-mingw4 libkexiv2-x64-mingw4 ksnapshot-x64-mingw4 libkipi-x64-mingw4 libkdcraw-x64-mingw4 ksaneplugin-x64-mingw4 kdegraphics-thumbnailers-x64-mingw4
+@deps libogg-x64-mingw4 runtime-x64-mingw4
+@deps libvorbis-x64-mingw4 runtime-x64-mingw4 libogg-x64-mingw4
+@deps taglib-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4
+@deps kdemultimedia-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 libogg-x64-mingw4 libvorbis-x64-mingw4 kdelibs-x64-mingw4 taglib-x64-mingw4
+@deps libmsn-x64-mingw4 runtime-x64-mingw4 openssl-x64-mingw4
+@deps libidn-x64-mingw4 runtime-x64-mingw4
+@deps libgmp-x64-mingw4 runtime-x64-mingw4
+@deps kdenetwork-x64-mingw4 runtime-x64-mingw4 libmsn-x64-mingw4 kdepimlibs-x64-mingw4 libidn-x64-mingw4 libgmp-x64-mingw4 kde-runtime-x64-mingw4 qca-x64-mingw4
+@deps grantlee-x64-mingw4 runtime-x64-mingw4 qt-x64-mingw4
+@deps kdepim-runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdepimlibs-x64-mingw4 sqlite-x64-mingw4 grantlee-x64-mingw4
+@deps kdepim-x64-mingw4 runtime-x64-mingw4 kdepim-runtime-x64-mingw4 grantlee-x64-mingw4 kdepimlibs-x64-mingw4 sqlite-x64-mingw4
+@deps libkdesdk-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps umbrello-x64-mingw4 runtime-x64-mingw4 libkdesdk-x64-mingw4
+@deps lokalize-x64-mingw4 runtime-x64-mingw4 libkdesdk-x64-mingw4
+@deps kate-x64-mingw4 runtime-x64-mingw4
+@deps kcachegrind-x64-mingw4 runtime-x64-mingw4 libkdesdk-x64-mingw4
+@deps okteta-x64-mingw4 runtime-x64-mingw4
+@deps kbugbuster-x64-mingw4 runtime-x64-mingw4 libkdesdk-x64-mingw4
+@deps kompare-x64-mingw4 runtime-x64-mingw4 libkdesdk-x64-mingw4
+@deps kdesdk-x64-mingw4 runtime-x64-mingw4 libkdesdk-x64-mingw4 umbrello-x64-mingw4 lokalize-x64-mingw4 kate-x64-mingw4 kcachegrind-x64-mingw4 okteta-x64-mingw4 kbugbuster-x64-mingw4 kompare-x64-mingw4
+@deps kdetoys-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps libzip-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4
+@deps libarchive-x64-mingw4 runtime-x64-mingw4 zlib-x64-mingw4 openssl-x64-mingw4 libbzip2-x64-mingw4 libxml2-x64-mingw4
+@deps kdeutils-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 libzip-x64-mingw4 kdepimlibs-x64-mingw4 libarchive-x64-mingw4
+@deps libsndfile-x64-mingw4 runtime-x64-mingw4 libogg-x64-mingw4 libvorbis-x64-mingw4
+@deps libsamplerate-x64-mingw4 runtime-x64-mingw4 libsndfile-x64-mingw4
+@deps libfftw-x64-mingw4 runtime-x64-mingw4
+@deps liblastfm-x64-mingw4 runtime-x64-mingw4 libsamplerate-x64-mingw4 qt-x64-mingw4 libfftw-x64-mingw4
+@deps taglib-extras-x64-mingw4 runtime-x64-mingw4 taglib-x64-mingw4
+@deps amarok-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4 mysql liblastfm-x64-mingw4 taglib-extras-x64-mingw4 qca-x64-mingw4 gettext-x64-mingw4 phonon-x64-mingw4 taglib-x64-mingw4 qtscriptgenerator-x64-mingw4
+@deps kate-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4
+@deps kile-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4
+@deps opencv-x64-mingw4 runtime-x64-mingw4
+@deps digikam-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4 marble-x64-mingw4 gettext-x64-mingw4 tiff-x64-mingw4 lcms-x64-mingw4 libkexiv2-x64-mingw4 opencv-x64-mingw4 libkipi-x64-mingw4 libkdcraw-x64-mingw4
+@deps mpir-x64-mingw4 runtime-x64-mingw4
+@deps libalkimia-x64-mingw4 runtime-x64-mingw4 mpir-x64-mingw4
+@deps libopensp-x64-mingw4 runtime-x64-mingw4
+@deps libofx-x64-mingw4 runtime-x64-mingw4 libopensp-x64-mingw4 win_iconv-x64-mingw4
+@deps kmymoney-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4 mysql libalkimia-x64-mingw4 gettext-x64-mingw4 libofx-x64-mingw4 sqlite-x64-mingw4 runtime-x64-mingw4 kdepimlibs-x64-mingw4 kdelibs-x64-mingw4 boost-x64-mingw4 cyrus-sasl-x64-mingw4 libical-x64-mingw4 gpgme-x64-mingw4 akonadi-x64-mingw4
+@deps kmid-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4
+@deps konversation-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4 qca-x64-mingw4 runtime-x64-mingw4 kdepimlibs-x64-mingw4 kdelibs-x64-mingw4 boost-x64-mingw4 cyrus-sasl-x64-mingw4 libical-x64-mingw4 gpgme-x64-mingw4 akonadi-x64-mingw4
+@deps pkg-config-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4
+@deps quassel-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4 pkg-config-x64-mingw4
+@deps kregexpeditor-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4
+@deps krecipes-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 oxygen-icons-x64-mingw4 libssh-x64-mingw4
+@deps skanlite-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kdegraphics-x64-mingw4 mobipocket-x64-mingw4 kdegraphics-strigi-analyzer-x64-mingw4 kcolorchooser-x64-mingw4 svgpart-x64-mingw4 libksane-x64-mingw4 okular-x64-mingw4 gwenview-x64-mingw4 kolourpaint-x64-mingw4 kruler-x64-mingw4 libkexiv2-x64-mingw4 ksnapshot-x64-mingw4 libkipi-x64-mingw4 libkdcraw-x64-mingw4 ksaneplugin-x64-mingw4 kdegraphics-thumbnailers-x64-mingw4
+@deps skrooge-x64-mingw4 runtime-x64-mingw4 kde-runtime-x64-mingw4 kdelibs-x64-mingw4 qt-x64-mingw4 libopensp-x64-mingw4 qca-x64-mingw4
+@deps zanshin-x64-mingw4 runtime-x64-mingw4 runtime-x64-mingw4 kdepimlibs-x64-mingw4 kdelibs-x64-mingw4 boost-x64-mingw4 cyrus-sasl-x64-mingw4 libical-x64-mingw4 gpgme-x64-mingw4 akonadi-x64-mingw4
+;
+; package dependencies for compiler x86-mingw4
+@deps expat-x86-mingw4 runtime-x86-mingw4
+@deps dbus-x86-mingw4 runtime-x86-mingw4 expat-x86-mingw4
+@deps openssl-x86-mingw4 runtime-x86-mingw4
+@deps qt-x86-mingw4 runtime-x86-mingw4 dbus-x86-mingw4 mysql openssl-x86-mingw4
+@deps attica-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4
+@deps qjson-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4
+@deps dbusmenu-qt-x86-mingw4 runtime-x86-mingw4 qjson-x86-mingw4 qt-x86-mingw4
+@deps zlib-x86-mingw4 runtime-x86-mingw4
+@deps libpng-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4
+@deps kdewin-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4 qt-x86-mingw4 libpng-x86-mingw4
+@deps phonon-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4
+@deps vlc-x86-mingw4 runtime-x86-mingw4
+@deps phonon-vlc-x86-mingw4 runtime-x86-mingw4 phonon-x86-mingw4 vlc-x86-mingw4 kdewin-x86-mingw4
+@deps win_iconv-x86-mingw4 runtime-x86-mingw4
+@deps libxml2-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4 win_iconv-x86-mingw4
+@deps libbzip2-x86-mingw4 runtime-x86-mingw4
+@deps gettext-x86-mingw4 runtime-x86-mingw4 win_iconv-x86-mingw4
+@deps exiv2-x86-mingw4 runtime-x86-mingw4 gettext-x86-mingw4 expat-x86-mingw4 win_iconv-x86-mingw4 zlib-x86-mingw4
+@deps strigi-x86-mingw4 runtime-x86-mingw4 libxml2-x86-mingw4 zlib-x86-mingw4 qt-x86-mingw4 libbzip2-x86-mingw4 exiv2-x86-mingw4 win_iconv-x86-mingw4
+@deps virtuoso-x86-mingw4 runtime-x86-mingw4
+@deps yajl-x86-mingw4 runtime-x86-mingw4
+@deps pcre-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4 libbzip2-x86-mingw4
+@deps libcurl-x86-mingw4 runtime-x86-mingw4
+@deps libxslt-x86-mingw4 runtime-x86-mingw4 libxml2-x86-mingw4
+@deps raptor2-x86-mingw4 runtime-x86-mingw4 expat-x86-mingw4 libxml2-x86-mingw4 yajl-x86-mingw4 libcurl-x86-mingw4 libxslt-x86-mingw4
+@deps rasqal-x86-mingw4 runtime-x86-mingw4 libxml2-x86-mingw4 expat-x86-mingw4 yajl-x86-mingw4 pcre-x86-mingw4 raptor2-x86-mingw4 libcurl-x86-mingw4 libxslt-x86-mingw4
+@deps sqlite-x86-mingw4 runtime-x86-mingw4
+@deps pthreads-x86-mingw4 runtime-x86-mingw4
+@deps librdf-x86-mingw4 runtime-x86-mingw4 rasqal-x86-mingw4 raptor2-x86-mingw4 sqlite-x86-mingw4 pthreads-x86-mingw4
+@deps soprano-x86-mingw4 runtime-x86-mingw4 virtuoso-x86-mingw4 qt-x86-mingw4 librdf-x86-mingw4
+@deps qca-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4 openssl-x86-mingw4
+@deps qimageblitz-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4
+@deps qtscriptgenerator-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4 runtime-x86-mingw4
+@deps oxygen-icons-x86-mingw4 runtime-x86-mingw4
+@deps boost-program-options-x86-mingw4 runtime-x86-mingw4
+@deps shared-mime-info-x86-mingw4 runtime-x86-mingw4 gettext-x86-mingw4 libxml2-x86-mingw4
+@deps akonadi-x86-mingw4 runtime-x86-mingw4 boost-program-options-x86-mingw4 shared-mime-info-x86-mingw4 soprano-x86-mingw4 qt-x86-mingw4 sqlite-x86-mingw4 libxslt-x86-mingw4
+@deps jpeg-x86-mingw4 runtime-x86-mingw4
+@deps jasper-x86-mingw4 runtime-x86-mingw4 jpeg-x86-mingw4
+@deps giflib-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4
+@deps aspell-x86-mingw4 runtime-x86-mingw4 win_iconv-x86-mingw4
+@deps kdelibs-x86-mingw4 runtime-x86-mingw4 attica-x86-mingw4 dbusmenu-qt-x86-mingw4 qca-x86-mingw4 docbook-xsl strigi-x86-mingw4 runtime-x86-mingw4 jasper-x86-mingw4 libpng-x86-mingw4 gettext-x86-mingw4 giflib-x86-mingw4 zlib-x86-mingw4 shared-mime-info-x86-mingw4 jpeg-x86-mingw4 libbzip2-x86-mingw4 libxslt-x86-mingw4 pcre-x86-mingw4 openssl-x86-mingw4 aspell-x86-mingw4 libxml2-x86-mingw4 phonon-vlc-x86-mingw4 phonon-x86-mingw4 kdewin-x86-mingw4 docbook-dtd soprano-x86-mingw4 qimageblitz-x86-mingw4 shared-desktop-ontologies
+@deps boost-thread-x86-mingw4 runtime-x86-mingw4
+@deps boost-system-x86-mingw4 runtime-x86-mingw4
+@deps snorenotify-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 qt-x86-mingw4 boost-thread-x86-mingw4 boost-system-x86-mingw4
+@deps boost-python-x86-mingw4 runtime-x86-mingw4
+@deps boost-x86-mingw4 runtime-x86-mingw4 boost-program-options-x86-mingw4 boost-python-x86-mingw4 boost-thread-x86-mingw4 boost-system-x86-mingw4
+@deps cyrus-sasl-x86-mingw4 runtime-x86-mingw4
+@deps libical-x86-mingw4 runtime-x86-mingw4
+@deps gpg-error-x86-mingw4 runtime-x86-mingw4
+@deps assuan2-x86-mingw4 runtime-x86-mingw4 gpg-error-x86-mingw4
+@deps gpgme-x86-mingw4 runtime-x86-mingw4 assuan2-x86-mingw4 gpg-error-x86-mingw4
+@deps kdepimlibs-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 boost-x86-mingw4 cyrus-sasl-x86-mingw4 libical-x86-mingw4 gpgme-x86-mingw4 akonadi-x86-mingw4
+@deps libssh-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4 openssl-x86-mingw4
+@deps kde-runtime-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4
+@deps freetype-x86-mingw4 runtime-x86-mingw4
+@deps kde-workspace-x86-mingw4 runtime-x86-mingw4 freetype-x86-mingw4 kde-runtime-x86-mingw4 akonadi-x86-mingw4
+@deps kde-baseapps-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kgeography-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps blinken-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kturtle-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps marble-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps cantor-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps libkdeedu-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kanagram-x86-mingw4 runtime-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4
+@deps khangman-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kalgebra-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps klettres-x86-mingw4 runtime-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4
+@deps openbabel-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4 libxml2-x86-mingw4
+@deps kalzium-x86-mingw4 runtime-x86-mingw4 libkdeedu-x86-mingw4 openbabel-x86-mingw4
+@deps kig-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kiten-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kmplot-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps rocs-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps ktouch-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps libnova-x86-mingw4 runtime-x86-mingw4
+@deps eigen2-x86-mingw4 runtime-x86-mingw4
+@deps kstars-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 libnova-x86-mingw4 eigen2-x86-mingw4
+@deps kbruch-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps step-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 eigen2-x86-mingw4
+@deps parley-x86-mingw4 runtime-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4
+@deps kwordquiz-x86-mingw4 runtime-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4 libkdeedu-x86-mingw4
+@deps kdeedu-x86-mingw4 runtime-x86-mingw4 kgeography-x86-mingw4 blinken-x86-mingw4 kturtle-x86-mingw4 marble-x86-mingw4 cantor-x86-mingw4 kanagram-x86-mingw4 khangman-x86-mingw4 kalgebra-x86-mingw4 klettres-x86-mingw4 libkdeedu-x86-mingw4 kalzium-x86-mingw4 kig-x86-mingw4 kiten-x86-mingw4 kmplot-x86-mingw4 rocs-x86-mingw4 ktouch-x86-mingw4 kstars-x86-mingw4 kbruch-x86-mingw4 step-x86-mingw4 parley-x86-mingw4 kwordquiz-x86-mingw4
+@deps libkdegames-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps bomber-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps bovo-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kapman-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps katomic-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kbattleship-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kblackbox-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kblocks-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kbounce-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kbreakout-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kdiamond-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kfourinline-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kgoldrunner-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kigo-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps killbots-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kiriki-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kjumpingcube-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps klickety-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps klines-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kmahjongg-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kmines-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps knetwalk-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kolf-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kollision-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps konquest-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kpat-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kreversi-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps ksame-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kshisen-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps ksirk-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4 qca-x86-mingw4
+@deps kspaceduel-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps ksquares-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps ksudoku-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps ktron-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps ktuberling-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kubrick-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps lskat-x86-mingw4 runtime-x86-mingw4 libkdegames-x86-mingw4
+@deps kdegames-x86-mingw4 runtime-x86-mingw4 bomber-x86-mingw4 bovo-x86-mingw4 kapman-x86-mingw4 katomic-x86-mingw4 kbattleship-x86-mingw4 kblackbox-x86-mingw4 kblocks-x86-mingw4 kbounce-x86-mingw4 kbreakout-x86-mingw4 kdiamond-x86-mingw4 kfourinline-x86-mingw4 kgoldrunner-x86-mingw4 kigo-x86-mingw4 killbots-x86-mingw4 kiriki-x86-mingw4 kjumpingcube-x86-mingw4 klickety-x86-mingw4 klines-x86-mingw4 kmahjongg-x86-mingw4 kmines-x86-mingw4 knetwalk-x86-mingw4 kolf-x86-mingw4 kollision-x86-mingw4 konquest-x86-mingw4 kpat-x86-mingw4 kreversi-x86-mingw4 ksame-x86-mingw4 kshisen-x86-mingw4 ksirk-x86-mingw4 kspaceduel-x86-mingw4 ksquares-x86-mingw4 ksudoku-x86-mingw4 ktron-x86-mingw4 ktuberling-x86-mingw4 kubrick-x86-mingw4 lskat-x86-mingw4
+@deps ghostscript-x86-mingw4 runtime-x86-mingw4
+@deps libspectre-x86-mingw4 runtime-x86-mingw4 ghostscript-x86-mingw4
+@deps tiff-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4
+@deps openjpeg-x86-mingw4 runtime-x86-mingw4 tiff-x86-mingw4
+@deps lcms-x86-mingw4 runtime-x86-mingw4
+@deps poppler-x86-mingw4 runtime-x86-mingw4 libpng-x86-mingw4 openjpeg-x86-mingw4 zlib-x86-mingw4 qt-x86-mingw4 jpeg-x86-mingw4 lcms-x86-mingw4 freetype-x86-mingw4 poppler-data libxml2-x86-mingw4
+@deps djvu-x86-mingw4 runtime-x86-mingw4
+@deps okular-x86-mingw4 runtime-x86-mingw4 libspectre-x86-mingw4 qca-x86-mingw4 zlib-x86-mingw4 kdelibs-x86-mingw4 tiff-x86-mingw4 poppler-x86-mingw4 freetype-x86-mingw4 kde-runtime-x86-mingw4 qimageblitz-x86-mingw4 djvu-x86-mingw4
+@deps mobipocket-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 strigi-x86-mingw4 okular-x86-mingw4
+@deps kdegraphics-strigi-analyzer-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 tiff-x86-mingw4 strigi-x86-mingw4
+@deps kcolorchooser-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps svgpart-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps libksane-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps libkipi-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps gwenview-x86-mingw4 runtime-x86-mingw4 libkipi-x86-mingw4 kde-baseapps-x86-mingw4 exiv2-x86-mingw4 jpeg-x86-mingw4
+@deps kolourpaint-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 qimageblitz-x86-mingw4
+@deps kruler-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps libkexiv2-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 exiv2-x86-mingw4
+@deps ksnapshot-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps libkdcraw-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps ksaneplugin-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4 libksane-x86-mingw4
+@deps kdegraphics-thumbnailers-x86-mingw4 runtime-x86-mingw4 kdelibs-x86-mingw4
+@deps kdegraphics-x86-mingw4 runtime-x86-mingw4 mobipocket-x86-mingw4 kdegraphics-strigi-analyzer-x86-mingw4 kcolorchooser-x86-mingw4 svgpart-x86-mingw4 libksane-x86-mingw4 okular-x86-mingw4 gwenview-x86-mingw4 kolourpaint-x86-mingw4 kruler-x86-mingw4 libkexiv2-x86-mingw4 ksnapshot-x86-mingw4 libkipi-x86-mingw4 libkdcraw-x86-mingw4 ksaneplugin-x86-mingw4 kdegraphics-thumbnailers-x86-mingw4
+@deps libogg-x86-mingw4 runtime-x86-mingw4
+@deps libvorbis-x86-mingw4 runtime-x86-mingw4 libogg-x86-mingw4
+@deps taglib-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4
+@deps kdemultimedia-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 libogg-x86-mingw4 libvorbis-x86-mingw4 kdelibs-x86-mingw4 taglib-x86-mingw4
+@deps libmsn-x86-mingw4 runtime-x86-mingw4 openssl-x86-mingw4
+@deps libidn-x86-mingw4 runtime-x86-mingw4
+@deps libgmp-x86-mingw4 runtime-x86-mingw4
+@deps kdenetwork-x86-mingw4 runtime-x86-mingw4 libmsn-x86-mingw4 kdepimlibs-x86-mingw4 libidn-x86-mingw4 libgmp-x86-mingw4 kde-runtime-x86-mingw4 qca-x86-mingw4
+@deps grantlee-x86-mingw4 runtime-x86-mingw4 qt-x86-mingw4
+@deps kdepim-runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdepimlibs-x86-mingw4 sqlite-x86-mingw4 grantlee-x86-mingw4
+@deps kdepim-x86-mingw4 runtime-x86-mingw4 kdepim-runtime-x86-mingw4 grantlee-x86-mingw4 kdepimlibs-x86-mingw4 sqlite-x86-mingw4
+@deps libkdesdk-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps umbrello-x86-mingw4 runtime-x86-mingw4 libkdesdk-x86-mingw4
+@deps lokalize-x86-mingw4 runtime-x86-mingw4 libkdesdk-x86-mingw4
+@deps kate-x86-mingw4 runtime-x86-mingw4
+@deps kcachegrind-x86-mingw4 runtime-x86-mingw4 libkdesdk-x86-mingw4
+@deps okteta-x86-mingw4 runtime-x86-mingw4
+@deps kbugbuster-x86-mingw4 runtime-x86-mingw4 libkdesdk-x86-mingw4
+@deps kompare-x86-mingw4 runtime-x86-mingw4 libkdesdk-x86-mingw4
+@deps kdesdk-x86-mingw4 runtime-x86-mingw4 libkdesdk-x86-mingw4 umbrello-x86-mingw4 lokalize-x86-mingw4 kate-x86-mingw4 kcachegrind-x86-mingw4 okteta-x86-mingw4 kbugbuster-x86-mingw4 kompare-x86-mingw4
+@deps kdetoys-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps libzip-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4
+@deps libarchive-x86-mingw4 runtime-x86-mingw4 zlib-x86-mingw4 openssl-x86-mingw4 libbzip2-x86-mingw4 libxml2-x86-mingw4
+@deps kdeutils-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 libzip-x86-mingw4 kdepimlibs-x86-mingw4 libarchive-x86-mingw4
+@deps libsndfile-x86-mingw4 runtime-x86-mingw4 libogg-x86-mingw4 libvorbis-x86-mingw4
+@deps libsamplerate-x86-mingw4 runtime-x86-mingw4 libsndfile-x86-mingw4
+@deps libfftw-x86-mingw4 runtime-x86-mingw4
+@deps liblastfm-x86-mingw4 runtime-x86-mingw4 libsamplerate-x86-mingw4 qt-x86-mingw4 libfftw-x86-mingw4
+@deps taglib-extras-x86-mingw4 runtime-x86-mingw4 taglib-x86-mingw4
+@deps amarok-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4 mysql liblastfm-x86-mingw4 taglib-extras-x86-mingw4 qca-x86-mingw4 gettext-x86-mingw4 phonon-x86-mingw4 taglib-x86-mingw4 qtscriptgenerator-x86-mingw4
+@deps kate-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4
+@deps kile-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4
+@deps opencv-x86-mingw4 runtime-x86-mingw4
+@deps digikam-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4 marble-x86-mingw4 gettext-x86-mingw4 tiff-x86-mingw4 lcms-x86-mingw4 libkexiv2-x86-mingw4 opencv-x86-mingw4 libkipi-x86-mingw4 libkdcraw-x86-mingw4
+@deps mpir-x86-mingw4 runtime-x86-mingw4
+@deps libalkimia-x86-mingw4 runtime-x86-mingw4 mpir-x86-mingw4
+@deps libopensp-x86-mingw4 runtime-x86-mingw4
+@deps libofx-x86-mingw4 runtime-x86-mingw4 libopensp-x86-mingw4 win_iconv-x86-mingw4
+@deps kmymoney-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4 mysql libalkimia-x86-mingw4 gettext-x86-mingw4 libofx-x86-mingw4 sqlite-x86-mingw4 runtime-x86-mingw4 kdepimlibs-x86-mingw4 kdelibs-x86-mingw4 boost-x86-mingw4 cyrus-sasl-x86-mingw4 libical-x86-mingw4 gpgme-x86-mingw4 akonadi-x86-mingw4
+@deps kmid-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4
+@deps konversation-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4 qca-x86-mingw4 runtime-x86-mingw4 kdepimlibs-x86-mingw4 kdelibs-x86-mingw4 boost-x86-mingw4 cyrus-sasl-x86-mingw4 libical-x86-mingw4 gpgme-x86-mingw4 akonadi-x86-mingw4
+@deps pkg-config-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4
+@deps quassel-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4 pkg-config-x86-mingw4
+@deps kregexpeditor-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4
+@deps krecipes-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 oxygen-icons-x86-mingw4 libssh-x86-mingw4
+@deps skanlite-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kdegraphics-x86-mingw4 mobipocket-x86-mingw4 kdegraphics-strigi-analyzer-x86-mingw4 kcolorchooser-x86-mingw4 svgpart-x86-mingw4 libksane-x86-mingw4 okular-x86-mingw4 gwenview-x86-mingw4 kolourpaint-x86-mingw4 kruler-x86-mingw4 libkexiv2-x86-mingw4 ksnapshot-x86-mingw4 libkipi-x86-mingw4 libkdcraw-x86-mingw4 ksaneplugin-x86-mingw4 kdegraphics-thumbnailers-x86-mingw4
+@deps skrooge-x86-mingw4 runtime-x86-mingw4 kde-runtime-x86-mingw4 kdelibs-x86-mingw4 qt-x86-mingw4 libopensp-x86-mingw4 qca-x86-mingw4
+@deps zanshin-x86-mingw4 runtime-x86-mingw4 runtime-x86-mingw4 kdepimlibs-x86-mingw4 kdelibs-x86-mingw4 boost-x86-mingw4 cyrus-sasl-x86-mingw4 libical-x86-mingw4 gpgme-x86-mingw4 akonadi-x86-mingw4
+;
+; package dependencies for compiler vc100
+@deps expat-vc100 runtime-vc100
+@deps dbus-vc100 runtime-vc100 expat-vc100
+@deps openssl-vc100 runtime-vc100
+@deps qt-vc100 runtime-vc100 dbus-vc100 mysql openssl-vc100
+@deps attica-vc100 runtime-vc100 qt-vc100
+@deps qjson-vc100 runtime-vc100 qt-vc100
+@deps dbusmenu-qt-vc100 runtime-vc100 qjson-vc100 qt-vc100
+@deps zlib-vc100 runtime-vc100
+@deps libpng-vc100 runtime-vc100 zlib-vc100
+@deps kdewin-vc100 runtime-vc100 zlib-vc100 qt-vc100 libpng-vc100
+@deps phonon-vc100 runtime-vc100 qt-vc100
+@deps vlc-vc100 runtime-vc100
+@deps phonon-vlc-vc100 runtime-vc100 phonon-vc100 vlc-vc100 kdewin-vc100
+@deps win_iconv-vc100 runtime-vc100
+@deps libxml2-vc100 runtime-vc100 zlib-vc100 win_iconv-vc100
+@deps libbzip2-vc100 runtime-vc100
+@deps gettext-vc100 runtime-vc100 win_iconv-vc100
+@deps exiv2-vc100 runtime-vc100 gettext-vc100 expat-vc100 win_iconv-vc100 zlib-vc100
+@deps strigi-vc100 runtime-vc100 libxml2-vc100 zlib-vc100 qt-vc100 libbzip2-vc100 exiv2-vc100 win_iconv-vc100
+@deps virtuoso-vc100 runtime-vc100
+@deps yajl-vc100 runtime-vc100
+@deps pcre-vc100 runtime-vc100 zlib-vc100 libbzip2-vc100
+@deps libcurl-vc100 runtime-vc100
+@deps libxslt-vc100 runtime-vc100 libxml2-vc100
+@deps raptor2-vc100 runtime-vc100 expat-vc100 libxml2-vc100 yajl-vc100 libcurl-vc100 libxslt-vc100
+@deps rasqal-vc100 runtime-vc100 libxml2-vc100 expat-vc100 yajl-vc100 pcre-vc100 raptor2-vc100 libcurl-vc100 libxslt-vc100
+@deps sqlite-vc100 runtime-vc100
+@deps pthreads-vc100 runtime-vc100
+@deps librdf-vc100 runtime-vc100 rasqal-vc100 raptor2-vc100 sqlite-vc100 pthreads-vc100
+@deps soprano-vc100 runtime-vc100 virtuoso-vc100 qt-vc100 librdf-vc100
+@deps qca-vc100 runtime-vc100 qt-vc100 openssl-vc100
+@deps qimageblitz-vc100 runtime-vc100 qt-vc100
+@deps qtscriptgenerator-vc100 runtime-vc100 qt-vc100 runtime-vc100
+@deps oxygen-icons-vc100 runtime-vc100
+@deps boost-program-options-vc100 runtime-vc100
+@deps shared-mime-info-vc100 runtime-vc100 gettext-vc100 libxml2-vc100
+@deps akonadi-vc100 runtime-vc100 boost-program-options-vc100 shared-mime-info-vc100 soprano-vc100 qt-vc100 sqlite-vc100 libxslt-vc100
+@deps jpeg-vc100 runtime-vc100
+@deps jasper-vc100 runtime-vc100 jpeg-vc100
+@deps giflib-vc100 runtime-vc100 zlib-vc100
+@deps aspell-vc100 runtime-vc100 win_iconv-vc100
+@deps kdelibs-vc100 runtime-vc100 attica-vc100 dbusmenu-qt-vc100 qca-vc100 docbook-xsl strigi-vc100 runtime-vc100 jasper-vc100 libpng-vc100 gettext-vc100 giflib-vc100 zlib-vc100 shared-mime-info-vc100 jpeg-vc100 libbzip2-vc100 libxslt-vc100 pcre-vc100 openssl-vc100 aspell-vc100 libxml2-vc100 phonon-vlc-vc100 phonon-vc100 kdewin-vc100 docbook-dtd soprano-vc100 qimageblitz-vc100 shared-desktop-ontologies
+@deps boost-thread-vc100 runtime-vc100
+@deps boost-system-vc100 runtime-vc100
+@deps snorenotify-vc100 runtime-vc100 kdelibs-vc100 qt-vc100 boost-thread-vc100 boost-system-vc100
+@deps boost-python-vc100 runtime-vc100
+@deps boost-vc100 runtime-vc100 boost-program-options-vc100 boost-python-vc100 boost-thread-vc100 boost-system-vc100
+@deps cyrus-sasl-vc100 runtime-vc100
+@deps libical-vc100 runtime-vc100
+@deps gpg-error-vc100 runtime-vc100
+@deps assuan2-vc100 runtime-vc100 gpg-error-vc100
+@deps gpgme-vc100 runtime-vc100 assuan2-vc100 gpg-error-vc100
+@deps kdepimlibs-vc100 runtime-vc100 kdelibs-vc100 boost-vc100 cyrus-sasl-vc100 libical-vc100 gpgme-vc100 akonadi-vc100
+@deps libssh-vc100 runtime-vc100 zlib-vc100 openssl-vc100
+@deps kde-runtime-vc100 runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100
+@deps freetype-vc100 runtime-vc100
+@deps kde-workspace-vc100 runtime-vc100 freetype-vc100 kde-runtime-vc100 akonadi-vc100
+@deps kde-baseapps-vc100 runtime-vc100 kde-runtime-vc100
+@deps kgeography-vc100 runtime-vc100 kde-runtime-vc100
+@deps blinken-vc100 runtime-vc100 kde-runtime-vc100
+@deps kturtle-vc100 runtime-vc100 kde-runtime-vc100
+@deps marble-vc100 runtime-vc100 kde-runtime-vc100
+@deps cantor-vc100 runtime-vc100 kde-runtime-vc100
+@deps libkdeedu-vc100 runtime-vc100 kde-runtime-vc100
+@deps kanagram-vc100 runtime-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100
+@deps khangman-vc100 runtime-vc100 kde-runtime-vc100
+@deps kalgebra-vc100 runtime-vc100 kde-runtime-vc100
+@deps klettres-vc100 runtime-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100
+@deps openbabel-vc100 runtime-vc100 zlib-vc100 libxml2-vc100
+@deps kalzium-vc100 runtime-vc100 libkdeedu-vc100 openbabel-vc100
+@deps kig-vc100 runtime-vc100 kde-runtime-vc100
+@deps kiten-vc100 runtime-vc100 kde-runtime-vc100
+@deps kmplot-vc100 runtime-vc100 kde-runtime-vc100
+@deps rocs-vc100 runtime-vc100 kde-runtime-vc100
+@deps ktouch-vc100 runtime-vc100 kde-runtime-vc100
+@deps libnova-vc100 runtime-vc100
+@deps eigen2-vc100 runtime-vc100
+@deps kstars-vc100 runtime-vc100 kde-runtime-vc100 libnova-vc100 eigen2-vc100
+@deps kbruch-vc100 runtime-vc100 kde-runtime-vc100
+@deps step-vc100 runtime-vc100 kde-runtime-vc100 eigen2-vc100
+@deps parley-vc100 runtime-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100
+@deps kwordquiz-vc100 runtime-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100 libkdeedu-vc100
+@deps kdeedu-vc100 runtime-vc100 kgeography-vc100 blinken-vc100 kturtle-vc100 marble-vc100 cantor-vc100 kanagram-vc100 khangman-vc100 kalgebra-vc100 klettres-vc100 libkdeedu-vc100 kalzium-vc100 kig-vc100 kiten-vc100 kmplot-vc100 rocs-vc100 ktouch-vc100 kstars-vc100 kbruch-vc100 step-vc100 parley-vc100 kwordquiz-vc100
+@deps libkdegames-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100
+@deps bomber-vc100 runtime-vc100 libkdegames-vc100
+@deps bovo-vc100 runtime-vc100 libkdegames-vc100
+@deps kapman-vc100 runtime-vc100 libkdegames-vc100
+@deps katomic-vc100 runtime-vc100 libkdegames-vc100
+@deps kbattleship-vc100 runtime-vc100 libkdegames-vc100
+@deps kblackbox-vc100 runtime-vc100 libkdegames-vc100
+@deps kblocks-vc100 runtime-vc100 libkdegames-vc100
+@deps kbounce-vc100 runtime-vc100 libkdegames-vc100
+@deps kbreakout-vc100 runtime-vc100 libkdegames-vc100
+@deps kdiamond-vc100 runtime-vc100 libkdegames-vc100
+@deps kfourinline-vc100 runtime-vc100 libkdegames-vc100
+@deps kgoldrunner-vc100 runtime-vc100 libkdegames-vc100
+@deps kigo-vc100 runtime-vc100 libkdegames-vc100
+@deps killbots-vc100 runtime-vc100 libkdegames-vc100
+@deps kiriki-vc100 runtime-vc100 libkdegames-vc100
+@deps kjumpingcube-vc100 runtime-vc100 libkdegames-vc100
+@deps klickety-vc100 runtime-vc100 libkdegames-vc100
+@deps klines-vc100 runtime-vc100 libkdegames-vc100
+@deps kmahjongg-vc100 runtime-vc100 libkdegames-vc100
+@deps kmines-vc100 runtime-vc100 libkdegames-vc100
+@deps knetwalk-vc100 runtime-vc100 libkdegames-vc100
+@deps kolf-vc100 runtime-vc100 libkdegames-vc100
+@deps kollision-vc100 runtime-vc100 libkdegames-vc100
+@deps konquest-vc100 runtime-vc100 libkdegames-vc100
+@deps kpat-vc100 runtime-vc100 libkdegames-vc100
+@deps kreversi-vc100 runtime-vc100 libkdegames-vc100
+@deps ksame-vc100 runtime-vc100 libkdegames-vc100
+@deps kshisen-vc100 runtime-vc100 libkdegames-vc100
+@deps ksirk-vc100 runtime-vc100 libkdegames-vc100 qca-vc100
+@deps kspaceduel-vc100 runtime-vc100 libkdegames-vc100
+@deps ksquares-vc100 runtime-vc100 libkdegames-vc100
+@deps ksudoku-vc100 runtime-vc100 libkdegames-vc100
+@deps ktron-vc100 runtime-vc100 libkdegames-vc100
+@deps ktuberling-vc100 runtime-vc100 libkdegames-vc100
+@deps kubrick-vc100 runtime-vc100 libkdegames-vc100
+@deps lskat-vc100 runtime-vc100 libkdegames-vc100
+@deps kdegames-vc100 runtime-vc100 bomber-vc100 bovo-vc100 kapman-vc100 katomic-vc100 kbattleship-vc100 kblackbox-vc100 kblocks-vc100 kbounce-vc100 kbreakout-vc100 kdiamond-vc100 kfourinline-vc100 kgoldrunner-vc100 kigo-vc100 killbots-vc100 kiriki-vc100 kjumpingcube-vc100 klickety-vc100 klines-vc100 kmahjongg-vc100 kmines-vc100 knetwalk-vc100 kolf-vc100 kollision-vc100 konquest-vc100 kpat-vc100 kreversi-vc100 ksame-vc100 kshisen-vc100 ksirk-vc100 kspaceduel-vc100 ksquares-vc100 ksudoku-vc100 ktron-vc100 ktuberling-vc100 kubrick-vc100 lskat-vc100
+@deps ghostscript-vc100 runtime-vc100
+@deps libspectre-vc100 runtime-vc100 ghostscript-vc100
+@deps tiff-vc100 runtime-vc100 zlib-vc100
+@deps openjpeg-vc100 runtime-vc100 tiff-vc100
+@deps lcms-vc100 runtime-vc100
+@deps poppler-vc100 runtime-vc100 libpng-vc100 openjpeg-vc100 zlib-vc100 qt-vc100 jpeg-vc100 lcms-vc100 freetype-vc100 poppler-data libxml2-vc100
+@deps djvu-vc100 runtime-vc100
+@deps okular-vc100 runtime-vc100 libspectre-vc100 qca-vc100 zlib-vc100 kdelibs-vc100 tiff-vc100 poppler-vc100 freetype-vc100 kde-runtime-vc100 qimageblitz-vc100 djvu-vc100
+@deps mobipocket-vc100 runtime-vc100 kdelibs-vc100 strigi-vc100 okular-vc100
+@deps kdegraphics-strigi-analyzer-vc100 runtime-vc100 kdelibs-vc100 tiff-vc100 strigi-vc100
+@deps kcolorchooser-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100
+@deps svgpart-vc100 runtime-vc100 kdelibs-vc100
+@deps libksane-vc100 runtime-vc100 kdelibs-vc100
+@deps libkipi-vc100 runtime-vc100 kdelibs-vc100
+@deps gwenview-vc100 runtime-vc100 libkipi-vc100 kde-baseapps-vc100 exiv2-vc100 jpeg-vc100
+@deps kolourpaint-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 qimageblitz-vc100
+@deps kruler-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100
+@deps libkexiv2-vc100 runtime-vc100 kdelibs-vc100 exiv2-vc100
+@deps ksnapshot-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100
+@deps libkdcraw-vc100 runtime-vc100 kdelibs-vc100
+@deps ksaneplugin-vc100 runtime-vc100 kdelibs-vc100 libksane-vc100
+@deps kdegraphics-thumbnailers-vc100 runtime-vc100 kdelibs-vc100
+@deps kdegraphics-vc100 runtime-vc100 mobipocket-vc100 kdegraphics-strigi-analyzer-vc100 kcolorchooser-vc100 svgpart-vc100 libksane-vc100 okular-vc100 gwenview-vc100 kolourpaint-vc100 kruler-vc100 libkexiv2-vc100 ksnapshot-vc100 libkipi-vc100 libkdcraw-vc100 ksaneplugin-vc100 kdegraphics-thumbnailers-vc100
+@deps libogg-vc100 runtime-vc100
+@deps libvorbis-vc100 runtime-vc100 libogg-vc100
+@deps taglib-vc100 runtime-vc100 zlib-vc100
+@deps kdemultimedia-vc100 runtime-vc100 kde-runtime-vc100 libogg-vc100 libvorbis-vc100 kdelibs-vc100 taglib-vc100
+@deps libmsn-vc100 runtime-vc100 openssl-vc100
+@deps libidn-vc100 runtime-vc100
+@deps libgmp-vc100 runtime-vc100
+@deps kdenetwork-vc100 runtime-vc100 libmsn-vc100 kdepimlibs-vc100 libidn-vc100 libgmp-vc100 kde-runtime-vc100 qca-vc100
+@deps grantlee-vc100 runtime-vc100 qt-vc100
+@deps kdepim-runtime-vc100 runtime-vc100 kde-runtime-vc100 kdepimlibs-vc100 sqlite-vc100 grantlee-vc100
+@deps kdepim-vc100 runtime-vc100 kdepim-runtime-vc100 grantlee-vc100 kdepimlibs-vc100 sqlite-vc100
+@deps libkdesdk-vc100 runtime-vc100 kde-runtime-vc100
+@deps umbrello-vc100 runtime-vc100 libkdesdk-vc100
+@deps lokalize-vc100 runtime-vc100 libkdesdk-vc100
+@deps kate-vc100 runtime-vc100
+@deps kcachegrind-vc100 runtime-vc100 libkdesdk-vc100
+@deps okteta-vc100 runtime-vc100
+@deps kbugbuster-vc100 runtime-vc100 libkdesdk-vc100
+@deps kompare-vc100 runtime-vc100 libkdesdk-vc100
+@deps kdesdk-vc100 runtime-vc100 libkdesdk-vc100 umbrello-vc100 lokalize-vc100 kate-vc100 kcachegrind-vc100 okteta-vc100 kbugbuster-vc100 kompare-vc100
+@deps kdetoys-vc100 runtime-vc100 kde-runtime-vc100
+@deps libzip-vc100 runtime-vc100 zlib-vc100
+@deps libarchive-vc100 runtime-vc100 zlib-vc100 openssl-vc100 libbzip2-vc100 libxml2-vc100
+@deps kdeutils-vc100 runtime-vc100 kde-runtime-vc100 libzip-vc100 kdepimlibs-vc100 libarchive-vc100
+@deps libsndfile-vc100 runtime-vc100 libogg-vc100 libvorbis-vc100
+@deps libsamplerate-vc100 runtime-vc100 libsndfile-vc100
+@deps libfftw-vc100 runtime-vc100
+@deps liblastfm-vc100 runtime-vc100 libsamplerate-vc100 qt-vc100 libfftw-vc100
+@deps taglib-extras-vc100 runtime-vc100 taglib-vc100
+@deps amarok-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100 mysql liblastfm-vc100 taglib-extras-vc100 qca-vc100 gettext-vc100 phonon-vc100 taglib-vc100 qtscriptgenerator-vc100
+@deps kate-vc100 runtime-vc100 kde-runtime-vc100
+@deps kile-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100
+@deps opencv-vc100 runtime-vc100
+@deps digikam-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100 marble-vc100 gettext-vc100 tiff-vc100 lcms-vc100 libkexiv2-vc100 opencv-vc100 libkipi-vc100 libkdcraw-vc100
+@deps mpir-vc100 runtime-vc100
+@deps libalkimia-vc100 runtime-vc100 mpir-vc100
+@deps libopensp-vc100 runtime-vc100
+@deps libofx-vc100 runtime-vc100 libopensp-vc100 win_iconv-vc100
+@deps kmymoney-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100 mysql libalkimia-vc100 gettext-vc100 libofx-vc100 sqlite-vc100 runtime-vc100 kdepimlibs-vc100 kdelibs-vc100 boost-vc100 cyrus-sasl-vc100 libical-vc100 gpgme-vc100 akonadi-vc100
+@deps kmid-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100
+@deps konversation-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100 qca-vc100 runtime-vc100 kdepimlibs-vc100 kdelibs-vc100 boost-vc100 cyrus-sasl-vc100 libical-vc100 gpgme-vc100 akonadi-vc100
+@deps pkg-config-vc100 runtime-vc100 runtime-vc100
+@deps quassel-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100 pkg-config-vc100
+@deps kregexpeditor-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100
+@deps krecipes-vc100 runtime-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 oxygen-icons-vc100 libssh-vc100
+@deps skanlite-vc100 runtime-vc100 runtime-vc100 kdegraphics-vc100 mobipocket-vc100 kdegraphics-strigi-analyzer-vc100 kcolorchooser-vc100 svgpart-vc100 libksane-vc100 okular-vc100 gwenview-vc100 kolourpaint-vc100 kruler-vc100 libkexiv2-vc100 ksnapshot-vc100 libkipi-vc100 libkdcraw-vc100 ksaneplugin-vc100 kdegraphics-thumbnailers-vc100
+@deps skrooge-vc100 runtime-vc100 kde-runtime-vc100 kdelibs-vc100 qt-vc100 libopensp-vc100 qca-vc100
+@deps zanshin-vc100 runtime-vc100 runtime-vc100 kdepimlibs-vc100 kdelibs-vc100 boost-vc100 cyrus-sasl-vc100 libical-vc100 gpgme-vc100 akonadi-vc100
+;
+@pkgnotes expat-* XML parser library written in C
+@pkgnotes dbus-* Freedesktop message bus system (daemon and clients)
+@pkgnotes mysql MySql database server and embedded library
+@pkgnotes openssl-* The OpenSSL runtime environment
+@pkgnotes qt-* a cross-platform application framework
+@pkgnotes attica-* implements the Open Collaboration Services API
+@pkgnotes qjson-* a qt-based library that maps JSON data to Qt objects
+@pkgnotes dbusmenu-qt-* a Qt implementation of the DBusMenu spec
+@pkgnotes zlib-* The zlib compression and decompression library
+@pkgnotes libpng-* A library to display png images
+@pkgnotes kdewin-* kde supplementary package for win32
+@pkgnotes phonon-* a Qt based multimedia framework
+@pkgnotes vlc-* an open-source multimedia framework
+@pkgnotes phonon-vlc-* the vlc based phonon multimedia backend
+@pkgnotes win_iconv-* a character set conversion library binary compatible with GNU iconv
+@pkgnotes libxml2-* XML C parser and toolkit (runtime and applications)
+@pkgnotes libbzip2-* shared libraries for handling bzip2 archives (runtime)
+@pkgnotes gettext-* GNU internationalization (i18n)
+@pkgnotes exiv2-* an image metadata library
+@pkgnotes strigi-* a desktop search engine and indexer
+@pkgnotes virtuoso-* a middleware and database engine hybrid for RDBMS, ORDBMS, virtual database, RDF, XML, free-text, web application server and file server functionality
+@pkgnotes yajl-* Yet Another JSON Library
+@pkgnotes pcre-* Perl-Compatible Regular Expressions
+@pkgnotes libcurl-* a free and easy-to-use client-side URL transfer library
+@pkgnotes libxslt-* The GNOME XSLT C library and tools
+@pkgnotes raptor2-* Resource Description Framework (RDF)
+@pkgnotes rasqal-* Rasqal RDF Query Library - for executing RDF queries
+@pkgnotes sqlite-* a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine
+@pkgnotes pthreads-* a POSIX thread implementation for windows
+@pkgnotes librdf-* Resource Description Framework (RDF)
+@pkgnotes soprano-* a RDF storage solutions library
+@pkgnotes qca-* Qt Cryptographic Architecture (QCA)
+@pkgnotes qimageblitz-* Graphical effects library for KDE4
+@pkgnotes qtscriptgenerator-* a tool that generates Qt bindings for Qt Script
+@pkgnotes oxygen-icons-* icons and bitmaps for the oxygen style
+@pkgnotes boost-program-options-* portable C++ libraries
+@pkgnotes shared-mime-info-* common mimetype library
+@pkgnotes akonadi-* a storage service for PIM data and meta data
+@pkgnotes docbook-xsl document translation defintions for docbook format
+@pkgnotes jpeg-* A library for manipulating JPEG image format files
+@pkgnotes jasper-* A library to manipulate JPEG-2000 images
+@pkgnotes giflib-* GIF file manipulation library (utilities and docs)
+@pkgnotes aspell-* A powerful spell checker, designed to replace ispell
+@pkgnotes docbook-dtd document type definition for docbook format
+@pkgnotes shared-desktop-ontologies the core ontologies such as RDF or RDFS and all Nepomuk ontologies
+@pkgnotes kdelibs-* The KDE Library
+@pkgnotes boost-thread-* portable C++ libraries
+@pkgnotes boost-system-* portable C++ libraries
+@pkgnotes snorenotify-* An application to show kde notifications with Snarl/Growl
+@pkgnotes boost-python-* portable C++ libraries
+@pkgnotes boost-* portable C++ libraries
+@pkgnotes cyrus-sasl-* Cyrus SASL implementation
+@pkgnotes libical-* reference implementation of the icalendar data type and serialization format
+@pkgnotes gpg-error-* a small library with error codes and descriptions shared by most GnuPG related software
+@pkgnotes assuan2-* an IPC library used by some of the other GnuPG related packages
+@pkgnotes gpgme-* GnuPG cryptography support library (runtime)
+@pkgnotes kdepimlibs-* the base libraries for PIM related services
+@pkgnotes libssh-* a working SSH implementation by the mean of a library
+@pkgnotes kde-runtime-* Plugins and applications necessary for the running of KDE applications.
+@pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
+@pkgnotes kde-workspace-* the KDE workspace including the oxygen style
+@pkgnotes kde-baseapps-* KDE base applications (Konqueror, Dolphin)
+@pkgnotes kgeography-* a geography trainer
+@pkgnotes blinken-* a memory enhancement game
+@pkgnotes kturtle-* educational programming environment
+@pkgnotes marble-* the desktop globe
+@pkgnotes cantor-* a KDE frontend for mathematical software
+@pkgnotes libkdeedu-* the educational support libraries
+@pkgnotes kanagram-* a letter order game
+@pkgnotes khangman-* the hangman game
+@pkgnotes kalgebra-* a graph calculator
+@pkgnotes klettres-* learn the alphabet
+@pkgnotes openbabel-* library to convert the various file formats used in chemical software
+@pkgnotes kalzium-* periodic table of elements
+@pkgnotes kig-* interactive geometry
+@pkgnotes kiten-* a Japanese reference/study tool
+@pkgnotes kmplot-* mathematical function plotter
+@pkgnotes rocs-* rocs graph theory
+@pkgnotes ktouch-* touch typing tutor
+@pkgnotes libnova-* a Celestial Mechanics, Astrometry and Astrodynamics library
+@pkgnotes kstars-* a desktop planetarium
+@pkgnotes kbruch-* Excercise fractions
+@pkgnotes step-* an interactive physical simulator
+@pkgnotes parley-* a vocabulary trainer
+@pkgnotes kwordquiz-* a flash card trainer
+@pkgnotes kdeedu-* the KDE educational packages
+@pkgnotes libkdegames-* the kdegames support libraries
+@pkgnotes bomber-* arcade bombing game
+@pkgnotes bovo-* a gomoku like game
+@pkgnotes kapman-* a pacman like game
+@pkgnotes katomic-* Katomic is both fun and educational game built around molecular geometry
+@pkgnotes kbattleship-* a Battle Ship game for KDE
+@pkgnotes kblackbox-* KBlackbox is a game of hide and seek
+@pkgnotes kblocks-* a tetris like game
+@pkgnotes kbounce-* kde bounce ball game
+@pkgnotes kbreakout-* a breakout like game
+@pkgnotes kdiamond-* a bejeweled like game
+@pkgnotes kfourinline-* a Connect-Four like game
+@pkgnotes kgoldrunner-* KGoldrunner is a maze-threading game with a puzzle flavor
+@pkgnotes kigo-* an open-source implementation of the popular Go game
+@pkgnotes killbots-* a game of killer robots and teleportation
+@pkgnotes kiriki-* a Yahtzee dice game
+@pkgnotes kjumpingcube-* a simple dice driven tactical game
+@pkgnotes klickety-* a kind of solitary game that takes place on a Tetris-like board
+@pkgnotes klines-* a little game about balls and how to get rid of them
+@pkgnotes kmahjongg-* a Mahjongg game
+@pkgnotes kmines-* a minesweeper game
+@pkgnotes knetwalk-* a game for system administrators
+@pkgnotes kolf-* a miniature golf game
+@pkgnotes kollision-* a simple ball dodging game
+@pkgnotes konquest-* a galactic strategy game
+@pkgnotes kpat-* a solitaire game
+@pkgnotes kreversi-* a reversi game
+@pkgnotes ksame-* a color matching game
+@pkgnotes kshisen-* a shisen sho game
+@pkgnotes ksirk-* a Risk strategy game
+@pkgnotes kspaceduel-* SpaceWar! arcade game
+@pkgnotes ksquares-* dots and boxes game
+@pkgnotes ksudoku-* a sudoku puzzle game
+@pkgnotes ktron-* a Tron clone game
+@pkgnotes ktuberling-* a stamp drawing toy
+@pkgnotes kubrick-* game based on Rubik's Cube
+@pkgnotes lskat-* Lieutnant Skat card game
+@pkgnotes kdegames-* KDE games applications
+@pkgnotes libspectre-* a wrapper library for libgs
+@pkgnotes tiff-* a library to manipulate TIFF image files
+@pkgnotes openjpeg-* a library for handling JPEG2000 image formats
+@pkgnotes lcms-* A small-footprint, speed optimized color management engine
+@pkgnotes poppler-data the poppler CJK encoding data
+@pkgnotes poppler-* PDF rendering library based on xpdf-3.0
+@pkgnotes djvu-* DjVuLibre is an implementation of DjVu image file format
+@pkgnotes okular-* KDE document viewer
+@pkgnotes mobipocket-* A collection of plugins to handle mobipocket files
+@pkgnotes kdegraphics-strigi-analyzer-* Strigi analyzers for various graphics file formats
+@pkgnotes kcolorchooser-* A small utility to select a color
+@pkgnotes svgpart-* A svg kpart
+@pkgnotes libksane-* libksane is an image scanning library that provides a QWidget that contains all the logic needed to interface a sacanner.
+@pkgnotes libkipi-* Libkipi is an interface to use kipi-plugins from a KDE image management program like digiKam.
+@pkgnotes gwenview-* Image viewer for KDE
+@pkgnotes kolourpaint-* KolourPaint is an easy-to-use paint program
+@pkgnotes kruler-* A pixel measuring tool for KDE
+@pkgnotes libkexiv2-* Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP.
+@pkgnotes ksnapshot-* A handy utility primarily designed for taking screenshots
+@pkgnotes libkdcraw-* libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files.
+@pkgnotes ksaneplugin-* This is a KScan plugin that implements the scanning through libksane
+@pkgnotes kdegraphics-thumbnailers-* Thumbnailers for various graphics file formats
+@pkgnotes kdegraphics-* Graphics applications (Okular, Gwenview)
+@pkgnotes libogg-* reference implementation for the ogg audio file format
+@pkgnotes libvorbis-* reference implementation for the vorbis video file format
+@pkgnotes taglib-* audio metadata library
+@pkgnotes kdemultimedia-* KDE multimedia applications (jux, kmix, kmixctrl, kscd)
+@pkgnotes libmsn-* a library for connecting to Microsoft's MSN Messenger service
+@pkgnotes libidn-* libidn internationalized domain names library
+@pkgnotes libgmp-* GNU MP library for arbitrary precision arithmetic
+@pkgnotes kdenetwork-* KDE Networking applications (Kopete, KGet)
+@pkgnotes grantlee-* libraries for a template system similar to django's
+@pkgnotes kdepim-runtime-* Extends the functionality of kdepim
+@pkgnotes kdepim-* KDE's Personal Information Management suite
+@pkgnotes libkdesdk-* additional libraries and applications for the KDE software development package
+@pkgnotes umbrello-* An UML modeling tool for KDE
+@pkgnotes lokalize-* A computer-aided translation system for KDE
+@pkgnotes kate-* a MDI text editor application for KDE
+@pkgnotes kcachegrind-* a profiling data visualization tool
+@pkgnotes okteta-* KDE's hex editor
+@pkgnotes kbugbuster-* a bug triaging application for KDE
+@pkgnotes kompare-* KDE diff tool
+@pkgnotes kdesdk-* KDE software development package (umbrello, okteta)
+@pkgnotes kdetoys-* some toy apps & games
+@pkgnotes libzip-* a library for handling zip archives
+@pkgnotes libarchive-* C library and command-line tools for reading and writing tar, cpio, zip, ISO, and other archive formats
+@pkgnotes kdeutils-* a compilation of various desktop utilities(ark, kgpg)
+@pkgnotes libsndfile-* a C library for reading and writing files containing sampled sound
+@pkgnotes libsamplerate-* an audio sample rate converter library
+@pkgnotes libfftw-* a C subroutine library for computing the discrete Fourier transform (DFT)
+@pkgnotes liblastfm-* a C++/Qt4 library provided by Last.fm for use with their web services
+@pkgnotes taglib-extras-* more plugins for the taglib library
+@pkgnotes amarok-* a powerful music player
+@pkgnotes kile-* a user friendly TeX/LaTeX editor for KDE
+@pkgnotes opencv-* a library for real time computer vision
+@pkgnotes digikam-* an advanced digital photo management application
+@pkgnotes mpir-* Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp
+@pkgnotes libalkimia-* A library with common classes and functionality used by finance applications for the KDE SC.
+@pkgnotes libopensp-* a library for a SGML parser algorithm
+@pkgnotes libofx-* a parser and an API for the OFX (Open Financial eXchange) specification
+@pkgnotes kmymoney-* a personal finance manager for KDE
+@pkgnotes kmid-* a MIDI/Karaoke player for KDE4
+@pkgnotes konversation-* a KDE based irc client
+@pkgnotes quassel-* a distributed IRC client
+@pkgnotes kregexpeditor-* a regular expression editor for KDE
+@pkgnotes krecipes-* a recipes database
+@pkgnotes skanlite-* a simple scanning application
+@pkgnotes skrooge-* a personal finance manager for KDE
+@pkgnotes zanshin-* a powerful yet simple application for managing your day to day actions
+
+;------------------------------------------------------
+; runtime packages
+;------------------------------------------------------
+@package runtime-vc90
+@category devel-tools
+@version 9.0.30729.17
+@notes Microsoft Visual C++ 2008 SP1 Redistributable Package (x86)
+@url-bin http://download.microsoft.com/download/d/d/9/dd9a82d0-52ef-40db-8dab-795376989c03/vcredist_x86.exe
+@filename-bin vcredist_x86-vc90.exe
+@nomd5
+
+; runtime-vc100 is now part of the release 
