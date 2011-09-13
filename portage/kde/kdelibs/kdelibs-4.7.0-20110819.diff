@@ -1,13 +1,37 @@
-diff -Nru kdelibs-4.7.0.orig/kjs/CMakeLists.txt kdelibs-4.7.0/kjs/CMakeLists.txt
---- kdelibs-4.7.0.orig/kjs/CMakeLists.txt	2011-06-23 16:49:06.000000000 +0200
-+++ kdelibs-4.7.0/kjs/CMakeLists.txt	2011-08-19 00:28:01.284768900 +0200
-@@ -1,7 +1,9 @@
+diff -Nru kdelibs-4.7.0.orig/kdecore/kernel/kcomponentdata.cpp kdelibs-4.7.0/kdecore/kernel/kcomponentdata.cpp
+--- kdelibs-4.7.0.orig/kdecore/kernel/kcomponentdata.cpp	2011-05-20 22:24:54.000000000 +0200
++++ kdelibs-4.7.0/kdecore/kernel/kcomponentdata.cpp	2011-09-12 21:51:45.209335400 +0200
+@@ -143,8 +143,12 @@
+             sharedConfig->reparseConfiguration();
+     }
+     
++#ifdef Q_OS_WIN
++    if (QCoreApplication::instance() && dirs && kdeLibraryPathsAdded != KdeLibraryPathsAddedDone) {
++#else
+     // the first KComponentData sets the KDE Qt plugin paths
+     if (dirs && kdeLibraryPathsAdded != KdeLibraryPathsAddedDone) {
++#endif
+         kdeLibraryPathsAdded = KdeLibraryPathsAddedDone;
+         const QStringList &plugins = dirs->resourceDirs("qtplugins");
+         QStringList::ConstIterator it = plugins.begin();
+diff -Nru kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmiquery.cpp kdelibs-4.7.0/solid/solid/backends/wmi/wmiquery.cpp
+--- kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmiquery.cpp	2011-05-20 22:24:54.000000000 +0200
++++ kdelibs-4.7.0/solid/solid/backends/wmi/wmiquery.cpp	2011-09-12 21:47:25.959507100 +0200
+@@ -80,7 +80,7 @@
  
- project(kjs)
+ QString WmiQuery::Item::getProperty(const QString &property )
+ {
+-    qDebug() << "start property:" << property;
++//    qDebug() << "start property:" << property;
+     QString prop = property;
+     if (property == "voule.ignore")
+         return "false";
+@@ -100,7 +100,7 @@
  
-+if(NOT MINGW)
- add_subdirectory(tests)
-+endif(NOT MINGW)
+     VariantClear(&vtProp);
+     m_p->Release();
+-    qDebug() << "end result:" << result;
++//    qDebug() << "end result:" << result;
+     return result;
+ }
  
- # Conflict between KJS::HashTable and WTF::HashTable, due to "using namespace" of both namespaces.
- kde4_no_enable_final(kjs)
