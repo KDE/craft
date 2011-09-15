@@ -121,6 +121,10 @@ class KDEWinPackager (PackagerBase):
             cmd = self.packagerExe + " " + cmd + " -template " + xmltemplate + " -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
             utils.debug("using xml template for package generating", 1)
+        elif self.package == "qt":
+            cmd = self.packagerExe + " " + cmd + " -template :/template-qt.xml -notes " + \
+                    "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
+            utils.debug("using xml template for package generating", 1)
         else:
             cmd = self.packagerExe + " " + cmd + " -verbose -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
@@ -145,8 +149,9 @@ class KDEWinPackager (PackagerBase):
                 cmd += " -type unknown "
 
 
-        if self.subinfo.options.package.specialMode:
-            cmd += " -special"
+#        not needed anymore
+#        if self.subinfo.options.package.specialMode:
+#            cmd += " -special"
 
         if not utils.system(cmd):
             utils.die( "while packaging. cmd: %s" % cmd )
