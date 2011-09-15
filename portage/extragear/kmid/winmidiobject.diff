@@ -1,0 +1,15 @@
+diff -Nru kmid-2.4.0.orig/win/winmidiobject.cpp kmid-2.4.0/win/winmidiobject.cpp
+--- kmid-2.4.0.orig/win/winmidiobject.cpp	2010-08-02 16:26:20.000000000 +0200
++++ kmid-2.4.0/win/winmidiobject.cpp	2011-09-15 12:56:06.633210300 +0200
+@@ -614,9 +614,9 @@
+         //TODO: looks like KIO::NetAccess::download() is broken in Windows/KDE 4.4.0
+         KUrl url(fileName);
+         kDebug() << fileName;
+-        if (fileName.startsWith(QLatin1String("file://"), Qt::CaseInsensitive)) {
++        if (url.isLocalFile()) {
+             kDebug() << "KUrl::localFile:" << url.toLocalFile();
+-            tmpFile = fileName.mid(7);
++            tmpFile = url.toLocalFile();
+             kDebug() << "workaround, loading" << tmpFile;
+         } else {
+             kDebug() << "download:" << url;
