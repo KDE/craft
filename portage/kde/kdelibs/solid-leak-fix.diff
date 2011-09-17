@@ -1,0 +1,136 @@
+diff -Nru kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmidevice.cpp kdelibs-4.7.0/solid/solid/backends/wmi/wmidevice.cpp
+--- kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmidevice.cpp	2011-09-17 23:53:03.300044900 +0200
++++ kdelibs-4.7.0/solid/solid/backends/wmi/wmidevice.cpp	2011-09-17 23:44:13.558044900 +0200
+@@ -248,9 +248,9 @@
+         QStringList result;
+ 
+ 		WmiQuery::ItemList list = WmiQuery::instance().sendQuery( "select * from " + getWMITable(type) );
+-        foreach(WmiQuery::Item *item, list) {
++        foreach(const WmiQuery::Item& item, list) {
+             QString propertyName = getPropertyNameForUDI(type);
+-            QString property = item->getProperty(propertyName);
++            QString property = item.getProperty(propertyName);
+ 
+             result << generateUDI(getUDIKey(type),propertyName.toLower(),property.toLower());
+         }
+@@ -443,7 +443,7 @@
+     if (list.size() == 0)
+         return QString();
+ 
+-    QString result = list[0]->getProperty( key );
++    QString result = list[0].getProperty( key );
+     return result;
+ }
+ 
+@@ -467,7 +467,8 @@
+     WmiQuery::ItemList list = d->sendQuery();
+     if (list.size() == 0)
+         return false;
+-    return list[0]->getProperty( key ).isEmpty() ? false: true;
++    const bool isEmpty = list[0].getProperty( key ).isEmpty() ? false: true;
++    return isEmpty;
+ }
+ 
+ bool WmiDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) const
+diff -Nru kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmiquery.cpp kdelibs-4.7.0/solid/solid/backends/wmi/wmiquery.cpp
+--- kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmiquery.cpp	2011-09-17 23:53:03.222044900 +0200
++++ kdelibs-4.7.0/solid/solid/backends/wmi/wmiquery.cpp	2011-09-17 23:51:36.688844900 +0200
+@@ -78,7 +78,7 @@
+  static WmiQuery instance;
+ */
+ 
+-QString WmiQuery::Item::getProperty(const QString &property )
++QString WmiQuery::Item::getProperty(const QString &property) const
+ {
+ //    qDebug() << "start property:" << property;
+     QString prop = property;
+@@ -99,11 +99,35 @@
+     }
+ 
+     VariantClear(&vtProp);
+-    m_p->Release();
+ //    qDebug() << "end result:" << result;
+     return result;
+ }
+ 
++WmiQuery::Item::Item(IWbemClassObject *p) : m_p(p), m_int(new QAtomicInt)
++{
++    m_int->ref();
++}
++
++WmiQuery::Item::Item(const Item& other) : m_p(other.m_p), m_int(other.m_int)
++{
++    m_int->ref();
++}
++
++WmiQuery::Item& WmiQuery::Item::operator=(const Item& other)
++{
++    m_p = other.m_p;
++    m_int = other.m_int;
++    m_int->ref();
++    return *this;
++}
++
++WmiQuery::Item::~Item()
++{
++    if(!m_int->deref()) {
++        m_p->Release();
++    }
++}
++
+ WmiQuery::WmiQuery()
+     : m_failed(false)
+     , pLoc(0)
+@@ -224,9 +248,11 @@
+             if( !uReturn )
+                 break;
+ 
+-         // TODO: any special thinks required to delete pclsObj ?
+-            retList.append( new Item(pclsObj) );
++         // pclsObj will be released on destruction of Item
++            retList.append( Item( pclsObj ) );
+         }
++        if( pEnumerator ) pEnumerator->Release();
++        else qDebug() << "failed to release enumerator!";
+     }
+     return retList;
+ }
+diff -Nru kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmiquery.h kdelibs-4.7.0/solid/solid/backends/wmi/wmiquery.h
+--- kdelibs-4.7.0.orig/solid/solid/backends/wmi/wmiquery.h	2011-05-20 22:24:54.000000000 +0200
++++ kdelibs-4.7.0/solid/solid/backends/wmi/wmiquery.h	2011-09-17 23:49:17.443244900 +0200
+@@ -24,6 +24,8 @@
+ #include <QtCore/QDebug>
+ #include <QtCore/QVariant>
+ #include <QtCore/QList>
++#include <QtCore/QAtomicInt>
++#include <QtCore/QSharedPointer>
+ 
+ #include <solid/solid_export.h>
+ 
+@@ -52,15 +54,21 @@
+ public:
+     class Item {
+     public:
+-        Item(IWbemClassObject *p) : m_p(p) {}
+-        ~Item() {} // how to delete the pointer ?
+-        QString getProperty(const QString &property );
++        Item(IWbemClassObject *p);
++        Item(const Item& other);
++        Item& operator=(const Item& other);
++        ~Item();
++
++        QString getProperty(const QString &property) const;
+ 
+     private:
+-        IWbemClassObject * m_p;
++        Item() {}
++        // QSharedPointer alone doesn't help because we need to call Release()
++        IWbemClassObject* m_p;
++        QSharedPointer<QAtomicInt> m_int;
+     };
+ 
+-    typedef QList<Item*> ItemList;
++    typedef QList<Item> ItemList;
+ 
+     WmiQuery();
+     ~WmiQuery();
