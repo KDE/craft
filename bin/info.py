@@ -106,6 +106,8 @@ class infoclass:
         """return archive file based package url"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
+        if not os.getenv("EMERGE_PACKAGETYPES") is None:
+            packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
         arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch = "-x64"
