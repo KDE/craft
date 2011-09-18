@@ -7,7 +7,7 @@
 #
 #
 # kdesupport stuff
-libs,qt,4.7.1,
+libs,qt,4.7.4,
 kdesupport,attica,,
 kdesupport,qjson,,
 kdesupport,dbusmenu-qt,gitHEAD,
@@ -24,9 +24,9 @@ kdesupport,akonadi,1.6.0,
 kdesupport,snorenotify,,
 #
 # the KDE packages themselves
-kde,kdelibs,4.7.0,1
+kde,kdelibs,4.7.0,2
 kde,kdepimlibs,4.7.0,
-kde,kde-runtime,4.7.0,
+kde,kde-runtime,4.7.0,1
 kde,kde-workspace,4.7.0,
 kde,kde-baseapps,4.7.0,
 #kdeedu
@@ -85,10 +85,10 @@ extragear,amarok,2.4.3,
 extragear,kate,4.7.0,
 extragear,kile,,
 # extragear,kipi-plugins,2.0.0,
-extragear,digikam,2.0.0,
+extragear,digikam,2.1.1,
 extragear,libalkimia,4.3.1,
 extragear,kmymoney,4.6.0,2
-extragear,kmid,2.4.0,
+extragear,kmid,2.4.0,1
 extragear,konversation,1.3.1,
 extragear,quassel,0.7.2,
 extragear,kregexpeditor,,
