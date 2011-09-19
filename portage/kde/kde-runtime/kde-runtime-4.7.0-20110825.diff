@@ -1,6 +1,6 @@
-diff -Nru kde-runtime-4.7.0.orig/drkonqi/CMakeLists.txt kde-runtime-4.7.0/drkonqi/CMakeLists.txt
+diff -Nrux '*~' kde-runtime-4.7.0.orig/drkonqi/CMakeLists.txt kde-runtime-4.7.0/drkonqi/CMakeLists.txt
 --- kde-runtime-4.7.0.orig/drkonqi/CMakeLists.txt	2011-05-20 22:32:25.000000000 +0200
-+++ kde-runtime-4.7.0/drkonqi/CMakeLists.txt	2011-09-12 00:45:34.692097900 +0200
++++ kde-runtime-4.7.0/drkonqi/CMakeLists.txt	2011-09-19 20:09:31.548587500 +0200
 @@ -68,6 +68,7 @@
  # Comment this out for release.
  #add_definitions(-DBACKTRACE_PARSER_DEBUG)
@@ -9,9 +9,21 @@ diff -Nru kde-runtime-4.7.0.orig/drkonqi/CMakeLists.txt kde-runtime-4.7.0/drkonq
  kde4_add_executable(drkonqi ${drkonqi_SRCS})
  
  target_link_libraries(drkonqi ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY} ${KDE4_KDEWEBKIT_LIBRARY} drkonqi_backtrace_parser)
-diff -Nru kde-runtime-4.7.0.orig/drkonqi/tests/backtraceparsertest/CMakeLists.txt kde-runtime-4.7.0/drkonqi/tests/backtraceparsertest/CMakeLists.txt
+diff -Nrux '*~' kde-runtime-4.7.0.orig/drkonqi/kdbgwin/CMakeLists.txt kde-runtime-4.7.0/drkonqi/kdbgwin/CMakeLists.txt
+--- kde-runtime-4.7.0.orig/drkonqi/kdbgwin/CMakeLists.txt	2011-05-20 22:32:25.000000000 +0200
++++ kde-runtime-4.7.0/drkonqi/kdbgwin/CMakeLists.txt	2011-09-19 20:12:04.782352000 +0200
+@@ -17,7 +17,7 @@
+ 
+ if ( MINGW )
+     kde4_add_executable(kdbgwin ${kdbgwin_SRCS} mingw_generator.h mingw_generator.cpp)
+-    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl)
++    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl z)
+ endif ( MINGW )
+ if ( MSVC )
+     kde4_add_executable(kdbgwin ${kdbgwin_SRCS} msvc_generator.h msvc_generator.cpp)
+diff -Nrux '*~' kde-runtime-4.7.0.orig/drkonqi/tests/backtraceparsertest/CMakeLists.txt kde-runtime-4.7.0/drkonqi/tests/backtraceparsertest/CMakeLists.txt
 --- kde-runtime-4.7.0.orig/drkonqi/tests/backtraceparsertest/CMakeLists.txt	2011-05-20 22:32:25.000000000 +0200
-+++ kde-runtime-4.7.0/drkonqi/tests/backtraceparsertest/CMakeLists.txt	2011-08-25 10:53:38.585941500 +0200
++++ kde-runtime-4.7.0/drkonqi/tests/backtraceparsertest/CMakeLists.txt	2011-09-19 20:09:31.551587700 +0200
 @@ -5,10 +5,12 @@
  target_link_libraries(backtraceparsertest_manual drkonqi_backtrace_parser)
  
