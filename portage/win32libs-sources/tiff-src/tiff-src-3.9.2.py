@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.9.2'] = "ftp://ftp.remotesensing.org/pub/libtiff/tiff-3.9.2.tar.gz"
+        self.targets['3.9.2'] = "http://download.osgeo.org/libtiff/tiff-3.9.2.tar.gz"
         self.targetInstSrc['3.9.2'] = "tiff-3.9.2"
         self.patchToApply['3.9.2'] = ( 'tiff-3.9.2-20100418.diff', 1 )
         self.targetDigests['3.9.2'] = '5c054d31e350e53102221b7760c3700cf70b4327'

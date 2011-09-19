@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/cyrus-sasl'] = 'default'
         self.dependencies['win32libs-bin/libical'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'
+        self.dependencies['win32libs-bin/openldap'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['win32libs-bin/gpgme'] = 'default'
         else:
