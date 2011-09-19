@@ -109,7 +109,7 @@ Flags:
 --target=[TARGET]               This will override the build of the default
                                 target. The default Target is marked with a
                                 star in the printout of --print-targets
---option=<OPTIONS>              Set emerge property from string <OPTIONS>.
+--options=<OPTIONS>             Set emerge property from string <OPTIONS>.
                                 An example for is "cmake.openIDE=1"; 
                                 see options.py for more informations.
 --patchlevel=[PATCHLEVEL]       This will add a patch level when used together
@@ -337,9 +337,9 @@ for i in sys.argv:
     nextArguments.pop(0)
     if ( i == "-p" or i == "--probe" ):
         doPretend = True
-    elif ( i.startswith("--option=") ):
+    elif ( i.startswith("--options=") ):
         # @todo how to add -o <parameter> option
-        options = i.replace( "--option=", "" )
+        options = i.replace( "--options=", "" )
         if "EMERGE_OPTIONS" in os.environ:
             os.environ["EMERGE_OPTIONS"] += " %s" % options
         else:
