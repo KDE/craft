@@ -55,7 +55,7 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdepimlibs'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepimlibs'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepimlibs'
-        self.defaultTarget = '4.7'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.hardDependencies['enterprise5/kdelibs-e5'] = 'default'

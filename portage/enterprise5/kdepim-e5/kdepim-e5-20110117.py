@@ -74,8 +74,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdepim'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepim'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
-        self.defaultTarget = '4.7'
-        self.patchToApply['4.7'] = [
+        self.defaultTarget = 'gitHEAD'
+        self.patchToApply['gitHEAD'] = [
                 ('disable-crypto-backend.patch', 1),
         # Necessary until we know how to build a stable gpgme for windows
                 ('add-full-shutdown-button.patch', 1)]
