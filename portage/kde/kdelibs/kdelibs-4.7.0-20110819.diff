@@ -1,3 +1,16 @@
+diff -Nru kdelibs-4.7.0.orig/kjs/CMakeLists.txt kdelibs-4.7.0/kjs/CMakeLists.txt
+--- kdelibs-4.7.0.orig/kjs/CMakeLists.txt   2011-06-23 16:49:06.000000000 +0200
++++ kdelibs-4.7.0/kjs/CMakeLists.txt    2011-08-19 00:28:01.284768900 +0200
+@@ -1,7 +1,9 @@
+ 
+ project(kjs)
+ 
++if(NOT MINGW)
+ add_subdirectory(tests)
++endif(NOT MINGW)
+ 
+ # Conflict between KJS::HashTable and WTF::HashTable, due to "using namespace" of both namespaces.
+ kde4_no_enable_final(kjs)
 diff -Nru kdelibs-4.7.0.orig/kdecore/kernel/kcomponentdata.cpp kdelibs-4.7.0/kdecore/kernel/kcomponentdata.cpp
 --- kdelibs-4.7.0.orig/kdecore/kernel/kcomponentdata.cpp	2011-05-20 22:24:54.000000000 +0200
 +++ kdelibs-4.7.0/kdecore/kernel/kcomponentdata.cpp	2011-09-12 21:51:45.209335400 +0200
