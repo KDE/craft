@@ -8,10 +8,14 @@ class subinfo( info.infoclass ):
             self.targets[ ver ] = 'http://download.gna.org/kbibtex/0.4/kbibtex-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kbibtex-' + ver
 
+        self.shortDescription = "a BibTeX editor to edit bibliographies used with LaTeX"
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'virtual/kde-runtime' ] = 'default'
+        self.runtimeDependencies[ 'kde/kde-runtime' ] = 'default'
+        self.dependencies[ 'kde/kdelibs' ] = 'default'
+        self.dependencies[ 'kdesupport/poppler' ] = 'default'
+        self.dependencies[ 'win32libs-bin/libxslt' ] = 'default'
 
 from Package.CMakePackageBase import *
 
