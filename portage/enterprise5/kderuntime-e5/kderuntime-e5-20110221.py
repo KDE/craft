@@ -9,8 +9,7 @@ class subinfo( info.infoclass ):
             self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdebase-runtime-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdebase-runtime-4.6.' + ver
         self.defaultTarget = '4.7'
-        self.patchToApply['4.7'] = [('Revert-disable-nepomuk-runtime-on-Windows.patch', 1),
-                                    ('Libbfd-needs-zlib.-Expand-link-libraries.patch', 1)]
+        self.patchToApply['4.7'] = [('Revert-disable-nepomuk-runtime-on-Windows.patch', 1)]
 
         self.patchToApply['4.6.2'] = [('Not-only-use-hardcoded-install-path-on-Windows.patch', 1),
 #                                      ('Revert-disable-nepomuk-runtime-on-Windows.patch', 1)
