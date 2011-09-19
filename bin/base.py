@@ -132,6 +132,8 @@ class baseclass:
             self.compiler = "msvc2008"
         elif COMPILER == "msvc2010":
             self.compiler = "msvc2010"
+        elif COMPILER == "msvc2011":
+            self.compiler = "msvc2011"
         elif COMPILER == "mingw":
             self.compiler = "mingw"
         elif COMPILER == "mingw4":
