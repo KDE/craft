@@ -85,7 +85,7 @@ extragear,amarok,2.4.3,
 extragear,kate,4.7.0,
 extragear,kile,,
 # extragear,kipi-plugins,2.0.0,
-extragear,digikam,2.1.1,
+extragear,digikam,2.0.0,
 extragear,libalkimia,4.3.1,
 extragear,kmymoney,4.6.0,2
 extragear,kmid,2.4.0,1
