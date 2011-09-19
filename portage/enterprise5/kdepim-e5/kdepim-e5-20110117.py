@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
         for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
-            self.svnTargets[version] = '[git]kde:kdepim|%s' % version
+            self.svnTargets[version] = '[git]kde:kdepim|KDE/%s' % version
         self.svnTargets['20091111'] = 'tags/kdepim/pe5.20091111/kdepim'
         self.svnTargets['20091123'] = 'tags/kdepim/pe5.20091123/kdepim'
         self.svnTargets['20091201'] = 'tags/kdepim/pe5.20091201/kdepim'

@@ -4,7 +4,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim-runtime'
         for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
-            self.svnTargets[version] = '[git]kde:kdepim-runtime|%s' % version
+            self.svnTargets[version] = '[git]kde:kdepim-runtime|KDE/%s' % version
         self.defaultTarget = '4.7'
         self.patchToApply['4.7'] = ('Disable-ServerSide-subscriptions-by-default.patch', 1)
 
