@@ -11,7 +11,7 @@ rem               please only use this option if you are exactly
 rem               sure about the consequences)
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler (not completly tested) 
-rem * msvc2011 - use the Microsoft Visual C++ 2010 compiler (not supported) 
+rem * msvc2011 - use the Microsoft Visual C++ 2011 compiler (not supported) 
 set KDECOMPILER=mingw4
 
 rem Here you can set the architecure for which packages are build. 
