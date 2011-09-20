@@ -5,6 +5,7 @@
 
 import os
 import utils
+import compiler
 
 from BuildSystem.BuildSystemBase import *
 
@@ -12,12 +13,15 @@ class QMakeBuildSystem(BuildSystemBase):
     def __init__( self):
         BuildSystemBase.__init__(self, "qmake")
         self.platform = ""
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
+        if compiler.isMSVC():
             self.platform = "win32-%s" % self.compiler()
-        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
+            if compiler.isMSVC2011():
+                print "Warning: using win32-msvc2010 instead of win32-msvc2011"
+                self.platform = "win32-msvc2010"
+        elif compiler.isMinGW():
             self.platform = "win32-g++"
         else:
-            exit( 1 )
+            utils.die( "QMakeBuildSystem: unsupported compiler platform %s" % self.compiler() )
 
     def setPathes( self ):
             # for building qt with qmake
