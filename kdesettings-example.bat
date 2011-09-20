@@ -11,6 +11,7 @@ rem               please only use this option if you are exactly
 rem               sure about the consequences)
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler (not completly tested) 
+rem * msvc2011 - use the Microsoft Visual C++ 2010 compiler (not supported) 
 set KDECOMPILER=mingw4
 
 rem Here you can set the architecure for which packages are build. 
@@ -65,6 +66,7 @@ rem Here you can adjust the path to your Visual Studio installation if needed
 rem This is used to set up the build environment automatically
 if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9.0
 if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10.0
+if %KDECOMPILER% == msvc2011 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 11.0
 
 rem Here you can adjust the path to the Windows Mobile SDK installation
 rem This is used to set up the cross-compilation environment automatically
