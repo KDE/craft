@@ -508,6 +508,8 @@ class baseclass:
                 cmd += " -type vc90 "
             elif self.compiler == "msvc2010":
                 cmd += " -type vc100 "
+            elif self.compiler == "msvc2011":
+                cmd += " -type vc110 "
             else:
                 cmd += " -type unknown "
 
