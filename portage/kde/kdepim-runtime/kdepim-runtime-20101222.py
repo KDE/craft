@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/kdepim-runtime-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'kdepim-runtime-4.7.' + ver
         self.patchToApply['4.7.0'] = ("kdepim-runtime-4.7.0-20110823.diff", 1)
+        self.patchToApply['4.7.1'] = ("0001-Ignore-items-with-empty-remote-ids-here.patch", 1)
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

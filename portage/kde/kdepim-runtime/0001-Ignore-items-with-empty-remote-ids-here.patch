@@ -1,0 +1,36 @@
+From ccd67f3e65c9ffe32858ca521aa1e56a42b026af Mon Sep 17 00:00:00 2001
+From: Volker Krause <vkrause@kde.org>
+Date: Tue, 20 Sep 2011 10:12:40 +0200
+Subject: [PATCH] Ignore items with empty remote ids here.
+
+Items with empty remote id are those not yet stored by the resource,
+ie. we still have pending change replays for those. So, if we do a sync
+during that period (which could happen since the introduction of the
+file system watcher), we would remove a random one of those (only one
+since the map would only contain one without a remote id). This mostly
+affects the POP3 usage pattern.
+(cherry picked from commit f814b46a799ea8418ae17cf77d44da473124d12d)
+---
+ resources/maildir/retrieveitemsjob.cpp |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/resources/maildir/retrieveitemsjob.cpp b/resources/maildir/retrieveitemsjob.cpp
+index 7253f7e..f0273ef 100644
+--- a/resources/maildir/retrieveitemsjob.cpp
++++ b/resources/maildir/retrieveitemsjob.cpp
+@@ -57,8 +57,10 @@ void RetrieveItemsJob::localListDone ( KJob* job )
+ 
+   const Akonadi::Item::List items = qobject_cast<Akonadi::ItemFetchJob*>( job )->items();
+   m_localItems.reserve( items.size() );
+-  foreach ( const Akonadi::Item &item, items )
+-    m_localItems.insert( item.remoteId(), item );
++  foreach ( const Akonadi::Item &item, items ) {
++    if ( !item.remoteId().isEmpty() )
++      m_localItems.insert( item.remoteId(), item );
++  }
+ 
+   const QStringList entryList = m_maildir.entryList();
+   qint64 previousMtime = m_collection.remoteRevision().toLongLong();
+-- 
+1.7.1
+
