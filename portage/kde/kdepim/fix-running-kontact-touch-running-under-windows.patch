@@ -1,0 +1,25 @@
+From fbe5fa43293c71a0fbf61614014e916050d42427 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andreas.holzammer@kdab.com>
+Date: Tue, 16 Aug 2011 20:28:42 +0200
+Subject: [PATCH] fix running kontact touch running under windows
+
+---
+ mobile/lib/kdeclarativefullscreenview.cpp |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/mobile/lib/kdeclarativefullscreenview.cpp b/mobile/lib/kdeclarativefullscreenview.cpp
+index 4389ace..3553287 100644
+--- a/mobile/lib/kdeclarativefullscreenview.cpp
++++ b/mobile/lib/kdeclarativefullscreenview.cpp
+@@ -186,7 +186,7 @@ void KDeclarativeFullScreenView::setQmlFile(const QString& source)
+     kWarning() << "start setSource" << &t << " - " << QDateTime::currentDateTime();
+   }
+   qDebug() << "trying to load \"" +  source << "\"";
+-  setSource( source );
++  setSource( QUrl::fromLocalFile(source) );
+   if ( debugTiming ) {
+     kWarning() << "setSourceDone" << t.elapsed() << &t;
+   }
+-- 
+1.7.4.msysgit.0
+

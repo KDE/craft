@@ -14,7 +14,8 @@ class subinfo( info.infoclass ):
         self.patchToApply['4.7.0'] += [("kdepim-4.7.0-20110823.diff", 1),
                                        ('Add-kde4_app_icon-macro-for-mobile-targets.patch',1),
                                        ('remove-old-icon-way.diff', 1),
-                                       ('broken-app-icons-fix.diff', 1)]
+                                       ('broken-app-icons-fix.diff', 1),
+                                       ('fix-running-kontact-touch-running-under-windows.patch', 1)]
 
     def setDependencies( self ):
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
