@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = '[git]kde:cantor|4.7|'
+        self.svnTargets['svnHEAD'] = '[git]kde:cantor|KDE/4.7|'
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/cantor-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'cantor-4.7.' + ver

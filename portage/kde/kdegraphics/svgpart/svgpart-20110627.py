@@ -3,7 +3,7 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in ['4.7']:
-            self.svnTargets[ ver ] = '[git]kde:svgpart|%s|' % ver
+            self.svnTargets[ ver ] = '[git]kde:svgpart|KDE/%s|' % ver
             
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/svgpart-4.7." + ver + ".tar.bz2"
