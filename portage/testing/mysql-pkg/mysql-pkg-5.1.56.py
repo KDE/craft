@@ -32,6 +32,7 @@ class Package(CMakePackageBase):
   def __init__(self):
     self.subinfo = subinfo()
     self.subinfo.options.package.packSources = False
+    self.subinfo.options.package.disableStriping = True
     CMakePackageBase.__init__( self )
 
 
