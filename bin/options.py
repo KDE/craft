@@ -139,6 +139,11 @@ class OptionsPackage:
         ## add file digests to the package located in the manifest sub dir
         # currently supported by SevenZipPackager
         self.withDigests = True
+        ##disable stripping of binary files
+        #needed for mysql, striping make the library unusable
+        self.disableStriping = False
+        
+        
 
 class OptionsCMake:
     def __init__(self):
