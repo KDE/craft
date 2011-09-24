@@ -220,16 +220,16 @@ class CollectionPackagerBase( PackagerBase ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-#            if entry_target.endswith(".dll"):
-#                self.stripLibs( entry_target[0:-4] )
+           if entry_target.endswith(".dll"):
+               self.stripLibs( entry_target[0:-4] )
         for entry in duplicates:
             entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-#            if entry_target.endswith(".dll"):
-#                self.stripLibs( entry_target[0:-4] )
+           if entry_target.endswith(".dll"):
+               self.stripLibs( entry_target[0:-4] )
           
     def internalCreatePackage( self ):
         """ create a package """
