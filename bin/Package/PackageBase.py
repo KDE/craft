@@ -202,6 +202,7 @@ class PackageBase (EmergeBase):
 
     def stripLibs( self, pkgName ):
         """strip debugging informations from shared libraries - mingw only!!! """
+        if self.subinfo.options.package.disableStriping: return True
         if not isMinGW(): return True
         basepath = os.path.join( self.installDir() )
         dllpath = os.path.join( basepath, "bin", "%s.dll" % pkgName )

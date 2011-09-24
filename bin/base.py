@@ -524,11 +524,12 @@ class baseclass:
 
     def stripLibs( self, pkg_name ):
         """stripping libraries"""
-        basepath = os.path.join( self.imagedir, self.instdestdir )
-        dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
+        if not self.subinfo.options.package.disableStriping:
+            basepath = os.path.join( self.imagedir, self.instdestdir )
+            dllpath = os.path.join( basepath, "bin", "%s.dll" % pkg_name )
 
-        cmd = "strip -s " + dllpath
-        self.system( cmd )
+            cmd = "strip -s " + dllpath
+            self.system( cmd )
         return True
 
     def msysConfigureFlags( self ):
