@@ -56,7 +56,6 @@ class Package(BinaryPackageBase):
   def __init__(self):
     self.subinfo = subinfo()
     self.subinfo.options.package.packSources = False
-    self.subinfo.options.package.withCompiler = None
     self.subinfo.options.package.packageName = 'vlc'
     BinaryPackageBase.__init__( self )
 
