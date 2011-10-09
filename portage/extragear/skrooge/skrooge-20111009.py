@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs-bin/libopensp'] = 'default'
