@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['libs/qt-static'] = 'default'
+        self.buildDependencies['libs/qt-static-src'] = 'default'
         self.buildDependencies['dev-util/upx'] = 'default'
 
 from Package.CMakePackageBase import *
@@ -22,9 +22,9 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.noDefaultInclude = True
         self.subinfo.options.configure.noDefaultLib = True
 
-        self.qtstatic = portage.getPackageInstance('libs','qt-static')
-        self.qtstatic.setBuildTarget('4.5.2-patched')
-        qmake = os.path.join(self.qtstatic.installDir(), "bin", "qmake.exe")
+        self.qtstatic = portage.getPackageInstance('libs','qt-static-src')
+        self.qtstatic.setBuildTarget('4.7.4')
+        qmake = os.path.join(self.qtstatic.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             utils.warning("could not find qmake in <%s>" % qmake)
         ## \todo a standardized way to check if a package is installed in the image dir would be good.

@@ -99,7 +99,9 @@ class KDEWinPackager (PackagerBase):
                     continue
                 utils.debug( "Checking: %s" % path, 3 )
                 for fileName in files:
-                    if not self.subinfo.options.package.disableStriping:
+                    if ( fileName.endswith( ".pdb" ) ):
+                        utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
+                    elif not self.subinfo.options.package.disableStriping:
                         if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) ):
                             if compiler.isMinGW():
                                 symFilename = fileName[:-4] + ".sym"
@@ -107,8 +109,6 @@ class KDEWinPackager (PackagerBase):
                                         + " " + os.path.join( path, fileName ) )
                                 # utils.system( "strip --strip-all " + os.path.join( path, fileName ) )
                                 utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
-                    elif ( fileName.endswith( ".pdb" ) ):
-                        utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
 
             if not self.subinfo.options.package.disableStriping and compiler.isMinGW() :
                 symCmd += "-strip "

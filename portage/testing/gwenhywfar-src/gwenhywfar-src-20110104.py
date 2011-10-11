@@ -15,6 +15,9 @@ class subinfo(info.infoclass):
         self.targets['4.0.3'] = 'gwenhywfar-4.0.3.tar.gz'
         self.targetInstSrc['4.0.3'] = "gwenhywfar-4.0.3"       
         self.patchToApply['4.0.3'] = ('gwenhywfar-4.0.3-20110122.diff', 1)
+        self.targets['4.3.0'] = 'gwenhywfar-4.3.0.tar.gz'
+        self.targetInstSrc['4.3.0'] = "gwenhywfar-4.3.0"       
+        self.patchToApply['4.3.0'] = ('gwenhywfar-4.0.3-20110122.diff', 1)
 
         self.options.package.withCompiler = False
         self.shortDescription = "A multi-platform helper library for other libraries"
