@@ -77,9 +77,9 @@ Section
 SetShellVarContext all
 CreateDirectory "${startmenu}"
 SetOutPath $INSTDIR ; for working directory
-CreateShortCut "${startmenu}\${executable_name}.lnk" "$INSTDIR\${executable}"
-CreateShortCut "${startmenu}\${executable2_name}.lnk" "$INSTDIR\${executable2}"
-CreateShortCut "${startmenu}\${executable3_name}.lnk" "$INSTDIR\${executable3}"
+CreateShortCut "${startmenu}\Amarok.lnk" "$INSTDIR\bin\Amarok.exe"
+CreateShortCut "${startmenu}\Appearance Settings.lnk" "$INSTDIR\bin\kcmshell4.exe" "style" "$INSTDIR\bin\systemsettings.exe"
+CreateShortCut "${startmenu}\Snorenotify.lnk" "$INSTDIR\bin\snorenotify.exe"
 CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
 SectionEnd
  
@@ -94,9 +94,6 @@ SetShellVarContext all
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
 
-Delete "${startmenu}\${executable_name}.lnk"
-Delete "${startmenu}\${executable2_name}.lnk"
-Delete "${startmenu}\${executable3_name}.lnk"
 Delete "${startmenu}\Uninstall.lnk"
 
 RMDir /r "${startmenu}"

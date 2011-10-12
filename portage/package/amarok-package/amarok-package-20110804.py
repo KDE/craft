@@ -25,12 +25,6 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.defines[ "executable" ] = "bin\\amarok.exe"
-        self.defines["executable_name" ] = "Amarok"
-        self.defines[ "executable2" ] = "bin\\systemsettings.exe"
-        self.defines["executable2_name" ] = "Settings"
-        self.defines[ "executable3" ] = "bin\\snorenotify.exe"
-        self.defines["executable3_name" ] = "Snorenotify"
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
 
 if __name__ == '__main__':
