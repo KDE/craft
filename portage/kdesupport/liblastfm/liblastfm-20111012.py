@@ -6,12 +6,10 @@ import shutil
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = "git://github.com/davidsansome/liblastfm.git"
-        self.patchToApply[ 'gitHEAD' ] = ( "liblastfm-src-20101128.diff", 1 )
-        self.svnTargets[ 'TheOneRing' ] = "git://github.com/TheOneRing/liblastfm.git"
-        self.targetSrcSuffix['TheOneRing'] = "theo"
+        self.svnTargets[ 'gitHEAD' ] = "git://github.com/TheOneRing/liblastfm.git"
+        self.targetSrcSuffix['gitHEAD'] = "theo"
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
-        self.defaultTarget = 'TheOneRing'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'
