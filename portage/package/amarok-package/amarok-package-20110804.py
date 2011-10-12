@@ -25,7 +25,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.defines[ "executable" ] = "bin\\amarok.exe"
+        self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
 
 if __name__ == '__main__':
     Package().execute()

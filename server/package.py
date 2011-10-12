@@ -193,7 +193,7 @@ class package:
 
 general = common.settings.getSection( "General" )
 
-emerge = os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
+emerge = "python " + os.path.join( general["kderoot"], "emerge", "bin", "emerge.py" )
 
 # first cleanup
 cmdstring = emerge + " --cleanup"
