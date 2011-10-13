@@ -55,11 +55,8 @@ class Package(QMakePackageBase):
 
         incdirs=""
         libdirs=""
-        os.environ[ "USERIN" ] = "y"
-        userin = "y"
 
-        configureTool = r"echo %s | %s " %  \
-            (userin, os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" ) )
+        configureTool = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
 
         configureOptions = ""
         if self.buildType() == "Debug":
@@ -67,11 +64,14 @@ class Package(QMakePackageBase):
         else:
             configureOptions += " -release "
 
-        configureOptions += "-opensource -platform %s -prefix %s -static " \
-          " -qt-gif -qt-libpng -no-libjpeg -no-libtiff" \
+        utils.copyFile( os.path.join( self.packageDir(), "qconfig-kdewin.h" ), os.path.join( self.sourceDir(), "src", "corelib", "global", "qconfig-kdewin.h" ) )
+        " -qconfig kdewin" \
+
+        configureOptions += "-opensource -confirm-license -platform %s -prefix %s -static " \
+          " -no-gif -qt-libpng -no-libjpeg -no-libtiff -no-libmng -no-mmx -no-3dnow -no-sse -no-sse2" \
           " -no-phonon -no-qdbus -no-qt3support -no-webkit -no-scripttools -no-openssl " \
           " -no-opengl -no-xmlpatterns -no-exceptions -no-rtti -no-stl -no-accessibility" \
-          " -no-vcproj -no-dsp -no-sql-sqlite" \
+          " -no-vcproj -no-dsp -no-sql-sqlite -no-multimedia -no-audio-backend -no-native-gestures -no-declarative -no-script -no-scripttools" \
           " -no-style-cde -no-style-cleanlooks -no-style-motif -no-style-plastique" \
           " -nomake demos -nomake examples -nomake docs" \
           "%s %s" % (  platform, self.installDir(), incdirs, libdirs)
