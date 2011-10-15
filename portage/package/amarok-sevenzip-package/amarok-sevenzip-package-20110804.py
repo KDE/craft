@@ -8,8 +8,8 @@ from Packager.SevenZipPackager2 import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ '2.4.3' ] = ""
-        self.defaultTarget = '2.4.3'
+        self.svnTargets[ '2.4.3-4' ] = ""
+        self.defaultTarget = '2.4.3-4'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
