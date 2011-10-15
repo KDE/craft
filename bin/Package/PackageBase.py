@@ -206,8 +206,9 @@ class PackageBase (EmergeBase):
         
     def strip( self , fileName ):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
-        if self.subinfo.options.package.disableStriping: return True
-        if not isMinGW(): return True
+        if self.subinfo.options.package.disableStriping or not isMinGW(): 
+            debug("Skiping stipping of " + fileName ,1 )
+            return True
         basepath = os.path.join( self.installDir() )
         filepath = os.path.join( basepath, "bin",  fileName )
 
