@@ -41,7 +41,7 @@ Packager for portal 7zip archives
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-package-%s.7z" % ( shortPackage, self.buildTarget )
+            self.defines[ "setupname" ] = "%s-portable-%s.7z" % ( shortPackage, self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         if self.scriptname:

@@ -4,10 +4,10 @@
 ; adapted from marble.nsi
 
 ; registry stuff
-!define regkey "Software\${company}\${productname}"
-!define uninstkey "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname}"
+!define regkey "Software\${company}\Amarok"
+!define uninstkey "Software\Microsoft\Windows\CurrentVersion\Uninstall\Amarok"
  
-!define startmenu "$SMPROGRAMS\${productname}"
+!define startmenu "$SMPROGRAMS\Amarok"
 !define uninstaller "uninstall.exe"
  
 ;--------------------------------
@@ -28,7 +28,7 @@ SetDatablockOptimize on
 CRCCheck on
 SilentInstall normal
  
-InstallDir "$PROGRAMFILES\${productname}"
+InstallDir "$PROGRAMFILES\${Amarok}"
 InstallDirRegKey HKLM "${regkey}" ""
  
 Function .onInstSuccess
@@ -57,7 +57,7 @@ Section
  
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
-  WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname} (remove only)"
+  WriteRegStr HKLM "${uninstkey}" "DisplayName" "${Amarok} (remove only)"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
  
   SetOutPath $INSTDIR
@@ -86,7 +86,7 @@ SectionEnd
 ; Uninstaller
 ; All section names prefixed by "Un" will be in the uninstaller
  
-UninstallText "This will uninstall ${productname}."
+UninstallText "This will uninstall Amarok."
  
 Section "Uninstall"
 SetShellVarContext all

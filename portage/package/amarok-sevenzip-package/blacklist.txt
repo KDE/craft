@@ -2,6 +2,8 @@
 # manifest files may be there because of lousy system
 manifest\\.*
 .*\.pdb
+.*\.la
+.*\.nsis
 
 # multiple docs
 doc\\.*
@@ -134,3 +136,9 @@ bin\\realpath\.exe
 bin\\redland-config\.exe
 bin\\redland-db-upgrade\.exe
 bin\\remote-widgets-browser\.exe
+bin\\aspell\.exe
+bin\\soprano\\.*
+
+lib\\libstreams\\.*
+lib\\strigi\\.*
+lib\\aspell-0.60\\.*
