@@ -61,7 +61,7 @@ Packager for portal 7zip archives
         """ create a package """
         print "packaging using the SevenzipPackager"
         
-        #self.internalCreatePackage()
+        self.internalCreatePackage()
 
         self.generate7zipPackage()
         utils.createDigetFile( self.defines[ "setupname" ])
