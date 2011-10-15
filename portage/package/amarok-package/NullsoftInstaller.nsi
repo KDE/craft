@@ -28,7 +28,7 @@ SetDatablockOptimize on
 CRCCheck on
 SilentInstall normal
  
-InstallDir "$PROGRAMFILES\${Amarok}"
+InstallDir "$PROGRAMFILES\Amarok"
 InstallDirRegKey HKLM "${regkey}" ""
  
 Function .onInstSuccess
@@ -57,7 +57,7 @@ Section
  
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
-  WriteRegStr HKLM "${uninstkey}" "DisplayName" "${Amarok} (remove only)"
+  WriteRegStr HKLM "${uninstkey}" "DisplayName" "Amarok (remove only)"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
  
   SetOutPath $INSTDIR
