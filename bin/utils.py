@@ -342,6 +342,14 @@ def createFilesDigests( downloaddir, filenames ):
         digestList.append(entry)
     return digestList
 
+def createDigetFile(path):
+    """creates a sha1 diget file"""
+    digets = digestFileSha1(path)
+    f = open(path + ".sha1","wb+")
+    f.write(digets)
+    f.write("\n")
+    f.close
+    
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
     i = 0
@@ -387,7 +395,7 @@ def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     ( shortname, ext ) = os.path.splitext( filename )
     if ( ext == ".zip" ):
-        return unZip( os.path.join( downloaddir, filename ), workdir )
+        return un7zip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".tgz" ):
@@ -418,34 +426,16 @@ def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
-
-    mode = "r"
-    if ( ext == ".gz" ):
-        mode = "r:gz"
-    elif ( ext == ".bz2" ):
-        mode = "r:bz2"
-    elif( ext == ".lzma" or ext == ".xz" ):
-        un7zip( fileName, os.getenv("TMP") )
-        _, tarname = os.path.split( shortname )
-        fileName = os.path.join( os.getenv("TMP"), tarname )
+    un7zip( fileName, os.getenv("TMP") )
+    _, tarname = os.path.split( shortname )
+    fileName = os.path.join( os.getenv("TMP"), tarname )
 
     if not os.path.exists( fileName ):
         error( "couldn't find file %s" % fileName )
         return False
 
-    try:
-        with tarfile.open( fileName, mode ) as tar:
-        # FIXME how to handle errors here ?
-            for fileName in tar:
-                try:
-                    tar.extract(fileName, destdir )
-                except tarfile.TarError:
-                    error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
-                    return False
-        return True
-    except tarfile.TarError:
-        error( "could not open existing tar archive: %s" % fileName )
-        return False
+    un7zip(fileName, destdir )
+    return True
 
 
 def unZip( fileName, destdir ):
