@@ -220,7 +220,7 @@ class CollectionPackagerBase( PackagerBase ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-            if strip and entry_target.endswith(".dll") or entry_target.endswith(".exe"):
+            if not strip and entry_target.endswith(".dll") or entry_target.endswith(".exe"):
                 self.strip( entry_target )
         for entry in duplicates:
             entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
@@ -228,7 +228,7 @@ class CollectionPackagerBase( PackagerBase ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-            if strip and entry_target.endswith(".dll") or entry_target.endswith(".exe"):
+            if not strip and entry_target.endswith(".dll") or entry_target.endswith(".exe"):
                 self.strip( entry_target )
           
     def internalCreatePackage( self ):
