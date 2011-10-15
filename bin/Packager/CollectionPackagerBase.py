@@ -118,7 +118,7 @@ class CollectionPackagerBase( PackagerBase ):
             defaultTarget = portage.findPossibleTargets( category, package, version )
             _package = portage.getPackageInstance( category, package, defaultTarget )
             imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ),
-                    self.__imageDirPattern( _package, defaultTarget ) ), _package.subinfo.options.merge.destinationPath ) )
+                    self.__imageDirPattern( _package, defaultTarget ) ), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
         return imageDirs
 
@@ -195,7 +195,7 @@ class CollectionPackagerBase( PackagerBase ):
                 elif os.path.isfile( f ) and whitelist( z ):
                     yield f
 
-    def copyFiles( self, srcDir, destDir ):
+    def copyFiles( self, srcDir, destDir, strip  ):
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
@@ -220,7 +220,7 @@ class CollectionPackagerBase( PackagerBase ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-            if entry_target.endswith(".dll") or entry_target.endswith(".exe"):
+            if strip and entry_target.endswith(".dll") or entry_target.endswith(".exe"):
                 self.strip( entry_target )
         for entry in duplicates:
             entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
@@ -228,7 +228,7 @@ class CollectionPackagerBase( PackagerBase ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
             utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
-            if entry_target.endswith(".dll") or entry_target.endswith(".exe"):
+            if strip and entry_target.endswith(".dll") or entry_target.endswith(".exe"):
                 self.strip( entry_target )
           
     def internalCreatePackage( self ):
@@ -236,12 +236,12 @@ class CollectionPackagerBase( PackagerBase ):
         if not utils.envAsBool("EMERGE_NOCLEAN"):
             utils.debug( "cleaning imagedir: %s" % self.imageDir() )
             utils.cleanDirectory( self.imageDir() )
-            for directory, mergeDir in self.__getImageDirectories():
+            for directory, mergeDir, strip  in self.__getImageDirectories():
                 imageDir = self.imageDir()
                 if mergeDir:
                     imageDir = os.path.join( imageDir, mergeDir )
                 if os.path.exists( directory ):
-                    self.copyFiles(directory, imageDir)
+                    self.copyFiles(directory, imageDir, strip)
                 else:
                     utils.warning( "image directory %s does not exist!" % directory )
 
