@@ -1,0 +1,18 @@
+Index: hupnp_av/hupnp_av.pro
+===================================================================
+--- hupnp_av/hupnp_av.pro	(Revision 129)
++++ hupnp_av/hupnp_av.pro	(Arbeitskopie)
+@@ -14,11 +14,11 @@
+ 
+ isEmpty(PREFIX) {
+     INCLUDEPATH += ../hupnp/include
+-    LIBS += -L"./../hupnp/bin/" -lHUpnp
++    LIBS += -L"./../hupnp/bin/" -lHUpnp1
+ }
+ else {
+     INCLUDEPATH += $$PREFIX/include/HUpnpCore/
+-    LIBS += -L"$$PREFIX/lib" -lHUpnp
++    LIBS += -L"$$PREFIX/lib" -lHUpnp1
+ }
+ 
+ OBJECTS_DIR = obj
