@@ -1,0 +1,14 @@
+diff -Nru kde-runtime-4.7.2.orig/knotify/notifybypopup.cpp kde-runtime-4.7.2/knotify/notifybypopup.cpp
+--- kde-runtime-4.7.2.orig/knotify/notifybypopup.cpp	2011-06-22 16:30:08.000000000 +0200
++++ kde-runtime-4.7.2/knotify/notifybypopup.cpp	2011-10-18 14:30:09.605890600 +0200
+@@ -68,6 +68,10 @@
+ 	watcher->addWatchedService(dbusServiceName);
+ 	connect(watcher, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
+ 			SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
++#ifdef Q_WS_WIN
++	if(!m_dbusServiceExists)
++		QDBusConnection::sessionBus().interface()->startService("org.freedesktop.Notifications");
++#endif
+ }
+ 
+ 

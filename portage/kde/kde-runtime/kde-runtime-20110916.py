@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
             self.targets['4.7.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.7." + ver + "/src/kde-runtime-4.7." + ver + ".tar.bz2"
             self.targetInstSrc['4.7.' + ver] = 'kde-runtime-4.7.' + ver
         self.patchToApply['4.7.0'] = ("kde-runtime-4.7.0-20110825.diff", 1)
+        self.patchToApply['4.7.2'] = ("kde-runtime-4.7.2-20111018.diff", 1)
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
