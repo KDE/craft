@@ -12,7 +12,8 @@ class subinfo(info.infoclass):
         
     def setTargets( self ):
       self.svnTargets['gitHEAD'] = '[git]kde:cagibi'
-      self.defaultTarget = 'gitHEAD'
+      self.svnTargets['0.1'] = '[git]kde:cagibi|0.1|'
+      self.defaultTarget = '0.1'
          
 
 class Package( CMakePackageBase ):
