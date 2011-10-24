@@ -341,6 +341,14 @@ def createFilesDigests( downloaddir, filenames ):
         entry = filename, digest
         digestList.append(entry)
     return digestList
+    
+def createDigetFile(path):
+    """creates a sha1 diget file"""
+    digets = digestFileSha1(path)
+    f = open(path + ".sha1","wb+")
+    f.write(digets)
+    f.write("\n")
+    f.close
 
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )

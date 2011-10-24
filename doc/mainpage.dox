@@ -134,20 +134,34 @@ Other actions:
 Package scripts are the central place for definitions and actions required to build a package.
 Package scripts are divided into categories and are located under a \ref package_root.
 
-A package file name could be named as shown below: 
-    \li package.py
-    \li <package-name>.py
-    \li <package-name>-<version>.py
-
-where package name could be: 
+a package directory may be defined in the form: 
+    \li <package-name>
+    \li <package-name>-<package-type>
+ 
+with the package name setup like: 
     \li <text>
     \li <text>-<text>
+    \li <text>-<text>-<text>
+
+and the package type could be: 
+    \li "-pkg"
+    \li "-src" - indicates that this package used as a replacement for the related binary package named without the postfix. See \ref EMERGE_SOURCEONLY for more informations
+    
+A package file name has to be named as shown below: 
+    \li <package-name>-<version>.py
+
+with the package name setup like: 
+    \li <text>
+    \li <text>-<text>
+    \li <text>-<text>-<text>
  
 and the version could be in the form: 
     \li <major>
     \li <major>.<minor>
     \li <major>.<minor>.<patch>
     \li <major>.<minor>.<patch>-<postfix>
+    \li <date>   e.g 20111103 
+    \li "all"    indicates, that all version handling is handled inside the package
     
 For a real example see below: 
     
@@ -155,9 +169,14 @@ For a real example see below:
     portage/
         kdesupport/ 
             kdewin-installer/
-                kdewin-installer.py
+                kdewin-installer-0.9.9-2.py
             kdewin/
                 kdewin-0.4.2.py
+            kdewin-packager-static/
+                kdewin-packager-static-0.9.9-2.py
+        libs/
+            qt-static-src/
+                qt-static-src-all.py
                 
 \endcode
 
@@ -209,6 +228,9 @@ The Emerge.py script contains the entry point for all available actions. In deta
 
 The emerge script is called by a command line wrapper named emerge.bat 
 
- 
+\page environment variables 
 
+\section EMERGE_SOURCEONLY EMERGE_SOURCEONLY 
+This variable can be used to build only source packages and don't use binary packages. It is needed for wince builds, but works everywhere. 
+source packages are distingushed from binary packages by a -src postfix 
 */

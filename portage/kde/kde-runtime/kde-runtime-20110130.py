@@ -37,6 +37,13 @@ class Package(CMakePackageBase):
         if self.isTargetBuild():
             self.subinfo.options.configure.defines += "-DKDEBASE_DISABLE_MULTIMEDIA=ON "
         self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
+        
+        automoc = os.path.join(self.mergeDestinationDir(), "lib", "automoc4", "Automoc4Config.cmake")
+        if not os.path.exists(automoc):
+            utils.warning("could not find automoc in <%s>" % automoc)
+        ## \todo a standardized way to check if a package is installed in the image dir would be good.
+        self.subinfo.options.configure.defines += " -DAUTOMOC4_CONFIG_FILE:FILEPATH=%s " \
+            % automoc.replace('\\', '/')
 
 if __name__ == '__main__':
     Package().execute()

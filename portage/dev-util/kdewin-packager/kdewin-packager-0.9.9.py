@@ -2,24 +2,18 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.9.6'] = "http://www.winkde.org/pub/kde/ports/win32/installer/kdewin-packager.exe"
-        self.defaultTarget = '0.9.6'
-        ## \todo specific a target independent install path option
-        self.targetInstallPath['0.9.6'] = 'bin'
+        self.targets['0.9.9-2'] = "http://downloads.sourceforge.net/project/kde-windows/kdewin-packager/0.9.9/kdewin-packager-static-vc100-0.9.9-2-bin.tar.bz2"
+        self.targetDigests['0.9.9-2'] = '8cc15a649ef33fa24f8ad07be30ef27ab2a6ccbb'
+        self.defaultTarget = '0.9.9-2'
 
-from Source.FileSource import *
-from Package.PackageBase import *
-from BuildSystem.BinaryBuildSystem import *
+from Package.BinaryPackageBase import *
 
-class Package( PackageBase, FileSource, BinaryBuildSystem ):
+class Package( BinaryPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.install.installPath = "bin"
-        FileSource.__init__( self )
-        PackageBase.__init__( self )
-        BinaryBuildSystem.__init__( self )
+        BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()

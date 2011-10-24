@@ -3,19 +3,24 @@ import compiler
 import info
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "https://hupnp.svn.sourceforge.net/svnroot/hupnp/trunk/herqq"
+    def setTargets( self ):        
         self.shortDescription = "Herqq UPnP (HUPnP) is a software library for building UPnP devices and control points conforming to the UPnP Device Architecture version 1.1"
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['svnHEAD'] = "https://hupnp.svn.sourceforge.net/svnroot/hupnp/trunk/herqq"
+        self.patchToApply['svnHEAD'] = ("HUpnp1.diff", 0)
+        for ver in ["1.0.0"]:
+            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/hupnp/herqq-%s.zip" % ver
+            self.targetInstSrc[ver] = "herqq-%s" % ver
+        
+        self.defaultTarget = "1.0.0"
 
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/libqtsoap'] = 'default'
 
     def setBuildOptions( self ):
-        self.options.configure.defines = '-r "CONFIG += DISABLE_TESTAPP"'
-        self.options.configure.defines = '-r "CONFIG += DISABLE_AVTESTAPP"'
-        self.options.configure.defines += ' -r "CONFIG += DISABLE_QTSOAP"'
+        self.options.configure.defines = ' "CONFIG += DISABLE_TESTAPP"'
+        self.options.configure.defines += ' "CONFIG += DISABLE_AVTESTAPP"'
+        self.options.configure.defines += ' "CONFIG += DISABLE_QTSOAP"'
 
 from Package.QMakePackageBase import *
 
@@ -24,17 +29,17 @@ class Package( QMakePackageBase ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
         if self.buildType() == "Release":
-            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug"'
-            self.subinfo.options.configure.defines += ' -r "CONFIG += release"'
-            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug_and_release"'
+            self.subinfo.options.configure.defines += ' "CONFIG -= debug"'
+            self.subinfo.options.configure.defines += ' "CONFIG += release"'
+            self.subinfo.options.configure.defines += ' "CONFIG -= debug_and_release"'
         if self.buildType() == "Debug":
-            self.subinfo.options.configure.defines += ' -r "CONFIG += debug"'
-            self.subinfo.options.configure.defines += ' -r "CONFIG -= release"'
-            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug_and_release"'
+            self.subinfo.options.configure.defines += ' "CONFIG += debug"'
+            self.subinfo.options.configure.defines += ' "CONFIG -= release"'
+            self.subinfo.options.configure.defines += ' "CONFIG -= debug_and_release"'
         if self.buildType() == "RelWithDebInfo":
-            self.subinfo.options.configure.defines += ' -r "CONFIG -= debug"'
-            self.subinfo.options.configure.defines += ' -r "CONFIG -= release"'
-            self.subinfo.options.configure.defines += ' -r "CONFIG += debug_and_release"'
+            self.subinfo.options.configure.defines += ' "CONFIG -= debug"'
+            self.subinfo.options.configure.defines += ' "CONFIG -= release"'
+            self.subinfo.options.configure.defines += ' "CONFIG += debug_and_release"'
         
     def unpack( self ):
         if not QMakePackageBase.unpack( self ):
