@@ -50,7 +50,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.7.4'] = [
             ('patches/4.7/out-of-source-build.patch', 1), 
             ('patches/4.7/add-pdbs-on-msvc.diff', 1) , 
-            ("patches/4.7/detect-windows-8-as-windows-7.patch",1)
+            ("patches/4.7/detect-windows-8-as-windows-7.patch",1),
             ("patches/4.7.4/0001-fixed-error-generating-wrong-introspection-string-in.patch",1)
         ]
 
