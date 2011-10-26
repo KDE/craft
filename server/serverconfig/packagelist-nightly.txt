@@ -85,6 +85,7 @@ kde,kdetoys,,
 kde,kdeutils,,
 #
 # the KDE extragear packages
+extragear,amarok,,
 extragear,kate,,
 extragear,kile,,
 extragear,digikam,gitHEAD,
