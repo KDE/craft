@@ -53,10 +53,25 @@ class QMakeBuildSystem(BuildSystemBase):
             command = "%s %s" % (self.subinfo.options.configure.tool, self.configureOptions(configureDefines))
         elif os.path.exists(configTool):
             command = "%s %s" % (configTool, self.configureOptions(configureDefines))
-        elif os.path.exists(qmakeTool) and os.path.exists(topLevelProFile) and topLevelProFilesFound == 1:
-            command = "qmake -makefile %s %s" % (topLevelProFile, self.configureOptions(configureDefines))
         elif os.path.exists(qmakeTool):
-            command = "qmake %s" % self.configureOptions(configureDefines)
+            if utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW():
+                configureDefines += ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
+            if self.buildType() == "Release":
+                configureDefines += ' "CONFIG -= debug"'
+                configureDefines += ' "CONFIG += release"'
+                configureDefines += ' "CONFIG -= debug_and_release"'
+            if self.buildType() == "Debug":
+                configureDefines += ' "CONFIG += debug"'
+                configureDefines += ' "CONFIG -= release"'
+                configureDefines += ' "CONFIG -= debug_and_release"'
+            if self.buildType() == "RelWithDebInfo":
+                configureDefines += ' "CONFIG -= debug"'
+                configureDefines += ' "CONFIG -= release"'
+                configureDefines += ' "CONFIG += debug_and_release"'
+            if os.path.exists(topLevelProFile) and topLevelProFilesFound == 1:
+                command = "qmake -makefile %s %s" % (topLevelProFile, self.configureOptions(configureDefines))
+            else:
+                command = "qmake %s" % self.configureOptions(configureDefines)
         else:
             utils.die("could not find configure.exe or top level pro-file, please take a look into the source and setup the config process.")
 
