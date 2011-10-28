@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         for ver in ["1.0.0"]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/hupnp/herqq-%s.zip" % ver
             self.targetInstSrc[ver] = "herqq-%s" % ver
+        self.targetDigests['1.0.0'] = '543a67802c37c66c29c8527522b1630c42756545'
         
         self.defaultTarget = "1.0.0"
 
@@ -28,18 +29,7 @@ class Package( QMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
-        if self.buildType() == "Release":
-            self.subinfo.options.configure.defines += ' "CONFIG -= debug"'
-            self.subinfo.options.configure.defines += ' "CONFIG += release"'
-            self.subinfo.options.configure.defines += ' "CONFIG -= debug_and_release"'
-        if self.buildType() == "Debug":
-            self.subinfo.options.configure.defines += ' "CONFIG += debug"'
-            self.subinfo.options.configure.defines += ' "CONFIG -= release"'
-            self.subinfo.options.configure.defines += ' "CONFIG -= debug_and_release"'
-        if self.buildType() == "RelWithDebInfo":
-            self.subinfo.options.configure.defines += ' "CONFIG -= debug"'
-            self.subinfo.options.configure.defines += ' "CONFIG -= release"'
-            self.subinfo.options.configure.defines += ' "CONFIG += debug_and_release"'
+
         
     def unpack( self ):
         if not QMakePackageBase.unpack( self ):
