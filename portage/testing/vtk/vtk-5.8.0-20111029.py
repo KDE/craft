@@ -10,7 +10,12 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.shortDescription = "The Visualization Toolkit (VTK) is an open-source, freely available software system for 3D computer graphics, image processing and visualization"
         self.buildDependencies['virtual/base'] = 'default'
-
+        self.dependencies['win32libs-bin/jpeg'] = 'defailt'
+        self.dependencies['win32libs-bin/libxml2'] = 'defailt'
+        self.dependencies['win32libs-bin/tiff'] = 'defailt'
+        self.dependencies['win32libs-bin/expat'] = 'defailt'
+        self.dependencies['win32libs-bin/zlib'] = 'defailt'
+        
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):
