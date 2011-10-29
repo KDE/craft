@@ -24,7 +24,9 @@ class MultiSource(object):
 
     def localFileNames( self ):
         utils.trace( "MultiSource localFileNames", 2 )
-        return self.source.localFileNamesBase()
+        if self.subinfo.archiveName() == "":
+            return self.source.localFileNamesBase()
+        return  (self.subinfo.archiveName(),)
 
     def fetch( self, repopath = None ):
         utils.trace( "MultiSource fetch", 2 )

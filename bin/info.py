@@ -19,6 +19,7 @@ class infoclass:
         ### package options
         self.options = Options()
         self.targets = dict()
+        self.archiveNames = dict()
         # Specifiy that the fetched source should be placed into a
         # subdirectory of the default source directory
         self.targetInstSrc = dict()
@@ -201,6 +202,12 @@ example:
         """return archive target"""
         if self.buildTarget in self.targets.keys():
             return self.targets[self.buildTarget]
+        return ""
+    
+    def archiveName( self ):
+        """returns the archive file name"""
+        if self.buildTarget in self.archiveNames.keys():
+            return self.archiveNames[self.buildTarget]
         return ""
 
     def hasMultipleTargets( self ):
