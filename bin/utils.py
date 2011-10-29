@@ -180,7 +180,7 @@ def verbose():
 def setVerbose( _verbose ):
     Verbose.setLevel(_verbose)
 
-def getFiles( urls, destdir, suffix=''):
+def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
     debug( "getfiles called. urls: %s" % urls, 1 )
     # make sure distfiles dir exists
@@ -192,13 +192,20 @@ def getFiles( urls, destdir, suffix=''):
     else:
         urlList = urls.split()
 
-    for url in urlList:
-        if ( not getFile( url + suffix, destdir ) ):
+    if type(filenames) == types.ListType:
+        filenameList = filenames
+    else:
+        filenameList = filenames.split()
+        
+    dlist = zip( urlList , filenameList )
+    
+    for url,filename in dlist:
+        if ( not getFile( url + suffix, destdir , filename ) ):
             return False
 
     return True
 
-def getFile( url, destdir ):
+def getFile( url, destdir , filename='' ):
     """download file from 'url' into 'destdir'"""
     debug( "getFile called. url: %s" % url, 1 )
     if url == "":
@@ -208,7 +215,7 @@ def getFile( url, destdir ):
 
     wgetpath = WGetExecutable
     if ( os.path.exists( wgetpath ) ):
-        return wgetFile( url, destdir )
+        return wgetFile( url, destdir , filename )
 
     scheme, host, path, _, _, _ = urlparse.urlparse( url )
 
