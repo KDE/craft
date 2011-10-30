@@ -2,7 +2,7 @@
 import info
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
-from Packager.SevenZipPackager2 import *
+from Packager.PortablePackager import *
 
 # This is an example package for building
 
@@ -20,11 +20,11 @@ class subinfo( info.infoclass ):
         #self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
         self.dependencies[ 'kdesupport/phonon-vlc'] = 'default'
         
-class Package( SevenZipPackager2, VirtualPackageBase ):
+class Package( PortablePackager, VirtualPackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
-        SevenZipPackager2.__init__( self, blacklists=blacklists )
+        PortablePackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join(self.packageDir(),"install.cmd") 
 
