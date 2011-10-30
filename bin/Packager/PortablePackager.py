@@ -5,10 +5,10 @@
 import utils
 from CollectionPackagerBase import *
 
-class SevenZipPackager2List( PackagerLists ):
+class PortablePackagerList( PackagerLists ):
     """ dummy name for PackagerLists """
 
-class SevenZipPackager2( CollectionPackagerBase ):
+class PortablePackager( CollectionPackagerBase ):
     """
 Packager for portal 7zip archives
 """
@@ -26,22 +26,20 @@ Packager for portal 7zip archives
 
 
 
-    def generate7zipPackage( self ):
-        """create 7z package with digest files located in the manifest subdir"""
+    def createPortablePackage( self ):
+        """create portable 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
             utils.die("could not find 7za in your path!")
 
         if self.package.endswith( "-package" ):
             shortPackage = self.package[ : -8 ]
-            if shortPackage.endswith("-sevenzip"):
-                shortPackage = shortPackage[:-9]
         else:
             shortPackage = self.package
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-portable-%s.7z" % ( shortPackage, self.buildTarget )
+            self.defines[ "setupname" ] = "%s-%s.7z" % ( shortPackage, self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         if self.scriptname:
@@ -59,7 +57,7 @@ Packager for portal 7zip archives
 
     def createPackage( self ):
         """ create a package """
-        print "packaging using the SevenzipPackager"
+        print "packaging using the PortablePackager"
         
         self.internalCreatePackage()
 
