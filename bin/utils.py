@@ -207,6 +207,8 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
         for url,filename in dlist:
             if ( not getFile( url + suffix, destdir , filename ) ):
                 return False
+    
+    return True
 
 def getFile( url, destdir , filename='' ):
     """download file from 'url' into 'destdir'"""
