@@ -199,11 +199,14 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
         
     dlist = zip( urlList , filenameList )
     
-    for url,filename in dlist:
-        if ( not getFile( url + suffix, destdir , filename ) ):
-            return False
-
-    return True
+    if len(filenameList) == 0:
+        for url in urlList:
+            if ( not getFile( url + suffix, destdir ) ):
+                return False
+    else:
+        for url,filename in dlist:
+            if ( not getFile( url + suffix, destdir , filename ) ):
+                return False
 
 def getFile( url, destdir , filename='' ):
     """download file from 'url' into 'destdir'"""
