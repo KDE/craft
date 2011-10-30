@@ -14,6 +14,7 @@ Packager for portal 7zip archives
 """
     def __init__( self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__( self, whitelists, blacklists )
+        self.scriptnames = []
         self.packagerExe = None
         fileName = "bin\\7za.exe"
         for directory in [".", "dev-utils", "release", "debug"]:
@@ -42,8 +43,8 @@ Packager for portal 7zip archives
             self.defines[ "setupname" ] = "%s-%s.7z" % ( shortPackage, self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
-        if self.scriptname:
-            utils.copyFile(self.scriptname,os.path.join(self.defines[ "srcdir" ],os.path.split(self.scriptname)[1]))
+        for f in self.scriptnames:
+            utils.copyFile(f,os.path.join(self.defines[ "srcdir" ],os.path.split(f)[1]))
             
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
@@ -61,6 +62,6 @@ Packager for portal 7zip archives
         
         self.internalCreatePackage()
 
-        self.generate7zipPackage()
+        self.createPortablePackage()
         utils.createDigetFile( self.defines[ "setupname" ])
         return True

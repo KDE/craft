@@ -26,7 +26,7 @@ class Package( PortablePackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         PortablePackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.scriptname = os.path.join(self.packageDir(),"install.cmd") 
+        self.scriptnames = [os.path.join(self.packageDir(),"amarok.bat") ,os.path.join(self.packageDir(),"firstrun") ]
 
 if __name__ == '__main__':
     Package().execute()
