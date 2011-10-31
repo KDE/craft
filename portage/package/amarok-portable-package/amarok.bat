@@ -5,6 +5,10 @@ SET KDEROOT=%~dp0
 SET PATH=%KDEROOT%\bin;%PATH%
 SET HOME=%KDEROOT%\home
 SET KDEHOME=%HOME%
+SET KDESYCOCA=%HOME%\kdesycoca
+SET XDG_CONFIG_HOME=%HOME%\.config
+SET XDG_DATA_HOME=%HOME%\.local\share
+SET XDG_CACHE_HOM=%HOME%
 
 SET APPLICATION=
 
@@ -30,7 +34,7 @@ GOTO :EOF
 :INSTALL
 echo install
 IF NOT EXIST %KDEROOT%\home MKDIR %KDEROOT%\home
-IF NOT EXIST %KDEROOT%\firstrun DEL firstrun
+IF EXIST %KDEROOT%\firstrun DEL firstrun
 
 
 
@@ -66,6 +70,5 @@ if not `"bin\kbuildsycoca4.exe --help"` equ "" (
     echo        please check for correct installation
 )
 
-echo HM
 
 GOTO :RUN
