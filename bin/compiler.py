@@ -55,6 +55,9 @@ def isMSVC2008():
 def isMSVC2010():
     return COMPILER == "msvc2010"
 
+def isMSVC2011():
+    return COMPILER == "msvc2011"
+
 
 def getCompilerName():
     if isMinGW():

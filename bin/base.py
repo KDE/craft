@@ -132,6 +132,8 @@ class baseclass:
             self.compiler = "msvc2008"
         elif COMPILER == "msvc2010":
             self.compiler = "msvc2010"
+        elif COMPILER == "msvc2011":
+            self.compiler = "msvc2011"
         elif COMPILER == "mingw":
             self.compiler = "mingw"
         elif COMPILER == "mingw4":
@@ -506,6 +508,8 @@ class baseclass:
                 cmd += " -type vc90 "
             elif self.compiler == "msvc2010":
                 cmd += " -type vc100 "
+            elif self.compiler == "msvc2011":
+                cmd += " -type vc110 "
             else:
                 cmd += " -type unknown "
 

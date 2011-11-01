@@ -8,6 +8,7 @@ import sys
 import datetime
 import emergePlatform
 from ctypes import *
+import compiler
 
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
@@ -103,6 +104,8 @@ class EmergeBase(object):
             self.__compiler = "msvc2008"
         elif COMPILER == "msvc2010":
             self.__compiler = "msvc2010"
+        elif COMPILER == "msvc2011":
+            self.__compiler = "msvc2011"
         elif COMPILER == "mingw":
             self.__compiler = "mingw"
         elif COMPILER == "mingw4":

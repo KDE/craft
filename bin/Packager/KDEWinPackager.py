@@ -81,11 +81,12 @@ class KDEWinPackager (PackagerBase):
             dirsToIgnore = [ 'cmake', 'CMakeFiles', 'CMakeTmp', 'CMakeTmp2', 'CMakeTmp3', 'dbg' ]
             path = self.buildDir()
             # where to copy the debugging information files
-            symPath = os.path.join( self.buildDir(), "dbg" )
+            symRoot = os.path.join( self.buildDir(), "dbg" )
+            symPath = os.path.join( symRoot, "bin" )
             if not os.path.exists( symPath ):
                 utils.createDir( symPath )
             # shouldn't be needed, usually; but if files are present, that could lead to errors
-            utils.cleanDirectory ( symPath )
+            utils.cleanDirectory ( symRoot )
 
             utils.debug( "Copying debugging files to 'dbg'..." )
             for path, _, files in os.walk( path ):
@@ -111,7 +112,7 @@ class KDEWinPackager (PackagerBase):
             if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
                 symCmd += "-strip "
             symCmd += "-debug-package "
-            symCmd += "-symroot " + symPath
+            symCmd += "-symroot " + symRoot
             utils.debug ( symCmd, 2 )
 
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \

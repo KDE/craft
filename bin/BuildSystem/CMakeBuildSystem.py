@@ -9,6 +9,7 @@ import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 from graphviz import *
+import compiler
 
 class CMakeBuildSystem(BuildSystemBase):
     """ cmake build support """
@@ -18,12 +19,12 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.compiler() == "msvc2010":
+        if compiler.isMSVC2010():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
                 return "Visual Studio 10"
             else:
                 return "NMake Makefiles"
-        elif self.compiler() == "msvc2008":
+        elif compiler.isMSVC2008():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
                 if self.isTargetBuild():
                     return "Visual Studio 9.0 Windows Mobile 6 Professional SDK (ARMV4I)"
@@ -31,9 +32,9 @@ class CMakeBuildSystem(BuildSystemBase):
                     return "Visual Studio 9 2008"
             else:
                 return "NMake Makefiles"
-        elif self.compiler() == "msvc2005" or self.compiler() == "msvc2010":
+        elif compiler.isMSVC():
             return "NMake Makefiles"
-        elif self.compiler() == "mingw" or self.compiler() == "mingw4":
+        elif compiler.isMinGW():
             return "MinGW Makefiles"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
@@ -138,17 +139,17 @@ class CMakeBuildSystem(BuildSystemBase):
         utils.prependPath(self.rootdir, self.envPath)
 
         if self.subinfo.options.cmake.openIDE:
-            if self.compiler() == "msvc2008":
+            if compiler.isMSVC2008():
                 command = "start %s" % self.__slnFileName()
-            elif self.compiler() == "msvc2010":
+            elif compiler.isMSVC2010():
                 command = "start vcexpress %s" % self.__slnFileName()
         elif self.subinfo.options.cmake.useIDE:
-            if self.compiler() == "msvc2008":
+            if compiler.isMSVC2008():
                 if self.isTargetBuild():
                     command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(), self.buildType())
                 else:
                     command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
-            elif self.compiler() == "msvc2010":
+            elif compiler.isMSVC2010():
                 utils.die("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
@@ -171,7 +172,7 @@ class CMakeBuildSystem(BuildSystemBase):
             fastString = "/fast"
 
         if self.subinfo.options.install.useMakeToolForInstall:
-            if self.compiler() == "msvc2008" and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+            if compiler.isMSVC2008() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 if self.isTargetBuild():
                     command = "vcbuild INSTALL.vcproj \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % self.buildType()
                 else:
