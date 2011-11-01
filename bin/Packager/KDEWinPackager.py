@@ -99,17 +99,18 @@ class KDEWinPackager (PackagerBase):
                     continue
                 utils.debug( "Checking: %s" % path, 3 )
                 for fileName in files:
-                    if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) ):
-                        if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
-                            symFilename = fileName[:-4] + ".sym"
-                            utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) \
-                                    + " " + os.path.join( path, fileName ) )
-                            # utils.system( "strip --strip-all " + os.path.join( path, fileName ) )
-                            utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
-                    elif ( fileName.endswith( ".pdb" ) ):
+                    if ( fileName.endswith( ".pdb" ) ):
                         utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
+                    elif not self.subinfo.options.package.disableStriping:
+                        if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) ):
+                            if compiler.isMinGW():
+                                symFilename = fileName[:-4] + ".sym"
+                                utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) \
+                                        + " " + os.path.join( path, fileName ) )
+                                # utils.system( "strip --strip-all " + os.path.join( path, fileName ) )
+                                utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
 
-            if ( self.compiler() == "mingw" or self.compiler() == "mingw4" ):
+            if not self.subinfo.options.package.disableStriping and compiler.isMinGW() :
                 symCmd += "-strip "
             symCmd += "-debug-package "
             symCmd += "-symroot " + symRoot

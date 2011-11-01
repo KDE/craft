@@ -7,6 +7,8 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
+        _,gitVersion = portage.getPackageInstance('qt-apps','qewitter').getPackageVersion() 
+        self.svnTargets[ 'git-' + gitVersion  ] = ""
         self.svnTargets[ '0.035' ] = ""
         self.defaultTarget = '0.035'
     

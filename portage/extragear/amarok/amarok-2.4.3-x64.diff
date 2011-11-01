@@ -1,0 +1,30 @@
+commit 5961904ec96a09d46b0c4bf143e8cb546a5586d7
+Author: Patrick von Reth <patrick.vonreth@gmail.com>
+Date:   Fri Aug 19 11:43:37 2011 +0200
+
+    fixed windows x64 build
+    
+    please dont use ulong for pointers use http://doc.trolltech.com/4.7/qtglobal.html#quintptr-typedef instead
+
+diff --git a/src/dynamic/DynamicModel.cpp b/src/dynamic/DynamicModel.cpp
+index b01700a..4a96329 100644
+--- a/src/dynamic/DynamicModel.cpp
++++ b/src/dynamic/DynamicModel.cpp
+@@ -1120,7 +1120,7 @@ static QString
+ biasToString( Dynamic::BiasPtr bias, int level )
+ {
+     QString result;
+-    result += QString(" ").repeated(level) + bias->toString() + " " + QString::number(ulong(bias.data()), 16) + "\n";
++    result += QString(" ").repeated(level) + bias->toString() + " " + QString::number(quintptr(bias.data()), 16) + "\n";
+     if( Dynamic::AndBias* aBias = qobject_cast<Dynamic::AndBias*>(bias.data()) )
+     {
+         foreach( Dynamic::BiasPtr bias2, aBias->biases() )
+@@ -1136,7 +1136,7 @@ Dynamic::DynamicModel::toString()
+ 
+     foreach( Dynamic::DynamicPlaylist* playlist, m_playlists )
+     {
+-        result += playlist->title() + " " + QString::number(ulong(playlist), 16) + "\n";
++        result += playlist->title() + " " + QString::number(quintptr(playlist), 16) + "\n";
+         if( Dynamic::BiasedPlaylist* bPlaylist = qobject_cast<Dynamic::BiasedPlaylist*>(playlist ) )
+             result += biasToString( bPlaylist->bias(), 1 );
+     }

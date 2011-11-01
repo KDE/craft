@@ -32,6 +32,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.make.supportsMultijob = False
+        self.subinfo.options.configure.defines = "-DENABLE_LIBOFX=ON"
 
 if __name__ == '__main__':
     Package().execute()

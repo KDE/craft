@@ -8,6 +8,7 @@ import types
 import fileinput
 from _winreg import * # pylint: disable=F0401
 import compiler
+import utils
 from CollectionPackagerBase import *
 
 class NSIPackagerLists( PackagerLists ):
@@ -113,4 +114,5 @@ file collection process is skipped, and only the installer is generated.
         self.internalCreatePackage()
 
         self.generateNSISInstaller()
+        utils.createDigetFile( self.defines[ "setupname" ])
         return True

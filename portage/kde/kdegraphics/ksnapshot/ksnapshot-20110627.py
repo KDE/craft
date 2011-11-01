@@ -2,14 +2,13 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:ksnapshot|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:ksnapshot'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/libkipi'] = 'default'
 
 
 from Package.CMakePackageBase import *

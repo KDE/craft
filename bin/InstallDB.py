@@ -6,6 +6,8 @@ import sqlite3
 
 def isDBEnabled():
     """ this function returns whether sqlite database should be used """
+    if not os.getenv("EMERGE_ENABLE_SQLITEDB"):
+        return True
     return utils.envAsBool("EMERGE_ENABLE_SQLITEDB")
 
 class InstallPackage:

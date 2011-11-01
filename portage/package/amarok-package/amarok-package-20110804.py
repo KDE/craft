@@ -7,8 +7,8 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ '2.4.3' ] = ""
-        self.defaultTarget = '2.4.3'
+        self.svnTargets[ '2.4.3-4' ] = ""
+        self.defaultTarget = '2.4.3-4'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
@@ -25,7 +25,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.defines[ "executable" ] = "bin\\amarok.exe"
+        self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
 
 if __name__ == '__main__':
     Package().execute()

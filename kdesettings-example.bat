@@ -182,12 +182,11 @@ set EMERGE_BUILDTYPE=RelWithDebInfo
 )
 
 rem override specific emerge options 
-rem currently only a subset of options (from bin\options.py) are setable by 
-rem this environment variable because of a not full implemented option parser. 
-rem  Options:
-rem    * cmake.useIDE=1
-rem    * cmake.openIDE=1
-rem and see bin\options.py:Options::readFromEnv() for the current state
+rem This option makes it possible to set properties, which are defined in 
+rem bin\options.py. Multiple entries are separated by a space 
+rem Please note that properties may be overriden by dedicated package 
+rem  Example:
+rem    * set EMERGE_OPTIONS=cmake.useIDE=1 install.useMakeToolForInstall=1
 rem set EMERGE_OPTIONS=
 
 rem If you want to have verbose output, uncomment the following option

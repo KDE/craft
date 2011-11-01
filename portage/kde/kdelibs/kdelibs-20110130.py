@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kdelibs'
+        self.svnTargets['gitHEAD'] = '[git]kde:kdelibs|KDE/4.7|'
         self.svnTargets['komobranch'] = 'branches/work/komo/kdelibs'
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = 'komobranch'
@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['win32libs-bin/automoc'] = 'default'
+        self.dependencies['kdesupport/hupnp'] = 'default'
         self.dependencies['kdesupport/kdewin'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'

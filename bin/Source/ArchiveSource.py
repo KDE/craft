@@ -28,7 +28,9 @@ class ArchiveSource(SourceBase):
         # pylint: disable=E0202
         # but I have no idea why pylint thinks this overrides
         # MultiSource.localFileNames
-        return self.localFileNamesBase()
+        if self.subinfo.archiveName() == "":
+            return self.localFileNamesBase()
+        return  self.subinfo.archiveName()
 
     def localFileNamesBase(self):
         """ collect local filenames """
@@ -70,14 +72,14 @@ class ArchiveSource(SourceBase):
                 utils.debug("files and digests available, no need to download files", 1)
                 return True
 
-            result = utils.getFiles( self.subinfo.target(), self.downloadDir() )
+            result = utils.getFiles( self.subinfo.target(), self.downloadDir() , filenames = self.subinfo.archiveName() )
             if not result:
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if self.subinfo.targetDigestUrl() == "auto":
-                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1" )
+                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.subinfo.archiveName() )
                 else:
-                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() )
+                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() ,filenames = self.subinfo.archiveName() )
             else:
                 return True
         else:
@@ -86,6 +88,7 @@ class ArchiveSource(SourceBase):
     def checkDigest(self):
         utils.debug( "ArchiveSource.checkDigest called", 2 )
         filenames = self.localFileNames()
+
         if self.subinfo.hasTargetDigestUrls():
             utils.debug("check digests urls", 1)
             if not utils.checkFilesDigests( self.downloadDir(), filenames):

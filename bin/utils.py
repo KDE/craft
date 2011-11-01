@@ -180,7 +180,7 @@ def verbose():
 def setVerbose( _verbose ):
     Verbose.setLevel(_verbose)
 
-def getFiles( urls, destdir, suffix=''):
+def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
     debug( "getfiles called. urls: %s" % urls, 1 )
     # make sure distfiles dir exists
@@ -192,13 +192,20 @@ def getFiles( urls, destdir, suffix=''):
     else:
         urlList = urls.split()
 
-    for url in urlList:
-        if ( not getFile( url + suffix, destdir ) ):
+    if type(filenames) == types.ListType:
+        filenameList = filenames
+    else:
+        filenameList = filenames.split()
+        
+    dlist = zip( urlList , filenameList )
+    
+    for url,filename in dlist:
+        if ( not getFile( url + suffix, destdir , filename ) ):
             return False
 
     return True
 
-def getFile( url, destdir ):
+def getFile( url, destdir , filename='' ):
     """download file from 'url' into 'destdir'"""
     debug( "getFile called. url: %s" % url, 1 )
     if url == "":
@@ -208,7 +215,7 @@ def getFile( url, destdir ):
 
     wgetpath = WGetExecutable
     if ( os.path.exists( wgetpath ) ):
-        return wgetFile( url, destdir )
+        return wgetFile( url, destdir , filename )
 
     scheme, host, path, _, _, _ = urlparse.urlparse( url )
 
@@ -341,6 +348,14 @@ def createFilesDigests( downloaddir, filenames ):
         entry = filename, digest
         digestList.append(entry)
     return digestList
+    
+def createDigetFile(path):
+    """creates a sha1 diget file"""
+    digets = digestFileSha1(path)
+    f = open(path + ".sha1","wb+")
+    f.write(digets)
+    f.write("\n")
+    f.close
 
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
@@ -418,34 +433,17 @@ def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
-
-    mode = "r"
-    if ( ext == ".gz" ):
-        mode = "r:gz"
-    elif ( ext == ".bz2" ):
-        mode = "r:bz2"
-    elif( ext == ".lzma" or ext == ".xz" ):
-        un7zip( fileName, os.getenv("TMP") )
-        _, tarname = os.path.split( shortname )
-        fileName = os.path.join( os.getenv("TMP"), tarname )
+  
+    un7zip( fileName, os.getenv("TMP") )
+    _, tarname = os.path.split( shortname )
+    fileName = os.path.join( os.getenv("TMP"), tarname )
 
     if not os.path.exists( fileName ):
         error( "couldn't find file %s" % fileName )
         return False
-
-    try:
-        with tarfile.open( fileName, mode ) as tar:
-        # FIXME how to handle errors here ?
-            for fileName in tar:
-                try:
-                    tar.extract(fileName, destdir )
-                except tarfile.TarError:
-                    error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
-                    return False
-        return True
-    except tarfile.TarError:
-        error( "could not open existing tar archive: %s" % fileName )
-        return False
+    un7zip(fileName, destdir )
+    os.remove(fileName)
+    return True
 
 
 def unZip( fileName, destdir ):
