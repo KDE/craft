@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):        
         self.shortDescription = "Herqq UPnP (HUPnP) is a software library for building UPnP devices and control points conforming to the UPnP Device Architecture version 1.1"
         self.svnTargets['svnHEAD'] = "https://hupnp.svn.sourceforge.net/svnroot/hupnp/trunk/herqq"
-        #self.patchToApply['svnHEAD'] = ("HUpnp1.diff", 0)
+        self.patchToApply['svnHEAD'] = ("HUpnp1.diff", 0)
         for ver in ["1.0.0"]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/hupnp/herqq-%s.zip" % ver
             self.targetInstSrc[ver] = "herqq-%s" % ver
