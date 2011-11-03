@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/kactivities'] = 'default'
 #        if not emergePlatform.isCrossCompilingEnabled():
 #            self.dependencies['win32libs-bin/fontconfig'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
