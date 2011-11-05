@@ -79,7 +79,8 @@ class ArchiveSource(SourceBase):
                 if self.subinfo.targetDigestUrl() == "auto":
                     return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.localFileNames() )
                 else:
-                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() ,filenames = self.localFileNames() )
+                    digestfilenames = " ".join([ os.path.basename(x) for x in self.subinfo.targetDigestUrl().split() ])
+                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir(), filenames = digestfilenames )
             else:
                 return True
         else:
