@@ -72,16 +72,17 @@ class ArchiveSource(SourceBase):
                 utils.debug("files and digests available, no need to download files", 1)
                 return True
 
-            result = utils.getFiles( self.subinfo.target(), self.downloadDir() , filenames = self.localFileNames() )
+            result = utils.getFiles( self.subinfo.target(), self.downloadDir() , filenames = self.subinfo.archiveName() )
             if not result:
+                utils.debug( "failed to download files", 1 )
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if self.subinfo.targetDigestUrl() == "auto":
-                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.localFileNames() )
+                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.subinfo.archiveName() )
                 else:
-                    digestfilenames = " ".join([ os.path.basename(x) for x in self.subinfo.targetDigestUrl().split() ])
-                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir(), filenames = digestfilenames )
+                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir(), filenames = '' )
             else:
+                utils.debug( "no digestUrls present", 2 )
                 return True
         else:
             return utils.getFiles( "", self.downloadDir() )
