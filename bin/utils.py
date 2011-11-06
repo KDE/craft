@@ -182,7 +182,7 @@ def setVerbose( _verbose ):
 
 def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
-    debug( "getfiles called. urls: %s" % urls, 1 )
+    debug( "getfiles called. urls: %s, filenames: %s, suffix: %s" % ( urls, filenames, suffix ), 1 )
     # make sure distfiles dir exists
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
@@ -191,6 +191,9 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
         urlList = urls
     else:
         urlList = urls.split()
+
+    if filenames == '':
+        filenames = [ os.path.basename(x) for x in urlList ]
 
     if type(filenames) == types.ListType:
         filenameList = filenames
