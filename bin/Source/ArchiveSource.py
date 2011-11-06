@@ -30,7 +30,7 @@ class ArchiveSource(SourceBase):
         # MultiSource.localFileNames
         if self.subinfo.archiveName() == "":
             return self.localFileNamesBase()
-        return  self.subinfo.archiveName()
+        return self.subinfo.archiveName()
 
     def localFileNamesBase(self):
         """ collect local filenames """
@@ -72,14 +72,15 @@ class ArchiveSource(SourceBase):
                 utils.debug("files and digests available, no need to download files", 1)
                 return True
 
-            result = utils.getFiles( self.subinfo.target(), self.downloadDir() , filenames = self.subinfo.archiveName() )
+            result = utils.getFiles( self.subinfo.target(), self.downloadDir() , filenames = self.localFileNames() )
             if not result:
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if self.subinfo.targetDigestUrl() == "auto":
-                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.subinfo.archiveName() )
+                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.localFileNames() )
                 else:
-                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir() ,filenames = self.subinfo.archiveName() )
+                    digestfilenames = " ".join([ os.path.basename(x) for x in self.subinfo.targetDigestUrl().split() ])
+                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir(), filenames = digestfilenames )
             else:
                 return True
         else:

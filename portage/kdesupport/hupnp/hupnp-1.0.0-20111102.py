@@ -18,10 +18,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/libqtsoap'] = 'default'
 
-    def setBuildOptions( self ):
-        self.options.configure.defines = ' "CONFIG += DISABLE_TESTAPP"'
-        self.options.configure.defines += ' "CONFIG += DISABLE_AVTESTAPP"'
-        self.options.configure.defines += ' "CONFIG += DISABLE_QTSOAP"'
 
 from Package.QMakePackageBase import *
 
@@ -29,25 +25,23 @@ class Package( QMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
-
-        
-    def unpack( self ):
-        if not QMakePackageBase.unpack( self ):
-            return False
-        return True
+        self.subinfo.options.configure.defines = ' "PREFIX = %s" ' % self.imageDir().replace("\\","/")
+        self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_TESTAPP"'
+        self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_AVTESTAPP"'
+        self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_QTSOAP"'
         
     def install( self ):
         if not QMakePackageBase.install( self ):
             return False
-        #sic.: the .lib file is placed under bin dir in hupnp
-        utils.copyDir( os.path.join( self.sourceDir(), "hupnp", "deploy" ) , self.installDir() )
-        utils.copyDir( os.path.join( self.sourceDir(), "hupnp_av", "deploy" ) , self.installDir() )
+        #sic.: the .lib file is placed under bin dir in hupnp)
         os.mkdir( os.path.join( self.installDir(), "bin" ) )
         # copy over dlls as required by KDE convention
         for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
             if file.endswith( ".dll" ):
                 utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
         return True
+        
+
         
 if __name__ == '__main__':
     Package().execute()
