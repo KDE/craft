@@ -11,13 +11,8 @@ def isDBEnabled():
     return utils.envAsBool("EMERGE_ENABLE_SQLITEDB")
 
 def blocking(fn):
-    """ Block parallel access to sqlite """
-    def block(*args, **kw):
-        with utils.LockFile(utils.LockFileName("SQLITE")):
-            ret = fn(*args, **kw)
-        return ret
-
-    return block
+    with utils.LockFile(utils.LockFileName("SQLITE")):
+        return fn
 
 class InstallPackage:
     """ InstallPackage finalizes an installation.
