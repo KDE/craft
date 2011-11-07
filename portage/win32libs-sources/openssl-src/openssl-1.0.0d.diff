@@ -119,44 +119,6 @@ diff -rupd openssl-1.0.0c.orig/engines/ccgost/gost_lcl.h openssl-1.0.0c/engines/
  /* Control commands */
  #define GOST_PARAM_CRYPT_PARAMS 0
  #define GOST_PARAM_MAX 0
-diff -rupd openssl-1.0.0c.orig/include/openssl/buffer.h openssl-1.0.0c/include/openssl/buffer.h
---- openssl-1.0.0c.orig/include/openssl/buffer.h	Tue Oct  9 17:52:08 2007
-+++ openssl-1.0.0c/include/openssl/buffer.h	Fri Jan 14 21:28:08 2011
-@@ -67,10 +67,6 @@ extern "C" {
- 
- #include <stddef.h>
- 
--#if !defined(NO_SYS_TYPES_H)
--#include <sys/types.h>
--#endif
--
- /* Already declared in ossl_typ.h */
- /* typedef struct buf_mem_st BUF_MEM; */
- 
-diff -rupd openssl-1.0.0c.orig/include/openssl/dtls1.h openssl-1.0.0c/include/openssl/dtls1.h
---- openssl-1.0.0c.orig/include/openssl/dtls1.h	Wed Apr 14 02:17:30 2010
-+++ openssl-1.0.0c/include/openssl/dtls1.h	Fri Jan 14 21:28:08 2011
-@@ -68,7 +68,7 @@
- #endif
- #ifdef OPENSSL_SYS_WIN32
- /* Needed for struct timeval */
--#include <winsock.h>
-+#include <winsock2.h>
- #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
- #include <sys/timeval.h>
- #else
-diff -rupd openssl-1.0.0c.orig/include/openssl/err.h openssl-1.0.0c/include/openssl/err.h
---- openssl-1.0.0c.orig/include/openssl/err.h	Sun Oct 26 19:40:52 2008
-+++ openssl-1.0.0c/include/openssl/err.h	Fri Jan 14 21:28:08 2011
-@@ -137,8 +137,6 @@ extern "C" {
- #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
- #endif
- 
--#include <errno.h>
--
- #define ERR_TXT_MALLOCED	0x01
- #define ERR_TXT_STRING		0x02
- 
 diff -rupd openssl-1.0.0c.orig/ssl/dtls1.h openssl-1.0.0c/ssl/dtls1.h
 --- openssl-1.0.0c.orig/ssl/dtls1.h	Wed Apr 14 02:17:30 2010
 +++ openssl-1.0.0c/ssl/dtls1.h	Fri Jan 14 21:28:08 2011
