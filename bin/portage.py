@@ -402,7 +402,6 @@ class Portage:
         if not self.isCategory( category ):
             utils.die( "could not find category '%s'" % category )
         if not self.isPackage( category, package ):
-            raise BlaException
             utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
 
         versions = []
