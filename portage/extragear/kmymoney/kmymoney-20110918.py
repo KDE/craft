@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/office/kmymoney'
-        for ver in ['4.5', '4.5.1', '4.5.2', '4.5.3', '4.6.0']:
+        for ver in ['4.5', '4.5.1', '4.5.2', '4.5.3', '4.6.0','4.6.1']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kmymoney-' + ver
         self.targets['3.98.1'] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-3.98.1.tar.bz2'
