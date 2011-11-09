@@ -76,7 +76,7 @@ packagefile.close()
 baseDependencies = """
     def setDependencies( self ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
-            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+            self.buildDependencies[ 'virtual/bin-base' ] = 'default'
 """
 
 for packageKey in addInfo:
