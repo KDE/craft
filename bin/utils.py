@@ -425,7 +425,8 @@ def unpackFile( downloaddir, filename, workdir ):
     return False
 
 def un7zip( fileName, destdir ):
-    command = "7za x -r -y -o%s %s" % ( destdir, fileName )
+    executable = os.path.join(os.getenv("KDEROOT"), "dev-utils", "bin", "7za.exe")
+    command = "%s x -r -y -o%s %s" % ( executable, destdir, fileName )
     if verbose() > 1:
         return system( command )
     else:
