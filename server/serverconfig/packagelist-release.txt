@@ -83,7 +83,7 @@ kde,kdetoys,4.7.3,
 kde,kdeutils,4.7.3,
 #
 # the KDE extragear packages
-extragear,amarok,2.4.3,
+extragear,amarok,2.4.90,
 extragear,kate,4.7.3,
 extragear,kile,,
 # extragear,kipi-plugins,2.0.0,

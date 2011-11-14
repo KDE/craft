@@ -12,6 +12,10 @@ class subinfo(info.infoclass):
         self.patchToApply[ '2.3.2' ] = [ ( 'amarok-2.3.2-20110110.diff', 1 ) ]
         self.patchToApply[ '2.4.3' ] = [ ( 'amarok-2.4.3-20110818.diff', 1 ), ( 'amarok-2.4.3-x64.diff', 1 ) ]
         self.targetDigests['2.4.3'] = '8a46fca6a550a4ca403a9be7f595728c819641c4'
+        
+        
+        self.targets['2.4.90'] = 'http://mark.kollide.net/amaroktest/amarok-2.4.90.tar.bz2'
+        self.targetInstSrc['2.4.90'] = 'amarok-2.4.90'
 
         self.svnTargets['gitHEAD'] = '[git]kde:amarok.git'
         self.defaultTarget = 'gitHEAD'
