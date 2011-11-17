@@ -444,7 +444,6 @@ def unTar( fileName, destdir ):
     elif(sys.version_info >= (3, 2) and ext == ".bz2"):
         mode = "r:bz2"
     elif((sys.version_info < (3, 2) and ext == ".bz2") or ext == ".lzma" or ext == ".xz" ):
-        else:
         un7zip( fileName, os.getenv("TMP") )
         _, tarname = os.path.split( shortname )
         fileName = os.path.join( os.getenv("TMP"), tarname )
