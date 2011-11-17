@@ -26,6 +26,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.install(self):
             return False
         utils.copyFile(os.path.join(self.imageDir(),"lib","libfl.a"),os.path.join(self.imageDir(),"lib","fl.lib"))#yes using a static mingw lib with msvc is very evil, but it seems works
+        os.remove(os.path.join(self.imageDir(),"include","unistd.h"))#would corrup winkde includes
         return True
 
 if __name__ == '__main__':
