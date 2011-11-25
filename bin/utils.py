@@ -436,6 +436,7 @@ def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
+    cleanupFile = None
 
     mode = "r"
     if ( ext == ".gz" ):
@@ -447,6 +448,7 @@ def unTar( fileName, destdir ):
         _, tarname = os.path.split( shortname )
         fileName = os.path.join( os.getenv("TMP"), tarname )
         cleanupFile = fileName
+
 
     if not os.path.exists( fileName ):
         error( "couldn't find file %s" % fileName )
