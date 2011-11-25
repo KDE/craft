@@ -440,19 +440,13 @@ def unTar( fileName, destdir ):
     mode = "r"
     if ( ext == ".gz" ):
         mode = "r:gz"
-    elif ( ext == ".bz2" ):
+    elif(sys.version_info >= (3, 2) and ext == ".bz2"):
         mode = "r:bz2"
-    elif( ext == ".lzma" or ext == ".xz" ):
-        un7zip( fileName, os.getenv("TMP") )
-        _, tarname = os.path.split( shortname )
-    if ( ext == ".gz" ):
-        mode = "r:gz"
-    elif ( ext == ".bz2" ):
-        mode = "r:bz2"
-    elif( ext == ".lzma" or ext == ".xz" ):
+    elif((sys.version_info < (3, 2) and ext == ".bz2") or ext == ".lzma" or ext == ".xz" ):
         un7zip( fileName, os.getenv("TMP") )
         _, tarname = os.path.split( shortname )
         fileName = os.path.join( os.getenv("TMP"), tarname )
+        cleanupFile = fileName
 
     if not os.path.exists( fileName ):
         error( "couldn't find file %s" % fileName )
@@ -471,6 +465,10 @@ def unTar( fileName, destdir ):
     except tarfile.TarError:
         error( "could not open existing tar archive: %s" % fileName )
         return False
+    finally:
+        if cleanupFile:
+            if os.path.exists(cleanupFile):
+                os.remove(cleanupFile)
 
 def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""

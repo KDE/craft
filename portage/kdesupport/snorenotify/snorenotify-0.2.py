@@ -16,9 +16,8 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
       self.svnTargets['gitHEAD'] = 'git://gitorious.org/snorenotify/snorenotify.git'
-      self.targets['0.1'] = 'http://winkde.org/~pvonreth/downloads/snorenotify-0.1.tar.xz'
-      self.targetInstSrc['0.1'] = 'snorenotify-0.1'
-      self.targetDigests['0.1'] = '39dea268b29c852a8eb740f440c4dcc51670d6f4'
+      self.targets['0.2'] = 'http://winkde.org/~pvonreth/downloads/snore/snore-0.2.tar.xz'
+      self.targetDigests['0.2'] = '3fcc5dfb69408fef1efb670d6042030daad75580'
       self.defaultTarget = 'gitHEAD'
 
 

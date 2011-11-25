@@ -8,10 +8,13 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/quassel/quassel.git'
         self.svnTargets['0.6'] = 'git://gitorious.org/quassel/quassel.git|0.6|'
-        self.targets['0.7.1'] = 'http://quassel-irc.org/pub/quassel-0.7.1.tar.bz2'
+        for ver in ['0.7.1','0.7.2','0.7.3']:
+            self.targets[ver] = 'http://quassel-irc.org/pub/quassel-%s.tar.bz2' % ver
+            self.targetInstSrc[ver] = 'quassel-%s' % ver
         self.targetDigests['0.7.1'] = '791086da977033a1bbee3effa317668b3726bd7f'
-        self.targetInstSrc['0.7.1'] = 'quassel-0.7.1'
+
         self.defaultTarget = 'gitHEAD'
+
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'

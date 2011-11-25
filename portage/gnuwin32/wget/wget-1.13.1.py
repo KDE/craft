@@ -10,6 +10,9 @@ import info
 #
 # 2. This package do not use the class base class BinaryPackageBase
 #    because of not wanted cyclic dependencies
+#
+#3. current version is from http://opensourcepack.blogspot.com/2010/05/wget-112-for-windows.html
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

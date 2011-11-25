@@ -1,64 +1,40 @@
-import base
-import utils
-import os
-import shutil
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = False
+        self.svnTargets['gitHEAD'] = '[git]kde:kdepimlibs'
+
         self.targets['r1322'] = "http://saroengels.net/kde-windows/gnuwin32/gpgme-qt.tar.bz2"
         self.targetInstSrc['r1322'] = "gpgme-qt"
-        self.defaultTarget = 'r1322'
+        #self.defaultTarget = 'r1322'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['win32libs-bin/automoc'] = 'default'
-        self.hardDependencies['virtual/base'] = 'default'
-        if not os.getenv("KDECOMPILER") == "mingw":
-            self.hardDependencies['kdesupport/kdewin'] = 'default'
-
-class subclass(base.baseclass):
-    def __init__( self, **args ):
-        base.baseclass.__init__( self, args=args )
-        # cmake scripts are not in src root...
-        self.instsrcdir = "gpgme-qt"
-        self.subinfo = subinfo()
-
-    def unpack( self ):
-        print "gpgme-qt unpack called"
-        # do the svn fetch/update
-        if self.buildTarget == 'svnHEAD':
-            repo = "svn://cvs.gnupg.org/gpgme/trunk/gpgme"
-            self.svnFetch( repo )
-
-            utils.cleanDirectory( self.workdir )
-
-            # now copy the tree below destdir/trunk to workdir
-            utils.debug( "%s %s" % ( self.svndir, self.workdir ) )
-            srcdir = os.path.join( self.svndir )
-            destdir = os.path.join( self.workdir, "gpgme-qt" )
-            utils.copySrcDirToDestDir( srcdir, destdir )
+        self.dependencies['win32libs-bin/gpgme'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['win32libs-bin/boost'] = 'default'
+        if not emergePlatform.isCrossCompilingEnabled():
+            self.dependencies['win32libs-bin/gpgme'] = 'default'
         else:
-            if( not base.baseclass.unpack( self ) ):
-                return True
+            self.dependencies['contributed/gpg4win-dev'] = 'default'
 
-        os.chdir( self.workdir )
-        self.system( "cd %s && patch -p0 < %s" % ( self.workdir, os.path.join( self.packagedir, "gpgme-qt.patch" ) ) )
-        return True
+from Package.CMakePackageBase import *
 
-    def compile( self ):
-        return self.kdeCompile()
+class Package(CMakePackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        CMakePackageBase.__init__( self )
+        self.boost = portage.getPackageInstance('win32libs-bin','boost')
+        path = self.boost.installDir()
+        os.putenv( "BOOST_ROOT", path )
 
-    def install( self ):
-        return self.kdeInstall()
+        self.subinfo.options.configure.defines = "-DHOST_BINDIR=%s " \
+            % os.path.join(ROOTDIR, "bin")
 
-    def make_package( self ):
-
-        # now do packaging with kdewin-packager
-        self.doPackaging( "gpgme-qt", "20080115", True )
-
-        return True
+        if emergePlatform.isCrossCompilingEnabled():
+            if self.isTargetBuild():
+                self.subinfo.options.configure.defines += "-DKDEPIM_NO_KRESOURCES=ON -DMAILTRANSPORT_INPROCESS_SMTP=ON "
+        self.subinfo.options.configure.defines += "-DBUILD_doc=OFF -DKDEPIM_ONLY_KLEO=ON"
 
 if __name__ == '__main__':
-    subclass().execute()
+    Package().execute()

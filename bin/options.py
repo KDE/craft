@@ -17,7 +17,7 @@
 #
 # or
 #
-# emerge "--option=cmake.openIDE=1" --make kdewin-installer
+# emerge "--options=cmake.openIDE=1" --make kdewin-installer
 #
 # or
 #
@@ -28,7 +28,7 @@
 #
 # for example:
 #
-#  emerge "--option=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
+#  emerge "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
 import os
 import utils
