@@ -1,7 +1,12 @@
 From 77e7acc841d412eff7d2693e7445f12ab7956b29 Mon Sep 17 00:00:00 2001
 From: Christian Ehrlicher <ch.ehrlicher@gmx.de>
 Date: Fri, 19 Sep 2008 17:41:26 +0200
-Subject: [PATCH] Fix configure.exe to do an out-of-source build on windows
+Subject: [PATCH] Fix to do an out-of-source build on windows
+
+This patch fixes two issues related to out of source builds:
+1. syncqt handling of drive letters
+2. let configure choose either relative or absolute pathes for
+   input files depending on the path length
 
 qt-bugs@ issue : N227213
 Trolltech task ID : none yet
