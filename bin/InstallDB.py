@@ -3,6 +3,9 @@ import utils
 import portage
 import emergePlatform
 import sqlite3
+import threading
+
+__blockme = threading.local()
 
 def isDBEnabled():
     """ this function returns whether sqlite database should be used """
@@ -13,8 +16,14 @@ def isDBEnabled():
 def blocking(fn):
     """ Block parallel access to sqlite """
     def block(*args, **kw):
-        with utils.LockFile(utils.LockFileName("SQLITE")):
-            ret = fn(*args, **kw)
+        if hasattr(__blockme, "blocked"): # Already blocked
+            return fn(*args, **kw)
+        try:
+            with utils.LockFile(utils.LockFileName("SQLITE")):
+                __blockme.blocked = True
+                ret = fn(*args, **kw)
+        finally:
+            delattr(__blockme, "blocked");
         return ret
 
     return block
