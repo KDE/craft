@@ -132,7 +132,7 @@ class ExecutionContext(object):
         os.environ["EMERGE_SQLITE_LOCK_FILE"] = self.sqlitelock
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for lockfile in [self.svnlock, self.msyslock]:
+        for lockfile in [self.svnlock, self.msyslock, self.sqlitelock]:
             if os.path.exists(lockfile):
                 try:
                     os.remove(lockfile)
