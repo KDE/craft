@@ -225,6 +225,7 @@ lib/antlr.lib
             <files include="lib/.*kompare.*lib"/>
         </part>
         <dependency>kde/libkdesdk</dependency>
+        <dependency>gnuwin32/diffutils</dependency>
     </package>
     <package name="kdesdk" comment="kdesdk meta package">
         <shortDescription>KDE software development package</shortDescription>
