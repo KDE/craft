@@ -3,12 +3,30 @@ import utils
 import portage
 import emergePlatform
 import sqlite3
+import threading
+
+__blockme = threading.local()
 
 def isDBEnabled():
     """ this function returns whether sqlite database should be used """
     if not os.getenv("EMERGE_ENABLE_SQLITEDB"):
         return True
     return utils.envAsBool("EMERGE_ENABLE_SQLITEDB")
+
+def blocking(fn):
+    """ Block parallel access to sqlite """
+    def block(*args, **kw):
+        if hasattr(__blockme, "blocked"): # Already blocked
+            return fn(*args, **kw)
+        try:
+            with utils.LockFile(utils.LockFileName("SQLITE")):
+                __blockme.blocked = True
+                ret = fn(*args, **kw)
+        finally:
+            delattr(__blockme, "blocked");
+        return ret
+
+    return block
 
 class InstallPackage:
     """ InstallPackage finalizes an installation.
@@ -50,6 +68,7 @@ class InstallPackage:
         """ appends files to the list of files to be installed """
         self.fileDict.update( fileDict )
 
+    @blocking
     def getFiles( self ):
         """ get a list of files that will be uninstalled """
         cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
@@ -57,10 +76,12 @@ class InstallPackage:
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
+    @blocking
     def revert( self ):
         """ revert all changes made to the database, use with care """
         self.cursor.connection.rollback()
 
+    @blocking
     def uninstall( self ):
         """ really uninstall that package """
         cmd = '''DELETE FROM fileList WHERE packageId=?;'''
@@ -71,6 +92,7 @@ class InstallPackage:
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
+    @blocking
     def install( self ):
         """ marking the package & package file list installed """
         fileNumber = len( self.fileDict )
@@ -105,6 +127,7 @@ class InstallDB:
             utils.debug( "found database", 1 )
             self.connection = sqlite3.connect( self.dbfilename )
 
+    @blocking
     def getLastId( self ):
         """ returns the last id from a table, which is essentially the  """
         cmd = '''SELECT max(packageId) FROM packageList;'''
@@ -133,6 +156,7 @@ class InstallDB:
 
         return stmt, params
 
+    @blocking
     def isInstalled( self, category, package, version=None, prefix=None ):
         """ returns whether a package is installed. If version and prefix are empty, all versions
             and prefixes will be checked. """
@@ -163,6 +187,7 @@ class InstallDB:
         else:
             return None
 
+    @blocking
     def getInstalled( self, category=None, package=None, prefix=None ):
         """ returns a list of the installed packages, which can be restricted by adding
             package, category and prefix.
@@ -179,6 +204,7 @@ class InstallDB:
         cursor.close()
         return values
 
+    @blocking
     def getDistinctInstalled( self, category=None, package=None, prefix=None ):
         """ returns a list of the installed packages, which can be restricted by adding
             package, category and prefix.
@@ -195,6 +221,7 @@ class InstallDB:
         cursor.close()
         return values
 
+    @blocking
     def getPackageIds( self, category=None, package=None, version=None, prefix=None ):
         """ returns a list of the ids of the packages, which can be restricted by adding
             package, category and prefix.
@@ -212,6 +239,7 @@ class InstallDB:
             values.append( row[0] )
         return values
 
+    @blocking
     def addInstalled( self, category, package, version, prefix=None, ignoreInstalled=False ):
         """ adds an installed package """
         cursor = self.connection.cursor()
@@ -224,6 +252,7 @@ class InstallDB:
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 
+    @blocking
     def remInstalled( self, category, package, version, prefix=None ):
         """ removes an installed package """
         cmd = '''DELETE FROM packageList'''
@@ -235,6 +264,7 @@ class InstallDB:
         cursor = self.connection.cursor()
         return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, version, prefix ) ]
 
+    @blocking
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """
         self.connection = sqlite3.connect( self.dbfilename )
