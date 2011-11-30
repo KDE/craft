@@ -9,6 +9,9 @@ class subinfo( info.infoclass ):
         self.targets['1.0.0'] = "http://skrooge.org/files/skrooge-1.0.0.tar.bz2"
         self.targetInstSrc['1.0.0'] = "skrooge-1.0.0"
         self.patchToApply['1.0.0'] = [("skrooge-1.0.0-20111009.diff", 1)]
+        self.targets['1.1.1'] = "http://skrooge.org/files/skrooge-1.1.1.tar.bz2"
+        self.targetInstSrc['1.1.1'] = "skrooge-1.1.1"
+#        self.patchToApply['1.1.1'] = [("skrooge-1.1.1-20111009.diff", 1)]
         self.shortDescription = "a personal finance manager for KDE"
         self.defaultTarget = 'gitHEAD'
 
