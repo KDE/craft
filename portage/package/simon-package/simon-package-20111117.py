@@ -10,8 +10,8 @@ class subinfo( info.infoclass ):
         self.simon = portage.getPackageInstance('testing','simon')
         _,gitVersion = self.simon.getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '2.4.3-4' ] = ""
-        self.defaultTarget = '2.4.3-4'
+        self.svnTargets[ '0.3.70' ] = ""
+        self.defaultTarget = '0.3.70'
 
 
 
