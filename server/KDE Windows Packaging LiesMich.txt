@@ -1,0 +1,38 @@
+[17:59] <TheOneRing> was muss auch auf winkde.org machen?
+[17:59] <SaroEngels_> für merge?
+[17:59] <SaroEngels_> du machst git checkout kde-4.7
+[17:59] <SaroEngels_> git merge kde-4.7.3
+[17:59] <TheOneRing> ne ne
+[17:59] <SaroEngels_> git push origin kde-4.7
+[17:59] <TheOneRing> um zu cleanen
+[17:59] <SaroEngels_> ah
+[18:00] <TheOneRing> vor nem neuen release
+[18:01] <SaroEngels_> du machst das kde_html/repository-4.7/kde Verzeichnis leer
+[18:01] <SaroEngels_> das l10n Verzeichnis auch
+[18:01] <SaroEngels_> win32libs nich
+[18:01] <TheOneRing> k
+[18:02] <SaroEngels_> die config.txt im config subdir muss neu erzeugt werden
+[18:02] <SaroEngels_> mit dem script
+[18:03] <TheOneRing> ich dachte die wird von emerge generiert?
+[18:04] <SaroEngels_> naja, das script dependencies.py im emerge repo
+[18:04] <SaroEngels_> kommando sage ich dir in einer Sekunde
+[18:06] <SaroEngels_> dependencies.py -t kwi -d runtime -o ..\config.txt -f %KDEROOT%\emerge\server\serverconfig\packagelist-release.txt
+[18:07] <SaroEngels_> kwi ist der Typ des outputs (kdewin-installer) -d sind die dependencies (nur runtime) -o ist das ausgabefile und -f das eingabefile
+[18:08] <TheOneRing> ok
+[18:08] <TheOneRing> das sollten wir mal in die readme aufm buildserver packen
+[18:08] <TheOneRing> oder direkt ins emerge
+[18:08] <SaroEngels_> ja
+[18:09] <SaroEngels_> achso
+[18:09] <TheOneRing> wo muss die config hin?
+[18:09] <SaroEngels_> ins config Verzeichnis
+[18:09] <SaroEngels_> der Teil ist aber spezifisch für unsere Lösung
+[18:10] <SaroEngels_> das laufen lassen der dependencies.py ist allgemein
+[18:10] <TheOneRing> ja
+[18:15] <SaroEngels_> speziell bei uns ist noch der Weg wie du dann das tatsächlich alles rüberkopieren lässt
+[18:19] <SaroEngels_> und zwar rufst du dann im Verzeichnis bin (nachdem alles hochgeladen worden ist) das Skript ./make_release 4.7.4 stable
+[18:20] <SaroEngels_> du brauchst Schreibrechte für das releases/stable Verzeichnis
+[18:22] <SaroEngels_> falls später einzelne Pakete ersetzt werden, e.g. Amarok 2.5 die Originalerweise nicht drin waren, rufst du im bin Verzeichnis ./update_package.sh amarok 2.4.90 2.5.0 ../../releases/stable/4.7.4 auf
+[18:22] <SaroEngels_> das ersetzt das vollkommen
+[18:23] <SaroEngels_> (e.g. das alte Paket wird entfernt, und das neue rüberkopiert)
+[18:23] <SaroEngels_> die md5sums und sha1sums werden auch upgedated
+[18:23] <SaroEngels_> für das weitere befüllen der ftp mirrors sollte man sich nicht kümmern müssen, da läuft ein Skript auf ftpmaster.kde.org
