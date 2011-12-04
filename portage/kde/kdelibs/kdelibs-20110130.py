@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.7.0'] = '2a7a59ac78a161c7c2393db89179449b495dd2db'
         self.patchToApply['4.7.0'] = [("kdelibs-4.7.0-20110819.diff", 1), ("silence_wmi_1.diff", 1), ("silence_wmi_3.diff", 1), ("solid-leak-fix.diff", 1)]
         self.patchToApply['4.7.2'] = [("kdelibs-find-hupnp-4.7.2-20111018.diff", 1)]
+        self.patchToApply['4.7.4'] = [("kdelibs-4.7-kjs.diff", 1)]
 
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
