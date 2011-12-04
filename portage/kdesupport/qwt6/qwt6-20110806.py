@@ -23,6 +23,8 @@ class Package( QMakePackageBase ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ' "QWT_INSTALL_PREFIX = %s" ' % self.imageDir().replace("\\","/")
+        if compiler.isMinGW():
+            self.subinfo.options.make.supportsMultijob = False
         
     def install( self ):
         if not QMakePackageBase.install( self ):
