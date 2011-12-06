@@ -640,6 +640,29 @@ diff -Nru redland-1.0.14.orig/src/librdf.h redland-1.0.14/src/librdf.h
  #        define REDLAND_API _declspec(dllexport)
  #      else
  #        define REDLAND_API _declspec(dllimport)
+@@ -63,13 +63,15 @@
+ #  endif
+ #endif
+ 
+-#ifndef REDLAND_CALLBACK_STDCALL
+-#  if defined(WIN32) && defined(USE_STDCALL_CALLBACKS)
+-#    define REDLAND_CALLBACK_STDCALL _stdcall
+-#  else
+-#    define REDLAND_CALLBACK_STDCALL
+-#  endif
+-#endif
++// The soprano log callback needs __stdcall unset.
++//#ifndef REDLAND_CALLBACK_STDCALL
++//#  if defined(WIN32) && defined(USE_STDCALL_CALLBACKS)
++//#    define REDLAND_CALLBACK_STDCALL __stdcall
++//#  else
++//#    define REDLAND_CALLBACK_STDCALL
++//#  endif
++//#endif
++#define REDLAND_CALLBACK_STDCALL
+ 
+ /* Use gcc 3.1+ feature to allow marking of deprecated API calls.
+  * This gives a warning during compiling.
 diff -Nru redland-1.0.14.orig/src/rdf_model.c redland-1.0.14/src/rdf_model.c
 --- redland-1.0.14.orig/src/rdf_model.c	2011-08-11 09:00:23.881216473 +0000
 +++ redland-1.0.14/src/rdf_model.c	2011-08-11 09:03:05.551458941 +0000
