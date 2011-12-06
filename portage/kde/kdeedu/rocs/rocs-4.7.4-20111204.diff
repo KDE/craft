@@ -1,0 +1,150 @@
+diff -Nru rocs-4.7.0.orig/src/Plugins/DataStructure/Graph/GraphStructure.h rocs-4.7.0/src/Plugins/DataStructure/Graph/GraphStructure.h
+--- rocs-4.7.0.orig/src/Plugins/DataStructure/Graph/GraphStructure.h    2011-06-22 16:53:03.000000000 +0200
++++ rocs-4.7.0/src/Plugins/DataStructure/Graph/GraphStructure.h 2011-08-23 13:30:48.433071700 +0200
+@@ -24,8 +24,11 @@
+ #include "DataStructure.h"
+ 
+ namespace Rocs{
+-class ROCSLIB_EXPORT GraphStructure : public DataStructure {
++class GraphStructure : public DataStructure {
+   Q_OBJECT
++  Q_PROPERTY (GRAPH_TYPE graphType READ graphType WRITE setGraphType)
++  Q_PROPERTY (bool directed READ directed)
++  Q_ENUMS(GRAPH_TYPE)
+   public:
+     typedef enum {
+         UNDIRECTED,
+diff -Nru rocs-4.7.0.orig/src/Plugins/GenerateGraph/generategraphwidget.cpp rocs-4.7.0/src/Plugins/GenerateGraph/generategraphwidget.cpp
+--- rocs-4.7.0.orig/src/Plugins/GenerateGraph/generategraphwidget.cpp   2011-06-22 16:53:03.000000000 +0200
++++ rocs-4.7.0/src/Plugins/GenerateGraph/generategraphwidget.cpp    2011-08-23 13:37:24.320715100 +0200
+@@ -165,7 +165,7 @@
+     
+     // compute radius such that nodes have space ~50 between each other
+     // circle that border-length of 2*PI*radius
+-    int radius = 50*numberSatelliteNodes/(2*PI_);
++    int radius = 50*numberSatelliteNodes/(2*M_PI);
+ 
+     if ( !graphDoc_ ){
+       return;
+@@ -180,7 +180,7 @@
+     for (int i=1; i<=numberSatelliteNodes; i++) {
+         starNodes << qMakePair(
+             QString("%1").arg(i),
+-            QPointF(sin(i*2*PI_/numberSatelliteNodes)*radius, cos(i*2*PI_/numberSatelliteNodes)*radius)+center
++            QPointF(sin(i*2*M_PI/numberSatelliteNodes)*radius, cos(i*2*M_PI/numberSatelliteNodes)*radius)+center
+         );
+     }
+     QList<Data*> nodeList = graph->addDataList(starNodes);
+@@ -201,7 +201,7 @@
+ 
+     // compute radius such that nodes have space ~50 between each other
+     // circle that border-length of 2*PI*radius
+-    int radius = 50*numberNodes/(2*PI_);
++    int radius = 50*numberNodes/(2*M_PI);
+ 
+     if (! graphDoc_ ){
+         return;
+@@ -218,7 +218,7 @@
+     for (int i=1; i<=numberNodes; i++) {
+         circleNodes << qMakePair(
+             QString("%1").arg(i),
+-            QPointF(sin(i*2*PI_/numberNodes)*radius, cos(i*2*PI_/numberNodes)*radius)+center
++            QPointF(sin(i*2*M_PI/numberNodes)*radius, cos(i*2*M_PI/numberNodes)*radius)+center
+         );
+     }
+     QList<Data*> nodeList = graph->addDataList(circleNodes);
+diff -Nru rocs-4.7.0.orig/src/Plugins/GenerateGraph/generategraphwidget.h rocs-4.7.0/src/Plugins/GenerateGraph/generategraphwidget.h
+--- rocs-4.7.0.orig/src/Plugins/GenerateGraph/generategraphwidget.h 2011-06-22 16:53:03.000000000 +0200
++++ rocs-4.7.0/src/Plugins/GenerateGraph/generategraphwidget.h  2011-08-23 13:37:28.648962700 +0200
+@@ -95,7 +95,6 @@
+         void generateErdosRenyiRandomGraph(int nodes, double edgeProbability, int seed, bool selfEdges);
+ 
+         Document* graphDoc_;
+-        static const double PI_ = 3.14159265358979323846;
+         int selectedGraphType_;
+         QGridLayout *gridLayout_;
+         QWidget* graphOptionsWidget_;
+diff -Nru rocs-4.7.0.orig/src/Plugins/TransformEdges/CMakeLists.txt rocs-4.7.0/src/Plugins/TransformEdges/CMakeLists.txt
+--- rocs-4.7.0.orig/src/Plugins/TransformEdges/CMakeLists.txt   2011-05-20 22:34:30.000000000 +0200
++++ rocs-4.7.0/src/Plugins/TransformEdges/CMakeLists.txt    2011-08-23 13:30:48.435071800 +0200
+@@ -12,7 +12,6 @@
+ 
+ kde4_add_plugin(rocs_transformedgesplugin ${TransformEdgesToolsPlugin_SRC} )
+ target_link_libraries( rocs_transformedgesplugin
+-                       rocs_GraphStructure
+                        ${KDE4_KDEUI_LIBS}
+                        rocslib)
+                             
+diff -Nru rocs-4.7.0.orig/src/Plugins/TransformEdges/transformedgeswidget.cpp rocs-4.7.0/src/Plugins/TransformEdges/transformedgeswidget.cpp
+--- rocs-4.7.0.orig/src/Plugins/TransformEdges/transformedgeswidget.cpp 2011-06-22 16:53:03.000000000 +0200
++++ rocs-4.7.0/src/Plugins/TransformEdges/transformedgeswidget.cpp  2011-08-23 13:30:48.438072000 +0200
+@@ -35,14 +35,13 @@
+ #include <Document.h>
+ #include <DataStructure.h>
+ #include <DocumentManager.h>
+-#include "../DataStructure/Graph/GraphStructure.h"
+ #include <Pointer.h>
+ #include <Data.h>
+ 
+ 
+ //TODO output usefull error message
+ namespace boost { void throw_exception( std::exception const & ) {} } // do noop on exception
+-using namespace Rocs;
++
+ 
+ class QPushButton;
+ 
+@@ -101,11 +100,8 @@
+ 
+ void TransformEdgesWidget::makeComplete( DataStructure* graph )
+ {
+-    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
+-    if( !graphDS ) 
+-        return;
+-        
+-    bool directed = graphDS->directed();
++
++    bool directed = graph->property("directed").toBool();
+ 
+     foreach ( Pointer *e, graph->pointers() ) {
+         graph->remove ( e );
+@@ -138,15 +134,11 @@
+ 
+ void TransformEdgesWidget::reverseAllEdges( DataStructure* graph )
+ {
+-    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
+-    if( !graphDS ) 
++    if (! graph->property("directed").toBool())
+         return;
+ 
+-    if (graphDS->directed()==false)
+-        return;
+-        
+     QList< QPair<Data*, Data*> > newPointers;
+-    foreach ( Pointer *e, graphDS->pointers() ) {
++    foreach ( Pointer *e, graph->pointers() ) {
+         newPointers << QPair<Data*, Data*>(e->to(), e->from());
+         graph->remove ( e );
+     }
+@@ -159,11 +151,8 @@
+ 
+ qreal TransformEdgesWidget::makeSpanningTree(DataStructure* graph)
+ {
+-    GraphStructure* graphDS = qobject_cast<Rocs::GraphStructure *>(graph);
+-    if( !graphDS ) 
+-        return 0;
+ 
+-    QList<Data*> vertices = graphDS->dataList();
++    QList<Data*> vertices = graph->dataList();
+     int n = vertices.size();
+ 
+     /*
+@@ -203,7 +192,7 @@
+         if (i==j)   weight[QPair<int,int>(i,j)] = 0;
+         
+         PointerList out;
+-        if (graphDS->directed())  
++        if (graph->property("directed").toBool())
+             out = vertices[i]->out_pointers();
+         else 
+             out = vertices[i]->adjacent_pointers();
