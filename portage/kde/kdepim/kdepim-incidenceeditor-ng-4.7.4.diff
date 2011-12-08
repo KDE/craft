@@ -1,0 +1,40 @@
+diff -Nru kdepim-4.7.4.orig/incidenceeditor-ng/tests/CMakeLists.txt kdepim-4.7.4/incidenceeditor-ng/tests/CMakeLists.txt
+--- kdepim-4.7.4.orig/incidenceeditor-ng/tests/CMakeLists.txt	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.4/incidenceeditor-ng/tests/CMakeLists.txt	2011-08-24 15:45:02.175044200 +0200
+@@ -14,7 +14,7 @@
+ MACRO(IE_EXECUTABLE_TESTS)
+   FOREACH(_testname ${ARGN})
+     kde4_add_executable(${_testname} NOGUI TEST ${_testname}.cpp modeltest.cpp)
+-    target_link_libraries(${_testname} ${KDEPIMLIBS_KCALCORE_LIBS} ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} ${KDE4_KDECORE_LIBS})
++    target_link_libraries(${_testname} ${KDEPIMLIBS_KCALCORE_LIBS} ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} ${KDE4_KDECORE_LIBS} incidenceeditorsng)
+   ENDFOREACH(_testname)
+ ENDMACRO(IE_EXECUTABLE_TESTS)
+ 
+@@ -28,7 +28,7 @@
+ ########### KTimeZoneComboBox unit test #############
+ set(ktimezonecomboboxtest_SRCS
+     ktimezonecomboboxtest.cpp
+-    ../ktimezonecombobox.cpp
++#    ../ktimezonecombobox.cpp
+ )
+ kde4_add_unit_test(ktimezonecomboboxtest TESTNAME ktimezonecomboboxtest ${ktimezonecomboboxtest_SRCS})
+ 
+@@ -39,5 +39,6 @@
+   ${QT_QTCORE_LIBRARY}
+   ${KDE4_KDECORE_LIBS}
+   ${KDEPIMLIBS_KCALCORE_LIBS}
++  incidenceeditorsng
+ )
+ 
+diff -Nru kdepim-4.7.4.orig/incidenceeditor-ng/tests/modeltest.h kdepim-4.7.4/incidenceeditor-ng/tests/modeltest.h
+--- kdepim-4.7.4.orig/incidenceeditor-ng/tests/modeltest.h	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.4/incidenceeditor-ng/tests/modeltest.h	2011-08-24 15:40:55.429844200 +0200
+@@ -30,7 +30,7 @@
+ 
+ #include "incidenceeditors-ng_export.h"
+ 
+-class INCIDENCEEDITORS_NG_EXPORT ModelTest : public QObject
++class ModelTest : public QObject
+ {
+   Q_OBJECT
+ 

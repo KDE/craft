@@ -16,7 +16,9 @@ class subinfo( info.infoclass ):
                                        ('remove-old-icon-way.diff', 1),
                                        ('broken-app-icons-fix.diff', 1),
                                        ('fix-running-kontact-touch-running-under-windows.patch', 1)]
-        self.patchToApply['4.7.4'] += [("kdepim-soap-4.7.4.diff", 1)]
+        self.patchToApply['4.7.4'] += [("kdepim-soap-4.7.4.diff", 1),
+                                       ("kdepim-calendar-4.7.4.diff", 1),
+                                       ("kdepim-incidenceeditor-ng-4.7.4.diff", 1)]
 
     def setDependencies( self ):
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
