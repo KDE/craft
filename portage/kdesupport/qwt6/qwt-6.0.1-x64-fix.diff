@@ -1,0 +1,12 @@
+diff -Nru qwt-6.0.1.orig/textengines/mathml/qwt_mml_document.cpp qwt-6.0.1/textengines/mathml/qwt_mml_document.cpp
+--- qwt-6.0.1.orig/textengines/mathml/qwt_mml_document.cpp	2011-08-01 16:33:53.000000000 +0200
++++ qwt-6.0.1/textengines/mathml/qwt_mml_document.cpp	2011-12-09 00:02:50.030609100 +0100
+@@ -3622,7 +3622,7 @@
+ 
+     return QString( "%1 %2 mr=%3 pr=%4 dr=%5 ro=(%7, %8) str=%9" )
+            .arg( spec->type_str )
+-           .arg( ( unsigned long )this, 0, 16 )
++           .arg( ( quintptr )this, 0, 16 )
+            .arg( rectToStr( myRect() ) )
+            .arg( rectToStr( parentRect() ) )
+            .arg( rectToStr( deviceRect() ) )
