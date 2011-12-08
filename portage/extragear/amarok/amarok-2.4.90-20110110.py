@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         
         
         self.targets['2.4.90'] = 'http://mark.kollide.net/amaroktest/amarok-2.4.90.tar.bz2'
+        self.patchToApply[ '2.4.90' ] = [ ( 'amarok-2.4.90-20111208.diff', 1 ) ]
         self.targetInstSrc['2.4.90'] = 'amarok-2.4.90'
 
         self.svnTargets['gitHEAD'] = '[git]kde:amarok.git'
