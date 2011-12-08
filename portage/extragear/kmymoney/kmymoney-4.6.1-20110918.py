@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = 'kmymoney-' + ver
         self.patchToApply['4.5.3'] = ('kmymoney-4.5.2-20110112.diff', 1)
         self.patchToApply['4.6.0'] = ('kmymoney-4.6.0-20110822.diff', 1)
+        self.patchToApply['4.6.1'] = ('kmymoney-4.6.1-20111208.diff', 1)
         self.defaultTarget = '4.6.1'
 
     def setDependencies( self ):
