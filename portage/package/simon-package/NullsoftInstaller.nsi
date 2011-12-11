@@ -15,21 +15,35 @@
  
 ;--------------------------------
  
+
 XPStyle on
 ShowInstDetails hide
 ShowUninstDetails hide
-
 SetCompressor /SOLID lzma
- 
+
 Name "${productname}"
 Caption "${productname}"
  
 OutFile "${setupname}"
-Icon "${simon-root}\simon.ico"
 ;AddBrandingImage top 100
 
-LicenseText "License page"
-LicenseData "${simon-root}\LICENCE.txt"
+!include "MUI2.nsh"
+!define MUI_ICON "${simon-root}\simon.ico"
+
+!define MUI_HEADERIMAGE
+    !define MUI_HEADERIMAGE_BITMAP "${simon-root}\installbanner.bmp"
+
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE "${simon-root}\LICENCE.txt"
+!insertmacro MUI_PAGE_INSTFILES
+
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
+ 
+
+
  
 SetDateSave on
 SetDatablockOptimize on
@@ -39,26 +53,18 @@ SilentInstall normal
 InstallDir "$PROGRAMFILES\Simon"
 InstallDirRegKey HKLM "${regkey}" ""
  
-Function .onInstSuccess
-  SetOutPath "$INSTDIR"
-  ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
-  ExecWait '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
-FunctionEnd
 
 ; pages
 ; we keep it simple - leave out selectable installation types
 ; Page components
-Page directory
-Page license
-Page instfiles
+
  
-UninstPage uninstConfirm
-UninstPage instfiles
+
  
 ;--------------------------------
  
 AutoCloseWindow false
-ShowInstDetails show
+ShowInstDetails hide
  
  
 ; beginning (invisible) section
@@ -78,7 +84,7 @@ Section
 File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*.*" 
 
 WriteUninstaller "${uninstaller}"
-  
+ 
 SectionEnd
  
 ; create shortcuts
@@ -97,6 +103,14 @@ CreateShortCut "${startmenu}\sscd.lnk" "$INSTDIR\bin\sscd.exe"
 CreateShortCut "${startmenu}\afaras.lnk" "$INSTDIR\bin\afaras.exe"
 
 CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
+
+SectionEnd
+
+;post install
+Section
+SetOutPath "$INSTDIR"
+ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
+ExecWait '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
 SectionEnd
  
 ; Uninstaller
@@ -120,4 +134,5 @@ SectionEnd
 
 ;Function .onGUIInit
 ;  SetBrandingImage /RESIZETOFIT "${simon-root}\installbanner2.bmp"
+;SetCtlColors $R0 FFFFFF FF0000
 ;FunctionEnd

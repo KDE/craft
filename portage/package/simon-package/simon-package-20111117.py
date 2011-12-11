@@ -18,6 +18,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies[ 'testing/simon' ] = 'default'
         self.dependencies[ 'kde/kde-workspace' ] = 'default'
+        self.dependencies[ 'kde/kdepim-runtime' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
         #self.dependencies[ 'kdesupport/phonon-ds9' ] = 'default'
         
