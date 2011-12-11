@@ -25,7 +25,6 @@ Name "${productname}"
 Caption "${productname}"
  
 OutFile "${setupname}"
-;AddBrandingImage top 100
 
 !include "MUI2.nsh"
 !define MUI_ICON "${simon-root}\simon.ico"
@@ -52,14 +51,6 @@ SilentInstall normal
  
 InstallDir "$PROGRAMFILES\Simon"
 InstallDirRegKey HKLM "${regkey}" ""
- 
-
-; pages
-; we keep it simple - leave out selectable installation types
-; Page components
-
- 
-
  
 ;--------------------------------
  

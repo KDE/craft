@@ -23,6 +23,18 @@ Caption "${productname}"
  
 OutFile "${setupname}"
  
+!include "MUI2.nsh"
+
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
+!insertmacro MUI_PAGE_INSTFILES
+
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
+ 
+
 SetDateSave on
 SetDatablockOptimize on
 CRCCheck on
@@ -31,30 +43,15 @@ SilentInstall normal
 InstallDir "$PROGRAMFILES\Amarok"
 InstallDirRegKey HKLM "${regkey}" ""
  
-Function .onInstSuccess
-  SetOutPath "$INSTDIR"
-  ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
-  ExecWait '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
-FunctionEnd
-
-; pages
-; we keep it simple - leave out selectable installation types
-; Page components
-Page directory
-Page instfiles
- 
-UninstPage uninstConfirm
-UninstPage instfiles
- 
 ;--------------------------------
  
 AutoCloseWindow false
-ShowInstDetails show
+ShowInstDetails hide
  
  
 ; beginning (invisible) section
 Section
- 
+  ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "Amarok (remove only)"
@@ -82,6 +79,13 @@ CreateShortCut "${startmenu}\Appearance Settings.lnk" "$INSTDIR\bin\kcmshell4.ex
 CreateShortCut "${startmenu}\Snorenotify.lnk" "$INSTDIR\bin\snorenotify.exe"
 CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
 SectionEnd
+
+;post install
+Section
+SetOutPath "$INSTDIR"
+ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
+ExecWait '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
+SectionEnd
  
 ; Uninstaller
 ; All section names prefixed by "Un" will be in the uninstaller
@@ -90,6 +94,7 @@ UninstallText "This will uninstall Amarok."
  
 Section "Uninstall"
 SetShellVarContext all
+ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
 
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"

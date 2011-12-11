@@ -7,7 +7,8 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        _,gitVersion = portage.getPackageInstance('extragear','amarok').getPackageVersion() 
+        self.amarok = portage.getPackageInstance('extragear','amarok')
+        _,gitVersion = self.amarok.getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
         self.svnTargets[ '2.4.3-4' ] = ""
         self.defaultTarget = '2.4.3-4'
@@ -30,6 +31,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
+        self.defines[ "amarok-root" ] = self.subinfo.amarok.sourceDir()
 
 if __name__ == '__main__':
     Package().execute()
