@@ -32,7 +32,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
         self.defines[ "amarok-root" ] = self.subinfo.amarok.sourceDir()
-        self.defines[ "amarok-icon" ] = os.path.join(self.subinfo.amarok.buildDir(),"src","amarok_SRCS.ico")
+        self.defines[ "amarok-icon" ] = os.path.join(self.packageDir(),"amarok.ico")
 
 if __name__ == '__main__':
     Package().execute()
