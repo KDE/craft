@@ -24,6 +24,7 @@ Caption "${productname}"
 OutFile "${setupname}"
  
 !include "MUI2.nsh"
+!define MUI_ICON "${amarok-icon}"
 
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
