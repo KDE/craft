@@ -10,8 +10,8 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         _,gitVersion = portage.getPackageInstance('extragear','amarok').getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '2.4.3-4' ] = ""
-        self.defaultTarget = '2.4.3-4'
+        self.svnTargets[ '2.5.0' ] = ""
+        self.defaultTarget = '2.5.0'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
@@ -19,7 +19,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kdesupport/snorenotify' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
         #self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
-        self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
+        #self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
         self.dependencies[ 'kdesupport/phonon-vlc'] = 'default'
         
 class Package( PortablePackager, VirtualPackageBase ):

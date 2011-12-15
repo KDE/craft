@@ -10,8 +10,8 @@ class subinfo( info.infoclass ):
         self.amarok = portage.getPackageInstance('extragear','amarok')
         _,gitVersion = self.amarok.getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '2.4.3-4' ] = ""
-        self.defaultTarget = '2.4.3-4'
+        self.svnTargets[ '2.5.0' ] = ""
+        self.defaultTarget = '2.5.0'
 
 
 
