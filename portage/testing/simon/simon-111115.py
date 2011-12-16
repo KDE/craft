@@ -13,11 +13,11 @@ class subinfo(info.infoclass):
       self.buildDependencies['gnuwin32/flex'] = 'default'
       self.buildDependencies['gnuwin32/bison'] = 'default'
       self.buildDependencies['dev-util/gettext-tools'] = 'default'
-      self.hardDependencies['libs/qt'] = 'default'
-      self.hardDependencies['win32libs-bin/gettext'] = 'default'
-      self.hardDependencies['kdesupport/qwt6'] = 'default'
-      self.hardDependencies['win32libs-bin/libsamplerate'] = 'default'
-      self.hardDependencies['kde/kdepimlibs'] = 'default'
+      self.dependencies['libs/qt'] = 'default'
+      self.dependencies['win32libs-bin/gettext'] = 'default'
+      self.dependencies['kdesupport/qwt6'] = 'default'
+      self.dependencies['win32libs-bin/libsamplerate'] = 'default'
+      self.dependencies['kde/kdepimlibs'] = 'default'
 
          
 

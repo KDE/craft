@@ -120,6 +120,7 @@ class ExecutionContext(object):
     def __init__(self):
         self.svnlock = uniqueLockFilename("SVN")
         self.msyslock = uniqueLockFilename("MSYS")
+        self.sqlitelock = uniqueLockFilename("SQLITE")
 
     def __enter__(self):
         log("start", "all")
@@ -127,9 +128,11 @@ class ExecutionContext(object):
         os.environ["EMERGE_SVN_LOCK_FILE"] = self.svnlock
         os.environ["EMERGE_MSYS_LOCK"     ] = "True"
         os.environ["EMERGE_MSYS_LOCK_FILE"] = self.msyslock
+        os.environ["EMERGE_SQLITE_LOCK"     ] = "True"
+        os.environ["EMERGE_SQLITE_LOCK_FILE"] = self.sqlitelock
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for lockfile in [self.svnlock, self.msyslock]:
+        for lockfile in [self.svnlock, self.msyslock, self.sqlitelock]:
             if os.path.exists(lockfile):
                 try:
                     os.remove(lockfile)
