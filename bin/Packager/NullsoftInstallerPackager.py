@@ -85,9 +85,19 @@ file collection process is skipped, and only the installer is generated.
         if not "company" in self.defines or not self.defines[ "company" ]:
             self.defines[ "company" ] = "KDE"
         if not "productname" in self.defines or not self.defines[ "productname" ]:
-            self.defines[ "productname" ] = "%s %s" % ( shortPackage.capitalize(), self.buildTarget )
+            self.defines[ "productname" ] = shortPackage.capitalize()
+        if not "version" in self.defines or not self.defines[ "version" ]:
+            self.defines[ "version" ] = self.buildTarget
         if not "executable" in self.defines or not self.defines[ "executable" ]:
             self.defines[ "executable" ] = ""
+        if "license" in self.defines and self.defines[ "license" ]:
+            self.defines[ "license" ] = "!insertmacro MUI_PAGE_LICENSE \"%s\"" %  self.defines[ "license" ] 
+        else:
+            self.defines[ "license" ] = ""
+        if "icon" in self.defines and self.defines[ "icon" ]:
+            self.defines[ "icon" ] = "!define MUI_ICON \"%s\"" % self.defines[ "icon" ]
+        else:
+            self.defines[ "icon" ] = ""
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
 
