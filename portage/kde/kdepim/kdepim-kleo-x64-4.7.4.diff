@@ -1,0 +1,44 @@
+diff -Nru kdepim-4.7.4.orig/kleopatra/libkleopatraclient/core/command.cpp kdepim-4.7.4/kleopatra/libkleopatraclient/core/command.cpp
+--- kdepim-4.7.4.orig/kleopatra/libkleopatraclient/core/command.cpp	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.4/kleopatra/libkleopatraclient/core/command.cpp	2011-08-24 22:30:21.268044200 +0200
+@@ -590,7 +590,7 @@
+ 
+     if ( in.parentWId ) {
+ #if defined(Q_OS_WIN32) || defined(_WIN32_WCE)
+-        err = send_option( ctx, "window-id", QString().sprintf( "%lx", reinterpret_cast<unsigned long>( in.parentWId ) ) );
++        err = send_option( ctx, "window-id", QString().sprintf( "%lx", reinterpret_cast<quintptr>( in.parentWId ) ) );
+ #else
+         err = send_option( ctx, "window-id", QString().sprintf( "%lx", static_cast<unsigned long>( in.parentWId ) ) );
+ #endif
+diff -Nru kdepim-4.7.4.orig/kleopatra/uiserver/assuanserverconnection.cpp kdepim-4.7.4/kleopatra/uiserver/assuanserverconnection.cpp
+--- kdepim-4.7.4.orig/kleopatra/uiserver/assuanserverconnection.cpp	2011-05-21 01:10:45.000000000 +0200
++++ kdepim-4.7.4/kleopatra/uiserver/assuanserverconnection.cpp	2011-08-24 18:48:52.799244200 +0200
+@@ -860,14 +860,14 @@
+     assert( numFDs != -1 ); // == 1
+ 
+     if ( !numFDs || fds[0] != fd ) {
+-        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (int)fd, QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
++        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (intptr_t)fd, QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
+         connect( sn.get(), SIGNAL(activated(int)), this, SLOT(slotReadActivity(int)) );
+         notifiers.push_back( sn );
+     }
+ 
+     notifiers.reserve( notifiers.size() + numFDs );
+     for ( int i = 0 ; i < numFDs ; ++i ) {
+-        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (int)fds[i], QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
++        const shared_ptr<QSocketNotifier> sn( new QSocketNotifier( (intptr_t)fds[i], QSocketNotifier::Read ), mem_fn( &QObject::deleteLater ) );
+         connect( sn.get(), SIGNAL(activated(int)), this, SLOT(slotReadActivity(int)) );
+         notifiers.push_back( sn );
+     }
+diff -Nru kdepim-4.7.4.orig/kleopatra/uiserver/uiserver_win.cpp kdepim-4.7.4/kleopatra/uiserver/uiserver_win.cpp
+--- kdepim-4.7.4.orig/kleopatra/uiserver/uiserver_win.cpp	2011-05-21 01:10:46.000000000 +0200
++++ kdepim-4.7.4/kleopatra/uiserver/uiserver_win.cpp	2011-08-24 18:45:24.107844200 +0200
+@@ -87,7 +87,7 @@
+         if ( ::listen( (SOCKET)sock, SOMAXCONN ) )
+             throw_<std::runtime_error>( i18n( "Could not listen to socket: %1", systemErrorString() ) );
+ 
+-        if ( !setSocketDescriptor( (int)sock  ) )
++        if ( !setSocketDescriptor( (intptr_t)sock  ) )
+             throw_<std::runtime_error>( i18n( "Could not pass socket to Qt: %1. This should not happen, please report this bug.", errorString() ) );
+ 
+     } catch ( ... ) {

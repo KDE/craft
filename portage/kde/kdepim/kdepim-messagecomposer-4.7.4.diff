@@ -1,0 +1,13 @@
+diff -Nru -x '*~' kdepim-4.7.4.orig/messagecomposer/akonadisender.cpp kdepim-4.7.4/messagecomposer/akonadisender.cpp
+--- kdepim-4.7.4.orig/messagecomposer/akonadisender.cpp	2011-12-02 00:25:40.000000000 +0100
++++ kdepim-4.7.4/messagecomposer/akonadisender.cpp	2011-12-20 22:29:49.327268300 +0100
+@@ -135,7 +135,8 @@
+       kDebug()<<" No transport defined. Need to create it";
+       return;
+   }
+-  if ( !Message::Util::sendMailDispatcherIsOnline() )
++  using namespace Message;
++  if ( !Util::sendMailDispatcherIsOnline() )
+     return;
+   
+   kDebug() << "Using transport (" << transport->name() << "," << transport->id() << ")";
