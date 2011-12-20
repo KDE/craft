@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/qwt/qwt-%s.tar.bz2" % ver
             self.targetInstSrc[ver] = "qwt-%s" % ver
         self.targetDigests['6.0.1'] = '301cca0c49c7efc14363b42e082b09056178973e'
+        self.patchToApply['6.0.1'] = [('qwt-6.0.1-20110807.diff',1), ('qwt-6.0.1-x64-fix.diff', 1)]
         self.defaultTarget = "6.0.1"
 
     def setDependencies( self ):
