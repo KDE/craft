@@ -1,6 +1,6 @@
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README kdepim-4.7.0/kresources/groupwise/soap/patches/README
---- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README  2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/patches/README   2011-08-24 23:34:27.346644200 +0200
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/patches/README kdepim-4.7.4/kresources/groupwise/soap/patches/README
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/patches/README	2011-10-02 15:24:37.000000000 +0200
++++ kdepim-4.7.4/kresources/groupwise/soap/patches/README	2011-12-20 16:59:35.015118100 +0100
 @@ -30,3 +30,14 @@
    Adriaan de Groot <groot@kde.org>: The attached patch is needed for me to get
    kresources/groupwise/soap/stdsoap2.cpp to build -- it's the pretty usual
@@ -16,9 +16,9 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/README kdepim-4.7.
 +
 +  Patrick Spendrin: This patch fixes compile errors due to sizeof(void*) != sizeof(long)
 +  on 64 bit windows systems.
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.diff kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff
---- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.diff   1970-01-01 01:00:00.000000000 +0100
-+++ kdepim-4.7.0/kresources/groupwise/soap/patches/unknown_reserved.diff    2011-08-24 13:20:11.703044200 +0200
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/patches/unknown_reserved.diff kdepim-4.7.4/kresources/groupwise/soap/patches/unknown_reserved.diff
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/patches/unknown_reserved.diff	1970-01-01 01:00:00.000000000 +0100
++++ kdepim-4.7.4/kresources/groupwise/soap/patches/unknown_reserved.diff	2011-12-20 16:59:35.017118200 +0100
 @@ -0,0 +1,45 @@
 +diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp
 +--- kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp  2011-05-21 01:10:46.000000000 +0200
@@ -65,9 +65,9 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/unknown_reserved.d
 +       </xs:restriction>
 +   </xs:simpleType>
 +   <xs:complexType name="RuleList">
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/windows-x64.diff kdepim-4.7.0/kresources/groupwise/soap/patches/windows-x64.diff
---- kdepim-4.7.0.orig/kresources/groupwise/soap/patches/windows-x64.diff    1970-01-01 01:00:00.000000000 +0100
-+++ kdepim-4.7.0/kresources/groupwise/soap/patches/windows-x64.diff 2011-08-24 23:32:53.402444200 +0200
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/patches/windows-x64.diff kdepim-4.7.4/kresources/groupwise/soap/patches/windows-x64.diff
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/patches/windows-x64.diff	1970-01-01 01:00:00.000000000 +0100
++++ kdepim-4.7.4/kresources/groupwise/soap/patches/windows-x64.diff	2011-12-20 16:59:35.020118400 +0100
 @@ -0,0 +1,42 @@
 +diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp
 +--- kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp   2011-05-21 01:10:46.000000000 +0200
@@ -111,21 +111,21 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/patches/windows-x64.diff k
 +   { if (pp->type == type && pp->array && pp->array->__ptr == a->__ptr)
 +     { register int i;
 +       for (i = 0; i < n; i++)
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp
---- kdepim-4.7.0.orig/kresources/groupwise/soap/soapC.cpp   2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/soapC.cpp    2011-08-24 13:20:11.781044200 +0200
-@@ -11338,7 +11338,7 @@
-    { (long)Reply, "Reply" },
-    { (long)Send, "Send" },
-    { (long)StopRules, "StopRules" },
--   { (long)Unknown, "Unknown" },
-+   { (long)Unknown_, "Unknown" },
-    { 0, NULL }
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/soapC.cpp kdepim-4.7.4/kresources/groupwise/soap/soapC.cpp
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/soapC.cpp	2011-10-02 15:24:37.000000000 +0200
++++ kdepim-4.7.4/kresources/groupwise/soap/soapC.cpp	2011-12-20 17:02:24.254798100 +0100
+@@ -11339,7 +11339,7 @@
+ 	{ (long)Reply, "Reply" },
+ 	{ (long)Send, "Send" },
+ 	{ (long)StopRules, "StopRules" },
+-	{ (long)Unknown, "Unknown" },
++	{ (long)Unknown_, "Unknown" },
+ 	{ 0, NULL }
  };
  
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.0/kresources/groupwise/soap/soapStub.h
---- kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h  2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/soapStub.h   2011-08-24 13:20:11.781044200 +0200
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.4/kresources/groupwise/soap/soapStub.h
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/soapStub.h	2011-10-02 15:24:37.000000000 +0200
++++ kdepim-4.7.4/kresources/groupwise/soap/soapStub.h	2011-12-20 16:59:35.140125300 +0100
 @@ -229,7 +229,7 @@
  #ifndef SOAP_TYPE_ngwt__RuleActionType
  #define SOAP_TYPE_ngwt__RuleActionType (380)
@@ -135,15 +135,15 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/soapStub.h kdepim-4.7.0/kr
  #endif
  
  #ifndef SOAP_TYPE_ngwt__StatusTrackingOptions
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp
---- kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp    2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/stdsoap2.cpp 2011-08-24 22:49:13.342044200 +0200
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/stdsoap2.cpp kdepim-4.7.4/kresources/groupwise/soap/stdsoap2.cpp
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/stdsoap2.cpp	2011-10-02 15:24:37.000000000 +0200
++++ kdepim-4.7.4/kresources/groupwise/soap/stdsoap2.cpp	2011-12-20 17:03:15.401723500 +0100
 @@ -2055,7 +2055,7 @@
        { n = soap_block_size(soap);
  #ifndef WITH_NOIDREF
          if (flag)
--     soap_update_ptrs(soap, q, q + n, (long)s - (long)q); /* pointers s and q may or may not be related */
-+     soap_update_ptrs(soap, q, q + n, (ptrdiff_t)s - (ptrdiff_t)q); /* pointers s and q may or may not be related */
+-	  soap_update_ptrs(soap, q, q + n, (long)s - (long)q); /* pointers s and q may or may not be related */
++	  soap_update_ptrs(soap, q, q + n, (ptrdiff_t)s - (ptrdiff_t)q); /* pointers s and q may or may not be related */
  #endif
          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copy %u bytes from %p to %p\n", (unsigned int)n, q, s));
          memcpy(s, q, n);
@@ -177,24 +177,24 @@ diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/stdsoap2.cpp kdepim-4.7.0/
    { if (pp->type == type && pp->array && pp->array->__ptr == a->__ptr)
      { register int i;
        for (i = 0; i < n; i++)
-diff -Nru kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd kdepim-4.7.0/kresources/groupwise/soap/types.xsd
---- kdepim-4.7.0.orig/kresources/groupwise/soap/types.xsd   2011-05-21 01:10:46.000000000 +0200
-+++ kdepim-4.7.0/kresources/groupwise/soap/types.xsd    2011-08-24 13:20:11.796644200 +0200
+diff -Nru kdepim-4.7.4.orig/kresources/groupwise/soap/types.xsd kdepim-4.7.4/kresources/groupwise/soap/types.xsd
+--- kdepim-4.7.4.orig/kresources/groupwise/soap/types.xsd	2011-10-02 15:24:37.000000000 +0200
++++ kdepim-4.7.4/kresources/groupwise/soap/types.xsd	2011-12-20 17:04:36.707373900 +0100
 @@ -1437,7 +1437,7 @@
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Accept"/>
-            <xs:enumeration value="Archive"/>
--           <xs:enumeration value="Category"/>
-+           <xs:enumeration value="Category_"/>
-            <xs:enumeration value="Delegate"/>
-            <xs:enumeration value="Delete"/>
-            <xs:enumeration value="Forward"/>
+ 		<xs:restriction base="xs:string">
+ 			<xs:enumeration value="Accept"/>
+ 			<xs:enumeration value="Archive"/>
+-			<xs:enumeration value="Category"/>
++			<xs:enumeration value="Category_"/>
+ 			<xs:enumeration value="Delegate"/>
+ 			<xs:enumeration value="Delete"/>
+ 			<xs:enumeration value="Forward"/>
 @@ -1450,7 +1450,7 @@
-            <xs:enumeration value="Reply"/>
-            <xs:enumeration value="Send"/>
-            <xs:enumeration value="StopRules"/>
--           <xs:enumeration value="Unknown"/>
-+           <xs:enumeration value="Unknown_"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:complexType name="RuleList">
+ 			<xs:enumeration value="Reply"/>
+ 			<xs:enumeration value="Send"/>
+ 			<xs:enumeration value="StopRules"/>
+-			<xs:enumeration value="Unknown"/>
++			<xs:enumeration value="Unknown_"/>
+ 		</xs:restriction>
+ 	</xs:simpleType>
+ 	<xs:complexType name="RuleList">
