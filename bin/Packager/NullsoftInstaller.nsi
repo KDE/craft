@@ -53,7 +53,6 @@ InstallDirRegKey HKLM "${regkey}" ""
 ;--------------------------------
  
 AutoCloseWindow false
-ShowInstDetails show
  
  
 ; beginning (invisible) section
