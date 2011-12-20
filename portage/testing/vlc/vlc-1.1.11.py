@@ -44,10 +44,9 @@ class subinfo(info.infoclass):
     else:
       try:
         fh = urllib.request.urlopen(self.vlcBaseUrl , timeout = 10)
-
       except Exception as e:
         return "Nightlys Unavailible:"+str(e)
-      m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
+      m = re.search( "\d\d\d\d\d\d\d\d-\d\d\d\d"  , str(fh.read() ))
       fh.close()
       _VLC_VER = m.group(0)
       return _VLC_VER 
