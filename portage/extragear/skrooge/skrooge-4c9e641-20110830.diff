@@ -1,0 +1,26 @@
+diff -Nru skrooge-4c9e641.orig/skgbasemodeler/CMakeLists.txt skrooge-4c9e641/skgbasemodeler/CMakeLists.txt
+--- skrooge-4c9e641.orig/skgbasemodeler/CMakeLists.txt	2011-08-22 22:33:31.000000000 +0200
++++ skrooge-4c9e641/skgbasemodeler/CMakeLists.txt	2011-08-30 00:14:43.476369000 +0200
+@@ -20,6 +20,11 @@
+    skgtraces.cpp
+  )
+ 
++IF(WIN32)
++    IF (CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
++        ADD_DEFINITIONS( -DQT_DEBUG )
++    ENDIF (CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
++ENDIF(WIN32)
+ #build a shared library
+ KDE4_ADD_LIBRARY(skgbasemodeler SHARED ${skgbasemodeler_SRCS})
+ 
+diff -Nru skrooge-4c9e641.orig/skrooge/CMakeLists.txt skrooge-4c9e641/skrooge/CMakeLists.txt
+--- skrooge-4c9e641.orig/skrooge/CMakeLists.txt	2011-08-22 22:33:31.000000000 +0200
++++ skrooge-4c9e641/skrooge/CMakeLists.txt	2011-08-30 00:01:49.496099900 +0200
+@@ -12,6 +12,7 @@
+ SET(skrooge_SRCS
+    main.cpp
+  )
++kde4_add_app_icon(skrooge_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-skrooge.png")
+ kde4_ADD_EXECUTABLE(skrooge ${skrooge_SRCS})
+ 
+ TARGET_LINK_LIBRARIES(skrooge ${KDE4_KDEUI_LIBS} skgbasemodeler skgbasegui skgbankmodeler skgbankgui)

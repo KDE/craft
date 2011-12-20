@@ -1,0 +1,14 @@
+diff -Nru skrooge-1.0.0.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt skrooge-1.0.0/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt
+--- skrooge-1.0.0.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2011-10-04 20:00:50.000000000 +0200
++++ skrooge-1.0.0/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2011-10-09 23:30:09.776859700 +0200
+@@ -14,7 +14,9 @@
+ ########### install files ###############
+ INSTALL(TARGETS grantlee_skroogefilters ${INSTALL_TARGETS_DEFAULT_ARGS}  )
+ IF(WIN32)
+-  INSTALL(TARGETS grantlee_skroogefilters LIBRARY ARCHIVE DESTINATION ${PLUGIN_INSTALL_DIR}/../grantlee/0.1 )
++  INSTALL(TARGETS grantlee_skroogefilters RUNTIME DESTINATION ${PLUGIN_INSTALL_DIR}/../grantlee/0.1
++                                          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR}/../grantlee/0.1
++                                          ARCHIVE DESTINATION ${PLUGIN_INSTALL_DIR}/../grantlee/0.1)
+ ELSE(WIN32)
+   INSTALL(TARGETS grantlee_skroogefilters LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR}/../grantlee/0.1 )
+ ENDIF(WIN32)
