@@ -220,10 +220,16 @@ goto :eof
     goto :eof
 
 :path-msvc
-    rem MSVC extra setup
-    if defined VSDIR (
-        call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
+    if defined WINDOWSSDKDIR (
+        call "!WINDOWSSDKDIR!\Bin\SetEnv.cmd" /%EMERGE_ARCHITECTURE%
+        echo call "!WINDOWSSDKDIR!\Bin\SetEnv.cmd" /%EMERGE_ARCHITECTURE%
+    ) else (
+        rem MSVC extra setup
+        if defined VSDIR (
+            call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
+        )
     )
+
     if defined PSDKDIR (
         echo Using Platform SDK: !PSDKDIR!
         set PATH=!PSDKDIR!\bin;!PATH!
