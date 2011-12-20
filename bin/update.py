@@ -46,7 +46,7 @@ subversion
 wget
 upx"""
     for package in packages.split():
-        print "removing package %s" % package
+        print("removing package %s" % package)
         utils.system("emerge --unmerge %s" % package)
         # remove all temporary files
         utils.system("emerge --cleanbuild %s" % package)

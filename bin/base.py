@@ -86,7 +86,7 @@ class baseclass:
     def __init__( self, SRC_URI="", **args ):
         """ the baseclass constructor
         args really should be documented"""
-        if "args" in args.keys() and "argv0" in args["args"].keys():
+        if "args" in list(args.keys()) and "argv0" in list(args["args"].keys()):
             self.argv0 = args["args"]["argv0"]
         else:
             self.argv0 = sys.argv[ 0 ]
@@ -139,7 +139,7 @@ class baseclass:
         elif COMPILER == "mingw4":
             self.compiler = "mingw4"
         else:
-            print >> sys.stderr, "emerge error: KDECOMPILER: %s not understood" % COMPILER
+            print("emerge error: KDECOMPILER: %s not understood" % COMPILER, file=sys.stderr)
             exit( 1 )
 
     def execute( self, cmd=None ):
@@ -161,17 +161,17 @@ class baseclass:
         self.subinfo.buildTarget = self.subinfo.defaultTarget
         self.buildTarget = self.subinfo.defaultTarget
 
-        if os.getenv( "EMERGE_TARGET" ) in self.Targets.keys():
+        if os.getenv( "EMERGE_TARGET" ) in list(self.Targets.keys()):
             self.subinfo.buildTarget = os.getenv( "EMERGE_TARGET" )
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
 
-        if self.subinfo.buildTarget in self.subinfo.targets.keys() and self.subinfo.buildTarget in self.subinfo.targetInstSrc.keys():
+        if self.subinfo.buildTarget in list(self.subinfo.targets.keys()) and self.subinfo.buildTarget in list(self.subinfo.targetInstSrc.keys()):
             self.instsrcdir = self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]
 
         self.msys.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir )
         self.kde.setDirectories( self.rootdir, self.imagedir, self.workdir, self.instsrcdir, self.instdestdir, self.subinfo )
 
-        if self.subinfo.buildTarget in self.subinfo.targets.keys() and not self.kdeSvnPath():
+        if self.subinfo.buildTarget in list(self.subinfo.targets.keys()) and not self.kdeSvnPath():
             filenames = []
             for uri in self.subinfo.targets[ self.subinfo.buildTarget ].split():
                 filenames.append( os.path.basename( uri ) )
@@ -209,7 +209,7 @@ class baseclass:
         if ( self.noFetch ):
             utils.debug( "skipping fetch (--offline)" )
             return True
-        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
+        if len( self.subinfo.targets ) and self.subinfo.buildTarget in list(self.subinfo.targets.keys()):
             return utils.getFiles( self.subinfo.targets[ self.subinfo.buildTarget ], self.downloaddir )
         else:
             return utils.getFiles( "", self.downloaddir )
@@ -252,7 +252,7 @@ class baseclass:
 
         utils.debug( "base unpack called", 1 )
 
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+        if self.subinfo.buildTarget in list(self.subinfo.svnTargets.keys()):
             if self.subinfo.svnTargets[ self.subinfo.buildTarget ] and utils.isGitUrl( self.subinfo.svnTargets[ self.subinfo.buildTarget ] ):
                 if ( not os.path.exists( self.workdir ) ):
                     os.makedirs( self.workdir )
@@ -283,7 +283,7 @@ class baseclass:
     def install( self ):
         """installing binary tarballs"""
         if utils.verbose() > 1:
-            print "base install called"
+            print("base install called")
         srcdir = os.path.join( self.workdir, self.instsrcdir )
         destdir = os.path.join( self.imagedir, self.instdestdir )
         utils.copySrcDirToDestDir( srcdir, destdir )
@@ -297,7 +297,7 @@ class baseclass:
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
         if utils.verbose() > 1:
-            print "base qmerge called"
+            print("base qmerge called")
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
             script = os.path.join( self.packagedir, "post-install-%s.cmd" ) % pkgtype
             scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
@@ -322,7 +322,7 @@ class baseclass:
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
         if utils.verbose() > 1:
-            print "base unmerge called"
+            print("base unmerge called")
         utils.unmerge( self.rootdir, self.package, self.forced )
         portage.remInstalled( self.category, self.package, self.version )
         return True
@@ -331,14 +331,14 @@ class baseclass:
         """installer compatibility: make the manifest files that make up the installers
         install database"""
         if utils.verbose() > 1:
-            print "base manifest called"
+            print("base manifest called")
         utils.createManifestDir(self.imagedir, self.category, self.package, self.version )
         return True
 
     def make_package( self ):
         """overload this function with the package specific packaging instructions"""
         if utils.verbose() > 1:
-            print "currently only supported for some internal packages"
+            print("currently only supported for some internal packages")
         return True
 
     def setDirectories( self ):
@@ -391,10 +391,10 @@ class baseclass:
     def svnFetch( self, repo ):
         """getting sources from a custom svn repo"""
         if utils.verbose() > 1:
-            print "base svnFetch called"
+            print("base svnFetch called")
         if ( self.noFetch ):
             if utils.verbose() > 0:
-                print "skipping svn fetch/update (--offline)"
+                print("skipping svn fetch/update (--offline)")
             return True
 
         utils.svnFetch( repo, self.svndir )
@@ -418,7 +418,7 @@ class baseclass:
         else:
             if not utils.unpackFiles( self.downloaddir, self._filenames, self.workdir ):
                 return False
-            if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.patchToApply.keys():
+            if len( self.subinfo.targets ) and self.subinfo.buildTarget in list(self.subinfo.patchToApply.keys()):
                 ( fileName, patchdepth ) = self.subinfo.patchToApply[ self.subinfo.buildTarget ]
                 utils.debug( "patchesToApply: %s" % fileName, 0 )
                 patchfile = os.path.join ( self.packagedir, fileName )
@@ -516,7 +516,7 @@ class baseclass:
         if special:
             cmd += " -special"
         if utils.verbose():
-            print "running %s" % cmd
+            print("running %s" % cmd)
         if not utils.system(cmd):
             utils.die( "while packaging. cmd: %s" % cmd )
         return True
@@ -582,11 +582,11 @@ class baseclass:
 
 def main():
     if utils.verbose() > 0:
-        print "KDEROOT:     ", ROOTDIR
-        print "KDECOMPILER: ", COMPILER
-        print "DOWNLOADDIR: ", DOWNLOADDIR
-        print "KDESVNDIR:   ", KDESVNDIR
-        print "KDESVNSERVER:", KDESVNSERVER
+        print("KDEROOT:     ", ROOTDIR)
+        print("KDECOMPILER: ", COMPILER)
+        print("DOWNLOADDIR: ", DOWNLOADDIR)
+        print("KDESVNDIR:   ", KDESVNDIR)
+        print("KDESVNSERVER:", KDESVNSERVER)
 # this would fail, MSYSDIR undefined. But this module is deprecated anyway.
 #       print "MSYSDIR:", MSYSDIR
 

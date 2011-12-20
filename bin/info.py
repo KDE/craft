@@ -94,9 +94,9 @@ class infoclass:
             self.buildTarget = buildTarget
         elif not os.getenv( "EMERGE_TARGET" ) == None:
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
-        if not self.buildTarget in self.targets.keys() and not self.buildTarget in self.svnTargets.keys() :
+        if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
             self.buildTarget = self.defaultTarget
-            utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, self.targets.keys(), self.svnTargets.keys()), 1)
+            utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys())), 1)
 
     def setBuildOptions( self ):
         """default method for setting build options, override to set individual targets"""
@@ -194,23 +194,23 @@ example:
 
     def hasTarget( self ):
         """return true if archive targets for the currently selected build target is available"""
-        return self.buildTarget in self.targets.keys()
+        return self.buildTarget in list(self.targets.keys())
 
     def target( self ):
         """return archive target"""
-        if self.buildTarget in self.targets.keys():
+        if self.buildTarget in list(self.targets.keys()):
             return self.targets[self.buildTarget]
         return ""
     
     def archiveName( self ):
         """returns the archive file name"""
-        if self.buildTarget in self.archiveNames.keys():
+        if self.buildTarget in list(self.archiveNames.keys()):
             return self.archiveNames[self.buildTarget]
         return ""
 
     def hasMultipleTargets( self ):
         """return whether we used a list of targets"""
-        return type( self.targets[self.buildTarget] ) == types.ListType
+        return type( self.targets[self.buildTarget] ) == list
 
     def targetCount( self ):
         """return the number of targets given either in a list, or split by a space character"""
@@ -231,79 +231,79 @@ example:
 
     def hasSvnTarget( self ):
         """return true if version system based target for the currently selected build target is available"""
-        return self.buildTarget in self.svnTargets.keys()
+        return self.buildTarget in list(self.svnTargets.keys())
 
     def svnTarget( self ):
         """return version system based target for the currently selected build target"""
-        if self.buildTarget in self.svnTargets.keys():
+        if self.buildTarget in list(self.svnTargets.keys()):
             return self.svnTargets[self.buildTarget]
         return ""
 
     def targetSourceSuffix(self):
         """return local source path suffix for the recent target"""
-        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetSrcSuffix.keys():
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetSrcSuffix.keys()):
             return self.targetSrcSuffix[ self.buildTarget ]
 
     def hasTargetSourcePath(self):
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetInstSrc.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetInstSrc.keys())
 
     def targetSourcePath(self):
         """return relative path appendable to local source path for the recent target"""
-        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetInstSrc.keys():
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetInstSrc.keys()):
             return self.targetInstSrc[ self.buildTarget ]
 
     def hasConfigurePath(self):
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetConfigurePath.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetConfigurePath.keys())
 
     def configurePath(self):
         """return relative path appendable to local source path for the recent target"""
-        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) and \
-                self.buildTarget in self.targetConfigurePath.keys():
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) and \
+                self.buildTarget in list(self.targetConfigurePath.keys()):
             return self.targetConfigurePath[ self.buildTarget ]
 
     def hasInstallPath(self):
         """return true if relative path appendable to local install path is given for the recent target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetInstallPath.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetInstallPath.keys())
 
     def installPath(self):
         """return relative path appendable to local install path for the recent target"""
-        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetInstallPath.keys():
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetInstallPath.keys()):
             return self.targetInstallPath[ self.buildTarget ]
         utils.die("no install path for this build target defined")
 
     def hasMergePath(self):
         """return true if relative path appendable to local merge path is given for the recent target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetMergePath.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetMergePath.keys())
 
     def mergePath(self):
         """return relative path appendable to local merge path for the recent target"""
-        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetMergePath.keys():
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetMergePath.keys()):
             return self.targetMergePath[ self.buildTarget ]
 
     def hasMergeSourcePath(self):
         """return true if relative path appendable to local merge source path is given for the recent target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetMergeSourcePath.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetMergeSourcePath.keys())
 
     def mergeSourcePath(self):
         """return relative path appendable to local merge source path for the recent target"""
-        if (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetMergeSourcePath.keys():
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetMergeSourcePath.keys()):
             return self.targetMergeSourcePath[ self.buildTarget ]
 
     def hasPatches(self):
         """return state for having patches for the recent target"""
-        return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in self.patchToApply.keys()
+        return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in list(self.patchToApply.keys())
 
     def patchesToApply(self):
         """return patch informations for the recent build target"""
@@ -313,8 +313,8 @@ example:
 
     def hasTargetDigests(self):
         """return state if target has digest(s) for the recent build target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetDigests.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetDigests.keys())
 
     def targetDigest(self):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
@@ -324,8 +324,8 @@ example:
 
     def hasTargetDigestUrls(self):
         """return state if target has digest url(s) for the recent build target"""
-        return (self.buildTarget in self.targets.keys() or self.buildTarget in self.svnTargets.keys()) \
-                and self.buildTarget in self.targetDigestUrls.keys()
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetDigestUrls.keys())
 
     def targetDigestUrl(self):
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""

@@ -63,12 +63,12 @@ class VersionSystemSourceBase (SourceBase):
 
         if not self.noClean:
             if utils.verbose() > 0:
-                print "cleaning %s" % self.buildDir()
+                print("cleaning %s" % self.buildDir())
             utils.cleanDirectory( self.buildDir() )
         if not self.noCopy:
             sourceDir = self.checkoutDir()
             if utils.verbose() > 0:
-                print "copying %s to %s" % (sourceDir, self.buildDir())
+                print("copying %s to %s" % (sourceDir, self.buildDir()))
             utils.copySrcDirToDestDir(sourceDir, self.buildDir())
         ret = self.applyPatches()
         if utils.envAsBool("EMERGE_HOLD_ON_PATCH_FAIL"):

@@ -8,7 +8,7 @@ class kde_interface:
         # TODO: env as argument is never used, eliminate
         for key in ["KDESVNUSERNAME", "KDESVNPASSWORD", "KDECOMPILER", "KDESVNDIR", "KDESVNSERVER",
                     "EMERGE_BUILDTYPE", "EMERGE_MAKE_PROGRAM", "DIRECTORY_LAYOUT" ]:
-            if not key in env.keys():
+            if not key in list(env.keys()):
                 env[ key ] = None
         self.COMPILER            = env[ "KDECOMPILER" ]
         self.KDESVNUSERNAME      = env[ "KDESVNUSERNAME" ]
@@ -45,7 +45,7 @@ class kde_interface:
             utils.debug( "set custom make program: %s" % self.MAKE_PROGRAM, 1 )
 
         if utils.verbose() > 1:
-            print "BuildType: %s" % self.BUILDTYPE
+            print("BuildType: %s" % self.BUILDTYPE)
         self.buildType = self.BUILDTYPE
 
         self.noFetch = utils.envAsBool( "EMERGE_OFFLINE" )
@@ -70,8 +70,8 @@ class kde_interface:
         self.svndir = None # set in self.kdeSvnFetch
 
         if utils.verbose() > 1 and self.kdeSvnPath():
-            print "noCopy       : %s" % self.noCopy
-            print "kdeSvnPath() : %s" % self.kdeSvnPath().replace("/", "\\")
+            print("noCopy       : %s" % self.noCopy)
+            print("kdeSvnPath() : %s" % self.kdeSvnPath().replace("/", "\\"))
 
         if not ( self.noCopy and self.kdeSvnPath() ) :
             if self.kdeSvnPath():
@@ -91,7 +91,7 @@ class kde_interface:
 
         if ( os.path.exists( os.path.join( ownpath, codir ) ) and not doRecursive ):
             if utils.verbose() > 0:
-                print "ksco exists:", ownpath, codir
+                print("ksco exists:", ownpath, codir)
             return
 
         if ( doRecursive ):
@@ -111,8 +111,8 @@ class kde_interface:
             svncmd = "%s/svn checkout %s %s" % (svnInstallDir, recFlag, repourl + codir )
 
         if utils.verbose() > 1:
-            print "kdesinglecheckout:pwd ", ownpath
-            print "kdesinglecheckout:   ", svncmd
+            print("kdesinglecheckout:pwd ", ownpath)
+            print("kdesinglecheckout:   ", svncmd)
         os.chdir( ownpath )
         with utils.LockFile(utils.LockFileName("SVN")):
             if not utils.system(svncmd):
@@ -124,11 +124,11 @@ class kde_interface:
         without the package"""
 
         if utils.verbose() > 1:
-            print "kdeSvnFetch called. svnpath: %s dir: %s" % ( svnpath, packagedir )
+            print("kdeSvnFetch called. svnpath: %s dir: %s" % ( svnpath, packagedir ))
 
         if ( self.noFetch ):
             if utils.verbose() > 0:
-                print "skipping svn fetch/update (--offline)"
+                print("skipping svn fetch/update (--offline)")
             return True
 
         svndir = self.kdesvndir
@@ -141,25 +141,25 @@ class kde_interface:
             if ( tmpdir == "" ):
                 continue
             if utils.verbose() > 1:
-                print "  svndir: %s" % svndir
-                print "  dir to checkout: %s" % tmpdir
-                print "  repourl", repourl
+                print("  svndir: %s" % svndir)
+                print("  dir to checkout: %s" % tmpdir)
+                print("  repourl", repourl)
 
             self.kdesinglecheckout( repourl, svndir, tmpdir, False )
             svndir = os.path.join( svndir, tmpdir )
             repourl = repourl + tmpdir + "/"
 
         if utils.verbose() > 0:
-            print "dir in which to really checkout: %s" % svndir
-            print "dir to really checkout: %s" % packagedir
+            print("dir in which to really checkout: %s" % svndir)
+            print("dir to really checkout: %s" % packagedir)
         self.kdesinglecheckout( repourl, svndir, packagedir, True )
 
         svndir = os.path.join( self.kdesvndir, svnpath ).replace( "/", "\\" )
         #repo = self.kdesvnserver + "/home/kde/" + svnpath + dir
         #utils.svnFetch( repo, svndir, self.kdesvnuser, self.kdesvnpass )
         if utils.verbose() > 1:
-            print "kdesvndir", self.kdesvndir
-            print "svndir", svndir
+            print("kdesvndir", self.kdesvndir)
+            print("svndir", svndir)
         self.svndir = os.path.join( svndir, packagedir )
 
         return True
@@ -167,7 +167,7 @@ class kde_interface:
     def kdeSvnPath( self ):
         """overload this function in kde packages to use the nocopy option
         this function should return the full path seen from /home/KDE/"""
-        if self.subinfo.buildTarget in self.subinfo.svnTargets.keys():
+        if self.subinfo.buildTarget in list(self.subinfo.svnTargets.keys()):
             return self.subinfo.svnTargets[ self.subinfo.buildTarget ]
 
     def kdeSvnUnpack( self, svnpath=None, packagedir=None ):
@@ -236,7 +236,7 @@ class kde_interface:
                 buildtype )
 
         if utils.verbose() > 0:
-            print "configuration command: %s" % command
+            print("configuration command: %s" % command)
         if not utils.system(command):
             utils.die( "while CMake'ing. cmd: %s" % command )
         return True
@@ -273,7 +273,7 @@ class kde_interface:
         os.chdir( builddir )
 
         if utils.verbose() > 0:
-            print "builddir: " + builddir
+            print("builddir: " + builddir)
 
         fastString = ""
         if not self.noFast:
@@ -321,7 +321,7 @@ class kde_interface:
         os.chdir( builddir )
 
         if utils.verbose() > 0:
-            print "builddir: " + builddir
+            print("builddir: " + builddir)
 
         if not utils.system( "%s test" % ( self.cmakeMakeProgramm ) ):
             utils.die( "while testing. cmd: %s" % "%s test" % ( self.cmakeMakeProgramm ) )

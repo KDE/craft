@@ -7,7 +7,7 @@ import shutil
 import re
 import types
 import fileinput
-from _winreg import * # pylint: disable=F0401
+from winreg import * # pylint: disable=F0401
 import compiler
 
 class PackagerLists(object):

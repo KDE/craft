@@ -17,7 +17,7 @@ def ververify(myver, silent=1):
         return 1
     else:
         if not silent:
-            print "!!! syntax error in version: %s" % myver
+            print("!!! syntax error in version: %s" % myver)
         return 0
 
 vercmp_cache = {}
@@ -58,11 +58,11 @@ def vercmp(ver1, ver2, silent=1):
     # checking that the versions are valid
     if not match1 or not match1.groups():
         if not silent:
-            print "!!! syntax error in version: %s" % ver1
+            print("!!! syntax error in version: %s" % ver1)
         return None
     if not match2 or not match2.groups():
         if not silent:
-            print "!!! syntax error in version: %s" % ver2
+            print("!!! syntax error in version: %s" % ver2)
         return None
 
     # shortcut for cvs ebuilds (new style)
@@ -181,7 +181,7 @@ def pkgcmp(pkg1, pkg2):
         4. 0 if pkg1 equals pkg2
     """
     if pkg1 == None or pkg2 == None:
-        print "warning: no package names provided in portage_versions.pkgcmp()"
+        print("warning: no package names provided in portage_versions.pkgcmp()")
         return None
     if pkg1[0] != pkg2[0]:
         return None
@@ -212,13 +212,13 @@ def pkgsplit(mypkg, silent=1):
 
     if len(myparts)<2:
         if not silent:
-            print "!!! Name error in", mypkg+": missing a version or name part."
+            print("!!! Name error in", mypkg+": missing a version or name part.")
         pkgcache[mypkg] = None
         return None
     for x in myparts:
         if len(x)==0:
             if not silent:
-                print "!!! Name error in", mypkg+": empty \"-\" part."
+                print("!!! Name error in", mypkg+": empty \"-\" part.")
             pkgcache[mypkg] = None
             return None
 

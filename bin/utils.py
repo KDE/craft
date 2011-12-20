@@ -8,11 +8,11 @@ this file contains some helper functions for emerge
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
-import httplib
+import http.client
 import ftplib
 import os.path
 import sys
-import urlparse
+import urllib.parse
 import shutil
 import zipfile
 import tarfile
@@ -32,7 +32,7 @@ if os.name == 'nt':
 else:
     import fcntl # pylint: disable=F0401
 
-import ConfigParser
+import configparser
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -76,7 +76,7 @@ class LockFile(object):
             fh.seek(0)
             while True:
                 try:
-                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647L)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647)
                 except IOError:
                     # after 15 secs (every 1 sec, 1 attempt -> 15 secs)
                     # a exception is raised but we want to continue trying.
@@ -86,7 +86,7 @@ class LockFile(object):
             fcntl.flock(fh, fcntl.LOCK_EX)
 
         fh.truncate(0)
-        print >> fh, "%d" % os.getpid()
+        print("%d" % os.getpid(), file=fh)
         fh.flush()
 
     def __exit__(self, exc_type, exc_value, exc_tb):
@@ -96,7 +96,7 @@ class LockFile(object):
         self.file_handle = None
         if os.name == 'nt':
             fh.seek(0)
-            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647L)
+            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647)
         else:
             fcntl.flock(fh, fcntl.LOCK_UN)
         try:
@@ -187,7 +187,7 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
 
-    if type(urls) == types.ListType:
+    if type(urls) == list:
         urlList = urls
     else:
         urlList = urls.split()
@@ -195,12 +195,12 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
     if filenames == '':
         filenames = [ os.path.basename(x) for x in urlList ]
 
-    if type(filenames) == types.ListType:
+    if type(filenames) == list:
         filenameList = filenames
     else:
         filenameList = filenames.split()
         
-    dlist = zip( urlList , filenameList )
+    dlist = list(zip( urlList , filenameList ))
     
     for url,filename in dlist:
         if ( not getFile( url + suffix, destdir , filename ) ):
@@ -220,7 +220,7 @@ def getFile( url, destdir , filename='' ):
     if ( os.path.exists( wgetpath ) ):
         return wgetFile( url, destdir , filename )
 
-    scheme, host, path, _, _, _ = urlparse.urlparse( url )
+    scheme, host, path, _, _, _ = urllib.parse.urlparse( url )
 
 
     filename = os.path.basename( path )
@@ -267,7 +267,7 @@ def getHttpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
     debug( "getHttpFile called. %s %s" % ( host, path ), 1 )
 
-    conn = httplib.HTTPConnection( host )
+    conn = http.client.HTTPConnection( host )
     conn.request( "GET", path )
     r1 = conn.getresponse()
     debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
@@ -278,9 +278,9 @@ def getHttpFile( host, path, destdir, filename ):
             debug( "Redirect loop" )
             return False
         count += 1
-        _, host, path, _, _, _ = urlparse.urlparse( r1.getheader( "Location" ) )
+        _, host, path, _, _, _ = urllib.parse.urlparse( r1.getheader( "Location" ) )
         debug( "Redirection: %s %s" % ( host, path ), 1 )
-        conn = httplib.HTTPConnection( host )
+        conn = http.client.HTTPConnection( host )
         conn.request( "GET", path )
         r1 = conn.getresponse()
         debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
@@ -364,28 +364,28 @@ def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
     i = 0
     for (fileName, digest) in digestFiles:
-        print "%40s %s" % ( fileName, digest ),
+        print("%40s %s" % ( fileName, digest ), end=' ')
         if size == 1:
             if buildTarget == None:
-                print "      '%s'" % ( digest )
+                print("      '%s'" % ( digest ))
             else:
-                print "self.targetDigests['%s'] = '%s'" % ( buildTarget, digest )
+                print("self.targetDigests['%s'] = '%s'" % ( buildTarget, digest ))
         else:
             if buildTarget == None:
                 if i == 0:
-                    print "      ['%s'," % ( digest )
+                    print("      ['%s'," % ( digest ))
                 elif i == size-1:
-                    print "       '%s']" % ( digest )
+                    print("       '%s']" % ( digest ))
                 else:
-                    print "       '%s'," % ( digest )
+                    print("       '%s'," % ( digest ))
                 i = i + 1
             else:
                 if i == 0:
-                    print "self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest )
+                    print("self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest ))
                 elif i == size-1:
-                    print "                             '%s']" % ( digest )
+                    print("                             '%s']" % ( digest ))
                 else:
-                    print "                             '%s'," % ( digest )
+                    print("                             '%s'," % ( digest ))
                 i = i + 1
 
 ### unpack functions
@@ -552,35 +552,35 @@ def checkManifestFile( name, category, package, version ):
 
 def info( message ):
     if verbose() > 0:
-        print "emerge info: %s" % message
+        print("emerge info: %s" % message)
     return True
 
 def debug( message, level=0 ):
     if verbose() > level and verbose() > 0:
-        print "emerge debug:", message
+        print("emerge debug:", message)
     sys.stdout.flush()
     return True
 
 def warning( message ):
     if verbose() > 0:
-        print "emerge warning: %s" % message
+        print("emerge warning: %s" % message)
     return True
 
 def new_line( level=0 ):
     if verbose() > level and verbose() > 0:
-        print
+        print()
 
 def debug_line( level=0 ):
     if verbose() > level and verbose() > 0:
-        print "_" * 80
+        print("_" * 80)
 
 def error( message ):
     if verbose() > 0:
-        print >> sys.stderr, "emerge error: %s" % message
+        print("emerge error: %s" % message, file=sys.stderr)
     return False
 
 def die( message ):
-    print >> sys.stderr, "emerge fatal error: %s" % message
+    print("emerge fatal error: %s" % message, file=sys.stderr)
     stopAllTimer()
     exit( 1 )
 
@@ -594,7 +594,7 @@ def traceMode():
 
 def trace( message, dummyLevel=0 ):
     if traceMode(): #> level:
-        print "emerge trace:", message
+        print("emerge trace:", message)
     sys.stdout.flush()
     return True
 
@@ -739,7 +739,7 @@ def getFileListFromManifest(rootdir, package, withManifests=False):
                     if a not in fileList or not fileList[a]:
                         # if it is not yet in the fileList or without digest:
                         fileList[a] = b
-    return sorted(fileList.items(), key = lambda x: x[0])
+    return sorted(list(fileList.items()), key = lambda x: x[0])
 
 def unmergeFileList(rootdir, fileList, forced=False):
     """ delete files in the fileList if has matches or forced is True """
@@ -1024,7 +1024,7 @@ def replaceVCSUrl( Url ):
          os.getenv( "KDESVNUSERNAME" ) != "username" ) :
         replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read( configfile )
         # add the default KDE stuff if the KDE username is set.
         for section in config.sections():
@@ -1032,7 +1032,7 @@ def replaceVCSUrl( Url ):
             replace = config.get( section, "replace" )
             replacedict[ host ] = replace
 
-    for host in replacedict.keys():
+    for host in list(replacedict.keys()):
         if not Url.find( host ) == -1:
             Url = Url.replace( host, replacedict[ host ] )
             break
@@ -1051,10 +1051,10 @@ def createImportLibs( dll_name, basepath ):
     HAVE_LIB = test4application( "lib" )
     HAVE_DLLTOOL = test4application( "dlltool" )
     if verbose() > 1:
-        print "pexports found:", HAVE_PEXPORTS
-        print "pexports used:", USE_PEXPORTS
-        print "lib found:", HAVE_LIB
-        print "dlltool found:", HAVE_DLLTOOL
+        print("pexports found:", HAVE_PEXPORTS)
+        print("pexports used:", USE_PEXPORTS)
+        print("lib found:", HAVE_LIB)
+        print("dlltool found:", HAVE_DLLTOOL)
 
     dllpath = os.path.join( basepath, "bin", "%s.dll" % dll_name )
     defpath = os.path.join( basepath, "lib", "%s.def" % dll_name )
@@ -1368,7 +1368,7 @@ def stopTimer(name):
 
 def stopAllTimer():
     """stops all timer for meassurement"""
-    keys = sorted(_TIMERS.items() , key=itemgetter(1) , reverse=True)
+    keys = sorted(list(_TIMERS.items()) , key=itemgetter(1) , reverse=True)
     for key , _ in keys:
         stopTimer(key)
 
@@ -1385,7 +1385,7 @@ def deSubstPath(path):
             if s != "":
                 key , val = s.split("\\: => ")
                 _SUBST[key] = val
-    if drive in _SUBST.keys():
+    if drive in list(_SUBST.keys()):
         deSubst = _SUBST[drive] + tail
         debug("desubstituded %s to %s" % (path , deSubst) , 1)
         return deSubst

@@ -35,7 +35,7 @@ class Package(QMakePackageBase):
             os.putenv("TARGETCPU",self.buildArchitecture())
 
     def configure( self ):
-        print "entering %s" % self.sourceDir()
+        print("entering %s" % self.sourceDir())
         os.chdir( self.sourceDir() )
 
         self.setupEnviroment()
@@ -54,12 +54,12 @@ class Package(QMakePackageBase):
             elif self.compiler() == "msvc2005":
                 cmd += "evc8"
 
-        print "running: %s" % cmd
+        print("running: %s" % cmd)
         return self.system( cmd )
 
 
     def make( self ):
-        print "entering %s" % os.path.join(self.sourceDir(), "build", "lib")
+        print("entering %s" % os.path.join(self.sourceDir(), "build", "lib"))
         os.chdir( os.path.join(self.sourceDir(), "build", "lib") )
 
         self.setupEnviroment()
@@ -69,7 +69,7 @@ class Package(QMakePackageBase):
         return self.system( "nmake" )
 
     def install( self ):
-        print "entering %s" % os.path.join(self.sourceDir(), "build", "lib")
+        print("entering %s" % os.path.join(self.sourceDir(), "build", "lib"))
         os.chdir( os.path.join(self.sourceDir(), "build", "lib") )
 
         self.setupEnviroment()

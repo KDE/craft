@@ -28,7 +28,7 @@ class subclass(base.baseclass):
     def execute( self ):
         base.baseclass.execute( self )
         if not compiler.isMinGW():
-            print "error: can only be build with MinGW right now."
+            print("error: can only be build with MinGW right now.")
             exit( 1 )
 
     def compile( self ):

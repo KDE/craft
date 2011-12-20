@@ -309,7 +309,7 @@ found in: %s \n Please ensure that package wincetools is installed" %\
         for f in firstrunrcs:
             with open(f, "rb") as f1:
                 old = f1.read()
-                for k, v in translations.iteritems():
+                for k, v in translations.items():
                     old = old.replace(k, v)
             with open(f, "wb") as f2:
                 f2.write(old)
@@ -372,30 +372,30 @@ found in: %s \n Please ensure that package wincetools is installed" %\
                     or d.endswith(".kde\share\config")
             else "a%d = 0,%%CE1%%\\Kontact-Mobile%s") % (
                 dir_id, d.replace(self.workDir(), ""))
-                for d, dir_id in sourcedisknames.iteritems()]
+                for d, dir_id in sourcedisknames.items()]
 
         sourcedisknames = ["%d=,,,%s" % (dir_id, d)
-            for d, dir_id in sourcedisknames.iteritems()]
+            for d, dir_id in sourcedisknames.items()]
 
         rn = "\r\n".join
 
         sections = []
-        for dir_id in files.iterkeys():
+        for dir_id in files.keys():
             sections.append("[a%d]\r\n" % dir_id)
             for f in files.get(dir_id):
                 sections.append("%s,%s,,0\r\n" % (re.sub("_dup[0-9]+","",f), f))
        # sections = ["[a%d]\r\n%s,%s,,0" % (dir_id, rn(replace(fs)), fs)
        #     for dir_id, fs in files.iteritems()]
-        sectionnames = ["a%d" % dir_id for dir_id in files.iterkeys()]
+        sectionnames = ["a%d" % dir_id for dir_id in files.keys()]
 
         with open(os.path.join(self.workDir(), "..", "Kontact-Mobile.inf"),
                 "wb") as output:
-            print >> output, cabtemplate.substitute(
+            print(cabtemplate.substitute(
                SOURCEDISKNAMES = rn(sourcedisknames),
                SOURCEDISKFILES = rn(sourcediskfiles),
                DESTINATIONDIRS = rn(destinationdirs),
                SECTIONS        = "".join(sections),
-               SECTIONNAMES    = ", ".join(sectionnames))
+               SECTIONNAMES    = ", ".join(sectionnames)), file=output)
             return output.name
 
 if __name__ == '__main__':

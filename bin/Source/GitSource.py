@@ -230,10 +230,10 @@ class GitSource ( VersionSystemSourceBase ):
                 tmpFile.seek( os.SEEK_SET )
                 # read the temporary file and grab the first line
                 # print the revision - everything else should be quiet now
-                print tmpFile.readline().replace("commit ", "").strip()
+                print(tmpFile.readline().replace("commit ", "").strip())
         else:
             # in case this is a tag, print out the tag version
-            print self.__getCurrentBranch()[ 1: ]
+            print(self.__getCurrentBranch()[ 1: ])
         return True
 
     def checkoutDir(self, index=0 ):

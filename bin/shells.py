@@ -58,7 +58,7 @@ class MSysShell(object):
 
         command += "\""
         if debugLvl == 0:
-            print "%s %s" % (cmd, args)
+            print("%s %s" % (cmd, args))
         else:
             utils.debug( "msys execute: %s" % command, debugLvl )
         return utils.system( command, stdout=out, stderr=err )

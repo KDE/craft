@@ -57,7 +57,7 @@ class BoostBuildSystem(BuildSystemBase):
         cmd  = "bjam"
         cmd += self.configureOptions(self.subinfo.options.configure.defines)
         if utils.verbose() >= 1:
-            print cmd
+            print(cmd)
         os.system(cmd) and utils.die(
                 "command: %s failed" % (cmd))
         return True

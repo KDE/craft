@@ -16,7 +16,7 @@ from InstallDB import *
 
 
 def usage():
-    print """
+    print("""
 Usage:
     emerge [[ command and flags ] [ singletarget ]
             [ command and flags ] [ singletarget ]
@@ -165,7 +165,7 @@ PLEASE DO NOT USE!
 More information see the README or http://windows.kde.org/.
 Send feedback to <kde-windows@kde.org>.
 
-"""
+""")
 
 @utils.log
 def doExec( category, package, version, action, opts ):
@@ -259,10 +259,10 @@ def handlePackage( category, package, version, buildAction, opts ):
         success = success and doExec( category, package, version, "cleanimage", opts )
         success = success and doExec( category, package, version, "install", opts )
     elif ( buildAction == "version-dir" ):
-        print "%s-%s" % ( package, version )
+        print("%s-%s" % ( package, version ))
         success = True
     elif ( buildAction == "version-package" ):
-        print "%s-%s-%s" % ( package, os.getenv( "KDECOMPILER" ), version )
+        print("%s-%s-%s" % ( package, os.getenv( "KDECOMPILER" ), version ))
         success = True
     elif ( buildAction == "print-installable" ):
         portage.printInstallables()
@@ -443,7 +443,7 @@ utils.debug_line()
 
 def unset_var( varname ):
     if not os.getenv( varname ) == None:
-        print
+        print()
         utils.warning( "%s found as environment variable. you cannot override emerge"\
                        " with this - unsetting %s locally" % ( varname, varname ) )
         os.environ[ varname ] = ""
@@ -546,7 +546,7 @@ else:
         isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
         if outDateVCS or (outDatePackage and isLastPackage):
             target = os.getenv( "EMERGE_TARGET" )
-            if not target or target not in portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys():
+            if not target or target not in list(portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys()):
                 # if no target or a wrong one is defined, simply set the default target here
                 target = defaultTarget
             targetList = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion )

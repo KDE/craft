@@ -207,7 +207,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
           command += " -debug "
         else:
           command += " -release "
-        print "command: ", command
+        print("command: ", command)
         utils.system( command )
         return True
 

@@ -3,7 +3,7 @@ import info
 import shutil
 import os
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import compiler
 
 _VLC_VER = None
@@ -43,9 +43,9 @@ class subinfo(info.infoclass):
       return _VLC_VER
     else:
       try:
-        fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
+        fh = urllib.request.urlopen(self.vlcBaseUrl , timeout = 10)
 
-      except Exception, e:
+      except Exception as e:
         return "Nightlys Unavailible:"+str(e)
       m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
       fh.close()

@@ -155,8 +155,8 @@ class ArchiveSource(SourceBase):
         return True
 
     def getUrls( self ):
-        print self.subinfo.target()
-        print self.subinfo.targetDigestUrl()
+        print(self.subinfo.target())
+        print(self.subinfo.targetDigestUrl())
         return True
 
     def createPatch( self ):
@@ -248,5 +248,5 @@ class ArchiveSource(SourceBase):
     def sourceVersion( self ):
         """ return a version based on the file name of the current target """
         # we hope that the build target is equal to the version that is build
-        print self.subinfo.buildTarget
+        print(self.subinfo.buildTarget)
         return True

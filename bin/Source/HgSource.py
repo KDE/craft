@@ -17,7 +17,7 @@ class HgSource ( VersionSystemSourceBase ):
         self.enableHg = os.path.exists( self.hgExecutable )
         # add other locations
         if not self.enableHg:
-            print "could not find hg.exe, you should run emerge mercurial"
+            print("could not find hg.exe, you should run emerge mercurial")
         # guard spaces in path
         self.hgExecutable = "\"%s\"" % self.hgExecutable
 
@@ -97,7 +97,7 @@ class HgSource ( VersionSystemSourceBase ):
                 revision = tempfile.readline().replace("changeset:", "").strip()
 
             # print the revision - everything else should be quiet now
-            print revision
+            print(revision)
             os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ) )
         # always return True to not break something serious
         return True

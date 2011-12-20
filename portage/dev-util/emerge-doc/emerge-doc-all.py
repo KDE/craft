@@ -38,9 +38,9 @@ class Package(PackageBase,GitSource,BuildSystemBase):
         fin = open (sourceDoxyFile, "r")
         fout = open (destDoxyFile, "w")
         for line in fin:
-            if line.find("@INPUT@") <> -1:
+            if line.find("@INPUT@") != -1:
                 line = line.replace("@INPUT@",doxygenSourcePathes)
-            elif line.find("@PROJECT_NUMBER@") <> -1:
+            elif line.find("@PROJECT_NUMBER@") != -1:
                 line = line.replace("@PROJECT_NUMBER@",date.today().isoformat())
             fout.write(line)
         fin.close()

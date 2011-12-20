@@ -22,7 +22,7 @@ class subclass(base.baseclass):
 
     def unpack( self ):
         if utils.verbose() >= 1:
-            print "lyx unpack called"
+            print("lyx unpack called")
         # do the svn fetch/update
         repo = "svn://svn.lyx.org/lyx/lyx-devel/trunk"
         self.svnFetch( repo )

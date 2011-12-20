@@ -22,7 +22,7 @@ class subclass(base.baseclass):
     def unpack( self ):
         if self.buildTarget == "svnHEAD":
             if utils.verbose() >= 1:
-                print "libassuan unpack called"
+                print("libassuan unpack called")
             # do the svn fetch/update
             repo = "svn://cvs.gnupg.org/libassuan/trunk"
             self.svnFetch( repo )

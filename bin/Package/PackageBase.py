@@ -253,7 +253,7 @@ class PackageBase (EmergeBase):
         #else:
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
                 or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
-            print "target ignored for this build type"
+            print("target ignored for this build type")
             return False
 
         if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild \

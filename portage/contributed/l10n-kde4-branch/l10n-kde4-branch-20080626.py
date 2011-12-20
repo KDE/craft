@@ -47,7 +47,7 @@ class subclass(base.baseclass):
         if svnpath:
             return base.baseclass.fetch( self )
 
-        if len( self.subinfo.targets ) and self.subinfo.buildTarget in self.subinfo.targets.keys():
+        if len( self.subinfo.targets ) and self.subinfo.buildTarget in list(self.subinfo.targets.keys()):
             for pkg in self.subinfo.languages.split():
                 tgt = self.subinfo.buildTarget
                 filename = self.subinfo.targets[ tgt ] + 'kde-l10n-' + pkg + '-' + tgt + '.tar.bz2'
@@ -80,7 +80,7 @@ class subclass(base.baseclass):
         else:
             filenames = []
             for pkg in self.subinfo.languages.split():
-                if not self.subinfo.buildTarget in self.subinfo.targets.keys():
+                if not self.subinfo.buildTarget in list(self.subinfo.targets.keys()):
                     return False
                 tgt = self.subinfo.buildTarget
                 filenames.append( 'kde-l10n-' + pkg + '-' + tgt + '.tar.bz2' )

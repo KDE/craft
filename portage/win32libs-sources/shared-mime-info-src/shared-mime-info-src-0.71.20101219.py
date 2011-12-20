@@ -51,7 +51,7 @@ class Package(CMakePackageBase):
       directory = os.path.join( self.glibDir, "glib" )
       if ( os.path.exists( directory ) ):
           for root, dirs, files in os.walk( directory, topdown=False ):
-              print root
+              print(root)
               for name in files:
                   if( p.match( name ) ):
                       utils.sedFile( root, name, sedcmd )

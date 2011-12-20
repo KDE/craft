@@ -55,7 +55,7 @@ class PackageMSVC( CMakePackageBase ):
     def install( self ):
         self.enterSourceDir()
         os.chdir( r"src\tools\msvc" )
-        print self.imageDir()
+        print(self.imageDir())
         return self.system( "install.bat %s" % self.imageDir() )
 
 from Package.AutoToolsPackageBase import *

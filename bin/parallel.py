@@ -95,7 +95,7 @@ def now():
 
 def log(kind, msg):
     """Writes timestamped message"""
-    print "builder: %s %s %s" % (now(), kind, msg)
+    print("builder: %s %s %s" % (now(), kind, msg))
     sys.stdout.flush()
 
 def uniqueLockFilename(lock_id):
@@ -314,12 +314,12 @@ def main():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:], "c:j:t:", ["command=", "jobs=", "tries="])
-    except getopt.GetoptError, err:
-        print >> sys.stderr, str(err)
+    except getopt.GetoptError as err:
+        print(str(err), file=sys.stderr)
         sys.exit(1)
 
     if len(args) < 1:
-        print >> sys.stderr, "missing package"
+        print("missing package", file=sys.stderr)
         sys.exit(1)
 
     command = DEFAULT_COMMAND

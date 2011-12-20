@@ -30,7 +30,7 @@ class msys_interface:
 
         cmd += "\""
         if utils.verbose() > 0:
-            print "msys execute: %s" % cmd
+            print("msys execute: %s" % cmd)
         if not utils.system(cmd):
             utils.die( "msys execute failed. cmd: %s" % cmd )
         return True
@@ -67,7 +67,7 @@ class msys_interface:
             cmd += " VERBOSE=1"
         cmd += "\""
         if utils.verbose() > 0:
-            print "msys compile: %s" % cmd
+            print("msys compile: %s" % cmd)
         if not utils.system(cmd):
             utils.die( "msys compile failed. cmd: %s" % cmd )
         return True
@@ -87,7 +87,7 @@ class msys_interface:
         cmd = "%s --login -c \"cd %s && make -j2 install DESTDIR=%s\"" % \
               ( sh, self.__toMSysPath( build ), self.__toMSysPath( install ) )
         if utils.verbose() > 0:
-            print "msys install: %s" % cmd
+            print("msys install: %s" % cmd)
         if not utils.system(cmd):
             utils.die( "msys install failed. cmd: %s" % cmd )
         return True

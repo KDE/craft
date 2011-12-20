@@ -30,7 +30,7 @@ class subclass(base.baseclass):
             compiler = "do_ms"
         workdir = os.path.join( self.workdir, self.instsrcdir )
         cmd = 'cd %s && ms\\%s' % ( workdir, compiler )
-        print cmd
+        print(cmd)
         utils.system( cmd ) or utils.die( "failed on command: %s" % cmd )
         return True
 

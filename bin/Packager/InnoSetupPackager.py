@@ -34,7 +34,7 @@ class InnoSetupPackager (PackagerBase):
     ## \todo rename to package()
     def createPackage(self):
         """packaging """
-        print "createPackage from innosetupPackager"
+        print("createPackage from innosetupPackager")
 
         if not self.packagerExe:
             utils.die("could not find packager in your path!")

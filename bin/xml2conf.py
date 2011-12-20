@@ -45,12 +45,12 @@ class Xml2Conf:
         ret = ""
         # print the metapackage line
         if self.moduleMetaName:
-            print "@metapackage", self.moduleMetaName,
+            print("@metapackage", self.moduleMetaName, end=' ')
             for i in self.packageDepsList[ self.moduleMetaName ]:
-                print i,
-            print
+                print(i, end=' ')
+            print()
             self.packageDepsList.pop( self.moduleMetaName, "" )
-        print ';'
+        print(';')
     
     def __str__( self ):
         moduleList = dict()
@@ -96,11 +96,11 @@ class Xml2Conf:
 
 if __name__ == '__main__':
     if len( sys.argv ) < 2:
-        print "not enough arguments"
+        print("not enough arguments")
         sys.exit( 0 )
 
     x = Xml2Conf()
 
     for filename in sys.argv[ 1: ]:
         x.parseFile( filename )
-    print x
+    print(x)

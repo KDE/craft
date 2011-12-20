@@ -56,9 +56,9 @@ class Package(CMakePackageBase):
         self.enterSourceDir()
         os.chdir("subversion-1.6.16")
         
-        print libs.split()
+        print(libs.split())
         cmd = "msbuild /target:Libraries\\" + ":rebuild,Libraries\\".join(libs.split()) + ":rebuild subversion_vcnet.sln"
-        print cmd
+        print(cmd)
         return self.system( cmd )
 
 

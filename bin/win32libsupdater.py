@@ -57,10 +57,10 @@ if "-p" in sys.argv:
     sys.argv.remove('-p')
 
 if len( sys.argv ) < 2 or not os.path.isfile( sys.argv[ 1 ] ):
-    print "packageList as first argument required!"
-    print
-    print "%s [-p] packagelist" % sys.argv[ 0 ]
-    print "The option -p shows what"
+    print("packageList as first argument required!")
+    print()
+    print("%s [-p] packagelist" % sys.argv[ 0 ])
+    print("The option -p shows what")
     exit( 1 )
 
 
@@ -123,7 +123,7 @@ for packageKey in addInfo:
 
         if regenerateFile:
             template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
-            targetkeys = binTargets.keys()
+            targetkeys = list(binTargets.keys())
             if 'svnHEAD' in binTargets and binTargets[ 'svnHEAD' ] == False:
                 targetkeys.remove( 'svnHEAD' )
             if not buildTarget in targetkeys:
@@ -221,8 +221,8 @@ for packageKey in addInfo:
                     continue
             else:
                 if not os.path.exists( newDir ):
-                    print "mkdir", newDir
-                    print "git add", gitPath
+                    print("mkdir", newDir)
+                    print("git add", gitPath)
 
-                print "write", newName
-                print "git add", gitName
+                print("write", newName)
+                print("git add", gitName)

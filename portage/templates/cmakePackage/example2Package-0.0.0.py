@@ -11,7 +11,7 @@ from Package.PackageMultiBase import *
 # deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
-        print "setTargets"
+        print("setTargets")
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin'
         self.targets['archiveHEAD'] = 'http://www.winkde.org/pub/kde/ports/win32/repository-4.3/kdesupport/kdewin-vc90-svnHEAD-src.tar.bz2'
         self.targetInstSrc['archiveHEAD'] = 'src/kdewin-vc90-svnHEAD'

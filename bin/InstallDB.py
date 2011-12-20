@@ -99,7 +99,7 @@ class InstallPackage:
         # keys() and values will stay in the same order if no changes are done in between calls
         # structure of each tuple:
         # fileId | packageId == package Id | filenames | file hashes
-        dataList = zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, self.fileDict.keys(), self.fileDict.values() )
+        dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
 
         cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
         utils.debug( "executing sqlcmd '%s' %s times" % ( cmd, len( self.fileDict ) ), 1 )
@@ -144,7 +144,7 @@ class InstallDB:
 #        if not prefix == '' or not category == '' or not package == '':
 #            cmd += ''' WHERE'''
 #
-        for key in _dict.keys():
+        for key in list(_dict.keys()):
             if not _dict[ key ] == None:
                 if parametersUsed:
                     stmt += ''' AND'''
@@ -445,9 +445,9 @@ def main():
     # test the import from the old style (manifest based) databases
     utils.new_line()
     db_temp.importExistingDatabase()
-    print "getInstalled:", db_temp.getInstalled()
-    print "findInstalled:", portage.findInstalled( 'win32libs-sources', 'dbus-src' )
-    print "getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) )
+    print("getInstalled:", db_temp.getInstalled())
+    print("findInstalled:", portage.findInstalled( 'win32libs-sources', 'dbus-src' ))
+    print("getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) ))
 
 if __name__ == '__main__':
     main()

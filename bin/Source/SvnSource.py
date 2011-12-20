@@ -207,7 +207,7 @@ class SvnSource (VersionSystemSourceBase):
                     break
 
         # print the revision - everything else should be quiet now
-        print revision
+        print(revision)
         os.environ["LANG"] = oldLanguage
         os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ) )
         return True

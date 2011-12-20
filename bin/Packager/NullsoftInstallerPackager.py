@@ -6,10 +6,10 @@ import shutil
 import re
 import types
 import fileinput
-from _winreg import * # pylint: disable=F0401
+from winreg import * # pylint: disable=F0401
 import compiler
 import utils
-from CollectionPackagerBase import *
+from .CollectionPackagerBase import *
 
 class NSIPackagerLists( PackagerLists ):
     """ dummy name for PackagerLists """
@@ -119,7 +119,7 @@ file collection process is skipped, and only the installer is generated.
 
     def createPackage( self ):
         """ create a package """
-        print "packaging using the NullsoftInstallerPackager"
+        print("packaging using the NullsoftInstallerPackager")
         
         self.internalCreatePackage()
 

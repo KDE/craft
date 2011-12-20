@@ -111,7 +111,7 @@ class GraphvizCreator(Visitor):
         ranks = {}
         tree.visit(self, (visited, out, ranks))
 
-        for v in ranks.itervalues():
+        for v in ranks.values():
             out.append("{ rank=same; ")
             for n in v:
                 out.append('"%s";' % nlSeparated(n))
@@ -409,7 +409,7 @@ class DependenciesTree(object):
             return
         for deps in converter.packageDepsList[ rootnode.package ]:
             _cat, _pac = deps.split('/')
-            if rootnode.category + "/" + _pac in converter.packageDepsList.keys():
+            if rootnode.category + "/" + _pac in list(converter.packageDepsList.keys()):
                 _ver = rootnode.version
                 _tag = rootnode.tag
             else:
@@ -426,7 +426,7 @@ class DependenciesTree(object):
                 subnode = self.key2node[subkey]
             except KeyError:
                 subnode = DependenciesNode(_cat, _pac, _ver, _tag)
-                if _pac in converter.packageDescriptionList.keys():
+                if _pac in list(converter.packageDescriptionList.keys()):
                     subnode.metaData['shortDescription'] = converter.packageDescriptionList[_pac]
                 if _pac == converter.moduleMetaName: subnode.virtual = True
                 self.__buildSubNodes(subnode, converter)
@@ -587,7 +587,7 @@ def main():
         sys.exit(1)
 
     if hasattr(args, "outputname") and args.outputname:
-        print "writing file ", args.outputname, os.path.dirname( args.outputname )
+        print("writing file ", args.outputname, os.path.dirname( args.outputname ))
         if os.path.dirname( args.outputname ) and not os.path.exists( os.path.dirname( args.outputname ) ):
             os.makedirs( os.path.dirname( args.outputname ) )
         with open(args.outputname, "w") as f:
@@ -602,7 +602,7 @@ def main():
 # we don't want to open the output automatically, at least not always
 #        _graphviz.openOutput()
     else:
-        print output
+        print(output)
 
 def createOutput(output_type, dep_tree):
     """return output for output_type"""
