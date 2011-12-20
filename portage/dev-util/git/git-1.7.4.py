@@ -49,7 +49,7 @@ class Package(BinaryPackageBase):
             stdout=tmpFile, stderr=tmpFile  )
         tmpFile.seek( 0 )
         for line in tmpFile:
-            if line.find("kde:")>-1:
+            if str(line).find("kde:")>-1:
                 return True
         utils.debug( "adding kde related settings to global git config file",1 )
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
