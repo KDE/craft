@@ -4,8 +4,8 @@ import os
 from email.mime.text import MIMEText
 import common
 import smtplib
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import json
 
 class Notification:
@@ -69,7 +69,7 @@ class EmailNotification(Notification):
                 server.sendmail( settings["sender"], settings["receivers"], msg.as_string() )
                 server.quit()
             else:
-                print subject
+                print(subject)
 #                print msg.as_string()
 
 
@@ -94,12 +94,12 @@ class DashboardNotification(Notification):
                 logurltext = ""
             values['logUrl'] = logurltext
             if not self.dryRun:
-                data = urllib.urlencode( values )
-                req = urllib2.Request( settings["submit-url"], data )
-                response = urllib2.urlopen( req )
+                data = urllib.parse.urlencode( values )
+                req = urllib.request.Request( settings["submit-url"], data )
+                response = urllib.request.urlopen( req )
                 the_page = response.read()
             else:
-                print values["logUrl"]
+                print(values["logUrl"])
 
 class LogUploadNotification( Notification ):
     """ this uploads the logfile to a server - it is no real notification """
@@ -108,7 +108,7 @@ class LogUploadNotification( Notification ):
         if settings:
             self.setShortLog()
             upload = common.Uploader( category="LogUpload" )
-            print "uploading logfile:", self.logfile, self.dryRun, upload.settings[ "server" ] + "/" + upload.settings[ "directory" ]
+            print("uploading logfile:", self.logfile, self.dryRun, upload.settings[ "server" ] + "/" + upload.settings[ "directory" ])
             if not self.dryRun:
                 upload.upload( self.logfile )
 
@@ -144,8 +144,8 @@ class StatusNotification(Notification):
                 jsondump.write( json.dumps( values, sort_keys=True, indent=4 ) )
                 jsondump.close()
             else:
-                print "writing to filename:", filename
-                print json.dumps( values, sort_keys=True, indent=4 )
+                print("writing to filename:", filename)
+                print(json.dumps( values, sort_keys=True, indent=4 ))
 
 if __name__ == '__main__':
     email = EmailNotification( "kdesupport", "automoc", __file__ )

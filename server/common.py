@@ -3,7 +3,7 @@
 import os
 import sys
 from datetime import date, datetime
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import subprocess
 import time
 
@@ -68,7 +68,7 @@ class Uploader:
         self.pstdin = None
         self.settings = settings.getSection( self.category )
         if not self.settings:
-            print "upload disabled!"
+            print("upload disabled!")
             return
 
     def ftpExecute( self, cmd ):
@@ -94,7 +94,7 @@ class Uploader:
 
             return ret == 0
         else:
-            print "no config for " + name + " found!"
+            print("no config for " + name + " found!")
         return True
 
     def upload( self, sourcefilename ):
@@ -103,11 +103,11 @@ class Uploader:
             return True
 
         if not ( ( "server" in self.settings ) and ( "directory" in self.settings ) ):
-            print "server or directory not set"
+            print("server or directory not set")
             return False
 
         if os.path.isdir( sourcefilename ):
-            print "sourcefile is a directory"
+            print("sourcefile is a directory")
             return False
 
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
@@ -153,13 +153,13 @@ class SourceForgeUploader ( Uploader ):
         self.settings = settings.getSection( self.category )
 
         if not self.settings:
-            print "sfupload disabled"
+            print("sfupload disabled")
             self.disabled = True
         else:
             self.disabled = False
 
         if not ( self.settings and "server" in self.settings and "directory" in self.settings ):
-            print "server or directory not set"
+            print("server or directory not set")
             self.disabled = True
             return
 
@@ -209,7 +209,7 @@ class SourceForgeUploader ( Uploader ):
             return True
 
         if os.path.isdir( sourcefilename ):
-            print "sourcefile is a directory"
+            print("sourcefile is a directory")
             return False
 
         self.ftpExecute( "put " + sourcefilename )
