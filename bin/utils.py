@@ -294,7 +294,7 @@ def getHttpFile( host, path, destdir, filename ):
 
 def isCrEol(filename):
     with open(filename, "rb") as f:
-        return f.readline().endswith("\r\n")
+        return str(f.readline()).endswith("\r\n")
 
 def checkFilesDigests( downloaddir, filenames, digests=None ):
     """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
@@ -1197,7 +1197,7 @@ def putenv(name, value):
 
 def unixToDos(filename):
     with open(filename, "rb") as f:
-        return f.read().replace('\n', '\r\n')
+        return str(f.read()).replace('\n', '\r\n')
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
@@ -1207,7 +1207,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
         p = subprocess.Popen([
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
             stdin = subprocess.PIPE)
-        p.communicate(unixToDos(f))
+        p.communicate(bytes(unixToDos(f),'UTF-8'))
         result = p.wait() == 0
     else:
         result = system( cmd )
