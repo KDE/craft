@@ -25,6 +25,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         NullsoftInstallerPackager.__init__( self, whitelists,blacklists )
         
         self.defines[ "executable" ] = "bin\\qewitter.exe"
+        self.defines[ "icon" ] = os.path.join(portage.getPackageInstance('qt-apps','qewitter').sourceDir(),"data","qewitter.ico")
         
 
 if __name__ == '__main__':
