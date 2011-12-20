@@ -1,0 +1,25 @@
+From d3155c7456924457ff677d39c115ee2cd864e26b Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Tue, 20 Dec 2011 17:21:23 +0100
+Subject: [PATCH] fix building on msvc64 - no const global static possible
+
+---
+ src/dbus/qdbusintegrator.cpp |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/dbus/qdbusintegrator.cpp b/src/dbus/qdbusintegrator.cpp
+index 6953e6e..6e0a3f8 100644
+--- a/src/dbus/qdbusintegrator.cpp
++++ b/src/dbus/qdbusintegrator.cpp
+@@ -71,7 +71,7 @@ QT_BEGIN_NAMESPACE
+ static bool isDebugging;
+ #define qDBusDebug              if (!::isDebugging); else qDebug
+ 
+-Q_GLOBAL_STATIC_WITH_ARGS(const QString, orgFreedesktopDBusString, (QLatin1String(DBUS_SERVICE_DBUS)))
++Q_GLOBAL_STATIC_WITH_ARGS(QString, orgFreedesktopDBusString, (QLatin1String(DBUS_SERVICE_DBUS)))
+ 
+ static inline QString dbusServiceString()
+ { return *orgFreedesktopDBusString(); }
+-- 
+1.7.4.msysgit.0
+
