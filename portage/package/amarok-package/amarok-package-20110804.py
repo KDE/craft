@@ -7,16 +7,21 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ '2.4.3-4' ] = ""
-        self.defaultTarget = '2.4.3-4'
+        self.amarok = portage.getPackageInstance('extragear','amarok')
+        _,gitVersion = self.amarok.getPackageVersion() 
+        self.svnTargets[ 'git-' + gitVersion  ] = ""
+        self.svnTargets[ '2.5.0' ] = ""
+        self.defaultTarget = '2.5.0'
+
+
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
         self.dependencies[ 'kde/kde-workspace' ] = 'default'
         self.dependencies[ 'kdesupport/snorenotify' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
-        self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
-        self.dependencies[ 'kdesupport/hupnp' ] = 'default'
+        #self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
+        #self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
         self.dependencies[ 'kdesupport/phonon-vlc'] = 'default'
         
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
@@ -26,6 +31,8 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
+        self.defines[ "amarok-root" ] = self.subinfo.amarok.sourceDir()
+        self.defines[ "amarok-icon" ] = os.path.join(self.packageDir(),"amarok.ico")
 
 if __name__ == '__main__':
     Package().execute()
