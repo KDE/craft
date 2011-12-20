@@ -847,11 +847,11 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
         if mList:
             with open( os.path.join( destdir, "manifest", "%s-%s-%s.mft" % ( package, version, ext )), 'wb' ) as f:
                 for fileName in mList:
-                    f.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
-                f.write( os.path.join( "manifest", "%s-%s-%s.mft\n" % ( package, version, ext ) ) )
-                f.write( os.path.join( "manifest", "%s-%s-%s.ver\n" % ( package, version, ext ) ) )
+                    f.write( bytes( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ), "UTF-8" ) )
+                f.write( bytes( os.path.join( "manifest", "%s-%s-%s.mft\n" % ( package, version, ext ) ), "UTF-8" ) )
+                f.write( bytes( os.path.join( "manifest", "%s-%s-%s.ver\n" % ( package, version, ext ) ), "UTF-8" ) )
             with open( os.path.join( destdir, "manifest", "%s-%s-%s.ver" % ( package, version, ext )), 'wb' ) as f:
-                f.write( "%s %s %s\n%s/%s:%s:unknown" % ( package, version, description, category, package, version ) )
+                f.write( bytes( "%s %s %s\n%s/%s:%s:unknown" % ( package, version, description, category, package, version ), "UTF-8" ) )
 
     return True
 
