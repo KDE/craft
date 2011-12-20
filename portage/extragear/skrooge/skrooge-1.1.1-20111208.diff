@@ -1,6 +1,18 @@
+diff -Nru skrooge-1.1.1.orig/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp skrooge-1.1.1/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp
+--- skrooge-1.1.1.orig/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp	2011-11-23 21:56:01.000000000 +0100
++++ skrooge-1.1.1/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp	2011-12-20 17:37:50.142228500 +0100
+@@ -103,7 +103,7 @@
+ 
+         // Group Scheduled operations per date in a Plasma::Frame
+         Plasma::Frame* frame;
+-        if (not framesHash.contains(date)) {
++        if (!framesHash.contains(date)) {
+             frame = createFrame(date);
+             framesHash.insert(date, frame);
+             widgetLayout->addItem(frame);
 diff -Nru skrooge-1.1.1.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt skrooge-1.1.1/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt
 --- skrooge-1.1.1.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2011-11-23 21:56:01.000000000 +0100
-+++ skrooge-1.1.1/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2011-12-08 22:52:55.219340800 +0100
++++ skrooge-1.1.1/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2011-12-20 17:27:13.878369800 +0100
 @@ -13,7 +13,7 @@
  
  ########### install files ###############
@@ -10,4 +22,4 @@ diff -Nru skrooge-1.1.1.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CM
  ELSE(WIN32)
    INSTALL(TARGETS grantlee_skroogefilters LIBRARY DESTINATION ${DATA_INSTALL_DIR}/skrooge/plugins/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
  ENDIF(WIN32)
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
