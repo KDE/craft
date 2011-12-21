@@ -44,7 +44,7 @@ def __import__( module ): # pylint: disable=W0622
                 return imp.load_module( modulename.replace('.', '_'),
                 fileHdl, module, suff_index )
             except ImportError as e:
-                utils.warning( 'import failed for file %s: %s' % (module, e.message) )
+                utils.warning( 'import failed for file %s: %s' % (module, e) )
                 return None
 
 class DependencyPackage:
