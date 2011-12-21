@@ -106,7 +106,7 @@ class KDEWinPackager (PackagerBase):
                                         + " " + os.path.join( path, fileName ) )
                                 # utils.system( "strip --strip-all " + os.path.join( path, fileName ) )
                                 utils.copyFile( os.path.join(path, symFilename), os.path.join( symPath, symFilename ) )
-                    elif ( fileName.endswith( ".pdb" ) ):
+                    if ( fileName.endswith( ".pdb" ) ):
                         utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
 
             if not self.subinfo.options.package.disableStriping and compiler.isMinGW() :
