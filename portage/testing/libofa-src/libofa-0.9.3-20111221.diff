@@ -1,0 +1,149 @@
+diff -Nru libofa-0.9.3.orig/configure libofa-0.9.3/configure
+--- libofa-0.9.3.orig/configure	2006-05-10 20:10:04.000000000 +0200
++++ libofa-0.9.3/configure	2011-12-21 14:12:58.403951300 +0100
+@@ -20516,13 +20516,13 @@
+ else
+     { echo "$as_me:$LINENO: Using libfftw3" >&5
+ echo "$as_me: Using libfftw3" >&6;}
+-    echo "$as_me:$LINENO: checking for fftw_malloc in -lfftw3" >&5
+-echo $ECHO_N "checking for fftw_malloc in -lfftw3... $ECHO_C" >&6
++    echo "$as_me:$LINENO: checking for fftw_malloc in -lfftw3-3" >&5
++echo $ECHO_N "checking for fftw_malloc in -lfftw3-3... $ECHO_C" >&6
+ if test "${ac_cv_lib_fftw3_fftw_malloc+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lfftw3  $LIBS"
++LIBS="-lfftw3-3  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -20581,7 +20581,7 @@
+ echo "${ECHO_T}$ac_cv_lib_fftw3_fftw_malloc" >&6
+ if test $ac_cv_lib_fftw3_fftw_malloc = yes; then
+ 
+-             LIBS="$LIBS -lfftw3"
++             LIBS="$LIBS -lfftw3-3"
+              FFT_WRAPPER="fftlibw3_op.cpp"
+ 
+ 
+diff -Nru libofa-0.9.3.orig/examples/example.cpp libofa-0.9.3/examples/example.cpp
+--- libofa-0.9.3.orig/examples/example.cpp	2006-05-10 20:05:37.000000000 +0200
++++ libofa-0.9.3/examples/example.cpp	2011-12-21 14:45:10.551811900 +0100
+@@ -9,6 +9,9 @@
+ 
+ #include "protocol.h"
+ 
++#include <string.h>
++#include <stdio.h>
++
+ AudioData* loadWaveFile(char *file);
+ AudioData* loadDataUsingLAME(char *file);
+ 
+diff -Nru libofa-0.9.3.orig/examples/uselame.cpp libofa-0.9.3/examples/uselame.cpp
+--- libofa-0.9.3.orig/examples/uselame.cpp	2006-05-10 20:05:51.000000000 +0200
++++ libofa-0.9.3/examples/uselame.cpp	2011-12-21 14:46:00.543607500 +0100
+@@ -9,6 +9,7 @@
+ #include "protocol.h"
+ #ifdef WIN32
+ #include "windows.h"
++#include <stdio.h>
+ #else
+ #include <sys/wait.h>
+ #endif
+diff -Nru libofa-0.9.3.orig/examples/wavefile.cpp libofa-0.9.3/examples/wavefile.cpp
+--- libofa-0.9.3.orig/examples/wavefile.cpp	2006-05-10 20:05:56.000000000 +0200
++++ libofa-0.9.3/examples/wavefile.cpp	2011-12-21 14:46:51.597605100 +0100
+@@ -9,6 +9,7 @@
+ #include "protocol.h"
+ #ifdef WIN32
+ #include "io.h"
++#include <stdio.h>
+ #endif
+ #include <fcntl.h>
+ 
+diff -Nru libofa-0.9.3.orig/lib/fft_op.h libofa-0.9.3/lib/fft_op.h
+--- libofa-0.9.3.orig/lib/fft_op.h	2006-05-10 20:01:24.000000000 +0200
++++ libofa-0.9.3/lib/fft_op.h	2011-12-21 12:34:33.263482500 +0100
+@@ -14,11 +14,8 @@
+ #ifndef __FFT_OP_H
+ #define __FFT_OP_H 1
+ 
+-#ifdef WIN32
+-#include "../config_win32.h"
+-#else
+ #include "../config.h"
+-#endif
++
+ #include "signal_op.h"
+ #include "fftlib_op.h"
+ 
+diff -Nru libofa-0.9.3.orig/lib/fftlibw3_op.cpp libofa-0.9.3/lib/fftlibw3_op.cpp
+--- libofa-0.9.3.orig/lib/fftlibw3_op.cpp	2006-05-10 20:00:59.000000000 +0200
++++ libofa-0.9.3/lib/fftlibw3_op.cpp	2011-12-21 12:34:23.791082500 +0100
+@@ -11,11 +11,7 @@
+ // AUTHOR: Frode Holm
+ // DATE CREATED: 1/12/06
+ 
+-#ifdef WIN32
+-#include "../config_win32.h"
+-#else
+ #include "../config.h"
+-#endif
+ #include "fftlib_op.h"
+ 
+ 
+diff -Nru libofa-0.9.3.orig/lib/JAMA/tnt_math_utils.h libofa-0.9.3/lib/JAMA/tnt_math_utils.h
+--- libofa-0.9.3.orig/lib/JAMA/tnt_math_utils.h	2006-05-10 19:58:50.000000000 +0200
++++ libofa-0.9.3/lib/JAMA/tnt_math_utils.h	2011-12-21 14:19:01.154113900 +0100
+@@ -19,24 +19,6 @@
+ 
+ namespace TNT
+ {
+-/**
+-	@returns hypotenuse of real (non-complex) scalars a and b by 
+-	avoiding underflow/overflow
+-	using (a * sqrt( 1 + (b/a) * (b/a))), rather than
+-	sqrt(a*a + b*b).
+-*/
+-template <class Real>
+-Real hypot(const Real &a, const Real &b)
+-{
+-	
+-	if (a== 0)
+-		return abs(b);
+-	else
+-	{
+-		Real c = b/a;
+-		return a * sqrt(1 + c*c);
+-	}
+-}
+ 
+ /**
+ 	@returns the minimum of scalars a and b.
+@@ -66,5 +48,25 @@
+ }
+ 
+ }
++
++/**
++	@returns hypotenuse of real (non-complex) scalars a and b by 
++	avoiding underflow/overflow
++	using (a * sqrt( 1 + (b/a) * (b/a))), rather than
++	sqrt(a*a + b*b).
++*/
++template <class Real>
++Real hypot(const Real &a, const Real &b)
++{
++	
++	if (a== 0)
++		return TNT::abs(b);
++	else
++	{
++		Real c = b/a;
++		return a * sqrt(1 + c*c);
++	}
++}
++
+ #endif
+ /* MATH_UTILS_H */
