@@ -18,6 +18,8 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/autotools'] = 'default'
         self.buildDependencies['dev-util/yasm'] = 'default'
+        self.buildDependencies['win32libs-bin/libvorbis'] = 'default'
+        self.buildDependencies['testing/lame-src'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *
@@ -28,7 +30,7 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
-        self.subinfo.options.configure.defines = " --enable-memalign-hack --disable-static --enable-shared --enable-gpl"
+        self.subinfo.options.configure.defines = " --enable-memalign-hack --disable-static --enable-shared --enable-gpl --enable-libvorbis --enable-libmp3lame"
         
     def configure( self):
         return AutoToolsPackageBase.configure( self, cflags="-std=c99 ", ldflags="")
