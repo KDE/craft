@@ -4,9 +4,9 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.0.7'] = "http://upx.sourceforge.net/download/upx307w.zip"
-        self.targetDigests['3.0.7'] = 'fbc3ea009cf90d32a49a619aa7fc46aab0f1a4e4'
-        self.defaultTarget = '3.0.7'
+        self.targets['3.0.8'] = "http://upx.sourceforge.net/download/upx308w.zip"
+        self.targetDigests['3.0.8'] = 'a3c1494a667c71d267285d4a9ebc687a55f70485'
+        self.defaultTarget = '3.0.8'
 
 from Package.BinaryPackageBase import *
 
@@ -20,10 +20,10 @@ class Package(BinaryPackageBase):
     def install(self):
         if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
             os.makedirs( os.path.join( self.installDir() , "bin" ) )
-        shutil.copy(os.path.join( self.imageDir() , "upx307w", "upx.exe"),
+        shutil.copy(os.path.join( self.imageDir() , "upx308w", "upx.exe"),
                     os.path.join( self.installDir() , "bin" , "upx.exe") )
-        utils.cleanDirectory( os.path.join( self.imageDir() , "upx307w" ) )
-        os.removedirs( os.path.join( self.imageDir() , "upx307w" ) )
+        utils.cleanDirectory( os.path.join( self.imageDir() , "upx308w" ) )
+        os.removedirs( os.path.join( self.imageDir() , "upx308w" ) )
         return True
 
 if __name__ == '__main__':
