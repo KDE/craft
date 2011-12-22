@@ -1,0 +1,332 @@
+Files LibVNCServer-0.9.8.2-orig/.CMakeLists.txt.swp and LibVNCServer-0.9.8.2/.CMakeLists.txt.swp differ
+diff -urN LibVNCServer-0.9.8.2-orig/CMakeLists.txt LibVNCServer-0.9.8.2/CMakeLists.txt
+--- LibVNCServer-0.9.8.2-orig/CMakeLists.txt	2011-11-09 12:47:33.000000000 +0100
++++ LibVNCServer-0.9.8.2/CMakeLists.txt	2011-12-19 21:39:23.461375000 +0100
+@@ -159,7 +159,14 @@
+ endif(TIGHTVNC_FILETRANSFER)
+ 
+ add_library(vncclient SHARED ${LIBVNCCLIENT_SOURCES})
++if(NOT MSVC)
+ add_library(vncserver SHARED ${LIBVNCSERVER_SOURCES})
++target_link_libraries(vncserver
++                      ${ADDITIONAL_LIBS}
++                      ${ZLIB_LIBRARIES}
++                      ${JPEG_LIBRARIES}
++                      ${SDL_LIBRARY})
++endif(NOT MSVC)
+ if(WIN32)
+   set(ADDITIONAL_LIBS ws2_32)
+ endif(WIN32)
+@@ -170,12 +177,6 @@
+                       ${JPEG_LIBRARIES}
+                       ${SDL_LIBRARY}
+ )
+-target_link_libraries(vncserver
+-                      ${ADDITIONAL_LIBS}
+-                      ${ZLIB_LIBRARIES}
+-                      ${JPEG_LIBRARIES}
+-                      ${SDL_LIBRARY}
+-)
+ 
+ # tests
+ set(LIBVNCSERVER_TESTS
+@@ -236,7 +237,7 @@
+   )
+ endif(HAVE_FFMPEG)
+ 
+-
++if(NOT MSVC)
+ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/examples)
+ foreach(test ${LIBVNCSERVER_TESTS})
+   add_executable(examples/${test} ${LIBVNCSRVTEST_DIR}/${test}.c)
+@@ -248,8 +249,11 @@
+   add_executable(client_examples/${test} ${LIBVNCCLITEST_DIR}/${test}.c ${LIBVNCCLITEST_DIR}/${${test}_EXTRA_SOURCES} )
+   target_link_libraries(client_examples/${test} vncclient ${CMAKE_THREAD_LIBS_INIT} ${GNUTLS_LIBRARIES} ${X11_LIBRARIES} ${SDL_LIBRARY} ${FFMPEG_LIBRARIES})
+ endforeach(test ${LIBVNCCLIENT_TESTS})
++endif(NOT MSVC)
+ 
++if(NOT MSVC)
+ install_targets(/lib vncserver)
++endif(NOT MSVC)
+ install_targets(/lib vncclient)
+ install_files(/include/rfb FILES
+     rfb/keysym.h
+diff -urN LibVNCServer-0.9.8.2-orig/common/vncauth.c LibVNCServer-0.9.8.2/common/vncauth.c
+--- LibVNCServer-0.9.8.2-orig/common/vncauth.c	2011-06-10 02:14:00.000000000 +0200
++++ LibVNCServer-0.9.8.2/common/vncauth.c	2011-12-19 21:09:49.711375000 +0100
+@@ -30,7 +30,9 @@
+ #endif
+ #include <stdio.h>
+ #include <stdlib.h>
++#ifdef LIBVNCSERVER_HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <rfb/rfbproto.h>
+ #include "d3des.h"
+ 
+diff -urN LibVNCServer-0.9.8.2-orig/libvncclient/listen.c LibVNCServer-0.9.8.2/libvncclient/listen.c
+--- LibVNCServer-0.9.8.2-orig/libvncclient/listen.c	2011-06-10 02:14:00.000000000 +0200
++++ LibVNCServer-0.9.8.2/libvncclient/listen.c	2011-12-19 21:07:40.898875000 +0100
+@@ -24,17 +24,23 @@
+ #ifdef __STRICT_ANSI__
+ #define _BSD_SOURCE
+ #endif
++#ifdef LIBVNCSERVER_HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <sys/types.h>
+-#ifdef __MINGW32__
++#if defined __MINGW32__ || defined _MSC_VER
+ #define close closesocket
+ #include <winsock2.h>
+ #undef max
+ #else
++#ifdef LIBVNCSERVER_HAVE_SYS_WAIT_H
+ #include <sys/wait.h>
+-#include <sys/utsname.h>
+ #endif
++//#include <sys/utsname.h>
++#endif
++#ifdef LIBVNCSERVER_HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
+ #include <rfb/rfbclient.h>
+ 
+ /*
+@@ -45,9 +51,9 @@
+ void
+ listenForIncomingConnections(rfbClient* client)
+ {
+-#ifdef __MINGW32__
++#if defined __MINGW32__ || defined _MSC_VER
+   /* FIXME */
+-  rfbClientErr("listenForIncomingConnections on MinGW32 NOT IMPLEMENTED\n");
++  rfbClientErr("listenForIncomingConnections on Win32 NOT IMPLEMENTED\n");
+   return;
+ #else
+   int listenSocket;
+diff -urN LibVNCServer-0.9.8.2-orig/libvncclient/sockets.c LibVNCServer-0.9.8.2/libvncclient/sockets.c
+--- LibVNCServer-0.9.8.2-orig/libvncclient/sockets.c	2011-10-12 19:44:49.000000000 +0200
++++ LibVNCServer-0.9.8.2/libvncclient/sockets.c	2011-12-19 21:16:21.055125000 +0100
+@@ -24,14 +24,16 @@
+ #ifdef __STRICT_ANSI__
+ #define _BSD_SOURCE
+ #endif
++#ifdef LIBVNCSERVER_HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <assert.h>
+ #include <rfb/rfbclient.h>
+ #ifdef WIN32
+ #undef SOCKET
+-#include <winsock2.h>
++#include <winsock.h>
+ #define EWOULDBLOCK WSAEWOULDBLOCK
+ #define close closesocket
+ #define read(sock,buf,len) recv(sock,buf,len,0)
+@@ -99,7 +101,7 @@
+ 	  diff.tv_sec--;
+ 	  diff.tv_usec+=1000000;
+         }
+-#ifndef __MINGW32__
++#if !defined __MINGW32__ && !defined _MSC_VER
+         sleep (diff.tv_sec);
+         usleep (diff.tv_usec);
+ #else
+diff -urN LibVNCServer-0.9.8.2-orig/libvncclient/tls.c LibVNCServer-0.9.8.2/libvncclient/tls.c
+--- LibVNCServer-0.9.8.2-orig/libvncclient/tls.c	2011-11-09 12:43:52.000000000 +0100
++++ LibVNCServer-0.9.8.2/libvncclient/tls.c	2011-12-19 21:15:08.305125000 +0100
+@@ -23,7 +23,7 @@
+ #undef SOCKET
+ #include <windows.h>           /* for Sleep() */
+ #define sleep(X) Sleep(1000*X) /* MinGW32 has no sleep() */
+-#include <winsock2.h>
++#include <winsock.h>
+ #define read(sock,buf,len) recv(sock,buf,len,0)
+ #define write(sock,buf,len) send(sock,buf,len,0)
+ #endif
+diff -urN LibVNCServer-0.9.8.2-orig/libvncclient/vncviewer.c LibVNCServer-0.9.8.2/libvncclient/vncviewer.c
+--- LibVNCServer-0.9.8.2-orig/libvncclient/vncviewer.c	2011-10-12 19:44:49.000000000 +0200
++++ LibVNCServer-0.9.8.2/libvncclient/vncviewer.c	2011-12-19 21:15:45.352000000 +0100
+@@ -40,20 +40,20 @@
+ static void DummyRect(rfbClient* client, int x, int y, int w, int h) {
+ }
+ 
+-#ifdef __MINGW32__
++#if defined __MINGW32__ || defined _MSC_VER
+ static char* NoPassword(rfbClient* client) {
+   return strdup("");
+ }
+ #undef SOCKET
+-#include <winsock2.h>
++#include <winsock.h>
+ #define close closesocket
+ #else
+ #include <stdio.h>
+-#include <termios.h>
++//#include <termios.h>
+ #endif
+ 
+ static char* ReadPassword(rfbClient* client) {
+-#ifdef __MINGW32__
++#if defined __MINGW32__ || defined _MSC_VER
+ 	/* FIXME */
+ 	rfbClientErr("ReadPassword on MinGW32 NOT IMPLEMENTED\n");
+ 	return NoPassword(client);
+diff -urN LibVNCServer-0.9.8.2-orig/libvncclient/zrle.c LibVNCServer-0.9.8.2/libvncclient/zrle.c
+--- LibVNCServer-0.9.8.2-orig/libvncclient/zrle.c	2011-06-10 02:14:00.000000000 +0200
++++ LibVNCServer-0.9.8.2/libvncclient/zrle.c	2011-12-19 21:08:57.930125000 +0100
+@@ -189,7 +189,7 @@
+ 	} /* while ( remaining > 0 ) */
+ 
+ 	if ( inflateResult == Z_OK ) {
+-		void* buf=client->raw_buffer;
++		char* buf=client->raw_buffer;
+ 		int i,j;
+ 
+ 		remaining = client->raw_buffer_size-client->decompStream.avail_out;
+diff -urN LibVNCServer-0.9.8.2-orig/libvncserver/main.c LibVNCServer-0.9.8.2/libvncserver/main.c
+--- LibVNCServer-0.9.8.2-orig/libvncserver/main.c	2011-11-09 12:43:52.000000000 +0100
++++ LibVNCServer-0.9.8.2/libvncserver/main.c	2011-12-19 21:28:00.883250000 +0100
+@@ -847,7 +847,11 @@
+    /* disable progressive updating per default */
+    screen->progressiveSliceHeight = 0;
+ 
++#ifdef _MSC_VER
++   screen->listenInterface.S_un.S_addr = htonl(INADDR_ANY);
++#else
+    screen->listenInterface = htonl(INADDR_ANY);
++#endif
+ 
+    screen->deferUpdateTime=5;
+    screen->maxRectsPerUpdate=50;
+@@ -1031,7 +1035,7 @@
+ #endif
+   rfbInitSockets(screen);
+   rfbHttpInitSockets(screen);
+-#ifndef __MINGW32__
++#if !defined __MINGW32__ && !defined _MSC_VER
+   if(screen->ignoreSIGPIPE)
+     signal(SIGPIPE,SIG_IGN);
+ #endif
+diff -urN LibVNCServer-0.9.8.2-orig/libvncserver/rfbserver.c LibVNCServer-0.9.8.2/libvncserver/rfbserver.c
+--- LibVNCServer-0.9.8.2-orig/libvncserver/rfbserver.c	2011-11-09 12:43:52.000000000 +0100
++++ LibVNCServer-0.9.8.2/libvncserver/rfbserver.c	2011-12-19 21:36:22.008250000 +0100
+@@ -39,6 +39,8 @@
+ 
+ #ifdef WIN32
+ #define write(sock,buf,len) send(sock,buf,len,0)
++typedef int socklen_t;
++#define LIBVNCSERVER_PACKAGE_STRING "LibVNCServer 0.9.8.2"
+ #else
+ #ifdef LIBVNCSERVER_HAVE_UNISTD_H
+ #include <unistd.h>
+@@ -65,9 +67,13 @@
+ /* stst() */
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifdef LIBVNCSERVER_HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ /* readdir() */
++#ifndef _MSC_VER
+ #include <dirent.h>
++#endif
+ /* errno */
+ #include <errno.h>
+ /* strftime() */
+@@ -1216,6 +1222,10 @@
+ 
+ rfbBool rfbSendDirContent(rfbClientPtr cl, int length, char *buffer)
+ {
++#ifdef _MSC_VER
++    // no SendDirContent on MSVC yet
++    return FALSE;
++#else
+     char retfilename[MAX_PATH];
+     char path[MAX_PATH];
+     struct stat statbuf;
+@@ -1281,6 +1291,7 @@
+     closedir(dirp);
+     /* End of the transfer */
+     return rfbSendFileTransferMessage(cl, rfbDirPacket, 0, 0, 0, NULL);
++#endif
+ }
+ 
+ 
+@@ -1498,6 +1509,9 @@
+      */
+ 
+     case rfbFileTransferRequest:
++#ifdef _MSC_VER
++	break;
++#else
+         /*
+         rfbLog("rfbProcessFileTransfer() rfbFileTransferRequest:\n");
+         */
+@@ -1565,7 +1579,7 @@
+         }
+         UNLOCK(cl->sendMutex);
+         break;
+-
++#endif
+     case rfbFileHeader:
+         /* Destination file (viewer side) is ready for reception (size > 0) or not (size = -1) */
+         if (size==-1) {
+diff -urN LibVNCServer-0.9.8.2-orig/rfb/rfb.h LibVNCServer-0.9.8.2/rfb/rfb.h
+--- LibVNCServer-0.9.8.2-orig/rfb/rfb.h	2011-11-09 12:43:52.000000000 +0100
++++ LibVNCServer-0.9.8.2/rfb/rfb.h	2011-12-19 21:26:00.336375000 +0100
+@@ -47,9 +47,10 @@
+ #include <sys/types.h>
+ #endif
+ 
+-#ifdef __MINGW32__
++#if defined __MINGW32__ || defined _MSC_VER
+ #undef SOCKET
+-#include <winsock2.h>
++#include <winsock.h>
++typedef struct in_addr in_addr_t;
+ #endif
+ 
+ #ifdef LIBVNCSERVER_HAVE_LIBPTHREAD
+diff -urN LibVNCServer-0.9.8.2-orig/rfb/rfbclient.h LibVNCServer-0.9.8.2/rfb/rfbclient.h
+--- LibVNCServer-0.9.8.2-orig/rfb/rfbclient.h	2011-11-02 14:02:03.000000000 +0100
++++ LibVNCServer-0.9.8.2/rfb/rfbclient.h	2011-12-19 21:17:27.992625000 +0100
+@@ -34,14 +34,22 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#ifdef LIBVNCSERVER_HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef LIBVNCSERVER_HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <rfb/rfbproto.h>
+ #include <rfb/keysym.h>
+ #ifdef LIBVNCSERVER_WITH_CLIENT_TLS
+ #include <gnutls/gnutls.h>
+ #endif
+ 
++#ifdef _MSC_VER
++#define snprintf _snprintf
++#endif
++
+ #define rfbClientSwap16IfLE(s) \
+     (*(char *)&client->endianTest ? ((((s) & 0xff) << 8) | (((s) >> 8) & 0xff)) : (s))
+ 
+diff -urN LibVNCServer-0.9.8.2-orig/rfb/rfbproto.h LibVNCServer-0.9.8.2/rfb/rfbproto.h
+--- LibVNCServer-0.9.8.2-orig/rfb/rfbproto.h	2011-11-09 12:43:52.000000000 +0100
++++ LibVNCServer-0.9.8.2/rfb/rfbproto.h	2011-12-19 21:00:39.648875000 +0100
+@@ -68,8 +68,8 @@
+ #define SOCKET int
+ #else
+ #include <rfb/rfbconfig.h>
+-#include <rfb/rfbint.h>
+ #endif
++#include <rfb/rfbint.h>
+ 
+ #ifdef LIBVNCSERVER_HAVE_LIBZ
+ #include <zlib.h>

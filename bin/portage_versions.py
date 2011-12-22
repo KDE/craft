@@ -180,6 +180,9 @@ def pkgcmp(pkg1, pkg2):
         3. -1 if pkg1 is less than pkg2
         4. 0 if pkg1 equals pkg2
     """
+    if pkg1 == None or pkg2 == None:
+        print "warning: no package names provided in portage_versions.pkgcmp()"
+        return None
     if pkg1[0] != pkg2[0]:
         return None
     mycmp = vercmp(pkg1[1], pkg2[1])

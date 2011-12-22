@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for v in [ '0.2.0', '0.2.1', '0.3.0', '0.4.0', '0.4.1', '0.4.2', '0.4.3', '0.4.4' ]:
+        for v in [ '0.2.0', '0.2.1', '0.3.0', '0.4.0', '0.4.1', '0.4.2', '0.4.3', '0.4.4','0.4.5' ]:
           self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
           self.targetInstSrc[v] = 'poppler-data-' + v
           if v not in ['0.4.2', '0.4.3', '0.4.4']:
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler-data"
         self.shortDescription = "the poppler CJK encoding data"
         self.options.package.withCompiler = False
-        self.defaultTarget = '0.4.4'
+        self.defaultTarget = '0.4.5'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

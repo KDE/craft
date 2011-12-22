@@ -10,6 +10,7 @@ class subinfo( info.infoclass ):
         self.hardDependencies['virtual/kdepimlibs'] = 'default'
         self.hardDependencies['virtual/kde-runtime'] = 'default'
         self.hardDependencies['kdesupport/eigen2'] = 'default'
+        self.hardDependencies['kdesupport/poppler'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
         self.softDependencies['testing/gsl'] = 'default'
 

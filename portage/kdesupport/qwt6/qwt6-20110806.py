@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/qwt/qwt-%s.tar.bz2" % ver
             self.targetInstSrc[ver] = "qwt-%s" % ver
         self.targetDigests['6.0.1'] = '301cca0c49c7efc14363b42e082b09056178973e'
+        self.patchToApply['6.0.1'] = [('qwt-6.0.1-20110807.diff',1), ('qwt-6.0.1-x64-fix.diff', 1)]
         self.defaultTarget = "6.0.1"
 
     def setDependencies( self ):
@@ -22,6 +23,8 @@ class Package( QMakePackageBase ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ' "QWT_INSTALL_PREFIX = %s" ' % self.imageDir().replace("\\","/")
+        if compiler.isMinGW():
+            self.subinfo.options.make.supportsMultijob = False
         
     def install( self ):
         if not QMakePackageBase.install( self ):

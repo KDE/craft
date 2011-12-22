@@ -1,0 +1,488 @@
+diff -Nru digikam-2.0.0.orig/core/CMakeLists.txt digikam-2.0.0/core/CMakeLists.txt
+--- digikam-2.0.0.orig/core/CMakeLists.txt	2011-07-28 01:28:25.000000000 +0200
++++ digikam-2.0.0/core/CMakeLists.txt	2011-08-25 10:02:10.004244200 +0200
+@@ -1462,127 +1462,127 @@
+ 
+     INCLUDE_DIRECTORIES(
+         ${DATABASESERVERDIR}
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/album
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/database
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/date
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/dragdrop
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/filters
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/items
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/main
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/metadata
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/models
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/tags
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/utils
+-        ${CMAKE_CURRENT_SOURCE_DIR}/digikam/views
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/color
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/decorate
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/decorate/superimpose
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/enhance
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/enhance/hotpixels
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/filters
+-        ${CMAKE_CURRENT_SOURCE_DIR}/imageplugins/transform
+-        ${CMAKE_CURRENT_SOURCE_DIR}/kioslave
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/3rdparty/cimg
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/3rdparty/lprof
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/3rdparty/sqlite2
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/3rdparty/kmemoryinfo
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/database
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/database/haar
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/database/imagehistory
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dialogs
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/auto
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/bcg
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/bw
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/cb
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/curves
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/decorate
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/fx
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/greycstoration
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/hsl
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/icc
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/lc
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/lens
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/levels
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/nr
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/sharp
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/transform
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/filters/wb
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/imagehistory
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dimg/loaders
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/dmetadata
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/imageproperties
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/kgeomaphelper
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/jpegutils
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/jpegutils/${DIGIKAM_LIBJPEG_DIR}
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/models
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/template
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/thememanager
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/threadimageio
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/threads
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/versionmanager
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/widgets
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/widgets/common
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/widgets/q3support
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/widgets/graphicsview
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/widgets/iccprofiles
+-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/widgets/metadata
+-        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/modeltest
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename/common
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename/parser
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename/parser/modifiers
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename/parser/options
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename/parser/options/database
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/advancedrename/parser/options/database/keys
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/batch
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/controller
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/devices
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/dialogs
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/items
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/views
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/widgets
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/main
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/cameragui/q3support
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/facedetection
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/firstrun
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/fuzzysearch
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/gpssearch
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/hotplug
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/imageeditor
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/imageeditor/canvas
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/imageeditor/editor
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/imageeditor/printiface
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/imageeditor/rawimport
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/imageeditor/widgets
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/kipiiface
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/lighttable
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/nepomuk
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/main
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/manager
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/views
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/color
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/convert
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/decorate
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/enhance
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/filters
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/metadata
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/queuemanager/basetools/transform
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/scriptiface
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/scripts
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/scripts/cleanup_digikamdb
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/scripts/digitaglinktree
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/searchwindow
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/setup
+-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/slideshow
++        digikam
++        digikam/album
++        digikam/database
++        digikam/date
++        digikam/dragdrop
++        digikam/filters
++        digikam/items
++        digikam/main
++        digikam/metadata
++        digikam/models
++        digikam/tags
++        digikam/utils
++        digikam/views
++        imageplugins
++        imageplugins/color
++        imageplugins/decorate
++        imageplugins/decorate/superimpose
++        imageplugins/enhance
++        imageplugins/enhance/hotpixels
++        imageplugins/filters
++        imageplugins/transform
++        kioslave
++        libs
++        libs/3rdparty/cimg
++        libs/3rdparty/lprof
++        libs/3rdparty/sqlite2
++        libs/3rdparty/kmemoryinfo
++        libs/database
++        libs/database/haar
++        libs/database/imagehistory
++        libs/dialogs
++        libs/dimg
++        libs/dimg/filters
++        libs/dimg/filters/auto
++        libs/dimg/filters/bcg
++        libs/dimg/filters/bw
++        libs/dimg/filters/cb
++        libs/dimg/filters/curves
++        libs/dimg/filters/decorate
++        libs/dimg/filters/fx
++        libs/dimg/filters/greycstoration
++        libs/dimg/filters/hsl
++        libs/dimg/filters/icc
++        libs/dimg/filters/lc
++        libs/dimg/filters/lens
++        libs/dimg/filters/levels
++        libs/dimg/filters/nr
++        libs/dimg/filters/sharp
++        libs/dimg/filters/transform
++        libs/dimg/filters/wb
++        libs/dimg/imagehistory
++        libs/dimg/loaders
++        libs/dmetadata
++        libs/imageproperties
++        libs/kgeomaphelper
++        libs/jpegutils
++        libs/jpegutils/${DIGIKAM_LIBJPEG_DIR}
++        libs/models
++        libs/template
++        libs/thememanager
++        libs/threadimageio
++        libs/threads
++        libs/versionmanager
++        libs/widgets
++        libs/widgets/common
++        libs/widgets/q3support
++        libs/widgets/graphicsview
++        libs/widgets/iccprofiles
++        libs/widgets/metadata
++        tests
++        tests/modeltest
++        utilities
++        utilities/advancedrename
++        utilities/advancedrename/common
++        utilities/advancedrename/parser
++        utilities/advancedrename/parser/modifiers
++        utilities/advancedrename/parser/options
++        utilities/advancedrename/parser/options/database
++        utilities/advancedrename/parser/options/database/keys
++        utilities/batch
++        utilities/cameragui
++        utilities/cameragui/controller
++        utilities/cameragui/devices
++        utilities/cameragui/dialogs
++        utilities/cameragui/items
++        utilities/cameragui/views
++        utilities/cameragui/widgets
++        utilities/cameragui/main
++        utilities/cameragui/q3support
++        utilities/facedetection
++        utilities/firstrun
++        utilities/fuzzysearch
++        utilities/gpssearch
++        utilities/hotplug
++        utilities/imageeditor
++        utilities/imageeditor/canvas
++        utilities/imageeditor/editor
++        utilities/imageeditor/printiface
++        utilities/imageeditor/rawimport
++        utilities/imageeditor/widgets
++        utilities/kipiiface
++        utilities/lighttable
++        utilities/nepomuk
++        utilities/queuemanager/main
++        utilities/queuemanager/manager
++        utilities/queuemanager/views
++        utilities/queuemanager/basetools
++        utilities/queuemanager/basetools/color
++        utilities/queuemanager/basetools/convert
++        utilities/queuemanager/basetools/decorate
++        utilities/queuemanager/basetools/enhance
++        utilities/queuemanager/basetools/filters
++        utilities/queuemanager/basetools/metadata
++        utilities/queuemanager/basetools/transform
++        utilities/scriptiface
++        utilities/scripts
++        utilities/scripts/cleanup_digikamdb
++        utilities/scripts/digitaglinktree
++        utilities/searchwindow
++        utilities/setup
++        utilities/slideshow
+ 
+         # version.h, gitversion.h config-digikam.h
+         ${CMAKE_CURRENT_BINARY_DIR}/digikam/utils
+diff -Nru digikam-2.0.0.orig/core/digikam/album/albumselectiontreeview.cpp digikam-2.0.0/core/digikam/album/albumselectiontreeview.cpp
+--- digikam-2.0.0.orig/core/digikam/album/albumselectiontreeview.cpp	2011-07-28 01:28:24.000000000 +0200
++++ digikam-2.0.0/core/digikam/album/albumselectiontreeview.cpp	2011-08-25 11:21:58.630644200 +0200
+@@ -45,7 +45,7 @@
+ #include "contextmenuhelper.h"
+ #include "itemviewtooltip.h"
+ #include "tooltipfiller.h"
+-#include "batchthumbsgenerator.h"
++#include "../../utilities/batch/batchthumbsgenerator.h"
+ 
+ namespace Digikam
+ {
+diff -Nru digikam-2.0.0.orig/core/digikam/main/digikamapp.cpp digikam-2.0.0/core/digikam/main/digikamapp.cpp
+--- digikam-2.0.0.orig/core/digikam/main/digikamapp.cpp	2011-07-28 01:28:24.000000000 +0200
++++ digikam-2.0.0/core/digikam/main/digikamapp.cpp	2011-08-25 11:10:53.333044200 +0200
+@@ -106,8 +106,8 @@
+ #include "albumdb.h"
+ #include "albumselectdialog.h"
+ #include "albumthumbnailloader.h"
+-#include "batchalbumssyncmetadata.h"
+-#include "batchthumbsgenerator.h"
++#include "../../utilities/batch/batchalbumssyncmetadata.h"
++#include "../../utilities/batch/batchthumbsgenerator.h"
+ #include "cameratype.h"
+ #include "cameraui.h"
+ #include "cameranamehelper.h"
+@@ -118,7 +118,7 @@
+ #include "dlogoaction.h"
+ #include "facescandialog.h"
+ #include "filterstatusbar.h"
+-#include "fingerprintsgenerator.h"
++#include "../../utilities/batch/fingerprintsgenerator.h"
+ #include "iccsettings.h"
+ #include "imageattributeswatch.h"
+ #include "imageinfo.h"
+@@ -138,7 +138,7 @@
+ #include "thumbnailsize.h"
+ #include "dmetadata.h"
+ #include "uifilevalidator.h"
+-#include "batchfacedetector.h"
++#include "../../utilities/batch/batchfacedetector.h"
+ #include "tagscache.h"
+ #include "tagsactionmngr.h"
+ #include "databaseserverstarter.h"
+diff -Nru digikam-2.0.0.orig/core/digikam/utils/uifilevalidator.cpp digikam-2.0.0/core/digikam/utils/uifilevalidator.cpp
+--- digikam-2.0.0.orig/core/digikam/utils/uifilevalidator.cpp	2011-07-28 01:28:25.000000000 +0200
++++ digikam-2.0.0/core/digikam/utils/uifilevalidator.cpp	2011-08-25 10:02:10.004244200 +0200
+@@ -20,7 +20,6 @@
+  * GNU General Public License for more details.
+  *
+  * ============================================================ */
+-
+ #include "uifilevalidator.h"
+ 
+ // Qt includes
+@@ -191,7 +190,7 @@
+                 QXmlStreamAttributes attrs;
+                 QXmlStreamAttributes _a = reader.attributes();
+ 
+-                for (QXmlStreamAttributes::iterator it = _a.begin(); it != _a.end(); ++it)
++                for (QXmlStreamAttributes::iterator it = const_cast<QXmlStreamAttribute*>(_a.begin()); it != _a.end(); ++it)
+                 {
+                     if (it->qualifiedName() == TOOLBARATTRIBUTE && it->value() != TOOLBARVALUE)
+                     {
+diff -Nru digikam-2.0.0.orig/core/digikam/views/digikamview.cpp digikam-2.0.0/core/digikam/views/digikamview.cpp
+--- digikam-2.0.0.orig/core/digikam/views/digikamview.cpp	2011-07-28 01:28:25.000000000 +0200
++++ digikam-2.0.0/core/digikam/views/digikamview.cpp	2011-08-25 11:27:17.334044200 +0200
+@@ -44,13 +44,13 @@
+ #include "albumhistory.h"
+ #include "albumsettings.h"
+ #include "stackedview.h"
+-#include "batchsyncmetadata.h"
++#include "../../utilities/batch/batchsyncmetadata.h"
+ #include "digikamapp.h"
+ #include "digikamimageview.h"
+ #include "dzoombar.h"
+ #include "imagealbummodel.h"
+ #include "imagedescedittab.h"
+-#include "imageinfoalbumsjob.h"
++#include "../../utilities/batch/imageinfoalbumsjob.h"
+ #include "imagepreviewview.h"
+ #include "imagepropertiessidebardb.h"
+ #include "imagethumbnailbar.h"
+diff -Nru digikam-2.0.0.orig/core/tests/CMakeLists.txt digikam-2.0.0/core/tests/CMakeLists.txt
+--- digikam-2.0.0.orig/core/tests/CMakeLists.txt	2011-07-28 01:28:08.000000000 +0200
++++ digikam-2.0.0/core/tests/CMakeLists.txt	2011-08-25 11:58:35.744444200 +0200
+@@ -184,6 +184,8 @@
+ KDE4_ADD_UNIT_TEST(dimagehistorytest ${dimagehistorytest_SRCS})
+ TARGET_LINK_LIBRARIES(dimagehistorytest
+                       ${KDE4_KDECORE_LIBS}
++                      ${KEXIV2_LIBRARIES}
++                      ${KDE4_KIO_LIBS}
+                       ${QT_QTGUI_LIBRARY}
+                       ${QT_QTTEST_LIBRARY}
+                       digikamcore
+@@ -200,6 +202,8 @@
+ KDE4_ADD_UNIT_TEST(dimagehistorygraphtest ${dimagehistorygraphtest_SRCS})
+ TARGET_LINK_LIBRARIES(dimagehistorygraphtest
+                       ${KDE4_KDECORE_LIBS}
++                      ${KEXIV2_LIBRARIES}
++                      ${KDE4_KIO_LIBS}
+                       ${QT_QTGUI_LIBRARY}
+                       ${QT_QTTEST_LIBRARY}
+                       digikamdatabase
+@@ -215,6 +219,8 @@
+ KDE4_ADD_UNIT_TEST(dimagefilteractiontest ${dimagefilteractiontest_SRCS})
+ TARGET_LINK_LIBRARIES(dimagefilteractiontest
+                       ${KDE4_KDECORE_LIBS}
++                      ${KDE4_KIO_LIBS}
++                      ${KEXIV2_LIBRARIES}
+                       ${QT_QTGUI_LIBRARY}
+                       ${QT_QTTEST_LIBRARY}
+                       digikamcore
+diff -Nru digikam-2.0.0.orig/core/utilities/advancedrename/parser/options/database/databaseoption.cpp digikam-2.0.0/core/utilities/advancedrename/parser/options/database/databaseoption.cpp
+--- digikam-2.0.0.orig/core/utilities/advancedrename/parser/options/database/databaseoption.cpp	2011-07-28 01:28:04.000000000 +0200
++++ digikam-2.0.0/core/utilities/advancedrename/parser/options/database/databaseoption.cpp	2011-08-25 10:02:10.004244200 +0200
+@@ -41,9 +41,9 @@
+ #include "imagecomments.h"
+ #include "dbkeyselector.h"
+ 
+-#include "commonkeys.h"
+-#include "metadatakeys.h"
+-#include "positionkeys.h"
++#include "keys/commonkeys.h"
++#include "keys/metadatakeys.h"
++#include "keys/positionkeys.h"
+ 
+ namespace Digikam
+ {
+diff -Nru digikam-2.0.0.orig/core/utilities/gpssearch/gpssearchview.cpp digikam-2.0.0/core/utilities/gpssearch/gpssearchview.cpp
+--- digikam-2.0.0.orig/core/utilities/gpssearch/gpssearchview.cpp	2011-07-28 01:28:02.000000000 +0200
++++ digikam-2.0.0/core/utilities/gpssearch/gpssearchview.cpp	2011-08-25 10:02:10.019844200 +0200
+@@ -49,7 +49,7 @@
+ // Local includes
+ 
+ #include "editablesearchtreeview.h"
+-#include "imageinfojob.h"
++#include "../batch/imageinfojob.h"
+ #include "searchxml.h"
+ #include "gpsmarkertiler.h"
+ #include "digikam2kgeomap.h"
+diff -Nru digikam-2.0.0.orig/core/utilities/setup/setup.cpp digikam-2.0.0/core/utilities/setup/setup.cpp
+--- digikam-2.0.0.orig/core/utilities/setup/setup.cpp	2011-07-28 01:28:03.000000000 +0200
++++ digikam-2.0.0/core/utilities/setup/setup.cpp	2011-08-25 10:02:10.019844200 +0200
+@@ -41,7 +41,7 @@
+ // Local includes
+ 
+ #include "albumsettings.h"
+-#include "batchthumbsgenerator.h"
++#include "../batch/batchthumbsgenerator.h"
+ #include "setupalbumview.h"
+ #include "setupcamera.h"
+ #include "setupcategory.h"
+diff -Nru digikam-2.0.0.orig/extra/kipi-plugins/gpssync/tests/CMakeLists.txt digikam-2.0.0/extra/kipi-plugins/gpssync/tests/CMakeLists.txt
+--- digikam-2.0.0.orig/extra/kipi-plugins/gpssync/tests/CMakeLists.txt	2011-07-28 01:27:36.000000000 +0200
++++ digikam-2.0.0/extra/kipi-plugins/gpssync/tests/CMakeLists.txt	2011-08-25 10:02:10.019844200 +0200
+@@ -7,6 +7,7 @@
+                         ${KDE4_KDECORE_LIBS}
+                         ${QT_QTTEST_LIBRARY}
+                         ${QT_QTGUI_LIBRARY}
++                        ${QT_QTXML_LIBRARY}
+                         ${KGEOMAP_LIBRARIES}
+                      )
+ 
+@@ -41,7 +42,7 @@
+                    )
+ 
+ TARGET_LINK_LIBRARIES(gpssync_test_kipiimageitem
+-                      ${KDE4_KDECORE_LIBS}
++                      ${KDE4_KDEUI_LIBS}
+                       ${QT_QTTEST_LIBRARY}
+                       ${QT_QTGUI_LIBRARY}
+                       ${KEXIV2_LIBRARIES}
+diff -Nru digikam-2.0.0.orig/extra/libkgeomap/test/CMakeLists.txt digikam-2.0.0/extra/libkgeomap/test/CMakeLists.txt
+--- digikam-2.0.0.orig/extra/libkgeomap/test/CMakeLists.txt	2011-07-28 01:27:44.000000000 +0200
++++ digikam-2.0.0/extra/libkgeomap/test/CMakeLists.txt	2011-08-25 10:02:10.019844200 +0200
+@@ -35,7 +35,7 @@
+         test_itemmarkertiler.cpp
+        )
+     KDE4_ADD_EXECUTABLE(kgeomap_test_itemmarkertiler ${test_itemmarkertiler_sources})
+-    TARGET_LINK_LIBRARIES(kgeomap_test_itemmarkertiler kgeomap ${QT_QTTEST_LIBRARY})
++    TARGET_LINK_LIBRARIES(kgeomap_test_itemmarkertiler kgeomap ${KDE4_KDECORE_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTTEST_LIBRARY})
+     ADD_TEST(kgeomap_test_itemmarkertiler ${EXECUTABLE_OUTPUT_PATH}/kgeomap_test_itemmarkertiler)
+ 
+     # test the primitive datatypes and helper functions
+@@ -43,7 +43,7 @@
+         test_primitives.cpp
+        )
+     KDE4_ADD_EXECUTABLE(kgeomap_test_primitives ${test_primitives_sources})
+-    TARGET_LINK_LIBRARIES(kgeomap_test_primitives kgeomap ${QT_QTTEST_LIBRARY})
++    TARGET_LINK_LIBRARIES(kgeomap_test_primitives kgeomap ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+     ADD_TEST(kgeomap_test_primitives ${EXECUTABLE_OUTPUT_PATH}/kgeomap_test_primitives)
+ 
+     # test the GeoCoordinates class
+@@ -51,7 +51,7 @@
+         test_geocoordinates.cpp
+        )
+     KDE4_ADD_EXECUTABLE(kgeomap_test_geocoordinates ${test_geocoordinates_sources})
+-    TARGET_LINK_LIBRARIES(kgeomap_test_geocoordinates kgeomap ${QT_QTTEST_LIBRARY})
++    TARGET_LINK_LIBRARIES(kgeomap_test_geocoordinates kgeomap ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+     ADD_TEST(kgeomap_test_geocoordinates ${EXECUTABLE_OUTPUT_PATH}/kgeomap_test_geocoordinates)
+ 
+     # test the TileIndex class
+@@ -59,7 +59,7 @@
+         test_tileindex.cpp
+        )
+     KDE4_ADD_EXECUTABLE(kgeomap_test_tileindex ${test_tileindex_sources})
+-    TARGET_LINK_LIBRARIES(kgeomap_test_tileindex kgeomap ${QT_QTTEST_LIBRARY})
++    TARGET_LINK_LIBRARIES(kgeomap_test_tileindex kgeomap ${KDE4_KDECORE_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+     ADD_TEST(kgeomap_test_tileindex ${EXECUTABLE_OUTPUT_PATH}/kgeomap_test_tileindex)
+ 
+     # test the LookupAltitudeGeonames class
+@@ -67,7 +67,7 @@
+         test_lookup_altitude_geonames.cpp
+        )
+     KDE4_ADD_EXECUTABLE(kgeomap_test_lookup_altitude_geonames ${test_lookup_altitude_geonames_sources})
+-    TARGET_LINK_LIBRARIES(kgeomap_test_lookup_altitude_geonames kgeomap ${QT_QTTEST_LIBRARY})
++    TARGET_LINK_LIBRARIES(kgeomap_test_lookup_altitude_geonames kgeomap ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+     # do not add this as a test because it only works if there is an internet connection
+ #     ADD_TEST(kgeomap_test_lookup_altitude_geonames ${EXECUTABLE_OUTPUT_PATH}/kgeomap_test_lookup_altitude_geonames)
+ ENDIF(KDE4_BUILD_TESTS)
+diff -Nru digikam-2.0.0.orig/extra/libmediawiki/libmediawiki/CMakeLists.txt digikam-2.0.0/extra/libmediawiki/libmediawiki/CMakeLists.txt
+--- digikam-2.0.0.orig/extra/libmediawiki/libmediawiki/CMakeLists.txt	2011-07-28 01:27:42.000000000 +0200
++++ digikam-2.0.0/extra/libmediawiki/libmediawiki/CMakeLists.txt	2011-08-25 10:02:10.019844200 +0200
+@@ -23,9 +23,9 @@
+ # ============================================================
+ 
+ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+-IF( KDE4_BUILD_TESTS )
++IF( KDE4_BUILD_TESTS AND NOT WIN32 )
+ 	set( CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+-ENDIF( KDE4_BUILD_TESTS )
++ENDIF( KDE4_BUILD_TESTS AND NOT WIN32 )
+ SET(mediawiki_LIB_SRCS image.cpp
+                        imageinfo.cpp
+                        mediawiki.cpp

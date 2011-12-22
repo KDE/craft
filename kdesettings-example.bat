@@ -254,6 +254,14 @@ rem The following option makes the emerge run fail if applying patches fails
 rem the default is that failing patches do not result in a stop
 rem set EMERGE_HOLD_ON_PATCH_FAIL=True
 
+rem emerge supports two type of package state and manifest databases: a file based and
+rem an sqlite based. The file based database interacts better with kdewin
+rem installer/packager eg. you can directly integrate binary packages while the
+rem sqlite based database seems to be slighty faster but is only accessable
+rem through the emerge command line. This option let you choose the used on.
+rem By default the sqlite database is used.
+rem set EMERGE_ENABLE_SQLITEDB=TRUE
+
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 

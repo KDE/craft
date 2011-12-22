@@ -19,9 +19,26 @@ ShowUninstDetails hide
 SetCompressor /SOLID lzma
  
 Name "${productname}"
-Caption "${productname}"
+Caption "${productname} ${version}"
  
 OutFile "${setupname}"
+!include "MUI2.nsh"
+
+;!define MUI_ICON
+${icon}
+;!define MUI_ICON
+
+!insertmacro MUI_PAGE_DIRECTORY
+
+;!insertmacro MUI_PAGE_LICENSE
+${license}
+;!insertmacro MUI_PAGE_LICENSE
+
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
  
 SetDateSave on
 SetDatablockOptimize on
@@ -31,30 +48,16 @@ SilentInstall normal
 InstallDir "$PROGRAMFILES\${productname}"
 InstallDirRegKey HKLM "${regkey}" ""
  
-Function .onInstSuccess
-  SetOutPath "$INSTDIR"
-  ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
-  ExecWait '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
-FunctionEnd
 
-; pages
-; we keep it simple - leave out selectable installation types
-; Page components
-Page directory
-Page instfiles
- 
-UninstPage uninstConfirm
-UninstPage instfiles
  
 ;--------------------------------
  
 AutoCloseWindow false
-ShowInstDetails show
  
  
 ; beginning (invisible) section
 Section
- 
+  ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname} (remove only)"
@@ -80,6 +83,13 @@ SetOutPath $INSTDIR ; for working directory
 CreateShortCut "${startmenu}\${productname}.lnk" "$INSTDIR\${executable}"
 CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
 SectionEnd
+
+;post install
+Section
+SetOutPath "$INSTDIR"
+ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
+ExecWait '"$INSTDIR\bin\kbuildsycoca4.exe" "--noincremental"'
+SectionEnd
  
 ; Uninstaller
 ; All section names prefixed by "Un" will be in the uninstaller
@@ -88,6 +98,7 @@ UninstallText "This will uninstall ${productname}."
  
 Section "Uninstall"
 SetShellVarContext all
+ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
 
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"

@@ -8,8 +8,10 @@ from Packager.PortablePackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ '2.4.3-4' ] = ""
-        self.defaultTarget = '2.4.3-4'
+        _,gitVersion = portage.getPackageInstance('extragear','amarok').getPackageVersion() 
+        self.svnTargets[ 'git-' + gitVersion  ] = ""
+        self.svnTargets[ '2.5.0' ] = ""
+        self.defaultTarget = '2.5.0'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'

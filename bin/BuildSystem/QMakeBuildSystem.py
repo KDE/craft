@@ -64,11 +64,11 @@ class QMakeBuildSystem(BuildSystemBase):
                 configureDefines += ' "CONFIG -= debug"'
                 configureDefines += ' "CONFIG += release"'
                 configureDefines += ' "CONFIG -= debug_and_release"'
-            if self.buildType() == "Debug":
+            elif self.buildType() == "Debug":
                 configureDefines += ' "CONFIG += debug"'
                 configureDefines += ' "CONFIG -= release"'
                 configureDefines += ' "CONFIG -= debug_and_release"'
-            if self.buildType() == "RelWithDebInfo":
+            elif self.buildType() == "RelWithDebInfo":
                 configureDefines += ' "CONFIG -= debug"'
                 configureDefines += ' "CONFIG -= release"'
                 configureDefines += ' "CONFIG += debug_and_release"'
