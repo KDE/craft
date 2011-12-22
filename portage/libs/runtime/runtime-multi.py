@@ -54,10 +54,10 @@ class Package( BinaryPackageBase ):
 #                srcdir = os.path.join( self.packageDir(), "redist", "x86", "Microsoft.VC90.CRT" )
 #                files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll" ]
         elif compiler.isMSVC2010():
-            if self.buildType() == "Debug":
-                srcdir = os.path.join( os.environ["VCINSTALLDIR"], "redist", "Debug_NonRedist" , os.environ["EMERGE_ARCHITECTURE"] , "Microsoft.VC100.DebugCRT"  ) 
+            if os.environ["EMERGE_ARCHITECTURE"] == "x86" and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
+                srcdir = os.path.join( os.environ["SystemRoot"], "SysWOW64") 
             else:
-                srcdir = os.path.join( os.environ["VCINSTALLDIR"], "redist", os.environ["EMERGE_ARCHITECTURE"] , "Microsoft.VC100.CRT" ) 
+                srcdir = os.path.join( os.environ["SystemRoot"], "System32") 
             files = [ "msvcr100%s.dll" % postfix, "msvcp100%s.dll" % postfix ]
 
         for file in files:
