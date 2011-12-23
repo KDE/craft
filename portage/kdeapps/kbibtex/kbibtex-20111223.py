@@ -4,7 +4,7 @@ import os
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ 'svnHEAD' ] = 'svn://svn.gna.org/svn/kbibtex/trunk'
-        for ver in ['0.4-beta1']:
+        for ver in ['0.4-beta1', '0.4']:
             self.targets[ ver ] = 'http://download.gna.org/kbibtex/0.4/kbibtex-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kbibtex-' + ver
 
