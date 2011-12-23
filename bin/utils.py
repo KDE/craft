@@ -356,9 +356,9 @@ def createDigetFile(path):
     """creates a sha1 diget file"""
     digets = digestFileSha1(path)
     f = open(path + ".sha1","wb+")
-    f.write(digets)
-    f.write("\n")
-    f.close
+    f.write(bytes(digets,"UTF-8"))
+    f.write(bytes("\n",'UTF-8'))
+    f.close()
 
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
