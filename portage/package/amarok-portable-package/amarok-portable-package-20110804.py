@@ -10,8 +10,8 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         _,gitVersion = portage.getPackageInstance('extragear','amarok').getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '2.5.0' ] = ""
-        self.defaultTarget = '2.5.0'
+        self.svnTargets[ '2.5.0-1' ] = ""
+        self.defaultTarget = '2.5.0-1'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
