@@ -136,6 +136,7 @@ if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
     echo KDEGITDIR   : %KDEGITDIR%
     echo PYTHONPATH  : %PYTHONPATH%
     echo DOWNLOADDIR : %DOWNLOADDIR%
+    title %KDEROOT% %KDECOMPILER%
 )
 
 rem handle multiple merge roots
