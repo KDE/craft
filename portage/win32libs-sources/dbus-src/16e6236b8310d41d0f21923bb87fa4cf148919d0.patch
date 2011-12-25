@@ -25,10 +25,10 @@ index b0cf90f..a7416cb 100644
 +  // handle relative pathes
 +  if (strlen(name) > 2 && name[0] != '\\' && name[0] != '/' && name[1] != ':')
 +    {
-+      _dbus_verbose ("babysitter: spawning %s", name);
 +      char install_root[2*MAX_PATH];
 +      LPSTR lpFile;
 +      char *p;
++      _dbus_verbose ("babysitter: spawning %s", name);
 +      if (!_dbus_get_install_root (install_root, sizeof(install_root)))
 +        return INVALID_HANDLE_VALUE;
 +
