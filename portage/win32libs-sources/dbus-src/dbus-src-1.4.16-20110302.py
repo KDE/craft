@@ -67,9 +67,11 @@ class subinfo(info.infoclass):
                                           ('replace_path_with_current_installdir.diff', 1)
                                          ]
             self.patchToApply['1.4.6'] = [('live-lock-fix.diff', 1),
-                                          ('0001-Do-not-use-ELEMENT_TYPE-which-is-reserved.patch', 1)
+                                          ('0001-Do-not-use-ELEMENT_TYPE-which-is-reserved.patch', 1),
+                                          ('16e6236b8310d41d0f21923bb87fa4cf148919d0.patch', 1)
                                          ]
-            self.patchToApply['1.4.10'] = [('workaround-for-inline-keyword-in-msvc10.patch', 1)
+            self.patchToApply['1.4.10'] = [('workaround-for-inline-keyword-in-msvc10.patch', 1),
+                                           ('16e6236b8310d41d0f21923bb87fa4cf148919d0.patch', 1)
                                          ]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
