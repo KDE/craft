@@ -1277,7 +1277,7 @@ def regQuery(key, value):
     # Output of this command is either an error to stderr
     # or the key with the value in the next line
     reValue = re.compile(r"(\s*%s\s*REG_\w+\s*)(.*)" % value)
-    match = reValue.search(result)
+    match = reValue.search(str(result, 'windows-1252'))
     if match and match.group(2):
         return match.group(2).rstrip()
     return False
