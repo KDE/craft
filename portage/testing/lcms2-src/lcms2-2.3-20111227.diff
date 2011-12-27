@@ -1,6 +1,6 @@
 diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
 --- lcms2-2.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/CMakeLists.txt	2011-12-27 22:20:40.499830500 +0100
++++ lcms2-2.3/CMakeLists.txt	2011-12-27 23:06:21.568610600 +0100
 @@ -0,0 +1,22 @@
 +project(lcms2)
 +
@@ -26,7 +26,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
 +endif(BUILD_UTILS)
 diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 --- lcms2-2.3.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/src/CMakeLists.txt	2011-12-27 22:10:55.009342300 +0100
++++ lcms2-2.3/src/CMakeLists.txt	2011-12-27 23:06:21.570610800 +0100
 @@ -0,0 +1,61 @@
 +# some configure checks:
 +if(WIN32)
@@ -91,15 +91,48 @@ diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 +install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2.h DESTINATION include)
 diff -Nru -x '*~' lcms2-2.3.orig/testbed/CMakeLists.txt lcms2-2.3/testbed/CMakeLists.txt
 --- lcms2-2.3.orig/testbed/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/testbed/CMakeLists.txt	2011-12-27 22:14:26.518440000 +0100
++++ lcms2-2.3/testbed/CMakeLists.txt	2011-12-27 23:06:21.572610900 +0100
 @@ -0,0 +1,4 @@
 +include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 +
 +add_executable(testcms testcms2.c)
 +target_link_libraries(testcms lcms_static)
+diff -Nru -x '*~' lcms2-2.3.orig/testbed/testcms2.c lcms2-2.3/testbed/testcms2.c
+--- lcms2-2.3.orig/testbed/testcms2.c	2011-12-15 16:45:47.000000000 +0100
++++ lcms2-2.3/testbed/testcms2.c	2011-12-27 23:16:18.216737000 +0100
+@@ -31,7 +31,7 @@
+ #include "lcms2_internal.h"
+ 
+ // On Visual Studio, use debug CRT
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #     include "crtdbg.h"
+ #     include <io.h>
+ #endif
+@@ -98,7 +98,11 @@
+ static
+ cmsContext DbgThread(void)
+ {
++#ifdef _WIN64
++    static cmsUInt64Number n = 1;
++#else
+     static cmsUInt32Number n = 1;
++#endif
+ 
+     return (cmsContext) n++;
+ }
+@@ -7570,7 +7574,7 @@
+     cmsInt32Number DoSpeedTests = 1;
+ 
+ 
+-#ifdef _MSC_VER
++#ifdef _WIN32
+     _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF ); 
+ #endif
+ 
 diff -Nru -x '*~' lcms2-2.3.orig/utils/CMakeLists.txt lcms2-2.3/utils/CMakeLists.txt
 --- lcms2-2.3.orig/utils/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/utils/CMakeLists.txt	2011-12-27 22:49:47.113731100 +0100
++++ lcms2-2.3/utils/CMakeLists.txt	2011-12-27 23:06:21.573610900 +0100
 @@ -0,0 +1,78 @@
 +include_directories(
 +    ${CMAKE_CURRENT_SOURCE_DIR}/../include
