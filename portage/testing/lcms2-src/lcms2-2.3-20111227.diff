@@ -1,8 +1,14 @@
 diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
 --- lcms2-2.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/CMakeLists.txt	2011-12-27 21:30:02.036040300 +0100
-@@ -0,0 +1,13 @@
++++ lcms2-2.3/CMakeLists.txt	2011-12-27 22:20:40.499830500 +0100
+@@ -0,0 +1,22 @@
 +project(lcms2)
++
++option(BUILD_TESTS "build the test executable" ON)
++option(BUILD_STATIC "build the static library" ON)
++option(BUILD_UTILS "build the utilities executables" ON)
++
++set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 +
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -11,14 +17,17 @@ diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
 +${CMAKE_SOURCE_DIR}/include
 +)
 +
-+add_definitions(-DLCMS_DLL)
-+
 +add_subdirectory(src)
-+
++if(BUILD_TESTS)
++    add_subdirectory(testbed)
++endif(BUILD_TESTS)
++if(BUILD_UTILS)
++    add_subdirectory(utils)
++endif(BUILD_UTILS)
 diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 --- lcms2-2.3.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/src/CMakeLists.txt	2011-12-27 21:33:55.391387500 +0100
-@@ -0,0 +1,55 @@
++++ lcms2-2.3/src/CMakeLists.txt	2011-12-27 22:10:55.009342300 +0100
+@@ -0,0 +1,61 @@
 +# some configure checks:
 +if(WIN32)
 +    if(MSVC)
@@ -70,7 +79,103 @@ diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 +add_library(lcms SHARED ${lcms_SRCS})
 +set_target_properties(lcms PROPERTIES OUTPUT_NAME "lcms-2"
 +                                      DEFINE_SYMBOL CMS_DLL_BUILD)
-+install(TARGETS lcms RUNTIME DESTINATION bin
-+                     LIBRARY DESTINATION lib
-+                     ARCHIVE DESTINATION lib)
++
++if(BUILD_TESTS OR BUILD_UTILS OR BUILD_STATIC)
++    add_library(lcms_static ${lcms_SRCS})
++    set(LCMS_STATIC lcms_static)
++endif(BUILD_TESTS OR BUILD_UTILS OR BUILD_STATIC)
++
++install(TARGETS lcms ${LCMS_STATIC} RUNTIME DESTINATION bin
++                                    LIBRARY DESTINATION lib
++                                    ARCHIVE DESTINATION lib)
 +install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2.h DESTINATION include)
+diff -Nru -x '*~' lcms2-2.3.orig/testbed/CMakeLists.txt lcms2-2.3/testbed/CMakeLists.txt
+--- lcms2-2.3.orig/testbed/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms2-2.3/testbed/CMakeLists.txt	2011-12-27 22:14:26.518440000 +0100
+@@ -0,0 +1,4 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../src)
++
++add_executable(testcms testcms2.c)
++target_link_libraries(testcms lcms_static)
+diff -Nru -x '*~' lcms2-2.3.orig/utils/CMakeLists.txt lcms2-2.3/utils/CMakeLists.txt
+--- lcms2-2.3.orig/utils/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms2-2.3/utils/CMakeLists.txt	2011-12-27 22:49:47.113731100 +0100
+@@ -0,0 +1,78 @@
++include_directories(
++    ${CMAKE_CURRENT_SOURCE_DIR}/../include
++    ${CMAKE_CURRENT_SOURCE_DIR}/../src
++    ${CMAKE_CURRENT_SOURCE_DIR}/../utils/common
++)
++
++find_package(JPEG)
++find_package(TIFF)
++
++set(UTILS_EXECUTABLES )
++set(UTILS_MANPAGES )
++
++###############################################################################
++if(JPEG_FOUND)
++    include_directories(${JPEG_INCLUDE_DIR})
++    set(JPGICC_SRCS
++        jpgicc/jpgicc.c
++        jpgicc/iccjpeg.c
++        common/xgetopt.c
++        common/vprf.c
++    )
++    add_executable(jpgicc ${JPGICC_SRCS})
++    target_link_libraries(jpgicc lcms_static ${JPEG_LIBRARIES})
++    list(APPEND UTILS_EXECUTABLES jpgicc)
++    list(APPEND UTILS_MANPAGES jpgicc/jpgicc.1)
++endif(JPEG_FOUND)
++
++###############################################################################
++set(LINKICC_SRCS
++    linkicc/linkicc.c
++    common/xgetopt.c
++    common/vprf.c
++)
++add_executable(linkicc ${LINKICC_SRCS})
++target_link_libraries(linkicc lcms_static)
++list(APPEND UTILS_EXECUTABLES linkicc)
++list(APPEND UTILS_MANPAGES linkicc/linkicc.1)
++
++###############################################################################
++set(PSICC_SRCS
++    psicc/psicc.c
++    common/xgetopt.c
++    common/vprf.c
++)
++add_executable(psicc ${PSICC_SRCS})
++target_link_libraries(psicc lcms_static)
++list(APPEND UTILS_EXECUTABLES psicc)
++list(APPEND UTILS_MANPAGES psicc/psicc.1)
++
++###############################################################################
++if(TIFF_FOUND)
++    include_directories(${TIFF_INCLUDE_DIR})
++    set(JPGICC_SRCS
++        tificc/tificc.c
++        common/xgetopt.c
++        common/vprf.c
++    )
++    add_executable(tificc ${JPGICC_SRCS})
++    target_link_libraries(tificc lcms_static ${TIFF_LIBRARIES})
++    list(APPEND UTILS_EXECUTABLES tificc)
++    list(APPEND UTILS_MANPAGES tificc/tificc.1)
++endif(TIFF_FOUND)
++
++###############################################################################
++set(TRANSICC_SRCS
++    transicc/transicc.c
++    common/xgetopt.c
++    common/vprf.c
++)
++add_executable(transicc ${TRANSICC_SRCS})
++target_link_libraries(transicc lcms_static)
++list(APPEND UTILS_EXECUTABLES transicc)
++list(APPEND UTILS_MANPAGES transicc/transicc.1)
++
++install(TARGETS ${UTILS_EXECUTABLES} RUNTIME DESTINATION bin
++                                     LIBRARY DESTINATION lib
++                                     ARCHIVE DESTINATION lib)
++install(FILES ${UTILS_MANPAGES} DESTINATION share/man/man1)
