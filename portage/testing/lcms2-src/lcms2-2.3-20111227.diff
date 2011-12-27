@@ -1,0 +1,76 @@
+diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
+--- lcms2-2.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms2-2.3/CMakeLists.txt	2011-12-27 21:30:02.036040300 +0100
+@@ -0,0 +1,13 @@
++project(lcms2)
++
++cmake_minimum_required(VERSION 2.6)
++
++include_directories(
++${CMAKE_BINARY_DIR}/include 
++${CMAKE_SOURCE_DIR}/include
++)
++
++add_definitions(-DLCMS_DLL)
++
++add_subdirectory(src)
++
+diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
+--- lcms2-2.3.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lcms2-2.3/src/CMakeLists.txt	2011-12-27 21:33:55.391387500 +0100
+@@ -0,0 +1,55 @@
++# some configure checks:
++if(WIN32)
++    if(MSVC)
++        set(UINT8_T "unsigned char")
++        set(UINT16_T "unsigned short")
++        set(UINT32_T "unsigned long")
++        set(INT8_T "char")
++        set(INT16_T "short")
++        set(INT32_T "long")
++    else(MSVC)
++        set(UINT8_T "uint8_t")
++        set(UINT16_T "uint16_t")
++        set(UINT32_T "uint32_t")
++        set(INT8_T "int8_t")
++        set(INT16_T "int16_t")
++        set(INT32_T "int32_t")
++    endif(MSVC)
++endif(WIN32)
++
++set(lcms_SRCS
++    cmscam02.c
++    cmscgats.c
++    cmscnvrt.c
++    cmserr.c
++    cmsgamma.c
++    cmsgmt.c
++    cmsintrp.c
++    cmsio0.c
++    cmsio1.c
++    cmslut.c
++    cmsmd5.c
++    cmsmtrx.c
++    cmsnamed.c
++    cmsopt.c
++    cmspack.c
++    cmspcs.c
++    cmsplugin.c
++    cmsps2.c
++    cmssamp.c
++    cmssm.c
++    cmstypes.c
++    cmsvirt.c
++    cmswtpnt.c
++    cmsxform.c
++)
++
++include_directories(${CMAKE_BINARY_DIR})
++
++add_library(lcms SHARED ${lcms_SRCS})
++set_target_properties(lcms PROPERTIES OUTPUT_NAME "lcms-2"
++                                      DEFINE_SYMBOL CMS_DLL_BUILD)
++install(TARGETS lcms RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2.h DESTINATION include)
