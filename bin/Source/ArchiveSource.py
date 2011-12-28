@@ -219,6 +219,8 @@ class ArchiveSource(SourceBase):
                     if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
                         return False
                 patchName = os.path.join( self.buildRoot(), patches[-1][0] )
+            else:
+                patchName = os.path.join( self.buildRoot(), patches[0] )
 
         # move the packages up and rename them to be different from the original source directory
         for directory in packagelist:
