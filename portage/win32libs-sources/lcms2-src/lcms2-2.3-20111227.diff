@@ -1,6 +1,6 @@
 diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
 --- lcms2-2.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/CMakeLists.txt	2011-12-28 14:49:05.855966700 +0100
++++ lcms2-2.3/CMakeLists.txt	2011-12-28 15:57:06.614372700 +0100
 @@ -0,0 +1,22 @@
 +project(lcms2)
 +
@@ -26,7 +26,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/CMakeLists.txt lcms2-2.3/CMakeLists.txt
 +endif(BUILD_UTILS)
 diff -Nru -x '*~' lcms2-2.3.orig/include/lcms2.h lcms2-2.3/include/lcms2.h
 --- lcms2-2.3.orig/include/lcms2.h	2011-12-15 16:45:47.000000000 +0100
-+++ lcms2-2.3/include/lcms2.h	2011-12-28 14:51:10.814113900 +0100
++++ lcms2-2.3/include/lcms2.h	2011-12-28 15:57:06.619373000 +0100
 @@ -194,25 +194,25 @@
  
  // Calling convention -- this is hardly platform and compiler dependent
@@ -72,13 +72,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/include/lcms2.h lcms2-2.3/include/lcms2.h
  // Some common definitions
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/jpegicc/Debug/jpegicc.lastbuildstate lcms2-2.3/Projects/VC2010/jpegicc/Debug/jpegicc.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/jpegicc/Debug/jpegicc.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/jpegicc/Debug/jpegicc.lastbuildstate	2011-12-28 14:49:05.864967200 +0100
++++ lcms2-2.3/Projects/VC2010/jpegicc/Debug/jpegicc.lastbuildstate	2011-12-28 15:57:06.621373100 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/jpegicc/Debug/jpegicc.log lcms2-2.3/Projects/VC2010/jpegicc/Debug/jpegicc.log
 --- lcms2-2.3.orig/Projects/VC2010/jpegicc/Debug/jpegicc.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/jpegicc/Debug/jpegicc.log	2011-12-28 14:49:05.867967400 +0100
++++ lcms2-2.3/Projects/VC2010/jpegicc/Debug/jpegicc.log	2011-12-28 15:57:06.624373300 +0100
 @@ -0,0 +1,18 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:36 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\jpegicc\jpegicc.vcxproj" auf Knoten "5", build Ziel(e).
@@ -100,7 +100,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/jpegicc/Debug/jpegicc.log lcms2
 +Verstrichene Zeit 00:00:00.51
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/jpegicc/jpegicc.vcxproj.user lcms2-2.3/Projects/VC2010/jpegicc/jpegicc.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/jpegicc/jpegicc.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/jpegicc/jpegicc.vcxproj.user	2011-12-28 14:49:05.871967600 +0100
++++ lcms2-2.3/Projects/VC2010/jpegicc/jpegicc.vcxproj.user	2011-12-28 15:57:06.628373500 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -108,7 +108,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/jpegicc/jpegicc.vcxproj.user lc
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.embed.manifest lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.embed.manifest
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.embed.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.embed.manifest	2011-12-28 14:49:05.873967700 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.embed.manifest	2011-12-28 15:57:06.647374600 +0100
 @@ -0,0 +1,10 @@
 +ï»¿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 +<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -123,7 +123,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.e
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.intermediate.manifest lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.intermediate.manifest
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.intermediate.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.intermediate.manifest	2011-12-28 14:49:05.876967900 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.intermediate.manifest	2011-12-28 15:57:06.650374800 +0100
 @@ -0,0 +1,10 @@
 +<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 +<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
@@ -137,13 +137,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.dll.i
 +</assembly>
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.lastbuildstate lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.lastbuildstate	2011-12-28 14:49:05.896969000 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.lastbuildstate	2011-12-28 15:57:06.658375200 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.log lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.log
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.log	2011-12-28 14:49:05.900969300 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.log	2011-12-28 15:57:06.666375700 +0100
 @@ -0,0 +1,107 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:33 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\lcms2_DLL\lcms2_DLL.vcxproj" auf Knoten "3", build Ziel(e).
@@ -254,7 +254,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.log l
 +Verstrichene Zeit 00:00:03.17
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.write.1.tlog lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.write.1.tlog	2011-12-28 14:49:05.902969400 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.write.1.tlog	2011-12-28 15:57:06.668375800 +0100
 @@ -0,0 +1,5 @@
 +^C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\lcms2_DLL\lcms2_DLL.vcxproj
 +C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\bin\lcms2_DLL.lib
@@ -263,19 +263,19 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/lcms2_DLL.write
 +C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\bin\lcms2_DLL.exp
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.read.1.tlog	2011-12-28 14:49:05.905969600 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.read.1.tlog	2011-12-28 15:57:06.682376600 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.write.1.tlog	2011-12-28 14:49:05.907969700 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/Debug/link-cvtres.write.1.tlog	2011-12-28 15:57:06.688377000 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/lcms2_DLL.vcxproj.user lcms2-2.3/Projects/VC2010/lcms2_DLL/lcms2_DLL.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/lcms2_DLL.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_DLL/lcms2_DLL.vcxproj.user	2011-12-28 14:49:05.930971000 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_DLL/lcms2_DLL.vcxproj.user	2011-12-28 15:57:06.691377100 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -283,13 +283,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_DLL/lcms2_DLL.vcxproj.use
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_static/Debug/lcms2_static.lastbuildstate lcms2-2.3/Projects/VC2010/lcms2_static/Debug/lcms2_static.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_static/Debug/lcms2_static.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_static/Debug/lcms2_static.lastbuildstate	2011-12-28 14:49:05.938971400 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_static/Debug/lcms2_static.lastbuildstate	2011-12-28 15:57:06.696377400 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_static/Debug/lcms2_static.log lcms2-2.3/Projects/VC2010/lcms2_static/Debug/lcms2_static.log
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_static/Debug/lcms2_static.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_static/Debug/lcms2_static.log	2011-12-28 14:49:05.941971600 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_static/Debug/lcms2_static.log	2011-12-28 15:57:06.705377900 +0100
 @@ -0,0 +1,67 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:33 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\lcms2_static\lcms2_static.vcxproj" auf Knoten "2", build Ziel(e).
@@ -360,7 +360,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_static/Debug/lcms2_static
 +Verstrichene Zeit 00:00:02.37
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_static/lcms2_static.vcxproj.user lcms2-2.3/Projects/VC2010/lcms2_static/lcms2_static.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/lcms2_static/lcms2_static.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/lcms2_static/lcms2_static.vcxproj.user	2011-12-28 14:49:05.944971800 +0100
++++ lcms2-2.3/Projects/VC2010/lcms2_static/lcms2_static.vcxproj.user	2011-12-28 15:57:06.707378000 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -368,43 +368,43 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/lcms2_static/lcms2_static.vcxpr
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/linkicc/Debug/link-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link-cvtres.read.1.tlog	2011-12-28 14:49:05.946971900 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link-cvtres.read.1.tlog	2011-12-28 15:57:06.709378200 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/linkicc/Debug/link-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link-cvtres.write.1.tlog	2011-12-28 14:49:05.949972100 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link-cvtres.write.1.tlog	2011-12-28 15:57:06.711378300 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564-cvtres.read.1.tlog	2011-12-28 14:49:05.951972200 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564-cvtres.read.1.tlog	2011-12-28 15:57:06.722378900 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564-cvtres.write.1.tlog	2011-12-28 14:49:05.954972400 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564-cvtres.write.1.tlog	2011-12-28 15:57:06.725379100 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564.read.1.tlog lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564.read.1.tlog	2011-12-28 14:49:05.957972500 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564.read.1.tlog	2011-12-28 15:57:06.728379200 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564.write.1.tlog lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/link.7564.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564.write.1.tlog	2011-12-28 14:49:05.961972800 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/link.7564.write.1.tlog	2011-12-28 15:57:06.730379400 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.exe.embed.manifest lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.exe.embed.manifest
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.exe.embed.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.exe.embed.manifest	2011-12-28 14:49:05.963972900 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.exe.embed.manifest	2011-12-28 15:57:06.732379500 +0100
 @@ -0,0 +1,10 @@
 +ï»¿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 +<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -419,7 +419,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.exe.embed
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.exe.intermediate.manifest lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.exe.intermediate.manifest
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.exe.intermediate.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.exe.intermediate.manifest	2011-12-28 14:49:05.967973100 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.exe.intermediate.manifest	2011-12-28 15:57:06.743380100 +0100
 @@ -0,0 +1,10 @@
 +<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 +<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
@@ -433,13 +433,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.exe.inter
 +</assembly>
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.lastbuildstate lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.lastbuildstate	2011-12-28 14:49:05.969973200 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.lastbuildstate	2011-12-28 15:57:06.745380200 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.log lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.log
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.log	2011-12-28 14:49:05.971973300 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/Debug/linkicc.log	2011-12-28 15:57:06.747380300 +0100
 @@ -0,0 +1,36 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:36 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\linkicc\linkicc.vcxproj" auf Knoten "5", build Ziel(e).
@@ -479,7 +479,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/Debug/linkicc.log lcms2
 +Verstrichene Zeit 00:00:02.09
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/linkicc.vcxproj.user lcms2-2.3/Projects/VC2010/linkicc/linkicc.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/linkicc/linkicc.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/linkicc/linkicc.vcxproj.user	2011-12-28 14:49:05.974973500 +0100
++++ lcms2-2.3/Projects/VC2010/linkicc/linkicc.vcxproj.user	2011-12-28 15:57:06.749380400 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -487,43 +487,43 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/linkicc/linkicc.vcxproj.user lc
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/psicc/Debug/link-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/link-cvtres.read.1.tlog	2011-12-28 14:49:05.978973700 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/link-cvtres.read.1.tlog	2011-12-28 15:57:06.751380600 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/psicc/Debug/link-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/link-cvtres.write.1.tlog	2011-12-28 14:49:06.011975600 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/link-cvtres.write.1.tlog	2011-12-28 15:57:06.755380800 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220-cvtres.read.1.tlog	2011-12-28 14:49:06.013975700 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220-cvtres.read.1.tlog	2011-12-28 15:57:06.758381000 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220-cvtres.write.1.tlog	2011-12-28 14:49:06.016975900 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220-cvtres.write.1.tlog	2011-12-28 15:57:06.762381200 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220.read.1.tlog lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220.read.1.tlog	2011-12-28 14:49:06.020976100 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220.read.1.tlog	2011-12-28 15:57:06.765381400 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220.write.1.tlog lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/link.7220.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220.write.1.tlog	2011-12-28 14:49:06.022976200 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/link.7220.write.1.tlog	2011-12-28 15:57:06.776382000 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.exe.embed.manifest lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.exe.embed.manifest
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.exe.embed.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.exe.embed.manifest	2011-12-28 14:49:06.025976400 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.exe.embed.manifest	2011-12-28 15:57:06.779382200 +0100
 @@ -0,0 +1,10 @@
 +ï»¿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 +<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -538,7 +538,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.exe.embed.man
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.exe.intermediate.manifest lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.exe.intermediate.manifest
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.exe.intermediate.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.exe.intermediate.manifest	2011-12-28 14:49:06.055978100 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.exe.intermediate.manifest	2011-12-28 15:57:06.781382300 +0100
 @@ -0,0 +1,10 @@
 +<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 +<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
@@ -552,13 +552,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.exe.intermedi
 +</assembly>
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.lastbuildstate lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.lastbuildstate	2011-12-28 14:49:06.058978300 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.lastbuildstate	2011-12-28 15:57:06.783382400 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.log lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.log
 --- lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.log	2011-12-28 14:49:06.061978500 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/Debug/psicc.log	2011-12-28 15:57:06.795383100 +0100
 @@ -0,0 +1,36 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:35 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\psicc\psicc.vcxproj" auf Knoten "2", build Ziel(e).
@@ -598,7 +598,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/Debug/psicc.log lcms2-2.3
 +Verstrichene Zeit 00:00:02.69
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/psicc.vcxproj.user lcms2-2.3/Projects/VC2010/psicc/psicc.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/psicc/psicc.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/psicc/psicc.vcxproj.user	2011-12-28 14:49:06.081979600 +0100
++++ lcms2-2.3/Projects/VC2010/psicc/psicc.vcxproj.user	2011-12-28 15:57:06.796383100 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -606,43 +606,43 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/psicc/psicc.vcxproj.user lcms2-
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/testbed/Debug/link-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/link-cvtres.read.1.tlog	2011-12-28 14:49:06.083979700 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/link-cvtres.read.1.tlog	2011-12-28 15:57:06.798383300 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/testbed/Debug/link-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/link-cvtres.write.1.tlog	2011-12-28 14:49:06.086979900 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/link-cvtres.write.1.tlog	2011-12-28 15:57:06.801383400 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848-cvtres.read.1.tlog	2011-12-28 14:49:06.090980100 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848-cvtres.read.1.tlog	2011-12-28 15:57:06.802383500 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848-cvtres.write.1.tlog	2011-12-28 14:49:06.114981500 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848-cvtres.write.1.tlog	2011-12-28 15:57:06.804383600 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848.read.1.tlog lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848.read.1.tlog	2011-12-28 14:49:06.116981600 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848.read.1.tlog	2011-12-28 15:57:06.806383700 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848.write.1.tlog lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/link.7848.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848.write.1.tlog	2011-12-28 14:49:06.118981700 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/link.7848.write.1.tlog	2011-12-28 15:57:06.808383800 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.exe.embed.manifest lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.exe.embed.manifest
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.exe.embed.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.exe.embed.manifest	2011-12-28 14:49:06.121981900 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.exe.embed.manifest	2011-12-28 15:57:06.810383900 +0100
 @@ -0,0 +1,10 @@
 +ï»¿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 +<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -657,7 +657,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.exe.embed
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.exe.intermediate.manifest lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.exe.intermediate.manifest
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.exe.intermediate.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.exe.intermediate.manifest	2011-12-28 14:49:06.124982100 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.exe.intermediate.manifest	2011-12-28 15:57:06.811384000 +0100
 @@ -0,0 +1,10 @@
 +<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 +<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
@@ -671,13 +671,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.exe.inter
 +</assembly>
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.lastbuildstate lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.lastbuildstate	2011-12-28 14:49:06.126982200 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.lastbuildstate	2011-12-28 15:57:06.822384600 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.log lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.log
 --- lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.log	2011-12-28 14:49:06.129982400 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/Debug/testbed.log	2011-12-28 15:57:06.824384700 +0100
 @@ -0,0 +1,29 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:37 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\testbed\testbed.vcxproj" auf Knoten "3", build Ziel(e).
@@ -710,7 +710,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/Debug/testbed.log lcms2
 +Verstrichene Zeit 00:00:01.91
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/testbed.vcxproj.user lcms2-2.3/Projects/VC2010/testbed/testbed.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/testbed/testbed.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/testbed/testbed.vcxproj.user	2011-12-28 14:49:06.131982500 +0100
++++ lcms2-2.3/Projects/VC2010/testbed/testbed.vcxproj.user	2011-12-28 15:57:06.826384900 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -718,13 +718,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/testbed/testbed.vcxproj.user lc
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tiffdiff/Debug/tiffdiff.lastbuildstate lcms2-2.3/Projects/VC2010/tiffdiff/Debug/tiffdiff.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/tiffdiff/Debug/tiffdiff.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/tiffdiff/Debug/tiffdiff.lastbuildstate	2011-12-28 14:49:06.133982600 +0100
++++ lcms2-2.3/Projects/VC2010/tiffdiff/Debug/tiffdiff.lastbuildstate	2011-12-28 15:57:06.828385000 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tiffdiff/Debug/tiffdiff.log lcms2-2.3/Projects/VC2010/tiffdiff/Debug/tiffdiff.log
 --- lcms2-2.3.orig/Projects/VC2010/tiffdiff/Debug/tiffdiff.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/tiffdiff/Debug/tiffdiff.log	2011-12-28 14:49:06.136982800 +0100
++++ lcms2-2.3/Projects/VC2010/tiffdiff/Debug/tiffdiff.log	2011-12-28 15:57:06.839385600 +0100
 @@ -0,0 +1,16 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:36 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\tiffdiff\tiffdiff.vcxproj" auf Knoten "4", build Ziel(e).
@@ -744,7 +744,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tiffdiff/Debug/tiffdiff.log lcm
 +Verstrichene Zeit 00:00:00.54
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tiffdiff/tiffdiff.vcxproj.user lcms2-2.3/Projects/VC2010/tiffdiff/tiffdiff.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/tiffdiff/tiffdiff.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/tiffdiff/tiffdiff.vcxproj.user	2011-12-28 14:49:06.138982900 +0100
++++ lcms2-2.3/Projects/VC2010/tiffdiff/tiffdiff.vcxproj.user	2011-12-28 15:57:06.841385700 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -752,13 +752,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tiffdiff/tiffdiff.vcxproj.user 
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tifficc/Debug/tifficc.lastbuildstate lcms2-2.3/Projects/VC2010/tifficc/Debug/tifficc.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/tifficc/Debug/tifficc.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/tifficc/Debug/tifficc.lastbuildstate	2011-12-28 14:49:06.140983000 +0100
++++ lcms2-2.3/Projects/VC2010/tifficc/Debug/tifficc.lastbuildstate	2011-12-28 15:57:06.843385800 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tifficc/Debug/tifficc.log lcms2-2.3/Projects/VC2010/tifficc/Debug/tifficc.log
 --- lcms2-2.3.orig/Projects/VC2010/tifficc/Debug/tifficc.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/tifficc/Debug/tifficc.log	2011-12-28 14:49:06.168984600 +0100
++++ lcms2-2.3/Projects/VC2010/tifficc/Debug/tifficc.log	2011-12-28 15:57:06.845385900 +0100
 @@ -0,0 +1,16 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:36 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\tifficc\tifficc.vcxproj" auf Knoten "3", build Ziel(e).
@@ -778,7 +778,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tifficc/Debug/tifficc.log lcms2
 +Verstrichene Zeit 00:00:00.38
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tifficc/tifficc.vcxproj.user lcms2-2.3/Projects/VC2010/tifficc/tifficc.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/tifficc/tifficc.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/tifficc/tifficc.vcxproj.user	2011-12-28 14:49:06.171984800 +0100
++++ lcms2-2.3/Projects/VC2010/tifficc/tifficc.vcxproj.user	2011-12-28 15:57:06.847386100 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -786,43 +786,43 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/tifficc/tifficc.vcxproj.user lc
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/transicc/Debug/link-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/link-cvtres.read.1.tlog	2011-12-28 14:49:06.173984900 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/link-cvtres.read.1.tlog	2011-12-28 15:57:06.849386200 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/transicc/Debug/link-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/link-cvtres.write.1.tlog	2011-12-28 14:49:06.177985100 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/link-cvtres.write.1.tlog	2011-12-28 15:57:06.860386800 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300-cvtres.read.1.tlog lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300-cvtres.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300-cvtres.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300-cvtres.read.1.tlog	2011-12-28 14:49:06.179985200 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300-cvtres.read.1.tlog	2011-12-28 15:57:06.862386900 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300-cvtres.write.1.tlog lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300-cvtres.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300-cvtres.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300-cvtres.write.1.tlog	2011-12-28 14:49:06.183985500 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300-cvtres.write.1.tlog	2011-12-28 15:57:06.864387000 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300.read.1.tlog lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300.read.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300.read.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300.read.1.tlog	2011-12-28 14:49:06.185985600 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300.read.1.tlog	2011-12-28 15:57:06.866387100 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300.write.1.tlog lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300.write.1.tlog
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/link.7300.write.1.tlog	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300.write.1.tlog	2011-12-28 14:49:06.188985700 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/link.7300.write.1.tlog	2011-12-28 15:57:06.868387300 +0100
 @@ -0,0 +1 @@
 +ÿþ
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.exe.embed.manifest lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.exe.embed.manifest
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.exe.embed.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.exe.embed.manifest	2011-12-28 14:49:06.192986000 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.exe.embed.manifest	2011-12-28 15:57:06.870387400 +0100
 @@ -0,0 +1,10 @@
 +ï»¿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 +<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -837,7 +837,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.exe.emb
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.exe.intermediate.manifest lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.exe.intermediate.manifest
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.exe.intermediate.manifest	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.exe.intermediate.manifest	2011-12-28 14:49:06.195986100 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.exe.intermediate.manifest	2011-12-28 15:57:06.872387500 +0100
 @@ -0,0 +1,10 @@
 +<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 +<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
@@ -851,13 +851,13 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.exe.int
 +</assembly>
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.lastbuildstate lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.lastbuildstate
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.lastbuildstate	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.lastbuildstate	2011-12-28 14:49:06.197986300 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.lastbuildstate	2011-12-28 15:57:06.874387600 +0100
 @@ -0,0 +1,2 @@
 +#v4.0:v100
 +Debug|Win32|C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\|
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.log lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.log
 --- lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.log	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.log	2011-12-28 14:49:06.200986400 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/Debug/transicc.log	2011-12-28 15:57:06.876387700 +0100
 @@ -0,0 +1,38 @@
 +ï»¿Der Buildvorgang wurde am 28.12.2011 12:00:36 gestartet.
 +     1>Projekt "C:\kde\kde-2k10-release\build\testing\lcms2-src-2.3-20111227\work\lcms2-2.3\Projects\VC2010\transicc\transicc.vcxproj" auf Knoten "4", build Ziel(e).
@@ -899,7 +899,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/Debug/transicc.log lcm
 +Verstrichene Zeit 00:00:01.76
 diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/transicc.vcxproj.user lcms2-2.3/Projects/VC2010/transicc/transicc.vcxproj.user
 --- lcms2-2.3.orig/Projects/VC2010/transicc/transicc.vcxproj.user	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/Projects/VC2010/transicc/transicc.vcxproj.user	2011-12-28 14:49:06.203986600 +0100
++++ lcms2-2.3/Projects/VC2010/transicc/transicc.vcxproj.user	2011-12-28 15:57:06.877387800 +0100
 @@ -0,0 +1,3 @@
 +ï»¿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -907,7 +907,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/Projects/VC2010/transicc/transicc.vcxproj.user 
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 --- lcms2-2.3.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/src/CMakeLists.txt	2011-12-28 14:49:06.205986700 +0100
++++ lcms2-2.3/src/CMakeLists.txt	2011-12-28 15:57:06.880387900 +0100
 @@ -0,0 +1,62 @@
 +# some configure checks:
 +if(WIN32)
@@ -973,16 +973,28 @@ diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 +install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2.h DESTINATION include)
 diff -Nru -x '*~' lcms2-2.3.orig/testbed/CMakeLists.txt lcms2-2.3/testbed/CMakeLists.txt
 --- lcms2-2.3.orig/testbed/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/testbed/CMakeLists.txt	2011-12-28 14:49:06.208986900 +0100
++++ lcms2-2.3/testbed/CMakeLists.txt	2011-12-28 15:57:06.881388000 +0100
 @@ -0,0 +1,5 @@
 +include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 +
 +add_executable(testcms testcms2.c)
 +target_link_libraries(testcms lcms_static)
 +set_target_properties(testcms PROPERTIES COMPILE_FLAGS -DCMS_STATIC)
+diff -Nru -x '*~' lcms2-2.3.orig/testbed/testcms2.c lcms2-2.3/testbed/testcms2.c
+--- lcms2-2.3.orig/testbed/testcms2.c	2011-12-15 16:45:47.000000000 +0100
++++ lcms2-2.3/testbed/testcms2.c	2011-12-28 15:57:34.229952200 +0100
+@@ -31,7 +31,7 @@
+ #include "lcms2_internal.h"
+ 
+ // On Visual Studio, use debug CRT
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #     include "crtdbg.h"
+ #     include <io.h>
+ #endif
 diff -Nru -x '*~' lcms2-2.3.orig/testbed/testthread.cpp lcms2-2.3/testbed/testthread.cpp
 --- lcms2-2.3.orig/testbed/testthread.cpp	2011-12-15 16:45:47.000000000 +0100
-+++ lcms2-2.3/testbed/testthread.cpp	2011-12-28 14:49:06.234988400 +0100
++++ lcms2-2.3/testbed/testthread.cpp	2011-12-28 15:57:06.883388100 +0100
 @@ -1,6 +1,6 @@
  
  #include <windows.h>
@@ -993,7 +1005,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/testbed/testthread.cpp lcms2-2.3/testbed/testth
  static cmsHTRANSFORM trans_xyz_to_rgb,trans_rgb_to_xyz;
 diff -Nru -x '*~' lcms2-2.3.orig/utils/CMakeLists.txt lcms2-2.3/utils/CMakeLists.txt
 --- lcms2-2.3.orig/utils/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ lcms2-2.3/utils/CMakeLists.txt	2011-12-28 14:49:06.237988500 +0100
++++ lcms2-2.3/utils/CMakeLists.txt	2011-12-28 15:57:06.895388800 +0100
 @@ -0,0 +1,78 @@
 +include_directories(
 +    ${CMAKE_CURRENT_SOURCE_DIR}/../include
