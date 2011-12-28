@@ -16,10 +16,10 @@ class subinfo(info.infoclass):
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
     self.vlcTagName = '1.3.0-git-'
 
-    self.targets[ self.vlcTagName + self.getVer() ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + self.getVer() + "-win32.7z"
+    self.targets[ self.vlcTagName + self.getVer() ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + self.getVer() + "-win" + self.vlcArch + ".7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() ] = 'vlc-' + self.vlcTagName + self.getVer()
 
-    self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + self.getVer() + "-win32-debug.7z"
+    self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + self.getVer() + "-win" + self.vlcArch + "-debug.7z"
     self.targetInstSrc[ self.vlcTagName + self.getVer() + "-debug" ] = 'vlc-' + self.vlcTagName +  self.getVer()
 
     releaseTag = '1.1.11'
