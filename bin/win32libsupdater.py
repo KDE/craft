@@ -7,6 +7,7 @@ import portage
 import subprocess
 import xml.dom.minidom
 from string import Template  # pylint: disable=W0402
+import string
 
 
 #################################################
@@ -139,8 +140,9 @@ for packageKey in addInfo:
 
             currentName = portage.getFilename( binCategory, binPackage, binVersion )
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
-            gitCurrentName = currentName.replace("%semerge\\" % KDEROOT ,"")
-            gitNewName = newName.replace("%semerge\\" % KDEROOT ,"")
+            gitCurrentName = string.lower(currentName).replace("%semerge\\" % KDEROOT ,"")
+            gitNewName = string.lower(newName).replace("%semerge\\" % KDEROOT ,"")
+            print gitCurrentName, KDEROOT
 
             if not doPretend:
                 if not currentName == newName:
