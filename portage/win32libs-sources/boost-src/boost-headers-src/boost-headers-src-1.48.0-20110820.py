@@ -8,15 +8,15 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets(self):      
-        for ver in ['1.44.0','1.47.0']:
+        for ver in ['1.44.0','1.47.0','1.48.0']:
               verString = ver.replace('.','_')
-              self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.tar.bz2' % verString
+              self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.7z' % verString
               self.targetInstSrc[ver] = 'boost_%s' % verString
-        self.targetDigests['1.44.0'] = '0dfeaad7a316ddfdcdb8a7e42443ef048ad18c01'
         self.patchToApply['1.47.0'] = ('boost_1_47_0-20110815.diff',1)
-        self.targetDigests['1.47.0'] = '6e3eb548b9d955c0bc6f71c51042b713b678136a'
+        self.patchToApply['1.48.0'] = ('boost_1_47_0-20110815.diff',1)
+        self.targetDigests['1.48.0'] = 'f221f067620e5af137e415869bd96ad667db9830'
 
-        self.defaultTarget = '1.47.0'
+        self.defaultTarget = '1.48.0'
         self.shortDescription = "portable C++ libraries"
 
     def setDependencies(self):
