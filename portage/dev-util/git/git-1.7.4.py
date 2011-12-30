@@ -38,6 +38,7 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(),"git.bat"),os.path.join(self.rootdir,"dev-utils","bin","git.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gb.bat"),os.path.join(self.rootdir,"dev-utils","bin","gb.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))
+        utils.copyFile(os.path.join(self.packageDir(),"vim.bat"),os.path.join(self.rootdir,"dev-utils","bin","vim.bat"))
         return True
 
     def qmerge(self):
