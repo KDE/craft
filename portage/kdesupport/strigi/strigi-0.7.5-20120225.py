@@ -39,6 +39,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101223.diff", 1)
         self.patchToApply['0.7.5'] = ("strigi-0.7.5-20120225.diff", 1)
         self.targetDigests['0.7.2'] = 'b4c1472ef068536acf9c5c4c8f033a97f9c69f9f'
+        self.patchToApply['0.7.5'] = ("strigi-0.7.5-20120102.diff", 1)
 
         self.shortDescription = "a desktop search engine and indexer"
         if emergePlatform.isCrossCompilingEnabled():
