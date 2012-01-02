@@ -1140,8 +1140,6 @@ def copyDir( srcdir, destdir,linkOnly=False ):
             if ( not os.path.exists( tmpdir ) ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                if os.path.exists(os.path.join( tmpdir, fileName )) or os.path.islink(os.path.join( tmpdir, fileName )):
-                    os.remove(os.path.join( tmpdir, fileName ))
                 if linkOnly:
                     if os.path.islink(os.path.join( root, fileName )):
                         os.symlink(deSubstPath(os.path.relpath(os.path.realpath(os.path.join( root, fileName )))), os.path.join( tmpdir, fileName ) )
