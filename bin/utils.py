@@ -38,6 +38,14 @@ def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
+def envAsBool(key, default=False):
+    """ return value of environment variable as bool value """
+    value = os.getenv(key)
+    if value:
+        return value.lower() in ['true', '1']
+    else:
+        return default
+        
 def isSourceOnly():
     return envAsBool("EMERGE_SOURCEONLY")
 
@@ -855,7 +863,7 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
 
     return True
 
-def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = False):
+def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
@@ -1144,7 +1152,7 @@ def copyDir( srcdir, destdir,linkOnly=False ):
                     if os.path.islink(os.path.join( root, fileName )):
                         os.symlink(deSubstPath(os.path.relpath(os.path.realpath(os.path.join( root, fileName )))), os.path.join( tmpdir, fileName ) )
                     else:
-                        if fileName.endswith(".exe"):                        
+                        if fileName.endswith(".exe") or fileName == "qt.conf":                        
                             shutil.copy( os.path.join( root, fileName ), tmpdir )
                         else:
                             os.symlink(deSubstPath(os.path.realpath(os.path.join( root, fileName ))), os.path.join( tmpdir, fileName ) )
@@ -1349,14 +1357,6 @@ def prependPath(*parts):
             debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
             os.putenv( "PATH", ";".join(old))
-
-def envAsBool(key, default=False):
-    """ return value of environment variable as bool value """
-    value = os.getenv(key)
-    if value:
-        return value.lower() in ['true', '1']
-    else:
-        return default
 
 _TIMERS = dict()
 def startTimer(name, level = 0):
