@@ -16,7 +16,7 @@ def getGCCTarget():
     global GCCTARGET # pylint: disable=W0603
     if not GCCTARGET:
         try:
-            result = str(subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0],'UTF-8')
+            result = str(subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
             utils.debug("GCC Target Processor:%s" % result, 1 )
             GCCTARGET = result.strip()
         except OSError:
