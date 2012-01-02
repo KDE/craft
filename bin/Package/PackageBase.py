@@ -76,7 +76,7 @@ class PackageBase (EmergeBase):
         self.manifest()
 
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
-        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
+        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() ,utils.envAsBool("EMERGE_USE_SYMLINKS"))
 
         # run post-install scripts
         if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):

@@ -855,8 +855,8 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
 
     return True
 
-def mergeImageDirToRootDir( imagedir, rootdir ):
-    copySrcDirToDestDir( imagedir, rootdir )
+def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = False):
+    copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
@@ -1123,7 +1123,7 @@ def createDir(path):
         os.makedirs( path )
     return True
 
-def copyDir( srcdir, destdir ):
+def copyDir( srcdir, destdir,linkOnly=False ):
     """ copy directory from srcdir to destdir """
     debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
 
@@ -1140,11 +1140,23 @@ def copyDir( srcdir, destdir ):
             if ( not os.path.exists( tmpdir ) ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                if os.path.islink(os.path.join( root, fileName )):
-                    os.symlink(os.path.relpath(os.path.realpath(os.path.join( root, fileName )),root), os.path.join( tmpdir, fileName ) )
+                if os.path.exists(os.path.join( tmpdir, fileName )) or os.path.islink(os.path.join( tmpdir, fileName )):
+                    os.remove(os.path.join( tmpdir, fileName ))
+                if linkOnly:
+                    if os.path.islink(os.path.join( root, fileName )):
+                        os.symlink(deSubstPath(os.path.relpath(os.path.realpath(os.path.join( root, fileName )))), os.path.join( tmpdir, fileName ) )
+                    else:
+                        if fileName.endswith(".exe"):                        
+                            shutil.copy( os.path.join( root, fileName ), tmpdir )
+                        else:
+                            os.symlink(deSubstPath(os.path.realpath(os.path.join( root, fileName ))), os.path.join( tmpdir, fileName ) )
                 else:
-                    shutil.copy( os.path.join( root, fileName ), tmpdir )
+                    if os.path.islink(os.path.join( root, fileName )):
+                        os.symlink(os.path.relpath(os.path.realpath(os.path.join( root, fileName )),root), os.path.join( tmpdir, fileName ) )
+                    else:
+                        shutil.copy( os.path.join( root, fileName ), tmpdir )
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
+
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
@@ -1384,7 +1396,7 @@ def deSubstPath(path):
     drive , tail = os.path.splitdrive(path)
     drive = drive.upper()
     if _SUBST == None:
-        tmp = subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0].split("\r\n")
+        tmp = str(subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0],"windows-1252      ").split("\r\n")
         _SUBST = dict()
         for s in tmp:
             if s != "":
