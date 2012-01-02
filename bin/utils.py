@@ -747,7 +747,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
         fullPath = os.path.join(rootdir, os.path.normcase( filename))
         if os.path.isfile(fullPath):
             currentHash = digestFile(fullPath)
-            if currentHash == filehash or filehash == "":
+            if currentHash == filehash or filehash == "" or os.path.islink(fullPath):
                 debug( "deleting file %s" % fullPath)
                 os.remove(fullPath)
             else:
