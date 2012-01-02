@@ -1131,6 +1131,23 @@ def createDir(path):
         os.makedirs( path )
     return True
 
+def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
+    """ copy file from src to dest"""
+    debug("copy file from %s to %s" % ( src, dest ), 2)
+    destDir = os.path.dirname(dest)
+    if not os.path.exists(destDir):
+        os.makedirs(destDir)
+    if os.path.islink(src):
+        src = os.path.realpath(src)
+    if linkOnly:
+        if src.endswith(".exe") or src.endswith("qt.conf"):
+            shutil.copy( src , dest )
+        else:
+            os.symlink(deSubstPath(os.path.realpath(src)), dest )
+    else:
+        shutil.copy(src,dest)
+    return True
+    
 def copyDir( srcdir, destdir,linkOnly=False ):
     """ copy directory from srcdir to destdir """
     debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
@@ -1145,22 +1162,8 @@ def copyDir( srcdir, destdir,linkOnly=False ):
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):
             tmpdir = root.replace( srcdir, destdir )
-            if ( not os.path.exists( tmpdir ) ):
-                os.makedirs( tmpdir )
             for fileName in files:
-                if linkOnly:
-                    if os.path.islink(os.path.join( root, fileName )):
-                        os.symlink(deSubstPath(os.path.relpath(os.path.realpath(os.path.join( root, fileName )))), os.path.join( tmpdir, fileName ) )
-                    else:
-                        if fileName.endswith(".exe") or fileName == "qt.conf":                        
-                            shutil.copy( os.path.join( root, fileName ), tmpdir )
-                        else:
-                            os.symlink(deSubstPath(os.path.realpath(os.path.join( root, fileName ))), os.path.join( tmpdir, fileName ) )
-                else:
-                    if os.path.islink(os.path.join( root, fileName )):
-                        os.symlink(os.path.relpath(os.path.realpath(os.path.join( root, fileName )),root), os.path.join( tmpdir, fileName ) )
-                    else:
-                        shutil.copy( os.path.join( root, fileName ), tmpdir )
+                copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ))
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
 
 
@@ -1173,15 +1176,6 @@ def rmtree( directory ):
     """ recursively delete directory """
     debug( "rmtree called. directory: %s" % ( directory ), 2 )
     shutil.rmtree ( directory, True ) # ignore errors
-
-def copyFile(src, dest):
-    """ copy file from src to dest"""
-    debug("copy file from %s to %s" % ( src, dest ), 2)
-    destDir = os.path.dirname(dest)
-    if not os.path.exists(destDir):
-        os.makedirs(destDir)
-    shutil.copy( src, dest )
-    return True
 
 def moveFile(src, dest):
     """move file from src to dest"""
