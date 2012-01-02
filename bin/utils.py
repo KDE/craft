@@ -441,9 +441,9 @@ def unTar( fileName, destdir ):
     mode = "r"
     if ( ext == ".gz" ):
         mode = "r:gz"
-    elif(sys.version_info >= (3, 2) and ext == ".bz2"):
+    elif(ext == ".bz2"):
         mode = "r:bz2"
-    elif((sys.version_info < (3, 2) and ext == ".bz2") or ext == ".lzma" or ext == ".xz" ):
+    elif(ext == ".lzma" or ext == ".xz" ):
         un7zip( fileName, os.getenv("TMP") )
         _, tarname = os.path.split( shortname )
         fileName = os.path.join( os.getenv("TMP"), tarname )
@@ -954,10 +954,12 @@ def sedFile( directory, fileName, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
-    with open( filepath, "rb" ) as digFile:
-        for line in digFile:
-            fileHash.update( line )
-    return fileHash.hexdigest()
+    if not os.path.islink(filepath):
+        with open( filepath, "rb" ) as digFile:
+            for line in digFile:
+                fileHash.update(  line )	
+        return fileHash.hexdigest()
+    return ""
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
@@ -1138,7 +1140,10 @@ def copyDir( srcdir, destdir ):
             if ( not os.path.exists( tmpdir ) ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                shutil.copy( os.path.join( root, fileName ), tmpdir )
+                if os.path.islink(os.path.join( root, fileName )):
+                    os.symlink(os.path.relpath(os.path.realpath(os.path.join( root, fileName )),root), os.path.join( tmpdir, fileName ) )
+                else:
+                    shutil.copy( os.path.join( root, fileName ), tmpdir )
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
 
 def moveDir( srcdir, destdir ):
@@ -1255,7 +1260,7 @@ def getWinVer():
         can not be determined
     '''
     try:
-        result = subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0]
+        result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0],"windows-1252")
     except OSError:
         debug("Windows Version can not be determined", 1)
         return "0"
