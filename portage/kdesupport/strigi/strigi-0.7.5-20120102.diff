@@ -1,0 +1,26 @@
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h strigi-0.7.5/libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h
+--- strigi-0.7.5.orig/libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h	2011-06-02 11:29:26.000000000 +0200
++++ strigi-0.7.5/libstreamanalyzer/plugins/indexers/cluceneindexer/cluceneindexmanager.h	2012-01-02 23:01:03.557780000 +0100
+@@ -26,6 +26,10 @@
+ #include <string>
+ #include <map>
+ 
++#ifdef _WIN32
++#include <winsock2.h>
++#endif
++
+ /**
+  **/
+ 
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreams/lib/filestreamopener.cpp strigi-0.7.5/libstreams/lib/filestreamopener.cpp
+--- strigi-0.7.5.orig/libstreams/lib/filestreamopener.cpp	2011-06-02 11:28:57.000000000 +0200
++++ strigi-0.7.5/libstreams/lib/filestreamopener.cpp	2012-01-02 22:28:40.972319200 +0100
+@@ -26,7 +26,7 @@
+ #include <strigi/fileinputstream.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-
++#undef stat
+ using namespace std;
+ using namespace Strigi;
+ 
