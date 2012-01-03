@@ -7,8 +7,20 @@ import emergePlatform
 import compiler
 
 class subinfo( info.infoclass ):
+
     def setTargets( self ):
-        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c','1.0.0d' ]:
+        # The deref version is a repackaged tarball of 1.0.0d
+        # creation of this tarball was done on a secure machine
+        # and the sources are exactly the same. Packaged
+        # with GNU Tar options: tar --dereference -czf to avoid
+        # problems with symlinks on windows
+        self.targets[ '1.0.0d' ] = ('https://downloads.sourceforge.net/project/kde-windows'
+                                    '/openssl/1.0.0d/openssl-1.0.0d-orig-deref-src.tar.gz')
+        self.targetInstSrc[ '1.0.0d' ] = 'openssl-1.0.0d'
+        self.patchToApply['1.0.0d'] = ('openssl-1.0.0d.diff', 1)
+        self.targetDigests['1.0.0d'] = '5c8472d09958c630eeb7548a1aeccb78fbd5cd10'
+
+        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c' ]:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
             if ver != '1.0.0a':
