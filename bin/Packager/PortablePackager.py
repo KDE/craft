@@ -63,5 +63,5 @@ Packager for portal 7zip archives
         self.internalCreatePackage()
 
         self.createPortablePackage()
-        utils.createDigetFile( self.defines[ "setupname" ])
+        utils.createDigestFile( self.defines[ "setupname" ])
         return True

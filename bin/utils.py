@@ -366,7 +366,7 @@ def createFilesDigests( downloaddir, filenames ):
         digestList.append(entry)
     return digestList
     
-def createDigetFile(path):
+def createDigestFile(path):
     """creates a sha1 diget file"""
     digets = digestFileSha1(path)
     f = open(path + ".sha1","wb+")
@@ -559,13 +559,13 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
 def checkManifestFile( name, category, package, version ):
     if os.path.isfile( name ):
-        with open( name, "rb" ) as f:
+        with open( name, "rt" ) as f:
             header = f.readline()
             line = f.readline()
         if not '/' in line:
             # update the file
             line = "%s/%s:%s:%s" % ( package, category, package, version )
-            with open( name, "wb" ) as f:
+            with open( name, "wt" ) as f:
                 f.write( header )
                 f.write( line )
         if ( line.startswith( "%s/%s:%s:" % ( category, package, version ) ) ):
@@ -738,9 +738,8 @@ def getFileListFromManifest(rootdir, package, withManifests=False):
     fileList = dict()
     manifestFiles = [os.path.join(rootdir, "manifest", x) for x in getManifestFiles(rootdir, package)]
     for manifestFile in manifestFiles:
-        with open(manifestFile, 'rb' ) as fptr:
-            for _line in fptr:
-                line = _line.decode('UTF-8')
+        with open(manifestFile, 'rt' ) as fptr:
+            for line in fptr:
                 try:
                     line = line.replace( "\n", "" ).replace( "\r", "" )
                     # check for digest having two spaces between filename and hash
@@ -773,11 +772,19 @@ def unmergeFileList(rootdir, fileList, forced=False):
             currentHash = digestFile(fullPath)
             if currentHash == filehash or filehash == "" or os.path.islink(fullPath):
                 debug( "deleting file %s" % fullPath)
-                os.remove(fullPath)
+                try:
+                    os.remove(fullPath)
+                except OSError:
+                    system( "cmd /C \"attrib -R %s\"" % fullPath )
+                    os.remove(fullPath)
             else:
                 if forced:
                     warning( "file %s has different hash: %s %s, deleting anyway" % \
                             (fullPath, currentHash, filehash ) )
+                try:
+                    os.remove(fullPath)
+                except OSError:
+                    system( "cmd /C \"attrib -R %s\"" % fullPath )
                     os.remove(fullPath)
                 else:
                     warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
@@ -951,12 +958,20 @@ def cleanDirectory( directory ):
                 try:
                     os.remove( os.path.join(root, name) )
                 except OSError:
-                    die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join( root, name ) ) )
+                    system( "cmd /C \"attrib -R %s\"" % os.path.join(root, name) )
+                    try:
+                        os.remove( os.path.join(root, name) )
+                    except OSError:
+                        die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join( root, name ) ) )
             for name in dirs:
                 try:
                     os.rmdir( os.path.join(root, name) )
                 except OSError:
-                    die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
+                    system( "cmd /C \"attrib -R %s\"" % os.path.join(root, name) )
+                    try:
+                        os.rmdir( os.path.join(root, name) )
+                    except OSError:
+                        die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
     else:
         os.makedirs( directory )
 
@@ -1174,7 +1189,11 @@ def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
         else:
             os.symlink(deSubstPath(src), dest )
     else:
-        shutil.copy(src,dest)
+        try:
+            shutil.copy(src,dest)
+        except OSError:
+            system("cmd /C \"attrib -R %s\"" % dest)
+            shutil.copy(src,dest)
     return True
     
 def copyDir( srcdir, destdir,linkOnly=False ):
