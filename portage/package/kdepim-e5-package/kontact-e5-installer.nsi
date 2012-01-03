@@ -1,5 +1,5 @@
 ;kontact-e5-installer.nsi
-;(c)2009-2011, Intevation GmbH
+;(c)2009-2012, Intevation GmbH
 ;Authors:
 ; Emanuel Schütze emanuel@intevation.de
 ; Andre Heinecke aheinecke@intevation.de
@@ -75,7 +75,7 @@
 ;Pages
   !define MUI_PAGE_CUSTOMFUNCTION_SHOW PrintNonAdminWarning
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE ${license}
+  ${license}
   !insertmacro MUI_PAGE_DIRECTORY
   Page custom CustomPageOptions
   !insertmacro MUI_PAGE_INSTFILES
