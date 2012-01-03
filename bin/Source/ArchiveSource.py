@@ -208,6 +208,7 @@ class ArchiveSource(SourceBase):
         # apply all patches only ommitting the last one, this makes it possible to always work on the latest patch
         # for future work, it might be interesting to switch patches on and off at will, this probably needs an
         # own patch management though
+        patchName = None
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if type(patches) == list:
@@ -217,6 +218,9 @@ class ArchiveSource(SourceBase):
                     utils.debug( "applying patch %s with patchlevel: %s" % ( fileName, patchdepth ) )
                     if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
                         return False
+                patchName = os.path.join( self.buildRoot(), patches[-1][0] )
+            else:
+                patchName = os.path.join( self.buildRoot(), patches[0] )
 
         # move the packages up and rename them to be different from the original source directory
         for directory in packagelist:
@@ -225,16 +229,16 @@ class ArchiveSource(SourceBase):
                 shutil.rmtree( os.path.join( destdir, directory + ".orig" ) )
             shutil.move( os.path.join( tmpdir, directory ), os.path.join( destdir, directory + ".orig" ) )
 
-        # make one diff per file, even though we aren't able to apply multiple patches per package atm
         os.chdir( destdir )
         for directory in packagelist:
-            outFile = os.path.join( self.buildRoot(), "%s-%s.diff" % ( directory, \
+            if not patchName:
+                patchName = os.path.join( self.buildRoot(), "%s-%s.diff" % ( directory, \
                 str( datetime.date.today() ).replace('-', '') ) )
-            cmd = "diff -Nru %s.orig %s > %s || echo 0" % ( directory, directory, outFile )
+            cmd = "diff -Nru -x *~ %s.orig %s > %s || echo 0" % ( directory, directory, patchName )
             if not self.system( cmd ):
                 return False
 
-        utils.debug( "patch created at %s" % outFile )
+        utils.debug( "patch created at %s" % patchName )
         # remove all directories that are not needed any more after making the patch
         # disabled for now
         #for directory in packagelist:

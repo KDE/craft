@@ -13,7 +13,6 @@ win32libs-sources,shared-mime-info-src,,1
 win32libs-sources,libxslt-src,,1
 win32libs-sources,expat-src,,
 win32libs-sources,dbus-src,1.4.10,
-win32libs-sources,dbus-src,gitHEAD,
 win32libs-sources,jpeg-src,,
 win32libs-sources,lcms-src,,2
 win32libs-sources,libbzip2-src,,
@@ -77,4 +76,5 @@ win32libs-sources,yajl-src,1.0.12,
 win32libs-sources,cfitsio-src,3.20,1
 win32libs-sources,opencv-src,,3
 win32libs-sources,ffmpeg-src,,
+win32libs-sources,lcms2-src,,
 libs,runtime,,

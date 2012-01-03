@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/extragear/office/alkimia/libalkimia'
+        self.svnTargets['gitHEAD'] = '[git]kde:alkimia'
         for ver in ['4.3.0', '4.3.1']:
             self.targets[ ver ] = 'http://kde-apps.org/CONTENT/content-files/137323-libalkimia-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = "libalkimia-" + ver
