@@ -352,7 +352,7 @@ def createFilesDigests( downloaddir, filenames ):
         digestList.append(entry)
     return digestList
     
-def createDigetFile(path):
+def createDigestFile(path):
     """creates a sha1 diget file"""
     digets = digestFileSha1(path)
     f = open(path + ".sha1","wb+")

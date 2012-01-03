@@ -124,5 +124,5 @@ file collection process is skipped, and only the installer is generated.
         self.internalCreatePackage()
 
         self.generateNSISInstaller()
-        utils.createDigetFile( self.defines[ "setupname" ])
+        utils.createDigestFile( self.defines[ "setupname" ])
         return True
