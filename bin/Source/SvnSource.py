@@ -92,6 +92,55 @@ class SvnSource (VersionSystemSourceBase):
             i += 1
         return True
 
+    def __getCurrentRevision( self ):
+        """ return the revision returned by svn info """
+
+        revision = None
+        # first, change the output to always be english
+        if "LANG" in os.environ:
+            oldLanguage = os.environ["LANG"]
+        else:
+            oldLanguage = ""
+        os.environ["LANG"] = "C"
+
+        # handle multiple urls in targets
+        # we need to find the main url which is marked with #main
+        # if not marked use the second last one, which is used currently
+        sourcedir = None
+        n = self.repositoryUrlCount()
+        if n > 1:
+            for i in range(0, n):
+                if self.repositoryUrlOptions(i) == 'main':
+                    sourcedir = self.checkoutDir(i)
+                    break
+            # if not found use the second last one
+            if sourcedir == None:
+                sourcedir = self.checkoutDir(n-2)
+        else:
+            sourcedir = self.checkoutDir()
+
+        # set up the command
+        cmd = "%s/svn info %s" % ( self.svnInstallDir, sourcedir )
+
+        # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
+        tempFileName = os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" )
+        with open( tempFileName, "wb+" ) as tempfile:
+
+            # run the command
+            with utils.LockFile(utils.LockFileName("SVN")):
+                utils.system( cmd, stdout=tempfile )
+
+            tempfile.seek(os.SEEK_SET)
+            # read the temporary file and find the line with the revision
+            for line in tempfile:
+                if line.startswith("Revision: "):
+                    revision = line.replace("Revision: ", "").strip()
+                    break
+
+        os.environ["LANG"] = oldLanguage
+        os.remove( tempFileName )
+        return revision
+
     def __splitPath(self, path):
         """ split a path into a base part and a relative repository url.
         The delimiters are currently 'trunk', 'branches' and 'tags'.
@@ -181,33 +230,9 @@ class SvnSource (VersionSystemSourceBase):
             return utils.system( cmd )
 
     def sourceVersion( self ):
-        """ return the revision returned by svn info """
-        # first, change the output to always be english
-        if "LANG" in os.environ:
-            oldLanguage = os.environ["LANG"]
-        else:
-            oldLanguage = ""
-        os.environ["LANG"] = "C"
-
-        # set up the command
-        cmd = "%s/svn info %s" % ( self.svnInstallDir, self.checkoutDir() )
-
-        # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "w+" ) as tempfile:
-
-            # run the command
-            with utils.LockFile(utils.LockFileName("SVN")):
-                utils.system( cmd, stdout=tempfile )
-
-            tempfile.seek(os.SEEK_SET)
-            # read the temporary file and find the line with the revision
-            for line in tempfile:
-                if line.startswith("Revision: "):
-                    revision = line.replace("Revision: ", "").strip()
-                    break
-
-        # print the revision - everything else should be quiet now
-        print(revision)
-        os.environ["LANG"] = oldLanguage
-        os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ) )
+        """ print the revision returned by svn info """
         return True
+
+    def currentRevision(self):
+        """return the name or number of the current revision"""
+        return self.__getCurrentRevision()
