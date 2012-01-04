@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.6.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.6.' + ver + '/src/kdebase-runtime-4.6.' + ver + '.tar.bz2'
             self.targetInstSrc['4.6.' + ver] = 'kdebase-runtime-4.6.' + ver
-        self.defaultTarget = '4.7'
+        self.defaultTarget = '4.8'
         self.patchToApply['4.7'] = [('Revert-disable-nepomuk-runtime-on-Windows.patch', 1)]
 
         self.patchToApply['4.6.2'] = [('Not-only-use-hardcoded-install-path-on-Windows.patch', 1),

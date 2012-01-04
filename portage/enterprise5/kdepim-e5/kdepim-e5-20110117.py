@@ -74,8 +74,8 @@ class subinfo(info.infoclass):
         self.svnTargets['20101217'] = 'tags/kdepim/enterprise5.0.20101217.1207336/kdepim'
         self.svnTargets['20110110'] = 'tags/kdepim/.20110110.enterprise5.0/kdepim'
         self.svnTargets['20110117'] = 'tags/kdepim/.20110117.enterprise5.0/kdepim'
-        self.defaultTarget = 'gitHEAD'
-        self.patchToApply['gitHEAD'] = [
+        self.defaultTarget = '4.8'
+        self.patchToApply['4.8'] = [
                 ('add-full-shutdown-button.patch', 1)]
         # To platform/package specific for master
         self.apply_branding("EMERGE_KDEPIME5_BRANDING_PATCHES")
