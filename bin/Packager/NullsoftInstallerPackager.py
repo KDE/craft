@@ -2,14 +2,9 @@
 # copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-import shutil
-import re
-import types
-import fileinput
 from _winreg import * # pylint: disable=F0401
-import compiler
 import utils
-from CollectionPackagerBase import *
+from Packager.CollectionPackagerBase import *
 
 class NSIPackagerLists( PackagerLists ):
     """ dummy name for PackagerLists """
@@ -113,16 +108,18 @@ file collection process is skipped, and only the installer is generated.
         utils.new_line()
         utils.debug( "generating installer %s" % self.defines[ "setupname" ] )
         if self.isInstalled:
-            utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join(
-                self.nsisInstallPath, 'makensis.exe' ), definestring,
-                self.scriptname ), cwd = os.path.abspath( self.packageDir() ) )
+            if not utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join(
+                    self.nsisInstallPath, 'makensis.exe' ), definestring,
+                    self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
+                utils.die("Error in makensis execution")
+
+
 
     def createPackage( self ):
         """ create a package """
         print "packaging using the NullsoftInstallerPackager"
-        
-        self.internalCreatePackage()
 
+        self.internalCreatePackage()
         self.generateNSISInstaller()
         utils.createDigestFile( self.defines[ "setupname" ])
         return True
