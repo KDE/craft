@@ -7,7 +7,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "20111031"
-        self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
+        self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/kde-windows/mingw/mingw-w32-bin_i686-mingw_20111031_sezero_aheinecke.tar.gz"
+        self.targetDigests["20111031"] = '52973249d5ee43be94bc785f9340d1c9c1fbfc3b'
         self.defaultTarget = ver
         
         
