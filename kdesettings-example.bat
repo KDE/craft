@@ -259,14 +259,15 @@ rem an sqlite based. The file based database interacts better with kdewin
 rem installer/packager eg. you can directly integrate binary packages while the
 rem sqlite based database seems to be slighty faster but is only accessable
 rem through the emerge command line. This option let you choose the used on.
-rem By default the sqlite database is used.
-rem set EMERGE_ENABLE_SQLITEDB=TRUE
+rem By default the sqlite database is not used, because the implementation 
+rem results into errors on qmerge action.
+rem set EMERGE_ENABLE_SQLITEDB=FALSE
 
 rem No editing should be necessary below this line (in an ideal world)
 rem ##################################################################
 
 rem internal used settings version only for emerge maintainers 
-rem increment for each definition change in this file and fix version 
+rem increment for each definition change in this file and fix version
 rem issues in kdeenv.bat 
 rem Note: unset EMERGE_SETTINGS_VERSION means version 0
 SET EMERGE_SETTINGS_VERSION=1
