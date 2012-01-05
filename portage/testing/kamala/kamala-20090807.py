@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "trunk/playground/games#norecursive;trunk/playground/games/kamala;trunk/playground/games/cmake"
+        self.svnTargets['svnHEAD'] = "trunk/playground/games#norecursive;trunk/playground/games/kamala#main;trunk/playground/games/cmake"
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

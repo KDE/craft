@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "trunk/KDE/kdegames#norecursive;trunk/KDE/kdegames/libkdegames;trunk/KDE/kdegames/cmake"
+        self.svnTargets['svnHEAD'] = "trunk/KDE/kdegames#norecursive;trunk/KDE/kdegames/libkdegames#main;trunk/KDE/kdegames/cmake"
         self.defaultTarget = 'svnHEAD'
         self.options.configure.configurePath = 'libkdegames'
 

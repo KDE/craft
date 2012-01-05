@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "trunk/KDE/kdemultimedia#norecursive;trunk/KDE/kdemultimedia/juk;trunk/KDE/kdemultimedia/cmake"
+        self.svnTargets['svnHEAD'] = "trunk/KDE/kdemultimedia#norecursive;trunk/KDE/kdemultimedia/juk#main;trunk/KDE/kdemultimedia/cmake"
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
