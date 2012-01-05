@@ -962,12 +962,12 @@ def sedFile( directory, fileName, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
-    if not os.path.islink(filepath):
-        with open( filepath, "rb" ) as digFile:
-            for line in digFile:
-                fileHash.update(  line )	
+	if os.path.islink(filepath):
+		filepath = os.readlink(filepath)
+	with open( filepath, "rb" ) as digFile:
+		for line in digFile:
+			fileHash.update(  line )	
         return fileHash.hexdigest()
-    return ""
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
