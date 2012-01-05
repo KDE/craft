@@ -963,7 +963,7 @@ def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
     if os.path.islink(filepath):
-        tmp = os.path.join(os.path.abspath(os.path.dirname(filepath) ),os.readlink(filepath))
+        tmp = resolveLink(filepath)
         if not os.path.exists(tmp):
             warning("cant resolve symbolic link target %s, returning \"\" as digests" % tmp)
             return ""
@@ -1135,6 +1135,15 @@ def createDir(path):
         os.makedirs( path )
     return True
 
+def resolveLink(link):
+    """tries to resolve a symlink"""
+    if not os.path.islink(link):
+        return link
+    tmp = os.path.join(os.path.abspath(os.path.dirname(link) ),os.readlink(link))
+    if not os.path.exists(tmp):
+        warning("cant resolve Link: %s" % link)
+    return tmp
+    
 def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
@@ -1142,9 +1151,7 @@ def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     if not os.path.exists(destDir):
         os.makedirs(destDir)
     if os.path.islink(src):
-        src = os.readlink(src)
-    if not os.path.exists(src):
-        die("trying to copy the non existing file %s" % src)
+        src = resolveLink(src)
     if linkOnly:
         if src.endswith(".exe") or src.endswith("qt.conf"):
             os.link( src , dest )
