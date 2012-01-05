@@ -1138,13 +1138,13 @@ def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     if not os.path.exists(destDir):
         os.makedirs(destDir)
     if os.path.islink(src):
-        src = os.path.realpath(src)
+        src = os.readlink(src)
     if linkOnly:
         if src.endswith(".exe") or src.endswith("qt.conf"):
-            shutil.copy( src , dest )
+            os.link( src , dest )
         else:
             if not (os.path.exists(dest) or os.path.islink(dest)):#dont collide with existing links
-                os.symlink(deSubstPath(os.path.realpath(src)), dest )
+                os.symlink(deSubstPath(src), dest )
     else:
         shutil.copy(src,dest)
     return True
