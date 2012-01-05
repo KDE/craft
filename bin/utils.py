@@ -1178,6 +1178,8 @@ def copyDir( srcdir, destdir,linkOnly=False ):
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):
             tmpdir = root.replace( srcdir, destdir )
+            if not os.path.exists( tmpdir ):
+                os.makedirs( tmpdir )
             for fileName in files:
                 copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ))
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
