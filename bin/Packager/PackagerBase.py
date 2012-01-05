@@ -21,6 +21,19 @@ class PackagerBase(EmergeBase):
                 with open( versionFile, "r" ) as f:
                     pkgVersion = f.read()
                 pkgNotesVersion = pkgVersion
+            elif self.version == "all": 
+                if self.subinfo.buildTarget == "gitHEAD":
+                    pkgVersion = str( datetime.date.today() ).replace('-', '')  + '-' + self.source.currentRevision()
+                    pkgNotesVersion = pkgVersion
+                elif self.subinfo.buildTarget == "svnHEAD":
+                    pkgVersion = str( datetime.date.today() ).replace('-', '')  + '-r' + self.source.currentRevision()
+                    pkgNotesVersion = pkgVersion
+                elif self.subinfo.buildTarget == "HEAD":
+                    pkgVersion = str( datetime.date.today() ).replace('-', '')  + '-' + self.subinfo.buildTarget
+                    pkgNotesVersion = pkgVersion
+                else:
+                    pkgVersion = self.subinfo.buildTarget
+                    pkgNotesVersion = pkgVersion
             elif self.subinfo.buildTarget == "gitHEAD" or self.subinfo.buildTarget == "svnHEAD":
                 pkgVersion = str( datetime.date.today() ).replace('-', '')
                 pkgNotesVersion = pkgVersion
