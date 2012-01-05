@@ -963,10 +963,14 @@ def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
     if os.path.islink(filepath):
-        filepath = os.readlink(filepath)
+        tmp = os.path.join(os.path.abspath(os.path.dirname(filepath) ),os.readlink(filepath))
+        if not os.path.exists(tmp):
+            warning("cant resolve symbolic link target %s, returning \"\" as digests" % tmp)
+            return ""
+        filepath = tmp
     with open( filepath, "rb" ) as digFile:
         for line in digFile:
-            fileHash.update(  line )	
+            fileHash.update( line )
         return fileHash.hexdigest()
 
 def digestFileSha1( filepath ):
