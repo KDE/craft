@@ -29,9 +29,9 @@ class subinfo(info.infoclass):
     self.shortDescription = "an open-source multimedia framework"
 
     if compiler.isMinGW_W64():
-      self.defaultTarget = self.vlcTagName + self.getVer() +"-debug" 
+        self.defaultTarget = self.vlcTagName + self.getVer() +"-debug" 
     else:
-      self.defaultTarget = releaseTag
+        self.defaultTarget = releaseTag
 
 
   def setDependencies( self ):
@@ -39,18 +39,21 @@ class subinfo(info.infoclass):
 
   def getVer( self ):
     global _VLC_VER
-    if _VLC_VER != None :
-      return _VLC_VER
-    else:
-      try:
-        fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
+    if _VLC_VER != None:
+        return _VLC_VER
 
-      except Exception, e:
+    try:
+        fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
+    except Exception, e:
         return "Nightlys Unavailible:"+str(e)
-      m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
-      fh.close()
-      _VLC_VER = m.group(0)
-      return _VLC_VER 
+
+    m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
+    fh.close()
+    if m == None:
+        _VLC_VER = ""
+    else:
+        _VLC_VER = m.group(0)
+    return _VLC_VER 
 
 class Package(BinaryPackageBase):
   def __init__(self):
