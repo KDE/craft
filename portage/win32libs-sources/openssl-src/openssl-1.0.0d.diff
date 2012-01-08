@@ -196,3 +196,14 @@ diff -rupd openssl-1.0.0c.orig/util/pl/VC-32.pl openssl-1.0.0c/util/pl/VC-32.pl
  	}
  
  sub do_lib_rule
+diff -Nru -x '*~' openssl-1.0.0d.orig/crypto/rand/rand_win.c openssl-1.0.0d/crypto/rand/rand_win.c
+--- openssl-1.0.0d.orig/crypto/rand/rand_win.c	2010-03-22 23:44:35.000000000 +0100
++++ openssl-1.0.0d/crypto/rand/rand_win.c	2012-01-08 23:50:11.299238600 +0100
+@@ -557,6 +557,7 @@
+ 							RAND_add(&hentry,
+ 								hentry.dwSize, 5);
+ 						while (heap_next(&hentry)
++							&& (!good || (GetTickCount()-starttime)<MAXDELAY)
+ 							&& --entrycnt > 0);
+ 						}
+ 					} while (heaplist_next(handle, &hlist)
