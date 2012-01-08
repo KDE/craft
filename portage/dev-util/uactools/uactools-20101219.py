@@ -3,7 +3,7 @@
 # requests, setuac.exe can be used to enable raise the privileges of a program.
 # The according source package is uactools-pkg
 
-import base
+
 import info
 
 class subinfo( info.infoclass ):

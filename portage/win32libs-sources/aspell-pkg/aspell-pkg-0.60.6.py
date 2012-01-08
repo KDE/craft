@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-import base
+
 import os
 import shutil
 import utils
