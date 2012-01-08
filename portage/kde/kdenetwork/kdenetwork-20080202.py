@@ -12,9 +12,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs-bin/libidn'] = 'default'
         self.dependencies['win32libs-bin/libmsn'] = 'default'
-        #mingw already contains libgmp
-        if not compiler.isMinGW():
-            self.dependencies['win32libs-bin/libgmp'] = 'default'
+        self.dependencies['win32libs-bin/mpir'] = 'default'
 
 from Package.CMakePackageBase import *
 
