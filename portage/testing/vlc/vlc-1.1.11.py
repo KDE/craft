@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
     self.shortDescription = "an open-source multimedia framework"
 
     if compiler.isMinGW_W64():
-      self.defaultTarget = self.vlcTagName + self.getVer() +"-debug" 
+      self.defaultTarget = self.vlcTagName +"-debug" 
     else:
       self.defaultTarget = releaseTag
 
