@@ -29,7 +29,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
-        self.subinfo.options.merge.destinationPath = "dev-utils/git";
+        self.subinfo.options.merge.destinationPath = "dev-utils//git";
         BinaryPackageBase.__init__(self)
 
     def unpack(self):
@@ -41,6 +41,7 @@ class Package(BinaryPackageBase):
         return True
 
     def qmerge(self):
+        utils.putenv("EMERGE_USE_SYMLINKS","False")
         if not BinaryPackageBase.qmerge(self):
             return False
         tmpFile = tempfile.TemporaryFile()
