@@ -471,12 +471,12 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
                         fDir,fName = os.path.split(fileName.name)
                         target = fileName.linkname
                         if not target.startswith("/"):#abspath?
-                            target = "%s/%s"%(fDir, target)
+                            target = os.path.normpath("%s/%s"%(fDir, target)).replace("\\","/")
                         if target in tar.getnames():
                             tar.extract(target, os.path.join(destdir,"emerge_tmp") )
                             shutil.move(os.path.join(destdir,"emerge_tmp",fDir, fileName.linkname),os.path.join(destdir,fileName.name))
                         else:
-                            warning("link target %s not included in tarfile" % target)
+                            warning("link target %s for %s not included in tarfile" % (target,fileName.name))
                     else:
                         tar.extract(fileName, destdir )
                 except tarfile.TarError:
