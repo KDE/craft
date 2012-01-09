@@ -36,7 +36,7 @@ class BuildError( Exception ):
         print("Error:", self.messageText)
 
     def __str__( self ):
-        log = file( self.logfile, 'rb' )
+        log = open( self.logfile, 'rb' )
         logtext = log.readlines()[-20:]
         log.close()
         return "Error:" + "".join( logtext )
@@ -63,7 +63,7 @@ class package:
                                                                         'logdstdir': logroot } )
 
         self.logfile = outfile % (self.generalSettings["platform"], self.cleanPackageName)
-        log = file( self.logfile, 'wb+' )
+        log = open( self.logfile, 'wb+' )
         log.close()
         self.notifications = { 'email': EmailNotification( self.category, self.packageName, self.logfile ),
                                'dashboard': DashboardNotification( self.category, self.packageName, self.logfile ),
@@ -81,7 +81,7 @@ class package:
 
     def timestamp( self ):
         print(datetime.now().strftime("%m/%d/%Y %H:%M"))
-        log = file( self.logfile, 'ab+' )
+        log = open( self.logfile, 'ab+' )
         log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
         log.close()
 
@@ -89,11 +89,11 @@ class package:
         """ runs emerge --print-revision for a specific package and returns the output """
         ## this function must replaced in case we are using the emerge API directly
         if not self.revision:
-            tempfile = file( os.path.join( logroot, "rev.tmp" ), "wb+" )
+            tempfile = open( os.path.join( logroot, "rev.tmp" ), "wb+" )
             tempfile.close()
             if not self.system( "--print-revision -q %s%s/%s" % ( self.targetString, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
                 return ""
-            tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
+            tempfile = open( os.path.join( logroot, "rev.tmp" ), "rb+" )
             self.revision = tempfile.readline().strip()
             tempfile.close()
             os.remove( os.path.join( logroot, "rev.tmp" ) )
@@ -102,10 +102,10 @@ class package:
     def system( self, cmdstring, logfile ):
         """ runs an emerge command """
         cmdstring = emerge + " " + cmdstring
-        fstderr = file( logfile + ".tmp", 'wb+' )
+        fstderr = open( logfile + ".tmp", 'wb+' )
         p = subprocess.Popen( cmdstring, shell=True, stdout=fstderr, stderr=fstderr )
         ret = p.wait()
-        log = file( logfile, 'ab+' )
+        log = open( logfile, 'ab+' )
         fstderr.seek( os.SEEK_SET )
         for line in fstderr:
             log.write( line )
@@ -185,7 +185,7 @@ class package:
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )
         else:
-            log = file( self.logfile, 'ab+' )
+            log = open( self.logfile, 'ab+' )
             log.write( "Package directory doesn't exist:\n"
                        "Package directory is %s" % pkgdir )
 
@@ -238,7 +238,7 @@ if len( sys.argv ) <= 1:
     exit( 0 )
 
 listfilename = sys.argv[ 1 ]
-packagefile = file( listfilename )
+packagefile = open( listfilename )
 
 addInfo = dict()
 _depList = []
