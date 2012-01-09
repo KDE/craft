@@ -440,7 +440,7 @@ def un7zip( fileName, destdir ):
         tmp = tempfile.TemporaryFile()
         return system( command, stdout=tmp )
 
-def unTar( fileName, destdir ):
+def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
@@ -467,7 +467,18 @@ def unTar( fileName, destdir ):
         # FIXME how to handle errors here ?
             for fileName in tar:
                 try:
-                    tar.extract(fileName, destdir )
+                    if not uselinks and fileName.issym():
+                        fDir,fName = os.path.split(fileName.name)
+                        target = fileName.linkname
+                        if not target.startswith("/"):#abspath?
+                            target = "%s/%s"%(fDir, target)
+                        if target in tar.getnames():
+                            tar.extract(target, os.path.join(destdir,"emerge_tmp") )
+                            shutil.move(os.path.join(destdir,"emerge_tmp",fDir, fileName.linkname),os.path.join(destdir,fileName.name))
+                        else:
+                            warning("link target %s not included in tarfile" % target)
+                    else:
+                        tar.extract(fileName, destdir )
                 except tarfile.TarError:
                     error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
                     return False
@@ -476,6 +487,8 @@ def unTar( fileName, destdir ):
         error( "could not open existing tar archive: %s" % fileName )
         return False
     finally:
+        if os.path.exists(os.path.join(destdir,"emerge_tmp")):
+            shutil.rmtree(os.path.join(destdir,"emerge_tmp"))
         if cleanupFile:
             if os.path.exists(cleanupFile):
                 os.remove(cleanupFile)
