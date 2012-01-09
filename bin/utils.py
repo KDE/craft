@@ -444,7 +444,7 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
-    cleanupFile = None
+    emerge_tmp = os.path.join(destdir,"emerge_tmp")
 
     mode = "r"
     if ( ext == ".gz" ):
@@ -452,10 +452,9 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
     elif(ext == ".bz2"):
         mode = "r:bz2"
     elif(ext == ".lzma" or ext == ".xz" ):
-        un7zip( fileName, os.getenv("TMP") )
+        un7zip( fileName, emerge_tmp )
         _, tarname = os.path.split( shortname )
-        fileName = os.path.join( os.getenv("TMP"), tarname )
-        cleanupFile = fileName
+        fileName = os.path.join( emerge_tmp , tarname )
 
 
     if not os.path.exists( fileName ):
@@ -465,20 +464,20 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
     try:
         with tarfile.open( fileName, mode ) as tar:
         # FIXME how to handle errors here ?
-            for fileName in tar:
+            for tarMember in tar:
                 try:
-                    if not uselinks and fileName.issym():
-                        fDir,fName = os.path.split(fileName.name)
-                        target = fileName.linkname
+                    if not uselinks and tarMember.issym():
+                        tarDir = os.path.dirname(tarMember.name)
+                        target = tarMember.linkname
                         if not target.startswith("/"):#abspath?
-                            target = os.path.normpath("%s/%s"%(fDir, target)).replace("\\","/")
+                            target = os.path.normpath("%s/%s"%(tarDir, target)).replace("\\","/")
                         if target in tar.getnames():
-                            tar.extract(target, os.path.join(destdir,"emerge_tmp") )
-                            shutil.move(os.path.join(destdir,"emerge_tmp",fDir, fileName.linkname),os.path.join(destdir,fileName.name))
+                            tar.extract(target, emerge_tmp )
+                            shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
                         else:
-                            warning("link target %s for %s not included in tarfile" % (target,fileName.name))
+                            warning("link target %s for %s not included in tarfile" % ( target , tarMember.name ))
                     else:
-                        tar.extract(fileName, destdir )
+                        tar.extract(tarMember, destdir )
                 except tarfile.TarError:
                     error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
                     return False
@@ -487,11 +486,8 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
         error( "could not open existing tar archive: %s" % fileName )
         return False
     finally:
-        if os.path.exists(os.path.join(destdir,"emerge_tmp")):
-            shutil.rmtree(os.path.join(destdir,"emerge_tmp"))
-        if cleanupFile:
-            if os.path.exists(cleanupFile):
-                os.remove(cleanupFile)
+        if os.path.exists(emerge_tmp):
+            shutil.rmtree(emerge_tmp)
 
 def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""
