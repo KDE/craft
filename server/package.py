@@ -21,7 +21,7 @@ import common
 
 def die( message ):
     log.write( message )
-    print("package.py fatal error: %s" % message,file=sys.stderr)
+    print("package.py fatal error: %s" % message, file=sys.stderr)
     exit( 1 )
 
 class BuildError( Exception ):
@@ -33,7 +33,7 @@ class BuildError( Exception ):
         self.logfile = logfile
         self.revision = False
         self.enabled = True
-        print(("Error:", self.messageText))
+        print("Error:", self.messageText)
 
     def __str__( self ):
         log = file( self.logfile, 'rb' )
@@ -80,7 +80,7 @@ class package:
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
 
     def timestamp( self ):
-        print((datetime.now().strftime("%m/%d/%Y %H:%M")))
+        print(datetime.now().strftime("%m/%d/%Y %H:%M"))
         log = file( self.logfile, 'ab+' )
         log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
         log.close()
@@ -115,7 +115,7 @@ class package:
 
     def emerge( self, cmd, addParameters = "" ):
         """ runs an emerge call """
-        print(("running:", cmd, self.packageName))
+        print("running:", cmd, self.packageName)
         if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s/%s" % ( self.targetString, self.category, self.packageName ), self.logfile ):
             self.enabled = False
             raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + cmd + " FAILED", self.logfile )
@@ -166,7 +166,7 @@ class package:
             return
 
         self.timestamp()
-        print(("running: upload", self.packageName))
+        print("running: upload", self.packageName)
         upload = common.Uploader( logfile=self.logfile )
         sfupload = common.SourceForgeUploader( self.packageName, self.target, self.patchlevel, logfile=self.logfile )
 
@@ -258,12 +258,12 @@ runtimeDepList = [x.ident() for x in _runtimeDepList]
 depList = [x.ident() for x in _depList]
 
 for [cat, pac, ver, tar] in depList:
-    target, patchlvl = ('', '')
+    target, patchlvl = '', ''
     if cat + "/" + pac in list(addInfo.keys()):
         target, patchlvl = addInfo[ cat + "/" + pac ]
     p = package( cat, pac, target, patchlvl )
     if not [cat, pac, ver, tar] in runtimeDepList:
-        print(("could not find package %s in runtime dependencies" % pac))
+        print("could not find package %s in runtime dependencies" % pac)
         p.ignoreNotifications = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
@@ -314,9 +314,9 @@ if "localbotnotificationport" in general:
         s.send( "BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] ) );
         s.send( "QUIT\r\n" )
         s.close()
-        print(("send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port )))
+        print("send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port ))
     except socket.error:
-        print(("failed to send BUILDFINISHED to Bot on localhost:%s" % port))
+        print("failed to send BUILDFINISHED to Bot on localhost:%s" % port)
 else:
     print("disabled bot communication")
 
