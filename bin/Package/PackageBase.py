@@ -45,7 +45,7 @@ class PackageBase (EmergeBase):
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
-
+        self.manifest()
         ## \todo is this the optimal place for creating the post install scripts ?
         # create post install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -73,7 +73,7 @@ class PackageBase (EmergeBase):
                 ignoreInstalled = True
                 self.unmerge()
 
-        self.manifest()
+        
 
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() ,utils.envAsBool("EMERGE_USE_SYMLINKS"))
