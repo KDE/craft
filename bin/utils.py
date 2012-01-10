@@ -637,7 +637,7 @@ def systemWithoutShell(cmd, **kw):
     try:
         if verbose() == 0 and kw['stdout']== sys.stdout and kw['stderr'] == sys.stderr:
             redirected = True
-            sys.stderr = sys.stdout = file('test.outlog', 'wb')
+            sys.stderr = sys.stdout = open('test.outlog', 'wb')
         p = subprocess.Popen( cmd, **kw )
         ret = p.wait()
     finally:
