@@ -193,7 +193,7 @@ class SvnSource (VersionSystemSourceBase):
         cmd = "%s/svn info %s" % ( self.svnInstallDir, self.checkoutDir() )
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" ) as tempfile:
+        with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "w+" ) as tempfile:
 
             # run the command
             with utils.LockFile(utils.LockFileName("SVN")):
