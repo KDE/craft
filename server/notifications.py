@@ -95,7 +95,7 @@ class DashboardNotification(Notification):
             values['logUrl'] = logurltext
             if not self.dryRun:
                 data = urllib.parse.urlencode( values )
-                req = urllib.request.Request( settings["submit-url"], data )
+                req = urllib.request.Request( settings["submit-url"], data.encode() )
                 response = urllib.request.urlopen( req )
                 the_page = response.read()
             else:
