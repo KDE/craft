@@ -1,0 +1,31 @@
+From cab744203c5a46449c1459c780551ebb950e688e Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Tue, 10 Jan 2012 17:59:46 +0100
+Subject: [PATCH] Fix regular expression llokup in qsscertificate fromPath
+
+    The regular expression is wrong with c escaping and
+    regexp escaping it escaped the closing bracket and not
+    the backslash as was probably the intention.
+---
+ src/network/ssl/qsslcertificate.cpp |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/network/ssl/qsslcertificate.cpp b/src/network/ssl/qsslcertificate.cpp
+index 1ae98f4..60b3163 100644
+--- a/src/network/ssl/qsslcertificate.cpp
++++ b/src/network/ssl/qsslcertificate.cpp
+@@ -539,9 +539,9 @@ QList<QSslCertificate> QSslCertificate::fromPath(const QString &path,
+     // $, (,), *, +, ., ?, [, ,], ^, {, | and }.
+     int pos = -1;
+     if (syntax == QRegExp::Wildcard)
+-        pos = path.indexOf(QRegExp(QLatin1String("[^\\][\\*\\?\\[\\]]")));
++        pos = path.indexOf(QRegExp(QLatin1String("[^\\\\][\\*\\?\\[\\]]")));
+     else if (syntax != QRegExp::FixedString)
+-        pos = path.indexOf(QRegExp(QLatin1String("[^\\][\\$\\(\\)\\*\\+\\.\\?\\[\\]\\^\\{\\}\\|]")));
++        pos = path.indexOf(QRegExp(QLatin1String("[^\\\\][\\$\\(\\)\\*\\+\\.\\?\\[\\]\\^\\{\\}\\|]")));
+     QString pathPrefix = path.left(pos); // == path if pos < 0
+     if (pos != -1)
+         pathPrefix = pathPrefix.left(pathPrefix.lastIndexOf(QLatin1Char('/')));
+-- 
+1.7.2.5
+
