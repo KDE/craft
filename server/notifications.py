@@ -21,7 +21,7 @@ class Notification:
         self.dryRun = False
 
     def setShortLog( self ):
-        log = file( self.logfile, 'rb' )
+        log = open( self.logfile, 'r', encoding="windows-1252" )
         logtext = log.readlines()[-20:]
         log.close()
         if self.error:
@@ -140,7 +140,7 @@ class StatusNotification(Notification):
                 if not os.path.exists( settings[ 'directory' ] ):
                     os.makedirs( settings[ 'directory' ] )
 
-                jsondump = file( filename, "w+b" )
+                jsondump = open( filename, "w+", encoding="windows-1252" )
                 jsondump.write( json.dumps( values, sort_keys=True, indent=4 ) )
                 jsondump.close()
             else:
