@@ -8,11 +8,12 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.2.8'] = 'http://ftp.gnu.org/gnu/libtool/libtool-2.2.8.tar.lzma'
-        self.targetDigests['2.2.8'] = 'e160056cab3b0d31db6c929f12ddd4a77e2a024d'
-        self.targetInstSrc['2.2.8'] = "libtool-2.2.8"
+        for ver in ['2.4.2']:
+            self.targets[ver] = 'http://ftp.gnu.org/gnu/libtool/libtool-%s.tar.xz' % ver
+            self.targetInstSrc[ver] = "libtool-%s" % ver
+        self.targetDigests['2.4.2'] = '4671f3323f2fbc712a70afce57602ce906a82a15'
 
-        self.defaultTarget = '2.2.8'
+        self.defaultTarget = '2.4.2'
 
 from Package.AutoToolsPackageBase import *
 
