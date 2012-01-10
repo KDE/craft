@@ -21,8 +21,9 @@ class KDEWinPackager (PackagerBase):
                 break
         if self.packagerExe:
             utils.debug("using kdewin packager from %s" % self.packagerExe, 2)
-            tmp = subprocess.Popen(self.packagerExe, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-            self.useDebugPackages = any("symroot" in line for str(line,"windows-1252") in tmp)
+            _,tmp = subprocess.Popen(self.packagerExe, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            tmp = str(tmp,"windows-1252")
+            self.useDebugPackages = any("symroot" in line for line,"windows-1252") in tmp)
 
     def xmlTemplate(self):
         template = os.path.join(self.packageDir(), self.package+"-package.xml")
