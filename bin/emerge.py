@@ -402,7 +402,6 @@ for i in sys.argv:
         mainBuildAction = i[2:]
     elif ( i == "--print-revision" ):
         mainBuildAction = "printrev"
-        stayQuiet = True
     elif ( i == "--disable-buildhost" ):
         disableHostBuild = True
     elif ( i == "--disable-buildtarget" ):
