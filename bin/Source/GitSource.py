@@ -33,8 +33,9 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if str(line).startswith("*"):
-                    branch = str(line[2:].rstrip(), "UTF-8")
+                line = str(line,"UTF-8")
+                if line.startswith("*"):
+                    branch = line[2:].rstrip()
                     break
         return branch
 
@@ -230,7 +231,7 @@ class GitSource ( VersionSystemSourceBase ):
                 tmpFile.seek( os.SEEK_SET )
                 # read the temporary file and grab the first line
                 # print the revision - everything else should be quiet now
-                print(str(tmpFile.readline().replace("commit ", "").strip(), "UTF-8"))
+                print(str(tmpFile.readline(), "UTF-8").replace("commit ", "").strip())
         else:
             # in case this is a tag, print out the tag version
             print(self.__getCurrentBranch()[ 1: ])
