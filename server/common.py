@@ -84,7 +84,7 @@ class Uploader:
 
         name = state+"-script"
         if name in self.settings:
-            self.fstderr = file( 'NUL', 'wb+' )
+            self.fstderr = open( 'NUL', 'wb+' )
             cmdstring = self.settings[ "sshclient" ] + " " + self.settings[ "server" ]
             p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
             self.pstdin = p.stdin
@@ -113,9 +113,9 @@ class Uploader:
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         ret = 0
         if self.logfile:
-            fstderr = file( self.logfile + ".tmp", 'wb+' )
+            fstderr = open( self.logfile + ".tmp", 'wb+' )
         else:
-            fstderr = file( 'NUL', 'wb+' )
+            fstderr = open( 'NUL', 'wb+' )
         p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
         self.fstderr = fstderr
         self.pstdin = p.stdin
@@ -128,7 +128,7 @@ class Uploader:
         ret = p.wait()
 
         if self.logfile:
-            log = file( self.logfile, 'ab+' )
+            log = open( self.logfile, 'ab+' )
             fstderr.seek( os.SEEK_SET )
             for line in fstderr:
                 log.write( line )
@@ -165,9 +165,9 @@ class SourceForgeUploader ( Uploader ):
 
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         if self.logfile:
-            self.fstderr = file( self.logfile + ".tmp", 'wb+' )
+            self.fstderr = open( self.logfile + ".tmp", 'wb+' )
         else:
-            self.fstderr = file( 'NUL', 'wb+' )
+            self.fstderr = open( 'NUL', 'wb+' )
 
         self.p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
         self.pstdin = self.p.stdin
@@ -196,7 +196,7 @@ class SourceForgeUploader ( Uploader ):
         self.p.wait()
 
         if self.logfile:
-            log = file( self.logfile, 'ab+' )
+            log = open( self.logfile, 'ab+' )
             self.fstderr.seek( os.SEEK_SET )
             for line in self.fstderr:
                 log.write( line )
