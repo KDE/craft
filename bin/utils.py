@@ -475,7 +475,7 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
                             tar.extract(target, emerge_tmp )
                             shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
                         else:
-                            warning("link target %s for %s not included in tarfile" % ( target , tarMember.name ))
+                            warning("link target %s for %s not included in tarfile" % ( target , tarMember.name))
                     else:
                         tar.extract(tarMember, destdir )
                 except tarfile.TarError:
@@ -1411,11 +1411,13 @@ def stopAllTimer():
 _SUBST = None
 def deSubstPath(path):
     """desubstitude emerge short path"""
+    if not envAsBool("EMERGE_USE_SHORT_PATH"):
+        return path
     global _SUBST # pylint: disable=W0603
     drive , tail = os.path.splitdrive(path)
     drive = drive.upper()
     if _SUBST == None:
-        tmp = str(subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0],"windows-1252      ").split("\r\n")
+        tmp = str(subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0],"windows-1252").split("\r\n")
         _SUBST = dict()
         for s in tmp:
             if s != "":
