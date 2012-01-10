@@ -72,7 +72,7 @@ class Uploader:
             return
 
     def ftpExecute( self, cmd ):
-        self.fstderr.write( (cmd + "\r\n").encode("windows-1252"))
+        self.fstderr.write( cmd + "\r\n" )
         self.fstderr.flush()
         self.pstdin.write( (cmd + "\r\n").encode("windows-1252") )
         self.pstdin.write( ("\r\n").encode("windows-1252") )
