@@ -42,7 +42,7 @@ class Settings:
 
     def getOption( self, section, option, additionalvars=None ):
         if self.enabled and self.sections[ section ]:
-            return self.parser.get( section, option, False, additionalvars )
+            return self.parser.get( section, option, raw=False, vars=additionalvars )
         else:
             return False
 
