@@ -1,14 +1,12 @@
-
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kletters|%s|' % ver
-            
-        self.svnTargets['gitHEAD'] = '[git]kde:kletters'
+        self.svnTargets['gitHEAD'] = '[git]kde:klettres|KDE/4.8|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/klettres-4.8." + ver + ".tar.bz2"
+            self.targetInstSrc['4.8.' + ver] = 'klettres-4.8.' + ver
+        self.shortDescription = 'learn the alphabet'
         self.defaultTarget = 'gitHEAD'
 
 

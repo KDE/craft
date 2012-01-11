@@ -1,15 +1,13 @@
-
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-       for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:blinken|%s|' % ver
-            
-       self.svnTargets['gitHEAD'] = '[git]kde:blinken'
-       self.defaultTarget = 'gitHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:blinken|KDE/4.8|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/blinken-4.8." + ver + ".tar.bz2"
+            self.targetInstSrc['4.8.' + ver] = 'blinken-4.8.' + ver
+        self.shortDescription = 'a memory enhancement game'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
