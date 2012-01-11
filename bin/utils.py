@@ -749,12 +749,20 @@ def unmergeFileList(rootdir, fileList, forced=False):
             currentHash = digestFile(fullPath)
             if currentHash == filehash or filehash == "":
                 debug( "deleting file %s" % fullPath)
-                os.remove(fullPath)
+                try:
+                    os.remove(fullPath)
+                except OSError:
+                    system( "cmd /C \"attrib -R %s\"" % fullPath )
+                    os.remove(fullPath)
             else:
                 if forced:
                     warning( "file %s has different hash: %s %s, deleting anyway" % \
                             (fullPath, currentHash, filehash ) )
-                    os.remove(fullPath)
+                    try:
+                        os.remove(fullPath)
+                    except OSError:
+                        system( "cmd /C \"attrib -R %s\"" % fullPath )
+                        os.remove(fullPath)
                 else:
                     warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
                             (fullPath, currentHash, filehash ) )
@@ -927,12 +935,21 @@ def cleanDirectory( directory ):
                 try:
                     os.remove( os.path.join(root, name) )
                 except OSError:
-                    die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join( root, name ) ) )
+                    system( "cmd /C \"attrib -R %s\"" % os.path.join(root, name) )
+                    try:
+                        os.remove( os.path.join(root, name) )
+                    except OSError:
+                        die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join(root, name) ) )
+
             for name in dirs:
                 try:
                     os.rmdir( os.path.join(root, name) )
                 except OSError:
-                    die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
+                    system( "cmd /C \"attrib -R %s\"" % os.path.join(root, name) )
+                    try:
+                        os.rmdir( os.path.join(root, name) )
+                    except OSError:
+                        die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join(root, name) ) )
     else:
         os.makedirs( directory )
 
@@ -1138,7 +1155,11 @@ def copyDir( srcdir, destdir ):
             if ( not os.path.exists( tmpdir ) ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                shutil.copy( os.path.join( root, fileName ), tmpdir )
+                try:
+                    shutil.copy( os.path.join( root, fileName ), tmpdir )
+                except OSError:
+                    system("cmd /C \"attrib -R %s\"" % os.path.join(tmpdir, fileName) )
+                    shutil.copy( os.path.join( root, fileName ), tmpdir )
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
 
 def moveDir( srcdir, destdir ):
