@@ -42,7 +42,6 @@ ldapwhoami\.exe
 QtDesignerComponents4\.dll
 onto2vocabularyclass\.exe
 makekdewidgets\.exe
-meinproc4\.exe
 moc\.exe
 linguist\.exe
 lrelease\.exe
