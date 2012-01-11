@@ -1,0 +1,32 @@
+From 3dc8fca1674503e0c9ade15af34a29f1974512c6 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Wed, 11 Jan 2012 10:49:13 +0000
+Subject: [PATCH] Autoallow access for every application.
+
+	As i do not see any security gain by "asking the user if an
+	application may have access to kwallet" and then writing
+	this into a plain text file i am disabling this for my packages.
+
+	This will fix a world of hurt and support problems caused by
+	accidental denying the access, not seeing the question as it opened
+	in the background etc. Without compromising security.
+---
+ kwalletd/kwalletd.cpp |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/kwalletd/kwalletd.cpp b/kwalletd/kwalletd.cpp
+index a833b3c..322e163 100644
+--- a/kwalletd/kwalletd.cpp
++++ b/kwalletd/kwalletd.cpp
+@@ -1413,7 +1413,7 @@ bool KWalletD::keyDoesNotExist(const QString& wallet, const QString& folder, con
+ 
+ 
+ bool KWalletD::implicitAllow(const QString& wallet, const QString& app) {
+-	return _implicitAllowMap[wallet].contains(app);
++	return true;
+ }
+ 
+ 
+-- 
+1.7.5.4
+
