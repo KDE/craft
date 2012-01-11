@@ -31,7 +31,7 @@ win32libs-sources,libssh-src,,1
 win32libs-sources,exiv2-src,,2
 win32libs-sources,boost-headers-src,,
 win32libs-sources,boost-bjam-src,,
-win32libs-sources,boost-python-src,,
+win32libs-sources,boost-python-src,,1
 win32libs-sources,boost-program-options-src,,
 win32libs-sources,boost-thread-src,,
 win32libs-sources,boost-system-src,,
