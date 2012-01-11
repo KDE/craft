@@ -9,6 +9,6 @@ class Snarl(NotificationInterface):
         self.snp = PySNP()
         
     def notify(self,title,message):     
-        self.snp.register("emerge", "emerge")
-        self.snp.notify("emerge", title, message ,icon="http://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/KDE_logo.svg/100px-KDE_logo.svg.png")
+        self.snp.register("emerge", "emerge",icon="http://winkde.org/~pvonreth/other/kde-logo.png")
+        self.snp.notify("emerge", title, message ,icon="http://winkde.org/~pvonreth/other/kde-logo.png")
         
