@@ -536,7 +536,9 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
         mainCategory, mainPackage, mainVersion = None, None, None
 
     if not handlePackage( mainCategory, mainPackage, mainVersion, mainBuildAction, mainOpts ):
+        utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion))
         exit(1)
+    utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion))
 
 else:
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
@@ -595,7 +597,9 @@ else:
                 if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         ( mainCategory, mainPackage, mainVersion, mainBuildAction ) )
+                    utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion))
                     exit( 1 )
+                utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion))
 
 utils.new_line()
 if len( nextArguments ) > 0:

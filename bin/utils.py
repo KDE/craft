@@ -26,6 +26,9 @@ import inspect
 import types
 import datetime
 from operator import itemgetter
+import Notifier.NotificationLoader
+
+
 
 if os.name == 'nt':
     import msvcrt # pylint: disable=F0401
@@ -1428,4 +1431,16 @@ def deSubstPath(path):
         debug("desubstituded %s to %s" % (path , deSubst) , 1)
         return deSubst
     return path
+
+def notify(title,message):
+    backends = os.getenv("EMERGE_USE_NOTIFY")
+    if not backends:
+        return
+    backends = Notifier.NotificationLoader.load(backends.split(";"))
+    for backend in backends.values():
+        backend.notify(title,message)
+
+    
+
+
 
