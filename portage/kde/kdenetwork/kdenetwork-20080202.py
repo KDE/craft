@@ -1,9 +1,11 @@
-import compiler
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdenetwork'
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.8/kdenetwork'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.8.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.' + ver + '/src/kdenetwork-4.8.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.8.' + ver] = 'kdenetwork-4.8.' + ver
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
@@ -13,6 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libidn'] = 'default'
         self.dependencies['win32libs-bin/libmsn'] = 'default'
         self.dependencies['win32libs-bin/mpir'] = 'default'
+        self.shortDescription = "KDE Networking applications (Kopete, KGet)"
 
 from Package.CMakePackageBase import *
 
@@ -20,7 +23,6 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()
