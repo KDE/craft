@@ -30,12 +30,14 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.4.0'] = 'dbus-1.4.0'
         self.targetConfigurePath['1.4.0'] = 'cmake'
 
-        self.targets['1.4.1'] = 'http://dbus.freedesktop.org/releases/dbus/dbus-1.4.1.tar.gz'
+        for ver in ['1.4.1','1.4.16']:
+            self.targets[ver] = 'http://dbus.freedesktop.org/releases/dbus/dbus-%s.tar.gz' % ver
+            self.targetInstSrc[ver] = 'dbus-%s' % ver
+            self.targetConfigurePath[ver] = 'cmake'
         self.targetDigests['1.4.1'] = '112279ff58305027294fe0eb5bee600f68cf0b50'
-        self.targetInstSrc['1.4.1'] = 'dbus-1.4.1'
-        self.targetConfigurePath['1.4.1'] = 'cmake'
+       
 
-        for ver in ['1.4.6', '1.4.8', '1.4.10', '1.4.12', '1.4.14','1.4.16']:
+        for ver in ['1.4.6', '1.4.8', '1.4.10', '1.4.12', '1.4.14']:
             self.svnTargets[ver] = 'git://anongit.freedesktop.org/git/dbus/dbus||dbus-' + ver
             self.targetSrcSuffix[ver] = 'git'
             self.targetConfigurePath[ver] = 'cmake'
