@@ -1,14 +1,12 @@
-
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kiten|%s|' % ver
-            
-        self.svnTargets['gitHEAD'] = '[git]kde:kiten'
+        self.svnTargets['gitHEAD'] = '[git]kde:kiten|KDE/4.8|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kiten-4.8." + ver + ".tar.bz2"
+            self.targetInstSrc['4.8.' + ver] = 'kiten-4.8.' + ver
+        self.shortDescription = 'a Japanese reference/study tool'
         self.defaultTarget = 'gitHEAD'
 
 
