@@ -11,11 +11,10 @@ _VLC_VER = None
 class subinfo(info.infoclass):
   def setTargets( self ):
     self.vlcArch = "32"
-    self.vlcTagName = '1.2.0-rc1-'
     if( emergePlatform.buildArchitecture() == 'x64' ):
-        self.vlcArch = "64"
-        self.vlcTagName = '1.3.0-git-%s' % self.getVer()
+        self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
+    self.vlcTagName = '1.3.0-git-%s' % self.getVer()
     
 
     self.targets[ self.vlcTagName ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + "-win" + self.vlcArch + ".7z"
