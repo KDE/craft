@@ -5,7 +5,6 @@ from email.mime.text import MIMEText
 import common
 import smtplib
 import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
 import json
 
 class Notification:

@@ -311,8 +311,8 @@ if "localbotnotificationport" in general:
     try:
         s = socket.socket()
         s.connect( ( socket.gethostname(), port ) )
-        s.send( "BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] ) );
-        s.send( "QUIT\r\n" )
+        s.send( str("BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] ),"UTF-8") );
+        s.send( str("QUIT\r\n" ,"UTF-8"))
         s.close()
         print("send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port ))
     except socket.error:
