@@ -1,15 +1,18 @@
 import os
-import sys
 import info
 
-# deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kactivities'
+        self.svnTargets['gitHEAD'] = '[git]kde:kactivities|KDE/4.8|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.8.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.' + ver + '/src/kactivities-4.8.' + ver + '.tar.bz2'
+            self.targetInstSrc['4.8.' + ver] = 'kde-baseapps-4.8.' + ver
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.shortDescription = "KDE Activity Manager"
 
 from Package.CMakePackageBase import *
 
