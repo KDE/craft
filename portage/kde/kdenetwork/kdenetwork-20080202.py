@@ -2,10 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.8/kdenetwork'
-        for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.' + ver + '/src/kdenetwork-4.8.' + ver + '.tar.bz2'
-            self.targetInstSrc['4.8.' + ver] = 'kdenetwork-4.8.' + ver
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdenetwork'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

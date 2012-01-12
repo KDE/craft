@@ -3,10 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kactivities|KDE/4.8|'
-        for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.' + ver + '/src/kactivities-4.8.' + ver + '.tar.bz2'
-            self.targetInstSrc['4.8.' + ver] = 'kde-baseapps-4.8.' + ver
+        self.svnTargets['gitHEAD'] = '[git]kde:kactivities'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

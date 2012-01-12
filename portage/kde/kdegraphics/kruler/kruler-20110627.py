@@ -2,10 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kruler|KDE/4.8|'
-        for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kruler-4.8." + ver + ".tar.bz2"
-            self.targetInstSrc['4.8.' + ver] = 'kruler-4.8.' + ver
+        self.svnTargets['gitHEAD'] = '[git]kde:kruler'
         self.shortDescription = "A pixel measuring tool for KDE"
         self.defaultTarget = 'gitHEAD'
 
