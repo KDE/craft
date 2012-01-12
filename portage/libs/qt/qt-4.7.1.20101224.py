@@ -35,6 +35,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.7.0'] = "[git]kde:qt-kde|4.7.0-patched|"
         self.svnTargets['4.7.1'] = "[git]kde:qt-kde|4.7.1-patched|"
         self.svnTargets['4.7.4'] = "[git]kde:qt|4.7-stable|v4.7.4"
+        self.svnTargets['4.8.0'] = "[git]kde:qt|4.7-stable|v4.8.0"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.svnTargets['wince'] = "git://gitorious.org/qt/qt.git|4.7|235d1d687dcc2d21860cd753c9d67964c5270be2"
         self.svnTargets['wince-4.7'] = self.svnTargets["4.7"]
@@ -42,12 +43,18 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['wince-4.7'] = "4.7"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.targetSrcSuffix['4.7.4'] = "4.7.4"
+        self.targetSrcSuffix['4.8.0'] = "4.8.0"
         self.patchToApply['4.6.3'] = ('patches/4.6.3/fixed_export_macro_for_QtDbus.patch', 1)
         self.patchToApply['4.7'] = [
             ('patches/4.7/out-of-source-build.patch', 1),
             ('patches/4.7/webkit-fixes.patch', 1) ]
         self.patchToApply['4.7.1'] = [('patches/4.7.1/buildfix-for-mingw64.patch', 1)]
         self.patchToApply['4.7.4'] = [
+            ('patches/4.7/out-of-source-build.patch', 1), 
+            ('patches/4.7/add-pdbs-on-msvc.diff', 1) , 
+            ("patches/4.7/detect-windows-8-as-windows-7.patch",1),
+            ("patches/4.7.4/0001-fixed-error-generating-wrong-introspection-string-in.patch",1)
+        self.patchToApply['4.8.0'] = [
             ('patches/4.7/out-of-source-build.patch', 1), 
             ('patches/4.7/add-pdbs-on-msvc.diff', 1) , 
             ("patches/4.7/detect-windows-8-as-windows-7.patch",1),
