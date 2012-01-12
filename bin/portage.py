@@ -24,7 +24,7 @@ def __import__( module ): # pylint: disable=W0622
         try:
             return builtins.__import__( module )
         except ImportError as e:
-            utils.warning( 'import failed for module %s: %s' % (module, e.message) )
+            utils.warning( 'import failed for module %s: %s' % (module, str(e)) )
             return None
     else:
         sys.path.append( os.path.dirname( module ) )
