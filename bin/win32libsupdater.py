@@ -149,7 +149,7 @@ for packageKey in addInfo:
                         continue
 
                 f = open( newName, 'w+b' )
-                f.write( result )
+                f.write( bytes( result, "UTF-8") )
                 f.close()
             else:
                 utils.debug("renaming/updating file %s" % gitNewName )
