@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision svn1204666
+# based on revision git300e71be83450407a947422dca7250fbfcbbea49
 
 from Package.BinaryPackageBase import *
 import os
@@ -11,17 +11,18 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '2.0.1', '400' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'assuan2', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'assuan2', version , '.tar.bz2.sha1' )
+        for version in [ '1.47.0', '1.44.0', '1.48.0-1' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'boost-python', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'boost-python', version, '.tar.bz2.sha1' )
 
-        self.defaultTarget = '400'
+        self.shortDescription = '''portable C++ libraries'''
+
+        self.defaultTarget = '1.48.0-1'
 
 
     def setDependencies( self ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
-            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/gpg-error' ] = 'default'
+            self.buildDependencies[ 'virtual/bin-base' ] = 'default'
 
 
     def setBuildOptions( self ):
