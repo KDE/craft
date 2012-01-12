@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision git886de0cc9b787069382ac2e9c21bfdd0f31d215d
+# based on revision git300e71be83450407a947422dca7250fbfcbbea49
 
 from Package.BinaryPackageBase import *
 import os
@@ -11,17 +11,19 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '1.47.0' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'boost-bjam', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'boost-bjam', version, '.tar.bz2.sha1' )
+        for version in [ '2.0.1', '400', '2.0.3' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'assuan2', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'assuan2', version, '.tar.bz2.sha1' )
 
-        self.defaultTarget = '1.47.0'
+        self.shortDescription = '''an IPC library used by some of the other GnuPG related packages'''
+
+        self.defaultTarget = '2.0.3'
 
 
     def setDependencies( self ):
-        self.dependencies['win32libs-bin/boost-headers'] = 'default'
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
-            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+            self.buildDependencies[ 'virtual/bin-base' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/gpg-error' ] = 'default'
 
 
     def setBuildOptions( self ):
