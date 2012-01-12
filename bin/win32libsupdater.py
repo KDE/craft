@@ -27,7 +27,7 @@ def getSvnVersion( path ):
 
 def getGitVersion( path ):
     gitinfo = subprocess.Popen( ['git', 'log', '-n 1', '--format=format:%H'], shell=True, stdout=subprocess.PIPE ).communicate()[0]
-    return "git" + gitinfo
+    return "git" + str(gitinfo, "UTF-8")
 
 def svnRename( currentName, newName ):
     cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
@@ -65,7 +65,7 @@ if len( sys.argv ) < 2 or not os.path.isfile( sys.argv[ 1 ] ):
 
 
 # parse the package file
-packagefile = file( sys.argv[ 1 ] )
+packagefile = open( sys.argv[ 1 ] )
 addInfo = dict()
 for line in packagefile:
     if not line.startswith( '#' ):
@@ -122,7 +122,7 @@ for packageKey in addInfo:
 
 
         if regenerateFile:
-            template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
+            template = Template( open( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = list(binTargets.keys())
             if 'svnHEAD' in binTargets and binTargets[ 'svnHEAD' ] == False:
                 targetkeys.remove( 'svnHEAD' )
@@ -148,7 +148,7 @@ for packageKey in addInfo:
                         utils.warning( 'failed to rename file %s' % os.path.basename( gitCurrentName ) )
                         continue
 
-                f = file( newName, 'w+b' )
+                f = open( newName, 'w+b' )
                 f.write( result )
                 f.close()
             else:
@@ -188,7 +188,7 @@ for packageKey in addInfo:
 
 
         if regenerateFile:
-            template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
+            template = Template( open( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = [ buildTarget ]
             targetsString = "'" + "', '".join( targetkeys ) + "'"
             result = template.safe_substitute( { 'revision': getGitVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
@@ -211,7 +211,7 @@ for packageKey in addInfo:
                         continue
 
 
-                f = file( newName, 'w+b' )
+                f = open( newName, 'w+b' )
                 f.write( result )
                 f.close()
 
