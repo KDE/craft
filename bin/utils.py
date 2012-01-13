@@ -1165,12 +1165,12 @@ def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     if os.path.islink(src):
         src = resolveLink(src)
     if linkOnly:
+        if (os.path.exists(dest) or os.path.islink(dest)):#if link is invailid os.path.exists will return false
+            warning("overiding existing link or file %s with %s" % (dest,src))
+            os.remove(dest)
         if src.endswith(".exe") or src.endswith("qt.conf"):
             os.link( src , dest )
         else:
-            if (os.path.exists(dest) or os.path.islink(dest)):#if link is invailid os.path.exists will return false
-                warning("overiding existing link or file %s with %s" % (dest,src))
-                os.remove(dest)
             os.symlink(deSubstPath(src), dest )
     else:
         shutil.copy(src,dest)
