@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/analitza'] = 'default'
 
 from Package.CMakePackageBase import *
 
