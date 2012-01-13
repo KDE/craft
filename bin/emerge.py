@@ -536,9 +536,9 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
         mainCategory, mainPackage, mainVersion = None, None, None
 
     if not handlePackage( mainCategory, mainPackage, mainVersion, mainBuildAction, mainOpts ):
-        utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion))
+        utils.notify("Emerge %s failed" % mainBuildAction, "%s of %s/%s-%s failed" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
         exit(1)
-    utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion))
+    utils.notify("Emerge %s finished"% mainBuildAction, "%s of %s/%s-%s finished" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
 
 else:
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
@@ -597,9 +597,9 @@ else:
                 if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         ( mainCategory, mainPackage, mainVersion, mainBuildAction ) )
-                    utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion))
+                    utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),mainAction)
                     exit( 1 )
-                utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion))
+                utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),mainAction)
 
 utils.new_line()
 if len( nextArguments ) > 0:
