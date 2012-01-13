@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ '1.47.0', '1.48.0' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'boost-headers', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'boost-headers', version, '.tar.bz2.sha1' )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'boost-headers', version, packagetypes=['lib'] )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'boost-headers', version, '.tar.bz2.sha1', packagetypes=['lib'] )
 
         self.shortDescription = '''portable C++ libraries'''
 
