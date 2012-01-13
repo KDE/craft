@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/svgpart'] = 'default'
         self.dependencies['kde/ksaneplugin'] = 'default' 
         self.dependencies['kde/kdegraphics-thumbnailers'] = 'default'         
-        self.dependencies['kde/mobipocket'] = 'default'         
+        self.dependencies['kde/kdegraphics-mobipocket'] = 'default'         
         self.dependencies['kde/kdegraphics-strigi-analyzer'] = 'default' 
         self.dependencies['kde/kcolorchooser'] = 'default' 
                        
