@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:gwenview'
+        self.svnTargets['gitHEAD'] = '[git]kde:ksecrets'
         self.shortDescription = "secrets management infrastructure for KDE"
         self.defaultTarget = 'gitHEAD'
 
