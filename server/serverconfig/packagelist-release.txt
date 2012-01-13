@@ -70,7 +70,7 @@ kde,libkdcraw,,
 kde,libkexiv2,,
 kde,libkipi,,
 kde,libksane,,
-kde,mobipocket,,
+kde,kdegraphics-mobipocket,,
 kde,okular,,
 kde,svgpart,,
 #kdeutils
