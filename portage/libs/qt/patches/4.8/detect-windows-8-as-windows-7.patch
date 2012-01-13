@@ -1,0 +1,25 @@
+From 0a33b4e1206e53f96856de8a5229cf81470e0498 Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <patrick.vonreth@gmail.com>
+Date: Sun, 25 Sep 2011 16:37:41 +0200
+Subject: [PATCH] detect windows 8 as windows 7
+
+---
+ src/corelib/global/qglobal.cpp |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/src/corelib/global/qglobal.cpp b/src/corelib/global/qglobal.cpp
+index 283cb02..6b5873b 100644
+--- a/src/corelib/global/qglobal.cpp
++++ b/src/corelib/global/qglobal.cpp
+@@ -1775,6 +1775,8 @@ QSysInfo::WinVersion QSysInfo::windowsVersion()
+             winver = QSysInfo::WV_VISTA;
+         } else if (osver.dwMajorVersion == 6 && osver.dwMinorVersion == 1) {
+             winver = QSysInfo::WV_WINDOWS7;
++        } else if (osver.dwMajorVersion == 6 && osver.dwMinorVersion == 2) {
++            winver = QSysInfo::WV_WINDOWS7;
+         } else {
+             qWarning("Qt: Untested Windows version %d.%d detected!",
+                      int(osver.dwMajorVersion), int(osver.dwMinorVersion));
+-- 
+1.7.4.msysgit.0
+
