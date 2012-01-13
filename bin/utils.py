@@ -1432,13 +1432,13 @@ def deSubstPath(path):
         return deSubst
     return path
 
-def notify(title,message):
+def notify(title,message,alertClass = None):
     backends = os.getenv("EMERGE_USE_NOTIFY")
     if not backends:
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))
     for backend in backends.values():
-        backend.notify(title,message)
+        backend.notify(title,message,alertClass)
 
     
 
