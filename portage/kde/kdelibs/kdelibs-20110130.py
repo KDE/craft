@@ -36,7 +36,7 @@ class Package(CMakePackageBase):
         if compiler.isMinGW():
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW %s\" " % compiler.getMinGWVersion()
         elif compiler.isMSVC():
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"%%s\" " % compiler.getVersion()
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"%s\" " % compiler.getVersion()
 
     def install( self ):
         if not CMakePackageBase.install( self ):
