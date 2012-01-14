@@ -1,0 +1,13 @@
+diff -Nru skrooge-1.2.0.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt skrooge-1.2.0/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt
+--- skrooge-1.2.0.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2012-01-09 11:11:55.000000000 +0100
++++ skrooge-1.2.0/plugins/skrooge/skrooge_monthly/grantlee_filters/CMakeLists.txt	2012-01-14 12:25:47.215285700 +0100
+@@ -13,7 +13,7 @@
+ 
+ ########### install files ###############
+ IF(WIN32)
+-  INSTALL(TARGETS grantlee_skroogefilters ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
++  INSTALL(TARGETS grantlee_skroogefilters DESTINATION ${LIB_INSTALL_DIR}/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
+ ELSE(WIN32)
+   INSTALL(TARGETS grantlee_skroogefilters LIBRARY DESTINATION ${LIB_INSTALL_DIR}/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
+ ENDIF(WIN32)
+\ Kein Zeilenumbruch am Dateiende.
