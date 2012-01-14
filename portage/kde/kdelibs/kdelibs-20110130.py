@@ -33,16 +33,10 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
-        if self.compiler() == "mingw":
-          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 3.4.5\" "
-        elif self.compiler() == "mingw4":
-          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW 4.4.0\" "
-        elif self.compiler() == "msvc2005":
-          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2005 SP1\" "
-        elif self.compiler() == "msvc2008":
-          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2008 SP1\" "
-        elif self.compiler() == "msvc2010":
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"MS Visual Studio 2010\" "
+        if compiler.isMinGW():
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW %s\" " % compiler.getMinGWVersion()
+        elif compiler.isMSVC():
+          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"%%s\" " % compiler.getVersion()
 
     def install( self ):
         if not CMakePackageBase.install( self ):
