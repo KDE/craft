@@ -93,7 +93,7 @@ def getMinGWVersion():
     global MINGW_VERSION # pylint: disable=W0603
     if not MINGW_VERSION:
         try:
-            result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
+            result = str(subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
             result = result.split()[2]
             utils.debug("GCC Version:%s" % result, 1 )
             MINGW_VERSION = result.strip()
