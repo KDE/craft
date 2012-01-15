@@ -6,8 +6,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/kmid'
         for ver in ['2.3.0', '2.3.1', '2.4.0']:
-          self.targets[ver] = 'http://downloads.sourceforge.net/kmid2/kmid-' + ver + '.tar.bz2'
-          self.targetInstSrc[ver] = 'kmid-' + ver
+            self.targets[ver] = 'http://downloads.sourceforge.net/kmid2/kmid-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = 'kmid-' + ver
+        self.targetDigests['2.4.0'] = '3841b8d38b284676ae5bb44071d2cee301f17c88'
+        self.patchToApply['2.4.0'] = [('kmid-2.4.0-20110822.diff', 1)]
         self.shortDescription = "a MIDI/Karaoke player for KDE4"
         self.defaultTarget = 'svnHEAD'
 
