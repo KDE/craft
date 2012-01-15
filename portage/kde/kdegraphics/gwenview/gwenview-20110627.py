@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-baseapps'] = 'default'
+        self.dependencies['kde/kde-baseapps'] = 'default' # libkonq is needed
         self.dependencies['kde/libkipi'] = 'default' 
         self.dependencies['win32libs-bin/exiv2'] = 'default'
         self.dependencies['win32libs-bin/jpeg'] = 'default'
