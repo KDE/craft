@@ -10,9 +10,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kde/kde-baseapps'] = 'default' # libkonq is needed
+        self.dependencies['kdesupport/qjson'] = 'default'
         self.dependencies['win32libs-bin/libzip'] = 'default'
+        self.dependencies['win32libs-bin/libbz2'] = 'default'
+        self.dependencies['win32libs-bin/zlib'] = 'default'
         self.dependencies['win32libs-bin/libarchive'] = 'default'
 
 from Package.CMakePackageBase import *
