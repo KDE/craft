@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = "libalkimia-" + ver
         self.patchToApply['4.3.1'] = ("libalkimia-4.3.1-20110822.diff", 1)
         self.targetDigests['4.3.1'] = 'a8381bf4def252425aca31d0929e31b1aa82d0b5'
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.hardDependencies['win32libs-bin/mpir'] = 'default'
