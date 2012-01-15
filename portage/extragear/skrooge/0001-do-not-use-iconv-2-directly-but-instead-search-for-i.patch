@@ -17,7 +17,7 @@ index 5c29ccf..addd74b 100644
              $ENV{KDEROOT}/lib
      )
 +    
-+    FIND_LIBRARY(ICONV_LIBRARY)
++    FIND_LIBRARY(ICONV_LIBRARY
 +        NAMES iconv iconv-2
 +        PATHS
 +            $ENV{KDEROOT}/lib
