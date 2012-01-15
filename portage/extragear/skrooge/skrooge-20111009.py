@@ -12,7 +12,8 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.0.0'] = [("skrooge-1.0.0-20111009.diff", 1)]
         self.patchToApply['1.1.1'] = [("skrooge-1.1.1-20111208.diff", 1)]
         self.patchToApply['1.2.0'] = [("skrooge-1.2.0-20120114.diff", 1),
-                                      ("0001-do-not-use-iconv-2-directly-but-instead-search-for-i.patch", 1)]
+                                      ("0001-do-not-use-iconv-2-directly-but-instead-search-for-i.patch", 1),
+                                      ("0001-do-not-use-not-as-msvc-won-t-understand-it.patch", 1)]
         self.targetDigests['1.1.1'] = '063af1a04c2406babc59203e0d57912e834e46f1'
         self.targetDigests['1.2.0'] = '1587d493f6064637805e3601bdae08fd5258a633'
         self.shortDescription = "a personal finance manager for KDE"

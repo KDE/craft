@@ -1,0 +1,25 @@
+From 1dbf3a10bbabcdc9bbcbf7188b7df120658fc48d Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Sun, 15 Jan 2012 21:01:17 +0100
+Subject: [PATCH] do not use 'not', as msvc won't understand it
+
+---
+ .../scheduledoperationskroogoid.cpp                |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp b/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp
+index 2308bd0..d40b749 100644
+--- a/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp
++++ b/plugins/applet/scheduledoperation/scheduledoperationskroogoid.cpp
+@@ -103,7 +103,7 @@ void ScheduledOperationSkroogoid::dataUpdated(const QString& sourceName, const P
+ 
+         // Group Scheduled operations per date in a Plasma::Frame
+         Plasma::Frame* frame;
+-        if (not framesHash.contains(date)) {
++        if (!framesHash.contains(date)) {
+             frame = createFrame(date);
+             framesHash.insert(date, frame);
+             widgetLayout->addItem(frame);
+-- 
+1.7.4.msysgit.0
+
