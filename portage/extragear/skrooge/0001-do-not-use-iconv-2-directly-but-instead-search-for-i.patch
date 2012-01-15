@@ -1,0 +1,60 @@
+From ee7dd346631d4a375bd329e5faca8c28ee1938cc Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Sun, 15 Jan 2012 14:40:32 +0100
+Subject: [PATCH] do not use iconv-2 directly but instead search for it
+
+---
+ cmake/modules/FindLibOfx.cmake                   |   12 +++++++++---
+ plugins/import/skrooge_import_ofx/CMakeLists.txt |    4 ----
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/cmake/modules/FindLibOfx.cmake b/cmake/modules/FindLibOfx.cmake
+index 5c29ccf..addd74b 100644
+--- a/cmake/modules/FindLibOfx.cmake
++++ b/cmake/modules/FindLibOfx.cmake
+@@ -67,10 +67,16 @@ IF (WIN32)
+         PATHS
+             $ENV{KDEROOT}/lib
+     )
++    
++    FIND_LIBRARY(ICONV_LIBRARY)
++        NAMES iconv iconv-2
++        PATHS
++            $ENV{KDEROOT}/lib
++    )
+ 
+-    IF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
++    IF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES AND ICONV_LIBRARY)
+         set(OPENSP_FOUND TRUE)
+-    ENDIF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES)
++    ENDIF (OPENSP_INCLUDES AND OPENSP_OPENSP_LIBRARIES AND ICONV_LIBRARY)
+ 
+   IF (OPENSP_FOUND)
+     IF (NOT OPENSP_FIND_QUIETLY)
+@@ -82,7 +88,7 @@ IF (WIN32)
+       MESSAGE(FATAL_ERROR "Could NOT find OPENSP library\nPlease install it first")
+     ENDIF (OPENSP_FIND_REQUIRED)
+   ENDIF (OPENSP_FOUND)
+-  SET(LIBOFX_LIBRARIES ${LIBOFX_LIBRARIES} ${OPENSP_LIBRARIES} $ENV{KDEROOT}/lib/libiconv-2.lib )
++  SET(LIBOFX_LIBRARIES ${LIBOFX_LIBRARIES} ${OPENSP_LIBRARIES} ${ICONV_LIBRARY} )
+ ENDIF (WIN32)
+ 
+ MARK_AS_ADVANCED(LIBOFX_INCLUDE_DIR  LIBOFX_LIBRARIES )
+diff --git a/plugins/import/skrooge_import_ofx/CMakeLists.txt b/plugins/import/skrooge_import_ofx/CMakeLists.txt
+index 05ffdb3..8587fe4 100644
+--- a/plugins/import/skrooge_import_ofx/CMakeLists.txt
++++ b/plugins/import/skrooge_import_ofx/CMakeLists.txt
+@@ -17,10 +17,6 @@ SET(skrooge_import_ofx_SRCS
+ 	skgimportpluginofx.cpp
+ )
+ 
+-IF(MSVC)
+-    TARGET_LINK_LIBRARIES(skgbankmodeler $ENV{KDEROOT}/lib/sp133.lib $ENV{KDEROOT}/lib/libiconv-2.lib)
+-ENDIF(MSVC)
+-
+ kde4_add_plugin(skrooge_import_ofx ${skrooge_import_ofx_SRCS})
+ TARGET_LINK_LIBRARIES(skrooge_import_ofx ${KDE4_KPARTS_LIBS} ${LIBOFX_LIBRARIES} skgbasemodeler skgbasegui skgbankmodeler skgbankgui)
+ 
+-- 
+1.7.4.msysgit.0
+
