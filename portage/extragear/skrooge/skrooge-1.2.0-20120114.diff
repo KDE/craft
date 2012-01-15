@@ -11,3 +11,24 @@ diff -Nru skrooge-1.2.0.orig/plugins/skrooge/skrooge_monthly/grantlee_filters/CM
    INSTALL(TARGETS grantlee_skroogefilters LIBRARY DESTINATION ${LIB_INSTALL_DIR}/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
  ENDIF(WIN32)
 \ Kein Zeilenumbruch am Dateiende.
+diff -Nru skrooge-1.2.0.orig/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp skrooge-1.2.0/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp
+--- skrooge-1.2.0.orig/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp	2012-01-09 11:11:55.000000000 +0100
++++ skrooge-1.2.0/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp	2012-01-15 23:03:16.125369800 +0100
+@@ -62,7 +62,7 @@
+     double max = 0;
+     for (int i = 0 ; i < listData.count() ; i++) {
+         QStringList values = listData.values().at(i);
+-        double amount = abs(SKGServices::stringToDouble(values.at(2)));
++        double amount = qAbs(SKGServices::stringToDouble(values.at(2)));
+         if (amount > max) {
+             max = amount;
+         }
+@@ -106,7 +106,7 @@
+ 
+ 
+         Plasma::Frame* monthFrame;
+-        if (not frames.keys().contains(date)) {
++        if (!frames.keys().contains(date)) {
+             // If the frame does not exist yet for this date we create it
+             // and we store it in the hash
+             monthFrame = new Plasma::Frame();
