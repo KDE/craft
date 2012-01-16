@@ -1,0 +1,23 @@
+diff -Nru mysql-5.5.20.orig/CMakeLists.txt mysql-5.5.20/CMakeLists.txt
+--- mysql-5.5.20.orig/CMakeLists.txt	2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/CMakeLists.txt	2012-01-16 15:37:55.976925200 +0100
+@@ -221,13 +221,13 @@
+ 
+ 
+ # Set commonly used variables
+-IF(WIN32)
+-  SET(DEFAULT_MYSQL_HOME "C:/Program Files/MySQL/MySQL Server ${MYSQL_BASE_VERSION}" )
+-  SET(SHAREDIR share)
+-ELSE()
++# IF(WIN32)
++#   SET(DEFAULT_MYSQL_HOME "C:/Program Files/MySQL/MySQL Server ${MYSQL_BASE_VERSION}" )
++#   SET(SHAREDIR share)
++# ELSE()
+   SET(DEFAULT_MYSQL_HOME ${CMAKE_INSTALL_PREFIX})
+-  SET(SHAREDIR ${DEFAULT_MYSQL_HOME}/${INSTALL_MYSQLSHAREDIR})
+-ENDIF()
++  SET(SHAREDIR share)
++# ENDIF()
+ 
+ SET(DEFAULT_BASEDIR "${DEFAULT_MYSQL_HOME}")
+ IF(INSTALL_MYSQLDATADIR MATCHES "^/.*")
