@@ -7,6 +7,8 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['win32libs-bin/openssl'] = 'default'
+        self.hardDependencies['win32libs-bin/zlib'] = 'default'
         self.buildDependencies["gnuwin32/bison"] = "default"
 
         
@@ -22,8 +24,7 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DWITH_UNIT_TESTS=OFF -DENABLED_PROFILING=OFF"
-        #self.subinfo.options.cmake.openIDE = True
+        self.subinfo.options.configure.defines = "-DWITH_UNIT_TESTS=OFF -DENABLED_PROFILING=OFF -DINSTALL_SQLBENCHDIR= -DINSTALL_MYSQLTESTDIR= -DWITH_ZLIB=system -DWITH_SSL=system"
 
 if __name__ == '__main__':
     Package().execute()
