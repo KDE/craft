@@ -1,7 +1,7 @@
 diff -Nru mysql-5.5.20.orig/cmake/ssl.cmake mysql-5.5.20/cmake/ssl.cmake
 --- mysql-5.5.20.orig/cmake/ssl.cmake	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/cmake/ssl.cmake	2012-01-16 17:27:34.794531200 +0100
-@@ -66,7 +66,7 @@
++++ mysql-5.5.20/cmake/ssl.cmake	2012-01-16 20:04:14.590625000 +0100
+@@ -66,9 +66,10 @@
      # Check for system library
      SET(OPENSSL_FIND_QUIETLY TRUE)
      INCLUDE(FindOpenSSL)
@@ -9,10 +9,13 @@ diff -Nru mysql-5.5.20.orig/cmake/ssl.cmake mysql-5.5.20/cmake/ssl.cmake
 +    FIND_LIBRARY(CRYPTO_LIBRARY NAMES crypto libeay32)
      MARK_AS_ADVANCED(CRYPTO_LIBRARY)
      INCLUDE(CheckSymbolExists)
++    SET(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
      CHECK_SYMBOL_EXISTS(SHA512_DIGEST_LENGTH "openssl/sha.h" 
+                         HAVE_SHA512_DIGEST_LENGTH)
+     IF(OPENSSL_FOUND AND CRYPTO_LIBRARY AND HAVE_SHA512_DIGEST_LENGTH)
 diff -Nru mysql-5.5.20.orig/CMakeLists.txt mysql-5.5.20/CMakeLists.txt
 --- mysql-5.5.20.orig/CMakeLists.txt	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/CMakeLists.txt	2012-01-16 17:06:04.079704400 +0100
++++ mysql-5.5.20/CMakeLists.txt	2012-01-16 18:35:12.661401400 +0100
 @@ -221,13 +221,13 @@
  
  
