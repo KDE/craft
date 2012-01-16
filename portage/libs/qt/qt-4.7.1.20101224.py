@@ -58,7 +58,8 @@ class subinfo(info.infoclass):
         self.patchToApply['4.8.0'] = [
             ('patches/4.7/out-of-source-build.patch', 1), 
             ('patches/4.8/add-pdbs-on-msvc.diff', 1),
-            ("patches/4.8/detect-windows-8-as-windows-7.patch", 1)
+            ('patches/4.8/detect-windows-8-as-windows-7.patch', 1),
+            ('patches/4.8/fixed-win32-detection.patch',1)
         ]
 
         self.shortDescription = "a cross-platform application framework"

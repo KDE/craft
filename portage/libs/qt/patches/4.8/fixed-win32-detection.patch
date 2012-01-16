@@ -1,0 +1,25 @@
+From ea644959dd668ac2baf0e5ad8f7ecb9496cfbc9e Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <patrick.vonreth@gmail.com>
+Date: Mon, 16 Jan 2012 12:04:57 +0100
+Subject: [PATCH] fixed win32 detection
+
+---
+ src/3rdparty/webkit/Source/WebKit.pri |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/3rdparty/webkit/Source/WebKit.pri b/src/3rdparty/webkit/Source/WebKit.pri
+index c469d1a..0e8e9bd 100644
+--- a/src/3rdparty/webkit/Source/WebKit.pri
++++ b/src/3rdparty/webkit/Source/WebKit.pri
+@@ -49,7 +49,7 @@ building-libs {
+             LIBS += -framework $$QTWEBKITLIBNAME
+             QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
+         } else {
+-            build_pass: win32-*|wince* {
++            build_pass: win32|wince* {
+                 !CONFIG(release, debug|release): QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}d
+                 QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}$${QT_MAJOR_VERSION}
+                 win32-g++*: LIBS += -l$$QTWEBKITLIBNAME
+-- 
+1.7.4.msysgit.0
+
