@@ -7,7 +7,7 @@
 #
 #
 # kdesupport stuff
-libs,qt,,
+libs,qt,4.8.0,
 kdesupport,attica,,
 kdesupport,qjson,,
 kdesupport,dbusmenu-qt,,
