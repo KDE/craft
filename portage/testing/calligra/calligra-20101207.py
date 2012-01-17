@@ -6,7 +6,11 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/lcms'] = 'default'
+        self.hardDependencies['win32libs-bin/lcms2'] = 'default'
+        self.hardDependencies['win32libs-bin/libwpd'] = 'default'
+        self.hardDependencies['win32libs-bin/libwpg'] = 'default'
+        self.hardDependencies['win32libs-bin/openjpeg'] = 'default'
+        self.hardDependencies['win32libs-bin/libfftw'] = 'default'
         self.hardDependencies['virtual/kdepimlibs'] = 'default'
         self.hardDependencies['virtual/kde-runtime'] = 'default'
         self.hardDependencies['kdesupport/eigen2'] = 'default'
