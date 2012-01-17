@@ -1,3 +1,15 @@
+diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/client/mysqlslap.c mysql-5.5.20/client/mysqlslap.c
+--- mysql-5.5.20.orig/client/mysqlslap.c	2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/client/mysqlslap.c	2012-01-17 15:53:50.506978000 +0100
+@@ -279,7 +279,7 @@
+     return s + us;
+ }
+ 
+-#ifdef __WIN__
++#ifdef _MSC_VER
+ static int gettimeofday(struct timeval *tp, void *tzp)
+ {
+   unsigned int ticks;
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/libutils.cmake mysql-5.5.20/cmake/libutils.cmake
 --- mysql-5.5.20.orig/cmake/libutils.cmake	2011-12-16 20:52:07.000000000 +0100
 +++ mysql-5.5.20/cmake/libutils.cmake	2012-01-17 15:41:04.233345400 +0100
@@ -81,7 +93,7 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/CMakeLists
  IF(INSTALL_MYSQLDATADIR MATCHES "^/.*")
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/config.h.cmake mysql-5.5.20/config.h.cmake
 --- mysql-5.5.20.orig/config.h.cmake	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/config.h.cmake	2012-01-17 15:37:20.053273400 +0100
++++ mysql-5.5.20/config.h.cmake	2012-01-17 15:49:02.385378000 +0100
 @@ -621,4 +621,21 @@
  #cmakedefine SIZEOF_TIME_T @SIZEOF_TIME_T@
  #cmakedefine TIME_T_UNSIGNED @TIME_T_UNSIGNED@
@@ -99,28 +111,29 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/config.h.c
 +#define __try
 +#define __except(x) if(0)
 + __declspec(dllimport) char * strtok_s(char *_Str,const char *_Delim,char **_Context);
-+typedef PVOID RTL_SRWLOCK;
++typedef void* RTL_SRWLOCK;
 +typedef RTL_SRWLOCK SRWLOCK, *PSRWLOCK;
 +#endif
 +
  #endif
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/include/my_pthread.h mysql-5.5.20/include/my_pthread.h
 --- mysql-5.5.20.orig/include/my_pthread.h	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/include/my_pthread.h	2012-01-17 15:37:43.349996400 +0100
-@@ -53,6 +53,12 @@
++++ mysql-5.5.20/include/my_pthread.h	2012-01-17 15:49:51.139578000 +0100
+@@ -53,6 +53,13 @@
    We use native conditions on Vista and later, and fallback to own 
    implementation on earlier OS version.
  */
-+    enum 
-+    {
-+      SIGNAL= 0,
-+      BROADCAST= 1,
-+      MAX_EVENTS= 2
-+    } EVENTS;
++typedef enum 
++{
++    SIGNAL= 0,
++    BROADCAST= 1,
++    MAX_EVENTS= 2
++} EVENTS;
++    
  typedef union
  {
    /* Native condition (used on Vista and later) */
-@@ -63,12 +69,6 @@
+@@ -63,12 +70,6 @@
    { 
      uint32 waiting;
      CRITICAL_SECTION lock_waiting;
@@ -133,7 +146,7 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/include/my
      HANDLE events[MAX_EVENTS];
      HANDLE broadcast_block_event;
    };
-@@ -99,11 +99,14 @@
+@@ -99,11 +100,14 @@
    FILETIME ft;
    __int64 i64;
   };
