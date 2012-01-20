@@ -6,7 +6,6 @@ class subinfo( info.infoclass ):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/libksane-4.8." + ver + ".tar.bz2"
             self.targetInstSrc['4.8.' + ver] = 'libksane-4.8.' + ver
-        self.patchToApply['4.8.0'] = ("libksane-4.8.0-20110819.diff", 1)
         self.shortDescription = "libksane is an image scanning library that provides a QWidget that contains all the logic needed to interface a sacanner."
         self.defaultTarget = 'gitHEAD'
 
