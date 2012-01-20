@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git://speech2text.git.sourceforge.net/gitroot/speech2text/speech2text'
+      self.svnTargets['gitHEAD'] = 'git:simon'
       self.defaultTarget = 'gitHEAD'
       
     def setDependencies( self ):
