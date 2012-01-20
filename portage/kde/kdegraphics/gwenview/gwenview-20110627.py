@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/gwenview-4.8." + ver + ".tar.bz2"
             self.targetInstSrc['4.8.' + ver] = 'gwenview-4.8.' + ver
-	self.patchToApply['4.8.0'] = [("replace-usage-of-unportable-mkdtemp-with-KTempDir-update.patch", 1)]
+        self.patchToApply['4.8.0'] = [("replace-usage-of-unportable-mkdtemp-with-KTempDir-update.patch", 1)]
         self.shortDescription = "Image viewer for KDE"
         self.defaultTarget = 'gitHEAD'
 
