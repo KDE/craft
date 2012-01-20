@@ -452,9 +452,9 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
     mode = "r"
     if ( ext == ".gz" ):
         mode = "r:gz"
-    elif(ext == ".bz2"):
-        mode = "r:bz2"
-    elif(ext == ".lzma" or ext == ".xz" ):
+    #elif(ext == ".bz2"):
+        #mode = "r:bz2"
+    elif(ext == ".lzma" or ext == ".xz" or ext == ".bz2"):
         un7zip( fileName, emerge_tmp )
         _, tarname = os.path.split( shortname )
         fileName = os.path.join( emerge_tmp , tarname )
