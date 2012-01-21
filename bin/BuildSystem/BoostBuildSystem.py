@@ -21,7 +21,8 @@ class BoostBuildSystem(BuildSystemBase):
         options += (" --build-type=minimal"
 #                " --debug-configuration"
                 " --build-dir=" + self.buildDir() + \
-                " threading=multi")
+                " threading=multi"
+                " -j"+ os.getenv("NUMBER_OF_PROCESSORS"))
                 
         if not utils.varAsBool(self.subinfo.options.buildStatic):
             options += (" link=shared"
