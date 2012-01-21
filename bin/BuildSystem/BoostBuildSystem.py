@@ -23,7 +23,8 @@ class BoostBuildSystem(BuildSystemBase):
                 " --build-dir=" + self.buildDir() + \
                 " threading=multi"
                 " link=shared"
-                " runtime-link=shared")
+                " runtime-link=shared"
+                " -j"+ os.getenv("NUMBER_OF_PROCESSORS"))
 
         options += " variant="
         if self.buildType() == "Debug":
