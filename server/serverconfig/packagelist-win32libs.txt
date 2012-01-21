@@ -35,6 +35,8 @@ win32libs-sources,boost-python-src,,1
 win32libs-sources,boost-program-options-src,,
 win32libs-sources,boost-thread-src,,
 win32libs-sources,boost-system-src,,
+win32libs-sources,boost-regex-src,,
+win32libs-sources,boost-graph-src,,
 win32libs-sources,chm-src,,
 win32libs-sources,djvu-src,,
 win32libs-sources,libzip-src,,
