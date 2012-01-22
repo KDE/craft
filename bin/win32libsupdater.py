@@ -212,7 +212,7 @@ for packageKey in addInfo:
 
 
                 f = open( newName, 'w+b' )
-                f.write( result )
+                f.write( result.encode("UTF-8") )
                 f.close()
 
 
