@@ -1,0 +1,15 @@
+Index: libface/CMakeLists.txt
+===================================================================
+--- libface/CMakeLists.txt	(revision 308)
++++ libface/CMakeLists.txt	(working copy)
+@@ -165,8 +165,8 @@
+         DESTINATION ${CMAKE_ROOT}/Modules)
+ 
+ 
+-ENABLE_TESTING()
+-ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/test)
++#ENABLE_TESTING()
++#ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/test)
+ 
+ #---------------------------------------------------------------------------------------------
+ 
