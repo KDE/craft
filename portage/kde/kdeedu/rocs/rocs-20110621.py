@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['win32libs-bin/boost-graph'] = 'default'
 
 from Package.CMakePackageBase import *
 
