@@ -16,9 +16,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/autotools'] = 'default'
-        self.buildDependencies['dev-util/yasm'] = 'default'
-        self.buildDependencies['win32libs-bin/libvorbis'] = 'default'
+        if compiler.isMinGW():
+            self.buildDependencies['dev-util/autotools'] = 'default'
+            self.buildDependencies['dev-util/yasm'] = 'default'
+        self.dependencies['win32libs-bin/libvorbis'] = 'default'
         #self.buildDependencies['testing/lame-src'] = 'default'
 
 
