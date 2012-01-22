@@ -1,6 +1,6 @@
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/client/mysqlslap.c mysql-5.5.20/client/mysqlslap.c
---- mysql-5.5.20.orig/client/mysqlslap.c	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/client/mysqlslap.c	2012-01-17 15:53:50.506978000 +0100
+--- mysql-5.5.20.orig/client/mysqlslap.c        2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/client/mysqlslap.c     2012-01-22 16:50:14.217000000 +0100
 @@ -279,7 +279,7 @@
      return s + us;
  }
@@ -10,9 +10,193 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/client/mys
  static int gettimeofday(struct timeval *tp, void *tzp)
  {
    unsigned int ticks;
+diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/FindLibraryWithDebug.cmake mysql-5.5.20/cmake/FindLibraryWithDebug.cmake
+--- mysql-5.5.20.orig/cmake/FindLibraryWithDebug.cmake  1970-01-01 01:00:00.000000000 +0100
++++ mysql-5.5.20/cmake/FindLibraryWithDebug.cmake       2012-01-20 09:22:34.852969800 +0100
+@@ -0,0 +1,113 @@
++#
++#  FIND_LIBRARY_WITH_DEBUG
++#  -> enhanced FIND_LIBRARY to allow the search for an
++#     optional debug library with a WIN32_DEBUG_POSTFIX similar
++#     to CMAKE_DEBUG_POSTFIX when creating a shared lib
++#     it has to be the second and third argument
++
++# Copyright (c) 2007, Christian Ehrlicher, <ch.ehrlicher@gmx.de>
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++MACRO(FIND_LIBRARY_WITH_DEBUG var_name win32_dbg_postfix_name dgb_postfix libname)
++
++  IF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++     # no WIN32_DEBUG_POSTFIX -> simply pass all arguments to FIND_LIBRARY
++     FIND_LIBRARY(${var_name}
++                  ${win32_dbg_postfix_name}
++                  ${dgb_postfix}
++                  ${libname}
++                  ${ARGN}
++     )
++
++  ELSE(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++    IF(NOT WIN32)
++      # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
++
++      FIND_LIBRARY(${var_name} ${libname} ${ARGN})
++
++    ELSE(NOT WIN32)
++
++      # 1. get all possible libnames
++      SET(args ${ARGN})
++      SET(newargs "")
++      SET(libnames_release "")
++      SET(libnames_debug "")
++
++      LIST(LENGTH args listCount)
++
++      IF("${libname}" STREQUAL "NAMES")
++        SET(append_rest 0)
++        LIST(APPEND args " ")
++
++        FOREACH(i RANGE ${listCount})
++          LIST(GET args ${i} val)
++
++          IF(append_rest)
++            LIST(APPEND newargs ${val})
++          ELSE(append_rest)
++            IF("${val}" STREQUAL "PATHS")
++              LIST(APPEND newargs ${val})
++              SET(append_rest 1)
++            ELSE("${val}" STREQUAL "PATHS")
++              LIST(APPEND libnames_release "${val}")
++              LIST(APPEND libnames_debug   "${val}${dgb_postfix}")
++            ENDIF("${val}" STREQUAL "PATHS")
++          ENDIF(append_rest)
++
++        ENDFOREACH(i)
++
++      ELSE("${libname}" STREQUAL "NAMES")
++
++        # just one name
++        LIST(APPEND libnames_release "${libname}")
++        LIST(APPEND libnames_debug   "${libname}${dgb_postfix}")
++
++        SET(newargs ${args})
++
++      ENDIF("${libname}" STREQUAL "NAMES")
++
++      # search the release lib
++      FIND_LIBRARY(${var_name}_RELEASE
++                   NAMES ${libnames_release}
++                   ${newargs}
++      )
++
++      # search the debug lib
++      FIND_LIBRARY(${var_name}_DEBUG
++                   NAMES ${libnames_debug}
++                   ${newargs}
++      )
++
++      IF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++        # both libs found
++        SET(${var_name} optimized ${${var_name}_RELEASE}
++                        debug     ${${var_name}_DEBUG})
++
++      ELSE(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++        IF(${var_name}_RELEASE)
++
++          # only release found
++          SET(${var_name} ${${var_name}_RELEASE})
++
++        ELSE(${var_name}_RELEASE)
++
++          # only debug (or nothing) found
++          SET(${var_name} ${${var_name}_DEBUG})
++
++        ENDIF(${var_name}_RELEASE)
++       
++      ENDIF(${var_name}_RELEASE AND ${var_name}_DEBUG)
++
++      MARK_AS_ADVANCED(${var_name}_RELEASE)
++      MARK_AS_ADVANCED(${var_name}_DEBUG)
++
++    ENDIF(NOT WIN32)
++
++  ENDIF(NOT "${win32_dbg_postfix_name}" STREQUAL "WIN32_DEBUG_POSTFIX")
++
++ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
+diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/FindOpenSSL.cmake mysql-5.5.20/cmake/FindOpenSSL.cmake
+--- mysql-5.5.20.orig/cmake/FindOpenSSL.cmake   1970-01-01 01:00:00.000000000 +0100
++++ mysql-5.5.20/cmake/FindOpenSSL.cmake        2012-01-20 09:22:34.868569800 +0100
+@@ -0,0 +1,63 @@
++# - Try to find the OpenSSL encryption library
++# Once done this will define
++#
++#  OPENSSL_FOUND - system has the OpenSSL library
++#  OPENSSL_INCLUDE_DIR - the OpenSSL include directory
++#  OPENSSL_LIBRARIES - The libraries needed to use OpenSSL
++#  OPENSSL_EAY_LIBRARIES - The additional libraries needed to use OpenSSL on windows
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++INCLUDE(FindLibraryWithDebug)
++
++# on win32 we additional need to link to libeay32.lib
++MACRO(OPENSSL_ADD_LIB_EAY_LIBS)
++   FIND_LIBRARY_WITH_DEBUG(OPENSSL_EAY_LIBRARIES
++                   WIN32_DEBUG_POSTFIX d
++                   NAMES eay libeay libeay32 libeay32MD)
++ENDMACRO(OPENSSL_ADD_LIB_EAY_LIBS)
++
++IF(OPENSSL_LIBRARIES)
++   SET(OpenSSL_FIND_QUIETLY TRUE)
++ENDIF(OPENSSL_LIBRARIES)
++
++IF(SSL_EAY_DEBUG AND SSL_EAY_RELEASE)
++   SET(LIB_FOUND 1)
++ENDIF(SSL_EAY_DEBUG AND SSL_EAY_RELEASE)
++
++FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h )
++
++FIND_LIBRARY_WITH_DEBUG(OPENSSL_LIBRARIES
++                WIN32_DEBUG_POSTFIX d
++                NAMES ssl ssleay ssleay32 libssleay32 ssleay32MD)
++
++IF(WIN32)
++   OPENSSL_ADD_LIB_EAY_LIBS()
++   IF(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES AND OPENSSL_EAY_LIBRARIES)
++      SET(OPENSSL_FOUND TRUE)
++   ELSE(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES AND OPENSSL_EAY_LIBRARIES)
++      SET(OPENSSL_FOUND FALSE)
++   ENDIF (OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES AND OPENSSL_EAY_LIBRARIES)
++ELSE(WIN32)
++   IF(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES)
++      SET(OPENSSL_FOUND TRUE)
++   ELSE(OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES)
++      SET(OPENSSL_FOUND FALSE)
++   ENDIF (OPENSSL_INCLUDE_DIR AND OPENSSL_LIBRARIES)
++ENDIF(WIN32)
++
++IF (OPENSSL_FOUND)
++   IF (NOT OpenSSL_FIND_QUIETLY)
++      MESSAGE(STATUS "Found OpenSSL: ${OPENSSL_LIBRARIES}")
++   ENDIF (NOT OpenSSL_FIND_QUIETLY)
++ELSE (OPENSSL_FOUND)
++   IF (OpenSSL_FIND_REQUIRED)
++      MESSAGE(FATAL_ERROR "Could NOT find OpenSSL")
++   ENDIF (OpenSSL_FIND_REQUIRED)
++ENDIF (OPENSSL_FOUND)
++
++MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
++
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/libutils.cmake mysql-5.5.20/cmake/libutils.cmake
---- mysql-5.5.20.orig/cmake/libutils.cmake	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/cmake/libutils.cmake	2012-01-17 15:41:04.233345400 +0100
+--- mysql-5.5.20.orig/cmake/libutils.cmake      2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/cmake/libutils.cmake   2012-01-22 16:50:14.217000000 +0100
 @@ -65,7 +65,7 @@
  # that references all exports and this prevents linker from creating an 
  # empty library(there are unportable alternatives, --whole-archive)
@@ -32,8 +216,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/libu
          ${CMAKE_CURRENT_BINARY_DIR}/merge_archives_${TARGET}.cmake
        )
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/os/Windows.cmake mysql-5.5.20/cmake/os/Windows.cmake
---- mysql-5.5.20.orig/cmake/os/Windows.cmake	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/cmake/os/Windows.cmake	2012-01-17 15:17:36.105291800 +0100
+--- mysql-5.5.20.orig/cmake/os/Windows.cmake    2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/cmake/os/Windows.cmake 2012-01-22 16:50:14.232600000 +0100
 @@ -117,6 +117,12 @@
    ENDIF()
  ENDIF()
@@ -48,8 +232,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/os/W
  LINK_LIBRARIES(ws2_32)
  # ..also for tests
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/ssl.cmake mysql-5.5.20/cmake/ssl.cmake
---- mysql-5.5.20.orig/cmake/ssl.cmake	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/cmake/ssl.cmake	2012-01-17 14:44:39.324672200 +0100
+--- mysql-5.5.20.orig/cmake/ssl.cmake   2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/cmake/ssl.cmake        2012-01-22 17:06:37.897800000 +0100
 @@ -66,14 +66,13 @@
      # Check for system library
      SET(OPENSSL_FIND_QUIETLY TRUE)
@@ -64,13 +248,13 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/cmake/ssl.
 +    IF(OPENSSL_FOUND AND HAVE_SHA512_DIGEST_LENGTH)
        SET(SSL_SOURCES "")
 -      SET(SSL_LIBRARIES ${OPENSSL_LIBRARIES} ${CRYPTO_LIBRARY})
-+      SET(SSL_LIBRARIES ${OPENSSL_LIBRARIES})
++      SET(SSL_LIBRARIES ${OPENSSL_LIBRARIES} ${OPENSSL_EAY_LIBRARIES})
        SET(SSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR})
        SET(SSL_INTERNAL_INCLUDE_DIRS "")
        SET(SSL_DEFINES "-DHAVE_OPENSSL")
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/CMakeLists.txt mysql-5.5.20/CMakeLists.txt
---- mysql-5.5.20.orig/CMakeLists.txt	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/CMakeLists.txt	2012-01-16 18:35:12.661401400 +0100
+--- mysql-5.5.20.orig/CMakeLists.txt    2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/CMakeLists.txt 2012-01-22 16:50:14.232600000 +0100
 @@ -221,13 +221,13 @@
  
  
@@ -92,8 +276,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/CMakeLists
  SET(DEFAULT_BASEDIR "${DEFAULT_MYSQL_HOME}")
  IF(INSTALL_MYSQLDATADIR MATCHES "^/.*")
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/config.h.cmake mysql-5.5.20/config.h.cmake
---- mysql-5.5.20.orig/config.h.cmake	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/config.h.cmake	2012-01-17 15:49:02.385378000 +0100
+--- mysql-5.5.20.orig/config.h.cmake    2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/config.h.cmake 2012-01-22 16:50:14.232600000 +0100
 @@ -621,4 +621,21 @@
  #cmakedefine SIZEOF_TIME_T @SIZEOF_TIME_T@
  #cmakedefine TIME_T_UNSIGNED @TIME_T_UNSIGNED@
@@ -117,8 +301,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/config.h.c
 +
  #endif
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/include/my_pthread.h mysql-5.5.20/include/my_pthread.h
---- mysql-5.5.20.orig/include/my_pthread.h	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/include/my_pthread.h	2012-01-17 15:49:51.139578000 +0100
+--- mysql-5.5.20.orig/include/my_pthread.h      2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/include/my_pthread.h   2012-01-22 16:50:14.232600000 +0100
 @@ -53,6 +53,13 @@
    We use native conditions on Vista and later, and fallback to own 
    implementation on earlier OS version.
@@ -163,8 +347,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/include/my
    GetSystemTimeAsFileTime(&((ABSTIME).tv.ft)); \
    (ABSTIME).tv.i64+= (__int64)(SEC)*10000000; \
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/libmysql/authentication_win/common.h mysql-5.5.20/libmysql/authentication_win/common.h
---- mysql-5.5.20.orig/libmysql/authentication_win/common.h	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/libmysql/authentication_win/common.h	2012-01-17 14:41:15.567359900 +0100
+--- mysql-5.5.20.orig/libmysql/authentication_win/common.h      2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/libmysql/authentication_win/common.h   2012-01-22 16:50:14.232600000 +0100
 @@ -70,7 +70,7 @@
                        const char *fmt, va_list args);
  
@@ -175,8 +359,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/libmysql/a
    va_list args;
    va_start(args, fmt);
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/libmysql/authentication_win/handshake.h mysql-5.5.20/libmysql/authentication_win/handshake.h
---- mysql-5.5.20.orig/libmysql/authentication_win/handshake.h	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/libmysql/authentication_win/handshake.h	2012-01-16 21:03:14.895239000 +0100
+--- mysql-5.5.20.orig/libmysql/authentication_win/handshake.h   2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/libmysql/authentication_win/handshake.h        2012-01-22 16:50:14.232600000 +0100
 @@ -100,7 +100,7 @@
    Handshake(const char *ssp, side_t side);
    virtual ~Handshake();
@@ -187,8 +371,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/libmysql/a
    bool virtual is_complete() const
    {
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/scripts/CMakeLists.txt mysql-5.5.20/scripts/CMakeLists.txt
---- mysql-5.5.20.orig/scripts/CMakeLists.txt	2011-12-16 20:52:07.000000000 +0100
-+++ mysql-5.5.20/scripts/CMakeLists.txt	2012-01-16 22:53:38.784705300 +0100
+--- mysql-5.5.20.orig/scripts/CMakeLists.txt    2011-12-16 20:52:07.000000000 +0100
++++ mysql-5.5.20/scripts/CMakeLists.txt 2012-01-22 16:50:14.232600000 +0100
 @@ -33,8 +33,7 @@
      ${CMAKE_CURRENT_BINARY_DIR}/mysql_fix_privilege_tables.sql
    )
@@ -200,8 +384,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/scripts/CM
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
     cmd /c copy /b mysql_system_tables.sql + mysql_system_tables_fix.sql
 diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/sql/mysqld.cc mysql-5.5.20/sql/mysqld.cc
---- mysql-5.5.20.orig/sql/mysqld.cc	2011-12-16 20:52:06.000000000 +0100
-+++ mysql-5.5.20/sql/mysqld.cc	2012-01-17 00:38:57.908591400 +0100
+--- mysql-5.5.20.orig/sql/mysqld.cc     2011-12-16 20:52:06.000000000 +0100
++++ mysql-5.5.20/sql/mysqld.cc  2012-01-22 16:50:14.248200000 +0100
 @@ -143,6 +143,11 @@
  #endif
  
@@ -215,8 +399,8 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/sql/mysqld
  #endif
  
 @@ -4708,7 +4713,7 @@
- 	if (my_strcasecmp(system_charset_info, argv[1],"mysql"))
- 	  load_default_groups[load_default_groups_sz-2]= argv[1];
+        if (my_strcasecmp(system_charset_info, argv[1],"mysql"))
+          load_default_groups[load_default_groups_sz-2]= argv[1];
          start_mode= 1;
 -        Service.Init(argv[1], mysql_service);
 +        Service.Init(argv[1], (void*)mysql_service);
@@ -224,12 +408,12 @@ diff -Nru -x '*~' -x mysql_fix_privilege_tables.sql mysql-5.5.20.orig/sql/mysqld
        }
      }
 @@ -4729,7 +4734,7 @@
- 	start_mode= 1;
- 	if (my_strcasecmp(system_charset_info, argv[2],"mysql"))
- 	  load_default_groups[load_default_groups_sz-2]= argv[2];
--	Service.Init(argv[2], mysql_service);
-+	Service.Init(argv[2], (void*)mysql_service);
- 	return 0;
+        start_mode= 1;
+        if (my_strcasecmp(system_charset_info, argv[2],"mysql"))
+          load_default_groups[load_default_groups_sz-2]= argv[2];
+-       Service.Init(argv[2], mysql_service);
++       Service.Init(argv[2], (void*)mysql_service);
+        return 0;
        }
      }
 @@ -4762,7 +4767,7 @@
