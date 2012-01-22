@@ -25,7 +25,6 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.package.withCompiler = False
         os.putenv("CXX","g++")
         os.putenv("CC","gcc")
 
