@@ -12,10 +12,10 @@ class subinfo( info.infoclass ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
         for version in [ 'working' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'ccache', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'ccache', version, '.tar.bz2.sha1' )
+            self.targets[ version ]          = self.getPackage( repoUrl, 'ccache', version , packagetypes=['bin'] )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'ccache', version, '.tar.bz2.sha1' , packagetypes=['bin'] )
 
-        self.shortDescription = '''${description}'''
+        self.shortDescription = 'ccache is a compiler cache. It speeds up recompilation by caching previous compilations and detecting when the same compilation is being done again. Supported languages are C, C++, Objective-C and Objective-C++.'
 
         self.defaultTarget = 'working'
 
