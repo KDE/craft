@@ -23,6 +23,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'virtual/bin-base' ] = 'default'
+        self.buildDependencies['win32libs-bin/boost-headers'] = 'default'
 
 
     def setBuildOptions( self ):
