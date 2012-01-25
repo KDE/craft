@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'libical'
-        for v in [ '0.41', '0.42', '0.43', '0.44']:
+        for v in [ '0.41', '0.42', '0.43', '0.44', '0.48']:
             self.targets[ v ] = 'http://downloads.sourceforge.net/freeassociation/libical-' + v + '.tar.gz'
             self.targetInstSrc[ v ] = 'libical-' + v
         self.defaultTarget = '0.44'

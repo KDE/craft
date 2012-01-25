@@ -22,7 +22,7 @@ kdesupport,grantlee,0.2,
 kdesupport,qimageblitz,0.0.6,
 kdesupport,qtscriptgenerator,,
 kdesupport,oxygen-icons,,
-kdesupport,akonadi,1.6.2,
+kdesupport,akonadi,1.7.0,
 kdesupport,snorenotify,0.2,
 #
 # the KDE packages themselves
@@ -115,7 +115,7 @@ extragear,skrooge,1.2.0,
 extragear,zanshin,0.2.0,
 kdeapps,kbibtex,0.4,
 testing,simon,,
-testing,calligra,2.3.85,
+testing,calligra,,
 #
 # release pending:
 #extragear,kdevplatform,1.3.0,
