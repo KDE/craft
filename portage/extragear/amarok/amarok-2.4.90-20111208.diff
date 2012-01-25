@@ -1,11 +1,13 @@
 diff -Nru amarok-2.4.90.orig/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt amarok-2.4.90/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt
 --- amarok-2.4.90.orig/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt	2011-11-14 12:26:13.000000000 +0100
 +++ amarok-2.4.90/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt	2011-12-08 23:52:21.363312600 +0100
-@@ -20,6 +20,7 @@
+@@ -20,6 +20,9 @@
   )
  
  remove_definitions(-DMAKE_AMAROK_DATABASECOLLECTION_LIB)
++if(NOT MSVC)
 +add_definitions(-DMAKE_AMAROK_SQLCOLLECTION_LIB)
++endif(NOT MSVC)
  kde4_add_plugin(amarok_collection-mysqlecollection ${amarok_collection-mysqlecollection_PART_SRCS})
  
  STRING(REPLACE "-Wl,--fatal-warnings" "" CMAKE_SHARED_LINKER_FLAGS_NOFATALWARN "${CMAKE_SHARED_LINKER_FLAGS}")
