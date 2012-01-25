@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
 
 
     def setTargets( self ):
-        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1', '1.4.1', '1.4.2', '1.4.3', '1.4.80', '1.4.90', '1.6.0','1.6.2']:
+        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1','1.4.1','1.4.2','1.4.3','1.4.80','1.4.90','1.6.0','1.6.2','1.7.0']:
           self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/akonadi/src/akonadi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'akonadi-' + ver
 
