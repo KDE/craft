@@ -515,20 +515,19 @@ def getDependencies( category, package, version, runtimeOnly=False ):
         subpackage = package
     
     deps = []
-    for pkg in subpackage:
-        mod = __import__( getFilename( category, subpackage, version ) )
-        if hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
-            depDict = info.hardDependencies
-            depDict.update( info.dependencies )
-            depDict.update( info.runtimeDependencies )
-            if not runtimeOnly:
-                depDict.update( info.buildDependencies )
+    mod = __import__( getFilename( category, subpackage, version ) )
+    if hasattr( mod, 'subinfo' ):
+        info = mod.subinfo()
+        depDict = info.hardDependencies
+        depDict.update( info.dependencies )
+        depDict.update( info.runtimeDependencies )
+        if not runtimeOnly:
+            depDict.update( info.buildDependencies )
 
-            for line in list(depDict.keys()):
-                (category, package) = line.split( "/" )
-                version = PortageInstance.getNewestVersion( category, package )
-                deps.append( [ category, package, version, depDict[ line ] ] )
+        for line in list(depDict.keys()):
+            (category, package) = line.split( "/" )
+            version = PortageInstance.getNewestVersion( category, package )
+            deps.append( [ category, package, version, depDict[ line ] ] )
 
     return deps
 
