@@ -1,6 +1,17 @@
+diff -Nru cantor-4.8.0.orig/src/imageentry.cpp cantor-4.8.0/src/imageentry.cpp
+--- cantor-4.8.0.orig/src/imageentry.cpp	2011-07-27 20:37:50.000000000 +0200
++++ cantor-4.8.0/src/imageentry.cpp	2012-01-26 14:33:51.550600000 +0100
+@@ -30,6 +30,7 @@
+ #include <kicon.h>
+ #include <klocale.h>
+ #include <kdebug.h>
++#include <kzip.h>
+ 
+ #include <kdebug.h>
+ #include <qurl.h>
 diff -Nru cantor-4.8.0.orig/src/pagebreakentry.cpp cantor-4.8.0/src/pagebreakentry.cpp
 --- cantor-4.8.0.orig/src/pagebreakentry.cpp	2011-07-27 20:37:50.000000000 +0200
-+++ cantor-4.8.0/src/pagebreakentry.cpp	2012-01-25 17:14:57.689200000 +0100
++++ cantor-4.8.0/src/pagebreakentry.cpp	2012-01-26 08:02:34.887200000 +0100
 @@ -25,6 +25,7 @@
  #include <kmenu.h>
  #include <kicon.h>
