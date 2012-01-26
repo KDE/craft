@@ -2,10 +2,10 @@ import sys
 import os
 
 def usage():
-    print
-    print "can be used to repackage a packagelist"
-    print "Syntax:"
-    print "\t", sys.argv[0], "packagelist.txt"
+    print()
+    print("can be used to repackage a packagelist")
+    print("Syntax:")
+    print("\t", sys.argv[0], "packagelist.txt")
 
 
 if len(sys.argv) == 1:
@@ -13,7 +13,7 @@ if len(sys.argv) == 1:
     exit(1)
 
 if not os.path.exists(sys.argv[1]):
-    print "error: couldn't find packagelist file", sys.argv[1]
+    print("error: couldn't find packagelist file", sys.argv[1])
     usage()
     exit(1)
 
@@ -31,6 +31,6 @@ with open(sys.argv[1], 'rb') as f:
         if patchlevel:
             patchlevel_target += patchleveltemplate % patchlevel
         cmd = cmdtemplate % (patchlevel_target, cat, pac)
-        print "running cmd:", cmd
+        print("running cmd:", cmd)
         os.system(cmd)
         
