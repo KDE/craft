@@ -1,6 +1,6 @@
 diff -Nru kdesdk-4.8.0.orig/okteta/CMakeLists.txt kdesdk-4.8.0/okteta/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/CMakeLists.txt	2011-08-22 15:32:14.000000000 +0200
-+++ kdesdk-4.8.0/okteta/CMakeLists.txt	2012-01-27 20:30:22.044400000 +0100
++++ kdesdk-4.8.0/okteta/CMakeLists.txt	2012-01-27 22:27:54.714600000 +0100
 @@ -54,8 +54,10 @@
  set( OKTETALIBS_ABI_VERSION 1 )
  set( OKTETALIBS_INCLUDE_INSTALL_DIR  ${INCLUDE_INSTALL_DIR}/okteta${OKTETALIBS_ABI_VERSION} )
@@ -16,7 +16,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/CMakeLists.txt kdesdk-4.8.0/okteta/CMakeLists
  set( OKTETALIBS_LIB_VERSION ${OKTETALIBS_VERSION} )
 diff -Nru kdesdk-4.8.0.orig/okteta/core/CMakeLists.txt kdesdk-4.8.0/okteta/core/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/core/CMakeLists.txt	2011-08-22 15:32:09.000000000 +0200
-+++ kdesdk-4.8.0/okteta/core/CMakeLists.txt	2012-01-27 20:30:56.055400000 +0100
++++ kdesdk-4.8.0/okteta/core/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -87,8 +87,9 @@
    ${KDE4_KDECORE_LIBS}
  )
@@ -31,7 +31,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/core/CMakeLists.txt kdesdk-4.8.0/okteta/core/
  install( TARGETS ${oktetacore_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/gui/CMakeLists.txt kdesdk-4.8.0/okteta/gui/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/gui/CMakeLists.txt	2011-07-27 20:25:26.000000000 +0200
-+++ kdesdk-4.8.0/okteta/gui/CMakeLists.txt	2012-01-27 20:31:35.794800000 +0100
++++ kdesdk-4.8.0/okteta/gui/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -103,8 +103,9 @@
    ${KDE4_KDEUI_LIBS}
  )
@@ -46,7 +46,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/gui/CMakeLists.txt kdesdk-4.8.0/okteta/gui/CM
  
 diff -Nru kdesdk-4.8.0.orig/okteta/kasten/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/kasten/CMakeLists.txt	2011-07-27 20:25:31.000000000 +0200
-+++ kdesdk-4.8.0/okteta/kasten/CMakeLists.txt	2012-01-27 20:52:38.962600000 +0100
++++ kdesdk-4.8.0/okteta/kasten/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -3,9 +3,12 @@
  add_definitions( -DKDE_DEFAULT_DEBUG_AREA=1806 )
  
@@ -81,8 +81,30 @@ diff -Nru kdesdk-4.8.0.orig/okteta/kasten/CMakeLists.txt kdesdk-4.8.0/okteta/kas
  set( OKTETAKASTEN_LIB_VERSION ${OKTETAKASTEN_VERSION} )
 diff -Nru kdesdk-4.8.0.orig/okteta/kasten/controllers/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/controllers/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/kasten/controllers/CMakeLists.txt	2012-01-10 15:27:00.000000000 +0100
-+++ kdesdk-4.8.0/okteta/kasten/controllers/CMakeLists.txt	2012-01-27 20:22:00.945800000 +0100
-@@ -504,8 +504,9 @@
++++ kdesdk-4.8.0/okteta/kasten/controllers/CMakeLists.txt	2012-01-28 00:30:15.942200000 +0100
+@@ -358,18 +358,21 @@
+   ${QT_QTSCRIPT_LIBRARY}
+   ${QT_QTSCRIPTTOOLS_LIBRARY}
+ )
++set_target_properties(structures-static PROPERTIES COMPILE_FLAGS -DOKTETAKASTENCONTROLLERS_EXPORT=)
+ 
+ kde4_add_unit_test( scriptvalueconvertertest
+   TESTNAME scriptvalue-converter-test
+   test/scriptvalueconvertertest.cpp
+ )
+ target_link_libraries(scriptvalueconvertertest structures-static ${QT_QTTEST_LIBRARY})
++set_target_properties(scriptvalueconvertertest PROPERTIES COMPILE_FLAGS -DOKTETAKASTENCONTROLLERS_EXPORT=)
+ 
+ kde4_add_unit_test( osdparsertest
+   TESTNAME osd-parser-test
+   test/osdparsertest.cpp
+ )
+ target_link_libraries(osdparsertest structures-static ${QT_QTTEST_LIBRARY})
++set_target_properties(osdparsertest PROPERTIES COMPILE_FLAGS -DOKTETAKASTENCONTROLLERS_EXPORT=)
+ 
+ endif ( KDE4_BUILD_TESTS )
+ 
+@@ -504,8 +507,9 @@
  endif( QCA2_FOUND )
  
  set_target_properties( ${oktetakastencontrollers_LIB}  PROPERTIES
@@ -96,7 +118,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/kasten/controllers/CMakeLists.txt kdesdk-4.8.
  install( TARGETS ${oktetakastencontrollers_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/kasten/core/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/core/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/kasten/core/CMakeLists.txt	2011-09-26 13:24:16.000000000 +0200
-+++ kdesdk-4.8.0/okteta/kasten/core/CMakeLists.txt	2012-01-27 20:15:03.973800000 +0100
++++ kdesdk-4.8.0/okteta/kasten/core/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -59,8 +59,9 @@
    ${KDE4_KDECORE_LIBS}
  )
@@ -111,7 +133,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/kasten/core/CMakeLists.txt kdesdk-4.8.0/oktet
  install( TARGETS ${oktetakastencore_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/kasten/gui/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/gui/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/kasten/gui/CMakeLists.txt	2011-07-27 20:25:27.000000000 +0200
-+++ kdesdk-4.8.0/okteta/kasten/gui/CMakeLists.txt	2012-01-27 20:21:53.442200000 +0100
++++ kdesdk-4.8.0/okteta/kasten/gui/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -181,8 +181,9 @@
  )
  #TODO should probably first check if QtScript is available??
@@ -126,7 +148,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/kasten/gui/CMakeLists.txt kdesdk-4.8.0/okteta
  install( TARGETS ${oktetakastengui_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/CMakeLists.txt	2011-07-27 20:25:32.000000000 +0200
-+++ kdesdk-4.8.0/okteta/libs/kasten/CMakeLists.txt	2012-01-27 20:20:47.916800000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -7,9 +7,12 @@
  set( KASTEN_ABI_VERSION 1 )
  set( KASTEN_INCLUDE_INSTALL_DIR  ${INCLUDE_INSTALL_DIR}/kasten${KASTEN_ABI_VERSION} )
@@ -145,7 +167,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/CMakeLists.txt kdesdk-4.8.0/oktet
  set( KASTEN_LIB_VERSION ${KASTEN_VERSION} )
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/controllers/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/controllers/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/controllers/CMakeLists.txt	2011-09-26 13:24:17.000000000 +0200
-+++ kdesdk-4.8.0/okteta/libs/kasten/controllers/CMakeLists.txt	2012-01-27 20:26:28.452600000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/controllers/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -187,8 +187,9 @@
    ${KDE4_KFILE_LIBS}
  )
@@ -160,7 +182,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/controllers/CMakeLists.txt kdesdk
  install( TARGETS ${kastencontrollers_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/core/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/core/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/core/CMakeLists.txt	2011-08-22 15:32:14.000000000 +0200
-+++ kdesdk-4.8.0/okteta/libs/kasten/core/CMakeLists.txt	2012-01-27 20:22:21.163400000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/core/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -129,8 +129,9 @@
    ${KDE4_SOLID_LIBS}
  )
@@ -175,7 +197,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/core/CMakeLists.txt kdesdk-4.8.0/
  install( TARGETS ${kastencore_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/gui/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/CMakeLists.txt	2011-08-22 15:32:09.000000000 +0200
-+++ kdesdk-4.8.0/okteta/libs/kasten/gui/CMakeLists.txt	2012-01-27 20:25:58.907000000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/CMakeLists.txt	2012-01-27 22:27:54.730200000 +0100
 @@ -161,8 +161,9 @@
    ${KDE4_KDEUI_LIBS}
  )
@@ -190,7 +212,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/CMakeLists.txt kdesdk-4.8.0/o
  install( TARGETS ${kastengui_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h kdesdk-4.8.0/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h	2011-11-17 21:59:19.000000000 +0100
-+++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h	2012-01-27 20:45:36.773600000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h	2012-01-27 22:27:54.730200000 +0100
 @@ -24,7 +24,7 @@
  #define ABSTRACTDOCUMENTSTRATEGY_H
  
@@ -211,7 +233,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/abstractdocumentstrate
  
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/multidocumentstrategy.h kdesdk-4.8.0/okteta/libs/kasten/gui/system/multidocumentstrategy.h
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/multidocumentstrategy.h	2011-11-17 21:59:19.000000000 +0100
-+++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/multidocumentstrategy.h	2012-01-27 20:43:56.372000000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/multidocumentstrategy.h	2012-01-27 22:27:54.730200000 +0100
 @@ -34,7 +34,7 @@
  class MultiDocumentStrategyPrivate;
  
@@ -223,7 +245,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/multidocumentstrategy.
  
 diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/singledocumentstrategy.h kdesdk-4.8.0/okteta/libs/kasten/gui/system/singledocumentstrategy.h
 --- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/singledocumentstrategy.h	2011-11-17 21:59:19.000000000 +0100
-+++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/singledocumentstrategy.h	2012-01-27 20:44:21.347600000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/singledocumentstrategy.h	2012-01-27 22:27:54.730200000 +0100
 @@ -34,7 +34,7 @@
  class SingleDocumentStrategyPrivate;
  
@@ -235,7 +257,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/singledocumentstrategy
  
 diff -Nru kdesdk-4.8.0.orig/okteta/parts/kpart/CMakeLists.txt kdesdk-4.8.0/okteta/parts/kpart/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/parts/kpart/CMakeLists.txt	2011-07-27 20:25:32.000000000 +0200
-+++ kdesdk-4.8.0/okteta/parts/kpart/CMakeLists.txt	2012-01-27 20:59:32.282800000 +0100
++++ kdesdk-4.8.0/okteta/parts/kpart/CMakeLists.txt	2012-01-27 22:27:54.745800000 +0100
 @@ -44,12 +44,12 @@
  
  
@@ -257,7 +279,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/parts/kpart/CMakeLists.txt kdesdk-4.8.0/oktet
  
 diff -Nru kdesdk-4.8.0.orig/okteta/program/CMakeLists.txt kdesdk-4.8.0/okteta/program/CMakeLists.txt
 --- kdesdk-4.8.0.orig/okteta/program/CMakeLists.txt	2011-09-26 13:24:18.000000000 +0200
-+++ kdesdk-4.8.0/okteta/program/CMakeLists.txt	2012-01-27 21:01:08.890200000 +0100
++++ kdesdk-4.8.0/okteta/program/CMakeLists.txt	2012-01-27 22:27:54.745800000 +0100
 @@ -50,12 +50,12 @@
  
  target_link_libraries( okteta
@@ -279,7 +301,7 @@ diff -Nru kdesdk-4.8.0.orig/okteta/program/CMakeLists.txt kdesdk-4.8.0/okteta/pr
  install( TARGETS okteta  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 diff -Nru kdesdk-4.8.0.orig/umbrello/umbrello/CMakeLists.txt kdesdk-4.8.0/umbrello/umbrello/CMakeLists.txt
 --- kdesdk-4.8.0.orig/umbrello/umbrello/CMakeLists.txt	2011-12-20 22:00:11.000000000 +0100
-+++ kdesdk-4.8.0/umbrello/umbrello/CMakeLists.txt	2012-01-27 21:18:19.027800000 +0100
++++ kdesdk-4.8.0/umbrello/umbrello/CMakeLists.txt	2012-01-27 22:27:54.745800000 +0100
 @@ -25,11 +25,12 @@
      set(SUBVERSION_REVISION 0)
      MESSAGE(STATUS "SVN Revision: 0 - not yet implemented!")
