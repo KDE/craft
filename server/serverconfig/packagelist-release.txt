@@ -29,6 +29,7 @@ kdesupport,snorenotify,0.2,
 kde,kdelibs,4.8.0,
 kde,kdepimlibs,4.8.0,
 kde,kde-runtime,4.8.0,
+kde,kactivities,4.8.0,
 kde,kde-workspace,4.8.0,
 kde,kde-baseapps,4.8.0,
 #kdeedu
