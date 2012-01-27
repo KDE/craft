@@ -1,0 +1,300 @@
+diff -Nru kdesdk-4.8.0.orig/okteta/CMakeLists.txt kdesdk-4.8.0/okteta/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/CMakeLists.txt	2011-08-22 15:32:14.000000000 +0200
++++ kdesdk-4.8.0/okteta/CMakeLists.txt	2012-01-27 20:30:22.044400000 +0100
+@@ -54,8 +54,10 @@
+ set( OKTETALIBS_ABI_VERSION 1 )
+ set( OKTETALIBS_INCLUDE_INSTALL_DIR  ${INCLUDE_INSTALL_DIR}/okteta${OKTETALIBS_ABI_VERSION} )
+ 
+-set( oktetacore_LIB  okteta${OKTETALIBS_ABI_VERSION}core )
+-set( oktetagui_LIB  okteta${OKTETALIBS_ABI_VERSION}gui )
++set( oktetacore_LIB  oktetacore )
++set( oktetagui_LIB  oktetagui )
++set( oktetacore_NAME okteta${OKTETALIBS_ABI_VERSION}core )
++set( oktetagui_NAME okteta${OKTETALIBS_ABI_VERSION}gui )
+ 
+ set( OKTETALIBS_LIB_SOVERSION ${OKTETALIBS_ABI_VERSION} )
+ set( OKTETALIBS_LIB_VERSION ${OKTETALIBS_VERSION} )
+diff -Nru kdesdk-4.8.0.orig/okteta/core/CMakeLists.txt kdesdk-4.8.0/okteta/core/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/core/CMakeLists.txt	2011-08-22 15:32:09.000000000 +0200
++++ kdesdk-4.8.0/okteta/core/CMakeLists.txt	2012-01-27 20:30:56.055400000 +0100
+@@ -87,8 +87,9 @@
+   ${KDE4_KDECORE_LIBS}
+ )
+ set_target_properties( ${oktetacore_LIB}  PROPERTIES
+-  VERSION ${OKTETALIBS_LIB_VERSION}
+-  SOVERSION ${OKTETALIBS_LIB_SOVERSION}
++  OUTPUT_NAME ${oktetacore_NAME}
++  VERSION     ${OKTETALIBS_LIB_VERSION}
++  SOVERSION   ${OKTETALIBS_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${oktetacore_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/gui/CMakeLists.txt kdesdk-4.8.0/okteta/gui/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/gui/CMakeLists.txt	2011-07-27 20:25:26.000000000 +0200
++++ kdesdk-4.8.0/okteta/gui/CMakeLists.txt	2012-01-27 20:31:35.794800000 +0100
+@@ -103,8 +103,9 @@
+   ${KDE4_KDEUI_LIBS}
+ )
+ set_target_properties( ${oktetagui_LIB}  PROPERTIES
+-  VERSION ${OKTETALIBS_LIB_VERSION}
+-  SOVERSION ${OKTETALIBS_LIB_SOVERSION}
++  OUTPUT_NAME ${oktetagui_NAME}
++  VERSION     ${OKTETALIBS_LIB_VERSION}
++  SOVERSION   ${OKTETALIBS_LIB_SOVERSION}
+   LABELS OktetaLabel
+ )
+ 
+diff -Nru kdesdk-4.8.0.orig/okteta/kasten/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/kasten/CMakeLists.txt	2011-07-27 20:25:31.000000000 +0200
++++ kdesdk-4.8.0/okteta/kasten/CMakeLists.txt	2012-01-27 20:52:38.962600000 +0100
+@@ -3,9 +3,12 @@
+ add_definitions( -DKDE_DEFAULT_DEBUG_AREA=1806 )
+ 
+ set( KASTEN_ABI_VERSION 1 )
+-set( KASTENCORE_LIBS  kasten${KASTEN_ABI_VERSION}core )
+-set( KASTENGUI_LIBS  kasten${KASTEN_ABI_VERSION}gui )
+-set( KASTENCONTROLLERS_LIBS  kasten${KASTEN_ABI_VERSION}controllers )
++set( KASTENCORE_LIBS  kastencore )
++set( KASTENCORE_NAME  kasten${KASTEN_ABI_VERSION}core )
++set( KASTENGUI_LIBS  kastengui )
++set( KASTENGUI_NAME  kasten${KASTEN_ABI_VERSION}gui )
++set( KASTENCONTROLLERS_LIBS  kastencontrollers )
++set( KASTENCONTROLLERS_NAME  kasten${KASTEN_ABI_VERSION}controllers )
+ 
+ 
+ set( OKTETAKASTEN_MAJOR_VERSION 0 )
+@@ -14,9 +17,12 @@
+ set( OKTETAKASTEN_VERSION "${OKTETAKASTEN_MAJOR_VERSION}.${OKTETAKASTEN_MINOR_VERSION}.${OKTETAKASTEN_PATCHLEVEL_VERSION}" )
+ set( OKTETAKASTEN_ABI_VERSION 1 )
+ set( OKTETAKASTEN_INCLUDE_INSTALL_DIR  ${INCLUDE_INSTALL_DIR}/kasten${KASTEN_ABI_VERSION}/okteta${OKTETAKASTEN_ABI_VERSION} )
+-set( oktetakastencore_LIB  kasten${KASTEN_ABI_VERSION}okteta${OKTETAKASTEN_ABI_VERSION}core )
+-set( oktetakastengui_LIB  kasten${KASTEN_ABI_VERSION}okteta${OKTETAKASTEN_ABI_VERSION}gui )
+-set( oktetakastencontrollers_LIB  kasten${KASTEN_ABI_VERSION}okteta${OKTETAKASTEN_ABI_VERSION}controllers )
++set( oktetakastencore_LIB  oktetakastencore )
++set( oktetakastengui_LIB  oktetakastengui )
++set( oktetakastencontrollers_LIB  oktetakastencontrollers )
++set( oktetakastencore_NAME kasten${KASTEN_ABI_VERSION}okteta${OKTETAKASTEN_ABI_VERSION}core )
++set( oktetakastengui_NAME kasten${KASTEN_ABI_VERSION}okteta${OKTETAKASTEN_ABI_VERSION}gui )
++set( oktetakastencontrollers_NAME kasten${KASTEN_ABI_VERSION}okteta${OKTETAKASTEN_ABI_VERSION}controllers )
+ 
+ set( OKTETAKASTEN_LIB_SOVERSION ${OKTETAKASTEN_ABI_VERSION} )
+ set( OKTETAKASTEN_LIB_VERSION ${OKTETAKASTEN_VERSION} )
+diff -Nru kdesdk-4.8.0.orig/okteta/kasten/controllers/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/controllers/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/kasten/controllers/CMakeLists.txt	2012-01-10 15:27:00.000000000 +0100
++++ kdesdk-4.8.0/okteta/kasten/controllers/CMakeLists.txt	2012-01-27 20:22:00.945800000 +0100
+@@ -504,8 +504,9 @@
+ endif( QCA2_FOUND )
+ 
+ set_target_properties( ${oktetakastencontrollers_LIB}  PROPERTIES
+-  VERSION   ${OKTETAKASTEN_LIB_VERSION}
+-  SOVERSION ${OKTETAKASTEN_LIB_SOVERSION}
++  OUTPUT_NAME ${oktetakastencontrollers_NAME}
++  VERSION     ${OKTETAKASTEN_LIB_VERSION}
++  SOVERSION   ${OKTETAKASTEN_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${oktetakastencontrollers_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/kasten/core/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/core/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/kasten/core/CMakeLists.txt	2011-09-26 13:24:16.000000000 +0200
++++ kdesdk-4.8.0/okteta/kasten/core/CMakeLists.txt	2012-01-27 20:15:03.973800000 +0100
+@@ -59,8 +59,9 @@
+   ${KDE4_KDECORE_LIBS}
+ )
+ set_target_properties( ${oktetakastencore_LIB} PROPERTIES
+-  VERSION   ${OKTETAKASTEN_LIB_VERSION}
+-  SOVERSION ${OKTETAKASTEN_LIB_SOVERSION}
++  OUTPUT_NAME ${oktetakastencore_NAME}
++  VERSION     ${OKTETAKASTEN_LIB_VERSION}
++  SOVERSION   ${OKTETAKASTEN_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${oktetakastencore_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/kasten/gui/CMakeLists.txt kdesdk-4.8.0/okteta/kasten/gui/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/kasten/gui/CMakeLists.txt	2011-07-27 20:25:27.000000000 +0200
++++ kdesdk-4.8.0/okteta/kasten/gui/CMakeLists.txt	2012-01-27 20:21:53.442200000 +0100
+@@ -181,8 +181,9 @@
+ )
+ #TODO should probably first check if QtScript is available??
+ set_target_properties( ${oktetakastengui_LIB}  PROPERTIES
+-  VERSION   ${OKTETAKASTEN_LIB_VERSION}
+-  SOVERSION ${OKTETAKASTEN_LIB_SOVERSION}
++  OUTPUT_NAME ${oktetakastengui_NAME}
++  VERSION     ${OKTETAKASTEN_LIB_VERSION}
++  SOVERSION   ${OKTETAKASTEN_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${oktetakastengui_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/CMakeLists.txt	2011-07-27 20:25:32.000000000 +0200
++++ kdesdk-4.8.0/okteta/libs/kasten/CMakeLists.txt	2012-01-27 20:20:47.916800000 +0100
+@@ -7,9 +7,12 @@
+ set( KASTEN_ABI_VERSION 1 )
+ set( KASTEN_INCLUDE_INSTALL_DIR  ${INCLUDE_INSTALL_DIR}/kasten${KASTEN_ABI_VERSION} )
+ 
+-set( kastencore_LIB  kasten${KASTEN_ABI_VERSION}core )
+-set( kastengui_LIB  kasten${KASTEN_ABI_VERSION}gui )
+-set( kastencontrollers_LIB  kasten${KASTEN_ABI_VERSION}controllers )
++set( kastencore_LIB  kastencore )
++set( kastengui_LIB  kastengui )
++set( kastencontrollers_LIB  kastencontrollers )
++set( kastencore_NAME  kasten${KASTEN_ABI_VERSION}core )
++set( kastengui_NAME  kasten${KASTEN_ABI_VERSION}gui )
++set( kastencontrollers_NAME  kasten${KASTEN_ABI_VERSION}controllers )
+ 
+ set( KASTEN_LIB_SOVERSION ${KASTEN_ABI_VERSION} )
+ set( KASTEN_LIB_VERSION ${KASTEN_VERSION} )
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/controllers/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/controllers/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/controllers/CMakeLists.txt	2011-09-26 13:24:17.000000000 +0200
++++ kdesdk-4.8.0/okteta/libs/kasten/controllers/CMakeLists.txt	2012-01-27 20:26:28.452600000 +0100
+@@ -187,8 +187,9 @@
+   ${KDE4_KFILE_LIBS}
+ )
+ set_target_properties( ${kastencontrollers_LIB}  PROPERTIES
+-  VERSION   ${KASTEN_LIB_VERSION}
+-  SOVERSION ${KASTEN_LIB_SOVERSION}
++  OUTPUT_NAME ${kastencontrollers_NAME}
++  VERSION     ${KASTEN_LIB_VERSION}
++  SOVERSION   ${KASTEN_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${kastencontrollers_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/core/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/core/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/core/CMakeLists.txt	2011-08-22 15:32:14.000000000 +0200
++++ kdesdk-4.8.0/okteta/libs/kasten/core/CMakeLists.txt	2012-01-27 20:22:21.163400000 +0100
+@@ -129,8 +129,9 @@
+   ${KDE4_SOLID_LIBS}
+ )
+ set_target_properties( ${kastencore_LIB}  PROPERTIES
+-  VERSION   ${KASTEN_LIB_VERSION}
+-  SOVERSION ${KASTEN_LIB_SOVERSION}
++  OUTPUT_NAME ${kastencore_NAME}
++  VERSION     ${KASTEN_LIB_VERSION}
++  SOVERSION   ${KASTEN_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${kastencore_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/CMakeLists.txt kdesdk-4.8.0/okteta/libs/kasten/gui/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/CMakeLists.txt	2011-08-22 15:32:09.000000000 +0200
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/CMakeLists.txt	2012-01-27 20:25:58.907000000 +0100
+@@ -161,8 +161,9 @@
+   ${KDE4_KDEUI_LIBS}
+ )
+ set_target_properties( ${kastengui_LIB}  PROPERTIES
+-  VERSION   ${KASTEN_LIB_VERSION}
+-  SOVERSION ${KASTEN_LIB_SOVERSION}
++  OUTPUT_NAME ${kastengui_NAME}
++  VERSION     ${KASTEN_LIB_VERSION}
++  SOVERSION   ${KASTEN_LIB_SOVERSION}
+ )
+ 
+ install( TARGETS ${kastengui_LIB}  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h kdesdk-4.8.0/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h	2011-11-17 21:59:19.000000000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/abstractdocumentstrategy.h	2012-01-27 20:45:36.773600000 +0100
+@@ -24,7 +24,7 @@
+ #define ABSTRACTDOCUMENTSTRATEGY_H
+ 
+ // lib
+-#include "kastencore_export.h"
++#include "kastengui_export.h"
+ // Qt
+ #include <QtCore/QObject>
+ 
+@@ -39,7 +39,7 @@
+ class AbstractDocumentStrategyPrivate;
+ 
+ 
+-class KASTENCORE_EXPORT AbstractDocumentStrategy : public QObject
++class KASTENGUI_EXPORT AbstractDocumentStrategy : public QObject
+ {
+   Q_OBJECT
+ 
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/multidocumentstrategy.h kdesdk-4.8.0/okteta/libs/kasten/gui/system/multidocumentstrategy.h
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/multidocumentstrategy.h	2011-11-17 21:59:19.000000000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/multidocumentstrategy.h	2012-01-27 20:43:56.372000000 +0100
+@@ -34,7 +34,7 @@
+ class MultiDocumentStrategyPrivate;
+ 
+ 
+-class KASTENCORE_EXPORT MultiDocumentStrategy : public AbstractDocumentStrategy
++class KASTENGUI_EXPORT MultiDocumentStrategy : public AbstractDocumentStrategy
+ {
+   Q_OBJECT
+ 
+diff -Nru kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/singledocumentstrategy.h kdesdk-4.8.0/okteta/libs/kasten/gui/system/singledocumentstrategy.h
+--- kdesdk-4.8.0.orig/okteta/libs/kasten/gui/system/singledocumentstrategy.h	2011-11-17 21:59:19.000000000 +0100
++++ kdesdk-4.8.0/okteta/libs/kasten/gui/system/singledocumentstrategy.h	2012-01-27 20:44:21.347600000 +0100
+@@ -34,7 +34,7 @@
+ class SingleDocumentStrategyPrivate;
+ 
+ 
+-class KASTENCORE_EXPORT SingleDocumentStrategy : public AbstractDocumentStrategy
++class KASTENGUI_EXPORT SingleDocumentStrategy : public AbstractDocumentStrategy
+ {
+   Q_OBJECT
+ 
+diff -Nru kdesdk-4.8.0.orig/okteta/parts/kpart/CMakeLists.txt kdesdk-4.8.0/okteta/parts/kpart/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/parts/kpart/CMakeLists.txt	2011-07-27 20:25:32.000000000 +0200
++++ kdesdk-4.8.0/okteta/parts/kpart/CMakeLists.txt	2012-01-27 20:59:32.282800000 +0100
+@@ -44,12 +44,12 @@
+ 
+ 
+ target_link_libraries( oktetapart
+-  kasten1okteta1controllers
+-  kasten1okteta1gui
+-  kasten1okteta1core
+-  kasten1controllers
+-  kasten1gui
+-  kasten1core
++  oktetakastencontrollers
++  oktetakastengui
++  oktetakastencore
++  kastencontrollers
++  kastengui
++  kastencore
+   ${KDE4_KPARTS_LIBS}
+ )
+ 
+diff -Nru kdesdk-4.8.0.orig/okteta/program/CMakeLists.txt kdesdk-4.8.0/okteta/program/CMakeLists.txt
+--- kdesdk-4.8.0.orig/okteta/program/CMakeLists.txt	2011-09-26 13:24:18.000000000 +0200
++++ kdesdk-4.8.0/okteta/program/CMakeLists.txt	2012-01-27 21:01:08.890200000 +0100
+@@ -50,12 +50,12 @@
+ 
+ target_link_libraries( okteta
+   ${KDE4_KDEUI_LIBS}
+-  kasten1okteta1controllers
+-  kasten1okteta1gui
+-  kasten1okteta1core
+-  kasten1controllers
+-  kasten1gui
+-  kasten1core
++  oktetakastencontrollers
++  oktetakastengui
++  oktetakastencore
++  kastencontrollers
++  kastengui
++  kastencore
+ )
+ 
+ install( TARGETS okteta  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+diff -Nru kdesdk-4.8.0.orig/umbrello/umbrello/CMakeLists.txt kdesdk-4.8.0/umbrello/umbrello/CMakeLists.txt
+--- kdesdk-4.8.0.orig/umbrello/umbrello/CMakeLists.txt	2011-12-20 22:00:11.000000000 +0100
++++ kdesdk-4.8.0/umbrello/umbrello/CMakeLists.txt	2012-01-27 21:18:19.027800000 +0100
+@@ -25,11 +25,12 @@
+     set(SUBVERSION_REVISION 0)
+     MESSAGE(STATUS "SVN Revision: 0 - not yet implemented!")
+ endif(SVN_FILE)
+-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/revision.h.in ${CMAKE_CURRENT_BINARY_DIR}/revision.temp)
+-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
+-                ${CMAKE_CURRENT_BINARY_DIR}/revision.temp ${CMAKE_CURRENT_BINARY_DIR}/revision.h
+-                COMMAND touch ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+-file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/revision.temp)
++#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/revision.h.in ${CMAKE_CURRENT_BINARY_DIR}/revision.temp)
++#execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
++#                ${CMAKE_CURRENT_BINARY_DIR}/revision.temp ${CMAKE_CURRENT_BINARY_DIR}/revision.h
++#                COMMAND touch ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
++#file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/revision.temp)
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/revision.h.in ${CMAKE_CURRENT_BINARY_DIR}/revision.h)
+ 
+ ########### set variables #############
+ 
