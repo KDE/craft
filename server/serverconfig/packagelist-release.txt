@@ -101,7 +101,7 @@ kde,kdetoys,4.8.0,
 #
 # the KDE extragear packages
 extragear,amarok,2.5.0,
-extragear,kate,,
+extragear,kate,4.8.0,
 extragear,kile,,
 extragear,digikam,2.5.0,
 extragear,libalkimia,4.3.1,
