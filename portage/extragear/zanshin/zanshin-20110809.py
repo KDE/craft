@@ -5,8 +5,11 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:zanshin'
-        self.svnTargets['0.2-beta1'] = 'http://files.kde.org/zanshin/zanshin-0.1.81.tar.bz2'
-        self.description = "a powerful yet simple application for managing your day to day actions"
+        releases = [ '0.1.81', '0.1.91', '0.2.0' ]
+        for ver in releases:
+            self.targets[ ver ] = 'http://files.kde.org/zanshin/zanshin-' +  ver  + '.tar.bz2'
+            self.targetInstSrc[ ver ] = 'zanshin-' + ver
+        self.shortDescription = "a powerful yet simple application for managing your day to day actions"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
