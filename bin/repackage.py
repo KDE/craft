@@ -20,7 +20,7 @@ if not os.path.exists(sys.argv[1]):
 cmdtemplate = "emerge --package%s %s/%s"
 targettemplate = " --target=%s"
 patchleveltemplate = " --patchlevel=%s"
-with open(sys.argv[1], 'rb') as f:
+with open(sys.argv[1], 'r') as f:
     for line in f:
         if line.startswith('#'):
             continue
