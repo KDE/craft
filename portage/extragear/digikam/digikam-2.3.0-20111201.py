@@ -27,7 +27,10 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/tiff'] = 'default'
         self.dependencies['win32libs-bin/gettext'] = 'default'
         self.dependencies['win32libs-bin/opencv'] = 'default'
-        self.buildDependencies['dev-util/gettext-tools'] = 'default'        
+        self.dependencies['extragear/libkgeomap'] = 'default'
+        self.dependencies['extragear/libkface'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        self.buildDependencies['win32libs-bin/boost-headers'] = 'default'
         self.shortDescription = "an advanced digital photo management application"
 
 class Package(CMakePackageBase):

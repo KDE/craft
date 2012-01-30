@@ -60,6 +60,24 @@ class GitSource ( VersionSystemSourceBase ):
                     return True
         return False
 
+    def __getCurrentRevision( self ):
+        """return the revision returned by git show"""
+
+        # run the command
+        branch = self.__getCurrentBranch()
+        if not self.__isTag( branch ):
+            # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
+            with tempfile.TemporaryFile() as tmpFile:
+                self.__git("show", "--abbrev-commit", stdout=tmpFile )
+                tmpFile.seek( os.SEEK_SET )
+                # read the temporary file and grab the first line
+                # print the revision - everything else should be quiet now
+                line = tmpFile.readline()
+                return line.replace("commit ", "").strip()
+        else:
+            # in case this is a tag, print out the tag version
+            return branch
+
     def __fetchSingleBranch( self, repopath = None ):
         utils.trace( 'GitSource __fetchSingleBranch', 2 )
         # get the path where the repositories should be stored to
@@ -221,19 +239,7 @@ class GitSource ( VersionSystemSourceBase ):
     def sourceVersion( self ):
         """print the revision returned by git show"""
         utils.trace( 'GitSource sourceVersion', 2 )
-
-        # run the command
-        if not self.__isTag( self.__getCurrentBranch()[ 1: ] ):
-            # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-            with tempfile.TemporaryFile() as tmpFile:
-                self.__git("show", "--abbrev-commit", stdout=tmpFile )
-                tmpFile.seek( os.SEEK_SET )
-                # read the temporary file and grab the first line
-                # print the revision - everything else should be quiet now
-                print tmpFile.readline().replace("commit ", "").strip()
-        else:
-            # in case this is a tag, print out the tag version
-            print self.__getCurrentBranch()[ 1: ]
+        print self.__getCurrentRevision()
         return True
 
     def checkoutDir(self, index=0 ):
@@ -260,3 +266,6 @@ class GitSource ( VersionSystemSourceBase ):
         utils.debug("using sourcedir: %s" % sourcedir, 2)
         return sourcedir
 
+    def currentRevision(self):
+        """return the name or number of the current revision"""
+        return self.__getCurrentRevision()

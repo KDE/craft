@@ -11,16 +11,18 @@ _VLC_VER = None
 class subinfo(info.infoclass):
   def setTargets( self ):
     self.vlcArch = "32"
+    self.vlcTagName = '1.2.0-rc1-'
     if( emergePlatform.buildArchitecture() == 'x64' ):
         self.vlcArch = "64"
+        self.vlcTagName = '1.3.0-git-%s' % self.getVer()
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
-    self.vlcTagName = '1.3.0-'
+    
 
-    self.targets[ self.vlcTagName + self.getVer() ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + self.getVer() + "-win" + self.vlcArch + ".7z"
-    self.targetInstSrc[ self.vlcTagName + self.getVer() ] = 'vlc-' + self.vlcTagName + self.getVer()
+    self.targets[ self.vlcTagName ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + "-win" + self.vlcArch + ".7z"
+    self.targetInstSrc[ self.vlcTagName ] = 'vlc-' + self.vlcTagName
 
-    self.targets[ self.vlcTagName + self.getVer() +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + self.getVer() + "-win" + self.vlcArch + "-debug.7z"
-    self.targetInstSrc[ self.vlcTagName + self.getVer() + "-debug" ] = 'vlc-' + self.vlcTagName +  self.getVer()
+    self.targets[ self.vlcTagName +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + "-win" + self.vlcArch + "-debug.7z"
+    self.targetInstSrc[ self.vlcTagName + "-debug" ] = 'vlc-' + self.vlcTagName
 
     releaseTag = '1.1.11'
     self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
@@ -29,7 +31,7 @@ class subinfo(info.infoclass):
     self.shortDescription = "an open-source multimedia framework"
 
     if compiler.isMinGW_W64():
-      self.defaultTarget = self.vlcTagName + self.getVer() +"-debug" 
+      self.defaultTarget = self.vlcTagName +"-debug" 
     else:
       self.defaultTarget = releaseTag
 
@@ -39,18 +41,21 @@ class subinfo(info.infoclass):
 
   def getVer( self ):
     global _VLC_VER
-    if _VLC_VER != None :
-      return _VLC_VER
-    else:
-      try:
-        fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
+    if _VLC_VER != None:
+        return _VLC_VER
 
-      except Exception, e:
+    try:
+        fh = urllib2.urlopen(self.vlcBaseUrl , timeout = 10)
+    except Exception, e:
         return "Nightlys Unavailible:"+str(e)
-      m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
-      fh.close()
-      _VLC_VER = m.group(0)
-      return _VLC_VER 
+
+    m = re.search( '\d\d\d\d\d\d\d\d-\d\d\d\d'  , fh.read() )
+    fh.close()
+    if m == None:
+        _VLC_VER = ""
+    else:
+        _VLC_VER = m.group(0)
+    return _VLC_VER 
 
 class Package(BinaryPackageBase):
   def __init__(self):
