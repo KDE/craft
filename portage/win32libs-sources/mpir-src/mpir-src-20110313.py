@@ -16,8 +16,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.3.0'] = "mpir-2.3.0"
         self.patchToApply['2.3.0'] = ('mpir-2.3.0-20110310.diff', 1)
 
+        self.targets['2.5.0'] = 'http://www.mpir.org/mpir-2.5.0.tar.bz2'
+        self.targetInstSrc['2.5.0'] = "mpir-2.5.0"
+        self.patchToApply['2.5.0'] = ('mpir-2.5.0-20120201.diff', 1)
+
         self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
-        self.defaultTarget = '2.3.0'
+        self.defaultTarget = '2.5.0'
 
 from Package.AutoToolsPackageBase import *
 from Package.MakeFilePackageBase import *
