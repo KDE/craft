@@ -18,8 +18,13 @@ class subinfo( info.infoclass ):
             self.patchToApply['0.9.2'].append(("ofx-msvc.diff", 1))
         self.patchToApply['0.9.2'].append(("libofx-0.9.2-20110215.diff", 1))
 
+        self.targets['0.9.5'] = "http://downloads.sourceforge.net/project/libofx/libofx/0.9.5/libofx-0.9.5.tar.gz"
+        self.targetDigests['0.9.5'] = '7e5245d68a0f3f7efad2fd809b2afbbff6ba0e73'
+        self.targetInstSrc['0.9.5'] = "libofx-0.9.5"
+        self.patchToApply['0.9.5'] = [("libofx-0.9.5-20120131.diff", 1)]
+
         self.shortDescription = "a parser and an API for the OFX (Open Financial eXchange) specification"
-        self.defaultTarget = '0.9.2'
+        self.defaultTarget = '0.9.5'
 
     def setDependencies( self ):
         self.dependencies['win32libs-bin/libopensp'] = 'default'
