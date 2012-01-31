@@ -26,6 +26,8 @@ kdesupport,akonadi,1.7.0,
 kdesupport,snorenotify,0.2,
 kdesupport,libqtsoap,,
 kdesupport,hupnp,,
+kdesupport,libkface,,
+kdesupport,libkgeomap,,
 #
 # the KDE packages themselves
 kde,kdelibs,4.8.0,
