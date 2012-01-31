@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['0.4.4', '0.4.6', '0.4.7']:
             self.targets[ ver ] = "http://www.libssh.org/files/0.4/libssh-" + ver + ".tar.gz"
             self.targetInstSrc[ ver ] = "libssh-" + ver
-        for ver in ['0.5.0']:
+        for ver in ['0.5.0', '0.5.2']:
             self.targets[ ver ] = "http://www.libssh.org/files/0.5/libssh-" + ver + ".tar.gz"
             self.targetInstSrc[ ver ] = "libssh-" + ver
         self.targetDigests['0.4.4'] = 'bde1d4713a86b6256ce2d14e6de6326e52c4da44'
