@@ -1,0 +1,130 @@
+From 92e145e05a13c3035c80102e285afde662ee14a9 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Wed, 1 Feb 2012 15:21:59 +0100
+Subject: [PATCH 2/2] add a way to test ssh connections on windows
+
+---
+ examples/CMakeLists.txt |    4 ++
+ examples/sample_win.c   |   95 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 99 insertions(+), 0 deletions(-)
+ create mode 100644 examples/sample_win.c
+
+diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
+index aeff201..bfdf07e 100644
+--- a/examples/CMakeLists.txt
++++ b/examples/CMakeLists.txt
+@@ -34,6 +34,10 @@ if (LINUX)
+         target_link_libraries(samplesshd ${LIBSSH_SHARED_LIBRARY})
+     endif (WITH_SERVER)
+ endif (LINUX)
++if (WIN32)
++    add_executable(samplessh sample_win.c ${examples_SRCS})
++    target_link_libraries(samplessh ${LIBSSH_SHARED_LIBRARY})
++endif (WIN32)
+ 
+ add_executable(exec exec.c ${examples_SRCS})
+ target_link_libraries(exec ${LIBSSH_SHARED_LIBRARY})
+diff --git a/examples/sample_win.c b/examples/sample_win.c
+new file mode 100644
+index 0000000..e29ae7f
+--- /dev/null
++++ b/examples/sample_win.c
+@@ -0,0 +1,95 @@
++/* client.c */
++/*
++Copyright 2011 Patrick Spendrin <ps_ml@gmx.de>
++
++This file is part of the SSH Library
++
++You are free to copy this file, modify it in any way, consider it being public
++domain. This does not apply to the rest of the library though, but it is
++allowed to cut-and-paste working code from this file to any license of
++program.
++The goal is to show the API in action. It's not a reference on how terminal
++clients must be made or how a client should react.
++*/
++
++#include "config.h"
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include <libssh/callbacks.h>
++#include <libssh/libssh.h>
++#include <libssh/sftp.h>
++
++#include <fcntl.h>
++
++#include "examples_common.h"
++#define MAXCMD 10
++#define snprintf _snprintf
++
++static int client(ssh_session session, char* user, char* host){
++  int auth=0;
++  char *banner;
++  int state;
++  if (ssh_options_set(session, SSH_OPTIONS_USER, user) < 0)
++    return -1;
++  if (ssh_options_set(session, SSH_OPTIONS_HOST, host) < 0)
++    return -1;
++  printf("user and server are set\n");
++  ssh_options_parse_config(session, NULL);
++
++  if(ssh_connect(session)){
++      fprintf(stderr,"Connection failed : %s\n",ssh_get_error(session));
++      return -1;
++  }
++  state=verify_knownhost(session);
++  printf("verified known host\n");
++  if (state != 0)
++    return -1;
++  printf("trying to authenticate next\n");
++  ssh_userauth_none(session, NULL);
++  printf("trying to get banner next\n");
++  banner=ssh_get_issue_banner(session);
++  if(banner){
++      printf("%s\n",banner);
++      free(banner);
++  }
++  printf("banner has been printed\n");
++  auth=authenticate_console(session);
++  if(auth != SSH_AUTH_SUCCESS){
++    return -1;
++  }
++  ssh_log(session, SSH_LOG_FUNCTIONS, "Authentication success");
++  return 0;
++}
++
++void usage() {
++}
++
++int main(int argc, char **argv){
++    ssh_session session;
++    char *user, *host;
++
++    if(argc <= 1) {
++        printf("syntax: %s user@host\n", argv[0]);
++        printf("checks whether a ssh connection can be established\n");
++        exit(1);
++    }
++
++    host = strchr(argv[1], '@') + 1;
++    user = (char*)malloc(strlen(argv[1]) - strlen(host));
++    strncpy(user, argv[1], strlen(argv[1]) - strlen(host) - 1);
++    user[strlen(argv[1]) - strlen(host) - 1] = 0;
++    printf("testing ssh authentication to %s@%s\n", user, host);
++    session = ssh_new();
++
++    client(session, user, host);
++
++    ssh_disconnect(session);
++    ssh_free(session);
++
++    ssh_finalize();
++    free(user);
++    return 0;
++}
++
+-- 
+1.7.4.msysgit.0
+
