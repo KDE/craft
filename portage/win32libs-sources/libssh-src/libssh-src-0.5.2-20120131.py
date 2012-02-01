@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh.git|v0-4"
         self.svnTargets['0.5'] = "git://git.libssh.org/projects/libssh.git|v0-5"
         self.shortDescription = "a working SSH implementation by the mean of a library"
-        self.defaultTarget = '0.5.0'
+        self.defaultTarget = '0.5.2'
         self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
 
     def setDependencies( self ):
