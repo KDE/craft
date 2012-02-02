@@ -1,0 +1,12 @@
+diff -Nru rocs-4.8.0.orig/src/Plugins/DataStructure/Graph/GraphStructure.h rocs-4.8.0/src/Plugins/DataStructure/Graph/GraphStructure.h
+--- rocs-4.8.0.orig/src/Plugins/DataStructure/Graph/GraphStructure.h	2011-11-04 15:35:33.000000000 +0100
++++ rocs-4.8.0/src/Plugins/DataStructure/Graph/GraphStructure.h	2012-02-02 21:31:06.709852000 +0100
+@@ -24,7 +24,7 @@
+ #include "DataStructure.h"
+ 
+ namespace Rocs{
+-class ROCSLIB_EXPORT GraphStructure : public DataStructure {
++class GraphStructure : public DataStructure {
+     Q_OBJECT
+     public:
+         typedef enum {
