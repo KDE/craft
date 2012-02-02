@@ -81,4 +81,5 @@ win32libs-sources,opencv-src,,3
 win32libs-sources,ffmpeg-src,,
 win32libs-sources,lcms2-src,,
 win32libs-sources,ccache-src,working,
+win32libs-sources,mysql-src,,
 libs,runtime,,
