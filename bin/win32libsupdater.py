@@ -10,7 +10,6 @@ from argparse import ArgumentParser
 import xml.dom.minidom
 from string import Template  # pylint: disable=W0402
 
-
 #################################################
 
 KDEROOT = os.getenv("KDEROOT")
@@ -54,8 +53,10 @@ def gitAdd( newDir ):
     return p.wait() == 0
 
 def getUrls(_cat, _pac, _file):
-    _oldSourceOnly = os.environ["EMERGE_SOURCEONLY"]
-    _oldPackageTypes = os.environ["EMERGE_PACKAGETYPES"]
+    _oldSourceOnly = ""
+    _oldPackageTypes = ""
+    if "EMERGE_SOURCEONLY" in os.environ: _oldSourceOnly = os.environ["EMERGE_SOURCEONLY"]
+    if "EMERGE_PACKAGETYPES" in os.environ: _oldPackageTypes = os.environ["EMERGE_PACKAGETYPES"]
     os.environ["EMERGE_SOURCEONLY"] = "False"
     os.environ["EMERGE_PACKAGETYPES"] = "dbg,src"
     cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(_pac)
@@ -169,8 +170,8 @@ for packageKey in addInfo:
                 f.close()
             else:
                 utils.debug("renaming/updating file %s" % gitNewName )
-        if args.outputname:
-            getUrls(category, package, fetchlist)
+            if args.outputname:
+                getUrls(category, package, fetchlist)
 
 
         # check that all targets from the source package are contained in the binTargets
@@ -244,5 +245,5 @@ for packageKey in addInfo:
 
                 print("write", newName)
                 print("git add", gitName)
-        if args.outputname:
-            getUrls(category, package, fetchlist)
+            if args.outputname:
+                getUrls(category, package, fetchlist)
