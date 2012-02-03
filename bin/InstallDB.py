@@ -182,8 +182,8 @@ class InstallDB:
     def findInstalled( self, category, package, prefix=None ):
         """ get the version of a package that is installed """
         f = self.getInstalled( category, package, prefix )
-        if len(f) == 1:
-            return f[ 0 ][2]
+        if len(f) == 3:
+            return f[ 2 ]
         else:
             return None
 
