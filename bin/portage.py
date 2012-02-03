@@ -725,8 +725,7 @@ def printSearch(search_category, search_package,maxDist = 3):
             print("\t Homepage: %s" % homepage)
             print("\t Description: %s" % description)
             print("\t Latest version: %s" % version)
-            #curently no effect because we always get the version from the file name
-            #print("\t Installed version: %s" % InstallDB.installdb.findInstalled(category,package))
+            print("\t Installed version: %s" % InstallDB.installdb.findInstalled(category,package))
     
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
