@@ -699,9 +699,10 @@ def printSearch(search_category, search_package,maxDist = 3):
         installable = PortageInstance.getInstallables()
         similar = []
         match = None
+        package_re = re.compile(".*%s.*" % search_package)
         for category,package,version in installable:
             levDist = utils.levenshtein(search_package,package)
-            if( search_category == "" and  levDist == 0) or (search_category == category and levDist == 0) :
+            if ( search_category == "" and  package_re.match(package)) or (search_category == category and levDist == 0) :
                 match = (category,package,version,levDist)
                 break
             elif( search_category== "" and  levDist <= maxDist) or (search_category == category and levDist <= maxDist) :
