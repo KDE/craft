@@ -11,7 +11,6 @@ import sys
 import portage_versions
 import emergePlatform
 import copy
-import InstallDB
 
 internalCategory = 'internal'
 ROOTDIR = os.getenv( "KDEROOT" )
@@ -340,8 +339,6 @@ class Portage:
                 tmpdict['shortDescription'] = info.shortDescription
             if not info.description == "":
                 tmpdict['description'] = info.description
-            if not info.homepage == "":
-                tmpdict['homepage'] = info.homepage
             tmpdict['withCompiler'] = info.options.package.withCompiler
             utils.debug( tmpdict, 2 )
             return tmpdict
@@ -688,45 +685,12 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
 def printInstallables():
     """get all the packages that can be installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), alwaysTrue )
-    
 
 def printInstalled():
     """get all the packages that are already installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
-    
-def printSearch(search_category, search_package,maxDist = 3):
-        installable = PortageInstance.getInstallables()
-        similar = []
-        match = None
-        for category,package,version in installable:
-            levDist = utils.levenshtein(search_package,package)
-            if( search_category == "" and  levDist == 0) or (search_category == category and levDist == 0) :
-                match = (category,package,version,levDist)
-                break
-            elif( search_category== "" and  levDist <= maxDist) or (search_category == category and levDist <= maxDist) :
-                similar.append((category,package,version,levDist))
-                
-        if match == None:
-            print("Package %s not found, similar packages are:" % search_package)
-        else:
-            print("Package %s found:" % search_package)
-            similar = [match]
-        for category,package,version,levDist in similar:
-            utils.debug((category,package,version,levDist),1)
-            meta = PortageInstance.getMetaData( category, package, version )
-            description = ""
-            if "shortDescription" in meta:
-                description = meta["shortDescription"]
-            homepage = ""
-            if "homepage" in meta:
-                homepage = meta["homepage"]
-            print("%s/%s" % (category,package))
-            print("\t Homepage: %s" % homepage)
-            print("\t Description: %s" % description)
-            print("\t Latest version: %s" % version)
-            #curently no effect because we always get the version from the file name
-            #print("\t Installed version: %s" % InstallDB.installdb.findInstalled(category,package))
-    
+
+
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
     utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype), 2 )
