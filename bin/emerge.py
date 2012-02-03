@@ -428,6 +428,13 @@ for i in sys.argv:
         # clean complete build directory
         utils.cleanDirectory(os.path.join( os.getenv("KDEROOT"), "build"))
         exit(0)
+    elif ( i == "--search" ):
+        package = nextArguments.pop(0)
+        category = ""
+        if not package.find("/") == -1:
+            (category,package) = package.split("/")
+        portage.printSearch(category, package)
+        exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
         exit ( 1 )
