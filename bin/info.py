@@ -51,6 +51,8 @@ class infoclass:
         # a long and a short description for the package
         self.shortDescription = ''
         self.description = ''
+        #a url to the projects homepage
+        self.homepage = ''
         # the category that will be used in the installer for this package
         # you must only set this property if you want to override the default category
         # of the package
