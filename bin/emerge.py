@@ -576,12 +576,6 @@ else:
             elif utils.verbose() > 2 and not mainPackage == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
         else:
-            # find the installed version of the package
-            if isDBEnabled():
-                instver = installdb.findInstalled( mainCategory, mainPackage )
-            else:
-                instver = portage.findInstalled( mainCategory, mainPackage )
-
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
