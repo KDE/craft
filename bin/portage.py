@@ -695,7 +695,7 @@ def printInstalled():
     """get all the packages that are already installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
     
-def printSearch(search_category, search_package,maxDist = 2):
+def printSearch(search_category, search_package,maxDist = 3):
         installable = PortageInstance.getInstallables()
         similar = []
         match = None
@@ -707,7 +707,7 @@ def printSearch(search_category, search_package,maxDist = 2):
                     match = ((levDist,category,package,version))
                     break;
                 elif package_re.match(package):
-                    similar.append((levDist,category,package,version))
+                    similar.append((levDist-maxDist,category,package,version))
                 elif levDist <= maxDist:
                     similar.append((levDist,category,package,version))
                 
@@ -727,6 +727,7 @@ def printSearch(search_category, search_package,maxDist = 2):
             homepage = ""
             if "homepage" in meta:
                 homepage = meta["homepage"]
+            #print(levDist)
             print("%s/%s" % (category,package))
             print("\t Homepage: %s" % homepage)
             print("\t Description: %s" % description)
