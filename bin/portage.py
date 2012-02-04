@@ -694,25 +694,30 @@ def printInstalled():
     """get all the packages that are already installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
     
-def printSearch(search_category, search_package,maxDist = 3):
+def printSearch(search_category, search_package,maxDist = 2):
         installable = PortageInstance.getInstallables()
         similar = []
         match = None
         package_re = re.compile(".*%s.*" % search_package)
         for category,package,version in installable:
-            levDist = utils.levenshtein(search_package,package)
-            if ( search_category == "" and  package_re.match(package)) or (search_category == category and levDist == 0) :
-                match = (category,package,version,levDist)
-                break
-            elif( search_category== "" and  levDist <= maxDist) or (search_category == category and levDist <= maxDist) :
-                similar.append((category,package,version,levDist))
+            if search_category == "" or search_category == category:
+                levDist = utils.levenshtein(search_package,package)
+                if levDist == 0 :
+                    match = ((levDist,category,package,version))
+                    break;
+                elif package_re.match(package):
+                    similar.append((levDist,category,package,version))
+                elif levDist <= maxDist:
+                    similar.append((levDist,category,package,version))
                 
         if match == None:
             print("Package %s not found, similar packages are:" % search_package)
+            similar.sort()
         else:
             print("Package %s found:" % search_package)
             similar = [match]
-        for category,package,version,levDist in similar:
+        
+        for levDist,category,package,version in similar:
             utils.debug((category,package,version,levDist),1)
             meta = PortageInstance.getMetaData( category, package, version )
             description = ""
