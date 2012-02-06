@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.5.3'] = ('kmymoney-4.5.2-20110112.diff', 1)
         self.patchToApply['4.6.0'] = ('kmymoney-4.6.0-20110822.diff', 1)
         self.patchToApply['4.6.1'] = ('kmymoney-4.6.1-20111208.diff', 1)
-        self.patchToApply['4.6.2'] = ('kmymoney-4.6.1-20120207.diff', 1)
+        self.patchToApply['4.6.2'] = ('kmymoney-4.6.2-20120207.diff', 1)
         self.defaultTarget = 'gitStable-4.6'
 
     def setDependencies( self ):
