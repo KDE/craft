@@ -31,7 +31,7 @@ kdesupport,libkgeomap,,
 #
 # the KDE packages themselves
 kde,kdelibs,4.8.0,
-kde,kdepimlibs,4.8.0,
+kde,kdepimlibs,4.8.0,1
 kde,kde-runtime,4.8.0,
 kde,kactivities,4.8.0,
 kde,kde-workspace,4.8.0,
@@ -98,8 +98,8 @@ kde,sweeper,4.8.0,
 #
 kde,kdemultimedia,4.8.0,
 kde,kdenetwork,4.8.0,
-kde,kdepim,4.8.0,
-kde,kdepim-runtime,4.8.0,
+kde,kdepim,4.8.0,1
+kde,kdepim-runtime,4.8.0,1
 kde,kdesdk,4.8.0,
 kde,kdetoys,4.8.0,
 #
@@ -109,7 +109,7 @@ extragear,kate,4.8.0,
 extragear,kile,,
 extragear,digikam,2.5.0,
 extragear,libalkimia,4.3.2,
-extragear,kmymoney,4.6.2,
+extragear,kmymoney,4.6.2,1
 extragear,kmid,2.4.0,
 extragear,konversation,1.4,
 extragear,quassel,0.7.3,
