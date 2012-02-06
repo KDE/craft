@@ -1,0 +1,25 @@
+diff -Nru kmymoney-4.6.2.orig/kmymoney/CMakeLists.txt kmymoney-4.6.2/kmymoney/CMakeLists.txt
+--- kmymoney-4.6.2.orig/kmymoney/CMakeLists.txt	2012-02-04 09:52:59.000000000 +0100
++++ kmymoney-4.6.2/kmymoney/CMakeLists.txt	2012-02-07 00:43:08.151600000 +0100
+@@ -177,7 +177,8 @@
+   kde4_add_unit_test( kmymoneyutilstest TESTNAME kmymoney-utilstest ${kmymoneyutilstest_SRCS} )
+   ADD_DEPENDENCIES( kmymoneyutilstest kmymoney_common kmm_mymoney )
+ 
+-  target_link_libraries( kmymoneyutilstest kmymoney_common kmm_config ${kmymoney_common_LIBS} kmm_mymoney ${target_link_libraries_test})
++  target_link_libraries( kmymoneyutilstest dialogs widgets converter kmm_mymoney kmymoney_common dialogs widgets kmm_config ${QT_AND_KDECORE_LIBS} ${QT_QTSQL_LIBRARY}
++  ${KDE4_KHTML_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KABC_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KUTILS_LIBRARY} ${target_link_libraries_test})
+ 
+ ENDIF( KDE4_BUILD_TESTS )
+ 
+diff -Nru kmymoney-4.6.2.orig/kmymoney/kmymoney.cpp kmymoney-4.6.2/kmymoney/kmymoney.cpp
+--- kmymoney-4.6.2.orig/kmymoney/kmymoney.cpp	2012-02-04 09:52:59.000000000 +0100
++++ kmymoney-4.6.2/kmymoney/kmymoney.cpp	2012-02-07 00:42:41.996000000 +0100
+@@ -21,7 +21,7 @@
+ #include "kmymoney.h"
+ 
+ // for _getpid
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #include <process.h>
+ #else
+ #if HAVE_SYS_TYPES_H
