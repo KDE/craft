@@ -28,6 +28,7 @@ kdesupport,libqtsoap,,
 kdesupport,hupnp,,
 kdesupport,libkface,,
 kdesupport,libkgeomap,,
+kdesupport,liblastfm,,
 #
 # the KDE packages themselves
 kde,kdelibs,4.8.0,
