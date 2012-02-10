@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
         self.archiveNames['1.0.1'] = 'GammaRay-v1.0.1.tar.gz'
         self.targetInstSrc['1.0.1'] = 'KDAB-GammaRay-6d4549b'
         self.targetDigests['1.0.1'] = 'bccded4e9764c69774811826497c133985e8dc53'
-        self.defaultTarget = '1.0.1'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.shortDescription = "GammaRay is a tool to poke around in a Qt-application and also to manipulate the application to some extent"
