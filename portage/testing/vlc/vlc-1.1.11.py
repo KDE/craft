@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
     if( emergePlatform.buildArchitecture() == 'x64' ):
         self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
-    self.vlcTagName = '2.1.0-git'
+    self.vlcTagName = '2.1.0-git-%s' % self.getVer() 
     
 
     self.targets[ self.vlcTagName ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + "-win" + self.vlcArch + ".7z"
