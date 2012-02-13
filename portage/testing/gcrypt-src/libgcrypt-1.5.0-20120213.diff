@@ -1,0 +1,789 @@
+diff -Nru libgcrypt-1.5.0.orig/cipher/md.c libgcrypt-1.5.0/cipher/md.c
+--- libgcrypt-1.5.0.orig/cipher/md.c	2011-03-28 14:12:14.000000000 +0200
++++ libgcrypt-1.5.0/cipher/md.c	2012-02-13 23:29:57.092143200 +0100
+@@ -550,9 +550,11 @@
+   gcry_module_t module;
+   gcry_err_code_t err = 0;
+ 
+-  for (entry = h->list; entry; entry = entry->next)
++  for (entry = h->list; entry; entry = entry->next) {
+     if (entry->module->mod_id == algorithm)
+       return err; /* already enabled */
++    printf("<%i> <%i>", entry->module->mod_id, algorithm);
++  }
+ 
+   REGISTER_DEFAULT_DIGESTS;
+ 
+diff -Nru libgcrypt-1.5.0.orig/cipher/pubkey.c libgcrypt-1.5.0/cipher/pubkey.c
+--- libgcrypt-1.5.0.orig/cipher/pubkey.c	2011-06-13 12:23:50.000000000 +0200
++++ libgcrypt-1.5.0/cipher/pubkey.c	2012-02-13 00:02:37.720666000 +0100
+@@ -2173,7 +2173,7 @@
+   return err;
+ }
+ 
+-static inline int
++static int
+ get_hash_algo (const char *s, size_t n)
+ {
+   static const struct { const char *name; int algo; } hashnames[] = {
+diff -Nru libgcrypt-1.5.0.orig/cipher/sha256.c libgcrypt-1.5.0/cipher/sha256.c
+--- libgcrypt-1.5.0.orig/cipher/sha256.c	2011-02-04 20:09:38.000000000 +0100
++++ libgcrypt-1.5.0/cipher/sha256.c	2012-02-13 00:03:42.088347600 +0100
+@@ -111,28 +111,28 @@
+           } while (0)
+ 
+ /* (4.2) same as SHA-1's F1.  */
+-static inline u32
++static u32
+ Cho (u32 x, u32 y, u32 z)
+ {
+   return (z ^ (x & (y ^ z)));
+ }
+ 
+ /* (4.3) same as SHA-1's F3 */
+-static inline u32
++static u32
+ Maj (u32 x, u32 y, u32 z)
+ {
+   return ((x & y) | (z & (x|y)));
+ }
+ 
+ /* (4.4) */
+-static inline u32
++static u32
+ Sum0 (u32 x)
+ {
+   return (ror (x, 2) ^ ror (x, 13) ^ ror (x, 22));
+ }
+ 
+ /* (4.5) */
+-static inline u32
++static u32
+ Sum1 (u32 x)
+ {
+   return (ror (x, 6) ^ ror (x, 11) ^ ror (x, 25));
+diff -Nru libgcrypt-1.5.0.orig/cipher/sha512.c libgcrypt-1.5.0/cipher/sha512.c
+--- libgcrypt-1.5.0.orig/cipher/sha512.c	2011-02-04 20:09:38.000000000 +0100
++++ libgcrypt-1.5.0/cipher/sha512.c	2012-02-13 00:04:20.179526300 +0100
+@@ -98,31 +98,31 @@
+ }
+ 
+ 
+-static inline u64
++static u64
+ ROTR (u64 x, u64 n)
+ {
+   return ((x >> n) | (x << (64 - n)));
+ }
+ 
+-static inline u64
++static u64
+ Ch (u64 x, u64 y, u64 z)
+ {
+   return ((x & y) ^ ( ~x & z));
+ }
+ 
+-static inline u64
++static u64
+ Maj (u64 x, u64 y, u64 z)
+ {
+   return ((x & y) ^ (x & z) ^ (y & z));
+ }
+ 
+-static inline u64
++static u64
+ Sum0 (u64 x)
+ {
+   return (ROTR (x, 28) ^ ROTR (x, 34) ^ ROTR (x, 39));
+ }
+ 
+-static inline u64
++static u64
+ Sum1 (u64 x)
+ {
+   return (ROTR (x, 14) ^ ROTR (x, 18) ^ ROTR (x, 41));
+diff -Nru libgcrypt-1.5.0.orig/cmake/modules/FindGpg-Error.cmake libgcrypt-1.5.0/cmake/modules/FindGpg-Error.cmake
+--- libgcrypt-1.5.0.orig/cmake/modules/FindGpg-Error.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/cmake/modules/FindGpg-Error.cmake	2012-02-12 23:18:38.234696000 +0100
+@@ -0,0 +1,35 @@
++# - Try to find GPG_ERROR
++# Once done this will define
++#
++#  GPG_ERROR_FOUND - system has GPG_ERROR
++#  GPG_ERROR_INCLUDE_DIR - the GPG_ERROR include directory
++#  GPG_ERROR_LIBRARIES - the libraries needed to use GPG_ERROR
++
++if (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    # in cache already
++    SET(GPG_ERROR_FOUND TRUE)
++
++else (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    FIND_PATH(GPG_ERROR_INCLUDE_DIR gpg-error.h)
++
++    FIND_LIBRARY(GPG_ERROR_LIBRARIES NAMES gpg-error libgpg-error gpg-error-0 libgpg-error-0)
++
++    if (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++       set(GPG_ERROR_FOUND TRUE)
++    endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
++
++    if (GPG_ERROR_FOUND)
++      if (NOT GPG_ERROR_FIND_QUIETLY)
++        message(STATUS "Found gpg-error: ${GPG_ERROR_LIBRARIES}")
++      endif (NOT GPG_ERROR_FIND_QUIETLY)
++    else (GPG_ERROR_FOUND)
++      if (GPG-ERROR_FIND_REQUIRED)
++        message(SEND_ERROR "Could NOT find gpg-error")
++      endif (GPG-ERROR_FIND_REQUIRED)
++    endif (GPG_ERROR_FOUND)
++
++    MARK_AS_ADVANCED(GPG_ERROR_INCLUDE_DIR GPG_ERROR_LIBRARIES)
++
++endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
+diff -Nru libgcrypt-1.5.0.orig/cmake/modules/MacroBoolTo01.cmake libgcrypt-1.5.0/cmake/modules/MacroBoolTo01.cmake
+--- libgcrypt-1.5.0.orig/cmake/modules/MacroBoolTo01.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/cmake/modules/MacroBoolTo01.cmake	2012-02-13 23:28:27.926043200 +0100
+@@ -0,0 +1,20 @@
++# MACRO_BOOL_TO_01( VAR RESULT0 ... RESULTN )
++# This macro evaluates its first argument
++# and sets all the given vaiables either to 0 or 1
++# depending on the value of the first one
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++MACRO(MACRO_BOOL_TO_01 FOUND_VAR )
++   FOREACH (_current_VAR ${ARGN})
++      IF(${FOUND_VAR})
++         SET(${_current_VAR} 1)
++      ELSE(${FOUND_VAR})
++         SET(${_current_VAR} 0)
++      ENDIF(${FOUND_VAR})
++   ENDFOREACH(_current_VAR)
++ENDMACRO(MACRO_BOOL_TO_01)
+diff -Nru libgcrypt-1.5.0.orig/cmake/modules/PrepareConfigureFile.cmake libgcrypt-1.5.0/cmake/modules/PrepareConfigureFile.cmake
+--- libgcrypt-1.5.0.orig/cmake/modules/PrepareConfigureFile.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/cmake/modules/PrepareConfigureFile.cmake	2012-02-12 22:49:24.492387700 +0100
+@@ -0,0 +1,12 @@
++# this macro is used to bring the template header syntax of ldap to the cmake syntax
++macro(prepare_configure_file _infile)
++    string(LENGTH ${_infile} __namelength)
++    math(EXPR __namelength "${__namelength} - 3")
++    string(SUBSTRING ${_infile} 0 ${__namelength} __outfile)
++    file(RELATIVE_PATH __outfile ${CMAKE_SOURCE_DIR} ${__outfile})
++    file(READ ${_infile} __content)
++    string(REPLACE ";" "\\;" __content "${__content}") # make sure that also ; get through cmake and won't get interpreted as array separators
++    string(REGEX REPLACE "\#undef ([^\r\n ]*)" "#cmakedefine \\1 @\\1@" __content "${__content}")
++    string(REGEX REPLACE "%([A-Za-z0-9_]*)%" "@\\1@" __content "${__content}")
++    file(WRITE ${CMAKE_BINARY_DIR}/${__outfile}.cmake ${__content})
++endmacro(prepare_configure_file _infile)
+diff -Nru libgcrypt-1.5.0.orig/CMakeLists.txt libgcrypt-1.5.0/CMakeLists.txt
+--- libgcrypt-1.5.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/CMakeLists.txt	2012-02-13 23:38:28.285381800 +0100
+@@ -0,0 +1,36 @@
++project(libgcrypt)
++
++cmake_minimum_required(VERSION 2.8)
++
++option(BUILD_STATIC "build a static library instead of a dll" OFF)
++option(BUILD_TESTS "build the tests" ON)
++option(BUILD_TOOLS "build the tools" ON)
++
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
++
++if(BUILD_STATIC)
++    set(GCRYPT_SHARED STATIC)
++else(BUILD_STATIC)
++    set(GCRYPT_SHARED SHARED)
++endif(BUILD_STATIC)
++
++if(BUILD_TESTS)
++enable_testing()
++endif(BUILD_TESTS)
++
++find_package(Gpg-Error REQUIRED)
++include_directories(${GPG_ERROR_INCLUDE_DIR})
++
++add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -DF_OK=0 -wd4996 -Dsnprintf=_snprintf)
++
++# one bloody hack because g10code doesn't use autotools as they should be used
++file(WRITE ${CMAKE_BINARY_DIR}/unistd.h "// empty file")
++include(ConfigureOptions.cmake)
++include(ConfigureChecks.cmake)
++# this is needed so that the mpi sources can be added
++include(${CMAKE_SOURCE_DIR}/mpi/ConfigLinks.cmake)
++set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
++add_subdirectory(src)
++if(BUILD_TESTS)
++    add_subdirectory(tests)
++endif(BUILD_TESTS)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru libgcrypt-1.5.0.orig/config.h.in libgcrypt-1.5.0/config.h.in
+--- libgcrypt-1.5.0.orig/config.h.in	2011-06-29 10:59:10.000000000 +0200
++++ libgcrypt-1.5.0/config.h.in	2012-02-13 00:01:33.749007000 +0100
+@@ -448,7 +448,9 @@
+ #undef pid_t
+ 
+ /* Define to `unsigned int' if <sys/types.h> does not define. */
+-#undef size_t
++typedef unsigned int size_t;
++typedef signed int ssize_t;
++typedef int pid_t;
+ 
+ /* type to use in place of socklen_t if not defined */
+ #undef socklen_t
+diff -Nru libgcrypt-1.5.0.orig/ConfigureChecks.cmake libgcrypt-1.5.0/ConfigureChecks.cmake
+--- libgcrypt-1.5.0.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/ConfigureChecks.cmake	2012-02-13 22:49:22.448889600 +0100
+@@ -0,0 +1,168 @@
++#/* Define if you don't want the default EGD socket name. For details see
++#   cipher/rndegd.c */
++#undef EGD_SOCKET_NAME
++#/* Enable support for Intel AES-NI instructions. */
++#undef ENABLE_AESNI_SUPPORT
++#/* Define to support an HMAC based integrity check */
++#undef ENABLE_HMAC_BINARY_CHECK
++#/* Enable support for the PadLock engine. */
++#undef ENABLE_PADLOCK_SUPPORT
++
++#/* Defined if the mlock() call does not work */
++#undef HAVE_BROKEN_MLOCK
++#/* Define to 1 if you have the declaration of `sys_siglist', and to 0 if you
++#   don't. */
++set(HAVE_DECL_SYS_SIGLIST 0)
++#/* defined if the system supports a random device */
++#undef HAVE_DEV_RANDOM
++#/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
++#undef HAVE_DOPRNT
++#/* Define to use the GNU C visibility attribute. */
++#undef GCRY_USE_VISIBILITY
++#/* Defined if the system supports an mlock() call */
++#undef HAVE_MLOCK
++
++#/* Defined if the GNU Pth is available */
++#undef HAVE_PTH
++
++#/* Defined if a `byte' is typedef'd */
++#undef HAVE_BYTE_TYPEDEF
++#/* Defined if a `u16' is typedef'd */
++#undef HAVE_U16_TYPEDEF
++#/* Defined if a `u32' is typedef'd */
++#undef HAVE_U32_TYPEDEF
++#/* Defined if a `ulong' is typedef'd */
++#undef HAVE_ULONG_TYPEDEF
++#/* Defined if a `ushort' is typedef'd */
++#undef HAVE_USHORT_TYPEDEF
++
++#/* The default error source for libgcrypt. */
++set(GPG_ERR_SOURCE_DEFAULT GPG_ERR_SOURCE_GCRYPT)
++
++include(CheckFunctionExists)
++check_function_exists("atexit" HAVE_ATEXIT)
++check_function_exists("clock" HAVE_CLOCK)
++check_function_exists("clock_gettime" HAVE_CLOCK_GETTIME)
++check_function_exists("fcntl" HAVE_FCNTL)
++check_function_exists("ftruncate" HAVE_FTRUNCATE)
++check_function_exists("gethrtime" HAVE_GETHRTIME)
++check_function_exists("getpagesize" HAVE_GETPAGESIZE)
++check_function_exists("getpid" HAVE_GETPID)
++check_function_exists("getrusage" HAVE_GETRUSAGE)
++check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
++check_function_exists("memmove" HAVE_MEMMOVE)
++check_function_exists("mmap" HAVE_MMAP)
++check_function_exists("raise" HAVE_RAISE)
++check_function_exists("rand" HAVE_RAND)
++check_function_exists("stpcpy" HAVE_STPCPY)
++check_function_exists("strcasecmp" HAVE_STRCASECMP)
++check_function_exists("strerror" HAVE_STRERROR)
++check_function_exists("stricmp" HAVE_STRICMP)
++check_function_exists("strtoul" HAVE_STRTOUL)
++check_function_exists("sysconf" HAVE_SYSCONF)
++check_function_exists("syslog" HAVE_SYSLOG)
++check_function_exists("vprintf" HAVE_VPRINTF)
++check_function_exists("wait4" HAVE_WAIT4)
++check_function_exists("waitpid" HAVE_WAITPID)
++
++
++include(CheckIncludeFile)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("sys/capability.h" HAVE_SYS_CAPABILITY_H)
++check_include_file("sys/mman.h" HAVE_SYS_MMAN_H)
++check_include_file("sys/msg.h" HAVE_SYS_MSG_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/socket.h" HAVE_SYS_SOCKET_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("winsock2.h" HAVE_WINSOCK2_H)
++check_include_file("ws2tcpip.h" HAVE_WS2TCPIP_H)
++
++
++
++if(WIN32)
++#/* defined if we run on some of the PCDOS like systems (DOS, Windoze. OS/2)
++#   with special properties like no file modes */
++set(HAVE_DOSISH_SYSTEM 1)
++#/* defined if we must run on a stupid file system */
++set(HAVE_DRIVE_LETTERS 1)
++#/* Defined if we run on a W32 API based system */
++set(HAVE_W32_SYSTEM 1)
++#/* Defined if the Windows specific RNG should be used. */
++set(USE_RNDW32 1)
++#/* Define to 1 if the system has the type `uintptr_t'. */
++set(HAVE_UINTPTR_T 1)
++#/* A human readable text with the name of the OS*/
++set(PRINTABLE_OS_NAME "\"NT\"")
++if(WINCE)
++#/* Defined if we run on WindowsCE */
++set(HAVE_W32CE_SYSTEM 1)
++#/* Defined if the WindowsCE specific RNG should be used. */
++set(USE_RNDW32CE 1)
++endif(WINCE)
++endif(WIN32)
++
++#/* Name of this package */
++set(PACKAGE "\"libgcrypt\"")
++#/* Define to the address where bug reports for this package should be sent. */
++set(PACKAGE_BUGREPORT "\"kde-windows@kde.org\"")
++#/* Define to the full name of this package. */
++set(PACKAGE_NAME "\"\"")
++#/* Define to the full name and version of this package. */
++set(PACKAGE_STRING "\"\"")
++#/* Define to the one symbol short name of this package. */
++set(PACKAGE_TARNAME "\"\"")
++#/* Define to the home page for this package. */
++set(PACKAGE_URL "\"\"")
++#/* Define to the version of this package. */
++set(PACKAGE_VERSION "\"\"")
++#/* Define as the return type of signal handlers (`int' or `void'). */
++set(RETSIGTYPE "int")
++
++#/* The size of `unsigned int', as computed by sizeof. */
++set(SIZEOF_UNSIGNED_INT 4)
++#/* The size of `unsigned long', as computed by sizeof. */
++set(SIZEOF_UNSIGNED_LONG 4)
++#/* The size of `unsigned long long', as computed by sizeof. */
++set(SIZEOF_UNSIGNED_LONG_LONG 8)
++#/* The size of `unsigned short', as computed by sizeof. */
++set(SIZEOF_UNSIGNED_SHORT 2)
++
++#/* Define to 1 if you have the ANSI C header files. */
++#undef STDC_HEADERS
++
++#/* Defined if the /dev/random RNG should be used. */
++#undef USE_RNDLINUX
++#/* Defined if the default Unix RNG should be used. */
++#undef USE_RNDUNIX
++
++#/* Version of this package */
++set(VERSION "\"1.5.0\"\"\"")
++
++#/* Define to `__inline__' or `__inline' if that's what the C compiler
++#   calls it, or to nothing if 'inline' is not supported under any name.  */
++if(MSVC)
++    set(inline __inline__)
++else(MSVC)
++    set(inline inline)
++endif(MSVC)
++
++#/* Define to `int' if <sys/types.h> does not define. */
++#undef pid_t
++#/* Define to `unsigned int' if <sys/types.h> does not define. */
++#undef size_t
++#/* type to use in place of socklen_t if not defined */
++#undef socklen_t
++
++include(PrepareConfigureFile)
++prepare_configure_file(${CMAKE_SOURCE_DIR}/config.h.in)
++configure_file(${CMAKE_BINARY_DIR}/config.h.cmake config.h)
++add_definitions(-DHAVE_CONFIG_H)
++include_directories(BEFORE ${CMAKE_BINARY_DIR})
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru libgcrypt-1.5.0.orig/ConfigureOptions.cmake libgcrypt-1.5.0/ConfigureOptions.cmake
+--- libgcrypt-1.5.0.orig/ConfigureOptions.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/ConfigureOptions.cmake	2012-02-13 23:30:52.615319000 +0100
+@@ -0,0 +1,114 @@
++option(ENABLE_AES "Defined if this module should be included" ON)
++option(ENABLE_ARCFOUR "Defined if this module should be included" ON)
++option(ENABLE_BLOWFISH "Defined if this module should be included" ON)
++option(ENABLE_CAMELLIA "Defined if this module should be included" ON)
++#option(ENABLE_CAPABILITIES "define if capabilities should be ENABLEd" ON)
++option(ENABLE_CAST5 "Defined if this module should be included" ON)
++option(ENABLE_CRC "Defined if this module should be included" ON)
++option(ENABLE_DES "Defined if this module should be included" ON)
++option(ENABLE_DSA "Defined if this module should be included" ON)
++option(ENABLE_ECC "Defined if this module should be included" ON)
++option(ENABLE_ELGAMAL "Defined if this module should be included" ON)
++option(ENABLE_GNU_PTH "Defined if the GNU Portable Thread Library should be ENABLEd" OFF)
++option(ENABLE_MD4 "Defined if this module should be included" ON)
++option(ENABLE_MD5 "Defined if this module should be included" ON)
++option(ENABLE_ONLY_8DOT3 "set this to limit filenames to the 8.3 format" OFF)
++option(ENABLE_RANDOM_DAEMON "Define to support the experimental random daemon" OFF)
++option(ENABLE_RFC2268 "Defined if this module should be included" ON)
++option(ENABLE_RMD160 "Defined if this module should be included" ON)
++option(ENABLE_RNDEGD "Defined if the EGD based RNG should be ENABLEd." OFF)
++option(ENABLE_RSA "Defined if this module should be included" ON)
++option(ENABLE_SEED "Defined if this module should be included" ON)
++option(ENABLE_SERPENT "Defined if this module should be included" ON)
++option(ENABLE_SHA1 "Defined if this module should be included" ON)
++option(ENABLE_SHA256 "Defined if this module should be included" ON)
++option(ENABLE_SHA512 "Defined if this module should be included" ON)
++
++option(ENABLE_TIGER "Defined if this module should be included " ON)
++option(ENABLE_TWOFISH "Defined if this module should be included " ON)
++option(ENABLE_WHIRLPOOL "Defined if this module should be included " ON)
++
++set(mods
++    AES
++    ARCFOUR
++    BLOWFISH
++    CAMELLIA
++    #CAPABILITIES
++    CAST5
++    CRC
++    DES
++    DSA
++    ECC
++    ELGAMAL
++    GNU_PTH
++    MD4
++    MD5
++    ONLY_8DOT3
++    RANDOM_DAEMON
++    RFC2268
++    RMD160
++    RNDEGD
++    RSA
++    SEED
++    SERPENT
++    SHA1
++    SHA256
++    SHA512
++
++    TIGER
++    TWOFISH
++    WHIRLPOOL
++)
++
++include(MacroBoolTo01)
++foreach(_mod ${mods})
++    macro_bool_to_01(ENABLE_${_mod} USE_${_mod})
++endforeach(_mod ${mods})
++
++# Definitions for symmetric ciphers.
++set(SYMMETRIC_CIPHERS arcfour blowfish cast5 des aes twofish serpent rfc2268 seed camellia)
++# Definitions for public-key ciphers.
++set(PUBKEY_CIPHERS dsa elgamal rsa ecc)
++# Definitions for message digests.
++set(DIGESTS crc md4 md5 rmd160 sha1 sha256)
++#available_digests_64="sha512 tiger whirlpool"
++
++#/* List of available cipher algorithms */
++foreach(_cipher ${SYMMETRIC_CIPHERS})
++    string(TOUPPER ${_cipher} __upper_cipher)
++    if(${USE_${__upper_cipher}})
++        if(NOT LIBGCRYPT_CIPHERS)
++            set(LIBGCRYPT_CIPHERS "\"${_cipher}")
++        else(NOT LIBGCRYPT_CIPHERS)
++            set(LIBGCRYPT_CIPHERS "${LIBGCRYPT_CIPHERS};${_cipher}")
++        endif(NOT LIBGCRYPT_CIPHERS)
++    endif(${USE_${__upper_cipher}})
++endforeach(_cipher ${SYMMETRIC_CIPHERS})
++
++#/* List of available digest algorithms */
++foreach(_cipher ${DIGESTS})
++    string(TOUPPER ${_cipher} __upper_cipher)
++    if(${USE_${__upper_cipher}})
++        if(NOT LIBGCRYPT_DIGESTS)
++            set(LIBGCRYPT_DIGESTS "\"${_cipher}")
++        else(NOT LIBGCRYPT_DIGESTS)
++            set(LIBGCRYPT_DIGESTS "${LIBGCRYPT_DIGESTS};${_cipher}")
++        endif(NOT LIBGCRYPT_DIGESTS)
++    endif(${USE_${__upper_cipher}})
++endforeach(_cipher ${DIGESTS})
++
++#/* List of available public key cipher algorithms */
++foreach(_cipher ${PUBKEY_CIPHERS})
++    string(TOUPPER ${_cipher} __upper_cipher)
++    if(${USE_${__upper_cipher}})
++        if(NOT LIBGCRYPT_PUBKEY_CIPHERS)
++            set(LIBGCRYPT_PUBKEY_CIPHERS "\"${_cipher}")
++        else(NOT LIBGCRYPT_PUBKEY_CIPHERS)
++            set(LIBGCRYPT_PUBKEY_CIPHERS "${LIBGCRYPT_PUBKEY_CIPHERS};${_cipher}")
++        endif(NOT LIBGCRYPT_PUBKEY_CIPHERS)
++    endif(${USE_${__upper_cipher}})
++endforeach(_cipher ${PUBKEY_CIPHERS})
++
++set(LIBGCRYPT_CIPHERS "${LIBGCRYPT_CIPHERS}\"")
++set(LIBGCRYPT_DIGESTS "${LIBGCRYPT_DIGESTS}\"")
++set(LIBGCRYPT_PUBKEY_CIPHERS "${LIBGCRYPT_PUBKEY_CIPHERS}\"")
+diff -Nru libgcrypt-1.5.0.orig/mpi/ConfigLinks.cmake libgcrypt-1.5.0/mpi/ConfigLinks.cmake
+--- libgcrypt-1.5.0.orig/mpi/ConfigLinks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/mpi/ConfigLinks.cmake	2012-02-13 22:16:38.342549100 +0100
+@@ -0,0 +1,34 @@
++# this does not implement the asm implementation of the mpi library but instead only uses the generic C part
++# the results of config.links file
++# asm-syntax.h
++set(host "i586")
++file(WRITE ${CMAKE_BINARY_DIR}/mpi/asm-syntax.h "/* created by config.links - do not edit */")
++file(APPEND ${CMAKE_BINARY_DIR}/mpi/asm-syntax.h "/* Host: ${host} */")
++file(APPEND ${CMAKE_BINARY_DIR}/mpi/asm-syntax.h "/* No assembler modules configured */")
++
++# sysdep.h
++file(WRITE ${CMAKE_BINARY_DIR}/mpi/sysdep.h "/* created by config.links - do not edit */")
++file(APPEND ${CMAKE_BINARY_DIR}/mpi/sysdep.h "#define C_SYMBOL_NAME(name) name")
++
++# mod-source-info.h
++file(WRITE ${CMAKE_BINARY_DIR}/mpi/mod-source-info.h "/* Created by config.links - do not edit */")
++file(APPEND ${CMAKE_BINARY_DIR}/mpi/mod-source-info.h "/* Host: ${host} */")
++file(APPEND ${CMAKE_BINARY_DIR}/mpi/mod-source-info.h "static char mod_source_info[] =")
++
++set(mpi_required_modules
++    mpih-add1
++    mpih-sub1
++    mpih-mul1
++    mpih-mul2
++    mpih-mul3
++    mpih-lshift
++    mpih-rshift
++    udiv-w-sdiv
++)
++
++foreach(_fn ${mpi_required_modules})
++    file(APPEND ${CMAKE_BINARY_DIR}/mpi/mod-source-info.h "  \":generic/${_fn}.c\"")
++    list(APPEND mpi_modules_SRCS ${CMAKE_SOURCE_DIR}/mpi/generic/${_fn}.c)
++endforeach(_fn ${mpi_required_modules})
++
++file(APPEND  ${CMAKE_BINARY_DIR}/mpi/mod-source-info.h "  ;")
+diff -Nru libgcrypt-1.5.0.orig/random/random-csprng.c libgcrypt-1.5.0/random/random-csprng.c
+--- libgcrypt-1.5.0.orig/random/random-csprng.c	2011-02-04 20:16:04.000000000 +0100
++++ libgcrypt-1.5.0/random/random-csprng.c	2012-02-13 22:27:36.253179500 +0100
+@@ -37,7 +37,9 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -62,6 +64,12 @@
+ #include "cipher.h" /* Required for the rmd160_hash_buffer() prototype.  */
+ #include "ath.h"
+ 
++#ifdef _MSC_VER
++#define S_ISREG(X) (((X) & S_IFMT) == S_IFREG)
++#define S_IRUSR 0x400
++#define S_IWUSR 0x200
++#endif
++
+ #ifndef RAND_MAX   /* For SunOS. */
+ #define RAND_MAX 32767
+ #endif
+diff -Nru libgcrypt-1.5.0.orig/random/rndw32.c libgcrypt-1.5.0/random/rndw32.c
+--- libgcrypt-1.5.0.orig/random/rndw32.c	2011-02-04 20:16:03.000000000 +0100
++++ libgcrypt-1.5.0/random/rndw32.c	2012-02-13 22:36:58.832357100 +0100
+@@ -80,6 +80,9 @@
+ 
+ #include <windows.h>
+ 
++#ifdef _MSC_VER
++#include <winperf.h>
++#endif
+ 
+ #include "types.h"
+ #include "g10lib.h"
+diff -Nru libgcrypt-1.5.0.orig/src/ath.c libgcrypt-1.5.0/src/ath.c
+--- libgcrypt-1.5.0.orig/src/ath.c	2011-03-28 14:07:52.000000000 +0200
++++ libgcrypt-1.5.0/src/ath.c	2012-02-12 23:42:17.662882700 +0100
+@@ -27,7 +27,7 @@
+ #ifdef HAVE_SYS_SELECT_H
+ # include <sys/select.h>
+ #else
+-# include <sys/time.h>
++//# include <sys/time.h>
+ #endif
+ #include <sys/types.h>
+ #ifndef _WIN32
+diff -Nru libgcrypt-1.5.0.orig/src/CMakeLists.txt libgcrypt-1.5.0/src/CMakeLists.txt
+--- libgcrypt-1.5.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/src/CMakeLists.txt	2012-02-13 23:45:41.612166700 +0100
+@@ -0,0 +1,110 @@
++set(cipher_SRCS
++    ${CMAKE_SOURCE_DIR}/cipher/cipher.c
++    ${CMAKE_SOURCE_DIR}/cipher/pubkey.c
++    ${CMAKE_SOURCE_DIR}/cipher/ac.c
++    ${CMAKE_SOURCE_DIR}/cipher/md.c
++    ${CMAKE_SOURCE_DIR}/cipher/kdf.c
++    ${CMAKE_SOURCE_DIR}/cipher/hmac-tests.c
++    ${CMAKE_SOURCE_DIR}/cipher/primegen.c
++    ${CMAKE_SOURCE_DIR}/cipher/hash-common.c
++    ${CMAKE_SOURCE_DIR}/cipher/arcfour.c
++    ${CMAKE_SOURCE_DIR}/cipher/blowfish.c
++    ${CMAKE_SOURCE_DIR}/cipher/cast5.c
++    ${CMAKE_SOURCE_DIR}/cipher/crc.c
++    ${CMAKE_SOURCE_DIR}/cipher/des.c
++    ${CMAKE_SOURCE_DIR}/cipher/dsa.c
++    ${CMAKE_SOURCE_DIR}/cipher/elgamal.c
++    ${CMAKE_SOURCE_DIR}/cipher/ecc.c
++    ${CMAKE_SOURCE_DIR}/cipher/md4.c
++    ${CMAKE_SOURCE_DIR}/cipher/md5.c
++    ${CMAKE_SOURCE_DIR}/cipher/rijndael.c
++    ${CMAKE_SOURCE_DIR}/cipher/rmd160.c
++    ${CMAKE_SOURCE_DIR}/cipher/rsa.c
++    ${CMAKE_SOURCE_DIR}/cipher/seed.c
++    ${CMAKE_SOURCE_DIR}/cipher/serpent.c
++    ${CMAKE_SOURCE_DIR}/cipher/sha1.c
++    ${CMAKE_SOURCE_DIR}/cipher/sha256.c
++    ${CMAKE_SOURCE_DIR}/cipher/sha512.c
++    ${CMAKE_SOURCE_DIR}/cipher/tiger.c
++    ${CMAKE_SOURCE_DIR}/cipher/whirlpool.c
++    ${CMAKE_SOURCE_DIR}/cipher/twofish.c
++    ${CMAKE_SOURCE_DIR}/cipher/rfc2268.c
++    ${CMAKE_SOURCE_DIR}/cipher/camellia.c
++    ${CMAKE_SOURCE_DIR}/cipher/camellia-glue.c
++)
++
++set(mpi_SRCS
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-add.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-bit.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-cmp.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-div.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-gcd.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-internal.h
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-inline.h
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-inline.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-inv.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-mul.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-mod.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-pow.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-mpow.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpi-scan.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpicoder.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpih-div.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpih-mul.c
++    ${CMAKE_SOURCE_DIR}/mpi/mpiutil.c
++    ${CMAKE_SOURCE_DIR}/mpi/ec.c
++)
++
++set(random_SRCS
++    ${CMAKE_SOURCE_DIR}/random/random.c
++    ${CMAKE_SOURCE_DIR}/random/random-csprng.c
++    ${CMAKE_SOURCE_DIR}/random/random-fips.c
++    ${CMAKE_SOURCE_DIR}/random/rndhw.c
++)
++
++if(WIN32)
++    list(APPEND random_SRCS ${CMAKE_SOURCE_DIR}/random/rndw32.c)
++endif(WIN32)
++if(WINCE)
++    list(APPEND random_SRCS ${CMAKE_SOURCE_DIR}/random/rndw32ce.c)
++endif(WINCE)
++
++set(gcrypt_SRCS
++    visibility.c
++    misc.c
++    global.c
++    sexp.c
++    hwfeatures.c
++    stdmem.c
++    stdmem.h secmem.c
++    missing-string.c
++    module.c
++    fips.c
++    hmac256.c
++    ath.c
++    ${CMAKE_SOURCE_DIR}/compat/compat.c
++)
++
++include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR}/mpi ${CMAKE_SOURCE_DIR}/mpi)
++
++if(WIN32 AND NOT BUILD_STATIC)
++    list(APPEND gcrypt_SRCS libgcrypt.def)
++endif(WIN32 AND NOT BUILD_STATIC)
++
++add_library(gcrypt ${GCRYPT_SHARED} ${cipher_SRCS} ${gcrypt_SRCS} ${mpi_SRCS} ${mpi_modules_SRCS} ${random_SRCS})
++set_target_properties(gcrypt PROPERTIES COMPILE_FLAGS -D_GCRYPT_IN_LIBGCRYPT=1)
++target_link_libraries(gcrypt ${GPG_ERROR_LIBRARIES})
++
++set(gcrypt_TARGETS)
++if(BUILD_TOOLS)
++    add_executable(dumpsexp dumpsexp.c)
++    target_link_libraries(dumpsexp ${GPG_ERROR_LIBRARIES})
++    
++    add_executable(hmac256 hmac256.c)
++    set_target_properties(hmac256 PROPERTIES COMPILE_FLAGS -DSTANDALONE)
++    target_link_libraries(hmac256 ${GPG_ERROR_LIBRARIES})
++
++    list(APPEND gcrypt_TARGETS dumpsexp hmac256)
++endif(BUILD_TOOLS)
++install(TARGETS ${gcrypt_TARGETS} RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++install(FILES gcrypt.h gcrypt-module.h DESTINATION include/libgcrypt)
+diff -Nru libgcrypt-1.5.0.orig/src/dumpsexp.c libgcrypt-1.5.0/src/dumpsexp.c
+--- libgcrypt-1.5.0.orig/src/dumpsexp.c	2011-03-28 14:19:51.000000000 +0200
++++ libgcrypt-1.5.0/src/dumpsexp.c	2012-02-13 23:43:40.316228900 +0100
+@@ -88,7 +88,7 @@
+ 
+ /* Return true if P points to a byte containing a whitespace according
+    to the S-expressions definition. */
+-static inline int
++static int
+ whitespace_p (int c)
+ {
+   switch (c)
+diff -Nru libgcrypt-1.5.0.orig/src/gcrypt.h libgcrypt-1.5.0/src/gcrypt.h
+--- libgcrypt-1.5.0.orig/src/gcrypt.h	2011-06-29 10:58:56.000000000 +0200
++++ libgcrypt-1.5.0/src/gcrypt.h	2012-02-13 23:46:28.037822100 +0100
+@@ -35,7 +35,7 @@
+ # include <ws2tcpip.h>
+ # include <time.h>
+ # ifndef __GNUC__
+-  typedef long ssize_t;
++//  typedef long ssize_t;
+   typedef int  pid_t;
+ # endif /*!__GNUC__*/
+ #else
+diff -Nru libgcrypt-1.5.0.orig/tests/CMakeLists.txt libgcrypt-1.5.0/tests/CMakeLists.txt
+--- libgcrypt-1.5.0.orig/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/tests/CMakeLists.txt	2012-02-13 23:49:22.882822600 +0100
+@@ -0,0 +1,28 @@
++set(gcrypt_test_SRCS
++    version
++    t-mpi-bit
++    prime
++    register
++    ac
++    ac-schemes
++    ac-data
++    basic
++    mpitests
++    tsexp
++    keygen
++    pubkey
++    hmac
++    keygrip
++    fips186-dsa
++    aeswrap
++    curves
++    t-kdf
++    pkcs1v2
++)
++
++include_directories(${CMAKE_SOURCE_DIR}/src)
++foreach(_test ${gcrypt_test_SRCS})
++    add_executable(${_test} ${_test}.c)
++    target_link_libraries(${_test} gcrypt)
++    add_test(NAME ${_test} COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${_test})
++endforeach(_test ${gcrypt_test_SRCS})
+\ Kein Zeilenumbruch am Dateiende.
