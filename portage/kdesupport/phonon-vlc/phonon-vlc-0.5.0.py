@@ -12,19 +12,20 @@ class subinfo(info.infoclass):
         if compiler.isMSVC():
             self.dependencies['kdesupport/kdewin'] = 'default'
 
-    def setTargets( self ):
+    def setTargets( self ):      
       self.targets['0.3.1'] = "http://download.kde.org/download.php?url=stable/phonon-backend-vlc/0.3.1/src/phonon-backend-vlc-0.3.1.tar.bz2"
       self.targetInstSrc['0.3.1'] = "phonon-backend-vlc-0.3.1"
       self.targetDigests['0.3.1'] = 'b94dddc6f37924c101a8bab7b7a184b7d6b42d96'
       self.patchToApply['0.3.1'] = ("phonon-backend-vlc-0.3.1-20101223.diff", 1)
-      self.targets['0.4.1'] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/0.4.1/phonon-backend-vlc-0.4.1.tar.xz"
-      self.targetInstSrc['0.4.1'] = "phonon-backend-vlc-0.4.1"
+      for ver in ['0.4.1','0.5.0']:
+        self.targets[ver] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/%s/phonon-backend-vlc-%s.tar.xz" % (ver,ver)
+        self.targetInstSrc[ver] = "phonon-backend-vlc-%s" % ver
       self.targetDigests['0.4.1'] = 'b2957b70e1722f08a231b9e64acfafb799b52d11'
       self.patchToApply['0.4.1'] = [("phonon-backend-vlc-0.4.1-20111213.diff", 1),("phonon-backend-vlc-0.4.1-20111223.diff",1)]
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.4.1'
+      self.defaultTarget = '0.5.0'
 
 
 class Package( CMakePackageBase ):
