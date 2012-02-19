@@ -7,6 +7,7 @@
 #
 #
 # kdesupport stuff
+testing,mysql-pkg,,
 libs,qt,4.7.4,
 kdesupport,attica,,
 kdesupport,qjson,,
