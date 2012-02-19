@@ -23,10 +23,10 @@ class subinfo(info.infoclass):
     self.targets[ self.vlcTagName +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + "-win" + self.vlcArch + "-debug.7z"
     self.targetInstSrc[ self.vlcTagName + "-debug" ] = 'vlc-' + self.vlcTagName
 
-    releaseTag = '1.1.11'
-    self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
-    self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
-    self.targetDigests['1.1.11'] = '5d95a0e55c1d30f21e6dd4aa2fb1744a3ab694ac'
+    for releaseTag in [ '1.1.11','2.0.0']:
+        self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
+        self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
+        self.targetDigestUrls[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z.sha1"
     self.shortDescription = "an open-source multimedia framework"
 
     if compiler.isMinGW_W64():
@@ -68,7 +68,7 @@ class Package(BinaryPackageBase):
     shutil.copy( os.path.join( self.imageDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlccore.lib" ))
     shutil.rmtree( os.path.join( self.installDir() , "bin" , "sdk" ) )
     os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
-    utils.wgetFile( "http://git.videolan.org/?p=vlc.git;a=blob_plain;f=share/vlc.desktop" , os.path.join( self.installDir() , "share" , "applications" , "kde4" ) , "vlc.desktop"  )
+    #utils.wgetFile( "http://git.videolan.org/?p=vlc.git;a=blob_plain;f=share/vlc.desktop" , os.path.join( self.installDir() , "share" , "applications" , "kde4" ) , "vlc.desktop"  )
     return True
 
 if __name__ == '__main__':
