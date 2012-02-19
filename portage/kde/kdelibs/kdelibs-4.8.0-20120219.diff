@@ -1,0 +1,28 @@
+diff -Nru kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt kdelibs-4.8.0/kdoctools/CMakeLists.txt
+--- kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt	2011-10-11 16:41:54.000000000 +0200
++++ kdelibs-4.8.0/kdoctools/CMakeLists.txt	2012-02-19 23:54:26.656616100 +0100
+@@ -26,6 +26,12 @@
+ find_package(DocBookXSL)
+ macro_log_feature(DOCBOOKXSL_FOUND "DocBook XSL" "Required by the KDE help system to process DocBook XML" "http://docbook.sourceforge.net/release/xsl/current/" TRUE "" "")
+ 
++if(WIN32)
++# this is needed so that the path on the build machine is not hardcoded in packages
++	file(RELATIVE_PATH DOCBOOKXSL_DIR ${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization ${DOCBOOKXSL_DIR})
++	file(RELATIVE_PATH DOCBOOKXML_CURRENTDTD_DIR ${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd ${DOCBOOKXML_CURRENTDTD_DIR})
++endif(WIN32)
++
+ set (_custom_dtd_kdex "customization/dtd/kdex.dtd")
+ configure_file(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex} )
+ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}
+diff -Nru kdelibs-4.8.0.orig/kjs/tests/testkjs.cpp kdelibs-4.8.0/kjs/tests/testkjs.cpp
+--- kdelibs-4.8.0.orig/kjs/tests/testkjs.cpp	2011-07-27 20:34:37.000000000 +0200
++++ kdelibs-4.8.0/kjs/tests/testkjs.cpp	2012-01-22 22:36:12.646200000 +0100
+@@ -175,7 +175,7 @@
+ // be in a separate main function because the kjsmain function requires object
+ // unwinding.
+ 
+-#if defined(_DEBUG)
++#if defined(_DEBUG) || defined(__MINGW32__)
+ #define TRY
+ #define EXCEPT(x)
+ #else
