@@ -17,7 +17,7 @@ diff -Nru kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt kdelibs-4.8.0/kdoctools/CM
 + "FILE(RELATIVE_PATH DOCBOOKXML_CURRENTDTD_DIR \${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd ${DOCBOOKXML_CURRENTDTD_DIR})
 +  CONFIGURE_FILE(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install)
 +  GET_FILENAME_COMPONENT(_custom_dtd_kdex_name ${_custom_dtd_kdex} NAME)
-+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd RENAME ${_custom_Dtd_kdex_name})
++  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd RENAME \${_custom_Dtd_kdex_name})
 +")
 +endif(NOT WIN32)
  
