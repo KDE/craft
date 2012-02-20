@@ -1,28 +1,67 @@
 diff -Nru kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt kdelibs-4.8.0/kdoctools/CMakeLists.txt
 --- kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt	2011-10-11 16:41:54.000000000 +0200
-+++ kdelibs-4.8.0/kdoctools/CMakeLists.txt	2012-02-19 23:54:26.656616100 +0100
-@@ -26,6 +26,12 @@
- find_package(DocBookXSL)
- macro_log_feature(DOCBOOKXSL_FOUND "DocBook XSL" "Required by the KDE help system to process DocBook XML" "http://docbook.sourceforge.net/release/xsl/current/" TRUE "" "")
++++ kdelibs-4.8.0/kdoctools/CMakeLists.txt	2012-02-20 23:33:21.851925500 +0100
+@@ -28,8 +28,19 @@
  
-+if(WIN32)
-+# this is needed so that the path on the build machine is not hardcoded in packages
-+	file(RELATIVE_PATH DOCBOOKXSL_DIR ${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization ${DOCBOOKXSL_DIR})
-+	file(RELATIVE_PATH DOCBOOKXML_CURRENTDTD_DIR ${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd ${DOCBOOKXML_CURRENTDTD_DIR})
-+endif(WIN32)
-+
  set (_custom_dtd_kdex "customization/dtd/kdex.dtd")
  configure_file(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex} )
- install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}
-diff -Nru kdelibs-4.8.0.orig/kjs/tests/testkjs.cpp kdelibs-4.8.0/kjs/tests/testkjs.cpp
---- kdelibs-4.8.0.orig/kjs/tests/testkjs.cpp	2011-07-27 20:34:37.000000000 +0200
-+++ kdelibs-4.8.0/kjs/tests/testkjs.cpp	2012-01-22 22:36:12.646200000 +0100
-@@ -175,7 +175,7 @@
- // be in a separate main function because the kjsmain function requires object
- // unwinding.
+-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}
+-        DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd )
++# WARNING: this is due to severe limitations on the windows platform to keep the dtd relocateable
++# see the .xsl.cmake files for a more verbose explanation below
++if(NOT WIN32)
++    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}
++            DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd )
++else(NOT WIN32)
++    install(CODE
++ "FILE(RELATIVE_PATH DOCBOOKXML_CURRENTDTD_DIR \${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd ${DOCBOOKXML_CURRENTDTD_DIR})
++  CONFIGURE_FILE(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install)
++  GET_FILENAME_COMPONENT(_custom_dtd_kdex_name ${_custom_dtd_kdex} NAME)
++  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd RENAME ${_custom_Dtd_kdex_name})
++")
++endif(NOT WIN32)
  
--#if defined(_DEBUG)
-+#if defined(_DEBUG) || defined(__MINGW32__)
- #define TRY
- #define EXCEPT(x)
- #else
+ configure_file(config-kdoctools.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdoctools.h )
+ 
+@@ -127,6 +138,11 @@
+ 
+ 
+ ########### customize includes for xslt ###############
++# WARNING: this has severe limitations on the windows platform since the .xsl
++# & docbook files need to be relocatable. We cannot just replace the paths in
++# the .xsl with relative paths because these files are not installed while
++# building kdelibs. Instead, we will reconfigure those files at install time
++# with relative paths.
+ 
+ file( GLOB _kdeincludexslt_ALL "customization/kde-include*.xsl.cmake" )
+ foreach( _kdeincludexslt ${_kdeincludexslt_ALL} )
+@@ -134,8 +150,15 @@
+     string( REGEX REPLACE ".cmake$" "" _kdeincludexslt_out "${_kdeincludexslt_name}" )
+     set( _kdeincludexslt_binarypath "${CMAKE_CURRENT_BINARY_DIR}/customization/${_kdeincludexslt_out}" )
+     configure_file( ${_kdeincludexslt} ${_kdeincludexslt_binarypath} )
+-    install(FILES ${_kdeincludexslt_binarypath}
+-            DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization )
++    if(NOT WIN32)
++        install(FILES ${_kdeincludexslt_binarypath}
++                DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization )
++    else(NOT WIN32)
++        install(CODE 
++ "FILE(RELATIVE_PATH DOCBOOKXSL_DIR \${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization ${DOCBOOKXSL_DIR})
++  CONFIGURE_FILE( ${_kdeincludexslt} ${_kdeincludexslt_binarypath}.install )
++  INSTALL(FILES ${_kdeincludexslt_binarypath}.install DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization RENAME ${_kdeincludexslt_out})")
++    endif(NOT WIN32)
+ endforeach( _kdeincludexslt ${_kdeincludexslt_ALL} )
+ 
+ 
+diff -Nru kdelibs-4.8.0.orig/kjs/tests/CMakeLists.txt kdelibs-4.8.0/kjs/tests/CMakeLists.txt
+--- kdelibs-4.8.0.orig/kjs/tests/CMakeLists.txt	2011-07-27 20:34:37.000000000 +0200
++++ kdelibs-4.8.0/kjs/tests/CMakeLists.txt	2012-01-22 22:27:31.925119700 +0100
+@@ -2,6 +2,8 @@
+ 
+ include_directories( ${CMAKE_SOURCE_DIR}/kjs ${kjs_SOURCE_DIR}/wtf ${KDEWIN_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR}/.. )
+ 
++add_definitions(-DKJS_EXPORT=)
++
+ if (NOT DEFINED QT_ONLY)
+    set(KJSLIBNAME kjs)
+ else (NOT DEFINED QT_ONLY)
