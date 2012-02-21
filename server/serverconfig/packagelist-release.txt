@@ -119,7 +119,7 @@ extragear,quassel,0.7.3,
 extragear,kregexpeditor,,
 extragear,krecipes,2.0-beta2,
 extragear,skanlite,,
-extragear,skrooge,1.2.0,
+extragear,skrooge,1.2.0,1
 extragear,zanshin,0.2.0,
 kdeapps,kbibtex,0.4,
 testing,simon,,
