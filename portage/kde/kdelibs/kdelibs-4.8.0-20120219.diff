@@ -1,7 +1,7 @@
 diff -Nru kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt kdelibs-4.8.0/kdoctools/CMakeLists.txt
 --- kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt	2011-10-11 16:41:54.000000000 +0200
 +++ kdelibs-4.8.0/kdoctools/CMakeLists.txt	2012-02-20 23:33:21.851925500 +0100
-@@ -28,8 +28,19 @@
+@@ -28,8 +28,18 @@
  
  set (_custom_dtd_kdex "customization/dtd/kdex.dtd")
  configure_file(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex} )
@@ -15,15 +15,14 @@ diff -Nru kdelibs-4.8.0.orig/kdoctools/CMakeLists.txt kdelibs-4.8.0/kdoctools/CM
 +else(NOT WIN32)
 +    install(CODE
 + "FILE(RELATIVE_PATH DOCBOOKXML_CURRENTDTD_DIR \${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd ${DOCBOOKXML_CURRENTDTD_DIR})
-+  CONFIGURE_FILE(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install)
-+  GET_FILENAME_COMPONENT(_custom_dtd_kdex_name ${_custom_dtd_kdex} NAME)
-+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd RENAME ${_custom_Dtd_kdex_name})
-+")
++  CONFIGURE_FILE(${_custom_dtd_kdex}.cmake ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install)")
++    get_filename_component(_custom_dtd_kdex_name ${_custom_dtd_kdex} NAME)
++    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_custom_dtd_kdex}.install DESTINATION ${DATA_INSTALL_DIR}/ksgmltools2/customization/dtd RENAME ${_custom_Dtd_kdex_name})
 +endif(NOT WIN32)
  
  configure_file(config-kdoctools.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdoctools.h )
  
-@@ -127,6 +138,11 @@
+@@ -127,6 +137,11 @@
  
  
  ########### customize includes for xslt ###############
