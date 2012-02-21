@@ -1,0 +1,17 @@
+diff --git a/skrooge/CMakeLists.txt b/skrooge/CMakeLists.txt
+index 9358f41..2251e27 100644
+--- a/skrooge/CMakeLists.txt
++++ b/skrooge/CMakeLists.txt
+@@ -12,10 +12,10 @@ LINK_DIRECTORIES (${LIBRARY_OUTPUT_PATH})
+ SET(skrooge_SRCS
+    main.cpp
+  )
+-KDE4_ADD_EXECUTABLE(skrooge ${skrooge_SRCS})
+-
+ KDE4_ADD_APP_ICON(skrooge_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-skrooge.png")
+ 
++KDE4_ADD_EXECUTABLE(skrooge ${skrooge_SRCS})
++
+ TARGET_LINK_LIBRARIES(skrooge ${KDE4_KDEUI_LIBS} skgbasemodeler skgbasegui skgbankmodeler skgbankgui)
+ 
+ 
