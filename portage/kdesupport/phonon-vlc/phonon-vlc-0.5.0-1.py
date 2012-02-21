@@ -23,6 +23,7 @@ class subinfo(info.infoclass):
       self.patchToApply['0.4.1'] = [("phonon-backend-vlc-0.4.1-20111213.diff", 1),("phonon-backend-vlc-0.4.1-20111223.diff",1)]
       self.targets['0.5.0'] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/0.5.0/src/phonon-backend-vlc-0.5.0.tar.xz"
       self.targetInstSrc['0.5.0'] = "phonon-backend-vlc-0.5.0"
+      self.patchToApply['0.5.0'] = [("0001-Revert-stop-leaking-video-audio-abstraction.patch",1)]
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
