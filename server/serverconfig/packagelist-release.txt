@@ -14,7 +14,7 @@ kdesupport,qjson,,
 kdesupport,dbusmenu-qt,gitHEAD,
 kdesupport,kdewin,,
 kdesupport,phonon,4.6.0,
-testing,vlc,2.0.0,
+testing,vlc,,
 kdesupport,phonon-vlc,0.5.0,1
 kdesupport,poppler,0.18.1,
 kdesupport,strigi,0.7.5,
