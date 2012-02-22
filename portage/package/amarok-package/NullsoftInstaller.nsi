@@ -17,7 +17,8 @@ ShowInstDetails hide
 ShowUninstDetails hide
 
 SetCompressor /SOLID lzma
- 
+
+
 Name "${productname}"
 Caption "${productname}"
  
@@ -26,14 +27,7 @@ OutFile "${setupname}"
 !include "MUI2.nsh"
 !define MUI_ICON "${amarok-icon}"
 
-!insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
-!insertmacro MUI_PAGE_INSTFILES
-
-!insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES
-
-!;Languages
+;Languages
 
   !insertmacro MUI_LANGUAGE "English" ;first language is the default language
   !insertmacro MUI_LANGUAGE "French"
@@ -91,8 +85,15 @@ OutFile "${setupname}"
   !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Esperanto"
-  !insertmacro MUI_LANGUAGE "Asturian"
-;
+
+;!insertmacro MUI_RESERVEFILE_LANGDLL ;lang dialog
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
+!insertmacro MUI_PAGE_INSTFILES
+
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+ 
  
 
 SetDateSave on
@@ -166,3 +167,8 @@ RMDir /r "$INSTDIR"
 
 SectionEnd
 
+Function .onInit
+
+  !insertmacro MUI_LANGDLL_DISPLAY
+
+FunctionEnd
