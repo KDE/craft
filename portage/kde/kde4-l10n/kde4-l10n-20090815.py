@@ -157,7 +157,7 @@ class MainPackage( CMakePackageBase ):
         found=None
         for language in languages:
             if not found and self.startLanguage:
-                if self.startLanguage <> language:
+                if self.startLanguage != language:
                     continue
                 else:
                     found = True
