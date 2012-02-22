@@ -117,7 +117,8 @@ class MainInfo( info.infoclass ):
         self.languages['svnHEAD'] += ' gl gu he hi hr hu id is it ja kk km kn ko lt lv mai mk ml nb nds' 
         self.languages['svnHEAD'] += ' nl nn pa pl pt pt_BR ro ru si sk sl sr sv tg tr uk wa zh_CN zh_TW'
 
-        self.languages['4.8.0'] = 'ar bg bs ca ca@valencia cs da de el en_GB es et eu fi fr ga gl he hr hu ia id is it ja kk km kn ko lt lv nb nds nl nn pa pl pt pt_BR ro ru sk sl sr sv th tr ug uk wa zh_CN zh_TW'
+        self.languages['4.8.0'] = 'ar bg bs ca ca@valencia cs da de el en_GB es et eu fi fr ga gl hr hu ia is it ja kk km ko lt lv nb nds nl nn pa pl pt pt_BR ro ru sk sl sr sv th tr uk wa zh_CN zh_TW'
+        #not existing "he id kn ug
         for ver in ['0', '1', '2', '3', '4']:
             self.languages['4.8.' + ver] = self.languages['4.8.0']
 
