@@ -4,15 +4,15 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      self.targets[ "20110627" ] = ""
+        self.targets[ "20110627" ] = ""
 
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
+        self.dependencies['dev-util/minsys'] = 'default'
         if compiler.isMinGW():
-          self.dependencies['dev-util/minsys'] = 'default'
-          self.dependencies['dev-util/libtool'] = 'default'
-          self.dependencies['dev-util/autotools'] = 'default'
+            self.dependencies['dev-util/libtool'] = 'default'
+            self.dependencies['dev-util/autotools'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
@@ -28,6 +28,3 @@ class Package( VirtualPackageBase ):
 
 if __name__ == '__main__':
     Package().execute()
-    
-    
-    
