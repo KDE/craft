@@ -872,7 +872,7 @@ diff -Nru openldap-2.4.28.orig/include/CMakeLists.txt openldap-2.4.28/include/CM
 +    ldif.h
 +)
 +
-+install(FILES ${ldap_HDRS} DESTINATION include/openldap)
++install(FILES ${ldap_HDRS} DESTINATION include)
 diff -Nru openldap-2.4.28.orig/include/getopt-compat.h openldap-2.4.28/include/getopt-compat.h
 --- openldap-2.4.28.orig/include/getopt-compat.h	2011-11-25 19:52:29.000000000 +0100
 +++ openldap-2.4.28/include/getopt-compat.h	2012-02-12 21:48:05.376954300 +0100
