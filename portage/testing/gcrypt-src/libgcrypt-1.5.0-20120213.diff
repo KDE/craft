@@ -618,7 +618,7 @@ diff -Nru libgcrypt-1.5.0.orig/src/ath.c libgcrypt-1.5.0/src/ath.c
  #ifndef _WIN32
 diff -Nru libgcrypt-1.5.0.orig/src/CMakeLists.txt libgcrypt-1.5.0/src/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/src/CMakeLists.txt	2012-02-13 23:45:41.612166700 +0100
++++ libgcrypt-1.5.0/src/CMakeLists.txt	2012-02-23 23:00:58.610316600 +0100
 @@ -0,0 +1,110 @@
 +set(cipher_SRCS
 +    ${CMAKE_SOURCE_DIR}/cipher/cipher.c
@@ -717,7 +717,7 @@ diff -Nru libgcrypt-1.5.0.orig/src/CMakeLists.txt libgcrypt-1.5.0/src/CMakeLists
 +set_target_properties(gcrypt PROPERTIES COMPILE_FLAGS -D_GCRYPT_IN_LIBGCRYPT=1)
 +target_link_libraries(gcrypt ${GPG_ERROR_LIBRARIES})
 +
-+set(gcrypt_TARGETS)
++set(gcrypt_TARGETS gcrypt)
 +if(BUILD_TOOLS)
 +    add_executable(dumpsexp dumpsexp.c)
 +    target_link_libraries(dumpsexp ${GPG_ERROR_LIBRARIES})
