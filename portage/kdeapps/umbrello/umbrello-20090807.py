@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['4.7'] = "branches/KDE/4.7/kdesdk#norecursive;branches/KDE/4.7/kdesdk/umbrello;branches/KDE/4.7/kdesdk/cmake"
+        self.svnTargets['4.8'] = "branches/KDE/4.8/kdesdk#norecursive;branches/KDE/4.8/kdesdk/umbrello;branches/KDE/4.8/kdesdk/cmake"
         self.svnTargets['svnHEAD'] = "trunk/KDE/kdesdk#norecursive;trunk/KDE/kdesdk/umbrello;trunk/KDE/kdesdk/cmake"
         self.defaultTarget = 'svnHEAD'
 
