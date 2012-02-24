@@ -44,10 +44,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     autogen = os.path.join(sourcedir, "autogen.sh")
                     if os.path.exists(autogen):
                         self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
-                if self.subinfo.options.install.useDestDir == False:
-                    _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
+                if self.subinfo.options.configure.noDefaultOptions == False:
+                    if self.subinfo.options.install.useDestDir == False:
+                        _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
+                    else:
+                        _prefix = "--prefix=" + mergeroot
                 else:
-                    _prefix = "--prefix=" + mergeroot
+                    _prefix = ""
                 _options = BuildSystemBase.configureOptions(self)
                 if _options:
                     _prefix += " %s" % _options
