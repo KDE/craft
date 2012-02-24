@@ -79,8 +79,11 @@ class OptionsConfigure:
         self.noDefaultLib = False
 
         ## set this attribute in case a non standard configuration
-		# tool is required (supported currently by QMakeBuildSystem only)
+        # tool is required (supported currently by QMakeBuildSystem only)
         self.tool = False
+
+        # do not add --prefix on msys
+        self.noDefaultOptions = False
 
 
 ## options for the make action
