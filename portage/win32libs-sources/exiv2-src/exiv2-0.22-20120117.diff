@@ -1,0 +1,133 @@
+diff -Nru exiv2-0.22.orig/src/types.hpp exiv2-0.22/src/types.hpp
+--- exiv2-0.22.orig/src/types.hpp	2011-06-29 14:16:34.000000000 +0200
++++ exiv2-0.22/src/types.hpp	2012-01-29 14:34:08.675600000 +0100
+@@ -58,16 +58,40 @@
+ #endif
+ 
+ // MSVC doesn't provide C99 types, but it has MS specific variants
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) && _MSC_VER < 1600
++#if !defined(HAVE_UINT8_T)
++#define HAVE_UINT8_T
+ typedef unsigned __int8  uint8_t;
++#endif
++#if !defined(HAVE_UINT16_T)
++#define HAVE_UINT16_T
+ typedef unsigned __int16 uint16_t;
++#endif
++#if !defined(HAVE_UINT32_T)
++#define HAVE_UINT32_T
+ typedef unsigned __int32 uint32_t;
++#endif
++#if !defined(HAVE_UINT64_T)
++#define HAVE_UINT64_T
+ typedef unsigned __int64 uint64_t;
++#endif
++#if !defined(HAVE_INT8_T)
++#define HAVE_INT8_T
+ typedef __int8           int8_t;
++#endif
++#if !defined(HAVE_INT16_T)
++#define HAVE_INT16_T
+ typedef __int16          int16_t;
++#endif
++#if !defined(HAVE_INT32_T)
++#define HAVE_INT32_T
+ typedef __int32          int32_t;
++#endif
++#if !defined(HAVE_INT64_T)
++#define HAVE_INT64_T
+ typedef __int64          int64_t;
+ #endif
++#endif
+ 
+ /*!
+   @brief Macro to make calls to member functions through a pointer more readable.
+diff -Nru exiv2-0.22.orig/src/value.cpp exiv2-0.22/src/value.cpp
+--- exiv2-0.22.orig/src/value.cpp	2011-02-13 15:08:44.000000000 +0100
++++ exiv2-0.22/src/value.cpp	2012-01-29 23:01:35.795800000 +0100
+@@ -581,6 +581,10 @@
+     {
+     }
+ 
++    XmpValue::~XmpValue()
++    {
++    }
++
+     XmpValue& XmpValue::operator=(const XmpValue& rhs)
+     {
+         if (this == &rhs) return *this;
+@@ -657,6 +661,10 @@
+         read(buf);
+     }
+ 
++    XmpTextValue::~XmpTextValue()
++    {
++    }
++
+     int XmpTextValue::read(const std::string& buf)
+     {
+         // support a type=Alt,Bag,Seq,Struct indicator
+@@ -756,6 +764,10 @@
+         setXmpArrayType(xmpArrayType(typeId));
+     }
+ 
++    XmpArrayValue::~XmpArrayValue()
++    {
++    }
++
+     int XmpArrayValue::read(const std::string& buf)
+     {
+         value_.push_back(buf);
+@@ -819,6 +831,10 @@
+         read(buf);
+     }
+ 
++    LangAltValue::~LangAltValue()
++    {
++    }
++
+     int LangAltValue::read(const std::string& buf)
+     {
+         std::string b = buf;
+diff -Nru exiv2-0.22.orig/src/value.hpp exiv2-0.22/src/value.hpp
+--- exiv2-0.22.orig/src/value.hpp	2011-02-13 15:08:44.000000000 +0100
++++ exiv2-0.22/src/value.hpp	2012-01-29 22:57:15.462000000 +0100
+@@ -649,7 +649,10 @@
+ 
+         //! @name Creators
+         //@{
++        //! Constructor
+         explicit XmpValue(TypeId typeId);
++        //! Virtual destructor.
++        virtual ~XmpValue();
+         //@}
+ 
+         //! @name Accessors
+@@ -739,6 +742,8 @@
+         XmpTextValue();
+         //! Constructor, reads the value from a string.
+         explicit XmpTextValue(const std::string& buf);
++        //! Virtual destructor.
++        virtual ~XmpTextValue();
+         //@}
+ 
+         //! @name Manipulators
+@@ -819,6 +824,8 @@
+         //@{
+         //! Constructor. \em typeId can be one of xmpBag, xmpSeq or xmpAlt.
+         explicit XmpArrayValue(TypeId typeId =xmpBag);
++        //! Virtual destructor.
++        virtual ~XmpArrayValue();
+         //@}
+ 
+         //! @name Manipulators
+@@ -888,6 +895,8 @@
+         LangAltValue();
+         //! Constructor, reads the value from a string.
+         explicit LangAltValue(const std::string& buf);
++        //! Virtual destructor.
++        virtual ~LangAltValue();
+         //@}
+ 
+         //! @name Manipulators

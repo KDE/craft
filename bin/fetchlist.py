@@ -3,6 +3,7 @@ import sys
 import subprocess
 
 import portage
+from packagelistparser import PackageListParser
 
 __doc__ = """this script produces a fetchlist for wget to synchronize the
 win32libs packages from sourceforge by asking emerge with --geturls.
@@ -19,15 +20,12 @@ if not len(sys.argv) == 3:
     print(__doc__)
     exit(1)
 
-_packageListFile = open(sys.argv[1])
+parser = PackageListParser(sys.argv[1])
 _fetchListFile = open(sys.argv[2], "a+b")
 
 os.environ["EMERGE_SOURCEONLY"] = "False"
 os.environ["EMERGE_PACKAGETYPES"] = "dbg,src"
-for line in _packageListFile:
-    if line.startswith('#'): continue
-    
-    _cat, _pac, _ver, _patch = line.split(",")
+for _cat, _pac, _ver, _patch in parser.getFullList():
     cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(_pac)
     if cat == None or pac == None:
         continue

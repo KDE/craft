@@ -7,13 +7,15 @@
 #
 #
 # kdesupport stuff
+testing,mysql-pkg,,
 libs,qt,4.7.4,
 kdesupport,attica,,
 kdesupport,qjson,,
 kdesupport,dbusmenu-qt,gitHEAD,
 kdesupport,kdewin,,
-kdesupport,phonon,4.5.1,
-kdesupport,phonon-vlc,0.4.1,
+kdesupport,phonon,4.6.0,
+testing,vlc,,
+kdesupport,phonon-vlc,0.5.0,1
 kdesupport,poppler,0.18.1,
 kdesupport,strigi,0.7.5,
 kdesupport,soprano,gitHEAD,
@@ -24,10 +26,15 @@ kdesupport,qtscriptgenerator,,
 kdesupport,oxygen-icons,,
 kdesupport,akonadi,1.7.0,
 kdesupport,snorenotify,0.2,
+kdesupport,libqtsoap,,
+kdesupport,hupnp,,
+kdesupport,libkface,,
+kdesupport,libkgeomap,,
+kdesupport,liblastfm,,
 #
 # the KDE packages themselves
-kde,kdelibs,4.8.0,
-kde,kdepimlibs,4.8.0,
+kde,kdelibs,4.8.0,1
+kde,kdepimlibs,4.8.0,1
 kde,kde-runtime,4.8.0,
 kde,kactivities,4.8.0,
 kde,kde-workspace,4.8.0,
@@ -94,8 +101,8 @@ kde,sweeper,4.8.0,
 #
 kde,kdemultimedia,4.8.0,
 kde,kdenetwork,4.8.0,
-kde,kdepim,4.8.0,
-kde,kdepim-runtime,4.8.0,
+kde,kdepim,4.8.0,1
+kde,kdepim-runtime,4.8.0,1
 kde,kdesdk,4.8.0,
 kde,kdetoys,4.8.0,
 #
@@ -104,15 +111,15 @@ extragear,amarok,2.5.0,
 extragear,kate,4.8.0,
 extragear,kile,,
 extragear,digikam,2.5.0,
-extragear,libalkimia,4.3.1,
-extragear,kmymoney,gitStable-4.6,
+extragear,libalkimia,4.3.2,
+extragear,kmymoney,4.6.2,1
 extragear,kmid,2.4.0,
 extragear,konversation,1.4,
 extragear,quassel,0.7.3,
 extragear,kregexpeditor,,
 extragear,krecipes,2.0-beta2,
 extragear,skanlite,,
-extragear,skrooge,1.2.0,
+extragear,skrooge,1.2.0,1
 extragear,zanshin,0.2.0,
 kdeapps,kbibtex,0.4,
 testing,simon,,

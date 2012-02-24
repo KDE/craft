@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:alkimia'
-        for ver in ['4.3.0', '4.3.1']:
+        for ver in ['4.3.0', '4.3.1', '4.3.2']:
             self.targets[ ver ] = 'http://kde-apps.org/CONTENT/content-files/137323-libalkimia-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = "libalkimia-" + ver
         self.patchToApply['4.3.1'] = ("libalkimia-4.3.1-20110822.diff", 1)

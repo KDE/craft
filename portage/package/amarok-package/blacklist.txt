@@ -9,7 +9,6 @@ manifest\\.*
 doc\\.*
 share\\man\\.*
 share\\xml\\.*
-share\\locale\\.*
 man\\.*
 
 # cmake stuff
