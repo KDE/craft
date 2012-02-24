@@ -1,18 +1,15 @@
-import utils
-import os
 import info
 import platform
 import compiler
 
-class subinfo(info.infoclass):
+class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in ['1.5.0']:
-            self.targets[ver] = 'ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-' + ver + '.tar.bz2'
-            self.targetInstSrc[ver] = 'libgcrypt-' + ver
-        self.targetDigests['1.5.0'] = '3e776d44375dc1a710560b98ae8437d5da6e32cf'
-        self.patchToApply['1.5.0'] = [('libgcrypt-1.5.0-20120213.diff', 1)]
+            self.targets[ ver ] = 'ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-' + ver + '.tar.gz'
+            self.targetInstSrc[ ver ] = 'libgcrypt-' + ver
 
-#        self.shortDescription = "GnuPG cryptography support library (runtime)"
+        self.patchToApply['1.5.0'] = [('libgcrypt-1.5.0-20110831.diff', 1), ('libgcrypt-1.5.0-cmake.diff', 1)]
+        self.targetDigests['1.5.0'] = 'e6508315b76eaf3d0df453f67371b106654bd4fe'
         self.defaultTarget = '1.5.0'
 
     def setDependencies( self ):
@@ -21,11 +18,10 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
+class Package( CMakePackageBase ):
+    def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-
 
 if __name__ == '__main__':
     Package().execute()

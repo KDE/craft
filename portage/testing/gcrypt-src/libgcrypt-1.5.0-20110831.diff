@@ -1,0 +1,574 @@
+diff -Nru libgcrypt-1.5.0.orig/tests/benchmark.c libgcrypt-1.5.0/tests/benchmark.c
+--- libgcrypt-1.5.0.orig/tests/benchmark.c	2011-02-21 16:54:06.000000000 +0100
++++ libgcrypt-1.5.0/tests/benchmark.c	2011-08-31 15:59:14.363591300 +0200
+@@ -25,6 +25,7 @@
+ #include <time.h>
+ #include <stdarg.h>
+ #ifdef _WIN32
++#include <winsock2.h>
+ #include <windows.h>
+ #else
+ #include <sys/times.h>
+diff -Nru libgcrypt-1.5.0.orig/cipher/ac.c libgcrypt-1.5.0/cipher/ac.c
+--- libgcrypt-1.5.0.orig/cipher/ac.c	2011-02-04 20:09:39.000000000 +0100
++++ libgcrypt-1.5.0/cipher/ac.c	2011-08-31 15:12:04.088708800 +0200
+@@ -29,6 +29,9 @@
+ #include "cipher.h"
+ #include "mpi.h"
+ 
++#ifndef BUFSIZ
++# define BUFSIZ 1024
++#endif
+ 
+ 
+ /* At the moment the ac interface is a wrapper around the pk
+diff -Nru libgcrypt-1.5.0.orig/cipher/sha512.c libgcrypt-1.5.0/cipher/sha512.c
+--- libgcrypt-1.5.0.orig/cipher/sha512.c	2011-02-04 20:09:38.000000000 +0100
++++ libgcrypt-1.5.0/cipher/sha512.c	2011-08-31 15:12:04.092709100 +0200
+@@ -387,23 +387,23 @@
+       memset (hd->buf, 0, 112);	/* fill next block with zeroes */
+     }
+   /* append the 128 bit count */
+-  hd->buf[112] = msb >> 56;
+-  hd->buf[113] = msb >> 48;
+-  hd->buf[114] = msb >> 40;
+-  hd->buf[115] = msb >> 32;
+-  hd->buf[116] = msb >> 24;
+-  hd->buf[117] = msb >> 16;
+-  hd->buf[118] = msb >> 8;
+-  hd->buf[119] = msb;
+-
+-  hd->buf[120] = lsb >> 56;
+-  hd->buf[121] = lsb >> 48;
+-  hd->buf[122] = lsb >> 40;
+-  hd->buf[123] = lsb >> 32;
+-  hd->buf[124] = lsb >> 24;
+-  hd->buf[125] = lsb >> 16;
+-  hd->buf[126] = lsb >> 8;
+-  hd->buf[127] = lsb;
++  hd->buf[112] = (byte)(msb >> 56);
++  hd->buf[113] = (byte)(msb >> 48);
++  hd->buf[114] = (byte)(msb >> 40);
++  hd->buf[115] = (byte)(msb >> 32);
++  hd->buf[116] = (byte)(msb >> 24);
++  hd->buf[117] = (byte)(msb >> 16);
++  hd->buf[118] = (byte)(msb >> 8);
++  hd->buf[119] = (byte)(msb);
++
++  hd->buf[120] = (byte)(lsb >> 56);
++  hd->buf[121] = (byte)(lsb >> 48);
++  hd->buf[122] = (byte)(lsb >> 40);
++  hd->buf[123] = (byte)(lsb >> 32);
++  hd->buf[124] = (byte)(lsb >> 24);
++  hd->buf[125] = (byte)(lsb >> 16);
++  hd->buf[126] = (byte)(lsb >> 8);
++  hd->buf[127] = (byte)(lsb);
+   transform (hd, hd->buf);
+   _gcry_burn_stack (768);
+ 
+@@ -411,10 +411,10 @@
+ #ifdef WORDS_BIGENDIAN
+ #define X(a) do { *(u64*)p = hd->h##a ; p += 8; } while (0)
+ #else /* little endian */
+-#define X(a) do { *p++ = hd->h##a >> 56; *p++ = hd->h##a >> 48;	      \
+-                  *p++ = hd->h##a >> 40; *p++ = hd->h##a >> 32;	      \
+-                  *p++ = hd->h##a >> 24; *p++ = hd->h##a >> 16;	      \
+-                  *p++ = hd->h##a >> 8;  *p++ = hd->h##a; } while (0)
++#define X(a) do { *p++ = (byte)(hd->h##a >> 56); *p++ = (byte)(hd->h##a >> 48);	      \
++                  *p++ = (byte)(hd->h##a >> 40); *p++ = (byte)(hd->h##a >> 32);	      \
++                  *p++ = (byte)(hd->h##a >> 24); *p++ = (byte)(hd->h##a >> 16);	      \
++                  *p++ = (byte)(hd->h##a >> 8);  *p++ = (byte)(hd->h##a); } while (0)
+ #endif
+   X (0);
+   X (1);
+diff -Nru libgcrypt-1.5.0.orig/cipher/tiger.c libgcrypt-1.5.0/cipher/tiger.c
+--- libgcrypt-1.5.0.orig/cipher/tiger.c	2011-02-04 20:09:38.000000000 +0100
++++ libgcrypt-1.5.0/cipher/tiger.c	2011-08-31 15:12:04.096709300 +0200
+@@ -831,15 +831,15 @@
+ #ifdef WORDS_BIGENDIAN
+ #define X(a) do { *(u64*)p = hd->a ; p += 8; } while(0)
+ #else /* little endian */
+-#define X(a) do { *p++ = hd->a >> 56; *p++ = hd->a >> 48; \
+-	          *p++ = hd->a >> 40; *p++ = hd->a >> 32; \
+-	          *p++ = hd->a >> 24; *p++ = hd->a >> 16; \
+-	          *p++ = hd->a >>  8; *p++ = hd->a;       } while(0)
++#define X(a) do { *p++ = (byte)(hd->a >> 56); *p++ = (byte)(hd->a >> 48); \
++	          *p++ = (byte)(hd->a >> 40); *p++ = (byte)(hd->a >> 32); \
++	          *p++ = (byte)(hd->a >> 24); *p++ = (byte)(hd->a >> 16); \
++	          *p++ = (byte)(hd->a >>  8); *p++ = (byte)(hd->a);       } while(0)
+ #endif
+-#define Y(a) do { *p++ = hd->a      ; *p++ = hd->a >> 8;  \
+-	          *p++ = hd->a >> 16; *p++ = hd->a >> 24; \
+-	          *p++ = hd->a >> 32; *p++ = hd->a >> 40; \
+-	          *p++ = hd->a >> 48; *p++ = hd->a >> 56; } while(0)
++#define Y(a) do { *p++ = (byte)(hd->a)      ; *p++ = (byte)(hd->a >> 8);  \
++	          *p++ = (byte)(hd->a >> 16); *p++ = (byte)(hd->a >> 24); \
++	          *p++ = (byte)(hd->a >> 32); *p++ = (byte)(hd->a >> 40); \
++	          *p++ = (byte)(hd->a >> 48); *p++ = (byte)(hd->a >> 56); } while(0)
+   if (hd->variant == 0)
+     {
+       X(a);
+diff -Nru libgcrypt-1.5.0.orig/compat/access.c libgcrypt-1.5.0/compat/access.c
+--- libgcrypt-1.5.0.orig/compat/access.c	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.0/compat/access.c	2011-08-31 15:12:04.101709600 +0200
+@@ -0,0 +1,95 @@
++/* w32-ce.h 
++   Copyright (C) 2010 g10 Code GmbH
++   Copyright (C) 1991,92,97,2000,02 Free Software Foundation, Inc.
++
++   This file is part of GPGME.
++ 
++   GPGME is free software; you can redistribute it and/or modify it
++   under the terms of the GNU Lesser General Public License as
++   published by the Free Software Foundation; either version 2.1 of
++   the License, or (at your option) any later version.
++   
++   GPGME is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++   
++   You should have received a copy of the GNU Lesser General Public
++   License along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#include <errno.h>
++#include <string.h>
++#include <gpg-error.h>
++
++#include <windows.h>
++
++/* Return a malloced wide char string from an UTF-8 encoded input
++   string STRING.  Caller must free this value.  Returns NULL and sets
++   ERRNO on failure.  Calling this function with STRING set to NULL is
++   not defined.  */
++wchar_t *
++utf8_to_wchar (const char *string)
++{
++  int n;
++  size_t nbytes;
++  wchar_t *result;
++
++  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, NULL, 0);
++  if (n < 0)
++    {
++      gpg_err_set_errno (EINVAL);
++      return NULL;
++    }
++
++  nbytes = (size_t)(n+1) * sizeof(*result);
++  if (nbytes / sizeof(*result) != (n+1)) 
++    {
++      gpg_err_set_errno (ENOMEM);
++      return NULL;
++    }
++  result = malloc (nbytes);
++  if (!result)
++    return NULL;
++
++  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, result, n);
++  if (n < 0)
++    {
++      free (result);
++      gpg_err_set_errno (EINVAL);
++      result = NULL;
++    }
++  return result;
++}
++
++/* Replacement for the access function.  Note that we can't use fopen
++   here because wince might now allow to have a shared read for an
++   executable; it is better to to read the file attributes.
++   
++   Limitation:  Only F_OK is supported.
++*/
++int
++_access (const char *fname, int mode)
++{
++  DWORD attr;
++  wchar_t *wfname;
++
++  (void)mode;
++
++  wfname = utf8_to_wchar (fname);
++  if (!wfname)
++    return -1;
++
++  attr = GetFileAttributes (wfname);
++  free (wfname);
++  if (attr == (DWORD)(-1))
++    {
++      gpg_err_set_errno (ENOENT);
++      return -1;
++    }
++  return 0;
++}
+diff -Nru libgcrypt-1.5.0.orig/compat/clock.c libgcrypt-1.5.0/compat/clock.c
+--- libgcrypt-1.5.0.orig/compat/clock.c	2011-02-04 20:10:08.000000000 +0100
++++ libgcrypt-1.5.0/compat/clock.c	2011-08-31 15:13:25.487364600 +0200
+@@ -23,7 +23,9 @@
+ _gcry_clock (void)
+ {
+   assert (CLOCKS_PER_SEC == 1000);
++#ifdef __GNUC__
+ #warning Replace by a correct implementaion.
++#endif
+   /* It seems that GetProcessTimes is available in the kernel but
+      without a declaration.  If that fails we would need to walk over
+      all threads and tally up the GetThreadTimes.  */
+diff -Nru libgcrypt-1.5.0.orig/compat/getpid.c libgcrypt-1.5.0/compat/getpid.c
+--- libgcrypt-1.5.0.orig/compat/getpid.c	2011-02-04 20:10:05.000000000 +0100
++++ libgcrypt-1.5.0/compat/getpid.c	2011-08-31 15:12:04.110710100 +0200
+@@ -15,8 +15,11 @@
+ #endif
+ 
+ #ifdef HAVE_W32CE_SYSTEM
+-#include <windows.h>
+-#include <sys/types.h>
++# include <windows.h>
++# ifdef HAVE_SYS_TYPES_H
++#  include <sys/types.h>
++# endif
++typedef int  pid_t;
+ 
+ pid_t
+ _gcry_getpid (void)
+diff -Nru libgcrypt-1.5.0.orig/mpi/mpi-internal.h libgcrypt-1.5.0/mpi/mpi-internal.h
+--- libgcrypt-1.5.0.orig/mpi/mpi-internal.h	2011-02-04 20:15:39.000000000 +0100
++++ libgcrypt-1.5.0/mpi/mpi-internal.h	2011-08-31 15:12:04.114710300 +0200
+@@ -51,6 +51,11 @@
+ 
+ #include "mpi.h"
+ 
++#ifdef _WIN32_WCE
++#undef leave
++#endif
++
++
+ /* If KARATSUBA_THRESHOLD is not already defined, define it to a
+  * value which is good on most machines.  */
+ 
+diff -Nru libgcrypt-1.5.0.orig/random/rand-internal.h libgcrypt-1.5.0/random/rand-internal.h
+--- libgcrypt-1.5.0.orig/random/rand-internal.h	2011-02-04 20:16:04.000000000 +0100
++++ libgcrypt-1.5.0/random/rand-internal.h	2011-08-31 15:12:04.119710600 +0200
+@@ -22,6 +22,10 @@
+ 
+ #include "../src/cipher-proto.h"
+ 
++#ifdef _WIN32_WCE
++#undef leave
++#endif
++
+ /* Constants used to define the origin of random added to the pool.
+    The code is sensitive to the order of the values.  */
+ enum random_origins
+diff -Nru libgcrypt-1.5.0.orig/random/random-csprng.c libgcrypt-1.5.0/random/random-csprng.c
+--- libgcrypt-1.5.0.orig/random/random-csprng.c	2011-02-04 20:16:04.000000000 +0100
++++ libgcrypt-1.5.0/random/random-csprng.c	2011-08-31 15:12:04.124710900 +0200
+@@ -37,11 +37,21 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
++#ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
++#endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
++#ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
++#endif
+ #include <time.h>
+ #ifdef	HAVE_GETHRTIME
+ #include <sys/times.h>
+@@ -62,6 +72,15 @@
+ #include "cipher.h" /* Required for the rmd160_hash_buffer() prototype.  */
+ #include "ath.h"
+ 
++#ifdef _MSC_VER
++#define S_IRUSR 0000400
++#define S_IWUSR 0000200
++#define     _IFMT	0170000	// type of file 
++#define		_IFREG	0100000	// regular 
++#define       S_ISREG(m)      (((m)&_IFMT) == _IFREG)
++
++#endif
++
+ #ifndef RAND_MAX   /* For SunOS. */
+ #define RAND_MAX 32767
+ #endif
+diff -Nru libgcrypt-1.5.0.orig/random/random-fips.c libgcrypt-1.5.0/random/random-fips.c
+--- libgcrypt-1.5.0.orig/random/random-fips.c	2011-02-04 20:16:03.000000000 +0100
++++ libgcrypt-1.5.0/random/random-fips.c	2011-08-31 15:12:04.128711100 +0200
+@@ -57,8 +57,12 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <errno.h>
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_GETTIMEOFDAY
+ #include <sys/time.h>
+ #endif
+diff -Nru libgcrypt-1.5.0.orig/random/rndlinux.c libgcrypt-1.5.0/random/rndlinux.c
+--- libgcrypt-1.5.0.orig/random/rndlinux.c	2011-02-04 20:16:03.000000000 +0100
++++ libgcrypt-1.5.0/random/rndlinux.c	2011-08-31 15:12:04.131711300 +0200
+@@ -23,14 +23,22 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <errno.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
++#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
++#endif
++#ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
++#endif
+ #ifdef HAVE_GETTIMEOFDAY
+ # include <sys/times.h>
+ #endif
+ #include <string.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <fcntl.h>
+ #include "types.h"
+ #include "g10lib.h"
+diff -Nru libgcrypt-1.5.0.orig/random/rndw32.c libgcrypt-1.5.0/random/rndw32.c
+--- libgcrypt-1.5.0.orig/random/rndw32.c	2011-02-04 20:16:03.000000000 +0100
++++ libgcrypt-1.5.0/random/rndw32.c	2011-08-31 15:15:08.303245300 +0200
+@@ -74,10 +74,11 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
+-#ifdef __GNUC__
++#ifdef HAVE_STDINT_H
+ #include <stdint.h>
+ #endif
+ 
++#include <winsock2.h>
+ #include <windows.h>
+ 
+ 
+diff -Nru libgcrypt-1.5.0.orig/random/rndw32ce.c libgcrypt-1.5.0/random/rndw32ce.c
+--- libgcrypt-1.5.0.orig/random/rndw32ce.c	2011-02-04 20:16:03.000000000 +0100
++++ libgcrypt-1.5.0/random/rndw32ce.c	2011-08-31 15:12:04.141711900 +0200
+@@ -20,8 +20,13 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#ifdef HAVE_STDINT_H
+ #include <stdint.h>
++#endif
+ 
++#ifdef _WIN32_WCE
++#include <winsock2.h>
++#endif
+ #include <windows.h>
+ #include <wincrypt.h>
+ 
+diff -Nru libgcrypt-1.5.0.orig/src/ath.c libgcrypt-1.5.0/src/ath.c
+--- libgcrypt-1.5.0.orig/src/ath.c	2011-03-28 14:07:52.000000000 +0200
++++ libgcrypt-1.5.0/src/ath.c	2011-08-31 15:12:04.144712000 +0200
+@@ -23,15 +23,25 @@
+ #endif
+ 
+ #include <assert.h>  /* Right: We need to use assert and not gcry_assert.  */
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_SYS_SELECT_H
+ # include <sys/select.h>
+ #else
+-# include <sys/time.h>
++# ifdef HAVE_SYS_TIME_H
++#  include <sys/time.h>
++# endif
++#endif
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
+ #endif
+-#include <sys/types.h>
+ #ifndef _WIN32
+ #include <sys/wait.h>
++#else
++#include <winsock2.h>
++#define ssize_t SSIZE_T
++typedef int pid_t;
+ #endif
+ #include <errno.h>
+ 
+diff -Nru libgcrypt-1.5.0.orig/src/cipher.h libgcrypt-1.5.0/src/cipher.h
+--- libgcrypt-1.5.0.orig/src/cipher.h	2011-06-10 10:53:41.000000000 +0200
++++ libgcrypt-1.5.0/src/cipher.h	2011-08-31 15:12:04.147712200 +0200
+@@ -70,6 +70,9 @@
+ 
+ #include "cipher-proto.h"
+ 
++#ifdef _WIN32_WCE
++#undef leave
++#endif
+ 
+ /*-- rmd160.c --*/
+ void _gcry_rmd160_hash_buffer (void *outbuf,
+diff -Nru libgcrypt-1.5.0.orig/src/fips.c libgcrypt-1.5.0/src/fips.c
+--- libgcrypt-1.5.0.orig/src/fips.c	2011-02-04 20:17:33.000000000 +0100
++++ libgcrypt-1.5.0/src/fips.c	2011-08-31 15:12:04.152712500 +0200
+@@ -21,7 +21,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <string.h>
+ #ifdef ENABLE_HMAC_BINARY_CHECK
+ # include <dlfcn.h>
+@@ -29,12 +31,20 @@
+ #ifdef HAVE_SYSLOG
+ # include <syslog.h>
+ #endif /*HAVE_SYSLOG*/
++#ifdef _WIN32
++#define	F_OK	0
++#define	R_OK	4
++#define	W_OK	2
++#endif
+ 
+ #include "g10lib.h"
+ #include "ath.h"
+ #include "cipher-proto.h"
+ #include "hmac256.h"
+ 
++#ifdef _WIN32_WCE
++#undef leave
++#endif
+ 
+ /* The name of the file used to foce libgcrypt into fips mode. */
+ #define FIPS_FORCE_FILE "/etc/gcrypt/fips_enabled"
+diff -Nru libgcrypt-1.5.0.orig/src/gcrypt.h.in libgcrypt-1.5.0/src/gcrypt.h.in
+--- libgcrypt-1.5.0.orig/src/gcrypt.h.in	2011-03-11 09:47:39.000000000 +0100
++++ libgcrypt-1.5.0/src/gcrypt.h.in	2011-08-31 15:12:04.157712800 +0200
+@@ -28,7 +28,9 @@
+ 
+ #include <gpg-error.h>
+ 
+-#include <sys/types.h>
++#ifndef _WIN32_WCE
++# include <sys/types.h>
++#endif
+ 
+ #if defined _WIN32 || defined __WIN32__
+ # include <winsock2.h>
+diff -Nru libgcrypt-1.5.0.orig/src/global.c libgcrypt-1.5.0/src/global.c
+--- libgcrypt-1.5.0.orig/src/global.c	2011-04-01 10:15:40.000000000 +0200
++++ libgcrypt-1.5.0/src/global.c	2011-08-31 15:12:04.161713000 +0200
+@@ -27,7 +27,9 @@
+ #include <ctype.h>
+ #include <limits.h>
+ #include <errno.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #ifdef HAVE_SYSLOG
+ # include <syslog.h>
+ #endif /*HAVE_SYSLOG*/
+diff -Nru libgcrypt-1.5.0.orig/src/hmac256.c libgcrypt-1.5.0/src/hmac256.c
+--- libgcrypt-1.5.0.orig/src/hmac256.c	2011-02-04 20:17:33.000000000 +0100
++++ libgcrypt-1.5.0/src/hmac256.c	2011-08-31 15:12:04.165713200 +0200
+@@ -59,7 +59,7 @@
+ /* For a native WindowsCE binary we need to include gpg-error.h to
+    provide a replacement for strerror.  In other cases we need a
+    replacement macro for gpg_err_set_errno.  */
+-#ifdef __MINGW32CE__
++#ifdef _WIN32_WCE
+ # include <gpg-error.h>
+ #else
+ # define gpg_err_set_errno(a) (errno = (a))
+diff -Nru libgcrypt-1.5.0.orig/src/hwfeatures.c libgcrypt-1.5.0/src/hwfeatures.c
+--- libgcrypt-1.5.0.orig/src/hwfeatures.c	2011-02-17 10:57:00.000000000 +0100
++++ libgcrypt-1.5.0/src/hwfeatures.c	2011-08-31 15:12:04.168713400 +0200
+@@ -22,7 +22,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ 
+ #include "g10lib.h"
+ 
+diff -Nru libgcrypt-1.5.0.orig/src/misc.c libgcrypt-1.5.0/src/misc.c
+--- libgcrypt-1.5.0.orig/src/misc.c	2011-02-04 20:17:33.000000000 +0100
++++ libgcrypt-1.5.0/src/misc.c	2011-08-31 15:12:04.171713600 +0200
+@@ -23,7 +23,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ 
+ #include "g10lib.h"
+ #include "secmem.h"
+diff -Nru libgcrypt-1.5.0.orig/src/secmem.c libgcrypt-1.5.0/src/secmem.c
+--- libgcrypt-1.5.0.orig/src/secmem.c	2011-04-19 16:03:37.000000000 +0200
++++ libgcrypt-1.5.0/src/secmem.c	2011-08-31 15:12:04.174713800 +0200
+@@ -24,8 +24,15 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <stdarg.h>
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <stddef.h>
++#ifdef _WIN32
++#include <winsock2.h>
++#define ssize_t SSIZE_T
++typedef int pid_t;
++#endif
+ 
+ #if defined(HAVE_MLOCK) || defined(HAVE_MMAP)
+ #include <sys/mman.h>
+diff -Nru libgcrypt-1.5.0.orig/src/sexp.c libgcrypt-1.5.0/src/sexp.c
+--- libgcrypt-1.5.0.orig/src/sexp.c	2011-06-10 10:53:41.000000000 +0200
++++ libgcrypt-1.5.0/src/sexp.c	2011-08-31 15:12:04.179714100 +0200
+@@ -31,6 +31,10 @@
+ #define GCRYPT_NO_MPI_MACROS 1
+ #include "g10lib.h"
+ 
++#ifdef _WIN32_WCE
++#undef leave
++#endif
++
+ typedef struct gcry_sexp *NODE;
+ typedef unsigned short DATALEN;
+ 
+diff -Nru libgcrypt-1.5.0.orig/src/types.h libgcrypt-1.5.0/src/types.h
+--- libgcrypt-1.5.0.orig/src/types.h	2010-12-23 14:59:11.000000000 +0100
++++ libgcrypt-1.5.0/src/types.h	2011-08-31 15:12:04.182714200 +0200
+@@ -38,7 +38,9 @@
+ #endif
+ 
+ 
+-#include <sys/types.h>
++#ifndef _WIN32_WCE
++# include <sys/types.h>
++#endif
+ 
+ 
+ #ifndef HAVE_BYTE_TYPEDEF
