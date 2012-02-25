@@ -37,6 +37,7 @@ class subinfo(info.infoclass):
           self.targets[ver] ='http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'strigi-' + ver
         self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101223.diff", 1)
+        self.patchToApply['0.7.5'] = ("strigi-0.7.5-20120225.diff", 1)
         self.targetDigests['0.7.2'] = 'b4c1472ef068536acf9c5c4c8f033a97f9c69f9f'
 
         self.shortDescription = "a desktop search engine and indexer"
