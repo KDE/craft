@@ -1,6 +1,6 @@
 diff -Nru libgcrypt-1.5.0.orig/cipher/CMakeLists.txt libgcrypt-1.5.0/cipher/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/cipher/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/cipher/CMakeLists.txt	2011-08-31 16:09:48.675871900 +0200
++++ libgcrypt-1.5.0/cipher/CMakeLists.txt	2012-02-25 00:13:20.205439000 +0100
 @@ -0,0 +1,36 @@
 +set(cipher_SRCS
 +    ${CMAKE_CURRENT_SOURCE_DIR}/cipher.c
@@ -40,7 +40,7 @@ diff -Nru libgcrypt-1.5.0.orig/cipher/CMakeLists.txt libgcrypt-1.5.0/cipher/CMak
 +)
 diff -Nru libgcrypt-1.5.0.orig/cmake/modules/FindGpg-Error.cmake libgcrypt-1.5.0/cmake/modules/FindGpg-Error.cmake
 --- libgcrypt-1.5.0.orig/cmake/modules/FindGpg-Error.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/cmake/modules/FindGpg-Error.cmake	2011-08-31 16:09:48.677872000 +0200
++++ libgcrypt-1.5.0/cmake/modules/FindGpg-Error.cmake	2012-02-25 00:13:20.206439000 +0100
 @@ -0,0 +1,35 @@
 +# - Try to find GPG_ERROR
 +# Once done this will define
@@ -79,7 +79,7 @@ diff -Nru libgcrypt-1.5.0.orig/cmake/modules/FindGpg-Error.cmake libgcrypt-1.5.0
 +endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
 diff -Nru libgcrypt-1.5.0.orig/cmake/modules/FindWcecompat.cmake libgcrypt-1.5.0/cmake/modules/FindWcecompat.cmake
 --- libgcrypt-1.5.0.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/cmake/modules/FindWcecompat.cmake	2011-08-31 16:09:48.681872200 +0200
++++ libgcrypt-1.5.0/cmake/modules/FindWcecompat.cmake	2012-02-25 00:13:20.209439200 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -116,7 +116,7 @@ diff -Nru libgcrypt-1.5.0.orig/cmake/modules/FindWcecompat.cmake libgcrypt-1.5.0
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru libgcrypt-1.5.0.orig/CMakeLists.txt libgcrypt-1.5.0/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/CMakeLists.txt	2011-08-31 17:09:33.033885400 +0200
++++ libgcrypt-1.5.0/CMakeLists.txt	2012-02-25 00:13:20.210439300 +0100
 @@ -0,0 +1,120 @@
 +project(gcrypt C)
 +
@@ -240,7 +240,7 @@ diff -Nru libgcrypt-1.5.0.orig/CMakeLists.txt libgcrypt-1.5.0/CMakeLists.txt
 +endif(BUILD_TESTS)
 diff -Nru libgcrypt-1.5.0.orig/config.h.cmake libgcrypt-1.5.0/config.h.cmake
 --- libgcrypt-1.5.0.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/config.h.cmake	2011-08-31 16:09:48.688872600 +0200
++++ libgcrypt-1.5.0/config.h.cmake	2012-02-25 00:13:20.212439400 +0100
 @@ -0,0 +1,489 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -733,7 +733,7 @@ diff -Nru libgcrypt-1.5.0.orig/config.h.cmake libgcrypt-1.5.0/config.h.cmake
 +#endif /*_GCRYPT_CONFIG_H_INCLUDED*/
 diff -Nru libgcrypt-1.5.0.orig/ConfigureChecks.cmake libgcrypt-1.5.0/ConfigureChecks.cmake
 --- libgcrypt-1.5.0.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/ConfigureChecks.cmake	2011-08-31 16:09:48.691872800 +0200
++++ libgcrypt-1.5.0/ConfigureChecks.cmake	2012-02-25 00:13:20.213439400 +0100
 @@ -0,0 +1,215 @@
 +include(CheckIncludeFile)
 +include(CheckFunctionExists)
@@ -952,7 +952,7 @@ diff -Nru libgcrypt-1.5.0.orig/ConfigureChecks.cmake libgcrypt-1.5.0/ConfigureCh
 +configure_file(src/gcrypt.h.in gcrypt.h)
 diff -Nru libgcrypt-1.5.0.orig/mpi/CMakeLists.txt libgcrypt-1.5.0/mpi/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/mpi/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/mpi/CMakeLists.txt	2011-08-31 16:09:48.694873000 +0200
++++ libgcrypt-1.5.0/mpi/CMakeLists.txt	2012-02-25 00:13:20.215439500 +0100
 @@ -0,0 +1,69 @@
 +# config.links stuff:
 +configure_file(generic/mpi-asm-defs.h ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
@@ -1025,7 +1025,7 @@ diff -Nru libgcrypt-1.5.0.orig/mpi/CMakeLists.txt libgcrypt-1.5.0/mpi/CMakeLists
 +)
 diff -Nru libgcrypt-1.5.0.orig/random/CMakeLists.txt libgcrypt-1.5.0/random/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/random/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/random/CMakeLists.txt	2011-08-31 16:09:48.696873100 +0200
++++ libgcrypt-1.5.0/random/CMakeLists.txt	2012-02-25 00:13:20.216439600 +0100
 @@ -0,0 +1,28 @@
 +set(_random_SRCS
 +    ${CMAKE_CURRENT_SOURCE_DIR}/random.c
@@ -1057,7 +1057,7 @@ diff -Nru libgcrypt-1.5.0.orig/random/CMakeLists.txt libgcrypt-1.5.0/random/CMak
 +set(random_SRCS ${_random_SRCS} PARENT_SCOPE)
 diff -Nru libgcrypt-1.5.0.orig/src/CMakeLists.txt libgcrypt-1.5.0/src/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/src/CMakeLists.txt	2011-08-31 16:09:48.698873200 +0200
++++ libgcrypt-1.5.0/src/CMakeLists.txt	2012-02-25 00:13:20.217439700 +0100
 @@ -0,0 +1,43 @@
 +set(libgcrypt_SRCS
 +    ${CMAKE_CURRENT_SOURCE_DIR}/visibility.c
@@ -1104,8 +1104,8 @@ diff -Nru libgcrypt-1.5.0.orig/src/CMakeLists.txt libgcrypt-1.5.0/src/CMakeLists
 +endif(USE_RANDOM_DAEMON)
 diff -Nru libgcrypt-1.5.0.orig/tests/CMakeLists.txt libgcrypt-1.5.0/tests/CMakeLists.txt
 --- libgcrypt-1.5.0.orig/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgcrypt-1.5.0/tests/CMakeLists.txt	2011-08-31 16:09:48.701873400 +0200
-@@ -0,0 +1,28 @@
++++ libgcrypt-1.5.0/tests/CMakeLists.txt	2012-02-25 00:20:53.458363600 +0100
+@@ -0,0 +1,29 @@
 +set(gcrypt_TESTS
 +    version
 +    t-mpi-bit
@@ -1132,6 +1132,6 @@ diff -Nru libgcrypt-1.5.0.orig/tests/CMakeLists.txt libgcrypt-1.5.0/tests/CMakeL
 +foreach(_t ${gcrypt_TESTS})
 +    add_executable(${_t} ${_t}.c)
 +    target_link_libraries(${_t} gcrypt ${GPG_ERROR_LIBRARIES})
-+    add_test(NAME ${_t} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMMAND ${_t})
++    add_test(${_t} ${CMAKE_BINARY_DIR}/${_t})
++    set_tests_properties(${_t} PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 +endforeach(_t ${gcrypt_TESTS})
-\ Kein Zeilenumbruch am Dateiende.
