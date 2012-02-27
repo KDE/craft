@@ -9,6 +9,7 @@ import subprocess
 import emergePlatform
 
 COMPILER = os.getenv("KDECOMPILER")
+
 GCCTARGET = None
 MINGW_VERSION = None
 
@@ -21,7 +22,10 @@ def getGCCTarget():
             GCCTARGET = result.strip()
         except OSError:
             #if no mingw is installed return mingw-w32 it is part of base
-            GCCTARGET = "i686-w64-mingw32"
+            if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+                GCCTARGET = "x86_64-w64-mingw32"
+            else:
+                GCCTARGET = "i686-w64-mingw32"
     return GCCTARGET
 
 def isMinGW():
