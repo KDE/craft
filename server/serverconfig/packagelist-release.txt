@@ -33,7 +33,7 @@ kdesupport,libkgeomap,,
 kdesupport,liblastfm,,
 #
 # the KDE packages themselves
-kde,kdelibs,4.8.0,1
+kde,kdelibs,4.8.0,2
 kde,kdepimlibs,4.8.0,1
 kde,kde-runtime,4.8.0,
 kde,kactivities,4.8.0,
