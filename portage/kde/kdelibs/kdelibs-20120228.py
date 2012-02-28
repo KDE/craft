@@ -8,7 +8,8 @@ class subinfo(info.infoclass):
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kdelibs-4.8." + ver + ".tar.bz2"
             self.targetInstSrc['4.8.' + ver] = 'kdelibs-4.8.' + ver
         self.patchToApply['4.8.0'] = [("kdelibs-4.8.0-20120219.diff", 1),
-                                      ("kdecore-add-kdeconf.diff", 1)]
+                                      ("kdecore-add-kdeconf.diff", 1),
+                                      ("fix-plasma-crash.diff", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
