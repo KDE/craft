@@ -35,7 +35,7 @@ kdesupport,liblastfm,,
 # the KDE packages themselves
 kde,kdelibs,4.8.0,2
 kde,kdepimlibs,4.8.0,1
-kde,kde-runtime,4.8.0,
+kde,kde-runtime,4.8.0,1
 kde,kactivities,4.8.0,
 kde,kde-workspace,4.8.0,
 kde,kde-baseapps,4.8.0,
