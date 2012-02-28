@@ -1,0 +1,27 @@
+diff --git a/kdecore/kernel/kstandarddirs.cpp b/kdecore/kernel/kstandarddirs.cpp
+index 9426ffc..9eaf2a9 100644
+--- a/kdecore/kernel/kstandarddirs.cpp
++++ b/kdecore/kernel/kstandarddirs.cpp
+@@ -67,6 +67,7 @@
+ #include <QtCore/QVarLengthArray>
+ #endif
+ 
++#include <QtCore/QCoreApplication>
+ #include <QtCore/QMutex>
+ #include <QtCore/QRegExp>
+ #include <QtCore/QDir>
+@@ -1732,8 +1733,12 @@ void KStandardDirs::addKDEDefaults()
+ #elif defined(Q_WS_WIN)
+ #ifndef _WIN32_WCE
+         WCHAR wPath[MAX_PATH+1];
+-        if ( SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, wPath) == S_OK) {
+-          localKdeDir = QDir::fromNativeSeparators(QString::fromUtf16((const ushort *) wPath)) + QLatin1Char('/') + QString::fromLatin1(KDE_DEFAULT_HOME) + QLatin1Char('/');
++        if ( QFile::exists(QCoreApplication::applicationDirPath() + QString::fromLatin1("/kde.conf") ) ) {
++            QSettings kdeconf( QCoreApplication::applicationDirPath() + QString::fromLatin1("/kde.conf"), QSettings::IniFormat );
++            kdeconf.beginGroup(QString::fromLatin1("KDEHOME"));
++            localKdeDir = kdeconf.value(QString::fromLatin1("KDEHOME")).toString();
++        } else if ( SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, wPath) == S_OK) {
++            localKdeDir = QDir::fromNativeSeparators(QString::fromUtf16((const ushort *) wPath)) + QLatin1Char('/') + QString::fromLatin1(KDE_DEFAULT_HOME) + QLatin1Char('/');
+         } else {
+ #endif
+           localKdeDir =  QDir::homePath() + QLatin1Char('/') + QString::fromLatin1(KDE_DEFAULT_HOME) + QLatin1Char('/');
