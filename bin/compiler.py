@@ -9,6 +9,7 @@ import subprocess
 import emergePlatform
 
 COMPILER = os.getenv("KDECOMPILER")
+
 GCCTARGET = None
 MINGW_VERSION = None
 
@@ -16,12 +17,15 @@ def getGCCTarget():
     global GCCTARGET # pylint: disable=W0603
     if not GCCTARGET:
         try:
-            result = subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0]
+            result = str(subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
             utils.debug("GCC Target Processor:%s" % result, 1 )
             GCCTARGET = result.strip()
         except OSError:
             #if no mingw is installed return mingw-w32 it is part of base
-            GCCTARGET = "i686-w64-mingw32"
+            if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+                GCCTARGET = "x86_64-w64-mingw32"
+            else:
+                GCCTARGET = "i686-w64-mingw32"
     return GCCTARGET
 
 def isMinGW():
@@ -89,7 +93,7 @@ def getMinGWVersion():
     global MINGW_VERSION # pylint: disable=W0603
     if not MINGW_VERSION:
         try:
-            result = subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0]
+            result = str(subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
             result = result.split()[2]
             utils.debug("GCC Version:%s" % result, 1 )
             MINGW_VERSION = result.strip()
@@ -105,7 +109,7 @@ def getVersion():
 
 
 if __name__ == '__main__':
-    print "Testing Compiler.py"
-    print "Version: %s" % getVersion()
-    print "Compiler Name: %s" % getCompilerName()
+    print("Testing Compiler.py")
+    print("Version: %s" % getVersion())
+    print("Compiler Name: %s" % getCompilerName())
 

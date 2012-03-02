@@ -3,7 +3,7 @@
 #  @note this file should replace all other related portage related files
 import utils
 
-import __builtin__
+import builtins
 import imp
 import os
 import re
@@ -11,6 +11,7 @@ import sys
 import portage_versions
 import emergePlatform
 import copy
+import InstallDB
 
 internalCategory = 'internal'
 ROOTDIR = os.getenv( "KDEROOT" )
@@ -22,9 +23,9 @@ def __import__( module ): # pylint: disable=W0622
     utils.debug( "module to import: %s" % module, 2 )
     if not os.path.isfile( module ):
         try:
-            return __builtin__.__import__( module )
+            return builtins.__import__( module )
         except ImportError as e:
-            utils.warning( 'import failed for module %s: %s' % (module, e.message) )
+            utils.warning( 'import failed for module %s: %s' % (module, str(e)) )
             return None
     else:
         sys.path.append( os.path.dirname( module ) )
@@ -44,7 +45,7 @@ def __import__( module ): # pylint: disable=W0622
                 return imp.load_module( modulename.replace('.', '_'),
                 fileHdl, module, suff_index )
             except ImportError as e:
-                utils.warning( 'import failed for file %s: %s' % (module, e.message) )
+                utils.warning( 'import failed for file %s: %s' % (module, e) )
                 return None
 
 class DependencyPackage:
@@ -70,8 +71,8 @@ class DependencyPackage:
 
     def __readChildren( self ):
         runtimeDependencies, buildDependencies = readChildren( self.category, self.name, self.version )
-        self.runtimeChildren = self.__readDependenciesForChildren( runtimeDependencies.keys() )
-        self.buildChildren = self.__readDependenciesForChildren( buildDependencies.keys() )
+        self.runtimeChildren = self.__readDependenciesForChildren( list(runtimeDependencies.keys()) )
+        self.buildChildren = self.__readDependenciesForChildren( list(buildDependencies.keys()) )
 
     def __readDependenciesForChildren( self, deps ):
         children = []
@@ -88,7 +89,7 @@ class DependencyPackage:
 
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
-                if not line in packageDict.keys():
+                if not line in list(packageDict.keys()):
                     p = DependencyPackage( category, package, version )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
                     packageDict[ line ] = p
@@ -233,7 +234,7 @@ class Portage:
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
 
-            if not category in self.categories.keys():
+            if not category in list(self.categories.keys()):
                 self.categories[ category ] = []
             for package in packageList:
                 if not os.path.isdir( os.path.join( directory, category, package ) ):
@@ -245,7 +246,7 @@ class Portage:
                 for subPackage in subPackageList:
                     if not os.path.isdir( os.path.join( directory, category, package, subPackage ) ) or subPackage in VCSDirs():
                         continue
-                    if not subPackage in self.subpackages.keys():
+                    if not subPackage in list(self.subpackages.keys()):
                         self.subpackages[ subPackage ] = []
                     if not subPackage in self.categories[ category ]:
                         self.categories[ category ].append( subPackage )
@@ -256,7 +257,7 @@ class Portage:
         """ returns the category of this package """
         utils.debug( "getCategory: %s" % package, 2 )
 
-        for cat in self.categories.keys():
+        for cat in list(self.categories.keys()):
             if package in self.categories[ cat ]:
                 utils.debug( "found: category %s for package %s" % ( cat, package ), 1 )
                 return cat
@@ -264,7 +265,7 @@ class Portage:
 
     def isCategory( self, category ):
         """ returns whether a certain category exists """
-        return category in self.categories.keys()
+        return category in list(self.categories.keys())
 
     def isPackage( self, category, package ):
         """ returns whether a certain package exists within a category """
@@ -339,6 +340,8 @@ class Portage:
                 tmpdict['shortDescription'] = info.shortDescription
             if not info.description == "":
                 tmpdict['description'] = info.description
+            if not info.homepage == "":
+                tmpdict['homepage'] = info.homepage
             tmpdict['withCompiler'] = info.options.package.withCompiler
             utils.debug( tmpdict, 2 )
             return tmpdict
@@ -429,7 +432,7 @@ class Portage:
     def getInstallables( self ):
         """ get all the packages that are within the portage directory """
         instList = list()
-        for category in self.categories.keys():
+        for category in list(self.categories.keys()):
             for package in self.categories[ category ]:
                 for script in os.listdir( getDirname( category, package ) ):
                     if script.endswith( '.py' ):
@@ -525,7 +528,7 @@ def getDependencies( category, package, version, runtimeOnly=False ):
             if not runtimeOnly:
                 depDict.update( info.buildDependencies )
 
-            for line in depDict.keys():
+            for line in list(depDict.keys()):
                 (category, package) = line.split( "/" )
                 version = PortageInstance.getNewestVersion( category, package )
                 deps.append( [ category, package, version, depDict[ line ] ] )
@@ -561,14 +564,14 @@ def printTargets( category, package, version ):
     defaultTarget = PortageInstance.getDefaultTarget( category, package, version )
     if 'svnHEAD' in targetsDict and not targetsDict['svnHEAD']:
         del targetsDict['svnHEAD']
-    targetsDictKeys = targetsDict.keys()
+    targetsDictKeys = list(targetsDict.keys())
     targetsDictKeys.sort()
     for i in targetsDictKeys:
         if defaultTarget == i:
-            print '*',
+            print('*', end=' ')
         else:
-            print ' ',
-        print i
+            print(' ', end=' ')
+        print(i)
 
 def readChildren( category, package, version ):
     identFileName = getFilename( category, package, version )
@@ -577,14 +580,14 @@ def readChildren( category, package, version ):
 
     # if we are an emerge internal package and already in the dictionary, ignore childrens
     # To avoid possible endless recursion this may be also make sense for all packages
-    if category == internalCategory and identFileName in modDict.keys():
+    if category == internalCategory and identFileName in list(modDict.keys()):
         return dict(), dict()
     package, subpackage = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
     else:
         utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
-    if not identFileName in modDict.keys():
+    if not identFileName in list(modDict.keys()):
         mod = __import__( identFileName )
         modDict[ identFileName ] = mod
     else:
@@ -642,7 +645,7 @@ def isPackageUpdateable( category, package, version ):
     mod = __import__( getFilename( category, package, version ) )
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()
-        if len( info.svnTargets ) == 1 and not info.svnTargets[ info.svnTargets.keys()[0] ]:
+        if len( info.svnTargets ) == 1 and not info.svnTargets[ list(info.svnTargets.keys())[0] ]:
             return False
         return len( info.svnTargets ) > 0
     else:
@@ -671,7 +674,7 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     def printLine( cat, pack, ver, hnt="" ):
         catlen = 25
         packlen = 25
-        print cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver, hnt
+        print(cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver, hnt)
 
     printLine( 'Category', 'Package', 'Version' )
     printLine( '--------', '-------', '-------' )
@@ -686,12 +689,51 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
 def printInstallables():
     """get all the packages that can be installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), alwaysTrue )
+    
 
 def printInstalled():
     """get all the packages that are already installed"""
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), isInstalled )
-
-
+    
+def printSearch(search_category, search_package,maxDist = 3):
+        installable = PortageInstance.getInstallables()
+        similar = []
+        match = None
+        package_re = re.compile(".*%s.*" % search_package)
+        for category,package,version in installable:
+            if search_category == "" or search_category == category:
+                levDist = utils.levenshtein(search_package,package)
+                if levDist == 0 :
+                    match = ((levDist,category,package,version))
+                    break;
+                elif package_re.match(package):
+                    similar.append((levDist-maxDist,category,package,version))
+                elif levDist <= maxDist:
+                    similar.append((levDist,category,package,version))
+                
+        if match == None:
+            print("Package %s not found, similar packages are:" % search_package)
+            similar.sort()
+        else:
+            print("Package %s found:" % search_package)
+            similar = [match]
+        
+        for levDist,category,package,version in similar:
+            utils.debug((category,package,version,levDist),1)
+            meta = PortageInstance.getMetaData( category, package, version )
+            description = ""
+            if "shortDescription" in meta:
+                description = meta["shortDescription"]
+            homepage = ""
+            if "homepage" in meta:
+                homepage = meta["homepage"]
+            #print(levDist)
+            print("%s/%s" % (category,package))
+            print("\t Homepage: %s" % homepage)
+            print("\t Description: %s" % description)
+            print("\t Latest version: %s" % version)
+            print("\t Installed version: %s" % InstallDB.installdb.findInstalled(category,package))
+    
 def isInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.isInstalled() instead """
     utils.debug( "isInstalled(%s, %s, %s, %s)" % (category, package, version, buildtype), 2 )

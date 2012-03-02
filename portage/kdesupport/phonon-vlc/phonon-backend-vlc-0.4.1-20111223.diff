@@ -1,0 +1,19 @@
+diff -Nru phonon-backend-vlc-0.4.1.orig/vlc/mediaobject.cpp phonon-backend-vlc-0.4.1/vlc/mediaobject.cpp
+--- phonon-backend-vlc-0.4.1.orig/vlc/mediaobject.cpp	2011-07-30 17:49:27.000000000 +0200
++++ phonon-backend-vlc-0.4.1/vlc/mediaobject.cpp	2011-12-23 10:54:59.343544100 +0100
+@@ -286,11 +286,10 @@
+     case MediaSource::Empty:
+         error() << Q_FUNC_INFO << "MediaSource is empty.";
+         break;
+-    case MediaSource::LocalFile:
+-    case MediaSource::Url: {
+-        debug() << "MediaSource::Mrl:" << source.mrl();
+-        loadMedia(source.mrl().toEncoded());
+-    } // Keep these braces and the following break as-is, some compilers fall over the var decl above.
++    case MediaSource::LocalFile:  
++    case MediaSource::Url: 
++        debug() << "MediaSource::Url:" << source.url();
++        loadMedia(source.url().toEncoded());    
+         break;
+     case MediaSource::Disc:
+         switch (source.discType()) {

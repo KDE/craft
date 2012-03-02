@@ -101,12 +101,12 @@ def main():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:], "c:t:", ["command=", "tries="])
-    except getopt.GetoptError, err:
-        print >> sys.stderr, str(err)
+    except getopt.GetoptError as err:
+        print(str(err), file=sys.stderr)
         sys.exit(1)
 
     if len(args) < 1:
-        print >> sys.stderr, "missing package"
+        print("missing package", file=sys.stderr)
         sys.exit(1)
 
     command = DEFAULT_COMMAND

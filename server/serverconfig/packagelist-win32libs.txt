@@ -12,7 +12,8 @@ win32libs-sources,libxml2-src,,1
 win32libs-sources,shared-mime-info-src,,1
 win32libs-sources,libxslt-src,,1
 win32libs-sources,expat-src,,
-win32libs-sources,dbus-src,1.4.10,
+win32libs-sources,dbus-src,1.4.16,
+#win32libs-sources,dbus-src,gitHEAD,
 win32libs-sources,jpeg-src,,
 win32libs-sources,lcms-src,,2
 win32libs-sources,libbzip2-src,,
@@ -27,13 +28,15 @@ win32libs-sources,sqlite-src,,
 win32libs-sources,libcurl-src,,
 win32libs-sources,openssl-src,,
 win32libs-sources,libssh-src,,1
-win32libs-sources,exiv2-src,,2
+win32libs-sources,exiv2-src,,
 win32libs-sources,boost-headers-src,,
 win32libs-sources,boost-bjam-src,,
-win32libs-sources,boost-python-src,,
+win32libs-sources,boost-python-src,,1
 win32libs-sources,boost-program-options-src,,
 win32libs-sources,boost-thread-src,,
 win32libs-sources,boost-system-src,,
+win32libs-sources,boost-regex-src,,
+win32libs-sources,boost-graph-src,,
 win32libs-sources,chm-src,,
 win32libs-sources,djvu-src,,
 win32libs-sources,libzip-src,,
@@ -77,4 +80,9 @@ win32libs-sources,cfitsio-src,3.20,1
 win32libs-sources,opencv-src,,3
 win32libs-sources,ffmpeg-src,,
 win32libs-sources,lcms2-src,,
+win32libs-sources,ccache-src,working,
+win32libs-sources,mysql-src,,
+data,docbook-xsl,,
+data,docbook-dtd,,
+data,shared-desktop-ontologies,,
 libs,runtime,,

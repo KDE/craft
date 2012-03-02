@@ -79,8 +79,11 @@ class OptionsConfigure:
         self.noDefaultLib = False
 
         ## set this attribute in case a non standard configuration
-		# tool is required (supported currently by QMakeBuildSystem only)
+        # tool is required (supported currently by QMakeBuildSystem only)
         self.tool = False
+
+        # do not add --prefix on msys
+        self.noDefaultOptions = False
 
 
 ## options for the make action
@@ -247,28 +250,28 @@ class Options:
         self.__instances['.'] = [ '', self, temp ]
         if self.__verbose:
             for key in self.__instances:
-                print self.__instances[key]
+                print(self.__instances[key])
 
     def __setInstanceAttribute( self, origKey, instanceKey, key, value ):
         """set attribute in an instance"""
         a = instanceKey.lower()
         if not a in self.__instances:
             if self.__errors:
-                print "instance self.%s not found" % (a)
+                print("instance self.%s not found" % (a))
             return False
         i = self.__instances[a][1]
 
         b = key.lower()
         if not b in self.__instances[a][2]:
             if self.__errors:
-                print "key %s not found" % (b)
+                print("key %s not found" % (b))
             return False
         setattr( i, self.__instances[a][2][b][0], value )
         p = ""
         if self.__instances[a][0]:
             p += self.__instances[a][0] + '.'
         if self.__verbose:
-            print "mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value)
+            print("mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value))
         return True
 
     def __readFromString( self, opts ):

@@ -231,7 +231,6 @@ class SvnSource (VersionSystemSourceBase):
 
     def sourceVersion( self ):
         """ print the revision returned by svn info """
-        print self.__getCurrentRevision()
         return True
 
     def currentRevision(self):

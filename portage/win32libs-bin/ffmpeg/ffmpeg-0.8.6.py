@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision git2307c0b44f07114f16134d0d5f4db2e94b481eb4
+# based on revision giteb21f060da306951f08314cbad761d4cec31659b
 
 from Package.BinaryPackageBase import *
 import os
@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
             self.targets[ version ]          = self.getPackage( repoUrl, 'ffmpeg', version )
             self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'ffmpeg', version, '.tar.bz2.sha1' )
 
-        self.shortDescription = '''${description}'''
+        self.shortDescription = ''''''
 
         self.defaultTarget = '0.8.6'
 
@@ -23,6 +23,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'virtual/bin-base' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/libvorbis' ] = 'default'
 
 
     def setBuildOptions( self ):

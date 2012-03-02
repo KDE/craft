@@ -34,7 +34,7 @@ class AutoNumberingType(type):
 def __init__():
     if not ArgBase.defined:
         argClasses = []
-        for v in globals().values():
+        for v in list(globals().values()):
             if hasattr(v, "__mro__"):
                 if v.__name__.endswith('Arg'):
                     argClass = v()
@@ -44,9 +44,8 @@ def __init__():
         argClass.setup()
 
 
-class ArgBase(object):
+class ArgBase(object, metaclass=AutoNumberingType):
     """this class defines available actions"""
-    __metaclass__ = AutoNumberingType
     defined = []
     argGroupName = None
     argGroups = {}
@@ -333,8 +332,8 @@ def main():
         value = args.__dict__[name]
         ArgBase.classByName[name].argValue = value
         if not value == False:
-            print name, args.__dict__[name]
-    givenCommands = list(x for x in ArgBase.classByName.values()
+            print(name, args.__dict__[name])
+    givenCommands = list(x for x in list(ArgBase.classByName.values())
             if isinstance(x, CommandArgBase) and x.argValue)
 
     # now augment command list for meta commands like --full-package
@@ -346,20 +345,20 @@ def main():
     if args.__dict__['continue']: # continue is a reserved word
         commands = list(ArgBase.classByType[x] for x in ArgBase.classByType[AllArg].expand())
         if givenCommands[0] not in commands:
-            print '--continue cannot be used with %s' % givenCommands[0].argStrings()[0]
+            print('--continue cannot be used with %s' % givenCommands[0].argStrings()[0])
             sys.exit(2)
         commands = commands[commands.index(givenCommands[0]):]
     else:
         if len(givenCommands) == 1:
             commands = (ArgBase.classByType[x] for x in givenCommands[0].expand())
         else:
-            print 'at most one command may be given for a TARGET'
+            print('at most one command may be given for a TARGET')
             sys.exit(2)
 
     # and execute all commands
     for command in commands:
         command.argValue = givenCommands[0].argValue
-        print 'executing', str(command)
+        print('executing', str(command))
         exitCode = command.execArg()
         # for success, commands do not need to return anything
         # for failure, they may return False or a numeric exit code

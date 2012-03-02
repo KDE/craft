@@ -33,6 +33,7 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
+                line = str(line,"UTF-8")
                 if line.startswith("*"):
                     branch = line[2:].rstrip()
                     break
@@ -45,7 +46,7 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if line[2:].rstrip() == branch:
+                if str(line[2:].rstrip(), "UTF-8") == branch:
                     return True
         return False
 
@@ -56,7 +57,7 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if line.rstrip() == _tag:
+                if str(line.rstrip(), "UTF-8") == _tag:
                     return True
         return False
 
@@ -73,7 +74,7 @@ class GitSource ( VersionSystemSourceBase ):
                 # read the temporary file and grab the first line
                 # print the revision - everything else should be quiet now
                 line = tmpFile.readline()
-                return line.replace("commit ", "").strip()
+                return str(line, "UTF-8").replace("commit ", "").strip()
         else:
             # in case this is a tag, print out the tag version
             return branch
@@ -239,7 +240,8 @@ class GitSource ( VersionSystemSourceBase ):
     def sourceVersion( self ):
         """print the revision returned by git show"""
         utils.trace( 'GitSource sourceVersion', 2 )
-        print self.__getCurrentRevision()
+
+        print(self.__getCurrentRevision())
         return True
 
     def checkoutDir(self, index=0 ):

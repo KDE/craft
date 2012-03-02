@@ -1,0 +1,18 @@
+diff -Nru flex-2.5.35.orig/CMakeLists.txt flex-2.5.35/CMakeLists.txt
+--- flex-2.5.35.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ flex-2.5.35/CMakeLists.txt	2012-01-23 20:38:49.406972600 +0100
+@@ -0,0 +1,14 @@
++project( libfl )
++cmake_minimum_required( VERSION 2.6 )
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++
++set( libfl_SRC libmain.c libyywrap.c  )
++
++add_library( libfl STATIC  ${libfl_SRC} )
++set_target_properties( libfl PROPERTIES PREFIX "" )
++
++
++
++install( TARGETS libfl RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )

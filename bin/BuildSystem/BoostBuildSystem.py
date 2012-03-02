@@ -23,7 +23,8 @@ class BoostBuildSystem(BuildSystemBase):
                 " --build-dir=" + self.buildDir() + \
                 " threading=multi"
                 " link=shared"
-                " runtime-link=shared")
+                " runtime-link=shared"
+                " -j"+ os.getenv("NUMBER_OF_PROCESSORS"))
 
         options += " variant="
         if self.buildType() == "Debug":
@@ -57,7 +58,7 @@ class BoostBuildSystem(BuildSystemBase):
         cmd  = "bjam"
         cmd += self.configureOptions(self.subinfo.options.configure.defines)
         if utils.verbose() >= 1:
-            print cmd
+            print(cmd)
         os.system(cmd) and utils.die(
                 "command: %s failed" % (cmd))
         return True

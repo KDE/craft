@@ -18,7 +18,7 @@ __license__ = "the emerge license (BSD)"
 import os
 import sys
 import subprocess
-import __builtin__
+import builtins
 import msvcrt  # pylint: disable=F0401
 import time
 
@@ -30,7 +30,7 @@ try:
 except ImportError:
     _pywin32 = False
 
-class Tee( __builtin__.file ):
+class Tee( builtins.file ):
     """
         This class behaves like the unix command tee:
         everything that gets written into it, will be given out into the given
@@ -42,12 +42,12 @@ class Tee( __builtin__.file ):
         self.outstream = outstream
         self.outfile = outfile
         if self.outfile is None:
-            __builtin__.file.__init__( self, name, mode, bufsize )
+            builtins.file.__init__( self, name, mode, bufsize )
 
     def write( self, inputstring ):
-        print >> self.outstream, inputstring,
+        print(inputstring, end=' ', file=self.outstream)
         if self.outfile is None:
-            __builtin__.file.write( self, inputstring )
+            builtins.file.write( self, inputstring )
         else:
             self.outfile.write( inputstring )
             self.outfile.flush()

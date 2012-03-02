@@ -5,10 +5,10 @@ import sys
 import utils
 import portage
 import subprocess
+from packagelistparser import PackageListParser
+from argparse import ArgumentParser
 import xml.dom.minidom
 from string import Template  # pylint: disable=W0402
-import string
-
 
 #################################################
 
@@ -28,7 +28,7 @@ def getSvnVersion( path ):
 
 def getGitVersion( path ):
     gitinfo = subprocess.Popen( ['git', 'log', '-n 1', '--format=format:%H'], shell=True, stdout=subprocess.PIPE ).communicate()[0]
-    return "git" + gitinfo
+    return "git" + str(gitinfo, "UTF-8")
 
 def svnRename( currentName, newName ):
     cmd = "svn --non-interactive rename %s %s" % ( currentName, newName )
@@ -52,27 +52,43 @@ def gitAdd( newDir ):
     p = subprocess.Popen( ['git', 'add', newDir], shell=True, stdin=subprocess.PIPE )
     return p.wait() == 0
 
-doPretend = False
-if "-p" in sys.argv:
-    doPretend = True
-    sys.argv.remove('-p')
+def getUrls(_cat, _pac, _file):
+    _oldSourceOnly = ""
+    _oldPackageTypes = ""
+    if "EMERGE_SOURCEONLY" in os.environ: _oldSourceOnly = os.environ["EMERGE_SOURCEONLY"]
+    if "EMERGE_PACKAGETYPES" in os.environ: _oldPackageTypes = os.environ["EMERGE_PACKAGETYPES"]
+    os.environ["EMERGE_SOURCEONLY"] = "False"
+    os.environ["EMERGE_PACKAGETYPES"] = "dbg,src"
+    cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(_pac)
+    if cat == None or pac == None:
+        return
 
-if len( sys.argv ) < 2 or not os.path.isfile( sys.argv[ 1 ] ):
-    print "packageList as first argument required!"
-    print
-    print "%s [-p] packagelist" % sys.argv[ 0 ]
-    print "The option -p shows what"
-    exit( 1 )
+    cmd = "emerge -q --geturls " + cat + "/" + pac
+    try:
+        output = subprocess.check_output(cmd.split(' '), shell=True)
+    except:
+        return
+    _file.write(output)
+    os.environ["EMERGE_SOURCEONLY"] = _oldSourceOnly
+    os.environ["EMERGE_PACKAGETYPES"] = _oldPackageTypes
 
+usage="%(prog)s [options]"
+argparser = ArgumentParser(prog=sys.argv[0], usage=usage)
+argparser.add_argument('-p', dest='doPretend', action='store_const', const=True, default=False, help='pretend to change the packages')
+argparser.add_argument("-o", "--output", dest = "outputname", metavar = "FILENAME", help="the name of the output url file")
+argparser.add_argument("-f", "--file", dest = "packagelist", metavar = "FILENAME", help="the packagelist")
+args, rest = argparser.parse_known_args()
+
+if not args.packagelist or not os.path.isfile(args.packagelist):
+    argparser.print_help()
+
+doPretend = args.doPretend
 
 # parse the package file
-packagefile = file( sys.argv[ 1 ] )
-addInfo = dict()
-for line in packagefile:
-    if not line.startswith( '#' ):
-        cat, pac, target, patchlvl = line.strip().split( ',' )
-        addInfo[ cat + "/" + pac ] = ( target, patchlvl )
-packagefile.close()
+listparser = PackageListParser( args.packagelist )
+addInfo = listparser.getInfoDict()
+if args.outputname:
+    fetchlist = open(args.outputname, 'a+b')
 
 baseDependencies = """
     def setDependencies( self ):
@@ -123,8 +139,8 @@ for packageKey in addInfo:
 
 
         if regenerateFile:
-            template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
-            targetkeys = binTargets.keys()
+            template = Template( open( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
+            targetkeys = list(binTargets.keys())
             if 'svnHEAD' in binTargets and binTargets[ 'svnHEAD' ] == False:
                 targetkeys.remove( 'svnHEAD' )
             if not buildTarget in targetkeys:
@@ -140,9 +156,8 @@ for packageKey in addInfo:
 
             currentName = portage.getFilename( binCategory, binPackage, binVersion )
             newName = portage.getFilename( binCategory, binPackage, buildTarget )
-            gitCurrentName = string.lower(currentName).replace("%semerge\\" % KDEROOT ,"")
-            gitNewName = string.lower(newName).replace("%semerge\\" % KDEROOT ,"")
-            print gitCurrentName, KDEROOT
+            gitCurrentName = currentName.replace("%semerge\\" % KDEROOT ,"")
+            gitNewName = newName.replace("%semerge\\" % KDEROOT ,"")
 
             if not doPretend:
                 if not currentName == newName:
@@ -150,11 +165,13 @@ for packageKey in addInfo:
                         utils.warning( 'failed to rename file %s' % os.path.basename( gitCurrentName ) )
                         continue
 
-                f = file( newName, 'w+b' )
-                f.write( result )
+                f = open( newName, 'w+b' )
+                f.write( bytes( result, "UTF-8") )
                 f.close()
             else:
                 utils.debug("renaming/updating file %s" % gitNewName )
+            if args.outputname:
+                getUrls(category, package, fetchlist)
 
 
         # check that all targets from the source package are contained in the binTargets
@@ -190,7 +207,7 @@ for packageKey in addInfo:
 
 
         if regenerateFile:
-            template = Template( file( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
+            template = Template( open( KDEROOT + '/emerge/bin/binaryPackage.py.template' ).read() )
             targetkeys = [ buildTarget ]
             targetsString = "'" + "', '".join( targetkeys ) + "'"
             result = template.safe_substitute( { 'revision': getGitVersion( os.path.join( KDEROOT, "emerge", "portage" ) ),
@@ -213,8 +230,8 @@ for packageKey in addInfo:
                         continue
 
 
-                f = file( newName, 'w+b' )
-                f.write( result )
+                f = open( newName, 'w+b' )
+                f.write( result.encode("UTF-8") )
                 f.close()
 
 
@@ -223,8 +240,10 @@ for packageKey in addInfo:
                     continue
             else:
                 if not os.path.exists( newDir ):
-                    print "mkdir", newDir
-                    print "git add", gitPath
+                    print("mkdir", newDir)
+                    print("git add", gitPath)
 
-                print "write", newName
-                print "git add", gitName
+                print("write", newName)
+                print("git add", gitName)
+            if args.outputname:
+                getUrls(category, package, fetchlist)

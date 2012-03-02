@@ -1,14 +1,9 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kanagram|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kanagram'
+        self.shortDescription = 'a letter order game'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

@@ -16,7 +16,7 @@ from InstallDB import *
 
 
 def usage():
-    print """
+    print("""
 Usage:
     emerge [[ command and flags ] [ singletarget ]
             [ command and flags ] [ singletarget ]
@@ -165,7 +165,7 @@ PLEASE DO NOT USE!
 More information see the README or http://windows.kde.org/.
 Send feedback to <kde-windows@kde.org>.
 
-"""
+""")
 
 @utils.log
 def doExec( category, package, version, action, opts ):
@@ -259,10 +259,10 @@ def handlePackage( category, package, version, buildAction, opts ):
         success = success and doExec( category, package, version, "cleanimage", opts )
         success = success and doExec( category, package, version, "install", opts )
     elif ( buildAction == "version-dir" ):
-        print "%s-%s" % ( package, version )
+        print("%s-%s" % ( package, version ))
         success = True
     elif ( buildAction == "version-package" ):
-        print "%s-%s-%s" % ( package, os.getenv( "KDECOMPILER" ), version )
+        print("%s-%s-%s" % ( package, os.getenv( "KDECOMPILER" ), version ))
         success = True
     elif ( buildAction == "print-installable" ):
         portage.printInstallables()
@@ -402,7 +402,6 @@ for i in sys.argv:
         mainBuildAction = i[2:]
     elif ( i == "--print-revision" ):
         mainBuildAction = "printrev"
-        stayQuiet = True
     elif ( i == "--disable-buildhost" ):
         disableHostBuild = True
     elif ( i == "--disable-buildtarget" ):
@@ -418,6 +417,13 @@ for i in sys.argv:
     elif i == "--cleanallbuilds":
         # clean complete build directory
         utils.cleanDirectory(os.path.join( os.getenv("KDEROOT"), "build"))
+        exit(0)
+    elif ( i == "--search" ):
+        package = nextArguments.pop(0)
+        category = ""
+        if not package.find("/") == -1:
+            (category,package) = package.split("/")
+        portage.printSearch(category, package)
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
@@ -443,7 +449,7 @@ utils.debug_line()
 
 def unset_var( varname ):
     if not os.getenv( varname ) == None:
-        print
+        print()
         utils.warning( "%s found as environment variable. you cannot override emerge"\
                        " with this - unsetting %s locally" % ( varname, varname ) )
         os.environ[ varname ] = ""
@@ -537,7 +543,9 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
         mainCategory, mainPackage, mainVersion = None, None, None
 
     if not handlePackage( mainCategory, mainPackage, mainVersion, mainBuildAction, mainOpts ):
+        utils.notify("Emerge %s failed" % mainBuildAction, "%s of %s/%s-%s failed" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
         exit(1)
+    utils.notify("Emerge %s finished"% mainBuildAction, "%s of %s/%s-%s finished" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
 
 else:
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
@@ -546,7 +554,7 @@ else:
         isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
         if outDateVCS or (outDatePackage and isLastPackage):
             target = os.getenv( "EMERGE_TARGET" )
-            if not target or target not in portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys():
+            if not target or target not in list(portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys()):
                 # if no target or a wrong one is defined, simply set the default target here
                 target = defaultTarget
             targetList = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion )
@@ -568,12 +576,6 @@ else:
             elif utils.verbose() > 2 and not mainPackage == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
         else:
-            # find the installed version of the package
-            if isDBEnabled():
-                instver = installdb.findInstalled( mainCategory, mainPackage )
-            else:
-                instver = portage.findInstalled( mainCategory, mainPackage )
-
             # in case we only want to see which packages are still to be build, simply return the package name
             if ( doPretend ):
                 if utils.verbose() > 0:
@@ -596,7 +598,9 @@ else:
                 if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         ( mainCategory, mainPackage, mainVersion, mainBuildAction ) )
+                    utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),mainAction)
                     exit( 1 )
+                utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),mainAction)
 
 utils.new_line()
 if len( nextArguments ) > 0:

@@ -27,7 +27,7 @@ class Package( CMakePackageBase ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = ""
-        self.subinfo.options.configure.defines += " -DWITH_KDE=ON -DWITH_SYSLOG=OFF "
+        self.subinfo.options.configure.defines += " -DWITH_KDE=ON -DWITH_SYSLOG=OFF"
 
 
 

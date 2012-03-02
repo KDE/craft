@@ -7,7 +7,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
-        self.dependencies['testing/dbus-python'] = 'default'
+        #self.dependencies['testing/dbus-python'] = 'default'
 
 
 from Package.CMakePackageBase import *

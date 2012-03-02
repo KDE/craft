@@ -1,15 +1,15 @@
 import os
-import sys
 import info
 
-# deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kactivities'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.shortDescription = "KDE Activity Manager"
 
 from Package.CMakePackageBase import *
 

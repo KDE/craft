@@ -2,15 +2,13 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kcolorchooser|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kcolorchooser'
+        self.shortDescription = "A small utility to select a color"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -2,10 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:ksaneplugin|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:ksaneplugin'
+        self.shortDescription = "This is a KScan plugin that implements the scanning through libksane"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

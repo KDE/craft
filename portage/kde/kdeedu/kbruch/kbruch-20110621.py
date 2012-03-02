@@ -1,14 +1,9 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kbruch|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kbruch'
+        self.shortDescription = 'Excercise fractions'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

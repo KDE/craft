@@ -2,15 +2,12 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kdegraphics-thumbnailers|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kdegraphics-thumbnailers'
+        self.shortDescription = "Thumbnailers for various graphics file formats"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-
 
 from Package.CMakePackageBase import *
 

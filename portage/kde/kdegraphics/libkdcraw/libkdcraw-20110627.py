@@ -2,15 +2,12 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:libkdcraw|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw'
+        self.shortDescription = "libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files."
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-
 
 from Package.CMakePackageBase import *
 

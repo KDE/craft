@@ -1,15 +1,10 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-       for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:cantor|%s|' % ver
-            
-       self.svnTargets['gitHEAD'] = '[git]kde:cantor'
-       self.defaultTarget = 'gitHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:cantor'
+        self.shortDescription = 'a KDE frontend for mathematical software'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

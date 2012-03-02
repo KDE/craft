@@ -76,8 +76,8 @@ def findPortage(category, package):
             if os.path.join(pdir, package) == os.path.dirname(fname):
                 candidate = fname
     if not candidate:
-        print >> sys.stderr, "Could not find portage file for %s %s\n\
-Looking in %s" % (category, package, pdir)
+        print("Could not find portage file for %s %s\n\
+Looking in %s" % (category, package, pdir), file=sys.stderr)
         sys.exit(1)
     return candidate
 
@@ -102,12 +102,12 @@ def setDefaultTarget(line):
 
 def main():
     if len(sys.argv) != 2:
-        print >> sys.stderr, "usage: packagelist2default.py <packagelist>"
+        print("usage: packagelist2default.py <packagelist>", file=sys.stderr)
         sys.exit(1)
 
     packagelist = sys.argv[1]
     if not os.path.isfile(packagelist):
-        print >> sys.stderr, "Error no such file: %s " % packagelist
+        print("Error no such file: %s " % packagelist, file=sys.stderr)
         sys.exit(1)
 
     with open(packagelist, "r") as plptr:

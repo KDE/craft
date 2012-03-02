@@ -71,7 +71,7 @@ class Part:
 
     def printFileList( self ):
         for fileName in self.fileList:
-            print fileName
+            print(fileName)
 
     def addFiles( self, include ):
         if include is None:
@@ -199,56 +199,56 @@ class XmlPackager:
 
     def printUnusedFiles( self ):
         if len(self.fileList) > 0:
-            print "unused files"
+            print("unused files")
             for name in self.fileList:
-                print name
+                print(name)
 
     def printOverview( self ):
         for package in self.packageList:
             for part in package.partList:
                 if len( part.ignoreFileList ) == 0:
-                    print package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), 'files'
+                    print(package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), 'files')
                 else:
-                    print package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), \
-                            'files, ignoring', len( package.ignoreFileList ), 'files'
+                    print(package.name + ' ' + part.name, '\tcontaining', len( part.fileList ), \
+                            'files, ignoring', len( package.ignoreFileList ), 'files')
 
     def printList( self, name="" ):
         for package in self.packageList:
-            print "package  " + package.name
+            print("package  " + package.name)
             if name == "" or package.name == name:
                 for part in package.partList:
-                    print "part " + part.name
+                    print("part " + part.name)
                     for filename in part.fileList:
-                        print filename
+                        print(filename)
                     if len( part.ignoreFileList ) > 0:
-                        print 'ATTENTION: Ignoring:'
+                        print('ATTENTION: Ignoring:')
                         for filename in part.ignoreFileList:
-                            print filename
+                            print(filename)
 
 def usage():
-    print 'Syntax:'
-    print os.path.basename( sys.argv[0] ) + ' imagepath X:\\kde\\package.xml command [options]'
-    print
-    print 'imagepath  \t\tthe directory containing the files which have'
-    print '           \t\tto be packaged'
-    print 'X:\\kde\\package.xml\tthe path to the xml file containing the'
-    print '           \t\tdefinition for the subpackages'
-    print
-    print 'command is one of the following:'
-    print 'print [packageName]  \tprint all files within packageName'
-    print
-    print 'without command the overview over all packages is printed'
-    print
-    print '-'*79
-    print
-    keys = TAGDOKU.keys()
+    print('Syntax:')
+    print(os.path.basename( sys.argv[0] ) + ' imagepath X:\\kde\\package.xml command [options]')
+    print()
+    print('imagepath  \t\tthe directory containing the files which have')
+    print('           \t\tto be packaged')
+    print('X:\\kde\\package.xml\tthe path to the xml file containing the')
+    print('           \t\tdefinition for the subpackages')
+    print()
+    print('command is one of the following:')
+    print('print [packageName]  \tprint all files within packageName')
+    print()
+    print('without command the overview over all packages is printed')
+    print()
+    print('-'*79)
+    print()
+    keys = list(TAGDOKU.keys())
     keys.sort()
-    print TAGDOKU['headline']
+    print(TAGDOKU['headline'])
     keys.remove('headline')
     for tag in keys:
-        print '- ' + tag
-        print TAGDOKU[tag]
-        print
+        print('- ' + tag)
+        print(TAGDOKU[tag])
+        print()
 
 def main():
     if len( sys.argv ) > 2:
@@ -272,7 +272,7 @@ def main():
             try:
                 doc = parse( fileobj )
             except xml.parsers.expat.ExpatError:
-                print 'FATAL ERROR: The xml file might not be wellformed. Please check!'
+                print('FATAL ERROR: The xml file might not be wellformed. Please check!')
                 exit(1)
 
         packager = XmlPackager( doc, image )

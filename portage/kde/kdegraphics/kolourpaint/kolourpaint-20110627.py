@@ -2,16 +2,14 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kolourpaint|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kolourpaint'
+        self.shortDescription = "KolourPaint is an easy-to-use paint program"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
-
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

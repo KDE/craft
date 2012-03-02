@@ -2,15 +2,13 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kruler|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kruler'
+        self.shortDescription = "A pixel measuring tool for KDE"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

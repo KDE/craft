@@ -21,7 +21,7 @@ import common
 
 def die( message ):
     log.write( message )
-    print >> sys.stderr, "package.py fatal error: %s" % message
+    print("package.py fatal error: %s" % message, file=sys.stderr)
     exit( 1 )
 
 class BuildError( Exception ):
@@ -33,10 +33,10 @@ class BuildError( Exception ):
         self.logfile = logfile
         self.revision = False
         self.enabled = True
-        print "Error:", self.messageText
+        print("Error:", self.messageText)
 
     def __str__( self ):
-        log = file( self.logfile, 'rb' )
+        log = open( self.logfile, 'r', encoding="windows-1252" )
         logtext = log.readlines()[-20:]
         log.close()
         return "Error:" + "".join( logtext )
@@ -63,7 +63,7 @@ class package:
                                                                         'logdstdir': logroot } )
 
         self.logfile = outfile % (self.generalSettings["platform"], self.cleanPackageName)
-        log = file( self.logfile, 'wb+' )
+        log = open( self.logfile, 'w+', encoding="windows-1252" )
         log.close()
         self.notifications = { 'email': EmailNotification( self.category, self.packageName, self.logfile ),
                                'dashboard': DashboardNotification( self.category, self.packageName, self.logfile ),
@@ -80,8 +80,8 @@ class package:
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
 
     def timestamp( self ):
-        print datetime.now().strftime("%m/%d/%Y %H:%M")
-        log = file( self.logfile, 'ab+' )
+        print(datetime.now().strftime("%m/%d/%Y %H:%M"))
+        log = open( self.logfile, 'a+', encoding="windows-1252" )
         log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
         log.close()
 
@@ -89,11 +89,11 @@ class package:
         """ runs emerge --print-revision for a specific package and returns the output """
         ## this function must replaced in case we are using the emerge API directly
         if not self.revision:
-            tempfile = file( os.path.join( logroot, "rev.tmp" ), "wb+" )
+            tempfile = open( os.path.join( logroot, "rev.tmp" ), "w+", encoding="windows-1252" )
             tempfile.close()
             if not self.system( "--print-revision -q %s%s/%s" % ( self.targetString, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
                 return ""
-            tempfile = file( os.path.join( logroot, "rev.tmp" ), "rb+" )
+            tempfile = open( os.path.join( logroot, "rev.tmp" ), "r+", encoding="windows-1252" )
             self.revision = tempfile.readline().strip()
             tempfile.close()
             os.remove( os.path.join( logroot, "rev.tmp" ) )
@@ -102,10 +102,10 @@ class package:
     def system( self, cmdstring, logfile ):
         """ runs an emerge command """
         cmdstring = emerge + " " + cmdstring
-        fstderr = file( logfile + ".tmp", 'wb+' )
+        fstderr = open( logfile + ".tmp", 'w+', encoding="windows-1252" )
         p = subprocess.Popen( cmdstring, shell=True, stdout=fstderr, stderr=fstderr )
         ret = p.wait()
-        log = file( logfile, 'ab+' )
+        log = open( logfile, 'a+', encoding="windows-1252" )
         fstderr.seek( os.SEEK_SET )
         for line in fstderr:
             log.write( line )
@@ -115,7 +115,7 @@ class package:
 
     def emerge( self, cmd, addParameters = "" ):
         """ runs an emerge call """
-        print "running:", cmd, self.packageName
+        print("running:", cmd, self.packageName)
         if self.enabled and not self.system( "--" + cmd + addParameters + " %s%s/%s" % ( self.targetString, self.category, self.packageName ), self.logfile ):
             self.enabled = False
             raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + cmd + " FAILED", self.logfile )
@@ -166,7 +166,7 @@ class package:
             return
 
         self.timestamp()
-        print "running: upload", self.packageName
+        print("running: upload", self.packageName)
         upload = common.Uploader( logfile=self.logfile )
         sfupload = common.SourceForgeUploader( self.packageName, self.target, self.patchlevel, logfile=self.logfile )
 
@@ -185,7 +185,7 @@ class package:
             if not ret == 0:
                 raise BuildError( self.cleanPackageName, "%s " % self.cleanPackageName + " upload FAILED\n", self.logfile )
         else:
-            log = file( self.logfile, 'ab+' )
+            log = open( self.logfile, 'a+', encoding="windows-1252" )
             log.write( "Package directory doesn't exist:\n"
                        "Package directory is %s" % pkgdir )
 
@@ -233,12 +233,12 @@ outfile = os.path.join( logroot, "log-%s-%s.txt" )
 
 packagelist = []
 if len( sys.argv ) <= 1:
-    print "please add the path to the packagelist file as only argument"
+    print("please add the path to the packagelist file as only argument")
     time.sleep( 6 )
     exit( 0 )
 
 listfilename = sys.argv[ 1 ]
-packagefile = file( listfilename )
+packagefile = open( listfilename )
 
 addInfo = dict()
 _depList = []
@@ -259,11 +259,11 @@ depList = [x.ident() for x in _depList]
 
 for [cat, pac, ver, tar] in depList:
     target, patchlvl = '', ''
-    if cat + "/" + pac in addInfo.keys():
+    if cat + "/" + pac in list(addInfo.keys()):
         target, patchlvl = addInfo[ cat + "/" + pac ]
     p = package( cat, pac, target, patchlvl )
     if not [cat, pac, ver, tar] in runtimeDepList:
-        print "could not find package %s in runtime dependencies" % pac
+        print("could not find package %s in runtime dependencies" % pac)
         p.ignoreNotifications = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
@@ -311,14 +311,14 @@ if "localbotnotificationport" in general:
     try:
         s = socket.socket()
         s.connect( ( socket.gethostname(), port ) )
-        s.send( "BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] ) );
-        s.send( "QUIT\r\n" )
+        s.send( ("BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] )).encode("UTF-8") )
+        s.send( ("QUIT\r\n" ).encode("UTF-8") )
         s.close()
-        print "send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port )
+        print("send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port ))
     except socket.error:
-        print "failed to send BUILDFINISHED to Bot on localhost:%s" % port
+        print("failed to send BUILDFINISHED to Bot on localhost:%s" % port)
 else:
-    print "disabled bot communication"
+    print("disabled bot communication")
 
 for entry in packagelist:
     try:

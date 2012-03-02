@@ -1,0 +1,113 @@
+diff -Nru mpir-2.5.0.orig/build.vc10/configure.bat mpir-2.5.0/build.vc10/configure.bat
+--- mpir-2.5.0.orig/build.vc10/configure.bat	2011-06-08 10:14:20.000000000 +0300
++++ mpir-2.5.0/build.vc10/configure.bat	2012-02-01 00:44:49.814702200 +0200
+@@ -69,6 +69,7 @@
+ 	set ARCH=amd64
+ 	set ARCHW=x64
+ )
++set YASM="%YASMPATH%\vsyasm.exe"
+ cl config.guess.c > nul 2>&1
+ if errorlevel 1 goto :nocc1
+ config.guess.exe print > config.guess.bat
+@@ -77,7 +78,6 @@
+ :nocc1
+ if exist "%VS100COMNTOOLS%\..\..\VC\vcvarsall.bat" (
+ 	call "%VS100COMNTOOLS%\..\..\VC\vcvarsall.bat" %ARCH%
+-        set YASM="%VS100COMNTOOLS%\..\..\VC\bin\vsyasm.exe"
+ )
+ cl config.guess.c > nul 2>&1
+ if errorlevel 1 goto :nocc
+diff -Nru mpir-2.5.0.orig/build.vc10/make.bat mpir-2.5.0/build.vc10/make.bat
+--- mpir-2.5.0.orig/build.vc10/make.bat	2011-06-08 10:14:20.000000000 +0300
++++ mpir-2.5.0/build.vc10/make.bat	2012-02-01 00:44:49.830327200 +0200
+@@ -39,7 +39,7 @@
+ 
+ :make
+ 
+-set MS_BUILD="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe"
++set MS_BUILD="C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
+ 
+ set LIBBUILD=%LIBTYPE%_mpir_%BCPU%
+ 
+diff -Nru mpir-2.5.0.orig/build.vc10/postbuild.bat mpir-2.5.0/build.vc10/postbuild.bat
+--- mpir-2.5.0.orig/build.vc10/postbuild.bat	2011-12-21 08:01:39.000000000 +0200
++++ mpir-2.5.0/build.vc10/postbuild.bat	2012-02-01 00:46:02.808691800 +0200
+@@ -37,13 +37,14 @@
+ call :seterr & echo "postbuild copy error ERROR: file = %file%, msbf = %msbf% extn = %extn%" & exit /b %errorlevel%
+ 
+ :is1st
++set type=%plat%
+ set plat=%conf%
+ set conf=%file%
+ 
+ :is2nd:
+ rem set the target aand output directories
+-set source="%plat%\%conf%"
+-set dest="..\%extn%\%plat%\%conf%"
++set source="%type%\%plat%\%conf%"
++set dest="%extn%\%plat%\%conf%"
+ 
+ rem output parametrers for the MPIR tests
+ echo (set libr=%extn%)  > output_params.bat
+diff -Nru mpir-2.5.0.orig/configure mpir-2.5.0/configure
+--- mpir-2.5.0.orig/configure	2012-01-05 01:44:46.000000000 +0200
++++ mpir-2.5.0/configure	2012-02-01 00:44:49.845952200 +0200
+@@ -9591,7 +9591,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.5.0/gmp-h.in"
+ 
+ #if ! __GMP_HAVE_PROTOTYPES
+ die die die
+@@ -25185,7 +25185,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.5.0/gmp-h.in"
+ 
+ #ifndef __GMP_EXTERN_INLINE
+ die die die
+@@ -25396,9 +25396,9 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.5.0/gmp-h.in"
+ 
+-#include "$srcdir/gmp-impl.h"
++#include "../mpir-2.5.0/gmp-impl.h"
+ 
+ int
+ main ()
+@@ -25494,7 +25494,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include "$srcdir/gmp-h.in"
++#include "../mpir-2.5.0/gmp-h.in"
+ 
+ #if ! _GMP_H_HAVE_FILE
+ die die die
+@@ -28260,7 +28260,7 @@
+ #define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+ #define GMP_LIMB_BITS 123
+ $DEFN_LONG_LONG_LIMB
+-#include \"$srcdir/gmp-h.in\"
++#include \"../mpir-2.5.0/gmp-h.in\"
+ 
+ "; then :
+ 
+diff -Nru mpir-2.5.0.orig/mpirxx.h mpir-2.5.0/mpirxx.h
+--- mpir-2.5.0.orig/mpirxx.h	2011-11-17 07:27:35.000000000 +0200
++++ mpir-2.5.0/mpirxx.h	2012-02-01 00:44:49.845952200 +0200
+@@ -1355,6 +1355,7 @@
+    since gmp-impl.h is not publicly available, I redefine it here
+    I use a different name to avoid possible clashes */
+ extern "C" {
++typedef void (*__gmp_freefunc_t) (void *, size_t);
+ struct __gmp_alloc_cstring_c
+ {
+    void (*free_func) (void *, size_t);

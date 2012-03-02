@@ -2,7 +2,7 @@ import os
 import shutil
 
 import utils
-import base
+
 import info
 
 class subinfo(info.infoclass):
@@ -15,10 +15,12 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies['win32libs-bin/boost-headers'] = 'default'
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs-bin/boost-thread'] = 'default'
-        self.dependencies['win32libs-bin/boost-system'] = 'default'
+        self.dependencies['win32libs-bin/boost-graph'] = 'default'
         self.dependencies['win32libs-bin/boost-program-options'] = 'default'
         self.dependencies['win32libs-bin/boost-python'] = 'default'
+        self.dependencies['win32libs-bin/boost-regex'] = 'default'
+        self.dependencies['win32libs-bin/boost-system'] = 'default'
+        self.dependencies['win32libs-bin/boost-thread'] = 'default'
 
 from Package.VirtualPackageBase import *
 

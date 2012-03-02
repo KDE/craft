@@ -33,7 +33,8 @@ class MSysShell(object):
         utils.putenv("CFLAGS", cflags)
         utils.putenv("LDFLAGS", ldflags)
         #unset make to remove things like jom
-        os.unsetenv("MAKE")
+        if "MAKE" in os.environ:
+            del os.environ["MAKE"]
         utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( os.environ.get( "KDEROOT" ), "dev-utils", "bin" )))
         #seting perl to prevent msys from using msys-perl
         perl = self.toNativePath(os.path.join( os.environ.get( "KDEROOT" ), "dev-utils", "bin", "perl.exe" ))
@@ -58,7 +59,7 @@ class MSysShell(object):
 
         command += "\""
         if debugLvl == 0:
-            print "%s %s" % (cmd, args)
+            print("%s %s" % (cmd, args))
         else:
             utils.debug( "msys execute: %s" % command, debugLvl )
         return utils.system( command, stdout=out, stderr=err )

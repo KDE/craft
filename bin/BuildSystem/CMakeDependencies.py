@@ -86,43 +86,43 @@ class CMakeDependencies:
             sys.stdout = open(outFile, "w")
             # check if valid
 
-        print "digraph G {"
-        print "rankdir=LR;"
-        print "title [label=\"%s\" color=lightgrey shape=record];" % title
+        print("digraph G {")
+        print("rankdir=LR;")
+        print("title [label=\"%s\" color=lightgrey shape=record];" % title)
 
-        print "subgraph legend {"
-        print "A [Label=\"\"];"
-        print "B [Label=\"\" shape=record];"
-        print "C [Label=\"\"];"
-        print "A -> B [color=green, label=\"directory A includes cmake package B\"];"
-        print "B -> C [label=\"directory C uses variables provided by cmake package B\"];"
-        print "}"
+        print("subgraph legend {")
+        print("A [Label=\"\"];")
+        print("B [Label=\"\" shape=record];")
+        print("C [Label=\"\"];")
+        print("A -> B [color=green, label=\"directory A includes cmake package B\"];")
+        print("B -> C [label=\"directory C uses variables provided by cmake package B\"];")
+        print("}")
 
 
-        print "{ rank=same; "
+        print("{ rank=same; ")
         for fileName in self.files1:
-            print "%s_include [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir))
-        print "}"
+            print("%s_include [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir)))
+        print("}")
 
-        print "{ rank=same; "
+        print("{ rank=same; ")
         for fileName in self.files2:
-            print "%s_uses [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir))
-        print "}"
+            print("%s_uses [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir)))
+        print("}")
 
-        print "{ rank=same; "
+        print("{ rank=same; ")
         for node in self.packageIncludes:
-            print "%s [shape=record];" % (node[0])
-        print "}"
+            print("%s [shape=record];" % (node[0]))
+        print("}")
 
         for node in self.packageIncludes:
             #print "%s;" % (node[0])
             for fileName in self.packageIncludes[node]:
-                print "%s_include -> %s [color=green];" % (toNodeName(fileName), node[0])
+                print("%s_include -> %s [color=green];" % (toNodeName(fileName), node[0]))
 
         for key in self.packageUsage:
             for value in self.packageUsage[key]:
-                print "%s -> %s_uses ;" % (key[0], toNodeName(value))
-        print "}"
+                print("%s -> %s_uses ;" % (key[0], toNodeName(value)))
+        print("}")
 
         if outFile != None:
             sys.stdout = sys.__stdout__
@@ -135,7 +135,7 @@ class CMakeDependencies:
             # check if valid
 
         for node in self.packageIncludes:
-            print node[0]
+            print(node[0])
 
         if outFile != None:
             sys.stdout = sys.__stdout__

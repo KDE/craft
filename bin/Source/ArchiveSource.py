@@ -155,8 +155,8 @@ class ArchiveSource(SourceBase):
         return True
 
     def getUrls( self ):
-        print self.subinfo.target()
-        print self.subinfo.targetDigestUrl()
+        print(self.subinfo.target())
+        print(self.subinfo.targetDigestUrl())
         return True
 
     def createPatch( self ):
@@ -220,7 +220,7 @@ class ArchiveSource(SourceBase):
                         return False
                 patchName = os.path.join( self.buildRoot(), patches[-1][0] )
             else:
-                patchName = os.path.join( self.buildRoot(), patches[0] )
+                patchName = os.path.join( self.buildRoot(), patches[-1] )
 
         # move the packages up and rename them to be different from the original source directory
         for directory in packagelist:
@@ -252,5 +252,5 @@ class ArchiveSource(SourceBase):
     def sourceVersion( self ):
         """ return a version based on the file name of the current target """
         # we hope that the build target is equal to the version that is build
-        print self.subinfo.buildTarget
+        print(self.subinfo.buildTarget)
         return True

@@ -45,7 +45,7 @@ class PackageBase (EmergeBase):
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
-
+        self.manifest()
         ## \todo is this the optimal place for creating the post install scripts ?
         # create post install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src']:
@@ -73,10 +73,10 @@ class PackageBase (EmergeBase):
                 ignoreInstalled = True
                 self.unmerge()
 
-        self.manifest()
+        
 
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
-        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
+        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() ,utils.envAsBool("EMERGE_USE_SYMLINKS"))
 
         # run post-install scripts
         if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):
@@ -253,7 +253,7 @@ class PackageBase (EmergeBase):
         #else:
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
                 or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
-            print "target ignored for this build type"
+            print("target ignored for this build type")
             return False
 
         if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild \

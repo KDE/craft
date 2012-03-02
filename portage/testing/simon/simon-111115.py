@@ -6,11 +6,12 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git://speech2text.git.sourceforge.net/gitroot/speech2text/speech2text||windows'
+      self.svnTargets['gitHEAD'] = '[git]kde:simon'
       self.defaultTarget = 'gitHEAD'
       
     def setDependencies( self ):
       self.buildDependencies['gnuwin32/flex'] = 'default'
+      self.dependencies['win32libs-sources/libfl-src'] = 'default'
       self.buildDependencies['gnuwin32/bison'] = 'default'
       self.buildDependencies['dev-util/gettext-tools'] = 'default'
       self.dependencies['libs/qt'] = 'default'

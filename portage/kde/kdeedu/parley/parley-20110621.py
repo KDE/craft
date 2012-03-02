@@ -1,16 +1,10 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:parley|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:parley'
+        self.shortDescription = 'a vocabulary trainer'
         self.defaultTarget = 'gitHEAD'
-
 
     def setDependencies( self ):
         self.dependencies['kde/libkdeedu'] = 'default'

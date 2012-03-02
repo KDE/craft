@@ -16,7 +16,7 @@ class QMakeBuildSystem(BuildSystemBase):
         if compiler.isMSVC():
             self.platform = "win32-%s" % self.compiler()
             if compiler.isMSVC2011():
-                print "Warning: using win32-msvc2010 instead of win32-msvc2011"
+                print("Warning: using win32-msvc2010 instead of win32-msvc2011")
                 self.platform = "win32-msvc2010"
         elif compiler.isMinGW():
             self.platform = "win32-g++"

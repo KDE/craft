@@ -1,14 +1,9 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kiten|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kiten'
+        self.shortDescription = 'a Japanese reference/study tool'
         self.defaultTarget = 'gitHEAD'
 
 

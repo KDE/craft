@@ -1,4 +1,3 @@
-import compiler
 import info
 
 class subinfo(info.infoclass):
@@ -12,9 +11,8 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs-bin/libidn'] = 'default'
         self.dependencies['win32libs-bin/libmsn'] = 'default'
-        #mingw already contains libgmp
-        if not compiler.isMinGW():
-            self.dependencies['win32libs-bin/libgmp'] = 'default'
+        self.dependencies['win32libs-bin/mpir'] = 'default'
+        self.shortDescription = "KDE Networking applications (Kopete, KGet)"
 
 from Package.CMakePackageBase import *
 
@@ -22,7 +20,6 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()

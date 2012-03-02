@@ -1,5 +1,5 @@
 import info
-import base
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

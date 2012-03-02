@@ -29,7 +29,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
-        self.subinfo.options.merge.destinationPath = "dev-utils/git";
+        self.subinfo.options.merge.destinationPath = "dev-utils//git";
         BinaryPackageBase.__init__(self)
 
     def unpack(self):
@@ -42,6 +42,7 @@ class Package(BinaryPackageBase):
         return True
 
     def qmerge(self):
+        utils.putenv("EMERGE_USE_SYMLINKS","False")
         if not BinaryPackageBase.qmerge(self):
             return False
         tmpFile = tempfile.TemporaryFile()
@@ -50,7 +51,7 @@ class Package(BinaryPackageBase):
             stdout=tmpFile, stderr=tmpFile  )
         tmpFile.seek( 0 )
         for line in tmpFile:
-            if line.find("kde:")>-1:
+            if str(line,'UTF-8').find("kde:")>-1:
                 return True
         utils.debug( "adding kde related settings to global git config file",1 )
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)

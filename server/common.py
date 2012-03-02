@@ -3,7 +3,7 @@
 import os
 import sys
 from datetime import date, datetime
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import subprocess
 import time
 
@@ -42,7 +42,7 @@ class Settings:
 
     def getOption( self, section, option, additionalvars=None ):
         if self.enabled and self.sections[ section ]:
-            return self.parser.get( section, option, False, additionalvars )
+            return self.parser.get( section, option, raw=False, vars=additionalvars )
         else:
             return False
 
@@ -68,14 +68,14 @@ class Uploader:
         self.pstdin = None
         self.settings = settings.getSection( self.category )
         if not self.settings:
-            print "upload disabled!"
+            print("upload disabled!")
             return
 
     def ftpExecute( self, cmd ):
         self.fstderr.write( cmd + "\r\n" )
         self.fstderr.flush()
-        self.pstdin.write( cmd + "\r\n" )
-        self.pstdin.write( "\r\n" )
+        self.pstdin.write( (cmd + "\r\n").encode("windows-1252") )
+        self.pstdin.write( ("\r\n").encode("windows-1252") )
         self.pstdin.flush()
 
     def executeScript( self, state="common" ):
@@ -84,17 +84,17 @@ class Uploader:
 
         name = state+"-script"
         if name in self.settings:
-            self.fstderr = file( 'NUL', 'wb+' )
+            self.fstderr = open( 'NUL', 'w+', encoding="windows-1252" )
             cmdstring = self.settings[ "sshclient" ] + " " + self.settings[ "server" ]
             p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
             self.pstdin = p.stdin
-            p.stdin.write( self.settings[ name ] + "\n" )
-            p.stdin.write( "exit\n" )
+            p.stdin.write( (self.settings[ name ] + "\n").encode("windows-1252"))
+            p.stdin.write( ("exit\n").encode("windows-1252"))
             ret = p.wait()
 
             return ret == 0
         else:
-            print "no config for " + name + " found!"
+            print("no config for " + name + " found!")
         return True
 
     def upload( self, sourcefilename ):
@@ -103,19 +103,19 @@ class Uploader:
             return True
 
         if not ( ( "server" in self.settings ) and ( "directory" in self.settings ) ):
-            print "server or directory not set"
+            print("server or directory not set")
             return False
 
         if os.path.isdir( sourcefilename ):
-            print "sourcefile is a directory"
+            print("sourcefile is a directory")
             return False
 
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         ret = 0
         if self.logfile:
-            fstderr = file( self.logfile + ".tmp", 'wb+' )
+            fstderr = open( self.logfile + ".tmp", 'w+', encoding="windows-1252" )
         else:
-            fstderr = file( 'NUL', 'wb+' )
+            fstderr = open( 'NUL', 'w+', encoding="windows-1252" )
         p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
         self.fstderr = fstderr
         self.pstdin = p.stdin
@@ -128,7 +128,7 @@ class Uploader:
         ret = p.wait()
 
         if self.logfile:
-            log = file( self.logfile, 'ab+' )
+            log = open( self.logfile, 'a+' , encoding="windows-1252")
             fstderr.seek( os.SEEK_SET )
             for line in fstderr:
                 log.write( line )
@@ -153,21 +153,21 @@ class SourceForgeUploader ( Uploader ):
         self.settings = settings.getSection( self.category )
 
         if not self.settings:
-            print "sfupload disabled"
+            print("sfupload disabled")
             self.disabled = True
         else:
             self.disabled = False
 
         if not ( self.settings and "server" in self.settings and "directory" in self.settings ):
-            print "server or directory not set"
+            print("server or directory not set")
             self.disabled = True
             return
 
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         if self.logfile:
-            self.fstderr = file( self.logfile + ".tmp", 'wb+' )
+            self.fstderr = open( self.logfile + ".tmp", 'w+', encoding="windows-1252" )
         else:
-            self.fstderr = file( 'NUL', 'wb+' )
+            self.fstderr = open( 'NUL', 'w+' , encoding="windows-1252" )
 
         self.p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
         self.pstdin = self.p.stdin
@@ -196,7 +196,7 @@ class SourceForgeUploader ( Uploader ):
         self.p.wait()
 
         if self.logfile:
-            log = file( self.logfile, 'ab+' )
+            log = open( self.logfile, 'a+', encoding="windows-1252" )
             self.fstderr.seek( os.SEEK_SET )
             for line in self.fstderr:
                 log.write( line )
@@ -209,7 +209,7 @@ class SourceForgeUploader ( Uploader ):
             return True
 
         if os.path.isdir( sourcefilename ):
-            print "sourcefile is a directory"
+            print("sourcefile is a directory")
             return False
 
         self.ftpExecute( "put " + sourcefilename )

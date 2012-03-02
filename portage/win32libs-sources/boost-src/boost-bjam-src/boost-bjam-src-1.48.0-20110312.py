@@ -2,7 +2,7 @@ import os
 import shutil
 
 import utils
-import base
+
 import info
 import compiler
 
@@ -49,7 +49,7 @@ class Package(BoostPackageBase):
             elif compiler.isMSVC2010():
                 cmd += "vc10"
         if utils.verbose() >= 1:
-            print cmd
+            print(cmd)
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs-bin',
                 'boost-headers').sourceDir(),"tools","build","v2","engine")) or utils.die(
                 "command: %s failed" % (cmd))

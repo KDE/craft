@@ -9,8 +9,8 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         _,gitVersion = portage.getPackageInstance('qt-apps','qewitter').getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '0.035' ] = ""
-        self.defaultTarget = '0.035'
+        self.svnTargets[ '0.11pre' ] = ""
+        self.defaultTarget = '0.11pre'
     
     def setDependencies( self ):
         self.dependencies[ 'qt-apps/qewitter' ] = 'default'

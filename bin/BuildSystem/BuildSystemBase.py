@@ -32,7 +32,8 @@ class BuildSystemBase(EmergeBase):
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
             return EMERGE_MAKE_PROGRAM
         elif not self.subinfo.options.make.supportsMultijob:
-            os.unsetenv("MAKE")
+            if "MAKE" in os.environ:
+                del os.environ["MAKE"]
         if compiler.isMSVC():
             return "nmake /NOLOGO"
         elif compiler.isMinGW_WXX():

@@ -35,7 +35,7 @@ class Package(CMakePackageBase):
     def install( self ):
         self.enterSourceDir()
         os.putenv("INSTALLDIR", self.imageDir() )
-        print self.imageDir()
+        print(self.imageDir())
         cmd = "msbuild /target:install build\\win32\\vs10\\glib.sln"
         return self.system( cmd )
 

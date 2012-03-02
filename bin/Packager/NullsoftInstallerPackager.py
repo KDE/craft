@@ -2,7 +2,7 @@
 # copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-from _winreg import * # pylint: disable=F0401
+from winreg import * # pylint: disable=F0401
 import utils
 from Packager.CollectionPackagerBase import *
 
@@ -113,11 +113,9 @@ file collection process is skipped, and only the installer is generated.
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
                 utils.die("Error in makensis execution")
 
-
-
     def createPackage( self ):
         """ create a package """
-        print "packaging using the NullsoftInstallerPackager"
+        print("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
         self.generateNSISInstaller()

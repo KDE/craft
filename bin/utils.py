@@ -8,11 +8,11 @@ this file contains some helper functions for emerge
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
-import httplib
+import http.client
 import ftplib
 import os.path
 import sys
-import urlparse
+import urllib.parse
 import shutil
 import zipfile
 import tarfile
@@ -26,18 +26,29 @@ import inspect
 import types
 import datetime
 from operator import itemgetter
+import Notifier.NotificationLoader
+
+
 
 if os.name == 'nt':
     import msvcrt # pylint: disable=F0401
 else:
     import fcntl # pylint: disable=F0401
 
-import ConfigParser
+import configparser
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
+def envAsBool(key, default=False):
+    """ return value of environment variable as bool value """
+    value = os.getenv(key)
+    if value:
+        return value.lower() in ['true', '1']
+    else:
+        return default
+        
 def isSourceOnly():
     return envAsBool("EMERGE_SOURCEONLY")
 
@@ -76,7 +87,7 @@ class LockFile(object):
             fh.seek(0)
             while True:
                 try:
-                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647L)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647)
                 except IOError:
                     # after 15 secs (every 1 sec, 1 attempt -> 15 secs)
                     # a exception is raised but we want to continue trying.
@@ -86,7 +97,7 @@ class LockFile(object):
             fcntl.flock(fh, fcntl.LOCK_EX)
 
         fh.truncate(0)
-        print >> fh, "%d" % os.getpid()
+        print("%d" % os.getpid(), file=fh)
         fh.flush()
 
     def __exit__(self, exc_type, exc_value, exc_tb):
@@ -96,7 +107,7 @@ class LockFile(object):
         self.file_handle = None
         if os.name == 'nt':
             fh.seek(0)
-            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647L)
+            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647)
         else:
             fcntl.flock(fh, fcntl.LOCK_UN)
         try:
@@ -187,7 +198,7 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
 
-    if type(urls) == types.ListType:
+    if type(urls) == list:
         urlList = urls
     else:
         urlList = urls.split()
@@ -195,12 +206,12 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
     if filenames == '':
         filenames = [ os.path.basename(x) for x in urlList ]
 
-    if type(filenames) == types.ListType:
+    if type(filenames) == list:
         filenameList = filenames
     else:
         filenameList = filenames.split()
         
-    dlist = zip( urlList , filenameList )
+    dlist = list(zip( urlList , filenameList ))
     
     for url,filename in dlist:
         if ( not getFile( url + suffix, destdir , filename ) ):
@@ -220,7 +231,7 @@ def getFile( url, destdir , filename='' ):
     if ( os.path.exists( wgetpath ) ):
         return wgetFile( url, destdir , filename )
 
-    scheme, host, path, _, _, _ = urlparse.urlparse( url )
+    scheme, host, path, _, _, _ = urllib.parse.urlparse( url )
 
 
     filename = os.path.basename( path )
@@ -267,7 +278,7 @@ def getHttpFile( host, path, destdir, filename ):
     # FIXME check return values here (implement useful error handling)...
     debug( "getHttpFile called. %s %s" % ( host, path ), 1 )
 
-    conn = httplib.HTTPConnection( host )
+    conn = http.client.HTTPConnection( host )
     conn.request( "GET", path )
     r1 = conn.getresponse()
     debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
@@ -278,9 +289,9 @@ def getHttpFile( host, path, destdir, filename ):
             debug( "Redirect loop" )
             return False
         count += 1
-        _, host, path, _, _, _ = urlparse.urlparse( r1.getheader( "Location" ) )
+        _, host, path, _, _, _ = urllib.parse.urlparse( r1.getheader( "Location" ) )
         debug( "Redirection: %s %s" % ( host, path ), 1 )
-        conn = httplib.HTTPConnection( host )
+        conn = http.client.HTTPConnection( host )
         conn.request( "GET", path )
         r1 = conn.getresponse()
         debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
@@ -294,7 +305,7 @@ def getHttpFile( host, path, destdir, filename ):
 
 def isCrEol(filename):
     with open(filename, "rb") as f:
-        return f.readline().endswith("\r\n")
+        return str(f.readline(),'UTF-8').endswith("\r\n")
 
 def checkFilesDigests( downloaddir, filenames, digests=None ):
     """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
@@ -356,36 +367,36 @@ def createDigestFile(path):
     """creates a sha1 diget file"""
     digets = digestFileSha1(path)
     f = open(path + ".sha1","wb+")
-    f.write(digets)
-    f.write("\n")
-    f.close
+    f.write(bytes(digets,"UTF-8"))
+    f.write(bytes("\n",'UTF-8'))
+    f.close()
 
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
     i = 0
     for (fileName, digest) in digestFiles:
-        print "%40s %s" % ( fileName, digest ),
+        print("%40s %s" % ( fileName, digest ), end=' ')
         if size == 1:
             if buildTarget == None:
-                print "      '%s'" % ( digest )
+                print("      '%s'" % ( digest ))
             else:
-                print "self.targetDigests['%s'] = '%s'" % ( buildTarget, digest )
+                print("self.targetDigests['%s'] = '%s'" % ( buildTarget, digest ))
         else:
             if buildTarget == None:
                 if i == 0:
-                    print "      ['%s'," % ( digest )
+                    print("      ['%s'," % ( digest ))
                 elif i == size-1:
-                    print "       '%s']" % ( digest )
+                    print("       '%s']" % ( digest ))
                 else:
-                    print "       '%s'," % ( digest )
+                    print("       '%s'," % ( digest ))
                 i = i + 1
             else:
                 if i == 0:
-                    print "self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest )
+                    print("self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest ))
                 elif i == size-1:
-                    print "                             '%s']" % ( digest )
+                    print("                             '%s']" % ( digest ))
                 else:
-                    print "                             '%s'," % ( digest )
+                    print("                             '%s'," % ( digest ))
                 i = i + 1
 
 ### unpack functions
@@ -432,22 +443,21 @@ def un7zip( fileName, destdir ):
         tmp = tempfile.TemporaryFile()
         return system( command, stdout=tmp )
 
-def unTar( fileName, destdir ):
+def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
-    cleanupFile = None
+    emerge_tmp = os.path.join(destdir,"emerge_tmp")
 
     mode = "r"
     if ( ext == ".gz" ):
         mode = "r:gz"
-    elif(sys.version_info >= (3, 2) and ext == ".bz2"):
-        mode = "r:bz2"
-    elif((sys.version_info < (3, 2) and ext == ".bz2") or ext == ".lzma" or ext == ".xz" ):
-        un7zip( fileName, os.getenv("TMP") )
+    #elif(ext == ".bz2"):
+        #mode = "r:bz2"
+    elif(ext == ".lzma" or ext == ".xz" or ext == ".bz2"):
+        un7zip( fileName, emerge_tmp )
         _, tarname = os.path.split( shortname )
-        fileName = os.path.join( os.getenv("TMP"), tarname )
-        cleanupFile = fileName
+        fileName = os.path.join( emerge_tmp , tarname )
 
 
     if not os.path.exists( fileName ):
@@ -457,9 +467,20 @@ def unTar( fileName, destdir ):
     try:
         with tarfile.open( fileName, mode ) as tar:
         # FIXME how to handle errors here ?
-            for fileName in tar:
+            for tarMember in tar:
                 try:
-                    tar.extract(fileName, destdir )
+                    if not uselinks and tarMember.issym():
+                        tarDir = os.path.dirname(tarMember.name)
+                        target = tarMember.linkname
+                        if not target.startswith("/"):#abspath?
+                            target = os.path.normpath("%s/%s"%(tarDir, target)).replace("\\","/")
+                        if target in tar.getnames():
+                            tar.extract(target, emerge_tmp )
+                            shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
+                        else:
+                            warning("link target %s for %s not included in tarfile" % ( target , tarMember.name))
+                    else:
+                        tar.extract(tarMember, destdir )
                 except tarfile.TarError:
                     error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
                     return False
@@ -468,9 +489,8 @@ def unTar( fileName, destdir ):
         error( "could not open existing tar archive: %s" % fileName )
         return False
     finally:
-        if cleanupFile:
-            if os.path.exists(cleanupFile):
-                os.remove(cleanupFile)
+        if os.path.exists(emerge_tmp):
+            shutil.rmtree(emerge_tmp)
 
 def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""
@@ -552,35 +572,35 @@ def checkManifestFile( name, category, package, version ):
 
 def info( message ):
     if verbose() > 0:
-        print "emerge info: %s" % message
+        print("emerge info: %s" % message)
     return True
 
 def debug( message, level=0 ):
     if verbose() > level and verbose() > 0:
-        print "emerge debug:", message
+        print("emerge debug:", message)
     sys.stdout.flush()
     return True
 
 def warning( message ):
     if verbose() > 0:
-        print "emerge warning: %s" % message
+        print("emerge warning: %s" % message)
     return True
 
 def new_line( level=0 ):
     if verbose() > level and verbose() > 0:
-        print
+        print()
 
 def debug_line( level=0 ):
     if verbose() > level and verbose() > 0:
-        print "_" * 80
+        print("_" * 80)
 
 def error( message ):
     if verbose() > 0:
-        print >> sys.stderr, "emerge error: %s" % message
+        print("emerge error: %s" % message, file=sys.stderr)
     return False
 
 def die( message ):
-    print >> sys.stderr, "emerge fatal error: %s" % message
+    print("emerge fatal error: %s" % message, file=sys.stderr)
     stopAllTimer()
     exit( 1 )
 
@@ -594,7 +614,7 @@ def traceMode():
 
 def trace( message, dummyLevel=0 ):
     if traceMode(): #> level:
-        print "emerge trace:", message
+        print("emerge trace:", message)
     sys.stdout.flush()
     return True
 
@@ -620,7 +640,7 @@ def systemWithoutShell(cmd, **kw):
     try:
         if verbose() == 0 and kw['stdout']== sys.stdout and kw['stderr'] == sys.stderr:
             redirected = True
-            sys.stderr = sys.stdout = file('test.outlog', 'wb')
+            sys.stderr = sys.stdout = open('test.outlog', 'wb')
         p = subprocess.Popen( cmd, **kw )
         ret = p.wait()
     finally:
@@ -739,7 +759,7 @@ def getFileListFromManifest(rootdir, package, withManifests=False):
                     if a not in fileList or not fileList[a]:
                         # if it is not yet in the fileList or without digest:
                         fileList[a] = b
-    return sorted(fileList.items(), key = lambda x: x[0])
+    return sorted(list(fileList.items()), key = lambda x: x[0])
 
 def unmergeFileList(rootdir, fileList, forced=False):
     """ delete files in the fileList if has matches or forced is True """
@@ -747,7 +767,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
         fullPath = os.path.join(rootdir, os.path.normcase( filename))
         if os.path.isfile(fullPath):
             currentHash = digestFile(fullPath)
-            if currentHash == filehash or filehash == "":
+            if currentHash == filehash or filehash == "" or os.path.islink(fullPath):
                 debug( "deleting file %s" % fullPath)
                 try:
                     os.remove(fullPath)
@@ -758,11 +778,11 @@ def unmergeFileList(rootdir, fileList, forced=False):
                 if forced:
                     warning( "file %s has different hash: %s %s, deleting anyway" % \
                             (fullPath, currentHash, filehash ) )
-                    try:
-                        os.remove(fullPath)
-                    except OSError:
-                        system( "cmd /C \"attrib -R %s\"" % fullPath )
-                        os.remove(fullPath)
+                try:
+                    os.remove(fullPath)
+                except OSError:
+                    system( "cmd /C \"attrib -R %s\"" % fullPath )
+                    os.remove(fullPath)
                 else:
                     warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
                             (fullPath, currentHash, filehash ) )
@@ -855,16 +875,16 @@ def createManifestFiles( imagedir, destdir, category, package, version ):
         if mList:
             with open( os.path.join( destdir, "manifest", "%s-%s-%s.mft" % ( package, version, ext )), 'wb' ) as f:
                 for fileName in mList:
-                    f.write( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ) )
-                f.write( os.path.join( "manifest", "%s-%s-%s.mft\n" % ( package, version, ext ) ) )
-                f.write( os.path.join( "manifest", "%s-%s-%s.ver\n" % ( package, version, ext ) ) )
+                    f.write( bytes( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ), "UTF-8" ) )
+                f.write( bytes( os.path.join( "manifest", "%s-%s-%s.mft\n" % ( package, version, ext ) ), "UTF-8" ) )
+                f.write( bytes( os.path.join( "manifest", "%s-%s-%s.ver\n" % ( package, version, ext ) ), "UTF-8" ) )
             with open( os.path.join( destdir, "manifest", "%s-%s-%s.ver" % ( package, version, ext )), 'wb' ) as f:
-                f.write( "%s %s %s\n%s/%s:%s:unknown" % ( package, version, description, category, package, version ) )
+                f.write( bytes( "%s %s %s\n%s/%s:%s:unknown" % ( package, version, description, category, package, version ), "UTF-8" ) )
 
     return True
 
-def mergeImageDirToRootDir( imagedir, rootdir ):
-    copySrcDirToDestDir( imagedir, rootdir )
+def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
+    copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
@@ -939,8 +959,7 @@ def cleanDirectory( directory ):
                     try:
                         os.remove( os.path.join(root, name) )
                     except OSError:
-                        die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join(root, name) ) )
-
+                        die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join( root, name ) ) )
             for name in dirs:
                 try:
                     os.rmdir( os.path.join(root, name) )
@@ -949,7 +968,7 @@ def cleanDirectory( directory ):
                     try:
                         os.rmdir( os.path.join(root, name) )
                     except OSError:
-                        die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join(root, name) ) )
+                        die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
     else:
         os.makedirs( directory )
 
@@ -971,10 +990,16 @@ def sedFile( directory, fileName, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
+    if os.path.islink(filepath):
+        tmp = resolveLink(filepath)
+        if not os.path.exists(tmp):
+            warning("cant resolve symbolic link target %s, returning \"\" as digests" % tmp)
+            return ""
+        filepath = tmp
     with open( filepath, "rb" ) as digFile:
         for line in digFile:
             fileHash.update( line )
-    return fileHash.hexdigest()
+        return fileHash.hexdigest()
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
@@ -1041,7 +1066,7 @@ def replaceVCSUrl( Url ):
          os.getenv( "KDESVNUSERNAME" ) != "username" ) :
         replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read( configfile )
         # add the default KDE stuff if the KDE username is set.
         for section in config.sections():
@@ -1049,7 +1074,7 @@ def replaceVCSUrl( Url ):
             replace = config.get( section, "replace" )
             replacedict[ host ] = replace
 
-    for host in replacedict.keys():
+    for host in list(replacedict.keys()):
         if not Url.find( host ) == -1:
             Url = Url.replace( host, replacedict[ host ] )
             break
@@ -1068,10 +1093,10 @@ def createImportLibs( dll_name, basepath ):
     HAVE_LIB = test4application( "lib" )
     HAVE_DLLTOOL = test4application( "dlltool" )
     if verbose() > 1:
-        print "pexports found:", HAVE_PEXPORTS
-        print "pexports used:", USE_PEXPORTS
-        print "lib found:", HAVE_LIB
-        print "dlltool found:", HAVE_DLLTOOL
+        print("pexports found:", HAVE_PEXPORTS)
+        print("pexports used:", USE_PEXPORTS)
+        print("lib found:", HAVE_LIB)
+        print("dlltool found:", HAVE_DLLTOOL)
 
     dllpath = os.path.join( basepath, "bin", "%s.dll" % dll_name )
     defpath = os.path.join( basepath, "lib", "%s.def" % dll_name )
@@ -1138,7 +1163,40 @@ def createDir(path):
         os.makedirs( path )
     return True
 
-def copyDir( srcdir, destdir ):
+def resolveLink(link):
+    """tries to resolve a symlink"""
+    if not os.path.islink(link):
+        return link
+    tmp = os.path.join(os.path.abspath(os.path.dirname(link) ),os.readlink(link))
+    if not os.path.exists(tmp):
+        warning("cant resolve Link: %s" % link)
+    return tmp
+    
+def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
+    """ copy file from src to dest"""
+    debug("copy file from %s to %s" % ( src, dest ), 2)
+    destDir = os.path.dirname(dest)
+    if not os.path.exists(destDir):
+        os.makedirs(destDir)
+    if os.path.islink(src):
+        src = resolveLink(src)
+    if linkOnly:
+        if (os.path.exists(dest) or os.path.islink(dest)):#if link is invailid os.path.exists will return false
+            warning("overiding existing link or file %s with %s" % (dest,src))
+            os.remove(dest)
+        if src.endswith(".exe") or src.endswith("qt.conf"):
+            os.link( src , dest )
+        else:
+            os.symlink(deSubstPath(src), dest )
+    else:
+        try:
+            shutil.copy(src,dest)
+        except OSError:
+            system("cmd /C \"attrib -R %s\"" % dest)
+            shutil.copy(src,dest)
+    return True
+    
+def copyDir( srcdir, destdir,linkOnly=False ):
     """ copy directory from srcdir to destdir """
     debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
 
@@ -1152,15 +1210,12 @@ def copyDir( srcdir, destdir ):
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):
             tmpdir = root.replace( srcdir, destdir )
-            if ( not os.path.exists( tmpdir ) ):
+            if not os.path.exists( tmpdir ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                try:
-                    shutil.copy( os.path.join( root, fileName ), tmpdir )
-                except OSError:
-                    system("cmd /C \"attrib -R %s\"" % os.path.join(tmpdir, fileName) )
-                    shutil.copy( os.path.join( root, fileName ), tmpdir )
+                copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ))
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
+
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
@@ -1171,15 +1226,6 @@ def rmtree( directory ):
     """ recursively delete directory """
     debug( "rmtree called. directory: %s" % ( directory ), 2 )
     shutil.rmtree ( directory, True ) # ignore errors
-
-def copyFile(src, dest):
-    """ copy file from src to dest"""
-    debug("copy file from %s to %s" % ( src, dest ), 2)
-    destDir = os.path.dirname(dest)
-    if not os.path.exists(destDir):
-        os.makedirs(destDir)
-    shutil.copy( src, dest )
-    return True
 
 def moveFile(src, dest):
     """move file from src to dest"""
@@ -1218,7 +1264,7 @@ def putenv(name, value):
 
 def unixToDos(filename):
     with open(filename, "rb") as f:
-        return f.read().replace('\n', '\r\n')
+        return str(f.read(),'UTF-8').replace('\n', '\r\n')
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
@@ -1228,7 +1274,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
         p = subprocess.Popen([
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
             stdin = subprocess.PIPE)
-        p.communicate(unixToDos(f))
+        p.communicate(bytes(unixToDos(f),'UTF-8'))
         result = p.wait() == 0
     else:
         result = system( cmd )
@@ -1276,7 +1322,7 @@ def getWinVer():
         can not be determined
     '''
     try:
-        result = subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0]
+        result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0],"windows-1252")
     except OSError:
         debug("Windows Version can not be determined", 1)
         return "0"
@@ -1298,7 +1344,7 @@ def regQuery(key, value):
     # Output of this command is either an error to stderr
     # or the key with the value in the next line
     reValue = re.compile(r"(\s*%s\s*REG_\w+\s*)(.*)" % value)
-    match = reValue.search(result)
+    match = reValue.search(str(result, 'windows-1252'))
     if match and match.group(2):
         return match.group(2).rstrip()
     return False
@@ -1356,14 +1402,6 @@ def prependPath(*parts):
             old.insert(0, fullPath)
             os.putenv( "PATH", ";".join(old))
 
-def envAsBool(key, default=False):
-    """ return value of environment variable as bool value """
-    value = os.getenv(key)
-    if value:
-        return value.lower() in ['true', '1']
-    else:
-        return default
-
 _TIMERS = dict()
 def startTimer(name, level = 0):
     """starts a timer for meassurement"""
@@ -1389,26 +1427,56 @@ def stopTimer(name):
 
 def stopAllTimer():
     """stops all timer for meassurement"""
-    keys = sorted(_TIMERS.items() , key=itemgetter(1) , reverse=True)
+    keys = sorted(list(_TIMERS.items()) , key=itemgetter(1) , reverse=True)
     for key , _ in keys:
         stopTimer(key)
 
 _SUBST = None
 def deSubstPath(path):
     """desubstitude emerge short path"""
+    if not envAsBool("EMERGE_USE_SHORT_PATH"):
+        return path
     global _SUBST # pylint: disable=W0603
     drive , tail = os.path.splitdrive(path)
     drive = drive.upper()
     if _SUBST == None:
-        tmp = subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0].split("\r\n")
+        tmp = str(subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0],"windows-1252").split("\r\n")
         _SUBST = dict()
         for s in tmp:
             if s != "":
                 key , val = s.split("\\: => ")
                 _SUBST[key] = val
-    if drive in _SUBST.keys():
+    if drive in list(_SUBST.keys()):
         deSubst = _SUBST[drive] + tail
         debug("desubstituded %s to %s" % (path , deSubst) , 1)
         return deSubst
     return path
+
+def notify(title,message,alertClass = None):
+    backends = os.getenv("EMERGE_USE_NOTIFY")
+    if not backends:
+        return
+    backends = Notifier.NotificationLoader.load(backends.split(";"))
+    for backend in backends.values():
+        backend.notify(title,message,alertClass)
+
+    
+
+def levenshtein(s1, s2):
+    if len(s1) < len(s2):
+        return levenshtein(s2, s1)
+    if not s1:
+        return len(s2)
+ 
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1 # j+1 instead of j since previous_row and current_row are one character longer
+            deletions = current_row[j] + 1       # than s2
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+ 
+    return previous_row[-1]
 

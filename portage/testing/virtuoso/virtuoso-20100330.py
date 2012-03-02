@@ -3,7 +3,7 @@ import info
 import shutil
 import os
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import emergePlatform
 
 # currently only needed from kdenetwork

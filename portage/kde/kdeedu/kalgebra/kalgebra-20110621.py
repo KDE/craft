@@ -1,15 +1,10 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-       for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kalgebra|%s|' % ver
-            
-       self.svnTargets['gitHEAD'] = '[git]kde:kalgebra'
-       self.defaultTarget = 'gitHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:kalgebra'
+        self.shortDescription = 'a graph calculator'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

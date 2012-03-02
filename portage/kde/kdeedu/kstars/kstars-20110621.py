@@ -1,16 +1,10 @@
-import base
-import os
-import sys
 import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:kstars|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:kstars'
+        self.shortDescription = 'a desktop planetarium'
         self.defaultTarget = 'gitHEAD'
-
 
     def setDependencies( self ):
         self.buildDependencies['win32libs-bin/cfitsio'] = 'default'

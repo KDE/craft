@@ -1,0 +1,53 @@
+diff --git a/Makefile.in b/Makefile.in
+index d3802d0..6cf23a6 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -16,7 +16,7 @@ LDFLAGS = @LDFLAGS@
+ EXEEXT = @EXEEXT@
+ RANLIB = @RANLIB@
+ 
+-libs = @LIBS@ -lz
++libs = @LIBS@
+ 
+ base_sources = \
+     ccache.c mdfour.c hash.c execute.c util.c args.c stats.c version.c \
+diff --git a/configure.ac b/configure.ac
+index 2b92782..e610c74 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -69,30 +69,11 @@ HW_FUNC_ASPRINTF
+ dnl Check if -lm is needed.
+ AC_SEARCH_LIBS(cos, m)
+ 
+-dnl Check for zlib.
+-AC_CACHE_CHECK(
+-    [for zlib >= 1.2.3],
+-    [ccache_cv_zlib_1_2_3],
+-    AC_TRY_COMPILE(
+-        [#include <zlib.h>],
+-        [
+-        #if (ZLIB_VERNUM >= 0x1230)
+-        #else
+-        #error "ZLIB_VERNUM < 0x1230"
+-        #endif
+-        ],
+-        [ccache_cv_zlib_1_2_3=yes],
+-        [ccache_cv_zlib_1_2_3=no]))
+-AC_CHECK_LIB(z, gzdopen, true)
+-if test $ccache_cv_zlib_1_2_3 = yes && test $ac_cv_lib_z_gzdopen = yes; then
+-    use_bundled_zlib=no
+-else
+-    use_bundled_zlib=yes
+-    extra_deps="zlib/libz.a"
+-    CPPFLAGS="$CPPFLAGS -I\$(srcdir)/zlib"
+-    LIBS="-Lzlib $LIBS"
+-    mkdir -p zlib
+-fi
++use_bundled_zlib=yes
++extra_deps="zlib/libz.a"
++CPPFLAGS="$CPPFLAGS -I\$(srcdir)/zlib"
++LIBS="zlib/libz.a $LIBS"
++mkdir -p zlib
+ 
+ AC_C_INLINE
+ 

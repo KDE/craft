@@ -2,15 +2,12 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:libkipi|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:libkipi'
+        self.shortDescription = "Libkipi is an interface to use kipi-plugins from a KDE image management program like digiKam."
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-
 
 from Package.CMakePackageBase import *
 

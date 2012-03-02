@@ -5,13 +5,13 @@ import shutil
 import re
 import types
 import fileinput
-from _winreg import * # pylint: disable=F0401
+from winreg import * # pylint: disable=F0401
 import compiler
-from CollectionPackagerBase import *
+from .CollectionPackagerBase import *
 from xml.dom.minidom import Document
 import hashlib
 from string import Template
-from StringIO import StringIO
+from io import StringIO
 import re
 
 
@@ -57,7 +57,7 @@ class MSInstallerPackager( CollectionPackagerBase ):
             m.update( self.defines[ "productname" ] )
             m.update( self.defines[ "setupname" ] )
             self.defines[ "productuid" ] = str( uuid.UUID( hex=m.hexdigest() ) )
-            print self.defines[ "productuid" ]
+            print(self.defines[ "productuid" ])
         if not "upgradeuid" in self.defines or not self.defines[ "upgradeuid" ]:
             self.defines[ "upgradeuid" ] = str( uuid.uuid4() )
         if not "componentuid" in self.defines or not self.defines[ "componentuid" ]:
@@ -143,7 +143,7 @@ class MSInstallerPackager( CollectionPackagerBase ):
 
     def createPackage( self ):
         """ create a package """
-        print "packaging using the MSInstallerPackager"
+        print("packaging using the MSInstallerPackager")
         
         self.internalCreatePackage()
 

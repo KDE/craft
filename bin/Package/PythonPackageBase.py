@@ -17,11 +17,11 @@ class PythonPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase)
         
     def install( self ): 
         ret = self.system("cd %s && python setup.py install" % self.sourceDir() )
-        print ret
+        print(ret)
         return True
 
     def unmerge( self ): 
         # setup.py do not support uninstalling 
-        print "not supported yet"
+        print("not supported yet")
         # we do not want to break unmerging other packages
         return True

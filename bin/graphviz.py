@@ -7,7 +7,7 @@
 import os
 import utils
 try:
-    from _winreg import *  # pylint: disable=F0401
+    from winreg import *  # pylint: disable=F0401
     HAS_REGISTRY = True
 except ImportError:
     import subprocess

@@ -75,7 +75,7 @@ class EmergeBase(object):
         self.alreadyCalled = True
         self.buildTarget = None
 
-        if "args" in args.keys() and "argv0" in args["args"].keys():
+        if "args" in list(args.keys()) and "argv0" in list(args["args"].keys()):
             self.argv0 = args["args"]["argv0"]
         else:
             self.argv0 = sys.argv[ 0 ]
@@ -111,7 +111,7 @@ class EmergeBase(object):
         elif COMPILER == "mingw4":
             self.__compiler = "mingw4"
         else:
-            print >> sys.stderr, "emerge error: KDECOMPILER: '%s' not understood" % COMPILER
+            print("emerge error: KDECOMPILER: '%s' not understood" % COMPILER, file=sys.stderr)
             exit( 1 )
         self.rootdir = ROOTDIR
         if self.subinfo:
@@ -128,7 +128,7 @@ class EmergeBase(object):
         buf = create_string_buffer('\000' * (length + 1))
         windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
         if utils.verbose() > 0:
-            print "converting " + directory + " to " + buf.value
+            print("converting " + directory + " to " + buf.value)
         return buf.value
 
     def buildType(self):
@@ -341,11 +341,11 @@ class EmergeBase(object):
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
             if utils.verbose() > 0:
-                print "creating: %s" % self.buildDir()
+                print("creating: %s" % self.buildDir())
 
         os.chdir( self.buildDir() )
         if utils.verbose() > 0:
-            print "entering: %s" % self.buildDir()
+            print("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
         if ( not os.path.exists( self.sourceDir() ) ):
@@ -353,7 +353,7 @@ class EmergeBase(object):
         utils.warning("entering the source directory!")
         os.chdir( self.sourceDir() )
         if utils.verbose() > 0:
-            print "entering: %s" % self.sourceDir()
+            print("entering: %s" % self.sourceDir())
 
     def system( self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.

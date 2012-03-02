@@ -2,15 +2,9 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.6']:
-            self.svnTargets[ ver ] = '[git]kde:svgpart|%s|' % ver
-            
         self.svnTargets['gitHEAD'] = '[git]kde:svgpart'
+        self.shortDescription = "A svg kpart"
         self.defaultTarget = 'gitHEAD'
-
-    def setDependencies( self ):
-        self.dependencies['kde/kdelibs'] = 'default'
-
 
 from Package.CMakePackageBase import *
 

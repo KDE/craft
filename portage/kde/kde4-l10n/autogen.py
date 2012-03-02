@@ -172,7 +172,7 @@ def add_cmake_files_scripts(path, f):
     walk_subdir_scripts(scriptsdir)
 
 def handle_subdir(langdir, language):
-    print "processing %s" % (langdir)
+    print("processing %s" % (langdir))
 
     # toplevel cmake script
     f = createTopLevelCMakeListFile(langdir, language)
@@ -213,7 +213,7 @@ if not subdirs:
     f.close()
 
 if not subdirs:
-    print "no subdirs given."
+    print("no subdirs given.")
     exit(1)
 
 # Go through all subdirs
