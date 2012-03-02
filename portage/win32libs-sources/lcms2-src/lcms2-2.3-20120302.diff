@@ -135,7 +135,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 +install(TARGETS lcms ${LCMS_STATIC} RUNTIME DESTINATION bin
 +                                    LIBRARY DESTINATION lib
 +                                    ARCHIVE DESTINATION lib)
-+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2.h DESTINATION include)
++install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2.h ${CMAKE_CURRENT_SOURCE_DIR}/../include/lcms2_plugin.h DESTINATION include)
 diff -Nru -x '*~' lcms2-2.3.orig/testbed/CMakeLists.txt lcms2-2.3/testbed/CMakeLists.txt
 --- lcms2-2.3.orig/testbed/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ lcms2-2.3/testbed/CMakeLists.txt	2011-12-28 15:57:06.881388000 +0100
