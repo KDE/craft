@@ -742,8 +742,9 @@ def isInstalled( category, package, version, buildtype='' ):
     fileName = os.path.join(path,'installed')
     found = False
     if os.path.isfile( fileName ):
-        with open( fileName, "rb" ) as f:
+        with open( fileName, "rt" ) as f:
             for line in f.read().splitlines():
+                if not line: continue # Ignore empty lines
                 (_category, _packageVersion) = line.split( "/" )
                 (_package, _version) = utils.packageSplit(_packageVersion)
                 if category != '' and version != '' and category == _category and package == _package and version == _version:
@@ -760,7 +761,7 @@ def isInstalled( category, package, version, buildtype='' ):
     if buildtype != '':
         fileName = os.path.join(path,'installed-' + buildtype )
         if os.path.isfile( fileName ):
-            with open( fileName, "rb" ) as f:
+            with open( fileName, "rt" ) as f:
                 for line in f.read().splitlines():
                     (_category, _packageVersion) = line.split( "/" )
                     (_package, _version) = utils.packageSplit(_packageVersion)
@@ -802,7 +803,7 @@ def findInstalled( category, package):
     ret = None
     regexStr = "^%s/%s-(.*)$" % ( category, re.escape(package) )
     regex = re.compile( regexStr )
-    with open( fileName, "rb" ) as f:
+    with open( fileName, "rt" ) as f:
         for line in f.read().splitlines():
             match = regex.match( line )
             if match:
@@ -824,14 +825,14 @@ def addInstalled( category, package, version, buildtype='' ):
         fileName = 'installed'
     utils.debug("installing package %s - %s into %s" % (package, version, fileName), 2)
     if( os.path.isfile( os.path.join( path, fileName ) ) ):
-        with open( os.path.join( path, fileName ), "rb" ) as f:
+        with open( os.path.join( path, fileName ), "rt" ) as f:
             for line in f:
                 if line.startswith( "%s/%s-%s" % ( category, package, version) ):
                     utils.warning( "version already installed" )
                     return
                 elif line.startswith( "%s/%s-" % ( category, package ) ):
-                    utils.die( "already installed, this should no happen" )
-    with open( os.path.join( path, fileName ), "ab" ) as f:
+                    utils.die( "Already installed, this should not happen" )
+    with open( os.path.join( path, fileName ), "at" ) as f:
         f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
 
 def remInstalled( category, package, version, buildtype='' ):
@@ -846,8 +847,8 @@ def remInstalled( category, package, version, buildtype='' ):
     tmpdbfile = os.path.join(utils.etcDir(), "TMPinstalled" )
     found = False
     if os.path.exists( dbFileName ):
-        with open( dbFileName, "rb" ) as dbFile:
-            with open( tmpdbfile, "wb" ) as tfile:
+        with open( dbFileName, "rt" ) as dbFile:
+            with open( tmpdbfile, "wt" ) as tfile:
                 for line in dbFile:
                     ## \todo the category should not be part of the search string
                     ## because otherwise it is not possible to unmerge package using

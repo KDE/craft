@@ -556,13 +556,13 @@ def svnFetch( repo, destdir, username = None, password = None ):
 
 def checkManifestFile( name, category, package, version ):
     if os.path.isfile( name ):
-        with open( name, "rb" ) as f:
+        with open( name, "rt" ) as f:
             header = f.readline()
             line = f.readline()
         if not '/' in line:
             # update the file
             line = "%s/%s:%s:%s" % ( package, category, package, version )
-            with open( name, "wb" ) as f:
+            with open( name, "wt" ) as f:
                 f.write( header )
                 f.write( line )
         if ( line.startswith( "%s/%s:%s:" % ( category, package, version ) ) ):
@@ -735,7 +735,7 @@ def getFileListFromManifest(rootdir, package, withManifests=False):
     fileList = dict()
     manifestFiles = [os.path.join(rootdir, "manifest", x) for x in getManifestFiles(rootdir, package)]
     for manifestFile in manifestFiles:
-        with open(manifestFile, 'rb' ) as fptr:
+        with open(manifestFile, 'rt' ) as fptr:
             for line in fptr:
                 try:
                     line = line.replace( "\n", "" ).replace( "\r", "" )
