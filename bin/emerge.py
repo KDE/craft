@@ -10,6 +10,7 @@ import os
 import utils
 import portage
 import emergePlatform
+import portageSearch
 import shutil
 from InstallDB import *
 
@@ -423,7 +424,7 @@ for i in sys.argv:
         category = ""
         if not package.find("/") == -1:
             (category,package) = package.split("/")
-        portage.printSearch(category, package)
+        portageSearch.printSearch(category, package)
         exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
