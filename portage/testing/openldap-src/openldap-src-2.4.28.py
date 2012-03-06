@@ -7,7 +7,8 @@ import compiler
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in ['2.4.28']:
-            self.targets[ ver ] = 'http://www.winkde.org/repository/other/openldap-' + ver + '.tgz'
+            self.targets[ ver ] = ('ftp://ftp.openldap.org/pub/OpenLDAP/'
+                                   'openldap-release/openldap-' + ver + '.tgz')
             self.targetInstSrc[ ver ] = 'openldap-' + ver
         self.patchToApply['2.4.28'] = ('openldap-2.4.28-20120212.diff', 1)
         self.targetDigests['2.4.28'] = 'd888beae1723002a5a2ff5509d3040df40885774'
