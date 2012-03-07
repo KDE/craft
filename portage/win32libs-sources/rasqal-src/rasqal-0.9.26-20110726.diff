@@ -504,9 +504,9 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    set_target_properties(rasqal_static PROPERTIES COMPILE_FLAGS "-DRASQAL_STATIC -DRASQAL_INTERNAL")
 +endif(BUILD_TOOLS OR BUILD_TESTS)
 +
-+if(NOT MSVC)
-+    target_link_libraries(rasqal gmp)
-+endif(NOT MSVC)
++#if(NOT MSVC)
++#    target_link_libraries(rasqal gmp)
++#endif(NOT MSVC)
 +
 +set(PROGRAMM rasqal)
 +
