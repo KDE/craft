@@ -17,12 +17,12 @@ class subinfo(info.infoclass):
     self.vlcTagName = '2.1.0-git'
     
 
-    self.targets[ self.vlcTagName ]  =  self.vlcBaseUrl + 'vlc-' + self.vlcTagName + "-win" + self.vlcArch + ".7z"
-    self.targetInstSrc[ self.vlcTagName ] = 'vlc-' + self.vlcTagName
+    self.targets[ self.vlcTagName ]  =  "%svlc-%s-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName, self.getVer(),self.vlcArch  )
+    
+    self.targetInstSrc[ self.vlcTagName ] = "vlc-%s-%s" % (self.vlcTagName,self.getVer())
 
-    self.targets[ self.vlcTagName +"-debug" ]  = self.vlcBaseUrl +  'vlc-' + self.vlcTagName + "-win" + self.vlcArch + "-debug.7z"
-    self.targetInstSrc[ self.vlcTagName + "-debug" ] = 'vlc-' + self.vlcTagName
-
+    self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName, self.getVer(),self.vlcArch  )
+    self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s-%s" % (self.vlcTagName,self.getVer())
     for releaseTag in [ '1.1.11','2.0.0']:
         self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
