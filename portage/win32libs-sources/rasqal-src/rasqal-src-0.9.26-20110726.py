@@ -1,6 +1,5 @@
 import info
 import emergePlatform
-import compiler
 
 from Package.CMakePackageBase import *
 
@@ -23,8 +22,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libxslt'] = 'default'
         self.dependencies['win32libs-bin/raptor2'] = 'default'        
         self.buildDependencies['virtual/base'] = 'default'
-        if compiler.isMinGW():
-            self.dependencies['win32libs-bin/mpir'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
