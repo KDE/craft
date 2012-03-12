@@ -199,7 +199,7 @@ diff -Nru openldap-2.4.28.orig/cmake/modules/PrepareConfigureFile.cmake openldap
 diff -Nru openldap-2.4.28.orig/CMakeLists.txt openldap-2.4.28/CMakeLists.txt
 --- openldap-2.4.28.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ openldap-2.4.28/CMakeLists.txt	2012-02-14 22:54:21.311348800 +0100
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,66 @@
 +# openldap cmake based build system
 +# copyright (c) 2012 Patrick Spendrin <pspendrin@kde.org>
 +
@@ -247,9 +247,11 @@ diff -Nru openldap-2.4.28.orig/CMakeLists.txt openldap-2.4.28/CMakeLists.txt
 +include_directories(${OPENSSL_INCLUDE_DIR} ${PCRE_INCLUDE_DIR})
 +include(ConfigureChecks.cmake)
 +
++if(NOT MINGW)
 +# specially for my friend Andy
 +add_definitions(-wd4996)
 +add_definitions(-Dstrncasecmp=_strnicmp -Dstrcasecmp=_stricmp)
++endif()
 +
 +set(INSTALL_TARGETS_DEFAULT_ARGS RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 +if(LDAP_LIBS_DYNAMIC)
@@ -267,7 +269,7 @@ diff -Nru openldap-2.4.28.orig/CMakeLists.txt openldap-2.4.28/CMakeLists.txt
 diff -Nru openldap-2.4.28.orig/ConfigureChecks.cmake openldap-2.4.28/ConfigureChecks.cmake
 --- openldap-2.4.28.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ openldap-2.4.28/ConfigureChecks.cmake	2012-02-14 23:28:20.737997400 +0100
-@@ -0,0 +1,470 @@
+@@ -0,0 +1,476 @@
 +if(BUILD_REENTRANT)
 +set(REENTRANT 1)
 +set(_REENTRANT 1)
@@ -318,6 +320,7 @@ diff -Nru openldap-2.4.28.orig/ConfigureChecks.cmake openldap-2.4.28/ConfigureCh
 +endif(${SASL2_FOUND})
 +
 +include(CheckIncludeFile)
++include(CheckTypeSize)
 +check_include_file("arpa/inet.h" HAVE_ARPA_INET_H)
 +check_include_file("arpa/nameser.h" HAVE_ARPA_NAMESER_H)
 +check_include_file("assert.h" HAVE_ASSERT_H)
@@ -522,6 +525,9 @@ diff -Nru openldap-2.4.28.orig/ConfigureChecks.cmake openldap-2.4.28/ConfigureCh
 +check_function_exists("write" HAVE_WRITE)
 +check_function_exists("_vsnprintf" HAVE__VSNPRINTF)
 +
++set(CMAKE_EXTRA_INCLUDE_FILES sys/types.h)
++check_type_size("mode_t" MODE_T)
++set(CMAKE_EXTRA_INCLUDE_FILES)
 +
 +#/* define if crypt(3) is available */
 +#undef HAVE_CRYPT
@@ -718,7 +724,9 @@ diff -Nru openldap-2.4.28.orig/ConfigureChecks.cmake openldap-2.4.28/ConfigureCh
 +#/* Define to `int' if <sys/types.h> doesn't define. */
 +set(gid_t int)
 +#/* Define to `int' if <sys/types.h> does not define. */
++if (NOT HAVE_MODE_T)
 +set(mode_t int)
++endif()
 +#/* Define to `long' if <sys/types.h> does not define. */
 +#set(off_t long)
 +#/* Define to `int' if <sys/types.h> does not define. */
