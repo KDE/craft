@@ -14,7 +14,12 @@ class subinfo( info.infoclass ):
           self.patchToApply[ver]  = [( 'exiv2-%s-cmake.diff' % ver, 1 )]
         self.patchToApply['0.21'].append(('exiv2-0.21-20101223.diff', 1))
         self.patchToApply['0.22'].append(('exiv2-0.22-20120117.diff', 1))
-        self.svnTargets['svnHEAD'] = 'svn://dev.robotbattle.com/exiv2/branches/'
+        # 0.23+ will use svn because cmake support are not included in the tarball but are in the repository
+        # exiv2 will eventually fully support cmake
+        for f in ( '23' ):
+          ver = '0.' + f
+          self.svnTargets[ver]       = 'svn://dev.exiv2.org/svn/tags/%s' % ver
+        self.svnTargets['svnHEAD'] = 'svn://dev.exiv2.org/svn/trunk'
         self.shortDescription = "an image metadata library"
         self.defaultTarget = '0.22'
 
