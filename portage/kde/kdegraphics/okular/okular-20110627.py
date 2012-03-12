@@ -17,6 +17,7 @@ class subinfo( info.infoclass ):
         self.dependencies['kdesupport/qimageblitz'] = 'default'
         self.dependencies['win32libs-bin/tiff'] = 'default'
         self.dependencies['win32libs-bin/djvu'] = 'default'
+        self.dependencies['win32libs-bin/ebook-tools'] = 'default'
         self.dependencies['win32libs-bin/zlib'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['win32libs-bin/libspectre'] = 'default'
