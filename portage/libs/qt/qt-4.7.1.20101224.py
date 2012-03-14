@@ -59,7 +59,8 @@ class subinfo(info.infoclass):
             ('patches/4.7/out-of-source-build.patch', 1), 
             ('patches/4.8/add-pdbs-on-msvc.diff', 1),
             ('patches/4.8/detect-windows-8-as-windows-7.patch', 1),
-            ('patches/4.8/fixed-win32-detection.patch',1)
+            ('patches/4.8/fixed-win32-detection.patch',1),
+            ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0)
         ]
 
         self.shortDescription = "a cross-platform application framework"
@@ -207,7 +208,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         # all builds
         command += "-no-phonon "
         command += "-qdbus -dbus-linked -openssl-linked "
-        command += "-fast -no-vcproj -no-dsp "
+        command += "-no-fast -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
 
