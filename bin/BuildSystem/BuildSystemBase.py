@@ -36,9 +36,7 @@ class BuildSystemBase(EmergeBase):
                 del os.environ["MAKE"]
         if compiler.isMSVC():
             return "nmake /NOLOGO"
-        elif compiler.isMinGW_WXX():
-            return "gmake"
-        elif compiler.isMinGW32():
+        elif compiler.isMinGW():
             return "mingw32-make"
         else:
             utils.die( "unknown %s compiler" % self.compiler() )
