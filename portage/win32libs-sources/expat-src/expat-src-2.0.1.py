@@ -8,8 +8,10 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.0.1'] = 'http://downloads.sourceforge.net/sourceforge/expat/expat-2.0.1.tar.gz'
-        self.targetInstSrc['2.0.1'] = 'expat-2.0.1'
+        for ver in ['2.0.1', '2.1.0-beta3']:
+            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/expat/expat-' + ver + '.tar.gz'
+            self.targetInstSrc[ ver ] = 'expat-' + ver
+        self.targetInstSrc[ '2.1.0-beta3' ] = 'expat-2012-03-11'
         self.patchToApply['2.0.1'] = ('expat-2.0.1-20100329.diff', 1)
         self.targetDigests['2.0.1'] = '663548c37b996082db1f2f2c32af060d7aa15c2d'
         self.shortDescription = "XML parser library written in C"
