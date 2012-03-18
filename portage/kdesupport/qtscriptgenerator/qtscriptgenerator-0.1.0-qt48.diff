@@ -1,6 +1,17 @@
+diff -Nru -x '*.tmp' -x '*.log' R:\tmp\qtscriptgenerator-src-0.1.0/generator/qtscript_core.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_core.cmake
+--- R:\tmp\qtscriptgenerator-src-0.1.0/generator/qtscript_core.cmake	2012-03-18 19:15:05.544353200 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_core.cmake	2012-03-18 20:49:07.346512200 +0100
+@@ -97,7 +97,6 @@
+         ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTimerEvent.cpp
+         ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QTranslator.cpp
+         ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QUuid.cpp
+-        ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QXmlStreamAttributes.cpp
+         ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_core/qtscriptshell_QXmlStreamEntityResolver.cpp
+ )
+ 
 diff -Nru -x '*.tmp' -x '*.log' R:\tmp\qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake
 --- R:\tmp\qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake	2012-03-18 19:15:05.547353200 +0100
-+++ qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake	2012-03-18 19:18:19.691753200 +0100
++++ qtscriptgenerator-src-0.1.0/generator/qtscript_gui.cmake	2012-03-18 19:21:21.369753200 +0100
 @@ -65,7 +65,6 @@
      ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QErrorMessage.cpp
      ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFileDialog.cpp
@@ -11,7 +22,7 @@ diff -Nru -x '*.tmp' -x '*.log' R:\tmp\qtscriptgenerator-src-0.1.0/generator/qts
      ${CMAKE_CURRENT_BINARY_DIR}/generated_cpp/com_trolltech_qt_gui/qtscript_QFont.cpp
 diff -Nru -x '*.tmp' -x '*.log' R:\tmp\qtscriptgenerator-src-0.1.0/generator/typesystem_gui-common.xml qtscriptgenerator-src-0.1.0/generator/typesystem_gui-common.xml
 --- R:\tmp\qtscriptgenerator-src-0.1.0/generator/typesystem_gui-common.xml	2009-02-20 12:42:24.000000000 +0100
-+++ qtscriptgenerator-src-0.1.0/generator/typesystem_gui-common.xml	2012-03-18 18:16:30.418121600 +0100
++++ qtscriptgenerator-src-0.1.0/generator/typesystem_gui-common.xml	2012-03-18 19:21:21.379753200 +0100
 @@ -2233,7 +2233,6 @@
      
                 
@@ -22,7 +33,7 @@ diff -Nru -x '*.tmp' -x '*.log' R:\tmp\qtscriptgenerator-src-0.1.0/generator/typ
              <remove/>
 diff -Nru -x '*.tmp' -x '*.log' R:\tmp\qtscriptgenerator-src-0.1.0/generator/typesystem_gui.xml qtscriptgenerator-src-0.1.0/generator/typesystem_gui.xml
 --- R:\tmp\qtscriptgenerator-src-0.1.0/generator/typesystem_gui.xml	2009-02-20 12:42:24.000000000 +0100
-+++ qtscriptgenerator-src-0.1.0/generator/typesystem_gui.xml	2012-03-18 18:16:30.428120800 +0100
++++ qtscriptgenerator-src-0.1.0/generator/typesystem_gui.xml	2012-03-18 19:21:21.389753200 +0100
 @@ -2555,7 +2555,6 @@
      
                 
