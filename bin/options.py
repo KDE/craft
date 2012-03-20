@@ -220,8 +220,8 @@ class Options:
 
         ## there is a special option available already
         self.buildTests = utils.envAsBool("EMERGE_BUILDTESTS")
-        self.buildTools = False
-        self.buildStatic = False
+        self.buildTools = "False"
+        self.buildStatic = "False"
 
         #### end of user configurable part
         self.__instances = dict()
