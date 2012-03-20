@@ -18,6 +18,7 @@ class infoclass:
     def __init__( self, RAW="" ):
         ### package options
         self.options = Options()
+        self.options.readFromEnv()
         self.targets = dict()
         self.archiveNames = dict()
         # Specifiy that the fetched source should be placed into a
