@@ -26,14 +26,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.staticDefine = "-DBUILD_SHARED_LIBS=OFF"
-        
-    def install(self):
-        if not CMakePackageBase.install(self):
-            return False
-        #to stay compatible to previous builds
-        if compiler.isMinGW() and not utils.varAsBool(self.subinfo.options.buildStatic):
-            shutil.copy(os.path.join( self.installDir() , "bin","libz.dll"),os.path.join( self.installDir() , "bin","libzlib1.dll"))
-        return True
 
 if __name__ == '__main__':
     Package().execute()
