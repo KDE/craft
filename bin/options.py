@@ -33,6 +33,7 @@
 import os
 import utils
 import inspect
+import shlex
 
 class OptionsBase(object):
     def __init__(self):
@@ -281,12 +282,13 @@ class Options:
         """collect properties from a space delimited key=valule string"""
         if opts == None:
             return False
-        opts = opts.split()
+        # keep escapes inside this string - otherwise spaces cannot be given over
+        opts = shlex.split(opts, posix=True)
         for entry in opts:
             if entry.find('=') == -1:
                 utils.debug('incomplete option %s' % entry, 3)
                 continue
-            (key, value) = entry.split( '=' )
+            (key, value) = entry.split( '=', 1 )
             a = key.split('.')
             if self.__setInstanceAttribute(key, '.', '.'.join(a[0:]), value ):
                 return True
