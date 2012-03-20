@@ -31,7 +31,7 @@ class Package(CMakePackageBase):
         if not CMakePackageBase.install(self):
             return False
         #to stay compatible to previous builds
-        if compiler.isMinGW():
+        if compiler.isMinGW() and not utils.varAsBool(self.subinfo.options.buildStatic):
             shutil.copy(os.path.join( self.installDir() , "bin","libz.dll"),os.path.join( self.installDir() , "bin","libzlib1.dll"))
         return True
 
