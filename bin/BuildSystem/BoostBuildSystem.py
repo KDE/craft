@@ -25,10 +25,10 @@ class BoostBuildSystem(BuildSystemBase):
                 " -j"+ os.getenv("NUMBER_OF_PROCESSORS"))
                 
         if not utils.varAsBool(self.subinfo.options.buildStatic):
-            options += " link=shared"
+            options += (" link=shared"
                        " runtime-link=shared")
         else:
-            options += " link=static"
+            options += (" link=static"
                        " runtime-link=static")
 
         options += " variant="
