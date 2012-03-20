@@ -24,15 +24,12 @@ class subinfo(info.infoclass):
     self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName, self.getVer(),self.vlcArch  )
     self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s-%s" % (self.vlcTagName,self.getVer())
     for releaseTag in [ '1.1.11','2.0.0','2.0.1']:
-        self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z"
+        self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-%s-win%s.7z" % ( releaseTag , self.vlcArch )
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
-        self.targetDigestUrls[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-"+releaseTag+"-win32.7z.sha1"
+        self.targetDigestUrls[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-%s-win%s.7z.sha1" % ( releaseTag , self.vlcArch )
     self.shortDescription = "an open-source multimedia framework"
 
-    if compiler.isMinGW_W64():
-      self.defaultTarget = self.vlcTagName +"-debug" 
-    else:
-      self.defaultTarget = releaseTag
+    self.defaultTarget = releaseTag
 
 
   def setDependencies( self ):
