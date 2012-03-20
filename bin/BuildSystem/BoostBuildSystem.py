@@ -21,9 +21,14 @@ class BoostBuildSystem(BuildSystemBase):
         options += (" --build-type=minimal"
 #                " --debug-configuration"
                 " --build-dir=" + self.buildDir() + \
-                " threading=multi"
-                " link=shared"
-                " runtime-link=shared")
+                " threading=multi")
+                
+        if not utils.varAsBool(self.subinfo.options.buildStatic):
+            options += " link=shared"
+                       " runtime-link=shared")
+        else:
+            options += " link=static"
+                       " runtime-link=static")
 
         options += " variant="
         if self.buildType() == "Debug":
