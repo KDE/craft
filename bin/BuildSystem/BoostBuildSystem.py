@@ -24,10 +24,10 @@ class BoostBuildSystem(BuildSystemBase):
                 " threading=multi")
                 
         if not utils.varAsBool(self.subinfo.options.buildStatic):
-            options += " link=shared"
+            options += (" link=shared"
                        " runtime-link=shared")
         else:
-            options += " link=static"
+            options += (" link=static"
                        " runtime-link=static")
 
         options += " variant="
