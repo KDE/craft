@@ -162,7 +162,6 @@ class OptionsCMake(OptionsBase):
         ## use CTest instead of the make utility
         self.useCTest = utils.envAsBool("EMERGE_USECTEST")
 
-## options for the make action
 class OptionsGit(OptionsBase):
     def __init__(self):
         ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
@@ -218,6 +217,11 @@ class Options:
         ## use short pathes (usefull for mingw to
         #  avoid exceeding the maximum path length)
         self.useShortPathes = False
+
+        ## there is a special option available already
+        self.buildTests = utils.envAsBool("EMERGE_BUILDTESTS")
+        self.buildTools = False
+        self.buildStatic = False
 
         #### end of user configurable part
         self.__instances = dict()
@@ -284,6 +288,7 @@ class Options:
             return False
         # keep escapes inside this string - otherwise spaces cannot be given over
         opts = shlex.split(opts, posix=True)
+        result = False
         for entry in opts:
             if entry.find('=') == -1:
                 utils.debug('incomplete option %s' % entry, 3)
@@ -291,7 +296,9 @@ class Options:
             (key, value) = entry.split( '=', 1 )
             a = key.split('.')
             if self.__setInstanceAttribute(key, '.', '.'.join(a[0:]), value ):
-                return True
+                result = True
+                continue
             if len(a) >= 2 and self.__setInstanceAttribute(key, a[0], '.'.join(a[1:]), value ):
-                return True
-        return False
+                result = True
+                continue
+        return result

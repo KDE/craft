@@ -41,6 +41,9 @@ def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
+def varAsBool(var):
+    return var.lower() in ['true', '1']
+
 def envAsBool(key, default=False):
     """ return value of environment variable as bool value """
     value = os.getenv(key)
