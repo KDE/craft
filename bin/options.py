@@ -34,8 +34,12 @@ import os
 import utils
 import inspect
 
+class OptionsBase(object):
+    def __init__(self):
+        pass
+
 ## options for the fetch action
-class OptionsFetch:
+class OptionsFetch(OptionsBase):
     def __init__(self):
         ## option comment
         self.option = None
@@ -44,7 +48,7 @@ class OptionsFetch:
         self.checkoutSubmodules = False
 
 ## options for the unpack action
-class OptionsUnpack:
+class OptionsUnpack(OptionsBase):
     def __init__(self):
         ## By default archives are unpackaged into the workdir.
         #  Use this option to unpack archives into recent build directory
@@ -53,7 +57,7 @@ class OptionsUnpack:
         self.runInstaller = False
 
 ## options for the configure action
-class OptionsConfigure:
+class OptionsConfigure(OptionsBase):
     def __init__(self):
         ## with this option additional definitions could be added to the configure commmand line
         self.defines = None
@@ -87,7 +91,7 @@ class OptionsConfigure:
 
 
 ## options for the make action
-class OptionsMake:
+class OptionsMake(OptionsBase):
     def __init__(self):
         ## ignore make error
         self.ignoreErrors = None
@@ -98,7 +102,7 @@ class OptionsMake:
         self.supportsMultijob = True
 
 ## options for the install action
-class OptionsInstall:
+class OptionsInstall(OptionsBase):
     def __init__(self):
         ## use either make tool for installing or
         # run cmake directly for installing
@@ -109,7 +113,7 @@ class OptionsInstall:
         self.useDestDir = True
 
 ## options for the merge action
-class OptionsMerge:
+class OptionsMerge(OptionsBase):
     def __init__(self):
         ## subdir based on installDir() used as merge source directory
         self.sourcePath = None
@@ -121,7 +125,7 @@ class OptionsMerge:
         self.ignoreBuildType = False
 
 ## options for the package action
-class OptionsPackage:
+class OptionsPackage(OptionsBase):
     def __init__(self):
         ## defines the package name
         self.packageName = None
@@ -148,7 +152,7 @@ class OptionsPackage:
         
         
 
-class OptionsCMake:
+class OptionsCMake(OptionsBase):
     def __init__(self):
         ## use IDE for msvc2008 projects
         self.useIDE = False
@@ -158,7 +162,7 @@ class OptionsCMake:
         self.useCTest = utils.envAsBool("EMERGE_USECTEST")
 
 ## options for the make action
-class OptionsGit:
+class OptionsGit(OptionsBase):
     def __init__(self):
         ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
         self.enableFormattedPatch = False
@@ -233,10 +237,9 @@ class Options:
         for key, value in inspect.getmembers(self):
             if key.startswith('__'):
                 continue
-            atype = type(value).__name__
-            if atype == 'instancemethod':
+            if inspect.ismethod(value):
                 continue
-            if atype == 'instance':
+            if isinstance(value, OptionsBase):
                 # collect attributes of instance one level below
                 sattributes = dict()
                 for skey, svalue in inspect.getmembers(value):
@@ -285,8 +288,8 @@ class Options:
                 continue
             (key, value) = entry.split( '=' )
             a = key.split('.')
-            if self.__setInstanceAttribute(key, '.', ''.join(a[0:]), value ):
+            if self.__setInstanceAttribute(key, '.', '.'.join(a[0:]), value ):
                 return True
-            if len(a) >= 2 and self.__setInstanceAttribute(key, a[0], ''.join(a[1:]), value ):
+            if len(a) >= 2 and self.__setInstanceAttribute(key, a[0], '.'.join(a[1:]), value ):
                 return True
         return False
