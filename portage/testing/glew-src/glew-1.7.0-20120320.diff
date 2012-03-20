@@ -1,0 +1,129 @@
+diff -Nru glew-1.7.0.orig/CMakeLists.txt glew-1.7.0/CMakeLists.txt
+--- glew-1.7.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glew-1.7.0/CMakeLists.txt	2012-03-20 23:05:49.854279400 +0100
+@@ -0,0 +1,40 @@
++project (glew)
++
++cmake_minimum_required (VERSION 2.6)
++
++option(BUILD_mx "Build glew with multiple rendering contexts (glew mx)" ON)
++option(BUILD_STATIC "Build glew as a static library" OFF)
++option(BUILD_tools "Build glewinfo and visualinfo" ON)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++# determine glew version from config/version
++# we have some assumptions on this file, but I don't think it will ever change
++file(READ config/version _versioncontents)
++STRING(REGEX REPLACE ";" "\\\\;" _versioncontents "${_versioncontents}")
++STRING(REGEX REPLACE "\n" ";" _versioncontents "${_versioncontents}")
++file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/version.cmake)
++
++foreach(_line ${_versioncontents})
++    string(REGEX REPLACE "([^ ]*) = (.*)" "set(\\1 \\2)" _replaced ${_line})
++    string(REGEX REPLACE "\\$\\(([^ \\)]*)\\)" "\${\\1}" _replaced ${_replaced})
++    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/version.cmake "${_replaced}\n")
++endforeach(_line ${_versioncontents})
++
++include(${CMAKE_CURRENT_BINARY_DIR}/version.cmake)
++
++add_subdirectory(include)
++add_subdirectory(src)
++
++set(prefix ${CMAKE_INSTALL_PREFIX})
++set(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
++set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
++set(includedir ${CMAKE_INSTALL_PREFIX}/include)
++set(version ${GLEW_VERSION})
++set(cflags)
++set(libname glew)
++
++configure_file(glew.pc.in ${CMAKE_CURRENT_BINARY_DIR}/glew.pc)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glew.pc DESTINATION lib/pkgconfig)
+diff -Nru glew-1.7.0.orig/include/CMakeLists.txt glew-1.7.0/include/CMakeLists.txt
+--- glew-1.7.0.orig/include/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glew-1.7.0/include/CMakeLists.txt	2012-03-20 23:00:03.771484600 +0100
+@@ -0,0 +1 @@
++install(FILES GL/glew.h GL/glxew.h GL/wglew.h DESTINATION include/GL)
+\ No newline at end of file
+diff -Nru glew-1.7.0.orig/include/GL/glew.h glew-1.7.0/include/GL/glew.h
+--- glew-1.7.0.orig/include/GL/glew.h	2012-03-20 23:05:56.005631200 +0100
++++ glew-1.7.0/include/GL/glew.h	2012-03-20 23:00:03.794485900 +0100
+@@ -151,7 +151,11 @@
+ #endif
+ #if !defined(_PTRDIFF_T_DEFINED) && !defined(_PTRDIFF_T_) && !defined(__MINGW64__)
+ #  ifdef _WIN64
+-typedef __int64 ptrdiff_t;
++#   ifdef __MINGW64__
++#   include <stdlib.h>
++#  else
++    typedef __int64 ptrdiff_t;
++#  endif
+ #  else
+ typedef _W64 int ptrdiff_t;
+ #  endif
+diff -Nru glew-1.7.0.orig/src/CMakeLists.txt glew-1.7.0/src/CMakeLists.txt
+--- glew-1.7.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ glew-1.7.0/src/CMakeLists.txt	2012-03-20 23:00:03.802486300 +0100
+@@ -0,0 +1,58 @@
++set(glew_SRCS
++    glew.c
++    ../build/vc6/glew.rc
++)
++
++set(glewinfo_SRCS
++    glewinfo.c
++    ../build/vc6/glewinfo.rc
++)
++
++set(visualinfo_SRCS
++    visualinfo.c
++    ../build/vc6/visualinfo.rc
++)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ../include)
++
++if(BUILD_STATIC)
++    set(_SHARED STATIC)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++endif(BUILD_STATIC)
++
++add_library(glew ${_SHARED} ${glew_SRCS})
++if(NOT BUILD_STATIC)
++    set_target_properties(glew PROPERTIES DEFINE_SYMBOL "GLEW_BUILD"
++                                          VERSION ${SO_MAJOR}
++                                          SOVERSION ${SO_VERSION})
++endif(NOT BUILD_STATIC)
++set_target_properties(glew PROPERTIES COMPILE_FLAGS "-DGLEW_NO_GLU")
++target_link_libraries(glew opengl32)
++set(_targets glew)
++
++if(BUILD_mx)
++    add_library(glewmx ${_SHARED} ${glew_SRCS})
++    if(NOT BUILD_STATIC)
++        set_target_properties(glewmx PROPERTIES DEFINE_SYMBOL "GLEW_BUILD"
++                                                VERSION ${SO_MAJOR}
++                                                SOVERSION ${SO_VERSION})
++    endif(NOT BUILD_STATIC)
++    set_target_properties(glewmx PROPERTIES COMPILE_FLAGS "-DGLEW_NO_GLU -DGLEW_MX")
++    target_link_libraries(glewmx opengl32)
++    list(APPEND _targets glewmx)
++endif(BUILD_mx)
++
++if(BUILD_tools)
++    add_executable(glewinfo ${glewinfo_SRCS})
++    target_link_libraries(glewinfo glew)
++
++    add_executable(visualinfo ${visualinfo_SRCS})
++    target_link_libraries(visualinfo glew opengl32 glu32)
++
++    list(APPEND _targets glewinfo visualinfo)
++endif(BUILD_tools)
++
++install(TARGETS glew ${_targets} RUNTIME DESTINATION bin
++                                 LIBRARY DESTINATION lib
++                                 ARCHIVE DESTINATION lib)
+\ No newline at end of file
