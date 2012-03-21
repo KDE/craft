@@ -1,0 +1,249 @@
+diff -Nru libwps-0.2.4.orig/cmake/modules/FindWPD.cmake libwps-0.2.4/cmake/modules/FindWPD.cmake
+--- libwps-0.2.4.orig/cmake/modules/FindWPD.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libwps-0.2.4/cmake/modules/FindWPD.cmake	2012-03-21 15:04:54.297633300 +0100
+@@ -0,0 +1,61 @@
++# - Try to find the libwpd (WordPerfect library)
++# Once done this will define
++#
++#  WPD_FOUND - system has WPD
++#  WPD_INCLUDE_DIR - the WPD include directory
++#  WPD_LIBRARIES - Link these to use WPD
++#  WPD_DEFINITIONS - Compiler switches required for using WPD
++#
++
++
++# use pkg-config to get the directories and then use these values
++# in the FIND_PATH() and FIND_LIBRARY() calls
++
++#if (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++
++   # Already in cache
++#   set(WPD_FOUND TRUE)
++
++#else (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++if(NOT WIN32)
++  INCLUDE(FindPkgConfig)
++  pkg_check_modules(WPD libwpd-0.8)
++  pkg_check_modules(WPD libwpd-0.9)
++endif(NOT WIN32)
++
++  FIND_PATH(WPD_INCLUDE_DIR libwpd/libwpd.h
++    PATHS
++	  ${WPD_INCLUDE_DIR}
++      /usr/include/libwpd-0.8
++      /usr/include/libwpd-0.9
++	PATH_SUFFIXES
++	  libwpd-0.8
++	  libwpd-0.9
++  )
++
++  IF(NOT WPD_LIBRARIES)
++    FIND_LIBRARY(WPD_LIBRARY
++	  NAMES
++	    wpd
++		libwpd
++	)
++
++	FIND_LIBRARY(WPD_STREAM_LIBRARY
++	  NAMES
++	    wpd-stream
++		libwpd-stream
++	)
++	
++	set(WPD_LIBRARIES ${WPD_LIBRARY} ${WPD_STREAM_LIBRARY})
++  ENDIF(NOT WPD_LIBRARIES)
++  
++  include(FindPackageHandleStandardArgs)
++  FIND_PACKAGE_HANDLE_STANDARD_ARGS(WPD DEFAULT_MSG WPD_INCLUDE_DIR WPD_LIBRARIES )
++
++  if(WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++    set(WPD_FOUND TRUE)
++  else (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++    set(WPD_FOUND FALSE)
++  endif(WPD_INCLUDE_DIR AND WPD_LIBRARIES)
++
++#endif (WPD_INCLUDE_DIR AND WPD_LIBRARIES)
+diff -Nru libwps-0.2.4.orig/CMakeLists.txt libwps-0.2.4/CMakeLists.txt
+--- libwps-0.2.4.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libwps-0.2.4/CMakeLists.txt	2012-03-21 15:04:54.301633500 +0100
+@@ -0,0 +1,24 @@
++project(libwps)
++
++cmake_minimum_required(VERSION 2.8)
++
++option(BUILD_tools "build wps2text, wps2raw & wps2html tools" ON)
++option(BUILD_STATIC "build a static version of the library" OFF)
++
++if(NOT BUILD_STATIC)
++    add_definitions(-D_WINDLL)
++endif(NOT BUILD_STATIC)
++set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
++
++# determine the version information from configure.ac
++file(READ configure.ac _versioncontents)
++
++string(REGEX REPLACE ".*m4_define\\(\\[libwps_version_major\\],\\[([0-9])\\]\\).*" "\\1" WPS_MAJOR_VERSION ${_versioncontents})
++string(REGEX REPLACE ".*m4_define\\(\\[libwps_version_minor\\],\\[([0-9])\\]\\).*" "\\1" WPS_MINOR_VERSION ${_versioncontents})
++string(REGEX REPLACE ".*m4_define\\(\\[libwps_version_micro\\],\\[([0-9])\\]\\).*" "\\1" WPS_MICRO_VERSION ${_versioncontents})
++
++find_package(WPD REQUIRED)
++
++include_directories(${WPD_INCLUDE_DIR})
++
++add_subdirectory(src)
+diff -Nru libwps-0.2.4.orig/src/CMakeLists.txt libwps-0.2.4/src/CMakeLists.txt
+--- libwps-0.2.4.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libwps-0.2.4/src/CMakeLists.txt	2012-03-21 15:04:54.305633700 +0100
+@@ -0,0 +1,4 @@
++add_subdirectory(lib)
++if(BUILD_tools)
++    add_subdirectory(conv)
++endif(BUILD_tools)
+diff -Nru libwps-0.2.4.orig/src/conv/CMakeLists.txt libwps-0.2.4/src/conv/CMakeLists.txt
+--- libwps-0.2.4.orig/src/conv/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libwps-0.2.4/src/conv/CMakeLists.txt	2012-03-21 15:04:54.307633800 +0100
+@@ -0,0 +1,28 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib)
++
++set(converterList 
++    Raw
++    Text
++    Html
++)
++
++set(_targets)
++
++foreach(converter ${converterList})
++    string(TOLOWER ${converter} _converter)
++    set(${_converter}_SRCS 
++        ${CMAKE_CURRENT_SOURCE_DIR}/${_converter}/${converter}DocumentGenerator.cpp
++        ${CMAKE_CURRENT_SOURCE_DIR}/${_converter}/wps2${_converter}.cpp
++        ${CMAKE_CURRENT_BINARY_DIR}/wps2${_converter}.rc
++    )
++
++    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${_converter}/wps2${_converter}.rc.in ${CMAKE_CURRENT_BINARY_DIR}/wps2${_converter}.rc)
++    
++    add_executable(wps2${_converter} ${${_converter}_SRCS})
++    target_link_libraries(wps2${_converter} wps)
++    list(APPEND _targets wps2${_converter})
++endforeach(converter ${converterList})
++
++install(TARGETS ${_targets} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
+diff -Nru libwps-0.2.4.orig/src/conv/html/wps2html.rc.in libwps-0.2.4/src/conv/html/wps2html.rc.in
+--- libwps-0.2.4.orig/src/conv/html/wps2html.rc.in	2011-09-26 14:22:15.000000000 +0200
++++ libwps-0.2.4/src/conv/html/wps2html.rc.in	2012-03-21 15:04:54.311634100 +0100
+@@ -1,7 +1,7 @@
+ #include <winver.h>
+ 
+ VS_VERSION_INFO VERSIONINFO
+-  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,BUILDNUMBER
++  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   PRODUCTVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   FILEFLAGSMASK 0
+   FILEFLAGS 0
+@@ -15,7 +15,7 @@
+       BEGIN
+ 	VALUE "CompanyName", "The libwps developer community"
+ 	VALUE "FileDescription", "wps2html"
+-	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.BUILDNUMBER"
++	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.0"
+ 	VALUE "InternalName", "wps2html"
+ 	VALUE "LegalCopyright", "Copyright (C) 2002-2006 William Lachance, Marc Maurer, Fridrich Strba, other contributers"
+ 	VALUE "OriginalFilename", "wps2html.exe"
+diff -Nru libwps-0.2.4.orig/src/conv/raw/wps2raw.rc.in libwps-0.2.4/src/conv/raw/wps2raw.rc.in
+--- libwps-0.2.4.orig/src/conv/raw/wps2raw.rc.in	2011-09-26 14:22:15.000000000 +0200
++++ libwps-0.2.4/src/conv/raw/wps2raw.rc.in	2012-03-21 15:04:54.316634400 +0100
+@@ -1,7 +1,7 @@
+ #include <winver.h>
+ 
+ VS_VERSION_INFO VERSIONINFO
+-  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,BUILDNUMBER
++  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   PRODUCTVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   FILEFLAGSMASK 0
+   FILEFLAGS 0
+@@ -15,7 +15,7 @@
+       BEGIN
+ 	VALUE "CompanyName", "The libwps developer community"
+ 	VALUE "FileDescription", "wps2raw"
+-	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.BUILDNUMBER"
++	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.0"
+ 	VALUE "InternalName", "wps2raw"
+ 	VALUE "LegalCopyright", "Copyright (C) 2002-2006 William Lachance, Marc Maurer, Fridrich Strba, other contributers"
+ 	VALUE "OriginalFilename", "wps2raw.exe"
+diff -Nru libwps-0.2.4.orig/src/conv/text/wps2text.rc.in libwps-0.2.4/src/conv/text/wps2text.rc.in
+--- libwps-0.2.4.orig/src/conv/text/wps2text.rc.in	2011-09-26 14:22:15.000000000 +0200
++++ libwps-0.2.4/src/conv/text/wps2text.rc.in	2012-03-21 15:04:54.320634600 +0100
+@@ -1,7 +1,7 @@
+ #include <winver.h>
+ 
+ VS_VERSION_INFO VERSIONINFO
+-  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,BUILDNUMBER
++  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   PRODUCTVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   FILEFLAGSMASK 0
+   FILEFLAGS 0
+@@ -15,7 +15,7 @@
+       BEGIN
+ 	VALUE "CompanyName", "The libwps developer community"
+ 	VALUE "FileDescription", "wps2text"
+-	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.BUILDNUMBER"
++	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.0"
+ 	VALUE "InternalName", "wps2text"
+ 	VALUE "LegalCopyright", "Copyright (C) 2002-2006 William Lachance, Marc Maurer, Fridrich Strba, other contributers"
+ 	VALUE "OriginalFilename", "wps2text.exe"
+diff -Nru libwps-0.2.4.orig/src/lib/CMakeLists.txt libwps-0.2.4/src/lib/CMakeLists.txt
+--- libwps-0.2.4.orig/src/lib/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libwps-0.2.4/src/lib/CMakeLists.txt	2012-03-21 15:36:26.247846600 +0100
+@@ -0,0 +1,28 @@
++set(WPS_SRCS
++    libwps_internal.cpp
++    WPS4.cpp
++    WPS8.cpp
++    WPSDocument.cpp
++    WPSContentListener.cpp
++    WPSHeader.cpp
++    WPSPageSpan.cpp
++    WPSParser.cpp
++    ${CMAKE_CURRENT_BINARY_DIR}/libwps.rc
++)
++
++if(BUILD_STATIC)
++    set(_SHARED STATIC)
++else(BUILD_STATIC)
++    set(_SHARED SHARED)
++endif(BUILD_STATIC)
++
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libwps.rc.in ${CMAKE_CURRENT_BINARY_DIR}/libwps.rc)
++add_library(wps ${_SHARED} ${WPS_SRCS})
++set_target_properties(wps PROPERTIES DEFINE_SYMBOL BUILD_WPS)
++target_link_libraries(wps ${WPD_LIBRARIES})
++
++install(TARGETS wps RUNTIME DESTINATION bin
++                    LIBRARY DESTINATION lib
++                    ARCHIVE DESTINATION lib)
++
++install(FILES libwps.h WPSDocument.h DESTINATION include/libwps-${WPS_MAJOR_VERSION}.${WPS_MINOR_VERSION}/libwps)
+diff -Nru libwps-0.2.4.orig/src/lib/libwps.rc.in libwps-0.2.4/src/lib/libwps.rc.in
+--- libwps-0.2.4.orig/src/lib/libwps.rc.in	2011-09-23 16:09:09.000000000 +0200
++++ libwps-0.2.4/src/lib/libwps.rc.in	2012-03-21 15:04:54.328635000 +0100
+@@ -1,7 +1,7 @@
+ #include <winver.h>
+ 
+ VS_VERSION_INFO VERSIONINFO
+-  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,BUILDNUMBER
++  FILEVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   PRODUCTVERSION @WPS_MAJOR_VERSION@,@WPS_MINOR_VERSION@,@WPS_MICRO_VERSION@,0
+   FILEFLAGSMASK 0
+   FILEFLAGS 0
+@@ -15,7 +15,7 @@
+       BEGIN
+ 	VALUE "CompanyName", "The libwps developer community"
+ 	VALUE "FileDescription", "libwps"
+-	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.BUILDNUMBER"
++	VALUE "FileVersion", "@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.@WPS_MICRO_VERSION@.0"
+ 	VALUE "InternalName", "libwps-@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@"
+ 	VALUE "LegalCopyright", "Copyright (C) 2006, 2007 Andrew Ziem, Fridrich Strba, other contributers"
+ 	VALUE "OriginalFilename", "libwps-@WPS_MAJOR_VERSION@.@WPS_MINOR_VERSION@.dll"
