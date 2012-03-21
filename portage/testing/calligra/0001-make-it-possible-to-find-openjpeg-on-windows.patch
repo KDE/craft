@@ -1,0 +1,33 @@
+From 21e0125fe16e5958c10a7c8141114e17d0ffec4b Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Wed, 21 Mar 2012 00:04:57 +0100
+Subject: [PATCH] make it possible to find openjpeg on windows
+
+---
+ cmake/modules/FindOpenJPEG.cmake |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/cmake/modules/FindOpenJPEG.cmake b/cmake/modules/FindOpenJPEG.cmake
+index 949384e..d88a1bc 100644
+--- a/cmake/modules/FindOpenJPEG.cmake
++++ b/cmake/modules/FindOpenJPEG.cmake
+@@ -10,10 +10,12 @@
+ #  OPENJPEG_LIBRARY, where to find the OpenJPEG library.
+ 
+ FIND_PATH(OPENJPEG_INCLUDE_DIR openjpeg.h
+-/usr/local/include/openjpeg
+-/usr/local/include
+-/usr/include/openjpeg
+-/usr/include
++PATHS
++    /usr/local/include/openjpeg
++    /usr/local/include
++    /usr/include/openjpeg
++    /usr/include
++PATH_SUFFIXES openjpeg
+ )
+ 
+ SET(OPENJPEG_NAMES ${OPENJPEG_NAMES} openjpeg)
+-- 
+1.7.4.msysgit.0
+
