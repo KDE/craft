@@ -67,7 +67,7 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "a cross-platform application framework"
         # If you change the default target here please do not forget to rename the portage file
-        self.defaultTarget = '4.7.4'
+        self.defaultTarget = '4.8.0'
 
         ## \todo this is prelimary  and may be changed
         self.options.package.packageName = 'qt'
