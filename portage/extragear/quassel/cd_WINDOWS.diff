@@ -1,0 +1,13 @@
+diff --git a/cmake/modules/QuasselMacros.cmake b/cmake/modules/QuasselMacros.cmake
+index 2e2dfef..d0655eb 100644
+--- a/cmake/modules/QuasselMacros.cmake
++++ b/cmake/modules/QuasselMacros.cmake
+@@ -22,7 +22,7 @@ macro(generate_ts outvar basename)
+   set(input ${basename}.po)
+   set(output ${CMAKE_BINARY_DIR}/po/${basename}.ts)
+   add_custom_command(OUTPUT ${output}
+-          COMMAND ${QT_LCONVERT_EXECUTABLE}
++          COMMAND cd /D ${CMAKE_SOURCE_DIR}/po && ${QT_LCONVERT_EXECUTABLE}
+           ARGS -i ${input}
+                -of ts
+                -o ${output}
