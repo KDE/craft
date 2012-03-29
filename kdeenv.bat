@@ -73,6 +73,10 @@ rem
 rem check for unversioned kdesettings.bat,
 rem in that case drive substition already took place
 if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
+	rem Make sure download/svn/git directories exist
+    if not exist !DOWNLOADDIR!\NUL mkdir !DOWNLOADDIR!
+    if not exist !KDESVNDIR!\NUL mkdir !KDESVNDIR!
+    if not exist !KDEGITDIR!\NUL mkdir !KDEGITDIR!
     if !EMERGE_USE_SHORT_PATH! == 1 (
         set ROOT_SET=FALSE
         set SVN_SET=FALSE
@@ -106,17 +110,14 @@ if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
             subst !EMERGE_ROOT_DRIVE! !KDEROOT!
         )
         if NOT "!DOWNLOAD_SET!"=="TRUE" (
-            if not exist !DOWNLOADDIR!\NUL mkdir !DOWNLOADDIR!
             if exist !EMERGE_DOWNLOAD_DRIVE!\NUL subst !EMERGE_DOWNLOAD_DRIVE! /D
             subst !EMERGE_DOWNLOAD_DRIVE! !DOWNLOADDIR!
         )
         if NOT "!SVN_SET!"=="TRUE" (
-            if not exist !KDESVNDIR!\NUL mkdir !KDESVNDIR!
             if exist !EMERGE_SVN_DRIVE!\NUL subst !EMERGE_SVN_DRIVE! /D
             subst !EMERGE_SVN_DRIVE! !KDESVNDIR!
         )
         if NOT "!GIT_SET!" == "TRUE" (
-            if not exist !KDEGITDIR!\NUL mkdir !KDEGITDIR!
             if exist !EMERGE_GIT_DRIVE!\NUL subst !EMERGE_GIT_DRIVE! /D
             subst !EMERGE_GIT_DRIVE! !KDEGITDIR!
          )
