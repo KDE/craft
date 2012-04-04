@@ -56,7 +56,7 @@ rem By setting this here, you don't have to change the global environment
 rem settings of Windows. In case python is distributed with emerge the 
 rem following setting is not used. 
 if "%PYTHONPATH%" == "" ( 
-    set PYTHONPATH="%PROGRAM_FILES%\python27"
+    set PYTHONPATH="%PROGRAM_FILES%\python32"
 )
 rem Here you set the path to msys if you want to compile
 rem automake-based projects (only needed for some internal packages).
