@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.shortDescription = "KDE Activity Manager"
 
 from Package.CMakePackageBase import *
