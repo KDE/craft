@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kactivities'] = 'default'
         self.dependencies['win32libs-bin/freetype'] = 'default'
         self.dependencies['win32libs-bin/boost'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
