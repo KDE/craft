@@ -7,7 +7,6 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'virtual/kde-runtime' ] = 'default'
-        self.dependencies[ 'virtual/kdeutils' ] = 'default'
         self.dependencies[ 'extragear/kate' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
         self.buildDependencies[ 'dev-util/zip' ] = 'default'
