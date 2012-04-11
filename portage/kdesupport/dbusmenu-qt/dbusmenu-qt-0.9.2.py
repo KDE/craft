@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver
         self.shortDescription = "a Qt implementation of the DBusMenu spec"
 
+        self.patchToApply['0.9.2'] = [('dbusmenu-qt-0.9.2.diff', 1)]
         self.defaultTarget = '0.9.2'
 
 from Package.CMakePackageBase import *
