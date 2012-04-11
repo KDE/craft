@@ -1,0 +1,15 @@
+Files libdbusmenu-qt-0.9.2.orig/.CMakeLists.txt.swp and libdbusmenu-qt-0.9.2/.CMakeLists.txt.swp differ
+Files libdbusmenu-qt-0.9.2.orig/src/.CMakeLists.txt.swp and libdbusmenu-qt-0.9.2/src/.CMakeLists.txt.swp differ
+diff -Nru -x '*~' libdbusmenu-qt-0.9.2.orig/src/CMakeLists.txt libdbusmenu-qt-0.9.2/src/CMakeLists.txt
+--- libdbusmenu-qt-0.9.2.orig/src/CMakeLists.txt	2012-03-29 17:47:52.000000000 +0200
++++ libdbusmenu-qt-0.9.2/src/CMakeLists.txt	2012-04-11 18:55:41.449200000 +0200
+@@ -73,7 +73,8 @@
+     )
+ 
+ install(TARGETS dbusmenu-qt
+-    LIBRARY DESTINATION lib${LIB_SUFFIX})
++    LIBRARY DESTINATION lib${LIB_SUFFIX}
++    RUNTIME DESTINATION bin)
+ 
+ install(DIRECTORY .
+     DESTINATION include/dbusmenu-qt
