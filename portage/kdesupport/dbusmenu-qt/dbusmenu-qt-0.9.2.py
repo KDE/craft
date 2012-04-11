@@ -8,14 +8,18 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qjson'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/dbusmenu/dbusmenu-qt.git'
+        # Dbusmenu-qt moved to bazaar in launchpad
+        # check https://launchpad.net/libdbusmenu-qt for the trunk sources
 
+        for ver in ['0.9.2']:
+          self.targets[ver] = "https://launchpad.net/libdbusmenu-qt/trunk/" + ver +"/+download/libdbusmenu-qt-" +ver + ".tar.bz2"
+          self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver
         for ver in ['0.6.4']:
           self.targets[ver] ='http://launchpad.net/libdbusmenu-qt/trunk/' + ver + '/+download/libdbusmenu-qt-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver
         self.shortDescription = "a Qt implementation of the DBusMenu spec"
 
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '0.9.2'
 
 from Package.CMakePackageBase import *
 
