@@ -10,7 +10,8 @@ import compiler
 from BuildSystem.BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
-    def __init__( self):
+    def __init__( self , QT_VER = 4 ):
+        self.QT_VER = QT_VER
         BuildSystemBase.__init__(self, "qmake")
         self.platform = ""
         if compiler.isMSVC():
@@ -25,12 +26,25 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def setPathes( self ):
             # for building qt with qmake
-        utils.putenv( "PATH", os.path.join( self.buildDir(), "bin" ) + ";" + os.getenv("PATH") )
-
-        # so that the mkspecs can be found, when -prefix is set
-        utils.putenv( "QMAKEPATH", self.sourceDir() )
-        # to be sure
-        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
+        utils.prependPath( os.path.join( self.buildDir(), "bin" )  )
+        
+        #qt5
+        if self.QT_VER == 5:
+          utils.prependPath(os.path.join(self.buildDir(),"qtbase","bin"))
+          utils.prependPath(os.path.join(self.sourceDir(),"qtbasebin"))
+          utils.prependPath(os.path.join(self.sourceDir(),"qtrepotools","bin"))
+          utils.prependPath(os.path.join(self.sourceDir(),"gnuwin32","bin"))
+          # so that the mkspecs can be found, when -prefix is set
+          utils.putenv( "QMAKEPATH", self.sourceDir() )
+          # to be sure
+          utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(),"qtbase", 'mkspecs', self.platform ))
+        else:
+          # so that the mkspecs can be found, when -prefix is set
+          utils.putenv( "QMAKEPATH", self.sourceDir() )
+          # to be sure
+          utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
+          
+        utils.system("set")
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
@@ -44,7 +58,6 @@ class QMakeBuildSystem(BuildSystemBase):
         # 2. if qmake is available search for a pro-file named as the package
         # 3. if a pro-file is available through configureOptions, run it with qmake
         # 4. otherwise run qmake without any pro file given
-        configTool = os.path.join(self.configureSourceDir(), "configure.exe")
         qmakeTool = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         topLevelProFilesFound = 0
         topLevelProFile = ""
@@ -55,8 +68,6 @@ class QMakeBuildSystem(BuildSystemBase):
                 topLevelProFilesFound += 1
         if self.subinfo.options.configure.tool != None and self.subinfo.options.configure.tool != False:
             command = "%s %s" % (self.subinfo.options.configure.tool, self.configureOptions(configureDefines))
-        elif os.path.exists(configTool):
-            command = "%s %s" % (configTool, self.configureOptions(configureDefines))
         elif os.path.exists(qmakeTool):
             if utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW():
                 configureDefines += ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
