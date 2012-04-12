@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-import compiler
 import info
-import portage
-import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
@@ -16,15 +13,12 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtjsbackend'] ='default'
 
 
-from Package.Qt5CoreBuildSystem import *
+from Package.Qt5CorePackageBase import *
 
-class Package( Qt5CoreBuildSystem ):
+class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        Qt5CoreBuildSystem.__init__( self )
-
-        
-
+        Qt5CorePackageBase.__init__( self )
         
 if __name__ == '__main__':
     Package().execute()
