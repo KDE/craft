@@ -24,10 +24,13 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
            return False
        if not  os.path.exists(os.path.join( self.installDir(), "bin" )):
           os.mkdir( os.path.join( self.installDir(), "bin" ) )
-       for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
-           if file.endswith( ".dll" ):
-               utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
-       shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
+
+       if os.path.exists( os.path.join( self.installDir(), "lib" )): 
+           for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
+               if file.endswith( ".dll" ):
+                   utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
+       if os.path.exists(os.path.join( self.installDir() , "bin" , "mkspecs") ):
+            shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
        return True
 
 
