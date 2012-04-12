@@ -18,8 +18,8 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
 
 
     def install( self, options=None ):
-        """implements the make step for Qt projects"""
-       if not QMakePackageBase.install( self ):
+       """implements the make step for Qt projects"""
+       if not QMakeBuildSystem.install( self ):
            return False
        if not  os.path.exists(os.path.join( self.installDir(), "bin" )):
           os.mkdir( os.path.join( self.installDir(), "bin" ) )
