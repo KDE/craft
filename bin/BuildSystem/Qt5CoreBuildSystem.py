@@ -6,6 +6,7 @@
 import os
 import utils
 import compiler
+import shutil
 
 from BuildSystem.QMakeBuildSystem import *
 
