@@ -15,35 +15,12 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
 
 
-from Package.QMakePackageBase import *
+from Package.Qt5CoreBuildSystem import *
 
-class Package( QMakePackageBase ):
+class Package( Qt5CoreBuildSystem ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        QMakePackageBase.__init__( self )
-        os.putenv("INSTALL_ROOT",os.path.join(self.imageDir(),"bin"))
-
-    def configure(self):
-        #cache = open(os.path.join( portage.getPackageInstance('libs','qtbase').buildDir() , ".qmake.cache" ), "rt+" )
-        #text = cache.read()
-        #cache.close()
-        #text.replace("QMAKE_EXTRA_MODULE_FORWARDS .*","QMAKE_EXTRA_MODULE_FORWARDS = \"%s\"" % os.path.join( self.sourceDir() , "module-paths" ,"modules" ).replace("\\","/"))
-        #cache = open(os.path.join(self.buildDir() , ".qmake.cache" ), "wt+" ) 
-        #cache.write(text)
-        #cache.close()
-        return QMakePackageBase.configure( self )
-        
-    def install( self ):
-       if not QMakePackageBase.install( self ):
-           return False
-       #sic.: the .lib file is placed under bin dir in hupnp)
-       os.mkdir( os.path.join( self.installDir(), "bin" ) )
-       # copy over dlls as required by KDE convention
-       for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
-           if file.endswith( ".dll" ):
-               utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
-       shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
-       return True
+        Qt5CoreBuildSystem.__init__( self )        
        
 
         

@@ -15,24 +15,13 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
 
 
-from Package.QMakePackageBase import *
+from Package.Qt5CoreBuildSystem import *
 
-class Package( QMakePackageBase ):
+class Package( Qt5CoreBuildSystem ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        QMakePackageBase.__init__( self )
-        os.putenv("INSTALL_ROOT",os.path.join(self.imageDir(),"bin"))
+        Qt5CoreBuildSystem.__init__( self )
 
-        
-    def install( self ):
-       if not QMakePackageBase.install( self ):
-           return False
-       # copy over dlls as required by KDE convention
-       for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
-           if file.endswith( ".dll" ):
-               utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
-       shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
-       return True
        
 
         
