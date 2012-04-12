@@ -46,7 +46,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         self.subinfo = subinfo()
         PackageBase.__init__(self)
         self.subinfo.options.fetch.checkoutSubmodules = True
-        self.subinfo.options.make.supportsMultijob = False
         if not self.subinfo.options.useShortPathes \
                 and compiler.isMinGW()  and len(self.rootdir) > 10:
             # mingw4 cannot compile qt if the command line arguments
@@ -75,11 +74,11 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
 
         configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, self.installDir(), self.platform )
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.path.join(self.buildDir(),"qtbase"), self.platform )
         command += "-plugin-sql-odbc -plugin-sql-mysql "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
-        command += "-system-libpng "
-        command += "-system-libjpeg "
+        command += "-qt-libpng "
+        command += "-qt-libjpeg "
         command += "-l libmysql "
 
 
@@ -142,8 +141,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
 
     def setPathes( self ):
-         # for building qt with qmake
-        utils.prependPath( os.path.join( self.buildDir(), "bin" )  )        
+         # for building qt with qmake       
         utils.prependPath(os.path.join(self.buildDir(),"qtbase","bin"))
         utils.prependPath(os.path.join(self.sourceDir(),"qtbasebin"))
         utils.prependPath(os.path.join(self.sourceDir(),"qtrepotools","bin"))
