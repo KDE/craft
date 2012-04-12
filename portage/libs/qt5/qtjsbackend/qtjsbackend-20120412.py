@@ -7,7 +7,7 @@ import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtscript.git" 
+        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtjsbackend.git" 
 
         self.defaultTarget = "gitHEAD"
 
