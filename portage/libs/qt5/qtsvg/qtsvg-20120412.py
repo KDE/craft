@@ -19,9 +19,9 @@ class Package( QMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
+        os.putenv("INSTALL_ROOT",os.path.join(self.imageDir(),"bin"))
 
     def configure(self):
-        self.setPathes()
         #cache = open(os.path.join( portage.getPackageInstance('libs','qtbase').buildDir() , ".qmake.cache" ), "rt+" )
         #text = cache.read()
         #cache.close()
