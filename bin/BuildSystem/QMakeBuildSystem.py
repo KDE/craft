@@ -22,6 +22,7 @@ class QMakeBuildSystem(BuildSystemBase):
             self.platform = "win32-g++"
         else:
             utils.die( "QMakeBuildSystem: unsupported compiler platform %s" % self.compiler() )
+        utils.putenv( "QMAKESPEC", os.path.join(os.getenv("KDEROOT"), 'mkspecs', self.platform ))
 
 
     def configure( self, configureDefines="" ):
@@ -88,6 +89,7 @@ class QMakeBuildSystem(BuildSystemBase):
             command = "%s install" % ( self.makeProgramm )
 
         return self.system( command )
+
 
     def runTest( self ):
         """running qmake based unittests"""

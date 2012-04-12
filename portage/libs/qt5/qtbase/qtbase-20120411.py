@@ -72,7 +72,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
 
         configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, self.buildDir(), self.platform )
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, self.imageDir(), self.platform )
         command += "-plugin-sql-odbc -plugin-sql-mysql "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
@@ -142,7 +142,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         utils.prependPath(os.path.join(self.sourceDir(),"gnuwin32","bin"))
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
-        # to be sure
         utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
 
 
