@@ -89,14 +89,10 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-openssl-linked "
         command += "-qt-zlib "#with system-zlib it tries to ling with zdll.lib with msvc ...
         command += "-no-fast -no-vcproj -no-dsp "
-        command += "-nomake demos -nomake examples -nomake tests  "
+        command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "%s %s" % ( incdirs, libdirs )
-        
-        # WebKit won't link properly with LTCG in a 32-bit MSVC environment
-        if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008():
-            command += "-no-ltcg "
-        else:
-            command += "-ltcg "
+       
+        command += "-ltcg "
 
         if self.buildType() == "Debug":
           command += " -debug "
