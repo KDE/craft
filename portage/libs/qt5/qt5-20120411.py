@@ -55,7 +55,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
                 ' Using short path names.' % self.rootdir)
             self.subinfo.options.useShortPathes = True
         GitSource.__init__(self)
-        QMakeBuildSystem.__init__(self,5)
+        QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
 
 
@@ -88,7 +88,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         #command += "-no-phonon "
         command += "-qdbus -dbus-linked "
         command += "-openssl-linked "
-        command += "-system-zlib "
+        command += "-qt-zlib "#with system-zlib it tries to ling with zdll.lib with msvc ...
         command += "-no-fast -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples -nomake tests  "
         command += "%s %s" % ( incdirs, libdirs )
@@ -104,10 +104,8 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
           command += " -release "
         print("command: ", command)
-        utils.system( command )        
-        
-        
-        return QMakeBuildSystem.configure(self)
+        utils.system( command )
+        return True
         
 
     def make(self, unused=''):
@@ -141,6 +139,20 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
 
         return True
+
+
+    def setPathes( self ):
+         # for building qt with qmake
+        utils.prependPath( os.path.join( self.buildDir(), "bin" )  )        
+        utils.prependPath(os.path.join(self.buildDir(),"qtbase","bin"))
+        utils.prependPath(os.path.join(self.sourceDir(),"qtbasebin"))
+        utils.prependPath(os.path.join(self.sourceDir(),"qtrepotools","bin"))
+        utils.prependPath(os.path.join(self.sourceDir(),"gnuwin32","bin"))
+        # so that the mkspecs can be found, when -prefix is set
+        utils.putenv( "QMAKEPATH", self.sourceDir() )
+        # to be sure
+        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(),"qtbase", 'mkspecs', self.platform ))
+          
 
 if __name__ == '__main__':
     Package().execute()

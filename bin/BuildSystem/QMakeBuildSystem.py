@@ -10,8 +10,7 @@ import compiler
 from BuildSystem.BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
-    def __init__( self , QT_VER = 4 ):
-        self.QT_VER = QT_VER
+    def __init__( self ):
         BuildSystemBase.__init__(self, "qmake")
         self.platform = ""
         if compiler.isMSVC():
@@ -24,27 +23,6 @@ class QMakeBuildSystem(BuildSystemBase):
         else:
             utils.die( "QMakeBuildSystem: unsupported compiler platform %s" % self.compiler() )
 
-    def setPathes( self ):
-            # for building qt with qmake
-        utils.prependPath( os.path.join( self.buildDir(), "bin" )  )
-        
-        #qt5
-        if self.QT_VER == 5:
-          utils.prependPath(os.path.join(self.buildDir(),"qtbase","bin"))
-          utils.prependPath(os.path.join(self.sourceDir(),"qtbasebin"))
-          utils.prependPath(os.path.join(self.sourceDir(),"qtrepotools","bin"))
-          utils.prependPath(os.path.join(self.sourceDir(),"gnuwin32","bin"))
-          # so that the mkspecs can be found, when -prefix is set
-          utils.putenv( "QMAKEPATH", self.sourceDir() )
-          # to be sure
-          utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(),"qtbase", 'mkspecs', self.platform ))
-        else:
-          # so that the mkspecs can be found, when -prefix is set
-          utils.putenv( "QMAKEPATH", self.sourceDir() )
-          # to be sure
-          utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
-          
-        utils.system("set")
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""

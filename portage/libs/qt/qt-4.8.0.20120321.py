@@ -287,5 +287,13 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         return True
 
+    def setPathes( self ):
+            # for building qt with qmake
+        utils.prependPath( os.path.join( self.buildDir(), "bin" )  )
+        # so that the mkspecs can be found, when -prefix is set
+        utils.putenv( "QMAKEPATH", self.sourceDir() )
+        # to be sure
+        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
+ 
 if __name__ == '__main__':
     Package().execute()
