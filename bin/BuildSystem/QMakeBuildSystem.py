@@ -92,3 +92,7 @@ class QMakeBuildSystem(BuildSystemBase):
     def runTest( self ):
         """running qmake based unittests"""
         return True
+        
+
+          
+
