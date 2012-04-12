@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
-        self.dependencies['libs/qtscript'] 'default'
+        self.dependencies['libs/qtscript'] ='default'
 
 
 from Package.QMakePackageBase import *
