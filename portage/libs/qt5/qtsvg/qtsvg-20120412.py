@@ -2,6 +2,8 @@
 import compiler
 import info
 import portage
+import shutil
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
@@ -31,17 +33,18 @@ class Package( QMakePackageBase ):
         #cache.close()
         return QMakePackageBase.configure( self )
         
-    #def install( self ):
-    #    if not QMakePackageBase.install( self ):
-    #        return False
-    #    #sic.: the .lib file is placed under bin dir in hupnp)
-    #    os.mkdir( os.path.join( self.installDir(), "bin" ) )
-    #    # copy over dlls as required by KDE convention
-    #    for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
-    #        if file.endswith( ".dll" ):
-    #            utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
-    #    return True
-    #    
+    def install( self ):
+       if not QMakePackageBase.install( self ):
+           return False
+       #sic.: the .lib file is placed under bin dir in hupnp)
+       os.mkdir( os.path.join( self.installDir(), "bin" ) )
+       # copy over dlls as required by KDE convention
+       for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
+           if file.endswith( ".dll" ):
+               utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
+       shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
+       return True
+       
 
         
 if __name__ == '__main__':
