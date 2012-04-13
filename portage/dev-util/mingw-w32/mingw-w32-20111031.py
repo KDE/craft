@@ -9,10 +9,11 @@ class subinfo(info.infoclass):
         ver = "20111031"
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
 
-        for ver in [ "4.6.4" ]:
-            self.targets["4.6.4"] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-4.6.4_rubenvb.7z"
+        for ver in [ "4.6.4","4.7.0-3" ]:
+            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-%s_rubenvb.7z" % ver
         self.targetDigests['4.6.4'] = 'f1117b60d089cfa0e18e5ec675eac6afc4e46136'
-        self.defaultTarget = "4.6.4"
+        self.targetDigests['4.7.0-3'] = '8e05ff09b475aec80e845672e5116bd4a8d002ca'
+        self.defaultTarget = "4.7.0-3"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
