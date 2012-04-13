@@ -113,10 +113,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         if not QMakeBuildSystem.install(self):
             return False
 
-        # Workaround QTBUG-12034
-        utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins", "imageformats" ) ,
-                                    os.path.join( self.installDir(), "bin", "imageformats" ) )
-
         # create qt.conf
         utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
 
@@ -132,6 +128,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
 
         return True
+        
          
          
     def setPathes( self ):
