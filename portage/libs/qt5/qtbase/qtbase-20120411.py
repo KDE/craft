@@ -20,8 +20,6 @@ from Package.QMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git"
-
-        self.patchToApply['gitHEAD'] = [ ('detect-windows-8-as-windows-7.patch', 1)  ]
         self.shortDescription = "a cross-platform application framework"
         # If you change the default target here please do not forget to rename the portage file
         self.defaultTarget = 'gitHEAD'
