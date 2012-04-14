@@ -8,7 +8,6 @@ import portage
 import emergePlatform
 import compiler
 
-from Package.QMakePackageBase import *
 
 # ok we need something more here
 # dbus-lib
@@ -38,10 +37,12 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/jpeg'] = 'default'
         self.dependencies['win32libs-bin/libpng'] = 'default'
 
-class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
+from Package.Qt5CorePackageBase import *
+
+class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
+        Qt5CorePackageBase.__init__( self )
         if not self.subinfo.options.useShortPathes \
                 and compiler.isMinGW()  and len(self.rootdir) > 10:
             # mingw4 cannot compile qt if the command line arguments
@@ -49,20 +50,12 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             utils.warning('for mingw4, rootdir %s is too long for full path names.'
                 ' Using short path names.' % self.rootdir)
             self.subinfo.options.useShortPathes = True
-        GitSource.__init__(self)
-        QMakeBuildSystem.__init__(self)
-        KDEWinPackager.__init__(self)
 
 
     def configure( self, unused1=None, unused2=""):
-        #self.enterSourceDir()
-        #utils.system( "perl init-repository -f" )
-        
+        self.qt5LibnameWorkaround()
         self.enterBuildDir()
         self.setPathes()
-
-
-        
 
         kderoot = os.getenv("KDEROOT")
         incdirs = " -I \"" + os.path.join( kderoot , "include" ) + "\""
