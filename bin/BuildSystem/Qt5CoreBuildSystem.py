@@ -19,10 +19,6 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
 
         
     def configure( self, configureDefines="" ):
-        self.qt5LibnameWorkaround()
-        return QMakeBuildSystem.configure(self,configureDefines)
-          
-    def qt5LibnameWorkaround(self):
         moduleDir =  os.path.join(self.sourceDir(),"modules")
         if not os.path.exists(moduleDir):
           moduleDir =  os.path.join(self.sourceDir(),"src","modules")
@@ -46,6 +42,8 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
                       f_out = open(os.path.join(moduleDir,module),"wt+")
                       f_out.writelines(out_lines)
                       f_out.close()
+        return QMakeBuildSystem.configure(self,configureDefines)
+              
 
 
     def install( self, options=None ):
