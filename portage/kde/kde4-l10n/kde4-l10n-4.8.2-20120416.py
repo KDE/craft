@@ -5,7 +5,8 @@ class subinfo(info.infoclass):
         self.svnTargets['4.8.2'] = ''
         self.defaultTarget = '4.8.2'
 
-    def setDependencies( self ):        self.dependencies['kde/kde4-l10n-ar'] = 'default'
+    def setDependencies( self ):
+        self.dependencies['kde/kde4-l10n-ar'] = 'default'
         self.dependencies['kde/kde4-l10n-bg'] = 'default'
         self.dependencies['kde/kde4-l10n-bs'] = 'default'
         self.dependencies['kde/kde4-l10n-ca'] = 'default'
