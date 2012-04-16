@@ -83,7 +83,12 @@ class EpcPackageCreator(object):
     def generateBaseModule(self):
         text = "import info\n\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):\n" % (self.default_target ,self.default_target )
         for package in self.packages:
-            text += "        self.dependencies['%s-%s'] = 'default'\n" % (self.portageDir,package["name"])
+            name = self.portageDir.split("/")[0]
+            if self.prefix != "":
+              name = "%s/%s-%s" % (name,self.prefix,package["name"])
+            else:
+              name = "%s/%s" % (name,package["name"])
+            text += "        self.dependencies['%s'] = 'default'\n" % name
         text += "\nfrom Package.VirtualPackageBase import *\n\nclass Package( VirtualPackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        VirtualPackageBase.__init__( self )"     
         text += self._getPpackageText()
         self.createPackage(text,self.prefix,os.path.join(self.kderoot,"emerge","portage",self.portageDir))
@@ -98,9 +103,10 @@ class EpcPackageCreator(object):
                     os.remove(os.path.join(dest,old))
         if self.suffix != "":
             name += "-%s" % self.suffix
-        name += "-%s-%s" % (self.default_target,strftime("%Y%m%d"))
-        out = open(os.path.join(dest,"%s.py" % name),"wt+")
+        name = os.path.join(dest,"%s-%s-%s.py" % (name,self.default_target,strftime("%Y%m%d")))
+        out = open(name,"wt+")
         out.write(text)
+        print(name)
         print(text)
 
 
