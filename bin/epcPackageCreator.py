@@ -48,18 +48,37 @@ class EpcPackageCreator(object):
             return type(target)(srcDict[key])
         return target
       
+      
+    def _getDependencies(self,package):
+        text = "\n\n    def setDependencies( self ):\n"
+        for dep in self.build_dependencies:
+            text += "        self.buildDependencies['%s'] = 'default'\n" % dep
+        for dep in self.dependencies:
+            text += "        self.dependencies['%s'] = 'default'\n" % dep
+        for dep in self._get("buildtime-dependencies",list(),package):
+            text += "        self.buildDependencies['%s'] = 'default'\n" % dep
+        for dep in self._get("dependencies",list(),package):
+            text += "        self.dependencies['%s'] = 'default'\n" % dep
+        return text
+        
+    def _getPatches(self,package):
+        text = ""
+        patches = self._get("patches",dict(),package)
+        for key in patches.keys():
+            patch = patches[key].pop(0)
+            text += "\n        self.patchToApply['%s'] = [('%s',%s)" %  (key , patch["patch"],patch["patch-lvl"] )
+            for patch in patches[key]:
+                text += "\n                                     ,('%s',%s)" %  patch["patch"],patch["patch-lvl"]
+            text += "]"
+        return text
+        
     def generateSubModule(self):
         for package in self.packages:
             text = self.subinfoTemlate
-            text += "\n\n    def setDependencies( self ):\n"
-            for dep in self.build_dependencies:
-                text += "        self.buildDependencies['%s'] = 'default'\n" % dep
-            for dep in self.dependencies:
-                text += "        self.dependencies['%s'] = 'default'\n" % dep
-            for dep in self._get("buildtime-dependencies",list(),package):
-                text += "        self.buildDependencies['%s'] = 'default'\n" % dep
-            for dep in self._get("dependencies",list(),package):
-                text += "        self.dependencies['%s'] = 'default'\n" % dep
+            text += self._getPatches(package)
+            text += self._getDependencies(package)
+
+                
             
             text += "\n\n"
             text += self.packageTemplate
@@ -108,6 +127,7 @@ class EpcPackageCreator(object):
         name = os.path.join(dest,"%s-%s-%s.py" % (name,self.default_target,strftime("%Y%m%d")))
         out = open(name,"wt+")
         out.write(text)
+        out.close()
         print(name)
         print(text)
 
