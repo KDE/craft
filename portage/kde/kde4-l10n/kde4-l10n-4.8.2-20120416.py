@@ -1,7 +1,7 @@
 import info
 
 class subinfo(info.infoclass):
-   def setTargets( self ):
+    def setTargets( self ):
         self.svnTargets['4.8.2'] = ''
         self.defaultTarget = '4.8.2'
 

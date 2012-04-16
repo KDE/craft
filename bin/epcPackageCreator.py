@@ -54,7 +54,7 @@ class EpcPackageCreator(object):
                 
 
         def generateBaseModule(self):            
-            text = "import info\n\nclass subinfo(info.infoclass):\n   def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):\n" % (self.default_target ,self.default_target )
+            text = "import info\n\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):\n" % (self.default_target ,self.default_target )
             for package in self.packages:
                 text += "        self.dependencies['%s-%s'] = 'default'\n" % (self.portageDir,package)                
             text +=self._getPpackageText("VirtualPackageBase")                
