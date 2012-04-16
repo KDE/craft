@@ -10,7 +10,8 @@ class EpcPackageCreator(object):
         self.kderoot = os.getenv("KDEROOT")
         self.epcDict = dict()
         self.variables = dict()
-        self.template = ""
+        self.subinfoTemlate = ""
+        self.packageTemplate = "from Package.CMakePackageBase import *\n\nclass Package( CMakePackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        CMakePackageBase.__init__( self )"
         self.versions = ""
         self.default_target = ""
         self.build_dependencies = list()
@@ -29,7 +30,8 @@ class EpcPackageCreator(object):
         tmp = json.load(json_file)
         self.epcDict = tmp["epc"]
         self.variables = tmp["vars"]
-        self.template = self._get("template",self.template)
+        self.subinfoTemlate = self._get("subinfo-template",self.subinfoTemlate)
+        self.packageTemplate = self._get("package-template",self.packageTemplate)
         self.versions = self._get("versions",self.versions)
         self.default_target = self._get("default-target",self.default_target)
         self.build_dependencies = self._get("buildtime-dependencies",self.build_dependencies)        
@@ -48,21 +50,21 @@ class EpcPackageCreator(object):
       
     def generateSubModule(self):
         for package in self.packages:
-            text = self.template
-            dependencies = ""
+            text = self.subinfoTemlate
+            text += "\n\n    def setDependencies( self ):\n"
             for dep in self.build_dependencies:
-                dependencies += "        self.buildDependencies['%s'] = 'default'\n" % dep
+                text += "        self.buildDependencies['%s'] = 'default'\n" % dep
             for dep in self.dependencies:
-                dependencies += "        self.dependencies['%s'] = 'default'\n" % dep
+                text += "        self.dependencies['%s'] = 'default'\n" % dep
             for dep in self._get("buildtime-dependencies",list(),package):
-                dependencies += "        self.buildDependencies['%s'] = 'default'\n" % dep
+                text += "        self.buildDependencies['%s'] = 'default'\n" % dep
             for dep in self._get("dependencies",list(),package):
-                dependencies += "        self.dependencies['%s'] = 'default'\n" % dep
+                text += "        self.dependencies['%s'] = 'default'\n" % dep
             
-                
+            text += "\n\n"
+            text += self.packageTemplate
             text +=  self._getPpackageText()
             
-            text = text = text.replace("${EPC_DEPENDENCIES}" , dependencies)
             for key in package.keys():
                 text = text.replace("${EPC_PACKAGE-%s}" % key.upper(), str(package[key]))
             for key in self.epcDict.keys():
