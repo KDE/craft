@@ -9,6 +9,9 @@
     "default-target": "4.8.2",
     "prefix": "",
     "portage-dir": "kde/kdegraphics",
+    "dependencies": [
+      "kde/kde-runtime"
+     ],
     "packages": [
       {
         "name": "gwenview",
@@ -19,6 +22,13 @@
           "win32libs-bin/jpeg"
         ],
         "description": "Image viewer for KDE"
+      },
+      {
+        "name": "kcolorchooser",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "A small utility to select a color"
       }
     ]
   },
