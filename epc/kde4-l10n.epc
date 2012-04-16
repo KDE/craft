@@ -5,14 +5,13 @@
       "4.8.1",
       "4.8.2"
     ],
-    "template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.bz2' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'",
+    "template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.bz2' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n\n    def setDependencies( self ):\n${EPC_DEPENDENCIES}\n\nfrom Package.CMakePackageBase import *\n\nclass Package( CMakePackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        CMakePackageBase.__init__( self )",
     "default-target": "4.8.2",
     "buildtime-dependencies": [
       "dev-util/cmake",
       "kde/kdelibs",
       "dev-util/gettext-tools"
     ],
-    "package-base" : "CMakePackageBase",
     "prefix": "kde4-l10n",
     "portage-dir": "kde/kde4-l10n",
     "packages": [
