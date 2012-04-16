@@ -2,15 +2,7 @@ import json
 import sys
 import utils
 import os
-import copy
 from time import strftime
-
-class CaseInsensitiveDict(dict):
-    def __setitem__(self, key, value):
-        super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
-
-    def __getitem__(self, key):
-        return super(CaseInsensitiveDict, self).__getitem__(key.lower())
         
 class EpcPackageCreator(object):     
         def __init__( self , epcFile ):
@@ -57,50 +49,15 @@ class EpcPackageCreator(object):
                 dependencies = "    def setDependencies( self ):\n"
                 for dep in self.build_dependencies:
                     dependencies += "        self.buildDependencies['%s'] = 'default'\n" % dep
-                baseClass = """from Package.%s import *
-class MainPackage( %s ):
-            def __init__( self  ):
-                self.subinfo = subinfo()
-                %s.__init__( self )
-                
-if __name__ == '__main__':
-    MainPackage().execute()""" % (self.packagebase,self.packagebase,self.packagebase)
     
-                self.createPackage("%s\n\n%s\n%s" % (text ,dependencies, baseClass),"%s-%s" % (self.prefix, package),os.path.join(self.kderoot,"emerge","portage",self.portageDir,"%s-%s" % (self.prefix,package)))
+                self.createPackage("%s\n\n%s\n%s" % (text ,dependencies, self._getPpackageText(self.packagebase)),"%s-%s" % (self.prefix, package),os.path.join(self.kderoot,"emerge","portage",self.portageDir,"%s-%s" % (self.prefix,package)))
                 
-          
-          
-          
-        def generateBaseModule(self):
-            text = """import info
 
-
-class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
-
-    def setDependencies( self ):
-"""
-        
-
-
+        def generateBaseModule(self):            
+            text = "import info\n\nclass subinfo(info.infoclass):\n   def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):" % (self.default_target ,self.default_target )
             for package in self.packages:
-                text += "        self.dependencies['%s-%s'] = 'default'\n" % (self.portageDir,package)
-                
-            text += """
-from Package.VirtualPackageBase import *
-
-class Package( VirtualPackageBase ):
-    def __init__( self ):
-        self.subinfo = subinfo()
-        VirtualPackageBase.__init__( self )
-
-
-if __name__ == '__main__':
-    Package().execute()
-"""
-                
+                text += "        self.dependencies['%s-%s'] = 'default'\n" % (self.portageDir,package)                
+            text +=self._getPpackageText("VirtualPackageBase")                
             self.createPackage(text,self.prefix,os.path.join(self.kderoot,"emerge","portage",self.portageDir))
 
                 
@@ -116,7 +73,8 @@ if __name__ == '__main__':
                 print(text)
         
           
-          
+        def _getPpackageText(self,packageBase):
+           return "\nfrom Package.%s import *\n\nclass Package( %s ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        %s.__init__( self )\n\n\nif __name__ == '__main__':\n    Package().execute()\n" % (packageBase,packageBase,packageBase)
 
 if __name__ == '__main__':
     if len( sys.argv ) < 2:

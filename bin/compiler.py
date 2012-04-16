@@ -112,4 +112,5 @@ if __name__ == '__main__':
     print("Testing Compiler.py")
     print("Version: %s" % getVersion())
     print("Compiler Name: %s" % getCompilerName())
+    print("Compiler Version: %s" % getMinGWVersion())
 
