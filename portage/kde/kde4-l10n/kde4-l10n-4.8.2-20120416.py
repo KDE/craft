@@ -1,13 +1,11 @@
 import info
 
-
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
+   def setTargets( self ):
+        self.svnTargets['4.8.2'] = ''
+        self.defaultTarget = '4.8.2'
 
-    def setDependencies( self ):
-        self.dependencies['kde/kde4-l10n-ar'] = 'default'
+    def setDependencies( self ):        self.dependencies['kde/kde4-l10n-ar'] = 'default'
         self.dependencies['kde/kde4-l10n-bg'] = 'default'
         self.dependencies['kde/kde4-l10n-bs'] = 'default'
         self.dependencies['kde/kde4-l10n-ca'] = 'default'
