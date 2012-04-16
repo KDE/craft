@@ -140,14 +140,6 @@
         "description": "KDE document viewer."
       },
       {
-        "name": "libkdcra",
-        "dependencies": [
-          "kde/kdelibs",
-          "win32libs-bin/exiv2"
-        ],
-        "description": "libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files."
-      },
-      {
         "name": "svgpart",
         "dependencies": [
           "kde/kdelibs"
