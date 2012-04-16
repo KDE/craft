@@ -82,16 +82,16 @@ class EpcPackageCreator(object):
 
     def generateBaseModule(self):
         text = "import info\n\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):\n" % (self.default_target ,self.default_target )
+        pName,module = self.portageDir.split("/")
         for package in self.packages:
-            name = self.portageDir.split("/")[0]
             if self.prefix != "":
-              name = "%s/%s-%s" % (name,self.prefix,package["name"])
+              name = "%s/%s-%s" % (pName,self.prefix,package["name"])
             else:
-              name = "%s/%s" % (name,package["name"])
+              name = "%s/%s" % (pName,package["name"])
             text += "        self.dependencies['%s'] = 'default'\n" % name
         text += "\nfrom Package.VirtualPackageBase import *\n\nclass Package( VirtualPackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        VirtualPackageBase.__init__( self )"     
-        text += self._getPpackageText()
-        self.createPackage(text,self.prefix,os.path.join(self.kderoot,"emerge","portage",self.portageDir))
+        text += self._getPpackageText()            
+        self.createPackage(text,module,os.path.join(self.kderoot,"emerge","portage",self.portageDir))
 
 
     def createPackage(self,text,name,dest):

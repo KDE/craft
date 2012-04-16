@@ -5,7 +5,7 @@
       "4.8.1",
       "4.8.2"
     ],
-    "template": "import os\nimport sys\nimport info\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['gitHEAD'] = '[git]kde:${EPC_PACKAGE-NAME}|KDE/4.8|'\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = \"ftp://ftp.kde.org/pub/kde/stable/\" + ver + \"/src/${EPC_PACKAGE-NAME}-\" + ver + \".tar.bz2\"\n            self.targetInstSrc[ ver] = '${EPC_PACKAGE-NAME}-' + ver\n        self.shortDescription = '${EPC_PACKAGE-DESCRIPTION}'\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n\ndef setDependencies( self ):\n${EPC_DEPENDENCIES}\n\nfrom Package.CMakePackageBase import *\n\nclass Package( CMakePackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        CMakePackageBase.__init__( self )",
+    "template": "import os\nimport sys\nimport info\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['gitHEAD'] = '[git]kde:${EPC_PACKAGE-NAME}'\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = \"ftp://ftp.kde.org/pub/kde/stable/\" + ver + \"/src/${EPC_PACKAGE-NAME}-\" + ver + \".tar.bz2\"\n            self.targetInstSrc[ ver] = '${EPC_PACKAGE-NAME}-' + ver\n        self.shortDescription = '${EPC_PACKAGE-DESCRIPTION}'\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n\ndef setDependencies( self ):\n${EPC_DEPENDENCIES}\n\nfrom Package.CMakePackageBase import *\n\nclass Package( CMakePackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        CMakePackageBase.__init__( self )",
     "default-target": "4.8.2",
     "prefix": "",
     "portage-dir": "kde/kdegraphics",
@@ -24,11 +24,135 @@
         "description": "Image viewer for KDE"
       },
       {
+        "name": "kamera",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "KDE integration for gphoto2 cameras"
+      },
+      {
         "name": "kcolorchooser",
         "dependencies": [
           "kde/kdelibs"
         ],
         "description": "A small utility to select a color"
+      },
+      {
+        "name": "kdegraphics-strigi-analyzer",
+        "dependencies": [
+          "kde/kdelibs",
+          "kdesupport/strigi"
+        ],
+        "description": "Strigi analyzers for various graphics file formats"
+      },
+      {
+        "name": "kdegraphics-thumbnailers",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "Thumbnailers for various graphics file formats"
+      },
+      {
+        "name": "kolourpaint",
+        "dependencies": [
+          "kde/kdelibs",
+          "kdesupport/qimageblitz"
+        ],
+        "description": "KolourPaint is an easy-to-use paint program"
+      },
+      {
+        "name": "kruler",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "A pixel measuring tool for KDE"
+      },
+      {
+        "name": "ksaneplugin",
+        "dependencies": [
+          "kde/kdelibs",
+          "kde/libksane"
+        ],
+        "description": "This is a KScan plugin that implements the scanning through libksane"
+      },
+      {
+        "name": "ksnapshot",
+        "dependencies": [
+          "kde/kdelibs",
+          "kde/libkipi"
+        ],
+        "description": "A handy utility primarily designed for taking screenshots"
+      },
+      {
+        "name": "libkdcraw",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files."
+      },
+      {
+        "name": "libkexiv2",
+        "dependencies": [
+          "kde/kdelibs",
+          "win32libs-bin/exiv2"
+        ],
+        "description": "Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP."
+      },
+      {
+        "name": "libkipi",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "Libkipi is an interface to use kipi-plugins from a KDE image management program like digiKam."
+      },
+      {
+        "name": "libksane",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "libksane is an image scanning library that provides a QWidget that contains all the logic needed to interface a sacanner."
+      },
+      {
+        "name": "libkdcra",
+        "dependencies": [
+          "kde/kdelibs",
+          "kde/okular",
+          "kdesupport/strigi"
+        ],
+        "description": "A collection of plugins to handle mobipocket files"
+      },
+      {
+        "name": "okular",
+        "dependencies": [
+          "kde/kdelibs",
+          "kdesupport/qca",
+          "kdesupport/poppler",
+          "kdesupport/qimageblitz",
+          "win32libs-bin/tiff",
+          "win32libs-bin/djvu",
+          "win32libs-bin/zlib",
+          "win32libs-bin/freetype",
+          "win32libs-bin/libspectre"
+        ],
+        "buildtime-dependencies": [
+          "win32libs-bin/chm"
+        ],
+        "description": "KDE document viewer."
+      },
+      {
+        "name": "libkdcra",
+        "dependencies": [
+          "kde/kdelibs",
+          "win32libs-bin/exiv2"
+        ],
+        "description": "libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files."
+      },
+      {
+        "name": "svgpart",
+        "dependencies": [
+          "kde/kdelibs"
+        ],
+        "description": "A svg kpart"
       }
     ]
   },
