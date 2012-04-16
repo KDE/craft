@@ -39,9 +39,11 @@ class EpcPackageCreator(object):
         self.suffix = self._get("suffix",self.suffix )
         self.portageDir = self._get("portage-dir",self.portageDir)
 
-    def _get(self,key,target):
-        if key in self.epcDict:
-            return type(target)(self.epcDict[key])
+    def _get(self,key,target,srcDict = None):
+        if srcDict == None:
+            srcDict = self.epcDict
+        if key in srcDict:
+            return type(target)(srcDict[key])
         return target
       
     def generateSubModule(self):
@@ -52,26 +54,36 @@ class EpcPackageCreator(object):
                 dependencies += "        self.buildDependencies['%s'] = 'default'\n" % dep
             for dep in self.dependencies:
                 dependencies += "        self.dependencies['%s'] = 'default'\n" % dep
+            for dep in self._get("buildtime-dependencies",list(),package):
+                dependencies += "        self.buildDependencies['%s'] = 'default'\n" % dep
+            for dep in self._get("dependencies",list(),package):
+                dependencies += "        self.dependencies['%s'] = 'default'\n" % dep
+            
                 
             text +=  self._getPpackageText()
             
             text = text = text.replace("${EPC_DEPENDENCIES}" , dependencies)
+            for key in package.keys():
+                text = text.replace("${EPC_PACKAGE-%s}" % key.upper(), str(package[key]))
             for key in self.epcDict.keys():
                 text = text.replace("${EPC_%s}" % key.upper(), str(self.epcDict[key]))
-            text = text.replace("${EPC_PACKAGE-NAME}" , package)
             for key in self.variables.keys():
                 text = text.replace("${%s}" % variables.uppercase() , str(self.epcDict[variables]))
 
-            dest = os.path.join(self.kderoot,"emerge","portage",self.portageDir,"%s-%s" % (self.prefix,package))
+            outName = package["name"]
+            if self.prefix != "":
+              outName = "%s-%s" % (self.prefix,outName)
+  
+            dest = os.path.join(self.kderoot,"emerge","portage",self.portageDir,outName)
             if self.suffix != "":
-                dest += "-%s" % self.suffix
-            self.createPackage(text,"%s-%s" % (self.prefix, package),dest)
+                dest = "%s-%s" % (dest,self.suffix)
+            self.createPackage(text,outName,dest)
 
 
     def generateBaseModule(self):
         text = "import info\n\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):\n" % (self.default_target ,self.default_target )
         for package in self.packages:
-            text += "        self.dependencies['%s-%s'] = 'default'\n" % (self.portageDir,package)
+            text += "        self.dependencies['%s-%s'] = 'default'\n" % (self.portageDir,package["name"])
         text += "\nfrom Package.VirtualPackageBase import *\n\nclass Package( VirtualPackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        VirtualPackageBase.__init__( self )"     
         text += self._getPpackageText()
         self.createPackage(text,self.prefix,os.path.join(self.kderoot,"emerge","portage",self.portageDir))
