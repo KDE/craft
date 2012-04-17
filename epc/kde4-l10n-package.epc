@@ -1,178 +1,178 @@
 {
   "epc": {
+    "suffix": "package", 
     "versions": [
-      "4.8.0",
-      "4.8.1",
+      "4.8.0", 
+      "4.8.1", 
       "4.8.2"
-    ],
-    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ ver ] = ''\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'",
-    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.NullsoftInstallerPackager import *\nclass Package( NullsoftInstallerPackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        NullsoftInstallerPackager.__init__( self )\n        VirtualPackageBase.__init__( self )",
-    "default-target": "4.8.2",
-    "buildtime-dependencies": [],
+    ], 
+    "portage-dir": "package/kde4-l10n-package", 
+    "default-target": "4.8.2", 
+    "prefix": "kde4-l10n", 
     "dependencies": [
       "kde/kde4-l10n-${EPC_PACKAGE-NAME}"
-    ],
-    "prefix": "kde4-l10n",
-    "suffix": "package",
-    "portage-dir": "package/kde4-l10n-package",
+    ], 
+    "buildtime-dependencies": [], 
+    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.NullsoftInstallerPackager import *\nclass Package( NullsoftInstallerPackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        NullsoftInstallerPackager.__init__( self )\n        VirtualPackageBase.__init__( self )", 
+    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ ver ] = ''\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
     "packages": [
       {
         "name": "ar"
-      },
+      }, 
       {
         "name": "bg"
-      },
+      }, 
       {
         "name": "bs"
-      },
+      }, 
       {
         "name": "ca"
-      },
+      }, 
       {
         "name": "ca@valencia"
-      },
+      }, 
       {
         "name": "cs"
-      },
+      }, 
       {
         "name": "da"
-      },
+      }, 
       {
         "name": "de"
-      },
+      }, 
       {
         "name": "el"
-      },
+      }, 
       {
         "name": "en_GB"
-      },
+      }, 
       {
         "name": "es"
-      },
+      }, 
       {
         "name": "et"
-      },
+      }, 
       {
         "name": "eu"
-      },
+      }, 
       {
         "name": "fi"
-      },
+      }, 
       {
         "name": "fr"
-      },
+      }, 
       {
         "name": "ga"
-      },
+      }, 
       {
         "name": "gl"
-      },
+      }, 
       {
         "name": "he"
-      },
+      }, 
       {
         "name": "hr"
-      },
+      }, 
       {
         "name": "hu"
-      },
+      }, 
       {
         "name": "ia"
-      },
+      }, 
       {
         "name": "id"
-      },
+      }, 
       {
         "name": "is"
-      },
+      }, 
       {
         "name": "it"
-      },
+      }, 
       {
         "name": "ja"
-      },
+      }, 
       {
         "name": "kk"
-      },
+      }, 
       {
         "name": "km"
-      },
+      }, 
       {
         "name": "kn"
-      },
+      }, 
       {
         "name": "ko"
-      },
+      }, 
       {
         "name": "lt"
-      },
+      }, 
       {
         "name": "lv"
-      },
+      }, 
       {
         "name": "nb"
-      },
+      }, 
       {
         "name": "nds"
-      },
+      }, 
       {
         "name": "nl"
-      },
+      }, 
       {
         "name": "nn"
-      },
+      }, 
       {
         "name": "pa"
-      },
+      }, 
       {
         "name": "pl"
-      },
+      }, 
       {
         "name": "pt"
-      },
+      }, 
       {
         "name": "pt_BR"
-      },
+      }, 
       {
         "name": "ro"
-      },
+      }, 
       {
         "name": "ru"
-      },
+      }, 
       {
         "name": "sk"
-      },
+      }, 
       {
         "name": "sl"
-      },
+      }, 
       {
         "name": "sr"
-      },
+      }, 
       {
         "name": "sv"
-      },
+      }, 
       {
         "name": "th"
-      },
+      }, 
       {
         "name": "tr"
-      },
+      }, 
       {
         "name": "ug"
-      },
+      }, 
       {
         "name": "uk"
-      },
+      }, 
       {
         "name": "wa"
-      },
+      }, 
       {
         "name": "zh_CN"
-      },
+      }, 
       {
         "name": "zh_TW"
       }
     ]
-  },
+  }, 
   "vars": {}
 }
