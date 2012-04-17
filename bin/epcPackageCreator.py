@@ -62,26 +62,27 @@ class EpcPackageCreator(object):
         return text
         
     def _getPatches(self,package):
-        text = ""
+        text = "\n"
         patches = self._get("patches",dict(),package)
         for key in patches.keys():
             patch = patches[key].pop(0)
             text += "\n        self.patchToApply['%s'] = [('%s',%s)" %  (key , patch["patch"],patch["patch-lvl"] )
             for patch in patches[key]:
-                text += "\n                                     ,('%s',%s)" %  patch["patch"],patch["patch-lvl"]
+                print(patch)
+                text += "\n                                     ,('%s',%s)" %  ( patch["patch"],patch["patch-lvl"] )
             text += "]"
         return text
         
     def generateSubModule(self):
         for package in self.packages:
-            text = self.subinfoTemlate
+            text = self._get("subinfo-template",self.subinfoTemlate,package)
             text += self._getPatches(package)
             text += self._getDependencies(package)
 
                 
             
             text += "\n\n"
-            text += self.packageTemplate
+            text += self._get("package-template",self.packageTemplate,package)
             text +=  self._getPpackageText()
             
             for key in package.keys():
@@ -94,10 +95,11 @@ class EpcPackageCreator(object):
             outName = package["name"]
             if self.prefix != "":
               outName = "%s-%s" % (self.prefix,outName)
+            if self.suffix != "":
+                outName = "%s-%s" % (outName,self.suffix)
   
             dest = os.path.join(self.kderoot,"emerge","portage",self.portageDir,outName)
-            if self.suffix != "":
-                dest = "%s-%s" % (dest,self.suffix)
+
             self.createPackage(text,outName,dest)
 
 
@@ -109,6 +111,8 @@ class EpcPackageCreator(object):
               name = "%s/%s-%s" % (pName,self.prefix,package["name"])
             else:
               name = "%s/%s" % (pName,package["name"])
+            if self.suffix != "":
+                name = "%s-%s" % (name,self.suffix)
             text += "        self.dependencies['%s'] = 'default'\n" % name
         text += "\nfrom Package.VirtualPackageBase import *\n\nclass Package( VirtualPackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        VirtualPackageBase.__init__( self )"     
         text += self._getPpackageText()            
@@ -122,8 +126,6 @@ class EpcPackageCreator(object):
             for old in os.listdir(dest):
                 if old.endswith(".py"):
                     os.remove(os.path.join(dest,old))
-        if self.suffix != "":
-            name += "-%s" % self.suffix
         name = os.path.join(dest,"%s-%s-%s.py" % (name,self.default_target,strftime("%Y%m%d")))
         out = open(name,"wt+")
         out.write(text)
