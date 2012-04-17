@@ -20,6 +20,7 @@ class EpcPackageCreator(object):
         self.prefix = ""
         self.suffix = ""
         self.portageDir = ""
+        self.description = ""
         
 
 
@@ -40,6 +41,7 @@ class EpcPackageCreator(object):
         self.prefix = self._get("prefix",self.prefix)
         self.suffix = self._get("suffix",self.suffix )
         self.portageDir = self._get("portage-dir",self.portageDir)
+        self.description = self._get("description",self.description)
 
     def _get(self,key,target,srcDict = None):
         if srcDict == None:
@@ -61,16 +63,20 @@ class EpcPackageCreator(object):
             text += "        self.dependencies['%s'] = 'default'\n" % dep
         return text
         
-    def _getDigests(self,package):
-        text = "\n\n"
+    def _getDigests(self,package):        
         digests = self._get("digests",dict(),package);
+        if len(digests) == 0:
+            return ""
+        text = "\n"
         for key in digests.keys():
             text += "        self.targetDigests['%s'] = '%s'\n" % ( key , digests[key])
         return text
         
     def _getPatches(self,package):
-        text = "\n"
         patches = self._get("patches",dict(),package)
+        if len(patches) == 0:
+            return ""
+        text = ""
         for key in patches.keys():
             patch = patches[key].pop(0)
             text += "\n        self.patchToApply['%s'] = [('%s',%s)" %  (key , patch["patch"],patch["patch-lvl"] )
@@ -78,13 +84,23 @@ class EpcPackageCreator(object):
                 print(patch)
                 text += "\n                                     ,('%s',%s)" %  ( patch["patch"],patch["patch-lvl"] )
             text += "]"
+        text += "\n"
         return text
+        
+    def _getDescription(self,package):
+        text = self._get("description",self.description,package)
+        if text == "":
+            return ""
+        return "\n        self.shortDescription = '%s'\n" % text
+        
         
     def generateSubModule(self):
         for package in self.packages:
             text = self._get("subinfo-template",self.subinfoTemlate,package)
+            text += "\n"
             text += self._getDigests(package)
             text += self._getPatches(package)
+            text += self._getDescription(package)
             text += self._getDependencies(package)
 
                 

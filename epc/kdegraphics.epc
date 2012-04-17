@@ -141,7 +141,7 @@
     ], 
     "portage-dir": "kde/kdegraphics", 
     "prefix": "", 
-    "subinfo-template": "import os\nimport sys\nimport info\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['gitHEAD'] = '[git]kde:${EPC_PACKAGE-NAME}'\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = \"ftp://ftp.kde.org/pub/kde/stable/\" + ver + \"/src/${EPC_PACKAGE-NAME}-\" + ver + \".tar.bz2\"\n            self.targetInstSrc[ ver] = '${EPC_PACKAGE-NAME}-' + ver\n        self.shortDescription = '${EPC_PACKAGE-DESCRIPTION}'\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n", 
+    "subinfo-template": "import os\nimport sys\nimport info\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['gitHEAD'] = '[git]kde:${EPC_PACKAGE-NAME}'\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = \"ftp://ftp.kde.org/pub/kde/stable/\" + ver + \"/src/${EPC_PACKAGE-NAME}-\" + ver + \".tar.bz2\"\n            self.targetInstSrc[ ver] = '${EPC_PACKAGE-NAME}-' + ver\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n", 
     "versions": [
       "4.8.0", 
       "4.8.1", 
