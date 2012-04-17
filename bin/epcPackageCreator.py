@@ -61,6 +61,13 @@ class EpcPackageCreator(object):
             text += "        self.dependencies['%s'] = 'default'\n" % dep
         return text
         
+    def _getDigests(self,package):
+        text = "\n\n"
+        digests = self._get("digests",dict(),package);
+        for key in digests.keys():
+            text += "        self.targetDigests['%s'] = '%s'\n" % ( key , digests[key])
+        return text
+        
     def _getPatches(self,package):
         text = "\n"
         patches = self._get("patches",dict(),package)
@@ -76,6 +83,7 @@ class EpcPackageCreator(object):
     def generateSubModule(self):
         for package in self.packages:
             text = self._get("subinfo-template",self.subinfoTemlate,package)
+            text += self._getDigests(package)
             text += self._getPatches(package)
             text += self._getDependencies(package)
 
