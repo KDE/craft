@@ -1,19 +1,11 @@
 {
   "epc": {
-    "versions": [
-      "4.8.0", 
-      "4.8.1", 
-      "4.8.2"
-    ], 
-    "default-target": "4.8.2", 
-    "prefix": "kde4-l10n", 
     "buildtime-dependencies": [
       "dev-util/cmake", 
       "kde/kdelibs", 
       "dev-util/gettext-tools"
     ], 
-    "portage-dir": "kde/kde4-l10n", 
-    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.bz2' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
+    "default-target": "4.8.2", 
     "packages": [
       {
         "name": "ar"
@@ -171,6 +163,14 @@
       {
         "name": "zh_TW"
       }
+    ], 
+    "portage-dir": "kde/kde4-l10n", 
+    "prefix": "kde4-l10n", 
+    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.bz2' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
+    "versions": [
+      "4.8.0", 
+      "4.8.1", 
+      "4.8.2"
     ]
   }, 
   "vars": {}

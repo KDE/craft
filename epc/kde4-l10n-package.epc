@@ -1,20 +1,11 @@
 {
   "epc": {
-    "suffix": "package", 
-    "versions": [
-      "4.8.0", 
-      "4.8.1", 
-      "4.8.2"
-    ], 
-    "portage-dir": "package/kde4-l10n-package", 
+    "buildtime-dependencies": [], 
     "default-target": "4.8.2", 
-    "prefix": "kde4-l10n", 
     "dependencies": [
       "kde/kde4-l10n-${EPC_PACKAGE-NAME}"
     ], 
-    "buildtime-dependencies": [], 
     "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.NullsoftInstallerPackager import *\nclass Package( NullsoftInstallerPackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        NullsoftInstallerPackager.__init__( self )\n        VirtualPackageBase.__init__( self )", 
-    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ ver ] = ''\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
     "packages": [
       {
         "name": "ar"
@@ -172,6 +163,15 @@
       {
         "name": "zh_TW"
       }
+    ], 
+    "portage-dir": "package/kde4-l10n-package", 
+    "prefix": "kde4-l10n", 
+    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ ver ] = ''\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
+    "suffix": "package", 
+    "versions": [
+      "4.8.0", 
+      "4.8.1", 
+      "4.8.2"
     ]
   }, 
   "vars": {}

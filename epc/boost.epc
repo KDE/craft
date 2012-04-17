@@ -1,45 +1,35 @@
 {
   "epc": {
-    "suffix": "src", 
-    "versions": [
-      "1.44.0", 
-      "1.47.0", 
-      "1.48.0", 
-      "1.49.0"
-    ], 
-    "portage-dir": "win32libs-sources/boost-src", 
-    "default-target": "1.49.0", 
-    "prefix": "boost", 
     "buildtime-dependencies": [
       "virtual/base"
     ], 
+    "default-target": "1.49.0", 
     "package-template": "from Package.BoostPackageBase import *\n\nclass Package( BoostPackageBase ):\n    def __init__(self, **args):\n        self.subinfo = subinfo()\n        BoostPackageBase.__init__(self)", 
-    "subinfo-template": "import info\nclass subinfo(info.infoclass):\n    def setTargets(self):\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = ''\n            self.targetInstSrc[ver] = '${EPC_PACKAGE-NAME}'.replace('-','_')\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n        self.shortDescription = 'portable C++ libraries'", 
     "packages": [
       {
-        "subinfo-template": "import info\nclass subinfo(info.infoclass):\n    def setTargets(self):\n        for ver in ${EPC_VERSIONS}:\n            verString = ver.replace('.','_')\n            self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.7z' % verString\n            self.targetInstSrc[ver] = 'boost_%s' % verString\n\n        self.targetDigests['1.48.0'] = 'f221f067620e5af137e415869bd96ad667db9830'\n        self.targetDigests['1.49.0'] = '406903ce4f946f44b126d6c8bfefafed2fc9fdc4'\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n        self.shortDescription = 'portable C++ libraries'", 
+        "name": "headers", 
         "package-template": "from Package.BoostPackageBase import *\nclass Package(BoostPackageBase):\n    def __init__(self, **args):\n        self.subinfo = subinfo()\n        BoostPackageBase.__init__(self)\n\n    def make(self):\n        return True\n\n    def install(self):\n        shutil.copytree(os.path.join(self.sourceDir(), 'boost'),\n                        os.path.join(self.imageDir(), 'include' , 'boost'))        #disable autolinking\n        f = open(os.path.join(self.imageDir(),'include', 'boost', 'config', 'user.hpp'), 'a')\n        f.write('#define BOOST_ALL_NO_LIB\\n')\n        f.close()\n        return True", 
         "patches": {
-          "1.48.0": [
-            {
-              "patch-lvl": 1, 
-              "patch": "boost_1_47_0-20110815.diff"
-            }
-          ], 
           "1.47.0": [
             {
-              "patch-lvl": 1, 
-              "patch": "boost_1_47_0-20110815.diff"
+              "patch": "boost_1_47_0-20110815.diff", 
+              "patch-lvl": 1
+            }
+          ], 
+          "1.48.0": [
+            {
+              "patch": "boost_1_47_0-20110815.diff", 
+              "patch-lvl": 1
             }
           ], 
           "1.49.0": [
             {
-              "patch-lvl": 1, 
-              "patch": "boost_1_47_0-20110815.diff"
+              "patch": "boost_1_47_0-20110815.diff", 
+              "patch-lvl": 1
             }
           ]
         }, 
-        "name": "headers"
+        "subinfo-template": "import info\nclass subinfo(info.infoclass):\n    def setTargets(self):\n        for ver in ${EPC_VERSIONS}:\n            verString = ver.replace('.','_')\n            self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.7z' % verString\n            self.targetInstSrc[ver] = 'boost_%s' % verString\n\n        self.targetDigests['1.48.0'] = 'f221f067620e5af137e415869bd96ad667db9830'\n        self.targetDigests['1.49.0'] = '406903ce4f946f44b126d6c8bfefafed2fc9fdc4'\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n        self.shortDescription = 'portable C++ libraries'"
       }, 
       {
         "dependencies": [
@@ -91,6 +81,16 @@
         ], 
         "name": "thread"
       }
+    ], 
+    "portage-dir": "win32libs-sources/boost-src", 
+    "prefix": "boost", 
+    "subinfo-template": "import info\nclass subinfo(info.infoclass):\n    def setTargets(self):\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = ''\n            self.targetInstSrc[ver] = '${EPC_PACKAGE-NAME}'.replace('-','_')\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n        self.shortDescription = 'portable C++ libraries'", 
+    "suffix": "src", 
+    "versions": [
+      "1.44.0", 
+      "1.47.0", 
+      "1.48.0", 
+      "1.49.0"
     ]
   }, 
   "vars": {}
