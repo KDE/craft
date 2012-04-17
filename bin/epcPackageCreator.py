@@ -2,12 +2,14 @@ import json
 import sys
 import utils
 import os
+import re
 from time import strftime
 
 class EpcPackageCreator(object):
     def __init__( self , epcFile ):
         self.epcFile = epcFile        
         self.kderoot = os.getenv("KDEROOT")
+        self.epcVariables = re.compile("\$\{.*\}")
         self.epcDict = dict()
         self.variables = dict()
         self.subinfoTemlate = ""
@@ -109,12 +111,14 @@ class EpcPackageCreator(object):
             text += self._get("package-template",self.packageTemplate,package)
             text +=  self._getPpackageText()
             
-            for key in package.keys():
-                text = text.replace("${EPC_PACKAGE-%s}" % key.upper(), str(package[key]))
-            for key in self.epcDict.keys():
-                text = text.replace("${EPC_%s}" % key.upper(), str(self.epcDict[key]))
-            for key in self.variables.keys():
-                text = text.replace("${%s}" % variables.uppercase() , str(self.epcDict[variables]))
+            for key in self.epcVariables.findall(text):
+                if key.startswith("${EPC_PACKAGE"):
+                    text = text.replace(key, str(package[key[14:-1].lower()]))
+                    continue
+                if key.startswith("${EPC_"):
+                    text = text.replace(key, str(self.epcDict[key[6:-1].lower()]))
+                    continue
+                text = text.replace(key, str(self.variables[key.lower()]))
 
             outName = package["name"]
             if self.prefix != "":
@@ -162,6 +166,7 @@ class EpcPackageCreator(object):
         return "\n\n\nif __name__ == '__main__':\n    Package().execute()\n"
 
 if __name__ == '__main__':
+    utils.startTimer("EPC")
     if len( sys.argv ) < 2:
         utils.die("")
 
@@ -171,3 +176,4 @@ if __name__ == '__main__':
     #print(epc.__dict__)
     epc.generateSubModule()
     epc.generateBaseModule()
+    utils.stopTimer("EPC")
