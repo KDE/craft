@@ -1,177 +1,176 @@
 {
   "epc": {
-    "versions": [
-      "4.8.0",
-      "4.8.1",
-      "4.8.2"
-    ],
-    "template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.bz2' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n\n    def setDependencies( self ):\n${EPC_DEPENDENCIES}\n\nfrom Package.CMakePackageBase import *\n\nclass Package( CMakePackageBase ):\n    def __init__( self ):\n        self.subinfo = subinfo()\n        CMakePackageBase.__init__( self )",
-    "default-target": "4.8.2",
     "buildtime-dependencies": [
-      "dev-util/cmake",
-      "kde/kdelibs",
+      "dev-util/cmake", 
+      "kde/kdelibs", 
       "dev-util/gettext-tools"
-    ],
-    "prefix": "kde4-l10n",
-    "portage-dir": "kde/kde4-l10n",
+    ], 
+    "default-target": "4.8.2", 
     "packages": [
       {
         "name": "ar"
-      },
+      }, 
       {
         "name": "bg"
-      },
+      }, 
       {
         "name": "bs"
-      },
+      }, 
       {
         "name": "ca"
-      },
+      }, 
       {
         "name": "ca@valencia"
-      },
+      }, 
       {
         "name": "cs"
-      },
+      }, 
       {
         "name": "da"
-      },
+      }, 
       {
         "name": "de"
-      },
+      }, 
       {
         "name": "el"
-      },
+      }, 
       {
         "name": "en_GB"
-      },
+      }, 
       {
         "name": "es"
-      },
+      }, 
       {
         "name": "et"
-      },
+      }, 
       {
         "name": "eu"
-      },
+      }, 
       {
         "name": "fi"
-      },
+      }, 
       {
         "name": "fr"
-      },
+      }, 
       {
         "name": "ga"
-      },
+      }, 
       {
         "name": "gl"
-      },
+      }, 
       {
         "name": "he"
-      },
+      }, 
       {
         "name": "hr"
-      },
+      }, 
       {
         "name": "hu"
-      },
+      }, 
       {
         "name": "ia"
-      },
+      }, 
       {
         "name": "id"
-      },
+      }, 
       {
         "name": "is"
-      },
+      }, 
       {
         "name": "it"
-      },
+      }, 
       {
         "name": "ja"
-      },
+      }, 
       {
         "name": "kk"
-      },
+      }, 
       {
         "name": "km"
-      },
+      }, 
       {
         "name": "kn"
-      },
+      }, 
       {
         "name": "ko"
-      },
+      }, 
       {
         "name": "lt"
-      },
+      }, 
       {
         "name": "lv"
-      },
+      }, 
       {
         "name": "nb"
-      },
+      }, 
       {
         "name": "nds"
-      },
+      }, 
       {
         "name": "nl"
-      },
+      }, 
       {
         "name": "nn"
-      },
+      }, 
       {
         "name": "pa"
-      },
+      }, 
       {
         "name": "pl"
-      },
+      }, 
       {
         "name": "pt"
-      },
+      }, 
       {
         "name": "pt_BR"
-      },
+      }, 
       {
         "name": "ro"
-      },
+      }, 
       {
         "name": "ru"
-      },
+      }, 
       {
         "name": "sk"
-      },
+      }, 
       {
         "name": "sl"
-      },
+      }, 
       {
         "name": "sr"
-      },
+      }, 
       {
         "name": "sv"
-      },
+      }, 
       {
         "name": "th"
-      },
+      }, 
       {
         "name": "tr"
-      },
+      }, 
       {
         "name": "ug"
-      },
+      }, 
       {
         "name": "uk"
-      },
+      }, 
       {
         "name": "wa"
-      },
+      }, 
       {
         "name": "zh_CN"
-      },
+      }, 
       {
         "name": "zh_TW"
       }
+    ], 
+    "portage-dir": "kde/kde4-l10n", 
+    "prefix": "kde4-l10n", 
+    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.xz' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
+    "versions": [
+      "4.8.1", 
+      "4.8.2"
     ]
-  },
+  }, 
   "vars": {}
 }

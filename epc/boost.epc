@@ -1,0 +1,103 @@
+{
+  "epc": {
+    "buildtime-dependencies": [
+      "virtual/base"
+    ], 
+    "default-target": "1.49.0", 
+    "description": "portable C++ libraries", 
+    "homepage": "http://www.boost.org/", 
+    "package-template": "from Package.BoostPackageBase import *\n\nclass Package( BoostPackageBase ):\n    def __init__(self, **args):\n        self.subinfo = subinfo()\n        BoostPackageBase.__init__(self)", 
+    "packages": [
+      {
+        "digests": {
+          "1.48.0": "f221f067620e5af137e415869bd96ad667db9830", 
+          "1.49.0": "406903ce4f946f44b126d6c8bfefafed2fc9fdc4"
+        }, 
+        "name": "headers", 
+        "package-template": "from Package.BoostPackageBase import *\nclass Package(BoostPackageBase):\n    def __init__(self, **args):\n        self.subinfo = subinfo()\n        BoostPackageBase.__init__(self)\n\n    def make(self):\n        return True\n\n    def install(self):\n        shutil.copytree(os.path.join(self.sourceDir(), 'boost'),\n                        os.path.join(self.imageDir(), 'include' , 'boost'))        #disable autolinking\n        f = open(os.path.join(self.imageDir(),'include', 'boost', 'config', 'user.hpp'), 'a')\n        f.write('#define BOOST_ALL_NO_LIB\\n')\n        f.close()\n        return True", 
+        "patches": {
+          "1.47.0": [
+            {
+              "patch": "boost_1_47_0-20110815.diff", 
+              "patch-lvl": 1
+            }
+          ], 
+          "1.48.0": [
+            {
+              "patch": "boost_1_47_0-20110815.diff", 
+              "patch-lvl": 1
+            }
+          ], 
+          "1.49.0": [
+            {
+              "patch": "boost_1_47_0-20110815.diff", 
+              "patch-lvl": 1
+            }
+          ]
+        }, 
+        "subinfo-template": "import info\nclass subinfo(info.infoclass):\n    def setTargets(self):\n        for ver in ${EPC_VERSIONS}:\n            verString = ver.replace('.','_')\n            self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.7z' % verString\n            self.targetInstSrc[ver] = 'boost_%s' % verString\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers"
+        ], 
+        "name": "bjam", 
+        "package-template": "from Package.BoostPackageBase import *\n\nclass Package(BoostPackageBase):\n    def __init__(self, **args):\n        self.subinfo = subinfo()\n        BoostPackageBase.__init__(self)\n\n    def install(self):\n        for root, dirs, files in os.walk( os.path.join( portage.getPackageInstance( 'win32libs-bin',\n                'boost-headers' ).sourceDir(), \"tools\", \"build\", \"v2\", \"engine\" ) ):\n            if \"bjam.exe\" in files:\n                utils.copyFile( os.path.join( root, \"bjam.exe\" ),\n                               os.path.join( self.imageDir(), \"bin\", \"bjam.exe\" ) )\n        return True\n\n    def make(self):\n        cmd  = \"build.bat \"\n        if compiler.isMinGW():\n            cmd += \"gcc\"\n        else:\n            if compiler.isMSVC2005():\n                cmd += \"vc8\"\n            elif compiler.isMSVC2008():\n                cmd += \"vc9\"\n            elif compiler.isMSVC2010():\n                cmd += \"vc10\"\n        if utils.verbose() >= 1:\n            print(cmd)\n        utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs-bin',\n                'boost-headers').sourceDir(),\"tools\",\"build\",\"v2\",\"engine\")) or utils.die(\n                \"command: %s failed\" % (cmd))\n        return True"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers", 
+          "win32libs-bin/boost-regex", 
+          "win32libs-bin/boost-bjam"
+        ], 
+        "name": "graph"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers", 
+          "win32libs-bin/boost-bjam"
+        ], 
+        "name": "program-options"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers", 
+          "win32libs-bin/boost-bjam"
+        ], 
+        "name": "python"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers", 
+          "win32libs-bin/boost-bjam"
+        ], 
+        "name": "regex"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers", 
+          "win32libs-bin/boost-bjam"
+        ], 
+        "name": "system"
+      }, 
+      {
+        "dependencies": [
+          "win32libs-bin/boost-headers", 
+          "win32libs-bin/boost-bjam"
+        ], 
+        "name": "thread"
+      }
+    ], 
+    "portage-dir": "win32libs-sources/boost-src", 
+    "prefix": "boost", 
+    "subinfo-template": "import info\nclass subinfo(info.infoclass):\n    def setTargets(self):\n        for ver in ${EPC_VERSIONS}:\n            self.targets[ver] = ''\n            self.targetInstSrc[ver] = '${EPC_PACKAGE-NAME}'.replace('-','_')\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'\n", 
+    "suffix": "src", 
+    "versions": [
+      "1.44.0", 
+      "1.47.0", 
+      "1.48.0", 
+      "1.49.0"
+    ]
+  }, 
+  "vars": {}
+}
