@@ -23,6 +23,7 @@ class EpcPackageCreator(object):
         self.suffix = ""
         self.portageDir = ""
         self.description = ""
+        self.homepage = ""
         
 
 
@@ -44,6 +45,7 @@ class EpcPackageCreator(object):
         self.suffix = self._get("suffix",self.suffix )
         self.portageDir = self._get("portage-dir",self.portageDir)
         self.description = self._get("description",self.description)
+        self.homepage = self._get("homepage",self.homepage)
 
     def _get(self,key,target,srcDict = None):
         if srcDict == None:
@@ -95,6 +97,12 @@ class EpcPackageCreator(object):
             return ""
         return "\n        self.shortDescription = '%s'\n" % text
         
+    def _getHomepage(self,package):
+        text = self._get("homepage",self.homepage,package)
+        if text == "":
+            return ""
+        return "\n        self.homepage = '%s'\n" % text
+        
         
     def generateSubModule(self):
         for package in self.packages:
@@ -102,6 +110,7 @@ class EpcPackageCreator(object):
             text += "\n"
             text += self._getDigests(package)
             text += self._getPatches(package)
+            text += self._getHomepage(package)
             text += self._getDescription(package)
             text += self._getDependencies(package)
 
@@ -132,7 +141,10 @@ class EpcPackageCreator(object):
 
 
     def generateBaseModule(self):
-        text = "import info\n\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n\n    def setDependencies( self ):\n" % (self.default_target ,self.default_target )
+        text = "import info\n\nclass subinfo(info.infoclass):\n    def setTargets( self ):\n        self.svnTargets['%s'] = ''\n        self.defaultTarget = '%s'\n" % (self.default_target ,self.default_target )
+        text += self._getHomepage(self.epcDict)
+        text += self._getDescription(self.epcDict)
+        text += "\n    def setDependencies( self ):\n"
         pName,module = self.portageDir.split("/")
         for package in self.packages:
             if self.prefix != "":
