@@ -4,10 +4,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.8|'
         for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kde-runtime-4.8." + ver + ".tar.bz2"
+            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kde-runtime-4.8." + ver + ".tar.xz"
             self.targetInstSrc['4.8.' + ver] = 'kde-runtime-4.8.' + ver
         self.patchToApply['4.8.0'] = [("reenable-nepomuk-on-kde-runtime.diff", 1)]
-        self.patchToApply['4.8.1'] = [("kde-runtime-4.8.1-20120319.diff", 1)]        
+        self.patchToApply['4.8.1'] = [("kde-runtime-4.8.1-20120319.diff", 1)]
+        self.patchToApply['4.8.2'] = [("kde-runtime-4.8.1-20120319.diff", 1)]
         self.shortDescription = "Plugins and applications necessary for the running of KDE applications"
         self.defaultTarget = 'gitHEAD'
 
