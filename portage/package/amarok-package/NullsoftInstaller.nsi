@@ -89,6 +89,7 @@ OutFile "${setupname}"
 ;!insertmacro MUI_RESERVEFILE_LANGDLL ;lang dialog
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
+!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_INSTFILES
 
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -110,8 +111,8 @@ AutoCloseWindow false
 ShowInstDetails hide
  
  
-; beginning (invisible) section
-Section
+
+Section "Amarok"
   ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
@@ -129,9 +130,10 @@ File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*.*"
 WriteUninstaller "${uninstaller}"
   
 SectionEnd
- 
+
+
 ; create shortcuts
-Section
+Section "Shortcuts"
 SetShellVarContext all
 CreateDirectory "${startmenu}"
 SetOutPath $INSTDIR ; for working directory
@@ -140,6 +142,23 @@ CreateShortCut "${startmenu}\Appearance Settings.lnk" "$INSTDIR\bin\kcmshell4.ex
 CreateShortCut "${startmenu}\Snorenotify.lnk" "$INSTDIR\bin\snorenotify.exe"
 CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
 SectionEnd
+
+!macro ADD_LANGUAGE LANG_SUFFIX
+    SetOutPath "$INSTDIR"
+    DetailPrint "Downloading: http://winkde.org/~pvonreth/downloads/l10n/${kde-version}/kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z"
+    NSISdl::download "http://winkde.org/~pvonreth/downloads/l10n/${kde-version}/kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z" "$TEMP\kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z"
+	Nsis7z::Extract "$TEMP\kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z" 
+	Delete "$TEMP\kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z"
+!macroend
+
+SubSection "Languages (needs internet connection)"
+Section /o "de"
+    !insertmacro ADD_LANGUAGE de
+SectionEnd
+Section /o "en"
+    !insertmacro ADD_LANGUAGE en
+SectionEnd
+SubSectionEnd
 
 ;post install
 Section
