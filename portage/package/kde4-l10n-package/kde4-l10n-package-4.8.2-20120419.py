@@ -33,7 +33,6 @@ class subinfo(info.infoclass):
         self.dependencies['package/kde4-l10n-ja-package'] = 'default'
         self.dependencies['package/kde4-l10n-kk-package'] = 'default'
         self.dependencies['package/kde4-l10n-km-package'] = 'default'
-        self.dependencies['package/kde4-l10n-kn-package'] = 'default'
         self.dependencies['package/kde4-l10n-ko-package'] = 'default'
         self.dependencies['package/kde4-l10n-lt-package'] = 'default'
         self.dependencies['package/kde4-l10n-lv-package'] = 'default'
