@@ -26,7 +26,6 @@ OutFile "${setupname}"
  
 !include "MUI2.nsh"
 !define MUI_ICON "${amarok-icon}"
-
 ;Languages
 
   !insertmacro MUI_LANGUAGE "English" ;first language is the default language
@@ -86,16 +85,7 @@ OutFile "${setupname}"
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Esperanto"
 
-;!insertmacro MUI_RESERVEFILE_LANGDLL ;lang dialog
-!insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
-!insertmacro MUI_PAGE_COMPONENTS
-!insertmacro MUI_PAGE_INSTFILES
 
-!insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES
- 
- 
 
 SetDateSave on
 SetDatablockOptimize on
@@ -151,14 +141,16 @@ SectionEnd
 	Delete "$TEMP\kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z"
 !macroend
 
-SubSection "Languages (needs internet connection)"
-Section /o "de"
+SubSection "Languages" SECTION_LANGAUAGES
+Section /o "de" SECTION_LANGAUAGES_DE
     !insertmacro ADD_LANGUAGE de
 SectionEnd
-Section /o "en"
-    !insertmacro ADD_LANGUAGE en
+Section /o "en_GB" SECTION_LANGAUAGES_EN_GB
+    !insertmacro ADD_LANGUAGE en_GB
 SectionEnd
 SubSectionEnd
+
+
 
 ;post install
 Section
@@ -191,3 +183,35 @@ Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
 
 FunctionEnd
+
+;initialize the translations
+!include "amarok_translation.nsh"
+ 
+ ;this must be called after the the strings are defined
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
+
+;this must be called after the strings and the pages are defined
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES} $(DESC_SECTION_LANGAUAGES)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES_DE} $(DESC_SECTION_LANGAUAGES_DE)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES_EN_GB} $(DESC_SECTION_LANGAUAGES_EN_GB)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+
+
+
+
+ 
+
+
+

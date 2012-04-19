@@ -2,8 +2,8 @@
 import info
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
-
-# This is an example package for building
+#you have to install
+#http://nsis.sourceforge.net/Nsis7z_plug-in
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
