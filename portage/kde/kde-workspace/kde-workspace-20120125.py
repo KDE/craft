@@ -3,8 +3,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-workspace|KDE/4.8|'
-        for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kde-workspace-4.8." + ver + ".tar.bz2"
+        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kde-workspace-4.8.0.tar.gz'
+        for ver in ['1', '2', '3', '4']:
+            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kde-workspace-4.8." + ver + ".tar.xz"
             self.targetInstSrc['4.8.' + ver] = 'kde-workspace-4.8.' + ver
         self.shortDescription = 'the KDE workspace including the oxygen style'
         self.defaultTarget = 'gitHEAD'

@@ -3,7 +3,8 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.8|'
-        for ver in ['0', '1', '2', '3', '4']:
+        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kde-runtime-4.8.0.tar.gz'
+        for ver in ['1', '2', '3', '4']:
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kde-runtime-4.8." + ver + ".tar.xz"
             self.targetInstSrc['4.8.' + ver] = 'kde-runtime-4.8.' + ver
         self.patchToApply['4.8.0'] = [("reenable-nepomuk-on-kde-runtime.diff", 1)]
