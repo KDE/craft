@@ -134,7 +134,8 @@
           "win32libs-bin/djvu", 
           "win32libs-bin/zlib", 
           "win32libs-bin/freetype", 
-          "win32libs-bin/libspectre"
+          "win32libs-bin/libspectre", 
+          "win32libs-bin/ebook-tools"
         ], 
         "description": "KDE document viewer.", 
         "homepage": "http://okular.kde.org/", 
