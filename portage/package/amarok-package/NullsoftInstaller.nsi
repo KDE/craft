@@ -25,67 +25,9 @@ Caption "${productname}"
 OutFile "${setupname}"
  
 !include "MUI2.nsh"
+!define MUI_LANGDLL_ALLLANGUAGES
 !define MUI_ICON "${amarok-icon}"
-;Languages
-
-  !insertmacro MUI_LANGUAGE "English" ;first language is the default language
-  !insertmacro MUI_LANGUAGE "French"
-  !insertmacro MUI_LANGUAGE "German"
-  !insertmacro MUI_LANGUAGE "Spanish"
-  !insertmacro MUI_LANGUAGE "SpanishInternational"
-  !insertmacro MUI_LANGUAGE "SimpChinese"
-  !insertmacro MUI_LANGUAGE "TradChinese"
-  !insertmacro MUI_LANGUAGE "Japanese"
-  !insertmacro MUI_LANGUAGE "Korean"
-  !insertmacro MUI_LANGUAGE "Italian"
-  !insertmacro MUI_LANGUAGE "Dutch"
-  !insertmacro MUI_LANGUAGE "Danish"
-  !insertmacro MUI_LANGUAGE "Swedish"
-  !insertmacro MUI_LANGUAGE "Norwegian"
-  !insertmacro MUI_LANGUAGE "NorwegianNynorsk"
-  !insertmacro MUI_LANGUAGE "Finnish"
-  !insertmacro MUI_LANGUAGE "Greek"
-  !insertmacro MUI_LANGUAGE "Russian"
-  !insertmacro MUI_LANGUAGE "Portuguese"
-  !insertmacro MUI_LANGUAGE "PortugueseBR"
-  !insertmacro MUI_LANGUAGE "Polish"
-  !insertmacro MUI_LANGUAGE "Ukrainian"
-  !insertmacro MUI_LANGUAGE "Czech"
-  !insertmacro MUI_LANGUAGE "Slovak"
-  !insertmacro MUI_LANGUAGE "Croatian"
-  !insertmacro MUI_LANGUAGE "Bulgarian"
-  !insertmacro MUI_LANGUAGE "Hungarian"
-  !insertmacro MUI_LANGUAGE "Thai"
-  !insertmacro MUI_LANGUAGE "Romanian"
-  !insertmacro MUI_LANGUAGE "Latvian"
-  !insertmacro MUI_LANGUAGE "Macedonian"
-  !insertmacro MUI_LANGUAGE "Estonian"
-  !insertmacro MUI_LANGUAGE "Turkish"
-  !insertmacro MUI_LANGUAGE "Lithuanian"
-  !insertmacro MUI_LANGUAGE "Slovenian"
-  !insertmacro MUI_LANGUAGE "Serbian"
-  !insertmacro MUI_LANGUAGE "SerbianLatin"
-  !insertmacro MUI_LANGUAGE "Arabic"
-  !insertmacro MUI_LANGUAGE "Farsi"
-  !insertmacro MUI_LANGUAGE "Hebrew"
-  !insertmacro MUI_LANGUAGE "Indonesian"
-  !insertmacro MUI_LANGUAGE "Mongolian"
-  !insertmacro MUI_LANGUAGE "Luxembourgish"
-  !insertmacro MUI_LANGUAGE "Albanian"
-  !insertmacro MUI_LANGUAGE "Breton"
-  !insertmacro MUI_LANGUAGE "Belarusian"
-  !insertmacro MUI_LANGUAGE "Icelandic"
-  !insertmacro MUI_LANGUAGE "Malay"
-  !insertmacro MUI_LANGUAGE "Bosnian"
-  !insertmacro MUI_LANGUAGE "Kurdish"
-  !insertmacro MUI_LANGUAGE "Irish"
-  !insertmacro MUI_LANGUAGE "Uzbek"
-  !insertmacro MUI_LANGUAGE "Galician"
-  !insertmacro MUI_LANGUAGE "Afrikaans"
-  !insertmacro MUI_LANGUAGE "Catalan"
-  !insertmacro MUI_LANGUAGE "Esperanto"
-
-
+!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\amarok.exe"
 
 SetDateSave on
 SetDatablockOptimize on
@@ -99,6 +41,20 @@ InstallDirRegKey HKLM "${regkey}" ""
  
 AutoCloseWindow false
 ShowInstDetails hide
+
+
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
  
  
 
@@ -108,6 +64,10 @@ Section "Amarok"
   ; write uninstall strings
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "Amarok (remove only)"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
+  ;save language
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKLM" 
+  !define MUI_LANGDLL_REGISTRY_KEY "${regkey}"
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
  
   SetOutPath $INSTDIR
  
@@ -162,7 +122,6 @@ SectionEnd
 ; Uninstaller
 ; All section names prefixed by "Un" will be in the uninstaller
  
-UninstallText "This will uninstall Amarok."
  
 Section "Uninstall"
 SetShellVarContext all
@@ -178,29 +137,11 @@ RMDir /r "$INSTDIR"
 
 SectionEnd
 
-Function .onInit
 
-  !insertmacro MUI_LANGDLL_DISPLAY
 
-FunctionEnd
 
-;initialize the translations
-!include "amarok_translation.nsh"
- 
- ;this must be called after the the strings are defined
-!insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
-!insertmacro MUI_PAGE_COMPONENTS
-!insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
 
-!insertmacro MUI_UNPAGE_WELCOME
-!insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES
-!insertmacro MUI_UNPAGE_FINISH
 
-;this must be called after the strings and the pages are defined
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES} $(DESC_SECTION_LANGAUAGES)
   !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES_DE} $(DESC_SECTION_LANGAUAGES_DE)
@@ -209,8 +150,26 @@ FunctionEnd
 
 
 
+  ;initialize the translations
+!include "amarok_translation.nsh"
 
 
+;installer Fcuntion
+Function  .onInit 
+
+  !insertmacro MUI_LANGDLL_DISPLAY
+
+FunctionEnd
+
+; Uninstaller Functions
+
+Function un.onInit
+
+  !insertmacro MUI_UNGETLANGUAGE
+  
+FunctionEnd
+
+  
  
 
 
