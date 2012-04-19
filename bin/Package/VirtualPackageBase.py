@@ -2,6 +2,8 @@ from Package.PackageBase import *
 from Source.SourceBase import *
 from BuildSystem.BuildSystemBase import *
 from Packager.PackagerBase import *
+import portage
+import InstallDB
 
 class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase ):
     """provides a base class for virtual packages"""
@@ -52,4 +54,8 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
 
 # from PackagerBase:
     def createPackage( self ):
+        for dep in self.subinfo.dependencies:
+            category,package = dep.split("/")            
+            if not portage.getPackageInstance(category,package).createPackage():
+                return False
         return True
