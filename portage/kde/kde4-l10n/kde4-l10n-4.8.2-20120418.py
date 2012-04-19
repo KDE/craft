@@ -33,7 +33,6 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kde4-l10n-ja'] = 'default'
         self.dependencies['kde/kde4-l10n-kk'] = 'default'
         self.dependencies['kde/kde4-l10n-km'] = 'default'
-        self.dependencies['kde/kde4-l10n-kn'] = 'default'
         self.dependencies['kde/kde4-l10n-ko'] = 'default'
         self.dependencies['kde/kde4-l10n-lt'] = 'default'
         self.dependencies['kde/kde4-l10n-lv'] = 'default'
