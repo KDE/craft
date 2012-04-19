@@ -5,7 +5,7 @@
     "dependencies": [
       "kde/kde4-l10n-${EPC_PACKAGE-NAME}"
     ], 
-    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.NullsoftInstallerPackager import *\nclass Package( NullsoftInstallerPackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        NullsoftInstallerPackager.__init__( self )\n        VirtualPackageBase.__init__( self )", 
+    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.PortablePackager import *\nclass Package( PortablePackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        PortablePackager.__init__( self , whitelists = [os.path.join(os.getenv('KDEROOT'),'emerge','portage','package','kde4-l10n-package','whitelist.txt')] )\n        VirtualPackageBase.__init__( self )", 
     "packages": [
       {
         "name": "ar"
