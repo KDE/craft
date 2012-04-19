@@ -4,6 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.8|'
         self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kde-runtime-4.8.0.tar.gz'
+        self.targetInstSrc['4.8.0'] = 'kde-runtime-4.8.0'
         for ver in ['1', '2', '3', '4']:
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kde-runtime-4.8." + ver + ".tar.xz"
             self.targetInstSrc['4.8.' + ver] = 'kde-runtime-4.8.' + ver
