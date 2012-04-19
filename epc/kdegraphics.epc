@@ -80,7 +80,15 @@
           "kde/kdelibs"
         ], 
         "description": "libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files.", 
-        "name": "libkdcraw"
+        "name": "libkdcraw", 
+        "patches": {
+          "4.8.0": [
+            {
+              "patch": "libkdcraw-4.8.0-20120125.diff", 
+              "patch-lvl": 1
+            }
+          ]
+        }
       }, 
       {
         "dependencies": [
@@ -128,9 +136,17 @@
           "win32libs-bin/freetype", 
           "win32libs-bin/libspectre"
         ], 
-        "homepage": "http://okular.kde.org/",
         "description": "KDE document viewer.", 
-        "name": "okular"
+        "homepage": "http://okular.kde.org/", 
+        "name": "okular", 
+        "patches": {
+          "4.8.0": [
+            {
+              "patch": "replace-usage-of-unportable-mkdtemp-with-KTempDir-update.patch", 
+              "patch-lvl": 1
+            }
+          ]
+        }
       }, 
       {
         "dependencies": [

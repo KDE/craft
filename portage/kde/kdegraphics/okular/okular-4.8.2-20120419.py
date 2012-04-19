@@ -4,13 +4,15 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:okular'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/okular-4.8.0.tar.gz'
+        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/okular-4.8.0.tar.bz2'
         self.targetInstSrc['4.8.0'] = 'okular-4.8.0'
         for ver in ['4.8.1', '4.8.2']:
             self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/okular-" + ver + ".tar.xz"
             self.targetInstSrc[ ver] = 'okular-' + ver
         self.defaultTarget = '4.8.2'
 
+
+        self.patchToApply['4.8.0'] = [('replace-usage-of-unportable-mkdtemp-with-KTempDir-update.patch',1)]
 
         self.homepage = 'http://okular.kde.org/'
 

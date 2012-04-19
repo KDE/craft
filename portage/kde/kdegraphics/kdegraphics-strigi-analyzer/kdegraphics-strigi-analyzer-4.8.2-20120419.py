@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdegraphics-strigi-analyzer'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kdegraphics-strigi-analyzer-4.8.0.tar.gz'
+        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kdegraphics-strigi-analyzer-4.8.0.tar.bz2'
         self.targetInstSrc['4.8.0'] = 'kdegraphics-strigi-analyzer-4.8.0'
         for ver in ['4.8.1', '4.8.2']:
             self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/kdegraphics-strigi-analyzer-" + ver + ".tar.xz"
