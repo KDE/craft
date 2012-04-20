@@ -63,10 +63,11 @@
 LangString DESC_SECTION_LANGAUAGES ${LANG_ENGLISH} "You have to be online to install aditional translations"
 LangString DESC_SECTION_LANGAUAGES_DE ${LANG_ENGLISH} "The German translations package"
 LangString DESC_SECTION_LANGAUAGES_EN_GB ${LANG_ENGLISH} "The English translations package"
+LangString DESC_SECTION_LANGAUAGES_IT ${LANG_ENGLISH} "The itallian translation package"
 
 ;German
 LangString DESC_SECTION_LANGAUAGES ${LANG_GERMAN} "Sie müssen online sein um zusäzlich sprachen zu installieren"
 LangString DESC_SECTION_LANGAUAGES_DE ${LANG_GERMAN} "Das deutsche sprach packet"
 LangString DESC_SECTION_LANGAUAGES_EN_GB ${LANG_GERMAN} "Das englische Sprachpacket"
-
+LangString DESC_SECTION_LANGAUAGES_IT ${LANG_GERMAN} "Das italienische Sprachpacket"
 

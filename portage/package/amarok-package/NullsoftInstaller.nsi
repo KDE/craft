@@ -1,4 +1,4 @@
-; basic script template for NullsoftInstallerPackager
+; basic script template for 
 ;
 ; Copyright 2010 Patrick Spendrin <ps_ml@gmx.de>
 ; adapted from marble.nsi
@@ -10,6 +10,20 @@
 !define startmenu "$SMPROGRAMS\Amarok"
 !define uninstaller "uninstall.exe"
  
+ Var StartMenuFolder
+ 
+ !define MUI_LANGDLL_ALLLANGUAGES
+!define MUI_ICON "${amarok-icon}"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\amarok.exe"
+;save language
+!define MUI_LANGDLL_REGISTRY_ROOT "HKLM" 
+!define MUI_LANGDLL_REGISTRY_KEY "${regkey}"
+!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
+;Start Menu Folder Page Configuration
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM" 
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "${regkey}" 
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 ;--------------------------------
  
 XPStyle on
@@ -25,9 +39,7 @@ Caption "${productname}"
 OutFile "${setupname}"
  
 !include "MUI2.nsh"
-!define MUI_LANGDLL_ALLLANGUAGES
-!define MUI_ICON "${amarok-icon}"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\amarok.exe"
+
 
 SetDateSave on
 SetDatablockOptimize on
@@ -45,16 +57,17 @@ ShowInstDetails hide
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "${amarok-root}\COPYING"
-!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_DIRECTORY 
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
+; !insertmacro MUI_PAGE_FINISH
 
 
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
-!insertmacro MUI_UNPAGE_FINISH
+; !insertmacro MUI_UNPAGE_FINISH
  
  
 
@@ -62,12 +75,6 @@ Section "Amarok"
   ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
-  WriteRegStr HKLM "${uninstkey}" "DisplayName" "Amarok (remove only)"
-  WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
-  ;save language
-  !define MUI_LANGDLL_REGISTRY_ROOT "HKLM" 
-  !define MUI_LANGDLL_REGISTRY_KEY "${regkey}"
-  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
  
   SetOutPath $INSTDIR
  
@@ -79,21 +86,29 @@ File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*.*"
 
 WriteUninstaller "${uninstaller}"
   
+    ;Create shortcuts
+
+!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    SetShellVarContext all
+    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Amarok.lnk" "$INSTDIR\bin\Amarok.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Appearance Settings.lnk" "$INSTDIR\bin\kcmshell4.exe" "style" "$INSTDIR\bin\systemsettings.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Snorenotify.lnk" "$INSTDIR\bin\snorenotify.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+      
+!insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 
-; create shortcuts
-Section "Shortcuts"
-SetShellVarContext all
-CreateDirectory "${startmenu}"
-SetOutPath $INSTDIR ; for working directory
-CreateShortCut "${startmenu}\Amarok.lnk" "$INSTDIR\bin\Amarok.exe"
-CreateShortCut "${startmenu}\Appearance Settings.lnk" "$INSTDIR\bin\kcmshell4.exe" "style" "$INSTDIR\bin\systemsettings.exe"
-CreateShortCut "${startmenu}\Snorenotify.lnk" "$INSTDIR\bin\snorenotify.exe"
-CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
+Section ;registry
+  WriteRegStr HKLM "${uninstkey}" "DisplayName" "Amarok (remove only)"
+  WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
+
 SectionEnd
 
-!macro ADD_LANGUAGE LANG_SUFFIX
+
+
+!macro AMAROK_ADD_LANGUAGE_PACKAGE LANG_SUFFIX
     SetOutPath "$INSTDIR"
     DetailPrint "Downloading: http://winkde.org/~pvonreth/downloads/l10n/${kde-version}/kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z"
     NSISdl::download "http://winkde.org/~pvonreth/downloads/l10n/${kde-version}/kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z" "$TEMP\kde4-l10n-${LANG_SUFFIX}-${kde-version}.7z"
@@ -103,10 +118,13 @@ SectionEnd
 
 SubSection "Languages" SECTION_LANGAUAGES
 Section /o "de" SECTION_LANGAUAGES_DE
-    !insertmacro ADD_LANGUAGE de
+    !insertmacro AMAROK_ADD_LANGUAGE_PACKAGE de
 SectionEnd
 Section /o "en_GB" SECTION_LANGAUAGES_EN_GB
-    !insertmacro ADD_LANGUAGE en_GB
+    !insertmacro AMAROK_ADD_LANGUAGE_PACKAGE en_GB
+SectionEnd
+Section /o "it" SECTION_LANGAUAGES_IT
+    !insertmacro AMAROK_ADD_LANGUAGE_PACKAGE it
 SectionEnd
 SubSectionEnd
 
@@ -130,9 +148,9 @@ ExecWait '"$INSTDIR\bin\kdeinit4.exe" "--shutdown"'
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
 
-Delete "${startmenu}\Uninstall.lnk"
+!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
-RMDir /r "${startmenu}"
+RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 RMDir /r "$INSTDIR"
 
 SectionEnd
@@ -146,6 +164,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES} $(DESC_SECTION_LANGAUAGES)
   !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES_DE} $(DESC_SECTION_LANGAUAGES_DE)
   !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES_EN_GB} $(DESC_SECTION_LANGAUAGES_EN_GB)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SECTION_LANGAUAGES_IT} $(DESC_SECTION_LANGAUAGES_IT)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 
