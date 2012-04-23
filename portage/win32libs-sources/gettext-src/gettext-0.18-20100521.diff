@@ -1,87 +1,6 @@
-Binary files gettext-0.18.orig/.CMakeLists.txt.swp and gettext-0.18/.CMakeLists.txt.swp differ
-diff -Nru gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
---- gettext-0.18.orig/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/CMakeLists.txt	2010-12-22 14:28:43.987198144 +0000
-@@ -0,0 +1,39 @@
-+cmake_minimum_required(VERSION 2.6)
-+
-+project(gettext)
-+
-+set(PACKAGE_VERSION_MAJOR 0)
-+set(PACKAGE_VERSION_MINOR 18)
-+set(PACKAGE_VERSION_SUBMINOR 0)
-+
-+set(PACKAGE_VERSION_STRING "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}")
-+
-+add_definitions(-DPACKAGE_VERSION_MAJOR=${PACKAGE_VERSION_MAJOR} -DPACKAGE_VERSION_MINOR=${PACKAGE_VERSION_MINOR} -DPACKAGE_VERSION_SUBMINOR=${PACKAGE_VERSION_SUBMINOR} -DPACKAGE_VERSION_STRING=${PACKAGE_VERSION_STRING})
-+
-+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
-+
-+include(MacroBoolTo01)
-+
-+if(WINCE)
-+    find_package(Wcecompat REQUIRED)
-+    include_directories(${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
-+    set(LIBRARY_TYPE STATIC)
-+    add_definitions(-DGETTEXT_STATIC_LIBS)
-+    add_definitions(-DWCECOMPAT_USE_DLMALLOC)
-+else(WINCE)
-+    set(LIBRARY_TYPE SHARED)
-+endif(WINCE)
-+
-+find_package(iconv)
-+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${ICONV_INCLUDE_DIR})
-+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${ICONV_LIBRARIES})
-+
-+include_directories(${ICONV_INCLUDE_DIR})
-+
-+if(MSVC)
-+    add_definitions(-wd4996 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
-+endif(MSVC)
-+
-+add_subdirectory(gettext-runtime)
-+#add_subdirectory(gettext-tools)
-diff -Nru gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake gettext-0.18/cmake/Modules/FindWcecompat.cmake
---- gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/cmake/Modules/FindWcecompat.cmake	2010-12-22 11:51:32.668177779 +0000
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
-diff -Nru gettext-0.18.orig/cmake/Modules/Findiconv.cmake gettext-0.18/cmake/Modules/Findiconv.cmake
---- gettext-0.18.orig/cmake/Modules/Findiconv.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/cmake/Modules/Findiconv.cmake	2010-12-22 11:51:32.917699985 +0000
+diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/Findiconv.cmake gettext-0.18/cmake/Modules/Findiconv.cmake
+--- gettext-0.18.orig/cmake/Modules/Findiconv.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/cmake/Modules/Findiconv.cmake	2012-04-21 23:16:04.131271700 +0200
 @@ -0,0 +1,60 @@
 +# - Try to find Iconv 
 +# Once done this will define 
@@ -143,9 +62,46 @@ diff -Nru gettext-0.18.orig/cmake/Modules/Findiconv.cmake gettext-0.18/cmake/Mod
 +  ICONV_LIBRARIES
 +  ICONV_SECOND_ARGUMENT_IS_CONST
 +)
-diff -Nru gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake gettext-0.18/cmake/Modules/MacroBoolTo01.cmake
---- gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/cmake/Modules/MacroBoolTo01.cmake	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake gettext-0.18/cmake/Modules/FindWcecompat.cmake
+--- gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/cmake/Modules/FindWcecompat.cmake	2012-04-21 23:16:04.125271400 +0200
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake gettext-0.18/cmake/Modules/MacroBoolTo01.cmake
+--- gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/cmake/Modules/MacroBoolTo01.cmake	2012-04-21 23:16:04.134271900 +0200
 @@ -0,0 +1,20 @@
 +# MACRO_BOOL_TO_01( VAR RESULT0 ... RESULTN )
 +# This macro evaluates its first argument
@@ -167,9 +123,52 @@ diff -Nru gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake gettext-0.18/cmake
 +      ENDIF(${FOUND_VAR})
 +   ENDFOREACH(_current_VAR)
 +ENDMACRO(MACRO_BOOL_TO_01)
-diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-runtime/CMakeLists.txt
---- gettext-0.18.orig/gettext-runtime/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/gettext-runtime/CMakeLists.txt	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
+--- gettext-0.18.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/CMakeLists.txt	2012-04-22 00:00:31.473835000 +0200
+@@ -0,0 +1,39 @@
++cmake_minimum_required(VERSION 2.6)
++
++project(gettext)
++
++set(PACKAGE_VERSION_MAJOR 0)
++set(PACKAGE_VERSION_MINOR 18)
++set(PACKAGE_VERSION_SUBMINOR 0)
++
++set(PACKAGE_VERSION_STRING "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}")
++
++add_definitions(-DPACKAGE_VERSION_MAJOR=${PACKAGE_VERSION_MAJOR} -DPACKAGE_VERSION_MINOR=${PACKAGE_VERSION_MINOR} -DPACKAGE_VERSION_SUBMINOR=${PACKAGE_VERSION_SUBMINOR} -DPACKAGE_VERSION_STRING="${PACKAGE_VERSION_STRING}")
++
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
++
++include(MacroBoolTo01)
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${WCECOMPAT_INCLUDE_DIR})
++    set(LIBRARY_TYPE STATIC)
++    add_definitions(-DGETTEXT_STATIC_LIBS)
++    add_definitions(-DWCECOMPAT_USE_DLMALLOC)
++else(WINCE)
++    set(LIBRARY_TYPE SHARED)
++endif(WINCE)
++
++find_package(iconv)
++set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${ICONV_INCLUDE_DIR})
++set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${ICONV_LIBRARIES})
++
++include_directories(${ICONV_INCLUDE_DIR})
++
++if(MSVC)
++    add_definitions(-wd4996 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
++endif(MSVC)
++
++add_subdirectory(gettext-runtime)
++#add_subdirectory(gettext-tools)
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-runtime/CMakeLists.txt
+--- gettext-0.18.orig/gettext-runtime/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/gettext-runtime/CMakeLists.txt	2012-04-21 23:16:04.138272100 +0200
 @@ -0,0 +1,23 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
@@ -194,175 +193,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-
 +
 +
 +
-diff -Nru gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
---- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	2010-12-22 11:51:33.109568104 +0000
-@@ -0,0 +1,161 @@
-+include(CheckFunctionExists)
-+include(CheckIncludeFile)
-+include(CheckTypeSize)
-+
-+check_include_file("argz.h" HAVE_ARGZ_H)
-+CHECK_INCLUDE_FILE("alloca.h" HAVE_ALLOCA_H)
-+CHECK_INCLUDE_FILE("bp-sym.h" HAVE_BP_SYM_H)
-+CHECK_INCLUDE_FILE("dlfcn.h" HAVE_DLFCN_H)
-+CHECK_INCLUDE_FILE("direct.h" HAVE_DIRECT_H)
-+CHECK_INCLUDE_FILE("errno.h" HAVE_ERRNO_H)
-+CHECK_INCLUDE_FILE("getopt.h" HAVE_GETOPT_H)
-+CHECK_INCLUDE_FILE("iconv.h" HAVE_ICONV_H)
-+CHECK_INCLUDE_FILE("inttypes.h" HAVE_INTTYPES_H)
-+CHECK_INCLUDE_FILE("limits.h" HAVE_LIMITS_H)
-+CHECK_INCLUDE_FILE("mach-o/dyld.h" HAVE_MACH_O_DYLD_H)
-+CHECK_INCLUDE_FILE("memory.h" HAVE_MEMORY_H)
-+CHECK_INCLUDE_FILE("random.h" HAVE_RANDOM_H)
-+CHECK_INCLUDE_FILE("search.h" HAVE_SEARCH_H)
-+CHECK_INCLUDE_FILE("signal.h" HAVE_SIGNAL_H)
-+CHECK_INCLUDE_FILE("stddef.h" HAVE_STDDEF_H)
-+CHECK_INCLUDE_FILE("stdint.h" HAVE_STDINT_H)
-+CHECK_INCLUDE_FILE("stdio.h" HAVE_STDIO_H)
-+CHECK_INCLUDE_FILE("stdlib.h" HAVE_STDLIB_H)
-+CHECK_INCLUDE_FILE("strings.h" HAVE_STRINGS_H)
-+CHECK_INCLUDE_FILE("string.h" HAVE_STRING_H)
-+CHECK_INCLUDE_FILE("sys/bitypes.h" HAVE_SYS_BITYPES_H)
-+CHECK_INCLUDE_FILE("sys/inttypes.h" HAVE_SYS_INTTYPES_H)
-+CHECK_INCLUDE_FILE("sys/mman.h" HAVE_SYS_MMAN_H)
-+CHECK_INCLUDE_FILE("sys/param.h" HAVE_SYS_PARAM_H)
-+CHECK_INCLUDE_FILE("sys/socket.h" HAVE_SYS_SOCKET_H)
-+CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
-+CHECK_INCLUDE_FILE("sys/time.h" HAVE_SYS_TIME_H)
-+CHECK_INCLUDE_FILE("sys/types.h" HAVE_SYS_TYPES_H)
-+CHECK_INCLUDE_FILE("time.h" HAVE_TIME_H)
-+CHECK_INCLUDE_FILE("unistd.h" HAVE_UNISTD_H)
-+CHECK_INCLUDE_FILE("wchar.h" HAVE_WCHAR_H)
-+CHECK_INCLUDE_FILE("wctype.h" HAVE_WCTYPE_H)
-+CHECK_INCLUDE_FILE("winsock2.h" HAVE_WINSOCK2_H)
-+
-+
-+CHECK_FUNCTION_EXISTS("argz_count" HAVE_ARGZ_COUNT)
-+CHECK_FUNCTION_EXISTS("argz_next" HAVE_ARGZ_NEXT)
-+CHECK_FUNCTION_EXISTS("argz_stringify" HAVE_ARGZ_STRINGIFY)
-+CHECK_FUNCTION_EXISTS("alloca" HAVE_ALLOCA)
-+if(MSVC)
-+    set(HAVE_ALLOCA 1)
-+endif(MSVC)
-+CHECK_FUNCTION_EXISTS("asprintf" HAVE_ASPRINTF)
-+CHECK_FUNCTION_EXISTS("atexit" HAVE_ATEXIT)
-+CHECK_FUNCTION_EXISTS("canonicalize_file_name" HAVE_CANONICALIZE_FILE_NAME)
-+CHECK_FUNCTION_EXISTS("CFLocaleCopyCurrent" HAVE_CFLOCALECOPYCURRENT)
-+CHECK_FUNCTION_EXISTS("fwprintf" HAVE_FWPRINTF)
-+CHECK_FUNCTION_EXISTS("getcwd" HAVE_GETCWD)
-+CHECK_FUNCTION_EXISTS("_getcwd" HAVE_GETCWD2)
-+CHECK_FUNCTION_EXISTS("getegid" HAVE_GETEGID)
-+CHECK_FUNCTION_EXISTS("geteuid" HAVE_GETEUID)
-+CHECK_FUNCTION_EXISTS("getgid" HAVE_GETGID)
-+CHECK_FUNCTION_EXISTS("getopt_long_only" HAVE_GETOPT_LONG_ONLY)
-+CHECK_FUNCTION_EXISTS("getpagesize" HAVE_GETPAGESIZE)
-+CHECK_FUNCTION_EXISTS("gettext" HAVE_GETTEXT)
-+CHECK_FUNCTION_EXISTS("getuid" HAVE_GETUID)
-+CHECK_FUNCTION_EXISTS("iconv" HAVE_ICONV)
-+CHECK_FUNCTION_EXISTS("iswblank" HAVE_ISWBLANK)
-+CHECK_FUNCTION_EXISTS("iswcntrl" HAVE_ISWCNTRL)
-+CHECK_FUNCTION_EXISTS("lstat" HAVE_LSTAT)
-+CHECK_FUNCTION_EXISTS("mbrtowc" HAVE_MBRTOWC)
-+CHECK_FUNCTION_EXISTS("mbsinit" HAVE_MBSINIT)
-+CHECK_FUNCTION_EXISTS("mbslen" HAVE_MBSLEN)
-+CHECK_FUNCTION_EXISTS("memchr" HAVE_MEMCHR)
-+CHECK_FUNCTION_EXISTS("memmove" HAVE_MEMMOVE)
-+CHECK_FUNCTION_EXISTS("mempcpy" HAVE_MEMPCPY)
-+CHECK_FUNCTION_EXISTS("mmap" HAVE_MMAP)
-+CHECK_FUNCTION_EXISTS("mprotect" HAVE_MPROTECT)
-+CHECK_FUNCTION_EXISTS("munmap" HAVE_MUNMAP)
-+CHECK_FUNCTION_EXISTS("newlocale" HAVE_NEWLOCALE)
-+CHECK_FUNCTION_EXISTS("pathconf" HAVE_PATHCONF)
-+CHECK_FUNCTION_EXISTS("putenv" HAVE_PUTENV)
-+CHECK_FUNCTION_EXISTS("readlink" HAVE_READLINK)
-+CHECK_FUNCTION_EXISTS("realpath" HAVE_REALPATH)
-+CHECK_FUNCTION_EXISTS("setenv" HAVE_SETENV)
-+CHECK_FUNCTION_EXISTS("setlocale" HAVE_SETLOCALE)
-+CHECK_FUNCTION_EXISTS("snprintf" HAVE_SNPRINTF)
-+CHECK_FUNCTION_EXISTS("stpcpy" HAVE_STPCPY)
-+CHECK_FUNCTION_EXISTS("strcasecmp" HAVE_STRCASECMP)
-+CHECK_FUNCTION_EXISTS("strdup" HAVE_STRDUP)
-+CHECK_FUNCTION_EXISTS("strerror_r" HAVE_STRERROR_R)
-+CHECK_FUNCTION_EXISTS("strnlen" HAVE_STRNLEN)
-+CHECK_FUNCTION_EXISTS("strtol" HAVE_STRTOL)
-+CHECK_FUNCTION_EXISTS("strtoul" HAVE_STRTOUL)
-+CHECK_FUNCTION_EXISTS("tsearch" HAVE_TSEARCH)
-+CHECK_FUNCTION_EXISTS("uselocale" HAVE_USELOCALE)
-+CHECK_FUNCTION_EXISTS("wcrtomb" HAVE_WCRTOMB)
-+CHECK_FUNCTION_EXISTS("wcslen" HAVE_WCSLEN)
-+CHECK_FUNCTION_EXISTS("wcsnlen" HAVE_WCSNLEN)
-+CHECK_FUNCTION_EXISTS("wcwidth" HAVE_WCWIDTH)
-+CHECK_FUNCTION_EXISTS("_NSGetExecutablePath" HAVE__NSGETEXECUTABLEPATH)
-+CHECK_FUNCTION_EXISTS("__fsetlocking" HAVE___FSETLOCKING)
-+
-+CHECK_FUNCTION_EXISTS("clearerr_unlocked" HAVE_DECL_CLEARERR_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("feof_unlocked" HAVE_DECL_FEOF_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("ferror_unlocked" HAVE_DECL_FERROR_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("fflush_unlocked" HAVE_DECL_FFLUSH_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("fgets_unlocked" HAVE_DECL_FGETS_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("fputc_unlocked" HAVE_DECL_FPUTC_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("fputs_unlocked" HAVE_DECL_FPUTS_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("fread_unlocked" HAVE_DECL_FREAD_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("fwrite_unlocked" HAVE_DECL_FWRITE_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("getchar_unlocked" HAVE_DECL_GETCHAR_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("getc_unlocked" HAVE_DECL_GETC_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("getenv" HAVE_DECL_GETENV)
-+CHECK_FUNCTION_EXISTS("getopt_clip" HAVE_DECL_GETOPT_CLIP)
-+CHECK_FUNCTION_EXISTS("optreset" HAVE_DECL_OPTRESET)
-+CHECK_FUNCTION_EXISTS("program_invocation_name" HAVE_DECL_PROGRAM_INVOCATION_NAME)
-+CHECK_FUNCTION_EXISTS("program_invocation_short_name" HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME)
-+CHECK_FUNCTION_EXISTS("putchar_unlocked" HAVE_DECL_PUTCHAR_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("putc_unlocked" HAVE_DECL_PUTC_UNLOCKED)
-+CHECK_FUNCTION_EXISTS("strerror_r" HAVE_DECL_STRERROR_R)
-+CHECK_FUNCTION_EXISTS("strnlen" HAVE_DECL_STRNLEN)
-+CHECK_FUNCTION_EXISTS("wcwidth" HAVE_DECL_WCWIDTH)
-+CHECK_FUNCTION_EXISTS("_snprintf" HAVE_DECL__SNPRINTF)
-+CHECK_FUNCTION_EXISTS("_snwprintf" HAVE_DECL__SNWPRINTF)
-+CHECK_FUNCTION_EXISTS("strerror" HAVE_DECL_STRERROR)
-+
-+CHECK_TYPE_SIZE("ptrdiff_t" BITSIZEOF_PTRDIFF_T)
-+CHECK_TYPE_SIZE("sig_atomic_t" BITSIZEOF_SIG_ATOMIC_T)
-+CHECK_TYPE_SIZE("size_t" BITSIZEOF_SIZE_T)
-+CHECK_TYPE_SIZE("wchar_t" BITSIZEOF_WCHAR_T)
-+CHECK_TYPE_SIZE("wint_t" BITSIZEOF_WINT_T)
-+
-+CHECK_TYPE_SIZE("intmax_t" INTMAX_T)
-+
-+CHECK_TYPE_SIZE("uintmax_t" UINTMAX_T)
-+if(HAVE_UINTMAX_T)
-+set(HAVE_STDINT_H_WITH_UINTMAX true)
-+endif(HAVE_UINTMAX_T)
-+
-+if(ICONV_SECOND_ARGUMENT_IS_CONST)
-+    set(ICONV_CONST const)
-+endif(ICONV_SECOND_ARGUMENT_IS_CONST)
-+
-+if(NOT HAVE_UINTMAX_T)
-+    set(uintmax_t "unsigned __int64")
-+endif(NOT HAVE_UINTMAX_T)
-+if(NOT HAVE_INTMAX_T)
-+    set(intmax_t "__int64")
-+endif(NOT HAVE_INTMAX_T)
-+
-+if(WINCE)
-+    set(INTDIV0_RAISES_SIGFPE 1)
-+endif(WINCE)
-+
-+if(WIN32)
-+    set(FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1)
-+    set(FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1)
-+else(WIN32)
-+    set(FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 0)
-+endif(WIN32)
-+
-+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-+
-+add_definitions(-DHAVE_CONFIG_H -DLIBDIR)
-\ No newline at end of file
-diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-runtime/config.h.cmake
---- gettext-0.18.orig/gettext-runtime/config.h.cmake	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/gettext-runtime/config.h.cmake	2010-12-22 14:24:42.489567545 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-runtime/config.h.cmake
+--- gettext-0.18.orig/gettext-runtime/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/gettext-runtime/config.h.cmake	2012-04-21 23:16:04.150272800 +0200
 @@ -0,0 +1,1270 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -1634,10 +1467,175 @@ diff -Nru gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-
 +#ifdef _MSC_VER
 +#define inline __inline
 +#endif
-Binary files gettext-0.18.orig/gettext-runtime/intl/.loadmsgcat.c.swp and gettext-0.18/gettext-runtime/intl/.loadmsgcat.c.swp differ
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
---- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
+--- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	2012-04-21 23:16:04.145272500 +0200
+@@ -0,0 +1,161 @@
++include(CheckFunctionExists)
++include(CheckIncludeFile)
++include(CheckTypeSize)
++
++check_include_file("argz.h" HAVE_ARGZ_H)
++CHECK_INCLUDE_FILE("alloca.h" HAVE_ALLOCA_H)
++CHECK_INCLUDE_FILE("bp-sym.h" HAVE_BP_SYM_H)
++CHECK_INCLUDE_FILE("dlfcn.h" HAVE_DLFCN_H)
++CHECK_INCLUDE_FILE("direct.h" HAVE_DIRECT_H)
++CHECK_INCLUDE_FILE("errno.h" HAVE_ERRNO_H)
++CHECK_INCLUDE_FILE("getopt.h" HAVE_GETOPT_H)
++CHECK_INCLUDE_FILE("iconv.h" HAVE_ICONV_H)
++CHECK_INCLUDE_FILE("inttypes.h" HAVE_INTTYPES_H)
++CHECK_INCLUDE_FILE("limits.h" HAVE_LIMITS_H)
++CHECK_INCLUDE_FILE("mach-o/dyld.h" HAVE_MACH_O_DYLD_H)
++CHECK_INCLUDE_FILE("memory.h" HAVE_MEMORY_H)
++CHECK_INCLUDE_FILE("random.h" HAVE_RANDOM_H)
++CHECK_INCLUDE_FILE("search.h" HAVE_SEARCH_H)
++CHECK_INCLUDE_FILE("signal.h" HAVE_SIGNAL_H)
++CHECK_INCLUDE_FILE("stddef.h" HAVE_STDDEF_H)
++CHECK_INCLUDE_FILE("stdint.h" HAVE_STDINT_H)
++CHECK_INCLUDE_FILE("stdio.h" HAVE_STDIO_H)
++CHECK_INCLUDE_FILE("stdlib.h" HAVE_STDLIB_H)
++CHECK_INCLUDE_FILE("strings.h" HAVE_STRINGS_H)
++CHECK_INCLUDE_FILE("string.h" HAVE_STRING_H)
++CHECK_INCLUDE_FILE("sys/bitypes.h" HAVE_SYS_BITYPES_H)
++CHECK_INCLUDE_FILE("sys/inttypes.h" HAVE_SYS_INTTYPES_H)
++CHECK_INCLUDE_FILE("sys/mman.h" HAVE_SYS_MMAN_H)
++CHECK_INCLUDE_FILE("sys/param.h" HAVE_SYS_PARAM_H)
++CHECK_INCLUDE_FILE("sys/socket.h" HAVE_SYS_SOCKET_H)
++CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
++CHECK_INCLUDE_FILE("sys/time.h" HAVE_SYS_TIME_H)
++CHECK_INCLUDE_FILE("sys/types.h" HAVE_SYS_TYPES_H)
++CHECK_INCLUDE_FILE("time.h" HAVE_TIME_H)
++CHECK_INCLUDE_FILE("unistd.h" HAVE_UNISTD_H)
++CHECK_INCLUDE_FILE("wchar.h" HAVE_WCHAR_H)
++CHECK_INCLUDE_FILE("wctype.h" HAVE_WCTYPE_H)
++CHECK_INCLUDE_FILE("winsock2.h" HAVE_WINSOCK2_H)
++
++
++CHECK_FUNCTION_EXISTS("argz_count" HAVE_ARGZ_COUNT)
++CHECK_FUNCTION_EXISTS("argz_next" HAVE_ARGZ_NEXT)
++CHECK_FUNCTION_EXISTS("argz_stringify" HAVE_ARGZ_STRINGIFY)
++CHECK_FUNCTION_EXISTS("alloca" HAVE_ALLOCA)
++if(MSVC)
++    set(HAVE_ALLOCA 1)
++endif(MSVC)
++CHECK_FUNCTION_EXISTS("asprintf" HAVE_ASPRINTF)
++CHECK_FUNCTION_EXISTS("atexit" HAVE_ATEXIT)
++CHECK_FUNCTION_EXISTS("canonicalize_file_name" HAVE_CANONICALIZE_FILE_NAME)
++CHECK_FUNCTION_EXISTS("CFLocaleCopyCurrent" HAVE_CFLOCALECOPYCURRENT)
++CHECK_FUNCTION_EXISTS("fwprintf" HAVE_FWPRINTF)
++CHECK_FUNCTION_EXISTS("getcwd" HAVE_GETCWD)
++CHECK_FUNCTION_EXISTS("_getcwd" HAVE_GETCWD2)
++CHECK_FUNCTION_EXISTS("getegid" HAVE_GETEGID)
++CHECK_FUNCTION_EXISTS("geteuid" HAVE_GETEUID)
++CHECK_FUNCTION_EXISTS("getgid" HAVE_GETGID)
++CHECK_FUNCTION_EXISTS("getopt_long_only" HAVE_GETOPT_LONG_ONLY)
++CHECK_FUNCTION_EXISTS("getpagesize" HAVE_GETPAGESIZE)
++CHECK_FUNCTION_EXISTS("gettext" HAVE_GETTEXT)
++CHECK_FUNCTION_EXISTS("getuid" HAVE_GETUID)
++CHECK_FUNCTION_EXISTS("iconv" HAVE_ICONV)
++CHECK_FUNCTION_EXISTS("iswblank" HAVE_ISWBLANK)
++CHECK_FUNCTION_EXISTS("iswcntrl" HAVE_ISWCNTRL)
++CHECK_FUNCTION_EXISTS("lstat" HAVE_LSTAT)
++CHECK_FUNCTION_EXISTS("mbrtowc" HAVE_MBRTOWC)
++CHECK_FUNCTION_EXISTS("mbsinit" HAVE_MBSINIT)
++CHECK_FUNCTION_EXISTS("mbslen" HAVE_MBSLEN)
++CHECK_FUNCTION_EXISTS("memchr" HAVE_MEMCHR)
++CHECK_FUNCTION_EXISTS("memmove" HAVE_MEMMOVE)
++CHECK_FUNCTION_EXISTS("mempcpy" HAVE_MEMPCPY)
++CHECK_FUNCTION_EXISTS("mmap" HAVE_MMAP)
++CHECK_FUNCTION_EXISTS("mprotect" HAVE_MPROTECT)
++CHECK_FUNCTION_EXISTS("munmap" HAVE_MUNMAP)
++CHECK_FUNCTION_EXISTS("newlocale" HAVE_NEWLOCALE)
++CHECK_FUNCTION_EXISTS("pathconf" HAVE_PATHCONF)
++CHECK_FUNCTION_EXISTS("putenv" HAVE_PUTENV)
++CHECK_FUNCTION_EXISTS("readlink" HAVE_READLINK)
++CHECK_FUNCTION_EXISTS("realpath" HAVE_REALPATH)
++CHECK_FUNCTION_EXISTS("setenv" HAVE_SETENV)
++CHECK_FUNCTION_EXISTS("setlocale" HAVE_SETLOCALE)
++CHECK_FUNCTION_EXISTS("snprintf" HAVE_SNPRINTF)
++CHECK_FUNCTION_EXISTS("stpcpy" HAVE_STPCPY)
++CHECK_FUNCTION_EXISTS("strcasecmp" HAVE_STRCASECMP)
++CHECK_FUNCTION_EXISTS("strdup" HAVE_STRDUP)
++CHECK_FUNCTION_EXISTS("strerror_r" HAVE_STRERROR_R)
++CHECK_FUNCTION_EXISTS("strnlen" HAVE_STRNLEN)
++CHECK_FUNCTION_EXISTS("strtol" HAVE_STRTOL)
++CHECK_FUNCTION_EXISTS("strtoul" HAVE_STRTOUL)
++CHECK_FUNCTION_EXISTS("tsearch" HAVE_TSEARCH)
++CHECK_FUNCTION_EXISTS("uselocale" HAVE_USELOCALE)
++CHECK_FUNCTION_EXISTS("wcrtomb" HAVE_WCRTOMB)
++CHECK_FUNCTION_EXISTS("wcslen" HAVE_WCSLEN)
++CHECK_FUNCTION_EXISTS("wcsnlen" HAVE_WCSNLEN)
++CHECK_FUNCTION_EXISTS("wcwidth" HAVE_WCWIDTH)
++CHECK_FUNCTION_EXISTS("_NSGetExecutablePath" HAVE__NSGETEXECUTABLEPATH)
++CHECK_FUNCTION_EXISTS("__fsetlocking" HAVE___FSETLOCKING)
++
++CHECK_FUNCTION_EXISTS("clearerr_unlocked" HAVE_DECL_CLEARERR_UNLOCKED)
++CHECK_FUNCTION_EXISTS("feof_unlocked" HAVE_DECL_FEOF_UNLOCKED)
++CHECK_FUNCTION_EXISTS("ferror_unlocked" HAVE_DECL_FERROR_UNLOCKED)
++CHECK_FUNCTION_EXISTS("fflush_unlocked" HAVE_DECL_FFLUSH_UNLOCKED)
++CHECK_FUNCTION_EXISTS("fgets_unlocked" HAVE_DECL_FGETS_UNLOCKED)
++CHECK_FUNCTION_EXISTS("fputc_unlocked" HAVE_DECL_FPUTC_UNLOCKED)
++CHECK_FUNCTION_EXISTS("fputs_unlocked" HAVE_DECL_FPUTS_UNLOCKED)
++CHECK_FUNCTION_EXISTS("fread_unlocked" HAVE_DECL_FREAD_UNLOCKED)
++CHECK_FUNCTION_EXISTS("fwrite_unlocked" HAVE_DECL_FWRITE_UNLOCKED)
++CHECK_FUNCTION_EXISTS("getchar_unlocked" HAVE_DECL_GETCHAR_UNLOCKED)
++CHECK_FUNCTION_EXISTS("getc_unlocked" HAVE_DECL_GETC_UNLOCKED)
++CHECK_FUNCTION_EXISTS("getenv" HAVE_DECL_GETENV)
++CHECK_FUNCTION_EXISTS("getopt_clip" HAVE_DECL_GETOPT_CLIP)
++CHECK_FUNCTION_EXISTS("optreset" HAVE_DECL_OPTRESET)
++CHECK_FUNCTION_EXISTS("program_invocation_name" HAVE_DECL_PROGRAM_INVOCATION_NAME)
++CHECK_FUNCTION_EXISTS("program_invocation_short_name" HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME)
++CHECK_FUNCTION_EXISTS("putchar_unlocked" HAVE_DECL_PUTCHAR_UNLOCKED)
++CHECK_FUNCTION_EXISTS("putc_unlocked" HAVE_DECL_PUTC_UNLOCKED)
++CHECK_FUNCTION_EXISTS("strerror_r" HAVE_DECL_STRERROR_R)
++CHECK_FUNCTION_EXISTS("strnlen" HAVE_DECL_STRNLEN)
++CHECK_FUNCTION_EXISTS("wcwidth" HAVE_DECL_WCWIDTH)
++CHECK_FUNCTION_EXISTS("_snprintf" HAVE_DECL__SNPRINTF)
++CHECK_FUNCTION_EXISTS("_snwprintf" HAVE_DECL__SNWPRINTF)
++CHECK_FUNCTION_EXISTS("strerror" HAVE_DECL_STRERROR)
++
++CHECK_TYPE_SIZE("ptrdiff_t" BITSIZEOF_PTRDIFF_T)
++CHECK_TYPE_SIZE("sig_atomic_t" BITSIZEOF_SIG_ATOMIC_T)
++CHECK_TYPE_SIZE("size_t" BITSIZEOF_SIZE_T)
++CHECK_TYPE_SIZE("wchar_t" BITSIZEOF_WCHAR_T)
++CHECK_TYPE_SIZE("wint_t" BITSIZEOF_WINT_T)
++
++CHECK_TYPE_SIZE("intmax_t" INTMAX_T)
++
++CHECK_TYPE_SIZE("uintmax_t" UINTMAX_T)
++if(HAVE_UINTMAX_T)
++set(HAVE_STDINT_H_WITH_UINTMAX true)
++endif(HAVE_UINTMAX_T)
++
++if(ICONV_SECOND_ARGUMENT_IS_CONST)
++    set(ICONV_CONST const)
++endif(ICONV_SECOND_ARGUMENT_IS_CONST)
++
++if(NOT HAVE_UINTMAX_T)
++    set(uintmax_t "unsigned __int64")
++endif(NOT HAVE_UINTMAX_T)
++if(NOT HAVE_INTMAX_T)
++    set(intmax_t "__int64")
++endif(NOT HAVE_INTMAX_T)
++
++if(WINCE)
++    set(INTDIV0_RAISES_SIGFPE 1)
++endif(WINCE)
++
++if(WIN32)
++    set(FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1)
++    set(FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1)
++else(WIN32)
++    set(FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 0)
++endif(WIN32)
++
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
++
++add_definitions(-DHAVE_CONFIG_H -DLIBDIR)
+\ No newline at end of file
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
+--- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	2012-04-21 23:20:32.625628700 +0200
 @@ -0,0 +1,70 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
@@ -1709,9 +1707,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/get
 +                        ARCHIVE DESTINATION lib)
 +
 +install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME libintl.h)
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
---- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	2009-12-26 13:42:37.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/dcigettext.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
+--- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	2009-12-26 14:42:37.000000000 +0100
++++ gettext-0.18/gettext-runtime/intl/dcigettext.c	2012-04-21 23:16:04.159273300 +0200
 @@ -140,8 +140,12 @@
  # define tfind __tfind
  #else
@@ -1726,9 +1724,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gette
  # else
  #  if VMS
  #   define getcwd(buf, max) (getcwd) (buf, max, 0)
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-runtime/intl/intl.def
---- gettext-0.18.orig/gettext-runtime/intl/intl.def	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/intl.def	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-runtime/intl/intl.def
+--- gettext-0.18.orig/gettext-runtime/intl/intl.def	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/gettext-runtime/intl/intl.def	2012-04-21 23:16:04.164273600 +0200
 @@ -0,0 +1,51 @@
 +LIBRARY libintl.DLL
 +EXPORTS
@@ -1781,9 +1779,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-r
 +libintl_textdomain
 +libintl_version
 +locale_charset
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettext-runtime/intl/langprefs.c
---- gettext-0.18.orig/gettext-runtime/intl/langprefs.c	2009-12-12 15:08:01.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/langprefs.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettext-runtime/intl/langprefs.c
+--- gettext-0.18.orig/gettext-runtime/intl/langprefs.c	2009-12-12 16:08:01.000000000 +0100
++++ gettext-0.18/gettext-runtime/intl/langprefs.c	2012-04-21 23:16:04.168273900 +0200
 @@ -53,6 +53,8 @@
  extern const char *_nl_locale_name_from_win32_LANGID (LANGID langid);
  extern const char *_nl_locale_name_from_win32_LCID (LCID lcid);
@@ -1842,9 +1840,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettex
 -
    return NULL;
  }
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
---- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	2010-05-09 18:54:29.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
+--- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	2010-05-09 20:54:29.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	2012-04-21 23:16:04.172274100 +0200
 @@ -19,6 +19,10 @@
  #ifndef _LIBINTL_H
  #define _LIBINTL_H 1
@@ -1856,9 +1854,28 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/ge
  #include <locale.h>
  #if (defined __APPLE__ && defined __MACH__) && @HAVE_NEWLOCALE@
  # include <xlocale.h>
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
---- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	2009-06-28 19:44:04.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	2010-12-22 15:19:13.419194351 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/libintl.rc gettext-0.18/gettext-runtime/intl/libintl.rc
+--- gettext-0.18.orig/gettext-runtime/intl/libintl.rc	2010-05-09 20:54:29.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/libintl.rc	2012-04-21 23:58:54.528290000 +0200
+@@ -22,13 +22,13 @@
+             VALUE "Comments", "This library is free software; you can redistribute it and/or modify it under the terms of the GNU Library General Public License. You should have received a copy of the GNU Library General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA\0"
+             VALUE "CompanyName", "Free Software Foundation\0"
+             VALUE "FileDescription", "LGPLed libintl for Windows NT/2000/XP/Vista/7 and Windows 95/98/ME\0"
+-            VALUE "FileVersion", PACKAGE_VERSION_STRING "\0"
++            VALUE "FileVersion", "0.18\0"
+             VALUE "InternalName", "intl.dll\0"
+             VALUE "LegalCopyright", "Copyright (C) 1995-2010\0"
+             VALUE "LegalTrademarks", "\0"
+             VALUE "OriginalFilename", "intl.dll\0"
+             VALUE "ProductName", "libintl: accessing NLS message catalogs\0"
+-            VALUE "ProductVersion", PACKAGE_VERSION_STRING "\0"
++            VALUE "ProductVersion", "0.18\0"
+         END
+     END
+     BLOCK "VarFileInfo"
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
+--- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	2009-06-28 21:44:04.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	2012-04-21 23:16:04.178274400 +0200
 @@ -33,6 +33,11 @@
  #include <sys/types.h>
  #include <sys/stat.h>
@@ -1949,9 +1966,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gette
    domain->must_swap = data->magic != _MAGIC;
    domain->malloced = NULL;
  
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gettext-runtime/intl/localename.c
---- gettext-0.18.orig/gettext-runtime/intl/localename.c	2010-05-09 02:27:13.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/localename.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gettext-runtime/intl/localename.c
+--- gettext-0.18.orig/gettext-runtime/intl/localename.c	2010-05-09 04:27:13.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/localename.c	2012-04-21 23:16:04.185274800 +0200
 @@ -1128,6 +1128,10 @@
  # endif
  #endif
@@ -1979,9 +1996,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gette
    /* Internet Explorer has an LCID to RFC3066 name mapping stored in
       HKEY_CLASSES_ROOT\Mime\Database\Rfc1766.  But we better don't use that
       since IE's i18n subsystem is known to be inconsistent with the Win32 base
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettext-runtime/intl/os2compat.c
---- gettext-0.18.orig/gettext-runtime/intl/os2compat.c	2009-06-28 19:44:04.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/os2compat.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettext-runtime/intl/os2compat.c
+--- gettext-0.18.orig/gettext-runtime/intl/os2compat.c	2009-06-28 21:44:04.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/os2compat.c	2012-04-21 23:16:04.189275100 +0200
 @@ -23,7 +23,9 @@
  
  #include <stdlib.h>
@@ -1992,9 +2009,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettex
  
  /* A version of getenv() that works from DLLs */
  extern unsigned long DosScanEnv (const unsigned char *pszName, unsigned char **ppszValue);
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-0.18/gettext-runtime/intl/printf-parse.c
---- gettext-0.18.orig/gettext-runtime/intl/printf-parse.c	2009-12-12 15:08:01.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/printf-parse.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-0.18/gettext-runtime/intl/printf-parse.c
+--- gettext-0.18.orig/gettext-runtime/intl/printf-parse.c	2009-12-12 16:08:01.000000000 +0100
++++ gettext-0.18/gettext-runtime/intl/printf-parse.c	2012-04-21 23:16:04.194275400 +0200
 @@ -75,6 +75,11 @@
  # include "c-ctype.h"
  #endif
@@ -2007,9 +2024,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-0.18/get
  #ifdef STATIC
  STATIC
  #endif
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettext-runtime/intl/setlocale.c
---- gettext-0.18.orig/gettext-runtime/intl/setlocale.c	2009-12-26 03:15:07.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/setlocale.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettext-runtime/intl/setlocale.c
+--- gettext-0.18.orig/gettext-runtime/intl/setlocale.c	2009-12-26 04:15:07.000000000 +0100
++++ gettext-0.18/gettext-runtime/intl/setlocale.c	2012-04-21 23:16:04.199275600 +0200
 @@ -16,6 +16,7 @@
     License along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
@@ -2052,9 +2069,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettex
  }
  
  # if HAVE_NEWLOCALE
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c gettext-0.18/gettext-runtime/intl/vasnprintf.c
---- gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c	2010-05-09 10:54:20.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/vasnprintf.c	2010-12-22 11:51:33.109568104 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c gettext-0.18/gettext-runtime/intl/vasnprintf.c
+--- gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c	2010-05-09 12:54:20.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/vasnprintf.c	2012-04-21 23:16:04.207276100 +0200
 @@ -86,6 +86,10 @@
  # endif
  #endif
@@ -2066,9 +2083,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c gettext-0.18/gette
  /* Checked size_t computations.  */
  #include "xsize.h"
  
-diff -Nru gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-runtime/intl/xsize.h
---- gettext-0.18.orig/gettext-runtime/intl/xsize.h	2009-06-28 19:44:04.000000000 +0000
-+++ gettext-0.18/gettext-runtime/intl/xsize.h	2010-12-22 11:51:33.119568253 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-runtime/intl/xsize.h
+--- gettext-0.18.orig/gettext-runtime/intl/xsize.h	2009-06-28 21:44:04.000000000 +0200
++++ gettext-0.18/gettext-runtime/intl/xsize.h	2012-04-21 23:16:04.212276400 +0200
 @@ -25,6 +25,9 @@
  
  /* Get SIZE_MAX.  */
@@ -2079,9 +2096,9 @@ diff -Nru gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-ru
  #if HAVE_STDINT_H
  # include <stdint.h>
  #endif
-diff -Nru gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt gettext-0.18/gettext-runtime/src/CMakeLists.txt
---- gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
-+++ gettext-0.18/gettext-runtime/src/CMakeLists.txt	2010-12-22 11:51:33.119568253 +0000
+diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt gettext-0.18/gettext-runtime/src/CMakeLists.txt
+--- gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gettext-0.18/gettext-runtime/src/CMakeLists.txt	2012-04-21 23:16:04.216276600 +0200
 @@ -0,0 +1,22 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
