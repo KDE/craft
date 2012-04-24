@@ -166,7 +166,7 @@ class EpcPackageCreator(object):
             for old in os.listdir(dest):
                 if old.endswith(".py"):
                     os.remove(os.path.join(dest,old))
-        name = os.path.join(dest,"%s-%s-%s.py" % (name,self.default_target,strftime("%Y%m%d")))
+        name = os.path.join(dest,"%s-%s.py" % (name,self.default_target))
         out = open(name,"wt+")
         out.write(text)
         out.close()
