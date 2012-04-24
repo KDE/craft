@@ -723,6 +723,8 @@ def isInstalled( category, package, version, buildtype='' ):
         if os.path.isfile( fileName ):
             with open( fileName, "rt" ) as f:
                 for line in f.read().splitlines():
+                    if not line or line == "":
+                        continue
                     (_category, _packageVersion) = line.split( "/" )
                     (_package, _version) = utils.packageSplit(_packageVersion)
                     if category != '' and version != '' and category == _category and package == _package and version == _version:
