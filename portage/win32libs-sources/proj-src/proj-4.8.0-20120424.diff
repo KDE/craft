@@ -1,0 +1,178 @@
+diff -Nru -x '*~' proj-4.8.0.orig/CMakeLists.txt proj-4.8.0/CMakeLists.txt
+--- proj-4.8.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ proj-4.8.0/CMakeLists.txt	2012-04-24 09:02:09.430759600 +0200
+@@ -0,0 +1,174 @@
++PROJECT(proj)
++
++cmake_minimum_required(VERSION 2.8)
++
++set (PROJ_SOURCES
++	src/aasincos.c
++	src/adjlon.c
++	src/bch2bps.c
++	src/bchgen.c
++	src/biveval.c
++	src/dmstor.c
++	src/emess.c
++	src/gen_cheb.c
++	src/geocent.c
++	src/geod_for.c
++	src/geod_inv.c
++	src/geod_set.c
++	src/mk_cheby.c
++	src/nad_cvt.c
++	src/nad_init.c
++	src/nad_intr.c
++	src/PJ_aea.c
++	src/PJ_aeqd.c
++	src/PJ_airy.c
++	src/PJ_aitoff.c
++	src/pj_apply_gridshift.c
++	src/PJ_august.c
++	src/pj_auth.c
++	src/PJ_bacon.c
++	src/PJ_bipc.c
++	src/PJ_boggs.c
++	src/PJ_bonne.c
++	src/PJ_cass.c
++	src/PJ_cc.c
++	src/PJ_cea.c
++	src/PJ_chamb.c
++	src/PJ_collg.c
++	src/PJ_crast.c
++	src/pj_datums.c
++	src/pj_datum_set.c
++	src/PJ_denoy.c
++	src/pj_deriv.c
++	src/PJ_eck1.c
++	src/PJ_eck2.c
++	src/PJ_eck3.c
++	src/PJ_eck4.c
++	src/PJ_eck5.c
++	src/pj_ellps.c
++	src/pj_ell_set.c
++	src/PJ_eqc.c
++	src/PJ_eqdc.c
++	src/pj_errno.c
++	src/pj_factors.c
++	src/PJ_fahey.c
++	src/PJ_fouc_s.c
++	src/pj_fwd.c
++	src/PJ_gall.c
++	src/pj_gauss.c
++	src/pj_geocent.c
++	src/PJ_geos.c
++	src/PJ_gins8.c
++	src/PJ_gnom.c
++	src/PJ_gn_sinu.c
++	src/PJ_goode.c
++	src/pj_gridinfo.c
++	src/pj_gridlist.c
++	src/PJ_gstmerc.c
++	src/PJ_hammer.c
++	src/PJ_hatano.c
++	src/PJ_imw_p.c
++	src/pj_init.c
++	src/pj_inv.c
++	src/PJ_krovak.c
++	src/PJ_labrd.c
++	src/PJ_laea.c
++	src/PJ_lagrng.c
++	src/PJ_larr.c
++	src/PJ_lask.c
++	src/pj_latlong.c
++	src/PJ_lcc.c
++	src/PJ_lcca.c
++	src/pj_list.c
++	src/PJ_loxim.c
++	src/PJ_lsat.c
++	src/pj_malloc.c
++	src/PJ_mbtfpp.c
++	src/PJ_mbtfpq.c
++	src/PJ_mbt_fps.c
++	src/PJ_merc.c
++	src/PJ_mill.c
++	src/pj_mlfn.c
++	src/PJ_mod_ster.c
++	src/PJ_moll.c
++	src/pj_msfn.c
++	src/PJ_nell.c
++	src/PJ_nell_h.c
++	src/PJ_nocol.c
++	src/PJ_nsper.c
++	src/PJ_nzmg.c
++	src/PJ_ob_tran.c
++	src/PJ_ocea.c
++	src/PJ_oea.c
++	src/PJ_omerc.c
++	src/pj_open_lib.c
++	src/PJ_ortho.c
++	src/pj_param.c
++	src/pj_phi2.c
++	src/PJ_poly.c
++	src/pj_pr_list.c
++	src/PJ_putp2.c
++	src/PJ_putp3.c
++	src/PJ_putp4p.c
++	src/PJ_putp5.c
++	src/PJ_putp6.c
++	src/pj_qsfn.c
++	src/pj_release.c
++	src/PJ_robin.c
++	src/PJ_rpoly.c
++	src/PJ_sconics.c
++	src/PJ_somerc.c
++	src/PJ_stere.c
++	src/PJ_sterea.c
++	src/pj_strerrno.c
++	src/PJ_sts.c
++	src/PJ_tcc.c
++	src/PJ_tcea.c
++	src/PJ_tmerc.c
++	src/PJ_tpeqd.c
++	src/pj_transform.c
++	src/pj_tsfn.c
++	src/pj_units.c
++	src/PJ_urm5.c
++	src/PJ_urmfps.c
++	src/pj_utils.c
++	src/PJ_vandg.c
++	src/PJ_vandg2.c
++	src/PJ_vandg4.c
++	src/PJ_wag2.c
++	src/PJ_wag3.c
++	src/PJ_wag7.c
++	src/PJ_wink1.c
++	src/PJ_wink2.c
++	src/pj_zpoly1.c
++	src/proj_mdist.c
++	src/proj_rouss.c
++	src/p_series.c
++	src/rtodms.c
++	src/vector1.c
++)
++
++set(PROJ_HEADERS 
++    src/org_proj4_Projections.h
++    src/proj_api.h
++    src/projects.h
++)
++
++set(PACKAGE proj)
++set(PACKAGE_NAME ${PACKAGE})
++set(PACKAGE_VERSION "4.8.0")
++set(VERSION ${PACKAGE_VERSION})
++set(PACKAGE_STRING "${PACKAGE_NAME}-${PACKAGE_VERSION}")
++
++configure_file(src/proj_config.h.in ${CMAKE_BINARY_DIR}/proj_config.h)
++
++include_directories(src ${CMAKE_BINARY_DIR})
++
++add_library(proj4 ${PROJ_SOURCES})
++target_link_libraries(proj4)
++install(TARGETS proj4 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++install(FILES ${PROJ_HEADERS} DESTINATION include)
++
++#set (PROJ_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/src  CACHE internal "proj includes" FORCE)
++#set (PROJ_LIBRARIES proj4 CACHE internal "proj libraries" FORCE)
++#set (PROJ_DEFINITIONS "" CACHE internal "proj definitions" FORCE)
