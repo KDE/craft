@@ -11,14 +11,11 @@ import sys
 # if you add code that changes this requirement
 MIN_PY_VERSION = (3, 0, 0)
 
-if not (sys.version_info[0] >= MIN_PY_VERSION[0] and
-        sys.version_info[1] >= MIN_PY_VERSION[1] and
-        sys.version_info[2] >= MIN_PY_VERSION[2]):
+if sys.version_info[0:3] < MIN_PY_VERSION:
     print ("Error: Python too old!")
     print ("Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION )
     print ("Please install it and adapt your kdesettings.bat")
     exit(1)
-
 
 import os
 import utils
