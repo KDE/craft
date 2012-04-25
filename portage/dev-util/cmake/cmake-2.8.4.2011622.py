@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
         self.targets['2.6.4'] = 'http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.zip'
         self.targets['2.8.4'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.4-win32-x86.zip'
         self.targets['2.8.5'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.5-win32-x86.zip'
+        self.targets['2.8.8'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.8-win32-x86.zip'
         self.targets['v2.8.2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-v2.8.2-bin.tar.bz2'
         self.targets['2.8.0-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.0-6-bin.tar.bz2'
         self.targets['2.8.1-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.1-bin.tar.bz2'
@@ -17,10 +18,12 @@ class subinfo( info.infoclass ):
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.4'] = 'cmake-2.8.4-win32-x86'
         self.targetMergeSourcePath['2.8.5'] = 'cmake-2.8.5-win32-x86'
+        self.targetMergeSourcePath['2.8.8'] = 'cmake-2.8.8-win32-x86'
         self.targetDigests['v2.8.2'] = 'de516a570808c7a022139b55e758d5f7b378ec7d'
         self.targetDigests['2.8.3-2'] = 'cba746303abb825c8549e6621da35757c039fa9e'
         self.targetDigests['2.8.4'] = '539ce250521d964a8770e0a7362db196dbc97fbc'
         self.targetDigests['2.8.5'] = 'ffdcd882600fba4dee1c225d89831f2f889c8276'
+        self.targetDigests['2.8.8'] = '3e93868b4be00e4cee1787c8d0479b2bf3807602'
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
 
         if emergePlatform.isCrossCompilingEnabled():
