@@ -12,6 +12,7 @@ class subinfo( info.infoclass ):
         self.targets['2.8.1-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.1-bin.tar.bz2'
         self.targets['2.8.3-1'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.3-1-bin.tar.bz2'
         self.targets['2.8.3-2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.3-2-bin.tar.bz2'
+        self.targets['v2.8.8'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc100-2.8.8-bin.tar.bz2'
         self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.4'] = 'cmake-2.8.4-win32-x86'
@@ -20,6 +21,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['2.8.3-2'] = 'cba746303abb825c8549e6621da35757c039fa9e'
         self.targetDigests['2.8.4'] = '539ce250521d964a8770e0a7362db196dbc97fbc'
         self.targetDigests['2.8.5'] = 'ffdcd882600fba4dee1c225d89831f2f889c8276'
+        self.targetDigests['v2.8.8'] = '5ff19829e0cd29b097d9be4dc1fec6e944d19d1a'
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
 
         if emergePlatform.isCrossCompilingEnabled():
