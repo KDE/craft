@@ -1,6 +1,6 @@
 diff -Nru -x '*~' nmealib.orig/CMakeLists.txt nmealib/CMakeLists.txt
 --- nmealib.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ nmealib/CMakeLists.txt	2012-04-24 09:43:14.926777900 +0200
++++ nmealib/CMakeLists.txt	2012-04-24 09:48:35.291101700 +0200
 @@ -0,0 +1,39 @@
 +PROJECT(nmealib)
 +
@@ -19,7 +19,7 @@ diff -Nru -x '*~' nmealib.orig/CMakeLists.txt nmealib/CMakeLists.txt
 +    src/tok.c
 +)
 +
-+set(NMEALIB_HEADERS 
++set(NMEALIB_HEADERS
 +    include/nmea/config.h
 +    include/nmea/context.h
 +    include/nmea/generate.h
