@@ -6,12 +6,16 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/marble-4.8." + ver + ".tar.bz2"
             self.targetInstSrc['4.8.' + ver] = 'marble-4.8.' + ver
-        self.patchToApply['4.8.0'] = [("marble-4.8.0-20120125.diff", 1)]
+        self.patchToApply['4.8.0'] = [("marble-4.8.0-20120125.diff", 1),
+                                      ("0001-added-first-version-of-flightgear-position-provider-.patch_", 1)]
+        self.patchToApply[ 'gitHEAD' ] = [("marble-4.8.0-20120125.diff", 1),
+                                          ("0001-added-first-version-of-flightgear-position-provider-.patch_", 1)]
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.buildDependencies['win32libs-sources/nmealib-src'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -1,0 +1,25 @@
+From bd5e69cf2edae3c57bb35f2d32116db08eaca7b5 Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:16:23 +0100
+Subject: [PATCH 6/8] Fix a warning
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ samples/parse_file/main.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/samples/parse_file/main.c b/samples/parse_file/main.c
+index 8822e56..e49cea1 100644
+--- a/samples/parse_file/main.c
++++ b/samples/parse_file/main.c
+@@ -2,6 +2,7 @@
+ 
+ #include <string.h>
+ #include <stdio.h>
++#include <unistd.h>
+ 
+ #ifdef NMEA_WIN
+ #   include <io.h>
+-- 
+1.7.3.2
+

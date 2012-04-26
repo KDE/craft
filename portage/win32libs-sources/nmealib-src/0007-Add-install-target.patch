@@ -1,0 +1,44 @@
+From bfea698495ee0740336521dae3561b9295442816 Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:16:40 +0100
+Subject: [PATCH 7/8] Add install target
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ Makefile |    9 ++++++++-
+ 1 files changed, 8 insertions(+), 1 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 030a934..780ea35 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,8 @@
+ CC = gcc 
+  
+ BIN = lib/libnmea.a 
++LIBDIR = /usr/lib
++INCLUDEDIR = /usr/include
+ MODULES = generate generator parse parser tok context time info gmath sentence  
+ SAMPLES = generate generator parse parse_file math
+  
+@@ -14,7 +16,7 @@ CCFLAGS += -fPIC -O2 -Wall
+ INCS = -I include 
+ LIBS = -lm -Llib -lnmea
+  
+-.PHONY: all all-before all-after clean clean-custom doc
++.PHONY: all all-before all-after clean clean-custom doc install
+  
+ all: all-before $(BIN) samples all-after 
+ 
+@@ -43,3 +45,8 @@ samples_%: samples/%/main.o
+ 
+ samples/%/main.o: samples/%/main.c
+ 	$(CC) $(CCFLAGS) $(INCS) -c $< -o $@
++
++install: all
++	cp $(BIN) $(LIBDIR)
++	rm -fr $(INCLUDEDIR)/nmea
++	cp -a include/nmea $(INCLUDEDIR)
+-- 
+1.7.3.2
+
