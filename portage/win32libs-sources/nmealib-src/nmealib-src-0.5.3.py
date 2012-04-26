@@ -6,7 +6,16 @@ class subinfo( info.infoclass ):
         for ver in ['0.5.3']:
             self.targets[ver] = ' http://freefr.dl.sourceforge.net/project/nmea/NmeaLib/nmea-0.5.x/nmealib-%s.zip' % ver
             self.targetInstSrc[ver] = 'nmealib'
-        self.patchToApply[ '0.5.3' ] = [ ( "nmealib-20120424.diff", 1 ) ]
+        self.patchToApply[ '0.5.3' ] = [
+            ( "nmealib-20120424.diff", 1 ),
+            ( "0001-Make-the-library-compile-on-C99-compilers.patch", 1 ),
+            ( "0002-Generate-position-independent-code-PIC.patch", 1 ),
+            ( "0003-Allow-the-parser-to-be-destroyed-when-its-buffer-is-.patch", 1 ),
+            ( "0004-Print-the-results-in-the-parsing-sample-program.patch", 1 ),
+            ( "0005-Optimise-generated-code-and-show-all-warnings-during.patch", 1 ),
+            ( "0006-Fix-a-warning.patch", 1 ),
+            ( "0007-Add-install-target.patch", 1 ),
+        ]
         self.targetDigests['0.5.3'] = '54a30c4791fd27a8e631728219ace8729d6d92f9'
         self.shortDescription = "library for handling NMEA protocol"
         self.defaultTarget = '0.5.3'
