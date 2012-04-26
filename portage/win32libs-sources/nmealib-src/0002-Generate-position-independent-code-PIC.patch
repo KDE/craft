@@ -1,0 +1,41 @@
+From 0c0afe90d8b6d8d9b4d2fbb21fc74cd180f8a1da Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:09:38 +0100
+Subject: [PATCH 2/8] Generate position independent code (PIC)
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ Makefile |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index d45f508..6068721 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,6 +10,7 @@ LINKOBJ = $(OBJ) $(RES)
+ SMPLS = $(SAMPLES:%=samples_%)
+ SMPLOBJ = $(SAMPLES:%=samples/%/main.o)
+ 
++CCFLAGS += -fPIC
+ INCS = -I include 
+ LIBS = -lm -Llib -lnmea
+  
+@@ -33,12 +34,12 @@ $(BIN): $(LINKOBJ)
+ 	ranlib $@
+ 
+ build/nmea_gcc/%.o: src/%.c 
+-	$(CC) $(INCS) -c $< -o $@
++	$(CC) $(CCFLAGS) $(INCS) -c $< -o $@
+ 
+ samples: $(SMPLS)
+ 
+ samples_%: samples/%/main.o
+-	$(CC) $< $(LIBS) -o build/$@
++	$(CC) $(CCFLAGS) $< $(LIBS) -o build/$@
+ 
+ samples/%/main.o: samples/%/main.c
+-	$(CC) $(INCS) -c $< -o $@
++	$(CC) $(CCFLAGS) $(INCS) -c $< -o $@
+-- 
+1.7.3.2
+

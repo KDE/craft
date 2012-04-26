@@ -1,0 +1,45 @@
+From d9ab67c93af1f9b5501de3ded5c0d86659792b86 Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:19:29 +0100
+Subject: [PATCH 4/8] Print the results in the parsing sample program
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ samples/parse/main.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
+
+diff --git a/samples/parse/main.c b/samples/parse/main.c
+index 0829d6a..1f07b79 100644
+--- a/samples/parse/main.c
++++ b/samples/parse/main.c
+@@ -1,5 +1,6 @@
+ #include <nmea/nmea.h>
+ #include <string.h>
++#include <stdio.h>
+ 
+ int main()
+ {
+@@ -16,13 +17,20 @@ int main()
+     int it;
+     nmeaINFO info;
+     nmeaPARSER parser;
++    nmeaPOS dpos;
+ 
+     nmea_zero_INFO(&info);
+     nmea_parser_init(&parser);
+ 
+     for(it = 0; it < 6; ++it)
++    {
+         nmea_parse(&parser, buff[it], (int)strlen(buff[it]), &info);
+ 
++        nmea_info2pos(&info, &dpos);
++        printf("%03d, Lat: %f, Lon: %f, Sig: %d, Fix: %d\n", it, dpos.lat,
++               dpos.lon, info.sig, info.fix);
++    }
++
+     nmea_parser_destroy(&parser);
+ 
+     return 0;
+-- 
+1.7.3.2
+

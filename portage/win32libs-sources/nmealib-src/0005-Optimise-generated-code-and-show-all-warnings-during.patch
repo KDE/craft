@@ -1,0 +1,26 @@
+From 4be4af3c020be439822c9ef137900398f9ae0ee7 Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:20:01 +0100
+Subject: [PATCH 5/8] Optimise generated code and show all warnings during build
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 6068721..030a934 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,7 +10,7 @@ LINKOBJ = $(OBJ) $(RES)
+ SMPLS = $(SAMPLES:%=samples_%)
+ SMPLOBJ = $(SAMPLES:%=samples/%/main.o)
+ 
+-CCFLAGS += -fPIC
++CCFLAGS += -fPIC -O2 -Wall
+ INCS = -I include 
+ LIBS = -lm -Llib -lnmea
+  
+-- 
+1.7.3.2
+
