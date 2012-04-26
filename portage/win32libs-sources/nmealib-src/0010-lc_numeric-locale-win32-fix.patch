@@ -1,0 +1,31 @@
+diff -Nru -x '*~' nmealib.orig/src/tok.c nmealib/src/tok.c
+--- nmealib.orig/src/tok.c	2012-04-26 15:19:15.146471200 +0200
++++ nmealib/src/tok.c	2012-04-26 15:18:19.277275600 +0200
+@@ -19,6 +19,10 @@
+ #include <string.h>
+ #include <limits.h>
+ 
++#ifdef _WIN32
++#include <locale.h>
++#endif
++
+ #define NMEA_TOKS_COMPARE   (1)
+ #define NMEA_TOKS_PERCENT   (2)
+ #define NMEA_TOKS_WIDTH     (3)
+@@ -70,7 +74,16 @@
+     {
+         memcpy(&buff[0], str, str_sz);
+         buff[str_sz] = '\0';
++#ifdef _WIN32
++        {
++        // we need '.' as decimal point 
++        _locale_t locale = _create_locale(LC_NUMERIC, "english");
++        res = _strtod_l(&buff[0], &tmp_ptr, locale);
++        _free_locale(locale);
++        }
++#else
+         res = strtod(&buff[0], &tmp_ptr);
++#endif
+     }
+ 
+     return res;
