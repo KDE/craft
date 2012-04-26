@@ -3,11 +3,13 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:marble'
+        self.patchToApply[ 'gitHEAD' ] = [ ( "0001-added-first-version-of-flightgear-position-provider-.patch", 1 ) ]
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['win32libs-sources/nmealib-src'] = 'default'
 
 from Package.CMakePackageBase import *
 
