@@ -1,16 +1,16 @@
-From 3cfb5dc6dc57039a1206858d73998fa2ea62464a Mon Sep 17 00:00:00 2001
+From c66a80650481d665a06ea07a1cbf2a3324113d37 Mon Sep 17 00:00:00 2001
 From: Ralf Habacker <ralf.habacker@freenet.de>
-Date: Thu, 26 Apr 2012 12:17:56 +0200
-Subject: [PATCH] added first version of flightgear position provider plugin
+Date: Fri, 27 Apr 2012 08:24:25 +0200
+Subject: [PATCH] first version of flightgear position provider plugin
 
 ---
  CMakeLists.txt                                     |    3 +
- cmake/modules/Findnmealib.cmake                    |   39 ++++
+ cmake/modules/Findnmealib.cmake                    |   41 ++++
  src/plugins/positionprovider/CMakeLists.txt        |    8 +
  .../positionprovider/flightgear/CMakeLists.txt     |   13 ++
  .../FlightGearPositionProviderPlugin.cpp           |  214 ++++++++++++++++++++
  .../flightgear/FlightGearPositionProviderPlugin.h  |   70 +++++++
- 6 files changed, 347 insertions(+), 0 deletions(-)
+ 6 files changed, 349 insertions(+), 0 deletions(-)
  create mode 100644 cmake/modules/Findnmealib.cmake
  create mode 100644 src/plugins/positionprovider/flightgear/CMakeLists.txt
  create mode 100644 src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
@@ -31,10 +31,10 @@ index d6466aa..79a6803 100644
  SET(CMAKE_COLOR_MAKEFILE ON)
 diff --git a/cmake/modules/Findnmealib.cmake b/cmake/modules/Findnmealib.cmake
 new file mode 100644
-index 0000000..60c4fcc
+index 0000000..e2f07ac
 --- /dev/null
 +++ b/cmake/modules/Findnmealib.cmake
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,41 @@
 +# - Try to find NMEA library
 +# Once done this will define
 +#
@@ -55,6 +55,8 @@ index 0000000..60c4fcc
 +
 +SET(POTENTIAL_NMEALIB_LIBS libnmea nmealib nmea)
 +FIND_LIBRARY(NMEALIB_LIBRARIES NAMES ${POTENTIAL_NMEALIB_LIBS})
++
++message(status ${NMEALIB_INCLUDE_DIR} ${NMEALIB_LIBRARIES})
 +
 +IF (NMEALIB_INCLUDE_DIR AND NMEALIB_LIBRARIES)
 +   SET(CMAKE_REQUIRED_INCLUDES "${NMEALIB_INCLUDE_DIR}" "${CMAKE_REQUIRED_INCLUDES}")
@@ -111,7 +113,7 @@ index 0000000..feffa1b
 +marble_add_plugin( FlightGearPositionProviderPlugin ${flightgear_SRCS} )
 diff --git a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
 new file mode 100644
-index 0000000..0644a84
+index 0000000..d9f53ec
 --- /dev/null
 +++ b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
 @@ -0,0 +1,214 @@
@@ -131,11 +133,22 @@ index 0000000..0644a84
 +#include <math.h>
 +
 +#include <QUdpSocket>
-+ 
++
 +using namespace Marble;
 +/* TRANSLATOR Marble::FlightGearPositionProviderPlugin */
 +
 +using namespace std;
++
++FlightGearPositionProviderPlugin::FlightGearPositionProviderPlugin() 
++  : m_socket(0), m_speed( 0.0 ), m_track( 0.0 )
++{
++}
++
++FlightGearPositionProviderPlugin::~FlightGearPositionProviderPlugin()
++{
++    delete m_socket;
++    nmea_parser_destroy(&m_parser);
++}
 +
 +QString FlightGearPositionProviderPlugin::name() const
 +{
@@ -188,13 +201,13 @@ index 0000000..0644a84
 +    m_socket->bind(QHostAddress::LocalHost, 5500);
 +    nmea_parser_init(&m_parser);
 +    nmea_zero_INFO(&m_info);
-+    
++
 +    connect(m_socket, SIGNAL(readyRead()),
 +             this, SLOT(readPendingDatagrams()));
 +}
 +
 +/**
-+ fixed case where wrong date format is used '2404112' instead of '240412' 
++ fixed case where wrong date format is used '2404112' instead of '240412'
 +*/
 +bool fixBadGPRMC(QByteArray &line)
 +{
@@ -229,7 +242,7 @@ index 0000000..0644a84
 +        m_socket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 +        foreach(QByteArray line, datagram.split('\n')) {
 +            fixBadGPRMC(line);
-+            qDebug() << line;
++            //qDebug() << line;
 +            line.append("\r\n");
 +            nmea_parse(&m_parser, line.data(), line.size(), &m_info);
 +            update();
@@ -246,16 +259,16 @@ index 0000000..0644a84
 +    else {
 +        m_status = PositionProviderStatusAvailable;
 +
-+        // fg atlas nmea output uses feet unit, which is not covered by nmealib <= 0.5.3 
++        // fg atlas nmea output uses feet unit, which is not covered by nmealib <= 0.5.3
 +#ifndef NMEA_TUD_FEED
 +#define NMEA_TUD_FEED       (1/0.3048)      /**< Feet, meter / NMEA_TUD_FEED = feet */
 +        qreal elevation = m_info.elv / NMEA_TUD_FEED;
-+#else 
-+        qreal elevation = m_info.elv; 
++#else
++        qreal elevation = m_info.elv;
 +#endif
 +        m_position.set( nmea_ndeg2degree(m_info.lon), nmea_ndeg2degree(m_info.lat), elevation, GeoDataCoordinates::Degree );
 +        m_accuracy.level = GeoDataAccuracy::Detailed;
-+        // FIX  for misinterpreting 
++        // FIX  for misinterpreting
 +        m_speed = m_info.speed * 0.51444444 / NMEA_TUD_KNOTS ;
 +        m_track = m_info.direction;
 +    }
@@ -289,17 +302,6 @@ index 0000000..0644a84
 +GeoDataAccuracy FlightGearPositionProviderPlugin::accuracy() const
 +{
 +    return m_accuracy;
-+}
-+
-+FlightGearPositionProviderPlugin::FlightGearPositionProviderPlugin() : m_speed( 0.0 ),
-+    m_track( 0.0 )
-+{
-+}
-+
-+FlightGearPositionProviderPlugin::~FlightGearPositionProviderPlugin()
-+{
-+    delete m_socket;
-+    nmea_parser_destroy(&m_parser);
 +}
 +
 +qreal FlightGearPositionProviderPlugin::speed() const
