@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.2.5'] = '8e8b93fa5eb80df1afe5422309dca42964562d7e'
 
         self.shortDescription = 'The zlib compression and decompression library'
-        self.defaultTarget = '1.2.5'
+        self.defaultTarget = '1.2.6'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
