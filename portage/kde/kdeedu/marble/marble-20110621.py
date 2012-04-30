@@ -7,9 +7,9 @@ class subinfo(info.infoclass):
             self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/marble-4.8." + ver + ".tar.bz2"
             self.targetInstSrc['4.8.' + ver] = 'marble-4.8.' + ver
         self.patchToApply['4.8.0'] = [("marble-4.8.0-20120125.diff", 1),
-                                      ("0001-added-first-version-of-flightgear-position-provider-.patch_", 1)]
+                                      ("0001-first-version-of-flightgear-position-provider-plugin.patch_", 1)]
         self.patchToApply[ 'gitHEAD' ] = [("marble-4.8.0-20120125.diff", 1),
-                                          ("0001-added-first-version-of-flightgear-position-provider-.patch_", 1)]
+                                          ("0001-first-version-of-flightgear-position-provider-plugin.patch_", 1)]
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
 
