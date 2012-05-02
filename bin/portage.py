@@ -723,7 +723,7 @@ def isInstalled( category, package, version, buildtype='' ):
         if os.path.isfile( fileName ):
             with open( fileName, "rt" ) as f:
                 for line in f.read().splitlines():
-                    if not line or line == "":
+                    if not line or line == b'':
                         continue
                     (_category, _packageVersion) = line.split( "/" )
                     (_package, _version) = utils.packageSplit(_packageVersion)
@@ -787,15 +787,17 @@ def addInstalled( category, package, version, buildtype='' ):
         fileName = 'installed'
     utils.debug("installing package %s - %s into %s" % (package, version, fileName), 2)
     if( os.path.isfile( os.path.join( path, fileName ) ) ):
-        with open( os.path.join( path, fileName ), "rt" ) as f:
-            for line in f:
+        with open( os.path.join( path, fileName ), "rb" ) as f:
+            for _line in f:
+                line = _line.decode('UTF-8')
                 if line.startswith( "%s/%s-%s" % ( category, package, version) ):
                     utils.warning( "version already installed" )
                     return
                 elif line.startswith( "%s/%s-" % ( category, package ) ):
-                    utils.die( "Already installed, this should not happen" )
-    with open( os.path.join( path, fileName ), "at" ) as f:
-        f.write( "%s/%s-%s\r\n" % ( category, package, version ) )
+                    utils.die( "already installed, this should no happen" )
+    with open( os.path.join( path, fileName ), "ab" ) as f:
+        s = "%s/%s-%s\r\n" % ( category, package, version )
+        f.write( bytes( s, 'UTF-8' ) )
 
 def remInstalled( category, package, version, buildtype='' ):
     """ deprecated, use InstallDB.installdb.remInstalled() instead """
