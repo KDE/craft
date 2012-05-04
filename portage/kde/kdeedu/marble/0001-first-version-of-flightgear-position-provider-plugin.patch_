@@ -1,39 +1,25 @@
-From c66a80650481d665a06ea07a1cbf2a3324113d37 Mon Sep 17 00:00:00 2001
+From c362b322f322a06944590f493c0453ff43cdb058 Mon Sep 17 00:00:00 2001
 From: Ralf Habacker <ralf.habacker@freenet.de>
-Date: Fri, 27 Apr 2012 08:24:25 +0200
-Subject: [PATCH] first version of flightgear position provider plugin
+Date: Thu, 3 May 2012 11:00:29 +0200
+Subject: [PATCH 1/4] first version of flightgear position provider
 
 ---
- CMakeLists.txt                                     |    3 +
- cmake/modules/Findnmealib.cmake                    |   41 ++++
+ Findnmealib.cmake                                  |   41 ++++
  src/plugins/positionprovider/CMakeLists.txt        |    8 +
- .../positionprovider/flightgear/CMakeLists.txt     |   13 ++
+ .../positionprovider/flightgear/CMakeLists.txt     |   14 ++
  .../FlightGearPositionProviderPlugin.cpp           |  214 ++++++++++++++++++++
  .../flightgear/FlightGearPositionProviderPlugin.h  |   70 +++++++
- 6 files changed, 349 insertions(+), 0 deletions(-)
- create mode 100644 cmake/modules/Findnmealib.cmake
+ 5 files changed, 347 insertions(+), 0 deletions(-)
+ create mode 100644 Findnmealib.cmake
  create mode 100644 src/plugins/positionprovider/flightgear/CMakeLists.txt
  create mode 100644 src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
  create mode 100644 src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.h
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d6466aa..79a6803 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -1,5 +1,8 @@
- project(marble)
- 
-+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-+
- ####################################################
- # CMake Settings 
- SET(CMAKE_COLOR_MAKEFILE ON)
-diff --git a/cmake/modules/Findnmealib.cmake b/cmake/modules/Findnmealib.cmake
+diff --git a/Findnmealib.cmake b/Findnmealib.cmake
 new file mode 100644
-index 0000000..e2f07ac
+index 0000000..f540a4e
 --- /dev/null
-+++ b/cmake/modules/Findnmealib.cmake
++++ b/Findnmealib.cmake
 @@ -0,0 +1,41 @@
 +# - Try to find NMEA library
 +# Once done this will define
@@ -43,7 +29,7 @@ index 0000000..e2f07ac
 +#  NMEALIB_LIBRARIES - Libraries needed to use NMEA
 +#  NMEALIB_DEFINITIONS - Compiler switches required for using NMEA
 +
-+# Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
++# Copyright (c) 2012 Ralf Habacker <ralf.habacker@freenet.de>
 +# See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
 +
 +IF (NMEALIB_INCLUDE_DIR AND NMEALIB_LIBRARIES)
@@ -77,7 +63,7 @@ index 0000000..e2f07ac
 +
 +MARK_AS_ADVANCED(NMEALIB_INCLUDE_DIR NMEALIB_LIBRARIES)
 diff --git a/src/plugins/positionprovider/CMakeLists.txt b/src/plugins/positionprovider/CMakeLists.txt
-index bebe774..d3cfc3d 100644
+index c9d9672..f6c3f40 100644
 --- a/src/plugins/positionprovider/CMakeLists.txt
 +++ b/src/plugins/positionprovider/CMakeLists.txt
 @@ -1,3 +1,11 @@
@@ -94,14 +80,15 @@ index bebe774..d3cfc3d 100644
       MESSAGE( STATUS "Building with gpsd position provider")
 diff --git a/src/plugins/positionprovider/flightgear/CMakeLists.txt b/src/plugins/positionprovider/flightgear/CMakeLists.txt
 new file mode 100644
-index 0000000..feffa1b
+index 0000000..742fa91
 --- /dev/null
 +++ b/src/plugins/positionprovider/flightgear/CMakeLists.txt
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,14 @@
 +PROJECT( FlightGearPositionProviderPlugin )
 +
 +INCLUDE_DIRECTORIES(
-+ ${CMAKE_CURRENT_SOURCE_DIR}
++ ${CMAKE_CURRENT_SOURCE_DIR}/src/plugins/positionprovider/flightgear
++ ${CMAKE_BINARY_DIR}/src/plugins/positionprovider/flightgear
 + ${QT_INCLUDE_DIR}
 +)
 +set( QT_USE_QTNETWORK  ON )
@@ -113,7 +100,7 @@ index 0000000..feffa1b
 +marble_add_plugin( FlightGearPositionProviderPlugin ${flightgear_SRCS} )
 diff --git a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
 new file mode 100644
-index 0000000..d9f53ec
+index 0000000..af0eb9a
 --- /dev/null
 +++ b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
 @@ -0,0 +1,214 @@
@@ -124,7 +111,7 @@ index 0000000..d9f53ec
 +// find a copy of this license in LICENSE.txt in the top directory of
 +// the source code.
 +//
-+// Copyright 2009      Eckhart Wörner <ewoerner@kde.org>
++// Copyright 2012 Ralf Habacker <ralf.habacker@freenet.de>
 +//
 +
 +#include "FlightGearPositionProviderPlugin.h"
@@ -139,7 +126,7 @@ index 0000000..d9f53ec
 +
 +using namespace std;
 +
-+FlightGearPositionProviderPlugin::FlightGearPositionProviderPlugin() 
++FlightGearPositionProviderPlugin::FlightGearPositionProviderPlugin()
 +  : m_socket(0), m_speed( 0.0 ), m_track( 0.0 )
 +{
 +}
@@ -333,7 +320,7 @@ index 0000000..d9f53ec
 +#include "FlightGearPositionProviderPlugin.moc"
 diff --git a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.h b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.h
 new file mode 100644
-index 0000000..1135460
+index 0000000..c7c7dac
 --- /dev/null
 +++ b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.h
 @@ -0,0 +1,70 @@
@@ -344,7 +331,7 @@ index 0000000..1135460
 +// find a copy of this license in LICENSE.txt in the top directory of
 +// the source code.
 +//
-+// Copyright 2011 Ralf Habacker <ralf.habacker@freenet.de>
++// Copyright 2012 Ralf Habacker <ralf.habacker@freenet.de>
 +
 +#ifndef FLIGHTGEARPOSITIONPROVIDERPLUGIN_H
 +#define FLIGHTGEARPOSITIONPROVIDERPLUGIN_H
