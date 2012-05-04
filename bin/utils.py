@@ -739,7 +739,8 @@ def getFileListFromManifest(rootdir, package, withManifests=False):
     manifestFiles = [os.path.join(rootdir, "manifest", x) for x in getManifestFiles(rootdir, package)]
     for manifestFile in manifestFiles:
         with open(manifestFile, 'rb' ) as fptr:
-            for line in fptr:
+            for _line in fptr:
+                line = _line.decode('UTF-8')
                 try:
                     line = line.replace( "\n", "" ).replace( "\r", "" )
                     # check for digest having two spaces between filename and hash

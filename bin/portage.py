@@ -813,7 +813,7 @@ def remInstalled( category, package, version, buildtype='' ):
                     ## \todo the category should not be part of the search string
                     ## because otherwise it is not possible to unmerge package using
                     ## the same name but living in different categories
-                    if not line.startswith("%s/%s" % ( category, package ) ):
+                    if not line.decode('UTF-8').startswith("%s/%s" % ( category, package ) ):
                         tfile.write( line )
                     else:
                         found = True
