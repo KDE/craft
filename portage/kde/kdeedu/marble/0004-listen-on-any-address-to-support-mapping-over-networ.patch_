@@ -11,14 +11,6 @@ diff --git a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderP
 index 7c13d0e..ecd02dd 100644
 --- a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
 +++ b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
-@@ -14,7 +14,6 @@
- #include <math.h>
- 
- #include <QUdpSocket>
--#include <QDateTime>
- 
- using namespace Marble;
- /* TRANSLATOR Marble::FlightGearPositionProviderPlugin */
 @@ -82,7 +81,7 @@ void FlightGearPositionProviderPlugin::initialize()
      emit statusChanged( m_status );
  
