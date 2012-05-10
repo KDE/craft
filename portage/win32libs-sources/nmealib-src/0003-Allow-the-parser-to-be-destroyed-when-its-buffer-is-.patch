@@ -1,0 +1,30 @@
+From 798cdf479a64b6817061c1e11d77d7166748997b Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:10:25 +0100
+Subject: [PATCH 3/8] Allow the parser to be destroyed when its buffer is no longer allocated
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ src/parser.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/parser.c b/src/parser.c
+index b973853..40d778b 100644
+--- a/src/parser.c
++++ b/src/parser.c
+@@ -64,8 +64,10 @@ int nmea_parser_init(nmeaPARSER *parser)
+  */
+ void nmea_parser_destroy(nmeaPARSER *parser)
+ {
+-    NMEA_ASSERT(parser && parser->buffer);
+-    free(parser->buffer);
++    NMEA_ASSERT(parser);
++    if (parser->buffer) {
++    	free(parser->buffer);
++    }
+     nmea_parser_queue_clear(parser);
+     memset(parser, 0, sizeof(nmeaPARSER));
+ }
+-- 
+1.7.3.2
+

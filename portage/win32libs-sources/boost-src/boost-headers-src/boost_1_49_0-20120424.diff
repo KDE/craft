@@ -1,0 +1,20 @@
+diff -Nru -x '*~' boost_1_49_0.orig/boost/lexical_cast.hpp boost_1_49_0/boost/lexical_cast.hpp
+--- boost_1_49_0.orig/boost/lexical_cast.hpp	2012-02-04 19:04:45.996772000 +0100
++++ boost_1_49_0/boost/lexical_cast.hpp	2012-04-24 17:10:13.372626500 +0200
+@@ -26,6 +26,7 @@
+ #define BOOST_LCAST_NO_WCHAR_T
+ #endif
+ 
++#if 0 // Broken compat code
+ #if (defined(__MINGW32__) || defined(__MINGW64__)) && (__GNUC__ == 4) \
+  && ((__GNUC_MINOR__ == 4) || (__GNUC_MINOR__ == 5)) && defined(__STRICT_ANSI__) \
+  && !defined(BOOST_LCAST_NO_WCHAR_T)
+@@ -47,6 +48,8 @@
+ #endif
+ #endif
+ 
++#endif
++
+ #include <climits>
+ #include <cstddef>
+ #include <istream>

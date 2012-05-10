@@ -1,0 +1,25 @@
+From 49b265a485ac12d54a7196a5c8fe8f7e85b43f09 Mon Sep 17 00:00:00 2001
+From: Ralf Habacker <ralf.habacker@freenet.de>
+Date: Fri, 4 May 2012 12:39:28 +0200
+Subject: [PATCH 4/4] listen on any address to support mapping over network
+
+---
+ .../FlightGearPositionProviderPlugin.cpp           |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
+index 7c13d0e..ecd02dd 100644
+--- a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
++++ b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
+@@ -82,7 +81,7 @@ void FlightGearPositionProviderPlugin::initialize()
+     emit statusChanged( m_status );
+ 
+     m_socket = new QUdpSocket(this);
+-    m_socket->bind(QHostAddress::LocalHost, 5500);
++    m_socket->bind(QHostAddress::Any, 5500);
+     nmea_parser_init(&m_parser);
+     nmea_zero_INFO(&m_info);
+ 
+-- 
+1.7.4.msysgit.0
+

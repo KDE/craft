@@ -1,0 +1,26 @@
+From 3d86b293c17be7ca783f8a7b088d1e7b26f78f11 Mon Sep 17 00:00:00 2001
+From: Ferry Huberts <f.huberts@mindef.nl>
+Date: Tue, 30 Nov 2010 07:09:01 +0100
+Subject: [PATCH 1/8] Make the library compile on C99 compilers
+
+Signed-off-by: Ferry Huberts <f.huberts@mindef.nl>
+---
+ include/nmea/context.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/nmea/context.h b/include/nmea/context.h
+index 24600ad..06e5583 100644
+--- a/include/nmea/context.h
++++ b/include/nmea/context.h
+@@ -31,7 +31,7 @@ typedef struct _nmeaPROPERTY
+ 
+ } nmeaPROPERTY;
+ 
+-nmeaPROPERTY * nmea_property();
++nmeaPROPERTY * nmea_property(void);
+ 
+ void nmea_trace(const char *str, ...);
+ void nmea_trace_buff(const char *buff, int buff_size);
+-- 
+1.7.3.2
+

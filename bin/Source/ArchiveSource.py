@@ -218,8 +218,9 @@ class ArchiveSource(SourceBase):
                     utils.debug( "applying patch %s with patchlevel: %s" % ( fileName, patchdepth ) )
                     if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
                         return False
-                patchName = os.path.join( self.buildRoot(), patches[-1][0] )
-            else:
+                if patches[-1][0]:
+                    patchName = os.path.join( self.buildRoot(), patches[-1][0] )
+            elif patches[-1]:
                 patchName = os.path.join( self.buildRoot(), patches[-1] )
 
         # move the packages up and rename them to be different from the original source directory

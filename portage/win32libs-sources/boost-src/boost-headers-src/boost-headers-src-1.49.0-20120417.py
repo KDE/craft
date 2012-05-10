@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
 
         self.patchToApply['1.48.0'] = [('boost_1_47_0-20110815.diff',1)]
         self.patchToApply['1.47.0'] = [('boost_1_47_0-20110815.diff',1)]
-        self.patchToApply['1.49.0'] = [('boost_1_47_0-20110815.diff',1)]
+        self.patchToApply['1.49.0'] = [('boost_1_47_0-20110815.diff',1),
+                                       ('boost_1_49_0-20120424.diff',1)]
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
