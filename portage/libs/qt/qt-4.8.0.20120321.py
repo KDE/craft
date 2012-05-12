@@ -36,6 +36,7 @@ class subinfo(info.infoclass):
         self.svnTargets['4.7.1'] = "[git]kde:qt-kde|4.7.1-patched|"
         self.svnTargets['4.7.4'] = "[git]kde:qt|4.7-stable|v4.7.4"
         self.svnTargets['4.8.0'] = "[git]kde:qt|4.7-stable|v4.8.0"
+        self.svnTargets['4.8.1'] = "[git]kde:qt|4.7-stable|v4.8.1"
         self.svnTargets['4.7'] = "git://gitorious.org/qt/qt.git|4.7|"
         self.svnTargets['wince'] = "git://gitorious.org/qt/qt.git|4.7|235d1d687dcc2d21860cd753c9d67964c5270be2"
         self.svnTargets['wince-4.7'] = self.svnTargets["4.7"]
@@ -44,6 +45,7 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['4.7'] = "4.7"
         self.targetSrcSuffix['4.7.4'] = "4.7.4"
         self.targetSrcSuffix['4.8.0'] = "4.8.0"
+        self.targetSrcSuffix['4.8.1'] = "4.8.1"
         self.patchToApply['4.6.3'] = ('patches/4.6.3/fixed_export_macro_for_QtDbus.patch', 1)
         self.patchToApply['4.7'] = [
             ('patches/4.7/out-of-source-build.patch', 1),
@@ -62,6 +64,13 @@ class subinfo(info.infoclass):
             ('patches/4.8/fixed-win32-detection.patch',1),
             ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0),
             ('patches/4.8.0/0001-Remove-implicit-const-char-QString-cast-from-QDBusSe.patch', 1)
+        ]
+        self.patchToApply['4.8.1'] = [
+            ('patches/4.7/out-of-source-build.patch', 1),
+            ('patches/4.8/add-pdbs-on-msvc.diff', 1),
+            ('patches/4.8/detect-windows-8-as-windows-7.patch', 1),
+            ('patches/4.8/fixed-win32-detection.patch',1),
+            ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0)
         ]
 
         self.shortDescription = "a cross-platform application framework"
