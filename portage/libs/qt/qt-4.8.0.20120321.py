@@ -71,7 +71,8 @@ class subinfo(info.infoclass):
             ('patches/4.8/add-pdbs-on-msvc.diff', 1),
             ('patches/4.8/detect-windows-8-as-windows-7.patch', 1),
             ('patches/4.8/fixed-win32-detection.patch',1),
-            ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0)
+            ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0),
+            ('patches/4.8.1/Use-windows-path-for-pkgconfig-mkdir_p_asstring.patch', 1)
         ]
 
         self.shortDescription = "a cross-platform application framework"
