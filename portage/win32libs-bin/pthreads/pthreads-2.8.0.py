@@ -4,6 +4,7 @@
 # based on revision gitcfc5b700df8db112d62408e5402ba6ed7170a64d
 
 from Package.BinaryPackageBase import *
+from Package.VirtualPackageBase import *
 import os
 import info
 

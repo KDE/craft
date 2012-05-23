@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
+from Package.VirtualPackageBase import *
 
 class PthreadsPackage(CMakePackageBase):
     def __init__( self, **args ):
