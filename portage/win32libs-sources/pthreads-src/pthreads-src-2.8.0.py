@@ -18,11 +18,22 @@ class subinfo(info.infoclass):
 from Package.CMakePackageBase import *
 from Package.VirtualPackageBase import *
 
-class Package(CMakePackageBase):
+class PthreadsPackage(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = " -DBUILD_TESTS=OFF"
 
+
+if compiler.isMSVC() or compiler.getMinGWVersion() == "4.4.7":
+    class Package(PthreadsPackage):
+        def __init__( self ):
+            PthreadsPackage.__init__( self )
+else:
+    class Package(VirtualPackageBase):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()
