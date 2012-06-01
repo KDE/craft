@@ -6,16 +6,16 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw'
         self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/libkdcraw-4.8.0.tar.bz2'
         self.targetInstSrc['4.8.0'] = 'libkdcraw-4.8.0'
-        for ver in ['4.8.1', '4.8.2']:
+        for ver in ['4.8.1', '4.8.2', '4.8.3']:
             self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/libkdcraw-" + ver + ".tar.xz"
-            self.targetInstSrc[ ver] = 'libkdcraw-' + ver
+            self.targetInstSrc[ver] = 'libkdcraw-' + ver
+        
+        for ver in ['4.8.0', '4.8.1', '4.8.2', '4.8.3']:
+            self.patchToApply[ver] = [('libkdcraw-4.8.0-20120125.diff',1)]
+        
         self.defaultTarget = '4.8.2'
-
-
-        self.patchToApply['4.8.0'] = [('libkdcraw-4.8.0-20120125.diff',1)]
-
+        
         self.shortDescription = 'libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files.'
-
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

@@ -1,6 +1,6 @@
-diff -Nru libkdcraw-4.8.0.orig/libraw/src/libraw_datastream.cpp libkdcraw-4.8.0/libraw/src/libraw_datastream.cpp
---- libkdcraw-4.8.0.orig/libraw/src/libraw_datastream.cpp	2012-01-18 19:49:41.000000000 +0100
-+++ libkdcraw-4.8.0/libraw/src/libraw_datastream.cpp	2012-01-25 22:08:44.360600000 +0100
+diff -Nru a/libraw/src/libraw_datastream.cpp b/libraw/src/libraw_datastream.cpp
+--- a/libraw/src/libraw_datastream.cpp
++++ b/libraw/src/libraw_datastream.cpp
 @@ -1,3 +1,6 @@
 +#ifdef _WIN32
 +#include <cmath>
