@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['win32libs-bin/opencv'] = 'default'
 
 class Package( CMakePackageBase ):
     def __init__( self):
