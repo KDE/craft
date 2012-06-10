@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.8.0'] = [("kdelibs-4.8.0-20120219.diff", 1),
                                       ("kdecore-add-kdeconf.diff", 1),
                                       ("fix-plasma-crash.diff", 1)]
+        self.patchToApply['4.8.4'] = [("0001-fixed-crash-for-unknow-property-added-icon-support-f.patch",1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
