@@ -10,8 +10,8 @@ class subinfo( info.infoclass ):
         self.amarok = portage.getPackageInstance('extragear','amarok')
         _,gitVersion = self.amarok.getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '2.6pre' ] = ""
-        self.defaultTarget = '2.6pre'
+        self.svnTargets[ '2.5.90' ] = ""
+        self.defaultTarget = '2.5.90'
 
 
 
@@ -31,7 +31,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join(self.subinfo.amarok.sourceDir(),"release_scripts","windows","amarok.nsi")
-        self.defines[ "kde-version" ] = "4.8.2"
+        self.defines[ "kde-version" ] = "4.8.4"
 
 if __name__ == '__main__':
     Package().execute()

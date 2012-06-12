@@ -22,7 +22,6 @@ share\\apps\\kgpg\\.*
 
 
 # cut the big oxygen icons: this can lead to errors though if used!!!!
-share\\icons\\hicolor\\.*
 share\\icons\\oxygen\\64x64\\.*
 share\\icons\\oxygen\\128x128\\.*
 share\\icons\\oxygen\\256x256\\.*
