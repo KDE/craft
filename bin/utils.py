@@ -128,7 +128,7 @@ if not os.path.exists( WGetExecutable ):
 def test4application( appname):
     """check if the application specified by 'appname' is available"""
     try:
-        f = file('NUL:')
+        f = open('NUL:')
         p = subprocess.Popen( appname, stdout=f, stderr=f )
         p.wait()
         return True
@@ -1113,11 +1113,10 @@ def createImportLibs( dll_name, basepath ):
     if not HAVE_PEXPORTS:
         warning( "system does not have pexports.exe" )
         return False
-    if not HAVE_LIB:
+    if not HAVE_LIB  and not os.path.isfile( imppath ):
         warning( "system does not have lib.exe (from msvc)" )
-        if not HAVE_DLLTOOL:
-            warning( "system does not have dlltool.exe" )
-            return False
+    if not HAVE_DLLTOOL and not os.path.isfile( gccpath ):
+        warning( "system does not have dlltool.exe" )
 
     # create .def
     if USE_PEXPORTS:
@@ -1134,6 +1133,7 @@ def createImportLibs( dll_name, basepath ):
     if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
         # create .dll.a
         cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
+        print( cmd )
         system( cmd )
 
     if os.path.exists( defpath ):
