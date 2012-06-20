@@ -25,16 +25,6 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
 
-    def createPackage( self ):
-        if(self.subinfo.buildTarget.startswith('1.2')):
-           libName="libpng12"
-        else:
-           libName="libpng14"
-        self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports
-        self.createImportLibs( libName )
-        return CMakePackageBase.createPackage( self )
-
 if __name__ == '__main__':
     Package().execute()
 

@@ -28,13 +28,6 @@ class Package( CMakePackageBase ):
         self.subinfo.options.package.packageName = 'libxslt'
 
 
-    def createPackage( self ):
-        libName="libxslt"
-        self.stripLibs( libName )
-        # auto-create both import libs with the help of pexports
-        self.createImportLibs( libName )
-        return CMakePackageBase.createPackage( self )
-
 if __name__ == '__main__':
     Package().execute()
 
