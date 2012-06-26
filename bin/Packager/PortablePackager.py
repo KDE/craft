@@ -40,7 +40,7 @@ Packager for portal 7zip archives
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-%s.7z" % ( shortPackage, self.buildTarget )
+            self.defines[ "setupname" ] = "%s-%s-%s.7z" % ( shortPackage, os.getenv("EMERGE_ARCHITECTURE") , self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         for f in self.scriptnames:
