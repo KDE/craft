@@ -10,7 +10,7 @@
 libs,qt,4.7.4,
 kdesupport,attica,,
 kdesupport,qjson,,
-kdesupport,dbusmenu-qt,gitHEAD,
+kdesupport,dbusmenu-qt,0.8.3,
 kdesupport,kdewin,,
 kdesupport,phonon,4.5.1,
 kdesupport,phonon-vlc,0.4.1,1
@@ -85,6 +85,7 @@ kde,kdeutils,4.7.4,
 # the KDE extragear packages
 extragear,amarok,2.5.0,
 extragear,kate,4.7.4,
+extragear,kile,,
 extragear,kile,,
 # extragear,kipi-plugins,2.0.0,
 extragear,digikam,2.3.0,
