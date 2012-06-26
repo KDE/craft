@@ -8,14 +8,14 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qjson'] = 'default'
 
     def setTargets( self ):
-        for ver in ['0.8.3']:
+        self.svnTargets['0.8.3'] = 'git://gitorious.org/dbusmenu/dbusmenu-qt.git|master|0.8.3.kde'
+
+        for ver in ['0.9.0']:
           self.targets[ver] ='http://launchpad.net/libdbusmenu-qt/trunk/' + ver + '/+download/libdbusmenu-qt-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver
         self.shortDescription = "a Qt implementation of the DBusMenu spec"
-			
-		## self.patchToApply['0.9.2'] = ('dbusmenu-qt-0.9.2.diff', 1)
+
         self.defaultTarget = '0.8.3'
-		
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
