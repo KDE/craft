@@ -90,7 +90,7 @@ file collection process is skipped, and only the installer is generated.
         else:
             shortPackage = self.package
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-setup-%s.exe" % ( shortPackage, self.buildTarget )
+            self.defines[ "setupname" ] = "%s-%s-setup-%s.exe" % ( shortPackage, os.getenv("EMERGE_ARCHITECTURE"), self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         if not "company" in self.defines or not self.defines[ "company" ]:
@@ -111,6 +111,7 @@ file collection process is skipped, and only the installer is generated.
             self.defines[ "icon" ] = ""
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
+        self.defines[ "architecture" ] = os.getenv("EMERGE_ARCHITECTURE")
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
