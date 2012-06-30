@@ -11,22 +11,21 @@ import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        #http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.25-win32.zip
+        #http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.24-win32.zip
         self.baseURL = "ftp://ftp.gwdg.de/pub/misc/mysql/Downloads/"
         if( emergePlatform.buildArchitecture() == 'x64' ):
           self.targets[ '5.1.63'] = self.baseURL+"MySQL-5.1/mysql-noinstall-5.1.63-winx64.zip"
           self.targetInstSrc[ '5.1.56' ] = "mysql-5.1.63-winx64"
-          self.targets[ '5.5.25'] = self.baseURL+"MySQL-5.5/mysql-5.5.25-winx64.zip"
-          self.targetInstSrc[ '5.5.25' ] = "mysql-5.5.25-winx64"
+          self.targets[ '5.5.24'] = self.baseURL+"MySQL-5.5/mysql-5.5.24-winx64.zip"
+          self.targetInstSrc[ '5.5.24' ] = "mysql-5.5.24-winx64"
         else:
           self.targets[ '5.1.63'] = self.baseURL+"MySQL-5.1/mysql-noinstall-5.1.63-win32.zip"
           self.targetInstSrc[ '5.1.63' ] = "mysql-5.1.63-win32"          
           self.targetDigests['5.1.63'] = '37827259cb5319d91940ff4f825e23165364305d'
-          self.targets[ '5.5.25'] = self.baseURL+"MySQL-5.5/mysql-5.5.25-win32.zip"
-          self.targetInstSrc[ '5.5.25' ] = "mysql-5.5.25-win32"
-          self.targetDigests['5.5.25'] = 'd4e937bb12c1e934b4db0b517019a22ef7ace6ef'
+          self.targets[ '5.5.24'] = self.baseURL+"MySQL-5.5/mysql-5.5.24-win32.zip"
+          self.targetInstSrc[ '5.5.24' ] = "mysql-5.5.24-win32"
         self.shortDescription = "MySql database server and embedded library"
-        self.defaultTarget = '5.5.25'
+        self.defaultTarget = '5.5.24'
 
 
     def setDependencies( self ):
