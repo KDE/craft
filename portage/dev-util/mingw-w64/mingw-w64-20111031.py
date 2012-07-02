@@ -5,13 +5,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in [ "20111031", "20111101" ]:
-            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
-        for ver in [ "4.6.4" ]:
-            self.targets["4.6.4"] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-4.6.4_rubenvb.7z"
+        for ver in [ "4.7.1"  ]:
+            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-%s-release-win64_rubenvb.7z" % ver
 
-        self.targetDigests['4.6.4'] = '3a811d891a9b376b05ae5ee372c4211100aeaaa6'
-        self.defaultTarget = "20111031"
+        self.defaultTarget = "4.7.1"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
@@ -24,10 +21,10 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
 
-    def install(self):
+    #def install(self):
 #        utils.applyPatch( self.imageDir(), os.path.join( self.packageDir(), "gcc_Exit.diff"), 1 )
 #        shutil.copy(os.path.join( self.installDir() , "mingw64" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw64" , "bin" , "mingw32-make.exe") )
-        return True
+        #return True
 
 if __name__ == '__main__':
     Package().execute()
