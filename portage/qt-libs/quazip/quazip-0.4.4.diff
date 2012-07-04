@@ -1,0 +1,83 @@
+diff -Nru quazip-0.4.4.orig/CMakeLists.txt quazip-0.4.4/CMakeLists.txt
+--- quazip-0.4.4.orig/CMakeLists.txt	2011-09-04 22:14:48.000000000 +0300
++++ quazip-0.4.4/CMakeLists.txt	2012-07-03 15:27:20.643397600 +0300
+@@ -7,7 +7,8 @@
+ include(${QT_USE_FILE})
+ 
+ set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
+-set(LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
++set(LIB_DESTINATION "lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
++set(BIN_DESTINATION "bin" CACHE STRING "Executable directory name" FORCE)
+ 
+ include_directories(${CMAKE_SOURCE_DIR})
+ add_subdirectory(quazip)
+diff -Nru quazip-0.4.4.orig/fix-exporting.diff quazip-0.4.4/fix-exporting.diff
+--- quazip-0.4.4.orig/fix-exporting.diff	1970-01-01 02:00:00.000000000 +0200
++++ quazip-0.4.4/fix-exporting.diff	2012-07-03 15:27:18.228156100 +0300
+@@ -0,0 +1,37 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index dd107ba..338828f 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -7,7 +7,8 @@ set(QT_USE_QTGUI false)
++ include(${QT_USE_FILE})
++ 
++ set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
++-set(LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
+++set(LIB_DESTINATION "lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
+++set(BIN_DESTINATION "bin" CACHE STRING "Executable directory name" FORCE)
++ 
++ include_directories(${CMAKE_SOURCE_DIR})
++ add_subdirectory(quazip)
++diff --git a/quazip/CMakeLists.txt b/quazip/CMakeLists.txt
++index a4df853..117de8e 100644
++--- a/quazip/CMakeLists.txt
+++++ b/quazip/CMakeLists.txt
++@@ -8,4 +8,4 @@ set_target_properties(quazip PROPERTIES VERSION 1 SOVERSION 1.0.0)
++ target_link_libraries(quazip ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} -lz)
++ 
++ install(FILES ${PUBLIC_HEADERS} DESTINATION include/quazip)
++-install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${LIB_DESTINATION})
+++install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${BIN_DESTINATION})
++diff --git a/quazip/quazip_global.h b/quazip/quazip_global.h
++index d9d09ad..f0c46d4 100644
++--- a/quazip/quazip_global.h
+++++ b/quazip/quazip_global.h
++@@ -39,7 +39,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
++  * When building a DLL with MSVC, QUAZIP_BUILD must be defined.
++  * qglobal.h takes care of defining Q_DECL_* correctly for msvc/gcc.
++  */
++-#if defined(QUAZIP_BUILD)
+++#if defined(QUAZIP_BUILD) || defined(quazip_EXPORTS)
++ 	#define QUAZIP_EXPORT Q_DECL_EXPORT
++ #else
++ 	#define QUAZIP_EXPORT Q_DECL_IMPORT
+diff -Nru quazip-0.4.4.orig/quazip/CMakeLists.txt quazip-0.4.4/quazip/CMakeLists.txt
+--- quazip-0.4.4.orig/quazip/CMakeLists.txt	2011-08-10 22:07:08.000000000 +0300
++++ quazip-0.4.4/quazip/CMakeLists.txt	2012-07-03 15:31:04.866817700 +0300
+@@ -3,9 +3,11 @@
+ qt4_wrap_cpp(MOC_SRCS ${PUBLIC_HEADERS})
+ set(SRCS ${SRCS} ${MOC_SRCS})
+ 
++find_package(Zlib)
++
+ add_library(quazip SHARED ${SRCS})
+ set_target_properties(quazip PROPERTIES VERSION 1 SOVERSION 1.0.0)
+-target_link_libraries(quazip ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} -lz)
++target_link_libraries(quazip ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${ZLIB_LIBRARIES})
+ 
+ install(FILES ${PUBLIC_HEADERS} DESTINATION include/quazip)
+-install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${LIB_DESTINATION})
++install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${BIN_DESTINATION})
+diff -Nru quazip-0.4.4.orig/quazip/quazip_global.h quazip-0.4.4/quazip/quazip_global.h
+--- quazip-0.4.4.orig/quazip/quazip_global.h	2011-08-13 11:18:18.000000000 +0300
++++ quazip-0.4.4/quazip/quazip_global.h	2012-07-03 15:27:20.648398100 +0300
+@@ -39,7 +39,7 @@
+  * When building a DLL with MSVC, QUAZIP_BUILD must be defined.
+  * qglobal.h takes care of defining Q_DECL_* correctly for msvc/gcc.
+  */
+-#if defined(QUAZIP_BUILD)
++#if defined(QUAZIP_BUILD) || defined(quazip_EXPORTS)
+ 	#define QUAZIP_EXPORT Q_DECL_EXPORT
+ #else
+ 	#define QUAZIP_EXPORT Q_DECL_IMPORT
