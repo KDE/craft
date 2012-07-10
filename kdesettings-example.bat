@@ -10,7 +10,7 @@ rem * mingw    - use the mingw gcc compiler (gcc Version 3.4.5 -
 rem               please only use this option if you are exactly 
 rem               sure about the consequences)
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
-rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler (not completly tested) 
+rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler
 rem * msvc2011 - use the Microsoft Visual C++ 2011 compiler (not supported) 
 set KDECOMPILER=mingw4
 
@@ -22,6 +22,7 @@ rem  mingw4        x    x       x[1]
 rem  mingw         x   ---     ---
 rem  msvc2005      x   ---     ---  
 rem  msvc2008      x   ---     ---
+rem  msvc2010      x   ---     ---
 rem 
 rem [1] by dev-utils/cegcc-arm-wince package
 rem 
