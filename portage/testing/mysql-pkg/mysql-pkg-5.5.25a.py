@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         #http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.24-win32.zip
         self.baseURL = "http://www.winkde.org/pub/kde/ports/win32/repository/other/"
         if( emergePlatform.buildArchitecture() == 'x64' ):
-          self.targets[ '5.5.25a'] = self.baseURL+"mysql-5.5.24-winx64.zip"
+          self.targets[ '5.5.25a'] = self.baseURL+"mysql-5.5.25a-winx64.zip"
           self.targetInstSrc[ '5.5.25a' ] = "mysql-5.5.25a-winx64"
         else:
           self.targets[ '5.5.25a'] = self.baseURL+"mysql-5.5.25a-win32.zip"
