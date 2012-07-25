@@ -28,7 +28,7 @@ class subinfo (info.infoclass):
         
         
         self.shortDescription = "high-performance, full-featured text search engine (required for compiling strigi)"
-        self.defaultTarget = '0.9.21b'
+        self.defaultTarget = '2.3.3.4'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
