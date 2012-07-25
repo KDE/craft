@@ -11,10 +11,12 @@ class subinfo( info.infoclass ):
 
     def setTargets( self ):
       self.svnTargets[ 'gitHEAD' ] = '[git]kde:libechonest'
-      self.targets['1.2.1'] = 'http://pwsp.cleinias.com/libechonest-1.2.1.tar.bz2'
-      self.targetInstSrc['1.2.1'] = 'libechonest-1.2.1'
+      for ver in ['1.2.1','2.0.1']:
+        self.targets[ver] = 'http://pwsp.cleinias.com/libechonest-%s.tar.bz2' % ver
+        self.targetInstSrc[ver] = 'libechonest-%s' % ver
       self.targetDigests['1.2.1'] = '5ad5897c91c365b32840e75e806c9725c89b4522'
-      self.defaultTarget = '1.2.1'
+      self.targetDigests['2.0.1'] = '5dd98ffb370e0e199e37ece4a1775a05594f3dcb'
+      self.defaultTarget = '2.0.1'
 
 
 class Package( CMakePackageBase ):
