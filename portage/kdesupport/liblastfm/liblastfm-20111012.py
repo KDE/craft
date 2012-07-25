@@ -8,9 +8,12 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ 'gitHEAD' ] = "git://github.com/TheOneRing/liblastfm.git"
         self.targetSrcSuffix['gitHEAD'] = "theo"
-        self.targets['1.0.0'] = 'http://cdn.last.fm/client/liblastfm-1.0.0.tar.gz'
+        for ver in ['1.0.0','1.0.1']:
+            self.targets[ver] = 'http://cdn.last.fm/client/liblastfm-%s.tar.gz' % ver
+            self.targetInstSrc[ver] = 'liblastfm-%s' % ver
         self.targetDigests['1.0.0'] = '1947b1a6397ea188151572da33edc7699bf10164'
-        self.targetInstSrc['1.0.0'] = 'liblastfm-1.0.0'
+        self.targetDigests['1.0.1'] = '2d6adb2c265daa4b62bd9bf7fa8e45d2e29b9c37'
+        
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
         self.defaultTarget = 'gitHEAD'
 
