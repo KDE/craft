@@ -23,7 +23,7 @@ class Package( AutoToolsPackageBase ):
         else:
             target = "i686-w64-mingw32"
             self.subinfo.options.merge.destinationPath = 'mingw/i686-w64-mingw32'
-        self.subinfo.options.configure.defines = " --enable-sdk=all --target=%s --host=%s" % (target,target)
+        self.subinfo.options.configure.defines = " --enable-sdk=all --target=%s" % target
 
 
 if __name__ == '__main__':

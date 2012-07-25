@@ -26,7 +26,7 @@ class Package( AutoToolsPackageBase ):
             target = "i686-w64-mingw32"
             disable = "--disable-lib64"
             self.subinfo.options.merge.destinationPath = 'mingw/i686-w64-mingw32'
-        self.subinfo.options.configure.defines = " --with-sysroot=%s  %s  --target=%s --host=%s" % (MSysShell().toNativePath(self.mergeDestinationDir()),disable, target,target)
+        self.subinfo.options.configure.defines = " --with-sysroot=%s  %s  --target=%s " % (MSysShell().toNativePath(self.mergeDestinationDir()),disable, target)
 
 
 if __name__ == '__main__':
