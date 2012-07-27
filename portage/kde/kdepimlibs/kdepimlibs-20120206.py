@@ -2,16 +2,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kdepimlibs|KDE/4.8|'
-        
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kdepimlibs-4.8.0.tar.bz2'
-        self.targetInstSrc['4.8.0'] = 'kdepimlibs-4.8.0'
-        self.patchToApply['4.8.0'] = [("kdepimlibs-4.8.0-20120206.diff", 1)]
-        
-        for ver in ['1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.' + ver + '/src/kdepimlibs-4.8.' + ver + '.tar.xz'
-            self.targetInstSrc['4.8.' + ver] = 'kdepimlibs-4.8.' + ver
-        
+        self.svnTargets['gitHEAD'] = '[git]kde:kdepimlibs|KDE/4.9|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/kdepimlibs-4.9.' + ver + '.tar.xz'
+            self.targetInstSrc['4.9.' + ver] = 'kdepimlibs-4.9.' + ver
+        self.shortDescription = "the base libraries for PIM related services"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
@@ -21,7 +16,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libical'] = 'default'
         self.dependencies['win32libs-bin/gpgme'] = 'default'
         self.dependencies['win32libs-bin/openldap'] = 'default'
-        self.shortDescription = "the base libraries for PIM related services"
 
 from Package.CMakePackageBase import *
 

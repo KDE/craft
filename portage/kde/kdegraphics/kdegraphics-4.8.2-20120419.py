@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['4.8.2'] = ''
-        self.defaultTarget = '4.8.2'
+        self.svnTargets['gitHEAD'] = ''
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/gwenview'] = 'default'

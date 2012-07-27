@@ -2,10 +2,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kgpg|KDE/4.8|'
+        self.svnTargets['gitHEAD'] = '[git]kde:kgpg|KDE/4.9|'
         for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.8." + ver + "/src/kgpg-4.8." + ver + ".tar.bz2"
-            self.targetInstSrc['4.8.' + ver] = 'kgpg-4.8.' + ver
+            self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/kgpg-4.9." + ver + ".tar.xz"
+            self.targetInstSrc['4.9.' + ver] = 'kgpg-4.9.' + ver
         self.shortDescription = "a simple interface for GnuPG"
         self.defaultTarget = 'gitHEAD'
 

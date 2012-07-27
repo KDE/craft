@@ -1,19 +1,13 @@
-import os
-import sys
 import info
+
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:gwenview'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/gwenview-4.8.0.tar.bz2'
-        self.targetInstSrc['4.8.0'] = 'gwenview-4.8.0'
-        for ver in ['4.8.1', '4.8.2']:
-            self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/gwenview-" + ver + ".tar.xz"
-            self.targetInstSrc[ ver] = 'gwenview-' + ver
-        self.defaultTarget = '4.8.2'
-
-
+        self.svnTargets['gitHEAD'] = '[git]kde:gwenview|KDE/4.9|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/gwenview-4.9." + ver + ".xz"
+            self.targetInstSrc['4.9.' + ver] = 'gwenview-4.9.' + ver
         self.shortDescription = 'Image viewer for KDE'
-
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
@@ -22,14 +16,12 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/exiv2'] = 'default'
         self.dependencies['win32libs-bin/jpeg'] = 'default'
 
-
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-
 
 if __name__ == '__main__':
     Package().execute()

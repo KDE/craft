@@ -2,13 +2,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'branches/KDE/4.8/kdenetwork'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kdenetwork-4.8.0.tar.bz2'
-        self.targetInstSrc['4.8.0'] = 'kdenetwork-4.8.0'
+        self.svnTargets['svnHEAD'] = 'branches/KDE/4.9/kdenetwork'
+        self.targets['4.9.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.0/src/kdenetwork-4.9.0.tar.xz'
+        self.targetInstSrc['4.9.0'] = 'kdenetwork-4.9.0'
         for ver in ['1', '2', '3', '4']:
-            self.targets['4.8.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.' + ver + '/src/kdenetwork-4.8.' + ver + '.tar.xz'
-            self.targetInstSrc['4.8.' + ver] = 'kdenetwork-4.8.' + ver
-            self.patchToApply['4.8.'+ver] = [("kdenetwork-4.8.0-20120125.diff", 1)]
+            self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/kdenetwork-4.9.' + ver + '.tar.xz'
+            self.targetInstSrc['4.9.' + ver] = 'kdenetwork-4.9.' + ver
+            self.patchToApply['4.9.'+ver] = [("kdenetwork-4.9.0-20120125.diff", 1)]
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):

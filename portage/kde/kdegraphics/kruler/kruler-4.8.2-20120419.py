@@ -1,15 +1,12 @@
-import os
-import sys
 import info
+
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kruler'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kruler-4.8.0.tar.bz2'
-        self.targetInstSrc['4.8.0'] = 'kruler-4.8.0'
-        for ver in ['4.8.1', '4.8.2']:
-            self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/kruler-" + ver + ".tar.xz"
-            self.targetInstSrc[ ver] = 'kruler-' + ver
-        self.defaultTarget = '4.8.2'
+        self.svnTargets['gitHEAD'] = '[git]kde:kruler|KDE/4.9|'
+        for ver in ['0', '1', '2', '3', '4']:
+            self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/kruler-4.9." + ver + ".tar.xz"
+            self.targetInstSrc['4.9.' + ver] = 'kruler-4.9.' + ver
+        self.defaultTarget = 'gitHEAD'
 
 
         self.shortDescription = 'A pixel measuring tool for KDE'
