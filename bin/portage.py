@@ -517,19 +517,20 @@ def getDependencies( category, package, version, runtimeOnly=False ):
         subpackage = package
     
     deps = []
-    mod = __import__( getFilename( category, subpackage, version ) )
-    if hasattr( mod, 'subinfo' ):
-        info = mod.subinfo()
-        depDict = info.hardDependencies
-        depDict.update( info.dependencies )
-        depDict.update( info.runtimeDependencies )
-        if not runtimeOnly:
-            depDict.update( info.buildDependencies )
+    for pkg in subpackage:
+        mod = __import__( getFilename( category, subpackage, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            depDict = info.hardDependencies
+            depDict.update( info.dependencies )
+            depDict.update( info.runtimeDependencies )
+            if not runtimeOnly:
+                depDict.update( info.buildDependencies )
 
-        for line in list(depDict.keys()):
-            (category, package) = line.split( "/" )
-            version = PortageInstance.getNewestVersion( category, package )
-            deps.append( [ category, package, version, depDict[ line ] ] )
+            for line in list(depDict.keys()):
+                (category, package) = line.split( "/" )
+                version = PortageInstance.getNewestVersion( category, package )
+                deps.append( [ category, package, version, depDict[ line ] ] )
 
     return deps
 
@@ -701,8 +702,9 @@ def isInstalled( category, package, version, buildtype='' ):
     fileName = os.path.join(path,'installed')
     found = False
     if os.path.isfile( fileName ):
-        with open( fileName, "rb" ) as f:
+        with open( fileName, "rt" ) as f:
             for line in f.read().splitlines():
+                if not line: continue # Ignore empty lines
                 (_category, _packageVersion) = line.split( "/" )
                 (_package, _version) = utils.packageSplit(_packageVersion)
                 if category != '' and version != '' and category == _category and package == _package and version == _version:
@@ -719,11 +721,11 @@ def isInstalled( category, package, version, buildtype='' ):
     if buildtype != '':
         fileName = os.path.join(path,'installed-' + buildtype )
         if os.path.isfile( fileName ):
-            with open( fileName, "rb" ) as f:
+            with open( fileName, "rt" ) as f:
                 for line in f.read().splitlines():
                     if not line or line == "":
                         continue
-                    (_category, _packageVersion) = line.decode('UTF-8').split( "/" )
+                    (_category, _packageVersion) = line.split( "/" )
                     (_package, _version) = utils.packageSplit(_packageVersion)
                     if category != '' and version != '' and category == _category and package == _package and version == _version:
                         found = True
@@ -763,7 +765,7 @@ def findInstalled( category, package):
     ret = None
     regexStr = "^%s/%s-(.*)$" % ( category, re.escape(package) )
     regex = re.compile( regexStr )
-    with open( fileName, "rb" ) as f:
+    with open( fileName, "rt" ) as f:
         for line in f.read().splitlines():
             match = regex.match( line )
             if match:
@@ -807,13 +809,13 @@ def remInstalled( category, package, version, buildtype='' ):
     tmpdbfile = os.path.join(utils.etcDir(), "TMPinstalled" )
     found = False
     if os.path.exists( dbFileName ):
-        with open( dbFileName, "rb" ) as dbFile:
-            with open( tmpdbfile, "wb" ) as tfile:
+        with open( dbFileName, "rt" ) as dbFile:
+            with open( tmpdbfile, "wt" ) as tfile:
                 for line in dbFile:
                     ## \todo the category should not be part of the search string
                     ## because otherwise it is not possible to unmerge package using
                     ## the same name but living in different categories
-                    if not line.decode('UTF-8').startswith("%s/%s" % ( category, package ) ):
+                    if not line.startswith("%s/%s" % ( category, package ) ):
                         tfile.write( line )
                     else:
                         found = True
