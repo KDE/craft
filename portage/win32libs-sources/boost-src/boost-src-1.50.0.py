@@ -2,8 +2,12 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['1.49.0'] = ''
-        self.defaultTarget = '1.49.0'
+        self.svnTargets['1.50.0'] = ''
+        self.defaultTarget = '1.50.0'
+
+        self.homepage = 'http://www.boost.org/'
+
+        self.shortDescription = 'portable C++ libraries'
 
     def setDependencies( self ):
         self.dependencies['win32libs-sources/boost-headers-src'] = 'default'
