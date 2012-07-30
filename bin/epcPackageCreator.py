@@ -179,7 +179,6 @@ class EpcPackageCreator(object):
 
 if __name__ == '__main__':
     utils.startTimer("EPC")
-    print("a")
     if len( sys.argv ) < 2:
         utils.die("to few arguments")
 
