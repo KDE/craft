@@ -1,19 +1,7 @@
-From 92e145e05a13c3035c80102e285afde662ee14a9 Mon Sep 17 00:00:00 2001
-From: Patrick Spendrin <ps_ml@gmx.de>
-Date: Wed, 1 Feb 2012 15:21:59 +0100
-Subject: [PATCH 2/2] add a way to test ssh connections on windows
-
----
- examples/CMakeLists.txt |    4 ++
- examples/sample_win.c   |   95 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 99 insertions(+), 0 deletions(-)
- create mode 100644 examples/sample_win.c
-
-diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
-index aeff201..bfdf07e 100644
---- a/examples/CMakeLists.txt
-+++ b/examples/CMakeLists.txt
-@@ -34,6 +34,10 @@ if (LINUX)
+diff -Nru -x '*~' libssh-0.5.2.orig/examples/CMakeLists.txt libssh-0.5.2/examples/CMakeLists.txt
+--- libssh-0.5.2.orig/examples/CMakeLists.txt	2011-09-16 21:57:36.000000000 +0200
++++ libssh-0.5.2/examples/CMakeLists.txt	2012-07-30 12:00:59.540332500 +0200
+@@ -34,6 +34,10 @@
          target_link_libraries(samplesshd ${LIBSSH_SHARED_LIBRARY})
      endif (WITH_SERVER)
  endif (LINUX)
@@ -24,11 +12,9 @@ index aeff201..bfdf07e 100644
  
  add_executable(exec exec.c ${examples_SRCS})
  target_link_libraries(exec ${LIBSSH_SHARED_LIBRARY})
-diff --git a/examples/sample_win.c b/examples/sample_win.c
-new file mode 100644
-index 0000000..e29ae7f
---- /dev/null
-+++ b/examples/sample_win.c
+diff -Nru -x '*~' libssh-0.5.2.orig/examples/sample_win.c libssh-0.5.2/examples/sample_win.c
+--- libssh-0.5.2.orig/examples/sample_win.c	1970-01-01 01:00:00.000000000 +0100
++++ libssh-0.5.2/examples/sample_win.c	2012-07-30 12:00:59.546332500 +0200
 @@ -0,0 +1,95 @@
 +/* client.c */
 +/*
@@ -125,6 +111,15 @@ index 0000000..e29ae7f
 +    return 0;
 +}
 +
--- 
-1.7.4.msysgit.0
-
+diff -Nru -x '*~' libssh-0.5.2.orig/src/threads/pthread.c libssh-0.5.2/src/threads/pthread.c
+--- libssh-0.5.2.orig/src/threads/pthread.c	2011-09-16 21:57:36.000000000 +0200
++++ libssh-0.5.2/src/threads/pthread.c	2012-07-30 12:19:28.571309300 +0200
+@@ -75,7 +75,7 @@
+ }
+ 
+ static unsigned long ssh_pthread_thread_id (void){
+-#if _WIN32
++#if defined(_WIN32) && !defined(__WINPTHREADS_VERSION)
+     return (unsigned long) pthread_self().p;
+ #else
+     return (unsigned long) pthread_self();
