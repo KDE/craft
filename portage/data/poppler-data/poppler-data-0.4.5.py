@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
         for v in [ '0.2.0', '0.2.1', '0.3.0', '0.4.0', '0.4.1', '0.4.2', '0.4.3', '0.4.4','0.4.5' ]:
           self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
           self.targetInstSrc[v] = 'poppler-data-' + v
-          if v not in ['0.4.2', '0.4.3', '0.4.4']:
+          if v in ['0.2.0', '0.2.1', '0.3.0', '0.4.0', '0.4.1']:
             self.patchToApply[v] = ( 'poppler-data-cmake.patch', 0 )
         self.targetDigests['0.4.3'] = 'aa28288563d2542e14414666a8b35d01f42ad164'
 
