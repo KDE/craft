@@ -13,7 +13,7 @@ import compiler
 
 class MSysShell(object):
     def __init__(self):
-        self.msysdir = os.getenv("MSYSDIR")
+        self.msysdir = os.path.join( os.environ.get( "KDEROOT" ), "msys" )
         self.buildType = os.getenv("EMERGE_BUILDTYPE")
         self.initEnvironment()
 
@@ -42,7 +42,7 @@ class MSysShell(object):
         utils.putenv("INTLTOOL_PERL", perl)
 
         #prepare path to sue autotools
-        utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( os.environ.get( "MSYSDIR" ), "opt", "autotools", "bin" )))
+        utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( self.msysdir, "opt", "autotools", "bin" )))
 
 
     def toNativePath( self, path ):
