@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
 
         
         self.shortDescription = "a Qt based multimedia framework"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '4.6.0'
 
 
     def setBuildOptions( self ):
