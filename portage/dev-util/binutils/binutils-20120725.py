@@ -3,9 +3,9 @@ from shells import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.targets['svnHEAD'] = 'ftp://sourceware.org/pub/binutils/snapshots/binutils.tar.bz2'#ftp://sourceware.org/pub/binutils/snapshots/binutils-2.22.52.tar.bz2
+        self.targets['svnHEAD'] = 'ftp://sourceware.org/pub/binutils/snapshots/binutils-2.22.52.tar.bz2'
         self.targetInstSrc['svnHEAD'] = 'binutils-2.22.52'
-        self.targetDigests['svnHEAD'] = '4494285ac9d2a805f76305c86ca2a9a1d3fc1195'
+        self.targetDigests['svnHEAD'] = 'ce5e58008e3e8be7c7e9fce03def27a3480ac28b'
         self.patchToApply[ 'svnHEAD' ] = [('binutils-2.22.52-20120726.diff',1)]
   
         self.defaultTarget = 'svnHEAD'
