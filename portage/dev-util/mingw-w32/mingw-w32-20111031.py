@@ -10,10 +10,8 @@ class subinfo(info.infoclass):
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
         self.defaultTarget = ver
         
-        ver = "4.7.0"
-        self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-4.7.0-release-win32_rubenvb.7z"
-        self.targetDigests['4.7.0'] = '5d97139ea6b4634581375ebc3fecc81c56df8686'
-        self.patchToApply['4.7.0'] = ("unknw.diff", 0)
+        for ver in [ "4.7.1" ]:
+            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-4.7.1-release-win32_rubenvb.7z"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
