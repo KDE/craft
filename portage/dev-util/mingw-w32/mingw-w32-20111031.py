@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
         
         for ver in [ "4.7.1" ]:
-            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-4.7.1-release-win32_rubenvb.7z"
+            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/686-w64-mingw32-gcc-4.7.1-release-win32_rubenvb.7z"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'

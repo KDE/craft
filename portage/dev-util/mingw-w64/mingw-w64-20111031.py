@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         for ver in [ "20111031", "20111101" ]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
         for ver in [ "4.7.1" ]:
-            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-4.7.1-release-win32_rubenvb.7z"
+            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-4.7.1-release-win64_rubenvb.7z"
 
         self.defaultTarget = "20111031"
 
