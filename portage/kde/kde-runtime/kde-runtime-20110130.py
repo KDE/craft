@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libssh'] = 'default'
         self.dependencies['kde/kactivities'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['kde/nepomuk-core'] = 'default'
         if compiler.isMinGW_WXX():
             self.dependencies['win32libs-bin/libbfd'] = 'default'
 
