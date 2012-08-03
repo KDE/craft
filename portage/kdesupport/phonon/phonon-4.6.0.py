@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'phonon-%s' % ver
         if ver in ['4.4.3', '4.4.4']: self.patchToApply[ver] = ("phonon-20100915.diff", 1)
         self.patchToApply['4.5.1'] = ("phonon-fix-gcc-4.5.diff", 1)
+        self.patchToApply['4.6.0'] = ("phonon-4.6.0-20120803.diff", 1)
         self.targetDigests['4.4.3'] = '50262d590beb648be9dcad6b913b920db19a84f8'
         self.targetDigests['4.4.4'] = '7f31752c20efecbe63c7b312ceb28819fa337943'
         self.targetDigests['4.5.0'] = '122f7c53939a2c40c3312c2f5e59f25ca2c9ee53'
