@@ -770,7 +770,9 @@ diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks
 +if(CMAKE_SYSTEM_NAME STREQUAL GNU)
 +    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pthread")
 +    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -pthread")
++    check_include_file("pthread.h" HAVE_PTHREAD_H)
 +    set(HAVE_LIBPTHREAD ON)
++
 +endif(CMAKE_SYSTEM_NAME STREQUAL GNU)
 +
 +# HAVE_LIBHISTORY
@@ -783,7 +785,6 @@ diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks
 +include(CheckSymbolExists)
 +
 +check_include_file("fcntl.h" HAVE_FCNTL_H)
-+check_include_file("pthread.h" HAVE_PTHREAD_H)
 +check_include_file("ansidecl.h" HAVE_ANSIDECL_H)
 +check_include_file("arpa/inet.h" HAVE_ARPA_INET_H)
 +check_include_file("arpa/nameser.h" HAVE_ARPA_NAMESER_H)
@@ -806,7 +807,6 @@ diff -Nru libxml2-2.7.7.orig/ConfigureChecks.cmake libxml2-2.7.7/ConfigureChecks
 +check_include_file("netdb.h" HAVE_NETDB_H)
 +check_include_file("netinet/in.h" HAVE_NETINET_IN_H)
 +check_include_file("poll.h" HAVE_POLL_H)
-+check_include_file("pthread.h" HAVE_PTHREAD_H)
 +check_include_file("resolv.h" HAVE_RESOLV_H)
 +check_include_file("signal.h" HAVE_SIGNAL_H)
 +check_include_file("stdarg.h" HAVE_STDARG_H)
