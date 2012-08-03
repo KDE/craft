@@ -28,6 +28,15 @@ class Package( AutoToolsPackageBase ):
             self.subinfo.options.merge.destinationPath = 'mingw/i686-w64-mingw32'
         self.subinfo.options.configure.defines = " --with-sysroot=%s  %s  --target=%s " % (MSysShell().toNativePath(self.mergeDestinationDir()),disable, target)
 
+    def install( self ):
+        if not AutoToolsPackageBase.install( self ):
+            return False
+        if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+            libdir = "lib64"
+        else:
+            libdir = "lib32"
+        shutil.move( os.path.join( self.installDir() , libdir ) , os.path.join( self.installDir(), "lib" ) )
+        return True
 
 if __name__ == '__main__':
      Package().execute()
