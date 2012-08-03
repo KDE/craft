@@ -14,6 +14,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "autotools")
         self.shell = MSysShell()
         self.makeProgram = "make -e"
+        if self.subinfo.options.make.supportsMultijob:
+            self.makeProgram += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
 
 
     def configureDefaultDefines( self ):
