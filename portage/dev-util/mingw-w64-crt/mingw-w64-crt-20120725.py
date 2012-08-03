@@ -32,10 +32,7 @@ class Package( AutoToolsPackageBase ):
         if not AutoToolsPackageBase.install( self ):
             return False
         if os.getenv("EMERGE_ARCHITECTURE") == "x64":
-            libdir = "lib64"
-        else:
-            libdir = "lib32"
-        shutil.move( os.path.join( self.installDir() , libdir ) , os.path.join( self.installDir(), "lib" ) )
+            shutil.move( os.path.join( self.installDir() , "lib64" ) , os.path.join( self.installDir(), "lib" ) )
         return True
 
 if __name__ == '__main__':
