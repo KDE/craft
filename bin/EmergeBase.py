@@ -31,7 +31,6 @@ KDESVNSERVER = os.getenv( "KDESVNSERVER" )
 if ( KDESVNSERVER == None ):
     KDESVNSERVER = "svn://anonsvn.kde.org"
 KDESVNUSERNAME = os.getenv( "KDESVNUSERNAME" )
-KDESVNPASSWORD = os.getenv( "KDESVNPASSWORD" )
 
 # ok, we have the following dirs:
 # ROOTDIR: the root where all this is below
