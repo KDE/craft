@@ -1,6 +1,6 @@
 diff -Nru -x '*~' kdelibs-4.9.0.orig/cmake/modules/FindKDE4Internal.cmake kdelibs-4.9.0/cmake/modules/FindKDE4Internal.cmake
 --- kdelibs-4.9.0.orig/cmake/modules/FindKDE4Internal.cmake	2012-05-23 01:41:14.000000000 +0200
-+++ kdelibs-4.9.0/cmake/modules/FindKDE4Internal.cmake	2012-08-03 15:47:51.372827500 +0200
++++ kdelibs-4.9.0/cmake/modules/FindKDE4Internal.cmake	2012-08-03 16:01:04.278110100 +0200
 @@ -1222,12 +1222,6 @@
        set (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -pthread")
     endif (CMAKE_SYSTEM_NAME STREQUAL GNU)
@@ -14,3 +14,15 @@ diff -Nru -x '*~' kdelibs-4.9.0.orig/cmake/modules/FindKDE4Internal.cmake kdelib
     check_cxx_compiler_flag(-fPIE HAVE_FPIE_SUPPORT)
     if(KDE4_ENABLE_FPIE)
         if(HAVE_FPIE_SUPPORT)
+diff -Nru -x '*~' kdelibs-4.9.0.orig/kjs/wtf/AlwaysInline.h kdelibs-4.9.0/kjs/wtf/AlwaysInline.h
+--- kdelibs-4.9.0.orig/kjs/wtf/AlwaysInline.h	2012-05-23 01:45:23.000000000 +0200
++++ kdelibs-4.9.0/kjs/wtf/AlwaysInline.h	2012-08-03 16:38:37.594774400 +0200
+@@ -22,7 +22,7 @@
+ 
+ 
+ #ifndef ALWAYS_INLINE
+-#if COMPILER(GCC) && defined(NDEBUG) &&  __GNUC__ > 3
++#if COMPILER(GCC) && defined(NDEBUG) &&  __GNUC__ > 3 && 0
+ #define ALWAYS_INLINE inline __attribute__ ((__always_inline__))
+ #elif COMPILER(MSVC) && defined(NDEBUG)
+ #define ALWAYS_INLINE __forceinline
