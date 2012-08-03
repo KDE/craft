@@ -6,6 +6,7 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
+        self.patchToApply['gitHEAD'] =  ('use_bundled_zlib.diff',1)
         self.svnTargets['working'] = "git://git.samba.org/ccache.git||206b0c182b8fbe1e115039507c4356ee1316a7fa"
         self.patchToApply['working'] =  ('use_bundled_zlib.diff',1)
         self.defaultTarget = 'working'
@@ -24,7 +25,8 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-zlib=bundle "
+        os.putenv("CXX","g++")
+        os.putenv("CC","gcc")
 
 if compiler.isMinGW():
     class Package(PackageMinGW):
