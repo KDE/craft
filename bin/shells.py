@@ -41,7 +41,7 @@ class MSysShell(object):
         utils.putenv("PERL", perl)
         utils.putenv("INTLTOOL_PERL", perl)
 
-        #prepare path to sue autotools
+        #prepare path to use autotools
         utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( self.msysdir, "opt", "autotools", "bin" )))
 
 
