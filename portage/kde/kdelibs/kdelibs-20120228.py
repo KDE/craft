@@ -7,11 +7,6 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/kdelibs-4.9." + ver + ".tar.xz"
             self.targetInstSrc['4.9.' + ver] = 'kdelibs-4.9.' + ver
-        self.patchToApply['4.9.0'] = [("kdelibs-4.9.0-20120219.diff", 1),
-                                      ("kdecore-add-kdeconf.diff", 1),
-                                      ("fix-plasma-crash.diff", 1)]
-        self.patchToApply['4.9.4'] = [("0001-fixed-crash-for-unknow-property-added-icon-support-f.patch",1),
-                                      ("0001-fixed-two-issues-and-implemented-basic-battery-suppo.patch",1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
