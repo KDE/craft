@@ -1,0 +1,15 @@
+diff -Nru download\mingw32/i686-w64-mingw32/include/unknwn.h build\dev-util\mingw-w32-20111031\image\mingw/i686-w64-mingw32/include/unknwn.h
+--- mingw32/i686-w64-mingw32/include/unknwn.h	2012-04-29 20:42:14.000000000 +0200
++++ mingw32/i686-w64-mingw32/include/unknwn.h	2012-05-24 15:55:42.943258700 +0200
+@@ -67,8 +67,10 @@
+ 	virtual HRESULT WINAPI QueryInterface(REFIID riid,void **ppvObject) = 0;
+ 	virtual ULONG WINAPI AddRef(void) = 0;
+ 	virtual ULONG WINAPI Release(void) = 0;
++#ifndef __STRICT_ANSI__
+ 	template<class Q> HRESULT WINAPI QueryInterface(Q **pp) { return QueryInterface(__uuidof(*pp),(void **)pp); }
+-      END_INTERFACE
++#endif
++    END_INTERFACE
+     };
+   }
+   HRESULT WINAPI IUnknown_QueryInterface_Proxy(IUnknown *This,REFIID riid,void **ppvObject);

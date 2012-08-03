@@ -1,15 +1,58 @@
-Files libdbusmenu-qt-0.9.2.orig/.CMakeLists.txt.swp and libdbusmenu-qt-0.9.2/.CMakeLists.txt.swp differ
-Files libdbusmenu-qt-0.9.2.orig/src/.CMakeLists.txt.swp and libdbusmenu-qt-0.9.2/src/.CMakeLists.txt.swp differ
-diff -Nru -x '*~' libdbusmenu-qt-0.9.2.orig/src/CMakeLists.txt libdbusmenu-qt-0.9.2/src/CMakeLists.txt
---- libdbusmenu-qt-0.9.2.orig/src/CMakeLists.txt	2012-03-29 17:47:52.000000000 +0200
-+++ libdbusmenu-qt-0.9.2/src/CMakeLists.txt	2012-04-11 18:55:41.449200000 +0200
-@@ -73,7 +73,8 @@
+diff -Nru libdbusmenu-qt-0.9.2.orig/src/CMakeLists.txt libdbusmenu-qt-0.9.2/src/CMakeLists.txt
+--- libdbusmenu-qt-0.9.2.orig/src/CMakeLists.txt	2012-03-29 16:47:52.000000000 +0100
++++ libdbusmenu-qt-0.9.2/src/CMakeLists.txt	2012-05-30 15:29:28.781385900 +0100
+@@ -73,7 +73,10 @@
      )
  
  install(TARGETS dbusmenu-qt
 -    LIBRARY DESTINATION lib${LIB_SUFFIX})
 +    LIBRARY DESTINATION lib${LIB_SUFFIX}
-+    RUNTIME DESTINATION bin)
++    RUNTIME DESTINATION bin
++    ARCHIVE DESTINATION lib${LIB_SUFFIX}
++    )
  
  install(DIRECTORY .
      DESTINATION include/dbusmenu-qt
+diff -Nru libdbusmenu-qt-0.9.2.orig/src/dbusmenushortcut_p.cpp libdbusmenu-qt-0.9.2/src/dbusmenushortcut_p.cpp
+--- libdbusmenu-qt-0.9.2.orig/src/dbusmenushortcut_p.cpp	2012-03-29 16:47:52.000000000 +0100
++++ libdbusmenu-qt-0.9.2/src/dbusmenushortcut_p.cpp	2012-05-31 13:58:16.519187700 +0100
+@@ -24,6 +24,7 @@
+ #include <QtGui/QKeySequence>
+ 
+ // Local
++#include "dbusmenutypes_p.h"
+ #include "debug_p.h"
+ 
+ static const int QT_COLUMN = 0;
+diff -Nru libdbusmenu-qt-0.9.2.orig/src/dbusmenutypes_p.h libdbusmenu-qt-0.9.2/src/dbusmenutypes_p.h
+--- libdbusmenu-qt-0.9.2.orig/src/dbusmenutypes_p.h	2012-03-29 16:47:52.000000000 +0100
++++ libdbusmenu-qt-0.9.2/src/dbusmenutypes_p.h	2012-05-31 12:21:44.623910300 +0100
+@@ -93,4 +93,11 @@
+ Q_DECLARE_METATYPE(DBusMenuLayoutItemList)
+ 
+ void DBusMenuTypes_register();
++
++//// fix compilation problems on MSVC
++#if defined(Q_CC_MSVC)
++inline uint qHash(const QStringList list)
++{ return qHash(list.join(";")); }
++#endif
++
+ #endif /* DBUSMENUTYPES_P_H */
+diff -Nru libdbusmenu-qt-0.9.2.orig/src/debug_p.h libdbusmenu-qt-0.9.2/src/debug_p.h
+--- libdbusmenu-qt-0.9.2.orig/src/debug_p.h	2012-03-29 16:47:52.000000000 +0100
++++ libdbusmenu-qt-0.9.2/src/debug_p.h	2012-05-30 16:33:14.915228200 +0100
+@@ -26,7 +26,12 @@
+ #define _DMBLUE  "\033[34m"
+ #define _DMRED   "\033[31m"
+ #define _DMRESET "\033[0m"
+-#define _DMTRACE(level, color) (level().nospace() << color << __PRETTY_FUNCTION__ << _DMRESET ":").space()
++#if defined(Q_CC_MSVC)
++  #define _DMFUNCSIG __FUNCSIG__
++#else
++  #define _DMFUNCSIG __PRETTY_FUNCTION__
++#endif
++#define _DMTRACE(level, color) (level().nospace() << color << _DMFUNCSIG << _DMRESET ":").space()
+ 
+ // Simple macros to get KDebug like support
+ #define DMDEBUG   _DMTRACE(qDebug, _DMBLUE)

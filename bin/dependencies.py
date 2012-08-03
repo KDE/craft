@@ -538,12 +538,11 @@ def parseOptions():
     parser = ArgumentParser(prog=sys.argv[0], usage=usage)
 
     parser.add_argument("-t", "--type", action = "store", default = OUTPUT_DOT,
-            help=("Change the output format type "
-                  "possible values: xml kwi, dot"))
+            help="Change the output format type possible values: xml kwi, dot")
     parser.add_argument("-f", "--file", dest = "filenames", metavar = "FILENAME",
-            nargs="+", help="add a filename for a packageList ")
+            nargs="+", help="add a filename for a packageList")
     parser.add_argument("-o", "--output", dest = "outputname", metavar = "FILENAME",
-            help=" ")
+            help="the name of the output file")
     parser.add_argument("-d", "--depstyle", action = "store", default = "both",
             help="possible values: both, runtime")
 

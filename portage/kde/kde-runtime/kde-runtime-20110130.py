@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
         self.dependencies['win32libs-bin/libssh'] = 'default'
         self.dependencies['kde/kactivities'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
         if compiler.isMinGW_WXX():
             self.dependencies['win32libs-bin/libbfd'] = 'default'
 

@@ -141,9 +141,10 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        AutoToolsPackageBase.__init__(self)
+        self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False
+        AutoToolsPackageBase.__init__(self)
         self.shell = MSysShell()
 
         self.buildInSource=True

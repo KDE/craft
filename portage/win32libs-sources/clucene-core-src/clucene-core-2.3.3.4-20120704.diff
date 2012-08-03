@@ -1,0 +1,85 @@
+diff -Nru -x '*~' clucene-core-2.3.3.4.orig/src/core/CMakeLists.txt clucene-core-2.3.3.4/src/core/CMakeLists.txt
+--- clucene-core-2.3.3.4.orig/src/core/CMakeLists.txt	2011-03-17 01:21:07.000000000 +0100
++++ clucene-core-2.3.3.4/src/core/CMakeLists.txt	2012-07-15 14:23:19.387373100 +0200
+@@ -282,5 +282,7 @@
+ 
+ #and install library
+ install(TARGETS clucene-core 
+-        DESTINATION ${LIB_DESTINATION}  
++        RUNTIME DESTINATION bin
++        LIBRARY DESTINATION lib
++        ARCHIVE DESTINATION lib
+         COMPONENT runtime )
+diff -Nru -x '*~' clucene-core-2.3.3.4.orig/src/shared/CLucene/config/_threads.h clucene-core-2.3.3.4/src/shared/CLucene/config/_threads.h
+--- clucene-core-2.3.3.4.orig/src/shared/CLucene/config/_threads.h	2011-03-17 01:21:07.000000000 +0100
++++ clucene-core-2.3.3.4/src/shared/CLucene/config/_threads.h	2012-07-15 14:46:32.458028100 +0200
+@@ -35,8 +35,8 @@
+     	    __declspec(dllimport) unsigned long __stdcall GetCurrentThreadId();
+ 
+ #ifdef _M_X64
+-          __declspec(dllimport) long long __stdcall _InterlockedIncrement64(__inout long long volatile*);
+-          __declspec(dllimport) long long __stdcall _InterlockedDecrement64(__inout long long volatile*);
++          long long __stdcall _InterlockedIncrement64(long long volatile*);
++          long long __stdcall _InterlockedDecrement64(long long volatile*);
+ #else
+           __declspec(dllimport) long __stdcall InterlockedIncrement(long volatile*);
+           __declspec(dllimport) long __stdcall InterlockedDecrement(long volatile*);
+diff -Nru -x '*~' clucene-core-2.3.3.4.orig/src/shared/cmake/MacroCheckGccVisibility.cmake clucene-core-2.3.3.4/src/shared/cmake/MacroCheckGccVisibility.cmake
+--- clucene-core-2.3.3.4.orig/src/shared/cmake/MacroCheckGccVisibility.cmake	2011-03-17 01:21:07.000000000 +0100
++++ clucene-core-2.3.3.4/src/shared/cmake/MacroCheckGccVisibility.cmake	2012-07-15 14:23:19.400373100 +0200
+@@ -13,7 +13,7 @@
+    check_cxx_compiler_flag(-fvisibility=hidden ${GccVisibility})
+ 
+    # get the gcc version
+-   exec_program(${CMAKE_C_COMPILER} ARGS --version OUTPUT_VARIABLE _gcc_version_info)
++   exec_program(${CMAKE_C_COMPILER} ARGS ${CMAKE_C_COMPILER_ARG1} --version OUTPUT_VARIABLE _gcc_version_info)
+ 
+    string (REGEX MATCH "[345]\\.[0-9]\\.[0-9]" _gcc_version "${_gcc_version_info}")
+    if (NOT _gcc_version)
+@@ -37,7 +37,7 @@
+ 
+    set(_GCC_COMPILED_WITH_BAD_ALLOCATOR FALSE)
+    if (GCC_IS_NEWER_THAN_4_1)
+-      exec_program(${CMAKE_C_COMPILER} ARGS -v OUTPUT_VARIABLE _gcc_alloc_info)
++      exec_program(${CMAKE_C_COMPILER} ARGS ${CMAKE_C_COMPILER_ARG1} -v OUTPUT_VARIABLE _gcc_alloc_info)
+       string(REGEX MATCH "(--enable-libstdcxx-allocator=mt)" _GCC_COMPILED_WITH_BAD_ALLOCATOR "${_gcc_alloc_info}")
+    endif (GCC_IS_NEWER_THAN_4_1)
+ 
+diff -Nru -x '*~' clucene-core-2.3.3.4.orig/src/shared/CMakeLists.txt clucene-core-2.3.3.4/src/shared/CMakeLists.txt
+--- clucene-core-2.3.3.4.orig/src/shared/CMakeLists.txt	2011-03-17 01:21:07.000000000 +0100
++++ clucene-core-2.3.3.4/src/shared/CMakeLists.txt	2012-07-15 15:42:02.800162600 +0200
+@@ -147,8 +147,8 @@
+ CHOOSE_FUNCTION(_mkdir "_mkdir((const char*)0)" "#define _mkdir(x) mkdir(x,0777)")
+ CHOOSE_FUNCTION(SLEEPFUNCTION "usleep;Sleep(0);_sleep")
+ 
+-CHOOSE_FUNCTION(_snprintf "snprintf;_snprintf")
+-CHOOSE_FUNCTION(_snwprintf "snwprintf;_snwprintf")
++#CHOOSE_FUNCTION(_snprintf "snprintf;_snprintf")
++#CHOOSE_FUNCTION(_snwprintf "snwprintf;_snwprintf")
+ 
+ ########################################################################
+ # test for symbols
+@@ -213,10 +213,11 @@
+ #check for pthreads
+ IF ( CMAKE_USE_WIN32_THREADS_INIT )
+     SET ( _CL_HAVE_WIN32_THREADS 1 )
+-ENDIF ( CMAKE_USE_WIN32_THREADS_INIT )
++ELSE( CMAKE_USE_WIN32_THREADS_INIT )
+ IF ( CMAKE_USE_PTHREADS_INIT )
+     SET ( _CL_HAVE_PTHREAD 1 )
+ ENDIF (CMAKE_USE_PTHREADS_INIT)
++ENDIF ( CMAKE_USE_WIN32_THREADS_INIT )
+ IF ( CMAKE_USE_SPROC_INIT OR CMAKE_HP_PTHREADS_INIT )
+     MESSAGE(FATAL_ERROR "Threads library not implemented")
+ ENDIF( CMAKE_USE_SPROC_INIT OR CMAKE_HP_PTHREADS_INIT )
+@@ -340,7 +341,9 @@
+ ENDIF ( EXTRA_LIBS )
+ 
+ install(TARGETS clucene-shared 
+-        DESTINATION ${LIB_DESTINATION} 
++        RUNTIME DESTINATION bin
++        LIBRARY DESTINATION lib
++        ARCHIVE DESTINATION lib
+         COMPONENT development )
+ 
+ IF ( BUILD_STATIC_LIBRARIES )

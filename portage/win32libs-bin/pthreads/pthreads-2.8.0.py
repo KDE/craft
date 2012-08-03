@@ -4,6 +4,7 @@
 # based on revision gitcfc5b700df8db112d62408e5402ba6ed7170a64d
 
 from Package.BinaryPackageBase import *
+from Package.VirtualPackageBase import *
 import os
 import info
 
@@ -27,10 +28,20 @@ class subinfo( info.infoclass ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-class Package(BinaryPackageBase):
+class PthreadsPackage(BinaryPackageBase):
   def __init__(self):
     self.subinfo = subinfo()
     BinaryPackageBase.__init__( self )
 
+if compiler.isMSVC() or compiler.getMinGWVersion() == "4.4.7":
+    class Package(PthreadsPackage):
+        def __init__( self ):
+            PthreadsPackage.__init__( self )
+else:
+    class Package(VirtualPackageBase):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()

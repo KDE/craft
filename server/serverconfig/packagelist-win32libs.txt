@@ -5,6 +5,7 @@
 # win32libs-sources,dbus-src,1.4.0,1
 # is equivalent to emerge --target=1.4.0 --patchlevel=1 win32libs-sources/dbus-src
 #
+dev-util,vsd,,
 win32libs-sources,win_iconv-src,,
 win32libs-sources,zlib-src,,1
 win32libs-sources,gettext-src,,

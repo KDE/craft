@@ -36,6 +36,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.unpack(self):
             return False
         utils.copyFile(os.path.join(self.packageDir(),"git.bat"),os.path.join(self.rootdir,"dev-utils","bin","git.bat"))
+        utils.copyFile(os.path.join(self.packageDir(),"git.sh"),os.path.join(self.rootdir,"dev-utils","bin","git"))#bash script
         utils.copyFile(os.path.join(self.packageDir(),"gb.bat"),os.path.join(self.rootdir,"dev-utils","bin","gb.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"vi.bat"),os.path.join(self.rootdir,"dev-utils","bin","vi.bat"))

@@ -128,7 +128,7 @@ if not os.path.exists( WGetExecutable ):
 def test4application( appname):
     """check if the application specified by 'appname' is available"""
     try:
-        f = file('NUL:')
+        f = open('NUL:')
         p = subprocess.Popen( appname, stdout=f, stderr=f )
         p.wait()
         return True
@@ -1091,13 +1091,13 @@ def createImportLibs( dll_name, basepath ):
         os.mkdir( dst )
 
     # check whether the required binary tools exist
-    HAVE_PEXPORTS = test4application( "pexports" )
-    USE_PEXPORTS = HAVE_PEXPORTS
+    HAVE_GENDEF = test4application( "gendef" )
+    USE_GENDEF = HAVE_GENDEF
     HAVE_LIB = test4application( "lib" )
     HAVE_DLLTOOL = test4application( "dlltool" )
     if verbose() > 1:
-        print("pexports found:", HAVE_PEXPORTS)
-        print("pexports used:", USE_PEXPORTS)
+        print("gendef found:", HAVE_GENDEF)
+        print("gendef used:", USE_GENDEF)
         print("lib found:", HAVE_LIB)
         print("dlltool found:", HAVE_DLLTOOL)
 
@@ -1107,24 +1107,21 @@ def createImportLibs( dll_name, basepath ):
     imppath = os.path.join( basepath, "lib", "%s.lib" % dll_name )
     gccpath = os.path.join( basepath, "lib", "%s.dll.a" % dll_name )
 
-    if not HAVE_PEXPORTS and os.path.exists( defpath ):
-        HAVE_PEXPORTS = True
-        USE_PEXPORTS = False
-    if not HAVE_PEXPORTS:
-        warning( "system does not have pexports.exe" )
+    if not HAVE_GENDEF and os.path.exists( defpath ):
+        HAVE_GENDEF = True
+        USE_GENDEF = False
+    if not HAVE_GENDEF:
+        warning( "system does not have gendef.exe" )
         return False
-    if not HAVE_LIB:
+    if not HAVE_LIB  and not os.path.isfile( imppath ):
         warning( "system does not have lib.exe (from msvc)" )
-        if not HAVE_DLLTOOL:
-            warning( "system does not have dlltool.exe" )
-            return False
+    if not HAVE_DLLTOOL and not os.path.isfile( gccpath ):
+        warning( "system does not have dlltool.exe" )
 
     # create .def
-    if USE_PEXPORTS:
-        cmd = "pexports %s > %s " % ( dllpath, defpath )
+    if USE_GENDEF:
+        cmd = "gendef - %s -a > %s " % ( dllpath, defpath )
         system( cmd )
-        sedcmd = "sed -i \"s/^LIBRARY.*$/LIBRARY %s.dll/\" %s" % (dll_name, defpath)
-        system( sedcmd )
 
     if( HAVE_LIB and not os.path.isfile( imppath ) ):
         # create .lib
@@ -1133,7 +1130,7 @@ def createImportLibs( dll_name, basepath ):
 
     if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
         # create .dll.a
-        cmd = "dlltool -d %s -l %s" % ( defpath, gccpath )
+        cmd = "dlltool -d %s -l %s -k" % ( defpath, gccpath )
         system( cmd )
 
     if os.path.exists( defpath ):

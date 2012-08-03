@@ -3,7 +3,7 @@
     "buildtime-dependencies": [
       "virtual/base"
     ], 
-    "default-target": "1.49.0", 
+    "default-target": "1.50.0", 
     "description": "portable C++ libraries", 
     "homepage": "http://www.boost.org/", 
     "package-template": "from Package.BoostPackageBase import *\n\nclass Package( BoostPackageBase ):\n    def __init__(self, **args):\n        self.subinfo = subinfo()\n        BoostPackageBase.__init__(self)", 
@@ -96,7 +96,8 @@
       "1.44.0", 
       "1.47.0", 
       "1.48.0", 
-      "1.49.0"
+      "1.49.0",
+      "1.50.0"
     ]
   }, 
   "vars": {}

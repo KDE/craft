@@ -1,0 +1,57 @@
+diff -Nru -x '*~' kwooty-0.8.4.orig/src/kwooty_export.h kwooty-0.8.4/src/kwooty_export.h
+--- kwooty-0.8.4.orig/src/kwooty_export.h	2012-03-29 20:04:04.000000000 +0200
++++ kwooty-0.8.4/src/kwooty_export.h	2012-07-12 00:05:34.611282400 +0200
+@@ -26,7 +26,7 @@
+ #include <kdemacros.h>
+  
+ #ifndef KWOOTY_EXPORT
+-# if defined(MAKE_KWOOTY_LIB)
++# if defined(MAKE_KWOOTYCORE_LIB)
+    // We are building this library
+ #  define KWOOTY_EXPORT KDE_EXPORT
+ # else
+diff -Nru -x '*~' kwooty-0.8.4.orig/src/plugins/autoretry/kwooty_autoretrysettings.kcfgc kwooty-0.8.4/src/plugins/autoretry/kwooty_autoretrysettings.kcfgc
+--- kwooty-0.8.4.orig/src/plugins/autoretry/kwooty_autoretrysettings.kcfgc	2012-03-29 20:04:04.000000000 +0200
++++ kwooty-0.8.4/src/plugins/autoretry/kwooty_autoretrysettings.kcfgc	2012-07-12 00:05:34.617282800 +0200
+@@ -4,6 +4,4 @@
+ Inherits=KConfigSkeleton
+ Mutators=true
+ Singleton=true
+-IncludeFiles=kwooty_export.h
+-Visibility=KWOOTY_EXPORT
+ # will create the necessary code for setting those variables
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' kwooty-0.8.4.orig/src/plugins/scheduler/kwooty_schedulersettings.kcfgc kwooty-0.8.4/src/plugins/scheduler/kwooty_schedulersettings.kcfgc
+--- kwooty-0.8.4.orig/src/plugins/scheduler/kwooty_schedulersettings.kcfgc	2012-03-29 20:04:04.000000000 +0200
++++ kwooty-0.8.4/src/plugins/scheduler/kwooty_schedulersettings.kcfgc	2012-07-12 00:05:34.624283200 +0200
+@@ -4,6 +4,4 @@
+ Inherits=KConfigSkeleton
+ Mutators=true
+ Singleton=true
+-IncludeFiles=kwooty_export.h
+-Visibility=KWOOTY_EXPORT
+ # will create the necessary code for setting those variables
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' kwooty-0.8.4.orig/src/plugins/watchfolder/kwooty_watchfoldersettings.kcfgc kwooty-0.8.4/src/plugins/watchfolder/kwooty_watchfoldersettings.kcfgc
+--- kwooty-0.8.4.orig/src/plugins/watchfolder/kwooty_watchfoldersettings.kcfgc	2012-03-29 20:04:04.000000000 +0200
++++ kwooty-0.8.4/src/plugins/watchfolder/kwooty_watchfoldersettings.kcfgc	2012-07-12 00:05:34.631283600 +0200
+@@ -4,6 +4,4 @@
+ Inherits=KConfigSkeleton
+ Mutators=true
+ Singleton=true
+-IncludeFiles=kwooty_export.h
+-Visibility=KWOOTY_EXPORT
+ # will create the necessary code for setting those variables
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' kwooty-0.8.4.orig/src/standarditemmodel.h kwooty-0.8.4/src/standarditemmodel.h
+--- kwooty-0.8.4.orig/src/standarditemmodel.h	2012-06-08 19:30:23.000000000 +0200
++++ kwooty-0.8.4/src/standarditemmodel.h	2012-07-12 00:19:27.103881800 +0200
+@@ -40,7 +40,7 @@
+     Q_OBJECT
+ 
+ public:
+-    StandardItemModel(CentralWidget* parent = 0);
++    StandardItemModel(CentralWidget* parent);
+     StandardItemModel();
+     QStandardItem* getParentItem(const QModelIndex&);
+     QStandardItem* getStateItemFromIndex(const QModelIndex&);

@@ -15,18 +15,12 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/libbzip2'] = 'default'
         self.dependencies['win32libs-bin/libxml2'] = 'default'
         self.dependencies['win32libs-bin/zlib'] = 'default'
-        if os.getenv('KDECOMPILER') == "msvc2010" and os.getenv('EMERGE_BUILDTYPE') == "Debug":
-            # we cannot use Package methods here - we should have a pointer to
-            # the package having instantiated us
-            # the downloaded binary of clucene is compiled without Debug and msv2010 cannot
-            # link it against strigi
-            self.buildDependencies['win32libs-sources/clucene-core-src'] = 'default'
-        else:
-            self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
 
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:strigi'
+        for ver in ['0.7.6','0.7.7']:
+            self.svnTargets[ver] = '[git]kde:strigi||v%s' % ver
         self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
@@ -59,7 +53,8 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.fetch.checkoutSubmodules = True
         self.subinfo.options.configure.defines = ""
-        if emergePlatform.isCrossCompilingEnabled():
+        self.subinfo.options.configure.defines += "-DENABLE_CLUCENE=OFF "
+        if emergePlatform.isCrossCompilingEnabled():            
             self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
             self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "
             self.subinfo.options.configure.defines += "-DENABLE_CPPUNIT=OFF "

@@ -28,11 +28,6 @@ class Package(CMakePackageBase):
     CMakePackageBase.__init__(self)
     self.subinfo.options.package.packageName = 'libbzip2'
 
-  def createPackage( self ):
-    # auto-create both import libs with the help of pexports
-    self.createImportLibs( "bzip2" )
-
-    return CMakePackageBase.createPackage( self )
 
 if __name__ == '__main__':
     Package().execute()
