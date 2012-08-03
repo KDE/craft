@@ -1,0 +1,16 @@
+diff -Nru -x '*~' kdelibs-4.9.0.orig/cmake/modules/FindKDE4Internal.cmake kdelibs-4.9.0/cmake/modules/FindKDE4Internal.cmake
+--- kdelibs-4.9.0.orig/cmake/modules/FindKDE4Internal.cmake	2012-05-23 01:41:14.000000000 +0200
++++ kdelibs-4.9.0/cmake/modules/FindKDE4Internal.cmake	2012-08-03 15:47:51.372827500 +0200
+@@ -1222,12 +1222,6 @@
+       set (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -pthread")
+    endif (CMAKE_SYSTEM_NAME STREQUAL GNU)
+ 
+-   # gcc under Windows
+-   if (MINGW)
+-      set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--export-all-symbols -Wl,--disable-auto-import")
+-      set (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--export-all-symbols -Wl,--disable-auto-import")
+-   endif (MINGW)
+-
+    check_cxx_compiler_flag(-fPIE HAVE_FPIE_SUPPORT)
+    if(KDE4_ENABLE_FPIE)
+        if(HAVE_FPIE_SUPPORT)
