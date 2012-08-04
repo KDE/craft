@@ -1,11 +1,19 @@
-diff -Nru ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
+diff -Nru -x '*~' ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
 --- ilmbase-1.0.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/CMakeLists.txt	2012-08-04 15:44:08.891156200 +0200
-@@ -0,0 +1,12 @@
++++ ilmbase-1.0.2/CMakeLists.txt	2012-08-04 16:21:02.027012900 +0200
+@@ -0,0 +1,20 @@
 +project(ilmbase)
 +cmake_minimum_required(VERSION 2.6)
 +
-+include_directories(config.windows)
++if(WIN32)
++    set(CONFIG_LOCATION config.windows)
++else(WIN32)
++    set(CONFIG_LOCATION config)
++endif(WIN32)
++
++include_directories(${CONFIG_LOCATION})
++install(FILES ${CONFIG_LOCATION}/IlmBaseConfig.h DESTINATION include)
++
 +include_directories(Half)
 +include_directories(Iex)
 +
@@ -14,9 +22,9 @@ diff -Nru ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
 +add_subdirectory(Imath)
 +add_subdirectory(IlmThread)
 +
-diff -Nru ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMakeLists.txt
+diff -Nru -x '*~' ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMakeLists.txt
 --- ilmbase-1.0.2.orig/Half/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/Half/CMakeLists.txt	2012-08-04 15:46:49.302240400 +0200
++++ ilmbase-1.0.2/Half/CMakeLists.txt	2012-08-04 16:04:48.441326900 +0200
 @@ -0,0 +1,40 @@
 +include_directories(${CMAKE_CURRENT_BINARY_DIR})
 +
@@ -58,9 +66,9 @@ diff -Nru ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMakeLists.t
 +	halfFunction.h
 +	halfLimits.h
 +	DESTINATION include)
-diff -Nru ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeLists.txt
+diff -Nru -x '*~' ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeLists.txt
 --- ilmbase-1.0.2.orig/Iex/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/Iex/CMakeLists.txt	2012-08-04 15:43:57.897607700 +0200
++++ ilmbase-1.0.2/Iex/CMakeLists.txt	2012-08-04 16:04:48.447327300 +0200
 @@ -0,0 +1,19 @@
 +set (Iex_SOURCES
 +	IexBaseExc.cpp
@@ -81,9 +89,9 @@ diff -Nru ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeLists.txt
 +	IexMathExc.h
 +	IexThrowErrnoExc.h
 +	DESTINATION include)
-diff -Nru ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmThread/CMakeLists.txt
+diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmThread/CMakeLists.txt
 --- ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/IlmThread/CMakeLists.txt	2012-08-04 15:44:27.373984300 +0200
++++ ilmbase-1.0.2/IlmThread/CMakeLists.txt	2012-08-04 16:04:48.452327600 +0200
 @@ -0,0 +1,27 @@
 +set (IlmThread_SOURCES
 +	IlmThread.cpp
@@ -112,9 +120,9 @@ diff -Nru ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmThread/CM
 +	IlmThreadPool.h
 +	IlmThreadSemaphore.h
 +	DESTINATION include)
-diff -Nru ilmbase-1.0.2.orig/Imath/CMakeLists.txt ilmbase-1.0.2/Imath/CMakeLists.txt
+diff -Nru -x '*~' ilmbase-1.0.2.orig/Imath/CMakeLists.txt ilmbase-1.0.2/Imath/CMakeLists.txt
 --- ilmbase-1.0.2.orig/Imath/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/Imath/CMakeLists.txt	2012-08-04 15:45:08.313787400 +0200
++++ ilmbase-1.0.2/Imath/CMakeLists.txt	2012-08-04 16:04:48.458327900 +0200
 @@ -0,0 +1,48 @@
 +set (Imath_SOURCES
 +	ImathBox.cpp
