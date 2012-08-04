@@ -5,7 +5,6 @@ import info
 # deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
-        print "setTargets"
         self.svnTargets['svnHEAD'] = 'https://libface.svn.sourceforge.net/svnroot/libface/trunk'
         self.defaultTarget = 'svnHEAD'
         self.patchToApply['svnHEAD'] = ('libface-20120122.patch', 1)
