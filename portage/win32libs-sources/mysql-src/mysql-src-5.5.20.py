@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targets['5.5.25a'] = 'ftp://ftp.fu-berlin.de/unix/databases/mysql/Downloads/MySQL-5.5/mysql-5.5.25a.tar.gz'
         self.targetDigests['5.5.25a'] = '85dfea413a7d5d2733a40f9dd79cf2320302979f'
         self.targetInstSrc[ '5.5.25a' ] = "mysql-5.5.25a"
-        self.patchToApply['5.5.25a'] = ("mysql-5.5.25a-20120804.diff",1)
+        self.patchToApply['5.5.25a'] = [("mysql-5.5.25a-20120804.diff",1)]
         self.defaultTarget = '5.5.25a'
          
 
