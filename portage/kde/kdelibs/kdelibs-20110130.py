@@ -3,6 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdelibs'
+        self.svnTargets['frameworks'] = '[git]kde:kdelibs|frameworks|'
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
