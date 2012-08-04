@@ -1,0 +1,36 @@
+diff -Nru -x '*~' kde-workspace-4.9.0.orig/kscreensaver/krandom_screensaver/random.cpp kde-workspace-4.9.0/kscreensaver/krandom_screensaver/random.cpp
+--- kde-workspace-4.9.0.orig/kscreensaver/krandom_screensaver/random.cpp	2012-05-23 01:52:39.000000000 +0200
++++ kde-workspace-4.9.0/kscreensaver/krandom_screensaver/random.cpp	2012-08-04 13:39:08.438227500 +0200
+@@ -155,7 +155,7 @@
+ 
+     QHash<QChar, QString> keyMap;
+ #ifdef Q_WS_WIN
+-    keyMap.insert('w', QString::number((unsigned long)windowId));
++    keyMap.insert('w', QString::number((quintptr)windowId));
+ #else
+     keyMap.insert('w', QString::number(windowId));
+ #endif
+diff -Nru -x '*~' kde-workspace-4.9.0.orig/libs/ksysguard/processui/ProcessFilter.h kde-workspace-4.9.0/libs/ksysguard/processui/ProcessFilter.h
+--- kde-workspace-4.9.0.orig/libs/ksysguard/processui/ProcessFilter.h	2012-05-23 01:54:41.000000000 +0200
++++ kde-workspace-4.9.0/libs/ksysguard/processui/ProcessFilter.h	2012-08-04 13:56:44.102783400 +0200
+@@ -30,7 +30,7 @@
+ 
+ class QModelIndex;
+ 
+-#ifdef Q_CC_MSVC
++#ifdef Q_OS_WIN
+ // this workaround is needed to make krunner link under msvc
+ // please keep it this way even if you port this library to have a _export.h header file
+ #define KSYSGUARD_EXPORT
+diff -Nru -x '*~' kde-workspace-4.9.0.orig/libs/ksysguard/processui/ProcessModel.h kde-workspace-4.9.0/libs/ksysguard/processui/ProcessModel.h
+--- kde-workspace-4.9.0.orig/libs/ksysguard/processui/ProcessModel.h	2012-05-23 01:54:41.000000000 +0200
++++ kde-workspace-4.9.0/libs/ksysguard/processui/ProcessModel.h	2012-08-04 13:56:57.240097000 +0200
+@@ -36,7 +36,7 @@
+ 
+ class ProcessModelPrivate;
+ 
+-#ifdef Q_CC_MSVC
++#ifdef Q_OS_WIN
+ // this workaround is needed to make krunner link under msvc
+ // please keep it this way even if you port this library to have a _export.h header file
+ #define KSYSGUARD_EXPORT
