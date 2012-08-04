@@ -2,14 +2,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.60'] = """
-            http://the.earth.li/~sgtatham/putty/latest/x86/pscp.exe
-            http://the.earth.li/~sgtatham/putty/latest/x86/plink.exe
-            http://the.earth.li/~sgtatham/putty/latest/x86/psftp.exe
-            http://the.earth.li/~sgtatham/putty/latest/x86/pageant.exe
-        """
-        self.targetInstallPath['0.60'] = "bin"
-        self.defaultTarget = '0.60'
+        self.targets['0.62'] = "http://the.earth.li/~sgtatham/putty/latest/x86/putty.zip"
+        self.targetDigests['0.62'] = '953e7b2eb7844184ccfb24651c7829f3e1e30558'
+        self.targetInstallPath['0.62'] = "bin"
+        self.defaultTarget = '0.62'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
