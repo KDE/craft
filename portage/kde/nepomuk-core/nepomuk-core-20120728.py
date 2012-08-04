@@ -6,6 +6,8 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/nepomuk-core-4.9.' + ver + '.tar.xz'
             self.targetInstSrc['4.9.' + ver] = 'nepomuk-core-4.9.' + ver
+            
+        self.patchToApply[ '4.9.0' ] = [("qtest.diff",1)]
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

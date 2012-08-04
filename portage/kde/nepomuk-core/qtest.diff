@@ -1,0 +1,26 @@
+diff --git a/autotests/lib/CMakeLists.txt b/autotests/lib/CMakeLists.txt
+index 7142748..1d766da 100644
+--- a/autotests/lib/CMakeLists.txt
++++ b/autotests/lib/CMakeLists.txt
+@@ -36,6 +36,7 @@ kde4_add_library (nepomuktestlib
+ target_link_libraries (nepomuktestlib
+                        ${QT_QTCORE_LIBRARY}
+                        ${QT_QTDBUS_LIBRARY}
++                       ${QT_QTTEST_LIBRARY}
+                        ${NEPOMUK_CORE_LIBRARY}
+ )
+ 
+diff --git a/autotests/test/CMakeLists.txt b/autotests/test/CMakeLists.txt
+index 43d1f6f..5ce84d4 100644
+--- a/autotests/test/CMakeLists.txt
++++ b/autotests/test/CMakeLists.txt
+@@ -41,8 +41,8 @@ target_link_libraries(queryupdatetests
+   ${QT_QTGUI_LIBRARY}
+   ${SOPRANO_LIBRARIES}
+   kdecore
+-  nepomukcore
+   nepomuktestlib
++  nepomukcore
+ )
+ 
+ add_nepomuk_test(QueryUpdateTests ${CMAKE_CURRENT_BINARY_DIR}/queryupdatetests)
