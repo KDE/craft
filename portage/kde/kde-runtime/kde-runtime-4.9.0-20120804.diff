@@ -1,0 +1,71 @@
+diff -Nru -x '*~' kde-runtime-4.9.0.orig/CMakeLists.txt kde-runtime-4.9.0/CMakeLists.txt
+--- kde-runtime-4.9.0.orig/CMakeLists.txt	2012-07-11 10:07:58.000000000 +0200
++++ kde-runtime-4.9.0/CMakeLists.txt	2012-08-04 10:19:25.317359700 +0200
+@@ -26,10 +26,8 @@
+ include(CheckFunctionExists)
+ include(CheckIncludeFiles)
+ 
+-if(NOT WIN32)
+ find_package(KDeclarative REQUIRED)
+ macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by corebindingsplugin (org.kde.plasma.core).")
+-endif(NOT WIN32)
+ 
+ macro_optional_find_package(NepomukCore)
+ macro_log_feature(NepomukCore_FOUND "Nepomuk Core" "Nepomuk Core Libraries" "https://projects.kde.org/nepomuk-core" FALSE "" "Required to build Nepomuk.")
+diff -Nru -x '*~' kde-runtime-4.9.0.orig/kpasswdserver/kpasswdserver.cpp kde-runtime-4.9.0/kpasswdserver/kpasswdserver.cpp
+--- kde-runtime-4.9.0.orig/kpasswdserver/kpasswdserver.cpp	2012-05-23 01:58:08.000000000 +0200
++++ kde-runtime-4.9.0/kpasswdserver/kpasswdserver.cpp	2012-08-04 10:27:42.685544800 +0200
+@@ -498,7 +498,7 @@
+     }
+     if ( !m_wallet )
+         m_wallet = KWallet::Wallet::openWallet(
+-            KWallet::Wallet::NetworkWallet(), static_cast<WId>(windowId));
++            KWallet::Wallet::NetworkWallet(), (WId)(windowId));
+     return m_wallet != 0;
+ }
+ 
+@@ -577,7 +577,7 @@
+         #ifndef Q_WS_WIN
+             KWindowSystem::setMainWindow(dlg, request->windowId);
+         #else
+-            KWindowSystem::setMainWindow(dlg, (HWND)(long)request->windowId);
++            KWindowSystem::setMainWindow(dlg, (HWND)request->windowId);
+         #endif
+ 
+             kDebug(debugArea()) << "Calling open on retry dialog" << dlg;
+@@ -847,7 +847,7 @@
+         dialogFlags |= KPasswordDialog::ShowKeepPassword;
+ 
+     // instantiate dialog
+-    kDebug(debugArea()) << "Widget for" << request->windowId << QWidget::find(request->windowId) << QApplication::activeWindow();
++    kDebug(debugArea()) << "Widget for" << request->windowId << QWidget::find((HWND)request->windowId) << QApplication::activeWindow();
+     KPasswordDialog* dlg = new KPasswordDialog(0, dialogFlags);
+     connect(dlg, SIGNAL(finished(int)), this, SLOT(passwordDialogDone(int)));
+     connect(this, SIGNAL(destroyed(QObject*)), dlg, SLOT(deleteLater()));
+@@ -882,7 +882,7 @@
+ #ifndef Q_WS_WIN
+     KWindowSystem::setMainWindow(dlg, request->windowId);
+ #else
+-    KWindowSystem::setMainWindow(dlg, (HWND)(long)request->windowId);
++    KWindowSystem::setMainWindow(dlg, (HWND)request->windowId);
+ #endif
+ 
+     kDebug(debugArea()) << "Showing password dialog" << dlg << ", window-id=" << request->windowId;
+@@ -1057,7 +1057,7 @@
+ {
+     bool foundMatch = false;
+     if (!m_authInProgress.isEmpty()) {
+-        const qlonglong windowId = static_cast<qlonglong>(id);
++        const qlonglong windowId = (qlonglong)(id);
+         QMutableHashIterator<QObject*, Request*> it (m_authInProgress);
+         while (it.hasNext()) {
+             it.next();
+@@ -1075,7 +1075,7 @@
+     }
+ 
+     if (!foundMatch && !m_authRetryInProgress.isEmpty()) {
+-        const qlonglong windowId = static_cast<qlonglong>(id);
++        const qlonglong windowId = (qlonglong)(id);
+         QMutableHashIterator<QObject*, Request*> it (m_authRetryInProgress);
+         while (it.hasNext()) {
+             it.next();
