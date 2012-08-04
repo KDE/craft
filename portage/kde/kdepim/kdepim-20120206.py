@@ -8,6 +8,9 @@ class subinfo( info.infoclass ):
             self.targetInstSrc['4.9.' + ver] = 'kdepim-4.9.' + ver
         self.defaultTarget = 'gitHEAD'
 
+        # Workaround BUG 302342
+        self.patchToApply['gitHEAD'] = ('fix_introduction_screen.diff', 1)
+
     def setDependencies( self ):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
