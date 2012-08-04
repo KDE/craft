@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kde/kactivities'] = 'default'
         self.dependencies['kdesupport/oxygen-icons'] = 'default'
         self.dependencies['win32libs-bin/libssh'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
