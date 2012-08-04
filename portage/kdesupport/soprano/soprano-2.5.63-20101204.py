@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/librdf']   = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
-            self.dependencies['testing/virtuoso']   = 'default'
+            self.dependencies['binary/virtuoso']   = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'

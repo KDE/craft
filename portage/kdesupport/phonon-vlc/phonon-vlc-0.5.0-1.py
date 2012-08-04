@@ -8,7 +8,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kdesupport/phonon'] = 'default'
-        self.dependencies['testing/vlc'] = 'default'
+        self.dependencies['binary/vlc'] = 'default'
         if compiler.isMSVC():
             self.dependencies['kdesupport/kdewin'] = 'default'
 
