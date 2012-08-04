@@ -6,8 +6,12 @@
 # is equivalent to emerge --target=1.4.0 --patchlevel=1 win32libs-sources/dbus-src
 #
 #
+# mingw stuff
+binutils,,
+mingw-w64-headers,,
+mingw-w64-crt,,
 # kdesupport stuff
-libs,qt,4.8.0,
+libs,qt,,
 kdesupport,attica,,
 kdesupport,qjson,,
 kdesupport,dbusmenu-qt,,
