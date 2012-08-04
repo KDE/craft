@@ -1,0 +1,166 @@
+diff -Nru ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
+--- ilmbase-1.0.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/CMakeLists.txt	2012-08-04 15:44:08.891156200 +0200
+@@ -0,0 +1,12 @@
++project(ilmbase)
++cmake_minimum_required(VERSION 2.6)
++
++include_directories(config.windows)
++include_directories(Half)
++include_directories(Iex)
++
++add_subdirectory(Half)
++add_subdirectory(Iex)
++add_subdirectory(Imath)
++add_subdirectory(IlmThread)
++
+diff -Nru ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMakeLists.txt
+--- ilmbase-1.0.2.orig/Half/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/Half/CMakeLists.txt	2012-08-04 15:46:49.302240400 +0200
+@@ -0,0 +1,40 @@
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
++
++add_executable(eLut eLut.cpp)
++add_executable(toFLoat toFloat.cpp)
++
++add_custom_command(
++	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
++	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/eLut > ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
++	DEPENDS eLut
++)
++
++add_custom_command(
++	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
++	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/toFloat > ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
++	DEPENDS toFloat
++)
++	
++set_source_files_properties(
++	eLut.h toFloat.h
++	PROPERTIES GENERATED ON
++	)
++
++
++set (HALF_SOURCES
++	half.cpp
++	eLut.h
++	toFloat.h
++	)
++
++add_library(Half ${HALF_SOURCES})
++
++install(TARGETS Half RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++
++install(FILES 
++	half.h
++	halfFunction.h
++	halfLimits.h
++	DESTINATION include)
+diff -Nru ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeLists.txt
+--- ilmbase-1.0.2.orig/Iex/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/Iex/CMakeLists.txt	2012-08-04 15:43:57.897607700 +0200
+@@ -0,0 +1,19 @@
++set (Iex_SOURCES
++	IexBaseExc.cpp
++	IexThrowErrnoExc.cpp
++	)
++
++add_library(Iex ${Iex_SOURCES})
++
++install(TARGETS Iex RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++
++install(FILES 
++	Iex.h
++	IexBaseExc.h
++	IexErrnoExc.h
++	IexMacros.h
++	IexMathExc.h
++	IexThrowErrnoExc.h
++	DESTINATION include)
+diff -Nru ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmThread/CMakeLists.txt
+--- ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/IlmThread/CMakeLists.txt	2012-08-04 15:44:27.373984300 +0200
+@@ -0,0 +1,27 @@
++set (IlmThread_SOURCES
++	IlmThread.cpp
++	IlmThreadMutex.cpp
++	IlmThreadMutexPosix.cpp
++	IlmThreadMutexWin32.cpp
++	IlmThreadPool.cpp
++	IlmThreadPosix.cpp
++	IlmThreadSemaphore.cpp
++	IlmThreadSemaphorePosix.cpp
++	IlmThreadSemaphorePosixCompat.cpp
++	IlmThreadSemaphoreWin32.cpp
++	IlmThreadWin32.cpp
++)
++
++add_library(IlmThread ${IlmThread_SOURCES})
++target_link_libraries(IlmThread Iex)
++
++install(TARGETS IlmThread RUNTIME DESTINATION bin
++                          LIBRARY DESTINATION lib
++                          ARCHIVE DESTINATION lib)
++
++install(FILES 
++	IlmThread.h
++	IlmThreadMutex.h
++	IlmThreadPool.h
++	IlmThreadSemaphore.h
++	DESTINATION include)
+diff -Nru ilmbase-1.0.2.orig/Imath/CMakeLists.txt ilmbase-1.0.2/Imath/CMakeLists.txt
+--- ilmbase-1.0.2.orig/Imath/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/Imath/CMakeLists.txt	2012-08-04 15:45:08.313787400 +0200
+@@ -0,0 +1,48 @@
++set (Imath_SOURCES
++	ImathBox.cpp
++	ImathColorAlgo.cpp
++	ImathFun.cpp
++	ImathMatrixAlgo.cpp
++	ImathRandom.cpp
++	ImathShear.cpp
++	ImathVec.cpp
++)
++
++add_library(Imath ${Imath_SOURCES})
++target_link_libraries(Imath Iex)
++
++install(TARGETS Imath RUNTIME DESTINATION bin
++                      LIBRARY DESTINATION lib
++                      ARCHIVE DESTINATION lib)
++
++install(FILES 
++	ImathBox.h
++	ImathBoxAlgo.h
++	ImathColor.h
++	ImathColorAlgo.h
++	ImathEuler.h
++	ImathExc.h
++	ImathFrame.h
++	ImathFrustum.h
++	ImathFun.h
++	ImathGL.h
++	ImathGLU.h
++	ImathHalfLimits.h
++	ImathInt64.h
++	ImathInterval.h
++	ImathLimits.h
++	ImathLine.h
++	ImathLineAlgo.h
++	ImathMath.h
++	ImathMatrix.h
++	ImathMatrixAlgo.h
++	ImathPlane.h
++	ImathPlatform.h
++	ImathQuat.h
++	ImathRandom.h
++	ImathRoots.h
++	ImathShear.h
++	ImathSphere.h
++	ImathVec.h
++	ImathVecAlgo.h
++	DESTINATION include)
