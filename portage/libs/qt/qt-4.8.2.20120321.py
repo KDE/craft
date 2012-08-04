@@ -137,7 +137,7 @@ class subinfo(info.infoclass):
         else:
             self.dependencies['win32libs-bin/dbus'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['testing/mysql-pkg'] = 'default'
+            self.dependencies['binary/mysql-pkg'] = 'default'
         else:
             self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
 
@@ -162,7 +162,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
             self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
         if not emergePlatform.isCrossCompilingEnabled():
-            self.mysql_server = portage.getPackageInstance('testing', 'mysql-pkg')
+            self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
         else:
             self.wcecompat = portage.getPackageInstance('win32libs-sources', 'wcecompat-src')
 
