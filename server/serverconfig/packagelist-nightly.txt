@@ -7,9 +7,9 @@
 #
 #
 # mingw stuff
-binutils,,
-mingw-w64-headers,,
-mingw-w64-crt,,
+dev-util,binutils,,
+dev-util,mingw-w64-headers,,
+dev-util,mingw-w64-crt,,
 # kdesupport stuff
 libs,qt,,
 kdesupport,attica,,
@@ -90,7 +90,7 @@ extragear,amarok,,
 extragear,kate,,
 extragear,kile,,
 # extragear,kipi-plugins,,
-extragear,digikam,,
+#extragear,digikam,,
 extragear,libalkimia,,
 extragear,kmymoney,,
 extragear,kmid,,
