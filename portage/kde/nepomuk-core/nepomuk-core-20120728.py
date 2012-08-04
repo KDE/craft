@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:nepomuk-core|KDE/4.9|'
+        self.svnTargets['gitHEAD'] = '[git]kde:nepomuk-core'
         for ver in ['0', '1', '2', '3', '4']:
             self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/nepomuk-core-4.9.' + ver + '.tar.xz'
             self.targetInstSrc['4.9.' + ver] = 'nepomuk-core-4.9.' + ver
