@@ -171,6 +171,7 @@ lib/antlr.lib
             <files include="include/.*(kasten|Kasten|Okteta|okteta).*"/>
             <files include="lib/.*(kasten|okteta).*"/>
         </part>
+        <dependency>kde/kde-runtime</dependency>
     </package>
     <package name="lokalize">
         <shortDescription>A computer-aided translation system for KDE</shortDescription>
@@ -211,6 +212,7 @@ lib/antlr.lib
             <files include="include/.*kate.*"/>
             <files include="lib/.*kate.*\.lib"/>
         </part>
+        <dependency>kde/kde-runtime</dependency>
     </package>
     <package name="kompare">
         <shortDescription>KDE diff tool</shortDescription>
