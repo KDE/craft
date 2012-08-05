@@ -1,6 +1,6 @@
 diff -Nru -x '*~' mysql-5.5.25a.orig/client/mysqlslap.c mysql-5.5.25a/client/mysqlslap.c
 --- mysql-5.5.25a.orig/client/mysqlslap.c	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/client/mysqlslap.c	2012-08-05 00:08:19.605635800 +0200
++++ mysql-5.5.25a/client/mysqlslap.c	2012-08-05 01:53:10.137433600 +0200
 @@ -280,7 +280,7 @@
      return s + us;
  }
@@ -12,7 +12,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/client/mysqlslap.c mysql-5.5.25a/client/mys
    unsigned int ticks;
 diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/FindLibraryWithDebug.cmake mysql-5.5.25a/cmake/FindLibraryWithDebug.cmake
 --- mysql-5.5.25a.orig/cmake/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ mysql-5.5.25a/cmake/FindLibraryWithDebug.cmake	2012-08-05 00:08:19.620636600 +0200
++++ mysql-5.5.25a/cmake/FindLibraryWithDebug.cmake	2012-08-05 01:53:10.146434100 +0200
 @@ -0,0 +1,113 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -129,7 +129,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/FindLibraryWithDebug.cmake mysql-5.5.
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
 diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/FindOpenSSL.cmake mysql-5.5.25a/cmake/FindOpenSSL.cmake
 --- mysql-5.5.25a.orig/cmake/FindOpenSSL.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ mysql-5.5.25a/cmake/FindOpenSSL.cmake	2012-08-05 00:08:19.624636900 +0200
++++ mysql-5.5.25a/cmake/FindOpenSSL.cmake	2012-08-05 01:53:10.151434400 +0200
 @@ -0,0 +1,63 @@
 +# - Try to find the OpenSSL encryption library
 +# Once done this will define
@@ -196,7 +196,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/FindOpenSSL.cmake mysql-5.5.25a/cmake
 +
 diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/libutils.cmake mysql-5.5.25a/cmake/libutils.cmake
 --- mysql-5.5.25a.orig/cmake/libutils.cmake	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/cmake/libutils.cmake	2012-08-05 00:08:19.628637100 +0200
++++ mysql-5.5.25a/cmake/libutils.cmake	2012-08-05 01:53:10.155434700 +0200
 @@ -65,7 +65,7 @@
  # that references all exports and this prevents linker from creating an 
  # empty library(there are unportable alternatives, --whole-archive)
@@ -217,7 +217,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/libutils.cmake mysql-5.5.25a/cmake/li
        )
 diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/os/Windows.cmake mysql-5.5.25a/cmake/os/Windows.cmake
 --- mysql-5.5.25a.orig/cmake/os/Windows.cmake	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/cmake/os/Windows.cmake	2012-08-05 00:47:13.854147200 +0200
++++ mysql-5.5.25a/cmake/os/Windows.cmake	2012-08-05 02:10:40.486510200 +0200
 @@ -117,6 +117,12 @@
    ENDIF()
  ENDIF()
@@ -233,7 +233,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/os/Windows.cmake mysql-5.5.25a/cmake/
  # ..also for tests
 diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/ssl.cmake mysql-5.5.25a/cmake/ssl.cmake
 --- mysql-5.5.25a.orig/cmake/ssl.cmake	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/cmake/ssl.cmake	2012-08-05 00:08:19.640637800 +0200
++++ mysql-5.5.25a/cmake/ssl.cmake	2012-08-05 01:53:10.169435500 +0200
 @@ -66,14 +66,13 @@
      # Check for system library
      SET(OPENSSL_FIND_QUIETLY TRUE)
@@ -254,7 +254,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/ssl.cmake mysql-5.5.25a/cmake/ssl.cma
        SET(SSL_DEFINES "-DHAVE_OPENSSL")
 diff -Nru -x '*~' mysql-5.5.25a.orig/CMakeLists.txt mysql-5.5.25a/CMakeLists.txt
 --- mysql-5.5.25a.orig/CMakeLists.txt	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/CMakeLists.txt	2012-08-05 00:08:19.646638100 +0200
++++ mysql-5.5.25a/CMakeLists.txt	2012-08-05 01:53:10.174435700 +0200
 @@ -232,13 +232,13 @@
  
  
@@ -277,7 +277,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/CMakeLists.txt mysql-5.5.25a/CMakeLists.txt
  IF(INSTALL_MYSQLDATADIR MATCHES "^/.*")
 diff -Nru -x '*~' mysql-5.5.25a.orig/CMakeLists.txt.orig mysql-5.5.25a/CMakeLists.txt.orig
 --- mysql-5.5.25a.orig/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
-+++ mysql-5.5.25a/CMakeLists.txt.orig	2012-08-05 00:08:19.656638700 +0200
++++ mysql-5.5.25a/CMakeLists.txt.orig	2012-08-05 01:53:10.180436100 +0200
 @@ -0,0 +1,400 @@
 +# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
 +# 
@@ -681,7 +681,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/CMakeLists.txt.orig mysql-5.5.25a/CMakeList
 +ENDIF()
 diff -Nru -x '*~' mysql-5.5.25a.orig/config.h.cmake mysql-5.5.25a/config.h.cmake
 --- mysql-5.5.25a.orig/config.h.cmake	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/config.h.cmake	2012-08-05 00:08:19.663639100 +0200
++++ mysql-5.5.25a/config.h.cmake	2012-08-05 01:53:10.184436300 +0200
 @@ -621,4 +621,21 @@
  #cmakedefine SIZEOF_TIME_T @SIZEOF_TIME_T@
  #cmakedefine TIME_T_UNSIGNED @TIME_T_UNSIGNED@
@@ -706,7 +706,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/config.h.cmake mysql-5.5.25a/config.h.cmake
  #endif
 diff -Nru -x '*~' mysql-5.5.25a.orig/include/my_pthread.h mysql-5.5.25a/include/my_pthread.h
 --- mysql-5.5.25a.orig/include/my_pthread.h	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/include/my_pthread.h	2012-08-05 00:08:19.678640000 +0200
++++ mysql-5.5.25a/include/my_pthread.h	2012-08-05 01:53:10.191436700 +0200
 @@ -53,6 +53,13 @@
    We use native conditions on Vista and later, and fallback to own 
    implementation on earlier OS version.
@@ -750,9 +750,21 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/include/my_pthread.h mysql-5.5.25a/include/
  #define set_timespec(ABSTIME,SEC) { \
    GetSystemTimeAsFileTime(&((ABSTIME).tv.ft)); \
    (ABSTIME).tv.i64+= (__int64)(SEC)*10000000; \
+diff -Nru -x '*~' mysql-5.5.25a.orig/libmysql/authentication_win/common.h mysql-5.5.25a/libmysql/authentication_win/common.h
+--- mysql-5.5.25a.orig/libmysql/authentication_win/common.h	2012-07-02 13:35:22.000000000 +0200
++++ mysql-5.5.25a/libmysql/authentication_win/common.h	2012-08-05 11:01:01.224575000 +0200
+@@ -70,7 +70,7 @@
+                       const char *fmt, va_list args);
+ 
+ template <error_log_level::type Level>
+-void error_log_print(const char *fmt, ...)
++inline void error_log_print(const char *fmt, ...)
+ {
+   va_list args;
+   va_start(args, fmt);
 diff -Nru -x '*~' mysql-5.5.25a.orig/libmysql/authentication_win/handshake.h mysql-5.5.25a/libmysql/authentication_win/handshake.h
 --- mysql-5.5.25a.orig/libmysql/authentication_win/handshake.h	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/libmysql/authentication_win/handshake.h	2012-08-05 00:08:19.686640400 +0200
++++ mysql-5.5.25a/libmysql/authentication_win/handshake.h	2012-08-05 01:53:10.199437200 +0200
 @@ -100,7 +100,7 @@
    Handshake(const char *ssp, side_t side);
    virtual ~Handshake();
@@ -764,7 +776,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/libmysql/authentication_win/handshake.h mys
    {
 diff -Nru -x '*~' mysql-5.5.25a.orig/scripts/CMakeLists.txt mysql-5.5.25a/scripts/CMakeLists.txt
 --- mysql-5.5.25a.orig/scripts/CMakeLists.txt	2012-07-02 13:35:22.000000000 +0200
-+++ mysql-5.5.25a/scripts/CMakeLists.txt	2012-08-05 00:08:19.692640800 +0200
++++ mysql-5.5.25a/scripts/CMakeLists.txt	2012-08-05 01:53:10.206437600 +0200
 @@ -33,8 +33,7 @@
      ${CMAKE_CURRENT_BINARY_DIR}/mysql_fix_privilege_tables.sql
    )
@@ -777,7 +789,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/scripts/CMakeLists.txt mysql-5.5.25a/script
     cmd /c copy /b mysql_system_tables.sql + mysql_system_tables_fix.sql
 diff -Nru -x '*~' mysql-5.5.25a.orig/sql/item_strfunc.cc mysql-5.5.25a/sql/item_strfunc.cc
 --- mysql-5.5.25a.orig/sql/item_strfunc.cc	2012-07-02 13:35:21.000000000 +0200
-+++ mysql-5.5.25a/sql/item_strfunc.cc	2012-08-05 00:08:19.700641200 +0200
++++ mysql-5.5.25a/sql/item_strfunc.cc	2012-08-05 01:53:10.215438100 +0200
 @@ -3799,7 +3799,7 @@
          with a clock_seq value (initialized random below), we use a separate
          randominit() here
@@ -789,7 +801,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/item_strfunc.cc mysql-5.5.25a/sql/item_
        /* purecov: end */    
 diff -Nru -x '*~' mysql-5.5.25a.orig/sql/mysqld.cc mysql-5.5.25a/sql/mysqld.cc
 --- mysql-5.5.25a.orig/sql/mysqld.cc	2012-07-02 13:35:21.000000000 +0200
-+++ mysql-5.5.25a/sql/mysqld.cc	2012-08-05 00:08:19.712641900 +0200
++++ mysql-5.5.25a/sql/mysqld.cc	2012-08-05 01:53:10.229438900 +0200
 @@ -4792,7 +4792,7 @@
  	if (my_strcasecmp(system_charset_info, argv[1],"mysql"))
  	  load_default_groups[load_default_groups_sz-2]= argv[1];
@@ -819,7 +831,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/mysqld.cc mysql-5.5.25a/sql/mysqld.cc
    }
 diff -Nru -x '*~' mysql-5.5.25a.orig/sql/sql_class.cc mysql-5.5.25a/sql/sql_class.cc
 --- mysql-5.5.25a.orig/sql/sql_class.cc	2012-07-02 13:35:21.000000000 +0200
-+++ mysql-5.5.25a/sql/sql_class.cc	2012-08-05 00:08:19.731643000 +0200
++++ mysql-5.5.25a/sql/sql_class.cc	2012-08-05 01:53:10.251440100 +0200
 @@ -874,7 +874,7 @@
  
    tablespace_op=FALSE;
@@ -831,7 +843,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/sql_class.cc mysql-5.5.25a/sql/sql_clas
  
 diff -Nru -x '*~' mysql-5.5.25a.orig/sql/sql_show.cc mysql-5.5.25a/sql/sql_show.cc
 --- mysql-5.5.25a.orig/sql/sql_show.cc	2012-07-02 13:35:21.000000000 +0200
-+++ mysql-5.5.25a/sql/sql_show.cc	2012-08-05 00:08:19.745643800 +0200
++++ mysql-5.5.25a/sql/sql_show.cc	2012-08-05 01:53:10.264440900 +0200
 @@ -2253,21 +2253,21 @@
          */
          switch (show_type) {
