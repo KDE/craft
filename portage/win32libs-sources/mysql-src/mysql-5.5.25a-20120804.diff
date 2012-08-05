@@ -883,3 +883,15 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/sql_show.cc mysql-5.5.25a/sql/sql_show.
  	  end= longlong10_to_str(*(longlong*) value, buff, 10);
  	  break;
          case SHOW_UNDEF:
+diff -Nru -x '*~' mysql-5.5.25a.orig/storage/innobase/include/univ.i mysql-5.5.25a/storage/innobase/include/univ.i
+--- mysql-5.5.25a.orig/storage/innobase/include/univ.i	2012-07-02 13:35:21.000000000 +0200
++++ mysql-5.5.25a/storage/innobase/include/univ.i	2012-08-05 11:23:30.389742900 +0200
+@@ -257,7 +257,7 @@
+ #ifndef UNIV_MUST_NOT_INLINE
+ /* Definition for inline version */
+ 
+-#ifdef __WIN__
++#ifdef __MSC_VER
+ # define UNIV_INLINE	__inline
+ #elif defined(__SUNPRO_CC) || defined(__SUNPRO_C)
+ # define UNIV_INLINE static inline
