@@ -1,7 +1,7 @@
 diff -Nru -x '*~' ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
 --- ilmbase-1.0.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/CMakeLists.txt	2012-08-04 16:21:02.027012900 +0200
-@@ -0,0 +1,20 @@
++++ ilmbase-1.0.2/CMakeLists.txt	2012-08-05 19:15:02.277199700 +0200
+@@ -0,0 +1,24 @@
 +project(ilmbase)
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -22,10 +22,14 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
 +add_subdirectory(Imath)
 +add_subdirectory(IlmThread)
 +
++set(IlmBase_targets Half Iex Imath IlmThread)
++install(EXPORT IlmBase_targets DESTINATION lib/cmake/IlmBase FILE IlmBaseTargets.cmake)
++
++install(FILES ${CMAKE_SOURCE_DIR}/IlmBaseConfig.cmake DESTINATION lib/cmake/IlmBase)
 diff -Nru -x '*~' ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMakeLists.txt
 --- ilmbase-1.0.2.orig/Half/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/Half/CMakeLists.txt	2012-08-04 16:04:48.441326900 +0200
-@@ -0,0 +1,40 @@
++++ ilmbase-1.0.2/Half/CMakeLists.txt	2012-08-05 19:15:02.292799700 +0200
+@@ -0,0 +1,41 @@
 +include_directories(${CMAKE_CURRENT_BINARY_DIR})
 +
 +add_executable(eLut eLut.cpp)
@@ -57,7 +61,8 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMak
 +
 +add_library(Half ${HALF_SOURCES})
 +
-+install(TARGETS Half RUNTIME DESTINATION bin
++install(TARGETS Half EXPORT IlmBase_targets
++                     RUNTIME DESTINATION bin
 +                     LIBRARY DESTINATION lib
 +                     ARCHIVE DESTINATION lib)
 +
@@ -68,8 +73,8 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMak
 +	DESTINATION include)
 diff -Nru -x '*~' ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeLists.txt
 --- ilmbase-1.0.2.orig/Iex/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/Iex/CMakeLists.txt	2012-08-04 16:04:48.447327300 +0200
-@@ -0,0 +1,19 @@
++++ ilmbase-1.0.2/Iex/CMakeLists.txt	2012-08-05 19:15:02.292799700 +0200
+@@ -0,0 +1,20 @@
 +set (Iex_SOURCES
 +	IexBaseExc.cpp
 +	IexThrowErrnoExc.cpp
@@ -77,9 +82,10 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeL
 +
 +add_library(Iex ${Iex_SOURCES})
 +
-+install(TARGETS Iex RUNTIME DESTINATION bin
-+                     LIBRARY DESTINATION lib
-+                     ARCHIVE DESTINATION lib)
++install(TARGETS Iex EXPORT IlmBase_targets
++                    RUNTIME DESTINATION bin
++                    LIBRARY DESTINATION lib
++                    ARCHIVE DESTINATION lib)
 +
 +install(FILES 
 +	Iex.h
@@ -89,10 +95,32 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeL
 +	IexMathExc.h
 +	IexThrowErrnoExc.h
 +	DESTINATION include)
+diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmBaseConfig.cmake ilmbase-1.0.2/IlmBaseConfig.cmake
+--- ilmbase-1.0.2.orig/IlmBaseConfig.cmake	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/IlmBaseConfig.cmake	2012-08-05 19:17:26.234593800 +0200
+@@ -0,0 +1,18 @@
++# - Config file for the IlmBase package
++# It defines the following variables
++#  ILMBASE_INCLUDE_DIRS - include directories for IlmBase
++#  HALF_LIBRARY         - the half library
++#  IEX_LIBRARY          - the iex library
++#  IMATH_LIBRARY        - the imath library
++#  ILMTHREAD_LIBRARY    - the ilmthread library
++#  ILMBASE_LIBRARIES    - all the ilmbase libraries to link against
++
++# Compute paths
++get_filename_component(ILMBASE_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
++set(ILMBASE_INCLUDE_DIRS "${ILMBASE_CMAKE_DIR}/../../../include")
++
++# Our library dependencies (contains definitions for IMPORTED targets)
++include("${ILMBASE_CMAKE_DIR}/IlmBaseTargets.cmake")
++
++set(ILMBASE_LIBRARIES ${HALF_LIBRARY} ${IEX_LIBRARY} ${ILMTHREAD_LIBRARY} ${IMATH_LIBRARY})
++
 diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmThread/CMakeLists.txt
 --- ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/IlmThread/CMakeLists.txt	2012-08-04 16:04:48.452327600 +0200
-@@ -0,0 +1,27 @@
++++ ilmbase-1.0.2/IlmThread/CMakeLists.txt	2012-08-05 19:15:02.292799700 +0200
+@@ -0,0 +1,28 @@
 +set (IlmThread_SOURCES
 +	IlmThread.cpp
 +	IlmThreadMutex.cpp
@@ -110,7 +138,8 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmT
 +add_library(IlmThread ${IlmThread_SOURCES})
 +target_link_libraries(IlmThread Iex)
 +
-+install(TARGETS IlmThread RUNTIME DESTINATION bin
++install(TARGETS IlmThread EXPORT IlmBase_targets
++                          RUNTIME DESTINATION bin
 +                          LIBRARY DESTINATION lib
 +                          ARCHIVE DESTINATION lib)
 +
@@ -122,8 +151,8 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmT
 +	DESTINATION include)
 diff -Nru -x '*~' ilmbase-1.0.2.orig/Imath/CMakeLists.txt ilmbase-1.0.2/Imath/CMakeLists.txt
 --- ilmbase-1.0.2.orig/Imath/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ ilmbase-1.0.2/Imath/CMakeLists.txt	2012-08-04 16:04:48.458327900 +0200
-@@ -0,0 +1,48 @@
++++ ilmbase-1.0.2/Imath/CMakeLists.txt	2012-08-05 19:15:02.292799700 +0200
+@@ -0,0 +1,49 @@
 +set (Imath_SOURCES
 +	ImathBox.cpp
 +	ImathColorAlgo.cpp
@@ -137,7 +166,8 @@ diff -Nru -x '*~' ilmbase-1.0.2.orig/Imath/CMakeLists.txt ilmbase-1.0.2/Imath/CM
 +add_library(Imath ${Imath_SOURCES})
 +target_link_libraries(Imath Iex)
 +
-+install(TARGETS Imath RUNTIME DESTINATION bin
++install(TARGETS Imath EXPORT IlmBase_targets
++                      RUNTIME DESTINATION bin
 +                      LIBRARY DESTINATION lib
 +                      ARCHIVE DESTINATION lib)
 +
