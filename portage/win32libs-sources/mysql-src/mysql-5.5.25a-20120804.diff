@@ -403,7 +403,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/mysqld.cc mysql-5.5.25a/sql/mysqld.cc
  	  load_default_groups[load_default_groups_sz-2]= argv[1];
          start_mode= 1;
 -        Service.Init(argv[1], mysql_service);
-+        Service.Init(argv[1], (void**) mysql_service);
++        Service.Init(argv[1], (void*) mysql_service);
          return 0;
        }
      }
@@ -412,7 +412,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/mysqld.cc mysql-5.5.25a/sql/mysqld.cc
  	if (my_strcasecmp(system_charset_info, argv[2],"mysql"))
  	  load_default_groups[load_default_groups_sz-2]= argv[2];
 -	Service.Init(argv[2], mysql_service);
-+	Service.Init(argv[2], (void**) mysql_service);
++	Service.Init(argv[2], (void*) mysql_service);
  	return 0;
        }
      }
@@ -421,7 +421,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/sql/mysqld.cc mysql-5.5.25a/sql/mysqld.cc
        /* start the default service */
        start_mode= 1;
 -      Service.Init(MYSQL_SERVICENAME, mysql_service);
-+      Service.Init(MYSQL_SERVICENAME, (void**) mysql_service);
++      Service.Init(MYSQL_SERVICENAME, (void*) mysql_service);
        return 0;
      }
    }
