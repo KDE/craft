@@ -74,8 +74,8 @@ class Uploader:
     def ftpExecute( self, cmd ):
         self.fstderr.write( cmd + "\r\n" )
         self.fstderr.flush()
-        self.pstdin.write( (cmd + "\r\n").encode("windows-1252") )
-        self.pstdin.write( ("\r\n").encode("windows-1252") )
+        self.pstdin.write( (cmd + "\r\n").encode("latin-1") )
+        self.pstdin.write( ("\r\n").encode("latin-1") )
         self.pstdin.flush()
 
     def executeScript( self, state="common" ):
@@ -84,12 +84,12 @@ class Uploader:
 
         name = state+"-script"
         if name in self.settings:
-            self.fstderr = open( 'NUL', 'w+', encoding="windows-1252" )
+            self.fstderr = open( 'NUL', 'w+', encoding="latin-1" )
             cmdstring = self.settings[ "sshclient" ] + " " + self.settings[ "server" ]
             p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
             self.pstdin = p.stdin
-            p.stdin.write( (self.settings[ name ] + "\n").encode("windows-1252"))
-            p.stdin.write( ("exit\n").encode("windows-1252"))
+            p.stdin.write( (self.settings[ name ] + "\n").encode("latin-1"))
+            p.stdin.write( ("exit\n").encode("latin-1"))
             ret = p.wait()
 
             return ret == 0
@@ -113,9 +113,9 @@ class Uploader:
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         ret = 0
         if self.logfile:
-            fstderr = open( self.logfile + ".tmp", 'w+', encoding="windows-1252" )
+            fstderr = open( self.logfile + ".tmp", 'w+', encoding="latin-1" )
         else:
-            fstderr = open( 'NUL', 'w+', encoding="windows-1252" )
+            fstderr = open( 'NUL', 'w+', encoding="latin-1" )
         p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=fstderr, stderr=fstderr )
         self.fstderr = fstderr
         self.pstdin = p.stdin
@@ -128,7 +128,7 @@ class Uploader:
         ret = p.wait()
 
         if self.logfile:
-            log = open( self.logfile, 'a+' , encoding="windows-1252")
+            log = open( self.logfile, 'a+' , encoding="latin-1")
             fstderr.seek( os.SEEK_SET )
             for line in fstderr:
                 log.write( line )
@@ -165,9 +165,9 @@ class SourceForgeUploader ( Uploader ):
 
         cmdstring = self.settings[ "ftpclient" ] + " " + self.settings[ "server" ]
         if self.logfile:
-            self.fstderr = open( self.logfile + ".tmp", 'w+', encoding="windows-1252" )
+            self.fstderr = open( self.logfile + ".tmp", 'w+', encoding="latin-1" )
         else:
-            self.fstderr = open( 'NUL', 'w+' , encoding="windows-1252" )
+            self.fstderr = open( 'NUL', 'w+' , encoding="latin-1" )
 
         self.p = subprocess.Popen( cmdstring, shell=True, stdin=subprocess.PIPE, stdout=self.fstderr, stderr=self.fstderr )
         self.pstdin = self.p.stdin
@@ -196,7 +196,7 @@ class SourceForgeUploader ( Uploader ):
         self.p.wait()
 
         if self.logfile:
-            log = open( self.logfile, 'a+', encoding="windows-1252" )
+            log = open( self.logfile, 'a+', encoding="latin-1" )
             self.fstderr.seek( os.SEEK_SET )
             for line in self.fstderr:
                 log.write( line )
