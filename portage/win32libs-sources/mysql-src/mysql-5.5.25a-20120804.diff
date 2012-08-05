@@ -891,7 +891,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/storage/innobase/include/univ.i mysql-5.5.2
  /* Definition for inline version */
  
 -#ifdef __WIN__
-+#ifdef __MSC_VER
++#ifdef _MSC_VER
  # define UNIV_INLINE	__inline
  #elif defined(__SUNPRO_CC) || defined(__SUNPRO_C)
  # define UNIV_INLINE static inline
