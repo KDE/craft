@@ -225,7 +225,7 @@ diff -Nru -x '*~' mysql-5.5.25a.orig/cmake/os/Windows.cmake mysql-5.5.25a/cmake/
 +IF(MINGW)
 +    ADD_DEFINITIONS(-DMINGW_HAS_SECURE_API)
 +    LINK_LIBRARIES(dbghelp)
-+    SET(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} -Wl,--enable-stdcall-fixup)
++    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--enable-stdcall-fixup")
 +ENDIF()
 +
  # Always link with socket library
