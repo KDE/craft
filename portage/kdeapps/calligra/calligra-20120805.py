@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies['kdesupport/eigen2'] = 'default'
         self.buildDependencies['win32libs-sources/glew-src'] = 'default'
+        self.buildDependencies['win32libs-bin/boost-headers'] = 'default'
         self.dependencies['win32libs-bin/lcms2'] = 'default'
         self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['virtual/kdepimlibs'] = 'default'
