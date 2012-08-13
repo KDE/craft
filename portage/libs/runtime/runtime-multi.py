@@ -37,22 +37,19 @@ class Package( BinaryPackageBase ):
 
         files = []
         if compiler.isMinGW():
-            if compiler.isMinGW32():
-                srcdir = os.path.join( self.rootdir, "mingw", "bin" )
-                files = [ 'mingwm10.dll', 'libgcc_s_dw2-1.dll' ]
-            elif compiler.isMinGW_W32():
-                srcdir = os.path.join( self.rootdir, "mingw", "bin" )
+            if compiler.getMinGWVersion() == "4.4.7":
+                if compiler.isMinGW_W32():
+                    srcdir = os.path.join( self.rootdir, "mingw", "bin" )
+                elif compiler.isMinGW_W64():
+                    srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
                 files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll' ]
-            elif compiler.isMinGW_W64():
-                srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
-                files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll' ]
-#        elif compiler.isMSVC2008():
-#            if self.buildType() == "Debug":
-#                srcdir = os.path.join( self.packageDir(), "redist", "Debug_NonRedist", "x86", "Microsoft.VC90.DebugCRT" )
-#                files = [ "Microsoft.VC90.DebugCRT.manifest", "msvcr90d.dll", "msvcp90d.dll", "msvcm90d.dll"]
-#            else:
-#                srcdir = os.path.join( self.packageDir(), "redist", "x86", "Microsoft.VC90.CRT" )
-#                files = [ "Microsoft.VC90.CRT.manifest", "msvcr90.dll", "msvcp90.dll", "msvcm90.dll" ]
+            else:
+                if compiler.isMinGW_W32():
+                    srcdir = os.path.join( self.rootdir, "mingw", "bin" )                    
+                elif compiler.isMinGW_W64():
+                    srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
+                files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll' ]
+                
         elif compiler.isMSVC2010():
             if os.environ["EMERGE_ARCHITECTURE"] == "x86" and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
                 srcdir = os.path.join( os.environ["SystemRoot"], "SysWOW64") 
@@ -64,7 +61,7 @@ class Package( BinaryPackageBase ):
             utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
 
         # extract pthread package.
-        if compiler.isMinGW_WXX():
+        if compiler.isMinGW_WXX() and compiler.getMinGWVersion() == "4.4.7":
             tmpdir = os.getenv( "TEMP" )
 
             if compiler.isMinGW_W32(): _ext = 32
@@ -80,6 +77,7 @@ class Package( BinaryPackageBase ):
             files = [ pthreadDll ]
             for file in files:
                 utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
+
         return True
 
 if __name__ == '__main__':
