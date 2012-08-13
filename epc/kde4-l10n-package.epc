@@ -1,7 +1,7 @@
 {
   "epc": {
     "buildtime-dependencies": [], 
-    "default-target": "4.8.2", 
+    "default-target": "4.9.0", 
     "dependencies": [
       "kde/kde4-l10n-${EPC_PACKAGE-NAME}"
     ], 
@@ -166,9 +166,10 @@
     "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ ver ] = ''\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
     "suffix": "package", 
     "versions": [
-      "4.8.0", 
-      "4.8.1", 
-      "4.8.2"
+      "4.9.1", 
+      "4.9.2", 
+      "4.9.3", 
+      "4.9.4"
     ]
   }, 
   "vars": {}
