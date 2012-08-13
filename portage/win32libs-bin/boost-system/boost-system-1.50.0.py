@@ -1,7 +1,7 @@
 # This package-script is automatically updated by the script win32libsupdater.py
 # which can be found in your emerge/bin folder. To update this package, run
 # win32libsupdater.py (and commit the results)
-# based on revision gitd35af27bcc6e664356dcf0ecbb677c47a37ba6c7
+# based on revision git517fe8408cfc04c16e44590384bd78d065060149
 
 from Package.BinaryPackageBase import *
 import os
@@ -11,16 +11,20 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         repoUrl = 'http://downloads.sourceforge.net/kde-windows'
 
-        for version in [ '0.0.1', '0.0.2', '0.0.3' ]:
-            self.targets[ version ]          = self.getPackage( repoUrl, 'win_iconv', version )
-            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'win_iconv', version, '.tar.bz2.sha1' )
+        for version in [ '1.48.0', '1.47.0', '1.44.0', '1.50.0' ]:
+            self.targets[ version ]          = self.getPackage( repoUrl, 'boost-system', version )
+            self.targetDigestUrls[ version ] = self.getPackage( repoUrl, 'boost-system', version, '.tar.bz2.sha1' )
 
-        self.defaultTarget = '0.0.3'
+        self.shortDescription = '''portable C++ libraries'''
+
+        self.defaultTarget = '1.50.0'
 
 
     def setDependencies( self ):
         if not utils.envAsBool( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
-            self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+            self.buildDependencies[ 'virtual/bin-base' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/boost-bjam' ] = 'default'
+        self.runtimeDependencies[ 'win32libs-bin/boost-headers' ] = 'default'
 
 
     def setBuildOptions( self ):
