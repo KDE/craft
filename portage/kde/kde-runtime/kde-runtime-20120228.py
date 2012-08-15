@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.8.2'] = [("kde-runtime-4.8.1-20120319.diff", 1)]
         self.patchToApply['4.8.3'] = [("kde-runtime-4.8.1-20120319.diff", 1)]
         self.patchToApply['4.8.4'] = [("kde-runtime-4.8.1-20120319.diff", 1)]
+        self.patchToApply['gitHEAD'] = [("kde-runtime-4.8.1-20120319.diff", 1)]
         self.shortDescription = "Plugins and applications necessary for the running of KDE applications"
         self.defaultTarget = 'gitHEAD'
 
