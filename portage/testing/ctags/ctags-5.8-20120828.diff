@@ -1,0 +1,25 @@
+diff -Nru -x '*~' ctags-5.8.orig/main.c ctags-5.8/main.c
+--- ctags-5.8.orig/main.c	2007-06-07 06:35:21.000000000 +0200
++++ ctags-5.8/main.c	2012-08-15 00:19:20.652057700 +0200
+@@ -525,6 +525,7 @@
+ extern int main (int __unused__ argc, char **argv)
+ {
+ 	cookedArgs *args;
++    int i = 0;
+ #ifdef VMS
+ 	extern int getredirection (int *ac, char ***av);
+ 
+@@ -550,6 +551,13 @@
+ 	setExecutableName (*argv++);
+ 	checkRegex ();
+ 
++    for(i = 0; i < argc - 1; i++) {
++        int arglen = strlen(argv[i]);
++        if(argv[i][arglen - 1] == '\\' || argv[i][arglen - 1] == '/') {
++            argv[i][arglen - 1] = 0;
++        }
++    };
++
+ 	args = cArgNewFromArgv (argv);
+ 	previewFirstOption (args);
+ 	testEtagsInvocation ();
