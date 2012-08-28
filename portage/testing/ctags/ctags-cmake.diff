@@ -1,0 +1,95 @@
+diff -Nru -x '*~' ctags-5.8.orig/CMakeLists.txt ctags-5.8/CMakeLists.txt
+--- ctags-5.8.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ctags-5.8/CMakeLists.txt	2012-08-28 17:04:45.418045400 +0200
+@@ -0,0 +1,91 @@
++project(ctags)
++
++cmake_minimum_required(VERSION 2.8)
++
++option(BUILD_DEBUG_EXTENSION "build debug extension for ctags" OFF)
++
++set(ctags_SRCS
++    args.c
++    ant.c
++    asm.c
++    asp.c
++    awk.c
++    basic.c
++    beta.c
++    c.c
++    cobol.c
++    dosbatch.c
++    eiffel.c
++    entry.c
++    erlang.c
++    flex.c
++    fortran.c
++    get.c
++    html.c
++    jscript.c
++    keyword.c
++    lisp.c
++    lregex.c
++    lua.c
++    main.c
++    make.c
++    matlab.c
++    ocaml.c
++    options.c
++    parse.c
++    pascal.c
++    perl.c
++    php.c
++    python.c
++    read.c
++    rexx.c
++    routines.c
++    ruby.c
++    scheme.c
++    sh.c
++    slang.c
++    sml.c
++    sort.c
++    sql.c
++    strlist.c
++    tcl.c
++    tex.c
++    verilog.c
++    vhdl.c
++    vim.c
++    yacc.c
++    vstring.c
++)
++
++set(environment_SRCS
++    argproc.c
++    mac.c
++    qdos.c
++)
++
++set(regex_SRCS
++    gnu_regex/regex.c
++)
++
++if(BUILD_DEBUG_EXTENSION)
++    list(APPEND ctags_SRCS debug.c)
++endif(BUILD_DEBUG_EXTENSION)
++
++add_definitions(-DHAVE_REGCOMP -D__USE_GNU -Dbool=int -Dfalse=0 -Dtrue=1 -Dstrcasecmp=stricmp)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
++endif(MSVC)
++
++include_directories(${CMAKE_SOURCE_DIR}/gnu_regex)
++
++add_executable(ctags ${ctags_SRCS} ${regex_SRCS})
++
++add_executable(readtags readtags.c)
++set_target_properties(readtags PROPERTIES COMPILE_FLAGS -DREADTAGS_MAIN)
++
++install(TARGETS ctags readtags RUNTIME DESTINATION bin
++                               LIBRARY DESTINATION lib
++                               ARCHIVE DESTINATION lib)
++
++install(FILES ctags.1 DESTINATION share/man/man1)
