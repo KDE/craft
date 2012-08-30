@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['win32libs-bin/ghostscript'] = 'default'
+        self.dependencies['dev-util/cmake'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
 
