@@ -13,7 +13,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
-        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['kde/nepomuk-widgets'] = 'default'
         self.shortDescription = "KDE's Personal Information Management suite"
 
 from Package.CMakePackageBase import *
