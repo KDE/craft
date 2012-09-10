@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kde4-l10n-hr'] = 'default'
         self.dependencies['kde/kde4-l10n-hu'] = 'default'
         self.dependencies['kde/kde4-l10n-ia'] = 'default'
-        self.dependencies['kde/kde4-l10n-id'] = 'default'
+        #self.dependencies['kde/kde4-l10n-id'] = 'default'
         self.dependencies['kde/kde4-l10n-is'] = 'default'
         self.dependencies['kde/kde4-l10n-it'] = 'default'
         self.dependencies['kde/kde4-l10n-ja'] = 'default'
