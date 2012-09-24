@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:netwalk'
+        self.svnTargets['gitHEAD'] = '[git]kde:knetwalk'
         self.shortDescription = 'a game for system administrators'
         self.defaultTarget = 'gitHEAD'
 
