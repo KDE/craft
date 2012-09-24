@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:zanshin'
-        releases = [ '0.1.81', '0.1.91', '0.2.0' ]
+        releases = [ '0.1.81', '0.1.91', '0.2.0', '0.2.1' ]
         for ver in releases:
             self.targets[ ver ] = 'http://files.kde.org/zanshin/zanshin-' +  ver  + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'zanshin-' + ver
