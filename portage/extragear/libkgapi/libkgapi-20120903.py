@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['kde/kdepimlibs'] = 'default'
+        self.shortDescription = "KDE library for Google API"
 
 from Package.CMakePackageBase import *
 
