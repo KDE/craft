@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kile'
         self.svnTargets['gitStable-2.1'] = '[git]kde:kile|2.1|'
-        for ver in ['2.1.1']:
+        for ver in ['2.1.1', '2.1.3']:
             self.targets[ver] = 'http://downloads.sourceforge.net/kile/kile-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'kile-' + ver
         self.shortDescription = "a user friendly TeX/LaTeX editor for KDE"
