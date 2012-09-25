@@ -21,6 +21,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         # whitelists = [ 'whitelist.txt' ]
         # blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt' ]
         VirtualPackageBase.__init__( self )
+        self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
         # NullsoftInstallerPackager.__init__( self, whitelists,blacklists )
         NullsoftInstallerPackager.__init__( self )
         
