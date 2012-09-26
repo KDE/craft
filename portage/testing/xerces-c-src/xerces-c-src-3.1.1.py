@@ -51,6 +51,8 @@ class PackageCMake(CMakePackageBase):
             os.mkdir( os.path.join( dst, "lib" ) )
         if not os.path.isdir( os.path.join( dst, "include" ) ):
             os.mkdir( os.path.join( dst, "include" ) )
+        if not os.path.isdir( os.path.join( dst, "include", "xercesc" ) ):
+            os.mkdir( os.path.join( dst, "include", "xercesc" ) )
 
         outdir = "Build\\Win32\\VC10\\"
 
@@ -65,8 +67,32 @@ class PackageCMake(CMakePackageBase):
 
         shutil.copy( os.path.join( src, outdir, outdll ) , os.path.join( dst, "bin" ) )
         shutil.copy( os.path.join( src, outdir, outimplib ) , os.path.join( dst, "lib" ) )
-#        utils.copySrcDirToDestDir( os.path.join( src, "include" ) , os.path.join( dst, "include" ) )
-
+        # include directory:
+        destsubdir = os.path.join( dst, "include", "xercesc" )
+        utils.copySrcDirToDestDir( os.path.join( src, "src", "xercesc" ), destsubdir )
+        shutil.rmtree( os.path.join( destsubdir, "NLS" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "MsgLoaders", "ICU" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "MsgLoaders", "InMemory" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "MsgLoaders", "MsgCatalog" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "NetAccessors", "Curl" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "NetAccessors", "MacOSURLAccessCF" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "NetAccessors", "Socket" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "Transcoders", "Iconv" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "Transcoders", "IconvGNU" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "Transcoders", "ICU" ) )
+        shutil.rmtree( os.path.join( destsubdir, "util", "Transcoders", "MacOSUnicodeConverter" ) )
+        os.remove( os.path.join( destsubdir, "util", "Xerces_autoconf_config.borland.hpp" ) )
+        os.remove( os.path.join( destsubdir, "util", "Xerces_autoconf_config.hpp.in" ) )
+        os.remove( os.path.join( destsubdir, "util", "Xerces_autoconf_config.hpp" ) )
+        os.remove( os.path.join( destsubdir, "util", "FileManagers", "PosixFileMgr.hpp" ) )
+        os.remove( os.path.join( destsubdir, "util", "MsgLoaders", "Win32", "Version.rc" ) )
+        os.remove( os.path.join( destsubdir, "util", "MutexManagers", "NoThreadMutexMgr.hpp" ) )
+        os.remove( os.path.join( destsubdir, "util", "MutexManagers", "PosixMutexMgr.hpp" ) )
+        for root, _, files in os.walk( destsubdir ):
+            for fileName in files:
+                if fileName.endswith( ".cpp" ): os.remove( os.path.join( root, fileName ) )
+        # now in the end copy config fileName
+        os.rename( os.path.join( destsubdir, "util", "Xerces_autoconf_config.msvc.hpp" ), os.path.join( destsubdir, "util", "Xerces_autoconf_config.hpp" ) )
         return True
 
 
