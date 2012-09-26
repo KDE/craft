@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/libkexiv2'] = 'default'
         self.dependencies['kde/libkipi'] = 'default'
         self.dependencies['kde/libksane'] = 'default'
-        self.dependencies['kde/mobipocket'] = 'default'
+        self.dependencies['kde/kdegraphics-mobipocket'] = 'default'
         self.dependencies['kde/okular'] = 'default'
         self.dependencies['kde/svgpart'] = 'default'
 
