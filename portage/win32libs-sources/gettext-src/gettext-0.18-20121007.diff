@@ -1727,7 +1727,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-runtime/intl/intl.def
 --- gettext-0.18.orig/gettext-runtime/intl/intl.def	1970-01-01 01:00:00.000000000 +0100
 +++ gettext-0.18/gettext-runtime/intl/intl.def	2012-04-21 23:16:04.164273600 +0200
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,52 @@
 +LIBRARY libintl.DLL
 +EXPORTS
 +;_imp___ctype_ptr
@@ -1776,6 +1776,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/g
 +;libintl_relocate
 +;libintl_set_relocation_prefix
 +libintl_setlocale
++libintl_sprintf
 +libintl_textdomain
 +libintl_version
 +locale_charset
