@@ -1,0 +1,22 @@
+commit 4c9e2ce10dc47e93370a3eab1113eafcc1690b64
+Author: Harald Sitter <sitter@kde.org>
+Date:   Fri Sep 14 20:48:15 2012 +0200
+
+    fix windows aout selection
+    
+    the directx aout is in fact called aout_directx, so make the devicemanager
+    look for that rather than directx to fix audio on windows
+
+diff --git a/src/devicemanager.cpp b/src/devicemanager.cpp
+index c9bed25..2f5d720 100644
+--- a/src/devicemanager.cpp
++++ b/src/devicemanager.cpp
+@@ -232,7 +232,7 @@ void DeviceManager::updateDeviceList()
+     knownSoundSystems << QByteArray("alsa")
+                       << QByteArray("oss")
+                       << QByteArray("jack")
+-                      << QByteArray("directx") // Windows
++                      << QByteArray("aout_directx") // Windows
+                       << QByteArray("auhal"); // Mac
+     foreach (const QByteArray &soundSystem, knownSoundSystems) {
+         if (!audioOutBackends.contains(soundSystem)) {

@@ -27,6 +27,8 @@ class subinfo(info.infoclass):
       self.targets['0.6.0'] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/0.6.0/src/phonon-backend-vlc-0.6.0.tar.xz"
       self.targetDigests['0.6.0'] = 'f66a70cd27ad49dc98eb6526d0566cfe0802774b'
       self.targetInstSrc['0.6.0'] = "phonon-backend-vlc-0.6.0"
+      self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
+      
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
