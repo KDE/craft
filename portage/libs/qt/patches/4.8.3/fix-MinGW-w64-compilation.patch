@@ -1,0 +1,30 @@
+From 0f5f7c22677e8681ff2af393d01cadd590fe250f Mon Sep 17 00:00:00 2001
+From: Jonathan Liu <net147@gmail.com>
+Date: Fri, 14 Sep 2012 08:54:25 +1000
+Subject: [PATCH] Fix MinGW-w64 compilation
+
+ENABLE_EXECUTABLE_ALLOCATOR_FIXED requires sys/mman.h which is not
+available with MinGW-w64.
+
+Change-Id: I6e76ce0c570e5819657debf813f0e80cef907dd4
+(cherry picked from commit 02c37f59839b7bb36b231560893fa3bccbecc065)
+Reviewed-by: Simon Hausmann <simon.hausmann@nokia.com>
+---
+ src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h
+index d930ed7..e95ac7f 100644
+--- a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h
++++ b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h
+@@ -1019,7 +1019,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
+ /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
+    On x86-64 we use a single fixed mmap, on other platforms we mmap on demand. */
+ #if ENABLE(ASSEMBLER)
+-#if CPU(X86_64)
++#if CPU(X86_64) && !COMPILER(MINGW64)
+ #define ENABLE_EXECUTABLE_ALLOCATOR_FIXED 1
+ #else
+ #define ENABLE_EXECUTABLE_ALLOCATOR_DEMAND 1
+-- 
+1.8.0
