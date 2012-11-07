@@ -58,7 +58,7 @@ class Package( BinaryPackageBase ):
             files = [ "msvcr100%s.dll" % postfix, "msvcp100%s.dll" % postfix ]
 
         for file in files:
-            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
+            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) ,False)
 
         # extract pthread package.
         if compiler.isMinGW_WXX() and compiler.getMinGWVersion() == "4.4.7":
