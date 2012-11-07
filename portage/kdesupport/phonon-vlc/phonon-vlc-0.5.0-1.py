@@ -28,11 +28,13 @@ class subinfo(info.infoclass):
       self.targetDigests['0.6.0'] = 'f66a70cd27ad49dc98eb6526d0566cfe0802774b'
       self.targetInstSrc['0.6.0'] = "phonon-backend-vlc-0.6.0"
       self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
+      self.targets['0.6.1'] = "http://people.ubuntu.com/~apachelogger/tmp/phonon-backend-vlc-0.6.1.tar.xz"
+      self.targetInstSrc['0.6.1'] = "phonon-backend-vlc-0.6.1"
       
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.6.0'
+      self.defaultTarget = '0.6.1'
 
 
 class Package( CMakePackageBase ):
