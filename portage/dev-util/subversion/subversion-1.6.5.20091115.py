@@ -3,10 +3,14 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.6.5'] = "http://subversion.tigris.org/files/documents/15/47906/svn-win32-1.6.5.zip"
+        self.targets['1.7.6'] = "http://downloads.sourceforge.net/win32svn/apache22/svn-win32-1.7.6.zip"
         # this location affects class SvnSource
         self.targetMergePath['1.6.5'] = "dev-utils/svn";
+        self.targetMergePath['1.7.6'] = "dev-utils/svn";
         self.targetMergeSourcePath['1.6.5'] = "svn-win32-1.6.5";
+        self.targetMergeSourcePath['1.7.6'] = "svn-win32-1.7.6";
         self.targetDigests['1.6.5'] = '0df7b20e0bf0fa82ca3a9ededb9207ba50df063e'
+        self.targetDigests['1.7.6'] = '3a18decdf971268abdec34ab459147a8139241db'
         self.defaultTarget = '1.6.5'
 
     def setDependencies( self ):
