@@ -26,7 +26,7 @@ def PackagerFactory(parent, packagerType):
 
     if packagerType:
         for packagerClass in packagerType:
-            if not isinstance(packagerClass, PackagerBase):
+            if not issubclass(packagerClass, PackagerBase):
                 utils.die("PackagerFactory: unsupported packager %s" % packagerClass)
             else:
                 packager = packagerClass()
