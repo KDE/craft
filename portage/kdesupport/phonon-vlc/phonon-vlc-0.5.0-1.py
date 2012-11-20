@@ -20,19 +20,22 @@ class subinfo(info.infoclass):
       self.targets['0.4.1'] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/0.4.1/phonon-backend-vlc-0.4.1.tar.xz"
       self.targetInstSrc['0.4.1'] = "phonon-backend-vlc-0.4.1"
       self.targetDigests['0.4.1'] = 'b2957b70e1722f08a231b9e64acfafb799b52d11'
+      
       self.patchToApply['0.4.1'] = [("phonon-backend-vlc-0.4.1-20111213.diff", 1),("phonon-backend-vlc-0.4.1-20111223.diff",1)]
-      self.targets['0.5.0'] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/0.5.0/src/phonon-backend-vlc-0.5.0.tar.xz"
-      self.targetInstSrc['0.5.0'] = "phonon-backend-vlc-0.5.0"
-      self.patchToApply['0.5.0'] = [("0001-Revert-stop-leaking-video-audio-abstraction.patch",1)]
-      self.targets['0.6.0'] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/0.6.0/src/phonon-backend-vlc-0.6.0.tar.xz"
+      for ver in ['0.5.0', '0.6.0', '0.6.1']:
+        self.targets[ ver ] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/%s/src/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
+        self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver 
+        
       self.targetDigests['0.6.0'] = 'f66a70cd27ad49dc98eb6526d0566cfe0802774b'
-      self.targetInstSrc['0.6.0'] = "phonon-backend-vlc-0.6.0"
+      self.targetDigests['0.6.1'] = '2c17bd124a2f6543efc6af0e6a79bf37f8f5cd37'
+      
+      self.patchToApply['0.5.0'] = [("0001-Revert-stop-leaking-video-audio-abstraction.patch",1)]
       self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
       
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.6.0'
+      self.defaultTarget = '0.6.1'
 
 
 class Package( CMakePackageBase ):
