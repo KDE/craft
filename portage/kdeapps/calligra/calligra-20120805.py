@@ -30,7 +30,7 @@ class Package( CMakePackageBase ):
         defines += "-DBUILD_kexi=OFF "
         defines += "-DBUILD_plan=OFF "
         defines += "-DBUILD_doc=OFF "
-        defines += "-DMEMORY_LEAK_TRACKER=OFF"
+        defines += "-DHAVE_MEMORY_LEAK_TRACKER=OFF"
 
         self.subinfo.options.configure.defines = defines
 
