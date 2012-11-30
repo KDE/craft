@@ -16,9 +16,10 @@ class subinfo(info.infoclass):
 
 
     def setTargets( self ):
-        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1','1.4.1','1.4.2','1.4.3','1.4.80','1.4.90','1.6.0','1.6.2','1.7.0','1.8.0']:
+        for ver in ['0.80','0.81','0.82','1.0.0','1.0.80','1.1.0','1.1.1','1.1.2','1.1.3','1.3.1','1.4.1','1.4.2','1.4.3','1.4.80','1.4.90','1.6.0','1.6.2','1.7.0','1.8.0','1.8.1']:
           self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/akonadi/src/akonadi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'akonadi-' + ver
+        self.targetDigests['1.8.1'] = '103f086cb8ed84e56be6e0717145e6f2d4689053'
 
 
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
@@ -30,7 +31,7 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = '1.8.0'
+        self.defaultTarget = '1.8.1'
 
 from Package.CMakePackageBase import *
 
