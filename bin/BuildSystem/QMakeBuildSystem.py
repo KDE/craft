@@ -35,7 +35,10 @@ class QMakeBuildSystem(BuildSystemBase):
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
 
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
         # here follows some automatic configure tool detection
         # 1. search for configure.exe in the order
@@ -83,7 +86,10 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def make( self, options=""):
         """implements the make step for Qt projects"""
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
         command = ' '.join([self.makeProgramm, self.makeOptions(options, maybeVerbose=False)])
 
