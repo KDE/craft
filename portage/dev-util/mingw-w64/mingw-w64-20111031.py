@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         for ver in [ "20111031", "20111101" ]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
         self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-4.7.2-release-win64_rubenvb.7z"
-
-        self.defaultTarget = "4.7.1"
+        self.targetDigests['4.7.2'] = '26176fa67128e6f43a69dcce6801a385b2176ac2'
+        self.defaultTarget = "4.7.2"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
