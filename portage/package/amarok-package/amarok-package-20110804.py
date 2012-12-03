@@ -13,8 +13,6 @@ class subinfo( info.infoclass ):
         self.svnTargets[ '2.6pre' ] = ""
         self.defaultTarget = '2.6pre'
 
-
-
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
         self.dependencies[ 'kde/kde-workspace' ] = 'default'

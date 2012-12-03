@@ -1,0 +1,28 @@
+diff -Nru -x '*~' clamz-0.5.orig/download.c clamz-0.5/download.c
+--- clamz-0.5.orig/download.c	2010-04-22 19:20:40.000000000 +0200
++++ clamz-0.5/download.c	2012-09-13 15:59:12.220908900 +0200
+@@ -32,6 +32,10 @@
+ 
+ #include "clamz.h"
+ 
++#ifdef _WIN32
++#define mkdir(X,Y) mkdir(X)
++#endif
++
+ struct _clamz_downloader {
+   const clamz_config *cfg;
+   CURL *curl;
+diff -Nru -x '*~' clamz-0.5.orig/options.c clamz-0.5/options.c
+--- clamz-0.5.orig/options.c	2010-04-19 01:28:51.000000000 +0200
++++ clamz-0.5/options.c	2012-09-13 15:58:45.976581900 +0200
+@@ -28,6 +28,10 @@
+ 
+ #include "clamz.h"
+ 
++#ifdef _WIN32
++#define mkdir(X,Y) mkdir(X)
++#endif
++
+ char *get_config_file_name(const char *subdir, const char *base,
+ 			   const char *suffix)
+ {

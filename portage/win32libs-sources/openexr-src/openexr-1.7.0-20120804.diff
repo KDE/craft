@@ -1,0 +1,357 @@
+diff -Nru -x '*~' openexr-1.7.0.orig/CMakeLists.txt openexr-1.7.0/CMakeLists.txt
+--- openexr-1.7.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/CMakeLists.txt	2012-08-05 23:08:04.086957500 +0200
+@@ -0,0 +1,65 @@
++project(OpenEXR)
++
++cmake_minimum_required(VERSION 2.8)
++
++find_package(ZLIB REQUIRED)
++find_package(IlmBase REQUIRED)
++
++include_directories(${ZLIB_INCLUDE_DIRS} ${ILMBASE_INCLUDES})
++if(WIN32)
++    if(MSVC)
++        add_definitions(-D_CRT_SECURE_NO_WARNINGS -DZLIB_DLL)
++    endif(MSVC)
++    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/config.windows)
++endif(WIN32)
++
++#### options for building exr
++option(BUILD_TOOLS "build the exr tools" ON)
++option(BUILD_TESTS "build the tests" OFF)
++option(BUILD_EXAMPLES "build the example files" OFF)
++option(BUILD_DOCS "build the documentation" OFF)
++
++add_subdirectory(IlmImf)
++
++if(BUILD_TOOLS)
++    include_directories(IlmImf ${CMAKE_CURRENT_BINARY_DIR}/IlmImf)
++    add_subdirectory(exrheader)
++    add_subdirectory(exr2aces)
++    add_subdirectory(exrenvmap)
++    add_subdirectory(exrmakepreview)
++    add_subdirectory(exrmaketiled)
++    add_subdirectory(exrmultiview)
++    add_subdirectory(exrstdattr)
++
++    set(_OPENEXR_TOOLS
++"
++set(EXRHEADER_BINARY exrheader)
++set(EXR2ACES_BINARY exr2aces)
++set(EXRENVMAP_BINARY exrenvmap)
++set(EXRMAKEPREVIEW_BINARY exrmakepreview)
++set(EXRMAKETILED_BINARY exrmaketiled)
++set(EXRMULTIVIEW_BINARY exrmultiview)
++set(EXRSTDATTR_BINARY exrstdattr)
++"
++    )
++endif(BUILD_TOOLS)
++
++set(OpenEXR_targets ilmimf)
++install(EXPORT OpenEXR_targets FILE OpenEXRTargets.cmake DESTINATION lib/cmake/OpenEXR)
++
++configure_file(${CMAKE_SOURCE_DIR}/OpenEXRConfig.cmake.in ${CMAKE_BINARY_DIR}/OpenEXRConfig.cmake @ONLY)
++
++install(FILES ${CMAKE_BINARY_DIR}/OpenEXRConfig.cmake DESTINATION lib/cmake/OpenEXR)
++
++if(BUILD_TESTS)
++    add_subdirectory(IlmImfTest)
++    add_subdirectory(IlmImfFuzzTest)
++endif(BUILD_TESTS)
++
++if(BUILD_EXAMPLES)
++    add_subdirectory(IlmImfExamples)
++endif(BUILD_EXAMPLES)
++
++if(BUILD_DOCS)
++    add_subdirectory(doc)
++endif(BUILD_DOCS)
+diff -Nru -x '*~' openexr-1.7.0.orig/exr2aces/CMakeLists.txt openexr-1.7.0/exr2aces/CMakeLists.txt
+--- openexr-1.7.0.orig/exr2aces/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exr2aces/CMakeLists.txt	2012-08-05 21:26:55.908408800 +0200
+@@ -0,0 +1,8 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++add_executable(exr2aces main.cpp)
++target_link_libraries(exr2aces ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exr2aces EXPORT OpenEXR_targets
++                         RUNTIME DESTINATION bin
++                         LIBRARY DESTINATION lib
++                         ARCHIVE DESTINATION lib)
+diff -Nru -x '*~' openexr-1.7.0.orig/exrenvmap/CMakeLists.txt openexr-1.7.0/exrenvmap/CMakeLists.txt
+--- openexr-1.7.0.orig/exrenvmap/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exrenvmap/CMakeLists.txt	2012-08-05 21:33:01.246971400 +0200
+@@ -0,0 +1,20 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++    set(exrenvmap_SRCS
++        makeCubeMap.cpp
++        EnvmapImage.cpp
++        readInputImage.cpp
++        resizeImage.cpp
++        blurImage.cpp
++        makeCubeMap.cpp
++        makeLatLongMap.cpp
++        main.cpp
++    )
++
++add_executable(exrenvmap ${exrenvmap_SRCS})
++target_link_libraries(exrenvmap ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exrenvmap EXPORT OpenEXR_targets
++                          RUNTIME DESTINATION bin
++                          LIBRARY DESTINATION lib
++                          ARCHIVE DESTINATION lib)
++
+diff -Nru -x '*~' openexr-1.7.0.orig/exrheader/CMakeLists.txt openexr-1.7.0/exrheader/CMakeLists.txt
+--- openexr-1.7.0.orig/exrheader/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exrheader/CMakeLists.txt	2012-08-05 21:33:09.642146300 +0200
+@@ -0,0 +1,8 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++add_executable(exrheader main.cpp)
++target_link_libraries(exrheader ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exrheader EXPORT OpenEXR_targets
++                          RUNTIME DESTINATION bin
++                          LIBRARY DESTINATION lib
++                          ARCHIVE DESTINATION lib)
+diff -Nru -x '*~' openexr-1.7.0.orig/exrmakepreview/CMakeLists.txt openexr-1.7.0/exrmakepreview/CMakeLists.txt
+--- openexr-1.7.0.orig/exrmakepreview/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exrmakepreview/CMakeLists.txt	2012-08-05 21:33:19.589337000 +0200
+@@ -0,0 +1,8 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++add_executable(exrmakepreview makePreview.cpp main.cpp)
++target_link_libraries(exrmakepreview ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exrmakepreview EXPORT OpenEXR_targets
++                               RUNTIME DESTINATION bin
++                               LIBRARY DESTINATION lib
++                               ARCHIVE DESTINATION lib)
+diff -Nru -x '*~' openexr-1.7.0.orig/exrmaketiled/CMakeLists.txt openexr-1.7.0/exrmaketiled/CMakeLists.txt
+--- openexr-1.7.0.orig/exrmaketiled/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exrmaketiled/CMakeLists.txt	2012-08-05 21:33:56.677522700 +0200
+@@ -0,0 +1,8 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++add_executable(exrmaketiled Image.cpp makeTiled.cpp main.cpp)
++target_link_libraries(exrmaketiled ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exrmaketiled EXPORT OpenEXR_targets
++                             RUNTIME DESTINATION bin
++                             LIBRARY DESTINATION lib
++                             ARCHIVE DESTINATION lib)
+diff -Nru -x '*~' openexr-1.7.0.orig/exrmultiview/CMakeLists.txt openexr-1.7.0/exrmultiview/CMakeLists.txt
+--- openexr-1.7.0.orig/exrmultiview/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exrmultiview/CMakeLists.txt	2012-08-05 21:34:11.685727800 +0200
+@@ -0,0 +1,8 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++add_executable(exrmultiview Image.cpp makeMultiView.cpp main.cpp)
++target_link_libraries(exrmultiview ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exrmultiview EXPORT OpenEXR_targets
++                             RUNTIME DESTINATION bin
++                             LIBRARY DESTINATION lib
++                             ARCHIVE DESTINATION lib)
+diff -Nru -x '*~' openexr-1.7.0.orig/exrstdattr/CMakeLists.txt openexr-1.7.0/exrstdattr/CMakeLists.txt
+--- openexr-1.7.0.orig/exrstdattr/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/exrstdattr/CMakeLists.txt	2012-08-05 21:32:42.940740600 +0200
+@@ -0,0 +1,8 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++add_executable(exrstdattr main.cpp)
++target_link_libraries(exrstdattr ilmimf ${ILMBASE_LIBRARIES} ${ZLIB_LIBRARIES})
++
++install(TARGETS exrstdattr EXPORT OpenEXR_targets
++                           RUNTIME DESTINATION bin
++                           LIBRARY DESTINATION lib
++                           ARCHIVE DESTINATION lib)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' openexr-1.7.0.orig/IlmImf/CMakeLists.txt openexr-1.7.0/IlmImf/CMakeLists.txt
+--- openexr-1.7.0.orig/IlmImf/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/IlmImf/CMakeLists.txt	2012-08-05 22:47:06.169879800 +0200
+@@ -0,0 +1,144 @@
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
++
++add_executable(b44ExpLogTable b44ExpLogTable.cpp)
++target_link_libraries(b44ExpLogTable ${HALF_LIBRARY})
++
++add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h COMMAND b44ExpLogTable > ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h DEPENDS b44ExpLogTable)
++
++set(ilmimf_SRCS
++    ImfAttribute.cpp
++    ImfBoxAttribute.cpp
++    ImfCRgbaFile.cpp
++    ImfChannelList.cpp
++    ImfChannelListAttribute.cpp
++    ImfFloatAttribute.cpp
++    ImfFrameBuffer.cpp
++    ImfHeader.cpp
++    ImfIO.cpp
++    ImfInputFile.cpp
++    ImfIntAttribute.cpp
++    ImfLineOrderAttribute.cpp
++    ImfMatrixAttribute.cpp
++    ImfOpaqueAttribute.cpp
++    ImfOutputFile.cpp
++    ImfRgbaFile.cpp
++    ImfStringAttribute.cpp
++    ImfVecAttribute.cpp
++    ImfHuf.cpp
++    ImfThreading.cpp
++    ImfWav.cpp
++    ImfLut.cpp
++    ImfCompressor.cpp
++    ImfRleCompressor.cpp
++    ImfZipCompressor.cpp
++    ImfPizCompressor.cpp
++    ImfB44Compressor.cpp
++    ImfMisc.cpp
++    ImfCompressionAttribute.cpp
++    ImfDoubleAttribute.cpp
++    ImfConvert.cpp
++    ImfPreviewImage.cpp
++    ImfPreviewImageAttribute.cpp
++    ImfVersion.cpp
++    ImfChromaticities.cpp
++    ImfChromaticitiesAttribute.cpp
++    ImfKeyCode.cpp
++    ImfKeyCodeAttribute.cpp
++    ImfTimeCode.cpp
++    ImfTimeCodeAttribute.cpp
++    ImfRational.cpp
++    ImfRationalAttribute.cpp
++    ImfFramesPerSecond.cpp
++    ImfStandardAttributes.cpp
++    ImfStdIO.cpp
++    ImfEnvmap.cpp
++    ImfEnvmapAttribute.cpp
++    ImfScanLineInputFile.cpp
++    ImfTiledInputFile.cpp
++    ImfTiledMisc.cpp
++    ImfTiledOutputFile.cpp
++    ImfTiledRgbaFile.cpp
++    ImfTileDescriptionAttribute.cpp
++    ImfTileOffsets.cpp
++    ImfRgbaYca.cpp
++    ImfPxr24Compressor.cpp
++    ImfTestFile.cpp
++    ImfStringVectorAttribute.cpp
++    ImfMultiView.cpp
++    ImfAcesFile.cpp
++
++    ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
++)
++
++set(ilmimf_HDRS
++    ImfAttribute.h
++    ImfBoxAttribute.h
++    ImfCRgbaFile.h
++    ImfChannelList.h
++    ImfChannelListAttribute.h
++    ImfCompressionAttribute.h
++    ImfDoubleAttribute.h
++    ImfFloatAttribute.h
++    ImfFrameBuffer.h
++    ImfHeader.h
++    ImfIO.h
++    ImfInputFile.h
++    ImfIntAttribute.h
++    ImfLineOrderAttribute.h
++    ImfMatrixAttribute.h
++    ImfOpaqueAttribute.h
++    ImfOutputFile.h
++    ImfRgbaFile.h
++    ImfStringAttribute.h
++    ImfVecAttribute.h
++    ImfHuf.h
++    ImfWav.h
++    ImfLut.h
++    ImfArray.h
++    ImfCompression.h
++    ImfLineOrder.h
++    ImfName.h
++    ImfPixelType.h
++    ImfVersion.h
++    ImfXdr.h
++    ImfConvert.h
++    ImfPreviewImage.h
++    ImfPreviewImageAttribute.h
++    ImfChromaticities.h
++    ImfChromaticitiesAttribute.h
++    ImfKeyCode.h
++    ImfKeyCodeAttribute.h
++    ImfTimeCode.h
++    ImfTimeCodeAttribute.h
++    ImfRational.h
++    ImfRationalAttribute.h
++    ImfFramesPerSecond.h
++    ImfStandardAttributes.h
++    ImfEnvmap.h
++    ImfEnvmapAttribute.h
++    ImfInt64.h
++    ImfRgba.h
++    ImfTileDescription.h
++    ImfTileDescriptionAttribute.h
++    ImfTiledInputFile.h
++    ImfTiledOutputFile.h
++    ImfTiledRgbaFile.h
++    ImfRgbaYca.h
++    ImfTestFile.h
++    ImfThreading.h
++    ImfB44Compressor.h
++    ImfStringVectorAttribute.h
++    ImfMultiView.h
++    ImfAcesFile.h
++)
++
++add_library(ilmimf ${ilmimf_SRCS})
++target_link_libraries(ilmimf ${ZLIB_LIBRARIES})
++
++install(TARGETS ilmimf
++    EXPORT OpenEXR_targets
++    RUNTIME DESTINATION bin
++    LIBRARY DESTINATION lib
++    ARCHIVE DESTINATION lib)
++
++install(FILES ${ilmimf_HDRS} DESTINATION include/openexr)
+diff -Nru -x '*~' openexr-1.7.0.orig/IlmImf/ImfPxr24Compressor.cpp openexr-1.7.0/IlmImf/ImfPxr24Compressor.cpp
+--- openexr-1.7.0.orig/IlmImf/ImfPxr24Compressor.cpp	2010-07-17 01:11:52.000000000 +0200
++++ openexr-1.7.0/IlmImf/ImfPxr24Compressor.cpp	2012-08-05 21:26:55.938408800 +0200
+@@ -62,7 +62,6 @@
+ //	string of bytes is compressed with zlib.
+ //
+ //-----------------------------------------------------------------------------
+-#define ZLIB_WINAPI 
+ 
+ #include <ImfPxr24Compressor.h>
+ #include <ImfHeader.h>
+diff -Nru -x '*~' openexr-1.7.0.orig/IlmImf/ImfZipCompressor.cpp openexr-1.7.0/IlmImf/ImfZipCompressor.cpp
+--- openexr-1.7.0.orig/IlmImf/ImfZipCompressor.cpp	2010-07-17 01:11:52.000000000 +0200
++++ openexr-1.7.0/IlmImf/ImfZipCompressor.cpp	2012-08-05 21:26:55.938408800 +0200
+@@ -39,7 +39,6 @@
+ //	class ZipCompressor
+ //
+ //-----------------------------------------------------------------------------
+-#define ZLIB_WINAPI
+ 
+ #include <ImfZipCompressor.h>
+ #include <ImfCheckedArithmetic.h>
+diff -Nru -x '*~' openexr-1.7.0.orig/OpenEXRConfig.cmake.in openexr-1.7.0/OpenEXRConfig.cmake.in
+--- openexr-1.7.0.orig/OpenEXRConfig.cmake.in	1970-01-01 01:00:00.000000000 +0100
++++ openexr-1.7.0/OpenEXRConfig.cmake.in	2012-08-05 23:11:55.878202600 +0200
+@@ -0,0 +1,17 @@
++# - Config file for the OpenEXR package
++# It defines the following variables
++#  OPENEXR_INCLUDE_DIRS - include directories for OpenEXR
++#  ILMIMF_LIBRARY       - the ilmimf library
++#  OPENEXR_LIBRARIES    - all the libraries to link against
++
++# Compute paths
++get_filename_component(OPENEXR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
++set(OPENEXR_INCLUDE_DIRS "${OPENEXR_CMAKE_DIR}/../../../include")
++
++# Our library dependencies (contains definitions for IMPORTED targets)
++include("${OPENEXR_CMAKE_DIR}/OpenEXRTargets.cmake")
++
++set(ILMIMF_LIBRARY ilmimf)
++@_OPENEXR_TOOLS@
++set(OPENEXR_LIBRARIES ${ILMIMF_LIBRARY})
++

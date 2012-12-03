@@ -20,7 +20,7 @@ class Notification:
         self.dryRun = False
 
     def setShortLog( self ):
-        log = open( self.logfile, 'r', encoding="windows-1252" )
+        log = open( self.logfile, 'r', encoding="latin-1" )
         logtext = log.readlines()[-20:]
         log.close()
         if self.error:
@@ -114,6 +114,7 @@ class LogUploadNotification( Notification ):
 class StatusNotification(Notification):
     """ this writes the status of the package into a file """
     def run( self, revision = None ):
+        return
         settings = common.settings.getSection( "StatusNotes", common.settings.getSection( "General" ) )
         if settings:
             self.setShortLog()
@@ -139,7 +140,7 @@ class StatusNotification(Notification):
                 if not os.path.exists( settings[ 'directory' ] ):
                     os.makedirs( settings[ 'directory' ] )
 
-                jsondump = open( filename, "w+", encoding="windows-1252" )
+                jsondump = open( filename, "w+", encoding="latin-1" )
                 jsondump.write( json.dumps( values, sort_keys=True, indent=4 ) )
                 jsondump.close()
             else:

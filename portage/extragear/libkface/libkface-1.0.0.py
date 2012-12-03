@@ -5,7 +5,6 @@ import info
 # deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
-        print "setTargets"
         self.svnTargets['gitHEAD'] = '[git]kde:libkface'
         self.defaultTarget = 'gitHEAD'
 

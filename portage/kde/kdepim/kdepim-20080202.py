@@ -5,12 +5,15 @@ class subinfo( info.infoclass ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdepim'
         self.defaultTarget = 'gitHEAD'
 
+        # Workaround BUG 302342
+        self.patchToApply['gitHEAD'] = ('fix_introduction_screen.diff', 1)
+
     def setDependencies( self ):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
-        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['kde/nepomuk-widgets'] = 'default'
         self.shortDescription = "KDE's Personal Information Management suite"
 
 from Package.CMakePackageBase import *

@@ -27,7 +27,10 @@ class QMakeBuildSystem(BuildSystemBase):
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
 
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
         # here follows some automatic configure tool detection
         # 1. search for configure.exe in the order
@@ -72,7 +75,10 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def make( self, options=""):
         """implements the make step for Qt projects"""
-        self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
         command = ' '.join([self.makeProgramm, self.makeOptions(options, maybeVerbose=False)])
 
@@ -81,11 +87,19 @@ class QMakeBuildSystem(BuildSystemBase):
     def install( self, options=None ):
         """implements the make step for Qt projects"""
 
+        # There is a bug in jom that parallel installation of qmake projects
+        # does not work. So just use the usual make programs. It's hacky but
+        # this was decided on the 2012 Windows sprint.
+        if compiler.isMSVC():
+            installmake="nmake /NOLOGO"
+        elif compiler.isMinGW():
+            installmake="mingw32-make"
+
         self.enterBuildDir()
         if options != None:
-            command = "%s %s" % ( self.makeProgramm, options )
+            command = "%s %s" % ( installmake, options )
         else:
-            command = "%s install" % ( self.makeProgramm )
+            command = "%s install" % ( installmake )
 
         return self.system( command )
 

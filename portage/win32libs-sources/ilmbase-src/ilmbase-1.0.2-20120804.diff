@@ -1,0 +1,291 @@
+diff -Nru -x '*~' ilmbase-1.0.2.orig/CMakeLists.txt ilmbase-1.0.2/CMakeLists.txt
+--- ilmbase-1.0.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/CMakeLists.txt	2012-08-06 10:19:40.428176400 +0200
+@@ -0,0 +1,36 @@
++project(ilmbase)
++cmake_minimum_required(VERSION 2.6)
++
++if(WIN32)
++    set(CONFIG_LOCATION config.windows)
++else(WIN32)
++    set(CONFIG_LOCATION config)
++endif(WIN32)
++
++option(BUILD_TESTS "build the test executables" ON)
++
++if(BUILD_TESTS)
++enable_testing()
++endif(BUILD_TESTS)
++
++include_directories(${CONFIG_LOCATION})
++install(FILES ${CONFIG_LOCATION}/IlmBaseConfig.h DESTINATION include)
++
++include_directories(Half)
++include_directories(Iex)
++
++add_subdirectory(Half)
++add_subdirectory(Iex)
++add_subdirectory(Imath)
++add_subdirectory(IlmThread)
++
++if(BUILD_TESTS)
++    add_subdirectory(HalfTest)
++    add_subdirectory(IexTest)
++    add_subdirectory(ImathTest)
++endif(BUILD_TESTS)
++
++set(IlmBase_targets Half Iex Imath IlmThread)
++install(EXPORT IlmBase_targets DESTINATION lib/cmake/IlmBase FILE IlmBaseTargets.cmake)
++
++install(FILES ${CMAKE_SOURCE_DIR}/IlmBaseConfig.cmake DESTINATION lib/cmake/IlmBase)
+diff -Nru -x '*~' ilmbase-1.0.2.orig/Half/CMakeLists.txt ilmbase-1.0.2/Half/CMakeLists.txt
+--- ilmbase-1.0.2.orig/Half/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/Half/CMakeLists.txt	2012-08-05 21:04:19.531275400 +0200
+@@ -0,0 +1,41 @@
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
++
++add_executable(eLut eLut.cpp)
++add_executable(toFLoat toFloat.cpp)
++
++add_custom_command(
++	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
++	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/eLut > ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
++	DEPENDS eLut
++)
++
++add_custom_command(
++	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
++	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/toFloat > ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
++	DEPENDS toFloat
++)
++	
++set_source_files_properties(
++	eLut.h toFloat.h
++	PROPERTIES GENERATED ON
++	)
++
++
++set (HALF_SOURCES
++	half.cpp
++	eLut.h
++	toFloat.h
++	)
++
++add_library(Half ${HALF_SOURCES})
++
++install(TARGETS Half EXPORT IlmBase_targets
++                     RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++
++install(FILES 
++	half.h
++	halfFunction.h
++	halfLimits.h
++	DESTINATION include)
+diff -Nru -x '*~' ilmbase-1.0.2.orig/HalfTest/CMakeLists.txt ilmbase-1.0.2/HalfTest/CMakeLists.txt
+--- ilmbase-1.0.2.orig/HalfTest/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/HalfTest/CMakeLists.txt	2012-08-06 02:14:50.714416800 +0200
+@@ -0,0 +1,17 @@
++include_directories(${CMAKE_SOURCE_DIR}/Half ${CMAKE_CURRENT_SOURCE_DIR})
++
++set(HalfTest_SRCS
++    main.cpp
++    testArithmetic.cpp
++    testBitPatterns.cpp
++    testClassification.cpp
++    testError.cpp
++    testFunction.cpp
++    testLimits.cpp
++    testSize.cpp
++)
++
++add_executable(HalfTest ${HalfTest_SRCS})
++target_link_libraries(HalfTest Half)
++
++add_test(HalfTest HalfTest)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' ilmbase-1.0.2.orig/Iex/CMakeLists.txt ilmbase-1.0.2/Iex/CMakeLists.txt
+--- ilmbase-1.0.2.orig/Iex/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/Iex/CMakeLists.txt	2012-08-05 21:04:19.541275400 +0200
+@@ -0,0 +1,20 @@
++set (Iex_SOURCES
++	IexBaseExc.cpp
++	IexThrowErrnoExc.cpp
++	)
++
++add_library(Iex ${Iex_SOURCES})
++
++install(TARGETS Iex EXPORT IlmBase_targets
++                    RUNTIME DESTINATION bin
++                    LIBRARY DESTINATION lib
++                    ARCHIVE DESTINATION lib)
++
++install(FILES 
++	Iex.h
++	IexBaseExc.h
++	IexErrnoExc.h
++	IexMacros.h
++	IexMathExc.h
++	IexThrowErrnoExc.h
++	DESTINATION include)
+diff -Nru -x '*~' ilmbase-1.0.2.orig/IexTest/CMakeLists.txt ilmbase-1.0.2/IexTest/CMakeLists.txt
+--- ilmbase-1.0.2.orig/IexTest/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/IexTest/CMakeLists.txt	2012-08-06 10:15:56.354360100 +0200
+@@ -0,0 +1,11 @@
++include_directories(${CMAKE_SOURCE_DIR}/Iex ${CMAKE_CURRENT_SOURCE_DIR})
++
++set(IexTest_SRCS
++    main.cpp
++    testBaseExc.cpp
++)
++
++add_executable(IexTest ${IexTest_SRCS})
++target_link_libraries(IexTest Iex)
++
++add_test(IexTest IexTest)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmBaseConfig.cmake ilmbase-1.0.2/IlmBaseConfig.cmake
+--- ilmbase-1.0.2.orig/IlmBaseConfig.cmake	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/IlmBaseConfig.cmake	2012-08-05 21:23:16.152746900 +0200
+@@ -0,0 +1,23 @@
++# - Config file for the FooBar package
++# It defines the following variables
++#  ILMBASE_INCLUDE_DIRS - include directories for IlmBase
++#  HALF_LIBRARY         - the half library
++#  IEX_LIBRARY          - the iex library
++#  IMATH_LIBRARY        - the imath library
++#  ILMTHREAD_LIBRARY    - the ilmthread library
++#  ILMBASE_LIBRARIES    - all the ilmbase libraries to link against
++
++# Compute paths
++get_filename_component(ILMBASE_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
++set(ILMBASE_INCLUDE_DIRS "${ILMBASE_CMAKE_DIR}/../../../include")
++
++# Our library dependencies (contains definitions for IMPORTED targets)
++include("${ILMBASE_CMAKE_DIR}/IlmBaseTargets.cmake")
++
++set(HALF_LIBRARY Half)
++set(IEX_LIBRARY Iex)
++set(ILMTHREAD_LIBRARY IlmThread)
++set(IMATH_LIBRARY Imath)
++
++set(ILMBASE_LIBRARIES ${HALF_LIBRARY} ${IEX_LIBRARY} ${ILMTHREAD_LIBRARY} ${IMATH_LIBRARY})
++
+diff -Nru -x '*~' ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt ilmbase-1.0.2/IlmThread/CMakeLists.txt
+--- ilmbase-1.0.2.orig/IlmThread/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/IlmThread/CMakeLists.txt	2012-08-05 21:04:19.541275400 +0200
+@@ -0,0 +1,28 @@
++set (IlmThread_SOURCES
++	IlmThread.cpp
++	IlmThreadMutex.cpp
++	IlmThreadMutexPosix.cpp
++	IlmThreadMutexWin32.cpp
++	IlmThreadPool.cpp
++	IlmThreadPosix.cpp
++	IlmThreadSemaphore.cpp
++	IlmThreadSemaphorePosix.cpp
++	IlmThreadSemaphorePosixCompat.cpp
++	IlmThreadSemaphoreWin32.cpp
++	IlmThreadWin32.cpp
++)
++
++add_library(IlmThread ${IlmThread_SOURCES})
++target_link_libraries(IlmThread Iex)
++
++install(TARGETS IlmThread EXPORT IlmBase_targets
++                          RUNTIME DESTINATION bin
++                          LIBRARY DESTINATION lib
++                          ARCHIVE DESTINATION lib)
++
++install(FILES 
++	IlmThread.h
++	IlmThreadMutex.h
++	IlmThreadPool.h
++	IlmThreadSemaphore.h
++	DESTINATION include)
+diff -Nru -x '*~' ilmbase-1.0.2.orig/Imath/CMakeLists.txt ilmbase-1.0.2/Imath/CMakeLists.txt
+--- ilmbase-1.0.2.orig/Imath/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/Imath/CMakeLists.txt	2012-08-05 21:04:19.551275500 +0200
+@@ -0,0 +1,49 @@
++set (Imath_SOURCES
++	ImathBox.cpp
++	ImathColorAlgo.cpp
++	ImathFun.cpp
++	ImathMatrixAlgo.cpp
++	ImathRandom.cpp
++	ImathShear.cpp
++	ImathVec.cpp
++)
++
++add_library(Imath ${Imath_SOURCES})
++target_link_libraries(Imath Iex)
++
++install(TARGETS Imath EXPORT IlmBase_targets
++                      RUNTIME DESTINATION bin
++                      LIBRARY DESTINATION lib
++                      ARCHIVE DESTINATION lib)
++
++install(FILES 
++	ImathBox.h
++	ImathBoxAlgo.h
++	ImathColor.h
++	ImathColorAlgo.h
++	ImathEuler.h
++	ImathExc.h
++	ImathFrame.h
++	ImathFrustum.h
++	ImathFun.h
++	ImathGL.h
++	ImathGLU.h
++	ImathHalfLimits.h
++	ImathInt64.h
++	ImathInterval.h
++	ImathLimits.h
++	ImathLine.h
++	ImathLineAlgo.h
++	ImathMath.h
++	ImathMatrix.h
++	ImathMatrixAlgo.h
++	ImathPlane.h
++	ImathPlatform.h
++	ImathQuat.h
++	ImathRandom.h
++	ImathRoots.h
++	ImathShear.h
++	ImathSphere.h
++	ImathVec.h
++	ImathVecAlgo.h
++	DESTINATION include)
+diff -Nru -x '*~' ilmbase-1.0.2.orig/ImathTest/CMakeLists.txt ilmbase-1.0.2/ImathTest/CMakeLists.txt
+--- ilmbase-1.0.2.orig/ImathTest/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ ilmbase-1.0.2/ImathTest/CMakeLists.txt	2012-08-06 10:20:02.847458700 +0200
+@@ -0,0 +1,27 @@
++include_directories(${CMAKE_SOURCE_DIR}/Imath ${CMAKE_CURRENT_SOURCE_DIR})
++
++set(ImathTest_SRCS
++    main.cpp
++    testExtractEuler.cpp
++    testExtractSHRT.cpp
++    testFrustum.cpp
++    testFun.cpp
++    testInvert.cpp
++    testMatrix.cpp
++    testRandom.cpp
++    testRoots.cpp
++    testShear.cpp
++    testColor.cpp
++    testQuatSetRotation.cpp
++    testLineAlgo.cpp
++    testQuatSlerp.cpp
++    testQuat.cpp
++    testBoxAlgo.cpp
++    testVec.cpp
++    testBox.cpp
++)
++
++add_executable(ImathTest ${ImathTest_SRCS})
++target_link_libraries(ImathTest Imath)
++
++add_test(ImathTest ImathTest)
+\ Kein Zeilenumbruch am Dateiende.

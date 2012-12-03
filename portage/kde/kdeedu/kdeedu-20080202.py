@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/marble'] = 'default'
         self.dependencies['kde/parley'] = 'default'
         self.dependencies['kde/rocs'] = 'default'
-        self.dependencies['kde/step'] = 'default'
+        # self.dependencies['kde/step'] = 'default'
 
 from Package.VirtualPackageBase import *
 

@@ -81,7 +81,7 @@ class package:
 
     def timestamp( self ):
         print(datetime.now().strftime("%m/%d/%Y %H:%M"))
-        log = open( self.logfile, 'a+', encoding="windows-1252" )
+        log = open( self.logfile, 'a+', encoding="latin-1" )
         log.write( datetime.now().strftime("%m/%d/%Y %H:%M") )
         log.close()
 
@@ -89,11 +89,11 @@ class package:
         """ runs emerge --print-revision for a specific package and returns the output """
         ## this function must replaced in case we are using the emerge API directly
         if not self.revision:
-            tempfile = open( os.path.join( logroot, "rev.tmp" ), "w+", encoding="windows-1252" )
+            tempfile = open( os.path.join( logroot, "rev.tmp" ), "w+", encoding="latin-1" )
             tempfile.close()
             if not self.system( "--print-revision -q %s%s/%s" % ( self.targetString, self.category, self.packageName ), os.path.join( logroot, "rev.tmp" ) ):
                 return ""
-            tempfile = open( os.path.join( logroot, "rev.tmp" ), "r+", encoding="windows-1252" )
+            tempfile = open( os.path.join( logroot, "rev.tmp" ), "r+", encoding="latin-1" )
             self.revision = tempfile.readline().strip()
             tempfile.close()
             os.remove( os.path.join( logroot, "rev.tmp" ) )
@@ -102,10 +102,10 @@ class package:
     def system( self, cmdstring, logfile ):
         """ runs an emerge command """
         cmdstring = emerge + " " + cmdstring
-        fstderr = open( logfile + ".tmp", 'w+', encoding="windows-1252" )
+        fstderr = open( logfile + ".tmp", 'w+', encoding="latin-1" )
         p = subprocess.Popen( cmdstring, shell=True, stdout=fstderr, stderr=fstderr )
         ret = p.wait()
-        log = open( logfile, 'a+', encoding="windows-1252" )
+        log = open( logfile, 'a+', encoding="latin-1")
         fstderr.seek( os.SEEK_SET )
         for line in fstderr:
             log.write( line )
@@ -311,8 +311,8 @@ if "localbotnotificationport" in general:
     try:
         s = socket.socket()
         s.connect( ( socket.gethostname(), port ) )
-        s.send( ("BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] )).encode("UTF-8") )
-        s.send( ("QUIT\r\n" ).encode("UTF-8") )
+        s.send( ("BUILDFINISHED %s %s\r\n" % ( general[ "platform" ], general[ "stage" ] )).encode("latin-1") )
+        s.send( ("QUIT\r\n" ).encode("latin-1") )
         s.close()
         print("send bot command BUILDFINISHED %s %s to %s:%s" % ( general[ "platform" ], general[ "stage" ], socket.gethostname(), port ))
     except socket.error:
