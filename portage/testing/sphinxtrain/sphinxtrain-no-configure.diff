@@ -1,0 +1,30 @@
+--- autogen.sh	2012-12-05 15:10:51.227364200 +0100
++++ autogen.sh	2012-12-05 15:11:49.130625000 +0100
+@@ -143,10 +143,3 @@
+ 
+ #conf_flags="--enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
+ 
+-if test x$NOCONFIGURE = x; then
+-  echo Running $srcdir/configure $conf_flags "$@" ...
+-  $srcdir/configure $conf_flags "$@" \
+-  && echo Now type \`make\' to compile $PKG_NAME
+-else
+-  echo Skipping configure process.
+-fi
+--- src/programs/bldtree/Makefile.am    (revision 11657)
++++ src/programs/bldtree/Makefile.am    (working copy)
+@@ -4,11 +4,11 @@
+ bldtree_SOURCES = main.c parse_cmd_ln.c parse_cmd_ln.h
+
+ LDADD = \
++       $(top_builddir)/src/libs/libmodinv/libmodinv.la \
++       $(top_builddir)/src/libs/libcommon/libcommon.la \
+        $(top_builddir)/src/libs/libclust/libclust.la \
+-       $(top_builddir)/src/libs/libcommon/libcommon.la \
+        $(top_builddir)/src/libs/libio/libio.la \
+-       $(top_builddir)/src/libs/libmllr/libmllr.la \
+-       $(top_builddir)/src/libs/libmodinv/libmodinv.la
++       $(top_builddir)/src/libs/libmllr/libmllr.la
+
+
+ INCLUDES = -I$(top_srcdir)/include

@@ -1,0 +1,24 @@
+--- autogen.sh	2012-12-05 15:10:51.227364200 +0100
++++ autogen.sh	2012-12-05 15:11:49.130625000 +0100
+@@ -143,10 +143,3 @@
+ 
+ #conf_flags="--enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
+ 
+-if test x$NOCONFIGURE = x; then
+-  echo Running $srcdir/configure $conf_flags "$@" ...
+-  $srcdir/configure $conf_flags "$@" \
+-  && echo Now type \`make\' to compile $PKG_NAME
+-else
+-  echo Skipping configure process.
+-fi
+--- include/sphinxbase/ad.h     (revision 11656)
++++ include/sphinxbase/ad.h     (working copy)
+@@ -108,7 +108,7 @@
+ #if defined (__CYGWIN__)
+ #include <w32api/windows.h>
+ #include <w32api/mmsystem.h>
+-#elif (defined(WIN32) && !defined(GNUWINCE)) || defined(_WIN32_WCE)
++#elif (defined(WIN32) && !defined(GNUWINCE)) || defined(_WIN32_WCE) || defined(__MINGW32__)
+ #include <windows.h>
+ #include <mmsystem.h>
+ #elif defined(AD_BACKEND_JACK)
