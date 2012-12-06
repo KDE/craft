@@ -94,6 +94,7 @@ diff -Nru -x '*~' lcms2-2.3.orig/src/CMakeLists.txt lcms2-2.3/src/CMakeLists.txt
 +endif(WIN32)
 +
 +set(lcms_SRCS
++    cmshalf.c
 +    cmscam02.c
 +    cmscgats.c
 +    cmscnvrt.c
