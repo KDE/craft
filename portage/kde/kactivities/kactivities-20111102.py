@@ -4,7 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kactivities'
-        self.defaultTarget = 'gitHEAD'
+        for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
+            self.svnTargets[version] = '[git]kde:kactivities|KDE/%s|' % version
+        self.defaultTarget = '4.9'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
