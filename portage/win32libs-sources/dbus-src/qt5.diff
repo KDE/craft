@@ -1,0 +1,33 @@
+From a942d1543f4d87db821c5836986129dea79a173d Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@kdab.com>
+Date: Thu, 16 Feb 2012 08:43:40 +0100
+Subject: [PATCH] dbus-protocol.h: compile under C++11
+
+C++11 compilers have a feature called 'user-defined string literals' which
+allow arbitrary string suffixes to have user-defined meaning.
+
+This makes code that concatenates macros with string literals without
+intervening whitespace illegal under C++11. Fortunately, string literal
+concatenation has allowed intervening whitespace since the dawn of time,
+so the solution is to simply pad with spaces.
+
+Tested (header) with GCC 4.7 (trunk).
+---
+ dbus/dbus-protocol.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/dbus/dbus-protocol.h b/dbus/dbus-protocol.h
+index 8aa15e5..60605ab 100644
+--- a/dbus/dbus-protocol.h
++++ b/dbus/dbus-protocol.h
+@@ -456,7 +456,7 @@ extern "C" {
+ /** XML system identifier of the introspection format version 1.0 */
+ #define DBUS_INTROSPECT_1_0_XML_SYSTEM_IDENTIFIER "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd"
+ /** XML document type declaration of the introspection format version 1.0 */
+-#define DBUS_INTROSPECT_1_0_XML_DOCTYPE_DECL_NODE "<!DOCTYPE node PUBLIC \""DBUS_INTROSPECT_1_0_XML_PUBLIC_IDENTIFIER"\"\n\""DBUS_INTROSPECT_1_0_XML_SYSTEM_IDENTIFIER"\">\n"
++#define DBUS_INTROSPECT_1_0_XML_DOCTYPE_DECL_NODE "<!DOCTYPE node PUBLIC \"" DBUS_INTROSPECT_1_0_XML_PUBLIC_IDENTIFIER "\"\n\"" DBUS_INTROSPECT_1_0_XML_SYSTEM_IDENTIFIER "\">\n"
+ 
+ /** @} */
+ 
+-- 
+1.7.2.3

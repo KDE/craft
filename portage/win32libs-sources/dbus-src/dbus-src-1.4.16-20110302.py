@@ -30,11 +30,13 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.4.0'] = 'dbus-1.4.0'
         self.targetConfigurePath['1.4.0'] = 'cmake'
 
-        for ver in ['1.4.1','1.4.16']:
+        for ver in ['1.4.1','1.4.16','1.6.8']:
             self.targets[ver] = 'http://dbus.freedesktop.org/releases/dbus/dbus-%s.tar.gz' % ver
             self.targetInstSrc[ver] = 'dbus-%s' % ver
             self.targetConfigurePath[ver] = 'cmake'
         self.targetDigests['1.4.1'] = '112279ff58305027294fe0eb5bee600f68cf0b50'
+        self.targetDigests['1.4.16'] = 'd6e6538cfc1ed71992f6786a6da55d815d995b5b'
+        self.targetDigests['1.6.8'] = 'd9634807d1de9b64727ae2178e3af2227fca0fca'
        
 
         for ver in ['1.4.6', '1.4.8', '1.4.10', '1.4.12', '1.4.14']:
@@ -75,7 +77,8 @@ class subinfo(info.infoclass):
             self.patchToApply['1.4.10'] = [('workaround-for-inline-keyword-in-msvc10.patch', 1),
                                            ('16e6236b8310d41d0f21923bb87fa4cf148919d0.patch', 1)
                                          ]
-
+            self.patchToApply['1.4.16'] = [('qt5.diff', 1),]
+            self.patchToApply['1.6.8'] = [('qt5.diff', 1),]
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.4.0'
