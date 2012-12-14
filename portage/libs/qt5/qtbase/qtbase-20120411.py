@@ -19,7 +19,7 @@ from Package.QMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git"
+        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git|stable"
         self.shortDescription = "a cross-platform application framework"
         # If you change the default target here please do not forget to rename the portage file
         self.defaultTarget = 'gitHEAD'
@@ -34,9 +34,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/perl'] = 'default'
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/dbus'] = 'default'
-        self.dependencies['testing/mysql-pkg'] = 'default'
-        self.dependencies['win32libs-bin/jpeg'] = 'default'
-        self.dependencies['win32libs-bin/libpng'] = 'default'
+        self.dependencies['binary/mysql-pkg'] = 'default'
 
 class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -52,6 +50,14 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         GitSource.__init__(self)
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
+        
+        # get instance of dbus and openssl package
+        self.openssl = portage.getPackageInstance('win32libs-bin', 'openssl')
+        if self.buildType() == "Debug":
+            self.dbus = portage.getPackageInstance('win32libs-sources', 'dbus-src')
+        else:
+            self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
+        self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
 
 
     def configure( self, unused1=None, unused2=""):
@@ -62,11 +68,14 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         self.setPathes()
 
 
+        incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+        libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
+        incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
+        libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+        incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
+        libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
+        libdirs += " -l libmysql "
         
-
-        kderoot = os.getenv("KDEROOT")
-        incdirs = " -I \"" + os.path.join( kderoot , "include" ) + "\""
-        libdirs = " -L \"" + os.path.join( kderoot, "lib" ) + "\" "
 
 
         configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
@@ -75,20 +84,18 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
         command += "-qt-libjpeg "
-        command += "-l libmysql "
-
-
-
-        # all builds
-        #command += "-no-phonon "
-        command += "-qdbus -dbus-linked "
+        command += "-qt-zlib "
+        command += "-qdbus -dbus-linked "#wont ubuild yet
         command += "-openssl-linked "
-        command += "-qt-zlib "#with system-zlib it tries to ling with zdll.lib with msvc ...
-        command += "-no-fast -no-vcproj -no-dsp "
+        command += "-no-vcproj "
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
+        command += "-c++11 "
+        if compiler.isMinGW():#we dont want to have to install the direct x sdk for mingw....
+            command += "-opengl desktop "
         command += "%s %s" % ( incdirs, libdirs )
        
         command += "-ltcg "
+       
 
         if self.buildType() == "Debug":
           command += " -debug "
