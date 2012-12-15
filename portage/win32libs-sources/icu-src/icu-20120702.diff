@@ -1,6 +1,6 @@
 diff -Nru -x '*~' icu.orig/source/tools/toolutil/pkg_genc.c icu/source/tools/toolutil/pkg_genc.c
 --- icu.orig/source/tools/toolutil/pkg_genc.c	2012-04-05 23:46:28.000000000 +0300
-+++ icu/source/tools/toolutil/pkg_genc.c	2012-07-02 14:46:45.017000200 +0300
++++ source/tools/toolutil/pkg_genc.c	2012-07-02 14:46:45.017000200 +0300
 @@ -5,6 +5,12 @@
   */
  #include "unicode/utypes.h"
