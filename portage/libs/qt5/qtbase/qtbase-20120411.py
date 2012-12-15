@@ -117,10 +117,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def install( self ):
         if not QMakeBuildSystem.install(self):
             return False
-
-        # create qt.conf
-        utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
-
+            
         # install msvc debug files if available
         if compiler.isMSVC():
             srcdir = os.path.join( self.buildDir(), "lib" )

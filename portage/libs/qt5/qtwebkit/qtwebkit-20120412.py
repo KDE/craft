@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qtwebkit/qt5-module.git|stable" 
+        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qtwebkit/qt5-module.git" 
 
         self.defaultTarget = "gitHEAD"
 
@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['gnuwin32/flex'] = 'default'
         self.buildDependencies['gnuwin32/bison'] = 'default'
         self.buildDependencies['gnuwin32/gperf'] = 'default'
+        self.buildDependencies['dev-util/ruby'] = 'default'
         
 
 from Package.Qt5CorePackageBase import *
