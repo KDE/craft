@@ -67,32 +67,22 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         self.enterBuildDir()
         self.setPathes()
 
-
-        incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
-        libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
-        incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
-        libdirs += " -l libmysql "
-        
-
-
         configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, self.imageDir(), self.platform )
-        command += "-plugin-sql-odbc -plugin-sql-mysql "
+        command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-zlib "
-        command += "-qdbus -dbus-linked "#wont ubuild yet
         command += "-openssl-linked "
         command += "-no-vcproj "
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "-c++11 "
+        command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
+        command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        command += " OPENSSL_PATH=%s " % self.openssl.installDir()
         if compiler.isMinGW():#we dont want to have to install the direct x sdk for mingw....
             command += "-opengl desktop "
-        command += "%s %s" % ( incdirs, libdirs )
        
         command += "-ltcg "
        
