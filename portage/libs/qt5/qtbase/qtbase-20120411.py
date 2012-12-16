@@ -8,7 +8,7 @@ import portage
 import emergePlatform
 import compiler
 
-from Package.QMakeBuildSystem import *
+from Package.QMakePackageBase import *
 
 # ok we need something more here
 # dbus-lib
@@ -34,10 +34,10 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
 
-class Package(QMakeBuildSystem):
+class Package(QMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        QMakeBuildSystem.__init__(self)
+        QMakePackageBase.__init__(self)
         if not self.subinfo.options.useShortPathes \
                 and compiler.isMinGW()  and len(self.rootdir) > 10:
             # mingw4 cannot compile qt if the command line arguments
@@ -70,7 +70,7 @@ class Package(QMakeBuildSystem):
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "-c++11 "
         command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
-        command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        # command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         if os.getenv("DXSDK_DIR") == "":
             command += "-opengl desktop "
