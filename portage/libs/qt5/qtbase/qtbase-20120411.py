@@ -8,7 +8,7 @@ import portage
 import emergePlatform
 import compiler
 
-from Package.Qt5CorePackageBase import *
+from Package.QMakeBuildSystem import *
 
 # ok we need something more here
 # dbus-lib
@@ -29,14 +29,15 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
+        self.buildDependencies['gnuwin32/bison'] = 'default'
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
 
-class Package(Qt5CorePackageBase):
+class Package(QMakeBuildSystem):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        Qt5CorePackageBase.__init__(self)
+        QMakeBuildSystem.__init__(self)
         if not self.subinfo.options.useShortPathes \
                 and compiler.isMinGW()  and len(self.rootdir) > 10:
             # mingw4 cannot compile qt if the command line arguments
@@ -69,7 +70,7 @@ class Package(Qt5CorePackageBase):
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "-c++11 "
         command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
-        # command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         if os.getenv("DXSDK_DIR") == "":
             command += "-opengl desktop "
