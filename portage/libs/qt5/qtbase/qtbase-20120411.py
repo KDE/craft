@@ -95,6 +95,7 @@ class Package(QMakePackageBase):
     def install( self ):
         if not QMakeBuildSystem.install(self):
             return False
+        utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
             
         # install msvc debug files if available
         if compiler.isMSVC():
