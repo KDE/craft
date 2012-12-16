@@ -24,14 +24,11 @@ class subinfo(info.infoclass):
         # If you change the default target here please do not forget to rename the portage file
         self.defaultTarget = 'gitHEAD'
 
-        ## \todo this is prelimary  and may be changed
-        self.options.package.packageName = 'qt'
-        self.options.package.specialMode = True
-
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
@@ -61,9 +58,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
 
     def configure( self, unused1=None, unused2=""):
-        #self.enterSourceDir()
-        #utils.system( "perl init-repository -f" )
-        
         self.enterBuildDir()
         self.setPathes()
 
@@ -74,14 +68,13 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-zlib "
-        command += "-openssl-linked "
         command += "-no-vcproj "
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "-c++11 "
         command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
         command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
-        command += " OPENSSL_PATH=%s " % self.openssl.installDir()
-        if compiler.isMinGW():#we dont want to have to install the direct x sdk for mingw....
+        command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
+        if os.getenv("DXSDK_DIR") == "":
             command += "-opengl desktop "
        
         command += "-ltcg "
@@ -98,10 +91,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
     def make(self, unused=''):
         self.setPathes()
-
-        QMakeBuildSystem.make(self)
-
-        return True
+        return QMakeBuildSystem.make(self)
 
 
     def install( self ):
