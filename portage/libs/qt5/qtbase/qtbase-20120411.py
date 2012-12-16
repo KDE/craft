@@ -8,7 +8,7 @@ import portage
 import emergePlatform
 import compiler
 
-from Package.QMakePackageBase import *
+from Package.Qt5CorePackageBase import *
 
 # ok we need something more here
 # dbus-lib
@@ -33,10 +33,10 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
 
-class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
+class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
+        Qt5CorePackageBase.__init__(self)
         if not self.subinfo.options.useShortPathes \
                 and compiler.isMinGW()  and len(self.rootdir) > 10:
             # mingw4 cannot compile qt if the command line arguments
@@ -44,9 +44,6 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             utils.warning('for mingw4, rootdir %s is too long for full path names.'
                 ' Using short path names.' % self.rootdir)
             self.subinfo.options.useShortPathes = True
-        GitSource.__init__(self)
-        QMakeBuildSystem.__init__(self)
-        KDEWinPackager.__init__(self)
         
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-bin', 'openssl')
@@ -72,7 +69,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "-c++11 "
         command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
-        command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        # command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         if os.getenv("DXSDK_DIR") == "":
             command += "-opengl desktop "
