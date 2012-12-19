@@ -4,9 +4,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.8.6'] = "ftp://ftp.ruby-lang.org/pub/ruby/binaries/mswin32/ruby-1.8.6-i386-mswin32.zip"
-        self.defaultTarget = '1.8.6'
-        self.targetMergePath['1.8.6'] = 'dev-utils'
+        self.targets['1.9.2'] = "ftp://ftp.ruby-lang.org/pub/ruby/binaries/mswin32/ruby-1.9.2-p136-i386-mswin32.zip"
+        self.defaultTarget = '1.9.2'
+        self.targetDigests['1.9.2'] = 'e8cbc6215d1f08433b105661a1ac72c197e2e5b1'
+        self.targetMergePath['1.9.2'] = 'dev-utils'
 
 from Package.BinaryPackageBase import *
 
