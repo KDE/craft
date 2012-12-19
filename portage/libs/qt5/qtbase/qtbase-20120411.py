@@ -33,6 +33,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs-bin/openssl'] = 'default'
         self.dependencies['win32libs-bin/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
+        self.dependencies['win32libs-sources/icu-src'] = 'default'
 
 class Package(QMakePackageBase):
     def __init__( self, **args ):
@@ -53,6 +54,7 @@ class Package(QMakePackageBase):
         else:
             self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
         self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
+        self.icu = portage.getPackageInstance('win32libs-sources','icu-src')
 
 
     def configure( self, unused1=None, unused2=""):
@@ -70,8 +72,9 @@ class Package(QMakePackageBase):
         command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
         command += "-c++11 "
         command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
-        # command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
+        command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
         if os.getenv("DXSDK_DIR") == "":
             command += "-opengl desktop "
        
