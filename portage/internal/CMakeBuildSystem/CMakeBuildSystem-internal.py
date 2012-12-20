@@ -8,15 +8,10 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/jom'] = 'default'
 
         if compiler.isMinGW():
-            if compiler.isMinGW_W64():
+            if compiler.isMinGW_WXX():
                 self.buildDependencies['dev-util/mingw-w64']    = 'default'
-            elif compiler.isMinGW_ARM():
+            elif emergePlatform.buildArchitecture() == 'arm-wince':
                 self.buildDependencies['dev-util/cegcc-arm-wince'] = 'default'
-            else:
-                if compiler.isMinGW32():
-                    self.buildDependencies['dev-util/mingw4']    = 'default'
-                else:
-                    self.buildDependencies['dev-util/mingw-w32']    = 'default'
 
 from Package.InternalPackageBase import *
 
