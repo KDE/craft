@@ -4,6 +4,7 @@ import os
 import info
 import emergePlatform
 import compiler
+import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -17,6 +18,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
+        if compiler.isMinGW():
+            self.buildDependencies['dev-util/msys'] = 'default'
 
 from Package.CMakePackageBase import *
 
@@ -44,6 +47,15 @@ class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
+        
+    def install(self):
+        if not AutoToolsPackageBase.install(self):
+            return False
+        files = os.listdir(os.path.join( self.installDir() , "lib" ))
+        for dll in files:
+            if dll.endswith(".dll"):
+                utils.copyFile( os.path.join( self.installDir() , "lib" ,dll) , os.path.join( self.installDir(), "bin" ,dll) )
+        return True
         
 if compiler.isMinGW():
     class Package(PackageMSys):
