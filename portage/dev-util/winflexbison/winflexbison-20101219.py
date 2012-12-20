@@ -8,9 +8,9 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.targets[ "1.1" ] = "http://downloads.sourceforge.net/winflexbison/win_flex_bison-1.1.zip"
-        self.targetDigests['1.1'] = '2edbad2d148d0787ef3c8fcbd108b5d694fd8eae'
-        self.defaultTarget = "1.1"
+        self.targets[ "1.2" ] = "http://downloads.sourceforge.net/winflexbison/win_flex_bison-1.2.zip"
+        self.targetDigests['1.2'] = 'e8896393f4a4e196f23a1f017f2a1c1d1b290f5a'
+        self.defaultTarget = "1.2"
 
     def setDependencies( self ):
         self.buildDependencies['gnuwin32/wget'] = 'default'
