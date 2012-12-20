@@ -2,13 +2,13 @@ import utils
 import shutil
 import os
 import info
+import emergePlatform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in [ "20111031", "20111101" ]:
-            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
-        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-4.7.2-release-win64_rubenvb.7z"
-        self.targetDigests['4.7.2'] = '26176fa67128e6f43a69dcce6801a385b2176ac2'
+        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture() 
+        if( emergePlatform.buildArchitecture() == 'x64' ):
+            self.targetDigests['4.7.2'] = 'e4cc0963bbfe632fd4f7170767f5654ee6adb3c9'
         self.defaultTarget = "4.7.2"
 
     def setDependencies( self ):
