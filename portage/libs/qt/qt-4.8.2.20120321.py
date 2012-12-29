@@ -92,7 +92,7 @@ class subinfo(info.infoclass):
             ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0),
             ('patches/4.8.1/Use-windows-path-for-pkgconfig-mkdir_p_asstring.patch', 1),
             ('patches/4.8/moc-boost-fix-bug-22829.diff', 1),
-            ('patches/4.8.3/fix-MinGW-w64-compilation.patch', 1)
+            ('patches/4.8.3/fix-MinGW-w64-compilation.patch', 1),
             ("patches/4.8.3/don't set QT_BUILD_DIR as a side effect.patch",1)
         ]
 
