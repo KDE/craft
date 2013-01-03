@@ -1,15 +1,13 @@
 
-#      this file sets some environment variables that are needed
+#    this file sets some environment variables that are needed
 #    for finding programs and libraries etc.
-#    by Holger Schroeder <schroder@kde.org>
-#    by Patrick Spendrin <ps_ml@gmx.de>
-
-#    you should copy kdesettings-example.bat to ..\etc\kdesettings.bat
+#    by patrick von Reth <vonreth@kde.org>
+#    you should copy kdesettings.ini to ..\etc\kdesettings.ini
 #    and adapt it to your needs (see that file for more info)
 
 #    this file should contain all path settings - and provide thus an environment
 #    to build and run kde programs
-#    this file sources the kdesettings.bat file automatically
+#    based on kdeenv.bat
 
 cls
 
@@ -62,21 +60,28 @@ function readINI([string] $fileName)
   $ini
 }
 
+function prependPATH([string] $path)
+{
+    $env:PATH="$path;$env:PATH"
+}
+
 function path-mingw()
 {
     if(test-path -path "$env:KDEROOT\mingw\bin")
     {
-        $env:PATH="$env:KDEROOT\mingw\bin;$env:PATH"
+        prependPATH "$env:KDEROOT\mingw\bin"
     }
     else 
     {
         if(test-path -path "$env:KDEROOT\mingw64\bin")
         {
-            $env:PATH="$env:KDEROOT\mingw64\bin;$env:PATH"
+            prependPATH "$env:KDEROOT\mingw64\bin"
         }
         else
-        { #dont know which version
-             $env:PATH="$env:KDEROOT\mingw64\bin;$env:KDEROOT\mingw\bin;$env:PATH"
+        { 
+            #dont know which version
+            prependPATH "$env:KDEROOT\mingw64\bin"
+            prependPATH "$env:KDEROOT\mingw\bin"
         }
     }
 }
@@ -100,6 +105,16 @@ function path-msvc()
     popd
 }
 
+function setupCCACHE()
+{
+    if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true)
+    {
+        $env:CCACHE_DIR="$env:KDEROOT\build\CCACHE"
+        $env:CXX="ccache g++"
+        $env:CC="ccache gcc"
+        $env:EMERGE_MAKE_PROGRAM="jom /E"
+    }
+}
 
 
 $env:EMERGE_BUILDTYPE="RelWithDebInfo"
@@ -145,6 +160,7 @@ subst "KDEGITDIR" $settings["Paths"]["KDEGITDIR"] $settings["ShortPath"]["EMERGE
 if ($settings["General"]["KDECOMPILER"] -eq "mingw4")
 { 
     path-mingw
+    setupCCACHE
 }
 else
 {
@@ -155,19 +171,18 @@ else
 }
 
 
-$env:PATH="$env:KDEROOT\bin;$env:PATH"
+prependPATH "$env:KDEROOT\bin"
 $env:QT_PLUGIN_PATH="$env:KDEROOT\plugins;$env:KDEROOT\lib\kde4\plugins"
 $env:XDG_DATA_DIRS="$env:KDEROOT\share"
 
 # for emerge
-$env:PATH="$env:KDEROOT\emerge\bin;$env:PATH"
+prependPATH "$env:KDEROOT\emerge\bin"
 
 # for dev-utils
-$env:PATH="$env:KDEROOT\dev-utils\bin;$env:PATH"
+prependPATH  "$env:KDEROOT\dev-utils\bin"
 
-$env:PATH="$env:KDEROOT\bin;$env:PATH"
 #todo:get pythonpath from registry
-$env:PATH="$env:PATH;"+$settings["Paths"]["PYTHONPATH"]
+prependPATH $settings["Paths"]["PYTHONPATH"]
 
 $env:HOME=$env:USERPROFILE
 $env:SVN_SSH="plink"
