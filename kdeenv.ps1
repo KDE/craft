@@ -17,20 +17,6 @@ $dp0=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
 
- $env:EMERGE_BUILDTYPE="RelWithDebInfo"
-
-foreach($arg in $args)
-{
-if($arg.ToString().ToLower() -is  @("debug","release","relwithdebinfo"))
-{
-    $env:EMERGE_BUILDTYPE=$arg
-}
-else
-{
-    $APPLICATION=$arg
-}
-
-}
 function subst([string] $varname, [string] $path, [string] $drive)
 {
     foreach($key in $settings["Paths"].keys)
@@ -76,6 +62,60 @@ function readINI([string] $fileName)
   $ini
 }
 
+function path-mingw()
+{
+    if(test-path -path "$env:KDEROOT\mingw\bin")
+    {
+        $env:PATH="$env:KDEROOT\mingw\bin;$env:PATH"
+    }
+    else 
+    {
+        if(test-path -path "$env:KDEROOT\mingw64\bin")
+        {
+            $env:PATH="$env:KDEROOT\mingw64\bin;$env:PATH"
+        }
+        else
+        { #dont know which version
+             $env:PATH="$env:KDEROOT\mingw64\bin;$env:KDEROOT\mingw\bin;$env:PATH"
+        }
+    }
+}
+
+function path-msvc()
+{
+    if($env:VS110COMNTOOLS -eq "")
+    {
+        Write-Host("Couldnt find msvc installation")
+    }
+    #http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
+    pushd "$env:VS110COMNTOOLS\..\..\VC"
+    cmd /c "vcvarsall.bat&set" |
+    foreach {
+      if ($_ -match "=") {        
+        $v = $_.split("=")
+        set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+        #Write-Host("$v[0]=$v[1]")
+      }
+    }
+    popd
+}
+
+
+
+$env:EMERGE_BUILDTYPE="RelWithDebInfo"
+
+foreach($arg in $args)
+{
+if($arg.ToString().ToLower() -is  @("debug","release","relwithdebinfo"))
+{
+    $env:EMERGE_BUILDTYPE=$arg
+}
+else
+{
+    $APPLICATION=$arg
+}
+
+}
 
 
 if(test-path -path $dp0\..\etc\kdesettings.ini)
@@ -102,30 +142,17 @@ subst "KDEGITDIR" $settings["Paths"]["KDEGITDIR"] $settings["ShortPath"]["EMERGE
 
 
 
-function path-mingw()
-{
-    if(test-path -path "$env:KDEROOT\mingw\bin")
-    {
-        $env:PATH="$env:KDEROOT\mingw\bin;$env:PATH"
-    }
-    else 
-    {
-        if(test-path -path "$env:KDEROOT\mingw64\bin")
-        {
-            $env:PATH="$env:KDEROOT\mingw64\bin;$env:PATH"
-        }
-        else
-        { #dont know which version
-             $env:PATH="$env:KDEROOT\mingw64\bin;$env:KDEROOT\mingw\bin;$env:PATH"
-        }
-    }
-}
-
 if ($settings["General"]["KDECOMPILER"] -eq "mingw4")
 { 
     path-mingw
 }
-
+else
+{
+    if(([string]$settings["General"]["KDECOMPILER"]).StartsWith("msvc"))
+    {
+        path-msvc
+    }
+}
 
 
 $env:PATH="$env:KDEROOT\bin;$env:PATH"
