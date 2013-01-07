@@ -175,9 +175,6 @@ prependPATH "$env:KDEROOT\bin"
 $env:QT_PLUGIN_PATH="$env:KDEROOT\plugins;$env:KDEROOT\lib\kde4\plugins"
 $env:XDG_DATA_DIRS="$env:KDEROOT\share"
 
-# for emerge
-prependPATH "$env:KDEROOT\emerge\bin"
-
 # for dev-utils
 prependPATH  "$env:KDEROOT\dev-utils\bin"
 
@@ -197,6 +194,7 @@ Write-Host("PYTHONPATH  : " + $settings["Paths"]["PYTHONPATH"])
 Write-Host("DOWNLOADDIR : ${env:DOWNLOADDIR}")
 
 }
+
 
 function emerge()
 {
