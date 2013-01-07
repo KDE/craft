@@ -10,12 +10,11 @@ import compiler
 
 from Package.Qt5CorePackageBase import *
 
-# ok we need something more here
-# dbus-lib
-# openssl-lib
-# we can't use kde-root/include because we get conflicting includes then
-# we have to make sure that the compiler picks up the correct ones!
-# --> fetch the two libs above, unpack them into a separate folder
+# there is a bug in qmake which results in install targets like
+# V:${INSTALL_ROOT}\build\libs\qtbase\bin
+# that is why I remove the first two character of installroot in Qt5CorePackageBase
+# and why I set the prefix to the first 3 chars of KDEROOT
+# its a ugly hack based on bugs but it works somehow
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -62,7 +61,7 @@ class Package(Qt5CorePackageBase):
         self.setPathes()
 
         configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT"), self.platform )
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT")[0:3], self.platform )
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
@@ -75,7 +74,6 @@ class Package(Qt5CorePackageBase):
         command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
-        command += " -I \"V:/build/libs/qtbase-20120411/work/mingw4-RelWithDebInfo-gitHEAD/include/QtCore/5.0.0/QtCore\""
         if os.getenv("DXSDK_DIR") == None:
             command += "-opengl desktop "
        
