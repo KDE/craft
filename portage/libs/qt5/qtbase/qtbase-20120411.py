@@ -8,7 +8,7 @@ import portage
 import emergePlatform
 import compiler
 
-from Package.QMakePackageBase import *
+from Package.Qt5CorePackageBase import *
 
 # ok we need something more here
 # dbus-lib
@@ -35,10 +35,10 @@ class subinfo(info.infoclass):
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs-sources/icu-src'] = 'default'
 
-class Package(QMakePackageBase):
+class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        QMakePackageBase.__init__(self)
+        Qt5CorePackageBase.__init__(self)
         if not self.subinfo.options.useShortPathes \
                 and compiler.isMinGW()  and len(self.rootdir) > 10:
             # mingw4 cannot compile qt if the command line arguments
@@ -62,7 +62,7 @@ class Package(QMakePackageBase):
         self.setPathes()
 
         configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, self.imageDir(), self.platform )
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT"), self.platform )
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
@@ -75,7 +75,8 @@ class Package(QMakePackageBase):
         command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
-        if os.getenv("DXSDK_DIR") == "":
+        command += " -I \"V:/build/libs/qtbase-20120411/work/mingw4-RelWithDebInfo-gitHEAD/include/QtCore/5.0.0/QtCore\""
+        if os.getenv("DXSDK_DIR") == None:
             command += "-opengl desktop "
        
         command += "-ltcg "
@@ -92,11 +93,12 @@ class Package(QMakePackageBase):
 
     def make(self, unused=''):
         self.setPathes()
-        return QMakeBuildSystem.make(self)
+        return Qt5CorePackageBase.make(self)
 
 
     def install( self ):
-        if not QMakeBuildSystem.install(self):
+        self.setPathes()
+        if not Qt5CorePackageBase.install(self):
             return False
         utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
             
@@ -117,10 +119,7 @@ class Package(QMakePackageBase):
          
     def setPathes( self ):
          # for building qt with qmake       
-        utils.prependPath(os.path.join(self.buildDir(),"qtbase","bin"))
-        utils.prependPath(os.path.join(self.sourceDir(),"qtbasebin"))
-        utils.prependPath(os.path.join(self.sourceDir(),"qtrepotools","bin"))
-        utils.prependPath(os.path.join(self.sourceDir(),"gnuwin32","bin"))
+        utils.prependPath(os.path.join(self.buildDir(),"bin"))
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
         utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))

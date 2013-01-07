@@ -15,10 +15,11 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__( self ):
         QMakeBuildSystem.__init__(self)
         utils.putenv( "QMAKESPEC", os.path.join(os.getenv("KDEROOT"), 'mkspecs', self.platform ))
-        os.putenv("INSTALL_ROOT",self.imageDir()[2:])#the image dir without the drive letter
+        
 
-    def install( self, options=None ):
+    def install( self, options=""):
        """implements the make step for Qt projects"""
+       options += " INSTALL_ROOT=%s install" % self.imageDir()[2:]
        if not QMakeBuildSystem.install( self ,options):
            return False
        if not  os.path.exists(os.path.join( self.installDir(), "bin" )):
