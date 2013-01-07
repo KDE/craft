@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtscript'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *
@@ -18,7 +19,6 @@ class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         Qt5CorePackageBase.__init__( self )
-        # self.subinfo.options.configure.defines = " INCLUDEPATH+=v:/include QMAKE_LIBS+=-Lv:/lib "
        
 
         
