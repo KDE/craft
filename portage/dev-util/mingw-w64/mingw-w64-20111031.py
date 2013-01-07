@@ -7,7 +7,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in [ "20111031", "20111101" ]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
-        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-w64-mingw32-gcc-4.7.2-release-win64_rubenvb.7z"
+        
+        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture() 
+        self.targetDigests['4.7.2'] = 'e4cc0963bbfe632fd4f7170767f5654ee6adb3c9'
 
         self.defaultTarget = "20111031"
 
@@ -21,11 +23,6 @@ class Package(BinaryPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)
-
-    def install(self):
-#        utils.applyPatch( self.imageDir(), os.path.join( self.packageDir(), "gcc_Exit.diff"), 1 )
-#        shutil.copy(os.path.join( self.installDir() , "mingw64" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw64" , "bin" , "mingw32-make.exe") )
-        return True
 
 if __name__ == '__main__':
     Package().execute()
