@@ -59,8 +59,8 @@ def isMSVC2008():
 def isMSVC2010():
     return COMPILER == "msvc2010"
 
-def isMSVC2011():
-    return COMPILER == "msvc2011"
+def isMSVC2012():
+    return COMPILER == "msvc2012"
 
 
 def getCompilerName():

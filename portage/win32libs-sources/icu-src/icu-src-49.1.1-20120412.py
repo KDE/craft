@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['49.1.1'] = "icu/source"
         self.targetDigests['49.1.1'] = 'f407d7e2808b76e3a6ca316aab896aef74bf6722'
         self.patchToApply[ '49.1.1' ] = [('icu-20120702.diff', 1)]
-        if compiler.isMSVC2011():   
+        if compiler.isMSVC2012():   
             self.patchToApply[ '49.1.1' ].append(('msvc2011.diff', 1))
         self.defaultTarget = '49.1.1'
 
