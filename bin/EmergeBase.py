@@ -103,8 +103,8 @@ class EmergeBase(object):
             self.__compiler = "msvc2008"
         elif COMPILER == "msvc2010":
             self.__compiler = "msvc2010"
-        elif COMPILER == "msvc2011":
-            self.__compiler = "msvc2011"
+        elif COMPILER == "msvc2012":
+            self.__compiler = "msvc2012"
         elif COMPILER == "mingw":
             self.__compiler = "mingw"
         elif COMPILER == "mingw4":
