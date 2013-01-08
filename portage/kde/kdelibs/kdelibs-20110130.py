@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
             self.svnTargets[version] = '[git]kde:kdelibs|KDE/%s|' % version
         self.shortDescription = "The KDE Library"
-        self.defaultTarget = '4.9'
+        self.defaultTarget = 'gitHEAD'
 
 
     def setDependencies( self ):

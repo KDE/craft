@@ -22,7 +22,7 @@ class subinfo (info.infoclass):
         self.targets['2.3.3.4'] = "http://garr.dl.sourceforge.net/project/clucene/clucene-core-unstable/2.3/clucene-core-2.3.3.4.tar.gz"
         self.targetDigests['2.3.3.4'] = '76d6788e747e78abb5abf8eaad78d3342da5f2a4'
         self.targetInstSrc['2.3.3.4'] =  "clucene-core-2.3.3.4"
-        self.patchToApply['2.3.3.4'] = ('clucene-core-2.3.3.4-20120704.diff',1)
+        self.patchToApply['2.3.3.4'] = [('clucene-core-2.3.3.4-20120704.diff',1)]
         
         
         

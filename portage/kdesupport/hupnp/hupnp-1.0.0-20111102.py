@@ -29,6 +29,7 @@ class Package( QMakePackageBase ):
         self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_TESTAPP"'
         self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_AVTESTAPP"'
         self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_QTSOAP"'
+        self.subinfo.options.configure.defines += ' "CONFIG += rtti"'
         
     def install( self ):
         if not QMakePackageBase.install( self ):
