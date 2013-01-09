@@ -28,6 +28,7 @@ function subst([string] $varname, [string] $path, [string] $drive)
 
     if( $settings["ShortPath"]["EMERGE_USE_SHORT_PATH"] -eq $true )
     {
+        [Environment]::SetEnvironmentVariable("EMERGE_USE_SHORT_PATH",$settings["ShortPath"]["EMERGE_USE_SHORT_PATH"],"Process")
         if(!(test-path -path $drive))
         {
             subst.exe $drive $path
