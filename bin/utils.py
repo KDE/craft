@@ -27,6 +27,8 @@ import types
 import datetime
 from operator import itemgetter
 import Notifier.NotificationLoader
+import ctypes
+
 
 
 
@@ -1402,7 +1404,10 @@ def prependPath(*parts):
             old.insert(0, fullPath)
             os.putenv( "PATH", ";".join(old))
 
-_TIMERS = dict()
+def setTitle(title):
+    ctypes.windll.kernel32.SetConsoleTitleW(title)
+    
+_TIMERS = dict()    
 def startTimer(name, level = 0):
     """starts a timer for meassurement"""
     if name in _TIMERS:
