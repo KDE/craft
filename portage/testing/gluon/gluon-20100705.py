@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['testing/openal-soft-src'] = 'default'
-        self.dependencies['win32libs-bin/libsndfile'] = 'default'
-        self.dependencies['win32libs-bin/glee'] = 'default'
+        self.dependencies['win32libs/libsndfile'] = 'default'
+        self.dependencies['win32libs/glee'] = 'default'
         self.dependencies['testing/alure-src'] = 'default'
         self.dependencies['win32libs-sources/glew-src'] = 'default'
 

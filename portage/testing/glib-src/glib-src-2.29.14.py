@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
         self.dependencies['testing/libffi-src'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
 
 
 class Package(CMakePackageBase):

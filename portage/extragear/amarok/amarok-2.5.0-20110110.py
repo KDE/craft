@@ -19,14 +19,14 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['win32libs-bin/taglib'] = 'default'
-        self.dependencies['win32libs-bin/taglib-extras'] = 'default'
+        self.dependencies['win32libs/taglib'] = 'default'
+        self.dependencies['win32libs/taglib-extras'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['kdesupport/liblastfm'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
         self.runtimeDependencies['kdesupport/qtscriptgenerator'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.shortDescription = "a powerful music player"

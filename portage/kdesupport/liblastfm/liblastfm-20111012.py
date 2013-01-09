@@ -20,8 +20,8 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'
-        self.dependencies[ 'win32libs-bin/libfftw' ] = 'default'
-        self.dependencies[ 'win32libs-bin/libsamplerate' ] = 'default'
+        self.dependencies[ 'win32libs/libfftw' ] = 'default'
+        self.dependencies[ 'win32libs/libsamplerate' ] = 'default'
 
 from Package.CMakePackageBase import *
 

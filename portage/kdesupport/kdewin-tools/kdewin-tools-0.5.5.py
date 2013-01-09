@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['libs/qt'] = 'default'
-        self.dependencies['win32libs-bin/zlib'] = 'default'
-        self.dependencies['win32libs-bin/libpng'] = 'default'
+        self.dependencies['win32libs/zlib'] = 'default'
+        self.dependencies['win32libs/libpng'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kdewin'

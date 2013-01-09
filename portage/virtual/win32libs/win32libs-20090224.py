@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['virtual/bin-base'] = 'default'
         for package in PACKAGES.split():
-            self.dependencies['win32libs-bin/' + package] = 'default'
+            self.dependencies['win32libs/' + package] = 'default'
 
 class Package( VirtualPackageBase ):
     def __init__( self ):

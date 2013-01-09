@@ -18,8 +18,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['virtual/kdegraphics'] = 'default'
-        self.dependencies['win32libs-bin/expat'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.dependencies['win32libs/expat'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
 
 class Package(CMakePackageBase):

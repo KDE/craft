@@ -224,7 +224,7 @@ class KDEWinCreator( Visitor ):
             elif node.category == "data" and node not in self.cats[ "data" ]:
                 self.cats[ "data" ].append( node )
                 return None
-            elif node.category in [ "testing", "win32libs-sources", "win32libs-bin" ] and node not in self.cats[ "win32libs" ]:
+            elif node.category in [ "testing", "win32libs" ] and node not in self.cats[ "win32libs" ]:
                 self.cats[ "win32libs" ].append( node )
                 return None
         return None

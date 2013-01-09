@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs-bin/gpg-error'] = 'default'
+        self.dependencies['win32libs/gpg-error'] = 'default'
 
 from Package.CMakePackageBase import *
 

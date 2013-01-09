@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
         self.dependencies['virtual/kdepimlibs'] = 'default'
         self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
-        self.dependencies['win32libs-bin/sqlite'] = 'default'
-        self.dependencies['win32libs-bin/libofx'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
+        self.dependencies['win32libs/sqlite'] = 'default'
+        self.dependencies['win32libs/libofx'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
         self.dependencies['extragear/libalkimia'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.shortDescription = "a personal finance manager for KDE"

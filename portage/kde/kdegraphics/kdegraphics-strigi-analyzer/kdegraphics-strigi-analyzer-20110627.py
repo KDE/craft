@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['win32libs-bin/tiff'] = 'default'
+        self.dependencies['win32libs/tiff'] = 'default'
         self.dependencies['kdesupport/strigi'] = 'default'
 
 from Package.CMakePackageBase import *

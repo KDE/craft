@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
-        self.hardDependencies['win32libs-bin/taglib'] = 'default'
+        self.hardDependencies['win32libs/taglib'] = 'default'
 
 from Package.CMakePackageBase import *
 

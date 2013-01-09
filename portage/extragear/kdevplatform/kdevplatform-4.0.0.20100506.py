@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'virtual/kde-runtime' ] = 'default'
-        self.dependencies[ 'win32libs-bin/boost' ] = 'default'
+        self.dependencies[ 'win32libs/boost' ] = 'default'
         self.dependencies[ 'kdesupport/qjson' ] = 'default'
         self.buildDependencies[ 'dev-util/gettext-tools' ] = 'default'
 

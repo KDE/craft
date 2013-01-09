@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['win32libs-bin/libidn'] = 'default'
-        self.dependencies['win32libs-bin/libmsn'] = 'default'
-        self.dependencies['win32libs-bin/mpir'] = 'default'
+        self.dependencies['win32libs/libidn'] = 'default'
+        self.dependencies['win32libs/libmsn'] = 'default'
+        self.dependencies['win32libs/mpir'] = 'default'
         self.shortDescription = "KDE Networking applications (Kopete, KGet)"
 
 from Package.CMakePackageBase import *

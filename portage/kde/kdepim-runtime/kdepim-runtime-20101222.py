@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
-        self.dependencies['win32libs-bin/sqlite'] = 'default'
+        self.dependencies['win32libs/sqlite'] = 'default'
         self.shortDescription = "Extends the functionality of kdepim"
 
 from Package.CMakePackageBase import *

@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-baseapps'] = 'default'
-        self.dependencies['win32libs-bin/boost'] = 'default'
+        self.dependencies['win32libs/boost'] = 'default'
         self.dependencies['dev-util/zip'] = 'default'
         self.shortDescription = "KDE software development package (umbrello, okteta)"
 

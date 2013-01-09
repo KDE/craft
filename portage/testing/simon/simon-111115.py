@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
       self.buildDependencies['gnuwin32/bison'] = 'default'
       self.buildDependencies['dev-util/gettext-tools'] = 'default'
       self.dependencies['libs/qt'] = 'default'
-      self.dependencies['win32libs-bin/gettext'] = 'default'
+      self.dependencies['win32libs/gettext'] = 'default'
       self.dependencies['kdesupport/qwt6'] = 'default'
-      self.dependencies['win32libs-bin/libsamplerate'] = 'default'
+      self.dependencies['win32libs/libsamplerate'] = 'default'
       self.dependencies['kde/kdepimlibs'] = 'default'
 
          

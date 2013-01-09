@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime']    = 'default'
-        self.dependencies['win32libs-bin/sqlite']    = 'default'
+        self.dependencies['win32libs/sqlite']    = 'default'
         self.dependencies['testing/l3p']    = 'default'
         self.dependencies['testing/ldraw-parts']    = 'default'
 

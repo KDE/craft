@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
       self.shortDescription = "An application to show kde notifications with Snarl/Growl"
       self.hardDependencies['libs/qt'] = 'default'
-      self.hardDependencies['win32libs-bin/boost-system'] = 'default'
-      self.hardDependencies['win32libs-bin/boost-thread'] = 'default'
+      self.hardDependencies['win32libs/boost-system'] = 'default'
+      self.hardDependencies['win32libs/boost-thread'] = 'default'
       self.hardDependencies['kde/kdelibs'] = 'default'
-      self.buildDependencies['win32libs-bin/cryptopp'] = 'default'
+      self.buildDependencies['win32libs/cryptopp'] = 'default'
 
 
     def setTargets( self ):
