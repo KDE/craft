@@ -1,7 +1,34 @@
 diff -Nru glib-2.29.14.orig/build/win32/vs10/gio.vcxproj glib-2.29.14/build/win32/vs10/gio.vcxproj
---- glib-2.29.14.orig/build/win32/vs10/gio.vcxproj	2011-07-22 09:13:19.000000000 +0200
-+++ glib-2.29.14/build/win32/vs10/gio.vcxproj	2011-07-23 16:39:12.713856200 +0200
+--- glib-2.29.14.orig/build/win32/vs10/gio.vcxproj	2011-07-22 08:13:19.000000000 +0100
++++ glib-2.29.14/build/win32/vs10/gio.vcxproj	2012-10-10 02:02:23.166508800 +0100
 @@ -82,7 +82,7 @@
+       <CompileAs>CompileAsC</CompileAs>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>zdll.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>zlib.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <OutputFile>$(OutDir)$(GlibDllPrefix)$(ProjectName)$(GlibDllSuffix).dll</OutputFile>
+       <ModuleDefinitionFile>$(IntDir)gio.def</ModuleDefinitionFile>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+@@ -106,7 +106,7 @@
+       <CompileAs>CompileAsC</CompileAs>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>zdll.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>zlib.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <OutputFile>$(OutDir)$(GlibDllPrefix)$(ProjectName)$(GlibDllSuffix).dll</OutputFile>
+       <ModuleDefinitionFile>$(IntDir)gio.def</ModuleDefinitionFile>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+@@ -135,7 +135,7 @@
+       <CompileAs>CompileAsC</CompileAs>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>zdll.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>zlib.lib;ws2_32.lib;shlwapi.lib;dnsapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <OutputFile>$(OutDir)$(GlibDllPrefix)$(ProjectName)$(GlibDllSuffix).dll</OutputFile>
+       <ModuleDefinitionFile>$(IntDir)gio.def</ModuleDefinitionFile>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+@@ -159,7 +159,7 @@
        <CompileAs>CompileAsC</CompileAs>
      </ClCompile>
      <Link>
@@ -18,16 +45,20 @@ diff -Nru glib-2.29.14.orig/build/win32/vs10/glib.props glib-2.29.14/build/win32
  <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <PropertyGroup Label="UserMacros">
 -    <CopyDir>..\..\..\..\..\vs10\$(Platform)</CopyDir>
-+    <CopyDir>%INSTALLDIR%</CopyDir>
++    <CopyDir>$(INSTALLDIR)</CopyDir>
      <DefDir>$(SolutionDir)$(Configuration)\$(PlatformName)\obj\$(ProjectName)\</DefDir>
      <ApiVersion>2.0</ApiVersion>
      <GlibDoInstall>
-@@ -467,7 +467,7 @@
-     <GlibSeparateVS10DllSuffix>-2-vs10</GlibSeparateVS10DllSuffix>
+@@ -464,10 +464,10 @@
+     <GlibLibtoolCompatibleDllPrefix>lib</GlibLibtoolCompatibleDllPrefix>
+     <GlibLibtoolCompatibleDllSuffix>-2.0-0</GlibLibtoolCompatibleDllSuffix>
+     <GlibSeparateVS10DllPrefix />
+-    <GlibSeparateVS10DllSuffix>-2-vs10</GlibSeparateVS10DllSuffix>
++    <GlibSeparateVS10DllSuffix />
      <GlibDllPrefix>$(GlibSeparateVS10DllPrefix)</GlibDllPrefix>
      <GlibDllSuffix>$(GlibSeparateVS10DllSuffix)</GlibDllSuffix>
 -    <GlibEtcInstallRoot>..\..\..\..\..\vs10\$(Platform)</GlibEtcInstallRoot>
-+    <GlibEtcInstallRoot>%KDEROOT%</GlibEtcInstallRoot>
++    <GlibEtcInstallRoot>$(KDEROOT)</GlibEtcInstallRoot>
    </PropertyGroup>
    <PropertyGroup>
      <_PropertySheetDisplayName>glibprops</_PropertySheetDisplayName>
