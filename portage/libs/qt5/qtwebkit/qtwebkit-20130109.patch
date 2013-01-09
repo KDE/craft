@@ -1,0 +1,39 @@
+diff --git a/Source/WebCore/html/StepRange.h b/Source/WebCore/html/StepRange.h
+index 697a7b5..28e5e7c 100644
+--- a/Source/WebCore/html/StepRange.h
++++ b/Source/WebCore/html/StepRange.h
+@@ -21,7 +21,7 @@
+ #ifndef StepRange_h
+ #define StepRange_h
+ 
+-#include "Decimal.h"
++#include "platform/Decimal.h"
+ #include <wtf/Forward.h>
+ #include <wtf/Noncopyable.h>
+ 
+diff --git a/Source/WebCore/html/parser/HTMLParserIdioms.cpp b/Source/WebCore/html/parser/HTMLParserIdioms.cpp
+index e5201ce..1432854 100644
+--- a/Source/WebCore/html/parser/HTMLParserIdioms.cpp
++++ b/Source/WebCore/html/parser/HTMLParserIdioms.cpp
+@@ -25,7 +25,7 @@
+ #include "config.h"
+ #include "HTMLParserIdioms.h"
+ 
+-#include "Decimal.h"
++#include "platform/Decimal.h"
+ #include <limits>
+ #include <wtf/MathExtras.h>
+ #include <wtf/text/AtomicString.h>
+diff --git a/Tools/qmake/mkspecs/features/default_post.prf b/Tools/qmake/mkspecs/features/default_post.prf
+index 7c92a7d..b67969c 100644
+--- a/Tools/qmake/mkspecs/features/default_post.prf
++++ b/Tools/qmake/mkspecs/features/default_post.prf
+@@ -84,7 +84,7 @@ contains(TEMPLATE, derived) {
+     # Qt5's top-level repository, so let's add that to the PATH if we can
+     # find it.
+     win32 {
+-        GNUTOOLS_DIR=$$[QT_HOST_DATA]/../gnuwin32/bin
++        GNUTOOLS_DIR=$$[QT_HOST_DATA]/dev-utils/bin
+         exists($$GNUTOOLS_DIR/gperf.exe) {
+             GNUTOOLS = "(set $$escape_expand(\\\")PATH=$$toSystemPath($$GNUTOOLS_DIR);%PATH%$$escape_expand(\\\"))"
+         }
