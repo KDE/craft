@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs/libsndfile'] = 'default'
         self.dependencies['win32libs/glee'] = 'default'
         self.dependencies['testing/alure-src'] = 'default'
-        self.dependencies['win32libs/glew-src'] = 'default'
+        self.dependencies['win32libs/glew'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

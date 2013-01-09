@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         if emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/wcecompat-src'] = 'default'
+            self.dependencies['win32libs/wcecompat'] = 'default'
 
 from Package.CMakePackageBase import *
 

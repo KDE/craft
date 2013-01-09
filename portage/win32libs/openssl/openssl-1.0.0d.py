@@ -44,7 +44,7 @@ class subinfo( info.infoclass ):
             self.buildDependencies['virtual/base'] = 'default'
             self.buildDependencies['dev-util/perl'] = 'default'
             if emergePlatform.isCrossCompilingEnabled():
-                self.dependencies['win32libs/wcecompat-src'] = 'default'
+                self.dependencies['win32libs/wcecompat'] = 'default'
             if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
                 self.dependencies['win32libs/zlib'] = 'default'

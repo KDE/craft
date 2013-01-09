@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['testing/apr-src'] = 'default'
-        self.dependencies['win32libs/openssl-src'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
 
 from Package.CMakePackageBase import *
 
@@ -27,7 +27,7 @@ class Package(CMakePackageBase):
         os.chdir("subversion-1.6.16")
 
         self.apr = portage.getPackageInstance('testing', 'apr')
-        self.openssl = portage.getPackageInstance('win32libs', 'openssl-src')
+        self.openssl = portage.getPackageInstance('win32libs', 'openssl')
         cmd = "python gen-make.py -t vcproj"
 #        if compiler.isMSVC():          # doesn't work for 2k10
 #            cmd += " --vsnet-version=" + compiler.getCompilerName()[-4:]

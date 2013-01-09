@@ -10,14 +10,14 @@ class subinfo(info.infoclass):
         self.shortDescription = 'portable C++ libraries'
 
     def setDependencies( self ):
-        self.dependencies['win32libs/boost-headers-src'] = 'default'
-        self.dependencies['win32libs/boost-bjam-src'] = 'default'
-        self.dependencies['win32libs/boost-graph-src'] = 'default'
-        self.dependencies['win32libs/boost-program-options-src'] = 'default'
-        self.dependencies['win32libs/boost-python-src'] = 'default'
-        self.dependencies['win32libs/boost-regex-src'] = 'default'
-        self.dependencies['win32libs/boost-system-src'] = 'default'
-        self.dependencies['win32libs/boost-thread-src'] = 'default'
+        self.dependencies['win32libs/boost-headers'] = 'default'
+        self.dependencies['win32libs/boost-bjam'] = 'default'
+        self.dependencies['win32libs/boost-graph'] = 'default'
+        self.dependencies['win32libs/boost-program-options'] = 'default'
+        self.dependencies['win32libs/boost-python'] = 'default'
+        self.dependencies['win32libs/boost-regex'] = 'default'
+        self.dependencies['win32libs/boost-system'] = 'default'
+        self.dependencies['win32libs/boost-thread'] = 'default'
 
 from Package.VirtualPackageBase import *
 

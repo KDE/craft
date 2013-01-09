@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs/gpg-error-src'] = 'default'
+        self.hardDependencies['win32libs/gpg-error'] = 'default'
         self.hardDependencies['virtual/bin-base'] = 'default'
         self.hardDependencies['dev-util/msys'] = 'default'
 
