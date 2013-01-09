@@ -24,7 +24,6 @@ import emergePlatform
 import portageSearch
 import shutil
 from InstallDB import *
-import sched
 import time
 import datetime
 import threading
@@ -316,7 +315,7 @@ def handlePackage( category, package, version, buildAction, opts ):
 # where it is safe so there are less redefinitions in inner scopes
 
 utils.startTimer("Emerge")
-tittleThread = threading.Thread(target=updateTitle,args = (datetime.datetime.now()," ".join(sys.argv[:]),))
+tittleThread = threading.Thread(target=updateTitle,args = (datetime.datetime.now()," ".join(sys.argv[1:]),))
 tittleThread.setDaemon(True)
 tittleThread.start()
 
