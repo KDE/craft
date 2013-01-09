@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
       
     def setDependencies( self ):
       self.buildDependencies['gnuwin32/flex'] = 'default'
-      self.dependencies['win32libs-sources/libfl-src'] = 'default'
+      self.dependencies['win32libs/libfl-src'] = 'default'
       self.buildDependencies['gnuwin32/bison'] = 'default'
       self.buildDependencies['dev-util/gettext-tools'] = 'default'
       self.dependencies['libs/qt'] = 'default'

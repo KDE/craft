@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.buildDependencies['win32libs-sources/nmealib-src'] = 'default'
+        self.buildDependencies['win32libs/nmealib-src'] = 'default'
 
 from Package.CMakePackageBase import *
 

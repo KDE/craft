@@ -24,7 +24,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'win32libs/zlib' ] = 'default'
 
         if emergePlatform.isCrossCompilingEnabled():
-            self.buildDependencies['win32libs-sources/wcecompat-src'] = 'default'
+            self.buildDependencies['win32libs/wcecompat-src'] = 'default'
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):

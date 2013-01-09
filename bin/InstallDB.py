@@ -367,12 +367,12 @@ def main():
 
     utils.debug( 'testing installation database' )
 
-    utils.debug( 'testing if package win32libs-sources/dbus-src with version 1.4.0 is installed: %s' %
-                 db.isPkgInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' ) )
+    utils.debug( 'testing if package win32libs/dbus-src with version 1.4.0 is installed: %s' %
+                 db.isPkgInstalled( 'win32libs', 'dbus-src', '1.4.0' ) )
 
     # in case the package is still installed, remove it first silently
-    if db.isInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' ):
-        packageList = db.remInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' )
+    if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
+        packageList = db.remInstalled( 'win32libs', 'dbus-src', '1.4.0' )
         # really commit uninstall
         for package in packageList:
             package.uninstall()
@@ -380,15 +380,15 @@ def main():
 
     utils.new_line()
     # add a package
-    utils.debug( 'installing package win32libs-sources/dbus-src-1.4.0 (release)' )
-    package = db.addInstalled( 'win32libs-sources', 'dbus-src', '1.4.0', 'release' )
+    utils.debug( 'installing package win32libs/dbus-src-1.4.0 (release)' )
+    package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'release' )
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
 
     # add another package in a different prefix
-    utils.debug( 'installing package win32libs-sources/dbus-src-1.4.0 (debug)' )
-    package = db.addInstalled( 'win32libs-sources', 'dbus-src', '1.4.0', 'debug' )
+    utils.debug( 'installing package win32libs/dbus-src-1.4.0 (debug)' )
+    package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'debug' )
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
@@ -396,13 +396,13 @@ def main():
 
     utils.new_line()
     utils.debug( 'checking installed packages' )
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs', 'dbus-src', 'debug' ) )
 
     utils.new_line()
     utils.debug( 'now trying to remove package & revert it again later' )
     # remove the package again
-    packageList = db.remInstalled( 'win32libs-sources', 'dbus-src', '1.4.0' )
+    packageList = db.remInstalled( 'win32libs', 'dbus-src', '1.4.0' )
     for pac in packageList:
         for line in pac.getFiles(): # pylint: disable=W0612
             # we could remove the file here
@@ -412,8 +412,8 @@ def main():
 
     utils.new_line()
     utils.debug( 'checking installed packages' )
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs', 'dbus-src', 'debug' ) )
     utils.debug_line()
 
     utils.new_line()
@@ -423,30 +423,30 @@ def main():
         pac.revert()
 
     utils.debug( 'checking installed packages' )
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs', 'dbus-src', 'debug' ) )
     utils.debug_line()
 
     db.getInstalled()
-    db.getInstalled( category='win32libs-sources', prefix='debug' )
+    db.getInstalled( category='win32libs', prefix='debug' )
     db.getInstalled( package='dbus-src' )
 
     utils.new_line()
     utils.debug( 'now really remove the package' )
-    packageList = db.remInstalled( 'win32libs-sources', 'dbus-src', '1.4.0')
+    packageList = db.remInstalled( 'win32libs', 'dbus-src', '1.4.0')
     for pac in packageList:
         utils.debug( 'removing %s files' % len( pac.getFiles() ) )
         pac.uninstall()
 
-    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'release' ) )
-    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs-sources', 'dbus-src', 'debug' ) )
+    utils.debug( 'get installed package (release): %s' % db.getInstalled( 'win32libs', 'dbus-src', 'release' ) )
+    utils.debug( 'get installed package (debug):   %s' % db.getInstalled( 'win32libs', 'dbus-src', 'debug' ) )
     utils.debug_line()
 
     # test the import from the old style (manifest based) databases
     utils.new_line()
     db_temp.importExistingDatabase()
     print("getInstalled:", db_temp.getInstalled())
-    print("findInstalled:", portage.findInstalled( 'win32libs-sources', 'dbus-src' ))
+    print("findInstalled:", portage.findInstalled( 'win32libs', 'dbus-src' ))
     print("getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) ))
 
 if __name__ == '__main__':

@@ -13,10 +13,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs-sources/freetype-src'] = 'default'
-        self.dependencies['win32libs-sources/pixman-src'] = 'default'
-        self.dependencies['win32libs-sources/libpng-src'] = 'default'
-        self.dependencies['win32libs-sources/zlib-src'] = 'default'
+        self.dependencies['win32libs/freetype-src'] = 'default'
+        self.dependencies['win32libs/pixman-src'] = 'default'
+        self.dependencies['win32libs/libpng-src'] = 'default'
+        self.dependencies['win32libs/zlib-src'] = 'default'
 
 from Package.CMakePackageBase import *
 
