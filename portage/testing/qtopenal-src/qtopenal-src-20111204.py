@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['testing/openal-soft-src'] = 'default'
-        self.dependencies['win32libs-bin/libsndfile'] = 'default'
+        self.dependencies['win32libs/libsndfile'] = 'default'
  
 class Package(CMakePackageBase):
     def __init__( self, **args ):

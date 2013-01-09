@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-baseapps'] = 'default'
         self.dependencies['kde/libkipi'] = 'default' 
-        self.dependencies['win32libs-bin/exiv2'] = 'default'
-        self.dependencies['win32libs-bin/jpeg'] = 'default'
+        self.dependencies['win32libs/exiv2'] = 'default'
+        self.dependencies['win32libs/jpeg'] = 'default'
    
 
 

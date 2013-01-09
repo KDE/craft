@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
 
         #add c++ runtime if we xcompile
         if emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs-bin/runtime-ce']   = 'default'
+            self.dependencies['win32libs/runtime-ce']   = 'default'
 
         if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             if os.getenv( "SVN_SSH" ) == "plink" or \

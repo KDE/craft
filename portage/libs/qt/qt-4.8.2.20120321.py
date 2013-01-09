@@ -142,15 +142,12 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-        self.dependencies['win32libs-bin/openssl'] = 'default'
-        if EmergeBase().buildType() == "Debug":
-            self.dependencies['win32libs-sources/dbus-src'] = 'default'
-        else:
-            self.dependencies['win32libs-bin/dbus'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
+        self.dependencies['win32libs/dbus'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['binary/mysql-pkg'] = 'default'
         else:
-            self.dependencies['win32libs-sources/wcecompat-src'] = 'default'
+            self.dependencies['win32libs/wcecompat'] = 'default'
 
 class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
     def __init__( self, **args ):
@@ -167,15 +164,12 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         QMakeBuildSystem.__init__(self)
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
-        self.openssl = portage.getPackageInstance('win32libs-bin', 'openssl')
-        if self.buildType() == "Debug":
-            self.dbus = portage.getPackageInstance('win32libs-sources', 'dbus-src')
-        else:
-            self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
+        self.openssl = portage.getPackageInstance('win32libs', 'openssl')
+        self.dbus = portage.getPackageInstance('win32libs', 'dbus')
         if not emergePlatform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
         else:
-            self.wcecompat = portage.getPackageInstance('win32libs-sources', 'wcecompat-src')
+            self.wcecompat = portage.getPackageInstance('win32libs', 'wcecompat')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()

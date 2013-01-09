@@ -23,14 +23,14 @@ class subinfo(info.infoclass):
         self.dependencies['kde/libkexiv2'] = 'default'
         self.dependencies['kde/libkipi'] = 'default'
         self.dependencies['kde/marble'] = 'default'
-        self.dependencies['win32libs-bin/lcms'] = 'default'
-        self.dependencies['win32libs-bin/tiff'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
-        self.dependencies['win32libs-bin/opencv'] = 'default'
+        self.dependencies['win32libs/lcms'] = 'default'
+        self.dependencies['win32libs/tiff'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
+        self.dependencies['win32libs/opencv'] = 'default'
         self.dependencies['extragear/libkgeomap'] = 'default'
         self.dependencies['extragear/libkface'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'        
-        self.buildDependencies['win32libs-bin/boost-headers'] = 'default'
+        self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.shortDescription = "an advanced digital photo management application"
 
 class Package(CMakePackageBase):

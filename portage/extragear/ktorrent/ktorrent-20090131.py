@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['virtual/kde-runtime'] = 'default'
         self.dependencies['virtual/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['win32libs-bin/mpir'] = 'default'
+        self.dependencies['win32libs/mpir'] = 'default'
         self.dependencies['extragear/libktorrent'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
 

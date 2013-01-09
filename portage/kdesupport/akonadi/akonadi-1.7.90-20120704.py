@@ -6,13 +6,13 @@ import os
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['win32libs-bin/automoc'] = 'default'
+        self.buildDependencies['win32libs/automoc'] = 'default'
         self.dependencies['kdesupport/soprano'] = 'default'
-        self.dependencies['win32libs-bin/boost-program-options']   = 'default'
-        self.dependencies['win32libs-bin/libxslt'] = 'default'
+        self.dependencies['win32libs/boost-program-options']   = 'default'
+        self.dependencies['win32libs/libxslt'] = 'default'
         self.dependencies['libs/qt'] = 'default'
-        self.dependencies['win32libs-bin/sqlite'] = 'default'
-        self.dependencies['win32libs-bin/shared-mime-info'] = 'default'
+        self.dependencies['win32libs/sqlite'] = 'default'
+        self.dependencies['win32libs/shared-mime-info'] = 'default'
 
     def setTargets( self ):
         baseurl = 'ftp://ftp.kde.org/pub/kde/stable/akonadi/src/akonadi-%s.tar.bz2'

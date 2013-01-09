@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/autotools'] = 'default'
             self.dependencies['testing/gcrypt'] = 'default'
             self.dependencies['kdesupport/kdewin'] = 'default'
-            self.dependencies['win32libs-bin/libcurl'] = 'default'
+            self.dependencies['win32libs/libcurl'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *

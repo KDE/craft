@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/libechonest'] = 'default'
         self.hardDependencies['kdesupport/attica'] = 'default'
         self.hardDependencies['kdesupport/liblastfm'] = 'default'
-        self.hardDependencies['win32libs-bin/taglib'] = 'default'
+        self.hardDependencies['win32libs/taglib'] = 'default'
         
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/tomahawk-player/tomahawk.git'

@@ -59,8 +59,8 @@ class DatabaseTest(unittest.TestCase):
 class TestAPI(DatabaseTest):
 
     def test_addInstalled(self):
-        package = self.db.addInstalled( 'win32libs-sources', 'dbus-src', '1.4.0', 'release' )
+        package = self.db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'release' )
         package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
         package.install()
-        self.assertEquals( self.db.isInstalled( 'win32libs-sources', 'dbus-src', '1.4.0',
+        self.assertEquals( self.db.isInstalled( 'win32libs', 'dbus-src', '1.4.0',
             'release'), True)

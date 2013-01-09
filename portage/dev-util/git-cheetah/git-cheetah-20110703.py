@@ -17,7 +17,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         if not os.getenv( 'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES' ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-        self.runtimeDependencies[ 'win32libs-bin/expat' ] = 'default'
+        self.runtimeDependencies[ 'win32libs/expat' ] = 'default'
 
 
     def setBuildOptions( self ):

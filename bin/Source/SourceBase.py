@@ -75,7 +75,6 @@ class SourceBase(EmergeBase):
         """base implementation for applying a single patch to the source"""
         utils.trace( "SourceBase.applyPatch called", 2 )
         if not fileName:
-            utils.warning('applyPatch got no fileName')
             return True
         if not srcdir:
             srcdir = self.sourceDir()

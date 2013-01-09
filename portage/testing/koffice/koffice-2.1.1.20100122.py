@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs-bin/lcms'] = 'default'
+        self.hardDependencies['win32libs/lcms'] = 'default'
         self.hardDependencies['kde/kdepimlibs'] = 'default'
         self.hardDependencies['kde/kde-runtime'] = 'default'
 #        self.hardDependencies['kdesupport/eigen'] = 'default'

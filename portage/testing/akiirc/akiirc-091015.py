@@ -8,8 +8,8 @@ class subinfo(infoclass ):
 
     def setDependencies( self ):
         self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['win32libs-bin/openssl'] = 'default'
-        self.hardDependencies['win32libs-bin/boost'] = 'default'
+        self.hardDependencies['win32libs/openssl'] = 'default'
+        self.hardDependencies['win32libs/boost'] = 'default'
         # also needs icu from http://site.icu-project.org
 
 class Package(CMakePackageBase):

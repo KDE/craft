@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['win32libs-bin/exiv2'] = 'default'
+        self.dependencies['win32libs/exiv2'] = 'default'
 
 from Package.CMakePackageBase import *
 

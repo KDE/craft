@@ -7,8 +7,8 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
-        self.dependencies['win32libs-bin/boost'] = 'default'
-        #self.hardDependencies['win32libs-bin/zip'] = 'default'
+        self.dependencies['win32libs/boost'] = 'default'
+        #self.hardDependencies['win32libs/zip'] = 'default'
 
 from Package.CMakePackageBase import *
 

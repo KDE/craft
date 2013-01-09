@@ -3,9 +3,9 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs-bin/openssl'] = 'default'
-        self.hardDependencies['win32libs-bin/zlib'] = 'default'
-        self.hardDependencies['win32libs-bin/libidn'] = 'default'
+        self.hardDependencies['win32libs/openssl'] = 'default'
+        self.hardDependencies['win32libs/zlib'] = 'default'
+        self.hardDependencies['win32libs/libidn'] = 'default'
 
     def setTargets( self ):
         for ver in ['1.0']:

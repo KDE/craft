@@ -18,7 +18,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/kde-workspace' ] = 'default'
         self.dependencies[ 'kdesupport/snorenotify' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
-        #self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
+        #self.dependencies[ 'win32libs/liblzma' ] = 'default'
         self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
         self.dependencies[ 'kdesupport/phonon-vlc'] = 'default'
         

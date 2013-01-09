@@ -5,9 +5,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base']            = 'default'
         self.dependencies['libs/qt']                 = 'default'
-        self.dependencies['win32libs-bin/librdf']   = 'default'
+        self.dependencies['win32libs/librdf']   = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
-            self.buildDependencies['win32libs-bin/clucene-core'] = 'default'
+            self.buildDependencies['win32libs/clucene-core'] = 'default'
             self.dependencies['binary/virtuoso']   = 'default'
 
     def setTargets( self ):

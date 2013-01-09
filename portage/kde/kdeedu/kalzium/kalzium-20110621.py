@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/libkdeedu'] = 'default'
-        self.dependencies['win32libs-bin/openbabel'] = 'default'
+        self.dependencies['win32libs/openbabel'] = 'default'
 
 from Package.CMakePackageBase import *
 

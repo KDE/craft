@@ -14,11 +14,11 @@ class subinfo( info.infoclass ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['gnuwin32/bison'] = 'default'
-        self.dependencies['win32libs-bin/openssl'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
-        self.dependencies['win32libs-bin/libxml2'] = 'default'
-        self.dependencies['win32libs-bin/libxslt'] = 'default'
-        self.dependencies['win32libs-bin/zlib'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
+        self.dependencies['win32libs/libxml2'] = 'default'
+        self.dependencies['win32libs/libxslt'] = 'default'
+        self.dependencies['win32libs/zlib'] = 'default'
 
 from Package.CMakePackageBase import *
 

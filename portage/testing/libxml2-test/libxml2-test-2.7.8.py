@@ -18,8 +18,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs-bin/zlib'] = 'default'
-        self.dependencies['win32libs-bin/win_iconv'] = 'default'
+        self.dependencies['win32libs/zlib'] = 'default'
+        self.dependencies['win32libs/win_iconv'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
