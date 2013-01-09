@@ -24,6 +24,10 @@ import emergePlatform
 import portageSearch
 import shutil
 from InstallDB import *
+import sched
+import time
+import datetime
+import threading
 
 
 def usage():
@@ -200,6 +204,12 @@ def doExec( category, package, version, action, opts ):
     utils.stopTimer("%s for %s" % ( action,package))
     return True
 
+def updateTitle(startTime,title): 
+    while(len(utils._TIMERS)>0):    
+        delta = datetime.datetime.now() - startTime
+        utils.setTitle("Emerge %s %s" %(title , delta))
+        time.sleep(1)
+    
 def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
     success = True
@@ -306,6 +316,11 @@ def handlePackage( category, package, version, buildAction, opts ):
 # where it is safe so there are less redefinitions in inner scopes
 
 utils.startTimer("Emerge")
+tittleThread = threading.Thread(target=updateTitle,args = (datetime.datetime.now()," ".join(sys.argv[:]),))
+tittleThread.setDaemon(True)
+tittleThread.start()
+
+
 mainBuildAction = "all"
 packageName = None
 doPretend = False
