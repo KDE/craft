@@ -29,10 +29,10 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
         self.buildDependencies['gnuwin32/bison'] = 'default'
-        self.dependencies['win32libs-bin/openssl'] = 'default'
-        self.dependencies['win32libs-bin/dbus'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
+        self.dependencies['win32libs/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
-        self.dependencies['win32libs-sources/icu-src'] = 'default'
+        self.dependencies['win32libs/icu'] = 'default'
 
 class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
@@ -47,13 +47,10 @@ class Package(Qt5CorePackageBase):
             self.subinfo.options.useShortPathes = True
         
         # get instance of dbus and openssl package
-        self.openssl = portage.getPackageInstance('win32libs-bin', 'openssl')
-        if self.buildType() == "Debug":
-            self.dbus = portage.getPackageInstance('win32libs-sources', 'dbus-src')
-        else:
-            self.dbus = portage.getPackageInstance('win32libs-bin', 'dbus')
+        self.openssl = portage.getPackageInstance('win32libs', 'openssl')
+        self.dbus = portage.getPackageInstance('win32libs', 'dbus')
         self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
-        self.icu = portage.getPackageInstance('win32libs-sources','icu-src')
+        self.icu = portage.getPackageInstance('win32libs','icu')
 
 
     def configure( self, unused1=None, unused2=""):
