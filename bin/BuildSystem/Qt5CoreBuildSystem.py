@@ -22,13 +22,7 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
        options += " INSTALL_ROOT=%s install" % self.imageDir()[2:]
        if not QMakeBuildSystem.install( self ,options):
            return False
-       if not  os.path.exists(os.path.join( self.installDir(), "bin" )):
-          os.mkdir( os.path.join( self.installDir(), "bin" ) )
 
-       if os.path.exists( os.path.join( self.installDir(), "lib" )): 
-           for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
-               if file.endswith( ".dll" ):
-                   utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
        if os.path.exists(os.path.join( self.installDir() , "bin" , "mkspecs") ):
             shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
        return True
