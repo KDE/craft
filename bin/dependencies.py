@@ -457,8 +457,7 @@ class DependenciesTree(object):
 
         pi = portage.PortageInstance
 
-        if portage.emergePlatform.isCrossCompilingEnabled() \
-        or utils.isSourceOnly():
+        if portage.emergePlatform.isCrossCompilingEnabled():
             sp = pi.getCorrespondingSourcePackage(package)
             if sp:
                 # we found such a package and we're allowed to replace it
@@ -490,8 +489,7 @@ class DependenciesTree(object):
 
         pi = portage.PortageInstance
 
-        if portage.emergePlatform.isCrossCompilingEnabled() \
-        or utils.isSourceOnly():
+        if portage.emergePlatform.isCrossCompilingEnabled():
             sp = pi.getCorrespondingSourcePackage(package)
             if sp:
                 # we found such a package and we're allowed to replace it

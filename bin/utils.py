@@ -54,8 +54,6 @@ def envAsBool(key, default=False):
     else:
         return default
         
-def isSourceOnly():
-    return envAsBool("EMERGE_SOURCEONLY")
 
 def LockFileName(lock_id):
     '''Generate a user global lock file. For id lock_id

@@ -23,7 +23,6 @@ if not len(sys.argv) == 3:
 parser = PackageListParser(sys.argv[1])
 _fetchListFile = open(sys.argv[2], "a+b")
 
-os.environ["EMERGE_SOURCEONLY"] = "False"
 os.environ["EMERGE_PACKAGETYPES"] = "dbg,src"
 for _cat, _pac, _ver, _patch in parser.getFullList():
     cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(_pac)

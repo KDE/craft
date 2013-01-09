@@ -78,7 +78,7 @@ class DependencyPackage:
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
-                if emergePlatform.isCrossCompilingEnabled() or utils.isSourceOnly():
+                if emergePlatform.isCrossCompilingEnabled():
                     sp = PortageInstance.getCorrespondingSourcePackage( package )
                     if sp:
                         # we found such a package and we're allowed to replace it
@@ -299,8 +299,7 @@ class Portage:
 
     def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
-        if emergePlatform.isCrossCompilingEnabled() \
-        or utils.isSourceOnly():
+        if emergePlatform.isCrossCompilingEnabled():
             sp = self.getCorrespondingSourcePackage( package )
             if sp:
                 category = sp[0]
@@ -536,7 +535,7 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
 def solveDependencies( category, package, version, depList, dep_type='both' ):
     depList.reverse()
-    if emergePlatform.isCrossCompilingEnabled() or utils.isSourceOnly():
+    if emergePlatform.isCrossCompilingEnabled():
         sp = PortageInstance.getCorrespondingSourcePackage( package )
         if sp:
             # we found such a package and we're allowed to replace it
@@ -744,7 +743,7 @@ def isInstalled( category, package, version, buildtype='' ):
             package + "-" + version + "-lib.ver"), category, package, version )
     found = found or binary or lib
 
-    if not utils.envAsBool("EMERGE_VERSIONING", default=True) or utils.isSourceOnly():
+    if not utils.envAsBool("EMERGE_VERSIONING", default=True):
         # check for any installation except data packages
         if not os.path.exists(os.path.join( os.getenv( "KDEROOT" ), "manifest" ) ):
             return False
