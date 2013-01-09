@@ -1,20 +1,20 @@
-diff -Nru qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CMakeLists.txt
+diff -Nru -x '*~' qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CMakeLists.txt
 --- qtsoap-2.7_1-opensource.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ qtsoap-2.7_1-opensource/CMakeLists.txt	2010-11-08 23:41:11.354981800 +0100
++++ qtsoap-2.7_1-opensource/CMakeLists.txt	2013-01-09 14:40:46.361887600 +0100
 @@ -0,0 +1,64 @@
 +project( qtsoap )
 +cmake_minimum_required( VERSION 2.8 )
-+add_definitions( -Wall )
 +
++set(CMAKE_AUTOMOC ON)
 +set(CMAKE_INCLUDE_CURRENT_DIR ON)
 +
-+find_package( Qt4 REQUIRED )
++find_package( Qt5Core REQUIRED )
++find_package( Qt5Network REQUIRED )
++find_package( Qt5Xml REQUIRED )
 +
-+include( ${QT_USE_FILE} )
 +include_directories(
 +        ${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR}
-+        ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-+        ${QT_QTNETWORK_INCLUDE_DIR} )
++        ${Qt5Core_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIR} )
 +
 +
 +if (CMAKE_COMPILER_IS_GNUCXX)
@@ -39,11 +39,11 @@ diff -Nru qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CM
 +
 +set(CMAKE_DEBUG_POSTFIX "d")
 +
-+QT4_WRAP_CPP(MOC_SOURCE src/qtsoap.h)
 +
-+add_library(qtsoap SHARED src/qtsoap.cpp ${MOC_SOURCE})
++
++add_library(qtsoap SHARED src/qtsoap.cpp)
 +set_target_properties( qtsoap PROPERTIES OUTPUT_NAME "QtSolutions_SOAP-2.7" DEFINE_SYMBOL "QT_QTSOAP_EXPORT" )
-+target_link_libraries(qtsoap ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
++target_link_libraries(qtsoap ${Qt5Core_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES})
 +
 +install(TARGETS qtsoap
 +  LIBRARY DESTINATION lib
@@ -66,3 +66,15 @@ diff -Nru qtsoap-2.7_1-opensource.orig/CMakeLists.txt qtsoap-2.7_1-opensource/CM
 +              src/QtSoapTypeConstructorBase
 +              src/QtSoapTypeFactory
 +        DESTINATION include/QtSoap)
+diff -Nru -x '*~' qtsoap-2.7_1-opensource.orig/src/qtsoap.cpp qtsoap-2.7_1-opensource/src/qtsoap.cpp
+--- qtsoap-2.7_1-opensource.orig/src/qtsoap.cpp	2013-01-09 14:42:26.886232400 +0100
++++ qtsoap-2.7_1-opensource/src/qtsoap.cpp	2013-01-09 14:36:34.187920400 +0100
+@@ -3157,7 +3157,7 @@
+ {
+     QNetworkRequest networkReq;
+     networkReq.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("text/xml;charset=utf-8"));
+-    networkReq.setRawHeader("SOAPAction", soapAction.toAscii());
++    networkReq.setRawHeader("SOAPAction", soapAction.toLatin1());
+     url.setPath(path);
+     networkReq.setUrl(url);
+ 
