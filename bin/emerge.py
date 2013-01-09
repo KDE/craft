@@ -207,7 +207,7 @@ def doExec( category, package, version, action, opts ):
 def updateTitle(startTime,title): 
     while(len(utils._TIMERS)>0):    
         delta = datetime.datetime.now() - startTime
-        utils.setTitle("Emerge %s %s" %(title , delta))
+        utils.setTitle("emerge %s %s" %(title , delta))
         time.sleep(1)
     
 def handlePackage( category, package, version, buildAction, opts ):
