@@ -14,6 +14,10 @@ class subinfo( info.infoclass ):
         self.targets['2.8.3-1'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.3-1-bin.tar.bz2'
         self.targets['2.8.3-2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.3-2-bin.tar.bz2'
         self.targets['v2.8.8'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc100-2.8.8-bin.tar.bz2'
+        if( emergePlatform.buildArchitecture() == 'x64' ):
+            self.targets['v2.8.10.2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-x64-mingw4-2.8.10.2.tar.bz2'
+        else:
+            self.targets['v2.8.10.2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-x86-mingw4-2.8.10.2.tar.bz2'
         self.targetMergeSourcePath['2.4.8'] = 'cmake-2.4.8-win32-x86'
         self.targetMergeSourcePath['2.6.4'] = 'cmake-2.6.4-win32-x86'
         self.targetMergeSourcePath['2.8.4'] = 'cmake-2.8.4-win32-x86'
@@ -25,6 +29,10 @@ class subinfo( info.infoclass ):
         self.targetDigests['2.8.5'] = 'ffdcd882600fba4dee1c225d89831f2f889c8276'
         self.targetDigests['2.8.8'] = '3e93868b4be00e4cee1787c8d0479b2bf3807602'
         self.targetDigests['v2.8.8'] = 'd63da3b1790b64729e357c157ad9103e1bcfa267'
+        if( emergePlatform.buildArchitecture() == 'x64' ):
+            self.targetDigests['v2.8.10.2'] = 'a681e98d5719441a625f26c2dc3a310992a4879b'
+        else:
+            self.targetDigests['v2.8.10.2'] = 'd0cf7751998c6f1f20fd29d151980e26a8782248'
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
 
         if emergePlatform.isCrossCompilingEnabled():
@@ -32,7 +40,7 @@ class subinfo( info.infoclass ):
         else:
             # 2.8.4 is broken when using short paths and
             # windres fails even in old projects like zlib
-            self.defaultTarget = 'v2.8.8'
+            self.defaultTarget = 'v2.8.10.2'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
