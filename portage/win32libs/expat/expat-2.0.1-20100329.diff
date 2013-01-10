@@ -1,6 +1,6 @@
-diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
+diff -Nru -x '*~' expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 --- expat-2.0.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ expat-2.0.1/CMakeLists.txt	2010-03-29 01:10:43.484000000 +0200
++++ expat-2.0.1/CMakeLists.txt	2013-01-10 09:16:28.301313600 +0100
 @@ -0,0 +1,78 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
@@ -80,9 +80,9 @@ diff -Nru expat-2.0.1.orig/CMakeLists.txt expat-2.0.1/CMakeLists.txt
 +    target_link_libraries(runtestspp expat)
 +    add_test(runtestspp runtestspp)
 +endif(BUILD_tests)
-diff -Nru expat-2.0.1.orig/ConfigureChecks.cmake expat-2.0.1/ConfigureChecks.cmake
+diff -Nru -x '*~' expat-2.0.1.orig/ConfigureChecks.cmake expat-2.0.1/ConfigureChecks.cmake
 --- expat-2.0.1.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ expat-2.0.1/ConfigureChecks.cmake	2010-03-28 23:55:23.255000000 +0200
++++ expat-2.0.1/ConfigureChecks.cmake	2013-01-10 09:16:28.305314200 +0100
 @@ -0,0 +1,44 @@
 +include(CheckIncludeFile)
 +include(CheckFunctionExists)
@@ -128,9 +128,9 @@ diff -Nru expat-2.0.1.orig/ConfigureChecks.cmake expat-2.0.1/ConfigureChecks.cma
 +
 +configure_file(expat_config.h.cmake expat_config.h)
 +add_definitions(-DHAVE_EXPAT_CONFIG_H)
-diff -Nru expat-2.0.1.orig/expat_config.h.cmake expat-2.0.1/expat_config.h.cmake
+diff -Nru -x '*~' expat-2.0.1.orig/expat_config.h.cmake expat-2.0.1/expat_config.h.cmake
 --- expat-2.0.1.orig/expat_config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ expat-2.0.1/expat_config.h.cmake	2010-03-28 23:43:32.502000000 +0200
++++ expat-2.0.1/expat_config.h.cmake	2013-01-10 09:16:28.308309600 +0100
 @@ -0,0 +1,91 @@
 +/* expat_config.h.in.  Generated from configure.in by autoheader.  */
 +
@@ -223,3 +223,13 @@ diff -Nru expat-2.0.1.orig/expat_config.h.cmake expat-2.0.1/expat_config.h.cmake
 +
 +/* Define to `unsigned' if <sys/types.h> does not define. */
 +#cmakedefine size_t @SIZE_T@
+diff -Nru -x '*~' expat-2.0.1.orig/lib/libexpat.def expat-2.0.1/lib/libexpat.def
+--- expat-2.0.1.orig/lib/libexpat.def	2007-05-11 19:20:24.000000000 +0200
++++ expat-2.0.1/lib/libexpat.def	2013-01-10 09:17:23.636622700 +0100
+@@ -1,6 +1,5 @@
+ ; DEF file for MS VC++
+ 
+-LIBRARY
+ EXPORTS
+   XML_DefaultCurrent @1
+   XML_ErrorString @2
