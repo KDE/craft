@@ -78,7 +78,10 @@ class BuildSystemBase(EmergeBase):
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
         if maybeVerbose and utils.verbose() > 1:
-            defines += " VERBOSE=1"
+            if self.supportsNinja and utils.envAsBool("EMERGE_USE_NINJA"):
+                defines += " -v "
+            else:
+                defines += " VERBOSE=1"
         return defines
 
     def setupTargetToolchain(self):
