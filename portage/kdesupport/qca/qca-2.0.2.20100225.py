@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
+        self.dependencies['win32libs/cyrus-sasl'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['2.0.0-5'] = 'tags/qca/2.0.0'
