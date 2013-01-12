@@ -18,6 +18,7 @@ class BuildSystemBase(EmergeBase):
     def __init__(self, typeName=""):
         """constructor"""
         EmergeBase.__init__(self)
+        self.supportsNinja = False
         self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -27,6 +28,8 @@ class BuildSystemBase(EmergeBase):
 
 
     def _getmakeProgram(self):
+        if self.supportsNinja and utils.envAsBool("EMERGE_USE_NINJA"):
+            return "ninja"
         EMERGE_MAKE_PROGRAM = os.getenv( "EMERGE_MAKE_PROGRAM" )
         if EMERGE_MAKE_PROGRAM and self.subinfo.options.make.supportsMultijob:
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
