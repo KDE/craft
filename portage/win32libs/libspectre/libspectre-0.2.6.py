@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.6'
 
     def setDependencies( self ):
-        self.dependencies['win32libs/ghostscript'] = 'default'
+        self.dependencies['binary/ghostscript'] = 'default'
         self.dependencies['dev-util/cmake'] = 'default'
         self.dependencies['virtual/base'] = 'default'
 
