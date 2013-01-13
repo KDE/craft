@@ -4,13 +4,12 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:mobipocket'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/mobipocket-4.8.0.tar.bz2'
-        self.targetInstSrc['4.8.0'] = 'mobipocket-4.8.0'
+        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/kdegraphics-mobipocket-4.8.0.tar.bz2'
+        self.targetInstSrc['4.8.0'] = 'kdegraphics-mobipocket-4.8.0'
         for ver in ['4.8.1', '4.8.2']:
-            self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/mobipocket-" + ver + ".tar.xz"
-            self.targetInstSrc[ ver] = 'mobipocket-' + ver
+            self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/kdegraphics-mobipocket-" + ver + ".tar.xz"
+            self.targetInstSrc[ver] = 'kdegraphics-mobipocket-' + ver
         self.defaultTarget = '4.8.2'
-
 
         self.shortDescription = 'A collection of plugins to handle mobipocket files'
 
