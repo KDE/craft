@@ -1,0 +1,24 @@
+From bea333c22fc46f29c44413a7e5ca3f27d0b476d4 Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <vonreth@kde.org>
+Date: Sat, 12 Jan 2013 11:32:45 +0100
+Subject: [PATCH] if windows and not msvc, set platform to mingw
+
+---
+ bootstrap.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/bootstrap.py b/bootstrap.py
+index a847df9..331ea0f 100755
+--- a/bootstrap.py
++++ b/bootstrap.py
+@@ -96,6 +96,7 @@ else:
+                    '-DNINJA_BOOTSTRAP'])
+     if options.windows:
+         cflags.append('-D_WIN32_WINNT=0x0501')
++        conf_args.append("--platform=mingw")
+     if options.x64:
+         cflags.append('-m64')
+ args.extend(cflags)
+-- 
+1.8.0.msysgit.0
+

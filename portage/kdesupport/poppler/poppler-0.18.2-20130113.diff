@@ -1,0 +1,27 @@
+diff -Nru -x '*~' poppler-0.18.2.orig/poppler/poppler-config.h.cmake poppler-0.18.2/poppler/poppler-config.h.cmake
+--- poppler-0.18.2.orig/poppler/poppler-config.h.cmake	2011-11-22 22:33:17.000000000 +0100
++++ poppler-0.18.2/poppler/poppler-config.h.cmake	2013-01-13 15:07:26.956251500 +0100
+@@ -151,9 +151,9 @@
+ #endif
+ 
+ #if defined(_WIN32)
+-#ifdef _MSC_VER
++#if !defined(strtok_r) && (defined(_MSC_VER) || defined(strtok_s))
+ #define strtok_r strtok_s
+-#elif __MINGW32__
++#elif __MINGW32__ && !defined(strtok_r)
+ char * strtok_r (char *s, const char *delim, char **save_ptr);
+ #endif
+ #endif
+diff -Nru -x '*~' poppler-0.18.2.orig/test/perf-test.cc poppler-0.18.2/test/perf-test.cc
+--- poppler-0.18.2.orig/test/perf-test.cc	2011-11-22 22:33:29.000000000 +0100
++++ poppler-0.18.2/test/perf-test.cc	2013-01-13 15:09:37.999854800 +0100
+@@ -325,7 +325,7 @@
+ #endif
+ }
+ 
+-#ifndef _MSC_VER
++#if !defined(_MSC_VER) && !__MINGW64_VERSION_MAJOR == 3
+ void strcpy_s(char* dst, size_t dst_size, const char* src)
+ {
+     size_t src_size = strlen(src) + 1;
