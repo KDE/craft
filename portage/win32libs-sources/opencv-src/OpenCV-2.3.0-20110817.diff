@@ -1,6 +1,6 @@
 diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
---- OpenCV-2.3.0.orig/CMakeLists.txt	2011-08-25 00:31:23.092044000 +0200
-+++ OpenCV-2.3.0/CMakeLists.txt	2011-08-24 12:17:53.754844200 +0200
+--- OpenCV-2.3.0.orig/CMakeLists.txt	2012-08-19 06:32:50.560461300 +0100
++++ OpenCV-2.3.0/CMakeLists.txt	2012-08-19 06:30:52.873854500 +0100
 @@ -246,7 +246,7 @@
          execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
                    OUTPUT_VARIABLE CMAKE_OPENCV_GCC_TARGET_MACHINE
@@ -10,6 +10,24 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
              set(MINGW64 1)
          endif()
      endif()
+@@ -633,7 +633,7 @@
+ endif()
+ 
+ # Attempt to discover the NumPy include directory. If this succeeds, then build python API with NumPy
+-execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import os; os.environ['DISTUTILS_USE_SDK']='1'; import numpy.distutils; print numpy.distutils.misc_util.get_numpy_include_dirs()[0]"
++execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import os; os.environ['DISTUTILS_USE_SDK']='1'; import numpy.distutils; print(numpy.distutils.misc_util.get_numpy_include_dirs()[0])"
+             RESULT_VARIABLE PYTHON_NUMPY_PROCESS
+             OUTPUT_VARIABLE PYTHON_NUMPY_INCLUDE_DIRS
+             OUTPUT_STRIP_TRAILING_WHITESPACE)
+@@ -647,7 +647,7 @@
+     set(PYTHON_USE_NUMPY 0)
+ endif()
+ 
+-execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import sphinx; print sphinx.__version__"
++execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import sphinx; print(sphinx.__version__)"
+             RESULT_VARIABLE SPHINX_PROCESS
+             OUTPUT_VARIABLE SPHINX_VERSION
+             OUTPUT_STRIP_TRAILING_WHITESPACE)
 @@ -892,7 +892,7 @@
          if(MINGW64)
              set(HIGHGUI_LIBRARIES ${HIGHGUI_LIBRARIES} msvfw32 avifil32 avicap32 winmm)
@@ -92,8 +110,8 @@ diff -Nru OpenCV-2.3.0.orig/CMakeLists.txt OpenCV-2.3.0/CMakeLists.txt
          #install(DIRECTORY doc/pics DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
          #install(DIRECTORY doc/latex2sphinx DESTINATION doc COMPONENT src PATTERN ".svn" EXCLUDE)
 diff -Nru OpenCV-2.3.0.orig/modules/core/include/opencv2/core/core.hpp OpenCV-2.3.0/modules/core/include/opencv2/core/core.hpp
---- OpenCV-2.3.0.orig/modules/core/include/opencv2/core/core.hpp	2011-08-25 00:31:27.194844000 +0200
-+++ OpenCV-2.3.0/modules/core/include/opencv2/core/core.hpp	2011-08-25 00:30:12.465244200 +0200
+--- OpenCV-2.3.0.orig/modules/core/include/opencv2/core/core.hpp	2012-08-19 06:32:51.434062800 +0100
++++ OpenCV-2.3.0/modules/core/include/opencv2/core/core.hpp	2012-08-19 06:00:53.082093300 +0100
 @@ -2904,7 +2904,8 @@
  {
  public:
@@ -114,8 +132,8 @@ diff -Nru OpenCV-2.3.0.orig/modules/core/include/opencv2/core/core.hpp OpenCV-2.
  
  /////////////////////////// multi-dimensional dense matrix //////////////////////////
 diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/highgui/CMakeLists.txt
---- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2011-08-25 00:31:27.881244000 +0200
-+++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2011-08-24 12:17:53.754844200 +0200
+--- OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt	2012-08-19 06:32:51.746063300 +0100
++++ OpenCV-2.3.0/modules/highgui/CMakeLists.txt	2012-08-19 06:00:53.097693400 +0100
 @@ -69,7 +69,7 @@
  endif()
  
@@ -125,9 +143,21 @@ diff -Nru OpenCV-2.3.0.orig/modules/highgui/CMakeLists.txt OpenCV-2.3.0/modules/
  endif()
  
  file(GLOB grfmt_hdrs src/grfmt*.hpp)
+diff -Nru OpenCV-2.3.0.orig/modules/python/CMakeLists.txt OpenCV-2.3.0/modules/python/CMakeLists.txt
+--- OpenCV-2.3.0.orig/modules/python/CMakeLists.txt	2012-08-19 06:32:52.323264400 +0100
++++ OpenCV-2.3.0/modules/python/CMakeLists.txt	2012-08-19 06:31:51.529957600 +0100
+@@ -53,7 +53,7 @@
+ set_target_properties(${cv_target} PROPERTIES PREFIX "")
+ set_target_properties(${cv_target} PROPERTIES OUTPUT_NAME "cv")
+ 
+-execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print distutils.sysconfig.get_config_var('SO')"
++execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('SO'))"
+                 RESULT_VARIABLE PYTHON_CVPY_PROCESS
+                 OUTPUT_VARIABLE CVPY_SUFFIX
+                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 diff -Nru OpenCV-2.3.0.orig/OpenCVConfig.cmake.in OpenCV-2.3.0/OpenCVConfig.cmake.in
---- OpenCV-2.3.0.orig/OpenCVConfig.cmake.in	2011-08-25 00:31:29.441244000 +0200
-+++ OpenCV-2.3.0/OpenCVConfig.cmake.in	2011-08-24 12:17:53.754844200 +0200
+--- OpenCV-2.3.0.orig/OpenCVConfig.cmake.in	2012-08-19 06:32:52.463664600 +0100
++++ OpenCV-2.3.0/OpenCVConfig.cmake.in	2012-08-19 06:00:53.097693400 +0100
 @@ -31,6 +31,8 @@
  # Extract the directory where *this* file has been installed (determined at cmake run-time)
  #  This variable may or may not be used below, depending on the parsing of OpenCVConfig.cmake
@@ -138,8 +168,8 @@ diff -Nru OpenCV-2.3.0.orig/OpenCVConfig.cmake.in OpenCV-2.3.0/OpenCVConfig.cmak
  # ======================================================
  # Include directories to add to the user project:
 diff -Nru OpenCV-2.3.0.orig/Package.cmake.in OpenCV-2.3.0/Package.cmake.in
---- OpenCV-2.3.0.orig/Package.cmake.in	2011-08-25 00:31:29.456844000 +0200
-+++ OpenCV-2.3.0/Package.cmake.in	2011-08-24 12:17:53.770444200 +0200
+--- OpenCV-2.3.0.orig/Package.cmake.in	2012-08-19 06:32:52.463664600 +0100
++++ OpenCV-2.3.0/Package.cmake.in	2012-08-19 06:00:53.097693400 +0100
 @@ -4,9 +4,6 @@
  # (c) Copyrights 2008 Hartmut Seichter, HIT Lab NZ
  #
