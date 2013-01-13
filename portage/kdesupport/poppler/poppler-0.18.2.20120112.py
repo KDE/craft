@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
         self.svnTargets['0.18-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.18"
         self.svnTargets['0.20-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.20"
+        self.targetDigests['0.18.2'] = '7ef4eec20e849024c0cdd7a49c428d20eb3de875'
+        self.patchToApply["0.18.2"] = [("poppler-0.18.2-20130113.diff",1)]
 
         self.shortDescription = "PDF rendering library based on xpdf-3.0"
         self.defaultTarget = "0.18.2"
