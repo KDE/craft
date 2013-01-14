@@ -1,0 +1,26 @@
+diff -Nru a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -82,7 +82,6 @@
+ IF(WIN32)
+   SET(PLATFORM_WINDOWS 1)
+   # install into place in build-dir
+-  SET(CMAKE_INSTALL_PREFIX "${SOURCE_BASE_DIR}/lensfun" CACHE PATH "Install prefix for lensfun" FORCE)
+ 
+   IF (MSVC)
+     IF(BUILD_STATIC)
+@@ -142,14 +141,6 @@
+   ADD_SUBDIRECTORY(docs)
+ ENDIF()
+ 
+-IF(WIN32 AND NOT BUILD_STATIC)
+-FIND_FILE(GLIB2_DLL 
+-          NAMES glib-2.dll glib-2-vs9.dll
+-          PATHS "${GLIB2_BASE_DIR}/bin"
+-          NO_SYSTEM_ENVIRONMENT_PATH)
+-INSTALL(FILES ${GLIB2_DLL} DESTINATION ${BINDIR})
+-ENDIF()
+-
+ # print some information
+ MESSAGE(STATUS "Building lensfun ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}.${VERSION_BUGFIX}")
+ MESSAGE(STATUS "-------------------------------------------------------------------------------------")
