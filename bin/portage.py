@@ -47,7 +47,7 @@ def __import__( module ): # pylint: disable=W0622
                 utils.warning( 'import failed for file %s: %s' % (module, e) )
                 return None
 
-class DependencyPackage:
+class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
@@ -200,7 +200,7 @@ def getCategoryPackageVersion( path ):
 def VCSDirs():
     return [ '.svn', 'CVS', '.hg', '.git' ]
 
-class Portage:
+class Portage(object):
     def __init__( self ):
         """ """
         self.categories = {}

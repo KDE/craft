@@ -30,7 +30,7 @@ def toNodeLabel(fileName, baseDir=None):
         return "toplevel"
     return s
 
-class CMakeDependencies:
+class CMakeDependencies(object):
     def __init__(self):
         self.files1 = []
         self.files2 = []
