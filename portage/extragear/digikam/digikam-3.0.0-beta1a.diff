@@ -1,0 +1,60 @@
+diff -Nru digikam-3.0.0-beta1a.orig/extra/libkdcraw/CMakeLists.txt digikam-3.0.0-beta1a/extra/libkdcraw/CMakeLists.txt
+--- digikam-3.0.0-beta1a.orig/extra/libkdcraw/CMakeLists.txt	2012-09-16 16:51:17.000000000 +0100
++++ digikam-3.0.0-beta1a/extra/libkdcraw/CMakeLists.txt	2012-10-13 21:13:06.838972900 +0100
+@@ -155,8 +155,7 @@
+   set(_jpeglib_version_include_dirs "-DINCLUDE_DIRECTORIES:STRING=${JPEG_INCLUDE_DIR}")
+ 
+   try_compile(_jpeglib_version_compile_result ${CMAKE_BINARY_DIR} ${_jpeglib_version_source_file}
+-    CMAKE_FLAGS "${_jpeglib_version_include_dirs}"
+-    COMPILE_OUTPUT_VARIABLE _jpeglib_version_compile_output_var)
++    CMAKE_FLAGS "${_jpeglib_version_include_dirs}")
+ 
+   if(_jpeglib_version_compile_result)
+     message(STATUS "Identified libjpeg version less than 80 (too low)")
+@@ -195,7 +194,8 @@
+ 
+ # Flag to use libjpeg with LibRaw DNG lossy codec
+ if(JPEG_FOUND)
+-  ADD_DEFINITIONS(-DUSE_JPEG)
++    ADD_DEFINITIONS(-DUSE_JPEG8)
++    INCLUDE_DIRECTORIES(${JPEG_INCLUDE_DIR})
+ endif()
+ 
+ # Flag to include demosaic pack GPL2
+@@ -214,13 +214,11 @@
+ 
+ # ==================================================================================================
+ 
++
+ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/libraw
+                     ${CMAKE_CURRENT_SOURCE_DIR}/libraw/demosaic-pack-GPL2
+                     ${CMAKE_CURRENT_SOURCE_DIR}/libraw/demosaic-pack-GPL3
+                    )
+-if(JPEG_FOUND)
+-  include_directories(${JPEG_INCLUDE_DIR})
+-endif()
+ 
+ # Do not compile LibRaw with KDE FINAL mode.
+ KDE4_NO_ENABLE_FINAL(libraw)
+@@ -250,6 +248,7 @@
+                       ${LCMS2_LIBRARIES}
+                       ${OPENMP_LDFLAGS}
+                      )
++
+ if(JPEG_FOUND)
+   target_link_libraries(libraw ${JPEG_LIBRARY})
+ endif()
+diff -Nru digikam-3.0.0-beta1a.orig/extra/libkdcraw/libraw/internal/dcraw_common.cpp digikam-3.0.0-beta1a/extra/libkdcraw/libraw/internal/dcraw_common.cpp
+--- digikam-3.0.0-beta1a.orig/extra/libkdcraw/libraw/internal/dcraw_common.cpp	2012-09-16 16:51:16.000000000 +0100
++++ digikam-3.0.0-beta1a/extra/libkdcraw/libraw/internal/dcraw_common.cpp	2012-10-13 21:06:11.907240200 +0100
+@@ -5827,8 +5827,8 @@
+       thumb_length = len;
+     }
+     if (type == 0x1818) {
+-      shutter = pow (2, -int_to_float((get4(),get4())));
+-      aperture = pow (2, int_to_float(get4())/2);
++      shutter = pow (2, (double)(-int_to_float((get4(),get4()))));
++      aperture = pow (2, (double)(int_to_float(get4())/2));
+     }
+     if (type == 0x102a) {
+       iso_speed = pow (2, (get4(),get2())/32.0 - 4) * 50;
