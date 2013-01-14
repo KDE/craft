@@ -1,6 +1,6 @@
 import utils
 
-class PackageListParser:
+class PackageListParser(object):
     def __init__(self, filename):
         self.filename = filename
         self.isParsed = False

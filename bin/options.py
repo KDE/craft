@@ -168,7 +168,7 @@ class OptionsGit(OptionsBase):
         self.enableFormattedPatch = False
 
 ## main option class
-class Options:
+class Options(object):
     def __init__(self):
         ## options of the fetch action
         self.fetch = OptionsFetch()

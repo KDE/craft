@@ -13,7 +13,7 @@ import compiler
 from options import *
 import types
 
-class infoclass:
+class infoclass(object):
     """this module contains the information class"""
     def __init__( self, RAW="" ):
         ### package options

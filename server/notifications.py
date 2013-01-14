@@ -7,7 +7,7 @@ import smtplib
 import urllib.request, urllib.parse, urllib.error
 import json
 
-class Notification:
+class Notification(object):
     """ this class is the base class for notifications """
     def __init__( self, category, packageName, logfile, error=0 ):
         self.category = category
