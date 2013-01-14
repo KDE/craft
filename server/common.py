@@ -10,7 +10,7 @@ import time
 isodate = str( date.today() ).replace( '-', '' )
 isodatetime = datetime.now().strftime( "%Y%m%d%H%M" )
 
-class Settings:
+class Settings(object):
     def __init__( self ):
         # this means emerge/server/../../etc/emergeserver.conf
         self.configpath = os.path.normpath( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "..", "..", "etc", "emergeserver.conf" ) )
@@ -59,7 +59,7 @@ class Settings:
 
 settings = Settings()
 
-class Uploader:
+class Uploader(object):
     def __init__( self, category='Upload', logfile=None ):
         self.category = category
         self.logfile = logfile

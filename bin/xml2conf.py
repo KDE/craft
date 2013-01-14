@@ -10,7 +10,7 @@ packageEnd = re.compile( r"</package>" )
 dependencyTerm = re.compile( r"<dependency>([^<]*)</dependency>" )
 descriptionTerm = re.compile( r"<shortDescription>([^<]*)</shortDescription>" )
 
-class Xml2Conf:
+class Xml2Conf(object):
     def __init__( self ):
         self.packageDepsList = dict()
         self.packageDescriptionList = dict()

@@ -60,7 +60,7 @@ Is a child tag of 'package' and contains a package dependency of this
 package. It is possible to have multiple 'dependency' tags per 'package'
 tag.
 """
-class Part:
+class Part(object):
     def __init__( self, name='' ):
         self.name = name
         self.reList = []
@@ -85,7 +85,7 @@ class Part:
     def addIgnore( self, regexp ):
         self.ignoreList.append( re.compile( regexp ) )
 
-class SinglePackage:
+class SinglePackage(object):
     def __init__( self, name='' ):
         self.description = ''
         self.shortDescription = ''
@@ -97,7 +97,7 @@ class SinglePackage:
         return self.name + ' - ' + self.shortDescription
 
 
-class XmlPackager:
+class XmlPackager(object):
     packageList = list()
     fileList = []
     def __init__( self, document, imagepath ):

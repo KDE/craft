@@ -28,7 +28,7 @@ def blocking(fn):
 
     return block
 
-class InstallPackage:
+class InstallPackage(object):
     """ InstallPackage finalizes an installation.
 
         If you call addInstalled or remInstalled an InstallPackage object is returned which
@@ -110,7 +110,7 @@ class InstallPackage:
         self.cursor.connection.commit()
 
 
-class InstallDB:
+class InstallDB(object):
     """ a database object which provides the methods for adding and removing a package and
         checking its installation status.
         In case the database doesn't exist if the constructor is called, a new database is constructed
